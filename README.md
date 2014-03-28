@@ -24,11 +24,11 @@ The driller was specifically developed to make full use of the XML annotation st
 - keyness: Compare two partitions to identify specific vocabulary (using a chi-square test).
 
 ### State of affairs
-There are quite a few further functions, some of which are experimental. The publication of the Driller on CRAN is planned will be a next step. Most recent developments will be available here on GitHub.
+There are quite a few further functions, some of which are experimental. The publication of the Driller on CRAN is planned as soon as the portability of the package is ensured. Most recent developments will be available here on GitHub.
 
 ### Installation
 Theoretically, it sould be easy to install the package with the devtools mechanism. It has been checked that the driller is portable, but feedback is most welcome.
-The tricky part of the installation will usually be the rcqp package. See the package vignette of the driller for some preliminary advice.
+The tricky part of the installation will usually be the _rcqp_ package. See the package vignette of the driller for some preliminary advice.
 
 ### Feedback
 Getting feedback is most welcome! I want this to be a useful package not just for me. Please do get in touch: Andreas Blaette, University of Duisburg-Essen (andreas.blaette@uni-due.de).
