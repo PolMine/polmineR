@@ -1,0 +1,71 @@
+v0.4.19
+ * documentation streamlined, package fully roxygenized
+
+v0.4.18
+ * using options (not exported list drillingControls)
+ * getting Encoding of corpus from registry
+
+v0.4.17
+ * method 'addPos' added for partition object, and keyness objects 
+
+v0.4.16
+ * inclusion of sample Data
+
+v0.4.15
+ * reduction of dependencies for publication of the package on CRAN
+
+v0.4.14
+ * adapting partition and distribution functions to cope with nested xml
+ 
+v0.4.13 
+ * wordCloud visualization
+ * usability of concordances improved
+
+v0.4.12
+ * partitionMerge changed so that it will use full functionality of partition-function
+ * helper functions for distribution on two dimensions improved, tremendous gain in speed
+ * started to fill in sample code into vignette
+
+v0.4.12
+ * new function for frequency counts at partition setup
+
+v0.4.11
+ * inclusion of shiny apps
+ * function 'distribution' as wrapper for functions to inspect distribution
+
+v0.4.10
+ * improved usability of the package, started to use lowerCamelCase
+
+v0.4.9
+ * partition can now be called without explicitly stating a label
+ * partition does not require sAttributes to be set, function .sattributes2cpos streamlined
+ * no labels in partition.cluster
+ * in context, the pos.filter can also be set as an exclusion   
+
+v0.4.8
+ * started to make functions more usable by shortening function names, 'partition.init' is now 'partition'
+ * xterm highlighting for collocates
+ * context can be called with parameters given by drillingControls
+
+v0.4.7
+ * xtermStyle used for kwic output on console
+ * partition object can be indexed
+
+v0.4.6
+ * partition.init expanded to allow for the generation of partitions with specified start and end dates
+ * wordscore analysis adapted so that it can be really used for performing wordscore analysis
+
+v0.4.5
+ * export functionality to tm introduced with as.TermDocumentMatrix.partitioncluster
+
+v0.4.4
+ * combine.collocates improved (new columns for plotting)
+
+v0.4.3
+ * bug-fix for partition.merge
+
+v0.4.1
+ *  partition.init can be used without setting up frequency lists and metadata. This may be useful, if a quick partition.init is desired and term frequencies and/or metadata are not needed.
+ *  partition.init can handle sattribute-lists with length == 1. partition.init will still not work, if no sattributes are given.
+ *  query.crosstab has been renamed to crosstab
+ *  crosstab will accept special characters (transforming them to .)

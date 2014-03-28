@@ -1,0 +1,41 @@
+Package: driller
+Type: Package
+Title: driller
+Version: 0.4.19
+Date: 2014-03-28
+Author: Andreas Blaette
+Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
+Depends:
+    rcqp,
+    tm
+Imports:
+    chron,
+    shiny,
+    methods,
+    slam,
+    parallel,
+    xtermStyle,
+    RColorBrewer
+Suggests:
+    knitr
+VignetteBuilder: knitr
+LazyData: yes
+Description: Tools for drilling and mining CWB corpora. The package offers
+    functionality to work with partitions and basic statistics. It is meant to
+    serve as an interface to packages implementing advanced statistical
+    procedures.
+License: CC BY-NC-SA 3.0 | file LICENSE
+Collate:
+    'RcppExports.R'
+    'context.R'
+    'controls.R'
+    'distribution.R'
+    'driller-package.R'
+    'frequency.R'
+    'matrix.R'
+    'partition.R'
+    'shiny.R'
+    'statistics.R'
+    'utils.R'
+    'visualization.R'
+    'import.R'

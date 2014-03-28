@@ -1,0 +1,9 @@
+citHeader("To cite package 'driller' in publications use:")
+
+citEntry(entry="Manual",
+         title = "driller: Machinery for mining CWB corpora",
+         author = person("Andreas", "Blaette", email="andreas.blaette@uni-due.de"),
+         year = "2014",
+         note = "v0.4.19",
+         textVersion = "Andreas Blaette (2014). driller: Machinery for mining CWB corpora (v0.4.19). See http://polmine.sowi.uni-due.de"
+)

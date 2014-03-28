@@ -1,0 +1,30 @@
+\docType{class}
+\name{crosstab-class}
+\alias{crosstab-class}
+\alias{show,crosstab-method}
+\title{crosstab class}
+\description{
+class for keeping crosstabulations of frequencies of
+queries
+}
+\section{Slots}{
+  \describe{ \item{\code{partitions}:}{Object of class
+  \code{"data.frame"} with sizes of the partition sizes for
+  combinations of s-attributes analyzed }
+  \item{\code{abs}:}{Object of class \code{"list"} for each
+  query: a data frame with absolute frequencies }
+  \item{\code{rel}:}{Object of class \code{"list"} for each
+  query: a data frame with relative frequencies }
+  \item{\code{total}:}{Object of class \code{"list"} with
+  list elements "abs" and "rel" - all queries are summed up
+  } \item{\code{rows}:}{Object of class \code{"character"}
+  what you find in the rows } \item{\code{cols}:}{Object of
+  class \code{"character"} what you find in the columns }
+  \item{\code{query}:}{Object of class \code{"character"}
+  the original queries } }
+}
+
+\section{Methods}{
+  \describe{ \item{show}{get summary of the object} }
+}
+

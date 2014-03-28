@@ -1,0 +1,44 @@
+\docType{class}
+\name{context-class}
+\alias{[,context-method}
+\alias{[[,context-method}
+\alias{context-class}
+\alias{show,context-method}
+\alias{summary,context-method}
+\title{S4 context class}
+\description{
+class to organize information of context analysis
+}
+\section{Slots}{
+  \describe{ \item{\code{query}:}{Object of class
+  \code{"character"} node examined }
+  \item{\code{frequency}:}{Object of class \code{"numeric"}
+  number of hits } \item{\code{partition}:}{Object of class
+  \code{"character"} the partition the analysis is based on
+  } \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
+  \item{\code{left.context}:}{Object of class
+  \code{"numeric"} number of tokens to the right }
+  \item{\code{right.context}:}{Object of class
+  \code{"numeric"} number of tokens to the left }
+  \item{\code{size}:}{Object of class \code{"numeric"}
+  number of tokens in the right and left context }
+  \item{\code{pattribute}:}{Object of class
+  \code{"character"} p-attribute of the query }
+  \item{\code{corpus}:}{Object of class \code{"character"}
+  the CWB corpus used } \item{\code{stat}:}{Object of class
+  \code{"data.frame"} statistics of the analysis }
+  \item{\code{encoding}:}{Object of class
+  \code{"character"} encoding of the corpus }
+  \item{\code{posFilter}:}{Object of class
+  \code{"character"} part-of-speech tags filtered}
+  \item{\code{cpos}:}{Object of class \code{"list"} corpus
+  positions of the hits } }
+}
+
+\section{Methods}{
+  \describe{ \item{show}{output of core information}
+  \item{summary}{core statistical information}
+  \item{[}{index the object} \item{[[}{specific collocates}
+  }
+}
+

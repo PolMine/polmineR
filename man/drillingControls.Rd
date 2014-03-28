@@ -1,0 +1,36 @@
+\docType{data}
+\name{drillingControls}
+\alias{drillingControls}
+\title{global controls}
+\format{\preformatted{List of 20
+ $ defaultCorpus   : chr "PLPRBTTXT"
+ $ pAttribute      : chr "word"
+ $ leftContext     : num 5
+ $ rightContext    : num 5
+ $ minSignificance : num 3.84
+ $ minFrequency    : num 5
+ $ posFilter       : chr "NN"
+ $ filterType      : chr "include"
+ $ kwicMetadata    : chr "text_party"
+ $ kwicNo          : num 10
+ $ xtermStyle      : logi FALSE
+ $ xtermFgNode     : chr "red"
+ $ xtermBgNode     : chr "white"
+ $ xtermFgCollocate: chr "green"
+ $ xtermBgCollocate: chr "black"
+ $ xtermFgMeta     : chr "white"
+ $ xtermBgMeta     : chr "blue"
+ $ metadata        : chr [1:3] "text_party" "text_speaker" "text_date"
+ $ multicore       : logi TRUE
+ $ consoleEncoding : chr "UTF-8"
+}}
+\usage{
+drillingControls
+}
+\description{
+These controls are used as default by several functions.
+Compare the rgl package for a similar approach for
+controls.
+}
+\keyword{datasets}
+

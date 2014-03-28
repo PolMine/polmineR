@@ -1,0 +1,51 @@
+\name{keyness}
+\alias{keyness}
+\title{compute chi-square values for tokens in a corpus using a reference corpus}
+\usage{
+keyness(coi, ref, pattribute = drillingControls$pAttribute,
+  included = FALSE, min.significance = drillingControls$minSignificance,
+  min.frequency = drillingControls$minFrequency, verbose = TRUE,
+  pos.filter = NULL)
+}
+\arguments{
+  \item{coi}{a partition object}
+
+  \item{ref}{a partition object, it is assumed that the coi
+  is a subcorpus of ref}
+
+  \item{pattribute}{The P-Attribute that will be counted
+  (usually either 'word' or 'lemma')}
+
+  \item{included}{TRUE if coi is part of ref, defaults to
+  FALSE}
+
+  \item{min.significance}{the minimum statistical test
+  value}
+
+  \item{min.frequency}{the minimum frequency of a token}
+
+  \item{verbose}{defaults to TRUE}
+
+  \item{pos.filter}{a character vector}
+}
+\value{
+The function returns a data frame with the following
+structure: - absolute frequencies in the first row - ...
+}
+\description{
+Pearson's chi-squared test is calculated to measure the
+keyness of a token in a corpus of interest (COI). A
+reference corpus is required for the computation
+}
+\details{
+If pos.filter is supplied, the most propable pos-Tags will
+be added to the statistical table and the table will be
+filtered. This may slow down the procedure considerably.
+}
+\author{
+Andreas Blaette
+}
+\references{
+Manning / Schuetze ...
+}
+

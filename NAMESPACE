@@ -1,0 +1,55 @@
+# useDynLib(driller)
+# importFrom(Rcpp, sourceCpp)
+
+import(rcqp)
+importFrom(chron, seq.dates)
+importFrom(slam, simple_triplet_matrix)
+importFrom(tm, as.TermDocumentMatrix, as.DocumentTermMatrix)
+importFrom(RColorBrewer, brewer.pal)
+import(methods)
+importFrom(xtermStyle, style)
+importFrom(shiny, runApp)
+importFrom(parallel, mclapply)
+
+# functions related to partitions
+export(partition)
+exportClasses(partition)
+export(partitionCluster)
+export(partitionMerge.partitionCluster)
+S3method("partitionMerge", "partitionCluster")
+export(as.DocumentTermMatrix.partitionCluster)
+export(as.TermDocumentMatrix.partitionCluster)
+export(as.matrix.partitionCluster)
+
+# core/basic statistical functions
+export(collocations)
+export(kwic)
+export(context)
+export(keyness)
+
+# functions for frequency and distributions
+exportClasses(crosstab)
+exportMethods(mergeCols, mergeColsRegex, filterCols)
+exportMethods(show)
+exportMethods('[', '[[', addPos)
+exportMethods(summary)
+export(distribution)
+
+# functions for visualisation
+export(lineChart)
+export(bubblegraph)
+export(egoNetwork)
+
+S3method("as.DocumentTermMatrix", "partitionCluster")
+S3method("as.TermDocumentMatrix", "partitionCluster")
+
+export(drillingControls)
+export(shinyContext)
+export(shinyKeyness)
+export(shinyDistribution)
+export(shinyVolatility)
+
+exportMethods(sAttributes)
+
+export(scatterplotCollocates)
+export(combineCollocates)

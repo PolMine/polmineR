@@ -1,0 +1,14 @@
+#! /bin/sh
+
+HEAD_PLPRBTTXT='##\n## registry entry for corpus DRILLER\n##\n\n# long descriptive name for the corpus\nNAME "PolMine-Corpus of Plenary Protocols - German Bundestag [PLPRBTTXT v0.9.1] (sample slice)"\n# corpus ID (must be lowercase in registry!)\nID   plprbttxt\n# path to binary data files\n'
+
+TAIL_PLPRBTTXT='# corpus properties provide additional information about the corpus:\n##:: charset  = "latin1" # character encoding of corpus data\n##:: language = "de"     # insert ISO code for language (de, en, fr, ...)\n\n\n##\n## p-attributes (token annotations)\n##\n\nATTRIBUTE word\nATTRIBUTE pos\nATTRIBUTE lemma\n\n\n##\n## s-attributes (structural markup)\##\n\n# <plenary_protocol> ... </plenary_protocol>\nSTRUCTURE plenary_protocol\n# <text source=".." id=".." type=".." lp=".." protocol_no=".." date=".." year=".." month=".." name=".." party=".." function=".." speaker=".." speaker_id=".." first_name=".." last_name=".."> ... </text>\n# (no recursive embedding allowed)\nSTRUCTURE text\nSTRUCTURE text_source          # [annotations]\nSTRUCTURE text_id              # [annotations]\nSTRUCTURE text_type            # [annotations]\mSTRUCTURE text_lp              # [annotations]\nSTRUCTURE text_protocol_no     # [annotations]\nSTRUCTURE text_date            # [annotations]\nSTRUCTURE text_year            # [annotations]\nSTRUCTURE text_month           # [annotations]\nSTRUCTURE text_name            # [annotations]\nSTRUCTURE text_party           # [annotations]\nSTRUCTURE text_function        # [annotations]\nSTRUCTURE text_speaker         # [annotations]\nSTRUCTURE text_speaker_id      # [annotations]\nSTRUCTURE text_first_name      # [annotations]\nSTRUCTURE text_last_name       # [annotations]\n\n\n# Yours sincerely, the Encode tool.\n'
+
+mkdir ${R_PACKAGE_DIR}/sampleCorpora
+mkdir ${R_PACKAGE_DIR}/sampleCorpora/registry
+
+echo $HEAD_PLPRBTTXT > ${R_PACKAGE_DIR}/sampleCorpora/registry/plprbttxt
+echo "HOME ${R_PACKAGE_DIR}/sampleCorpora/indexed_corpora/plprbttxt" >> ${R_PACKAGE_DIR}/sampleCorpora/registry/plprbttxt
+echo $TAIL_PLPRBTTXT >> ${R_PACKAGE_DIR}/sampleCorpora/registry/plprbttxt
+
+export CORPUS_REGISTRY=${R_PACKAGE_DIR}/sampleCorpora/registry

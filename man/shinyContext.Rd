@@ -1,0 +1,35 @@
+\name{shinyContext}
+\alias{shinyContext}
+\title{Shiny app for contextual analysis}
+\usage{
+shinyContext()
+
+shinyContext()
+}
+\value{
+not applicable
+
+not applicable
+}
+\description{
+Fires up a shiny app for analysing the context of a node.
+The default values of \code{drillingControls} are used.
+
+Fires up a shiny app for analysing the context of a node.
+The default values of \code{drillingControls} are used.
+}
+\details{
+Shiny will open a window in your browser, offering to
+perform a context analysis based on the partition objects
+found in the global environment.
+
+Shiny will open a window in your browser, offering to
+perform a context analysis based on the partition objects
+found in the global environment.
+}
+\author{
+Andreas Blaette
+
+Andreas Blaette
+}
+

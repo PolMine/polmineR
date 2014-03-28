@@ -1,0 +1,244 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{url}
+%\VignetteIndexEntry{Introduction to Package 'driller'}
+%\VignetteEngine{knitr}
+
+\begin{document}
+\title{An introduction to the \textit{driller} (v0.4.19)}
+\author{Andreas Blaette (andreas.blaette@uni-due.de)}
+\date{March 28, 2014}
+\maketitle
+
+<<setup, include=FALSE>>=
+options(width=60)
+@
+
+\section{Purpose}
+The purpose of the package \textit{driller} is to facilitate the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
+
+There are quite a few R packages for text mining already, it is quite unnecessary to implement again what has already been implemented. Thus, this package is also meant to serve as an interface between the Corpus Workbench (CWB)\footnote{\url{http://cwb.sourceforge.net/}}, an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods. There are several relevant packages on CRAN.\footnote{\url{http://cran.r-project.org/web/views/NaturalLanguageProcessing.html}}
+
+Quantitative text analytics may bear the risk to get out of touch with the original text. The driller seeks to keep the actual text analysed accessible. This is a further reason why the CWB is used as a backend. Apart from the speed of text processing, the Corpus Query Processor (CQP) and the CQP syntax\footnote{\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf}} provide a great machinery to query corpora. Queries found can be viewed with a concordancer.
+
+Using a combination of R and the CWB implies a software architecture you will also find in the TXM project\footnote{\url{http://sourceforge.net/projects/txm/}}. TXM, among other things, offers a rich functionality for importing corpora into the CWB. A very specific concern of the driller is to provide the means to examine and to compare subcorpora that are generated based on the metainformation stored as structural attributes to the CWB corpus. In line with the French tradition of discourse analysis (and for technical reasons), these subcorpora are called partitions here. The driller may be particularly useful for analyses of diachronic variation and synchronic change.
+
+\section{Corpora}
+The \textit{driller} is an instrument to analyse corpora imported to the CWB. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes).  Typically, the p-attributes will be 'word', 'pos' (for part-of-speech) and 'lemma' (for the lemmatized word form). 
+
+The driller was developed for analysing corpora with a flat XML strucutre. Future versions of the driller will be able to process nested XML. Yet so far,  it is generally speaking necessary that all metadata are attributes of one XML element. This may be unproblematic if you work with a corpus of newspaper articles, for instance (attributes might be 'date', 'author', 'newspaper', 'page' etc.). For the corpora of plenary debates that were the impetus to develop the package\footnote{See \url{http://polmine.sowi.uni-due.de}}, a respective transformation generated the flat XML structure.
+
+In the package, two (very small) sample corpora from the PolMine project are included. The corpus "PLPRBTTXT" is a set of five plenary protocols (out of several hundred) of the German Bundestag. The sample corpus can only be used if the respective registry files contain the path to the binary files of the indexed corpora. The setting is managed by a configure file that is called when the package is installed.
+
+The sample corpora are encoded in latin-1, the traditional encoding used by the CWB. The package is not yet entirely generic as far as encodings are concerned. Problems may still arise when using a utf-8 encoded corpus. Future versions of the driller will be generic in this respect.
+
+
+\section{Installation}
+\subsection{System requirements}
+For the time being, only the installation on Linux and Mac OS is supported.
+
+For a Windows installation, the driller itself should not be the problem. The parallelization the package implements may only be used on a Mac/Linux system (due to forking), but multicore processing can be switched of. However, there may be problems with the rcqp package, as it uses several libraries potentially unavailable on Windows.\footnote{A workaround may be an installation in a Linux virtual machine.}
+
+\subsection{Dependencies}
+The driller relies on a few packages (see DESCRIPTION): The tm and the rcqp package are crucial.
+
+The tm package offers a wealth of functions for textmining. It is imported primarly because of the TermDocumentMatrix class and related methods. Once an object of that class has been generated, all tm functions can be used. There are quite a few packages that use the tm TermDocumentMatrix as an input (e.g. topicmodels or lsa). So in a sense, tm is not just a dependency but the link that pushes the R world of text mining open once you have extracted information from a CWB corpus using the driller.
+
+Installation of the rcqp package can be tricky. The rcqp package is however core for the whole driller project. It provides the API for connecting to the CWB.
+
+Apart from R packages rcqp requires (plyr, for instance) that can be installed easily with install.packages(), rcqp requires a few non-R libraries (pkg-config, libffi, gettext, glib). The installation files are easily found in the web. Then the ./configure, make, make install procedure is needed. A tricky hurdle is that pkg-config requires glib, and glib requires pkg-config. A workaround is to start the pkg-config installation with ./configure --without-internal-glib. To install glib on a Mac, I found it useful to use homebrew as an installer (brew install glib).
+
+\subsection{Loading the package}
+
+As mentioned, the rcqp package is the most important dependency of the driller. It is important to set the CORPUS\_REGISTRY environment variable \textit{before} you load the driller and the rcqp package. Note that it will not be possible to change the path to the registry once you have loaded rcqp/the driller. This is caused by rcqp, not the driller.
+
+<<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
+registryDir <- system.file(
+  "sampleCorpora", "registry", package="driller"
+  )
+Sys.setenv(CORPUS_REGISTRY=registryDir)
+library(driller)
+@
+
+\section{Default settings}
+To keep the number of required inputs low when calling individual functions, the package stores a set of variables in a list object called 'drillingControls'.
+
+A drillingControls is an ordinary list, the values of the list elements can be changed accordingly. In the examples that follow, I use the corpus "PLPRNWHTM", a corpus of parliamentary debates of the regional parliament of Northrhine-Westfalia (Germany) as a default corpus. For KWIC output and calculating collocations, an extended left and right context could be set as follows. For building the vignette, the multicore option is set to FALSE.
+
+<<setDrillingControls, echo=TRUE, results="tex">>=
+drillingControls$defaultCorpus <- "PLPRBTTXT"
+drillingControls$leftContext <- 15
+drillingControls$rightContext <- 15
+drillingControls$multicore <- FALSE
+@
+
+Note that when looking at the documentation of functions you will not always see that the settings from drillingControls are used. Where parameters default to NULL, the function will usually get the settings from the drillingControls object in the global environment.
+
+\section{Setting up a partition}
+Usually, any session using the driller will start with initializing a partition. The return of a call of the partition function is a S4 partition object, and almost every function of the driller package will require a partition object as an input.
+
+In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
+
+<<partitionInit, echo=TRUE, results="tex", tidy=FALSE>>=
+bt <- partition(list(text_type="speech"), "PLPRBTTXT")
+cdu <- partition(
+  sAttributes=list(text_type="speech", text_party="CDU"),
+  corpus="PLPRBTTXT"
+  )
+@
+
+To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
+
+<<showPartition, echo=TRUE, results="tex", tidy=FALSE>>=
+cdu
+@
+
+Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
+
+There are two methods to set up a partition, 'grep' and 'in'. If the method is 'in', you can provide a character vector for every s-attribute. If the method is "grep", all s-Attribute values are kept that match a regex. As an example for the 'in'-procedure, if you want a partition comprising of CDU/CSU and FDP as parties, you might formulate:\footnote{Sometimes, you will want to be more specific about the start and end date of a partition. In this case, you can set a dateRange.}
+
+<<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
+coalition <- partition(
+  sAttributes=list(
+    text_type="speech",
+    text_party=c("CDU_CSU", "FDP")
+    ),
+  method="in",
+  corpus="PLPRBTTXT"
+  )
+@
+
+If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the function.
+
+\section{Getting a tm TermDocumentMatrix}
+For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
+<<cluster, echo=TRUE, results="tex", tidy=FALSE, message=FALSE>>=
+parties <- partitionCluster(
+  corpus="PLPRBTTXT",
+  sAttributesStatic=list(text_type="speech"),
+  sAttributeVar="text_party"
+  )
+tdm <- as.TermDocumentMatrix(parties, "word")
+class(tdm) # to see what it is
+show(tdm)
+m <- as.matrix(tdm) # turn it into an ordinary matrix
+m[c("Integration", "Zuwanderung", "Ausländer", "Migration"),]
+@
+
+
+\section{Context analysis}
+The partition object has a method that will give you immediate access to view the concordances of a (single-word) word found in a partition by indexing the partition object accordingly (here: \texttt{min["Minderheitsregierung"]}). This a shortcut that may be useful at times. Usually, the context function will be called first, the summary method will give some information on the resulting context object.
+
+
+<<context, echo=TRUE, results="tex", tidy=FALSE>>=
+integration <- context(
+  "Integration", bt,
+  leftContext=20, rightContext=20
+  )
+summary(integration)
+@
+
+Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object (here: \texttt{min@stat}).
+
+To view some concordances, the context object can be indexed accordingly. If you put a query in double brackets, it is used as a filter, giving you those concordances containing this query (e.g. \texttt{min[["Scheitern"]]}). If you run R in a console, you may use xterm color highlighting. The colors can be set via drillingControls. This applies also for the metainformation you receive as output.
+
+\section{Distribution of queries}
+To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.
+
+
+<<distributionReal, echo=FALSE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
+# one query / one dimension
+foo <- capture.output(oneQuery <- distribution(
+  coalition,
+  '"Gerechtigkeit"',
+  "text_party"
+  ))
+# # multiple queries / one dimension
+foo <- capture.output(twoQueries <- distribution(
+  coalition,
+  c('"[eE]uro.*"', '"Br.ssel"'),
+  "text_party"
+  ))
+# multiple queries / two dimensions
+foo <- capture.output(twoDim <- distribution(
+  bt,
+  c('"Regierung"'),
+  c("text_date", "text_party")
+  ))
+@
+
+
+<<distributionFake1, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
+# one query / one dimension
+foo <- capture.output(oneQuery <- distribution(
+  coalition,
+  '"Gerechtigkeit"',
+  "text_party"
+  ))
+@
+<<distributionOutput1, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
+oneQuery
+@ 
+<<distributionFake2, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
+# multiple queries / one dimension
+twoQueries <- distribution(
+  coalition,
+  c('"[eE]uro.*"', '"Brüssel"'),
+  "text_party"
+  )
+@
+<<distributionOutput2, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
+twoQueries
+@
+<<distributionFake3, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
+# multiple queries / two dimensions
+foo <- capture.output(twoDim <- distribution(
+  bt,
+  c('"Regierung"'),
+  c("text_date", "text_party")
+  ))
+@
+<<distributionOutput3, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
+round((twoDim@total$rel*100000),2)[,c(1,2,3,4,6)]
+@
+
+
+\section{Keyness}
+To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
+
+<<keyness, echo=TRUE, results="tex", message=FALSE, tidy=FALSE>>=
+vocabulary <- keyness(coalition, bt, included=TRUE)
+vocabulary@stat[1:10,1:4] # show the first ten rows
+@
+
+
+\section{Visualisation}
+The results of functions can be visualised using the general functionality of R, of course. In the driller-package, you will find convenience functions/methods for visualisation. The lineChart and the bubblegraph-functions help to visualise the results of a distribution on two dimensions. 
+
+Apart from this, the wordcloud package works nicely to visualize the statistical results returned with the data frames in the stats slots of the context and the keyness function. The return of the egoNetwork function can be turned in an igraph object and displayed as a network. The wordcloud and the igraph packages are not imported to avoid an inflation of the number of dependencies.
+
+\section{Shiny}
+If the driller runs on a local installation, some shiny apps can be tested that are included in the package. You may call:
+\begin{itemize}
+\item shinyContext()
+\item shinyKeyness()
+\item shinyDistribution("simple")
+\item shinyDistribution("multi")
+\item shinyDistribution("crosstab")
+\end{itemize}
+
+The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.
+
+The apps are still experimental and at times may throw out errors before you get a result. They are included to demonstrate how using the driller is meant to be made more convenient in future versions of the package.
+
+\section{On this release}
+Quite deliberately, this version is not v1.0.0 but v0.4.14. In one sense, the code is not very coherent yet. I have only started to move to the lowerCamelCase naming convention with v0.4.2, and there is still a mixture of the more traditional R naming style (using dots) and lowerCamelCase.
+
+More importantly, I am very well aware that functions are not yet robust throughout. I still have not run out of ideas how the package could be made more coherent and functions more usable and faster. However, I thought that making it available and gaining feedback sufficientyl early will help tremendously to improve the quality of the package. Of course, I hope it will be useful for others. 
+
+There will be bugs I am not aware of and ideas that have not occured to me. Any kind of feedback is welcome.
+
+To get in touch: andreas.blaette@uni-due.de
+
+\end{document}
