@@ -47,7 +47,8 @@ basis for most other operations.
   \item{sAttributes}{output of s-attributes in a partition}
   \item{addPos}{\code{signature(object="partition")}: add
   list with most frequent pos for a token } \item{[}{get
-  concordance output} \item{[[}{to be written} }
+  frequency of a query} \item{[[}{shortcut to concordances
+  for a query} }
 }
 \author{
 Andreas Blaette

@@ -21,7 +21,7 @@ export(as.DocumentTermMatrix.partitionCluster)
 export(as.TermDocumentMatrix.partitionCluster)
 export(as.matrix.partitionCluster)
 export(.importPolMineCorpus)
-export(variation)
+export(frequencies)
 
 # core/basic statistical functions
 export(collocations)
