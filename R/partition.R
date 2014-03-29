@@ -515,8 +515,7 @@ setMethod('[[', 'partition', function(x,i){
     get('drillingControls', '.GlobalEnv')[['posFilter']],
     verbose=FALSE
     )
-  kwic <- kwic(context, drillingControls$metadata)
-  print(kwic)
+  context
 }
 )
 
@@ -628,5 +627,5 @@ setMethod(
   if (!encoding %in% iconvlist()){
     warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
   }
-  return(encoding)
+  return(tolower(encoding))
 }

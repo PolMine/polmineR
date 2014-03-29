@@ -117,6 +117,32 @@
   return(characterVector)
 }
 
+#' Convert a string to a CQP query
+#' 
+#' Takes a simple string as an imput and converts it to a valid CQP query
+#' @param queries a character vector
+#' @return a character vector
+#' @export
+#' @rdname as.cqpQuery
+#' @name as.cqpQuery
+as.cqpQuery <- function(queries){
+  cqp <- vapply(
+    queries,
+    function(x) paste(
+      vapply(
+        unlist(strsplit(x, "\\s")),
+        function(x) paste('"', x, '"', sep=''),
+        USE.NAMES=FALSE,
+        FUN.VALUE="character"
+      ),
+      collapse=" "
+    ),
+    FUN.VALUE="character",
+    USE.NAMES=FALSE      
+    )
+  return(cqp)
+}
+
 # #include <Rcpp.h>
 # using namespace Rcpp;
 # 

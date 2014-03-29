@@ -2,7 +2,7 @@
 \alias{kwic}
 \title{KWIC output}
 \usage{
-kwic(ctxt, metadata = drillingControls$kwicMetadata, collocate = c())
+kwic(ctxt, metadata = NULL, collocate = c())
 }
 \arguments{
   \item{ctxt}{a context object}

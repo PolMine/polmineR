@@ -220,7 +220,8 @@ context <- function(
 #'   collocate
 #' @return a concordances object
 #' @author Andreas Blaette
-kwic <- function(ctxt, metadata=drillingControls$kwicMetadata, collocate=c()){
+kwic <- function(ctxt, metadata=NULL, collocate=c()){
+  if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
   for (meta in metadata){
     sattr <- paste(ctxt@corpus, ".", meta, sep="")
