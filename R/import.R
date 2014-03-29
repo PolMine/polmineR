@@ -2,8 +2,9 @@
   urlRegistry <- paste("http://polmine.sowi.uni-due.de/cwb/", tolower(corpus), "/", tolower(corpus), sep="")
   urlBinaries <- paste("http://polmine.sowi.uni-due.de/cwb/", tolower(corpus), "/", tolower(corpus), ".tar.gz", sep="")
   registryFilename <- file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus))
-  pathElements <- unlist(strsplit(Sys.getenv("COPRUS_REGISTRY"), split="/"))
-  cwbDir <- paste(pathElements[2:length(pathElements)-1], collapse="/")
+  pathElements <- unlist(strsplit(Sys.getenv("CORPUS_REGISTRY"), split="/"))
+  cwbDir <- paste(pathElements[2:(length(pathElements)-1)], collapse="/")
+  cwbDir <- paste('/', cwbDir, sep='')
   dirs <- list.dirs(cwbDir, recursive=FALSE)
   binaryDir <- dirs[grep("indexed", dirs)]
   cat('... destination for corpus binary files: ', binaryDir, '\n')
