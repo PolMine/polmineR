@@ -24,19 +24,19 @@
   )
   system(paste(system("which tar", intern=TRUE), "xzfv", tarFilename))
   untar(tarFilename, tar=system("which tar", intern=TRUE), exdir=binaryDir)
-  registry <- scan(registryFilename, what="character", blank.lines.skip=FALSE, sep="\n")
+  registry <- scan(registryFilename, what="character", blank.lines.skip=FALSE, sep="\n", quiet=TRUE)
   lineHome <- grep("^HOME", registry)
   registry[lineHome] <- paste("HOME ", binaryDir, "/", tolower(corpus), sep="")
   lineInfo <- grep("^INFO", registry)
   registry[lineInfo] <- paste("INFO ", binaryDir, "/", tolower(corpus), "/.info", sep="")
   cat(registry, file=registryFilename, sep="\n")
-  cat('Corpus "', corpus, '" has been installed\n', sep="\n")
+  cat('Corpus "', corpus, '" has been installed\n', sep="")
   cat("registry at:", registryFilename, "\n")
   cat("corpus binaries at:", binaryDir, "\n\n")
   remove <- readline(paste("Remove", tarFilename, " (yes/no) ? \n"))
   if (grepl(".*yes.*", remove)==TRUE) {
     system(paste("rm", tarFilename))
   }
-  cat("** enjoy the mining and the drilling! **")
+  cat("** enjoy the mining and the drilling! **\n")
   
 }
