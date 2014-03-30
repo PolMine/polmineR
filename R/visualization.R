@@ -37,6 +37,8 @@ lineChart <- function (tab, xlab="", ylab="", main="", rowsParties="TRUE", ymax=
 #' visualise the distribution of counts/frequencies in a crosstab object with a bubblegraph
 #' @param ctab a crosstabulation (a slot of a crosstab object, see example)
 #' @param rex a radius expansion factor to control the bubble size
+#' @param leftMargin adjust left margin of the plot
+#' @param bottomMargin adjust bottom margin of the plot
 #' @return a nice plot, hopefully
 #' @examples
 #' \dontrun{
@@ -44,8 +46,8 @@ lineChart <- function (tab, xlab="", ylab="", main="", rowsParties="TRUE", ymax=
 #' dist <- distribution(bt, "Politik", c("text_date", "text_party"))
 #' bubblegraph(dist@@total$rel)
 #' }
-bubblegraph <- function(ctab, rex=1) {
-  par(mai=c(1.2, 1.6, 0.2, 0.2), mfcol=c(1,1), cex.axis=0.8)
+bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6) {
+  par(mai=c(bottomMargin,leftMargin, 0.2, 0.2), mfcol=c(1,1), cex.axis=0.8)
   xrange <- c(1, ncol(ctab))
   yrange <- c(1, nrow(ctab))
   plot(c(1,1), type = "n", xlab=c(""), ylab=c(""),

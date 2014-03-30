@@ -336,25 +336,30 @@ function(object){
 .queryDistribution <- function (part, pAttribute, query, sAttribute, rel=TRUE) {
   query <- .adjustEncoding(query, part@encoding)
   cpos <- .queryCpos(query, part, pAttribute)[,1]
-  sAttr <- paste(part@corpus,'.',sAttribute, sep='')
-  struc <- cqi_cpos2struc(sAttr, cpos)
-  abs <- table(cqi_struc2str(sAttr,struc))
-  if (rel==TRUE) {
-    sizes <- xtabs(
-      length~meta,
-      data=data.frame(length=part@cpos[,2]-part@cpos[,1], meta=part@metadata$table[,sAttribute])
-      )
-    tf <- join(
-      data.frame(sAttr=names(sizes), sizes=as.vector(sizes)),
-      data.frame(sAttr=names(abs), abs=as.vector(abs)),
-      by="sAttr", type="left"
-      )
-    tf <- cbind(tf, rel=tf$abs/tf$sizes)
-    rownames(tf) <- tf[,1]
-    tf <- tf[,c("abs", "rel", "sizes")]
-    tf[is.na(tf)] <- 0
+  if(!is.null(cpos)){
+    sAttr <- paste(part@corpus,'.',sAttribute, sep='')
+    struc <- cqi_cpos2struc(sAttr, cpos)
+    abs <- table(cqi_struc2str(sAttr,struc))
+    if (rel==TRUE) {
+      sizes <- xtabs(
+        length~meta,
+        data=data.frame(length=part@cpos[,2]-part@cpos[,1], meta=part@metadata$table[,sAttribute])
+        )
+      tf <- join(
+        data.frame(sAttr=names(sizes), sizes=as.vector(sizes)),
+        data.frame(sAttr=names(abs), abs=as.vector(abs)),
+        by="sAttr", type="left"
+        )
+      tf <- cbind(tf, rel=tf$abs/tf$sizes)
+      rownames(tf) <- tf[,1]
+      tf <- tf[,c("abs", "rel", "sizes")]
+      tf[is.na(tf)] <- 0
+    } else {
+      tf <- abs
+    }
   } else {
-    tf <- abs
+    warning("no hits for query ", query)
+    tf <- NULL
   }
   tf
 }
@@ -379,6 +384,7 @@ function(object){
 #' @seealso .query.distribution, multiword.distribution
 #' @noRd
 .queriesDistribution <- function(part, pAttribute, queries, sAttribute){
+  message("retrieving frequencies for the ", length(queries), " queries given")
   dist <- list()
   dist$subcorpussizes <- xtabs(
     length~meta,
@@ -386,8 +392,13 @@ function(object){
     )
   abs <- as.data.frame(dist$subcorpussizes)
   for (query in queries) {
-    incoming <- as.data.frame(.queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE))
-    abs <- merge(abs, incoming, by.x="meta", by.y="Var1", all=TRUE)
+    message('... query: ', query)
+    incoming <- .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE)
+    if (!is.null(incoming)){
+      abs <- merge(abs, as.data.frame(incoming), by.x="meta", by.y="Var1", all=TRUE)
+    } else {
+      abs <- cbind(abs, new=rep(0,times=nrow(abs)))
+    }
     colnames(abs)[dim(abs)[2]] <- query
   }
   rownames(abs) <- abs[,"meta"]

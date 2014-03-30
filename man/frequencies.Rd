@@ -12,6 +12,9 @@ frequencies(query, Partition, pAttribute = NULL)
   \item{pAttribute}{pAttribute}
 }
 \description{
-Returns a frequency breakdown of the results of a query
+If one query is supplied, the function returns a frequency
+breakdown of the results of the query. If several queries
+are supplied, frequencies for the individual queries are
+retrieved.
 }
 

@@ -3,7 +3,7 @@
 \title{Generate a list of partitions}
 \usage{
 partitionCluster(corpus, sAttributesStatic, sAttributeVar,
-  sAttributeVarValues = c(), encoding = NULL, root = "text", tf = TRUE,
+  sAttributeVarValues = c(), encoding = NULL, tf = TRUE,
   metadata = TRUE, method = "grep", multicore = FALSE)
 }
 \arguments{
@@ -19,8 +19,6 @@ partitionCluster(corpus, sAttributesStatic, sAttributeVar,
 
   \item{encoding}{encoding of the corpus, if not provided,
   encoding provided in the registry file will be used}
-
-  \item{root}{the root of the corpus}
 
   \item{tf}{logical, whether term frequencies shall be
   generated}

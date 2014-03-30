@@ -46,7 +46,7 @@
       hits <- matrix(hits, nrow=1)
     }
   } else {
-    warning("no hits for query")
+    warning("no hits for query -> ", query)
     hits = NULL
   }
   hits

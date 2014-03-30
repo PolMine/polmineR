@@ -2,7 +2,7 @@
 \alias{bubblegraph}
 \title{bubblegraph visualisation}
 \usage{
-bubblegraph(ctab, rex = 1)
+bubblegraph(ctab, rex = 1, leftMargin = 1.2, bottomMargin = 1.6)
 }
 \arguments{
   \item{ctab}{a crosstabulation (a slot of a crosstab
@@ -10,6 +10,10 @@ bubblegraph(ctab, rex = 1)
 
   \item{rex}{a radius expansion factor to control the
   bubble size}
+
+  \item{leftMargin}{adjust left margin of the plot}
+
+  \item{bottomMargin}{adjust bottom margin of the plot}
 }
 \value{
 a nice plot, hopefully

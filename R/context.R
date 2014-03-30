@@ -325,7 +325,11 @@ setMethod('show', 'context',
 function(object) {
   drillingControls <- get("drillingControls", '.GlobalEnv')
   conc <- kwic(object, metadata=drillingControls$kwicMetadata)
-  foo <- .showChunkwise(conc)
+  if (nrow(conc@table) > drillingControls$kwicNo) {
+    foo <- .showChunkwise(conc)
+  } else {
+    show(conc)
+  }
 })
 
 setMethod('[', 'context',

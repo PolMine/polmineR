@@ -2,9 +2,9 @@
 \alias{partition}
 \title{Initialize a partition}
 \usage{
-partition(sAttributes, corpus = "default", label = "noLabel",
-  dateRange = c(), encoding = NULL, root = "text", tf = TRUE,
-  metadata = TRUE, method = "grep", xml = "flat", pos = NULL)
+partition(sAttributes, corpus = "default", label = c(""), dateRange = c(),
+  encoding = NULL, tf = TRUE, metadata = TRUE, method = "grep",
+  xml = "flat", pos = NULL)
 }
 \arguments{
   \item{sAttributes}{list consisting of a set of character
@@ -22,8 +22,6 @@ partition(sAttributes, corpus = "default", label = "noLabel",
   or "(UTF-8)), if NULL, the encoding provided in the
   registry file of the corpus (charset="...") will be used
   b}
-
-  \item{root}{the root element of the corpus}
 
   \item{tf}{either FALSE or TRUE, defaults to TRUE}
 

@@ -80,7 +80,6 @@ setClass("partition",
 #' @param label label of the new partition, defaults to "noLabel"
 #' @param dateRange a character vector specifying start and end date for the partition
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
-#' @param root the root element of the corpus
 #' @param tf either FALSE or TRUE, defaults to TRUE
 #' @param metadata either FALSE or TRUE, defaults to TRUE
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
@@ -93,9 +92,9 @@ setClass("partition",
 #' spd <- partition(list(text_party="SPD", text_type="speech"), "PLPRBTTXT"))
 #' }
 #' @export partition
-partition <- function(sAttributes, corpus="default", label="noLabel", dateRange=c(), encoding=NULL, root="text", tf=TRUE, metadata=TRUE, method="grep", xml="flat", pos=NULL) {
+partition <- function(sAttributes, corpus="default", label=c(""), dateRange=c(), encoding=NULL, tf=TRUE, metadata=TRUE, method="grep", xml="flat", pos=NULL) {
   if (corpus=="default") corpus <- get("drillingControls", '.GlobalEnv')[['defaultCorpus']]
-  message('Setting up partition')
+  message('Setting up partition ', label)
   Partition <- new('partition')
   Partition@corpus <- corpus
   Partition@label <- label
@@ -201,7 +200,6 @@ NULL
 #' @param sAttributeVar character vector indicating the s-attribute to be variabel
 #' @param sAttributeVarValues character vector
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
-#' @param root the root of the corpus
 #' @param tf logical, whether term frequencies shall be generated
 #' @param metadata logical, whether to set up metadata
 #' @param method either 'grep' or 'in'
@@ -211,14 +209,14 @@ NULL
 partitionCluster <- function(
   corpus,
   sAttributesStatic, sAttributeVar, sAttributeVarValues=c(),
-  encoding=NULL, root="text", tf=TRUE, metadata=TRUE, method="grep",
+  encoding=NULL, tf=TRUE, metadata=TRUE, method="grep",
   multicore=FALSE
   ) {
   message('\nPreparing cluster of partitions')
   cluster <- list()
   if (is.null(sAttributeVarValues)){
     message('... retrieving values of fixed s-attributes')
-    partitionTmp <- partition(sAttributesStatic, corpus, root=root, tf=FALSE, metadata=FALSE, method=method)
+    partitionTmp <- partition(sAttributesStatic, corpus, tf=FALSE, metadata=FALSE, method=method)
     sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionTmp@strucs))
     message('... number of partitions to be initialized:', length(sAttributeVarValues),'\n')
   }
@@ -383,10 +381,6 @@ print.partitionCluster <- function (object) {
                   )
            ), byrow=TRUE, ncol=2
   )
-#   cpos <- matrix(
-#     unlist(lapply(strucs, function(x) cqi_struc2cpos(sAttr[1], x))),
-#     byrow=TRUE, ncol=2
-#     )
   for (i in c(1:length(sAttr))){
     if ( i == 1) {
       meta <- cqi_struc2str(sAttr[i], strucs)
