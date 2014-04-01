@@ -157,8 +157,8 @@ context <- function(
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
   if (verbose==TRUE) message("... getting hits for query in partition", appendLF=FALSE)
-  query <- .adjustEncoding(query, partition@encoding)
-  Encoding(query) <- ctxt@encoding
+  # query <- .adjustEncoding(query, partition@encoding)
+  # Encoding(query) <- ctxt@encoding
   hits <- .queryCpos(query, partition, pAttribute)
   hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
   hits <- apply(hits, 1, function(x) as.list(unname(x)))
@@ -223,6 +223,9 @@ context <- function(
 kwic <- function(ctxt, metadata=NULL, collocate=c()){
   if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
+  if (all(is.element(metadata, cqi_attributes(ctxt@corpus, "s")))!=TRUE) {
+    warning("check drillingControls$kwicMetadata: Not all sAttributes supplied are available in corpus")
+  }
   for (meta in metadata){
     sattr <- paste(ctxt@corpus, ".", meta, sep="")
     strucs <- cqi_cpos2struc(sattr, unlist(lapply(ctxt@cpos, function(x)x$node[1])))

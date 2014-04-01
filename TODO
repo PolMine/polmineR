@@ -1,9 +1,5 @@
 To do / known bugs:
  * 'merge' is obviously slow, move to 'join' from plyr or 'match'
- * concordancer does not use drillingControls when called by indexing partition
- * supplying root when calling partition with xml="nested"
- * when calling less hits than kwicNo NAs given
  * function to split a partition according to one criterium
  * bubblegraph, depending on order of dimensions: "invalid dimnames"
- * skip partition@root
- * catch counting when cqq.cpos runds
+ 

@@ -604,7 +604,8 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 setMethod(
   "sAttributes", "partition",
   function (object) {
-    sAttributes <- lapply(cqi_attributes(object@corpus, "s"), function(x)cat(x,"\n"))
+    sAttributes <- cqi_attributes(object@corpus, "s")
+    sAttributes
   }
 )
 
