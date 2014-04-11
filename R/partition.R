@@ -31,7 +31,7 @@
 #' @aliases partition-class show,partition-method [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method addPos,partition-method addPos [,partition-method [[,partition-method sAttributes,partition-method sAttributes
 #' @rdname partition-class
 #' @name partition-class
-#' @exportClass
+#' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
 setClass("partition",
@@ -91,6 +91,9 @@ setClass("partition",
 #' \dontrun{
 #' spd <- partition(list(text_party="SPD", text_type="speech"), "PLPRBTTXT"))
 #' }
+#' @import rcqp
+#' @import methods
+#' @importFrom chron seq.dates
 #' @export partition
 partition <- function(sAttributes, corpus="default", label=c(""), dateRange=c(), encoding=NULL, tf=TRUE, metadata=TRUE, method="grep", xml="flat", pos=NULL) {
   if (corpus=="default") corpus <- get("drillingControls", '.GlobalEnv')[['defaultCorpus']]
@@ -181,7 +184,7 @@ partition <- function(sAttributes, corpus="default", label=c(""), dateRange=c(),
 #' @name partitionCluster-class
 #' @aliases as.DocumentTermMatrix.partitionCluster as.matrix.partitionCluster as.TermDocumentMatrix.partitionCluster print.partitionCluster partitionMerge,partitionCluster-method partitionMerge.partitionCluster
 #' @docType class
-#' @Rdname partitionCluster-class
+#' @rdname partitionCluster-class
 NULL
 
 
@@ -208,6 +211,8 @@ NULL
 #' @param method either 'grep' or 'in'
 #' @param multicore defaults to FALSE, if TRUE, mclapply will be used
 #' @return a S3 class 'partitionCluster', which is a list with partition objects
+#' @importFrom parallel mclapply
+#' @export partitionCluster
 #' @author Andreas Blaette
 partitionCluster <- function(
   corpus,
@@ -251,7 +256,8 @@ partitionCluster <- function(
 #' @noRd
 .partition.size <- function(partition) sum(partition@cpos[,2]-partition@cpos[,1]+1)
 
-
+#' @exportMethod show
+#' @noRd
 setMethod("show", "partition",
 function(object){
   cat("** partition object **\n")
@@ -462,6 +468,7 @@ setGeneric("partitionMerge", function(object,...){standardGeneric("partitionMerg
 #' @return An object of the class 'partition. See partition for the
 #' details on the class.
 #' @author Andreas Blaette
+#' @S3method partitionMerge partitionCluster
 #' @noRd
 partitionMerge.partitionCluster <- function(cluster, label){
   cat('There are', length(cluster), 'partitions to be merged\n')
@@ -502,6 +509,7 @@ partitionMerge.partitionCluster <- function(cluster, label){
   partition
 }
 
+#' @exportMethod [[
 setMethod('[[', 'partition', function(x,i){
   context <- context(
     i, x,
@@ -516,6 +524,7 @@ setMethod('[[', 'partition', function(x,i){
 }
 )
 
+#' @exportMethod [
 setMethod('[', 'partition', function(x,i){
   hits <- nrow(.queryCpos(i,x))
   hits
@@ -603,6 +612,7 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #'
 #' @param partition a partition object
 #' @return the S-Attributes are immediately printed
+#' @exportMethod sAttributes
 #' @noRd
 setMethod(
   "sAttributes", "partition",

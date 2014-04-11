@@ -1,7 +1,7 @@
 \docType{class}
 \name{keyness-class}
-\alias{keyness,summary-method}
 \alias{keyness-class}
+\alias{summary,keyness-method}
 \title{S4 class for comparing corpora}
 \description{
 to keep results from a keyness analysis
@@ -17,6 +17,13 @@ to keep results from a keyness analysis
   of class \code{"character"} ~~ }
   \item{\code{stat}:}{Object of class \code{"data.frame"}
   ~~ } }
+}
+
+\section{Methods}{
+  \describe{ \item{summary}{\code{signature(object =
+  "keyness")}: Display essential information }
+  \item{addPos}{\code{signature(object = "keyness")}: add
+  POS attribute to statistics table } }
 }
 \author{
 Andreas Blaette

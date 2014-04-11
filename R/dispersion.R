@@ -20,9 +20,9 @@
 #'     
 #' @name crosstab-class
 #' @aliases show,crosstab-method
-#' @exportClass
+#' @exportClass crosstab
 #' @docType class
-#' @Rdname crosstab-class
+#' @rdname crosstab-class
 setClass("crosstab",
          representation(partitions="data.frame", 
                         abs="list",
@@ -151,8 +151,8 @@ setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 #' @author Andreas Blaette
 #' @docType methods
 #' @aliases mergeCols mergeCols-crosstab-method
-#' @Rdname mergeCols-crosstab-method
-#' @exportMethod
+#' @rdname mergeCols-crosstab-method
+#' @exportMethod mergeCols
 setMethod('mergeCols','crosstab', 
 function(object, colname.old1, colname.old2, colname.new) {
   object@partitions[,colname.old1] <- object@partitions[,colname.old1] + object@partitions[,colname.old2]
@@ -179,10 +179,10 @@ function(object, colname.old1, colname.old2, colname.new) {
 #' @param colname.new the colname of the merged column
 #' @return a crosstab object has a matrix with partition sizes,
 #' absoute query frequencies and relative query frequencies, just as the input
-#' @exportMethod
 #' @docType methods
 #' @aliases mergeColsRegex mergeColsRegex,crosstab-method 
 #' @rdname mergeColsRegex-crosstab-method
+#' @exportMethod mergeColsRegex
 setMethod("mergeColsRegex", "crosstab",
 function(object, regex, colname.new) {
   match <- grep(regex, colnames(object@partitions))
@@ -235,8 +235,8 @@ function(object, regex, colname.new) {
 #' frequencies
 #' @author Andreas Blaette
 #' @aliases filterCols filterCols-crosstab-method
-#' @exportMethod
-#' @Rdname filterCols-crosstab-method
+#' @exportMethod filterCols
+#' @rdname filterCols-crosstab-method
 setMethod("filterCols", "crosstab",
 function(object, filter, what="drop"){
   if (what=="drop"){
@@ -258,7 +258,7 @@ function(object, filter, what="drop"){
 #' @param object a crosstab object
 #' @author Andreas Blaette
 #' @rdname show-crosstab-method
-#' @exportMethod
+#' @exportMethod show
 #' @noRd
 setMethod("show", "crosstab",
 function(object){
@@ -432,6 +432,7 @@ function(object){
 #' dispersion(plpr, "Vorsorge", "text_year")
 #' }
 #' @author Andreas Blaette
+#' @export dispersion
 dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
   if ( is.null(names(partition@metadata))) warning("Metadata need to ne set up in partition")
   if (length(dim)==1){

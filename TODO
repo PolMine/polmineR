@@ -1,3 +1,0 @@
-To do / known bugs:
- * 'merge' is obviously slow, move to 'join' from plyr or 'match'
- * zoom-function to split a partition according to one criterium

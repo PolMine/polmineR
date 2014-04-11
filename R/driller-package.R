@@ -17,14 +17,13 @@
 #' term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
 #' generated (with \code{as.TermDocumentMatrix}). This opens the door to the wealth of
 #' statistical methods implemented in R.
-#' @author Andreas Blaette (andreas.blaette@uni-due.de)
+#' @author Andreas Blaette (andreas.blaette@@uni-due.de)
 #' @references http://polmine.sowi.uni-due.de
-#' @keyword package
+#' @keywords package
 #' @docType package
 #' @rdname driller-package
 #' @name driller-package
 NULL
-
 
 
 #' colors associated with German parties

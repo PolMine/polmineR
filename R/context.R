@@ -10,7 +10,7 @@
 #' @name kwic-class
 #' @rdname kwic-class
 #' @docType class
-#' @exportClass
+#' @exportClass kwic
 setClass("kwic",
          representation(cpos="list",
                         word="list"
@@ -53,8 +53,8 @@ setClass("kwic",
 #' @name context-class
 #' @aliases show,context-method [,context-method [[,context-method summary,context-method
 #' @docType class
-#' @exportClass
-#' @Rdname context-class
+#' @exportClass kwic
+#' @rdname context-class
 setClass("context",
          representation(query="character",
                         frequency="numeric",
@@ -92,8 +92,8 @@ setClass("context",
 #' @name concordances-class
 #' @docType class
 #' @aliases show,concordances-method concordances-class [,concordances,ANY,ANY,ANY-method [,concordances-method
-#' @exportClass
-#' @Rdname concordances-class
+#' @exportClass concordances
+#' @rdname concordances-class
 setClass("concordances",
          representation(metadata="character",
                         collocate="character",
@@ -126,6 +126,7 @@ setClass("concordances",
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
 #' a <- context('"Integration"', p)
 #' }
+#' @export context
 context <- function(
   query, partition,
   pAttribute=NULL,
@@ -220,6 +221,7 @@ context <- function(
 #'   collocate
 #' @return a concordances object
 #' @author Andreas Blaette
+#' @export kwic
 kwic <- function(ctxt, metadata=NULL, collocate=c()){
   if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
@@ -252,7 +254,7 @@ kwic <- function(ctxt, metadata=NULL, collocate=c()){
 
 
 
-
+#' @importFrom xtermStyle style
 setMethod('show', 'concordances',
 function(object){
   drillingControls <- get("drillingControls", '.GlobalEnv')
@@ -289,6 +291,8 @@ function(object){
 }
 )
 
+#' @exportMethod summary
+#' @noRd
 setMethod('summary', 'context',
 function(object) {
   cat("\n** Context object - general information: **\n")
@@ -385,6 +389,7 @@ setMethod('[', 'concordances',
 #'  tklplot(g)
 #'  }
 #' @author Andreas Blaette
+#' @export egoNetwork
 egoNetwork <- function(Partition, node, degrees, pAttribute, leftContext, rightContext, minSignificance, posFilter) {
   gData <- context(Partition, node, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
   gData <- cbind(node=rep(node, times=nrow(gData)), target=rownames(gData), degree=rep(1, times=nrow(gData)), gData)
@@ -419,6 +424,7 @@ egoNetwork <- function(Partition, node, degrees, pAttribute, leftContext, rightC
 #' @param pearson set to TRUE if pearsons rho shall be calculated, defaults to FALSE
 #' @return a combined data frame
 #' @author Andreas Blaette
+#' @export combineCollocates
 combineCollocates <- function (x, y, maxRank=0, minFrequency=0, tokenFilter=c("FOO"), pearson=FALSE){
   x <- trim(x, minFrequency=minFrequency, maxRank=maxRank)
   y <- trim(y, minFrequency=minFrequency, maxRank=maxRank)

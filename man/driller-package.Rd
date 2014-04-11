@@ -27,9 +27,10 @@ from the tm package) can be generated (with
 wealth of statistical methods implemented in R.
 }
 \author{
-Andreas Blaette (andreas.blaette
+Andreas Blaette (andreas.blaette@uni-due.de)
 }
 \references{
 http://polmine.sowi.uni-due.de
 }
+\keyword{package}
 

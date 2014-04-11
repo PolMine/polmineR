@@ -1,3 +1,6 @@
+v0.4.21
+ * technical update: automatic generation of NAMESPACE file with roxygen
+
 v0.4.20
  * new cqpQuery-class introduced
  * distribution-function renamed as dispersion

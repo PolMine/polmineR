@@ -10,6 +10,9 @@
 #' @method as.TermDocumentMatrix partitionCluster
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
+#' @importFrom slam simple_triplet_matrix
+#' @importFrom tm as.TermDocumentMatrix
+#' @S3method as.TermDocumentMatrix partitionCluster
 #' @noRd
 as.TermDocumentMatrix.partitionCluster <- function (x, pAttribute, ...) {
   encoding <- unique(unlist(lapply(x, function(c) c@encoding)))
@@ -52,6 +55,7 @@ as.TermDocumentMatrix.partitionCluster <- function (x, pAttribute, ...) {
 #' @method as.matrix partitionCluster
 #' @return a matrix
 #' @author Andreas Blaette
+#' @S3method as.matrix partitionCluster
 #' @noRd
 as.matrix.partitionCluster <- function(x, pAttribute, ...) {
   as.matrix(as.TermDocumentMatrix(x, pAttribute))
@@ -69,6 +73,8 @@ as.matrix.partitionCluster <- function(x, pAttribute, ...) {
 #' @method as.DocumentTermMatrix partitionCluster
 #' @return a DocumentTermMatrix
 #' @author Andreas Blaette
+#' @importFrom tm as.DocumentTermMatrix
+#' @S3method as.DocumentTermMatrix partitionCluster
 #' @noRd
 as.DocumentTermMatrix.partitionCluster <- function(x, pAttribute, ...) {
   as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute))

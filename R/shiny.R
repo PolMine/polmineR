@@ -10,6 +10,8 @@ shinyReferencePartition <- "UNSET"
 #' based on the partition objects found in the global environment.
 #' 
 #' @return not applicable
+#' @importFrom shiny runApp
+#' @export shinyContext
 #' @author Andreas Blaette
 shinyContext <- function() {
   assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
@@ -27,6 +29,7 @@ shinyContext <- function() {
 #' @param partition1 a partition object (corpus of interest)
 #' @param partition2 a partition object (reference corpus)
 #' @return not applicable
+#' @export shinyKeyness
 #' @author Andreas Blaette
 shinyKeyness <- function(partition1, partition2) {
   assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
@@ -43,8 +46,9 @@ shinyKeyness <- function(partition1, partition2) {
 #' 
 #' @param type either "simple", "multi" or "crosstab"
 #' @return not applicable
+#' @export shinyDispersion
 #' @author Andreas Blaette
-shinyDistribution <- function(type) {
+shinyDispersion <- function(type) {
   assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
   if (type=="simple") {
     shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppDistribution')
@@ -64,6 +68,7 @@ shinyDistribution <- function(type) {
 #' 
 #' @return not applicable
 #' @author Andreas Blaette
+#' @export shinyContext
 shinyContext <- function() {
   assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
   #  shiny::runApp(system.file("shinyAppContext", package="driller"))
@@ -78,6 +83,7 @@ shinyContext <- function() {
 #' has to be called again.
 #' 
 #' @author Andreas Blaette
+#' @export shinyVolatility
 shinyVolatility <- function() {
   assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
   #  shiny::runApp(system.file("shinyAppKeyness", package="driller"))

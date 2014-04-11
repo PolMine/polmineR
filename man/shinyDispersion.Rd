@@ -1,8 +1,8 @@
-\name{shinyDistribution}
-\alias{shinyDistribution}
+\name{shinyDispersion}
+\alias{shinyDispersion}
 \title{Shiny app for exploring the distribution}
 \usage{
-shinyDistribution(type)
+shinyDispersion(type)
 }
 \arguments{
   \item{type}{either "simple", "multi" or "crosstab"}

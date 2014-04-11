@@ -13,6 +13,8 @@
 #' @param ymax maximum y value for chart
 #' @return output is a plot
 #' @author Andreas Blaette
+#' @importFrom RColorBrewer brewer.pal
+#' @export lineChart
 lineChart <- function (tab, xlab="", ylab="", main="", rowsParties="TRUE", ymax=NA) {
   colors <- ifelse(
     rowsParties=="TRUE",
@@ -48,6 +50,7 @@ lineChart <- function (tab, xlab="", ylab="", main="", rowsParties="TRUE", ymax=
 #' dist <- dispersion(bt, "Politik", c("text_date", "text_party"))
 #' bubblegraph(dist@@total$rel)
 #' }
+#' @export bubblegraph
 bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6, cex=1, font=1) {
   par(mai=c(bottomMargin,leftMargin, 0.2, 0.2), mfcol=c(1,1), cex.axis=0.8)
   xrange <- c(1, ncol(ctab))
@@ -80,6 +83,7 @@ bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6, cex=1, fo
 #' @param rotation rotation of the text
 #' @param type defaults to 0 for output of terms, can be set to symbol integer 
 #' @return the plot
+#' @export scatterplotCollocates
 #' @author Andreas Blaette
 scatterplotCollocates <- function(comp, xmax=c(), ymax=c(), fontSize=0.7, rotation=45, type=0){
   plot(

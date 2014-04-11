@@ -13,6 +13,7 @@
 #' @author Andreas Blaette
 #' @name trim
 #' @rdname trim
+#' @export trim
 trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
   if (maxRank==0) maxRank=dim(object@stat)[1]
   object@stat <- object@stat[order(object@stat[,4], decreasing=TRUE),]
@@ -64,6 +65,7 @@ trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter
 #' 
 #' @param object the keyness object
 #' @param partition a partition object (the corpus of interest)
+#' @exportMethod addPos
 #' @noRd
 setMethod("addPos", "keyness",
   function(object, Partition=NULL){
@@ -95,11 +97,16 @@ setMethod("addPos", "keyness",
 #'   \code{"character"} ~~ } \item{\code{pattribute}:}{Object of class
 #'   \code{"character"} ~~ } \item{\code{stat}:}{Object of class
 #'   \code{"data.frame"} ~~ } }
+#'  @section Methods:
+#'   \describe{
+#'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
+#'    \item{addPos}{\code{signature(object = "keyness")}: add POS attribute to statistics table }
+#'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness-class keyness,summary-method
+#' @aliases keyness-class summary,keyness-method
 #' @docType class
-#' @exportClass
+#' @exportClass keyness
 #' @author Andreas Blaette
 setClass("keyness",
          representation(corpus="character",
@@ -109,6 +116,8 @@ setClass("keyness",
 )
 
 #' Summary of a keyness object
+#' @exportMethod summary
+#' @noRd
 setMethod(
   "summary", "keyness",
   function(object){

@@ -1,3 +1,4 @@
+#' @export .importPolMineCorpus
 .importPolMineCorpus <- function(corpus, user, pw, binaryDir=NULL){
   urlRegistry <- paste("http://polmine.sowi.uni-due.de/cwb/", tolower(corpus), "/", tolower(corpus), sep="")
   urlBinaries <- paste("http://polmine.sowi.uni-due.de/cwb/", tolower(corpus), "/", tolower(corpus), ".tar.gz", sep="")

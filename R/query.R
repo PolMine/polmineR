@@ -12,10 +12,10 @@
 #'    \item{[}{get frequency of a query}
 #'    }
 #' 
-#' @aliases cqpQuery-class [,cqpQuery-method [[,cqpQuery-method
+#' @aliases cqpQuery-class [,cqpQuery-method [[,cqpQuery-method show,cqpQuery-method
 #' @rdname cqpQuery-class
 #' @name cqpQuery-class
-#' @exportClass
+#' @exportClass cqpQuery
 #' @docType class
 #' @author Andreas Blaette
 setClass("cqpQuery",
@@ -28,7 +28,7 @@ setClass("cqpQuery",
 #' Takes a simple string as an imput and converts it to a valid CQP query
 #' @param queries a character vector
 #' @return a character vector
-#' @export
+#' @export as.cqpQuery
 #' @rdname as.cqpQuery
 #' @name as.cqpQuery
 as.cqpQuery <- function(queries){
@@ -52,13 +52,13 @@ as.cqpQuery <- function(queries){
 }
 
 setMethod('[', 'cqpQuery', function(x,i){
-  hits <- nrow(.queryCpos(x, i))
+  hits <- nrow(.queryCpos(x@query, i))
   hits
 })
 
 setMethod('[[', 'cqpQuery', function(x,i){
   context <- context(
-    x, i,
+    x@query, i,
     get('drillingControls', '.GlobalEnv')[['pAttribute']],
     get('drillingControls', '.GlobalEnv')[['leftContext']],
     get('drillingControls', '.GlobalEnv')[['rightContext']],
@@ -70,3 +70,9 @@ setMethod('[[', 'cqpQuery', function(x,i){
 }
 )
 
+#' @exportMethod show
+#' @noRd
+setMethod('show', 'cqpQuery', function(x){
+  cat("A 'cqpQuery' object, the query being:\n")
+  cat(x@query, '\n')
+})
