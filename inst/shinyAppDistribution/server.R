@@ -9,7 +9,7 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "dim", choices=cqi_attributes(p@corpus, 's'))
   })
   data <- reactive({
-    aha <- distribution(
+    aha <- dispersion(
       partition=partitionObjects[[input$partitionObject]],
       query=input$query,
       dim=input$dim,

@@ -185,7 +185,7 @@ context <- function(
      obs.ref=calc[,3],
      log=calc[,6]
   )
-  ctxt <- .consolidate(ctxt, min.significance=minSignificance)
+  ctxt <- trim(ctxt, minSignificance=minSignificance)
   Encoding(rownames(ctxt@stat)) <- partition@encoding
   ctxt
 }
@@ -413,23 +413,23 @@ egoNetwork <- function(Partition, node, degrees, pAttribute, leftContext, rightC
 #' 
 #' @param x context object 1
 #' @param y context object 2
-#' @param max.rank a cutoff rank
-#' @param min.frequency a minimum frequency
-#' @param token.filter keep rows only for tokens given by a character vector
+#' @param maxRank a cutoff rank
+#' @param minFrequency a minimum frequency
+#' @param tokenFilter keep rows only for tokens given by a character vector
 #' @param pearson set to TRUE if pearsons rho shall be calculated, defaults to FALSE
 #' @return a combined data frame
 #' @author Andreas Blaette
-combineCollocates <- function (x, y, max.rank=0, min.frequency=0, token.filter=c("FOO"), pearson=FALSE){
-  x <- .consolidate(x, min.frequency=min.frequency, max.rank=max.rank)
-  y <- .consolidate(y, min.frequency=min.frequency, max.rank=max.rank)
+combineCollocates <- function (x, y, maxRank=0, minFrequency=0, tokenFilter=c("FOO"), pearson=FALSE){
+  x <- trim(x, minFrequency=minFrequency, maxRank=maxRank)
+  y <- trim(y, minFrequency=minFrequency, maxRank=maxRank)
   c <- merge(x@stat, y@stat, all=TRUE, by.x=0, by.y=0)
   rownames(c) <- c[,1]
   c <- c[,2:dim(c)[2]]
   c <- cbind(c,
-             x.plot=sapply(c[,1], function(x) if (is.na(x)==TRUE) {max.rank} else {x}),
-             y.plot=sapply(c[,5], function(x) if (is.na(x)==TRUE) {max.rank} else {x})
+             x.plot=sapply(c[,1], function(x) if (is.na(x)==TRUE) {maxRank} else {x}),
+             y.plot=sapply(c[,5], function(x) if (is.na(x)==TRUE) {maxRank} else {x})
   )
-  if (!unique(token.filter)[1]=="FOO") {c <- c[which(rownames(c)%in% token.filter),]}
+  if (!unique(tokenFilter)[1]=="FOO") {c <- c[which(rownames(c)%in% tokenFilter),]}
   comparison <- list(
     partition.x=x@partition,
     partition.y=y@partition,

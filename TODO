@@ -1,5 +1,3 @@
 To do / known bugs:
  * 'merge' is obviously slow, move to 'join' from plyr or 'match'
- * function to split a partition according to one criterium
- * bubblegraph, depending on order of dimensions: "invalid dimnames"
- 
+ * zoom-function to split a partition according to one criterium

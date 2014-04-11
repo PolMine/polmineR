@@ -2,7 +2,8 @@
 \alias{bubblegraph}
 \title{bubblegraph visualisation}
 \usage{
-bubblegraph(ctab, rex = 1, leftMargin = 1.2, bottomMargin = 1.6)
+bubblegraph(ctab, rex = 1, leftMargin = 1.2, bottomMargin = 1.6,
+  cex = 1, font = 1)
 }
 \arguments{
   \item{ctab}{a crosstabulation (a slot of a crosstab
@@ -14,6 +15,10 @@ bubblegraph(ctab, rex = 1, leftMargin = 1.2, bottomMargin = 1.6)
   \item{leftMargin}{adjust left margin of the plot}
 
   \item{bottomMargin}{adjust bottom margin of the plot}
+
+  \item{cex}{character expansion factor}
+
+  \item{font}{set font parameter from par}
 }
 \value{
 a nice plot, hopefully
@@ -25,7 +30,7 @@ crosstab object with a bubblegraph
 \examples{
 \dontrun{
 bt <- partition(sAttributes=list(text_date="*"), method="grep", corpus="PLPRBTTXT", encoding="latin1")
-dist <- distribution(bt, "Politik", c("text_date", "text_party"))
+dist <- dispersion(bt, "Politik", c("text_date", "text_party"))
 bubblegraph(dist@total$rel)
 }
 }

@@ -1,11 +1,10 @@
 \name{keyness}
+\alias{addPos,keyness-method}
 \alias{keyness}
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{
-keyness(coi, ref, pattribute = drillingControls$pAttribute,
-  included = FALSE, min.significance = drillingControls$minSignificance,
-  min.frequency = drillingControls$minFrequency, verbose = TRUE,
-  pos.filter = NULL)
+keyness(coi, ref, pAttribute = drillingControls$pAttribute,
+  minFrequency = 0, included = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{coi}{a partition object}
@@ -13,20 +12,15 @@ keyness(coi, ref, pattribute = drillingControls$pAttribute,
   \item{ref}{a partition object, it is assumed that the coi
   is a subcorpus of ref}
 
-  \item{pattribute}{The P-Attribute that will be counted
+  \item{pAttribute}{The P-Attribute that will be counted
   (usually either 'word' or 'lemma')}
+
+  \item{minFrequency}{the minimum frequency of collocates}
 
   \item{included}{TRUE if coi is part of ref, defaults to
   FALSE}
 
-  \item{min.significance}{the minimum statistical test
-  value}
-
-  \item{min.frequency}{the minimum frequency of a token}
-
   \item{verbose}{defaults to TRUE}
-
-  \item{pos.filter}{a character vector}
 }
 \value{
 The function returns a data frame with the following

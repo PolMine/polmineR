@@ -6,9 +6,9 @@
 %\VignetteEngine{knitr}
 
 \begin{document}
-\title{An introduction to the \textit{driller} (v0.4.19)}
+\title{An introduction to the \textit{driller} (v0.4.20)}
 \author{Andreas Blaette (andreas.blaette@uni-due.de)}
-\date{March 28, 2014}
+\date{April 04, 2014}
 \maketitle
 
 <<setup, include=FALSE>>=
@@ -149,19 +149,19 @@ To understand the occurance of a phenomenon, the distribution of query results a
 
 <<distributionReal, echo=FALSE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
 # one query / one dimension
-foo <- capture.output(oneQuery <- distribution(
+foo <- capture.output(oneQuery <- dispersion(
   coalition,
   '"Gerechtigkeit"',
   "text_party"
   ))
 # # multiple queries / one dimension
-foo <- capture.output(twoQueries <- distribution(
+foo <- capture.output(twoQueries <- dispersion(
   coalition,
   c('"[eE]uro.*"', '"Br.ssel"'),
   "text_party"
   ))
 # multiple queries / two dimensions
-foo <- capture.output(twoDim <- distribution(
+foo <- capture.output(twoDim <- dispersion(
   bt,
   c('"Regierung"'),
   c("text_date", "text_party")
@@ -171,7 +171,7 @@ foo <- capture.output(twoDim <- distribution(
 
 <<distributionFake1, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # one query / one dimension
-foo <- capture.output(oneQuery <- distribution(
+foo <- capture.output(oneQuery <- dispersion(
   coalition,
   '"Gerechtigkeit"',
   "text_party"
@@ -182,7 +182,7 @@ oneQuery
 @ 
 <<distributionFake2, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # multiple queries / one dimension
-twoQueries <- distribution(
+twoQueries <- dispersion(
   coalition,
   c('"[eE]uro.*"', '"Brüssel"'),
   "text_party"

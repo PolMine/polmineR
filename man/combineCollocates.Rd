@@ -2,19 +2,19 @@
 \alias{combineCollocates}
 \title{combine statistics}
 \usage{
-combineCollocates(x, y, max.rank = 0, min.frequency = 0,
-  token.filter = c("FOO"), pearson = FALSE)
+combineCollocates(x, y, maxRank = 0, minFrequency = 0,
+  tokenFilter = c("FOO"), pearson = FALSE)
 }
 \arguments{
   \item{x}{context object 1}
 
   \item{y}{context object 2}
 
-  \item{max.rank}{a cutoff rank}
+  \item{maxRank}{a cutoff rank}
 
-  \item{min.frequency}{a minimum frequency}
+  \item{minFrequency}{a minimum frequency}
 
-  \item{token.filter}{keep rows only for tokens given by a
+  \item{tokenFilter}{keep rows only for tokens given by a
   character vector}
 
   \item{pearson}{set to TRUE if pearsons rho shall be

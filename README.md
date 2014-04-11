@@ -20,7 +20,7 @@ The driller was specifically developed to make full use of the XML annotation st
 ### Core functions
 - *partition*: Set up a partition (i.e. subcorpus);
 - *context*: Analyse the context of a query (including some statistics);
-- *distribution*: Analyse the distribution of a query across one or two dimensions (absolute and relative frequencies);
+- *dispersion*: Analyse the dispersion of a query across one or two dimensions (absolute and relative frequencies);
 - *keyness*: Compare two partitions to identify specific vocabulary (using a chi-square test).
 
 ### State of affairs

@@ -1,60 +1,40 @@
-#' filter a context object
+#' trim and filter a context object
 #' 
-#' Just make it more handy and nicer
+#' Trim 
 #' 
 #' Maybe it would be more efficient to use the subset function.-
 #' 
 #' @param object a context object to be filtered
-#' @param min.significance minimum significance level
-#' @param min.frequency the minimum frequency
-#' @param max.rank maximum rank
-#' @param pos.filter exclude words with a POS tag not in this list
+#' @param minSignificance minimum significance level
+#' @param minFrequency the minimum frequency
+#' @param maxRank maximum rank
+#' @param posFilter exclude words with a POS tag not in this list
+#' @param tokenFilter tokens to exclude from table
 #' @author Andreas Blaette
-#' @noRd
-.consolidate <- function(object, min.significance=0, min.frequency=0, max.rank=0, pos.filter=c()){
-  if (max.rank==0) max.rank=dim(object@stat)[1]
+#' @name trim
+#' @rdname trim
+trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
+  if (maxRank==0) maxRank=dim(object@stat)[1]
   object@stat <- object@stat[order(object@stat[,4], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,4]>=min.significance),]
-  object@stat <- object@stat[which(object@stat[,"obs.coi"]>=min.frequency),]
-  if (length(pos.filter)!=0) {
-    cat('... adding part-of-speech tags to statistics-table (may take a while)\n')
-    object <- .add.pos(object)
-    object@stat<- object@stat[which(object@stat[,"pos"] %in% pos.filter),]
-  }
+  object@stat <- object@stat[which(object@stat[,4]>=minSignificance),]
+  object@stat <- object@stat[which(object@stat[,"obs.coi"]>=minFrequency),]
   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-  object@stat <- object@stat[which(object@stat[,"rank"]<=max.rank),]
-  object
-}
-
-
-
-
-
-#' Add POS tags
-#' 
-#' Add the POS tags to a table with tokens in the rows
-#' 
-#' The POS tags that occur for a given token are counted. The POS tag with the
-#' highest share is added to the table
-#' 
-#' @param object a context object
-#' @return An amended table
-#' @author Andreas Blaette
-#' @noRd
-.add.pos <- function(object) {
-  pos.col <- c()
-  share.col <- c()
-  ids = cqi_str2id(paste(object@corpus, ".", object@pattribute, sep=""), rownames(object@stat))
-  for (i in 1:dim(object@stat)[1]){
-    pos = count(cqi_cpos2str(paste(object@corpus, ".pos", sep=""),cqi_id2cpos(paste(object@corpus, ".", object@pattribute, sep=""), ids[i])))
-    pos <- pos[order(pos[,2],decreasing=TRUE),]
-    pos.col <- c(pos.col, as.character(pos[1,1]))
-    share.col <- c(share.col, round(pos[1,2]/sum(pos[,2])*100, digits=1))
+  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
+  if (!is.null(tokenFilter)){
+    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
   }
-  object@stat <- cbind(object@stat, pos=pos.col, pos.share=share.col)
+  if (!is.null(posFilter)) {
+    if(is.element("pos", colnames(object@stat))==FALSE){
+      cat('... adding part-of-speech tags to statistics-table (may take a while)\n')
+      object <- .addPos(object)      
+    }
+    object@stat<- object@stat[which(object@stat[,"pos"] %in% posFilter),]
+  }
   object
 }
-  
+
+
+
 
 #' Add POS tags
 #' 
@@ -64,7 +44,7 @@
 #' highest share is added to the table
 #' 
 #' @param object a context object
-#' @return An amended table
+#' @return object with pimped stat table
 #' @author Andreas Blaette
 #' @noRd
 .addPos <- function(object) {
@@ -80,6 +60,29 @@
   object
 }
 
+#' add pos values to the statistics of a keyness object
+#' 
+#' @param object the keyness object
+#' @param partition a partition object (the corpus of interest)
+#' @noRd
+setMethod("addPos", "keyness",
+  function(object, Partition=NULL){
+    if (is.null(partition)){
+      object <- .addPos(object)
+    } else if (class(Partition) == "partition"){
+      if (object@pattribute %in% names(Partition@pos)) {
+        pos <- vapply(
+          rownames(object@stat[1:50, ]),
+          function(x) return(Partition@pos[[object@pattribute]][["max"]][x]),
+          USE.NAMES=FALSE,
+          FUN.VALUE="character")
+        object@stat <- cbind(object@stat, pos=pos)
+      }
+    }
+   object 
+  }
+)
+
 #' S4 class for comparing corpora
 #' 
 #' to keep results from a keyness analysis
@@ -94,6 +97,7 @@
 #'   \code{"data.frame"} ~~ } }
 #' @rdname keyness-class
 #' @name keyness-class
+#' @aliases keyness-class keyness,summary-method
 #' @docType class
 #' @exportClass
 #' @author Andreas Blaette
@@ -104,7 +108,18 @@ setClass("keyness",
          )
 )
 
-
+#' Summary of a keyness object
+setMethod(
+  "summary", "keyness",
+  function(object){
+    cat("the statistics table has", nrow(object@stat), "rows")
+  # output of number of tokens > 3.84 significance
+  # output of number of tokens > 6... significance
+  if ("pos" %in% colnames(object@stat)){
+    cat("the cat is on the roof")
+  }
+  }
+)
 
 
 
@@ -122,37 +137,34 @@ setClass("keyness",
 #' @param coi a partition object
 #' @param ref a partition object, it is assumed that the coi is a subcorpus of
 #' ref
-#' @param pattribute The P-Attribute that will be counted (usually either
+#' @param pAttribute The P-Attribute that will be counted (usually either
 #' 'word' or 'lemma')
+#' @param minFrequency the minimum frequency of collocates
 #' @param included TRUE if coi is part of ref, defaults to FALSE
-#' @param min.significance the minimum statistical test value
-#' @param min.frequency the minimum frequency of a token
 #' @param verbose defaults to TRUE
-#' @param pos.filter a character vector 
 #' @return The function returns a data frame with the following structure:
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
+#' @aliases addPos,keyness-method
 #' @references Manning / Schuetze ...
 #' @export keyness
 keyness <- function(
   coi,
   ref,
-  pattribute=drillingControls$pAttribute,
+  pAttribute=drillingControls$pAttribute,
+  minFrequency=0,
   included=FALSE,
-  min.significance=drillingControls$minSignificance,
-  min.frequency=drillingControls$minFrequency,
-  verbose=TRUE,
-  pos.filter=NULL
+  verbose=TRUE
   ) {
   if (verbose==TRUE) message ('Computing keyness')
   keyness <- new('keyness')
   if (verbose==TRUE) message("... combining frequency lists")
-  c <- merge(coi@tf[[pattribute]], ref@tf[[pattribute]], by.x="id", by.y="id")
+  c <- merge(coi@tf[[pAttribute]], ref@tf[[pAttribute]], by.x="id", by.y="id")
   if (verbose==TRUE) message("... computing chisquare tests")
-  c <- .chisquare(c, included, min.frequency)
+  c <- .chisquare(c, included, minFrequency)
   statistic <- data.frame(
-    row.names=cqi_id2str(paste(coi@corpus,".", pattribute, sep=""), c[,1]),
+    row.names=cqi_id2str(paste(coi@corpus,".", pAttribute, sep=""), c[,1]),
     rank=c(1:dim(c)[1]),
     obs.coi=c[,2],
     obs.ref=c[,3],
@@ -162,10 +174,8 @@ keyness <- function(
   )
   Encoding(rownames(statistic)) <- ref@encoding
   keyness@corpus <- coi@corpus
-  keyness@pattribute <- pattribute
+  keyness@pattribute <- pAttribute
   keyness@stat <- statistic
-  if (verbose==TRUE) message("... filtering results")
-  keyness <- .consolidate(keyness, min.significance, min.frequency, pos.filter=pos.filter)  
   keyness
 }
 

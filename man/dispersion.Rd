@@ -1,8 +1,8 @@
-\name{distribution}
-\alias{distribution}
+\name{dispersion}
+\alias{dispersion}
 \title{Distribution of a query or multiple queries}
 \usage{
-distribution(partition, query, dim, pAttribute = drillingControls$pAttribute)
+dispersion(partition, query, dim, pAttribute = drillingControls$pAttribute)
 }
 \arguments{
   \item{partition}{a partition object that will be queried}
@@ -29,7 +29,7 @@ Note that metadata need to be set up for the partition.
 \examples{
 \dontrun{
 bt <- partition("PLPRBTTXT", tf=FALSE) # term frequencies are not needed
-distribution(plpr, "Vorsorge", "text_year")
+dispersion(plpr, "Vorsorge", "text_year")
 }
 }
 \author{

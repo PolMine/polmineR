@@ -13,7 +13,7 @@ importFrom(parallel, mclapply)
 
 # functions related to partitions
 export(partition)
-exportClasses(partition)
+exportClasses(partition, cqpQuery)
 export(partitionCluster)
 export(partitionMerge.partitionCluster)
 S3method("partitionMerge", "partitionCluster")
@@ -23,6 +23,7 @@ export(as.matrix.partitionCluster)
 export(.importPolMineCorpus)
 export(frequencies)
 export(as.cqpQuery)
+export(trim)
 
 # core/basic statistical functions
 export(collocations)
@@ -36,7 +37,7 @@ exportMethods(mergeCols, mergeColsRegex, filterCols)
 exportMethods(show)
 exportMethods('[', '[[', addPos)
 exportMethods(summary)
-export(distribution)
+export(dispersion)
 
 # functions for visualisation
 export(lineChart)

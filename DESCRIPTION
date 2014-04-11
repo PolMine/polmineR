@@ -1,8 +1,8 @@
 Package: driller
 Type: Package
 Title: driller
-Version: 0.4.19
-Date: 2014-03-28
+Version: 0.4.20
+Date: 2014-04-04
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -29,7 +29,7 @@ Collate:
     'RcppExports.R'
     'context.R'
     'controls.R'
-    'distribution.R'
+    'dispersion.R'
     'driller-package.R'
     'frequency.R'
     'matrix.R'
@@ -39,4 +39,5 @@ Collate:
     'utils.R'
     'visualization.R'
     'import.R'
+    'query.R'
 

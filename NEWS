@@ -1,3 +1,8 @@
+v0.4.20
+ * new cqpQuery-class introduced
+ * distribution-function renamed as dispersion
+ * trim function for sorting tables
+
 v0.4.19
  * documentation streamlined, package fully roxygenized
 

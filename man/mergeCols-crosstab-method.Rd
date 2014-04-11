@@ -10,9 +10,6 @@
 \arguments{
   \item{object}{the partition object}
 
-  \item{crosstab}{the crosstab object that shall be
-  reworked}
-
   \item{colname.old1}{the colname of the first column to be
   merged}
 

@@ -12,7 +12,7 @@ shinyServer(function(input, output, session) {
     queries <- unlist(strsplit(input$queries, ','))
     queries <- vapply(queries, function(x) gsub('^\\s+', '', x), FUN.VALUE="character", USE.NAMES=FALSE)
     queries <- vapply(queries, function(x) gsub('\\s+$', '', x), FUN.VALUE="character", USE.NAMES=FALSE)
-    aha <- distribution(
+    aha <- dispersion(
       partition=partitionObjects[[input$partitionObject]],
       query=queries,
       dim=input$dim,

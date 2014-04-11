@@ -39,14 +39,16 @@ lineChart <- function (tab, xlab="", ylab="", main="", rowsParties="TRUE", ymax=
 #' @param rex a radius expansion factor to control the bubble size
 #' @param leftMargin adjust left margin of the plot
 #' @param bottomMargin adjust bottom margin of the plot
+#' @param cex character expansion factor
+#' @param font set font parameter from par
 #' @return a nice plot, hopefully
 #' @examples
 #' \dontrun{
 #' bt <- partition(sAttributes=list(text_date="*"), method="grep", corpus="PLPRBTTXT", encoding="latin1")
-#' dist <- distribution(bt, "Politik", c("text_date", "text_party"))
+#' dist <- dispersion(bt, "Politik", c("text_date", "text_party"))
 #' bubblegraph(dist@@total$rel)
 #' }
-bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6) {
+bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6, cex=1, font=1) {
   par(mai=c(bottomMargin,leftMargin, 0.2, 0.2), mfcol=c(1,1), cex.axis=0.8)
   xrange <- c(1, ncol(ctab))
   yrange <- c(1, nrow(ctab))
@@ -55,6 +57,7 @@ bubblegraph <- function(ctab, rex=1, leftMargin=1.2, bottomMargin=1.6) {
        ylim=c(yrange[1]-0.5, yrange[2]+0.5),
        axes=F, main=c(""))
   box(lwd=2.0)
+  par(cex=cex, font.axis=font)
   axis(side=2, labels=rownames(ctab), tick=TRUE, at=c(yrange[1]:yrange[2]), las=2)
   axis(side=1, labels=colnames(ctab), tick=TRUE, at=c(xrange[1]:xrange[2]), las=2)
   grid(col = "lightgray", lty = "dotted", lwd=1.5)  

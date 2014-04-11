@@ -14,7 +14,7 @@ shinyServer(function(input, output, session) {
     paste('Analysing distribution', input$rows, input$query, input$cols)
      })
   data <- reactive({
-    aha <- distribution(
+    aha <- dispersion(
       partition=partitionObjects[[input$partitionObject]],
       query=input$query,
       dim=c(input$rows, input$cols),

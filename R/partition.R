@@ -129,6 +129,9 @@ partition <- function(sAttributes, corpus="default", label=c(""), dateRange=c(),
     Partition <- .partition.metadata(Partition, table=TRUE)
   }
   if (!is.null(pos)){
+    if (all(pos %in% cqi_attributes(corpus, "p")) == FALSE){
+      warning("please check p-Attributes given for pos")
+    }
     message('... setting up pos tables')
     Partition <- addPos(Partition, pos)
   }

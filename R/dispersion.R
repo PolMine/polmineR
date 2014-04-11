@@ -143,7 +143,6 @@ setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 #' 
 #' @method mergeCols crosstab
 #' @param object the partition object
-#' @param crosstab the crosstab object that shall be reworked
 #' @param colname.old1 the colname of the first column to be merged
 #' @param colname.old2 the colname of the second column to be merged
 #' @param colname.new the colname of the merged column
@@ -426,13 +425,14 @@ function(object){
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
 #' @return depends on the input, as this is a wrapper function
+#' @export
 #' @examples
 #' \dontrun{
 #' bt <- partition("PLPRBTTXT", tf=FALSE) # term frequencies are not needed
-#' distribution(plpr, "Vorsorge", "text_year")
+#' dispersion(plpr, "Vorsorge", "text_year")
 #' }
 #' @author Andreas Blaette
-distribution <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
+dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
   if ( is.null(names(partition@metadata))) warning("Metadata need to ne set up in partition")
   if (length(dim)==1){
     if (length(query)==1){
