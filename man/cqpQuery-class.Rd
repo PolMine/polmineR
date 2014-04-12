@@ -3,6 +3,7 @@
 \alias{[,cqpQuery-method}
 \alias{[[,cqpQuery-method}
 \alias{cqpQuery-class}
+\alias{show,cqpQuery-method}
 \title{CQP query object}
 \description{
 Object to store and check a CQP query, and to supply a few

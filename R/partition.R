@@ -7,7 +7,7 @@
 #'  \item{\code{label}:}{Object of class \code{"character"} a label that may be useful }
 #'  \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the partition is based on }
 #'  \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
-#'  \item{\code{sattributes}:}{Object of class \code{"list"} s-attributes specifying the partition }
+#'  \item{\code{sAttributes}:}{Object of class \code{"list"} s-attributes specifying the partition }
 #'  \item{\code{explanation}:}{Object of class \code{"character"} an explanation of the partition }
 #'  \item{\code{cpos}:}{Object of class \code{"matrix"} corpus positions }
 #'  \item{\code{pos}:}{Object of class \code{"list"} with tables "abs", "rel" and "max"}
@@ -38,7 +38,7 @@ setClass("partition",
          representation(label="character", 
                         corpus="character",
                         encoding="character",
-                        sattributes="list",
+                        sAttributes="list",
                         explanation="character",
                         cpos="matrix",
                         pos="list",
@@ -74,17 +74,16 @@ setClass("partition",
 #' Note that the sequence of the s-Attributes will matter. Things will speed up if you start 
 #' with the conditions narrowing down the corpus the most.
 #' 
+#' @param corpus the CWB-corpus to be used
 #' @param sAttributes list consisting of a set of character vectors (see
 #' details)
-#' @param corpus the CWB-corpus to be used
 #' @param label label of the new partition, defaults to "noLabel"
-#' @param dateRange a character vector specifying start and end date for the partition
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param tf either FALSE or TRUE, defaults to TRUE
 #' @param metadata either FALSE or TRUE, defaults to TRUE
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
-#' @param pos whether pos tables shall be added, defaults to FALSE
+#' @param verbose logical, defaults to TRUE
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
@@ -95,71 +94,123 @@ setClass("partition",
 #' @import methods
 #' @importFrom chron seq.dates
 #' @export partition
-partition <- function(sAttributes, corpus="default", label=c(""), dateRange=c(), encoding=NULL, tf=TRUE, metadata=TRUE, method="grep", xml="flat", pos=NULL) {
-  if (corpus=="default") corpus <- get("drillingControls", '.GlobalEnv')[['defaultCorpus']]
-  message('Setting up partition ', label)
+partition <- function(corpus, sAttributes, label=c(""), encoding=NULL, tf=TRUE, metadata=TRUE, method="grep", xml="flat", verbose=TRUE) {
+  if (verbose==TRUE) message('Setting up partition ', label)
   Partition <- new('partition')
   Partition@corpus <- corpus
   Partition@label <- label
-  Partition@sattributes <- sAttributes
+  Partition@sAttributes <- sAttributes
   Partition@sAttributeStrucs <- names(sAttributes)[length(sAttributes)]
   Partition@xml <- xml
   if(is.null(encoding)) {
     Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
   } else {
     Partition@encoding <- encoding
-  }
-  
-  if (!is.null(dateRange)) {sAttributes <- .sAttributesDateRange(corpus, sAttributes, dateRange)}
-  message('... computing corpus positions and retrieving strucs')
+  } 
+  if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
   if (xml=="flat") {
     Partition <- .flatXmlSattributes2cpos(Partition, method)
   } else if (xml=="nested") {
     Partition <- .nestedXmlSattributes2cpos(Partition, method)
   } else {
-    message("WARNING: Value of 'xml' is not valid!")
+    warning("WARNING: Value of 'xml' is not valid!")
   }
-  message('... computing partition size')
+  if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
   if (tf==TRUE) {
-    message('... computing term frequencies (for p-attribute word)')
+    if (verbose==TRUE) message('... computing term frequencies (for p-attribute word)')
     Partition@tf$word <- .cpos2tf(Partition, "word")
-    message('... computing term frequencies (for p-attribute lemma)')
+    if (verbose==TRUE) message('... computing term frequencies (for p-attribute lemma)')
     Partition@tf$lemma <- .cpos2tf(Partition, "lemma")      
   }
   if (metadata==TRUE) {
-    message('... setting up metadata (table and list of values)')
+    if (verbose==TRUE) message('... setting up metadata (table and list of values)')
     Partition <- .partition.metadata(Partition, table=TRUE)
   }
-  if (!is.null(pos)){
-    if (all(pos %in% cqi_attributes(corpus, "p")) == FALSE){
-      warning("please check p-Attributes given for pos")
-    }
-    message('... setting up pos tables')
-    Partition <- addPos(Partition, pos)
-  }
-  message('... partition is set up\n')
+  if (verbose==TRUE) message('... partition is set up\n')
   Partition
 }
+
+#' zoom into a partition
+#' 
+#' add a further specification of a s-attribute to an existing partition
+#' @param Partition a partition object
+#' @param sAttribute a list supplying further sAttributes
+#' @param label a label for the new partition
+#' @param method either "in" or "grep"
+#' @param tf logical, whether to compute term frequencies
+#' @export zoom
+#' @rdname zoom
+#' @name zoom
+zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=TRUE){
+  newPartition <- new("partition")
+  newPartition@corpus <- Partition@corpus
+  message('Zooming into partition ', label)
+  newPartition@label <- label  
+  newPartition@sAttributes <- c(Partition@sAttributes, sAttribute)
+  newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
+  newPartition@xml <- Partition@xml
+  newPartition@encoding <- Partition@encoding
+  message('... specifying strucs and corpus positions')
+  newPartition <- .zoomingSattributes2cpos(Partition, newPartition, sAttribute, method)
+  message('... computing partition size')
+  newPartition@size <- .partition.size(newPartition)
+  if (tf==TRUE) {
+    message('... computing term frequencies (for p-attribute word)')
+    newPartition@tf$word <- .cpos2tf(newPartition, "word")
+    message('... computing term frequencies (for p-attribute lemma)')
+    newPartition@tf$lemma <- .cpos2tf(newPartition, "lemma")      
+  }
+  newPartition
+}
+
+#' Augment the partition object by strucs and cpos
+#' 
+#' @param Partition the partition object to be specified
+#' @param newPartition the new partition
+#' @param sAttribute info for specification (a list)
+#' @param method either "in" or "grep"
+#' @return an augmented partition object
+#' @noRd
+.zoomingSattributes2cpos <- function(Partition, newPartition, sAttribute, method){
+  sAttr <- paste(Partition@corpus, '.', names(sAttribute), sep='')
+  if (Partition@xml == "flat") {
+    str <- cqi_struc2str(sAttr, Partition@strucs)    
+  } else if (Partition@xml == "nested") {
+    str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, Partition@cpos[,1]))    
+  }
+  if (method == "in") {
+    hits <- which(str %in% sAttribute[[1]])
+  } else if (method == "grep") {
+    hits <- grep(sAttributes[[1]], str)
+  }
+  newPartition@cpos <- Partition@cpos[hits,]
+  newPartition@strucs <- Partition@strucs[hits]
+  if (length(Partition@metadata) == 2) {
+    message('... adjusting metadata')
+    newPartition@metadata$table <- Partition@metadata$table[hits,]
+    newPartition <- .partitionMetadataValues(newPartition)
+  }
+  newPartition
+}
+
 
 #' generate the sattribute
 #' 
 #' Helper function for partition
 #' 
 #' @param corpus the CWB corpus used
-#' @param sAttributes a list with sAttributes defining a corpus, see partition
 #' @param dateRange a character with two character strings: the start date, and the end date
-#' @return a list that can be used by partition
+#' @return a character vector (length > 1) that can be used in sAttribute definition
 #' @author Andreas Blaette
-#' @noRd
-.sAttributesDateRange <- function(corpus, sAttributes, dateRange) {
+#' @export datesPeriod
+datesPeriod <- function(corpus, dateRange) {
   sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
   sAttr <- paste(corpus, '.', sAttributeDate, sep='')
   allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
   daysSequence <- strftime(seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
   daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
-  sAttributes[[sAttributeDate]] <- daysInCorpus
-  sAttributes
+  daysInCorpus
 }
 
 
@@ -209,7 +260,6 @@ NULL
 #' @param tf logical, whether term frequencies shall be generated
 #' @param metadata logical, whether to set up metadata
 #' @param method either 'grep' or 'in'
-#' @param multicore defaults to FALSE, if TRUE, mclapply will be used
 #' @return a S3 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
@@ -217,32 +267,40 @@ NULL
 partitionCluster <- function(
   corpus,
   sAttributesStatic, sAttributeVar, sAttributeVarValues=c(),
-  encoding=NULL, tf=TRUE, metadata=TRUE, method="grep",
-  multicore=FALSE
+  encoding=NULL, tf=TRUE, metadata=TRUE, method="grep"
   ) {
-  message('\nPreparing cluster of partitions')
+  multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
+  multicoreMessage <- ifelse(
+    multicore==TRUE,
+    ' (use multicore: TRUE)',
+    ' (use multicore: FALSE)'
+    )
+  message('\nPreparing cluster of partitions', multicoreMessage)
   cluster <- list()
+  message('... setting up base partition')
+  partitionBase <- partition(corpus, sAttributesStatic, tf=tf, metadata=metadata, method=method, verbose=FALSE)
   if (is.null(sAttributeVarValues)){
-    message('... retrieving values of fixed s-attributes')
-    partitionTmp <- partition(sAttributesStatic, corpus, tf=FALSE, metadata=FALSE, method=method)
-    sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionTmp@strucs))
-    message('... number of partitions to be initialized:', length(sAttributeVarValues),'\n')
+    message('... getting values of fixed s-attributes')
+    sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionBase@strucs))
+    message('... number of partitions to be initialized: ', length(sAttributeVarValues))
   }
   if (multicore==FALSE) {
     for (sAttribute in sAttributeVarValues){
-      sAttributes <- sAttributesStatic
-      sAttributes[[sAttributeVar]] <- sAttribute
-      cluster[[sAttribute]] <- partition(sAttributes, corpus, label=sAttribute)
+      sAttr <- list()
+      sAttr[[sAttributeVar]] <- sAttribute
+      cluster[[sAttribute]] <- zoom(partitionBase, sAttribute=sAttr, label=sAttribute)
     }
   } else if (multicore==TRUE) {
-    partitionDef <- lapply(
+    message('... setting up the partitions')
+    cluster <- mclapply(
       sAttributeVarValues,
-      function(sAttribute) {sAttributes <- sAttributesStatic
-                            sAttributes[[sAttributeVar]] <- sAttribute
-                            sAttributes})
-    names(partitionDef) <- sAttributeVarValues
-    cluster <- mclapply(names(partitionDef), function(x) partition(partitionDef[[x]], corpus, label=x))
-    names(cluster) <- names(partitionDef)
+      function(x) zoom(
+        partitionBase,
+        sAttribute=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
+        label=x
+        )
+      )
+    names(cluster) <- sAttributeVarValues
   }
   class(cluster) <- "partitionCluster"
   cluster
@@ -263,12 +321,12 @@ function(object){
   cat("** partition object **\n")
   cat(sprintf("%-20s", "CWB-corpus:"), object@corpus, "\n")
   cat(sprintf("%-20s", "Label:"), object@label, "\n")
-  if (length(object@sattributes)==0) {
+  if (length(object@sAttributes)==0) {
     cat(sprintf("%-20s", "S-Attributes:"), "no specification\n")
   } else {
     s <- unlist(lapply(
-      names(object@sattributes),
-      function(x) {paste(x, "=", paste(object@sattributes[[x]], collapse="/"))}
+      names(object@sAttributes),
+      function(x) {paste(x, "=", paste(object@sAttributes[[x]], collapse="/"))}
       ))
     cat(sprintf("%-20s", "S-attributes:"), s[1], '\n')
     if (length(s)>1) {for (i in length(s)){cat(sprintf("%-20s", " "), s[i], '\n')}}
@@ -332,10 +390,23 @@ print.partitionCluster <- function (object) {
       colnames(Partition@metadata$table) <- names(meta)
     }
   }
-  Partition@metadata$values <- sapply(m, USE.NAMES=TRUE, function(x){foo<-unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)); Encoding(foo)<-Partition@encoding; foo})
+  Partition <- .partitionMetadataValues(Partition)
   return(Partition)
 }
 
+#' Helper function
+#' @noRd
+.partitionMetadataValues <- function(Partition){
+  Partition@metadata$values <- sapply(
+    sAttributes(Partition),
+    USE.NAMES=TRUE,
+    function(x){
+      foo<-unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs));
+      Encoding(foo)<-Partition@encoding;
+      foo}
+    )
+  Partition
+}
 
 #' Get the cpos for a partition based on sattributes
 #' 
@@ -349,15 +420,15 @@ print.partitionCluster <- function (object) {
 .flatXmlSattributes2cpos <- function(part, method){
   root <- paste(part@corpus, '.', part@sAttributeStrucs, sep='')
   meta <- data.frame(struc=c(0:(cqi_attribute_size(root)-1)), select=rep(0, times=cqi_attribute_size(root)))
-  if (length(part@sattributes) > 0) {
-    for (s in names(part@sattributes)){
+  if (length(part@sAttributes) > 0) {
+    for (s in names(part@sAttributes)){
       sattr <- paste(part@corpus, ".", s, sep="")
       meta[,2] <- as.vector(cqi_struc2str(sattr, meta[,1]))
       Encoding(meta[,2]) <- part@encoding
       if (method=="in") {
-        meta <- meta[which(meta[,2] %in% part@sattributes[[s]]),]
+        meta <- meta[which(meta[,2] %in% part@sAttributes[[s]]),]
       } else {
-        meta <- meta[grep(part@sattributes[[s]], meta[,2]),]
+        meta <- meta[grep(part@sAttributes[[s]], meta[,2]),]
       }
     }
   }
@@ -378,7 +449,7 @@ print.partitionCluster <- function (object) {
 #' @noRd
 .nestedXmlSattributes2cpos <- function(Partition, method){
   sAttr <- vapply(
-    names(Partition@sattributes),
+    names(Partition@sAttributes),
     USE.NAMES=TRUE, FUN.VALUE="character",
     function(x)paste(Partition@corpus, '.', x, sep='')
     )
@@ -398,9 +469,9 @@ print.partitionCluster <- function (object) {
     }
     # Encoding(meta) <- Partition@encoding
     if (method == "in") {
-      hits <- which(meta %in% Partition@sattributes[[names(sAttr)[i]]])
+      hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
     } else if (method == "grep") {
-      hits <- grep(Partition@sattributes[[names(sAttr)[i]]], meta)
+      hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
     }
     cpos <- cpos[hits,]
     strucs <- strucs[hits]

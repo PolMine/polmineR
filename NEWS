@@ -1,3 +1,9 @@
+v0.4.22
+ * zoom function added to specify partitions
+ * partitionCluster faster as it relies on zoom function
+ * context function will work on character vectors and cqpQuery object
+ * some modifications of backend functions
+
 v0.4.21
  * technical update: automatic generation of NAMESPACE file with roxygen
 

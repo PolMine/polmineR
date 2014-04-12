@@ -2,21 +2,17 @@
 \alias{partition}
 \title{Initialize a partition}
 \usage{
-partition(sAttributes, corpus = "default", label = c(""), dateRange = c(),
-  encoding = NULL, tf = TRUE, metadata = TRUE, method = "grep",
-  xml = "flat", pos = NULL)
+partition(corpus, sAttributes, label = c(""), encoding = NULL, tf = TRUE,
+  metadata = TRUE, method = "grep", xml = "flat", verbose = TRUE)
 }
 \arguments{
+  \item{corpus}{the CWB-corpus to be used}
+
   \item{sAttributes}{list consisting of a set of character
   vectors (see details)}
 
-  \item{corpus}{the CWB-corpus to be used}
-
   \item{label}{label of the new partition, defaults to
   "noLabel"}
-
-  \item{dateRange}{a character vector specifying start and
-  end date for the partition}
 
   \item{encoding}{encoding of the corpus (typically "LATIN1
   or "(UTF-8)), if NULL, the encoding provided in the
@@ -32,8 +28,7 @@ partition(sAttributes, corpus = "default", label = c(""), dateRange = c(),
 
   \item{xml}{either 'flat' (default) or 'nested'}
 
-  \item{pos}{whether pos tables shall be added, defaults to
-  FALSE}
+  \item{verbose}{logical, defaults to TRUE}
 }
 \value{
 An object of the S4 class 'partition'

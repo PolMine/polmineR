@@ -14,7 +14,7 @@
 
   \item{filter}{a character vector with colnames}
 
-  \item{what}{if "drops", cols is used as a stoplist, if
+  \item{what}{if "drop", cols is used as a stoplist, if
   "keep", itis a list with the columns to be kept}
 }
 \value{

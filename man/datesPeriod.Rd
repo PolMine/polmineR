@@ -1,0 +1,23 @@
+\name{datesPeriod}
+\alias{datesPeriod}
+\title{generate the sattribute}
+\usage{
+datesPeriod(corpus, dateRange)
+}
+\arguments{
+  \item{corpus}{the CWB corpus used}
+
+  \item{dateRange}{a character with two character strings:
+  the start date, and the end date}
+}
+\value{
+a character vector (length > 1) that can be used in
+sAttribute definition
+}
+\description{
+Helper function for partition
+}
+\author{
+Andreas Blaette
+}
+

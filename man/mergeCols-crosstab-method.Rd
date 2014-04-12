@@ -5,18 +5,18 @@
 \alias{mergeCols-crosstab-method}
 \title{merge two columns in a crosstab object}
 \usage{
-\S4method{mergeCols}{crosstab}(object, colname.old1, colname.old2, colname.new)
+\S4method{mergeCols}{crosstab}(object, colnameOld1, colnameOld2, colnameNew)
 }
 \arguments{
   \item{object}{the partition object}
 
-  \item{colname.old1}{the colname of the first column to be
+  \item{colnameOld1}{the colname of the first column to be
   merged}
 
-  \item{colname.old2}{the colname of the second column to
-  be merged}
+  \item{colnameOld2}{the colname of the second column to be
+  merged}
 
-  \item{colname.new}{the colname of the merged column}
+  \item{colnameNew}{the colname of the merged column}
 }
 \value{
 the returned crosstab object has a matrix with partition

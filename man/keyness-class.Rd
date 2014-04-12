@@ -1,5 +1,6 @@
 \docType{class}
 \name{keyness-class}
+\alias{addPos,keyness-method}
 \alias{keyness-class}
 \alias{summary,keyness-method}
 \title{S4 class for comparing corpora}

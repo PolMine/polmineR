@@ -5,9 +5,8 @@
 #' @section Slots:
 #'   \describe{
 #'     \item{\code{partitions}:}{Object of class \code{"data.frame"} with sizes of the partition sizes for combinations of s-attributes analyzed }
-#'     \item{\code{abs}:}{Object of class \code{"list"} for each query: a data frame with absolute frequencies }
-#'     \item{\code{rel}:}{Object of class \code{"list"} for each query: a data frame with relative frequencies }
-#'     \item{\code{total}:}{Object of class \code{"list"} with list elements "abs" and "rel" - all queries are summed up }
+#'     \item{\code{abs}:}{Object of class \code{"data.frame"} for each query: a data frame with absolute frequencies }
+#'     \item{\code{rel}:}{Object of class \code{"data.frame"} for each query: a data frame with relative frequencies }
 #'     \item{\code{rows}:}{Object of class \code{"character"} what you find in the rows }
 #'     \item{\code{cols}:}{Object of class \code{"character"} what you find in the columns }
 #'     \item{\code{query}:}{Object of class \code{"character"} the original queries }
@@ -25,9 +24,8 @@
 #' @rdname crosstab-class
 setClass("crosstab",
          representation(partitions="data.frame", 
-                        abs="list",
-                        rel="list",
-                        total="list",
+                        abs="data.frame",
+                        rel="data.frame",
                         rows="character",
                         cols="character",
                         query="character"
@@ -44,7 +42,14 @@ setClass("crosstab",
   tab
 }
 
-.crosstabSizes <- function(Partition, rows, cols){
+#' Size of sub-partitions
+#' @param Partition a partition object
+#' @param rows what to find in rows
+#' @param cols what to find in cols
+#' @export crosstabulationSizes
+#' @rdname crosstabulationSizes
+#' @name crosstabulationSizes
+crosstabulationSizes <- function(Partition, rows, cols){
   strucSize= Partition@cpos[,2] - Partition@cpos[,1] + 1
   sAttrRows <- paste(Partition@corpus,'.', rows, sep='')
   sAttrCols <- paste(Partition@corpus,'.', cols, sep='')
@@ -75,50 +80,28 @@ setClass("crosstab",
 #' @param rows character string, supplying the s-attribute for the rows of the contingency table that is to be produced
 #' @param cols character stringwhat shall be displayed in the cols
 #' @param pAttribute the pattribute to look up
-#' @param queries a list with character vectors containing two elements, the
-#' s-attribute and its value (only ASCII characters)
+#' @param query a character vector
 #' @param verbose whether updates shall be printed
 #' @return returns a list
 #' @author Andreas Blaette
 #' @noRd
-.crosstab <- function (Partition, rows, cols, pAttribute, queries, verbose=TRUE) {
+.crosstab <- function (Partition, rows, cols, pAttribute, query, verbose=TRUE) {
   crosstab <- new("crosstab")
   if (verbose==TRUE) message("Starting the inquiry")
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
-  crosstab@partitions <- .crosstabSizes(Partition, rows, cols)
-  for ( i in 1:length(queries) ) {
-    if (verbose==TRUE) message ('... getting frequencies for "', queries[i],'"')
-    crosstab@abs[[queries[i]]] <- .crosstabToken(Partition, rows, cols, pAttribute, queries[i])
-    crosstab@abs[[queries[i]]] <- .map(crosstab@partitions, crosstab@abs[[queries[i]]])
-    crosstab@abs[[queries[i]]][is.na(crosstab@abs[[queries[i]]])] <- 0
-    crosstab@rel[[queries[i]]] <- crosstab@abs[[queries[i]]]/crosstab@partitions
-    crosstab@rel[[queries[i]]][is.infinite(as.matrix(crosstab@rel[[queries[i]]]))] <- 0 
-    crosstab@rel[[queries[i]]][is.nan(as.matrix(crosstab@rel[[queries[i]]]))] <- 0
-  }
-  if (verbose==TRUE) message("... cumulating frequencies")
-  crosstab <- .crosstab.total(crosstab)
-  if (verbose==TRUE) message("... calculating relative frequencies")
-  crosstab <- .crosstab.rel(crosstab)
+  crosstab@partitions <- crosstabulationSizes(Partition, rows, cols)
+  if (verbose==TRUE) message ('... getting frequencies')
+  crosstab@abs <- .crosstabToken(Partition, rows, cols, pAttribute, query)
+  crosstab@abs <- .map(crosstab@partitions, crosstab@abs)
+  crosstab@abs[is.na(crosstab@abs)] <- 0
+  crosstab@rel <- crosstab@abs/crosstab@partitions
+  crosstab@rel[is.infinite(as.matrix(crosstab@rel))] <- 0 
+  crosstab@rel[is.nan(as.matrix(crosstab@rel))] <- 0
   crosstab@rows <- rows
   crosstab@cols <- cols
-  crosstab@query <- queries
+  crosstab@query <- query
   colnames(crosstab@partitions) <- gsub('^X(.*?)', '\\1', colnames(crosstab@partitions))
   rownames(crosstab@partitions)[which(rownames(crosstab@partitions)=="")] <- 'VOID'
-  crosstab
-}
-
-.crosstab.rel <- function(crosstab){
-  crosstab@total$rel <- crosstab@total$abs/crosstab@partitions
-  crosstab@total$rel[is.infinite(as.matrix(crosstab@total$rel))] <- 0 
-  crosstab@total$rel[is.nan(as.matrix(crosstab@total$rel))] <- 0
-  crosstab
-}
-
-.crosstab.total <- function(crosstab){
-  crosstab@total$abs <- crosstab@abs[[1]]
-  if (length(names(crosstab@abs))>1) {
-    for ( i in c(2:length(names(crosstab@abs)))) crosstab@total$abs <- crosstab@total$abs + crosstab@abs[[i]]
-  }  
   crosstab
 }
 
@@ -143,9 +126,9 @@ setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 #' 
 #' @method mergeCols crosstab
 #' @param object the partition object
-#' @param colname.old1 the colname of the first column to be merged
-#' @param colname.old2 the colname of the second column to be merged
-#' @param colname.new the colname of the merged column
+#' @param colnameOld1 the colname of the first column to be merged
+#' @param colnameOld2 the colname of the second column to be merged
+#' @param colnameNew the colname of the merged column
 #' @return the returned crosstab object has a matrix with partition sizes,
 #' absoute query frequencies and relative query frequencies, just as the input
 #' @author Andreas Blaette
@@ -154,18 +137,14 @@ setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 #' @rdname mergeCols-crosstab-method
 #' @exportMethod mergeCols
 setMethod('mergeCols','crosstab', 
-function(object, colname.old1, colname.old2, colname.new) {
-  object@partitions[,colname.old1] <- object@partitions[,colname.old1] + object@partitions[,colname.old2]
-  colnames(object@partitions)[which(colnames(object@partitions)==colname.old1)] <- colname.new
-  object@partitions <- .dropcols(object@partitions, colname.old2)
-  for (query in object@query) {
-    object@abs[[query]][,colname.old1] <- object@abs[[query]][,colname.old1] + object@abs[[query]][,colname.old2]
-    colnames(object@abs[[query]])[which(colnames(object@abs[[query]])==colname.old1)] <- colname.new
-    object@abs[[query]] <- object@abs[[query]][-grep(colname.old2, colnames(object@abs[[query]]))]
-    object@rel[[query]] <- object@abs[[query]]/object@partitions
-  }
-  object <- .crosstab.total(object)
-  object <- .crosstab.rel(object)
+function(object, colnameOld1, colnameOld2, colnameNew) {
+  object@partitions[,colnameOld1] <- object@partitions[,colnameOld1] + object@partitions[,colnameOld2]
+  colnames(object@partitions)[which(colnames(object@partitions)==colnameOld1)] <- colnameNew
+  object@partitions <- .dropcols(object@partitions, colnameOld2)
+  object@abs[,colnameOld1] <- object@abs[,colnameOld1] + object@abs[,colnameOld2]
+  colnames(object@abs)[which(colnames(object@abs)==colnameOld1)] <- colnameNew
+  object@abs <- object@abs[-grep(colnameOld2, colnames(object@abs))]
+  object@rel <- object@abs/object@partitions
   object
 })
 
@@ -191,30 +170,23 @@ function(object, regex, colname.new) {
     object@partitions <- cbind(object@partitions, rowSums(object@partitions[,match]))
     object@partitions <- .dropcols(object@partitions, regex)      
     colnames(object@partitions)[ncol(object@partitions)] <- colname.new
-    for (name in names(object@abs)) {
-      object@abs[[name]] <- cbind(object@abs[[name]], rowSums(object@abs[[name]][,match]))
-      object@abs[[name]] <- .dropcols(object@abs[[name]], regex)      
-      colnames(object@abs[[name]])[ncol(object@abs[[name]])] <- colname.new
-    }
+    object@abs <- cbind(object@abs, rowSums(object@abs[,match]))
+    object@abs <- .dropcols(object@abs, regex)      
+    colnames(object@abs)[ncol(object@abs)] <- colname.new
   } else if (length(match==1)) {
     object@partitions <- cbind(object@partitions, object@partitions[,match])
     object@partitions <- .dropcols(object@partitions, regex)      
     colnames(object@partitions)[ncol(object@partitions)] <- colname.new
-    for (name in names(object@abs)) {
-      object@abs[[name]] <- cbind(object@abs[[name]], object@abs[[name]][,match])
-      object@abs[[name]] <- .dropcols(object@abs[[name]], regex)      
-      colnames(object@abs[[name]])[ncol(object@abs[[name]])] <- colname.new
-    }
+    object@abs <- cbind(object@abs, object@abs[,match])
+    object@abs <- .dropcols(object@abs, regex)      
+    colnames(object@abs)[ncol(object@abs)] <- colname.new
   } else {
     object@partitions <- cbind(object@partitions, rep(0, times=nrow(object@partitions)))
     colnames(object@partitions)[ncol(object@partitions)] <- colname.new    
-    for (name in names(object@abs)) {
-      object@abs[[name]] <- cbind(object@abs[[name]], rep(0, times=nrow(object@abs[[name]])))
-      colnames(object@abs[[name]])[ncol(object@abs[[name]])] <- colname.new
-    }
+    object@abs <- cbind(object@abs, rep(0, times=nrow(object@abs)))
+    colnames(object@abs)[ncol(object@abs)] <- colname.new
   }
-  object <- .crosstab.total(object)
-  object <- .crosstab.rel(object)
+  object@rel <- object@abs/object@partitions
   object
 })
 
@@ -229,7 +201,7 @@ function(object, regex, colname.new) {
 #' @param object the crosstab object
 #' @param crosstab the crosstab object to be reworked
 #' @param filter a character vector with colnames
-#' @param what if "drops", cols is used as a stoplist, if "keep", itis a list with
+#' @param what if "drop", cols is used as a stoplist, if "keep", itis a list with
 #' the columns to be kept
 #' @return you get a crosstab object with partition size, absolute and relative
 #' frequencies
@@ -241,15 +213,13 @@ setMethod("filterCols", "crosstab",
 function(object, filter, what="drop"){
   if (what=="drop"){
     object@partitions <- .dropcols(object@partitions, filter)
-    slot(object, "abs") <- lapply(slot(object,"abs"), function(x).dropcols(x, filter))
-    slot(object, "rel") <- lapply(slot(object,"rel"), function(x).dropcols(x, filter))
+    object@abs <- .dropcols(object@abs, filter)
+    object@rel <- .dropcols(object@rel, filter)
   } else if (what=="keep"){
     object@partitions <- object@partitions[,which(colnames(object@partitions) %in% filter)]
-    slot(object, "abs") <- lapply(slot(object, "abs"), function(x) x[,which(colnames(x) %in% filter)])
-    slot(object, "rel") <- lapply(slot(object, "rel"), function(x) x[,which(colnames(x) %in% filter)])
+    object@abs <- object@abs[,which(colnames(object@abs) %in% filter)]
+    object@rel <- object@rel[,which(colnames(object@rel) %in% filter)]
   }
-  object <- .crosstab.total(object)
-  object <- .crosstab.rel(object)
   object
 })
 
@@ -263,23 +233,26 @@ function(object, filter, what="drop"){
 setMethod("show", "crosstab",
 function(object){
   cat('Query:', object@query, '; Rows:', object@rows, '; Columns:', object@cols, '\n\n')
-  print(object@total$rel)
+  print(object@rel)
   cat('\n')
-  print(object@total$abs)
+  print(object@abs)
 })
 
 .dropcols <- function(tab, colname) {
   drop <- grep(colname, colnames(tab))
   tab <- tab[-drop]
+  tab
 }
 
 .map <- function(tableToMatch, tableToAdjust) {
+  rownames(tableToAdjust)[which(rownames(tableToAdjust)=="")] <- 'VOID'
+  rownames(tableToMatch)[which(rownames(tableToMatch)=="")] <- 'VOID'
+  colnames(tableToAdjust)[which(colnames(tableToAdjust)=="V1")] <- 'VOID'
+  colnames(tableToMatch)[which(colnames(tableToMatch)=="V1")] <- 'VOID'  
   tableToAdjust <- merge(t(tableToMatch), t(tableToAdjust), by.x="row.names", by.y="row.names", all.x=TRUE, all.y=TRUE)
   tableToAdjust <- tableToAdjust[,grep('\\.y', colnames(tableToAdjust))]
   tableToAdjust <- t(tableToAdjust)
   rownames(tableToAdjust) <- sub('(.*?)\\.y', '\\1', rownames(tableToAdjust))
-  rownames(tableToAdjust)[which(rownames(tableToAdjust)=="V1")] <- 'VOID'
-  rownames(tableToMatch)[which(rownames(tableToMatch)=="")] <- 'VOID'
   tableToAdjust <- merge(tableToMatch, tableToAdjust, by.x="row.names", by.y="row.names", all.x=TRUE, all.y=TRUE)
   tableToAdjust <- tableToAdjust[,grep('V\\d+', colnames(tableToAdjust))]
   dimnames(tableToAdjust) <- dimnames(tableToMatch)
@@ -412,15 +385,15 @@ function(object){
   dist
 }
 
-#' Distribution of a query or multiple queries
+#' Dispersion of a query or multiple queries
 #' 
 #' The function returns the frequencies of a query or a multiple queries
 #' in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
 #' on the number of queries and dimensions provided. Note that metadata need
 #' to be set up for the partition.
 #' 
-#' @param partition a partition object that will be queried
 #' @param query a character vector containing one or multiple queries
+#' @param partition a partition object that will be queried
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
@@ -433,8 +406,11 @@ function(object){
 #' }
 #' @author Andreas Blaette
 #' @export dispersion
-dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
+dispersion <- function(query, partition, dim, pAttribute=drillingControls$pAttribute){
   if ( is.null(names(partition@metadata))) warning("Metadata need to ne set up in partition")
+  if (class(query) == "cqpQuery"){
+    query <- query@query
+  }
   if (length(dim)==1){
     if (length(query)==1){
       result <- .queryDistribution(partition, pAttribute, query, dim)

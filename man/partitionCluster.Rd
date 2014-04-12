@@ -4,7 +4,7 @@
 \usage{
 partitionCluster(corpus, sAttributesStatic, sAttributeVar,
   sAttributeVarValues = c(), encoding = NULL, tf = TRUE,
-  metadata = TRUE, method = "grep", multicore = FALSE)
+  metadata = TRUE, method = "grep")
 }
 \arguments{
   \item{corpus}{the CWB corpus to be used}
@@ -26,9 +26,6 @@ partitionCluster(corpus, sAttributesStatic, sAttributeVar,
   \item{metadata}{logical, whether to set up metadata}
 
   \item{method}{either 'grep' or 'in'}
-
-  \item{multicore}{defaults to FALSE, if TRUE, mclapply
-  will be used}
 }
 \value{
 a S3 class 'partitionCluster', which is a list with

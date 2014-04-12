@@ -37,7 +37,7 @@
     strucHits <- cqi_cpos2struc(
       paste(
         Partition@corpus, ".",
-        names(Partition@sattributes)[length(Partition@sattributes)],
+        names(Partition@sAttributes)[length(Partition@sAttributes)],
         sep=""),
       hits[,1]
       )

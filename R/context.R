@@ -102,14 +102,13 @@ setClass("concordances",
          )
 )
 
-
 #' Analyze context of a node word
 #' 
 #' Retrieve the concordances of a token and calculate the log-likelihood test for collocates
 #' 
 #' For formulating the query, CPQ syntax may be used (see examples).
 #' 
-#' @param query query, which may by a multi-word unit
+#' @param query query, which may by a character vector or a cqpQuery object
 #' @param partition a partition object
 #' @param pAttribute p-attribute of the query
 #' @param leftContext no of tokens and to the left of the node word
@@ -118,35 +117,40 @@ setClass("concordances",
 #' @param posFilter character vector with the POS tags to be included - may not be empty!!
 #' @param filterType either "include" or "exclude"
 #' @param verbose report progress, defaults to TRUE
-#' @param multicore speed it up or not
 #' @author Andreas Blaette
-#' @export context
+#' @aliases context,character-method context,cqpQuery-method
 #' @examples
 #' \dontrun{
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
 #' a <- context('"Integration"', p)
 #' }
-#' @export context
+#' @importFrom parallel mclapply
+#' @export context 
 context <- function(
-  query, partition,
-  pAttribute=NULL,
-  leftContext=NULL,
-  rightContext=NULL,
-  minSignificance=NULL,
-  posFilter=NULL,
-  filterType=NULL,
-  verbose=TRUE,
-  multicore=NULL
+  query,
+  partition,
+  pAttribute="useControls",
+  leftContext=0,
+  rightContext=0,
+  minSignificance=-1,
+  posFilter="useControls",
+  filterType="useControls",
+  verbose=TRUE
   ) {
-  if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
-  if (is.null(leftContext)) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
-  if (is.null(rightContext)) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
-  if (is.null(minSignificance)) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-  if (is.null(posFilter)) posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
-  if (is.null(filterType)) filterType <- get("drillingControls", '.GlobalEnv')[['filterType']]
-  if (is.null(multicore)) multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
-  
-  ctxt <- new("context")
+  if (pAttribute == "useControls") pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
+  if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
+  if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
+  if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
+  if (posFilter == "useControls") posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
+  if (filterType == "useControls") filterType <- get("drillingControls", '.GlobalEnv')[['filterType']]
+  multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
+
+   ctxt <- new("context")
+#   if (class(query) == "cqpQuery") {
+#      ctxt@query <- query@query
+#   } else {
+#     query <- query
+#   }
   ctxt@query <- query
   ctxt@pattribute <- pAttribute
   ctxt@corpus <- partition@corpus
@@ -157,15 +161,15 @@ context <- function(
   if (verbose==TRUE) message('Analysing the context for node word "', query,'"')
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
-  if (verbose==TRUE) message("... getting hits for query in partition", appendLF=FALSE)
+  if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
   # query <- .adjustEncoding(query, partition@encoding)
   # Encoding(query) <- ctxt@encoding
-  hits <- .queryCpos(query, partition, pAttribute)
+  hits <- .queryCpos(ctxt@query, partition, pAttribute)
   hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
   hits <- apply(hits, 1, function(x) as.list(unname(x)))
-  message(' > ', length(hits), " hits")
+  message(' (', length(hits), " occurrences)")
   concordances <- new("kwic")
-  if (verbose==TRUE) message("... frequency count for left and right context > ", appendLF=F)
+  if (verbose==TRUE) message("... counting tokens in left and right context ", appendLF=F)
   if (multicore==TRUE) {
     bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType))
   } else {
@@ -174,9 +178,9 @@ context <- function(
   ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
   wc <- table(unlist(lapply(bigBag, function(x) x$id)))
   ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
-  if (verbose==TRUE) message('context size: ', ctxt@size, ' token')
+  if (verbose==TRUE) message('(context size: ', ctxt@size, ')')
   if (verbose==TRUE) message("... performing log likelihood test")
-  calc <- .calc.g2(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
+  calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
   ctxt@frequency <- length(hits)
   ctxt@partition <- partition@label
   ctxt@stat <- data.frame(

@@ -22,7 +22,7 @@ basis for most other operations.
   the CWB corpus the partition is based on }
   \item{\code{encoding}:}{Object of class
   \code{"character"} encoding of the corpus }
-  \item{\code{sattributes}:}{Object of class \code{"list"}
+  \item{\code{sAttributes}:}{Object of class \code{"list"}
   s-attributes specifying the partition }
   \item{\code{explanation}:}{Object of class
   \code{"character"} an explanation of the partition }

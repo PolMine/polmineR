@@ -1,5 +1,4 @@
 \name{keyness}
-\alias{addPos,keyness-method}
 \alias{keyness}
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{

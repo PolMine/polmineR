@@ -81,10 +81,10 @@ Usually, any session using the driller will start with initializing a partition.
 In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
 
 <<partitionInit, echo=TRUE, results="tex", tidy=FALSE>>=
-bt <- partition(list(text_type="speech"), "PLPRBTTXT")
+bt <- partition(corpus="PLPRBTTXT", list(text_type="speech"))
 cdu <- partition(
-  sAttributes=list(text_type="speech", text_party="CDU"),
-  corpus="PLPRBTTXT"
+  corpus="PLPRBTTXT",
+  sAttributes=list(text_type="speech", text_party="CDU")
   )
 @
 
@@ -100,12 +100,12 @@ There are two methods to set up a partition, 'grep' and 'in'. If the method is '
 
 <<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
 coalition <- partition(
+  corpus="PLPRBTTXT",
   sAttributes=list(
     text_type="speech",
     text_party=c("CDU_CSU", "FDP")
     ),
-  method="in",
-  corpus="PLPRBTTXT"
+  method="in"
   )
 @
 
@@ -150,20 +150,20 @@ To understand the occurance of a phenomenon, the distribution of query results a
 <<distributionReal, echo=FALSE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
 # one query / one dimension
 foo <- capture.output(oneQuery <- dispersion(
-  coalition,
   '"Gerechtigkeit"',
+  coalition,
   "text_party"
   ))
 # # multiple queries / one dimension
 foo <- capture.output(twoQueries <- dispersion(
-  coalition,
   c('"[eE]uro.*"', '"Br.ssel"'),
+  coalition,
   "text_party"
   ))
 # multiple queries / two dimensions
 foo <- capture.output(twoDim <- dispersion(
-  bt,
   c('"Regierung"'),
+  bt,
   c("text_date", "text_party")
   ))
 @
@@ -172,8 +172,8 @@ foo <- capture.output(twoDim <- dispersion(
 <<distributionFake1, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # one query / one dimension
 foo <- capture.output(oneQuery <- dispersion(
-  coalition,
   '"Gerechtigkeit"',
+  coalition,
   "text_party"
   ))
 @
@@ -183,8 +183,8 @@ oneQuery
 <<distributionFake2, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # multiple queries / one dimension
 twoQueries <- dispersion(
-  coalition,
   c('"[eE]uro.*"', '"Brüssel"'),
+  coalition,
   "text_party"
   )
 @
@@ -194,13 +194,13 @@ twoQueries
 <<distributionFake3, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # multiple queries / two dimensions
 foo <- capture.output(twoDim <- distribution(
-  bt,
   c('"Regierung"'),
+  bt,
   c("text_date", "text_party")
   ))
 @
 <<distributionOutput3, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-round((twoDim@total$rel*100000),2)[,c(1,2,3,4,6)]
+round((twoDim@rel*100000),2)[,c(1,2,3,4,6)]
 @
 
 

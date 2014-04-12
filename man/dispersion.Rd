@@ -1,14 +1,14 @@
 \name{dispersion}
 \alias{dispersion}
-\title{Distribution of a query or multiple queries}
+\title{Dispersion of a query or multiple queries}
 \usage{
-dispersion(partition, query, dim, pAttribute = drillingControls$pAttribute)
+dispersion(query, partition, dim, pAttribute = drillingControls$pAttribute)
 }
 \arguments{
-  \item{partition}{a partition object that will be queried}
-
   \item{query}{a character vector containing one or
   multiple queries}
+
+  \item{partition}{a partition object that will be queried}
 
   \item{dim}{a character vector of length 1 or 2 providing
   the sAttributes}

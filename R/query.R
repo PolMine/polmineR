@@ -32,23 +32,23 @@ setClass("cqpQuery",
 #' @rdname as.cqpQuery
 #' @name as.cqpQuery
 as.cqpQuery <- function(queries){
-  query <- new("cqpQuery")
-  cqp <- vapply(
-    queries,
-    function(x) paste(
-      vapply(
-        unlist(strsplit(x, "\\s")),
-        function(x) paste('"', x, '"', sep=''),
-        USE.NAMES=FALSE,
-        FUN.VALUE="character"
-      ),
-      collapse=" "
-    ),
-    FUN.VALUE="character",
-    USE.NAMES=FALSE      
-  )
-  query@query <- cqp
-  return(query)
+  cqp <- c()
+  for (query in queries){
+    bag <- c()
+    for (q in unlist(strsplit(query, "\\s"))){
+        if (substr(q, 1, 1) !='['){
+          q <- paste('"', q, '"', sep='') 
+        }
+        bag <- append(bag, q)      
+    }
+    cqp <- append(cqp, paste('(', paste(bag, sep='', collapse=' '), ')', sep=""))
+  }
+  if (length(cqp)>1){
+    cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
+  }    
+  cqpQuery <- new("cqpQuery")
+  cqpQuery@query <- cqp
+  return(cqpQuery)
 }
 
 setMethod('[', 'cqpQuery', function(x,i){
@@ -72,7 +72,7 @@ setMethod('[[', 'cqpQuery', function(x,i){
 
 #' @exportMethod show
 #' @noRd
-setMethod('show', 'cqpQuery', function(x){
-  cat("A 'cqpQuery' object, the query being:\n")
-  cat(x@query, '\n')
+setMethod('show', 'cqpQuery', function(object){
+  cat("A 'cqpQuery' object. The query is:\n")
+  cat(object@query, '\n')
 })

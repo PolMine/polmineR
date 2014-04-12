@@ -61,6 +61,37 @@ trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter
   object
 }
 
+#' S4 class for comparing corpora
+#' 
+#' to keep results from a keyness analysis
+#' 
+#' @section Objects from the class:
+#' keyness objects are returned by the function call \code{keyness}
+#'   
+#' @section Slots:
+#' \describe{ \item{\code{corpus}:}{Object of class
+#'   \code{"character"} ~~ } \item{\code{pattribute}:}{Object of class
+#'   \code{"character"} ~~ } \item{\code{stat}:}{Object of class
+#'   \code{"data.frame"} ~~ } }
+#'  @section Methods:
+#'   \describe{
+#'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
+#'    \item{addPos}{\code{signature(object = "keyness")}: add POS attribute to statistics table }
+#'    }
+#' @rdname keyness-class
+#' @name keyness-class
+#' @aliases keyness-class summary,keyness-method addPos,keyness-method
+#' @docType class
+#' @exportClass keyness
+#' @author Andreas Blaette
+setClass("keyness",
+         representation(corpus="character",
+                        pattribute="character",
+                        stat="data.frame"
+         )
+)
+
+
 #' add pos values to the statistics of a keyness object
 #' 
 #' @param object the keyness object
@@ -85,35 +116,6 @@ setMethod("addPos", "keyness",
   }
 )
 
-#' S4 class for comparing corpora
-#' 
-#' to keep results from a keyness analysis
-#' 
-#' @section Objects from the class:
-#' keyness objects are returned by the function call \code{keyness}
-#'   
-#' @section Slots:
-#' \describe{ \item{\code{corpus}:}{Object of class
-#'   \code{"character"} ~~ } \item{\code{pattribute}:}{Object of class
-#'   \code{"character"} ~~ } \item{\code{stat}:}{Object of class
-#'   \code{"data.frame"} ~~ } }
-#'  @section Methods:
-#'   \describe{
-#'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
-#'    \item{addPos}{\code{signature(object = "keyness")}: add POS attribute to statistics table }
-#'    }
-#' @rdname keyness-class
-#' @name keyness-class
-#' @aliases keyness-class summary,keyness-method
-#' @docType class
-#' @exportClass keyness
-#' @author Andreas Blaette
-setClass("keyness",
-         representation(corpus="character",
-                        pattribute="character",
-                        stat="data.frame"
-         )
-)
 
 #' Summary of a keyness object
 #' @exportMethod summary
@@ -155,7 +157,6 @@ setMethod(
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
-#' @aliases addPos,keyness-method
 #' @references Manning / Schuetze ...
 #' @export keyness
 keyness <- function(
@@ -308,7 +309,7 @@ collocations <- function(partitionObject, pAttribute="word", window=5, filter=TR
   collocateWindowFreq <- unlist(lapply(raw, function(x) unname(x)))
   windowSize <- unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
   message('... g2-Test')
-  calc <- cbind(nodeId, .calc.g2(collocateId, collocateWindowFreq, windowSize, partitionObject, pAttribute))
+  calc <- cbind(nodeId, .g2Statistic(collocateId, collocateWindowFreq, windowSize, partitionObject, pAttribute))
   tab <- data.frame(node=cqi_id2str("PLPRBTTXT.word", calc[,1]),
                        collocate=cqi_id2str("PLPRBTTXT.word", calc[,2]),
                        calc)
@@ -321,7 +322,7 @@ collocations <- function(partitionObject, pAttribute="word", window=5, filter=TR
 }
 
 
-.calc.g2 <- function(windowIds, windowFreq, windows.total, partitionObject, pAttribute){
+.g2Statistic <- function(windowIds, windowFreq, windows.total, partitionObject, pAttribute){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=6)
   colnames(calc) <- c("collocateId", "freqObsWindow", "freqObsCorpus", "freqExpWindow", "freqExpCorpus", "g2-Test")
   calc[,1] <- windowIds

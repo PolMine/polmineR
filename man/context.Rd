@@ -1,13 +1,16 @@
 \name{context}
 \alias{context}
+\alias{context,character-method}
+\alias{context,cqpQuery-method}
 \title{Analyze context of a node word}
 \usage{
-context(query, partition, pAttribute = NULL, leftContext = NULL,
-  rightContext = NULL, minSignificance = NULL, posFilter = NULL,
-  filterType = NULL, verbose = TRUE, multicore = NULL)
+context(query, partition, pAttribute = "useControls", leftContext = 0,
+  rightContext = 0, minSignificance = -1, posFilter = "useControls",
+  filterType = "useControls", verbose = TRUE)
 }
 \arguments{
-  \item{query}{query, which may by a multi-word unit}
+  \item{query}{query, which may by a character vector or a
+  cqpQuery object}
 
   \item{partition}{a partition object}
 
@@ -27,8 +30,6 @@ context(query, partition, pAttribute = NULL, leftContext = NULL,
   \item{filterType}{either "include" or "exclude"}
 
   \item{verbose}{report progress, defaults to TRUE}
-
-  \item{multicore}{speed it up or not}
 }
 \description{
 Retrieve the concordances of a token and calculate the
