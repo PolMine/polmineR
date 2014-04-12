@@ -36,7 +36,7 @@ as.cqpQuery <- function(queries){
   for (query in queries){
     bag <- c()
     for (q in unlist(strsplit(query, "\\s"))){
-        if (substr(q, 1, 1) !='['){
+        if ((substr(q, 1, 1) !='[') && (substr(q, nchar(q), nchar(q) != ']'))){
           q <- paste('"', q, '"', sep='') 
         }
         bag <- append(bag, q)      

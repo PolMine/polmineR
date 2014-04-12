@@ -1,4 +1,5 @@
 \name{partitionCluster}
+\alias{addPos,partitionCluster-method}
 \alias{partitionCluster}
 \title{Generate a list of partitions}
 \usage{

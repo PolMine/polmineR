@@ -118,13 +118,15 @@ setClass("concordances",
 #' @param filterType either "include" or "exclude"
 #' @param verbose report progress, defaults to TRUE
 #' @author Andreas Blaette
-#' @aliases context,character-method context,cqpQuery-method
+#' @aliases context context,character-method context,cqpQuery-method
 #' @examples
 #' \dontrun{
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
 #' a <- context('"Integration"', p)
 #' }
 #' @importFrom parallel mclapply
+#' @rdname context
+#' @name context
 #' @export context 
 context <- function(
   query,
@@ -209,7 +211,43 @@ context <- function(
   bag
 }
 
- 
+#' Compute a set of context analyses
+#' 
+#' @param query either a character vector or a cqpQuery
+#' @param partitionCluster a partitionCluster object
+#' @param pAttribute p-attribute of the query
+#' @param leftContext no of tokens and to the left of the node word
+#' @param rightContext no of tokens to the right of the node word
+#' @param minSignificance minimum log-likelihood value
+#' @param posFilter character vector with the POS tags to be included - may not be empty!!
+#' @param filterType either "include" or "exclude"
+#' @param verbose report progress, defaults to TRUE
+#' @aliases contextCluster as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method
+#' 
+#' @export contextCluster
+#' @rdname contextCluster
+#' @name contextCluster
+contextCluster <- function(
+  query, partitionCluster, pAttribute="useControls",
+  leftContext=0, rightContext=0,
+  minSignificance=-1, posFilter="useControls", filterType="useControls",
+  verbose=TRUE
+  ) {
+  contextCluster <- sapply(
+    partitionCluster,
+    function(x) context(
+      query, x,
+      pAttribute=pAttribute,
+      leftContext=leftContext, rightContext=rightContext,
+      minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
+      verbose=verbose
+      ),
+    simplify = TRUE,
+    USE.NAMES = TRUE
+    )
+  class(contextCluster) <- "contextCluster"
+  contextCluster
+} 
 
 #' KWIC output
 #' 

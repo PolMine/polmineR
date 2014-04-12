@@ -263,6 +263,7 @@ NULL
 #' @return a S3 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
+#' @aliases partitionCluster addPos,partitionCluster-method
 #' @author Andreas Blaette
 partitionCluster <- function(
   corpus,
@@ -497,10 +498,11 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' Augment the partition object by strucs and cpos
 #' 
 #' @param object a partition class object
-#' @param pos what to add
-#' @return an augmented partition object (includes now pos now)
+#' @param pos character vector - pos statistic for lemma or word
+#' @return an augmented partition object (includes pos now)
 #' @author Andreas Blaette
 #' @docType methods
+#' @exportMethod addPos
 #' @noRd
 setMethod("addPos", "partition",
           function(object, pos){
@@ -517,11 +519,46 @@ setMethod("addPos", "partition",
     rownames(crosstab) <- cqi_id2str(paste(object@corpus, '.', pAttr, sep=''), as.integer(rownames(crosstab)))
     colnames(crosstab) <- cqi_id2str(paste(object@corpus, '.pos', sep=''), as.integer(colnames(crosstab)))
     object@pos[[pAttr]][["abs"]] <- crosstab
+    Encoding(rownames(object@pos[[pAttr]][["abs"]])) <- object@encoding
     object@pos[[pAttr]][["rel"]] <- t(apply(crosstab, 1, function(x) round(x/sum(x)*100, 2)))
+    Encoding(rownames(object@pos[[pAttr]][["rel"]])) <- object@encoding
     object@pos[[pAttr]][["max"]] <- apply(crosstab, 1, function(x) colnames(crosstab)[which.max(x)])
+    Encoding(names(object@pos[[pAttr]][["max"]])) <- object@encoding
   }
   object
 })
+
+#' perform addPos and further adjustments for all partitions in a cluster
+#' 
+#' @param cluster a partitionCluster object
+#' @param pos character vector: "word", "lemma", or both
+#' @param posFilter pos to keep
+#' @param minFrequency minimum frequency of tokens
+#' @export adjust
+#' @rdname adjust
+#' @name adjust
+adjust <- function(cluster, pos=c(""), posFilter=c(), minFrequency=0){
+  pimping <- function(p) {
+    new <- addPos(p, pos)
+    if (!is.null(posFilter)) {
+      for (i in pos){
+        new@tf[[i]] <- new@tf[[i]][which(new@pos[[i]]$max %in% posFilter),]
+      }
+    }
+    if (minFrequency > 0){
+      for (i in pos){
+        new@tf[[i]] <- new@tf[[i]][which(new@tf[[i]][,"tf"]>=minFrequency),]
+      }
+    }
+    new 
+  }
+  if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
+    pimpedCluster <- mclapply(cluster, FUN = pimping)
+  } else {
+    pimpedCluster <- lapply(cluster, FUN=pimping)    
+  }
+  class(pimpedCluster) <- "partitionCluster"
+}
 
 setGeneric("partitionMerge", function(object,...){standardGeneric("partitionMerge")})
 
