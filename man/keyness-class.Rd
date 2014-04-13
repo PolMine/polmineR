@@ -17,7 +17,10 @@ to keep results from a keyness analysis
   \code{"character"} ~~ } \item{\code{pattribute}:}{Object
   of class \code{"character"} ~~ }
   \item{\code{stat}:}{Object of class \code{"data.frame"}
-  ~~ } }
+  ~~ } \item{\code{statisticalTest}:}{Object of class
+  \code{"character"} statisticalTest used }
+  \item{\code{statisticalSummary}:}{Object of class
+  \code{"data.frame"} statistical summary } }
 }
 
 \section{Methods}{

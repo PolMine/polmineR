@@ -5,7 +5,7 @@
 \title{Analyze context of a node word}
 \usage{
 context(query, partition, pAttribute = "useControls", leftContext = 0,
-  rightContext = 0, minSignificance = -1, posFilter = "useControls",
+  rightContext = 0, minSignificance = 0, posFilter = "useControls",
   filterType = "useControls", verbose = TRUE)
 }
 \arguments{

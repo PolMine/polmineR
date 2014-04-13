@@ -32,7 +32,11 @@ class to organize information of context analysis
   \item{\code{posFilter}:}{Object of class
   \code{"character"} part-of-speech tags filtered}
   \item{\code{cpos}:}{Object of class \code{"list"} corpus
-  positions of the hits } }
+  positions of the hits }
+  \item{\code{statisticalTest}:}{Object of class
+  \code{"character"} statistical test used }
+  \item{\code{statSummary}:}{Object of class
+  \code{"data.frame"} statistical summary } }
 }
 
 \section{Methods}{

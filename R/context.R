@@ -41,6 +41,8 @@ setClass("kwic",
 #'     \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
 #'     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
 #'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions of the hits }
+#'     \item{\code{statisticalTest}:}{Object of class \code{"character"} statistical test used }
+#'     \item{\code{statSummary}:}{Object of class \code{"data.frame"} statistical summary }
 #'   }
 #' @section Methods:
 #'   \describe{
@@ -68,7 +70,9 @@ setClass("context",
                         stat="data.frame",
                         encoding="character",
                         posFilter="character",
-                        cpos="list"
+                        cpos="list",
+                        statisticalTest="character",
+                        statisticalSummary="data.frame"
                         )
 )
 
@@ -134,7 +138,7 @@ context <- function(
   pAttribute="useControls",
   leftContext=0,
   rightContext=0,
-  minSignificance=-1,
+  minSignificance=0,
   posFilter="useControls",
   filterType="useControls",
   verbose=TRUE
@@ -185,15 +189,15 @@ context <- function(
   calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
   ctxt@frequency <- length(hits)
   ctxt@partition <- partition@label
-  ctxt@stat <- data.frame(
-     row.names=cqi_id2str(corpus.pattr, calc[,1]),
-     rank=1:nrow(calc),
-     obs.coi=calc[,2],
-     obs.ref=calc[,3],
-     log=calc[,6]
-  )
-  ctxt <- trim(ctxt, minSignificance=minSignificance)
+  ctxt@stat <- as.data.frame(cbind(
+    rank=1:nrow(calc),
+    calc
+  ))
+  ctxt@statisticalTest <- "LL"
+  rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
   Encoding(rownames(ctxt@stat)) <- partition@encoding
+  ctxt@statisticalSummary <- .statisticalSummary(ctxt)
+  ctxt <- trim(ctxt, minSignificance=minSignificance)
   ctxt
 }
 
@@ -338,16 +342,37 @@ function(object){
 setMethod('summary', 'context',
 function(object) {
   cat("\n** Context object - general information: **\n")
-  cat(sprintf("%-20s", "Node:"), object@query, "\n")
   cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
   cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
-  cat(sprintf("%-20s", "Frequency:"), object@frequency, "\n")
+  cat(sprintf("%-20s", "Node:"), object@query, "\n")
   cat(sprintf("%-20s", "P-Attribute:"), object@pattribute, "\n")
-  cat(sprintf("%-20s", "Context size:"), object@size, "\n\n")
-  cat("\n** Text statistics: **\n")
-  print(object@stat[1:15,])
+  cat(sprintf("%-20s", "Node count:"), object@frequency, "\n")
+  cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
+
+  cat("\n** Statistical summary: **\n")
+  print(object@statisticalSummary)
+  
+  cat("\n** Top ten: **\n")
+  print(object@stat[1:10,c(1,3,4,7)])
 }
 )
+
+.statisticalSummary <- function(object) {
+  if (object@statisticalTest %in% c("LL", "chiSquare")){
+    criticalValue <- c(3.84, 6.63, 7.88, 10.83)
+    propability <- c(0.05, 0.01, 0.005, 0.001)
+     no <- vapply(
+       criticalValue,
+       function(x) length(which(object@stat[[object@statisticalTest]]>x)),
+       FUN.VALUE=1
+     )
+    result <- data.frame(propability, criticalValue, no)
+    result <- result[order(result$propability, decreasing=FALSE),]
+  }
+  return(result)
+}
+
+  
 
 .showChunkwise <- function (conc) {
   drillingControls <- get("drillingControls", '.GlobalEnv')

@@ -15,10 +15,11 @@
 #' @rdname trim
 #' @export trim
 trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
-  if (maxRank==0) maxRank=dim(object@stat)[1]
-  object@stat <- object@stat[order(object@stat[,4], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,4]>=minSignificance),]
-  object@stat <- object@stat[which(object@stat[,"obs.coi"]>=minFrequency),]
+  test <- object@statisticalTest
+  if (maxRank==0) maxRank=nrow(object@stat)
+  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
+  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
+  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
   object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
   if (!is.null(tokenFilter)){
@@ -69,10 +70,13 @@ trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter
 #' keyness objects are returned by the function call \code{keyness}
 #'   
 #' @section Slots:
-#' \describe{ \item{\code{corpus}:}{Object of class
-#'   \code{"character"} ~~ } \item{\code{pattribute}:}{Object of class
-#'   \code{"character"} ~~ } \item{\code{stat}:}{Object of class
-#'   \code{"data.frame"} ~~ } }
+#' \describe{
+#'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
+#'   \item{\code{pattribute}:}{Object of class \code{"character"} ~~ }
+#'   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ } 
+#'   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
+#'   \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
+#'   }
 #'  @section Methods:
 #'   \describe{
 #'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
@@ -87,7 +91,9 @@ trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter
 setClass("keyness",
          representation(corpus="character",
                         pattribute="character",
-                        stat="data.frame"
+                        stat="data.frame",
+                        statisticalTest="character",
+                        statisticalSummary="data.frame"
          )
 )
 
@@ -123,12 +129,17 @@ setMethod("addPos", "keyness",
 setMethod(
   "summary", "keyness",
   function(object){
-    cat("the statistics table has", nrow(object@stat), "rows")
-  # output of number of tokens > 3.84 significance
-  # output of number of tokens > 6... significance
+    cat("the statistics table has", nrow(object@stat), "rows\n")
+    cat("pos attributest have been added: ")
   if ("pos" %in% colnames(object@stat)){
-    cat("the cat is on the roof")
+    cat("YES\n")
+  } else {
+    cat("NO\n")
   }
+  cat("\n** Statistical summary: **\n")
+  print(object@statisticalSummary) 
+  cat("\n** Top ten: **\n")
+  print(object@stat[1:10,])
   }
 )
 
@@ -176,16 +187,19 @@ keyness <- function(
   statistic <- data.frame(
     row.names=cqi_id2str(paste(coi@corpus,".", pAttribute, sep=""), c[,1]),
     rank=c(1:dim(c)[1]),
-    obs.coi=c[,2],
-    obs.ref=c[,3],
-    chi.square=round(c[,4], digits=2),
-    exp.coi=round(c[,5], digits=2),
-    exp.ref=round(c[,6], digits=2)
+    countCoi=c[,2],
+    countRef=c[,3],
+    chiSquare=round(c[,4], digits=2),
+    expCoi=round(c[,5], digits=2),
+    expRef=round(c[,6], digits=2)
   )
   Encoding(rownames(statistic)) <- ref@encoding
+  keyness@statisticalTest <- "chiSquare"
+  keyness@statisticalSummary <- .statisticalSummary(keyness)
   keyness@corpus <- coi@corpus
   keyness@pattribute <- pAttribute
   keyness@stat <- statistic
+  keyness <- trim(keyness)
   keyness
 }
 
@@ -310,8 +324,8 @@ collocations <- function(partitionObject, pAttribute="word", window=5, filter=TR
   windowSize <- unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
   message('... g2-Test')
   calc <- cbind(nodeId, .g2Statistic(collocateId, collocateWindowFreq, windowSize, partitionObject, pAttribute))
-  tab <- data.frame(node=cqi_id2str("PLPRBTTXT.word", calc[,1]),
-                       collocate=cqi_id2str("PLPRBTTXT.word", calc[,2]),
+  tab <- data.frame(node=cqi_id2str(tokenAttr, calc[,1]),
+                       collocate=cqi_id2str(tokenAttr, calc[,2]),
                        calc)
   tab[,1] <- as.character(tab[,1])
   tab[,2] <- as.character(tab[,2])
@@ -324,7 +338,7 @@ collocations <- function(partitionObject, pAttribute="word", window=5, filter=TR
 
 .g2Statistic <- function(windowIds, windowFreq, windows.total, partitionObject, pAttribute){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=6)
-  colnames(calc) <- c("collocateId", "freqObsWindow", "freqObsCorpus", "freqExpWindow", "freqExpCorpus", "g2-Test")
+  colnames(calc) <- c("collocateId", "countCoi", "countCorpus", "expCoi", "expCorpus", "LL")
   calc[,1] <- windowIds
   calc[,2] <- windowFreq
   calc[,3] <- partitionObject@tf[[pAttribute]][match(calc[,1], partitionObject@tf[[pAttribute]][,1]),2]
