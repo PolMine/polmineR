@@ -120,6 +120,8 @@ setClass("concordances",
 #' @param minSignificance minimum log-likelihood value
 #' @param posFilter character vector with the POS tags to be included - may not be empty!!
 #' @param filterType either "include" or "exclude"
+#' @param stopwords exclude a query hit from analysis if stopword(s) is/are in context
+#' @param statisticalTest either "LL" (default) or "pmi"
 #' @param verbose report progress, defaults to TRUE
 #' @author Andreas Blaette
 #' @aliases context context,character-method context,cqpQuery-method
@@ -141,6 +143,8 @@ context <- function(
   minSignificance=0,
   posFilter="useControls",
   filterType="useControls",
+  stopwords=c(),
+  statisticalTest="LL",
   verbose=TRUE
   ) {
   if (pAttribute == "useControls") pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
@@ -150,13 +154,7 @@ context <- function(
   if (posFilter == "useControls") posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
   if (filterType == "useControls") filterType <- get("drillingControls", '.GlobalEnv')[['filterType']]
   multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
-
-   ctxt <- new("context")
-#   if (class(query) == "cqpQuery") {
-#      ctxt@query <- query@query
-#   } else {
-#     query <- query
-#   }
+  ctxt <- new("context")
   ctxt@query <- query
   ctxt@pattribute <- pAttribute
   ctxt@corpus <- partition@corpus
@@ -164,6 +162,8 @@ context <- function(
   ctxt@right.context <- rightContext
   ctxt@encoding <- partition@encoding
   ctxt@posFilter <- posFilter
+  ctxt@partition <- partition@label
+  ctxt@statisticalTest <- statisticalTest
   if (verbose==TRUE) message('Analysing the context for node word "', query,'"')
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
@@ -175,33 +175,49 @@ context <- function(
   hits <- apply(hits, 1, function(x) as.list(unname(x)))
   message(' (', length(hits), " occurrences)")
   concordances <- new("kwic")
-  if (verbose==TRUE) message("... counting tokens in left and right context ", appendLF=F)
+  stopwordId <- unlist(lapply(stopwords, function(x) cqi_regex2id(corpus.pattr, x)))
+  if (verbose==TRUE) message("... counting tokens in context ")
   if (multicore==TRUE) {
-    bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType))
+    bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
   } else {
-    bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType))
+    bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
+  }
+  bigBag <- bigBag[!sapply(bigBag, is.null)]
+  if (!is.null(stopwordId)){
+    message("... hits filtered because stopword(s) occur in context: ", (length(hits)-length(bigBag)))
   }
   ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
   wc <- table(unlist(lapply(bigBag, function(x) x$id)))
   ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
-  if (verbose==TRUE) message('(context size: ', ctxt@size, ')')
-  if (verbose==TRUE) message("... performing log likelihood test")
-  calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
-  ctxt@frequency <- length(hits)
-  ctxt@partition <- partition@label
+  ctxt@frequency <- length(bigBag)
+  if (verbose==TRUE) message('... context size: ', ctxt@size)
+  if (statisticalTest == "LL"){
+    if (verbose==TRUE) message("... performing log likelihood test")
+    calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
+    ctxt@statisticalSummary <- .statisticalSummary(ctxt)
+  } else if (statisticalTest=="pmi"){
+    if (verbose==TRUE) message("... calculating pointwise mutual information")
+    calc <- .pmi(
+      windowIds=as.integer(names(wc)),
+      windowFreq=unname(wc),
+      countTarget=ctxt@frequency,
+      partitionObject=partition,
+      pAttribute=pAttribute
+      )
+  } else {
+    warning("test suggested not supported")
+  }
   ctxt@stat <- as.data.frame(cbind(
     rank=1:nrow(calc),
     calc
   ))
-  ctxt@statisticalTest <- "LL"
+  ctxt <- trim(ctxt, minSignificance=minSignificance)
   rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
   Encoding(rownames(ctxt@stat)) <- partition@encoding
-  ctxt@statisticalSummary <- .statisticalSummary(ctxt)
-  ctxt <- trim(ctxt, minSignificance=minSignificance)
   ctxt
 }
 
-.surrounding <- function (set, ctxt, corpus.sattr, filterType) {
+.surrounding <- function (set, ctxt, corpus.sattr, filterType, stopwordId) {
   bag <- list()
   set <- as.numeric(set)
   cpos.left <- c((set[1]-ctxt@left.context):(set[1]-1))
@@ -210,10 +226,13 @@ context <- function(
   cpos.right <- cpos.right[which(cqi_cpos2struc(corpus.sattr, cpos.right)==set[3])]
   bag$cpos <- list(left=cpos.left, node=c(set[1]:set[2]), right=cpos.right)
   cpos <- c(cpos.left, cpos.right)
-  bag$posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
-  bag$id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), bag$posChecked)
+  if (!is.null(stopwordId)) ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), cpos)
+  posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
+  bag$id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), posChecked)
+  if (!is.null(stopwordId)) if (any(stopwordId %in% ids)) {bag <- NULL}
   bag
 }
+
 
 #' Compute a set of context analyses
 #' 

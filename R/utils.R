@@ -108,10 +108,11 @@
 #' @return a character vector with adjusted encoding
 #' @noRd
 .adjustEncoding <- function(characterVector, partitionEncoding){
-  if (!drillingControls$consoleEncoding==partitionEncoding) {
+  consoleEncoding <- get("drillingControls", '.GlobalEnv')[['consoleEncoding']]
+  if (!consoleEncoding==partitionEncoding) {
     characterVector <- iconv(
       characterVector,
-      from=drillingControls$consoleEncoding,
+      from=consoleEncoding,
       to=partitionEncoding)
   }
   return(characterVector)

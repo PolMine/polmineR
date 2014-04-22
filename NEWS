@@ -1,3 +1,7 @@
+v0.4.23
+ * stopwords option introduced in context function for filtering and brute disambiguation
+ * cqp class thrown out again - it does not improve usability
+
 v0.4.22
  * zoom function added to specify partitions
  * partitionCluster faster as it relies on zoom function

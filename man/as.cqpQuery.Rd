@@ -2,10 +2,12 @@
 \alias{as.cqpQuery}
 \title{Convert a string to a CQP query}
 \usage{
-as.cqpQuery(queries)
+as.cqpQuery(queries, collapse = FALSE)
 }
 \arguments{
   \item{queries}{a character vector}
+
+  \item{collapse}{whether collapse the queries into one}
 }
 \value{
 a character vector

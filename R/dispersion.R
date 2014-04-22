@@ -306,7 +306,6 @@ function(object){
 #' @seealso multiword.distribution, queries.distribution
 #' @noRd
 .queryDistribution <- function (part, pAttribute, query, sAttribute, rel=TRUE) {
-  query <- .adjustEncoding(query, part@encoding)
   cpos <- .queryCpos(query, part, pAttribute)[,1]
   if(!is.null(cpos)){
     sAttr <- paste(part@corpus,'.',sAttribute, sep='')

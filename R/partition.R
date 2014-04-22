@@ -98,15 +98,22 @@ partition <- function(corpus, sAttributes, label=c(""), encoding=NULL, tf=TRUE, 
   if (verbose==TRUE) message('Setting up partition ', label)
   Partition <- new('partition')
   Partition@corpus <- corpus
-  Partition@label <- label
-  Partition@sAttributes <- sAttributes
-  Partition@sAttributeStrucs <- names(sAttributes)[length(sAttributes)]
-  Partition@xml <- xml
   if(is.null(encoding)) {
     Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
   } else {
     Partition@encoding <- encoding
-  } 
+  }
+  if (verbose==TRUE) message('... encoding of the corpus is ', Partition@encoding)
+  Partition@label <- label
+  consoleEncoding <- get("drillingControls", '.GlobalEnv')[['consoleEncoding']]
+  if (consoleEncoding==Partition@encoding) {
+    Partition@sAttributes <- sAttributes
+  } else {
+    Partition@sAttributes <- lapply(sAttributes, function(x).adjustEncoding(x, Partition@encoding))  
+  }
+  
+  Partition@sAttributeStrucs <- names(sAttributes)[length(sAttributes)]
+  Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
   if (xml=="flat") {
     Partition <- .flatXmlSattributes2cpos(Partition, method)
@@ -184,7 +191,12 @@ zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=TRUE){
   } else if (method == "grep") {
     hits <- grep(sAttributes[[1]], str)
   }
-  newPartition@cpos <- Partition@cpos[hits,]
+  newCpos <- Partition@cpos[hits,]
+  if (class(newCpos) == "matrix"){
+    newPartition@cpos <- newCpos
+  } else if (class(newCpos) == "integer") {
+    newPartition@cpos <- matrix(newCpos, ncol=2, byrow=TRUE)     
+  }
   newPartition@strucs <- Partition@strucs[hits]
   if (length(Partition@metadata) == 2) {
     message('... adjusting metadata')
@@ -348,14 +360,17 @@ function(object){
 #' Prints the number of partitions in the cluster and returns the respective sizes
 #' 
 #' @param object the partitionCluster object
-#' @method print partitionCluster
+#' @S3method print partitionCluster
 #' @noRd
 print.partitionCluster <- function (object) {
-            cat("\n** PartitionCluster object: **\n")
-            cat('Cluster includes', length(object), 'partition objects:\n')
-            for (i in c(1: length(object))) {
-              cat(names(object)[i], '(', object[[i]]@size, ' token)\n', sep='')
-            }
+  summary <- cbind(
+    name=names(object),
+    size=lapply(object, function(x) x@size)
+  )
+  rownames(summary) <- c(1:nrow(summary))
+  cat("** PartitionCluster object: **\n")
+  cat('There are', length(object), 'partition objects: (total:', sum(as.integer(summary[,2])), 'token)\n')
+  print(summary)
 }
 
 
