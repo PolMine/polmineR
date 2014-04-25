@@ -1,6 +1,6 @@
 #' partition class
 #' 
-#' In the 'driller'-package, the class 'partition' is the basis for most other operations.
+#' Basic class for for almost anything in the driller package.
 #' 
 #' @section Slots:
 #' \describe{
@@ -24,11 +24,13 @@
 #'    \item{show}{\code{signature(object = "partition")}: Display essential information }
 #'    \item{sAttributes}{output of s-attributes in a partition}
 #'    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
+#'    \item{trim}{\code{signature(object="partition")}: trim a partition object }
+#'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
 #'    \item{[}{get frequency of a query}
 #'    \item{[[}{shortcut to concordances for a query}
 #'    }
 #' 
-#' @aliases partition-class show,partition-method [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method addPos,partition-method addPos [,partition-method [[,partition-method sAttributes,partition-method sAttributes
+#' @aliases partition-class show,partition-method [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method addPos,partition-method addPos [,partition-method [[,partition-method sAttributes,partition-method sAttributes trim,partition-method tf,partition-method tf
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition
@@ -51,6 +53,16 @@ setClass("partition",
          )
 )
 
+#' trim an object
+#'
+#' @param object the object to be trimmed
+#' @param ... further parameters
+#' @author Andreas Blaette
+#' @docType methods
+#' @noRd
+setGeneric("trim", function(object, ...){standardGeneric("trim")})
+
+setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' Initialize a partition
 #' 
@@ -79,8 +91,9 @@ setClass("partition",
 #' details)
 #' @param label label of the new partition, defaults to "noLabel"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
-#' @param tf either FALSE or TRUE, defaults to TRUE
-#' @param metadata either FALSE or TRUE, defaults to TRUE
+#' @param pAttributes the pAttributes for which term frequencies shall be retrieved
+#' @param metadata either "skip", "minimal", "defined", "all"
+#' @param sAttributesMetadata to define the sAttributes for metadata
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
 #' @param verbose logical, defaults to TRUE
@@ -94,9 +107,21 @@ setClass("partition",
 #' @import methods
 #' @importFrom chron seq.dates
 #' @export partition
-partition <- function(corpus, sAttributes, label=c(""), encoding=NULL, tf=TRUE, metadata=TRUE, method="grep", xml="flat", verbose=TRUE) {
+partition <- function(
+  corpus,
+  sAttributes,
+  label=c(""),
+  encoding=NULL,
+  pAttributes=c("word", "lemma"),
+  metadata="all",
+  sAttributesMetadata=c(),
+  method="grep",
+  xml="flat",
+  verbose=TRUE
+  ) {
   if (verbose==TRUE) message('Setting up partition ', label)
   Partition <- new('partition')
+  if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
   if(is.null(encoding)) {
     Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
@@ -124,15 +149,16 @@ partition <- function(corpus, sAttributes, label=c(""), encoding=NULL, tf=TRUE, 
   }
   if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
-  if (tf==TRUE) {
-    if (verbose==TRUE) message('... computing term frequencies (for p-attribute word)')
-    Partition@tf$word <- .cpos2tf(Partition, "word")
-    if (verbose==TRUE) message('... computing term frequencies (for p-attribute lemma)')
-    Partition@tf$lemma <- .cpos2tf(Partition, "lemma")      
+  if (length(pAttributes>0)) {
+    for (p in pAttributes){
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
+      Partition@tf[[p]] <- .cpos2tf(Partition, p)
+    }
   }
-  if (metadata==TRUE) {
+  if (!metadata %in% c("skip", "defined", "all")) warning("not a valid instruction how to set up metadata")
+  if (metadata != "skip") {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    Partition <- .partition.metadata(Partition, table=TRUE)
+    Partition <- .partition.metadata(Partition, metadata, sAttributesMetadata)
   }
   if (verbose==TRUE) message('... partition is set up\n')
   Partition
@@ -141,15 +167,17 @@ partition <- function(corpus, sAttributes, label=c(""), encoding=NULL, tf=TRUE, 
 #' zoom into a partition
 #' 
 #' add a further specification of a s-attribute to an existing partition
+#' 
 #' @param Partition a partition object
 #' @param sAttribute a list supplying further sAttributes
 #' @param label a label for the new partition
 #' @param method either "in" or "grep"
-#' @param tf logical, whether to compute term frequencies
+#' @param pAttributes character vector, pAttributes for which term frequencies shall be retrieved
+#' @param verbose logical, show progress report or not (defaults to TRUE)
 #' @export zoom
 #' @rdname zoom
 #' @name zoom
-zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=TRUE){
+zoom <- function(Partition, sAttribute, label=c(""), method="in", pAttributes=c("word", "lemma"), verbose=TRUE){
   newPartition <- new("partition")
   newPartition@corpus <- Partition@corpus
   message('Zooming into partition ', label)
@@ -162,11 +190,11 @@ zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=TRUE){
   newPartition <- .zoomingSattributes2cpos(Partition, newPartition, sAttribute, method)
   message('... computing partition size')
   newPartition@size <- .partition.size(newPartition)
-  if (tf==TRUE) {
-    message('... computing term frequencies (for p-attribute word)')
-    newPartition@tf$word <- .cpos2tf(newPartition, "word")
-    message('... computing term frequencies (for p-attribute lemma)')
-    newPartition@tf$lemma <- .cpos2tf(newPartition, "lemma")      
+  if (length(pAttributes)>0) {
+    for (p in pAttributes){
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
+      newPartition@tf[[p]] <- .cpos2tf(newPartition, p)
+    }
   }
   newPartition
 }
@@ -244,80 +272,8 @@ datesPeriod <- function(corpus, dateRange) {
 #'    \item{as.matrix}{(x, pAttribute)}    
 #'    }
 
-#' @name partitionCluster-class
-#' @aliases as.DocumentTermMatrix.partitionCluster as.matrix.partitionCluster as.TermDocumentMatrix.partitionCluster print.partitionCluster partitionMerge,partitionCluster-method partitionMerge.partitionCluster
-#' @docType class
-#' @rdname partitionCluster-class
-NULL
 
 
-
-#' Generate a list of partitions
-#' 
-#' A list of partition objects with fixed s-attributes and one variable
-#' s-attribute is generated
-#' 
-#' If sAttributeVarValues is not given, all values for sAttributeVar in the partition
-#' defined by sAttributesStatic will be retrived and used for defining the
-#' partitions.
-#' While generally S4 methods are used in the driller package, the return is a S3 method.
-#' The reasons is that the number of partitions kept in the cluster is not known before the initialization.
-#' Setting multicore to TRUE will speed up things. Error handling is less benevolent, risk of overheating, no verbose output.
-#' 
-#' @param corpus the CWB corpus to be used
-#' @param sAttributesStatic a list with the definition of a partition that shall be prepared
-#' @param sAttributeVar character vector indicating the s-attribute to be variabel
-#' @param sAttributeVarValues character vector
-#' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
-#' @param tf logical, whether term frequencies shall be generated
-#' @param metadata logical, whether to set up metadata
-#' @param method either 'grep' or 'in'
-#' @return a S3 class 'partitionCluster', which is a list with partition objects
-#' @importFrom parallel mclapply
-#' @export partitionCluster
-#' @aliases partitionCluster addPos,partitionCluster-method
-#' @author Andreas Blaette
-partitionCluster <- function(
-  corpus,
-  sAttributesStatic, sAttributeVar, sAttributeVarValues=c(),
-  encoding=NULL, tf=TRUE, metadata=TRUE, method="grep"
-  ) {
-  multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
-  multicoreMessage <- ifelse(
-    multicore==TRUE,
-    ' (use multicore: TRUE)',
-    ' (use multicore: FALSE)'
-    )
-  message('\nPreparing cluster of partitions', multicoreMessage)
-  cluster <- list()
-  message('... setting up base partition')
-  partitionBase <- partition(corpus, sAttributesStatic, tf=tf, metadata=metadata, method=method, verbose=FALSE)
-  if (is.null(sAttributeVarValues)){
-    message('... getting values of fixed s-attributes')
-    sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionBase@strucs))
-    message('... number of partitions to be initialized: ', length(sAttributeVarValues))
-  }
-  if (multicore==FALSE) {
-    for (sAttribute in sAttributeVarValues){
-      sAttr <- list()
-      sAttr[[sAttributeVar]] <- sAttribute
-      cluster[[sAttribute]] <- zoom(partitionBase, sAttribute=sAttr, label=sAttribute)
-    }
-  } else if (multicore==TRUE) {
-    message('... setting up the partitions')
-    cluster <- mclapply(
-      sAttributeVarValues,
-      function(x) zoom(
-        partitionBase,
-        sAttribute=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
-        label=x
-        )
-      )
-    names(cluster) <- sAttributeVarValues
-  }
-  class(cluster) <- "partitionCluster"
-  cluster
-}
 
 
 #' add size of the partition to a partition object
@@ -352,26 +308,8 @@ function(object){
   else {cat(object@size, "tokens\n")}
   cat(sprintf("%-21s", "Term frequencies:"))
   if (length(object@tf)==0) {cat("not available\n")}
-  else {cat("available\n")}
+  else {cat("available for", paste(names(object@tf), collapse=", "), "\n")}
 })
-
-#' Print method for partitionCluster Objects 
-#'
-#' Prints the number of partitions in the cluster and returns the respective sizes
-#' 
-#' @param object the partitionCluster object
-#' @S3method print partitionCluster
-#' @noRd
-print.partitionCluster <- function (object) {
-  summary <- cbind(
-    name=names(object),
-    size=lapply(object, function(x) x@size)
-  )
-  rownames(summary) <- c(1:nrow(summary))
-  cat("** PartitionCluster object: **\n")
-  cat('There are', length(object), 'partition objects: (total:', sum(as.integer(summary[,2])), 'token)\n')
-  print(summary)
-}
 
 
 #' add metadata information to a partition object
@@ -386,15 +324,21 @@ print.partitionCluster <- function (object) {
 #' values. It can be omitted for performance and memora reasons.
 #' 
 #' @param partition a partition object
-#' @param table logical, defaults to FALSE
+#' @param metadata the kind of metadata setup ("skip", "minimal", "defined", "all")
+#' @param sAttributesMetadata a character vector
+#' @param table whether to setup metadata table
 #' @return A 'metadata' item will be added to the partition object, with the
 #' two following subitems:
 #' table - the table described above
 #' values - a list of character vectors
 #' @author Andreas Blaette
 #' @noRd
-.partition.metadata <- function(Partition, table=FALSE) {
-  m <- cqi_attributes(Partition@corpus, 's')
+.partition.metadata <- function(Partition, metadata, sAttributesMetadata, table=TRUE) {
+  if (metadata == "all") {
+    m <- cqi_attributes(Partition@corpus, 's')
+  } else if (metadata == "defined") {
+    m <- sAttributesMetadata
+  }
   if (table==TRUE) {
     if (Partition@xml == "flat") {
       Partition@metadata$table <- data.frame(sapply(m, USE.NAMES=TRUE, function(x) cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)))
@@ -497,15 +441,6 @@ print.partitionCluster <- function (object) {
   Partition
 }
 
-#' add POS attributes
-#'
-#' @param object the object to be passed
-#' @param ... further parameters
-#' @author Andreas Blaette
-#' @export
-#' @docType methods
-#' @rdname addPos-methods
-#' @noRd
 setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 
 #' Fill slot 'pos' of a partition object with tables giving the statistic of pos
@@ -519,15 +454,17 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' @docType methods
 #' @exportMethod addPos
 #' @noRd
-setMethod("addPos", "partition",
-          function(object, pos){
+setMethod("addPos", "partition", function(object, pos){
+  message("Adding pos information to partition object ", object@label)
   cpos <- unlist(apply(object@cpos, 1, function(x) c(x[1]:x[2])))
+  message("... retrieving corpus information")
   bag <- data.frame(
     word=cqi_cpos2id(paste(object@corpus, '.word', sep=''), cpos),
     lemma=cqi_cpos2id(paste(object@corpus, '.lemma', sep=''), cpos),
     pos=cqi_cpos2id(paste(object@corpus, '.pos', sep=''), cpos),
     tf <- rep(1, length(cpos))
   )
+  message("... doing the calculations")
   for (pAttr in pos) {
     object@pos[[pAttr]] <- list()
     crosstab <- table(bag[,c(pAttr, "pos")])
@@ -543,94 +480,51 @@ setMethod("addPos", "partition",
   object
 })
 
-#' perform addPos and further adjustments for all partitions in a cluster
-#' 
-#' @param cluster a partitionCluster object
-#' @param pos character vector: "word", "lemma", or both
-#' @param posFilter pos to keep
-#' @param minFrequency minimum frequency of tokens
-#' @export adjust
-#' @rdname adjust
-#' @name adjust
-adjust <- function(cluster, pos=c(""), posFilter=c(), minFrequency=0){
-  pimping <- function(p) {
-    new <- addPos(p, pos)
-    if (!is.null(posFilter)) {
-      for (i in pos){
-        new@tf[[i]] <- new@tf[[i]][which(new@pos[[i]]$max %in% posFilter),]
-      }
-    }
-    if (minFrequency > 0){
-      for (i in pos){
-        new@tf[[i]] <- new@tf[[i]][which(new@tf[[i]][,"tf"]>=minFrequency),]
-      }
-    }
-    new 
-  }
-  if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-    pimpedCluster <- mclapply(cluster, FUN = pimping)
-  } else {
-    pimpedCluster <- lapply(cluster, FUN=pimping)    
-  }
-  class(pimpedCluster) <- "partitionCluster"
-}
 
-setGeneric("partitionMerge", function(object,...){standardGeneric("partitionMerge")})
-
-#' Merge the partitions in a cluster into one partition
+#' trim partition object
 #' 
-#' The partitions in a cluster object will be merged into one new partition
+#' Augment the partition object by strucs and cpos
 #' 
-#' The function aggregates several partitions into one partition. The
-#' prerequisite for this function to work properly is that there are no
-#' overlaps of the different partitions that are to be summarized.
-#' Encodings and the root node need to be identical, too.
-#' 
-#' @param cluster a cluster object
-#' @param label the label for the new partition
-#' @return An object of the class 'partition. See partition for the
-#' details on the class.
+#' @param object a partition class object
+#' @param pos character vector - pos statistic for lemma or word
+#' @param minFrequency an integer
+#' @param posFilter a character vector
+#' @return a trimmed partition object
 #' @author Andreas Blaette
-#' @S3method partitionMerge partitionCluster
+#' @docType methods
+#' @exportMethod trim
 #' @noRd
-partitionMerge.partitionCluster <- function(cluster, label){
-  cat('There are', length(cluster), 'partitions to be merged\n')
-  corpora <- unique(unlist(lapply(names(cluster), function(x)cluster[[x]]@corpus)))
-  if (!all(corpora==cluster[[1]]@corpus)) print("WARNING: This function will not work correctly, as the cluster comprises different corpora")
-  message('... merging the struc vectors')
-  strucs <- c()
-  for (name in names(cluster)) {strucs <- union(strucs, cluster[[name]]@strucs)}
-  message('... generating corpus positions')
-  cpos <- data.matrix(t(data.frame(lapply(strucs, function(x){cqi_struc2cpos(paste(corpora,'.', 'text', sep=''),x)}))))
-  rownames(cpos) <- NULL
-  partition <- new("partition")
-  partition@corpus <- corpora
-  partition@strucs <- strucs
-  partition@cpos <- cpos
-  partition@encoding <- unique(unlist(lapply(names(cluster), function(x)cluster[[x]]@encoding)))
-  partition@sAttributeStrucs <- unique(unlist(lapply(names(cluster), function(x)cluster[[x]]@sAttributeStrucs)))
-  partition@explanation=c(paste("this partition is a merger of the partitions", paste(names(cluster), collapse=', ')))
-  cat('... computing corpus size\n')
-  partition@size <- .partition.size(partition)
-  cat('... computing term frequencies (for p-attribute word)\n')
-  tfmatrix <- .cluster2tfmatrix(cluster, 'word')
-  partition@tf$word <- data.frame(
-    row.names=rownames(tfmatrix$abs),
-    id=cqi_str2id(paste(corpora,'.', 'word',sep=''), rownames(tfmatrix$abs)),
-    wc=rowSums(tfmatrix$abs)
-  ) 
-  cat('... computing term frequencies (for p-attribute lemma)\n')
-  tfmatrix <- .cluster2tfmatrix(cluster, 'lemma')
-  partition@tf$lemma <- data.frame(
-    row.names=rownames(tfmatrix$abs),
-    id=cqi_str2id(paste(corpora,'.', 'word',sep=''), rownames(tfmatrix$abs)),
-    wc=rowSums(tfmatrix$abs)
-  )                      
-  cat('... setting up metadata (table and list of values)\n')
-  partition <- .partition.metadata(partition, table=TRUE)
-  partition@label <- label
-  partition
-}
+setMethod("trim", "partition", function(object, pos, minFrequency=0, posFilter=c(),  ...){
+  new <- object
+  message("Trimming partition ", new@label)
+  if (!is.null(posFilter)) {
+    if (length(new@pos) == 0 ){
+      message("... no pos at all")
+      new <- addPos(new, pos)
+    } else if (!pos %in% names(new@pos)){
+      message("... specific pos missing")
+      pimpedCluster <- addPos(new, pos)
+    }
+    for (i in pos){
+      hits <- which(new@pos[[i]]$max %in% posFilter)
+      new@tf[[i]] <- new@tf[[i]][hits,]
+      new@pos[[i]]$abs <- new@pos[[i]]$abs[hits,]
+      new@pos[[i]]$rel <- new@pos[[i]]$rel[hits,]
+      new@pos[[i]]$max <- new@pos[[i]]$max[hits]
+    }
+  }
+  if (minFrequency > 0){
+    for (i in pos){
+      hits <- which(new@tf[[i]][,"tf"] >= minFrequency)
+      new@tf[[i]] <- new@tf[[i]][hits,]
+      new@pos[[i]]$abs <- new@pos[[i]]$abs[hits,]
+      new@pos[[i]]$rel <- new@pos[[i]]$rel[hits,]
+      new@pos[[i]]$max <- new@pos[[i]]$max[hits]
+    }
+  }
+  new 
+})
+
 
 #' @exportMethod [[
 setMethod('[[', 'partition', function(x,i){
@@ -653,77 +547,6 @@ setMethod('[', 'partition', function(x,i){
   hits
 }
 )
-
-#' merge either two partitionx matrices, or a tf matrix and a partition
-#' matrix
-#' 
-#' The function either takes two partition objects with tf lists as an input,
-#' or a tf matrix and a tf list. It will then expand the first list by the
-#' second list. The function is used by cluster2tfmatrix.
-#' 
-#' @param x either a partition object with tf frequencies or a tf-matrix
-#' @param y a partition object with tf frequencies
-#' @param pattribute a p-attribute
-#' @return you get a tf matrix with the tokens in the rows and the subcorpora
-#' in the columns
-#' @author Andreas Blaette
-#' @noRd
-.partition2tfmatrix <- function(x, y, pattribute){
-  b <- cbind(rownames(y@tf[[pattribute]]), y@tf[[pattribute]][,2])    
-  if (class(x)=='partition'){
-    partition.labels <- x@label
-    a <- cbind(rownames(x@tf[[pattribute]]), x@tf[[pattribute]][,2])
-  }
-  else {
-    partition.labels <- colnames(x)
-    a <- cbind(rownames(x), x)
-  }
-  m <- merge(a,b, by.x=1, by.y=1, all=TRUE)
-  rownames(m) <- m[,1]
-  m <- m[,2:ncol(m)]
-  colnames(m) <- c(partition.labels, y@label)  
-  m
-}
-
-
-
-
-#' prepare a tf-matrix based on a partition cluster that includes frequency
-#' counts
-#' 
-#' The function merges the frequency counts (for p-attribute 'word' or 'token')
-#' that are contained in the partition objects included in a partition object
-#' into a tf matrix.
-#' 
-#' The function merges the given frequency lists using strings. The function
-#' may be potentially faster, it uses ids, which has not been implemented so
-#' far.
-#' 
-#' @param cluster cluster of partition objects
-#' @param pattribute typically 'word' or 'token'
-#' @return A list with the following items:
-#' abs - a matrix with the absolute frequencies
-#' rel - a matrix with the relative frequencies
-#' sizes - a vector with the sizes of the subcorpora
-#' @author Andreas Blaette
-#' @noRd
-.cluster2tfmatrix <- function(cluster, pattribute){
-  cat(.takeoff(), '... there are',length(cluster),'clusters to merge\n')
-  cat(.takeoff(), '... merging frequency lists 1 and 2 /', cluster[[1]]@label,'and', cluster[[2]]@label,'\n')
-  tf <- list()
-  tf$abs <- .partition2tfmatrix(cluster[[1]], cluster[[2]], pattribute)
-  if (length(cluster)>2){
-    for (i in 3:length(cluster)){
-      cat(.takeoff(), '... proceeding to merger', i, '- adding', cluster[[i]]@label,'\n')
-      tf$abs <- .partition2tfmatrix(tf$abs, cluster[[i]], pattribute)
-    }
-  }
-  tf$abs <- matrix(as.numeric(as.vector(unlist(tf$abs))), nrow=nrow(tf$abs), dimnames=dimnames(tf$abs))
-  tf$abs[is.na(tf$abs)] <- 0
-  tf$sizes <- sapply(names(cluster), function(x)sum(cluster[[x]]@tf[[pattribute]][,2]))
-  tf$rel <- tf$abs/tf$sizes
-  tf
-}
 
 
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
@@ -760,3 +583,37 @@ setMethod(
   }
   return(tolower(encoding))
 }
+
+#' @param object a partition object
+#' @param token may also be a character vector length > 1
+#' @param pAttribute asdf
+#' @param rel whether to return absolute or relative frequencies
+#' @docType method
+#' @exportMethod tf
+#' @noRd
+setMethod("tf", "partition", function(object, token, pAttribute=c()){
+  if (length(pAttribute) == 0){
+    if (length(object@tf) > 1){
+      warning("several tf lists available, please state pAttribute explicitly")
+    } else if (length(object@tf) == 0){
+      warning("no tf lists available - at least one needs to be set up")
+    } else {
+      pAttribute <- names(object@tf)[1]
+    }
+  }
+  if (is.character(token) == TRUE){
+    token <- driller:::.adjustEncoding(token, object@encoding)
+    tab <- data.frame(
+      token=token,
+      tfAbs=object@tf[[pAttribute]][token,"tf"],
+      tfRel=object@tf[[pAttribute]][token,"tf"]/object@size)
+  } else if(is.numeric(token)){
+    relevantRows <- object@tf[[pAttribute]][object@tf$word$id %in% token,]
+    tab <- data.frame(
+      token=rownames(relevantRows),
+      tfAbs=relevantRows$tf,
+      tfRel=relevantRows$tf/object@size
+      )
+  }
+  tab
+})

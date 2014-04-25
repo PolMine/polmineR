@@ -11,10 +11,9 @@
 #' @param posFilter exclude words with a POS tag not in this list
 #' @param tokenFilter tokens to exclude from table
 #' @author Andreas Blaette
-#' @name trim
-#' @rdname trim
-#' @export trim
-trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
+#' @exportMethod trim
+#' @noRd
+setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
   test <- object@statisticalTest
   if (maxRank==0) maxRank=nrow(object@stat)
   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
@@ -33,7 +32,7 @@ trim <- function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter
     object@stat<- object@stat[which(object@stat[,"pos"] %in% posFilter),]
   }
   object
-}
+})
 
 
 

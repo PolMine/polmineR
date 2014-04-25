@@ -31,6 +31,7 @@ setClass("kwic",
 #'     \item{\code{query}:}{Object of class \code{"character"} node examined }
 #'     \item{\code{frequency}:}{Object of class \code{"numeric"} number of hits }
 #'     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
+#'     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
 #'     \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
 #'     \item{\code{left.context}:}{Object of class \code{"numeric"} number of tokens to the right }
 #'     \item{\code{right.context}:}{Object of class \code{"numeric"} number of tokens to the left }
@@ -50,10 +51,11 @@ setClass("kwic",
 #'     \item{summary}{core statistical information}
 #'     \item{[}{index the object}
 #'     \item{[[}{specific collocates}
+#'     \item{trim}{trim the object}
 #'    }
 #'     
 #' @name context-class
-#' @aliases show,context-method [,context-method [[,context-method summary,context-method
+#' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method [[,context-method summary,context-method trim,context-method
 #' @docType class
 #' @exportClass kwic
 #' @rdname context-class
@@ -61,6 +63,7 @@ setClass("context",
          representation(query="character",
                         frequency="numeric",
                         partition="character",
+                        partitionSize="numeric",
                         kwic="kwic",
                         left.context="numeric",
                         right.context="numeric",
@@ -75,6 +78,8 @@ setClass("context",
                         statisticalSummary="data.frame"
                         )
 )
+
+
 
 #' concordances (S4 class)
 #' 
@@ -163,6 +168,7 @@ context <- function(
   ctxt@encoding <- partition@encoding
   ctxt@posFilter <- posFilter
   ctxt@partition <- partition@label
+  ctxt@partitionSize <- partition@size
   ctxt@statisticalTest <- statisticalTest
   if (verbose==TRUE) message('Analysing the context for node word "', query,'"')
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
@@ -234,43 +240,6 @@ context <- function(
 }
 
 
-#' Compute a set of context analyses
-#' 
-#' @param query either a character vector or a cqpQuery
-#' @param partitionCluster a partitionCluster object
-#' @param pAttribute p-attribute of the query
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
-#' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not be empty!!
-#' @param filterType either "include" or "exclude"
-#' @param verbose report progress, defaults to TRUE
-#' @aliases contextCluster as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method
-#' 
-#' @export contextCluster
-#' @rdname contextCluster
-#' @name contextCluster
-contextCluster <- function(
-  query, partitionCluster, pAttribute="useControls",
-  leftContext=0, rightContext=0,
-  minSignificance=-1, posFilter="useControls", filterType="useControls",
-  verbose=TRUE
-  ) {
-  contextCluster <- sapply(
-    partitionCluster,
-    function(x) context(
-      query, x,
-      pAttribute=pAttribute,
-      leftContext=leftContext, rightContext=rightContext,
-      minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-      verbose=verbose
-      ),
-    simplify = TRUE,
-    USE.NAMES = TRUE
-    )
-  class(contextCluster) <- "contextCluster"
-  contextCluster
-} 
 
 #' KWIC output
 #' 

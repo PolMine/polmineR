@@ -1,6 +1,13 @@
+v0.4.24
+ * tf method for partition and partitionCluster
+ * summary for partitionCluster
+ * selective setup of metadata for speeding up things
+
 v0.4.23
  * stopwords option introduced in context function for filtering and brute disambiguation
- * cqp class thrown out again - it does not improve usability
+ * cqpQuery class thrown out again - it does not improve usability
+ * partitionCluster and contextCluster are now S4 classes, with some more methods
+ * adjust function is now trim method for contextCluster objects
 
 v0.4.22
  * zoom function added to specify partitions

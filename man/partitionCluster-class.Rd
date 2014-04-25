@@ -1,28 +1,58 @@
 \docType{class}
 \name{partitionCluster-class}
-\alias{as.DocumentTermMatrix.partitionCluster}
-\alias{as.TermDocumentMatrix.partitionCluster}
-\alias{as.matrix.partitionCluster}
+\alias{+,partitionCluster,ANY-method}
+\alias{+,partitionCluster-method}
+\alias{[,partitionCluster,ANY,ANY,ANY-method}
+\alias{[,partitionCluster-method}
+\alias{[[,partitionCluster-method}
+\alias{addPos,partitionCluster-method}
+\alias{as.DocumentTermMatrix,partitionCluster-method}
+\alias{as.TermDocumentMatrix,partitionCluster-method}
+\alias{as.matrix,partitionCluster-method}
+\alias{as.sparseMatrix}
+\alias{as.sparseMatrix,partitionCluster-Method}
+\alias{merge,partitionCluster-method}
+\alias{names,partitionCluster-method}
 \alias{partitionCluster-class}
-\alias{partitionMerge,partitionCluster-method}
-\alias{partitionMerge.partitionCluster}
-\alias{print.partitionCluster}
-\title{S3 partitionCluster class}
+\alias{show,partitionCluster-method}
+\alias{summary,partitionCluster-method}
+\alias{tf,partitionCluster-method}
+\alias{trim}
+\alias{trim,partitionCluster-method}
+\alias{trim-method}
+\title{partitionCluster class}
 \description{
-it's simply a list with partition (class) objects
+A cluster of partition objects.
 }
 \section{Slots}{
-  \describe{ \item{\code{partition}:}{Object of class
-  \code{"partition"} } }
+  \describe{ \item{\code{partitions}:}{Object of class
+  \code{"list"} the partitions making up the cluster }
+  \item{\code{corpus}:}{Object of class \code{"character"}
+  the CWB corpus the partition is based on }
+  \item{\code{sAttributesFixed}:}{Object of class
+  \code{"list"} fixed sAttributes }
+  \item{\code{encoding}:}{Object of class
+  \code{"character"} encoding of the corpus }
+  \item{\code{explanation}:}{Object of class
+  \code{"character"} an explanation of the partition }
+  \item{\code{xml}:}{Object of class \code{"character"}
+  whether the xml is flat or nested } }
 }
 
 \section{Methods}{
-  \describe{ \item{print}{get essential information about
-  the partitionCluster}
-  \item{partitionMerge}{(partitionCluster, label) merge the
-  partitions in a partitionCluster into one partition}
-  \item{as.DocumentTermMatrix}{(x, pAttribute)}
-  \item{as.TermDocumentMatrix}{(x, pAttribute)}
-  \item{as.matrix}{(x, pAttribute)} }
+  \describe{ \item{show}{\code{signature(object =
+  "partitionCluster")}: Display essential information }
+  \item{addPos}{\code{signature(object="partitionCluster")}:
+  add list with most frequent pos for a token }
+  \item{tf}{\code{signature(object="partitionCluster")}:
+  get term frequencies }
+  \item{trim}{\code{signature(object="partitionCluster")}:
+  trim a partitionCluster object } \item{[}{get frequency
+  of a query} \item{[[}{get a partition within the cluster}
+  \item{+}{\code{signature(object = "partitionCluster")}:
+  combine two partitionClusters into a new one } }
+}
+\author{
+Andreas Blaette
 }
 

@@ -1,0 +1,26 @@
+\docType{class}
+\name{contextCluster-class}
+\alias{[,contextCluster,ANY,ANY,ANY-method}
+\alias{[,contextCluster-method}
+\alias{[[,contextCluster-method}
+\alias{as.TermContextCluster,contextCluster-method}
+\alias{as.TermContextMatrix}
+\alias{contextCluster-class}
+\alias{show,contextCluster-method}
+\alias{summary,contextCluster-method}
+\title{S4 contextCluster class}
+\description{
+class to organize information of multiple context analyses
+}
+\section{Slots}{
+  \describe{ \item{\code{contexts}:}{Object of class
+  \code{"list"} a list of context objects } }
+}
+
+\section{Methods}{
+  \describe{ \item{show}{output of core information}
+  \item{summary}{core statistical information}
+  \item{[}{specific collocates} \item{[[}{specific
+  collocates} }
+}
+

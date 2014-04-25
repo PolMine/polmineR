@@ -6,7 +6,8 @@
 \usage{
 context(query, partition, pAttribute = "useControls", leftContext = 0,
   rightContext = 0, minSignificance = 0, posFilter = "useControls",
-  filterType = "useControls", verbose = TRUE)
+  filterType = "useControls", stopwords = c(), statisticalTest = "LL",
+  verbose = TRUE)
 }
 \arguments{
   \item{query}{query, which may by a character vector or a
@@ -28,6 +29,11 @@ context(query, partition, pAttribute = "useControls", leftContext = 0,
   included - may not be empty!!}
 
   \item{filterType}{either "include" or "exclude"}
+
+  \item{stopwords}{exclude a query hit from analysis if
+  stopword(s) is/are in context}
+
+  \item{statisticalTest}{either "LL" (default) or "pmi"}
 
   \item{verbose}{report progress, defaults to TRUE}
 }

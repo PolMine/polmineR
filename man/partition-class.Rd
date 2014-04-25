@@ -10,10 +10,12 @@
 \alias{sAttributes}
 \alias{sAttributes,partition-method}
 \alias{show,partition-method}
+\alias{tf}
+\alias{tf,partition-method}
+\alias{trim,partition-method}
 \title{partition class}
 \description{
-In the 'driller'-package, the class 'partition' is the
-basis for most other operations.
+Basic class for for almost anything in the driller package.
 }
 \section{Slots}{
   \describe{ \item{\code{label}:}{Object of class
@@ -46,9 +48,12 @@ basis for most other operations.
   "partition")}: Display essential information }
   \item{sAttributes}{output of s-attributes in a partition}
   \item{addPos}{\code{signature(object="partition")}: add
-  list with most frequent pos for a token } \item{[}{get
-  frequency of a query} \item{[[}{shortcut to concordances
-  for a query} }
+  list with most frequent pos for a token }
+  \item{trim}{\code{signature(object="partition")}: trim a
+  partition object }
+  \item{tf}{\code{signature(object="partition")}: get term
+  frequencies } \item{[}{get frequency of a query}
+  \item{[[}{shortcut to concordances for a query} }
 }
 \author{
 Andreas Blaette

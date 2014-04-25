@@ -6,7 +6,8 @@
 \usage{
 contextCluster(query, partitionCluster, pAttribute = "useControls",
   leftContext = 0, rightContext = 0, minSignificance = -1,
-  posFilter = "useControls", filterType = "useControls", verbose = TRUE)
+  posFilter = "useControls", filterType = "useControls", stopwords = c(),
+  verbose = TRUE)
 }
 \arguments{
   \item{query}{either a character vector or a cqpQuery}
@@ -27,6 +28,9 @@ contextCluster(query, partitionCluster, pAttribute = "useControls",
   included - may not be empty!!}
 
   \item{filterType}{either "include" or "exclude"}
+
+  \item{stopwords}{discard a hit if stopwords occur in
+  context}
 
   \item{verbose}{report progress, defaults to TRUE}
 }

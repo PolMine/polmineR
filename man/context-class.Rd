@@ -1,10 +1,12 @@
 \docType{class}
 \name{context-class}
+\alias{[,context,ANY,ANY,ANY-method}
 \alias{[,context-method}
 \alias{[[,context-method}
 \alias{context-class}
 \alias{show,context-method}
 \alias{summary,context-method}
+\alias{trim,context-method}
 \title{S4 context class}
 \description{
 class to organize information of context analysis
@@ -15,7 +17,9 @@ class to organize information of context analysis
   \item{\code{frequency}:}{Object of class \code{"numeric"}
   number of hits } \item{\code{partition}:}{Object of class
   \code{"character"} the partition the analysis is based on
-  } \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
+  } \item{\code{partitionSize}:}{Object of class
+  \code{"numeric"} the size of the partition }
+  \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
   \item{\code{left.context}:}{Object of class
   \code{"numeric"} number of tokens to the right }
   \item{\code{right.context}:}{Object of class
@@ -43,6 +47,6 @@ class to organize information of context analysis
   \describe{ \item{show}{output of core information}
   \item{summary}{core statistical information}
   \item{[}{index the object} \item{[[}{specific collocates}
-  }
+  \item{trim}{trim the object} }
 }
 

@@ -1,13 +1,14 @@
 Package: driller
 Type: Package
 Title: driller
-Version: 0.4.23
-Date: 2014-04-15
+Version: 0.4.24
+Date: 2014-04-22
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
     rcqp,
-    tm
+    tm,
+    Matrix
 Imports:
     chron,
     shiny,

@@ -114,16 +114,16 @@ If you work with a flat XML structure, the order of the provided s-attributes ma
 \section{Getting a tm TermDocumentMatrix}
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
 <<cluster, echo=TRUE, results="tex", tidy=FALSE, message=FALSE>>=
-parties <- partitionCluster(
-  corpus="PLPRBTTXT",
-  sAttributesStatic=list(text_type="speech"),
-  sAttributeVar="text_party"
-  )
-tdm <- as.TermDocumentMatrix(parties, "word")
-class(tdm) # to see what it is
-show(tdm)
-m <- as.matrix(tdm) # turn it into an ordinary matrix
-m[c("Integration", "Zuwanderung", "Migration"),]
+# parties <- partitionCluster(
+#   corpus="PLPRBTTXT",
+#   sAttributesStatic=list(text_type="speech"),
+#   sAttributeVar="text_party"
+#   )
+# tdm <- as.TermDocumentMatrix(parties, "word")
+# class(tdm) # to see what it is
+# show(tdm)
+# m <- as.matrix(tdm) # turn it into an ordinary matrix
+# m[c("Integration", "Zuwanderung", "Migration"),]
 @
 
 

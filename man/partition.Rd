@@ -2,8 +2,10 @@
 \alias{partition}
 \title{Initialize a partition}
 \usage{
-partition(corpus, sAttributes, label = c(""), encoding = NULL, tf = TRUE,
-  metadata = TRUE, method = "grep", xml = "flat", verbose = TRUE)
+partition(corpus, sAttributes, label = c(""), encoding = NULL,
+  pAttributes = c("word", "lemma"), metadata = "all",
+  sAttributesMetadata = c(), method = "grep", xml = "flat",
+  verbose = TRUE)
 }
 \arguments{
   \item{corpus}{the CWB-corpus to be used}
@@ -19,9 +21,14 @@ partition(corpus, sAttributes, label = c(""), encoding = NULL, tf = TRUE,
   registry file of the corpus (charset="...") will be used
   b}
 
-  \item{tf}{either FALSE or TRUE, defaults to TRUE}
+  \item{pAttributes}{the pAttributes for which term
+  frequencies shall be retrieved}
 
-  \item{metadata}{either FALSE or TRUE, defaults to TRUE}
+  \item{metadata}{either "skip", "minimal", "defined",
+  "all"}
+
+  \item{sAttributesMetadata}{to define the sAttributes for
+  metadata}
 
   \item{method}{either 'grep' or 'in' to specify the
   filtering method to get relevant strucs}
