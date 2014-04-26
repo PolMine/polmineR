@@ -26,11 +26,16 @@
 #'    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
 #'    \item{trim}{\code{signature(object="partition")}: trim a partition object }
 #'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
+#'    \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
 #'    \item{[}{get frequency of a query}
 #'    \item{[[}{shortcut to concordances for a query}
 #'    }
 #' 
-#' @aliases partition-class show,partition-method [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method addPos,partition-method addPos [,partition-method [[,partition-method sAttributes,partition-method sAttributes trim,partition-method tf,partition-method tf
+#' @aliases partition-class show,partition-method
+#'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method
+#'   addPos,partition-method addPos [,partition-method [[,partition-method
+#'   sAttributes,partition-method sAttributes trim,partition-method
+#'   tf,partition-method tf as.partitionCluster as.partitionCluster,partition-method
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition

@@ -1,6 +1,8 @@
 \docType{class}
 \name{partitionCluster-class}
 \alias{+,partitionCluster,ANY-method}
+\alias{+,partitionCluster,partition-method}
+\alias{+,partitionCluster,partitionCluster-method}
 \alias{+,partitionCluster-method}
 \alias{[,partitionCluster,ANY,ANY,ANY-method}
 \alias{[,partitionCluster-method}

@@ -22,15 +22,18 @@
 #'   a partition within the cluster} \item{+}{\code{signature(object =
 #'   "partitionCluster")}: combine two partitionClusters into a new one } }
 #'   
-#' @aliases partitionCluster-class show,partitionCluster-method
-#'   addPos,partitionCluster-method [,partitionCluster-method
-#'   [[,partitionCluster-method as.DocumentTermMatrix,partitionCluster-method
-#'   as.matrix,partitionCluster-method
+#' @aliases partitionCluster-class show,partitionCluster-method 
+#'   addPos,partitionCluster-method [,partitionCluster-method 
+#'   [[,partitionCluster-method as.DocumentTermMatrix,partitionCluster-method 
+#'   as.matrix,partitionCluster-method 
 #'   as.TermDocumentMatrix,partitionCluster-method merge,partitionCluster-method
 #'   trim,partitionCluster-method merge,partitionCluster-method trim-method trim
-#'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix
-#'   +,partitionCluster-method names,partitionCluster-method
-#'   summary,partitionCluster-method tf,partitionCluster-method +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
+#'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix 
+#'   +,partitionCluster-method names,partitionCluster-method 
+#'   summary,partitionCluster-method tf,partitionCluster-method 
+#'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
+#'   +,partitionCluster,partition-method
+#'   +,partitionCluster,partitionCluster-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -133,7 +136,6 @@ setMethod("show", "partitionCluster", function (object) {
   stat <- summary(object)
   cat('** PartitionCluster object: **\n')
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@partitions), '\n')
-  cat(sprintf('%-25s', 'Total number of tokens:'), sum(as.integer(stat[,"token"])), '\n\n')
   # same code as in show-method for partition
   sFix <- unlist(lapply(
     names(object@sAttributesFixed),
@@ -141,6 +143,7 @@ setMethod("show", "partitionCluster", function (object) {
   ))
   cat(sprintf("%-25s", "sAttributes Fixed:"), sFix[1], '\n')
   if (length(sFix)>1) {for (i in length(sFix)){cat(sprintf("%-25s", " "), sFix[i], '\n')}}
+  cat("\n")
   print(stat, quote=FALSE)
 })
 
@@ -154,16 +157,23 @@ setMethod("show", "partitionCluster", function (object) {
 setMethod("summary", "partitionCluster", function (object) {
   summary <- data.frame(
     partition=names(object@partitions),
-    token=unlist(lapply(object@partitions, function(x) x@size))
-#     wordCountTotal=lapply(object@partitions, function(x) sum(x@tf$word[,"tf"])),
-#     wordUnique=lapply(object@partitions, function(x) nrow(x@tf$word)),
-#     lemmaCountTotal=lapply(object@partitions, function(x) sum(x@tf$lemma[,"tf"])),
-#     lemmaUnique=lapply(object@partitions, function(x) nrow(x@tf$lemma))
+    token=unlist(lapply(object@partitions, function(x) x@size)),
+    stringsAsFactors=FALSE
    )
+  pAttr <- unique(unlist(lapply(object@partitions, function(x) names(x@tf))))
+  raw <- lapply(pAttr, function(x) unlist(lapply(object@partitions, function(y) nrow(y@tf[[x]]))))
+  raw <- do.call(data.frame, raw)
+  colnames(raw) <- paste("unique_", pAttr, sep="")
+  summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
+  totalRow <- c(
+    "TOTAL",
+    sum(summary[, "token"]),
+    lapply(pAttr, function(x) length(unique(unlist(lapply(object@partitions, function(y) y@tf[[x]][,1])))))
+  )
+  summary <- rbind(summary, totalRow)
   rownames(summary) <- c(1:nrow(summary))
   summary
 })
-
 
 
 #' perform addPos and further adjustments for all partitions in a cluster
@@ -172,14 +182,20 @@ setMethod("summary", "partitionCluster", function (object) {
 #' @param pos character vector: "word", "lemma", or both
 #' @param minFrequency minimum frequency of tokens
 #' @param posFilter pos to keep
+#' @param drop partitionObjects you want to drop, specified either by number or by label
 #' @exportMethod trim
 #' @noRd
-setMethod("trim", "partitionCluster", function(object, pos, minFrequency=0, posFilter=c(),  ...){
+setMethod("trim", "partitionCluster", function(object, pos, minFrequency=0, posFilter=c(),  drop=c(), ...){
   pimpedCluster <- object
-  if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-    pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))
-  } else {
-    pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))    
+  if (minFrequency !=0 || !is.null(posFilter)){
+    if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
+      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))
+    } else {
+      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))    
+    }
+  }
+  for (i in drop){
+    pimpedCluster@partitions[[i]] <- NULL
   }
   pimpedCluster
 })
@@ -387,7 +403,7 @@ setMethod("names", "partitionCluster", function(x){
 })
 
 #' @exportMethod +
-setMethod("+", "partitionCluster", function(e1, e2){
+setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
   newPartition <- new("partitionCluster")
   newPartition@partitions <- c(e1@partitions, e2@partitions)
   corpus <- unique(e1@corpus, e2@corpus)
@@ -396,6 +412,15 @@ setMethod("+", "partitionCluster", function(e1, e2){
   xml <- "not available"
   newPartition
 })
+
+#' @exportMethod +
+setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2){
+  if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
+  e1@partitions[[length(e1@partitions)+1]] <- e2
+  names(e1@partitions)[length(e1@partitions)] <- e2@label
+  e1
+})
+
 
 #' @exportMethod tf
 setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=FALSE){
@@ -413,4 +438,17 @@ setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=
   tab <- xtabs(tf~partition+token, data=tab)
   tab <- as.data.frame(as.matrix(unclass(tab)))
   tab
+})
+
+setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
+
+#' @exportMethod as.partitionCluster
+setMethod("as.partitionCluster", "partition", function(object){
+ newCluster <- new("partitionCluster")
+ newCluster@partitions[[1]] <- object
+ names(newCluster@partitions)[1] <- object@label
+ newCluster@corpus <- object@corpus
+ newCluster@encoding <- object@encoding
+ newCluster@explanation <- c("derived from a partition object")
+ newCluster
 })
