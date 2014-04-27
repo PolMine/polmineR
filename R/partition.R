@@ -449,35 +449,30 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' Augment the partition object by strucs and cpos
 #' 
 #' @param object a partition class object
-#' @param pos character vector - pos statistic for lemma or word
+#' @param pAttribute character vector - pos statistic for lemma or word
 #' @return an augmented partition object (includes pos now)
 #' @author Andreas Blaette
 #' @docType methods
 #' @exportMethod addPos
 #' @noRd
-setMethod("addPos", "partition", function(object, pos){
+setMethod("addPos", "partition", function(object, pAttribute){
+  if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
   message("Adding pos information to partition object ", object@label)
   cpos <- unlist(apply(object@cpos, 1, function(x) c(x[1]:x[2])))
   message("... retrieving corpus information")
   bag <- data.frame(
-    word=cqi_cpos2id(paste(object@corpus, '.word', sep=''), cpos),
-    lemma=cqi_cpos2id(paste(object@corpus, '.lemma', sep=''), cpos),
-    pos=cqi_cpos2id(paste(object@corpus, '.pos', sep=''), cpos),
-    tf <- rep(1, length(cpos))
+    token=cqi_cpos2id(paste(object@corpus, '.', pAttribute, sep=''), cpos),
+    pos=cqi_cpos2id(paste(object@corpus, '.pos', sep=''), cpos)
   )
   message("... doing the calculations")
-  for (pAttr in pos) {
-    object@pos[[pAttr]] <- list()
-    crosstab <- table(bag[,c(pAttr, "pos")])
-    rownames(crosstab) <- cqi_id2str(paste(object@corpus, '.', pAttr, sep=''), as.integer(rownames(crosstab)))
-    colnames(crosstab) <- cqi_id2str(paste(object@corpus, '.pos', sep=''), as.integer(colnames(crosstab)))
-    object@pos[[pAttr]][["abs"]] <- crosstab
-    Encoding(rownames(object@pos[[pAttr]][["abs"]])) <- object@encoding
-    object@pos[[pAttr]][["rel"]] <- t(apply(crosstab, 1, function(x) round(x/sum(x)*100, 2)))
-    Encoding(rownames(object@pos[[pAttr]][["rel"]])) <- object@encoding
-    object@pos[[pAttr]][["max"]] <- apply(crosstab, 1, function(x) colnames(crosstab)[which.max(x)])
-    Encoding(names(object@pos[[pAttr]][["max"]])) <- object@encoding
-  }
+  object@pos[[pAttribute]] <- list()
+  crosstab <- table(bag)
+  rownames(crosstab) <- cqi_id2str(paste(object@corpus, '.', pAttribute, sep=''), as.integer(rownames(crosstab)))
+  colnames(crosstab) <- cqi_id2str(paste(object@corpus, '.pos', sep=''), as.integer(colnames(crosstab)))
+  object@pos[[pAttribute]] <- apply(crosstab, 1, function(x) colnames(crosstab)[which.max(x)])
+  Encoding(names(object@pos[[pAttribute]])) <- object@encoding
+  # to make sure that there are no superfluous pos information
+  object@pos[[pAttribute]] <- object@pos[[pAttribute]][names(object@pos[[pAttribute]]) %in% rownames(object@tf[[pAttribute]])]
   object
 })
 
@@ -487,7 +482,7 @@ setMethod("addPos", "partition", function(object, pos){
 #' Augment the partition object by strucs and cpos
 #' 
 #' @param object a partition class object
-#' @param pos character vector - pos statistic for lemma or word
+#' @param pAttribute character vector, either lemma or word
 #' @param minFrequency an integer
 #' @param posFilter a character vector
 #' @return a trimmed partition object
@@ -495,33 +490,21 @@ setMethod("addPos", "partition", function(object, pos){
 #' @docType methods
 #' @exportMethod trim
 #' @noRd
-setMethod("trim", "partition", function(object, pos, minFrequency=0, posFilter=c(),  ...){
+setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=c(),  ...){
   new <- object
+  if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
   message("Trimming partition ", new@label)
   if (!is.null(posFilter)) {
-    if (length(new@pos) == 0 ){
-      message("... no pos at all")
-      new <- addPos(new, pos)
-    } else if (!pos %in% names(new@pos)){
-      message("... specific pos missing")
-      pimpedCluster <- addPos(new, pos)
+    if (! pAttribute %in% names(object@pos) ){
+      message("... pos need to be added first")
+      new <- addPos(new, pAttribute)
     }
-    for (i in pos){
-      hits <- which(new@pos[[i]]$max %in% posFilter)
-      new@tf[[i]] <- new@tf[[i]][hits,]
-      new@pos[[i]]$abs <- new@pos[[i]]$abs[hits,]
-      new@pos[[i]]$rel <- new@pos[[i]]$rel[hits,]
-      new@pos[[i]]$max <- new@pos[[i]]$max[hits]
-    }
+    new@pos[[pAttribute]] <- new@pos[[pAttribute]][new@pos[[pAttribute]] %in% posFilter]
+    new@tf[[pAttribute]] <- new@tf[[pAttribute]][rownames(new@tf[[pAttribute]]) %in% names(new@pos[[pAttribute]]),]
   }
   if (minFrequency > 0){
-    for (i in pos){
-      hits <- which(new@tf[[i]][,"tf"] >= minFrequency)
-      new@tf[[i]] <- new@tf[[i]][hits,]
-      new@pos[[i]]$abs <- new@pos[[i]]$abs[hits,]
-      new@pos[[i]]$rel <- new@pos[[i]]$rel[hits,]
-      new@pos[[i]]$max <- new@pos[[i]]$max[hits]
-    }
+    new@tf[[pAttribute]] <- subset(new@tf[[pAttribute]], tf >= minFrequency)
+    new@pos[[pAttribute]] <- new@pos[[pAttribute]][names(new@pos[[pAttribute]]) %in% rownames(new@tf[[pAttribute]])]
   }
   new 
 })

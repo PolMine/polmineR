@@ -33,7 +33,7 @@
 #'   summary,partitionCluster-method tf,partitionCluster-method 
 #'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
 #'   +,partitionCluster,partition-method
-#'   +,partitionCluster,partitionCluster-method
+#'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -181,19 +181,19 @@ setMethod("summary", "partitionCluster", function (object) {
 #' perform addPos and further adjustments for all partitions in a cluster
 #' 
 #' @param object a partitionCluster object
-#' @param pos character vector: "word", "lemma", or both
+#' @param pAttribute character vector: "word", "lemma", or both
 #' @param minFrequency minimum frequency of tokens
 #' @param posFilter pos to keep
 #' @param drop partitionObjects you want to drop, specified either by number or by label
 #' @exportMethod trim
 #' @noRd
-setMethod("trim", "partitionCluster", function(object, pos, minFrequency=0, posFilter=c(),  drop=c(), ...){
+setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=0, posFilter=c(),  drop=c(), ...){
   pimpedCluster <- object
   if (minFrequency !=0 || !is.null(posFilter)){
     if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))
+      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))
     } else {
-      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x,pos, minFrequency, posFilter))    
+      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))    
     }
   }
   for (i in drop){
@@ -207,18 +207,18 @@ setMethod("trim", "partitionCluster", function(object, pos, minFrequency=0, posF
 #' Augment the partitionCluster object
 #' 
 #' @param object a partition class object
-#' @param pos character vector - pos statistic for lemma or word
+#' @param pAttribute character vector - pos statistic for lemma or word
 #' @return an augmented partition object (includes pos now)
 #' @author Andreas Blaette
 #' @docType methods
 #' @exportMethod addPos
 #' @noRd
-setMethod("addPos", "partitionCluster", function(object, pos){
+setMethod("addPos", "partitionCluster", function(object, pAttribute){
   pimpedCluster <- object
   if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-    pimpedCluster@partitions <- mclapply(object@partitions, function(x) addPos(x, pos))
+    pimpedCluster@partitions <- mclapply(object@partitions, function(x) addPos(x, pAttribute))
   } else {
-    pimpedCluster@partitions <- lapply(object@partitions, function(x) addPos(x, pos))    
+    pimpedCluster@partitions <- lapply(object@partitions, function(x) addPos(x, pAttribute))    
   }
   pimpedCluster
 })
@@ -453,4 +453,13 @@ setMethod("as.partitionCluster", "partition", function(object){
  newCluster@encoding <- object@encoding
  newCluster@explanation <- c("derived from a partition object")
  newCluster
+})
+
+setMethod("as.partitionCluster", "list", function(object, ...){
+  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
+  newCluster <- new("partitionCluster")
+  newCluster@partitions <- object
+  newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
+  newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
+  newCluster
 })

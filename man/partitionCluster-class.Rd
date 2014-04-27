@@ -11,6 +11,7 @@
 \alias{as.DocumentTermMatrix,partitionCluster-method}
 \alias{as.TermDocumentMatrix,partitionCluster-method}
 \alias{as.matrix,partitionCluster-method}
+\alias{as.partitionCluster,list-method}
 \alias{as.sparseMatrix}
 \alias{as.sparseMatrix,partitionCluster-Method}
 \alias{merge,partitionCluster-method}
