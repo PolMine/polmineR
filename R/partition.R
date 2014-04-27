@@ -135,13 +135,7 @@ partition <- function(
   }
   if (verbose==TRUE) message('... encoding of the corpus is ', Partition@encoding)
   Partition@label <- label
-  consoleEncoding <- get("drillingControls", '.GlobalEnv')[['consoleEncoding']]
-  if (consoleEncoding==Partition@encoding) {
-    Partition@sAttributes <- sAttributes
-  } else {
-    Partition@sAttributes <- lapply(sAttributes, function(x).adjustEncoding(x, Partition@encoding))  
-  }
-  
+  Partition@sAttributes <- lapply(sAttributes, function(x).adjustEncoding(x, Partition@encoding))  
   Partition@sAttributeStrucs <- names(sAttributes)[length(sAttributes)]
   Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
@@ -187,6 +181,7 @@ zoom <- function(Partition, sAttribute, label=c(""), method="in", pAttributes=c(
   newPartition@corpus <- Partition@corpus
   message('Zooming into partition ', label)
   newPartition@label <- label  
+  sAttribute <- lapply(sAttribute, function(x).adjustEncoding(x, Partition@encoding))  
   newPartition@sAttributes <- c(Partition@sAttributes, sAttribute)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   newPartition@xml <- Partition@xml
@@ -219,6 +214,7 @@ zoom <- function(Partition, sAttribute, label=c(""), method="in", pAttributes=c(
   } else if (Partition@xml == "nested") {
     str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, Partition@cpos[,1]))    
   }
+  Encoding(str) <- newPartition@encoding
   if (method == "in") {
     hits <- which(str %in% sAttribute[[1]])
   } else if (method == "grep") {
@@ -432,7 +428,7 @@ function(object){
     } else if ( i > 1 ) {
       meta <- cqi_struc2str(sAttr[i], cqi_cpos2struc(sAttr[i], cpos[,1]))
     }
-    # Encoding(meta) <- Partition@encoding
+    Encoding(meta) <- Partition@encoding
     if (method == "in") {
       hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
     } else if (method == "grep") {

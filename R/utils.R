@@ -108,14 +108,17 @@
 #' @return a character vector with adjusted encoding
 #' @noRd
 .adjustEncoding <- function(characterVector, partitionEncoding){
-  consoleEncoding <- get("drillingControls", '.GlobalEnv')[['consoleEncoding']]
-  if (!consoleEncoding==partitionEncoding) {
-    characterVector <- iconv(
-      characterVector,
-      from=consoleEncoding,
-      to=partitionEncoding)
-  }
-  return(characterVector)
+  retval <- sapply(
+    as.list(characterVector),
+    function(x) {
+      enc <- Encoding(x)
+      if ( enc != "unknown" && enc != partitionEncoding ) {
+        x <- iconv(x, from=enc, to=partitionEncoding)
+      }
+      x
+    }
+    )
+  return(retval)
 }
 
 

@@ -120,8 +120,7 @@ partitionCluster <- function(
       )
     )
   }
-  names(cluster@partitions) <- paste(prefixLabels, sAttributeVarValues, sep='')
-  Encoding(names(cluster@partitions)) <- cluster@encoding
+  names(cluster@partitions) <- paste(.adjustEncoding(prefixLabels, cluster@encoding), sAttributeVarValues, sep='')
   cluster
 }
 
@@ -161,15 +160,18 @@ setMethod("summary", "partitionCluster", function (object) {
     stringsAsFactors=FALSE
    )
   pAttr <- unique(unlist(lapply(object@partitions, function(x) names(x@tf))))
-  raw <- lapply(pAttr, function(x) unlist(lapply(object@partitions, function(y) nrow(y@tf[[x]]))))
-  raw <- do.call(data.frame, raw)
-  colnames(raw) <- paste("unique_", pAttr, sep="")
-  summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
-  totalRow <- c(
-    "TOTAL",
-    sum(summary[, "token"]),
-    lapply(pAttr, function(x) length(unique(unlist(lapply(object@partitions, function(y) y@tf[[x]][,1])))))
-  )
+  if (!is.null(pAttr)){
+    raw <- lapply(pAttr, function(x) unlist(lapply(object@partitions, function(y) nrow(y@tf[[x]]))))
+    raw <- do.call(data.frame, raw)
+    colnames(raw) <- paste("unique_", pAttr, sep="")
+    summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
+    totalRow <- c(
+      "TOTAL", sum(summary[, "token"]),
+      lapply(pAttr, function(x) length(unique(unlist(lapply(object@partitions, function(y) y@tf[[x]][,1]))))))
+  } else {
+    totalRow <- c(
+      "TOTAL", sum(summary[, "token"]))    
+  }
   summary <- rbind(summary, totalRow)
   rownames(summary) <- c(1:nrow(summary))
   summary
