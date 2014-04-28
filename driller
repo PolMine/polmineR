@@ -1,0 +1,33 @@
+function(
+  coi,
+  ref,
+  pAttribute=drillingControls$pAttribute,
+  minFrequency=0,
+  included=FALSE,
+  verbose=TRUE
+  ) {
+  if (verbose==TRUE) message ('Computing keyness')
+  keyness <- new('keyness')
+  if (verbose==TRUE) message("... combining frequency lists")
+  c <- merge(coi@tf[[pAttribute]], ref@tf[[pAttribute]], by.x="id", by.y="id")
+  if (verbose==TRUE) message("... computing chisquare tests")
+  c <- .chisquare(c, included, minFrequency)
+  statistic <- data.frame(
+    row.names=cqi_id2str(paste(coi@corpus,".", pAttribute, sep=""), c[,1]),
+    rank=c(1:dim(c)[1]),
+    countCoi=c[,2],
+    countRef=c[,3],
+    chiSquare=round(c[,4], digits=2),
+    expCoi=round(c[,5], digits=2),
+    expRef=round(c[,6], digits=2)
+  )
+  Encoding(rownames(statistic)) <- ref@encoding
+  keyness@statisticalTest <- "chiSquare"
+  keyness@statisticalSummary <- .statisticalSummary(keyness)
+  keyness@corpus <- coi@corpus
+  keyness@pattribute <- pAttribute
+  keyness@stat <- statistic
+  keyness <- trim(keyness)
+  keyness
+}
+

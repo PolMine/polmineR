@@ -3,6 +3,7 @@
 \alias{addPos,keyness-method}
 \alias{keyness-class}
 \alias{summary,keyness-method}
+\alias{trim,keyness-method}
 \title{S4 class for comparing corpora}
 \description{
 to keep results from a keyness analysis

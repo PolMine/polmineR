@@ -2,13 +2,13 @@
 \alias{egoNetwork}
 \title{Prepare data for an ego-network}
 \usage{
-egoNetwork(Partition, node, degrees, pAttribute, leftContext, rightContext,
-  minSignificance, posFilter)
+egoNetwork(node, Partition, degrees, pAttribute = "useControls",
+  leftContext = 0, rightContext = 0, minSignificance, posFilter = c())
 }
 \arguments{
-  \item{Partition}{a partition object}
-
   \item{node}{query, which may by a multi-word unit}
+
+  \item{Partition}{a partition object}
 
   \item{degrees}{the degrees of the resulting egoNetwork}
 

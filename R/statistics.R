@@ -83,7 +83,7 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness-class summary,keyness-method addPos,keyness-method
+#' @aliases keyness-class summary,keyness-method addPos,keyness-method trim,keyness-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette
@@ -95,6 +95,38 @@ setClass("keyness",
                         statisticalSummary="data.frame"
          )
 )
+
+
+
+#' trim and filter a context object
+#' 
+#' Trim 
+#' 
+#' Maybe it would be more efficient to use the subset function.-
+#' 
+#' @param object a context object to be filtered
+#' @param minSignificance minimum significance level
+#' @param minFrequency the minimum frequency
+#' @param maxRank maximum rank
+#' @param tokenFilter tokens to exclude from table
+#' @author Andreas Blaette
+#' @exportMethod trim
+#' @noRd
+setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL){
+  test <- object@statisticalTest
+  if (maxRank==0) maxRank <- nrow(object@stat)
+  if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
+  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
+  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
+  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
+  if (!is.null(tokenFilter)){
+    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
+  }
+  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
+  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
+  object
+})
+
 
 
 #' add pos values to the statistics of a keyness object

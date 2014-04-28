@@ -146,7 +146,7 @@ context <- function(
   leftContext=0,
   rightContext=0,
   minSignificance=0,
-  posFilter="useControls",
+  posFilter=c(),
   filterType="useControls",
   stopwords=c(),
   statisticalTest="LL",
@@ -156,7 +156,7 @@ context <- function(
   if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
   if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
   if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-  if (posFilter == "useControls") posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
+  if (is.null(posFilter)) posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
   if (filterType == "useControls") filterType <- get("drillingControls", '.GlobalEnv')[['filterType']]
   multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
   ctxt <- new("context")
@@ -427,8 +427,8 @@ setMethod('[', 'concordances',
 #' This conversion is not part of the function to keep number of dependencies of the 
 #' package low.
 #' 
-#' @param Partition a partition object
 #' @param node query, which may by a multi-word unit
+#' @param Partition a partition object
 #' @param degrees the degrees of the resulting egoNetwork
 #' @param pAttribute pattribute of the query
 #' @param leftContext no of tokens and to the left of the node word
@@ -445,21 +445,21 @@ setMethod('[', 'concordances',
 #'  }
 #' @author Andreas Blaette
 #' @export egoNetwork
-egoNetwork <- function(Partition, node, degrees, pAttribute, leftContext, rightContext, minSignificance, posFilter) {
-  gData <- context(Partition, node, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
+egoNetwork <- function(node, Partition, degrees, pAttribute="useControls", leftContext=0, rightContext=0, minSignificance, posFilter=c()) {
+  gData <- context(node, Partition, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
   gData <- cbind(node=rep(node, times=nrow(gData)), target=rownames(gData), degree=rep(1, times=nrow(gData)), gData)
   rownames(gData) <- NULL
   for ( degree in 2:degrees ) {
     terms <- gData[which(gData$degree==(degree-1)),2]
     for ( term in terms ) {
-      dataNew <- context(Partition, term, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
+      dataNew <- context(term, Partition, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
       dataNew <- cbind(node=rep(term, times=nrow(dataNew)), target=rownames(dataNew), degree=degree, dataNew)
       rownames(dataNew) <- NULL
       gData <- rbind(gData, dataNew)
     }
   }
   vertices <- unique(c(as.vector(unname(unlist(gData[,1]))), as.vector(unname(unlist(gData[,2])))))
-  verticeData <- data.frame(vertices=vertices, Partition@tf[[pAttribute]][vertices,"tf"])
+  # verticeData <- data.frame(vertices=vertices, Partition@tf[[pAttribute]][vertices,"tf"])
   gData
 }
 
