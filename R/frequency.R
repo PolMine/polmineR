@@ -15,8 +15,8 @@
     tf=c(length(ids[which(ids==0)]), tfRaw),
     row.names=cqi_id2str(paste(part@corpus,'.',pAttribute, sep=''), c(0:length(tfRaw)))
   )
-  Encoding(rownames(tf)) <- part@encoding
   tf <- subset(tf, tf > 0)
+  Encoding(rownames(tf)) <- part@encoding
   tf
 }
 

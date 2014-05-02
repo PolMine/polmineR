@@ -105,4 +105,10 @@ scatterplotCollocates <- function(comp, xmax=c(), ymax=c(), fontSize=0.7, rotati
   }
 }
 
-
+setMethod("plot", signature(x="partitionCluster", y="character"),
+          function(x, y){
+  val <- as.matrix(x, y)
+  val <- val[rowSums(val)!=0,]
+  data <- data.frame(rank(val[,1]), rank(val[,2]))
+  plot(data[,1], data[,2])
+})

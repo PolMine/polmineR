@@ -29,13 +29,16 @@
 #'    \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
 #'    \item{[}{get frequency of a query}
 #'    \item{[[}{shortcut to concordances for a query}
+#'    \item{export}{restore text}
 #'    }
 #' 
-#' @aliases partition-class show,partition-method
-#'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method
-#'   addPos,partition-method addPos [,partition-method [[,partition-method
-#'   sAttributes,partition-method sAttributes trim,partition-method
-#'   tf,partition-method tf as.partitionCluster as.partitionCluster,partition-method
+#' @aliases partition-class show,partition-method 
+#'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method 
+#'   addPos,partition-method addPos [,partition-method [[,partition-method 
+#'   sAttributes,partition-method sAttributes trim,partition-method 
+#'   tf,partition-method tf as.partitionCluster
+#'   as.partitionCluster,partition-method export export,partition-method split
+#'   split,partition-method enrich enrich,partition-method
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition
@@ -600,4 +603,107 @@ setMethod("tf", "partition", function(object, token, pAttribute=c()){
       )
   }
   tab
+})
+
+
+setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
+
+#' @exportMethod enrich
+setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), metadata="skip", sAttributesMetadata=c(), verbose=TRUE){
+  if (size == TRUE) object@size <- driller:::.partition.size(object)
+  if (length(tf>0)) {
+    for (what in tf){
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', what, ')')  
+      object@tf[[what]] <- .cpos2tf(object, what)
+    }
+  }
+  if (metadata != "skip") {
+    if (!metadata %in% c("skip", "defined", "all")) warning("not a valid instruction how to set up metadata")
+    if (verbose==TRUE) message('... setting up metadata (table and list of values)')
+    object <- .partition.metadata(object, metadata, sAttributesMetadata)
+  }
+  object
+})
+
+#' @exportMethod split
+setMethod("split", "partition", function(x, f, drop=FALSE, ...){
+  cpos <- x@cpos
+  if (nrow(cpos) > 1){
+    distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
+    beginning <- c(1, ifelse(distance>f, 1, 0))
+    no <- vapply(1:length(beginning), FUN.VALUE=1, function(x) ifelse (beginning[x]==1, sum(beginning[1:x]), 0))
+    for (i in (1:length(no))) no[i] <- ifelse (no[i]==0, no[i-1], no[i])
+    strucsClassified <- cbind(x@strucs, no)
+    strucList <- split(strucsClassified[,1], strucsClassified[,2])
+    cposClassified <- cbind(cpos, no)
+    cposList1 <- split(cposClassified[,1], cposClassified[,3])
+    cposList2 <- split(cposClassified[,2], cposClassified[,3])
+    clusterRaw <- lapply(c(1:length(strucList)), function(i) {
+      p <- new("partition")
+      p@strucs <- strucList[[i]]
+      p@cpos <- cbind(cposList1[[i]], cposList2[[i]])
+      p@corpus <- x@corpus
+      p@encoding <- x@encoding
+      p@xml <- x@xml
+      p@sAttributeStrucs <- x@sAttributeStrucs
+      p@label <- paste(x@label, i, collapse="_", sep="")
+      meta <- ifelse (is.null(names(x@metadata)),
+                      "skip",
+                      "defined"
+      )
+      if (meta == "defined") sAttr <- colnames(x@metadata$table)
+      p <- enrich(
+        p, size=TRUE,
+        tf=names(x@tf),
+        metadata=meta, sAttributesMetadata=sAttr,
+        verbose=TRUE
+      )
+      p
+    })
+  } else {
+    clusterRaw <- list(x)
+  }
+  names(clusterRaw) <- unlist(lapply(clusterRaw, function(y) y@label))
+  cluster <- as.partitionCluster(clusterRaw)
+  cluster
+})
+
+setGeneric("export", function(object, ...){standardGeneric("export")})
+
+#' @exportMethod export
+setMethod("export", "partition", function(object, file, style="markdown", type="speech"){
+  if (length(object@strucs)>1){
+    s <- object@strucs
+    gapSize <- s[2:length(s)] - s[1:(length(s)-1)]
+    gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
+    m <- object@metadata$table
+    metaNo <- ncol(m)
+    metaComp <- data.frame(m[2:nrow(m),], m[1:(nrow(m)-1),])
+    metaChange <- !apply(
+      metaComp, 1,
+      function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
+    )
+    metaChange <- c(TRUE, metaChange)
+    } else {
+    gap <- 0
+    metaChange <- TRUE
+  }
+  type <- cqi_struc2str(paste(object@corpus, ".text_type", sep=""), object@strucs)
+  metadata <- apply(object@metadata$table, 2, function(x) as.vector(x))
+  markdown <- sapply(c(1:nrow(tab)), function(i) {
+    meta <- c("")
+    if (metaChange[i] == TRUE) { 
+      meta <- paste(metadata[i,], collapse=" | ", sep="")
+      meta <- paste("\n###", meta, "\n", collapse="")
+    }
+    plainText <- paste(cqi_cpos2str(paste(object@corpus, '.word', sep=''), c(object@cpos[i,1]:object@cpos[i, 2])), collapse=" ")
+    if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
+    return(paste(meta, plainText))
+  })
+  markdown <- paste(markdown, collapse="\n")
+  Encoding(markdown) <- object@encoding
+  markdown <- .adjustEncoding(markdown, "UTF8")
+  markdown <- gsub("(.)\\s([.:!?])", "\\1\\2", markdown)
+  cat(markdown, file=file)
+  markdown
 })

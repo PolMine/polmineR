@@ -34,6 +34,7 @@
 #'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
 #'   +,partitionCluster,partition-method
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
+#'   enrich,partitionCluster-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -165,14 +166,7 @@ setMethod("summary", "partitionCluster", function (object) {
     raw <- do.call(data.frame, raw)
     colnames(raw) <- paste("unique_", pAttr, sep="")
     summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
-    totalRow <- c(
-      "TOTAL", sum(summary[, "token"]),
-      lapply(pAttr, function(x) length(unique(unlist(lapply(object@partitions, function(y) y@tf[[x]][,1]))))))
-  } else {
-    totalRow <- c(
-      "TOTAL", sum(summary[, "token"]))    
   }
-  summary <- rbind(summary, totalRow)
   rownames(summary) <- c(1:nrow(summary))
   summary
 })
@@ -187,7 +181,7 @@ setMethod("summary", "partitionCluster", function (object) {
 #' @param drop partitionObjects you want to drop, specified either by number or by label
 #' @exportMethod trim
 #' @noRd
-setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=0, posFilter=c(),  drop=c(), ...){
+setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=0, posFilter=c(),  drop=c(), minSize=0, ...){
   pimpedCluster <- object
   if (minFrequency !=0 || !is.null(posFilter)){
     if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
@@ -195,6 +189,15 @@ setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=
     } else {
       pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))    
     }
+  }
+  if (minSize > 0){
+    toKill <- subset(
+      data.frame(
+        name=names(pimpedCluster),
+        noToken=summary(pimpedCluster)$token,
+        stringsAsFactors=FALSE
+        ), noToken < minSize)$name
+    if (length(toKill) > 0) {drop <- c(toKill, drop)}
   }
   for (i in drop){
     pimpedCluster@partitions[[i]] <- NULL
@@ -240,42 +243,23 @@ setMethod("addPos", "partitionCluster", function(object, pAttribute){
 #' @author Andreas Blaette
 #' @exportMethod merge
 #' @noRd
-setMethod("merge", "partitionCluster", function(x, label){
+setMethod("merge", "partitionCluster", function(x, label=c("")){
   object <- x
+  partition <- new("partition")
   cat('There are', length(object@partitions), 'partitions to be merged\n')
   corpora <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@corpus)))
   if (!all(corpora==object@partitions[[1]]@corpus)) print("WARNING: This function will not work correctly, as the cluster comprises different corpora")
-  message('... merging the struc vectors')
-  strucs <- c()
-  for (name in names(object@partitions)) {strucs <- union(strucs, object@partitions[[name]]@strucs)}
-  message('... generating corpus positions')
-  cpos <- data.matrix(t(data.frame(lapply(strucs, function(j){cqi_struc2cpos(paste(corpora,'.', 'text', sep=''),j)}))))
-  rownames(cpos) <- NULL
-  partition <- new("partition")
   partition@corpus <- corpora
-  partition@strucs <- strucs
-  partition@cpos <- cpos
+  partition@xml <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@xml)))
   partition@encoding <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@encoding)))
   partition@sAttributeStrucs <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@sAttributeStrucs)))
+  message('... merging the struc vectors')
+  for (name in names(object@partitions)) {partition@strucs <- union(strucs, object@partitions[[name]]@strucs)}
+  message('... generating corpus positions')
+  cpos <- data.matrix(t(data.frame(lapply(partition@strucs, function(j){cqi_struc2cpos(paste(corpora,'.', partition@sAttributeStrucs, sep=''),j)}))))
+  rownames(cpos) <- NULL
+  partition@cpos <- cpos
   partition@explanation=c(paste("this partition is a merger of the partitions", paste(names(object@partitions), collapse=', ')))
-  cat('... computing corpus size\n')
-  partition@size <- .partition.size(partition)
-  cat('... computing term frequencies (for p-attribute word)\n')
-  tfmatrix <- as.matrix(object, 'word')
-  partition@tf$word <- data.frame(
-    row.names=rownames(tfmatrix),
-    id=cqi_str2id(paste(corpora,'.', 'word',sep=''), rownames(tfmatrix)),
-    wc=rowSums(tfmatrix)
-  ) 
-  cat('... computing term frequencies (for p-attribute lemma)\n')
-  tfmatrix <- as.matrix(object, 'lemma')
-  partition@tf$lemma <- data.frame(
-    row.names=rownames(tfmatrix),
-    id=cqi_str2id(paste(corpora,'.', 'word',sep=''), rownames(tfmatrix)),
-    wc=rowSums(tfmatrix)
-  )                      
-  cat('... setting up metadata (table and list of values)\n')
-  partition <- .partition.metadata(partition, table=TRUE)
   partition@label <- label
   partition
 })
@@ -434,11 +418,13 @@ setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=
     }
   )
   tab <- do.call(rbind, bag)
-  if (rel==FALSE) tab <- tab[,c("partition", "token", "tfAbs")]
-  if (rel==TRUE) tab <- tab[,c("partition", "token", "tfRel")]       
-  colnames(tab)[3] <- "tf"
-  tab <- xtabs(tf~partition+token, data=tab)
-  tab <- as.data.frame(as.matrix(unclass(tab)))
+  if(!is.null(tab)){
+    if (rel==FALSE) tab <- tab[,c("partition", "token", "tfAbs")]
+    if (rel==TRUE) tab <- tab[,c("partition", "token", "tfRel")]       
+    colnames(tab)[3] <- "tf"
+    tab <- xtabs(tf~partition+token, data=tab)
+    tab <- as.data.frame(as.matrix(unclass(tab)))
+  }
   tab
 })
 
@@ -462,4 +448,12 @@ setMethod("as.partitionCluster", "list", function(object, ...){
   newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
   newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
   newCluster
+})
+
+setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), metadata="skip", sAttributesMetadata=c(), verbose=TRUE){
+  object@partitions <- lapply(
+    object@partitions,
+    function(p) enrich(p, size=size, tf=tf, metadata=metadata, sAttributesMetadata=sAttributesMetadata, verbose=TRUE)
+    )
+  object
 })
