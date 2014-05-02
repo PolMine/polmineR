@@ -29,7 +29,7 @@
 #'    \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
 #'    \item{[}{get frequency of a query}
 #'    \item{[[}{shortcut to concordances for a query}
-#'    \item{export}{restore text}
+#'    \item{html}{transform partition to html}
 #'    }
 #' 
 #' @aliases partition-class show,partition-method 
@@ -38,7 +38,7 @@
 #'   sAttributes,partition-method sAttributes trim,partition-method 
 #'   tf,partition-method tf as.partitionCluster
 #'   as.partitionCluster,partition-method export export,partition-method split
-#'   split,partition-method enrich enrich,partition-method
+#'   split,partition-method enrich enrich,partition-method html html,partition-method
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition
@@ -589,7 +589,7 @@ setMethod("tf", "partition", function(object, token, pAttribute=c()){
     }
   }
   if (is.character(token) == TRUE){
-    token <- driller:::.adjustEncoding(token, object@encoding)
+    token <- .adjustEncoding(token, object@encoding)
     tab <- data.frame(
       token=token,
       tfAbs=object@tf[[pAttribute]][token,"tf"],
@@ -610,7 +610,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 
 #' @exportMethod enrich
 setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), metadata="skip", sAttributesMetadata=c(), verbose=TRUE){
-  if (size == TRUE) object@size <- driller:::.partition.size(object)
+  if (size == TRUE) object@size <- .partition.size(object)
   if (length(tf>0)) {
     for (what in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', what, ')')  
@@ -668,10 +668,9 @@ setMethod("split", "partition", function(x, f, drop=FALSE, ...){
   cluster
 })
 
-setGeneric("export", function(object, ...){standardGeneric("export")})
+setGeneric("html", function(object, ...){standardGeneric("html")})
 
-#' @exportMethod export
-setMethod("export", "partition", function(object, file, style="markdown", type="speech"){
+.partition2markdown <- function(object, type="speech"){
   if (length(object@strucs)>1){
     s <- object@strucs
     gapSize <- s[2:length(s)] - s[1:(length(s)-1)]
@@ -684,26 +683,59 @@ setMethod("export", "partition", function(object, file, style="markdown", type="
       function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
     )
     metaChange <- c(TRUE, metaChange)
-    } else {
+    metadata <- apply(object@metadata$table, 2, function(x) as.vector(x))
+  } else {
     gap <- 0
     metaChange <- TRUE
+    metadata <- matrix(apply(object@metadata$table, 2, function(x) as.vector(x)), nrow=1)
   }
   type <- cqi_struc2str(paste(object@corpus, ".text_type", sep=""), object@strucs)
-  metadata <- apply(object@metadata$table, 2, function(x) as.vector(x))
-  markdown <- sapply(c(1:nrow(tab)), function(i) {
+  markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
       meta <- paste(metadata[i,], collapse=" | ", sep="")
       meta <- paste("\n###", meta, "\n", collapse="")
     }
-    plainText <- paste(cqi_cpos2str(paste(object@corpus, '.word', sep=''), c(object@cpos[i,1]:object@cpos[i, 2])), collapse=" ")
+    plainText <- paste(
+      cqi_cpos2str(paste(
+        object@corpus, '.word', sep=''),
+        c(object@cpos[i,1]:object@cpos[i, 2])),
+      collapse=" "
+    )
     if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
     return(paste(meta, plainText))
   })
-  markdown <- paste(markdown, collapse="\n")
+  markdown <- paste(markdown, collapse="\n\n")
   Encoding(markdown) <- object@encoding
   markdown <- .adjustEncoding(markdown, "UTF8")
-  markdown <- gsub("(.)\\s([.:!?])", "\\1\\2", markdown)
-  cat(markdown, file=file)
+  markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
+  markdown <- gsub("\n - ", "\n", markdown)
   markdown
+}
+
+#' @importFrom markdown markdownToHTML
+.markdown2tmpfile <- function(markdown){
+  mdFilename <- tempfile(fileext=".md")
+  htmlFile <- tempfile(fileext=".html")
+  cat(markdown, file=mdFilename)
+  markdown::markdownToHTML(file=mdFilename, output=htmlFile)
+  htmlFile
+}
+
+#' @exportMethod html
+setMethod("html", "partition", function(object, filename=c(), type="debate"){
+  if (length(object@metadata) == 0) warning("metadata missing!")
+  markdown <- .partition2markdown(object, type)
+  markdown <- paste(
+    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+    markdown,
+    '\n* * *\n',
+    collapse="\n")
+  if (is.null(filename)) {
+    htmlFile <- .markdown2tmpfile(markdown)
+  } else {
+    cat(markdown, file=filename)    
+  }
+  if (is.null(filename)) browseURL(htmlFile)
 })
+

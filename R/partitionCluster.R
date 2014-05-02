@@ -12,15 +12,16 @@
 #'   explanation of the partition } \item{\code{xml}:}{Object of class
 #'   \code{"character"} whether the xml is flat or nested } }
 #'   
-#' @section Methods: \describe{ \item{show}{\code{signature(object =
+#' @section Methods: \describe{ \item{show}{\code{signature(object = 
 #'   "partitionCluster")}: Display essential information } 
-#'   \item{addPos}{\code{signature(object="partitionCluster")}: add list with
+#'   \item{addPos}{\code{signature(object="partitionCluster")}: add list with 
 #'   most frequent pos for a token } 
 #'   \item{tf}{\code{signature(object="partitionCluster")}: get term frequencies
-#'   } \item{trim}{\code{signature(object="partitionCluster")}: trim a
-#'   partitionCluster object } \item{[}{get frequency of a query} \item{[[}{get
-#'   a partition within the cluster} \item{+}{\code{signature(object =
-#'   "partitionCluster")}: combine two partitionClusters into a new one } }
+#'   } \item{trim}{\code{signature(object="partitionCluster")}: trim a 
+#'   partitionCluster object } \item{[}{get frequency of a query} \item{[[}{get 
+#'   a partition within the cluster} \item{+}{\code{signature(object = 
+#'   "partitionCluster")}: combine two partitionClusters into a new one } 
+#'  \item{html}{bla} }
 #'   
 #' @aliases partitionCluster-class show,partitionCluster-method 
 #'   addPos,partitionCluster-method [,partitionCluster-method 
@@ -34,7 +35,7 @@
 #'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
 #'   +,partitionCluster,partition-method
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
-#'   enrich,partitionCluster-method
+#'   enrich,partitionCluster-method html,partitionCluster-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -244,24 +245,25 @@ setMethod("addPos", "partitionCluster", function(object, pAttribute){
 #' @exportMethod merge
 #' @noRd
 setMethod("merge", "partitionCluster", function(x, label=c("")){
-  object <- x
-  partition <- new("partition")
-  cat('There are', length(object@partitions), 'partitions to be merged\n')
-  corpora <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@corpus)))
-  if (!all(corpora==object@partitions[[1]]@corpus)) print("WARNING: This function will not work correctly, as the cluster comprises different corpora")
-  partition@corpus <- corpora
-  partition@xml <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@xml)))
-  partition@encoding <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@encoding)))
-  partition@sAttributeStrucs <- unique(unlist(lapply(names(object@partitions), function(j)object@partitions[[j]]@sAttributeStrucs)))
+  y <- new("partition")
+  cat('There are', length(x@partitions), 'partitions to be merged\n')
+  y@corpus <- unique(vapply(x@partitions, FUN.VALUE="characer", function(p) p@corpus))
+  if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the cluster comprises different corpora")
+  y@xml <- unique(vapply(x@partitions, function(p)p@xml, FUN.VALUE="character"))
+  y@encoding <- unique(vapply(x@partitions, function(p)p@encoding, FUN.VALUE="character"))
+  y@sAttributeStrucs <- unique(vapply(x@partitions, function(p) p@sAttributeStrucs, FUN.VALUE="character"))
   message('... merging the struc vectors')
-  for (name in names(object@partitions)) {partition@strucs <- union(strucs, object@partitions[[name]]@strucs)}
+  for (name in names(x@partitions)) {y@strucs <- union(y@strucs, x@partitions[[name]]@strucs)}
   message('... generating corpus positions')
-  cpos <- data.matrix(t(data.frame(lapply(partition@strucs, function(j){cqi_struc2cpos(paste(corpora,'.', partition@sAttributeStrucs, sep=''),j)}))))
+  cpos <- data.matrix(t(data.frame(lapply(
+    y@strucs,
+    function(s){cqi_struc2cpos(paste(corpora,'.', y@sAttributeStrucs, sep=''),s)})
+    )))
   rownames(cpos) <- NULL
-  partition@cpos <- cpos
-  partition@explanation=c(paste("this partition is a merger of the partitions", paste(names(object@partitions), collapse=', ')))
-  partition@label <- label
-  partition
+  y@cpos <- cpos
+  y@explanation=c(paste("this partition is a merger of the partitions", paste(names(object@partitions), collapse=', ')))
+  y@label <- label
+  y
 })
 
 #' @exportMethod [[
@@ -447,6 +449,7 @@ setMethod("as.partitionCluster", "list", function(object, ...){
   newCluster@partitions <- object
   newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
   newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
+  names(newCluster@partitions) <- vapply(newCluster@partitions, function(x) x@label, FUN.VALUE="character")
   newCluster
 })
 
@@ -457,3 +460,19 @@ setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta
     )
   object
 })
+
+setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
+  markdown <- paste(lapply(object@partitions, function(p) .partition2markdown(p, type)), collapse="\n* * *\n")
+  markdown <- paste(
+    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+    markdown,
+    '\n* * *\n',
+    collapse="\n")
+  if (is.null(filename)) {
+    htmlFile <- .markdown2tmpfile(markdown)
+  } else {
+    cat(markdown, file=filename)    
+  }
+  if (is.null(filename)) browseURL(htmlFile)
+})
+

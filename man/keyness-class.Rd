@@ -2,6 +2,7 @@
 \name{keyness-class}
 \alias{addPos,keyness-method}
 \alias{keyness-class}
+\alias{show,keyness-method}
 \alias{summary,keyness-method}
 \alias{trim,keyness-method}
 \title{S4 class for comparing corpora}

@@ -15,6 +15,7 @@
 \alias{as.sparseMatrix}
 \alias{as.sparseMatrix,partitionCluster-Method}
 \alias{enrich,partitionCluster-method}
+\alias{html,partitionCluster-method}
 \alias{merge,partitionCluster-method}
 \alias{names,partitionCluster-method}
 \alias{partitionCluster-class}
@@ -54,7 +55,8 @@ A cluster of partition objects.
   trim a partitionCluster object } \item{[}{get frequency
   of a query} \item{[[}{get a partition within the cluster}
   \item{+}{\code{signature(object = "partitionCluster")}:
-  combine two partitionClusters into a new one } }
+  combine two partitionClusters into a new one }
+  \item{html}{bla} }
 }
 \author{
 Andreas Blaette

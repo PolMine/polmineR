@@ -16,7 +16,8 @@ Imports:
     slam,
     parallel,
     xtermStyle,
-    RColorBrewer
+    RColorBrewer,
+    markdown
 Suggests:
     knitr
 VignetteBuilder: knitr

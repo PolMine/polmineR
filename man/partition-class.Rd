@@ -12,6 +12,8 @@
 \alias{enrich,partition-method}
 \alias{export}
 \alias{export,partition-method}
+\alias{html}
+\alias{html,partition-method}
 \alias{partition-class}
 \alias{sAttributes}
 \alias{sAttributes,partition-method}
@@ -65,7 +67,7 @@ Basic class for for almost anything in the driller package.
   transform a partition object into a partitionCluster (to
   add further objects) } \item{[}{get frequency of a query}
   \item{[[}{shortcut to concordances for a query}
-  \item{export}{restore text} }
+  \item{html}{transform partition to html} }
 }
 \author{
 Andreas Blaette

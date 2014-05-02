@@ -83,7 +83,7 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness-class summary,keyness-method addPos,keyness-method trim,keyness-method
+#' @aliases keyness-class summary,keyness-method show,keyness-method addPos,keyness-method trim,keyness-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette
@@ -168,12 +168,15 @@ setMethod(
     cat("NO\n")
   }
   cat("\n** Statistical summary: **\n")
-  print(object@statisticalSummary) 
+  print(.statisticalSummary(object)) 
   cat("\n** Top ten: **\n")
   print(object@stat[1:10,])
   }
 )
 
+setMethod("show", "keyness", function(object){
+  summary(object)
+})
 
 
 #' compute chi-square values for tokens in a corpus using a reference corpus
