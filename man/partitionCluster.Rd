@@ -4,8 +4,7 @@
 \usage{
 partitionCluster(corpus, sAttributesFixed, sAttributeVar,
   sAttributeVarValues = c(), prefixLabels = c(""), encoding = NULL,
-  pAttributes = c("word", "lemma"), metadata = "defined",
-  sAttributesMetadata = c(), method = "grep", xml = "flat")
+  tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat")
 }
 \arguments{
   \item{corpus}{the CWB corpus to be used}
@@ -21,14 +20,10 @@ partitionCluster(corpus, sAttributesFixed, sAttributeVar,
   \item{encoding}{encoding of the corpus, if not provided,
   encoding provided in the registry file will be used}
 
-  \item{pAttributes}{the pAttributes for which term
-  frequencies shall be retrieved}
+  \item{tf}{the pAttributes for which term frequencies
+  shall be retrieved}
 
-  \item{metadata}{logical, whether to set up metadata}
-
-  \item{sAttributesMetadata}{the metadata to include in the
-  setup of the metadata table (set to NULL, if only
-  metadata values are wanted)}
+  \item{meta}{a character vector}
 
   \item{method}{either 'grep' or 'in'}
 

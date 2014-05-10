@@ -70,9 +70,8 @@ setClass("partitionCluster",
 #' @param sAttributeVar character vector indicating the s-attribute to be variabel
 #' @param sAttributeVarValues character vector
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
-#' @param pAttributes the pAttributes for which term frequencies shall be retrieved
-#' @param metadata logical, whether to set up metadata
-#' @param sAttributesMetadata the metadata to include in the setup of the metadata table (set to NULL, if only metadata values are wanted)
+#' @param tf the pAttributes for which term frequencies shall be retrieved
+#' @param meta a character vector
 #' @param method either 'grep' or 'in'
 #' @param xml either 'flat' (default) or 'nested'
 #' @param prefixLabels a character vector that will serve as a prefix for partition labels
@@ -84,7 +83,7 @@ setClass("partitionCluster",
 partitionCluster <- function(
   corpus,
   sAttributesFixed, sAttributeVar, sAttributeVarValues=c(), prefixLabels=c(""),
-  encoding=NULL, pAttributes=c("word", "lemma"), metadata="defined", sAttributesMetadata=c(), method="grep", xml="flat"
+  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat"
 ) {
   multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
   multicoreMessage <- ifelse(
@@ -97,7 +96,7 @@ partitionCluster <- function(
   cluster@corpus <- corpus
   cluster@sAttributesFixed <- sAttributesFixed
   message('... setting up base partition')
-  partitionBase <- partition(corpus, sAttributesFixed, pAttributes=c(), metadata=metadata, sAttributesMetadata=sAttributesMetadata, method=method, xml=xml, verbose=FALSE)
+  partitionBase <- partition(corpus, sAttributesFixed, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     message('... getting values of fixed s-attributes')
@@ -108,7 +107,7 @@ partitionCluster <- function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@partitions[[sAttribute]] <- zoom(partitionBase, sAttribute=sAttr, label=sAttribute, pAttributes=pAttributes)
+      cluster@partitions[[sAttribute]] <- zoom(partitionBase, sAttribute=sAttr, label=sAttribute, tf=tf)
     }
   } else if (multicore==TRUE) {
     message('... setting up the partitions')
@@ -118,7 +117,7 @@ partitionCluster <- function(
         partitionBase,
         sAttribute=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         label=x,
-        pAttributes=pAttributes
+        tf=tf
       )
     )
   }
@@ -257,7 +256,7 @@ setMethod("merge", "partitionCluster", function(x, label=c("")){
   message('... generating corpus positions')
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
-    function(s){cqi_struc2cpos(paste(corpora,'.', y@sAttributeStrucs, sep=''),s)})
+    function(s){cqi_struc2cpos(paste(y@corpus,'.', y@sAttributeStrucs, sep=''),s)})
     )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
@@ -453,10 +452,10 @@ setMethod("as.partitionCluster", "list", function(object, ...){
   newCluster
 })
 
-setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), metadata="skip", sAttributesMetadata=c(), verbose=TRUE){
+setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, verbose=TRUE){
   object@partitions <- lapply(
     object@partitions,
-    function(p) enrich(p, size=size, tf=tf, metadata=metadata, sAttributesMetadata=sAttributesMetadata, verbose=TRUE)
+    function(p) enrich(p, size=size, tf=tf, meta=meta, verbose=TRUE)
     )
   object
 })

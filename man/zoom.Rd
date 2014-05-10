@@ -2,8 +2,8 @@
 \alias{zoom}
 \title{zoom into a partition}
 \usage{
-zoom(Partition, sAttribute, label = c(""), method = "in",
-  pAttributes = c("word", "lemma"), verbose = TRUE)
+zoom(Partition, sAttribute, label = c(""), method = "in", tf = c("word",
+  "lemma"), verbose = TRUE)
 }
 \arguments{
   \item{Partition}{a partition object}
@@ -14,8 +14,8 @@ zoom(Partition, sAttribute, label = c(""), method = "in",
 
   \item{method}{either "in" or "grep"}
 
-  \item{pAttributes}{character vector, pAttributes for
-  which term frequencies shall be retrieved}
+  \item{tf}{character vector, pAttributes for which term
+  frequencies shall be retrieved}
 
   \item{verbose}{logical, show progress report or not
   (defaults to TRUE)}

@@ -1,0 +1,21 @@
+\docType{methods}
+\name{sAttributes,partition-method}
+\alias{sAttributes}
+\alias{sAttributes,character-method}
+\alias{sAttributes,partition-method}
+\title{Print S-Attributes in a partition or corpus}
+\usage{
+\S4method{sAttributes}{partition}(object)
+}
+\arguments{
+  \item{object}{either a partition or a character vector
+  specifying a CWB corpus}
+}
+\value{
+the S-Attributes are immediately printed
+}
+\description{
+Convencience function - just to access the s-sttributes in
+a partition quickly.
+}
+

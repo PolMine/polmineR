@@ -26,5 +26,9 @@ drillingControls <- list(
   xtermBgMeta="blue",
   metadata = c("text_party", "text_speaker", "text_date"),
   multicore=TRUE,
-  consoleEncoding="UTF-8"
+  consoleEncoding="UTF-8",
+  smtpServer="mailout.uni-due.de",
+  smtpPort="587",
+  email=""
+  
 )

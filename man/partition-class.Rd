@@ -15,8 +15,6 @@
 \alias{html}
 \alias{html,partition-method}
 \alias{partition-class}
-\alias{sAttributes}
-\alias{sAttributes,partition-method}
 \alias{show,partition-method}
 \alias{split}
 \alias{split,partition-method}
@@ -56,7 +54,6 @@ Basic class for for almost anything in the driller package.
 \section{Methods}{
   \describe{ \item{show}{\code{signature(object =
   "partition")}: Display essential information }
-  \item{sAttributes}{output of s-attributes in a partition}
   \item{addPos}{\code{signature(object="partition")}: add
   list with most frequent pos for a token }
   \item{trim}{\code{signature(object="partition")}: trim a

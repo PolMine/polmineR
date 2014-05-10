@@ -149,58 +149,63 @@ To understand the occurance of a phenomenon, the distribution of query results a
 
 <<distributionReal, echo=FALSE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
 # one query / one dimension
-foo <- capture.output(oneQuery <- dispersion(
-  '"Gerechtigkeit"',
-  coalition,
-  "text_party"
-  ))
+#foo <- capture.output(oneQuery <- dispersion(
+#  '"Gerechtigkeit"',
+#  coalition,
+#  "text_party"
+#  ))
 # # multiple queries / one dimension
-foo <- capture.output(twoQueries <- dispersion(
-  c('"[eE]uro.*"', '"Br.ssel"'),
-  coalition,
-  "text_party"
-  ))
+#foo <- capture.output(twoQueries <- dispersion(
+#  c('"[eE]uro.*"', '"Br.ssel"'),
+#  coalition,
+#  "text_party"
+#  ))
 # multiple queries / two dimensions
-foo <- capture.output(twoDim <- dispersion(
-  c('"Regierung"'),
-  bt,
-  c("text_date", "text_party")
-  ))
+#foo <- capture.output(twoDim <- dispersion(
+#  c('"Regierung"'),
+#  bt,
+#  c("text_date", "text_party")
+#  ))
 @
 
 
 <<distributionFake1, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # one query / one dimension
-foo <- capture.output(oneQuery <- dispersion(
-  '"Gerechtigkeit"',
-  coalition,
-  "text_party"
-  ))
+# foo <- capture.output(oneQuery <- dispersion(
+#   '"Gerechtigkeit"',
+#  coalition,
+#  "text_party"
+#  ))
 @
+
 <<distributionOutput1, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-oneQuery
+#oneQuery
 @ 
+
 <<distributionFake2, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # multiple queries / one dimension
-twoQueries <- dispersion(
-  c('"[eE]uro.*"', '"Brüssel"'),
-  coalition,
-  "text_party"
-  )
+#twoQueries <- dispersion(
+#  c('"[eE]uro.*"', '"Brüssel"'),
+#  coalition,
+#  "text_party"
+#  )
 @
+
 <<distributionOutput2, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-twoQueries
+# twoQueries
 @
+
 <<distributionFake3, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
 # multiple queries / two dimensions
-foo <- capture.output(twoDim <- distribution(
-  c('"Regierung"'),
-  bt,
-  c("text_date", "text_party")
-  ))
+# foo <- capture.output(twoDim <- distribution(
+#  c('"Regierung"'),
+#  bt,
+#  c("text_date", "text_party")
+#  ))
 @
+
 <<distributionOutput3, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-round((twoDim@rel*100000),2)[,c(1,2,3,4,6)]
+# round((twoDim@rel*100000),2)[,c(1,2,3,4,6)]
 @
 
 

@@ -2,7 +2,7 @@
 \name{drillingControls}
 \alias{drillingControls}
 \title{global controls}
-\format{\preformatted{List of 20
+\format{\preformatted{List of 23
  $ defaultCorpus   : chr "PLPRBTTXT"
  $ pAttribute      : chr "word"
  $ leftContext     : num 5
@@ -23,6 +23,9 @@
  $ metadata        : chr [1:3] "text_party" "text_speaker" "text_date"
  $ multicore       : logi TRUE
  $ consoleEncoding : chr "UTF-8"
+ $ smtpServer      : chr "mailout.uni-due.de"
+ $ smtpPort        : chr "587"
+ $ email           : chr ""
 }}
 \usage{
 drillingControls

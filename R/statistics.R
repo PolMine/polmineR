@@ -1,3 +1,6 @@
+
+
+
 #' trim and filter a context object
 #' 
 #' Trim 
@@ -11,6 +14,7 @@
 #' @param posFilter exclude words with a POS tag not in this list
 #' @param tokenFilter tokens to exclude from table
 #' @author Andreas Blaette
+#' @include generics.R
 #' @exportMethod trim
 #' @noRd
 setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
@@ -133,6 +137,7 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
 #' 
 #' @param object the keyness object
 #' @param partition a partition object (the corpus of interest)
+#' @include generics.R
 #' @exportMethod addPos
 #' @noRd
 setMethod("addPos", "keyness",
@@ -415,3 +420,4 @@ collocations <- function(partitionObject, pAttribute="word", window=5, filter=TR
 # return xab;
 # '
 # fun <- cxxfunction(signature(a = "integer"),src, plugin = "Rcpp")
+

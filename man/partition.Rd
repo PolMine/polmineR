@@ -3,8 +3,7 @@
 \title{Initialize a partition}
 \usage{
 partition(corpus, sAttributes, label = c(""), encoding = NULL,
-  pAttributes = c("word", "lemma"), metadata = "all",
-  sAttributesMetadata = c(), method = "grep", xml = "flat",
+  tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
   verbose = TRUE)
 }
 \arguments{
@@ -21,14 +20,10 @@ partition(corpus, sAttributes, label = c(""), encoding = NULL,
   registry file of the corpus (charset="...") will be used
   b}
 
-  \item{pAttributes}{the pAttributes for which term
-  frequencies shall be retrieved}
+  \item{tf}{the pAttributes for which term frequencies
+  shall be retrieved}
 
-  \item{metadata}{either "skip", "minimal", "defined",
-  "all"}
-
-  \item{sAttributesMetadata}{to define the sAttributes for
-  metadata}
+  \item{meta}{a character vector}
 
   \item{method}{either 'grep' or 'in' to specify the
   filtering method to get relevant strucs}

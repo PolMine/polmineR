@@ -22,7 +22,6 @@
 #' @section Methods:
 #'   \describe{
 #'    \item{show}{\code{signature(object = "partition")}: Display essential information }
-#'    \item{sAttributes}{output of s-attributes in a partition}
 #'    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
 #'    \item{trim}{\code{signature(object="partition")}: trim a partition object }
 #'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
@@ -35,7 +34,7 @@
 #' @aliases partition-class show,partition-method 
 #'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method 
 #'   addPos,partition-method addPos [,partition-method [[,partition-method 
-#'   sAttributes,partition-method sAttributes trim,partition-method 
+#'   trim,partition-method 
 #'   tf,partition-method tf as.partitionCluster
 #'   as.partitionCluster,partition-method export export,partition-method split
 #'   split,partition-method enrich enrich,partition-method html html,partition-method
@@ -61,14 +60,6 @@ setClass("partition",
          )
 )
 
-#' trim an object
-#'
-#' @param object the object to be trimmed
-#' @param ... further parameters
-#' @author Andreas Blaette
-#' @docType methods
-#' @noRd
-setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
@@ -99,9 +90,8 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 #' details)
 #' @param label label of the new partition, defaults to "noLabel"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
-#' @param pAttributes the pAttributes for which term frequencies shall be retrieved
-#' @param metadata either "skip", "minimal", "defined", "all"
-#' @param sAttributesMetadata to define the sAttributes for metadata
+#' @param tf the pAttributes for which term frequencies shall be retrieved
+#' @param meta a character vector
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
 #' @param verbose logical, defaults to TRUE
@@ -120,9 +110,8 @@ partition <- function(
   sAttributes,
   label=c(""),
   encoding=NULL,
-  pAttributes=c("word", "lemma"),
-  metadata="all",
-  sAttributesMetadata=c(),
+  tf=c("word", "lemma"),
+  meta=NULL,
   method="grep",
   xml="flat",
   verbose=TRUE
@@ -151,16 +140,15 @@ partition <- function(
   }
   if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
-  if (length(pAttributes>0)) {
-    for (p in pAttributes){
+  if (length(tf>0)) {
+    for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
       Partition@tf[[p]] <- .cpos2tf(Partition, p)
     }
   }
-  if (!metadata %in% c("skip", "defined", "all")) warning("not a valid instruction how to set up metadata")
-  if (metadata != "skip") {
+  if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    Partition <- .partition.metadata(Partition, metadata, sAttributesMetadata)
+    Partition <- .partition.metadata(Partition, meta)
   }
   if (verbose==TRUE) message('... partition is set up\n')
   Partition
@@ -174,12 +162,12 @@ partition <- function(
 #' @param sAttribute a list supplying further sAttributes
 #' @param label a label for the new partition
 #' @param method either "in" or "grep"
-#' @param pAttributes character vector, pAttributes for which term frequencies shall be retrieved
+#' @param tf character vector, pAttributes for which term frequencies shall be retrieved
 #' @param verbose logical, show progress report or not (defaults to TRUE)
 #' @export zoom
 #' @rdname zoom
 #' @name zoom
-zoom <- function(Partition, sAttribute, label=c(""), method="in", pAttributes=c("word", "lemma"), verbose=TRUE){
+zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=c("word", "lemma"), verbose=TRUE){
   newPartition <- new("partition")
   newPartition@corpus <- Partition@corpus
   message('Zooming into partition ', label)
@@ -193,8 +181,8 @@ zoom <- function(Partition, sAttribute, label=c(""), method="in", pAttributes=c(
   newPartition <- .zoomingSattributes2cpos(Partition, newPartition, sAttribute, method)
   message('... computing partition size')
   newPartition@size <- .partition.size(newPartition)
-  if (length(pAttributes)>0) {
-    for (p in pAttributes){
+  if (length(tf)>0) {
+    for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
       newPartition@tf[[p]] <- .cpos2tf(newPartition, p)
     }
@@ -328,8 +316,7 @@ function(object){
 #' values. It can be omitted for performance and memora reasons.
 #' 
 #' @param partition a partition object
-#' @param metadata the kind of metadata setup ("skip", "minimal", "defined", "all")
-#' @param sAttributesMetadata a character vector
+#' @param meta a character vector
 #' @param table whether to setup metadata table
 #' @return A 'metadata' item will be added to the partition object, with the
 #' two following subitems:
@@ -337,12 +324,9 @@ function(object){
 #' values - a list of character vectors
 #' @author Andreas Blaette
 #' @noRd
-.partition.metadata <- function(Partition, metadata, sAttributesMetadata, table=TRUE) {
-  if (metadata == "all") {
-    m <- cqi_attributes(Partition@corpus, 's')
-  } else if (metadata == "defined") {
-    m <- sAttributesMetadata
-  }
+.partition.metadata <- function(Partition, meta, table=TRUE) {
+  m <- meta
+  meta <- NULL
   if (table==TRUE) {
     if (Partition@xml == "flat") {
       Partition@metadata$table <- data.frame(sapply(m, USE.NAMES=TRUE, function(x) cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)))
@@ -445,7 +429,6 @@ function(object){
   Partition
 }
 
-setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 
 #' Fill slot 'pos' of a partition object with tables giving the statistic of pos
 #' 
@@ -538,15 +521,17 @@ setMethod('[', 'partition', function(x,i){
 
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
-#' Print S-Attributes in a partition
+#' Print S-Attributes in a partition or corpus
 #' 
 #' Convencience function - just to access the s-sttributes in a partition
 #' quickly.
 #'
-#' @param partition a partition object
+#' @param object either a partition or a character vector specifying a CWB corpus
 #' @return the S-Attributes are immediately printed
 #' @exportMethod sAttributes
-#' @noRd
+#' @docType methods
+#' @aliases sAttributes sAttributes,character-method sAttributes,partition-method
+#' @rdname sAttributes-method
 setMethod(
   "sAttributes", "partition",
   function (object) {
@@ -554,6 +539,12 @@ setMethod(
     sAttributes
   }
 )
+
+setMethod("sAttributes", "character", function(object){
+  sAttributes <- cqi_attributes(object, "s")
+  sAttributes
+  
+})
 
 .getCorpusEncoding <- function(corpus){
   registry <- scan(
@@ -609,7 +600,7 @@ setMethod("tf", "partition", function(object, token, pAttribute=c()){
 setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 
 #' @exportMethod enrich
-setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), metadata="skip", sAttributesMetadata=c(), verbose=TRUE){
+setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), meta=NULL, verbose=TRUE){
   if (size == TRUE) object@size <- .partition.size(object)
   if (length(tf>0)) {
     for (what in tf){
@@ -617,13 +608,13 @@ setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), metadata="s
       object@tf[[what]] <- .cpos2tf(object, what)
     }
   }
-  if (metadata != "skip") {
-    if (!metadata %in% c("skip", "defined", "all")) warning("not a valid instruction how to set up metadata")
+  if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    object <- .partition.metadata(object, metadata, sAttributesMetadata)
+    object <- .partition.metadata(object, meta)
   }
   object
 })
+
 
 #' @exportMethod split
 setMethod("split", "partition", function(x, f, drop=FALSE, ...){
@@ -648,14 +639,13 @@ setMethod("split", "partition", function(x, f, drop=FALSE, ...){
       p@sAttributeStrucs <- x@sAttributeStrucs
       p@label <- paste(x@label, i, collapse="_", sep="")
       meta <- ifelse (is.null(names(x@metadata)),
-                      "skip",
-                      "defined"
+                      NULL,
+                      colnames(x@metadata$table)
       )
-      if (meta == "defined") sAttr <- colnames(x@metadata$table)
       p <- enrich(
         p, size=TRUE,
         tf=names(x@tf),
-        metadata=meta, sAttributesMetadata=sAttr,
+        meta=meta,
         verbose=TRUE
       )
       p

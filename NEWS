@@ -1,3 +1,11 @@
+v0.4.26
+ * extended export functionality: mail statistics
+ * parameters for partition and partitionCluster call simplified (tf, meta)
+ * sAttributes method for character vectors to get sAttributes of corpus
+
+v0.4.25
+ * html method to inspect partitions
+
 v0.4.24
  * tf method for partition and partitionCluster
  * summary for partitionCluster
