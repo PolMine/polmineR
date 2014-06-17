@@ -1,3 +1,32 @@
+Planned changes:
+ * proper documentation for tf method
+ * tf will not work if a token is not in corpus
+ * tf without token > all tokens
+ * split fails if metadata are absent - to be changed
+ * proper documentation for trim method needed
+ * meta method for convenient access to metadata
+ * context function needs explicit statement of posFilter
+ * proper documentation for tf
+ * use tf to get relative frequencies
+ * tf as character method (then freq in whole corpus)
+ * tf using grep
+ * partition > check that corpus exists
+ * dispersion > enricht if required metadata are not available
+ * drop for dispersion results as method
+ * warning for tf if names for partitions are missing
+ * tf for simple string 
+ * integrate addPos to enrich and document properly
+ * partitionCluster -> simplify sAttribute Values
+ * encoding of metadata tables is not adjusted > implemented, check result
+ * dropping a cluster with name "" not possible for partition cluster
+ * set Encoding of partition labels in partition cluster to partition encoding
+ * partitionCluster function will not prepare corpora for Umlaute 
+ * dispersion needs metadata to be initialised - check this
+ * order of partition, query in dispersion function
+
+v0.4.27
+ * context and contextCluster functions turned into methods
+
 v0.4.26
  * extended export functionality: mail statistics
  * parameters for partition and partitionCluster call simplified (tf, meta)

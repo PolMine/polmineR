@@ -1,6 +1,9 @@
 \docType{class}
 \name{keyness-class}
 \alias{addPos,keyness-method}
+\alias{as.matrix,keynessCluster-method}
+\alias{keyness}
+\alias{keyness,partitionCluster-method}
 \alias{keyness-class}
 \alias{show,keyness-method}
 \alias{summary,keyness-method}
@@ -18,8 +21,11 @@ to keep results from a keyness analysis
   \describe{ \item{\code{corpus}:}{Object of class
   \code{"character"} ~~ } \item{\code{pattribute}:}{Object
   of class \code{"character"} ~~ }
-  \item{\code{stat}:}{Object of class \code{"data.frame"}
-  ~~ } \item{\code{statisticalTest}:}{Object of class
+  \item{\code{encoding}:}{Object of class
+  \code{"character"} ~~ } \item{\code{corpus}:}{Object of
+  class \code{"character"} ~~ } \item{\code{stat}:}{Object
+  of class \code{"data.frame"} ~~ }
+  \item{\code{statisticalTest}:}{Object of class
   \code{"character"} statisticalTest used }
   \item{\code{statisticalSummary}:}{Object of class
   \code{"data.frame"} statistical summary } }

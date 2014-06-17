@@ -111,14 +111,57 @@ setClass("concordances",
          )
 )
 
+
+#' trim and filter a context object
+#' 
+#' Trim 
+#' 
+#' Maybe it would be more efficient to use the subset function.-
+#' 
+#' @param object a context object to be filtered
+#' @param minSignificance minimum significance level
+#' @param minFrequency the minimum frequency
+#' @param maxRank maximum rank
+#' @param posFilter exclude words with a POS tag not in this list
+#' @param tokenFilter tokens to exclude from table
+#' @author Andreas Blaette
+#' @include generics.R
+#' @exportMethod trim
+#' @docType methods
+#' @noRd
+setMethod("trim", signature(object="context"), function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
+  test <- object@statisticalTest
+  if (maxRank==0) maxRank=nrow(object@stat)
+  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
+  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
+  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
+  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
+  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
+  if (!is.null(tokenFilter)){
+    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
+  }
+  if (!is.null(posFilter)) {
+    if(is.element("pos", colnames(object@stat))==FALSE){
+      cat('... adding part-of-speech tags to statistics-table (may take a while)\n')
+      object <- .addPos(object)      
+    }
+    object@stat<- object@stat[which(object@stat[,"pos"] %in% posFilter),]
+  }
+  object
+})
+
+
+setGeneric("context", function(object, ...){standardGeneric("context")})
+
+
 #' Analyze context of a node word
 #' 
 #' Retrieve the concordances of a token and calculate the log-likelihood test for collocates
 #' 
 #' For formulating the query, CPQ syntax may be used (see examples).
 #' 
+#' @param object a partition or a partitionCluster object
 #' @param query query, which may by a character vector or a cqpQuery object
-#' @param partition a partition object
 #' @param pAttribute p-attribute of the query
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
@@ -128,29 +171,33 @@ setClass("concordances",
 #' @param stopwords exclude a query hit from analysis if stopword(s) is/are in context
 #' @param statisticalTest either "LL" (default) or "pmi"
 #' @param verbose report progress, defaults to TRUE
+#' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
 #' @author Andreas Blaette
-#' @aliases context context,character-method context,cqpQuery-method
+#' @include generics.R partition.R
+#' @aliases context context,partition-method context,partitionCluster-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method
 #' @examples
 #' \dontrun{
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
 #' a <- context('"Integration"', p)
 #' }
 #' @importFrom parallel mclapply
-#' @rdname context
+#' @rdname context-method
+#' @docType methods
 #' @name context
-#' @export context 
-context <- function(
-  query,
-  partition,
-  pAttribute="useControls",
-  leftContext=0,
-  rightContext=0,
-  minSignificance=0,
-  posFilter=c(),
-  filterType="useControls",
-  stopwords=c(),
-  statisticalTest="LL",
-  verbose=TRUE
+#' @exportMethod context
+setMethod("context", "partition",
+  function(
+    object,
+    query,
+    pAttribute="useControls",
+    leftContext=0,
+    rightContext=0,
+    minSignificance=0,
+    posFilter=c(),
+    filterType="useControls",
+    stopwords=c(),
+    statisticalTest="LL",
+    verbose=TRUE
   ) {
   if (pAttribute == "useControls") pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
   if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
@@ -221,7 +268,7 @@ context <- function(
   rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
   Encoding(rownames(ctxt@stat)) <- partition@encoding
   ctxt
-}
+})
 
 .surrounding <- function (set, ctxt, corpus.sattr, filterType, stopwordId) {
   bag <- list()
@@ -501,5 +548,6 @@ combineCollocates <- function (x, y, maxRank=0, minFrequency=0, tokenFilter=c("F
   if (pearson==TRUE) {comparison$pearsons.rho=cor.test(c[,4], c[,8], method="pearson")$estimate}
   comparison
 }
+
 
 

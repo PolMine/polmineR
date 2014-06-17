@@ -27,28 +27,13 @@ setClass("contextCluster",
          )
 )
 
-#' Compute a set of context analyses
-#' 
-#' @param query either a character vector or a cqpQuery
-#' @param partitionCluster a partitionCluster object
-#' @param pAttribute p-attribute of the query
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
-#' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not be empty!!
-#' @param filterType either "include" or "exclude"
-#' @param stopwords discard a hit if stopwords occur in context
-#' @param verbose report progress, defaults to TRUE
-#' @aliases contextCluster as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method
-#' @export contextCluster
-#' @rdname contextCluster
-#' @name contextCluster
-contextCluster <- function(
-  query, partitionCluster, pAttribute="useControls",
+#' @include context.R generics.R partitionCluster.R
+setMethod("context", "partitionCluster", function(
+  object, query, pAttribute="useControls",
   leftContext=0, rightContext=0,
   minSignificance=-1, posFilter="useControls", filterType="useControls",
-  stopwords=c(),
-  verbose=TRUE
+  stopwords=c(), statisticalTest="LL",
+  verbose=TRUE  
 ) {
   contextCluster <- new("contextCluster")
   contextCluster@query <- query
@@ -60,14 +45,14 @@ contextCluster <- function(
       pAttribute=pAttribute,
       leftContext=leftContext, rightContext=rightContext,
       minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-      stopwords=stopwords,
+      stopwords=stopwords, statisticalTest=statisticalTest,
       verbose=verbose
     ),
     simplify = TRUE,
     USE.NAMES = TRUE
   )
   contextCluster
-} 
+})
 
 setMethod("[[", "contextCluster", function(x,i){
   return(x@contexts[[i]])
@@ -162,9 +147,9 @@ setMethod("summary", "contextCluster", function(object, top=3){
     tfAbs=tfAbs,
     tfRel=round(tfAbs/partitionSizes*100000,2)
     )
-  overview <- cbind(overview, t(data.frame(lapply(i.all@contexts, function(x) .statisticalSummary(x)$no))))
+  overview <- cbind(overview, t(data.frame(lapply(object@contexts, function(x) .statisticalSummary(x)$no))))
   colnames(overview)[3:6] <- criticalValue <- c(">10.83", ">7.88", ">6.63", ">3.84")
-  overview <- cbind(overview, t(data.frame(lapply(i.all@contexts, function(x) rownames(x@stat)[1:top]))))
+  overview <- cbind(overview, t(data.frame(lapply(object@contexts, function(x) rownames(x@stat)[1:top]))))
   overview
 })
 

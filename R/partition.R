@@ -267,7 +267,6 @@ datesPeriod <- function(corpus, dateRange) {
 
 
 
-
 #' add size of the partition to a partition object
 #' 
 #' The function requires the cpos in a partition object to be present. The size
@@ -329,12 +328,30 @@ function(object){
   meta <- NULL
   if (table==TRUE) {
     if (Partition@xml == "flat") {
-      Partition@metadata$table <- data.frame(sapply(m, USE.NAMES=TRUE, function(x) cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)))
+      Partition@metadata$table <- data.frame(
+        sapply(
+          m,
+          USE.NAMES=TRUE,
+          function(x) { 
+            tmp <- cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)
+            Encoding(tmp) <- partition@encoding
+            tmp
+          }
+          )
+        )
     } else if (Partition@xml == "nested") {
       meta <- vapply(m, FUN.VALUE="character", USE.NAMES=TRUE, function(x)paste(Partition@corpus, '.', x, sep=''))
-      Partition@metadata$table <- data.frame(sapply(meta, USE.NAMES=TRUE,
-                                                    function(x) cqi_struc2str(x, cqi_cpos2struc(x, Partition@cpos[,1]))
-                                                    ))
+      Partition@metadata$table <- data.frame(
+        sapply(
+          meta,
+          USE.NAMES=TRUE,
+          function(x) {
+            tmp <- cqi_struc2str(x, cqi_cpos2struc(x, Partition@cpos[,1]))
+            Encoding(tmp) <- partition@encoding
+            tmp
+          }
+          )
+        )
       colnames(Partition@metadata$table) <- names(meta)
     }
   }
@@ -438,6 +455,7 @@ function(object){
 #' @param pAttribute character vector - pos statistic for lemma or word
 #' @return an augmented partition object (includes pos now)
 #' @author Andreas Blaette
+#' @include generics.R
 #' @docType methods
 #' @exportMethod addPos
 #' @noRd
@@ -565,26 +583,43 @@ setMethod("sAttributes", "character", function(object){
 #' @param object a partition object
 #' @param token may also be a character vector length > 1
 #' @param pAttribute asdf
-#' @param rel whether to return absolute or relative frequencies
+#' @param method either "in" (for exact matching) or "grep"
 #' @docType method
 #' @exportMethod tf
 #' @noRd
-setMethod("tf", "partition", function(object, token, pAttribute=c()){
+setMethod("tf", "partition", function(object, token, pAttribute=NULL, method="in"){
   if (length(pAttribute) == 0){
     if (length(object@tf) > 1){
       warning("several tf lists available, please state pAttribute explicitly")
     } else if (length(object@tf) == 0){
-      warning("no tf lists available - at least one needs to be set up")
+      warning("tf lists are available - at least one needs to be set up")
     } else {
       pAttribute <- names(object@tf)[1]
     }
   }
   if (is.character(token) == TRUE){
     token <- .adjustEncoding(token, object@encoding)
-    tab <- data.frame(
-      token=token,
-      tfAbs=object@tf[[pAttribute]][token,"tf"],
-      tfRel=object@tf[[pAttribute]][token,"tf"]/object@size)
+    if (method == "in"){
+      tab <- data.frame(
+        token=token,
+        tfAbs=object@tf[[pAttribute]][token,"tf"],
+        tfRel=object@tf[[pAttribute]][token,"tf"]/object@size
+        )
+    } else if (method == "grep"){
+      bag <- lapply(token, function(query) {
+        rowNo <- grep(query, rownames(object@tf[[pAttribute]]))
+        tfAbs <- sum(object@tf[[pAttribute]][rowNo,"tf"])
+        tab <- data.frame(
+          token=query,
+          tfAbs=tfAbs,
+          tfRel=tfAbs/object@size
+          )
+        tab
+      })
+      tab <- do.call(rbind, bag)
+    } else {
+      warning("method specification is not valid")
+    }
   } else if(is.numeric(token)){
     relevantRows <- object@tf[[pAttribute]][object@tf$word$id %in% token,]
     tab <- data.frame(
@@ -638,10 +673,11 @@ setMethod("split", "partition", function(x, f, drop=FALSE, ...){
       p@xml <- x@xml
       p@sAttributeStrucs <- x@sAttributeStrucs
       p@label <- paste(x@label, i, collapse="_", sep="")
-      meta <- ifelse (is.null(names(x@metadata)),
-                      NULL,
-                      colnames(x@metadata$table)
-      )
+      if (is.null(names(x@metadata))){
+        meta <- NULL
+      } else {
+        meta <- colnames(x@metadata$table)
+      }
       p <- enrich(
         p, size=TRUE,
         tf=names(x@tf),
@@ -729,3 +765,12 @@ setMethod("html", "partition", function(object, filename=c(), type="debate"){
   if (is.null(filename)) browseURL(htmlFile)
 })
 
+setMethod("meta", "partition", function(object, sAttribute){
+  if ("values" %in% names(object@metadata)) {
+    ret <- object@metadata$values[[sAttribute]]
+  } else {
+    ret <- unique(cqi_struc2str(paste(object@corpus, '.', sAttribute, sep=''), object@strucs));
+    Encoding(foo)<-Partition@encoding;  
+  }
+  ret
+})

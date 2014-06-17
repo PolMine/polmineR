@@ -101,6 +101,7 @@ partitionCluster <- function(
   if (is.null(sAttributeVarValues)){
     message('... getting values of fixed s-attributes')
     sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionBase@strucs))
+    Encoding(sAttributeVarValues) <- cluster@encoding
     message('... number of partitions to be initialized: ', length(sAttributeVarValues))
   }
   if (multicore==FALSE) {
@@ -260,7 +261,7 @@ setMethod("merge", "partitionCluster", function(x, label=c("")){
     )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
-  y@explanation=c(paste("this partition is a merger of the partitions", paste(names(object@partitions), collapse=', ')))
+  y@explanation=c(paste("this partition is a merger of the partitions", paste(names(x@partitions), collapse=', ')))
   y@label <- label
   y
 })
@@ -410,11 +411,11 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
 
 
 #' @exportMethod tf
-setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=FALSE){
+setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=FALSE, method="in"){
   bag <- lapply(
     names(object@partitions),
     function(x) {
-      tab <- tf(object@partitions[[x]], token, pAttribute)
+      tab <- tf(object@partitions[[x]], token, pAttribute, method=method)
       cbind(partition=rep(x, nrow(tab)), tab)
     }
   )

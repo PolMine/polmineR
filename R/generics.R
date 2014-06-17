@@ -8,3 +8,8 @@
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 setGeneric("addPos", function(object,...){standardGeneric("addPos")})
+
+
+setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
+
+setGeneric("meta", function(object, ...){standardGeneric("meta")})

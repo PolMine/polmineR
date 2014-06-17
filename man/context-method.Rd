@@ -1,19 +1,23 @@
+\docType{methods}
 \name{context}
+\alias{as.TermContextMatrix,contextCluster-method}
+\alias{as.matrix,contextCluster-method}
 \alias{context}
-\alias{context,character-method}
-\alias{context,cqpQuery-method}
+\alias{context,contextCluster-method}
+\alias{context,partition-method}
+\alias{context,partitionCluster-method}
 \title{Analyze context of a node word}
 \usage{
-context(query, partition, pAttribute = "useControls", leftContext = 0,
-  rightContext = 0, minSignificance = 0, posFilter = c(),
-  filterType = "useControls", stopwords = c(), statisticalTest = "LL",
-  verbose = TRUE)
+\S4method{context}{partition}(object, query, pAttribute = "useControls",
+  leftContext = 0, rightContext = 0, minSignificance = 0,
+  posFilter = c(), filterType = "useControls", stopwords = c(),
+  statisticalTest = "LL", verbose = TRUE)
 }
 \arguments{
+  \item{object}{a partition or a partitionCluster object}
+
   \item{query}{query, which may by a character vector or a
   cqpQuery object}
-
-  \item{partition}{a partition object}
 
   \item{pAttribute}{p-attribute of the query}
 
@@ -36,6 +40,11 @@ context(query, partition, pAttribute = "useControls", leftContext = 0,
   \item{statisticalTest}{either "LL" (default) or "pmi"}
 
   \item{verbose}{report progress, defaults to TRUE}
+}
+\value{
+depending on whether a partition or a partitionCluster
+serves as input, the return will be a context object, or a
+contextCluster object
 }
 \description{
 Retrieve the concordances of a token and calculate the

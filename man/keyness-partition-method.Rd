@@ -1,14 +1,15 @@
-\name{keyness}
-\alias{keyness}
+\docType{methods}
+\name{keyness,partition-method}
+\alias{keyness,partition-method}
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{
-keyness(coi, ref, pAttribute = drillingControls$pAttribute,
+\S4method{keyness}{partition}(x, y, pAttribute = drillingControls$pAttribute,
   minFrequency = 0, included = FALSE, verbose = TRUE)
 }
 \arguments{
-  \item{coi}{a partition object}
+  \item{x}{a partition or partitionCluster object}
 
-  \item{ref}{a partition object, it is assumed that the coi
+  \item{y}{a partition object, it is assumed that the coi
   is a subcorpus of ref}
 
   \item{pAttribute}{The P-Attribute that will be counted

@@ -132,11 +132,11 @@ The partition object has a method that will give you immediate access to view th
 
 
 <<context, echo=TRUE, results="tex", tidy=FALSE>>=
-integration <- context(
-  "Integration", bt,
-  leftContext=20, rightContext=20
-  )
-summary(integration)
+# integration <- context(
+#   bt, "Integration",
+#  leftContext=20, rightContext=20
+#  )
+# summary(integration)
 @
 
 Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object (here: \texttt{min@stat}).
