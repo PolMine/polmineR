@@ -1,0 +1,29 @@
+\docType{methods}
+\name{enrich,partition-method}
+\alias{enrich,partition-method}
+\alias{enrich,partitionCluster-method}
+\title{enrich partition object (S4 method)}
+\usage{
+\S4method{enrich}{partition}(object, size = FALSE, tf = NULL, meta = NULL,
+  addPos = NULL, verbose = TRUE)
+}
+\arguments{
+  \item{object}{a partition object}
+
+  \item{size}{logical, defaults to FALSE}
+
+  \item{tf}{character vector providing the p-attributes for
+  which frequency tables shall be generated}
+
+  \item{meta}{character vector providing s-attributes for
+  which metainformation shall be supplied}
+
+  \item{addPos}{character vector providing p-attributes}
+
+  \item{verbose}{logical, defaults to TRUE}
+}
+\description{
+Fill slots of a partition object: Add object size,
+metainformation, pos.
+}
+

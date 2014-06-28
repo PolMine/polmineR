@@ -4,23 +4,13 @@
 \alias{[,partition-method}
 \alias{[[,partition,ANY,ANY,ANY-method}
 \alias{[[,partition-method}
-\alias{addPos}
-\alias{addPos,partition-method}
 \alias{as.partitionCluster}
 \alias{as.partitionCluster,partition-method}
-\alias{enrich}
-\alias{enrich,partition-method}
 \alias{export}
 \alias{export,partition-method}
-\alias{html}
-\alias{html,partition-method}
 \alias{partition-class}
 \alias{show,partition-method}
 \alias{split}
-\alias{split,partition-method}
-\alias{tf}
-\alias{tf,partition-method}
-\alias{trim,partition-method}
 \title{partition class}
 \description{
 Basic class for for almost anything in the driller package.

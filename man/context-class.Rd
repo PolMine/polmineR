@@ -6,7 +6,6 @@
 \alias{context-class}
 \alias{show,context-method}
 \alias{summary,context-method}
-\alias{trim,context-method}
 \title{S4 context class}
 \description{
 class to organize information of context analysis

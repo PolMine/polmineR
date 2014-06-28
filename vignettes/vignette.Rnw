@@ -81,17 +81,17 @@ Usually, any session using the driller will start with initializing a partition.
 In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
 
 <<partitionInit, echo=TRUE, results="tex", tidy=FALSE>>=
-bt <- partition(corpus="PLPRBTTXT", list(text_type="speech"))
-cdu <- partition(
-  corpus="PLPRBTTXT",
-  sAttributes=list(text_type="speech", text_party="CDU")
-  )
+# bt <- partition(corpus="PLPRBTTXT", list(text_type="speech"))
+# cdu <- partition(
+#  corpus="PLPRBTTXT",
+#  sAttributes=list(text_type="speech", text_party="CDU")
+#  )
 @
 
 To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
 
 <<showPartition, echo=TRUE, results="tex", tidy=FALSE>>=
-cdu
+# cdu
 @
 
 Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
@@ -101,7 +101,7 @@ There are two methods to set up a partition, 'grep' and 'in'. If the method is '
 <<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
 coalition <- partition(
   corpus="PLPRBTTXT",
-  sAttributes=list(
+  def=list(
     text_type="speech",
     text_party=c("CDU_CSU", "FDP")
     ),

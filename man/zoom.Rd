@@ -2,13 +2,13 @@
 \alias{zoom}
 \title{zoom into a partition}
 \usage{
-zoom(Partition, sAttribute, label = c(""), method = "in", tf = c("word",
+zoom(Partition, def, label = c(""), method = "in", tf = c("word",
   "lemma"), verbose = TRUE)
 }
 \arguments{
   \item{Partition}{a partition object}
 
-  \item{sAttribute}{a list supplying further sAttributes}
+  \item{def}{a list supplying further sAttributes}
 
   \item{label}{a label for the new partition}
 

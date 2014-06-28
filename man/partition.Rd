@@ -2,15 +2,14 @@
 \alias{partition}
 \title{Initialize a partition}
 \usage{
-partition(corpus, sAttributes, label = c(""), encoding = NULL,
-  tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
-  verbose = TRUE)
+partition(corpus, def, label = c(""), encoding = NULL, tf = c("word",
+  "lemma"), meta = NULL, method = "grep", xml = "flat", verbose = TRUE)
 }
 \arguments{
   \item{corpus}{the CWB-corpus to be used}
 
-  \item{sAttributes}{list consisting of a set of character
-  vectors (see details)}
+  \item{def}{list consisting of a set of character vectors
+  (see details)}
 
   \item{label}{label of the new partition, defaults to
   "noLabel"}

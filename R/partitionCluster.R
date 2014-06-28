@@ -1,3 +1,6 @@
+#'@include partition.R
+NULL
+
 #' partitionCluster class
 #' 
 #' A cluster of partition objects.
@@ -24,18 +27,18 @@
 #'  \item{html}{bla} }
 #'   
 #' @aliases partitionCluster-class show,partitionCluster-method 
-#'   addPos,partitionCluster-method [,partitionCluster-method 
+#'   [,partitionCluster-method 
 #'   [[,partitionCluster-method as.DocumentTermMatrix,partitionCluster-method 
 #'   as.matrix,partitionCluster-method 
 #'   as.TermDocumentMatrix,partitionCluster-method merge,partitionCluster-method
-#'   trim,partitionCluster-method merge,partitionCluster-method trim-method trim
+#'   merge,partitionCluster-method 
 #'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix 
 #'   +,partitionCluster-method names,partitionCluster-method 
-#'   summary,partitionCluster-method tf,partitionCluster-method 
+#'   summary,partitionCluster-method 
 #'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
 #'   +,partitionCluster,partition-method
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
-#'   enrich,partitionCluster-method html,partitionCluster-method
+#'   html,partitionCluster-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -58,7 +61,8 @@ setClass("partitionCluster",
 #' A list of partition objects with fixed s-attributes and one variable
 #' s-attribute is generated
 #' 
-#' If sAttributeVarValues is not given, all values for sAttributeVar in the partition
+#' If var is list(text_date=NULL) for instance, all values for the provided s-attribute
+#' in the partition
 #' defined by sAttributesFixed will be retrived and used for defining the
 #' partitions.
 #' While generally S4 methods are used in the driller package, the return is a S3 method.
@@ -66,25 +70,29 @@ setClass("partitionCluster",
 #' Setting multicore to TRUE will speed up things. Error handling is less benevolent, risk of overheating, no verbose output.
 #' 
 #' @param corpus the CWB corpus to be used
-#' @param sAttributesFixed a list with the definition of a partition that shall be prepared
-#' @param sAttributeVar character vector indicating the s-attribute to be variabel
-#' @param sAttributeVarValues character vector
+#' @param def a list with the definition of a partition that shall be prepared
+#' @param var list indicating the s-attribute to be variabel
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
 #' @param method either 'grep' or 'in'
 #' @param xml either 'flat' (default) or 'nested'
-#' @param prefixLabels a character vector that will serve as a prefix for partition labels
+#' @param prefix a character vector that will serve as a prefix for partition labels
 #' @return a S3 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
 #' @aliases partitionCluster
 #' @author Andreas Blaette
 partitionCluster <- function(
-  corpus,
-  sAttributesFixed, sAttributeVar, sAttributeVarValues=c(), prefixLabels=c(""),
+  corpus, def, var, prefix=c(""),
   encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat"
 ) {
+  if (length(names(var))==1) {
+    sAttributeVar <- names(var)
+    sAttributeVarValues <- var[[sAttributeVar]]
+  } else {
+    warning("only one variable s-attribute may be provided")
+  }
   multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
   multicoreMessage <- ifelse(
     multicore==TRUE,
@@ -94,9 +102,9 @@ partitionCluster <- function(
   message('\nPreparing cluster of partitions', multicoreMessage)
   cluster <- new("partitionCluster")
   cluster@corpus <- corpus
-  cluster@sAttributesFixed <- sAttributesFixed
+  cluster@sAttributesFixed <- def
   message('... setting up base partition')
-  partitionBase <- partition(corpus, sAttributesFixed, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
+  partitionBase <- partition(corpus, def, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     message('... getting values of fixed s-attributes')
@@ -108,7 +116,7 @@ partitionCluster <- function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@partitions[[sAttribute]] <- zoom(partitionBase, sAttribute=sAttr, label=sAttribute, tf=tf)
+      cluster@partitions[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf)
     }
   } else if (multicore==TRUE) {
     message('... setting up the partitions')
@@ -116,13 +124,13 @@ partitionCluster <- function(
       sAttributeVarValues,
       function(x) zoom(
         partitionBase,
-        sAttribute=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
+        def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         label=x,
         tf=tf
       )
     )
   }
-  names(cluster@partitions) <- paste(.adjustEncoding(prefixLabels, cluster@encoding), sAttributeVarValues, sep='')
+  names(cluster@partitions) <- paste(.adjustEncoding(prefix, cluster@encoding), sAttributeVarValues, sep='')
   cluster
 }
 
@@ -173,59 +181,6 @@ setMethod("summary", "partitionCluster", function (object) {
 })
 
 
-#' perform addPos and further adjustments for all partitions in a cluster
-#' 
-#' @param object a partitionCluster object
-#' @param pAttribute character vector: "word", "lemma", or both
-#' @param minFrequency minimum frequency of tokens
-#' @param posFilter pos to keep
-#' @param drop partitionObjects you want to drop, specified either by number or by label
-#' @exportMethod trim
-#' @noRd
-setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=0, posFilter=c(),  drop=c(), minSize=0, ...){
-  pimpedCluster <- object
-  if (minFrequency !=0 || !is.null(posFilter)){
-    if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))
-    } else {
-      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))    
-    }
-  }
-  if (minSize > 0){
-    toKill <- subset(
-      data.frame(
-        name=names(pimpedCluster),
-        noToken=summary(pimpedCluster)$token,
-        stringsAsFactors=FALSE
-        ), noToken < minSize)$name
-    if (length(toKill) > 0) {drop <- c(toKill, drop)}
-  }
-  for (i in drop){
-    pimpedCluster@partitions[[i]] <- NULL
-  }
-  pimpedCluster
-})
-
-#' Fill slot 'pos' of a partitionCluster object with tables giving the statistic of pos
-#' 
-#' Augment the partitionCluster object
-#' 
-#' @param object a partition class object
-#' @param pAttribute character vector - pos statistic for lemma or word
-#' @return an augmented partition object (includes pos now)
-#' @author Andreas Blaette
-#' @docType methods
-#' @exportMethod addPos
-#' @noRd
-setMethod("addPos", "partitionCluster", function(object, pAttribute){
-  pimpedCluster <- object
-  if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-    pimpedCluster@partitions <- mclapply(object@partitions, function(x) addPos(x, pAttribute))
-  } else {
-    pimpedCluster@partitions <- lapply(object@partitions, function(x) addPos(x, pAttribute))    
-  }
-  pimpedCluster
-})
 
 
 #' Merge the partitions in a cluster into one partition
@@ -369,9 +324,9 @@ setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, .
   as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute))
 })
 
-setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
 
 #' @import Matrix
+#' @include generics.R
 setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
   message("... converting partitionCluster to TermDocumentMatrix")
   tdm_stm <- as.TermDocumentMatrix(x, "word")
@@ -390,6 +345,7 @@ setMethod("names", "partitionCluster", function(x){
   names(x@partitions)
 })
 
+# '@include partition.R
 #' @exportMethod +
 setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
   newPartition <- new("partitionCluster")
@@ -410,28 +366,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
 })
 
 
-#' @exportMethod tf
-setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=FALSE, method="in"){
-  bag <- lapply(
-    names(object@partitions),
-    function(x) {
-      tab <- tf(object@partitions[[x]], token, pAttribute, method=method)
-      cbind(partition=rep(x, nrow(tab)), tab)
-    }
-  )
-  tab <- do.call(rbind, bag)
-  if(!is.null(tab)){
-    if (rel==FALSE) tab <- tab[,c("partition", "token", "tfAbs")]
-    if (rel==TRUE) tab <- tab[,c("partition", "token", "tfRel")]       
-    colnames(tab)[3] <- "tf"
-    tab <- xtabs(tf~partition+token, data=tab)
-    tab <- as.data.frame(as.matrix(unclass(tab)))
-  }
-  tab
-})
-
-setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
-
+#'@include partition.R
 #' @exportMethod as.partitionCluster
 setMethod("as.partitionCluster", "partition", function(object){
  newCluster <- new("partitionCluster")
@@ -451,14 +386,6 @@ setMethod("as.partitionCluster", "list", function(object, ...){
   newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
   names(newCluster@partitions) <- vapply(newCluster@partitions, function(x) x@label, FUN.VALUE="character")
   newCluster
-})
-
-setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, verbose=TRUE){
-  object@partitions <- lapply(
-    object@partitions,
-    function(p) enrich(p, size=size, tf=tf, meta=meta, verbose=TRUE)
-    )
-  object
 })
 
 setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){

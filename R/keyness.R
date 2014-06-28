@@ -1,3 +1,5 @@
+#' @include generics.R
+NULL
 
 #' Add POS tags
 #' 
@@ -65,61 +67,8 @@ setClass("keynessCluster", representation(objects="list"))
 
 
 
-#' trim and filter a context object
-#' 
-#' Trim 
-#' 
-#' Maybe it would be more efficient to use the subset function.-
-#' 
-#' @param object a context object to be filtered
-#' @param minSignificance minimum significance level
-#' @param minFrequency the minimum frequency
-#' @param maxRank maximum rank
-#' @param tokenFilter tokens to exclude from table
-#' @author Andreas Blaette
-#' @exportMethod trim
-#' @noRd
-setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL){
-  test <- object@statisticalTest
-  if (maxRank==0) maxRank <- nrow(object@stat)
-  if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
-  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
-  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
-  if (!is.null(tokenFilter)){
-    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
-  }
-  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
-  object
-})
 
 
-
-#' add pos values to the statistics of a keyness object
-#' 
-#' @param object the keyness object
-#' @param partition a partition object (the corpus of interest)
-#' @include generics.R
-#' @exportMethod addPos
-#' @noRd
-setMethod("addPos", "keyness",
-          function(object, Partition=NULL){
-            if (is.null(partition)){
-              object <- .addPos(object)
-            } else if (class(Partition) == "partition"){
-              if (object@pattribute %in% names(Partition@pos)) {
-                pos <- vapply(
-                  rownames(object@stat[1:50, ]),
-                  function(x) return(Partition@pos[[object@pattribute]][["max"]][x]),
-                  USE.NAMES=FALSE,
-                  FUN.VALUE="character")
-                object@stat <- cbind(object@stat, pos=pos)
-              }
-            }
-            object 
-          }
-)
 
 
 #' Summary of a keyness object
@@ -171,7 +120,6 @@ setMethod("show", "keyness", function(object){
 #' - ...
 #' @author Andreas Blaette
 #' @docType methods
-#' @include generics.R
 #' @references Manning / Schuetze ...
 #' @exportMethod keyness
 setMethod("keyness", signature=c(x="partition"), function(

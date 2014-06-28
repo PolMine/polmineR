@@ -1,21 +1,5 @@
-#' class for kwic output
-#' 
-#' information for kwic output
-#' 
-#' @section Slots:
-#'   \describe{
-#'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions }
-#'     \item{\code{word}:}{Object of class \code{"list"} to be explained }
-#'  }
-#' @name kwic-class
-#' @rdname kwic-class
-#' @docType class
-#' @exportClass kwic
-setClass("kwic",
-         representation(cpos="list",
-                        word="list"
-         )
-)
+#' @include generics.R partition.R context.R partitionCluster.R kwic.R
+NULL
 
 .filter <- list(
   include=function(x,y) {x %in% y},
@@ -55,7 +39,7 @@ setClass("kwic",
 #'    }
 #'     
 #' @name context-class
-#' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method [[,context-method summary,context-method trim,context-method
+#' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method [[,context-method summary,context-method
 #' @docType class
 #' @exportClass kwic
 #' @rdname context-class
@@ -81,77 +65,8 @@ setClass("context",
 
 
 
-#' concordances (S4 class)
-#' 
-#' S4 class for organizing information for concordance output
-#' 
-#' @section Slots:
-#'   \describe{
-#'    \item{\code{metadata}:}{Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed }
-#'    \item{\code{table}:}{Object of class \code{"data.frame"} a table with the relevant information for kwic output }
-#'    \item{\code{collocate}:}{Object of class \code{"character"} collocate, if applicable }
-#'    \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
-#'   }
-#' @section Methods:
-#'   \describe{
-#'    \item{[}{indexing for seeing only some concordances}
-#'    \item{show}{get kwic output}
-#'   }
-#'   
-#' @name concordances-class
-#' @docType class
-#' @aliases show,concordances-method concordances-class [,concordances,ANY,ANY,ANY-method [,concordances-method
-#' @exportClass concordances
-#' @rdname concordances-class
-setClass("concordances",
-         representation(metadata="character",
-                        collocate="character",
-                        table="data.frame",
-                        encoding="character"
-         )
-)
 
 
-#' trim and filter a context object
-#' 
-#' Trim 
-#' 
-#' Maybe it would be more efficient to use the subset function.-
-#' 
-#' @param object a context object to be filtered
-#' @param minSignificance minimum significance level
-#' @param minFrequency the minimum frequency
-#' @param maxRank maximum rank
-#' @param posFilter exclude words with a POS tag not in this list
-#' @param tokenFilter tokens to exclude from table
-#' @author Andreas Blaette
-#' @include generics.R
-#' @exportMethod trim
-#' @docType methods
-#' @noRd
-setMethod("trim", signature(object="context"), function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
-  test <- object@statisticalTest
-  if (maxRank==0) maxRank=nrow(object@stat)
-  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
-  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
-  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
-  if (!is.null(tokenFilter)){
-    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
-  }
-  if (!is.null(posFilter)) {
-    if(is.element("pos", colnames(object@stat))==FALSE){
-      cat('... adding part-of-speech tags to statistics-table (may take a while)\n')
-      object <- .addPos(object)      
-    }
-    object@stat<- object@stat[which(object@stat[,"pos"] %in% posFilter),]
-  }
-  object
-})
-
-
-setGeneric("context", function(object, ...){standardGeneric("context")})
 
 
 #' Analyze context of a node word
@@ -173,18 +88,16 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param verbose report progress, defaults to TRUE
 #' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
 #' @author Andreas Blaette
-#' @include generics.R partition.R
-#' @aliases context context,partition-method context,partitionCluster-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method
+#' @aliases context context,partition-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method context,partitionCluster-method
 #' @examples
 #' \dontrun{
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
 #' a <- context('"Integration"', p)
 #' }
 #' @importFrom parallel mclapply
-#' @rdname context-method
+#' @rdname context-partition-method
 #' @docType methods
-#' @name context
-#' @exportMethod context
+#' @aliases context,partition-method
 setMethod("context", "partition",
   function(
     object,
@@ -193,8 +106,8 @@ setMethod("context", "partition",
     leftContext=0,
     rightContext=0,
     minSignificance=0,
-    posFilter=c(),
-    filterType="useControls",
+    posFilter=NULL,
+    filterType="exclude",
     stopwords=c(),
     statisticalTest="LL",
     verbose=TRUE
@@ -203,25 +116,23 @@ setMethod("context", "partition",
   if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
   if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
   if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-  if (is.null(posFilter)) posFilter <- get("drillingControls", '.GlobalEnv')[['posFilter']]
-  if (filterType == "useControls") filterType <- get("drillingControls", '.GlobalEnv')[['filterType']]
   multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
   ctxt <- new("context")
   ctxt@query <- query
   ctxt@pattribute <- pAttribute
-  ctxt@corpus <- partition@corpus
+  ctxt@corpus <- object@corpus
   ctxt@left.context <- leftContext
   ctxt@right.context <- rightContext
-  ctxt@encoding <- partition@encoding
+  ctxt@encoding <- object@encoding
   ctxt@posFilter <- posFilter
-  ctxt@partition <- partition@label
-  ctxt@partitionSize <- partition@size
+  ctxt@partition <- object@label
+  ctxt@partitionSize <- object@size
   ctxt@statisticalTest <- statisticalTest
   if (verbose==TRUE) message('Analysing the context for node word "', query,'"')
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
   if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
-  # query <- .adjustEncoding(query, partition@encoding)
+  # query <- .adjustEncoding(query, object@encoding)
   # Encoding(query) <- ctxt@encoding
   hits <- .queryCpos(ctxt@query, partition, pAttribute)
   hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
@@ -230,6 +141,7 @@ setMethod("context", "partition",
   concordances <- new("kwic")
   stopwordId <- unlist(lapply(stopwords, function(x) cqi_regex2id(corpus.pattr, x)))
   if (verbose==TRUE) message("... counting tokens in context ")
+  
   if (multicore==TRUE) {
     bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
   } else {
@@ -266,7 +178,7 @@ setMethod("context", "partition",
   ))
   ctxt <- trim(ctxt, minSignificance=minSignificance)
   rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
-  Encoding(rownames(ctxt@stat)) <- partition@encoding
+  Encoding(rownames(ctxt@stat)) <- object@encoding
   ctxt
 })
 
@@ -288,89 +200,10 @@ setMethod("context", "partition",
 
 
 
-#' KWIC output
-#' 
-#' Based on a context object, you get concordances, i.e. the context of a 
-#' keyword
-#' 
-#' This functiongives you quite some flexibility to adjust the output to your needs.
-#' Use drillingControls to adjust output.
-#' 
-#' @param ctxt a context object
-#' @param metadata character vector with the metadata included in output
-#' @param collocate limit output to a concordances containing a specific 
-#'   collocate
-#' @return a concordances object
-#' @author Andreas Blaette
-#' @export kwic
-kwic <- function(ctxt, metadata=NULL, collocate=c()){
-  if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
-  m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
-  if (all(is.element(metadata, cqi_attributes(ctxt@corpus, "s")))!=TRUE) {
-    warning("check drillingControls$kwicMetadata: Not all sAttributes supplied are available in corpus")
-  }
-  for (meta in metadata){
-    sattr <- paste(ctxt@corpus, ".", meta, sep="")
-    strucs <- cqi_cpos2struc(sattr, unlist(lapply(ctxt@cpos, function(x)x$node[1])))
-    m <- cbind(m, cqi_struc2str(sattr, strucs))
-  }
-  left <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$left), collapse=" ")}))
-  node <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$node), collapse=" ")}))
-  right <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$right), collapse=" ")}))
-  Encoding(left) <- ctxt@encoding
-  Encoding(node) <- ctxt@encoding
-  Encoding(right) <- ctxt@encoding  
-  m <- cbind(m, left=left, node=node, right=right)
-  if (length(collocate) > 0) m <- m[grep(collocate, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
-  m <- m[2:ncol(m)]
-  colnames(m) <- c(metadata, c('left.context', 'node', 'right.context'))
-  conc <- new('concordances')
-  if (!is.null(collocate)) {conc@collocate <- collocate}
-  conc@table <- m
-  conc@metadata <- metadata
-  conc@encoding <- ctxt@encoding
-  conc
-}
 
 
 
 
-#' @importFrom xtermStyle style
-setMethod('show', 'concordances',
-function(object){
-  drillingControls <- get("drillingControls", '.GlobalEnv')
-  for (i in 1:nrow(object@table)){
-    metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
-    Encoding(metaoutput) <- object@encoding
-    if (drillingControls$xtermStyle==FALSE){
-      cat('[',metaoutput, '] ', sep='')
-    } else {
-      cat(style(paste('[',metaoutput, ']',sep=''),fg=drillingControls$xtermFgMeta,bg=drillingControls$xtermBgMeta), ' ', sep='')
-    }
-    if (drillingControls$xtermStyle==FALSE){
-    cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
-    } else {
-      if (length(object@collocate)==0){object@collocate="FOO"}
-      foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)-2]))), ' ')),
-                    function(x){
-                      if (x==object@collocate){
-                        cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                      } else {cat(x, ' ', sep='')}
-                    }
-      )
-      cat(' ', style(object@table[i,ncol(object@table)-1], bg=drillingControls$xtermBgNode, fg=drillingControls$xtermFgNode), ' ', sep='')
-      foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)]))), ' ')),
-                    function(x){
-                      if (x==object@collocate){
-                        cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                      } else {cat(x, ' ', sep='')}
-                    }
-      )                                                     
-      cat("\n\n")
-    }
-  }          
-}
-)
 
 #' @exportMethod summary
 #' @noRd
@@ -409,27 +242,6 @@ function(object) {
 
   
 
-.showChunkwise <- function (conc) {
-  drillingControls <- get("drillingControls", '.GlobalEnv')
-  if (drillingControls$kwicNo == 0 ) {
-    show(conc)
-  } else if (drillingControls$kwicNo > 0) {
-    chunks <- trunc(nrow(conc@table)/drillingControls$kwicNo)
-    for ( i in c(0:(chunks-1))) {
-      lines <- i*drillingControls$kwicNo+c(1:drillingControls$kwicNo)
-      cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(conc@table),'----------\n\n')
-      foo <- show(conc[lines])
-      cat("(press 'q' to quit or ENTER to continue)\n")
-      loopControl <- readline()
-      if (loopControl == "q") break
-    }
-    if ((chunks*drillingControls$kwicNo < nrow(conc@table)) && (loopControl != "q")){
-      cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(conc@table), 'of', nrow(conc@table),'----------\n\n')
-      foo <- show(conc[c((chunks*drillingControls$kwicNo):nrow(conc@table))])
-    }
-  }    
-}
-
 setMethod('show', 'context',
 function(object) {
   drillingControls <- get("drillingControls", '.GlobalEnv')
@@ -458,12 +270,6 @@ setMethod('[[', 'context',
   }        
 )
 
-setMethod('[', 'concordances',
-  function(x,i) {
-    x@table <- x@table[i,]
-    x
-  }        
-)
 
 
 #' Prepare data for an ego-network
@@ -510,44 +316,29 @@ egoNetwork <- function(node, Partition, degrees, pAttribute="useControls", leftC
   gData
 }
 
-#' combine statistics
-#' 
-#' Merge statistics for two contextual analyses, calculate pearson rank correlation (experimental)
-#' 
-#' The function is intended to facilitate the exploration of the variation of a term.
-#' Setting the max.rank needs to be handled with care. 
-#' This analysis makes only sense for dyachronic comparisons with roughly equal frequencies.
-#' 
-#' @param x context object 1
-#' @param y context object 2
-#' @param maxRank a cutoff rank
-#' @param minFrequency a minimum frequency
-#' @param tokenFilter keep rows only for tokens given by a character vector
-#' @param pearson set to TRUE if pearsons rho shall be calculated, defaults to FALSE
-#' @return a combined data frame
-#' @author Andreas Blaette
-#' @export combineCollocates
-combineCollocates <- function (x, y, maxRank=0, minFrequency=0, tokenFilter=c("FOO"), pearson=FALSE){
-  x <- trim(x, minFrequency=minFrequency, maxRank=maxRank)
-  y <- trim(y, minFrequency=minFrequency, maxRank=maxRank)
-  c <- merge(x@stat, y@stat, all=TRUE, by.x=0, by.y=0)
-  rownames(c) <- c[,1]
-  c <- c[,2:dim(c)[2]]
-  c <- cbind(c,
-             x.plot=sapply(c[,1], function(x) if (is.na(x)==TRUE) {maxRank} else {x}),
-             y.plot=sapply(c[,5], function(x) if (is.na(x)==TRUE) {maxRank} else {x})
+setMethod("context", "partitionCluster", function(
+  object, query, pAttribute="useControls",
+  leftContext=0, rightContext=0,
+  minSignificance=-1, posFilter="useControls", filterType="useControls",
+  stopwords=c(), statisticalTest="LL",
+  verbose=TRUE  
+) {
+  contextCluster <- new("contextCluster")
+  contextCluster@query <- query
+  contextCluster@pAttribute <- pAttribute
+  contextCluster@contexts <- sapply(
+    partitionCluster@partitions,
+    function(x) context(
+      query, x,
+      pAttribute=pAttribute,
+      leftContext=leftContext, rightContext=rightContext,
+      minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
+      stopwords=stopwords, statisticalTest=statisticalTest,
+      verbose=verbose
+    ),
+    simplify = TRUE,
+    USE.NAMES = TRUE
   )
-  if (!unique(tokenFilter)[1]=="FOO") {c <- c[which(rownames(c)%in% tokenFilter),]}
-  comparison <- list(
-    partition.x=x@partition,
-    partition.y=y@partition,
-    node.x=x@query,
-    node.y=y@query,
-    stat=c
-  )
-  if (pearson==TRUE) {comparison$pearsons.rho=cor.test(c[,4], c[,8], method="pearson")$estimate}
-  comparison
-}
-
-
+  contextCluster
+})
 

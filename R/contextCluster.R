@@ -1,3 +1,6 @@
+#' @include generics.R context.R
+NULL
+
 #' S4 contextCluster class
 #' 
 #' class to organize information of multiple context analyses
@@ -27,32 +30,6 @@ setClass("contextCluster",
          )
 )
 
-#' @include context.R generics.R partitionCluster.R
-setMethod("context", "partitionCluster", function(
-  object, query, pAttribute="useControls",
-  leftContext=0, rightContext=0,
-  minSignificance=-1, posFilter="useControls", filterType="useControls",
-  stopwords=c(), statisticalTest="LL",
-  verbose=TRUE  
-) {
-  contextCluster <- new("contextCluster")
-  contextCluster@query <- query
-  contextCluster@pAttribute <- pAttribute
-  contextCluster@contexts <- sapply(
-    partitionCluster@partitions,
-    function(x) context(
-      query, x,
-      pAttribute=pAttribute,
-      leftContext=leftContext, rightContext=rightContext,
-      minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-      stopwords=stopwords, statisticalTest=statisticalTest,
-      verbose=verbose
-    ),
-    simplify = TRUE,
-    USE.NAMES = TRUE
-  )
-  contextCluster
-})
 
 setMethod("[[", "contextCluster", function(x,i){
   return(x@contexts[[i]])
@@ -83,7 +60,7 @@ setMethod('show', 'context', function(object) {
 })
 
 
-as.TermContextMatrix <- function(x, col, ...) UseMethod("as.TermContextMatrix", x)
+
 
 #' Transform a context cluster into a Term Context Matrix
 #' 

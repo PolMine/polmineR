@@ -1,4 +1,5 @@
-setGeneric("mail", function(object, ...){standardGeneric("mail")})
+#' @include generics.R keyness.R
+NULL
 
 #' mail a result
 #' 

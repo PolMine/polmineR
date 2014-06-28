@@ -1,3 +1,6 @@
+#' @include generics.R
+NULL
+
 #' crosstab class
 #' 
 #' class for keeping crosstabulations of frequencies of queries
@@ -105,19 +108,6 @@ crosstabulationSizes <- function(Partition, rows, cols){
   crosstab
 }
 
-#' merge cols
-#'
-#' @param object the object to be passed
-#' @param ... further parameters
-#' @author Andreas Blaette
-#' @export
-#' @docType methods
-#' @rdname mergeColsRegex-methods
-#' @noRd
-setGeneric("mergeColsRegex", function(object,...){standardGeneric("mergeColsRegex")})
-
-setGeneric("mergeCols", function(object,...){standardGeneric("mergeCols")})
-setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 
 #' merge two columns in a crosstab object
 #' 
@@ -131,13 +121,8 @@ setGeneric("filterCols", function(object,...){standardGeneric("filterCols")})
 #' @param colnameNew the colname of the merged column
 #' @return the returned crosstab object has a matrix with partition sizes,
 #' absoute query frequencies and relative query frequencies, just as the input
-#' @author Andreas Blaette
-#' @docType methods
-#' @aliases mergeCols mergeCols-crosstab-method
-#' @rdname mergeCols-crosstab-method
-#' @exportMethod mergeCols
-setMethod('mergeCols','crosstab', 
-function(object, colnameOld1, colnameOld2, colnameNew) {
+#' @noRd
+.crosstabMergeCols <- function(object, colnameOld1, colnameOld2, colnameNew) {
   object@partitions[,colnameOld1] <- object@partitions[,colnameOld1] + object@partitions[,colnameOld2]
   colnames(object@partitions)[which(colnames(object@partitions)==colnameOld1)] <- colnameNew
   object@partitions <- .dropcols(object@partitions, colnameOld2)
@@ -146,24 +131,19 @@ function(object, colnameOld1, colnameOld2, colnameNew) {
   object@abs <- object@abs[-grep(colnameOld2, colnames(object@abs))]
   object@rel <- object@abs/object@partitions
   object
-})
+}
 
 #' merge columns that match a regex
 #' 
 #' Merge columns of a crosstab object that match a regular expression
 #' 
-#' @method mergeColsRegex crosstab
 #' @param object the partition object
 #' @param regex a regular expression
 #' @param colname.new the colname of the merged column
 #' @return a crosstab object has a matrix with partition sizes,
 #' absoute query frequencies and relative query frequencies, just as the input
-#' @docType methods
-#' @aliases mergeColsRegex mergeColsRegex,crosstab-method 
-#' @rdname mergeColsRegex-crosstab-method
-#' @exportMethod mergeColsRegex
-setMethod("mergeColsRegex", "crosstab",
-function(object, regex, colname.new) {
+#' @noRd
+.crosstabMergeColsRegex <- function(object, regex, colname.new) {
   match <- grep(regex, colnames(object@partitions))
   message('...', length(match), 'columns to be merged')
   if (length(match)>1) {
@@ -188,29 +168,24 @@ function(object, regex, colname.new) {
   }
   object@rel <- object@abs/object@partitions
   object
-})
+}
 
 
 #' drop columns from a crosstab object
 #' 
-#' columns indicated in a character vector are either dropped or maintained,
+#' Columns indicated in a character vector are either dropped or maintained,
 #' depending on whether the vector is used as a stoplist or a list of columns
 #' to be kept
 #' 
-#' @method filterCols crosstab
-#' @param object the crosstab object
-#' @param crosstab the crosstab object to be reworked
+#' @param x the crosstab object
 #' @param filter a character vector with colnames
 #' @param what if "drop", cols is used as a stoplist, if "keep", itis a list with
 #' the columns to be kept
 #' @return you get a crosstab object with partition size, absolute and relative
 #' frequencies
-#' @author Andreas Blaette
-#' @aliases filterCols filterCols-crosstab-method
-#' @exportMethod filterCols
-#' @rdname filterCols-crosstab-method
-setMethod("filterCols", "crosstab",
-function(object, filter, what="drop"){
+#' @noRd
+.crosstabDrop <- function(x, filter, what="drop"){
+  object <- x
   if (what=="drop"){
     object@partitions <- .dropcols(object@partitions, filter)
     object@abs <- .dropcols(object@abs, filter)
@@ -221,7 +196,7 @@ function(object, filter, what="drop"){
     object@rel <- object@rel[,which(colnames(object@rel) %in% filter)]
   }
   object
-})
+}
 
 #' show a crosstab object
 #' 
@@ -391,8 +366,8 @@ function(object){
 #' on the number of queries and dimensions provided. Note that metadata need
 #' to be set up for the partition.
 #' 
-#' @param query a character vector containing one or multiple queries
 #' @param partition a partition object that will be queried
+#' @param query a character vector containing one or multiple queries
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
@@ -405,8 +380,11 @@ function(object){
 #' }
 #' @author Andreas Blaette
 #' @export dispersion
-dispersion <- function(query, partition, dim, pAttribute=drillingControls$pAttribute){
-  if ( is.null(names(partition@metadata))) warning("Metadata need to ne set up in partition")
+dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
+  if ( is.null(names(partition@metadata))) {
+    warning("required metadata missing, fixing this")
+    partition <- enrich(partition, meta=dim)
+  }
   if (class(query) == "cqpQuery"){
     query <- query@query
   }

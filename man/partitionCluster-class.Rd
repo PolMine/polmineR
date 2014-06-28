@@ -7,24 +7,18 @@
 \alias{[,partitionCluster,ANY,ANY,ANY-method}
 \alias{[,partitionCluster-method}
 \alias{[[,partitionCluster-method}
-\alias{addPos,partitionCluster-method}
 \alias{as.DocumentTermMatrix,partitionCluster-method}
 \alias{as.TermDocumentMatrix,partitionCluster-method}
 \alias{as.matrix,partitionCluster-method}
 \alias{as.partitionCluster,list-method}
 \alias{as.sparseMatrix}
 \alias{as.sparseMatrix,partitionCluster-Method}
-\alias{enrich,partitionCluster-method}
 \alias{html,partitionCluster-method}
 \alias{merge,partitionCluster-method}
 \alias{names,partitionCluster-method}
 \alias{partitionCluster-class}
 \alias{show,partitionCluster-method}
 \alias{summary,partitionCluster-method}
-\alias{tf,partitionCluster-method}
-\alias{trim}
-\alias{trim,partitionCluster-method}
-\alias{trim-method}
 \title{partitionCluster class}
 \description{
 A cluster of partition objects.

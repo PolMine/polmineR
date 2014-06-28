@@ -1,0 +1,32 @@
+\docType{methods}
+\name{trim,context-method}
+\alias{trim,context-method}
+\title{trim context object}
+\usage{
+\S4method{trim}{context}(object, minSignificance = 0, minFrequency = 0,
+  maxRank = 0, posFilter = NULL, tokenFilter = NULL)
+}
+\arguments{
+  \item{object}{a context object to be filtered}
+
+  \item{minSignificance}{minimum significance level}
+
+  \item{minFrequency}{the minimum frequency}
+
+  \item{maxRank}{maximum rank}
+
+  \item{posFilter}{exclude words with a POS tag not in this
+  list}
+
+  \item{tokenFilter}{tokens to exclude from table}
+}
+\value{
+context object
+}
+\description{
+Trim a context object by applying different filters.
+}
+\author{
+Andreas Blaette
+}
+

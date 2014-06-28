@@ -122,23 +122,3 @@
 }
 
 
-# #include <Rcpp.h>
-# using namespace Rcpp;
-# 
-# // [[Rcpp::export]]
-# IntegerVector cpos2struc(IntegerVector x){
-#   int max_struc = which_max(x);
-#   IntegerVector result(max_struc);    
-#   int max_cpos = x.size();
-#   int count = 0;
-#   int cpos = 0;
-#   for (int i = 0; i < max_struc; i++) {
-#     if (x[i] == count+1) {
-#       result[count] = cpos;
-#       count++;
-#       cpos = i;
-#     }
-#   }
-#   return(result);
-# } 
-# 

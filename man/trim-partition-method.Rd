@@ -1,0 +1,32 @@
+\docType{methods}
+\name{trim,partition-method}
+\alias{trim,partition-method}
+\title{trim partition object}
+\usage{
+\S4method{trim}{partition}(object, pAttribute, minFrequency = 0,
+  posFilter = c(), ...)
+}
+\arguments{
+  \item{object}{a partition class object}
+
+  \item{pAttribute}{character vector, either lemma or word}
+
+  \item{minFrequency}{an integer}
+
+  \item{posFilter}{a character vector}
+
+  \item{...}{further arguments}
+}
+\value{
+a trimmed partition object
+}
+\description{
+Trim, filter and adjust the tf slot of a partition object
+for the p-attribute specified. You can drop the tf values
+if below a minimum frequency or token that do not
+correspond to a a part-of-speech specified.
+}
+\author{
+Andreas Blaette
+}
+

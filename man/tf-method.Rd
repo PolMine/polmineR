@@ -1,0 +1,24 @@
+\name{tf}
+\alias{tf}
+\alias{tf-method}
+\title{get term frequencies}
+\usage{
+tf(object, ...)
+}
+\arguments{
+  \item{object}{either a partition or a partitionCluster
+  object}
+
+  \item{...}{further parameters}
+}
+\description{
+Method to obtain term frequencies for one or multiple terms
+or queries. The method can be applied to partition or
+partitionCluster class objects. If object is a character
+string, frequencies for a whole corpus are returned. Please
+see the respective documentation for details
+(\code{method?tf("partition")},
+\code{method?tf("partitionCluster")} or
+\code{method?tf("character")}).
+}
+

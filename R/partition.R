@@ -33,11 +33,9 @@
 #' 
 #' @aliases partition-class show,partition-method 
 #'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method 
-#'   addPos,partition-method addPos [,partition-method [[,partition-method 
-#'   trim,partition-method 
-#'   tf,partition-method tf as.partitionCluster
+#'   [,partition-method [[,partition-method 
+#'   as.partitionCluster
 #'   as.partitionCluster,partition-method export export,partition-method split
-#'   split,partition-method enrich enrich,partition-method html html,partition-method
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition
@@ -60,8 +58,6 @@ setClass("partition",
          )
 )
 
-
-setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' Initialize a partition
 #' 
@@ -86,7 +82,7 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 #' with the conditions narrowing down the corpus the most.
 #' 
 #' @param corpus the CWB-corpus to be used
-#' @param sAttributes list consisting of a set of character vectors (see
+#' @param def list consisting of a set of character vectors (see
 #' details)
 #' @param label label of the new partition, defaults to "noLabel"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
@@ -107,7 +103,7 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 #' @export partition
 partition <- function(
   corpus,
-  sAttributes,
+  def,
   label=c(""),
   encoding=NULL,
   tf=c("word", "lemma"),
@@ -116,6 +112,7 @@ partition <- function(
   xml="flat",
   verbose=TRUE
   ) {
+  if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', label)
   Partition <- new('partition')
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
@@ -127,8 +124,8 @@ partition <- function(
   }
   if (verbose==TRUE) message('... encoding of the corpus is ', Partition@encoding)
   Partition@label <- label
-  Partition@sAttributes <- lapply(sAttributes, function(x).adjustEncoding(x, Partition@encoding))  
-  Partition@sAttributeStrucs <- names(sAttributes)[length(sAttributes)]
+  Partition@sAttributes <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
+  Partition@sAttributeStrucs <- names(def)[length(def)]
   Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
   if (xml=="flat") {
@@ -159,7 +156,7 @@ partition <- function(
 #' add a further specification of a s-attribute to an existing partition
 #' 
 #' @param Partition a partition object
-#' @param sAttribute a list supplying further sAttributes
+#' @param def a list supplying further sAttributes
 #' @param label a label for the new partition
 #' @param method either "in" or "grep"
 #' @param tf character vector, pAttributes for which term frequencies shall be retrieved
@@ -167,18 +164,18 @@ partition <- function(
 #' @export zoom
 #' @rdname zoom
 #' @name zoom
-zoom <- function(Partition, sAttribute, label=c(""), method="in", tf=c("word", "lemma"), verbose=TRUE){
+zoom <- function(Partition, def, label=c(""), method="in", tf=c("word", "lemma"), verbose=TRUE){
   newPartition <- new("partition")
   newPartition@corpus <- Partition@corpus
   message('Zooming into partition ', label)
   newPartition@label <- label  
-  sAttribute <- lapply(sAttribute, function(x).adjustEncoding(x, Partition@encoding))  
-  newPartition@sAttributes <- c(Partition@sAttributes, sAttribute)
+  def <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
+  newPartition@sAttributes <- c(Partition@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   newPartition@xml <- Partition@xml
   newPartition@encoding <- Partition@encoding
   message('... specifying strucs and corpus positions')
-  newPartition <- .zoomingSattributes2cpos(Partition, newPartition, sAttribute, method)
+  newPartition <- .zoomingSattributes2cpos(Partition, newPartition, def, method)
   message('... computing partition size')
   newPartition@size <- .partition.size(newPartition)
   if (length(tf)>0) {
@@ -334,7 +331,7 @@ function(object){
           USE.NAMES=TRUE,
           function(x) { 
             tmp <- cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)
-            Encoding(tmp) <- partition@encoding
+            Encoding(tmp) <- Partition@encoding
             tmp
           }
           )
@@ -347,7 +344,7 @@ function(object){
           USE.NAMES=TRUE,
           function(x) {
             tmp <- cqi_struc2str(x, cqi_cpos2struc(x, Partition@cpos[,1]))
-            Encoding(tmp) <- partition@encoding
+            Encoding(tmp) <- Partition@encoding
             tmp
           }
           )
@@ -447,71 +444,6 @@ function(object){
 }
 
 
-#' Fill slot 'pos' of a partition object with tables giving the statistic of pos
-#' 
-#' Augment the partition object by strucs and cpos
-#' 
-#' @param object a partition class object
-#' @param pAttribute character vector - pos statistic for lemma or word
-#' @return an augmented partition object (includes pos now)
-#' @author Andreas Blaette
-#' @include generics.R
-#' @docType methods
-#' @exportMethod addPos
-#' @noRd
-setMethod("addPos", "partition", function(object, pAttribute){
-  if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Adding pos information to partition object ", object@label)
-  cpos <- unlist(apply(object@cpos, 1, function(x) c(x[1]:x[2])))
-  message("... retrieving corpus information")
-  bag <- data.frame(
-    token=cqi_cpos2id(paste(object@corpus, '.', pAttribute, sep=''), cpos),
-    pos=cqi_cpos2id(paste(object@corpus, '.pos', sep=''), cpos)
-  )
-  message("... doing the calculations")
-  object@pos[[pAttribute]] <- list()
-  crosstab <- table(bag)
-  rownames(crosstab) <- cqi_id2str(paste(object@corpus, '.', pAttribute, sep=''), as.integer(rownames(crosstab)))
-  colnames(crosstab) <- cqi_id2str(paste(object@corpus, '.pos', sep=''), as.integer(colnames(crosstab)))
-  object@pos[[pAttribute]] <- apply(crosstab, 1, function(x) colnames(crosstab)[which.max(x)])
-  Encoding(names(object@pos[[pAttribute]])) <- object@encoding
-  # to make sure that there are no superfluous pos information
-  object@pos[[pAttribute]] <- object@pos[[pAttribute]][names(object@pos[[pAttribute]]) %in% rownames(object@tf[[pAttribute]])]
-  object
-})
-
-
-#' trim partition object
-#' 
-#' Augment the partition object by strucs and cpos
-#' 
-#' @param object a partition class object
-#' @param pAttribute character vector, either lemma or word
-#' @param minFrequency an integer
-#' @param posFilter a character vector
-#' @return a trimmed partition object
-#' @author Andreas Blaette
-#' @docType methods
-#' @exportMethod trim
-#' @noRd
-setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=c(),  ...){
-  new <- object
-  if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Trimming partition ", new@label)
-  if (!is.null(posFilter)) {
-    if (! pAttribute %in% names(object@pos) ){
-      message("... pos need to be added first")
-      new <- addPos(new, pAttribute)
-    }
-    new@pos[[pAttribute]] <- new@pos[[pAttribute]][new@pos[[pAttribute]] %in% posFilter]
-    new@tf[[pAttribute]] <- new@tf[[pAttribute]][rownames(new@tf[[pAttribute]]) %in% names(new@pos[[pAttribute]]),]
-  }
-  if (minFrequency > 0){
-    new@tf[[pAttribute]] <- subset(new@tf[[pAttribute]], tf >= minFrequency)
-    new@pos[[pAttribute]] <- new@pos[[pAttribute]][names(new@pos[[pAttribute]]) %in% rownames(new@tf[[pAttribute]])]
-  }
-  new 
-})
 
 
 #' @exportMethod [[
@@ -537,32 +469,8 @@ setMethod('[', 'partition', function(x,i){
 )
 
 
-setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
-#' Print S-Attributes in a partition or corpus
-#' 
-#' Convencience function - just to access the s-sttributes in a partition
-#' quickly.
-#'
-#' @param object either a partition or a character vector specifying a CWB corpus
-#' @return the S-Attributes are immediately printed
-#' @exportMethod sAttributes
-#' @docType methods
-#' @aliases sAttributes sAttributes,character-method sAttributes,partition-method
-#' @rdname sAttributes-method
-setMethod(
-  "sAttributes", "partition",
-  function (object) {
-    sAttributes <- cqi_attributes(object@corpus, "s")
-    sAttributes
-  }
-)
 
-setMethod("sAttributes", "character", function(object){
-  sAttributes <- cqi_attributes(object, "s")
-  sAttributes
-  
-})
 
 .getCorpusEncoding <- function(corpus){
   registry <- scan(
@@ -580,83 +488,29 @@ setMethod("sAttributes", "character", function(object){
   return(tolower(encoding))
 }
 
-#' @param object a partition object
-#' @param token may also be a character vector length > 1
-#' @param pAttribute asdf
-#' @param method either "in" (for exact matching) or "grep"
-#' @docType method
-#' @exportMethod tf
-#' @noRd
-setMethod("tf", "partition", function(object, token, pAttribute=NULL, method="in"){
-  if (length(pAttribute) == 0){
-    if (length(object@tf) > 1){
-      warning("several tf lists available, please state pAttribute explicitly")
-    } else if (length(object@tf) == 0){
-      warning("tf lists are available - at least one needs to be set up")
-    } else {
-      pAttribute <- names(object@tf)[1]
-    }
-  }
-  if (is.character(token) == TRUE){
-    token <- .adjustEncoding(token, object@encoding)
-    if (method == "in"){
-      tab <- data.frame(
-        token=token,
-        tfAbs=object@tf[[pAttribute]][token,"tf"],
-        tfRel=object@tf[[pAttribute]][token,"tf"]/object@size
-        )
-    } else if (method == "grep"){
-      bag <- lapply(token, function(query) {
-        rowNo <- grep(query, rownames(object@tf[[pAttribute]]))
-        tfAbs <- sum(object@tf[[pAttribute]][rowNo,"tf"])
-        tab <- data.frame(
-          token=query,
-          tfAbs=tfAbs,
-          tfRel=tfAbs/object@size
-          )
-        tab
-      })
-      tab <- do.call(rbind, bag)
-    } else {
-      warning("method specification is not valid")
-    }
-  } else if(is.numeric(token)){
-    relevantRows <- object@tf[[pAttribute]][object@tf$word$id %in% token,]
-    tab <- data.frame(
-      token=rownames(relevantRows),
-      tfAbs=relevantRows$tf,
-      tfRel=relevantRows$tf/object@size
-      )
-  }
-  tab
-})
 
 
-setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
-
-#' @exportMethod enrich
-setMethod("enrich", "partition", function(object, size=TRUE, tf=c(), meta=NULL, verbose=TRUE){
-  if (size == TRUE) object@size <- .partition.size(object)
-  if (length(tf>0)) {
-    for (what in tf){
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', what, ')')  
-      object@tf[[what]] <- .cpos2tf(object, what)
-    }
-  }
-  if (!is.null(meta)) {
-    if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    object <- .partition.metadata(object, meta)
-  }
-  object
-})
 
 
+#' split partition into partitionCluster
+#' 
+#' Split a partition object into a partition Cluster if gap between strucs
+#' exceeds a minimum number of tokens specified by 'gap'. Relevant to 
+#' split up a plenary protocol into speeches.
+#' 
+#' @param x a partition object
+#' @param gap an integer specifying the minimum gap for performing the split
+#' @param drop not yet implemented
+#' @return a partitionCluster
+#' @aliases split,partitionMethod
+#' @rdname split-partition-method 
 #' @exportMethod split
-setMethod("split", "partition", function(x, f, drop=FALSE, ...){
+setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
+  if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
   cpos <- x@cpos
   if (nrow(cpos) > 1){
     distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
-    beginning <- c(1, ifelse(distance>f, 1, 0))
+    beginning <- c(1, ifelse(distance>gap, 1, 0))
     no <- vapply(1:length(beginning), FUN.VALUE=1, function(x) ifelse (beginning[x]==1, sum(beginning[1:x]), 0))
     for (i in (1:length(no))) no[i] <- ifelse (no[i]==0, no[i-1], no[i])
     strucsClassified <- cbind(x@strucs, no)
@@ -694,7 +548,6 @@ setMethod("split", "partition", function(x, f, drop=FALSE, ...){
   cluster
 })
 
-setGeneric("html", function(object, ...){standardGeneric("html")})
 
 .partition2markdown <- function(object, type="speech"){
   if (length(object@strucs)>1){
@@ -748,29 +601,18 @@ setGeneric("html", function(object, ...){standardGeneric("html")})
   htmlFile
 }
 
-#' @exportMethod html
-setMethod("html", "partition", function(object, filename=c(), type="debate"){
-  if (length(object@metadata) == 0) warning("metadata missing!")
-  markdown <- .partition2markdown(object, type)
-  markdown <- paste(
-    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
-    markdown,
-    '\n* * *\n',
-    collapse="\n")
-  if (is.null(filename)) {
-    htmlFile <- .markdown2tmpfile(markdown)
-  } else {
-    cat(markdown, file=filename)    
-  }
-  if (is.null(filename)) browseURL(htmlFile)
-})
-
-setMethod("meta", "partition", function(object, sAttribute){
-  if ("values" %in% names(object@metadata)) {
-    ret <- object@metadata$values[[sAttribute]]
-  } else {
-    ret <- unique(cqi_struc2str(paste(object@corpus, '.', sAttribute, sep=''), object@strucs));
-    Encoding(foo)<-Partition@encoding;  
-  }
-  ret
-})
+# #' @param sAttribute the s-attribute that provides the speaker names
+# speeches <- function(object, sAttribute, gap){
+#   names <- meta(object, sAttribute)
+#   speakers <- lapply(names, function(name){
+#     who <- list()
+#     who[[sAttribute]] <- name
+#     zoom(object, def=who, tf=names(object@tf), label=name)
+#   })
+#   cluster <- list()
+#   for (i in 1:length(speakers)){
+#     cluster <- c(cluster, split(speakers[[i]], gap))
+#   }
+#   cluster <- as.partitionCluster(cluster)
+#   cluster
+# }

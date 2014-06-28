@@ -1,0 +1,27 @@
+\docType{methods}
+\name{trim,crosstab-method}
+\alias{trim,crosstab-method}
+\title{trim crosstab object}
+\usage{
+\S4method{trim}{crosstab}(object, drop = NULL, merge = list(old = c(), new =
+  c()))
+}
+\arguments{
+  \item{object}{a crosstab object to be adjusted}
+
+  \item{drop}{defaults to NULL, or a character vector
+  giving columns to be dropped}
+
+  \item{merge}{a list giving columns to be merged or
+  exactly one string with a regex (see examples)}
+}
+\value{
+a modified crosstab object
+}
+\description{
+Drop unwanted columns in a crosstab object, and merge
+columns by either explicitly stating the columns, or
+providing a regex. If merge$old is length 1, it is assumed
+that a regex is provided
+}
+
