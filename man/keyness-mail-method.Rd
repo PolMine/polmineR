@@ -1,8 +1,8 @@
 \docType{methods}
-\name{mail}
-\alias{mail}
+\name{mail-keyness-method}
 \alias{mail,keyness-method}
-\title{mail a result}
+\alias{mail-keyness-method}
+\title{mail result of keyness analysis}
 \usage{
 \S4method{mail}{keyness}(object, to = NULL, nrow = NULL,
   fileFormat = c("csv", "xlsx"))

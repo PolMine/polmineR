@@ -24,15 +24,17 @@ The function returns the frequencies of a query or a
 multiple queries in sub-partitions defined by one or two
 dimensions. This is a wrapper function, so the output will
 depend on the number of queries and dimensions provided.
-Note that metadata need to be set up for the partition.
 }
 \examples{
-\dontrun{
-bt <- partition("PLPRBTTXT", tf=FALSE) # term frequencies are not needed
-dispersion(plpr, "Vorsorge", "text_year")
-}
+test <- partition("PLPRBTTXT", def=list(text_date=".*"), tf="word")
+dispersion(test, "Integration", c("text_date"))
+dispersion(test, "Integration", c("text_date", "text_party"))
+dispersion(test, '"Integration.*"', c("text_date")) # note the brackets when using regex!
 }
 \author{
 Andreas Blaette
+}
+\seealso{
+\code{crosstab-class}
 }
 

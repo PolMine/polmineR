@@ -1,0 +1,21 @@
+\docType{methods}
+\name{mail,partition-method}
+\alias{mail,partition-method}
+\title{mail a result}
+\usage{
+\S4method{mail}{partition}(object, to = NULL,
+  filename = "drillerExport.html", what = "html")
+}
+\arguments{
+  \item{object}{an object with some statistics}
+
+  \item{to}{the receiver of the mail message}
+
+  \item{filename}{name of the file to be sent out}
+
+  \item{what}{what to send (defaults to "html")}
+}
+\description{
+still experimental
+}
+

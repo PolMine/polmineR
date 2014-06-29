@@ -52,8 +52,8 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @param tokenFilter tokens to exclude from table
 #' @return a keyness object
 #' @author Andreas Blaette
+#' @aliases trim,keyness-method
 #' @exportMethod trim
-#' @noRd
 setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL){
   test <- object@statisticalTest
   if (maxRank==0) maxRank <- nrow(object@stat)
@@ -168,7 +168,7 @@ setMethod("trim", "crosstab", function(object, drop=NULL, merge=list(old=c(), ne
   if (!is.null(drop)){
     object <- .crosstabDrop(x=object, filter=drop, what="drop")
   }
-  if (all(sapply(merge, is.null))){
+  if (!all(sapply(merge, is.null))){
     if (length(merge$new) != 1) warning("check length of character vectors in merge-list (needs to be 1)")
     if (length(merge$old) == 2){
       object <- .crosstabMergeCols(

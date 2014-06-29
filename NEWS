@@ -1,19 +1,24 @@
 planned changes:
- * search method [drafting has begun]
+ * score method [drafting has begun]
+
+v0.4.29
+ * controls() function for setting drillingControls
+ * mail concordances
+ * rework of kwic as a S4 method for partition and context class
 
 v0.4.28
  * reorganization of the code in files so that shift to S4 methods is reflected
- * documentation for trim method [to be checked]
- * documentation for enrich method [to be checked]
+ * documentation for trim method
+ * documentation for enrich method
  * addPos method integrated into enrich method [to be checked]
  * addPos is kept as a method, but not exported into namespace
- * set up of missing metadata for dispersion [to be checked]
+ * set up of missing metadata for dispersion
  * warning if labels are missing in tf method for partitionCluster
  * Encoding of partition labels adjusted to encoding of console
  * adjust encoding for input to partitionCluster
  * speeches method is drafted at end of partition.R [final development, debugging]
  * context method: no explicit statement of posFilter required [to be checked]
- * methods for adjusting crosstab objects fused into trim,crosstab-method [needs to be checked]
+ * methods for adjusting crosstab objects fused into trim,crosstab-method [BUG, needs to be checked]
 
 
 v0.4.27

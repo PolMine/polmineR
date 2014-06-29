@@ -38,7 +38,6 @@ NULL
 #'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
 #'   +,partitionCluster,partition-method
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
-#'   html,partitionCluster-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster
@@ -358,6 +357,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function
 })
 
 #' @exportMethod +
+#' @include partition.R
 setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
   e1@partitions[[length(e1@partitions)+1]] <- e2

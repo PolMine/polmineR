@@ -24,6 +24,9 @@ a partitionCluster
 Split a partition object into a partition Cluster if gap
 between strucs exceeds a minimum number of tokens specified
 by 'gap'. Relevant to split up a plenary protocol into
-speeches.
+speeches. Note: To speed things up, the returned partitions
+will not include frequency lists. The lists can be prepared
+by applying \code{enrich} on the partitionCluster object
+that is returned.
 }
 

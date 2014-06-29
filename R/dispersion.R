@@ -1,9 +1,9 @@
 #' @include generics.R
 NULL
 
-#' crosstab class
+#' crosstab S4 class
 #' 
-#' class for keeping crosstabulations of frequencies of queries
+#' Class for storing crosstabulations of frequencies of queries
 #' 
 #' @section Slots:
 #'   \describe{
@@ -18,10 +18,12 @@ NULL
 #' @section Methods:
 #'    \describe{
 #'     \item{show}{get summary of the object}
+#'     \item{t}{change rows and columns}
 #'    }
 #'     
 #' @name crosstab-class
-#' @aliases show,crosstab-method
+#' @aliases show,crosstab-method t,crosstab-method
+#' @seealso \code{dispersion}
 #' @exportClass crosstab
 #' @docType class
 #' @rdname crosstab-class
@@ -34,6 +36,19 @@ setClass("crosstab",
                         query="character"
          )
 )
+
+
+# documented with crosstab class
+setMethod("t", "crosstab", function(x){
+  x@partitions <- as.data.frame(t(x@partitions))
+  x@abs <- as.data.frame(t(x@abs))
+  x@rel <- as.data.frame(t(x@rel))
+  rows <- x@rows
+  cols <- x@cols
+  x@rows <- cols
+  x@cols <- rows
+  x  
+})
 
 .crosstabToken <- function(Partition,rows, cols, pAttribute, query){
   hits <- .queryCpos(query, Partition, pAttribute)
@@ -49,10 +64,8 @@ setClass("crosstab",
 #' @param Partition a partition object
 #' @param rows what to find in rows
 #' @param cols what to find in cols
-#' @export crosstabulationSizes
-#' @rdname crosstabulationSizes
-#' @name crosstabulationSizes
-crosstabulationSizes <- function(Partition, rows, cols){
+#' @noRd
+.crosstabulationSizes <- function(Partition, rows, cols){
   strucSize= Partition@cpos[,2] - Partition@cpos[,1] + 1
   sAttrRows <- paste(Partition@corpus,'.', rows, sep='')
   sAttrCols <- paste(Partition@corpus,'.', cols, sep='')
@@ -90,9 +103,8 @@ crosstabulationSizes <- function(Partition, rows, cols){
 #' @noRd
 .crosstab <- function (Partition, rows, cols, pAttribute, query, verbose=TRUE) {
   crosstab <- new("crosstab")
-  if (verbose==TRUE) message("Starting the inquiry")
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
-  crosstab@partitions <- crosstabulationSizes(Partition, rows, cols)
+  crosstab@partitions <- .crosstabulationSizes(Partition, rows, cols)
   if (verbose==TRUE) message ('... getting frequencies')
   crosstab@abs <- .crosstabToken(Partition, rows, cols, pAttribute, query)
   crosstab@abs <- .map(crosstab@partitions, crosstab@abs)
@@ -220,12 +232,13 @@ function(object){
 }
 
 .map <- function(tableToMatch, tableToAdjust) {
+  colnames(tableToMatch) <- sub('X(\\d)', '\\1', colnames(tableToMatch))
   rownames(tableToAdjust)[which(rownames(tableToAdjust)=="")] <- 'VOID'
   rownames(tableToMatch)[which(rownames(tableToMatch)=="")] <- 'VOID'
   colnames(tableToAdjust)[which(colnames(tableToAdjust)=="V1")] <- 'VOID'
   colnames(tableToMatch)[which(colnames(tableToMatch)=="V1")] <- 'VOID'  
   tableToAdjust <- merge(t(tableToMatch), t(tableToAdjust), by.x="row.names", by.y="row.names", all.x=TRUE, all.y=TRUE)
-  tableToAdjust <- tableToAdjust[,grep('\\.y', colnames(tableToAdjust))]
+  tableToAdjust <- tableToAdjust[,(nrow(tableToMatch)+2):ncol(tableToAdjust)]
   tableToAdjust <- t(tableToAdjust)
   rownames(tableToAdjust) <- sub('(.*?)\\.y', '\\1', rownames(tableToAdjust))
   tableToAdjust <- merge(tableToMatch, tableToAdjust, by.x="row.names", by.y="row.names", all.x=TRUE, all.y=TRUE)
@@ -363,8 +376,7 @@ function(object){
 #' 
 #' The function returns the frequencies of a query or a multiple queries
 #' in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
-#' on the number of queries and dimensions provided. Note that metadata need
-#' to be set up for the partition.
+#' on the number of queries and dimensions provided.
 #' 
 #' @param partition a partition object that will be queried
 #' @param query a character vector containing one or multiple queries
@@ -372,17 +384,18 @@ function(object){
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
 #' @return depends on the input, as this is a wrapper function
+#' @seealso \code{crosstab-class}
 #' @export
 #' @examples
-#' \dontrun{
-#' bt <- partition("PLPRBTTXT", tf=FALSE) # term frequencies are not needed
-#' dispersion(plpr, "Vorsorge", "text_year")
-#' }
+#' test <- partition("PLPRBTTXT", def=list(text_date=".*"), tf="word")
+#' dispersion(test, "Integration", c("text_date"))
+#' dispersion(test, "Integration", c("text_date", "text_party"))
+#' dispersion(test, '"Integration.*"', c("text_date")) # note the brackets when using regex!
 #' @author Andreas Blaette
 #' @export dispersion
 dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
   if ( is.null(names(partition@metadata))) {
-    warning("required metadata missing, fixing this")
+    message("... required metadata missing, fixing this")
     partition <- enrich(partition, meta=dim)
   }
   if (class(query) == "cqpQuery"){
@@ -399,3 +412,4 @@ dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttri
   }
   result
 }
+

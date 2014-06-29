@@ -1,0 +1,18 @@
+\name{mail}
+\alias{mail}
+\alias{mail-method}
+\title{mail result}
+\usage{
+mail(object, ...)
+}
+\arguments{
+  \item{object}{a driller object}
+
+  \item{...}{further parameters}
+}
+\description{
+Mail a result (to yourself). Please see the respective
+documentation for details (\code{method?mail("keyness")},
+\code{method?mail("partition")}.
+}
+

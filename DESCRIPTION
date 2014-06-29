@@ -1,8 +1,8 @@
 Package: driller
 Type: Package
 Title: driller
-Version: 0.4.28
-Date: 2014-06-27
+Version: 0.4.29
+Date: 2014-06-29
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -31,9 +31,9 @@ Description: Tools for drilling and mining CWB corpora. The package offers
 License: CC BY-NC-SA 3.0 | file LICENSE
 Collate:
     'RcppExports.R'
+    'partition.R'
     'generics.R'
     'partitionCluster.R'
-    'partition.R'
     'kwic.R'
     'context.R'
     'contextCluster.R'
@@ -52,6 +52,7 @@ Collate:
     'sAttributes.R'
     'score.R'
     'shiny.R'
+    'speeches.R'
     'tf.R'
     'trim.R'
     'utils.R'

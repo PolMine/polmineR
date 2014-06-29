@@ -106,13 +106,17 @@ setMethod("context", "partition",
     leftContext=0,
     rightContext=0,
     minSignificance=0,
-    posFilter=NULL,
+    posFilter=c(),
     filterType="exclude",
     stopwords=c(),
     statisticalTest="LL",
     verbose=TRUE
   ) {
   if (pAttribute == "useControls") pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
+  if (!pAttribute %in% names(object@tf)) {
+    if (verbose==TRUE) message("... required tf list in partition not yet available, needs to be done first")
+    object <- enrich(object, tf=pAttribute)
+  }
   if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
   if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
   if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
@@ -124,24 +128,21 @@ setMethod("context", "partition",
   ctxt@left.context <- leftContext
   ctxt@right.context <- rightContext
   ctxt@encoding <- object@encoding
-  ctxt@posFilter <- posFilter
+  ctxt@posFilter <- as.character(posFilter)
   ctxt@partition <- object@label
   ctxt@partitionSize <- object@size
   ctxt@statisticalTest <- statisticalTest
-  if (verbose==TRUE) message('Analysing the context for node word "', query,'"')
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
   if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
   # query <- .adjustEncoding(query, object@encoding)
   # Encoding(query) <- ctxt@encoding
-  hits <- .queryCpos(ctxt@query, partition, pAttribute)
+  hits <- .queryCpos(ctxt@query, object, pAttribute)
   hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
   hits <- apply(hits, 1, function(x) as.list(unname(x)))
   message(' (', length(hits), " occurrences)")
-  concordances <- new("kwic")
   stopwordId <- unlist(lapply(stopwords, function(x) cqi_regex2id(corpus.pattr, x)))
-  if (verbose==TRUE) message("... counting tokens in context ")
-  
+  if (verbose==TRUE) message("... counting tokens in context ")  
   if (multicore==TRUE) {
     bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
   } else {
@@ -152,33 +153,36 @@ setMethod("context", "partition",
     message("... hits filtered because stopword(s) occur in context: ", (length(hits)-length(bigBag)))
   }
   ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
-  wc <- table(unlist(lapply(bigBag, function(x) x$id)))
   ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
-  ctxt@frequency <- length(bigBag)
   if (verbose==TRUE) message('... context size: ', ctxt@size)
-  if (statisticalTest == "LL"){
-    if (verbose==TRUE) message("... performing log likelihood test")
-    calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, partition, pAttribute)
-    ctxt@statisticalSummary <- .statisticalSummary(ctxt)
-  } else if (statisticalTest=="pmi"){
-    if (verbose==TRUE) message("... calculating pointwise mutual information")
-    calc <- .pmi(
-      windowIds=as.integer(names(wc)),
-      windowFreq=unname(wc),
-      countTarget=ctxt@frequency,
-      partitionObject=partition,
-      pAttribute=pAttribute
-      )
-  } else {
-    warning("test suggested not supported")
+  ctxt@frequency <- length(bigBag)
+  # if statisticalTest is 'NULL' the following can be ommitted
+  if (!statisticalTest == "skip"){
+    wc <- table(unlist(lapply(bigBag, function(x) x$id)))
+    if (statisticalTest == "LL"){
+      if (verbose==TRUE) message("... performing log likelihood test")
+      calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, object, pAttribute)
+      ctxt@statisticalSummary <- .statisticalSummary(ctxt)
+    } else if (statisticalTest=="pmi"){
+      if (verbose==TRUE) message("... calculating pointwise mutual information")
+      calc <- .pmi(
+        windowIds=as.integer(names(wc)),
+        windowFreq=unname(wc),
+        countTarget=ctxt@frequency,
+        partitionObject=partition,
+        pAttribute=pAttribute
+        )
+    } else {
+      warning("test suggested not supported")
+    }
+    ctxt@stat <- as.data.frame(cbind(
+      rank=1:nrow(calc),
+      calc
+    ))
+    ctxt <- trim(ctxt, minSignificance=minSignificance)
+    rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
+    Encoding(rownames(ctxt@stat)) <- object@encoding
   }
-  ctxt@stat <- as.data.frame(cbind(
-    rank=1:nrow(calc),
-    calc
-  ))
-  ctxt <- trim(ctxt, minSignificance=minSignificance)
-  rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
-  Encoding(rownames(ctxt@stat)) <- object@encoding
   ctxt
 })
 
@@ -246,11 +250,7 @@ setMethod('show', 'context',
 function(object) {
   drillingControls <- get("drillingControls", '.GlobalEnv')
   conc <- kwic(object, metadata=drillingControls$kwicMetadata)
-  if (nrow(conc@table) > drillingControls$kwicNo) {
-    foo <- .showChunkwise(conc)
-  } else {
-    show(conc)
-  }
+  show(conc)
 })
 
 setMethod('[', 'context',
@@ -266,7 +266,7 @@ setMethod('[[', 'context',
   function(x,i) {
     drillingControls <- get("drillingControls", '.GlobalEnv')
     conc <- kwic(x, metadata=drillingControls$kwicMetadata, collocate=i)
-    foo <- .showChunkwise(conc)
+    foo <- show(conc)
   }        
 )
 

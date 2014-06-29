@@ -13,7 +13,6 @@
 \alias{as.partitionCluster,list-method}
 \alias{as.sparseMatrix}
 \alias{as.sparseMatrix,partitionCluster-Method}
-\alias{html,partitionCluster-method}
 \alias{merge,partitionCluster-method}
 \alias{names,partitionCluster-method}
 \alias{partitionCluster-class}

@@ -1,12 +1,19 @@
 #' trim an object
 #' 
-#' Use this method to trim 'context', 'keyness', 'context', partition' and 'partitionCluster'
-#' objects. See respective documentation available through \code{method?trim("context")},
-#' \code{method?trim("keyness")}, \code{method?trim("partition")},
-#' \code{method?trim("partitionCluster")}, \code{method?trim("crosstab")}.
+#' Method that includes varying to adjust objects from the driller package by 
+#' applying thresholds, minimum frequencies etc. It can be applied to 'context',
+#' 'keyness', 'context', 'partition' and 'partitionCluster' objects. See 
+#' the respective documentation:
+#' \describe{
+#'  \item{contex:t}{\code{method?trim("context")}}
+#'  \item{keyness:}{\code{method?trim("keyness")}} 
+#'  \item{partition:}{\code{method?trim("partition")}}
+#'  \item{partitionCluster:}{\code{method?trim("partitionCluster")}} 
+#'  \item{crosstab:}{\code{method?trim("crosstab")}}
+#' }
 #' 
 #' @param object the object to be trimmed
-#' @param ... further parameters
+#' @param ... further arguments
 #' @author Andreas Blaette
 #' @docType methods
 #' @aliases trim trim-method
@@ -59,6 +66,16 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @rdname tf-method
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
+#' mail result
+#' 
+#' Mail a result (to yourself).
+#' Please see the respective documentation for details 
+#' (\code{method?mail("keyness")}, \code{method?mail("partition")}.
+#' 
+#' @param object a driller object
+#' @param ... further parameters
+#' @aliases mail mail-method
+#' @rdname mail
 setGeneric("mail", function(object, ...){standardGeneric("mail")})
 
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
@@ -66,9 +83,11 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #' enrich an object
 #' 
 #' Method to fill slots of a partition, partitionCluster or keyness object that 
-#' have not been set up previously. See  \code{method?enrich("partition")} for 
-#' applying the method on partition or partitionCluster objects, or 
-#' \code{method?enrich("keyness")}).
+#' have not been set up previously. See the respective documentation:
+#' \describe{
+#'  \item{partition and partitionCluster:}{\code{method?enrich("partition")}}
+#'  \item{keyness}{\code{method?enrich("keyness")}}
+#' }
 #' 
 #' @param object a partition, partitionCluster or keyness object
 #' @param ... further parameters
@@ -86,3 +105,7 @@ setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.parti
 setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.TermContextMatrix")})
 
 setGeneric("score", function(object, ...){standardGeneric("score")})
+
+setGeneric("speeches", function(object, ...){standardGeneric("speeches")})
+
+setGeneric("kwic", function(object, ...){standardGeneric("kwic")})

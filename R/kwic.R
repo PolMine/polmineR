@@ -61,8 +61,8 @@ setClass("concordances",
 #'   collocate
 #' @return a concordances object
 #' @author Andreas Blaette
-#' @export kwic
-kwic <- function(ctxt, metadata=NULL, collocate=c()){
+#' @noRd
+.kwic <- function(ctxt, metadata=NULL, collocate=c()){
   if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
   if (all(is.element(metadata, cqi_attributes(ctxt@corpus, "s")))!=TRUE) {
@@ -91,63 +91,83 @@ kwic <- function(ctxt, metadata=NULL, collocate=c()){
   conc
 }
 
-#' @importFrom xtermStyle style
-setMethod('show', 'concordances',
-          function(object){
-            drillingControls <- get("drillingControls", '.GlobalEnv')
-            for (i in 1:nrow(object@table)){
-              metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
-              Encoding(metaoutput) <- object@encoding
-              if (drillingControls$xtermStyle==FALSE){
-                cat('[',metaoutput, '] ', sep='')
-              } else {
-                cat(style(paste('[',metaoutput, ']',sep=''),fg=drillingControls$xtermFgMeta,bg=drillingControls$xtermBgMeta), ' ', sep='')
-              }
-              if (drillingControls$xtermStyle==FALSE){
-                cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
-              } else {
-                if (length(object@collocate)==0){object@collocate="FOO"}
-                foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)-2]))), ' ')),
-                              function(x){
-                                if (x==object@collocate){
-                                  cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                                } else {cat(x, ' ', sep='')}
-                              }
-                )
-                cat(' ', style(object@table[i,ncol(object@table)-1], bg=drillingControls$xtermBgNode, fg=drillingControls$xtermFgNode), ' ', sep='')
-                foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)]))), ' ')),
-                              function(x){
-                                if (x==object@collocate){
-                                  cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                                } else {cat(x, ' ', sep='')}
-                              }
-                )                                                     
-                cat("\n\n")
-              }
-            }          
-          }
-)
+#' @include context.R
+setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
+  .kwic(ctxt=object, metadata=metadata, collocate=collocate)
+})
 
-.showChunkwise <- function (conc) {
+setMethod("kwic", "partition", function(
+  object, query,
+  leftContext=0,
+  rightContext=0,
+  meta=NULL,
+  pAttribute="word",
+  collocate=c()
+  ){
+  ctxt <- context(
+    object=object, query=query, pAttribute=pAttribute,
+    leftContext=leftContext, rightContext=rightContext,
+    statisticalTest="skip"
+    )
+  .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
+})
+
+
+.showKwicLine <- function(object, i){
+  drillingControls <- get("drillingControls", '.GlobalEnv')
+  metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
+  Encoding(metaoutput) <- object@encoding
+  if (drillingControls$xtermStyle==FALSE){
+    cat('[',metaoutput, '] ', sep='')
+  } else {
+    cat(style(paste('[',metaoutput, ']',sep=''),fg=drillingControls$xtermFgMeta,bg=drillingControls$xtermBgMeta), ' ', sep='')
+  }
+  if (drillingControls$xtermStyle==FALSE){
+    cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
+  } else {
+    if (length(object@collocate)==0){object@collocate="FOO"}
+    foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)-2]))), ' ')),
+                  function(x){
+                    if (x==object@collocate){
+                      cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
+                    } else {cat(x, ' ', sep='')}
+                  }
+    )
+    cat(' ', style(object@table[i,ncol(object@table)-1], bg=drillingControls$xtermBgNode, fg=drillingControls$xtermFgNode), ' ', sep='')
+    foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)]))), ' ')),
+                  function(x){
+                    if (x==object@collocate){
+                      cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
+                    } else {cat(x, ' ', sep='')}
+                  }
+    )                                                     
+    cat("\n\n")
+  }
+}
+
+#' @importFrom xtermStyle style
+setMethod('show', 'concordances', function(object){
   drillingControls <- get("drillingControls", '.GlobalEnv')
   if (drillingControls$kwicNo == 0 ) {
-    show(conc)
+    for (i in 1:nrow(object@table)) .showKwicLine(object, i)
   } else if (drillingControls$kwicNo > 0) {
-    chunks <- trunc(nrow(conc@table)/drillingControls$kwicNo)
+    chunks <- trunc(nrow(object@table)/drillingControls$kwicNo)
     for ( i in c(0:(chunks-1))) {
       lines <- i*drillingControls$kwicNo+c(1:drillingControls$kwicNo)
-      cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(conc@table),'----------\n\n')
-      foo <- show(conc[lines])
+      cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
+      for (j in lines) .showKwicLine(object, j)
       cat("(press 'q' to quit or ENTER to continue)\n")
       loopControl <- readline()
       if (loopControl == "q") break
     }
-    if ((chunks*drillingControls$kwicNo < nrow(conc@table)) && (loopControl != "q")){
-      cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(conc@table), 'of', nrow(conc@table),'----------\n\n')
-      foo <- show(conc[c((chunks*drillingControls$kwicNo):nrow(conc@table))])
+    if ((chunks*drillingControls$kwicNo < nrow(object@table)) && (loopControl != "q")){
+      cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
+      lines <- c((chunks*drillingControls$kwicNo):nrow(object@table))
+      for (j in lines) .showKwicLine(object, j)
     }
   }    
-}
+})
+
 
 setMethod('[', 'concordances',
           function(x,i) {

@@ -1,0 +1,33 @@
+\docType{methods}
+\name{trim,keyness-method}
+\alias{trim,keyness-method}
+\title{trim keyness object}
+\usage{
+\S4method{trim}{keyness}(object, minSignificance = 0, minFrequency = 0,
+  maxRank = 0, tokenFilter = NULL)
+}
+\arguments{
+  \item{object}{a keyness object}
+
+  \item{minSignificance}{minimum significance level}
+
+  \item{minFrequency}{the minimum frequency}
+
+  \item{maxRank}{maximum rank}
+
+  \item{tokenFilter}{tokens to exclude from table}
+}
+\value{
+a keyness object
+}
+\description{
+Trim a context object by applying different filters.
+}
+\details{
+Maybe it would be more efficient to use the subset
+function.-
+}
+\author{
+Andreas Blaette
+}
+

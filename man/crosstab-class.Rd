@@ -2,9 +2,10 @@
 \name{crosstab-class}
 \alias{crosstab-class}
 \alias{show,crosstab-method}
-\title{crosstab class}
+\alias{t,crosstab-method}
+\title{crosstab S4 class}
 \description{
-class for keeping crosstabulations of frequencies of
+Class for storing crosstabulations of frequencies of
 queries
 }
 \section{Slots}{
@@ -23,6 +24,10 @@ queries
 }
 
 \section{Methods}{
-  \describe{ \item{show}{get summary of the object} }
+  \describe{ \item{show}{get summary of the object}
+  \item{t}{change rows and columns} }
+}
+\seealso{
+\code{dispersion}
 }
 

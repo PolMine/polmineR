@@ -2,8 +2,6 @@
 \name{partition-class}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{[[,partition,ANY,ANY,ANY-method}
-\alias{[[,partition-method}
 \alias{as.partitionCluster}
 \alias{as.partitionCluster,partition-method}
 \alias{export}
@@ -53,7 +51,6 @@ Basic class for for almost anything in the driller package.
   \item{as.partitionCluster}{\code{signature(object="partition")}:
   transform a partition object into a partitionCluster (to
   add further objects) } \item{[}{get frequency of a query}
-  \item{[[}{shortcut to concordances for a query}
   \item{html}{transform partition to html} }
 }
 \author{

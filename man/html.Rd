@@ -2,13 +2,21 @@
 \name{html,partition-method}
 \alias{html}
 \alias{html,partition-method}
+\alias{html,partitionCluster-method}
 \alias{html-method}
-\title{Convert partition into html}
+\title{Convert partition/partition Cluster into html}
 \usage{
-\S4method{html}{partition}(object, filename = NULL, type = "debate")
+\S4method{html}{partition}(object, meta = NULL, browser = TRUE,
+  filename = NULL, type = "debate")
 }
 \arguments{
   \item{object}{a partition object}
+
+  \item{meta}{metadata for output}
+
+  \item{browser}{logical (defaults to TRUE), whether to
+  direct output to browser, if FALSE, the generated html
+  will be returned}
 
   \item{filename}{filename for the html file, if NULL
   (default), a temporary file is created}
@@ -17,6 +25,7 @@
 }
 \description{
 A partition is converted into a html file and displayed in
-a browser
+a browser. If a partitionCluster is provided, the browser
+will open several windows.
 }
 

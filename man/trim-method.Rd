@@ -9,17 +9,19 @@ trim(object, ...)
 \arguments{
   \item{object}{the object to be trimmed}
 
-  \item{...}{further parameters}
+  \item{...}{further arguments}
 }
 \description{
-Use this method to trim 'context', 'keyness', 'context',
-partition' and 'partitionCluster' objects. See respective
-documentation available through
-\code{method?trim("context")},
-\code{method?trim("keyness")},
-\code{method?trim("partition")},
-\code{method?trim("partitionCluster")},
-\code{method?trim("crosstab")}.
+Method that includes varying to adjust objects from the
+driller package by applying thresholds, minimum frequencies
+etc. It can be applied to 'context', 'keyness', 'context',
+'partition' and 'partitionCluster' objects. See the
+respective documentation: \describe{
+\item{contex:t}{\code{method?trim("context")}}
+\item{keyness:}{\code{method?trim("keyness")}}
+\item{partition:}{\code{method?trim("partition")}}
+\item{partitionCluster:}{\code{method?trim("partitionCluster")}}
+\item{crosstab:}{\code{method?trim("crosstab")}} }
 }
 \author{
 Andreas Blaette

@@ -10,7 +10,7 @@
 \usage{
 \S4method{context}{partition}(object, query, pAttribute = "useControls",
   leftContext = 0, rightContext = 0, minSignificance = 0,
-  posFilter = NULL, filterType = "exclude", stopwords = c(),
+  posFilter = c(), filterType = "exclude", stopwords = c(),
   statisticalTest = "LL", verbose = TRUE)
 }
 \arguments{

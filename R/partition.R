@@ -27,14 +27,11 @@
 #'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
 #'    \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
 #'    \item{[}{get frequency of a query}
-#'    \item{[[}{shortcut to concordances for a query}
 #'    \item{html}{transform partition to html}
 #'    }
 #' 
-#' @aliases partition-class show,partition-method 
-#'   [[,partition,ANY,ANY,ANY-method [,partition,ANY,ANY,ANY-method 
-#'   [,partition-method [[,partition-method 
-#'   as.partitionCluster
+#' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
+#'   [,partition-method as.partitionCluster
 #'   as.partitionCluster,partition-method export export,partition-method split
 #' @rdname partition-class
 #' @name partition-class
@@ -137,6 +134,7 @@ partition <- function(
   }
   if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
+  if (!is.null(tf)) {if (tf == FALSE) {tf <- NULL}}
   if (length(tf>0)) {
     for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
@@ -444,23 +442,6 @@ function(object){
 }
 
 
-
-
-#' @exportMethod [[
-setMethod('[[', 'partition', function(x,i){
-  context <- context(
-    i, x,
-    get('drillingControls', '.GlobalEnv')[['pAttribute']],
-    get('drillingControls', '.GlobalEnv')[['leftContext']],
-    get('drillingControls', '.GlobalEnv')[['rightContext']],
-    get('drillingControls', '.GlobalEnv')[['minSignificance']],
-    get('drillingControls', '.GlobalEnv')[['posFilter']],
-    verbose=FALSE
-    )
-  context
-}
-)
-
 #' @exportMethod [
 setMethod('[', 'partition', function(x,i){
   hits <- nrow(.queryCpos(i,x))
@@ -496,7 +477,10 @@ setMethod('[', 'partition', function(x,i){
 #' 
 #' Split a partition object into a partition Cluster if gap between strucs
 #' exceeds a minimum number of tokens specified by 'gap'. Relevant to 
-#' split up a plenary protocol into speeches.
+#' split up a plenary protocol into speeches. Note: To speed things up, the
+#' returned partitions will not include frequency lists. The lists can be
+#' prepared by applying \code{enrich} on the partitionCluster object that
+#' is returned.
 #' 
 #' @param x a partition object
 #' @param gap an integer specifying the minimum gap for performing the split
@@ -534,7 +518,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       }
       p <- enrich(
         p, size=TRUE,
-        tf=names(x@tf),
+        tf=NULL,
         meta=meta,
         verbose=TRUE
       )
@@ -549,70 +533,3 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
 })
 
 
-.partition2markdown <- function(object, type="speech"){
-  if (length(object@strucs)>1){
-    s <- object@strucs
-    gapSize <- s[2:length(s)] - s[1:(length(s)-1)]
-    gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
-    m <- object@metadata$table
-    metaNo <- ncol(m)
-    metaComp <- data.frame(m[2:nrow(m),], m[1:(nrow(m)-1),])
-    metaChange <- !apply(
-      metaComp, 1,
-      function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
-    )
-    metaChange <- c(TRUE, metaChange)
-    metadata <- apply(object@metadata$table, 2, function(x) as.vector(x))
-  } else {
-    gap <- 0
-    metaChange <- TRUE
-    metadata <- matrix(apply(object@metadata$table, 2, function(x) as.vector(x)), nrow=1)
-  }
-  type <- cqi_struc2str(paste(object@corpus, ".text_type", sep=""), object@strucs)
-  markdown <- sapply(c(1:nrow(metadata)), function(i) {
-    meta <- c("")
-    if (metaChange[i] == TRUE) { 
-      meta <- paste(metadata[i,], collapse=" | ", sep="")
-      meta <- paste("\n###", meta, "\n", collapse="")
-    }
-    plainText <- paste(
-      cqi_cpos2str(paste(
-        object@corpus, '.word', sep=''),
-        c(object@cpos[i,1]:object@cpos[i, 2])),
-      collapse=" "
-    )
-    if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
-    return(paste(meta, plainText))
-  })
-  markdown <- paste(markdown, collapse="\n\n")
-  Encoding(markdown) <- object@encoding
-  markdown <- .adjustEncoding(markdown, "UTF8")
-  markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
-  markdown <- gsub("\n - ", "\n", markdown)
-  markdown
-}
-
-#' @importFrom markdown markdownToHTML
-.markdown2tmpfile <- function(markdown){
-  mdFilename <- tempfile(fileext=".md")
-  htmlFile <- tempfile(fileext=".html")
-  cat(markdown, file=mdFilename)
-  markdown::markdownToHTML(file=mdFilename, output=htmlFile)
-  htmlFile
-}
-
-# #' @param sAttribute the s-attribute that provides the speaker names
-# speeches <- function(object, sAttribute, gap){
-#   names <- meta(object, sAttribute)
-#   speakers <- lapply(names, function(name){
-#     who <- list()
-#     who[[sAttribute]] <- name
-#     zoom(object, def=who, tf=names(object@tf), label=name)
-#   })
-#   cluster <- list()
-#   for (i in 1:length(speakers)){
-#     cluster <- c(cluster, split(speakers[[i]], gap))
-#   }
-#   cluster <- as.partitionCluster(cluster)
-#   cluster
-# }

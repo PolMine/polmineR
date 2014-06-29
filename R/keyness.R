@@ -49,7 +49,7 @@ NULL
 #'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness keyness-class summary,keyness-method show,keyness-method addPos,keyness-method trim,keyness-method as.matrix,keynessCluster-method keyness,partitionCluster-method
+#' @aliases keyness keyness-class summary,keyness-method show,keyness-method addPos,keyness-method as.matrix,keynessCluster-method keyness,partitionCluster-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette
