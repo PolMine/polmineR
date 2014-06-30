@@ -1,0 +1,162 @@
+#' @include generics.R keyness.R
+NULL
+
+#' @importFrom sendmailR sendmail sendmail_options mime_part
+#' @importFrom xlsx write.xlsx
+.attachTables <- function(tab, nrow, msg, filename, fileFormat){
+  tabTempDir <- tempdir()
+  if ("csv" %in% fileFormat) {
+    tabFilenameCsv <- file.path(tabTempDir, paste(filename, ".csv", sep=""))
+    write.csv(tab[c(1:nrow),], file=tabFilenameCsv, fileEncoding="latin1")
+    msg[[length(msg)+1]] <- mime_part(tabFilenameCsv)
+  }
+  if ("xlsx" %in% fileFormat) {
+    tabFilenameXlsx <- file.path(tabTempDir, paste(filename, ".xlsx", sep=""))
+    write.xlsx(tab[c(1:nrow),], file=tabFilenameXlsx)
+    msg[[length(msg)+1]] <- mime_part(tabFilenameXlsx)
+  }
+  msg
+}
+
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+.mail <- function(msg, to){
+  server <- get("drillingControls", '.GlobalEnv')[['smtpServer']]
+  smtpPort <- get("drillingControls", '.GlobalEnv')[['smtpPort']]
+  sendmail_options(list(smtpServer=server, smtpPort=smtpPort))
+  if (is.null(to)){
+    to <- get("drillingControls", '.GlobalEnv')[['email']]
+    if (to == "") warning("email is not set in drillingControls")
+  }
+  sendmail(from=to,
+           to=to,
+           subject='driller message',
+           msg=msg
+  )
+}
+
+#' mail result of keyness analysis
+#' 
+#' still experimental
+#' 
+#' @param object an object with some statistics
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows
+#' @param fileFormat either csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name mail-keyness-method
+#' @rdname keyness-mail-method
+#' @aliases mail,keyness-method
+#' @docType methods
+setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+  msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail result of context analysis
+#' 
+#' still experimental
+#' 
+#' @param object a context object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows
+#' @param fileFormat either csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name context-keyness-method
+#' @rdname context-mail-method
+#' @aliases mail,context-method
+#' @docType methods
+setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+  msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+
+
+#' mail a result
+#' 
+#' still experimental
+#' 
+#' @param object an object with some statistics
+#' @param to the receiver of the mail message
+#' @param filename name of the file to be sent out
+#' @param what what to send (defaults to "html")
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name mail,partition-method
+#' @rdname mail-partition-method
+#' @aliases mail,partition-method
+#' @docType methods
+setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport.html", what="html"){
+  msg <- list('Delivering something to read.\nSincerely yours\nThe driller\n')
+  filename <- html(
+    object, meta=NULL, browser=FALSE,
+    filename=file.path(tempdir(), filename)
+    )
+  msg[[length(msg)+1]] <- mime_part(filename)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail concordances
+#' 
+#' still experimental
+#' 
+#' @param object the concordance object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include kwic.R
+#' @name mail-concordances-method
+#' @rdname keyness-concordances-method
+#' @aliases mail,concordances-method
+#' @docType methods
+setMethod("mail", "concordances", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering concordances.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- .attachTables(object@table, nrow, msg, "concordances", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail crosstab
+#' 
+#' For exporting.
+#' 
+#' @param object the crosstab object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include dispersion.R
+#' @name mail-crosstab-method
+#' @rdname keyness-crosstab-method
+#' @aliases mail,crosstab-method
+#' @docType methods
+setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering a crosstabulation.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object@abs)
+  msg <- .attachTables(foo@abs, nrow, msg, "crosstabAbs", fileFormat) 
+  msg <- .attachTables(foo@rel, nrow, msg, "crosstabRel", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})

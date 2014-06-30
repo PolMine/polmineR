@@ -5,15 +5,23 @@
 \alias{score-method}
 \title{score partitions in a cluster}
 \usage{
-\S4method{score}{partitionCluster}(object, query, method)
+\S4method{score}{partitionCluster}(object, token, method, pAttribute,
+  rel = FALSE, tfMethod = FALSE)
 }
 \arguments{
   \item{object}{a partitionCluster object}
 
-  \item{query}{query a character vector supplying tokens to
-  be looked up}
+  \item{token}{a character vector supplying tokens to be
+  looked up}
 
-  \item{method}{either "addedFreq" or "SVM"}
+  \item{method}{either "additive" or "vsm"}
+
+  \item{pAttribute}{the p-attribute the analysis is based
+  on}
+
+  \item{rel}{logical, whether to use relative frequencies}
+
+  \item{tfMethod}{what method to use for term frequencies}
 }
 \value{
 a named numeric vector (names are the labels of the

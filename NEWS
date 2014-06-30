@@ -5,6 +5,8 @@ v0.4.29
  * controls() function for setting drillingControls
  * mail concordances
  * rework of kwic as a S4 method for partition and context class
+ * speeches method
+ * tf for partitionCluster improved
 
 v0.4.28
  * reorganization of the code in files so that shift to S4 methods is reflected

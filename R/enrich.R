@@ -115,11 +115,18 @@ setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, meta=NULL
 })
 
 # documented with enrich,partition-method
-setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, verbose=TRUE){
-  object@partitions <- lapply(
-    object@partitions,
-    function(p) enrich(p, size=size, tf=tf, meta=meta, addPos, verbose=TRUE)
-  )
+setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
+  if (mc == FALSE) {
+    object@partitions <- lapply(
+      object@partitions,
+      function(p) enrich(p, size=size, tf=tf, meta=meta, addPos, verbose=TRUE)
+    )
+  } else if (mc == TRUE){
+    object@partitions <- mclapply(
+      object@partitions,
+      function(p) enrich(p, size=size, tf=tf, meta=meta, addPos, verbose=TRUE)
+    )    
+  }
   object
 })
 

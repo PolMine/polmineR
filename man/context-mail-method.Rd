@@ -1,0 +1,22 @@
+\docType{methods}
+\name{context-keyness-method}
+\alias{context-keyness-method}
+\alias{mail,context-method}
+\title{mail result of context analysis}
+\usage{
+\S4method{mail}{context}(object, to = NULL, nrow = NULL,
+  fileFormat = c("csv", "xlsx"))
+}
+\arguments{
+  \item{object}{a context object}
+
+  \item{to}{the receiver of the mail message}
+
+  \item{nrow}{the number of rows}
+
+  \item{fileFormat}{either csv or xlsx, or both}
+}
+\description{
+still experimental
+}
+

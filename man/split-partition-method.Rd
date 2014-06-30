@@ -1,7 +1,7 @@
 \docType{methods}
 \name{split,partition-method}
+\alias{split,partition}
 \alias{split,partition-method}
-\alias{split,partitionMethod}
 \title{split partition into partitionCluster}
 \usage{
 \S4method{split}{partition}(x, gap, drop = FALSE, ...)

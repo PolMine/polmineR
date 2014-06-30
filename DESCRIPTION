@@ -19,7 +19,8 @@ Imports:
     RColorBrewer,
     markdown,
     xlsx,
-    sendmailR
+    sendmailR,
+    plyr
 Suggests:
     knitr
 VignetteBuilder: knitr
@@ -42,11 +43,11 @@ Collate:
     'driller-package.R'
     'keyness.R'
     'enrich.R'
-    'statistics.R'
-    'export.R'
     'frequency.R'
     'html.R'
     'import.R'
+    'statistics.R'
+    'mail.R'
     'meta.R'
     'query.R'
     'sAttributes.R'

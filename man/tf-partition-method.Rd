@@ -3,7 +3,7 @@
 \alias{tf,partition-method}
 \title{get term frequencies from a partition object}
 \usage{
-\S4method{tf}{partition}(object, token, method = "in")
+\S4method{tf}{partition}(object, token, method = "in", pAttribute = NULL)
 }
 \arguments{
   \item{object}{a partition object}
@@ -11,7 +11,11 @@
   \item{token}{a character vector (one or multiple terms to
   be looked up)}
 
-  \item{method}{either "in" or "grep" (defaults to "in")}
+  \item{method}{either "in", "grep" or "cqp" (defaults to
+  "in")}
+
+  \item{pAttribute}{if NULL, the pAttributes available in
+  the partition object will be reported}
 }
 \value{
 a data frame

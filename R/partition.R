@@ -134,7 +134,7 @@ partition <- function(
   }
   if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
-  if (!is.null(tf)) {if (tf == FALSE) {tf <- NULL}}
+  if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
   if (length(tf>0)) {
     for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
@@ -486,7 +486,7 @@ setMethod('[', 'partition', function(x,i){
 #' @param gap an integer specifying the minimum gap for performing the split
 #' @param drop not yet implemented
 #' @return a partitionCluster
-#' @aliases split,partitionMethod
+#' @aliases split,partition
 #' @rdname split-partition-method 
 #' @exportMethod split
 setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
@@ -508,6 +508,8 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       p@cpos <- cbind(cposList1[[i]], cposList2[[i]])
       p@corpus <- x@corpus
       p@encoding <- x@encoding
+      p@sAttributes <- x@sAttributes
+      p@explanation <- c("partition results from split, sAttributes do not necessarily define partition")
       p@xml <- x@xml
       p@sAttributeStrucs <- x@sAttributeStrucs
       p@label <- paste(x@label, i, collapse="_", sep="")

@@ -3,8 +3,9 @@
 \alias{trim,partitionCluster-method}
 \title{trim partitionCluster Object}
 \usage{
-\S4method{trim}{partitionCluster}(object, pAttribute, minFrequency = 0,
-  posFilter = c(), drop = NULL, minSize = 0, ...)
+\S4method{trim}{partitionCluster}(object, pAttribute = NULL,
+  minFrequency = 0, posFilter = c(), drop = NULL, minSize = 0,
+  keep = NULL, ...)
 }
 \arguments{
   \item{object}{a partitionCluster object}
@@ -21,6 +22,9 @@
 
   \item{minSize}{a minimum size for the partitions to be
   kept}
+
+  \item{keep}{specify labels of partitions to keep,
+  everything else is dropped}
 
   \item{...}{further arguments (unused)}
 }

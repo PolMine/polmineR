@@ -3,19 +3,19 @@
 \alias{tf,partitionCluster-method}
 \title{get term frequencies from a partitionCluster object}
 \usage{
-\S4method{tf}{partitionCluster}(object, token, pAttribute = c(),
-  rel = FALSE, method = "in")
+\S4method{tf}{partitionCluster}(object, token, method = "in",
+  pAttribute = NULL, rel = FALSE)
 }
 \arguments{
   \item{object}{a partitionCluster object}
 
   \item{token}{one or several tokens}
 
+  \item{method}{either "in", "grep" or "cqp"}
+
   \item{pAttribute}{the p-attribute you want to get}
 
   \item{rel}{logical, defaults to FALSE}
-
-  \item{method}{either "in" or "grep"}
 }
 \value{
 a data frame (partitions in the rows, terms in the columns)

@@ -7,7 +7,7 @@
 #' use single quotes, and double quotes for individual words
 #' (see example below). Input needs to be in UTF-8
 #' 
-#' @param query a query (encoding: UTF-8), see details
+#' @param query character vector length 1 providing a query (encoding: UTF-8), see details
 #' @param partition a partition object
 #' @param pAttribute either 'word' or 'lemma', not used 
 #' @return a data frame with two columns with cpos (start and end positions of hits)
@@ -18,7 +18,8 @@
 #' foo <- .queryCpos('"Menschen" "mit" "Migrationshintergrund"', partitionObject)
 #' }
 #' @noRd
-.queryCpos <- function(query, Partition, pAttribute=drillingControls$pAttribute) {
+.queryCpos <- function(query, Partition, pAttribute=drillingControls$pAttribute, verbose=TRUE) {
+  if (length(query) > 1) warning("query needs to be a character vector with length 1")
   query <- .adjustEncoding(query, Partition@encoding)
   if (grepl('"', query) == FALSE) {
     pAttr <- paste(Partition@corpus, '.', pAttribute, sep='')
@@ -46,7 +47,7 @@
       hits <- matrix(hits, nrow=1)
     }
   } else {
-    warning("no hits for query -> ", query)
+    if (verbose == TRUE) warning("no hits for query -> ", query)
     hits = NULL
   }
   hits

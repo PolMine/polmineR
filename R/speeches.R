@@ -1,6 +1,7 @@
 #' Split partition into speeches
 #' 
-#' This method is designed for corpora from the PolMine corpora of plenary protocols.
+#' A partition is split into speeches. Method particularly for corpora from the
+#' PolMine corpora of plenary protocols.
 #' 
 #' @param object a partition object
 #' @param sAttribute the s-attribute that provides the speaker names
@@ -11,6 +12,7 @@
 #' @param verbose logical, defaults to TRUE
 #' @return a partitionCluster object
 #' @include generics.R partition.R
+#' @importFrom plyr llply
 #' @name speeches
 #' @aliases speeches speeches-method speeches,partition-method
 #' @rdname speeches
@@ -34,13 +36,24 @@ setMethod("speeches", "partition", function(object, sAttribute, gap=500, exclude
   }
   speakers <- as.partitionCluster(speakers)
   if (!is.null(exclude)) speakers <- trim(speakers, drop=exclude)
-  message("... splitting speaker partitions into speeches")
-  bag <- lapply(speakers@partitions, function(p) split(p, gap=gap))  
-  cluster <- new("partitionCluster")
-  for (i in 1:length(bag)) cluster <- cluster + bag[[i]]
+  if (verbose == TRUE) message("... splitting speaker partitions into speeches")
+  if (mc == FALSE){
+    bag <- lapply(speakers@partitions, function(p) {
+      if (verbose == TRUE) message("... splitting partition ", p@label)
+      split(p, gap=gap)
+      })  
+  } else {
+    bag <- mclapply(speakers@partitions, function(p) split(p, gap=gap))      
+  }
+  message("... flattening data structure")
+  bagFlat <- lapply(bag, function(x) x@partitions)  
+  cluster <- do.call(c, unlist(bagFlat, recursive=FALSE))
+  names(cluster) <- unname(unlist(lapply(cluster, function(x)x@label)))
+  cluster <- as.partitionCluster(cluster)
   if (!is.null(addMeta)){
-    for (i in 1:length(cluster@partitions)){
-      labelOld <- cluster@partitions[[i]]@label
+    if (verbose == TRUE) message("... enhancing partition labels")
+    cluster@partitions <- llply(.data=cluster@partitions, .fun=function(x){
+      labelOld <- x@label
       if (grepl("^.*(\\d+)$", labelOld)){
         no <- sub("^.*?(\\d+)$", "\\1", labelOld, perl=TRUE)
         txt <- sub("(.*?)\\d+$", "\\1", labelOld, perl=TRUE)
@@ -48,11 +61,12 @@ setMethod("speeches", "partition", function(object, sAttribute, gap=500, exclude
         no <- "1"
         txt <- labelOld
       }
-      metadata <- vapply(addMeta, function(m) meta(cluster@partitions[[i]], m)[1], FUN.VALUE="character") 
+      metadata <- vapply(addMeta, function(sAttr) meta(x, sAttr)[1], FUN.VALUE="character") 
       labelNew <- paste(txt, paste("|", paste(metadata, collapse="|"), "|", sep=""), no, sep="")
-      cluster@partitions[[i]]@label <- labelNew
-      names(cluster@partitions)[i] <- labelNew
-    }
+      x@label <- labelNew
+      x
+    })
+    names(cluster@partitions) <- unname(unlist(lapply(cluster@partitions, function(x)x@label)))
   }
   cluster
 })

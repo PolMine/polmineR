@@ -8,7 +8,8 @@
 #' 
 #' @param object a partition object
 #' @param token a character vector (one or multiple terms to be looked up)
-#' @param method either "in" or "grep" (defaults to "in")
+#' @param method either "in", "grep" or "cqp" (defaults to "in")
+#' @param pAttribute if NULL, the pAttributes available in the partition object will be reported
 #' @return a data frame
 #' @examples
 #' # generate a partition for testing 
@@ -20,14 +21,22 @@
 #' @aliases tf,partition-method
 #' @exportMethod tf
 #' @docType methods
-setMethod("tf", "partition", function(object, token, method="in"){
-  if (is.null(names(object@tf)) == TRUE){
-    warning("no tf lists available")
+setMethod("tf", "partition", function(object, token, method="in", pAttribute=NULL){
+  if (is.null(pAttribute)){
+    if (is.null(names(object@tf)) == TRUE) {
+      warning("no pAttribute provided, no tf lists available")
+    } else {
+      pAttribute <- names(object@tf)
+    }
+  } else {
+    if (method!="cqp" && any(!pAttribute %in% names(object@tf))){
+      warning("pAttribute provided is not available")
+    }
   }
   if (is.character(token) == TRUE){
     bag <- list(token=.adjustEncoding(token, object@encoding))
     if (method == "in"){ 
-      for (pAttr in names(object@tf)) {
+      for (pAttr in pAttribute) {
         bag[[paste(pAttr, "Abs", sep="")]] <- object@tf[[pAttr]][token,"tf"]
         bag[[paste(pAttr, "Rel", sep="")]] <- object@tf[[pAttr]][token,"tf"]/object@size
       }
@@ -35,7 +44,7 @@ setMethod("tf", "partition", function(object, token, method="in"){
     } else if (method == "grep"){
       bag <- lapply(token, function(query) {
         foo <- list()
-        for (pAttr in names(object@tf)) {
+        for (pAttr in pAttribute) {
           rowNo <- grep(query, rownames(object@tf[[pAttr]]))
           tfAbs <- sum(object@tf[[pAttr]][rowNo,"tf"])
           foo[[paste(pAttr, "Abs", sep="")]] <- tfAbs
@@ -51,8 +60,22 @@ setMethod("tf", "partition", function(object, token, method="in"){
                function(x) c(paste(x,"Abs", sep=""), paste(x, "Rel", sep="")))
         )
       tab <- tab[,colOrder]
+    } else if (method == "cqp") {
+      for (pAttr in pAttribute) {
+        no <- vapply(
+          token,
+          function(query) {
+            n <- nrow(.queryCpos(query=query, Partition=object, pAttribute=pAttr, verbose=FALSE))
+            ifelse(is.null(n), 0, n)
+          }, FUN.VALUE=1
+          )
+        bag[[paste(pAttr, "Abs", sep="")]] <- no
+        bag[[paste(pAttr, "Rel", sep="")]] <- no/object@size
+      }
+      tab <- data.frame(bag)
+      rownames(tab) <- NULL
     } else {
-      warning("not a valid method specification")
+      warning("not a valid method specification")      
     }
   } else if (is.numeric(token)) {
     warning("tf method not implemented for token ids")
@@ -70,23 +93,28 @@ setMethod("tf", "partition", function(object, token, method="in"){
 #' 
 #' @param object a partitionCluster object
 #' @param token one or several tokens
+#' @param method either "in", "grep" or "cqp"
 #' @param pAttribute the p-attribute you want to get
 #' @param rel logical, defaults to FALSE 
-#' @param method either "in" or "grep" 
 #' @return a data frame (partitions in the rows, terms in the columns)
 #' @aliases tf,partitionCluster-method
 #' @rdname tf-partitionCluster-method
 #' @exportMethod tf
 #' @docType methods
-setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=FALSE, method="in"){
-  tfAvailable <- unique(unlist(lapply(object@partitions, function(x) names(x@tf))))
+setMethod("tf", "partitionCluster", function(object, token, method="in", pAttribute=NULL, rel=FALSE){
   # check whether all partitions in the cluster have a proper label
   if (is.null(names(object@partitions)) || any(is.na(names(object@partitions)))) {
-    warning("all partitions in the cluster need to have a label (not the case)")
+    warning("all partitions in the cluster need to have a label (at least some missing)")
   }
   what <- paste(pAttribute, ifelse(rel==FALSE, "Abs", "Rel"), sep="")
-  if (pAttribute %in% tfAvailable == FALSE) {
-    warning("requested term frequencies are not available")
+  tfAvailable <- unique(unlist(lapply(object@partitions, function(x) names(x@tf))))
+  if (method %in% c("in", "grep")){
+    if (length(pAttribute)!=1) {
+      warning("pAttribute required for methods 'in' and/or 'grep' but not given")
+      if (pAttribute %in% tfAvailable == FALSE) {
+        warning("requested term frequencies are not available")
+      }
+    }
   }
   bag <- lapply(
     names(object@partitions),
@@ -94,7 +122,7 @@ setMethod("tf", "partitionCluster", function(object, token, pAttribute=c(), rel=
       data.frame(
         partition=x,
         token=token,
-        tf(object@partitions[[x]], token, method=method)
+        tf(object@partitions[[x]], token, method=method, pAttribute=pAttribute)
         )
     }
   )

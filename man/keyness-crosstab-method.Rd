@@ -1,14 +1,14 @@
 \docType{methods}
-\name{mail-concordances-method}
-\alias{mail,concordances-method}
-\alias{mail-concordances-method}
-\title{mail concordances}
+\name{mail-crosstab-method}
+\alias{mail,crosstab-method}
+\alias{mail-crosstab-method}
+\title{mail crosstab}
 \usage{
-\S4method{mail}{concordances}(object, to = NULL, nrow = NULL,
+\S4method{mail}{crosstab}(object, to = NULL, nrow = NULL,
   fileFormat = c("csv", "xlsx"))
 }
 \arguments{
-  \item{object}{the concordance object}
+  \item{object}{the crosstab object}
 
   \item{to}{the receiver of the mail message}
 
@@ -18,6 +18,6 @@
   \item{fileFormat}{csv or xlsx, or both}
 }
 \description{
-still experimental
+For exporting.
 }
 

@@ -31,7 +31,6 @@ NULL
 #'   [[,partitionCluster-method as.DocumentTermMatrix,partitionCluster-method 
 #'   as.matrix,partitionCluster-method 
 #'   as.TermDocumentMatrix,partitionCluster-method merge,partitionCluster-method
-#'   merge,partitionCluster-method 
 #'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix 
 #'   +,partitionCluster-method names,partitionCluster-method 
 #'   summary,partitionCluster-method 

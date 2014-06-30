@@ -31,7 +31,7 @@
 a partitionCluster object
 }
 \description{
-This method is designed for corpora from the PolMine
-corpora of plenary protocols.
+A partition is split into speeches. Method particularly for
+corpora from the PolMine corpora of plenary protocols.
 }
 

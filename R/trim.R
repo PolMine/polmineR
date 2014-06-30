@@ -117,12 +117,13 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 #' @param posFilter pos to keep
 #' @param drop partitionObjects you want to drop, specified either by number or by label
 #' @param minSize a minimum size for the partitions to be kept
+#' @param keep specify labels of partitions to keep, everything else is dropped
 #' @param ... further arguments (unused)
 #' @return partitionCluster
 #' @aliases trim,partitionCluster-method
 #' @exportMethod trim
 #' @rdname trim-partitionCluster-method
-setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=0, posFilter=c(),  drop=NULL, minSize=0, ...){
+setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=c(),  drop=NULL, minSize=0, keep=NULL, ...){
   pimpedCluster <- object
   if (minFrequency !=0 || !is.null(posFilter)){
     if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
@@ -144,9 +145,14 @@ setMethod("trim", "partitionCluster", function(object, pAttribute, minFrequency=
     if (is.null(names(object@partitions)) || any(is.na(names(object@partitions)))) {
       warning("there a partitions to be dropped, but some or all partitions do not have a label, which may potentially cause errors or problems")
     }
+    if (is.character(drop) == TRUE){
+      pimpedCluster@partitions[which(names(pimpedCluster@partitions) %in% drop)] <- NULL
+    } else if (is.numeric(drop == TRUE)){
+      pimpedCluster@partitions[drop] <- NULL
+    }
   }
-  for (i in drop){
-    pimpedCluster@partitions[[i]] <- NULL
+  if (!is.null(keep)){
+    pimpedCluster@partitions <- pimpedCluster@partitions[which(names(pimpedCluster@partitions) %in% keep)]
   }
   pimpedCluster
 })

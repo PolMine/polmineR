@@ -92,6 +92,7 @@ setClass("concordances",
 }
 
 #' @include context.R
+#' @exportMethod kwic
 setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
   .kwic(ctxt=object, metadata=metadata, collocate=collocate)
 })
