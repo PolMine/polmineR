@@ -18,7 +18,6 @@ class to organize information of context analysis
   \code{"character"} the partition the analysis is based on
   } \item{\code{partitionSize}:}{Object of class
   \code{"numeric"} the size of the partition }
-  \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
   \item{\code{left.context}:}{Object of class
   \code{"numeric"} number of tokens to the right }
   \item{\code{right.context}:}{Object of class

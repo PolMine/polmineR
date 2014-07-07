@@ -1,0 +1,33 @@
+\docType{methods}
+\name{kwic,partition-method}
+\alias{kwic}
+\alias{kwic,context-method}
+\alias{kwic,partition-method}
+\alias{kwic,show-method}
+\title{KWIC output}
+\usage{
+\S4method{kwic}{partition}(object, query, leftContext = 0, rightContext = 0,
+  meta = NULL, pAttribute = "word", collocate = c())
+}
+\arguments{
+  \item{object}{a partition object}
+
+  \item{query}{what to look up}
+
+  \item{leftContext}{to the left}
+
+  \item{rightContext}{to the right}
+
+  \item{meta}{metainformation to display}
+
+  \item{pAttribute}{typically 'word' or 'lemma'}
+
+  \item{collocate}{only show kwic if a certain word is
+  present}
+}
+\description{
+Prepare and show 'keyword in context' (KWIC). The same
+result can be achieved by applying the kwich method on
+either a partition or a context object.
+}
+

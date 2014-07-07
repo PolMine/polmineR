@@ -25,7 +25,7 @@
  $ consoleEncoding : chr "UTF-8"
  $ smtpServer      : chr "mailout.uni-due.de"
  $ smtpPort        : chr "587"
- $ email           : chr ""
+ $ email           : chr "polmine@uni-due.de"
 }}
 \usage{
 drillingControls

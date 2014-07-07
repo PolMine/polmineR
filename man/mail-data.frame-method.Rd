@@ -1,0 +1,23 @@
+\docType{methods}
+\name{mail-data.frame-method}
+\alias{mail,data.frame-method}
+\alias{mail-data.frame-method}
+\title{mail a data frame}
+\usage{
+\S4method{mail}{data.frame}(object, to = NULL, nrow = NULL,
+  fileFormat = c("csv", "xlsx"))
+}
+\arguments{
+  \item{object}{the data frame}
+
+  \item{to}{the receiver of the mail message}
+
+  \item{nrow}{the number of rows of the table (if NULL, the
+  whole table will be sent)}
+
+  \item{fileFormat}{csv or xlsx, or both}
+}
+\description{
+For exporting.
+}
+

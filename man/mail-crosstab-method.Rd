@@ -6,9 +6,6 @@
 \usage{
 \S4method{mail}{crosstab}(object, to = NULL, nrow = NULL,
   fileFormat = c("csv", "xlsx"))
-
-\S4method{mail}{data.frame}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
 }
 \arguments{
   \item{object}{the crosstab object}
@@ -19,19 +16,8 @@
   whole table will be sent)}
 
   \item{fileFormat}{csv or xlsx, or both}
-
-  \item{object}{the data frame}
-
-  \item{to}{the receiver of the mail message}
-
-  \item{nrow}{the number of rows of the table (if NULL, the
-  whole table will be sent)}
-
-  \item{fileFormat}{csv or xlsx, or both}
 }
 \description{
-For exporting.
-
 For exporting.
 }
 

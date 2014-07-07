@@ -1,14 +1,26 @@
 \docType{class}
 \name{kwic-class}
+\alias{[,kwic,ANY,ANY,ANY-method}
+\alias{[,kwic-method}
 \alias{kwic-class}
-\title{class for kwic output}
+\title{kwic (S4 class)}
 \description{
-information for kwic output
+S4 class for organizing information for concordance output
 }
 \section{Slots}{
-  \describe{ \item{\code{cpos}:}{Object of class
-  \code{"list"} corpus positions }
-  \item{\code{word}:}{Object of class \code{"list"} to be
-  explained } }
+  \describe{ \item{\code{metadata}:}{Object of class
+  \code{"character"} keeping the sAttributes of the
+  metadata that are to be displayed }
+  \item{\code{table}:}{Object of class \code{"data.frame"}
+  a table with the relevant information for kwic output }
+  \item{\code{collocate}:}{Object of class
+  \code{"character"} collocate, if applicable }
+  \item{\code{encoding}:}{Object of class
+  \code{"character"} encoding of the corpus } }
+}
+
+\section{Methods}{
+  \describe{ \item{[}{indexing for seeing only some
+  concordances} \item{show}{get kwic output} }
 }
 
