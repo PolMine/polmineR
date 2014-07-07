@@ -129,7 +129,6 @@ setMethod("context", "partition",
   ctxt@posFilter <- as.character(posFilter)
   ctxt@partition <- object@label
   ctxt@partitionSize <- object@size
-  ctxt@statisticalTest <- statisticalTest
   corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
   corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
   if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
@@ -156,6 +155,7 @@ setMethod("context", "partition",
   ctxt@frequency <- length(bigBag)
   # if statisticalTest is 'NULL' the following can be ommitted
   if (!is.null(statisticalTest)){
+    ctxt@statisticalTest <- statisticalTest
     wc <- table(unlist(lapply(bigBag, function(x) x$id)))
     if (statisticalTest == "LL"){
       if (verbose==TRUE) message("... performing log likelihood test")

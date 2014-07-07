@@ -30,4 +30,9 @@ Prepare and show 'keyword in context' (KWIC). The same
 result can be achieved by applying the kwich method on
 either a partition or a context object.
 }
+\examples{
+bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep)
+kwic(bt, "Integration") kwic(bt, "Integration", leftContext=20,
+ rightContext=20, meta=c("text_date", "text_name", "text_party))
+}
 
