@@ -17,7 +17,7 @@ setMethod("score", "partitionCluster", function(object, token, method, pAttribut
   if (is.null(names(object@partitions))) warning("labels needed but missing")
   if ((length(unique(names(object@partitions)))) != length(object@partitions)) warning("please ensure that are labels are present and unique")
   if (method == "additive"){
-    how <- ifelse(regex==FALSE, "in", "grep")
+    how <- ifelse(tfMethod==FALSE, "in", "grep")
     tab <- tf(object=object, token=token, pAttribute=pAttribute, rel=rel, method=tfMethod)
     score <- rowSums(tab)
   }

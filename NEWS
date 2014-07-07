@@ -1,5 +1,6 @@
 planned changes:
  * score method [drafting has begun]
+ * kwich method not available in global namespace, bit faulty
 
 v0.4.29
  * controls() function for setting drillingControls

@@ -16,7 +16,6 @@ NULL
 #'     \item{\code{frequency}:}{Object of class \code{"numeric"} number of hits }
 #'     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
 #'     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
-#'     \item{\code{kwic}:}{Object of class \code{"kwic"} ~~ }
 #'     \item{\code{left.context}:}{Object of class \code{"numeric"} number of tokens to the right }
 #'     \item{\code{right.context}:}{Object of class \code{"numeric"} number of tokens to the left }
 #'     \item{\code{size}:}{Object of class \code{"numeric"} number of tokens in the right and left context }
@@ -48,7 +47,6 @@ setClass("context",
                         frequency="numeric",
                         partition="character",
                         partitionSize="numeric",
-                        kwic="kwic",
                         left.context="numeric",
                         right.context="numeric",
                         size="numeric",
@@ -157,7 +155,7 @@ setMethod("context", "partition",
   if (verbose==TRUE) message('... context size: ', ctxt@size)
   ctxt@frequency <- length(bigBag)
   # if statisticalTest is 'NULL' the following can be ommitted
-  if (!statisticalTest == "skip"){
+  if (!is.null(statisticalTest)){
     wc <- table(unlist(lapply(bigBag, function(x) x$id)))
     if (statisticalTest == "LL"){
       if (verbose==TRUE) message("... performing log likelihood test")

@@ -1,23 +1,4 @@
-#' class for kwic output
-#' 
-#' information for kwic output
-#' 
-#' @section Slots:
-#'   \describe{
-#'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions }
-#'     \item{\code{word}:}{Object of class \code{"list"} to be explained }
-#'  }
-#' @name kwic-class
-#' @rdname kwic-class
-#' @docType class
-#' @exportClass kwic
-setClass("kwic",
-         representation(cpos="list",
-                        word="list"
-         )
-)
-
-#' concordances (S4 class)
+#' kwic (S4 class)
 #' 
 #' S4 class for organizing information for concordance output
 #' 
@@ -34,12 +15,12 @@ setClass("kwic",
 #'    \item{show}{get kwic output}
 #'   }
 #'   
-#' @name concordances-class
+#' @name kwic-class
 #' @docType class
-#' @aliases show,concordances-method concordances-class [,concordances,ANY,ANY,ANY-method [,concordances-method
-#' @exportClass concordances
-#' @rdname concordances-class
-setClass("concordances",
+#' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
+#' @exportClass kwic
+#' @rdname kwic-class
+setClass("kwic",
          representation(metadata="character",
                         collocate="character",
                         table="data.frame",
@@ -59,7 +40,7 @@ setClass("concordances",
 #' @param metadata character vector with the metadata included in output
 #' @param collocate limit output to a concordances containing a specific 
 #'   collocate
-#' @return a concordances object
+#' @return a kwic object
 #' @author Andreas Blaette
 #' @noRd
 .kwic <- function(ctxt, metadata=NULL, collocate=c()){
@@ -83,7 +64,7 @@ setClass("concordances",
   if (length(collocate) > 0) m <- m[grep(collocate, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   m <- m[2:ncol(m)]
   colnames(m) <- c(metadata, c('left.context', 'node', 'right.context'))
-  conc <- new('concordances')
+  conc <- new('kwic')
   if (!is.null(collocate)) {conc@collocate <- collocate}
   conc@table <- m
   conc@metadata <- metadata
@@ -97,6 +78,22 @@ setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
   .kwic(ctxt=object, metadata=metadata, collocate=collocate)
 })
 
+#' KWIC output
+#' 
+#' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
+#' applying the kwich method on either a partition or a context object.
+#' 
+#' @param object a partition object
+#' @param query what to look up
+#' @param leftContext to the left
+#' @param rightContext to the right
+#' @param meta metainformation to display
+#' @param pAttribute typically 'word' or 'lemma'
+#' @param collocate only show kwic if a certain word is present
+#' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
+#'
+#' 
+#' @exportMethod kwic
 setMethod("kwic", "partition", function(
   object, query,
   leftContext=0,
@@ -108,7 +105,7 @@ setMethod("kwic", "partition", function(
   ctxt <- context(
     object=object, query=query, pAttribute=pAttribute,
     leftContext=leftContext, rightContext=rightContext,
-    statisticalTest="skip"
+    statisticalTest=NULL
     )
   .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
 })
@@ -147,30 +144,34 @@ setMethod("kwic", "partition", function(
 }
 
 #' @importFrom xtermStyle style
-setMethod('show', 'concordances', function(object){
+setMethod('show', 'kwic', function(object){
   drillingControls <- get("drillingControls", '.GlobalEnv')
   if (drillingControls$kwicNo == 0 ) {
     for (i in 1:nrow(object@table)) .showKwicLine(object, i)
   } else if (drillingControls$kwicNo > 0) {
-    chunks <- trunc(nrow(object@table)/drillingControls$kwicNo)
-    for ( i in c(0:(chunks-1))) {
-      lines <- i*drillingControls$kwicNo+c(1:drillingControls$kwicNo)
-      cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
-      for (j in lines) .showKwicLine(object, j)
-      cat("(press 'q' to quit or ENTER to continue)\n")
-      loopControl <- readline()
-      if (loopControl == "q") break
-    }
-    if ((chunks*drillingControls$kwicNo < nrow(object@table)) && (loopControl != "q")){
-      cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
-      lines <- c((chunks*drillingControls$kwicNo):nrow(object@table))
-      for (j in lines) .showKwicLine(object, j)
+    if (nrow(object@table) <= drillingControls$kwicNo) {
+      for (i in 1:nrow(object@table)) .showKwicLine(object, i)
+    } else {
+      chunks <- trunc(nrow(object@table)/drillingControls$kwicNo)
+      for ( i in c(0:(chunks-1))) {
+        lines <- i*drillingControls$kwicNo+c(1:drillingControls$kwicNo)
+        cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
+        for (j in lines) .showKwicLine(object, j)
+        cat("(press 'q' to quit or ENTER to continue)\n")
+        loopControl <- readline()
+        if (loopControl == "q") break
+      }
+      if ((chunks*drillingControls$kwicNo < nrow(object@table)) && (loopControl != "q")){
+        cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
+        lines <- c((chunks*drillingControls$kwicNo):nrow(object@table))
+        for (j in lines) .showKwicLine(object, j)
+      }
     }
   }    
 })
 
 
-setMethod('[', 'concordances',
+setMethod('[', 'kwic',
           function(x,i) {
             x@table <- x@table[i,]
             x

@@ -3,7 +3,7 @@
 \alias{kwic}
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
-\alias{kwic,show-method}
+\alias{show,kwic-method}
 \title{KWIC output}
 \usage{
 \S4method{kwic}{partition}(object, query, leftContext = 0, rightContext = 0,

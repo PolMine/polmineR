@@ -122,34 +122,3 @@
   return(retval)
 }
 
-#' inspect or set drillingControls
-#' 
-#' Set drillingControls (a list in the global environment). The controls are used
-#' by several functions to keep the number of needed parameters short.
-#' WARNING: Providing a character string length > 1 does not yet work!
-#' 
-#' @param ... parameters you want to set
-#' @examples
-#' controls() # view the current setting of parameters
-#' @rdname controls
-#' @name controls
-#' 
-#' @export
-controls <- function(...){
-  toSet <- as.list(sys.call())
-  if (is.null(names(toSet))){
-    foo <- lapply(
-      names(drillingControls),
-      function(x)
-        cat(sprintf("%-20s", paste(x, ":", sep="")), drillingControls[[x]], "\n")
-      )
-  } else {
-    drillingControls <- get("drillingControls", '.GlobalEnv')
-    what <- names(toSet)
-    what <- what[!what %in% ""]
-    for (setting in what) {
-      drillingControls[[setting]] <- toSet[[setting]]
-    }
-    drillingControls <<- drillingControls
-  }
-}

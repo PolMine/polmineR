@@ -28,7 +28,7 @@ NULL
     to <- get("drillingControls", '.GlobalEnv')[['email']]
     if (to == "") warning("email is not set in drillingControls")
   }
-  sendmail(from=to,
+  sendmail(from=get("drillingControls", '.GlobalEnv')[['email']],
            to=to,
            subject='driller message',
            msg=msg
@@ -112,7 +112,7 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
   status$msg
 })
 
-#' mail concordances
+#' mail kwic/concordances
 #' 
 #' still experimental
 #' 
@@ -124,14 +124,14 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
 #' @include kwic.R
-#' @name mail-concordances-method
-#' @rdname keyness-concordances-method
-#' @aliases mail,concordances-method
+#' @name mail-kwic-method
+#' @rdname mail-kwic-method
+#' @aliases mail,kwic-method
 #' @docType methods
-setMethod("mail", "concordances", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
-  msg <- list('Delivering concordances.\nSincerely yours\nThe driller\n')
+setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering kwic.\nSincerely yours\nThe driller\n')
   if(is.null(nrow)) nrow <- nrow(object@stat)
-  msg <- .attachTables(object@table, nrow, msg, "concordances", fileFormat) 
+  msg <- .attachTables(object@table, nrow, msg, "kwic", fileFormat) 
   status <- .mail(msg, to)
   status$msg
 })
@@ -149,7 +149,7 @@ setMethod("mail", "concordances", function(object, to=NULL, nrow=NULL, fileForma
 #' @importFrom xlsx write.xlsx
 #' @include dispersion.R
 #' @name mail-crosstab-method
-#' @rdname keyness-crosstab-method
+#' @rdname mail-crosstab-method
 #' @aliases mail,crosstab-method
 #' @docType methods
 setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
@@ -157,6 +157,30 @@ setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c(
   if(is.null(nrow)) nrow <- nrow(object@abs)
   msg <- .attachTables(foo@abs, nrow, msg, "crosstabAbs", fileFormat) 
   msg <- .attachTables(foo@rel, nrow, msg, "crosstabRel", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail a data frame
+#' 
+#' For exporting.
+#' 
+#' @param object the data frame
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include dispersion.R
+#' @name mail-data.frame-method
+#' @rdname mail-data.frame-method
+#' @aliases mail,data.frame-method
+#' @docType methods
+setMethod("mail", "data.frame", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering a data frame.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object)
+  msg <- .attachTables(object, nrow, msg, "dataFrame", fileFormat) 
   status <- .mail(msg, to)
   status$msg
 })
