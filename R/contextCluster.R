@@ -31,6 +31,7 @@ setClass("contextCluster",
 )
 
 
+
 setMethod("[[", "contextCluster", function(x,i){
   return(x@contexts[[i]])
 })
@@ -62,42 +63,6 @@ setMethod('show', 'context', function(object) {
 
 
 
-#' Transform a context cluster into a Term Context Matrix
-#' 
-#' Method based on the tm package, adds to as.TermDocumentMatrix
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a contextCluster object (S3 class)
-#' @param col the col of the stat table to take
-#' @param ... to make the check happy
-#' @method as.TermContextMatrix contextCluster
-#' @return a TermContextMatrix
-#' @author Andreas Blaette
-#' @docType method
-#' @importFrom slam simple_triplet_matrix
-#' @exportMethod as.TermContextMatrix
-#' @noRd
-setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
-  encoding <- unique(unlist(lapply(x@contexts, function(c) c@encoding)))
-  corpus <- unique(unlist(lapply(x@contexts, function(c) c@corpus)))
-  pAttribute <- unique(unlist(lapply(x@contexts, function(c) c@pattribute)))
-  pAttr <- paste(corpus, '.', pAttribute, sep='')
-  i <- unlist(lapply(x@contexts, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
-  j <- unlist(lapply(c(1:length(x@contexts)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
-  v <- unlist(lapply(x@contexts, function(c) c@stat[,col]))
-  lexiconSize <- cqi_lexicon_size(pAttr)
-  mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@contexts),
-                               nrow=lexiconSize+1,
-                               dimnames=list(
-                                 Terms=cqi_id2str(pAttr, c(0:lexiconSize)),
-                                 Docs=names(x@contexts))
-  )
-  mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")
-  class(mat) <- c("TermContextMatrix", "TermDocumentMatrix", "simple_triplet_matrix")
-  mat
-})
 
 #' Turn a context cluster into a matrix
 #' 
