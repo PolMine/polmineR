@@ -5,7 +5,7 @@
 #' 'keyness', 'context', 'partition' and 'partitionCluster' objects. See 
 #' the respective documentation:
 #' \describe{
-#'  \item{contex:t}{\code{method?trim("context")}}
+#'  \item{context:}{\code{method?trim("context")}}
 #'  \item{keyness:}{\code{method?trim("keyness")}} 
 #'  \item{partition:}{\code{method?trim("partition")}}
 #'  \item{partitionCluster:}{\code{method?trim("partitionCluster")}} 
@@ -40,15 +40,17 @@ setGeneric("meta", function(object, ...){standardGeneric("meta")})
 
 #' contextual analysis
 #' 
-#' statistical analysis of the context of a token
-#' 
-#' The method can be applied to partition or partitionCluster class objects.
-#' 
-#' @param object a partition or partitionCluster object
+#' Statistical analysis of the context of a token. The method can be applied to partition or partitionCluster class objects.
+#' \describe{
+#'  \item{partition:}{\code{method?context("partition")}}
+#'  \item{partitionCluster:}{\code{method?trim("partitionCluster")}} 
+#' }
+
+#' @param object a partition or a partitionCluster object
 #' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
-#' @rdname context-methods
+#' @noRd
 setGeneric("context", function(object, ...){standardGeneric("context")})
 
 
@@ -124,8 +126,10 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' @param minSignificance minimum log-likelihood value
 #' @param posFilter character vector with the POS tags to be included - may not be empty!!
 #' @param filterType either "include" or "exclude"
-#' @param stopwords exclude a query hit from analysis if stopword(s) is/are in context
-#' @param statisticalTest either "LL" (default) or "pmi"
+#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in context
+#' @param positivelist include a query hit only if token in positivelist is present
+#' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped
+#' @param mc whether to use multicore; if NULL (default), the function will get the setting from the drillingControls
 #' @param verbose report progress, defaults to TRUE
 #' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
 #' @author Andreas Blaette
@@ -136,7 +140,7 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' a <- context('"Integration"', p)
 #' }
 #' @importFrom parallel mclapply
-#' @exportMethod
+#' @exportMethod context
 #' @rdname context-methods
 #' @docType methods
 #' @aliases context,partition-method
@@ -147,18 +151,19 @@ setMethod(
   (
     object,
     query,
-    pAttribute="useControls",
+    pAttribute=NULL,
     leftContext=0,
     rightContext=0,
     minSignificance=0,
-    posFilter=c(),
+    posFilter=NULL,
     filterType="exclude",
-    stopwords=c(),
+    stoplist=NULL,
+    positivelist=NULL,
     statisticalTest="LL",
-    verbose=TRUE,
-    ...
+    mc=NULL,
+    verbose=TRUE
   ) {
-    if (pAttribute == "useControls") pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
+    if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
     if (!pAttribute %in% names(object@tf)) {
       if (verbose==TRUE) message("... required tf list in partition not yet available, needs to be done first")
       object <- enrich(object, tf=pAttribute)
@@ -166,17 +171,19 @@ setMethod(
     if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
     if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
     if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-    multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
-    ctxt <- new("context")
-    ctxt@query <- query
-    ctxt@pattribute <- pAttribute
-    ctxt@corpus <- object@corpus
-    ctxt@left.context <- leftContext
-    ctxt@right.context <- rightContext
-    ctxt@encoding <- object@encoding
-    ctxt@posFilter <- as.character(posFilter)
-    ctxt@partition <- object@label
-    ctxt@partitionSize <- object@size
+    if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
+    ctxt <- new(
+      "context",
+      query=query,
+      pattribute=pAttribute,
+      corpus=object@corpus,
+      left.context=leftContext,
+      right.context=rightContext,
+      encoding=object@encoding,
+      posFilter=as.character(posFilter),
+      partition=object@label,
+      partitionSize=object@size
+      )
     corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
     corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
@@ -185,16 +192,18 @@ setMethod(
     hits <- .queryCpos(ctxt@query, object, pAttribute)
     hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
     hits <- apply(hits, 1, function(x) as.list(unname(x)))
+    
     message(' (', length(hits), " occurrences)")
-    stopwordId <- unlist(lapply(stopwords, function(x) cqi_regex2id(corpus.pattr, x)))
+    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pattr, x)))
+    positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pattr, x)))
     if (verbose==TRUE) message("... counting tokens in context ")  
-    if (multicore==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
+    if (mc==TRUE) {
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stopwordId))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)]
-    if (!is.null(stopwordId)){
+    if (!is.null(stoplistIds) || !is.null(positivelistIds)){
       message("... hits filtered because stopword(s) occur in context: ", (length(hits)-length(bigBag)))
     }
     ctxt@cpos <- lapply(bigBag, function(x) x$cpos)

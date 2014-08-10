@@ -1,6 +1,18 @@
 planned changes:
- * score method [drafting has begun]
- * kwich method not available in global namespace, bit faulty
+----------------
+ * proper documentation for kwic
+ * proper documentation for trim/enrich method for keyness
+ * to be fixed: dispersion (2dim) requires meta to be set up - breaks if not
+ * empty partition generates error - more verbose output desired
+ * allow for multicore in partitionCluster explicitly
+
+v0.4.31
+ * some changes to context method:
+    - whether to use multicore can be stated explicitly
+    - stopwords renamed to stoplist, and a positivelist is introduced
+
+v0.4.30
+ * minor bug fixes
 
 v0.4.29
  * controls() function for setting drillingControls

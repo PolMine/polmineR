@@ -10,6 +10,7 @@
 #' @aliases terms,partition-method
 #' @docType methods
 setMethod("terms", "partition", function(x, pAttribute, regex=NULL){
+  if (!pAttribute %in% names(x@tf)) x <- enrich(x, tf=pAttribute) 
   terms <- rownames(x@tf[[pAttribute]])
   terms <- enc2utf8(terms)
   if (!is.null(regex)) {

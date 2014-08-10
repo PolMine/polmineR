@@ -63,7 +63,7 @@ setClass("context",
 
 
 
-.surrounding <- function (set, ctxt, corpus.sattr, filterType, stopwordId) {
+.surrounding <- function (set, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds) {
   bag <- list()
   set <- as.numeric(set)
   cpos.left <- c((set[1]-ctxt@left.context):(set[1]-1))
@@ -72,10 +72,13 @@ setClass("context",
   cpos.right <- cpos.right[which(cqi_cpos2struc(corpus.sattr, cpos.right)==set[3])]
   bag$cpos <- list(left=cpos.left, node=c(set[1]:set[2]), right=cpos.right)
   cpos <- c(cpos.left, cpos.right)
-  if (!is.null(stopwordId)) ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), cpos)
   posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
   bag$id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), posChecked)
-  if (!is.null(stopwordId)) if (any(stopwordId %in% ids)) {bag <- NULL}
+  if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
+    ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), cpos)
+    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids)) {bag <- NULL}
+    if (!is.null(positivelistIds)) if (any(positivelistIds %in% ids) == FALSE) {bag <- NULL}
+  }
   bag
 }
 
@@ -197,7 +200,7 @@ setMethod("context", "partitionCluster", function(
   object, query, pAttribute="useControls",
   leftContext=0, rightContext=0,
   minSignificance=-1, posFilter="useControls", filterType="useControls",
-  stopwords=c(), statisticalTest="LL",
+  stoplist=c(), statisticalTest="LL",
   verbose=TRUE  
 ) {
   contextCluster <- new("contextCluster")
@@ -210,7 +213,7 @@ setMethod("context", "partitionCluster", function(
       pAttribute=pAttribute,
       leftContext=leftContext, rightContext=rightContext,
       minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-      stopwords=stopwords, statisticalTest=statisticalTest,
+      stoplist=stoplist, statisticalTest=statisticalTest,
       verbose=verbose
     ),
     simplify = TRUE,

@@ -92,9 +92,9 @@ setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
 #' @param collocate only show kwic if a certain word is present
 #' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
 #' @examples
-#' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep)
-#' kwic(bt, "Integration") kwic(bt, "Integration", leftContext=20,
-#'  rightContext=20, meta=c("text_date", "text_name", "text_party)) 
+#' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep")
+#' kwic(bt, "Integration")
+#' kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
 #' @exportMethod kwic
 setMethod("kwic", "partition", function(
   object, query,

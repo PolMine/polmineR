@@ -490,7 +490,7 @@ setMethod('[', 'partition', function(x,i){
 #' @rdname split-partition-method 
 #' @exportMethod split
 setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
-  if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
+  # if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
   cpos <- x@cpos
   if (nrow(cpos) > 1){
     distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
