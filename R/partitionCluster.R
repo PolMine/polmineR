@@ -70,12 +70,14 @@ setClass("partitionCluster",
 #' @param corpus the CWB corpus to be used
 #' @param def a list with the definition of a partition that shall be prepared
 #' @param var list indicating the s-attribute to be variabel
+#' @param prefix a character vector that will serve as a prefix for partition labels
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
 #' @param method either 'grep' or 'in'
 #' @param xml either 'flat' (default) or 'nested'
-#' @param prefix a character vector that will serve as a prefix for partition labels
+#' @param mc logical, whether to use multicore parallelization
+#' @param verbose logical, whether to provide progress information
 #' @return a S3 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
@@ -83,7 +85,7 @@ setClass("partitionCluster",
 #' @author Andreas Blaette
 partitionCluster <- function(
   corpus, def, var, prefix=c(""),
-  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat"
+  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -91,9 +93,9 @@ partitionCluster <- function(
   } else {
     warning("only one variable s-attribute may be provided")
   }
-  multicore <- get("drillingControls", '.GlobalEnv')[['multicore']]
+  if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
   multicoreMessage <- ifelse(
-    multicore==TRUE,
+    mc==TRUE,
     ' (use multicore: TRUE)',
     ' (use multicore: FALSE)'
   )
@@ -101,23 +103,23 @@ partitionCluster <- function(
   cluster <- new("partitionCluster")
   cluster@corpus <- corpus
   cluster@sAttributesFixed <- def
-  message('... setting up base partition')
+  if (verbose==TRUE) message('... setting up base partition')
   partitionBase <- partition(corpus, def, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
-    message('... getting values of fixed s-attributes')
+    if (verbose==TRUE) message('... getting values of fixed s-attributes')
     sAttributeVarValues <- unique(cqi_struc2str(paste(corpus, '.', sAttributeVar, sep=''), partitionBase@strucs))
     Encoding(sAttributeVarValues) <- cluster@encoding
-    message('... number of partitions to be initialized: ', length(sAttributeVarValues))
+    if (verbose==TRUE) message('... number of partitions to be initialized: ', length(sAttributeVarValues))
   }
-  if (multicore==FALSE) {
+  if (mc==FALSE) {
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
       cluster@partitions[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf)
     }
-  } else if (multicore==TRUE) {
-    message('... setting up the partitions')
+  } else if (mc==TRUE) {
+    if (verbose==TRUE) message('... setting up the partitions')
     cluster@partitions <- mclapply(
       sAttributeVarValues,
       function(x) zoom(

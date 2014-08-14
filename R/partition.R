@@ -391,12 +391,18 @@ function(object){
         meta <- meta[grep(part@sAttributes[[s]], meta[,2]),]
       }
     }
+    if (nrow(meta) == 0) warning(paste("no strucs found for the values provided for s-attribute", s))
   }
-  part@cpos <- matrix(data=unlist(lapply(meta[,1], function(x)cqi_struc2cpos(root, x))),
-         ncol=2,
-         byrow=TRUE
-         )
-  part@strucs <- as.numeric(meta[,1])
+  if (nrow(meta) != 0){
+    part@cpos <- matrix(
+      data=unlist(lapply(meta[,1], function(x)cqi_struc2cpos(root, x))),
+      ncol=2, byrow=TRUE
+    )
+    part@strucs <- as.numeric(meta[,1])
+  } else {
+    warning("returning a NULL object")
+    part <- NULL    
+  }
   part
 }
 

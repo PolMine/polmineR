@@ -88,7 +88,8 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #' Method to fill slots of a partition, partitionCluster or keyness object that 
 #' have not been set up previously. See the respective documentation:
 #' \describe{
-#'  \item{partition and partitionCluster:}{\code{method?enrich("partition")}}
+#'  \item{partition:}{\code{method?enrich("partition")}}
+#'  \item{partitionCluster:}{\code{method?enrich("partitionCluster)}}
 #'  \item{keyness}{\code{method?enrich("keyness")}}
 #' }
 #' 
@@ -127,7 +128,7 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' @param posFilter character vector with the POS tags to be included - may not be empty!!
 #' @param filterType either "include" or "exclude"
 #' @param stoplist exclude a query hit from analysis if stopword(s) is/are in context
-#' @param positivelist include a query hit only if token in positivelist is present
+#' @param positivelist character vector or numeric vector: include a query hit only if token in positivelist is present. If positivelist is a character vector, it is assumed to provide regex expressions (incredibly long if the list is long)
 #' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get the setting from the drillingControls
 #' @param verbose report progress, defaults to TRUE
@@ -163,11 +164,11 @@ setMethod(
     mc=NULL,
     verbose=TRUE
   ) {
-    if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
-    if (!pAttribute %in% names(object@tf)) {
-      if (verbose==TRUE) message("... required tf list in partition not yet available, needs to be done first")
+    if (!pAttribute %in% names(object@tf) && !is.null(statisticalTest)) {
+      if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
       object <- enrich(object, tf=pAttribute)
     }
+    if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
     if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
     if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
     if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
@@ -193,9 +194,13 @@ setMethod(
     hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
     hits <- apply(hits, 1, function(x) as.list(unname(x)))
     
-    message(' (', length(hits), " occurrences)")
+    if (verbose==TRUE) message(' (', length(hits), " occurrences)")
     stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pattr, x)))
-    positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pattr, x)))
+    if (is.numeric(positivelist)){
+      positivelistIds <- positivelist
+    } else {
+      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pattr, x)))
+    }
     if (verbose==TRUE) message("... counting tokens in context ")  
     if (mc==TRUE) {
       bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
@@ -204,7 +209,7 @@ setMethod(
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)]
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
-      message("... hits filtered because stopword(s) occur in context: ", (length(hits)-length(bigBag)))
+      if (verbose==TRUE) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
     }
     ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
@@ -369,7 +374,7 @@ setMethod("addPos", "keyness",
 #' @param addPos character vector providing p-attributes 
 #' @param verbose logical, defaults to TRUE   
 #' @exportMethod enrich
-#' @aliases enrich,partition-method enrich,partitionCluster-method
+#' @aliases enrich,partition-method
 #' @docType methods
 #' @rdname enrich-partition-method
 setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, meta=NULL, addPos=NULL, verbose=TRUE){
@@ -390,7 +395,22 @@ setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, meta=NULL
   object
 })
 
-# documented with enrich,partition-method
+#' enrich partition object (S4 method)
+#' 
+#' Fill slots of a partition object: Add object size, metainformation, pos.
+#' 
+#' @param object a partition object
+#' @param size logical, defaults to FALSE
+#' @param tf character vector providing the p-attributes for which frequency
+#'   tables shall be generated
+#' @param meta character vector providing s-attributes for which metainformation shall be supplied
+#' @param addPos character vector providing p-attributes
+#' @param mc logical whether to use multicore parallelization
+#' @param verbose logical, defaults to TRUE   
+#' @exportMethod enrich
+#' @aliases enrich,partitionCluster-method
+#' @docType methods
+#' @rdname enrich-partitionCluster-method
 setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
   if (mc == FALSE) {
     object@partitions <- lapply(
@@ -412,14 +432,14 @@ setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta
 #' Wrapper for adding a statistic on pos attributes to keyness object
 #' 
 #' @param object a keyness object
-#' @param addPos no idea ....
+#' @param addPos logical, whether to add POS information to keyness object
 #' @param verbose whether R should be talkative
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname enrich-keyness-method
 #' @aliases enrich,keyness-method
 setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
-  object <- addPos(object, Partition=addPos)
+  if (addPos==TRUE) object <- addPos(object, Partition=addPos)
   object
 })
 

@@ -50,11 +50,13 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @param minFrequency the minimum frequency
 #' @param maxRank maximum rank
 #' @param tokenFilter tokens to exclude from table
+#' @param posFilter pos to keep
+#' @param filterType either "include" or "exclude"
 #' @return a keyness object
 #' @author Andreas Blaette
 #' @aliases trim,keyness-method
 #' @exportMethod trim
-setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL){
+setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType=include){
   test <- object@statisticalTest
   if (maxRank==0) maxRank <- nrow(object@stat)
   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
@@ -62,7 +64,10 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
   object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
   object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
   if (!is.null(tokenFilter)){
-    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
+    object@stat <- object@stat[.filter[[filterType]](rownames(object@stat), tokenFilter),]
+  }
+  if (!is.null(posFilter)){
+    object@stat <- object@stat[.filter[[filterType]](object@stat[, "pos"], posFilter),]
   }
   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
   object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]

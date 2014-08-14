@@ -103,6 +103,11 @@ setMethod("t", "crosstab", function(x){
 #' @noRd
 .crosstab <- function (Partition, rows, cols, pAttribute, query, verbose=TRUE) {
   crosstab <- new("crosstab")
+  if (length(Partition@metadata) == 0){
+    Partition <- enrich(Partition, meta=c(rows, cols))
+  } else if (length(Partition@metadata) > 0 && any(!(c(rows, cols) %in% colnames(Partition@metadata$table)))) {
+    Partition <- enrich(Partition, meta=c(rows, cols))
+  }
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
   crosstab@partitions <- .crosstabulationSizes(Partition, rows, cols)
   if (verbose==TRUE) message ('... getting frequencies')
