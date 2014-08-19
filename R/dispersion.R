@@ -1,4 +1,4 @@
-#' @include generics.R
+#' @include methods.R
 NULL
 
 #' crosstab S4 class

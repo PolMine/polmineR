@@ -1,4 +1,4 @@
-#' @include generics.R context.R
+#' @include methods.R context.R
 NULL
 
 
@@ -74,6 +74,24 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
   object
 })
 
+setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include"){
+  rework <- new("keynessCluster")
+  rework@objects <- lapply(
+    setNames(object@objects, names(object@objects)),
+    function(x) {
+      trim(
+        x,
+        minSignificance=minSignificance,
+        minFrequency=minFrequency,
+        maxRank=maxRank,
+        tokenFilter=tokenFilter,
+        posFilter=posFilter,
+        filterType=filterType
+        )
+  })
+  rework
+})
+
 #' trim partition object
 #' 
 #' Trim, filter and adjust the tf slot of a partition object for the p-attribute specified.
@@ -84,6 +102,7 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
 #' @param pAttribute character vector, either lemma or word
 #' @param minFrequency an integer
 #' @param posFilter a character vector
+#' @param tokenFilter a character vector with tokens to keep in the tf list specified by pAttribute
 #' @param ... further arguments
 #' @return a trimmed partition object
 #' @author Andreas Blaette
@@ -91,23 +110,27 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
 #' @docType methods
 #' @exportMethod trim
 #' @rdname trim-partition-method
-setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=c(),  ...){
-  new <- object
+setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, ...){
+  rework <- object
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Trimming partition ", new@label)
+  message("Trimming partition ", rework@label)
   if (!is.null(posFilter)) {
     if (! pAttribute %in% names(object@pos) ){
       message("... pos need to be added first")
-      new <- addPos(new, pAttribute)
+      rework <- addPos(rework, pAttribute)
     }
-    new@pos[[pAttribute]] <- new@pos[[pAttribute]][new@pos[[pAttribute]] %in% posFilter]
-    new@tf[[pAttribute]] <- new@tf[[pAttribute]][rownames(new@tf[[pAttribute]]) %in% names(new@pos[[pAttribute]]),]
+    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][rework@pos[[pAttribute]] %in% posFilter]
+    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][rownames(rework@tf[[pAttribute]]) %in% names(rework@pos[[pAttribute]]),]
   }
   if (minFrequency > 0){
-    new@tf[[pAttribute]] <- subset(new@tf[[pAttribute]], tf >= minFrequency)
-    new@pos[[pAttribute]] <- new@pos[[pAttribute]][names(new@pos[[pAttribute]]) %in% rownames(new@tf[[pAttribute]])]
+    rework@tf[[pAttribute]] <- subset(rework@tf[[pAttribute]], tf >= minFrequency)
+    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf[[pAttribute]])]
   }
-  new 
+  if(!is.null(tokenFilter)) {
+    tokenFilter <- .adjustEncoding(tokenFilter, rework@encoding)
+    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][which(rownames(rework@tf[[pAttribute]]) %in% tokenFilter),]
+  }
+  rework 
 })
 
 
@@ -120,24 +143,27 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 #' @param pAttribute character vector: "word", "lemma", or both
 #' @param minFrequency minimum frequency of tokens
 #' @param posFilter pos to keep
+#' @param tokenFilter a character vector with tokens to keep in the tf list specified by pAttribute
 #' @param drop partitionObjects you want to drop, specified either by number or by label
 #' @param minSize a minimum size for the partitions to be kept
 #' @param keep specify labels of partitions to keep, everything else is dropped
+#' @param mc if not NULL logical - whether to use multicore parallelization
 #' @param ... further arguments (unused)
 #' @return partitionCluster
 #' @aliases trim,partitionCluster-method
 #' @exportMethod trim
 #' @rdname trim-partitionCluster-method
-setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=c(),  drop=NULL, minSize=0, keep=NULL, ...){
+setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
+  if (is.null(mc)) mc <- get('drillingControls', '.GlobalEnv')[['multicore']]
   pimpedCluster <- object
-  if (minFrequency !=0 || !is.null(posFilter)){
-    if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
-      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))
+  if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
+    if (mc == TRUE) {
+      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
     } else {
-      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute, minFrequency, posFilter))    
+      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
     }
   }
-  if (minSize > 0){
+  if (minSize >= 0){
     toKill <- subset(
       data.frame(
         name=names(pimpedCluster),

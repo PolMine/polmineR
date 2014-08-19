@@ -122,3 +122,39 @@
   return(retval)
 }
 
+#' flatten a nested list
+#' 
+#' If you have a list of partitionClusters, this function will flatten the data
+#' structure and return a partition Cluster object.
+#' 
+#' @param object a list (with partitionCluster objects)
+#' @return a partitionCluster object
+#' @export flatten
+#' @rdname flatten
+#' @name flatten
+flatten <- function(object){
+  newCluster <- new("partitionCluster")
+  for (i in 1:length(object)){
+    if(!is.null(object[[i]])){
+      if (length(object[[i]]@partitions) > 0){
+        newCluster <- newCluster + object[[i]]
+      }
+    }
+  } 
+  newCluster
+}
+
+.statisticalSummary <- function(object) {
+  if (object@statisticalTest %in% c("LL", "chiSquare")){
+    criticalValue <- c(3.84, 6.63, 7.88, 10.83)
+    propability <- c(0.05, 0.01, 0.005, 0.001)
+    no <- vapply(
+      criticalValue,
+      function(x) length(which(object@stat[[object@statisticalTest]]>x)),
+      FUN.VALUE=1
+    )
+    result <- data.frame(propability, criticalValue, no)
+    result <- result[order(result$propability, decreasing=FALSE),]
+  }
+  return(result)
+}

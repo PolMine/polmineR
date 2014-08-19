@@ -16,8 +16,9 @@ enrich(object, ...)
 Method to fill slots of a partition, partitionCluster or keyness object that
 have not been set up previously. See the respective documentation:
 \describe{
- \item{partition and partitionCluster:}{\code{method?enrich("partition")}}
- \item{keyness}{\code{method?enrich("keyness")}}
+ \item{partition:}{\code{method?enrich("partition")}}
+ \item{partitionCluster:}{\code{method?enrich("partitionCluster")}}
+ \item{keyness:}{\code{method?enrich("keyness")}}
 }
 }
 

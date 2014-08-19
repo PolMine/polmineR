@@ -5,7 +5,7 @@
 \title{trim partition object}
 \usage{
 \S4method{trim}{partition}(object, pAttribute, minFrequency = 0,
-  posFilter = c(), ...)
+  posFilter = NULL, tokenFilter = NULL, ...)
 }
 \arguments{
 \item{object}{a partition class object}
@@ -15,6 +15,8 @@
 \item{minFrequency}{an integer}
 
 \item{posFilter}{a character vector}
+
+\item{tokenFilter}{a character vector with tokens to keep in the tf list specified by pAttribute}
 
 \item{...}{further arguments}
 }

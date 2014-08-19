@@ -1,4 +1,4 @@
-#' @include generics.R
+#' @include methods.R
 NULL
 
 #' Add POS tags
@@ -46,10 +46,14 @@ NULL
 #'   \describe{
 #'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
 #'    \item{addPos}{\code{signature(object = "keyness")}: add POS attribute to statistics table }
+#'    \item{as.data.frame}{\code{signature(object = "keyness")}: get the statistics table}
 #'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness keyness-class summary,keyness-method show,keyness-method addPos,keyness-method as.matrix,keynessCluster-method keyness,partitionCluster-method
+#' @aliases keyness keyness-class keynessCluster-class summary,keyness-method
+#'   show,keyness-method addPos,keyness-method as.matrix,keynessCluster-method
+#'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
+#'   trim,keynessCluster-method summary,keynessCluster-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette
@@ -63,37 +67,20 @@ setClass("keyness",
          )
 )
 
-setClass("keynessCluster", representation(objects="list"))
-
-
-
-
+setClass("keynessCluster",
+         representation(objects="list")
+         )
 
 
 
 #' Summary of a keyness object
+#' 
 #' @exportMethod summary
 #' @noRd
-setMethod(
-  "summary", "keyness",
-  function(object){
-    cat("the statistics table has", nrow(object@stat), "rows\n")
-    cat("pos attributest have been added: ")
-    if ("pos" %in% colnames(object@stat)){
-      cat("YES\n")
-    } else {
-      cat("NO\n")
-    }
-    cat("\n** Statistical summary: **\n")
-    print(.statisticalSummary(object)) 
-    cat("\n** Top ten: **\n")
-    print(object@stat[1:10,])
-  }
-)
+setMethod("summary", "keyness", function(object){.statisticalSummary(object)})
 
-setMethod("show", "keyness", function(object){
-  summary(object)
-})
+
+setMethod("show", "keyness", function(object){summary(object)})
 
 
 #' compute chi-square values for tokens in a corpus using a reference corpus
@@ -201,4 +188,14 @@ setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chi"){
   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   mat <- as.matrix(mat)
   mat
+})
+
+setMethod("[[", "keynessCluster", function(x, i){
+  return(x@objects[[i]])
+})
+
+setMethod("summary", "keynessCluster", function(object){
+  tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
+  colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
+  tab
 })

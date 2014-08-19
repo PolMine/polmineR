@@ -99,7 +99,7 @@ partitionCluster <- function(
     ' (use multicore: TRUE)',
     ' (use multicore: FALSE)'
   )
-  message('\nPreparing cluster of partitions', multicoreMessage)
+  if (verbose==TRUE) message('\nPreparing cluster of partitions', multicoreMessage)
   cluster <- new("partitionCluster")
   cluster@corpus <- corpus
   cluster@sAttributesFixed <- def
@@ -326,7 +326,7 @@ setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, .
 
 
 #' @import Matrix
-#' @include generics.R
+#' @include methods.R
 setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
   message("... converting partitionCluster to TermDocumentMatrix")
   tdm_stm <- as.TermDocumentMatrix(x, "word")

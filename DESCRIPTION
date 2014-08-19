@@ -33,7 +33,7 @@ License: CC BY-NC-SA 3.0 | file LICENSE
 Collate:
     'RcppExports.R'
     'partition.R'
-    'generics.R'
+    'methods.R'
     'context.R'
     'contextCluster.R'
     'controls.R'

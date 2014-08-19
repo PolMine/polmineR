@@ -34,9 +34,9 @@
 
 \item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in context}
 
-\item{positivelist}{include a query hit only if token in positivelist is present}
+\item{positivelist}{character vector or numeric vector: include a query hit only if token in positivelist is present. If positivelist is a character vector, it is assumed to provide regex expressions (incredibly long if the list is long)}
 
-\item{statisticalTest}{either "LL" (default) or "pmi"}
+\item{statisticalTest}{either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped}
 
 \item{mc}{whether to use multicore; if NULL (default), the function will get the setting from the drillingControls}
 

@@ -1,4 +1,4 @@
-#' @include generics.R partition.R 
+#' @include methods.R partition.R 
 NULL
 
 setMethod("sAttributes", "character", function(object){

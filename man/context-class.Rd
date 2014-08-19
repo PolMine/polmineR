@@ -40,6 +40,7 @@ class to organize information of context analysis
     \item{[}{index the object}
     \item{[[}{specific collocates}
     \item{trim}{trim the object}
+    \item{as.data.frame}{get the statistics table}
    }
 }
 

@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{a keyness object}
 
-\item{addPos}{no idea ....}
+\item{addPos}{logical, whether to add POS information to keyness object}
 
 \item{verbose}{whether R should be talkative}
 }

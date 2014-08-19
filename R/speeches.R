@@ -11,7 +11,7 @@
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @return a partitionCluster object
-#' @include generics.R partition.R
+#' @include methods.R partition.R
 #' @importFrom plyr llply
 #' @name speeches
 #' @aliases speeches speeches-method speeches,partition-method

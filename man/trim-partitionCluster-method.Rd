@@ -5,8 +5,8 @@
 \title{trim partitionCluster Object}
 \usage{
 \S4method{trim}{partitionCluster}(object, pAttribute = NULL,
-  minFrequency = 0, posFilter = c(), drop = NULL, minSize = 0,
-  keep = NULL, ...)
+  minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
+  minSize = 0, keep = NULL, mc = NULL, ...)
 }
 \arguments{
 \item{object}{a partitionCluster object}
@@ -17,11 +17,15 @@
 
 \item{posFilter}{pos to keep}
 
+\item{tokenFilter}{a character vector with tokens to keep in the tf list specified by pAttribute}
+
 \item{drop}{partitionObjects you want to drop, specified either by number or by label}
 
 \item{minSize}{a minimum size for the partitions to be kept}
 
 \item{keep}{specify labels of partitions to keep, everything else is dropped}
+
+\item{mc}{if not NULL logical - whether to use multicore parallelization}
 
 \item{...}{further arguments (unused)}
 }

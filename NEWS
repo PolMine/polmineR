@@ -1,8 +1,18 @@
 planned changes:
 ----------------
- * proper documentation for kwic
- * proper documentation for trim/enrich method for keyness
-
+ * documentation to be improved:
+     - kwic
+     - keyness (trim and enrich methods)
+     - ?keyness guides you to keyness-class, it should be keyness-method
+ * minus values for statistical tests if O < E in keyness and context method
+ * log likelihood test for keyness method
+ * check: rename keyness to tex
+ * no documentation for keynessCluster-class (e.g. if I want to know the slots)
+    - summary-method for keynessCluster-class
+    - [[- method for keynessCluster-class
+ * turn .statisticalSummary into an exported object?!
+ * meta as character-method to get Auspraegungen most quickly
+ 
 v0.4.31
  * some changes to context method:
     - whether to use multicore can be stated explicitly
@@ -10,6 +20,7 @@ v0.4.31
  * individual documentation for partitionCluster enrich-method
  * NULL object returned for partition call if s-attribute/value-combination not available
  * call to dispersion (2dim): metadata are set up if not available
+ * as.data.frame-method for context and keyness class to access statistics table more easily
 
 v0.4.30
  * minor bug fixes

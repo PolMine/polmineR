@@ -1,4 +1,4 @@
-#' @include generics.R context.R
+#' @include methods.R context.R
 NULL
 
 #' S4 contextCluster class

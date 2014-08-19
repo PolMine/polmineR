@@ -4,7 +4,8 @@
 \title{Generate a list of partitions}
 \usage{
 partitionCluster(corpus, def, var, prefix = c(""), encoding = NULL,
-  tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat")
+  tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
+  mc = NULL, verbose = TRUE)
 }
 \arguments{
 \item{corpus}{the CWB corpus to be used}
@@ -12,6 +13,8 @@ partitionCluster(corpus, def, var, prefix = c(""), encoding = NULL,
 \item{def}{a list with the definition of a partition that shall be prepared}
 
 \item{var}{list indicating the s-attribute to be variabel}
+
+\item{prefix}{a character vector that will serve as a prefix for partition labels}
 
 \item{encoding}{encoding of the corpus, if not provided, encoding provided in the registry file will be used}
 
@@ -23,7 +26,9 @@ partitionCluster(corpus, def, var, prefix = c(""), encoding = NULL,
 
 \item{xml}{either 'flat' (default) or 'nested'}
 
-\item{prefix}{a character vector that will serve as a prefix for partition labels}
+\item{mc}{logical, whether to use multicore parallelization}
+
+\item{verbose}{logical, whether to provide progress information}
 }
 \value{
 a S3 class 'partitionCluster', which is a list with partition objects

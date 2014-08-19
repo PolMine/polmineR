@@ -89,8 +89,8 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #' have not been set up previously. See the respective documentation:
 #' \describe{
 #'  \item{partition:}{\code{method?enrich("partition")}}
-#'  \item{partitionCluster:}{\code{method?enrich("partitionCluster)}}
-#'  \item{keyness}{\code{method?enrich("keyness")}}
+#'  \item{partitionCluster:}{\code{method?enrich("partitionCluster")}}
+#'  \item{keyness:}{\code{method?enrich("keyness")}}
 #' }
 #' 
 #' @param object a partition, partitionCluster or keyness object
@@ -439,7 +439,61 @@ setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta
 #' @rdname enrich-keyness-method
 #' @aliases enrich,keyness-method
 setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
-  if (addPos==TRUE) object <- addPos(object, Partition=addPos)
+  if (addPos==TRUE) object <- addPos(object, Partition=NULL)
   object
 })
+
+setMethod("enrich", "keynessCluster", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
+  if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
+  rework <- new("keynessCluster")
+  if (mc==FALSE){
+  rework@objects <- lapply(
+    setNames(object@objects, names(object@objects)),
+    function(x) enrich(x, addPos=addPos, verbose=TRUE)
+    )
+  } else if (mc==TRUE){
+    rework@objects <- mclapply(
+      setNames(object@objects, names(object@objects)),
+      function(x) enrich(x, addPos=addPos, verbose=TRUE)
+    )    
+  }
+  rework
+})
+
+
+#' Get statistics table from an object
+#' 
+#' @param x object with a statistics table
+#' @param ... any further arguments
+#' @rdname asDataFrame-method
+#' @name as.data.frame
+#' @aliases as.data.frame,keyness-method as.data.frame,context-method
+#' @exportMethod as.data.frame
+setMethod("as.data.frame", "keyness", function(x, ...) x@stat )
+setMethod("as.data.frame", "context", function(x, ...) x@stat )
+
+#' Basic information on an object
+#' 
+#' @param x the object to learn about
+#' @exportMethod info
+#' @docType methods
+#' @rdname info-method
+#' @aliases info info,keyness-method
+setGeneric("info", function(x){standardGeneric("info")})
+
+#' Information on a keyness object
+#' 
+#' @exportMethod info
+#' @noRd
+setMethod(
+  "info", "keyness",
+  function(x){
+    cat("the statistics table has", nrow(x@stat), "rows\n")
+    cat("pos attributest have been added: ")
+    if ("pos" %in% colnames(x@stat)){
+      cat("YES\n")
+    } else {
+      cat("NO\n")
+    }
+  })
 

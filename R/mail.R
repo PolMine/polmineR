@@ -1,4 +1,4 @@
-#' @include generics.R keyness.R
+#' @include methods.R keyness.R
 NULL
 
 #' @importFrom sendmailR sendmail sendmail_options mime_part

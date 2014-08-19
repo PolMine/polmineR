@@ -1,4 +1,4 @@
-#' @include partition.R generics.R
+#' @include partition.R methods.R
 NULL
 
 .filter <- list(
@@ -35,6 +35,7 @@ NULL
 #'     \item{[}{index the object}
 #'     \item{[[}{specific collocates}
 #'     \item{trim}{trim the object}
+#'     \item{as.data.frame}{get the statistics table}
 #'    }
 #'     
 #' @name context-class
@@ -109,20 +110,6 @@ function(object) {
 }
 )
 
-.statisticalSummary <- function(object) {
-  if (object@statisticalTest %in% c("LL", "chiSquare")){
-    criticalValue <- c(3.84, 6.63, 7.88, 10.83)
-    propability <- c(0.05, 0.01, 0.005, 0.001)
-     no <- vapply(
-       criticalValue,
-       function(x) length(which(object@stat[[object@statisticalTest]]>x)),
-       FUN.VALUE=1
-     )
-    result <- data.frame(propability, criticalValue, no)
-    result <- result[order(result$propability, decreasing=FALSE),]
-  }
-  return(result)
-}
 
   
 

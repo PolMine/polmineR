@@ -18,7 +18,7 @@ applying thresholds, minimum frequencies etc. It can be applied to 'context',
 'keyness', 'context', 'partition' and 'partitionCluster' objects. See
 the respective documentation:
 \describe{
- \item{contex:t}{\code{method?trim("context")}}
+ \item{context:}{\code{method?trim("context")}}
  \item{keyness:}{\code{method?trim("keyness")}}
  \item{partition:}{\code{method?trim("partition")}}
  \item{partitionCluster:}{\code{method?trim("partitionCluster")}}

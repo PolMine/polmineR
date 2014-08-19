@@ -5,7 +5,8 @@
 \title{trim keyness object}
 \usage{
 \S4method{trim}{keyness}(object, minSignificance = 0, minFrequency = 0,
-  maxRank = 0, tokenFilter = NULL)
+  maxRank = 0, tokenFilter = NULL, posFilter = NULL,
+  filterType = include)
 }
 \arguments{
 \item{object}{a keyness object}
@@ -17,6 +18,10 @@
 \item{maxRank}{maximum rank}
 
 \item{tokenFilter}{tokens to exclude from table}
+
+\item{posFilter}{pos to keep}
+
+\item{filterType}{either "include" or "exclude"}
 }
 \value{
 a keyness object
