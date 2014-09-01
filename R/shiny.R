@@ -14,7 +14,7 @@ shinyReferencePartition <- "UNSET"
 #' @export shinyContext
 #' @author Andreas Blaette
 shinyContext <- function() {
-  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
+  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'polmineR')
 #  shiny::runApp(system.file("shinyAppContext", package="driller"))
   shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppContext')
 }
@@ -32,7 +32,7 @@ shinyContext <- function() {
 #' @export shinyKeyness
 #' @author Andreas Blaette
 shinyKeyness <- function(partition1, partition2) {
-  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
+  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'polmineR')
   #  shiny::runApp(system.file("shinyAppKeyness", package="driller"))
   shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppKeyness')
 }
@@ -49,7 +49,7 @@ shinyKeyness <- function(partition1, partition2) {
 #' @export shinyDispersion
 #' @author Andreas Blaette
 shinyDispersion <- function(type) {
-  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
+  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'polmineR')
   if (type=="simple") {
     shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppDistribution')
   } else if (type == "crosstab") {
@@ -70,7 +70,7 @@ shinyDispersion <- function(type) {
 #' @author Andreas Blaette
 #' @export shinyContext
 shinyContext <- function() {
-  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
+  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'polmineR')
   #  shiny::runApp(system.file("shinyAppContext", package="driller"))
   shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppContext')
 }
@@ -85,7 +85,7 @@ shinyContext <- function() {
 #' @author Andreas Blaette
 #' @export shinyVolatility
 shinyVolatility <- function() {
-  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'driller')
+  assignInNamespace('drillingControls', get('drillingControls', '.GlobalEnv'), 'polmineR')
   #  shiny::runApp(system.file("shinyAppKeyness", package="driller"))
   shiny::runApp('/media/Daten/lab/repos/driller/inst/shinyAppVolatility')
 }

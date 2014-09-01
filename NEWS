@@ -12,6 +12,7 @@ planned changes:
     - [[- method for keynessCluster-class
  * turn .statisticalSummary into an exported object?!
  * meta as character-method to get Auspraegungen most quickly
+ * plot-method for partitionCluster
  
 v0.4.31
  * some changes to context method:

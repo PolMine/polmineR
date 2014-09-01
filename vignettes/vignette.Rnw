@@ -55,10 +55,10 @@ As mentioned, the rcqp package is the most important dependency of the driller. 
 
 <<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
 registryDir <- system.file(
-  "sampleCorpora", "registry", package="driller"
+  "sampleCorpora", "registry", package="polmineR"
   )
 Sys.setenv(CORPUS_REGISTRY=registryDir)
-library(driller)
+library(polmineR)
 @
 
 \section{Default settings}

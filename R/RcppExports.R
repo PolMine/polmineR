@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cpos2struc <- function(x) {
-    .Call('driller_cpos2struc', PACKAGE = 'driller', x)
+    .Call('driller_cpos2struc', PACKAGE = 'polmineR', x)
 }
 
