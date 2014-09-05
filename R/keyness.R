@@ -1,86 +1,7 @@
 #' @include methods.R
 NULL
 
-#' Add POS tags
-#' 
-#' Add the POS tags to a table with tokens in the rows
-#' 
-#' The POS tags that occur for a given token are counted. The POS tag with the
-#' highest share is added to the table
-#' 
-#' @param object a context object
-#' @return object with pimped stat table
-#' @author Andreas Blaette
-#' @noRd
-.addPos <- function(object) {
-  ids = cqi_str2id(paste(object@corpus, ".", object@pattribute, sep=""), rownames(object@stat))
-  posIds <- unlist(mclapply(ids, function (x){
-    idPos <- cqi_cpos2id(paste(object@corpus, ".pos", sep=""), cqi_id2cpos(paste(object@corpus, ".", object@pattribute, sep=""), x))
-    posIdFrequencies <- tabulate(idPos+1)
-    mostFrequent <- which.max(posIdFrequencies) - 1
-    return(mostFrequent)
-  }))
-  pos <- cqi_id2str(paste(object@corpus, ".pos", sep=""), posIds)
-  object@stat <- cbind(object@stat, pos=pos)
-  object
-}
-
-#' S4 class for comparing corpora
-#' 
-#' to keep results from a keyness analysis
-#' 
-#' @section Objects from the class:
-#' keyness objects are returned by the function call \code{keyness}
-#'   
-#' @section Slots:
-#' \describe{
-#'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
-#'   \item{\code{pattribute}:}{Object of class \code{"character"} ~~ }
-#'   \item{\code{encoding}:}{Object of class \code{"character"} ~~ } 
-#'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ } 
-#'   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ } 
-#'   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
-#'   \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
-#'   }
-#'  @section Methods:
-#'   \describe{
-#'    \item{summary}{\code{signature(object = "keyness")}: Display essential information }
-#'    \item{addPos}{\code{signature(object = "keyness")}: add POS attribute to statistics table }
-#'    \item{as.data.frame}{\code{signature(object = "keyness")}: get the statistics table}
-#'    }
-#' @rdname keyness-class
-#' @name keyness-class
-#' @aliases keyness keyness-class keynessCluster-class summary,keyness-method
-#'   show,keyness-method addPos,keyness-method as.matrix,keynessCluster-method
-#'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
-#'   trim,keynessCluster-method summary,keynessCluster-method
-#' @docType class
-#' @exportClass keyness
-#' @author Andreas Blaette
-setClass("keyness",
-         representation(corpus="character",
-                        pattribute="character",
-                        encoding="character",
-                        stat="data.frame",
-                        statisticalTest="character",
-                        statisticalSummary="data.frame"
-         )
-)
-
-setClass("keynessCluster",
-         representation(objects="list")
-         )
-
-
-
-#' Summary of a keyness object
-#' 
-#' @exportMethod summary
-#' @noRd
-setMethod("summary", "keyness", function(object){.statisticalSummary(object)})
-
-
-setMethod("show", "keyness", function(object){summary(object)})
+setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 
 
 #' compute chi-square values for tokens in a corpus using a reference corpus
@@ -108,6 +29,7 @@ setMethod("show", "keyness", function(object){summary(object)})
 #' @author Andreas Blaette
 #' @docType methods
 #' @references Manning / Schuetze ...
+#' @include partition.R methods.R
 #' @exportMethod keyness
 setMethod("keyness", signature=c(x="partition"), function(
   x,
@@ -144,6 +66,31 @@ setMethod("keyness", signature=c(x="partition"), function(
   keyness
 })
 
+
+
+#' Add POS tags
+#' 
+#' Add the POS tags to a table with tokens in the rows
+#' 
+#' The POS tags that occur for a given token are counted. The POS tag with the
+#' highest share is added to the table
+#' 
+#' @param object a context object
+#' @return object with pimped stat table
+#' @author Andreas Blaette
+#' @noRd
+.addPos <- function(object) {
+  ids = cqi_str2id(paste(object@corpus, ".", object@pattribute, sep=""), rownames(object@stat))
+  posIds <- unlist(mclapply(ids, function (x){
+    idPos <- cqi_cpos2id(paste(object@corpus, ".pos", sep=""), cqi_id2cpos(paste(object@corpus, ".", object@pattribute, sep=""), x))
+    posIdFrequencies <- tabulate(idPos+1)
+    mostFrequent <- which.max(posIdFrequencies) - 1
+    return(mostFrequent)
+  }))
+  pos <- cqi_id2str(paste(object@corpus, ".pos", sep=""), posIds)
+  object@stat <- cbind(object@stat, pos=pos)
+  object
+}
 setMethod("keyness", signature=c(x="partitionCluster"), function(
   x, y, pAttribute=drillingControls$pAttribute,
   minFrequency=0, included=FALSE, verbose=TRUE
@@ -199,3 +146,14 @@ setMethod("summary", "keynessCluster", function(object){
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
   tab
 })
+
+
+#' Summary of a keyness object
+#' 
+#' @exportMethod summary
+#' @noRd
+setMethod("summary", "keyness", function(object){.statisticalSummary(object)})
+
+
+setMethod("show", "keyness", function(object){summary(object)})
+

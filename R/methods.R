@@ -29,14 +29,11 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 #' @param object either a partition, a partitionCluster or a keyness object
 #' @param ... further arguments
 #' @return the original, enhanced object
-#' @noRd
 #' @docType methods
 setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 
-setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 
-# documented with meta,partition-method
-setGeneric("meta", function(object, ...){standardGeneric("meta")})
+
 
 #' contextual analysis
 #' 
@@ -45,13 +42,6 @@ setGeneric("meta", function(object, ...){standardGeneric("meta")})
 #'  \item{partition:}{\code{method?context("partition")}}
 #'  \item{partitionCluster:}{\code{method?trim("partitionCluster")}} 
 #' }
-
-#' @param object a partition or a partitionCluster object
-#' @param ... further arguments
-#' @exportMethod context
-#' @docType methods
-#' @noRd
-setGeneric("context", function(object, ...){standardGeneric("context")})
 
 
 #' get term frequencies
@@ -81,6 +71,89 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 #' @rdname mail
 setGeneric("mail", function(object, ...){standardGeneric("mail")})
 
+#' mail a result
+#' 
+#' still experimental
+#' 
+#' @param object an object with some statistics
+#' @param to the receiver of the mail message
+#' @param filename name of the file to be sent out
+#' @param what what to send (defaults to "html")
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name mail,partition-method
+#' @rdname mail-partition-method
+#' @aliases mail,partition-method
+#' @docType methods
+setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport.html", what="html"){
+  msg <- list('Delivering something to read.\nSincerely yours\nThe driller\n')
+  filename <- html(
+    object, meta=NULL, browser=FALSE,
+    filename=file.path(tempdir(), filename)
+  )
+  msg[[length(msg)+1]] <- mime_part(filename)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+
+
+
+#' mail result of context analysis
+#' 
+#' still experimental
+#' 
+#' @param object a context object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows
+#' @param fileFormat either csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name context-keyness-method
+#' @rdname context-mail-method
+#' @aliases mail,context-method
+#' @docType methods
+setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+  msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+
+#' mail result of keyness analysis
+#' 
+#' still experimental
+#' 
+#' @param object an object with some statistics
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows
+#' @param fileFormat either csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include statistics.R
+#' @name mail-keyness-method
+#' @rdname keyness-mail-method
+#' @aliases mail,keyness-method
+#' @include keyness.R
+#' @docType methods
+setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+  msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+  status <- .mail(msg, to)
+  status$msg
+})
+
+
+
+
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
 #' enrich an object
@@ -102,6 +175,45 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 
 setGeneric("html", function(object, ...){standardGeneric("html")})
 
+#' Convert partition/partition Cluster into html
+#' 
+#' A partition is converted into a html file and displayed in a browser. If a partitionCluster
+#' is provided, the browser will open several windows.
+#'   
+#' @param object a partition object
+#' @param meta metadata for output
+#' @param browser logical (defaults to TRUE), whether to direct output to browser, if FALSE, the generated html will be returned
+#' @param filename filename for the html file, if NULL (default), a temporary file is created
+#' @param type the type of html to be generated
+#' @include partition.R methods.R
+#' @rdname html
+#' @exportMethod html
+#' @aliases html html-method html,partition-method html,partitionCluster-method
+setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filename=NULL, type="debate"){
+  if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
+  object <- enrich(object, meta=meta)
+  markdown <- .partition2markdown(object, type)
+  markdown <- paste(
+    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+    markdown,
+    '\n* * *\n',
+    collapse="\n")
+  if (is.null(filename)) {
+    htmlFile <- .markdown2tmpfile(markdown)
+  } else {
+    cat(markdown, file=filename)
+    htmlFile <- filename
+  }
+  if (browser == TRUE){
+    browseURL(htmlFile)
+    retval <- c("[html output redirected to browser]")
+  } else if (browser == FALSE) {
+    retval <- htmlFile
+  }
+  retval
+})
+
+
 setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
 
 setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
@@ -114,137 +226,6 @@ setGeneric("speeches", function(object, ...){standardGeneric("speeches")})
 
 setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 
-#' Analyze context of a node word
-#' 
-#' Retrieve the concordances of a token and calculate the log-likelihood test for collocates
-#' For formulating the query, CPQ syntax may be used (see examples).
-#' 
-#' @param object a partition or a partitionCluster object
-#' @param query query, which may by a character vector or a cqpQuery object
-#' @param pAttribute p-attribute of the query
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
-#' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not be empty!!
-#' @param filterType either "include" or "exclude"
-#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in context
-#' @param positivelist character vector or numeric vector: include a query hit only if token in positivelist is present. If positivelist is a character vector, it is assumed to provide regex expressions (incredibly long if the list is long)
-#' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped
-#' @param mc whether to use multicore; if NULL (default), the function will get the setting from the drillingControls
-#' @param verbose report progress, defaults to TRUE
-#' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
-#' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method context,partitionCluster-method
-#' @examples
-#' \dontrun{
-#' p <- partition(list(text_type="speech"), "PLPRBTTXT")
-#' a <- context('"Integration"', p)
-#' }
-#' @importFrom parallel mclapply
-#' @exportMethod context
-#' @rdname context-methods
-#' @docType methods
-#' @aliases context,partition-method
-setMethod(
-  f="context",
-  signature(object="partition"),
-  function
-  (
-    object,
-    query,
-    pAttribute=NULL,
-    leftContext=0,
-    rightContext=0,
-    minSignificance=0,
-    posFilter=NULL,
-    filterType="exclude",
-    stoplist=NULL,
-    positivelist=NULL,
-    statisticalTest="LL",
-    mc=NULL,
-    verbose=TRUE
-  ) {
-    if (!pAttribute %in% names(object@tf) && !is.null(statisticalTest)) {
-      if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
-      object <- enrich(object, tf=pAttribute)
-    }
-    if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
-    if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
-    if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
-    if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-    if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
-    ctxt <- new(
-      "context",
-      query=query,
-      pattribute=pAttribute,
-      corpus=object@corpus,
-      left.context=leftContext,
-      right.context=rightContext,
-      encoding=object@encoding,
-      posFilter=as.character(posFilter),
-      partition=object@label,
-      partitionSize=object@size
-      )
-    corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
-    corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
-    if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
-    # query <- .adjustEncoding(query, object@encoding)
-    # Encoding(query) <- ctxt@encoding
-    hits <- .queryCpos(ctxt@query, object, pAttribute)
-    hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
-    hits <- apply(hits, 1, function(x) as.list(unname(x)))
-    
-    if (verbose==TRUE) message(' (', length(hits), " occurrences)")
-    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pattr, x)))
-    if (is.numeric(positivelist)){
-      positivelistIds <- positivelist
-    } else {
-      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pattr, x)))
-    }
-    if (verbose==TRUE) message("... counting tokens in context ")  
-    if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
-    } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
-    }
-    bigBag <- bigBag[!sapply(bigBag, is.null)]
-    if (!is.null(stoplistIds) || !is.null(positivelistIds)){
-      if (verbose==TRUE) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
-    }
-    ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
-    ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
-    if (verbose==TRUE) message('... context size: ', ctxt@size)
-    ctxt@frequency <- length(bigBag)
-    # if statisticalTest is 'NULL' the following can be ommitted
-    if (!is.null(statisticalTest)){
-      ctxt@statisticalTest <- statisticalTest
-      wc <- table(unlist(lapply(bigBag, function(x) x$id)))
-      if (statisticalTest == "LL"){
-        if (verbose==TRUE) message("... performing log likelihood test")
-        calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, object, pAttribute)
-        ctxt@statisticalSummary <- .statisticalSummary(ctxt)
-      } else if (statisticalTest=="pmi"){
-        if (verbose==TRUE) message("... calculating pointwise mutual information")
-        calc <- .pmi(
-          windowIds=as.integer(names(wc)),
-          windowFreq=unname(wc),
-          countTarget=ctxt@frequency,
-          partitionObject=partition,
-          pAttribute=pAttribute
-        )
-      } else {
-        warning("test suggested not supported")
-      }
-      ctxt@stat <- as.data.frame(cbind(
-        rank=1:nrow(calc),
-        calc
-      ))
-      ctxt <- trim(ctxt, minSignificance=minSignificance)
-      rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
-      Encoding(rownames(ctxt@stat)) <- object@encoding
-    }
-    ctxt
-  })
 
 #' Transform a context cluster into a Term Context Matrix
 #' 
@@ -293,6 +274,7 @@ setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
 #' @param pAttribute character vector (typically c("word") or c("lemma") or c("word", "lemma"))
 #' @return an augmented partition or partitionCluster object (includes pos now)
 #' @author Andreas Blaette
+#' @exportMethod addPos
 #' @noRd
 setMethod("addPos", "partition", function(object, pAttribute){
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
@@ -496,4 +478,156 @@ setMethod(
       cat("NO\n")
     }
   })
+
+#' @include context.R partition.R
+#' @exportMethod kwic
+setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
+  .kwic(ctxt=object, metadata=metadata, collocate=collocate)
+})
+
+
+#' KWIC output
+#' 
+#' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
+#' applying the kwich method on either a partition or a context object.
+#' 
+#' @param object a partition object
+#' @param query what to look up
+#' @param leftContext to the left
+#' @param rightContext to the right
+#' @param meta metainformation to display
+#' @param pAttribute typically 'word' or 'lemma'
+#' @param collocate only show kwic if a certain word is present
+#' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
+#' @examples
+#' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep")
+#' foo <- kwic(bt, "Integration")
+#' foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
+#' @exportMethod kwic
+setMethod("kwic", "partition", function(
+  object, query,
+  leftContext=0,
+  rightContext=0,
+  meta=NULL,
+  pAttribute="word",
+  collocate=c()
+){
+  ctxt <- context(
+    object=object, query=query, pAttribute=pAttribute,
+    leftContext=leftContext, rightContext=rightContext,
+    statisticalTest=NULL
+  )
+  .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
+})
+
+
+#' mail kwic/concordances
+#' 
+#' still experimental
+#' 
+#' @param object the concordance object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include methods.R
+#' @name mail-kwic-method
+#' @rdname mail-kwic-method
+#' @aliases mail,kwic-method
+#' @docType methods
+setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering kwic.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object@stat)
+  msg <- .attachTables(object@table, nrow, msg, "kwic", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail crosstab
+#' 
+#' For exporting.
+#' 
+#' @param object the crosstab object
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include dispersion.R
+#' @name mail-crosstab-method
+#' @rdname mail-crosstab-method
+#' @aliases mail,crosstab-method
+#' @docType methods
+setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering a crosstabulation.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object@abs)
+  msg <- .attachTables(foo@abs, nrow, msg, "crosstabAbs", fileFormat) 
+  msg <- .attachTables(foo@rel, nrow, msg, "crosstabRel", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#' mail a data frame
+#' 
+#' For exporting.
+#' 
+#' @param object the data frame
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @exportMethod mail
+#' @importFrom sendmailR sendmail sendmail_options
+#' @importFrom xlsx write.xlsx
+#' @include dispersion.R
+#' @name mail-data.frame-method
+#' @rdname mail-data.frame-method
+#' @aliases mail,data.frame-method
+#' @docType methods
+setMethod("mail", "data.frame", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+  msg <- list('Delivering a data frame.\nSincerely yours\nThe driller\n')
+  if(is.null(nrow)) nrow <- nrow(object)
+  msg <- .attachTables(object, nrow, msg, "dataFrame", fileFormat) 
+  status <- .mail(msg, to)
+  status$msg
+})
+
+#'@include partition.R
+#' @exportMethod as.partitionCluster
+setMethod("as.partitionCluster", "partition", function(object){
+  newCluster <- new("partitionCluster")
+  newCluster@partitions[[1]] <- object
+  names(newCluster@partitions)[1] <- object@label
+  newCluster@corpus <- object@corpus
+  newCluster@encoding <- object@encoding
+  newCluster@explanation <- c("derived from a partition object")
+  newCluster
+})
+
+setMethod("as.partitionCluster", "list", function(object, ...){
+  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
+  newCluster <- new("partitionCluster")
+  newCluster@partitions <- object
+  newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
+  newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
+  names(newCluster@partitions) <- vapply(newCluster@partitions, function(x) x@label, FUN.VALUE="character")
+  newCluster
+})
+
+setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
+  markdown <- paste(lapply(object@partitions, function(p) .partition2markdown(p, type)), collapse="\n* * *\n")
+  markdown <- paste(
+    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+    markdown,
+    '\n* * *\n',
+    collapse="\n")
+  if (is.null(filename)) {
+    htmlFile <- .markdown2tmpfile(markdown)
+  } else {
+    cat(markdown, file=filename)    
+  }
+  if (is.null(filename)) browseURL(htmlFile)
+})
 

@@ -1,33 +1,3 @@
-#' kwic (S4 class)
-#' 
-#' S4 class for organizing information for concordance output
-#' 
-#' @section Slots:
-#'   \describe{
-#'    \item{\code{metadata}:}{Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed }
-#'    \item{\code{table}:}{Object of class \code{"data.frame"} a table with the relevant information for kwic output }
-#'    \item{\code{collocate}:}{Object of class \code{"character"} collocate, if applicable }
-#'    \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
-#'   }
-#' @section Methods:
-#'   \describe{
-#'    \item{[}{indexing for seeing only some concordances}
-#'    \item{show}{get kwic output}
-#'   }
-#'   
-#' @name kwic-class
-#' @docType class
-#' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
-#' @exportClass kwic
-#' @rdname kwic-class
-setClass("kwic",
-         representation(metadata="character",
-                        collocate="character",
-                        table="data.frame",
-                        encoding="character"
-         )
-)
-
 #' KWIC output
 #' 
 #' Based on a context object, you get concordances, i.e. the context of a 
@@ -72,45 +42,7 @@ setClass("kwic",
   conc
 }
 
-#' @include context.R
-#' @exportMethod kwic
-setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
-  .kwic(ctxt=object, metadata=metadata, collocate=collocate)
-})
 
-#' KWIC output
-#' 
-#' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
-#' applying the kwich method on either a partition or a context object.
-#' 
-#' @param object a partition object
-#' @param query what to look up
-#' @param leftContext to the left
-#' @param rightContext to the right
-#' @param meta metainformation to display
-#' @param pAttribute typically 'word' or 'lemma'
-#' @param collocate only show kwic if a certain word is present
-#' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
-#' @examples
-#' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep")
-#' foo <- kwic(bt, "Integration")
-#' foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
-#' @exportMethod kwic
-setMethod("kwic", "partition", function(
-  object, query,
-  leftContext=0,
-  rightContext=0,
-  meta=NULL,
-  pAttribute="word",
-  collocate=c()
-  ){
-  ctxt <- context(
-    object=object, query=query, pAttribute=pAttribute,
-    leftContext=leftContext, rightContext=rightContext,
-    statisticalTest=NULL
-    )
-  .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
-})
 
 
 .showKwicLine <- function(object, i){
@@ -179,4 +111,3 @@ setMethod('[', 'kwic',
             x
           }        
 )
-

@@ -112,3 +112,14 @@ setMethod("plot", signature(x="partitionCluster", y="character"),
   data <- data.frame(rank(val[,1]), rank(val[,2]))
   plot(data[,1], data[,2])
 })
+
+#' barplot of a partitionCluster
+#' 
+#' @param pCluster a partitionCluster object
+#' @exportMethod barplot
+#' @noRd
+setMethod("barplot", "partitionCluster", function(height, ...){
+  tab <- summary(height)
+  tab <- tab[order(tab[, "token"], decreasing=TRUE),]
+  barplot(tab$token, names.arg=tab$partition, ...)
+})

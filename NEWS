@@ -1,19 +1,20 @@
 planned changes:
 ----------------
- * documentation to be improved:
-     - kwic
-     - keyness (trim and enrich methods)
-     - ?keyness guides you to keyness-class, it should be keyness-method
+ * documentation to be improved (kwic, keyness)
  * minus values for statistical tests if O < E in keyness and context method
  * log likelihood test for keyness method
  * check: rename keyness to tex
  * no documentation for keynessCluster-class (e.g. if I want to know the slots)
-    - summary-method for keynessCluster-class
-    - [[- method for keynessCluster-class
- * turn .statisticalSummary into an exported object?!
- * meta as character-method to get Auspraegungen most quickly
- * plot-method for partitionCluster
- 
+
+v0.4.32
+ * meta,character-method to learn about a corpus without first generating a partition
+ * rudimentary barplot-method for partitionCluster
+ * functionality to remove empty rows in DocumentTermMatrix upon construction
+ * tf/idf-weighting included in as.TermDocumentMatrix
+ * summary-method for keynessCluster-class
+ * [[- method for keynessCluster-class
+
+
 v0.4.31
  * some changes to context method:
     - whether to use multicore can be stated explicitly

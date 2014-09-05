@@ -8,12 +8,18 @@
 \alias{[,partitionCluster,ANY,ANY,ANY-method}
 \alias{[,partitionCluster-method}
 \alias{[[,partitionCluster-method}
+\alias{addPos,partitionCluster-method}
+\alias{as.DocumentTermMatrix}
 \alias{as.DocumentTermMatrix,partitionCluster-method}
+\alias{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix,partitionCluster-method}
 \alias{as.matrix,partitionCluster-method}
 \alias{as.partitionCluster,list-method}
 \alias{as.sparseMatrix}
+\alias{as.sparseMatrix,TermDocumentMatrix-method}
 \alias{as.sparseMatrix,partitionCluster-Method}
+\alias{as.sparseMatrix,partitionCluster-method}
+\alias{barplot,partitionCluster-method}
 \alias{merge,partitionCluster-method}
 \alias{names,partitionCluster-method}
 \alias{partitionCluster-class}
@@ -45,7 +51,9 @@ A cluster of partition objects.
   partitionCluster object } \item{[}{get frequency of a query} \item{[[}{get
   a partition within the cluster} \item{+}{\code{signature(object =
   "partitionCluster")}: combine two partitionClusters into a new one }
- \item{html}{bla} }
+  \item{html}{bla}
+  \item{as.sparseMatrix}{bla}
+  }
 }
 \author{
 Andreas Blaette

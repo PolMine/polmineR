@@ -158,3 +158,8 @@ flatten <- function(object){
   }
   return(result)
 }
+
+.filter <- list(
+  include=function(x,y) {x %in% y},
+  exclude=function(x,y) {!(x %in% y)}
+)

@@ -3,6 +3,7 @@
 \name{partition-class}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
+\alias{addPos,partition-method}
 \alias{as.partitionCluster}
 \alias{as.partitionCluster,partition-method}
 \alias{export}

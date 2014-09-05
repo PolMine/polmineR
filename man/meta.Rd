@@ -2,6 +2,7 @@
 \docType{methods}
 \name{meta}
 \alias{meta}
+\alias{meta,character-method}
 \alias{meta,partition-method}
 \alias{meta-method}
 \title{get values of metadata}
@@ -9,7 +10,7 @@
 \S4method{meta}{partition}(object, sAttribute)
 }
 \arguments{
-\item{object}{a partition object}
+\item{object}{a partition object or a character vector (length 1) supplying the name of a corpus}
 
 \item{sAttribute}{the s-attribute to be looked up}
 }

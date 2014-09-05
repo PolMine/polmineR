@@ -1,57 +1,6 @@
 #'@include partition.R
 NULL
 
-#' partitionCluster class
-#' 
-#' A cluster of partition objects.
-#' 
-#' @section Slots: \describe{ \item{\code{partitions}:}{Object of class
-#'   \code{"list"} the partitions making up the cluster } 
-#'   \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the
-#'   partition is based on } \item{\code{sAttributesFixed}:}{Object of class
-#'   \code{"list"} fixed sAttributes } \item{\code{encoding}:}{Object of class
-#'   \code{"character"} encoding of the corpus } 
-#'   \item{\code{explanation}:}{Object of class \code{"character"} an
-#'   explanation of the partition } \item{\code{xml}:}{Object of class
-#'   \code{"character"} whether the xml is flat or nested } }
-#'   
-#' @section Methods: \describe{ \item{show}{\code{signature(object = 
-#'   "partitionCluster")}: Display essential information } 
-#'   \item{addPos}{\code{signature(object="partitionCluster")}: add list with 
-#'   most frequent pos for a token } 
-#'   \item{tf}{\code{signature(object="partitionCluster")}: get term frequencies
-#'   } \item{trim}{\code{signature(object="partitionCluster")}: trim a 
-#'   partitionCluster object } \item{[}{get frequency of a query} \item{[[}{get 
-#'   a partition within the cluster} \item{+}{\code{signature(object = 
-#'   "partitionCluster")}: combine two partitionClusters into a new one } 
-#'  \item{html}{bla} }
-#'   
-#' @aliases partitionCluster-class show,partitionCluster-method 
-#'   [,partitionCluster-method 
-#'   [[,partitionCluster-method as.DocumentTermMatrix,partitionCluster-method 
-#'   as.matrix,partitionCluster-method 
-#'   as.TermDocumentMatrix,partitionCluster-method merge,partitionCluster-method
-#'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix 
-#'   +,partitionCluster-method names,partitionCluster-method 
-#'   summary,partitionCluster-method 
-#'   +,partitionCluster,ANY-method [,partitionCluster,ANY,ANY,ANY-method
-#'   +,partitionCluster,partition-method
-#'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method
-#' @rdname partitionCluster-class
-#' @name partitionCluster-class
-#' @exportClass partitionCluster
-#' @docType class
-#' @author Andreas Blaette
-setClass("partitionCluster",
-         representation(partitions="list", 
-                        corpus="character",
-                        sAttributesFixed="list",
-                        encoding="character",
-                        explanation="character",
-                        xml="character"
-         )
-)
-
 
 
 #' Generate a list of partitions
@@ -241,51 +190,6 @@ setMethod('[', 'partitionCluster', function(x,i){
 }
 )
 
-#' Transform a partition cluster into a Term Document Matrix
-#' 
-#' Method based on the tm package, adds to as.TermDocumentMatrix
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a partitionCluster object (S3 class)
-#' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param ... to make the check happy
-#' @method as.TermDocumentMatrix partitionCluster
-#' @return a TermDocumentMatrix
-#' @author Andreas Blaette
-#' @importFrom slam simple_triplet_matrix
-#' @importFrom tm as.TermDocumentMatrix
-#' @exportMethod as.TermDocumentMatrix
-#' @noRd
-setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, ...) {
-  encoding <- unique(unlist(lapply(x@partitions, function(c) c@encoding)))
-  corpus <- unique(unlist(lapply(x@partitions, function(c) c@corpus)))
-  i <- as.integer(unname(unlist(lapply(x@partitions,
-                     function(c) {a <- c@tf[[pAttribute]][,1]
-                                  a <- a+1
-                                  a})
-  )))
-  j <- unlist(lapply(c(1:length(x@partitions)),
-                     function(m) {rep(
-                       m,times=nrow(x@partitions[[m]]@tf[[pAttribute]])
-                     )
-                     }
-  ))
-  v <- as.integer(unlist(lapply(x@partitions, function(c) c@tf[[pAttribute]][,2])))
-  attr <- paste(corpus, '.', pAttribute, sep='')
-  lexicon.size <- cqi_lexicon_size(attr)
-  mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@partitions),
-                               nrow=lexicon.size+1,
-                               dimnames=list(
-                                 Terms=cqi_id2str(attr, c(0:lexicon.size)),
-                                 Docs=names(x@partitions))
-  )
-  mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")  
-  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  mat
-})
-
 
 #' Turn a partition cluster into a matrix
 #' 
@@ -295,50 +199,17 @@ setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, 
 #' 
 #' @param x a partitionCluster object (S3 class)
 #' @param pAttribute the counts for the patttribute to show up in the matrix
+#' @param weight whether to introduce a weight ("tfidf", for example)
 #' @param ... necessary for S3 method?!
 #' @method as.matrix partitionCluster
 #' @return a matrix
 #' @author Andreas Blaette
 #' @exportMethod as.matrix
 #' @noRd
-setMethod("as.matrix", "partitionCluster", function(x, pAttribute, ...) {
-  as.matrix(as.TermDocumentMatrix(x, pAttribute))
+setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
+  as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
 })
 
-#' Turn a partition cluster into a document-term matrix
-#' 
-#' Method based on the tm package.
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a partitionCluster object (S3 class)
-#' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param ... make R happy
-#' @method as.DocumentTermMatrix partitionCluster
-#' @return a DocumentTermMatrix
-#' @author Andreas Blaette
-#' @importFrom tm as.DocumentTermMatrix
-#' @exportMethod as.DocumentTermMatrix
-#' @noRd
-setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, ...) {
-  as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute))
-})
-
-
-#' @import Matrix
-#' @include methods.R
-setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
-  message("... converting partitionCluster to TermDocumentMatrix")
-  tdm_stm <- as.TermDocumentMatrix(x, "word")
-  message("... converting TermDocumentMatrix to Matrix")
-  retval <-  sparseMatrix(i=tdm_stm$i,
-                          j=tdm_stm$j,
-                          x=tdm_stm$v,
-                          dims=c(tdm_stm$nrow, tdm_stm$ncol),
-                          dimnames = dimnames(tdm_stm),
-                          giveCsparse = TRUE)
- retval
-})
 
 #' @exportMethod names
 setMethod("names", "partitionCluster", function(x){
@@ -366,41 +237,4 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
   e1
 })
 
-
-#'@include partition.R
-#' @exportMethod as.partitionCluster
-setMethod("as.partitionCluster", "partition", function(object){
- newCluster <- new("partitionCluster")
- newCluster@partitions[[1]] <- object
- names(newCluster@partitions)[1] <- object@label
- newCluster@corpus <- object@corpus
- newCluster@encoding <- object@encoding
- newCluster@explanation <- c("derived from a partition object")
- newCluster
-})
-
-setMethod("as.partitionCluster", "list", function(object, ...){
-  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
-  newCluster <- new("partitionCluster")
-  newCluster@partitions <- object
-  newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
-  newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
-  names(newCluster@partitions) <- vapply(newCluster@partitions, function(x) x@label, FUN.VALUE="character")
-  newCluster
-})
-
-setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
-  markdown <- paste(lapply(object@partitions, function(p) .partition2markdown(p, type)), collapse="\n* * *\n")
-  markdown <- paste(
-    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
-    markdown,
-    '\n* * *\n',
-    collapse="\n")
-  if (is.null(filename)) {
-    htmlFile <- .markdown2tmpfile(markdown)
-  } else {
-    cat(markdown, file=filename)    
-  }
-  if (is.null(filename)) browseURL(htmlFile)
-})
 

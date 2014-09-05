@@ -45,6 +45,7 @@ NULL
 }
 
 #' @importFrom markdown markdownToHTML
+#' @noRd
 .markdown2tmpfile <- function(markdown){
   mdFilename <- tempfile(fileext=".md")
   htmlFile <- tempfile(fileext=".html")
@@ -53,42 +54,6 @@ NULL
   htmlFile
 }
 
-#' Convert partition/partition Cluster into html
-#' 
-#' A partition is converted into a html file and displayed in a browser. If a partitionCluster
-#' is provided, the browser will open several windows.
-#'   
-#' @param object a partition object
-#' @param meta metadata for output
-#' @param browser logical (defaults to TRUE), whether to direct output to browser, if FALSE, the generated html will be returned
-#' @param filename filename for the html file, if NULL (default), a temporary file is created
-#' @param type the type of html to be generated
-#' @aliases html html-method html,partition-method html,partitionCluster-method
-#' @rdname html
-#' @exportMethod html
-setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filename=NULL, type="debate"){
-  if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
-  object <- enrich(object, meta=meta)
-  markdown <- .partition2markdown(object, type)
-  markdown <- paste(
-    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
-    markdown,
-    '\n* * *\n',
-    collapse="\n")
-  if (is.null(filename)) {
-    htmlFile <- .markdown2tmpfile(markdown)
-  } else {
-    cat(markdown, file=filename)
-    htmlFile <- filename
-  }
-  if (browser == TRUE){
-    browseURL(htmlFile)
-    retval <- c("[html output redirected to browser]")
-  } else if (browser == FALSE) {
-    retval <- htmlFile
-  }
-  retval
-})
 
 setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
   for (i in from:to){
