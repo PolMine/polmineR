@@ -36,3 +36,6 @@ NULL
 #' @keywords datasets
 #' data(colorsParties)
 NULL
+
+setOldClass("TermDocumentMatrix")
+

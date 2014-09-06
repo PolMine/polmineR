@@ -2,7 +2,6 @@
 \docType{class}
 \name{keyness-class}
 \alias{[[,keynessCluster-method}
-\alias{addPos,keyness-method}
 \alias{as.matrix,keynessCluster-method}
 \alias{enrich,keynessCluster-method}
 \alias{keyness}

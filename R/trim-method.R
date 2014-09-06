@@ -1,4 +1,5 @@
-#' @include methods.R context.R
+#' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
+#' @include crosstab-class.R keyness-class.R keynessCluster-class.R
 NULL
 
 
@@ -79,6 +80,7 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @author Andreas Blaette
 #' @aliases trim,keyness-method
 #' @exportMethod trim
+#' @docType methods
 setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType=include){
   test <- object@statisticalTest
   if (maxRank==0) maxRank <- nrow(object@stat)
@@ -97,6 +99,8 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
   object
 })
 
+#' @docType methods
+#' @noRd
 setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include"){
   rework <- new("keynessCluster")
   rework@objects <- lapply(
@@ -175,6 +179,7 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 #' @return partitionCluster
 #' @aliases trim,partitionCluster-method
 #' @exportMethod trim
+#' @docType methods
 #' @rdname trim-partitionCluster-method
 setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
   if (is.null(mc)) mc <- get('drillingControls', '.GlobalEnv')[['multicore']]
@@ -224,6 +229,7 @@ setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequ
 #' @aliases trim,crosstab-method
 #' @rdname trim-crosstab-method
 #' @exportMethod trim
+#' @docType methods
 setMethod("trim", "crosstab", function(object, drop=NULL, merge=list(old=c(), new=c())){
   if (!is.null(drop)){
     object <- .crosstabDrop(x=object, filter=drop, what="drop")

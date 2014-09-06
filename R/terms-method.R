@@ -1,10 +1,13 @@
+#' @include partition-class.R
+NULL
+
 #' get terms available in a corpus
 #' 
 #' @param x a partition object
 #' @param pAttribute the pAttribute to be queried
 #' @param regex a regex to filter results
 #' @exportMethod terms
-#' @include partition.R
+#' @docType methods
 #' @name terms-partition-method
 #' @rdname terms-partition-method
 #' @aliases terms,partition-method

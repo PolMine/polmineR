@@ -1,3 +1,6 @@
+#' @include context-class.R
+NULL
+
 #' S4 contextCluster class
 #' 
 #' class to organize information of multiple context analyses

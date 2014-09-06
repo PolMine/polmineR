@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.32
-Date: 2014-09-01
+Version: 0.4.33
+Date: 2014-09-06
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -19,8 +19,7 @@ Imports:
     RColorBrewer,
     markdown,
     xlsx,
-    sendmailR,
-    plyr
+    sendmailR
 Suggests:
     knitr
 VignetteBuilder: knitr
@@ -31,39 +30,47 @@ Description: Tools for drilling and mining CWB corpora. The package offers
     procedures.
 License: CC BY-NC-SA 3.0 | file LICENSE
 Collate:
-    'RcppExports.R'
+    'driller-package.R'
     'partition-class.R'
     'partitionCluster-class.R'
     'keyness-class.R'
-    'keynessCluster-class.R'
+    'addPos-method.R'
     'context-class.R'
     'contextCluster-class.R'
-    'kwic-class.R'
-    'context.R'
-    'statistics.R'
-    'partition.R'
-    'keyness.R'
-    'dispersion.R'
-    'methods.R'
-    'contextCluster.R'
+    'as.Class-method.R'
+    'bubblegraph-method.R'
+    'collocations-method.R'
+    'context-method.R'
+    'context-methods.R'
+    'contextCluster-methods.R'
     'controls.R'
-    'driller-package.R'
-    'frequency.R'
-    'html.R'
-    'import.R'
-    'kwic.R'
-    'mail.R'
-    'meta.R'
-    'partitionCluster.R'
-    'query.R'
-    'sAttributes.R'
-    'score.R'
+    'crosstab-class.R'
+    'crosstab-methods.R'
+    'dispersion-method.R'
+    'egoNetwork-method.R'
+    'keynessCluster-class.R'
+    'enrich-method.R'
+    'frequencies-method.R'
+    'html-method.R'
+    'keyness-method.R'
+    'keyness-methods.R'
+    'keynessCluster-methods.R'
+    'kwic-class.R'
+    'kwic-method.R'
+    'kwic-methods.R'
+    'linechart-method.R'
+    'mail-method.R'
+    'meta-method.R'
+    'partition-methods.R'
+    'partitionCluster-methods.R'
+    'sAttributes-method.R'
+    'scatterplot-method.R'
+    'score-method.R'
     'shiny.R'
-    'speeches.R'
-    'terms.R'
-    'tf.R'
-    'tfidf.R'
-    'trim.R'
+    'statistics.R'
+    'terms-method.R'
+    'tf-method.R'
+    'trim-method.R'
     'utils.R'
-    'visualization.R'
-    'asMatrix-methods.R'
+    'weigh-method.R'
+    'zoom-method.R'

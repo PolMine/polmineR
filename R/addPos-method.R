@@ -1,3 +1,6 @@
+#' @include partition-class.R partitionCluster-class.R keyness-class.R
+NULL
+
 #' add pos information
 #' 
 #' Add information on part-of-speech tags of tokens to tokens. The method is 
@@ -8,8 +11,35 @@
 #' @param ... further arguments
 #' @return the original, enhanced object
 #' @docType methods
+#' @rdname addPos-method
+#' @name addPos
+#' @aliases addPos addPos-method addPos,partition-method addPos,partitionCluster-method addPos,keyness-method
 setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 
+
+#' Add POS tags
+#' 
+#' Add the POS tags to a table with tokens in the rows
+#' 
+#' The POS tags that occur for a given token are counted. The POS tag with the
+#' highest share is added to the table
+#' 
+#' @param object a context object
+#' @return object with pimped stat table
+#' @author Andreas Blaette
+#' @noRd
+.addPos <- function(object) {
+  ids = cqi_str2id(paste(object@corpus, ".", object@pattribute, sep=""), rownames(object@stat))
+  posIds <- unlist(mclapply(ids, function (x){
+    idPos <- cqi_cpos2id(paste(object@corpus, ".pos", sep=""), cqi_id2cpos(paste(object@corpus, ".", object@pattribute, sep=""), x))
+    posIdFrequencies <- tabulate(idPos+1)
+    mostFrequent <- which.max(posIdFrequencies) - 1
+    return(mostFrequent)
+  }))
+  pos <- cqi_id2str(paste(object@corpus, ".pos", sep=""), posIds)
+  object@stat <- cbind(object@stat, pos=pos)
+  object
+}
 
 
 #' Fill slot 'pos' of partition (or partitionCluster) object
@@ -23,6 +53,7 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' @return an augmented partition or partitionCluster object (includes pos now)
 #' @author Andreas Blaette
 #' @exportMethod addPos
+#' @docType methods
 #' @noRd
 setMethod("addPos", "partition", function(object, pAttribute){
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
@@ -53,6 +84,7 @@ setMethod("addPos", "partition", function(object, pAttribute){
 #' @param pAttribute character vector - pos statistic for lemma or word
 #' @return an augmented partition object (includes pos now)
 #' @author Andreas Blaette
+#' @docType methods
 #' @noRd
 setMethod("addPos", "partitionCluster", function(object, pAttribute){
   pimpedCluster <- object
@@ -73,6 +105,7 @@ setMethod("addPos", "partitionCluster", function(object, pAttribute){
 #' @param object the keyness object
 #' @param Partition a partition object (the corpus of interest)
 #' @return an enhanced keyness object 
+#' @docType methods
 #' @noRd 
 setMethod("addPos", "keyness",
           function(object, Partition=NULL){

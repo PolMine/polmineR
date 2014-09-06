@@ -1,3 +1,6 @@
+setGeneric("score", function(object, ...){standardGeneric("score")})
+
+
 #' score partitions in a cluster
 #' 
 #' Assign scores to the partitions in a partitionCluster object.
@@ -10,6 +13,7 @@
 #' @param tfMethod what method to use for term frequencies
 #' @return a named numeric vector (names are the labels of the partitions in the cluster)
 #' @exportMethod score
+#' @docType methods
 #' @rdname score-method
 #' @aliases score score-method score,partitionCluster-method
 #' @name score

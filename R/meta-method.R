@@ -1,6 +1,8 @@
+#' @include partition-class.R
+NULL
+
 # documented with meta,partition-method
 setGeneric("meta", function(object, ...){standardGeneric("meta")})
-
 
 #' get values of metadata
 #' 
@@ -13,7 +15,6 @@ setGeneric("meta", function(object, ...){standardGeneric("meta")})
 #' @rdname meta
 #' @name meta
 #' @exportMethod meta
-#' @include partition.R
 #' @docType methods
 setMethod("meta", "partition", function(object, sAttribute){
   if ("values" %in% names(object@metadata)) {
@@ -25,6 +26,8 @@ setMethod("meta", "partition", function(object, sAttribute){
   ret
 })
 
+#' @docType methods
+#' @noRd
 setMethod("meta", "character", function(object, sAttribute){
   if (object %in% cqi_list_corpora()) {
     ret <- unique(cqi_struc2str(

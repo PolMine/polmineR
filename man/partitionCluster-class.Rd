@@ -8,7 +8,6 @@
 \alias{[,partitionCluster,ANY,ANY,ANY-method}
 \alias{[,partitionCluster-method}
 \alias{[[,partitionCluster-method}
-\alias{addPos,partitionCluster-method}
 \alias{as.DocumentTermMatrix}
 \alias{as.DocumentTermMatrix,partitionCluster-method}
 \alias{as.TermDocumentMatrix}

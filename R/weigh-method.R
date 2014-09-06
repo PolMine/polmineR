@@ -1,7 +1,5 @@
 setGeneric("weigh", function(tdm, ...){standardGeneric("weigh")})
 
-setOldClass("TermDocumentMatrix")
-
 #' weigh a matrix 
 #' 
 #' @param tdm a matrix (which is a term-document-matrix, terms in the rows, docs in the columns)
@@ -20,6 +18,7 @@ setMethod("weigh", "matrix", function(tdm, method="tfidf", corpusSizes){
 )
 
 #' @exportMethod weigh
+#' @docType methods
 #' @noRd
 setMethod("weigh", "TermDocumentMatrix", function(tdm, method="tfidf", corpusSizes){
   tdmMatrix <- as.sparseMatrix(tdm)

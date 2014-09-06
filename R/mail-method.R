@@ -1,4 +1,4 @@
-#' @include methods.R keyness.R partition-class.R keyness-class.R context-class.R
+#' @include partition-class.R keyness-class.R context-class.R kwic-class.R crosstab-class.R
 NULL
 
 #' mail result
@@ -59,7 +59,6 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include statistics.R
 #' @name mail,partition-method
 #' @rdname mail-partition-method
 #' @aliases mail,partition-method
@@ -89,7 +88,6 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include statistics.R
 #' @name context-keyness-method
 #' @rdname context-mail-method
 #' @aliases mail,context-method
@@ -114,11 +112,9 @@ setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include statistics.R
 #' @name mail-keyness-method
 #' @rdname keyness-mail-method
 #' @aliases mail,keyness-method
-#' @include keyness.R
 #' @docType methods
 setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if(is.null(nrow)) nrow <- nrow(object@stat)
@@ -140,7 +136,6 @@ setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include methods.R
 #' @name mail-kwic-method
 #' @rdname mail-kwic-method
 #' @aliases mail,kwic-method
@@ -164,7 +159,6 @@ setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include dispersion.R
 #' @name mail-crosstab-method
 #' @rdname mail-crosstab-method
 #' @aliases mail,crosstab-method
@@ -189,7 +183,6 @@ setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c(
 #' @exportMethod mail
 #' @importFrom sendmailR sendmail sendmail_options
 #' @importFrom xlsx write.xlsx
-#' @include dispersion.R
 #' @name mail-data.frame-method
 #' @rdname mail-data.frame-method
 #' @aliases mail,data.frame-method

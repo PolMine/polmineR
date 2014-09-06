@@ -24,7 +24,7 @@
 #' @rdname keyness-class
 #' @name keyness-class
 #' @aliases keyness keyness-class keynessCluster-class summary,keyness-method
-#'   show,keyness-method addPos,keyness-method as.matrix,keynessCluster-method
+#'   show,keyness-method as.matrix,keynessCluster-method
 #'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
 #'   trim,keynessCluster-method summary,keynessCluster-method
 #' @docType class

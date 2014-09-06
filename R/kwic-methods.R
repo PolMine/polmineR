@@ -1,6 +1,8 @@
 #' @include kwic-class.R kwic-method.R
+NULL
 
 #' @importFrom xtermStyle style
+#' @docType methods
 setMethod('show', 'kwic', function(object){
   drillingControls <- get("drillingControls", '.GlobalEnv')
   if (drillingControls$kwicNo == 0 ) {
@@ -27,7 +29,8 @@ setMethod('show', 'kwic', function(object){
   }    
 })
 
-
+#' @docType methods
+#' @noRd
 setMethod('[', 'kwic',
           function(x,i) {
             x@table <- x@table[i,]

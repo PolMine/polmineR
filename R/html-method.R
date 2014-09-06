@@ -57,6 +57,8 @@ setGeneric("html", function(object, ...){standardGeneric("html")})
 }
 
 
+#' @docType methods
+#' @noRd
 setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
   for (i in from:to){
     html(object@partitions[[i]], meta=meta, filename=NULL, type="debate")
@@ -73,9 +75,9 @@ setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10,
 #' @param browser logical (defaults to TRUE), whether to direct output to browser, if FALSE, the generated html will be returned
 #' @param filename filename for the html file, if NULL (default), a temporary file is created
 #' @param type the type of html to be generated
-#' @include partition.R methods.R
 #' @rdname html
 #' @exportMethod html
+#' @docType methods
 #' @aliases html html-method html,partition-method html,partitionCluster-method
 setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filename=NULL, type="debate"){
   if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
@@ -101,6 +103,8 @@ setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filenam
   retval
 })
 
+#' @docType methods
+#' @noRd
 setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
   markdown <- paste(lapply(object@partitions, function(p) .partition2markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(

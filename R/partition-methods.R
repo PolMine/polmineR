@@ -1,4 +1,5 @@
 #' @exportMethod show
+#' @docType methods
 #' @noRd
 setMethod("show", "partition",
 function(object){
@@ -30,6 +31,8 @@ function(object){
 
 
 #' @exportMethod [
+#' @docType methods
+#' @noRd
 setMethod('[', 'partition', function(x,i){
   hits <- nrow(.queryCpos(i,x))
   hits
@@ -54,6 +57,7 @@ setMethod('[', 'partition', function(x,i){
 #' @aliases split,partition
 #' @rdname split-partition-method 
 #' @exportMethod split
+#' @docType methods
 setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
   # if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
   cpos <- x@cpos

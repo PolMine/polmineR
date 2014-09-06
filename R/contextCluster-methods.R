@@ -1,18 +1,21 @@
-#' @include methods.R context.R
+#' @include contextCluster-class.R
 NULL
 
 
 
+#' @docType methods
 setMethod("[[", "contextCluster", function(x,i){
   return(x@contexts[[i]])
 })
 
+#' @docType methods
 setMethod("[", "contextCluster", function(x,i){
   tf <- unlist(lapply(x, function(x) x@stat[i,"freqObs"]))
   cat("be aware of bugs\n")
 })
 
 #' @exportMethod summary
+#' @docType methods
 #' @noRd
 setMethod('summary', 'contextCluster',
           function(object) {
@@ -24,12 +27,6 @@ setMethod('summary', 'contextCluster',
           }
 )
 
-
-#' @exportMethod summary
-#' @noRd
-setMethod('show', 'context', function(object) {
-            return(summary(object))
-})
 
 
 
@@ -45,6 +42,7 @@ setMethod('show', 'context', function(object) {
 #' @return a matrix
 #' @author Andreas Blaette
 #' @exportMethod as.matrix
+#' @docType methods
 #' @noRd
 setMethod("as.matrix", "contextCluster", function(x, col, ...) {
   slamStyle <- as.TermContextMatrix(x, col)
@@ -53,6 +51,8 @@ setMethod("as.matrix", "contextCluster", function(x, col, ...) {
   mat
 })
 
+#' @docType methods
+#' @noRd
 setMethod("summary", "contextCluster", function(object, top=3){
   partitionSizes=unlist(lapply(object@contexts, function(x) x@partitionSize))
   tfAbs=unlist(lapply(object@contexts, function(x) x@frequency))
@@ -66,6 +66,8 @@ setMethod("summary", "contextCluster", function(object, top=3){
   overview
 })
 
+#' @docType methods
+#' @noRd
 setMethod("show", "contextCluster", function(object){
   summary(object)
 })

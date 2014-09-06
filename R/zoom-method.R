@@ -15,6 +15,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @param verbose logical, show progress report or not (defaults to TRUE)
 #' @aliases zoom zoom,partition-method
 #' @exportMethod zoom
+#' @docType methods
 #' @name zoom
 setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), verbose=TRUE){
   newPartition <- new("partition")

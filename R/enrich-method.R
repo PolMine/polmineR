@@ -1,3 +1,7 @@
+#' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
+#' @include crosstab-class.R keyness-class.R keynessCluster-class.R
+NULL
+
 #' enrich an object
 #' 
 #' Method to fill slots of a partition, partitionCluster or keyness object that 
@@ -99,6 +103,8 @@ setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
   object
 })
 
+#' @docType methods
+#' @noRd
 setMethod("enrich", "keynessCluster", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
   if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
   rework <- new("keynessCluster")

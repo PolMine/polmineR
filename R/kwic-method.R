@@ -1,5 +1,8 @@
 # this file contains the kwic method and helper functions for these methods
 
+#' @include partition-class.R context-class.R
+NULL 
+
 setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 
 
@@ -84,8 +87,8 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
   }
 }
 
-#' @include context.R partition.R
 #' @exportMethod kwic
+#' @docType methods
 setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
   .kwic(ctxt=object, metadata=metadata, collocate=collocate)
 })
@@ -105,6 +108,7 @@ setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
 #' @param pAttribute typically 'word' or 'lemma'
 #' @param collocate only show kwic if a certain word is present
 #' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
+#' @docType methods
 #' @examples
 #' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep")
 #' foo <- kwic(bt, "Integration")

@@ -1,11 +1,12 @@
+#' @include driller-package.R
+NULL
+
 # this file includes the partition class, the constructor function 'partition'
 # for generating the partition class, and the helper functions used 
 # by the constructur
 
 
-#' partition class
-#' 
-#' Basic class for for almost anything in the driller package.
+#' @title partition class definition
 #' 
 #' @section Slots:
 #' \describe{
@@ -36,7 +37,7 @@
 #'    }
 #' 
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
-#'   [,partition-method as.partitionCluster addPos,partition-method
+#'   [,partition-method as.partitionCluster 
 #'   as.partitionCluster,partition-method export export,partition-method split
 #' @rdname partition-class
 #' @name partition-class
@@ -314,4 +315,26 @@ partition <- function(
   Partition@strucs <- strucs
   Partition@cpos <- cpos
   Partition
+}
+
+#' Obtain frequencies
+#' 
+#' Get term frequencies for a partition object. This is a helper function
+#' for \code{partition}.
+#'
+#' @param part a partition object
+#' @param pAttribute either 'word' or 'lemma'
+#' @noRd
+.cpos2tf <- function(part, pAttribute){
+  cpos <- unlist(apply(part@cpos, 1, function(x) x[1]:x[2]))
+  ids <- cqi_cpos2id(paste(part@corpus, '.', pAttribute, sep=''), cpos)
+  tfRaw <- tabulate(ids)
+  tf <- data.frame(
+    id=c(0:length(tfRaw)),
+    tf=c(length(ids[which(ids==0)]), tfRaw),
+    row.names=cqi_id2str(paste(part@corpus,'.',pAttribute, sep=''), c(0:length(tfRaw)))
+  )
+  tf <- subset(tf, tf > 0)
+  Encoding(rownames(tf)) <- part@encoding
+  tf
 }

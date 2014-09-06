@@ -1,5 +1,14 @@
-#' @include partition-class.R context-class.R
+#' @include partition-class.R partitionCluster-class.R
 NULL
+
+
+##################################################################
+#                                                                #
+#  Methods that can be applied to objects of the class 'context' #
+#                                                                #
+##################################################################
+
+
 
 #' @param object a partition or a partitionCluster object
 #' @param ... further arguments
@@ -160,93 +169,7 @@ setMethod(
   bag
 }
 
-
-setMethod('summary', 'context',
-  function(object) {
-  .statisticalSummary(object)
-  
-}
-)
-
-setMethod('head', 'context', function(x, n=10) {
-  x@stat[1:n,c(1,3,4,7)]
-})
-
-setMethod('show', 'context',
-          function(object) {
-            cat("\n** Context object - general information: **\n")
-            cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
-            cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
-            cat(sprintf("%-20s", "Node:"), object@query, "\n")
-            cat(sprintf("%-20s", "P-Attribute:"), object@pattribute, "\n")
-            cat(sprintf("%-20s", "Node count:"), object@frequency, "\n")
-            cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
-})
-
-  
-setMethod('[', 'context',
-          function(x,i) {
-            drillingControls <- get("drillingControls", '.GlobalEnv')
-            conc <- kwic(x, metadata=drillingControls$kwicMetadata)
-            conc@table <- conc@table[i,]
-            show(conc)
-          }        
-)
-
-setMethod('[[', 'context',
-  function(x,i) {
-    drillingControls <- get("drillingControls", '.GlobalEnv')
-    conc <- kwic(x, metadata=drillingControls$kwicMetadata, collocate=i)
-    foo <- show(conc)
-  }        
-)
-
-
-
-#' Prepare data for an ego-network
-#' 
-#' For a node word, collocates of n degrees are calculated
-#' 
-#' The function returns a data frame that can be converted into an igraph object easily.
-#' This conversion is not part of the function to keep number of dependencies of the 
-#' package low.
-#' 
-#' @param node query, which may by a multi-word unit
-#' @param Partition a partition object
-#' @param degrees the degrees of the resulting egoNetwork
-#' @param pAttribute pattribute of the query
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
-#' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not be empty!!
-#' @return a data frame that can be turned into an igraph object with graph.data.frame (see example)
-#' @examples
-#' \dontrun{
-#'  nw <- partition(list(text_year="2005", text_type="speech"), corpus="PLPRNWHTM")
-#'  net <- egoNetwork(nw, "Integration", 1, "word", 5,5, 3.84, "NN")
-#'  g <- graph.data.frame(net[,c(1,2,3,7)])
-#'  tklplot(g)
-#'  }
-#' @author Andreas Blaette
-#' @export egoNetwork
-egoNetwork <- function(node, Partition, degrees, pAttribute="useControls", leftContext=0, rightContext=0, minSignificance, posFilter=c()) {
-  gData <- context(node, Partition, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
-  gData <- cbind(node=rep(node, times=nrow(gData)), target=rownames(gData), degree=rep(1, times=nrow(gData)), gData)
-  rownames(gData) <- NULL
-  for ( degree in 2:degrees ) {
-    terms <- gData[which(gData$degree==(degree-1)),2]
-    for ( term in terms ) {
-      dataNew <- context(term, Partition, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
-      dataNew <- cbind(node=rep(term, times=nrow(dataNew)), target=rownames(dataNew), degree=degree, dataNew)
-      rownames(dataNew) <- NULL
-      gData <- rbind(gData, dataNew)
-    }
-  }
-  vertices <- unique(c(as.vector(unname(unlist(gData[,1]))), as.vector(unname(unlist(gData[,2])))))
-  # verticeData <- data.frame(vertices=vertices, Partition@tf[[pAttribute]][vertices,"tf"])
-  gData
-}
-
+#' @docType methods
 setMethod("context", "partitionCluster", function(
   object, query, pAttribute="useControls",
   leftContext=0, rightContext=0,

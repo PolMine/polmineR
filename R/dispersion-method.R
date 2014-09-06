@@ -1,18 +1,8 @@
-#' @include methods.R crosstab-class.R
+#' @include partition-class.R crosstab-class.R
 NULL
 
+setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 
-# documented with crosstab class
-setMethod("t", "crosstab", function(x){
-  x@partitions <- as.data.frame(t(x@partitions))
-  x@abs <- as.data.frame(t(x@abs))
-  x@rel <- as.data.frame(t(x@rel))
-  rows <- x@rows
-  cols <- x@cols
-  x@rows <- cols
-  x@cols <- rows
-  x  
-})
 
 .crosstabToken <- function(Partition,rows, cols, pAttribute, query){
   hits <- .queryCpos(query, Partition, pAttribute)
@@ -179,20 +169,6 @@ setMethod("t", "crosstab", function(x){
   object
 }
 
-#' show a crosstab object
-#' 
-#' @param object a crosstab object
-#' @author Andreas Blaette
-#' @rdname show-crosstab-method
-#' @exportMethod show
-#' @noRd
-setMethod("show", "crosstab",
-function(object){
-  cat('Query:', object@query, '; Rows:', object@rows, '; Columns:', object@cols, '\n\n')
-  print(object@rel)
-  cat('\n')
-  print(object@abs)
-})
 
 .dropcols <- function(tab, colname) {
   drop <- grep(colname, colnames(tab))
@@ -347,38 +323,42 @@ function(object){
 #' in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
 #' on the number of queries and dimensions provided.
 #' 
-#' @param partition a partition object that will be queried
+#' @param object a partition object that will be queried
 #' @param query a character vector containing one or multiple queries
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
 #' @return depends on the input, as this is a wrapper function
 #' @seealso \code{crosstab-class}
-#' @export
+#' @exportMethod dispersion
 #' @examples
 #' test <- partition("PLPRBTTXT", def=list(text_date=".*"), tf="word")
 #' dispersion(test, "Integration", c("text_date"))
 #' dispersion(test, "Integration", c("text_date", "text_party"))
 #' dispersion(test, '"Integration.*"', c("text_date")) # note the brackets when using regex!
 #' @author Andreas Blaette
-#' @export dispersion
-dispersion <- function(partition, query, dim, pAttribute=drillingControls$pAttribute){
-  if ( is.null(names(partition@metadata))) {
+#' @docType methods
+#' @exportMethod dispersion
+#' @rdname dispersion-method
+#' @name dispersion
+#' @aliases dispersion dispersion-method dispersion,partition-method
+setMethod("dispersion", "partition", function(object, query, dim, pAttribute=drillingControls$pAttribute){
+  if ( is.null(names(object@metadata))) {
     message("... required metadata missing, fixing this")
-    partition <- enrich(partition, meta=dim)
+    object <- enrich(object, meta=dim)
   }
   if (class(query) == "cqpQuery"){
     query <- query@query
   }
   if (length(dim)==1){
     if (length(query)==1){
-      result <- .queryDistribution(partition, pAttribute, query, dim)
+      result <- .queryDistribution(object, pAttribute, query, dim)
     } else if (length(query)>1){
-      result <- .queriesDistribution(partition, pAttribute, query, dim)
+      result <- .queriesDistribution(object, pAttribute, query, dim)
     }
   } else if (length(dim)==2){
-    result <- .crosstab(partition, dim[1], dim[2], pAttribute, query)
+    result <- .crosstab(object, dim[1], dim[2], pAttribute, query)
   }
   result
-}
+})
 

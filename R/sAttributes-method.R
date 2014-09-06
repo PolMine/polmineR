@@ -1,6 +1,11 @@
-#' @include methods.R partition.R 
+#' @include partition-class.R 
 NULL
 
+setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
+
+
+#' @docType methods
+#' @noRd
 setMethod("sAttributes", "character", function(object){
   sAttributes <- cqi_attributes(object, "s")
   sAttributes

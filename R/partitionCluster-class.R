@@ -1,3 +1,6 @@
+#' @include partition-class.R
+NULL
+
 #' partitionCluster class
 #' 
 #' A cluster of partition objects.
@@ -36,7 +39,7 @@
 #'   [,partitionCluster,ANY,ANY,ANY-method +,partitionCluster,partition-method 
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method 
 #'   as.sparseMatrix,partitionCluster-method as.TermDocumentMatrix as.DocumentTermMatrix
-#'   addPos,partitionCluster-method barplot,partitionCluster-method
+#'   barplot,partitionCluster-method
 #'   as.sparseMatrix,TermDocumentMatrix-method
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class

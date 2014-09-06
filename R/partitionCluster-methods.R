@@ -1,4 +1,4 @@
-#'@include partition.R partitionCluster-class.R
+#'@include partition-class.R partitionCluster-class.R
 NULL
 
 #' Show method for partitionCluster Objects 
@@ -7,6 +7,7 @@ NULL
 #' 
 #' @param object the partitionCluster object
 #' @exportMethod show
+#' @docType methods
 #' @noRd
 setMethod("show", "partitionCluster", function (object) {
   stat <- summary(object)
@@ -29,6 +30,7 @@ setMethod("show", "partitionCluster", function (object) {
 #' 
 #' @param object the partitionCluster object
 #' @exportMethod summary
+#' @docType methods
 #' @noRd
 setMethod("summary", "partitionCluster", function (object) {
   summary <- data.frame(
@@ -65,6 +67,7 @@ setMethod("summary", "partitionCluster", function (object) {
 #' details on the class.
 #' @author Andreas Blaette
 #' @exportMethod merge
+#' @docType methods
 #' @noRd
 setMethod("merge", "partitionCluster", function(x, label=c("")){
   y <- new("partition")
@@ -88,13 +91,16 @@ setMethod("merge", "partitionCluster", function(x, label=c("")){
   y
 })
 
+
 #' @exportMethod [[
+#' @docType methods
 setMethod('[[', 'partitionCluster', function(x,i){
   return(x@partitions[[i]])
 }
 )
 
 #' @exportMethod [
+#' @docType methods
 setMethod('[', 'partitionCluster', function(x,i){
   a <- unname(unlist(lapply(x@partitions, function(y) y@tf$word[i,2])))
   sizes <- unlist(lapply(x@partitions, function(y) y@size))
@@ -123,6 +129,7 @@ setMethod('[', 'partitionCluster', function(x,i){
 #' @return a matrix
 #' @author Andreas Blaette
 #' @exportMethod as.matrix
+#' @docType methods
 #' @noRd
 setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
   as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
@@ -130,12 +137,13 @@ setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, 
 
 
 #' @exportMethod names
+#' @docType methods
 setMethod("names", "partitionCluster", function(x){
   names(x@partitions)
 })
 
-# '@include partition.R
 #' @exportMethod +
+#' @docType methods
 setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
   newPartition <- new("partitionCluster")
   newPartition@partitions <- c(e1@partitions, e2@partitions)
@@ -147,7 +155,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function
 })
 
 #' @exportMethod +
-#' @include partition.R
+#' @docType methods
 setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
   e1@partitions[[length(e1@partitions)+1]] <- e2
@@ -155,4 +163,22 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
   e1
 })
 
+#' @docType methods
+setMethod("plot", signature(x="partitionCluster", y="character"),
+          function(x, y){
+            val <- as.matrix(x, y)
+            val <- val[rowSums(val)!=0,]
+            data <- data.frame(rank(val[,1]), rank(val[,2]))
+            plot(data[,1], data[,2])
+          })
 
+#' barplot of a partitionCluster
+#' 
+#' @param pCluster a partitionCluster object
+#' @exportMethod barplot
+#' @noRd
+setMethod("barplot", "partitionCluster", function(height, ...){
+  tab <- summary(height)
+  tab <- tab[order(tab[, "token"], decreasing=TRUE),]
+  barplot(tab$token, names.arg=tab$partition, ...)
+})

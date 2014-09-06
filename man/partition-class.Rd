@@ -3,7 +3,6 @@
 \name{partition-class}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{addPos,partition-method}
 \alias{as.partitionCluster}
 \alias{as.partitionCluster,partition-method}
 \alias{export}
@@ -11,9 +10,9 @@
 \alias{partition-class}
 \alias{show,partition-method}
 \alias{split}
-\title{partition class}
+\title{partition class definition}
 \description{
-Basic class for for almost anything in the driller package.
+partition class definition
 }
 \section{Slots}{
 
