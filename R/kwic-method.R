@@ -1,3 +1,10 @@
+# this file contains the kwic method and helper functions for these methods
+
+setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
+
+
+
+
 #' KWIC output
 #' 
 #' Based on a context object, you get concordances, i.e. the context of a 
@@ -77,37 +84,45 @@
   }
 }
 
-#' @importFrom xtermStyle style
-setMethod('show', 'kwic', function(object){
-  drillingControls <- get("drillingControls", '.GlobalEnv')
-  if (drillingControls$kwicNo == 0 ) {
-    for (i in 1:nrow(object@table)) .showKwicLine(object, i)
-  } else if (drillingControls$kwicNo > 0) {
-    if (nrow(object@table) <= drillingControls$kwicNo) {
-      for (i in 1:nrow(object@table)) .showKwicLine(object, i)
-    } else {
-      chunks <- trunc(nrow(object@table)/drillingControls$kwicNo)
-      for ( i in c(0:(chunks-1))) {
-        lines <- i*drillingControls$kwicNo+c(1:drillingControls$kwicNo)
-        cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
-        for (j in lines) .showKwicLine(object, j)
-        cat("(press 'q' to quit or ENTER to continue)\n")
-        loopControl <- readline()
-        if (loopControl == "q") break
-      }
-      if ((chunks*drillingControls$kwicNo < nrow(object@table)) && (loopControl != "q")){
-        cat ('---------- KWIC output', chunks*drillingControls$kwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
-        lines <- c((chunks*drillingControls$kwicNo):nrow(object@table))
-        for (j in lines) .showKwicLine(object, j)
-      }
-    }
-  }    
+#' @include context.R partition.R
+#' @exportMethod kwic
+setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
+  .kwic(ctxt=object, metadata=metadata, collocate=collocate)
 })
 
 
-setMethod('[', 'kwic',
-          function(x,i) {
-            x@table <- x@table[i,]
-            x
-          }        
-)
+
+#' KWIC output
+#' 
+#' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
+#' applying the kwich method on either a partition or a context object.
+#' 
+#' @param object a partition object
+#' @param query what to look up
+#' @param leftContext to the left
+#' @param rightContext to the right
+#' @param meta metainformation to display
+#' @param pAttribute typically 'word' or 'lemma'
+#' @param collocate only show kwic if a certain word is present
+#' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
+#' @examples
+#' bt <- partition("PLPRTXT", def=list(text_date=".*"), method="grep")
+#' foo <- kwic(bt, "Integration")
+#' foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
+#' @exportMethod kwic
+setMethod("kwic", "partition", function(
+  object, query,
+  leftContext=0,
+  rightContext=0,
+  meta=NULL,
+  pAttribute="word",
+  collocate=c()
+){
+  ctxt <- context(
+    object=object, query=query, pAttribute=pAttribute,
+    leftContext=leftContext, rightContext=rightContext,
+    statisticalTest=NULL
+  )
+  .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
+})
+

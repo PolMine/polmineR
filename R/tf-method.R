@@ -1,3 +1,18 @@
+#' get term frequencies
+#' 
+#' Method to obtain term frequencies for one or multiple terms or queries.
+#' The method can be applied to partition or partitionCluster class objects.
+#' If object is a character string, frequencies for a whole corpus are returned.
+#' Please see the respective documentation for details 
+#' (\code{method?tf("partition")}, \code{method?tf("partitionCluster")} or
+#' \code{method?tf("character")}).
+#' 
+#' @param object either a partition or a partitionCluster object
+#' @param ... further parameters
+#' @aliases tf tf-method
+#' @rdname tf-method
+setGeneric("tf", function(object, ...){standardGeneric("tf")})
+
 #' get term frequencies from a partition object
 #' 
 #' Obtain term frequencies for one or several terms from a partition object.
@@ -58,7 +73,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
       colOrder <- unlist(
         lapply(names(object@tf),
                function(x) c(paste(x,"Abs", sep=""), paste(x, "Rel", sep="")))
-        )
+      )
       tab <- tab[,colOrder]
     } else if (method == "cqp") {
       for (pAttr in pAttribute) {
@@ -68,7 +83,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
             n <- nrow(.queryCpos(query=query, Partition=object, pAttribute=pAttr, verbose=FALSE))
             ifelse(is.null(n), 0, n)
           }, FUN.VALUE=1
-          )
+        )
         bag[[paste(pAttr, "Abs", sep="")]] <- no
         bag[[paste(pAttr, "Rel", sep="")]] <- no/object@size
       }
@@ -123,7 +138,7 @@ setMethod("tf", "partitionCluster", function(object, token, method="in", pAttrib
         partition=x,
         token=token,
         tf(object@partitions[[x]], token, method=method, pAttribute=pAttribute)
-        )
+      )
     }
   )
   tab <- do.call(rbind, bag)

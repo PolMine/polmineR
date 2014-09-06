@@ -163,3 +163,40 @@ flatten <- function(object){
   include=function(x,y) {x %in% y},
   exclude=function(x,y) {!(x %in% y)}
 )
+
+#' generate the sattribute
+#' 
+#' Helper function for partition
+#' 
+#' @param corpus the CWB corpus used
+#' @param dateRange a character with two character strings: the start date, and the end date
+#' @return a character vector (length > 1) that can be used in sAttribute definition
+#' @author Andreas Blaette
+#' @export datesPeriod
+datesPeriod <- function(corpus, dateRange) {
+  sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
+  sAttr <- paste(corpus, '.', sAttributeDate, sep='')
+  allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
+  daysSequence <- strftime(seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
+  daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
+  daysInCorpus
+}
+
+
+
+.getCorpusEncoding <- function(corpus){
+  registry <- scan(
+    file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
+    sep="\n",
+    what="character",
+    quiet=TRUE
+  )
+  encodingLine <- registry[grep('charset\\s*=\\s*"', registry)]
+  encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
+  encoding <- toupper(encoding)
+  if (!encoding %in% iconvlist()){
+    warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
+  }
+  return(tolower(encoding))
+}
+

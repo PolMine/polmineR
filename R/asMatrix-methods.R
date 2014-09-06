@@ -33,7 +33,7 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
 #' @importFrom slam simple_triplet_matrix
-#' @importMethodsFrom tm as.TermDocumentMatrix
+#' @importFrom tm as.TermDocumentMatrix
 #' @exportMethod as.TermDocumentMatrix
 #' @noRd
 setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
@@ -103,7 +103,7 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 #' @param rmBlank whether to remove blank lines
 #' @param ... make R happy
 #' @method as.DocumentTermMatrix partitionCluster
-#' @importMethodsFrom tm as.DocumentTermMatrix
+#' @importFrom tm as.DocumentTermMatrix
 #' @return a DocumentTermMatrix
 #' @author Andreas Blaette
 #' @exportMethod as.DocumentTermMatrix
