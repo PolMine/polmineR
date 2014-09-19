@@ -3,11 +3,12 @@
 \name{collocations}
 \alias{collocations}
 \alias{collocations,partition-method}
+\alias{collocations,partitionCluster-method}
 \alias{collocations-method}
 \title{calculate all collocations in a partition}
 \usage{
 \S4method{collocations}{partition}(object, pAttribute = "word", window = 5,
-  filter = TRUE, posFilter = c("ADJA", "NN"), multicore = FALSE)
+  method = "ll", filter = TRUE, posFilter = c("ADJA", "NN"), mc = FALSE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -16,11 +17,13 @@
 
 \item{window}{no of tokens to the left and to the right}
 
+\item{method}{the statistical test to use}
+
 \item{filter}{defaults to TRUE}
 
 \item{posFilter}{what POS to keep}
 
-\item{multicore}{whether to use multicore}
+\item{mc}{whether to use multicore}
 }
 \value{
 a data frame

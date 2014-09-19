@@ -5,7 +5,7 @@
 \title{trim context object}
 \usage{
 \S4method{trim}{context}(object, minSignificance = 0, minFrequency = 0,
-  maxRank = 0, posFilter = NULL, tokenFilter = NULL)
+  maxRank = 0, rankBy = NULL, posFilter = NULL, tokenFilter = NULL)
 }
 \arguments{
 \item{object}{a context object to be filtered}
@@ -15,6 +15,8 @@
 \item{minFrequency}{the minimum frequency}
 
 \item{maxRank}{maximum rank}
+
+\item{rankBy}{a character vector indicating the column for ranking}
 
 \item{posFilter}{exclude words with a POS tag not in this list}
 

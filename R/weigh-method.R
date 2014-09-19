@@ -12,6 +12,11 @@ setGeneric("weigh", function(tdm, ...){standardGeneric("weigh")})
 setMethod("weigh", "matrix", function(tdm, method="tfidf", corpusSizes){
   if (method=="tfidf"){
     tdmWeighed <- .tfidf(tdm)  
+  } else if (method=="rel"){
+    tdmWeighed <- tdm / corpusSizes
+  } else if (method=="rank"){
+    tdmWeighed <- apply(tdm, 2, order)
+    rownames(tdmWeighed) <- rownames(tdm)
   }
   return(tdmWeighed)
   }
@@ -24,6 +29,12 @@ setMethod("weigh", "TermDocumentMatrix", function(tdm, method="tfidf", corpusSiz
   tdmMatrix <- as.sparseMatrix(tdm)
   if (method=="tfidf"){
     tdmWeighed <- .tfidf(tdmMatrix, corpusSizes)  
+  } else if (method=="rel"){
+    tdmWeighed <- tdmMatrix / corpusSizes
+  } else if (method=="rank"){
+    tdmWeighedRaw <- apply(tdm, 2, order)
+    rownames(tdmWeighedRaw) <- rownames(tdm)
+    tdmWeighed <- Matrix(tdmWeighedRaw, sparse=TRUE)
   }
   tdmWeighed <- as.simple_triplet_matrix(tdmWeighed)
   class(tdmWeighed) <- c("TermDocumentMatrix", "simple_triplet_matrix")

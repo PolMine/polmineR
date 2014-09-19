@@ -34,6 +34,7 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 #' @param minSignificance minimum significance level
 #' @param minFrequency the minimum frequency
 #' @param maxRank maximum rank
+#' @param rankBy a character vector indicating the column for ranking
 #' @param posFilter exclude words with a POS tag not in this list
 #' @param tokenFilter tokens to exclude from table
 #' @return context object
@@ -42,8 +43,12 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 #' @aliases trim,context-method
 #' @docType methods
 #' @rdname trim-context-method
-setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, posFilter=NULL, tokenFilter=NULL){
-  test <- object@statisticalTest
+setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, rankBy=NULL, posFilter=NULL, tokenFilter=NULL){
+  if (is.null(rankBy)) {
+    test <- object@statisticalTest[1]  
+  } else {
+    test <- rankBy
+  }
   if (maxRank==0) maxRank=nrow(object@stat)
   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
   object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
@@ -73,18 +78,26 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @param minSignificance minimum significance level
 #' @param minFrequency the minimum frequency
 #' @param maxRank maximum rank
+#' @param rankBy the column of the statistics-table to use for ordering
 #' @param tokenFilter tokens to exclude from table
 #' @param posFilter pos to keep
 #' @param filterType either "include" or "exclude"
+#' @param digits a list
+#' @param verbose whether to be talkative
 #' @return a keyness object
 #' @author Andreas Blaette
 #' @aliases trim,keyness-method
 #' @exportMethod trim
 #' @docType methods
-setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType=include){
-  test <- object@statisticalTest
+setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType=include, digits=NULL, verbose=TRUE){
   if (maxRank==0) maxRank <- nrow(object@stat)
   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
+  if (is.null(rankBy)) {
+    test <- object@statisticalTest[1]
+  } else {
+    test <- rankBy
+  }
+  if (verbose == TRUE) message("... ordering results by ", test)
   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
   object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
   object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
@@ -93,6 +106,11 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
   }
   if (!is.null(posFilter)){
     object@stat <- object@stat[.filter[[filterType]](object@stat[, "pos"], posFilter),]
+  }
+  if (!is.null(digits)){
+    for (n in names(digits)){
+      object@stat[,n] <- round(object@stat[,n], digits[[n]])
+    }
   }
   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
   object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]

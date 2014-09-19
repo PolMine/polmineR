@@ -5,8 +5,8 @@
 \title{trim keyness object}
 \usage{
 \S4method{trim}{keyness}(object, minSignificance = 0, minFrequency = 0,
-  maxRank = 0, tokenFilter = NULL, posFilter = NULL,
-  filterType = include)
+  maxRank = 0, rankBy = NULL, tokenFilter = NULL, posFilter = NULL,
+  filterType = include, digits = NULL, verbose = TRUE)
 }
 \arguments{
 \item{object}{a keyness object}
@@ -17,11 +17,17 @@
 
 \item{maxRank}{maximum rank}
 
+\item{rankBy}{the column of the statistics-table to use for ordering}
+
 \item{tokenFilter}{tokens to exclude from table}
 
 \item{posFilter}{pos to keep}
 
 \item{filterType}{either "include" or "exclude"}
+
+\item{digits}{a list}
+
+\item{verbose}{whether to be talkative}
 }
 \value{
 a keyness object

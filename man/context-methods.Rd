@@ -7,12 +7,14 @@
 \alias{context,contextCluster-method}
 \alias{context,partition-method}
 \alias{context,partitionCluster-method}
+\alias{ll}
+\alias{ll-method}
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(object, query, pAttribute = NULL,
   leftContext = 0, rightContext = 0, minSignificance = 0,
   posFilter = NULL, filterType = "exclude", stoplist = NULL,
-  positivelist = NULL, statisticalTest = "LL", mc = NULL,
+  positivelist = NULL, statisticalTest = "ll", mc = NULL,
   verbose = TRUE)
 }
 \arguments{

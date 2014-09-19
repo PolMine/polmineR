@@ -1,13 +1,12 @@
 #' @include keynessCluster-class.R
 NULL
 
-#' @docType methods
-#' @noRd
-setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chi"){
+
+setMethod("as.TermDocumentMatrix", signature(x="keynessCluster"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
   object <- x
   encoding <- unique(unlist(lapply(object@objects, function(o) o@encoding)))
   corpus <- unique(unlist(lapply(object@objects, function(o) o@corpus)))
-  pAttribute <- unique(unlist(lapply(object@contexts, function(o) o@pattribute)))
+  pAttribute <- unique(unlist(lapply(object@objects, function(o) o@pattribute)))
   pAttr <- paste(corpus, '.', pAttribute, sep='')
   i <- unlist(lapply(object@objects, function(o) (cqi_str2id(pAttr, rownames(o@stat))+1)))
   j <- unlist(lapply(c(1:length(object@objects)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
@@ -15,7 +14,7 @@ setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chi"){
   lexiconSize <- cqi_lexicon_size(pAttr)
   mat <- simple_triplet_matrix(
     i=i, j=j, v=v,
-    ncol=length(x@contexts),
+    ncol=length(x@objects),
     nrow=lexiconSize+1,
     dimnames=list(
       Terms=cqi_id2str(pAttr, c(0:lexiconSize)),
@@ -24,6 +23,15 @@ setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chi"){
   )
   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")
   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  if (rmBlank==TRUE) mat <- .rmBlank(mat, verbose=verbose)
+  mat
+})
+
+
+#' @docType methods
+#' @noRd
+setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
+  mat <- as.TermDocumentMatrix(x, col=col, rmBlank=rmBlank, verbose=verbose)
   mat <- as.matrix(mat)
   mat
 })

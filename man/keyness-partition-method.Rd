@@ -5,7 +5,8 @@
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{
 \S4method{keyness}{partition}(x, y, pAttribute = drillingControls$pAttribute,
-  minFrequency = 0, included = FALSE, verbose = TRUE)
+  minFrequency = 0, included = FALSE, method = "chiSquare", digits = 2,
+  verbose = TRUE)
 }
 \arguments{
 \item{x}{a partition or partitionCluster object}
@@ -18,7 +19,11 @@ ref}
 
 \item{minFrequency}{the minimum frequency of collocates}
 
+\item{method}{the statistical test to apply (chisquare or log likelihood)}
+
 \item{included}{TRUE if coi is part of ref, defaults to FALSE}
+
+\item{digits}{numeric}
 
 \item{verbose}{defaults to TRUE}
 }

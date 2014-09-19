@@ -145,7 +145,7 @@ flatten <- function(object){
 }
 
 .statisticalSummary <- function(object) {
-  if (object@statisticalTest %in% c("LL", "chiSquare")){
+  if (object@statisticalTest %in% c("ll", "chiSquare")){
     criticalValue <- c(3.84, 6.63, 7.88, 10.83)
     propability <- c(0.05, 0.01, 0.005, 0.001)
     no <- vapply(

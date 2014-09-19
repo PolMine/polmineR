@@ -2,12 +2,14 @@
 \docType{class}
 \name{keyness-class}
 \alias{[[,keynessCluster-method}
+\alias{as.TermDocumentMatrix,keynessCluster-method}
 \alias{as.matrix,keynessCluster-method}
 \alias{enrich,keynessCluster-method}
 \alias{keyness}
 \alias{keyness,partitionCluster-method}
 \alias{keyness-class}
 \alias{keynessCluster-class}
+\alias{ll,keyness-method}
 \alias{show,keyness-method}
 \alias{summary,keyness-method}
 \alias{summary,keynessCluster-method}
@@ -29,8 +31,12 @@ keyness objects are returned by the function call \code{keyness}
   \item{\code{encoding}:}{Object of class \code{"character"} ~~ }
   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ }
+  \item{\code{sizeCoi}:}{Object of class \code{"numeric"} ~~ }
+  \item{\code{sizeRef}:}{Object of class \code{"numeric"} ~~ }
+  \item{\code{included}:}{Object of class \code{"logical"} whether corpus of interest is included in reference corpus }
+  \item{\code{minFrequency}:}{Object of class \code{"logical"} minimum frequency }
   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
-  \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
+  \item{\code{digits}:}{Object of class \code{"data.frame"} number of digits }
   }
 }
 

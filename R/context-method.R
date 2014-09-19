@@ -37,7 +37,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param verbose report progress, defaults to TRUE
 #' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
 #' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method context,partitionCluster-method
+#' @aliases context context,partition-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method context,partitionCluster-method ll ll-method
 #' @examples
 #' \dontrun{
 #' p <- partition(list(text_type="speech"), "PLPRBTTXT")
@@ -63,7 +63,7 @@ setMethod(
     filterType="exclude",
     stoplist=NULL,
     positivelist=NULL,
-    statisticalTest="LL",
+    statisticalTest="ll",
     mc=NULL,
     verbose=TRUE
   ) {
@@ -120,31 +120,28 @@ setMethod(
     ctxt@frequency <- length(bigBag)
     # if statisticalTest is 'NULL' the following can be ommitted
     if (!is.null(statisticalTest)){
-      ctxt@statisticalTest <- statisticalTest
       wc <- table(unlist(lapply(bigBag, function(x) x$id)))
-      if (statisticalTest == "LL"){
-        if (verbose==TRUE) message("... performing log likelihood test")
-        calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, object, pAttribute)
-        ctxt@statisticalSummary <- .statisticalSummary(ctxt)
-      } else if (statisticalTest=="pmi"){
-        if (verbose==TRUE) message("... calculating pointwise mutual information")
-        calc <- .pmi(
-          windowIds=as.integer(names(wc)),
-          windowFreq=unname(wc),
-          countTarget=ctxt@frequency,
-          partitionObject=partition,
-          pAttribute=pAttribute
+      ctxt@stat <- data.frame(
+        id=as.integer(names(wc)),
+        countCoi=as.integer(unname(wc))
         )
-      } else {
-        warning("test suggested not supported")
-      }
-      ctxt@stat <- as.data.frame(cbind(
-        rank=1:nrow(calc),
-        calc
-      ))
-      ctxt <- trim(ctxt, minSignificance=minSignificance)
-      rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"collocateId"])
+      ctxt@stat$countCorpus <- object@tf[[pAttribute]][match(ctxt@stat[,"id"], object@tf[[pAttribute]][,1]),2]
+      rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"id"])
       Encoding(rownames(ctxt@stat)) <- object@encoding
+      if ("ll" %in% statisticalTest){
+        if (verbose==TRUE) message("... performing log likelihood test")
+        # calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, object, pAttribute)
+        ctxt <- ll(ctxt, object)
+      }
+      if ("pmi" %in% statisticalTest){
+        if (verbose==TRUE) message("... calculating pointwise mutual information")
+        ctxt <- pmi(ctxt)
+      }
+      ctxt@stat <- data.frame(
+        rank=1:nrow(ctxt@stat),
+        ctxt@stat
+      )
+      ctxt <- trim(ctxt, minSignificance=minSignificance, rankBy=ctxt@statisticalTest[1])
     }
     ctxt
   })

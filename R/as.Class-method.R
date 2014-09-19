@@ -8,6 +8,22 @@ setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")
 setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
 setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.TermContextMatrix")})
 
+#' @param mat a TermDocumentMatrix
+#' @param verbose logicla, whether to be talkative
+#' @return a TermDocumentMatrix
+#' @importFrom slam as.simple_triplet_matrix
+#' 
+#' @noRd
+.rmBlank <- function(mat, verbose=TRUE){
+  if (verbose==TRUE) message("... removing empty rows")
+  matTmp <- as.sparseMatrix(mat)
+  matTmp <- matTmp[which(rowSums(matTmp) > 0),]
+  mat <- as.simple_triplet_matrix(matTmp)
+  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  mat
+}
+
+
 #' @docType methods
 setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
   retval <-  sparseMatrix(i=x$i,
@@ -27,8 +43,9 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' 
 #' @param x a partitionCluster object (S4 class)
 #' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param weight whether to introduce a weight ("tfidf" is implemented)
+#' @param weight whether to introduce a weight ("tfidf" and "rel" are implemented)
 #' @param rmBlank whether to remove blank lines
+#' @param verbose logical, whether to be talkative
 #' @param ... to make the check happy
 #' @method as.TermDocumentMatrix partitionCluster
 #' @return a TermDocumentMatrix
@@ -38,7 +55,7 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @exportMethod as.TermDocumentMatrix
 #' @docType methods
 #' @noRd
-setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
+setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@partitions, function(c) c@encoding)))
   corpus <- unique(unlist(lapply(x@partitions, function(c) c@corpus)))
   message("... putting together the matrix")
@@ -65,17 +82,14 @@ setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, 
   )
   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")  
   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  if (rmBlank == TRUE) {
-    message("... removing empty rows")
-    matTmp <- as.sparseMatrix(mat)
-    matTmp <- matTmp[which(rowSums(matTmp) > 0),]
-    mat <- as.simple_triplet_matrix(matTmp)
-    class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  }
+  if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
   if (!is.null(weight)){
     if (weight == "tfidf"){
       message("... applying tf/idf as a weight")
       mat <- weigh(mat, method="tfidf", corpusSizes=summary(x)$token)
+    } else if (weight == "rel"){
+      message("... computing relative frequencies")
+      mat <- weigh(mat, method="rel", corpusSizes=summary(x)$token)
     }
   }
   mat

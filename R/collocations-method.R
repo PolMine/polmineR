@@ -8,9 +8,10 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @param object a partition object
 #' @param pAttribute p-attribute, typically "word" or "token"
 #' @param window no of tokens to the left and to the right
+#' @param method the statistical test to use 
 #' @param filter defaults to TRUE
 #' @param posFilter what POS to keep
-#' @param multicore whether to use multicore
+#' @param mc whether to use multicore
 #' @return a data frame
 #' @exportMethod collocations
 #' @docType methods
@@ -18,8 +19,17 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @export collocations
 #' @name collocations
 #' @rdname collocations-method
-#' @aliases collocations collocations-method collocations,partition-method
-setMethod("collocations", "partition", function(object, pAttribute="word", window=5, filter=TRUE, posFilter=c("ADJA", "NN"), multicore=FALSE){
+#' @aliases collocations collocations-method collocations,partition-method collocations,partitionCluster-method
+setMethod("collocations", "partition", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+  if (!pAttribute %in% names(object@tf)){
+    object <- enrich(object, tf=pAttribute)
+  }
+  coll <- new(
+    "collocations",
+    pAttribute=pAttribute, posFilter=posFilter,
+    leftContext=window, rightContext=window,
+    corpus=object@corpus, encoding=object@encoding
+    )
   tokenAttr <- paste(object@corpus,".",pAttribute, sep="")
   posAttr <- paste(object@corpus,".pos", sep="")
   getIdsWindow <- function(x, window, cposMax, ids, pos){
@@ -47,7 +57,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
     bag
   }
   message('... creating window lists')
-  if (multicore==FALSE){
+  if (mc==FALSE){
     bag <- lapply(c(1:nrow(object@cpos)), function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)})
   } else {
     bag <- mclapply(c(1:nrow(object@cpos)), function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)})
@@ -65,26 +75,45 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   message('... pre-sorting for frequency count')
   frameSplit <- split(idFrameSelect[,1], idFrameSelect[,3])
   message('... now for the actual frequency count')
-  if (multicore==FALSE){
+  if (mc==FALSE){
     raw <- lapply(frameSplit, table)
   } else {
     raw <- mclapply(frameSplit, table)
   }
-  message('... re-arrange data')
-  nodeId <- unlist(lapply(names(raw), function(x) rep(as.numeric(x), times=length(raw[[x]]))))
-  collocateId <- unlist(lapply(raw, function(x) as.numeric(names(x))))
-  collocateWindowFreq <- unlist(lapply(raw, function(x) unname(x)))
-  windowSize <- unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
-  message('... g2-Test')
-  calc <- cbind(nodeId, .g2Statistic(collocateId, collocateWindowFreq, windowSize, object, pAttribute))
-  tab <- data.frame(node=cqi_id2str(tokenAttr, calc[,1]),
-                    collocate=cqi_id2str(tokenAttr, calc[,2]),
-                    calc)
-  tab[,1] <- as.character(tab[,1])
-  tab[,2] <- as.character(tab[,2])
-  Encoding(tab[,1]) <- object@encoding
-  Encoding(tab[,2]) <- object@encoding
-  tab <- tab[order(tab[,9], decreasing=T),]
-  tab
+  message('... preparing stat table')
+  coll@stat <- data.frame(
+    nodeId=unlist(lapply(names(raw), function(x) rep(as.numeric(x), times=length(raw[[x]])))),
+    collocateId=unlist(lapply(raw, function(x) as.numeric(names(x)))),
+    collocateWindowFreq=unlist(lapply(raw, function(x) unname(x))),
+    windowSize=unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
+  )
+  coll@stat$collocateCorpusFreq <- object@tf[[pAttribute]][match(coll@stat[,"collocateId"], object@tf[[pAttribute]][,1]),2]
+  coll@stat <- data.frame(node=as.vector(cqi_id2str(tokenAttr, coll@stat[,"nodeId"])),
+                    collocate=as.vector(cqi_id2str(tokenAttr, coll@stat[,"collocateId"])),
+                    coll@stat, stringsAsFactors=FALSE)
+  Encoding(coll@stat[,"node"]) <- object@encoding
+  Encoding(coll@stat[,"collocate"]) <- object@encoding
+  if ("ll" %in% method) {
+    message('... g2-Test')
+    coll <- ll(coll, partitionSize=object@size)
+    coll@stat <- coll@stat[order(coll@stat[,"ll"], decreasing=TRUE),]
+    coll@stat <- data.frame(rank=c(1:nrow(coll@stat)), coll@stat, stringsAsFactors=FALSE)
+  }
+  rownames(coll@stat) <- paste(coll@stat[,"node"], "->", coll@stat[,"collocate"], sep="")
+  coll
 })
 
+setMethod("collocations", "partitionCluster", function(object, pAttribute="word", window=5, filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+  cluster <- new(
+    "collocationsCluster",
+    encoding=unique(vapply(object@partitions, function(x) x@encoding, FUN.VALUE="character")),
+    corpus=unique(vapply(object@partitions, function(x) x@corpus, FUN.VALUE="character"))
+    )
+  cluster@collocations <- lapply(
+    setNames(object@partitions, names(object@partitions)),
+    function(x) {
+      message('Calculating collocations for partition ', x@label)
+      collocations(x, pAttribute=pAttribute, window=window, filter=filter, posFilter)
+    })
+  cluster
+})

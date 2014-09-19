@@ -1,3 +1,6 @@
+#' @include textstat-class.R
+NULL
+
 #' S4 context class
 #' 
 #' class to organize information of context analysis
@@ -18,7 +21,6 @@
 #'     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
 #'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions of the hits }
 #'     \item{\code{statisticalTest}:}{Object of class \code{"character"} statistical test used }
-#'     \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
 #'   }
 #' @section Methods:
 #'   \describe{
@@ -30,7 +32,7 @@
 #'     \item{as.data.frame}{get the statistics table}
 #'    }
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
-#'   [[,context-method summary,context-method head,context-method
+#'   [[,context-method summary,context-method head,context-method ll,context-method
 #' @docType class
 #' @exportClass context
 setClass("context",
@@ -47,7 +49,7 @@ setClass("context",
                         encoding="character",
                         posFilter="character",
                         cpos="list",
-                        statisticalTest="character",
-                        statisticalSummary="data.frame"
-         )
+                        statisticalTest="character"
+         ),
+         contains=c("textstat")
 )

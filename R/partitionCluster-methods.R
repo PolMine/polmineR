@@ -10,7 +10,6 @@ NULL
 #' @docType methods
 #' @noRd
 setMethod("show", "partitionCluster", function (object) {
-  stat <- summary(object)
   cat('** PartitionCluster object: **\n')
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@partitions), '\n')
   # same code as in show-method for partition
@@ -21,7 +20,6 @@ setMethod("show", "partitionCluster", function (object) {
   cat(sprintf("%-25s", "sAttributes Fixed:"), sFix[1], '\n')
   if (length(sFix)>1) {for (i in length(sFix)){cat(sprintf("%-25s", " "), sFix[i], '\n')}}
   cat("\n")
-  print(stat, quote=FALSE)
 })
 
 #' Summary method for partitionCluster Objects 
@@ -163,14 +161,13 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
   e1
 })
 
-#' @docType methods
-setMethod("plot", signature(x="partitionCluster", y="character"),
-          function(x, y){
-            val <- as.matrix(x, y)
-            val <- val[rowSums(val)!=0,]
-            data <- data.frame(rank(val[,1]), rank(val[,2]))
-            plot(data[,1], data[,2])
-          })
+# setMethod("plot", signature(x="partitionCluster"),
+#           function(x, y){
+#             val <- as.matrix(x, y)
+#             val <- val[rowSums(val)!=0,]
+#             data <- data.frame(rank(val[,1]), rank(val[,2]))
+#             plot(data[,1], data[,2])
+#           })
 
 #' barplot of a partitionCluster
 #' 

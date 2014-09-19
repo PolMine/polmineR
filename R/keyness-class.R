@@ -1,3 +1,7 @@
+#' @include textstat-class.R
+NULL
+
+
 #' S4 class for comparing corpora
 #' 
 #' to keep results from a keyness analysis
@@ -11,9 +15,14 @@
 #'   \item{\code{pattribute}:}{Object of class \code{"character"} ~~ }
 #'   \item{\code{encoding}:}{Object of class \code{"character"} ~~ } 
 #'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ } 
-#'   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ } 
+#'   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ }
+#'   \item{\code{sizeCoi}:}{Object of class \code{"numeric"} ~~ }
+#'   \item{\code{sizeRef}:}{Object of class \code{"numeric"} ~~ }
+#'   \item{\code{included}:}{Object of class \code{"logical"} whether corpus of interest is included in reference corpus }
+#'   \item{\code{minFrequency}:}{Object of class \code{"logical"} minimum frequency }
 #'   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
-#'   \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
+#'   \item{\code{digits}:}{Object of class \code{"data.frame"} number of digits }
+
 #'   }
 #'  @section Methods:
 #'   \describe{
@@ -27,6 +36,7 @@
 #'   show,keyness-method as.matrix,keynessCluster-method
 #'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
 #'   trim,keynessCluster-method summary,keynessCluster-method
+#'   as.TermDocumentMatrix,keynessCluster-method ll,keyness-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette
@@ -35,7 +45,12 @@ setClass("keyness",
                         pattribute="character",
                         encoding="character",
                         stat="data.frame",
+                        sizeCoi="numeric",
+                        sizeRef="numeric",
                         statisticalTest="character",
-                        statisticalSummary="data.frame"
-         )
+                        included="logical",
+                        minFrequency="numeric",
+                        digits="list"
+         ),
+         contains=c("textstat")
 )

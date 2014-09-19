@@ -6,6 +6,7 @@
 \alias{[[,context-method}
 \alias{context-class}
 \alias{head,context-method}
+\alias{ll,context-method}
 \alias{show,context-method}
 \alias{summary,context-method}
 \title{S4 context class}
@@ -29,7 +30,6 @@ class to organize information of context analysis
     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions of the hits }
     \item{\code{statisticalTest}:}{Object of class \code{"character"} statistical test used }
-    \item{\code{statisticalSummary}:}{Object of class \code{"data.frame"} statistical summary }
   }
 }
 

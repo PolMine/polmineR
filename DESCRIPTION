@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.33
-Date: 2014-09-06
+Version: 0.4.35
+Date: 2014-09-19
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -33,13 +33,19 @@ Collate:
     'driller-package.R'
     'partition-class.R'
     'partitionCluster-class.R'
+    'textstat-class.R'
     'keyness-class.R'
     'addPos-method.R'
     'context-class.R'
     'contextCluster-class.R'
     'as.Class-method.R'
     'bubblegraph-method.R'
+    'chisquare-method.R'
+    'collocations-class.R'
     'collocations-method.R'
+    'collocations-methods.R'
+    'collocationsCluster-class.R'
+    'collocationsCluster-methods.R'
     'context-method.R'
     'context-methods.R'
     'contextCluster-methods.R'
@@ -59,16 +65,19 @@ Collate:
     'kwic-method.R'
     'kwic-methods.R'
     'linechart-method.R'
+    'll-method.R'
     'mail-method.R'
     'meta-method.R'
     'partition-methods.R'
     'partitionCluster-methods.R'
+    'plot-method.R'
+    'pmi-method.R'
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'
     'shiny.R'
-    'statistics.R'
     'terms-method.R'
+    'textstat-methods.R'
     'tf-method.R'
     'trim-method.R'
     'utils.R'
