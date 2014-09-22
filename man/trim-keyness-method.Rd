@@ -4,7 +4,7 @@
 \alias{trim,keyness-method}
 \title{trim keyness object}
 \usage{
-\S4method{trim}{keyness}(object, minSignificance = 0, minFrequency = 0,
+\S4method{trim}{keyness}(object, minSignificance = NULL, minFrequency = 0,
   maxRank = 0, rankBy = NULL, tokenFilter = NULL, posFilter = NULL,
   filterType = include, digits = NULL, verbose = TRUE)
 }

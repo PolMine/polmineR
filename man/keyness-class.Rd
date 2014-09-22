@@ -27,7 +27,7 @@ keyness objects are returned by the function call \code{keyness}
 
 \describe{
   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
-  \item{\code{pattribute}:}{Object of class \code{"character"} ~~ }
+  \item{\code{pAttribute}:}{Object of class \code{"character"} ~~ }
   \item{\code{encoding}:}{Object of class \code{"character"} ~~ }
   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ }
@@ -37,6 +37,8 @@ keyness objects are returned by the function call \code{keyness}
   \item{\code{minFrequency}:}{Object of class \code{"logical"} minimum frequency }
   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
   \item{\code{digits}:}{Object of class \code{"data.frame"} number of digits }
+  \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
+  \item{\code{call}:}{Object of class \code{"character"} the call that generated the object }
   }
 }
 

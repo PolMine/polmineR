@@ -11,7 +11,6 @@ setGeneric("pmi", function(object){standardGeneric("pmi")})
 #' @param windowFreq count for occurrence of collocates
 #' @param countTarget counts of targe in partition (total) 
 #' @param partitionObject here we get the counts for cooccurring tokens
-#' @param pattribute needed for matching
 #' @noRd
 .pmi <- function(windowIds, windowFreq, partitionFreq, countTarget, partitionSize){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=4)

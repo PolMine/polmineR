@@ -3,6 +3,8 @@
 \name{collocations-class}
 \alias{[,collocations,ANY,ANY,ANY-method}
 \alias{[,collocations-method}
+\alias{as.igraph,collocations-method}
+\alias{as.sparseMatrix,collocations-method}
 \alias{collocations-class}
 \alias{ll,collocations-method}
 \alias{show,collocations-method}
@@ -14,6 +16,7 @@ class to organize information of context analysis
 \section{Slots}{
 
   \describe{
+    \item{\code{call}:}{Object of class \code{"character"} the call that generated the object }
     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
     \item{\code{leftContext}:}{Object of class \code{"numeric"} number of tokens to the right }
@@ -24,6 +27,7 @@ class to organize information of context analysis
     \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
     \item{\code{method}:}{Object of class \code{"character"} statistical test(s) used }
+    \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
   }
 }
 

@@ -16,7 +16,7 @@
 
 \item{degrees}{the degrees of the resulting egoNetwork}
 
-\item{pAttribute}{pattribute of the query}
+\item{pAttribute}{p-attribute of the query}
 
 \item{leftContext}{no of tokens and to the left of the node word}
 

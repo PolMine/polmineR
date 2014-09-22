@@ -2,7 +2,6 @@ planned changes:
 ----------------
  * names-method for partitionCluster, keynessCluster objects
  * show-method for keynessCluster
- * chisquare-method
  * remove empty rows in keynessCluster-object
  * multicore for keyness,partitionCluster-method
  * show method for keynessCluster
@@ -16,11 +15,20 @@ planned changes:
  * egoNetwork as a method on data.frame resulting from collocations
  * write documentation for as.matrix-method
  * check: why are there no negative chiSquare-values with tail(keyness-object)
+ * rename statisticalTest to method
+ * include partition as slot in classes
+
+v0.36
+ * context,collocations-method
+ * call-slot in most objects
 
 v0.35
  * textstat-class introduced to serve as superclass for keyness- and context- classes
  * chisquare-, ll-, pmi-methods for statistics
- * collocations-method developed
+ * collocations-method introduced
+ * multicore for partition-constructor (parallel preparation of tf-lists)
+ * parallelisation of as.sparseMatrix,collocations-method
+ * introduction of keyness,collocations-method
 
 v0.4.34
  * plot-method for partitionCluster

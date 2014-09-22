@@ -2,7 +2,6 @@
 #' @include crosstab-class.R keyness-class.R keynessCluster-class.R
 NULL
 
-
 #' trim an object
 #' 
 #' Method that includes varying to adjust objects from the driller package by 
@@ -25,6 +24,27 @@ NULL
 #' @rdname trim-method
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
+
+#' trim textstat object
+#' 
+#' @param cutoff a list with colnames and cutoff levels
+#' @return a trimmed object
+#' @docType methods
+#' @noRd
+setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
+  if (!is.null(cutoff)){
+    # ensure that colnames provided are actually available
+    if (!all(names(cutoff) %in% colnames(object@stat))){
+      warning("PLEASE CHECK: one or more of the colnames provided in the cutoff-list are not available")
+    }
+    nrowBeforeCut <- nrow(object@stat)
+    for (cut in names(cutoff)){
+      object@stat <- object@stat[which(object@stat[,cut] >= cutoff[[cut]]),] 
+    }
+    message("... cutoff levels have been applied - ", (nrowBeforeCut - nrow(object@stat)), " rows have been dropped")
+  }
+  return(object)
+})
 
 #' trim context object
 #' 
@@ -89,7 +109,7 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @aliases trim,keyness-method
 #' @exportMethod trim
 #' @docType methods
-setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType=include, digits=NULL, verbose=TRUE){
+setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType=include, digits=NULL, verbose=TRUE){
   if (maxRank==0) maxRank <- nrow(object@stat)
   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
   if (is.null(rankBy)) {
@@ -99,7 +119,7 @@ setMethod("trim", "keyness", function(object, minSignificance=0, minFrequency=0,
   }
   if (verbose == TRUE) message("... ordering results by ", test)
   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
+  if (!is.null(minSignificance)) object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
   object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
   if (!is.null(tokenFilter)){
     object@stat <- object@stat[.filter[[filterType]](rownames(object@stat), tokenFilter),]

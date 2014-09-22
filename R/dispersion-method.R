@@ -49,7 +49,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @param partition a partition object
 #' @param rows character string, supplying the s-attribute for the rows of the contingency table that is to be produced
 #' @param cols character stringwhat shall be displayed in the cols
-#' @param pAttribute the pattribute to look up
+#' @param pAttribute the p-attribute to look up
 #' @param query a character vector
 #' @param verbose whether updates shall be printed
 #' @return returns a list

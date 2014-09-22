@@ -29,6 +29,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
+#' @aliases keyness,collocations-method
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod keyness
@@ -46,8 +47,9 @@ setMethod("keyness", signature=c(x="partition"), function(
   keyness <- new(
     'keyness',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
-    corpus=x@corpus, pattribute=pAttribute,
-    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size)
+    corpus=x@corpus, pAttribute=pAttribute,
+    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size),
+    call=deparse(match.call())
     )
   keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
   # check whether tf-lists are available for the pAttribute given
@@ -89,7 +91,7 @@ setMethod("keyness", signature=c(x="partition"), function(
 #' @noRd
 setMethod("keyness", signature=c(x="partitionCluster"), function(
   x, y, pAttribute=drillingControls$pAttribute,
-  minFrequency=0, included=FALSE, verbose=TRUE
+  minFrequency=1, included=FALSE, verbose=TRUE
 ) {
   kclust <- new("keynessCluster")
   kclust@objects <- sapply(
@@ -107,5 +109,94 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
     )
   kclust
 })
+
+# used by keyness,collocations-method
+# listed here because it may be used by other methods
+.minMaxId <- function(row){
+  if (row["nodeId"] == row["collocateId"]){
+    retval <- c(row, idMin=row["nodeId"], idMax=row["collocateId"])
+  } else {
+    idMin <- min(row["nodeId"], row["collocateId"])
+    idMax <- max(row["nodeId"], row["collocateId"])
+    retval <- c(row, idMin=idMin, idMax=idMax)
+  }
+  return(retval)
+}
+
+
+#' @importFrom parallel detectCores makeCluster
+#' @importFrom doParallel registerDoParallel
+setMethod("keyness", "collocations", function(
+  x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
+  ){
+  newObject <- new(
+    'keyness',
+    encoding=x@encoding, included=included, minFrequency=minFrequency,
+    corpus=x@corpus, sizeCoi=x@partitionSize,
+    sizeRef=ifelse(included==FALSE, y@partitionSize, y@partitionSize-x@partitionSize)
+  )
+  newObject@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
+  if (x@pAttribute != y@pAttribute) {
+    warning("BEWARE: collocations objects are not based on the same pAttribute!")
+  } else {
+    newObject@pAttribute <- unique(c(x@pAttribute, y@pAttribute))
+  }
+  tabs <- list(x=x@stat, y=y@stat)
+  if (verbose == TRUE) message("... preparing tabs for matching")
+  pimpTabs <- function(xOrY){
+    tab <- data.frame(what=ifelse(xOrY == "x", 1, 2), tabs[[xOrY]])
+    tabMatrix <- as.matrix(tab[,-which(colnames(tab) %in% c("collocate", "node"))])
+    tabMatrixPlus <- t(apply(tabMatrix, 1, .minMaxId))
+    colnames(tabMatrixPlus) <- c(colnames(tabMatrix), c("idMin", "idMax"))
+    tabMatrixPlus
+  }
+  if (mc==FALSE) {
+    tabsPlus <- lapply(names(tabs), pimpTabs)
+  } else if (mc == TRUE) {
+    tabsPlus <- mclapply(names(tabs), pimpTabs)
+  }
+  tab <- do.call(rbind, tabsPlus)
+  rownames(tab) <- NULL
+  characterKey <- paste(
+      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMin"]),
+      "<->",
+      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMax"])
+    )
+  Encoding(characterKey) <- newObject@encoding
+  tab <- data.frame(tab, characterKey=characterKey, stringsAsFactors=FALSE)
+  keysInX <- unique(subset(tab, what==1)[,"characterKey"])
+  reducedTab <- subset(tab, characterKey %in% keysInX)
+  if (verbose == TRUE) message("... matching")
+  matched <- ddply(
+    .data=reducedTab,
+    .variables=.(characterKey),
+    .fun=function(tab){
+      xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
+      yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
+      keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
+      foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
+      foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
+      data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], x=xValues[1], y=yValues[1])
+    },
+    .progress="text"
+    )
+  newObject@stat <- matched
+  ### starting here - the same as keyness,partition-method
+  if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
+  if ("chiSquare" %in% method) {
+    if (verbose==TRUE) message("... computing chisquare tests")
+    newObject <- chisquare(newObject)
+  }
+  if ("ll" %in% method) {
+    if (verbose==TRUE) message("... computing log likelihood tests")
+    newObject <- ll(newObject)
+  }
+  if (verbose == TRUE) message("... trimming the object")
+  newObject@stat <- cbind(rank=c(1:nrow(newObject@stat)), newObject@stat)
+  newObject <- trim(newObject, minFrequency=minFrequency, rankBy=method[1])
+  newObject
+})
+
+
 
 

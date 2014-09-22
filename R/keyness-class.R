@@ -12,7 +12,7 @@ NULL
 #' @section Slots:
 #' \describe{
 #'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
-#'   \item{\code{pattribute}:}{Object of class \code{"character"} ~~ }
+#'   \item{\code{pAttribute}:}{Object of class \code{"character"} ~~ }
 #'   \item{\code{encoding}:}{Object of class \code{"character"} ~~ } 
 #'   \item{\code{corpus}:}{Object of class \code{"character"} ~~ } 
 #'   \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ }
@@ -22,7 +22,8 @@ NULL
 #'   \item{\code{minFrequency}:}{Object of class \code{"logical"} minimum frequency }
 #'   \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
 #'   \item{\code{digits}:}{Object of class \code{"data.frame"} number of digits }
-
+#'   \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
+#'   \item{\code{call}:}{Object of class \code{"character"} the call that generated the object }
 #'   }
 #'  @section Methods:
 #'   \describe{
@@ -42,7 +43,7 @@ NULL
 #' @author Andreas Blaette
 setClass("keyness",
          representation(corpus="character",
-                        pattribute="character",
+                        pAttribute="character",
                         encoding="character",
                         stat="data.frame",
                         sizeCoi="numeric",
@@ -50,7 +51,9 @@ setClass("keyness",
                         statisticalTest="character",
                         included="logical",
                         minFrequency="numeric",
-                        digits="list"
+                        digits="list",
+                        cutoff="list",
+                        call="character"
          ),
          contains=c("textstat")
 )

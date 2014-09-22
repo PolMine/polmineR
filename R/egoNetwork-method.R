@@ -12,7 +12,7 @@ setGeneric("egoNetwork", function(object, ...){standardGeneric("egoNetwork")})
 #' @param node query, which may by a multi-word unit
 #' @param object a partition object
 #' @param degrees the degrees of the resulting egoNetwork
-#' @param pAttribute pattribute of the query
+#' @param pAttribute p-attribute of the query
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
 #' @param minSignificance minimum log-likelihood value

@@ -26,9 +26,12 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   }
   coll <- new(
     "collocations",
+    call=deparse(match.call()),
+    partition=strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2],
     pAttribute=pAttribute, posFilter=posFilter,
     leftContext=window, rightContext=window,
-    corpus=object@corpus, encoding=object@encoding
+    corpus=object@corpus, encoding=object@encoding,
+    partitionSize=object@size
     )
   tokenAttr <- paste(object@corpus,".",pAttribute, sep="")
   posAttr <- paste(object@corpus,".pos", sep="")

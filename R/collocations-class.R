@@ -7,6 +7,7 @@ NULL
 #' 
 #' @section Slots:
 #'   \describe{
+#'     \item{\code{call}:}{Object of class \code{"character"} the call that generated the object }
 #'     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
 #'     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
 #'     \item{\code{leftContext}:}{Object of class \code{"numeric"} number of tokens to the right }
@@ -17,21 +18,28 @@ NULL
 #'     \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
 #'     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
 #'     \item{\code{method}:}{Object of class \code{"character"} statistical test(s) used }
+#'     \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
 #'   }
-#' @aliases collocations-class ll,collocations-method [,collocations-method [,collocations,ANY,ANY,ANY-method show,collocations-method summary,collocations-method
+#' @aliases collocations-class ll,collocations-method [,collocations-method
+#'   [,collocations,ANY,ANY,ANY-method show,collocations-method
+#'   summary,collocations-method as.sparseMatrix,collocations-method
+#'   as.igraph,collocations-method 
 #' @docType class
 #' @exportClass collocations
 setClass("collocations",
-         representation(partition="character",
-                        partitionSize="numeric",
-                        leftContext="numeric",
-                        rightContext="numeric",
-                        pAttribute="character",
-                        corpus="character",
-                        stat="data.frame",
-                        encoding="character",
-                        posFilter="character",
-                        method="character"
+         representation(
+           call="character",
+           partition="character",
+           partitionSize="numeric",
+           leftContext="numeric",
+           rightContext="numeric",
+           pAttribute="character",
+           corpus="character",
+           stat="data.frame",
+           encoding="character",
+           posFilter="character",
+           method="character",
+           cutoff="list"
          ),
          contains=c("textstat")
 )

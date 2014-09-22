@@ -4,7 +4,8 @@
 \title{Initialize a partition}
 \usage{
 partition(corpus, def, label = c(""), encoding = NULL, tf = c("word",
-  "lemma"), meta = NULL, method = "grep", xml = "flat", verbose = TRUE)
+  "lemma"), meta = NULL, method = "grep", xml = "flat", mc = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{corpus}{the CWB-corpus to be used}
@@ -23,6 +24,8 @@ details)}
 \item{method}{either 'grep' or 'in' to specify the filtering method to get relevant strucs}
 
 \item{xml}{either 'flat' (default) or 'nested'}
+
+\item{mc}{whether to use multicore (for tf lists)}
 
 \item{verbose}{logical, defaults to TRUE}
 }
@@ -53,7 +56,7 @@ with the conditions narrowing down the corpus the most.
 }
 \examples{
 \dontrun{
-spd <- partition(list(text_party="SPD", text_type="speech"), "PLPRBTTXT"))
+spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
 }
 }
 \author{

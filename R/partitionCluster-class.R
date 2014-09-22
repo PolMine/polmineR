@@ -5,15 +5,15 @@ NULL
 #' 
 #' A cluster of partition objects.
 #' 
-#' @section Slots: \describe{ \item{\code{partitions}:}{Object of class 
-#'   \code{"list"} the partitions making up the cluster } 
-#'   \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the
-#'   partition is based on } \item{\code{sAttributesFixed}:}{Object of class 
-#'   \code{"list"} fixed sAttributes } \item{\code{encoding}:}{Object of class 
-#'   \code{"character"} encoding of the corpus } 
-#'   \item{\code{explanation}:}{Object of class \code{"character"} an 
-#'   explanation of the partition } \item{\code{xml}:}{Object of class 
-#'   \code{"character"} whether the xml is flat or nested } }
+#' @section Slots: \describe{
+#'  \item{\code{partitions}:}{Object of class \code{"list"} the partitions making up the cluster } 
+#'  \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the partition is based on }
+#'  \item{\code{sAttributesFixed}:}{Object of class \code{"list"} fixed sAttributes }
+#'  \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus } 
+#'  \item{\code{explanation}:}{Object of class \code{"character"} an explanation of the partition }
+#'  \item{\code{xml}:}{Object of class \code{"character"} whether the xml is flat or nested }
+#'  \item{\code{call}:}{Object of class \code{"character"} the call that generated the partitionCluster }
+#'   }
 #'   
 #' @section Methods: \describe{ \item{show}{\code{signature(object = 
 #'   "partitionCluster")}: Display essential information } 
@@ -52,7 +52,8 @@ setClass("partitionCluster",
                         sAttributesFixed="list",
                         encoding="character",
                         explanation="character",
-                        xml="character"
+                        xml="character",
+                        call="character"
          )
 )
 
@@ -103,9 +104,12 @@ partitionCluster <- function(
     ' (use multicore: FALSE)'
   )
   if (verbose==TRUE) message('\nPreparing cluster of partitions', multicoreMessage)
-  cluster <- new("partitionCluster")
-  cluster@corpus <- corpus
-  cluster@sAttributesFixed <- def
+  cluster <- new(
+    "partitionCluster",
+    corpus=corpus,
+    sAttributesFixed=def,
+    call=deparse(match.call())
+  )
   if (verbose==TRUE) message('... setting up base partition')
   partitionBase <- partition(corpus, def, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding

@@ -6,7 +6,7 @@ setMethod("as.TermDocumentMatrix", signature(x="keynessCluster"), function(x, co
   object <- x
   encoding <- unique(unlist(lapply(object@objects, function(o) o@encoding)))
   corpus <- unique(unlist(lapply(object@objects, function(o) o@corpus)))
-  pAttribute <- unique(unlist(lapply(object@objects, function(o) o@pattribute)))
+  pAttribute <- unique(unlist(lapply(object@objects, function(o) o@pAttribute)))
   pAttr <- paste(corpus, '.', pAttribute, sep='')
   i <- unlist(lapply(object@objects, function(o) (cqi_str2id(pAttr, rownames(o@stat))+1)))
   j <- unlist(lapply(c(1:length(object@objects)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))

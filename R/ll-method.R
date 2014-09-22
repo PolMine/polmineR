@@ -74,7 +74,7 @@ setMethod("ll", "collocations", function(object, partitionSize){
     expCorpus=mat[,"expCorpus"],
     ll=mat[, "ll"]
   )
-  object@statisticalTest <- c(object@statisticalTest, "ll")
+  object@method <- c(object@method, "ll")
   return(object)
 })
 

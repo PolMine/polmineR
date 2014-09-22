@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.35
-Date: 2014-09-19
+Version: 0.4.36
+Date: 2014-09-22
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -11,10 +11,11 @@ Depends:
     Matrix
 Imports:
     chron,
-    shiny,
+    igraph,
     methods,
     slam,
     parallel,
+    doParallel,
     xtermStyle,
     RColorBrewer,
     markdown,
@@ -30,7 +31,7 @@ Description: Tools for drilling and mining CWB corpora. The package offers
     procedures.
 License: CC BY-NC-SA 3.0 | file LICENSE
 Collate:
-    'driller-package.R'
+    'polmineR-package.R'
     'partition-class.R'
     'partitionCluster-class.R'
     'textstat-class.R'
@@ -38,10 +39,11 @@ Collate:
     'addPos-method.R'
     'context-class.R'
     'contextCluster-class.R'
+    'collocations-class.R'
     'as.Class-method.R'
+    'as.igraph-method.R'
     'bubblegraph-method.R'
     'chisquare-method.R'
-    'collocations-class.R'
     'collocations-method.R'
     'collocations-methods.R'
     'collocationsCluster-class.R'
@@ -75,7 +77,6 @@ Collate:
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'
-    'shiny.R'
     'terms-method.R'
     'textstat-methods.R'
     'tf-method.R'

@@ -22,7 +22,7 @@ setMethod('show', 'context',
             cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
             cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
             cat(sprintf("%-20s", "Node:"), object@query, "\n")
-            cat(sprintf("%-20s", "P-Attribute:"), object@pattribute, "\n")
+            cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
             cat(sprintf("%-20s", "Node count:"), object@frequency, "\n")
             cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
 })

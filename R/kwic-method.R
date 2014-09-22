@@ -34,16 +34,16 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
     strucs <- cqi_cpos2struc(sattr, unlist(lapply(ctxt@cpos, function(x)x$node[1])))
     m <- cbind(m, cqi_struc2str(sattr, strucs))
   }
-  left <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$left), collapse=" ")}))
-  node <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$node), collapse=" ")}))
-  right <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pattribute, sep=""), x$right), collapse=" ")}))
+  left <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$left), collapse=" ")}))
+  node <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$node), collapse=" ")}))
+  right <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$right), collapse=" ")}))
   Encoding(left) <- ctxt@encoding
   Encoding(node) <- ctxt@encoding
   Encoding(right) <- ctxt@encoding  
   m <- cbind(m, left=left, node=node, right=right)
   if (length(collocate) > 0) m <- m[grep(collocate, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   m <- m[2:ncol(m)]
-  colnames(m) <- c(metadata, c('left.context', 'node', 'right.context'))
+  colnames(m) <- c(metadata, c('leftContext', 'node', 'rightContext'))
   conc <- new('kwic')
   if (!is.null(collocate)) {conc@collocate <- collocate}
   conc@table <- m

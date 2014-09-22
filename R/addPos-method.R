@@ -29,9 +29,9 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' @author Andreas Blaette
 #' @noRd
 .addPos <- function(object) {
-  ids = cqi_str2id(paste(object@corpus, ".", object@pattribute, sep=""), rownames(object@stat))
+  ids = cqi_str2id(paste(object@corpus, ".", object@pAttribute, sep=""), rownames(object@stat))
   posIds <- unlist(mclapply(ids, function (x){
-    idPos <- cqi_cpos2id(paste(object@corpus, ".pos", sep=""), cqi_id2cpos(paste(object@corpus, ".", object@pattribute, sep=""), x))
+    idPos <- cqi_cpos2id(paste(object@corpus, ".pos", sep=""), cqi_id2cpos(paste(object@corpus, ".", object@pAttribute, sep=""), x))
     posIdFrequencies <- tabulate(idPos+1)
     mostFrequent <- which.max(posIdFrequencies) - 1
     return(mostFrequent)
@@ -112,10 +112,10 @@ setMethod("addPos", "keyness",
             if (is.null(Partition)){
               object <- .addPos(object)
             } else if (class(Partition) == "partition"){
-              if (object@pattribute %in% names(Partition@pos)) {
+              if (object@pAttribute %in% names(Partition@pos)) {
                 pos <- vapply(
                   rownames(object@stat[1:50, ]),
-                  function(x) return(Partition@pos[[object@pattribute]][["max"]][x]),
+                  function(x) return(Partition@pos[[object@pAttribute]][["max"]][x]),
                   USE.NAMES=FALSE,
                   FUN.VALUE="character")
                 object@stat <- cbind(object@stat, pos=pos)

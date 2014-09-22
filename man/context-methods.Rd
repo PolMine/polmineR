@@ -4,6 +4,7 @@
 \alias{as.TermContextMatrix,contextCluster-method}
 \alias{as.matrix,contextCluster-method}
 \alias{context}
+\alias{context,collocations-method}
 \alias{context,contextCluster-method}
 \alias{context,partition-method}
 \alias{context,partitionCluster-method}
@@ -30,31 +31,40 @@
 
 \item{minSignificance}{minimum log-likelihood value}
 
-\item{posFilter}{character vector with the POS tags to be included - may not be empty!!}
+\item{posFilter}{character vector with the POS tags to be included - may not
+be empty!!}
 
 \item{filterType}{either "include" or "exclude"}
 
-\item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in context}
+\item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
+context}
 
-\item{positivelist}{character vector or numeric vector: include a query hit only if token in positivelist is present. If positivelist is a character vector, it is assumed to provide regex expressions (incredibly long if the list is long)}
+\item{positivelist}{character vector or numeric vector: include a query hit
+only if token in positivelist is present. If positivelist is a character
+vector, it is assumed to provide regex expressions (incredibly long if the
+list is long)}
 
-\item{statisticalTest}{either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped}
+\item{statisticalTest}{either "LL" (default) or "pmi", if NULL, calculating
+the statistics will be skipped}
 
-\item{mc}{whether to use multicore; if NULL (default), the function will get the setting from the drillingControls}
+\item{mc}{whether to use multicore; if NULL (default), the function will get
+the setting from the drillingControls}
 
 \item{verbose}{report progress, defaults to TRUE}
 }
 \value{
-depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
+depending on whether a partition or a partitionCluster serves as
+  input, the return will be a context object, or a contextCluster object
 }
 \description{
-Retrieve the concordances of a token and calculate the log-likelihood test for collocates
-For formulating the query, CPQ syntax may be used (see examples).
+Retrieve the concordances of a token and calculate the log-likelihood test
+for collocates For formulating the query, CPQ syntax may be used (see
+examples).
 }
 \examples{
 \dontrun{
-p <- partition(list(text_type="speech"), "PLPRBTTXT")
-a <- context('"Integration"', p)
+p <- partition("PLPRBTTXT", list(text_type="speech"))
+a <- context(p, "Integration", "word")
 }
 }
 \author{

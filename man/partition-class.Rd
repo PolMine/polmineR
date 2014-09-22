@@ -30,6 +30,7 @@ partition class definition
  \item{\code{tf}:}{Object of class \code{"list"} term frequencies }
  \item{\code{xml}:}{Object of class \code{"character"} whether the xml is flat or nested }
  \item{\code{sAttributeStrucs}:}{Object of class \code{"character"} the base node }
+ \item{\code{call}:}{Object of class \code{"character"} the call that generated the partition }
 }
 }
 

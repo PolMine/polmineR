@@ -1,4 +1,4 @@
-#' @include driller-package.R
+#' @include polmineR-package.R
 NULL
 
 # this file includes the partition class, the constructor function 'partition'
@@ -23,6 +23,7 @@ NULL
 #'  \item{\code{tf}:}{Object of class \code{"list"} term frequencies }
 #'  \item{\code{xml}:}{Object of class \code{"character"} whether the xml is flat or nested }
 #'  \item{\code{sAttributeStrucs}:}{Object of class \code{"character"} the base node }
+#'  \item{\code{call}:}{Object of class \code{"character"} the call that generated the partition }
 #' }
 #' 
 #' @section Methods:
@@ -57,7 +58,8 @@ setClass("partition",
                         strucs="numeric",
                         tf="list",
                         xml="character",
-                        sAttributeStrucs="character"
+                        sAttributeStrucs="character",
+                        call="character"
          )
 )
 
@@ -93,12 +95,13 @@ setClass("partition",
 #' @param meta a character vector
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
+#' @param mc whether to use multicore (for tf lists)
 #' @param verbose logical, defaults to TRUE
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
 #' \dontrun{
-#' spd <- partition(list(text_party="SPD", text_type="speech"), "PLPRBTTXT"))
+#' spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
 #' }
 #' @import rcqp
 #' @import methods
@@ -113,11 +116,15 @@ partition <- function(
   meta=NULL,
   method="grep",
   xml="flat",
+  mc=FALSE,
   verbose=TRUE
 ) {
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', label)
-  Partition <- new('partition')
+  Partition <- new(
+    'partition',
+    call=deparse(match.call())
+    )
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
   if(is.null(encoding)) {
@@ -141,10 +148,20 @@ partition <- function(
   if (verbose==TRUE) message('... computing partition size')
   Partition@size <- .partition.size(Partition)
   if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
-  if (length(tf>0)) {
-    for (p in tf){
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
-      Partition@tf[[p]] <- .cpos2tf(Partition, p)
+  if (length(tf > 0)) {
+    if (length(tf) == 1){
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf[1], ')')  
+      Partition@tf[[tf[1]]] <- .cpos2tf(Partition, tf[1])
+    } else if (length(tf) >= 2) {
+      if (mc==FALSE){
+        Partition@tf <- lapply(setNames(tf, tf), function(p) {
+          if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')
+          .cpos2tf(Partition, p)
+          })
+      } else if (mc==TRUE){
+        if (verbose==TRUE) message('... computing term frequencies (using multicore)')
+        Partition@tf <- mclapply(setNames(tf, tf), function(p) {.cpos2tf(Partition, p)})
+      }
     }
   }
   if (!is.null(meta)) {

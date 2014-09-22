@@ -19,8 +19,9 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 
 #' Analyze context of a node word
 #' 
-#' Retrieve the concordances of a token and calculate the log-likelihood test for collocates
-#' For formulating the query, CPQ syntax may be used (see examples).
+#' Retrieve the concordances of a token and calculate the log-likelihood test
+#' for collocates For formulating the query, CPQ syntax may be used (see
+#' examples).
 #' 
 #' @param object a partition or a partitionCluster object
 #' @param query query, which may by a character vector or a cqpQuery object
@@ -28,20 +29,31 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
 #' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not be empty!!
+#' @param posFilter character vector with the POS tags to be included - may not
+#'   be empty!!
 #' @param filterType either "include" or "exclude"
-#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in context
-#' @param positivelist character vector or numeric vector: include a query hit only if token in positivelist is present. If positivelist is a character vector, it is assumed to provide regex expressions (incredibly long if the list is long)
-#' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating the statistics will be skipped
-#' @param mc whether to use multicore; if NULL (default), the function will get the setting from the drillingControls
+#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
+#'   context
+#' @param positivelist character vector or numeric vector: include a query hit
+#'   only if token in positivelist is present. If positivelist is a character
+#'   vector, it is assumed to provide regex expressions (incredibly long if the
+#'   list is long)
+#' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating
+#'   the statistics will be skipped
+#' @param mc whether to use multicore; if NULL (default), the function will get
+#'   the setting from the drillingControls
 #' @param verbose report progress, defaults to TRUE
-#' @return depending on whether a partition or a partitionCluster serves as input, the return will be a context object, or a contextCluster object
+#' @return depending on whether a partition or a partitionCluster serves as
+#'   input, the return will be a context object, or a contextCluster object
 #' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,contextCluster-method as.TermContextMatrix,contextCluster-method context,contextCluster-method context,partitionCluster-method ll ll-method
+#' @aliases context context,partition-method as.matrix,contextCluster-method
+#'   as.TermContextMatrix,contextCluster-method context,contextCluster-method
+#'   context,partitionCluster-method ll ll-method context,collocations-method
+#'   context,collocations-method
 #' @examples
 #' \dontrun{
-#' p <- partition(list(text_type="speech"), "PLPRBTTXT")
-#' a <- context('"Integration"', p)
+#' p <- partition("PLPRBTTXT", list(text_type="speech"))
+#' a <- context(p, "Integration", "word")
 #' }
 #' @importFrom parallel mclapply
 #' @exportMethod context
@@ -79,14 +91,15 @@ setMethod(
     ctxt <- new(
       "context",
       query=query,
-      pattribute=pAttribute,
+      pAttribute=pAttribute,
       corpus=object@corpus,
-      left.context=leftContext,
-      right.context=rightContext,
+      leftContext=leftContext,
+      rightContext=rightContext,
       encoding=object@encoding,
       posFilter=as.character(posFilter),
       partition=object@label,
-      partitionSize=object@size
+      partitionSize=object@size,
+      call=deparse(match.call())
     )
     corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
     corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
@@ -146,24 +159,37 @@ setMethod(
     ctxt
   })
 
+#' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
+#' @param leftContext no of tokens to the left
+#' @param rightContext no of tokens to the right
+#' @param sAttribute the integrity of the sAttribute to be checked
+#' @return a list!
+#' @noRd
+.leftRightContextChecked <- function(set, leftContext, rightContext, sAttribute){
+  cposLeft <- c((set[1] - leftContext):(set[1]-1))
+  cposLeft <- cposLeft[which(cqi_cpos2struc(sAttribute, cposLeft)==set[3])]
+  cposRight <- c((set[2] + 1):(set[2] + rightContext))
+  cposRight <- cposRight[which(cqi_cpos2struc(sAttribute, cposRight)==set[3])]
+  return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+}
 
-.surrounding <- function (set, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds) {
-  bag <- list()
+.surrounding <- function (set, ctxt, corpus.sattr, filterType, stoplistIds=NULL, positivelistIds=NULL) {
   set <- as.numeric(set)
-  cpos.left <- c((set[1]-ctxt@left.context):(set[1]-1))
-  cpos.left <- cpos.left[which(cqi_cpos2struc(corpus.sattr, cpos.left)==set[3])]
-  cpos.right <- c((set[2]+1):(set[2]+ctxt@right.context))
-  cpos.right <- cpos.right[which(cqi_cpos2struc(corpus.sattr, cpos.right)==set[3])]
-  bag$cpos <- list(left=cpos.left, node=c(set[1]:set[2]), right=cpos.right)
-  cpos <- c(cpos.left, cpos.right)
+  cposList <- .leftRightContextChecked(
+    set,
+    leftContext=ctxt@leftContext,
+    rightContext=ctxt@rightContext,
+    sAttribute=corpus.sattr
+    )
+  cpos <- c(cposList$left, cposList$right)
   posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
-  bag$id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), posChecked)
+  id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), posChecked)
   if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
-    ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pattribute, sep=""), cpos)
+    ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
     if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids)) {bag <- NULL}
     if (!is.null(positivelistIds)) if (any(positivelistIds %in% ids) == FALSE) {bag <- NULL}
   }
-  bag
+  return(list(cpos=cposList, id=id))
 }
 
 #' @docType methods
@@ -171,7 +197,7 @@ setMethod("context", "partitionCluster", function(
   object, query, pAttribute="useControls",
   leftContext=0, rightContext=0,
   minSignificance=-1, posFilter="useControls", filterType="useControls",
-  stoplist=c(), statisticalTest="LL",
+  stoplist=c(), statisticalTest="ll",
   verbose=TRUE  
 ) {
   contextCluster <- new("contextCluster")
@@ -193,3 +219,48 @@ setMethod("context", "partitionCluster", function(
   contextCluster
 })
 
+setMethod("context", "collocations", function(object, query, complete=FALSE){
+  newObject <- new(
+    "context",
+    query=query,
+    partition=object@partition,
+    partitionSize=object@partitionSize,
+    leftContext=object@leftContext,
+    rightContext=object@rightContext,
+    pAttribute=object@pAttribute,
+    corpus=object@corpus,
+    encoding=object@encoding,
+    posFilter=object@posFilter,
+    statisticalTest=object@method,
+    cutoff=object@cutoff,
+    stat=subset(object@stat, node==query),
+    call=deparse(match.call()),
+    size=unique(subset(object@stat, node==query)[,"windowSize"])
+  )  
+  if (complete == TRUE){
+    sAttr <- paste(
+      newObject@corpus, ".",
+      names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]],
+      sep=""
+      )
+    hits <- .queryCpos(
+      newObject@query,
+      get(newObject@partition, ".GlobalEnv"),
+      pAttribute=newObject@pAttribute,
+      verbose=FALSE
+      )
+    newObject@size <- nrow(hits)
+    hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
+    newObject@cpos <- apply(
+      hits, 1, function(row) {
+        .leftRightContextChecked(
+          row,
+          leftContext=newObject@leftContext,
+          rightContext=newObject@rightContext,
+          sAttribute=sAttr
+          )
+      }    
+    )
+  }
+  return(newObject)
+})

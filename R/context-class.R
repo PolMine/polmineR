@@ -11,16 +11,18 @@ NULL
 #'     \item{\code{frequency}:}{Object of class \code{"numeric"} number of hits }
 #'     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
 #'     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
-#'     \item{\code{left.context}:}{Object of class \code{"numeric"} number of tokens to the right }
-#'     \item{\code{right.context}:}{Object of class \code{"numeric"} number of tokens to the left }
+#'     \item{\code{leftContext}:}{Object of class \code{"numeric"} number of tokens to the right }
+#'     \item{\code{rightContext}:}{Object of class \code{"numeric"} number of tokens to the left }
 #'     \item{\code{size}:}{Object of class \code{"numeric"} number of tokens in the right and left context }
-#'     \item{\code{pattribute}:}{Object of class \code{"character"} p-attribute of the query }
+#'     \item{\code{pAttribute}:}{Object of class \code{"character"} p-attribute of the query }
 #'     \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus used }
 #'     \item{\code{stat}:}{Object of class \code{"data.frame"} statistics of the analysis }
 #'     \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
 #'     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
 #'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions of the hits }
 #'     \item{\code{statisticalTest}:}{Object of class \code{"character"} statistical test used }
+#'     \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
+#'     \item{\code{call}:}{Object of class \code{"character"} call that generated the object }
 #'   }
 #' @section Methods:
 #'   \describe{
@@ -40,16 +42,18 @@ setClass("context",
                         frequency="numeric",
                         partition="character",
                         partitionSize="numeric",
-                        left.context="numeric",
-                        right.context="numeric",
+                        leftContext="numeric",
+                        rightContext="numeric",
                         size="numeric",
-                        pattribute="character",
+                        pAttribute="character",
                         corpus="character",
                         stat="data.frame",
                         encoding="character",
                         posFilter="character",
                         cpos="list",
-                        statisticalTest="character"
+                        statisticalTest="character",
+                        cutoff="list",
+                        call="character"
          ),
          contains=c("textstat")
 )

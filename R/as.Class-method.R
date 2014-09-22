@@ -1,4 +1,4 @@
-#' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
+#' @include polmineR-package.R partition-class.R partitionCluster-class.R context-class.R collocations-class.R contextCluster-class.R
 NULL
 
 setGeneric("as.TermDocumentMatrix", function(x, ...){UseMethod("as.TermDocumentMatrix")})
@@ -155,7 +155,7 @@ setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, w
 setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
   encoding <- unique(unlist(lapply(x@contexts, function(c) c@encoding)))
   corpus <- unique(unlist(lapply(x@contexts, function(c) c@corpus)))
-  pAttribute <- unique(unlist(lapply(x@contexts, function(c) c@pattribute)))
+  pAttribute <- unique(unlist(lapply(x@contexts, function(c) c@pAttribute)))
   pAttr <- paste(corpus, '.', pAttribute, sep='')
   i <- unlist(lapply(x@contexts, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
   j <- unlist(lapply(c(1:length(x@contexts)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
