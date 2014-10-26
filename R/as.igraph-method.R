@@ -18,3 +18,6 @@ setMethod("as.igraph", "collocations", function(x, edgeAttributes="ll", verticeA
   return(g)
 })
 
+setMethod("as.igraph", "keyness", function(x, edgeAttributes="ll"){
+  graph.data.frame(x@stat[,c("term1", "term2", edgeAttributes)])
+})

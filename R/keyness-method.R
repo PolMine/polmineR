@@ -81,7 +81,7 @@ setMethod("keyness", signature=c(x="partition"), function(
   keyness@stat <- cbind(rank=c(1:nrow(keyness@stat)), keyness@stat)
   keyness@stat <- keyness@stat[,-which(colnames(keyness@stat)=="id")]
   if (verbose==TRUE) message("... trimming table with statistical tests")
-  keyness <- trim(keyness, digits=keyness@digits)
+  keyness <- trim(keyness, digits=keyness@digits, verbose=verbose)
   keyness
 })
 
@@ -181,6 +181,7 @@ setMethod("keyness", "collocations", function(
     .progress="text"
     )
   newObject@stat <- matched
+  colnames(newObject@stat)[c(6,7)] <- c("countCoi", "countRef")
   ### starting here - the same as keyness,partition-method
   if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
   if ("chiSquare" %in% method) {

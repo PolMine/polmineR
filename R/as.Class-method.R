@@ -177,6 +177,8 @@ setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
 #' Get statistics table from an object
 #' 
 #' @param x object with a statistics table
+#' @param row.names defaults to NULL
+#' @param optional see documentation of as.data.frame
 #' @param ... any further arguments
 #' @rdname asDataFrame-method
 #' @name as.data.frame

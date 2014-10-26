@@ -21,6 +21,7 @@ planned changes:
 v0.36
  * context,collocations-method
  * call-slot in most objects
+ * as.TermDocumentMatrix,collocations-method finalized
 
 v0.35
  * textstat-class introduced to serve as superclass for keyness- and context- classes

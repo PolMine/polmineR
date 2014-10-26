@@ -107,6 +107,7 @@ setMethod("kwic", "context", function(object, metadata=NULL, collocate=c()){
 #' @param meta metainformation to display
 #' @param pAttribute typically 'word' or 'lemma'
 #' @param collocate only show kwic if a certain word is present
+#' @param verbose whether to be talkative
 #' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
 #' @docType methods
 #' @examples
@@ -120,12 +121,14 @@ setMethod("kwic", "partition", function(
   rightContext=0,
   meta=NULL,
   pAttribute="word",
-  collocate=c()
+  collocate=c(),
+  verbose=TRUE
 ){
   ctxt <- context(
     object=object, query=query, pAttribute=pAttribute,
     leftContext=leftContext, rightContext=rightContext,
-    statisticalTest=NULL
+    statisticalTest=NULL,
+    verbose=verbose
   )
   .kwic(ctxt=ctxt, metadata=meta, collocate=collocate)
 })

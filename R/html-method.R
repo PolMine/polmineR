@@ -89,7 +89,8 @@ setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filenam
     '\n* * *\n',
     collapse="\n")
   if (is.null(filename)) {
-    htmlFile <- .markdown2tmpfile(markdown)
+    # htmlFile <- .markdown2tmpfile(markdown)
+    htmlDoc <- markdownToHTML(text=markdown)
   } else {
     cat(markdown, file=filename)
     htmlFile <- filename
@@ -98,7 +99,7 @@ setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filenam
     browseURL(htmlFile)
     retval <- c("[html output redirected to browser]")
   } else if (browser == FALSE) {
-    retval <- htmlFile
+    retval <- htmlDoc
   }
   retval
 })

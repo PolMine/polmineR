@@ -56,6 +56,7 @@ setMethod('[', 'partition', function(x,i){
 #' @param x a partition object
 #' @param gap an integer specifying the minimum gap for performing the split
 #' @param drop not yet implemented
+#' @param ... further arguments
 #' @return a partitionCluster
 #' @aliases split,partition
 #' @rdname split-partition-method 

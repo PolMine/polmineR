@@ -37,7 +37,7 @@ NULL
 #'   show,keyness-method as.matrix,keynessCluster-method
 #'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
 #'   trim,keynessCluster-method summary,keynessCluster-method
-#'   as.TermDocumentMatrix,keynessCluster-method ll,keyness-method
+#'   as.TermDocumentMatrix,keynessCluster-method ll,keyness-method as.igraph,keyness-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette

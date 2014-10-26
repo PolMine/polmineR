@@ -109,7 +109,7 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
 #' @aliases trim,keyness-method
 #' @exportMethod trim
 #' @docType methods
-setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType=include, digits=NULL, verbose=TRUE){
+setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType="include", digits=NULL, verbose=TRUE){
   if (maxRank==0) maxRank <- nrow(object@stat)
   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
   if (is.null(rankBy)) {

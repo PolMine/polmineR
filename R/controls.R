@@ -29,7 +29,8 @@ drillingControls <- list(
   consoleEncoding="UTF-8",
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
-  email="polmine@uni-due.de"
+  email="polmine@uni-due.de",
+  partitionDir="/Users/blaette/Lab/tmp/partitions"
 )
 
 #' inspect or set drillingControls
