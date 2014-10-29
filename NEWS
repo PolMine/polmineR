@@ -18,6 +18,10 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.37
+ * turned partition in a character-method
+ * verbose=FALSE really implemented for 
+
 v0.36
  * context,collocations-method
  * call-slot in most objects

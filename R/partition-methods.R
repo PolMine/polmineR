@@ -1,6 +1,7 @@
 #' @include partition-class.R
 NULL
 
+
 #' @exportMethod show
 #' @docType methods
 #' @noRd

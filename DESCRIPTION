@@ -70,6 +70,7 @@ Collate:
     'll-method.R'
     'mail-method.R'
     'meta-method.R'
+    'partition-method.R'
     'partition-methods.R'
     'partitionCluster-methods.R'
     'plot-method.R'

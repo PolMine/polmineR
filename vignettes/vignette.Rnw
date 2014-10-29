@@ -100,7 +100,7 @@ There are two methods to set up a partition, 'grep' and 'in'. If the method is '
 
 <<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
 coalition <- partition(
-  corpus="PLPRBTTXT",
+  object="PLPRBTTXT",
   def=list(
     text_type="speech",
     text_party=c("CDU_CSU", "FDP")
