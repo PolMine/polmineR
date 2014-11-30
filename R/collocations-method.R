@@ -11,6 +11,7 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @param method the statistical test to use 
 #' @param filter defaults to TRUE
 #' @param posFilter what POS to keep
+#' @param progress logical, whether to show progress bar
 #' @param mc whether to use multicore
 #' @return a data frame
 #' @exportMethod collocations
@@ -20,7 +21,12 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @name collocations
 #' @rdname collocations-method
 #' @aliases collocations collocations-method collocations,partition-method collocations,partitionCluster-method
-setMethod("collocations", "partition", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+#' @examples
+#' \dontrun{
+#' bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
+#' bt17merkelColl <- collocations(bt17merkel)
+#' }
+setMethod("collocations", "partition", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), progress=TRUE, mc=FALSE){
   if (!pAttribute %in% names(object@tf)){
     object <- enrich(object, tf=pAttribute)
   }
@@ -61,7 +67,10 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   }
   message('... creating window lists')
   if (mc==FALSE){
-    bag <- lapply(c(1:nrow(object@cpos)), function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)})
+    bag <- lapply(c(1:nrow(object@cpos)), function(cposRow) {
+      if (progress==TRUE) .progressBar(i=cposRow, total=nrow(object@cpos))
+      b <- movingContext(cposRow, window, object, tokenAttr, posAttr)
+      })
   } else {
     bag <- mclapply(c(1:nrow(object@cpos)), function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)})
   }
@@ -91,10 +100,14 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
     windowSize=unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
   )
   coll@stat$collocateCorpusFreq <- object@tf[[pAttribute]][match(coll@stat[,"collocateId"], object@tf[[pAttribute]][,1]),2]
-  coll@stat <- data.frame(node=as.vector(cqi_id2str(tokenAttr, coll@stat[,"nodeId"])),
-                    collocate=as.vector(cqi_id2str(tokenAttr, coll@stat[,"collocateId"])),
-                    coll@stat, stringsAsFactors=FALSE)
-  Encoding(coll@stat[,"node"]) <- object@encoding
+  nodeStr <- as.vector(cqi_id2str(tokenAttr, coll@stat[,"nodeId"]))
+  Encoding(nodeStr) <- object@encoding
+  coll@stat <- data.frame(
+    node=nodeStr,
+    collocate=as.vector(cqi_id2str(tokenAttr, coll@stat[,"collocateId"])),
+    coll@stat, nodeTf=object@tf[[pAttribute]][nodeStr, "tf"],
+    stringsAsFactors=FALSE
+    )
   Encoding(coll@stat[,"collocate"]) <- object@encoding
   if ("ll" %in% method) {
     message('... g2-Test')

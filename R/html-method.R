@@ -72,14 +72,12 @@ setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10,
 #'   
 #' @param object a partition object
 #' @param meta metadata for output
-#' @param browser logical (defaults to TRUE), whether to direct output to browser, if FALSE, the generated html will be returned
-#' @param filename filename for the html file, if NULL (default), a temporary file is created
 #' @param type the type of html to be generated
 #' @rdname html
 #' @exportMethod html
 #' @docType methods
-#' @aliases html html-method html,partition-method html,partitionCluster-method
-setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filename=NULL, type="debate"){
+#' @aliases html html-method html,partition-method html,partitionCluster-method show,html-method
+setMethod("html", "partition", function(object, meta=NULL, type="debate"){
   if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
   object <- enrich(object, meta=meta)
   markdown <- .partition2markdown(object, type)
@@ -87,21 +85,11 @@ setMethod("html", "partition", function(object, meta=NULL, browser=TRUE, filenam
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
     markdown,
     '\n* * *\n',
-    collapse="\n")
-  if (is.null(filename)) {
-    # htmlFile <- .markdown2tmpfile(markdown)
-    htmlDoc <- markdownToHTML(text=markdown)
-  } else {
-    cat(markdown, file=filename)
-    htmlFile <- filename
-  }
-  if (browser == TRUE){
-    browseURL(htmlFile)
-    retval <- c("[html output redirected to browser]")
-  } else if (browser == FALSE) {
-    retval <- htmlDoc
-  }
-  retval
+    collapse="\n"
+    )
+  htmlDoc <- markdownToHTML(text=markdown)
+  htmlDoc <- HTML(htmlDoc)
+  htmlDoc
 })
 
 #' @docType methods

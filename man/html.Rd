@@ -5,19 +5,15 @@
 \alias{html,partition-method}
 \alias{html,partitionCluster-method}
 \alias{html-method}
+\alias{show,html-method}
 \title{Convert partition/partition Cluster into html}
 \usage{
-\S4method{html}{partition}(object, meta = NULL, browser = TRUE,
-  filename = NULL, type = "debate")
+\S4method{html}{partition}(object, meta = NULL, type = "debate")
 }
 \arguments{
 \item{object}{a partition object}
 
 \item{meta}{metadata for output}
-
-\item{browser}{logical (defaults to TRUE), whether to direct output to browser, if FALSE, the generated html will be returned}
-
-\item{filename}{filename for the html file, if NULL (default), a temporary file is created}
 
 \item{type}{the type of html to be generated}
 }

@@ -1,4 +1,4 @@
-#' @include partition-class.R
+#' @include partition-class.R generics.R
 NULL
 
 
@@ -107,3 +107,4 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
   cluster <- as.partitionCluster(clusterRaw)
   cluster
 })
+

@@ -18,6 +18,11 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.39
+ * reshape collocations-class-objects with trim(object, reshape=TRUE)
+ * collocationsReshaped-class
+ * keynessCollocations-class
+
 v0.37
  * turned partition in a character-method
  * verbose=FALSE really implemented for 

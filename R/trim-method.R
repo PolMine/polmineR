@@ -287,3 +287,20 @@ setMethod("trim", "crosstab", function(object, drop=NULL, merge=list(old=c(), ne
     }
   }
 })
+
+
+setMethod("trim", "collocations", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
+  if (reshape == TRUE) object <- .reshapeCollocations(object, mc=mc)
+  if (is.null(by) == FALSE){
+    if (class(by) %in% c("keynessCollocations", "collocationsReshaped")){
+      bidirectional <- strsplit(rownames(by@stat), "<->")
+      fromTo <- c(
+        sapply(bidirectional, function(pair) paste(pair[1], "->", pair[2], sep="")),
+        sapply(bidirectional, function(pair) paste(pair[2], "->", pair[1], sep=""))
+      ) 
+      object@stat <- object@stat[which(rownames(object@stat) %in% fromTo),]
+    }
+  }
+  callNextMethod()
+})
+

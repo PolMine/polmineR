@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.37
-Date: 2014-09-22
+Version: 0.4.39
+Date: 2014-11-29
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -11,7 +11,6 @@ Depends:
     Matrix
 Imports:
     chron,
-    igraph,
     methods,
     slam,
     parallel,
@@ -20,7 +19,8 @@ Imports:
     RColorBrewer,
     markdown,
     xlsx,
-    sendmailR
+    sendmailR,
+    htmltools
 Suggests:
     knitr
 VignetteBuilder: knitr
@@ -41,13 +41,16 @@ Collate:
     'contextCluster-class.R'
     'collocations-class.R'
     'as.Class-method.R'
-    'as.igraph-method.R'
+    'browse-method.R'
     'bubblegraph-method.R'
     'chisquare-method.R'
     'collocations-method.R'
+    'generics.R'
     'collocations-methods.R'
     'collocationsCluster-class.R'
     'collocationsCluster-methods.R'
+    'collocationsReshaped-class.R'
+    'collocationsReshaped-methods.R'
     'context-method.R'
     'context-methods.R'
     'contextCluster-methods.R'
@@ -60,6 +63,7 @@ Collate:
     'enrich-method.R'
     'frequencies-method.R'
     'html-method.R'
+    'html-methods.R'
     'keyness-method.R'
     'keyness-methods.R'
     'keynessCluster-methods.R'

@@ -30,7 +30,10 @@ drillingControls <- list(
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
   email="polmine@uni-due.de",
-  partitionDir="/Users/blaette/Lab/tmp/partitions"
+  partitionDir="/Users/blaette/Lab/tmp/partitions",
+  defaultKwicCollocate="",
+  defaultKwicNode="Suche",
+  defaultPartition=NULL
 )
 
 #' inspect or set drillingControls

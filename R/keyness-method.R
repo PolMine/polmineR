@@ -110,18 +110,6 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
   kclust
 })
 
-# used by keyness,collocations-method
-# listed here because it may be used by other methods
-.minMaxId <- function(row){
-  if (row["nodeId"] == row["collocateId"]){
-    retval <- c(row, idMin=row["nodeId"], idMax=row["collocateId"])
-  } else {
-    idMin <- min(row["nodeId"], row["collocateId"])
-    idMax <- max(row["nodeId"], row["collocateId"])
-    retval <- c(row, idMin=idMin, idMax=idMax)
-  }
-  return(retval)
-}
 
 
 #' @importFrom parallel detectCores makeCluster
@@ -130,7 +118,7 @@ setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){
   newObject <- new(
-    'keyness',
+    'keynessCollocations',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
     corpus=x@corpus, sizeCoi=x@partitionSize,
     sizeRef=ifelse(included==FALSE, y@partitionSize, y@partitionSize-x@partitionSize)
@@ -160,14 +148,15 @@ setMethod("keyness", "collocations", function(
   characterKey <- paste(
       cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMin"]),
       "<->",
-      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMax"])
+      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMax"]),
+      sep=""
     )
   Encoding(characterKey) <- newObject@encoding
   tab <- data.frame(tab, characterKey=characterKey, stringsAsFactors=FALSE)
   keysInX <- unique(subset(tab, what==1)[,"characterKey"])
   reducedTab <- subset(tab, characterKey %in% keysInX)
   if (verbose == TRUE) message("... matching")
-  matched <- ddply(
+  newObject@stat <- ddply(
     .data=reducedTab,
     .variables=.(characterKey),
     .fun=function(tab){
@@ -176,12 +165,10 @@ setMethod("keyness", "collocations", function(
       keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
       foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
       foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
-      data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], x=xValues[1], y=yValues[1])
+      data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
     },
     .progress="text"
     )
-  newObject@stat <- matched
-  colnames(newObject@stat)[c(6,7)] <- c("countCoi", "countRef")
   ### starting here - the same as keyness,partition-method
   if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
   if ("chiSquare" %in% method) {
@@ -194,6 +181,7 @@ setMethod("keyness", "collocations", function(
   }
   if (verbose == TRUE) message("... trimming the object")
   newObject@stat <- cbind(rank=c(1:nrow(newObject@stat)), newObject@stat)
+  rownames(newObject@stat) <- newObject@stat[,"characterKey"]
   newObject <- trim(newObject, minFrequency=minFrequency, rankBy=method[1])
   newObject
 })

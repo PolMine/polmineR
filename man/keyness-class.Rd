@@ -10,6 +10,7 @@
 \alias{keyness,partitionCluster-method}
 \alias{keyness-class}
 \alias{keynessCluster-class}
+\alias{keynessCollocations-class}
 \alias{ll,keyness-method}
 \alias{show,keyness-method}
 \alias{summary,keyness-method}

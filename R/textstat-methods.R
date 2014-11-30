@@ -10,3 +10,5 @@ setMethod("dim", "textstat", function(x) dim(x@stat))
 setMethod("nrow", "textstat", function(x) nrow(x@stat))
 setMethod("colnames", "textstat", function(x) colnames(x@stat))
 setMethod("rownames", "textstat", function(x) rownames(x@stat))
+
+setMethod("names", "textstat", function(x) rownames(x@stat))

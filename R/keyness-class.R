@@ -57,3 +57,23 @@ setClass("keyness",
          ),
          contains=c("textstat")
 )
+
+#' @rdname keyness-class
+#' @exportClass keynessCollocations
+setClass("keynessCollocations",
+         representation(corpus="character",
+                        pAttribute="character",
+                        encoding="character",
+                        stat="data.frame",
+                        sizeCoi="numeric",
+                        sizeRef="numeric",
+                        statisticalTest="character",
+                        included="logical",
+                        minFrequency="numeric",
+                        digits="list",
+                        cutoff="list",
+                        call="character"
+         ),
+         contains=c("keyness", "textstat")
+)
+

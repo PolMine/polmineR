@@ -8,7 +8,8 @@
 \title{calculate all collocations in a partition}
 \usage{
 \S4method{collocations}{partition}(object, pAttribute = "word", window = 5,
-  method = "ll", filter = TRUE, posFilter = c("ADJA", "NN"), mc = FALSE)
+  method = "ll", filter = TRUE, posFilter = c("ADJA", "NN"),
+  progress = TRUE, mc = FALSE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -23,6 +24,8 @@
 
 \item{posFilter}{what POS to keep}
 
+\item{progress}{logical, whether to show progress bar}
+
 \item{mc}{whether to use multicore}
 }
 \value{
@@ -30,6 +33,12 @@ a data frame
 }
 \description{
 the result is meant to serve as a result for an analysis of collocation graphs
+}
+\examples{
+\dontrun{
+bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
+bt17merkelColl <- collocations(bt17merkel)
+}
 }
 \author{
 Andreas Blaette

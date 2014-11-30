@@ -19,13 +19,11 @@ NULL
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
 #' @slot igraph Object of class \code{"igraph"}
-#' @aliases collocations-class ll,collocations-method [,collocations-method
-#'   [,collocations,ANY,ANY,ANY-method show,collocations-method
-#'   summary,collocations-method as.sparseMatrix,collocations-method
-#'   as.igraph,collocations-method trim,collocations-method
+#' @aliases collocationsReshaped-class
+#' @rdname collocationsReshaped-class
 #' @docType class
-#' @exportClass collocations
-setClass("collocations",
+#' @exportClass collocationsReshaped
+setClass("collocationsReshaped",
          representation(
            call="character",
            partition="character",
@@ -42,5 +40,14 @@ setClass("collocations",
            svg="character",
            igraph="igraph"
          ),
-         contains=c("textstat")
+         contains=c("collocations", "textstat")
 )
+
+#' Methods for manipulating collocationsReshaped-class-objects
+#' 
+#' @param x collocations for a corpus of interest
+#' @param y collocations for a reference corpus
+#' @rdname collocationsReshaped
+#' @aliases collocationsReshaped merge,collocationsReshaped-method
+#' @name collocationsReshaped
+NULL

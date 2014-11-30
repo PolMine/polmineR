@@ -21,8 +21,8 @@
 #' @references http://polmine.sowi.uni-due.de
 #' @keywords package
 #' @docType package
-#' @rdname driller-package
-#' @name driller-package
+#' @rdname polmineR-package
+#' @name polmineR-package
 NULL
 
 
@@ -38,4 +38,5 @@ NULL
 NULL
 
 setOldClass("TermDocumentMatrix")
-
+setOldClass("igraph")
+setOldClass("html")

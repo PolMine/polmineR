@@ -4,6 +4,7 @@
 \alias{as.data.frame,textstat-method}
 \alias{colnames,textstat-method}
 \alias{dim,textstat-method}
+\alias{names,textstat-method}
 \alias{nrow,textstat-method}
 \alias{rownames,textstat-method}
 \alias{show,textstat-method}

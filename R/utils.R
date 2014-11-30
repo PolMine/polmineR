@@ -260,3 +260,28 @@ as.cqp <- function(queries, collapse=FALSE){
   cat("** enjoy the mining and the drilling! **\n")
   
 }
+
+
+
+.progressBar <- function(i, total, barLength=80) {
+  no <- floor(barLength * (i/total))
+  if (i>1) cat(paste(rep("\b", times=barLength+2+8), collapse=""))
+  cat(paste("0% [", paste(rep("=", times=no), collapse=""), paste(rep(" ", times=barLength-no), collapse=""),  "] 100%", sep=""))
+  if (i == total) cat("\n")
+}
+
+
+# used by keyness,collocations-method
+# listed here because it may be used by other methods
+.minMaxId <- function(row){
+  if (row["nodeId"] == row["collocateId"]){
+    retval <- c(row, idMin=row["nodeId"], idMax=row["collocateId"])
+  } else {
+    idMin <- min(row["nodeId"], row["collocateId"])
+    idMax <- max(row["nodeId"], row["collocateId"])
+    retval <- c(row, idMin=idMin, idMax=idMax)
+  }
+  return(retval)
+}
+
+

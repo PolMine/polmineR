@@ -3,31 +3,34 @@
 \name{drillingControls}
 \alias{drillingControls}
 \title{global controls}
-\format{\preformatted{List of 24
- $ defaultCorpus   : chr "PLPRBTTXT"
- $ pAttribute      : chr "word"
- $ leftContext     : num 5
- $ rightContext    : num 5
- $ minSignificance : num 3.84
- $ minFrequency    : num 5
- $ posFilter       : chr "NN"
- $ filterType      : chr "include"
- $ kwicMetadata    : chr "text_party"
- $ kwicNo          : num 10
- $ xtermStyle      : logi FALSE
- $ xtermFgNode     : chr "red"
- $ xtermBgNode     : chr "white"
- $ xtermFgCollocate: chr "green"
- $ xtermBgCollocate: chr "black"
- $ xtermFgMeta     : chr "white"
- $ xtermBgMeta     : chr "blue"
- $ metadata        : chr [1:3] "text_party" "text_speaker" "text_date"
- $ multicore       : logi TRUE
- $ consoleEncoding : chr "UTF-8"
- $ smtpServer      : chr "mailout.uni-due.de"
- $ smtpPort        : chr "587"
- $ email           : chr "polmine@uni-due.de"
- $ partitionDir    : chr "/Users/blaette/Lab/tmp/partitions"
+\format{\preformatted{List of 27
+ $ defaultCorpus       : chr "PLPRBTTXT"
+ $ pAttribute          : chr "word"
+ $ leftContext         : num 5
+ $ rightContext        : num 5
+ $ minSignificance     : num 3.84
+ $ minFrequency        : num 5
+ $ posFilter           : chr "NN"
+ $ filterType          : chr "include"
+ $ kwicMetadata        : chr "text_party"
+ $ kwicNo              : num 10
+ $ xtermStyle          : logi FALSE
+ $ xtermFgNode         : chr "red"
+ $ xtermBgNode         : chr "white"
+ $ xtermFgCollocate    : chr "green"
+ $ xtermBgCollocate    : chr "black"
+ $ xtermFgMeta         : chr "white"
+ $ xtermBgMeta         : chr "blue"
+ $ metadata            : chr [1:3] "text_party" "text_speaker" "text_date"
+ $ multicore           : logi TRUE
+ $ consoleEncoding     : chr "UTF-8"
+ $ smtpServer          : chr "mailout.uni-due.de"
+ $ smtpPort            : chr "587"
+ $ email               : chr "polmine@uni-due.de"
+ $ partitionDir        : chr "/Users/blaette/Lab/tmp/partitions"
+ $ defaultKwicCollocate: chr ""
+ $ defaultKwicNode     : chr "Suche"
+ $ defaultPartition    : NULL
 }}
 \usage{
 drillingControls
