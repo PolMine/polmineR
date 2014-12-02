@@ -18,6 +18,12 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.41
+ * DataTables-functionality moved to DataTablesR-package which is imported
+
+v0.40
+ * browse-method for textstat objects: use DataTables.js
+
 v0.39
  * reshape collocations-class-objects with trim(object, reshape=TRUE)
  * collocationsReshaped-class

@@ -35,6 +35,7 @@ NULL
 #'    }
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method ll,context-method
+#'   browse,context-method as.DataTables,context-method
 #' @docType class
 #' @exportClass context
 setClass("context",

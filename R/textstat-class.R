@@ -11,7 +11,8 @@
 #'   \code{"list"} cutoff levels that have been applied } }
 #' @aliases as.data.frame,textstat-method show,textstat-method
 #'   trim,textstat-method dim,textstat-method nrow,textstat-method
-#'   colnames,textstat-method rownames,textstat-method names,textstat-method
+#'   colnames,textstat-method rownames,textstat-method names,textstat-method browse,textstat-method
+#'   as.DataTables,textstat-method
 #' @docType class
 #' @exportClass textstat
 setClass("textstat",

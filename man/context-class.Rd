@@ -4,6 +4,8 @@
 \alias{[,context,ANY,ANY,ANY-method}
 \alias{[,context-method}
 \alias{[[,context-method}
+\alias{as.DataTables,context-method}
+\alias{browse,context-method}
 \alias{context-class}
 \alias{head,context-method}
 \alias{ll,context-method}

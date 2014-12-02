@@ -1,14 +1,39 @@
 #' @include polmineR-package.R
 NULL
 
-#' @exportMethod browse
-setGeneric("browse", function(object, ...){standardGeneric("browse")})
+#' @import DataTablesR
+NULL
 
-setMethod("browse", "html", function(object){
-  tmpFile <- tempfile(fileext=".html")
-  cat(object, file=tmpFile)
-  browseURL(tmpFile)
+setMethod("as.DataTables", "textstat", function(object){
+  as.DataTables(
+    data.frame(
+      token=colnames(object@stat),
+      object@stat
+      )
+    )
 })
 
-#' @rdname partition
-setMethod("browse", "html", function(object){browse(html(object))})
+setMethod("browse", "textstat", function(object){
+  htmlDoc <- as.DataTables(object)
+  browse(htmlDoc)
+})
+
+setMethod("as.DataTables", "context", function(object){
+  tab <- data.frame(
+    token=colnames(object@stat),
+    object@stat
+  )
+  tab[, "expCoi"] <- round(tab[, "expCoi"], 2)
+  tab[, "expCorpus"] <- round(tab[, "expCorpus"], 2)
+  for (what in object@statisticalTest){
+    tab[, what] <- round(tab[, what], 2)
+  }
+  htmlDoc <- as.DataTables(tab)
+  return(htmlDoc)
+})
+
+setMethod("browse", "context", function(object){
+  htmlDoc <- as.DataTables(object)
+  browse(htmlDoc)
+})
+
