@@ -57,7 +57,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' }
 #' @importFrom parallel mclapply
 #' @exportMethod context
-#' @rdname context-methods
+#' @rdname context
 #' @docType methods
 #' @aliases context,partition-method
 setMethod(
@@ -264,3 +264,10 @@ setMethod("context", "collocations", function(object, query, complete=FALSE){
   }
   return(newObject)
 })
+
+#' @rdname context
+setMethod("context", "missing", function(){
+  .getClassObjectsAvailable(".GlobalEnv", "context")
+})
+
+

@@ -301,3 +301,10 @@ setMethod("partition", "character", function(
   tf
 }
 
+#' @rdname partition
+setMethod("partition", "missing", function(){
+  .getClassObjectsAvailable(".GlobalEnv", "partition")
+})
+
+
+

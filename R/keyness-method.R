@@ -33,6 +33,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod keyness
+#' @rdname  keyness
 setMethod("keyness", signature=c(x="partition"), function(
   x,
   y,
@@ -184,6 +185,11 @@ setMethod("keyness", "collocations", function(
   rownames(newObject@stat) <- newObject@stat[,"characterKey"]
   newObject <- trim(newObject, minFrequency=minFrequency, rankBy=method[1])
   newObject
+})
+
+#' @rdname keyness
+setMethod("keyness", "missing", function(){
+  .getClassObjectsAvailable(".GlobalEnv", "keyness")
 })
 
 

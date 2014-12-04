@@ -18,7 +18,6 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @slot igraph Object of class \code{"igraph"}
 #' @aliases collocations-class ll,collocations-method [,collocations-method
 #'   [,collocations,ANY,ANY,ANY-method show,collocations-method
 #'   summary,collocations-method as.sparseMatrix,collocations-method
@@ -39,8 +38,7 @@ setClass("collocations",
            posFilter="character",
            method="character",
            cutoff="list",
-           svg="character",
-           igraph="igraph"
+           svg="character"
          ),
          contains=c("textstat")
 )

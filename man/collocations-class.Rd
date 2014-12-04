@@ -42,7 +42,5 @@ class to organize information of context analysis
 \item{\code{cutoff}}{Object of class \code{"list"} cutoff levels that have been applied}
 
 \item{\code{svg}}{Object of class \code{"character"} - valid XML with svg representation}
-
-\item{\code{igraph}}{Object of class \code{"igraph"}}
 }}
 

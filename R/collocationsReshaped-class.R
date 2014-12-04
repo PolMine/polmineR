@@ -18,7 +18,6 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @slot igraph Object of class \code{"igraph"}
 #' @aliases collocationsReshaped-class
 #' @rdname collocationsReshaped-class
 #' @docType class
@@ -37,8 +36,7 @@ setClass("collocationsReshaped",
            posFilter="character",
            method="character",
            cutoff="list",
-           svg="character",
-           igraph="igraph"
+           svg="character"
          ),
          contains=c("collocations", "textstat")
 )

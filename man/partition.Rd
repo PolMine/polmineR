@@ -3,11 +3,14 @@
 \name{partition,character-method}
 \alias{partition}
 \alias{partition,character-method}
+\alias{partition,missing-method}
 \title{Initialize a partition}
 \usage{
 \S4method{partition}{character}(object, def, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
   mc = FALSE, verbose = TRUE)
+
+\S4method{partition}{missing}()
 }
 \arguments{
 \item{object}{character-vector - the CWB-corpus to be used}

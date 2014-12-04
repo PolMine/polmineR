@@ -2,12 +2,15 @@
 \docType{methods}
 \name{keyness,partition-method}
 \alias{keyness,collocations-method}
+\alias{keyness,missing-method}
 \alias{keyness,partition-method}
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{
 \S4method{keyness}{partition}(x, y, pAttribute = drillingControls$pAttribute,
   minFrequency = 0, included = FALSE, method = "chiSquare", digits = 2,
   verbose = TRUE)
+
+\S4method{keyness}{missing}()
 }
 \arguments{
 \item{x}{a partition or partitionCluster object}

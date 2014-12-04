@@ -1,0 +1,41 @@
+#' store objects
+#' 
+#' store and restore
+#' 
+#' @param object an object
+#' @rdname store
+#' @name store
+#' @aliases restore
+NULL
+
+
+#' @exportMethod store
+setGeneric("store", function(object) standardGeneric("store"))
+
+#' @rdname store
+setMethod("store", "textstat", function(object){
+  whereToStore <- file.path(
+    Sys.getenv("POLMINER_DIR"),
+    get("session", ".GlobalEnv")@project,
+    class(object),
+    paste(
+      strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2],
+      ".RData", sep=""
+    )
+  )
+  saveRDS(object=object, file=whereToStore)
+  return(whereToStore)
+})
+
+#' @rdname store
+setMethod("store", "session", function(object){
+  saveRDS(
+    object=object,
+    file.path(
+      Sys.getenv("POLMINER_DIR"),
+      object@project,
+      "session.RData"
+    )
+  )
+})
+

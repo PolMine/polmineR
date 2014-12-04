@@ -6,6 +6,7 @@
 \alias{context}
 \alias{context,collocations-method}
 \alias{context,contextCluster-method}
+\alias{context,missing-method}
 \alias{context,partition-method}
 \alias{context,partitionCluster-method}
 \alias{ll}
@@ -17,6 +18,8 @@
   posFilter = NULL, filterType = "exclude", stoplist = NULL,
   positivelist = NULL, statisticalTest = "ll", mc = NULL,
   verbose = TRUE)
+
+\S4method{context}{missing}()
 }
 \arguments{
 \item{object}{a partition or a partitionCluster object}

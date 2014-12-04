@@ -2,7 +2,7 @@ Package: polmineR
 Type: Package
 Title: polmineR
 Version: 0.4.41
-Date: 2014-12-01
+Date: 2014-12-04
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
@@ -74,15 +74,18 @@ Collate:
     'linechart-method.R'
     'll-method.R'
     'mail-method.R'
-    'meta-method.R'
     'partition-method.R'
     'partition-methods.R'
+    'partitionCluster-method.R'
     'partitionCluster-methods.R'
     'plot-method.R'
     'pmi-method.R'
+    'restore-method.R'
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'
+    'session-class.R'
+    'store-method.R'
     'terms-method.R'
     'textstat-methods.R'
     'tf-method.R'

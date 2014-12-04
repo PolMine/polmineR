@@ -6,10 +6,12 @@
 \alias{sAttributes,partition-method}
 \title{Print S-Attributes in a partition or corpus}
 \usage{
-\S4method{sAttributes}{partition}(object)
+\S4method{sAttributes}{partition}(object, sAttributes = NULL)
 }
 \arguments{
 \item{object}{either a partition or a character vector specifying a CWB corpus}
+
+\item{sAttributes}{bla}
 }
 \value{
 the S-Attributes are immediately printed

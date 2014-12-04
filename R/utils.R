@@ -285,3 +285,16 @@ as.cqp <- function(queries, collapse=FALSE){
 }
 
 
+# exactly the same function is included in polmineR.shiny
+#' @param ns character string, namespace to be searched
+#' @param class character, class to be looked for
+#' @return a list with the partitions found in the namespace
+#' @noRd
+.getClassObjectsAvailable <- function(ns, class) {
+  rawList <- sapply(ls(ns), function(x) class(get(x, ns))[1])
+  availableObjectsList <- rawList[rawList %in% class]
+  names(unlist(availableObjectsList))
+}
+
+
+
