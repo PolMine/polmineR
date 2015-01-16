@@ -74,11 +74,13 @@ setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10,
 #' @param meta metadata for output
 #' @param type the type of html to be generated
 #' @rdname html
+#' @importFrom htmltools HTML
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method html,partitionCluster-method show,html-method
 setMethod("html", "partition", function(object, meta=NULL, type="debate"){
   if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
+  if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
   object <- enrich(object, meta=meta)
   markdown <- .partition2markdown(object, type)
   markdown <- paste(

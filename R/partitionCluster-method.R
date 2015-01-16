@@ -85,6 +85,20 @@ setMethod("partitionCluster", "character", function(
 })
 
 #' @rdname partitionCluster
+setMethod("partitionCluster", "list", function(
+  object, var, prefix=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
+  method="grep", xml="flat", mc=FALSE, verbose=TRUE
+) {
+  partitionCluster(
+    object=get('session', '.GlobalEnv')@defaultCorpus,
+    def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
+    meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
+  )
+})
+
+
+
+#' @rdname partitionCluster
 setMethod("partitionCluster", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "partitionCluster")
 })

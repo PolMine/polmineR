@@ -1,5 +1,8 @@
 planned changes:
 ----------------
+ * document tf as one rdname, link by "see also"
+ * label-method for partition and label() <- 
+ * bubblegraph as a matrix method, pass par 
  * names-method for partitionCluster, keynessCluster objects
  * show-method for keynessCluster
  * remove empty rows in keynessCluster-object

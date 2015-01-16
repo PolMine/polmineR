@@ -2,29 +2,128 @@
 \docType{class}
 \name{session-class}
 \alias{createProject}
+\alias{email}
+\alias{email,session-method}
+\alias{email<-,session,character-method}
+\alias{filterType}
+\alias{filterType,session-method}
+\alias{filterType<-,session,character-method}
+\alias{kwicMetadata}
+\alias{kwicMetadata,session-method}
+\alias{kwicMetadata<-,session,character-method}
+\alias{kwicNo}
+\alias{kwicNo,session-method}
+\alias{kwicNo<-,session,numeric-method}
+\alias{leftContext}
+\alias{leftContext,session-method}
+\alias{leftContext<-,session,numeric-method}
+\alias{metadata}
+\alias{metadata,session-method}
+\alias{metadata<-,session,character-method}
+\alias{minFrequency}
+\alias{minFrequency,session-method}
+\alias{minFrequency<-,session,numeric-method}
+\alias{minSignificance}
+\alias{minSignificance,session-method}
+\alias{minSignificance<-,session,numeric-method}
+\alias{multicore}
+\alias{multicore,session-method}
+\alias{multicore<-,session,logical-method}
+\alias{pAttribute}
+\alias{pAttribute,session-method}
+\alias{pAttribute<-,session,character-method}
+\alias{posFilter}
+\alias{posFilter,session-method}
+\alias{posFilter<-,session,character-method}
+\alias{project}
 \alias{project,missing-method}
 \alias{project,session-method}
 \alias{project<-,session,character-method}
+\alias{rightContext}
+\alias{rightContext,session-method}
+\alias{rightContext<-,session,numeric-method}
 \alias{session}
 \alias{session-class}
+\alias{smtpPort}
+\alias{smtpPort,session-method}
+\alias{smtpPort<-,session,character-method}
+\alias{smtpServer}
+\alias{smtpServer,session-method}
+\alias{smtpServer<-,session,character-method}
 \title{session class}
 \usage{
-\S4method{project}{session,character}(x) <- value
+createProject(project)
+
+\S4method{project}{session,character}(object) <- value
 
 \S4method{project}{session}(object)
 
 \S4method{project}{missing}()
 
-createProject(project)
+\S4method{pAttribute}{session}(object)
+
+\S4method{pAttribute}{session,character}(object) <- value
+
+\S4method{leftContext}{session}(x)
+
+\S4method{leftContext}{session,numeric}(x) <- value
+
+\S4method{rightContext}{session}(x)
+
+\S4method{rightContext}{session,numeric}(x) <- value
+
+\S4method{minSignificance}{session}(x)
+
+\S4method{minSignificance}{session,numeric}(x) <- value
+
+\S4method{minFrequency}{session}(x)
+
+\S4method{minFrequency}{session,numeric}(x) <- value
+
+\S4method{posFilter}{session}(x)
+
+\S4method{posFilter}{session,character}(x) <- value
+
+\S4method{filterType}{session}(x)
+
+\S4method{filterType}{session,character}(x) <- value
+
+\S4method{kwicMetadata}{session}(x)
+
+\S4method{kwicMetadata}{session,character}(x) <- value
+
+\S4method{kwicNo}{session}(x)
+
+\S4method{kwicNo}{session,numeric}(x) <- value
+
+\S4method{metadata}{session}(x)
+
+\S4method{metadata}{session,character}(x) <- value
+
+\S4method{multicore}{session}(x)
+
+\S4method{multicore}{session,logical}(x) <- value
+
+\S4method{smtpServer}{session}(x)
+
+\S4method{smtpServer}{session,character}(x) <- value
+
+\S4method{smtpPort}{session}(x)
+
+\S4method{smtpPort}{session,character}(x) <- value
+
+\S4method{email}{session}(x)
+
+\S4method{email}{session,character}(x) <- value
 }
 \arguments{
-\item{x}{bla}
+\item{project}{the project}
 
-\item{value}{to assign}
+\item{object}{a session class object}
 
-\item{object}{bla}
+\item{value}{character string to be assigned}
 
-\item{project}{bla}
+\item{x}{an object}
 }
 \description{
 default settings for current session

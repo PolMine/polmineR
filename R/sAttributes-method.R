@@ -4,8 +4,7 @@ NULL
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
 
-#' @docType methods
-#' @noRd
+#' @rdname sAttributes-method
 setMethod("sAttributes", "character", function(object, sAttribute=NULL){
   if (is.null(sAttribute)){
     ret <- cqi_attributes(object, "s")
@@ -32,7 +31,7 @@ setMethod("sAttributes", "character", function(object, sAttribute=NULL){
 #' quickly.
 #'
 #' @param object either a partition or a character vector specifying a CWB corpus
-#' @param sAttributes bla
+#' @param sAttribute bla
 #' @return the S-Attributes are immediately printed
 #' @exportMethod sAttributes
 #' @docType methods
@@ -40,8 +39,8 @@ setMethod("sAttributes", "character", function(object, sAttribute=NULL){
 #' @rdname sAttributes-method
 setMethod(
   "sAttributes", "partition",
-  function (object, sAttributes=NULL) {
-    if (is.null(sAttributes)){
+  function (object, sAttribute=NULL) {
+    if (is.null(sAttribute)){
     ret <- cqi_attributes(object@corpus, "s")
     } else {
       if ("values" %in% names(object@metadata)) {

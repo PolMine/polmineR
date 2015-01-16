@@ -38,3 +38,23 @@ setMethod('[', 'kwic',
           }        
 )
 
+setMethod("as.DataTables", "kwic", function(object){
+  metaColumnsNo <- length(colnames(object@table)) - 3
+  metadata <- apply(object@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
+  tab <- data.frame(
+    meta=metadata,
+    leftContext=object@table$leftContext,
+    node=object@table$node,
+    rightContext=object@table$rightContext
+  )
+  htmlDoc <- as.DataTables(tab, align=c("l", "r", "c", "l"))
+  return(htmlDoc)
+})
+
+setMethod("browse", "kwic", function(object){
+  htmlDoc <- as.DataTables(object)
+  browse(htmlDoc)
+})
+
+
+

@@ -20,7 +20,7 @@ NULL
 #' @param ... further arguments
 #' @author Andreas Blaette
 #' @docType methods
-#' @aliases trim trim-method
+#' @aliases trim trim-method trim,TermDocumentMatrix-method
 #' @rdname trim-method
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
@@ -304,3 +304,25 @@ setMethod("trim", "collocations", function(object, mc=TRUE, reshape=FALSE, by=NU
   callNextMethod()
 })
 
+#' @importFrom Matrix rowSums
+#' @importFrom tm stopwords
+#' @importFrom slam as.simple_triplet_matrix
+setMethod("trim", "TermDocumentMatrix", function(object, minFrequency=NULL, stopwords=NULL, keep=NULL, verbose=TRUE){
+  mat <- as.sparseMatrix(object)
+  if (!is.null(minFrequency)){
+    if (verbose) message("... applying minimum frequency")
+    aggregatedFrequencies <- rowSums(mat)
+    mat <- mat[which(aggregatedFrequencies >= minFrequency),]
+  }
+  if (!is.null(keep)){
+    if (verbose) message("... removing words apart from those to keep")
+    mat <- mat[which(rownames(mat) %in% keep),]
+  }
+  if (!is.null(stopwords)){
+    if (verbose) message("... removing stopwords")
+    mat <- mat[which(!rownames(mat) %in% stopwords("German")), ]
+  }
+  retval <- as.simple_triplet_matrix(mat)
+  class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  retval
+})

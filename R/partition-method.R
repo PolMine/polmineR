@@ -33,6 +33,9 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param xml either 'flat' (default) or 'nested'
 #' @param mc whether to use multicore (for tf lists)
 #' @param verbose logical, defaults to TRUE
+#' @param value a character string that will be the label of the partition
+#' @param from from
+#' @param to to
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
@@ -116,6 +119,17 @@ setMethod("partition", "character", function(
 })
 
 
+#' @rdname partition
+setMethod("partition", "list", function(
+  object, label=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
+  method="grep", xml="flat", mc=FALSE, verbose=TRUE
+) {
+  partition(
+    object=get('session', '.GlobalEnv')@defaultCorpus,
+    def=object, label=label, encoding=encoding, tf=tf,
+    meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
+    )
+})
 
 
 #' add size of the partition to a partition object

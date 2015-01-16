@@ -6,7 +6,7 @@
 %\VignetteEngine{knitr}
 
 \begin{document}
-\title{An introduction to the \textit{driller} (v0.4.20)}
+\title{An introduction to the \textit{polmineR-package} (v0.4.41)}
 \author{Andreas Blaette (andreas.blaette@uni-due.de)}
 \date{April 04, 2014}
 \maketitle
@@ -16,7 +16,7 @@ options(width=60)
 @
 
 \section{Purpose}
-The purpose of the package \textit{driller} is to facilitate the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
+The purpose of the package \textit{polmineR} is to facilitate the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
 
 There are quite a few R packages for text mining already, it is quite unnecessary to implement again what has already been implemented. Thus, this package is also meant to serve as an interface between the Corpus Workbench (CWB)\footnote{\url{http://cwb.sourceforge.net/}}, an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods. There are several relevant packages on CRAN.\footnote{\url{http://cran.r-project.org/web/views/NaturalLanguageProcessing.html}}
 
@@ -54,10 +54,8 @@ Apart from R packages rcqp requires (plyr, for instance) that can be installed e
 As mentioned, the rcqp package is the most important dependency of the driller. It is important to set the CORPUS\_REGISTRY environment variable \textit{before} you load the driller and the rcqp package. Note that it will not be possible to change the path to the registry once you have loaded rcqp/the driller. This is caused by rcqp, not the driller.
 
 <<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
-registryDir <- system.file(
-  "sampleCorpora", "registry", package="polmineR"
-  )
-Sys.setenv(CORPUS_REGISTRY=registryDir)
+library(polmineR.sampleCorpus)
+use("polmineR.sampleCorpus")
 library(polmineR)
 @
 

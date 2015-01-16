@@ -1,3 +1,7 @@
+#' @include generics.R
+NULL
+
+
 #' driller-package
 #' 
 #' Machinery for mining CWB corpora
@@ -36,6 +40,10 @@ NULL
 #' @keywords datasets
 #' data(colorsParties)
 NULL
+
+#' @import polmineR.sampleCorpus
+NULL
+
 
 setOldClass("TermDocumentMatrix")
 setOldClass("igraph")

@@ -3,12 +3,17 @@
 \name{partitionCluster,character-method}
 \alias{partitionCluster}
 \alias{partitionCluster,character-method}
+\alias{partitionCluster,list-method}
 \alias{partitionCluster,missing-method}
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionCluster}{character}(object, def, var, prefix = c(""),
   encoding = NULL, tf = c("word", "lemma"), meta = NULL,
   method = "grep", xml = "flat", mc = NULL, verbose = TRUE)
+
+\S4method{partitionCluster}{list}(object, var, prefix = c(""),
+  encoding = NULL, tf = c("word", "lemma"), meta = NULL,
+  method = "grep", xml = "flat", mc = FALSE, verbose = TRUE)
 
 \S4method{partitionCluster}{missing}()
 }

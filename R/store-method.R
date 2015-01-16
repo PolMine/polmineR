@@ -1,3 +1,6 @@
+#' @include session-class.R
+NULL
+
 #' store objects
 #' 
 #' store and restore

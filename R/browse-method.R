@@ -1,4 +1,4 @@
-#' @include polmineR-package.R
+#' @include polmineR-package.R kwic-class.R
 NULL
 
 #' @import DataTablesR
@@ -7,7 +7,7 @@ NULL
 setMethod("as.DataTables", "textstat", function(object){
   as.DataTables(
     data.frame(
-      token=colnames(object@stat),
+      token=rownames(object@stat),
       object@stat
       )
     )
@@ -20,7 +20,7 @@ setMethod("browse", "textstat", function(object){
 
 setMethod("as.DataTables", "context", function(object){
   tab <- data.frame(
-    token=colnames(object@stat),
+    token=rownames(object@stat),
     object@stat
   )
   tab[, "expCoi"] <- round(tab[, "expCoi"], 2)
@@ -35,5 +35,13 @@ setMethod("as.DataTables", "context", function(object){
 setMethod("browse", "context", function(object){
   htmlDoc <- as.DataTables(object)
   browse(htmlDoc)
+})
+
+#' @rdname partition
+setMethod("browse", "partition", function(object){
+  htmlDoc <- html(object)
+  tmpFile <- tempfile()
+  cat(htmlDoc, file=tmpFile)
+  browseURL(tmpFile)
 })
 

@@ -22,9 +22,14 @@
 #' @slot partitionDir default partition directory
 #' @slot defaultKwicCollocate default collocate for kwic display
 #' @slot defaultKwicNode default node for kwic analysis
+#' @param project the project
+#' @param object a session class object
+#' @param x an object
+#' @param value character string to be assigned
 #' @exportClass session
 #' @rdname session
-#' @aliases session
+#' @aliases session email filterType kwicMetadata kwicNo leftContext metadata minFrequency 
+#' minSignificance multicore pAttribute posFilter project rightContext smtpPort smtpServer
 setClass(
   "session",
   slots=c(
@@ -75,27 +80,6 @@ session <- new(
   defaultKwicNode="Suche"           
   )
 
-setGeneric("project<-", function(x, value) standardGeneric("project<-"))
-
-#' @param x bla
-#' @param object bla
-#' @param project bla
-#' @param value to assign
-#' @rdname session
-setReplaceMethod("project", signature=c(x="session", value="character"), function(x, value) {
-  x@project <- value
-  x
-  })
-
-setGeneric("project", function(object) standardGeneric("project"))
-
-#' @rdname session
-setMethod("project", "session", function(object) print(object@project))
-
-#' @rdname session
-setMethod("project", "missing", function(){
-  list.dirs(Sys.getenv("POLMINER_DIR"), full.names=FALSE, recursive=FALSE)
-})
 
 
 

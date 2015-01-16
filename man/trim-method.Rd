@@ -2,6 +2,7 @@
 \docType{methods}
 \name{trim}
 \alias{trim}
+\alias{trim,TermDocumentMatrix-method}
 \alias{trim-method}
 \title{trim an object}
 \usage{

@@ -1,14 +1,15 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.41
-Date: 2014-12-04
+Version: 0.4.43
+Date: 2015-01-16
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
     rcqp,
     tm,
     Matrix,
+    polmineR.sampleCorpus,
     DataTablesR
 Imports:
     chron,
@@ -32,6 +33,8 @@ Description: Tools for drilling and mining CWB corpora. The package offers
     procedures.
 License: CC BY-NC-SA 3.0 | file LICENSE
 Collate:
+    'TermDocumentMatrix-methods.R'
+    'generics.R'
     'polmineR-package.R'
     'partition-class.R'
     'partitionCluster-class.R'
@@ -42,11 +45,11 @@ Collate:
     'contextCluster-class.R'
     'collocations-class.R'
     'as.Class-method.R'
+    'kwic-class.R'
     'browse-method.R'
     'bubblegraph-method.R'
     'chisquare-method.R'
     'collocations-method.R'
-    'generics.R'
     'collocations-methods.R'
     'collocationsCluster-class.R'
     'collocationsCluster-methods.R'
@@ -68,13 +71,15 @@ Collate:
     'keyness-method.R'
     'keyness-methods.R'
     'keynessCluster-methods.R'
-    'kwic-class.R'
     'kwic-method.R'
     'kwic-methods.R'
     'linechart-method.R'
     'll-method.R'
     'mail-method.R'
     'partition-method.R'
+    'session-class.R'
+    'store-method.R'
+    'session-methods.R'
     'partition-methods.R'
     'partitionCluster-method.R'
     'partitionCluster-methods.R'
@@ -84,8 +89,6 @@ Collate:
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'
-    'session-class.R'
-    'store-method.R'
     'terms-method.R'
     'textstat-methods.R'
     'tf-method.R'
