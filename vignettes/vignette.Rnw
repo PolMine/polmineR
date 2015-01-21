@@ -60,15 +60,13 @@ library(polmineR)
 @
 
 \section{Default settings}
-To keep the number of required inputs low when calling individual functions, the package stores a set of variables in a list object called 'drillingControls'.
-
-A drillingControls is an ordinary list, the values of the list elements can be changed accordingly. In the examples that follow, I use the corpus "PLPRNWHTM", a corpus of parliamentary debates of the regional parliament of Northrhine-Westfalia (Germany) as a default corpus. For KWIC output and calculating collocations, an extended left and right context could be set as follows. For building the vignette, the multicore option is set to FALSE.
+To keep the number of required inputs low when calling individual functions, the package stores a set of variables in an object called 'settings'.
 
 <<setDrillingControls, echo=TRUE, results="tex">>=
-drillingControls$defaultCorpus <- "PLPRBTTXT"
-drillingControls$leftContext <- 15
-drillingControls$rightContext <- 15
-drillingControls$multicore <- FALSE
+corpus(session) <- "PLPRBTTXT"
+leftContext(session) <- 15
+rightContext(session) <- 15
+multicore(session) <- FALSE
 @
 
 Note that when looking at the documentation of functions you will not always see that the settings from drillingControls are used. Where parameters default to NULL, the function will usually get the settings from the drillingControls object in the global environment.

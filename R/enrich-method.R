@@ -106,7 +106,7 @@ setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
 #' @docType methods
 #' @noRd
 setMethod("enrich", "keynessCluster", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
-  if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
+  if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
   rework <- new("keynessCluster")
   if (mc==FALSE){
     rework@objects <- lapply(

@@ -342,7 +342,8 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @rdname dispersion-method
 #' @name dispersion
 #' @aliases dispersion dispersion-method dispersion,partition-method
-setMethod("dispersion", "partition", function(object, query, dim, pAttribute=drillingControls$pAttribute){
+setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL){
+  if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if ( is.null(names(object@metadata))) {
     message("... required metadata missing, fixing this")
     object <- enrich(object, meta=dim)

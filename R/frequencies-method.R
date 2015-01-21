@@ -16,7 +16,7 @@ setGeneric("frequencies", function(object, ...){standardGeneric("frequencies")})
 #' @name frequencies
 #' @aliases frequencies frequencies-method frequencies,partition-method frequencies,partitionCluster-method
 setMethod("frequencies", "partition", function(object, query, pAttribute=NULL) {
-  if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
+  if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
   if (length(query)==1) {
     cpos <- .queryCpos(query, object, pAttribute)
     attr <- paste(object@corpus, '.', pAttribute, sep='')

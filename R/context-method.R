@@ -41,7 +41,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating
 #'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
-#'   the setting from the drillingControls
+#'   the value from the session settings
 #' @param verbose report progress, defaults to TRUE
 #' @return depending on whether a partition or a partitionCluster serves as
 #'   input, the return will be a context object, or a contextCluster object
@@ -79,15 +79,15 @@ setMethod(
     mc=NULL,
     verbose=TRUE
   ) {
+    if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
     if (!pAttribute %in% names(object@tf) && !is.null(statisticalTest)) {
       if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
       object <- enrich(object, tf=pAttribute)
     }
-    if (is.null(pAttribute)) pAttribute <- get("drillingControls", '.GlobalEnv')[['pAttribute']]
-    if (leftContext == 0) leftContext <- get("drillingControls", '.GlobalEnv')[['leftContext']]
-    if (rightContext == 0) rightContext <- get("drillingControls", '.GlobalEnv')[['rightContext']]
-    if (minSignificance == -1) minSignificance <- get("drillingControls", '.GlobalEnv')[['minSignificance']]
-    if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
+    if (leftContext == 0) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
+    if (rightContext == 0) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
+    if (minSignificance == -1) minSignificance <- slot(get("session", '.GlobalEnv'), 'minSignificance')
+    if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
     ctxt <- new(
       "context",
       query=query,
@@ -149,6 +149,11 @@ setMethod(
       if ("pmi" %in% statisticalTest){
         if (verbose==TRUE) message("... calculating pointwise mutual information")
         ctxt <- pmi(ctxt)
+      }
+      if ("t" %in% statisticalTest){
+        ctxt@stat$countCooc <- table(unlist(lapply(bigBag, function(x) unique(x$id))))
+        if (verbose==TRUE) message("... calculating t-test")
+        ctxt <- tTest(ctxt, object)
       }
       ctxt@stat <- data.frame(
         rank=1:nrow(ctxt@stat),

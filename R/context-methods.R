@@ -12,7 +12,12 @@ setMethod('summary', 'context',
 
 #' @docType methods
 setMethod('head', 'context', function(x, n=10) {
-  x@stat[1:n,c(1,3,4,7)]
+  head(x@stat, n=n)
+})
+
+#' @docType methods
+setMethod('tail', 'context', function(x, n=10){
+  tail(x@stat, n=n)
 })
 
 #' @docType methods
@@ -30,8 +35,8 @@ setMethod('show', 'context',
 #' @docType methods  
 setMethod('[', 'context',
           function(x,i) {
-            drillingControls <- get("drillingControls", '.GlobalEnv')
-            conc <- kwic(x, metadata=drillingControls$kwicMetadata)
+            settingKwicMetadata <- slot(get("session", '.GlobalEnv'), "kwicMetadata")
+            conc <- kwic(x, metadata=settingKwicMetadata)
             conc@table <- conc@table[i,]
             show(conc)
           }        
@@ -40,8 +45,8 @@ setMethod('[', 'context',
 #' @docType methods
 setMethod('[[', 'context',
   function(x,i) {
-    drillingControls <- get("drillingControls", '.GlobalEnv')
-    conc <- kwic(x, metadata=drillingControls$kwicMetadata, collocate=i)
+    sessionKwicMetadata <- slot(get("session", '.GlobalEnv'), "kwicMetadata")
+    conc <- kwic(x, metadata=sessionKwicMetadata, collocate=i)
     foo <- show(conc)
   }        
 )

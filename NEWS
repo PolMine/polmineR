@@ -6,7 +6,6 @@ planned changes:
  * names-method for partitionCluster, keynessCluster objects
  * show-method for keynessCluster
  * remove empty rows in keynessCluster-object
- * multicore for keyness,partitionCluster-method
  * show method for keynessCluster
  * documentation to be improved (kwic, keyness)
  * minus values for statistical tests if O < E in keyness and context method
@@ -20,6 +19,14 @@ planned changes:
  * check: why are there no negative chiSquare-values with tail(keyness-object)
  * rename statisticalTest to method
  * include partition as slot in classes
+
+v0.46
+  * multicore for keyness,partitionCluster-method
+
+v0.45
+ * bubblegraph-method removed, turned into an independent package
+   (available at github.com/ablaette/bubblegraph)
+ * tag-method using the treetag function from the koRpus package
 
 v0.41
  * DataTables-functionality moved to DataTablesR-package which is imported

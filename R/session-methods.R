@@ -3,7 +3,28 @@ NULL
 
 ##############################
 
+#' @exportMethod corpus
+#' @exportMethod corpus<-
+NULL
+
+setGeneric("corpus", function(object, ...) standardGeneric("corpus"))
+setGeneric("corpus<-", function(object, value) standardGeneric("corpus<-"))
+
+#' @rdname session
+setReplaceMethod("corpus", signature=c(object="session", value="character"), function(object, value) {
+  object@corpus <- value
+  object
+})
+
+#' @rdname session
+setMethod("corpus", "session", function(object) object@corpus)
+
+
+
+##############################
+
 #' @exportMethod project
+#' @exportMethod project<-
 NULL
 
 setGeneric("project", function(object, ...) standardGeneric("project"))
@@ -43,6 +64,7 @@ setReplaceMethod("pAttribute", signature=c(object="session", value="character"),
 ##############################
 
 #' @exportMethod leftContext
+#' @exportMethod leftContext<-
 NULL
 
 
@@ -62,6 +84,7 @@ setReplaceMethod("leftContext", signature=c(x="session", value="numeric"), funct
 ##############################
 
 #' @exportMethod rightContext
+#' @exportMethod rightContext<-
 NULL
 
 
@@ -81,6 +104,7 @@ setReplaceMethod("rightContext", signature=c(x="session", value="numeric"), func
 ##############################
 
 #' @exportMethod minSignificance
+#' @exportMethod minSignificance<-
 NULL
 
 
@@ -101,6 +125,7 @@ setReplaceMethod("minSignificance", signature=c(x="session", value="numeric"), f
 ##############################
 
 #' @exportMethod minFrequency
+#' @exportMethod minFrequency<-
 NULL
 
 
@@ -120,6 +145,7 @@ setReplaceMethod("minFrequency", signature=c(x="session", value="numeric"), func
 ##############################
 
 #' @exportMethod posFilter
+#' @exportMethod posFilter<-
 NULL
 
 
@@ -139,6 +165,7 @@ setReplaceMethod("posFilter", signature=c(x="session", value="character"), funct
 ##############################
 
 #' @exportMethod filterType
+#' @exportMethod filterType<-
 NULL
 
 
@@ -157,6 +184,7 @@ setReplaceMethod("filterType", signature=c(x="session", value="character"), func
 ##############################
 
 #' @exportMethod kwicMetadata
+#' @exportMethod kwicMetadata<-
 NULL
 
 
@@ -177,6 +205,7 @@ setReplaceMethod("kwicMetadata", signature=c(x="session", value="character"), fu
 ##############################
 
 #' @exportMethod kwicNo
+#' @exportMethod kwicNo<-
 NULL
 
 
@@ -195,6 +224,7 @@ setReplaceMethod("kwicNo", signature=c(x="session", value="numeric"), function(x
 ##############################
 
 #' @exportMethod metadata
+#' @exportMethod metadata<-
 NULL
 
 
@@ -213,6 +243,7 @@ setReplaceMethod("metadata", signature=c(x="session", value="character"), functi
 ##############################
 
 #' @exportMethod multicore
+#' @exportMethod multicore<-
 NULL
 
 
@@ -232,6 +263,7 @@ setReplaceMethod("multicore", signature=c(x="session", value="logical"), functio
 ##############################
 
 #' @exportMethod smtpServer
+#' @exportMethod smtpServer<-
 NULL
 
 
@@ -251,6 +283,7 @@ setReplaceMethod("smtpServer", signature=c(x="session", value="character"), func
 ##############################
 
 #' @exportMethod smtpPort
+#' @exportMethod smtpPort<-
 NULL
 
 
@@ -270,6 +303,7 @@ setReplaceMethod("smtpPort", signature=c(x="session", value="character"), functi
 ######################
 
 #' @exportMethod email
+#' @exportMethod email<-
 NULL
 
 
@@ -284,4 +318,16 @@ setMethod("email", "session", function(x) x@email)
 setReplaceMethod("email", signature=c(x="session", value="character"), function(x, value) {
   x@email <- value
   x
+})
+
+
+######################
+
+#' @rdname session
+setMethod("show", "session", function(object){
+  cat("session settings:\n")
+  cat("-----------------\n")
+  for (x in slotNames(object)){
+    cat(paste(sprintf("%-22s", paste(x, ":", sep="")), paste(slot(object, x), collapse=" / "), "\n"))
+  }
 })

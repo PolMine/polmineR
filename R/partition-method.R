@@ -44,7 +44,6 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' }
 #' @import rcqp
 #' @import methods
-#' @importFrom chron seq.dates
 #' @exportMethod partition
 #' @rdname partition
 #' @aliases partition partition,character-method
@@ -125,7 +124,7 @@ setMethod("partition", "list", function(
   method="grep", xml="flat", mc=FALSE, verbose=TRUE
 ) {
   partition(
-    object=get('session', '.GlobalEnv')@defaultCorpus,
+    object=get('session', '.GlobalEnv')@corpus,
     def=object, label=label, encoding=encoding, tf=tf,
     meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
     )

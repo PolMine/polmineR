@@ -1,29 +1,27 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.43
-Date: 2015-01-16
+Version: 0.4.47
+Date: 2015-01-19
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Depends:
     rcqp,
     tm,
-    Matrix,
-    polmineR.sampleCorpus,
-    DataTablesR
+    Matrix
 Imports:
-    chron,
     methods,
     slam,
-    parallel,
-    doParallel,
-    xtermStyle,
-    RColorBrewer,
-    markdown,
-    xlsx,
-    sendmailR,
-    htmltools
+    parallel
 Suggests:
+    polmineR.sampleCorpus,
+    markdown,
+    htmltools,
+    xlsx,
+    DataTablesR,
+    sendmailR,
+    koRpus,
+    chron,
     knitr
 VignetteBuilder: knitr
 LazyData: yes
@@ -47,7 +45,6 @@ Collate:
     'as.Class-method.R'
     'kwic-class.R'
     'browse-method.R'
-    'bubblegraph-method.R'
     'chisquare-method.R'
     'collocations-method.R'
     'collocations-methods.R'
@@ -58,7 +55,6 @@ Collate:
     'context-method.R'
     'context-methods.R'
     'contextCluster-methods.R'
-    'controls.R'
     'crosstab-class.R'
     'crosstab-methods.R'
     'dispersion-method.R'
@@ -73,7 +69,6 @@ Collate:
     'keynessCluster-methods.R'
     'kwic-method.R'
     'kwic-methods.R'
-    'linechart-method.R'
     'll-method.R'
     'mail-method.R'
     'partition-method.R'
@@ -89,6 +84,8 @@ Collate:
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'
+    'tTest.R'
+    'tag-method.R'
     'terms-method.R'
     'textstat-methods.R'
     'tf-method.R'

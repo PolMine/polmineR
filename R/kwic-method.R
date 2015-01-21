@@ -14,7 +14,7 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' keyword
 #' 
 #' This functiongives you quite some flexibility to adjust the output to your needs.
-#' Use drillingControls to adjust output.
+#' Use session settings to adjust output.
 #' 
 #' @param ctxt a context object
 #' @param metadata character vector with the metadata included in output
@@ -24,10 +24,10 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' @author Andreas Blaette
 #' @noRd
 .kwic <- function(ctxt, metadata=NULL, collocate=c()){
-  if(is.null(metadata)) metadata <- get("drillingControls", '.GlobalEnv')[['kwicMetadata']]
+  if(is.null(metadata)) metadata <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
   if (all(is.element(metadata, cqi_attributes(ctxt@corpus, "s")))!=TRUE) {
-    warning("check drillingControls$kwicMetadata: Not all sAttributes supplied are available in corpus")
+    warning("check session settings: Not all sAttributes supplied are available in corpus")
   }
   for (meta in metadata){
     sattr <- paste(ctxt@corpus, ".", meta, sep="")
@@ -56,35 +56,10 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 
 
 .showKwicLine <- function(object, i){
-  drillingControls <- get("drillingControls", '.GlobalEnv')
   metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
   Encoding(metaoutput) <- object@encoding
-  if (drillingControls$xtermStyle==FALSE){
-    cat('[',metaoutput, '] ', sep='')
-  } else {
-    cat(style(paste('[',metaoutput, ']',sep=''),fg=drillingControls$xtermFgMeta,bg=drillingControls$xtermBgMeta), ' ', sep='')
-  }
-  if (drillingControls$xtermStyle==FALSE){
-    cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
-  } else {
-    if (length(object@collocate)==0){object@collocate="FOO"}
-    foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)-2]))), ' ')),
-                  function(x){
-                    if (x==object@collocate){
-                      cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                    } else {cat(x, ' ', sep='')}
-                  }
-    )
-    cat(' ', style(object@table[i,ncol(object@table)-1], bg=drillingControls$xtermBgNode, fg=drillingControls$xtermFgNode), ' ', sep='')
-    foo <- sapply(unlist(strsplit(as.vector(unname(unlist(object@table[i,ncol(object@table)]))), ' ')),
-                  function(x){
-                    if (x==object@collocate){
-                      cat(style(x, bg=drillingControls$xtermBgCollocate, fg=drillingControls$xtermFgCollocate), ' ')
-                    } else {cat(x, ' ', sep='')}
-                  }
-    )                                                     
-    cat("\n\n")
-  }
+  cat('[',metaoutput, '] ', sep='')
+  cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
 }
 
 #' @exportMethod kwic

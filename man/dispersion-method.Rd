@@ -6,8 +6,7 @@
 \alias{dispersion-method}
 \title{Dispersion of a query or multiple queries}
 \usage{
-\S4method{dispersion}{partition}(object, query, dim,
-  pAttribute = drillingControls$pAttribute)
+\S4method{dispersion}{partition}(object, query, dim, pAttribute = NULL)
 }
 \arguments{
 \item{object}{a partition object that will be queried}

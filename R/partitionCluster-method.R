@@ -40,7 +40,7 @@ setMethod("partitionCluster", "character", function(
   } else {
     warning("only one variable s-attribute may be provided")
   }
-  if (is.null(mc)) mc <- get("drillingControls", '.GlobalEnv')[['multicore']]
+  if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
   multicoreMessage <- ifelse(
     mc==TRUE,
     ' (use multicore: TRUE)',
@@ -90,7 +90,7 @@ setMethod("partitionCluster", "list", function(
   method="grep", xml="flat", mc=FALSE, verbose=TRUE
 ) {
   partitionCluster(
-    object=get('session', '.GlobalEnv')@defaultCorpus,
+    object=get('session', '.GlobalEnv')@corpus,
     def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
     meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
   )

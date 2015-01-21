@@ -37,7 +37,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 setMethod("keyness", signature=c(x="partition"), function(
   x,
   y,
-  pAttribute=drillingControls$pAttribute,
+  pAttribute=NULL,
   minFrequency=0,
   included=FALSE,
   method="chiSquare",
@@ -45,6 +45,7 @@ setMethod("keyness", signature=c(x="partition"), function(
   verbose=TRUE
 ) {
   if (verbose==TRUE) message ('Computing keyness')
+  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   keyness <- new(
     'keyness',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
@@ -91,30 +92,24 @@ setMethod("keyness", signature=c(x="partition"), function(
 #' @docType methods
 #' @noRd
 setMethod("keyness", signature=c(x="partitionCluster"), function(
-  x, y, pAttribute=drillingControls$pAttribute,
-  minFrequency=1, included=FALSE, verbose=TRUE
+  x, y, pAttribute=NULL,
+  minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE
 ) {
+  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   kclust <- new("keynessCluster")
-  kclust@objects <- sapply(
-      x@partitions,
-      function(a) keyness(
-        a,
-        y,
-        pAttribute=pAttribute,
-        minFrequency=minFrequency,
-        included=included,
-        verbose=verbose
-      ),
-      simplify = TRUE,
-      USE.NAMES = TRUE
-    )
+  .keyness <- function(a) {
+    keyness(a, y, pAttribute=pAttribute, minFrequency=minFrequency, included=included, method=method, verbose=verbose)
+  }
+  if (mc == FALSE){
+    kclust@objects <- lapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
+  } else if (mc == TRUE){
+    kclust@objects <- mclapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
+  }
   kclust
 })
 
 
 
-#' @importFrom parallel detectCores makeCluster
-#' @importFrom doParallel registerDoParallel
 setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){

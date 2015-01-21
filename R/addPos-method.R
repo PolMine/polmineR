@@ -88,7 +88,7 @@ setMethod("addPos", "partition", function(object, pAttribute){
 #' @noRd
 setMethod("addPos", "partitionCluster", function(object, pAttribute){
   pimpedCluster <- object
-  if (get('drillingControls', '.GlobalEnv')[['multicore']] == TRUE) {
+  if (slot(get('session', '.GlobalEnv'), "multicore") == TRUE) {
     pimpedCluster@partitions <- mclapply(object@partitions, function(x) addPos(x, pAttribute))
   } else {
     pimpedCluster@partitions <- lapply(object@partitions, function(x) addPos(x, pAttribute))    

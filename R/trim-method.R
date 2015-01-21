@@ -139,21 +139,17 @@ setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency
 
 #' @docType methods
 #' @noRd
-setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include"){
+setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
   rework <- new("keynessCluster")
-  rework@objects <- lapply(
-    setNames(object@objects, names(object@objects)),
-    function(x) {
-      trim(
-        x,
-        minSignificance=minSignificance,
-        minFrequency=minFrequency,
-        maxRank=maxRank,
-        tokenFilter=tokenFilter,
-        posFilter=posFilter,
-        filterType=filterType
-        )
-  })
+  .trimFunction <- function(x) {
+    trim( x, minSignificance=minSignificance, minFrequency=minFrequency, maxRank=maxRank,
+    tokenFilter=tokenFilter, posFilter=posFilter, filterType=filterType)
+  }
+  if (mc == FALSE){
+    rework@objects <- lapply(setNames(object@objects, names(object@objects)), function(x) .trimFunction(x))   
+  } else if (mc == TRUE){
+    rework@objects <- mclapply(setNames(object@objects, names(object@objects)), function(x) .trimFunction(x))  
+  }
   rework
 })
 
@@ -220,7 +216,7 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 #' @docType methods
 #' @rdname trim-partitionCluster-method
 setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
-  if (is.null(mc)) mc <- get('drillingControls', '.GlobalEnv')[['multicore']]
+  if (is.null(mc)) mc <- slot(get('session', '.GlobalEnv'), 'multicore')
   pimpedCluster <- object
   if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
     if (mc == TRUE) {

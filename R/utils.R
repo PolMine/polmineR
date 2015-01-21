@@ -18,7 +18,8 @@
 #' foo <- .queryCpos('"Menschen" "mit" "Migrationshintergrund"', partitionObject)
 #' }
 #' @noRd
-.queryCpos <- function(query, Partition, pAttribute=drillingControls$pAttribute, verbose=TRUE) {
+.queryCpos <- function(query, Partition, pAttribute=NULL, verbose=TRUE) {
+  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   query <- .adjustEncoding(query, Partition@encoding)
   if (grepl('"', query) == FALSE) {
@@ -164,12 +165,18 @@ flatten <- function(object){
 #' @author Andreas Blaette
 #' @export datesPeriod
 datesPeriod <- function(corpus, dateRange) {
-  sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
-  sAttr <- paste(corpus, '.', sAttributeDate, sep='')
-  allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
-  daysSequence <- strftime(seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
-  daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
-  daysInCorpus
+  if (requireNamespace("chron", quietly=TRUE)){
+    sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
+    sAttr <- paste(corpus, '.', sAttributeDate, sep='')
+    allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
+    daysSequence <- strftime(seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
+    daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
+    retval <- daysInCorpus    
+  } else {
+    warning("the 'chron'-package needs to be installed but is not available")
+    stop()
+  }
+  retval
 }
 
 

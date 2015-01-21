@@ -46,13 +46,17 @@ setGeneric("html", function(object, ...){standardGeneric("html")})
   markdown
 }
 
-#' @importFrom markdown markdownToHTML
 #' @noRd
 .markdown2tmpfile <- function(markdown){
-  mdFilename <- tempfile(fileext=".md")
-  htmlFile <- tempfile(fileext=".html")
-  cat(markdown, file=mdFilename)
-  markdown::markdownToHTML(file=mdFilename, output=htmlFile)
+  if (requireNamespace("markdown", quietly=TRUE)){
+    mdFilename <- tempfile(fileext=".md")
+    htmlFile <- tempfile(fileext=".html")
+    cat(markdown, file=mdFilename)
+    htmlFile <- markdown::markdownToHTML(file=mdFilename, output=htmlFile)  
+  } else {
+    warning("package 'markdown' is not installed, but necessary for this function")
+    stop()
+  }
   htmlFile
 }
 
@@ -74,23 +78,27 @@ setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10,
 #' @param meta metadata for output
 #' @param type the type of html to be generated
 #' @rdname html
-#' @importFrom htmltools HTML
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method html,partitionCluster-method show,html-method
 setMethod("html", "partition", function(object, meta=NULL, type="debate"){
-  if (is.null(meta)) meta <- get("drillingControls", '.GlobalEnv')[['metadata']]
-  if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
-  object <- enrich(object, meta=meta)
-  markdown <- .partition2markdown(object, type)
-  markdown <- paste(
-    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
-    markdown,
-    '\n* * *\n',
-    collapse="\n"
+  if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
+    if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')
+    if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
+    object <- enrich(object, meta=meta)
+    markdown <- .partition2markdown(object, type)
+    markdown <- paste(
+      paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+      markdown,
+      '\n* * *\n',
+      collapse="\n"
     )
-  htmlDoc <- markdownToHTML(text=markdown)
-  htmlDoc <- HTML(htmlDoc)
+    htmlDoc <- markdown::markdownToHTML(text=markdown)
+    htmlDoc <- htmltools::HTML(htmlDoc)
+  } else {
+    warning("package 'markdown' is not installed, but necessary for this function")
+    stop()
+  }
   htmlDoc
 })
 

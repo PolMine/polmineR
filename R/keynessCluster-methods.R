@@ -47,3 +47,4 @@ setMethod("summary", "keynessCluster", function(object){
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
   tab
 })
+

@@ -41,8 +41,6 @@ NULL
 #' data(colorsParties)
 NULL
 
-#' @import polmineR.sampleCorpus
-NULL
 
 
 setOldClass("TermDocumentMatrix")

@@ -3,7 +3,7 @@
 #' default settings for current session
 #' 
 #' @slot project currently active project 
-#' @slot defaultCorpus corpus to use if none is provided
+#' @slot corpus corpus to use if none is provided
 #' @slot pAttribute default pAttribute
 #' @slot leftContext default left context
 #' @slot rightContext default right context
@@ -30,11 +30,15 @@
 #' @rdname session
 #' @aliases session email filterType kwicMetadata kwicNo leftContext metadata minFrequency 
 #' minSignificance multicore pAttribute posFilter project rightContext smtpPort smtpServer
+#' corpus corpus<- email<- filterType<- kwicMetadata<-
+#' kwicNo<- leftContext<- metadata<- minFrequency<-
+#' minSignificance<- multicore<- pAttribute<- posFilter<-
+#' project<- rightContext<- smtpPort<- smtpServer<-
 setClass(
   "session",
   slots=c(
     project="character",
-    defaultCorpus="character",
+    corpus="character",
     pAttribute="character",
     leftContext="numeric",
     rightContext="numeric",
@@ -59,7 +63,7 @@ setClass(
 session <- new(
   "session",
   project=c(""),
-  defaultCorpus="PLPRBTTXT",
+  corpus="PLPRBTTXT",
   pAttribute="word",
   leftContext=5,
   rightContext=5,
@@ -75,7 +79,7 @@ session <- new(
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
   email="polmine@uni-due.de",
-  partitionDir="/Users/blaette/Lab/tmp/partitions",
+  partitionDir="",
   defaultKwicCollocate="",
   defaultKwicNode="Suche"           
   )
