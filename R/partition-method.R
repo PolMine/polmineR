@@ -42,7 +42,6 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' \dontrun{
 #' spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
 #' }
-#' @import rcqp
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition

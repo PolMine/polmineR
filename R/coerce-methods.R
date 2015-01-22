@@ -25,6 +25,7 @@ setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.Te
 
 
 #' @docType methods
+#' @importFrom Matrix sparseMatrix
 setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
   retval <-  sparseMatrix(i=x$i,
                           j=x$j,
@@ -97,7 +98,6 @@ setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, 
 
 
 #' @docType methods
-#' @import Matrix
 #' @noRd
 setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
   message("... converting partitionCluster to TermDocumentMatrix")

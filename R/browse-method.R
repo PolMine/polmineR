@@ -1,4 +1,4 @@
-#' @include polmineR-package.R kwic-class.R
+#' @include polmineR-package.R kwic-class.R context-class.R
 NULL
 
 

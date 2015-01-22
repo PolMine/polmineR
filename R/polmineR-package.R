@@ -1,6 +1,21 @@
 #' @include generics.R
 NULL
 
+#' @importFrom rcqp cqi_cpos2id cqi_cpos2str cqi_cpos2id cqi_cpos2struc
+#' @importFrom rcqp cqi_regex2id
+#' @importFrom rcqp cqi_id2str cqi_str2id cqi_id2freq cqi_id2cpos
+#' @importFrom rcqp cqi_lexicon_size cqi_list_corpora cqi_attribute_size cqi_attributes
+#' @importFrom rcqp cqi_struc2str cqi_struc2cpos
+#' @importFrom rcqp cqi_query cqi_dump_subcorpus
+#' @importFrom plyr join
+NULL
+
+#' @importFrom tm TermDocumentMatrix DocumentTermMatrix
+#' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
+NULL
+
+#' @importFrom Matrix rowSums colSums
+NULL
 
 #' driller-package
 #' 
