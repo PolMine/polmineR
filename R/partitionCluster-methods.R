@@ -161,6 +161,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
   e1
 })
 
+
 # setMethod("plot", signature(x="partitionCluster"),
 #           function(x, y){
 #             val <- as.matrix(x, y)
@@ -179,3 +180,32 @@ setMethod("barplot", "partitionCluster", function(height, ...){
   tab <- tab[order(tab[, "token"], decreasing=TRUE),]
   barplot(tab$token, names.arg=tab$partition, ...)
 })
+
+
+#' @rdname partitionCluster
+setMethod("label", "partitionCluster", function(object){
+  unname(unlist(lapply(object@partitions, function(x) label(x))))
+})
+
+#' @rdname partitionCluster
+#' @exportMethod label<-
+setReplaceMethod(
+  "label",
+  signature=c(object="partitionCluster", value="character"),
+  function(object, value) {
+    if ( length(value) != length(object@partitions) ) {
+      warning("length of value provided does not match number of partitions")
+      stop()
+    }
+    if ( !is.character(label(object)) ){
+      warning("value needs to be a character vector")
+      stop()
+    }
+    for (i in c(1:length(object@partitions))){
+      object@partitions[[i]]@label <- value[i]
+    }
+    names(object@partitions) <- value
+    object
+  }
+)
+

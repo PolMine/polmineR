@@ -2,9 +2,7 @@ planned changes:
 ----------------
  * document tf as one rdname, link by "see also"
  * label-method for partition and label() <- 
- * bubblegraph as a matrix method, pass par 
  * names-method for partitionCluster, keynessCluster objects
- * show-method for keynessCluster
  * remove empty rows in keynessCluster-object
  * show method for keynessCluster
  * documentation to be improved (kwic, keyness)
@@ -19,6 +17,9 @@ planned changes:
  * check: why are there no negative chiSquare-values with tail(keyness-object)
  * rename statisticalTest to method
  * include partition as slot in classes
+
+v0.4.49
+  * cooccurences method for partition objects
 
 v0.46
   * multicore for keyness,partitionCluster-method

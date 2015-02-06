@@ -45,7 +45,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
-#' @aliases partition partition,character-method
+#' @aliases partition
 setMethod("partition", "character", function(
   object,
   def,

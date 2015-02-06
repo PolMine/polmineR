@@ -145,11 +145,22 @@ setMethod("pAttribute", "partition", function(object, from, to, mc=TRUE, verbose
   statList
 })
 
-
+#' get/set the label of a partition
+#' 
+#' Assign a label to a partition, or a partitionCluster.
+#' 
+#' @rdname partition
+#' @exportMethod label
 setGeneric("label", function(object) standardGeneric("label"))
+
+#' @rdname partition
 setGeneric("label<-", function(object, value) standardGeneric("label<-"))
 
 #' @rdname partition
+setMethod("label", "partition", function(object) object@label)
+
+#' @rdname partition
+#' @exportMethod label<-
 setReplaceMethod("label", signature=c(object="partition", value="character"), function(object, value) {
   object@label <- value
   object

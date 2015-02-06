@@ -13,3 +13,8 @@ setGeneric("pAttribute<-", function(object, value) standardGeneric("pAttribute<-
 #' @name browse
 #' @exportMethod browse
 setGeneric("browse", function(object, ...) standardGeneric("browse"))
+
+
+setGeneric("label", function(object, ...) standardGeneric("label"))
+
+setGeneric("label<-", function(object, value) standardGeneric("label<-"))

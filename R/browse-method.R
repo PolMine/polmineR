@@ -2,7 +2,7 @@
 NULL
 
 
-
+#' @rdname browse
 setMethod("browse", "textstat", function(object){
   if (require("DataTablesR", quietly=TRUE)){
     htmlDoc <- DataTablesR::as.DataTables(
@@ -19,6 +19,7 @@ setMethod("browse", "textstat", function(object){
   retval
 })
 
+#' @rdname browse
 setMethod("browse", "context", function(object){
   if (require("DataTablesR", quietly=TRUE)){
     tab <- data.frame(
@@ -40,7 +41,7 @@ setMethod("browse", "context", function(object){
 })
 
 
-#' @rdname partition
+#' @rdname browse
 setMethod("browse", "partition", function(object){
   htmlDoc <- html(object)
   tmpFile <- tempfile()

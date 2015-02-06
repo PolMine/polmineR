@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.48
-Date: 2015-01-22
+Version: 0.4.49
+Date: 2015-02-06
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -29,7 +29,7 @@ Description: Tools for drilling and mining CWB corpora. The package offers
     functionality to work with partitions and basic statistics. It is meant to
     serve as an interface to packages implementing advanced statistical
     procedures.
-License: CC BY-NC-SA 3.0 | file LICENSE
+License: CC BY-NC-SA 4.0 | file LICENSE
 Collate:
     'TermDocumentMatrix-methods.R'
     'generics.R'
@@ -55,10 +55,12 @@ Collate:
     'context-method.R'
     'context-methods.R'
     'contextCluster-methods.R'
+    'cooccurrence-method.R'
     'crosstab-class.R'
     'crosstab-methods.R'
     'dispersion-method.R'
     'egoNetwork-method.R'
+    'encoding-method.R'
     'keynessCluster-class.R'
     'enrich-method.R'
     'frequencies-method.R'

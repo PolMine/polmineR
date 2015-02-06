@@ -169,7 +169,7 @@ datesPeriod <- function(corpus, dateRange) {
     sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
     sAttr <- paste(corpus, '.', sAttributeDate, sep='')
     allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
-    daysSequence <- strftime(seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
+    daysSequence <- strftime(chron::seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
     daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
     retval <- daysInCorpus    
   } else {
