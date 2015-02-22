@@ -2,13 +2,12 @@
 #' 
 #' S4 class for organizing information for concordance output
 #' 
-#' @section Slots:
-#'   \describe{
-#'    \item{\code{metadata}:}{Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed }
-#'    \item{\code{table}:}{Object of class \code{"data.frame"} a table with the relevant information for kwic output }
-#'    \item{\code{collocate}:}{Object of class \code{"character"} collocate, if applicable }
-#'    \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
-#'   }
+#' @slot metadata Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed
+#' @slot table Object of class \code{"data.frame"} a table with the relevant information for kwic output
+#' @slot collocate Object of class \code{"character"} collocate, if applicable
+#' @slot encoding Object of class \code{"character"} encoding of the corpus
+#' 
+#' @param x a kwic-class object
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}

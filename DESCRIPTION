@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.49
-Date: 2015-02-06
+Version: 0.4.50
+Date: 2015-02-22
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -22,7 +22,8 @@ Suggests:
     sendmailR,
     koRpus,
     chron,
-    knitr
+    knitr,
+    polmineR.plpr
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for drilling and mining CWB corpora. The package offers

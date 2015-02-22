@@ -3,6 +3,12 @@ NULL
 
 #' @docType methods
 setMethod('show', 'kwic', function(object){
+  .showKwicLine <- function(object, i){
+    metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
+    Encoding(metaoutput) <- object@encoding
+    cat('[',metaoutput, '] ', sep='')
+    cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
+  }
   sessionKwicNo <- slot(get("session", '.GlobalEnv'), 'kwicNo')
   if (sessionKwicNo == 0 ) {
     for (i in 1:nrow(object@table)) .showKwicLine(object, i)
@@ -37,18 +43,23 @@ setMethod('[', 'kwic',
           }        
 )
 
+#' @rdname kwic-class
+setMethod("as.data.frame", "kwic", function(x){
+  metaColumnsNo <- length(colnames(x@table)) - 3
+  metadata <- apply(x@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
+  data.frame(
+    meta=metadata,
+    leftContext=x@table$leftContext,
+    node=x@table$node,
+    rightContext=x@table$rightContext
+  )
+})
+
 #' @rdname browse
 setMethod("browse", "kwic", function(object){
   if (requireNamespace("DataTablesR", quietly=TRUE)){
-    metaColumnsNo <- length(colnames(object@table)) - 3
-    metadata <- apply(object@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
-    tab <- data.frame(
-      meta=metadata,
-      leftContext=object@table$leftContext,
-      node=object@table$node,
-      rightContext=object@table$rightContext
-    )
-    htmlDoc <- as.DataTables(tab, align=c("l", "r", "c", "l"))    
+    tab <- as.data.frame(object)
+    htmlDoc <- DataTablesR::as.DataTables(tab, align=c("l", "r", "c", "l"))    
   } else {
     warning("package 'DataTablesR' needs to be installed but is not available")
     stop()

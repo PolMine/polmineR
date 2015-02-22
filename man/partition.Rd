@@ -15,7 +15,7 @@
 \usage{
 \S4method{partition}{character}(object, def, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
-  mc = FALSE, verbose = TRUE)
+  type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{list}(object, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
@@ -51,6 +51,8 @@ details)}
 \item{method}{either 'grep' or 'in' to specify the filtering method to get relevant strucs}
 
 \item{xml}{either 'flat' (default) or 'nested'}
+
+\item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
 
 \item{mc}{whether to use multicore (for tf lists)}
 

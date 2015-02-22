@@ -45,18 +45,6 @@ NULL
 NULL
 
 
-#' colors associated with German parties
-#' 
-#' included in the package for line chart graphs
-#' 
-#' @name colorsParties
-#' @docType data
-#' @format a simple list object
-#' @keywords datasets
-#' data(colorsParties)
-NULL
-
-
 
 setOldClass("TermDocumentMatrix")
 setOldClass("igraph")

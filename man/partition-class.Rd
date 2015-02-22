@@ -18,23 +18,34 @@ partition class definition
 \section{Slots}{
 
 \describe{
- \item{\code{label}:}{Object of class \code{"character"} a label that may be useful }
- \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the partition is based on }
- \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
- \item{\code{sAttributes}:}{Object of class \code{"list"} s-attributes specifying the partition }
- \item{\code{explanation}:}{Object of class \code{"character"} an explanation of the partition }
- \item{\code{cpos}:}{Object of class \code{"matrix"} corpus positions }
- \item{\code{pos}:}{Object of class \code{"list"} with tables "abs", "rel" and "max"}
- \item{\code{size}:}{Object of class \code{"numeric"} total size of the partition }
- \item{\code{metadata}:}{Object of class \code{"list"} metadata information }
- \item{\code{strucs}:}{Object of class \code{"numeric"} the strucs defining the partition }
- \item{\code{tf}:}{Object of class \code{"list"} term frequencies }
- \item{\code{xml}:}{Object of class \code{"character"} whether the xml is flat or nested }
- \item{\code{sAttributeStrucs}:}{Object of class \code{"character"} the base node }
- \item{\code{call}:}{Object of class \code{"character"} the call that generated the partition }
-}
-}
+\item{\code{label}}{Object of class \code{"character"} a label that may be useful}
 
+\item{\code{corpus}}{Object of class \code{"character"} the CWB corpus the partition is based on}
+
+\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+
+\item{\code{sAttributes}}{Object of class \code{"list"} s-attributes specifying the partition}
+
+\item{\code{explanation}}{Object of class \code{"character"} an explanation of the partition}
+
+\item{\code{cpos}}{Object of class \code{"matrix"} corpus positions}
+
+\item{\code{pos}}{Object of class \code{"list"} with tables "abs", "rel" and "max"}
+
+\item{\code{size}}{Object of class \code{"numeric"} total size of the partition}
+
+\item{\code{metadata}}{Object of class \code{"list"} metadata information}
+
+\item{\code{strucs}}{Object of class \code{"numeric"} the strucs defining the partition}
+
+\item{\code{tf}}{Object of class \code{"list"} term frequencies}
+
+\item{\code{xml}}{Object of class \code{"character"} whether the xml is flat or nested}
+
+\item{\code{sAttributeStrucs}}{Object of class \code{"character"} the base node}
+
+\item{\code{call}}{Object of class \code{"character"} the call that generated the partition}
+}}
 \section{Methods}{
 
   \describe{

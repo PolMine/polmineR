@@ -31,6 +31,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param meta a character vector
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
+#' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for tf lists)
 #' @param verbose logical, defaults to TRUE
 #' @param value a character string that will be the label of the partition
@@ -55,16 +56,23 @@ setMethod("partition", "character", function(
   meta=NULL,
   method="grep",
   xml="flat",
+  type=NULL,
   mc=FALSE,
   verbose=TRUE
 ) {
   corpus <- object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', label)
-  Partition <- new(
-    'partition',
-    call=deparse(match.call())
-  )
+  if (is.null(type)){
+    Partition <- new('partition')  
+  } else if (type == "plpr") {
+    if (requireNamespace("polmineR.plpr", quietly=TRUE)){
+      Partition <- new("plprPartition")
+    } else {
+      warning("to set a specific partition type, the respective package needs to be available")
+    }
+  }
+  Partition@call <- deparse(match.call())
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
   if(is.null(encoding)) {
