@@ -20,7 +20,7 @@
 
 browse(object, ...)
 
-\S4method{browse}{kwic}(object)
+\S4method{browse}{kwic}(object, colnames = NULL)
 }
 \arguments{
 \item{object}{what is to be displayed}
@@ -28,6 +28,8 @@ browse(object, ...)
 \item{meta}{metainformation to be displayed}
 
 \item{...}{further parameters}
+
+\item{colnames}{colnames to be used for data.frame}
 }
 \description{
 bla

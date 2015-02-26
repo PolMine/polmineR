@@ -56,9 +56,12 @@ setMethod("as.data.frame", "kwic", function(x){
 })
 
 #' @rdname browse
-setMethod("browse", "kwic", function(object){
+setMethod("browse", "kwic", function(object, colnames=NULL){
   if (requireNamespace("DataTablesR", quietly=TRUE)){
     tab <- as.data.frame(object)
+    if (!is.null(colnames)){
+      colnames(tab) <- colnames
+    }
     htmlDoc <- DataTablesR::as.DataTables(tab, align=c("l", "r", "c", "l"))    
   } else {
     warning("package 'DataTablesR' needs to be installed but is not available")

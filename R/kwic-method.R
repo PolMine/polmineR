@@ -52,7 +52,9 @@ setMethod("kwic", "context", function(object, meta=NULL, collocate=c()){
   if (length(collocate) > 0) m <- m[grep(collocate, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   m <- m[2:ncol(m)]
   colnames(m) <- c(meta, c('leftContext', 'node', 'rightContext'))
-  conc <- new('kwic')
+  conc <- new(
+    'kwic', leftContext=object@leftContext, rightContext=object@rightContext
+    )
   if (!is.null(collocate)) {conc@collocate <- collocate}
   conc@table <- m
   conc@metadata <- meta
