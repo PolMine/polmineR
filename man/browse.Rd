@@ -14,7 +14,7 @@
 
 \S4method{browse}{context}(object)
 
-\S4method{browse}{partition}(object)
+\S4method{browse}{partition}(object, meta = NULL)
 
 \S4method{browse}{html}(object)
 
@@ -24,6 +24,8 @@ browse(object, ...)
 }
 \arguments{
 \item{object}{what is to be displayed}
+
+\item{meta}{metainformation to be displayed}
 
 \item{...}{further parameters}
 }

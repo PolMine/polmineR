@@ -40,10 +40,9 @@ setMethod("browse", "context", function(object){
   retval
 })
 
-
 #' @rdname browse
-setMethod("browse", "partition", function(object){
-  htmlDoc <- html(object)
+setMethod("browse", "partition", function(object, meta=NULL){
+  htmlDoc <- html(object, meta=meta)
   tmpFile <- tempfile()
   cat(htmlDoc, file=tmpFile)
   browseURL(tmpFile)

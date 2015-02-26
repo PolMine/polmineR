@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.50
-Date: 2015-02-22
+Version: 0.4.51
+Date: 2015-02-26
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -40,6 +40,7 @@ Collate:
     'textstat-class.R'
     'keyness-class.R'
     'addPos-method.R'
+    'as.markdown-method.R'
     'kwic-class.R'
     'context-class.R'
     'browse-method.R'

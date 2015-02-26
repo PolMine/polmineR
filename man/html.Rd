@@ -9,14 +9,12 @@
 \alias{show,html-method}
 \title{Convert partition/partition Cluster into html}
 \usage{
-\S4method{html}{partition}(object, meta = NULL, type = "debate")
+\S4method{html}{partition}(object, meta = NULL)
 }
 \arguments{
 \item{object}{a partition object}
 
 \item{meta}{metadata for output}
-
-\item{type}{the type of html to be generated}
 }
 \description{
 A partition is converted into a html file and displayed in a browser. If a partitionCluster
