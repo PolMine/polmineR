@@ -165,3 +165,7 @@ setReplaceMethod("label", signature=c(object="partition", value="character"), fu
   object@label <- value
   object
 })
+
+
+#' @rdname partition
+setMethod("corpus", "partition", function(object) object@corpus)

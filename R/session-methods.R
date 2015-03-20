@@ -10,6 +10,8 @@ NULL
 setGeneric("corpus", function(object, ...) standardGeneric("corpus"))
 setGeneric("corpus<-", function(object, value) standardGeneric("corpus<-"))
 
+setMethod("corpus", "missing", function(object) rcqp::cqi_list_corpora())
+
 #' @rdname session
 setReplaceMethod("corpus", signature=c(object="session", value="character"), function(object, value) {
   object@corpus <- value
