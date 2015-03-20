@@ -9,8 +9,8 @@ setMethod("html", "character", function(object){
   if (requireNamespace("markdown", quietly=TRUE)){
     mdFilename <- tempfile(fileext=".md")
     htmlFile <- tempfile(fileext=".html")
-    cat(markdown, file=mdFilename)
-    htmlFile <- markdown::markdownToHTML(file=mdFilename, output=htmlFile)  
+    cat(object, file=mdFilename)
+    markdown::markdownToHTML(file=mdFilename, output=htmlFile)  
   } else {
     warning("package 'markdown' is not installed, but necessary for this function")
     stop()
@@ -42,10 +42,10 @@ setMethod("html", "partition", function(object, meta=NULL){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
-    object <- enrich(object, meta=meta)
-    markdown <- as.markdown(object)
+    object <- enrich(object, meta=meta, verbose=FALSE)
+    markdown <- as.markdown(object, meta)
     markdown <- paste(
-      paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
+      paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
       markdown,
       '\n* * *\n',
       collapse="\n"

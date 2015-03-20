@@ -84,6 +84,7 @@ Collate:
     'partitionCluster-methods.R'
     'plot-method.R'
     'pmi-method.R'
+    'read-method.R'
     'restore-method.R'
     'sAttributes-method.R'
     'scatterplot-method.R'

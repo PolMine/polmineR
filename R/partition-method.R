@@ -65,9 +65,11 @@ setMethod("partition", "character", function(
   if (verbose==TRUE) message('Setting up partition ', label)
   if (is.null(type)){
     Partition <- new('partition')  
-  } else if (type == "plpr") {
-    if (requireNamespace("polmineR.plpr", quietly=TRUE)){
-      Partition <- new("plprPartition")
+  } else {
+    pkgName <- paste("polmineR.", type, sep="")
+    cName <- paste(type, "Partition", sep="")
+    if (requireNamespace(pkgName, quietly=TRUE)){
+      Partition <- new(cName)
     } else {
       warning("to set a specific partition type, the respective package needs to be available")
     }

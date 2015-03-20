@@ -22,7 +22,7 @@
 #' @exportClass kwic
 #' @rdname kwic-class
 setClass("kwic",
-         representation(metadata="character",
+         slots=c(metadata="character",
                         leftContext="numeric",
                         rightContext="numeric",
                         collocate="character",
