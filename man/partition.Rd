@@ -2,6 +2,7 @@
 % Please edit documentation in R/partition-method.R, R/partition-methods.R
 \docType{methods}
 \name{partition,character-method}
+\alias{corpus,partition-method}
 \alias{label}
 \alias{label,partition-method}
 \alias{label<-}
@@ -19,7 +20,7 @@
 
 \S4method{partition}{list}(object, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
-  mc = FALSE, verbose = TRUE)
+  type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{missing}()
 
@@ -33,6 +34,8 @@ label(object) <- value
 \S4method{label}{partition}(object)
 
 \S4method{label}{partition,character}(object) <- value
+
+\S4method{corpus}{partition}(object)
 }
 \arguments{
 \item{object}{character-vector - the CWB-corpus to be used}

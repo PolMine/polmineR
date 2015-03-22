@@ -130,12 +130,12 @@ setMethod("partition", "character", function(
 #' @rdname partition
 setMethod("partition", "list", function(
   object, label=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
-  method="grep", xml="flat", mc=FALSE, verbose=TRUE
+  method="grep", xml="flat", type=NULL, mc=FALSE, verbose=TRUE
 ) {
   partition(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, label=label, encoding=encoding, tf=tf,
-    meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
+    meta=meta, method=method, xml=xml, type=type, mc=mc, verbose=verbose
     )
 })
 

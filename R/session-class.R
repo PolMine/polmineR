@@ -73,7 +73,7 @@ session <- new(
   filterType="include",
   kwicMetadata=c("text_party"),
   kwicNo=10,
-  metadata = c("text_party", "text_speaker", "text_date"),
+  metadata = c("text_party", "text_name", "text_date"),
   multicore=TRUE,
   consoleEncoding="UTF-8",
   smtpServer="mailout.uni-due.de",
