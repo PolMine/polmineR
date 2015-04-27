@@ -31,6 +31,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param meta a character vector
 #' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
 #' @param xml either 'flat' (default) or 'nested'
+#' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for tf lists)
 #' @param verbose logical, defaults to TRUE
@@ -56,6 +57,7 @@ setMethod("partition", "character", function(
   meta=NULL,
   method="grep",
   xml="flat",
+  id2str=TRUE,
   type=NULL,
   mc=FALSE,
   verbose=TRUE
@@ -97,17 +99,17 @@ setMethod("partition", "character", function(
   }
   if (!is.null(Partition)) {
     if (verbose==TRUE) message('... computing partition size')
-    Partition@size <- .partition.size(Partition)
+    Partition@size <- size(Partition)
     if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
     if (length(tf > 0)) {
       if (length(tf) == 1){
         if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf[1], ')')  
-        Partition@tf[[tf[1]]] <- .cpos2tf(Partition, tf[1])
+        Partition@tf[[tf[1]]] <- .cpos2tf(Partition, tf[1], id2str)
       } else if (length(tf) >= 2) {
         if (mc==FALSE){
           Partition@tf <- lapply(setNames(tf, tf), function(p) {
             if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')
-            .cpos2tf(Partition, p)
+            .cpos2tf(Partition, p, id2str)
           })
         } else if (mc==TRUE){
           if (verbose==TRUE) message('... computing term frequencies (using multicore)')
@@ -130,24 +132,14 @@ setMethod("partition", "character", function(
 #' @rdname partition
 setMethod("partition", "list", function(
   object, label=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
-  method="grep", xml="flat", type=NULL, mc=FALSE, verbose=TRUE
+  method="grep", xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
 ) {
   partition(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, label=label, encoding=encoding, tf=tf,
-    meta=meta, method=method, xml=xml, type=type, mc=mc, verbose=verbose
+    meta=meta, method=method, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
     )
 })
-
-
-#' add size of the partition to a partition object
-#' 
-#' The function requires the cpos in a partition object to be present. The size
-#' of the partition is calculated based on the cpos. This is optimized / as good as it gets.
-#' @noRd
-.partition.size <- function(partition) sum(partition@cpos[,2]-partition@cpos[,1]+1)
-
-
 
 
 #' add metadata information to a partition object
@@ -309,17 +301,26 @@ setMethod("partition", "list", function(
 #' @param part a partition object
 #' @param pAttribute either 'word' or 'lemma'
 #' @noRd
-.cpos2tf <- function(part, pAttribute){
-  cpos <- unlist(apply(part@cpos, 1, function(x) x[1]:x[2]))
-  ids <- cqi_cpos2id(paste(part@corpus, '.', pAttribute, sep=''), cpos)
+.cpos2tf <- function(.Object, pAttribute, id2str=TRUE){
+  cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+  ids <- cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
   tfRaw <- tabulate(ids)
-  tf <- data.frame(
-    id=c(0:length(tfRaw)),
-    tf=c(length(ids[which(ids==0)]), tfRaw),
-    row.names=cqi_id2str(paste(part@corpus,'.',pAttribute, sep=''), c(0:length(tfRaw)))
+  tf <- matrix(
+    c(
+      c(0:length(tfRaw)),
+      c(length(ids[which(ids==0)]), tfRaw)
+      ),
+    ncol=2, dimnames=list(NULL, c("id", "tf"))
   )
-  tf <- subset(tf, tf > 0)
-  Encoding(rownames(tf)) <- part@encoding
+  tf <- tf[which(tf[,"tf"] > 0),]
+  if (id2str == TRUE){   
+    .addRownames <- function(tf){
+      rownames(tf) <- cqi_id2str(paste(.Object@corpus, '.', pAttribute, sep=''), tf[,"id"])
+      Encoding(rownames(tf)) <- .Object@encoding
+      tf
+    }
+    try(tf <- .addRownames(tf), silent=FALSE)
+  }
   tf
 }
 

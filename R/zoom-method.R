@@ -17,7 +17,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @exportMethod zoom
 #' @docType methods
 #' @name zoom
-setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), verbose=TRUE){
+setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, verbose=TRUE){
   newPartition <- new("partition")
   newPartition@corpus <- object@corpus
   message('Zooming into partition ', label)
@@ -30,11 +30,11 @@ setMethod("zoom", "partition", function(object, def, label=c(""), method="in", t
   message('... specifying strucs and corpus positions')
   newPartition <- .zoomingSattributes2cpos(object, newPartition, def, method)
   message('... computing partition size')
-  newPartition@size <- .partition.size(newPartition)
+  newPartition@size <- size(newPartition)
   if (length(tf)>0) {
     for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
-      newPartition@tf[[p]] <- .cpos2tf(newPartition, p)
+      newPartition@tf[[p]] <- .cpos2tf(newPartition, p, id2str=id2str)
     }
   }
   newPartition

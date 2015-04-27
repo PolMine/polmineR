@@ -8,21 +8,26 @@
 \alias{partitionCluster,character-method}
 \alias{partitionCluster,list-method}
 \alias{partitionCluster,missing-method}
+\alias{unique,partitionCluster-method}
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionCluster}{character}(object, def, var, prefix = c(""),
   encoding = NULL, tf = c("word", "lemma"), meta = NULL,
-  method = "grep", xml = "flat", mc = NULL, verbose = TRUE)
+  method = "grep", xml = "flat", id2str = TRUE, mc = NULL,
+  verbose = TRUE)
 
 \S4method{partitionCluster}{list}(object, var, prefix = c(""),
   encoding = NULL, tf = c("word", "lemma"), meta = NULL,
-  method = "grep", xml = "flat", mc = FALSE, verbose = TRUE)
+  method = "grep", xml = "flat", id2str = TRUE, mc = FALSE,
+  verbose = TRUE)
 
 \S4method{partitionCluster}{missing}()
 
 \S4method{label}{partitionCluster}(object)
 
 \S4method{label}{partitionCluster,character}(object) <- value
+
+\S4method{unique}{partitionCluster}(x)
 }
 \arguments{
 \item{object}{character string, the CWB corpus to be used}
@@ -42,6 +47,8 @@
 \item{method}{either 'grep' or 'in'}
 
 \item{xml}{either 'flat' (default) or 'nested'}
+
+\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
 
 \item{mc}{logical, whether to use multicore parallelization}
 

@@ -1,41 +1,29 @@
 #' get term frequencies
 #' 
 #' Method to obtain term frequencies for one or multiple terms or queries.
-#' The method can be applied to partition or partitionCluster class objects.
-#' If object is a character string, frequencies for a whole corpus are returned.
-#' Please see the respective documentation for details 
-#' (\code{method?tf("partition")}, \code{method?tf("partitionCluster")} or
-#' \code{method?tf("character")}).
 #' 
 #' @param object either a partition or a partitionCluster object
-#' @param ... further parameters
-#' @aliases tf tf-method
-#' @rdname tf-method
-setGeneric("tf", function(object, ...){standardGeneric("tf")})
-
-#' get term frequencies from a partition object
-#' 
-#' Obtain term frequencies for one or several terms from a partition object.
-#' 
-#' The term frequencies are retrieved for all the p-attributes that are available 
-#' in the partition object. To get the total frequency of the variations of a term,
-#' use the "grep"-method.
-#' 
-#' @param object a partition object
 #' @param token a character vector (one or multiple terms to be looked up)
 #' @param method either "in", "grep" or "cqp" (defaults to "in")
 #' @param pAttribute if NULL, the pAttributes available in the partition object will be reported
-#' @return a data frame
+#' @param rel logical, defaults to FALSE 
+#' @param ... further parameters
+#' @exportMethod tf
+#' @docType methods
+#' @rdname tf-method
+#' @name tf
+#' @aliases tf-method
+#' @seealso tf
 #' @examples
 #' # generate a partition for testing 
 #' test <- partition("PLPRBTTXT", list(text_date=".*"), tf=c("word", "lemma"), method="grep")
 #' tf(test, "Wir") # get frequencies for one token
 #' tf(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
 #' tf(test, c("Zuwander.*", "Integration.*"), method="grep") # get frequencies using "grep"-method
-#' @rdname tf-partition-method
-#' @aliases tf,partition-method
-#' @exportMethod tf
-#' @docType methods
+#' tf("PLPRTXT", c("machen", "Integration"), "word")
+setGeneric("tf", function(object, ...){standardGeneric("tf")})
+
+#' @rdname tf-method
 setMethod("tf", "partition", function(object, token, method="in", pAttribute=NULL){
   if (is.null(pAttribute)){
     if (is.null(names(object@tf)) == TRUE) {
@@ -99,23 +87,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
 })
 
 
-#' get term frequencies from a partitionCluster object
-#' 
-#' Obtain term frequencies from a \code{partitionCluster}. You get a data frame with the
-#' partitions in the object in the rows and the different terms in the columns. It needs
-#' to be specified whether relative or absolute frequencies are retrieved, and what
-#' s-attribute will be queried.
-#' 
-#' @param object a partitionCluster object
-#' @param token one or several tokens
-#' @param method either "in", "grep" or "cqp"
-#' @param pAttribute the p-attribute you want to get
-#' @param rel logical, defaults to FALSE 
-#' @return a data frame (partitions in the rows, terms in the columns)
-#' @aliases tf,partitionCluster-method
-#' @rdname tf-partitionCluster-method
-#' @exportMethod tf
-#' @docType methods
+#' @rdname tf-method
 setMethod("tf", "partitionCluster", function(object, token, method="in", pAttribute=NULL, rel=FALSE){
   # check whether all partitions in the cluster have a proper label
   if (is.null(names(object@partitions)) || any(is.na(names(object@partitions)))) {
@@ -151,22 +123,7 @@ setMethod("tf", "partitionCluster", function(object, token, method="in", pAttrib
   tab
 })
 
-#' get term frequencies from a corpus
-#' 
-#' Obtain term frequencies from a CWB corpus. You get a data frame with the
-#' partitions in the object in the rows and the different terms in the columns.
-#' 
-#' @param object a character string specifying a CWB corpus
-#' @param token one or several tokens
-#' @param pAttribute the p-attribute you want to get
-#' @param method either "in" or "cqp" (cqp method is not yet implemented)
-#' @return a data frame (partitions in the rows, terms in the columns)
-#' @examples
-#' tf("PLPRTXT", c("machen", "Integration"), "word")
-#' @aliases tf,character-method
-#' @rdname tf-character-method
-#' @exportMethod tf
-#' @docType methods
+#' @rdname tf-method
 setMethod("tf", "character", function(object, token, pAttribute, method="in"){
   if (object %in% cqi_list_corpora()) {
     if (method=="in"){

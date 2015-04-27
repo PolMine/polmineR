@@ -7,7 +7,7 @@
 \title{zoom into a partition}
 \usage{
 \S4method{zoom}{partition}(object, def, label = c(""), method = "in",
-  tf = c("word", "lemma"), verbose = TRUE)
+  tf = c("word", "lemma"), id2str = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{object}{a partition object}

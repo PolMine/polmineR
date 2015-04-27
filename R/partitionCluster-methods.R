@@ -209,3 +209,14 @@ setReplaceMethod(
   }
 )
 
+#' @exportMethod unique
+#' @rdname partitionCluster
+setMethod("unique", "partitionCluster", function(x){
+  labels <- lapply(x@partitions, function(p) p@label)
+  uniqueLabels <- unique(unlist(labels))
+  uniquePartitionsPos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
+  partitionsToDrop <- which(c(1:length(labels)) %in% uniquePartitionsPos == FALSE)
+  partitionsToDrop <- partitionsToDrop[order(partitionsToDrop, decreasing=TRUE)]
+  for (pos in partitionsToDrop) x@partitions[pos] <- NULL
+  x
+})

@@ -336,6 +336,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' dispersion(test, "Integration", c("text_date"))
 #' dispersion(test, "Integration", c("text_date", "text_party"))
 #' dispersion(test, '"Integration.*"', c("text_date")) # note the brackets when using regex!
+#' @seealso tf
 #' @author Andreas Blaette
 #' @docType methods
 #' @exportMethod dispersion

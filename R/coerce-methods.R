@@ -211,3 +211,87 @@ setMethod("as.partitionCluster", "list", function(object, ...){
 })
 
 
+#' @examples
+#' dontrun{
+#' foo <- as.TermDocumentMatrix(
+#'   "ZEIT", "word", "text_id",
+#'   left="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
+#'   right="1951_08_gespraeche-zum-interzonenhandel.html"
+#' )
+#' }
+#' @noRd
+setMethod("as.TermDocumentMatrix", "character", function (x, pAttribute, sAttribute, left=NULL, right=NULL, encoding="ISO-8859-1", weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+  if (!is.null(left) || !is.null(right)) sAttributeString <- sAttributes(x, sAttribute)
+  leftStruc <- ifelse(!is.null(left), grep(left, sAttributeString)[1], 1)
+  rightStruc <- ifelse(!is.null(right), grep(right, sAttributeString)[1], 1)
+  sAttr <- paste(x, ".", sAttribute, sep="")
+  pAttr <- paste(x, ".", pAttribute, sep="")
+  freqList <- lapply(
+    c(leftStruc:rightStruc),
+    function(i){
+      cpos <- cqi_struc2cpos(sAttr, i)
+      ids <- cqi_cpos2id(pAttr, c(cpos[1]:cpos[2]))
+      freqVector <- tabulate(ids + 1)
+      noZeroCount <- which(freqVector != 0)
+      freqMatrix <- matrix(
+        c(noZeroCount, freqVector[noZeroCount]),
+        ncol=2, byrow=FALSE
+        )
+      cbind(rep(i, times=nrow(freqMatrix)), freqMatrix)
+    })
+  freqMatrixAgg <- do.call(rbind, freqList)
+  lexiconSize <- cqi_lexicon_size(pAttr)
+  sAttributeStrings <- cqi_struc2str(sAttr, c(leftStruc:rightStruc))
+  pAttributeStrings <- cqi_id2str(pAttr, c(0:lexiconSize)) # slow!
+  pAttributeStrings <- iconv(pAttributeStrings, from=encoding, to="UTF-8")                            
+  mat <- simple_triplet_matrix(
+    i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
+    ncol=length(freqList),
+    nrow=lexiconSize+1,
+    dimnames=list(Terms=pAttributeStrings, Docs=sAttributeStrings)
+  )
+  # copied from as.TermDocumentMatrix,partitionCluster-method
+#   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+#   if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
+#   if (!is.null(weight)){
+#     if (weight == "tfidf"){
+#       message("... applying tf/idf as a weight")
+#       mat <- weigh(mat, method="tfidf", corpusSizes=summary(x)$token)
+#     } else if (weight == "rel"){
+#       message("... computing relative frequencies")
+#       mat <- weigh(mat, method="rel", corpusSizes=summary(x)$token)
+#     }
+#   }
+  mat
+})
+
+setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
+  newPartitionCluster <- new(
+    "partitionCluster",
+    corpus=object@corpus,
+    encoding=object@encoding,
+    explanation="this partitionCluster is derived from a context object"
+    )
+  .makeNewPartition <- function(cpos){
+    newPartition <- new(
+      "partition",
+      corpus=object@corpus,
+      encoding=object@encoding,
+      cpos=matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2)
+    )
+    newPartition <- enrich(newPartition, size=TRUE, tf=object@pAttribute)
+    newPartition@strucs <- c(
+      cqi_cpos2struc(paste(object@corpus, ".", object@sAttribute, sep=""), newPartition@cpos[1,1])
+      :
+        cqi_cpos2struc(paste(object@corpus, ".", object@sAttribute, sep=""), newPartition@cpos[1,2])
+    )
+    newPartition
+  }
+  if (mc == FALSE){
+    newPartitionCluster@partitions <- lapply(object@cpos, FUN=.makeNewPartition)  
+  } else {
+    newPartitionCluster@partitions <- mclapply(object@cpos, FUN=.makeNewPartition)  
+  }
+  return(newPartitionCluster)
+})
+

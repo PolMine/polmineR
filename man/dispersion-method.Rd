@@ -38,5 +38,7 @@ Andreas Blaette
 }
 \seealso{
 \code{crosstab-class}
+
+tf
 }
 

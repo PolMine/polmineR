@@ -5,15 +5,13 @@ NULL
 #' 
 #' A cluster of partition objects.
 #' 
-#' @section Slots: \describe{
-#'  \item{\code{partitions}:}{Object of class \code{"list"} the partitions making up the cluster } 
-#'  \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus the partition is based on }
-#'  \item{\code{sAttributesFixed}:}{Object of class \code{"list"} fixed sAttributes }
-#'  \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus } 
-#'  \item{\code{explanation}:}{Object of class \code{"character"} an explanation of the partition }
-#'  \item{\code{xml}:}{Object of class \code{"character"} whether the xml is flat or nested }
-#'  \item{\code{call}:}{Object of class \code{"character"} the call that generated the partitionCluster }
-#'   }
+#' @slot partitions Object of class \code{"list"} the partitions making up the cluster
+#' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on
+#' @slot sAttributesFixed Object of class \code{"list"} fixed sAttributes
+#' @slot encoding Object of class \code{"character"} encoding of the corpus
+#' @slot explanation Object of class \code{"character"} an explanation of the partition
+#' @slot xml Object of class \code{"character"} whether the xml is flat or nested
+#' @slot call Object of class \code{"character"} the call that generated the partitionCluster
 #'   
 #' @section Methods: \describe{ \item{show}{\code{signature(object = 
 #'   "partitionCluster")}: Display essential information } 

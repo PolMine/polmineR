@@ -5,25 +5,24 @@ NULL
 #' 
 #' class to organize information of context analysis
 #' 
-#' @section Slots:
-#'   \describe{
-#'     \item{\code{query}:}{Object of class \code{"character"} node examined }
-#'     \item{\code{frequency}:}{Object of class \code{"numeric"} number of hits }
-#'     \item{\code{partition}:}{Object of class \code{"character"} the partition the analysis is based on }
-#'     \item{\code{partitionSize}:}{Object of class \code{"numeric"} the size of the partition }
-#'     \item{\code{leftContext}:}{Object of class \code{"numeric"} number of tokens to the right }
-#'     \item{\code{rightContext}:}{Object of class \code{"numeric"} number of tokens to the left }
-#'     \item{\code{size}:}{Object of class \code{"numeric"} number of tokens in the right and left context }
-#'     \item{\code{pAttribute}:}{Object of class \code{"character"} p-attribute of the query }
-#'     \item{\code{corpus}:}{Object of class \code{"character"} the CWB corpus used }
-#'     \item{\code{stat}:}{Object of class \code{"data.frame"} statistics of the analysis }
-#'     \item{\code{encoding}:}{Object of class \code{"character"} encoding of the corpus }
-#'     \item{\code{posFilter}:}{Object of class \code{"character"} part-of-speech tags filtered}
-#'     \item{\code{cpos}:}{Object of class \code{"list"} corpus positions of the hits }
-#'     \item{\code{statisticalTest}:}{Object of class \code{"character"} statistical test used }
-#'     \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
-#'     \item{\code{call}:}{Object of class \code{"character"} call that generated the object }
-#'   }
+#' @slot query Object of class \code{"character"} node examined
+#' @slot frequency Object of class \code{"numeric"} number of hits
+#' @slot partition Object of class \code{"character"} the partition the analysis is based on
+#' @slot partitionSize Object of class \code{"numeric"} the size of the partition
+#' @slot leftContext Object of class \code{"numeric"} number of tokens to the right
+#' @slot rightContext Object of class \code{"numeric"} number of tokens to the left
+#' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
+#' @slot pAttribute Object of class \code{"character"} p-attribute of the query
+#' @slot sAttribute Object of ...
+#' @slot corpus Object of class \code{"character"} the CWB corpus used
+#' @slot stat Object of class \code{"data.frame"} statistics of the analysis
+#' @slot encoding Object of class \code{"character"} encoding of the corpus
+#' @slot posFilter Object of class \code{"character"} part-of-speech tags filtered
+#' @slot cpos Object of class \code{"list"} corpus positions of the hits
+#' @slot statisticalTest Object of class \code{"character"} statistical test used
+#' @slot cutoff Object of class \code{"list"} cutoff levels that have been applied
+#' @slot call Object of class \code{"character"} call that generated the object
+#'     
 #' @section Methods:
 #'   \describe{
 #'     \item{show}{output of core information}
@@ -47,6 +46,7 @@ setClass("context",
                         rightContext="numeric",
                         size="numeric",
                         pAttribute="character",
+                        sAttribute="character",
                         corpus="character",
                         stat="data.frame",
                         encoding="character",

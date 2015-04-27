@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.51
-Date: 2015-02-26
+Version: 0.4.52
+Date: 2015-04-25
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -40,10 +40,12 @@ Collate:
     'textstat-class.R'
     'keyness-class.R'
     'addPos-method.R'
+    'adjustEncoding-method.R'
     'as.markdown-method.R'
     'kwic-class.R'
     'context-class.R'
     'browse-method.R'
+    'bughunt-method.R'
     'chisquare-method.R'
     'contextCluster-class.R'
     'collocations-class.R'
@@ -58,6 +60,7 @@ Collate:
     'context-methods.R'
     'contextCluster-methods.R'
     'cooccurrence-method.R'
+    'cpos-method.R'
     'crosstab-class.R'
     'crosstab-methods.R'
     'dispersion-method.R'
@@ -66,6 +69,7 @@ Collate:
     'keynessCluster-class.R'
     'enrich-method.R'
     'frequencies-method.R'
+    'getEncoding-method.R'
     'html-method.R'
     'html-methods.R'
     'keyness-method.R'

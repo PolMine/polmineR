@@ -184,7 +184,7 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
     rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][rownames(rework@tf[[pAttribute]]) %in% names(rework@pos[[pAttribute]]),]
   }
   if (minFrequency > 0){
-    rework@tf[[pAttribute]] <- subset(rework@tf[[pAttribute]], tf >= minFrequency)
+    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][which(rework@tf[[pAttribute]][,"tf"] >= minFrequency),]
     rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf[[pAttribute]])]
   }
   if(!is.null(tokenFilter)) {

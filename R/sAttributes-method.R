@@ -53,3 +53,10 @@ setMethod(
     ret
   }
 )
+
+setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
+  lapply(
+    object@partitions,
+    function(x) sAttributes(x, sAttribute)
+    )
+})

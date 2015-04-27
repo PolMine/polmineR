@@ -12,17 +12,20 @@
 \alias{partition,character-method}
 \alias{partition,list-method}
 \alias{partition,missing-method}
+\alias{size,partition-method}
 \title{Initialize a partition}
 \usage{
 \S4method{partition}{character}(object, def, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
-  type = NULL, mc = FALSE, verbose = TRUE)
+  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{list}(object, label = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
-  type = NULL, mc = FALSE, verbose = TRUE)
+  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{missing}()
+
+\S4method{size}{partition}(x)
 
 \S4method{pAttribute}{partition}(object, from, to, mc = TRUE,
   verbose = TRUE)
@@ -54,6 +57,8 @@ details)}
 \item{method}{either 'grep' or 'in' to specify the filtering method to get relevant strucs}
 
 \item{xml}{either 'flat' (default) or 'nested'}
+
+\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
 
 \item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
 

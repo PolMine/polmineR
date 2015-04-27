@@ -26,6 +26,8 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param object a partition or a partitionCluster object
 #' @param query query, which may by a character vector or a cqpQuery object
 #' @param pAttribute p-attribute of the query
+#' @param sAttribute if provided, it will be checked that cpos do not extend beyond
+#' the region defined by the s-attribute 
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
 #' @param minSignificance minimum log-likelihood value
@@ -56,8 +58,10 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' a <- context(p, "Integration", "word")
 #' }
 #' @importFrom parallel mclapply
+#' @importFrom rcqp cqi_cpos2lbound cqi_cpos2rbound
 #' @exportMethod context
-#' @rdname context
+#' @rdname context-method
+#' @name context
 #' @docType methods
 #' @aliases context,partition-method
 setMethod(
@@ -65,63 +69,60 @@ setMethod(
   signature(object="partition"),
   function
   (
-    object,
-    query,
-    pAttribute=NULL,
-    leftContext=0,
-    rightContext=0,
-    minSignificance=0,
-    posFilter=NULL,
-    filterType="exclude",
-    stoplist=NULL,
-    positivelist=NULL,
+    object, query,
+    pAttribute=NULL, sAttribute="text_id",
+    leftContext=NULL, rightContext=NULL,
+    minSignificance=0, posFilter=NULL, filterType="exclude",
+    stoplist=NULL, positivelist=NULL,
     statisticalTest="ll",
-    mc=NULL,
-    verbose=TRUE
+    mc=NULL, verbose=TRUE
   ) {
     if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
     if (!pAttribute %in% names(object@tf) && !is.null(statisticalTest)) {
       if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
       object <- enrich(object, tf=pAttribute)
     }
-    if (leftContext == 0) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
-    if (rightContext == 0) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
-    if (minSignificance == -1) minSignificance <- slot(get("session", '.GlobalEnv'), 'minSignificance')
+    if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
+    if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
+    if (is.null(minSignificance)) minSignificance <- slot(get("session", '.GlobalEnv'), 'minSignificance')
     if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
+    
+    corpus.pAttribute <- paste(object@corpus, ".", pAttribute, sep="")
+    corpus.sAttribute <- .setMethod(leftContext, rightContext, sAttribute, corpus=object@corpus)[1]
+    method <- .setMethod(leftContext, rightContext, sAttribute, corpus=object@corpus)[2]
+    
     ctxt <- new(
       "context",
-      query=query,
-      pAttribute=pAttribute,
-      corpus=object@corpus,
-      leftContext=leftContext,
-      rightContext=rightContext,
-      encoding=object@encoding,
-      posFilter=as.character(posFilter),
-      partition=object@label,
-      partitionSize=object@size,
+      query=query, pAttribute=pAttribute, sAttribute=sAttribute, corpus=object@corpus,
+      leftContext=ifelse(is.character(leftContext), 0, leftContext),
+      rightContext=ifelse(is.character(rightContext), 0, rightContext),
+      encoding=object@encoding, posFilter=as.character(posFilter),
+      partition=object@label, partitionSize=object@size,
       call=deparse(match.call())
     )
-    corpus.pattr <- paste(ctxt@corpus,".", pAttribute, sep="")
-    corpus.sattr <- paste(ctxt@corpus,".text_id", sep="")
+    
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
     # query <- .adjustEncoding(query, object@encoding)
     # Encoding(query) <- ctxt@encoding
-    hits <- .queryCpos(ctxt@query, object, pAttribute)
-    hits <- cbind(hits, cqi_cpos2struc(corpus.sattr, hits[,1]))
-    hits <- apply(hits, 1, function(x) as.list(unname(x)))
+    hits <- cpos(object, query, pAttribute)
+    if (is.null(hits)) warning("not hits, proceeding actually does not make sense")
+    if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(corpus.sAttribute, hits[,1]))
+    hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
     
     if (verbose==TRUE) message(' (', length(hits), " occurrences)")
-    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pattr, x)))
+    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pAttribute, x)))
     if (is.numeric(positivelist)){
       positivelistIds <- positivelist
+      if (verbose == TRUE) message("... using ids provided as positivelist")
     } else {
-      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pattr, x)))
+      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
     }
     if (verbose==TRUE) message("... counting tokens in context ")  
+        
     if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds, positivelistIds, method))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, corpus.sattr, filterType, stoplistIds, positivelistIds))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds, positivelistIds, method))
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)]
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
@@ -139,7 +140,7 @@ setMethod(
         countCoi=as.integer(unname(wc))
         )
       ctxt@stat$countCorpus <- object@tf[[pAttribute]][match(ctxt@stat[,"id"], object@tf[[pAttribute]][,1]),2]
-      rownames(ctxt@stat) <- cqi_id2str(corpus.pattr, ctxt@stat[,"id"])
+      rownames(ctxt@stat) <- cqi_id2str(corpus.pAttribute, ctxt@stat[,"id"])
       Encoding(rownames(ctxt@stat)) <- object@encoding
       if ("ll" %in% statisticalTest){
         if (verbose==TRUE) message("... performing log likelihood test")
@@ -164,66 +165,152 @@ setMethod(
     ctxt
   })
 
+
+.setMethod <- function(leftContext, rightContext, sAttribute, corpus){
+  if (is.numeric(leftContext) && is.numeric(rightContext)){
+    if (is.null(names(leftContext)) && is.null(names(leftContext))){
+      method <- "expandToCpos"
+      if (!is.null(sAttribute)) {
+        corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
+      } else {
+        corpus.sAttribute <- NA
+      }
+    } else {
+      method <- "expandBeyondRegion"
+      sAttribute <- unique(c(names(leftContext), names(rightContext)))
+      if (length(sAttribute) == 1){
+        corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
+      } else {
+        warning("please check names of left and right context provided")
+      }
+    }
+  } else if (is.character(leftContext) && is.character(rightContext)){
+    method <- "expandToRegion"
+    sAttribute <- unique(c(leftContext, rightContext))
+    if (length(sAttribute) == 1){
+      corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
+    } else {
+      warning("please check names of left and right context provided")
+    }
+  }
+  return(c(corpus.sAttribute, method))
+}
+
+
+
+
 #' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
 #' @param leftContext no of tokens to the left
 #' @param rightContext no of tokens to the right
 #' @param sAttribute the integrity of the sAttribute to be checked
 #' @return a list!
 #' @noRd
-.leftRightContextChecked <- function(set, leftContext, rightContext, sAttribute){
-  cposLeft <- c((set[1] - leftContext):(set[1]-1))
-  cposLeft <- cposLeft[which(cqi_cpos2struc(sAttribute, cposLeft)==set[3])]
-  cposRight <- c((set[2] + 1):(set[2] + rightContext))
-  cposRight <- cposRight[which(cqi_cpos2struc(sAttribute, cposRight)==set[3])]
-  return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
-}
+.makeLeftRightCpos <- list(
+  
+  "expandToCpos" = function(set, leftContext, rightContext, corpus.sAttribute){
+    cposLeft <- c((set[1] - leftContext):(set[1]-1))
+    cposRight <- c((set[2] + 1):(set[2] + rightContext))
+    if (!is.na(corpus.sAttribute)){
+      cposLeft <- cposLeft[which(cqi_cpos2struc(corpus.sAttribute, cposLeft)==set[3])]
+      cposRight <- cposRight[which(cqi_cpos2struc(corpus.sAttribute, cposRight)==set[3])]   
+    }
+    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+  },
+  
+  "expandToRegion" = function(set, leftContext, rightContext, corpus.sAttribute){
+    cposLeft <- c((cqi_cpos2lbound(corpus.sAttribute, set[1])):(set[1] - 1))
+    cposRight <- c((set[2] + 1):(cqi_cpos2rbound(corpus.sAttribute, set[1])))
+    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+  },
+  
+  "expandBeyondRegion" = function(set, leftContext, rightContext, corpus.sAttribute){
+    queryStruc <- cqi_cpos2struc(corpus.sAttribute, set[1])
+    maxStruc <- cqi_attribute_size(corpus.sAttribute)
+    # get left min cpos
+    leftStruc <- queryStruc - leftContext
+    leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
+    leftCposMin <- cqi_struc2cpos(corpus.sAttribute, leftStruc)[1]
+    cposLeft <- c(leftCposMin:(set[1]-1))
+    # get right max cpos
+    rightStruc <- queryStruc + rightContext
+    rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
+    rightCposMax <- cqi_struc2cpos(corpus.sAttribute, rightStruc)[2]
+    cposRight <- c((set[2] + 1):rightCposMax)
+    # handing it back
+    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+  }
+  
+)
 
-.surrounding <- function (set, ctxt, corpus.sattr, filterType, stoplistIds=NULL, positivelistIds=NULL) {
-  set <- as.numeric(set)
-  cposList <- .leftRightContextChecked(
+.surrounding <- function (set, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds=NULL, positivelistIds=NULL, method) {
+  cposList <- .makeLeftRightCpos[[method]](
     set,
-    leftContext=ctxt@leftContext,
-    rightContext=ctxt@rightContext,
-    sAttribute=corpus.sattr
+    leftContext=leftContext,
+    rightContext=rightContext,
+    corpus.sAttribute=corpus.sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
   posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
   id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), posChecked)
   if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
+    exclude <- FALSE
     ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
-    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids)) {bag <- NULL}
-    if (!is.null(positivelistIds)) if (any(positivelistIds %in% ids) == FALSE) {bag <- NULL}
+    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids)) {exclude <- TRUE}
+    if (!is.null(positivelistIds)) {
+      if (any(positivelistIds %in% ids) == FALSE) { exclude <- TRUE }
+    }
+  } else { 
+    exclude <- FALSE
   }
-  return(list(cpos=cposList, id=id))
+  if (exclude == TRUE){
+    retval <- NULL
+  } else {
+    retval <- list(cpos=cposList, id=id)
+  }
+  return(retval)
 }
 
+
 #' @docType methods
+#' @rdname context-method
 setMethod("context", "partitionCluster", function(
-  object, query, pAttribute="useControls",
-  leftContext=0, rightContext=0,
-  minSignificance=-1, posFilter="useControls", filterType="useControls",
-  stoplist=c(), statisticalTest="ll",
-  verbose=TRUE  
+  object, query, pAttribute=NULL, sAttribute="text_id",
+  leftContext=NULL, rightContext=NULL,
+  minSignificance=NULL, posFilter=NULL, filterType="exclude",
+  stoplist=c(), positivelist=NULL,
+  statisticalTest="ll",
+  mc=FALSE, verbose=TRUE  
 ) {
-  contextCluster <- new("contextCluster")
-  contextCluster@query <- query
-  contextCluster@pAttribute <- pAttribute
+  contextCluster <- new("contextCluster", query=query, pAttribute=pAttribute)
+  if (!is.numeric(positivelist)){
+    corpus.pAttribute <- paste(
+      unique(lapply(object@partitions, function(x) x@corpus)),
+      ".", pAttribute, sep=""
+      )
+    positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
+  }
+  
   contextCluster@contexts <- sapply(
-    partitionCluster@partitions,
-    function(x) context(
-      query, x,
-      pAttribute=pAttribute,
-      leftContext=leftContext, rightContext=rightContext,
-      minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-      stoplist=stoplist, statisticalTest=statisticalTest,
-      verbose=verbose
-    ),
+    object@partitions,
+    function(x) {
+      if (verbose == TRUE) message("... proceeding to partition ", x@label)
+      context(
+        x, query,
+        pAttribute=pAttribute, sAttribute=sAttribute,
+        leftContext=leftContext, rightContext=rightContext,
+        minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
+        stoplist=stoplist, positivelist=positivelist,
+        statisticalTest=statisticalTest,
+        mc=mc, verbose=verbose
+      )
+      },
     simplify = TRUE,
     USE.NAMES = TRUE
   )
   contextCluster
 })
 
+#' @rdname context-method
 setMethod("context", "collocations", function(object, query, complete=FALSE){
   newObject <- new(
     "context",
@@ -270,7 +357,7 @@ setMethod("context", "collocations", function(object, query, complete=FALSE){
   return(newObject)
 })
 
-#' @rdname context
+#' @rdname context-method
 setMethod("context", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "context")
 })

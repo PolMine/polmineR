@@ -38,7 +38,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @docType methods
 #' @rdname enrich-partition-method
 setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, meta=NULL, addPos=NULL, verbose=TRUE){
-  if (size == TRUE) object@size <- .partition.size(object)
+  if (size == TRUE) object@size <- size(object)
   if (length(tf>0)) {
     for (what in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', what, ')')  

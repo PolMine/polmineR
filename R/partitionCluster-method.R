@@ -22,6 +22,7 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @param meta a character vector
 #' @param method either 'grep' or 'in'
 #' @param xml either 'flat' (default) or 'nested'
+#' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
 #' @param value a character vector
@@ -33,7 +34,7 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @rdname partitionCluster
 setMethod("partitionCluster", "character", function(
   object, def, var, prefix=c(""),
-  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", mc=NULL, verbose=TRUE
+  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -55,7 +56,7 @@ setMethod("partitionCluster", "character", function(
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
-  partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, verbose=FALSE)
+  partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, id2str=FALSE, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
@@ -67,7 +68,7 @@ setMethod("partitionCluster", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@partitions[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf)
+      cluster@partitions[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
@@ -77,7 +78,8 @@ setMethod("partitionCluster", "character", function(
         partitionBase,
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         label=x,
-        tf=tf
+        tf=tf,
+        id2str=id2str
       )
     )
   }
@@ -88,12 +90,12 @@ setMethod("partitionCluster", "character", function(
 #' @rdname partitionCluster
 setMethod("partitionCluster", "list", function(
   object, var, prefix=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
-  method="grep", xml="flat", mc=FALSE, verbose=TRUE
+  method="grep", xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
 ) {
   partitionCluster(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
-    meta=meta, method=method, xml=xml, mc=mc, verbose=verbose
+    meta=meta, method=method, xml=xml, id2str=id2str, mc=mc, verbose=verbose
   )
 })
 
