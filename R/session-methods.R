@@ -264,6 +264,28 @@ setReplaceMethod("multicore", signature=c(x="session", value="logical"), functio
 
 ##############################
 
+#' @exportMethod cores
+#' @exportMethod cores<-
+NULL
+
+
+
+setGeneric("cores", function(x) standardGeneric("cores"))
+setGeneric("cores<-", function(x, value) standardGeneric("cores<-"))
+
+#' @rdname session
+setMethod("cores", "session", function(x) x@cores)
+
+#' @rdname session
+setReplaceMethod("cores", signature=c(x="session", value="numeric"), function(x, value) {
+  x@cores <- value
+  x
+})
+
+
+
+##############################
+
 #' @exportMethod smtpServer
 #' @exportMethod smtpServer<-
 NULL

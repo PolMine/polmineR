@@ -70,6 +70,7 @@ Collate:
     'enrich-method.R'
     'frequencies-method.R'
     'getEncoding-method.R'
+    'getTerms-method.R'
     'html-method.R'
     'html-methods.R'
     'keyness-method.R'

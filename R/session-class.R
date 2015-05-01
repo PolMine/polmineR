@@ -2,7 +2,8 @@
 #' 
 #' default settings for current session
 #' 
-#' @slot project currently active project 
+#' @slot project currently active project
+#' @slot projectDir directory of the current project 
 #' @slot corpus corpus to use if none is provided
 #' @slot pAttribute default pAttribute
 #' @slot leftContext default left context
@@ -15,6 +16,7 @@
 #' @slot kwicNo default number of kwic lines
 #' @slot metadata default metadata 
 #' @slot multicore default multicore
+#' @slot cores number of CPU cores to use
 #' @slot consoleEncoding default console encoding
 #' @slot smtpServer default server to use for sending mail
 #' @slot smtpPort default port 
@@ -38,6 +40,7 @@ setClass(
   "session",
   slots=c(
     project="character",
+    projectDir="character",
     corpus="character",
     pAttribute="character",
     leftContext="numeric",
@@ -50,6 +53,7 @@ setClass(
     kwicNo="numeric",
     metadata="character",
     multicore="logical",
+    cores="numeric",
     consoleEncoding="character",
     smtpServer="character",
     smtpPort="character",
@@ -63,6 +67,7 @@ setClass(
 session <- new(
   "session",
   project=c(""),
+  projectDir=c(""),
   corpus="PLPRBTTXT",
   pAttribute="word",
   leftContext=5,
@@ -75,6 +80,7 @@ session <- new(
   kwicNo=10,
   metadata = c("text_party", "text_name", "text_date"),
   multicore=TRUE,
+  cores=2,
   consoleEncoding="UTF-8",
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
