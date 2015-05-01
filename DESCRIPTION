@@ -80,6 +80,7 @@ Collate:
     'kwic-methods.R'
     'll-method.R'
     'mail-method.R'
+    'means-method.R'
     'partition-method.R'
     'session-class.R'
     'store-method.R'

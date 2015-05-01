@@ -7,7 +7,8 @@
 \alias{sAttributes,partition-method}
 \title{Print S-Attributes in a partition or corpus}
 \usage{
-\S4method{sAttributes}{character}(object, sAttribute = NULL)
+\S4method{sAttributes}{character}(object, sAttribute = NULL, unique = TRUE,
+  regex = NULL)
 
 \S4method{sAttributes}{partition}(object, sAttribute = NULL)
 }
