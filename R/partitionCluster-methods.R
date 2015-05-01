@@ -220,3 +220,6 @@ setMethod("unique", "partitionCluster", function(x){
   for (pos in partitionsToDrop) x@partitions[pos] <- NULL
   x
 })
+
+#' @exportMethod length
+setMethod("length", "partitionCluster", function(x) length(x@partitions))

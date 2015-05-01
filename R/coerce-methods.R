@@ -56,8 +56,17 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @exportMethod as.TermDocumentMatrix
 #' @docType methods
 #' @noRd
-setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@partitions, function(c) c@encoding)))
+  if (is.null(pAttribute)){
+    pAttributesAvailable <- unique(unlist(lapply(x@partitions, function(x) names(x@tf))))
+    if (length(pAttributesAvailable) == 1){
+      pAttribute <- pAttributesAvailable
+      if (verbose == TRUE) message("... preparing TermDocumentMatrix for pAttribute ", pAttribute)
+    } else {
+      warning("term frequencies are available for more than one tf, please provide pAttribute to be used explicitly")
+    }
+  }
   corpus <- unique(unlist(lapply(x@partitions, function(c) c@corpus)))
   message("... putting together the matrix")
   i <- as.integer(unname(unlist(lapply(x@partitions,
@@ -126,8 +135,8 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 #' @exportMethod as.DocumentTermMatrix
 #' @docType methods
 #' @noRd
-setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
-  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute, weight=weight, rmBlank=rmBlank))
+setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
+  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
   retval
 })
 
