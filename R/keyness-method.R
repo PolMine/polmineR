@@ -25,6 +25,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' @param included TRUE if coi is part of ref, defaults to FALSE
 #' @param digits numeric
 #' @param verbose defaults to TRUE
+#' @param progress logical
 #' @return The function returns a data frame with the following structure:
 #' - absolute frequencies in the first row
 #' - ...
@@ -90,10 +91,10 @@ setMethod("keyness", signature=c(x="partition"), function(
 
 
 #' @docType methods
-#' @noRd
+#' @rdname keyness
 setMethod("keyness", signature=c(x="partitionCluster"), function(
   x, y, pAttribute=NULL,
-  minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE
+  minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
 ) {
   if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   kclust <- new("keynessCluster")
@@ -101,7 +102,18 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
     keyness(a, y, pAttribute=pAttribute, minFrequency=minFrequency, included=included, method=method, verbose=verbose)
   }
   if (mc == FALSE){
-    kclust@objects <- lapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
+    if (progress == FALSE){
+      kclust@objects <- lapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))  
+    } else {
+      tmp <- lapply(
+        c(1:length(x@partitions)),
+        function(i) {
+          .progressBar(i, length(x@partitions))
+          .keyness(x@partitions[[i]])
+          })
+      names(tmp) <- names(x@partitions)
+      kclust@objects <- tmp
+    }
   } else if (mc == TRUE){
     kclust@objects <- mclapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
   }

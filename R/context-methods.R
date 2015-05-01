@@ -36,7 +36,7 @@ setMethod('show', 'context',
 setMethod('[', 'context',
           function(x,i) {
             settingKwicMetadata <- slot(get("session", '.GlobalEnv'), "kwicMetadata")
-            conc <- kwic(x, metadata=settingKwicMetadata)
+            conc <- kwic(x, meta=settingKwicMetadata)
             conc@table <- conc@table[i,]
             show(conc)
           }        

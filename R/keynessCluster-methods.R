@@ -48,3 +48,18 @@ setMethod("summary", "keynessCluster", function(object){
   tab
 })
 
+setMethod("dim", "keynessCluster", function(x) length(x@objects))
+
+setMethod("length", "keynessCluster", function(x) length(x@objects))
+
+setMethod("names", "keynessCluster", function(x) names(x@objects))
+
+setMethod("unique", "keynessCluster", function(x){
+  labels <- names(x)
+  uniqueLabels <- unique(labels)
+  uniquePos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
+  objectsToDrop <- which(c(1:length(labels)) %in% uniquePos == FALSE)
+  objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
+  for (pos in objectsToDrop) x@objects[pos] <- NULL
+  x
+})
