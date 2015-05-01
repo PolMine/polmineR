@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.52
-Date: 2015-04-25
+Version: 0.4.53
+Date: 2015-05-01
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -80,6 +80,7 @@ Collate:
     'kwic-methods.R'
     'll-method.R'
     'mail-method.R'
+    'means-method.R'
     'partition-method.R'
     'session-class.R'
     'store-method.R'
