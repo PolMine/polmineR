@@ -1,5 +1,7 @@
 planned changes:
 ----------------
+ * 
+ * streamline label-, labels- and names-method
  * turn .cpos2tf into a method (getTf)
  * label-method for partition and label() <- 
  * names-method for partitionCluster, keynessCluster objects

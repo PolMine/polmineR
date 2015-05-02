@@ -115,13 +115,18 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
       kclust@objects <- tmp
     }
   } else if (mc == TRUE){
-    kclust@objects <- mclapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
+    kclust@objects <- mclapply(
+      setNames(x@partitions, names(x@partitions)),
+      function(a) .keyness(a),
+      mc.cores=slot(get("session", '.GlobalEnv'), 'multicore')
+      )
   }
   kclust
 })
 
 
-
+#' @importFrom plyr ddply
+#' @rdname keyness
 setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){
@@ -149,7 +154,7 @@ setMethod("keyness", "collocations", function(
   if (mc==FALSE) {
     tabsPlus <- lapply(names(tabs), pimpTabs)
   } else if (mc == TRUE) {
-    tabsPlus <- mclapply(names(tabs), pimpTabs)
+    tabsPlus <- mclapply(names(tabs), pimpTabs, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
   }
   tab <- do.call(rbind, tabsPlus)
   rownames(tab) <- NULL

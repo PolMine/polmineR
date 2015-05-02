@@ -21,6 +21,7 @@
 #' @slot smtpServer default server to use for sending mail
 #' @slot smtpPort default port 
 #' @slot email default email address
+#' @slot jsDir directory for storing js files
 #' @slot partitionDir default partition directory
 #' @slot defaultKwicCollocate default collocate for kwic display
 #' @slot defaultKwicNode default node for kwic analysis
@@ -58,6 +59,7 @@ setClass(
     smtpServer="character",
     smtpPort="character",
     email="character",
+    jsDir="character",
     partitionDir="character",
     defaultKwicCollocate="character",
     defaultKwicNode="character"
@@ -85,6 +87,7 @@ session <- new(
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
   email="polmine@uni-due.de",
+  jsDir="",
   partitionDir="",
   defaultKwicCollocate="",
   defaultKwicNode="Suche"           

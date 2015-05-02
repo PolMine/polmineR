@@ -30,6 +30,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   if (!pAttribute %in% names(object@tf)){
     object <- enrich(object, tf=pAttribute)
   }
+  if (mc == TRUE) noCores <- slot(get('session', '.GlobalEnv'), "cores")
   coll <- new(
     "collocations",
     call=deparse(match.call()),
@@ -72,7 +73,11 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
       b <- movingContext(cposRow, window, object, tokenAttr, posAttr)
       })
   } else {
-    bag <- mclapply(c(1:nrow(object@cpos)), function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)})
+    bag <- mclapply(
+      c(1:nrow(object@cpos)),
+      function(cposRow) {b <- movingContext(cposRow, window, object, tokenAttr, posAttr)},
+      mc.cores=noCores
+      )
   }
   nodes <- lapply(bag, function(x) x$nodes)
   neighbourhood <- lapply(bag, function(x) x$neighbourhood)
@@ -90,7 +95,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   if (mc==FALSE){
     raw <- lapply(frameSplit, table)
   } else {
-    raw <- mclapply(frameSplit, table)
+    raw <- mclapply(frameSplit, table, mc.cores=noCores)
   }
   message('... preparing stat table')
   coll@stat <- data.frame(
@@ -125,11 +130,23 @@ setMethod("collocations", "partitionCluster", function(object, pAttribute="word"
     encoding=unique(vapply(object@partitions, function(x) x@encoding, FUN.VALUE="character")),
     corpus=unique(vapply(object@partitions, function(x) x@corpus, FUN.VALUE="character"))
     )
-  cluster@collocations <- lapply(
-    setNames(object@partitions, names(object@partitions)),
-    function(x) {
-      message('Calculating collocations for partition ', x@label)
-      collocations(x, pAttribute=pAttribute, window=window, filter=filter, posFilter)
-    })
+  if (mc == FALSE){
+    cluster@collocations <- lapply(
+      setNames(object@partitions, names(object@partitions)),
+      function(x) {
+        message('Calculating collocations for partition ', x@label)
+        collocations(x, pAttribute=pAttribute, window=window, filter=filter, posFilter=posFilter)
+      })
+    
+  } else {
+    cluster@collocations <- mclapply(
+      setNames(object@partitions, names(object@partitions)),
+      function(x) {
+        message('Calculating collocations for partition ', x@label)
+        collocations(
+          x, pAttribute=pAttribute, window=window, filter=filter, posFilter=posFilter, mc=FALSE, progress=FALSE
+          )
+      }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    
+  }
   cluster
 })
