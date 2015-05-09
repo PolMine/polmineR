@@ -33,13 +33,13 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   if (mc == TRUE) noCores <- slot(get('session', '.GlobalEnv'), "cores")
   coll <- new(
     "collocations",
-    call=deparse(match.call()),
-    partition=strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2],
     pAttribute=pAttribute, posFilter=posFilter,
     leftContext=window, rightContext=window,
     corpus=object@corpus, encoding=object@encoding,
     partitionSize=object@size
     )
+  coll@call <- deparse(match.call())
+  coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2],
   tokenAttr <- paste(object@corpus,".",pAttribute, sep="")
   posAttr <- paste(object@corpus,".pos", sep="")
   getIdsWindow <- function(x, window, cposMax, ids, pos){
@@ -67,7 +67,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
     bag
   }
   message('... creating window lists')
-  if (mc==FALSE){
+  if (mc == FALSE){
     bag <- lapply(c(1:nrow(object@cpos)), function(cposRow) {
       if (progress==TRUE) .progressBar(i=cposRow, total=nrow(object@cpos))
       b <- movingContext(cposRow, window, object, tokenAttr, posAttr)
@@ -124,7 +124,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   coll
 })
 
-setMethod("collocations", "partitionCluster", function(object, pAttribute="word", window=5, filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+setMethod("collocations", "partitionCluster", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
   cluster <- new(
     "collocationsCluster",
     encoding=unique(vapply(object@partitions, function(x) x@encoding, FUN.VALUE="character")),
@@ -135,7 +135,7 @@ setMethod("collocations", "partitionCluster", function(object, pAttribute="word"
       setNames(object@partitions, names(object@partitions)),
       function(x) {
         message('Calculating collocations for partition ', x@label)
-        collocations(x, pAttribute=pAttribute, window=window, filter=filter, posFilter=posFilter)
+        collocations(x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter)
       })
     
   } else {
@@ -144,7 +144,7 @@ setMethod("collocations", "partitionCluster", function(object, pAttribute="word"
       function(x) {
         message('Calculating collocations for partition ', x@label)
         collocations(
-          x, pAttribute=pAttribute, window=window, filter=filter, posFilter=posFilter, mc=FALSE, progress=FALSE
+          x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter, mc=FALSE, progress=FALSE
           )
       }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    
   }

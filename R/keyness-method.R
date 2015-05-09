@@ -126,6 +126,7 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
 
 
 #' @importFrom plyr ddply
+#' @importFrom data.table rbindlist
 #' @rdname keyness
 setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
@@ -169,19 +170,29 @@ setMethod("keyness", "collocations", function(
   keysInX <- unique(subset(tab, what==1)[,"characterKey"])
   reducedTab <- subset(tab, characterKey %in% keysInX)
   if (verbose == TRUE) message("... matching")
-  newObject@stat <- ddply(
-    .data=reducedTab,
-    .variables=.(characterKey),
-    .fun=function(tab){
-      xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
-      yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
-      keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
-      foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
-      foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
-      data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
-    },
-    .progress="text"
-    )
+  .applyWorker <- function(tab){
+    xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
+    yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
+    keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
+    foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
+    foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
+    data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
+  }
+  if (mc == FALSE){
+    newObject@stat <- ddply(
+      .data=reducedTab, .variables=.(characterKey),
+      .fun=.applyWorker, .progress="text"
+    )    
+  } else {
+    if (verbose == TRUE) message("... performing split")
+    splittedTab <- split(x=reducedTab, f=reducedTab$characterKey)
+    if (verbose == TRUE) message("... apply")
+    resultList <- mclapply(splittedTab, .applyWorker, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
+    if (verbose == TRUE) message("... combine (using data.table")
+    newTab <- rbindlist(resultList)
+    newTab <- cbind(characterKey=names(resultList), newTab)
+    newObject@stat <- as.data.frame(newTab)    
+  }
   ### starting here - the same as keyness,partition-method
   if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
   if ("chiSquare" %in% method) {

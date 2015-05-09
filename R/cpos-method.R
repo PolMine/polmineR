@@ -47,6 +47,6 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
     strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
   }
-  if (nrow(hits) == 0) hits <- NULL
+  # if (nrow(hits) == 0) hits <- NULL
   return(hits)
 })

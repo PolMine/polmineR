@@ -105,7 +105,10 @@ setMethod(
     # query <- .adjustEncoding(query, object@encoding)
     # Encoding(query) <- ctxt@encoding
     hits <- cpos(object, query, pAttribute)
-    if (is.null(hits)) warning("not hits, proceeding actually does not make sense")
+    if (is.null(hits)){
+      warning("not hits, proceeding actually does not make sense")
+      return(NULL)
+    }
     if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(corpus.sAttribute, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
     

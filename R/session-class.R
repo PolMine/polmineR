@@ -65,7 +65,7 @@ setClass(
     defaultKwicNode="character"
     ))
 
-#' @export
+#' @export session
 session <- new(
   "session",
   project=c(""),
