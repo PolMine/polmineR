@@ -15,6 +15,9 @@
   minFrequency = 1, included = FALSE, method = "chiSquare",
   verbose = TRUE, mc = TRUE, progress = FALSE)
 
+\S4method{keyness}{collocations}(x, y, minFrequency = 0, included = FALSE,
+  method = "ll", digits = 2, mc = TRUE, verbose = TRUE)
+
 \S4method{keyness}{missing}()
 }
 \arguments{

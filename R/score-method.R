@@ -18,8 +18,8 @@ setGeneric("score", function(object, ...){standardGeneric("score")})
 #' @aliases score score-method score,partitionCluster-method
 #' @name score
 setMethod("score", "partitionCluster", function(object, token, method, pAttribute, rel=FALSE, tfMethod=FALSE){
-  if (is.null(names(object@partitions))) warning("labels needed but missing")
-  if ((length(unique(names(object@partitions)))) != length(object@partitions)) warning("please ensure that are labels are present and unique")
+  if (is.null(names(object@objects))) warning("labels needed but missing")
+  if ((length(unique(names(object@objects)))) != length(object@objects)) warning("please ensure that are labels are present and unique")
   if (method == "additive"){
     how <- ifelse(tfMethod==FALSE, "in", "grep")
     tab <- tf(object=object, token=token, pAttribute=pAttribute, rel=rel, method=tfMethod)

@@ -16,11 +16,9 @@ class to organize information of multiple context analyses
 }
 \section{Slots}{
 
-  \describe{
-    \item{\code{contexts}:}{Object of class \code{"list"} a list of context objects }
-  }
-}
-
+\describe{
+\item{\code{objects}}{Object of class \code{"list"} a list of context objects}
+}}
 \section{Methods}{
 
   \describe{

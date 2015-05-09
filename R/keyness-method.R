@@ -103,20 +103,20 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
   }
   if (mc == FALSE){
     if (progress == FALSE){
-      kclust@objects <- lapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))  
+      kclust@objects <- lapply(setNames(x@objects, names(x@objects)), function(a) .keyness(a))  
     } else {
       tmp <- lapply(
-        c(1:length(x@partitions)),
+        c(1:length(x@objects)),
         function(i) {
-          .progressBar(i, length(x@partitions))
-          .keyness(x@partitions[[i]])
+          .progressBar(i, length(x@objects))
+          .keyness(x@objects[[i]])
           })
-      names(tmp) <- names(x@partitions)
+      names(tmp) <- names(x@objects)
       kclust@objects <- tmp
     }
   } else if (mc == TRUE){
     kclust@objects <- mclapply(
-      setNames(x@partitions, names(x@partitions)),
+      setNames(x@objects, names(x@objects)),
       function(a) .keyness(a),
       mc.cores=slot(get("session", '.GlobalEnv'), 'multicore')
       )

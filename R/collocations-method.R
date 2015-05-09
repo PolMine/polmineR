@@ -39,7 +39,7 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
     partitionSize=object@size
     )
   coll@call <- deparse(match.call())
-  coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2],
+  coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
   tokenAttr <- paste(object@corpus,".",pAttribute, sep="")
   posAttr <- paste(object@corpus,".pos", sep="")
   getIdsWindow <- function(x, window, cposMax, ids, pos){
@@ -127,20 +127,20 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
 setMethod("collocations", "partitionCluster", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
   cluster <- new(
     "collocationsCluster",
-    encoding=unique(vapply(object@partitions, function(x) x@encoding, FUN.VALUE="character")),
-    corpus=unique(vapply(object@partitions, function(x) x@corpus, FUN.VALUE="character"))
+    encoding=unique(vapply(object@objects, function(x) x@encoding, FUN.VALUE="character")),
+    corpus=unique(vapply(object@objects, function(x) x@corpus, FUN.VALUE="character"))
     )
   if (mc == FALSE){
-    cluster@collocations <- lapply(
-      setNames(object@partitions, names(object@partitions)),
+    cluster@objects <- lapply(
+      setNames(object@objects, names(object@objects)),
       function(x) {
         message('Calculating collocations for partition ', x@label)
         collocations(x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter)
       })
     
   } else {
-    cluster@collocations <- mclapply(
-      setNames(object@partitions, names(object@partitions)),
+    cluster@objects <- mclapply(
+      setNames(object@objects, names(object@objects)),
       function(x) {
         message('Calculating collocations for partition ', x@label)
         collocations(

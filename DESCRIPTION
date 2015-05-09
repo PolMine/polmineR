@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.53
-Date: 2015-05-01
+Version: 0.4.54
+Date: 2015-05-09
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -36,6 +36,7 @@ Collate:
     'generics.R'
     'polmineR-package.R'
     'partition-class.R'
+    'bundle-class.R'
     'partitionCluster-class.R'
     'textstat-class.R'
     'keyness-class.R'

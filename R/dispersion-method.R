@@ -63,19 +63,19 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
     Partition <- enrich(Partition, meta=c(rows, cols))
   }
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
-  crosstab@partitions <- .crosstabulationSizes(Partition, rows, cols)
+  crosstab@objects <- .crosstabulationSizes(Partition, rows, cols)
   if (verbose==TRUE) message ('... getting frequencies')
   crosstab@abs <- .crosstabToken(Partition, rows, cols, pAttribute, query)
-  crosstab@abs <- .map(crosstab@partitions, crosstab@abs)
+  crosstab@abs <- .map(crosstab@objects, crosstab@abs)
   crosstab@abs[is.na(crosstab@abs)] <- 0
-  crosstab@rel <- crosstab@abs/crosstab@partitions
+  crosstab@rel <- crosstab@abs/crosstab@objects
   crosstab@rel[is.infinite(as.matrix(crosstab@rel))] <- 0 
   crosstab@rel[is.nan(as.matrix(crosstab@rel))] <- 0
   crosstab@rows <- rows
   crosstab@cols <- cols
   crosstab@query <- query
-  colnames(crosstab@partitions) <- gsub('^X(.*?)', '\\1', colnames(crosstab@partitions))
-  rownames(crosstab@partitions)[which(rownames(crosstab@partitions)=="")] <- 'VOID'
+  colnames(crosstab@objects) <- gsub('^X(.*?)', '\\1', colnames(crosstab@objects))
+  rownames(crosstab@objects)[which(rownames(crosstab@objects)=="")] <- 'VOID'
   crosstab
 }
 
@@ -94,13 +94,13 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' absoute query frequencies and relative query frequencies, just as the input
 #' @noRd
 .crosstabMergeCols <- function(object, colnameOld1, colnameOld2, colnameNew) {
-  object@partitions[,colnameOld1] <- object@partitions[,colnameOld1] + object@partitions[,colnameOld2]
-  colnames(object@partitions)[which(colnames(object@partitions)==colnameOld1)] <- colnameNew
-  object@partitions <- .dropcols(object@partitions, colnameOld2)
+  object@objects[,colnameOld1] <- object@objects[,colnameOld1] + object@objects[,colnameOld2]
+  colnames(object@objects)[which(colnames(object@objects)==colnameOld1)] <- colnameNew
+  object@objects <- .dropcols(object@objects, colnameOld2)
   object@abs[,colnameOld1] <- object@abs[,colnameOld1] + object@abs[,colnameOld2]
   colnames(object@abs)[which(colnames(object@abs)==colnameOld1)] <- colnameNew
   object@abs <- object@abs[-grep(colnameOld2, colnames(object@abs))]
-  object@rel <- object@abs/object@partitions
+  object@rel <- object@abs/object@objects
   object
 }
 
@@ -115,29 +115,29 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' absoute query frequencies and relative query frequencies, just as the input
 #' @noRd
 .crosstabMergeColsRegex <- function(object, regex, colname.new) {
-  match <- grep(regex, colnames(object@partitions))
+  match <- grep(regex, colnames(object@objects))
   message('...', length(match), 'columns to be merged')
   if (length(match)>1) {
-    object@partitions <- cbind(object@partitions, rowSums(object@partitions[,match]))
-    object@partitions <- .dropcols(object@partitions, regex)      
-    colnames(object@partitions)[ncol(object@partitions)] <- colname.new
+    object@objects <- cbind(object@objects, rowSums(object@objects[,match]))
+    object@objects <- .dropcols(object@objects, regex)      
+    colnames(object@objects)[ncol(object@objects)] <- colname.new
     object@abs <- cbind(object@abs, rowSums(object@abs[,match]))
     object@abs <- .dropcols(object@abs, regex)      
     colnames(object@abs)[ncol(object@abs)] <- colname.new
   } else if (length(match==1)) {
-    object@partitions <- cbind(object@partitions, object@partitions[,match])
-    object@partitions <- .dropcols(object@partitions, regex)      
-    colnames(object@partitions)[ncol(object@partitions)] <- colname.new
+    object@objects <- cbind(object@objects, object@objects[,match])
+    object@objects <- .dropcols(object@objects, regex)      
+    colnames(object@objects)[ncol(object@objects)] <- colname.new
     object@abs <- cbind(object@abs, object@abs[,match])
     object@abs <- .dropcols(object@abs, regex)      
     colnames(object@abs)[ncol(object@abs)] <- colname.new
   } else {
-    object@partitions <- cbind(object@partitions, rep(0, times=nrow(object@partitions)))
-    colnames(object@partitions)[ncol(object@partitions)] <- colname.new    
+    object@objects <- cbind(object@objects, rep(0, times=nrow(object@objects)))
+    colnames(object@objects)[ncol(object@objects)] <- colname.new    
     object@abs <- cbind(object@abs, rep(0, times=nrow(object@abs)))
     colnames(object@abs)[ncol(object@abs)] <- colname.new
   }
-  object@rel <- object@abs/object@partitions
+  object@rel <- object@abs/object@objects
   object
 }
 
@@ -158,11 +158,11 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 .crosstabDrop <- function(x, filter, what="drop"){
   object <- x
   if (what=="drop"){
-    object@partitions <- .dropcols(object@partitions, filter)
+    object@objects <- .dropcols(object@objects, filter)
     object@abs <- .dropcols(object@abs, filter)
     object@rel <- .dropcols(object@rel, filter)
   } else if (what=="keep"){
-    object@partitions <- object@partitions[,which(colnames(object@partitions) %in% filter)]
+    object@objects <- object@objects[,which(colnames(object@objects) %in% filter)]
     object@abs <- object@abs[,which(colnames(object@abs) %in% filter)]
     object@rel <- object@rel[,which(colnames(object@rel) %in% filter)]
   }

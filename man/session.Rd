@@ -202,6 +202,8 @@ default settings for current session
 
 \item{\code{email}}{default email address}
 
+\item{\code{jsDir}}{directory for storing js files}
+
 \item{\code{partitionDir}}{default partition directory}
 
 \item{\code{defaultKwicCollocate}}{default collocate for kwic display}

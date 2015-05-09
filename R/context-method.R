@@ -287,14 +287,14 @@ setMethod("context", "partitionCluster", function(
   contextCluster <- new("contextCluster", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
-      unique(lapply(object@partitions, function(x) x@corpus)),
+      unique(lapply(object@objects, function(x) x@corpus)),
       ".", pAttribute, sep=""
       )
     positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
   }
   
-  contextCluster@contexts <- sapply(
-    object@partitions,
+  contextCluster@objects <- sapply(
+    object@objects,
     function(x) {
       if (verbose == TRUE) message("... proceeding to partition ", x@label)
       context(

@@ -32,7 +32,7 @@ A cluster of partition objects.
 \section{Slots}{
 
 \describe{
-\item{\code{partitions}}{Object of class \code{"list"} the partitions making up the cluster}
+\item{\code{objects}}{Object of class \code{"list"} the partitions making up the cluster}
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus the partition is based on}
 

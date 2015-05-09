@@ -59,7 +59,7 @@ setMethod(
 
 setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
   lapply(
-    object@partitions,
+    object@objects,
     function(x) sAttributes(x, sAttribute)
     )
 })

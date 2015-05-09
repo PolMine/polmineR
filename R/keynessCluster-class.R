@@ -1,4 +1,8 @@
+#' @include bundle-class.R
+NULL
+
 setClass("keynessCluster",
-         representation(objects="list")
+         slots=c(objects="list"),
+         contains=c("bundle")
 )
 

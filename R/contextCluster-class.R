@@ -1,14 +1,12 @@
-#' @include context-class.R
+#' @include context-class.R bundle-class.R
 NULL
 
 #' S4 contextCluster class
 #' 
 #' class to organize information of multiple context analyses
 #' 
-#' @section Slots:
-#'   \describe{
-#'     \item{\code{contexts}:}{Object of class \code{"list"} a list of context objects }
-#'   }
+#' @slot objects Object of class \code{"list"} a list of context objects
+#'
 #' @section Methods:
 #'   \describe{
 #'     \item{show}{output of core information}
@@ -24,9 +22,10 @@ NULL
 #' @rdname contextCluster-class
 setClass("contextCluster",
          representation(
-           contexts="list",
+           objects="list",
            query="character",
            pAttribute="character"
-         )
+         ),
+         contains=c("bundle")
 )
 

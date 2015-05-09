@@ -220,9 +220,9 @@ setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequ
   pimpedCluster <- object
   if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
     if (mc == TRUE) {
-      pimpedCluster@partitions <- mclapply(object@partitions, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
+      pimpedCluster@objects <- mclapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
     } else {
-      pimpedCluster@partitions <- lapply(object@partitions, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
+      pimpedCluster@objects <- lapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
     }
   }
   if (minSize >= 0){
@@ -235,17 +235,17 @@ setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequ
     if (length(toKill) > 0) {drop <- c(toKill, drop)}
   }
   if (!is.null(drop)) {
-    if (is.null(names(object@partitions)) || any(is.na(names(object@partitions)))) {
+    if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
       warning("there a partitions to be dropped, but some or all partitions do not have a label, which may potentially cause errors or problems")
     }
     if (is.character(drop) == TRUE){
-      pimpedCluster@partitions[which(names(pimpedCluster@partitions) %in% drop)] <- NULL
+      pimpedCluster@objects[which(names(pimpedCluster@objects) %in% drop)] <- NULL
     } else if (is.numeric(drop == TRUE)){
-      pimpedCluster@partitions[drop] <- NULL
+      pimpedCluster@objects[drop] <- NULL
     }
   }
   if (!is.null(keep)){
-    pimpedCluster@partitions <- pimpedCluster@partitions[which(names(pimpedCluster@partitions) %in% keep)]
+    pimpedCluster@objects <- pimpedCluster@objects[which(names(pimpedCluster@objects) %in% keep)]
   }
   pimpedCluster
 })
