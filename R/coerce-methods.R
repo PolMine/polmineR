@@ -296,6 +296,7 @@ setMethod(
     mat
   })
 
+#' @exportMethod as.partitionCluster
 setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
   newPartitionCluster <- new(
     "partitionCluster",

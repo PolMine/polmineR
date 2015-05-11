@@ -46,7 +46,8 @@ setGeneric("bapply", function(x, ...) standardGeneric("bapply"))
 
 #' @param f a function that can be applied to each object contained in the bundle
 #' @rdname bundle-class
+#' @exportMethod bapply
 setMethod("bapply", "bundle", function(x, f, ...){
-  x@objects <- lapply(X=x@object, FUN=f, ...)
+  x@objects <- lapply(X=x@objects, FUN=f, ...)
   x
 })
