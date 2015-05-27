@@ -1,11 +1,11 @@
-#' @include partition-class.R
+#' @include partition-class.R bundle-class.R
 NULL
 
 #' partitionCluster class
 #' 
 #' A cluster of partition objects.
 #' 
-#' @slot partitions Object of class \code{"list"} the partitions making up the cluster
+#' @slot objects Object of class \code{"list"} the partitions making up the cluster
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on
 #' @slot sAttributesFixed Object of class \code{"list"} fixed sAttributes
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
@@ -45,13 +45,14 @@ NULL
 #' @docType class
 #' @author Andreas Blaette
 setClass("partitionCluster",
-         representation(partitions="list", 
+         representation(objects="list", 
                         corpus="character",
                         sAttributesFixed="list",
                         encoding="character",
                         explanation="character",
                         xml="character",
                         call="character"
-         )
+         ),
+         contains=c("bundle")
 )
 

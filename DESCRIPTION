@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.52
-Date: 2015-04-25
+Version: 0.4.54
+Date: 2015-05-09
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -36,6 +36,7 @@ Collate:
     'generics.R'
     'polmineR-package.R'
     'partition-class.R'
+    'bundle-class.R'
     'partitionCluster-class.R'
     'textstat-class.R'
     'keyness-class.R'
@@ -70,6 +71,7 @@ Collate:
     'enrich-method.R'
     'frequencies-method.R'
     'getEncoding-method.R'
+    'getTerms-method.R'
     'html-method.R'
     'html-methods.R'
     'keyness-method.R'
@@ -79,6 +81,7 @@ Collate:
     'kwic-methods.R'
     'll-method.R'
     'mail-method.R'
+    'means-method.R'
     'partition-method.R'
     'session-class.R'
     'store-method.R'

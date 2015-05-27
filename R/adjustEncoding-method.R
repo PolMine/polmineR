@@ -1,14 +1,17 @@
 #' adjust encoding
 #' 
-#' make sure that encoding is equal to partition encoding
+#' Utility method to help making sure that the encoding of a character string or the relevant parts of an object
+#' conform to the encoding to the corpus. 
 #' 
-#' @param .Object the object
-#' @param corpusEncoding the encoding of the corpus
+#' @param .Object the object (usually a character vector, nothing else is implemented so far)
+#' @param corpusEncoding the encoding of the corpus (e.g. "latin1")
+#' @param ... further parameters
 #' @rdname adjustEncoding-method
 #' @name adjustEncoding
 #' @exportMethod adjustEncoding
 setGeneric("adjustEncoding", function(.Object, ...) standardGeneric("adjustEncoding"))
 
+#' @rdname adjustEncoding-method
 setMethod("adjustEncoding", "character", function(.Object, corpusEncoding){
   sapply(
     as.list(.Object),

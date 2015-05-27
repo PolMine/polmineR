@@ -2,7 +2,7 @@
 #' @docType methods
 #' @noRd
 setMethod("t", "crosstab", function(x){
-  x@partitions <- as.data.frame(t(x@partitions))
+  x@objects <- as.data.frame(t(x@objects))
   x@abs <- as.data.frame(t(x@abs))
   x@rel <- as.data.frame(t(x@rel))
   rows <- x@rows

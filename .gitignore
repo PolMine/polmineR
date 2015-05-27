@@ -2,5 +2,4 @@
 .Rproj.user
 .Rhistory
 .RData
-.gitignore
-polmineR.Rproj
+./*.Rproj

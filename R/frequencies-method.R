@@ -48,7 +48,7 @@ setMethod("frequencies", "partition", function(object, query, pAttribute=NULL) {
 #' @docType methods
 #' @noRd
 setMethod("frequencies", "partitionCluster", function(object, query, pAttribute=NULL){
-  bag <- lapply(object@partitions, function(x) frequencies(x, query, pAttribute=pAttribute))
+  bag <- lapply(object@objects, function(x) frequencies(x, query, pAttribute=pAttribute))
   tmp <- do.call(rbind, lapply(names(bag), function(x) {
     if (!is.null(bag[[x]])) data.frame(partition=rep(x, nrow(bag[[x]])), bag[[x]])
     }))

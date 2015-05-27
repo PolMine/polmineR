@@ -5,18 +5,21 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
 
 #' @rdname sAttributes-method
-setMethod("sAttributes", "character", function(object, sAttribute=NULL){
+setMethod("sAttributes", "character", function(object, sAttribute=NULL, unique=TRUE, regex=NULL){
   if (is.null(sAttribute)){
     ret <- cqi_attributes(object, "s")
     ret
   } else {
     if (object %in% cqi_list_corpora()) {
-      ret <- unique(cqi_struc2str(
+      ret <- cqi_struc2str(
         paste(object, '.', sAttribute, sep=''),
-        1:cqi_attribute_size(paste(object, '.', sAttribute, sep=''))
-      )
-      )
-      Encoding(ret) <- .getCorpusEncoding(object) 
+        c(0:(cqi_attribute_size(paste(object, '.', sAttribute, sep=''))-1))
+        )
+      if (!is.null(regex)) {
+        ret <- grep(regex, ret, value=TRUE)
+      }
+      if (unique == TRUE) ret <- unique(ret)
+      Encoding(ret) <- getEncoding(object) 
     } else {
       warning("corpus name provided not available")
       ret <- NULL
@@ -56,7 +59,7 @@ setMethod(
 
 setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
   lapply(
-    object@partitions,
+    object@objects,
     function(x) sAttributes(x, sAttribute)
     )
 })

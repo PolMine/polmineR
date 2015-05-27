@@ -105,7 +105,10 @@ setMethod(
     # query <- .adjustEncoding(query, object@encoding)
     # Encoding(query) <- ctxt@encoding
     hits <- cpos(object, query, pAttribute)
-    if (is.null(hits)) warning("not hits, proceeding actually does not make sense")
+    if (is.null(hits)){
+      warning("not hits, proceeding actually does not make sense")
+      return(NULL)
+    }
     if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(corpus.sAttribute, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
     
@@ -284,14 +287,14 @@ setMethod("context", "partitionCluster", function(
   contextCluster <- new("contextCluster", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
-      unique(lapply(object@partitions, function(x) x@corpus)),
+      unique(lapply(object@objects, function(x) x@corpus)),
       ".", pAttribute, sep=""
       )
     positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
   }
   
-  contextCluster@contexts <- sapply(
-    object@partitions,
+  contextCluster@objects <- sapply(
+    object@objects,
     function(x) {
       if (verbose == TRUE) message("... proceeding to partition ", x@label)
       context(

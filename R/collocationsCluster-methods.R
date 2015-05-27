@@ -2,7 +2,7 @@
 NULL
 
 setMethod("as.TermDocumentMatrix", "collocationsCluster", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
-  tabs <- lapply(x@collocations, as.data.frame)
+  tabs <- lapply(x@objects, as.data.frame)
   if (directed == TRUE){
     keys <- unique(unlist(lapply(tabs, rownames)))
     keyVector <- setNames(c(1:length(keys)), keys)
@@ -60,7 +60,7 @@ setMethod("as.TermDocumentMatrix", "collocationsCluster", function(x, col, direc
     nrow=length(keyVector),
     dimnames=list(
       Terms=names(keyVector),
-      Docs=names(x@collocations)
+      Docs=names(x@objects)
     )
   ) 
   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=x@encoding, to="UTF-8")

@@ -90,11 +90,11 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
 #' @rdname tf-method
 setMethod("tf", "partitionCluster", function(object, token, method="in", pAttribute=NULL, rel=FALSE){
   # check whether all partitions in the cluster have a proper label
-  if (is.null(names(object@partitions)) || any(is.na(names(object@partitions)))) {
+  if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
     warning("all partitions in the cluster need to have a label (at least some missing)")
   }
   what <- paste(pAttribute, ifelse(rel==FALSE, "Abs", "Rel"), sep="")
-  tfAvailable <- unique(unlist(lapply(object@partitions, function(x) names(x@tf))))
+  tfAvailable <- unique(unlist(lapply(object@objects, function(x) names(x@tf))))
   if (method %in% c("in", "grep")){
     if (length(pAttribute)!=1) {
       warning("pAttribute required for methods 'in' and/or 'grep' but not given")
@@ -104,12 +104,12 @@ setMethod("tf", "partitionCluster", function(object, token, method="in", pAttrib
     }
   }
   bag <- lapply(
-    names(object@partitions),
+    names(object@objects),
     function(x) {
       data.frame(
         partition=x,
         token=token,
-        tf(object@partitions[[x]], token, method=method, pAttribute=pAttribute)
+        tf(object@objects[[x]], token, method=method, pAttribute=pAttribute)
       )
     }
   )

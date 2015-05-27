@@ -1,14 +1,11 @@
-#' @include collocations-class.R
+#' @include collocations-class.R bundle-class.R
 NULL
 
 #' S4 collocationsCluster class
 #' 
 #' class to organize information of multiple context analyses
 #' 
-#' @section Slots:
-#'   \describe{
-#'     \item{\code{contexts}:}{Object of class \code{"list"} a list of context objects }
-#'   }
+#' @slot objects Object of class \code{"list"} a list of context objects
 #'     
 #' @name collocationsCluster-class
 #' @aliases collocationsCluster as.TermDocumentMatrix,collocationsCluster-method
@@ -16,11 +13,12 @@ NULL
 #' @exportClass kwic
 #' @rdname collocationsCluster-class
 setClass("collocationsCluster",
-         representation(
-           collocations="list",
+         slots=c(
+           objects="list",
            pAttribute="character",
            encoding="character",
            corpus="character"
-         )
+         ),
+         contains=c("bundle")
 )
 

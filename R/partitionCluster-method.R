@@ -68,11 +68,11 @@ setMethod("partitionCluster", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@partitions[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str)
+      cluster@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
-    cluster@partitions <- mclapply(
+    cluster@objects <- mclapply(
       sAttributeVarValues,
       function(x) zoom(
         partitionBase,
@@ -83,7 +83,7 @@ setMethod("partitionCluster", "character", function(
       )
     )
   }
-  names(cluster@partitions) <- paste(.adjustEncoding(prefix, cluster@encoding), sAttributeVarValues, sep='')
+  names(cluster@objects) <- paste(.adjustEncoding(prefix, cluster@encoding), sAttributeVarValues, sep='')
   cluster
 })
 

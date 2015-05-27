@@ -4,11 +4,6 @@ NULL
 
 
 #' @docType methods
-setMethod("[[", "contextCluster", function(x,i){
-  return(x@contexts[[i]])
-})
-
-#' @docType methods
 setMethod("[", "contextCluster", function(x,i){
   tf <- unlist(lapply(x, function(x) x@stat[i,"freqObs"]))
   cat("be aware of bugs\n")
@@ -54,15 +49,15 @@ setMethod("as.matrix", "contextCluster", function(x, col, ...) {
 #' @docType methods
 #' @noRd
 setMethod("summary", "contextCluster", function(object, top=3){
-  partitionSizes=unlist(lapply(object@contexts, function(x) x@partitionSize))
-  tfAbs=unlist(lapply(object@contexts, function(x) x@frequency))
+  partitionSizes=unlist(lapply(object@objects, function(x) x@partitionSize))
+  tfAbs=unlist(lapply(object@objects, function(x) x@frequency))
   overview <- data.frame(
     tfAbs=tfAbs,
     tfRel=round(tfAbs/partitionSizes*100000,2)
     )
-  overview <- cbind(overview, t(data.frame(lapply(object@contexts, function(x) .statisticalSummary(x)$no))))
+  overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))))
   colnames(overview)[3:6] <- criticalValue <- c(">10.83", ">7.88", ">6.63", ">3.84")
-  overview <- cbind(overview, t(data.frame(lapply(object@contexts, function(x) rownames(x@stat)[1:top]))))
+  overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) rownames(x@stat)[1:top]))))
   overview
 })
 

@@ -56,30 +56,39 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @exportMethod as.TermDocumentMatrix
 #' @docType methods
 #' @noRd
-setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
-  encoding <- unique(unlist(lapply(x@partitions, function(c) c@encoding)))
-  corpus <- unique(unlist(lapply(x@partitions, function(c) c@corpus)))
+setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+  encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
+  if (is.null(pAttribute)){
+    pAttributesAvailable <- unique(unlist(lapply(x@objects, function(x) names(x@tf))))
+    if (length(pAttributesAvailable) == 1){
+      pAttribute <- pAttributesAvailable
+      if (verbose == TRUE) message("... preparing TermDocumentMatrix for pAttribute ", pAttribute)
+    } else {
+      warning("term frequencies are available for more than one tf, please provide pAttribute to be used explicitly")
+    }
+  }
+  corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
   message("... putting together the matrix")
-  i <- as.integer(unname(unlist(lapply(x@partitions,
+  i <- as.integer(unname(unlist(lapply(x@objects,
                                        function(c) {a <- c@tf[[pAttribute]][,1]
                                                     a <- a+1
                                                     a})
   )))
-  j <- unlist(lapply(c(1:length(x@partitions)),
+  j <- unlist(lapply(c(1:length(x@objects)),
                      function(m) {rep(
-                       m,times=nrow(x@partitions[[m]]@tf[[pAttribute]])
+                       m,times=nrow(x@objects[[m]]@tf[[pAttribute]])
                      )
                      }
   ))
-  v <- as.integer(unlist(lapply(x@partitions, function(c) c@tf[[pAttribute]][,2])))
+  v <- as.integer(unlist(lapply(x@objects, function(c) c@tf[[pAttribute]][,2])))
   attr <- paste(corpus, '.', pAttribute, sep='')
   lexicon.size <- cqi_lexicon_size(attr)
   mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@partitions),
+                               ncol=length(x@objects),
                                nrow=lexicon.size+1,
                                dimnames=list(
                                  Terms=cqi_id2str(attr, c(0:lexicon.size)),
-                                 Docs=names(x@partitions))
+                                 Docs=names(x@objects))
   )
   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")  
   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
@@ -126,8 +135,8 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 #' @exportMethod as.DocumentTermMatrix
 #' @docType methods
 #' @noRd
-setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
-  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute, weight=weight, rmBlank=rmBlank))
+setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
+  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
   retval
 })
 
@@ -153,20 +162,20 @@ setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute, w
 #' @exportMethod as.TermContextMatrix
 #' @noRd
 setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
-  encoding <- unique(unlist(lapply(x@contexts, function(c) c@encoding)))
-  corpus <- unique(unlist(lapply(x@contexts, function(c) c@corpus)))
-  pAttribute <- unique(unlist(lapply(x@contexts, function(c) c@pAttribute)))
+  encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
+  corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
+  pAttribute <- unique(unlist(lapply(x@objects, function(c) c@pAttribute)))
   pAttr <- paste(corpus, '.', pAttribute, sep='')
-  i <- unlist(lapply(x@contexts, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
-  j <- unlist(lapply(c(1:length(x@contexts)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
-  v <- unlist(lapply(x@contexts, function(c) c@stat[,col]))
+  i <- unlist(lapply(x@objects, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
+  j <- unlist(lapply(c(1:length(x@objects)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
+  v <- unlist(lapply(x@objects, function(c) c@stat[,col]))
   lexiconSize <- cqi_lexicon_size(pAttr)
   mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@contexts),
+                               ncol=length(x@objects),
                                nrow=lexiconSize+1,
                                dimnames=list(
                                  Terms=cqi_id2str(pAttr, c(0:lexiconSize)),
-                                 Docs=names(x@contexts))
+                                 Docs=names(x@objects))
   )
   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")
   class(mat) <- c("TermContextMatrix", "TermDocumentMatrix", "simple_triplet_matrix")
@@ -192,8 +201,8 @@ setMethod("as.data.frame", "context", function(x, ...) x@stat )
 #' @exportMethod as.partitionCluster
 setMethod("as.partitionCluster", "partition", function(object){
   newCluster <- new("partitionCluster")
-  newCluster@partitions[[1]] <- object
-  names(newCluster@partitions)[1] <- object@label
+  newCluster@objects[[1]] <- object
+  names(newCluster@objects)[1] <- object@label
   newCluster@corpus <- object@corpus
   newCluster@encoding <- object@encoding
   newCluster@explanation <- c("derived from a partition object")
@@ -203,10 +212,10 @@ setMethod("as.partitionCluster", "partition", function(object){
 setMethod("as.partitionCluster", "list", function(object, ...){
   if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
   newCluster <- new("partitionCluster")
-  newCluster@partitions <- object
-  newCluster@corpus <- unique(unlist(lapply(newCluster@partitions, function(x) x@corpus)))
-  newCluster@encoding <- unique(unlist(lapply(newCluster@partitions, function(x) x@encoding)))
-  names(newCluster@partitions) <- vapply(newCluster@partitions, function(x) x@label, FUN.VALUE="character")
+  newCluster@objects <- object
+  newCluster@corpus <- unique(unlist(lapply(newCluster@objects, function(x) x@corpus)))
+  newCluster@encoding <- unique(unlist(lapply(newCluster@objects, function(x) x@encoding)))
+  names(newCluster@objects) <- vapply(newCluster@objects, function(x) x@label, FUN.VALUE="character")
   newCluster
 })
 
@@ -214,57 +223,80 @@ setMethod("as.partitionCluster", "list", function(object, ...){
 #' @examples
 #' dontrun{
 #' foo <- as.TermDocumentMatrix(
-#'   "ZEIT", "word", "text_id",
-#'   left="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-#'   right="1951_08_gespraeche-zum-interzonenhandel.html"
+#'   x="ZEIT", pAttribute="word", sAttribute="text_id",
+#'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
+#'   to="1951_08_gespraeche-zum-interzonenhandel.html", robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
 #' )
 #' }
 #' @noRd
-setMethod("as.TermDocumentMatrix", "character", function (x, pAttribute, sAttribute, left=NULL, right=NULL, encoding="ISO-8859-1", weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
-  if (!is.null(left) || !is.null(right)) sAttributeString <- sAttributes(x, sAttribute)
-  leftStruc <- ifelse(!is.null(left), grep(left, sAttributeString)[1], 1)
-  rightStruc <- ifelse(!is.null(right), grep(right, sAttributeString)[1], 1)
-  sAttr <- paste(x, ".", sAttribute, sep="")
-  pAttr <- paste(x, ".", pAttribute, sep="")
-  freqList <- lapply(
-    c(leftStruc:rightStruc),
-    function(i){
-      cpos <- cqi_struc2cpos(sAttr, i)
+setMethod(
+  "as.TermDocumentMatrix", "character",
+  function (
+    x, pAttribute, sAttribute, from=NULL, to=NULL, strucs=NULL,
+    rmBlank=TRUE, verbose=TRUE, robust=FALSE, mc=FALSE
+  ) {
+    sAttr <- paste(x, ".", sAttribute, sep="")
+    pAttr <- paste(x, ".", pAttribute, sep="")
+    if (!is.null(strucs)){
+      if (is.character(strucs)){
+        sAttributeStrings <- sAttributes(x, sAttribute)
+        strucs <- which(sAttributeStrings %in% strucs)
+        sAttributeStrings <- sAttributeStrings[strucs]
+      }
+    } else {
+      if (!is.null(from) || !is.null(to)) {
+        sAttributeStrings <- sAttributes(x, sAttribute)
+        fromStruc <- grep(from, sAttributeStrings)[1]
+        toStruc <- grep(to, sAttributeStrings)[1]
+        strucs <- c(fromStruc:toStruc)
+        sAttributeStrings <- sAttributeStrings[strucs]
+      } else {
+        strucs <- c(0:cqi_attribute_size(sAttr))
+      }
+    }
+    .freqMatrix <- function(i){
+      struc <- strucs[i]
+      cpos <- cqi_struc2cpos(sAttr, struc)
       ids <- cqi_cpos2id(pAttr, c(cpos[1]:cpos[2]))
       freqVector <- tabulate(ids + 1)
       noZeroCount <- which(freqVector != 0)
       freqMatrix <- matrix(
         c(noZeroCount, freqVector[noZeroCount]),
         ncol=2, byrow=FALSE
-        )
+      )
       cbind(rep(i, times=nrow(freqMatrix)), freqMatrix)
-    })
-  freqMatrixAgg <- do.call(rbind, freqList)
-  lexiconSize <- cqi_lexicon_size(pAttr)
-  sAttributeStrings <- cqi_struc2str(sAttr, c(leftStruc:rightStruc))
-  pAttributeStrings <- cqi_id2str(pAttr, c(0:lexiconSize)) # slow!
-  pAttributeStrings <- iconv(pAttributeStrings, from=encoding, to="UTF-8")                            
-  mat <- simple_triplet_matrix(
-    i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
-    ncol=length(freqList),
-    nrow=lexiconSize+1,
-    dimnames=list(Terms=pAttributeStrings, Docs=sAttributeStrings)
-  )
-  # copied from as.TermDocumentMatrix,partitionCluster-method
-#   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-#   if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
-#   if (!is.null(weight)){
-#     if (weight == "tfidf"){
-#       message("... applying tf/idf as a weight")
-#       mat <- weigh(mat, method="tfidf", corpusSizes=summary(x)$token)
-#     } else if (weight == "rel"){
-#       message("... computing relative frequencies")
-#       mat <- weigh(mat, method="rel", corpusSizes=summary(x)$token)
-#     }
-#   }
-  mat
-})
+    }
+    if (verbose == TRUE) message("... computing term frequencies")
+    if (mc == FALSE){
+      freqMatrixList <- lapply(c(1:length(strucs)), .freqMatrix)
+    } else if (mc == TRUE) {
+      coresToUse <- slot(get("session", ".GlobalEnv"), "cores")
+      if (verbose == TRUE) message("... using ", coresToUse, " cores")
+      freqMatrixList <- mclapply(c(1:length(strucs)), .freqMatrix, mc.cores=coresToUse)
+    }
+    if (verbose == TRUE) message("... combining results")
+    freqMatrixAgg <- do.call(rbind, freqMatrixList)
+    lexiconSize <- cqi_lexicon_size(pAttr)
+    if (verbose == TRUE) message("... id2str for pAttribute")
+    # pAttributeStrings <- cqi_id2str(pAttr, c(0:lexiconSize)) # slow!
+    pAttributeStrings <- getTerms(x, pAttribute=pAttribute, robust=robust)
+    pAttributeStrings <- iconv(pAttributeStrings, from=getEncoding(x), to="UTF-8")                            
+    if (!exists("sAttributeStrings")){
+      if (verbose == TRUE) message("... id2str for sAttribute")
+      sAttributeStrings <- cqi_struc2str(sAttr, c(fromStruc:toStruc))  
+    }
+    mat <- simple_triplet_matrix(
+      i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
+      ncol=length(strucs),
+      nrow=lexiconSize,
+      dimnames=list(Terms=pAttributeStrings, Docs=sAttributeStrings)
+    )
+    class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+    if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
+    mat
+  })
 
+#' @exportMethod as.partitionCluster
 setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
   newPartitionCluster <- new(
     "partitionCluster",
@@ -288,9 +320,10 @@ setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
     newPartition
   }
   if (mc == FALSE){
-    newPartitionCluster@partitions <- lapply(object@cpos, FUN=.makeNewPartition)  
+    newPartitionCluster@objects <- lapply(object@cpos, FUN=.makeNewPartition)  
   } else {
-    newPartitionCluster@partitions <- mclapply(object@cpos, FUN=.makeNewPartition)  
+    coresToUse <- slot(get("session", ".GlobalEnv"), "cores")
+    newPartitionCluster@objects <- mclapply(object@cpos, FUN=.makeNewPartition, mc.cores=coresToUse)  
   }
   return(newPartitionCluster)
 })

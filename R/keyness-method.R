@@ -103,25 +103,31 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
   }
   if (mc == FALSE){
     if (progress == FALSE){
-      kclust@objects <- lapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))  
+      kclust@objects <- lapply(setNames(x@objects, names(x@objects)), function(a) .keyness(a))  
     } else {
       tmp <- lapply(
-        c(1:length(x@partitions)),
+        c(1:length(x@objects)),
         function(i) {
-          .progressBar(i, length(x@partitions))
-          .keyness(x@partitions[[i]])
+          .progressBar(i, length(x@objects))
+          .keyness(x@objects[[i]])
           })
-      names(tmp) <- names(x@partitions)
+      names(tmp) <- names(x@objects)
       kclust@objects <- tmp
     }
   } else if (mc == TRUE){
-    kclust@objects <- mclapply(setNames(x@partitions, names(x@partitions)), function(a) .keyness(a))
+    kclust@objects <- mclapply(
+      setNames(x@objects, names(x@objects)),
+      function(a) .keyness(a),
+      mc.cores=slot(get("session", '.GlobalEnv'), 'multicore')
+      )
   }
   kclust
 })
 
 
-
+#' @importFrom plyr ddply
+#' @importFrom data.table rbindlist
+#' @rdname keyness
 setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){
@@ -149,7 +155,7 @@ setMethod("keyness", "collocations", function(
   if (mc==FALSE) {
     tabsPlus <- lapply(names(tabs), pimpTabs)
   } else if (mc == TRUE) {
-    tabsPlus <- mclapply(names(tabs), pimpTabs)
+    tabsPlus <- mclapply(names(tabs), pimpTabs, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
   }
   tab <- do.call(rbind, tabsPlus)
   rownames(tab) <- NULL
@@ -164,19 +170,29 @@ setMethod("keyness", "collocations", function(
   keysInX <- unique(subset(tab, what==1)[,"characterKey"])
   reducedTab <- subset(tab, characterKey %in% keysInX)
   if (verbose == TRUE) message("... matching")
-  newObject@stat <- ddply(
-    .data=reducedTab,
-    .variables=.(characterKey),
-    .fun=function(tab){
-      xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
-      yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
-      keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
-      foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
-      foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
-      data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
-    },
-    .progress="text"
-    )
+  .applyWorker <- function(tab){
+    xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
+    yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
+    keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
+    foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
+    foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
+    data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
+  }
+  if (mc == FALSE){
+    newObject@stat <- ddply(
+      .data=reducedTab, .variables=.(characterKey),
+      .fun=.applyWorker, .progress="text"
+    )    
+  } else {
+    if (verbose == TRUE) message("... performing split")
+    splittedTab <- split(x=reducedTab, f=reducedTab$characterKey)
+    if (verbose == TRUE) message("... apply")
+    resultList <- mclapply(splittedTab, .applyWorker, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
+    if (verbose == TRUE) message("... combine (using data.table")
+    newTab <- rbindlist(resultList)
+    newTab <- cbind(characterKey=names(resultList), newTab)
+    newObject@stat <- as.data.frame(newTab)    
+  }
   ### starting here - the same as keyness,partition-method
   if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
   if ("chiSquare" %in% method) {

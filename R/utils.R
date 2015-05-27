@@ -127,7 +127,7 @@ flatten <- function(object){
   newCluster <- new("partitionCluster")
   for (i in 1:length(object)){
     if(!is.null(object[[i]])){
-      if (length(object[[i]]@partitions) > 0){
+      if (length(object[[i]]@objects) > 0){
         newCluster <- newCluster + object[[i]]
       }
     }

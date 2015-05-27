@@ -2,7 +2,8 @@
 #' 
 #' default settings for current session
 #' 
-#' @slot project currently active project 
+#' @slot project currently active project
+#' @slot projectDir directory of the current project 
 #' @slot corpus corpus to use if none is provided
 #' @slot pAttribute default pAttribute
 #' @slot leftContext default left context
@@ -15,10 +16,12 @@
 #' @slot kwicNo default number of kwic lines
 #' @slot metadata default metadata 
 #' @slot multicore default multicore
+#' @slot cores number of CPU cores to use
 #' @slot consoleEncoding default console encoding
 #' @slot smtpServer default server to use for sending mail
 #' @slot smtpPort default port 
 #' @slot email default email address
+#' @slot webDir directory for putting files that shall be accessible by www
 #' @slot partitionDir default partition directory
 #' @slot defaultKwicCollocate default collocate for kwic display
 #' @slot defaultKwicNode default node for kwic analysis
@@ -38,6 +41,7 @@ setClass(
   "session",
   slots=c(
     project="character",
+    projectDir="character",
     corpus="character",
     pAttribute="character",
     leftContext="numeric",
@@ -50,19 +54,22 @@ setClass(
     kwicNo="numeric",
     metadata="character",
     multicore="logical",
+    cores="numeric",
     consoleEncoding="character",
     smtpServer="character",
     smtpPort="character",
     email="character",
+    webDir="character",
     partitionDir="character",
     defaultKwicCollocate="character",
     defaultKwicNode="character"
     ))
 
-#' @export
+#' @export session
 session <- new(
   "session",
   project=c(""),
+  projectDir=c(""),
   corpus="PLPRBTTXT",
   pAttribute="word",
   leftContext=5,
@@ -75,10 +82,12 @@ session <- new(
   kwicNo=10,
   metadata = c("text_party", "text_name", "text_date"),
   multicore=TRUE,
+  cores=2,
   consoleEncoding="UTF-8",
   smtpServer="mailout.uni-due.de",
   smtpPort="587",
   email="polmine@uni-due.de",
+  webDir="",
   partitionDir="",
   defaultKwicCollocate="",
   defaultKwicNode="Suche"           

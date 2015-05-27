@@ -23,7 +23,7 @@ setMethod("html", "character", function(object){
 #' @noRd
 setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
   for (i in from:to){
-    html(object@partitions[[i]], meta=meta, filename=NULL, type="debate")
+    html(object@objects[[i]], meta=meta, filename=NULL, type="debate")
   }
 })
 
@@ -62,7 +62,7 @@ setMethod("html", "partition", function(object, meta=NULL){
 #' @docType methods
 #' @noRd
 setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
-  markdown <- paste(lapply(object@partitions, function(p) as.markdown(p, type)), collapse="\n* * *\n")
+  markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
     markdown,

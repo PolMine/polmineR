@@ -1,50 +1,53 @@
-setGeneric("weigh", function(tdm, ...){standardGeneric("weigh")})
-
 #' weigh a matrix 
 #' 
-#' @param tdm a matrix (which is a term-document-matrix, terms in the rows, docs in the columns)
-#' @param method which weighting to apply (currently only tfidf is implemented)
-#' @param corpusSizes the total number of tokens in the documents
-#' @aliases weigh weigh,matrix-method weigh,TermDocumentMatrix-method
-#' @rdname weigh
+#' @param .Object the matrix to be weighed
+#' @param method the kind of weight to apply
 #' @exportMethod weigh
 #' @docType methods
-setMethod("weigh", "matrix", function(tdm, method="tfidf", corpusSizes){
-  if (method=="tfidf"){
-    tdmWeighed <- .tfidf(tdm)  
-  } else if (method=="rel"){
-    tdmWeighed <- tdm / corpusSizes
-  } else if (method=="rank"){
-    tdmWeighed <- apply(tdm, 2, order)
-    rownames(tdmWeighed) <- rownames(tdm)
-  }
-  return(tdmWeighed)
-  }
-)
+#' @rdname weigh-method
+#' @name weigh
+setGeneric("weigh", function(.Object, ...){standardGeneric("weigh")})
 
-#' @exportMethod weigh
-#' @docType methods
-#' @noRd
-setMethod("weigh", "TermDocumentMatrix", function(tdm, method="tfidf", corpusSizes){
-  tdmMatrix <- as.sparseMatrix(tdm)
+#' @importFrom slam row_sums col_sums
+#' @importFrom tm nDocs
+#' @rdname weigh-method
+setMethod("weigh", "TermDocumentMatrix", function(.Object, method="tfidf"){
   if (method=="tfidf"){
-    tdmWeighed <- .tfidf(tdmMatrix, corpusSizes)  
+    .Object$v <- .Object$v/col_sums(.Object)[.Object$j] * log2(nDocs(.Object)/row_sums(.Object > 0))[.Object$i]  
+    attr(.Object, "weighting") <- c(
+      "term frequency - inverse document frequency (normalized)",
+      "tf-idf"
+    )
   } else if (method=="rel"){
-    tdmWeighed <- tdmMatrix / corpusSizes
+    .Object$v <- .Object$v/col_sums(.Object)[.Object$j]
+    attr(.Object, "weighting") <- c(
+      "term frequency (normalized)",
+      "tf-normalized"
+    )
   } else if (method=="rank"){
-    tdmWeighedRaw <- apply(tdm, 2, order)
-    rownames(tdmWeighedRaw) <- rownames(tdm)
-    tdmWeighed <- Matrix(tdmWeighedRaw, sparse=TRUE)
+    warning("not implemented")
   }
-  tdmWeighed <- as.simple_triplet_matrix(tdmWeighed)
-  class(tdmWeighed) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  return(tdmWeighed)
+  return(.Object)
 })
 
 
-.tfidf <- function(tdm, corpusSizes){
-  idf <- log(ncol(tdm)/colSums(tdm/tdm, na.rm=TRUE))
-  tf <- tdm / corpusSizes
-  tdmWeighed <- tf * idf
-  return(tdmWeighed)
-}
+#' @rdname weigh-method
+setMethod("weigh", "DocumentTermMatrix", function(.Object, method="tfidf"){
+  if (method=="tfidf"){
+    .Object$v <- .Object$v/row_sums(.Object)[.Object$i] * log2(nDocs(.Object)/col_sums(.Object > 0))[.Object$j]  
+    attr(.Object, "weighting") <- c(
+      "term frequency - inverse document frequency (normalized)",
+      "tf-idf"
+    )
+  } else if (method=="rel"){
+    .Object$v <- .Object$v/row_sums(.Object)[.Object$i]
+    attr(.Object, "weighting") <- c(
+      "term frequency (normalized)",
+      "tf-normalized"
+    )
+  } else if (method=="rank"){
+    warning("not implemented")
+  }
+  return(.Object)
+})
+

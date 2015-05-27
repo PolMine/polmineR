@@ -36,11 +36,6 @@ setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chiSquare
   mat
 })
 
-#' @docType methods
-#' @noRd
-setMethod("[[", "keynessCluster", function(x, i){
-  return(x@objects[[i]])
-})
 
 setMethod("summary", "keynessCluster", function(object){
   tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
@@ -49,17 +44,3 @@ setMethod("summary", "keynessCluster", function(object){
 })
 
 setMethod("dim", "keynessCluster", function(x) length(x@objects))
-
-setMethod("length", "keynessCluster", function(x) length(x@objects))
-
-setMethod("names", "keynessCluster", function(x) names(x@objects))
-
-setMethod("unique", "keynessCluster", function(x){
-  labels <- names(x)
-  uniqueLabels <- unique(labels)
-  uniquePos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
-  objectsToDrop <- which(c(1:length(labels)) %in% uniquePos == FALSE)
-  objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
-  for (pos in objectsToDrop) x@objects[pos] <- NULL
-  x
-})
