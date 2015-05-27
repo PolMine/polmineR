@@ -10,9 +10,10 @@
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encoding="latin-1", verbose=TRUE){
+setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encoding=NULL, verbose=TRUE){
   if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
+  if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
   if (grepl('"', query) == FALSE) {
     pAttr <- paste(.Object, '.', pAttribute, sep='')
@@ -39,11 +40,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encodin
 })
   
 setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose=TRUE){
-  # if (is.null(encoding)) encoding <- 
-  hits <- cpos(
-    .Object@corpus, query=query, pAttribute,
-    encoding=.Object@encoding, verbose=verbose
-    )
+  hits <- cpos(.Object@corpus, query=query, pAttribute, encoding=.Object@encoding, verbose=verbose)
   if (!is.null(hits)){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
     corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
