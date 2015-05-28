@@ -1,8 +1,14 @@
-#' get the corpus positions for a query
+#' corpus positions for a query
 #' 
-#' @param .Object an Object
-#' @param query a query, may be CQP
-#' @param pAttribute which attribute to search
+#' Get the corpus positions (cpos) for a query. The query may also be a 
+#' CQP query. 
+#' 
+#' @param .Object a character vector (length 1) giving the name of a corpus, or a partition object
+#' @param query a query, either a single term, or a CQP query
+#' @param pAttribute the p-attribute to search
+#' @param encoding the encoding of the corpus (if NULL, the
+#'  encoding provided in the registry file of the corpus will be used)
+#' @param verbose logical, whether to be talkative
 #' @param ... further arguments
 #' @exportMethod cpos
 #' @rdname cpos-method
@@ -33,12 +39,13 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encodin
       hits <- matrix(hits, nrow=1)
     }
   } else {
-    if (verbose == TRUE) warning("no hits for query -> ", query)
+    if (verbose == TRUE) message("no hits for query -> ", query)
     hits = NULL
   }
   hits
 })
   
+#' @rdname cpos-method
 setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose=TRUE){
   hits <- cpos(.Object@corpus, query=query, pAttribute, encoding=.Object@encoding, verbose=verbose)
   if (!is.null(hits)){
