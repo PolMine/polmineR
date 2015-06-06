@@ -1,9 +1,11 @@
 #' get term frequencies
 #' 
-#' Method to obtain term frequencies for one or multiple terms or queries.
+#' Method to obtain term frequencies for one or multiple terms or queries. The
+#' query may be formulated using regular expression syntax (method="grep"),
+#' or may use the CQP syntax.
 #' 
 #' @param object either a partition or a partitionCluster object
-#' @param token a character vector (one or multiple terms to be looked up)
+#' @param query a character vector (one or multiple terms to be looked up)
 #' @param method either "in", "grep" or "cqp" (defaults to "in")
 #' @param pAttribute if NULL, the pAttributes available in the partition object will be reported
 #' @param rel logical, defaults to FALSE 
@@ -24,7 +26,7 @@
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
-setMethod("tf", "partition", function(object, token, method="in", pAttribute=NULL){
+setMethod("tf", "partition", function(object, query, method="in", pAttribute=NULL){
   if (is.null(pAttribute)){
     if (is.null(names(object@tf)) == TRUE) {
       warning("no pAttribute provided, no tf lists available")
@@ -36,16 +38,16 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
       warning("pAttribute provided is not available")
     }
   }
-  if (is.character(token) == TRUE){
-    bag <- list(token=.adjustEncoding(token, object@encoding))
+  if (is.character(query) == TRUE){
+    bag <- list(query=.adjustEncoding(query, object@encoding))
     if (method == "in"){ 
       for (pAttr in pAttribute) {
-        bag[[paste(pAttr, "Abs", sep="")]] <- object@tf[[pAttr]][token,"tf"]
-        bag[[paste(pAttr, "Rel", sep="")]] <- object@tf[[pAttr]][token,"tf"]/object@size
+        bag[[paste(pAttr, "Abs", sep="")]] <- object@tf[[pAttr]][query,"tf"]
+        bag[[paste(pAttr, "Rel", sep="")]] <- object@tf[[pAttr]][query,"tf"]/object@size
       }
       tab <- data.frame(bag)
     } else if (method == "grep"){
-      bag <- lapply(token, function(query) {
+      bag <- lapply(query, function(query) {
         foo <- list()
         for (pAttr in pAttribute) {
           rowNo <- grep(query, rownames(object@tf[[pAttr]]))
@@ -66,7 +68,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
     } else if (method == "cqp") {
       for (pAttr in pAttribute) {
         no <- vapply(
-          token,
+          query,
           function(query) {
             n <- nrow(.queryCpos(query=query, Partition=object, pAttribute=pAttr, verbose=FALSE))
             ifelse(is.null(n), 0, n)
@@ -80,7 +82,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
     } else {
       warning("not a valid method specification")      
     }
-  } else if (is.numeric(token)) {
+  } else if (is.numeric(query)) {
     warning("tf method not implemented for token ids")
   }
   tab
@@ -88,7 +90,7 @@ setMethod("tf", "partition", function(object, token, method="in", pAttribute=NUL
 
 
 #' @rdname tf-method
-setMethod("tf", "partitionCluster", function(object, token, method="in", pAttribute=NULL, rel=FALSE){
+setMethod("tf", "partitionCluster", function(object, query, method="in", pAttribute=NULL, rel=FALSE){
   # check whether all partitions in the cluster have a proper label
   if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
     warning("all partitions in the cluster need to have a label (at least some missing)")
@@ -108,32 +110,32 @@ setMethod("tf", "partitionCluster", function(object, token, method="in", pAttrib
     function(x) {
       data.frame(
         partition=x,
-        token=token,
-        tf(object@objects[[x]], token, method=method, pAttribute=pAttribute)
+        query=query,
+        tf(object@objects[[x]], query, method=method, pAttribute=pAttribute)
       )
     }
   )
   tab <- do.call(rbind, bag)
   if(!is.null(tab)){
-    tab <- data.frame(tab[,c("partition", "token", what)])
-    colnames(tab) <- c("partition", "token", "tf")
-    tab <- xtabs(tf~partition+token, data=tab)
+    tab <- data.frame(tab[,c("partition", "query", what)])
+    colnames(tab) <- c("partition", "query", "tf")
+    tab <- xtabs(tf~partition+query, data=tab)
     tab <- as.data.frame(as.matrix(unclass(tab)))
   }
   tab
 })
 
 #' @rdname tf-method
-setMethod("tf", "character", function(object, token, pAttribute, method="in"){
+setMethod("tf", "character", function(object, query, pAttribute, method="in"){
   if (object %in% cqi_list_corpora()) {
     if (method=="in"){
       sAttr <- paste(object, ".", pAttribute, sep="")
       total <- cqi_attribute_size(sAttr)
-      abs <- sapply(token, function(query) {
+      abs <- sapply(query, function(query) {
         cqi_id2freq(sAttr, cqi_str2id(sAttr, query))
       })
       rel <- abs/total
-      tab <- data.frame(token=token, abs=abs, rel=rel, row.names=NULL)
+      tab <- data.frame(query=query, abs=abs, rel=rel, row.names=NULL)
     } else if (method=="cqp"){
       warning("not yet implemented")
     }
