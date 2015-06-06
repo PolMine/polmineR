@@ -202,7 +202,7 @@ default settings for current session
 
 \item{\code{email}}{default email address}
 
-\item{\code{jsDir}}{directory for storing js files}
+\item{\code{webDir}}{directory for putting files that shall be accessible by www}
 
 \item{\code{partitionDir}}{default partition directory}
 
