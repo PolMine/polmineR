@@ -20,6 +20,14 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.4.56
+  * pAttributes-method for character, and partition objects
+    for easy access to inspect available p-attributes
+  * (hidden) helper functions .parseRegistry and .parseInfoFile
+  * automatic detection of corpus type, if .info file is available
+  * def parameter of partition-method may be NULL, and anchor element
+    will be read from .info-file
+
 v0.4.49
   * cooccurences method for partition objects
 

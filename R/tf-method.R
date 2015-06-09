@@ -26,35 +26,20 @@
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
-setMethod("tf", "partition", function(object, query, method="in", pAttribute=NULL){
-  if (is.null(pAttribute)){
-    if (is.null(names(object@tf)) == TRUE) {
-      warning("no pAttribute provided, no tf lists available")
-    } else {
-      pAttribute <- names(object@tf)
-    }
-  } else {
-    if (method!="cqp" && any(!pAttribute %in% names(object@tf))){
-      warning("pAttribute provided is not available")
-    }
-  }
+setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in", verbose=T){
+  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if (is.character(query) == TRUE){
     bag <- list(query=.adjustEncoding(query, object@encoding))
     if (method == "in"){ 
-      for (pAttr in pAttribute) {
-        bag[[paste(pAttr, "Abs", sep="")]] <- object@tf[[pAttr]][query,"tf"]
-        bag[[paste(pAttr, "Rel", sep="")]] <- object@tf[[pAttr]][query,"tf"]/object@size
-      }
+      bag[["abs"]] <- object@tf[[pAttr]][query,"tf"]
+      bag[["rel"]] <- object@tf[[pAttr]][query,"tf"]/object@size
       tab <- data.frame(bag)
     } else if (method == "grep"){
       bag <- lapply(query, function(query) {
         foo <- list()
-        for (pAttr in pAttribute) {
-          rowNo <- grep(query, rownames(object@tf[[pAttr]]))
-          tfAbs <- sum(object@tf[[pAttr]][rowNo,"tf"])
-          foo[[paste(pAttr, "Abs", sep="")]] <- tfAbs
-          foo[[paste(pAttr, "Rel", sep="")]] <- tfAbs/object@size
-        }
+        rowNo <- grep(query, rownames(object@tf[[pAttr]]))
+        foo[["abs"]] <- sum(object@tf[[pAttr]][rowNo,"tf"])
+        foo[["rel"]] <- foo[["abs"]]/object@size
         data.frame(what=names(foo), query, freq=do.call(rbind, foo))
       })
       tab <- do.call(rbind, bag)
@@ -66,17 +51,20 @@ setMethod("tf", "partition", function(object, query, method="in", pAttribute=NUL
       )
       tab <- tab[,colOrder]
     } else if (method == "cqp") {
-      for (pAttr in pAttribute) {
-        no <- vapply(
-          query,
-          function(query) {
-            n <- nrow(.queryCpos(query=query, Partition=object, pAttribute=pAttr, verbose=FALSE))
-            ifelse(is.null(n), 0, n)
-          }, FUN.VALUE=1
-        )
-        bag[[paste(pAttr, "Abs", sep="")]] <- no
-        bag[[paste(pAttr, "Rel", sep="")]] <- no/object@size
-      }
+      no <- vapply(
+        query,
+        function(query) {
+          if (verbose == TRUE) message("... processing query ", query)
+          cposResult <- cpos(.Object=object, query=query, pAttribute=pAttr, verbose=FALSE)
+          if (is.null(cposResult)){
+            retval <- 0
+          } else {
+            retval <- nrow(cposResult)
+          }
+          retval
+        }, FUN.VALUE=1)
+      bag[["abs"]] <- no
+      bag[["rel"]] <- no/object@size
       tab <- data.frame(bag)
       rownames(tab) <- NULL
     } else {
@@ -90,7 +78,7 @@ setMethod("tf", "partition", function(object, query, method="in", pAttribute=NUL
 
 
 #' @rdname tf-method
-setMethod("tf", "partitionCluster", function(object, query, method="in", pAttribute=NULL, rel=FALSE){
+setMethod("tf", "partitionCluster", function(object, query, pAttribute=NULL, method="in", rel=FALSE){
   # check whether all partitions in the cluster have a proper label
   if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
     warning("all partitions in the cluster need to have a label (at least some missing)")
@@ -126,7 +114,11 @@ setMethod("tf", "partitionCluster", function(object, query, method="in", pAttrib
 })
 
 #' @rdname tf-method
-setMethod("tf", "character", function(object, query, pAttribute, method="in"){
+setMethod("tf", "character", function(object, query, pAttribute=NULL, method="in", verbose=TRUE){
+  if (is.null(pAttribute)) {
+    pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
+    if (verbose == TRUE) message("... using pAttribute ", pAttribute, " from session settings")
+  }  
   if (object %in% cqi_list_corpora()) {
     if (method=="in"){
       sAttr <- paste(object, ".", pAttribute, sep="")

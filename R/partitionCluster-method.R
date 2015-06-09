@@ -23,6 +23,7 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @param method either 'grep' or 'in'
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
+#' @param type the type of the partition objects
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
 #' @param value a character vector
@@ -34,7 +35,7 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @rdname partitionCluster
 setMethod("partitionCluster", "character", function(
   object, def, var, prefix=c(""),
-  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, mc=NULL, verbose=TRUE
+  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -56,7 +57,7 @@ setMethod("partitionCluster", "character", function(
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
-  partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, id2str=FALSE, verbose=FALSE)
+  partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
   cluster@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
@@ -68,7 +69,7 @@ setMethod("partitionCluster", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str)
+      cluster@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str, type=type)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
@@ -79,7 +80,8 @@ setMethod("partitionCluster", "character", function(
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         label=x,
         tf=tf,
-        id2str=id2str
+        id2str=id2str,
+        type=type
       )
     )
   }

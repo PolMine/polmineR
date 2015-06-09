@@ -66,7 +66,7 @@ setMethod("kwic", "context", function(object, meta=NULL, collocate=c()){
 #' @rdname kwic
 setMethod("kwic", "partition", function(
   object, query,
-  leftContext=0, rightContext=0,
+  leftContext=NULL, rightContext=NULL,
   meta=NULL, pAttribute="word", collocate=c(),
   verbose=TRUE
 ){

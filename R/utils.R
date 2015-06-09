@@ -207,17 +207,21 @@ datesPeriod <- function(corpus, dateRange) {
 #' @rdname as.cqp
 #' @name as.cqp
 as.cqp <- function(queries, collapse=FALSE){
-  cqp <- c()
-  for (query in queries){
-    bag <- c()
-    for (q in unlist(strsplit(query, "\\s"))){
-      if ((substr(q, 1, 1) !='[') && (substr(q, nchar(q), nchar(q)) != ']')){
-        q <- paste('"', q, '"', sep='') 
-      }
-      bag <- append(bag, q)      
-    }
-    cqp <- append(cqp, paste('(', paste(bag, sep='', collapse=' '), ')', sep=""))
-  }
+  cqp <- sapply(
+    queries,
+    function(query){
+      cqpRaw <- lapply(
+        unlist(strsplit(query, "\\s")),
+        function(q){
+          if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
+            retval <- q
+          } else {
+            retval <- paste('"', q, '"', sep='') 
+          }
+          retval
+        })
+      paste(cqpRaw, collapse=" ")
+      })
   if (length(cqp)>1 && collapse==TRUE){
     cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
   }    
@@ -303,5 +307,47 @@ as.cqp <- function(queries, collapse=FALSE){
   names(unlist(availableObjectsList))
 }
 
+.parseRegistry <- function(corpus){
+  registry <- scan(
+    file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
+    sep="\n",
+    what="character",
+    quiet=TRUE
+  )
+  registryList <- lapply(
+    setNames(c("NAME", "ID", "HOME", "INFO"), c("NAME", "ID", "HOME", "INFO")),
+    function(query){
+      gsub(paste("^", query, "\\s+(.*?)$", sep=""), "\\1", grep(paste("^", query, sep=""), registry, value=T), perl=T)
+    })
+  # get pAttributes
+  registryList[["pAttributes"]] <- gsub("^ATTRIBUTE\\s+(.*?)$", "\\1", grep("^ATTRIBUTE", registry, value=T))
+  # get language
+  registryList[["language"]] <- gsub("^.*language\\s=\\s\"(.*?)\".*$", "\\1", grep("language =", registry, value=T))
+  # getEncoding
+  encodingLine <- registry[grep('charset\\s*=\\s*"', registry)]
+  encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
+  encoding <- toupper(encoding)
+  if (!encoding %in% iconvlist()){
+    warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
+  }
+  registryList[["encoding"]] <- tolower(encoding)
+  return(registryList)
+}
 
+.parseInfoFile <- function(corpus){
+  pathInfoFile <- .parseRegistry(corpus)$INFO
+  if (file.exists(pathInfoFile)){
+    infoFile <- scan(
+      file=.parseRegistry(corpus)$INFO,
+      sep="\n", what="character", quiet=TRUE
+    )
+    retval <- sapply(
+      strsplit(infoFile, "\\s*=\\s*"),
+      function(x) setNames(x[2], x[1])
+    )
+  } else {
+    retval <- NULL
+  }
+  retval
+}
 

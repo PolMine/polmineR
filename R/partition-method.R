@@ -50,7 +50,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @aliases partition
 setMethod("partition", "character", function(
   object,
-  def,
+  def=NULL,
   label=c(""),
   encoding=NULL,
   tf=c("word", "lemma"),
@@ -65,9 +65,7 @@ setMethod("partition", "character", function(
   corpus <- object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', label)
-  if (is.null(type)){
-    Partition <- new('partition')  
-  } else {
+  .makeSpecificPartition <- function(type){
     pkgName <- paste("polmineR.", type, sep="")
     cName <- paste(type, "Partition", sep="")
     if (requireNamespace(pkgName, quietly=TRUE)){
@@ -75,10 +73,35 @@ setMethod("partition", "character", function(
     } else {
       warning("to set a specific partition type, the respective package needs to be available")
     }
+    return(Partition)
+  }
+  if (is.null(type)){
+    parsedInfoFile <- .parseInfoFile(object)
+    if (is.null(parsedInfoFile)){
+      Partition <- new('partition')    
+    } else {
+      if ("CORPUS_TYPE" %in% names(parsedInfoFile)){
+        type <- parsedInfoFile["CORPUS_TYPE"]
+        message("... type of the corpus is ", type)
+        Partition <- .makeSpecificPartition(type)
+      }
+    }
+  } else {
+    Partition <- .makeSpecificPartition(type)
   }
   Partition@call <- deparse(match.call())
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
+  if(is.null(def)){
+    parsedInfo <- .parseInfoFile(object)
+    if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
+      def <- list()
+      def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
+      method <- "grep"
+    } else {
+      message("... no idea what the anchor element might be, please provide explicitly")
+    }
+  }
   if(is.null(encoding)) {
     Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
   } else {

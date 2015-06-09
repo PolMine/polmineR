@@ -12,13 +12,26 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @param label a label for the new partition
 #' @param method either "in" or "grep"
 #' @param tf character vector, pAttributes for which term frequencies shall be retrieved
+#' @param id2str whether to transfer ids to strings
+#' @param type the type of the resulting partition
 #' @param verbose logical, show progress report or not (defaults to TRUE)
 #' @aliases zoom zoom,partition-method
 #' @exportMethod zoom
 #' @docType methods
 #' @name zoom
-setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, verbose=TRUE){
-  newPartition <- new("partition")
+setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, type=NULL, verbose=TRUE){
+  # these lines are identical with partition method
+  if (is.null(type)){
+    newPartition <- new('partition')  
+  } else {
+    pkgName <- paste("polmineR.", type, sep="")
+    cName <- paste(type, "Partition", sep="")
+    if (requireNamespace(pkgName, quietly=TRUE)){
+      newPartition <- new(cName)
+    } else {
+      warning("to set a specific partition type, the respective package needs to be available")
+    }
+  }
   newPartition@corpus <- object@corpus
   message('Zooming into partition ', label)
   newPartition@label <- label  

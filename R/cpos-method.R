@@ -26,21 +26,19 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encodin
     cpos <- try(cqi_id2cpos(pAttr, cqi_str2id(pAttr, query)), silent=TRUE)
     if (is(cpos)[1] != "try-error"){
       hits <- matrix(c(cpos, cpos), ncol=2)
+    } else {
+      if (verbose == TRUE) message("no hits for query -> ", query)
+      hits = NULL
     }
   } else if (grepl('"', query) == TRUE) {
     cqi_query(.Object, "Hits", query)
     cpos <- try(cqi_dump_subcorpus(paste(.Object, ":Hits", sep="")), silent=TRUE)
-    if(is(cpos)[1] != "try-error"){
+    if (!is.null(cpos)){
       hits <- matrix(cpos[,1:2], ncol=2)
+    } else {
+      if (verbose == TRUE) message("no hits for query -> ", query)
+      hits = NULL
     }
-  }
-  if (is(cpos)[1] != "try-error") {
-    if (is(hits)[1] == "integer") {
-      hits <- matrix(hits, nrow=1)
-    }
-  } else {
-    if (verbose == TRUE) message("no hits for query -> ", query)
-    hits = NULL
   }
   hits
 })
@@ -54,6 +52,8 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
     strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
   }
-  # if (nrow(hits) == 0) hits <- NULL
+  if (is(hits)[1] == "integer") {
+    hits <- matrix(hits, ncol=2)
+  }
   return(hits)
 })
