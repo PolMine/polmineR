@@ -27,7 +27,11 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
 setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in", verbose=T){
-  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
+  if (is.null(pAttribute)) {
+    pAttr <- slot(get("session", ".GlobalEnv"), "pAttribute")
+  } else {
+    pAttr <- pAttribute
+  }
   if (is.character(query) == TRUE){
     bag <- list(query=.adjustEncoding(query, object@encoding))
     if (method == "in"){ 
