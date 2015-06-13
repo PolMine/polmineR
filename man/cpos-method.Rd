@@ -29,6 +29,11 @@ encoding provided in the registry file of the corpus will be used)}
 
 \item{verbose}{logical, whether to be talkative}
 }
+\value{
+You get a matrix with two columns, the first column giving the start cpos of the hits obtained,
+the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
+If there are no hits, a NULL object will be returned.
+}
 \description{
 Get the corpus positions (cpos) for a query. The query may also be a
 CQP query.

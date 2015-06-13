@@ -5,13 +5,13 @@ NULL
 #' @rdname browse
 setMethod("browse", "textstat", function(object){
   if (require("DataTablesR", quietly=TRUE)){
-    htmlDoc <- DataTablesR::as.DataTables(
+    htmlDir <- DataTablesR::as.DataTables(
       data.frame(
         token=rownames(object@stat),
         object@stat
       )
     )
-    retval <- browse(htmlDoc)
+    retval <- show(htmlDir)
   } else {
     warning("the 'DataTablesR'-package needs to be installed")
     stop()
@@ -31,8 +31,8 @@ setMethod("browse", "context", function(object){
     for (what in object@statisticalTest){
       tab[, what] <- round(tab[, what], 2)
     }
-    htmlDoc <- DataTablesR::as.DataTables(tab)
-    retval <- browse(htmlDoc)
+    htmlDir <- DataTablesR::as.DataTables(tab)
+    retval <- show(htmlDir)
   } else {
     warning("package 'DataTablesR' needs to be installed but is not available")
     stop()

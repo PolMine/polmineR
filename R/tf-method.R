@@ -7,6 +7,7 @@
 #' @param object either a partition or a partitionCluster object
 #' @param query a character vector (one or multiple terms to be looked up)
 #' @param method either "in", "grep" or "cqp" (defaults to "in")
+#' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param pAttribute if NULL, the pAttributes available in the partition object will be reported
 #' @param rel logical, defaults to FALSE 
 #' @param ... further parameters
@@ -18,7 +19,7 @@
 #' @seealso tf
 #' @examples
 #' # generate a partition for testing 
-#' test <- partition("PLPRBTTXT", list(text_date=".*"), tf=c("word", "lemma"), method="grep")
+#' test <- partition("PLPRBTTXT")
 #' tf(test, "Wir") # get frequencies for one token
 #' tf(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
 #' tf(test, c("Zuwander.*", "Integration.*"), method="grep") # get frequencies using "grep"-method
@@ -26,7 +27,7 @@
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
-setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in", verbose=T){
+setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in", mc=F, verbose=T){
   if (is.null(pAttribute)) {
     pAttr <- slot(get("session", ".GlobalEnv"), "pAttribute")
   } else {
@@ -55,9 +56,7 @@ setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in
       )
       tab <- tab[,colOrder]
     } else if (method == "cqp") {
-      no <- vapply(
-        query,
-        function(query) {
+      .getNumberOfHits <- function(query) {
           if (verbose == TRUE) message("... processing query ", query)
           cposResult <- cpos(.Object=object, query=query, pAttribute=pAttr, verbose=FALSE)
           if (is.null(cposResult)){
@@ -66,7 +65,15 @@ setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in
             retval <- nrow(cposResult)
           }
           retval
-        }, FUN.VALUE=1)
+        }
+      if (mc == FALSE){
+        no <- vapply(query, .getNumberOfHits, FUN.VALUE=1)
+      } else if (mc == TRUE){
+        no <- unlist(mclapply(
+          query, .getNumberOfHits,
+          mc.cores=slot(get("session", ".GlobalEnv"), "cores")
+          ))
+      }
       bag[["abs"]] <- no
       bag[["rel"]] <- no/object@size
       tab <- data.frame(bag)
@@ -139,4 +146,9 @@ setMethod("tf", "character", function(object, query, pAttribute=NULL, method="in
     warning("the character string provided does not refer to an available corpus")
   }
   tab
+})
+
+#' @rdname context-class
+setMethod("tf", "context", function(object) {
+  object@frequency
 })

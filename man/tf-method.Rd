@@ -12,7 +12,7 @@
 tf(object, ...)
 
 \S4method{tf}{partition}(object, query, pAttribute = NULL, method = "in",
-  verbose = T)
+  mc = F, verbose = T)
 
 \S4method{tf}{partitionCluster}(object, query, pAttribute = NULL,
   method = "in", rel = FALSE)
@@ -31,6 +31,8 @@ tf(object, ...)
 
 \item{method}{either "in", "grep" or "cqp" (defaults to "in")}
 
+\item{mc}{logical, whether to use multicore (defaults to FALSE)}
+
 \item{rel}{logical, defaults to FALSE}
 }
 \description{
@@ -40,7 +42,7 @@ or may use the CQP syntax.
 }
 \examples{
 # generate a partition for testing
-test <- partition("PLPRBTTXT", list(text_date=".*"), tf=c("word", "lemma"), method="grep")
+test <- partition("PLPRBTTXT")
 tf(test, "Wir") # get frequencies for one token
 tf(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
 tf(test, c("Zuwander.*", "Integration.*"), method="grep") # get frequencies using "grep"-method

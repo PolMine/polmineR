@@ -62,12 +62,12 @@ setMethod("browse", "kwic", function(object, colnames=NULL){
     if (!is.null(colnames)){
       colnames(tab) <- colnames
     }
-    htmlDoc <- DataTablesR::as.DataTables(tab, align=c("l", "r", "c", "l"))    
+    htmlDir <- DataTablesR::as.DataTables(tab, align=c("l", "r", "c", "l"))    
   } else {
     warning("package 'DataTablesR' needs to be installed but is not available")
     stop()
   }
-  retval <- browse(htmlDoc)
+  retval <- show(htmlDir)
   retval
 })
 

@@ -7,7 +7,8 @@
 setGeneric("view", function(.Object, ...) standardGeneric("view"))
 
 setMethod("view", "kwic", function(.Object){
-  View(.Object@table)
+  tableToView <- .Object@table
+  View(tableToView)
 })
 
 setMethod("view", "textstat", function(.Object){

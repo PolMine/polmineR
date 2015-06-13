@@ -20,6 +20,13 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.4.57
+  * debugging of tf,partition-method: There was an error, if all hits for a query in a corpus
+    were obtained outside of the partition
+  * tf,context-method to provide quick access to number of query results
+  * view-method as a wrapper for View
+  * multicore for tf-method if cqp=TRUE
+
 v0.4.56
   * pAttributes-method for character, and partition objects
     for easy access to inspect available p-attributes

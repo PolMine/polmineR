@@ -97,16 +97,16 @@ setMethod(
       leftContext=ifelse(is.character(leftContext), 0, leftContext),
       rightContext=ifelse(is.character(rightContext), 0, rightContext),
       encoding=object@encoding, posFilter=as.character(posFilter),
-      partition=object@label, partitionSize=object@size,
-      call=deparse(match.call())
+      partition=object@label, partitionSize=object@size
     )
+    ctxt@call <- deparse(match.call())
     
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
     # query <- .adjustEncoding(query, object@encoding)
     # Encoding(query) <- ctxt@encoding
     hits <- cpos(object, query, pAttribute)
     if (is.null(hits)){
-      warning("not hits, proceeding actually does not make sense")
+      if (verbose==TRUE) message(' -> no hits')
       return(NULL)
     }
     if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(corpus.sAttribute, hits[,1]))

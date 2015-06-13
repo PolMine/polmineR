@@ -10,6 +10,9 @@
 #'  encoding provided in the registry file of the corpus will be used)
 #' @param verbose logical, whether to be talkative
 #' @param ... further arguments
+#' @return You get a matrix with two columns, the first column giving the start cpos of the hits obtained,
+#' the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
+#' If there are no hits, a NULL object will be returned.
 #' @exportMethod cpos
 #' @rdname cpos-method
 #' @name cpos
@@ -51,6 +54,9 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
     corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
     strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
+    if (nrow(hits) == 0){
+      hits <- NULL
+    }
   }
   if (is(hits)[1] == "integer") {
     hits <- matrix(hits, ncol=2)

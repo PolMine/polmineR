@@ -178,3 +178,6 @@ setReplaceMethod("label", signature=c(object="partition", value="character"), fu
 
 #' @rdname partition
 setMethod("corpus", "partition", function(object) object@corpus)
+
+setMethod("length", "partition", function(x) object@size)
+
