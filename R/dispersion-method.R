@@ -5,7 +5,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 
 
 .crosstabToken <- function(Partition,rows, cols, pAttribute, query){
-  hits <- cpos(query, Partition, pAttribute)
+  hits <- cpos(Partition, query, pAttribute)
   sAttrRows <- paste(Partition@corpus,'.', rows, sep='')
   sAttrCols <- paste(Partition@corpus,'.', cols, sep='')
   rowsAttribute <- cqi_struc2str(sAttrRows, cqi_cpos2struc(sAttrRows,hits[,1]))
@@ -239,7 +239,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @seealso multiword.distribution, queries.distribution
 #' @noRd
 .queryDistribution <- function (part, pAttribute, query, sAttribute, rel=TRUE) {
-  cpos <- cpos(query, part, pAttribute)[,1]
+  cpos <- cpos(part, query, pAttribute)[,1]
   if(!is.null(cpos)){
     sAttr <- paste(part@corpus,'.',sAttribute, sep='')
     struc <- cqi_cpos2struc(sAttr, cpos)
@@ -314,6 +314,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
   dist$rel <- apply(dist$abs, 1, function(x)x/dist$subcorpussizes)
   dist$rel <- t(dist$rel)
   Encoding(colnames(dist$rel)) <- part@encoding
+  class(dist) <- "dispersion"
   dist
 }
 
@@ -364,3 +365,6 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
   result
 })
 
+#' @exportMethod rel
+setGeneric("rel", function(x) standardGeneric("rel"))
+setMethod("rel", "dispersion", function(x) x$rel)

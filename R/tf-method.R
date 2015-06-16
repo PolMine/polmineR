@@ -152,3 +152,5 @@ setMethod("tf", "character", function(object, query, pAttribute=NULL, method="in
 setMethod("tf", "context", function(object) {
   object@frequency
 })
+
+setMethod("tf", "dispersion", function(object) object$abs)
