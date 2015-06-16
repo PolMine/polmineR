@@ -36,11 +36,11 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encodin
   } else if (grepl('"', query) == TRUE) {
     cqi_query(.Object, "Hits", query)
     cpos <- try(cqi_dump_subcorpus(paste(.Object, ":Hits", sep="")), silent=TRUE)
-    if (!is.null(cpos)){
-      hits <- matrix(cpos[,1:2], ncol=2)
-    } else {
+    if (is(cpos)[1] == "try-error"){
       if (verbose == TRUE) message("no hits for query -> ", query)
       hits = NULL
+    } else {
+      hits <- matrix(cpos[,1:2], ncol=2)
     }
   }
   hits
