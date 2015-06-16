@@ -1,8 +1,34 @@
 #' @include polmineR-package.R partition-class.R partitionCluster-class.R context-class.R collocations-class.R contextCluster-class.R
 NULL
 
+
+#' coerce object to TermDocumentMatrix/DocumentTermMatrix
+#' 
+#' A set of methods to transform objects into the TermDocumentMatrix-objects, or
+#' DocumentTermMatrix-objects imported from the \code{tm} package.
+#' 
+#' @param x some object
+#' @param pAttribute the p-attribute
+#' @param sAttribute the s-attribute
+#' @param from bla
+#' @param to bla
+#' @param strucs bla
+#' @param rmBlank bla
+#' @param weight whether to introduce a weight ("tfidf" and "rel" are implemented)
+#' @param verbose bla
+#' @param robust bla
+#' @param mc logical
+#' @param ... to make the check happy
+#' @return a TermDocumentMatrix
+#' @author Andreas Blaette
+#' @exportMethod as.TermDocumentMatrix
+#' @docType methods
+#' @rdname as.TermDocumentMatrix
+#' @name as.TermDocumentMatrix
+#' @author me
 setGeneric("as.TermDocumentMatrix", function(x, ...){UseMethod("as.TermDocumentMatrix")})
 setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermMatrix")})
+
 #' @exportMethod as.sparseMatrix
 setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
 setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
@@ -36,26 +62,10 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
   return(retval)  
 })
 
-#' Transform a partition cluster into a Term Document Matrix
-#' 
-#' Method based on the tm package, adds to as.TermDocumentMatrix
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a partitionCluster object (S4 class)
-#' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param weight whether to introduce a weight ("tfidf" and "rel" are implemented)
-#' @param rmBlank whether to remove blank lines
-#' @param verbose logical, whether to be talkative
-#' @param ... to make the check happy
 #' @method as.TermDocumentMatrix partitionCluster
-#' @return a TermDocumentMatrix
-#' @author Andreas Blaette
 #' @importFrom slam simple_triplet_matrix
 #' @importFrom tm as.TermDocumentMatrix
-#' @exportMethod as.TermDocumentMatrix
-#' @docType methods
-#' @noRd
+#' @rdname as.TermDocumentMatrix
 setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
   if (is.null(pAttribute)){
@@ -134,7 +144,7 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 #' @author Andreas Blaette
 #' @exportMethod as.DocumentTermMatrix
 #' @docType methods
-#' @noRd
+#' @rdname as.TermDocumentMatrix
 setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
   retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
   retval
@@ -221,14 +231,14 @@ setMethod("as.partitionCluster", "list", function(object, ...){
 
 
 #' @examples
-#' dontrun{
+#' /dontrun{
 #' foo <- as.TermDocumentMatrix(
 #'   x="ZEIT", pAttribute="word", sAttribute="text_id",
 #'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
 #'   to="1951_08_gespraeche-zum-interzonenhandel.html", robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
 #' )
 #' }
-#' @noRd
+#' @rdname as.TermDocumentMatrix
 setMethod(
   "as.TermDocumentMatrix", "character",
   function (

@@ -54,6 +54,9 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
     corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
     strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
+    if (is(hits)[1] == "integer"){
+      hits <- matrix(data=hits, ncol=2)
+    }
     if (nrow(hits) == 0){
       hits <- NULL
     }

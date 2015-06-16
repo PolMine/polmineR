@@ -5,7 +5,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 
 
 .crosstabToken <- function(Partition,rows, cols, pAttribute, query){
-  hits <- .queryCpos(query, Partition, pAttribute)
+  hits <- cpos(query, Partition, pAttribute)
   sAttrRows <- paste(Partition@corpus,'.', rows, sep='')
   sAttrCols <- paste(Partition@corpus,'.', cols, sep='')
   rowsAttribute <- cqi_struc2str(sAttrRows, cqi_cpos2struc(sAttrRows,hits[,1]))
@@ -239,7 +239,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @seealso multiword.distribution, queries.distribution
 #' @noRd
 .queryDistribution <- function (part, pAttribute, query, sAttribute, rel=TRUE) {
-  cpos <- .queryCpos(query, part, pAttribute)[,1]
+  cpos <- cpos(query, part, pAttribute)[,1]
   if(!is.null(cpos)){
     sAttr <- paste(part@corpus,'.',sAttribute, sep='')
     struc <- cqi_cpos2struc(sAttr, cpos)
