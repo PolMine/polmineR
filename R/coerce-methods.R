@@ -261,7 +261,9 @@ setMethod(
         strucs <- c(fromStruc:toStruc)
         sAttributeStrings <- sAttributeStrings[strucs]
       } else {
-        strucs <- c(0:cqi_attribute_size(sAttr))
+        toStruc <- cqi_attribute_size(sAttr) - 1
+        fromStruc <- 0
+        strucs <- c(0:toStruc) 
       }
     }
     .freqMatrix <- function(i){
@@ -278,7 +280,11 @@ setMethod(
     }
     if (verbose == TRUE) message("... computing term frequencies")
     if (mc == FALSE){
-      freqMatrixList <- lapply(c(1:length(strucs)), .freqMatrix)
+      freqMatrixList <- lapply(
+        c(1:length(strucs)), function(struc){
+          if (verbose == TRUE) message("... processing struc", struc)
+          .freqMatrix(struc)
+        })
     } else if (mc == TRUE) {
       coresToUse <- slot(get("session", ".GlobalEnv"), "cores")
       if (verbose == TRUE) message("... using ", coresToUse, " cores")
@@ -302,7 +308,7 @@ setMethod(
       dimnames=list(Terms=pAttributeStrings, Docs=sAttributeStrings)
     )
     class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-    if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
+    if (rmBlank == TRUE) mat <- .rmBlank(mat, verbose=verbose)
     mat
   })
 
