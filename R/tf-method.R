@@ -153,4 +153,4 @@ setMethod("tf", "context", function(object) {
   object@frequency
 })
 
-setMethod("tf", "dispersion", function(object) object$abs)
+setMethod("tf", "dispersion", function(object) object@abs)

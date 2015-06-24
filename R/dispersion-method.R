@@ -287,35 +287,94 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @author Andreas Blaette
 #' @seealso .query.distribution, multiword.distribution
 #' @noRd
-.queriesDistribution <- function(part, pAttribute, queries, sAttribute){
-  message("retrieving frequencies for the ", length(queries), " queries given")
-  dist <- list()
-  dist$subcorpussizes <- xtabs(
+.queriesDistribution <- function(part, pAttribute, queries, sAttribute, rel, mc, verbose){
+  if (verbose == TRUE) message("... retrieving frequencies for the ", length(queries), " queries given")
+  queriesUnique <- unique(queries)
+  if (length(queriesUnique) != length(queries)) {
+    warning("Please note: Not all queries are unique, this analysis will use only unique queries!")
+    queries <- queriesUnique
+  }
+  if ("" %in% queries){
+    warning("empty string as query, needs to be removed")
+    queries <- queries[-which(queries == "")]
+  }
+  dispersionObject <- new("dispersion")
+  subsetsRaw <- xtabs(
     length~meta,
     data=data.frame(length=part@cpos[,2]-part@cpos[,1], meta=part@metadata$table[,sAttribute])
     )
-  abs <- as.data.frame(dist$subcorpussizes)
-  for (query in queries) {
-    message('... query: ', query)
-    incoming <- .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE)
-    if (!is.null(incoming)){
-      abs <- merge(abs, as.data.frame(incoming), by.x="meta", by.y="Var1", all=TRUE)
-    } else {
-      abs <- cbind(abs, new=rep(0,times=nrow(abs)))
-    }
-    colnames(abs)[dim(abs)[2]] <- query
+  dispersionObject@subsets <- matrix(
+    data=as.vector(subsetsRaw), ncol=1,
+    dimnames=list(part@metadata$table[,sAttribute], "subsetSize")
+    )
+  if (mc == FALSE){
+    queryHits <- lapply(
+      setNames(queries, queries),
+      function(query) {
+        if (verbose == TRUE) message('... processing query: ', query)
+        .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE)
+      }
+    )
+  } else if (mc == TRUE) {
+    if (verbose == TRUE) message("... getting counts from corpus (parallel processing)")
+    queryHits <- mclapply(
+      setNames(queries, queries),
+      function(query) .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE),
+      mc.cores=slot(get("session", ".GlobalEnv"), "cores")
+    )
   }
-  rownames(abs) <- abs[,"meta"]
-  abs <- abs[,3:dim(abs)[2]]
-  abs[is.na(abs)] <- 0
-  colnames(abs) <- queries
-  Encoding(rownames(abs)) <- part@encoding
-  dist$abs <- t(abs)
-  dist$rel <- apply(dist$abs, 1, function(x)x/dist$subcorpussizes)
-  dist$rel <- t(dist$rel)
-  Encoding(colnames(dist$rel)) <- part@encoding
-  class(dist) <- "dispersion"
-  dist
+  queryHitsNullLogical <- vapply(queryHits, is.null, FUN.VALUE=TRUE)
+  queryHitsFail <- which(queryHitsNullLogical == TRUE)
+  queryHitsSuccess <- which(queryHitsNullLogical == FALSE)
+  queryHits2 <- queryHits[queryHitsSuccess]
+  queryHits3 <- lapply(
+    names(queryHits2),
+    function(x) data.frame(partition=names(queryHits2[[x]]), query=x, no=as.vector(queryHits2[[x]]))
+    )
+  queryHits4 <- do.call(rbind, queryHits3)
+  subcorpusToMerge <- data.frame(
+    partition=rownames(dispersionObject@subsets),
+    query="subcorpus_size",
+    no=dispersionObject@subsets[,1]
+    )
+  mergedDF <- rbind(subcorpusToMerge, queryHits4)
+  tabulatedDF <- xtabs(no~partition+query, data=mergedDF)
+#   for (query in queries) {
+#     if (verbose == TRUE) message("... adjusting data.frames")
+#     # incoming <- .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE)
+#     incoming <- queryHits[[query]]
+#     if (!is.null(incoming)){
+#       abs <- merge(abs, as.data.frame(incoming), by.x="meta", by.y="Var1", all=TRUE)
+#     } else {
+#       abs <- cbind(abs, new=rep(0,times=nrow(abs)))
+#     }
+#     colnames(abs)[dim(abs)[2]] <- query
+#   }
+#  rownames(abs) <- abs[,"meta"]
+#  abs <- abs[,3:dim(abs)[2]]
+#  abs[is.na(abs)] <- 0
+#  colnames(abs) <- queries
+#  Encoding(rownames(abs)) <- part@encoding
+  tabulatedDF1 <- as.matrix(ftable(tabulatedDF))
+  rownames(tabulatedDF) <- part@metadata$table[,sAttribute]
+  tabulatedDF2 <- tabulatedDF1[,-which(colnames(tabulatedDF1) == "subcorpus_size")]
+  zeroValues <- matrix(
+    data=rep(0, times=length(queryHitsFail)*nrow(tabulatedDF2)),
+    ncol=length(queryHitsFail),
+    dimnames=list(rownames(tabulatedDF),names(queryHitsFail))
+    )
+  tabulatedDF3 <- cbind(tabulatedDF2, zeroValues)
+  tabulatedDF4 <- tabulatedDF3[,queries]
+  dispersionObject@abs <- t(tabulatedDF4)
+  if (rel == TRUE){
+    if (verbose == TRUE) message("... calculating relative frequencies")
+    dispersionObject@rel <- t(apply(
+      dispersionObject@abs, 1,
+      function(x)x/as.vector(dispersionObject@subsets)
+    ))
+    Encoding(colnames(dispersionObject@rel)) <- part@encoding
+  }
+  dispersionObject
 }
 
 #' Dispersion of a query or multiple queries
@@ -329,6 +388,8 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
+#' @param mc logical, whether to use multicore
+#' @param verbose logical, whether to be verbose
 #' @return depends on the input, as this is a wrapper function
 #' @seealso \code{crosstab-class}
 #' @exportMethod dispersion
@@ -344,10 +405,10 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @rdname dispersion-method
 #' @name dispersion
 #' @aliases dispersion dispersion-method dispersion,partition-method
-setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL){
+setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL, rel=TRUE, mc=FALSE, verbose=TRUE){
   if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if ( is.null(names(object@metadata))) {
-    message("... required metadata missing, fixing this")
+    if (verbose == TRUE) message("... required metadata missing, fixing this")
     object <- enrich(object, meta=dim)
   }
   if (class(query) == "cqpQuery"){
@@ -357,7 +418,7 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
     if (length(query)==1){
       result <- .queryDistribution(object, pAttribute, query, dim)
     } else if (length(query)>1){
-      result <- .queriesDistribution(object, pAttribute, query, dim)
+      result <- .queriesDistribution(object, pAttribute, query, dim, rel=rel, mc=mc, verbose=verbose)
     }
   } else if (length(dim)==2){
     result <- .crosstab(object, dim[1], dim[2], pAttribute, query)
@@ -365,6 +426,4 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
   result
 })
 
-#' @exportMethod rel
-setGeneric("rel", function(x) standardGeneric("rel"))
-setMethod("rel", "dispersion", function(x) x$rel)
+
