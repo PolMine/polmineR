@@ -82,7 +82,7 @@ setMethod("partition", "character", function(
     } else {
       if ("CORPUS_TYPE" %in% names(parsedInfoFile)){
         type <- parsedInfoFile["CORPUS_TYPE"]
-        message("... type of the corpus is ", type)
+        if (verbose == TRUE) message("... type of the corpus is ", type)
         assign("Partition", .makeSpecificPartition(type))
       }
     }

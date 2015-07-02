@@ -1,4 +1,4 @@
-#' @include generics.R
+#' @include generics.R session-class.R
 NULL
 
 #' @importFrom rcqp cqi_cpos2id cqi_cpos2str cqi_cpos2id cqi_cpos2struc
@@ -51,3 +51,8 @@ setOldClass("DocumentTermMatrix")
 setOldClass("igraph")
 setOldClass("html")
 setOldClass("dispersion")
+
+
+.onLoad <- function (lib, pkg) {
+  session@defaultRegistry <- Sys.getenv("CORPUS_REGISTRY")
+}

@@ -13,7 +13,7 @@ NULL
 
 
 #' @exportMethod store
-setGeneric("store", function(object) standardGeneric("store"))
+setGeneric("store", function(object, ...) standardGeneric("store"))
 
 #' @rdname store
 setMethod("store", "textstat", function(object){
@@ -41,4 +41,23 @@ setMethod("store", "session", function(object){
     )
   )
 })
+
+#' @importClassesFrom rJava jobjRef
+setMethod("store", "jobjRef", function(object, filename=NULL){
+  if (require("rJava", quietly=TRUE)){
+    message("... rJava-package loaded")
+  } else {
+    warning("rJava package not available")
+    stop()
+  }
+  if (is.null(filename)) filename <- tempfile()
+  fileOutputStream <- new(J("java/io/FileOutputStream"), filename)
+  objectStream <- new(J("java/io/ObjectOutputStream"), fileOutputStream)
+  objectStream$writeObject(object)
+  filename
+})
+
+
+
+
 

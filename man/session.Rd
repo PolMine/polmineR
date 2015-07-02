@@ -209,5 +209,7 @@ default settings for current session
 \item{\code{defaultKwicCollocate}}{default collocate for kwic display}
 
 \item{\code{defaultKwicNode}}{default node for kwic analysis}
+
+\item{\code{defaultRegistry}}{the COPRUS_REGISTRY used when loading polmineR}
 }}
 

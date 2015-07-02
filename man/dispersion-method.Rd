@@ -7,7 +7,8 @@
 \alias{dispersion-method}
 \title{Dispersion of a query or multiple queries}
 \usage{
-\S4method{dispersion}{partition}(object, query, dim, pAttribute = NULL)
+\S4method{dispersion}{partition}(object, query, dim, pAttribute = NULL,
+  rel = TRUE, mc = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{object}{a partition object that will be queried}
@@ -18,6 +19,10 @@
 
 \item{pAttribute}{the p-attribute that will be looked up, typically 'word'
 or 'lemma'}
+
+\item{mc}{logical, whether to use multicore}
+
+\item{verbose}{logical, whether to be verbose}
 }
 \value{
 depends on the input, as this is a wrapper function

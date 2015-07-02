@@ -25,6 +25,7 @@
 #' @slot partitionDir default partition directory
 #' @slot defaultKwicCollocate default collocate for kwic display
 #' @slot defaultKwicNode default node for kwic analysis
+#' @slot defaultRegistry the COPRUS_REGISTRY used when loading polmineR
 #' @param project the project
 #' @param object a session class object
 #' @param x an object
@@ -62,7 +63,8 @@ setClass(
     webDir="character",
     partitionDir="character",
     defaultKwicCollocate="character",
-    defaultKwicNode="character"
+    defaultKwicNode="character",
+    defaultRegistry="character"
     ))
 
 #' @export session

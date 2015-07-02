@@ -2,7 +2,7 @@
 % Please edit documentation in R/bundle-class.R
 \docType{class}
 \name{bundle-class}
-\alias{[[,bundle-method}
+\alias{[[,bundle,ANY-method}
 \alias{bapply,bundle-method}
 \alias{bundle-class}
 \alias{length,bundle-method}
@@ -10,7 +10,7 @@
 \alias{unique,bundle-method}
 \title{bundle class}
 \usage{
-\S4method{[[}{bundle}(x, i)
+\S4method{[[}{bundle,ANY}(x, i)
 
 \S4method{length}{bundle}(x)
 
