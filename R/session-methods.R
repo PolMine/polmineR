@@ -21,6 +21,8 @@ setReplaceMethod("corpus", signature=c(object="session", value="character"), fun
 #' @rdname session
 setMethod("corpus", "session", function(object) object@corpus)
 
+#' @rdname partition
+setMethod("corpus", "partition", function(object) object@corpus)
 
 
 ##############################

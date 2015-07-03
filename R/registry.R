@@ -22,9 +22,15 @@
 #' @param registryDir path to the registry directory to be used
 #' @return the registry directory used before resetting CORPUS_REGISTRY
 #' @export resetRegistry
-resetRegistry <- function(registryDir) {
-  oldRegistry <- Sys.setenv(CORPUS_REGISTRY=registryDir)
-  # toUnload <- .dynLibs()[grep("rcqp.so", .dynLibs())][[1]][2]$path
+resetRegistry <- function(registryDir=NULL) {
+  if (!is.null(registryDir)){
+    oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
+    Sys.setenv(CORPUS_REGISTRY=registryDir)
+    # toUnload <- .dynLibs()[grep("rcqp.so", .dynLibs())][[1]][2]$path
+  } else {
+    oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
+    Sys.setenv(CORPUS_REGISTRY=session@defaultRegistry)
+  }
   library.dynam.unload("rcqp", libpath=system.file(package="rcqp"))
   library.dynam("rcqp", package="rcqp", lib.loc=.libPaths()[1])
   oldRegistry

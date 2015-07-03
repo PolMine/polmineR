@@ -1,5 +1,17 @@
-#' @include polmineR-package.R kwic-class.R context-class.R
+#' @include generics.R polmineR-package.R kwic-class.R context-class.R
 NULL
+
+#' display in browser
+#' 
+#' bla
+#' @param object what is to be displayed
+#' @param meta metainformation to be displayed
+#' @param colnames colnames to be used for data.frame
+#' @param ... further parameters
+#' @rdname browse
+#' @name browse
+#' @exportMethod browse
+setGeneric("browse", function(object, ...) standardGeneric("browse"))
 
 
 #' @rdname browse
@@ -55,4 +67,23 @@ setMethod("browse", "html", function(object){
   browseURL(tmpFile)
   return(tmpFile)
 })
+
+
+
+#' @rdname browse
+setMethod("browse", "kwic", function(object, colnames=NULL){
+  if (requireNamespace("DataTablesR", quietly=TRUE)){
+    tab <- as.data.frame(object)
+    if (!is.null(colnames)){
+      colnames(tab) <- colnames
+    }
+    htmlDir <- DataTablesR::as.DataTables(tab, align=c("l", "r", "c", "l"))    
+  } else {
+    warning("package 'DataTablesR' needs to be installed but is not available")
+    stop()
+  }
+  retval <- show(htmlDir)
+  retval
+})
+
 

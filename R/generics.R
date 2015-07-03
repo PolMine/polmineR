@@ -4,17 +4,6 @@ setGeneric("pAttribute", function(object, ...) standardGeneric("pAttribute"))
 setGeneric("pAttribute<-", function(object, value) standardGeneric("pAttribute<-"))
 
 
-#' display in browser
-#' 
-#' bla
-#' @param object what is to be displayed
-#' @param meta metainformation to be displayed
-#' @param colnames colnames to be used for data.frame
-#' @param ... further parameters
-#' @rdname browse
-#' @name browse
-#' @exportMethod browse
-setGeneric("browse", function(object, ...) standardGeneric("browse"))
 
 
 setGeneric("label", function(object, ...) standardGeneric("label"))

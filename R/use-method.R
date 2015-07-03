@@ -7,15 +7,15 @@
 #' @aliases use use,character-method
 #' @rdname use-method
 #' @name use
-setGeneric("use", function(corpus) standardGeneric("use"))
+setGeneric("use", function(pkg) standardGeneric("use"))
 
 #' @rdname use-method
-setMethod("use", "character", function(corpus){
-  if (object == "sampleCorpus"){
-    path <- file.path(
-      system.file("corpora", package="polmineR.sampleCorpus"),
-      "registry"
-    )
-    Sys.setenv(CORPUS_REGISTRY=path)
-  }
+setMethod("use", "character", function(pkg){
+    registryDir <- system.file("extdata", "cwb", "registry", package=pkg)
+    resetRegistry(registryDir)
+})
+
+setMethod("use", "missing", function(){
+  registryDir <- session@defaultRegistry
+  resetRegistry(registryDir)
 })

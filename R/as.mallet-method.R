@@ -11,6 +11,7 @@ setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 #' clu <- partitionCluster("ARENEN", def=list(text_newspaper="Süddeutsche Zeitung"), var=list(text_date=NULL), tf=NULL)
 #' foo <- as.mallet(clu)
 #' }
+#' @rdname as.mallet
 setMethod("as.mallet", "partitionCluster", function(.Object, pAttribute="word", stoplist=stopwords("de"), mc=TRUE, verbose=TRUE){
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")
