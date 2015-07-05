@@ -2,6 +2,7 @@
 NULL
 
 
+#' @rdname keynessCluster-class
 setMethod("as.TermDocumentMatrix", signature(x="keynessCluster"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
   object <- x
   encoding <- unique(unlist(lapply(object@objects, function(o) o@encoding)))
@@ -43,4 +44,5 @@ setMethod("summary", "keynessCluster", function(object){
   tab
 })
 
+#' @rdname keynessCluster-class
 setMethod("dim", "keynessCluster", function(x) length(x@objects))

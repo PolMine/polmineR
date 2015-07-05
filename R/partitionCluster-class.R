@@ -28,17 +28,20 @@ NULL
 #'   
 #' @aliases partitionCluster-class show,partitionCluster-method 
 #'   [,partitionCluster-method [[,partitionCluster-method
-#'   as.DocumentTermMatrix,partitionCluster-method 
 #'   as.matrix,partitionCluster-method 
-#'   as.TermDocumentMatrix,partitionCluster-method merge,partitionCluster-method
+#'   merge,partitionCluster-method
 #'   as.sparseMatrix,partitionCluster-Method as.sparseMatrix 
 #'   +,partitionCluster-method names,partitionCluster-method 
 #'   summary,partitionCluster-method +,partitionCluster,ANY-method
 #'   [,partitionCluster,ANY,ANY,ANY-method +,partitionCluster,partition-method 
 #'   +,partitionCluster,partitionCluster-method as.partitionCluster,list-method 
-#'   as.sparseMatrix,partitionCluster-method as.TermDocumentMatrix as.DocumentTermMatrix
+#'   as.sparseMatrix,partitionCluster-method as.DocumentTermMatrix
 #'   barplot,partitionCluster-method
 #'   as.sparseMatrix,TermDocumentMatrix-method
+#' @param x a partitionCluster object
+#' @param object a partitionCluster object
+#' @param i integer index
+#' @param sAttribute the s-attribute to use
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster

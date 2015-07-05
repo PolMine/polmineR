@@ -7,6 +7,9 @@
 \usage{
 \S4method{nrow}{textstat}(x)
 }
+\arguments{
+\item{x}{textstat object}
+}
 \description{
 exportMethod nrow
 }

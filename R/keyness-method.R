@@ -26,6 +26,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' @param digits numeric
 #' @param verbose defaults to TRUE
 #' @param progress logical
+#' @param mc logical, whether to use multicore
 #' @return The function returns a data frame with the following structure:
 #' - absolute frequencies in the first row
 #' - ...

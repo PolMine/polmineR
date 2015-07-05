@@ -3,13 +3,15 @@
 #' @param .Object the object
 #' @param pAttribute the pAttribute
 #' @param mc logical, whether to use multicore
-#' @param robust logical, whether to be robus
+#' @param verbose logical, whether to be verbose
+#' @param robust logical, whether to be robust
+#' @param ... further parameters
 #' @exportMethod getTerms
 #' @rdname getTerms-method
 #' @name getTerms
 setGeneric("getTerms", function(.Object, ...) standardGeneric("getTerms"))
 
-
+#' @rdname getTerms-method
 setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, verbose=TRUE, mc=FALSE){
   pAttr <- paste(.Object, ".", pAttribute, sep="")
   corpusEncoding <- getEncoding(.Object)

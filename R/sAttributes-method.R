@@ -4,6 +4,8 @@ NULL
 setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 
 
+#' @param unique logical, whether to return unique values only
+#' @param regex apply a regex
 #' @rdname sAttributes-method
 setMethod("sAttributes", "character", function(object, sAttribute=NULL, unique=TRUE, regex=NULL){
   if (is.null(sAttribute)){
@@ -57,6 +59,7 @@ setMethod(
   }
 )
 
+#' @rdname partitionCluster-class
 setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
   lapply(
     object@objects,

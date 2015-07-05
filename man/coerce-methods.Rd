@@ -44,33 +44,16 @@ as.TermDocumentMatrix(x, ...)
 \item{robust}{bla}
 
 \item{mc}{logical}
-
-\item{x}{a partitionCluster object (S3 class)}
-
-\item{pAttribute}{the counts for the patttribute to show up in the matrix}
-
-\item{weight}{whether to weigh the matrix}
-
-\item{rmBlank}{whether to remove blank lines}
-
-\item{...}{make R happy}
 }
 \value{
 a TermDocumentMatrix
-
-a DocumentTermMatrix
 }
 \description{
 A set of methods to transform objects into the TermDocumentMatrix-objects, or
 DocumentTermMatrix-objects imported from the \code{tm} package.
-
-Method based on the tm package.
-}
-\details{
-The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
 }
 \examples{
-/dontrun{
+\dontrun{
 foo <- as.TermDocumentMatrix(
   x="ZEIT", pAttribute="word", sAttribute="text_id",
   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
@@ -82,7 +65,5 @@ foo <- as.TermDocumentMatrix(
 Andreas Blaette
 
 me
-
-Andreas Blaette
 }
 

@@ -20,6 +20,8 @@
 \item{pAttribute}{the p-attribute that will be looked up, typically 'word'
 or 'lemma'}
 
+\item{rel}{logical, whether to calculate relative values}
+
 \item{mc}{logical, whether to use multicore}
 
 \item{verbose}{logical, whether to be verbose}
@@ -33,10 +35,10 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-test <- partition("PLPRBTTXT", def=list(text_date=".*"), tf="word")
-dispersion(test, "Integration", c("text_date"))
-dispersion(test, "Integration", c("text_date", "text_party"))
-dispersion(test, '"Integration.*"', c("text_date")) # note the brackets when using regex!
+test <- partition("PLPRBTTXT", def=list(text_lp="17"), tf=NULL)
+dispersion(test, "Integration", pAttribute="word", dim=c("text_year"))
+foo <- dispersion(test, "Integration", c("text_year", "text_party"))
+dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
 }
 \author{
 Andreas Blaette

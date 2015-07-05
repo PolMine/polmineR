@@ -313,6 +313,7 @@ setMethod("context", "partitionCluster", function(
   contextCluster
 })
 
+#' @param complete enhance completely
 #' @rdname context-method
 setMethod("context", "collocations", function(object, query, complete=FALSE){
   newObject <- new(

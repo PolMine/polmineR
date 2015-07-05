@@ -15,6 +15,7 @@ setMethod('head', 'context', function(x, n=10) {
   head(x@stat, n=n)
 })
 
+#' @rdname context-class
 #' @docType methods
 setMethod('tail', 'context', function(x, n=10){
   tail(x@stat, n=n)
@@ -43,6 +44,7 @@ setMethod('[', 'context',
 )
 
 #' @docType methods
+#' @rdname context-class
 setMethod('[[', 'context',
   function(x,i) {
     sessionKwicMetadata <- slot(get("session", '.GlobalEnv'), "kwicMetadata")

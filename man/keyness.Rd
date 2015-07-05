@@ -39,6 +39,8 @@ ref}
 
 \item{verbose}{defaults to TRUE}
 
+\item{mc}{logical, whether to use multicore}
+
 \item{progress}{logical}
 }
 \value{

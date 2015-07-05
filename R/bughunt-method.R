@@ -1,5 +1,3 @@
-setGeneric("bughunt", function(.Object, ...) standardGeneric("bughunt"))
-
 #' find bugs in a corpus
 #' 
 #' This is utility to trace back the cause of errors that cwb-encode 
@@ -7,9 +5,13 @@ setGeneric("bughunt", function(.Object, ...) standardGeneric("bughunt"))
 #' 
 #' @param .Object a character vector providing the name of a CWB corpus
 #' @param nested name of an element that is nested in an unwanted fashion 
-#' @rdname bughunt-method
+#' @param ... further parameters
 #' @name bughunt
 #' @exportMethod bughunt
+#' @rdname bughunt-method
+setGeneric("bughunt", function(.Object, ...) standardGeneric("bughunt"))
+
+#' @rdname bughunt-method
 setMethod("bughunt", "character", function(.Object, nested=c("p"=10), ...){
   lapply(
     as.character(c(1:nested[1])),

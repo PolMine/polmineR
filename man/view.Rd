@@ -8,6 +8,8 @@ view(.Object, ...)
 }
 \arguments{
 \item{.Object}{an object}
+
+\item{...}{further parameters}
 }
 \description{
 browse an object using View()

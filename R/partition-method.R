@@ -38,6 +38,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param value a character string that will be the label of the partition
 #' @param from from
 #' @param to to
+#' @param x CHECK
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
@@ -228,7 +229,7 @@ setMethod("partition", "list", function(
     sAttributes(Partition),
     USE.NAMES=TRUE,
     function(x){
-      foo<-unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs));
+      foo <- unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs));
       Encoding(foo)<-Partition@encoding;
       foo}
   )

@@ -92,6 +92,7 @@ setMethod("merge", "partitionCluster", function(x, label=c("")){
 
 #' @exportMethod [[
 #' @docType methods
+#' @rdname partitionCluster-class
 setMethod('[[', 'partitionCluster', function(x,i){
   return(x@objects[[i]])
 }
@@ -216,4 +217,5 @@ setMethod("unique", "partitionCluster", function(x){
 })
 
 #' @exportMethod length
+#' @rdname partitionCluster-class
 setMethod("length", "partitionCluster", function(x) length(x@objects))

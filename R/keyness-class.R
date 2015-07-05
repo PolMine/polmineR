@@ -33,11 +33,11 @@ NULL
 #'    }
 #' @rdname keyness-class
 #' @name keyness-class
-#' @aliases keyness keyness-class keynessCluster-class summary,keyness-method
+#' @aliases keyness keyness-class summary,keyness-method
 #'   show,keyness-method as.matrix,keynessCluster-method
-#'   keyness,partitionCluster-method [[,keynessCluster-method enrich,keynessCluster-method
+#'   [[,keynessCluster-method enrich,keynessCluster-method
 #'   trim,keynessCluster-method summary,keynessCluster-method
-#'   as.TermDocumentMatrix,keynessCluster-method ll,keyness-method as.igraph,keyness-method
+#'   ll,keyness-method as.igraph,keyness-method
 #' @docType class
 #' @exportClass keyness
 #' @author Andreas Blaette

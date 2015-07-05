@@ -10,6 +10,8 @@ NULL
 setGeneric("corpus", function(object, ...) standardGeneric("corpus"))
 setGeneric("corpus<-", function(object, value) standardGeneric("corpus<-"))
 
+#' @param object a non-object
+#' @rdname polmineR-package
 setMethod("corpus", "missing", function(object) rcqp::cqi_list_corpora())
 
 #' @rdname session

@@ -2,7 +2,7 @@ Package: polmineR
 Type: Package
 Title: polmineR
 Version: 0.4.58
-Date: 2015-07-02
+Date: 2015-07-05
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -12,7 +12,8 @@ Imports:
     methods,
     slam,
     parallel,
-    plyr
+    plyr,
+    data.table
 Suggests:
     polmineR.sampleCorpus,
     markdown,
@@ -23,7 +24,8 @@ Suggests:
     koRpus,
     chron,
     knitr,
-    polmineR.plpr
+    polmineR.plpr,
+    rJava
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for drilling and mining CWB corpora. The package offers
@@ -32,9 +34,9 @@ Description: Tools for drilling and mining CWB corpora. The package offers
     procedures.
 License: CC BY-NC-SA 4.0 | file LICENSE
 Collate:
-    'generics.R'
     'TermDocumentMatrix-methods.R'
     'session-class.R'
+    'generics.R'
     'polmineR-package.R'
     'partition-class.R'
     'bundle-class.R'
@@ -64,11 +66,10 @@ Collate:
     'contextCluster-methods.R'
     'cooccurrence-method.R'
     'cpos-method.R'
-    'crosstab-class.R'
-    'crosstab-methods.R'
     'ctm-method.R'
     'dispersion-class.R'
     'dispersion-method.R'
+    'dispersion-methods.R'
     'egoNetwork-method.R'
     'encoding-method.R'
     'keynessCluster-class.R'
@@ -99,6 +100,7 @@ Collate:
     'read-method.R'
     'registry.R'
     'restore-method.R'
+    'rustyard.R'
     'sAttributes-method.R'
     'scatterplot-method.R'
     'score-method.R'

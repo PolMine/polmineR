@@ -2,7 +2,7 @@
 #' 
 #' Use a cwb corpus shipped in a package.
 #' 
-#' @param .Object the object to be used
+#' @param pkg the object to be used
 #' @exportMethod use
 #' @aliases use use,character-method
 #' @rdname use-method
@@ -15,6 +15,7 @@ setMethod("use", "character", function(pkg){
     resetRegistry(registryDir)
 })
 
+#' @rdname session
 setMethod("use", "missing", function(){
   registryDir <- session@defaultRegistry
   resetRegistry(registryDir)

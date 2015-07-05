@@ -6,12 +6,12 @@
 \alias{use,character-method}
 \title{use corpus}
 \usage{
-use(corpus)
+use(pkg)
 
-\S4method{use}{character}(corpus)
+\S4method{use}{character}(pkg)
 }
 \arguments{
-\item{.Object}{the object to be used}
+\item{pkg}{the object to be used}
 }
 \description{
 Use a cwb corpus shipped in a package.

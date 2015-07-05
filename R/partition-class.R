@@ -32,10 +32,14 @@ NULL
 #'    \item{[}{get frequency of a query}
 #'    \item{html}{transform partition to html}
 #'    }
-#' 
+#' @param .Object a partition object
+#' @param object a partition object
+#' @param dim don't know
+#' @param verbose logical, whether to be verbose
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partitionCluster 
 #'   as.partitionCluster,partition-method export export,partition-method split
+#'   dissect size
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition

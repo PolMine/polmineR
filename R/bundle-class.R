@@ -42,9 +42,11 @@ setMethod("unique", "bundle", function(x){
   x
 })
 
+#' @rdname bundle-class
 setGeneric("bapply", function(x, ...) standardGeneric("bapply"))
 
 #' @param f a function that can be applied to each object contained in the bundle
+#' @param ... further parameters
 #' @rdname bundle-class
 #' @exportMethod bapply
 setMethod("bapply", "bundle", function(x, f, ...){

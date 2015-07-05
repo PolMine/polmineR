@@ -33,6 +33,8 @@ tf(object, ...)
 
 \item{mc}{logical, whether to use multicore (defaults to FALSE)}
 
+\item{verbose}{logical, whether to be verbose}
+
 \item{rel}{logical, defaults to FALSE}
 }
 \description{

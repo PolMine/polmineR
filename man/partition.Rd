@@ -67,6 +67,8 @@ details)}
 
 \item{verbose}{logical, defaults to TRUE}
 
+\item{x}{CHECK}
+
 \item{from}{from}
 
 \item{to}{to}

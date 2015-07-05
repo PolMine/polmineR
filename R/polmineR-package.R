@@ -1,3 +1,5 @@
+# roxygen2::roxygenise(package.dir="/Users/blaette/Lab/github/polmineR", roclets=c("rd", "namespace"), clean=T)
+
 #' @include generics.R session-class.R
 NULL
 
@@ -50,7 +52,6 @@ setOldClass("TermDocumentMatrix")
 setOldClass("DocumentTermMatrix")
 setOldClass("igraph")
 setOldClass("html")
-setOldClass("dispersion")
 
 
 .onLoad <- function (lib, pkg) {

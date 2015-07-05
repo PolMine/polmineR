@@ -1,17 +1,25 @@
 #' as.mallet
 #' 
 #' Save polmineR-object as mallet object
+#' 
 #' @param .Object partition- or partitionCluster-object
 #' @param ... further parameters
+#' @param pAttribute the pAttribute to use, typically "word" or "lemma"
+#' @param stoplist a list of stopwords to be dropped from matrix, defaults to stopwords("de") from tm package
+#' @param mc whether to use multicore
+#' @param verbose logical, whether to be verbose
+#' @param object the rJava-object
+#' @param filename where to store the Java-object
 #' @exportMethod as.mallet
+#' @rdname as.mallet-method
 setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 
 #' @examples 
 #' \dontrun{
-#' clu <- partitionCluster("ARENEN", def=list(text_newspaper="Süddeutsche Zeitung"), var=list(text_date=NULL), tf=NULL)
+#' clu <- partitionCluster("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), tf=NULL)
 #' foo <- as.mallet(clu)
 #' }
-#' @rdname as.mallet
+#' @rdname as.mallet-method
 setMethod("as.mallet", "partitionCluster", function(.Object, pAttribute="word", stoplist=stopwords("de"), mc=TRUE, verbose=TRUE){
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")

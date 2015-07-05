@@ -1,6 +1,7 @@
 #' @include collocations-class.R collocationsCluster-class.R
 NULL
 
+#' @rdname collocationsCluster-class
 setMethod("as.TermDocumentMatrix", "collocationsCluster", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
   tabs <- lapply(x@objects, as.data.frame)
   if (directed == TRUE){

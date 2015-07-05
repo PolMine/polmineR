@@ -42,7 +42,7 @@ setMethod("store", "session", function(object){
   )
 })
 
-#' @importClassesFrom rJava jobjRef
+#' @rdname as.mallet-method
 setMethod("store", "jobjRef", function(object, filename=NULL){
   if (require("rJava", quietly=TRUE)){
     message("... rJava-package loaded")

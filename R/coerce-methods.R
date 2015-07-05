@@ -23,7 +23,7 @@ NULL
 #' @author Andreas Blaette
 #' @exportMethod as.TermDocumentMatrix
 #' @docType methods
-#' @rdname as.TermDocumentMatrix
+#' @rdname coerce-methods
 #' @name as.TermDocumentMatrix
 #' @author me
 setGeneric("as.TermDocumentMatrix", function(x, ...){UseMethod("as.TermDocumentMatrix")})
@@ -65,7 +65,7 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @method as.TermDocumentMatrix partitionCluster
 #' @importFrom slam simple_triplet_matrix
 #' @importFrom tm as.TermDocumentMatrix
-#' @rdname as.TermDocumentMatrix
+#' @rdname coerce-methods
 setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
   if (is.null(pAttribute)){
@@ -127,24 +127,7 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 })
 
 
-#' Turn a partition cluster into a document-term matrix
-#' 
-#' Method based on the tm package.
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a partitionCluster object (S3 class)
-#' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param weight whether to weigh the matrix
-#' @param rmBlank whether to remove blank lines
-#' @param ... make R happy
-#' @method as.DocumentTermMatrix partitionCluster
-#' @importFrom tm as.DocumentTermMatrix
-#' @return a DocumentTermMatrix
-#' @author Andreas Blaette
-#' @exportMethod as.DocumentTermMatrix
-#' @docType methods
-#' @rdname as.TermDocumentMatrix
+#' @rdname coerce-methods
 setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
   retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
   retval
@@ -231,14 +214,14 @@ setMethod("as.partitionCluster", "list", function(object, ...){
 
 
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' foo <- as.TermDocumentMatrix(
 #'   x="ZEIT", pAttribute="word", sAttribute="text_id",
 #'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
 #'   to="1951_08_gespraeche-zum-interzonenhandel.html", robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
 #' )
 #' }
-#' @rdname as.TermDocumentMatrix
+#' @rdname coerce-methods
 setMethod(
   "as.TermDocumentMatrix", "character",
   function (
@@ -313,6 +296,7 @@ setMethod(
   })
 
 #' @exportMethod as.partitionCluster
+#' @rdname context-class
 setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
   newPartitionCluster <- new(
     "partitionCluster",

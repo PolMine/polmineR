@@ -2,6 +2,7 @@
 #' 
 #' @param .Object the matrix to be weighed
 #' @param method the kind of weight to apply
+#' @param ... further parameters
 #' @exportMethod weigh
 #' @docType methods
 #' @rdname weigh-method

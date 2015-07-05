@@ -1,4 +1,4 @@
-#' @include partition-class.R keyness-class.R context-class.R kwic-class.R crosstab-class.R
+#' @include partition-class.R keyness-class.R context-class.R kwic-class.R
 NULL
 
 #' mail result

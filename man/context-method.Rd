@@ -66,6 +66,8 @@ the statistics will be skipped}
 the value from the session settings}
 
 \item{verbose}{report progress, defaults to TRUE}
+
+\item{complete}{enhance completely}
 }
 \value{
 depending on whether a partition or a partitionCluster serves as

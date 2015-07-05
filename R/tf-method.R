@@ -10,6 +10,7 @@
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param pAttribute if NULL, the pAttributes available in the partition object will be reported
 #' @param rel logical, defaults to FALSE 
+#' @param verbose logical, whether to be verbose
 #' @param ... further parameters
 #' @exportMethod tf
 #' @docType methods
@@ -153,4 +154,5 @@ setMethod("tf", "context", function(object) {
   object@frequency
 })
 
+#' @rdname dispersion-class
 setMethod("tf", "dispersion", function(object) object@abs)

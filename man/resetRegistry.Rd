@@ -4,7 +4,7 @@
 \alias{resetRegistry}
 \title{reset CORPUS_REGISTRY}
 \usage{
-resetRegistry(registryDir)
+resetRegistry(registryDir = NULL)
 }
 \arguments{
 \item{registryDir}{path to the registry directory to be used}

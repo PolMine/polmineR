@@ -32,6 +32,12 @@ NULL
 #'     \item{trim}{trim the object}
 #'     \item{as.data.frame}{get the statistics table}
 #'    }
+#' @param x object
+#' @param object object
+#' @param mc logical, whether to use multicore
+#' @param i for indexing
+#' @param n for head and tail
+#' @param sAttribute the s-attribute to use
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method ll,context-method
 #'   as.DataTables,context-method

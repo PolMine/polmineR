@@ -16,6 +16,8 @@ weigh(.Object, ...)
 \arguments{
 \item{.Object}{the matrix to be weighed}
 
+\item{...}{further parameters}
+
 \item{method}{the kind of weight to apply}
 }
 \description{

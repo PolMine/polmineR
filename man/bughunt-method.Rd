@@ -3,12 +3,17 @@
 \docType{methods}
 \name{bughunt}
 \alias{bughunt}
+\alias{bughunt,character-method}
 \title{find bugs in a corpus}
 \usage{
+bughunt(.Object, ...)
+
 \S4method{bughunt}{character}(.Object, nested = c(p = 10), ...)
 }
 \arguments{
 \item{.Object}{a character vector providing the name of a CWB corpus}
+
+\item{...}{further parameters}
 
 \item{nested}{name of an element that is nested in an unwanted fashion}
 }

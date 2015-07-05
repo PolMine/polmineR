@@ -16,6 +16,10 @@
 \item{object}{either a partition or a character vector specifying a CWB corpus}
 
 \item{sAttribute}{bla}
+
+\item{unique}{logical, whether to return unique values only}
+
+\item{regex}{apply a regex}
 }
 \value{
 the S-Attributes are immediately printed

@@ -175,6 +175,26 @@ setReplaceMethod("label", signature=c(object="partition", value="character"), fu
   object
 })
 
+#' @rdname partition-class
+setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
+  if ( is.null(names(object@metadata))) {
+    if (verbose == TRUE) message("... required metadata missing, enriching partition")
+    object <- enrich(object, meta=dim, verbose=verbose)
+  }
+  strucSize <- object@cpos[,2] - object@cpos[,1] + 1
+  tab <- data.frame(
+    strucSize,
+    rows=object@metadata$table[,dim[1]],
+    cols=object@metadata$table[,dim[2]]
+  )
+  ctab <- xtabs(strucSize~rows+cols, data=tab)
+  ctab <- as.matrix(unclass(ctab))
+  colnames(ctab)[which(colnames(ctab) == "NA.")] <- "NA"
+  rownames(ctab)[which(colnames(ctab) == "NA.")] <- "NA"
+  attr(ctab, "call") <- NULL
+  dimnames(ctab) <- setNames(list(rownames(ctab), colnames(ctab)), dim)
+  ctab
+})
 
 
 # setMethod("length", "partition", function(x) object@size)

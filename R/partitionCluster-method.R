@@ -27,7 +27,8 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
 #' @param value a character vector
-#' @return a S3 class 'partitionCluster', which is a list with partition objects
+#' @param x CHECK
+#' @return a S4 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
 #' @aliases partitionCluster

@@ -307,3 +307,30 @@ as.cqp <- function(queries, collapse=FALSE){
   names(unlist(availableObjectsList))
 }
 
+# used by .crosstab
+.mapMatrices <- function(matrixToMatch, matrixToAdjust){
+  colnames(matrixToAdjust)[which(colnames(matrixToAdjust)=="")] <- 'NA'
+  rownames(matrixToAdjust)[which(rownames(matrixToAdjust)=="")] <- 'NA'
+  colnames(matrixToMatch)[which(colnames(matrixToMatch)=="")] <- 'NA'
+  rownames(matrixToMatch)[which(rownames(matrixToMatch)=="")] <- 'NA'
+  missingRows <- rownames(matrixToMatch)[!rownames(matrixToMatch) %in% rownames(matrixToAdjust)]
+  if (length(missingRows) > 0){
+    matrixToAppend <- matrix(
+      data=0, nrow=length(missingRows), ncol=ncol(matrixToAdjust),
+      dimnames=list(missingRows, colnames(matrixToAdjust))
+    )
+    matrixToAdjust <- rbind(matrixToAdjust, matrixToAppend)
+  }
+  matrixToMatchOrdered <- matrixToMatch[order(rownames(matrixToMatch)),]
+  matrixToAdjustOrdered <- matrixToAdjust[order(rownames(matrixToAdjust)),]
+  matrixFinal <- matrix(
+    data=0, nrow=nrow(matrixToMatchOrdered), ncol=ncol(matrixToMatchOrdered),
+    dimnames=dimnames(matrixToMatchOrdered)
+  )
+  for (colName in colnames(matrixToAdjustOrdered)){
+    matrixFinal[,colName] <- matrixToAdjustOrdered[,colName] 
+  }
+  matrixFinal
+}
+
+

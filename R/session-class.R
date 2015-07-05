@@ -38,6 +38,7 @@
 #' kwicNo<- leftContext<- metadata<- minFrequency<-
 #' minSignificance<- multicore<- pAttribute<- posFilter<-
 #' project<- rightContext<- smtpPort<- smtpServer<-
+#' cores cores<-
 setClass(
   "session",
   slots=c(

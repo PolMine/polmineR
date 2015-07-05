@@ -9,8 +9,11 @@
 #'   analysis } \item{\code{encoding}:}{Object of class \code{"character"}
 #'   encoding of the corpus } \item{\code{cutoff}:}{Object of class
 #'   \code{"list"} cutoff levels that have been applied } }
+#' @param .Object an object
+#' @param x an object
+#' @param ... further parameters
 #' @aliases as.data.frame,textstat-method show,textstat-method
-#'   trim,textstat-method dim,textstat-method nrow,textstat-method
+#'   trim,textstat-method dim,textstat-method
 #'   colnames,textstat-method rownames,textstat-method names,textstat-method
 #'   as.DataTables,textstat-method
 #' @docType class

@@ -1,5 +1,5 @@
 #' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
-#' @include crosstab-class.R keyness-class.R keynessCluster-class.R
+#' @include keyness-class.R keynessCluster-class.R
 NULL
 
 #' enrich an object

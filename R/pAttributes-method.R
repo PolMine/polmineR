@@ -11,6 +11,7 @@ setMethod("pAttributes", "character", function(.Object){
   .parseRegistry(.Object)$pAttributes
 })
 
+#' @rdname partition-class
 setMethod("pAttributes", "partition", function(.Object){
   .parseRegistry(.Object@corpus)$pAttributes
 })

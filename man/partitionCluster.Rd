@@ -57,9 +57,11 @@
 \item{verbose}{logical, whether to provide progress information}
 
 \item{value}{a character vector}
+
+\item{x}{CHECK}
 }
 \value{
-a S3 class 'partitionCluster', which is a list with partition objects
+a S4 class 'partitionCluster', which is a list with partition objects
 }
 \description{
 A list of partition objects with fixed s-attributes and one variable

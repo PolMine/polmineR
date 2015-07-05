@@ -3,6 +3,7 @@
 \docType{class}
 \name{bundle-class}
 \alias{[[,bundle,ANY-method}
+\alias{bapply}
 \alias{bapply,bundle-method}
 \alias{bundle-class}
 \alias{length,bundle-method}
@@ -18,12 +19,16 @@
 
 \S4method{unique}{bundle}(x)
 
+bapply(x, ...)
+
 \S4method{bapply}{bundle}(x, f, ...)
 }
 \arguments{
 \item{x}{a bundle object}
 
 \item{i}{index to address an object}
+
+\item{...}{further parameters}
 
 \item{f}{a function that can be applied to each object contained in the bundle}
 }

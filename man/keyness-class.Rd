@@ -3,14 +3,11 @@
 \docType{class}
 \name{keyness-class}
 \alias{[[,keynessCluster-method}
-\alias{as.TermDocumentMatrix,keynessCluster-method}
 \alias{as.igraph,keyness-method}
 \alias{as.matrix,keynessCluster-method}
 \alias{enrich,keynessCluster-method}
 \alias{keyness}
-\alias{keyness,partitionCluster-method}
 \alias{keyness-class}
-\alias{keynessCluster-class}
 \alias{keynessCollocations-class}
 \alias{ll,keyness-method}
 \alias{show,keyness-method}
