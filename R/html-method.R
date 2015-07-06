@@ -60,7 +60,7 @@ setMethod("html", "partition", function(object, meta=NULL){
 })
 
 #' @docType methods
-#' @noRd
+#' @rdname partitionCluster-class
 setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
   markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(

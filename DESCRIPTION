@@ -115,3 +115,4 @@ Collate:
     'view-method.R'
     'weigh-method.R'
     'zoom-method.R'
+    'rel-method.R'

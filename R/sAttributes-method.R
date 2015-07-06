@@ -59,6 +59,7 @@ setMethod(
   }
 )
 
+#' @docType methods
 #' @rdname partitionCluster-class
 setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
   lapply(

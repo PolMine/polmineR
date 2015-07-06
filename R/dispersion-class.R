@@ -24,5 +24,3 @@ setClass("dispersion",
          )
 )
 
-#' @rdname dispersion-class
-setMethod("rel", "dispersion", function(x) x@rel)

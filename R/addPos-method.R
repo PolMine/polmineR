@@ -76,16 +76,8 @@ setMethod("addPos", "partition", function(object, pAttribute){
   object
 })
 
-#' Fill slot 'pos' of a partitionCluster object with tables giving the statistic of pos
-#' 
-#' Augment the partitionCluster object
-#' 
-#' @param object a partition class object
-#' @param pAttribute character vector - pos statistic for lemma or word
-#' @return an augmented partition object (includes pos now)
-#' @author Andreas Blaette
+#' @rdname partitionCluster-class
 #' @docType methods
-#' @noRd
 setMethod("addPos", "partitionCluster", function(object, pAttribute){
   pimpedCluster <- object
   if (slot(get('session', '.GlobalEnv'), "multicore") == TRUE) {

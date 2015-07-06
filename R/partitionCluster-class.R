@@ -3,7 +3,7 @@ NULL
 
 #' partitionCluster class
 #' 
-#' A cluster of partition objects.
+#' A cluster of partition objects. 
 #' 
 #' @slot objects Object of class \code{"list"} the partitions making up the cluster
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on
@@ -12,21 +12,7 @@ NULL
 #' @slot explanation Object of class \code{"character"} an explanation of the partition
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested
 #' @slot call Object of class \code{"character"} the call that generated the partitionCluster
-#'   
-#' @section Methods: \describe{ \item{show}{\code{signature(object = 
-#'   "partitionCluster")}: Display essential information } 
-#'   \item{addPos}{\code{signature(object="partitionCluster")}: add list with 
-#'   most frequent pos for a token } 
-#'   \item{tf}{\code{signature(object="partitionCluster")}: get term frequencies
-#'   } \item{trim}{\code{signature(object="partitionCluster")}: trim a 
-#'   partitionCluster object } \item{[}{get frequency of a query} \item{[[}{get 
-#'   a partition within the cluster} \item{+}{\code{signature(object = 
-#'   "partitionCluster")}: combine two partitionClusters into a new one } 
-#'   \item{html}{bla}
-#'   \item{as.sparseMatrix}{bla}  
-#'   }
-#'   
-#' @aliases partitionCluster-class show,partitionCluster-method 
+#' @aliases partitionCluster-class
 #'   [,partitionCluster-method [[,partitionCluster-method
 #'   as.matrix,partitionCluster-method 
 #'   merge,partitionCluster-method

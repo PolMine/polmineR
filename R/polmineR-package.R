@@ -19,11 +19,11 @@ NULL
 #' @importFrom Matrix rowSums colSums
 NULL
 
-#' driller-package
+#' polmineR-package
 #' 
 #' Machinery for mining CWB corpora
 #'
-#' The driller-package provides functions for basic text statistics for corpora 
+#' The package provides functions for basic text statistics for corpora 
 #' that are managed by the Corpus Workbench (CWB). A core feature is to generate
 #' subcorpora/partitions based on metadata. The package is also meant to serve
 #' as an interface between the CWB and R-packages implementing more

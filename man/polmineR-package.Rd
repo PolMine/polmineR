@@ -4,7 +4,7 @@
 \name{polmineR-package}
 \alias{corpus,missing-method}
 \alias{polmineR-package}
-\title{driller-package}
+\title{polmineR-package}
 \usage{
 \S4method{corpus}{missing}(object)
 }
@@ -15,7 +15,7 @@
 Machinery for mining CWB corpora
 }
 \details{
-The driller-package provides functions for basic text statistics for corpora
+The package provides functions for basic text statistics for corpora
 that are managed by the Corpus Workbench (CWB). A core feature is to generate
 subcorpora/partitions based on metadata. The package is also meant to serve
 as an interface between the CWB and R-packages implementing more

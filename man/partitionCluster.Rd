@@ -3,12 +3,10 @@
 \docType{methods}
 \name{partitionCluster,character-method}
 \alias{label,partitionCluster-method}
-\alias{label<-,partitionCluster,character-method}
 \alias{partitionCluster}
 \alias{partitionCluster,character-method}
 \alias{partitionCluster,list-method}
 \alias{partitionCluster,missing-method}
-\alias{unique,partitionCluster-method}
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionCluster}{character}(object, def, var, prefix = c(""),
@@ -24,10 +22,6 @@
 \S4method{partitionCluster}{missing}()
 
 \S4method{label}{partitionCluster}(object)
-
-\S4method{label}{partitionCluster,character}(object) <- value
-
-\S4method{unique}{partitionCluster}(x)
 }
 \arguments{
 \item{object}{character string, the CWB corpus to be used}

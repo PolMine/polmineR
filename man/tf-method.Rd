@@ -5,7 +5,6 @@
 \alias{tf}
 \alias{tf,character-method}
 \alias{tf,partition-method}
-\alias{tf,partitionCluster-method}
 \alias{tf-method}
 \title{get term frequencies}
 \usage{
@@ -13,9 +12,6 @@ tf(object, ...)
 
 \S4method{tf}{partition}(object, query, pAttribute = NULL, method = "in",
   mc = F, verbose = T)
-
-\S4method{tf}{partitionCluster}(object, query, pAttribute = NULL,
-  method = "in", rel = FALSE)
 
 \S4method{tf}{character}(object, query, pAttribute = NULL, method = "in",
   verbose = TRUE)

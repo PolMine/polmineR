@@ -1,14 +1,8 @@
 #'@include partition-class.R partitionCluster-class.R
 NULL
 
-#' Show method for partitionCluster Objects 
-#'
-#' Prints the number of partitions in the cluster and returns the respective sizes
-#' 
-#' @param object the partitionCluster object
-#' @exportMethod show
 #' @docType methods
-#' @noRd
+#' @rdname partitionCluster-class
 setMethod("show", "partitionCluster", function (object) {
   cat('** PartitionCluster object: **\n')
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@objects), '\n')
@@ -99,6 +93,7 @@ setMethod('[[', 'partitionCluster', function(x,i){
 )
 
 #' @exportMethod [
+#' @rdname partitionCluster-class
 #' @docType methods
 setMethod('[', 'partitionCluster', function(x,i){
   a <- unname(unlist(lapply(x@objects, function(y) y@tf$word[i,2])))
@@ -136,6 +131,7 @@ setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, 
 
 
 #' @exportMethod +
+#' @rdname partitionCluster-class
 #' @docType methods
 setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
   newPartition <- new("partitionCluster")
@@ -182,7 +178,8 @@ setMethod("label", "partitionCluster", function(object){
   unname(unlist(lapply(object@objects, function(x) label(x))))
 })
 
-#' @rdname partitionCluster
+#' @rdname partitionCluster-class
+#' @docType methods
 #' @exportMethod label<-
 setReplaceMethod(
   "label",
@@ -205,7 +202,8 @@ setReplaceMethod(
 )
 
 #' @exportMethod unique
-#' @rdname partitionCluster
+#' @docType methods
+#' @rdname partitionCluster-class
 setMethod("unique", "partitionCluster", function(x){
   labels <- lapply(x@objects, function(p) p@label)
   uniqueLabels <- unique(unlist(labels))
