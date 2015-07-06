@@ -89,7 +89,7 @@ setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in
 })
 
 
-#' @rdname partitionCluster-class
+#' @rdname tf-method
 #' @docType methods
 setMethod("tf", "partitionCluster", function(object, query, pAttribute=NULL, method="in", rel=FALSE){
   # check whether all partitions in the cluster have a proper label

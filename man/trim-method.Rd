@@ -4,28 +4,81 @@
 \name{trim}
 \alias{trim}
 \alias{trim,TermDocumentMatrix-method}
+\alias{trim,context-method}
+\alias{trim,keyness-method}
+\alias{trim,keynessCluster-method}
+\alias{trim,partition-method}
+\alias{trim,partitionCluster-method}
+\alias{trim,textstat-method}
 \alias{trim-method}
 \title{trim an object}
 \usage{
 trim(object, ...)
+
+\S4method{trim}{textstat}(object, cutoff = NULL, ...)
+
+\S4method{trim}{context}(object, minSignificance = 0, minFrequency = 0,
+  maxRank = 0, rankBy = NULL, posFilter = NULL, tokenFilter = NULL)
+
+\S4method{trim}{keyness}(object, minSignificance = NULL, minFrequency = 0,
+  maxRank = 0, rankBy = NULL, tokenFilter = NULL, posFilter = NULL,
+  filterType = "include", digits = NULL, verbose = TRUE)
+
+\S4method{trim}{keynessCluster}(object, minSignificance = 0,
+  minFrequency = 0, maxRank = 0, tokenFilter = NULL, posFilter = NULL,
+  filterType = "include", mc = FALSE)
+
+\S4method{trim}{partition}(object, pAttribute, minFrequency = 0,
+  posFilter = NULL, tokenFilter = NULL, ...)
+
+\S4method{trim}{partitionCluster}(object, pAttribute = NULL,
+  minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
+  minSize = 0, keep = NULL, mc = NULL, ...)
+
+\S4method{trim}{TermDocumentMatrix}(object, minFrequency = NULL,
+  stopwords = NULL, keep = NULL, verbose = TRUE)
 }
 \arguments{
 \item{object}{the object to be trimmed}
 
 \item{...}{further arguments}
+
+\item{cutoff}{a list with colnames and cutoff levels}
+
+\item{minSignificance}{minimum significance level}
+
+\item{minFrequency}{the minimum frequency}
+
+\item{maxRank}{maximum rank}
+
+\item{rankBy}{a character vector indicating the column for ranking}
+
+\item{posFilter}{exclude words with a POS tag not in this list}
+
+\item{tokenFilter}{tokens to exclude from table}
+
+\item{filterType}{either "include" or "exclude"}
+
+\item{digits}{a list}
+
+\item{verbose}{whether to be talkative}
+
+\item{mc}{if not NULL logical - whether to use multicore parallelization}
+
+\item{pAttribute}{character vector, either lemma or word}
+
+\item{drop}{partitionObjects you want to drop, specified either by number or by label}
+
+\item{minSize}{a minimum size for the partitions to be kept}
+
+\item{keep}{specify labels of partitions to keep, everything else is dropped}
+
+\item{stopwords}{words/tokens to drop}
 }
 \description{
-Method that includes varying to adjust objects from the driller package by
+Method to trim and adjust objects by
 applying thresholds, minimum frequencies etc. It can be applied to 'context',
-'keyness', 'context', 'partition' and 'partitionCluster' objects. See
-the respective documentation:
-\describe{
- \item{context:}{\code{method?trim("context")}}
- \item{keyness:}{\code{method?trim("keyness")}}
- \item{partition:}{\code{method?trim("partition")}}
- \item{partitionCluster:}{\code{method?trim("partitionCluster")}}
- \item{crosstab:}{\code{method?trim("crosstab")}}
-}
+'keyness', 'context', 'partition' and 'partitionCluster' objects.
 }
 \author{
 Andreas Blaette

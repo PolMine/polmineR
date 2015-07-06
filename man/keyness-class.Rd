@@ -13,7 +13,6 @@
 \alias{show,keyness-method}
 \alias{summary,keyness-method}
 \alias{summary,keynessCluster-method}
-\alias{trim,keynessCluster-method}
 \title{S4 class for comparing corpora}
 \description{
 to keep results from a keyness analysis

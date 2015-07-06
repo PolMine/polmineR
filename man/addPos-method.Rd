@@ -5,24 +5,46 @@
 \alias{addPos}
 \alias{addPos,keyness-method}
 \alias{addPos,partition-method}
-\alias{addPos,partitionCluster-method}
 \alias{addPos-method}
 \title{add pos information}
 \usage{
 addPos(object, ...)
+
+\S4method{addPos}{partition}(object, pAttribute)
+
+\S4method{addPos}{keyness}(object, Partition = NULL)
 }
 \arguments{
 \item{object}{either a partition, a partitionCluster or a keyness object}
 
 \item{...}{further arguments}
+
+\item{pAttribute}{character vector (typically c("word") or c("lemma") or c("word", "lemma"))}
+
+\item{Partition}{a partition object (the corpus of interest)}
 }
 \value{
 the original, enhanced object
+
+an augmented partition or partitionCluster object (includes pos now)
+
+an enhanced keyness object
 }
 \description{
 Add information on part-of-speech tags of tokens to tokens. The method is
 available for objects of the classes 'partition', 'partitionCluster' and
 'keyness' respectively.
 \code{method?addPos("partitionCluster")}, \code{method?addPos("keyness")}).
+
+The 'pos'-slot of the partition (or partitionCluster) object is filled with tables
+providing a statistic on the frequency of a pos-tag of a token
+in the partition.
+
+A keyness object will be supplemented with pos information. The working of the
+method is potentially slow. It is recommended to trim the object first, before
+adding pos information.
+}
+\author{
+Andreas Blaette
 }
 

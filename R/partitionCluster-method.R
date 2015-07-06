@@ -26,14 +26,14 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @param type the type of the partition objects
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
-#' @param value a character vector
-#' @param x CHECK
 #' @return a S4 class 'partitionCluster', which is a list with partition objects
 #' @importFrom parallel mclapply
 #' @export partitionCluster
-#' @aliases partitionCluster
+#' @aliases partitionCluster partitionCluster,character-method
 #' @author Andreas Blaette
-#' @rdname partitionCluster
+#' @name partitionCluster
+#' @docType methods
+#' @rdname partitionCluster-method
 setMethod("partitionCluster", "character", function(
   object, def, var, prefix=c(""),
   encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
@@ -90,7 +90,7 @@ setMethod("partitionCluster", "character", function(
   cluster
 })
 
-#' @rdname partitionCluster
+#' @rdname partitionCluster-method
 setMethod("partitionCluster", "list", function(
   object, var, prefix=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
   method="grep", xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
@@ -104,7 +104,7 @@ setMethod("partitionCluster", "list", function(
 
 
 
-#' @rdname partitionCluster
+#' @rdname partitionCluster-method
 setMethod("partitionCluster", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "partitionCluster")
 })

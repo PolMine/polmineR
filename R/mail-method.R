@@ -4,13 +4,16 @@ NULL
 #' mail result
 #' 
 #' Mail a result (to yourself).
-#' Please see the respective documentation for details 
-#' (\code{method?mail("keyness")}, \code{method?mail("partition")}.
 #' 
 #' @param object a driller object
+#' @param what what to send (defaults to "html")
+#' @param to the receiver of the mail message
+#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
+#' @param fileFormat csv or xlsx, or both
+#' @param filename filename
 #' @param ... further parameters
 #' @aliases mail mail-method
-#' @rdname mail
+#' @rdname mail-method
 setGeneric("mail", function(object, ...){standardGeneric("mail")})
 
 
@@ -48,18 +51,7 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
   )
 }
 
-#' mail a result
-#' 
-#' still experimental
-#' 
-#' @param object an object with some statistics
-#' @param to the receiver of the mail message
-#' @param filename name of the file to be sent out
-#' @param what what to send (defaults to "html")
-#' @exportMethod mail
-#' @name mail,partition-method
-#' @rdname mail-partition-method
-#' @aliases mail,partition-method
+#' @rdname mail-method
 #' @docType methods
 setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport.html", what="html"){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
@@ -81,18 +73,7 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
 
 
 
-#' mail result of context analysis
-#' 
-#' still experimental
-#' 
-#' @param object a context object
-#' @param to the receiver of the mail message
-#' @param nrow the number of rows
-#' @param fileFormat either csv or xlsx, or both
-#' @exportMethod mail
-#' @name context-keyness-method
-#' @rdname context-mail-method
-#' @aliases mail,context-method
+#' @rdname mail-method
 #' @docType methods
 setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
@@ -109,18 +90,7 @@ setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("
 })
 
 
-#' mail result of keyness analysis
-#' 
-#' still experimental
-#' 
-#' @param object an object with some statistics
-#' @param to the receiver of the mail message
-#' @param nrow the number of rows
-#' @param fileFormat either csv or xlsx, or both
-#' @exportMethod mail
-#' @name mail-keyness-method
-#' @rdname keyness-mail-method
-#' @aliases mail,keyness-method
+#' @rdname mail-method
 #' @docType methods
 setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
@@ -137,18 +107,7 @@ setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("
 })
 
 
-#' mail kwic/concordances
-#' 
-#' still experimental
-#' 
-#' @param object the concordance object
-#' @param to the receiver of the mail message
-#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
-#' @param fileFormat csv or xlsx, or both
-#' @exportMethod mail
-#' @name mail-kwic-method
-#' @rdname mail-kwic-method
-#' @aliases mail,kwic-method
+#' @rdname mail-method
 #' @docType methods
 setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
@@ -164,20 +123,9 @@ setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv
   retval
 })
 
-#' mail crosstab
-#' 
-#' For exporting.
-#' 
-#' @param object the crosstab object
-#' @param to the receiver of the mail message
-#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
-#' @param fileFormat csv or xlsx, or both
-#' @exportMethod mail
-#' @name mail-crosstab-method
-#' @rdname mail-crosstab-method
-#' @aliases mail,crosstab-method
+#' @rdname mail-method
 #' @docType methods
-setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+setMethod("mail", "dispersion", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     msg <- list('Delivering a crosstabulation.\nSincerely yours\nThe driller\n')
     if(is.null(nrow)) nrow <- nrow(object@abs)
@@ -192,18 +140,7 @@ setMethod("mail", "crosstab", function(object, to=NULL, nrow=NULL, fileFormat=c(
   retval
 })
 
-#' mail a data frame
-#' 
-#' For exporting.
-#' 
-#' @param object the data frame
-#' @param to the receiver of the mail message
-#' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
-#' @param fileFormat csv or xlsx, or both
-#' @exportMethod mail
-#' @name mail-data.frame-method
-#' @rdname mail-data.frame-method
-#' @aliases mail,data.frame-method
+#' @rdname mail-method
 #' @docType methods
 setMethod("mail", "data.frame", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {

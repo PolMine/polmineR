@@ -13,7 +13,7 @@ NULL
 #' @docType methods
 #' @rdname addPos-method
 #' @name addPos
-#' @aliases addPos addPos-method addPos,partition-method addPos,partitionCluster-method addPos,keyness-method
+#' @aliases addPos addPos-method
 setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 
 
@@ -48,13 +48,12 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' providing a statistic on the frequency of a pos-tag of a token
 #' in the partition.
 #' 
-#' @param object a partition class object
 #' @param pAttribute character vector (typically c("word") or c("lemma") or c("word", "lemma"))
 #' @return an augmented partition or partitionCluster object (includes pos now)
 #' @author Andreas Blaette
 #' @exportMethod addPos
 #' @docType methods
-#' @noRd
+#' @rdname addPos-method
 setMethod("addPos", "partition", function(object, pAttribute){
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
   message("Adding pos information to partition object ", object@label)
@@ -78,6 +77,7 @@ setMethod("addPos", "partition", function(object, pAttribute){
 
 #' @rdname partitionCluster-class
 #' @docType methods
+#' @rdname addPos-method
 setMethod("addPos", "partitionCluster", function(object, pAttribute){
   pimpedCluster <- object
   if (slot(get('session', '.GlobalEnv'), "multicore") == TRUE) {
@@ -94,11 +94,10 @@ setMethod("addPos", "partitionCluster", function(object, pAttribute){
 #' method is potentially slow. It is recommended to trim the object first, before
 #' adding pos information.
 #' 
-#' @param object the keyness object
 #' @param Partition a partition object (the corpus of interest)
 #' @return an enhanced keyness object 
 #' @docType methods
-#' @noRd 
+#' @rdname addPos-method
 setMethod("addPos", "keyness",
           function(object, Partition=NULL){
             if (is.null(Partition)){

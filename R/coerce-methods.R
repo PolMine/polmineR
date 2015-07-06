@@ -65,7 +65,7 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @method as.TermDocumentMatrix partitionCluster
 #' @importFrom slam simple_triplet_matrix
 #' @importFrom tm as.TermDocumentMatrix
-#' @rdname partitionCluster-class
+#' @rdname coerce-methods
 #' @docType methods
 setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))

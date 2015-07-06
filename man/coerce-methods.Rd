@@ -5,9 +5,13 @@
 \alias{as.DocumentTermMatrix,partitionCluster-method}
 \alias{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix,character-method}
+\alias{as.TermDocumentMatrix,partitionCluster-method}
 \title{coerce object to TermDocumentMatrix/DocumentTermMatrix}
 \usage{
 as.TermDocumentMatrix(x, ...)
+
+\S4method{as.TermDocumentMatrix}{partitionCluster}(x, pAttribute = NULL,
+  weight = NULL, rmBlank = TRUE, verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{partitionCluster}(x, pAttribute = NULL,
   weight = NULL, rmBlank = TRUE, ...)
@@ -27,6 +31,8 @@ as.TermDocumentMatrix(x, ...)
 
 \item{rmBlank}{bla}
 
+\item{verbose}{bla}
+
 \item{sAttribute}{the s-attribute}
 
 \item{from}{bla}
@@ -34,8 +40,6 @@ as.TermDocumentMatrix(x, ...)
 \item{to}{bla}
 
 \item{strucs}{bla}
-
-\item{verbose}{bla}
 
 \item{robust}{bla}
 

@@ -4,19 +4,27 @@ NULL
 
 #' trim an object
 #' 
-#' Method that includes varying to adjust objects from the driller package by 
+#' Method to trim and adjust objects by 
 #' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'keyness', 'context', 'partition' and 'partitionCluster' objects. See 
-#' the respective documentation:
-#' \describe{
-#'  \item{context:}{\code{method?trim("context")}}
-#'  \item{keyness:}{\code{method?trim("keyness")}} 
-#'  \item{partition:}{\code{method?trim("partition")}}
-#'  \item{partitionCluster:}{\code{method?trim("partitionCluster")}} 
-#'  \item{crosstab:}{\code{method?trim("crosstab")}}
-#' }
+#' 'keyness', 'context', 'partition' and 'partitionCluster' objects.
 #' 
 #' @param object the object to be trimmed
+#' @param cutoff a list with colnames and cutoff levels
+#' @param minSignificance minimum significance level
+#' @param minFrequency the minimum frequency
+#' @param maxRank maximum rank
+#' @param rankBy a character vector indicating the column for ranking
+#' @param posFilter exclude words with a POS tag not in this list
+#' @param tokenFilter tokens to exclude from table
+#' @param filterType either "include" or "exclude"
+#' @param digits a list
+#' @param pAttribute character vector, either lemma or word
+#' @param verbose whether to be talkative
+#' @param drop partitionObjects you want to drop, specified either by number or by label
+#' @param minSize a minimum size for the partitions to be kept
+#' @param keep specify labels of partitions to keep, everything else is dropped
+#' @param stopwords words/tokens to drop
+#' @param mc if not NULL logical - whether to use multicore parallelization
 #' @param ... further arguments
 #' @author Andreas Blaette
 #' @docType methods
@@ -25,12 +33,8 @@ NULL
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 
-#' trim textstat object
-#' 
-#' @param cutoff a list with colnames and cutoff levels
-#' @return a trimmed object
 #' @docType methods
-#' @noRd
+#' @rdname trim-method
 setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
   if (!is.null(cutoff)){
     # ensure that colnames provided are actually available
@@ -46,23 +50,9 @@ setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
   return(object)
 })
 
-#' trim context object
-#' 
-#' Trim a context object by applying different filters.
-#' 
-#' @param object a context object to be filtered
-#' @param minSignificance minimum significance level
-#' @param minFrequency the minimum frequency
-#' @param maxRank maximum rank
-#' @param rankBy a character vector indicating the column for ranking
-#' @param posFilter exclude words with a POS tag not in this list
-#' @param tokenFilter tokens to exclude from table
-#' @return context object
-#' @author Andreas Blaette
-#' @exportMethod trim
 #' @aliases trim,context-method
 #' @docType methods
-#' @rdname trim-context-method
+#' @rdname trim-method
 setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, rankBy=NULL, posFilter=NULL, tokenFilter=NULL){
   if (is.null(rankBy)) {
     test <- object@statisticalTest[1]  
@@ -88,26 +78,8 @@ setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0,
   object
 })
 
-#' trim keyness object
-#' 
-#' Trim a context object by applying different filters.
-#' 
-#' Maybe it would be more efficient to use the subset function.-
-#' 
-#' @param object a keyness object 
-#' @param minSignificance minimum significance level
-#' @param minFrequency the minimum frequency
-#' @param maxRank maximum rank
-#' @param rankBy the column of the statistics-table to use for ordering
-#' @param tokenFilter tokens to exclude from table
-#' @param posFilter pos to keep
-#' @param filterType either "include" or "exclude"
-#' @param digits a list
-#' @param verbose whether to be talkative
-#' @return a keyness object
-#' @author Andreas Blaette
-#' @aliases trim,keyness-method
 #' @exportMethod trim
+#' @rdname trim-method
 #' @docType methods
 setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType="include", digits=NULL, verbose=TRUE){
   if (maxRank==0) maxRank <- nrow(object@stat)
@@ -138,7 +110,7 @@ setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency
 })
 
 #' @docType methods
-#' @noRd
+#' @rdname trim-method
 setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
   rework <- new("keynessCluster")
   .trimFunction <- function(x) {
@@ -153,24 +125,9 @@ setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequ
   rework
 })
 
-#' trim partition object
-#' 
-#' Trim, filter and adjust the tf slot of a partition object for the p-attribute specified.
-#' You can drop the tf values if below a minimum frequency or token that do not correspond to a
-#' a part-of-speech specified.
-#' 
-#' @param object a partition class object
-#' @param pAttribute character vector, either lemma or word
-#' @param minFrequency an integer
-#' @param posFilter a character vector
-#' @param tokenFilter a character vector with tokens to keep in the tf list specified by pAttribute
-#' @param ... further arguments
-#' @return a trimmed partition object
-#' @author Andreas Blaette
-#' @aliases trim,partition-method
 #' @docType methods
 #' @exportMethod trim
-#' @rdname trim-partition-method
+#' @rdname trim-method
 setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, ...){
   rework <- object
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
@@ -195,26 +152,9 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 })
 
 
-#' trim partitionCluster Object
-#' 
-#' Apply the trim method to all partitions in a partitionCluster. In addition,
-#' partitions can be dropped.
-#' 
-#' @param object a partitionCluster object
-#' @param pAttribute character vector: "word", "lemma", or both
-#' @param minFrequency minimum frequency of tokens
-#' @param posFilter pos to keep
-#' @param tokenFilter a character vector with tokens to keep in the tf list specified by pAttribute
-#' @param drop partitionObjects you want to drop, specified either by number or by label
-#' @param minSize a minimum size for the partitions to be kept
-#' @param keep specify labels of partitions to keep, everything else is dropped
-#' @param mc if not NULL logical - whether to use multicore parallelization
-#' @param ... further arguments (unused)
-#' @return partitionCluster
-#' @aliases trim,partitionCluster-method
 #' @exportMethod trim
 #' @docType methods
-#' @rdname trim-partitionCluster-method
+#' @rdname trim-method
 setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
   if (is.null(mc)) mc <- slot(get('session', '.GlobalEnv'), 'multicore')
   pimpedCluster <- object
@@ -250,40 +190,6 @@ setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequ
   pimpedCluster
 })
 
-#' trim crosstab object
-#' 
-#' Drop unwanted columns in a crosstab object, and merge columns by either explicitly stating the columns,
-#' or providing a regex. If merge$old is length 1, it is assumed that a regex is provided
-#' 
-#' @param object a crosstab object to be adjusted
-#' @param drop defaults to NULL, or a character vector giving columns to be dropped 
-#' @param merge a list giving columns to be merged or exactly one string with a regex (see examples)
-#' @return a modified crosstab object
-#' @docType methods
-#' @aliases trim,crosstab-method
-#' @rdname trim-crosstab-method
-#' @exportMethod trim
-#' @docType methods
-setMethod("trim", "crosstab", function(object, drop=NULL, merge=list(old=c(), new=c())){
-  if (!is.null(drop)){
-    object <- .crosstabDrop(x=object, filter=drop, what="drop")
-  }
-  if (!all(sapply(merge, is.null))){
-    if (length(merge$new) != 1) warning("check length of character vectors in merge-list (needs to be 1)")
-    if (length(merge$old) == 2){
-      object <- .crosstabMergeCols(
-        object,
-        colnameOld1=merge$old[1], colnameOld2=merge$old[2],
-        colnameNew=merge$new[1]
-        )
-    } else if (length(merge$old == 1 )){
-      object <- .crosstabMergeColsRegex(object, regex=merge$old[1], colname.new=merge$new[1])
-    } else {
-      warning("length of merge$old not valid")
-    }
-  }
-})
-
 
 setMethod("trim", "collocations", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
   if (reshape == TRUE) object <- .reshapeCollocations(object, mc=mc)
@@ -303,6 +209,7 @@ setMethod("trim", "collocations", function(object, mc=TRUE, reshape=FALSE, by=NU
 #' @importFrom Matrix rowSums
 #' @importFrom tm stopwords
 #' @importFrom slam as.simple_triplet_matrix
+#' @rdname trim-method
 setMethod("trim", "TermDocumentMatrix", function(object, minFrequency=NULL, stopwords=NULL, keep=NULL, verbose=TRUE){
   mat <- as.sparseMatrix(object)
   if (!is.null(minFrequency)){
@@ -322,3 +229,37 @@ setMethod("trim", "TermDocumentMatrix", function(object, minFrequency=NULL, stop
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   retval
 })
+
+#' trim dispersion object
+#' 
+#' Drop unwanted columns in a dispersion object, and merge columns by either explicitly stating the columns,
+#' or providing a regex. If merge$old is length 1, it is assumed that a regex is provided
+#' 
+#' @param object a crosstab object to be adjusted
+#' @param drop defaults to NULL, or a character vector giving columns to be dropped 
+#' @param merge a list giving columns to be merged or exactly one string with a regex (see examples)
+#' @return a modified crosstab object
+#' @docType methods
+#' @rdname dispersion-class
+#' @exportMethod trim
+#' @docType methods
+setMethod("trim", "dispersion", function(object, drop=NULL, merge=list(old=c(), new=c())){
+  if (!is.null(drop)){
+    object <- .crosstabDrop(x=object, filter=drop, what="drop")
+  }
+  if (!all(sapply(merge, is.null))){
+    if (length(merge$new) != 1) warning("check length of character vectors in merge-list (needs to be 1)")
+    if (length(merge$old) == 2){
+      object <- .crosstabMergeCols(
+        object,
+        colnameOld1=merge$old[1], colnameOld2=merge$old[2],
+        colnameNew=merge$new[1]
+      )
+    } else if (length(merge$old == 1 )){
+      object <- .crosstabMergeColsRegex(object, regex=merge$old[1], colname.new=merge$new[1])
+    } else {
+      warning("length of merge$old not valid")
+    }
+  }
+})
+

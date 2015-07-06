@@ -251,7 +251,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
 #' on the number of queries and dimensions provided.
 #' 
-#' @param object a partition object that will be queried
+#' @param object a partition object
 #' @param query a character vector containing one or multiple queries
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'

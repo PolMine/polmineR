@@ -36,7 +36,7 @@ NULL
 #' @aliases keyness keyness-class summary,keyness-method
 #'   show,keyness-method as.matrix,keynessCluster-method
 #'   [[,keynessCluster-method enrich,keynessCluster-method
-#'   trim,keynessCluster-method summary,keynessCluster-method
+#'   summary,keynessCluster-method
 #'   ll,keyness-method as.igraph,keyness-method
 #' @docType class
 #' @exportClass keyness

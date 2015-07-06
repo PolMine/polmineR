@@ -132,6 +132,8 @@ setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, 
 
 #' @exportMethod +
 #' @rdname partitionCluster-class
+#' @param e1 partition 1
+#' @param e2 partition 2
 #' @docType methods
 setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
   newPartition <- new("partitionCluster")
@@ -145,6 +147,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function
 
 #' @exportMethod +
 #' @docType methods
+#' @rdname partitionCluster-class
 setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
   e1@objects[[length(e1@objects)+1]] <- e2
@@ -173,7 +176,7 @@ setMethod("barplot", "partitionCluster", function(height, ...){
 })
 
 
-#' @rdname partitionCluster
+#' @rdname partitionCluster-class
 setMethod("label", "partitionCluster", function(object){
   unname(unlist(lapply(object@objects, function(x) label(x))))
 })

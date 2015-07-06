@@ -13,7 +13,7 @@
 #' @param x an object
 #' @param ... further parameters
 #' @aliases as.data.frame,textstat-method show,textstat-method
-#'   trim,textstat-method dim,textstat-method
+#'   dim,textstat-method
 #'   colnames,textstat-method rownames,textstat-method names,textstat-method
 #'   as.DataTables,textstat-method
 #' @docType class

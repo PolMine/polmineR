@@ -12,7 +12,6 @@
 \alias{show,textstat-method}
 \alias{tail,textstat-method}
 \alias{textstat-class}
-\alias{trim,textstat-method}
 \alias{view,textstat-method}
 \title{S4 textstat class}
 \usage{

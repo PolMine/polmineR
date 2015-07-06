@@ -35,7 +35,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod keyness
-#' @rdname  keyness
+#' @rdname  keyness-method
 setMethod("keyness", signature=c(x="partition"), function(
   x,
   y,
@@ -92,7 +92,7 @@ setMethod("keyness", signature=c(x="partition"), function(
 
 
 #' @docType methods
-#' @rdname keyness
+#' @rdname keyness-method
 setMethod("keyness", signature=c(x="partitionCluster"), function(
   x, y, pAttribute=NULL,
   minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
@@ -128,7 +128,7 @@ setMethod("keyness", signature=c(x="partitionCluster"), function(
 
 #' @importFrom plyr ddply
 #' @importFrom data.table rbindlist
-#' @rdname keyness
+#' @rdname keyness-method
 setMethod("keyness", "collocations", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){
@@ -211,7 +211,7 @@ setMethod("keyness", "collocations", function(
   newObject
 })
 
-#' @rdname keyness
+#' @rdname keyness-method
 setMethod("keyness", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "keyness")
 })

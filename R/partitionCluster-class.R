@@ -27,7 +27,11 @@ NULL
 #' @param x a partitionCluster object
 #' @param object a partitionCluster object
 #' @param i integer index
+#' @param pAttribute the p-attribute
+#' @param value the value
 #' @param sAttribute the s-attribute to use
+#' @param filename filename
+#' @param type type
 #' @rdname partitionCluster-class
 #' @name partitionCluster-class
 #' @exportClass partitionCluster

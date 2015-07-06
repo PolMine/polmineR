@@ -19,25 +19,19 @@ setMethod("html", "character", function(object){
 })
 
 
-#' @docType methods
-#' @noRd
-setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
-  for (i in from:to){
-    html(object@objects[[i]], meta=meta, filename=NULL, type="debate")
-  }
-})
+# #' @docType methods
+# #' @rdname partitionCluster-class
+# setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
+#   for (i in from:to){
+#     html(object@objects[[i]], meta=meta, filename=filename, type=type)
+#   }
+# })
 
-#' Convert partition/partition Cluster into html
-#' 
-#' A partition is converted into a html file and displayed in a browser. If a partitionCluster
-#' is provided, the browser will open several windows.
-#'   
-#' @param object a partition object
 #' @param meta metadata for output
-#' @rdname html
+#' @rdname partition-class
 #' @exportMethod html
 #' @docType methods
-#' @aliases html html-method html,partition-method html,partitionCluster-method show,html-method
+#' @aliases html html-method html,partition-method show,html-method
 setMethod("html", "partition", function(object, meta=NULL){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')

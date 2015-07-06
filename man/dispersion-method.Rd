@@ -11,7 +11,7 @@
   rel = TRUE, mc = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{object}{a partition object that will be queried}
+\item{object}{a partition object}
 
 \item{query}{a character vector containing one or multiple queries}
 
