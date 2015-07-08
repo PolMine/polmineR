@@ -115,24 +115,24 @@
 
 #' flatten a nested list
 #' 
-#' If you have a list of partitionClusters, this function will flatten the data
-#' structure and return a partition Cluster object.
+#' If you have a list of partitionBundles, this function will flatten the data
+#' structure and return a partition Bundle object.
 #' 
-#' @param object a list (with partitionCluster objects)
-#' @return a partitionCluster object
+#' @param object a list (with partitionBundle objects)
+#' @return a partitionBundle object
 #' @export flatten
 #' @rdname flatten
 #' @name flatten
 flatten <- function(object){
-  newCluster <- new("partitionCluster")
+  newBundle <- new("partitionBundle")
   for (i in 1:length(object)){
     if(!is.null(object[[i]])){
       if (length(object[[i]]@objects) > 0){
-        newCluster <- newCluster + object[[i]]
+        newBundle <- newBundle + object[[i]]
       }
     }
   } 
-  newCluster
+  newBundle
 }
 
 .statisticalSummary <- function(object) {

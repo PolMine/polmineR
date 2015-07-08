@@ -34,9 +34,9 @@ NULL
 #' @rdname keyness-class
 #' @name keyness-class
 #' @aliases keyness keyness-class summary,keyness-method
-#'   show,keyness-method as.matrix,keynessCluster-method
-#'   [[,keynessCluster-method enrich,keynessCluster-method
-#'   summary,keynessCluster-method
+#'   show,keyness-method as.matrix,keynessBundle-method
+#'   [[,keynessBundle-method enrich,keynessBundle-method
+#'   summary,keynessBundle-method
 #'   ll,keyness-method as.igraph,keyness-method
 #' @docType class
 #' @exportClass keyness

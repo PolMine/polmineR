@@ -3,19 +3,19 @@
 \docType{methods}
 \name{as.mallet}
 \alias{as.mallet}
-\alias{as.mallet,partitionCluster-method}
+\alias{as.mallet,partitionBundle-method}
 \alias{store,jobjRef-method}
 \title{as.mallet}
 \usage{
 as.mallet(.Object, ...)
 
-\S4method{as.mallet}{partitionCluster}(.Object, pAttribute = "word",
+\S4method{as.mallet}{partitionBundle}(.Object, pAttribute = "word",
   stoplist = stopwords("de"), mc = TRUE, verbose = TRUE)
 
 \S4method{store}{jobjRef}(object, filename = NULL)
 }
 \arguments{
-\item{.Object}{partition- or partitionCluster-object}
+\item{.Object}{partition- or partitionBundle-object}
 
 \item{...}{further parameters}
 
@@ -36,7 +36,7 @@ Save polmineR-object as mallet object
 }
 \examples{
 \dontrun{
-clu <- partitionCluster("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), tf=NULL)
+clu <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), tf=NULL)
 foo <- as.mallet(clu)
 }
 }

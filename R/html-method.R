@@ -1,4 +1,4 @@
-#' @include partition-class.R partitionCluster-class.R
+#' @include partition-class.R partitionBundle-class.R
 NULL
 
 setGeneric("html", function(object, ...){standardGeneric("html")})
@@ -20,8 +20,8 @@ setMethod("html", "character", function(object){
 
 
 # #' @docType methods
-# #' @rdname partitionCluster-class
-# setMethod("html", "partitionCluster", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
+# #' @rdname partitionBundle-class
+# setMethod("html", "partitionBundle", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
 #   for (i in from:to){
 #     html(object@objects[[i]], meta=meta, filename=filename, type=type)
 #   }
@@ -54,8 +54,8 @@ setMethod("html", "partition", function(object, meta=NULL){
 })
 
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod("html", "partitionCluster", function(object, filename=c(), type="debate"){
+#' @rdname partitionBundle-class
+setMethod("html", "partitionBundle", function(object, filename=c(), type="debate"){
   markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),

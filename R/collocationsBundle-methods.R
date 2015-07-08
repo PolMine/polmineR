@@ -1,8 +1,8 @@
-#' @include collocations-class.R collocationsCluster-class.R
+#' @include collocations-class.R collocationsBundle-class.R
 NULL
 
-#' @rdname collocationsCluster-class
-setMethod("as.TermDocumentMatrix", "collocationsCluster", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
+#' @rdname collocationsBundle-class
+setMethod("as.TermDocumentMatrix", "collocationsBundle", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
   tabs <- lapply(x@objects, as.data.frame)
   if (directed == TRUE){
     keys <- unique(unlist(lapply(tabs, rownames)))

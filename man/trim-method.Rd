@@ -6,9 +6,9 @@
 \alias{trim,TermDocumentMatrix-method}
 \alias{trim,context-method}
 \alias{trim,keyness-method}
-\alias{trim,keynessCluster-method}
+\alias{trim,keynessBundle-method}
 \alias{trim,partition-method}
-\alias{trim,partitionCluster-method}
+\alias{trim,partitionBundle-method}
 \alias{trim,textstat-method}
 \alias{trim-method}
 \title{trim an object}
@@ -24,14 +24,14 @@ trim(object, ...)
   maxRank = 0, rankBy = NULL, tokenFilter = NULL, posFilter = NULL,
   filterType = "include", digits = NULL, verbose = TRUE)
 
-\S4method{trim}{keynessCluster}(object, minSignificance = 0,
+\S4method{trim}{keynessBundle}(object, minSignificance = 0,
   minFrequency = 0, maxRank = 0, tokenFilter = NULL, posFilter = NULL,
   filterType = "include", mc = FALSE)
 
 \S4method{trim}{partition}(object, pAttribute, minFrequency = 0,
   posFilter = NULL, tokenFilter = NULL, ...)
 
-\S4method{trim}{partitionCluster}(object, pAttribute = NULL,
+\S4method{trim}{partitionBundle}(object, pAttribute = NULL,
   minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
   minSize = 0, keep = NULL, mc = NULL, ...)
 
@@ -78,7 +78,7 @@ trim(object, ...)
 \description{
 Method to trim and adjust objects by
 applying thresholds, minimum frequencies etc. It can be applied to 'context',
-'keyness', 'context', 'partition' and 'partitionCluster' objects.
+'keyness', 'context', 'partition' and 'partitionBundle' objects.
 }
 \author{
 Andreas Blaette

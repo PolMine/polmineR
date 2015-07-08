@@ -4,8 +4,8 @@
 \name{pAttributes,partition-method}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{as.partitionCluster}
-\alias{as.partitionCluster,partition-method}
+\alias{as.partitionBundle}
+\alias{as.partitionBundle,partition-method}
 \alias{dissect}
 \alias{dissect,partition-method}
 \alias{export}
@@ -71,7 +71,7 @@ partition class definition
    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
    \item{trim}{\code{signature(object="partition")}: trim a partition object }
    \item{tf}{\code{signature(object="partition")}: get term frequencies }
-   \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
+   \item{as.partitionBundle}{\code{signature(object="partition")}: transform a partition object into a partitionBundle (to add further objects) }
    \item{[}{get frequency of a query}
    \item{html}{transform partition to html}
    }

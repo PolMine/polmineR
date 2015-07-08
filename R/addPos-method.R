@@ -1,13 +1,13 @@
-#' @include partition-class.R partitionCluster-class.R keyness-class.R
+#' @include partition-class.R partitionBundle-class.R keyness-class.R
 NULL
 
 #' add pos information
 #' 
 #' Add information on part-of-speech tags of tokens to tokens. The method is 
-#' available for objects of the classes 'partition', 'partitionCluster' and
+#' available for objects of the classes 'partition', 'partitionBundle' and
 #' 'keyness' respectively. 
-#' \code{method?addPos("partitionCluster")}, \code{method?addPos("keyness")}).
-#' @param object either a partition, a partitionCluster or a keyness object
+#' \code{method?addPos("partitionBundle")}, \code{method?addPos("keyness")}).
+#' @param object either a partition, a partitionBundle or a keyness object
 #' @param ... further arguments
 #' @return the original, enhanced object
 #' @docType methods
@@ -42,14 +42,14 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 }
 
 
-#' Fill slot 'pos' of partition (or partitionCluster) object
+#' Fill slot 'pos' of partition (or partitionBundle) object
 #' 
-#' The 'pos'-slot of the partition (or partitionCluster) object is filled with tables
+#' The 'pos'-slot of the partition (or partitionBundle) object is filled with tables
 #' providing a statistic on the frequency of a pos-tag of a token
 #' in the partition.
 #' 
 #' @param pAttribute character vector (typically c("word") or c("lemma") or c("word", "lemma"))
-#' @return an augmented partition or partitionCluster object (includes pos now)
+#' @return an augmented partition or partitionBundle object (includes pos now)
 #' @author Andreas Blaette
 #' @exportMethod addPos
 #' @docType methods
@@ -75,17 +75,17 @@ setMethod("addPos", "partition", function(object, pAttribute){
   object
 })
 
-#' @rdname partitionCluster-class
+#' @rdname partitionBundle-class
 #' @docType methods
 #' @rdname addPos-method
-setMethod("addPos", "partitionCluster", function(object, pAttribute){
-  pimpedCluster <- object
+setMethod("addPos", "partitionBundle", function(object, pAttribute){
+  pimpedBundle <- object
   if (slot(get('session', '.GlobalEnv'), "multicore") == TRUE) {
-    pimpedCluster@objects <- mclapply(object@objects, function(x) addPos(x, pAttribute))
+    pimpedBundle@objects <- mclapply(object@objects, function(x) addPos(x, pAttribute))
   } else {
-    pimpedCluster@objects <- lapply(object@objects, function(x) addPos(x, pAttribute))    
+    pimpedBundle@objects <- lapply(object@objects, function(x) addPos(x, pAttribute))    
   }
-  pimpedCluster
+  pimpedBundle
 })
 
 #' supplement keyness object with pos information

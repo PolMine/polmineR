@@ -12,7 +12,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' For the s-attributes, list elements may be character vectors with a length > 2.
 #' However, the initialization of a partition object is considerably slower, if
 #' you supply a >2 vector. The alternative being creating a set of partitions with
-#' \code{partition.cluster} and then merging the partitions, this may still be ok.
+#' \code{partition.bundle} and then merging the partitions, this may still be ok.
 #' For s-attributes, regular expressions can be used. Please note that for R grep,
 #' double backlashes have to be used.
 #' For some purposes (c.g. computation of crosstabulations), term frequencies will

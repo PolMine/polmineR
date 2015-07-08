@@ -4,7 +4,7 @@
 \name{split,partition-method}
 \alias{split,partition}
 \alias{split,partition-method}
-\title{split partition into partitionCluster}
+\title{split partition into partitionBundle}
 \usage{
 \S4method{split}{partition}(x, gap, drop = FALSE, ...)
 }
@@ -18,14 +18,14 @@
 \item{...}{further arguments}
 }
 \value{
-a partitionCluster
+a partitionBundle
 }
 \description{
-Split a partition object into a partition Cluster if gap between strucs
+Split a partition object into a partition Bundle if gap between strucs
 exceeds a minimum number of tokens specified by 'gap'. Relevant to
 split up a plenary protocol into speeches. Note: To speed things up, the
 returned partitions will not include frequency lists. The lists can be
-prepared by applying \code{enrich} on the partitionCluster object that
+prepared by applying \code{enrich} on the partitionBundle object that
 is returned.
 }
 

@@ -1,4 +1,4 @@
-#' @include partition-class.R partitionCluster-class.R
+#' @include partition-class.R partitionBundle-class.R
 NULL
 
 setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
@@ -15,7 +15,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' procedure considerably.
 #' 
 #' 
-#' @param x a partition or partitionCluster object
+#' @param x a partition or partitionBundle object
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
 #' @param pAttribute The P-Attribute that will be counted (usually either
@@ -93,12 +93,12 @@ setMethod("keyness", signature=c(x="partition"), function(
 
 #' @docType methods
 #' @rdname keyness-method
-setMethod("keyness", signature=c(x="partitionCluster"), function(
+setMethod("keyness", signature=c(x="partitionBundle"), function(
   x, y, pAttribute=NULL,
   minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
 ) {
   if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
-  kclust <- new("keynessCluster")
+  kclust <- new("keynessBundle")
   .keyness <- function(a) {
     keyness(a, y, pAttribute=pAttribute, minFrequency=minFrequency, included=included, method=method, verbose=verbose)
   }

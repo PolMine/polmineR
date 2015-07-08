@@ -20,7 +20,7 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @export collocations
 #' @name collocations
 #' @rdname collocations-method
-#' @aliases collocations collocations-method collocations,partition-method collocations,partitionCluster-method
+#' @aliases collocations collocations-method collocations,partition-method collocations,partitionBundle-method
 #' @examples
 #' \dontrun{
 #' bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
@@ -124,14 +124,14 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   coll
 })
 
-setMethod("collocations", "partitionCluster", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
-  cluster <- new(
-    "collocationsCluster",
+setMethod("collocations", "partitionBundle", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+  bundle <- new(
+    "collocationsBundle",
     encoding=unique(vapply(object@objects, function(x) x@encoding, FUN.VALUE="character")),
     corpus=unique(vapply(object@objects, function(x) x@corpus, FUN.VALUE="character"))
     )
   if (mc == FALSE){
-    cluster@objects <- lapply(
+    bundle@objects <- lapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
         message('Calculating collocations for partition ', x@label)
@@ -139,7 +139,7 @@ setMethod("collocations", "partitionCluster", function(object, pAttribute="word"
       })
     
   } else {
-    cluster@objects <- mclapply(
+    bundle@objects <- mclapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
         message('Calculating collocations for partition ', x@label)
@@ -148,5 +148,5 @@ setMethod("collocations", "partitionCluster", function(object, pAttribute="word"
           )
       }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    
   }
-  cluster
+  bundle
 })

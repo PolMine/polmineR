@@ -1,4 +1,4 @@
-#' @include polmineR-package.R partition-class.R partitionCluster-class.R context-class.R collocations-class.R contextCluster-class.R
+#' @include polmineR-package.R partition-class.R partitionBundle-class.R context-class.R collocations-class.R contextBundle-class.R
 NULL
 
 
@@ -31,7 +31,7 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 
 #' @exportMethod as.sparseMatrix
 setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
-setGeneric("as.partitionCluster", function(object,...){standardGeneric("as.partitionCluster")})
+setGeneric("as.partitionBundle", function(object,...){standardGeneric("as.partitionBundle")})
 setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.TermContextMatrix")})
 
 #' @param mat a TermDocumentMatrix
@@ -62,12 +62,12 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
   return(retval)  
 })
 
-#' @method as.TermDocumentMatrix partitionCluster
+#' @method as.TermDocumentMatrix partitionBundle
 #' @importFrom slam simple_triplet_matrix
 #' @importFrom tm as.TermDocumentMatrix
 #' @rdname coerce-methods
 #' @docType methods
-setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
   if (is.null(pAttribute)){
     pAttributesAvailable <- unique(unlist(lapply(x@objects, function(x) names(x@tf))))
@@ -119,8 +119,8 @@ setMethod("as.TermDocumentMatrix", "partitionCluster", function (x, pAttribute=N
 
 #' @docType methods
 #' @noRd
-setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
-  message("... converting partitionCluster to TermDocumentMatrix")
+setMethod("as.sparseMatrix", "partitionBundle", function(x, pAttribute, ...){
+  message("... converting partitionBundle to TermDocumentMatrix")
   tdm_stm <- as.TermDocumentMatrix(x, pAttribute=pAttribute)
   message("... converting TermDocumentMatrix to Matrix")
   retval <-  as.sparseMatrix(tdm_stm)
@@ -129,7 +129,7 @@ setMethod("as.sparseMatrix", "partitionCluster", function(x, pAttribute, ...){
 
 
 #' @rdname coerce-methods
-setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
+setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
   retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
   retval
 })
@@ -139,23 +139,23 @@ setMethod("as.DocumentTermMatrix", "partitionCluster", function(x, pAttribute=NU
 
 
 
-#' Transform a context cluster into a Term Context Matrix
+#' Transform a context bundle into a Term Context Matrix
 #' 
 #' Method based on the tm package, adds to as.TermDocumentMatrix
 #' 
 #' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
 #' 
-#' @param x a contextCluster object (S3 class)
+#' @param x a contextBundle object (S3 class)
 #' @param col the col of the stat table to take
 #' @param ... to make the check happy
-#' @method as.TermContextMatrix contextCluster
+#' @method as.TermContextMatrix contextBundle
 #' @return a TermContextMatrix
 #' @author Andreas Blaette
 #' @docType method
 #' @importFrom slam simple_triplet_matrix
 #' @exportMethod as.TermContextMatrix
 #' @noRd
-setMethod("as.TermContextMatrix", "contextCluster", function (x, col, ...) {
+setMethod("as.TermContextMatrix", "contextBundle", function (x, col, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
   corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
   pAttribute <- unique(unlist(lapply(x@objects, function(c) c@pAttribute)))
@@ -192,25 +192,25 @@ setMethod("as.data.frame", "keyness", function(x, ...) x@stat )
 setMethod("as.data.frame", "context", function(x, ...) x@stat )
 
 #' @docType methods
-#' @exportMethod as.partitionCluster
-setMethod("as.partitionCluster", "partition", function(object){
-  newCluster <- new("partitionCluster")
-  newCluster@objects[[1]] <- object
-  names(newCluster@objects)[1] <- object@label
-  newCluster@corpus <- object@corpus
-  newCluster@encoding <- object@encoding
-  newCluster@explanation <- c("derived from a partition object")
-  newCluster
+#' @exportMethod as.partitionBundle
+setMethod("as.partitionBundle", "partition", function(object){
+  newBundle <- new("partitionBundle")
+  newBundle@objects[[1]] <- object
+  names(newBundle@objects)[1] <- object@label
+  newBundle@corpus <- object@corpus
+  newBundle@encoding <- object@encoding
+  newBundle@explanation <- c("derived from a partition object")
+  newBundle
 })
 
-setMethod("as.partitionCluster", "list", function(object, ...){
+setMethod("as.partitionBundle", "list", function(object, ...){
   if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
-  newCluster <- new("partitionCluster")
-  newCluster@objects <- object
-  newCluster@corpus <- unique(unlist(lapply(newCluster@objects, function(x) x@corpus)))
-  newCluster@encoding <- unique(unlist(lapply(newCluster@objects, function(x) x@encoding)))
-  names(newCluster@objects) <- vapply(newCluster@objects, function(x) x@label, FUN.VALUE="character")
-  newCluster
+  newBundle <- new("partitionBundle")
+  newBundle@objects <- object
+  newBundle@corpus <- unique(unlist(lapply(newBundle@objects, function(x) x@corpus)))
+  newBundle@encoding <- unique(unlist(lapply(newBundle@objects, function(x) x@encoding)))
+  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@label, FUN.VALUE="character")
+  newBundle
 })
 
 
@@ -296,14 +296,14 @@ setMethod(
     mat
   })
 
-#' @exportMethod as.partitionCluster
+#' @exportMethod as.partitionBundle
 #' @rdname context-class
-setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
-  newPartitionCluster <- new(
-    "partitionCluster",
+setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
+  newPartitionBundle <- new(
+    "partitionBundle",
     corpus=object@corpus,
     encoding=object@encoding,
-    explanation="this partitionCluster is derived from a context object"
+    explanation="this partitionBundle is derived from a context object"
     )
   .makeNewPartition <- function(cpos){
     newPartition <- new(
@@ -321,11 +321,11 @@ setMethod("as.partitionCluster", "context", function(object, mc=FALSE){
     newPartition
   }
   if (mc == FALSE){
-    newPartitionCluster@objects <- lapply(object@cpos, FUN=.makeNewPartition)  
+    newPartitionBundle@objects <- lapply(object@cpos, FUN=.makeNewPartition)  
   } else {
     coresToUse <- slot(get("session", ".GlobalEnv"), "cores")
-    newPartitionCluster@objects <- mclapply(object@cpos, FUN=.makeNewPartition, mc.cores=coresToUse)  
+    newPartitionBundle@objects <- mclapply(object@cpos, FUN=.makeNewPartition, mc.cores=coresToUse)  
   }
-  return(newPartitionCluster)
+  return(newPartitionBundle)
 })
 

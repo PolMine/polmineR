@@ -60,8 +60,8 @@ setMethod(
 )
 
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod("sAttributes", "partitionCluster", function(object, sAttribute){
+#' @rdname partitionBundle-class
+setMethod("sAttributes", "partitionBundle", function(object, sAttribute){
   lapply(
     object@objects,
     function(x) sAttributes(x, sAttribute)

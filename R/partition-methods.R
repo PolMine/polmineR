@@ -54,20 +54,20 @@ setMethod('[', 'partition', function(x,i){
 
 
 
-#' split partition into partitionCluster
+#' split partition into partitionBundle
 #' 
-#' Split a partition object into a partition Cluster if gap between strucs
+#' Split a partition object into a partition Bundle if gap between strucs
 #' exceeds a minimum number of tokens specified by 'gap'. Relevant to 
 #' split up a plenary protocol into speeches. Note: To speed things up, the
 #' returned partitions will not include frequency lists. The lists can be
-#' prepared by applying \code{enrich} on the partitionCluster object that
+#' prepared by applying \code{enrich} on the partitionBundle object that
 #' is returned.
 #' 
 #' @param x a partition object
 #' @param gap an integer specifying the minimum gap for performing the split
 #' @param drop not yet implemented
 #' @param ... further arguments
-#' @return a partitionCluster
+#' @return a partitionBundle
 #' @aliases split,partition
 #' @rdname split-partition-method 
 #' @exportMethod split
@@ -85,7 +85,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
     cposClassified <- cbind(cpos, no)
     cposList1 <- split(cposClassified[,1], cposClassified[,3])
     cposList2 <- split(cposClassified[,2], cposClassified[,3])
-    clusterRaw <- lapply(c(1:length(strucList)), function(i) {
+    bundleRaw <- lapply(c(1:length(strucList)), function(i) {
       p <- new("partition")
       p@strucs <- strucList[[i]]
       p@cpos <- cbind(cposList1[[i]], cposList2[[i]])
@@ -110,11 +110,11 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       p
     })
   } else {
-    clusterRaw <- list(x)
+    bundleRaw <- list(x)
   }
-  names(clusterRaw) <- unlist(lapply(clusterRaw, function(y) y@label))
-  cluster <- as.partitionCluster(clusterRaw)
-  cluster
+  names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@label))
+  bundle <- as.partitionBundle(bundleRaw)
+  bundle
 })
 
 #' @rdname partition
@@ -156,7 +156,7 @@ setMethod("pAttribute", "partition", function(object, from, to, mc=TRUE, verbose
 
 #' get/set the label of a partition
 #' 
-#' Assign a label to a partition, or a partitionCluster.
+#' Assign a label to a partition, or a partitionBundle.
 #' 
 #' @rdname partition
 #' @exportMethod label

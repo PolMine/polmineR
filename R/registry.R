@@ -36,14 +36,17 @@ resetRegistry <- function(registryDir=NULL) {
   oldRegistry
 }
 
-
-.parseRegistry <- function(corpus){
-  registry <- scan(
+.readRegistry <- function(corpus){
+  scan(
     file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
     sep="\n",
     what="character",
-    quiet=TRUE
+    quiet=TRUE, blank.lines.skip=FALSE
   )
+}
+
+.parseRegistry <- function(corpus){
+  registry <- .readRegistry(corpus)
   registryList <- lapply(
     setNames(c("NAME", "ID", "HOME", "INFO"), c("NAME", "ID", "HOME", "INFO")),
     function(query){

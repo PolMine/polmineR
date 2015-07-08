@@ -1,10 +1,10 @@
-#'@include partition-class.R partitionCluster-class.R
+#'@include partition-class.R partitionBundle-class.R
 NULL
 
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod("show", "partitionCluster", function (object) {
-  cat('** PartitionCluster object: **\n')
+#' @rdname partitionBundle-class
+setMethod("show", "partitionBundle", function (object) {
+  cat('** PartitionBundle object: **\n')
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@objects), '\n')
   # same code as in show-method for partition
   sFix <- unlist(lapply(
@@ -16,15 +16,15 @@ setMethod("show", "partitionCluster", function (object) {
   cat("\n")
 })
 
-#' Summary method for partitionCluster Objects 
+#' Summary method for partitionBundle Objects 
 #'
 #' simple statistic 
 #' 
-#' @param object the partitionCluster object
+#' @param object the partitionBundle object
 #' @exportMethod summary
 #' @docType methods
 #' @noRd
-setMethod("summary", "partitionCluster", function (object) {
+setMethod("summary", "partitionBundle", function (object) {
   summary <- data.frame(
     partition=names(object@objects),
     token=unlist(lapply(object@objects, function(x) x@size)),
@@ -44,16 +44,16 @@ setMethod("summary", "partitionCluster", function (object) {
 
 
 
-#' Merge the partitions in a cluster into one partition
+#' Merge the partitions in a bundle into one partition
 #' 
-#' The partitions in a cluster object will be merged into one new partition
+#' The partitions in a bundle object will be merged into one new partition
 #' 
 #' The function aggregates several partitions into one partition. The
 #' prerequisite for this function to work properly is that there are no
 #' overlaps of the different partitions that are to be summarized.
 #' Encodings and the root node need to be identical, too.
 #' 
-#' @param object a cluster object
+#' @param object a bundle object
 #' @param label the label for the new partition
 #' @return An object of the class 'partition. See partition for the
 #' details on the class.
@@ -61,11 +61,11 @@ setMethod("summary", "partitionCluster", function (object) {
 #' @exportMethod merge
 #' @docType methods
 #' @noRd
-setMethod("merge", "partitionCluster", function(x, label=c("")){
+setMethod("merge", "partitionBundle", function(x, label=c("")){
   y <- new("partition")
   cat('There are', length(x@objects), 'partitions to be merged\n')
   y@corpus <- unique(vapply(x@objects, FUN.VALUE="characer", function(p) p@corpus))
-  if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the cluster comprises different corpora")
+  if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
   y@xml <- unique(vapply(x@objects, function(p)p@xml, FUN.VALUE="character"))
   y@encoding <- unique(vapply(x@objects, function(p)p@encoding, FUN.VALUE="character"))
   y@sAttributeStrucs <- unique(vapply(x@objects, function(p) p@sAttributeStrucs, FUN.VALUE="character"))
@@ -86,16 +86,16 @@ setMethod("merge", "partitionCluster", function(x, label=c("")){
 
 #' @exportMethod [[
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod('[[', 'partitionCluster', function(x,i){
+#' @rdname partitionBundle-class
+setMethod('[[', 'partitionBundle', function(x,i){
   return(x@objects[[i]])
 }
 )
 
 #' @exportMethod [
-#' @rdname partitionCluster-class
+#' @rdname partitionBundle-class
 #' @docType methods
-setMethod('[', 'partitionCluster', function(x,i){
+setMethod('[', 'partitionBundle', function(x,i){
   a <- unname(unlist(lapply(x@objects, function(y) y@tf$word[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
@@ -109,34 +109,34 @@ setMethod('[', 'partitionCluster', function(x,i){
 )
 
 
-#' Turn a partition cluster into a matrix
+#' Turn a partition bundle into a matrix
 #' 
 #' Method based on the tm package.
 #' 
 #' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
 #' 
-#' @param x a partitionCluster object (S3 class)
+#' @param x a partitionBundle object (S3 class)
 #' @param pAttribute the counts for the patttribute to show up in the matrix
 #' @param weight whether to introduce a weight ("tfidf", for example)
 #' @param ... necessary for S3 method?!
-#' @method as.matrix partitionCluster
+#' @method as.matrix partitionBundle
 #' @return a matrix
 #' @author Andreas Blaette
 #' @exportMethod as.matrix
 #' @docType methods
 #' @noRd
-setMethod("as.matrix", "partitionCluster", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
+setMethod("as.matrix", "partitionBundle", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
   as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
 })
 
 
 #' @exportMethod +
-#' @rdname partitionCluster-class
+#' @rdname partitionBundle-class
 #' @param e1 partition 1
 #' @param e2 partition 2
 #' @docType methods
-setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function(e1, e2){
-  newPartition <- new("partitionCluster")
+setMethod("+", signature(e1="partitionBundle", e2="partitionBundle"), function(e1, e2){
+  newPartition <- new("partitionBundle")
   newPartition@objects <- c(e1@objects, e2@objects)
   corpus <- unique(e1@corpus, e2@corpus)
   encoding <- unique(e1@encoding, e2@encoding)
@@ -147,8 +147,8 @@ setMethod("+", signature(e1="partitionCluster", e2="partitionCluster"), function
 
 #' @exportMethod +
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2){
+#' @rdname partitionBundle-class
+setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
   e1@objects[[length(e1@objects)+1]] <- e2
   names(e1@objects)[length(e1@objects)] <- e2@label
@@ -156,7 +156,7 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
 })
 
 
-# setMethod("plot", signature(x="partitionCluster"),
+# setMethod("plot", signature(x="partitionBundle"),
 #           function(x, y){
 #             val <- as.matrix(x, y)
 #             val <- val[rowSums(val)!=0,]
@@ -164,29 +164,29 @@ setMethod("+", signature(e1="partitionCluster", e2="partition"), function(e1, e2
 #             plot(data[,1], data[,2])
 #           })
 
-#' barplot of a partitionCluster
+#' barplot of a partitionBundle
 #' 
-#' @param pCluster a partitionCluster object
+#' @param pBundle a partitionBundle object
 #' @exportMethod barplot
 #' @noRd
-setMethod("barplot", "partitionCluster", function(height, ...){
+setMethod("barplot", "partitionBundle", function(height, ...){
   tab <- summary(height)
   tab <- tab[order(tab[, "token"], decreasing=TRUE),]
   barplot(tab$token, names.arg=tab$partition, ...)
 })
 
 
-#' @rdname partitionCluster-class
-setMethod("label", "partitionCluster", function(object){
+#' @rdname partitionBundle-class
+setMethod("label", "partitionBundle", function(object){
   unname(unlist(lapply(object@objects, function(x) label(x))))
 })
 
-#' @rdname partitionCluster-class
+#' @rdname partitionBundle-class
 #' @docType methods
 #' @exportMethod label<-
 setReplaceMethod(
   "label",
-  signature=c(object="partitionCluster", value="character"),
+  signature=c(object="partitionBundle", value="character"),
   function(object, value) {
     if ( length(value) != length(object@objects) ) {
       warning("length of value provided does not match number of partitions")
@@ -206,8 +206,8 @@ setReplaceMethod(
 
 #' @exportMethod unique
 #' @docType methods
-#' @rdname partitionCluster-class
-setMethod("unique", "partitionCluster", function(x){
+#' @rdname partitionBundle-class
+setMethod("unique", "partitionBundle", function(x){
   labels <- lapply(x@objects, function(p) p@label)
   uniqueLabels <- unique(unlist(labels))
   uniquePartitionsPos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
@@ -218,5 +218,5 @@ setMethod("unique", "partitionCluster", function(x){
 })
 
 #' @exportMethod length
-#' @rdname partitionCluster-class
-setMethod("length", "partitionCluster", function(x) length(x@objects))
+#' @rdname partitionBundle-class
+setMethod("length", "partitionBundle", function(x) length(x@objects))

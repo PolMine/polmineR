@@ -1,23 +1,23 @@
 #' @include collocations-class.R bundle-class.R
 NULL
 
-#' S4 collocationsCluster class
+#' S4 collocationsBundle class
 #' 
 #' class to organize information of multiple context analyses
 #' 
 #' @slot objects Object of class \code{"list"} a list of context objects
 #'     
-#' @param x a collocationsCluster object
+#' @param x a collocationsBundle object
 #' @param col the column to extract
 #' @param directed to be explained
 #' @param rel to be explained, too
 #' @param mc logical, whether to use multicore
-#' @name collocationsCluster-class
-#' @aliases collocationsCluster
+#' @name collocationsBundle-class
+#' @aliases collocationsBundle
 #' @docType class
 #' @exportClass kwic
-#' @rdname collocationsCluster-class
-setClass("collocationsCluster",
+#' @rdname collocationsBundle-class
+setClass("collocationsBundle",
          slots=c(
            objects="list",
            pAttribute="character",

@@ -1,7 +1,7 @@
 #' @include context-class.R bundle-class.R
 NULL
 
-#' S4 contextCluster class
+#' S4 contextBundle class
 #' 
 #' class to organize information of multiple context analyses
 #' 
@@ -15,12 +15,12 @@ NULL
 #'     \item{[[}{specific collocates}
 #'    }
 #'     
-#' @name contextCluster-class
-#' @aliases show,contextCluster-method summary,contextCluster-method [,contextCluster-method [,contextCluster,ANY,ANY,ANY-method [[,contextCluster-method as.TermContextCluster,contextCluster-method as.TermContextMatrix
+#' @name contextBundle-class
+#' @aliases show,contextBundle-method summary,contextBundle-method [,contextBundle-method [,contextBundle,ANY,ANY,ANY-method [[,contextBundle-method as.TermContextBundle,contextBundle-method as.TermContextMatrix
 #' @docType class
 #' @exportClass kwic
-#' @rdname contextCluster-class
-setClass("contextCluster",
+#' @rdname contextBundle-class
+setClass("contextBundle",
          representation(
            objects="list",
            query="character",

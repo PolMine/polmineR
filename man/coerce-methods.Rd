@@ -2,18 +2,18 @@
 % Please edit documentation in R/coerce-methods.R
 \docType{methods}
 \name{as.TermDocumentMatrix}
-\alias{as.DocumentTermMatrix,partitionCluster-method}
+\alias{as.DocumentTermMatrix,partitionBundle-method}
 \alias{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix,character-method}
-\alias{as.TermDocumentMatrix,partitionCluster-method}
+\alias{as.TermDocumentMatrix,partitionBundle-method}
 \title{coerce object to TermDocumentMatrix/DocumentTermMatrix}
 \usage{
 as.TermDocumentMatrix(x, ...)
 
-\S4method{as.TermDocumentMatrix}{partitionCluster}(x, pAttribute = NULL,
+\S4method{as.TermDocumentMatrix}{partitionBundle}(x, pAttribute = NULL,
   weight = NULL, rmBlank = TRUE, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{partitionCluster}(x, pAttribute = NULL,
+\S4method{as.DocumentTermMatrix}{partitionBundle}(x, pAttribute = NULL,
   weight = NULL, rmBlank = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, pAttribute, sAttribute,

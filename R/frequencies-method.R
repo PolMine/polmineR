@@ -14,7 +14,7 @@ setGeneric("frequencies", function(object, ...){standardGeneric("frequencies")})
 #' @docType methods
 #' @rdname frequencies
 #' @name frequencies
-#' @aliases frequencies frequencies-method frequencies,partition-method frequencies,partitionCluster-method
+#' @aliases frequencies frequencies-method frequencies,partition-method frequencies,partitionBundle-method
 setMethod("frequencies", "partition", function(object, query, pAttribute=NULL) {
   if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
   if (length(query)==1) {
@@ -47,7 +47,7 @@ setMethod("frequencies", "partition", function(object, query, pAttribute=NULL) {
 
 #' @docType methods
 #' @noRd
-setMethod("frequencies", "partitionCluster", function(object, query, pAttribute=NULL){
+setMethod("frequencies", "partitionBundle", function(object, query, pAttribute=NULL){
   bag <- lapply(object@objects, function(x) frequencies(x, query, pAttribute=pAttribute))
   tmp <- do.call(rbind, lapply(names(bag), function(x) {
     if (!is.null(bag[[x]])) data.frame(partition=rep(x, nrow(bag[[x]])), bag[[x]])

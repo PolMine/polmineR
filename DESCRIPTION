@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.4.58
-Date: 2015-07-05
+Version: 0.5.0
+Date: 2015-07-07
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -40,7 +40,7 @@ Collate:
     'polmineR-package.R'
     'partition-class.R'
     'bundle-class.R'
-    'partitionCluster-class.R'
+    'partitionBundle-class.R'
     'textstat-class.R'
     'keyness-class.R'
     'addPos-method.R'
@@ -52,18 +52,18 @@ Collate:
     'browse-method.R'
     'bughunt-method.R'
     'chisquare-method.R'
-    'contextCluster-class.R'
+    'contextBundle-class.R'
     'collocations-class.R'
     'coerce-methods.R'
     'collocations-method.R'
     'collocations-methods.R'
-    'collocationsCluster-class.R'
-    'collocationsCluster-methods.R'
+    'collocationsBundle-class.R'
+    'collocationsBundle-methods.R'
     'collocationsReshaped-class.R'
     'collocationsReshaped-methods.R'
     'context-method.R'
     'context-methods.R'
-    'contextCluster-methods.R'
+    'contextBundle-methods.R'
     'cooccurrence-method.R'
     'cpos-method.R'
     'ctm-method.R'
@@ -72,7 +72,7 @@ Collate:
     'dispersion-methods.R'
     'egoNetwork-method.R'
     'encoding-method.R'
-    'keynessCluster-class.R'
+    'keynessBundle-class.R'
     'enrich-method.R'
     'frequencies-method.R'
     'getEncoding-method.R'
@@ -82,7 +82,7 @@ Collate:
     'html-methods.R'
     'keyness-method.R'
     'keyness-methods.R'
-    'keynessCluster-methods.R'
+    'keynessBundle-methods.R'
     'kwic-method.R'
     'kwic-methods.R'
     'll-method.R'
@@ -93,8 +93,8 @@ Collate:
     'store-method.R'
     'session-methods.R'
     'partition-methods.R'
-    'partitionCluster-method.R'
-    'partitionCluster-methods.R'
+    'partitionBundle-method.R'
+    'partitionBundle-methods.R'
     'plot-method.R'
     'pmi-method.R'
     'read-method.R'

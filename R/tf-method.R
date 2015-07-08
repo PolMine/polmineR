@@ -4,7 +4,7 @@
 #' query may be formulated using regular expression syntax (method="grep"),
 #' or may use the CQP syntax.
 #' 
-#' @param object either a partition or a partitionCluster object
+#' @param object either a partition or a partitionBundle object
 #' @param query a character vector (one or multiple terms to be looked up)
 #' @param method either "in", "grep" or "cqp" (defaults to "in")
 #' @param mc logical, whether to use multicore (defaults to FALSE)
@@ -91,10 +91,10 @@ setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in
 
 #' @rdname tf-method
 #' @docType methods
-setMethod("tf", "partitionCluster", function(object, query, pAttribute=NULL, method="in", rel=FALSE){
-  # check whether all partitions in the cluster have a proper label
+setMethod("tf", "partitionBundle", function(object, query, pAttribute=NULL, method="in", rel=FALSE){
+  # check whether all partitions in the bundle have a proper label
   if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
-    warning("all partitions in the cluster need to have a label (at least some missing)")
+    warning("all partitions in the bundle need to have a label (at least some missing)")
   }
   what <- paste(pAttribute, ifelse(rel==FALSE, "Abs", "Rel"), sep="")
   tfAvailable <- unique(unlist(lapply(object@objects, function(x) names(x@tf))))

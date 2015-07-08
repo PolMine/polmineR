@@ -1,9 +1,9 @@
-#' @include keynessCluster-class.R
+#' @include keynessBundle-class.R
 NULL
 
 
-#' @rdname keynessCluster-class
-setMethod("as.TermDocumentMatrix", signature(x="keynessCluster"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
+#' @rdname keynessBundle-class
+setMethod("as.TermDocumentMatrix", signature(x="keynessBundle"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
   object <- x
   encoding <- unique(unlist(lapply(object@objects, function(o) o@encoding)))
   corpus <- unique(unlist(lapply(object@objects, function(o) o@corpus)))
@@ -31,18 +31,18 @@ setMethod("as.TermDocumentMatrix", signature(x="keynessCluster"), function(x, co
 
 #' @docType methods
 #' @noRd
-setMethod("as.matrix", signature(x="keynessCluster"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
+setMethod("as.matrix", signature(x="keynessBundle"), function(x, col="chiSquare", rmBlank=TRUE, verbose=TRUE){
   mat <- as.TermDocumentMatrix(x, col=col, rmBlank=rmBlank, verbose=verbose)
   mat <- as.matrix(mat)
   mat
 })
 
 
-setMethod("summary", "keynessCluster", function(object){
+setMethod("summary", "keynessBundle", function(object){
   tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
   tab
 })
 
-#' @rdname keynessCluster-class
-setMethod("dim", "keynessCluster", function(x) length(x@objects))
+#' @rdname keynessBundle-class
+setMethod("dim", "keynessBundle", function(x) length(x@objects))

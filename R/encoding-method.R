@@ -1,6 +1,6 @@
 #' get/set encoding slot of an object
 #' 
-#' Method for partition, partitionCluster objects.
+#' Method for partition, partitionBundle objects.
 #' 
 #' @param object the object with an 'encoding'-slot
 #' @param value value to be assigned
@@ -15,4 +15,4 @@ setGeneric("encoding<-", function(object, value) standardGeneric("encoding<-"))
 setMethod("encoding", "partition", function(object) object@encoding)
 
 #' @rdname encoding
-setMethod("encoding", "partitionCluster", function(object) object@encoding)
+setMethod("encoding", "partitionBundle", function(object) object@encoding)

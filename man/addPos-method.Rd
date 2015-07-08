@@ -15,7 +15,7 @@ addPos(object, ...)
 \S4method{addPos}{keyness}(object, Partition = NULL)
 }
 \arguments{
-\item{object}{either a partition, a partitionCluster or a keyness object}
+\item{object}{either a partition, a partitionBundle or a keyness object}
 
 \item{...}{further arguments}
 
@@ -26,17 +26,17 @@ addPos(object, ...)
 \value{
 the original, enhanced object
 
-an augmented partition or partitionCluster object (includes pos now)
+an augmented partition or partitionBundle object (includes pos now)
 
 an enhanced keyness object
 }
 \description{
 Add information on part-of-speech tags of tokens to tokens. The method is
-available for objects of the classes 'partition', 'partitionCluster' and
+available for objects of the classes 'partition', 'partitionBundle' and
 'keyness' respectively.
-\code{method?addPos("partitionCluster")}, \code{method?addPos("keyness")}).
+\code{method?addPos("partitionBundle")}, \code{method?addPos("keyness")}).
 
-The 'pos'-slot of the partition (or partitionCluster) object is filled with tables
+The 'pos'-slot of the partition (or partitionBundle) object is filled with tables
 providing a statistic on the frequency of a pos-tag of a token
 in the partition.
 

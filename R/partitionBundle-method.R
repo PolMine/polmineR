@@ -1,4 +1,4 @@
-setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionCluster"))
+setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBundle"))
 
 #' Generate a list of partitions
 #' 
@@ -10,7 +10,7 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' defined by sAttributesFixed will be retrived and used for defining the
 #' partitions.
 #' While generally S4 methods are used in the driller package, the return is a S3 method.
-#' The reasons is that the number of partitions kept in the cluster is not known before the initialization.
+#' The reasons is that the number of partitions kept in the bundle is not known before the initialization.
 #' Setting multicore to TRUE will speed up things. Error handling is less benevolent, risk of overheating, no verbose output.
 #' 
 #' @param object character string, the CWB corpus to be used
@@ -26,15 +26,15 @@ setGeneric("partitionCluster", function(object, ...) standardGeneric("partitionC
 #' @param type the type of the partition objects
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
-#' @return a S4 class 'partitionCluster', which is a list with partition objects
+#' @return a S4 class 'partitionBundle', which is a list with partition objects
 #' @importFrom parallel mclapply
-#' @export partitionCluster
-#' @aliases partitionCluster partitionCluster,character-method
+#' @export partitionBundle
+#' @aliases partitionBundle partitionBundle,character-method
 #' @author Andreas Blaette
-#' @name partitionCluster
+#' @name partitionBundle
 #' @docType methods
-#' @rdname partitionCluster-method
-setMethod("partitionCluster", "character", function(
+#' @rdname partitionBundle-method
+setMethod("partitionBundle", "character", function(
   object, def, var, prefix=c(""),
   encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
 ) {
@@ -50,31 +50,31 @@ setMethod("partitionCluster", "character", function(
     ' (use multicore: TRUE)',
     ' (use multicore: FALSE)'
   )
-  if (verbose==TRUE) message('\nPreparing cluster of partitions', multicoreMessage)
-  cluster <- new(
-    "partitionCluster",
+  if (verbose==TRUE) message('\nPreparing bundle of partitions', multicoreMessage)
+  bundle <- new(
+    "partitionBundle",
     corpus=object,
     sAttributesFixed=def,
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
   partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
-  cluster@encoding <- partitionBase@encoding
+  bundle@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
     sAttributeVarValues <- unique(cqi_struc2str(paste(object, '.', sAttributeVar, sep=''), partitionBase@strucs))
-    Encoding(sAttributeVarValues) <- cluster@encoding
+    Encoding(sAttributeVarValues) <- bundle@encoding
     if (verbose==TRUE) message('... number of partitions to be initialized: ', length(sAttributeVarValues))
   }
   if (mc==FALSE) {
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      cluster@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str, type=type)
+      bundle@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str, type=type)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
-    cluster@objects <- mclapply(
+    bundle@objects <- mclapply(
       sAttributeVarValues,
       function(x) zoom(
         partitionBase,
@@ -86,16 +86,16 @@ setMethod("partitionCluster", "character", function(
       )
     )
   }
-  names(cluster@objects) <- paste(.adjustEncoding(prefix, cluster@encoding), sAttributeVarValues, sep='')
-  cluster
+  names(bundle@objects) <- paste(.adjustEncoding(prefix, bundle@encoding), sAttributeVarValues, sep='')
+  bundle
 })
 
-#' @rdname partitionCluster-method
-setMethod("partitionCluster", "list", function(
+#' @rdname partitionBundle-method
+setMethod("partitionBundle", "list", function(
   object, var, prefix=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
   method="grep", xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
 ) {
-  partitionCluster(
+  partitionBundle(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
     meta=meta, method=method, xml=xml, id2str=id2str, mc=mc, verbose=verbose
@@ -104,9 +104,9 @@ setMethod("partitionCluster", "list", function(
 
 
 
-#' @rdname partitionCluster-method
-setMethod("partitionCluster", "missing", function(){
-  .getClassObjectsAvailable(".GlobalEnv", "partitionCluster")
+#' @rdname partitionBundle-method
+setMethod("partitionBundle", "missing", function(){
+  .getClassObjectsAvailable(".GlobalEnv", "partitionBundle")
 })
 
 

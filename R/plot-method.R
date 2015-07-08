@@ -1,10 +1,10 @@
 # setGeneric("plot", function(x, ...){UseMethod("plot")})
 # 
-# #' @param x the partitionCluster
+# #' @param x the partitionBundle
 # #' @param y the pAttribute
 # #' @param weight whether to attach a weight
 # #' @noRd
-# setMethod("plot", "partitionCluster", function(x, y, weight="rel", ...){
+# setMethod("plot", "partitionBundle", function(x, y, weight="rel", ...){
 #   tab <- as.matrix(x, pAttribute=y, weight=weight)
 #   if (ncol(tab) == 2){
 #     plot(tab[,1], tab[,2], ...)

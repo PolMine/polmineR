@@ -2,17 +2,17 @@
 % Please edit documentation in R/keyness-class.R
 \docType{class}
 \name{keyness-class}
-\alias{[[,keynessCluster-method}
+\alias{[[,keynessBundle-method}
 \alias{as.igraph,keyness-method}
-\alias{as.matrix,keynessCluster-method}
-\alias{enrich,keynessCluster-method}
+\alias{as.matrix,keynessBundle-method}
+\alias{enrich,keynessBundle-method}
 \alias{keyness}
 \alias{keyness-class}
 \alias{keynessCollocations-class}
 \alias{ll,keyness-method}
 \alias{show,keyness-method}
 \alias{summary,keyness-method}
-\alias{summary,keynessCluster-method}
+\alias{summary,keynessBundle-method}
 \title{S4 class for comparing corpora}
 \description{
 to keep results from a keyness analysis

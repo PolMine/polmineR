@@ -4,7 +4,7 @@
 \name{collocations}
 \alias{collocations}
 \alias{collocations,partition-method}
-\alias{collocations,partitionCluster-method}
+\alias{collocations,partitionBundle-method}
 \alias{collocations-method}
 \title{calculate all collocations in a partition}
 \usage{

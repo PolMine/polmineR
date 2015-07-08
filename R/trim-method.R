@@ -1,12 +1,12 @@
-#' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
-#' @include keyness-class.R keynessCluster-class.R
+#' @include partition-class.R partitionBundle-class.R context-class.R contextBundle-class.R
+#' @include keyness-class.R keynessBundle-class.R
 NULL
 
 #' trim an object
 #' 
 #' Method to trim and adjust objects by 
 #' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'keyness', 'context', 'partition' and 'partitionCluster' objects.
+#' 'keyness', 'context', 'partition' and 'partitionBundle' objects.
 #' 
 #' @param object the object to be trimmed
 #' @param cutoff a list with colnames and cutoff levels
@@ -111,8 +111,8 @@ setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency
 
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "keynessCluster", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
-  rework <- new("keynessCluster")
+setMethod("trim", "keynessBundle", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
+  rework <- new("keynessBundle")
   .trimFunction <- function(x) {
     trim( x, minSignificance=minSignificance, minFrequency=minFrequency, maxRank=maxRank,
     tokenFilter=tokenFilter, posFilter=posFilter, filterType=filterType)
@@ -155,21 +155,21 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
 #' @exportMethod trim
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
+setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
   if (is.null(mc)) mc <- slot(get('session', '.GlobalEnv'), 'multicore')
-  pimpedCluster <- object
+  pimpedBundle <- object
   if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
     if (mc == TRUE) {
-      pimpedCluster@objects <- mclapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
+      pimpedBundle@objects <- mclapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
     } else {
-      pimpedCluster@objects <- lapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
+      pimpedBundle@objects <- lapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
     }
   }
   if (minSize >= 0){
     toKill <- subset(
       data.frame(
-        name=names(pimpedCluster),
-        noToken=summary(pimpedCluster)$token,
+        name=names(pimpedBundle),
+        noToken=summary(pimpedBundle)$token,
         stringsAsFactors=FALSE
       ), noToken < minSize)$name
     if (length(toKill) > 0) {drop <- c(toKill, drop)}
@@ -179,15 +179,15 @@ setMethod("trim", "partitionCluster", function(object, pAttribute=NULL, minFrequ
       warning("there a partitions to be dropped, but some or all partitions do not have a label, which may potentially cause errors or problems")
     }
     if (is.character(drop) == TRUE){
-      pimpedCluster@objects[which(names(pimpedCluster@objects) %in% drop)] <- NULL
+      pimpedBundle@objects[which(names(pimpedBundle@objects) %in% drop)] <- NULL
     } else if (is.numeric(drop == TRUE)){
-      pimpedCluster@objects[drop] <- NULL
+      pimpedBundle@objects[drop] <- NULL
     }
   }
   if (!is.null(keep)){
-    pimpedCluster@objects <- pimpedCluster@objects[which(names(pimpedCluster@objects) %in% keep)]
+    pimpedBundle@objects <- pimpedBundle@objects[which(names(pimpedBundle@objects) %in% keep)]
   }
-  pimpedCluster
+  pimpedBundle
 })
 
 

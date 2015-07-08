@@ -7,13 +7,13 @@
 flatten(object)
 }
 \arguments{
-\item{object}{a list (with partitionCluster objects)}
+\item{object}{a list (with partitionBundle objects)}
 }
 \value{
-a partitionCluster object
+a partitionBundle object
 }
 \description{
-If you have a list of partitionClusters, this function will flatten the data
-structure and return a partition Cluster object.
+If you have a list of partitionBundles, this function will flatten the data
+structure and return a partition Bundle object.
 }
 

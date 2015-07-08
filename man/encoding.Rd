@@ -4,7 +4,7 @@
 \name{encoding}
 \alias{encoding}
 \alias{encoding,partition-method}
-\alias{encoding,partitionCluster-method}
+\alias{encoding,partitionBundle-method}
 \alias{encoding<-}
 \title{get/set encoding slot of an object}
 \usage{
@@ -14,7 +14,7 @@ encoding(object) <- value
 
 \S4method{encoding}{partition}(object)
 
-\S4method{encoding}{partitionCluster}(object)
+\S4method{encoding}{partitionBundle}(object)
 }
 \arguments{
 \item{object}{the object with an 'encoding'-slot}
@@ -22,6 +22,6 @@ encoding(object) <- value
 \item{value}{value to be assigned}
 }
 \description{
-Method for partition, partitionCluster objects.
+Method for partition, partitionBundle objects.
 }
 

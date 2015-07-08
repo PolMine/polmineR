@@ -2,14 +2,14 @@
 % Please edit documentation in R/context-method.R
 \docType{methods}
 \name{context}
-\alias{as.TermContextMatrix,contextCluster-method}
-\alias{as.matrix,contextCluster-method}
+\alias{as.TermContextMatrix,contextBundle-method}
+\alias{as.matrix,contextBundle-method}
 \alias{context}
 \alias{context,collocations-method}
-\alias{context,contextCluster-method}
+\alias{context,contextBundle-method}
 \alias{context,missing-method}
 \alias{context,partition-method}
-\alias{context,partitionCluster-method}
+\alias{context,partitionBundle-method}
 \alias{ll}
 \alias{ll-method}
 \title{Analyze context of a node word}
@@ -20,7 +20,7 @@
   stoplist = NULL, positivelist = NULL, statisticalTest = "ll",
   mc = NULL, verbose = TRUE)
 
-\S4method{context}{partitionCluster}(object, query, pAttribute = NULL,
+\S4method{context}{partitionBundle}(object, query, pAttribute = NULL,
   sAttribute = "text_id", leftContext = NULL, rightContext = NULL,
   minSignificance = NULL, posFilter = NULL, filterType = "exclude",
   stoplist = c(), positivelist = NULL, statisticalTest = "ll",
@@ -31,7 +31,7 @@
 \S4method{context}{missing}()
 }
 \arguments{
-\item{object}{a partition or a partitionCluster object}
+\item{object}{a partition or a partitionBundle object}
 
 \item{query}{query, which may by a character vector or a cqpQuery object}
 
@@ -70,8 +70,8 @@ the value from the session settings}
 \item{complete}{enhance completely}
 }
 \value{
-depending on whether a partition or a partitionCluster serves as
-  input, the return will be a context object, or a contextCluster object
+depending on whether a partition or a partitionBundle serves as
+  input, the return will be a context object, or a contextBundle object
 }
 \description{
 Retrieve the concordances of a token and calculate the log-likelihood test

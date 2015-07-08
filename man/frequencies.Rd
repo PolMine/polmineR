@@ -4,7 +4,7 @@
 \name{frequencies}
 \alias{frequencies}
 \alias{frequencies,partition-method}
-\alias{frequencies,partitionCluster-method}
+\alias{frequencies,partitionBundle-method}
 \alias{frequencies-method}
 \title{Frequency breakdown of the variation of query results}
 \usage{

@@ -1,7 +1,7 @@
 #' @include bundle-class.R
 NULL
 
-#' keynessCluster-class
+#' keynessBundle-class
 #' 
 #' The class inherits from the bundle class.
 #' 
@@ -10,8 +10,8 @@ NULL
 #' @param rmBlank remove blank rows
 #' @param verbose logical, whether to be verbose
 #' @slot objects an object of class \code{list}
-#' @rdname keynessCluster-class
-setClass("keynessCluster",
+#' @rdname keynessBundle-class
+setClass("keynessBundle",
          slots=c(objects="list"),
          contains=c("bundle")
 )

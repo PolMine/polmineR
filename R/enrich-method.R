@@ -1,18 +1,18 @@
-#' @include partition-class.R partitionCluster-class.R context-class.R contextCluster-class.R
-#' @include keyness-class.R keynessCluster-class.R
+#' @include partition-class.R partitionBundle-class.R context-class.R contextBundle-class.R
+#' @include keyness-class.R keynessBundle-class.R
 NULL
 
 #' enrich an object
 #' 
-#' Method to fill slots of a partition, partitionCluster or keyness object that 
+#' Method to fill slots of a partition, partitionBundle or keyness object that 
 #' have not been set up previously. See the respective documentation:
 #' \describe{
 #'  \item{partition:}{\code{method?enrich("partition")}}
-#'  \item{partitionCluster:}{\code{method?enrich("partitionCluster")}}
+#'  \item{partitionBundle:}{\code{method?enrich("partitionBundle")}}
 #'  \item{keyness:}{\code{method?enrich("keyness")}}
 #' }
 #' 
-#' @param object a partition, partitionCluster or keyness object
+#' @param object a partition, partitionBundle or keyness object
 #' @param ... further parameters
 #' @aliases enrich enrich-method
 #' @docType methods
@@ -68,10 +68,10 @@ setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, meta=NULL
 #' @param mc logical whether to use multicore parallelization
 #' @param verbose logical, defaults to TRUE   
 #' @exportMethod enrich
-#' @aliases enrich,partitionCluster-method
+#' @aliases enrich,partitionBundle-method
 #' @docType methods
-#' @rdname enrich-partitionCluster-method
-setMethod("enrich", "partitionCluster", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
+#' @rdname enrich-partitionBundle-method
+setMethod("enrich", "partitionBundle", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
   if (mc == FALSE) {
     object@objects <- lapply(
       object@objects,
@@ -105,9 +105,9 @@ setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
 
 #' @docType methods
 #' @noRd
-setMethod("enrich", "keynessCluster", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
+setMethod("enrich", "keynessBundle", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
   if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
-  rework <- new("keynessCluster")
+  rework <- new("keynessBundle")
   if (mc==FALSE){
     rework@objects <- lapply(
       setNames(object@objects, names(object@objects)),

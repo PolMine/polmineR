@@ -9,16 +9,16 @@
 enrich(object, ...)
 }
 \arguments{
-\item{object}{a partition, partitionCluster or keyness object}
+\item{object}{a partition, partitionBundle or keyness object}
 
 \item{...}{further parameters}
 }
 \description{
-Method to fill slots of a partition, partitionCluster or keyness object that
+Method to fill slots of a partition, partitionBundle or keyness object that
 have not been set up previously. See the respective documentation:
 \describe{
  \item{partition:}{\code{method?enrich("partition")}}
- \item{partitionCluster:}{\code{method?enrich("partitionCluster")}}
+ \item{partitionBundle:}{\code{method?enrich("partitionBundle")}}
  \item{keyness:}{\code{method?enrich("keyness")}}
 }
 }

@@ -1,4 +1,4 @@
-#' @include partition-class.R partitionCluster-class.R
+#' @include partition-class.R partitionBundle-class.R
 NULL
 
 
@@ -10,7 +10,7 @@ NULL
 
 
 
-#' @param object a partition or a partitionCluster object
+#' @param object a partition or a partitionBundle object
 #' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
@@ -23,7 +23,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' for collocates For formulating the query, CPQ syntax may be used (see
 #' examples).
 #' 
-#' @param object a partition or a partitionCluster object
+#' @param object a partition or a partitionBundle object
 #' @param query query, which may by a character vector or a cqpQuery object
 #' @param pAttribute p-attribute of the query
 #' @param sAttribute if provided, it will be checked that cpos do not extend beyond
@@ -45,12 +45,12 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the session settings
 #' @param verbose report progress, defaults to TRUE
-#' @return depending on whether a partition or a partitionCluster serves as
-#'   input, the return will be a context object, or a contextCluster object
+#' @return depending on whether a partition or a partitionBundle serves as
+#'   input, the return will be a context object, or a contextBundle object
 #' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,contextCluster-method
-#'   as.TermContextMatrix,contextCluster-method context,contextCluster-method
-#'   context,partitionCluster-method ll ll-method context,collocations-method
+#' @aliases context context,partition-method as.matrix,contextBundle-method
+#'   as.TermContextMatrix,contextBundle-method context,contextBundle-method
+#'   context,partitionBundle-method ll ll-method context,collocations-method
 #'   context,collocations-method
 #' @examples
 #' \dontrun{
@@ -276,7 +276,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionCluster", function(
+setMethod("context", "partitionBundle", function(
   object, query, pAttribute=NULL, sAttribute="text_id",
   leftContext=NULL, rightContext=NULL,
   minSignificance=NULL, posFilter=NULL, filterType="exclude",
@@ -284,7 +284,7 @@ setMethod("context", "partitionCluster", function(
   statisticalTest="ll",
   mc=FALSE, verbose=TRUE  
 ) {
-  contextCluster <- new("contextCluster", query=query, pAttribute=pAttribute)
+  contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
       unique(lapply(object@objects, function(x) x@corpus)),
@@ -293,7 +293,7 @@ setMethod("context", "partitionCluster", function(
     positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
   }
   
-  contextCluster@objects <- sapply(
+  contextBundle@objects <- sapply(
     object@objects,
     function(x) {
       if (verbose == TRUE) message("... proceeding to partition ", x@label)
@@ -310,7 +310,7 @@ setMethod("context", "partitionCluster", function(
     simplify = TRUE,
     USE.NAMES = TRUE
   )
-  contextCluster
+  contextBundle
 })
 
 #' @param complete enhance completely

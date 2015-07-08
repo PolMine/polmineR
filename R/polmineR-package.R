@@ -36,9 +36,9 @@ NULL
 #'   
 #' Any analysis using this package will usually start with setting up a 
 #' subcorpus/partition (with \code{partition}). A set of partitions can be
-#' generated with \code{partitionCluster}. Once a partition or a set of partitions
+#' generated with \code{partitionBundle}. Once a partition or a set of partitions
 #' has been set up, core functions are \code{context} and
-#' \code{keyness}. Based on a partition cluster, a
+#' \code{keyness}. Based on a partition bundle, a
 #' term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
 #' generated (with \code{as.TermDocumentMatrix}). This opens the door to the wealth of
 #' statistical methods implemented in R.

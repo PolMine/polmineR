@@ -5,13 +5,13 @@
 \alias{keyness,collocations-method}
 \alias{keyness,missing-method}
 \alias{keyness,partition-method}
-\alias{keyness,partitionCluster-method}
+\alias{keyness,partitionBundle-method}
 \title{compute chi-square values for tokens in a corpus using a reference corpus}
 \usage{
 \S4method{keyness}{partition}(x, y, pAttribute = NULL, minFrequency = 0,
   included = FALSE, method = "chiSquare", digits = 2, verbose = TRUE)
 
-\S4method{keyness}{partitionCluster}(x, y, pAttribute = NULL,
+\S4method{keyness}{partitionBundle}(x, y, pAttribute = NULL,
   minFrequency = 1, included = FALSE, method = "chiSquare",
   verbose = TRUE, mc = TRUE, progress = FALSE)
 
@@ -21,7 +21,7 @@
 \S4method{keyness}{missing}()
 }
 \arguments{
-\item{x}{a partition or partitionCluster object}
+\item{x}{a partition or partitionBundle object}
 
 \item{y}{a partition object, it is assumed that the coi is a subcorpus of
 ref}

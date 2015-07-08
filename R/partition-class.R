@@ -28,7 +28,7 @@ NULL
 #'    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
 #'    \item{trim}{\code{signature(object="partition")}: trim a partition object }
 #'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
-#'    \item{as.partitionCluster}{\code{signature(object="partition")}: transform a partition object into a partitionCluster (to add further objects) }
+#'    \item{as.partitionBundle}{\code{signature(object="partition")}: transform a partition object into a partitionBundle (to add further objects) }
 #'    \item{[}{get frequency of a query}
 #'    \item{html}{transform partition to html}
 #'    }
@@ -37,8 +37,8 @@ NULL
 #' @param dim don't know
 #' @param verbose logical, whether to be verbose
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
-#'   [,partition-method as.partitionCluster 
-#'   as.partitionCluster,partition-method export export,partition-method split
+#'   [,partition-method as.partitionBundle 
+#'   as.partitionBundle,partition-method export export,partition-method split
 #'   dissect size
 #' @rdname partition-class
 #' @name partition-class
