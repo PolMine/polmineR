@@ -9,7 +9,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' 
 #' @param object a partition object
 #' @param def a list supplying further sAttributes
-#' @param label a label for the new partition
+#' @param name a name for the new partition
 #' @param method either "in" or "grep"
 #' @param tf character vector, pAttributes for which term frequencies shall be retrieved
 #' @param id2str whether to transfer ids to strings
@@ -19,7 +19,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @exportMethod zoom
 #' @docType methods
 #' @name zoom
-setMethod("zoom", "partition", function(object, def, label=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, type=NULL, verbose=TRUE){
+setMethod("zoom", "partition", function(object, def, name=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, type=NULL, verbose=TRUE){
   # these lines are identical with partition method
   if (is.null(type)){
     newPartition <- new('partition')  
@@ -33,8 +33,8 @@ setMethod("zoom", "partition", function(object, def, label=c(""), method="in", t
     }
   }
   newPartition@corpus <- object@corpus
-  message('Zooming into partition ', label)
-  newPartition@label <- label  
+  message('Zooming into partition ', name)
+  newPartition@name <- name
   def <- lapply(def, function(x).adjustEncoding(x, object@encoding))  
   newPartition@sAttributes <- c(object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]

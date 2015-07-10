@@ -24,7 +24,7 @@
 \item{tfMethod}{what method to use for term frequencies}
 }
 \value{
-a named numeric vector (names are the labels of the partitions in the bundle)
+a named numeric vector (names of the partitions in the bundle)
 }
 \description{
 Assign scores to the partitions in a partitionBundle object.

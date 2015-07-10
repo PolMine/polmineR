@@ -25,7 +25,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param object character-vector - the CWB-corpus to be used
 #' @param def list consisting of a set of character vectors (see
 #' details)
-#' @param label label of the new partition, defaults to "noLabel"
+#' @param name name of the new partition, defaults to "noName"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
@@ -35,7 +35,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for tf lists)
 #' @param verbose logical, defaults to TRUE
-#' @param value a character string that will be the label of the partition
+#' @param value a character string that will be the name of the partition
 #' @param from from
 #' @param to to
 #' @param x CHECK
@@ -52,7 +52,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 setMethod("partition", "character", function(
   object,
   def=NULL,
-  label=c(""),
+  name=c(""),
   encoding=NULL,
   tf=c("word", "lemma"),
   meta=NULL,
@@ -65,7 +65,7 @@ setMethod("partition", "character", function(
 ) {
   corpus <- object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
-  if (verbose==TRUE) message('Setting up partition ', label)
+  if (verbose==TRUE) message('Setting up partition ', name)
   .makeSpecificPartition <- function(type){
     pkgName <- paste("polmineR.", type, sep="")
     cName <- paste(type, "Partition", sep="")
@@ -109,7 +109,7 @@ setMethod("partition", "character", function(
     Partition@encoding <- encoding
   }
   if (verbose==TRUE) message('... encoding of the corpus is ', Partition@encoding)
-  Partition@label <- label
+  Partition@name <- name
   Partition@sAttributes <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
   Partition@sAttributeStrucs <- names(def)[length(def)]
   Partition@xml <- xml
@@ -155,12 +155,12 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(
-  object, label=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
+  object, name=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
   method="grep", xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
 ) {
   partition(
     object=get('session', '.GlobalEnv')@corpus,
-    def=object, label=label, encoding=encoding, tf=tf,
+    def=object, name=name, encoding=encoding, tf=tf,
     meta=meta, method=method, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
     )
 })

@@ -45,7 +45,7 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", s
   # malletFile <- file.path(tmpDir, "partitionBundle.mallet")
   if (verbose == TRUE) message("... make mallet object")
   malletObject <- mallet.import(
-    id.array=labels(.Object), text.array=tokenStreamVector,
+    id.array=names(.Object), text.array=tokenStreamVector,
     stoplist.file=stoplistFile, preserve.case=T, token.regexp="\n"
   )
   return(malletObject)

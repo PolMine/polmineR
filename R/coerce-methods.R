@@ -196,7 +196,7 @@ setMethod("as.data.frame", "context", function(x, ...) x@stat )
 setMethod("as.partitionBundle", "partition", function(object){
   newBundle <- new("partitionBundle")
   newBundle@objects[[1]] <- object
-  names(newBundle@objects)[1] <- object@label
+  names(newBundle@objects)[1] <- object@name
   newBundle@corpus <- object@corpus
   newBundle@encoding <- object@encoding
   newBundle@explanation <- c("derived from a partition object")
@@ -209,7 +209,7 @@ setMethod("as.partitionBundle", "list", function(object, ...){
   newBundle@objects <- object
   newBundle@corpus <- unique(unlist(lapply(newBundle@objects, function(x) x@corpus)))
   newBundle@encoding <- unique(unlist(lapply(newBundle@objects, function(x) x@encoding)))
-  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@label, FUN.VALUE="character")
+  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@name, FUN.VALUE="character")
   newBundle
 })
 

@@ -27,7 +27,7 @@
 
 \item{var}{list indicating the s-attribute to be variabel}
 
-\item{prefix}{a character vector that will serve as a prefix for partition labels}
+\item{prefix}{a character vector that will serve as a prefix for partition names}
 
 \item{encoding}{encoding of the corpus, if not provided, encoding provided in the registry file will be used}
 

@@ -8,7 +8,7 @@ NULL
 
 #' @title partition class definition
 #' 
-#' @slot label Object of class \code{"character"} a label that may be useful 
+#' @slot name Object of class \code{"character"} a name that may be useful 
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on 
 #' @slot encoding Object of class \code{"character"} encoding of the corpus 
 #' @slot sAttributes Object of class \code{"list"} s-attributes specifying the partition 
@@ -46,7 +46,7 @@ NULL
 #' @docType class
 #' @author Andreas Blaette
 setClass("partition",
-         representation(label="character", 
+         representation(name="character", 
                         corpus="character",
                         encoding="character",
                         sAttributes="list",

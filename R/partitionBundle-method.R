@@ -16,7 +16,7 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @param object character string, the CWB corpus to be used
 #' @param def a list with the definition of a partition that shall be prepared
 #' @param var list indicating the s-attribute to be variabel
-#' @param prefix a character vector that will serve as a prefix for partition labels
+#' @param prefix a character vector that will serve as a prefix for partition names
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
@@ -70,7 +70,7 @@ setMethod("partitionBundle", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      bundle@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, label=sAttribute, tf=tf, id2str=id2str, type=type)
+      bundle@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, name=sAttribute, tf=tf, id2str=id2str, type=type)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
@@ -79,7 +79,7 @@ setMethod("partitionBundle", "character", function(
       function(x) zoom(
         partitionBase,
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
-        label=x,
+        name=x,
         tf=tf,
         id2str=id2str,
         type=type

@@ -134,7 +134,7 @@ setMethod("collocations", "partitionBundle", function(object, pAttribute="word",
     bundle@objects <- lapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
-        message('Calculating collocations for partition ', x@label)
+        message('Calculating collocations for partition ', x@name)
         collocations(x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter)
       })
     
@@ -142,7 +142,7 @@ setMethod("collocations", "partitionBundle", function(object, pAttribute="word",
     bundle@objects <- mclapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
-        message('Calculating collocations for partition ', x@label)
+        message('Calculating collocations for partition ', x@name)
         collocations(
           x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter, mc=FALSE, progress=FALSE
           )

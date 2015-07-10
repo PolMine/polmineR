@@ -23,11 +23,10 @@
 \alias{html,partition-method}
 \alias{html,partitionBundle-method}
 \alias{html-method}
-\alias{label,partitionBundle-method}
-\alias{label<-,partitionBundle,character-method}
 \alias{length,partitionBundle-method}
 \alias{merge,partitionBundle-method}
 \alias{names,partitionBundle-method}
+\alias{names<-,partitionBundle,character-method}
 \alias{partitionBundle-class}
 \alias{sAttributes,partitionBundle-method}
 \alias{show,html-method}
@@ -52,9 +51,9 @@
 
 \S4method{+}{partitionBundle,partition}(e1, e2)
 
-\S4method{label}{partitionBundle}(object)
+\S4method{names}{partitionBundle}(x)
 
-\S4method{label}{partitionBundle,character}(object) <- value
+\S4method{names}{partitionBundle,character}(x) <- value
 
 \S4method{unique}{partitionBundle}(x)
 

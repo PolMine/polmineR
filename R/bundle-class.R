@@ -33,10 +33,10 @@ setMethod("names", "bundle", function(x) names(x@objects))
 
 #' @rdname bundle-class
 setMethod("unique", "bundle", function(x){
-  labels <- names(x)
-  uniqueLabels <- unique(labels)
-  uniquePos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
-  objectsToDrop <- which(c(1:length(labels)) %in% uniquePos == FALSE)
+  partitionNames <- names(x)
+  uniquePartitionNames <- unique(partitionNames)
+  uniquePos <- sapply(uniqueuniquePartitionNames, function(x) grep(x, partitionNames)[1])
+  objectsToDrop <- which(c(1:length(partitionNames)) %in% uniquePos == FALSE)
   objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
   for (pos in objectsToDrop) x@objects[pos] <- NULL
   x

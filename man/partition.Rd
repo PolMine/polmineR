@@ -3,10 +3,8 @@
 \docType{methods}
 \name{partition,character-method}
 \alias{corpus,partition-method}
-\alias{label}
-\alias{label,partition-method}
-\alias{label<-}
-\alias{label<-,partition,character-method}
+\alias{name,partition-method}
+\alias{name<-,partition,character-method}
 \alias{pAttribute,partition-method}
 \alias{partition}
 \alias{partition,character-method}
@@ -15,12 +13,12 @@
 \alias{size,partition-method}
 \title{Initialize a partition}
 \usage{
-\S4method{partition}{character}(object, def = NULL, label = c(""),
+\S4method{partition}{character}(object, def = NULL, name = c(""),
   encoding = NULL, tf = c("word", "lemma"), meta = NULL,
   method = "grep", xml = "flat", id2str = TRUE, type = NULL,
   mc = FALSE, verbose = TRUE)
 
-\S4method{partition}{list}(object, label = c(""), encoding = NULL,
+\S4method{partition}{list}(object, name = c(""), encoding = NULL,
   tf = c("word", "lemma"), meta = NULL, method = "grep", xml = "flat",
   id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE)
 
@@ -31,13 +29,9 @@
 \S4method{pAttribute}{partition}(object, from, to, mc = TRUE,
   verbose = TRUE)
 
-label(object)
+\S4method{name}{partition}(x)
 
-label(object) <- value
-
-\S4method{label}{partition}(object)
-
-\S4method{label}{partition,character}(object) <- value
+\S4method{name}{partition,character}(x) <- value
 
 \S4method{corpus}{partition}(object)
 }
@@ -47,7 +41,7 @@ label(object) <- value
 \item{def}{list consisting of a set of character vectors (see
 details)}
 
-\item{label}{label of the new partition, defaults to "noLabel"}
+\item{name}{name of the new partition, defaults to "noName"}
 
 \item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
 
@@ -73,15 +67,13 @@ details)}
 
 \item{to}{to}
 
-\item{value}{a character string that will be the label of the partition}
+\item{value}{a character string that will be the name of the partition}
 }
 \value{
 An object of the S4 class 'partition'
 }
 \description{
 Set up an object of the partition class. Usually, this will include frequency lists.
-
-Assign a label to a partition, or a partitionBundle.
 }
 \details{
 The function sets up a partition based on a list of s-attributes with respective values.

@@ -6,7 +6,7 @@
 \alias{zoom,partition-method}
 \title{zoom into a partition}
 \usage{
-\S4method{zoom}{partition}(object, def, label = c(""), method = "in",
+\S4method{zoom}{partition}(object, def, name = c(""), method = "in",
   tf = c("word", "lemma"), id2str = TRUE, type = NULL, verbose = TRUE)
 }
 \arguments{
@@ -14,7 +14,7 @@
 
 \item{def}{a list supplying further sAttributes}
 
-\item{label}{a label for the new partition}
+\item{name}{a name for the new partition}
 
 \item{method}{either "in" or "grep"}
 

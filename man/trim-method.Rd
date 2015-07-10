@@ -67,11 +67,11 @@ trim(object, ...)
 
 \item{pAttribute}{character vector, either lemma or word}
 
-\item{drop}{partitionObjects you want to drop, specified either by number or by label}
+\item{drop}{partitionObjects you want to drop, specified either by number or name}
 
 \item{minSize}{a minimum size for the partitions to be kept}
 
-\item{keep}{specify labels of partitions to keep, everything else is dropped}
+\item{keep}{specify names of partitions to keep, everything else is dropped}
 
 \item{stopwords}{words/tokens to drop}
 }

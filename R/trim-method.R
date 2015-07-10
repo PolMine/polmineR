@@ -20,9 +20,9 @@ NULL
 #' @param digits a list
 #' @param pAttribute character vector, either lemma or word
 #' @param verbose whether to be talkative
-#' @param drop partitionObjects you want to drop, specified either by number or by label
+#' @param drop partitionObjects you want to drop, specified either by number or name
 #' @param minSize a minimum size for the partitions to be kept
-#' @param keep specify labels of partitions to keep, everything else is dropped
+#' @param keep specify names of partitions to keep, everything else is dropped
 #' @param stopwords words/tokens to drop
 #' @param mc if not NULL logical - whether to use multicore parallelization
 #' @param ... further arguments
@@ -131,7 +131,7 @@ setMethod("trim", "keynessBundle", function(object, minSignificance=0, minFreque
 setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, ...){
   rework <- object
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Trimming partition ", rework@label)
+  message("Trimming partition ", rework@name)
   if (!is.null(posFilter)) {
     if (! pAttribute %in% names(object@pos) ){
       message("... pos need to be added first")
@@ -176,7 +176,7 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
   }
   if (!is.null(drop)) {
     if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
-      warning("there a partitions to be dropped, but some or all partitions do not have a label, which may potentially cause errors or problems")
+      warning("there a partitions to be dropped, but some or all partitions do not have a name, which may potentially cause errors or problems")
     }
     if (is.character(drop) == TRUE){
       pimpedBundle@objects[which(names(pimpedBundle@objects) %in% drop)] <- NULL

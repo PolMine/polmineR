@@ -54,14 +54,14 @@ setMethod("summary", "partitionBundle", function (object) {
 #' Encodings and the root node need to be identical, too.
 #' 
 #' @param object a bundle object
-#' @param label the label for the new partition
+#' @param name the name for the new partition
 #' @return An object of the class 'partition. See partition for the
 #' details on the class.
 #' @author Andreas Blaette
 #' @exportMethod merge
 #' @docType methods
 #' @noRd
-setMethod("merge", "partitionBundle", function(x, label=c("")){
+setMethod("merge", "partitionBundle", function(x, name=c("")){
   y <- new("partition")
   cat('There are', length(x@objects), 'partitions to be merged\n')
   y@corpus <- unique(vapply(x@objects, FUN.VALUE="characer", function(p) p@corpus))
@@ -79,7 +79,7 @@ setMethod("merge", "partitionBundle", function(x, label=c("")){
   rownames(cpos) <- NULL
   y@cpos <- cpos
   y@explanation=c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', ')))
-  y@label <- label
+  y@name <- name
   y
 })
 
@@ -151,7 +151,7 @@ setMethod("+", signature(e1="partitionBundle", e2="partitionBundle"), function(e
 setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
   e1@objects[[length(e1@objects)+1]] <- e2
-  names(e1@objects)[length(e1@objects)] <- e2@label
+  names(e1@objects)[length(e1@objects)] <- e2@name
   e1
 })
 
@@ -177,30 +177,30 @@ setMethod("barplot", "partitionBundle", function(height, ...){
 
 
 #' @rdname partitionBundle-class
-setMethod("label", "partitionBundle", function(object){
-  unname(unlist(lapply(object@objects, function(x) label(x))))
+setMethod("names", "partitionBundle", function(x){
+  unname(unlist(lapply(x@objects, function(y) name(y))))
 })
 
 #' @rdname partitionBundle-class
 #' @docType methods
-#' @exportMethod label<-
+#' @exportMethod name<-
 setReplaceMethod(
-  "label",
-  signature=c(object="partitionBundle", value="character"),
-  function(object, value) {
-    if ( length(value) != length(object@objects) ) {
+  "names",
+  signature=c(x="partitionBundle", value="character"),
+  function(x, value) {
+    if ( length(value) != length(x@objects) ) {
       warning("length of value provided does not match number of partitions")
       stop()
     }
-    if ( !is.character(label(object)) ){
+    if ( !is.character(name(x)) ){
       warning("value needs to be a character vector")
       stop()
     }
-    for (i in c(1:length(object@objects))){
-      object@objects[[i]]@label <- value[i]
+    for (i in c(1:length(x@objects))){
+      x@objects[[i]]@name <- value[i]
     }
-    names(object@objects) <- value
-    object
+    names(x@objects) <- value
+    x
   }
 )
 
@@ -208,10 +208,10 @@ setReplaceMethod(
 #' @docType methods
 #' @rdname partitionBundle-class
 setMethod("unique", "partitionBundle", function(x){
-  labels <- lapply(x@objects, function(p) p@label)
-  uniqueLabels <- unique(unlist(labels))
-  uniquePartitionsPos <- sapply(uniqueLabels, function(x) grep(x, labels)[1])
-  partitionsToDrop <- which(c(1:length(labels)) %in% uniquePartitionsPos == FALSE)
+  partitionNames <- lapply(x@objects, function(p) p@name)
+  uniquePartitionNames <- unique(unlist(partitionNames))
+  uniquePartitionsPos <- sapply(uniquePartitionNames, function(x) grep(x, partitionNames)[1])
+  partitionsToDrop <- which(c(1:length(partitionNames)) %in% uniquePartitionsPos == FALSE)
   partitionsToDrop <- partitionsToDrop[order(partitionsToDrop, decreasing=TRUE)]
   for (pos in partitionsToDrop) x@objects[pos] <- NULL
   x

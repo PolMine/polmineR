@@ -92,9 +92,9 @@ setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in
 #' @rdname tf-method
 #' @docType methods
 setMethod("tf", "partitionBundle", function(object, query, pAttribute=NULL, method="in", rel=FALSE){
-  # check whether all partitions in the bundle have a proper label
+  # check whether all partitions in the bundle have a proper name
   if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
-    warning("all partitions in the bundle need to have a label (at least some missing)")
+    warning("all partitions in the bundle need to have a name (at least some missing)")
   }
   what <- paste(pAttribute, ifelse(rel==FALSE, "Abs", "Rel"), sep="")
   tfAvailable <- unique(unlist(lapply(object@objects, function(x) names(x@tf))))

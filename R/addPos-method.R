@@ -56,7 +56,7 @@ setGeneric("addPos", function(object,...){standardGeneric("addPos")})
 #' @rdname addPos-method
 setMethod("addPos", "partition", function(object, pAttribute){
   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Adding pos information to partition object ", object@label)
+  message("Adding pos information to partition object ", object@name)
   cpos <- unlist(apply(object@cpos, 1, function(x) c(x[1]:x[2])))
   message("... retrieving corpus information")
   bag <- data.frame(

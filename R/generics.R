@@ -6,9 +6,9 @@ setGeneric("pAttribute<-", function(object, value) standardGeneric("pAttribute<-
 #' @exportMethod dissect
 setGeneric("dissect", function(object, ...) standardGeneric("dissect"))
 
-#' @exportMethod label
-#' @exportMethod label<-
-setGeneric("label", function(object, ...) standardGeneric("label"))
-setGeneric("label<-", function(object, value) standardGeneric("label<-"))
+#' @exportMethod name
+#' @exportMethod name<-
+setGeneric("name", function(x, ...) standardGeneric("name"))
+setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
 

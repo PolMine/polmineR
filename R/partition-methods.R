@@ -18,7 +18,7 @@ setMethod("show", "partition",
 function(object){
   cat("** partition object **\n")
   cat(sprintf("%-20s", "CWB-corpus:"), object@corpus, "\n")
-  cat(sprintf("%-20s", "Label:"), object@label, "\n")
+  cat(sprintf("%-20s", "Name:"), object@name, "\n")
   if (length(object@sAttributes)==0) {
     cat(sprintf("%-20s", "S-Attributes:"), "no specification\n")
   } else {
@@ -95,7 +95,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       p@explanation <- c("partition results from split, sAttributes do not necessarily define partition")
       p@xml <- x@xml
       p@sAttributeStrucs <- x@sAttributeStrucs
-      p@label <- paste(x@label, i, collapse="_", sep="")
+      p@name <- paste(x@name, i, collapse="_", sep="")
       if (is.null(names(x@metadata))){
         meta <- NULL
       } else {
@@ -112,7 +112,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
   } else {
     bundleRaw <- list(x)
   }
-  names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@label))
+  names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@name))
   bundle <- as.partitionBundle(bundleRaw)
   bundle
 })
@@ -154,25 +154,16 @@ setMethod("pAttribute", "partition", function(object, from, to, mc=TRUE, verbose
   statList
 })
 
-#' get/set the label of a partition
-#' 
-#' Assign a label to a partition, or a partitionBundle.
-#' 
-#' @rdname partition
-#' @exportMethod label
-setGeneric("label", function(object) standardGeneric("label"))
+
 
 #' @rdname partition
-setGeneric("label<-", function(object, value) standardGeneric("label<-"))
+setMethod("name", "partition", function(x) x@name)
 
 #' @rdname partition
-setMethod("label", "partition", function(object) object@label)
-
-#' @rdname partition
-#' @exportMethod label<-
-setReplaceMethod("label", signature=c(object="partition", value="character"), function(object, value) {
-  object@label <- value
-  object
+#' @exportMethod name<-
+setReplaceMethod("name", signature=c(x="partition", value="character"), function(x, value) {
+  x@name <- value
+  x
 })
 
 #' @rdname partition-class
@@ -195,7 +186,4 @@ setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
   dimnames(ctab) <- setNames(list(rownames(ctab), colnames(ctab)), dim)
   ctab
 })
-
-
-# setMethod("length", "partition", function(x) object@size)
 

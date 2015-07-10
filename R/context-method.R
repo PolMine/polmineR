@@ -97,7 +97,7 @@ setMethod(
       leftContext=ifelse(is.character(leftContext), 0, leftContext),
       rightContext=ifelse(is.character(rightContext), 0, rightContext),
       encoding=object@encoding, posFilter=as.character(posFilter),
-      partition=object@label, partitionSize=object@size
+      partition=object@name, partitionSize=object@size
     )
     ctxt@call <- deparse(match.call())
     
@@ -296,7 +296,7 @@ setMethod("context", "partitionBundle", function(
   contextBundle@objects <- sapply(
     object@objects,
     function(x) {
-      if (verbose == TRUE) message("... proceeding to partition ", x@label)
+      if (verbose == TRUE) message("... proceeding to partition ", x@name)
       context(
         x, query,
         pAttribute=pAttribute, sAttribute=sAttribute,

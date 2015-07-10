@@ -36,7 +36,7 @@ partition class definition
 \section{Slots}{
 
 \describe{
-\item{\code{label}}{Object of class \code{"character"} a label that may be useful}
+\item{\code{name}}{Object of class \code{"character"} a name that may be useful}
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus the partition is based on}
 
