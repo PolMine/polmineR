@@ -1,22 +1,26 @@
 #' use corpus
 #' 
-#' Use a cwb corpus shipped in a package.
+#' Use a cwb corpus shipped in a package or return to default registry.
 #' 
-#' @param pkg the object to be used
-#' @exportMethod use
-#' @aliases use use,character-method
-#' @rdname use-method
+#' @param pkg the package with a cwb corpus that shall be used, defaults to "default"
+#' (will reset original registry)
+#' @export use
+#' @rdname use
 #' @name use
-setGeneric("use", function(pkg) standardGeneric("use"))
-
-#' @rdname use-method
-setMethod("use", "character", function(pkg){
+#' @examples
+#' use("polmineR.sampleCorpus")
+#' use(polmineR.sampleCorpus)
+#' use() # to restore using the default registry
+use <- function(pkg="default"){
+  pkgSub <- as.character(substitute(pkg))
+  if (exists(pkgSub) == FALSE && pkgSub != "default") {
+    registryDir <- system.file("extdata", "cwb", "registry", package=pkgSub)
+    previousRegistry <- resetRegistry(registryDir)
+  } else if (pkg=="default"){
+    previousRegistry <- resetRegistry(session@defaultRegistry)
+  } else {
     registryDir <- system.file("extdata", "cwb", "registry", package=pkg)
-    resetRegistry(registryDir)
-})
-
-#' @rdname session
-setMethod("use", "missing", function(){
-  registryDir <- session@defaultRegistry
-  resetRegistry(registryDir)
-})
+    previousRegistry <- resetRegistry(registryDir)
+  }
+  previousRegistry
+}  
