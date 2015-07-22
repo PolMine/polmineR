@@ -22,6 +22,7 @@
 #' @param registryDir path to the registry directory to be used
 #' @return the registry directory used before resetting CORPUS_REGISTRY
 #' @export resetRegistry
+#' @rdname registry
 resetRegistry <- function(registryDir=NULL) {
   if (!is.null(registryDir)){
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
@@ -36,7 +37,11 @@ resetRegistry <- function(registryDir=NULL) {
   oldRegistry
 }
 
-.readRegistry <- function(corpus){
+
+#' @param corpus the CWB name of the corpus
+#' @export readRegistry
+#' @rdname registry
+readRegistry <- function(corpus){
   scan(
     file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
     sep="\n",
@@ -46,7 +51,7 @@ resetRegistry <- function(registryDir=NULL) {
 }
 
 .parseRegistry <- function(corpus){
-  registry <- .readRegistry(corpus)
+  registry <- readRegistry(corpus)
   registryList <- lapply(
     setNames(c("NAME", "ID", "HOME", "INFO"), c("NAME", "ID", "HOME", "INFO")),
     function(query){
