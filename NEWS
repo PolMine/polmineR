@@ -1,6 +1,5 @@
 planned changes:
 ----------------
- * 
  * streamline label-, labels- and names-method
  * turn .cpos2tf into a method (getTf)
  * names-method for partitionCluster, keynessCluster objects
@@ -18,6 +17,11 @@ planned changes:
  * check: why are there no negative chiSquare-values with tail(keyness-object)
  * rename statisticalTest to method
  * include partition as slot in classes
+
+v0.5.0
+  * renamed xxxCluster to xxxBundle, bundle-superclass introduced
+  * slot label/labels renamed to name/names
+  * name/names-method instead of label/labels
 
 v0.4.57
   * debugging of tf,partition-method: There was an error, if all hits for a query in a corpus

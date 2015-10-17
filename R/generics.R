@@ -7,8 +7,11 @@ setGeneric("pAttribute<-", function(object, value) standardGeneric("pAttribute<-
 setGeneric("dissect", function(object, ...) standardGeneric("dissect"))
 
 #' @exportMethod name
+#' @rdname polmineR-generics
+setGeneric("name", function(x) standardGeneric("name"))
+
 #' @exportMethod name<-
-setGeneric("name", function(x, ...) standardGeneric("name"))
+#' @rdname polmineR-generics
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
 
