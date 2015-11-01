@@ -7,7 +7,7 @@ setGeneric("scatterplot", function(object,...){standardGeneric("scatterplot")})
 #' word scatterplot
 #' 
 #' plot a word scatterplot
-#' @param object a data frame with the ranks of collocates
+#' @param object a data frame with the ranks of cooccurrences
 #' @param xmax maximum on x axis for plot
 #' @param ymax maximum on y axis for plot
 #' @param fontSize the expansion factor for the words

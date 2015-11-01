@@ -10,11 +10,11 @@
 \usage{
 kwic(object, ...)
 
-\S4method{kwic}{context}(object, meta = NULL, collocate = c())
+\S4method{kwic}{context}(object, meta = NULL, neighbor = c())
 
 \S4method{kwic}{partition}(object, query, leftContext = NULL,
-  rightContext = NULL, meta = NULL, pAttribute = "word",
-  collocate = c(), verbose = TRUE)
+  rightContext = NULL, meta = NULL, pAttribute = "word", neighbor = c(),
+  verbose = TRUE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -23,7 +23,7 @@ kwic(object, ...)
 
 \item{meta}{metainformation to display}
 
-\item{collocate}{only show kwic if a certain word is present}
+\item{neighbor}{only show kwic if a certain word is present}
 
 \item{query}{what to look up}
 

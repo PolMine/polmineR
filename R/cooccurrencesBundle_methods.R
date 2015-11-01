@@ -1,8 +1,8 @@
-#' @include collocations_class.R collocationsBundle_class.R
+#' @include cooccurrences_class.R cooccurrencesBundle_class.R
 NULL
 
-#' @rdname collocationsBundle-class
-setMethod("as.TermDocumentMatrix", "collocationsBundle", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
+#' @rdname cooccurrencesBundle-class
+setMethod("as.TermDocumentMatrix", "cooccurrencesBundle", function(x, col, directed=TRUE, rel=FALSE, mc=TRUE){
   tabs <- lapply(x@objects, as.data.frame)
   if (directed == TRUE){
     keys <- unique(unlist(lapply(tabs, rownames)))
@@ -12,7 +12,7 @@ setMethod("as.TermDocumentMatrix", "collocationsBundle", function(x, col, direct
     v <- unlist(lapply(tabs, function(tab) tab[,col]))
   } else if (directed == FALSE){
     uniqueKeys4tab <- function(tab){
-      tabMatrix <- as.matrix(tab[,c("nodeId", "collocateId", col)])
+      tabMatrix <- as.matrix(tab[,c("nodeId", "cooccurrenceId", col)])
       tabMatrixPlus <- t(apply(tabMatrix, 1, .minMaxId))
       colnames(tabMatrixPlus) <- c(colnames(tabMatrix), c("idMin", "idMax"))
       tabDataFrame <- data.frame(

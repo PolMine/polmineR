@@ -282,14 +282,14 @@ as.cqp <- function(queries, collapse=FALSE){
 }
 
 
-# used by keyness,collocations-method
+# used by keyness,cooccurrences-method
 # listed here because it may be used by other methods
 .minMaxId <- function(row){
-  if (row["nodeId"] == row["collocateId"]){
-    retval <- c(row, idMin=row["nodeId"], idMax=row["collocateId"])
+  if (row["nodeId"] == row["cooccurrenceId"]){
+    retval <- c(row, idMin=row["nodeId"], idMax=row["cooccurrenceId"])
   } else {
-    idMin <- min(row["nodeId"], row["collocateId"])
-    idMax <- max(row["nodeId"], row["collocateId"])
+    idMin <- min(row["nodeId"], row["cooccurrenceId"])
+    idMax <- max(row["nodeId"], row["cooccurrenceId"])
     retval <- c(row, idMin=idMin, idMax=idMax)
   }
   return(retval)

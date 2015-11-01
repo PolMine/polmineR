@@ -1,37 +1,37 @@
-#' @include collocations_class.R generics.R
+#' @include cooccurrences_class.R generics.R
 NULL
 
-setMethod("[", "collocations", function(x,i){
+setMethod("[", "cooccurrences", function(x,i){
   tab <- subset(x@stat, node == i)
-  tab <- tab[, c("collocateWindowFreq", "collocateCorpusFreq", "expCoi", "expCorpus", "ll")]
-  colnames(tab) <- c("collocate", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
+  tab <- tab[, c("cooccurrenceWindowFreq", "cooccurrenceCorpusFreq", "expCoi", "expCorpus", "ll")]
+  colnames(tab) <- c("cooccurrence", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
   return(tab)
 })
 
-setMethod("show", "collocations", function(object){
-  cat("Object of 'collocations'-class\n")
+setMethod("show", "cooccurrences", function(object){
+  cat("Object of 'cooccurrences'-class\n")
   cat("Number of rows: ", nrow(object@stat), "\n")
 })
 
 
-setMethod("summary", "collocations", function(object){
+setMethod("summary", "cooccurrences", function(object){
   return(.statisticalSummary(object))
 })
 
 #' @importFrom parallel mcparallel mccollect
-setMethod("as.sparseMatrix", "collocations", function(x, col, mc=FALSE){
-  uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"collocate"]))
+setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
+  uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"cooccurrence"]))
   keyVector <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
-  splittedTab <- split(x=x@stat[,c(col, "collocate")], f=x@stat[,"node"])
+  splittedTab <- split(x=x@stat[,c(col, "cooccurrence")], f=x@stat[,"node"])
   system.time(
   if (mc==FALSE){
     bag <- list()
     bag[["i"]] <- unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times=nrow(splittedTab[[n]]))))) #nodes
-    bag[["j"]] <- unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"collocate"]]))) # collocates
+    bag[["j"]] <- unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]]))) # cooccurrences
     bag[["x"]] <- unname(unlist(lapply(splittedTab, function(tab) tab[,col]))) # values
   } else if (mc==TRUE) {
     i <- mcparallel(unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times=nrow(splittedTab[[n]])))))) #nodes
-    j <- mcparallel(unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"collocate"]])))) # collocates
+    j <- mcparallel(unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]])))) # cooccurrences
     x <- mcparallel(unname(unlist(lapply(splittedTab, function(tab) tab[,col])))) # values
     bag <- mccollect(list(i,j,x), wait=TRUE)
     names(bag) <- c("i", "j", "x")
@@ -47,10 +47,10 @@ setMethod("as.sparseMatrix", "collocations", function(x, col, mc=FALSE){
 })
 
 
-.reshapeCollocations <- function(object, mc=TRUE){
-  message("... ordering collocates and nodes by id")
+.reshapeCooccurrences <- function(object, mc=TRUE){
+  message("... ordering cooccurrences and nodes by id")
   minMaxMatrix <- t(apply(
-    as.matrix(object@stat[,c("nodeId", "collocateId")]),
+    as.matrix(object@stat[,c("nodeId", "cooccurrenceId")]),
     1, .minMaxId
     ))
   colnames(minMaxMatrix) <- c("a", "b", "minId", "maxId")
@@ -67,24 +67,24 @@ setMethod("as.sparseMatrix", "collocations", function(x, col, mc=FALSE){
       set <- set[order(set[,"idOrder"]),]
       retval <- c(
         aId=set[1,"minId"], bId=set[1,"maxId"],
-        tf_a=set[which(set[,"collocateId"] == set[1,"minId"]), "collocateCorpusFreq"],
-        tf_b=set[which(set[,"collocateId"] == set[1,"maxId"]), "collocateCorpusFreq"],
-        tf_ab=set[1, "collocateWindowFreq"],
+        tf_a=set[which(set[,"cooccurrenceId"] == set[1,"minId"]), "cooccurrenceCorpusFreq"],
+        tf_b=set[which(set[,"cooccurrenceId"] == set[1,"maxId"]), "cooccurrenceCorpusFreq"],
+        tf_ab=set[1, "cooccurrenceWindowFreq"],
         ll_a2b=set[1,"ll"], ll_b2a=set[2,"ll"]
       )
     } else {
       if (set[,"idOrder"] == 0){
         retval <- c(
           aId=set[1,"minId"], bId=set[1,"maxId"],
-          tf_a=set[1, "collocateCorpusFreq"], tf_b=set[1, "collocateCorpusFreq"],
-          tf_ab=set[1, "collocateWindowFreq"],          
+          tf_a=set[1, "cooccurrenceCorpusFreq"], tf_b=set[1, "cooccurrenceCorpusFreq"],
+          tf_ab=set[1, "cooccurrenceWindowFreq"],          
           ll_a2b=set[1,"ll"], ll_b2a=NA
         )
       } else if (set[,"idOrder"] == 1) {
         retval <- c(
           aId=set[1,"minId"], bId=set[1,"maxId"],
-          tf_a=set[1, "collocateCorpusFreq"], tf_b=set[1, "collocateCorpusFreq"],
-          tf_ab=set[1, "collocateWindowFreq"],
+          tf_a=set[1, "cooccurrenceCorpusFreq"], tf_b=set[1, "cooccurrenceCorpusFreq"],
+          tf_ab=set[1, "cooccurrenceWindowFreq"],
           ll_a2b=NA, ll_b2a=set[2,"ll"]
         )
       }
@@ -111,7 +111,7 @@ setMethod("as.sparseMatrix", "collocations", function(x, col, mc=FALSE){
     )
   consDf2
   retval <- new(
-    "collocationsReshaped",
+    "cooccurrencesReshaped",
 #   call="character",
     partition=object@partition,
     partitionSize=object@partitionSize,

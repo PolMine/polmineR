@@ -59,8 +59,8 @@ setClass("keyness",
 )
 
 #' @rdname keyness-class
-#' @exportClass keynessCollocations
-setClass("keynessCollocations",
+#' @exportClass keynessCooccurrences
+setClass("keynessCooccurrences",
          representation(corpus="character",
                         pAttribute="character",
                         encoding="character",

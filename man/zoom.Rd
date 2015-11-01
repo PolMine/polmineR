@@ -6,8 +6,9 @@
 \alias{zoom,partition-method}
 \title{zoom into a partition}
 \usage{
-\S4method{zoom}{partition}(object, def, name = c(""), method = "in",
-  tf = c("word", "lemma"), id2str = TRUE, type = NULL, verbose = TRUE)
+\S4method{zoom}{partition}(object, def, name = c(""), regex = FALSE,
+  tf = c("word", "lemma"), id2str = TRUE, type = NULL, verbose = TRUE,
+  mc = FALSE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -16,7 +17,7 @@
 
 \item{name}{a name for the new partition}
 
-\item{method}{either "in" or "grep"}
+\item{regex}{logical, whether to apply regex}
 
 \item{tf}{character vector, pAttributes for which term frequencies shall be retrieved}
 

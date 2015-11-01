@@ -2,7 +2,7 @@
 % Please edit documentation in R/keyness_method.R
 \docType{methods}
 \name{keyness,partition-method}
-\alias{keyness,collocations-method}
+\alias{keyness,cooccurrences-method}
 \alias{keyness,missing-method}
 \alias{keyness,partition-method}
 \alias{keyness,partitionBundle-method}
@@ -15,7 +15,7 @@
   minFrequency = 1, included = FALSE, method = "chiSquare",
   verbose = TRUE, mc = TRUE, progress = FALSE)
 
-\S4method{keyness}{collocations}(x, y, minFrequency = 0, included = FALSE,
+\S4method{keyness}{cooccurrences}(x, y, minFrequency = 0, included = FALSE,
   method = "ll", digits = 2, mc = TRUE, verbose = TRUE)
 
 \S4method{keyness}{missing}()
@@ -29,7 +29,7 @@ ref}
 \item{pAttribute}{The P-Attribute that will be counted (usually either
 'word' or 'lemma')}
 
-\item{minFrequency}{the minimum frequency of collocates}
+\item{minFrequency}{the minimum frequency of cooccurrence}
 
 \item{included}{TRUE if coi is part of ref, defaults to FALSE}
 

@@ -1,4 +1,3 @@
-# this file contains the kwic method and helper functions for these methods
 #' @include partition_class.R context_class.R
 NULL 
 
@@ -13,7 +12,7 @@ NULL
 #' @param rightContext to the right
 #' @param meta metainformation to display
 #' @param pAttribute typically 'word' or 'lemma'
-#' @param collocate only show kwic if a certain word is present
+#' @param neighbor only show kwic if a certain word is present
 #' @param verbose whether to be talkative
 #' @param ... further parameters to be passed
 #' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
@@ -30,7 +29,7 @@ setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(object, meta=NULL, collocate=c()){
+setMethod("kwic", "context", function(object, meta=NULL, neighbor=c()){
   ctxt <- object
   if(is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
   m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
@@ -49,13 +48,13 @@ setMethod("kwic", "context", function(object, meta=NULL, collocate=c()){
   Encoding(node) <- ctxt@encoding
   Encoding(right) <- ctxt@encoding  
   m <- cbind(m, left=left, node=node, right=right)
-  if (length(collocate) > 0) m <- m[grep(collocate, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
+  if (length(neighbor) > 0) m <- m[grep(neighbor, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   m <- m[2:ncol(m)]
   colnames(m) <- c(meta, c('leftContext', 'node', 'rightContext'))
   conc <- new(
     'kwic', leftContext=object@leftContext, rightContext=object@rightContext
     )
-  if (!is.null(collocate)) {conc@collocate <- collocate}
+  if (!is.null(neighbor)) {conc@neighbor <- neighbor}
   conc@table <- m
   conc@metadata <- meta
   conc@encoding <- ctxt@encoding
@@ -67,7 +66,7 @@ setMethod("kwic", "context", function(object, meta=NULL, collocate=c()){
 setMethod("kwic", "partition", function(
   object, query,
   leftContext=NULL, rightContext=NULL,
-  meta=NULL, pAttribute="word", collocate=c(),
+  meta=NULL, pAttribute="word", neighbor=c(),
   verbose=TRUE
 ){
   ctxt <- context(
@@ -75,6 +74,10 @@ setMethod("kwic", "partition", function(
     leftContext=leftContext, rightContext=rightContext,
     statisticalTest=NULL, verbose=verbose
   )
-  kwic(ctxt, meta=meta, collocate=collocate)
+  if (is.null(ctxt)){
+    message("... no occurrence of query")
+    return(NULL)
+    }
+  kwic(ctxt, meta=meta, neighbor=neighbor)
 })
 

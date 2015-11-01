@@ -18,11 +18,11 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @aliases collocationsReshaped-class
-#' @rdname collocationsReshaped-class
+#' @aliases cooccurrencesReshaped-class
+#' @rdname cooccurrencesReshaped-class
 #' @docType class
-#' @exportClass collocationsReshaped
-setClass("collocationsReshaped",
+#' @exportClass cooccurrencesReshaped
+setClass("cooccurrencesReshaped",
          representation(
            call="character",
            partition="character",
@@ -38,14 +38,14 @@ setClass("collocationsReshaped",
            cutoff="list",
            svg="character"
          ),
-         contains=c("collocations", "textstat")
+         contains=c("cooccurrences", "textstat")
 )
 
-#' Methods for manipulating collocationsReshaped-class-objects
+#' Methods for manipulating cooccurrencesReshaped-class-objects
 #' 
-#' @param x collocations for a corpus of interest
-#' @param y collocations for a reference corpus
-#' @rdname collocationsReshaped
-#' @aliases collocationsReshaped merge,collocationsReshaped-method
-#' @name collocationsReshaped
+#' @param x cooccurrences for a corpus of interest
+#' @param y cooccurrences for a reference corpus
+#' @rdname cooccurrencesReshaped
+#' @aliases cooccurrencesReshaped merge,cooccurrencesReshaped-method
+#' @name cooccurrencesReshaped
 NULL

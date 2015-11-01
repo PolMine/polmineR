@@ -10,7 +10,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @param object a partition object
 #' @param def a list supplying further sAttributes
 #' @param name a name for the new partition
-#' @param method either "in" or "grep"
+#' @param regex logical, whether to apply regex
 #' @param tf character vector, pAttributes for which term frequencies shall be retrieved
 #' @param id2str whether to transfer ids to strings
 #' @param type the type of the resulting partition
@@ -19,7 +19,7 @@ setGeneric("zoom", function(object, ...){standardGeneric("zoom")})
 #' @exportMethod zoom
 #' @docType methods
 #' @name zoom
-setMethod("zoom", "partition", function(object, def, name=c(""), method="in", tf=c("word", "lemma"), id2str=TRUE, type=NULL, verbose=TRUE){
+setMethod("zoom", "partition", function(object, def, name=c(""), regex=FALSE, tf=c("word", "lemma"), id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE){
   # these lines are identical with partition method
   if (is.null(type)){
     newPartition <- new('partition')  
@@ -41,13 +41,14 @@ setMethod("zoom", "partition", function(object, def, name=c(""), method="in", tf
   newPartition@xml <- object@xml
   newPartition@encoding <- object@encoding
   message('... specifying strucs and corpus positions')
-  newPartition <- .zoomingSattributes2cpos(object, newPartition, def, method)
+  newPartition <- .zoomingSattributes2cpos(object, newPartition, def, regex)
   message('... computing partition size')
   newPartition@size <- size(newPartition)
   if (length(tf)>0) {
     for (p in tf){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
-      newPartition@tf[[p]] <- .cpos2tf(newPartition, p, id2str=id2str)
+      newPartition@tf <- getTermFrequencyMatrix(.Object=newPartition, pAttribute=p, id2str=id2str, mc=mc)
+      newPartition@pAttribute <- p
     }
   }
   newPartition
@@ -61,7 +62,7 @@ setMethod("zoom", "partition", function(object, def, name=c(""), method="in", tf
 #' @param method either "in" or "grep"
 #' @return an augmented partition object
 #' @noRd
-.zoomingSattributes2cpos <- function(Partition, newPartition, sAttribute, method){
+.zoomingSattributes2cpos <- function(Partition, newPartition, sAttribute, regex){
   sAttr <- paste(Partition@corpus, '.', names(sAttribute), sep='')
   if (Partition@xml == "flat") {
     str <- cqi_struc2str(sAttr, Partition@strucs)    
@@ -69,9 +70,9 @@ setMethod("zoom", "partition", function(object, def, name=c(""), method="in", tf
     str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, Partition@cpos[,1]))    
   }
   Encoding(str) <- newPartition@encoding
-  if (method == "in") {
+  if (regex == FALSE) {
     hits <- which(str %in% sAttribute[[1]])
-  } else if (method == "grep") {
+  } else if (regex == TRUE) {
     hits <- grep(sAttributes[[1]], str)
   }
   newCpos <- Partition@cpos[hits,]

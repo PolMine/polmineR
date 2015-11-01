@@ -47,10 +47,6 @@
 
 \S4method{[}{partitionBundle,ANY,ANY,ANY}(x, i)
 
-\S4method{+}{partitionBundle,partitionBundle}(e1, e2)
-
-\S4method{+}{partitionBundle,partition}(e1, e2)
-
 \S4method{names}{partitionBundle}(x)
 
 \S4method{names}{partitionBundle,character}(x) <- value
@@ -75,10 +71,6 @@
 \item{x}{a partitionBundle object}
 
 \item{i}{integer index}
-
-\item{e1}{partition 1}
-
-\item{e2}{partition 2}
 
 \item{value}{the value}
 

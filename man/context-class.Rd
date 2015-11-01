@@ -89,7 +89,7 @@ Based on a context object, get distribution of hits
     \item{show}{output of core information}
     \item{summary}{core statistical information}
     \item{[}{index the object}
-    \item{[[}{specific collocates}
+    \item{[[}{specific cooccurrences}
     \item{trim}{trim the object}
     \item{as.data.frame}{get the statistics table}
    }

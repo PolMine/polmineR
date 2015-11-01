@@ -31,7 +31,7 @@
 a data frame that can be turned into an igraph object with graph.data.frame (see example)
 }
 \description{
-For a node word, collocates of n degrees are calculated
+For a node word, cooccurrences of n degrees are calculated
 }
 \details{
 The function returns a data frame that can be converted into an igraph object easily.

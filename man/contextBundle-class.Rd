@@ -24,8 +24,8 @@ class to organize information of multiple context analyses
   \describe{
     \item{show}{output of core information}
     \item{summary}{core statistical information}
-    \item{[}{specific collocates}
-    \item{[[}{specific collocates}
+    \item{[}{specific cooccurrences}
+    \item{[[}{specific cooccurrences}
    }
 }
 

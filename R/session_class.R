@@ -23,9 +23,10 @@
 #' @slot email default email address
 #' @slot webDir directory for putting files that shall be accessible by www
 #' @slot partitionDir default partition directory
-#' @slot defaultKwicCollocate default collocate for kwic display
+#' @slot defaultKwicCooccurrence default coccurrence for kwic display
 #' @slot defaultKwicNode default node for kwic analysis
 #' @slot defaultRegistry the COPRUS_REGISTRY used when loading polmineR
+#' @slot browse logical, whether to browse results
 #' @param project the project
 #' @param object a session class object
 #' @param x an object
@@ -63,9 +64,10 @@ setClass(
     email="character",
     webDir="character",
     partitionDir="character",
-    defaultKwicCollocate="character",
+    defaultKwicCooccurrence="character",
     defaultKwicNode="character",
-    defaultRegistry="character"
+    defaultRegistry="character",
+    browse="logical"
     ))
 
 #' @export session
@@ -92,8 +94,9 @@ session <- new(
   email="polmine@uni-due.de",
   webDir="",
   partitionDir="",
-  defaultKwicCollocate="",
-  defaultKwicNode="Suche"           
+  defaultKwicCooccurrence="",
+  defaultKwicNode="Suche",
+  browse=FALSE
   )
 
 

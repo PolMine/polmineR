@@ -1,4 +1,4 @@
-#' @include polmineR_package.R
+#' @include element_class.R polmineR_package.R
 NULL
 
 # this file includes the partition class, the constructor function 'partition'
@@ -18,7 +18,9 @@ NULL
 #' @slot size Object of class \code{"numeric"} total size of the partition 
 #' @slot metadata Object of class \code{"list"} metadata information 
 #' @slot strucs Object of class \code{"numeric"} the strucs defining the partition 
-#' @slot tf Object of class \code{"list"} term frequencies 
+#' @slot tf Object of class \code{"matrix"}: term frequencies
+#' @slot pAttribute Object of class \code{"character"} indicating the pAttribute of the
+#' count in slot tf
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested 
 #' @slot sAttributeStrucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
@@ -45,20 +47,23 @@ NULL
 #' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
-setClass("partition",
-         representation(name="character", 
-                        corpus="character",
-                        encoding="character",
-                        sAttributes="list",
-                        explanation="character",
-                        cpos="matrix",
-                        pos="list",
-                        size="numeric",
-                        metadata="list",
-                        strucs="numeric",
-                        tf="list",
-                        xml="character",
-                        sAttributeStrucs="character",
-                        call="character"
-         )
+setClass(
+  "partition",
+  representation(
+    name="character", 
+    corpus="character",
+    encoding="character",
+    sAttributes="list",
+    explanation="character",
+    cpos="matrix",
+    pos="list",
+    size="numeric",
+    metadata="list",
+    strucs="numeric",
+    tf="matrix",
+    pAttribute="character",
+    xml="character",
+    sAttributeStrucs="character",
+    call="character"
+  )
 )

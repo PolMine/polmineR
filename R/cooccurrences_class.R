@@ -18,13 +18,13 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @aliases collocations-class ll,collocations-method [,collocations-method
-#'   [,collocations,ANY,ANY,ANY-method show,collocations-method
-#'   summary,collocations-method as.sparseMatrix,collocations-method
-#'   as.igraph,collocations-method trim,collocations-method
+#' @aliases cooccurrences-class ll,cooccurrences-method [,cooccurrences-method
+#'   [,cooccurrences,ANY,ANY,ANY-method show,cooccurrences-method
+#'   summary,cooccurrences-method as.sparseMatrix,cooccurrences-method
+#'   as.igraph,cooccurrences-method trim,cooccurrences-method
 #' @docType class
-#' @exportClass collocations
-setClass("collocations",
+#' @exportClass cooccurrences
+setClass("cooccurrences",
          representation(
            call="character",
            partition="character",

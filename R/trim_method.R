@@ -138,15 +138,15 @@ setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posF
       rework <- addPos(rework, pAttribute)
     }
     rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][rework@pos[[pAttribute]] %in% posFilter]
-    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][rownames(rework@tf[[pAttribute]]) %in% names(rework@pos[[pAttribute]]),]
+    rework@tf <- rework@tf[rownames(rework@tf) %in% names(rework@pos[[pAttribute]]),]
   }
   if (minFrequency > 0){
-    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][which(rework@tf[[pAttribute]][,"tf"] >= minFrequency),]
-    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf[[pAttribute]])]
+    rework@tf <- rework@tf[which(rework@tf[,"tf"] >= minFrequency),]
+    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf)]
   }
   if(!is.null(tokenFilter)) {
     tokenFilter <- .adjustEncoding(tokenFilter, rework@encoding)
-    rework@tf[[pAttribute]] <- rework@tf[[pAttribute]][which(rownames(rework@tf[[pAttribute]]) %in% tokenFilter),]
+    rework@tf <- rework@tf[which(rownames(rework@tf) %in% tokenFilter),]
   }
   rework 
 })
@@ -191,10 +191,11 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
 })
 
 
-setMethod("trim", "collocations", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
-  if (reshape == TRUE) object <- .reshapeCollocations(object, mc=mc)
+#' @rdname cooccurrences-class
+setMethod("trim", "cooccurrences", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
+  if (reshape == TRUE) object <- .reshapeCooccurrences(object, mc=mc)
   if (is.null(by) == FALSE){
-    if (class(by) %in% c("keynessCollocations", "collocationsReshaped")){
+    if (class(by) %in% c("keynessCooccurrences", "cooccurrencesReshaped")){
       bidirectional <- strsplit(rownames(by@stat), "<->")
       fromTo <- c(
         sapply(bidirectional, function(pair) paste(pair[1], "->", pair[2], sep="")),

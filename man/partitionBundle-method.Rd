@@ -9,14 +9,12 @@
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionBundle}{character}(object, def, var, prefix = c(""),
-  encoding = NULL, tf = c("word", "lemma"), meta = NULL,
-  method = "grep", xml = "flat", id2str = TRUE, type = NULL,
-  mc = NULL, verbose = TRUE)
+  encoding = NULL, tf = NULL, meta = NULL, regex = FALSE,
+  xml = "flat", id2str = TRUE, type = NULL, mc = NULL, verbose = TRUE)
 
 \S4method{partitionBundle}{list}(object, var, prefix = c(""),
-  encoding = NULL, tf = c("word", "lemma"), meta = NULL,
-  method = "grep", xml = "flat", id2str = TRUE, mc = FALSE,
-  verbose = TRUE)
+  encoding = NULL, tf = NULL, meta = NULL, regex = FALSE,
+  xml = "flat", id2str = TRUE, mc = FALSE, verbose = TRUE)
 
 \S4method{partitionBundle}{missing}()
 }
@@ -35,7 +33,7 @@
 
 \item{meta}{a character vector}
 
-\item{method}{either 'grep' or 'in'}
+\item{regex}{logical}
 
 \item{xml}{either 'flat' (default) or 'nested'}
 

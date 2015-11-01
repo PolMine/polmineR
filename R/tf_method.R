@@ -28,34 +28,38 @@
 setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
-setMethod("tf", "partition", function(object, query, pAttribute=NULL, method="in", mc=F, verbose=T){
+setMethod("tf", "partition", function(object, query=NULL, pAttribute=NULL, method="in", mc=F, verbose=T){
   if (is.null(pAttribute)) {
     pAttr <- slot(get("session", ".GlobalEnv"), "pAttribute")
   } else {
     pAttr <- pAttribute
   }
+  if (is.null(query)){
+    if (length(object@pAttribute) == 0) object <- enrich(object, tf=pAttr)
+    tab <- data.frame(
+      abs=object@tf[,"tf"],
+      rel=object@tf[,"tf"]/object@size
+    )
+    rownames(tab) <- rownames(object@tf)
+  }
   if (is.character(query) == TRUE){
     bag <- list(query=.adjustEncoding(query, object@encoding))
     if (method == "in"){ 
-      bag[["abs"]] <- object@tf[[pAttr]][query,"tf"]
-      bag[["rel"]] <- object@tf[[pAttr]][query,"tf"]/object@size
-      tab <- data.frame(bag)
+      tab <- data.frame(
+        abs=object@tf[query,"tf"],
+        rel=object@tf[query,"tf"]/object@size
+        )
     } else if (method == "grep"){
       bag <- lapply(query, function(query) {
         foo <- list()
-        rowNo <- grep(query, rownames(object@tf[[pAttr]]))
-        foo[["abs"]] <- sum(object@tf[[pAttr]][rowNo,"tf"])
+        rowNo <- grep(query, rownames(object@tf))
+        foo[["abs"]] <- sum(object@tf[rowNo,"tf"])
         foo[["rel"]] <- foo[["abs"]]/object@size
         data.frame(what=names(foo), query, freq=do.call(rbind, foo))
       })
       tab <- do.call(rbind, bag)
       tab <- xtabs(freq~query+what, data=tab)
       tab <- as.data.frame(as.matrix(unclass(tab)))
-      colOrder <- unlist(
-        lapply(names(object@tf),
-               function(x) c(paste(x,"Abs", sep=""), paste(x, "Rel", sep="")))
-      )
-      tab <- tab[,colOrder]
     } else if (method == "cqp") {
       .getNumberOfHits <- function(query) {
           if (verbose == TRUE) message("... processing query ", query)
@@ -97,7 +101,7 @@ setMethod("tf", "partitionBundle", function(object, query, pAttribute=NULL, meth
     warning("all partitions in the bundle need to have a name (at least some missing)")
   }
   what <- paste(pAttribute, ifelse(rel==FALSE, "Abs", "Rel"), sep="")
-  tfAvailable <- unique(unlist(lapply(object@objects, function(x) names(x@tf))))
+  tfAvailable <- unique(unlist(lapply(object@objects, function(x) x@pAttribute)))
   if (method %in% c("in", "grep")){
     if (length(pAttribute)!=1) {
       warning("pAttribute required for methods 'in' and/or 'grep' but not given")

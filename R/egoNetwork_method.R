@@ -3,7 +3,7 @@ setGeneric("egoNetwork", function(object, ...){standardGeneric("egoNetwork")})
 
 #' Prepare data for an ego-network
 #' 
-#' For a node word, collocates of n degrees are calculated
+#' For a node word, cooccurrences of n degrees are calculated
 #' 
 #' The function returns a data frame that can be converted into an igraph object easily.
 #' This conversion is not part of the function to keep number of dependencies of the 
@@ -44,7 +44,7 @@ setMethod("egoNetwork", "partition", function(object, node, degrees, pAttribute=
     }
   }
   vertices <- unique(c(as.vector(unname(unlist(gData[,1]))), as.vector(unname(unlist(gData[,2])))))
-  # verticeData <- data.frame(vertices=vertices, object@tf[[pAttribute]][vertices,"tf"])
+  # verticeData <- data.frame(vertices=vertices, object@tf[vertices,"tf"])
   gData
 })
 

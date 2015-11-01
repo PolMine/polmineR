@@ -5,8 +5,8 @@
 \alias{as.TermContextMatrix,contextBundle-method}
 \alias{as.matrix,contextBundle-method}
 \alias{context}
-\alias{context,collocations-method}
 \alias{context,contextBundle-method}
+\alias{context,cooccurrences-method}
 \alias{context,missing-method}
 \alias{context,partition-method}
 \alias{context,partitionBundle-method}
@@ -26,7 +26,7 @@
   stoplist = c(), positivelist = NULL, statisticalTest = "ll",
   mc = FALSE, verbose = TRUE)
 
-\S4method{context}{collocations}(object, query, complete = FALSE)
+\S4method{context}{cooccurrences}(object, query, complete = FALSE)
 
 \S4method{context}{missing}()
 }
@@ -74,9 +74,9 @@ depending on whether a partition or a partitionBundle serves as
   input, the return will be a context object, or a contextBundle object
 }
 \description{
-Retrieve the concordances of a token and calculate the log-likelihood test
-for collocates For formulating the query, CPQ syntax may be used (see
-examples).
+Retrieve the word context of a token, checking for the boundaries of a XML
+region. For formulating the query, CPQ syntax may be used (see
+examples). Statistical tests available are log-likelihood, t-test, pmi.
 }
 \examples{
 \dontrun{

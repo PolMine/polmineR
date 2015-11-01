@@ -10,8 +10,8 @@
 \usage{
 as.TermDocumentMatrix(x, ...)
 
-\S4method{as.TermDocumentMatrix}{partitionBundle}(x, pAttribute = NULL,
-  weight = NULL, rmBlank = TRUE, verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{partitionBundle}(x, weight = NULL,
+  rmBlank = TRUE, verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{partitionBundle}(x, pAttribute = NULL,
   weight = NULL, rmBlank = TRUE, ...)
@@ -25,13 +25,13 @@ as.TermDocumentMatrix(x, ...)
 
 \item{...}{to make the check happy}
 
-\item{pAttribute}{the p-attribute}
-
 \item{weight}{whether to introduce a weight ("tfidf" and "rel" are implemented)}
 
 \item{rmBlank}{bla}
 
 \item{verbose}{bla}
+
+\item{pAttribute}{the p-attribute}
 
 \item{sAttribute}{the s-attribute}
 

@@ -37,22 +37,25 @@ function(object){
   else {cat(object@size, "tokens\n")}
   cat(sprintf("%-21s", "Term frequencies:"))
   if (length(object@tf)==0) {cat("not available\n")}
-  else {cat("available for", paste(names(object@tf), collapse=", "), "\n")}
+  else {cat("available for ", object@pAttribute, "\n")}
 })
 
 
 
 
 #' @exportMethod [
-#' @docType methods
-#' @noRd
+#' @rdname partition-class
 setMethod('[', 'partition', function(x,i){
   hits <- nrow(.queryCpos(i,x))
   hits
 }
 )
 
-
+#' @exportMethod [[
+#' @rdname partition-class
+setMethod("[[", "partition", function(x,i){
+  kwic(object=x, i)
+})
 
 #' split partition into partitionBundle
 #' 
@@ -187,3 +190,6 @@ setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
   ctab
 })
 
+#' @exportMethod length
+#' @rdname partition-class
+setMethod("length", "partition", function(x) x@size)

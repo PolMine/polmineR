@@ -11,7 +11,7 @@
   fontSize = 0.7, rotation = 45, type = 0)
 }
 \arguments{
-\item{object}{a data frame with the ranks of collocates}
+\item{object}{a data frame with the ranks of cooccurrences}
 
 \item{xmax}{maximum on x axis for plot}
 

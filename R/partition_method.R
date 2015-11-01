@@ -29,7 +29,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
-#' @param method either 'grep' or 'in' to specify the filtering method to get relevant strucs
+#' @param regex logical, whether strucs will be filtered by applying a regex (via grep)
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
@@ -54,9 +54,9 @@ setMethod("partition", "character", function(
   def=NULL,
   name=c(""),
   encoding=NULL,
-  tf=c("word", "lemma"),
+  tf=NULL,
   meta=NULL,
-  method="grep",
+  regex=FALSE,
   xml="flat",
   id2str=TRUE,
   type=NULL,
@@ -98,7 +98,7 @@ setMethod("partition", "character", function(
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
       def <- list()
       def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
-      method <- "grep"
+      regex <- TRUE
     } else {
       message("... no idea what the anchor element might be, please provide explicitly")
     }
@@ -115,9 +115,9 @@ setMethod("partition", "character", function(
   Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
   if (xml=="flat") {
-    Partition <- .flatXmlSattributes2cpos(Partition, method)
+    Partition <- .flatXmlSattributes2cpos(Partition, regex)
   } else if (xml=="nested") {
-    Partition <- .nestedXmlSattributes2cpos(Partition, method)
+    Partition <- .nestedXmlSattributes2cpos(Partition, regex)
   } else {
     warning("WARNING: Value of 'xml' is not valid!")
   }
@@ -125,21 +125,11 @@ setMethod("partition", "character", function(
     if (verbose==TRUE) message('... computing partition size')
     Partition@size <- size(Partition)
     if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
-    if (length(tf > 0)) {
-      if (length(tf) == 1){
-        if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf[1], ')')  
-        Partition@tf[[tf[1]]] <- .cpos2tf(Partition, tf[1], id2str)
-      } else if (length(tf) >= 2) {
-        if (mc==FALSE){
-          Partition@tf <- lapply(setNames(tf, tf), function(p) {
-            if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')
-            .cpos2tf(Partition, p, id2str)
-          })
-        } else if (mc==TRUE){
-          if (verbose==TRUE) message('... computing term frequencies (using multicore)')
-          Partition@tf <- mclapply(setNames(tf, tf), function(p) {.cpos2tf(Partition, p)})
-        }
-      }
+    if (!is.null(tf)) {
+      stopifnot(is.character(tf) == TRUE, length(tf) == 1, tf %in% pAttributes(object))  
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf, ')')  
+      Partition@tf <- getTermFrequencyMatrix(.Object=Partition, pAttribute=tf, id2str=id2str, mc=mc)
+      Partition@pAttribute <- tf
     }
     if (!is.null(meta)) {
       if (verbose==TRUE) message('... setting up metadata (table and list of values)')
@@ -155,13 +145,13 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(
-  object, name=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
-  method="grep", xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
+  object, name=c(""), encoding=NULL, tf=NULL, meta=NULL,
+  regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
 ) {
   partition(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, name=name, encoding=encoding, tf=tf,
-    meta=meta, method=method, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
+    meta=meta, regex=regex, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
     )
 })
 
@@ -245,7 +235,7 @@ setMethod("partition", "list", function(
 #' @param partition the rudimentary partition object
 #' @return an augmented partition object (includes now cpos and strucs)
 #' @noRd
-.flatXmlSattributes2cpos <- function(part, method){
+.flatXmlSattributes2cpos <- function(part, regex){
   root <- paste(part@corpus, '.', part@sAttributeStrucs, sep='')
   meta <- data.frame(struc=c(0:(cqi_attribute_size(root)-1)), select=rep(0, times=cqi_attribute_size(root)))
   if (length(part@sAttributes) > 0) {
@@ -253,7 +243,7 @@ setMethod("partition", "list", function(
       sattr <- paste(part@corpus, ".", s, sep="")
       meta[,2] <- as.vector(cqi_struc2str(sattr, meta[,1]))
       Encoding(meta[,2]) <- part@encoding
-      if (method=="in") {
+      if (regex==FALSE) {
         meta <- meta[which(meta[,2] %in% part@sAttributes[[s]]),]
       } else {
         meta <- meta[grep(part@sAttributes[[s]], meta[,2]),]
@@ -283,7 +273,7 @@ setMethod("partition", "list", function(
 #' @param partition the rudimentary partition object
 #' @return an augmented partition object (includes now cpos and strucs)
 #' @noRd
-.nestedXmlSattributes2cpos <- function(Partition, method){
+.nestedXmlSattributes2cpos <- function(Partition, regex){
   sAttr <- vapply(
     names(Partition@sAttributes),
     USE.NAMES=TRUE, FUN.VALUE="character",
@@ -304,9 +294,9 @@ setMethod("partition", "list", function(
       meta <- cqi_struc2str(sAttr[i], cqi_cpos2struc(sAttr[i], cpos[,1]))
     }
     Encoding(meta) <- Partition@encoding
-    if (method == "in") {
+    if (regex == FALSE) {
       hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
-    } else if (method == "grep") {
+    } else if (regex == TRUE) {
       hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
     }
     cpos <- cpos[hits,]
@@ -317,36 +307,6 @@ setMethod("partition", "list", function(
   Partition
 }
 
-#' Obtain frequencies
-#' 
-#' Get term frequencies for a partition object. This is a helper function
-#' for \code{partition}.
-#'
-#' @param part a partition object
-#' @param pAttribute either 'word' or 'lemma'
-#' @noRd
-.cpos2tf <- function(.Object, pAttribute, id2str=TRUE){
-  cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-  ids <- cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
-  tfRaw <- tabulate(ids)
-  tf <- matrix(
-    c(
-      c(0:length(tfRaw)),
-      c(length(ids[which(ids==0)]), tfRaw)
-      ),
-    ncol=2, dimnames=list(NULL, c("id", "tf"))
-  )
-  tf <- tf[which(tf[,"tf"] > 0),]
-  if (id2str == TRUE){   
-    .addRownames <- function(tf){
-      rownames(tf) <- cqi_id2str(paste(.Object@corpus, '.', pAttribute, sep=''), tf[,"id"])
-      Encoding(rownames(tf)) <- .Object@encoding
-      tf
-    }
-    try(tf <- .addRownames(tf), silent=FALSE)
-  }
-  tf
-}
 
 #' @rdname partition
 setMethod("partition", "missing", function(){

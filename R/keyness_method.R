@@ -20,7 +20,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' ref
 #' @param pAttribute The P-Attribute that will be counted (usually either
 #' 'word' or 'lemma')
-#' @param minFrequency the minimum frequency of collocates
+#' @param minFrequency the minimum frequency of cooccurrence
 #' @param method the statistical test to apply (chisquare or log likelihood)
 #' @param included TRUE if coi is part of ref, defaults to FALSE
 #' @param digits numeric
@@ -31,7 +31,7 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
-#' @aliases keyness,collocations-method
+#' @aliases keyness,cooccurrences-method
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod keyness
@@ -57,16 +57,16 @@ setMethod("keyness", signature=c(x="partition"), function(
     )
   keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
   # check whether tf-lists are available for the pAttribute given
-  if (!pAttribute %in% names(x@tf)){
+  if (!pAttribute %in% x@pAttribute){
     message("... term frequencies not available for pAttribute given in corpus of interest - enriching the partition ")
     x <- enrich(x, tf=pAttribute, verbose=FALSE)
   }
-  if (!pAttribute %in% names(y@tf)){
+  if (!pAttribute %in% y@pAttribute){
     message("... term frequencies not available for pAttribute given in reference corpus - enriching the partition ")
     y <- enrich(y, tf=pAttribute, verbose=FALSE)
   }
   if (verbose==TRUE) message("... combining frequency lists")
-  keyness@stat <- merge(x@tf[[pAttribute]], y@tf[[pAttribute]], by.x="id", by.y="id")
+  keyness@stat <- merge(x@tf, y@tf, by.x="id", by.y="id")
   rownames(keyness@stat) <- cqi_id2str(
     paste(x@corpus,".", pAttribute, sep=""),
     keyness@stat[,"id"]
@@ -129,18 +129,18 @@ setMethod("keyness", signature=c(x="partitionBundle"), function(
 #' @importFrom plyr ddply
 #' @importFrom data.table rbindlist
 #' @rdname keyness-method
-setMethod("keyness", "collocations", function(
+setMethod("keyness", "cooccurrences", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
   ){
   newObject <- new(
-    'keynessCollocations',
+    'keynessCooccurrences',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
     corpus=x@corpus, sizeCoi=x@partitionSize,
     sizeRef=ifelse(included==FALSE, y@partitionSize, y@partitionSize-x@partitionSize)
   )
   newObject@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
   if (x@pAttribute != y@pAttribute) {
-    warning("BEWARE: collocations objects are not based on the same pAttribute!")
+    warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
   } else {
     newObject@pAttribute <- unique(c(x@pAttribute, y@pAttribute))
   }
@@ -148,7 +148,7 @@ setMethod("keyness", "collocations", function(
   if (verbose == TRUE) message("... preparing tabs for matching")
   pimpTabs <- function(xOrY){
     tab <- data.frame(what=ifelse(xOrY == "x", 1, 2), tabs[[xOrY]])
-    tabMatrix <- as.matrix(tab[,-which(colnames(tab) %in% c("collocate", "node"))])
+    tabMatrix <- as.matrix(tab[,-which(colnames(tab) %in% c("cooccurrence", "node"))])
     tabMatrixPlus <- t(apply(tabMatrix, 1, .minMaxId))
     colnames(tabMatrixPlus) <- c(colnames(tabMatrix), c("idMin", "idMax"))
     tabMatrixPlus
@@ -172,12 +172,12 @@ setMethod("keyness", "collocations", function(
   reducedTab <- subset(tab, characterKey %in% keysInX)
   if (verbose == TRUE) message("... matching")
   .applyWorker <- function(tab){
-    xValues <- tab[which(tab[,"what"] == 1), "collocateWindowFreq"]
-    yValues <- tab[which(tab[,"what"] == 2), "collocateWindowFreq"]
+    xValues <- tab[which(tab[,"what"] == 1), "cooccurrenceWindowFreq"]
+    yValues <- tab[which(tab[,"what"] == 2), "cooccurrenceWindowFreq"]
     keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
-    foo1 <- min(c(tab[,"nodeId"], tab[,"collocateId"]))
-    foo2 <- max(c(tab[,"nodeId"], tab[,"collocateId"]))
-    data.frame(nodeId=foo1, collocateId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
+    foo1 <- min(c(tab[,"nodeId"], tab[,"cooccurrenceId"]))
+    foo2 <- max(c(tab[,"nodeId"], tab[,"cooccurrenceId"]))
+    data.frame(nodeId=foo1, cooccurrenceId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
   }
   if (mc == FALSE){
     newObject@stat <- ddply(

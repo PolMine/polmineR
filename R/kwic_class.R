@@ -6,7 +6,7 @@
 #' @slot leftContext words to the left
 #' @slot rightContext words to the right
 #' @slot table Object of class \code{"data.frame"} a table with the relevant information for kwic output
-#' @slot collocate Object of class \code{"character"} collocate, if applicable
+#' @slot neighbor Object of class \code{"character"} neighbor, if applicable
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' 
 #' @param x a kwic-class object
@@ -25,7 +25,7 @@ setClass("kwic",
          slots=c(metadata="character",
                         leftContext="numeric",
                         rightContext="numeric",
-                        collocate="character",
+                        neighbor="character",
                         table="data.frame",
                         encoding="character"
          )

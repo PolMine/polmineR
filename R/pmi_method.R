@@ -8,14 +8,14 @@ setGeneric("pmi", function(object){standardGeneric("pmi")})
 #' There may be a (small) problem: the counts used are not cooccurrences ...
 #' 
 #' @param windowIds ids of cooccurring words, used for matching
-#' @param windowFreq count for occurrence of collocates
+#' @param windowFreq count for occurrence of cooccurrences
 #' @param countTarget counts of targe in partition (total) 
 #' @param partitionObject here we get the counts for cooccurring tokens
 #' @noRd
 .pmi <- function(windowIds, windowFreq, partitionFreq, countTarget, partitionSize){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=4)
   size <- partitionSize
-  colnames(calc) <- c("collocateId", "countCoi", "countPartition", "pmi")
+  colnames(calc) <- c("cooccurrenceId", "countCoi", "countPartition", "pmi")
   calc[,1] <- windowIds
   calc[,2] <- windowFreq
   calc[,3] <- partitionFreq

@@ -6,9 +6,12 @@
 \alias{[,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{kwic-class}
+\alias{show,kwic-method}
 \alias{view,kwic-method}
 \title{kwic (S4 class)}
 \usage{
+\S4method{show}{kwic}(object)
+
 \S4method{as.data.frame}{kwic}(x)
 
 \S4method{view}{kwic}(.Object)
@@ -32,7 +35,7 @@ S4 class for organizing information for concordance output
 
 \item{\code{table}}{Object of class \code{"data.frame"} a table with the relevant information for kwic output}
 
-\item{\code{collocate}}{Object of class \code{"character"} collocate, if applicable}
+\item{\code{neighbor}}{Object of class \code{"character"} neighbor, if applicable}
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 }}

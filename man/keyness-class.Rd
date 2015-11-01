@@ -8,7 +8,7 @@
 \alias{enrich,keynessBundle-method}
 \alias{keyness}
 \alias{keyness-class}
-\alias{keynessCollocations-class}
+\alias{keynessCooccurrences-class}
 \alias{ll,keyness-method}
 \alias{show,keyness-method}
 \alias{summary,keyness-method}

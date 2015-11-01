@@ -5,8 +5,9 @@
 \alias{enrich,partition-method}
 \title{enrich partition object (S4 method)}
 \usage{
-\S4method{enrich}{partition}(object, size = FALSE, tf = NULL, meta = NULL,
-  addPos = NULL, verbose = TRUE)
+\S4method{enrich}{partition}(object, size = FALSE, tf = NULL,
+  id2str = TRUE, meta = NULL, addPos = NULL, verbose = TRUE,
+  mc = FALSE)
 }
 \arguments{
 \item{object}{a partition object}

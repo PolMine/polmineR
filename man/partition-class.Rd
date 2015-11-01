@@ -4,6 +4,7 @@
 \name{pAttributes,partition-method}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
+\alias{[[,partition,ANY-method}
 \alias{as.partitionBundle}
 \alias{as.partitionBundle,partition-method}
 \alias{corpus,partition-method}
@@ -11,8 +12,10 @@
 \alias{dissect,partition-method}
 \alias{export}
 \alias{export,partition-method}
+\alias{length,partition-method}
 \alias{name,partition-method}
 \alias{name<-,partition,character-method}
+\alias{pAttribute,partition-method}
 \alias{pAttributes,partition-method}
 \alias{partition-class}
 \alias{show,partition-method}
@@ -25,11 +28,20 @@
 
 \S4method{size}{partition}(x)
 
+\S4method{[}{partition,ANY,ANY,ANY}(x, i)
+
+\S4method{[[}{partition,ANY}(x, i)
+
+\S4method{pAttribute}{partition}(object, from, to, mc = TRUE,
+  verbose = TRUE)
+
 \S4method{name}{partition}(x)
 
 \S4method{name}{partition,character}(x) <- value
 
 \S4method{dissect}{partition}(object, dim, verbose = FALSE)
+
+\S4method{length}{partition}(x)
 
 \S4method{corpus}{partition}(object)
 }
@@ -38,9 +50,9 @@
 
 \item{object}{a partition object}
 
-\item{dim}{don't know}
-
 \item{verbose}{logical, whether to be verbose}
+
+\item{dim}{don't know}
 }
 \description{
 partition class definition
@@ -68,7 +80,10 @@ partition class definition
 
 \item{\code{strucs}}{Object of class \code{"numeric"} the strucs defining the partition}
 
-\item{\code{tf}}{Object of class \code{"list"} term frequencies}
+\item{\code{tf}}{Object of class \code{"matrix"}: term frequencies}
+
+\item{\code{pAttribute}}{Object of class \code{"character"} indicating the pAttribute of the
+count in slot tf}
 
 \item{\code{xml}}{Object of class \code{"character"} whether the xml is flat or nested}
 

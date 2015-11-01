@@ -8,6 +8,8 @@
 \alias{dim,textstat-method}
 \alias{head,textstat-method}
 \alias{names,textstat-method}
+\alias{nrow,textstat-method}
+\alias{round,textstat-method}
 \alias{rownames,textstat-method}
 \alias{show,textstat-method}
 \alias{tail,textstat-method}
@@ -19,6 +21,10 @@
 
 \S4method{tail}{textstat}(x, ...)
 
+\S4method{nrow}{textstat}(x)
+
+\S4method{round}{textstat}(x, digits = 2)
+
 \S4method{view}{textstat}(.Object)
 }
 \arguments{
@@ -26,7 +32,11 @@
 
 \item{...}{further parameters}
 
+\item{digits}{}
+
 \item{.Object}{an object}
+
+\item{x}{textstat object}
 }
 \description{
 superclass for keyness and conctext class

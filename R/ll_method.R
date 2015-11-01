@@ -16,7 +16,7 @@ setGeneric("ll", function(object, ...){standardGeneric("ll")})
 #' @noRd
 .g2Statistic <- function(ids, windowFreq, corpusFreq, windows.total, corpus.total){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=6)
-  colnames(calc) <- c("collocateId", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
+  colnames(calc) <- c("cooccurrenceId", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
   calc[,1] <- ids
   calc[,2] <- windowFreq
   calc[,3] <- corpusFreq
@@ -60,11 +60,11 @@ setMethod("ll", "keyness", function(object){
   return(object)
 })
 
-setMethod("ll", "collocations", function(object, partitionSize){
+setMethod("ll", "cooccurrences", function(object, partitionSize){
   mat <- .g2Statistic(
     ids=rep(0, times=nrow(object@stat)),
-    windowFreq=object@stat[,"collocateWindowFreq"],
-    corpusFreq=object@stat[,"collocateCorpusFreq"],
+    windowFreq=object@stat[,"cooccurrenceWindowFreq"],
+    corpusFreq=object@stat[,"cooccurrenceCorpusFreq"],
     windows.total=object@stat[,"windowSize"],
     corpus.total=partitionSize
     )

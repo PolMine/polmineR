@@ -1,5 +1,7 @@
+.gitignore
 .Rbuildignore
 .Rproj.user
 .Rhistory
 .RData
 ./*.Rproj
+polmineR.Rproj

@@ -1,4 +1,4 @@
-#' @include polmineR_package.R partition_class.R partitionBundle_class.R context_class.R collocations_class.R contextBundle_class.R
+#' @include polmineR_package.R partition_class.R partitionBundle_class.R context_class.R cooccurrences_class.R contextBundle_class.R
 NULL
 
 
@@ -67,31 +67,19 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
 #' @importFrom tm as.TermDocumentMatrix
 #' @rdname coerce-methods
 #' @docType methods
-setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
-  if (is.null(pAttribute)){
-    pAttributesAvailable <- unique(unlist(lapply(x@objects, function(x) names(x@tf))))
-    if (length(pAttributesAvailable) == 1){
-      pAttribute <- pAttributesAvailable
-      if (verbose == TRUE) message("... preparing TermDocumentMatrix for pAttribute ", pAttribute)
-    } else {
-      warning("term frequencies are available for more than one tf, please provide pAttribute to be used explicitly")
-    }
-  }
+  pAttribute <- unique(unlist(lapply(x@objects, function(x) x@pAttribute)))
+  if (length(pAttribute) != 1) warning("incoherence of pAttributes/tf")
   corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
   message("... putting together the matrix")
   i <- as.integer(unname(unlist(lapply(x@objects,
-                                       function(c) {a <- c@tf[[pAttribute]][,1]
+                                       function(c) {a <- c@tf[,1]
                                                     a <- a+1
                                                     a})
   )))
-  j <- unlist(lapply(c(1:length(x@objects)),
-                     function(m) {rep(
-                       m,times=nrow(x@objects[[m]]@tf[[pAttribute]])
-                     )
-                     }
-  ))
-  v <- as.integer(unlist(lapply(x@objects, function(c) c@tf[[pAttribute]][,2])))
+  j <- unlist(lapply(c(1:length(x@objects)), function(m) rep(m,times=nrow(x@objects[[m]]@tf))))
+  v <- as.integer(unlist(lapply(x@objects, function(c) c@tf[,2])))
   attr <- paste(corpus, '.', pAttribute, sep='')
   lexicon.size <- cqi_lexicon_size(attr)
   mat <- simple_triplet_matrix(i=i, j=j, v=v,
@@ -194,14 +182,17 @@ setMethod("as.data.frame", "context", function(x, ...) x@stat )
 #' @docType methods
 #' @exportMethod as.partitionBundle
 setMethod("as.partitionBundle", "partition", function(object){
-  newBundle <- new("partitionBundle")
-  newBundle@objects[[1]] <- object
+  newBundle <- new(
+    "partitionBundle",
+    objects=list(object),
+    corpus=object@corpus,
+    encoding=object@encoding,
+    explanation=c("derived from a partition object")
+    )
   names(newBundle@objects)[1] <- object@name
-  newBundle@corpus <- object@corpus
-  newBundle@encoding <- object@encoding
-  newBundle@explanation <- c("derived from a partition object")
   newBundle
 })
+
 
 setMethod("as.partitionBundle", "list", function(object, ...){
   if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")

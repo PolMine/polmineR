@@ -20,7 +20,7 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
 #' @param tf the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
-#' @param method either 'grep' or 'in'
+#' @param regex logical
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type the type of the partition objects
@@ -36,7 +36,7 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
   object, def, var, prefix=c(""),
-  encoding=NULL, tf=c("word", "lemma"), meta=NULL, method="grep", xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
+  encoding=NULL, tf=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -58,7 +58,7 @@ setMethod("partitionBundle", "character", function(
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
-  partitionBase <- partition(object, def, tf=c(), meta=meta, method=method, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
+  partitionBase <- partition(object, def, tf=c(), meta=meta, regex=regex, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
   bundle@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
@@ -92,13 +92,13 @@ setMethod("partitionBundle", "character", function(
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "list", function(
-  object, var, prefix=c(""), encoding=NULL, tf=c("word", "lemma"), meta=NULL,
-  method="grep", xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
+  object, var, prefix=c(""), encoding=NULL, tf=NULL, meta=NULL,
+  regex=FALSE, xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
 ) {
   partitionBundle(
     object=get('session', '.GlobalEnv')@corpus,
     def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
-    meta=meta, method=method, xml=xml, id2str=id2str, mc=mc, verbose=verbose
+    meta=meta, regex=regex, xml=xml, id2str=id2str, mc=mc, verbose=verbose
   )
 })
 

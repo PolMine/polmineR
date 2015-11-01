@@ -1,6 +1,6 @@
 #' bundle class
 #' 
-#' A class to bundle several objects (partition, context, keyness, collocations objects)
+#' A class to bundle several objects (partition, context, keyness, cooccurrences objects)
 #' in one S4 object.
 #' 
 #' @slot objects Object of class \code{"list"}
@@ -53,3 +53,22 @@ setMethod("bapply", "bundle", function(x, f, ...){
   x@objects <- lapply(X=x@objects, FUN=f, ...)
   x
 })
+
+
+#' @exportMethod +
+#' @rdname bundle-class
+#' @param e1 object 1
+#' @param e2 object 2
+#' @docType methods
+setMethod("+", signature(e1="bundle", e2="bundle"), function(e1, e2){
+  newObjectClass <- unique(c(is(e1)[1], is(e2)[1]))
+  if (length(newObjectClass) > 1) stop("the two objects do not have the same length")
+  new(
+    newObjectClass,
+    objects=c(e1@objects, e2@objects),
+    corpus=unique(e1@corpus, e2@corpus),
+    encoding=unique(e1@encoding, e2@encoding)
+    )
+})
+
+

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.1
-Date: 2015-07-07
+Version: 0.5.4
+Date: 2015-10-19
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -14,6 +14,8 @@ Imports:
     parallel,
     plyr,
     data.table,
+    DT,
+    magrittr,
     rJava
 Suggests:
     polmineR.sampleCorpus,
@@ -52,19 +54,19 @@ Collate:
     'browse_method.R'
     'bughunt_method.R'
     'chisquare_method.R'
+    'cooccurrences_class.R'
     'contextBundle_class.R'
-    'collocations_class.R'
     'coerce_methods.R'
-    'collocationsBundle_class.R'
-    'collocationsBundle_methods.R'
-    'collocationsReshaped_class.R'
-    'collocationsReshaped_methods.R'
-    'collocations_method.R'
-    'collocations_methods.R'
     'contextBundle_methods.R'
     'context_method.R'
     'context_methods.R'
     'cooccurrence_method.R'
+    'cooccurrencesBundle_class.R'
+    'cooccurrencesBundle_methods.R'
+    'cooccurrencesReshaped_class.R'
+    'cooccurrencesReshaped_methods.R'
+    'cooccurrences_method.R'
+    'cooccurrences_methods.R'
     'cpos_method.R'
     'ctm_method.R'
     'dispersion_class.R'
@@ -76,6 +78,7 @@ Collate:
     'enrich_method.R'
     'frequencies_method.R'
     'getEncoding_method.R'
+    'getTermFrequencyMatrix_method.R'
     'getTerms_method.R'
     'getTokenStream_method.R'
     'html_method.R'
@@ -116,3 +119,4 @@ Collate:
     'view_method.R'
     'weigh_method.R'
     'zoom_method.R'
+    'element_class.R'

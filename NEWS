@@ -18,6 +18,13 @@ planned changes:
  * rename statisticalTest to method
  * include partition as slot in classes
 
+v0.5.3
+  * renamed collocations to cooccurrences, seems more appropriate
+  * 
+  
+v0.5.2
+  * multicore for term frequency counts (param for partition)
+
 v0.5.0
   * renamed xxxCluster to xxxBundle, bundle-superclass introduced
   * slot label/labels renamed to name/names

@@ -11,8 +11,8 @@
 \usage{
 tf(object, ...)
 
-\S4method{tf}{partition}(object, query, pAttribute = NULL, method = "in",
-  mc = F, verbose = T)
+\S4method{tf}{partition}(object, query = NULL, pAttribute = NULL,
+  method = "in", mc = F, verbose = T)
 
 \S4method{tf}{partitionBundle}(object, query, pAttribute = NULL,
   method = "in", rel = FALSE)

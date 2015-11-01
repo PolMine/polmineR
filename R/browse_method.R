@@ -13,6 +13,8 @@ NULL
 #' @exportMethod browse
 setGeneric("browse", function(object, ...) standardGeneric("browse"))
 
+#' @rdname polmineR-generics
+setGeneric("browse<-", function(x, value) standardGeneric("browse<-"))
 
 #' @rdname browse
 setMethod("browse", "textstat", function(object){
@@ -84,6 +86,19 @@ setMethod("browse", "kwic", function(object, colnames=NULL){
   }
   retval <- show(htmlDir)
   retval
+})
+
+#' @rdname session
+setMethod("browse", "session", function(object) object@browse)
+
+#' @exportMethod browse<-
+setGeneric("browse<-", function(x, value) standardGeneric("browse<-"))
+
+#' @rdname session
+#' @exportMethod browse<-
+setReplaceMethod("browse", signature=c(x="session", value="logical"), function(x, value) {
+  x@browse <- value
+  x
 })
 
 

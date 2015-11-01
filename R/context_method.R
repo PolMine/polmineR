@@ -2,13 +2,6 @@
 NULL
 
 
-##################################################################
-#                                                                #
-#  Methods that can be applied to objects of the class 'context' #
-#                                                                #
-##################################################################
-
-
 
 #' @param object a partition or a partitionBundle object
 #' @param ... further arguments
@@ -19,9 +12,9 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 
 #' Analyze context of a node word
 #' 
-#' Retrieve the concordances of a token and calculate the log-likelihood test
-#' for collocates For formulating the query, CPQ syntax may be used (see
-#' examples).
+#' Retrieve the word context of a token, checking for the boundaries of a XML
+#' region. For formulating the query, CPQ syntax may be used (see
+#' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
 #' @param object a partition or a partitionBundle object
 #' @param query query, which may by a character vector or a cqpQuery object
@@ -50,8 +43,8 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @author Andreas Blaette
 #' @aliases context context,partition-method as.matrix,contextBundle-method
 #'   as.TermContextMatrix,contextBundle-method context,contextBundle-method
-#'   context,partitionBundle-method ll ll-method context,collocations-method
-#'   context,collocations-method
+#'   context,partitionBundle-method ll ll-method context,cooccurrences-method
+#'   context,cooccurrences-method
 #' @examples
 #' \dontrun{
 #' p <- partition("PLPRBTTXT", list(text_type="speech"))
@@ -78,7 +71,7 @@ setMethod(
     mc=NULL, verbose=TRUE
   ) {
     if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-    if (!pAttribute %in% names(object@tf) && !is.null(statisticalTest)) {
+    if (!pAttribute %in% object@pAttribute && !is.null(statisticalTest)) {
       if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
       object <- enrich(object, tf=pAttribute)
     }
@@ -142,7 +135,7 @@ setMethod(
         id=as.integer(names(wc)),
         countCoi=as.integer(unname(wc))
         )
-      ctxt@stat$countCorpus <- object@tf[[pAttribute]][match(ctxt@stat[,"id"], object@tf[[pAttribute]][,1]),2]
+      ctxt@stat$countCorpus <- object@tf[match(ctxt@stat[,"id"], object@tf[,1]),2]
       rownames(ctxt@stat) <- cqi_id2str(corpus.pAttribute, ctxt@stat[,"id"])
       Encoding(rownames(ctxt@stat)) <- object@encoding
       if ("ll" %in% statisticalTest){
@@ -315,7 +308,7 @@ setMethod("context", "partitionBundle", function(
 
 #' @param complete enhance completely
 #' @rdname context-method
-setMethod("context", "collocations", function(object, query, complete=FALSE){
+setMethod("context", "cooccurrences", function(object, query, complete=FALSE){
   newObject <- new(
     "context",
     query=query,

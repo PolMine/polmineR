@@ -1,7 +1,7 @@
-setGeneric("collocations", function(object, ...){standardGeneric("collocations")})
+setGeneric("cooccurrences", function(object, ...){standardGeneric("cooccurrences")})
 
 
-#' calculate all collocations in a partition
+#' calculate all cooccurrences in a partition
 #' 
 #' the result is meant to serve as a result for an analysis of collocation graphs
 #' 
@@ -14,25 +14,23 @@ setGeneric("collocations", function(object, ...){standardGeneric("collocations")
 #' @param progress logical, whether to show progress bar
 #' @param mc whether to use multicore
 #' @return a data frame
-#' @exportMethod collocations
+#' @exportMethod cooccurrences
 #' @docType methods
 #' @author Andreas Blaette
-#' @export collocations
-#' @name collocations
-#' @rdname collocations-method
-#' @aliases collocations collocations-method collocations,partition-method collocations,partitionBundle-method
+#' @export cooccurrences
+#' @name cooccurrences
+#' @rdname cooccurrences-method
+#' @aliases cooccurrences cooccurrences-method cooccurrences,partition-method cooccurrences,partitionBundle-method
 #' @examples
 #' \dontrun{
 #' bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
-#' bt17merkelColl <- collocations(bt17merkel)
+#' bt17merkelColl <- cooccurrences(bt17merkel)
 #' }
-setMethod("collocations", "partition", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), progress=TRUE, mc=FALSE){
-  if (!pAttribute %in% names(object@tf)){
-    object <- enrich(object, tf=pAttribute)
-  }
+setMethod("cooccurrences", "partition", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), progress=TRUE, mc=FALSE){
+  if (!pAttribute %in% object@pAttribute) object <- enrich(object, tf=pAttribute)
   if (mc == TRUE) noCores <- slot(get('session', '.GlobalEnv'), "cores")
   coll <- new(
-    "collocations",
+    "cooccurrences",
     pAttribute=pAttribute, posFilter=posFilter,
     leftContext=window, rightContext=window,
     corpus=object@corpus, encoding=object@encoding,
@@ -100,33 +98,33 @@ setMethod("collocations", "partition", function(object, pAttribute="word", windo
   message('... preparing stat table')
   coll@stat <- data.frame(
     nodeId=unlist(lapply(names(raw), function(x) rep(as.numeric(x), times=length(raw[[x]])))),
-    collocateId=unlist(lapply(raw, function(x) as.numeric(names(x)))),
-    collocateWindowFreq=unlist(lapply(raw, function(x) unname(x))),
+    cooccurrenceId=unlist(lapply(raw, function(x) as.numeric(names(x)))),
+    cooccurrenceWindowFreq=unlist(lapply(raw, function(x) unname(x))),
     windowSize=unlist(lapply(raw, function(x) rep(sum(x), times=length(x))))
   )
-  coll@stat$collocateCorpusFreq <- object@tf[[pAttribute]][match(coll@stat[,"collocateId"], object@tf[[pAttribute]][,1]),2]
+  coll@stat$cooccurrenceCorpusFreq <- object@tf[match(coll@stat[,"cooccurrenceId"], object@tf[,1]),2]
   nodeStr <- as.vector(cqi_id2str(tokenAttr, coll@stat[,"nodeId"]))
   Encoding(nodeStr) <- object@encoding
   coll@stat <- data.frame(
     node=nodeStr,
-    collocate=as.vector(cqi_id2str(tokenAttr, coll@stat[,"collocateId"])),
-    coll@stat, nodeTf=object@tf[[pAttribute]][nodeStr, "tf"],
+    cooccurrence=as.vector(cqi_id2str(tokenAttr, coll@stat[,"cooccurrenceId"])),
+    coll@stat, nodeTf=object@tf[nodeStr, "tf"],
     stringsAsFactors=FALSE
     )
-  Encoding(coll@stat[,"collocate"]) <- object@encoding
+  Encoding(coll@stat[,"cooccurrence"]) <- object@encoding
   if ("ll" %in% method) {
     message('... g2-Test')
     coll <- ll(coll, partitionSize=object@size)
     coll@stat <- coll@stat[order(coll@stat[,"ll"], decreasing=TRUE),]
     coll@stat <- data.frame(rank=c(1:nrow(coll@stat)), coll@stat, stringsAsFactors=FALSE)
   }
-  rownames(coll@stat) <- paste(coll@stat[,"node"], "->", coll@stat[,"collocate"], sep="")
+  rownames(coll@stat) <- paste(coll@stat[,"node"], "->", coll@stat[,"cooccurrence"], sep="")
   coll
 })
 
-setMethod("collocations", "partitionBundle", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
+setMethod("cooccurrences", "partitionBundle", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, posFilter=c("ADJA", "NN"), mc=FALSE){
   bundle <- new(
-    "collocationsBundle",
+    "cooccurrencesBundle",
     encoding=unique(vapply(object@objects, function(x) x@encoding, FUN.VALUE="character")),
     corpus=unique(vapply(object@objects, function(x) x@corpus, FUN.VALUE="character"))
     )
@@ -134,16 +132,16 @@ setMethod("collocations", "partitionBundle", function(object, pAttribute="word",
     bundle@objects <- lapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
-        message('Calculating collocations for partition ', x@name)
-        collocations(x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter)
+        message('Calculating cooccurrences for partition ', x@name)
+        cooccurrences(x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter)
       })
     
   } else {
     bundle@objects <- mclapply(
       setNames(object@objects, names(object@objects)),
       function(x) {
-        message('Calculating collocations for partition ', x@name)
-        collocations(
+        message('Calculating cooccurrences for partition ', x@name)
+        cooccurrences(
           x, pAttribute=pAttribute, window=window, method=method, filter=filter, posFilter=posFilter, mc=FALSE, progress=FALSE
           )
       }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    

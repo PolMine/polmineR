@@ -30,9 +30,9 @@ setMethod("summary", "partitionBundle", function (object) {
     token=unlist(lapply(object@objects, function(x) x@size)),
     stringsAsFactors=FALSE
    )
-  pAttr <- unique(unlist(lapply(object@objects, function(x) names(x@tf))))
-  if (!is.null(pAttr)){
-    raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@tf[[x]]))))
+  pAttr <- unique(unlist(lapply(object@objects, function(x) x@pAttribute)))
+  if (length(pAttr == 1)){
+    raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@tf))))
     raw <- do.call(data.frame, raw)
     colnames(raw) <- paste("unique_", pAttr, sep="")
     summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
@@ -96,7 +96,7 @@ setMethod('[[', 'partitionBundle', function(x,i){
 #' @rdname partitionBundle-class
 #' @docType methods
 setMethod('[', 'partitionBundle', function(x,i){
-  a <- unname(unlist(lapply(x@objects, function(y) y@tf$word[i,2])))
+  a <- unname(unlist(lapply(x@objects, function(y) y@tf[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
     partition=names(x@objects),
@@ -107,6 +107,17 @@ setMethod('[', 'partitionBundle', function(x,i){
   dist
 }
 )
+
+#' @exportMethod +
+#' @docType methods
+#' @rdname bundle-class
+setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
+  if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
+  e1@objects[[length(e1@objects)+1]] <- e2
+  names(e1@objects)[length(e1@objects)] <- e2@name
+  e1
+})
+
 
 
 #' Turn a partition bundle into a matrix
@@ -129,31 +140,6 @@ setMethod("as.matrix", "partitionBundle", function(x, pAttribute, weight=NULL, r
   as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
 })
 
-
-#' @exportMethod +
-#' @rdname partitionBundle-class
-#' @param e1 partition 1
-#' @param e2 partition 2
-#' @docType methods
-setMethod("+", signature(e1="partitionBundle", e2="partitionBundle"), function(e1, e2){
-  newPartition <- new("partitionBundle")
-  newPartition@objects <- c(e1@objects, e2@objects)
-  corpus <- unique(e1@corpus, e2@corpus)
-  encoding <- unique(e1@encoding, e2@encoding)
-  explanation <- paste(e1@explanation, e2@explanation)
-  xml <- "not available"
-  newPartition
-})
-
-#' @exportMethod +
-#' @docType methods
-#' @rdname partitionBundle-class
-setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
-  if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
-  e1@objects[[length(e1@objects)+1]] <- e2
-  names(e1@objects)[length(e1@objects)] <- e2@name
-  e1
-})
 
 
 # setMethod("plot", signature(x="partitionBundle"),
@@ -183,7 +169,7 @@ setMethod("names", "partitionBundle", function(x){
 
 #' @rdname partitionBundle-class
 #' @docType methods
-#' @exportMethod name<-
+#' @exportMethod names<-
 setReplaceMethod(
   "names",
   signature=c(x="partitionBundle", value="character"),
@@ -220,3 +206,5 @@ setMethod("unique", "partitionBundle", function(x){
 #' @exportMethod length
 #' @rdname partitionBundle-class
 setMethod("length", "partitionBundle", function(x) length(x@objects))
+
+
