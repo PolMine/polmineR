@@ -1,4 +1,4 @@
-#' @include element_class.R polmineR_package.R
+#' @include polmineR_package.R
 NULL
 
 # this file includes the partition class, the constructor function 'partition'

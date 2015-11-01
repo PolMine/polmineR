@@ -50,18 +50,9 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @rdname partition
 #' @aliases partition
 setMethod("partition", "character", function(
-  object,
-  def=NULL,
-  name=c(""),
-  encoding=NULL,
-  tf=NULL,
-  meta=NULL,
-  regex=FALSE,
-  xml="flat",
-  id2str=TRUE,
-  type=NULL,
-  mc=FALSE,
-  verbose=TRUE
+  object, def=NULL, name=c(""),
+  encoding=NULL, tf=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
+  mc=FALSE, verbose=TRUE
 ) {
   corpus <- object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
@@ -126,7 +117,7 @@ setMethod("partition", "character", function(
     Partition@size <- size(Partition)
     if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
     if (!is.null(tf)) {
-      stopifnot(is.character(tf) == TRUE, length(tf) == 1, tf %in% pAttributes(object))  
+      stopifnot(is.character(tf) == TRUE, length(tf) <= 2, all(tf %in% pAttributes(object)))
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf, ')')  
       Partition@tf <- getTermFrequencyMatrix(.Object=Partition, pAttribute=tf, id2str=id2str, mc=mc)
       Partition@pAttribute <- tf

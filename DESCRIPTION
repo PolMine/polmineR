@@ -73,6 +73,7 @@ Collate:
     'dispersion_method.R'
     'dispersion_methods.R'
     'egoNetwork_method.R'
+    'element_class.R'
     'encoding_method.R'
     'keynessBundle_class.R'
     'enrich_method.R'
@@ -119,4 +120,3 @@ Collate:
     'view_method.R'
     'weigh_method.R'
     'zoom_method.R'
-    'element_class.R'

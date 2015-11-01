@@ -1,3 +1,6 @@
+#' @include partition_class.R keyness_class.R context_class.R cooccurrences_class.R
+NULL
+
 #' virtual superclass for elementary classes
 #' 
 #' @exportClass element

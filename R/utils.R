@@ -333,4 +333,13 @@ as.cqp <- function(queries, collapse=FALSE){
   matrixFinal
 }
 
+.splitMatrixIntoEquallySizedParts <- function(x, n){
+  chunkFactor <- cut(
+    c(1:nrow(x)),
+    unique(c(1, floor(c(1:(n-1))*(nrow(x)/n)), nrow(x))),
+    include.lowest=TRUE
+  )
+  chunkedMatrix <- split(x, chunkFactor)
+  lapply(chunkedMatrix, function(m) matrix(m, ncol=ncol(x)))
+}
 

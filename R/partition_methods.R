@@ -193,3 +193,28 @@ setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
 #' @exportMethod length
 #' @rdname partition-class
 setMethod("length", "partition", function(x) x@size)
+
+
+#' @exportMethod as.data.frame
+#' @rdname partition-class
+setMethod("as.data.frame", "partition", function(x){
+  df <- data.frame(
+    tf=x@tf[,"tf"],
+    rel=x@tf[,"tf"] / x@size
+    )
+  if (length(x@pAttribute == 2)){
+    df[[x@pAttribute[1]]] <- gsub("^(.*?)//.*?$", "\\1", rownames(df))
+    df[[x@pAttribute[2]]] <- gsub("^.*?//(.*?)$", "\\1", rownames(x@tf))
+    df <- df[, c(x@pAttribute[1], x@pAttribute[2], "tf", "rel")]
+    df <- df[order(df[,"tf"], decreasing=TRUE),]
+  }
+  df
+})
+
+setMethod("view", "partition", function(.Object){
+  View(as.data.frame(.Object))
+})
+
+#' @exportMethod hist
+#' @rdname partition-class
+setMethod("hist", "partition", function(x, ...){hist(x@tf[,"tf"], ...)})
