@@ -15,7 +15,7 @@ NULL
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
 #' @slot sAttribute Object of ...
 #' @slot corpus Object of class \code{"character"} the CWB corpus used
-#' @slot stat Object of class \code{"data.frame"} statistics of the analysis
+#' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @slot posFilter Object of class \code{"character"} part-of-speech tags filtered
 #' @slot cpos Object of class \code{"list"} corpus positions of the hits
@@ -54,7 +54,7 @@ setClass("context",
                         pAttribute="character",
                         sAttribute="character",
                         corpus="character",
-                        stat="data.frame",
+                        stat="data.table",
                         encoding="character",
                         posFilter="character",
                         cpos="list",

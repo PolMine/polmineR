@@ -35,12 +35,8 @@ setMethod("ll", "context", function(object, partitionObject){
     corpus.total=partitionObject@size
     )
   
-  object@stat <- cbind(
-    object@stat,
-    expCoi=mat[,"expCoi"],
-    expCorpus=mat[,"expCorpus"],
-    ll=mat[, "ll"]
-    )
+  object@stat[,expCoi:=mat[,"expCoi"]][,expCorpus:=mat[,"expCorpus"]]
+  object@stat[,ll:=mat[, "ll"]]
   object@statisticalTest <- c(object@statisticalTest, "ll")
   return(object)
 })

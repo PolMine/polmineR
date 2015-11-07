@@ -18,3 +18,22 @@ setMethod("view", "kwic", function(.Object){
 setMethod("view", "textstat", function(.Object){
   View(.Object@stat)
 })
+
+setMethod("view", "partition", function(.Object){
+  View(as.data.frame(.Object))
+})
+
+setMethod("view", "context", function(.Object){
+  DT <- .Object@stat
+  if (length(.Object@pAttribute) == 1){
+    tokenCols <- "token"
+  } else {
+    tokenCols <- .Object@pAttribute
+  }
+  what <- c(
+    "rank", tokenCols,
+    "countCoi", "countCorpus", "expCoi", "expCorpus",
+    .Object@statisticalTest
+    )
+  View(DT[, what, with=FALSE])
+})

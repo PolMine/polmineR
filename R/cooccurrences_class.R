@@ -39,6 +39,6 @@ setClass("cooccurrences",
            method="character",
            cutoff="list",
            svg="character"
-         ),
-         contains=c("textstat")
+         )
+#         , contains=c("textstat")
 )

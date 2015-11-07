@@ -24,9 +24,6 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
 #' @param minSignificance minimum log-likelihood value
-#' @param posFilter character vector with the POS tags to be included - may not
-#'   be empty!!
-#' @param filterType either "include" or "exclude"
 #' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
 #'   context
 #' @param positivelist character vector or numeric vector: include a query hit
@@ -52,6 +49,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' }
 #' @importFrom parallel mclapply
 #' @importFrom rcqp cqi_cpos2lbound cqi_cpos2rbound
+#' @import data.table
 #' @exportMethod context
 #' @rdname context-method
 #' @name context
@@ -65,13 +63,13 @@ setMethod(
     object, query,
     pAttribute=NULL, sAttribute="text_id",
     leftContext=NULL, rightContext=NULL,
-    minSignificance=0, posFilter=NULL, filterType="exclude",
+    minSignificance=0,
     stoplist=NULL, positivelist=NULL,
     statisticalTest="ll",
     mc=NULL, verbose=TRUE
   ) {
     if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-    if (!pAttribute %in% object@pAttribute && !is.null(statisticalTest)) {
+    if (!all(pAttribute == object@pAttribute) && !is.null(statisticalTest)) {
       if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
       object <- enrich(object, tf=pAttribute)
     }
@@ -86,10 +84,11 @@ setMethod(
     
     ctxt <- new(
       "context",
-      query=query, pAttribute=pAttribute, sAttribute=sAttribute, corpus=object@corpus,
+      query=query, pAttribute=pAttribute, stat=data.table(),
+      sAttribute=sAttribute, corpus=object@corpus,
       leftContext=ifelse(is.character(leftContext), 0, leftContext),
       rightContext=ifelse(is.character(rightContext), 0, rightContext),
-      encoding=object@encoding, posFilter=as.character(posFilter),
+      encoding=object@encoding, 
       partition=object@name, partitionSize=object@size
     )
     ctxt@call <- deparse(match.call())
@@ -97,7 +96,7 @@ setMethod(
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
     # query <- .adjustEncoding(query, object@encoding)
     # Encoding(query) <- ctxt@encoding
-    hits <- cpos(object, query, pAttribute)
+    hits <- cpos(object, query, pAttribute[1])
     if (is.null(hits)){
       if (verbose==TRUE) message(' -> no hits')
       return(NULL)
@@ -116,9 +115,9 @@ setMethod(
     if (verbose==TRUE) message("... counting tokens in context ")  
         
     if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds, positivelistIds, method))
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds, positivelistIds, method))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds, positivelistIds, method))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds, positivelistIds, method))
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)]
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
@@ -129,20 +128,49 @@ setMethod(
     if (verbose==TRUE) message('... context size: ', ctxt@size)
     ctxt@frequency <- length(bigBag)
     # if statisticalTest is 'NULL' the following can be ommitted
-    if (!is.null(statisticalTest)){
-      wc <- table(unlist(lapply(bigBag, function(x) x$id)))
-      ctxt@stat <- data.frame(
-        id=as.integer(names(wc)),
-        countCoi=as.integer(unname(wc))
-        )
-      ctxt@stat$countCorpus <- object@tf[match(ctxt@stat[,"id"], object@tf[,1]),2]
-      rownames(ctxt@stat) <- cqi_id2str(corpus.pAttribute, ctxt@stat[,"id"])
-      Encoding(rownames(ctxt@stat)) <- object@encoding
-      if ("ll" %in% statisticalTest){
-        if (verbose==TRUE) message("... performing log likelihood test")
-        # calc <- .g2Statistic(as.integer(names(wc)), unname(wc), ctxt@size, object, pAttribute)
-        ctxt <- ll(ctxt, object)
-      }
+    if (length(pAttribute) == 1){
+      tokenIds <- unlist(lapply(bigBag, function(x) x$ids[[1]]))
+      tabulatedIds <- tabulate(tokenIds)
+      toKeep <- which(tabulatedIds > 0)
+      ctxt@stat <- data.table(
+        id=c(1:max(tokenIds))[toKeep],
+        countCoi=tabulatedIds[toKeep]
+      )
+      idsAsString <- cqi_id2str(paste(object@corpus, ".", pAttribute, sep=""), ids=ctxt@stat$id)
+      Encoding(idsAsString) <- object@encoding
+      idsAsString <- enc2utf8(idsAsString)
+      Encoding(idsAsString) <- "unknown"
+      ctxt@stat[, token := idsAsString]
+      setcolorder(ctxt@stat, c("id", "token", "countCoi"))
+      setkey(ctxt@stat, "token")
+    } else if (length(pAttribute) == 2){
+      idList <- list(
+        tokenIds=unlist(lapply(bigBag, function(x) x$ids[[1]])),
+        posIds=unlist(lapply(bigBag, function(x) x$ids[[2]]))
+      )
+      statRaw <- getTermFrequencyMatrix(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
+      colnames(statRaw) <- c("id", "countCoi")
+      ctxt@stat <- data.table(statRaw)
+      ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", rownames(statRaw))]
+      ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", rownames(statRaw))]
+      token <- rownames(statRaw)
+      Encoding(token) <- "unknown"
+      ctxt@stat[, "token" := token]
+      setcolorder(ctxt@stat, c("token", "id", pAttribute[[1]], pAttribute[[2]], "countCoi"))
+      setkey(ctxt@stat, "token")
+    }
+    # wc <- table(unlist(lapply(bigBag, function(x) x$id)))
+     if (!is.null(statisticalTest)){
+       token <- rownames(object@tf)
+       Encoding(token) <- "unknown"
+       tfAsDt <- data.table(token=token, tf=object@tf[,"tf"], key="token")
+       # Encoding(ctxt@stat[["token"]]) <- "unknown"
+       
+       ctxt@stat[,countCorpus := merge(ctxt@stat, tfAsDt, all.x=TRUE, all.y=FALSE)[["tf"]]]
+       if ("ll" %in% statisticalTest){
+         if (verbose==TRUE) message("... performing log likelihood test")
+         ctxt <- ll(ctxt, object)
+       }
       if ("pmi" %in% statisticalTest){
         if (verbose==TRUE) message("... calculating pointwise mutual information")
         ctxt <- pmi(ctxt)
@@ -152,12 +180,9 @@ setMethod(
         if (verbose==TRUE) message("... calculating t-test")
         ctxt <- tTest(ctxt, object)
       }
-      ctxt@stat <- data.frame(
-        rank=1:nrow(ctxt@stat),
-        ctxt@stat
-      )
-      ctxt <- trim(ctxt, minSignificance=minSignificance, rankBy=ctxt@statisticalTest[1])
-    }
+      ctxt@stat[, rank := c(1:nrow(ctxt@stat))]
+#       ctxt <- trim(ctxt, minSignificance=minSignificance, rankBy=ctxt@statisticalTest[1])
+     }
     ctxt
   })
 
@@ -238,7 +263,7 @@ setMethod(
   
 )
 
-.surrounding <- function (set, ctxt, leftContext, rightContext, corpus.sAttribute, filterType, stoplistIds=NULL, positivelistIds=NULL, method) {
+.surrounding <- function (set, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds=NULL, positivelistIds=NULL, method) {
   cposList <- .makeLeftRightCpos[[method]](
     set,
     leftContext=leftContext,
@@ -246,14 +271,19 @@ setMethod(
     corpus.sAttribute=corpus.sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
-  posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
-  id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), posChecked)
+  # posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
+  # id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
+  ids <- lapply(
+    ctxt@pAttribute,
+    function(pAttr) cqi_cpos2id(paste(ctxt@corpus,".", pAttr, sep=""), cpos) 
+    )
+  
   if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
     exclude <- FALSE
-    ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
-    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids)) {exclude <- TRUE}
+    # ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
+    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids[[1]])) {exclude <- TRUE}
     if (!is.null(positivelistIds)) {
-      if (any(positivelistIds %in% ids) == FALSE) { exclude <- TRUE }
+      if (any(positivelistIds %in% ids[[1]]) == FALSE) { exclude <- TRUE }
     }
   } else { 
     exclude <- FALSE
@@ -261,7 +291,7 @@ setMethod(
   if (exclude == TRUE){
     retval <- NULL
   } else {
-    retval <- list(cpos=cposList, id=id)
+    retval <- list(cpos=cposList, ids=ids)
   }
   return(retval)
 }
@@ -269,14 +299,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionBundle", function(
-  object, query, pAttribute=NULL, sAttribute="text_id",
-  leftContext=NULL, rightContext=NULL,
-  minSignificance=NULL, posFilter=NULL, filterType="exclude",
-  stoplist=c(), positivelist=NULL,
-  statisticalTest="ll",
-  mc=FALSE, verbose=TRUE  
-) {
+setMethod("context", "partitionBundle", function(object, query, ...){
   contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
@@ -290,15 +313,7 @@ setMethod("context", "partitionBundle", function(
     object@objects,
     function(x) {
       if (verbose == TRUE) message("... proceeding to partition ", x@name)
-      context(
-        x, query,
-        pAttribute=pAttribute, sAttribute=sAttribute,
-        leftContext=leftContext, rightContext=rightContext,
-        minSignificance=minSignificance, posFilter=posFilter, filterType=filterType,
-        stoplist=stoplist, positivelist=positivelist,
-        statisticalTest=statisticalTest,
-        mc=mc, verbose=verbose
-      )
+      context(x, query, ...)
       },
     simplify = TRUE,
     USE.NAMES = TRUE

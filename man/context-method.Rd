@@ -16,15 +16,10 @@
 \usage{
 \S4method{context}{partition}(object, query, pAttribute = NULL,
   sAttribute = "text_id", leftContext = NULL, rightContext = NULL,
-  minSignificance = 0, posFilter = NULL, filterType = "exclude",
-  stoplist = NULL, positivelist = NULL, statisticalTest = "ll",
-  mc = NULL, verbose = TRUE)
+  minSignificance = 0, stoplist = NULL, positivelist = NULL,
+  statisticalTest = "ll", mc = NULL, verbose = TRUE)
 
-\S4method{context}{partitionBundle}(object, query, pAttribute = NULL,
-  sAttribute = "text_id", leftContext = NULL, rightContext = NULL,
-  minSignificance = NULL, posFilter = NULL, filterType = "exclude",
-  stoplist = c(), positivelist = NULL, statisticalTest = "ll",
-  mc = FALSE, verbose = TRUE)
+\S4method{context}{partitionBundle}(object, query, ...)
 
 \S4method{context}{cooccurrences}(object, query, complete = FALSE)
 
@@ -45,11 +40,6 @@ the region defined by the s-attribute}
 \item{rightContext}{no of tokens to the right of the node word}
 
 \item{minSignificance}{minimum log-likelihood value}
-
-\item{posFilter}{character vector with the POS tags to be included - may not
-be empty!!}
-
-\item{filterType}{either "include" or "exclude"}
 
 \item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
 context}

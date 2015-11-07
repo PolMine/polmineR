@@ -33,81 +33,94 @@ NULL
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 
-#' @docType methods
-#' @rdname trim-method
-setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
-  if (!is.null(cutoff)){
-    # ensure that colnames provided are actually available
-    if (!all(names(cutoff) %in% colnames(object@stat))){
-      warning("PLEASE CHECK: one or more of the colnames provided in the cutoff-list are not available")
-    }
-    nrowBeforeCut <- nrow(object@stat)
-    for (cut in names(cutoff)){
-      object@stat <- object@stat[which(object@stat[,cut] >= cutoff[[cut]]),] 
-    }
-    message("... cutoff levels have been applied - ", (nrowBeforeCut - nrow(object@stat)), " rows have been dropped")
-  }
-  return(object)
-})
+# #' @docType methods
+# #' @rdname trim-method
+# setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
+#   if (!is.null(cutoff)){
+#     # ensure that colnames provided are actually available
+#     if (!all(names(cutoff) %in% colnames(object@stat))){
+#       warning("PLEASE CHECK: one or more of the colnames provided in the cutoff-list are not available")
+#     }
+#     nrowBeforeCut <- nrow(object@stat)
+#     for (cut in names(cutoff)){
+#       object@stat <- object@stat[which(object@stat[,cut] >= cutoff[[cut]]),] 
+#     }
+#     message("... cutoff levels have been applied - ", (nrowBeforeCut - nrow(object@stat)), " rows have been dropped")
+#   }
+#   return(object)
+# })
 
 #' @aliases trim,context-method
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "context", function(object, minSignificance=0, minFrequency=0, maxRank=0, rankBy=NULL, posFilter=NULL, tokenFilter=NULL){
-  if (is.null(rankBy)) {
-    test <- object@statisticalTest[1]  
-  } else {
-    test <- rankBy
+setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list(), keep=list(), rankBy=NULL){
+  if (length(min) > 0){
+    stopifnot(all((names(min) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
+    rowsToKeep <- as.vector(unique(sapply(
+     names(min),
+     function(column) which(object@stat[[column]] >= min[[column]])
+    )))
+    if (length(rowsToKeep) > 0) object@stat <- object@stat[rowsToKeep,]
   }
-  if (maxRank==0) maxRank=nrow(object@stat)
-  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-  object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
-  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
-  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
-  if (!is.null(tokenFilter)){
-    object@stat <- object@stat[!rownames(object@stat) %in% tokenFilter,]
+  if (length(max) > 0){
+    stopifnot(all((names(max) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
+    rowsToKeep <- as.vector(unique(sapply(
+      names(max),
+      function(column) which(object@stat[[column]] <= max[[column]])
+    )))
+    if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToKeep,]
   }
-  if (!is.null(posFilter)) {
-    if(is.element("pos", colnames(object@stat))==FALSE){
-      cat('... adding part-of-speech tags to statistics-table (may take a while)\n')
-      object <- .addPos(object)      
-    }
-    object@stat<- object@stat[which(object@stat[,"pos"] %in% posFilter),]
+  if (length(drop) > 0){
+    stopifnot(all((names(drop) %in% colnames(object@stat))))
+    rowsToDrop <- as.vector(unlist(sapply(
+      names(drop),
+      function(column) sapply(drop[[column]], function(x) grep(x, object@stat[[column]]))
+      )))
+    if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToDrop,]
   }
+  if (length(keep) > 0){
+    stopifnot(all((names(keep) %in% colnames(object@stat))))
+    rowsToKeep <- as.vector(unique(sapply(
+      names(keep),
+      function(column) sapply(keep[[column]], function(x) grep(x, object@stat[[column]]))
+    )))
+    object@stat <- object@stat[rowsToKeep,]
+  }
+  test <- ifelse(is.null(rankBy), object@statisticalTest[1], rankBy)
+  setorderv(object@stat, test, order=c(-1))
   object
 })
 
-#' @exportMethod trim
-#' @rdname trim-method
-#' @docType methods
-setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType="include", digits=NULL, verbose=TRUE){
-  if (maxRank==0) maxRank <- nrow(object@stat)
-  if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
-  if (is.null(rankBy)) {
-    test <- object@statisticalTest[1]
-  } else {
-    test <- rankBy
-  }
-  if (verbose == TRUE) message("... ordering results by ", test)
-  object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-  if (!is.null(minSignificance)) object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
-  object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
-  if (!is.null(tokenFilter)){
-    object@stat <- object@stat[.filter[[filterType]](rownames(object@stat), tokenFilter),]
-  }
-  if (!is.null(posFilter)){
-    object@stat <- object@stat[.filter[[filterType]](object@stat[, "pos"], posFilter),]
-  }
-  if (!is.null(digits)){
-    for (n in names(digits)){
-      object@stat[,n] <- round(object@stat[,n], digits[[n]])
-    }
-  }
-  object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-  object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
-  object
-})
+# #' @exportMethod trim
+# #' @rdname trim-method
+# #' @docType methods
+# setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType="include", digits=NULL, verbose=TRUE){
+#   if (maxRank==0) maxRank <- nrow(object@stat)
+#   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
+#   if (is.null(rankBy)) {
+#     test <- object@statisticalTest[1]
+#   } else {
+#     test <- rankBy
+#   }
+#   if (verbose == TRUE) message("... ordering results by ", test)
+#   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
+#   if (!is.null(minSignificance)) object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
+#   object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
+#   if (!is.null(tokenFilter)){
+#     object@stat <- object@stat[.filter[[filterType]](rownames(object@stat), tokenFilter),]
+#   }
+#   if (!is.null(posFilter)){
+#     object@stat <- object@stat[.filter[[filterType]](object@stat[, "pos"], posFilter),]
+#   }
+#   if (!is.null(digits)){
+#     for (n in names(digits)){
+#       object@stat[,n] <- round(object@stat[,n], digits[[n]])
+#     }
+#   }
+#   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
+#   object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
+#   object
+# })
 
 #' @docType methods
 #' @rdname trim-method

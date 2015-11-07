@@ -69,7 +69,7 @@ Based on a context object, get distribution of hits
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus used}
 
-\item{\code{stat}}{Object of class \code{"data.frame"} statistics of the analysis}
+\item{\code{stat}}{Object of class \code{"data.table"} statistics of the analysis}
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 

@@ -202,7 +202,7 @@ setMethod("as.data.frame", "partition", function(x){
     tf=x@tf[,"tf"],
     rel=x@tf[,"tf"] / x@size
     )
-  if (length(x@pAttribute == 2)){
+  if (length(x@pAttribute) == 2){
     df[[x@pAttribute[1]]] <- gsub("^(.*?)//.*?$", "\\1", rownames(df))
     df[[x@pAttribute[2]]] <- gsub("^.*?//(.*?)$", "\\1", rownames(x@tf))
     df <- df[, c(x@pAttribute[1], x@pAttribute[2], "tf", "rel")]
@@ -211,9 +211,10 @@ setMethod("as.data.frame", "partition", function(x){
   df
 })
 
-setMethod("view", "partition", function(.Object){
-  View(as.data.frame(.Object))
+setAs("partition", "data.table", function(from){
+  data.table(as.data.frame(from))
 })
+
 
 #' @exportMethod hist
 #' @rdname partition-class

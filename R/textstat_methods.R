@@ -27,7 +27,7 @@ setMethod("nrow", "textstat", function(x) nrow(x@stat))
 setMethod("round", "textstat", function(x, digits=2){
   columnClasses <- sapply(x@stat, function(column) is(column)[1])
   numericColumns <- which(columnClasses == "numeric")
-  for (i in numericColumns) x@stat[,i] <- round(x@stat[,i], digits)
+  for (i in numericColumns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
   x
 })
 

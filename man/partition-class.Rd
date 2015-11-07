@@ -5,6 +5,7 @@
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
 \alias{[[,partition,ANY-method}
+\alias{as.data.frame,partition-method}
 \alias{as.partitionBundle}
 \alias{as.partitionBundle,partition-method}
 \alias{corpus,partition-method}
@@ -12,6 +13,7 @@
 \alias{dissect,partition-method}
 \alias{export}
 \alias{export,partition-method}
+\alias{hist,partition-method}
 \alias{length,partition-method}
 \alias{name,partition-method}
 \alias{name<-,partition,character-method}
@@ -42,6 +44,10 @@
 \S4method{dissect}{partition}(object, dim, verbose = FALSE)
 
 \S4method{length}{partition}(x)
+
+\S4method{as.data.frame}{partition}(x)
+
+\S4method{hist}{partition}(x, ...)
 
 \S4method{corpus}{partition}(object)
 }

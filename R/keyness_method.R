@@ -127,7 +127,6 @@ setMethod("keyness", signature=c(x="partitionBundle"), function(
 
 
 #' @importFrom plyr ddply
-#' @importFrom data.table rbindlist
 #' @rdname keyness-method
 setMethod("keyness", "cooccurrences", function(
   x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE

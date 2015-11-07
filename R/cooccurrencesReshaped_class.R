@@ -37,8 +37,8 @@ setClass("cooccurrencesReshaped",
            method="character",
            cutoff="list",
            svg="character"
-         ),
-         contains=c("cooccurrences", "textstat")
+         )
+#         , contains=c("cooccurrences", "textstat")
 )
 
 #' Methods for manipulating cooccurrencesReshaped-class-objects

@@ -54,8 +54,8 @@ setClass("keyness",
                         digits="list",
                         cutoff="list",
                         call="character"
-         ),
-         contains=c("textstat")
+         )
+#         , contains=c("textstat")
 )
 
 #' @rdname keyness-class
@@ -73,7 +73,7 @@ setClass("keynessCooccurrences",
                         digits="list",
                         cutoff="list",
                         call="character"
-         ),
-         contains=c("keyness", "textstat")
+         )
+#         , contains=c("keyness", "textstat")
 )
 

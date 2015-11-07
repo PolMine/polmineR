@@ -31,10 +31,11 @@ setMethod("pmi", "context", function(object){
     countTarget=object@frequency,
     partitionSize=object@partitionSize
     )
-  object@stat <- data.frame(
-    object@stat,
-    pmi=mat[,4]
-    )
+  object@stat[,pmi := mat[,4]]
+#   object@stat <- data.frame(
+#     object@stat,
+#     pmi=mat[,4]
+#     )
   object@statisticalTest <- c(object@statisticalTest, "pmi")
   return(object)
 })

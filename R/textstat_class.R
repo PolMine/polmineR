@@ -1,14 +1,12 @@
 #' S4 textstat class
 #' 
-#' superclass for keyness and conctext class
+#' superclass for keyness and context class
 #' 
-#' @section Slots: \describe{ \item{\code{pAttribute}:}{Object of class
-#'   \code{"character"} p-attribute of the query } \item{\code{corpus}:}{Object
-#'   of class \code{"character"} the CWB corpus used } 
-#'   \item{\code{stat}:}{Object of class \code{"data.frame"} statistics of the
-#'   analysis } \item{\code{encoding}:}{Object of class \code{"character"}
-#'   encoding of the corpus } \item{\code{cutoff}:}{Object of class
-#'   \code{"list"} cutoff levels that have been applied } }
+#' @slot pAttribute Object of class \code{"character"} p-attribute of the query
+#' @slot corpus Object of class \code{"character"
+#' @slot stat Object of class \code{"data.frame"} statistics of the analysis
+#' @slot encoding Object of class \code{"character" encoding of the corpus
+#' @slot cutoff Object of class \code{"list"} cutoff levels that have been applied
 #' @param .Object an object
 #' @param x an object
 #' @param ... further parameters
@@ -19,10 +17,11 @@
 #' @docType class
 #' @exportClass textstat
 setClass("textstat",
-         representation(corpus="character",
-                        pAttribute="character",
-                        encoding="character",
-                        stat="data.frame",
-                        cutoff="list"
+         representation(
+           corpus="character",
+           pAttribute="character",
+           encoding="character",
+           stat="data.table",
+           cutoff="list"
          )
 )

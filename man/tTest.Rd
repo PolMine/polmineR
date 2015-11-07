@@ -6,12 +6,12 @@
 \alias{tTest,context-method}
 \title{perform t-test}
 \usage{
-tTest(object, ...)
+tTest(.Object, ...)
 
-\S4method{tTest}{context}(object, partitionObject)
+\S4method{tTest}{context}(.Object, partitionObject)
 }
 \arguments{
-\item{object}{a context or keyness object}
+\item{.Object}{a context or keyness object}
 
 \item{...}{further parameters}
 
