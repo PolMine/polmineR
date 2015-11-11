@@ -6,8 +6,7 @@
 \title{enrich partition object (S4 method)}
 \usage{
 \S4method{enrich}{partition}(object, size = FALSE, tf = NULL,
-  id2str = TRUE, meta = NULL, addPos = NULL, verbose = TRUE,
-  mc = FALSE)
+  id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -19,9 +18,9 @@ tables shall be generated}
 
 \item{meta}{character vector providing s-attributes for which metainformation shall be supplied}
 
-\item{addPos}{character vector providing p-attributes}
-
 \item{verbose}{logical, defaults to TRUE}
+
+\item{addPos}{character vector providing p-attributes}
 }
 \description{
 Fill slots of a partition object: Add object size, metainformation, pos.

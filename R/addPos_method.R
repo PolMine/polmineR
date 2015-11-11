@@ -71,7 +71,7 @@ setMethod("addPos", "partition", function(object, pAttribute){
   object@pos[[pAttribute]] <- apply(crosstab, 1, function(x) colnames(crosstab)[which.max(x)])
   Encoding(names(object@pos[[pAttribute]])) <- object@encoding
   # to make sure that there are no superfluous pos information
-  object@pos[[pAttribute]] <- object@pos[[pAttribute]][names(object@pos[[pAttribute]]) %in% rownames(object@tf)]
+  object@pos[[pAttribute]] <- object@pos[[pAttribute]][names(object@pos[[pAttribute]]) %in% rownames(object@stat)]
   object
 })
 

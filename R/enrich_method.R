@@ -37,19 +37,16 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @aliases enrich,partition-method
 #' @docType methods
 #' @rdname enrich-partition-method
-setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, id2str=TRUE, meta=NULL, addPos=NULL, verbose=TRUE, mc=FALSE){
+setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE){
   if (size == TRUE) object@size <- size(object)
   if (!is.null(tf)) {
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf, ')')  
-      object@tf <- getTermFrequencyMatrix(.Object=object, pAttribute=tf, id2str=id2str, mc=mc)
+      object@stat <- getTermFrequencies(.Object=object, pAttribute=tf, id2str=id2str, mc=mc)
       object@pAttribute <- tf
   }
   if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
     object <- .partition.metadata(object, meta)
-  }
-  if(!is.null(addPos)){
-    object <- addPos(object, addPos)
   }
   object
 })

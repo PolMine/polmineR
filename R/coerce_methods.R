@@ -74,12 +74,12 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, weight=NULL, 
   corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
   message("... putting together the matrix")
   i <- as.integer(unname(unlist(lapply(x@objects,
-                                       function(c) {a <- c@tf[,1]
+                                       function(c) {a <- c@stat[,1]
                                                     a <- a+1
                                                     a})
   )))
-  j <- unlist(lapply(c(1:length(x@objects)), function(m) rep(m,times=nrow(x@objects[[m]]@tf))))
-  v <- as.integer(unlist(lapply(x@objects, function(c) c@tf[,2])))
+  j <- unlist(lapply(c(1:length(x@objects)), function(m) rep(m,times=nrow(x@objects[[m]]@stat))))
+  v <- as.integer(unlist(lapply(x@objects, function(c) c@stat[,2])))
   attr <- paste(corpus, '.', pAttribute, sep='')
   lexicon.size <- cqi_lexicon_size(attr)
   mat <- simple_triplet_matrix(i=i, j=j, v=v,

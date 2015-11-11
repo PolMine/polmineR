@@ -24,3 +24,12 @@ setMethod("adjustEncoding", "character", function(.Object, corpusEncoding){
     }
   )
 })
+
+setGeneric("as.utf8", function(.Object, ...) standardGeneric("as.utf8"))
+
+setMethod("as.utf8", "character", function(.Object, from="latin1"){
+  Encoding(.Object) <- from
+  retval <- enc2utf8(.Object)
+  Encoding(retval) <- "unknown"
+  retval
+})

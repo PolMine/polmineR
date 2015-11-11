@@ -1,7 +1,6 @@
 planned changes:
 ----------------
  * streamline label-, labels- and names-method
- * turn .cpos2tf into a method (getTf)
  * names-method for partitionCluster, keynessCluster objects
  * remove empty rows in keynessCluster-object
  * show method for keynessCluster
@@ -17,6 +16,11 @@ planned changes:
  * check: why are there no negative chiSquare-values with tail(keyness-object)
  * rename statisticalTest to method
  * include partition as slot in classes
+
+v0.5.6
+  * slot tf renamed to stat, class is data.table now
+  * keyness_method moved to data.tables
+  * 
 
 v0.5.3
   * renamed collocations to cooccurrences, seems more appropriate

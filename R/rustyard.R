@@ -37,3 +37,31 @@
 #   tableToAdjust
 # }
 # 
+
+# #' @docType methods
+# #' @exportMethod trim
+# #' @rdname trim-method
+# setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, ...){
+#   rework <- object
+#   if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
+#   message("Trimming partition ", rework@name)
+#   if (!is.null(posFilter)) {
+#     if (! pAttribute %in% names(object@pos) ){
+#       message("... pos need to be added first")
+#       rework <- addPos(rework, pAttribute)
+#     }
+#     rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][rework@pos[[pAttribute]] %in% posFilter]
+#     rework@tf <- rework@tf[rownames(rework@tf) %in% names(rework@pos[[pAttribute]]),]
+#   }
+#   if (minFrequency > 0){
+#     rework@tf <- rework@tf[which(rework@tf[,"tf"] >= minFrequency),]
+#     rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf)]
+#   }
+#   if(!is.null(tokenFilter)) {
+#     tokenFilter <- .adjustEncoding(tokenFilter, rework@encoding)
+#     rework@tf <- rework@tf[which(rownames(rework@tf) %in% tokenFilter),]
+#   }
+#   rework 
+# })
+# 
+

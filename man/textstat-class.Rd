@@ -39,15 +39,19 @@
 \item{x}{textstat object}
 }
 \description{
-superclass for keyness and conctext class
+superclass for keyness and context class
 }
 \section{Slots}{
- \describe{ \item{\code{pAttribute}:}{Object of class
-  \code{"character"} p-attribute of the query } \item{\code{corpus}:}{Object
-  of class \code{"character"} the CWB corpus used }
-  \item{\code{stat}:}{Object of class \code{"data.frame"} statistics of the
-  analysis } \item{\code{encoding}:}{Object of class \code{"character"}
-  encoding of the corpus } \item{\code{cutoff}:}{Object of class
-  \code{"list"} cutoff levels that have been applied } }
-}
+
+\describe{
+\item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
+
+\item{\code{corpus}}{Object of class \code{"character"}}
+
+\item{\code{stat}}{Object of class \code{"data.frame"} statistics of the analysis}
+
+\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+
+\item{\code{cutoff}}{Object of class \code{"list"} cutoff levels that have been applied}
+}}
 

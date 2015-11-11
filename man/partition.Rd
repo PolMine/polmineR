@@ -6,6 +6,7 @@
 \alias{partition,character-method}
 \alias{partition,list-method}
 \alias{partition,missing-method}
+\alias{partition,partition-method}
 \title{Initialize a partition}
 \usage{
 \S4method{partition}{character}(object, def = NULL, name = c(""),
@@ -18,6 +19,9 @@
   type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{missing}()
+
+\S4method{partition}{partition}(object, def, name = c(""), regex = FALSE,
+  tf = NULL, id2str = TRUE, type = NULL, verbose = TRUE, mc = FALSE)
 }
 \arguments{
 \item{object}{character-vector - the CWB-corpus to be used}

@@ -19,9 +19,9 @@ setMethod("view", "textstat", function(.Object){
   View(.Object@stat)
 })
 
-setMethod("view", "partition", function(.Object){
-  View(as.data.frame(.Object))
-})
+# setMethod("view", "partition", function(.Object){
+#   View(.Object@stat)
+# })
 
 setMethod("view", "context", function(.Object){
   DT <- .Object@stat
@@ -36,4 +36,21 @@ setMethod("view", "context", function(.Object){
     .Object@statisticalTest
     )
   View(DT[, what, with=FALSE])
+})
+
+setMethod(view, "cooccurrences", function(.Object){
+  .Object <- round(.Object, digits=2)
+  colsToView <- c(
+    "rank", "node", "cooccurrence",
+    "nodeCorpusFreq", "cooccurrenceWindowFreq", "cooccurrenceCorpusFreq",
+    "windowSize", "expCorpus", "expCoi", "ll"
+    )
+  View(.Object@stat[, colsToView, with=FALSE])
+})
+
+setMethod(view, "cooccurrencesReshaped", function(.Object){
+  .Object <- round(.Object, digits=2)
+  colsToView <- c("a", "b", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a")
+  View(.Object@stat[, colsToView, with=FALSE])
+  
 })

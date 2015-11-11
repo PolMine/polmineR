@@ -148,25 +148,20 @@ setMethod(
         tokenIds=unlist(lapply(bigBag, function(x) x$ids[[1]])),
         posIds=unlist(lapply(bigBag, function(x) x$ids[[2]]))
       )
-      statRaw <- getTermFrequencyMatrix(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
-      colnames(statRaw) <- c("id", "countCoi")
-      ctxt@stat <- data.table(statRaw)
-      ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", rownames(statRaw))]
-      ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", rownames(statRaw))]
-      token <- rownames(statRaw)
+      statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
+      setnames(statRaw, c("token", "ids", "countCoi"))
+      ctxt@stat <- copy(statRaw)
+      ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", statRaw[["token"]])]
+      ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", statRaw[["token"]])]
+      token <- statRaw[["token"]]
       Encoding(token) <- "unknown"
       ctxt@stat[, "token" := token]
-      setcolorder(ctxt@stat, c("token", "id", pAttribute[[1]], pAttribute[[2]], "countCoi"))
+      setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "countCoi"))
       setkey(ctxt@stat, "token")
     }
     # wc <- table(unlist(lapply(bigBag, function(x) x$id)))
      if (!is.null(statisticalTest)){
-       token <- rownames(object@tf)
-       Encoding(token) <- "unknown"
-       tfAsDt <- data.table(token=token, tf=object@tf[,"tf"], key="token")
-       # Encoding(ctxt@stat[["token"]]) <- "unknown"
-       
-       ctxt@stat[,countCorpus := merge(ctxt@stat, tfAsDt, all.x=TRUE, all.y=FALSE)[["tf"]]]
+       ctxt@stat[,countCorpus := merge(ctxt@stat, object@stat, all.x=TRUE, all.y=FALSE)[["tf"]]]
        if ("ll" %in% statisticalTest){
          if (verbose==TRUE) message("... performing log likelihood test")
          ctxt <- ll(ctxt, object)

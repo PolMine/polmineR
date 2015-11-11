@@ -17,30 +17,35 @@
 \description{
 to keep results from a keyness analysis
 }
-\section{Objects from the class}{
-
-keyness objects are returned by the function call \code{keyness}
-}
-
 \section{Slots}{
 
 \describe{
-  \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
-  \item{\code{pAttribute}:}{Object of class \code{"character"} ~~ }
-  \item{\code{encoding}:}{Object of class \code{"character"} ~~ }
-  \item{\code{corpus}:}{Object of class \code{"character"} ~~ }
-  \item{\code{stat}:}{Object of class \code{"data.frame"} ~~ }
-  \item{\code{sizeCoi}:}{Object of class \code{"numeric"} ~~ }
-  \item{\code{sizeRef}:}{Object of class \code{"numeric"} ~~ }
-  \item{\code{included}:}{Object of class \code{"logical"} whether corpus of interest is included in reference corpus }
-  \item{\code{minFrequency}:}{Object of class \code{"logical"} minimum frequency }
-  \item{\code{statisticalTest}:}{Object of class \code{"character"} statisticalTest used }
-  \item{\code{digits}:}{Object of class \code{"data.frame"} number of digits }
-  \item{\code{cutoff}:}{Object of class \code{"list"} cutoff levels that have been applied }
-  \item{\code{call}:}{Object of class \code{"character"} the call that generated the object }
-  }
-}
+\item{\code{corpus}}{Object of class \code{"character"}}
 
+\item{\code{pAttribute}}{Object of class \code{"character"}}
+
+\item{\code{encoding}}{Object of class \code{"character"}}
+
+\item{\code{corpus}}{Object of class \code{"character"}}
+
+\item{\code{stat}}{Object of class \code{"data.frame"}}
+
+\item{\code{sizeCoi}}{Object of class \code{"numeric"}}
+
+\item{\code{sizeRef}}{Object of class \code{"numeric"}}
+
+\item{\code{included}}{Object of class \code{"logical"} whether corpus of interest is included in reference corpus}
+
+\item{\code{minFrequency}}{Object of class \code{"logical"} minimum frequency}
+
+\item{\code{statisticalTest}}{Object of class \code{"character"} statisticalTest used}
+
+\item{\code{digits}}{Object of class \code{"data.frame"} number of digits}
+
+\item{\code{cutoff}}{Object of class \code{"list"} cutoff levels that have been applied}
+
+\item{\code{call}}{Object of class \code{"character"} the call that generated the object}
+}}
 \section{Methods}{
 
   \describe{

@@ -46,84 +46,46 @@ setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
   return(retval)
 })
 
-
-.reshapeCooccurrences <- function(object, mc=TRUE){
-  message("... ordering cooccurrences and nodes by id")
+# calles by trim, cooccurrences-method
+.reshapeCooccurrences <- function(object, mc=TRUE, verbose=TRUE){
+  if (verbose == TRUE) message("... ordering cooccurrences and nodes by id")
   minMaxMatrix <- t(apply(
-    as.matrix(object@stat[,c("nodeId", "cooccurrenceId")]),
+    as.matrix(object@stat[,c("nodeId", "cooccurrenceId"), with=FALSE]),
     1, .minMaxId
-    ))
+    )) # .minMaxId -> utils.R
   colnames(minMaxMatrix) <- c("a", "b", "minId", "maxId")
   minMaxOrder <- apply(minMaxMatrix, 1, function(row) ifelse(row["a"] <= row["b"], 0, 1 ))
-  statPlus <- data.frame(
+  if (verbose == TRUE) message("... merging and trimming")
+  statPlus <- data.table(
     minMaxMatrix[,c("minId", "maxId")], idOrder=minMaxOrder,
-    idId=paste(minMaxMatrix[,"minId"], minMaxMatrix[,"maxId"], sep="-"),
     object@stat
-    )
-  message("... creating subsets of paired couples")
-  bag <- split(statPlus, f=statPlus[,"idId"])
-  .reassembleSubsets <- function(set){
-    if(nrow(set) == 2){
-      set <- set[order(set[,"idOrder"]),]
-      retval <- c(
-        aId=set[1,"minId"], bId=set[1,"maxId"],
-        tf_a=set[which(set[,"cooccurrenceId"] == set[1,"minId"]), "cooccurrenceCorpusFreq"],
-        tf_b=set[which(set[,"cooccurrenceId"] == set[1,"maxId"]), "cooccurrenceCorpusFreq"],
-        tf_ab=set[1, "cooccurrenceWindowFreq"],
-        ll_a2b=set[1,"ll"], ll_b2a=set[2,"ll"]
-      )
-    } else {
-      if (set[,"idOrder"] == 0){
-        retval <- c(
-          aId=set[1,"minId"], bId=set[1,"maxId"],
-          tf_a=set[1, "cooccurrenceCorpusFreq"], tf_b=set[1, "cooccurrenceCorpusFreq"],
-          tf_ab=set[1, "cooccurrenceWindowFreq"],          
-          ll_a2b=set[1,"ll"], ll_b2a=NA
-        )
-      } else if (set[,"idOrder"] == 1) {
-        retval <- c(
-          aId=set[1,"minId"], bId=set[1,"maxId"],
-          tf_a=set[1, "cooccurrenceCorpusFreq"], tf_b=set[1, "cooccurrenceCorpusFreq"],
-          tf_ab=set[1, "cooccurrenceWindowFreq"],
-          ll_a2b=NA, ll_b2a=set[2,"ll"]
-        )
-      }
-    }
-    retval
-  }
-  message("... reassembling information")
-  if (mc == FALSE){
-    consList <- lapply(bag, .reassembleSubsets) 
-  } else {
-    consList <- mclapply(bag, .reassembleSubsets) 
-  }
-  consDf <- do.call(rbind, consList)
-  message("... preparing table to be returned")
-  abStr <- lapply(c("aId", "bId"), function(x){
-    foo <- cqi_id2str(paste(object@corpus, ".", object@pAttribute, sep=""), consDf[,x])
-    iconv(foo, from=object@encoding, to="UTF-8")
-  })
-  consDf2 <- data.frame(
-    a=abStr[[1]],
-    b=abStr[[2]],
-    consDf[,c("tf_a", "tf_b", "tf_ab", "ll_a2b", "ll_b2a")],
-    row.names=paste(abStr[[1]], abStr[[2]], sep="<->")
-    )
-  consDf2
-  retval <- new(
-    "cooccurrencesReshaped",
-#   call="character",
-    partition=object@partition,
-    partitionSize=object@partitionSize,
-    leftContext=object@leftContext, rightContext=object@rightContext,
-    pAttribute=object@pAttribute,
-    corpus=object@corpus,
-    stat=consDf2,
-    encoding=object@encoding,
-    posFilter=object@posFilter,
-    method=object@method,
-    cutoff=object@cutoff
   )
+  setkey(statPlus, "idOrder")
+  aToB <- statPlus[.(0)]
+  setkey(aToB, minId, maxId)
+  bToA <- statPlus[.(1)]
+  setkey(bToA, minId, maxId)
+  merger <- merge(aToB, bToA)
+  colnamesToDrop <- c(
+    "minId", "maxId" , "idOrder.x", "idOrder.y", "rank.x", "rank.y", "relation.x", "relation.y",
+    "cooccurrence.x", "cooccurrence.y", "cooccurrenceId.x", "cooccurrenceId.y", "cooccurrenceCorpusFreq.x", "cooccurrenceCorpusFreq.y",
+    "windowSize.x", "windowSize.y", "expCorpus.x", "expCorpus.y", "expCoi.x", "expCoi.y",
+    "cooccurrenceWindowFreq.y"
+  )
+  merger[, c(colnamesToDrop) := NULL]
+  setnames(
+    merger,
+    c(
+      "node.x", "nodeId.x", "nodeCorpusFreq.x", "cooccurrenceWindowFreq.x", "ll.x",
+      "node.y", "nodeId.y", "nodeCorpusFreq.y", "ll.y"),
+    c("a", "a_id", "tf_a", "tf_ab", "ll_a2b", "b", "b_id", "tf_b", "ll_b2a")
+    )
+  setcolorder(merger, c("a", "b", "a_id", "b_id", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a"))
+  setkey(merger, a, b)
+  retval <- new("cooccurrencesReshaped")
+  for (x in (slotNames(object))) if (x != "stat") slot(retval, x) <- slot(object, x)
+  retval@stat <- merger
+  
   return(retval)
 }
 

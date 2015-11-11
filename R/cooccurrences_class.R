@@ -14,7 +14,7 @@ NULL
 #' @slot corpus  Object of class \code{"character"} the CWB corpus used
 #' @slot stat  Object of class \code{"data.frame"} statistics of the analysis
 #' @slot encoding  Object of class \code{"character"} encoding of the corpus
-#' @slot posFilter  Object of class \code{"character"} part-of-speech tags filtered
+#' @slot pos  Object of class \code{"character"} part-of-speech tags filtered
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
@@ -23,7 +23,7 @@ NULL
 #'   summary,cooccurrences-method as.sparseMatrix,cooccurrences-method
 #'   as.igraph,cooccurrences-method trim,cooccurrences-method
 #' @docType class
-#' @exportClass cooccurrences
+#' @exportClass cooccurrences-class
 setClass("cooccurrences",
          representation(
            call="character",
@@ -33,12 +33,25 @@ setClass("cooccurrences",
            rightContext="numeric",
            pAttribute="character",
            corpus="character",
-           stat="data.frame",
+           stat="data.table",
            encoding="character",
-           posFilter="character",
+           pos="character",
            method="character",
            cutoff="list",
            svg="character"
-         )
-#         , contains=c("textstat")
+         ),
+         contains=c("textstat")
 )
+
+#' @rdname cooccurrences-class
+setClass("cooccurrencesReshaped", contains=c("cooccurrences", "textstat"))
+
+#' Methods for manipulating cooccurrencesReshaped-class-objects
+#' 
+#' @param x cooccurrences for a corpus of interest
+#' @param y cooccurrences for a reference corpus
+#' @rdname cooccurrencesReshaped
+#' @aliases cooccurrencesReshaped merge,cooccurrencesReshaped-method
+#' @name cooccurrencesReshaped
+NULL
+

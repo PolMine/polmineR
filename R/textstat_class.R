@@ -3,9 +3,9 @@
 #' superclass for keyness and context class
 #' 
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
-#' @slot corpus Object of class \code{"character"
+#' @slot corpus Object of class \code{"character"}
 #' @slot stat Object of class \code{"data.frame"} statistics of the analysis
-#' @slot encoding Object of class \code{"character" encoding of the corpus
+#' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @slot cutoff Object of class \code{"list"} cutoff levels that have been applied
 #' @param .Object an object
 #' @param x an object

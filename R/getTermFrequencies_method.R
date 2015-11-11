@@ -1,10 +1,15 @@
-setGeneric("getTermFrequencyMatrix", function(.Object, ...) standardGeneric("getTermFrequencyMatrix"))
+setGeneric("getTermFrequencies", function(.Object, ...) standardGeneric("getTermFrequencies"))
 
 .expandCposMatrix <- function(cposMatrix) unlist(apply(cposMatrix, 1, function(x) x[1]:x[2]))
-.addRownames <- function(tf, corpus, pAttribute, encoding){
-  rownames(tf) <- cqi_id2str(paste(corpus, '.', pAttribute, sep=''), tf[,"id"])
-  Encoding(rownames(tf)) <- encoding
-  rownames(tf) <- enc2utf8(rownames(tf))
+
+.id2str <- function(tf, corpus, pAttribute, encoding){
+  token <- cqi_id2str(paste(corpus, '.', pAttribute, sep=''), tf[["ids"]])
+  Encoding(token) <- encoding
+  token <- enc2utf8(token)
+  Encoding(token) <- "unknown"
+  tf[["token"]] <- token
+  setcolorder(tf, c("token", "ids", "tf"))
+  setkey(tf, "token")
   tf
 }
 
@@ -20,11 +25,10 @@ setGeneric("getTermFrequencyMatrix", function(.Object, ...) standardGeneric("get
 #' @param pAttribute length 1 or 2 character vector, first element is supposed to be "word" or "lemma", second (optionally) "pos"
 #' @param id2str logical, whether to add rownames
 #' @param mc logical, whether to use multicore
-#' @rdname getTermFrequencyMatrix
-#' @exportMethod getTermFrequencyMatrix
-setMethod("getTermFrequencyMatrix", "partition", function(.Object, pAttribute, id2str=TRUE, mc=FALSE){
+#' @rdname getTermFrequencies
+#' @exportMethod getTermFrequencies
+setMethod("getTermFrequencies", "partition", function(.Object, pAttribute, id2str=TRUE, mc=FALSE){
   stopifnot(length(pAttribute) <= 2)
-  .cpos2ids <- function(corpus, pAttribute, cpos) cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
   if (length(pAttribute) == 1){
     .cposMatrix2ids <- function(cposMatrix){
       cpos <- .expandCposMatrix(cposMatrix)
@@ -38,21 +42,22 @@ setMethod("getTermFrequencyMatrix", "partition", function(.Object, pAttribute, i
       idList <- mclapply(chunkList, .cposMatrix2ids, mc.cores=noCores)
       ids <- unlist(idList, recursive=FALSE, use.names=FALSE)
     }
-    tf <- getTermFrequencyMatrix(ids)
+    tf <- getTermFrequencies(ids)
     if (id2str == TRUE){   
-      try(tf <- .addRownames(
+      try(tf <- .id2str(
         tf, corpus=.Object@corpus, pAttribute=pAttribute, encoding=.Object@encoding
         ), silent=FALSE)
     }
     return(tf)
   } else if(length(pAttribute == 2)){
+    .cpos2ids <- function(corpus, pAttribute, cpos) cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
     cpos <- .expandCposMatrix(.Object@cpos)
     pAttributeIds <- lapply(
       c(1,2),
       function(i) .cpos2ids(corpus=.Object@corpus, pAttribute=pAttribute[i], cpos=cpos)
 #      , mc.cores=ifelse(mc==FALSE, 1, 2)
     )
-    retval <- getTermFrequencyMatrix(
+    retval <- getTermFrequencies(
       .Object=pAttributeIds, pAttributes=pAttribute,
       corpus=.Object@corpus, encoding=.Object@encoding
       )
@@ -61,13 +66,13 @@ setMethod("getTermFrequencyMatrix", "partition", function(.Object, pAttribute, i
 })
 
 
-setMethod("getTermFrequencyMatrix", "list", function(.Object, pAttributes, corpus, encoding){
+setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, encoding){
   pAttributeIds <- .Object
   chunks <- split(pAttributeIds[[1]], pAttributeIds[[2]])  
-  chunksTabulated <- lapply(chunks, function(x) getTermFrequencyMatrix(x))
+  chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
   chunksTabulatedWithRownames <- lapply(
     chunksTabulated,
-    function(tf) .addRownames(tf, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
+    function(tf) .id2str(tf, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
 #    , mc.cores=ifelse(mc==FALSE, 1, mc)
   )
   chunksTabulatedWithEnhancedRownames <- lapply(
@@ -77,25 +82,25 @@ setMethod("getTermFrequencyMatrix", "list", function(.Object, pAttributes, corpu
       idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
       Encoding(idAsStr) <- encoding
       idAsStr <- enc2utf8(idAsStr)
-      rownames(tf) <- paste(rownames(tf), "//", idAsStr, sep="")
+      tf[["token"]] <- paste(tf[["token"]], "//", idAsStr, sep="")
+      setcolorder(tf, c("token", "ids", "tf"))
+      setkey(tf, "token")
       tf
     }
 #    , mc.cores=ifelse(mc==FALSE, 1, mc)
     )
-  retval <- do.call(rbind, chunksTabulatedWithEnhancedRownames)
+  retval <- rbindlist(chunksTabulatedWithEnhancedRownames)
+  setkey(retval, "token")
+  retval
 })
 
 
-setMethod("getTermFrequencyMatrix", "vector", function(.Object){
-  ids <- .Object  
-  tfRaw <- tabulate(ids)
-  tf <- matrix(
-    c(
-      c(0:length(tfRaw)),
-      c(length(ids[which(ids==0)]), tfRaw)
-    ),
-    ncol=2, dimnames=list(NULL, c("id", "tf"))
+setMethod("getTermFrequencies", "vector", function(.Object){
+  count <- tabulate(.Object)
+  stat <- data.table(
+      ids=c(0:length(count)),
+      tf=c(length(count[which(count==0)]), count)
   )
-  tf <- matrix(tf[which(tf[,"tf"] > 0),], ncol=2, dimnames=list(NULL, c("id", "tf")))
-  return(tf)
+  setkey(stat, "ids")
+  subset(stat, tf > 0)
 })

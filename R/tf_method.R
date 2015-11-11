@@ -29,37 +29,33 @@ setGeneric("tf", function(object, ...){standardGeneric("tf")})
 
 #' @rdname tf-method
 setMethod("tf", "partition", function(object, query=NULL, pAttribute=NULL, method="in", mc=F, verbose=T){
-  if (is.null(pAttribute)) {
-    pAttr <- slot(get("session", ".GlobalEnv"), "pAttribute")
-  } else {
-    pAttr <- pAttribute
-  }
+  pAttr <- ifelse(
+    is.null(pAttribute),
+    slot(get("session", ".GlobalEnv"), "pAttribute"), 
+    pAttribute
+    )
   if (is.null(query)){
     if (length(object@pAttribute) == 0) object <- enrich(object, tf=pAttr)
-    tab <- data.frame(
-      abs=object@tf[,"tf"],
-      rel=object@tf[,"tf"]/object@size
-    )
-    rownames(tab) <- rownames(object@tf)
+    DT <- copy(object@stat)
+    DT[, rel := DT[["tf"]] / object@size]
+    DT[, ids := NULL]
+    setnames(DT, c("token", "tf"), c("query", "abs"))
+    return(DT)
   }
   if (is.character(query) == TRUE){
-    bag <- list(query=.adjustEncoding(query, object@encoding))
+    # bag <- list(query=.adjustEncoding(query, object@encoding))
     if (method == "in"){ 
-      tab <- data.frame(
-        abs=object@tf[query,"tf"],
-        rel=object@tf[query,"tf"]/object@size
-        )
+      DT <- copy(object@stat[query])
+      DT[, ids := NULL]
+      DT[, rel := DT[["tf"]] / object@size]
+      setnames(DT, c("token", "tf"), c("query", "abs"))
+      return(DT)
     } else if (method == "grep"){
-      bag <- lapply(query, function(query) {
-        foo <- list()
-        rowNo <- grep(query, rownames(object@tf))
-        foo[["abs"]] <- sum(object@tf[rowNo,"tf"])
-        foo[["rel"]] <- foo[["abs"]]/object@size
-        data.frame(what=names(foo), query, freq=do.call(rbind, foo))
-      })
-      tab <- do.call(rbind, bag)
-      tab <- xtabs(freq~query+what, data=tab)
-      tab <- as.data.frame(as.matrix(unclass(tab)))
+      rowsToGet <- lapply(query, function(query) grep(query, object@stat[["token"]])) %>% unlist %>% unique
+      DT <- copy(object@stat[rowsToGet])
+      DT[, ids := NULL]
+      DT[, rel := DT[["tf"]]/object@size]
+      return(DT)
     } else if (method == "cqp") {
       .getNumberOfHits <- function(query) {
           if (verbose == TRUE) message("... processing query ", query)
@@ -79,17 +75,15 @@ setMethod("tf", "partition", function(object, query=NULL, pAttribute=NULL, metho
           mc.cores=slot(get("session", ".GlobalEnv"), "cores")
           ))
       }
-      bag[["abs"]] <- no
-      bag[["rel"]] <- no/object@size
-      tab <- data.frame(bag)
-      rownames(tab) <- NULL
+      DT <- data.table(query=query, abs=no, rel=no/object@size)
+      return(DT)
     } else {
       warning("not a valid method specification")      
     }
   } else if (is.numeric(query)) {
     warning("tf method not implemented for token ids")
   }
-  tab
+  DT
 })
 
 

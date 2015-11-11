@@ -37,11 +37,9 @@ setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
 #' @exportMethod keyness
 #' @rdname  keyness-method
 setMethod("keyness", signature=c(x="partition"), function(
-  x,
-  y,
+  x, y,
   pAttribute=NULL,
-  minFrequency=0,
-  included=FALSE,
+  minFrequency=0, included=FALSE,
   method="chiSquare",
   digits=2,
   verbose=TRUE
@@ -52,28 +50,31 @@ setMethod("keyness", signature=c(x="partition"), function(
     'keyness',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
     corpus=x@corpus, pAttribute=pAttribute,
-    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size),
-    call=deparse(match.call())
+    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size)
     )
+  keyness@call <- deparse(match.call())
   keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
   # check whether tf-lists are available for the pAttribute given
-  if (!pAttribute %in% x@pAttribute){
+  if (identical(pAttribute, x@pAttribute) == FALSE){
     message("... term frequencies not available for pAttribute given in corpus of interest - enriching the partition ")
     x <- enrich(x, tf=pAttribute, verbose=FALSE)
   }
-  if (!pAttribute %in% y@pAttribute){
+  if (identical(pAttribute, y@pAttribute) == FALSE){
     message("... term frequencies not available for pAttribute given in reference corpus - enriching the partition ")
     y <- enrich(y, tf=pAttribute, verbose=FALSE)
   }
   if (verbose==TRUE) message("... combining frequency lists")
-  keyness@stat <- merge(x@tf, y@tf, by.x="id", by.y="id")
-  rownames(keyness@stat) <- cqi_id2str(
-    paste(x@corpus,".", pAttribute, sep=""),
-    keyness@stat[,"id"]
-    )
-  Encoding(rownames(keyness@stat)) <- y@encoding
-  colnames(keyness@stat) <- c("id", "countCoi", "countRef")
-  if (included == TRUE) keyness@stat[,"countRef"] <- keyness@stat[,"countRef"] - keyness@stat[,"countCoi"]
+  keyness@stat <- merge(x@stat, y@stat, by.x="token", by.y="token")
+#   rownames(keyness@stat) <- cqi_id2str(
+#     paste(x@corpus,".", pAttribute, sep=""),
+#     keyness@stat[,"id"]
+#     )
+  keyness@stat[, ids.x := NULL]
+  keyness@stat[, ids.y := NULL]
+  setnames(keyness@stat, c("token", "tf.x", "tf.y"),  c("token", "countCoi", "countRef"))
+  # Encoding(rownames(keyness@stat)) <- y@encoding
+  # colnames(keyness@stat) <- c("id", "countCoi", "countRef")
+  if (included == TRUE) keyness@stat[, countRef := keyness@stat[["countRef"]] - keyness@stat[["countCoi"]]]
   if ("chiSquare" %in% method) {
     if (verbose==TRUE) message("... computing chisquare tests")
     keyness <- chisquare(keyness)
@@ -82,10 +83,16 @@ setMethod("keyness", signature=c(x="partition"), function(
     if (verbose==TRUE) message("... computing log likelihood tests")
     keyness <- ll(keyness)
   }
-  keyness@stat <- cbind(rank=c(1:nrow(keyness@stat)), keyness@stat)
-  keyness@stat <- keyness@stat[,-which(colnames(keyness@stat)=="id")]
+  keyness@stat[, rank := c(1:nrow(keyness@stat))]
+  if (length(pAttribute) == 2){
+    keyness@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", keyness@stat[["token"]])]
+    keyness@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", keyness@stat[["token"]])]
+    keyness@stat[, token := NULL]
+  }
+  # keyness@stat <- keyness@stat[,-which(colnames(keyness@stat)=="id")]
   if (verbose==TRUE) message("... trimming table with statistical tests")
-  keyness <- trim(keyness, digits=keyness@digits, verbose=verbose)
+  # keyness <- trim(keyness, digits=keyness@digits, verbose=verbose)
+  keyness <- sort(keyness, by=method[1], decreasing=TRUE)
   keyness
 })
 

@@ -70,13 +70,13 @@ setMethod("partitionBundle", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      bundle@objects[[sAttribute]] <- zoom(partitionBase, def=sAttr, name=sAttribute, tf=tf, id2str=id2str, type=type)
+      bundle@objects[[sAttribute]] <- partition(partitionBase, def=sAttr, name=sAttribute, tf=tf, id2str=id2str, type=type)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
     bundle@objects <- mclapply(
       sAttributeVarValues,
-      function(x) zoom(
+      function(x) partition(
         partitionBase,
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         name=x,

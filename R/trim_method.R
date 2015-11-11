@@ -33,27 +33,11 @@ NULL
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 
-# #' @docType methods
-# #' @rdname trim-method
-# setMethod("trim", "textstat", function(object, cutoff=NULL, ...){
-#   if (!is.null(cutoff)){
-#     # ensure that colnames provided are actually available
-#     if (!all(names(cutoff) %in% colnames(object@stat))){
-#       warning("PLEASE CHECK: one or more of the colnames provided in the cutoff-list are not available")
-#     }
-#     nrowBeforeCut <- nrow(object@stat)
-#     for (cut in names(cutoff)){
-#       object@stat <- object@stat[which(object@stat[,cut] >= cutoff[[cut]]),] 
-#     }
-#     message("... cutoff levels have been applied - ", (nrowBeforeCut - nrow(object@stat)), " rows have been dropped")
-#   }
-#   return(object)
-# })
 
 #' @aliases trim,context-method
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list(), keep=list(), rankBy=NULL){
+setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list(), keep=list()){
   if (length(min) > 0){
     stopifnot(all((names(min) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
     rowsToKeep <- as.vector(unique(sapply(
@@ -86,41 +70,9 @@ setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list
     )))
     object@stat <- object@stat[rowsToKeep,]
   }
-  test <- ifelse(is.null(rankBy), object@statisticalTest[1], rankBy)
-  setorderv(object@stat, test, order=c(-1))
   object
 })
 
-# #' @exportMethod trim
-# #' @rdname trim-method
-# #' @docType methods
-# setMethod("trim", "keyness", function(object, minSignificance=NULL, minFrequency=0, maxRank=0, rankBy=NULL, tokenFilter=NULL, posFilter=NULL, filterType="include", digits=NULL, verbose=TRUE){
-#   if (maxRank==0) maxRank <- nrow(object@stat)
-#   if (maxRank > nrow(object@stat)) maxRank <- nrow(object@stat)
-#   if (is.null(rankBy)) {
-#     test <- object@statisticalTest[1]
-#   } else {
-#     test <- rankBy
-#   }
-#   if (verbose == TRUE) message("... ordering results by ", test)
-#   object@stat <- object@stat[order(object@stat[,test], decreasing=TRUE),]
-#   if (!is.null(minSignificance)) object@stat <- object@stat[which(object@stat[,test]>=minSignificance),]
-#   object@stat <- object@stat[which(object@stat[,"countCoi"]>=minFrequency),]
-#   if (!is.null(tokenFilter)){
-#     object@stat <- object@stat[.filter[[filterType]](rownames(object@stat), tokenFilter),]
-#   }
-#   if (!is.null(posFilter)){
-#     object@stat <- object@stat[.filter[[filterType]](object@stat[, "pos"], posFilter),]
-#   }
-#   if (!is.null(digits)){
-#     for (n in names(digits)){
-#       object@stat[,n] <- round(object@stat[,n], digits[[n]])
-#     }
-#   }
-#   object@stat[,"rank"] <- c(1:length(object@stat[,"rank"]))
-#   object@stat <- object@stat[which(object@stat[,"rank"]<=maxRank),]
-#   object
-# })
 
 #' @docType methods
 #' @rdname trim-method
@@ -136,32 +88,6 @@ setMethod("trim", "keynessBundle", function(object, minSignificance=0, minFreque
     rework@objects <- mclapply(setNames(object@objects, names(object@objects)), function(x) .trimFunction(x))  
   }
   rework
-})
-
-#' @docType methods
-#' @exportMethod trim
-#' @rdname trim-method
-setMethod("trim", "partition", function(object, pAttribute, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, ...){
-  rework <- object
-  if (length(pAttribute) > 1) warning("taking only one pAttribute at a time")
-  message("Trimming partition ", rework@name)
-  if (!is.null(posFilter)) {
-    if (! pAttribute %in% names(object@pos) ){
-      message("... pos need to be added first")
-      rework <- addPos(rework, pAttribute)
-    }
-    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][rework@pos[[pAttribute]] %in% posFilter]
-    rework@tf <- rework@tf[rownames(rework@tf) %in% names(rework@pos[[pAttribute]]),]
-  }
-  if (minFrequency > 0){
-    rework@tf <- rework@tf[which(rework@tf[,"tf"] >= minFrequency),]
-    rework@pos[[pAttribute]] <- rework@pos[[pAttribute]][names(rework@pos[[pAttribute]]) %in% rownames(rework@tf)]
-  }
-  if(!is.null(tokenFilter)) {
-    tokenFilter <- .adjustEncoding(tokenFilter, rework@encoding)
-    rework@tf <- rework@tf[which(rownames(rework@tf) %in% tokenFilter),]
-  }
-  rework 
 })
 
 

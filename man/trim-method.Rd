@@ -5,9 +5,7 @@
 \alias{trim}
 \alias{trim,TermDocumentMatrix-method}
 \alias{trim,context-method}
-\alias{trim,keyness-method}
 \alias{trim,keynessBundle-method}
-\alias{trim,partition-method}
 \alias{trim,partitionBundle-method}
 \alias{trim,textstat-method}
 \alias{trim-method}
@@ -15,21 +13,12 @@
 \usage{
 trim(object, ...)
 
-\S4method{trim}{textstat}(object, cutoff = NULL, ...)
-
-\S4method{trim}{context}(object, minSignificance = 0, minFrequency = 0,
-  maxRank = 0, rankBy = NULL, posFilter = NULL, tokenFilter = NULL)
-
-\S4method{trim}{keyness}(object, minSignificance = NULL, minFrequency = 0,
-  maxRank = 0, rankBy = NULL, tokenFilter = NULL, posFilter = NULL,
-  filterType = "include", digits = NULL, verbose = TRUE)
+\S4method{trim}{textstat}(object, min = list(), max = list(),
+  drop = list(), keep = list())
 
 \S4method{trim}{keynessBundle}(object, minSignificance = 0,
   minFrequency = 0, maxRank = 0, tokenFilter = NULL, posFilter = NULL,
   filterType = "include", mc = FALSE)
-
-\S4method{trim}{partition}(object, pAttribute, minFrequency = 0,
-  posFilter = NULL, tokenFilter = NULL, ...)
 
 \S4method{trim}{partitionBundle}(object, pAttribute = NULL,
   minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
@@ -43,7 +32,9 @@ trim(object, ...)
 
 \item{...}{further arguments}
 
-\item{cutoff}{a list with colnames and cutoff levels}
+\item{drop}{partitionObjects you want to drop, specified either by number or name}
+
+\item{keep}{specify names of partitions to keep, everything else is dropped}
 
 \item{minSignificance}{minimum significance level}
 
@@ -51,29 +42,27 @@ trim(object, ...)
 
 \item{maxRank}{maximum rank}
 
-\item{rankBy}{a character vector indicating the column for ranking}
+\item{tokenFilter}{tokens to exclude from table}
 
 \item{posFilter}{exclude words with a POS tag not in this list}
 
-\item{tokenFilter}{tokens to exclude from table}
-
 \item{filterType}{either "include" or "exclude"}
-
-\item{digits}{a list}
-
-\item{verbose}{whether to be talkative}
 
 \item{mc}{if not NULL logical - whether to use multicore parallelization}
 
 \item{pAttribute}{character vector, either lemma or word}
 
-\item{drop}{partitionObjects you want to drop, specified either by number or name}
-
 \item{minSize}{a minimum size for the partitions to be kept}
 
-\item{keep}{specify names of partitions to keep, everything else is dropped}
-
 \item{stopwords}{words/tokens to drop}
+
+\item{verbose}{whether to be talkative}
+
+\item{cutoff}{a list with colnames and cutoff levels}
+
+\item{rankBy}{a character vector indicating the column for ranking}
+
+\item{digits}{a list}
 }
 \description{
 Method to trim and adjust objects by

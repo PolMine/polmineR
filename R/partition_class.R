@@ -1,4 +1,4 @@
-#' @include polmineR_package.R
+#' @include polmineR_package.R textstat_class.R
 NULL
 
 # this file includes the partition class, the constructor function 'partition'
@@ -60,10 +60,11 @@ setClass(
     size="numeric",
     metadata="list",
     strucs="numeric",
-    tf="matrix",
+    stat="data.table",
     pAttribute="character",
     xml="character",
     sAttributeStrucs="character",
     call="character"
-  )
+  ),
+  contains=c("textstat")
 )

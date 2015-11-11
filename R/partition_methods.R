@@ -45,11 +45,7 @@ function(object){
 
 #' @exportMethod [
 #' @rdname partition-class
-setMethod('[', 'partition', function(x,i){
-  hits <- nrow(.queryCpos(i,x))
-  hits
-}
-)
+setMethod('[', 'partition', function(x,i) tf(x, query=i, method="grep"))
 
 #' @exportMethod [[
 #' @rdname partition-class

@@ -3,7 +3,7 @@ NULL
 
 
 #' @exportMethod as.data.frame
-setMethod("as.data.frame", "textstat", function(x, ...) x@stat )
+setMethod("as.data.frame", "textstat", function(x, ...) as.data.frame(x@stat))
 
 #' @exportMethod head
 #' @rdname textstat-class
@@ -34,8 +34,10 @@ setMethod("round", "textstat", function(x, digits=2){
 #' @exportMethod colnames
 setMethod("colnames", "textstat", function(x) colnames(x@stat))
 
-#' @exportMethod rownames
-setMethod("rownames", "textstat", function(x) rownames(x@stat))
-
 #' @exportMethod names
-setMethod("names", "textstat", function(x) rownames(x@stat))
+setMethod("names", "textstat", function(x) x@stat[["token"]])
+
+setMethod("sort", "textstat", function(x, by, decreasing=TRUE){
+  setorderv(x@stat, cols=by, order=ifelse(decreasing == TRUE, -1, 1))
+  return(x)
+})

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.5
-Date: 2015-11-01
+Version: 0.5.6
+Date: 2015-11-07
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -37,13 +37,13 @@ Description: Tools for drilling and mining CWB corpora. The package offers
 License: CC BY-NC-SA 4.0 | file LICENSE
 Collate:
     'TermDocumentMatrix_methods.R'
+    'textstat_class.R'
     'session_class.R'
     'generics.R'
     'polmineR_package.R'
     'partition_class.R'
     'bundle_class.R'
     'partitionBundle_class.R'
-    'textstat_class.R'
     'keyness_class.R'
     'addPos_method.R'
     'adjustEncoding_method.R'
@@ -79,7 +79,7 @@ Collate:
     'enrich_method.R'
     'frequencies_method.R'
     'getEncoding_method.R'
-    'getTermFrequencyMatrix_method.R'
+    'getTermFrequencies_method.R'
     'getTerms_method.R'
     'getTokenStream_method.R'
     'html_method.R'
@@ -119,4 +119,3 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
-    'zoom_method.R'
