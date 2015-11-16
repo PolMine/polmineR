@@ -64,11 +64,9 @@ setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list
   }
   if (length(keep) > 0){
     stopifnot(all((names(keep) %in% colnames(object@stat))))
-    rowsToKeep <- as.vector(unique(sapply(
-      names(keep),
-      function(column) sapply(keep[[column]], function(x) grep(x, object@stat[[column]]))
-    )))
-    object@stat <- object@stat[rowsToKeep,]
+    for (col in names(keep)){
+      object@stat <- object@stat[which(object@stat[[col]] %in% keep[[col]]),]
+    }
   }
   object
 })

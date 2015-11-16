@@ -5,8 +5,8 @@
 \alias{getTermFrequencies,partition-method}
 \title{get term frequencies}
 \usage{
-\S4method{getTermFrequencies}{partition}(.Object, pAttribute, id2str = TRUE,
-  mc = FALSE)
+\S4method{getTermFrequencies}{partition}(.Object, pAttribute = c("word",
+  "pos"), id2str = TRUE, mc = TRUE)
 }
 \arguments{
 \item{.Object}{a partition object}

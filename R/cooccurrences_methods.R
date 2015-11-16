@@ -1,23 +1,27 @@
 #' @include cooccurrences_class.R generics.R
 NULL
 
-setMethod("[", "cooccurrences", function(x,i){
-  tab <- subset(x@stat, node == i)
-  tab <- tab[, c("cooccurrenceWindowFreq", "cooccurrenceCorpusFreq", "expCoi", "expCorpus", "ll")]
-  colnames(tab) <- c("cooccurrence", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
-  return(tab)
-})
+# setMethod("[", "cooccurrences", function(x,i){
+#   setkeyv(x@stat, col=)
+#   aTab <- subset(x@stat, node == i)
+#   tab <- tab[, c("cooccurrenceWindowFreq", "cooccurrenceCorpusFreq", "expCoi", "expCorpus", "ll")]
+#   colnames(tab) <- c("cooccurrence", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
+#   return(tab)
+# })
 
+#' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object){
   cat("Object of 'cooccurrences'-class\n")
   cat("Number of rows: ", nrow(object@stat), "\n")
 })
 
 
+#' @rdname cooccurrences-class
 setMethod("summary", "cooccurrences", function(object){
   return(.statisticalSummary(object))
 })
 
+#' @rdname cooccurrences-class
 #' @importFrom parallel mcparallel mccollect
 setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
   uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"cooccurrence"]))
@@ -46,40 +50,29 @@ setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
   return(retval)
 })
 
+setGeneric("compress", function(.Object, ...) standardGeneric("compress"))
 # calles by trim, cooccurrences-method
-.reshapeCooccurrences <- function(object, mc=TRUE, verbose=TRUE){
-  if (verbose == TRUE) message("... ordering cooccurrences and nodes by id")
-  minMaxMatrix <- t(apply(
-    as.matrix(object@stat[,c("nodeId", "cooccurrenceId"), with=FALSE]),
-    1, .minMaxId
-    )) # .minMaxId -> utils.R
-  colnames(minMaxMatrix) <- c("a", "b", "minId", "maxId")
-  minMaxOrder <- apply(minMaxMatrix, 1, function(row) ifelse(row["a"] <= row["b"], 0, 1 ))
-  if (verbose == TRUE) message("... merging and trimming")
-  statPlus <- data.table(
-    minMaxMatrix[,c("minId", "maxId")], idOrder=minMaxOrder,
-    object@stat
+
+setMethod("compress", "cooccurrences", function(.Object, ...){
+  DT <- copy(.Object@stat)
+  aColsStr <- paste("a_", .Object@pAttribute, sep="")
+  bColsStr <- paste("b_", .Object@pAttribute, sep="")
+  KEY <- data.table(
+    i=c(1:nrow(DT)),
+    aKey=apply(DT, 1, function(x) paste(x[aColsStr], collapse="//")),
+    bKey=apply(DT, 1, function(x) paste(x[bColsStr], collapse="//"))
   )
-  setkey(statPlus, "idOrder")
-  aToB <- statPlus[.(0)]
-  setkey(aToB, minId, maxId)
-  bToA <- statPlus[.(1)]
-  setkey(bToA, minId, maxId)
-  merger <- merge(aToB, bToA)
-  colnamesToDrop <- c(
-    "minId", "maxId" , "idOrder.x", "idOrder.y", "rank.x", "rank.y", "relation.x", "relation.y",
-    "cooccurrence.x", "cooccurrence.y", "cooccurrenceId.x", "cooccurrenceId.y", "cooccurrenceCorpusFreq.x", "cooccurrenceCorpusFreq.y",
-    "windowSize.x", "windowSize.y", "expCorpus.x", "expCorpus.y", "expCoi.x", "expCoi.y",
-    "cooccurrenceWindowFreq.y"
-  )
-  merger[, c(colnamesToDrop) := NULL]
-  setnames(
-    merger,
-    c(
-      "node.x", "nodeId.x", "nodeCorpusFreq.x", "cooccurrenceWindowFreq.x", "ll.x",
-      "node.y", "nodeId.y", "nodeCorpusFreq.y", "ll.y"),
-    c("a", "a_id", "tf_a", "tf_ab", "ll_a2b", "b", "b_id", "tf_b", "ll_b2a")
-    )
+  DT[, order := KEY[, order(c(aKey, bKey))[1], by=i][["V1"]]]
+  
+  setkey(DT, "order")
+  aToB <- DT[.(1)]
+  setkeyv(aToB, col=c(aColsStr, bColsStr))
+  bToA <- DT[.(2)]
+  setnames(bToA, old=c(aColsStr, bColsStr), new=c(bColsStr, aColsStr))
+  setkeyv(bToA, col=c(aColsStr, bColsStr))
+  merger <- merge(aToB, bToA, all.x=FALSE, all.y=TRUE)
+  FIN <- merger[, c(aColsStr, bColsStr, "ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"), with=FALSE]
+  setnames(FIN, c("ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"), c("ab_tf", "ab_ll", "ba_ll", "a_tf", "b_tf"))
   setcolorder(merger, c("a", "b", "a_id", "b_id", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a"))
   setkey(merger, a, b)
   retval <- new("cooccurrencesReshaped")
@@ -87,6 +80,53 @@ setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
   retval@stat <- merger
   
   return(retval)
-}
+  
+
+  a_key <- DT[, .paste(), by=eval(), with=TRUE]
+})
+
+
+# .reshapeCooccurrences <- function(object, mc=TRUE, verbose=TRUE){
+#   if (verbose == TRUE) message("... ordering cooccurrences and nodes by id")
+#   
+#   minMaxMatrix <- t(apply(
+#     as.matrix(object@stat[,c("nodeId", "cooccurrenceId"), with=FALSE]),
+#     1, .minMaxId
+#   )) # .minMaxId -> utils.R
+#   colnames(minMaxMatrix) <- c("a", "b", "minId", "maxId")
+#   minMaxOrder <- apply(minMaxMatrix, 1, function(row) ifelse(row["a"] <= row["b"], 0, 1 ))
+#   if (verbose == TRUE) message("... merging and trimming")
+#   statPlus <- data.table(
+#     minMaxMatrix[,c("minId", "maxId")], idOrder=minMaxOrder,
+#     object@stat
+#   )
+#   setkey(statPlus, "idOrder")
+#   aToB <- statPlus[.(0)]
+#   setkey(aToB, minId, maxId)
+#   bToA <- statPlus[.(1)]
+#   setkey(bToA, minId, maxId)
+#   merger <- merge(aToB, bToA)
+#   colnamesToDrop <- c(
+#     "minId", "maxId" , "idOrder.x", "idOrder.y", "rank.x", "rank.y", "relation.x", "relation.y",
+#     "cooccurrence.x", "cooccurrence.y", "cooccurrenceId.x", "cooccurrenceId.y", "cooccurrenceCorpusFreq.x", "cooccurrenceCorpusFreq.y",
+#     "windowSize.x", "windowSize.y", "expCorpus.x", "expCorpus.y", "expCoi.x", "expCoi.y",
+#     "cooccurrenceWindowFreq.y"
+#   )
+#   merger[, c(colnamesToDrop) := NULL]
+#   setnames(
+#     merger,
+#     c(
+#       "node.x", "nodeId.x", "nodeCorpusFreq.x", "cooccurrenceWindowFreq.x", "ll.x",
+#       "node.y", "nodeId.y", "nodeCorpusFreq.y", "ll.y"),
+#     c("a", "a_id", "tf_a", "tf_ab", "ll_a2b", "b", "b_id", "tf_b", "ll_b2a")
+#   )
+#   setcolorder(merger, c("a", "b", "a_id", "b_id", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a"))
+#   setkey(merger, a, b)
+#   retval <- new("cooccurrencesReshaped")
+#   for (x in (slotNames(object))) if (x != "stat") slot(retval, x) <- slot(object, x)
+#   retval@stat <- merger
+#   
+#   return(retval)
+# }
 
 

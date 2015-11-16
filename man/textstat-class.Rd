@@ -2,7 +2,9 @@
 % Please edit documentation in R/textstat_class.R, R/textstat_methods.R, R/view_method.R
 \docType{class}
 \name{textstat-class}
+\alias{+,textstat,textstat-method}
 \alias{as.DataTables,textstat-method}
+\alias{as.bundle}
 \alias{as.data.frame,textstat-method}
 \alias{colnames,textstat-method}
 \alias{dim,textstat-method}
@@ -24,6 +26,10 @@
 \S4method{nrow}{textstat}(x)
 
 \S4method{round}{textstat}(x, digits = 2)
+
+as.bundle(object, ...)
+
+\S4method{+}{textstat,textstat}(e1, e2)
 
 \S4method{view}{textstat}(.Object)
 }

@@ -16,6 +16,7 @@ setMethod("view", "kwic", function(.Object){
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
+  .Object <- round(.Object, digits=2)
   View(.Object@stat)
 })
 
@@ -38,15 +39,6 @@ setMethod("view", "context", function(.Object){
   View(DT[, what, with=FALSE])
 })
 
-setMethod(view, "cooccurrences", function(.Object){
-  .Object <- round(.Object, digits=2)
-  colsToView <- c(
-    "rank", "node", "cooccurrence",
-    "nodeCorpusFreq", "cooccurrenceWindowFreq", "cooccurrenceCorpusFreq",
-    "windowSize", "expCorpus", "expCoi", "ll"
-    )
-  View(.Object@stat[, colsToView, with=FALSE])
-})
 
 setMethod(view, "cooccurrencesReshaped", function(.Object){
   .Object <- round(.Object, digits=2)

@@ -1,161 +1,151 @@
-setGeneric("cooccurrences", function(object, ...){standardGeneric("cooccurrences")})
-
-
-#' calculate all cooccurrences in a partition
+#' get all cooccurrences in a partition
 #' 
-#' the result is meant to serve as a result for an analysis of collocation graphs
-#' 
-#' @param object a partition object
-#' @param pAttribute p-attribute, typically "word" or "token"
-#' @param window no of tokens to the left and to the right
-#' @param method the statistical test to use 
-#' @param pos what POS to keep
-#' @param progress logical, whether to show progress bar
+#' @param .Object a partition object
+#' @param pAttribute p-attribute to define tokens (can be length > 1)
+#' @param window no of tokens to the left and to the right of nodes
+#' @param method statistical test to use (defaults to "ll")
+#' @param keep list with tokens to keep
 #' @param mc whether to use multicore
-#' @return a data frame
+#' @return a cooccurrences-class object
 #' @exportMethod cooccurrences
 #' @docType methods
 #' @author Andreas Blaette
 #' @export cooccurrences
 #' @name cooccurrences
-#' @rdname cooccurrences-method
-#' @aliases cooccurrences cooccurrences-method cooccurrences,partition-method cooccurrences,partitionBundle-method
+#' @rdname cooccurrences
 #' @examples
 #' \dontrun{
 #' bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
 #' bt17merkelColl <- cooccurrences(bt17merkel)
 #' }
-setMethod("cooccurrences", "partition", function(
-  object, pAttribute="word", window=5, method="ll",
-  pos=c("ADJA", "NN"), progress=TRUE, mc=FALSE, verbose=TRUE
-  ){
-  if (!pAttribute %in% object@pAttribute) object <- enrich(object, tf=pAttribute)
-  if (mc == TRUE) noCores <- slot(get('session', '.GlobalEnv'), "cores")
+setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
+
+
+#' @rdname cooccurrences
+setMethod(
+  "cooccurrences", "partition",
+  function(.Object, pAttribute=c("word", "pos"), window=5, keep=list(pos=c("NN", "ADJA")), method="ll", mc=FALSE, progress=TRUE, verbose=TRUE, ...){
+  if (identical(pAttribute, .Object@pAttribute) == FALSE) .Object <- enrich(.Object, tf=pAttribute)
   coll <- new(
     "cooccurrences",
-    pAttribute=pAttribute, pos=pos,
-    leftContext=window, rightContext=window,
-    corpus=object@corpus, encoding=object@encoding,
-    partitionSize=object@size, stat=data.table()
-    )
+    pAttribute=pAttribute, corpus=.Object@corpus, encoding=.Object@encoding,
+    leftContext=window, rightContext=window, partitionSize=.Object@size, stat=data.table()
+  )
   coll@call <- deparse(match.call())
   coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
-  tokenAttr <- paste(object@corpus,".",pAttribute, sep="")
-  posAttr <- paste(object@corpus,".pos", sep="")
-  .getIdsWindow <- function(x, window, cposMax, ids, pos){
-    j <- c((x-window):(x-1), (x+1):(x+window))
-    j <- j[which(j > 0)]
-    j <- j[which(j <= cposMax)]
-    list(id=ids[j], pos=pos[j])
-  }
-  .getNodeIds <- function(x, noNeighbours, ids, pos) {
-    list(
-      id=rep(ids[x], times=noNeighbours[x]),
-      pos=rep(pos[x], times=noNeighbours[x])
-    )
-  } 
-  .movingContext <- function (cposMin, cposMax, window, object, tokenAttr, posAttr) {
+  pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus,".", x, sep=""))
+  aColsId <- setNames(paste("a_", pAttribute, "_id", sep=""), pAttribute)
+  bColsId <- setNames(paste("b_", pAttribute, "_id", sep=""), pAttribute)
+  aColsStr <- setNames(paste("a_", pAttribute, sep=""), pAttribute)
+  bColsStr <- setNames(paste("b_", pAttribute, sep=""), pAttribute)
+  
+  keepId <- lapply(setNames(names(keep), names(keep)), function(x) cqi_str2id(pAttr[[x]], keep[[x]]))
+  
+  if (verbose == TRUE) message("... making windows with corpus positions")
+  .makeWindows <- function(i){
+    cposMin <- .Object@cpos[i,1]
+    cposMax <- .Object@cpos[i,2]
     if (cposMin != cposMax){
-      cpos <- c(cposMin:cposMax)
-      ids <- cqi_cpos2id(tokenAttr, cpos)
-      pos <- cqi_cpos2id(posAttr, cpos)
-      neighbourhood <- lapply(
-        c(1:length(cpos)),
-        function(x) .getIdsWindow(x, window, length(cpos), ids, pos)
-        )
-      noNeighbours <- sapply(neighbourhood, function(x) length(x[["id"]]))
-      nodes <- lapply(
-        c(1:length(cpos)),
-        function(x) .getNodeIds(x, noNeighbours, ids, pos)
-      )
-      retval <- list(
-        contextIds=unlist(lapply(neighbourhood, function(x) x[["id"]])),
-        contextPos=unlist(lapply(neighbourhood, function(x) x[["pos"]])),
-        nodeIds=unlist(lapply(nodes, function(x) x[["id"]])),
-        nodePos=unlist(lapply(nodes, function(x) x[["pos"]]))
-      )
-    } else {
-      retval <- NULL
+      cposRange <- c(cposMin:cposMax)
+      lapply(
+        setNames(cposRange, cposRange),
+        function(x) {
+          cpos <- c((x-window):(x-1), (x+1):(x+window))
+          cpos <- cpos[which(cpos > cposMin)]
+          cpos[which(cpos <= cposMax)]
+        })
     }
-    retval 
   }
-  if (verbose == TRUE) message('... performing frequency counts')
   if (mc == FALSE){
-    bag <- lapply(c(1:nrow(object@cpos)), function(i) {
-      if (progress==TRUE) .progressBar(i=i, total=nrow(object@cpos))
-      b <- .movingContext(
-        cposMin=object@cpos[i,1], cposMax=object@cpos[i,2],
-        window, object, tokenAttr, posAttr
-        )
-      })
+    bag <- lapply(
+      c(1:nrow(.Object@cpos)),
+      function(i){
+        if (progress == TRUE) .progressBar(i=i, total=nrow(.Object@cpos))
+        .makeWindows(i)
+      }
+    )
+    bCpos <- lapply(bag, function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]]))))
   } else {
-    bag <- mclapply(
-      c(1:nrow(object@cpos)),
-      function(i) {b <- .movingContext(
-        cposMin=object@cpos[i,1], object@cpos[i,2], window, object, tokenAttr, posAttr
-        )},
+    noCores <- ifelse(is.numeric(mc), mc, getOption("mc.cores", 2L))
+    bag <- mclapply(c(1:nrow(.Object@cpos)), .makeWindows, mc.cores=noCores)
+    bCpos <- mclapply(
+      bag,
+      function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]]))),
       mc.cores=noCores
       )
   }
-  # nodes <- lapply(bag, function(x) x$nodes)
-  # neighbourhood <- lapply(bag, function(x) x$neighbourhood)
-  if (verbose == TRUE) message("... aggregating and trimming counts")
-  idFrame <- data.table(
-    nodeId=unlist(lapply(bag, function(x) x[["nodeIds"]])),
-    nodePos=unlist(lapply(bag, function(x) x[["nodePos"]])),
-    tokenId=unlist(lapply(bag, function(x) x[["contextIds"]])),
-    tokenPos=unlist(lapply(bag, function(x) x[["contextPos"]]))
+  if (verbose == TRUE) message("... putting together data.table")
+  DT <- data.table(
+    a_cpos=unlist(bag),
+    b_cpos=unlist(bCpos)
   )
-  idFrameSelect <- idFrame[which(idFrame[["nodePos"]] %in% cqi_str2id(posAttr, pos)),]
-  idFrameSelect <- idFrameSelect[which(idFrameSelect[["tokenPos"]] %in% cqi_str2id(posAttr, pos)),]
-  message('... pre-sorting for frequency count')
-  frameSplit <- split(idFrameSelect[["tokenId"]], idFrameSelect[["nodeId"]])
-  frameSplitUnfiltered <- split(idFrame[["tokenId"]], idFrame[["nodeId"]])
-  message('... now for the actual frequency count')
-  if (mc==FALSE){
-    raw <- lapply(frameSplit, table)
-  } else {
-    raw <- mclapply(frameSplit, table, mc.cores=noCores)
+  
+  if (verbose == TRUE) message("... getting token ids")
+  lapply(
+    pAttribute, function(x){
+      DT[, eval(aColsId[x]) := cqi_cpos2id(pAttr[[x]], DT[["a_cpos"]]), with=TRUE]
+      DT[, eval(bColsId[x]) := cqi_cpos2id(pAttr[[x]], DT[["b_cpos"]]), with=TRUE]
+    }
+  )
+  
+  if (verbose == TRUE) message("... counting window size")
+  contextDT <- DT[, nrow(.SD), by=c(eval(aColsId)), with=TRUE] 
+  
+  if (verbose == TRUE) message("... applying filter")
+  for (x in names(keep)){
+    DT <- DT[DT[[aColsId[x]]] %in% keepId[[x]]]
+    DT <- DT[DT[[bColsId[x]]] %in% keepId[[x]]]
   }
-  message('... preparing stat table')
-  coll@stat <- data.table(
-    nodeId=unlist(lapply(names(raw), function(x) rep(as.numeric(x), times=length(raw[[x]])))),
-    cooccurrenceId=unlist(lapply(raw, function(x) as.numeric(names(x)))),
-    cooccurrenceWindowFreq=unlist(lapply(raw, function(x) unname(x))),
-    windowSize=unlist(lapply(names(raw), function(i) {rep(length(frameSplitUnfiltered[[i]]), times=length(raw[[i]])) }))
+  
+  if (verbose == TRUE) message("... counting joint occurrence")
+  TF <- DT[, nrow(.SD), by=c(eval(c(aColsId, bColsId))), with=TRUE] # not fast
+  setnames(TF, "V1", "ab_tf")
+  
+  if (verbose == TRUE) message("... adding window size")
+  setkeyv(contextDT, cols=aColsId)
+  setkeyv(TF, cols=aColsId)
+  TF <- contextDT[TF]
+  setnames(TF, "V1", "window_size")
+  
+  if (verbose == TRUE) message("... doing things")
+  lapply(
+    c(1:length(pAttribute)),
+    function(i){
+      TF[, eval(aColsStr[i]) := cqi_id2str(pAttr[i], TF[[aColsId[i]]]) %>% as.utf8, with=TRUE]
+      TF[, eval(bColsStr[i]) := cqi_id2str(pAttr[i], TF[[bColsId[i]]]) %>% as.utf8, with=TRUE]
+      TF[, eval(aColsId[i]) := NULL]
+      TF[, eval(bColsId[i]) := NULL]
+    }
   )
-  coll@stat[, cooccurrenceCorpusFreq := object@stat[match(coll@stat[["cooccurrenceId"]], object@stat[["ids"]]), "tf", with=FALSE] ]
-  coll@stat[, nodeCorpusFreq := object@stat[match(coll@stat[["nodeId"]], object@stat[["ids"]]), "tf", with=FALSE] ]
-  # coll@stat[, nodeTf := object@stat[coll@stat[["nodeId"]], "tf", with=FALSE]]
-  nodeStr <- cqi_id2str(tokenAttr, coll@stat[["nodeId"]]) %>% as.vector %>% as.utf8
-  coll@stat[, node := nodeStr]
-  cooc <- cqi_id2str(tokenAttr, coll@stat[["cooccurrenceId"]]) %>% as.vector %>% as.utf8
-  coll@stat[, cooccurrence := cooc]
+  setkeyv(TF, cols=aColsStr)
+  setkeyv(.Object@stat, cols=pAttribute)
+  TF[, a_tf := .Object@stat[TF][["tf"]]]
+  setkeyv(TF, cols=bColsStr)
+  TF[, b_tf := .Object@stat[TF][["tf"]]]
+  setcolorder(TF, c(aColsStr, bColsStr, "ab_tf", "a_tf", "b_tf", "window_size"))
+  coll@stat <- TF
   if ("ll" %in% method) {
     message('... g2-Test')
-    coll <- ll(coll, partitionSize=object@size)
+    coll <- ll(coll, partitionSize=.Object@size)
     coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
-    coll@stat[, rank := c(1:nrow(coll@stat))]
   }
-  coll@stat[, relation := paste(coll@stat[["node"]], "->", coll@stat[["cooccurrence"]], sep="")]
-  setcolorder(coll@stat, c(
-    "rank", "relation", 
-    "node", "nodeId", "nodeCorpusFreq",
-    "cooccurrence", "cooccurrenceId", "cooccurrenceWindowFreq", "cooccurrenceCorpusFreq",
-    "windowSize", "expCorpus", "expCoi", "ll")
-    )
+  coll@stat[, rank := c(1:nrow(coll@stat))]
+  setcolorder(coll@stat, c("rank", colnames(coll@stat)[-which(colnames(coll@stat) == "rank")]))
   coll
 })
 
-setMethod("cooccurrences", "partitionBundle", function(object, pAttribute="word", window=5, method="ll", filter=TRUE, pos=c("ADJA", "NN"), mc=FALSE){
+#' @rdname cooccurrences
+setMethod(
+  "cooccurrences", "partitionBundle",
+  function(.Object, pAttribute="word", window=5, method="ll", keep=list(pos=c("ADJA", "NN")), mc=FALSE){
   bundle <- new(
     "cooccurrencesBundle",
-    encoding=unique(vapply(object@objects, function(x) x@encoding, FUN.VALUE="character")),
-    corpus=unique(vapply(object@objects, function(x) x@corpus, FUN.VALUE="character"))
+    encoding=unique(vapply(.Object@objects, function(x) x@encoding, FUN.VALUE="character")),
+    corpus=unique(vapply(.Object@objects, function(x) x@corpus, FUN.VALUE="character"))
     )
   if (mc == FALSE){
     bundle@objects <- lapply(
-      setNames(object@objects, names(object@objects)),
+      setNames(.Object@objects, names(.Object@objects)),
       function(x) {
         message('Calculating cooccurrences for partition ', x@name)
         cooccurrences(x, pAttribute=pAttribute, window=window, method=method, filter=filter, pos=pos)
@@ -163,7 +153,7 @@ setMethod("cooccurrences", "partitionBundle", function(object, pAttribute="word"
     
   } else {
     bundle@objects <- mclapply(
-      setNames(object@objects, names(object@objects)),
+      setNames(.Object@objects, names(.Object@objects)),
       function(x) {
         message('Calculating cooccurrences for partition ', x@name)
         cooccurrences(
@@ -175,100 +165,6 @@ setMethod("cooccurrences", "partitionBundle", function(object, pAttribute="word"
 })
 
 
-cooc <- function(object, pAttribute="word", window=5, pos=TRUE, ...){
-  if (identical(pAttribute, object@pAttribute) == FALSE) object <- enrich(object, tf=pAttribute)
-  coll <- new(
-    "cooccurrences",
-    pAttribute=pAttribute, corpus=object@corpus, encoding=object@encoding, pos=pos,
-    leftContext=window, rightContext=window, partitionSize=object@size, stat=data.table()
-  )
-  coll@call <- deparse(match.call())
-  coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
-  
-  tokenAttr <- paste(object@corpus,".",pAttribute[1], sep="")
-  posAttr <- paste(object@corpus,".pos", sep="")
-  posId <- cqi_str2id(posAttr, pos)
-  .movingContext <- function (cposMin, cposMax, window) {
-    if (cposMin != cposMax){
-      retval <- lapply(
-        setNames(c(cposMin:cposMax), c(cposMin:cposMax)),
-        function(x) {
-          cpos1 <- c((x-window):(x-1), (x+1):(x+window))
-          cpos2 <- cpos1[which(cpos1 > cposMin)]
-          cpos3 <- cpos2[which(cpos2 <= cposMax)]
-          cpos3
-        })
-    } else {
-      retval <- NULL
-    }
-    retval 
-  }
-  bag <- apply(
-    object@cpos, 1, function(row) .movingContext(cposMin=row[1], cposMax=row[2], window)
-  )
-  DT <- data.table(
-    cposContext=unlist(bag),
-    cposNode=unlist(lapply(bag, function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]])))))
-  )
-  DT[, contextId := cqi_cpos2id(tokenAttr, DT[["cposContext"]])]
-  DT[, nodeId := cqi_cpos2id(tokenAttr, DT[["cposNode"]])]
-  DT[, contextPos := cqi_cpos2id(posAttr, DT[["cposContext"]])]
-  DT[, nodePos := cqi_cpos2id(posAttr, DT[["cposNode"]])]
-  setkey(DT, nodeId)
-#   .countFast <- function(contextId){
-#     a <- table(contextId)
-#     data.frame(
-#       contextId=as.integer(names(a)),
-#       count=as.integer(as.vector(a))
-#     )
-#   }
-#   
-  # fooFast <- DT[, .countFast(contextId), by=.(nodeId)]
-  .count <- function(nodeId, nodePos, contextId, contextPos){
-    chunks <- split(contextId, contextPos)
-    tfNode <- lapply(chunks, length)
-    chunks <- lapply(chunks, table)
-    data.frame(
-      cooccurrenceId=unname(unlist(lapply(chunks, function(chunk) as.integer(names(chunk))))),
-      cooccurrenceWindowFreq=unname(unlist(lapply(chunks, function(chunk) as.vector(chunk)))),
-      contextPos=unlist(lapply(names(chunks), function(id) rep(as.integer(id), times=length(chunks[[id]])))),
-      nodePos=nodePos,
-      windowSize=length(contextId)
-      )
-  }
-  DTpos <- DT[nodePos %in% posId][contextPos %in% posId]
-  idTab <- DTpos[, .count(nodeId, nodePos, contextId, contextPos), by=.(nodeId, nodePos)]
-  idTab[, node := cqi_id2str(tokenAttr, idTab[["nodeId"]]) %>% as.vector %>% as.utf8]
-  idTab[, posStr := cqi_id2str(posAttr, idTab[["nodePos"]]) %>% as.vector %>% as.utf8]
-  idTab[, contextStr := cqi_id2str(tokenAttr, idTab[["cooccurrenceId"]]) %>% as.vector %>% as.utf8]
-  idTab[, contextPos := cqi_id2str(posAttr, idTab[["contextPos"]]) %>% as.vector %>% as.utf8]
-  idTab[, nodeKey := paste(idTab[["node"]], "//", idTab[["posStr"]], sep="")]
-  # idTab[, idKey := paste(idTab[["nodeId"]], "//", idTab[["nodePos"]], sep="")]
-  idTab[, cooccurrenceKey := paste(idTab[["contextStr"]], "//", idTab[["contextPos"]], sep="")]
-  
-  nodeTf <- DT[, nrow(.SD), by=.(nodeId, nodePos)]
-  # nodeTf[, idKey := paste(nodeTf[["nodeId"]], "//", nodeTf[["nodePos"]], sep="")]
-  setkey(nodeTf, nodeId, nodePos)
-  setkey(idTab, nodeId, nodePos)
-  idTab[, nodeFreq := nodeTf[idTab][["V1"]]]
-  setkey(idTab, nodeKey)
-  setkey(object@stat, token)
-  idTab[, nodeCorpusFreq := object@stat[idTab][["tf"]]]
-  setkey(idTab, cooccurrenceKey)
-  idTab[ , cooccurrenceCorpusFreq := object@stat[idTab][["tf"]]]
 
-  if ("ll" %in% method) {
-    message('... g2-Test')
-    coll <- ll(coll, partitionSize=object@size)
-    coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
-    coll@stat[, rank := c(1:nrow(coll@stat))]
-  }
-  coll@stat[, relation := paste(coll@stat[["node"]], "->", coll@stat[["cooccurrence"]], sep="")]
-  setcolorder(coll@stat, c(
-    "rank", "relation", 
-    "node", "nodeId", "nodeCorpusFreq",
-    "cooccurrence", "cooccurrenceId", "cooccurrenceWindowFreq", "cooccurrenceCorpusFreq",
-    "windowSize", "expCorpus", "expCoi", "ll")
-  )
-  coll
-}
+
+

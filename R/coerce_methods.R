@@ -320,3 +320,33 @@ setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
   return(newPartitionBundle)
 })
 
+setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
+  keyList <- lapply(
+    x@objects,
+    function(object) {
+      keys <- object@stat[, c(x@pAttribute), with=FALSE] %>%
+        apply(1, function(row) paste(row, collapse="//"))
+      object@stat[, key := keys]
+      keys
+    })
+  uniqueKeys <- keyList %>% unlist %>% unique
+  keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
+  DTs <- lapply(
+    c(1:length(x@objects)),
+    function(object){ 
+      DT <- copy(x@objects[[object]]@stat)
+      oldCols <- colnames(DT)
+      oldCols <- oldCols[-which(oldCols == col)]
+      setnames(DT, col, "v")
+      DT[, i := keys[ DT[["key"]] ] ][, j := object][, c(eval(oldCols)) := NULL, with=TRUE]
+    })
+  DT <- rbindlist(DTs)
+  retval <- simple_triplet_matrix(
+    i = DT[["i"]],
+    j = DT[["j"]],
+    v = DT[["v"]],
+    dimnames = list(Terms=names(keys), Docs=names(x@objects))
+    )
+  class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  retval
+})

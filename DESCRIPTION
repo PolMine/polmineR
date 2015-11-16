@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.6
-Date: 2015-11-07
+Version: 0.5.7
+Date: 2015-11-13
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -61,9 +61,7 @@ Collate:
     'context_method.R'
     'context_methods.R'
     'cooccurrence_method.R'
-    'cooccurrencesBundle_class.R'
     'cooccurrencesBundle_methods.R'
-    'cooccurrencesReshaped_class.R'
     'cooccurrencesReshaped_methods.R'
     'cooccurrences_method.R'
     'cooccurrences_methods.R'
@@ -73,7 +71,6 @@ Collate:
     'dispersion_method.R'
     'dispersion_methods.R'
     'egoNetwork_method.R'
-    'element_class.R'
     'encoding_method.R'
     'keynessBundle_class.R'
     'enrich_method.R'
@@ -85,6 +82,7 @@ Collate:
     'html_method.R'
     'html_methods.R'
     'keynessBundle_methods.R'
+    'ngrams_method.R'
     'keyness_method.R'
     'keyness_methods.R'
     'kwic_method.R'

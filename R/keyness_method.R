@@ -1,4 +1,4 @@
-#' @include partition_class.R partitionBundle_class.R
+#' @include partition_class.R partitionBundle_class.R ngrams_method.R
 NULL
 
 setGeneric("keyness", function(x, ...){standardGeneric("keyness")})
@@ -222,6 +222,20 @@ setMethod("keyness", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "keyness")
 })
 
-
-
+setMethod(
+  "keyness", "ngrams",
+  function(x, y, included=FALSE, method="chisquare", verbose=TRUE, ...){
+    stopifnot(
+      identical(x@pAttribute, y@pAttribute) == TRUE,
+      x@n == y@n,
+      method %in% c("chisquare")
+    )
+    tokenColnames <- paste("token_", c(1:x@n), sep="")
+    setkeyv(x@stat, cols=tokenColnames)
+    setkeyv(y@stat, cols=tokenColnames)
+    DT <- y@stat[x@stat]
+    setnames(DT, c("tf", "i.tf"), c("tf_x", "tf_y"))
+    setcolorder(DT, c(tokenColnames, "tf_x", "tf_y"))
+    
+  })
 

@@ -59,13 +59,12 @@ setMethod("ll", "keyness", function(object){
 setMethod("ll", "cooccurrences", function(object, partitionSize){
   mat <- .g2Statistic(
     ids=rep(0, times=nrow(object@stat)),
-    windowFreq=object@stat[["cooccurrenceWindowFreq"]],
-    corpusFreq=object@stat[["cooccurrenceCorpusFreq"]],
-    windows.total=object@stat[["windowSize"]],
+    windowFreq=object@stat[["ab_tf"]],
+    corpusFreq=object@stat[["b_tf"]],
+    windows.total=object@stat[["window_size"]],
     corpus.total=partitionSize
     )
-  object@stat[, expCoi :=mat[,"expCoi"]]
-  object@stat[, expCorpus :=mat[,"expCorpus"]]
+  object@stat[, exp_coi := mat[,"expCoi"]]
   object@stat[, ll := mat[, "ll"]]
   object@method <- c(object@method, "ll")
   return(object)

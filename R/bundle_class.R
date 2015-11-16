@@ -4,6 +4,7 @@
 #' in one S4 object.
 #' 
 #' @slot objects Object of class \code{"list"}
+#' @slot pAttribute Object of class \code{"character"}
 #' 
 #' @param x a bundle object
 #' @param i index to address an object
@@ -15,7 +16,8 @@
 #' @author Andreas Blaette
 setClass("bundle",
          representation(
-           objects="list"
+           objects="list",
+           pAttribute="character"
            )
 )
 

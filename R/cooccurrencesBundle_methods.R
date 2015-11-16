@@ -1,4 +1,4 @@
-#' @include cooccurrences_class.R cooccurrencesBundle_class.R
+#' @include cooccurrences_class.R
 NULL
 
 #' @rdname cooccurrencesBundle-class

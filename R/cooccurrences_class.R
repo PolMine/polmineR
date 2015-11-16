@@ -23,7 +23,8 @@ NULL
 #'   summary,cooccurrences-method as.sparseMatrix,cooccurrences-method
 #'   as.igraph,cooccurrences-method trim,cooccurrences-method
 #' @docType class
-#' @exportClass cooccurrences-class
+#' @exportClass cooccurrences
+#' @rdname cooccurrences-class
 setClass("cooccurrences",
          representation(
            call="character",
@@ -54,4 +55,33 @@ setClass("cooccurrencesReshaped", contains=c("cooccurrences", "textstat"))
 #' @aliases cooccurrencesReshaped merge,cooccurrencesReshaped-method
 #' @name cooccurrencesReshaped
 NULL
+
+#' @include cooccurrences_class.R bundle_class.R
+NULL
+
+#' S4 cooccurrencesBundle class
+#' 
+#' class to organize information of multiple context analyses
+#' 
+#' @slot objects for cooccurrenceBundle-objects - Object of class \code{"list"} - list of cooccurrence objects
+#'     
+#' @param x a cooccurrencesBundle object
+#' @param col the column to extract
+#' @param directed to be explained
+#' @param rel to be explained, too
+#' @param mc logical, whether to use multicore
+#' @name cooccurrencesBundle-class
+#' @aliases cooccurrencesBundle
+#' @docType class
+#' @exportClass kwic
+#' @rdname cooccurrencesBundle-class
+setClass("cooccurrencesBundle",
+         slots=c(
+           objects="list",
+           pAttribute="character",
+           encoding="character",
+           corpus="character"
+         ),
+         contains=c("bundle")
+)
 

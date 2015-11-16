@@ -41,3 +41,28 @@ setMethod("sort", "textstat", function(x, by, decreasing=TRUE){
   setorderv(x@stat, cols=by, order=ifelse(decreasing == TRUE, -1, 1))
   return(x)
 })
+
+#' @rdname textstat-class
+#' @exportMethod as.bundle
+setGeneric("as.bundle", function(object, ...) standardGeneric("as.bundle"))
+
+setMethod("as.bundle", "textstat", function(object){
+  new(
+    paste(is(object)[1], "Bundle", sep=""),
+    objects=setNames(list(object), object@name),
+    corpus=object@corpus,
+    encoding=object@encoding,
+    explanation=c("derived from a partition object")
+  )
+})
+
+#' @exportMethod +
+#' @docType methods
+#' @rdname textstat-class
+setMethod("+", signature(e1="textstat", e2="textstat"), function(e1, e2){
+  if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
+  newBundle <- as.bundle(e1)
+  newBundle@objects[[length(newBundle@objects)+1]] <- e2
+  names(newBundle@objects)[length(newBundle@objects)] <- e2@name
+  newBundle
+})
