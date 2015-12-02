@@ -50,7 +50,8 @@ setMethod("keyness", signature=c(x="partition"), function(
     'keyness',
     encoding=x@encoding, included=included, minFrequency=minFrequency,
     corpus=x@corpus, pAttribute=pAttribute,
-    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size)
+    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size),
+    stat=data.table()
     )
   keyness@call <- deparse(match.call())
   keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
@@ -64,14 +65,15 @@ setMethod("keyness", signature=c(x="partition"), function(
     y <- enrich(y, tf=pAttribute, verbose=FALSE)
   }
   if (verbose==TRUE) message("... combining frequency lists")
-  keyness@stat <- merge(x@stat, y@stat, by.x="token", by.y="token")
+  keyness@stat <- merge(x@stat, y@stat, by=pAttribute)
+  # keyness@stat <- merge(x@stat, y@stat, by.x=pAttribute, by.y=pAttribute)
 #   rownames(keyness@stat) <- cqi_id2str(
 #     paste(x@corpus,".", pAttribute, sep=""),
 #     keyness@stat[,"id"]
 #     )
-  keyness@stat[, ids.x := NULL]
-  keyness@stat[, ids.y := NULL]
-  setnames(keyness@stat, c("token", "tf.x", "tf.y"),  c("token", "countCoi", "countRef"))
+  # keyness@stat[, ids.x := NULL]
+  # keyness@stat[, ids.y := NULL]
+  setnames(keyness@stat, c("tf.x", "tf.y"),  c("countCoi", "countRef"))
   # Encoding(rownames(keyness@stat)) <- y@encoding
   # colnames(keyness@stat) <- c("id", "countCoi", "countRef")
   if (included == TRUE) keyness@stat[, countRef := keyness@stat[["countRef"]] - keyness@stat[["countCoi"]]]
@@ -84,11 +86,11 @@ setMethod("keyness", signature=c(x="partition"), function(
     keyness <- ll(keyness)
   }
   keyness@stat[, rank := c(1:nrow(keyness@stat))]
-  if (length(pAttribute) == 2){
-    keyness@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", keyness@stat[["token"]])]
-    keyness@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", keyness@stat[["token"]])]
-    keyness@stat[, token := NULL]
-  }
+#   if (length(pAttribute) == 2){
+#     keyness@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", keyness@stat[["token"]])]
+#     keyness@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", keyness@stat[["token"]])]
+#     keyness@stat[, token := NULL]
+#   }
   # keyness@stat <- keyness@stat[,-which(colnames(keyness@stat)=="id")]
   if (verbose==TRUE) message("... trimming table with statistical tests")
   # keyness <- trim(keyness, digits=keyness@digits, verbose=verbose)

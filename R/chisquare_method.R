@@ -45,12 +45,13 @@ setGeneric("chisquare", function(x, ...){standardGeneric("chisquare")})
 }
 
 setMethod("chisquare", "keyness", function(x){
-  x@stat <- data.table(.chisquare(
-    ctab=as.data.frame(x@stat),
+  chiResult <- .chisquare(
+    ctab=as.data.frame(x@stat[, c(colnames(x@stat)[1], "countCoi", "countRef"), with=FALSE]),
     sizeCoi=x@sizeCoi,
     sizeRef=x@sizeRef,
     minFrequency=x@minFrequency
-    ))
+  )
+  x@stat[, chiSquare:= chiResult[["chiSquare"]]]
   x@statisticalTest <- c(x@statisticalTest, "chiSquare")
   return(x)
 })
