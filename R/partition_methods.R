@@ -36,7 +36,7 @@ function(object){
   if (is.null(object@size)) {cat("not available\n")}
   else {cat(object@size, "tokens\n")}
   cat(sprintf("%-21s", "Term frequencies:"))
-  if (length(object@tf)==0) {cat("not available\n")}
+  if (is.null(dim(object@stat))) {cat("not available\n")}
   else {cat("available for ", object@pAttribute, "\n")}
 })
 
@@ -193,23 +193,9 @@ setMethod("length", "partition", function(x) x@size)
 
 #' @exportMethod as.data.frame
 #' @rdname partition-class
-setMethod("as.data.frame", "partition", function(x){
-  df <- data.frame(
-    tf=x@tf[,"tf"],
-    rel=x@tf[,"tf"] / x@size
-    )
-  if (length(x@pAttribute) == 2){
-    df[[x@pAttribute[1]]] <- gsub("^(.*?)//.*?$", "\\1", rownames(df))
-    df[[x@pAttribute[2]]] <- gsub("^.*?//(.*?)$", "\\1", rownames(x@tf))
-    df <- df[, c(x@pAttribute[1], x@pAttribute[2], "tf", "rel")]
-    df <- df[order(df[,"tf"], decreasing=TRUE),]
-  }
-  df
-})
+setMethod("as.data.frame", "partition", function(x) as.data.frame(tf(x)) )
 
-setAs("partition", "data.table", function(from){
-  data.table(as.data.frame(from))
-})
+setAs("partition", "data.table", function(from) data.table(tf(from)) )
 
 
 #' @exportMethod hist

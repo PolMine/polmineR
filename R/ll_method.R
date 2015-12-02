@@ -28,9 +28,9 @@ setGeneric("ll", function(object, ...){standardGeneric("ll")})
 
 setMethod("ll", "context", function(object, partitionObject){
   mat <- .g2Statistic(
-    ids=object@stat$id,
-    windowFreq=object@stat$countCoi,
-    corpusFreq=object@stat$countCorpus,
+    ids=rep(0, times=nrow(object@stat)),
+    windowFreq=object@stat[["countCoi"]],
+    corpusFreq=object@stat[["countCorpus"]],
     windows.total=object@size,
     corpus.total=partitionObject@size
     )
@@ -70,3 +70,16 @@ setMethod("ll", "cooccurrences", function(object, partitionSize){
   return(object)
 })
 
+setMethod("ll", "keynessCooccurrences", function(object, partitionSize){
+  mat <- .g2Statistic(
+    ids=rep(0, times=nrow(object@stat)),
+    windowFreq=object@stat[["x_ab_tf"]],
+    corpusFreq=object@stat[["y_ab_tf"]],
+    windows.total=object@sizeCoi,
+    corpus.total=partitionSize
+  )
+  object@stat[, exp_coi := mat[,"expCoi"]]
+  object@stat[, ll := mat[, "ll"]]
+  # object@method <- c(object@method, "ll")
+  return(object)
+})

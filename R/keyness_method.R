@@ -135,85 +135,45 @@ setMethod("keyness", signature=c(x="partitionBundle"), function(
 
 #' @importFrom plyr ddply
 #' @rdname keyness-method
-setMethod("keyness", "cooccurrences", function(
-  x,y, minFrequency=0, included=FALSE, method="ll", digits=2, mc=TRUE, verbose=TRUE
-  ){
+setMethod("keyness", "cooccurrences", function(x,y, included=FALSE, method="ll", mc=TRUE, verbose=TRUE){
   newObject <- new(
     'keynessCooccurrences',
-    encoding=x@encoding, included=included, minFrequency=minFrequency,
-    corpus=x@corpus, sizeCoi=x@partitionSize,
-    sizeRef=ifelse(included==FALSE, y@partitionSize, y@partitionSize-x@partitionSize)
+    encoding=x@encoding, included=included, corpus=x@corpus, sizeCoi=x@partitionSize,
+    sizeRef=ifelse(included == FALSE, y@partitionSize, y@partitionSize-x@partitionSize),
+    stat=data.table()
   )
-  newObject@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
-  if (x@pAttribute != y@pAttribute) {
+  if (identical(x@pAttribute, y@pAttribute) == FALSE) {
     warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
   } else {
-    newObject@pAttribute <- unique(c(x@pAttribute, y@pAttribute))
+    newObject@pAttribute <- x@pAttribute
   }
-  tabs <- list(x=x@stat, y=y@stat)
   if (verbose == TRUE) message("... preparing tabs for matching")
-  pimpTabs <- function(xOrY){
-    tab <- data.frame(what=ifelse(xOrY == "x", 1, 2), tabs[[xOrY]])
-    tabMatrix <- as.matrix(tab[,-which(colnames(tab) %in% c("cooccurrence", "node"))])
-    tabMatrixPlus <- t(apply(tabMatrix, 1, .minMaxId))
-    colnames(tabMatrixPlus) <- c(colnames(tabMatrix), c("idMin", "idMax"))
-    tabMatrixPlus
-  }
-  if (mc==FALSE) {
-    tabsPlus <- lapply(names(tabs), pimpTabs)
-  } else if (mc == TRUE) {
-    tabsPlus <- mclapply(names(tabs), pimpTabs, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
-  }
-  tab <- do.call(rbind, tabsPlus)
-  rownames(tab) <- NULL
-  characterKey <- paste(
-      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMin"]),
-      "<->",
-      cqi_id2str(paste(newObject@corpus, '.', newObject@pAttribute, sep=""), tab[,"idMax"]),
-      sep=""
+  keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
+  setkeyv(x@stat, keys)
+  setkeyv(y@stat, keys)
+  MATCH <- y@stat[x@stat]
+  
+  # remove columns not needed
+  colsToDrop <- c(
+    "ll", "i.ll", "exp_coi", "i.exp_coi", "rank", "i.rank",
+    "window_size", "i.window_size", "a_tf", "i.a_tf", "b_tf", "i.b_tf"
     )
-  Encoding(characterKey) <- newObject@encoding
-  tab <- data.frame(tab, characterKey=characterKey, stringsAsFactors=FALSE)
-  keysInX <- unique(subset(tab, what==1)[,"characterKey"])
-  reducedTab <- subset(tab, characterKey %in% keysInX)
-  if (verbose == TRUE) message("... matching")
-  .applyWorker <- function(tab){
-    xValues <- tab[which(tab[,"what"] == 1), "cooccurrenceWindowFreq"]
-    yValues <- tab[which(tab[,"what"] == 2), "cooccurrenceWindowFreq"]
-    keySplit <- unlist(strsplit(tab[, "characterKey"], " <-> "))
-    foo1 <- min(c(tab[,"nodeId"], tab[,"cooccurrenceId"]))
-    foo2 <- max(c(tab[,"nodeId"], tab[,"cooccurrenceId"]))
-    data.frame(nodeId=foo1, cooccurrenceId=foo2, term1=keySplit[1], term2=keySplit[2], countCoi=xValues[1], countRef=yValues[1])
-  }
-  if (mc == FALSE){
-    newObject@stat <- ddply(
-      .data=reducedTab, .variables=.(characterKey),
-      .fun=.applyWorker, .progress="text"
-    )    
-  } else {
-    if (verbose == TRUE) message("... performing split")
-    splittedTab <- split(x=reducedTab, f=reducedTab$characterKey)
-    if (verbose == TRUE) message("... apply")
-    resultList <- mclapply(splittedTab, .applyWorker, mc.cores=slot(get("session", '.GlobalEnv'), 'multicore'))
-    if (verbose == TRUE) message("... combine (using data.table")
-    newTab <- rbindlist(resultList)
-    newTab <- cbind(characterKey=names(resultList), newTab)
-    newObject@stat <- as.data.frame(newTab)    
-  }
-  ### starting here - the same as keyness,partition-method
-  if (included == TRUE) newObject@stat[,"countRef"] <- newObject@stat[,"countRef"] - newObject@stat[,"countCoi"]
+  for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
+  setnames(MATCH, old=c("ab_tf", "i.ab_tf"), new=c("y_ab_tf", "x_ab_tf"))
+  
+  if (included == TRUE) MATCH[, y_ab_tf := y_ab_tf - x_ab_tf]
+  
+  newObject@stat <- MATCH
   if ("chiSquare" %in% method) {
     if (verbose==TRUE) message("... computing chisquare tests")
     newObject <- chisquare(newObject)
   }
   if ("ll" %in% method) {
     if (verbose==TRUE) message("... computing log likelihood tests")
-    newObject <- ll(newObject)
+    newObject <- ll(newObject, partitionSize=newObject@sizeRef)
   }
   if (verbose == TRUE) message("... trimming the object")
-  newObject@stat <- cbind(rank=c(1:nrow(newObject@stat)), newObject@stat)
-  rownames(newObject@stat) <- newObject@stat[,"characterKey"]
-  newObject <- trim(newObject, minFrequency=minFrequency, rankBy=method[1])
+  # newObject <- sort(newObject, by=method[1])
   newObject
 })
 

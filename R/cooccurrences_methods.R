@@ -51,7 +51,7 @@ setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
 })
 
 setGeneric("compress", function(.Object, ...) standardGeneric("compress"))
-# calles by trim, cooccurrences-method
+# called by trim, cooccurrences-method
 
 setMethod("compress", "cooccurrences", function(.Object, ...){
   DT <- copy(.Object@stat)
@@ -72,17 +72,16 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
   setkeyv(bToA, col=c(aColsStr, bColsStr))
   merger <- merge(aToB, bToA, all.x=FALSE, all.y=TRUE)
   FIN <- merger[, c(aColsStr, bColsStr, "ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"), with=FALSE]
-  setnames(FIN, c("ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"), c("ab_tf", "ab_ll", "ba_ll", "a_tf", "b_tf"))
-  setcolorder(merger, c("a", "b", "a_id", "b_id", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a"))
-  setkey(merger, a, b)
+  setnames(
+    FIN,
+    c("ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"),
+    c("ab_tf", "ab_ll", "ba_ll", "a_tf", "b_tf"))
+  setcolorder(FIN, c(aColsStr, bColsStr, "ab_tf", "a_tf", "b_tf", "ab_ll", "ba_ll"))
+  setkeyv(FIN, cols=c(aColsStr, bColsStr))
   retval <- new("cooccurrencesReshaped")
-  for (x in (slotNames(object))) if (x != "stat") slot(retval, x) <- slot(object, x)
-  retval@stat <- merger
-  
+  for (x in (slotNames(.Object))) if (x != "stat") slot(retval, x) <- slot(.Object, x)
+  retval@stat <- FIN
   return(retval)
-  
-
-  a_key <- DT[, .paste(), by=eval(), with=TRUE]
 })
 
 
@@ -128,5 +127,4 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
 #   
 #   return(retval)
 # }
-
 

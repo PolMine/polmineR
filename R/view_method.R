@@ -26,11 +26,7 @@ setMethod("view", "textstat", function(.Object){
 
 setMethod("view", "context", function(.Object){
   DT <- .Object@stat
-  if (length(.Object@pAttribute) == 1){
-    tokenCols <- "token"
-  } else {
-    tokenCols <- .Object@pAttribute
-  }
+  tokenCols <- .Object@pAttribute
   what <- c(
     "rank", tokenCols,
     "countCoi", "countCorpus", "expCoi", "expCorpus",

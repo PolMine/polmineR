@@ -50,6 +50,8 @@ in one S4 object.
 
 \describe{
 \item{\code{objects}}{Object of class \code{"list"}}
+
+\item{\code{pAttribute}}{Object of class \code{"character"}}
 }}
 \author{
 Andreas Blaette

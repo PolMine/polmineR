@@ -140,24 +140,34 @@ setMethod(
       Encoding(idsAsString) <- object@encoding
       idsAsString <- enc2utf8(idsAsString)
       Encoding(idsAsString) <- "unknown"
-      ctxt@stat[, token := idsAsString]
-      setcolorder(ctxt@stat, c("id", "token", "countCoi"))
-      setkey(ctxt@stat, "token")
+      ctxt@stat[, eval(pAttribute) := idsAsString, with=TRUE]
+      setcolorder(ctxt@stat, c("id", pAttribute, "countCoi"))
+      setkeyv(ctxt@stat, pAttribute)
     } else if (length(pAttribute) == 2){
       idList <- list(
-        tokenIds=unlist(lapply(bigBag, function(x) x$ids[[1]])),
-        posIds=unlist(lapply(bigBag, function(x) x$ids[[2]]))
+        id1=unlist(lapply(bigBag, function(x) x$ids[[1]])),
+        id2=unlist(lapply(bigBag, function(x) x$ids[[2]]))
       )
-      statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
-      setnames(statRaw, c("token", "ids", "countCoi"))
-      ctxt@stat <- copy(statRaw)
-      ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", statRaw[["token"]])]
-      ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", statRaw[["token"]])]
-      token <- statRaw[["token"]]
-      Encoding(token) <- "unknown"
-      ctxt@stat[, "token" := token]
-      setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "countCoi"))
-      setkey(ctxt@stat, "token")
+      names(idList) <- pAttribute
+      ID <- as.data.table(idList)
+      setkeyv(ID, pAttribute)
+      count <- function(x) return(x)
+      TF <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
+      for (i in c(1:length(pAttribute))){
+        TF[, eval(pAttribute[i]) := cqi_id2str(paste(object@corpus, ".", pAttribute[i], sep=""), TF[[pAttribute[i]]]) %>% as.utf8()]
+      }
+
+      # statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
+      
+      setnames(TF, "V1", "countCoi")
+      ctxt@stat <- copy(TF)
+      # ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", statRaw[["token"]])]
+      # ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", statRaw[["token"]])]
+      # token <- statRaw[["token"]]
+      # Encoding(token) <- "unknown"
+      # ctxt@stat[, "token" := token]
+      # setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "countCoi"))
+      setkeyv(ctxt@stat, pAttribute)
     }
     # wc <- table(unlist(lapply(bigBag, function(x) x$id)))
      if (!is.null(statisticalTest)){
@@ -175,7 +185,11 @@ setMethod(
         if (verbose==TRUE) message("... calculating t-test")
         ctxt <- tTest(ctxt, object)
       }
+      # ctxt@stat[, id := NULL]
+      colnamesOld <- colnames(ctxt@stat)
       ctxt@stat[, rank := c(1:nrow(ctxt@stat))]
+      # setcolorder(ctxt@stat, c("rank", colnamesOld))
+      
 #       ctxt <- trim(ctxt, minSignificance=minSignificance, rankBy=ctxt@statisticalTest[1])
      }
     ctxt

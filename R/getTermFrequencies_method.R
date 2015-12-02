@@ -60,34 +60,34 @@ setMethod("getTermFrequencies", "vector", function(.Object, corpus, pAttribute){
 
 
 
-# setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, encoding){
-#   pAttributeIds <- .Object
-#   chunks <- split(pAttributeIds[[1]], pAttributeIds[[2]])  
-#   chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
-#   chunksTabulatedWithRownames <- lapply(
-#     chunksTabulated,
-#     function(tf) .id2str(tf, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
-# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
-#   )
-#   chunksTabulatedWithEnhancedRownames <- lapply(
-#     names(chunksTabulatedWithRownames),
-#     function(id){
-#       tf <- chunksTabulatedWithRownames[[id]]
-#       idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
-#       Encoding(idAsStr) <- encoding
-#       idAsStr <- enc2utf8(idAsStr)
-#       tf[["token"]] <- paste(tf[["token"]], "//", idAsStr, sep="")
-#       setcolorder(tf, c("token", "ids", "tf"))
-#       setkey(tf, "token")
-#       tf
-#     }
-# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
-#     )
-#   retval <- rbindlist(chunksTabulatedWithEnhancedRownames)
-#   setkey(retval, "token")
-#   retval
-# })
-# 
+setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, encoding){
+  pAttributeIds <- .Object
+  chunks <- split(pAttributeIds[[1]], pAttributeIds[[2]])  
+  chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
+  chunksTabulatedWithRownames <- lapply(
+    chunksTabulated,
+    function(tf) .id2str(tf, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
+#    , mc.cores=ifelse(mc==FALSE, 1, mc)
+  )
+  chunksTabulatedWithEnhancedRownames <- lapply(
+    names(chunksTabulatedWithRownames),
+    function(id){
+      tf <- chunksTabulatedWithRownames[[id]]
+      idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
+      Encoding(idAsStr) <- encoding
+      idAsStr <- enc2utf8(idAsStr)
+      tf[["token"]] <- paste(tf[["token"]], "//", idAsStr, sep="")
+      setcolorder(tf, c("token", "ids", "tf"))
+      setkey(tf, "token")
+      tf
+    }
+#    , mc.cores=ifelse(mc==FALSE, 1, mc)
+    )
+  retval <- rbindlist(chunksTabulatedWithEnhancedRownames)
+  setkey(retval, "token")
+  retval
+})
+
 
 
 

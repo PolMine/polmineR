@@ -11,7 +11,7 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{partition}(.Object, pAttribute = c("word", "pos"),
   window = 5, keep = list(pos = c("NN", "ADJA")), method = "ll",
-  mc = FALSE, verbose = TRUE, ...)
+  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
 \S4method{cooccurrences}{partitionBundle}(.Object, pAttribute = "word",
   window = 5, method = "ll", keep = list(pos = c("ADJA", "NN")),

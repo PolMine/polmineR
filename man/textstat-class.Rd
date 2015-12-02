@@ -6,14 +6,18 @@
 \alias{as.DataTables,textstat-method}
 \alias{as.bundle}
 \alias{as.data.frame,textstat-method}
+\alias{as.data.table,textstat-method}
 \alias{colnames,textstat-method}
 \alias{dim,textstat-method}
 \alias{head,textstat-method}
 \alias{names,textstat-method}
 \alias{nrow,textstat-method}
+\alias{pAttribute,textstat-method}
 \alias{round,textstat-method}
 \alias{rownames,textstat-method}
 \alias{show,textstat-method}
+\alias{sort,textstat-method}
+\alias{subset,textstat-method}
 \alias{tail,textstat-method}
 \alias{textstat-class}
 \alias{view,textstat-method}
@@ -23,13 +27,25 @@
 
 \S4method{tail}{textstat}(x, ...)
 
+\S4method{dim}{textstat}(x)
+
 \S4method{nrow}{textstat}(x)
 
 \S4method{round}{textstat}(x, digits = 2)
 
+\S4method{colnames}{textstat}(x)
+
+\S4method{sort}{textstat}(x, by, decreasing = TRUE)
+
 as.bundle(object, ...)
 
 \S4method{+}{textstat,textstat}(e1, e2)
+
+\S4method{subset}{textstat}(x, ...)
+
+\S4method{as.data.table}{textstat}(x)
+
+\S4method{pAttribute}{textstat}(object)
 
 \S4method{view}{textstat}(.Object)
 }

@@ -7,9 +7,9 @@
 ngrams(.Object, ...)
 }
 \arguments{
-\item{.Object}{object}
+\item{.Object}{object of class \code{partition}}
 
-\item{n}{number of token}
+\item{n}{number of tokens}
 
 \item{pAttribute}{p-attribute}
 }

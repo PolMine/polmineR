@@ -38,8 +38,8 @@ setMethod("tf", "partition", function(object, query=NULL, pAttribute=NULL, metho
     if (length(object@pAttribute) == 0) object <- enrich(object, tf=pAttr)
     DT <- copy(object@stat)
     DT[, rel := DT[["tf"]] / object@size]
-    DT[, ids := NULL]
-    setnames(DT, c("token", "tf"), c("query", "abs"))
+    # DT[, ids := NULL]
+    # setnames(DT, c("token", "tf"), c("token", "abs"))
     return(DT)
   }
   if (is.character(query) == TRUE){
