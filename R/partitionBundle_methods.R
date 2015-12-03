@@ -1,4 +1,4 @@
-#'@include partition_class.R partitionBundle_class.R
+#' @include partition_class.R partitionBundle_class.R
 NULL
 
 #' @docType methods

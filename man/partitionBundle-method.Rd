@@ -9,11 +9,11 @@
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionBundle}{character}(object, def, var, prefix = c(""),
-  encoding = NULL, tf = NULL, meta = NULL, regex = FALSE,
+  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, type = NULL, mc = NULL, verbose = TRUE)
 
 \S4method{partitionBundle}{list}(object, var, prefix = c(""),
-  encoding = NULL, tf = NULL, meta = NULL, regex = FALSE,
+  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, mc = FALSE, verbose = TRUE)
 
 \S4method{partitionBundle}{missing}()
@@ -29,7 +29,7 @@
 
 \item{encoding}{encoding of the corpus, if not provided, encoding provided in the registry file will be used}
 
-\item{tf}{the pAttributes for which term frequencies shall be retrieved}
+\item{pAttribute}{the pAttributes for which term frequencies shall be retrieved}
 
 \item{meta}{a character vector}
 

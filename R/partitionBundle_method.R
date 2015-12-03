@@ -18,7 +18,7 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @param var list indicating the s-attribute to be variabel
 #' @param prefix a character vector that will serve as a prefix for partition names
 #' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
-#' @param tf the pAttributes for which term frequencies shall be retrieved
+#' @param pAttribute the pAttributes for which term frequencies shall be retrieved
 #' @param meta a character vector
 #' @param regex logical
 #' @param xml either 'flat' (default) or 'nested'
@@ -36,7 +36,7 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
   object, def, var, prefix=c(""),
-  encoding=NULL, tf=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
+  encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -58,7 +58,7 @@ setMethod("partitionBundle", "character", function(
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
-  partitionBase <- partition(object, def, tf=c(), meta=meta, regex=regex, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
+  partitionBase <- partition(object, def, pAttribute=c(), meta=meta, regex=regex, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
   bundle@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
@@ -70,7 +70,7 @@ setMethod("partitionBundle", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      bundle@objects[[sAttribute]] <- partition(partitionBase, def=sAttr, name=sAttribute, tf=tf, id2str=id2str, type=type)
+      bundle@objects[[sAttribute]] <- partition(partitionBase, def=sAttr, name=sAttribute, pAttribute=pAttribute, id2str=id2str, type=type)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
@@ -80,7 +80,7 @@ setMethod("partitionBundle", "character", function(
         partitionBase,
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
         name=x,
-        tf=tf,
+        pAttribute=pAttribute,
         id2str=id2str,
         type=type
       )
@@ -92,12 +92,12 @@ setMethod("partitionBundle", "character", function(
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "list", function(
-  object, var, prefix=c(""), encoding=NULL, tf=NULL, meta=NULL,
+  object, var, prefix=c(""), encoding=NULL, pAttribute=NULL, meta=NULL,
   regex=FALSE, xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
 ) {
   partitionBundle(
     object=get('session', '.GlobalEnv')@corpus,
-    def=object, var=var, prefix=prefix, encoding=encoding, tf=tf,
+    def=object, var=var, prefix=prefix, encoding=encoding, pAttribute=pAttribute,
     meta=meta, regex=regex, xml=xml, id2str=id2str, mc=mc, verbose=verbose
   )
 })

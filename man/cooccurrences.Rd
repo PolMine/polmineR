@@ -11,7 +11,8 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{partition}(.Object, pAttribute = c("word", "pos"),
   window = 5, keep = list(pos = c("NN", "ADJA")), method = "ll",
-  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
+  how = 1, matrix = FALSE, mc = FALSE, progress = TRUE,
+  verbose = TRUE, ...)
 
 \S4method{cooccurrences}{partitionBundle}(.Object, pAttribute = "word",
   window = 5, method = "ll", keep = list(pos = c("ADJA", "NN")),
@@ -27,6 +28,8 @@ cooccurrences(.Object, ...)
 \item{keep}{list with tokens to keep}
 
 \item{method}{statistical test to use (defaults to "ll")}
+
+\item{matrix}{logical, whether to return matrix}
 
 \item{mc}{whether to use multicore}
 }

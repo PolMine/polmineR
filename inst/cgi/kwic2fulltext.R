@@ -7,7 +7,7 @@ run <- function(...){
   if ("corpus" %in% names(sAttr)){
     corpus <- sAttr[["corpus"]]
     sAttr[["corpus"]] <- NULL
-    partitionToDisplay <- partition(object=corpus, def=sAttr, tf=NULL, verbose=FALSE)
+    partitionToDisplay <- partition(object=corpus, def=sAttr, pAttribute=NULL, verbose=FALSE)
     partitionAsHtml <- html(partitionToDisplay)
 #   out("Content-type: text/html\n\n")
     out(partitionAsHtml)

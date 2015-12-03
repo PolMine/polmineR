@@ -201,3 +201,9 @@ setAs("partition", "data.table", function(from) data.table(tf(from)) )
 #' @exportMethod hist
 #' @rdname partition-class
 setMethod("hist", "partition", function(x, ...){hist(x@tf[,"tf"], ...)})
+
+
+setMethod("subset", "partition", function(x, ...){
+  partition(object=x, list(...))
+})
+

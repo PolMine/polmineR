@@ -10,18 +10,19 @@
 \title{Initialize a partition}
 \usage{
 \S4method{partition}{character}(object, def = NULL, name = c(""),
-  encoding = NULL, tf = NULL, meta = NULL, regex = FALSE,
+  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, type = NULL, mc = FALSE,
   verbose = TRUE)
 
 \S4method{partition}{list}(object, name = c(""), encoding = NULL,
-  tf = NULL, meta = NULL, regex = FALSE, xml = "flat", id2str = TRUE,
-  type = NULL, mc = FALSE, verbose = TRUE)
+  pAttribute = NULL, meta = NULL, regex = FALSE, xml = "flat",
+  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE)
 
 \S4method{partition}{missing}()
 
 \S4method{partition}{partition}(object, def, name = c(""), regex = FALSE,
-  tf = NULL, id2str = TRUE, type = NULL, verbose = TRUE, mc = FALSE)
+  pAttribute = NULL, id2str = TRUE, type = NULL, verbose = TRUE,
+  mc = FALSE)
 }
 \arguments{
 \item{object}{character-vector - the CWB-corpus to be used}
@@ -33,7 +34,7 @@ details)}
 
 \item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
 
-\item{tf}{the pAttributes for which term frequencies shall be retrieved}
+\item{pAttribute}{the pAttribute(s) for which term frequencies shall be retrieved}
 
 \item{meta}{a character vector}
 
@@ -45,7 +46,7 @@ details)}
 
 \item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
 
-\item{mc}{whether to use multicore (for tf lists)}
+\item{mc}{whether to use multicore (for counting terms)}
 
 \item{verbose}{logical, defaults to TRUE}
 
@@ -76,16 +77,16 @@ you supply a >2 vector. The alternative being creating a set of partitions with
 For s-attributes, regular expressions can be used. Please note that for R grep,
 double backlashes have to be used.
 For some purposes (c.g. computation of crosstabulations), term frequencies will
-not be needed in the setup of the partition object. In that case tf=FALSE and
+not be needed in the setup of the partition object. In that case pAttribute=FALSE and
 metadata=FALSE will speed up the initialization of the object a lot.
 A date range with a specific start and end date can be specified by providing dateRange.
 Note that the sequence of the s-Attributes will matter. Things will speed up if you start
 with the conditions narrowing down the corpus the most.
 }
 \examples{
-\dontrun{
+use(polmineR.sampleCorpus)
 spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
-}
+kauder <- partition("PLPRBTTXT", def=list(text_name="Volker Kauder"), pAttribute=c("word"))
 }
 \author{
 Andreas Blaette

@@ -16,7 +16,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' For s-attributes, regular expressions can be used. Please note that for R grep,
 #' double backlashes have to be used.
 #' For some purposes (c.g. computation of crosstabulations), term frequencies will
-#' not be needed in the setup of the partition object. In that case tf=FALSE and
+#' not be needed in the setup of the partition object. In that case pAttribute=FALSE and
 #' metadata=FALSE will speed up the initialization of the object a lot.
 #' A date range with a specific start and end date can be specified by providing dateRange.
 #' Note that the sequence of the s-Attributes will matter. Things will speed up if you start 
@@ -27,13 +27,13 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' details)
 #' @param name name of the new partition, defaults to "noName"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
-#' @param tf the pAttributes for which term frequencies shall be retrieved
+#' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
 #' @param meta a character vector
 #' @param regex logical, whether strucs will be filtered by applying a regex (via grep)
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
-#' @param mc whether to use multicore (for tf lists)
+#' @param mc whether to use multicore (for counting terms)
 #' @param verbose logical, defaults to TRUE
 #' @param value a character string that will be the name of the partition
 #' @param from from
@@ -42,16 +42,16 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
-#' \dontrun{
+#' use(polmineR.sampleCorpus)
 #' spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
-#' }
+#' kauder <- partition("PLPRBTTXT", def=list(text_name="Volker Kauder"), pAttribute=c("word"))
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
 #' @aliases partition
 setMethod("partition", "character", function(
   object, def=NULL, name=c(""),
-  encoding=NULL, tf=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
+  encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
   mc=FALSE, verbose=TRUE
 ) {
   corpus <- object
@@ -70,7 +70,7 @@ setMethod("partition", "character", function(
   if (is.null(type)){
     parsedInfoFile <- .parseInfoFile(object)
     if (is.null(parsedInfoFile)){
-      Partition <- new('partition')    
+      Partition <- new('partition', stat=data.table())    
     } else {
       if ("CORPUS_TYPE" %in% names(parsedInfoFile)){
         type <- parsedInfoFile["CORPUS_TYPE"]
@@ -115,12 +115,12 @@ setMethod("partition", "character", function(
   if (!is.null(Partition)) {
     if (verbose==TRUE) message('... computing partition size')
     Partition@size <- size(Partition)
-    if (!is.null(tf)) {if (tf[1] == FALSE) {tf <- NULL}}
-    if (!is.null(tf)) {
-      stopifnot(is.character(tf) == TRUE, length(tf) <= 2, all(tf %in% pAttributes(object)))
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf, ')')  
-      Partition@stat <- getTermFrequencies(.Object=Partition, pAttribute=tf, id2str=id2str, mc=mc)
-      Partition@pAttribute <- tf
+    if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
+    if (!is.null(pAttribute)) {
+      stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+      Partition@stat <- getTermFrequencies(.Object=Partition, pAttribute=pAttribute, id2str=id2str, mc=mc)
+      Partition@pAttribute <- pAttribute
     }
     if (!is.null(meta)) {
       if (verbose==TRUE) message('... setting up metadata (table and list of values)')
@@ -136,12 +136,12 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(
-  object, name=c(""), encoding=NULL, tf=NULL, meta=NULL,
+  object, name=c(""), encoding=NULL, pAttribute=NULL, meta=NULL,
   regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
 ) {
   partition(
     object=get('session', '.GlobalEnv')@corpus,
-    def=object, name=name, encoding=encoding, tf=tf,
+    def=object, name=name, encoding=encoding, pAttribute=pAttribute,
     meta=meta, regex=regex, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
     )
 })
@@ -306,7 +306,7 @@ setMethod("partition", "missing", function(){
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, tf=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE){
+setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE){
   # these lines are identical with partition method
   if (is.null(type)){
     newPartition <- new('partition')  
@@ -331,8 +331,8 @@ setMethod("partition", "partition", function(object, def, name=c(""), regex=FALS
   newPartition <- .zoomingSattributes2cpos(object, newPartition, def, regex)
   message('... computing partition size')
   newPartition@size <- size(newPartition)
-  if (length(tf)>0) {
-    for (p in tf){
+  if (length(pAttribute)>0) {
+    for (p in pAttribute){
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
       newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=p, id2str=id2str, mc=mc)
       newPartition@pAttribute <- p

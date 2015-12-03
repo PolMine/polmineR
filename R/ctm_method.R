@@ -1,9 +1,9 @@
 # 
 # #' @examples 
 # #' \dontrun{
-# #' sz2010 <- partition("ARENEN", list(text_date=".*2010"), method="grep", tf=NULL)
+# #' sz2010 <- partition("ARENEN", list(text_date=".*2010"), method="grep", pAttribute=NULL)
 # #' dates <- sAttributes(sz2010, "text_date")
-# #' sz2010 <- partitionBundle("ARENEN", def=list(text_date=".*2010"), var=list(text_date=dates), tf="word")
+# #' sz2010 <- partitionBundle("ARENEN", def=list(text_date=".*2010"), var=list(text_date=dates), pAttribute="word")
 # #' sz2010tdm <- as.TermDocumentMatrix(sz2010)
 # #' }
 # setMethod("ctm", "TermDocumentMatrix", function(.Object){

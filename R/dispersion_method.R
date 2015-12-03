@@ -263,7 +263,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @seealso \code{crosstab-class}
 #' @exportMethod dispersion
 #' @examples
-#' test <- partition("PLPRBTTXT", def=list(text_lp="17"), tf=NULL)
+#' test <- partition("PLPRBTTXT", def=list(text_lp="17"), pAttribute=NULL)
 #' dispersion(test, "Integration", pAttribute="word", dim=c("text_year"))
 #' foo <- dispersion(test, "Integration", c("text_year", "text_party"))
 #' dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
