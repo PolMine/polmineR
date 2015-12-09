@@ -34,43 +34,6 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 
 
-#' @aliases trim,context-method
-#' @docType methods
-#' @rdname trim-method
-setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list(), keep=list()){
-  if (length(min) > 0){
-    stopifnot(all((names(min) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
-    rowsToKeep <- as.vector(unique(sapply(
-     names(min),
-     function(column) which(object@stat[[column]] >= min[[column]])
-    )))
-    if (length(rowsToKeep) > 0) object@stat <- object@stat[rowsToKeep,]
-  }
-  if (length(max) > 0){
-    stopifnot(all((names(max) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
-    rowsToKeep <- as.vector(unique(sapply(
-      names(max),
-      function(column) which(object@stat[[column]] <= max[[column]])
-    )))
-    if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToKeep,]
-  }
-  if (length(drop) > 0){
-    stopifnot(all((names(drop) %in% colnames(object@stat))))
-    rowsToDrop <- as.vector(unlist(sapply(
-      names(drop),
-      function(column) sapply(drop[[column]], function(x) grep(x, object@stat[[column]]))
-      )))
-    if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToDrop,]
-  }
-  if (length(keep) > 0){
-    stopifnot(all((names(keep) %in% colnames(object@stat))))
-    for (col in names(keep)){
-      object@stat <- object@stat[which(object@stat[[col]] %in% keep[[col]]),]
-    }
-  }
-  object
-})
-
 
 #' @docType methods
 #' @rdname trim-method
@@ -127,22 +90,6 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
   pimpedBundle
 })
 
-
-#' @rdname cooccurrences-class
-setMethod("trim", "cooccurrences", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
-  if (reshape == TRUE) object <- .reshapeCooccurrences(object, mc=mc)
-  if (is.null(by) == FALSE){
-    if (class(by) %in% c("keynessCooccurrences", "cooccurrencesReshaped")){
-      bidirectional <- strsplit(rownames(by@stat), "<->")
-      fromTo <- c(
-        sapply(bidirectional, function(pair) paste(pair[1], "->", pair[2], sep="")),
-        sapply(bidirectional, function(pair) paste(pair[2], "->", pair[1], sep=""))
-      ) 
-      object@stat <- object@stat[which(rownames(object@stat) %in% fromTo),]
-    }
-  }
-  callNextMethod()
-})
 
 #' @importFrom Matrix rowSums
 #' @importFrom tm stopwords
@@ -216,4 +163,22 @@ setMethod("trim", "cooccurrences", function(object, by){
   }
   object
 })
+
+
+# #' @rdname cooccurrences-class
+# setMethod("trim", "cooccurrences", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
+#   if (reshape == TRUE) object <- .reshapeCooccurrences(object, mc=mc)
+#   if (is.null(by) == FALSE){
+#     if (class(by) %in% c("keynessCooccurrences", "cooccurrencesReshaped")){
+#       bidirectional <- strsplit(rownames(by@stat), "<->")
+#       fromTo <- c(
+#         sapply(bidirectional, function(pair) paste(pair[1], "->", pair[2], sep="")),
+#         sapply(bidirectional, function(pair) paste(pair[2], "->", pair[1], sep=""))
+#       ) 
+#       object@stat <- object@stat[which(rownames(object@stat) %in% fromTo),]
+#     }
+#   }
+#   callNextMethod()
+# })
+# 
 

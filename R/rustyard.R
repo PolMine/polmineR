@@ -308,3 +308,42 @@
 #           }
 # )
 # 
+
+
+# #' @aliases trim,context-method
+# #' @docType methods
+# #' @rdname trim-method
+# setMethod("trim", "textstat", function(object, min=list(), max=list(), drop=list(), keep=list()){
+#   if (length(min) > 0){
+#     stopifnot(all((names(min) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
+#     rowsToKeep <- as.vector(unique(sapply(
+#       names(min),
+#       function(column) which(object@stat[[column]] >= min[[column]])
+#     )))
+#     if (length(rowsToKeep) > 0) object@stat <- object@stat[rowsToKeep,]
+#   }
+#   if (length(max) > 0){
+#     stopifnot(all((names(max) %in% colnames(object@stat)))) # ensure that colnames provided are actually available
+#     rowsToKeep <- as.vector(unique(sapply(
+#       names(max),
+#       function(column) which(object@stat[[column]] <= max[[column]])
+#     )))
+#     if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToKeep,]
+#   }
+#   if (length(drop) > 0){
+#     stopifnot(all((names(drop) %in% colnames(object@stat))))
+#     rowsToDrop <- as.vector(unlist(sapply(
+#       names(drop),
+#       function(column) sapply(drop[[column]], function(x) grep(x, object@stat[[column]]))
+#     )))
+#     if (length(rowsToDrop) > 0) object@stat <- object@stat[-rowsToDrop,]
+#   }
+#   if (length(keep) > 0){
+#     stopifnot(all((names(keep) %in% colnames(object@stat))))
+#     for (col in names(keep)){
+#       object@stat <- object@stat[which(object@stat[[col]] %in% keep[[col]]),]
+#     }
+#   }
+#   object
+# })
+
