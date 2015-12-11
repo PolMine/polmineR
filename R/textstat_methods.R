@@ -87,6 +87,7 @@ setMethod("as.data.table", "textstat", function(x) x@stat)
 #' @rdname textstat-class
 setMethod("pAttribute", "textstat", function(object) object@pAttribute)
 
+#' @exportMethod dotchart
 setMethod("dotchart", "textstat", function(x, col, n=20, ...){
-  dotchart(x=x@stat[["tf"]][n:1], labels=x@stat[[1]][n:1])
+  dotchart(x=x@stat[[col]][n:1], labels=x@stat[[1]][n:1], ...)
 })
