@@ -1,7 +1,6 @@
 #' @include partition_class.R partitionBundle_class.R
 NULL
 
-#' @docType methods
 #' @rdname partitionBundle-class
 setMethod("show", "partitionBundle", function (object) {
   cat('** PartitionBundle object: **\n')
@@ -16,14 +15,7 @@ setMethod("show", "partitionBundle", function (object) {
   cat("\n")
 })
 
-#' Summary method for partitionBundle Objects 
-#'
-#' simple statistic 
-#' 
-#' @param object the partitionBundle object
-#' @exportMethod summary
-#' @docType methods
-#' @noRd
+#' @rdname partitionBundle-class
 setMethod("summary", "partitionBundle", function (object) {
   summary <- data.frame(
     partition=names(object@objects),
@@ -53,13 +45,12 @@ setMethod("summary", "partitionBundle", function (object) {
 #' overlaps of the different partitions that are to be summarized.
 #' Encodings and the root node need to be identical, too.
 #' 
-#' @param object a bundle object
+#' @param x a bundle object
 #' @param name the name for the new partition
 #' @return An object of the class 'partition. See partition for the
 #' details on the class.
 #' @author Andreas Blaette
 #' @exportMethod merge
-#' @docType methods
 #' @noRd
 setMethod("merge", "partitionBundle", function(x, name=c("")){
   y <- new("partition")
@@ -85,7 +76,6 @@ setMethod("merge", "partitionBundle", function(x, name=c("")){
 
 
 #' @exportMethod [[
-#' @docType methods
 #' @rdname partitionBundle-class
 setMethod('[[', 'partitionBundle', function(x,i){
   return(x@objects[[i]])
@@ -94,14 +84,13 @@ setMethod('[[', 'partitionBundle', function(x,i){
 
 #' @exportMethod [
 #' @rdname partitionBundle-class
-#' @docType methods
 setMethod('[', 'partitionBundle', function(x,i){
   a <- unname(unlist(lapply(x@objects, function(y) y@tf[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
     partition=names(x@objects),
-    tfAbs=a,
-    tfRel=round(a/sizes*100000,2),
+    count=a,
+    freq=round(a/sizes*100000,2),
     row.names=c(1:length(x@objects))
     )
   dist
@@ -109,7 +98,6 @@ setMethod('[', 'partitionBundle', function(x,i){
 )
 
 #' @exportMethod +
-#' @docType methods
 #' @rdname bundle-class
 setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
@@ -134,7 +122,6 @@ setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2)
 #' @return a matrix
 #' @author Andreas Blaette
 #' @exportMethod as.matrix
-#' @docType methods
 #' @noRd
 setMethod("as.matrix", "partitionBundle", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
   as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
@@ -168,7 +155,6 @@ setMethod("names", "partitionBundle", function(x){
 })
 
 #' @rdname partitionBundle-class
-#' @docType methods
 #' @exportMethod names<-
 setReplaceMethod(
   "names",
@@ -191,7 +177,6 @@ setReplaceMethod(
 )
 
 #' @exportMethod unique
-#' @docType methods
 #' @rdname partitionBundle-class
 setMethod("unique", "partitionBundle", function(x){
   partitionNames <- lapply(x@objects, function(p) p@name)

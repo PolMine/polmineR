@@ -21,8 +21,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 
 #' Contingency tables with term frequencies
 #' 
-#' Generates a 'crosstab' object with partition sizes, absolute and relative
-#' frequencies
+#' Generates a 'crosstab' object with partition sizes, counts and normalized frequencies
 #' 
 #' The original intention for this function was to be able to generate time series in a fashion very similar to the google ngram viewer.
 #' Applications for this function are much broader.
@@ -49,12 +48,12 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
   dispObject@sizes <- dissect(object, dim=c(rows, cols), verbose=FALSE)
   if (verbose==TRUE) message ('... getting frequencies')
-  absRaw <- .tfDispersion(object, query, dim=c(rows, cols), pAttribute)
-  dispObject@abs <- .mapMatrices(matrixToMatch=dispObject@sizes, matrixToAdjust=absRaw)
-  dispObject@abs[is.na(dispObject@abs)] <- 0
-  dispObject@rel <- dispObject@abs/dispObject@sizes
-  dispObject@rel[is.infinite(as.matrix(dispObject@rel))] <- 0 
-  dispObject@rel[is.nan(as.matrix(dispObject@rel))] <- 0
+  countRaw <- .tfDispersion(object, query, dim=c(rows, cols), pAttribute)
+  dispObject@count <- .mapMatrices(matrixToMatch=dispObject@sizes, matrixToAdjust=countRaw)
+  dispObject@count[is.na(dispObject@count)] <- 0
+  dispObject@freq <- dispObject@count/dispObject@sizes
+  dispObject@freq[is.infinite(as.matrix(dispObject@freq))] <- 0 
+  dispObject@freq[is.nan(as.matrix(dispObject@freq))] <- 0
   colnames(dispObject@sizes) <- gsub('^X(.*?)', '\\1', colnames(dispObject@sizes))
   rownames(dispObject@sizes)[which(rownames(dispObject@sizes) == "")] <- 'NA'
   dispObject
@@ -95,18 +94,18 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @author Andreas Blaette
 #' @seealso multiword.distribution, queries.distribution
 #' @noRd 
-.queryDistribution <- function (object, query, pAttribute, sAttribute, rel=TRUE) {
+.queryDistribution <- function (object, query, pAttribute, sAttribute, freq=TRUE) {
   dispObject <- new("dispersion", dim=sAttribute, query=query)
   cpos <- cpos(object, query, pAttribute)[,1]
   if(!is.null(cpos)){
     sAttr <- paste(object@corpus,'.',sAttribute, sep='')
     struc <- cqi_cpos2struc(sAttr, cpos)
-    abs <- table(cqi_struc2str(sAttr,struc))
-    absMatrix <- as(abs, "matrix")
-    dimnames(absMatrix) <- list(names(abs), "tf")
-    names(dimnames(absMatrix)) <- c(sAttribute, "tf")
-    dispObject@abs <- absMatrix
-    if (rel==TRUE) {
+    count <- table(cqi_struc2str(sAttr,struc))
+    countMatrix <- as(count, "matrix")
+    dimnames(countMatrix) <- list(names(count), "count")
+    names(dimnames(countMatrix)) <- c(sAttribute, "count")
+    dispObject@count <- countMatrix
+    if (freq==TRUE) {
       sizes <- xtabs(
         length~meta,
         data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata$table[,sAttribute])
@@ -114,15 +113,15 @@ setMethod("dispersion", "context", function(object, sAttribute){
       sizeMatrix <- as(sizes, "matrix")
       dimnames(sizeMatrix) <- setNames(list(names(sizes), "noToken"), c(sAttribute, "size"))
       dispObject@sizes <- sizeMatrix
-      relDf <- join(
+      freqDf <- join(
         data.frame(sAttr=names(sizes), sizes=as.vector(sizes)),
-        data.frame(sAttr=names(abs), abs=as.vector(abs)),
+        data.frame(sAttr=names(count), count=as.vector(count)),
         by="sAttr", type="left"
         )
-      relDf <- cbind(relDf, rel=relDf$abs/relDf$sizes)
-      relDf[is.na(relDf)] <- 0
-      relMatrix <- matrix(data=relDf[,"rel"], ncol=1, dimnames=setNames(list(relDf$sAttr, "rel"), c(sAttribute, "rel")))
-      dispObject@rel <- relMatrix
+      freqDf <- cbind(freqDf, freq=freqDf$count/freqDf$sizes)
+      freqDf[is.na(freqDf)] <- 0
+      freqMatrix <- matrix(data=freqDf[,"freq"], ncol=1, dimnames=setNames(list(freqDf$sAttr, "freq"), c(sAttribute, "freq")))
+      dispObject@freq <- freqMatrix
     }
   } else {
     warning("no hits for query ", query)
@@ -150,7 +149,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @author Andreas Blaette
 #' @seealso .query.distribution, multiword.distribution
 #' @noRd
-.queriesDistribution <- function(object, queries, pAttribute, sAttribute, rel, mc, verbose){
+.queriesDistribution <- function(object, queries, pAttribute, sAttribute, freq, mc, verbose){
   if (verbose == TRUE) message("... retrieving frequencies for the ", length(queries), " queries given")
   queriesUnique <- unique(queries)
   if (length(queriesUnique) != length(queries)) {
@@ -175,14 +174,14 @@ setMethod("dispersion", "context", function(object, sAttribute){
       setNames(queries, queries),
       function(query) {
         if (verbose == TRUE) message('... processing query: ', query)
-        .queryDistribution(object, query, pAttribute, sAttribute, rel=FALSE)
+        .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE)
       }
     )
   } else if (mc == TRUE) {
     if (verbose == TRUE) message("... getting counts from corpus (parallel processing)")
     queryHits <- mclapply(
       setNames(queries, queries),
-      function(query) .queryDistribution(object, query, pAttribute, sAttribute, rel=FALSE),
+      function(query) .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE),
       mc.cores=slot(get("session", ".GlobalEnv"), "cores")
     )
   }
@@ -194,9 +193,9 @@ setMethod("dispersion", "context", function(object, sAttribute){
     names(queryHits2),
     function(x) {
       data.frame(
-        partition=rownames(queryHits2[[x]]@abs),
+        partition=rownames(queryHits2[[x]]@count),
         query=x,
-        no=as.vector(queryHits2[[x]]@abs)
+        no=as.vector(queryHits2[[x]]@count)
         )
     })
   queryHits4 <- do.call(rbind, queryHits3)
@@ -209,7 +208,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
   tabulatedDF <- xtabs(no~partition+query, data=mergedDF)
 #   for (query in queries) {
 #     if (verbose == TRUE) message("... adjusting data.frames")
-#     # incoming <- .queryDistribution(part, pAttribute, query, sAttribute, rel=FALSE)
+#     # incoming <- .queryDistribution(part, pAttribute, query, sAttribute, freq=FALSE)
 #     incoming <- queryHits[[query]]
 #     if (!is.null(incoming)){
 #       abs <- merge(abs, as.data.frame(incoming), by.x="meta", by.y="Var1", all=TRUE)
@@ -233,14 +232,14 @@ setMethod("dispersion", "context", function(object, sAttribute){
     )
   tabulatedDF3 <- cbind(tabulatedDF2, zeroValues)
   tabulatedDF4 <- tabulatedDF3[,queries]
-  dispersionObject@abs <- t(tabulatedDF4)
-  if (rel == TRUE){
-    if (verbose == TRUE) message("... calculating relative frequencies")
-    dispersionObject@rel <- t(apply(
-      dispersionObject@abs, 1,
+  dispersionObject@count <- t(tabulatedDF4)
+  if (freq == TRUE){
+    if (verbose == TRUE) message("... calculating normalized frequencies")
+    dispersionObject@freq <- t(apply(
+      dispersionObject@count, 1,
       function(x)x/as.vector(dispersionObject@sizes)
     ))
-    Encoding(colnames(dispersionObject@rel)) <- object@encoding
+    Encoding(colnames(dispersionObject@freq)) <- object@encoding
   }
   dispersionObject
 }
@@ -256,7 +255,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
-#' @param rel logical, whether to calculate relative values
+#' @param freq logical, whether to calculate normalized frequencies
 #' @param mc logical, whether to use multicore
 #' @param verbose logical, whether to be verbose
 #' @return depends on the input, as this is a wrapper function
@@ -267,14 +266,14 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' dispersion(test, "Integration", pAttribute="word", dim=c("text_year"))
 #' foo <- dispersion(test, "Integration", c("text_year", "text_party"))
 #' dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
-#' @seealso tf
+#' @seealso count
 #' @author Andreas Blaette
 #' @docType methods
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
 #' @aliases dispersion dispersion-method dispersion,partition-method
-setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL, rel=TRUE, mc=FALSE, verbose=TRUE){
+setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL, freq=TRUE, mc=FALSE, verbose=TRUE){
   if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if ( is.null(names(object@metadata))) {
     if (verbose == TRUE) message("... required metadata missing, fixing this")
@@ -287,7 +286,7 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
     if (length(query) == 1){
       result <- .queryDistribution(object, query=query, pAttribute=pAttribute, sAttribute=dim)
     } else if (length(query) > 1){
-      result <- .queriesDistribution(object, query, pAttribute, dim, rel=rel, mc=mc, verbose=verbose)
+      result <- .queriesDistribution(object, query, pAttribute, dim, freq=freq, mc=mc, verbose=verbose)
     }
   } else if (length(dim)==2){
     result <- .distributionCrosstab(

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.9
-Date: 2015-12-02
+Version: 0.5.10
+Date: 2015-12-11
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -64,15 +64,18 @@ Collate:
     'cooccurrencesReshaped_methods.R'
     'cooccurrences_method.R'
     'cooccurrences_methods.R'
+    'count_method.R'
     'cpos_method.R'
     'ctm_method.R'
     'dispersion_class.R'
     'dispersion_method.R'
     'dispersion_methods.R'
+    'dotChart_method.R'
     'egoNetwork_method.R'
     'encoding_method.R'
     'keynessBundle_class.R'
     'enrich_method.R'
+    'freq_method.R'
     'frequencies_method.R'
     'getEncoding_method.R'
     'getTermFrequencies_method.R'
@@ -100,7 +103,6 @@ Collate:
     'pmi_method.R'
     'read_method.R'
     'registry.R'
-    'rel_method.R'
     'restore_method.R'
     'rustyard.R'
     'sAttributes_method.R'
@@ -110,7 +112,6 @@ Collate:
     'tag_method.R'
     'terms_method.R'
     'textstat_methods.R'
-    'tf_method.R'
     'trim_method.R'
     'use_method.R'
     'utils.R'

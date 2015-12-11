@@ -1,4 +1,4 @@
-#' @include textstat_class.R
+#' @include textstat_class.R dispersion_class.R
 NULL
 
 
@@ -86,8 +86,3 @@ setMethod("as.data.table", "textstat", function(x) x@stat)
 #' @exportMethod pAttribute
 #' @rdname textstat-class
 setMethod("pAttribute", "textstat", function(object) object@pAttribute)
-
-#' @exportMethod dotchart
-setMethod("dotchart", "textstat", function(x, col, n=20, ...){
-  dotchart(x=x@stat[[col]][n:1], labels=x@stat[[1]][n:1], ...)
-})

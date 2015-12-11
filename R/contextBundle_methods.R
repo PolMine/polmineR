@@ -5,7 +5,7 @@ NULL
 
 #' @docType methods
 setMethod("[", "contextBundle", function(x,i){
-  tf <- unlist(lapply(x, function(x) x@stat[i,"freqObs"]))
+  count <- unlist(lapply(x, function(x) x@stat[i,"freqObs"]))
   cat("be aware of bugs\n")
 })
 
@@ -49,11 +49,11 @@ setMethod("as.matrix", "contextBundle", function(x, col, ...) {
 #' @docType methods
 #' @noRd
 setMethod("summary", "contextBundle", function(object, top=3){
-  partitionSizes=unlist(lapply(object@objects, function(x) x@partitionSize))
-  tfAbs=unlist(lapply(object@objects, function(x) x@frequency))
+  partitionSizes <- unlist(lapply(object@objects, function(x) x@partitionSize))
+  counts <- unlist(lapply(object@objects, function(x) x@frequency))
   overview <- data.frame(
-    tfAbs=tfAbs,
-    tfRel=round(tfAbs/partitionSizes*100000,2)
+    count=counts,
+    freq=round(counts/partitionSizes*100000,2)
     )
   overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))))
   colnames(overview)[3:6] <- criticalValue <- c(">10.83", ">7.88", ">6.63", ">3.84")

@@ -22,7 +22,7 @@ setMethod("score", "partitionBundle", function(object, token, method, pAttribute
   if ((length(unique(names(object@objects)))) != length(object@objects)) warning("please ensure that are names are present and unique")
   if (method == "additive"){
     how <- ifelse(tfMethod==FALSE, "in", "grep")
-    tab <- tf(object=object, token=token, pAttribute=pAttribute, rel=rel, method=tfMethod)
+    tab <- count(object=object, token=token, pAttribute=pAttribute, rel=rel, method=tfMethod)
     score <- rowSums(tab)
   }
   score

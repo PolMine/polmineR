@@ -87,6 +87,12 @@ with the conditions narrowing down the corpus the most.
 use(polmineR.sampleCorpus)
 spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
 kauder <- partition("PLPRBTTXT", def=list(text_name="Volker Kauder"), pAttribute=c("word"))
+merkel <- partition("PLPRBTTXT", list(text_name=".*Merkel"), pAttribute="word", regex=TRUE)
+sAttributes(merkel, "text_date")
+sAttributes(merkel, "text_name")
+merkel <- partition("PLPRBTTXT", list(text_name="Angela Dorothea Merkel", text_date="2009-11-10", text_type="speech"), pAttribute="word")
+merkel <- subset(merkel, !word \%in\% punctuation)
+merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
 }
 \author{
 Andreas Blaette

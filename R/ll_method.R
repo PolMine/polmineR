@@ -29,14 +29,16 @@ setGeneric("ll", function(object, ...){standardGeneric("ll")})
 setMethod("ll", "context", function(object, partitionObject){
   mat <- .g2Statistic(
     ids=rep(0, times=nrow(object@stat)),
-    windowFreq=object@stat[["countCoi"]],
-    corpusFreq=object@stat[["countCorpus"]],
+    windowFreq=object@stat[["count_window"]],
+    corpusFreq=object@stat[["count_partition"]],
     windows.total=object@size,
     corpus.total=partitionObject@size
     )
   
-  object@stat[,expCoi:=mat[,"expCoi"]][,expCorpus:=mat[,"expCorpus"]]
+  object@stat[,exp_window:=mat[,"expCoi"]][,exp_partition:=mat[,"expCorpus"]]
   object@stat[,ll:=mat[, "ll"]]
+  object <- sort(object, by="ll")
+  object@stat[, rank := c(1:nrow(object@stat))]
   object@statisticalTest <- c(object@statisticalTest, "ll")
   return(object)
 })
@@ -52,6 +54,8 @@ setMethod("ll", "keyness", function(object){
   if (! "expCoi" %in% colnames(object@stat)) object@stat$expCoi <- mat[, "expCoi"]
   if (! "expRef" %in% colnames(object@stat)) object@stat$expRef <- mat[, "expCorpus"]
   object@stat$ll <- mat[,"ll"]
+  object <- sort(object, by="ll")
+  object@stat[, rank := c(1:nrow(object@stat))]
   object@statisticalTest <- c(object@statisticalTest, "ll")
   return(object)
 })
@@ -59,8 +63,8 @@ setMethod("ll", "keyness", function(object){
 setMethod("ll", "cooccurrences", function(object, partitionSize){
   mat <- .g2Statistic(
     ids=rep(0, times=nrow(object@stat)),
-    windowFreq=object@stat[["ab_tf"]],
-    corpusFreq=object@stat[["b_tf"]],
+    windowFreq=object@stat[["ab_count"]],
+    corpusFreq=object@stat[["b_count"]],
     windows.total=object@stat[["window_size"]],
     corpus.total=partitionSize
     )
@@ -73,13 +77,14 @@ setMethod("ll", "cooccurrences", function(object, partitionSize){
 setMethod("ll", "keynessCooccurrences", function(object, partitionSize){
   mat <- .g2Statistic(
     ids=rep(0, times=nrow(object@stat)),
-    windowFreq=object@stat[["x_ab_tf"]],
-    corpusFreq=object@stat[["y_ab_tf"]],
+    windowFreq=object@stat[["x_ab_count"]],
+    corpusFreq=object@stat[["y_ab_count"]],
     windows.total=object@sizeCoi,
     corpus.total=partitionSize
   )
   object@stat[, exp_coi := mat[,"expCoi"]]
   object@stat[, ll := mat[, "ll"]]
-  # object@method <- c(object@method, "ll")
+  object <- sort(object, by="ll")
+  object@stat[, rank := c(1:nrow(object@stat))]
   return(object)
 })

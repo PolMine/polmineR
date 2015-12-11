@@ -35,7 +35,6 @@ NULL
 #' @rdname partitionBundle-class
 #' @name partitionBundle-class
 #' @exportClass partitionBundle
-#' @docType class
 #' @author Andreas Blaette
 setClass("partitionBundle",
          representation(objects="list", 

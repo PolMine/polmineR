@@ -71,12 +71,12 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
   setnames(bToA, old=c(aColsStr, bColsStr), new=c(bColsStr, aColsStr))
   setkeyv(bToA, col=c(aColsStr, bColsStr))
   merger <- merge(aToB, bToA, all.x=FALSE, all.y=TRUE)
-  FIN <- merger[, c(aColsStr, bColsStr, "ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"), with=FALSE]
+  FIN <- merger[, c(aColsStr, bColsStr, "ab_count.x", "ll.x", "ll.y", "a_count.x", "b_count.x"), with=FALSE]
   setnames(
     FIN,
-    c("ab_tf.x", "ll.x", "ll.y", "a_tf.x", "b_tf.x"),
-    c("ab_tf", "ab_ll", "ba_ll", "a_tf", "b_tf"))
-  setcolorder(FIN, c(aColsStr, bColsStr, "ab_tf", "a_tf", "b_tf", "ab_ll", "ba_ll"))
+    c("ab_count.x", "ll.x", "ll.y", "a_count.x", "b_count.x"),
+    c("ab_count", "ab_ll", "ba_ll", "a_count", "b_count"))
+  setcolorder(FIN, c(aColsStr, bColsStr, "ab_count", "a_count", "b_count", "ab_ll", "ba_ll"))
   setkeyv(FIN, cols=c(aColsStr, bColsStr))
   retval <- new("cooccurrencesReshaped")
   for (x in (slotNames(.Object))) if (x != "stat") slot(retval, x) <- slot(.Object, x)
@@ -117,9 +117,9 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
 #     c(
 #       "node.x", "nodeId.x", "nodeCorpusFreq.x", "cooccurrenceWindowFreq.x", "ll.x",
 #       "node.y", "nodeId.y", "nodeCorpusFreq.y", "ll.y"),
-#     c("a", "a_id", "tf_a", "tf_ab", "ll_a2b", "b", "b_id", "tf_b", "ll_b2a")
+#     c("a", "a_id", "count_a", "count_ab", "ll_a2b", "b", "b_id", "count_b", "ll_b2a")
 #   )
-#   setcolorder(merger, c("a", "b", "a_id", "b_id", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a"))
+#   setcolorder(merger, c("a", "b", "a_id", "b_id", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a"))
 #   setkey(merger, a, b)
 #   retval <- new("cooccurrencesReshaped")
 #   for (x in (slotNames(object))) if (x != "stat") slot(retval, x) <- slot(object, x)

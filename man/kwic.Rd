@@ -8,16 +8,16 @@
 \alias{show,kwic-method}
 \title{KWIC output}
 \usage{
-kwic(object, ...)
+kwic(.Object, ...)
 
-\S4method{kwic}{context}(object, meta = NULL, neighbor = c())
+\S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL)
 
-\S4method{kwic}{partition}(object, query, leftContext = NULL,
-  rightContext = NULL, meta = NULL, pAttribute = "word", neighbor = c(),
-  verbose = TRUE)
+\S4method{kwic}{partition}(.Object, query, leftContext = NULL,
+  rightContext = NULL, meta = NULL, pAttribute = "word",
+  neighbor = NULL, verbose = TRUE)
 }
 \arguments{
-\item{object}{a partition object}
+\item{.Object}{a partition object}
 
 \item{...}{further parameters to be passed}
 

@@ -26,7 +26,7 @@ setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrence
 setMethod(
   "cooccurrences", "partition",
   function(.Object, pAttribute=c("word", "pos"), window=5, keep=list(pos=c("NN", "ADJA")), method="ll", how=1, matrix=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE, ...){
-  if (!identical(pAttribute, .Object@pAttribute)) .Object <- enrich(.Object, tf=pAttribute)
+  if (!identical(pAttribute, .Object@pAttribute)) .Object <- enrich(.Object, pAttribute=pAttribute)
   coll <- new(
     "cooccurrences",
     pAttribute=pAttribute, corpus=.Object@corpus, encoding=.Object@encoding,
@@ -91,7 +91,7 @@ setMethod(
     
     setkey(DT, a, b)
     DT <- DT[!is.na(a)][!is.na(b)]
-    # DT[ , ab_tf := DT[, nrow(.SD), by=.(a, b)]]
+    # DT[ , ab_count := DT[, nrow(.SD), by=.(a, b)]]
     # DT <- DText[, nrow(.SD), by=.(a, b)]
     setnames(DT, old=c("a", "b"), new=c(aColsId, bColsId))
     # DT[ , dummy := NULL]
@@ -157,7 +157,7 @@ setMethod(
   
   if (verbose == TRUE) message("... counting co-occurrences")
   TF <- DT[, nrow(.SD), by=c(eval(c(aColsId, bColsId))), with=TRUE] # not fast
-  setnames(TF, "V1", "ab_tf")
+  setnames(TF, "V1", "ab_count")
   
   if (verbose == TRUE) message("... adding window size")
   setkeyv(contextDT, cols=aColsId)
@@ -177,10 +177,10 @@ setMethod(
   )
   setkeyv(TF, cols=aColsStr)
   setkeyv(.Object@stat, cols=pAttribute)
-  TF[, a_tf := .Object@stat[TF][["tf"]]]
+  TF[, a_count := .Object@stat[TF][["count"]]]
   setkeyv(TF, cols=bColsStr)
-  TF[, b_tf := .Object@stat[TF][["tf"]]]
-  setcolorder(TF, c(aColsStr, bColsStr, "ab_tf", "a_tf", "b_tf", "window_size"))
+  TF[, b_count := .Object@stat[TF][["count"]]]
+  setcolorder(TF, c(aColsStr, bColsStr, "ab_count", "a_count", "b_count", "window_size"))
   coll@stat <- TF
   if ("ll" %in% method) {
     message('... g2-Test')
@@ -200,7 +200,7 @@ setMethod(
     i <- unname(keys[TF[["strKeyA"]]])
     j <- unname(keys[TF[["strKeyB"]]])
     retval <- simple_triplet_matrix(
-      i=i, j=j, v=TF[["ab_tf"]],
+      i=i, j=j, v=TF[["ab_count"]],
       dimnames=list(a=names(keys)[1:max(i)], b=names(keys)[1:max(j)])
     )
     return(retval)

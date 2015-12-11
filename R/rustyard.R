@@ -267,8 +267,6 @@
 #   object
 # })
 # 
-# #' @rdname partitionBundle-class
-# #' @docType methods
 # #' @rdname addPos-method
 # setMethod("addPos", "partitionBundle", function(object, pAttribute){
 #   pimpedBundle <- object

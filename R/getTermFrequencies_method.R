@@ -26,7 +26,7 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
     setkeyv(ID, cols=names(idList))
     count <- function(x) return(x)
     TF <- ID[, count(.N), by=c(eval(names(idList))), with=TRUE]
-    setnames(TF, "V1", "tf")
+    setnames(TF, "V1", "count")
   }
   if (id2str == TRUE){
     dummy <- lapply(
@@ -36,9 +36,9 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
         TF[, eval(pAttribute[i]) := str , with=TRUE] 
       })
     dummy <- lapply(pAttr_id, function(x) TF[, eval(x) := NULL, with=TRUE])
-    setcolorder(TF, neworder=c(pAttribute, "tf"))
+    setcolorder(TF, neworder=c(pAttribute, "count"))
   } else {
-    setcolorder(TF, neworder=c(pAttr_id, "tf"))
+    setcolorder(TF, neworder=c(pAttr_id, "count"))
   }
   
   # setorderv(TF, "V1", order=-1)
@@ -50,11 +50,11 @@ setMethod("getTermFrequencies", "vector", function(.Object, corpus, pAttribute){
   count <- tabulate(ids)
   TF <- data.table(
     id=c(0:length(count)),
-    tf=c(length(count[which(count==0)]), count)
+    count=c(length(which(ids == 0)), count)
   )
   setkey(TF, "id")
   setnames(TF, "id", paste(pAttribute, "_id", sep=""))
-  TF[tf > 0]
+  TF[count > 0]
 })
 
 
@@ -66,20 +66,20 @@ setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, e
   chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
   chunksTabulatedWithRownames <- lapply(
     chunksTabulated,
-    function(tf) .id2str(tf, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
+    function(count) .id2str(count, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
 #    , mc.cores=ifelse(mc==FALSE, 1, mc)
   )
   chunksTabulatedWithEnhancedRownames <- lapply(
     names(chunksTabulatedWithRownames),
     function(id){
-      tf <- chunksTabulatedWithRownames[[id]]
+      count <- chunksTabulatedWithRownames[[id]]
       idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
       Encoding(idAsStr) <- encoding
       idAsStr <- enc2utf8(idAsStr)
-      tf[["token"]] <- paste(tf[["token"]], "//", idAsStr, sep="")
-      setcolorder(tf, c("token", "ids", "tf"))
-      setkey(tf, "token")
-      tf
+      count[["token"]] <- paste(count[["token"]], "//", idAsStr, sep="")
+      setcolorder(count, c("token", "ids", "count"))
+      setkey(count, "token")
+      count
     }
 #    , mc.cores=ifelse(mc==FALSE, 1, mc)
     )
@@ -106,13 +106,13 @@ setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, e
 #       idList <- mclapply(chunkList, .cposMatrix2ids, mc.cores=noCores)
 #       ids <- unlist(idList, recursive=FALSE, use.names=FALSE)
 #     }
-#     tf <- getTermFrequencies(ids)
+#     count <- getTermFrequencies(ids)
 #     if (id2str == TRUE){   
-#       try(tf <- .id2str(
-#         tf, corpus=.Object@corpus, pAttribute=pAttribute, encoding=.Object@encoding
+#       try(count <- .id2str(
+#         count, corpus=.Object@corpus, pAttribute=pAttribute, encoding=.Object@encoding
 #       ), silent=FALSE)
 #     }
-#     return(tf)
+#     return(count)
 #   } else if(length(pAttribute == 2)){
 #     .cpos2ids <- function(corpus, pAttribute, cpos) cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
 #     cpos <- .expandCposMatrix(.Object@cpos)
@@ -133,14 +133,14 @@ setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, e
 
 # .expandCposMatrix <- function(cposMatrix) unlist(apply(cposMatrix, 1, function(x) x[1]:x[2]))
 
-# .id2str <- function(tf, corpus, pAttribute, encoding){
-#   token <- cqi_id2str(paste(corpus, '.', pAttribute, sep=''), tf[["ids"]])
+# .id2str <- function(count, corpus, pAttribute, encoding){
+#   token <- cqi_id2str(paste(corpus, '.', pAttribute, sep=''), count[["ids"]])
 #   Encoding(token) <- encoding
 #   token <- enc2utf8(token)
 #   Encoding(token) <- "unknown"
-#   tf[["token"]] <- token
-#   setcolorder(tf, c("token", "ids", "tf"))
-#   setkey(tf, "token")
-#   tf
+#   count[["token"]] <- token
+#   setcolorder(count, c("token", "ids", "count"))
+#   setkey(count, "token")
+#   count
 # }
 

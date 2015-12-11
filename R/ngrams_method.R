@@ -30,7 +30,7 @@ setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word"){
   setnames(DT, colnames(DT), paste("id_", c(1:n), sep=""))
   count <- function(x) return(x)
   TF <- DT[, count(.N), by=c(eval(colnames(DT))), with=TRUE]
-  setnames(TF, "V1", "tf")
+  setnames(TF, "V1", "count")
   lapply(
     c(1:n),
     function(i){
@@ -60,7 +60,7 @@ setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word"){
   DT <- as.data.table(idList)
   count <- function(x) return(x)
   TF <- DT[, count(.N), by=c(eval(colnames(DT))), with=TRUE]
-  setnames(TF, "V1", "tf")
+  setnames(TF, "V1", "count")
   pAttrsCols <- rep(pAttrs, times=n)
   tokenNo <- unlist(lapply(c(1:n), function(x) rep(x, times=length(pAttribute))))
   # convert ids to strings

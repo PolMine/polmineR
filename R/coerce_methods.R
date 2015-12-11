@@ -303,7 +303,7 @@ setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
       encoding=object@encoding,
       cpos=matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2)
     )
-    newPartition <- enrich(newPartition, size=TRUE, tf=object@pAttribute)
+    newPartition <- enrich(newPartition, size=TRUE, pAttribute=object@pAttribute)
     newPartition@strucs <- c(
       cqi_cpos2struc(paste(object@corpus, ".", object@sAttribute, sep=""), newPartition@cpos[1,1])
       :

@@ -44,7 +44,7 @@ setMethod("egoNetwork", "partition", function(object, node, degrees, pAttribute=
     }
   }
   vertices <- unique(c(as.vector(unname(unlist(gData[,1]))), as.vector(unname(unlist(gData[,2])))))
-  # verticeData <- data.frame(vertices=vertices, object@tf[vertices,"tf"])
+  # verticeData <- data.frame(vertices=vertices, object@tf[vertices,"count"])
   gData
 })
 

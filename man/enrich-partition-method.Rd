@@ -5,7 +5,7 @@
 \alias{enrich,partition-method}
 \title{enrich partition object (S4 method)}
 \usage{
-\S4method{enrich}{partition}(object, size = FALSE, tf = NULL,
+\S4method{enrich}{partition}(object, size = FALSE, pAttribute = NULL,
   id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE)
 }
 \arguments{
@@ -13,7 +13,7 @@
 
 \item{size}{logical, defaults to FALSE}
 
-\item{tf}{character vector providing the p-attributes for which frequency
+\item{pAttribute}{character vector providing the p-attributes for which frequency
 tables shall be generated}
 
 \item{meta}{character vector providing s-attributes for which metainformation shall be supplied}

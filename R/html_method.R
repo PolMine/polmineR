@@ -19,13 +19,6 @@ setMethod("html", "character", function(object){
 })
 
 
-# #' @docType methods
-# #' @rdname partitionBundle-class
-# setMethod("html", "partitionBundle", function(object, meta=NULL, from=1, to=10, filename=NULL, type="debate"){
-#   for (i in from:to){
-#     html(object@objects[[i]], meta=meta, filename=filename, type=type)
-#   }
-# })
 
 #' @param meta metadata for output
 #' @rdname partition-class

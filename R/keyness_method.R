@@ -55,14 +55,14 @@ setMethod("keyness", signature=c(x="partition"), function(
     )
   keyness@call <- deparse(match.call())
   keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
-  # check whether tf-lists are available for the pAttribute given
+  # check whether count-lists are available for the pAttribute given
   if (identical(pAttribute, x@pAttribute) == FALSE){
     message("... term frequencies not available for pAttribute given in corpus of interest - enriching the partition ")
-    x <- enrich(x, tf=pAttribute, verbose=FALSE)
+    x <- enrich(x, pAttribute=pAttribute, verbose=FALSE)
   }
   if (identical(pAttribute, y@pAttribute) == FALSE){
     message("... term frequencies not available for pAttribute given in reference corpus - enriching the partition ")
-    y <- enrich(y, tf=pAttribute, verbose=FALSE)
+    y <- enrich(y, pAttribute=pAttribute, verbose=FALSE)
   }
   if (verbose==TRUE) message("... combining frequency lists")
   keyness@stat <- merge(x@stat, y@stat, by=pAttribute)
@@ -73,7 +73,7 @@ setMethod("keyness", signature=c(x="partition"), function(
 #     )
   # keyness@stat[, ids.x := NULL]
   # keyness@stat[, ids.y := NULL]
-  setnames(keyness@stat, c("tf.x", "tf.y"),  c("countCoi", "countRef"))
+  setnames(keyness@stat, c("count.x", "count.y"),  c("countCoi", "countRef"))
   # Encoding(rownames(keyness@stat)) <- y@encoding
   # colnames(keyness@stat) <- c("id", "countCoi", "countRef")
   if (included == TRUE) keyness@stat[, countRef := keyness@stat[["countRef"]] - keyness@stat[["countCoi"]]]
@@ -158,12 +158,12 @@ setMethod("keyness", "cooccurrences", function(x,y, included=FALSE, method="ll",
   # remove columns not needed
   colsToDrop <- c(
     "ll", "i.ll", "exp_coi", "i.exp_coi", "rank", "i.rank",
-    "window_size", "i.window_size", "a_tf", "i.a_tf", "b_tf", "i.b_tf"
+    "window_size", "i.window_size", "a_count", "i.a_count", "b_count", "i.b_count"
     )
   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
-  setnames(MATCH, old=c("ab_tf", "i.ab_tf"), new=c("y_ab_tf", "x_ab_tf"))
+  setnames(MATCH, old=c("ab_count", "i.ab_count"), new=c("y_ab_count", "x_ab_count"))
   
-  if (included == TRUE) MATCH[, y_ab_tf := y_ab_tf - x_ab_tf]
+  if (included == TRUE) MATCH[, y_ab_count := y_ab_count - x_ab_count]
   
   newObject@stat <- MATCH
   if ("chiSquare" %in% method) {
@@ -196,8 +196,8 @@ setMethod(
     setkeyv(x@stat, cols=tokenColnames)
     setkeyv(y@stat, cols=tokenColnames)
     DT <- y@stat[x@stat]
-    setnames(DT, c("tf", "i.tf"), c("tf_x", "tf_y"))
-    setcolorder(DT, c(tokenColnames, "tf_x", "tf_y"))
+    setnames(DT, c("count", "i.count"), c("count_x", "count_y"))
+    setcolorder(DT, c(tokenColnames, "count_x", "count_y"))
     
   })
 

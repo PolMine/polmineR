@@ -18,22 +18,11 @@ NULL
 #' @slot size Object of class \code{"numeric"} total size of the partition 
 #' @slot metadata Object of class \code{"list"} metadata information 
 #' @slot strucs Object of class \code{"numeric"} the strucs defining the partition 
-#' @slot tf Object of class \code{"matrix"}: term frequencies
 #' @slot pAttribute Object of class \code{"character"} indicating the pAttribute of the
 #' count in slot tf
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested 
 #' @slot sAttributeStrucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
-#' @section Methods:
-#'   \describe{
-#'    \item{show}{\code{signature(object = "partition")}: Display essential information }
-#'    \item{addPos}{\code{signature(object="partition")}: add list with most frequent pos for a token }
-#'    \item{trim}{\code{signature(object="partition")}: trim a partition object }
-#'    \item{tf}{\code{signature(object="partition")}: get term frequencies }
-#'    \item{as.partitionBundle}{\code{signature(object="partition")}: transform a partition object into a partitionBundle (to add further objects) }
-#'    \item{[}{get frequency of a query}
-#'    \item{html}{transform partition to html}
-#'    }
 #' @param .Object a partition object
 #' @param object a partition object
 #' @param dim don't know

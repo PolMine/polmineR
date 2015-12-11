@@ -45,7 +45,7 @@ function(object){
 
 #' @exportMethod [
 #' @rdname partition-class
-setMethod('[', 'partition', function(x,i) tf(x, query=i, method="grep"))
+setMethod('[', 'partition', function(x,i) count(x, query=i, method="grep"))
 
 #' @exportMethod [[
 #' @rdname partition-class
@@ -102,7 +102,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       }
       p <- enrich(
         p, size=TRUE,
-        tf=NULL,
+        pAttribute=NULL,
         meta=meta,
         verbose=TRUE
       )
@@ -193,17 +193,13 @@ setMethod("length", "partition", function(x) x@size)
 
 #' @exportMethod as.data.frame
 #' @rdname partition-class
-setMethod("as.data.frame", "partition", function(x) as.data.frame(tf(x)) )
+setMethod("as.data.frame", "partition", function(x) as.data.frame(count(x)) )
 
-setAs("partition", "data.table", function(from) data.table(tf(from)) )
+setAs("partition", "data.table", function(from) data.table(count(from)) )
 
 
 #' @exportMethod hist
 #' @rdname partition-class
-setMethod("hist", "partition", function(x, ...){hist(x@tf[,"tf"], ...)})
+setMethod("hist", "partition", function(x, ...){hist(x@stat[,"count"], ...)})
 
-
-setMethod("subset", "partition", function(x, ...){
-  partition(object=x, list(...))
-})
 

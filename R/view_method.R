@@ -16,7 +16,7 @@ setMethod("view", "kwic", function(.Object){
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
-  .Object <- round(.Object, digits=2)
+  .Object <- round(.Object, digits=3)
   View(.Object@stat)
 })
 
@@ -29,7 +29,7 @@ setMethod("view", "context", function(.Object){
   tokenCols <- .Object@pAttribute
   what <- c(
     "rank", tokenCols,
-    "countCoi", "countCorpus", "expCoi", "expCorpus",
+    "countCoi", "count_partition", "expCoi", "expCorpus",
     .Object@statisticalTest
     )
   View(DT[, what, with=FALSE])
@@ -38,7 +38,7 @@ setMethod("view", "context", function(.Object){
 
 setMethod(view, "cooccurrencesReshaped", function(.Object){
   .Object <- round(.Object, digits=2)
-  colsToView <- c("a", "b", "tf_ab", "tf_a", "tf_b", "ll_a2b", "ll_b2a")
+  colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
   View(.Object@stat[, colsToView, with=FALSE])
   
 })

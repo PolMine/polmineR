@@ -8,7 +8,7 @@
 \title{Dispersion of a query or multiple queries}
 \usage{
 \S4method{dispersion}{partition}(object, query, dim, pAttribute = NULL,
-  rel = TRUE, mc = FALSE, verbose = TRUE)
+  freq = TRUE, mc = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{object}{a partition object}
@@ -20,7 +20,7 @@
 \item{pAttribute}{the p-attribute that will be looked up, typically 'word'
 or 'lemma'}
 
-\item{rel}{logical, whether to calculate relative values}
+\item{freq}{logical, whether to calculate normalized frequencies}
 
 \item{mc}{logical, whether to use multicore}
 
@@ -46,6 +46,6 @@ Andreas Blaette
 \seealso{
 \code{crosstab-class}
 
-tf
+count
 }
 

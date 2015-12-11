@@ -16,7 +16,7 @@ setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 
 #' @examples 
 #' \dontrun{
-#' clu <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), tf=NULL)
+#' clu <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
 #' foo <- as.mallet(clu)
 #' }
 #' @rdname as.mallet-method

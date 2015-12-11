@@ -6,7 +6,7 @@ NULL
 #' class to organize information of context analysis
 #' 
 #' @slot query Object of class \code{"character"} node examined
-#' @slot frequency Object of class \code{"numeric"} number of hits
+#' @slot count Object of class \code{"numeric"} number of hits
 #' @slot partition Object of class \code{"character"} the partition the analysis is based on
 #' @slot partitionSize Object of class \code{"numeric"} the size of the partition
 #' @slot leftContext Object of class \code{"numeric"} number of tokens to the right
@@ -45,7 +45,7 @@ NULL
 #' @exportClass context
 setClass("context",
          representation(query="character",
-                        frequency="numeric",
+                        count="numeric",
                         partition="character",
                         partitionSize="numeric",
                         leftContext="numeric",

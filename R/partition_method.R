@@ -45,6 +45,12 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' use(polmineR.sampleCorpus)
 #' spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
 #' kauder <- partition("PLPRBTTXT", def=list(text_name="Volker Kauder"), pAttribute=c("word"))
+#' merkel <- partition("PLPRBTTXT", list(text_name=".*Merkel"), pAttribute="word", regex=TRUE)
+#' sAttributes(merkel, "text_date")
+#' sAttributes(merkel, "text_name")
+#' merkel <- partition("PLPRBTTXT", list(text_name="Angela Dorothea Merkel", text_date="2009-11-10", text_type="speech"), pAttribute="word")
+#' merkel <- subset(merkel, !word %in% punctuation)
+#' merkel <- subset(merkel, !word %in% tm::stopwords("de"))
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
@@ -118,9 +124,10 @@ setMethod("partition", "character", function(
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
       stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', paste(pAttribute, collapse=", "), ')')  
       Partition@stat <- getTermFrequencies(.Object=Partition, pAttribute=pAttribute, id2str=id2str, mc=mc)
       Partition@pAttribute <- pAttribute
+      Partition <- sort(Partition, "count")
     }
     if (!is.null(meta)) {
       if (verbose==TRUE) message('... setting up metadata (table and list of values)')

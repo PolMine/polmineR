@@ -91,6 +91,11 @@
   return(gsub('[\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc]','.', cmd))
 }
 
+#' @export punctuation
+#' @rdname trim-method
+punctuation <- c(".", ",", ";", ":", "!", "?", "-", "--", "(", ")", "[", "]", "/")
+
+
 #' adjust encoding
 #' 
 #' use case: encoding of console input is UTF-8, the corpus encoding is latin-1

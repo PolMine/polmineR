@@ -40,8 +40,8 @@ setMethod("browse", "context", function(object){
       token=rownames(object@stat),
       object@stat
     )
-    tab[, "expCoi"] <- round(tab[, "expCoi"], 2)
-    tab[, "expCorpus"] <- round(tab[, "expCorpus"], 2)
+    tab[, "exp_window"] <- round(tab[, "exp_window"], 2)
+    tab[, "exp_partition"] <- round(tab[, "exp_partition"], 2)
     for (what in object@statisticalTest){
       tab[, what] <- round(tab[, what], 2)
     }

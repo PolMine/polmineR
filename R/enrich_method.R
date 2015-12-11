@@ -28,7 +28,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' 
 #' @param object a partition object
 #' @param size logical, defaults to FALSE
-#' @param tf character vector providing the p-attributes for which frequency
+#' @param pAttribute character vector providing the p-attributes for which frequency
 #'   tables shall be generated
 #' @param meta character vector providing s-attributes for which metainformation shall be supplied
 #' @param addPos character vector providing p-attributes 
@@ -37,12 +37,12 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @aliases enrich,partition-method
 #' @docType methods
 #' @rdname enrich-partition-method
-setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE){
+setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE){
   if (size == TRUE) object@size <- size(object)
-  if (!is.null(tf)) {
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', tf, ')')  
-      object@stat <- getTermFrequencies(.Object=object, pAttribute=tf, id2str=id2str, mc=mc)
-      object@pAttribute <- tf
+  if (!is.null(pAttribute)) {
+      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+      object@stat <- getTermFrequencies(.Object=object, pAttribute=pAttribute, id2str=id2str, mc=mc)
+      object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
@@ -57,7 +57,7 @@ setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, id2str=TR
 #' 
 #' @param object a partition object
 #' @param size logical, defaults to FALSE
-#' @param tf character vector providing the p-attributes for which frequency
+#' @param pAttribute character vector providing the p-attributes for which frequency
 #'   tables shall be generated
 #' @param meta character vector providing s-attributes for which metainformation shall be supplied
 #' @param addPos character vector providing p-attributes
@@ -67,16 +67,16 @@ setMethod("enrich", "partition", function(object, size=FALSE, tf=NULL, id2str=TR
 #' @aliases enrich,partitionBundle-method
 #' @docType methods
 #' @rdname enrich-partitionBundle-method
-setMethod("enrich", "partitionBundle", function(object, size=TRUE, tf=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
+setMethod("enrich", "partitionBundle", function(object, size=TRUE, pAttribute=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
   if (mc == FALSE) {
     object@objects <- lapply(
       object@objects,
-      function(p) enrich(p, size=size, tf=tf, meta=meta, addPos, verbose=TRUE)
+      function(p) enrich(p, size=size, pAttribute=pAttribute, meta=meta, addPos, verbose=TRUE)
     )
   } else if (mc == TRUE){
     object@objects <- mclapply(
       object@objects,
-      function(p) enrich(p, size=size, tf=tf, meta=meta, addPos, verbose=TRUE)
+      function(p) enrich(p, size=size, pAttribute=pAttribute, meta=meta, addPos, verbose=TRUE)
     )    
   }
   object

@@ -6,7 +6,7 @@ NULL
 #' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
 #' applying the kwich method on either a partition or a context object.
 #' 
-#' @param object a partition object
+#' @param .Object a partition object
 #' @param query what to look up
 #' @param leftContext to the left
 #' @param rightContext to the right
@@ -23,54 +23,59 @@ NULL
 #' foo <- kwic(bt, "Integration")
 #' foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
 #' @exportMethod kwic
-setGeneric("kwic", function(object, ...){standardGeneric("kwic")})
+setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 
 
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(object, meta=NULL, neighbor=c()){
-  ctxt <- object
+setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
   if(is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
-  m <- data.frame(dummy=rep(0, length(ctxt@cpos)))
-  if (all(is.element(meta, cqi_attributes(ctxt@corpus, "s")))!=TRUE) {
-    warning("check session settings: Not all sAttributes supplied are available in corpus")
-  }
-  for (metadat in meta){
-    sattr <- paste(ctxt@corpus, ".", metadat, sep="")
-    strucs <- cqi_cpos2struc(sattr, unlist(lapply(ctxt@cpos, function(x)x$node[1])))
-    m <- cbind(m, cqi_struc2str(sattr, strucs))
-  }
-  left <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$left), collapse=" ")}))
-  node <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$node), collapse=" ")}))
-  right <- unlist(lapply(ctxt@cpos, function(x) {paste(cqi_cpos2str(paste(ctxt@corpus,'.', ctxt@pAttribute, sep=""), x$right), collapse=" ")}))
-  Encoding(left) <- ctxt@encoding
-  Encoding(node) <- ctxt@encoding
-  Encoding(right) <- ctxt@encoding  
-  m <- cbind(m, left=left, node=node, right=right)
-  if (length(neighbor) > 0) m <- m[grep(neighbor, apply(m, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
-  m <- m[2:ncol(m)]
-  colnames(m) <- c(meta, c('leftContext', 'node', 'rightContext'))
+  stopifnot(all(meta %in% sAttributes(.Object@corpus)))
+  metainformation <- lapply(
+    meta,
+    function(metadat){
+      sAttr <- paste(.Object@corpus, ".", metadat, sep="")
+      strucs <- cqi_cpos2struc(sAttr, unlist(lapply(.Object@cpos, function(x)x$node[1])))
+      as.utf8(cqi_struc2str(sAttr, strucs))
+    }
+    )
+  metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
+  colnames(metainformation) <- meta
+  conc <- lapply(
+    c("left", "node", "right"),
+    function(what){
+      tokens <- unlist(lapply(.Object@cpos, function(x) {paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")}))
+      Encoding(tokens) <- .Object@encoding
+      as.utf8(tokens)
+    }
+  )
+  conc <- data.frame(conc, stringsAsFactors=FALSE)
+  colnames(conc) <- c("leftContext", "node", "rightContext")
+  tab <- data.frame(metainformation, conc)
+  if (length(neighbor) > 0){
+    tab <- tab[grep(neighbor, apply(tab, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
+  } 
   conc <- new(
-    'kwic', leftContext=object@leftContext, rightContext=object@rightContext
+    'kwic',
+    leftContext=.Object@leftContext, rightContext=.Object@rightContext,
+    table=tab, metadata=meta, encoding=.Object@encoding
     )
   if (!is.null(neighbor)) {conc@neighbor <- neighbor}
-  conc@table <- m
-  conc@metadata <- meta
-  conc@encoding <- ctxt@encoding
   conc
 })
 
 
 #' @rdname kwic
+#' @exportMethod kwic
 setMethod("kwic", "partition", function(
-  object, query,
+  .Object, query,
   leftContext=NULL, rightContext=NULL,
-  meta=NULL, pAttribute="word", neighbor=c(),
+  meta=NULL, pAttribute="word", neighbor=NULL,
   verbose=TRUE
 ){
   ctxt <- context(
-    object=object, query=query, pAttribute=pAttribute,
+    .Object=.Object, query=query, pAttribute=pAttribute,
     leftContext=leftContext, rightContext=rightContext,
     statisticalTest=NULL, verbose=verbose
   )

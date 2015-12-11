@@ -27,7 +27,7 @@ setMethod("pmi", "context", function(object){
   mat <- .pmi(
     windowIds=object@stat$id,
     windowFreq=object@stat$countCoi,
-    partitionFreq=object@stat$countCorpus,
+    partitionFreq=object@stat$count_partition,
     countTarget=object@frequency,
     partitionSize=object@partitionSize
     )

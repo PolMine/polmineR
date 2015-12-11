@@ -33,8 +33,6 @@ NULL
 setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 
-
-
 #' @docType methods
 #' @rdname trim-method
 setMethod("trim", "keynessBundle", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
@@ -158,8 +156,8 @@ setMethod("trim", "cooccurrences", function(object, by){
     object@stat <- by@stat[object@stat]
     object@stat <- object@stat[by@stat]
     for (toDrop in grep("i\\.", colnames(object@stat), value=T)) object@stat[, eval(toDrop) := NULL, with=TRUE]
-    object@stat[, y_ab_tf := NULL]
-    object@stat[, x_ab_tf := NULL]
+    object@stat[, y_ab_count := NULL]
+    object@stat[, x_ab_count := NULL]
   }
   object
 })

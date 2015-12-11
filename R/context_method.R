@@ -3,12 +3,12 @@ NULL
 
 
 
-#' @param object a partition or a partitionBundle object
+#' @param .Object a partition or a partitionBundle object
 #' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
 #' @noRd
-setGeneric("context", function(object, ...){standardGeneric("context")})
+setGeneric("context", function(.Object, ...){standardGeneric("context")})
 
 #' Analyze context of a node word
 #' 
@@ -16,7 +16,7 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' region. For formulating the query, CPQ syntax may be used (see
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
-#' @param object a partition or a partitionBundle object
+#' @param .Object a partition or a partitionBundle object
 #' @param query query, which may by a character vector or a cqpQuery object
 #' @param pAttribute p-attribute of the query
 #' @param sAttribute if provided, it will be checked that cpos do not extend beyond
@@ -57,10 +57,10 @@ setGeneric("context", function(object, ...){standardGeneric("context")})
 #' @aliases context,partition-method
 setMethod(
   f="context",
-  signature(object="partition"),
+  signature(.Object="partition"),
   function
   (
-    object, query,
+    .Object, query,
     pAttribute=NULL, sAttribute="text_id",
     leftContext=NULL, rightContext=NULL,
     minSignificance=0,
@@ -69,34 +69,34 @@ setMethod(
     mc=NULL, verbose=TRUE
   ) {
     if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-    if (!all(pAttribute == object@pAttribute) && !is.null(statisticalTest)) {
-      if (verbose==TRUE) message("... required tf list in partition not yet available: doing this now")
-      object <- enrich(object, tf=pAttribute)
+    if (!all(pAttribute == .Object@pAttribute) && !is.null(statisticalTest)) {
+      if (verbose==TRUE) message("... required counts in partition not yet available: doing this now")
+      .Object <- enrich(.Object, pAttribute=pAttribute)
     }
     if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
     if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
     if (is.null(minSignificance)) minSignificance <- slot(get("session", '.GlobalEnv'), 'minSignificance')
     if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
     
-    corpus.pAttribute <- paste(object@corpus, ".", pAttribute, sep="")
-    corpus.sAttribute <- .setMethod(leftContext, rightContext, sAttribute, corpus=object@corpus)[1]
-    method <- .setMethod(leftContext, rightContext, sAttribute, corpus=object@corpus)[2]
+    corpus.pAttribute <- paste(.Object@corpus, ".", pAttribute, sep="")
+    corpus.sAttribute <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[1]
+    method <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[2]
     
     ctxt <- new(
       "context",
       query=query, pAttribute=pAttribute, stat=data.table(),
-      sAttribute=sAttribute, corpus=object@corpus,
+      sAttribute=sAttribute, corpus=.Object@corpus,
       leftContext=ifelse(is.character(leftContext), 0, leftContext),
       rightContext=ifelse(is.character(rightContext), 0, rightContext),
-      encoding=object@encoding, 
-      partition=object@name, partitionSize=object@size
+      encoding=.Object@encoding, 
+      partition=.Object@name, partitionSize=.Object@size
     )
     ctxt@call <- deparse(match.call())
     
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
-    # query <- .adjustEncoding(query, object@encoding)
+    # query <- .adjustEncoding(query, .Object@encoding)
     # Encoding(query) <- ctxt@encoding
-    hits <- cpos(object, query, pAttribute[1])
+    hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
       if (verbose==TRUE) message(' -> no hits')
       return(NULL)
@@ -126,7 +126,7 @@ setMethod(
     ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
     if (verbose==TRUE) message('... context size: ', ctxt@size)
-    ctxt@frequency <- length(bigBag)
+    ctxt@count <- length(bigBag)
     # if statisticalTest is 'NULL' the following can be ommitted
     if (length(pAttribute) == 1){
       tokenIds <- unlist(lapply(bigBag, function(x) x$ids[[1]]))
@@ -134,14 +134,13 @@ setMethod(
       toKeep <- which(tabulatedIds > 0)
       ctxt@stat <- data.table(
         id=c(1:max(tokenIds))[toKeep],
-        countCoi=tabulatedIds[toKeep]
+        count_window=tabulatedIds[toKeep]
       )
-      idsAsString <- cqi_id2str(paste(object@corpus, ".", pAttribute, sep=""), ids=ctxt@stat$id)
-      Encoding(idsAsString) <- object@encoding
-      idsAsString <- enc2utf8(idsAsString)
-      Encoding(idsAsString) <- "unknown"
+      idsAsString <- cqi_id2str(paste(.Object@corpus, ".", pAttribute, sep=""), ids=ctxt@stat$id)
+      idsAsString <- as.utf8(idsAsString, from=.Object@encoding)
       ctxt@stat[, eval(pAttribute) := idsAsString, with=TRUE]
-      setcolorder(ctxt@stat, c("id", pAttribute, "countCoi"))
+      ctxt@stat[, id := NULL]
+      setcolorder(ctxt@stat, c(pAttribute, "count_window"))
       setkeyv(ctxt@stat, pAttribute)
     } else if (length(pAttribute) == 2){
       idList <- list(
@@ -154,27 +153,27 @@ setMethod(
       count <- function(x) return(x)
       TF <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
       for (i in c(1:length(pAttribute))){
-        TF[, eval(pAttribute[i]) := cqi_id2str(paste(object@corpus, ".", pAttribute[i], sep=""), TF[[pAttribute[i]]]) %>% as.utf8()]
+        TF[, eval(pAttribute[i]) := cqi_id2str(paste(.Object@corpus, ".", pAttribute[i], sep=""), TF[[pAttribute[i]]]) %>% as.utf8()]
       }
 
-      # statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=object@corpus, encoding=object@encoding)
+      # statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=.Object@corpus, encoding=object@encoding)
       
-      setnames(TF, "V1", "countCoi")
+      setnames(TF, "V1", "count_window")
       ctxt@stat <- copy(TF)
       # ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", statRaw[["token"]])]
       # ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", statRaw[["token"]])]
       # token <- statRaw[["token"]]
       # Encoding(token) <- "unknown"
       # ctxt@stat[, "token" := token]
-      # setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "countCoi"))
+      # setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "count_window"))
       setkeyv(ctxt@stat, pAttribute)
     }
     # wc <- table(unlist(lapply(bigBag, function(x) x$id)))
      if (!is.null(statisticalTest)){
-       ctxt@stat[,countCorpus := merge(ctxt@stat, object@stat, all.x=TRUE, all.y=FALSE)[["tf"]]]
+       ctxt@stat[,count_partition := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
        if ("ll" %in% statisticalTest){
          if (verbose==TRUE) message("... performing log likelihood test")
-         ctxt <- ll(ctxt, object)
+         ctxt <- ll(ctxt, .Object)
        }
       if ("pmi" %in% statisticalTest){
         if (verbose==TRUE) message("... calculating pointwise mutual information")
@@ -183,14 +182,12 @@ setMethod(
       if ("t" %in% statisticalTest){
         ctxt@stat$countCooc <- table(unlist(lapply(bigBag, function(x) unique(x$id))))
         if (verbose==TRUE) message("... calculating t-test")
-        ctxt <- tTest(ctxt, object)
+        ctxt <- tTest(ctxt, .Object)
       }
       # ctxt@stat[, id := NULL]
       colnamesOld <- colnames(ctxt@stat)
-      ctxt@stat[, rank := c(1:nrow(ctxt@stat))]
       # setcolorder(ctxt@stat, c("rank", colnamesOld))
       
-#       ctxt <- trim(ctxt, minSignificance=minSignificance, rankBy=ctxt@statisticalTest[1])
      }
     ctxt
   })
@@ -308,18 +305,18 @@ setMethod(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionBundle", function(object, query, ...){
+setMethod("context", "partitionBundle", function(.Object, query, ...){
   contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
-      unique(lapply(object@objects, function(x) x@corpus)),
+      unique(lapply(.Object@objects, function(x) x@corpus)),
       ".", pAttribute, sep=""
       )
     positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
   }
   
   contextBundle@objects <- sapply(
-    object@objects,
+    .Object@objects,
     function(x) {
       if (verbose == TRUE) message("... proceeding to partition ", x@name)
       context(x, query, ...)
@@ -332,23 +329,23 @@ setMethod("context", "partitionBundle", function(object, query, ...){
 
 #' @param complete enhance completely
 #' @rdname context-method
-setMethod("context", "cooccurrences", function(object, query, complete=FALSE){
+setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
   newObject <- new(
     "context",
     query=query,
-    partition=object@partition,
-    partitionSize=object@partitionSize,
-    leftContext=object@leftContext,
-    rightContext=object@rightContext,
-    pAttribute=object@pAttribute,
-    corpus=object@corpus,
-    encoding=object@encoding,
-    posFilter=object@posFilter,
-    statisticalTest=object@method,
-    cutoff=object@cutoff,
-    stat=subset(object@stat, node==query),
+    partition=.Object@partition,
+    partitionSize=.Object@partitionSize,
+    leftContext=.Object@leftContext,
+    rightContext=.Object@rightContext,
+    pAttribute=.Object@pAttribute,
+    corpus=.Object@corpus,
+    encoding=.Object@encoding,
+    posFilter=.Object@posFilter,
+    statisticalTest=.Object@method,
+    cutoff=.Object@cutoff,
+    stat=subset(.Object@stat, node==query),
     call=deparse(match.call()),
-    size=unique(subset(object@stat, node==query)[,"windowSize"])
+    size=unique(subset(.Object@stat, node==query)[,"windowSize"])
   )  
   if (complete == TRUE){
     sAttr <- paste(
