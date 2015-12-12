@@ -25,14 +25,14 @@ setMethod("view", "textstat", function(.Object){
 # })
 
 setMethod("view", "context", function(.Object){
-  DT <- .Object@stat
-  tokenCols <- .Object@pAttribute
-  what <- c(
-    "rank", tokenCols,
-    "countCoi", "count_partition", "expCoi", "expCorpus",
+  .Object <- round(.Object, 2)
+  whatToView <- c(
+    paste("rank", .Object@statisticalTest, sep="_"),
+    .Object@pAttribute,
+    "count_window", "count_partition", "exp_window", "exp_partition",
     .Object@statisticalTest
     )
-  View(DT[, what, with=FALSE])
+  View(.Object@stat[, whatToView, with=FALSE])
 })
 
 

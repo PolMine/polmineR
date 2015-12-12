@@ -182,7 +182,7 @@
 #   #     "rank", "relation", 
 #   #     "node", "nodeId", "nodeCorpusFreq",
 #   #     "cooccurrence", "cooccurrenceId", "cooccurrenceWindowFreq", "cooccurrenceCorpusFreq",
-#   #     "windowSize", "expCorpus", "expCoi", "ll")
+#   #     "windowSize", "exp_b", "exp_a", "ll")
 #   #     )
 #   #   coll
 # })
@@ -344,4 +344,16 @@
 #   }
 #   object
 # })
+
+# .g2Statistic <- function(ids, windowFreq, corpusFreq, windows.total, corpus.total){
+#   calc <- matrix(data=0, nrow=length(windowFreq), ncol=6)
+#   colnames(calc) <- c("id", "count_a", "count_b", "exp_a", "exp_b", "ll")
+#   calc[,"id"] <- ids
+#   calc[,"count_a"] <- windowFreq
+#   calc[,"count_b"] <- corpusFreq
+#   calc[,"exp_a"] <- windows.total*calc[,"count_b"]/corpus.total
+#   calc[,"exp_b"] <- (corpus.total-windows.total)*calc[,"count_b"]/corpus.total
+#   calc[,"ll"] <- 2*(calc[,"count_a"]*log(calc[,"count_a"]/calc[,"exp_a"])+((calc[,"count_b"]-calc[,"exp_a"])*log((calc[,"count_b"]-calc[,"exp_a"])/calc[,"exp_b"])))
+#   calc
+# }
 

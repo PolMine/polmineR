@@ -10,8 +10,8 @@ setGeneric("tTest", function(.Object, ...){standardGeneric("tTest")})
 
 #' @rdname tTest
 setMethod("tTest", "context", function(.Object, partitionObject){
-  pRandom <- (.Object@stat$countCoi / partitionObject@size) * ( .Object@frequency / partitionObject@size)
-  pSample <- .Object@stat$countCooc / partitionObject@size
+  pRandom <- (.Object@stat[["count_window"]] / .Object@partitionSize) * ( .Object@count / .Object@partitionSize)
+  pSample <- .Object@stat[["count_"]] / .Object@partitionSize
   tValues <- (pSample - pRandom) / sqrt( pSample / partitionObject@size )
   .Object@stat[, t := tValues]
   .Object@statisticalTest <- c(.Object@statisticalTest, "t")

@@ -19,7 +19,7 @@ setGeneric("chisquare", function(x, ...){standardGeneric("chisquare")})
 #' @author Andreas Blaette
 #' @noRd
 .chisquare <- function(ctab, sizeCoi, sizeRef, minFrequency) {
-  ctab <- ctab[which(ctab[,"countCoi"] > minFrequency),]
+  ctab <- ctab[which(ctab[,"count_a"] > minFrequency),]
   o <- matrix(data=0, nrow=nrow(ctab), ncol=6)
   o[,1] <- ctab[,2]
   o[,2] <- ctab[,3]
@@ -37,21 +37,50 @@ setGeneric("chisquare", function(x, ...){standardGeneric("chisquare")})
   chi <- ((e[,1]-o[,1])**2)/e[,1]+((e[,2]-o[,2])**2)/e[,2]+((e[,3]-o[,4])**2)/e[,3]+((e[,4]-o[,5])**2)/e[,4]
   chi <- chi*apply(cbind(o[,1], e[,1]), MARGIN=1, function(x){if (x[1]>x[2]){1} else {-1}})
   options(digits=7)
-  ctab$expCoi <- e[,1]
-  ctab$expRef <- e[,2]
+  ctab$exp_a <- e[,1]
+  ctab$exp_b <- e[,2]
   ctab$chiSquare <- chi
-  # retval <- cbind(ctab, expCoi=e[,1], expRef=e[,2], chiSquare=chi)
+  # retval <- cbind(ctab, exp_a=e[,1], exp_b=e[,2], chiSquare=chi)
   return(ctab)
 }
 
 setMethod("chisquare", "keyness", function(x){
   chiResult <- .chisquare(
-    ctab=as.data.frame(x@stat[, c(colnames(x@stat)[1], "countCoi", "countRef"), with=FALSE]),
+    ctab=as.data.frame(x@stat[, c(colnames(x@stat)[1], "count_a", "countRef"), with=FALSE]),
     sizeCoi=x@sizeCoi,
     sizeRef=x@sizeRef,
     minFrequency=x@minFrequency
   )
   x@stat[, chiSquare:= chiResult[["chiSquare"]]]
   x@statisticalTest <- c(x@statisticalTest, "chiSquare")
+  return(x)
+})
+
+setMethod("chisquare", "context", function(x){
+  size_window <- x@size
+  size_total <- x@partitionSize
+  count_x_coi <- x@stat[["count_window"]]
+  count_x_ref <- x@stat[["count_partition"]] - count_x_coi
+  count_x_total <- x@stat[["count_partition"]]
+  count_notx_coi <- x@size - x@stat[["count_window"]]
+  count_notx_ref <- size_total - size_window - count_x_ref
+  count_notx_total <- size_total - x@stat[["count_partition"]]
+  options(digits=20)
+  exp_x_coi <- (count_x_total/size_total) * size_window
+  exp_x_ref <- (count_x_total/size_total) * (size_total - size_window)
+  exp_notx_coi <- (count_notx_total/size_total) * size_window
+  exp_notx_ref <- (count_notx_total/size_total) * (size_total - size_window)
+  chi1 <- ((exp_x_coi - count_x_coi)**2) / exp_x_coi
+  chi2 <- ((exp_x_ref - count_x_ref)**2) / exp_x_ref
+  chi3 <- ((exp_notx_coi - count_notx_coi)**2) / exp_notx_coi
+  chi4 <- ((exp_notx_ref - count_notx_ref)**2) / exp_notx_ref
+  chi <- chi1 + chi2 + chi3 + chi4
+  chi <- chi * apply(cbind(count_x_coi, exp_x_coi), 1, function(x) ifelse(x[1] > x[2], 1, -1))
+  options(digits=7)
+  x@stat[, exp_window := exp_x_coi]
+  x@stat[, chisquare := chi]
+  x <- sort(x, by="chisquare")
+  x@stat[, rank_chisquare := c(1:nrow(x@stat))]
+  x@statisticalTest <- c(x@statisticalTest, "chisquare")
   return(x)
 })

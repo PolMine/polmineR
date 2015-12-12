@@ -54,7 +54,7 @@ setMethod("keyness", signature=c(x="partition"), function(
     stat=data.table()
     )
   keyness@call <- deparse(match.call())
-  keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("expCoi", "expRef", method)))
+  keyness@digits <- as.list(setNames(rep(2, times=2+length(method)), c("exp_a", "exp_b", method)))
   # check whether count-lists are available for the pAttribute given
   if (identical(pAttribute, x@pAttribute) == FALSE){
     message("... term frequencies not available for pAttribute given in corpus of interest - enriching the partition ")
@@ -73,10 +73,10 @@ setMethod("keyness", signature=c(x="partition"), function(
 #     )
   # keyness@stat[, ids.x := NULL]
   # keyness@stat[, ids.y := NULL]
-  setnames(keyness@stat, c("count.x", "count.y"),  c("countCoi", "countRef"))
+  setnames(keyness@stat, c("count.x", "count.y"),  c("count_a", "count_b"))
   # Encoding(rownames(keyness@stat)) <- y@encoding
-  # colnames(keyness@stat) <- c("id", "countCoi", "countRef")
-  if (included == TRUE) keyness@stat[, countRef := keyness@stat[["countRef"]] - keyness@stat[["countCoi"]]]
+  # colnames(keyness@stat) <- c("id", "count_a", "count_b")
+  if (included == TRUE) keyness@stat[, countRef := keyness@stat[["countRef"]] - keyness@stat[["count_a"]]]
   if ("chiSquare" %in% method) {
     if (verbose==TRUE) message("... computing chisquare tests")
     keyness <- chisquare(keyness)

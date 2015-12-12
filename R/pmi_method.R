@@ -15,7 +15,7 @@ setGeneric("pmi", function(object){standardGeneric("pmi")})
 .pmi <- function(windowIds, windowFreq, partitionFreq, countTarget, partitionSize){
   calc <- matrix(data=0, nrow=length(windowFreq), ncol=4)
   size <- partitionSize
-  colnames(calc) <- c("cooccurrenceId", "countCoi", "countPartition", "pmi")
+  colnames(calc) <- c("cooccurrenceId", "count_a", "count_b", "pmi")
   calc[,1] <- windowIds
   calc[,2] <- windowFreq
   calc[,3] <- partitionFreq

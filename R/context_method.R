@@ -23,7 +23,6 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' the region defined by the s-attribute 
 #' @param leftContext no of tokens and to the left of the node word
 #' @param rightContext no of tokens to the right of the node word
-#' @param minSignificance minimum log-likelihood value
 #' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
 #'   context
 #' @param positivelist character vector or numeric vector: include a query hit
@@ -63,25 +62,27 @@ setMethod(
     .Object, query,
     pAttribute=NULL, sAttribute="text_id",
     leftContext=NULL, rightContext=NULL,
-    minSignificance=0,
     stoplist=NULL, positivelist=NULL,
     statisticalTest="ll",
     mc=NULL, verbose=TRUE
   ) {
-    if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
+    
     if (!all(pAttribute == .Object@pAttribute) && !is.null(statisticalTest)) {
       if (verbose==TRUE) message("... required counts in partition not yet available: doing this now")
       .Object <- enrich(.Object, pAttribute=pAttribute)
     }
+    
+    # get values from session object if params are not provided
+    if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
     if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
     if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
-    if (is.null(minSignificance)) minSignificance <- slot(get("session", '.GlobalEnv'), 'minSignificance')
     if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
     
-    corpus.pAttribute <- paste(.Object@corpus, ".", pAttribute, sep="")
-    corpus.sAttribute <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[1]
+    pAttr <- paste(.Object@corpus, ".", pAttribute, sep="")
+    sAttr <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[1]
     method <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[2]
     
+    # instantiate the context object
     ctxt <- new(
       "context",
       query=query, pAttribute=pAttribute, stat=data.table(),
@@ -93,33 +94,34 @@ setMethod(
     )
     ctxt@call <- deparse(match.call())
     
+    # getting counts of query in partition
     if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
-    # query <- .adjustEncoding(query, .Object@encoding)
-    # Encoding(query) <- ctxt@encoding
     hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
       if (verbose==TRUE) message(' -> no hits')
       return(NULL)
     }
-    if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(corpus.sAttribute, hits[,1]))
+    if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
-    
     if (verbose==TRUE) message(' (', length(hits), " occurrences)")
-    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(corpus.pAttribute, x)))
+    
+    # generate positivelist, negativelist
+    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(pAttr, x)))
     if (is.numeric(positivelist)){
       positivelistIds <- positivelist
       if (verbose == TRUE) message("... using ids provided as positivelist")
     } else {
-      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
+      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(pAttr, x)))
     }
+    
+    
     if (verbose==TRUE) message("... counting tokens in context ")  
-        
     if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds, positivelistIds, method))
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, method))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds, positivelistIds, method))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, method))
     }
-    bigBag <- bigBag[!sapply(bigBag, is.null)]
+    bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
       if (verbose==TRUE) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
     }
@@ -127,68 +129,32 @@ setMethod(
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
     if (verbose==TRUE) message('... context size: ', ctxt@size)
     ctxt@count <- length(bigBag)
-    # if statisticalTest is 'NULL' the following can be ommitted
-    if (length(pAttribute) == 1){
-      tokenIds <- unlist(lapply(bigBag, function(x) x$ids[[1]]))
-      tabulatedIds <- tabulate(tokenIds)
-      toKeep <- which(tabulatedIds > 0)
-      ctxt@stat <- data.table(
-        id=c(1:max(tokenIds))[toKeep],
-        count_window=tabulatedIds[toKeep]
-      )
-      idsAsString <- cqi_id2str(paste(.Object@corpus, ".", pAttribute, sep=""), ids=ctxt@stat$id)
-      idsAsString <- as.utf8(idsAsString, from=.Object@encoding)
-      ctxt@stat[, eval(pAttribute) := idsAsString, with=TRUE]
-      ctxt@stat[, id := NULL]
-      setcolorder(ctxt@stat, c(pAttribute, "count_window"))
-      setkeyv(ctxt@stat, pAttribute)
-    } else if (length(pAttribute) == 2){
-      idList <- list(
-        id1=unlist(lapply(bigBag, function(x) x$ids[[1]])),
-        id2=unlist(lapply(bigBag, function(x) x$ids[[2]]))
-      )
-      names(idList) <- pAttribute
-      ID <- as.data.table(idList)
-      setkeyv(ID, pAttribute)
-      count <- function(x) return(x)
-      TF <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
-      for (i in c(1:length(pAttribute))){
-        TF[, eval(pAttribute[i]) := cqi_id2str(paste(.Object@corpus, ".", pAttribute[i], sep=""), TF[[pAttribute[i]]]) %>% as.utf8()]
-      }
-
-      # statRaw <- getTermFrequencies(.Object=idList, pAttributes=pAttribute, corpus=.Object@corpus, encoding=object@encoding)
-      
-      setnames(TF, "V1", "count_window")
-      ctxt@stat <- copy(TF)
-      # ctxt@stat[, pAttribute[1] := gsub("^(.*?)//.*?$", "\\1", statRaw[["token"]])]
-      # ctxt@stat[, pAttribute[2] := gsub("^.*?//(.*?)$", "\\1", statRaw[["token"]])]
-      # token <- statRaw[["token"]]
-      # Encoding(token) <- "unknown"
-      # ctxt@stat[, "token" := token]
-      # setcolorder(ctxt@stat, c("token", "ids", pAttribute[[1]], pAttribute[[2]], "count_window"))
-      setkeyv(ctxt@stat, pAttribute)
+    
+    # put together raw stat table
+    idList <- lapply(
+      c(1:length(pAttribute)),
+      function(i) unlist(lapply(bigBag, function(x) x$ids[[i]]))
+    )
+    names(idList) <- pAttribute
+    ID <- as.data.table(idList)
+    setkeyv(ID, pAttribute)
+    count <- function(x) return(x)
+    ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
+    for (i in c(1:length(pAttribute))){
+      ctxt@stat[, eval(pAttribute[i]) := cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]) %>% as.utf8()]
     }
-    # wc <- table(unlist(lapply(bigBag, function(x) x$id)))
-     if (!is.null(statisticalTest)){
-       ctxt@stat[,count_partition := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
-       if ("ll" %in% statisticalTest){
-         if (verbose==TRUE) message("... performing log likelihood test")
-         ctxt <- ll(ctxt, .Object)
-       }
-      if ("pmi" %in% statisticalTest){
-        if (verbose==TRUE) message("... calculating pointwise mutual information")
-        ctxt <- pmi(ctxt)
+    setnames(ctxt@stat, "V1", "count_window")
+    setkeyv(ctxt@stat, pAttribute)
+    
+    # statistical tests
+    if (!is.null(statisticalTest)){
+      ctxt@stat[,count_partition := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
+      for (test in statisticalTest){
+        if (verbose == TRUE) message("... statistical test: ", test)
+        ctxt <- do.call(test, args=list(.Object=ctxt, .Object))  
       }
-      if ("t" %in% statisticalTest){
-        ctxt@stat$countCooc <- table(unlist(lapply(bigBag, function(x) unique(x$id))))
-        if (verbose==TRUE) message("... calculating t-test")
-        ctxt <- tTest(ctxt, .Object)
-      }
-      # ctxt@stat[, id := NULL]
       colnamesOld <- colnames(ctxt@stat)
-      # setcolorder(ctxt@stat, c("rank", colnamesOld))
-      
-     }
+    }
     ctxt
   })
 

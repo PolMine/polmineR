@@ -4,8 +4,8 @@ NULL
 # setMethod("[", "cooccurrences", function(x,i){
 #   setkeyv(x@stat, col=)
 #   aTab <- subset(x@stat, node == i)
-#   tab <- tab[, c("cooccurrenceWindowFreq", "cooccurrenceCorpusFreq", "expCoi", "expCorpus", "ll")]
-#   colnames(tab) <- c("cooccurrence", "countCoi", "countCorpus", "expCoi", "expCorpus", "ll")
+#   tab <- tab[, c("cooccurrenceWindowFreq", "cooccurrenceCorpusFreq", "exp_a", "exp_b", "ll")]
+#   colnames(tab) <- c("cooccurrence", "count_a", "count_b", "exp_a", "exp_b", "ll")
 #   return(tab)
 # })
 
@@ -108,7 +108,7 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
 #   colnamesToDrop <- c(
 #     "minId", "maxId" , "idOrder.x", "idOrder.y", "rank.x", "rank.y", "relation.x", "relation.y",
 #     "cooccurrence.x", "cooccurrence.y", "cooccurrenceId.x", "cooccurrenceId.y", "cooccurrenceCorpusFreq.x", "cooccurrenceCorpusFreq.y",
-#     "windowSize.x", "windowSize.y", "expCorpus.x", "expCorpus.y", "expCoi.x", "expCoi.y",
+#     "windowSize.x", "windowSize.y", "exp_b.x", "exp_b.y", "exp_a.x", "exp_a.y",
 #     "cooccurrenceWindowFreq.y"
 #   )
 #   merger[, c(colnamesToDrop) := NULL]
