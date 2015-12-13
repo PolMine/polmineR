@@ -22,7 +22,7 @@ setMethod("dim", "textstat", function(x) dim(x@stat))
 #' @rdname textstat-class
 setMethod("nrow", "textstat", function(x) nrow(x@stat))
 
-#' @param digits
+#' @param digits no of digits
 #' @rdname textstat-class
 #' @exportMethod round
 setMethod("round", "textstat", function(x, digits=2){
@@ -86,3 +86,4 @@ setMethod("as.data.table", "textstat", function(x) x@stat)
 #' @exportMethod pAttribute
 #' @rdname textstat-class
 setMethod("pAttribute", "textstat", function(object) object@pAttribute)
+

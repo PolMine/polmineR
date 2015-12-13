@@ -1,18 +1,12 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include keyness_class.R keynessBundle_class.R
+#' @include comp_class.R
 NULL
 
 #' enrich an object
 #' 
-#' Method to fill slots of a partition, partitionBundle or keyness object that 
+#' Method to fill slots of a partition, partitionBundle or comp object that 
 #' have not been set up previously. See the respective documentation:
-#' \describe{
-#'  \item{partition:}{\code{method?enrich("partition")}}
-#'  \item{partitionBundle:}{\code{method?enrich("partitionBundle")}}
-#'  \item{keyness:}{\code{method?enrich("keyness")}}
-#' }
-#' 
-#' @param object a partition, partitionBundle or keyness object
+#' @param object a partition, partitionBundle or comp object
 #' @param ... further parameters
 #' @aliases enrich enrich-method
 #' @docType methods
@@ -83,27 +77,26 @@ setMethod("enrich", "partitionBundle", function(object, size=TRUE, pAttribute=c(
 })
 
 
-#' Enrich keyness object
+#' Enrich comp object
 #' 
-#' Wrapper for adding a statistic on pos attributes to keyness object
+#' Wrapper for adding a statistic on pos attributes to comp object
 #' 
-#' @param object a keyness object
-#' @param addPos logical, whether to add POS information to keyness object
+#' @param object a comp object
+#' @param addPos logical, whether to add POS information to comp object
 #' @param verbose whether R should be talkative
 #' @exportMethod enrich
 #' @docType methods
-#' @rdname enrich-keyness-method
-#' @aliases enrich,keyness-method
-setMethod("enrich", "keyness", function(object, addPos=NULL, verbose=TRUE){
+#' @rdname comp-class
+setMethod("enrich", "comp", function(object, addPos=NULL, verbose=TRUE){
   if (addPos==TRUE) object <- addPos(object, Partition=NULL)
   object
 })
 
 #' @docType methods
 #' @noRd
-setMethod("enrich", "keynessBundle", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
+setMethod("enrich", "compBundle", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
   if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
-  rework <- new("keynessBundle")
+  rework <- new("compBundle")
   if (mc==FALSE){
     rework@objects <- lapply(
       setNames(object@objects, names(object@objects)),

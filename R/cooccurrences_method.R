@@ -25,7 +25,7 @@ setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrence
 #' @rdname cooccurrences
 setMethod(
   "cooccurrences", "partition",
-  function(.Object, pAttribute=c("word", "pos"), window=5, keep=list(pos=c("NN", "ADJA")), method="ll", how=1, matrix=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE, ...){
+  function(.Object, pAttribute=c("word", "pos"), window=5, keep=list(pos=c("NN", "ADJA")), method="ll", how=2, matrix=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE, ...){
   if (!identical(pAttribute, .Object@pAttribute)) .Object <- enrich(.Object, pAttribute=pAttribute)
   coll <- new(
     "cooccurrences",
@@ -91,7 +91,7 @@ setMethod(
     
     setkey(DT, a, b)
     DT <- DT[!is.na(a)][!is.na(b)]
-    # DT[ , ab_count := DT[, nrow(.SD), by=.(a, b)]]
+    # DT[ , count_ab := DT[, nrow(.SD), by=.(a, b)]]
     # DT <- DText[, nrow(.SD), by=.(a, b)]
     setnames(DT, old=c("a", "b"), new=c(aColsId, bColsId))
     # DT[ , dummy := NULL]
@@ -157,13 +157,13 @@ setMethod(
   
   if (verbose == TRUE) message("... counting co-occurrences")
   TF <- DT[, nrow(.SD), by=c(eval(c(aColsId, bColsId))), with=TRUE] # not fast
-  setnames(TF, "V1", "ab_count")
+  setnames(TF, "V1", "count_ab")
   
   if (verbose == TRUE) message("... adding window size")
   setkeyv(contextDT, cols=aColsId)
   setkeyv(TF, cols=aColsId)
   TF <- contextDT[TF]
-  setnames(TF, "V1", "window_size")
+  setnames(TF, "V1", "size_window")
   
   if (verbose == TRUE) message("... converting ids to strings")
   lapply(
@@ -177,19 +177,17 @@ setMethod(
   )
   setkeyv(TF, cols=aColsStr)
   setkeyv(.Object@stat, cols=pAttribute)
-  TF[, a_count := .Object@stat[TF][["count"]]]
+  TF[, count_a := .Object@stat[TF][["count"]]]
   setkeyv(TF, cols=bColsStr)
-  TF[, b_count := .Object@stat[TF][["count"]]]
-  setcolorder(TF, c(aColsStr, bColsStr, "ab_count", "a_count", "b_count", "window_size"))
+  TF[, count_b := .Object@stat[TF][["count"]]]
+  setcolorder(TF, c(aColsStr, bColsStr, "count_ab", "count_a", "count_b", "size_window"))
   coll@stat <- TF
   if ("ll" %in% method) {
     message('... g2-Test')
-    coll <- ll(coll, partitionSize=.Object@size)
+    coll <- ll(coll)
     coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
   }
   if (matrix == FALSE){
-    coll@stat[, rank := c(1:nrow(coll@stat))]
-    setcolorder(coll@stat, c("rank", colnames(coll@stat)[-which(colnames(coll@stat) == "rank")]))
     return(coll)
   } else if (matrix != FALSE){
     concatenate <- function(x) paste(x, collapse="//")
@@ -200,7 +198,7 @@ setMethod(
     i <- unname(keys[TF[["strKeyA"]]])
     j <- unname(keys[TF[["strKeyB"]]])
     retval <- simple_triplet_matrix(
-      i=i, j=j, v=TF[["ab_count"]],
+      i=i, j=j, v=TF[["count_ab"]],
       dimnames=list(a=names(keys)[1:max(i)], b=names(keys)[1:max(j)])
     )
     return(retval)

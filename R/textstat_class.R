@@ -1,6 +1,6 @@
 #' S4 textstat class
 #' 
-#' superclass for keyness and context class
+#' superclass for comp and context class
 #' 
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
 #' @slot corpus Object of class \code{"character"}

@@ -21,7 +21,8 @@ The polmineR-package was specifically developed to make full use of the XML anno
 - *partition*: Set up a partition (i.e. subcorpus);
 - *context*: Analyse the context of a query (including some statistics);
 - *dispersion*: Analyse the dispersion of a query across one or two dimensions (absolute and relative frequencies);
-- *keyness*: Compare two partitions to identify specific vocabulary (using a chi-square test).
+- *compare*: Compare two partitions to identify specific vocabulary (using a chi-square test).
+- *count*: Count features
 
 ### State of affairs
 There are quite a few further functions, some of which are experimental. The publication of the polmineR-package on CRAN is planned as soon as the portability of the package is ensured. Most recent developments will be available here on GitHub.

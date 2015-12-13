@@ -1,4 +1,4 @@
-#' @include partition_class.R keyness_class.R context_class.R kwic_class.R
+#' @include partition_class.R comp_class.R context_class.R kwic_class.R
 NULL
 
 #' mail result
@@ -79,7 +79,7 @@ setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     if(is.null(nrow)) nrow <- nrow(object@stat)
     msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
-    msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+    msg <- .attachTables(object@stat, nrow, msg, "comp", fileFormat)
     status <- .mail(msg, to)
     retval <- status$msg
   } else {
@@ -92,11 +92,11 @@ setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("
 
 #' @rdname mail-method
 #' @docType methods
-setMethod("mail", "keyness", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+setMethod("mail", "comp", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     if(is.null(nrow)) nrow <- nrow(object@stat)
     msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
-    msg <- .attachTables(object@stat, nrow, msg, "keyness", fileFormat)
+    msg <- .attachTables(object@stat, nrow, msg, "comp", fileFormat)
     status <- .mail(msg, to)
     retval <- status$msg  
   } else {

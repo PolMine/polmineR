@@ -114,7 +114,7 @@ createProject <- function(project){
   } else {
     message("... creating ", newProjectDir)
     dir.create(newProjectDir)
-    for (subdir in c("partition", "partitionBundle", "context", "kwic", "keyness")){
+    for (subdir in c("partition", "partitionBundle", "context", "kwic", "comp")){
       newDir <- file.path(newProjectDir, subdir)
       message("... creating ", newDir)
       dir.create(newDir)

@@ -357,3 +357,86 @@
 #   calc
 # }
 
+
+
+# #' Transform a context bundle into a Term Context Matrix
+# #' 
+# #' Method based on the tm package, adds to as.TermDocumentMatrix
+# #' 
+# #' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
+# #' 
+# #' @param x a contextBundle object (S3 class)
+# #' @param col the col of the stat table to take
+# #' @param ... to make the check happy
+# #' @method as.TermContextMatrix contextBundle
+# #' @return a TermContextMatrix
+# #' @author Andreas Blaette
+# #' @docType method
+# #' @importFrom slam simple_triplet_matrix
+# #' @exportMethod as.TermContextMatrix
+# #' @noRd
+# setMethod("as.TermContextMatrix", "contextBundle", function (x, col, ...) {
+#   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
+#   corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
+#   pAttribute <- unique(unlist(lapply(x@objects, function(c) c@pAttribute)))
+#   pAttr <- paste(corpus, '.', pAttribute, sep='')
+#   i <- unlist(lapply(x@objects, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
+#   j <- unlist(lapply(c(1:length(x@objects)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
+#   v <- unlist(lapply(x@objects, function(c) c@stat[,col]))
+#   lexiconSize <- cqi_lexicon_size(pAttr)
+#   mat <- simple_triplet_matrix(i=i, j=j, v=v,
+#                                ncol=length(x@objects),
+#                                nrow=lexiconSize+1,
+#                                dimnames=list(
+#                                  Terms=cqi_id2str(pAttr, c(0:lexiconSize)),
+#                                  Docs=names(x@objects))
+#   )
+#   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")
+#   class(mat) <- c("TermContextMatrix", "TermDocumentMatrix", "simple_triplet_matrix")
+#   mat
+# })
+# 
+
+# 
+# #' @method as.TermDocumentMatrix partitionBundle
+# #' @importFrom slam simple_triplet_matrix
+# #' @importFrom tm as.TermDocumentMatrix
+# #' @rdname coerce-methods
+# #' @docType methods
+# setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
+#   encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
+#   pAttribute <- unique(unlist(lapply(x@objects, function(x) x@pAttribute)))
+#   if (length(pAttribute) != 1) warning("incoherence of pAttributes/tf")
+#   corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
+#   message("... putting together the matrix")
+#   i <- as.integer(unname(unlist(lapply(x@objects,
+#                                        function(c) {a <- c@stat[,1]
+#                                        a <- a+1
+#                                        a})
+#   )))
+#   j <- unlist(lapply(c(1:length(x@objects)), function(m) rep(m,times=nrow(x@objects[[m]]@stat))))
+#   v <- as.integer(unlist(lapply(x@objects, function(c) c@stat[,2])))
+#   attr <- paste(corpus, '.', pAttribute, sep='')
+#   lexicon.size <- cqi_lexicon_size(attr)
+#   mat <- simple_triplet_matrix(i=i, j=j, v=v,
+#                                ncol=length(x@objects),
+#                                nrow=lexicon.size+1,
+#                                dimnames=list(
+#                                  Terms=cqi_id2str(attr, c(0:lexicon.size)),
+#                                  Docs=names(x@objects))
+#   )
+#   mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")  
+#   class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+#   if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
+#   if (!is.null(weight)){
+#     if (weight == "tfidf"){
+#       message("... applying tf/idf as a weight")
+#       mat <- weigh(mat, method="tfidf", corpusSizes=summary(x)$token)
+#     } else if (weight == "rel"){
+#       message("... computing relative frequencies")
+#       mat <- weigh(mat, method="rel", corpusSizes=summary(x)$token)
+#     }
+#   }
+#   mat
+# })
+# 

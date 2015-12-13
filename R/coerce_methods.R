@@ -31,8 +31,6 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 
 #' @exportMethod as.sparseMatrix
 setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
-setGeneric("as.partitionBundle", function(object,...){standardGeneric("as.partitionBundle")})
-setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.TermContextMatrix")})
 
 #' @param mat a TermDocumentMatrix
 #' @param verbose logicla, whether to be talkative
@@ -40,14 +38,6 @@ setGeneric("as.TermContextMatrix", function(x, col, ...) {standardGeneric("as.Te
 #' @importFrom slam as.simple_triplet_matrix
 #' 
 #' @noRd
-.rmBlank <- function(mat, verbose=TRUE){
-  if (verbose==TRUE) message("... removing empty rows")
-  matTmp <- as.sparseMatrix(mat)
-  matTmp <- matTmp[which(rowSums(matTmp) > 0),]
-  mat <- as.simple_triplet_matrix(matTmp)
-  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  mat
-}
 
 
 #' @docType methods
@@ -62,147 +52,7 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
   return(retval)  
 })
 
-#' @method as.TermDocumentMatrix partitionBundle
-#' @importFrom slam simple_triplet_matrix
-#' @importFrom tm as.TermDocumentMatrix
-#' @rdname coerce-methods
-#' @docType methods
-setMethod("as.TermDocumentMatrix", "partitionBundle", function (x, weight=NULL, rmBlank=TRUE, verbose=TRUE, ...) {
-  encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
-  pAttribute <- unique(unlist(lapply(x@objects, function(x) x@pAttribute)))
-  if (length(pAttribute) != 1) warning("incoherence of pAttributes/tf")
-  corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
-  message("... putting together the matrix")
-  i <- as.integer(unname(unlist(lapply(x@objects,
-                                       function(c) {a <- c@stat[,1]
-                                                    a <- a+1
-                                                    a})
-  )))
-  j <- unlist(lapply(c(1:length(x@objects)), function(m) rep(m,times=nrow(x@objects[[m]]@stat))))
-  v <- as.integer(unlist(lapply(x@objects, function(c) c@stat[,2])))
-  attr <- paste(corpus, '.', pAttribute, sep='')
-  lexicon.size <- cqi_lexicon_size(attr)
-  mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@objects),
-                               nrow=lexicon.size+1,
-                               dimnames=list(
-                                 Terms=cqi_id2str(attr, c(0:lexicon.size)),
-                                 Docs=names(x@objects))
-  )
-  mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")  
-  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  if (rmBlank == TRUE) mt <- .rmBlank(mat, verbose=verbose)
-  if (!is.null(weight)){
-    if (weight == "tfidf"){
-      message("... applying tf/idf as a weight")
-      mat <- weigh(mat, method="tfidf", corpusSizes=summary(x)$token)
-    } else if (weight == "rel"){
-      message("... computing relative frequencies")
-      mat <- weigh(mat, method="rel", corpusSizes=summary(x)$token)
-    }
-  }
-  mat
-})
 
-
-#' @docType methods
-#' @noRd
-setMethod("as.sparseMatrix", "partitionBundle", function(x, pAttribute, ...){
-  message("... converting partitionBundle to TermDocumentMatrix")
-  tdm_stm <- as.TermDocumentMatrix(x, pAttribute=pAttribute)
-  message("... converting TermDocumentMatrix to Matrix")
-  retval <-  as.sparseMatrix(tdm_stm)
-  return(retval)
-})
-
-
-#' @rdname coerce-methods
-setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, pAttribute=NULL, weight=NULL, rmBlank=TRUE, ...) {
-  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x, pAttribute=NULL, weight=weight, rmBlank=rmBlank))
-  retval
-})
-
-
-
-
-
-
-#' Transform a context bundle into a Term Context Matrix
-#' 
-#' Method based on the tm package, adds to as.TermDocumentMatrix
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a contextBundle object (S3 class)
-#' @param col the col of the stat table to take
-#' @param ... to make the check happy
-#' @method as.TermContextMatrix contextBundle
-#' @return a TermContextMatrix
-#' @author Andreas Blaette
-#' @docType method
-#' @importFrom slam simple_triplet_matrix
-#' @exportMethod as.TermContextMatrix
-#' @noRd
-setMethod("as.TermContextMatrix", "contextBundle", function (x, col, ...) {
-  encoding <- unique(unlist(lapply(x@objects, function(c) c@encoding)))
-  corpus <- unique(unlist(lapply(x@objects, function(c) c@corpus)))
-  pAttribute <- unique(unlist(lapply(x@objects, function(c) c@pAttribute)))
-  pAttr <- paste(corpus, '.', pAttribute, sep='')
-  i <- unlist(lapply(x@objects, function(c) (cqi_str2id(pAttr, rownames(c@stat))+1)))
-  j <- unlist(lapply(c(1:length(x@objects)), function(m) {rep(m,times=nrow(x[[m]]@stat))}))
-  v <- unlist(lapply(x@objects, function(c) c@stat[,col]))
-  lexiconSize <- cqi_lexicon_size(pAttr)
-  mat <- simple_triplet_matrix(i=i, j=j, v=v,
-                               ncol=length(x@objects),
-                               nrow=lexiconSize+1,
-                               dimnames=list(
-                                 Terms=cqi_id2str(pAttr, c(0:lexiconSize)),
-                                 Docs=names(x@objects))
-  )
-  mat$dimnames$Terms <- iconv(mat$dimnames$Terms, from=encoding, to="UTF-8")
-  class(mat) <- c("TermContextMatrix", "TermDocumentMatrix", "simple_triplet_matrix")
-  mat
-})
-
-
-#' Get statistics table from an object
-#' 
-#' @param x object with a statistics table
-#' @param row.names defaults to NULL
-#' @param optional see documentation of as.data.frame
-#' @param ... any further arguments
-#' @rdname asDataFrame-method
-#' @name as.data.frame
-#' @aliases as.data.frame,keyness-method as.data.frame,context-method
-#' @exportMethod as.data.frame
-#' @docType methods
-setMethod("as.data.frame", "keyness", function(x, ...) x@stat )
-setMethod("as.data.frame", "context", function(x, ...) x@stat )
-
-#' @docType methods
-#' @exportMethod as.partitionBundle
-setMethod("as.partitionBundle", "partition", function(object){
-  newBundle <- new(
-    "partitionBundle",
-    objects=list(object),
-    corpus=object@corpus,
-    encoding=object@encoding,
-    explanation=c("derived from a partition object")
-    )
-  names(newBundle@objects)[1] <- object@name
-  newBundle
-})
-
-
-setMethod("as.partitionBundle", "list", function(object, ...){
-  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
-  newBundle <- new("partitionBundle")
-  newBundle@objects <- object
-  newBundle@corpus <- unique(unlist(lapply(newBundle@objects, function(x) x@corpus)))
-  newBundle@encoding <- unique(unlist(lapply(newBundle@objects, function(x) x@encoding)))
-  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@name, FUN.VALUE="character")
-  newBundle
-})
 
 
 #' @examples
@@ -287,6 +137,8 @@ setMethod(
     mat
   })
 
+setGeneric("as.partitionBundle", function(object, ...) standardGeneric("as.partitionBundle"))
+
 #' @exportMethod as.partitionBundle
 #' @rdname context-class
 setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
@@ -320,33 +172,85 @@ setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
   return(newPartitionBundle)
 })
 
+
 setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
-  keyList <- lapply(
-    x@objects,
-    function(object) {
-      keys <- object@stat[, c(x@pAttribute), with=FALSE] %>%
+  dts <- lapply(x@objects, function(x) copy(x@stat))
+  lapply(
+    c(1:length(dts)),
+    function(i){
+      keys <- dts[[i]][, c(x@objects[[i]]@pAttribute), with=FALSE] %>%
         apply(1, function(row) paste(row, collapse="//"))
-      object@stat[, key := keys]
-      keys
+      dts[[i]][, key := keys]
     })
-  uniqueKeys <- keyList %>% unlist %>% unique
+  uniqueKeys <- lapply(dts, function(dt) dt[["key"]]) %>% unlist %>% unique
   keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
-  DTs <- lapply(
-    c(1:length(x@objects)),
-    function(object){ 
-      DT <- copy(x@objects[[object]]@stat)
-      oldCols <- colnames(DT)
+  lapply(
+    c(1:length(dts)),
+    function(n){ 
+      oldCols <- colnames(dts[[n]])
       oldCols <- oldCols[-which(oldCols == col)]
-      setnames(DT, col, "v")
-      DT[, i := keys[ DT[["key"]] ] ][, j := object][, c(eval(oldCols)) := NULL, with=TRUE]
+      setnames(dts[[n]], col, "v")
+      dts[[n]][, i := keys[ dts[[n]][["key"]] ] ][, j := n][, c(eval(oldCols)) := NULL, with=TRUE]
     })
-  DT <- rbindlist(DTs)
+  DT <- rbindlist(dts)
   retval <- simple_triplet_matrix(
     i = DT[["i"]],
     j = DT[["j"]],
     v = DT[["v"]],
     dimnames = list(Terms=names(keys), Docs=names(x@objects))
-    )
+  )
+#   .rmBlank <- function(mat, verbose=TRUE){
+#     if (verbose==TRUE) message("... removing empty rows")
+#     matTmp <- as.sparseMatrix(mat)
+#     matTmp <- matTmp[which(rowSums(matTmp) > 0),]
+#     mat <- as.simple_triplet_matrix(matTmp)
+#     class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+#     mat
+#   }
+#   if (rmBlank == TRUE) retval <- .rmBlank(retval, verbose=verbose)
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   retval
 })
+
+#' @rdname bundle-class
+setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
+  retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x=x, col=col))
+  retval
+})
+
+
+setMethod("as.bundle", "list", function(object, ...){
+  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
+  newBundle <- new("partitionBundle")
+  newBundle@objects <- object
+  newBundle@corpus <- unique(unlist(lapply(newBundle@objects, function(x) x@corpus)))
+  newBundle@encoding <- unique(unlist(lapply(newBundle@objects, function(x) x@encoding)))
+  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@name, FUN.VALUE="character")
+  newBundle
+})
+
+#' @docType methods
+#' @exportMethod as.partitionBundle
+setMethod("as.bundle", "textstat", function(object){
+  newBundle <- new(
+    paste(is(object)[1], "Bundle", sep=""),
+    objects=list(object),
+    corpus=object@corpus,
+    encoding=object@encoding,
+    explanation=c("derived from a partition object")
+  )
+  names(newBundle@objects)[1] <- object@name
+  newBundle
+})
+
+#' @docType methods
+#' @rdname bundle-class
+setMethod("as.sparseMatrix", "bundle", function(x, col){
+  message("... converting partitionBundle to TermDocumentMatrix")
+  tdm_stm <- as.TermDocumentMatrix(x=x, col=col)
+  message("... converting TermDocumentMatrix to Matrix")
+  retval <-  as.sparseMatrix(tdm_stm)
+  return(retval)
+})
+
+

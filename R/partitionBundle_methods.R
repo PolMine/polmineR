@@ -75,17 +75,11 @@ setMethod("merge", "partitionBundle", function(x, name=c("")){
 })
 
 
-#' @exportMethod [[
-#' @rdname partitionBundle-class
-setMethod('[[', 'partitionBundle', function(x,i){
-  return(x@objects[[i]])
-}
-)
 
 #' @exportMethod [
 #' @rdname partitionBundle-class
 setMethod('[', 'partitionBundle', function(x,i){
-  a <- unname(unlist(lapply(x@objects, function(y) y@tf[i,2])))
+  a <- unname(unlist(lapply(x@objects, function(y) y@stat[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
     partition=names(x@objects),
@@ -97,36 +91,18 @@ setMethod('[', 'partitionBundle', function(x,i){
 }
 )
 
-#' @exportMethod +
-#' @rdname bundle-class
-setMethod("+", signature(e1="partitionBundle", e2="partition"), function(e1, e2){
-  if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
-  e1@objects[[length(e1@objects)+1]] <- e2
-  names(e1@objects)[length(e1@objects)] <- e2@name
-  e1
+
+
+#' barplot of a partitionBundle
+#' 
+#' @param pBundle a partitionBundle object
+#' @exportMethod barplot
+#' @rdname partitionBundle-class
+setMethod("barplot", "partitionBundle", function(height, ...){
+  tab <- summary(height)
+  tab <- tab[order(tab[, "token"], decreasing=TRUE),]
+  barplot(tab$token, names.arg=tab$partition, ...)
 })
-
-
-
-#' Turn a partition bundle into a matrix
-#' 
-#' Method based on the tm package.
-#' 
-#' The partitions need to be derived from the same corpus (because the lexicon of the corpus is used).
-#' 
-#' @param x a partitionBundle object (S3 class)
-#' @param pAttribute the counts for the patttribute to show up in the matrix
-#' @param weight whether to introduce a weight ("tfidf", for example)
-#' @param ... necessary for S3 method?!
-#' @method as.matrix partitionBundle
-#' @return a matrix
-#' @author Andreas Blaette
-#' @exportMethod as.matrix
-#' @noRd
-setMethod("as.matrix", "partitionBundle", function(x, pAttribute, weight=NULL, rmBlank=TRUE, ...) {
-  as.matrix(as.TermDocumentMatrix(x, pAttribute, weight, rmBlank))
-})
-
 
 
 # setMethod("plot", signature(x="partitionBundle"),
@@ -136,60 +112,3 @@ setMethod("as.matrix", "partitionBundle", function(x, pAttribute, weight=NULL, r
 #             data <- data.frame(rank(val[,1]), rank(val[,2]))
 #             plot(data[,1], data[,2])
 #           })
-
-#' barplot of a partitionBundle
-#' 
-#' @param pBundle a partitionBundle object
-#' @exportMethod barplot
-#' @noRd
-setMethod("barplot", "partitionBundle", function(height, ...){
-  tab <- summary(height)
-  tab <- tab[order(tab[, "token"], decreasing=TRUE),]
-  barplot(tab$token, names.arg=tab$partition, ...)
-})
-
-
-#' @rdname partitionBundle-class
-setMethod("names", "partitionBundle", function(x){
-  unname(unlist(lapply(x@objects, function(y) name(y))))
-})
-
-#' @rdname partitionBundle-class
-#' @exportMethod names<-
-setReplaceMethod(
-  "names",
-  signature=c(x="partitionBundle", value="character"),
-  function(x, value) {
-    if ( length(value) != length(x@objects) ) {
-      warning("length of value provided does not match number of partitions")
-      stop()
-    }
-    if ( !is.character(name(x)) ){
-      warning("value needs to be a character vector")
-      stop()
-    }
-    for (i in c(1:length(x@objects))){
-      x@objects[[i]]@name <- value[i]
-    }
-    names(x@objects) <- value
-    x
-  }
-)
-
-#' @exportMethod unique
-#' @rdname partitionBundle-class
-setMethod("unique", "partitionBundle", function(x){
-  partitionNames <- lapply(x@objects, function(p) p@name)
-  uniquePartitionNames <- unique(unlist(partitionNames))
-  uniquePartitionsPos <- sapply(uniquePartitionNames, function(x) grep(x, partitionNames)[1])
-  partitionsToDrop <- which(c(1:length(partitionNames)) %in% uniquePartitionsPos == FALSE)
-  partitionsToDrop <- partitionsToDrop[order(partitionsToDrop, decreasing=TRUE)]
-  for (pos in partitionsToDrop) x@objects[pos] <- NULL
-  x
-})
-
-#' @exportMethod length
-#' @rdname partitionBundle-class
-setMethod("length", "partitionBundle", function(x) length(x@objects))
-
-

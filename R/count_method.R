@@ -1,3 +1,6 @@
+#' @include dispersion_class.R
+NULL
+
 #' get counts
 #' 
 #' Method to obtain term frequencies for one or multiple CQP queries. If

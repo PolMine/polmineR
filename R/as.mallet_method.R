@@ -1,3 +1,6 @@
+#' @include partitionBundle_class.R
+NULL
+
 #' as.mallet
 #' 
 #' Save polmineR-object as mallet object
@@ -11,15 +14,14 @@
 #' @param object the rJava-object
 #' @param filename where to store the Java-object
 #' @exportMethod as.mallet
-#' @rdname as.mallet-method
-setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
-
 #' @examples 
 #' \dontrun{
 #' clu <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
 #' foo <- as.mallet(clu)
 #' }
 #' @rdname as.mallet-method
+setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
+
 setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", stoplist=stopwords("de"), mc=TRUE, verbose=TRUE){
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")

@@ -29,7 +29,7 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #'   only if token in positivelist is present. If positivelist is a character
 #'   vector, it is assumed to provide regex expressions (incredibly long if the
 #'   list is long)
-#' @param statisticalTest either "LL" (default) or "pmi", if NULL, calculating
+#' @param method either "LL" (default) or "pmi", if NULL, calculating
 #'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the session settings
@@ -59,28 +59,26 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query,
-    pAttribute=NULL, sAttribute="text_id",
+    .Object, query, sAttribute="text_id",
     leftContext=NULL, rightContext=NULL,
     stoplist=NULL, positivelist=NULL,
-    statisticalTest="ll",
+    method="ll",
     mc=NULL, verbose=TRUE
   ) {
-    
-    if (!all(pAttribute == .Object@pAttribute) && !is.null(statisticalTest)) {
-      if (verbose==TRUE) message("... required counts in partition not yet available: doing this now")
-      .Object <- enrich(.Object, pAttribute=pAttribute)
+    if (length(.Object@pAttribute) == 0) {
+      stop("partition object does not contain counts for any pAttribute, enrich partition object first")
+    } else {
+      pAttribute <- .Object@pAttribute
     }
     
     # get values from session object if params are not provided
-    if (is.null(pAttribute)) pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
     if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
     if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
     if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
     
     pAttr <- paste(.Object@corpus, ".", pAttribute, sep="")
     sAttr <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[1]
-    method <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[2]
+    cposMethod <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[2]
     
     # instantiate the context object
     ctxt <- new(
@@ -103,7 +101,7 @@ setMethod(
     }
     if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
-    if (verbose==TRUE) message(' (', length(hits), " occurrences)")
+    if (verbose==TRUE) message(': ', length(hits))
     
     # generate positivelist, negativelist
     stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(pAttr, x)))
@@ -117,9 +115,9 @@ setMethod(
     
     if (verbose==TRUE) message("... counting tokens in context ")  
     if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, method))
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, cposMethod))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, method))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, cposMethod))
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
@@ -127,7 +125,9 @@ setMethod(
     }
     ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
-    if (verbose==TRUE) message('... context size: ', ctxt@size)
+    ctxt@sizeCoi <- as.integer(ctxt@size)
+    ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
+    if (verbose==TRUE) message('... window size total: ', ctxt@size)
     ctxt@count <- length(bigBag)
     
     # put together raw stat table
@@ -147,11 +147,11 @@ setMethod(
     setkeyv(ctxt@stat, pAttribute)
     
     # statistical tests
-    if (!is.null(statisticalTest)){
+    if (!is.null(method)){
       ctxt@stat[,count_partition := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
-      for (test in statisticalTest){
+      for (test in method){
         if (verbose == TRUE) message("... statistical test: ", test)
-        ctxt <- do.call(test, args=list(.Object=ctxt, .Object))  
+        ctxt <- do.call(test, args=list(.Object=ctxt))  
       }
       colnamesOld <- colnames(ctxt@stat)
     }
@@ -243,8 +243,6 @@ setMethod(
     corpus.sAttribute=corpus.sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
-  # posChecked <- cpos[.filter[[filterType]](cqi_cpos2str(paste(ctxt@corpus,".pos", sep=""), cpos), ctxt@posFilter)]
-  # id <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
   ids <- lapply(
     ctxt@pAttribute,
     function(pAttr) cqi_cpos2id(paste(ctxt@corpus,".", pAttr, sep=""), cpos) 
@@ -306,12 +304,10 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
     pAttribute=.Object@pAttribute,
     corpus=.Object@corpus,
     encoding=.Object@encoding,
-    posFilter=.Object@posFilter,
-    statisticalTest=.Object@method,
-    cutoff=.Object@cutoff,
+    method=.Object@method,
     stat=subset(.Object@stat, node==query),
     call=deparse(match.call()),
-    size=unique(subset(.Object@stat, node==query)[,"windowSize"])
+    size=unique(subset(.Object@stat, node==query)[,"size_window"])
   )  
   if (complete == TRUE){
     sAttr <- paste(

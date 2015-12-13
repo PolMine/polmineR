@@ -1,6 +1,12 @@
+#' @include bundle_class.R textstat_class.R
+NULL
+
+setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
+
+
 #' bundle class
 #' 
-#' A class to bundle several objects (partition, context, keyness, cooccurrences objects)
+#' A class to bundle several objects (partition, context, comp, cooccurrences objects)
 #' in one S4 object.
 #' 
 #' @slot objects Object of class \code{"list"}
@@ -30,19 +36,48 @@ setMethod("[[", "bundle", function(x,i){
 #' @rdname bundle-class
 setMethod("length", "bundle", function(x) length(x@objects))
 
+
+
 #' @rdname bundle-class
 setMethod("names", "bundle", function(x) names(x@objects))
 
+
+#' @rdname partitionBundle-class
+#' @exportMethod names<-
+setReplaceMethod(
+  "names",
+  signature=c(x="bundle", value="character"),
+  function(x, value) {
+    if ( length(value) != length(x@objects) ) {
+      warning("length of value provided does not match number of partitions")
+      stop()
+    }
+    if ( !is.character(name(x)) ){
+      warning("value needs to be a character vector")
+      stop()
+    }
+    for (i in c(1:length(x@objects))){
+      x@objects[[i]]@name <- value[i]
+    }
+    names(x@objects) <- value
+    x
+  }
+)
+
+
 #' @rdname bundle-class
 setMethod("unique", "bundle", function(x){
-  partitionNames <- names(x)
-  uniquePartitionNames <- unique(partitionNames)
-  uniquePos <- sapply(uniqueuniquePartitionNames, function(x) grep(x, partitionNames)[1])
-  objectsToDrop <- which(c(1:length(partitionNames)) %in% uniquePos == FALSE)
+  objectNames <- names(x)
+  uniqueObjectNames <- unique(objectNames)
+  uniquePos <- sapply(uniqueObjectNames, function(x) grep(x, objectNames)[1])
+  objectsToDrop <- which(c(1:length(objectNames)) %in% uniquePos == FALSE)
   objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
   for (pos in objectsToDrop) x@objects[pos] <- NULL
   x
 })
+
+
+
 
 #' @rdname bundle-class
 setGeneric("bapply", function(x, ...) standardGeneric("bapply"))
@@ -73,4 +108,24 @@ setMethod("+", signature(e1="bundle", e2="bundle"), function(e1, e2){
     )
 })
 
+#' @exportMethod +
+#' @rdname bundle-class
+setMethod("+", signature(e1="bundle", e2="textstat"), function(e1, e2){
+  e1@objects[[length(e1@objects)+1]] <- e2
+  names(e1@objects)[length(e1@objects)] <- e2@name
+  e1
+})
 
+
+
+#' @exportMethod [[
+#' @rdname bundle-class
+setMethod('[[', 'bundle', function(x,i){
+  return(x@objects[[i]])
+}
+)
+
+#' @rdname bundle-class
+setMethod("as.matrix", "bundle", function(x, col) {
+  as.matrix(as.TermDocumentMatrix(x, col))
+})

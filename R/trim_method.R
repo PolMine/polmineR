@@ -1,12 +1,12 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include keyness_class.R keynessBundle_class.R
+#' @include comp_class.R
 NULL
 
 #' trim an object
 #' 
 #' Method to trim and adjust objects by 
 #' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'keyness', 'context', 'partition' and 'partitionBundle' objects.
+#' 'comp', 'context', 'partition' and 'partitionBundle' objects.
 #' 
 #' @param object the object to be trimmed
 #' @param cutoff a list with colnames and cutoff levels
@@ -35,8 +35,8 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "keynessBundle", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
-  rework <- new("keynessBundle")
+setMethod("trim", "compBundle", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
+  rework <- new("compBundle")
   .trimFunction <- function(x) {
     trim( x, minSignificance=minSignificance, minFrequency=minFrequency, maxRank=maxRank,
     tokenFilter=tokenFilter, posFilter=posFilter, filterType=filterType)
@@ -167,7 +167,7 @@ setMethod("trim", "cooccurrences", function(object, by){
 # setMethod("trim", "cooccurrences", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
 #   if (reshape == TRUE) object <- .reshapeCooccurrences(object, mc=mc)
 #   if (is.null(by) == FALSE){
-#     if (class(by) %in% c("keynessCooccurrences", "cooccurrencesReshaped")){
+#     if (class(by) %in% c("compCooccurrences", "cooccurrencesReshaped")){
 #       bidirectional <- strsplit(rownames(by@stat), "<->")
 #       fromTo <- c(
 #         sapply(bidirectional, function(pair) paste(pair[1], "->", pair[2], sep="")),

@@ -148,25 +148,6 @@ setReplaceMethod("minFrequency", signature=c(x="session", value="numeric"), func
   x
 })
 
-##############################
-
-#' @exportMethod posFilter
-#' @exportMethod posFilter<-
-NULL
-
-
-
-setGeneric("posFilter", function(x) standardGeneric("posFilter"))
-setGeneric("posFilter<-", function(x, value) standardGeneric("posFilter<-"))
-
-#' @rdname session
-setMethod("posFilter", "session", function(x) x@posFilter)
-
-#' @rdname session
-setReplaceMethod("posFilter", signature=c(x="session", value="character"), function(x, value) {
-  x@posFilter <- value
-  x
-})
 
 ##############################
 

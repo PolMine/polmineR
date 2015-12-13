@@ -205,7 +205,7 @@ To understand the occurance of a phenomenon, the distribution of query results a
 @
 
 
-\section{Keyness}
+\section{Compare}
 To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
 
 <<keyness, echo=TRUE, results="tex", message=FALSE, tidy=FALSE>>=

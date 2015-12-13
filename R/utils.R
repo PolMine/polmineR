@@ -141,12 +141,12 @@ flatten <- function(object){
 }
 
 .statisticalSummary <- function(object) {
-  if (object@statisticalTest %in% c("ll", "chiSquare")){
+  if (object@method %in% c("ll", "chiSquare")){
     criticalValue <- c(3.84, 6.63, 7.88, 10.83)
     propability <- c(0.05, 0.01, 0.005, 0.001)
     no <- vapply(
       criticalValue,
-      function(x) length(which(object@stat[[object@statisticalTest]]>x)),
+      function(x) length(which(object@stat[[object@method]]>x)),
       FUN.VALUE=1
     )
     result <- data.frame(propability, criticalValue, no)
@@ -287,7 +287,7 @@ as.cqp <- function(queries, collapse=FALSE){
 }
 
 
-# used by keyness,cooccurrences-method
+# used by compare,cooccurrences-method
 # listed here because it may be used by other methods
 .minMaxId <- function(row){
   if (row["nodeId"] == row["cooccurrenceId"]){

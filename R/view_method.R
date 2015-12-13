@@ -27,12 +27,24 @@ setMethod("view", "textstat", function(.Object){
 setMethod("view", "context", function(.Object){
   .Object <- round(.Object, 2)
   whatToView <- c(
-    paste("rank", .Object@statisticalTest, sep="_"),
+    paste("rank", .Object@method, sep="_"),
     .Object@pAttribute,
-    "count_window", "count_partition", "exp_window", "exp_partition",
-    .Object@statisticalTest
+    "count_window", "count_partition", "exp_window",
+    .Object@method
     )
-  View(.Object@stat[, whatToView, with=FALSE])
+  View(.Object@stat[, whatToView, with=FALSE], title=.Object@query)
+})
+
+#' @exportMethod view
+setMethod("view", "comp", function(.Object){
+  .Object <- round(.Object, 2)
+  whatToView <- c(
+    paste("rank", .Object@method, sep="_"),
+    .Object@pAttribute,
+    "count_coi", "count_ref", "exp_coi",
+    .Object@method
+  )
+  View(.Object@stat[, whatToView, with=FALSE], title="comp")
 })
 
 

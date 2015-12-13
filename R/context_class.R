@@ -1,4 +1,4 @@
-#' @include textstat_class.R
+#' @include textstat_class.R comp_class.R
 NULL
 
 #' S4 context class
@@ -17,21 +17,10 @@ NULL
 #' @slot corpus Object of class \code{"character"} the CWB corpus used
 #' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
-#' @slot posFilter Object of class \code{"character"} part-of-speech tags filtered
 #' @slot cpos Object of class \code{"list"} corpus positions of the hits
-#' @slot statisticalTest Object of class \code{"character"} statistical test used
-#' @slot cutoff Object of class \code{"list"} cutoff levels that have been applied
+#' @slot method Object of class \code{"character"} statistical test used
 #' @slot call Object of class \code{"character"} call that generated the object
 #'     
-#' @section Methods:
-#'   \describe{
-#'     \item{show}{output of core information}
-#'     \item{summary}{core statistical information}
-#'     \item{[}{index the object}
-#'     \item{[[}{specific cooccurrences}
-#'     \item{trim}{trim the object}
-#'     \item{as.data.frame}{get the statistics table}
-#'    }
 #' @param x object
 #' @param object object
 #' @param mc logical, whether to use multicore
@@ -51,16 +40,9 @@ setClass("context",
                         leftContext="numeric",
                         rightContext="numeric",
                         size="numeric",
-                        pAttribute="character",
                         sAttribute="character",
-                        corpus="character",
-                        stat="data.table",
-                        encoding="character",
-                        posFilter="character",
                         cpos="list",
-                        statisticalTest="character",
-                        cutoff="list",
                         call="character"
          ),
-         contains=c("textstat")
+         contains=c("comp", "textstat")
 )

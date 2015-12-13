@@ -27,25 +27,13 @@ NULL
 #' @rdname cooccurrences-class
 setClass("cooccurrences",
          representation(
-           call="character",
-           partition="character",
-           partitionSize="numeric",
-           leftContext="numeric",
-           rightContext="numeric",
-           pAttribute="character",
-           corpus="character",
-           stat="data.table",
-           encoding="character",
-           pos="character",
-           method="character",
-           cutoff="list",
            svg="character"
          ),
-         contains=c("textstat")
+         contains=c("context", "comp", "textstat")
 )
 
 #' @rdname cooccurrences-class
-setClass("cooccurrencesReshaped", contains=c("cooccurrences", "textstat"))
+setClass("cooccurrencesReshaped", contains=c("cooccurrences"))
 
 #' Methods for manipulating cooccurrencesReshaped-class-objects
 #' 

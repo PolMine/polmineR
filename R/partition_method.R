@@ -339,11 +339,8 @@ setMethod("partition", "partition", function(object, def, name=c(""), regex=FALS
   message('... computing partition size')
   newPartition@size <- size(newPartition)
   if (length(pAttribute)>0) {
-    for (p in pAttribute){
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', p, ')')  
-      newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=p, id2str=id2str, mc=mc)
-      newPartition@pAttribute <- p
-    }
+    newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=pAttribute, id2str=id2str, mc=mc)
+    newPartition@pAttribute <- pAttribute
   }
   newPartition
 })
