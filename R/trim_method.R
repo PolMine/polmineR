@@ -148,7 +148,7 @@ setMethod("trim", "dispersion", function(object, drop=NULL, merge=list(old=c(), 
 
 #' @exportMethod subset
 #' @rdname cooccurrences-class
-setMethod("trim", "cooccurrences", function(object, by){
+setMethod("trim", "cooccurrences", function(object, by=NULL){
   if (is.null(by) == FALSE){
     keys <- unlist(lapply(c("a", "b"), function(what) paste(what, object@pAttribute, sep="_")))
     setkeyv(by@stat, keys)
@@ -156,8 +156,8 @@ setMethod("trim", "cooccurrences", function(object, by){
     object@stat <- by@stat[object@stat]
     object@stat <- object@stat[by@stat]
     for (toDrop in grep("i\\.", colnames(object@stat), value=T)) object@stat[, eval(toDrop) := NULL, with=TRUE]
-    object@stat[, y_ab_count := NULL]
-    object@stat[, x_ab_count := NULL]
+    object@stat[, count_ref := NULL]
+    object@stat[, count_coi := NULL]
   }
   object
 })

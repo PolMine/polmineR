@@ -67,18 +67,3 @@ setMethod("ll", "comp", function(.Object){
   return(.Object)
 })
 
-
-setMethod("ll", "compCooccurrences", function(.Object, partitionSize){
-  mat <- .g2Statistic(
-    ids=rep(0, times=nrow(.Object@stat)),
-    windowFreq=.Object@stat[["x_ab_count"]],
-    corpusFreq=.Object@stat[["y_ab_count"]],
-    windows.total=.Object@sizeCoi,
-    corpus.total=partitionSize
-  )
-  .Object@stat[, exp_coi := mat[,"exp_a"]]
-  .Object@stat[, ll := mat[, "ll"]]
-  .Object <- sort(.Object, by="ll")
-  .Object@stat[, rank := c(1:nrow(.Object@stat))]
-  return(.Object)
-})

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.10
-Date: 2015-12-11
+Version: 0.5.11
+Date: 2015-12-16
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -38,10 +38,10 @@ License: CC BY-NC-SA 4.0 | file LICENSE
 Collate:
     'TermDocumentMatrix_methods.R'
     'adjustEncoding_method.R'
+    'generics.R'
     'textstat_class.R'
     'bundle_class.R'
     'session_class.R'
-    'generics.R'
     'polmineR_package.R'
     'partition_class.R'
     'partitionBundle_class.R'
@@ -60,7 +60,6 @@ Collate:
     'compare_method.R'
     'contextBundle_methods.R'
     'context_method.R'
-    'context_methods.R'
     'cooccurrence_method.R'
     'cooccurrencesBundle_methods.R'
     'cooccurrencesReshaped_methods.R'
@@ -108,7 +107,6 @@ Collate:
     'tTest.R'
     'tag_method.R'
     'terms_method.R'
-    'textstat_methods.R'
     'trim_method.R'
     'use_method.R'
     'utils.R'

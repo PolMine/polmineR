@@ -29,7 +29,6 @@ setMethod("compare", signature=c(x="partition"), function(
   verbose=FALSE
 ) {
   if (verbose==TRUE) message ('Comparing x and y ...')
-  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   newObject <- new(
     'comp',
     encoding=x@encoding, included=included,
@@ -98,7 +97,7 @@ setMethod("compare", signature=c(x="partitionBundle"), function(
 #' @rdname compare-method
 setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll", mc=TRUE, verbose=TRUE){
   newObject <- new(
-    'compareCooccurrences',
+    'compCooccurrences',
     encoding=x@encoding, included=included, corpus=x@corpus, sizeCoi=x@partitionSize,
     sizeRef=ifelse(included == FALSE, y@partitionSize, y@partitionSize-x@partitionSize),
     stat=data.table()
@@ -116,13 +115,13 @@ setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll"
   
   # remove columns not needed
   colsToDrop <- c(
-    "ll", "i.ll", "exp_coi", "i.exp_coi", "rank", "i.rank",
-    "window_size", "i.window_size", "a_count", "i.a_count", "b_count", "i.b_count"
+    "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
+    "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b"
     )
   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
-  setnames(MATCH, old=c("ab_count", "i.ab_count"), new=c("count_coi", "count_ref"))
+  setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
   
-  if (included == TRUE) MATCH[, y_ab_count := y_ab_count - x_ab_count]
+  if (included == TRUE) MATCH[, count_ref := count_ref - count_coi]
   
   newObject@stat <- MATCH
   for (how in method){
