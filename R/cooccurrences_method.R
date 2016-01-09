@@ -245,20 +245,3 @@ setMethod(
   bundle
 })
 
-setGeneric("bigcooccurrences", "partition", function(.Object, window){
-    # this is a copy from cooccurrences-method
-    pAttribute <- .Object@pAttribute
-    newObject <- new(
-      "cooccurrences",
-      pAttribute=pAttribute, corpus=.Object@corpus, encoding=.Object@encoding,
-      leftContext=window, rightContext=window, partitionSize=.Object@size, stat=data.table()
-    )
-    # coll@call <- deparse(match.call())
-    # coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
-    pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus,".", x, sep=""))
-    aColsId <- setNames(paste("a_", pAttribute, "_id", sep=""), pAttribute)
-    bColsId <- setNames(paste("b_", pAttribute, "_id", sep=""), pAttribute)
-    aColsStr <- setNames(paste("a_", pAttribute, sep=""), pAttribute)
-    bColsStr <- setNames(paste("b_", pAttribute, sep=""), pAttribute)
-    
-})
