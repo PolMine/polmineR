@@ -65,7 +65,7 @@ setMethod("round", "textstat", function(x, digits=2){
 setMethod("colnames", "textstat", function(x) colnames(x@stat))
 
 #' @exportMethod names
-setMethod("names", "textstat", function(x) x@stat[["token"]])
+setMethod("names", "textstat", function(x) x@name)
 
 #' @exportMethod sort
 #' @rdname textstat-class

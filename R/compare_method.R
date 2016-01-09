@@ -116,7 +116,8 @@ setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll"
   # remove columns not needed
   colsToDrop <- c(
     "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
-    "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b"
+    "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b",
+    "exp_partition", "i.exp_partition"
     )
   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
   setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
