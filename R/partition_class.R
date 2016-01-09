@@ -57,3 +57,11 @@ setClass(
   ),
   contains=c("textstat")
 )
+
+
+#' @rdname partition-class
+setClass("plprPartition", contains="partition")
+
+#' @rdname partition-class
+setClass("pressPartition", contains="partition")
+
