@@ -102,3 +102,10 @@ setReplaceMethod("browse", signature=c(x="session", value="logical"), function(x
 })
 
 
+ 
+@rdname browse
+@exportMethod browse
+setMethod("browse", "pressPartition", function(object, meta=c("text_newspaper", "text_date")){
+  callNextMethod(object=object, meta=meta)
+})
+
