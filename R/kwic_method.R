@@ -89,11 +89,11 @@ setMethod("kwic", "partition", function(
 
 #' @rdname kwic
 setMethod("kwic", "plprPartition", function(
-  object, query, leftContext=5, rightContext=5,
+  .Object, query, leftContext=5, rightContext=5,
   meta=NULL, pAttribute="word", neighbor=c(), verbose=TRUE
 ){
   Partition <- new("partition")
-  for (x in slotNames(object)) slot(Partition, x) <- slot(object, x)
+  for (x in slotNames(.Object)) slot(Partition, x) <- slot(.Object, x)
   kwicObject <- kwic(
     Partition, query=query, leftContext=leftContext,
     rightContext=rightContext, meta=meta, pAttribute=pAttribute,
@@ -104,8 +104,8 @@ setMethod("kwic", "plprPartition", function(
     return()
   }
   plprKwicObject <- as(kwicObject, "plprKwic")
-  plprKwicObject@sAttributes <- object@sAttributes
-  plprKwicObject@corpus <- object@corpus
+  plprKwicObject@sAttributes <- .Object@sAttributes
+  plprKwicObject@corpus <- .Object@corpus
   plprKwicObject
 })
 

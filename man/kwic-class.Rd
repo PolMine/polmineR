@@ -6,6 +6,7 @@
 \alias{[,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{kwic-class}
+\alias{plprKwic-class}
 \alias{show,kwic-method}
 \alias{view,kwic-method}
 \title{kwic (S4 class)}

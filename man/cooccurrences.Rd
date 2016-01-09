@@ -9,10 +9,9 @@
 \usage{
 cooccurrences(.Object, ...)
 
-\S4method{cooccurrences}{partition}(.Object, pAttribute = c("word", "pos"),
-  window = 5, keep = list(pos = c("NN", "ADJA")), method = "ll",
-  how = 2, matrix = FALSE, mc = FALSE, progress = TRUE,
-  verbose = TRUE, ...)
+\S4method{cooccurrences}{partition}(.Object, window = 5, keep = list(pos =
+  c("NN", "ADJA")), method = "ll", big = FALSE, matrix = FALSE,
+  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
 \S4method{cooccurrences}{partitionBundle}(.Object, pAttribute = "word",
   window = 5, method = "ll", keep = list(pos = c("ADJA", "NN")),
@@ -21,13 +20,15 @@ cooccurrences(.Object, ...)
 \arguments{
 \item{.Object}{a partition object}
 
-\item{pAttribute}{p-attribute to define tokens (can be length > 1)}
+\item{...}{further parameters that will be passed into bigmatrix (applies only of big=TRUE)}
 
 \item{window}{no of tokens to the left and to the right of nodes}
 
 \item{keep}{list with tokens to keep}
 
 \item{method}{statistical test to use (defaults to "ll")}
+
+\item{big}{logical, whether to use bigmatrix}
 
 \item{matrix}{logical, whether to return matrix}
 

@@ -6,6 +6,14 @@
 #' @param ... further parameters
 #' @exportMethod read
 #' @rdname read-method
+#' @examples
+#' use("polmineR.sampleCorpus")
+#' merkel <- partition(
+#'   "PLPRBTTXT",
+#'   list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
+#'   type="plpr"
+#' )
+#' read(merkel)
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method

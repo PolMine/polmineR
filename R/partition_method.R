@@ -63,16 +63,6 @@ setMethod("partition", "character", function(
   corpus <- object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', name)
-  .makeSpecificPartition <- function(type){
-    pkgName <- paste("polmineR.", type, sep="")
-    cName <- paste(type, "Partition", sep="")
-    if (requireNamespace(pkgName, quietly=TRUE)){
-      Partition <- new(cName)
-    } else {
-      warning("to set a specific partition type, the respective package needs to be available")
-    }
-    return(Partition)
-  }
   if (is.null(type)){
     parsedInfoFile <- .parseInfoFile(object)
     if (is.null(parsedInfoFile)){
@@ -81,11 +71,11 @@ setMethod("partition", "character", function(
       if ("CORPUS_TYPE" %in% names(parsedInfoFile)){
         type <- parsedInfoFile["CORPUS_TYPE"]
         if (verbose == TRUE) message("... type of the corpus is ", type)
-        assign("Partition", .makeSpecificPartition(type))
+        assign("Partition", new(paste(type, "Partition", sep="")))
       }
     }
   } else {
-    Partition <- .makeSpecificPartition(type)
+    Partition <- new(paste(type, "Partition", sep=""))
   }
   Partition@call <- deparse(match.call())
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")

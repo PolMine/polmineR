@@ -3,10 +3,17 @@
 \docType{methods}
 \name{as.markdown}
 \alias{as.markdown}
+\alias{as.markdown,plprPartition-method}
+\alias{as.markdown,pressPartition-method}
 \alias{html,character-method}
 \title{turn partition into markdown}
 \usage{
 as.markdown(object, ...)
+
+\S4method{as.markdown}{plprPartition}(object, meta)
+
+\S4method{as.markdown}{pressPartition}(object, meta = c("text_newspaper",
+  "text_date"))
 
 \S4method{html}{character}(object)
 }

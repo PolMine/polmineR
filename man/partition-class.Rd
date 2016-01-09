@@ -24,6 +24,8 @@
 \alias{pAttribute,partition-method}
 \alias{pAttributes,partition-method}
 \alias{partition-class}
+\alias{plprPartition-class}
+\alias{pressPartition-class}
 \alias{show,html-method}
 \alias{show,partition-method}
 \alias{size}

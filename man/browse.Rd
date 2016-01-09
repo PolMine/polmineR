@@ -7,6 +7,7 @@
 \alias{browse,html-method}
 \alias{browse,kwic-method}
 \alias{browse,partition-method}
+\alias{browse,pressPartition-method}
 \alias{browse,textstat-method}
 \title{display in browser}
 \usage{
@@ -21,6 +22,9 @@ browse(object, ...)
 \S4method{browse}{html}(object)
 
 \S4method{browse}{kwic}(object, colnames = NULL)
+
+\S4method{browse}{pressPartition}(object, meta = c("text_newspaper",
+  "text_date"))
 }
 \arguments{
 \item{object}{what is to be displayed}

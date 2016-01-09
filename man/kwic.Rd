@@ -5,6 +5,7 @@
 \alias{kwic}
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
+\alias{kwic,plprPartition-method}
 \alias{show,kwic-method}
 \title{KWIC output}
 \usage{
@@ -15,6 +16,10 @@ kwic(.Object, ...)
 \S4method{kwic}{partition}(.Object, query, leftContext = NULL,
   rightContext = NULL, meta = NULL, pAttribute = "word",
   neighbor = NULL, verbose = TRUE)
+
+\S4method{kwic}{plprPartition}(.Object, query, leftContext = 5,
+  rightContext = 5, meta = NULL, pAttribute = "word", neighbor = c(),
+  verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a partition object}

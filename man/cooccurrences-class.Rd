@@ -20,7 +20,7 @@
 
 \S4method{as.sparseMatrix}{cooccurrences}(x, col, mc = FALSE)
 
-\S4method{trim}{cooccurrences}(object, by)
+\S4method{trim}{cooccurrences}(object, by = NULL)
 }
 \description{
 class to organize information of context analysis
