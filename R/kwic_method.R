@@ -86,3 +86,26 @@ setMethod("kwic", "partition", function(
   kwic(ctxt, meta=meta, neighbor=neighbor)
 })
 
+
+#' @rdname kwic
+setMethod("kwic", "plprPartition", function(
+  object, query, leftContext=5, rightContext=5,
+  meta=NULL, pAttribute="word", neighbor=c(), verbose=TRUE
+){
+  Partition <- new("partition")
+  for (x in slotNames(object)) slot(Partition, x) <- slot(object, x)
+  kwicObject <- kwic(
+    Partition, query=query, leftContext=leftContext,
+    rightContext=rightContext, meta=meta, pAttribute=pAttribute,
+    neighbor=neighbor, verbose=verbose
+  )
+  if (is.null(kwicObject)) {
+    message("... no hits for query")
+    return()
+  }
+  plprKwicObject <- as(kwicObject, "plprKwic")
+  plprKwicObject@sAttributes <- object@sAttributes
+  plprKwicObject@corpus <- object@corpus
+  plprKwicObject
+})
+
