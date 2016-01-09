@@ -30,3 +30,6 @@ setClass("kwic",
                         encoding="character"
          )
 )
+
+#' @rdname kwic-class
+setClass("plprKwic", contains="kwic", slots=c(sAttributes="list", corpus="character"))
