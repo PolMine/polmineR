@@ -3,8 +3,7 @@ NULL
 
 #' get counts
 #' 
-#' Method to obtain term frequencies for one or multiple CQP queries. If
-#' CQP syntax is not needed, use subst as partition-method.
+#' Count number of occurrences of a query (CQP syntax can be used).
 #' 
 #' @param .Object either a partition or a partitionBundle object
 #' @param query a character vector (one or multiple terms to be looked up)
@@ -22,12 +21,11 @@ NULL
 #' test <- partition("PLPRBTTXT")
 #' count(test, "Wir") # get frequencies for one token
 #' count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-#' count(test, c("Zuwander.*", "Integration.*"), method="grep") # get frequencies using "grep"-method
 #' count("PLPRTXT", c("machen", "Integration"), "word")
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
-setMethod("count", "partition", function(.Object, query, mc=F, verbose=T){
+setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, verbose=T){
   pAttr <- ifelse(
     is.null(pAttribute),
     slot(get("session", ".GlobalEnv"), "pAttribute"), 
@@ -60,7 +58,7 @@ setMethod("count", "partition", function(.Object, query, mc=F, verbose=T){
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, mc=F, verbose=T){
+setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, mc=F, verbose=T){
   # check whether all partitions in the bundle have a proper name
   if (is.null(names(.Object@objects)) || any(is.na(names(.Object@objects)))) {
     warning("all partitions in the bundle need to have a name (at least some missing)")

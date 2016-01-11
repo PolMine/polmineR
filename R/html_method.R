@@ -21,11 +21,12 @@ setMethod("html", "character", function(object){
 
 
 #' @param meta metadata for output
+#' @param highlight list with regex to be highlighted
 #' @rdname partition-class
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method show,html-method
-setMethod("html", "partition", function(object, meta=NULL){
+setMethod("html", "partition", function(object, meta=NULL, highlight=list()){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
@@ -38,6 +39,7 @@ setMethod("html", "partition", function(object, meta=NULL){
       collapse="\n"
     )
     htmlDoc <- markdown::markdownToHTML(text=markdown)
+    htmlDoc <- highlight(htmlDoc, highlight=highlight)
     htmlDoc <- htmltools::HTML(htmlDoc)
   } else {
     warning("package 'markdown' is not installed, but necessary for this function")

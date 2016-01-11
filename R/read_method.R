@@ -14,11 +14,15 @@
 #'   type="plpr"
 #' )
 #' read(merkel)
+#' read(
+#'   merkel,
+#'   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
+#'   )
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "plprPartition", function(.Object, meta=c("text_name", "text_party", "text_date")){
-  fulltextHtml <- html(.Object, meta=meta)
+setMethod("read", "plprPartition", function(.Object, meta=c("text_name", "text_party", "text_date"), highlight=list()){
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
@@ -27,8 +31,8 @@ setMethod("read", "plprPartition", function(.Object, meta=c("text_name", "text_p
 })
 
 #' @rdname read-method
-setMethod("read", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date")){
-  fulltextHtml <- html(.Object, meta=meta)
+setMethod("read", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), highlight=list()){
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
