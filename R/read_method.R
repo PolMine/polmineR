@@ -21,6 +21,13 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
+setMethod("read", "partition", function(.Object, ...){
+  warning(
+    "the read-method requires the type of the partition to be provided when the partition is defined\n(currently defined partition types: plpr, press)"
+  )
+})
+
+#' @rdname read-method
 setMethod("read", "plprPartition", function(.Object, meta=c("text_name", "text_party", "text_date"), highlight=list()){
   fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
   if(require("htmltools", quietly = TRUE)){
