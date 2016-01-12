@@ -50,7 +50,9 @@ readRegistry <- function(corpus){
   )
 }
 
-.parseRegistry <- function(corpus){
+#' @export parseRegistry
+#' @rdname registry
+parseRegistry <- function(corpus){
   registry <- readRegistry(corpus)
   registryList <- lapply(
     setNames(c("NAME", "ID", "HOME", "INFO"), c("NAME", "ID", "HOME", "INFO")),
@@ -72,11 +74,13 @@ readRegistry <- function(corpus){
   return(registryList)
 }
 
-.parseInfoFile <- function(corpus){
-  pathInfoFile <- .parseRegistry(corpus)$INFO
+#' @export parseInfoFile
+#' @rdname registry
+parseInfoFile <- function(corpus){
+  pathInfoFile <- parseRegistry(corpus)$INFO
   if (file.exists(pathInfoFile)){
     infoFile <- scan(
-      file=.parseRegistry(corpus)$INFO,
+      file=parseRegistry(corpus)$INFO,
       sep="\n", what="character", quiet=TRUE
     )
     retval <- sapply(

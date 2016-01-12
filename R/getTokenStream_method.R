@@ -17,7 +17,7 @@ setMethod("getTokenStream", "matrix", function(.Object, corpus, pAttribute, enco
   tokens <- cqi_id2str(pAttr, cqi_cpos2id(pAttr, cpos))
   tokens <- iconv(tokens, from=encoding, to="UTF-8")
   if (!is.null(collapse)){
-    paste(tokens, collapse=collapse)  
+    tokens <- paste(tokens, collapse=collapse)  
   }
   return(tokens)
 })
@@ -30,11 +30,3 @@ setMethod("getTokenStream", "partition", function(.Object, pAttribute, collapse=
     )
 })
 
-# 
-# getTokenStream2 <- function(x){
-#   cpos <- as.vector(unlist(apply(x@cpos, 1, function(row) c(row[1]:row[2]))))
-#   pAttr <- paste(x@corpus, ".", pAttribute, sep="")
-#   token <- cqi_id2str(pAttr, cqi_cpos2id(pAttr, cpos))
-#   token <- iconv(token, from=x@encoding, to="UTF-8")
-#   paste(token, collapse="\n")
-# }

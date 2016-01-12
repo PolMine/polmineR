@@ -440,3 +440,66 @@
 #   mat
 # })
 # 
+
+
+
+
+# #' @rdname kwic
+# setMethod("kwic", "plprPartition", function(
+#   .Object, query, leftContext=5, rightContext=5,
+#   meta=NULL, pAttribute="word", neighbor=c(), verbose=TRUE
+# ){
+#   Partition <- new("partition")
+#   for (x in slotNames(.Object)) slot(Partition, x) <- slot(.Object, x)
+#   kwicObject <- kwic(
+#     Partition, query=query, leftContext=leftContext,
+#     rightContext=rightContext, meta=meta, pAttribute=pAttribute,
+#     neighbor=neighbor, verbose=verbose
+#   )
+#   if (is.null(kwicObject)) {
+#     message("... no hits for query")
+#     return()
+#   }
+#   plprKwicObject <- as(kwicObject, "plprKwic")
+#   plprKwicObject@sAttributes <- .Object@sAttributes
+#   plprKwicObject@corpus <- .Object@corpus
+#   plprKwicObject
+# })
+# 
+
+
+# #' @docType methods
+# setMethod('show', 'kwic', function(object){
+#   .showKwicLine <- function(object, i){
+#     metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
+#     Encoding(metaoutput) <- object@encoding
+#     cat('[',metaoutput, '] ', sep='')
+#     cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
+#   }
+#   sessionKwicNo <- slot(get("session", '.GlobalEnv'), 'kwicNo')
+#   if (sessionKwicNo == 0 ) {
+#     for (i in 1:nrow(object@table)) .showKwicLine(object, i)
+#   } else if (sessionKwicNo > 0) {
+#     if (nrow(object@table) <= sessionKwicNo) {
+#       for (i in 1:nrow(object@table)) .showKwicLine(object, i)
+#     } else {
+#       chunks <- trunc(nrow(object@table)/sessionKwicNo)
+#       for ( i in c(0:(chunks-1))) {
+#         lines <- i*sessionKwicNo+c(1:sessionKwicNo)
+#         cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
+#         for (j in lines) .showKwicLine(object, j)
+#         cat("(press 'q' to quit or ENTER to continue)\n")
+#         loopControl <- readline()
+#         if (loopControl == "q") break
+#       }
+#       if ((chunks*sessionKwicNo < nrow(object@table)) && (loopControl != "q")){
+#         cat ('---------- KWIC output', chunks*sessionKwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
+#         lines <- c((chunks*sessionKwicNo):nrow(object@table))
+#         for (j in lines) .showKwicLine(object, j)
+#       }
+#     }
+#   }    
+# })
+
+# #' @rdname kwic-class
+# setClass("plprKwic", contains="kwic", slots=c(sAttributes="list", corpus="character"))

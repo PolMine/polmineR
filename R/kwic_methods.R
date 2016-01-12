@@ -6,44 +6,20 @@ NULL
 #' @importFrom DT datatable formatStyle
 #' @importFrom magrittr %>%
 setMethod("show", "kwic", function(object){
-  retval <- datatable(object@table) %>%
-    formatStyle("node", color="blue", textAlign="center") %>%
-    formatStyle("leftContext", textAlign="right")
+  kwicLineView <- slot(get("session", ".GlobalEnv"), "kwicLineView")
+  if (kwicLineView == FALSE){
+    retval <- datatable(object@table) %>%
+      formatStyle("node", color="blue", textAlign="center") %>%
+      formatStyle("left", textAlign="right")
+  } else {
+    object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
+    object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse=" "))
+    for (x in c("left", "node", "right")) object@table[[x]] <- NULL
+    retval <- datatable(object@table, escape=FALSE)
+  }
   show(retval)
 })
 
-# #' @docType methods
-# setMethod('show', 'kwic', function(object){
-#   .showKwicLine <- function(object, i){
-#     metaoutput <- paste(as.vector(unname(unlist(object@table[i,c(1:length(object@metadata))]))), collapse=" | ")
-#     Encoding(metaoutput) <- object@encoding
-#     cat('[',metaoutput, '] ', sep='')
-#     cat(paste(as.vector(unname(unlist(object@table[i,c((ncol(object@table)-2):ncol(object@table))]))), collapse=" * "), "\n\n")
-#   }
-#   sessionKwicNo <- slot(get("session", '.GlobalEnv'), 'kwicNo')
-#   if (sessionKwicNo == 0 ) {
-#     for (i in 1:nrow(object@table)) .showKwicLine(object, i)
-#   } else if (sessionKwicNo > 0) {
-#     if (nrow(object@table) <= sessionKwicNo) {
-#       for (i in 1:nrow(object@table)) .showKwicLine(object, i)
-#     } else {
-#       chunks <- trunc(nrow(object@table)/sessionKwicNo)
-#       for ( i in c(0:(chunks-1))) {
-#         lines <- i*sessionKwicNo+c(1:sessionKwicNo)
-#         cat ('---------- KWIC output', min(lines), 'to', max(lines), 'of', nrow(object@table),'----------\n\n')
-#         for (j in lines) .showKwicLine(object, j)
-#         cat("(press 'q' to quit or ENTER to continue)\n")
-#         loopControl <- readline()
-#         if (loopControl == "q") break
-#       }
-#       if ((chunks*sessionKwicNo < nrow(object@table)) && (loopControl != "q")){
-#         cat ('---------- KWIC output', chunks*sessionKwicNo, 'to', nrow(object@table), 'of', nrow(object@table),'----------\n\n')
-#         lines <- c((chunks*sessionKwicNo):nrow(object@table))
-#         for (j in lines) .showKwicLine(object, j)
-#       }
-#     }
-#   }    
-# })
 
 #' @docType methods
 #' @noRd

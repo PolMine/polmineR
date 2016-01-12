@@ -59,18 +59,20 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query, sAttribute="text_id",
+    .Object, query, pAttribute=NULL, sAttribute="text_id",
     leftContext=NULL, rightContext=NULL,
     stoplist=NULL, positivelist=NULL,
     method="ll",
     mc=NULL, verbose=TRUE
   ) {
-    if (length(.Object@pAttribute) == 0) {
-      stop("partition object does not contain counts for any pAttribute, enrich partition object first")
-    } else {
-      pAttribute <- .Object@pAttribute
+    if (is.null(pAttribute)) {
+      pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
+      message("param pAttribute not state, using session setting: ", pAttribute)
     }
-    
+    if (!identical(.Object@pAttribute, pAttribute)){
+      message("... tf for pAttribute ", pAttribute, " not available, enriching object now")
+      .Object <- enrich(.Object, pAttribute=pAttribute)
+    }
     # get values from session object if params are not provided
     if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
     if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')

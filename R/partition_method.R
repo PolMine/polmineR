@@ -64,7 +64,7 @@ setMethod("partition", "character", function(
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', name)
   if (is.null(type)){
-    parsedInfoFile <- .parseInfoFile(object)
+    parsedInfoFile <- parseInfoFile(object)
     if (is.null(parsedInfoFile)){
       Partition <- new('partition', stat=data.table())    
     } else {
@@ -81,7 +81,7 @@ setMethod("partition", "character", function(
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
   if(is.null(def)){
-    parsedInfo <- .parseInfoFile(object)
+    parsedInfo <- parseInfoFile(object)
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
       def <- list()
       def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"

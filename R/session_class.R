@@ -67,7 +67,8 @@ setClass(
     defaultKwicCooccurrence="character",
     defaultKwicNode="character",
     defaultRegistry="character",
-    browse="logical"
+    browse="logical",
+    kwicLineView="logical"
     ))
 
 #' @export session
@@ -85,6 +86,7 @@ session <- new(
   filterType="include",
   kwicMetadata=c("text_party"),
   kwicNo=10,
+  kwicLineView=FALSE,
   metadata = c("text_party", "text_name", "text_date"),
   multicore=TRUE,
   cores=2,

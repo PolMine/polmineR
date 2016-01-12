@@ -51,7 +51,7 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
     }
   )
   conc <- data.frame(conc, stringsAsFactors=FALSE)
-  colnames(conc) <- c("leftContext", "node", "rightContext")
+  colnames(conc) <- c("left", "node", "right")
   tab <- data.frame(metainformation, conc)
   if (length(neighbor) > 0){
     tab <- tab[grep(neighbor, apply(tab, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
@@ -77,7 +77,7 @@ setMethod("kwic", "partition", function(
   ctxt <- context(
     .Object=.Object, query=query, pAttribute=pAttribute,
     leftContext=leftContext, rightContext=rightContext,
-    statisticalTest=NULL, verbose=verbose
+    method=NULL, verbose=verbose
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
@@ -85,27 +85,3 @@ setMethod("kwic", "partition", function(
     }
   kwic(ctxt, meta=meta, neighbor=neighbor)
 })
-
-
-#' @rdname kwic
-setMethod("kwic", "plprPartition", function(
-  .Object, query, leftContext=5, rightContext=5,
-  meta=NULL, pAttribute="word", neighbor=c(), verbose=TRUE
-){
-  Partition <- new("partition")
-  for (x in slotNames(.Object)) slot(Partition, x) <- slot(.Object, x)
-  kwicObject <- kwic(
-    Partition, query=query, leftContext=leftContext,
-    rightContext=rightContext, meta=meta, pAttribute=pAttribute,
-    neighbor=neighbor, verbose=verbose
-  )
-  if (is.null(kwicObject)) {
-    message("... no hits for query")
-    return()
-  }
-  plprKwicObject <- as(kwicObject, "plprKwic")
-  plprKwicObject@sAttributes <- .Object@sAttributes
-  plprKwicObject@corpus <- .Object@corpus
-  plprKwicObject
-})
-

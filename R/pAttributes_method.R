@@ -8,10 +8,10 @@ setGeneric("pAttributes", function(.Object) standardGeneric("pAttributes"))
 
 #' @rdname pAttributes
 setMethod("pAttributes", "character", function(.Object){
-  .parseRegistry(.Object)$pAttributes
+  parseRegistry(.Object)$pAttributes
 })
 
 #' @rdname partition-class
 setMethod("pAttributes", "partition", function(.Object){
-  .parseRegistry(.Object@corpus)$pAttributes
+  parseRegistry(.Object@corpus)$pAttributes
 })

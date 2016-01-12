@@ -21,15 +21,14 @@
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
 #' @rdname kwic-class
-setClass("kwic",
-         slots=c(metadata="character",
-                        leftContext="numeric",
-                        rightContext="numeric",
-                        neighbor="character",
-                        table="data.frame",
-                        encoding="character"
-         )
+setClass(
+  "kwic",
+  slots = c(
+    metadata = "character",
+    leftContext = "numeric",
+    rightContext = "numeric",
+    neighbor = "character",
+    table = "data.frame",
+    encoding = "character"
+  )
 )
-
-#' @rdname kwic-class
-setClass("plprKwic", contains="kwic", slots=c(sAttributes="list", corpus="character"))

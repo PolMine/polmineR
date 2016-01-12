@@ -30,7 +30,7 @@ setMethod("ll", "context", function(.Object){
   .Object@stat[, exp_window := size_window * (count_partition / size_partition)]
   .Object@stat[, exp_partition := (size_partition - size_window) * count_partition / size_partition]
   .Object@stat[, ll := 2 * (count_window * log(count_window/exp_window) + (count_partition - exp_window) * log((count_partition - exp_window)/exp_partition))]
-  .Object@stat[, ll := ll * apply(.Object@stat, 1, function(x) ifelse(x["count_window"] > x["exp_windo"], -1, 1))]
+  .Object@stat[, ll := ll * apply(.Object@stat, 1, function(x) ifelse(x["count_window"] > x["exp_window"], -1, 1))]
   .Object <- sort(.Object, by="ll")
   .Object@stat[, rank_ll := c(1:nrow(.Object@stat))]
   .Object@method <- c(.Object@method, "ll")

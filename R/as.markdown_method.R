@@ -8,6 +8,14 @@
 #' @exportMethod as.markdown
 setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")})
 
+setMethod("as.markdown", "partition", function(object, meta){
+  rawtxt <- paste(
+    getTokenStream(object, pAttribute="word", collapse=" "),
+    sep="\n"
+  )
+  gsub("(.)\\s([,.:!?])", "\\1\\2", rawtxt)
+})
+
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
 setMethod("as.markdown", "plprPartition", function(object, meta){
@@ -98,9 +106,7 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
       function(x) .formattingFactory[[names(article)[x]]](article[[x]])
     )
     articleMarkdown <- paste(formattedArticle, collapse="\n\n")
-    # markdown <- polmineR:::.adjustEncoding(markdown, "UTF8")
     markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", articleMarkdown)
-    # markdown <- gsub("\n - ", "\n", markdown)
     markdown
   })
   paste(c("\n", unlist(articles)), collapse='\n* * *\n')

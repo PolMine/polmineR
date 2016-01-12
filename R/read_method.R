@@ -3,6 +3,9 @@
 #' A html page will be generated and displayed in the viewer pane of RStudio.
 #' 
 #' @param .Object an object to be read
+#' @param meta a character vector indicating the s-attributes for the metainformation to be printed
+#' @param highlight a list of character vectors with regular expressions
+#' to highlight relevant terms or expressions; the names of the list provide the colors (see examples)
 #' @param ... further parameters
 #' @exportMethod read
 #' @rdname read-method
@@ -21,10 +24,13 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, ...){
-  warning(
-    "the read-method requires the type of the partition to be provided when the partition is defined\n(currently defined partition types: plpr, press)"
-  )
+setMethod("read", "partition", function(.Object, meta=NULL, highlight=list()){
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
+  if(require("htmltools", quietly = TRUE)){
+    htmltools::html_print(fulltextHtml)  
+  } else {
+    warning("package htmltools required, but not available")
+  }
 })
 
 #' @rdname read-method
