@@ -35,7 +35,7 @@
 \usage{
 \S4method{freq}{partition}(.Object)
 
-\S4method{html}{partition}(object, meta = NULL)
+\S4method{html}{partition}(object, meta = NULL, highlight = list())
 
 \S4method{pAttributes}{partition}(.Object)
 
@@ -68,6 +68,8 @@
 \item{object}{a partition object}
 
 \item{meta}{metadata for output}
+
+\item{highlight}{list with regex to be highlighted}
 
 \item{verbose}{logical, whether to be verbose}
 

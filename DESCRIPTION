@@ -83,6 +83,7 @@ Collate:
     'getTermFrequencies_method.R'
     'getTerms_method.R'
     'getTokenStream_method.R'
+    'highlight_method.R'
     'html_method.R'
     'html_methods.R'
     'kwic_method.R'
@@ -114,5 +115,4 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
-    'highlight_method.R'
 RoxygenNote: 5.0.1

@@ -11,9 +11,11 @@
 \usage{
 count(.Object, ...)
 
-\S4method{count}{partition}(.Object, query, mc = F, verbose = T)
+\S4method{count}{partition}(.Object, query, pAttribute = NULL, mc = F,
+  verbose = T)
 
-\S4method{count}{partitionBundle}(.Object, query, mc = F, verbose = T)
+\S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL, mc = F,
+  verbose = T)
 
 \S4method{count}{character}(.Object, query, pAttribute = NULL,
   verbose = TRUE)
@@ -30,15 +32,13 @@ count(.Object, ...)
 \item{verbose}{logical, whether to be verbose}
 }
 \description{
-Method to obtain term frequencies for one or multiple CQP queries. If
-CQP syntax is not needed, use subst as partition-method.
+Count number of occurrences of a query (CQP syntax can be used).
 }
 \examples{
 # generate a partition for testing 
 test <- partition("PLPRBTTXT")
 count(test, "Wir") # get frequencies for one token
 count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-count(test, c("Zuwander.*", "Integration.*"), method="grep") # get frequencies using "grep"-method
 count("PLPRTXT", c("machen", "Integration"), "word")
 }
 \seealso{

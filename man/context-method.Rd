@@ -14,9 +14,10 @@
 \alias{ll-method}
 \title{Analyze context of a node word}
 \usage{
-\S4method{context}{partition}(.Object, query, sAttribute = "text_id",
-  leftContext = NULL, rightContext = NULL, stoplist = NULL,
-  positivelist = NULL, method = "ll", mc = NULL, verbose = TRUE)
+\S4method{context}{partition}(.Object, query, pAttribute = NULL,
+  sAttribute = "text_id", leftContext = NULL, rightContext = NULL,
+  stoplist = NULL, positivelist = NULL, method = "ll", mc = NULL,
+  verbose = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, ...)
 
@@ -28,6 +29,8 @@
 \item{.Object}{a partition or a partitionBundle object}
 
 \item{query}{query, which may by a character vector or a cqpQuery object}
+
+\item{pAttribute}{p-attribute of the query}
 
 \item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
@@ -53,8 +56,6 @@ the value from the session settings}
 \item{verbose}{report progress, defaults to TRUE}
 
 \item{complete}{enhance completely}
-
-\item{pAttribute}{p-attribute of the query}
 }
 \value{
 depending on whether a partition or a partitionBundle serves as

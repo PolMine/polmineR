@@ -3,24 +3,45 @@
 \docType{methods}
 \name{read}
 \alias{read}
+\alias{read,partition-method}
 \alias{read,plprPartition-method}
 \alias{read,pressPartition-method}
 \title{read an object}
 \usage{
 read(.Object, ...)
 
+\S4method{read}{partition}(.Object, meta = NULL, highlight = list())
+
 \S4method{read}{plprPartition}(.Object, meta = c("text_name", "text_party",
-  "text_date"))
+  "text_date"), highlight = list())
 
 \S4method{read}{pressPartition}(.Object, meta = c("text_newspaper",
-  "text_date"))
+  "text_date"), highlight = list())
 }
 \arguments{
 \item{.Object}{an object to be read}
 
 \item{...}{further parameters}
+
+\item{meta}{a character vector indicating the s-attributes for the metainformation to be printed}
+
+\item{highlight}{a list of character vectors with regular expressions
+to highlight relevant terms or expressions; the names of the list provide the colors (see examples)}
 }
 \description{
 A html page will be generated and displayed in the viewer pane of RStudio.
+}
+\examples{
+use("polmineR.sampleCorpus")
+merkel <- partition(
+  "PLPRBTTXT",
+  list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
+  type="plpr"
+)
+read(merkel)
+read(
+  merkel,
+  highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
+  )
 }
 
