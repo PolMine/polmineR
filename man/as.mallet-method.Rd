@@ -3,10 +3,14 @@
 \docType{methods}
 \name{as.mallet}
 \alias{as.mallet}
+\alias{as.mallet,partitionBundle-method}
 \alias{store,jobjRef-method}
 \title{as.mallet}
 \usage{
 as.mallet(.Object, ...)
+
+\S4method{as.mallet}{partitionBundle}(.Object, pAttribute = "word",
+  stoplist = stopwords("de"), mc = TRUE, verbose = TRUE)
 
 \S4method{store}{jobjRef}(object, filename = NULL)
 }
@@ -15,10 +19,6 @@ as.mallet(.Object, ...)
 
 \item{...}{further parameters}
 
-\item{object}{the rJava-object}
-
-\item{filename}{where to store the Java-object}
-
 \item{pAttribute}{the pAttribute to use, typically "word" or "lemma"}
 
 \item{stoplist}{a list of stopwords to be dropped from matrix, defaults to stopwords("de") from tm package}
@@ -26,6 +26,10 @@ as.mallet(.Object, ...)
 \item{mc}{whether to use multicore}
 
 \item{verbose}{logical, whether to be verbose}
+
+\item{object}{the rJava-object}
+
+\item{filename}{where to store the Java-object}
 }
 \description{
 Save polmineR-object as mallet object

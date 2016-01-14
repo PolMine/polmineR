@@ -7,6 +7,9 @@ NULL
 #' Method to fill slots of a partition, partitionBundle or comp object that 
 #' have not been set up previously. See the respective documentation:
 #' @param object a partition, partitionBundle or comp object
+#' @param addPos depracated
+#' @param verbose logical
+#' @param mc logical or, if numeric, providing the number of cores
 #' @param ... further parameters
 #' @aliases enrich enrich-method
 #' @docType methods
@@ -25,7 +28,8 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @param pAttribute character vector providing the p-attributes for which frequency
 #'   tables shall be generated
 #' @param meta character vector providing s-attributes for which metainformation shall be supplied
-#' @param addPos character vector providing p-attributes 
+#' @param id2str logical
+#' @param mc logical or, if numeric, the number of cores to use
 #' @param verbose logical, defaults to TRUE   
 #' @exportMethod enrich
 #' @aliases enrich,partition-method
@@ -93,7 +97,7 @@ setMethod("enrich", "comp", function(object, addPos=NULL, verbose=TRUE){
 })
 
 #' @docType methods
-#' @noRd
+#' @rdname enrich-method
 setMethod("enrich", "compBundle", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
   if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
   rework <- new("compBundle")

@@ -66,7 +66,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @rdname context-class
 setMethod("dispersion", "context", function(object, sAttribute){
   sAttr <- paste(object@corpus, '.', sAttribute, sep='')
-  table(cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, ContextObject@cpos[,1])))
+  table(cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, object@cpos[,1])))
 })
 
 

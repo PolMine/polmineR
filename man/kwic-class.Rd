@@ -17,6 +17,8 @@
 \S4method{view}{kwic}(.Object)
 }
 \arguments{
+\item{object}{an object of class \code{kwic}}
+
 \item{x}{a kwic-class object}
 
 \item{.Object}{a kwic object}

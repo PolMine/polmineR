@@ -13,6 +13,11 @@ name(x) <- value
 
 browse(x) <- value
 }
+\arguments{
+\item{x}{object}
+
+\item{value}{value}
+}
 \description{
 The package defines a set of generic functions. This doc file
 only provides an overview. Please consult the documentation

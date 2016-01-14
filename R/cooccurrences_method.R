@@ -3,6 +3,8 @@
 #' @param .Object a partition object
 #' @param window no of tokens to the left and to the right of nodes
 #' @param method statistical test to use (defaults to "ll")
+#' @param verbose logical, whether to be verbose
+#' @param progress logical, whether to be verbose
 #' @param keep list with tokens to keep
 #' @param big logical, whether to use bigmatrix
 #' @param matrix logical, whether to return matrix
@@ -50,7 +52,7 @@ setMethod(
     if (big == TRUE){
       if (requireNamespace("bigmemory", quietly = TRUE) && requireNamespace("bigtabulate", quietly = TRUE) ) {
         if (verbose == TRUE) message("... generating context tables")
-        BIG <- big.matrix(ncol = window * 2 + 1, nrow = .Object@size, ...)
+        BIG <- bigmemory::big.matrix(ncol = window * 2 + 1, nrow = .Object@size, ...)
         ids <- lapply(
           c(1:nrow(.Object@cpos)),
           function(i) 
@@ -187,9 +189,9 @@ setMethod(
     )
     setkeyv(TF, cols=aColsStr)
     setkeyv(.Object@stat, cols=pAttribute)
-    TF[, count_a := .Object@stat[TF][["count"]]]
+    TF[, "count_a" := .Object@stat[TF][["count"]]]
     setkeyv(TF, cols=bColsStr)
-    TF[, count_b := .Object@stat[TF][["count"]]]
+    TF[, "count_b" := .Object@stat[TF][["count"]]]
     setcolorder(TF, c(aColsStr, bColsStr, "count_ab", "count_a", "count_b", "size_window"))
     coll@stat <- TF
     if ("ll" %in% method) {
@@ -201,8 +203,8 @@ setMethod(
       return(coll)
     } else if (matrix != FALSE){
       concatenate <- function(x) paste(x, collapse="//")
-      TF[, strKeyA := apply(TF[, eval(paste("a_", pAttribute, sep="")), with=FALSE], 1, concatenate)]
-      TF[, strKeyB := apply(TF[, eval(paste("b_", pAttribute, sep="")), with=FALSE], 1, concatenate)]
+      TF[, "strKeyA" := apply(TF[, eval(paste("a_", pAttribute, sep="")), with=FALSE], 1, concatenate)]
+      TF[, "strKeyB" := apply(TF[, eval(paste("b_", pAttribute, sep="")), with=FALSE], 1, concatenate)]
       uniqueKey <- unique(c(TF[["strKeyA"]], TF[["strKeyB"]]))
       keys <- setNames(c(1:length(uniqueKey)), uniqueKey)
       i <- unname(keys[TF[["strKeyA"]]])
@@ -216,9 +218,7 @@ setMethod(
   })
 
 #' @rdname cooccurrences
-setMethod(
-  "cooccurrences", "partitionBundle",
-  function(.Object, pAttribute="word", window=5, method="ll", keep=list(pos=c("ADJA", "NN")), mc=FALSE){
+setMethod("cooccurrences", "partitionBundle", function(.Object, mc=FALSE, ...){
   bundle <- new(
     "cooccurrencesBundle",
     encoding=unique(vapply(.Object@objects, function(x) x@encoding, FUN.VALUE="character")),
@@ -229,7 +229,7 @@ setMethod(
       setNames(.Object@objects, names(.Object@objects)),
       function(x) {
         message('Calculating cooccurrences for partition ', x@name)
-        cooccurrences(x, pAttribute=pAttribute, window=window, method=method, filter=filter, pos=pos)
+        cooccurrences(x, ...)
       })
     
   } else {
@@ -237,9 +237,7 @@ setMethod(
       setNames(.Object@objects, names(.Object@objects)),
       function(x) {
         message('Calculating cooccurrences for partition ', x@name)
-        cooccurrences(
-          x, pAttribute=pAttribute, window=window, method=method, filter=filter, pos=pos, mc=FALSE, progress=FALSE
-          )
+        cooccurrences(x, ...)
       }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    
   }
   bundle

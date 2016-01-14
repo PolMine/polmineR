@@ -27,6 +27,8 @@ count(.Object, ...)
 
 \item{query}{a character vector (one or multiple terms to be looked up)}
 
+\item{pAttribute}{the p-attribute(s) to use}
+
 \item{mc}{logical, whether to use multicore (defaults to FALSE)}
 
 \item{verbose}{logical, whether to be verbose}
@@ -35,11 +37,14 @@ count(.Object, ...)
 Count number of occurrences of a query (CQP syntax can be used).
 }
 \examples{
+\dontrun{
 # generate a partition for testing 
-test <- partition("PLPRBTTXT")
+use("polmineR.sampleCorpus")
+test <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
 count(test, "Wir") # get frequencies for one token
 count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-count("PLPRTXT", c("machen", "Integration"), "word")
+count("PLPRBTTXT", c("machen", "Integration"), "word")
+}
 }
 \seealso{
 count

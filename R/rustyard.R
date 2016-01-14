@@ -503,3 +503,59 @@
 
 # #' @rdname kwic-class
 # setClass("plprKwic", contains="kwic", slots=c(sAttributes="list", corpus="character"))
+
+
+
+# setMethod("getTermFrequencies", "partition", function(.Object, pAttribute, id2str=TRUE, mc=FALSE){
+#   stopifnot(length(pAttribute) <= 2)
+#   if (length(pAttribute) == 1){
+#     .cposMatrix2ids <- function(cposMatrix){
+#       cpos <- .expandCposMatrix(cposMatrix)
+#       ids <- cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
+#     }
+#     if (mc == FALSE){
+#       ids <- .cposMatrix2ids(cposMatrix=.Object@cpos)
+#     } else {
+#       noCores <- ifelse(is.numeric(mc), mc, getOption("mc.cores", 2L))
+#       chunkList <- .splitMatrixIntoEquallySizedParts(x=.Object@cpos, n=noCores)
+#       idList <- mclapply(chunkList, .cposMatrix2ids, mc.cores=noCores)
+#       ids <- unlist(idList, recursive=FALSE, use.names=FALSE)
+#     }
+#     count <- getTermFrequencies(ids)
+#     if (id2str == TRUE){   
+#       try(count <- .id2str(
+#         count, corpus=.Object@corpus, pAttribute=pAttribute, encoding=.Object@encoding
+#       ), silent=FALSE)
+#     }
+#     return(count)
+#   } else if(length(pAttribute == 2)){
+#     .cpos2ids <- function(corpus, pAttribute, cpos) cqi_cpos2id(paste(.Object@corpus, '.', pAttribute, sep=''), cpos)
+#     cpos <- .expandCposMatrix(.Object@cpos)
+#     pAttributeIds <- lapply(
+#       c(1,2),
+#       function(i) .cpos2ids(corpus=.Object@corpus, pAttribute=pAttribute[i], cpos=cpos)
+#       #      , mc.cores=ifelse(mc==FALSE, 1, 2)
+#     )
+#     retval <- getTermFrequencies(
+#       .Object=pAttributeIds, pAttributes=pAttribute,
+#       corpus=.Object@corpus, encoding=.Object@encoding
+#     )
+#     return(retval)
+#   }
+# })
+# 
+
+
+# .expandCposMatrix <- function(cposMatrix) unlist(apply(cposMatrix, 1, function(x) x[1]:x[2]))
+
+# .id2str <- function(count, corpus, pAttribute, encoding){
+#   token <- cqi_id2str(paste(corpus, '.', pAttribute, sep=''), count[["ids"]])
+#   Encoding(token) <- encoding
+#   token <- enc2utf8(token)
+#   Encoding(token) <- "unknown"
+#   count[["token"]] <- token
+#   setcolorder(count, c("token", "ids", "count"))
+#   setkey(count, "token")
+#   count
+# }
+

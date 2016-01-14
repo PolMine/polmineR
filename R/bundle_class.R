@@ -14,7 +14,9 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' 
 #' @param x a bundle object
 #' @param i index to address an object
-#'   
+#' @param object a bundle object
+#' @param col columsn of the table to be used
+#' @param value ...
 #' @rdname bundle-class
 #' @name bundle-class
 #' @exportClass bundle
@@ -42,7 +44,7 @@ setMethod("length", "bundle", function(x) length(x@objects))
 setMethod("names", "bundle", function(x) names(x@objects))
 
 
-#' @rdname partitionBundle-class
+#' @rdname bundle-class
 #' @exportMethod names<-
 setReplaceMethod(
   "names",

@@ -55,8 +55,8 @@ As mentioned, the rcqp package is the most important dependency of the driller. 
 
 <<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
 library(polmineR.sampleCorpus)
-use("polmineR.sampleCorpus")
 library(polmineR)
+use("polmineR.sampleCorpus")
 @
 
 \section{Default settings}
@@ -100,8 +100,7 @@ coalition <- partition(
   def=list(
     text_type="speech",
     text_party=c("CDU_CSU", "FDP")
-    ),
-  method="in"
+    )
   )
 @
 

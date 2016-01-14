@@ -27,11 +27,11 @@ NULL
 #' @param x a partitionBundle object
 #' @param object a partitionBundle object
 #' @param i integer index
-#' @param pAttribute the p-attribute
-#' @param value the value
 #' @param sAttribute the s-attribute to use
 #' @param filename filename
+#' @param height height
 #' @param type type
+#' @param ... further parameters
 #' @rdname partitionBundle-class
 #' @name partitionBundle-class
 #' @exportClass partitionBundle

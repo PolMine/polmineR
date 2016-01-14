@@ -56,12 +56,6 @@ punctuation
 \item{stopwords}{words/tokens to drop}
 
 \item{verbose}{whether to be talkative}
-
-\item{cutoff}{a list with colnames and cutoff levels}
-
-\item{rankBy}{a character vector indicating the column for ranking}
-
-\item{digits}{a list}
 }
 \description{
 Method to trim and adjust objects by 

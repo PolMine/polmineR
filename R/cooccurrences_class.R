@@ -18,7 +18,13 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @aliases cooccurrences-class ll,cooccurrences-method [,cooccurrences-method
+#' @param object object
+#' @param .Object object
+#' @param x object
+#' @param col column
+#' @param by by
+#' @param mc whether to use multicore
+#' @aliases cooccurrences-class [,cooccurrences-method
 #'   [,cooccurrences,ANY,ANY,ANY-method show,cooccurrences-method
 #'   summary,cooccurrences-method as.sparseMatrix,cooccurrences-method
 #'   as.igraph,cooccurrences-method trim,cooccurrences-method

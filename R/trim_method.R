@@ -9,15 +9,12 @@ NULL
 #' 'comp', 'context', 'partition' and 'partitionBundle' objects.
 #' 
 #' @param object the object to be trimmed
-#' @param cutoff a list with colnames and cutoff levels
 #' @param minSignificance minimum significance level
 #' @param minFrequency the minimum frequency
 #' @param maxRank maximum rank
-#' @param rankBy a character vector indicating the column for ranking
 #' @param posFilter exclude words with a POS tag not in this list
 #' @param tokenFilter tokens to exclude from table
 #' @param filterType either "include" or "exclude"
-#' @param digits a list
 #' @param pAttribute character vector, either lemma or word
 #' @param verbose whether to be talkative
 #' @param drop partitionObjects you want to drop, specified either by number or name
@@ -64,12 +61,12 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
     }
   }
   if (minSize >= 0){
-    toKill <- subset(
-      data.frame(
-        name=names(pimpedBundle),
-        noToken=summary(pimpedBundle)$token,
-        stringsAsFactors=FALSE
-      ), noToken < minSize)$name
+    df <- data.frame(
+      name=names(pimpedBundle),
+      noToken=summary(pimpedBundle)$token,
+      stringsAsFactors=FALSE
+    )
+    toKill <- subset(df, df$noToken < minSize)$name
     if (length(toKill) > 0) {drop <- c(toKill, drop)}
   }
   if (!is.null(drop)) {
@@ -156,8 +153,8 @@ setMethod("trim", "cooccurrences", function(object, by=NULL){
     object@stat <- by@stat[object@stat]
     object@stat <- object@stat[by@stat]
     for (toDrop in grep("i\\.", colnames(object@stat), value=T)) object@stat[, eval(toDrop) := NULL, with=TRUE]
-    object@stat[, count_ref := NULL]
-    object@stat[, count_coi := NULL]
+    object@stat[, "count_ref" := NULL]
+    object@stat[, "count_coi" := NULL]
   }
   object
 })

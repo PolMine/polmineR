@@ -8,17 +8,15 @@ NULL
 #' This function deliberately uses a self-made chi-square test for performance
 #' reason
 #' 
-#' @param ctab a matrix with ids in column 1 term frequencies in col 2, and
-#' overall frequencies in col 3
-#' @param included defaults to FALSE, YES if corpus of interest is included in
-#' reference corpus
-#' @param minFrequency minimum frequency for a token to be kept in matrix
+#' @param .Object object
+#' @param ... further parameters
 #' @exportMethod chisquare
 #' @return a table
 #' @author Andreas Blaette
-#' @noRd
+#' @rdname chisquare-method
 setGeneric("chisquare", function(.Object, ...){standardGeneric("chisquare")})
 
+#' @rdname chisquare-method
 setMethod("chisquare", "textstat", function(.Object){
   size_coi <- .Object@sizeCoi
   size_ref <- .Object@sizeRef
@@ -41,22 +39,23 @@ setMethod("chisquare", "textstat", function(.Object){
   chi <- chi1 + chi2 + chi3 + chi4
   chi <- chi * apply(cbind(count_x_coi, exp_x_coi), 1, function(x) ifelse(x[1] > x[2], 1, -1))
   options(digits=7)
-  .Object@stat[, exp_coi := exp_x_coi]
-  .Object@stat[, chisquare := chi]
+  .Object@stat[, "exp_coi" := exp_x_coi]
+  .Object@stat[, "chisquare" := chi]
   .Object <- sort(.Object, by="chisquare")
-  .Object@stat[, rank_chisquare := c(1:nrow(.Object@stat))]
+  .Object@stat[, "rank_chisquare" := c(1:nrow(.Object@stat))]
   .Object@method <- c(.Object@method, "chisquare")
   return(.Object)
 })
 
 
+#' @rdname chisquare-method
 setMethod("chisquare", "context", function(.Object){
   setnames(
     .Object@stat,
     old=c("count_window", "count_partition"),
     new=c("count_coi", "count_ref")
     )
-  .Object@stat[, count_ref := count_ref - count_coi]
+  .Object@stat[, "count_ref" := .Object@stat[["count_ref"]] - .Object@stat[["count_coi"]] ]
   .Object <- callNextMethod()
   setnames(
     .Object@stat,

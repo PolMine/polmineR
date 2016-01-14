@@ -6,7 +6,6 @@
 \alias{[,contextBundle-method}
 \alias{[[,contextBundle-method}
 \alias{as.TermContextBundle,contextBundle-method}
-\alias{as.TermContextMatrix}
 \alias{contextBundle-class}
 \alias{show,contextBundle-method}
 \alias{summary,contextBundle-method}

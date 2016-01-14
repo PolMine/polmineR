@@ -6,6 +6,9 @@
 \alias{+,bundle,textstat-method}
 \alias{[[,bundle,ANY-method}
 \alias{as.DocumentTermMatrix,bundle-method}
+\alias{as.TermDocumentMatrix,bundle-method}
+\alias{as.bundle,list-method}
+\alias{as.bundle,textstat-method}
 \alias{as.matrix,bundle-method}
 \alias{as.sparseMatrix,bundle-method}
 \alias{bapply}
@@ -13,6 +16,7 @@
 \alias{bundle-class}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
+\alias{names<-,bundle,character-method}
 \alias{unique,bundle-method}
 \title{bundle class}
 \usage{
@@ -21,6 +25,8 @@
 \S4method{length}{bundle}(x)
 
 \S4method{names}{bundle}(x)
+
+\S4method{names}{bundle,character}(x) <- value
 
 \S4method{unique}{bundle}(x)
 
@@ -36,7 +42,13 @@ bapply(x, ...)
 
 \S4method{as.matrix}{bundle}(x, col)
 
+\S4method{as.TermDocumentMatrix}{bundle}(x, col)
+
 \S4method{as.DocumentTermMatrix}{bundle}(x, col)
+
+\S4method{as.bundle}{list}(object, ...)
+
+\S4method{as.bundle}{textstat}(object)
 
 \S4method{as.sparseMatrix}{bundle}(x, col)
 }
@@ -45,6 +57,8 @@ bapply(x, ...)
 
 \item{i}{index to address an object}
 
+\item{value}{...}
+
 \item{...}{further parameters}
 
 \item{f}{a function that can be applied to each object contained in the bundle}
@@ -52,6 +66,10 @@ bapply(x, ...)
 \item{e1}{object 1}
 
 \item{e2}{object 2}
+
+\item{col}{columsn of the table to be used}
+
+\item{object}{a bundle object}
 }
 \description{
 A class to bundle several objects (partition, context, comp, cooccurrences objects)

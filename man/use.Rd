@@ -13,9 +13,4 @@ use(pkg = "default")
 \description{
 Use a cwb corpus shipped in a package or return to default registry.
 }
-\examples{
-use("polmineR.sampleCorpus")
-use(polmineR.sampleCorpus)
-use() # to restore using the default registry
-}
 

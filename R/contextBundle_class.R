@@ -16,7 +16,7 @@ NULL
 #'    }
 #'     
 #' @name contextBundle-class
-#' @aliases show,contextBundle-method summary,contextBundle-method [,contextBundle-method [,contextBundle,ANY,ANY,ANY-method [[,contextBundle-method as.TermContextBundle,contextBundle-method as.TermContextMatrix
+#' @aliases show,contextBundle-method summary,contextBundle-method [,contextBundle-method [,contextBundle,ANY,ANY,ANY-method [[,contextBundle-method as.TermContextBundle,contextBundle-method
 #' @docType class
 #' @exportClass kwic
 #' @rdname contextBundle-class

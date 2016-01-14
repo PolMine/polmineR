@@ -13,8 +13,8 @@ NULL
 #' @aliases terms,partition-method
 #' @docType methods
 setMethod("terms", "partition", function(x, pAttribute, regex=NULL){
-  if (!pAttribute %in% tf@pAttribute) x <- enrich(x, tf=pAttribute) 
-  terms <- rownames(x@tf)
+  if (!identical(pAttribute, x@pAttribute)) x <- enrich(x, pAttribute=pAttribute) 
+  terms <- rownames(x@stat)
   terms <- enc2utf8(terms)
   if (!is.null(regex)) {
     termsSelectRaw <- lapply(regex, function(r) terms[grep(r, terms)])

@@ -93,9 +93,6 @@ setMethod('[', 'partitionBundle', function(x,i){
 
 
 
-#' barplot of a partitionBundle
-#' 
-#' @param pBundle a partitionBundle object
 #' @exportMethod barplot
 #' @rdname partitionBundle-class
 setMethod("barplot", "partitionBundle", function(height, ...){

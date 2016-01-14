@@ -23,6 +23,8 @@
   = c()))
 }
 \arguments{
+\item{.Object}{a dispersion object}
+
 \item{x}{a dispersion object}
 
 \item{object}{a crosstab object to be adjusted}

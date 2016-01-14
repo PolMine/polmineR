@@ -33,7 +33,11 @@ resetRegistry <- function(registryDir=NULL) {
     Sys.setenv(CORPUS_REGISTRY=session@defaultRegistry)
   }
   library.dynam.unload("rcqp", libpath=system.file(package="rcqp"))
-  library.dynam("rcqp", package="rcqp", lib.loc=.libPaths()[1])
+  # library.dynam("rcqp", package="rcqp", lib.loc=.libPaths()[1])
+  library.dynam(
+    "rcqp", package="rcqp",
+    lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library/"
+  )
   oldRegistry
 }
 

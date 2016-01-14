@@ -56,15 +56,25 @@ as.bundle(object, ...)
 \S4method{view}{textstat}(.Object)
 }
 \arguments{
-\item{x}{an object}
+\item{x}{textstat object}
 
 \item{...}{further parameters}
 
 \item{digits}{no of digits}
 
-\item{.Object}{an object}
+\item{by}{by}
 
-\item{x}{textstat object}
+\item{decreasing}{logical}
+
+\item{object}{an object}
+
+\item{e1}{object 1}
+
+\item{e2}{object 2}
+
+\item{i}{index}
+
+\item{.Object}{an object}
 }
 \description{
 superclass for comp and context class
@@ -78,8 +88,8 @@ superclass for comp and context class
 
 \item{\code{stat}}{Object of class \code{"data.frame"} statistics of the analysis}
 
-\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+\item{\code{name}}{name of the object}
 
-\item{\code{cutoff}}{Object of class \code{"list"} cutoff levels that have been applied}
+\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 }}
 

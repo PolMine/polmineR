@@ -6,7 +6,7 @@ NULL
 # by the constructur
 
 
-#' @title partition class definition
+#' partition class
 #' 
 #' @slot name Object of class \code{"character"} a name that may be useful 
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on 
@@ -24,6 +24,13 @@ NULL
 #' @slot sAttributeStrucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
 #' @param .Object a partition object
+#' @param x a partition object
+#' @param i index
+#' @param from from
+#' @param to to
+#' @param mc multicore
+#' @param ... further parameters
+#' @param value value
 #' @param object a partition object
 #' @param dim don't know
 #' @param verbose logical, whether to be verbose

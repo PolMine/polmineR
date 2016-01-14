@@ -2,7 +2,6 @@
 % Please edit documentation in R/context_method.R
 \docType{methods}
 \name{context}
-\alias{as.TermContextMatrix,contextBundle-method}
 \alias{as.matrix,contextBundle-method}
 \alias{context}
 \alias{context,contextBundle-method}
@@ -10,8 +9,6 @@
 \alias{context,missing-method}
 \alias{context,partition-method}
 \alias{context,partitionBundle-method}
-\alias{ll}
-\alias{ll-method}
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(.Object, query, pAttribute = NULL,
@@ -19,7 +16,7 @@
   stoplist = NULL, positivelist = NULL, method = "ll", mc = NULL,
   verbose = TRUE)
 
-\S4method{context}{partitionBundle}(.Object, query, ...)
+\S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
 
@@ -54,6 +51,8 @@ the statistics will be skipped}
 the value from the session settings}
 
 \item{verbose}{report progress, defaults to TRUE}
+
+\item{...}{further parameters}
 
 \item{complete}{enhance completely}
 }

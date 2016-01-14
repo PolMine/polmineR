@@ -34,8 +34,6 @@ as.TermDocumentMatrix(x, ...)
 \item{robust}{bla}
 
 \item{mc}{logical}
-
-\item{weight}{whether to introduce a weight ("tfidf" and "rel" are implemented)}
 }
 \value{
 a TermDocumentMatrix

@@ -7,10 +7,6 @@
 #' @export use
 #' @rdname use
 #' @name use
-#' @examples
-#' use("polmineR.sampleCorpus")
-#' use(polmineR.sampleCorpus)
-#' use() # to restore using the default registry
 use <- function(pkg="default"){
   pkgSub <- as.character(substitute(pkg))
   if (exists(pkgSub) == FALSE && pkgSub != "default") {

@@ -40,7 +40,7 @@ setMethod('summary', 'contextBundle',
 #' @docType methods
 #' @noRd
 setMethod("as.matrix", "contextBundle", function(x, col, ...) {
-  slamStyle <- as.TermContextMatrix(x, col)
+  slamStyle <- as.TermDocumentMatrix(x, col)
   mat <- as.matrix(slamStyle)
   mat <- mat[which(rowSums(mat)>0),]
   mat

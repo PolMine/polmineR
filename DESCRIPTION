@@ -27,9 +27,8 @@ Suggests:
     koRpus,
     chron,
     knitr,
-    polmineR.plpr,
     bigmemory,
-    bigmatrix
+    bigtabulate
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for drilling and mining CWB corpora. The package offers

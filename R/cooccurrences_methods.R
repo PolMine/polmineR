@@ -62,14 +62,14 @@ setMethod("compress", "cooccurrences", function(.Object, ...){
     aKey=apply(DT, 1, function(x) paste(x[aColsStr], collapse="//")),
     bKey=apply(DT, 1, function(x) paste(x[bColsStr], collapse="//"))
   )
-  DT[, order := KEY[, order(c(aKey, bKey))[1], by=i][["V1"]]]
-  
+  # DT[, "order" := KEY[, order(c(aKey, bKey))[1], by=c("i")][["V1"]]]
+  DT[, "order" := KEY[, order(c(.SD[["aKey"]][1], .SD[["bKey"]][1]))[1], by=c("i")][["V1"]]]
   setkey(DT, "order")
-  aToB <- DT[.(1)]
-  setkeyv(aToB, col=c(aColsStr, bColsStr))
-  bToA <- DT[.(2)]
+  aToB <- DT[list(1)]
+  setkeyv(aToB, cols=c(aColsStr, bColsStr))
+  bToA <- DT[list(2)]
   setnames(bToA, old=c(aColsStr, bColsStr), new=c(bColsStr, aColsStr))
-  setkeyv(bToA, col=c(aColsStr, bColsStr))
+  setkeyv(bToA, cols=c(aColsStr, bColsStr))
   merger <- merge(aToB, bToA, all.x=FALSE, all.y=TRUE)
   FIN <- merger[, c(aColsStr, bColsStr, "ab_count.x", "ll.x", "ll.y", "a_count.x", "b_count.x"), with=FALSE]
   setnames(

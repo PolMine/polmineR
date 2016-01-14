@@ -21,6 +21,8 @@ as.markdown(object, ...)
 \item{object}{object to be converted}
 
 \item{...}{further arguments}
+
+\item{meta}{metainformation i.e. s-attributes) to be displayed}
 }
 \description{
 for further processing to html

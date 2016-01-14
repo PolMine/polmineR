@@ -1,6 +1,7 @@
 #' @include partition_class.R partitionBundle_class.R ngrams_method.R
 NULL
 
+#' @rdname compare-method
 setGeneric("compare", function(x, ...){standardGeneric("compare")})
 
 
@@ -10,10 +11,12 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
 #' @param method the statistical test to apply (chisquare or log likelihood)
+#' @param pAttribute the p-attribute to be used
 #' @param included TRUE if coi is part of ref, defaults to FALSE
 #' @param verbose defaults to TRUE
 #' @param progress logical
 #' @param mc logical, whether to use multicore
+#' @param ... further parameters
 #' @return The function returns a data frame with the following structure:
 #' - absolute frequencies in the first row
 #' - ...
@@ -48,7 +51,7 @@ setMethod("compare", signature=c(x="partition"), function(
   if (verbose==TRUE) message("... combining frequency lists")
   newObject@stat <- merge(x@stat, y@stat, by=pAttribute)
   setnames(newObject@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
-  if (included == TRUE) newObject@stat[, count_ref := count_ref - count_coi]
+  if (included == TRUE) newObject@stat[, "count_ref" := newObject@stat[["count_ref"]] - newObject@stat[["count_coi"]] ]
   for (how in method){
     if (verbose==TRUE) message("... statistical test: ", how)
     newObject <- do.call(how, args=list(.Object=newObject))
@@ -62,12 +65,12 @@ setMethod("compare", signature=c(x="partition"), function(
 #' @rdname compare-method
 setMethod("compare", signature=c(x="partitionBundle"), function(
   x, y, pAttribute=NULL,
-  minFrequency=1, included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
+  included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
 ) {
   if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   kclust <- new("compareBundle")
   .compare <- function(a) {
-    compare(a, y, pAttribute=pAttribute, minFrequency=minFrequency, included=included, method=method, verbose=verbose)
+    compare(a, y, pAttribute=pAttribute, included=included, method=method, verbose=verbose)
   }
   if (mc == FALSE){
     if (progress == FALSE){
@@ -122,7 +125,7 @@ setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll"
   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
   setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
   
-  if (included == TRUE) MATCH[, count_ref := count_ref - count_coi]
+  if (included == TRUE) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
   
   newObject@stat <- MATCH
   for (how in method){
@@ -137,6 +140,7 @@ setMethod("compare", "missing", function(){
   .getClassObjectsAvailable(".GlobalEnv", "comp")
 })
 
+#' @rdname compare-method
 setMethod(
   "compare", "ngrams",
   function(x, y, included=FALSE, method="chisquare", verbose=TRUE, ...){
@@ -151,7 +155,7 @@ setMethod(
     DT <- y@stat[x@stat]
     setnames(DT, c("count", "i.count"), c("count_ref", "count_coi"))
     setcolorder(DT, c(tokenColnames, "count_coi", "count_ref"))
-    if (included == TRUE) DT[, count_ref := count_ref - count_coi]
+    if (included == TRUE) DT[, "count_ref" := DT[["count_ref"]] - DT[["count_coi"]] ]
     newObject <- new(
       "compareNgrams",
       encoding=x@encoding, included=included, corpus=x@corpus, sizeCoi=x@size,

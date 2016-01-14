@@ -9,6 +9,7 @@
 #' @slot query the query / the queries that were used
 #' @slot sizes  Object of class \code{"numeric"} the size of the partition
 #' @param x a dispersion object
+#' @param .Object a dispersion object
 #' @aliases freq
 #' @exportClass dispersion
 #' @rdname dispersion-class

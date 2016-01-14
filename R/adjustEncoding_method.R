@@ -5,13 +5,14 @@
 #' 
 #' @param .Object the object (usually a character vector, nothing else is implemented so far)
 #' @param corpusEncoding the encoding of the corpus (e.g. "latin1")
+#' @param from encoding
 #' @param ... further parameters
-#' @rdname adjustEncoding-method
+#' @rdname encodings
 #' @name adjustEncoding
 #' @exportMethod adjustEncoding
 setGeneric("adjustEncoding", function(.Object, ...) standardGeneric("adjustEncoding"))
 
-#' @rdname adjustEncoding-method
+#' @rdname encodings
 setMethod("adjustEncoding", "character", function(.Object, corpusEncoding){
   sapply(
     as.list(.Object),
@@ -26,8 +27,11 @@ setMethod("adjustEncoding", "character", function(.Object, corpusEncoding){
 })
 
 #' @exportMethod as.utf8
+#' @rdname encodings
 setGeneric("as.utf8", function(.Object, ...) standardGeneric("as.utf8"))
 
+#' adjustEncoding-method
+#' @rdname encodings
 setMethod("as.utf8", "character", function(.Object, from="latin1"){
   Encoding(.Object) <- from
   retval <- enc2utf8(.Object)

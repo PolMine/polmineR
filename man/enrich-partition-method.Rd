@@ -16,11 +16,13 @@
 \item{pAttribute}{character vector providing the p-attributes for which frequency
 tables shall be generated}
 
+\item{id2str}{logical}
+
 \item{meta}{character vector providing s-attributes for which metainformation shall be supplied}
 
 \item{verbose}{logical, defaults to TRUE}
 
-\item{addPos}{character vector providing p-attributes}
+\item{mc}{logical or, if numeric, the number of cores to use}
 }
 \description{
 Fill slots of a partition object: Add object size, metainformation, pos.

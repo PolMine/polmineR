@@ -14,7 +14,6 @@ NULL
 #' @param to bla
 #' @param strucs bla
 #' @param rmBlank bla
-#' @param weight whether to introduce a weight ("tfidf" and "rel" are implemented)
 #' @param verbose bla
 #' @param robust bla
 #' @param mc logical
@@ -173,6 +172,18 @@ setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
 })
 
 
+.rmBlank <- function(mat, verbose=TRUE){
+  if (verbose==TRUE) message("... removing empty rows")
+  matTmp <- as.sparseMatrix(mat)
+  matTmp <- matTmp[which(rowSums(matTmp) > 0),]
+  mat <- as.simple_triplet_matrix(matTmp)
+  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  mat
+}
+
+
+#' @rdname bundle-class
+#' @importFrom slam simple_triplet_matrix
 setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
   dts <- lapply(x@objects, function(x) copy(x@stat))
   lapply(
@@ -190,7 +201,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
       oldCols <- colnames(dts[[n]])
       oldCols <- oldCols[-which(oldCols == col)]
       setnames(dts[[n]], col, "v")
-      dts[[n]][, i := keys[ dts[[n]][["key"]] ] ][, j := n][, c(eval(oldCols)) := NULL, with=TRUE]
+      dts[[n]][, "i" := keys[ dts[[n]][["key"]] ] ][, "j" := n][, c(eval(oldCols)) := NULL, with=TRUE]
     })
   DT <- rbindlist(dts)
   retval <- simple_triplet_matrix(
@@ -199,14 +210,6 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
     v = DT[["v"]],
     dimnames = list(Terms=names(keys), Docs=names(x@objects))
   )
-#   .rmBlank <- function(mat, verbose=TRUE){
-#     if (verbose==TRUE) message("... removing empty rows")
-#     matTmp <- as.sparseMatrix(mat)
-#     matTmp <- matTmp[which(rowSums(matTmp) > 0),]
-#     mat <- as.simple_triplet_matrix(matTmp)
-#     class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-#     mat
-#   }
 #   if (rmBlank == TRUE) retval <- .rmBlank(retval, verbose=verbose)
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   retval
@@ -219,6 +222,7 @@ setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
 })
 
 
+#' @rdname bundle-class
 setMethod("as.bundle", "list", function(object, ...){
   if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
   newBundle <- new("partitionBundle")
@@ -231,6 +235,7 @@ setMethod("as.bundle", "list", function(object, ...){
 
 #' @docType methods
 #' @exportMethod as.partitionBundle
+#' @rdname bundle-class
 setMethod("as.bundle", "textstat", function(object){
   newBundle <- new(
     paste(is(object)[1], "Bundle", sep=""),

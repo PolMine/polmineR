@@ -13,9 +13,7 @@ cooccurrences(.Object, ...)
   c("NN", "ADJA")), method = "ll", big = FALSE, matrix = FALSE,
   mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
-\S4method{cooccurrences}{partitionBundle}(.Object, pAttribute = "word",
-  window = 5, method = "ll", keep = list(pos = c("ADJA", "NN")),
-  mc = FALSE)
+\S4method{cooccurrences}{partitionBundle}(.Object, mc = FALSE, ...)
 }
 \arguments{
 \item{.Object}{a partition object}
@@ -33,6 +31,10 @@ cooccurrences(.Object, ...)
 \item{matrix}{logical, whether to return matrix}
 
 \item{mc}{whether to use multicore}
+
+\item{progress}{logical, whether to be verbose}
+
+\item{verbose}{logical, whether to be verbose}
 }
 \value{
 a cooccurrences-class object

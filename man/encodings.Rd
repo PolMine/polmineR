@@ -4,11 +4,17 @@
 \name{adjustEncoding}
 \alias{adjustEncoding}
 \alias{adjustEncoding,character-method}
+\alias{as.utf8}
+\alias{as.utf8,character-method}
 \title{adjust encoding}
 \usage{
 adjustEncoding(.Object, ...)
 
 \S4method{adjustEncoding}{character}(.Object, corpusEncoding)
+
+as.utf8(.Object, ...)
+
+\S4method{as.utf8}{character}(.Object, from = "latin1")
 }
 \arguments{
 \item{.Object}{the object (usually a character vector, nothing else is implemented so far)}
@@ -16,9 +22,13 @@ adjustEncoding(.Object, ...)
 \item{...}{further parameters}
 
 \item{corpusEncoding}{the encoding of the corpus (e.g. "latin1")}
+
+\item{from}{encoding}
 }
 \description{
 Utility method to help making sure that the encoding of a character string or the relevant parts of an object
 conform to the encoding to the corpus.
+
+adjustEncoding-method
 }
 

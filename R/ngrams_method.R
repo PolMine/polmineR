@@ -1,4 +1,5 @@
 #' @exportClass ngrams
+#' @rdname ngrams
 setClass(
   "ngrams",
   representation(
@@ -17,10 +18,12 @@ setClass(
 #' @param .Object object of class \code{partition}
 #' @param n number of tokens
 #' @param pAttribute p-attribute
+#' @param ... further parameters
 #' @exportMethod ngrams
 #' @rdname ngrams
 setGeneric("ngrams", function(.Object, ...) standardGeneric("ngrams"))
 
+#' @rdname ngrams
 setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word"){
   cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
   pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep=""))

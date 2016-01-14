@@ -35,10 +35,6 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for counting terms)
 #' @param verbose logical, defaults to TRUE
-#' @param value a character string that will be the name of the partition
-#' @param from from
-#' @param to to
-#' @param x CHECK
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples

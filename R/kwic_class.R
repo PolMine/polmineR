@@ -10,6 +10,7 @@
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' 
 #' @param x a kwic-class object
+#' @param object an object of class \code{kwic}
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}

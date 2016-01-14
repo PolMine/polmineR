@@ -34,12 +34,13 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the session settings
 #' @param verbose report progress, defaults to TRUE
+#' @param ... further parameters
 #' @return depending on whether a partition or a partitionBundle serves as
 #'   input, the return will be a context object, or a contextBundle object
 #' @author Andreas Blaette
 #' @aliases context context,partition-method as.matrix,contextBundle-method
-#'   as.TermContextMatrix,contextBundle-method context,contextBundle-method
-#'   context,partitionBundle-method ll ll-method context,cooccurrences-method
+#'   context,contextBundle-method
+#'   context,partitionBundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
 #' \dontrun{
@@ -150,7 +151,7 @@ setMethod(
     
     # statistical tests
     if (!is.null(method)){
-      ctxt@stat[,count_partition := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
+      ctxt@stat[, "count_partition" := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
       for (test in method){
         if (verbose == TRUE) message("... statistical test: ", test)
         ctxt <- do.call(test, args=list(.Object=ctxt))  
@@ -271,7 +272,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionBundle", function(.Object, query, ...){
+setMethod("context", "partitionBundle", function(.Object, query, verbose=TRUE, ...){
   contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     corpus.pAttribute <- paste(
@@ -307,9 +308,9 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
     corpus=.Object@corpus,
     encoding=.Object@encoding,
     method=.Object@method,
-    stat=subset(.Object@stat, node==query),
+    stat=subset(.Object@stat, .Object@stat[, "node"]==query),
     call=deparse(match.call()),
-    size=unique(subset(.Object@stat, node==query)[,"size_window"])
+    size=unique(subset(.Object@stat, .Object@stat[, "node"]==query)[,"size_window"])
   )  
   if (complete == TRUE){
     sAttr <- paste(
@@ -327,7 +328,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
     hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
     newObject@cpos <- apply(
       hits, 1, function(row) {
-        .leftRightContextChecked(
+        .makeLeftRightCpos[["expandToCpos"]](
           row,
           leftContext=newObject@leftContext,
           rightContext=newObject@rightContext,

@@ -7,6 +7,7 @@ NULL
 #' 
 #' @param .Object either a partition or a partitionBundle object
 #' @param query a character vector (one or multiple terms to be looked up)
+#' @param pAttribute the p-attribute(s) to use
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
 #' @param ... further parameters
@@ -17,11 +18,14 @@ NULL
 #' @aliases count-method
 #' @seealso count
 #' @examples
+#' \dontrun{
 #' # generate a partition for testing 
-#' test <- partition("PLPRBTTXT")
+#' use("polmineR.sampleCorpus")
+#' test <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
 #' count(test, "Wir") # get frequencies for one token
 #' count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-#' count("PLPRTXT", c("machen", "Integration"), "word")
+#' count("PLPRBTTXT", c("machen", "Integration"), "word")
+#' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method

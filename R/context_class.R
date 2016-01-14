@@ -21,14 +21,12 @@ NULL
 #' @slot method Object of class \code{"character"} statistical test used
 #' @slot call Object of class \code{"character"} call that generated the object
 #'     
-#' @param x object
-#' @param object object
+#' @param .Object object
 #' @param mc logical, whether to use multicore
-#' @param i for indexing
-#' @param n for head and tail
 #' @param sAttribute the s-attribute to use
+#' @param object object of class \code{context}
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
-#'   [[,context-method summary,context-method head,context-method ll,context-method
+#'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
 #' @docType class
 #' @exportClass context

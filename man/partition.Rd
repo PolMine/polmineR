@@ -49,14 +49,6 @@ details)}
 \item{mc}{whether to use multicore (for counting terms)}
 
 \item{verbose}{logical, defaults to TRUE}
-
-\item{value}{a character string that will be the name of the partition}
-
-\item{from}{from}
-
-\item{to}{to}
-
-\item{x}{CHECK}
 }
 \value{
 An object of the S4 class 'partition'

@@ -129,8 +129,8 @@ setMethod("mail", "dispersion", function(object, to=NULL, nrow=NULL, fileFormat=
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     msg <- list('Delivering a crosstabulation.\nSincerely yours\nThe driller\n')
     if(is.null(nrow)) nrow <- nrow(object@abs)
-    msg <- .attachTables(foo@abs, nrow, msg, "crosstabAbs", fileFormat) 
-    msg <- .attachTables(foo@rel, nrow, msg, "crosstabRel", fileFormat) 
+    msg <- .attachTables(object@abs, nrow, msg, "crosstabAbs", fileFormat) 
+    msg <- .attachTables(object@rel, nrow, msg, "crosstabRel", fileFormat) 
     status <- .mail(msg, to)
     retval <- status$msg  
   } else {

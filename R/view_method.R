@@ -24,6 +24,7 @@ setMethod("view", "textstat", function(.Object){
 #   View(.Object@stat)
 # })
 
+#' @rdname context-class
 setMethod("view", "context", function(.Object){
   .Object <- round(.Object, 2)
   whatToView <- c(
@@ -36,6 +37,7 @@ setMethod("view", "context", function(.Object){
 })
 
 #' @exportMethod view
+#' @rdname comp-class
 setMethod("view", "comp", function(.Object){
   .Object <- round(.Object, 2)
   whatToView <- c(
@@ -47,10 +49,9 @@ setMethod("view", "comp", function(.Object){
   View(.Object@stat[, whatToView, with=FALSE], title="comp")
 })
 
-
+#' @rdname cooccurrences-class
 setMethod(view, "cooccurrencesReshaped", function(.Object){
   .Object <- round(.Object, digits=2)
   colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
   View(.Object@stat[, colsToView, with=FALSE])
-  
 })

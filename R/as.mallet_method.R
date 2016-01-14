@@ -22,6 +22,7 @@ NULL
 #' @rdname as.mallet-method
 setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 
+#' @rdname as.mallet-method
 setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", stoplist=stopwords("de"), mc=TRUE, verbose=TRUE){
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")
@@ -46,7 +47,7 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", s
   cat(paste(stoplist, collapse="\n"), file=stoplistFile)
   # malletFile <- file.path(tmpDir, "partitionBundle.mallet")
   if (verbose == TRUE) message("... make mallet object")
-  malletObject <- mallet.import(
+  malletObject <- mallet::mallet.import(
     id.array=names(.Object), text.array=tokenStreamVector,
     stoplist.file=stoplistFile, preserve.case=T, token.regexp="\n"
   )

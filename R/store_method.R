@@ -52,8 +52,8 @@ setMethod("store", "jobjRef", function(object, filename=NULL){
     stop()
   }
   if (is.null(filename)) filename <- tempfile()
-  fileOutputStream <- new(J("java/io/FileOutputStream"), filename)
-  objectStream <- new(J("java/io/ObjectOutputStream"), fileOutputStream)
+  fileOutputStream <- new(rJava::J("java/io/FileOutputStream"), filename)
+  objectStream <- new(rJava::J("java/io/ObjectOutputStream"), fileOutputStream)
   objectStream$writeObject(object)
   filename
 })

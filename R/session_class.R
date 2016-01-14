@@ -12,6 +12,7 @@
 #' @slot minFrequency default minimum frequency
 #' @slot posFilter default filter for POS
 #' @slot filterType default filter type
+#' @slot kwicLineView logical
 #' @slot kwicMetadata default metadata displayed for kwic
 #' @slot kwicNo default number of kwic lines
 #' @slot metadata default metadata 

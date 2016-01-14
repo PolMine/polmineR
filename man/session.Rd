@@ -186,6 +186,8 @@ default settings for current session
 
 \item{\code{filterType}}{default filter type}
 
+\item{\code{kwicLineView}}{logical}
+
 \item{\code{kwicMetadata}}{default metadata displayed for kwic}
 
 \item{\code{kwicNo}}{default number of kwic lines}

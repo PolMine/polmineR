@@ -22,6 +22,7 @@ NULL
 #'    \item{addPos}{\code{signature(object = "comp")}: add POS attribute to statistics table }
 #'    \item{as.data.frame}{\code{signature(object = "comp")}: get the statistics table}
 #'    }
+#' @param .Object an object
 #' @rdname comp-class
 #' @name comp-class
 #' @docType class
@@ -50,16 +51,8 @@ setClass("compCooccurrences", contains=c("comp", "textstat"))
 #' @exportClass compNgrams
 setClass("compNgrams", representation(n="integer"), contains=c("comp", "textstat"))
 
-#' compBundle-class
-#' 
-#' The class inherits from the bundle class.
-#' 
-#' @param x object
-#' @param col the column to extract
-#' @param rmBlank remove blank rows
-#' @param verbose logical, whether to be verbose
 #' @slot objects an object of class \code{list}
-#' @rdname compBundle-class
+#' @rdname comp-class
 setClass("compBundle", slots=c(objects="list"), contains=c("bundle"))
 
 
@@ -84,7 +77,7 @@ setMethod("show", "comp", function(object){
 })
 
 
-#' @rdname compBundle-class
+#' @rdname comp-class
 setMethod("summary", "compBundle", function(object){
   tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")

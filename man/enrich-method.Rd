@@ -3,15 +3,25 @@
 \docType{methods}
 \name{enrich}
 \alias{enrich}
+\alias{enrich,compBundle-method}
 \alias{enrich-method}
 \title{enrich an object}
 \usage{
 enrich(object, ...)
+
+\S4method{enrich}{compBundle}(object, addPos = NULL, verbose = TRUE,
+  mc = NULL)
 }
 \arguments{
 \item{object}{a partition, partitionBundle or comp object}
 
 \item{...}{further parameters}
+
+\item{addPos}{depracated}
+
+\item{verbose}{logical}
+
+\item{mc}{logical or, if numeric, providing the number of cores}
 }
 \description{
 Method to fill slots of a partition, partitionBundle or comp object that 

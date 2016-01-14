@@ -15,7 +15,7 @@ NULL
 #' @param neighbor only show kwic if a certain word is present
 #' @param verbose whether to be talkative
 #' @param ... further parameters to be passed
-#' @aliases kwic,partition-method show,kwic-method kwic,context-method kwic
+#' @aliases kwic,partition-method kwic,context-method kwic
 #' @rdname kwic
 #' @docType methods
 #' @examples

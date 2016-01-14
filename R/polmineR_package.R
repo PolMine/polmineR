@@ -59,6 +59,8 @@ NULL
 #' of a certain type.
 #' 
 #' @rdname polmineR-generics
+#' @param x object
+#' @param value value
 #' @name polmineR-generics
 NULL
 

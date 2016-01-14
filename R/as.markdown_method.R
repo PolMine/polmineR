@@ -3,11 +3,13 @@
 #' for further processing to html
 #' 
 #' @param object object to be converted
+#' @param meta metainformation i.e. s-attributes) to be displayed
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
 setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")})
 
+#' @rdname partition-class
 setMethod("as.markdown", "partition", function(object, meta){
   rawtxt <- paste(
     getTokenStream(object, pAttribute="word", collapse=" "),

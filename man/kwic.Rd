@@ -5,7 +5,6 @@
 \alias{kwic}
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
-\alias{show,kwic-method}
 \title{KWIC output}
 \usage{
 kwic(.Object, ...)
