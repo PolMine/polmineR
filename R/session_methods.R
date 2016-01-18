@@ -69,41 +69,41 @@ setReplaceMethod("pAttribute", signature=c(object="session", value="character"),
 
 ##############################
 
-#' @exportMethod leftContext
-#' @exportMethod leftContext<-
+#' @exportMethod left
+#' @exportMethod left<-
 NULL
 
 
 
-setGeneric("leftContext", function(x) standardGeneric("leftContext"))
-setGeneric("leftContext<-", function(x, value) standardGeneric("leftContext<-"))
+setGeneric("left", function(x) standardGeneric("left"))
+setGeneric("left<-", function(x, value) standardGeneric("left<-"))
 
 #' @rdname session
-setMethod("leftContext", "session", function(x) x@leftContext)
+setMethod("left", "session", function(x) x@left)
 
 #' @rdname session
-setReplaceMethod("leftContext", signature=c(x="session", value="numeric"), function(x, value) {
-  x@leftContext <- value
+setReplaceMethod("left", signature=c(x="session", value="numeric"), function(x, value) {
+  x@left <- value
   x
 })
 
 ##############################
 
-#' @exportMethod rightContext
-#' @exportMethod rightContext<-
+#' @exportMethod right
+#' @exportMethod right<-
 NULL
 
 
 
-setGeneric("rightContext", function(x) standardGeneric("rightContext"))
-setGeneric("rightContext<-", function(x, value) standardGeneric("rightContext<-"))
+setGeneric("right", function(x) standardGeneric("right"))
+setGeneric("right<-", function(x, value) standardGeneric("right<-"))
 
 #' @rdname session
-setMethod("rightContext", "session", function(x) x@rightContext)
+setMethod("right", "session", function(x) x@right)
 
 #' @rdname session
-setReplaceMethod("rightContext", signature=c(x="session", value="numeric"), function(x, value) {
-  x@rightContext <- value
+setReplaceMethod("right", signature=c(x="session", value="numeric"), function(x, value) {
+  x@right <- value
   x
 })
 

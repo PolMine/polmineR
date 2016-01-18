@@ -12,9 +12,8 @@
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(.Object, query, pAttribute = NULL,
-  sAttribute = "text_id", leftContext = NULL, rightContext = NULL,
-  stoplist = NULL, positivelist = NULL, method = "ll", mc = NULL,
-  verbose = TRUE)
+  sAttribute = "text_id", left = NULL, right = NULL, stoplist = NULL,
+  positivelist = NULL, method = "ll", mc = NULL, verbose = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 
@@ -32,9 +31,9 @@
 \item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
 
-\item{leftContext}{no of tokens and to the left of the node word}
+\item{left}{no of tokens and to the left of the node word}
 
-\item{rightContext}{no of tokens to the right of the node word}
+\item{right}{no of tokens to the right of the node word}
 
 \item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
 context}

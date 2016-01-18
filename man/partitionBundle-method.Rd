@@ -5,7 +5,6 @@
 \alias{partitionBundle}
 \alias{partitionBundle,character-method}
 \alias{partitionBundle,list-method}
-\alias{partitionBundle,missing-method}
 \title{Generate a list of partitions}
 \usage{
 \S4method{partitionBundle}{character}(object, def, var, prefix = c(""),
@@ -15,8 +14,6 @@
 \S4method{partitionBundle}{list}(object, var, prefix = c(""),
   encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, mc = FALSE, verbose = TRUE)
-
-\S4method{partitionBundle}{missing}()
 }
 \arguments{
 \item{object}{character string, the CWB corpus to be used}

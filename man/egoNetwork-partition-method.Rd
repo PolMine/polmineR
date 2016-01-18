@@ -7,8 +7,8 @@
 \title{Prepare data for an ego-network}
 \usage{
 \S4method{egoNetwork}{partition}(object, node, degrees,
-  pAttribute = "useControls", leftContext = 0, rightContext = 0,
-  minSignificance, posFilter = c())
+  pAttribute = "useControls", left = 0, right = 0, minSignificance,
+  posFilter = c())
 }
 \arguments{
 \item{object}{a partition object}
@@ -19,9 +19,9 @@
 
 \item{pAttribute}{p-attribute of the query}
 
-\item{leftContext}{no of tokens and to the left of the node word}
+\item{left}{no of tokens and to the left of the node word}
 
-\item{rightContext}{no of tokens to the right of the node word}
+\item{right}{no of tokens to the right of the node word}
 
 \item{minSignificance}{minimum log-likelihood value}
 

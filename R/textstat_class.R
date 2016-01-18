@@ -31,7 +31,6 @@ setClass("textstat",
            encoding="character",
            stat="data.table",
            name="character"
-           
          )
 )
 

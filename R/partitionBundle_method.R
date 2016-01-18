@@ -103,10 +103,3 @@ setMethod("partitionBundle", "list", function(
 })
 
 
-
-#' @rdname partitionBundle-method
-setMethod("partitionBundle", "missing", function(){
-  .getClassObjectsAvailable(".GlobalEnv", "partitionBundle")
-})
-
-

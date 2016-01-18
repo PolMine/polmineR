@@ -11,9 +11,8 @@ kwic(.Object, ...)
 
 \S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL)
 
-\S4method{kwic}{partition}(.Object, query, leftContext = NULL,
-  rightContext = NULL, meta = NULL, pAttribute = "word",
-  neighbor = NULL, verbose = TRUE)
+\S4method{kwic}{partition}(.Object, query, left = NULL, right = NULL,
+  meta = NULL, pAttribute = "word", neighbor = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a partition object}
@@ -26,9 +25,9 @@ kwic(.Object, ...)
 
 \item{query}{what to look up}
 
-\item{leftContext}{to the left}
+\item{left}{to the left}
 
-\item{rightContext}{to the right}
+\item{right}{to the right}
 
 \item{pAttribute}{typically 'word' or 'lemma'}
 
@@ -41,6 +40,6 @@ applying the kwich method on either a partition or a context object.
 \examples{
 bt <- partition("PLPRTXT", def=list(text_date=".*"), regex=TRUE)
 foo <- kwic(bt, "Integration")
-foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
+foo <- kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
 }
 

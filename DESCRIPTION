@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.15
-Date: 2016-01-12
+Version: 0.5.16
+Date: 2016-01-16
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -53,10 +53,12 @@ Collate:
     'kwic_class.R'
     'browse_method.R'
     'bughunt_method.R'
+    'characterCount_method.R'
     'chisquare_method.R'
     'contextBundle_class.R'
     'cooccurrences_class.R'
     'coerce_methods.R'
+    'comparables_method.R'
     'ngrams_method.R'
     'compare_method.R'
     'contextBundle_methods.R'
@@ -73,6 +75,7 @@ Collate:
     'dispersion_method.R'
     'dispersion_methods.R'
     'dotplot_method.R'
+    'duplicates_method.R'
     'egoNetwork_method.R'
     'encoding_method.R'
     'enrich_method.R'
@@ -91,6 +94,7 @@ Collate:
     'mail_method.R'
     'means_method.R'
     'pAttributes_method.R'
+    'papply_function.R'
     'partitionBundle_method.R'
     'partitionBundle_methods.R'
     'partition_method.R'
@@ -106,6 +110,7 @@ Collate:
     'sAttributes_method.R'
     'scatterplot_method.R'
     'score_method.R'
+    'similarity_method.R'
     'tTest.R'
     'tag_method.R'
     'terms_method.R'

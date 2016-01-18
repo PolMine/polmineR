@@ -12,7 +12,7 @@
 \alias{summary,cooccurrences-method}
 \alias{trim,cooccurrences-method}
 \alias{view,cooccurrencesReshaped-method}
-\title{S4 context class}
+\title{cooccurrences}
 \usage{
 \S4method{show}{cooccurrences}(object)
 
@@ -49,9 +49,9 @@ class to organize information of context analysis
 
 \item{\code{partitionSize}}{Object of class \code{"numeric"} the size of the partition}
 
-\item{\code{leftContext}}{Object of class \code{"numeric"} number of tokens to the right}
+\item{\code{left}}{Object of class \code{"numeric"} number of tokens to the right}
 
-\item{\code{rightContext}}{Object of class \code{"numeric"} number of tokens to the left}
+\item{\code{right}}{Object of class \code{"numeric"} number of tokens to the left}
 
 \item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
 

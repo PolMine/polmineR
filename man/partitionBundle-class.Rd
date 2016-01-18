@@ -20,6 +20,7 @@
 \alias{html,partitionBundle-method}
 \alias{merge,partitionBundle-method}
 \alias{names,partitionBundle-method}
+\alias{partitionBundle,missing-method}
 \alias{partitionBundle-class}
 \alias{sAttributes,partitionBundle-method}
 \alias{show,partitionBundle-method}
@@ -35,6 +36,8 @@
 \S4method{[}{partitionBundle,ANY,ANY,ANY}(x, i)
 
 \S4method{barplot}{partitionBundle}(height, ...)
+
+\S4method{partitionBundle}{missing}()
 
 \S4method{sAttributes}{partitionBundle}(object, sAttribute)
 }

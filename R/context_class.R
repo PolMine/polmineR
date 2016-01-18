@@ -9,8 +9,8 @@ NULL
 #' @slot count Object of class \code{"numeric"} number of hits
 #' @slot partition Object of class \code{"character"} the partition the analysis is based on
 #' @slot partitionSize Object of class \code{"numeric"} the size of the partition
-#' @slot leftContext Object of class \code{"numeric"} number of tokens to the right
-#' @slot rightContext Object of class \code{"numeric"} number of tokens to the left
+#' @slot left Object of class \code{"numeric"} number of tokens to the left
+#' @slot right Object of class \code{"numeric"} number of tokens to the right
 #' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
 #' @slot sAttribute Object of ...
@@ -35,8 +35,8 @@ setClass("context",
                         count="numeric",
                         partition="character",
                         partitionSize="numeric",
-                        leftContext="numeric",
-                        rightContext="numeric",
+                        left="numeric",
+                        right="numeric",
                         size="numeric",
                         sAttribute="character",
                         cpos="list",

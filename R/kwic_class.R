@@ -3,8 +3,8 @@
 #' S4 class for organizing information for concordance output
 #' 
 #' @slot metadata Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed
-#' @slot leftContext words to the left
-#' @slot rightContext words to the right
+#' @slot left words to the left
+#' @slot right words to the right
 #' @slot table Object of class \code{"data.frame"} a table with the relevant information for kwic output
 #' @slot neighbor Object of class \code{"character"} neighbor, if applicable
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
@@ -26,8 +26,8 @@ setClass(
   "kwic",
   slots = c(
     metadata = "character",
-    leftContext = "numeric",
-    rightContext = "numeric",
+    left = "numeric",
+    right = "numeric",
     neighbor = "character",
     table = "data.frame",
     encoding = "character"

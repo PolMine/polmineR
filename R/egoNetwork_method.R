@@ -13,8 +13,8 @@ setGeneric("egoNetwork", function(object, ...){standardGeneric("egoNetwork")})
 #' @param object a partition object
 #' @param degrees the degrees of the resulting egoNetwork
 #' @param pAttribute p-attribute of the query
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
+#' @param left no of tokens and to the left of the node word
+#' @param right no of tokens to the right of the node word
 #' @param minSignificance minimum log-likelihood value
 #' @param posFilter character vector with the POS tags to be included - may not be empty!!
 #' @return a data frame that can be turned into an igraph object with graph.data.frame (see example)
@@ -30,14 +30,14 @@ setGeneric("egoNetwork", function(object, ...){standardGeneric("egoNetwork")})
 #' @author Andreas Blaette
 #' @docType methods
 #' @export egoNetwork
-setMethod("egoNetwork", "partition", function(object, node, degrees, pAttribute="useControls", leftContext=0, rightContext=0, minSignificance, posFilter=c()) {
-  gData <- context(object, node, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
+setMethod("egoNetwork", "partition", function(object, node, degrees, pAttribute="useControls", left=0, right=0, minSignificance, posFilter=c()) {
+  gData <- context(object, node, pAttribute, left, right, minSignificance, posFilter)@stat
   gData <- cbind(node=rep(node, times=nrow(gData)), target=rownames(gData), degree=rep(1, times=nrow(gData)), gData)
   rownames(gData) <- NULL
   for ( degree in 2:degrees ) {
     terms <- gData[which(gData$degree==(degree-1)),2]
     for ( term in terms ) {
-      dataNew <- context(object, term, pAttribute, leftContext, rightContext, minSignificance, posFilter)@stat
+      dataNew <- context(object, term, pAttribute, left, right, minSignificance, posFilter)@stat
       dataNew <- cbind(node=rep(term, times=nrow(dataNew)), target=rownames(dataNew), degree=degree, dataNew)
       rownames(dataNew) <- NULL
       gData <- rbind(gData, dataNew)

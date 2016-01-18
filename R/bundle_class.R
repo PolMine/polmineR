@@ -131,3 +131,10 @@ setMethod('[[', 'bundle', function(x,i){
 setMethod("as.matrix", "bundle", function(x, col) {
   as.matrix(as.TermDocumentMatrix(x, col))
 })
+
+setMethod("sample", "bundle", function(x, size){
+  toDrop <- sample(c(1:length(x)), size=length(x)-size)
+  toDrop <- toDrop[order(toDrop, decreasing=TRUE)]
+  for (i in toDrop) x@objects[[i]] <- NULL
+  x
+})

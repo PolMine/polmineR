@@ -36,9 +36,9 @@ setMethod("as.data.frame", "kwic", function(x){
   metadata <- apply(x@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
   data.frame(
     meta=metadata,
-    leftContext=x@table$leftContext,
+    left=x@table$left,
     node=x@table$node,
-    rightContext=x@table$rightContext
+    right=x@table$right
   )
 })
 

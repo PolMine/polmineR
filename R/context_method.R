@@ -21,8 +21,8 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' @param pAttribute p-attribute of the query
 #' @param sAttribute if provided, it will be checked that cpos do not extend beyond
 #' the region defined by the s-attribute 
-#' @param leftContext no of tokens and to the left of the node word
-#' @param rightContext no of tokens to the right of the node word
+#' @param left no of tokens and to the left of the node word
+#' @param right no of tokens to the right of the node word
 #' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
 #'   context
 #' @param positivelist character vector or numeric vector: include a query hit
@@ -61,7 +61,7 @@ setMethod(
   function
   (
     .Object, query, pAttribute=NULL, sAttribute="text_id",
-    leftContext=NULL, rightContext=NULL,
+    left=NULL, right=NULL,
     stoplist=NULL, positivelist=NULL,
     method="ll",
     mc=NULL, verbose=TRUE
@@ -75,21 +75,21 @@ setMethod(
       .Object <- enrich(.Object, pAttribute=pAttribute)
     }
     # get values from session object if params are not provided
-    if (is.null(leftContext)) leftContext <- slot(get("session", '.GlobalEnv'), 'leftContext')
-    if (is.null(rightContext)) rightContext <- slot(get("session", '.GlobalEnv'), 'rightContext')
+    if (is.null(left)) left <- slot(get("session", '.GlobalEnv'), 'left')
+    if (is.null(right)) right <- slot(get("session", '.GlobalEnv'), 'right')
     if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
     
     pAttr <- paste(.Object@corpus, ".", pAttribute, sep="")
-    sAttr <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[1]
-    cposMethod <- .setMethod(leftContext, rightContext, sAttribute, corpus=.Object@corpus)[2]
+    sAttr <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[1]
+    cposMethod <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[2]
     
     # instantiate the context object
     ctxt <- new(
       "context",
       query=query, pAttribute=pAttribute, stat=data.table(),
       sAttribute=sAttribute, corpus=.Object@corpus,
-      leftContext=ifelse(is.character(leftContext), 0, leftContext),
-      rightContext=ifelse(is.character(rightContext), 0, rightContext),
+      left=ifelse(is.character(left), 0, left),
+      right=ifelse(is.character(right), 0, right),
       encoding=.Object@encoding, 
       partition=.Object@name, partitionSize=.Object@size
     )
@@ -118,9 +118,9 @@ setMethod(
     
     if (verbose==TRUE) message("... counting tokens in context ")  
     if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, cposMethod))
+      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
     } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, leftContext, rightContext, sAttr, stoplistIds, positivelistIds, cposMethod))
+      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
     }
     bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
@@ -162,9 +162,9 @@ setMethod(
   })
 
 
-.setMethod <- function(leftContext, rightContext, sAttribute, corpus){
-  if (is.numeric(leftContext) && is.numeric(rightContext)){
-    if (is.null(names(leftContext)) && is.null(names(leftContext))){
+.setMethod <- function(left, right, sAttribute, corpus){
+  if (is.numeric(left) && is.numeric(right)){
+    if (is.null(names(left)) && is.null(names(left))){
       method <- "expandToCpos"
       if (!is.null(sAttribute)) {
         corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
@@ -173,16 +173,16 @@ setMethod(
       }
     } else {
       method <- "expandBeyondRegion"
-      sAttribute <- unique(c(names(leftContext), names(rightContext)))
+      sAttribute <- unique(c(names(left), names(right)))
       if (length(sAttribute) == 1){
         corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
       } else {
         warning("please check names of left and right context provided")
       }
     }
-  } else if (is.character(leftContext) && is.character(rightContext)){
+  } else if (is.character(left) && is.character(right)){
     method <- "expandToRegion"
-    sAttribute <- unique(c(leftContext, rightContext))
+    sAttribute <- unique(c(left, right))
     if (length(sAttribute) == 1){
       corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
     } else {
@@ -196,16 +196,16 @@ setMethod(
 
 
 #' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
-#' @param leftContext no of tokens to the left
-#' @param rightContext no of tokens to the right
+#' @param left no of tokens to the left
+#' @param right no of tokens to the right
 #' @param sAttribute the integrity of the sAttribute to be checked
 #' @return a list!
 #' @noRd
 .makeLeftRightCpos <- list(
   
-  "expandToCpos" = function(set, leftContext, rightContext, corpus.sAttribute){
-    cposLeft <- c((set[1] - leftContext):(set[1]-1))
-    cposRight <- c((set[2] + 1):(set[2] + rightContext))
+  "expandToCpos" = function(set, left, right, corpus.sAttribute){
+    cposLeft <- c((set[1] - left):(set[1]-1))
+    cposRight <- c((set[2] + 1):(set[2] + right))
     if (!is.na(corpus.sAttribute)){
       cposLeft <- cposLeft[which(cqi_cpos2struc(corpus.sAttribute, cposLeft)==set[3])]
       cposRight <- cposRight[which(cqi_cpos2struc(corpus.sAttribute, cposRight)==set[3])]   
@@ -213,22 +213,22 @@ setMethod(
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
-  "expandToRegion" = function(set, leftContext, rightContext, corpus.sAttribute){
+  "expandToRegion" = function(set, left, right, corpus.sAttribute){
     cposLeft <- c((cqi_cpos2lbound(corpus.sAttribute, set[1])):(set[1] - 1))
     cposRight <- c((set[2] + 1):(cqi_cpos2rbound(corpus.sAttribute, set[1])))
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
-  "expandBeyondRegion" = function(set, leftContext, rightContext, corpus.sAttribute){
+  "expandBeyondRegion" = function(set, left, right, corpus.sAttribute){
     queryStruc <- cqi_cpos2struc(corpus.sAttribute, set[1])
     maxStruc <- cqi_attribute_size(corpus.sAttribute)
     # get left min cpos
-    leftStruc <- queryStruc - leftContext
+    leftStruc <- queryStruc - left
     leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
     leftCposMin <- cqi_struc2cpos(corpus.sAttribute, leftStruc)[1]
     cposLeft <- c(leftCposMin:(set[1]-1))
     # get right max cpos
-    rightStruc <- queryStruc + rightContext
+    rightStruc <- queryStruc + right
     rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
     rightCposMax <- cqi_struc2cpos(corpus.sAttribute, rightStruc)[2]
     cposRight <- c((set[2] + 1):rightCposMax)
@@ -238,11 +238,11 @@ setMethod(
   
 )
 
-.surrounding <- function (set, ctxt, leftContext, rightContext, corpus.sAttribute, stoplistIds=NULL, positivelistIds=NULL, method) {
+.surrounding <- function (set, ctxt, left, right, corpus.sAttribute, stoplistIds=NULL, positivelistIds=NULL, method) {
   cposList <- .makeLeftRightCpos[[method]](
     set,
-    leftContext=leftContext,
-    rightContext=rightContext,
+    left=left,
+    right=right,
     corpus.sAttribute=corpus.sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
@@ -302,8 +302,8 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
     query=query,
     partition=.Object@partition,
     partitionSize=.Object@partitionSize,
-    leftContext=.Object@leftContext,
-    rightContext=.Object@rightContext,
+    left=.Object@left,
+    right=.Object@right,
     pAttribute=.Object@pAttribute,
     corpus=.Object@corpus,
     encoding=.Object@encoding,
@@ -330,8 +330,8 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
       hits, 1, function(row) {
         .makeLeftRightCpos[["expandToCpos"]](
           row,
-          leftContext=newObject@leftContext,
-          rightContext=newObject@rightContext,
+          left=newObject@left,
+          right=newObject@right,
           sAttribute=sAttr
           )
       }    

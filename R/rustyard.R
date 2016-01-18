@@ -20,6 +20,8 @@
 # }
 
 
+
+
 # .map <- function(tableToMatch, tableToAdjust) {
 #   colnames(tableToMatch) <- sub('X(\\d)', '\\1', colnames(tableToMatch))
 #   rownames(tableToAdjust)[which(rownames(tableToAdjust)=="")] <- 'NA'
@@ -559,3 +561,26 @@
 #   count
 # }
 
+# #' @rdname ngrams
+# setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word"){
+#   cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+#   pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep=""))
+#   ids <- cqi_cpos2id(pAttr, cpos)
+#   idList <- lapply(c(1:n), function(i) c(ids[c(i:(length(ids) - (n-i)))]))
+#   DT <- as.data.table(idList)
+#   setnames(DT, colnames(DT), paste("id_", c(1:n), sep=""))
+#   count <- function(x) return(x)
+#   TF <- DT[, count(.N), by=c(eval(colnames(DT))), with=TRUE]
+#   setnames(TF, "V1", "count")
+#   lapply(
+#     c(1:n),
+#     function(i){
+#       str <- cqi_id2str(pAttr, TF[[i]]) %>% as.utf8(from="latin1")
+#       TF[, eval(paste("token_", i, sep="")) := str , with=TRUE] 
+#     })
+#   lapply(paste("id_", c(1:n), sep=""), function(x) TF[, eval(x) := NULL, with=TRUE])
+#   new(
+#     "ngrams",
+#     n=as.integer(n), corpus=.Object@corpus, encoding=.Object@encoding,
+#     size=as.integer(size(.Object)), stat=TF, pAttribute=pAttribute)
+# })

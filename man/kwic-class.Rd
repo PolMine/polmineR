@@ -31,9 +31,9 @@ S4 class for organizing information for concordance output
 \describe{
 \item{\code{metadata}}{Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed}
 
-\item{\code{leftContext}}{words to the left}
+\item{\code{left}}{words to the left}
 
-\item{\code{rightContext}}{words to the right}
+\item{\code{right}}{words to the right}
 
 \item{\code{table}}{Object of class \code{"data.frame"} a table with the relevant information for kwic output}
 

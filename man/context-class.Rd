@@ -49,9 +49,9 @@ Based on a context object, get distribution of hits
 
 \item{\code{partitionSize}}{Object of class \code{"numeric"} the size of the partition}
 
-\item{\code{leftContext}}{Object of class \code{"numeric"} number of tokens to the right}
+\item{\code{left}}{Object of class \code{"numeric"} number of tokens to the left}
 
-\item{\code{rightContext}}{Object of class \code{"numeric"} number of tokens to the left}
+\item{\code{right}}{Object of class \code{"numeric"} number of tokens to the right}
 
 \item{\code{size}}{Object of class \code{"numeric"} number of tokens in the right and left context}
 

@@ -64,8 +64,8 @@ To keep the number of required inputs low when calling individual functions, the
 
 <<setDrillingControls, echo=TRUE, results="tex">>=
 corpus(session) <- "PLPRBTTXT"
-leftContext(session) <- 15
-rightContext(session) <- 15
+left(session) <- 15
+right(session) <- 15
 multicore(session) <- FALSE
 @
 
@@ -129,7 +129,7 @@ The partition object has a method that will give you immediate access to view th
 <<context, echo=TRUE, results="tex", tidy=FALSE>>=
 # integration <- context(
 #   bt, "Integration",
-#  leftContext=20, rightContext=20
+#  left=20, right=20
 #  )
 # summary(integration)
 @

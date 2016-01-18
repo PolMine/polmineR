@@ -33,7 +33,7 @@ setMethod(
     coll <- new(
       "cooccurrences",
       pAttribute=pAttribute, corpus=.Object@corpus, encoding=.Object@encoding,
-      leftContext=window, rightContext=window, partitionSize=.Object@size, stat=data.table()
+      left=window, right=window, partitionSize=.Object@size, stat=data.table()
     )
     coll@call <- deparse(match.call())
     coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]

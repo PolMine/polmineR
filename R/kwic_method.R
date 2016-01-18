@@ -8,8 +8,8 @@ NULL
 #' 
 #' @param .Object a partition object
 #' @param query what to look up
-#' @param leftContext to the left
-#' @param rightContext to the right
+#' @param left to the left
+#' @param right to the right
 #' @param meta metainformation to display
 #' @param pAttribute typically 'word' or 'lemma'
 #' @param neighbor only show kwic if a certain word is present
@@ -21,7 +21,7 @@ NULL
 #' @examples
 #' bt <- partition("PLPRTXT", def=list(text_date=".*"), regex=TRUE)
 #' foo <- kwic(bt, "Integration")
-#' foo <- kwic(bt, "Integration", leftContext=20, rightContext=20, meta=c("text_date", "text_name", "text_party")) 
+#' foo <- kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 
@@ -58,7 +58,7 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
   } 
   conc <- new(
     'kwic',
-    leftContext=.Object@leftContext, rightContext=.Object@rightContext,
+    left=.Object@left, right=.Object@right,
     table=tab, metadata=meta, encoding=.Object@encoding
     )
   if (!is.null(neighbor)) {conc@neighbor <- neighbor}
@@ -70,13 +70,13 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
 #' @exportMethod kwic
 setMethod("kwic", "partition", function(
   .Object, query,
-  leftContext=NULL, rightContext=NULL,
+  left=NULL, right=NULL,
   meta=NULL, pAttribute="word", neighbor=NULL,
   verbose=TRUE
 ){
   ctxt <- context(
     .Object=.Object, query=query, pAttribute=pAttribute,
-    leftContext=leftContext, rightContext=rightContext,
+    left=left, right=right,
     method=NULL, verbose=verbose
   )
   if (is.null(ctxt)){

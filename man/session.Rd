@@ -29,10 +29,10 @@
 \alias{kwicNo,session-method}
 \alias{kwicNo<-}
 \alias{kwicNo<-,session,numeric-method}
-\alias{leftContext}
-\alias{leftContext,session-method}
-\alias{leftContext<-}
-\alias{leftContext<-,session,numeric-method}
+\alias{left}
+\alias{left,session-method}
+\alias{left<-}
+\alias{left<-,session,numeric-method}
 \alias{metadata}
 \alias{metadata,session-method}
 \alias{metadata<-}
@@ -60,10 +60,10 @@
 \alias{project,session-method}
 \alias{project<-}
 \alias{project<-,session,character-method}
-\alias{rightContext}
-\alias{rightContext,session-method}
-\alias{rightContext<-}
-\alias{rightContext<-,session,numeric-method}
+\alias{right}
+\alias{right,session-method}
+\alias{right<-}
+\alias{right<-,session,numeric-method}
 \alias{session}
 \alias{session-class}
 \alias{show,session-method}
@@ -97,13 +97,13 @@ createProject(project)
 
 \S4method{pAttribute}{session,character}(object) <- value
 
-\S4method{leftContext}{session}(x)
+\S4method{left}{session}(x)
 
-\S4method{leftContext}{session,numeric}(x) <- value
+\S4method{left}{session,numeric}(x) <- value
 
-\S4method{rightContext}{session}(x)
+\S4method{right}{session}(x)
 
-\S4method{rightContext}{session,numeric}(x) <- value
+\S4method{right}{session,numeric}(x) <- value
 
 \S4method{minSignificance}{session}(x)
 
@@ -174,9 +174,9 @@ default settings for current session
 
 \item{\code{pAttribute}}{default pAttribute}
 
-\item{\code{leftContext}}{default left context}
+\item{\code{left}}{default left context}
 
-\item{\code{rightContext}}{default right context}
+\item{\code{right}}{default right context}
 
 \item{\code{minSignificance}}{default minimum significance}
 

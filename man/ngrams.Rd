@@ -4,12 +4,17 @@
 \name{ngrams-class}
 \alias{ngrams}
 \alias{ngrams,partition-method}
+\alias{ngrams,partitionBundle-method}
 \alias{ngrams-class}
 \title{get ngrams}
 \usage{
 ngrams(.Object, ...)
 
-\S4method{ngrams}{partition}(.Object, n = 2, pAttribute = "word")
+\S4method{ngrams}{partition}(.Object, n = 2, pAttribute = "word",
+  char = NULL, progress = FALSE)
+
+\S4method{ngrams}{partitionBundle}(.Object, char = NULL, mc = FALSE,
+  progress = FALSE, ...)
 }
 \arguments{
 \item{.Object}{object of class \code{partition}}
@@ -19,6 +24,12 @@ ngrams(.Object, ...)
 \item{n}{number of tokens}
 
 \item{pAttribute}{p-attribute}
+
+\item{char}{if NULL, tokens will be counted, else characters, keeping only those provided by a character vector}
+
+\item{progress}{logical}
+
+\item{mc}{logical, whether to use multicore}
 }
 \description{
 get ngrams

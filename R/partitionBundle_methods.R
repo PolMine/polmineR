@@ -92,13 +92,18 @@ setMethod('[', 'partitionBundle', function(x,i){
 )
 
 
-
 #' @exportMethod barplot
 #' @rdname partitionBundle-class
 setMethod("barplot", "partitionBundle", function(height, ...){
   tab <- summary(height)
   tab <- tab[order(tab[, "token"], decreasing=TRUE),]
   barplot(tab$token, names.arg=tab$partition, ...)
+})
+
+
+#' @rdname partitionBundle-class
+setMethod("partitionBundle", "missing", function(){
+  .getClassObjectsAvailable(".GlobalEnv", "partitionBundle")
 })
 
 

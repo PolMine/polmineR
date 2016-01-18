@@ -6,8 +6,8 @@
 #' @slot projectDir directory of the current project 
 #' @slot corpus corpus to use if none is provided
 #' @slot pAttribute default pAttribute
-#' @slot leftContext default left context
-#' @slot rightContext default right context
+#' @slot left default left context
+#' @slot right default right context
 #' @slot minSignificance default minimum significance
 #' @slot minFrequency default minimum frequency
 #' @slot posFilter default filter for POS
@@ -34,12 +34,12 @@
 #' @param value character string to be assigned
 #' @exportClass session
 #' @rdname session
-#' @aliases session email filterType kwicMetadata kwicNo leftContext metadata minFrequency 
-#' minSignificance multicore pAttribute posFilter project rightContext smtpPort smtpServer
+#' @aliases session email filterType kwicMetadata kwicNo left metadata minFrequency 
+#' minSignificance multicore pAttribute posFilter project right smtpPort smtpServer
 #' corpus corpus<- email<- filterType<- kwicMetadata<-
-#' kwicNo<- leftContext<- metadata<- minFrequency<-
+#' kwicNo<- left<- metadata<- minFrequency<-
 #' minSignificance<- multicore<- pAttribute<- posFilter<-
-#' project<- rightContext<- smtpPort<- smtpServer<-
+#' project<- right<- smtpPort<- smtpServer<-
 #' cores cores<-
 setClass(
   "session",
@@ -48,8 +48,8 @@ setClass(
     projectDir="character",
     corpus="character",
     pAttribute="character",
-    leftContext="numeric",
-    rightContext="numeric",
+    left="numeric",
+    right="numeric",
     minSignificance="numeric",
     minFrequency="numeric",
     posFilter="character",
@@ -79,8 +79,8 @@ session <- new(
   projectDir=c(""),
   corpus="PLPRBTTXT",
   pAttribute="word",
-  leftContext=5,
-  rightContext=5,
+  left=5,
+  right=5,
   minSignificance=3.84,
   minFrequency=5,
   posFilter=c("NN"),
