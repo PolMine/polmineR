@@ -36,7 +36,7 @@ resetRegistry <- function(registryDir=NULL) {
   # library.dynam("rcqp", package="rcqp", lib.loc=.libPaths()[1])
   library.dynam(
     "rcqp", package="rcqp",
-    lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library/"
+    lib.loc=gsub("^(.*?)/rcqp$", "\\1", system.file(package="rcqp"))
   )
   oldRegistry
 }
