@@ -26,6 +26,10 @@ duplicates(.Object, ...)
 \item{n}{number of days before and after a document was published}
 
 \item{threshold}{numeric (0 < x < 1), the minimum similarity to qualify two documents as duplicates}
+
+\item{mc}{whether to use multicore}
+
+\item{verbose}{logical, whether to be verbose}
 }
 \description{
 The method implements a procedure described by Fritz Kliche, Andre Blessing,

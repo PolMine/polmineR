@@ -3,14 +3,17 @@ NULL
 
 #' get counts
 #' 
-#' Count number of occurrences of a query (CQP syntax can be used).
+#' Count number of occurrences of a query. The CQP syntax can be used to formulate 
+#' the query.
 #' 
-#' @param .Object either a partition or a partitionBundle object
+#' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus
 #' @param query a character vector (one or multiple terms to be looked up)
 #' @param pAttribute the p-attribute(s) to use
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
+#' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
 #' @param ... further parameters
+#' @return a \code{"data.table"}
 #' @exportMethod count
 #' @docType methods
 #' @rdname count-method
@@ -18,13 +21,19 @@ NULL
 #' @aliases count-method
 #' @seealso count
 #' @examples
-#' \dontrun{
-#' # generate a partition for testing 
 #' use("polmineR.sampleCorpus")
-#' test <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' count(test, "Wir") # get frequencies for one token
-#' count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-#' count("PLPRBTTXT", c("machen", "Integration"), "word")
+#' debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#' count(debates, "Arbeit") # get frequencies for one token
+#' count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+#' count("PLPRBTTXT", c("Migration", "Integration"), "word")
+#' 
+#' debates <- partitionBundle(
+#'   object="PLPRBTTXT",
+#'   def=list(text_id=".*"),
+#'   var=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+#'   regex=TRUE, mc=FALSE, verbose=FALSE
+#' )
+#' count(debates, c("Arbeit", "Integration", "Umwelt"))
 #' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
@@ -62,12 +71,11 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, mc=F, verbose=T){
+setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, mc=F, verbose=T){
   # check whether all partitions in the bundle have a proper name
   if (is.null(names(.Object@objects)) || any(is.na(names(.Object@objects)))) {
     warning("all partitions in the bundle need to have a name (at least some missing)")
   }
-  what <- paste(pAttribute, ifelse(freq==FALSE, "count", "freq"), sep="")
   countAvailable <- unique(unlist(lapply(.Object@objects, function(x) x@pAttribute)))
   bag <- lapply(
     names(.Object@objects),
@@ -75,12 +83,15 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
       data.table(partition=x, query=query, count(.Object@objects[[x]], query))
     }
   )
-  tab <- do.call(rbind, bag)
-  if(!is.null(tab)){
-    tab <- data.table(tab[,c("partition", "query", what)])
-    colnames(tab) <- c("partition", "query", "count")
-    tab <- xtabs(count~partition+query, data=tab)
-    tab <- as.data.frame(as.matrix(unclass(tab)))
+  tabRaw <- do.call(rbind, bag)
+  if(!is.null(tabRaw)){
+    tab <- tabRaw[,c("partition", "query", ifelse(freq==FALSE, "count", "freq")), with=FALSE]
+    if (freq == FALSE){
+      tab <- xtabs(count~partition+query, data=tab)  
+    } else {
+      tab <- xtabs(freq~partition+query, data=tab)  
+    }
+    tab <- data.table(partition=names(.Object), as.data.table(as.matrix(unclass(tab))))
   }
   tab
 })

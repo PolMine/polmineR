@@ -1,5 +1,3 @@
-setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBundle"))
-
 #' Generate a list of partitions
 #' 
 #' A list of partition objects with fixed s-attributes and one variable
@@ -7,15 +5,10 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' 
 #' @param object character string, the CWB corpus to be used
 #' @param def a list with the definition of a partition that shall be prepared
-#' @param var list indicating the s-attribute to be variabel
+#' @param var a list that indicates the s-attribute to be variable and that
+#' provides a character string of values (e.g. var=list(text_year=c("2005", "2006"))
 #' @param prefix a character vector that will serve as a prefix for partition names
-#' @param encoding encoding of the corpus, if not provided, encoding provided in the registry file will be used
-#' @param pAttribute the pAttributes for which term frequencies shall be retrieved
-#' @param meta a character vector
-#' @param regex logical
-#' @param xml either 'flat' (default) or 'nested'
-#' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
-#' @param type the type of the partition objects
+#' @param ... further parameters that will be pased into the partition-method called to generate the partitions in the bundle
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
 #' @return a S4 class 'partitionBundle', which is a list with partition objects
@@ -26,9 +19,12 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' @name partitionBundle
 #' @docType methods
 #' @rdname partitionBundle-method
+#' @seealso \code{\link{partition}} and \code{\link{bundle-class}}
+setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBundle"))
+
+#' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
-  object, def, var, prefix=c(""),
-  encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=NULL, verbose=TRUE
+  object, def, var, prefix=c(""), ..., mc=NULL, verbose=TRUE
 ) {
   if (length(names(var))==1) {
     sAttributeVar <- names(var)
@@ -50,7 +46,7 @@ setMethod("partitionBundle", "character", function(
     call=deparse(match.call())
   )
   if (verbose==TRUE) message('... setting up base partition')
-  partitionBase <- partition(object, def, pAttribute=c(), meta=meta, regex=regex, xml=xml, id2str=FALSE, type=type, verbose=FALSE)
+  partitionBase <- partition(object, def, ..., verbose=FALSE)
   bundle@encoding <- partitionBase@encoding
   if (is.null(sAttributeVarValues)){
     if (verbose==TRUE) message('... getting values of fixed s-attributes')
@@ -62,7 +58,7 @@ setMethod("partitionBundle", "character", function(
     for (sAttribute in sAttributeVarValues){
       sAttr <- list()
       sAttr[[sAttributeVar]] <- sAttribute
-      bundle@objects[[sAttribute]] <- partition(partitionBase, def=sAttr, name=sAttribute, pAttribute=pAttribute, id2str=id2str, type=type)
+      bundle@objects[[sAttribute]] <- partition(partitionBase, def=sAttr, name=sAttribute, ...)
     }
   } else if (mc==TRUE) {
     if (verbose==TRUE) message('... setting up the partitions')
@@ -71,10 +67,7 @@ setMethod("partitionBundle", "character", function(
       function(x) partition(
         partitionBase,
         def=sapply(sAttributeVar, function(y) x, USE.NAMES=TRUE),
-        name=x,
-        pAttribute=pAttribute,
-        id2str=id2str,
-        type=type
+        name=x, ...
       )
     )
   }
@@ -83,14 +76,10 @@ setMethod("partitionBundle", "character", function(
 })
 
 #' @rdname partitionBundle-method
-setMethod("partitionBundle", "list", function(
-  object, var, prefix=c(""), encoding=NULL, pAttribute=NULL, meta=NULL,
-  regex=FALSE, xml="flat", id2str=TRUE, mc=FALSE, verbose=TRUE
-) {
+setMethod("partitionBundle", "list", function(object, var, prefix=c(""), ...) {
   partitionBundle(
     object=get('session', '.GlobalEnv')@corpus,
-    def=object, var=var, prefix=prefix, encoding=encoding, pAttribute=pAttribute,
-    meta=meta, regex=regex, xml=xml, id2str=id2str, mc=mc, verbose=verbose
+    def=object, var=var, prefix=prefix, ...
   )
 })
 

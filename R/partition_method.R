@@ -269,7 +269,7 @@ setMethod("partition", "list", function(
       hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
     } else if (regex == TRUE) {
       # hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
-      hits <- unique(unlist(lapply(part@sAttributes[[s]], function(x) grep(x, meta[,2]))))
+      hits <- unique(unlist(lapply(Partition@sAttributes[[names(sAttr)[i]]], function(x) grep(x, meta[,2]))))
     }
     cpos <- cpos[hits,]
     strucs <- strucs[hits]
@@ -287,7 +287,7 @@ setMethod("partition", "missing", function(){
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE){
+setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
   # these lines are identical with partition method
   if (is.null(type)){
     newPartition <- new('partition')  
@@ -338,7 +338,7 @@ setMethod("partition", "partition", function(object, def, name=c(""), regex=FALS
   if (regex == FALSE) {
     hits <- which(str %in% sAttribute[[1]])
   } else if (regex == TRUE) {
-    hits <- grep(sAttributes[[1]], str)
+    hits <- grep(sAttribute[[1]], str)
   }
   newCpos <- Partition@cpos[hits,]
   if (class(newCpos) == "matrix"){

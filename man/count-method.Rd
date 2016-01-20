@@ -14,8 +14,8 @@ count(.Object, ...)
 \S4method{count}{partition}(.Object, query, pAttribute = NULL, mc = F,
   verbose = T)
 
-\S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL, mc = F,
-  verbose = T)
+\S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
+  freq = FALSE, mc = F, verbose = T)
 
 \S4method{count}{character}(.Object, query, pAttribute = NULL,
   verbose = TRUE)
@@ -32,6 +32,8 @@ count(.Object, ...)
 \item{mc}{logical, whether to use multicore (defaults to FALSE)}
 
 \item{verbose}{logical, whether to be verbose}
+
+\item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
 }
 \description{
 Count number of occurrences of a query (CQP syntax can be used).

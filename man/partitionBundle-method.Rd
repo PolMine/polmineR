@@ -7,36 +7,24 @@
 \alias{partitionBundle,list-method}
 \title{Generate a list of partitions}
 \usage{
-\S4method{partitionBundle}{character}(object, def, var, prefix = c(""),
-  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
-  xml = "flat", id2str = TRUE, type = NULL, mc = NULL, verbose = TRUE)
+partitionBundle(object, ...)
 
-\S4method{partitionBundle}{list}(object, var, prefix = c(""),
-  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
-  xml = "flat", id2str = TRUE, mc = FALSE, verbose = TRUE)
+\S4method{partitionBundle}{character}(object, def, var, prefix = c(""), ...,
+  mc = NULL, verbose = TRUE)
+
+\S4method{partitionBundle}{list}(object, var, prefix = c(""), ...)
 }
 \arguments{
 \item{object}{character string, the CWB corpus to be used}
 
+\item{...}{further parameters that will be pased into the partition-method called to generate the partitions in the bundle}
+
 \item{def}{a list with the definition of a partition that shall be prepared}
 
-\item{var}{list indicating the s-attribute to be variabel}
+\item{var}{a list that indicates the s-attribute to be variable and that
+provides a character string of values (e.g. var=list(text_year=c("2005", "2006"))}
 
 \item{prefix}{a character vector that will serve as a prefix for partition names}
-
-\item{encoding}{encoding of the corpus, if not provided, encoding provided in the registry file will be used}
-
-\item{pAttribute}{the pAttributes for which term frequencies shall be retrieved}
-
-\item{meta}{a character vector}
-
-\item{regex}{logical}
-
-\item{xml}{either 'flat' (default) or 'nested'}
-
-\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
-
-\item{type}{the type of the partition objects}
 
 \item{mc}{logical, whether to use multicore parallelization}
 
@@ -51,5 +39,8 @@ s-attribute is generated
 }
 \author{
 Andreas Blaette
+}
+\seealso{
+\code{\link{partition}} and \code{\link{bundle-class}}
 }
 

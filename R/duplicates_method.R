@@ -14,6 +14,8 @@ setGeneric("duplicates", function(.Object, ...) standardGeneric("duplicates"))
 #' @param sample will be passed as param size into sample-method to achieve a subset of partitionBundle and make char count faster
 #' @param n number of days before and after a document was published
 #' @param threshold numeric (0 < x < 1), the minimum similarity to qualify two documents as duplicates
+#' @param mc whether to use multicore
+#' @param verbose logical, whether to be verbose
 #' @param ... further parameters (verbose, progress, mc) to be passed into functions
 #' @examples 
 #' \dontrun{
