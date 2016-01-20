@@ -25,26 +25,19 @@ setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
 setMethod("read", "partition", function(.Object, meta=NULL, highlight=list()){
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
-  if(require("htmltools", quietly = TRUE)){
-    htmltools::html_print(fulltextHtml)  
-  } else {
-    warning("package htmltools required, but not available")
+  if (is.null(meta)){
+    parsedRegistry <- parseRegistry(.Object@corpus)
+    if ("meta" %in% names(parsedRegistry)){
+      meta <- parsedRegistry[["meta"]]
+    } else {
+      message("... no default metadata stated as corpus properties in registry, trying to use session settings")
+      if (all(session@metadata %in% sAttributes(.Object@corpus))){
+        meta <- session@metadata
+      } else {
+        stop("metadata not available, please set session settings or indicate explicitly")
+      }
+    }
   }
-})
-
-#' @rdname read-method
-setMethod("read", "plprPartition", function(.Object, meta=c("text_name", "text_party", "text_date"), highlight=list()){
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
-  if(require("htmltools", quietly = TRUE)){
-    htmltools::html_print(fulltextHtml)  
-  } else {
-    warning("package htmltools required, but not available")
-  }
-})
-
-#' @rdname read-method
-setMethod("read", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), highlight=list()){
   fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  

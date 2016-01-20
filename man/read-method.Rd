@@ -4,19 +4,11 @@
 \name{read}
 \alias{read}
 \alias{read,partition-method}
-\alias{read,plprPartition-method}
-\alias{read,pressPartition-method}
 \title{read an object}
 \usage{
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list())
-
-\S4method{read}{plprPartition}(.Object, meta = c("text_name", "text_party",
-  "text_date"), highlight = list())
-
-\S4method{read}{pressPartition}(.Object, meta = c("text_newspaper",
-  "text_date"), highlight = list())
 }
 \arguments{
 \item{.Object}{an object to be read}

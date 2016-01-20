@@ -4,6 +4,7 @@
 \name{kwic}
 \alias{kwic}
 \alias{kwic,context-method}
+\alias{kwic,missing-method}
 \alias{kwic,partition-method}
 \title{KWIC output}
 \usage{
@@ -13,6 +14,8 @@ kwic(.Object, ...)
 
 \S4method{kwic}{partition}(.Object, query, left = NULL, right = NULL,
   meta = NULL, pAttribute = "word", neighbor = NULL, verbose = TRUE)
+
+\S4method{kwic}{missing}(.Object, ...)
 }
 \arguments{
 \item{.Object}{a partition object}

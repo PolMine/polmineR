@@ -2,25 +2,13 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 
 #' Initialize a partition
 #' 
-#' Set up an object of the partition class. Usually, this will include frequency lists.
+#' Set up an object of the partition class. Frequency lists are computeted if a pAttribute is provided.
 #' 
 #' The function sets up a partition based on a list of s-attributes with respective values.
 #' The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-#' The values of the list may contain regular expressions, but then the length always needs to be 1,
-#' and the method needs to be set to "grep". Alternatively, the method can be set to "in", then
-#' the length of the list may be > 1.
-#' For the s-attributes, list elements may be character vectors with a length > 2.
-#' However, the initialization of a partition object is considerably slower, if
-#' you supply a >2 vector. The alternative being creating a set of partitions with
-#' \code{partition.bundle} and then merging the partitions, this may still be ok.
-#' For s-attributes, regular expressions can be used. Please note that for R grep,
-#' double backlashes have to be used.
-#' For some purposes (c.g. computation of crosstabulations), term frequencies will
-#' not be needed in the setup of the partition object. In that case pAttribute=FALSE and
-#' metadata=FALSE will speed up the initialization of the object a lot.
-#' A date range with a specific start and end date can be specified by providing dateRange.
-#' Note that the sequence of the s-Attributes will matter. Things will speed up if you start 
-#' with the conditions narrowing down the corpus the most.
+#' The values of the list may contain regular expressions. To use regular expression syntex, set the 
+#' parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
+#' used in R needs to be used (double backlashes etc.).
 #' 
 #' @param object character-vector - the CWB-corpus to be used
 #' @param def list consisting of a set of character vectors (see
@@ -29,7 +17,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
 #' @param meta a character vector
-#' @param regex logical, whether strucs will be filtered by applying a regex (via grep)
+#' @param regex logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
@@ -60,18 +48,16 @@ setMethod("partition", "character", function(
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', name)
   if (is.null(type)){
-    parsedInfoFile <- parseInfoFile(object)
-    if (is.null(parsedInfoFile)){
+    parsedRegistry <- parseRegistry(object)
+    if (!"type" %in% names(parsedRegistry)){
       Partition <- new('partition', stat=data.table())    
     } else {
-      if ("CORPUS_TYPE" %in% names(parsedInfoFile)){
-        type <- parsedInfoFile["CORPUS_TYPE"]
-        if (verbose == TRUE) message("... type of the corpus is ", type)
-        assign("Partition", new(paste(type, "Partition", sep="")))
-      }
+      type <- parsedRegistry[["type"]]
+      if (verbose == TRUE) message("... type of the corpus is ", type)
+      if (type %in% c("press", "plpr")) assign("Partition", new(paste(type, "Partition", sep="")))  
     }
   } else {
-    Partition <- new(paste(type, "Partition", sep=""))
+    if (type %in% c("press", "plpr")) Partition <- new(paste(type, "Partition", sep=""))
   }
   Partition@call <- deparse(match.call())
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
@@ -230,7 +216,8 @@ setMethod("partition", "list", function(
       if (regex==FALSE) {
         meta <- meta[which(meta[,2] %in% part@sAttributes[[s]]),]
       } else {
-        meta <- meta[grep(part@sAttributes[[s]], meta[,2]),]
+        lines <- lapply(part@sAttributes[[s]], function(x) grep(x, meta[,2]))
+        meta <- meta[unique(unlist(lines)),]
       }
     }
     if (nrow(meta) == 0) {
@@ -281,7 +268,8 @@ setMethod("partition", "list", function(
     if (regex == FALSE) {
       hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
     } else if (regex == TRUE) {
-      hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
+      # hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
+      hits <- unique(unlist(lapply(part@sAttributes[[s]], function(x) grep(x, meta[,2]))))
     }
     cpos <- cpos[hits,]
     strucs <- strucs[hits]

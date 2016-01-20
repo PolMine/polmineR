@@ -38,7 +38,7 @@ details)}
 
 \item{meta}{a character vector}
 
-\item{regex}{logical, whether strucs will be filtered by applying a regex (via grep)}
+\item{regex}{logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1}
 
 \item{xml}{either 'flat' (default) or 'nested'}
 
@@ -54,26 +54,14 @@ details)}
 An object of the S4 class 'partition'
 }
 \description{
-Set up an object of the partition class. Usually, this will include frequency lists.
+Set up an object of the partition class. Frequency lists are computeted if a pAttribute is provided.
 }
 \details{
 The function sets up a partition based on a list of s-attributes with respective values.
 The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-The values of the list may contain regular expressions, but then the length always needs to be 1,
-and the method needs to be set to "grep". Alternatively, the method can be set to "in", then
-the length of the list may be > 1.
-For the s-attributes, list elements may be character vectors with a length > 2.
-However, the initialization of a partition object is considerably slower, if
-you supply a >2 vector. The alternative being creating a set of partitions with
-\code{partition.bundle} and then merging the partitions, this may still be ok.
-For s-attributes, regular expressions can be used. Please note that for R grep,
-double backlashes have to be used.
-For some purposes (c.g. computation of crosstabulations), term frequencies will
-not be needed in the setup of the partition object. In that case pAttribute=FALSE and
-metadata=FALSE will speed up the initialization of the object a lot.
-A date range with a specific start and end date can be specified by providing dateRange.
-Note that the sequence of the s-Attributes will matter. Things will speed up if you start 
-with the conditions narrowing down the corpus the most.
+The values of the list may contain regular expressions. To use regular expression syntex, set the 
+parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
+used in R needs to be used (double backlashes etc.).
 }
 \examples{
 use(polmineR.sampleCorpus)

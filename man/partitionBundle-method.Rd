@@ -49,15 +49,6 @@ a S4 class 'partitionBundle', which is a list with partition objects
 A list of partition objects with fixed s-attributes and one variable
 s-attribute is generated
 }
-\details{
-If var is list(text_date=NULL) for instance, all values for the provided s-attribute
-in the partition
-defined by sAttributesFixed will be retrived and used for defining the
-partitions.
-While generally S4 methods are used in the driller package, the return is a S3 method.
-The reasons is that the number of partitions kept in the bundle is not known before the initialization.
-Setting multicore to TRUE will speed up things. Error handling is less benevolent, risk of overheating, no verbose output.
-}
 \author{
 Andreas Blaette
 }

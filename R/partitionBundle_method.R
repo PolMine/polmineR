@@ -5,14 +5,6 @@ setGeneric("partitionBundle", function(object, ...) standardGeneric("partitionBu
 #' A list of partition objects with fixed s-attributes and one variable
 #' s-attribute is generated
 #' 
-#' If var is list(text_date=NULL) for instance, all values for the provided s-attribute
-#' in the partition
-#' defined by sAttributesFixed will be retrived and used for defining the
-#' partitions.
-#' While generally S4 methods are used in the driller package, the return is a S3 method.
-#' The reasons is that the number of partitions kept in the bundle is not known before the initialization.
-#' Setting multicore to TRUE will speed up things. Error handling is less benevolent, risk of overheating, no verbose output.
-#' 
 #' @param object character string, the CWB corpus to be used
 #' @param def a list with the definition of a partition that shall be prepared
 #' @param var list indicating the s-attribute to be variabel

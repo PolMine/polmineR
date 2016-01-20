@@ -1,6 +1,13 @@
+#' @rdname duplicates-method
 setGeneric("duplicates", function(.Object, ...) standardGeneric("duplicates"))
 
 #' get duplicates
+#' 
+#' The method implements a procedure described by Fritz Kliche, Andre Blessing,
+#' Urlich Heid and Jonathan Sonntag in the paper "The eIdentity Text
+#' ExplorationWorkbench" presented at LREC 2014
+#' (see \url{http://www.lrec-conf.org/proceedings/lrec2014/pdf/332_Paper.pdf}).
+#' 
 #' @param .Object a \code{"partitionBundle"} object
 #' @param chars a regex providing the characters to keep
 #' @param sAttribute the s-attribute providing the date
@@ -18,7 +25,8 @@ setGeneric("duplicates", function(.Object, ...) standardGeneric("duplicates"))
 #'  )
 #' doubled <- duplicates(foo)
 #' }
-#' @noRd
+#' @exportMethod duplicates
+#' @rdname duplicates-method
 setMethod("duplicates", "partitionBundle", function(.Object, chars="[a-zA-Z]", sAttribute="text_date", sample=100, n=2, threshold=0.9, mc=FALSE, verbose=TRUE){
   if (verbose == TRUE) message("... counting characters")
   bundleSample <- sample(.Object, size=sample)

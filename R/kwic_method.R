@@ -30,8 +30,19 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @docType methods
 #' @rdname kwic
 setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
-  if(is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
-  stopifnot(all(meta %in% sAttributes(.Object@corpus)))
+  if(is.null(meta)){
+    parsedRegistry <- parseRegistry(.Object@corpus)
+    if ("meta" %in% names(parsedRegistry)){
+      meta <- parsedRegistry[["meta"]]
+    } else {
+      meta <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
+      if (all(meta %in% sAttributes(.Object@corpus)) == FALSE){
+        stop("meta found in session settings does not work") 
+      }
+    }
+  }
+    
+  
   metainformation <- lapply(
     meta,
     function(metadat){
@@ -84,4 +95,14 @@ setMethod("kwic", "partition", function(
     return(NULL)
     }
   kwic(ctxt, meta=meta, neighbor=neighbor)
+})
+
+#' @rdname kwic
+setMethod("kwic", "missing", function(.Object, ...){
+  if (requireNamespace("shiny", quietly=TRUE)){
+    shiny::runApp(system.file("shiny", "kwic", package="polmineR"), launch.browser=TRUE)  
+  } else {
+    message("package shiny not available")
+  }
+  
 })

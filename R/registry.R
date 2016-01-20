@@ -66,7 +66,6 @@ parseRegistry <- function(corpus){
   # get pAttributes
   registryList[["pAttributes"]] <- gsub("^ATTRIBUTE\\s+(.*?)$", "\\1", grep("^ATTRIBUTE", registry, value=T))
   # get language
-  registryList[["language"]] <- gsub("^.*language\\s=\\s\"(.*?)\".*$", "\\1", grep("language =", registry, value=T))
   # getEncoding
   encodingLine <- registry[grep('charset\\s*=\\s*"', registry)]
   encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
@@ -75,6 +74,13 @@ parseRegistry <- function(corpus){
     warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
   }
   registryList[["encoding"]] <- tolower(encoding)
+  propertiesLines <- grep("^##::", registry)
+  propertiesNames <- sapply(propertiesLines, function(x) gsub("^##::\\s+(.*?)\\s+=.*?$", "\\1", registry[x]))
+  properties <- lapply(
+    setNames(propertiesLines, propertiesNames),
+    function(x) strsplit(gsub('^##::.*?=\\s"(.*?)".*?$', "\\1", registry[x]), "\\|")[[1]]
+  )
+  registryList <- c(registryList, properties)
   return(registryList)
 }
 
