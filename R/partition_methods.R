@@ -98,7 +98,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
       if (is.null(names(x@metadata))){
         meta <- NULL
       } else {
-        meta <- colnames(x@metadata$table)
+        meta <- colnames(x@metadata)
       }
       p <- enrich(
         p, size=TRUE,
@@ -174,8 +174,8 @@ setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
   strucSize <- object@cpos[,2] - object@cpos[,1] + 1
   tab <- data.frame(
     strucSize,
-    rows=object@metadata$table[,dim[1]],
-    cols=object@metadata$table[,dim[2]]
+    rows=object@metadata[,dim[1]],
+    cols=object@metadata[,dim[2]]
   )
   ctab <- xtabs(strucSize~rows+cols, data=tab)
   ctab <- as.matrix(unclass(ctab))

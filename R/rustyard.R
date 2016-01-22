@@ -9,8 +9,8 @@
 #   sAttrCols <- paste(Partition@corpus,'.', cols, sep='')
 #   tab <- data.frame(
 #     strucSize,
-#     rows=Partition@metadata$table[,rows],
-#     cols=Partition@metadata$table[,cols]
+#     rows=Partition@metadata[,rows],
+#     cols=Partition@metadata[,cols]
 #   )
 #   ctab <- xtabs(strucSize~rows+cols, data=tab)
 #   ctab <- data.frame(as.matrix(unclass(ctab)))
@@ -584,3 +584,19 @@
 #     n=as.integer(n), corpus=.Object@corpus, encoding=.Object@encoding,
 #     size=as.integer(size(.Object)), stat=TF, pAttribute=pAttribute)
 # })
+
+
+# #' Helper function
+# #' @noRd
+# .partitionMetadataValues <- function(Partition){
+#   Partition@metadata$values <- sapply(
+#     sAttributes(Partition),
+#     USE.NAMES=TRUE,
+#     function(x){
+#       foo <- unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs));
+#       Encoding(foo)<-Partition@encoding;
+#       foo}
+#   )
+#   Partition
+# }
+# 

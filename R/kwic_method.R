@@ -19,7 +19,7 @@ NULL
 #' @rdname kwic
 #' @docType methods
 #' @examples
-#' bt <- partition("PLPRTXT", def=list(text_date=".*"), regex=TRUE)
+#' bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
 #' foo <- kwic(bt, "Integration")
 #' foo <- kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
 #' @exportMethod kwic

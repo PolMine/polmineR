@@ -114,7 +114,7 @@ partition class
 
 \item{\code{size}}{Object of class \code{"numeric"} total size of the partition}
 
-\item{\code{metadata}}{Object of class \code{"list"} metadata information}
+\item{\code{metadata}}{Object of class \code{"data.frame"} metadata information}
 
 \item{\code{strucs}}{Object of class \code{"numeric"} the strucs defining the partition}
 

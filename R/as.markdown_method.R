@@ -26,7 +26,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta){
     s <- object@strucs
     gapSize <- s[2:length(s)] - s[1:(length(s)-1)]
     gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
-    m <- object@metadata$table
+    m <- object@metadata
     metaNo <- ncol(m)
     metaComp <- data.frame(m[2:nrow(m),], m[1:(nrow(m)-1),])
     metaChange <- !apply(
@@ -34,11 +34,11 @@ setMethod("as.markdown", "plprPartition", function(object, meta){
       function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
     )
     metaChange <- c(TRUE, metaChange)
-    metadata <- apply(object@metadata$table, 2, function(x) as.vector(x))
+    metadata <- apply(object@metadata, 2, function(x) as.vector(x))
   } else {
     gap <- 0
     metaChange <- TRUE
-    metadata <- matrix(apply(object@metadata$table, 2, function(x) as.vector(x)), nrow=1)
+    metadata <- matrix(apply(object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
   type <- cqi_struc2str(paste(object@corpus, ".text_type", sep=""), object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {

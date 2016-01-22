@@ -16,7 +16,7 @@ NULL
 #' @slot cpos Object of class \code{"matrix"} corpus positions 
 #' @slot pos Object of class \code{"list"} with tables "abs", "rel" and "max"
 #' @slot size Object of class \code{"numeric"} total size of the partition 
-#' @slot metadata Object of class \code{"list"} metadata information 
+#' @slot metadata Object of class \code{"data.frame"} metadata information 
 #' @slot strucs Object of class \code{"numeric"} the strucs defining the partition 
 #' @slot pAttribute Object of class \code{"character"} indicating the pAttribute of the
 #' count in slot tf
@@ -54,7 +54,7 @@ setClass(
     cpos="matrix",
     pos="list",
     size="numeric",
-    metadata="list",
+    metadata="data.frame",
     strucs="numeric",
     stat="data.table",
     pAttribute="character",

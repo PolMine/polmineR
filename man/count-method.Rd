@@ -21,7 +21,7 @@ count(.Object, ...)
   verbose = TRUE)
 }
 \arguments{
-\item{.Object}{either a partition or a partitionBundle object}
+\item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus}
 
 \item{...}{further parameters}
 
@@ -35,18 +35,27 @@ count(.Object, ...)
 
 \item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
 }
+\value{
+a \code{"data.table"}
+}
 \description{
-Count number of occurrences of a query (CQP syntax can be used).
+Count number of occurrences of a query. The CQP syntax can be used to formulate 
+the query.
 }
 \examples{
-\dontrun{
-# generate a partition for testing 
 use("polmineR.sampleCorpus")
-test <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-count(test, "Wir") # get frequencies for one token
-count(test, c("Wir", "lassen", "uns")) # get frequencies for multiple tokens
-count("PLPRBTTXT", c("machen", "Integration"), "word")
-}
+debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+count(debates, "Arbeit") # get frequencies for one token
+count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+count("PLPRBTTXT", c("Migration", "Integration"), "word")
+
+debates <- partitionBundle(
+  object="PLPRBTTXT",
+  def=list(text_id=".*"),
+  var=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+  regex=TRUE, mc=FALSE, verbose=FALSE
+)
+count(debates, c("Arbeit", "Integration", "Umwelt"))
 }
 \seealso{
 count

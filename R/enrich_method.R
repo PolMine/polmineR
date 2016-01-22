@@ -44,7 +44,7 @@ setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, i
   }
   if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    object <- .partition.metadata(object, meta)
+    object@metadata <- meta(object, sAttributes=meta)
   }
   object
 })

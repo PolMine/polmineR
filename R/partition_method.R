@@ -1,5 +1,3 @@
-setGeneric("partition", function(object, ...){standardGeneric("partition")})
-
 #' Initialize a partition
 #' 
 #' Set up an object of the partition class. Frequency lists are computeted if a pAttribute is provided.
@@ -23,6 +21,7 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for counting terms)
 #' @param verbose logical, defaults to TRUE
+#' @param ... parameters passed into the partition-method
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
@@ -39,6 +38,9 @@ setGeneric("partition", function(object, ...){standardGeneric("partition")})
 #' @exportMethod partition
 #' @rdname partition
 #' @aliases partition
+setGeneric("partition", function(object, ...){standardGeneric("partition")})
+
+#' @rdname partition
 setMethod("partition", "character", function(
   object, def=NULL, name=c(""),
   encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
@@ -103,7 +105,7 @@ setMethod("partition", "character", function(
     }
     if (!is.null(meta)) {
       if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-      Partition <- .partition.metadata(Partition, meta)
+      Partition@metadata <- meta(Partition, sAttributes=meta)
     }
     if (verbose==TRUE) message('... partition is set up\n')
   } else {
@@ -125,76 +127,6 @@ setMethod("partition", "list", function(
     )
 })
 
-
-#' add metadata information to a partition object
-#' 
-#' This function is usually part of the procedure to set up a partition. Based
-#' on the corpus positions that have initially been set up, a table with all
-#' metadata is added to the object, and a list with the attributes and the
-#' values that occur.
-#' 
-#' The values of the metadata are there to determine which subcorpora can be
-#' generated. The table with all metadata can be added as it is a basis for the
-#' values. It can be omitted for performance and memora reasons.
-#' 
-#' @param partition a partition object
-#' @param meta a character vector
-#' @param table whether to setup metadata table
-#' @return A 'metadata' item will be added to the partition object, with the
-#' two following subitems:
-#' table - the table described above
-#' values - a list of character vectors
-#' @author Andreas Blaette
-#' @noRd
-.partition.metadata <- function(Partition, meta, table=TRUE) {
-  m <- meta
-  meta <- NULL
-  if (table==TRUE) {
-    if (Partition@xml == "flat") {
-      Partition@metadata$table <- data.frame(
-        sapply(
-          m,
-          USE.NAMES=TRUE,
-          function(x) { 
-            tmp <- cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs)
-            Encoding(tmp) <- Partition@encoding
-            tmp
-          }
-        )
-      )
-    } else if (Partition@xml == "nested") {
-      meta <- vapply(m, FUN.VALUE="character", USE.NAMES=TRUE, function(x)paste(Partition@corpus, '.', x, sep=''))
-      Partition@metadata$table <- data.frame(
-        sapply(
-          meta,
-          USE.NAMES=TRUE,
-          function(x) {
-            tmp <- cqi_struc2str(x, cqi_cpos2struc(x, Partition@cpos[,1]))
-            Encoding(tmp) <- Partition@encoding
-            tmp
-          }
-        )
-      )
-      colnames(Partition@metadata$table) <- names(meta)
-    }
-  }
-  Partition <- .partitionMetadataValues(Partition)
-  return(Partition)
-}
-
-#' Helper function
-#' @noRd
-.partitionMetadataValues <- function(Partition){
-  Partition@metadata$values <- sapply(
-    sAttributes(Partition),
-    USE.NAMES=TRUE,
-    function(x){
-      foo <- unique(cqi_struc2str(paste(Partition@corpus, '.', x, sep=''), Partition@strucs));
-      Encoding(foo)<-Partition@encoding;
-      foo}
-  )
-  Partition
-}
 
 #' Get the cpos for a partition based on sattributes
 #' 
@@ -281,7 +213,7 @@ setMethod("partition", "list", function(
 
 
 #' @rdname partition
-setMethod("partition", "missing", function(){
+setMethod("partition", "session", function(object){
   .getClassObjectsAvailable(".GlobalEnv", "partition")
 })
 
@@ -349,10 +281,62 @@ setMethod("partition", "partition", function(object, def, name=c(""), regex=FALS
   newPartition@strucs <- Partition@strucs[hits]
   if (length(Partition@metadata) == 2) {
     message('... adjusting metadata')
-    newPartition@metadata$table <- Partition@metadata$table[hits,]
-    newPartition <- .partitionMetadataValues(newPartition)
+    newPartition@metadata <- Partition@metadata[hits,]
+    # newPartition <- .partitionMetadataValues(newPartition)
   }
   newPartition
 }
 
+
+#' @rdname partition
+setMethod("partition", "missing", function() {
+  if (requireNamespace("shiny", quietly=TRUE) && requireNamespace("miniUI", quietly=TRUE)){
+    ui <- miniUI::miniPage(
+      shiny::tags$head(shiny::tags$style(shiny::HTML("
+                                .form-group, .form-control, .selectize-input, .selectize-dropdown, .radio-inline{
+                                font-size: 90%;
+                                }
+                                "))),
+      miniUI::gadgetTitleBar(
+        "make partition",
+        right = miniUI::miniTitleBarButton("done", "Generate", primary = TRUE)
+      ),
+      miniUI::miniContentPanel(
+        shiny::textInput(inputId = "name", label = "Partition name:", value = "FOO"),
+        shiny::selectInput("corpus", "Corpus:", choices = cqi_list_corpora(), selected = "PLPRTXT"),
+        shiny::textInput(inputId = "def", label = "sAttributes:", value = 'text_year="2012"'),
+        shiny::selectInput(inputId="pAttribute", label="pAttribute:", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
+        shiny::radioButtons("regex", "Use regular expressions:", choices = list("TRUE", "FALSE"), inline = TRUE),
+        shiny::radioButtons("xml", "XML type:", choices = list("flat", "nested"), inline = TRUE)
+      ),
+      
+      miniUI::miniButtonBlock(
+        shiny::actionButton("check", " check", icon=shiny::icon("stethoscope")),
+        shiny::actionButton("save", " save", icon = shiny::icon("save"))
+      )
+      )
+    
+    server <- function(input, output, session) {
+      shiny::observeEvent(input$done, {
+        shiny::stopApp(
+          partition(
+            as.character(input$corpus),
+            def=eval(parse(text=paste("list(", input$def, ")", sep=""))),
+            name=input$name,
+            pAttribute=input$pAttribute,
+            regex=input$regex,
+            xml=input$xml,
+            mc=input$mc,
+            verbose=FALSE
+          )
+        )
+      })
+      shiny::observeEvent(input$check, {
+        print("yeah")
+      })
+      
+    }
+    shiny::runGadget(ui, server)
+  }
+})
 

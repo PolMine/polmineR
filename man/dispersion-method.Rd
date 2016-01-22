@@ -35,9 +35,9 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-test <- partition("PLPRBTTXT", def=list(text_lp="17"), pAttribute=NULL)
-dispersion(test, "Integration", pAttribute="word", dim=c("text_year"))
-foo <- dispersion(test, "Integration", c("text_year", "text_party"))
+test <- partition("PLPRBTTXT", def=list(text_year="2009"), pAttribute=NULL)
+dispersion(test, query="Integration", pAttribute="word", dim=c("text_date"))
+foo <- dispersion(test, "Integration", c("text_date", "text_party"))
 dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
 }
 \author{

@@ -40,11 +40,7 @@ setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
 #' @noRd
 .distributionCrosstab <- function(object, query, pAttribute, rows, cols, verbose=TRUE) {
   dispObject <- new("dispersion", dim=c(rows, cols), query=query)
-  if (length(object@metadata) == 0){
-    object <- enrich(object, meta=c(rows, cols))
-  } else if (length(object@metadata) > 0 && any(!(c(rows, cols) %in% colnames(object@metadata$table)))) {
-    object <- enrich(object, meta=c(rows, cols))
-  }
+  object <- enrich(object, meta=c(rows, cols))
   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
   dispObject@sizes <- dissect(object, dim=c(rows, cols), verbose=FALSE)
   if (verbose==TRUE) message ('... getting frequencies')
@@ -108,7 +104,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
     if (freq==TRUE) {
       sizes <- xtabs(
         length~meta,
-        data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata$table[,sAttribute])
+        data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata[,sAttribute])
         )
       sizeMatrix <- as(sizes, "matrix")
       dimnames(sizeMatrix) <- setNames(list(names(sizes), "noToken"), c(sAttribute, "size"))
@@ -163,7 +159,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
   dispersionObject <- new("dispersion", dim=sAttribute)
   subsetsRaw <- xtabs(
     length~meta,
-    data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata$table[,sAttribute])
+    data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata[,sAttribute])
     )
   dispersionObject@sizes <- matrix(
     data=as.vector(subsetsRaw), ncol=1,
@@ -223,7 +219,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #  colnames(abs) <- queries
 #  Encoding(rownames(abs)) <- part@encoding
   tabulatedDF1 <- as.matrix(ftable(tabulatedDF))
-  # rownames(tabulatedDF1) <- object@metadata$table[,sAttribute]
+  # rownames(tabulatedDF1) <- object@metadata[,sAttribute]
   tabulatedDF2 <- tabulatedDF1[,-which(colnames(tabulatedDF1) == "subcorpus_size")]
   zeroValues <- matrix(
     data=rep(0, times=length(queryHitsFail)*nrow(tabulatedDF2)),
@@ -262,9 +258,9 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @seealso \code{crosstab-class}
 #' @exportMethod dispersion
 #' @examples
-#' test <- partition("PLPRBTTXT", def=list(text_lp="17"), pAttribute=NULL)
-#' dispersion(test, "Integration", pAttribute="word", dim=c("text_year"))
-#' foo <- dispersion(test, "Integration", c("text_year", "text_party"))
+#' test <- partition("PLPRBTTXT", def=list(text_year="2009"), pAttribute=NULL)
+#' dispersion(test, query="Integration", pAttribute="word", dim=c("text_date"))
+#' foo <- dispersion(test, "Integration", c("text_date", "text_party"))
 #' dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
 #' @seealso count
 #' @author Andreas Blaette
@@ -275,7 +271,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @aliases dispersion dispersion-method dispersion,partition-method
 setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL, freq=TRUE, mc=FALSE, verbose=TRUE){
   if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
-  if ( is.null(names(object@metadata))) {
+  if ( nrow(object@metadata) == 0) {
     if (verbose == TRUE) message("... required metadata missing, fixing this")
     object <- enrich(object, meta=dim)
   }
@@ -289,6 +285,9 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
       result <- .queriesDistribution(object, query, pAttribute, dim, freq=freq, mc=mc, verbose=verbose)
     }
   } else if (length(dim)==2){
+    if(sAttributes(object, dim[1]) <= 1 || sAttributes(object, dim[2]) <= 1){
+      warning("less than two valuesfor one of the dimensions provided")
+    }
     result <- .distributionCrosstab(
       object, query=query, pAttribute=pAttribute, rows=dim[1], cols=dim[2], verbose=verbose
       )

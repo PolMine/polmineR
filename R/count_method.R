@@ -34,7 +34,6 @@ NULL
 #'   regex=TRUE, mc=FALSE, verbose=FALSE
 #' )
 #' count(debates, c("Arbeit", "Integration", "Umwelt"))
-#' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method

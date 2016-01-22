@@ -46,14 +46,10 @@ setMethod(
   "sAttributes", "partition",
   function (object, sAttribute=NULL) {
     if (is.null(sAttribute)){
-    ret <- cqi_attributes(object@corpus, "s")
+      ret <- cqi_attributes(object@corpus, "s")
     } else {
-      if ("values" %in% names(object@metadata)) {
-        ret <- object@metadata$values[[sAttribute]]
-      } else {
-        ret <- unique(cqi_struc2str(paste(object@corpus, '.', sAttribute, sep=''), object@strucs));
-        Encoding(ret) <- object@encoding;  
-      }   
+      ret <- unique(cqi_struc2str(paste(object@corpus, '.', sAttribute, sep=''), object@strucs));
+      Encoding(ret) <- object@encoding;  
     }
     ret
   }
