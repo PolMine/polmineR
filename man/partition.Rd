@@ -8,6 +8,7 @@
 \alias{partition,missing-method}
 \alias{partition,partition-method}
 \alias{partition,session-method}
+\alias{partitionGadget}
 \title{Initialize a partition}
 \usage{
 partition(object, ...)
@@ -28,6 +29,8 @@ partition(object, ...)
   mc = FALSE, ...)
 
 \S4method{partition}{missing}()
+
+partitionGadget()
 }
 \arguments{
 \item{object}{character-vector - the CWB-corpus to be used}

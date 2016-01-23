@@ -340,3 +340,6 @@ setMethod("partition", "missing", function() {
   }
 })
 
+#' @export partitionGadget
+#' @rdname partition
+partitionGadget <- function() partition()
