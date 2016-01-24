@@ -8,6 +8,11 @@ setGeneric("duplicates", function(.Object, ...) standardGeneric("duplicates"))
 #' ExplorationWorkbench" presented at LREC 2014
 #' (see \url{http://www.lrec-conf.org/proceedings/lrec2014/pdf/332_Paper.pdf}).
 #' 
+#' The method calls the (internal) \code{"getDuplicates"}-method that will make choices as follows:
+#' (a) If two similar articles have been published on the same day, the shorter article will
+#' be considered the duplicate; (b) if two similar articles were published on different days,
+#' the article that appeared later will be considered the duplicate.
+#' 
 #' @param .Object a \code{"partitionBundle"} object
 #' @param chars a regex providing the characters to keep
 #' @param sAttribute the s-attribute providing the date
@@ -29,10 +34,15 @@ setGeneric("duplicates", function(.Object, ...) standardGeneric("duplicates"))
 #' }
 #' @exportMethod duplicates
 #' @rdname duplicates-method
-setMethod("duplicates", "partitionBundle", function(.Object, chars="[a-zA-Z]", sAttribute="text_date", sample=100, n=2, threshold=0.9, mc=FALSE, verbose=TRUE){
+setMethod("duplicates", "partitionBundle", function(.Object, chars="[a-zA-Z]", pAttribute="word", sAttribute="text_date", sample=100, n=2, threshold=0.9, mc=FALSE, verbose=TRUE){
   if (verbose == TRUE) message("... counting characters")
-  bundleSample <- sample(.Object, size=sample)
-  charCount <- characterCount(.Object, pAttribute, regexCharsToKeep=chars, toLower=TRUE, decreasing=FALSE, mc=FALSE)
+  if (is.numeric(sample)){
+    bundleSample <- sample(.Object, size=sample)
+    charCount <- nchars(bundleSample, pAttribute=pAttribute, regexCharsToKeep=chars, toLower=TRUE, decreasing=FALSE, mc=FALSE)
+    rm(bundleSample)
+  } else {
+    charCount <- nchars(.Object, pAttribute, regexCharsToKeep=chars, toLower=TRUE, decreasing=FALSE, mc=FALSE)  
+  }
   if (verbose == TRUE) message("... preparing ngram matrix")
   ngramBundle <- ngrams(.Object, n=4, char=names(charCount[1:10]))
   ngramDocumentMatrix <- as.TermDocumentMatrix(ngramBundle, col="count")
@@ -43,6 +53,7 @@ setMethod("duplicates", "partitionBundle", function(.Object, chars="[a-zA-Z]", s
   similarityMatrix <- similarity(ngramDocumentMatrixWeighed, select=whatToCompareMatrix)
   if (verbose == TRUE) message("... preparing data.table")
   duplicates <- getDuplicates(.Object, similarityMatrix=similarityMatrix, threshold=threshold, date=sAttribute, progress=TRUE)
+  duplicates
 })
 
 
@@ -54,9 +65,10 @@ setMethod("getDuplicates", "partitionBundle", function(.Object, similarityMatrix
   dates <- unlist(lapply(
     setNames(.Object@objects, names(.Object)),
     function(x) sAttributes(x, date))
-    )
+  )
   indexDuplicates <- which(similarityMatrix$v >= threshold)
-  if (length(indexDuplicates > 0)){
+  if (length(indexDuplicates) > 0){
+    # keep only those values in similarity matrix that are above the threshold
     for (x in c("i", "j", "v")) similarityMatrix[[x]] <- similarityMatrix[[x]][indexDuplicates]  
     duplicateList <- lapply(
       c(1:length(similarityMatrix$i)),
@@ -64,34 +76,27 @@ setMethod("getDuplicates", "partitionBundle", function(.Object, similarityMatrix
         iName <- similarityMatrix$dimnames[[1]][similarityMatrix$i[i]]
         jName <- similarityMatrix$dimnames[[1]] [similarityMatrix$j[i]]
         iDate <- as.POSIXct(dates[[iName]])
-        iLength <- .Object@objects[[iName]]@size
+        iSize <- .Object@objects[[iName]]@size
         jDate <- as.POSIXct(dates[[jName]])
-        jLength <- .Object@objects[[jName]]@size
+        jSize <- .Object@objects[[jName]]@size
         value <- similarityMatrix$v[i]
         if(iDate == jDate){
-          if (iLength >= jLength){
-            return(c(name=iName, duplicateName=jName, value=value))
+          if (iSize >= jSize){
+            return(c(name=iName, date=as.character(iDate), size=iSize, duplicate_name=jName, duplicate_date=as.character(jDate), duplicate_size=jSize, similarity=value))
           } else {
-            return(c(name=jName, duplicateName=iName, value=value))
+            return(c(name=jName, date=as.character(jDate), size=jSize, duplicate_name=iName, duplicate_date=as.character(iDate), duplicate_size=iSize, similarity=value))
           }
         } else if (iDate < jDate){
-          return(c(name=iName, duplicateName=jName, value=value))
+          return(c(name=iName, date=as.character(iDate), size=iSize, duplicate_name=jName, duplicate_date=as.character(jDate), duplicate_size=jSize, similarity=value))
         } else if (iDate > jDate){
-          return(c(name=jName, duplicateName=iName, value=value))
+          return(c(name=jName, date=as.character(jDate), size=jSize, duplicate_name=iName, duplicate_date=as.character(iDate), duplicate_size=iSize, similarity=value))
         }
       })
     duplicateDT <- data.table(do.call(rbind, duplicateList))
-#     duplicateUnique <- unique(sapply(duplicateList, function(x) paste(x, collapse="\t")))
-#     duplicateFinal <- as.data.frame(
-#       do.call(rbind, strsplit(duplicateUnique, "\t")),
-#       stringsAsFactor=FALSE
-#     )
-#     duplicateFinal[,1] <- as.character(as.vector(duplicateFinal[,1]))
-#     duplicateFinal[,2] <- as.character(as.vector(duplicateFinal[,2]))
-#     duplicateFinal[,3] <- as.numeric(as.vector(duplicateFinal[,3]))
-#     colnames(duplicateFinal) <- c("name", "duplicateName", "value")
-#     return(duplicateFinal)
-    return(duplicateDT)
+    count <- function(x) return(x)
+    DT <- duplicateDT[, count(.N), by=.(name, date, size, duplicate_name, duplicate_date, duplicate_size, similarity)][, V1 := NULL]
+    DT[, size := as.numeric(size)][, duplicate_size := as.numeric(duplicate_size)][, similarity := as.numeric(similarity)]
+    return(DT)
   } else {
     message("... no duplicates found")
     return(NULL)

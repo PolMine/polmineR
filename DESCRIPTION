@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.18
-Date: 2016-01-22
+Version: 0.5.19
+Date: 2016-01-24
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -43,22 +43,21 @@ Collate:
     'adjustEncoding_method.R'
     'generics.R'
     'textstat_class.R'
-    'bundle_class.R'
     'session_class.R'
     'polmineR_package.R'
     'partition_class.R'
+    'bundle_class.R'
     'partitionBundle_class.R'
     'as.mallet_method.R'
     'as.markdown_method.R'
+    'kwic_class.R'
     'comp_class.R'
     'context_class.R'
-    'kwic_class.R'
     'browse_method.R'
     'bughunt_method.R'
-    'characterCount_method.R'
     'chisquare_method.R'
-    'contextBundle_class.R'
     'cooccurrences_class.R'
+    'contextBundle_class.R'
     'coerce_methods.R'
     'comparables_method.R'
     'ngrams_method.R'
@@ -96,6 +95,7 @@ Collate:
     'mail_method.R'
     'means_method.R'
     'meta_method.R'
+    'nchars_method.R'
     'pAttributes_method.R'
     'papply_function.R'
     'partitionBundle_method.R'

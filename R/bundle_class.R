@@ -132,6 +132,7 @@ setMethod("as.matrix", "bundle", function(x, col) {
   as.matrix(as.TermDocumentMatrix(x, col))
 })
 
+#' @exportMethod sample
 setMethod("sample", "bundle", function(x, size){
   toDrop <- sample(c(1:length(x)), size=length(x)-size)
   toDrop <- toDrop[order(toDrop, decreasing=TRUE)]
