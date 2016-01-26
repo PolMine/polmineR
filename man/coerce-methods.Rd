@@ -3,14 +3,18 @@
 \docType{methods}
 \name{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix}
+\alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.TermDocumentMatrix,character-method}
-\title{coerce object to TermDocumentMatrix/DocumentTermMatrix}
+\title{coerce object to matrix}
 \usage{
 as.TermDocumentMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, pAttribute, sAttribute,
   from = NULL, to = NULL, strucs = NULL, rmBlank = TRUE,
   verbose = TRUE, robust = FALSE, mc = FALSE)
+
+\S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{x}{some object}
@@ -39,8 +43,8 @@ as.TermDocumentMatrix(x, ...)
 a TermDocumentMatrix
 }
 \description{
-A set of methods to transform objects into the TermDocumentMatrix-objects, or
-DocumentTermMatrix-objects imported from the \code{tm} package.
+Coerce an object, usually a bundle (or an object inheriting from bundle) to
+a TermDocumentMatrix, DocumentTermMatrix, sparseMatrix etc.
 }
 \examples{
 \dontrun{
