@@ -9,8 +9,8 @@
 \usage{
 nchars(x, ...)
 
-\S4method{nchars}{partition}(x, pAttribute, regexCharsToKeep = "[a-zA-Z]",
-  toLower = TRUE, decreasing = TRUE)
+\S4method{nchars}{partition}(x, pAttribute = "word",
+  regexCharsToKeep = "[a-zA-Z]", toLower = TRUE, decreasing = TRUE)
 
 \S4method{nchars}{partitionBundle}(x, decreasing = TRUE, mc = FALSE, ...)
 }

@@ -37,6 +37,12 @@ Urlich Heid and Jonathan Sonntag in the paper "The eIdentity Text
 ExplorationWorkbench" presented at LREC 2014
 (see \url{http://www.lrec-conf.org/proceedings/lrec2014/pdf/332_Paper.pdf}).
 }
+\details{
+The method calls the (internal) \code{"getDuplicates"}-method that will make choices as follows:
+(a) If two similar articles have been published on the same day, the shorter article will
+be considered the duplicate; (b) if two similar articles were published on different days,
+the article that appeared later will be considered the duplicate.
+}
 \examples{
 \dontrun{
 foo <- partitionBundle(

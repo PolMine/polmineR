@@ -10,7 +10,7 @@ NULL
 #' 
 #' @param object the object to be trimmed
 #' @param minSignificance minimum significance level
-#' @param minFrequency the minimum frequency
+#' @param minTotal the minimum frequency
 #' @param maxRank maximum rank
 #' @param posFilter exclude words with a POS tag not in this list
 #' @param tokenFilter tokens to exclude from table
@@ -90,8 +90,8 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
 #' @importFrom tm stopwords
 #' @importFrom slam as.simple_triplet_matrix
 #' @rdname trim-method
-setMethod("trim", "TermDocumentMatrix", function(object, minFrequency=NULL, stopwords=NULL, keep=NULL, verbose=TRUE){
-  mat <- as.sparseMatrix(object)
+setMethod("trim", "TermDocumentMatrix", function(object, minTotal=NULL, stopwords=NULL, keep=NULL, verbose=TRUE){
+  # mat <- as.sparseMatrix(object)
   if (!is.null(minFrequency)){
     if (verbose) message("... applying minimum frequency")
     aggregatedFrequencies <- rowSums(mat)
@@ -109,6 +109,70 @@ setMethod("trim", "TermDocumentMatrix", function(object, minFrequency=NULL, stop
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   retval
 })
+
+#' shrink a matrix for topicmodelling
+#' 
+#' @param object an object of class \code{"DocumentTermMatrix"}
+#' @param minCount minimum overall occurrence of a term in the matrix
+#' @param minTfIdfMean minimum mean value for tf-idf (suggested: 0.005)
+#' @param sparse will be passed into \code{"removeSparseTerms"} from \code{"tm"}-package
+#' @param stopwordsLanguage e.g. "german", to get stopwords defined in the tm package
+#' @param removeTrash if TRUE, terms containing special chars, numbers or length = 1 will be removed
+#' @importFrom slam col_sums
+setMethod("trim", "DocumentTermMatrix", function(object, minTotal=2, minTfIdfMean = 0.005, sparse=0.995, stopwordsLanguage="german", removeTrash=TRUE, verbose=TRUE){
+  # min count
+  if (!is.null(minTotal)){
+    if (verbose == TRUE) message("... applying minTotal ", appendLF = FALSE)
+    tfTotal <- slam::col_sums(object)
+    tokensToKeep <- names(tfTotal[which(tfTotal >= minTotal)])
+    if (verbose == TRUE) message("(reduction: ", ncol(object) - length(tokensToKeep), ")")
+    object <- object[,tokensToKeep]
+  }
+  
+  # min tf idf mean
+  if (!is.null(minTfIdfMean)){
+    if (verbose == TRUE) message("... applying minTfIdfMean ", appendLF = FALSE)
+    dtmTfidf <- weigh(object, method="tfidf")
+    tfidfMeans <- means(dtmTfidf, dim=1)
+    tokensToKeep2 <- names(tfidfMeans[which(tfidfMeans > minTfIdfMean)])
+    tokensToKeep2 <- tokensToKeep2[!is.na(tokensToKeep2)]
+    if (verbose == TRUE) message("(reduction: ", ncol(object) - length(tokensToKeep2), ")")
+    object <- object[,tokensToKeep2]
+  }
+  
+  # reduce sparsity
+  if (!is.null(sparse)){
+    if (verbose == TRUE) message("... reducing sparsity ", appendLF = FALSE)
+    ncolOld <- ncol(object)
+    object <- tm::removeSparseTerms(object, sparse=sparse)
+    if (verbose == TRUE) message("(reduction of: ", ncolOld - ncol(object), ")")
+  }
+  
+  terms <- dimnames(object)[["Terms"]]
+  
+  if (verbose == TRUE) message("... filtering vocabulary ", appendLF = FALSE)
+  termsToDrop <- list()
+  if (!is.null(stopwordsLanguage)){
+    termsToDrop[["stopwordsToDrop"]] <- which(terms %in% stopwords(stopwordsLanguage))
+  }
+  if (removeTrash == TRUE){
+    termsToDrop[["specialChars"]] <- which(!c(1:length(terms)) %in% grep("^[a-zA-ZéäöüÄÖÜ-ß|-]+$", terms))
+    termsToDrop[["numbers"]] <- grep("[0-9]", terms)
+    termsToDrop[["stubs"]] <- which(nchar(terms) == 1)
+  }
+  
+  # Entfernen von Sonderzeichen, Zahlen, Stopwoertern, Stummeln
+  termsToDrop <- unique(unlist(termsToDrop))
+  if (length(termsToDrop) > 0) {
+    ncolOld <- ncol(object)
+    object <- object[,-termsToDrop]
+    if (verbose == TRUE) message("(reduction: ", ncolOld - ncol(object), ")")
+  }
+  
+  attr(object, "weighting") <- c("term frequency", "tf")
+  object
+})
+
 
 #' trim dispersion object
 #' 

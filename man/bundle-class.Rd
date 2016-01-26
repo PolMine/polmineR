@@ -6,7 +6,6 @@
 \alias{+,bundle,textstat-method}
 \alias{[[,bundle-method}
 \alias{as.DocumentTermMatrix,bundle-method}
-\alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.bundle,list-method}
 \alias{as.bundle,textstat-method}
 \alias{as.matrix,bundle-method}
@@ -41,8 +40,6 @@ bapply(x, ...)
 \S4method{[[}{bundle}(x, i)
 
 \S4method{as.matrix}{bundle}(x, col)
-
-\S4method{as.TermDocumentMatrix}{bundle}(x, col)
 
 \S4method{as.DocumentTermMatrix}{bundle}(x, col)
 

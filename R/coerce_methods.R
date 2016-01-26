@@ -2,11 +2,11 @@
 NULL
 
 
-#' coerce object to TermDocumentMatrix/DocumentTermMatrix
+#' coerce object to matrix
 #' 
-#' A set of methods to transform objects into the TermDocumentMatrix-objects, or
-#' DocumentTermMatrix-objects imported from the \code{tm} package.
-#' 
+#' Coerce an object, usually a bundle (or an object inheriting from bundle) to
+#' a TermDocumentMatrix, DocumentTermMatrix, sparseMatrix etc.
+#'  
 #' @param x some object
 #' @param pAttribute the p-attribute
 #' @param sAttribute the s-attribute
@@ -21,6 +21,7 @@ NULL
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
 #' @exportMethod as.TermDocumentMatrix
+#' @exportMethod as.DocumentTermMatrix
 #' @docType methods
 #' @rdname coerce-methods
 #' @name as.TermDocumentMatrix
@@ -30,13 +31,6 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 
 #' @exportMethod as.sparseMatrix
 setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
-
-#' @param mat a TermDocumentMatrix
-#' @param verbose logicla, whether to be talkative
-#' @return a TermDocumentMatrix
-#' @importFrom slam as.simple_triplet_matrix
-#' 
-#' @noRd
 
 
 #' @docType methods
@@ -182,36 +176,47 @@ setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
 }
 
 
-#' @rdname bundle-class
+#' @rdname coerce-methods
 #' @importFrom slam simple_triplet_matrix
-setMethod("as.TermDocumentMatrix", "bundle", function(x, col){
-  dts <- lapply(x@objects, function(x) copy(x@stat))
-  lapply(
-    c(1:length(dts)),
-    function(i){
-      keys <- dts[[i]][, c(x@objects[[i]]@pAttribute), with=FALSE] %>%
-        apply(1, function(row) paste(row, collapse="//"))
-      dts[[i]][, key := keys]
-    })
-  uniqueKeys <- lapply(dts, function(dt) dt[["key"]]) %>% unlist %>% unique
+setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, verbose=TRUE){
+  if (is.null(pAttribute)){
+    pAttribute <- x@objects[[1]]@pAttribute
+    if (verbose == TRUE) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
+  }
+  stopifnot(
+    col %in% colnames(x@objects[[1]]),
+    pAttribute %in% colnames(x@objects[[1]])
+  )
+  if (verbose == TRUE) message("... generating (temporary) key column")
+  if (length(pAttribute) > 1){
+    lapply(
+      c(1:length(x@objects)),
+      function(i){
+        keys <- x@objects[[i]]@stat[, c(pAttribute), with=FALSE] %>% apply(1, function(row) paste(row, collapse="//"))
+        x@objects[[i]]@stat[, key := keys]
+      })
+  } else {
+    lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old=pAttribute, new="key"))
+  }
+  if (verbose == TRUE) message("... generating cumulated data.table")
+  DT <- rbindlist(lapply(x@objects, function(y) y@stat))
+  if (verbose == TRUE) message("... getting unique keys")
+  uniqueKeys <- unique(DT[["key"]])
   keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
-  lapply(
-    c(1:length(dts)),
-    function(n){ 
-      oldCols <- colnames(dts[[n]])
-      oldCols <- oldCols[-which(oldCols == col)]
-      setnames(dts[[n]], col, "v")
-      dts[[n]][, "i" := keys[ dts[[n]][["key"]] ] ][, "j" := n][, c(eval(oldCols)) := NULL, with=TRUE]
-    })
-  DT <- rbindlist(dts)
+  if (verbose == TRUE) message("... generating integer keys")
+  i <- keys[ DT[["key"]] ]
+  j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
   retval <- simple_triplet_matrix(
-    i = DT[["i"]],
-    j = DT[["j"]],
-    v = DT[["v"]],
+    i = i, j = j, v = DT[[col]],
     dimnames = list(Terms=names(keys), Docs=names(x@objects))
   )
-#   if (rmBlank == TRUE) retval <- .rmBlank(retval, verbose=verbose)
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  if (verbose == TRUE) message("... cleaning up temporary key columns")
+  if (length(pAttribute) > 1){
+    lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
+  } else {
+    lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
+  }
   retval
 })
 
