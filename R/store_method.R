@@ -55,8 +55,15 @@ setMethod("store", "jobjRef", function(object, filename=NULL){
   fileOutputStream <- new(rJava::J("java/io/FileOutputStream"), filename)
   objectStream <- new(rJava::J("java/io/ObjectOutputStream"), fileOutputStream)
   objectStream$writeObject(object)
+  objectStream$close()
+  # somewhat different alternative
+  # fos <- .jnew("java/io/FileOutputStream", filename)
+  # oos <- .jnew("java/io/ObjectOutputStream", .jcast(fos, "java/io/OutputStream"))
+  # oos$writeObject(object)
+  # oos$close()
   filename
 })
+
 
 
 

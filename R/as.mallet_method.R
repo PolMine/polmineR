@@ -15,10 +15,10 @@ NULL
 #' @param filename where to store the Java-object
 #' @exportMethod as.mallet
 #' @examples 
-#' \dontrun{
-#' clu <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
-#' foo <- as.mallet(clu)
-#' }
+#' use("polmineR.sampleCorpus")
+#' bundle <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
+#' instanceList <- as.mallet(bundle)
+#' store(instanceList, filename=NULL) # output to a tempfile
 #' @rdname as.mallet-method
 setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 
@@ -27,7 +27,7 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", s
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")
   } else {
-    warning("malle package not available")
+    warning("mallet package not available")
     stop()
   }
   if (mc == FALSE){
@@ -53,3 +53,12 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", s
   )
   return(malletObject)
 })
+
+.malletCmd <- function(input, start=TRUE){
+  cmd <- c("/opt/mallet/bin/mallet", "train-topics", "--input", input)
+  paste(cmd, collapse=" ")
+}
+
+getMalletResults <- function(){
+  
+}
