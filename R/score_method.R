@@ -1,11 +1,11 @@
-setGeneric("score", function(object, ...){standardGeneric("score")})
+setGeneric("score", function(.Object, ...){standardGeneric("score")})
 
 
 #' score partitions in a bundle
 #' 
 #' Assign scores to the partitions in a partitionBundle object.
 #' 
-#' @param object a partitionBundle object
+#' @param .Object a partitionBundle object
 #' @param token a character vector supplying tokens to be looked up
 #' @param method either "additive" or "vsm"
 #' @param pAttribute the p-attribute the analysis is based on
@@ -17,14 +17,18 @@ setGeneric("score", function(object, ...){standardGeneric("score")})
 #' @rdname score-method
 #' @aliases score score-method score,partitionBundle-method
 #' @name score
-setMethod("score", "partitionBundle", function(object, token, method, pAttribute, rel=FALSE, tfMethod=FALSE){
-  if (is.null(names(object@objects))) warning("names needed but missing")
-  if ((length(unique(names(object@objects)))) != length(object@objects)) warning("please ensure that are names are present and unique")
-  if (method == "additive"){
-    how <- ifelse(tfMethod==FALSE, "in", "grep")
-    tab <- count(object=object, token=token, pAttribute=pAttribute, rel=rel, method=tfMethod)
-    score <- rowSums(tab)
+setMethod("score", "partitionBundle", function(.Object, by, pAttribute, method="count", freq=FALSE){
+  if (is.null(names(.Object@objects))){
+    stop("names needed but missing")
   }
-  score
+  if ((length(unique(names(.Object@objects)))) != length(.Object@objects)){
+    warning("please ensure that are names are present and unique")
+  }
+  if (method == "count"){
+    tab <- count(.Object, query=by, pAttribute=pAttribute, freq=freq)
+    score <- tab[, TOTAL := rowSums(.SD), by=partition]
+    setnames(score, "V1", "score")
+  }
+  tab
 })
 
