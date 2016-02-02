@@ -121,4 +121,7 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
+    'as.svmlight_method.R'
+    'noise_method.R'
+    'size_method.R'
 RoxygenNote: 5.0.1

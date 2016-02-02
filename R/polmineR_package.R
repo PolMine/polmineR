@@ -65,8 +65,6 @@ NULL
 NULL
 
 
-setOldClass("TermDocumentMatrix")
-setOldClass("DocumentTermMatrix")
 setOldClass("igraph")
 setOldClass("html")
 
