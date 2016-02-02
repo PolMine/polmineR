@@ -1,14 +1,6 @@
 #' @include partition_class.R generics.R session_methods.R
 NULL
 
-setGeneric("size", function(x){UseMethod("size")})
-
-
-#' @rdname partition-class
-#' @exportMethod size
-setMethod("size", "partition", function(x) sum(x@cpos[,2]-x@cpos[,1]+1))
-
-
 
 
 #' @exportMethod show

@@ -217,6 +217,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, v
   } else {
     lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
   }
+  attr(retval, "weighting") <- c("term frequency", "tf")
   retval
 })
 

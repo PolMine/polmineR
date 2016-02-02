@@ -1,8 +1,8 @@
 setGeneric("as.svmlight", function(.Object, ...) standardGeneric("as.svmlight"))
 
 setMethod("as.svmlight", "DocumentTermMatrix", function(.Object, filename){
-  features <- split(x=.Object@i, f=.Object@j)
-  values <- split(.Object@v, f=.Object@j)
+  features <- split(x=.Object$j, f=.Object$i)
+  values <- split(.Object$v, f=.Object$i)
   lapply(
     c(1:length(features)),
     function(i){
@@ -11,7 +11,7 @@ setMethod("as.svmlight", "DocumentTermMatrix", function(.Object, filename){
         features[[i]][featureOrder], values[[i]][featureOrder],
         sep=":"
         )
-      cat(paste0("1", featureValues, sep=" "), file=filename, append=TRUE)
+      cat(paste("1 ", paste(featureValues, collapse=" "), "\n", sep=""), file=filename, append=TRUE)
       return(TRUE)
     }
   )

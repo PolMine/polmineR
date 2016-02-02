@@ -1,4 +1,14 @@
+#' Methods for TermDocumentMatrix / DocumentTermMatrix
+#' 
+#' @param x object
+#' @rdname TermDocumentMatrix
+NULL
+
+
+
 setOldClass("TermDocumentMatrix")
+setOldClass("DocumentTermMatrix")
+
 
 #' @importFrom slam as.simple_triplet_matrix
 setMethod("cbind2", signature=c(x="TermDocumentMatrix", y="TermDocumentMatrix"), function(x,y){

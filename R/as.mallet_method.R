@@ -19,11 +19,17 @@ NULL
 #' bundle <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
 #' instanceList <- as.mallet(bundle)
 #' store(instanceList, filename=NULL) # output to a tempfile
+#' topic.model <- MalletLDA(num.topics=20)
+#' topic.model$loadDocuments(instanceList)
+#' topic.model$setAlphaOptimization(20, 50)
+#' topic.model$train(200)
+#' 
 #' @rdname as.mallet-method
 setGeneric("as.mallet", function(.Object, ...) standardGeneric("as.mallet"))
 
 #' @rdname as.mallet-method
-setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", stoplist=stopwords("de"), mc=TRUE, verbose=TRUE){
+setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", termsToDrop=tm::stopwords("de"), mc=TRUE, verbose=TRUE){
+  options(java.parameters = "-Xmx8g")
   if (require("mallet", quietly=TRUE)){
     if (verbose == TRUE) message("... mallet-package loaded")
   } else {
@@ -33,18 +39,20 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", s
   if (mc == FALSE){
     if (verbose == TRUE) message("... reconstructing token stream (mc=FALSE)")
     tokenStream <- lapply(
-      .Object@objects, function(x) getTokenStream(x, pAttribute=pAttribute, collapse="\n")
+      .Object@objects,
+      function(x) getTokenStream(x, pAttribute=pAttribute, collapse="\n")
       )
   } else if (mc == TRUE){
     if (verbose == TRUE) message("... reconstructing token stream (mc=TRUE)")
     tokenStream <- mclapply(
-      .Object@objects, function(x) getTokenStream(x, pAttribute=pAttribute, collapse="\n")
+      .Object@objects,
+      function(x) getTokenStream(x, pAttribute=pAttribute, collapse="\n")
       )
   }
   tokenStreamVector <- unlist(tokenStream)
   tmpDir <- tempdir()
   stoplistFile <- file.path(tmpDir, "stoplists.txt")
-  cat(paste(stoplist, collapse="\n"), file=stoplistFile)
+  cat(paste(termsToDrop, collapse="\n"), file=stoplistFile)
   # malletFile <- file.path(tmpDir, "partitionBundle.mallet")
   if (verbose == TRUE) message("... make mallet object")
   malletObject <- mallet::mallet.import(
