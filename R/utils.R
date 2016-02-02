@@ -215,6 +215,7 @@ as.cqp <- function(queries, collapse=FALSE){
   cqp <- sapply(
     queries,
     function(query){
+      query <- gsub("\\s+", " ", query)
       cqpRaw <- lapply(
         unlist(strsplit(query, "\\s")),
         function(q){
