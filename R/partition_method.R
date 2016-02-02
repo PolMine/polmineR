@@ -220,34 +220,23 @@ setMethod("partition", "session", function(object){
 
 #' @rdname partition
 setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
-  # these lines are identical with partition method
-  if (is.null(type)){
-    newPartition <- new('partition')  
-  } else {
-    pkgName <- paste("polmineR.", type, sep="")
-    cName <- paste(type, "Partition", sep="")
-    if (requireNamespace(pkgName, quietly=TRUE)){
-      newPartition <- new(cName)
-    } else {
-      warning("to set a specific partition type, the respective package needs to be available")
-    }
-  }
-  newPartition@corpus <- object@corpus
-  message('Zooming into partition ', name)
-  newPartition@name <- name
-  def <- lapply(def, function(x).adjustEncoding(x, object@encoding))  
+  newPartition <- new(
+    class(object)[1],
+    corpus=object@corpus, encoding=object@encoding, name=name, xml=object@xml,
+    stat=data.table()
+    )
+  if (verbose == TRUE) message('Setting up partition', name)
+  def <- lapply(def, function(x) .adjustEncoding(x, object@encoding))  
   newPartition@sAttributes <- c(object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
-  newPartition@xml <- object@xml
-  newPartition@encoding <- object@encoding
-  message('... specifying strucs and corpus positions')
+  if (verbose == TRUE) message('... getting strucs and corpus positions')
   newPartition <- .zoomingSattributes2cpos(object, newPartition, def, regex)
-  message('... computing partition size')
   newPartition@size <- size(newPartition)
   if (length(pAttribute)>0) {
     newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=pAttribute, id2str=id2str, mc=mc)
     newPartition@pAttribute <- pAttribute
   }
+  if (verbose == TRUE) message('... partition is set up')
   newPartition
 })
 

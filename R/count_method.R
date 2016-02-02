@@ -12,6 +12,7 @@ NULL
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
 #' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
+#' @param total defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned
 #' @param ... further parameters
 #' @return a \code{"data.table"}
 #' @exportMethod count
@@ -37,7 +38,7 @@ NULL
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
-setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, verbose=T){
+setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, verbose=T, progress=F){
   pAttr <- ifelse(
     is.null(pAttribute),
     slot(get("session", ".GlobalEnv"), "pAttribute"), 
@@ -70,18 +71,20 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, mc=F, verbose=T){
+setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, total=FALSE, mc=T, progress=T, verbose=FALSE){
   # check whether all partitions in the bundle have a proper name
   if (is.null(names(.Object@objects)) || any(is.na(names(.Object@objects)))) {
     warning("all partitions in the bundle need to have a name (at least some missing)")
   }
   countAvailable <- unique(unlist(lapply(.Object@objects, function(x) x@pAttribute)))
-  bag <- lapply(
-    names(.Object@objects),
-    function(x) {
-      data.table(partition=x, query=query, count(.Object@objects[[x]], query))
-    }
-  )
+  bag <- blapply(.Object, f=count, mc=mc, progress=progress, verbose=verbose, query=query, pAttribute=pAttribute)
+  bag <- lapply(c(1:length(bag)), function(i) bag[[i]][, partition := names(.Object)[i]])
+  # bag <- lapply(
+  #   names(.Object@objects),
+  #   function(x) {
+  #     data.table(partition=x, query=query, count(.Object@objects[[x]], query))
+  #   }
+  # )
   tabRaw <- do.call(rbind, bag)
   if(!is.null(tabRaw)){
     tab <- tabRaw[,c("partition", "query", ifelse(freq==FALSE, "count", "freq")), with=FALSE]
@@ -92,6 +95,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     }
     tab <- data.table(partition=names(.Object), as.data.table(as.matrix(unclass(tab))))
   }
+  if (total == TRUE) tab[, TOTAL := rowSums(.SD), by=partition]
   tab
 })
 

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.19
-Date: 2016-01-24
+Version: 0.5.20
+Date: 2016-02-01
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -12,6 +12,7 @@ Imports:
     methods,
     slam,
     parallel,
+    foreach,
     plyr,
     data.table,
     DT,
@@ -30,7 +31,8 @@ Suggests:
     bigmemory,
     bigtabulate,
     shiny,
-    miniUI
+    miniUI,
+    doSNOW
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for drilling and mining CWB corpora. The package offers
@@ -43,21 +45,24 @@ Collate:
     'adjustEncoding_method.R'
     'generics.R'
     'textstat_class.R'
+    'bundle_class.R'
     'session_class.R'
     'polmineR_package.R'
     'partition_class.R'
-    'bundle_class.R'
     'partitionBundle_class.R'
     'as.mallet_method.R'
     'as.markdown_method.R'
-    'kwic_class.R'
+    'as.speeches_method.R'
+    'as.svmlight_method.R'
+    'blapply_method.R'
     'comp_class.R'
     'context_class.R'
+    'kwic_class.R'
     'browse_method.R'
     'bughunt_method.R'
     'chisquare_method.R'
-    'cooccurrences_class.R'
     'contextBundle_class.R'
+    'cooccurrences_class.R'
     'coerce_methods.R'
     'comparables_method.R'
     'ngrams_method.R'
@@ -96,6 +101,7 @@ Collate:
     'means_method.R'
     'meta_method.R'
     'nchars_method.R'
+    'noise_method.R'
     'pAttributes_method.R'
     'papply_function.R'
     'partitionBundle_method.R'
@@ -112,7 +118,6 @@ Collate:
     'rustyard.R'
     'sAttributes_method.R'
     'scatterplot_method.R'
-    'score_method.R'
     'similarity_method.R'
     'tTest.R'
     'terms_method.R'

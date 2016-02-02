@@ -77,16 +77,17 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
     cposList1 <- split(cposClassified[,1], cposClassified[,3])
     cposList2 <- split(cposClassified[,2], cposClassified[,3])
     bundleRaw <- lapply(c(1:length(strucList)), function(i) {
-      p <- new("partition")
-      p@strucs <- strucList[[i]]
-      p@cpos <- cbind(cposList1[[i]], cposList2[[i]])
-      p@corpus <- x@corpus
-      p@encoding <- x@encoding
-      p@sAttributes <- x@sAttributes
-      p@explanation <- c("partition results from split, sAttributes do not necessarily define partition")
-      p@xml <- x@xml
-      p@sAttributeStrucs <- x@sAttributeStrucs
-      p@name <- paste(x@name, i, collapse="_", sep="")
+      p <- new(
+        class(x)[1],
+        strucs=strucList[[i]],
+        cpos=cbind(cposList1[[i]], cposList2[[i]]),
+        corpus=x@corpus, encoding=x@encoding,
+        sAttributes=x@sAttributes,
+        xml=x@xml, sAttributeStrucs=x@sAttributeStrucs,
+        explanation=c("partition results from split, sAttributes do not necessarily define partition"),
+        name=paste(x@name, i, collapse="_", sep=""),
+        stat=data.table()
+        )
       if (is.null(names(x@metadata))){
         meta <- NULL
       } else {
@@ -96,7 +97,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
         p, size=TRUE,
         pAttribute=NULL,
         meta=meta,
-        verbose=TRUE
+        verbose=FALSE
       )
       p
     })
@@ -104,7 +105,7 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
     bundleRaw <- list(x)
   }
   names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@name))
-  bundle <- as.partitionBundle(bundleRaw)
+  bundle <- as.bundle(bundleRaw)
   bundle
 })
 

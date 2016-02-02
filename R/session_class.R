@@ -28,6 +28,7 @@
 #' @slot defaultKwicNode default node for kwic analysis
 #' @slot defaultRegistry the COPRUS_REGISTRY used when loading polmineR
 #' @slot browse logical, whether to browse results
+#' @slot backend parallel backend (doMC, doSNOW etc.)
 #' @param project the project
 #' @param object a session class object
 #' @param x an object
@@ -69,7 +70,8 @@ setClass(
     defaultKwicNode="character",
     defaultRegistry="character",
     browse="logical",
-    kwicLineView="logical"
+    kwicLineView="logical",
+    backend="character"
     ))
 
 #' @export session
@@ -99,7 +101,8 @@ session <- new(
   partitionDir="",
   defaultKwicCooccurrence="",
   defaultKwicNode="Suche",
-  browse=FALSE
+  browse=FALSE,
+  backend="doSNOW"
   )
 
 

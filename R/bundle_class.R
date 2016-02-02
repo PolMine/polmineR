@@ -32,7 +32,16 @@ setClass("bundle",
 #' @rdname bundle-class
 #' @exportMethod [[
 setMethod("[[", "bundle", function(x,i){
-  return(x@objects[[i]])
+  if (length(i) == 1){
+    return(x@objects[[i]])  
+  } else if (length(i) > 1){
+    if (is.character(i)){
+      for (j in rev(which(!names(x) %in% i))) x@objects[[j]] <- NULL  
+    } else if (is.numeric(i)){
+      for (j in rev(which(!c(1:length(x)) %in% i))) x@objects[[j]] <- NULL
+    }
+    return(x)
+  }
 })
 
 #' @rdname bundle-class
@@ -79,19 +88,6 @@ setMethod("unique", "bundle", function(x){
 })
 
 
-
-
-#' @rdname bundle-class
-setGeneric("bapply", function(x, ...) standardGeneric("bapply"))
-
-#' @param f a function that can be applied to each object contained in the bundle
-#' @param ... further parameters
-#' @rdname bundle-class
-#' @exportMethod bapply
-setMethod("bapply", "bundle", function(x, f, ...){
-  x@objects <- lapply(X=x@objects, FUN=f, ...)
-  x
-})
 
 
 #' @exportMethod +
