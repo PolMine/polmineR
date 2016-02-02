@@ -18,7 +18,7 @@ setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX=x$j, sum), x[["dimnames"]][["Docs"]])
 })
 
-setGeneric("reindex", function(.Object) standardGeneric("reindex"))
+setGeneric("reindex", function(x) standardGeneric("reindex"))
 
 setMethod("reindex", "DocumentTermMatrix", function(x){
   i_uniqueValues <- unique(x$i)
