@@ -53,6 +53,10 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
 
 #' @rdname blapply
 setMethod("blapply", "bundle", function(x, f, mc=FALSE, progress=TRUE, verbose=FALSE, ...){
-  x@objects <- blapply(x@objects, f=f, mc=mc, progress=progress, verbose=verbose, ...)
+  x@objects <- setNames(
+    blapply(x@objects, f=f, mc=mc, progress=progress, verbose=verbose, ...),
+    names(x)
+  )
+  x
 })
 

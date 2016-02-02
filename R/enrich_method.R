@@ -35,7 +35,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @aliases enrich,partition-method
 #' @docType methods
 #' @rdname enrich-partition-method
-setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE){
+setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE, ...){
   if (size == TRUE) object@size <- size(object)
   if (!is.null(pAttribute)) {
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
@@ -65,19 +65,8 @@ setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, i
 #' @aliases enrich,partitionBundle-method
 #' @docType methods
 #' @rdname enrich-partitionBundle-method
-setMethod("enrich", "partitionBundle", function(object, size=TRUE, pAttribute=c(), meta=NULL, addPos=NULL, mc=FALSE, verbose=TRUE){
-  if (mc == FALSE) {
-    object@objects <- lapply(
-      object@objects,
-      function(p) enrich(p, size=size, pAttribute=pAttribute, meta=meta, addPos, verbose=TRUE)
-    )
-  } else if (mc == TRUE){
-    object@objects <- mclapply(
-      object@objects,
-      function(p) enrich(p, size=size, pAttribute=pAttribute, meta=meta, addPos, verbose=TRUE)
-    )    
-  }
-  object
+setMethod("enrich", "partitionBundle", function(object, mc=FALSE, progress=TRUE, verbose=FALSE, ...){
+  blapply(x=object, f=enrich, mc=mc, progress=progress, verbose=verbose, ...)
 })
 
 

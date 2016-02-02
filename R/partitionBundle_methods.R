@@ -23,8 +23,8 @@ setMethod("summary", "partitionBundle", function (object) {
     stringsAsFactors=FALSE
    )
   pAttr <- unique(unlist(lapply(object@objects, function(x) x@pAttribute)))
-  if (length(pAttr == 1)){
-    raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@tf))))
+  if (length(pAttr) == 1){
+    raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@stat))))
     raw <- do.call(data.frame, raw)
     colnames(raw) <- paste("unique_", pAttr, sep="")
     summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
