@@ -65,6 +65,7 @@ NULL
 NULL
 
 
+# setOldClass("dfmSparse") # class defined in quanteda-package
 setOldClass("TermDocumentMatrix")
 setOldClass("DocumentTermMatrix")
 setOldClass("igraph")

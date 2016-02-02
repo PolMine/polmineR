@@ -35,14 +35,14 @@ setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")
 
 #' @docType methods
 #' @importFrom Matrix sparseMatrix
+#' @exportMethod as.sparseMatrix
 setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x){
-  retval <-  sparseMatrix(i=x$i,
-                          j=x$j,
-                          x=x$v,
-                          dims=c(x$nrow, x$ncol),
-                          dimnames = dimnames(x),
-                          giveCsparse = TRUE)
-  return(retval)  
+  sparseMatrix(
+    i=x$i, j=x$j, x=x$v,
+    dims=c(x$nrow, x$ncol),
+    dimnames = dimnames(x),
+    giveCsparse = TRUE
+    )
 })
 
 
@@ -229,12 +229,18 @@ setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
 
 #' @rdname bundle-class
 setMethod("as.bundle", "list", function(object, ...){
-  if (!all(unlist(lapply(object, class))=="partition")) warning("all objects in list need to be partition objects")
-  newBundle <- new("partitionBundle")
-  newBundle@objects <- object
-  newBundle@corpus <- unique(unlist(lapply(newBundle@objects, function(x) x@corpus)))
-  newBundle@encoding <- unique(unlist(lapply(newBundle@objects, function(x) x@encoding)))
-  names(newBundle@objects) <- vapply(newBundle@objects, function(x) x@name, FUN.VALUE="character")
+  uniqueClass <- unique(unlist(lapply(object, class)))
+  stopifnot(
+    length(uniqueClass) == 1,
+    grepl("[pP]artition", uniqueClass)
+    )
+  newBundle <- new(
+    "partitionBundle",
+    objects=object,
+    corpus=unique(unlist(lapply(object, function(x) x@corpus))),
+    encoding=unique(unlist(lapply(object, function(x) x@encoding)))
+    )
+  names(newBundle@objects) <- vapply(object, function(x) x@name, FUN.VALUE="character")
   newBundle
 })
 
@@ -263,4 +269,25 @@ setMethod("as.sparseMatrix", "bundle", function(x, col){
   return(retval)
 })
 
+#' @rdname coerce-methods
+setGeneric("as.dfm", function(.Object) standardGeneric("as.dfm"))
 
+#' @rdname coerce-methods
+#' @importClassesFrom quanteda dfmSparse
+setMethod("as.dfm", "TermDocumentMatrix", function(.Object){
+  if (requireNamespace("quanteda", quietly=TRUE)){
+    new("dfmSparse", as.sparseMatrix(.Object))  
+  } else {
+    stop("package 'quanteda required but not available")
+  }
+})
+
+#' @importClassesFrom quanteda dfmSparse
+#' @rdname coerce-methods
+setMethod("as.dfm", "DocumentTermMatrix", function(.Object){
+  if (requireNamespace("quanteda", quietly=TRUE)){
+    new("dfmSparse", as.sparseMatrix(t(.Object)))
+  } else {
+    stop("package 'quanteda required but not available")
+  }
+})

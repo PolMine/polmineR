@@ -88,10 +88,11 @@ setMethod("as.bundle", "textstat", function(object){
     paste(is(object)[1], "Bundle", sep=""),
     objects=setNames(list(object), object@name),
     corpus=object@corpus,
-    encoding=object@encoding,
-    explanation=c("derived from a partition object")
+    encoding=object@encoding
   )
 })
+
+
 
 #' @exportMethod +
 #' @docType methods
