@@ -47,12 +47,13 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
   .getNumberOfHits <- function(query) {
     if (verbose == TRUE) message("... processing query ", query)
     cposResult <- cpos(.Object=.Object, query=query, pAttribute=pAttr, verbose=FALSE)
-    if (is.null(cposResult)){
-      retval <- 0
-    } else {
-      retval <- nrow(cposResult)
-    }
-    retval
+#     if (is.null(cposResult)){
+#       retval <- 0
+#     } else {
+#       retval <- nrow(cposResult)
+#     }
+#     retval
+    ifelse(is.null(cposResult), 0, nrow(cposResult))
   }
   if (mc == FALSE){
     no <- vapply(query, .getNumberOfHits, FUN.VALUE=1)
@@ -63,9 +64,7 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
       mc.cores=slot(get("session", ".GlobalEnv"), "cores")
     ))
   }
-  DT <- data.table(query=query, count=no, freq=no/.Object@size)
-  return(DT)
-  DT
+  data.table(query=query, count=no, freq=no/.Object@size)
 })
 
 
@@ -77,26 +76,31 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     warning("all partitions in the bundle need to have a name (at least some missing)")
   }
   countAvailable <- unique(unlist(lapply(.Object@objects, function(x) x@pAttribute)))
-  bag <- blapply(.Object, f=count, mc=mc, progress=progress, verbose=verbose, query=query, pAttribute=pAttribute)
-  bag <- lapply(c(1:length(bag)), function(i) bag[[i]][, partition := names(.Object)[i]])
-  # bag <- lapply(
-  #   names(.Object@objects),
-  #   function(x) {
-  #     data.table(partition=x, query=query, count(.Object@objects[[x]], query))
-  #   }
-  # )
-  tabRaw <- do.call(rbind, bag)
-  if(!is.null(tabRaw)){
-    tab <- tabRaw[,c("partition", "query", ifelse(freq==FALSE, "count", "freq")), with=FALSE]
-    if (freq == FALSE){
-      tab <- xtabs(count~partition+query, data=tab)  
-    } else {
-      tab <- xtabs(freq~partition+query, data=tab)  
-    }
-    tab <- data.table(partition=names(.Object), as.data.table(as.matrix(unclass(tab))))
-  }
-  if (total == TRUE) tab[, TOTAL := rowSums(.SD), by=partition]
-  tab
+  bag <- blapply(.Object@objects, f=count, mc=mc, progress=progress, verbose=verbose, query=query, pAttribute=pAttribute)
+  lapply(c(1:length(bag)), function(i) bag[[i]][, partition := names(.Object)[i]])
+  # tabRaw <- do.call(rbind, bag)
+  colToGet <- ifelse(freq == TRUE, "freq", "count")
+  tabRaw <- do.call(rbind, lapply(bag, function(x) x[[colToGet]]))
+  colnames(tabRaw) <- query
+  DT <- data.table(partition=names(.Object), data.table(tabRaw))
+#   if(!is.null(tabRaw)){
+#     tab <- tabRaw[,c("partition", "query", ifelse(freq==FALSE, "count", "freq")), with=FALSE]
+#     if (freq == FALSE){
+#       tab <- xtabs(count~partition+query, data=tab)  
+#     } else {
+#       tab <- xtabs(freq~partition+query, data=tab)  
+#     }
+#     tmp <- unclass(tab)
+#     labels <- dimnames(tmp)$partition
+#     Encoding(labels) <- "unknown"
+#     DT <- data.table(partition=labels, tmp)
+#     setkeyv(DT, "partition")
+#     bundleOrder <- names(.Object)
+#     Encoding(bundleOrder) <- "unknown"
+#     DT <- DT[bundleOrder,]
+#   }
+  if (total == TRUE) DT[, TOTAL := rowSums(.SD), by=partition]
+  DT
 })
 
 #' @rdname count-method
