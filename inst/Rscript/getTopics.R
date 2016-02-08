@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 
 library(polmineR)
-library(polmineR.topics)
-library(parallel)
-library(magrittr)
+library(topicmodels)
 library(optparse)
+library(tm)
+library(slam)
 
 # usage:
 # Rscript getTopics.R -f /path/to/input/filename.RData -o /path/to/output/filename.RData
@@ -27,8 +27,16 @@ startTime <- Sys.time()
 message("START: ", startTime)
 
 dtmTrimmed <- readRDS(file=opt$file)
-ldas <- ldaBundle(dtmTrimmed, ks=opt$k, mc=1, verbose=TRUE)
-saveRDS(ldas, file=opt$out)
+dtmTrimmed <- trim(dtmTrimmed, docsToDrop = names(which(slam::row_sums(dtmTrimmed) < 20)))
+
+dtmTrimmedWeighed <- weigh(dtmTrimmed, method="tfidf")
+
+tmodel <- LDA(
+  dtmTrimmed, k=opt$k, method = "Gibbs",
+  control = list(burnin = 1000, iter = 1000, keep = 50, verbose=TRUE)
+)
+
+saveRDS(tmodel, file=opt$out)
 
 endTime <- Sys.time()
 message("END: ", endTime)

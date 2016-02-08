@@ -92,10 +92,10 @@ setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFreque
 #' @rdname trim-method
 setMethod("trim", "TermDocumentMatrix", function(object, termsToKeep=NULL, termsToDrop=NULL, docsToKeep=NULL, docsToDrop=NULL, verbose=TRUE){
   if (!is.null(docsToKeep)){
-    object <- object[which(colnames(object) %in% docsToKeep),]
+    object <- object[,which(colnames(object) %in% docsToKeep)]
   }
   if (!is.null(docsToDrop)){
-    object <- object[which(!colnames(object) %in% docsToDrop),]
+    object <- object[,which(!colnames(object) %in% docsToDrop)]
   }
   if (!is.null(termsToKeep)){
     object <- object[which(rownames(object) %in% termsToKeep),]
