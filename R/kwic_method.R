@@ -12,6 +12,7 @@ NULL
 #' @param right to the right
 #' @param meta metainformation to display
 #' @param pAttribute typically 'word' or 'lemma'
+#' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
 #' @param neighbor only show kwic if a certain word is present
 #' @param verbose whether to be talkative
 #' @param ... further parameters to be passed
@@ -82,11 +83,13 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
 setMethod("kwic", "partition", function(
   .Object, query,
   left=NULL, right=NULL,
-  meta=NULL, pAttribute="word", neighbor=NULL,
+  meta=NULL, pAttribute="word", sAttribute=NULL,
+  neighbor=NULL,
   verbose=TRUE
 ){
   ctxt <- context(
-    .Object=.Object, query=query, pAttribute=pAttribute,
+    .Object=.Object, query=query,
+    pAttribute=pAttribute, sAttribute=sAttribute,
     left=left, right=right,
     method=NULL, verbose=verbose
   )

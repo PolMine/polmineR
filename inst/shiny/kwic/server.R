@@ -14,7 +14,7 @@ shinyServer(function(input, output, session) {
 #  loadedPartition <- load(file.path(session@partitionDir, input$partitionObject, ".RData", sep=""))
   observe({
     foo <- input$partitionButton
-    availablePartitions <- gsub("^(.*)\\.RData$", "\\1", list.files(controls@partitionDir))
+    availablePartitions <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
     updateSelectInput(session, "partitionObject", choices=availablePartitions)
   })
   
@@ -33,7 +33,7 @@ shinyServer(function(input, output, session) {
     
     isolate(
       kwicObject <- kwic(
-        .Object=readRDS(paste(controls@partitionDir, "/", input$partitionObject, ".RData", sep="")),
+        .Object=get(input$partitionObject, '.GlobalEnv'),
 #        object=partitionObjects[[input$partitionObject]],
         query=input$node,
         pAttribute=input$pAttribute,
@@ -51,7 +51,7 @@ shinyServer(function(input, output, session) {
         c(1:nrow(tab)),
         function(i){
           sAttr <- unlist(lapply(tab[i,1:noMetadata], as.character))
-          shownText <- paste(sAttr, collapse="\n")
+          shownText <- paste(sAttr, collapse=" | ")
           wrappedText <- shownText
 #           wrappedText <- paste(
 #             '<a href="http://localhost/cgi-bin/R/kwic2fulltext?', .cgiArguments(sAttr), '" target="_blank">', shownText, '</a>',

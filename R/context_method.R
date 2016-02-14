@@ -60,7 +60,7 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query, pAttribute=NULL, sAttribute="text_id",
+    .Object, query, pAttribute=NULL, sAttribute=NULL,
     left=NULL, right=NULL,
     stoplist=NULL, positivelist=NULL,
     method="ll",
@@ -68,9 +68,9 @@ setMethod(
   ) {
     if (is.null(pAttribute)) {
       pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-      message("param pAttribute not state, using session setting: ", pAttribute)
+      message("... using session settings for p-attribute: ", pAttribute)
     }
-    if (!identical(.Object@pAttribute, pAttribute)){
+    if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){
       message("... tf for pAttribute ", pAttribute, " not available, enriching object now")
       .Object <- enrich(.Object, pAttribute=pAttribute)
     }
@@ -87,12 +87,13 @@ setMethod(
     ctxt <- new(
       "context",
       query=query, pAttribute=pAttribute, stat=data.table(),
-      sAttribute=sAttribute, corpus=.Object@corpus,
+      corpus=.Object@corpus,
       left=ifelse(is.character(left), 0, left),
       right=ifelse(is.character(right), 0, right),
       encoding=.Object@encoding, 
       partition=.Object@name, partitionSize=.Object@size
     )
+    if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
     ctxt@call <- deparse(match.call())
     
     # getting counts of query in partition

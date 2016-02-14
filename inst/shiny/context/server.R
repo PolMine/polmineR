@@ -8,7 +8,7 @@ sessionSettings <-  get('session', '.GlobalEnv')
 shinyServer(function(input, output, session) {
   observe({
     foo <- input$partitionButton
-    availablePartitions <- gsub("^(.*)\\.RData$", "\\1", list.files(sessionSettings@partitionDir))
+    availablePartitions <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
     updateSelectInput(session, "partitionObject", choices=availablePartitions)
   })
   output$query <- renderText({
@@ -21,17 +21,17 @@ shinyServer(function(input, output, session) {
     input$goButton
     isolate(
       ctext <- context(
-        .Object=readRDS(paste(sessionSettings@partitionDir, "/", input$partitionObject, ".RData", sep="")),
+        .Object=get(input$partitionObject, '.GlobalEnv'),
         query=input$node,
         pAttribute=input$pAttribute,
         left=input$left,
         right=input$right,
         verbose=TRUE
         )
-      # %>% subset(ll > input$minSignificance)
+#      %>% subset(ll > input$minSignificance)
       )
     # round(ctext, 2)
     # cbind(token=rownames(ctext@stat), ctext@stat)
-    as.data.frame(ctext@stat)
+    as.data.frame(round(ctext, 2)@stat)
     })
 })

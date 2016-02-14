@@ -13,15 +13,14 @@ shinyUI(pageWithSidebar(
     actionButton("goButton", "Go!"),
     br(), br(),
     selectInput(
-      "partitionObject", "Partition:",
-    gsub("^(.*)\\.RData$", "\\1", list.files(sessionSettings@partitionDir))
+      "partitionObject", "Partition:", polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
       ),
     textInput("node", "Node:", value="Suche"),
     selectInput("pAttribute", "Select p-attribute:", choices=c("word", "pos", "lemma"), selected=sessionSettings@pAttribute, multiple=TRUE),
     numericInput("left", "Left context:", value=sessionSettings@left),
     numericInput("right", "Right context:", value=sessionSettings@right),
-    numericInput("minSignificance", "Minimum significance:", value=sessionSettings@minSignificance),
-    textInput("posFilter", "POS-based filter:", value=paste(sessionSettings@posFilter, collapse=' ')),
+#    numericInput("minSignificance", "Minimum significance:", value=0),
+#    textInput("posFilter", "POS-based filter:", value=paste(sessionSettings@posFilter, collapse=' ')),
     br(),
     actionButton("goButton", "Go!")
     ),

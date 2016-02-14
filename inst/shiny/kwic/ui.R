@@ -2,7 +2,7 @@ library(shiny)
 library(polmineR)
 
 session <- get('session', '.GlobalEnv')
-# partitionObjects <- polmineR.shiny:::.getClassObjects('.GlobalEnv', 'partition')
+partitionObjects <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
 
 shinyUI(fluidPage(
   
@@ -18,13 +18,15 @@ shinyUI(fluidPage(
   headerPanel("kwic"),
   
   sidebarPanel(
-    actionButton("partitionButton", "refresh partitions"),
+#    actionButton("partitionButton", "refresh partitions"),
     actionButton("goButton", "Go!"),
     br(),br(),
     selectInput(
       "partitionObject", "Partition:",
-      choices=gsub("^(.*)\\.RData$", "\\1", list.files(session@partitionDir)),
-      selected=gsub("^(.*)\\.RData$", "\\1", list.files(session@partitionDir))[1]
+      choices=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
+#      , selected="foo"
+      # choices=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition'),
+      # selected=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')[1]
       ),
     textInput("node", "Node:", value=session@defaultKwicNode),
     selectInput("pAttribute", "Select p-attribute:", choices=c("word", "pos", "lemma"), selected=session@pAttribute),
