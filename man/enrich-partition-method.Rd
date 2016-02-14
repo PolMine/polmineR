@@ -6,7 +6,7 @@
 \title{enrich partition object (S4 method)}
 \usage{
 \S4method{enrich}{partition}(object, size = FALSE, pAttribute = NULL,
-  id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE)
+  id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE, ...)
 }
 \arguments{
 \item{object}{a partition object}

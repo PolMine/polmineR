@@ -10,7 +10,6 @@
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @return a partitionCluster object
-#' @importFrom plyr llply
 #' @name as.speeches
 #' @aliases speeches speeches-method speeches,partition-method
 #' @rdname as.speeches

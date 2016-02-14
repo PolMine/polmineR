@@ -1,4 +1,4 @@
-#' @include partition_class.R TermDocumentMatirx_methods.R
+#' @include partition_class.R TermDocumentMatrix_methods.R
 NULL
 
 setGeneric("size", function(x){UseMethod("size")})

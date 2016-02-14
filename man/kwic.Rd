@@ -6,19 +6,20 @@
 \alias{kwic,context-method}
 \alias{kwic,missing-method}
 \alias{kwic,partition-method}
-\title{KWIC output}
+\title{KWIC output / concordances}
 \usage{
 kwic(.Object, ...)
 
 \S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL)
 
 \S4method{kwic}{partition}(.Object, query, left = NULL, right = NULL,
-  meta = NULL, pAttribute = "word", neighbor = NULL, verbose = TRUE)
+  meta = NULL, pAttribute = "word", sAttribute = NULL, neighbor = NULL,
+  verbose = TRUE)
 
 \S4method{kwic}{missing}(.Object, ...)
 }
 \arguments{
-\item{.Object}{a partition object}
+\item{.Object}{a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched}
 
 \item{...}{further parameters to be passed}
 
@@ -26,7 +27,7 @@ kwic(.Object, ...)
 
 \item{neighbor}{only show kwic if a certain word is present}
 
-\item{query}{what to look up}
+\item{query}{a query, CQP-syntax can be used, then use}
 
 \item{left}{to the left}
 
@@ -34,15 +35,26 @@ kwic(.Object, ...)
 
 \item{pAttribute}{typically 'word' or 'lemma'}
 
-\item{verbose}{whether to be talkative}
+\item{sAttribute}{if provided, the s-attribute will be used to check the boundaries of the text}
+
+\item{verbose}{logical, whether to be talkative}
 }
 \description{
-Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
+Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
 applying the kwich method on either a partition or a context object.
 }
+\details{
+If you enter \code{"kwic()"} on the console, a shiny application will be launched. The app
+will offer partition objects present in the global environment.
+}
 \examples{
+use("polmineR.sampleCorpus")
 bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
-foo <- kwic(bt, "Integration")
-foo <- kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
+kwic(bt, "Integration")
+kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party"))
+kwic(bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"', left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
+}
+\seealso{
+To read the whole text, see the \code{\link{read}}-method.
 }
 

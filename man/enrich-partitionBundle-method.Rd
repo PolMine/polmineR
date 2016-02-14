@@ -5,11 +5,15 @@
 \alias{enrich,partitionBundle-method}
 \title{enrich partition object (S4 method)}
 \usage{
-\S4method{enrich}{partitionBundle}(object, size = TRUE, pAttribute = c(),
-  meta = NULL, addPos = NULL, mc = FALSE, verbose = TRUE)
+\S4method{enrich}{partitionBundle}(object, mc = FALSE, progress = TRUE,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{a partition object}
+
+\item{mc}{logical whether to use multicore parallelization}
+
+\item{verbose}{logical, defaults to TRUE}
 
 \item{size}{logical, defaults to FALSE}
 
@@ -19,10 +23,6 @@ tables shall be generated}
 \item{meta}{character vector providing s-attributes for which metainformation shall be supplied}
 
 \item{addPos}{character vector providing p-attributes}
-
-\item{mc}{logical whether to use multicore parallelization}
-
-\item{verbose}{logical, defaults to TRUE}
 }
 \description{
 Fill slots of a partition object: Add object size, metainformation, pos.

@@ -13,7 +13,6 @@ NULL
 #' @importFrom rcqp cqi_lexicon_size cqi_list_corpora cqi_attribute_size cqi_attributes
 #' @importFrom rcqp cqi_struc2str cqi_struc2cpos
 #' @importFrom rcqp cqi_query cqi_dump_subcorpus
-#' @importFrom plyr join
 NULL
 
 #' @importFrom tm TermDocumentMatrix DocumentTermMatrix

@@ -4,24 +4,32 @@
 \name{read}
 \alias{read}
 \alias{read,partition-method}
-\title{read an object}
+\alias{read,partitionBundle-method}
+\title{Return to the original text and read}
 \usage{
 read(.Object, ...)
 
-\S4method{read}{partition}(.Object, meta = NULL, highlight = list())
+\S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
+  verbose = TRUE)
+
+\S4method{read}{partitionBundle}(.Object, ...)
 }
 \arguments{
-\item{.Object}{an object to be read}
+\item{.Object}{an object to be read (\code{"partition" or "partitionBundle"})}
 
-\item{...}{further parameters}
+\item{...}{further parameters passed into read}
 
-\item{meta}{a character vector indicating the s-attributes for the metainformation to be printed}
+\item{meta}{a character vector supplying s-attributes for the metainformation
+to be printed, if not stated explicitly, session settings will be used}
 
-\item{highlight}{a list of character vectors with regular expressions
-to highlight relevant terms or expressions; the names of the list provide the colors (see examples)}
+\item{highlight}{a list of character vectors with regular expressions to
+highlight relevant terms or expressions; the names of the list provide the
+colors (see examples)}
 }
 \description{
-A html page will be generated and displayed in the viewer pane of RStudio.
+Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
+a \code{"partitionBundle"}-object, skip through the partitions contained in the
+bundle.
 }
 \examples{
 use("polmineR.sampleCorpus")
@@ -35,5 +43,13 @@ read(
   merkel,
   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
   )
+\dontrun{
+all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
+read(speeches)
+}
+}
+\seealso{
+For concordances / a keword-in-context display, see \code{\link{kwic}}.
 }
 

@@ -21,8 +21,9 @@ trim(object, ...)
   minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
   minSize = 0, keep = NULL, mc = NULL, ...)
 
-\S4method{trim}{TermDocumentMatrix}(object, minTotal = NULL,
-  stopwords = NULL, keep = NULL, verbose = TRUE)
+\S4method{trim}{TermDocumentMatrix}(object, termsToKeep = NULL,
+  termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL,
+  verbose = TRUE)
 
 punctuation
 }
@@ -51,11 +52,11 @@ punctuation
 
 \item{keep}{specify names of partitions to keep, everything else is dropped}
 
+\item{verbose}{whether to be talkative}
+
 \item{minTotal}{the minimum frequency}
 
 \item{stopwords}{words/tokens to drop}
-
-\item{verbose}{whether to be talkative}
 }
 \description{
 Method to trim and adjust objects by 

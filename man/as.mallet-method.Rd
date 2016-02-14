@@ -10,7 +10,7 @@
 as.mallet(.Object, ...)
 
 \S4method{as.mallet}{partitionBundle}(.Object, pAttribute = "word",
-  stoplist = stopwords("de"), mc = TRUE, verbose = TRUE)
+  termsToDrop = tm::stopwords("de"), mc = TRUE, verbose = TRUE)
 
 \S4method{store}{jobjRef}(object, filename = NULL)
 }
@@ -21,8 +21,6 @@ as.mallet(.Object, ...)
 
 \item{pAttribute}{the pAttribute to use, typically "word" or "lemma"}
 
-\item{stoplist}{a list of stopwords to be dropped from matrix, defaults to stopwords("de") from tm package}
-
 \item{mc}{whether to use multicore}
 
 \item{verbose}{logical, whether to be verbose}
@@ -30,6 +28,8 @@ as.mallet(.Object, ...)
 \item{object}{the rJava-object}
 
 \item{filename}{where to store the Java-object}
+
+\item{stoplist}{a list of stopwords to be dropped from matrix, defaults to stopwords("de") from tm package}
 }
 \description{
 Save polmineR-object as mallet object
@@ -39,5 +39,10 @@ use("polmineR.sampleCorpus")
 bundle <- partitionBundle("PLPRBTTXT", def=list(text_year="2009"), var=list(text_protocol_no=NULL), pAttribute=NULL)
 instanceList <- as.mallet(bundle)
 store(instanceList, filename=NULL) # output to a tempfile
+topic.model <- MalletLDA(num.topics=20)
+topic.model$loadDocuments(instanceList)
+topic.model$setAlphaOptimization(20, 50)
+topic.model$train(200)
+
 }
 

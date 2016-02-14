@@ -1,23 +1,21 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.22
-Date: 2016-02-11
+Version: 0.5.23
+Date: 2016-02-14
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
+    methods,
+    rcqp,
+    slam,
     Matrix,
     tm,
-    rcqp,
-    methods,
-    slam,
+    data.table,
     parallel,
     foreach,
-    plyr,
-    data.table,
     DT,
-    magrittr,
-    rJava
+    magrittr
 Suggests:
     polmineR.sampleCorpus,
     markdown,
@@ -32,7 +30,8 @@ Suggests:
     bigtabulate,
     shiny,
     miniUI,
-    doSNOW
+    doSNOW,
+    rJava
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for drilling and mining CWB corpora. The package offers
@@ -43,6 +42,7 @@ License: CC BY-NC-SA 4.0 | file LICENSE
 Collate:
     'TermDocumentMatrix_methods.R'
     'adjustEncoding_method.R'
+    'as.dfm_method.R'
     'generics.R'
     'textstat_class.R'
     'bundle_class.R'
@@ -96,6 +96,7 @@ Collate:
     'html_methods.R'
     'kwic_method.R'
     'kwic_methods.R'
+    'label_method.R'
     'll_method.R'
     'mail_method.R'
     'means_method.R'
@@ -119,6 +120,7 @@ Collate:
     'sAttributes_method.R'
     'scatterplot_method.R'
     'similarity_method.R'
+    'size_method.R'
     'tTest.R'
     'terms_method.R'
     'trim_method.R'
@@ -126,5 +128,4 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
-    'size_method.R'
 RoxygenNote: 5.0.1

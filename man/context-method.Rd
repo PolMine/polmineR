@@ -12,7 +12,7 @@
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(.Object, query, pAttribute = NULL,
-  sAttribute = "text_id", left = NULL, right = NULL, stoplist = NULL,
+  sAttribute = NULL, left = NULL, right = NULL, stoplist = NULL,
   positivelist = NULL, method = "ll", mc = NULL, verbose = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)

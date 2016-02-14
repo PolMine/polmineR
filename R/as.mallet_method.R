@@ -67,6 +67,6 @@ setMethod("as.mallet", "partitionBundle", function(.Object, pAttribute="word", t
   paste(cmd, collapse=" ")
 }
 
-getMalletResults <- function(){
-  
-}
+# getMalletResults <- function(){
+#   
+# }

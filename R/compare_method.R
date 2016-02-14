@@ -96,7 +96,6 @@ setMethod("compare", signature=c(x="partitionBundle"), function(
 })
 
 
-#' @importFrom plyr ddply
 #' @rdname compare-method
 setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll", mc=TRUE, verbose=TRUE){
   newObject <- new(

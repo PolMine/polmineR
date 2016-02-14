@@ -5,9 +5,6 @@
 \alias{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.TermDocumentMatrix,character-method}
-\alias{as.dfm}
-\alias{as.dfm,DocumentTermMatrix-method}
-\alias{as.dfm,TermDocumentMatrix-method}
 \title{coerce object to matrix}
 \usage{
 as.TermDocumentMatrix(x, ...)
@@ -18,12 +15,6 @@ as.TermDocumentMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
   verbose = TRUE)
-
-as.dfm(.Object)
-
-\S4method{as.dfm}{TermDocumentMatrix}(.Object)
-
-\S4method{as.dfm}{DocumentTermMatrix}(.Object)
 }
 \arguments{
 \item{x}{some object}

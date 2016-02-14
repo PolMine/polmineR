@@ -1,28 +1,33 @@
 #' @include partition_class.R context_class.R
 NULL 
 
-#' KWIC output
+#' KWIC output / concordances
 #' 
-#' Prepare and show 'keyword in context' (KWIC). The same result can be achieved by 
+#' Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
 #' applying the kwich method on either a partition or a context object.
 #' 
-#' @param .Object a partition object
-#' @param query what to look up
+#' If you enter \code{"kwic()"} on the console, a shiny application will be launched. The app
+#' will offer partition objects present in the global environment.
+#' 
+#' @param .Object a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched
+#' @param query a query, CQP-syntax can be used, then use 
 #' @param left to the left
 #' @param right to the right
 #' @param meta metainformation to display
 #' @param pAttribute typically 'word' or 'lemma'
 #' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
 #' @param neighbor only show kwic if a certain word is present
-#' @param verbose whether to be talkative
+#' @param verbose logical, whether to be talkative
 #' @param ... further parameters to be passed
-#' @aliases kwic,partition-method kwic,context-method kwic
 #' @rdname kwic
 #' @docType methods
+#' @seealso To read the whole text, see the \code{\link{read}}-method.
 #' @examples
+#' use("polmineR.sampleCorpus")
 #' bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
-#' foo <- kwic(bt, "Integration")
-#' foo <- kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
+#' kwic(bt, "Integration")
+#' kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party"))
+#' kwic(bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"', left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 

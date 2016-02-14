@@ -2,10 +2,7 @@
 #' 
 #' @param x object
 #' @rdname TermDocumentMatrix
-NULL
-
-
-
+#' @name TermDocumentMatrix
 setOldClass("TermDocumentMatrix")
 setOldClass("DocumentTermMatrix")
 
