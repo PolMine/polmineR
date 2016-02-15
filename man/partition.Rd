@@ -11,20 +11,18 @@
 \alias{partitionGadget}
 \title{Initialize a partition}
 \usage{
-partition(object, ...)
+partition(.Object, ...)
 
-\S4method{partition}{character}(object, def = NULL, name = c(""),
+\S4method{partition}{character}(.Object, def = NULL, name = c(""),
   encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, type = NULL, mc = FALSE,
   verbose = TRUE)
 
-\S4method{partition}{list}(object, name = c(""), encoding = NULL,
-  pAttribute = NULL, meta = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE)
+\S4method{partition}{list}(.Object, ...)
 
-\S4method{partition}{session}(object)
+\S4method{partition}{session}(.Object)
 
-\S4method{partition}{partition}(object, def, name = c(""), regex = FALSE,
+\S4method{partition}{partition}(.Object, def, name = c(""), regex = FALSE,
   pAttribute = NULL, id2str = TRUE, type = NULL, verbose = TRUE,
   mc = FALSE, ...)
 
@@ -33,12 +31,12 @@ partition(object, ...)
 partitionGadget()
 }
 \arguments{
-\item{object}{character-vector - the CWB-corpus to be used}
+\item{.Object}{character-vector - the CWB-corpus to be used}
 
 \item{...}{parameters passed into the partition-method}
 
 \item{def}{list consisting of a set of character vectors (see
-details)}
+details and examples)}
 
 \item{name}{name of the new partition, defaults to "noName"}
 
@@ -64,14 +62,27 @@ details)}
 An object of the S4 class 'partition'
 }
 \description{
-Set up an object of the partition class. Frequency lists are computeted if a pAttribute is provided.
+Set up an object of the \code{partition} class. Frequency lists are computeted and kept 
+in the stat-slot if pAttribute is not NULL.
 }
 \details{
 The function sets up a partition based on a list of s-attributes with respective values.
 The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-The values of the list may contain regular expressions. To use regular expression syntex, set the 
+The values of the list may contain regular expressions. To use regular expression syntax, set the 
 parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
 used in R needs to be used (double backlashes etc.).
+
+The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
+parameter \code{xml} (default is "flat"). If you generate a partition based on a 
+flat XML structure, some performance gain may be achieved when ordering the sAttributes
+with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
+order of the sAttributes provided reflects the hierarchy of the XML. Nested XML may be
+somewhat more difficult to handle, but generating partitions will be faster than with flat XML.
+
+If pAttribute is not NULL, a count of tokens in the corpus will be performed and kept in the
+\code{stat}-slot of the partition-object. The length of the pAttribute character vector may be 1
+or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
+A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
 use(polmineR.sampleCorpus)

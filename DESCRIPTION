@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.23
-Date: 2016-02-14
+Version: 0.5.24
+Date: 2016-02-15
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -107,6 +107,7 @@ Collate:
     'papply_function.R'
     'partitionBundle_method.R'
     'partitionBundle_methods.R'
+    'sAttributes2cpos_method.R'
     'partition_method.R'
     'store_method.R'
     'session_methods.R'

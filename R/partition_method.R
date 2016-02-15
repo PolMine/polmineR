@@ -1,16 +1,29 @@
 #' Initialize a partition
 #' 
-#' Set up an object of the partition class. Frequency lists are computeted if a pAttribute is provided.
+#' Set up an object of the \code{partition} class. Frequency lists are computeted and kept 
+#' in the stat-slot if pAttribute is not NULL.
 #' 
 #' The function sets up a partition based on a list of s-attributes with respective values.
 #' The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-#' The values of the list may contain regular expressions. To use regular expression syntex, set the 
+#' The values of the list may contain regular expressions. To use regular expression syntax, set the 
 #' parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
 #' used in R needs to be used (double backlashes etc.).
 #' 
-#' @param object character-vector - the CWB-corpus to be used
+#' The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
+#' parameter \code{xml} (default is "flat"). If you generate a partition based on a 
+#' flat XML structure, some performance gain may be achieved when ordering the sAttributes
+#' with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
+#' order of the sAttributes provided reflects the hierarchy of the XML: The top-level elements
+#' need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
+#' elements at the end.
+#' 
+#' If pAttribute is not NULL, a count of tokens in the corpus will be performed and kept in the
+#' \code{stat}-slot of the partition-object. The length of the pAttribute character vector may be 1
+#' or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
+#' A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
+#' @param .Object character-vector - the CWB-corpus to be used
 #' @param def list consisting of a set of character vectors (see
-#' details)
+#' details and examples)
 #' @param name name of the new partition, defaults to "noName"
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
@@ -37,20 +50,21 @@
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
+#' @include sAttributes2cpos_method.R
 #' @aliases partition
-setGeneric("partition", function(object, ...){standardGeneric("partition")})
+setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 
 #' @rdname partition
 setMethod("partition", "character", function(
-  object, def=NULL, name=c(""),
+  .Object, def=NULL, name=c(""),
   encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
   mc=FALSE, verbose=TRUE
 ) {
-  corpus <- object
+  corpus <- .Object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
   if (verbose==TRUE) message('Setting up partition ', name)
   if (is.null(type)){
-    parsedRegistry <- parseRegistry(object)
+    parsedRegistry <- parseRegistry(.Object)
     if (!"type" %in% names(parsedRegistry)){
       Partition <- new('partition', stat=data.table())    
     } else {
@@ -65,7 +79,7 @@ setMethod("partition", "character", function(
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
   if(is.null(def)){
-    parsedInfo <- parseInfoFile(object)
+    parsedInfo <- parseInfoFile(.Object)
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
       def <- list()
       def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
@@ -85,19 +99,14 @@ setMethod("partition", "character", function(
   Partition@sAttributeStrucs <- names(def)[length(def)]
   Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
-  if (xml=="flat") {
-    Partition <- .flatXmlSattributes2cpos(Partition, regex)
-  } else if (xml=="nested") {
-    Partition <- .nestedXmlSattributes2cpos(Partition, regex)
-  } else {
-    warning("WARNING: Value of 'xml' is not valid!")
-  }
+  stopifnot(xml %in% c("nested", "flat"))
+  Partition <- sAttributes2cpos(Partition, xml, regex)
   if (!is.null(Partition)) {
     if (verbose==TRUE) message('... computing partition size')
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
-      stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
+      stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(.Object)))
       if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', paste(pAttribute, collapse=", "), ')')  
       Partition@stat <- getTermFrequencies(.Object=Partition, pAttribute=pAttribute, id2str=id2str, mc=mc)
       Partition@pAttribute <- pAttribute
@@ -116,121 +125,56 @@ setMethod("partition", "character", function(
 
 
 #' @rdname partition
-setMethod("partition", "list", function(
-  object, name=c(""), encoding=NULL, pAttribute=NULL, meta=NULL,
-  regex=FALSE, xml="flat", id2str=TRUE, type=NULL, mc=FALSE, verbose=TRUE
-) {
+setMethod("partition", "list", function(.Object, ...) {
   partition(
-    object=get('session', '.GlobalEnv')@corpus,
-    def=object, name=name, encoding=encoding, pAttribute=pAttribute,
-    meta=meta, regex=regex, xml=xml, id2str=id2str, type=type, mc=mc, verbose=verbose
+    .Object=get('session', '.GlobalEnv')@corpus, def=.Object, ...
     )
 })
 
-
-#' Get the cpos for a partition based on sattributes
-#' 
-#' Augment the partition object
-#' 
-#' The function works nicely - potentially, it can be optimized, but I have tried many things.
-#' Interestingly, the for-loop is more effective than a vectorized version
-#' @param partition the rudimentary partition object
-#' @return an augmented partition object (includes now cpos and strucs)
-#' @noRd
-.flatXmlSattributes2cpos <- function(part, regex){
-  root <- paste(part@corpus, '.', part@sAttributeStrucs, sep='')
-  meta <- data.frame(struc=c(0:(cqi_attribute_size(root)-1)), select=rep(0, times=cqi_attribute_size(root)))
-  if (length(part@sAttributes) > 0) {
-    for (s in names(part@sAttributes)){
-      sattr <- paste(part@corpus, ".", s, sep="")
-      meta[,2] <- as.vector(cqi_struc2str(sattr, meta[,1]))
-      Encoding(meta[,2]) <- part@encoding
-      if (regex==FALSE) {
-        meta <- meta[which(meta[,2] %in% part@sAttributes[[s]]),]
-      } else {
-        lines <- lapply(part@sAttributes[[s]], function(x) grep(x, meta[,2]))
-        meta <- meta[unique(unlist(lines)),]
-      }
-    }
-    if (nrow(meta) == 0) {
-      warning(paste("no strucs found for the values provided for s-attribute", s))
-    }
-  }
-  if (nrow(meta) != 0){
-    part@cpos <- matrix(
-      data=unlist(lapply(meta[,1], function(x)cqi_struc2cpos(root, x))),
-      ncol=2, byrow=TRUE
-    )
-    part@strucs <- as.numeric(meta[,1])
-  } else {
-    warning("returning a NULL object")
-    part <- NULL    
-  }
-  part
-}
-
-#' Get the cpos for a partition based on sattributes
-#' 
-#' Augment the partition object by strucs and cpos
-#' 
-#' @param partition the rudimentary partition object
-#' @return an augmented partition object (includes now cpos and strucs)
-#' @noRd
-.nestedXmlSattributes2cpos <- function(Partition, regex){
-  sAttr <- vapply(
-    names(Partition@sAttributes),
-    USE.NAMES=TRUE, FUN.VALUE="character",
-    function(x)paste(Partition@corpus, '.', x, sep='')
-  )
-  sAttr <- rev(sAttr)
-  strucs <- c(0:(cqi_attribute_size(sAttr[1])-1))
-  cpos <- matrix(
-    unlist(lapply(strucs,
-                  function(x) cqi_struc2cpos(sAttr[1], x)
-    )
-    ), byrow=TRUE, ncol=2
-  )
-  for (i in c(1:length(sAttr))){
-    if ( i == 1) {
-      meta <- cqi_struc2str(sAttr[i], strucs)
-    } else if ( i > 1 ) {
-      meta <- cqi_struc2str(sAttr[i], cqi_cpos2struc(sAttr[i], cpos[,1]))
-    }
-    Encoding(meta) <- Partition@encoding
-    if (regex == FALSE) {
-      hits <- which(meta %in% Partition@sAttributes[[names(sAttr)[i]]])
-    } else if (regex == TRUE) {
-      # hits <- grep(Partition@sAttributes[[names(sAttr)[i]]], meta)
-      hits <- unique(unlist(lapply(Partition@sAttributes[[names(sAttr)[i]]], function(x) grep(x, meta[,2]))))
-    }
-    cpos <- cpos[hits,]
-    strucs <- strucs[hits]
-  }
-  Partition@strucs <- strucs
-  Partition@cpos <- cpos
-  Partition
-}
-
-
 #' @rdname partition
-setMethod("partition", "session", function(object){
+setMethod("partition", "session", function(.Object){
   .getClassObjectsAvailable(".GlobalEnv", "partition")
 })
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
+setMethod("partition", "partition", function(.Object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
   newPartition <- new(
-    class(object)[1],
-    corpus=object@corpus, encoding=object@encoding, name=name, xml=object@xml,
+    class(.Object)[1],
+    corpus=.Object@corpus, encoding=.Object@encoding, name=name, xml=.Object@xml,
     stat=data.table()
     )
   if (verbose == TRUE) message('Setting up partition', name)
-  def <- lapply(def, function(x) .adjustEncoding(x, object@encoding))  
-  newPartition@sAttributes <- c(object@sAttributes, def)
+  def <- lapply(def, function(x) .adjustEncoding(x, .Object@encoding))  
+  newPartition@sAttributes <- c(.Object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   if (verbose == TRUE) message('... getting strucs and corpus positions')
-  newPartition <- .zoomingSattributes2cpos(object, newPartition, def, regex)
+  # newPartition <- sAttributes2cpos(.Object, newPartition, def, regex)
+  
+  sAttr <- paste(.Object@corpus, '.', names(sAttribute), sep='')
+  if (.Object@xml == "flat") {
+    str <- cqi_struc2str(sAttr, .Object@strucs)    
+  } else if (.Object@xml == "nested") {
+    str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, .Object@cpos[,1]))    
+  }
+  Encoding(str) <- newPartition@encoding
+  if (regex == FALSE) {
+    hits <- which(str %in% sAttribute[[1]])
+  } else if (regex == TRUE) {
+    hits <- grep(sAttribute[[1]], str)
+  }
+  newCpos <- .Object@cpos[hits,]
+  if (class(newCpos) == "matrix"){
+    newPartition@cpos <- newCpos
+  } else if (class(newCpos) == "integer") {
+    newPartition@cpos <- matrix(newCpos, ncol=2, byrow=TRUE)     
+  }
+  newPartition@strucs <- .Object@strucs[hits]
+  if (length(.Object@metadata) == 2) {
+    message('... adjusting metadata')
+    newPartition@metadata <- .Object@metadata[hits,]
+  }
+  
   newPartition@size <- size(newPartition)
   if (length(pAttribute)>0) {
     newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=pAttribute, id2str=id2str, mc=mc)
@@ -240,41 +184,6 @@ setMethod("partition", "partition", function(object, def, name=c(""), regex=FALS
   newPartition
 })
 
-#' Augment the partition object by strucs and cpos
-#' 
-#' @param Partition the partition object to be specified
-#' @param newPartition the new partition
-#' @param sAttribute info for specification (a list)
-#' @param method either "in" or "grep"
-#' @return an augmented partition object
-#' @noRd
-.zoomingSattributes2cpos <- function(Partition, newPartition, sAttribute, regex){
-  sAttr <- paste(Partition@corpus, '.', names(sAttribute), sep='')
-  if (Partition@xml == "flat") {
-    str <- cqi_struc2str(sAttr, Partition@strucs)    
-  } else if (Partition@xml == "nested") {
-    str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, Partition@cpos[,1]))    
-  }
-  Encoding(str) <- newPartition@encoding
-  if (regex == FALSE) {
-    hits <- which(str %in% sAttribute[[1]])
-  } else if (regex == TRUE) {
-    hits <- grep(sAttribute[[1]], str)
-  }
-  newCpos <- Partition@cpos[hits,]
-  if (class(newCpos) == "matrix"){
-    newPartition@cpos <- newCpos
-  } else if (class(newCpos) == "integer") {
-    newPartition@cpos <- matrix(newCpos, ncol=2, byrow=TRUE)     
-  }
-  newPartition@strucs <- Partition@strucs[hits]
-  if (length(Partition@metadata) == 2) {
-    message('... adjusting metadata')
-    newPartition@metadata <- Partition@metadata[hits,]
-    # newPartition <- .partitionMetadataValues(newPartition)
-  }
-  newPartition
-}
 
 
 #' @rdname partition

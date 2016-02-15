@@ -28,7 +28,7 @@ use("polmineR.sampleCorpus")
 all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 speechesSample <- sample(speeches, 25)
-assignedLabels <- label(speechesSample, logfile="/Users/blaette/Lab/tmp/foo.csv")
+df <- label(speechesSample, logfile="/Users/blaette/Lab/tmp/foo.csv")
 } 
 }
 
