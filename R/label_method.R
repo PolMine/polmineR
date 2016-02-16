@@ -46,5 +46,6 @@ setMethod("label", "partitionBundle", function(.Object, labels=c(true=1, false=0
   }
   retval <- do.call(rbind, retval)
   colnames(retval) <- c("label", "name", "corpus", "sAttributes")
+  retval
 })
 
