@@ -17,11 +17,11 @@
 #' @exportMethod label
 setGeneric("label", function(.Object, ...) standardGeneric("label"))
 
-setMethod("label", "partitionBundle", function(.Object, labels=c(true=1, false=0), description="Make your choice", logfile=NULL, resume=FALSE){
+setMethod("label", "partitionBundle", function(.Object, labels=c(true=1, false=0), description="Make your choice", logfile=NULL, resume=FALSE, ...){
   retval <- list()
   labels <- c(setNames(as.character(labels), names(labels)), quit="quit")
   for (i in c(1:length(.Object@objects))){
-    read(.Object@objects[[i]])
+    read(.Object@objects[[i]], ...)
     msg <- paste(
       description, " (",
       paste(labels, names(labels), sep=" = ", collapse=" | "),
