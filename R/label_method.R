@@ -33,13 +33,13 @@ setMethod("label", "partitionBundle", function(.Object, labels=c(true=1, false=0
       message("sorry, this is not a valid value, please try again ")
     }
     if (newLabel == "quit") break
+    status <- c(
+      newLabel,
+      names(.Object@objects[i]),
+      .Object@objects[[i]]@corpus,
+      deparse(.Object[[i]]@sAttributes, control=c("quoteExpressions"))  
+    )
     if (!is.null(logfile)){
-      status <- c(
-        newLabel,
-        names(.Object@objects[i]),
-        .Object@objects[[i]]@corpus,
-        deparse(speechesSample[[i]]@sAttributes, control=c("quoteExpressions"))  
-      )
       cat(paste(paste(status, collapse="\t"), "\n", sep=""), file=logfile, append=TRUE)
     }
     retval[[i]] <- status
