@@ -20,7 +20,7 @@ setMethod("as.markdown", "partition", function(object, meta){
 
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(object, meta){
+setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="speaker_type"){
   # in the function call, meta is actually not needed, its required by the calling function
   if (length(object@strucs)>1){
     s <- object@strucs
@@ -40,7 +40,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta){
     metaChange <- TRUE
     metadata <- matrix(apply(object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
-  type <- cqi_struc2str(paste(object@corpus, ".text_type", sep=""), object@strucs)
+  type <- cqi_struc2str(paste(object@corpus, sAttribute, sep=""), object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
