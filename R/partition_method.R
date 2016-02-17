@@ -151,7 +151,7 @@ setMethod("partition", "partition", function(.Object, def, name=c(""), regex=FAL
   if (verbose == TRUE) message('... getting strucs and corpus positions')
   # newPartition <- sAttributes2cpos(.Object, newPartition, def, regex)
   
-  sAttr <- paste(.Object@corpus, '.', names(sAttribute), sep='')
+  sAttr <- paste(.Object@corpus, '.', names(def), sep='')
   if (.Object@xml == "flat") {
     str <- cqi_struc2str(sAttr, .Object@strucs)    
   } else if (.Object@xml == "nested") {
@@ -159,9 +159,9 @@ setMethod("partition", "partition", function(.Object, def, name=c(""), regex=FAL
   }
   Encoding(str) <- newPartition@encoding
   if (regex == FALSE) {
-    hits <- which(str %in% sAttribute[[1]])
+    hits <- which(str %in% def[[1]])
   } else if (regex == TRUE) {
-    hits <- grep(sAttribute[[1]], str)
+    hits <- grep(def[[1]], str)
   }
   newCpos <- .Object@cpos[hits,]
   if (class(newCpos) == "matrix"){
