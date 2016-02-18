@@ -34,7 +34,7 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), verbose=TRUE){
+setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), verbose=TRUE, ...){
   if (is.null(meta)){
     parsedRegistry <- parseRegistry(.Object@corpus)
     if ("meta" %in% names(parsedRegistry)){
@@ -48,7 +48,7 @@ setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), ve
       }
     }
   }
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight)
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {

@@ -26,12 +26,12 @@ setMethod("html", "character", function(object){
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method show,html-method
-setMethod("html", "partition", function(object, meta=NULL, highlight=list()){
+setMethod("html", "partition", function(object, meta=NULL, highlight=list(), ...){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     object <- enrich(object, meta=meta, verbose=FALSE)
-    markdown <- as.markdown(object, meta)
+    markdown <- as.markdown(object, meta, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
       markdown,

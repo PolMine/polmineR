@@ -40,7 +40,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="spe
     metaChange <- TRUE
     metadata <- matrix(apply(object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
-  type <- cqi_struc2str(paste(object@corpus, sAttribute, sep=""), object@strucs)
+  type <- cqi_struc2str(paste(object@corpus, sAttribute, sep="."), object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
