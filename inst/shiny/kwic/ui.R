@@ -22,24 +22,27 @@ shinyUI(fluidPage(
     actionButton("goButton", "Go!"),
     br(),br(),
     selectInput(
-      "partitionObject", "Partition:",
+      "partitionObject", "partition:",
       choices=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
-#      , selected="foo"
-      # choices=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition'),
-      # selected=polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')[1]
       ),
-    textInput("node", "Node:", value=session@defaultKwicNode),
-    selectInput("pAttribute", "Select p-attribute:", choices=c("word", "pos", "lemma"), selected=session@pAttribute),
-    numericInput("leftContext", "Left context:", value=session@left),
-    numericInput("rightContext", "Right context:", value=session@right),
-    textInput("collocate", "collocate:", value=session@defaultKwicCooccurrence),
-    textInput("meta", "Metainformation:", value="text_party,text_date"),
-    br(),
-    actionButton("goButton", "Go!")
+    textInput("node", "node/query:", value=session@defaultKwicNode),
+    selectInput(
+      "meta", "s-attribute/metadata:",
+      choices=sAttributes(corpus(get(partitionObjects[1], ".GlobalEnv"))),
+      multiple=TRUE
+    ),
+    selectInput(
+      "pAttribute", "p-attribute:",
+      choices=pAttributes(corpus(get(partitionObjects[1], ".GlobalEnv")))
+      ),
+    numericInput("leftContext", "left context:", value=session@left),
+    numericInput("rightContext", "right context:", value=session@right),
+#    textInput("collocate", "collocate:", value=session@defaultKwicCooccurrence),
+    br()
     ),
   
   mainPanel(
-    h3(textOutput("query")),
+#    h3(textOutput("query")),
     # p(textOutput("frequency")),
     dataTableOutput('table')
     )

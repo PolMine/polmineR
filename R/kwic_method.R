@@ -41,14 +41,13 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
     if ("meta" %in% names(parsedRegistry)){
       meta <- parsedRegistry[["meta"]]
     } else {
-      meta <- slot(get("session", '.GlobalEnv'), 'kwicMetadata')
+      meta <- slot(get("session", '.GlobalEnv'), 'metadata')
       if (all(meta %in% sAttributes(.Object@corpus)) == FALSE){
         stop("meta found in session settings does not work") 
       }
     }
   }
     
-  
   metainformation <- lapply(
     meta,
     function(metadat){
@@ -62,14 +61,21 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
   conc <- lapply(
     c("left", "node", "right"),
     function(what){
-      tokens <- unlist(lapply(.Object@cpos, function(x) {paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")}))
+      tokens <- unlist(lapply(
+        .Object@cpos, function(x) {
+          paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")
+          }))
       Encoding(tokens) <- .Object@encoding
       as.utf8(tokens)
     }
   )
   conc <- data.frame(conc, stringsAsFactors=FALSE)
   colnames(conc) <- c("left", "node", "right")
-  tab <- data.frame(metainformation, conc)
+  if (ncol(metainformation) > 0){
+    tab <- data.frame(metainformation, conc)  
+  } else {
+    tab <- conc
+  }
   if (length(neighbor) > 0){
     tab <- tab[grep(neighbor, apply(tab, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   } 

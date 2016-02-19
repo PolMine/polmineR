@@ -12,9 +12,7 @@
 #' @slot minFrequency default minimum frequency
 #' @slot posFilter default filter for POS
 #' @slot filterType default filter type
-#' @slot kwicLineView logical
-#' @slot kwicMetadata default metadata displayed for kwic
-#' @slot kwicNo default number of kwic lines
+#' @slot lineview logical
 #' @slot metadata default metadata 
 #' @slot multicore default multicore
 #' @slot cores number of CPU cores to use
@@ -51,12 +49,11 @@ setClass(
     pAttribute="character",
     left="numeric",
     right="numeric",
+    lineview="logical",
     minSignificance="numeric",
     minFrequency="numeric",
     posFilter="character",
     filterType="character",
-    kwicMetadata="character",
-    kwicNo="numeric",
     metadata="character",
     multicore="logical",
     cores="numeric",
@@ -66,7 +63,6 @@ setClass(
     email="character",
     webDir="character",
     partitionDir="character",
-    defaultKwicCooccurrence="character",
     defaultKwicNode="character",
     defaultRegistry="character",
     browse="logical",
@@ -85,12 +81,9 @@ session <- new(
   right=5,
   minSignificance=3.84,
   minFrequency=5,
-  posFilter=c("NN"),
   filterType="include",
-  kwicMetadata=c("text_party"),
-  kwicNo=10,
-  kwicLineView=FALSE,
-  metadata = c("text_party", "text_name", "text_date"),
+  lineview=FALSE,
+  metadata = as.character(c()),
   multicore=TRUE,
   cores=2,
   consoleEncoding="UTF-8",
@@ -99,7 +92,6 @@ session <- new(
   email="polmine@uni-due.de",
   webDir="",
   partitionDir="",
-  defaultKwicCooccurrence="",
   defaultKwicNode="Suche",
   browse=FALSE,
   backend="doSNOW"

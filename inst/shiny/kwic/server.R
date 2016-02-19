@@ -12,12 +12,18 @@ controls <- get('session', '.GlobalEnv')
 
 shinyServer(function(input, output, session) {
 #  loadedPartition <- load(file.path(session@partitionDir, input$partitionObject, ".RData", sep=""))
+  # observe({
+  #   foo <- input$partitionButton
+  #   availablePartitions <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
+  #   updateSelectInput(session, "partitionObject", choices=availablePartitions)
+  # })
   observe({
-    foo <- input$partitionButton
-    availablePartitions <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
-    updateSelectInput(session, "partitionObject", choices=availablePartitions)
+    x <- input$partitionObject
+    new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
+    new_pAttr <- pAttributes(get(x, ".GlobalEnv")@corpus)
+    updateSelectInput(session, "pAttribute", choices=new_pAttr, selected=NULL)
+    updateSelectInput(session, "meta", choices=new_sAttr, selected=NULL)
   })
-  
   output$query <- renderText({
     paste(
       'Query: "',
@@ -34,23 +40,22 @@ shinyServer(function(input, output, session) {
     isolate(
       kwicObject <- kwic(
         .Object=get(input$partitionObject, '.GlobalEnv'),
-#        object=partitionObjects[[input$partitionObject]],
         query=input$node,
         pAttribute=input$pAttribute,
         left=input$leftContext,
         right=input$rightContext,
-        neighbor=input$collocate,
-        meta=unlist(strsplit(input$meta,",")),
+#        neighbor=input$collocate,
+        meta=input$meta,
         verbose=FALSE
       )
     )
     tab <- kwicObject@table
-    noMetadata <- length(unlist(strsplit(input$meta,",")))
-    if (noMetadata > 0){
+    if (length(input$meta) > 0){
+      print(input$meta)
       metaRow <- unlist(lapply(
         c(1:nrow(tab)),
         function(i){
-          sAttr <- unlist(lapply(tab[i,1:noMetadata], as.character))
+          sAttr <- unlist(lapply(tab[i,c(1:length(input$meta))], as.character))
           shownText <- paste(sAttr, collapse=" | ")
           wrappedText <- shownText
 #           wrappedText <- paste(
@@ -60,15 +65,15 @@ shinyServer(function(input, output, session) {
           return(wrappedText)
         }
       ))
-      if (noMetadata > 1){
+      if (length(input$meta) > 1){
         retval <- data.frame(
           metadata=metaRow,
-          tab[,(length(unlist(strsplit(input$meta,",")))+1):ncol(tab)]
+          tab[,(length(input$meta)+1):ncol(tab)]
         )
-      } else if (noMetadata == 1){
+      } else if (length(input$meta) == 1){
         retval <- tab
       }
-    } else if (noMetadata == 0){
+    } else if (length(input$meta) == 0){
       retval <- data.frame(
         no=c(1:nrow(tab)),
         tab

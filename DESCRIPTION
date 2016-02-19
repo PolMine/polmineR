@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.24
-Date: 2016-02-15
+Version: 0.5.25
+Date: 2016-02-19
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -34,8 +34,9 @@ Suggests:
     rJava
 VignetteBuilder: knitr
 LazyData: yes
-Description: Tools for drilling and mining CWB corpora. The package offers
-    functionality to work with partitions and basic statistics. It is meant to
+Description: Tools for corpus analysis using the CWB as an efficient backend. 
+    The package offers basic functionality to flexibly create subcorpora and to 
+    carry out and basic statistical operations. Beyond that, it is intended to
     serve as an interface to packages implementing advanced statistical
     procedures.
 License: CC BY-NC-SA 4.0 | file LICENSE
