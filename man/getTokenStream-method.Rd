@@ -10,9 +10,10 @@
 getTokenStream(.Object, ...)
 
 \S4method{getTokenStream}{matrix}(.Object, corpus, pAttribute, encoding,
-  collapse = NULL)
+  collapse = NULL, cposAsNames = FALSE)
 
-\S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL)
+\S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
+  cposAsNames = FALSE)
 }
 \arguments{
 \item{.Object}{an object of classe \code{matrix} or \code{partition}}
@@ -26,6 +27,8 @@ getTokenStream(.Object, ...)
 \item{encoding}{encoding to use}
 
 \item{collapse}{character string length 1}
+
+\item{cposAsNames}{logical, whether to return cpos as names of the tokens}
 }
 \description{
 get token stream

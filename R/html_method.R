@@ -42,8 +42,7 @@ setMethod("html", "partition", function(object, meta=NULL, highlight=list(), ...
     htmlDoc <- highlight(htmlDoc, highlight=highlight)
     htmlDoc <- htmltools::HTML(htmlDoc)
   } else {
-    warning("package 'markdown' is not installed, but necessary for this function")
-    stop()
+    stop("package 'markdown' is not installed, but necessary for this function")
   }
   htmlDoc
 })

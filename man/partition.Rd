@@ -76,8 +76,9 @@ The XML imported into the CWB may be "flat" or "nested". This needs to be indica
 parameter \code{xml} (default is "flat"). If you generate a partition based on a 
 flat XML structure, some performance gain may be achieved when ordering the sAttributes
 with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
-order of the sAttributes provided reflects the hierarchy of the XML. Nested XML may be
-somewhat more difficult to handle, but generating partitions will be faster than with flat XML.
+order of the sAttributes provided reflects the hierarchy of the XML: The top-level elements
+need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
+elements at the end.
 
 If pAttribute is not NULL, a count of tokens in the corpus will be performed and kept in the
 \code{stat}-slot of the partition-object. The length of the pAttribute character vector may be 1

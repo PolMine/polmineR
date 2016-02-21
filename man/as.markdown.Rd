@@ -10,7 +10,8 @@
 \usage{
 as.markdown(object, ...)
 
-\S4method{as.markdown}{plprPartition}(object, meta)
+\S4method{as.markdown}{plprPartition}(object, meta,
+  sAttribute = "speaker_type", cposAsSpan = FALSE)
 
 \S4method{as.markdown}{pressPartition}(object, meta = c("text_newspaper",
   "text_date"))
@@ -23,6 +24,8 @@ as.markdown(object, ...)
 \item{...}{further arguments}
 
 \item{meta}{metainformation i.e. s-attributes) to be displayed}
+
+\item{cpos}{logical, whether to add cpos as ids in span elements}
 }
 \description{
 for further processing to html

@@ -4,31 +4,43 @@
 #' 
 #' @param object object to be converted
 #' @param meta metainformation i.e. s-attributes) to be displayed
+#' @param cpos logical, whether to add cpos as ids in span elements
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
 setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")})
 
-#' @rdname partition-class
-setMethod("as.markdown", "partition", function(object, meta){
-  rawtxt <- paste(
-    getTokenStream(object, pAttribute="word", collapse=" "),
-    sep="\n"
+# helper function to wrap span with id around tokens
+.wrapTokens <- function(tokens){
+  sapply(
+    c(1:length(tokens)),
+    function(i){
+      paste('<span id="', names(tokens)[i], '">', tokens[i], "</span>", sep="")
+    }
   )
-  gsub("(.)\\s([,.:!?])", "\\1\\2", rawtxt)
+}
+
+#' @rdname partition-class
+setMethod("as.markdown", "partition", function(object, meta, cposAsSpan=FALSE){
+  tokens <- getTokenStream(object, pAttribute="word", cposAsNames=cposAsSpan)
+  if (cpos == TRUE) tokens <- wrapTokens(tokens)
+  tokens <- paste(tokens, collapse=" ")
+  rawTxt <- paste(tokens, sep="\n")
+  gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
 })
 
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="speaker_type"){
+setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="speaker_type", cposAsSpan=FALSE){
   # in the function call, meta is actually not needed, its required by the calling function
-  if (length(object@strucs)>1){
-    s <- object@strucs
-    gapSize <- s[2:length(s)] - s[1:(length(s)-1)]
+  if (length(object@strucs) > 1){
+    gapSize <- object@strucs[2:length(object@strucs)] - object@strucs[1:(length(object@strucs)-1)]
     gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
-    m <- object@metadata
-    metaNo <- ncol(m)
-    metaComp <- data.frame(m[2:nrow(m),], m[1:(nrow(m)-1),])
+    metaNo <- ncol(object@metadata)
+    metaComp <- data.frame(
+      object@metadata[2:nrow(object@metadata),],
+      object@metadata[1:(nrow(object@metadata)-1),]
+      )
     metaChange <- !apply(
       metaComp, 1,
       function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
@@ -48,16 +60,20 @@ setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="spe
       meta <- paste("\n###", meta, "\n", collapse="")
       meta <- polmineR:::.adjustEncoding(meta, "latin1")
     }
-    plainText <- paste(
-      cqi_cpos2str(paste(
-        object@corpus, '.word', sep=''),
-        c(object@cpos[i,1]:object@cpos[i, 2])),
-      collapse=" "
+    tokens <- getTokenStream(
+      matrix(object@cpos[i,], nrow=1),
+      corpus=object@corpus, pAttribute="word", encoding=object@encoding,
+      cposAsNames=cposAsSpan
     )
-    Encoding(plainText) <- object@encoding
+    if (cposAsSpan == TRUE) tokens <- .wrapTokens(tokens)
+    # cqi_cpos2str(
+    #   paste(object@corpus, '.word', sep=''),
+    #   c(object@cpos[i,1]:object@cpos[i, 2])
+    #   )
+    plainText <- paste(tokens, collapse=" ")
+    # Encoding(plainText) <- object@encoding
     if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
-    retval <- paste(meta, plainText)
-    return(retval)
+    paste(meta, plainText)
   })
   # Encoding(markdown) <- object@encoding
   markdown <- paste(markdown, collapse="\n\n")

@@ -34,11 +34,11 @@
 \alias{split}
 \title{partition class}
 \usage{
-\S4method{as.markdown}{partition}(object, meta)
+\S4method{as.markdown}{partition}(object, meta, cposAsSpan = FALSE)
 
 \S4method{freq}{partition}(.Object)
 
-\S4method{html}{partition}(object, meta = NULL, highlight = list())
+\S4method{html}{partition}(object, meta = NULL, highlight = list(), ...)
 
 \S4method{pAttributes}{partition}(.Object)
 
@@ -74,6 +74,8 @@
 
 \item{highlight}{list with regex to be highlighted}
 
+\item{...}{further parameters}
+
 \item{x}{a partition object}
 
 \item{i}{index}
@@ -89,8 +91,6 @@
 \item{value}{value}
 
 \item{dim}{don't know}
-
-\item{...}{further parameters}
 }
 \description{
 partition class

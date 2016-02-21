@@ -10,7 +10,7 @@
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{read}{partitionBundle}(.Object, ...)
 }
