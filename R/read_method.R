@@ -7,9 +7,12 @@
 #' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed, if not stated explicitly, session settings will be used
-#' @param highlight a list of character vectors with regular expressions to
+#' @param regex a list of character vectors with regular expressions to
 #'   highlight relevant terms or expressions; the names of the list provide the
 #'   colors (see examples)
+#' @param cqp a list of character vectors with regular expressions to
+#'   highlight relevant terms or expressions; the names of the list provide the
+#'   colors
 #' @param ... further parameters passed into read
 #' @exportMethod read
 #' @rdname read-method

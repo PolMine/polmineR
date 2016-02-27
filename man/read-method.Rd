@@ -22,9 +22,13 @@ read(.Object, ...)
 \item{meta}{a character vector supplying s-attributes for the metainformation
 to be printed, if not stated explicitly, session settings will be used}
 
-\item{highlight}{a list of character vectors with regular expressions to
+\item{regex}{a list of character vectors with regular expressions to
 highlight relevant terms or expressions; the names of the list provide the
 colors (see examples)}
+
+\item{cqp}{a list of character vectors with regular expressions to
+highlight relevant terms or expressions; the names of the list provide the
+colors}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
