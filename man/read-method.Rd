@@ -9,8 +9,8 @@
 \usage{
 read(.Object, ...)
 
-\S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
-  verbose = TRUE, ...)
+\S4method{read}{partition}(.Object, meta = NULL, regex = list(),
+  cqp = list(), verbose = TRUE, ...)
 
 \S4method{read}{partitionBundle}(.Object, ...)
 }
@@ -38,7 +38,7 @@ merkel <- partition(
   list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
   type="plpr"
 )
-read(merkel)
+read(merkel, meta=c("text_name", "text_date"))
 read(
   merkel,
   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
@@ -47,6 +47,9 @@ read(
 all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 read(speeches)
+
+migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
+read(migVocab, speeches, col="Integration")
 }
 }
 \seealso{

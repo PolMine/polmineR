@@ -63,6 +63,7 @@ setMethod(
     .Object, query, pAttribute=NULL, sAttribute=NULL,
     left=NULL, right=NULL,
     stoplist=NULL, positivelist=NULL,
+    count=TRUE,
     method="ll",
     mc=NULL, verbose=TRUE
   ) {
@@ -97,7 +98,7 @@ setMethod(
     ctxt@call <- deparse(match.call())
     
     # getting counts of query in partition
-    if (verbose==TRUE) message("... getting counts for query in partition", appendLF=FALSE)
+    if (verbose==TRUE) message("... getting corpus positions of query in partition", appendLF=FALSE)
     hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
       if (verbose==TRUE) message(' -> no hits')
@@ -117,7 +118,7 @@ setMethod(
     }
     
     
-    if (verbose==TRUE) message("... counting tokens in context ")  
+    if (verbose==TRUE) message("... generating contexts ")  
     if (mc==TRUE) {
       bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
     } else {
@@ -135,20 +136,23 @@ setMethod(
     ctxt@count <- length(bigBag)
     
     # put together raw stat table
-    idList <- lapply(
-      c(1:length(pAttribute)),
-      function(i) unlist(lapply(bigBag, function(x) x$ids[[i]]))
-    )
-    names(idList) <- pAttribute
-    ID <- as.data.table(idList)
-    setkeyv(ID, pAttribute)
-    count <- function(x) return(x)
-    ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
-    for (i in c(1:length(pAttribute))){
-      ctxt@stat[, eval(pAttribute[i]) := cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]) %>% as.utf8()]
+    if (count == TRUE || length(method) > 0){
+      if (verbose == TRUE) message('... counting tokens')
+      idList <- lapply(
+        c(1:length(pAttribute)),
+        function(i) unlist(lapply(bigBag, function(x) x$ids[[i]]))
+      )
+      names(idList) <- pAttribute
+      ID <- as.data.table(idList)
+      setkeyv(ID, pAttribute)
+      count <- function(x) return(x)
+      ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
+      for (i in c(1:length(pAttribute))){
+        ctxt@stat[, eval(pAttribute[i]) := cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]) %>% as.utf8()]
+      }
+      setnames(ctxt@stat, "V1", "count_window")
+      setkeyv(ctxt@stat, pAttribute)
     }
-    setnames(ctxt@stat, "V1", "count_window")
-    setkeyv(ctxt@stat, pAttribute)
     
     # statistical tests
     if (!is.null(method)){

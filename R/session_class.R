@@ -13,7 +13,7 @@
 #' @slot posFilter default filter for POS
 #' @slot filterType default filter type
 #' @slot lineview logical
-#' @slot metadata default metadata 
+#' @slot meta default metadata 
 #' @slot multicore default multicore
 #' @slot cores number of CPU cores to use
 #' @slot consoleEncoding default console encoding
@@ -33,9 +33,9 @@
 #' @param value character string to be assigned
 #' @exportClass session
 #' @rdname session
-#' @aliases session email filterType kwicMetadata kwicNo left metadata minFrequency 
+#' @aliases session email filterType kwicNo left metadata minFrequency 
 #' minSignificance multicore pAttribute posFilter project right smtpPort smtpServer
-#' corpus corpus<- email<- filterType<- kwicMetadata<-
+#' corpus corpus<- email<- filterType<- 
 #' kwicNo<- left<- metadata<- minFrequency<-
 #' minSignificance<- multicore<- pAttribute<- posFilter<-
 #' project<- right<- smtpPort<- smtpServer<-
@@ -54,7 +54,7 @@ setClass(
     minFrequency="numeric",
     posFilter="character",
     filterType="character",
-    metadata="character",
+    meta="character",
     multicore="logical",
     cores="numeric",
     consoleEncoding="character",
@@ -83,7 +83,7 @@ session <- new(
   minFrequency=5,
   filterType="include",
   lineview=FALSE,
-  metadata = as.character(c()),
+  meta = as.character(c()),
   multicore=TRUE,
   cores=2,
   consoleEncoding="UTF-8",

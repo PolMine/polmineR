@@ -10,8 +10,7 @@
 \usage{
 as.markdown(object, ...)
 
-\S4method{as.markdown}{plprPartition}(object, meta,
-  sAttribute = "speaker_type", cposAsSpan = FALSE)
+\S4method{as.markdown}{plprPartition}(object, meta, cpos = FALSE)
 
 \S4method{as.markdown}{pressPartition}(object, meta = c("text_newspaper",
   "text_date"))

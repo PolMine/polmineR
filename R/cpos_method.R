@@ -1,9 +1,12 @@
+#' @include tempcorpus.R
+NULL
+
 #' corpus positions for a query
 #' 
 #' Get the corpus positions (cpos) for a query. The query may also be a 
 #' CQP query. 
 #' 
-#' @param .Object a character vector (length 1) giving the name of a corpus, or a partition object
+#' @param .Object a character vector (length 1) giving the name of a corpus, a partition object or a tempcorpus
 #' @param query a query, either a single term, or a CQP query
 #' @param pAttribute the p-attribute to search
 #' @param encoding the encoding of the corpus (if NULL, the
@@ -68,4 +71,26 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
     hits <- matrix(hits, ncol=2)
   }
   return(hits)
+})
+
+#' @param shift logical, if true, the cpos resulting from the query performed on
+#'   the tempcorpus will be shifted so that they match the positions of the
+#'   corpus from which the tempcorpus was generated
+#' @rdname cpos-method
+setMethod("cpos", "tempcorpus", function(.Object, query, shift=TRUE){
+  cqpBatchCmds <- paste(paste(c(
+    "TMPCORPUS",
+    paste("FOO = ", query, sep=""),
+    "dump FOO"
+  ), collapse=";"), ";", sep="")
+  cqpBatchFile=file.path(.Object@dir, "cqpBatchFile.txt")
+  cat(cqpBatchCmds, file=cqpBatchFile)
+  cqpCmd <- paste(c(
+    "cqp", "-r", .Object@registry, "-f", cqpBatchFile
+  ), collapse=" ")
+  cpos <- system(cqpCmd, intern=TRUE)
+  cposMatrix <- do.call(rbind, lapply(strsplit(cpos, "\t"), as.integer))
+  cposMatrix <- cposMatrix[,c(1:2)]
+  if (shift == TRUE) cposMatrix <- apply(cposMatrix, 2, function(x) x + .Object@cpos[1,1])
+  cposMatrix
 })

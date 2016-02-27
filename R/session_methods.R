@@ -1,4 +1,4 @@
-#' @include session_class.R store_method.R
+#' @include session_class.R store_method.R meta_method.R
 NULL
 
 ##############################
@@ -168,26 +168,6 @@ setReplaceMethod("filterType", signature=c(x="session", value="character"), func
   x
 })
 
-##############################
-
-#' @exportMethod kwicMetadata
-#' @exportMethod kwicMetadata<-
-NULL
-
-
-
-setGeneric("kwicMetadata", function(x) standardGeneric("kwicMetadata"))
-setGeneric("kwicMetadata<-", function(x, value) standardGeneric("kwicMetadata<-"))
-
-#' @rdname session
-setMethod("kwicMetadata", "session", function(x) x@kwicMetadata)
-
-#' @rdname session
-setReplaceMethod("kwicMetadata", signature=c(x="session", value="character"), function(x, value) {
-  x@kwicMetadata <- value
-  x
-})
-
 
 ##############################
 
@@ -210,21 +190,23 @@ setReplaceMethod("kwicNo", signature=c(x="session", value="numeric"), function(x
 
 ##############################
 
-#' @exportMethod metadata
-#' @exportMethod metadata<-
+#' @exportMethod meta
+#' @exportMethod meta<-
 NULL
 
 
-setGeneric("metadata", function(x) standardGeneric("metadata"))
-setGeneric("metadata<-", function(x, value) standardGeneric("metadata<-"))
+setGeneric("meta<-", function(.Object, value) standardGeneric("meta<-"))
 
 #' @rdname session
-setMethod("metadata", "session", function(x) x@metadata)
+#' @exportMethod meta
+setMethod("meta", "session", function(.Object) .Object@meta)
 
 #' @rdname session
-setReplaceMethod("metadata", signature=c(x="session", value="character"), function(x, value) {
-  x@metadata <- value
-  x
+#' @exportMethod meta<-
+setReplaceMethod("meta", signature=c(.Object="session", value="character"), function(.Object, value) {
+  if (is.null(value)) value <- as.character(c())
+  .Object@meta <- value
+  .Object
 })
 
 ##############################

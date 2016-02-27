@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.26
-Date: 2016-02-19
+Version: 0.5.29
+Date: 2016-02-26
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -34,8 +34,8 @@ Suggests:
     rJava
 VignetteBuilder: knitr
 LazyData: yes
-Description: Tools for corpus analysis using the CWB as an efficient backend. 
-    The package offers basic functionality to flexibly create subcorpora and to 
+Description: Tools for corpus analysis using the CWB as an efficient backend.
+    The package offers basic functionality to flexibly create subcorpora and to
     carry out and basic statistical operations. Beyond that, it is intended to
     serve as an interface to packages implementing advanced statistical
     procedures.
@@ -77,6 +77,7 @@ Collate:
     'cooccurrences_methods.R'
     'dispersion_class.R'
     'count_method.R'
+    'tempcorpus.R'
     'cpos_method.R'
     'ctm_method.R'
     'dispersion_method.R'

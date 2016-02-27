@@ -5,6 +5,7 @@
 \alias{cpos}
 \alias{cpos,character-method}
 \alias{cpos,partition-method}
+\alias{cpos,tempcorpus-method}
 \title{corpus positions for a query}
 \usage{
 cpos(.Object, ...)
@@ -14,9 +15,11 @@ cpos(.Object, ...)
 
 \S4method{cpos}{partition}(.Object, query, pAttribute = NULL,
   verbose = TRUE)
+
+\S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
 }
 \arguments{
-\item{.Object}{a character vector (length 1) giving the name of a corpus, or a partition object}
+\item{.Object}{a character vector (length 1) giving the name of a corpus, a partition object or a tempcorpus}
 
 \item{...}{further arguments}
 
@@ -28,6 +31,10 @@ cpos(.Object, ...)
 encoding provided in the registry file of the corpus will be used)}
 
 \item{verbose}{logical, whether to be talkative}
+
+\item{shift}{logical, if true, the cpos resulting from the query performed on
+the tempcorpus will be shifted so that they match the positions of the
+corpus from which the tempcorpus was generated}
 }
 \value{
 You get a matrix with two columns, the first column giving the start cpos of the hits obtained,

@@ -119,9 +119,20 @@ setMethod("+", signature(e1="bundle", e2="textstat"), function(e1, e2){
 #' @exportMethod [[
 #' @rdname bundle-class
 setMethod('[[', 'bundle', function(x,i){
-  return(x@objects[[i]])
-}
-)
+  if (is.character(i)){
+    namesToDrop <- names(x)[!names(x) %in% i]
+    for (n in namesToDrop) x@objects[[n]] <- NULL
+    return(x)
+  } else {
+    if (length(i) == 1){
+      return(x@objects[[i]])
+    } else {
+      partitionsToDrop <- c(1:length(x@objects))[c(1:length(x@objects)) %in% i]
+      for (j in partitionsToDrop) x@objects[[j]] <- NULL
+      return(x)
+    }
+  }
+})
 
 #' @rdname bundle-class
 setMethod("as.matrix", "bundle", function(x, col) {

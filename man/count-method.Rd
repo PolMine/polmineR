@@ -15,7 +15,7 @@ count(.Object, ...)
   verbose = T, progress = F)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
-  freq = FALSE, total = FALSE, mc = T, progress = T, verbose = FALSE)
+  freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
 
 \S4method{count}{character}(.Object, query, pAttribute = NULL,
   verbose = TRUE)

@@ -26,11 +26,13 @@ setMethod("html", "character", function(object){
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method show,html-method
-setMethod("html", "partition", function(object, meta=NULL, highlight=list(), ...){
+setMethod("html", "partition", function(object, meta=NULL, regex=list(), cqp=list(), verbose=FALSE, ...){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
-    if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'metadata')
+    if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'meta')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
+    if (verbose == TRUE) message("... enriching partition with metadata")
     object <- enrich(object, meta=meta, verbose=FALSE)
+    if (verbose == TRUE) message("... generating markdown")
     markdown <- as.markdown(object, meta, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
@@ -38,13 +40,21 @@ setMethod("html", "partition", function(object, meta=NULL, highlight=list(), ...
       '\n* * *\n',
       collapse="\n"
     )
+    if (verbose == TRUE) message("... markdown to html")
     htmlDoc <- markdown::markdownToHTML(text=markdown)
-    htmlDoc <- highlight(htmlDoc, highlight=highlight)
-    htmlDoc <- htmltools::HTML(htmlDoc)
+    if (length(regex) > 0) {
+      if (verbose == TRUE) message("... highlighting regular expressions")
+      htmlDoc <- highlight(htmlDoc, highlight=regex)
+    }
+    if (length(cqp) > 0) {
+      if (verbose == TRUE) message("... highlighting cqp queries")
+      htmlDoc <- highlight(object, htmlDoc, highlight=cqp)
+    }
+    htmlDocFinal <- htmltools::HTML(htmlDoc)
   } else {
     stop("package 'markdown' is not installed, but necessary for this function")
   }
-  htmlDoc
+  htmlDocFinal
 })
 
 #' @docType methods
