@@ -47,12 +47,6 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
   .getNumberOfHits <- function(query) {
     if (verbose == TRUE) message("... processing query ", query)
     cposResult <- cpos(.Object=.Object, query=query, pAttribute=pAttr, verbose=FALSE)
-#     if (is.null(cposResult)){
-#       retval <- 0
-#     } else {
-#       retval <- nrow(cposResult)
-#     }
-#     retval
     ifelse(is.null(cposResult), 0, nrow(cposResult))
   }
   if (mc == FALSE){
@@ -70,7 +64,7 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, total=FALSE, mc=T, progress=T, verbose=FALSE){
+setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, total=T, mc=F, progress=T, verbose=FALSE){
   # check whether all partitions in the bundle have a proper name
   if (is.null(names(.Object@objects)) || any(is.na(names(.Object@objects)))) {
     warning("all partitions in the bundle need to have a name (at least some missing)")
@@ -83,22 +77,6 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
   tabRaw <- do.call(rbind, lapply(bag, function(x) x[[colToGet]]))
   colnames(tabRaw) <- query
   DT <- data.table(partition=names(.Object), data.table(tabRaw))
-#   if(!is.null(tabRaw)){
-#     tab <- tabRaw[,c("partition", "query", ifelse(freq==FALSE, "count", "freq")), with=FALSE]
-#     if (freq == FALSE){
-#       tab <- xtabs(count~partition+query, data=tab)  
-#     } else {
-#       tab <- xtabs(freq~partition+query, data=tab)  
-#     }
-#     tmp <- unclass(tab)
-#     labels <- dimnames(tmp)$partition
-#     Encoding(labels) <- "unknown"
-#     DT <- data.table(partition=labels, tmp)
-#     setkeyv(DT, "partition")
-#     bundleOrder <- names(.Object)
-#     Encoding(bundleOrder) <- "unknown"
-#     DT <- DT[bundleOrder,]
-#   }
   if (total == TRUE) DT[, TOTAL := rowSums(.SD), by=partition]
   DT
 })

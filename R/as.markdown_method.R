@@ -21,9 +21,9 @@ setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")}
 }
 
 #' @rdname partition-class
-setMethod("as.markdown", "partition", function(object, meta, cposAsSpan=FALSE){
-  tokens <- getTokenStream(object, pAttribute="word", cposAsNames=cposAsSpan)
-  if (cpos == TRUE) tokens <- wrapTokens(tokens)
+setMethod("as.markdown", "partition", function(object, meta, cpos=TRUE){
+  tokens <- getTokenStream(object, pAttribute="word", cpos=cpos)
+  if (cpos == TRUE) tokens <- .wrapTokens(tokens)
   tokens <- paste(tokens, collapse=" ")
   rawTxt <- paste(tokens, sep="\n")
   gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
@@ -31,8 +31,10 @@ setMethod("as.markdown", "partition", function(object, meta, cposAsSpan=FALSE){
 
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="speaker_type", cposAsSpan=FALSE){
+setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE){
   # in the function call, meta is actually not needed, its required by the calling function
+  if (length(meta) == 0) stop("meta needs to be provided, either as session setting, or directly")
+  sAttribute <- grep("_type", sAttributes(object), value=T)[1]
   if (length(object@strucs) > 1){
     gapSize <- object@strucs[2:length(object@strucs)] - object@strucs[1:(length(object@strucs)-1)]
     gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
@@ -63,19 +65,13 @@ setMethod("as.markdown", "plprPartition", function(object, meta, sAttribute="spe
     tokens <- getTokenStream(
       matrix(object@cpos[i,], nrow=1),
       corpus=object@corpus, pAttribute="word", encoding=object@encoding,
-      cposAsNames=cposAsSpan
+      cpos=cpos
     )
-    if (cposAsSpan == TRUE) tokens <- .wrapTokens(tokens)
-    # cqi_cpos2str(
-    #   paste(object@corpus, '.word', sep=''),
-    #   c(object@cpos[i,1]:object@cpos[i, 2])
-    #   )
+    if (cpos == TRUE) tokens <- .wrapTokens(tokens)
     plainText <- paste(tokens, collapse=" ")
-    # Encoding(plainText) <- object@encoding
     if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
     paste(meta, plainText)
   })
-  # Encoding(markdown) <- object@encoding
   markdown <- paste(markdown, collapse="\n\n")
   markdown <- polmineR:::.adjustEncoding(markdown, "UTF8")
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)

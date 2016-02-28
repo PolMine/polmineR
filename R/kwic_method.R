@@ -35,19 +35,8 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL){
-  if(is.null(meta)){
-    parsedRegistry <- parseRegistry(.Object@corpus)
-    if ("meta" %in% names(parsedRegistry)){
-      meta <- parsedRegistry[["meta"]]
-    } else {
-      meta <- slot(get("session", '.GlobalEnv'), 'metadata')
-      if (all(meta %in% sAttributes(.Object@corpus)) == FALSE){
-        stop("meta found in session settings does not work") 
-      }
-    }
-  }
-    
+setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL, verbose=FALSE){
+  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
   metainformation <- lapply(
     meta,
     function(metadat){
@@ -98,17 +87,18 @@ setMethod("kwic", "partition", function(
   neighbor=NULL,
   verbose=TRUE
 ){
+  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
   ctxt <- context(
     .Object=.Object, query=query,
     pAttribute=pAttribute, sAttribute=sAttribute,
     left=left, right=right,
-    method=NULL, verbose=verbose
+    method=NULL, count=FALSE, verbose=verbose
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
     return(NULL)
     }
-  kwic(ctxt, meta=meta, neighbor=neighbor)
+  kwic(.Object=ctxt, meta=meta, neighbor=neighbor)
 })
 
 #' @rdname kwic

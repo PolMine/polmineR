@@ -13,7 +13,8 @@
 \usage{
 \S4method{context}{partition}(.Object, query, pAttribute = NULL,
   sAttribute = NULL, left = NULL, right = NULL, stoplist = NULL,
-  positivelist = NULL, method = "ll", mc = NULL, verbose = TRUE)
+  positivelist = NULL, count = TRUE, method = "ll", mc = NULL,
+  verbose = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 

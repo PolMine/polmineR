@@ -21,10 +21,6 @@
 \alias{filterType,session-method}
 \alias{filterType<-}
 \alias{filterType<-,session,character-method}
-\alias{kwicMetadata}
-\alias{kwicMetadata,session-method}
-\alias{kwicMetadata<-}
-\alias{kwicMetadata<-,session,character-method}
 \alias{kwicNo}
 \alias{kwicNo,session-method}
 \alias{kwicNo<-}
@@ -33,10 +29,10 @@
 \alias{left,session-method}
 \alias{left<-}
 \alias{left<-,session,numeric-method}
+\alias{meta,session-method}
+\alias{meta<-,session,character-method}
 \alias{metadata}
-\alias{metadata,session-method}
 \alias{metadata<-}
-\alias{metadata<-,session,character-method}
 \alias{minFrequency}
 \alias{minFrequency,session-method}
 \alias{minFrequency<-}
@@ -117,17 +113,13 @@ createProject(project)
 
 \S4method{filterType}{session,character}(x) <- value
 
-\S4method{kwicMetadata}{session}(x)
-
-\S4method{kwicMetadata}{session,character}(x) <- value
-
 \S4method{kwicNo}{session}(x)
 
 \S4method{kwicNo}{session,numeric}(x) <- value
 
-\S4method{metadata}{session}(x)
+\S4method{meta}{session}(.Object)
 
-\S4method{metadata}{session,character}(x) <- value
+\S4method{meta}{session,character}(.Object) <- value
 
 \S4method{multicore}{session}(x)
 
@@ -188,7 +180,7 @@ default settings for current session
 
 \item{\code{lineview}}{logical}
 
-\item{\code{metadata}}{default metadata}
+\item{\code{meta}}{default metadata}
 
 \item{\code{multicore}}{default multicore}
 

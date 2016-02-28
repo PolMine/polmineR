@@ -10,7 +10,8 @@
 \usage{
 kwic(.Object, ...)
 
-\S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL)
+\S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL,
+  verbose = FALSE)
 
 \S4method{kwic}{partition}(.Object, query, left = NULL, right = NULL,
   meta = NULL, pAttribute = "word", sAttribute = NULL, neighbor = NULL,
@@ -27,6 +28,8 @@ kwic(.Object, ...)
 
 \item{neighbor}{only show kwic if a certain word is present}
 
+\item{verbose}{logical, whether to be talkative}
+
 \item{query}{a query, CQP-syntax can be used, then use}
 
 \item{left}{to the left}
@@ -36,8 +39,6 @@ kwic(.Object, ...)
 \item{pAttribute}{typically 'word' or 'lemma'}
 
 \item{sAttribute}{if provided, the s-attribute will be used to check the boundaries of the text}
-
-\item{verbose}{logical, whether to be talkative}
 }
 \description{
 Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 

@@ -7,9 +7,12 @@
 #' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed, if not stated explicitly, session settings will be used
-#' @param highlight a list of character vectors with regular expressions to
+#' @param regex a list of character vectors with regular expressions to
 #'   highlight relevant terms or expressions; the names of the list provide the
 #'   colors (see examples)
+#' @param cqp a list of character vectors with regular expressions to
+#'   highlight relevant terms or expressions; the names of the list provide the
+#'   colors
 #' @param ... further parameters passed into read
 #' @exportMethod read
 #' @rdname read-method
@@ -20,7 +23,7 @@
 #'   list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
 #'   type="plpr"
 #' )
-#' read(merkel)
+#' read(merkel, meta=c("text_name", "text_date"))
 #' read(
 #'   merkel,
 #'   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
@@ -29,26 +32,22 @@
 #' all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 #' speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 #' read(speeches)
+#' 
+#' migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
+#' read(migVocab, speeches, col="Integration")
 #' }
 #' @seealso For concordances / a keword-in-context display, see \code{\link{kwic}}.
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), verbose=TRUE, ...){
+setMethod("read", "partition", function(.Object, meta=NULL, regex=list(), cqp=list(), verbose=TRUE, ...){
   if (is.null(meta)){
-    parsedRegistry <- parseRegistry(.Object@corpus)
-    if ("meta" %in% names(parsedRegistry)){
-      meta <- parsedRegistry[["meta"]]
-    } else {
-      if (verbose == TRUE) message("... no default metadata stated as corpus properties in registry, trying to use session settings")
-      if (all(session@metadata %in% sAttributes(.Object@corpus))){
-        meta <- session@metadata
-      } else {
-        stop("metadata not available, please set session settings or indicate explicitly")
-      }
+    if (all(session@meta %in% sAttributes(.Object@corpus))) {
+      meta <- slot(get('session', '.GlobalEnv'), 'meta')
+      if (verbose == TRUE) message("... using meta from session: ", meta)
     }
   }
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, ...)
+  fulltextHtml <- html(.Object, meta=meta, regex=regex, cqp=cqp, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
@@ -63,4 +62,12 @@ setMethod("read", "partitionBundle", function(.Object, ...){
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
   }
+})
+
+#' rdname read-method
+setMethod("read", "data.table", function(.Object, partitionBundle, col, ...){
+  DT <- subset(.Object, col > 0)
+  partitionsToGet <- DT[["partition"]]
+  partitionBundle <- partitionBundle[[partitionsToGet]]
+  read(partitionBundle, ...)
 })
