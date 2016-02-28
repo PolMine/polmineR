@@ -29,7 +29,7 @@ message("START: ", startTime)
 dtmTrimmed <- readRDS(file=opt$file)
 dtmTrimmed <- trim(dtmTrimmed, docsToDrop = names(which(slam::row_sums(dtmTrimmed) < 20)))
 
-dtmTrimmedWeighed <- weigh(dtmTrimmed, method="tfidf")
+# dtmTrimmedWeighed <- weigh(dtmTrimmed, method="tfidf")
 
 tmodel <- LDA(
   dtmTrimmed, k=opt$k, method = "Gibbs",
