@@ -3,21 +3,26 @@
 \docType{methods}
 \name{read}
 \alias{read}
-\alias{read,partition-method}
-\alias{read,partitionBundle-method}
+\alias{read,partition,list-method}
+\alias{read,partitionBundle,list-method}
 \title{Return to the original text and read}
 \usage{
-read(.Object, ...)
+read(.Object, highlight, ...)
 
-\S4method{read}{partition}(.Object, meta = NULL, regex = list(),
-  cqp = list(), verbose = TRUE, ...)
+\S4method{read}{partition,list}(.Object, highlight = list(), cqp = FALSE,
+  meta = NULL, verbose = TRUE, ...)
 
-\S4method{read}{partitionBundle}(.Object, ...)
+\S4method{read}{partitionBundle,list}(.Object, highlight = list(),
+  cqp = FALSE, ...)
 }
 \arguments{
 \item{.Object}{an object to be read (\code{"partition" or "partitionBundle"})}
 
 \item{...}{further parameters passed into read}
+
+\item{cqp}{a list of character vectors with regular expressions to
+highlight relevant terms or expressions; the names of the list provide the
+colors}
 
 \item{meta}{a character vector supplying s-attributes for the metainformation
 to be printed, if not stated explicitly, session settings will be used}
@@ -25,10 +30,6 @@ to be printed, if not stated explicitly, session settings will be used}
 \item{regex}{a list of character vectors with regular expressions to
 highlight relevant terms or expressions; the names of the list provide the
 colors (see examples)}
-
-\item{cqp}{a list of character vectors with regular expressions to
-highlight relevant terms or expressions; the names of the list provide the
-colors}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on

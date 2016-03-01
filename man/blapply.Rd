@@ -5,7 +5,8 @@
 \alias{blapply}
 \alias{blapply,bundle-method}
 \alias{blapply,list-method}
-\title{apply a function over a list or bundle with and without verbose parallelization}
+\title{apply a function over a list or bundle with and without verbose
+parallelization}
 \usage{
 blapply(x, ...)
 
@@ -18,9 +19,25 @@ blapply(x, ...)
 \arguments{
 \item{...}{further parameters}
 
-\item{f}{a function that can be applied to each object contained in the bundle}
+\item{f}{a function that can be applied to each object contained in the
+bundle, note that it should swallow the parameters mc, verbose and progress
+(use ... to catch these params )}
+
+\item{mc}{logical, whether to use multicore - if TRUE, the number of cores
+will be taken from the session object in the global environment}
+
+\item{progress}{logical, whether to display progress bar}
+
+\item{verbose}{logical, whether to print intermediate messages}
 }
 \description{
-apply a function over a list or bundle with and without verbose parallelization
+apply a function over a list or bundle with and without verbose
+parallelization
+}
+\examples{
+use(polmineR.sampleCorpus)
+bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+foo <- blapply(speeches, function(x, ...) x@cpos)
 }
 

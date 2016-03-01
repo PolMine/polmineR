@@ -26,7 +26,7 @@ setMethod("html", "character", function(object){
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method show,html-method
-setMethod("html", "partition", function(object, meta=NULL, regex=list(), cqp=list(), verbose=FALSE, ...){
+setMethod("html", "partition", function(object, meta=NULL, highlight=list(), cqp=FALSE, verbose=FALSE, ...){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'meta')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
@@ -42,13 +42,14 @@ setMethod("html", "partition", function(object, meta=NULL, regex=list(), cqp=lis
     )
     if (verbose == TRUE) message("... markdown to html")
     htmlDoc <- markdown::markdownToHTML(text=markdown)
-    if (length(regex) > 0) {
-      if (verbose == TRUE) message("... highlighting regular expressions")
-      htmlDoc <- highlight(htmlDoc, highlight=regex)
-    }
-    if (length(cqp) > 0) {
-      if (verbose == TRUE) message("... highlighting cqp queries")
-      htmlDoc <- highlight(object, htmlDoc, highlight=cqp)
+    if (length(highlight) > 0) {
+      if (cqp == FALSE){
+        if (verbose == TRUE) message("... highlighting regular expressions")
+        htmlDoc <- highlight(htmlDoc, highlight=highlight)
+      } else if (cqp == TRUE){
+        if (verbose == TRUE) message("... highlighting CQP queries")
+        htmlDoc <- highlight(object, htmlDoc, highlight=highlight)
+      }
     }
     htmlDocFinal <- htmltools::HTML(htmlDoc)
   } else {

@@ -146,3 +146,4 @@ setMethod("sample", "bundle", function(x, size){
   for (i in toDrop) x@objects[[i]] <- NULL
   x
 })
+

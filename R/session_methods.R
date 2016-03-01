@@ -27,6 +27,13 @@ setMethod("corpus", "session", function(object) object@corpus)
 setMethod("corpus", "partition", function(object) object@corpus)
 
 
+
+#' @exportMethod corpus
+#' @rdname bundle-class
+setMethod("corpus", "bundle", function(object){
+  unique(sapply(object@objects, function(x) x@corpus))
+})
+
 ##############################
 
 #' @exportMethod project

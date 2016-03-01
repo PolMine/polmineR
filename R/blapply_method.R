@@ -1,6 +1,13 @@
-#' apply a function over a list or bundle with and without verbose parallelization
+#' apply a function over a list or bundle with and without verbose
+#' parallelization
 #' 
-#' @param f a function that can be applied to each object contained in the bundle
+#' @param f a function that can be applied to each object contained in the
+#'   bundle, note that it should swallow the parameters mc, verbose and progress
+#'   (use ... to catch these params )
+#' @param mc logical, whether to use multicore - if TRUE, the number of cores
+#'   will be taken from the session object in the global environment
+#' @param progress logical, whether to display progress bar
+#' @param verbose logical, whether to print intermediate messages
 #' @param ... further parameters
 #' @rdname blapply
 #' @exportMethod blapply
@@ -8,6 +15,11 @@
 #' @importFrom foreach %dopar%
 #' @importFrom foreach foreach
 #' @rdname blapply
+#' @examples
+#' use(polmineR.sampleCorpus)
+#' bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#' speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#' foo <- blapply(speeches, function(x, ...) x@cpos)
 setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 
 #' @rdname blapply

@@ -15,7 +15,8 @@ count(.Object, ...)
   verbose = T, progress = F)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
-  freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
+  freq = FALSE, total = T, method = 2, mc = F, progress = T,
+  verbose = FALSE)
 
 \S4method{count}{character}(.Object, query, pAttribute = NULL,
   verbose = TRUE)
@@ -36,13 +37,15 @@ count(.Object, ...)
 \item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
 
 \item{total}{defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned}
+
+\item{method}{either 1 or 2, for working with}
 }
 \value{
 a \code{"data.table"}
 }
 \description{
-Count number of occurrences of a query. The CQP syntax can be used to formulate 
-the query.
+Count number of occurrences of a query in a partition, or a partitionBundle.
+The CQP syntax can be used to formulate the query.
 }
 \examples{
 use("polmineR.sampleCorpus")

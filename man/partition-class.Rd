@@ -38,8 +38,8 @@
 
 \S4method{freq}{partition}(.Object)
 
-\S4method{html}{partition}(object, meta = NULL, regex = list(),
-  cqp = list(), verbose = FALSE, ...)
+\S4method{html}{partition}(object, meta = NULL, highlight = list(),
+  cqp = FALSE, verbose = FALSE, ...)
 
 \S4method{pAttributes}{partition}(.Object)
 
@@ -73,6 +73,8 @@
 
 \item{.Object}{a partition object}
 
+\item{highlight}{list with regex to be highlighted}
+
 \item{verbose}{logical, whether to be verbose}
 
 \item{...}{further parameters}
@@ -90,8 +92,6 @@
 \item{value}{value}
 
 \item{dim}{don't know}
-
-\item{highlight}{list with regex to be highlighted}
 }
 \description{
 partition class

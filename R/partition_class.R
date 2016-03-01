@@ -72,3 +72,8 @@ setClass("plprPartition", contains="partition")
 #' @rdname partition-class
 setClass("pressPartition", contains="partition")
 
+setAs(from="partition", to="plprPartition", function(from){
+  y <- new("plprPartition")
+  for (z in slotNames(from)) slot(y, z) <- slot(from, z)
+  y
+})

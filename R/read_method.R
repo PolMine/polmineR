@@ -37,17 +37,17 @@
 #' read(migVocab, speeches, col="Integration")
 #' }
 #' @seealso For concordances / a keword-in-context display, see \code{\link{kwic}}.
-setGeneric("read", function(.Object, ...) standardGeneric("read"))
+setGeneric("read", function(.Object, highlight, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=NULL, regex=list(), cqp=list(), verbose=TRUE, ...){
+setMethod("read", signature("partition", "list"), function(.Object, highlight=list(), cqp=FALSE, meta=NULL, verbose=TRUE, ...){
   if (is.null(meta)){
     if (all(session@meta %in% sAttributes(.Object@corpus))) {
       meta <- slot(get('session', '.GlobalEnv'), 'meta')
       if (verbose == TRUE) message("... using meta from session: ", meta)
     }
   }
-  fulltextHtml <- html(.Object, meta=meta, regex=regex, cqp=cqp, ...)
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
@@ -56,18 +56,19 @@ setMethod("read", "partition", function(.Object, meta=NULL, regex=list(), cqp=li
 })
 
 #' @rdname read-method
-setMethod("read", "partitionBundle", function(.Object, ...){
+setMethod("read", signature("partitionBundle", "list"), function(.Object, highlight=list(), cqp=FALSE, ...){
   for (i in c(1:length(.Object@objects))){
-    read(.Object@objects[[i]], ...)
+    read(.Object@objects[[i]], highlight=highlight, cqp=cqp, ...)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
   }
 })
 
 #' rdname read-method
-setMethod("read", "data.table", function(.Object, partitionBundle, col, ...){
-  DT <- subset(.Object, col > 0)
+setMethod("read", "data.table", function(.Object, highlight=list(), cqp=FALSE, partitionBundle, col, ...){
+  stopifnot(col %in% colnames(.Object))
+  DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]
-  partitionBundle <- partitionBundle[[partitionsToGet]]
-  read(partitionBundle, ...)
+  toRead <- as.bundle(lapply(partitionsToGet, function(x) partitionBundle@objects[[x]]))
+  read(toRead, highlight=list(yellow=col), cqp=cqp, ...)
 })
