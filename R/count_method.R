@@ -136,7 +136,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     DT <- strucDT[countDT] # merge
     if (verbose == TRUE) message("... wrapping things up")
     DT[, dummy := 1]
-    DT_cast <- dcast(DT, partition~query, value.var="dummy", fun.aggregate=length)
+    DT_cast <- dcast.data.table(DT, partition~query, value.var="dummy", fun.aggregate=length)
     DT_cast2 <- DT_cast[is.na(DT_cast[["partition"]]) == FALSE] # remove counts that are not in one of the partitions
     if (total == TRUE) DT_cast2[, TOTAL := rowSums(.SD), by=partition]
     return(DT_cast2)
