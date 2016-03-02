@@ -18,8 +18,6 @@
 \alias{unique,bundle-method}
 \title{bundle class}
 \usage{
-\S4method{[[}{bundle,ANY}(x, i)
-
 \S4method{length}{bundle}(x)
 
 \S4method{names}{bundle}(x)
@@ -36,9 +34,9 @@
 
 \S4method{as.matrix}{bundle}(x, col)
 
-\S4method{as.DocumentTermMatrix}{bundle}(x, col)
-
 \S4method{as.bundle}{list}(object, ...)
+
+\S4method{as.DocumentTermMatrix}{bundle}(x, col)
 
 \S4method{as.bundle}{textstat}(object)
 
@@ -49,13 +47,13 @@
 \arguments{
 \item{x}{a bundle object}
 
-\item{i}{index to address an object}
-
 \item{value}{...}
 
 \item{e1}{object 1}
 
 \item{e2}{object 2}
+
+\item{i}{index to address an object}
 
 \item{col}{columsn of the table to be used}
 

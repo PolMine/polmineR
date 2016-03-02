@@ -28,26 +28,26 @@
 #'   merkel,
 #'   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
 #'   )
-#' \dontrun{
 #' all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 #' speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 #' read(speeches)
 #' 
 #' migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
-#' read(migVocab, speeches, col="Integration")
-#' }
+#' read(migVocab, col="Integration", partitionBundle=speeches)
+#' 
 #' @seealso For concordances / a keword-in-context display, see \code{\link{kwic}}.
-setGeneric("read", function(.Object, highlight, ...) standardGeneric("read"))
+setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", signature("partition", "list"), function(.Object, highlight=list(), cqp=FALSE, meta=NULL, verbose=TRUE, ...){
+setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), cqp=FALSE, verbose=TRUE, cpos=FALSE, ...){
   if (is.null(meta)){
     if (all(session@meta %in% sAttributes(.Object@corpus))) {
       meta <- slot(get('session', '.GlobalEnv'), 'meta')
       if (verbose == TRUE) message("... using meta from session: ", meta)
     }
   }
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, ...)
+  if (cqp == TRUE) cpos <- TRUE
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
@@ -56,19 +56,20 @@ setMethod("read", signature("partition", "list"), function(.Object, highlight=li
 })
 
 #' @rdname read-method
-setMethod("read", signature("partitionBundle", "list"), function(.Object, highlight=list(), cqp=FALSE, ...){
+setMethod("read", "partitionBundle", function(.Object, highlight=list(), cqp=FALSE, cpos=FALSE, ...){
   for (i in c(1:length(.Object@objects))){
-    read(.Object@objects[[i]], highlight=highlight, cqp=cqp, ...)
+    read(.Object@objects[[i]], highlight=highlight, cqp=cqp, cpos=cpos, ...)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
   }
 })
 
 #' rdname read-method
-setMethod("read", "data.table", function(.Object, highlight=list(), cqp=FALSE, partitionBundle, col, ...){
+setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp=FALSE, highlight=list(), cpos=FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]
+  if (col == "TOTAL") col <- colnames(.Object)[2:(ncol(.Object)-1)]
   toRead <- as.bundle(lapply(partitionsToGet, function(x) partitionBundle@objects[[x]]))
   read(toRead, highlight=list(yellow=col), cqp=cqp, ...)
 })

@@ -3,7 +3,6 @@ NULL
 
 setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 
-
 #' bundle class
 #' 
 #' A class to bundle several objects (partition, context, comp, cooccurrences objects)
@@ -29,20 +28,6 @@ setClass("bundle",
            )
 )
 
-#' @rdname bundle-class
-#' @exportMethod [[
-setMethod("[[", "bundle", function(x,i){
-  if (length(i) == 1){
-    return(x@objects[[i]])  
-  } else if (length(i) > 1){
-    if (is.character(i)){
-      for (j in rev(which(!names(x) %in% i))) x@objects[[j]] <- NULL  
-    } else if (is.numeric(i)){
-      for (j in rev(which(!c(1:length(x)) %in% i))) x@objects[[j]] <- NULL
-    }
-    return(x)
-  }
-})
 
 #' @rdname bundle-class
 setMethod("length", "bundle", function(x) length(x@objects))
@@ -119,20 +104,12 @@ setMethod("+", signature(e1="bundle", e2="textstat"), function(e1, e2){
 #' @exportMethod [[
 #' @rdname bundle-class
 setMethod('[[', 'bundle', function(x,i){
-  if (is.character(i)){
-    namesToDrop <- names(x)[!names(x) %in% i]
-    for (n in namesToDrop) x@objects[[n]] <- NULL
-    return(x)
+  if (length(i) == 1){
+    return(x@objects[[i]])
   } else {
-    if (length(i) == 1){
-      return(x@objects[[i]])
-    } else {
-      partitionsToDrop <- c(1:length(x@objects))[c(1:length(x@objects)) %in% i]
-      for (j in partitionsToDrop) x@objects[[j]] <- NULL
-      return(x)
-    }
+    return(as.bundle(lapply(i, function(j) x@objects[[j]])))
   }
-})
+})  
 
 #' @rdname bundle-class
 setMethod("as.matrix", "bundle", function(x, col) {
@@ -141,9 +118,32 @@ setMethod("as.matrix", "bundle", function(x, col) {
 
 #' @exportMethod sample
 setMethod("sample", "bundle", function(x, size){
-  toDrop <- sample(c(1:length(x)), size=length(x)-size)
-  toDrop <- toDrop[order(toDrop, decreasing=TRUE)]
-  for (i in toDrop) x@objects[[i]] <- NULL
-  x
+  x[[sample(c(1:length(x)), size=size)]]
 })
+
+
+setAs(from="list", to="bundle", def=function(from){
+  uniqueClass <- unique(unlist(lapply(from, class)))
+  stopifnot(length(uniqueClass) == 1)
+  newObjectClass <- ifelse(
+    grepl("[pP]artition", uniqueClass),
+    "partitionBundle", "bundle"
+    )
+  newBundle <- new(
+    newObjectClass,
+    objects=from,
+    corpus=unique(unlist(lapply(from, function(x) x@corpus))),
+    encoding=unique(unlist(lapply(from, function(x) x@encoding)))
+  )
+  names(newBundle@objects) <- vapply(from, function(x) x@name, FUN.VALUE="character")
+  newBundle
+})
+
+
+#' @rdname bundle-class
+#' @exportMethod as.bundle
+setMethod("as.bundle", "list", function(object, ...){
+  as(object, "bundle")
+})
+
 

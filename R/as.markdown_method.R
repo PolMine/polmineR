@@ -31,9 +31,19 @@ setMethod("as.markdown", "partition", function(object, meta, cpos=TRUE){
 
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE){
+setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, interjections=TRUE){
   # in the function call, meta is actually not needed, its required by the calling function
   if (length(meta) == 0) stop("meta needs to be provided, either as session setting, or directly")
+  if (interjections == TRUE){
+    maxNoStrucs <- object@strucs[length(object@strucs)] - object@strucs[1] + 1
+    if (maxNoStrucs != length(object@strucs)){
+      object@strucs <- c(object@strucs[1]:object@strucs[length(object@strucs)])
+      object@cpos <- do.call(rbind, lapply(
+        object@strucs,
+        function(i) cqi_struc2cpos(paste(object@corpus, object@sAttributeStrucs, sep="."), i)
+      ))
+    }
+  }
   sAttribute <- grep("_type", sAttributes(object), value=T)[1]
   if (length(object@strucs) > 1){
     gapSize <- object@strucs[2:length(object@strucs)] - object@strucs[1:(length(object@strucs)-1)]
@@ -81,7 +91,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE){
 
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str cqi_cpos2struc
 #' @rdname as.markdown
-setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspaper", "text_date")){
+setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
   articles <- apply(object@cpos, 1, function(row) {
     cpos <- c(row[1]:row[2])
     textStruc <- cqi_cpos2struc(paste(object@corpus, ".text", sep=""), row[1])

@@ -48,14 +48,13 @@ read(
   merkel,
   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
   )
-\dontrun{
 all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 read(speeches)
 
 migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
-read(migVocab, speeches, col="Integration")
-}
+read(migVocab, col="Integration", partitionBundle=speeches)
+
 }
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.

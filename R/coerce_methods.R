@@ -132,6 +132,11 @@ setMethod(
 
 setGeneric("as.partitionBundle", function(object, ...) standardGeneric("as.partitionBundle"))
 
+#' @rdname partitionBundle-class
+setMethod("as.partitionBundle", "list", function(object, ...){
+  as(object, "bundle") # defined in bundle_class.R
+})
+
 #' @exportMethod as.partitionBundle
 #' @rdname context-class
 setMethod("as.partitionBundle", "context", function(object, mc=FALSE){
@@ -225,24 +230,6 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, v
 setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
   retval <- as.DocumentTermMatrix(as.TermDocumentMatrix(x=x, col=col))
   retval
-})
-
-
-#' @rdname bundle-class
-setMethod("as.bundle", "list", function(object, ...){
-  uniqueClass <- unique(unlist(lapply(object, class)))
-  stopifnot(
-    length(uniqueClass) == 1,
-    grepl("[pP]artition", uniqueClass)
-    )
-  newBundle <- new(
-    "partitionBundle",
-    objects=object,
-    corpus=unique(unlist(lapply(object, function(x) x@corpus))),
-    encoding=unique(unlist(lapply(object, function(x) x@encoding)))
-    )
-  names(newBundle@objects) <- vapply(object, function(x) x@name, FUN.VALUE="character")
-  newBundle
 })
 
 #' @docType methods
