@@ -43,6 +43,8 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
         function(i) cqi_struc2cpos(paste(object@corpus, object@sAttributeStrucs, sep="."), i)
       ))
     }
+    # this is potential double work, enrich is also performed in the html-method
+    object <- enrich(object, meta=meta, verbose=FALSE)
   }
   sAttribute <- grep("_type", sAttributes(object), value=T)[1]
   if (length(object@strucs) > 1){
@@ -93,20 +95,25 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
 #' @rdname as.markdown
 setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
   articles <- apply(object@cpos, 1, function(row) {
-    cpos <- c(row[1]:row[2])
+    cposSeries <- c(row[1]:row[2])
     textStruc <- cqi_cpos2struc(paste(object@corpus, ".text", sep=""), row[1])
-    pStrucs <- rcqp::cqi_cpos2struc(paste(object@corpus, ".p_type", sep=""), cpos)
-    chunks <- split(cpos, pStrucs)
-    pType <- rcqp::cqi_struc2str(paste(object@corpus, ".p_type", sep=""), as.numeric(names(chunks)))
+    pStrucs <- rcqp::cqi_cpos2struc(paste(object@corpus, ".p_type", sep=""), cposSeries)
+    chunks <- split(cposSeries, pStrucs)
+    pTypes <- rcqp::cqi_struc2str(paste(object@corpus, ".p_type", sep=""), as.numeric(names(chunks)))
     article <- Map(
       function(pType, chunk){
-        meta <- 
-          wordVector <- rcqp::cqi_cpos2str(paste(object@corpus, ".word", sep=""), chunk)
-        para <- paste(wordVector, collapse=" ")
+        # wordVector <- rcqp::cqi_cpos2str(paste(object@corpus, ".word", sep=""), chunk)
+        tokens <- getTokenStream(
+          matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
+          corpus=object@corpus, pAttribute="word", encoding=object@encoding,
+          cpos=cpos
+        )
+        if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+        para <- paste(tokens, collapse=" ")
         Encoding(para) <- object@encoding
         para
       },
-      pType, chunks
+      pTypes, chunks
     )
     metaInformation <- sapply(
       meta,
@@ -114,7 +121,7 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
         retval <- cqi_struc2str(paste(object@corpus, ".", x, sep=""), textStruc)
         Encoding(retval) <- object@encoding
         retval
-      }      )
+      })
     metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
     article <- c(
       meta=metaInformation,
