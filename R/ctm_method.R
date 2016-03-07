@@ -1,5 +1,4 @@
-# 
-# #' @examples 
+ # #' @examples 
 # #' \dontrun{
 # #' sz2010 <- partition("ARENEN", list(text_date=".*2010"), method="grep", pAttribute=NULL)
 # #' dates <- sAttributes(sz2010, "text_date")

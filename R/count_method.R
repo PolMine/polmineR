@@ -1,6 +1,9 @@
 #' @include dispersion_class.R
 NULL
 
+#' @exportClass count
+setOldClass("count")
+
 #' get counts
 #' 
 #' Count number of occurrences of a query in a partition, or a partitionBundle.
@@ -139,6 +142,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     DT_cast <- dcast.data.table(DT, partition~query, value.var="dummy", fun.aggregate=length)
     DT_cast2 <- DT_cast[is.na(DT_cast[["partition"]]) == FALSE] # remove counts that are not in one of the partitions
     if (total == TRUE) DT_cast2[, TOTAL := rowSums(.SD), by=partition]
+    class(DT_cast2) <- c("count", is(DT_cast2))
     return(DT_cast2)
   }
 })

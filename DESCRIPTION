@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.33
-Date: 2016-03-04
+Version: 0.5.34
+Date: 2016-03-07
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -46,24 +46,24 @@ Collate:
     'as.dfm_method.R'
     'generics.R'
     'textstat_class.R'
-    'bundle_class.R'
     'session_class.R'
     'polmineR_package.R'
     'partition_class.R'
+    'bundle_class.R'
     'partitionBundle_class.R'
     'as.mallet_method.R'
     'as.markdown_method.R'
     'as.speeches_method.R'
     'as.svmlight_method.R'
     'blapply_method.R'
+    'kwic_class.R'
     'comp_class.R'
     'context_class.R'
-    'kwic_class.R'
     'browse_method.R'
     'bughunt_method.R'
     'chisquare_method.R'
-    'contextBundle_class.R'
     'cooccurrences_class.R'
+    'contextBundle_class.R'
     'coerce_methods.R'
     'comparables_method.R'
     'ngrams_method.R'
@@ -129,6 +129,7 @@ Collate:
     'trim_method.R'
     'use_method.R'
     'utils.R'
+    'validate_method.R'
     'view_method.R'
     'weigh_method.R'
 RoxygenNote: 5.0.1

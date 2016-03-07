@@ -16,10 +16,10 @@
 #' @importFrom foreach foreach
 #' @rdname blapply
 #' @examples
-#' use(polmineR.sampleCorpus)
-#' bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
-#' foo <- blapply(speeches, function(x, ...) x@cpos)
+#' # use(polmineR.sampleCorpus)
+#' # bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#' # speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#' # foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
 setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 
 #' @rdname blapply
