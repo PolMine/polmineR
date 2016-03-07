@@ -294,3 +294,36 @@ setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NUL
   }
   result
 })
+
+setMethod("dispersion", "character", function(object, query, sAttribute, pAttribute="word", freq=FALSE, mc=FALSE, verbose=TRUE, progress=T){
+  sAttrs <- paste(object, sAttribute, sep=".")
+  names(sAttrs) <- sAttribute
+  if (mc == FALSE){
+    if (progress == TRUE) pb <- txtProgressBar(max=length(query), style=3)
+    corpusPositions <- lapply(
+      c(1:length(query)),
+      function(i){
+        if (progress == TRUE) setTxtProgressBar(pb, i)
+        cpos(object, query[i], pAttribute=pAttribute, verbose=FALSE)[,1]
+      })
+  } else if (mc == TRUE){
+    corpusPositions <- mclapply(
+      c(1:length(query)),
+      function(i){
+        cpos(object, query[i], pAttribute=pAttribute, verbose=FALSE)[,1]
+      }, mc.cores=slot(get('session', '.GlobalEnv'), 'cores'))
+  }
+  names(corpusPositions) <- query
+  for (i in c(length(query):1)) {
+    if (is.null(corpusPositions[[i]])) corpusPositions[[i]] <- NULL
+  }
+  DT <- data.table(cpos=unlist(corpusPositions))
+  DT[, query := unlist(lapply(names(corpusPositions), function(x) rep(x, times=length(corpusPositions[[x]]))))]
+  for (i in c(1:length(sAttribute))){
+    DT[, eval(sAttribute[i]) := cqi_struc2str(sAttrs[i], cqi_cpos2struc(sAttrs[i], DT[["cpos"]]))]
+  }
+  count <- function(x) return(x)
+  TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
+  setnames(TF, old="V1", new="count")
+  TF
+})
