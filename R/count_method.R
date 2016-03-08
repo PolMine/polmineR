@@ -101,13 +101,16 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     if (verbose == TRUE) message("... performing counts")
     
     if (mc == FALSE){
-      if (progress == TRUE) pb <- txtProgressBar(max=length(query))
+      if (progress == TRUE) pb <- txtProgressBar(max=length(query), style=3)
       countDTlist <- lapply(
         c(1:length(query)),
         function(i) {
           if (progress == TRUE) pb <- setTxtProgressBar(pb, i)
           queryToPerform <- query[i]
-          cposMatrix <- cpos(corpus, query=queryToPerform, encoding=corpusEncoding)
+          cposMatrix <- cpos(
+            corpus, query=queryToPerform, encoding=corpusEncoding,
+            verbose=ifelse(progress == TRUE, FALSE, TRUE)
+            )
           if (!is.null(cposMatrix)){
             dt <- data.table(cposMatrix)
             dt[, query := queryToPerform]
