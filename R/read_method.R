@@ -64,7 +64,7 @@ setMethod("read", "partitionBundle", function(.Object, highlight=list(), cqp=FAL
   }
 })
 
-#' rdname read-method
+#' @rdname read-method
 setMethod("read", "count", function(.Object, col, partitionBundle, cqp=FALSE, highlight=list(), cpos=FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
@@ -72,4 +72,15 @@ setMethod("read", "count", function(.Object, col, partitionBundle, cqp=FALSE, hi
   if (col == "TOTAL") col <- colnames(.Object)[2:(ncol(.Object)-1)]
   toRead <- as.bundle(lapply(partitionsToGet, function(x) partitionBundle@objects[[x]]))
   read(toRead, highlight=list(yellow=col), cqp=cqp, ...)
+})
+
+#' @rdname read-method
+setMethod("read", "hits", function(.Object, def, i=NULL, ...){
+  if (is.null(i)){
+    for (i in c(1:nrow(.Object@dt))){
+      sAttrs <- lapply(setNames(def, def), function(x) .Object@dt[[x]][i])
+      read(partition(.Object@corpus, def=sAttrs, ...))
+      readline(">> ")
+    }
+  }
 })

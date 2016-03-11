@@ -206,12 +206,13 @@ datesPeriod <- function(corpus, dateRange) {
 #' 
 #' Takes a simple string as an imput and converts it to a valid CQP query
 #' @param queries a character vector
+#' @param normalise_case logical
 #' @param collapse whether collapse the queries into one
 #' @return a character vector
 #' @export as.cqp
 #' @rdname as.cqp
 #' @name as.cqp
-as.cqp <- function(queries, collapse=FALSE){
+as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
   cqp <- sapply(
     queries,
     function(query){
@@ -222,7 +223,8 @@ as.cqp <- function(queries, collapse=FALSE){
           if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
             retval <- q
           } else {
-            retval <- paste('"', q, '"', sep='') 
+            retval <- paste('"', q, '"', sep='')
+            if (normalise_case == TRUE) retval <- paste(retval, "%c", sep=" ")
           }
           retval
         })

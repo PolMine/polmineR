@@ -1,244 +1,8 @@
-#' @include partition_class.R
+#' @include partition_class.R hits_class.R
 NULL
 
-setGeneric("dispersion", function(object, ...){standardGeneric("dispersion")})
+setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 
-
-#' helper function for .distributionCrosstab
-#' @noRd
-.tfDispersion <- function(object, query, dim, pAttribute){
-  hits <- cpos(object, query, pAttribute)
-  sAttrRows <- paste(object@corpus,'.', dim[1], sep='')
-  sAttrCols <- paste(object@corpus,'.', dim[2], sep='')
-  rowsAttribute <- cqi_struc2str(sAttrRows, cqi_cpos2struc(sAttrRows, hits[,1]))
-  colsAttribute <- cqi_struc2str(sAttrCols, cqi_cpos2struc(sAttrRows, hits[,1]))
-  tabRaw <- table(data.frame(rows=rowsAttribute, cols=colsAttribute))
-  tab <- as(tabRaw, "matrix")
-  dimnames(tab) <- setNames(list(rownames(tab), colnames(tab)), dim)
-  tab
-}
-
-
-#' Contingency tables with term frequencies
-#' 
-#' Generates a 'crosstab' object with partition sizes, counts and normalized frequencies
-#' 
-#' The original intention for this function was to be able to generate time series in a fashion very similar to the google ngram viewer.
-#' Applications for this function are much broader.
-#' The function will retrieve frequencies from the corpus using cwb-scan-corpus.
-#' It is not required that term frequencies have been set up for the partition that is supplied-
-#' 
-#' 
-#' @param partition a partition object
-#' @param rows character string, supplying the s-attribute for the rows of the contingency table that is to be produced
-#' @param cols character stringwhat shall be displayed in the cols
-#' @param pAttribute the p-attribute to look up
-#' @param query a character vector
-#' @param verbose whether updates shall be printed
-#' @return returns a list
-#' @author Andreas Blaette
-#' @noRd
-.distributionCrosstab <- function(object, query, pAttribute, rows, cols, verbose=TRUE) {
-  dispObject <- new("dispersion", dim=c(rows, cols), query=query)
-  object <- enrich(object, meta=c(rows, cols))
-  if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
-  dispObject@sizes <- dissect(object, dim=c(rows, cols), verbose=FALSE)
-  if (verbose==TRUE) message ('... getting frequencies')
-  countRaw <- .tfDispersion(object, query, dim=c(rows, cols), pAttribute)
-  dispObject@count <- .mapMatrices(matrixToMatch=dispObject@sizes, matrixToAdjust=countRaw)
-  dispObject@count[is.na(dispObject@count)] <- 0
-  dispObject@freq <- dispObject@count/dispObject@sizes
-  dispObject@freq[is.infinite(as.matrix(dispObject@freq))] <- 0 
-  dispObject@freq[is.nan(as.matrix(dispObject@freq))] <- 0
-  colnames(dispObject@sizes) <- gsub('^X(.*?)', '\\1', colnames(dispObject@sizes))
-  rownames(dispObject@sizes)[which(rownames(dispObject@sizes) == "")] <- 'NA'
-  dispObject
-}
-
-#' Distribution of hits
-#' 
-#' Based on a context object, get distribution of hits
-#' 
-#' @rdname context-class
-setMethod("dispersion", "context", function(object, sAttribute){
-  sAttr <- paste(object@corpus, '.', sAttribute, sep='')
-  table(cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, object@cpos[,1])))
-})
-
-
-#' Number of occurences of a query in subcorpora
-#' 
-#' Perform frequency count of a query.
-#' 
-#' The function is designed for queries comprising a single word. Regular
-#' expressions can be used (not tested yet). For multi-word-queries,
-#' \code{multiword.distribution} can be used.
-#' 
-#' Queries may be single words or multi-word units. In the first case, the
-#' query runs much quicker. For multi-word units, the tokens need to be
-#' separated by a space. Usage of regular may differ between single words and
-#' multi-word units. Generally, regular expressions can be used.  The is
-#' required to be in UTF-8 and is translated to Latin-1, as this assumed to be
-#' the encoding of the corpus.
-#' 
-#' @param partition a partition object that will be queried
-#' @param p.attribute the p-attribute to look for, typically 'word' or 'lemma'
-#' @param query a query (for one word/token) that may contain a regular
-#' expression
-#' @param s.attribute the s-attribute that will be used for differentiation
-#' @return you get a table object
-#' @author Andreas Blaette
-#' @seealso multiword.distribution, queries.distribution
-#' @noRd 
-.queryDistribution <- function (object, query, pAttribute, sAttribute, freq=TRUE) {
-  dispObject <- new("dispersion", dim=sAttribute, query=query)
-  cpos <- cpos(object, query, pAttribute)[,1]
-  if(!is.null(cpos)){
-    sAttr <- paste(object@corpus,'.',sAttribute, sep='')
-    struc <- cqi_cpos2struc(sAttr, cpos)
-    count <- table(cqi_struc2str(sAttr,struc))
-    countMatrix <- as(count, "matrix")
-    dimnames(countMatrix) <- list(names(count), "count")
-    names(dimnames(countMatrix)) <- c(sAttribute, "count")
-    dispObject@count <- countMatrix
-    if (freq==TRUE) {
-      sizes <- xtabs(
-        length~meta,
-        data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata[,sAttribute])
-        )
-      sizeMatrix <- as(sizes, "matrix")
-      dimnames(sizeMatrix) <- setNames(list(names(sizes), "noToken"), c(sAttribute, "size"))
-      dispObject@sizes <- sizeMatrix
-      freqDf <- join(
-        data.frame(sAttr=names(sizes), sizes=as.vector(sizes)),
-        data.frame(sAttr=names(count), count=as.vector(count)),
-        by="sAttr", type="left"
-        )
-      freqDf <- cbind(freqDf, freq=freqDf$count/freqDf$sizes)
-      freqDf[is.na(freqDf)] <- 0
-      freqMatrix <- matrix(data=freqDf[,"freq"], ncol=1, dimnames=setNames(list(freqDf$sAttr, "freq"), c(sAttribute, "freq")))
-      dispObject@freq <- freqMatrix
-    }
-  } else {
-    warning("no hits for query ", query)
-    dispObject <- NULL
-  }
-  dispObject
-}
-
-
-#' Cpos of a query in a partition
-#' 
-#' Get the corpus positions for a query in a partition
-#' 
-#' so far, the function only works for queries containing a single word. For
-#' the encoding of the query see query.distribution.
-#' 
-#' @param partition a partition object that will be queried
-#' @param p.attribute the p-attribute that will be looked up, typically 'word'
-#' or 'lemma'
-#' @param queries a character vector containing the queries
-#' @param s.attribute the s-attribute to be used to create categories of the
-#' result
-#' @return the function returns a table with the queries in the rows and the subcorpora in
-#' the columns
-#' @author Andreas Blaette
-#' @seealso .query.distribution, multiword.distribution
-#' @noRd
-.queriesDistribution <- function(object, queries, pAttribute, sAttribute, freq, mc, verbose){
-  if (verbose == TRUE) message("... retrieving frequencies for the ", length(queries), " queries given")
-  queriesUnique <- unique(queries)
-  if (length(queriesUnique) != length(queries)) {
-    warning("Please note: Not all queries are unique, this analysis will use only unique queries!")
-    queries <- queriesUnique
-  }
-  if ("" %in% queries){
-    warning("empty string as query, needs to be removed")
-    queries <- queries[-which(queries == "")]
-  }
-  dispersionObject <- new("dispersion", dim=sAttribute)
-  subsetsRaw <- xtabs(
-    length~meta,
-    data=data.frame(length=object@cpos[,2]-object@cpos[,1], meta=object@metadata[,sAttribute])
-    )
-  dispersionObject@sizes <- matrix(
-    data=as.vector(subsetsRaw), ncol=1,
-    dimnames=setNames(list(names(subsetsRaw), "subsetSize"), c(sAttribute, "size"))
-    )
-  if (mc == FALSE){
-    queryHits <- lapply(
-      setNames(queries, queries),
-      function(query) {
-        if (verbose == TRUE) message('... processing query: ', query)
-        .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE)
-      }
-    )
-  } else if (mc == TRUE) {
-    if (verbose == TRUE) message("... getting counts from corpus (parallel processing)")
-    queryHits <- mclapply(
-      setNames(queries, queries),
-      function(query) .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE),
-      mc.cores=slot(get("session", ".GlobalEnv"), "cores")
-    )
-  }
-  queryHitsNullLogical <- vapply(queryHits, is.null, FUN.VALUE=TRUE)
-  queryHitsFail <- which(queryHitsNullLogical == TRUE)
-  queryHitsSuccess <- which(queryHitsNullLogical == FALSE)
-  queryHits2 <- queryHits[queryHitsSuccess]
-  queryHits3 <- lapply(
-    names(queryHits2),
-    function(x) {
-      data.frame(
-        partition=rownames(queryHits2[[x]]@count),
-        query=x,
-        no=as.vector(queryHits2[[x]]@count)
-        )
-    })
-  queryHits4 <- do.call(rbind, queryHits3)
-  subcorpusToMerge <- data.frame(
-    partition=rownames(dispersionObject@sizes),
-    query="subcorpus_size",
-    no=dispersionObject@sizes[,1]
-    )
-  mergedDF <- rbind(subcorpusToMerge, queryHits4)
-  tabulatedDF <- xtabs(no~partition+query, data=mergedDF)
-#   for (query in queries) {
-#     if (verbose == TRUE) message("... adjusting data.frames")
-#     # incoming <- .queryDistribution(part, pAttribute, query, sAttribute, freq=FALSE)
-#     incoming <- queryHits[[query]]
-#     if (!is.null(incoming)){
-#       abs <- merge(abs, as.data.frame(incoming), by.x="meta", by.y="Var1", all=TRUE)
-#     } else {
-#       abs <- cbind(abs, new=rep(0,times=nrow(abs)))
-#     }
-#     colnames(abs)[dim(abs)[2]] <- query
-#   }
-#  rownames(abs) <- abs[,"meta"]
-#  abs <- abs[,3:dim(abs)[2]]
-#  abs[is.na(abs)] <- 0
-#  colnames(abs) <- queries
-#  Encoding(rownames(abs)) <- part@encoding
-  tabulatedDF1 <- as.matrix(ftable(tabulatedDF))
-  # rownames(tabulatedDF1) <- object@metadata[,sAttribute]
-  tabulatedDF2 <- tabulatedDF1[,-which(colnames(tabulatedDF1) == "subcorpus_size")]
-  zeroValues <- matrix(
-    data=rep(0, times=length(queryHitsFail)*nrow(tabulatedDF2)),
-    ncol=length(queryHitsFail),
-    dimnames=list(rownames(tabulatedDF),names(queryHitsFail))
-    )
-  tabulatedDF3 <- cbind(tabulatedDF2, zeroValues)
-  tabulatedDF4 <- tabulatedDF3[,queries]
-  dispersionObject@count <- t(tabulatedDF4)
-  if (freq == TRUE){
-    if (verbose == TRUE) message("... calculating normalized frequencies")
-    dispersionObject@freq <- t(apply(
-      dispersionObject@count, 1,
-      function(x)x/as.vector(dispersionObject@sizes)
-    ))
-    Encoding(colnames(dispersionObject@freq)) <- object@encoding
-  }
-  dispersionObject
-}
 
 #' Dispersion of a query or multiple queries
 #' 
@@ -246,7 +10,7 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
 #' on the number of queries and dimensions provided.
 #' 
-#' @param object a partition object
+#' @param .Object a partition object
 #' @param query a character vector containing one or multiple queries
 #' @param dim a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
@@ -268,62 +32,34 @@ setMethod("dispersion", "context", function(object, sAttribute){
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-#' @aliases dispersion dispersion-method dispersion,partition-method
-setMethod("dispersion", "partition", function(object, query, dim, pAttribute=NULL, freq=TRUE, mc=FALSE, verbose=TRUE){
+setMethod("dispersion", "partition", function(.Object, query, dim, pAttribute=NULL, freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
   if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
-  if ( nrow(object@metadata) == 0) {
-    if (verbose == TRUE) message("... required metadata missing, fixing this")
-    object <- enrich(object, meta=dim)
-  }
-  if (class(query) == "cqpQuery"){
-    query <- query@query
-  }
-  if (length(dim) == 1){
-    if (length(query) == 1){
-      result <- .queryDistribution(object, query=query, pAttribute=pAttribute, sAttribute=dim)
-    } else if (length(query) > 1){
-      result <- .queriesDistribution(object, query, pAttribute, dim, freq=freq, mc=mc, verbose=verbose)
-    }
-  } else if (length(dim)==2){
-    if(sAttributes(object, dim[1]) <= 1 || sAttributes(object, dim[2]) <= 1){
-      warning("less than two valuesfor one of the dimensions provided")
-    }
-    result <- .distributionCrosstab(
-      object, query=query, pAttribute=pAttribute, rows=dim[1], cols=dim[2], verbose=verbose
-      )
-  }
-  result
+  dispersion(
+    hits(
+      .Object=.Object, query=query, sAttribute=dim, pAttribute=pAttribute, freq=freq,
+      mc=mc, verbose=verbose, progress=progress
+      ),
+    dim=dim, freq=freq
+  )
 })
 
-setMethod("dispersion", "character", function(object, query, sAttribute, pAttribute="word", freq=FALSE, mc=FALSE, verbose=TRUE, progress=T){
-  sAttrs <- paste(object, sAttribute, sep=".")
-  names(sAttrs) <- sAttribute
-  if (mc == FALSE){
-    if (progress == TRUE) pb <- txtProgressBar(max=length(query), style=3)
-    corpusPositions <- lapply(
-      c(1:length(query)),
-      function(i){
-        if (progress == TRUE) setTxtProgressBar(pb, i)
-        cpos(object, query[i], pAttribute=pAttribute, verbose=FALSE)[,1]
-      })
-  } else if (mc == TRUE){
-    corpusPositions <- mclapply(
-      c(1:length(query)),
-      function(i){
-        cpos(object, query[i], pAttribute=pAttribute, verbose=FALSE)[,1]
-      }, mc.cores=slot(get('session', '.GlobalEnv'), 'cores'))
+setMethod("dispersion", "character", function(.Object, query, dim, pAttribute=NULL, freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
+  if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
+  dispersion(
+    hits(
+      .Object, query=query, sAttribute=dim, pAttribute=pAttribute, freq=freq,
+      mc=mc, verbose=verbose, progress=progress
+    ),
+    dim=dim, freq=freq
+  )
+})
+
+
+setMethod("dispersion", "hits", function(.Object, dim, freq=FALSE){
+  if (length(dim) == 2){
+    dcast.data.table(
+      .Object@dt, formula(paste(dim, collapse="~")),
+      value.var=ifelse(freq == TRUE, "freq", "count"), fun.aggregate=sum, fill=0
+      )  
   }
-  names(corpusPositions) <- query
-  for (i in c(length(query):1)) {
-    if (is.null(corpusPositions[[i]])) corpusPositions[[i]] <- NULL
-  }
-  DT <- data.table(cpos=unlist(corpusPositions))
-  DT[, query := unlist(lapply(names(corpusPositions), function(x) rep(x, times=length(corpusPositions[[x]]))))]
-  for (i in c(1:length(sAttribute))){
-    DT[, eval(sAttribute[i]) := cqi_struc2str(sAttrs[i], cqi_cpos2struc(sAttrs[i], DT[["cpos"]]))]
-  }
-  count <- function(x) return(x)
-  TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
-  setnames(TF, old="V1", new="count")
-  TF
 })
