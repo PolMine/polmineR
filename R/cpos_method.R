@@ -94,3 +94,7 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift=TRUE){
   if (shift == TRUE) cposMatrix <- apply(cposMatrix, 2, function(x) x + .Object@cpos[1,1])
   cposMatrix
 })
+
+setMethod("cpos", "matrix", function(.Object){
+  as.vector(unlist(apply(.Object, 1, function(row) c(row[1]:row[2]))))  
+})
