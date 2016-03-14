@@ -4,10 +4,12 @@
 \alias{as.cqp}
 \title{Convert a string to a CQP query}
 \usage{
-as.cqp(queries, collapse = FALSE)
+as.cqp(queries, normalise_case = FALSE, collapse = FALSE)
 }
 \arguments{
 \item{queries}{a character vector}
+
+\item{normalise_case}{logical}
 
 \item{collapse}{whether collapse the queries into one}
 }

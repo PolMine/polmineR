@@ -65,7 +65,7 @@ setMethod("read", "partitionBundle", function(.Object, highlight=list(), cqp=FAL
 })
 
 #' @rdname read-method
-setMethod("read", "count", function(.Object, col, partitionBundle, cqp=FALSE, highlight=list(), cpos=FALSE, ...){
+setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp=FALSE, highlight=list(), cpos=FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]

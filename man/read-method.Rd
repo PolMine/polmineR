@@ -3,7 +3,7 @@
 \docType{methods}
 \name{read}
 \alias{read}
-\alias{read,count-method}
+\alias{read,data.table-method}
 \alias{read,hits-method}
 \alias{read,partition-method}
 \alias{read,partitionBundle-method}
@@ -17,7 +17,7 @@ read(.Object, ...)
 \S4method{read}{partitionBundle}(.Object, highlight = list(), cqp = FALSE,
   cpos = FALSE, ...)
 
-\S4method{read}{count}(.Object, col, partitionBundle, cqp = FALSE,
+\S4method{read}{data.table}(.Object, col, partitionBundle, cqp = FALSE,
   highlight = list(), cpos = FALSE, ...)
 
 \S4method{read}{hits}(.Object, def, i = NULL, ...)

@@ -66,25 +66,7 @@ setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, i
 #' @docType methods
 #' @rdname enrich-partitionBundle-method
 setMethod("enrich", "partitionBundle", function(object, mc=FALSE, progress=TRUE, verbose=FALSE, method=1, ...){
-  if (method == 1){
-    blapply(x=object, f=enrich, mc=mc, progress=progress, verbose=verbose, ...)  
-  } else if (method == 2){
-    if (!is.null(pAttribute)){
-      cposList <- lapply(
-        c(1:length(object@objects)),
-        function(i){cbind(i, cpos(object@objects[[i]]@cpos))}
-        )
-      cposMatrix <- do.call(rbind, cposList)
-      i_vector <- cposMatrix[,1]
-      cpos_vector <- cposMatrix[,2]
-      id_vector <- cqi_cpos2id(paste(object[[1]]@corpus, pAttribute, sep="."), cpos_vector)
-      system.time(DT <- data.table(i=i_vector, id=id_vector, key=c("i", "id")))
-      system.time(TF <- DT[,.N, by=.(i, id)])
-      setnames(TF, old="N", new="count")
-      TF[, word := cqi_id2str(paste(object[[1]]@corpus, pAttribute, sep="."), id)]
-    }
-  }
-  
+  blapply(x=object, f=enrich, mc=mc, progress=progress, verbose=verbose, ...)  
 })
 
 

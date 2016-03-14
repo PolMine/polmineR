@@ -4,9 +4,10 @@
 \name{cpos}
 \alias{cpos}
 \alias{cpos,character-method}
+\alias{cpos,matrix-method}
 \alias{cpos,partition-method}
 \alias{cpos,tempcorpus-method}
-\title{corpus positions for a query}
+\title{get corpus positions}
 \usage{
 cpos(.Object, ...)
 
@@ -17,15 +18,18 @@ cpos(.Object, ...)
   verbose = TRUE)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
+
+\S4method{cpos}{matrix}(.Object)
 }
 \arguments{
-\item{.Object}{a character vector (length 1) giving the name of a corpus, a partition object or a tempcorpus}
+\item{.Object}{a \code{"character"} vector indicating a CWB corpus, a \code{"partition"}
+object, a \code{"tempcorpus"} object, or a \code{"matrix"} with corpus positions}
 
 \item{...}{further arguments}
 
-\item{query}{a query, either a single term, or a CQP query}
+\item{query}{a character vector (length 1) providing a (single) query: either a single token to look up, or a CQP query.}
 
-\item{pAttribute}{the p-attribute to search}
+\item{pAttribute}{the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.}
 
 \item{encoding}{the encoding of the corpus (if NULL, the
 encoding provided in the registry file of the corpus will be used)}
@@ -37,12 +41,15 @@ the tempcorpus will be shifted so that they match the positions of the
 corpus from which the tempcorpus was generated}
 }
 \value{
-You get a matrix with two columns, the first column giving the start cpos of the hits obtained,
+Unless .Object is a \code{"matrix"}, you get a matrix with two columns, the first column giving the start cpos of the hits obtained,
 the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
 If there are no hits, a NULL object will be returned.
 }
 \description{
-Get the corpus positions (cpos) for a query. The query may also be a 
-CQP query.
+If the cpos-method isapplied on \code{"character"}, \code{"partition"},
+or \code{"tempcorpus"} object, the result is a two-column matrix with the
+start end end corpus positions of the matches for a query (CQP syntax can
+be used.) If the cpos-method is called on a \code{"matrix"} object,  the cpos
+matrix is unfolded.
 }
 

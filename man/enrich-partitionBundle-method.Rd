@@ -6,7 +6,7 @@
 \title{enrich partition object (S4 method)}
 \usage{
 \S4method{enrich}{partitionBundle}(object, mc = FALSE, progress = TRUE,
-  verbose = FALSE, ...)
+  verbose = FALSE, method = 1, ...)
 }
 \arguments{
 \item{object}{a partition object}

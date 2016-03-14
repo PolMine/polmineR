@@ -146,4 +146,18 @@ setMethod("as.bundle", "list", function(object, ...){
   as(object, "bundle")
 })
 
+#' @docType methods
+#' @exportMethod as.partitionBundle
+#' @rdname bundle-class
+setMethod("as.bundle", "textstat", function(object){
+  newBundle <- new(
+    paste(is(object)[1], "Bundle", sep=""),
+    objects=list(object),
+    corpus=object@corpus,
+    encoding=object@encoding,
+    explanation=c("derived from a partition object")
+  )
+  names(newBundle@objects)[1] <- object@name
+  newBundle
+})
 

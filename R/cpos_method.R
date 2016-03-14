@@ -1,19 +1,23 @@
 #' @include tempcorpus.R
 NULL
 
-#' corpus positions for a query
+#' get corpus positions
 #' 
-#' Get the corpus positions (cpos) for a query. The query may also be a 
-#' CQP query. 
+#' If the cpos-method isapplied on \code{"character"}, \code{"partition"},
+#' or \code{"tempcorpus"} object, the result is a two-column matrix with the
+#' start end end corpus positions of the matches for a query (CQP syntax can
+#' be used.) If the cpos-method is called on a \code{"matrix"} object,  the cpos
+#' matrix is unfolded. 
 #' 
-#' @param .Object a character vector (length 1) giving the name of a corpus, a partition object or a tempcorpus
-#' @param query a query, either a single term, or a CQP query
-#' @param pAttribute the p-attribute to search
+#' @param .Object a \code{"character"} vector indicating a CWB corpus, a \code{"partition"}
+#' object, a \code{"tempcorpus"} object, or a \code{"matrix"} with corpus positions
+#' @param query a character vector (length 1) providing a (single) query: either a single token to look up, or a CQP query. 
+#' @param pAttribute the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.
 #' @param encoding the encoding of the corpus (if NULL, the
 #'  encoding provided in the registry file of the corpus will be used)
 #' @param verbose logical, whether to be talkative
 #' @param ... further arguments
-#' @return You get a matrix with two columns, the first column giving the start cpos of the hits obtained,
+#' @return Unless .Object is a \code{"matrix"}, you get a matrix with two columns, the first column giving the start cpos of the hits obtained,
 #' the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
 #' If there are no hits, a NULL object will be returned.
 #' @exportMethod cpos
@@ -23,11 +27,11 @@ setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
 setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encoding=NULL, verbose=TRUE){
-  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
   if (grepl('"', query) == FALSE) {
+    if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
     pAttr <- paste(.Object, '.', pAttribute, sep='')
     cpos <- try(cqi_id2cpos(pAttr, cqi_str2id(pAttr, query)), silent=TRUE)
     if (is(cpos)[1] != "try-error"){
@@ -95,6 +99,7 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift=TRUE){
   cposMatrix
 })
 
+#' @rdname cpos-method
 setMethod("cpos", "matrix", function(.Object){
   as.vector(unlist(apply(.Object, 1, function(row) c(row[1]:row[2]))))  
 })
