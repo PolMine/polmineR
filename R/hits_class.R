@@ -1,6 +1,6 @@
 #' hits class
 #' 
-#' class to organize results from counting
+#' A potentially useful worker. 
 #' 
 #' @slot dt a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
@@ -132,7 +132,7 @@ setMethod("hits", "partition", function(.Object, query, sAttribute=NULL, pAttrib
 
 #' @rdname hits
 setMethod("hits", "partitionBundle", function(
-  .Object, query, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE,
+  .Object, query, pAttribute="word", size=TRUE, freq=FALSE,
   mc=FALSE, progress=FALSE, verbose=TRUE
   ){
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))

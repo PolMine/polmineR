@@ -73,7 +73,8 @@ setMethod("partitionBundle", "character", function(
           encoding=bundle@encoding,
           stat=data.table(),
           name=names(cposList)[i],
-          cpos=matrix(cposList[[i]], ncol=2)
+          cpos=matrix(cposList[[i]], ncol=2),
+          sAttributeStrucs=names(var)[1]
           )
       })
     return(bundle)
