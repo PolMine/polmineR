@@ -110,3 +110,39 @@ setMethod("kwic", "missing", function(.Object, ...){
   }
   
 })
+
+#' @rdname kwic
+setMethod("kwic", "character", function(
+  .Object, query,
+  left=NULL, right=NULL,
+  meta=NULL, pAttribute="word", sAttribute=NULL,
+  neighbor=NULL,
+  verbose=TRUE
+){
+  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
+  if (is.null(left)) left <- slot(get('session', '.GlobalEnv'), 'left')
+  if (is.null(right)) right <- slot(get('session', '.GlobalEnv'), 'right')
+  hits <- cpos(.Object, query=query, pAttribute=pAttribute)
+  cposList <- apply(
+    hits, 1,
+    function(row){
+      list(
+        left=c((row[1] - left - 1):(row[1] - 1)),
+        node=c(row[1]:row[2]),
+        right=c((row[2] + 1):(row[2] + right + 1))
+      )
+    }
+    )
+  ctxt <- new(
+    "context",
+    count=nrow(hits), stat=data.table(),
+    corpus=.Object,
+    left=left, right=right, 
+    cpos=cposList,
+    pAttribute=pAttribute,
+    encoding=parseRegistry(.Object)[["charset"]]
+    )
+  if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
+  kwic(.Object=ctxt, meta=meta, neighbor=neighbor)
+})
+
