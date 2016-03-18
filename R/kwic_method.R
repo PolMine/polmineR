@@ -122,15 +122,22 @@ setMethod("kwic", "character", function(
   if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
   if (is.null(left)) left <- slot(get('session', '.GlobalEnv'), 'left')
   if (is.null(right)) right <- slot(get('session', '.GlobalEnv'), 'right')
-  hits <- cpos(.Object, query=query, pAttribute=pAttribute)
+  hits <- cpos(.Object, query=query, pAttribute=pAttribute, verbose=FALSE)
+  if (is.null(hits)) {
+    message("sorry, not hits")
+    return(NULL)
+  }
+  cposMax <- rcqp::cqi_attribute_size(paste(.Object, pAttribute, sep="."))
   cposList <- apply(
     hits, 1,
     function(row){
+      left <- c((row[1] - left - 1):(row[1] - 1))
+      right <- c((row[2] + 1):(row[2] + right + 1))
       list(
-        left=c((row[1] - left - 1):(row[1] - 1)),
+        left=left[left > 0],
         node=c(row[1]:row[2]),
-        right=c((row[2] + 1):(row[2] + right + 1))
-      )
+        right=right[right <= cposMax]
+        )
     }
     )
   ctxt <- new(

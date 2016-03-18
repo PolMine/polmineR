@@ -110,7 +110,8 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
         )
         if (cpos == TRUE) tokens <- .wrapTokens(tokens)
         para <- paste(tokens, collapse=" ")
-        Encoding(para) <- object@encoding
+        # Encoding(para) <- object@encoding
+        #para <- as.utf8(para)
         para
       },
       pTypes, chunks
@@ -120,6 +121,7 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
       function(x) {
         retval <- cqi_struc2str(paste(object@corpus, ".", x, sep=""), textStruc)
         Encoding(retval) <- object@encoding
+        retval <- as.utf8(retval)
         retval
       })
     metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
@@ -130,14 +132,16 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
       meta=function(x) paste("### ", x, sep=""),
       title=function(x) paste("## ", x, sep=""),
       teaser=function(x) paste("_", x, "_\n", sep=""),
-      body=function(x) paste(x, "\n", sep="")  
+      body=function(x) paste(x, "\n", sep=""),
+      highlight=function(x) paste("_", x, "_\n", sep="")
     )
     formattedArticle <- lapply(
       c(1:length(article)),
       function(x) .formattingFactory[[names(article)[x]]](article[[x]])
     )
-    articleMarkdown <- paste(formattedArticle, collapse="\n\n")
-    markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", articleMarkdown)
+    markdown <- paste(formattedArticle, collapse="\n\n")
+    # markdown <- as.utf8(markdown)
+    markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
     markdown
   })
   paste(c("\n", unlist(articles)), collapse='\n* * *\n')
