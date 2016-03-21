@@ -205,4 +205,12 @@ setMethod("hits", "partitionBundle", function(
   }
 })
 
-
+#' @rdname hits
+setMethod("sample", "hits", function(x, size){
+  if (size > nrow(x@dt)) size <- nrow(x@dt)
+  new(
+    "hits",
+    dt=x@dt[sample(c(1:nrow(x@dt)), size=size)],
+    corpus=x@corpus, query=x@query
+  )
+})

@@ -39,15 +39,15 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), cqp=FALSE, verbose=TRUE, cpos=FALSE, ...){
+setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
   if (is.null(meta)){
     if (all(session@meta %in% sAttributes(.Object@corpus))) {
       meta <- slot(get('session', '.GlobalEnv'), 'meta')
       if (verbose == TRUE) message("... using meta from session: ", meta)
     }
   }
-  if (cqp == TRUE) cpos <- TRUE
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, ...)
+  if (any(cqp) == TRUE) cpos <- TRUE
+  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, tooltips=tooltips, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
