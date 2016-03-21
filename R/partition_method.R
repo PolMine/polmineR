@@ -58,7 +58,7 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 setMethod("partition", "character", function(
   .Object, def=NULL, name=c(""),
   encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
-  mc=FALSE, verbose=TRUE
+  mc=FALSE, verbose=TRUE, ...
 ) {
   corpus <- .Object
   if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
@@ -78,6 +78,9 @@ setMethod("partition", "character", function(
   Partition@call <- deparse(match.call())
   if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
   Partition@corpus <- corpus
+  if (length(list(...)) != 0 && is.null(def)){
+    def <- list(...)
+  }
   if(is.null(def)){
     parsedInfo <- parseInfoFile(.Object)
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
