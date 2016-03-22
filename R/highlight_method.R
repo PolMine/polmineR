@@ -1,3 +1,12 @@
+#' highlight tokens based on cpos or regex
+#' 
+#' The method is a worker for the read method and is not exported.
+#' 
+#' @param .Object either a \code{"partition"} or \code{"character"} object
+#' @param html character vector with a website
+#' @param highlight a \code{"list"} of character vectors, the names need to provide the colors
+#' @param tooltips a \code{"list"} of character vectors, all names need to be included in lists of the highlight-list
+#' @norRd
 setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 .makeTooltipTags <- function(color, tooltips){
