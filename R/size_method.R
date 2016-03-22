@@ -3,6 +3,10 @@ NULL
 
 setGeneric("size", function(x){UseMethod("size")})
 
+setMethod("size", "character", function(x){
+  cqi_attribute_size(paste(x, "word", sep="."))
+  })
+
 #' @rdname partition-class
 #' @exportMethod size
 setMethod("size", "partition", function(x) sum(x@cpos[,2]-x@cpos[,1]+1))
