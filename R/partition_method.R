@@ -144,7 +144,16 @@ setMethod("partition", "list", function(.Object, ...) {
 
 #' @rdname partition
 setMethod("partition", "session", function(.Object){
-  .getClassObjectsAvailable(".GlobalEnv", "partition")
+  partitionObjects <- .getClassObjectsAvailable(".GlobalEnv", "partition")
+  slotsToGet <- c("name", "corpus", "size")
+  data.frame(c(
+    list(object=partitionObjects),
+    lapply(
+      setNames(slotsToGet, slotsToGet),
+      function(x) sapply(partitionObjects, function(y) slot(get(y), x))
+      )),
+    stringsAsFactors = FALSE
+  )
 })
 
 

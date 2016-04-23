@@ -72,3 +72,8 @@ setOldClass("html")
 .onLoad <- function (lib, pkg) {
   session@defaultRegistry <- Sys.getenv("CORPUS_REGISTRY")
 }
+
+#' @export polmineR
+polmineR <- function(){
+  shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/gui")
+}

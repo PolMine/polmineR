@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.44
-Date: 2016-04-21
+Version: 0.5.45
+Date: 2016-04-23
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:

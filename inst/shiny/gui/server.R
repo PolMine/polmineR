@@ -10,21 +10,29 @@ shinyServer(function(input, output, session) {
   
   observe({
     input$partition_go
-    assign(
-      input$partition_name,
-      partition(
-        as.character(input$partition_corpus),
-        def=eval(parse(text=paste("list(", input$partition_def, ")", sep=""))),
-        name=input$partition_name,
-        pAttribute=input$partition_pAttribute,
-        regex=input$partition_regex,
-        xml=input$partition_xml,
-        mc=FALSE,
-        verbose=FALSE
+    isolate({
+      assign(
+        input$partition_name,
+        partition(
+          as.character(input$partition_corpus),
+          def=eval(parse(text=paste("list(", input$partition_def, ")", sep=""))),
+          name=input$partition_name,
+          pAttribute=input$partition_pAttribute,
+          regex=input$partition_regex,
+          xml=input$partition_xml,
+          mc=FALSE,
+          verbose=TRUE
+        ),
+        envir=.GlobalEnv
       )
-    )
+      partitionDf <- partition(controls)
+      output$partition_table <- renderDataTable(partitionDf)
+      updateSelectInput(session, "kwic_partition", choices=partitionDf$object, selected=NULL)
+      updateSelectInput(session, "context_partition", choices=partitionDf$object, selected=NULL)
+    })
   })
   
+  output$partition_table <- renderDataTable(partition(controls))
   
   ## kwic 
   

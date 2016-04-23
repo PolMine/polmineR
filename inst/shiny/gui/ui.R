@@ -14,15 +14,15 @@ shinyUI(
       sidebarLayout(
         sidebarPanel(
           actionButton("partition_go", "Go!"), br(),br(),
-          textInput(inputId = "partition_name", label = "Partition name:", value = "FOO"),
-          selectInput("partition_corpus", "Corpus:", choices = cqi_list_corpora(), selected = "PLPRTXT"),
-          textInput(inputId = "partition_def", label = "sAttributes:", value = 'text_year="2012"'),
-          selectInput(inputId="partition_pAttribute", label="pAttribute:", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
-          radioButtons("partition_regex", "Use regular expressions:", choices = list("TRUE", "FALSE"), inline = TRUE),
-          radioButtons("partition_xml", "XML type:", choices = list("flat", "nested"), inline = TRUE)
+          textInput(inputId = "partition_name", label = "name", value = "FOO"),
+          selectInput("partition_corpus", "corpus", choices = rcqp::cqi_list_corpora(), selected = "PLPRTXT"),
+          textInput(inputId = "partition_def", label = "def", value = 'text_year="2012"'),
+          selectInput(inputId="partition_pAttribute", label="pAttribute", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
+          radioButtons("partition_regex", "regex", choices = list("TRUE", "FALSE"), inline = TRUE),
+          radioButtons("partition_xml", "xml", choices = list("flat", "nested"), inline = TRUE)
           ),
         mainPanel(
-
+            dataTableOutput('partition_table')
           )
 
         )
