@@ -4,27 +4,42 @@
 \name{partitionBundle}
 \alias{partitionBundle}
 \alias{partitionBundle,character-method}
-\alias{partitionBundle,list-method}
+\alias{partitionBundle,partition-method}
 \title{Generate a list of partitions}
 \usage{
-partitionBundle(object, ...)
+partitionBundle(.Object, ...)
 
-\S4method{partitionBundle}{character}(object, def, var, prefix = c(""), ...,
-  mc = NULL, verbose = TRUE)
+\S4method{partitionBundle}{partition}(.Object, def = NULL, prefix = c(""),
+  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
+  id2str = TRUE, type = NULL, mc = NULL, verbose = TRUE,
+  progress = FALSE, ...)
 
-\S4method{partitionBundle}{list}(object, var, prefix = c(""), ...)
+\S4method{partitionBundle}{character}(.Object, def, prefix = c(""),
+  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
+  id2str = TRUE, type = NULL, mc = NULL, verbose = TRUE,
+  progress = FALSE, ...)
 }
 \arguments{
-\item{object}{character string, the CWB corpus to be used}
+\item{.Object}{character string, a partition, or a list}
 
-\item{...}{further parameters that will be pased into the partition-method called to generate the partitions in the bundle}
+\item{...}{shortcut to define partitions}
 
-\item{def}{a list with the definition of a partition that shall be prepared}
-
-\item{var}{a list that indicates the s-attribute to be variable and that
-provides a character string of values (e.g. var=list(text_year=c("2005", "2006"))}
+\item{def}{a list that indicates the s-attribute to be variable and that
+provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))}
 
 \item{prefix}{a character vector that will serve as a prefix for partition names}
+
+\item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
+
+\item{pAttribute}{the pAttribute(s) for which term frequencies shall be retrieved}
+
+\item{regex}{logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1}
+
+\item{xml}{either 'flat' (default) or 'nested'}
+
+\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
+
+\item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
 
 \item{mc}{logical, whether to use multicore parallelization}
 

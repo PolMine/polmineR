@@ -17,18 +17,18 @@
 \usage{
 \S4method{count}{context}(.Object)
 
-\S4method{as.partitionBundle}{context}(object, mc = FALSE)
+\S4method{as.partitionBundle}{context}(.Object, mc = FALSE)
 
 \S4method{view}{context}(.Object)
 }
 \arguments{
 \item{.Object}{object}
 
-\item{object}{object of class \code{context}}
-
 \item{mc}{logical, whether to use multicore}
 
 \item{sAttribute}{the s-attribute to use}
+
+\item{object}{object of class \code{context}}
 }
 \description{
 class to organize information of context analysis

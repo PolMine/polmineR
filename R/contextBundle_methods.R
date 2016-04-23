@@ -3,48 +3,6 @@ NULL
 
 
 
-#' @docType methods
-setMethod("[", "contextBundle", function(x,i){
-  count <- unlist(lapply(x, function(x) x@stat[i,"freqObs"]))
-  cat("be aware of bugs\n")
-})
-
-#' @exportMethod summary
-#' @docType methods
-#' @noRd
-setMethod('summary', 'contextBundle',
-          function(object) {
-            cat("\n** ContextBundle object - general information: **\n")
-            cat(sprintf("%-20s", "Node:"), object@query, "\n")
-            cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
-            cat("\n** Statistical summary: **\n")
-            yet("yet to be implemented\n")      
-          }
-)
-
-
-
-
-
-
-#' Turn a context bundle into a matrix
-#' 
-#' Method based on the tm package.
-#' @param x a contextBundle object (S3 class)
-#' @param col the to be used
-#' @param ... furhter arguments
-#' @method as.matrix contextBundle
-#' @return a matrix
-#' @author Andreas Blaette
-#' @exportMethod as.matrix
-#' @docType methods
-#' @noRd
-setMethod("as.matrix", "contextBundle", function(x, col, ...) {
-  slamStyle <- as.TermDocumentMatrix(x, col)
-  mat <- as.matrix(slamStyle)
-  mat <- mat[which(rowSums(mat)>0),]
-  mat
-})
 
 #' @docType methods
 #' @noRd

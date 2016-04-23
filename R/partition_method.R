@@ -61,26 +61,35 @@ setMethod("partition", "character", function(
   mc=FALSE, verbose=TRUE, ...
 ) {
   corpus <- .Object
-  if (!corpus %in% cqi_list_corpora()) warning("corpus is not an available CWB corpus")
+  stopifnot(xml %in% c("nested", "flat"))
+  if (!corpus %in% cqi_list_corpora()) stop("corpus is not an available CWB corpus")
+  if (length(list(...)) != 0 && is.null(def)) def <- list(...)
+  if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
   if (verbose==TRUE) message('Setting up partition ', name)
   if (is.null(type)){
     parsedRegistry <- parseRegistry(.Object)
     if (!"type" %in% names(parsedRegistry)){
-      Partition <- new('partition', stat=data.table())    
+      partitionType <- "partition"
     } else {
       type <- parsedRegistry[["type"]]
-      if (verbose == TRUE) message("... type of the corpus is ", type)
-      if (type %in% c("press", "plpr")) assign("Partition", new(paste(type, "Partition", sep="")))  
+      if (type %in% c("press", "plpr")){
+        if (verbose == TRUE) message("... type of the corpus is ", partitionType)
+        partitionType <- paste(type, "Partition", sep="")
+      } else {
+        stop("partition type provided by registry is not valid")
+      }
     }
   } else {
-    if (type %in% c("press", "plpr")) Partition <- new(paste(type, "Partition", sep=""))
+    if (type %in% c("press", "plpr")) partitionType <- paste(type, "Partition", sep="")
   }
-  Partition@call <- deparse(match.call())
-  if ((corpus %in% cqi_list_corpora()) == FALSE) warning("corpus not in registry - maybe a typo?")
-  Partition@corpus <- corpus
-  if (length(list(...)) != 0 && is.null(def)){
-    def <- list(...)
-  }
+  assign(
+    "Partition",
+    new(partitionType,
+        stat=data.table(),
+        call=deparse(match.call()),
+        corpus=.Object
+        )
+    )  
   if(is.null(def)){
     parsedInfo <- parseInfoFile(.Object)
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
@@ -96,13 +105,12 @@ setMethod("partition", "character", function(
   } else {
     Partition@encoding <- encoding
   }
-  if (verbose==TRUE) message('... encoding of the corpus is ', Partition@encoding)
+  if (verbose==TRUE) message('... encoding of the corpus: ', Partition@encoding)
   Partition@name <- name
   Partition@sAttributes <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
   Partition@sAttributeStrucs <- names(def)[length(def)]
   Partition@xml <- xml
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
-  stopifnot(xml %in% c("nested", "flat"))
   Partition <- sAttributes2cpos(Partition, xml, regex)
   if (!is.null(Partition)) {
     if (verbose==TRUE) message('... computing partition size')
@@ -141,7 +149,8 @@ setMethod("partition", "session", function(.Object){
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(.Object, def, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
+setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
+  if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   newPartition <- new(
     class(.Object)[1],
     corpus=.Object@corpus, encoding=.Object@encoding, name=name, xml=.Object@xml,

@@ -1,5 +1,6 @@
 library(shiny)
 library(polmineR)
+library(magrittr)
 
 # partitionObjects <- polmineR.shiny:::.getClassObjects('.GlobalEnv', 'partition')
 controls <- get('session', '.GlobalEnv')
@@ -24,31 +25,21 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "pAttribute", choices=new_pAttr, selected=NULL)
     updateSelectInput(session, "meta", choices=new_sAttr, selected=NULL)
   })
-  output$query <- renderText({
-    paste(
-      'Query: "',
-      input$node, '"',
-#      ' (tf=',
-#      as.character(tf(partitionObjects[[input$partitionObject]], input$node)[1, paste(input$pAttribute, "Abs", sep="")]),
-#      as.character(tf(loadedPartition, input$node)[1, paste(input$pAttribute, "Abs", sep="")]),
-#      ')',
-      sep='')
-  })
-  output$table <- renderDataTable({
+  output$query <- renderText({paste('Query: "', input$node, '"', sep='')})
+  
+  output$table <- DT::renderDataTable({
     input$goButton
     
     isolate(
-      kwicObject <- kwic(
+      kwicObject <<- kwic(
         .Object=get(input$partitionObject, '.GlobalEnv'),
-        query=input$node,
-        pAttribute=input$pAttribute,
-        left=input$leftContext,
-        right=input$rightContext,
+        query=input$node, pAttribute=input$pAttribute,
+        left=input$leftContext, right=input$rightContext,
 #        neighbor=input$collocate,
-        meta=input$meta,
-        verbose=FALSE
+        meta=input$meta, verbose=FALSE
       )
     )
+    
     tab <- kwicObject@table
     if (length(input$meta) > 0){
       print(input$meta)
@@ -88,6 +79,20 @@ shinyServer(function(input, output, session) {
       list(sClass="alignCenter", aTargets=c(list(2))),
       list(sWidth="50px", aTargets=c(list(2)))
     )
+  ), selection="single"
   )
-        )
+  # %>% DT::formatStyle("node", color="blue", textAlign="center") %>% DT::formatStyle("left", textAlign="right")
+  
+  observe({
+    input$table_rows_selected
+    if (length(input$table_rows_selected) > 0){
+      if (input$read == "TRUE"){
+        fulltext <- html(kwicObject, input$table_rows_selected, type="plpr")
+        browse(fulltext)
+      } else {
+        output$fulltext <- renderText("you do not want to read")
+      }
+    }
+  })
+
 })

@@ -84,3 +84,8 @@ setMethod("read", "hits", function(.Object, def, i=NULL, ...){
     }
   }
 })
+
+setMethod("read", "kwic", function(.Object, i, type=NULL){
+  fulltext <- html(.Object, i=i, type=type)
+  htmltools::html_print(fulltext)
+})

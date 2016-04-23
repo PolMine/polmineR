@@ -16,7 +16,7 @@ partition(.Object, ...)
 \S4method{partition}{character}(.Object, def = NULL, name = c(""),
   encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
   xml = "flat", id2str = TRUE, type = NULL, mc = FALSE,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{partition}{list}(.Object, ...)
 

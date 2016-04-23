@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: polmineR
-Version: 0.5.41
-Date: 2016-03-21
+Version: 0.5.44
+Date: 2016-04-21
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -51,7 +51,6 @@ Collate:
     'partition_class.R'
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
-    'as.dfm_method.R'
     'as.mallet_method.R'
     'as.markdown_method.R'
     'comp_class.R'
@@ -60,7 +59,6 @@ Collate:
     'cooccurrences_class.R'
     'as.sparseMatrix_method.R'
     'as.speeches_method.R'
-    'as.svmlight_method.R'
     'blapply_method.R'
     'kwic_class.R'
     'browse_method.R'
@@ -80,7 +78,6 @@ Collate:
     'count_method.R'
     'tempcorpus.R'
     'cpos_method.R'
-    'ctm_method.R'
     'hits_class.R'
     'dispersion_method.R'
     'dispersion_methods.R'

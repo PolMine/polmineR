@@ -6,7 +6,7 @@
 #' @param html character vector with a website
 #' @param highlight a \code{"list"} of character vectors, the names need to provide the colors
 #' @param tooltips a \code{"list"} of character vectors, all names need to be included in lists of the highlight-list
-#' @norRd
+#' @noRd
 setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 .makeTooltipTags <- function(color, tooltips){
@@ -19,6 +19,23 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
     return(tooltipTags <- list(start="", end=""))
   }
 }
+
+setMethod("highlight", "html", function(.Object, highlight=list(), tooltips=NULL){
+  for (color in names(highlight)){
+    tooltipTags <- .makeTooltipTags(color, tooltips)
+    for (i in highlight[[color]]){
+      .Object <- gsub(
+        paste('<span id="', i, '">(.*?)</span>', sep=""),
+        paste(
+          paste('<span id="', i, '"><span style="background-color:', color, '">', sep=""),
+          tooltipTags[["start"]], "\\1", tooltipTags[["end"]], '</span></span>', sep=""
+        ),
+        .Object
+      )
+    }
+  }
+  .Object
+})
 
 setMethod("highlight", "partition", function(.Object, html, highlight=list(), tooltips=NULL){
   for (color in names(highlight)){
@@ -39,7 +56,6 @@ setMethod("highlight", "partition", function(.Object, html, highlight=list(), to
           }
         }
       }
-      
     }
   }
   html

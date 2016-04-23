@@ -3,6 +3,7 @@
 \docType{methods}
 \name{kwic}
 \alias{kwic}
+\alias{kwic,character-method}
 \alias{kwic,context-method}
 \alias{kwic,missing-method}
 \alias{kwic,partition-method}
@@ -18,6 +19,10 @@ kwic(.Object, ...)
   verbose = TRUE)
 
 \S4method{kwic}{missing}(.Object, ...)
+
+\S4method{kwic}{character}(.Object, query, left = NULL, right = NULL,
+  meta = NULL, pAttribute = "word", sAttribute = NULL, neighbor = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched}

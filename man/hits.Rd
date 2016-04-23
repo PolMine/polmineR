@@ -7,6 +7,7 @@
 \alias{hits,partition-method}
 \alias{hits,partitionBundle-method}
 \alias{hits-class}
+\alias{sample,hits-method}
 \title{hits class}
 \usage{
 hits(.Object, ...)
@@ -19,9 +20,11 @@ hits(.Object, ...)
   pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE)
 
-\S4method{hits}{partitionBundle}(.Object, query, sAttribute = NULL,
-  pAttribute = "word", size = TRUE, freq = FALSE, mc = FALSE,
-  progress = FALSE, verbose = TRUE)
+\S4method{hits}{partitionBundle}(.Object, query, pAttribute = "word",
+  size = TRUE, freq = FALSE, mc = FALSE, progress = FALSE,
+  verbose = TRUE)
+
+\S4method{sample}{hits}(x, size)
 }
 \arguments{
 \item{query}{character vector}
@@ -39,7 +42,7 @@ hits(.Object, ...)
 \item{progress}{logical}
 }
 \description{
-class to organize results from counting
+A potentially useful worker.
 }
 \section{Slots}{
 

@@ -64,13 +64,13 @@ setMethod("compare", signature=c(x="partition"), function(
 #' @docType methods
 #' @rdname compare-method
 setMethod("compare", signature=c(x="partitionBundle"), function(
-  x, y, pAttribute=NULL,
-  included=FALSE, method="chiSquare", verbose=TRUE, mc=TRUE, progress=FALSE
+  x, y, 
+  included=FALSE, method="chisquare", verbose=TRUE, mc=TRUE, progress=FALSE
 ) {
-  if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
-  kclust <- new("compareBundle")
+  # if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
+  kclust <- new("compBundle")
   .compare <- function(a) {
-    compare(a, y, pAttribute=pAttribute, included=included, method=method, verbose=verbose)
+    compare(a, y, included=included, method=method, verbose=verbose)
   }
   if (mc == FALSE){
     if (progress == FALSE){

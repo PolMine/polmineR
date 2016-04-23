@@ -29,7 +29,7 @@
 \usage{
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
-\S4method{as.partitionBundle}{list}(object, ...)
+\S4method{as.partitionBundle}{list}(.Object, ...)
 
 \S4method{show}{partitionBundle}(object)
 

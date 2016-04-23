@@ -35,7 +35,7 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL, verbose=FALSE){
+setMethod("kwic", "context", function(.Object, meta=NULL, cpos=FALSE, neighbor=NULL, verbose=FALSE){
   if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
   metainformation <- lapply(
     meta,
@@ -70,9 +70,10 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL, verbose
   } 
   conc <- new(
     'kwic',
-    left=.Object@left, right=.Object@right,
+    corpus=.Object@corpus, left=.Object@left, right=.Object@right,
     table=tab, metadata=meta, encoding=.Object@encoding
     )
+  if (cpos == TRUE) conc@cpos <- .Object@cpos
   if (!is.null(neighbor)) {conc@neighbor <- neighbor}
   conc
 })
@@ -83,7 +84,7 @@ setMethod("kwic", "context", function(.Object, meta=NULL, neighbor=NULL, verbose
 setMethod("kwic", "partition", function(
   .Object, query,
   left=NULL, right=NULL,
-  meta=NULL, pAttribute="word", sAttribute=NULL,
+  meta=NULL, pAttribute="word", sAttribute=NULL, cpos=TRUE,
   neighbor=NULL,
   verbose=TRUE
 ){
@@ -98,7 +99,7 @@ setMethod("kwic", "partition", function(
     message("... no occurrence of query")
     return(NULL)
     }
-  kwic(.Object=ctxt, meta=meta, neighbor=neighbor)
+  kwic(.Object=ctxt, meta=meta, neighbor=neighbor, cpos=cpos)
 })
 
 #' @rdname kwic
@@ -115,7 +116,7 @@ setMethod("kwic", "missing", function(.Object, ...){
 setMethod("kwic", "character", function(
   .Object, query,
   left=NULL, right=NULL,
-  meta=NULL, pAttribute="word", sAttribute=NULL,
+  meta=NULL, pAttribute="word", sAttribute=NULL, cpos=FALSE,
   neighbor=NULL,
   verbose=TRUE
 ){
@@ -150,6 +151,6 @@ setMethod("kwic", "character", function(
     encoding=parseRegistry(.Object)[["charset"]]
     )
   if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
-  kwic(.Object=ctxt, meta=meta, neighbor=neighbor)
+  kwic(.Object=ctxt, meta=meta, neighbor=neighbor, cpos=cpos)
 })
 

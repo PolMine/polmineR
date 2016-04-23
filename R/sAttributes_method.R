@@ -9,8 +9,7 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #' @rdname sAttributes-method
 setMethod("sAttributes", "character", function(object, sAttribute=NULL, unique=TRUE, regex=NULL){
   if (is.null(sAttribute)){
-    ret <- cqi_attributes(object, "s")
-    ret
+    return(cqi_attributes(object, "s"))
   } else {
     if (object %in% cqi_list_corpora()) {
       ret <- cqi_struc2str(
@@ -21,13 +20,13 @@ setMethod("sAttributes", "character", function(object, sAttribute=NULL, unique=T
         ret <- grep(regex, ret, value=TRUE)
       }
       if (unique == TRUE) ret <- unique(ret)
-      Encoding(ret) <- getEncoding(object) 
+      Encoding(ret) <- getEncoding(object)
+      return(ret)
     } else {
       warning("corpus name provided not available")
-      ret <- NULL
+      return(NULL)
     }
   }
-  ret
 })
 
 #' Print S-Attributes in a partition or corpus

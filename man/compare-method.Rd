@@ -15,9 +15,8 @@ compare(x, ...)
 \S4method{compare}{partition}(x, y, included = FALSE, method = "chisquare",
   verbose = FALSE)
 
-\S4method{compare}{partitionBundle}(x, y, pAttribute = NULL,
-  included = FALSE, method = "chiSquare", verbose = TRUE, mc = TRUE,
-  progress = FALSE)
+\S4method{compare}{partitionBundle}(x, y, included = FALSE,
+  method = "chisquare", verbose = TRUE, mc = TRUE, progress = FALSE)
 
 \S4method{compare}{cooccurrences}(x, y, included = FALSE, method = "ll",
   mc = TRUE, verbose = TRUE)
@@ -41,11 +40,11 @@ ref}
 
 \item{verbose}{defaults to TRUE}
 
-\item{pAttribute}{the p-attribute to be used}
-
 \item{mc}{logical, whether to use multicore}
 
 \item{progress}{logical}
+
+\item{pAttribute}{the p-attribute to be used}
 }
 \value{
 The function returns a data frame with the following structure:

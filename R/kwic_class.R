@@ -25,6 +25,8 @@
 setClass(
   "kwic",
   slots = c(
+    corpus = "character",
+    cpos = "list",
     metadata = "character",
     left = "numeric",
     right = "numeric",

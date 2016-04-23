@@ -38,12 +38,14 @@ shinyUI(fluidPage(
     numericInput("leftContext", "left context:", value=session@left),
     numericInput("rightContext", "right context:", value=session@right),
 #    textInput("collocate", "collocate:", value=session@defaultKwicCooccurrence),
+    radioButtons("read", "read:", choices=c("TRUE", "FALSE"), selected="FALSE", inline=T),
     br()
     ),
   
   mainPanel(
 #    h3(textOutput("query")),
     # p(textOutput("frequency")),
-    dataTableOutput('table')
+    DT::dataTableOutput('table'),
+    uiOutput("fulltext")
     )
 ))

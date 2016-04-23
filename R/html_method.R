@@ -110,4 +110,19 @@ setMethod("html", "partitionBundle", function(object, filename=c(), type="debate
   if (is.null(filename)) browseURL(htmlFile)
 })
 
-
+setMethod("html", "kwic", function(object, i, type){
+  partitionToRead <- partition(
+    object@corpus,
+    def=lapply(setNames(object@metadata, object@metadata), function(x) object@table[[x]][i]),
+    type=type
+  )
+  fulltext <- html(partitionToRead, meta=object@metadata, cpos=TRUE)
+  fulltext <- highlight(
+    fulltext,
+    highlight=list(
+      yellow=c(object@cpos[[i]][["left"]], object@cpos[[i]][["right"]]),
+      lightgreen=object@cpos[[i]][["node"]]
+    )
+  )
+  fulltext
+})

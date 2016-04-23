@@ -1,3 +1,4 @@
+#' @rdname noise
 setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 
 #' detect noise
@@ -11,7 +12,7 @@ setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 #' @return a list 
 #' @importFrom slam col_sums
 #' @exportMethod noise
-#' @rdname TermDocumentMatrix
+#' @rdname noise
 setMethod(
   "noise", "DocumentTermMatrix",
   function(
@@ -44,26 +45,52 @@ setMethod(
     dtmTmp <- tm::removeSparseTerms(.Object, sparse=sparse)
     noiseList[["sparse"]] <-  colnames(.Object)[which(!colnames(.Object) %in% colnames(dtmTmp))]
   }
-  
-  if (!is.null(stopwordsLanguage)){
-    if (verbose == TRUE) message("... stopwords")
-    noiseList[["stopwords"]] <- colnames(.Object)[which(colnames(.Object) %in% tm::stopwords(stopwordsLanguage))]
-  }
-  if (!is.null(specialChars)){
-    if (verbose == TRUE) message("... specialCharsRegex")
-    noiseList[["specialChars"]] <- colnames(.Object)[which(!c(1:length(colnames(.Object))) %in% grep(specialChars, colnames(.Object)))]  
-  }
-  if (!is.null(numbers)){
-    if (verbose == TRUE) message("... numbers")
-    noiseList[["numbers"]] <- grep(numbers, colnames(.Object), value=T)
-  }
-  if (!is.null(minNchar)){
-    noiseList[["minNchar"]] <- colnames(.Object)[which(nchar(colnames(.Object)) <= minNchar)]  
-  }
-  # attr(.Object, "weighting") <- c("term frequency", "tf")
+  noiseList <- c(
+    noiseList,
+    noise(
+      colnames(.Object),
+      stopwordsLanguage=stopwordsLanguage, minNchar=minNchar,
+      specialChars=specialChars, numbers=numbers
+    )
+  )
   noiseList
 })
 
+#' @rdname noise
 setMethod("noise", "TermDocumentMatrix", function(.Object,  ...){
   noise(t(.Object), ...)
+})
+
+#' @rdname noise
+setMethod(
+  "noise", "character",
+  function(
+    .Object, 
+    stopwordsLanguage="german", minNchar=2, specialChars="^[a-zA-ZéäöüÄÖÜ-ß|-]+$",
+    numbers="^[0-9\\.,]+$",
+    verbose=TRUE
+  ){
+    noiseList <- list()
+    if (!is.null(stopwordsLanguage)){
+      if (verbose == TRUE) message("... stopwords")
+      noiseList[["stopwords"]] <- .Object[which(.Object %in% tm::stopwords(stopwordsLanguage))]
+    }
+    if (!is.null(specialChars)){
+      if (verbose == TRUE) message("... specialCharsRegex")
+      noiseList[["specialChars"]] <- .Object[which(!c(1:length(.Object)) %in% grep(specialChars, .Object))]  
+    }
+    if (!is.null(numbers)){
+      if (verbose == TRUE) message("... numbers")
+      noiseList[["numbers"]] <- grep(numbers, .Object, value=T)
+    }
+    if (!is.null(minNchar)){
+      noiseList[["minNchar"]] <- .Object[which(nchar(.Object) <= minNchar)]  
+    }
+    # attr(.Object, "weighting") <- c("term frequency", "tf")
+    noiseList
+  })
+
+#' @rdname noise
+setMethod("noise", "textstat", function(.Object, pAttribute, ...){
+  noise(.Object@stat[[pAttribute]], ...)
 })
