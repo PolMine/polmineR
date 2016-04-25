@@ -13,7 +13,7 @@ use <- function(pkg="default"){
     registryDir <- system.file("extdata", "cwb", "registry", package=pkgSub)
     previousRegistry <- resetRegistry(registryDir)
   } else if (pkg=="default"){
-    previousRegistry <- resetRegistry(session@defaultRegistry)
+    previousRegistry <- resetRegistry(getOption("polmineR_default_registry"))
   } else {
     registryDir <- system.file("extdata", "cwb", "registry", package=pkg)
     previousRegistry <- resetRegistry(registryDir)

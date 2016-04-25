@@ -70,6 +70,7 @@ setOldClass("html")
 
 
 .onLoad <- function (lib, pkg) {
+  options("polmineR_default_registry" = Sys.getenv("CORPUS_REGISTRY"))
   session@defaultRegistry <- Sys.getenv("CORPUS_REGISTRY")
 }
 

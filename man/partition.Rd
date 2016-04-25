@@ -22,9 +22,9 @@ partition(.Object, ...)
 
 \S4method{partition}{session}(.Object)
 
-\S4method{partition}{partition}(.Object, def, name = c(""), regex = FALSE,
-  pAttribute = NULL, id2str = TRUE, type = NULL, verbose = TRUE,
-  mc = FALSE, ...)
+\S4method{partition}{partition}(.Object, def = NULL, name = c(""),
+  regex = FALSE, pAttribute = NULL, id2str = TRUE, type = NULL,
+  verbose = TRUE, mc = FALSE, ...)
 
 \S4method{partition}{missing}()
 

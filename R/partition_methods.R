@@ -9,26 +9,26 @@ NULL
 setMethod("show", "partition",
 function(object){
   cat("** partition object **\n")
-  cat(sprintf("%-20s", "CWB-corpus:"), object@corpus, "\n")
-  cat(sprintf("%-20s", "Name:"), object@name, "\n")
+  cat(sprintf("%-20s", "corpus:"), object@corpus, "\n")
+  cat(sprintf("%-20s", "name:"), object@name, "\n")
   if (length(object@sAttributes)==0) {
-    cat(sprintf("%-20s", "S-Attributes:"), "no specification\n")
+    cat(sprintf("%-20s", "sAttributes:"), "no specification\n")
   } else {
     s <- unlist(lapply(
       names(object@sAttributes),
       function(x) {paste(x, "=", paste(object@sAttributes[[x]], collapse="/"))}
       ))
-    cat(sprintf("%-20s", "S-attributes:"), s[1], '\n')
+    cat(sprintf("%-20s", "sAttributes:"), s[1], '\n')
     if (length(s)>1) {for (i in length(s)){cat(sprintf("%-20s", " "), s[i], '\n')}}
   } 
-  cat(sprintf("%-21s", "Corpus positions:"))
+  cat(sprintf("%-21s", "cpos:"))
   if (nrow(object@cpos)==0) {cat("not available\n")}
   else {cat(nrow(object@cpos), "pairs of corpus positions\n")}
-  cat(sprintf("%-21s", "Partition size:"))
+  cat(sprintf("%-21s", "size:"))
   if (is.null(object@size)) {cat("not available\n")}
   else {cat(object@size, "tokens\n")}
-  cat(sprintf("%-21s", "Term frequencies:"))
-  if (is.null(dim(object@stat))) {cat("not available\n")}
+  cat(sprintf("%-21s", "count:"))
+  if (length(object@pAttribute) == 0) {cat("not available\n")}
   else {cat("available for ", object@pAttribute, "\n")}
 })
 

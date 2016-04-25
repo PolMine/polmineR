@@ -1,12 +1,22 @@
 library(shiny)
 library(polmineR)
+library(shinyBS)
+library(shinythemes)
 
 controls <- get('session', '.GlobalEnv')
-partitionNames <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
+partitionNames <- c(
+  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition'),
+  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'pressPartition'),
+  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'plprPartition')
+)
+shinyThemeToUse <- shinytheme("cerulean") # alternative: flatly
 
 shinyUI(
   
   navbarPage(
+    
+    theme = shinyThemeToUse,
+    
     "polmineR",
     
     tabPanel(
@@ -15,8 +25,19 @@ shinyUI(
         sidebarPanel(
           actionButton("partition_go", "Go!"), br(),br(),
           textInput(inputId = "partition_name", label = "name", value = "FOO"),
-          selectInput("partition_corpus", "corpus", choices = rcqp::cqi_list_corpora(), selected = "PLPRTXT"),
-          textInput(inputId = "partition_def", label = "def", value = 'text_year="2012"'),
+          bsTooltip(
+            id = "partition_name", title = "This is an input", 
+                    placement = "top", trigger = "hover"
+            ),
+          selectInput("partition_corpus", "corpus", choices = corpus(), selected = corpus()[1]),
+          textInput(
+            inputId = "partition_def",
+            label = "def",
+            value = paste(
+              grep("date", sAttributes(corpus()[1]), value=T),
+              paste('"', sample(sAttributes(corpus()[1], grep("date", sAttributes(corpus()[1]), value=T)), 1), '"', sep=""),
+              sep="="
+            )),
           selectInput(inputId="partition_pAttribute", label="pAttribute", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
           radioButtons("partition_regex", "regex", choices = list("TRUE", "FALSE"), inline = TRUE),
           radioButtons("partition_xml", "xml", choices = list("flat", "nested"), inline = TRUE)
@@ -33,20 +54,20 @@ shinyUI(
       sidebarLayout(
         sidebarPanel(
           actionButton("kwic_go", "Go!"), br(),br(),
-          selectInput("kwic_partition", "partition:", choices=partitionNames),
-          textInput("kwic_query", "node/query:", value=controls@defaultKwicNode),
+          selectInput("kwic_partition", "partition", choices=partitionNames),
+          textInput("kwic_query", "query", value=controls@defaultKwicNode),
           selectInput(
-            "kwic_meta", "s-attribute/metadata:",
+            "kwic_meta", "sAttribute",
             choices=sAttributes(get(partitionNames[1], ".GlobalEnv")@corpus),
             multiple=TRUE
           ),
           selectInput(
-            "kwic_pAttribute", "p-attribute:",
+            "kwic_pAttribute", "pAttribute",
             choices=pAttributes(get(partitionNames[1], ".GlobalEnv")@corpus)
           ),
-          numericInput("kwic_left", "left context:", value=controls@left),
-          numericInput("kwic_right", "right context:", value=controls@right),
-          radioButtons("kwic_read", "read:", choices=c("TRUE", "FALSE"), selected="FALSE", inline=T),
+          numericInput("kwic_left", "left", value=controls@left),
+          numericInput("kwic_right", "right", value=controls@right),
+          radioButtons("kwic_read", "read", choices=c("TRUE", "FALSE"), selected="FALSE", inline=T),
           br()
         ),
 
@@ -60,11 +81,11 @@ shinyUI(
         sidebarPanel(
           actionButton("context_go", "Go!"),
           br(), br(),
-          selectInput("context_partition", "Partition:", partitionNames[1]),
-          textInput("context_node", "Node:", value="Suche"),
-          selectInput("context_pAttribute", "Select p-attribute:", choices=c("word", "pos", "lemma"), selected=controls@pAttribute, multiple=TRUE),
-          numericInput("context_left", "Left context:", value=controls@left),
-          numericInput("context_right", "Right context:", value=controls@right),
+          selectInput("context_partition", "partition", partitionNames[1]),
+          textInput("context_node", "query", value="Suche"),
+          selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=controls@pAttribute, multiple=TRUE),
+          numericInput("context_left", "left", value=controls@left),
+          numericInput("context_right", "right", value=controls@right),
           br()
         ),
 

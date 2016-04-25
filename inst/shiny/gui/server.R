@@ -1,5 +1,7 @@
 library(shiny)
 library(polmineR)
+library(magrittr)
+library(DT)
 
 controls <- get('session', '.GlobalEnv')
 
@@ -46,7 +48,6 @@ shinyServer(function(input, output, session) {
 
   output$kwic_table <- DT::renderDataTable({
     input$kwic_go
-    print(class(get(input$kwic_partition, '.GlobalEnv')))
 
     isolate(
       kwicObject <<- polmineR::kwic(
@@ -59,29 +60,29 @@ shinyServer(function(input, output, session) {
 
     tab <- kwicObject@table
     if (length(input$kwic_meta) > 0){
-      print(input$kwic_meta)
       metaRow <- unlist(lapply(
         c(1:nrow(tab)),
         function(i){
           paste(unlist(lapply(tab[i,c(1:length(input$kwic_meta))], as.character)), collapse=" | ")
         }
       ))
-      if (length(input$kwic_meta) > 1){
-        retval <- data.frame(
-          metadata=metaRow,
-          tab[,(length(input$kwic_meta)+1):ncol(tab)]
-        )
-      } else if (length(input$kwic_meta) == 1){
-        retval <- tab
-      }
+#      if (length(input$kwic_meta) > 1){
+        retval <- data.frame(meta=metaRow, tab[,(length(input$kwic_meta)+1):ncol(tab)])
+#      } else if (length(input$kwic_meta) == 1){
+#        retval <- tab
+#      }
     } else if (length(input$kwic_meta) == 0){
-      retval <- data.frame(
-        no=c(1:nrow(tab)),
-        tab
-      )
+      retval <- data.frame(no=c(1:nrow(tab)), tab)
     }
+    retval <- DT::datatable(retval, selection="single", rownames=FALSE) %>% 
+      DT::formatStyle("node", color="#4863A0", textAlign="center") %>%
+      DT::formatStyle("left", textAlign="right")
+    if (length(input$kwic_meta) > 0){
+      retval <- DT::formatStyle(retval, "meta", fontStyle="italic", textAlign="left", borderRight="1px solid DarkGray")
+    }
+    # ; ; 
     retval
-  } , selection="single"
+  }
   )
 
   observe({

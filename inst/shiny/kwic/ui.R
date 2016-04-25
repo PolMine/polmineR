@@ -1,10 +1,12 @@
 library(shiny)
 library(polmineR)
+library(shinythemes)
 
 session <- get('session', '.GlobalEnv')
 partitionObjects <- polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition')
 
 shinyUI(fluidPage(
+  theme=shinytheme("cerulean")
   
   tags$head(tags$style(
     c(".table .alignRight {color: black; text-align:right;}

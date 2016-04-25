@@ -133,7 +133,8 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
       title=function(x) paste("## ", x, sep=""),
       teaser=function(x) paste("_", x, "_\n", sep=""),
       body=function(x) paste(x, "\n", sep=""),
-      highlight=function(x) paste("_", x, "_\n", sep="")
+      highlight=function(x) paste("_", x, "_\n", sep=""),
+      headline=function(x) paste("# ", x, sep="")
     )
     formattedArticle <- lapply(
       c(1:length(article)),

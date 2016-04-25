@@ -11,18 +11,18 @@
 \usage{
 kwic(.Object, ...)
 
-\S4method{kwic}{context}(.Object, meta = NULL, neighbor = NULL,
-  verbose = FALSE)
+\S4method{kwic}{context}(.Object, meta = NULL, cpos = FALSE,
+  neighbor = NULL, verbose = FALSE)
 
 \S4method{kwic}{partition}(.Object, query, left = NULL, right = NULL,
-  meta = NULL, pAttribute = "word", sAttribute = NULL, neighbor = NULL,
-  verbose = TRUE)
+  meta = NULL, pAttribute = "word", sAttribute = NULL, cpos = TRUE,
+  neighbor = NULL, verbose = TRUE)
 
 \S4method{kwic}{missing}(.Object, ...)
 
 \S4method{kwic}{character}(.Object, query, left = NULL, right = NULL,
-  meta = NULL, pAttribute = "word", sAttribute = NULL, neighbor = NULL,
-  verbose = TRUE)
+  meta = NULL, pAttribute = "word", sAttribute = NULL, cpos = FALSE,
+  neighbor = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched}
