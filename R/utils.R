@@ -351,3 +351,11 @@ as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
   lapply(chunkedMatrix, function(m) matrix(m, ncol=ncol(x)))
 }
 
+
+.verboseOutput <- function(message, verbose){
+  if (verbose == TRUE){
+    message(paste("...", message))
+  } else if (verbose == "shiny"){
+    shiny::incProgress(amount = 1, detail = message)
+  }
+}

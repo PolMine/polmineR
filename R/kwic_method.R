@@ -74,7 +74,7 @@ setMethod("kwic", "context", function(.Object, meta=NULL, cpos=FALSE, neighbor=N
     table=tab, metadata=meta, encoding=.Object@encoding
     )
   if (cpos == TRUE) conc@cpos <- .Object@cpos
-  if (!is.null(neighbor)) {conc@neighbor <- neighbor}
+  if (!is.null(neighbor) || !length(neighbor) == 0) {conc@neighbor <- neighbor}
   conc
 })
 
@@ -83,8 +83,10 @@ setMethod("kwic", "context", function(.Object, meta=NULL, cpos=FALSE, neighbor=N
 #' @exportMethod kwic
 setMethod("kwic", "partition", function(
   .Object, query,
-  left=NULL, right=NULL,
-  meta=NULL, pAttribute="word", sAttribute=NULL, cpos=TRUE,
+  left = getOption("polmineR")[["left"]],
+  right = getOption("polmineR")[["right"]],
+  meta = NULL,
+  pAttribute="word", sAttribute=NULL, cpos=TRUE,
   neighbor=NULL,
   verbose=TRUE
 ){

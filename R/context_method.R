@@ -60,26 +60,21 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query, pAttribute=NULL, sAttribute=NULL,
-    left=NULL, right=NULL,
+    .Object, query,
+    pAttribute=getOption("polmineR")[["pAttribute"]],
+    sAttribute=NULL,
+    left=getOption("polmineR")[["left"]],
+    right=getOption("polmineR")[["right"]],
     stoplist=NULL, positivelist=NULL,
     count=TRUE,
     method="ll",
-    mc=NULL, verbose=TRUE
+    mc=getOption("polmineR")[["mc"]],
+    verbose=TRUE
   ) {
-    if (is.null(pAttribute)) {
-      pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-      message("... using session settings for p-attribute: ", pAttribute)
-    }
     if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){
-      message("... tf for pAttribute ", pAttribute, " not available, enriching object now")
+      message("... count for pAttribute ", pAttribute, " not available")
       .Object <- enrich(.Object, pAttribute=pAttribute)
     }
-    # get values from session object if params are not provided
-    if (is.null(left)) left <- slot(get("session", '.GlobalEnv'), 'left')
-    if (is.null(right)) right <- slot(get("session", '.GlobalEnv'), 'right')
-    if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
-    
     pAttr <- paste(.Object@corpus, ".", pAttribute, sep="")
     sAttr <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[1]
     cposMethod <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[2]
@@ -87,18 +82,20 @@ setMethod(
     # instantiate the context object
     ctxt <- new(
       "context",
-      query=query, pAttribute=pAttribute, stat=data.table(),
+      query=query, pAttribute=pAttribute,
+      stat=data.table(),
       corpus=.Object@corpus,
       left=ifelse(is.character(left), 0, left),
       right=ifelse(is.character(right), 0, right),
       encoding=.Object@encoding, 
-      partition=.Object@name, partitionSize=.Object@size
+      partition=.Object@name,
+      partitionSize=.Object@size
     )
     if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
     ctxt@call <- deparse(match.call())
     
     # getting counts of query in partition
-    if (verbose==TRUE) message("... getting corpus positions of query in partition", appendLF=FALSE)
+    .verboseOutput(message="getting cpos", verbose = verbose)
     hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
       if (verbose==TRUE) message(' -> no hits')
@@ -106,8 +103,7 @@ setMethod(
     }
     if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
-    if (verbose==TRUE) message(': ', length(hits))
-    
+
     # generate positivelist, negativelist
     stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(pAttr, x)))
     if (is.numeric(positivelist)){
@@ -117,8 +113,8 @@ setMethod(
       positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(pAttr, x)))
     }
     
+    .verboseOutput(message="generating contexts", verbose = verbose)
     
-    if (verbose==TRUE) message("... generating contexts ")  
     if (mc==TRUE) {
       bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
     } else {
@@ -132,12 +128,11 @@ setMethod(
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
     ctxt@sizeCoi <- as.integer(ctxt@size)
     ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
-    if (verbose==TRUE) message('... window size total: ', ctxt@size)
     ctxt@count <- length(bigBag)
     
     # put together raw stat table
     if (count == TRUE || length(method) > 0){
-      if (verbose == TRUE) message('... counting tokens')
+      .verboseOutput(message="counting tokens", verbose = verbose)
       idList <- lapply(
         c(1:length(pAttribute)),
         function(i) unlist(lapply(bigBag, function(x) x$ids[[i]]))
@@ -158,7 +153,7 @@ setMethod(
     if (!is.null(method)){
       ctxt@stat[, "count_partition" := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
       for (test in method){
-        if (verbose == TRUE) message("... statistical test: ", test)
+        .verboseOutput(message=paste("statistical test:", test), verbose = verbose)
         ctxt <- do.call(test, args=list(.Object=ctxt))  
       }
       colnamesOld <- colnames(ctxt@stat)

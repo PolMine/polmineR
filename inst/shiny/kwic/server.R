@@ -30,7 +30,9 @@ shinyServer(function(input, output, session) {
   output$table <- DT::renderDataTable({
     input$goButton
     
-    isolate(
+    withProgress({
+      incProgress(0.5, detail = paste("Doing part", 1))
+      isolate(
       kwicObject <<- kwic(
         .Object=get(input$partitionObject, '.GlobalEnv'),
         query=input$node, pAttribute=input$pAttribute,
@@ -39,7 +41,7 @@ shinyServer(function(input, output, session) {
         meta=input$meta, verbose=FALSE
       )
     )
-    
+    }, message("may take a moment"), value=0)
     tab <- kwicObject@table
     if (length(input$meta) > 0){
       print(input$meta)

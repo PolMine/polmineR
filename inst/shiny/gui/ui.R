@@ -9,7 +9,7 @@ partitionNames <- c(
   polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'pressPartition'),
   polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'plprPartition')
 )
-shinyThemeToUse <- shinytheme("cerulean") # alternative: flatly
+shinyThemeToUse <- shinytheme("cerulean") # alternatives: flatly, cerulean
 
 shinyUI(
   
@@ -17,7 +17,9 @@ shinyUI(
     
     theme = shinyThemeToUse,
     
-    "polmineR",
+    title = "polmineR",
+    
+    id = "polmineR",
     
     tabPanel(
       "partition",
@@ -56,6 +58,7 @@ shinyUI(
           actionButton("kwic_go", "Go!"), br(),br(),
           selectInput("kwic_partition", "partition", choices=partitionNames),
           textInput("kwic_query", "query", value=controls@defaultKwicNode),
+          textInput("kwic_neighbor", "neighbor", value=""),
           selectInput(
             "kwic_meta", "sAttribute",
             choices=sAttributes(get(partitionNames[1], ".GlobalEnv")@corpus),
@@ -82,7 +85,7 @@ shinyUI(
           actionButton("context_go", "Go!"),
           br(), br(),
           selectInput("context_partition", "partition", partitionNames[1]),
-          textInput("context_node", "query", value="Suche"),
+          textInput("context_query", "query", value="Suche"),
           selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=controls@pAttribute, multiple=TRUE),
           numericInput("context_left", "left", value=controls@left),
           numericInput("context_right", "right", value=controls@right),
@@ -90,8 +93,9 @@ shinyUI(
         ),
 
         mainPanel(
-          dataTableOutput('context_table')
-        )
+          DT::dataTableOutput('context_table'),
+          textOutput("context2kwic")
+          )
       )
     )
 

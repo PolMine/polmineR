@@ -70,9 +70,34 @@ setOldClass("html")
 
 
 .onLoad <- function (lib, pkg) {
-  options("polmineR_default_registry" = Sys.getenv("CORPUS_REGISTRY"))
-  session@defaultRegistry <- Sys.getenv("CORPUS_REGISTRY")
+  options(
+    polmineR=list(
+      project=c(""),
+      projectDir=c(""),
+      corpus="PLPRBTTXT",
+      pAttribute="word",
+      left=5,
+      right=5,
+      minSignificance=3.84,
+      minFrequency=5,
+      filterType="include",
+      lineview=FALSE,
+      meta = as.character(c()),
+      mc=FALSE,
+      cores=2,
+      consoleEncoding="UTF-8",
+      smtpServer="",
+      smtpPort="",
+      email="",
+      partitionDir="",
+      browse=FALSE,
+      backend="doSNOW"
+    ))
 }
+
+
+
+
 
 #' @export polmineR
 polmineR <- function(){
