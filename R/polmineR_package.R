@@ -4,7 +4,7 @@
 NULL
 
 
-#' @include generics.R session_class.R
+#' @include generics.R 
 NULL
 
 #' @importFrom rcqp cqi_cpos2id cqi_cpos2str cqi_cpos2id cqi_cpos2struc
@@ -101,5 +101,6 @@ setOldClass("html")
 
 #' @export polmineR
 polmineR <- function(){
-  shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/gui")
+  # shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/gui")
+  shiny::runApp(system.file("shiny", "gui", package="polmineR"))
 }

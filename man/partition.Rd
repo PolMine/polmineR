@@ -7,7 +7,6 @@
 \alias{partition,list-method}
 \alias{partition,missing-method}
 \alias{partition,partition-method}
-\alias{partition,session-method}
 \alias{partitionGadget}
 \title{Initialize a partition}
 \usage{
@@ -20,13 +19,11 @@ partition(.Object, ...)
 
 \S4method{partition}{list}(.Object, ...)
 
-\S4method{partition}{session}(.Object)
+\S4method{partition}{missing}(.Object)
 
 \S4method{partition}{partition}(.Object, def = NULL, name = c(""),
   regex = FALSE, pAttribute = NULL, id2str = TRUE, type = NULL,
   verbose = TRUE, mc = FALSE, ...)
-
-\S4method{partition}{missing}()
 
 partitionGadget()
 }

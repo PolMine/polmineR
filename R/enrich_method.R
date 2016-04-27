@@ -87,8 +87,7 @@ setMethod("enrich", "comp", function(object, addPos=NULL, verbose=TRUE){
 
 #' @docType methods
 #' @rdname enrich-method
-setMethod("enrich", "compBundle", function(object, addPos=NULL, verbose=TRUE, mc=NULL){
-  if (is.null(mc)) mc <- slot(get("session", '.GlobalEnv'), 'multicore')
+setMethod("enrich", "compBundle", function(object, addPos=NULL, verbose=TRUE, mc=getOption("polmineR")[["mc"]]){
   rework <- new("compBundle")
   if (mc==FALSE){
     rework@objects <- lapply(

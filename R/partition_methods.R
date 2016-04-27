@@ -1,4 +1,4 @@
-#' @include partition_class.R generics.R session_methods.R
+#' @include partition_class.R generics.R
 NULL
 
 

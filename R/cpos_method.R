@@ -26,12 +26,11 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute=NULL, encoding=NULL, verbose=TRUE){
+setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("polmineR")[["pAttribute"]], encoding=NULL, verbose=TRUE){
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
   if (grepl('"', query) == FALSE) {
-    if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
     pAttr <- paste(.Object, '.', pAttribute, sep='')
     cpos <- try(cqi_id2cpos(pAttr, cqi_str2id(pAttr, query)), silent=TRUE)
     if (is(cpos)[1] != "try-error"){

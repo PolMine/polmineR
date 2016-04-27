@@ -12,7 +12,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' 
 #' @param .Object a partition object
 #' @param query a character vector containing one or multiple queries
-#' @param dim a character vector of length 1 or 2 providing the sAttributes 
+#' @param sAttribute a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
 #' @param freq logical, whether to calculate normalized frequencies
@@ -32,34 +32,37 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-setMethod("dispersion", "partition", function(.Object, query, dim, pAttribute=NULL, freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
-  if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
+setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttribute=getOption("polmineR")[["pAttribute"]], freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
   dispersion(
     hits(
-      .Object=.Object, query=query, sAttribute=dim, pAttribute=pAttribute, freq=freq,
+      .Object=.Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
       mc=mc, verbose=verbose, progress=progress
       ),
-    dim=dim, freq=freq
+    sAttribute=sAttribute, freq=freq
   )
 })
 
-setMethod("dispersion", "character", function(.Object, query, dim, pAttribute=NULL, freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
-  if ( is.null(pAttribute) ) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
+setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttribute=getOption("polmineR")[["pAttribute"]], freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
   dispersion(
     hits(
-      .Object, query=query, sAttribute=dim, pAttribute=pAttribute, freq=freq,
+      .Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
       mc=mc, verbose=verbose, progress=progress
     ),
-    dim=dim, freq=freq
+    sAttribute=sAttribute, freq=freq
   )
 })
 
 
-setMethod("dispersion", "hits", function(.Object, dim, freq=FALSE){
-  if (length(dim) == 2){
-    dcast.data.table(
-      .Object@dt, formula(paste(dim, collapse="~")),
+setMethod("dispersion", "hits", function(.Object, sAttribute, freq=FALSE){
+  if (length(sAttribute) == 2){
+    retval <- dcast.data.table(
+      .Object@dt, formula(paste(sAttribute, collapse="~")),
       value.var=ifelse(freq == TRUE, "freq", "count"), fun.aggregate=sum, fill=0
       )  
+  } else if (length(sAttribute) == 1){
+    retval <- .Object@dt[, query := NULL]
+  } else {
+    warning("length(sAttribute) needs to be 1 or 2")
   }
+  retval
 })

@@ -8,7 +8,8 @@
 \alias{frequencies-method}
 \title{Frequency breakdown of the variation of query results}
 \usage{
-\S4method{frequencies}{partition}(object, query, pAttribute = NULL)
+\S4method{frequencies}{partition}(object, query,
+  pAttribute = getOption("polmineR")[["pAttribute"]])
 }
 \arguments{
 \item{object}{a partition object}

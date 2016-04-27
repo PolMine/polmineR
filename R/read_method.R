@@ -39,13 +39,8 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=NULL, highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
-  if (is.null(meta)){
-    if (all(session@meta %in% sAttributes(.Object@corpus))) {
-      meta <- slot(get('session', '.GlobalEnv'), 'meta')
-      if (verbose == TRUE) message("... using meta from session: ", meta)
-    }
-  }
+setMethod("read", "partition", function(.Object, meta=getOption("polmineR")[["meta"]], highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
+  stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
   fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, tooltips=tooltips, ...)
   if(require("htmltools", quietly = TRUE)){

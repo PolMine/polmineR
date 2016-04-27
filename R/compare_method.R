@@ -67,7 +67,6 @@ setMethod("compare", signature=c(x="partitionBundle"), function(
   x, y, 
   included=FALSE, method="chisquare", verbose=TRUE, mc=TRUE, progress=FALSE
 ) {
-  # if (is.null(pAttribute)) pAttribute <- slot(get("session", ".GlobalEnv"), "pAttribute")
   kclust <- new("compBundle")
   .compare <- function(a) {
     compare(a, y, included=included, method=method, verbose=verbose)
@@ -89,7 +88,7 @@ setMethod("compare", signature=c(x="partitionBundle"), function(
     kclust@objects <- mclapply(
       setNames(x@objects, names(x@objects)),
       function(a) .compare(a),
-      mc.cores=slot(get("session", '.GlobalEnv'), 'multicore')
+      mc.cores=getOption("polmineR")[["mc"]]
       )
   }
   kclust

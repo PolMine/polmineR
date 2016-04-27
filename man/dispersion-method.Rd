@@ -5,15 +5,16 @@
 \alias{dispersion}
 \title{Dispersion of a query or multiple queries}
 \usage{
-\S4method{dispersion}{partition}(.Object, query, dim, pAttribute = NULL,
-  freq = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE)
+\S4method{dispersion}{partition}(.Object, query, sAttribute,
+  pAttribute = getOption("polmineR")[["pAttribute"]], freq = TRUE,
+  mc = FALSE, progress = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{.Object}{a partition object}
 
 \item{query}{a character vector containing one or multiple queries}
 
-\item{dim}{a character vector of length 1 or 2 providing the sAttributes}
+\item{sAttribute}{a character vector of length 1 or 2 providing the sAttributes}
 
 \item{pAttribute}{the p-attribute that will be looked up, typically 'word'
 or 'lemma'}

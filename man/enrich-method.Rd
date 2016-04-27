@@ -10,7 +10,7 @@
 enrich(object, ...)
 
 \S4method{enrich}{compBundle}(object, addPos = NULL, verbose = TRUE,
-  mc = NULL)
+  mc = getOption("polmineR")[["mc"]])
 }
 \arguments{
 \item{object}{a partition, partitionBundle or comp object}

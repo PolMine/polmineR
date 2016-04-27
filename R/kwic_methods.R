@@ -6,8 +6,8 @@ NULL
 #' @importFrom DT datatable formatStyle
 #' @importFrom magrittr %>%
 setMethod("show", "kwic", function(object){
-  kwicLineView <- slot(get("session", ".GlobalEnv"), "lineview")
-  if (kwicLineView == FALSE){
+  lineview <- getOption("polmineR")[["lineview"]]
+  if (lineview == FALSE){
     retval <- datatable(object@table) %>%
       formatStyle("node", color="blue", textAlign="center") %>%
       formatStyle("left", textAlign="right")

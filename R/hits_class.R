@@ -32,7 +32,8 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' }
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE, mc=FALSE, verbose=TRUE, progress=TRUE){
-  stopifnot(.Object %in% polmineR::corpus())
+  stopifnot(.Object %in% rcqp::cqi_list_corpora())
+  # check availability of sAttributes before proceeding
   if (!is.null(sAttribute)) {
     stopifnot(all(sAttribute %in% sAttributes(.Object)))
     sAttrs <- paste(.Object, sAttribute, sep=".")
@@ -51,7 +52,7 @@ setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttrib
       c(1:length(query)),
       function(i){
         cpos(.Object, query[i], pAttribute=pAttribute, verbose=FALSE)[,1]
-      }, mc.cores=slot(get('session', '.GlobalEnv'), 'cores'))
+      }, mc.cores=getOption("polmineR")[["cores"]])
   }
   names(corpusPositions) <- query
   for (i in c(length(query):1)) {
@@ -75,7 +76,7 @@ setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttrib
         rbind,
         mclapply(
           c(1:(cqi_attribute_size(sAttrs[1]) -1)),
-          function(x) cqi_struc2cpos(sAttrs[1], x), mc.cores=slot(get('session', '.GlobalEnv'), 'cores'))
+          function(x) cqi_struc2cpos(sAttrs[1], x), mc.cores=getOption("polmineR")[["cores"]])
         )
       META[, size := cposMatrix[,2] - cposMatrix[,1] + 1]
       SIZE <- META[, sum(size), by=eval(sAttribute), with=TRUE]
@@ -182,7 +183,7 @@ setMethod("hits", "partitionBundle", function(
           } else {
             return(NULL)
           }
-        }, mc.cores=slot(get("session", ".GlobalEnv"), "cores")
+        }, mc.cores=getOption("polmineR")[["cores"]]
       )
     }
     countDT <- rbindlist(countDTlist)

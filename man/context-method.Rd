@@ -50,7 +50,7 @@ list is long)}
 the statistics will be skipped}
 
 \item{mc}{whether to use multicore; if NULL (default), the function will get
-the value from the session settings}
+the value from the options}
 
 \item{verbose}{report progress, defaults to TRUE}
 

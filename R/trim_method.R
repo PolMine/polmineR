@@ -50,8 +50,7 @@ setMethod("trim", "compBundle", function(object, minSignificance=0, minFrequency
 #' @exportMethod trim
 #' @docType methods
 #' @rdname trim-method
-setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=NULL, ...){
-  if (is.null(mc)) mc <- slot(get('session', '.GlobalEnv'), 'multicore')
+setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=getOption("polmineR")[["mc"]], ...){
   pimpedBundle <- object
   if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
     if (mc == TRUE) {

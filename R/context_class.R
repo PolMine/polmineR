@@ -67,7 +67,7 @@ setMethod('show', 'context', function(object) {
   if (Sys.getenv("RSTUDIO") == "1"){
     View(roundedTextstatObject)
   } else {
-    if (slot(get("session", '.GlobalEnv'), "browse") == TRUE){
+    if (getOption("polmineR")[["browse"]] == TRUE){
       browse(roundedTextstatObject)  
     } else {
       return(roundedTextstatObject) 

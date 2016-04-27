@@ -43,7 +43,7 @@ setMethod("nchars", "partitionBundle", function(x, decreasing=TRUE, mc=FALSE, ..
     partitionCount <- mclapply(
       .Object@objects,
       function(x) nchars(x, ...),
-      mc.cores=ifelse(mc == TRUE, slot(get("session", ".GlobalEnv"), "cores"))
+      mc.cores=ifelse(mc == TRUE, getOption("polmineR")[["cores"]])
       )
   }
   charCount <- tapply(

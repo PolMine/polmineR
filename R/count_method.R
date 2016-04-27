@@ -3,11 +3,14 @@ NULL
 
 #' get counts
 #' 
-#' Count number of occurrences of a query in a partition, or a partitionBundle.
-#' The CQP syntax can be used to formulate the query.
+#' Count number of occurrences of a query (CQP syntax may be used) in a
+#' partition, or a partitionBundle.
+#' 
+#' @seealso  For a metadata-based breakdown of counts
+#' (i.e. a differentiation by s-attributes), see \code{"dispersion"}.
 #' 
 #' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus
-#' @param query a character vector (one or multiple terms to be looked up)
+#' @param query a character vector (one or multiple terms to be looked up), CQP syntax can be used.
 #' @param pAttribute the p-attribute(s) to use
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
@@ -39,15 +42,10 @@ NULL
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
-setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, verbose=T, progress=F){
-  pAttr <- ifelse(
-    is.null(pAttribute),
-    slot(get("session", ".GlobalEnv"), "pAttribute"), 
-    pAttribute
-  )
+setMethod("count", "partition", function(.Object, query, pAttribute=getOption("polmineR")[["pAttribute"]], mc=F, verbose=T, progress=F){
   .getNumberOfHits <- function(query) {
     if (verbose == TRUE) message("... processing query ", query)
-    cposResult <- cpos(.Object=.Object, query=query, pAttribute=pAttr, verbose=FALSE)
+    cposResult <- cpos(.Object=.Object, query=query, pAttribute=pAttribute, verbose=FALSE)
     ifelse(is.null(cposResult), 0, nrow(cposResult))
   }
   if (mc == FALSE){
@@ -56,7 +54,7 @@ setMethod("count", "partition", function(.Object, query, pAttribute=NULL, mc=F, 
     no <- unlist(mclapply(
       query,
       .getNumberOfHits, 
-      mc.cores=slot(get("session", ".GlobalEnv"), "cores")
+      mc.cores=getOption("polmineR")[["cores"]]
     ))
   }
   data.table(query=query, count=no, freq=no/.Object@size)
@@ -75,17 +73,12 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
     DT_cast2[, eval(q) := sapply(DT_cast2[[q]], function(x) ifelse(is.na(x), 0, x)), with=FALSE]
   }
   if (total == TRUE) DT_cast2[, TOTAL := rowSums(.SD), by=partition]
-  # class(DT_cast2) <- c("count", is(DT_cast2))
   DT_cast2
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query, pAttribute=NULL, verbose=TRUE){
+setMethod("count", "character", function(.Object, query, pAttribute=getOption("polmineR")[["pAttribute"]], verbose=TRUE){
   stopifnot(.Object %in% cqi_list_corpora())
-  if (is.null(pAttribute)) {
-    pAttribute <- slot(get("session", '.GlobalEnv'), 'pAttribute')
-    if (verbose == TRUE) message("... using pAttribute ", pAttribute, " from session settings")
-  }  
   pAttr <- paste(.Object, ".", pAttribute, sep="")
   total <- cqi_attribute_size(pAttr)
   count <- sapply(query, function(query) cqi_id2freq(pAttr, cqi_str2id(pAttr, query)))

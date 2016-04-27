@@ -35,8 +35,7 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta=NULL, cpos=FALSE, neighbor=NULL, verbose=FALSE){
-  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
+setMethod("kwic", "context", function(.Object, meta=getOption("polmineR")[["meta"]], cpos=FALSE, neighbor=NULL, verbose=FALSE){
   metainformation <- lapply(
     meta,
     function(metadat){
@@ -85,12 +84,11 @@ setMethod("kwic", "partition", function(
   .Object, query,
   left = getOption("polmineR")[["left"]],
   right = getOption("polmineR")[["right"]],
-  meta = NULL,
+  meta = getOption("polmineR")[["meta"]],
   pAttribute="word", sAttribute=NULL, cpos=TRUE,
   neighbor=NULL,
   verbose=TRUE
 ){
-  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
   ctxt <- context(
     .Object=.Object, query=query,
     pAttribute=pAttribute, sAttribute=sAttribute,
@@ -117,14 +115,13 @@ setMethod("kwic", "missing", function(.Object, ...){
 #' @rdname kwic
 setMethod("kwic", "character", function(
   .Object, query,
-  left=NULL, right=NULL,
-  meta=NULL, pAttribute="word", sAttribute=NULL, cpos=FALSE,
+  left=getOption("polmineR")[["left"]],
+  right=getOption("polmineR")[["right"]],
+  meta=getOption("polmineR")[["meta"]],
+  pAttribute="word", sAttribute=NULL, cpos=FALSE,
   neighbor=NULL,
   verbose=TRUE
 ){
-  if (is.null(meta)) meta <- slot(get('session', '.GlobalEnv'), 'meta')
-  if (is.null(left)) left <- slot(get('session', '.GlobalEnv'), 'left')
-  if (is.null(right)) right <- slot(get('session', '.GlobalEnv'), 'right')
   hits <- cpos(.Object, query=query, pAttribute=pAttribute, verbose=FALSE)
   if (is.null(hits)) {
     message("sorry, not hits")

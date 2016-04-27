@@ -27,9 +27,8 @@ setMethod("html", "character", function(object){
 #' @exportMethod html
 #' @docType methods
 #' @aliases html html-method html,partition-method show,html-method
-setMethod("html", "partition", function(object, meta=NULL, highlight=list(), cqp=FALSE, tooltips=NULL, cpos=FALSE, verbose=FALSE, ...){
+setMethod("html", "partition", function(object, meta=getOption("polmineR")[["meta"]], highlight=list(), cqp=FALSE, tooltips=NULL, cpos=FALSE, verbose=FALSE, ...){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
-    if (is.null(meta)) meta <- slot(get("session", '.GlobalEnv'), 'meta')
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     if (verbose == TRUE) message("... enriching partition with metadata")
     object <- enrich(object, meta=meta, verbose=FALSE)

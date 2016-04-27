@@ -238,7 +238,7 @@ setMethod("cooccurrences", "partitionBundle", function(.Object, mc=FALSE, ...){
       function(x) {
         message('Calculating cooccurrences for partition ', x@name)
         cooccurrences(x, ...)
-      }, mc.cores=slot(get('session', '.GlobalEnv'), "cores"))    
+      }, mc.cores=getOption("polmineR")[["cores"]])    
   }
   bundle
 })

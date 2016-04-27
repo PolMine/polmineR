@@ -32,7 +32,7 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' @param method either "LL" (default) or "pmi", if NULL, calculating
 #'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
-#'   the value from the session settings
+#'   the value from the options
 #' @param verbose report progress, defaults to TRUE
 #' @param ... further parameters
 #' @return depending on whether a partition or a partitionBundle serves as

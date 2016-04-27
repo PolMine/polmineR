@@ -11,21 +11,22 @@
 \usage{
 count(.Object, ...)
 
-\S4method{count}{partition}(.Object, query, pAttribute = NULL, mc = F,
-  verbose = T, progress = F)
+\S4method{count}{partition}(.Object, query,
+  pAttribute = getOption("polmineR")[["pAttribute"]], mc = F, verbose = T,
+  progress = F)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
   freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
 
-\S4method{count}{character}(.Object, query, pAttribute = NULL,
-  verbose = TRUE)
+\S4method{count}{character}(.Object, query,
+  pAttribute = getOption("polmineR")[["pAttribute"]], verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus}
 
 \item{...}{further parameters}
 
-\item{query}{a character vector (one or multiple terms to be looked up)}
+\item{query}{a character vector (one or multiple terms to be looked up), CQP syntax can be used.}
 
 \item{pAttribute}{the p-attribute(s) to use}
 
@@ -43,8 +44,8 @@ count(.Object, ...)
 a \code{"data.table"}
 }
 \description{
-Count number of occurrences of a query in a partition, or a partitionBundle.
-The CQP syntax can be used to formulate the query.
+Count number of occurrences of a query (CQP syntax may be used) in a
+partition, or a partitionBundle.
 }
 \examples{
 use("polmineR.sampleCorpus")
@@ -62,6 +63,9 @@ debates <- partitionBundle(
 count(debates, c("Arbeit", "Integration", "Umwelt"))
 }
 \seealso{
+For a metadata-based breakdown of counts
+(i.e. a differentiation by s-attributes), see \code{"dispersion"}.
+
 count
 }
 

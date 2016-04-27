@@ -24,7 +24,7 @@ bundle, note that it should swallow the parameters mc, verbose and progress
 (use ... to catch these params )}
 
 \item{mc}{logical, whether to use multicore - if TRUE, the number of cores
-will be taken from the session object in the global environment}
+will be taken from the polmineR-options}
 
 \item{progress}{logical, whether to display progress bar}
 
