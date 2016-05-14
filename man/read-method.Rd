@@ -11,7 +11,7 @@
 \usage{
 read(.Object, ...)
 
-\S4method{read}{partition}(.Object, meta = getOption("polmineR")[["meta"]],
+\S4method{read}{partition}(.Object, meta = getOption("polmineR.meta"),
   highlight = list(), cqp = FALSE, tooltips = NULL, verbose = TRUE,
   cpos = FALSE, ...)
 

@@ -19,7 +19,7 @@ trim(object, ...)
 
 \S4method{trim}{partitionBundle}(object, pAttribute = NULL,
   minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
-  minSize = 0, keep = NULL, mc = getOption("polmineR")[["mc"]], ...)
+  minSize = 0, keep = NULL, mc = getOption("polmineR.mc"), ...)
 
 \S4method{trim}{TermDocumentMatrix}(object, termsToKeep = NULL,
   termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL,

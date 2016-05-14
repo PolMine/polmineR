@@ -18,7 +18,7 @@
 #' foo <- .queryCpos('"Menschen" "mit" "Migrationshintergrund"', partitionObject)
 #' }
 #' @noRd
-.queryCpos <- function(query, Partition, pAttribute=getOption("polmineR")[["pAttribute"]], verbose=TRUE) {
+.queryCpos <- function(query, Partition, pAttribute=getOption("polmineR.pAttribute"), verbose=TRUE) {
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   query <- .adjustEncoding(query, Partition@encoding)
   if (grepl('"', query) == FALSE) {

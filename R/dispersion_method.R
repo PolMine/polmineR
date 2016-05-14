@@ -32,7 +32,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttribute=getOption("polmineR")[["pAttribute"]], freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
+setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttribute=getOption("polmineR.pAttribute"), freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
   dispersion(
     hits(
       .Object=.Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
@@ -42,7 +42,7 @@ setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttri
   )
 })
 
-setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttribute=getOption("polmineR")[["pAttribute"]], freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
+setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
   dispersion(
     hits(
       .Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,

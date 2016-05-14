@@ -34,7 +34,7 @@ setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionB
 setMethod("partitionBundle", "partition", function(
   .Object, def=NULL, prefix=c(""),
   encoding=NULL, pAttribute=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
-  mc=getOption("polmineR")[["mc"]], verbose=TRUE, progress=FALSE,
+  mc=getOption("polmineR.mc"), verbose=TRUE, progress=FALSE,
   ...
 ) {
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
@@ -83,7 +83,7 @@ setMethod("partitionBundle", "partition", function(
 setMethod("partitionBundle", "character", function(
   .Object, def, prefix=c(""),
   encoding=NULL, pAttribute=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
-  mc=getOption("polmineR")[["mc"]], verbose=TRUE, progress=FALSE,
+  mc=getOption("polmineR.mc"), verbose=TRUE, progress=FALSE,
   ...
 ) {
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
@@ -157,7 +157,7 @@ setMethod("as.partitionBundle", "context", function(.Object, mc=FALSE){
   if (mc == FALSE){
     newPartitionBundle@objects <- lapply(.Object@cpos, FUN=.makeNewPartition)  
   } else {
-    coresToUse <- getOption("polmineR")[["cores"]]
+    coresToUse <- getOption("polmineR.cores")
     newPartitionBundle@objects <- mclapply(.Object@cpos, FUN=.makeNewPartition, mc.cores=coresToUse)  
   }
   return(newPartitionBundle)

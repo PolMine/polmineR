@@ -35,7 +35,7 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta=getOption("polmineR")[["meta"]], cpos=FALSE, neighbor=NULL, verbose=FALSE){
+setMethod("kwic", "context", function(.Object, meta=getOption("polmineR.meta"), cpos=FALSE, neighbor=NULL, verbose=FALSE){
   metainformation <- lapply(
     meta,
     function(metadat){
@@ -82,9 +82,9 @@ setMethod("kwic", "context", function(.Object, meta=getOption("polmineR")[["meta
 #' @exportMethod kwic
 setMethod("kwic", "partition", function(
   .Object, query,
-  left = getOption("polmineR")[["left"]],
-  right = getOption("polmineR")[["right"]],
-  meta = getOption("polmineR")[["meta"]],
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  meta = getOption("polmineR.meta"),
   pAttribute="word", sAttribute=NULL, cpos=TRUE,
   neighbor=NULL,
   verbose=TRUE
@@ -115,9 +115,9 @@ setMethod("kwic", "missing", function(.Object, ...){
 #' @rdname kwic
 setMethod("kwic", "character", function(
   .Object, query,
-  left=getOption("polmineR")[["left"]],
-  right=getOption("polmineR")[["right"]],
-  meta=getOption("polmineR")[["meta"]],
+  left=getOption("polmineR.left"),
+  right=getOption("polmineR.right"),
+  meta=getOption("polmineR.meta"),
   pAttribute="word", sAttribute=NULL, cpos=FALSE,
   neighbor=NULL,
   verbose=TRUE

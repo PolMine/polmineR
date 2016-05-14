@@ -11,12 +11,12 @@ partitionBundle(.Object, ...)
 
 \S4method{partitionBundle}{partition}(.Object, def = NULL, prefix = c(""),
   encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = getOption("polmineR")[["mc"]],
+  id2str = TRUE, type = NULL, mc = getOption("polmineR.mc"),
   verbose = TRUE, progress = FALSE, ...)
 
 \S4method{partitionBundle}{character}(.Object, def, prefix = c(""),
   encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = getOption("polmineR")[["mc"]],
+  id2str = TRUE, type = NULL, mc = getOption("polmineR.mc"),
   verbose = TRUE, progress = FALSE, ...)
 }
 \arguments{

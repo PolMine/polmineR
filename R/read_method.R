@@ -39,7 +39,7 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=getOption("polmineR")[["meta"]], highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
+setMethod("read", "partition", function(.Object, meta=getOption("polmineR.meta"), highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
   stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
   fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, tooltips=tooltips, ...)

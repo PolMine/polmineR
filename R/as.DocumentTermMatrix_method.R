@@ -109,7 +109,7 @@ setMethod(
           .freqMatrix(struc)
         })
     } else if (mc == TRUE) {
-      coresToUse <- getOption("polmineR")[["cores"]]
+      coresToUse <- getOption("polmineR.cores")
       if (verbose == TRUE) message("... using ", coresToUse, " cores")
       freqMatrixList <- mclapply(c(1:length(strucs)), .freqMatrix, mc.cores=coresToUse)
     }

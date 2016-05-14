@@ -24,15 +24,29 @@ setMethod("highlight", "html", function(.Object, highlight=list(), tooltips=NULL
   for (color in names(highlight)){
     tooltipTags <- .makeTooltipTags(color, tooltips)
     for (i in highlight[[color]]){
-      .Object <- gsub(
-        paste('<span id="', i, '">(.*?)</span>', sep=""),
-        paste(
-          paste('<span id="', i, '"><span style="background-color:', color, '">', sep=""),
-          tooltipTags[["start"]], "\\1", tooltipTags[["end"]], '</span></span>', sep=""
-        ),
-        .Object
-      )
+      if (is.numeric(i)){
+        .Object <- gsub(
+          paste('<span id="', i, '">(.*?)</span>', sep=""),
+          paste(
+            paste('<span id="', i, '"><span style="background-color:', color, '">', sep=""),
+            tooltipTags[["start"]], "\\1", tooltipTags[["end"]], '</span></span>', sep=""
+          ),
+          .Object
+        )
+      } else {
+        .Object <- gsub(
+          paste("(", i, ")", sep=""),
+          paste(
+            paste('<span style="background-color:', color, '">', sep=""),
+            tooltipTags[["start"]],
+            "\\1", tooltipTags[["end"]], '</span>', sep=""
+          ),
+          .Object
+        )
+        
+      }
     }
+    
   }
   .Object
 })

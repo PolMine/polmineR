@@ -12,11 +12,10 @@
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(.Object, query,
-  pAttribute = getOption("polmineR")[["pAttribute"]], sAttribute = NULL,
-  left = getOption("polmineR")[["left"]],
-  right = getOption("polmineR")[["right"]], stoplist = NULL,
-  positivelist = NULL, count = TRUE, method = "ll",
-  mc = getOption("polmineR")[["mc"]], verbose = TRUE)
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
+  mc = getOption("polmineR.mc"), verbose = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 

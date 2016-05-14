@@ -61,14 +61,14 @@ setMethod(
   function
   (
     .Object, query,
-    pAttribute=getOption("polmineR")[["pAttribute"]],
+    pAttribute=getOption("polmineR.pAttribute"),
     sAttribute=NULL,
-    left=getOption("polmineR")[["left"]],
-    right=getOption("polmineR")[["right"]],
+    left=getOption("polmineR.left"),
+    right=getOption("polmineR.right"),
     stoplist=NULL, positivelist=NULL,
     count=TRUE,
     method="ll",
-    mc=getOption("polmineR")[["mc"]],
+    mc=getOption("polmineR.mc"),
     verbose=TRUE
   ) {
     if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){

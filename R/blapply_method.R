@@ -34,13 +34,13 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
       f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
     }
   } else {
-    backend <- getOption("polmineR")[["backend"]]
+    backend <- getOption("polmineR.backend")
     stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis"))
     if (requireNamespace(backend, quietly=TRUE)){
       if (backend == "doSNOW"){
         pb <- txtProgressBar(min = 0, max = length(x), style = 3)
         progressBar <- function(n) setTxtProgressBar(pb, n)
-        cl <- snow::makeSOCKcluster(getOption("polmineR")[["backend"]])
+        cl <- snow::makeSOCKcluster(getOption("polmineR.backend"))
         doSNOW::registerDoSNOW(cl)
         snow::clusterCall(cl, function() library(polmineR))
         snow::clusterExport(cl, names(list(...)))
@@ -53,7 +53,7 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
         snow::stopCluster(cl)
         close(pb)
       } else if (backend == "doMC"){
-        doMC::registerDoMC(cores=getOption("polmineR")[["backend"]])  
+        doMC::registerDoMC(cores=getOption("polmineR.backend"))  
         retval <- foreach(i=c(1:length(x))) %dopar% {
           f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
         }

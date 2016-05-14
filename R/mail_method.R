@@ -38,15 +38,15 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
 }
 
 .mail <- function(msg, to){
-  server <- getOption("polmineR")[["smtpServer"]]
-  smtpPort <- getOption("polmineR")[["smtpPort"]]
+  server <- getOption("polmineR.smtpServer")
+  smtpPort <- getOption("polmineR.smtpPort")
   sendmailR::sendmail_options(list(smtpServer=server, smtpPort=smtpPort))
   if (is.null(to)){
-    to <- getOption("polmineR")[["email"]]
+    to <- getOption("polmineR.email")
     if (to == "") warning("email is not set in session settings")
   }
   sendmailR::sendmail(
-    from=getOption("polmineR")[["email"]],
+    from=getOption("polmineR.email"),
     to=to, subject='driller message', msg=msg
   )
 }

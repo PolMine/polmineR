@@ -4,12 +4,13 @@
 #' PolMine corpora of plenary protocols. A partition is split into speeches. 
 #' 
 #' @param .Object a partition .Object
-#' @param sAttribute the s-attribute that provides the speaker names
+#' @param sAttributeDates the s-attribute that provides the dates of sessions
+#' @param sAttributeNames the s-attribute that provides the names of speakers
 #' @param gap number of tokens between strucs to identify speeches
 #' @param addMeta whether to add metainformation to partition name, if wanted, provide s-attribute with date as character vector
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
-#' @return a partitionCluster object
+#' @return a partitionBundle object
 #' @name as.speeches
 #' @aliases speeches speeches-method speeches,partition-method
 #' @rdname as.speeches

@@ -6,8 +6,8 @@
 \title{Dispersion of a query or multiple queries}
 \usage{
 \S4method{dispersion}{partition}(.Object, query, sAttribute,
-  pAttribute = getOption("polmineR")[["pAttribute"]], freq = TRUE,
-  mc = FALSE, progress = TRUE, verbose = FALSE)
+  pAttribute = getOption("polmineR.pAttribute"), freq = TRUE, mc = FALSE,
+  progress = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{.Object}{a partition object}

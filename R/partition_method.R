@@ -137,9 +137,9 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(.Object, ...) {
-  stopifnot(getOption("polmineR")[["corpus"]] %in% rcqp::cqi_list_corpora())
+  stopifnot(getOption("polmineR.corpus") %in% rcqp::cqi_list_corpora())
   partition(
-    .Object=getOption("polmineR")[["corpus"]], def=.Object, ...
+    .Object=getOption("polmineR.corpus"), def=.Object, ...
     )
 })
 

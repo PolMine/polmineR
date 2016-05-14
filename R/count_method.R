@@ -42,7 +42,7 @@ NULL
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
-setMethod("count", "partition", function(.Object, query, pAttribute=getOption("polmineR")[["pAttribute"]], mc=F, verbose=T, progress=F){
+setMethod("count", "partition", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), mc=F, verbose=T, progress=F){
   .getNumberOfHits <- function(query) {
     if (verbose == TRUE) message("... processing query ", query)
     cposResult <- cpos(.Object=.Object, query=query, pAttribute=pAttribute, verbose=FALSE)
@@ -54,7 +54,7 @@ setMethod("count", "partition", function(.Object, query, pAttribute=getOption("p
     no <- unlist(mclapply(
       query,
       .getNumberOfHits, 
-      mc.cores=getOption("polmineR")[["cores"]]
+      mc.cores=getOption("polmineR.cores")
     ))
   }
   data.table(query=query, count=no, freq=no/.Object@size)
@@ -77,7 +77,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query, pAttribute=getOption("polmineR")[["pAttribute"]], verbose=TRUE){
+setMethod("count", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), verbose=TRUE){
   stopifnot(.Object %in% cqi_list_corpora())
   pAttr <- paste(.Object, ".", pAttribute, sep="")
   total <- cqi_attribute_size(pAttr)

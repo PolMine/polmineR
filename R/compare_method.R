@@ -88,7 +88,7 @@ setMethod("compare", signature=c(x="partitionBundle"), function(
     kclust@objects <- mclapply(
       setNames(x@objects, names(x@objects)),
       function(a) .compare(a),
-      mc.cores=getOption("polmineR")[["mc"]]
+      mc.cores=getOption("polmineR.mc")
       )
   }
   kclust

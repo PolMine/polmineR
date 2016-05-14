@@ -12,14 +12,14 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query,
-  pAttribute = getOption("polmineR")[["pAttribute"]], mc = F, verbose = T,
+  pAttribute = getOption("polmineR.pAttribute"), mc = F, verbose = T,
   progress = F)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
   freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
 
 \S4method{count}{character}(.Object, query,
-  pAttribute = getOption("polmineR")[["pAttribute"]], verbose = TRUE)
+  pAttribute = getOption("polmineR.pAttribute"), verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus}

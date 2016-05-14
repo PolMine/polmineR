@@ -13,7 +13,8 @@ NULL
 #' @slot encoding Object of class \code{"character"} encoding of the corpus 
 #' @slot sAttributes Object of class \code{"list"} s-attributes specifying the partition 
 #' @slot explanation Object of class \code{"character"} an explanation of the partition 
-#' @slot cpos Object of class \code{"matrix"} corpus positions 
+#' @slot cpos Object of class \code{"matrix"} corpus positions
+#' @slot annotations Object of class \code{"list"}
 #' @slot pos Object of class \code{"list"} with tables "abs", "rel" and "max"
 #' @slot size Object of class \code{"numeric"} total size of the partition 
 #' @slot metadata Object of class \code{"data.frame"} metadata information 
@@ -53,6 +54,7 @@ setClass(
     explanation="character",
     cpos="matrix",
     pos="list",
+    annotations="list",
     size="numeric",
     metadata="data.frame",
     strucs="numeric",

@@ -40,7 +40,7 @@
 
 \S4method{freq}{partition}(.Object)
 
-\S4method{html}{partition}(object, meta = getOption("polmineR")[["meta"]],
+\S4method{html}{partition}(object, meta = getOption("polmineR.meta"),
   highlight = list(), cqp = FALSE, tooltips = NULL, cpos = FALSE,
   verbose = FALSE, ...)
 
@@ -113,6 +113,8 @@ partition class
 \item{\code{explanation}}{Object of class \code{"character"} an explanation of the partition}
 
 \item{\code{cpos}}{Object of class \code{"matrix"} corpus positions}
+
+\item{\code{annotations}}{Object of class \code{"list"}}
 
 \item{\code{pos}}{Object of class \code{"list"} with tables "abs", "rel" and "max"}
 

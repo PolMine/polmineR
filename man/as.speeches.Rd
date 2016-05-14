@@ -17,18 +17,20 @@ as.speeches(.Object, ...)
 \arguments{
 \item{.Object}{a partition .Object}
 
+\item{sAttributeDates}{the s-attribute that provides the dates of sessions}
+
+\item{sAttributeNames}{the s-attribute that provides the names of speakers}
+
 \item{gap}{number of tokens between strucs to identify speeches}
 
 \item{mc}{whether to use multicore, defaults to FALSE}
 
 \item{verbose}{logical, defaults to TRUE}
 
-\item{sAttribute}{the s-attribute that provides the speaker names}
-
 \item{addMeta}{whether to add metainformation to partition name, if wanted, provide s-attribute with date as character vector}
 }
 \value{
-a partitionCluster object
+a partitionBundle object
 }
 \description{
 A method designed for corpora from the

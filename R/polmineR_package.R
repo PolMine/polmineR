@@ -71,28 +71,27 @@ setOldClass("html")
 
 .onLoad <- function (lib, pkg) {
   options(
-    polmineR=list(
-      project=c(""),
-      projectDir=c(""),
-      corpus="PLPRBTTXT",
-      pAttribute="word",
-      left=5,
-      right=5,
-      minSignificance=3.84,
-      minFrequency=5,
-      filterType="include",
-      lineview=FALSE,
-      meta = as.character(c()),
-      mc=FALSE,
-      cores=2,
-      consoleEncoding="UTF-8",
-      smtpServer="",
-      smtpPort="",
-      email="",
-      partitionDir="",
-      browse=FALSE,
-      backend="doSNOW"
-    ))
+    "polmineR.project" = c(""),
+		"polmineR.projectDir" = c(""),
+		"polmineR.corpus" = "PLPRBTTXT",
+		"polmineR.pAttribute" = "word",
+		"polmineR.left" = 5,
+		"polmineR.right" = 5,
+		"polmineR.minSignificance" = 3.84,
+		"polmineR.minFrequency" = 5,
+		"polmineR.filterType" = "include",
+		"polmineR.lineview" = FALSE,
+		"polmineR.meta " =  as.character(c()),
+		"polmineR.mc" = FALSE,
+		"polmineR.cores" = 2,
+		"polmineR.consoleEncoding" = "UTF-8",
+		"polmineR.smtpServer" = "",
+		"polmineR.smtpPort" = "",
+		"polmineR.email" = "",
+		"polmineR.partitionDir" = "",
+		"polmineR.browse" = FALSE,
+		"polmineR.backend" = "doSNOW"
+    )
 }
 
 
