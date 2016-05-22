@@ -67,8 +67,8 @@ shinyUI(
             "kwic_pAttribute", "pAttribute",
             choices=pAttributes(get(partitionNames[1], ".GlobalEnv")@corpus)
           ),
-          numericInput("kwic_left", "left", value=getOption("polmineR")[["left"]]),
-          numericInput("kwic_right", "right", value=getOption("polmineR")[["right"]]),
+          numericInput("kwic_left", "left", value=getOption("polmineR.left")),
+          numericInput("kwic_right", "right", value=getOption("polmineR.right")),
           radioButtons("kwic_read", "read", choices=c("TRUE", "FALSE"), selected="FALSE", inline=T),
           br()
         ),
@@ -85,9 +85,9 @@ shinyUI(
           br(), br(),
           selectInput("context_partition", "partition", partitionNames[1]),
           textInput("context_query", "query", value="Suche"),
-          selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=getOption("polmineR")[["pAttribute"]], multiple=TRUE),
-          numericInput("context_left", "left", value=getOption("polmineR")[["left"]]),
-          numericInput("context_right", "right", value=getOption("polmineR")[["right"]]),
+          selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=getOption("polmineR.pAttribute"), multiple=TRUE),
+          numericInput("context_left", "left", value=getOption("polmineR.left")),
+          numericInput("context_right", "right", value=getOption("polmineR.right")),
           br()
         ),
 
