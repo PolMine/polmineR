@@ -4,7 +4,7 @@
 \name{textstat-class}
 \alias{+,textstat,textstat-method}
 \alias{[,textstat,ANY,ANY,ANY-method}
-\alias{[[,textstat,ANY-method}
+\alias{[[,textstat-method}
 \alias{as.DataTables,textstat-method}
 \alias{as.bundle}
 \alias{as.data.frame,textstat-method}
@@ -49,7 +49,7 @@ as.bundle(object, ...)
 
 \S4method{pAttribute}{textstat}(object)
 
-\S4method{[[}{textstat,ANY}(x, i)
+\S4method{[[}{textstat}(x, i)
 
 \S4method{[}{textstat,ANY,ANY,ANY}(x, i)
 

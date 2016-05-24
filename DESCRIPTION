@@ -82,7 +82,6 @@ Collate:
     'dispersion_methods.R'
     'dotplot_method.R'
     'duplicates_method.R'
-    'egoNetwork_method.R'
     'encoding_method.R'
     'enrich_method.R'
     'freq_method.R'

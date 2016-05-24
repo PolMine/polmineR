@@ -4,7 +4,7 @@
 \name{bundle-class}
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
-\alias{[[,bundle,ANY-method}
+\alias{[[,bundle-method}
 \alias{as.bundle,list-method}
 \alias{as.bundle,textstat-method}
 \alias{as.matrix,bundle-method}
@@ -29,7 +29,7 @@
 
 \S4method{+}{bundle,textstat}(e1, e2)
 
-\S4method{[[}{bundle,ANY}(x, i)
+\S4method{[[}{bundle}(x, i)
 
 \S4method{as.matrix}{bundle}(x, col)
 

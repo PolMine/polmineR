@@ -4,7 +4,7 @@
 \name{partition-class}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{[[,partition,ANY-method}
+\alias{[[,partition-method}
 \alias{as.data.frame,partition-method}
 \alias{as.markdown,partition-method}
 \alias{as.partitionBundle}
@@ -48,7 +48,7 @@
 
 \S4method{[}{partition,ANY,ANY,ANY}(x, i)
 
-\S4method{[[}{partition,ANY}(x, i)
+\S4method{[[}{partition}(x, i)
 
 \S4method{pAttribute}{partition}(object, from, to, mc = TRUE,
   verbose = TRUE)
