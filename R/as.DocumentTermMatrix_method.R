@@ -119,7 +119,7 @@ setMethod(
     if (verbose == TRUE) message("... id2str for pAttribute")
     # pAttributeStrings <- cqi_id2str(pAttr, c(0:lexiconSize)) # slow!
     pAttributeStrings <- getTerms(x, pAttribute=pAttribute, robust=robust)
-    pAttributeStrings <- iconv(pAttributeStrings, from=getEncoding(x), to="UTF-8")                            
+    # pAttributeStrings <- iconv(pAttributeStrings, from=getEncoding(x), to="UTF-8")                            
     if (!exists("sAttributeStrings")){
       if (verbose == TRUE) message("... id2str for sAttribute")
       sAttributeStrings <- cqi_struc2str(sAttr, c(fromStruc:toStruc))  
