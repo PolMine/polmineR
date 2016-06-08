@@ -1,4 +1,4 @@
-#' @include textstat_class.R partition_class.R polmineR_package.R
+#' @include context_class.R textstat_class.R partition_class.R polmineR_package.R
 NULL
 
 #' cooccurrences
