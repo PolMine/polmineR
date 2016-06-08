@@ -17,6 +17,8 @@ blapply(x, ...)
   verbose = FALSE, ...)
 }
 \arguments{
+\item{x}{a list or a bundle object}
+
 \item{...}{further parameters}
 
 \item{f}{a function that can be applied to each object contained in the

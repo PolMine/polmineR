@@ -90,7 +90,8 @@ setOldClass("html")
 		"polmineR.email" = "",
 		"polmineR.partitionDir" = "",
 		"polmineR.browse" = FALSE,
-		"polmineR.backend" = "doSNOW"
+		"polmineR.backend" = "doSNOW",
+		"polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$"
     )
 }
 
@@ -99,6 +100,7 @@ setOldClass("html")
 
 
 #' @export polmineR
+#' @rdname polmineR-package
 polmineR <- function(){
   # shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/gui")
   shiny::runApp(system.file("shiny", "gui", package="polmineR"))

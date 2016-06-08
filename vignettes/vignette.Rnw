@@ -2,13 +2,13 @@
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{url}
-%\VignetteIndexEntry{Introduction to Package 'driller'}
+%\VignetteIndexEntry{Introduction to the polmineR-package}
 %\VignetteEngine{knitr}
 
 \begin{document}
-\title{An introduction to the \textit{polmineR-package} (v0.4.41)}
+\title{An introduction to the \textit{polmineR-package} (v0.5.53)}
 \author{Andreas Blaette (andreas.blaette@uni-due.de)}
-\date{April 04, 2014}
+\date{June 08, 2016}
 \maketitle
 
 <<setup, include=FALSE>>=
@@ -63,10 +63,10 @@ use("polmineR.sampleCorpus")
 To keep the number of required inputs low when calling individual functions, the package stores a set of variables in an object called 'settings'.
 
 <<setDrillingControls, echo=TRUE, results="tex">>=
-corpus(session) <- "PLPRBTTXT"
-left(session) <- 15
-right(session) <- 15
-multicore(session) <- FALSE
+options("polmineR.corpus" = "PLPRBTTXT")
+options("polmineR.left" = 15)
+options("polmineR.right" = 15)
+options("polmineR.mc" = FALSE)
 @
 
 Note that when looking at the documentation of functions you will not always see that the settings from drillingControls are used. Where parameters default to NULL, the function will usually get the settings from the drillingControls object in the global environment.
@@ -77,17 +77,14 @@ Usually, any session using the driller will start with initializing a partition.
 In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
 
 <<partitionInit, echo=TRUE, results="tex", tidy=FALSE>>=
-# bt <- partition(corpus="PLPRBTTXT", list(text_type="speech"))
-# cdu <- partition(
-#  corpus="PLPRBTTXT",
-#  sAttributes=list(text_type="speech", text_party="CDU")
-#  )
+bt <- partition("PLPRBTTXT", text_type="speech")
+cdu <- partition("PLPRBTTXT", text_type="speech", text_party="CDU_CSU")
 @
 
 To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
 
 <<showPartition, echo=TRUE, results="tex", tidy=FALSE>>=
-# cdu
+cdu
 @
 
 Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
@@ -96,11 +93,8 @@ There are two methods to set up a partition, 'grep' and 'in'. If the method is '
 
 <<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
 coalition <- partition(
-  object="PLPRBTTXT",
-  def=list(
-    text_type="speech",
-    text_party=c("CDU_CSU", "FDP")
-    )
+  "PLPRBTTXT",
+  text_type="speech", text_party=c("CDU_CSU", "FDP")
   )
 @
 
@@ -109,12 +103,12 @@ If you work with a flat XML structure, the order of the provided s-attributes ma
 \section{Getting a tm TermDocumentMatrix}
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
 <<cluster, echo=TRUE, results="tex", tidy=FALSE, message=FALSE>>=
-# parties <- partitionCluster(
-#   corpus="PLPRBTTXT",
-#   sAttributesStatic=list(text_type="speech"),
-#   sAttributeVar="text_party"
-#   )
-# tdm <- as.TermDocumentMatrix(parties, "word")
+base <- partition("PLPRBTTXT", text_type="speech")
+parties <- partitionBundle(
+  base, def=list(text_party=NULL),
+  pAttribute="word", progress=TRUE, verbose=FALSE
+  )
+# tdm <- as.TermDocumentMatrix(parties, col="word")
 # class(tdm) # to see what it is
 # show(tdm)
 # m <- as.matrix(tdm) # turn it into an ordinary matrix
@@ -127,11 +121,11 @@ The partition object has a method that will give you immediate access to view th
 
 
 <<context, echo=TRUE, results="tex", tidy=FALSE>>=
-# integration <- context(
-#   bt, "Integration",
-#  left=20, right=20
-#  )
-# summary(integration)
+integration <- context(
+   bt, "Integration", pAttribute="word",
+  left=20, right=20
+)
+summary(integration)
 @
 
 Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object (here: \texttt{min@stat}).
@@ -208,8 +202,9 @@ To understand the occurance of a phenomenon, the distribution of query results a
 To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
 
 <<keyness, echo=TRUE, results="tex", message=FALSE, tidy=FALSE>>=
-# vocabulary <- keyness(coalition, bt, included=TRUE)
-# vocabulary@stat[1:10,1:4] # show the first ten rows
+coalition <- enrich(coalition, pAttribute="word")
+bt <- enrich(coalition, pAttribute="word")
+vocabulary <- compare(coalition, bt, included=TRUE)
 @
 
 
@@ -219,14 +214,7 @@ The results of functions can be visualised using the general functionality of R,
 Apart from this, the wordcloud package works nicely to visualize the statistical results returned with the data frames in the stats slots of the context and the keyness function. The return of the egoNetwork function can be turned in an igraph object and displayed as a network. The wordcloud and the igraph packages are not imported to avoid an inflation of the number of dependencies.
 
 \section{Shiny}
-If the driller runs on a local installation, some shiny apps can be tested that are included in the package. You may call:
-\begin{itemize}
-\item shinyContext()
-\item shinyKeyness()
-\item shinyDistribution("simple")
-\item shinyDistribution("multi")
-\item shinyDistribution("crosstab")
-\end{itemize}
+If the driller runs on a local installation, some shiny apps can be tested that are included in the package by calling polmineR().
 
 The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.
 

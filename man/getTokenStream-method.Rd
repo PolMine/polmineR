@@ -3,14 +3,20 @@
 \docType{methods}
 \name{getTokenStream}
 \alias{getTokenStream}
+\alias{getTokenStream,character-method}
 \alias{getTokenStream,matrix-method}
+\alias{getTokenStream,numeric-method}
 \alias{getTokenStream,partition-method}
 \title{get token stream}
 \usage{
 getTokenStream(.Object, ...)
 
-\S4method{getTokenStream}{matrix}(.Object, corpus, pAttribute, encoding,
-  collapse = NULL, cpos = FALSE)
+\S4method{getTokenStream}{numeric}(.Object, corpus, pAttribute,
+  encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE)
+
+\S4method{getTokenStream}{matrix}(.Object, ...)
+
+\S4method{getTokenStream}{character}(.Object, left, right, ...)
 
 \S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
   cpos = FALSE)
@@ -28,7 +34,13 @@ getTokenStream(.Object, ...)
 
 \item{collapse}{character string length 1}
 
+\item{beautify}{logical, whether to correct whitespace before and after interpunctation}
+
 \item{cpos}{logical, whether to return cpos as names of the tokens}
+
+\item{left}{left corpus position}
+
+\item{right}{right corpus position}
 }
 \description{
 get token stream

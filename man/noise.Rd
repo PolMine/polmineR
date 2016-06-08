@@ -13,19 +13,23 @@ noise(.Object, ...)
 
 \S4method{noise}{DocumentTermMatrix}(.Object, minTotal = 2,
   minTfIdfMean = 0.005, sparse = 0.995, stopwordsLanguage = "german",
-  minNchar = 2, specialChars = "^[a-zA-ZéäöüÄÖÜ-ß|-]+$",
+  minNchar = 2, specialChars = getOption("polmineR.specialChars"),
   numbers = "^[0-9\\\\.,]+$", verbose = TRUE)
 
 \S4method{noise}{TermDocumentMatrix}(.Object, ...)
 
 \S4method{noise}{character}(.Object, stopwordsLanguage = "german",
-  minNchar = 2, specialChars = "^[a-zA-ZéäöüÄÖÜ-ß|-]+$",
+  minNchar = 2, specialChars = getOption("polmineR.specialChars"),
   numbers = "^[0-9\\\\.,]+$", verbose = TRUE)
 
 \S4method{noise}{textstat}(.Object, pAttribute, ...)
 }
 \arguments{
 \item{.Object}{an .Object of class \code{"DocumentTermMatrix"}}
+
+\item{...}{further parameters}
+
+\item{minTotal}{minimum colsum (for DocumentTermMatrix) to qualify a term as non-noise}
 
 \item{minTfIdfMean}{minimum mean value for tf-idf to qualify a term as non-noise}
 
@@ -35,7 +39,13 @@ noise(.Object, ...)
 
 \item{minNchar}{min char length ti qualify a term as non-noise}
 
-\item{minSum}{minimum colsum (for DocumentTermMatrix) to qualify a term as non-noise}
+\item{specialChars}{special characters to drop}
+
+\item{numbers}{regex, to drop numbers}
+
+\item{verbose}{logical}
+
+\item{pAttribute}{relevant if applied to a textstat object}
 }
 \value{
 a list

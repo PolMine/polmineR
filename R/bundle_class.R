@@ -14,7 +14,9 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @param x a bundle object
 #' @param i index to address an object
 #' @param object a bundle object
-#' @param col columsn of the table to be used
+#' @param size xxx
+#' @param ... further parameters
+#' @param col columns of the table to be used
 #' @param value ...
 #' @rdname bundle-class
 #' @name bundle-class
@@ -117,6 +119,7 @@ setMethod("as.matrix", "bundle", function(x, col) {
 })
 
 #' @exportMethod sample
+#' @rdname bundle-class
 setMethod("sample", "bundle", function(x, size){
   x[[sample(c(1:length(x)), size=size)]]
 })

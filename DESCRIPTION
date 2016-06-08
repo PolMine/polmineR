@@ -1,27 +1,25 @@
 Package: polmineR
 Type: Package
-Title: polmineR
-Version: 0.5.50
-Date: 2016-05-22
+Title: Toolset for Corpus Analysis
+Version: 0.5.53
+Date: 2016-06-08
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
     methods,
     rcqp,
+    data.table,
     slam,
     Matrix,
     tm,
-    data.table,
     parallel,
     foreach,
-    DT,
-    magrittr
+    DT
 Suggests:
     polmineR.sampleCorpus,
     markdown,
     htmltools,
     xlsx,
-    DataTablesR,
     sendmailR,
     koRpus,
     chron,
@@ -32,6 +30,9 @@ Suggests:
     miniUI,
     doSNOW,
     rJava
+Remotes:
+    github::cran/rcqp
+    github::PolMine/polmineR.sampleCorpus
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for corpus analysis using the CWB as an efficient backend.
@@ -39,7 +40,7 @@ Description: Tools for corpus analysis using the CWB as an efficient backend.
     carry out and basic statistical operations. Beyond that, it is intended to
     serve as an interface to packages implementing advanced statistical
     procedures.
-License: CC BY-NC-SA 4.0 | file LICENSE
+License: GPL-3
 Collate:
     'TermDocumentMatrix_methods.R'
     'adjustEncoding_method.R'
@@ -60,9 +61,7 @@ Collate:
     'blapply_method.R'
     'kwic_class.R'
     'browse_method.R'
-    'bughunt_method.R'
     'chisquare_method.R'
-    'comparables_method.R'
     'ngrams_method.R'
     'compare_method.R'
     'contextBundle_methods.R'
@@ -81,7 +80,6 @@ Collate:
     'dispersion_method.R'
     'dispersion_methods.R'
     'dotplot_method.R'
-    'duplicates_method.R'
     'encoding_method.R'
     'enrich_method.R'
     'freq_method.R'
@@ -95,15 +93,12 @@ Collate:
     'html_methods.R'
     'kwic_method.R'
     'kwic_methods.R'
-    'label_method.R'
     'll_method.R'
     'mail_method.R'
     'means_method.R'
     'meta_method.R'
-    'nchars_method.R'
     'noise_method.R'
     'pAttributes_method.R'
-    'papply_function.R'
     'partitionBundle_method.R'
     'partitionBundle_methods.R'
     'sAttributes2cpos_method.R'
@@ -116,14 +111,12 @@ Collate:
     'rustyard.R'
     'sAttributes_method.R'
     'scatterplot_method.R'
-    'similarity_method.R'
     'size_method.R'
     'tTest.R'
     'terms_method.R'
     'trim_method.R'
     'use_method.R'
     'utils.R'
-    'validate_method.R'
     'view_method.R'
     'weigh_method.R'
 RoxygenNote: 5.0.1

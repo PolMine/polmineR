@@ -7,9 +7,15 @@
 #' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed, if not stated explicitly, session settings will be used
-#' @param regex a list of character vectors with regular expressions to
-#'   highlight relevant terms or expressions; the names of the list provide the
-#'   colors (see examples)
+#' @param highlight a list
+#' @param tooltips a list
+#' @param verbose logical
+#' @param cpos logical
+#' @param col column
+#' @param partitionBundle a partitionBundle object
+#' @param def ...
+#' @param i ...
+#' @param type ...
 #' @param cqp a list of character vectors with regular expressions to
 #'   highlight relevant terms or expressions; the names of the list provide the
 #'   colors
@@ -18,9 +24,10 @@
 #' @rdname read-method
 #' @examples
 #' use("polmineR.sampleCorpus")
+#' options("polmineR.meta" = "text_date")
 #' merkel <- partition(
 #'   "PLPRBTTXT",
-#'   list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
+#'   text_date="2009-11-10", text_name="Angela Dorothea Merkel",
 #'   type="plpr"
 #' )
 #' read(merkel, meta=c("text_name", "text_date"))
@@ -29,12 +36,12 @@
 #'   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
 #'   )
 #' all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+#' \dontrun{
 #' speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 #' read(speeches)
-#' 
 #' migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
 #' read(migVocab, col="Integration", partitionBundle=speeches)
-#' 
+#' }
 #' @seealso For concordances / a keword-in-context display, see \code{\link{kwic}}.
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
@@ -80,6 +87,7 @@ setMethod("read", "hits", function(.Object, def, i=NULL, ...){
   }
 })
 
+#' @rdname read-method
 setMethod("read", "kwic", function(.Object, i, type=NULL){
   fulltext <- html(.Object, i=i, type=type)
   htmltools::html_print(fulltext)

@@ -33,6 +33,7 @@ NULL
 #' @param x some object
 #' @param pAttribute the p-attribute
 #' @param sAttribute the s-attribute
+#' @param col the column to use of assembling the matrix
 #' @param from bla
 #' @param to bla
 #' @param strucs bla
@@ -58,7 +59,8 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 #' foo <- as.TermDocumentMatrix(
 #'   x="ZEIT", pAttribute="word", sAttribute="text_id",
 #'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-#'   to="1951_08_gespraeche-zum-interzonenhandel.html", robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
+#'   to="1951_08_gespraeche-zum-interzonenhandel.html",
+#'   robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
 #' )
 #' }
 #' @rdname as.DocumentTermMatrix
@@ -152,7 +154,8 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, v
     lapply(
       c(1:length(x@objects)),
       function(i){
-        keys <- x@objects[[i]]@stat[, c(pAttribute), with=FALSE] %>% apply(1, function(row) paste(row, collapse="//"))
+        keysRaw <- x@objects[[i]]@stat[, c(pAttribute), with=FALSE]
+        keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
         x@objects[[i]]@stat[, key := keys]
       })
   } else {
@@ -193,29 +196,31 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
   if (!is.null(col)){
     callNextMethod()
   } else if (!is.null(pAttribute)){
-  if (verbose == TRUE) message("... generating corpus positions")
-  cposList <- lapply(
-    c(1:length(x@objects)),
-    function(i) cbind(i, cpos(x@objects[[i]]@cpos))
-  )
-  cposMatrix <- do.call(rbind, cposList)
-  if (verbose == TRUE) message("... getting ids")
-  id_vector <- cqi_cpos2id(paste(x[[1]]@corpus, pAttribute, sep="."), cposMatrix[,2])
-  DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
-  if (verbose == TRUE) message("... performing count")
-  TF <- DT[,.N, by=.(i, id)]
-  setnames(TF, old="N", new="count")
-  TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), id)), with=FALSE]
-  if (verbose == TRUE) message("... generating keys")
-  uniqueTerms <- unique(TF[[pAttribute]])
-  keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
-  if (verbose == TRUE) message("... generating simple triplet matrix")
-  retval <- simple_triplet_matrix(
-    i = keys[ TF[[pAttribute]] ], j = TF[["i"]], v = TF[["count"]],
-    dimnames = list(Terms=names(keys), Docs=names(x@objects))
-  )
-  class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  return(retval)
+    if (verbose == TRUE) message("... generating corpus positions")
+    cposList <- lapply(
+      c(1:length(x@objects)),
+      function(i) cbind(i, cpos(x@objects[[i]]@cpos))
+    )
+    cposMatrix <- do.call(rbind, cposList)
+    if (verbose == TRUE) message("... getting ids")
+    id_vector <- cqi_cpos2id(paste(x[[1]]@corpus, pAttribute, sep="."), cposMatrix[,2])
+    DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
+    if (verbose == TRUE) message("... performing count")
+    # TF <- DT[,.N, by=.(i, id)]
+    TF <- DT[,.N, by=c("i", "id"), with=TRUE]
+    setnames(TF, old="N", new="count")
+    # TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), id)), with=FALSE]
+    TF[, "pAttribute" := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), TF[["id"]])), with=TRUE]
+    if (verbose == TRUE) message("... generating keys")
+    uniqueTerms <- unique(TF[[pAttribute]])
+    keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
+    if (verbose == TRUE) message("... generating simple triplet matrix")
+    retval <- simple_triplet_matrix(
+      i = keys[ TF[[pAttribute]] ], j = TF[["i"]], v = TF[["count"]],
+      dimnames = list(Terms=names(keys), Docs=names(x@objects))
+    )
+    class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+    return(retval)
   } else {
     message("... doing nothing, as pAttribute and col is NULL")
   }

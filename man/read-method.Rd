@@ -5,6 +5,7 @@
 \alias{read}
 \alias{read,data.table-method}
 \alias{read,hits-method}
+\alias{read,kwic-method}
 \alias{read,partition-method}
 \alias{read,partitionBundle-method}
 \title{Return to the original text and read}
@@ -22,6 +23,8 @@ read(.Object, ...)
   highlight = list(), cpos = FALSE, ...)
 
 \S4method{read}{hits}(.Object, def, i = NULL, ...)
+
+\S4method{read}{kwic}(.Object, i, type = NULL)
 }
 \arguments{
 \item{.Object}{an object to be read (\code{"partition" or "partitionBundle"})}
@@ -31,13 +34,27 @@ read(.Object, ...)
 \item{meta}{a character vector supplying s-attributes for the metainformation
 to be printed, if not stated explicitly, session settings will be used}
 
+\item{highlight}{a list}
+
 \item{cqp}{a list of character vectors with regular expressions to
 highlight relevant terms or expressions; the names of the list provide the
 colors}
 
-\item{regex}{a list of character vectors with regular expressions to
-highlight relevant terms or expressions; the names of the list provide the
-colors (see examples)}
+\item{tooltips}{a list}
+
+\item{verbose}{logical}
+
+\item{cpos}{logical}
+
+\item{col}{column}
+
+\item{partitionBundle}{a partitionBundle object}
+
+\item{def}{...}
+
+\item{i}{...}
+
+\item{type}{...}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
@@ -46,9 +63,10 @@ bundle.
 }
 \examples{
 use("polmineR.sampleCorpus")
+options("polmineR.meta" = "text_date")
 merkel <- partition(
   "PLPRBTTXT",
-  list(text_date="2009-11-10", text_name="Angela Dorothea Merkel"),
+  text_date="2009-11-10", text_name="Angela Dorothea Merkel",
   type="plpr"
 )
 read(merkel, meta=c("text_name", "text_date"))
@@ -57,12 +75,12 @@ read(
   highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
   )
 all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+\dontrun{
 speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
 read(speeches)
-
 migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
 read(migVocab, col="Integration", partitionBundle=speeches)
-
+}
 }
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.

@@ -11,7 +11,6 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
 #' @param method the statistical test to apply (chisquare or log likelihood)
-#' @param pAttribute the p-attribute to be used
 #' @param included TRUE if coi is part of ref, defaults to FALSE
 #' @param verbose defaults to TRUE
 #' @param progress logical

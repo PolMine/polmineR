@@ -12,8 +12,8 @@ NULL
 #' @slot left Object of class \code{"numeric"} number of tokens to the left
 #' @slot right Object of class \code{"numeric"} number of tokens to the right
 #' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
+#' @slot sAttribute Object of class \code{"character"} s-attribute
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
-#' @slot sAttribute Object of ...
 #' @slot corpus Object of class \code{"character"} the CWB corpus used
 #' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
@@ -23,8 +23,6 @@ NULL
 #'     
 #' @param .Object object
 #' @param mc logical, whether to use multicore
-#' @param sAttribute the s-attribute to use
-#' @param object object of class \code{context}
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
@@ -53,9 +51,9 @@ setMethod('summary', 'context',
             cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
             cat(sprintf("%-20s", "Node:"), object@query, "\n")
             cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
-            cat(sprintf("%-20s", "Node count:"), object@frequency, "\n")
+            cat(sprintf("%-20s", "Node count:"), object@count, "\n")
             cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
-            return(.statisticalSummary(object))
+            # return(.statisticalSummary(object))
             
           })
 

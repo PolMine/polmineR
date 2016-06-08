@@ -9,9 +9,13 @@
 #' @param sAttribute s-attributes
 #' @param pAttribute p-attribute (will be passed into cpos)
 #' @param size logical
+#' @param freq locial
+#' @param x a hits object
+#' @param .Object a character, partition or partitionBundle object
 #' @param mc logical
 #' @param progress logical
 #' @param verbose logical
+#' @param ... further parameters
 #' @exportClass hits
 #' @rdname hits
 setClass("hits",
@@ -27,9 +31,6 @@ setClass("hits",
 #' @exportMethod hits
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
-#' @examples
-#' \dontrun{
-#' }
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE, mc=FALSE, verbose=TRUE, progress=TRUE){
   stopifnot(.Object %in% rcqp::cqi_list_corpora())
@@ -100,8 +101,8 @@ setMethod("hits", "partition", function(.Object, query, sAttribute=NULL, pAttrib
   if (freq == TRUE) size <- TRUE
   sAttrs <- paste(.Object@corpus, sAttribute, sep=".")
   DT <- hits(.Object@corpus, query=query, sAttribute=NULL, pAttribute=pAttribute, mc=mc, progress=progress)@dt
-  DT[, struc := cqi_cpos2struc(paste(.Object@corpus, .Object@sAttributeStrucs, sep="."), DT[["cpos"]])]
-  DT <- subset(DT, struc %in% .Object@strucs)
+  DT[, "struc" := cqi_cpos2struc(paste(.Object@corpus, .Object@sAttributeStrucs, sep="."), DT[["cpos"]]), with=TRUE]
+  DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
       DT[, eval(sAttribute[i]) := cqi_struc2str(sAttrs[i], cqi_cpos2struc(sAttrs[i], DT[["cpos"]]))]
@@ -164,7 +165,7 @@ setMethod("hits", "partitionBundle", function(
           )
           if (!is.null(cposMatrix)){
             dt <- data.table(cposMatrix)
-            dt[, query := queryToPerform]
+            dt[, "query" := queryToPerform, with = TRUE]
             return(dt)
           } else {
             return(NULL)
@@ -188,12 +189,13 @@ setMethod("hits", "partitionBundle", function(
     }
     countDT <- rbindlist(countDTlist)
     if (verbose == TRUE) message("... matching data.tables")
-    countDT[, struc := cqi_cpos2struc(paste(corpus, sAttributeStrucs, sep="."), countDT[["V1"]]) ]
+    countDT[, "struc" := cqi_cpos2struc(paste(corpus, sAttributeStrucs, sep="."), countDT[["V1"]]), with=TRUE]
     setkeyv(countDT, cols="struc")
     DT <- strucDT[countDT] # merge
-    DT[, dummy := 1]
+    DT[, "dummy" := 1, with=TRUE]
     count <- function(x) return(x)
-    TF <- DT[, count(.N), by=.(partition, query)]
+    TF <- DT[, count(.N), by=c("partition", "query"), with=TRUE]
+    # TF <- DT[, count(.N), by=.(partition, query)]
     setnames(TF, old="V1", new="count")
     if (freq == TRUE) size <- TRUE
     if (size == TRUE){

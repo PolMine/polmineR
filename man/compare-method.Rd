@@ -43,8 +43,6 @@ ref}
 \item{mc}{logical, whether to use multicore}
 
 \item{progress}{logical}
-
-\item{pAttribute}{the p-attribute to be used}
 }
 \value{
 The function returns a data frame with the following structure:

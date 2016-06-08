@@ -29,6 +29,7 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #'   only if token in positivelist is present. If positivelist is a character
 #'   vector, it is assumed to provide regex expressions (incredibly long if the
 #'   list is long)
+#' @param count logical
 #' @param method either "LL" (default) or "pmi", if NULL, calculating
 #'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
@@ -143,7 +144,7 @@ setMethod(
       count <- function(x) return(x)
       ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
       for (i in c(1:length(pAttribute))){
-        ctxt@stat[, eval(pAttribute[i]) := cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]) %>% as.utf8()]
+        ctxt@stat[, eval(pAttribute[i]) := as.utf8(cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]))]
       }
       setnames(ctxt@stat, "V1", "count_window")
       setkeyv(ctxt@stat, pAttribute)
@@ -269,6 +270,11 @@ setMethod(
   return(retval)
 }
 
+
+#' @rdname context-method
+setMethod("context", "character", function(.Object, query, ...){
+  context(partition(.Object), query=query, ...)
+})
 
 #' @docType methods
 #' @rdname context-method

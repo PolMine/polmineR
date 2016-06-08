@@ -33,6 +33,8 @@ kwic(.Object, ...)
 
 \item{meta}{metainformation to display}
 
+\item{cpos}{logical}
+
 \item{neighbor}{only show kwic if a certain word is present}
 
 \item{verbose}{logical, whether to be talkative}
@@ -59,8 +61,16 @@ will offer partition objects present in the global environment.
 use("polmineR.sampleCorpus")
 bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
 kwic(bt, "Integration")
-kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party"))
-kwic(bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"', left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
+kwic(
+  bt, "Integration",
+  left=20, right=20,
+  meta=c("text_date", "text_name", "text_party")
+)
+kwic(
+  bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+  left=20, right=20,
+  meta=c("text_date", "text_name", "text_party")
+) 
 }
 \seealso{
 To read the whole text, see the \code{\link{read}}-method.

@@ -34,11 +34,11 @@ count(.Object, ...)
 
 \item{verbose}{logical, whether to be verbose}
 
+\item{progress}{logical, whether to show progress}
+
 \item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
 
 \item{total}{defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned}
-
-\item{method}{either 1 or 2, for working with}
 }
 \value{
 a \code{"data.table"}
@@ -50,14 +50,13 @@ partition, or a partitionBundle.
 \examples{
 use("polmineR.sampleCorpus")
 debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-count(debates, "Arbeit") # get frequencies for one token
+count(debates, query="Arbeit") # get frequencies for one token
 count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
 count("PLPRBTTXT", c("Migration", "Integration"), "word")
 
 debates <- partitionBundle(
-  object="PLPRBTTXT",
-  def=list(text_id=".*"),
-  var=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+  .Object="PLPRBTTXT",
+  def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
   regex=TRUE, mc=FALSE, verbose=FALSE
 )
 count(debates, c("Arbeit", "Integration", "Umwelt"))

@@ -4,13 +4,12 @@ NULL
 #' @rdname kwic-class
 #' @docType method
 #' @importFrom DT datatable formatStyle
-#' @importFrom magrittr %>%
 setMethod("show", "kwic", function(object){
   lineview <- getOption("polmineR.lineview")
   if (lineview == FALSE){
-    retval <- datatable(object@table) %>%
-      formatStyle("node", color="blue", textAlign="center") %>%
-      formatStyle("left", textAlign="right")
+    retvalRaw <- datatable(object@table)
+    retvalRaw <- formatStyle(retvalRaw, "node", color="blue", textAlign="center")
+    retval <- formatStyle(retvalRaw, "left", textAlign="right")
   } else {
     object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
     object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse=" "))

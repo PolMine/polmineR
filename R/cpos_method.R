@@ -58,21 +58,15 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
 #' @rdname cpos-method
 setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose=TRUE){
   hits <- cpos(.Object@corpus, query=query, pAttribute, encoding=.Object@encoding, verbose=verbose)
-  if (!is.null(hits)){
+  if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
     corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
     strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
-    if (is(hits)[1] == "integer"){
-      hits <- matrix(data=hits, ncol=2)
-    }
-    if (nrow(hits) == 0){
-      hits <- NULL
-    }
+    if (is(hits)[1] == "integer") hits <- matrix(data=hits, ncol=2)
+    if (nrow(hits) == 0) hits <- NULL
   }
-  if (is(hits)[1] == "integer") {
-    hits <- matrix(hits, ncol=2)
-  }
+  if (is(hits)[1] == "integer") hits <- matrix(hits, ncol=2)
   return(hits)
 })
 

@@ -3,14 +3,27 @@
 \docType{methods}
 \name{dispersion}
 \alias{dispersion}
+\alias{dispersion,character-method}
+\alias{dispersion,hits-method}
+\alias{dispersion,partition-method}
 \title{Dispersion of a query or multiple queries}
 \usage{
+dispersion(.Object, ...)
+
 \S4method{dispersion}{partition}(.Object, query, sAttribute,
   pAttribute = getOption("polmineR.pAttribute"), freq = TRUE, mc = FALSE,
   progress = TRUE, verbose = FALSE)
+
+\S4method{dispersion}{character}(.Object, query, sAttribute,
+  pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE,
+  progress = TRUE, verbose = TRUE)
+
+\S4method{dispersion}{hits}(.Object, sAttribute, freq = FALSE)
 }
 \arguments{
 \item{.Object}{a partition object}
+
+\item{...}{further parameters}
 
 \item{query}{a character vector containing one or multiple queries}
 
@@ -23,6 +36,8 @@ or 'lemma'}
 
 \item{mc}{logical, whether to use multicore}
 
+\item{progress}{logical, whether to shop progress}
+
 \item{verbose}{logical, whether to be verbose}
 }
 \value{
@@ -34,10 +49,10 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-test <- partition("PLPRBTTXT", def=list(text_year="2009"), pAttribute=NULL)
-dispersion(test, query="Integration", pAttribute="word", dim=c("text_date"))
-foo <- dispersion(test, "Integration", c("text_date", "text_party"))
-dispersion(test, '"Integration.*"', c("text_year")) # note the brackets when using regex!
+test <- partition("PLPRBTTXT", text_year="2009", pAttribute=NULL)
+dispersion(test, query="Integration", pAttribute="word", sAttribute="text_date")
+foo <- dispersion(test, "Integration", sAttribute=c("text_date", "text_party"))
+dispersion(test, '"Integration.*"', sAttribute=c("text_year")) # note the brackets when using regex!
 }
 \author{
 Andreas Blaette

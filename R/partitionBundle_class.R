@@ -21,16 +21,15 @@ NULL
 #'   summary,partitionBundle-method +,partitionBundle,ANY-method
 #'   [,partitionBundle,ANY,ANY,ANY-method +,partitionBundle,partition-method 
 #'   +,partitionBundle,partitionBundle-method as.partitionBundle,list-method 
-#'   as.sparseMatrix,partitionBundle-method as.DocumentTermMatrix
+#'   as.sparseMatrix,partitionBundle-method
 #'   barplot,partitionBundle-method
 #'   as.sparseMatrix,TermDocumentMatrix-method
 #' @param x a partitionBundle object
+#' @param .Object a partitionBundle object
 #' @param object a partitionBundle object
 #' @param i integer index
 #' @param sAttribute the s-attribute to use
-#' @param filename filename
 #' @param height height
-#' @param type type
 #' @param ... further parameters
 #' @rdname partitionBundle-class
 #' @name partitionBundle-class

@@ -35,7 +35,7 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
     dummy <- lapply(
       c(1:length(pAttribute)),
       function(i){
-        str <- cqi_id2str(pAttr[i], TF[[pAttr_id[i]]]) %>% as.utf8(from=.Object@encoding)
+        str <- as.utf8(cqi_id2str(pAttr[i], TF[[pAttr_id[i]]]), from=.Object@encoding)
         TF[, eval(pAttribute[i]) := str , with=TRUE] 
       })
     dummy <- lapply(pAttr_id, function(x) TF[, eval(x) := NULL, with=TRUE])

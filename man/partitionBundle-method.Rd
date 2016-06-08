@@ -44,6 +44,8 @@ provides a character string of values (e.g. def=list(text_year=c("2005", "2006")
 \item{mc}{logical, whether to use multicore parallelization}
 
 \item{verbose}{logical, whether to provide progress information}
+
+\item{progress}{logical, whether to show progress bar}
 }
 \value{
 a S4 class 'partitionBundle', which is a list with partition objects

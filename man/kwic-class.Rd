@@ -35,11 +35,19 @@ S4 class for organizing information for concordance output
 
 \item{\code{right}}{words to the right}
 
+\item{\code{corpus}}{the CWB corpus}
+
+\item{\code{cpos}}{the corpus positions}
+
 \item{\code{table}}{Object of class \code{"data.frame"} a table with the relevant information for kwic output}
 
 \item{\code{neighbor}}{Object of class \code{"character"} neighbor, if applicable}
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+
+\item{\code{labels}}{Object of class \code{"character"}}
+
+\item{\code{categories}}{Object of class \code{"character"}}
 }}
 \section{Methods}{
 

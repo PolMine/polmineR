@@ -1,3 +1,5 @@
+setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
+
 #' Split partition into speeches
 #' 
 #' A method designed for corpora from the
@@ -7,19 +9,14 @@
 #' @param sAttributeDates the s-attribute that provides the dates of sessions
 #' @param sAttributeNames the s-attribute that provides the names of speakers
 #' @param gap number of tokens between strucs to identify speeches
-#' @param addMeta whether to add metainformation to partition name, if wanted, provide s-attribute with date as character vector
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @return a partitionBundle object
 #' @name as.speeches
-#' @aliases speeches speeches-method speeches,partition-method
-#' @rdname as.speeches
 #' @docType methods
 #' @exportMethod as.speeches
-setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
-
-
-#' @rdname as.speeches
+#' @rdname as.speeches-method
+#' @aliases as.speeches as.speeches,partition-method
 setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=FALSE){
   partitionByDate <- lapply(
     sAttributes(.Object, sAttributeDates),

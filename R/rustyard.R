@@ -861,3 +861,59 @@
 #     object, query=query, pAttribute=pAttribute, rows=dim[1], cols=dim[2], verbose=verbose
 #   )
 # }
+
+
+#' #' @docType methods
+#' #' @rdname trim-method
+#' setMethod("trim", "compBundle", function(object, minSignificance=0, minFrequency=0, maxRank=0, tokenFilter=NULL, posFilter=NULL, filterType="include", mc=FALSE){
+#'   rework <- new("compBundle")
+#'   .trimFunction <- function(x) {
+#'     trim( x, minSignificance=minSignificance, minFrequency=minFrequency, maxRank=maxRank,
+#'           tokenFilter=tokenFilter, posFilter=posFilter, filterType=filterType)
+#'   }
+#'   if (mc == FALSE){
+#'     rework@objects <- lapply(setNames(object@objects, names(object@objects)), function(x) .trimFunction(x))   
+#'   } else if (mc == TRUE){
+#'     rework@objects <- mclapply(setNames(object@objects, names(object@objects)), function(x) .trimFunction(x))  
+#'   }
+#'   rework
+#' })
+#' 
+#' 
+#' #' @exportMethod trim
+#' #' @docType methods
+#' #' @rdname trim-method
+#' setMethod("trim", "partitionBundle", function(object, pAttribute=NULL, minFrequency=0, posFilter=NULL,  tokenFilter=NULL, drop=NULL, minSize=0, keep=NULL, mc=getOption("polmineR.mc"), ...){
+#'   pimpedBundle <- object
+#'   if (minFrequency !=0 || !is.null(posFilter) || !is.null(tokenFilter)){
+#'     if (mc == TRUE) {
+#'       pimpedBundle@objects <- mclapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))
+#'     } else {
+#'       pimpedBundle@objects <- lapply(object@objects, function(x) trim(x, pAttribute=pAttribute, minFrequency=minFrequency, posFilter=posFilter, tokenFilter=tokenFilter))    
+#'     }
+#'   }
+#'   if (minSize >= 0){
+#'     df <- data.frame(
+#'       name=names(pimpedBundle),
+#'       noToken=summary(pimpedBundle)$token,
+#'       stringsAsFactors=FALSE
+#'     )
+#'     toKill <- subset(df, df$noToken < minSize)$name
+#'     if (length(toKill) > 0) {drop <- c(toKill, drop)}
+#'   }
+#'   if (!is.null(drop)) {
+#'     if (is.null(names(object@objects)) || any(is.na(names(object@objects)))) {
+#'       warning("there a partitions to be dropped, but some or all partitions do not have a name, which may potentially cause errors or problems")
+#'     }
+#'     if (is.character(drop) == TRUE){
+#'       pimpedBundle@objects[which(names(pimpedBundle@objects) %in% drop)] <- NULL
+#'     } else if (is.numeric(drop == TRUE)){
+#'       pimpedBundle@objects[drop] <- NULL
+#'     }
+#'   }
+#'   if (!is.null(keep)){
+#'     pimpedBundle@objects <- pimpedBundle@objects[which(names(pimpedBundle@objects) %in% keep)]
+#'   }
+#'   pimpedBundle
+#' })
+#' 

@@ -16,7 +16,7 @@ NULL
 #' @param verbose logical, whether to be verbose
 #' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
 #' @param total defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned
-#' @param method either 1 or 2, for working with 
+#' @param progress logical, whether to show progress
 #' @param ... further parameters
 #' @return a \code{"data.table"}
 #' @exportMethod count
@@ -28,14 +28,13 @@ NULL
 #' @examples
 #' use("polmineR.sampleCorpus")
 #' debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' count(debates, "Arbeit") # get frequencies for one token
+#' count(debates, query="Arbeit") # get frequencies for one token
 #' count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
 #' count("PLPRBTTXT", c("Migration", "Integration"), "word")
 #' 
 #' debates <- partitionBundle(
-#'   object="PLPRBTTXT",
-#'   def=list(text_id=".*"),
-#'   var=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+#'   .Object="PLPRBTTXT",
+#'   def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
 #'   regex=TRUE, mc=FALSE, verbose=FALSE
 #' )
 #' count(debates, c("Arbeit", "Integration", "Umwelt"))
@@ -65,14 +64,14 @@ setMethod("count", "partition", function(.Object, query, pAttribute=getOption("p
 #' @docType methods
 setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, total=T, mc=F, progress=T, verbose=FALSE){
   if (verbose == TRUE) message("... preparatory work")
-  DT <- hits(.Object, query=query, sAttribute=NULL, pAttribute=pAttribute, mc=mc, progress=progress, verbose=verbose)@dt
+  DT <- hits(.Object, query=query, pAttribute=pAttribute, mc=mc, progress=progress, verbose=verbose)@dt
   if (verbose == TRUE) message("... wrapping things up")
   DT_cast <- dcast.data.table(DT, partition~query, value.var="count")
   DT_cast2 <- DT_cast[is.na(DT_cast[["partition"]]) == FALSE] # remove counts that are not in one of the partitions
   for (q in query){
     DT_cast2[, eval(q) := sapply(DT_cast2[[q]], function(x) ifelse(is.na(x), 0, x)), with=FALSE]
   }
-  if (total == TRUE) DT_cast2[, TOTAL := rowSums(.SD), by=partition]
+  if (total == TRUE) DT_cast2[, "TOTAL" := rowSums(.SD), by=partition, with=TRUE]
   DT_cast2
 })
 

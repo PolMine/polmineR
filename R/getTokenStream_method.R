@@ -5,6 +5,9 @@
 #' @param encoding encoding to use
 #' @param collapse character string length 1
 #' @param corpus the CWB corpus
+#' @param beautify logical, whether to correct whitespace before and after interpunctation
+#' @param left left corpus position
+#' @param right right corpus position
 #' @param cpos logical, whether to return cpos as names of the tokens
 #' @param ... further arguments
 #' @exportMethod getTokenStream
@@ -12,14 +15,40 @@
 setGeneric("getTokenStream", function(.Object, ...) standardGeneric("getTokenStream"))
 
 #' @rdname getTokenStream-method
-setMethod("getTokenStream", "matrix", function(.Object, corpus, pAttribute, encoding, collapse=NULL, cpos=FALSE){
+setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, encoding=NULL, collapse=NULL, beautify=TRUE, cpos=FALSE){
+  pAttr <- paste(corpus, pAttribute, sep=".")
+  tokens <- cqi_cpos2str(pAttr, .Object)
+  if (!is.null(encoding)){
+    Encoding(tokens) <- encoding
+    tokens <- iconv(tokens, from=encoding, to="UTF-8")
+  }
+  if (cpos == TRUE) names(tokens) <- .Object
+  if (!is.null(collapse)) {
+    if (beautify == TRUE){
+      pos <- cqi_cpos2str(paste(corpus, "pos", sep="."), .Object)
+      whitespace <- rep(collapse, times = length(.Object))
+      whitespace[grep("\\$[\\.;,:!?]", pos, perl=T)] <- ""
+      whitespace[grep("\\)", tokens, perl=T)] <- ""
+      whitespace[grep("\\(", tokens, perl=T) + 1] <- ""
+      whitespace[1] <- ""
+      tokens <- paste(paste(whitespace, tokens, sep=""), collapse="")
+    } else {
+      tokens <- paste(tokens, collapse=collapse)  
+    }
+  }
+  tokens
+})
+
+#' @rdname getTokenStream-method
+setMethod("getTokenStream", "matrix", function(.Object, ...){
   cposVector <- as.vector(unlist(apply(.Object, 1, function(row) c(row[1]:row[2]))))
-  pAttr <- paste(corpus, ".", pAttribute, sep="")
-  tokens <- cqi_id2str(pAttr, cqi_cpos2id(pAttr, cposVector))
-  tokens <- iconv(tokens, from=encoding, to="UTF-8")
-  if (cpos == TRUE) names(tokens) <- cposVector
-  if (!is.null(collapse)) tokens <- paste(tokens, collapse=collapse)  
-  return(tokens)
+  getTokenStream(cposVector, ...)
+})
+
+
+#' @rdname getTokenStream-method
+setMethod("getTokenStream", "character", function(.Object, left, right, ...){
+  getTokenStream(c(left:right), corpus=.Object, ...)
 })
 
 #' @rdname getTokenStream-method

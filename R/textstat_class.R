@@ -117,7 +117,8 @@ setMethod("subset", "textstat", function(x, ...){
 setMethod("as.data.table", "textstat", function(x) x@stat)
 
 #' @exportMethod pAttribute
-#' @rdname textstat-class
+#' @param object a textstat object
+#' @rdname pAttribute-method
 setMethod("pAttribute", "textstat", function(object) object@pAttribute)
 
 #' @exportMethod [[

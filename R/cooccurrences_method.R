@@ -19,7 +19,10 @@
 #' @rdname cooccurrences
 #' @examples
 #' \dontrun{
-#' bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
+#' bt17merkel <- partition(
+#'  "PLPRTXT", text_lp="17", text_type="speech",
+#'  text_speaker="Angela Merkel"
+#' )
 #' bt17merkelColl <- cooccurrences(bt17merkel)
 #' }
 setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
@@ -181,8 +184,8 @@ setMethod(
     lapply(
       c(1:length(pAttribute)),
       function(i){
-        TF[, eval(aColsStr[i]) := cqi_id2str(pAttr[i], TF[[aColsId[i]]]) %>% as.utf8, with=TRUE]
-        TF[, eval(bColsStr[i]) := cqi_id2str(pAttr[i], TF[[bColsId[i]]]) %>% as.utf8, with=TRUE]
+        TF[, eval(aColsStr[i]) := cqi_id2str(pAttr[i], as.utf8(TF[[aColsId[i]]])), with=TRUE]
+        TF[, eval(bColsStr[i]) := cqi_id2str(pAttr[i], as.utf8(TF[[bColsId[i]]])), with=TRUE]
         TF[, eval(aColsId[i]) := NULL]
         TF[, eval(bColsId[i]) := NULL]
       }

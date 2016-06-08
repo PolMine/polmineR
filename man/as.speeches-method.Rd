@@ -4,13 +4,8 @@
 \name{as.speeches}
 \alias{as.speeches}
 \alias{as.speeches,partition-method}
-\alias{speeches}
-\alias{speeches,partition-method}
-\alias{speeches-method}
 \title{Split partition into speeches}
 \usage{
-as.speeches(.Object, ...)
-
 \S4method{as.speeches}{partition}(.Object, sAttributeDates, sAttributeNames,
   gap = 500, mc = FALSE, verbose = FALSE)
 }
@@ -26,8 +21,6 @@ as.speeches(.Object, ...)
 \item{mc}{whether to use multicore, defaults to FALSE}
 
 \item{verbose}{logical, defaults to TRUE}
-
-\item{addMeta}{whether to add metainformation to partition name, if wanted, provide s-attribute with date as character vector}
 }
 \value{
 a partitionBundle object

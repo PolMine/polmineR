@@ -3,28 +3,40 @@
 \docType{methods}
 \name{enrich}
 \alias{enrich}
-\alias{enrich,compBundle-method}
+\alias{enrich,partition-method}
+\alias{enrich,partitionBundle-method}
 \alias{enrich-method}
 \title{enrich an object}
 \usage{
 enrich(object, ...)
 
-\S4method{enrich}{compBundle}(object, addPos = NULL, verbose = TRUE,
-  mc = getOption("polmineR.mc"))
+\S4method{enrich}{partition}(object, size = FALSE, pAttribute = NULL,
+  id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE, ...)
+
+\S4method{enrich}{partitionBundle}(object, mc = FALSE, progress = TRUE,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{a partition, partitionBundle or comp object}
 
 \item{...}{further parameters}
 
-\item{addPos}{depracated}
+\item{size}{logical}
+
+\item{pAttribute}{character vector}
+
+\item{id2str}{logical}
+
+\item{meta}{character vector}
 
 \item{verbose}{logical}
 
 \item{mc}{logical or, if numeric, providing the number of cores}
+
+\item{progress}{logical, whether to show progress bar}
 }
 \description{
-Method to fill slots of a partition, partitionBundle or comp object that 
+Method to fill slots of a partition or partitionBundle object that 
 have not been set up previously. See the respective documentation:
 }
 

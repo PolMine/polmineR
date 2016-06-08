@@ -1,10 +1,22 @@
 #' @include partition_class.R partitionBundle_class.R
 NULL
 
+#' restore fulltext as html
+#' 
+#' @param object the object
+#' @param cqp logical
+#' @param cpos logical
+#' @param verbose logical
+#' @param filename the filename
+#' @param type the partition type
+#' @param i to be checked
+#' @param ... further parameters
+#' @rdname html-method
+#' @aliases show,html-method
 setGeneric("html", function(object, ...){standardGeneric("html")})
 
 
-#' @rdname as.markdown
+#' @rdname html-method
 setMethod("html", "character", function(object){
   if (requireNamespace("markdown", quietly=TRUE)){
     mdFilename <- tempfile(fileext=".md")
@@ -23,10 +35,9 @@ setMethod("html", "character", function(object){
 #' @param meta metadata for output
 #' @param highlight list with regex to be highlighted
 #' @param tooltips tooltips for highlighted text
-#' @rdname partition-class
+#' @rdname html-method
 #' @exportMethod html
 #' @docType methods
-#' @aliases html html-method html,partition-method show,html-method
 setMethod("html", "partition", function(object, meta=getOption("polmineR.meta"), highlight=list(), cqp=FALSE, tooltips=NULL, cpos=FALSE, verbose=FALSE, ...){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
@@ -93,7 +104,7 @@ setMethod("html", "partition", function(object, meta=getOption("polmineR.meta"),
 })
 
 #' @docType methods
-#' @rdname partitionBundle-class
+#' @rdname html-method
 setMethod("html", "partitionBundle", function(object, filename=c(), type="debate"){
   markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(
@@ -109,6 +120,7 @@ setMethod("html", "partitionBundle", function(object, filename=c(), type="debate
   if (is.null(filename)) browseURL(htmlFile)
 })
 
+#' @rdname html-method
 setMethod("html", "kwic", function(object, i, type){
   partitionToRead <- partition(
     object@corpus,

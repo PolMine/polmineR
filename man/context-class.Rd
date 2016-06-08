@@ -25,10 +25,6 @@
 \item{.Object}{object}
 
 \item{mc}{logical, whether to use multicore}
-
-\item{sAttribute}{the s-attribute to use}
-
-\item{object}{object of class \code{context}}
 }
 \description{
 class to organize information of context analysis
@@ -50,9 +46,9 @@ class to organize information of context analysis
 
 \item{\code{size}}{Object of class \code{"numeric"} number of tokens in the right and left context}
 
-\item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
+\item{\code{sAttribute}}{Object of class \code{"character"} s-attribute}
 
-\item{\code{sAttribute}}{Object of ...}
+\item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus used}
 

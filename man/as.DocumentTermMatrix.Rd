@@ -50,6 +50,8 @@ as.TermDocumentMatrix(x, ...)
 \item{robust}{bla}
 
 \item{mc}{logical}
+
+\item{col}{the column to use of assembling the matrix}
 }
 \value{
 a TermDocumentMatrix
@@ -78,7 +80,8 @@ too.
 foo <- as.TermDocumentMatrix(
   x="ZEIT", pAttribute="word", sAttribute="text_id",
   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-  to="1951_08_gespraeche-zum-interzonenhandel.html", robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
+  to="1951_08_gespraeche-zum-interzonenhandel.html",
+  robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
 )
 }
 }

@@ -4,11 +4,16 @@ setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 #' detect noise
 #' 
 #' @param .Object an .Object of class \code{"DocumentTermMatrix"}
-#' @param minSum minimum colsum (for DocumentTermMatrix) to qualify a term as non-noise
+#' @param minTotal minimum colsum (for DocumentTermMatrix) to qualify a term as non-noise
 #' @param minTfIdfMean minimum mean value for tf-idf to qualify a term as non-noise
+#' @param specialChars special characters to drop
+#' @param numbers regex, to drop numbers
+#' @param verbose logical
+#' @param pAttribute relevant if applied to a textstat object
 #' @param sparse will be passed into \code{"removeSparseTerms"} from \code{"tm"}-package
 #' @param stopwordsLanguage e.g. "german", to get stopwords defined in the tm package
 #' @param minNchar min char length ti qualify a term as non-noise
+#' @param ... further parameters
 #' @return a list 
 #' @importFrom slam col_sums
 #' @exportMethod noise
@@ -17,7 +22,8 @@ setMethod(
   "noise", "DocumentTermMatrix",
   function(
     .Object, minTotal=2, minTfIdfMean = 0.005, sparse=0.995,
-    stopwordsLanguage="german", minNchar=2, specialChars="^[a-zA-ZéäöüÄÖÜ-ß|-]+$",
+    stopwordsLanguage="german", minNchar=2,
+    specialChars=getOption("polmineR.specialChars"),
     numbers="^[0-9\\.,]+$",
     verbose=TRUE
     ){
@@ -66,7 +72,8 @@ setMethod(
   "noise", "character",
   function(
     .Object, 
-    stopwordsLanguage="german", minNchar=2, specialChars="^[a-zA-ZéäöüÄÖÜ-ß|-]+$",
+    stopwordsLanguage="german", minNchar=2,
+    specialChars=getOption("polmineR.specialChars"),
     numbers="^[0-9\\.,]+$",
     verbose=TRUE
   ){

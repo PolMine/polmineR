@@ -39,12 +39,22 @@
 #' @author Andreas Blaette
 #' @examples
 #' use(polmineR.sampleCorpus)
-#' spd <- partition("PLPRBTTXT", def=list(text_party="SPD", text_type="speech"))
-#' kauder <- partition("PLPRBTTXT", def=list(text_name="Volker Kauder"), pAttribute=c("word"))
-#' merkel <- partition("PLPRBTTXT", list(text_name=".*Merkel"), pAttribute="word", regex=TRUE)
+#' spd <- partition(
+#'   "PLPRBTTXT", text_party="SPD", text_type="speech"
+#'   )
+#' kauder <- partition(
+#' "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
+#' )
+#' merkel <- partition(
+#'   "PLPRBTTXT", text_name=".*Merkel",
+#'   pAttribute="word", regex=TRUE
+#'   )
 #' sAttributes(merkel, "text_date")
 #' sAttributes(merkel, "text_name")
-#' merkel <- partition("PLPRBTTXT", list(text_name="Angela Dorothea Merkel", text_date="2009-11-10", text_type="speech"), pAttribute="word")
+#' merkel <- partition(
+#'   "PLPRBTTXT", text_name="Angela Dorothea Merkel",
+#'   text_date="2009-11-10", text_type="speech", pAttribute="word"
+#'   )
 #' merkel <- subset(merkel, !word %in% punctuation)
 #' merkel <- subset(merkel, !word %in% tm::stopwords("de"))
 #' @import methods
@@ -84,34 +94,40 @@ setMethod("partition", "character", function(
   }
   assign(
     "Partition",
-    new(partitionType,
-        stat=data.table(),
-        call=deparse(match.call()),
-        corpus=.Object
-        )
+    new(
+      partitionType,
+      stat = data.table(),
+      call = deparse(match.call()),
+      corpus = .Object,
+      name = name,
+      xml = xml
+      )
     )  
-  if(is.null(def)){
-    parsedInfo <- parseInfoFile(.Object)
-    if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
-      def <- list()
-      def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
-      regex <- TRUE
-    } else {
-      message("... no idea what the anchor element might be, please provide explicitly")
-    }
-  }
   if(is.null(encoding)) {
     Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
   } else {
     Partition@encoding <- encoding
   }
   if (verbose==TRUE) message('... encoding of the corpus: ', Partition@encoding)
-  Partition@name <- name
   Partition@sAttributes <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
-  Partition@sAttributeStrucs <- names(def)[length(def)]
-  Partition@xml <- xml
+
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
-  Partition <- sAttributes2cpos(Partition, xml, regex)
+  if(is.null(def)){
+    parsedInfo <- parseInfoFile(.Object)
+    if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
+      def <- list()
+      def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
+      regex <- TRUE
+      Partition@sAttributeStrucs <- names(def)[length(def)]
+      Partition <- sAttributes2cpos(Partition, xml, regex)
+    } else {
+      warning("no anchor element in corpus registry")
+      Partition@cpos <- matrix(c(0, cqi_attribute_size(paste(.Object, pAttributes(.Object)[1], sep=".")) - 1), nrow = 1)
+    }
+  } else {
+    Partition@sAttributeStrucs <- names(def)[length(def)]
+    Partition <- sAttributes2cpos(Partition, xml, regex)  
+  }
   if (!is.null(Partition)) {
     if (verbose==TRUE) message('... computing partition size')
     Partition@size <- size(Partition)

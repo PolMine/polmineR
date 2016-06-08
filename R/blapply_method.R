@@ -1,6 +1,7 @@
 #' apply a function over a list or bundle with and without verbose
 #' parallelization
 #' 
+#' @param x a list or a bundle object
 #' @param f a function that can be applied to each object contained in the
 #'   bundle, note that it should swallow the parameters mc, verbose and progress
 #'   (use ... to catch these params )
@@ -29,6 +30,7 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
     total <- length(x)
     pb <- txtProgressBar(min = 0, max = total, style = 3)
     # progressBar <- function(n) setTxtProgressBar(pb, n)
+    i <- 0 # it's just to pass R CMD check
     retval <- foreach(i=c(1:length(x))) %do% {
       setTxtProgressBar(pb, i)
       f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)

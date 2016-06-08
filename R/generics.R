@@ -1,7 +1,9 @@
+#' get pAttribute
+#'
+#' @param pAttribute the pAttribute to get
 #' @exportMethod pAttribute
-#' @exportMethod pAttribute<-
-setGeneric("pAttribute", function(object, ...) standardGeneric("pAttribute"))
-setGeneric("pAttribute<-", function(object, value) standardGeneric("pAttribute<-"))
+#' @rdname pAttribute-method
+setGeneric("pAttribute", function(object) standardGeneric("pAttribute"))
 
 #' @exportMethod dissect
 setGeneric("dissect", function(object, ...) standardGeneric("dissect"))

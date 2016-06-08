@@ -4,26 +4,19 @@
 \name{trim}
 \alias{punctuation}
 \alias{trim}
+\alias{trim,DocumentTermMatrix-method}
 \alias{trim,TermDocumentMatrix-method}
-\alias{trim,compBundle-method}
-\alias{trim,partitionBundle-method}
 \alias{trim-method}
 \title{trim an object}
 \format{An object of class \code{character} of length 13.}
 \usage{
 trim(object, ...)
 
-\S4method{trim}{compBundle}(object, minSignificance = 0, minFrequency = 0,
-  maxRank = 0, tokenFilter = NULL, posFilter = NULL,
-  filterType = "include", mc = FALSE)
-
-\S4method{trim}{partitionBundle}(object, pAttribute = NULL,
-  minFrequency = 0, posFilter = NULL, tokenFilter = NULL, drop = NULL,
-  minSize = 0, keep = NULL, mc = getOption("polmineR.mc"), ...)
-
 \S4method{trim}{TermDocumentMatrix}(object, termsToKeep = NULL,
   termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL,
   verbose = TRUE)
+
+\S4method{trim}{DocumentTermMatrix}(object, ...)
 
 punctuation
 }
@@ -32,31 +25,15 @@ punctuation
 
 \item{...}{further arguments}
 
-\item{minSignificance}{minimum significance level}
+\item{termsToKeep}{...}
 
-\item{maxRank}{maximum rank}
+\item{termsToDrop}{...}
 
-\item{tokenFilter}{tokens to exclude from table}
+\item{docsToKeep}{...}
 
-\item{posFilter}{exclude words with a POS tag not in this list}
+\item{docsToDrop}{...}
 
-\item{filterType}{either "include" or "exclude"}
-
-\item{mc}{if not NULL logical - whether to use multicore parallelization}
-
-\item{pAttribute}{character vector, either lemma or word}
-
-\item{drop}{partitionObjects you want to drop, specified either by number or name}
-
-\item{minSize}{a minimum size for the partitions to be kept}
-
-\item{keep}{specify names of partitions to keep, everything else is dropped}
-
-\item{verbose}{whether to be talkative}
-
-\item{minTotal}{the minimum frequency}
-
-\item{stopwords}{words/tokens to drop}
+\item{verbose}{logical}
 }
 \description{
 Method to trim and adjust objects by 

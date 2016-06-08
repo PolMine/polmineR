@@ -3,12 +3,9 @@
 \docType{methods}
 \name{TermDocumentMatrix}
 \alias{TermDocumentMatrix}
-\alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
 \title{Methods for TermDocumentMatrix / DocumentTermMatrix}
 \usage{
-\S4method{size}{DocumentTermMatrix}(x)
-
 \S4method{size}{TermDocumentMatrix}(x)
 }
 \arguments{

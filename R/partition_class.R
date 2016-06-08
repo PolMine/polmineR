@@ -26,10 +26,9 @@ NULL
 #' @slot call Object of class \code{"character"} the call that generated the partition 
 #' @param .Object a partition object
 #' @param x a partition object
+#' @param cpos ...
+#' @param meta ...
 #' @param i index
-#' @param from from
-#' @param to to
-#' @param mc multicore
 #' @param ... further parameters
 #' @param value value
 #' @param object a partition object
@@ -38,7 +37,7 @@ NULL
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partitionBundle 
 #'   as.partitionBundle,partition-method export export,partition-method split
-#'   dissect size
+#'   dissect
 #' @rdname partition-class
 #' @name partition-class
 #' @exportClass partition

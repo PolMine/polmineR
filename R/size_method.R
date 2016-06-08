@@ -1,18 +1,23 @@
 #' @include partition_class.R TermDocumentMatrix_methods.R
 NULL
 
+#' get corpus size
+#' 
+#' @param x object
+#' @rdname size-method
 setGeneric("size", function(x){UseMethod("size")})
 
+#' @rdname size-method
 setMethod("size", "character", function(x){
   cqi_attribute_size(paste(x, "word", sep="."))
   })
 
-#' @rdname partition-class
+#' @rdname size-method
 #' @exportMethod size
 setMethod("size", "partition", function(x) sum(x@cpos[,2]-x@cpos[,1]+1))
 
 
-#' @rdname TermDocumentMatrix
+#' @rdname size-method
 setMethod("size", "DocumentTermMatrix", function(x){
   setNames(tapply(x$v, INDEX=x$i, sum), x[["dimnames"]][["Docs"]])
 })

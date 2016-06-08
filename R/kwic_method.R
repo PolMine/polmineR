@@ -14,6 +14,7 @@ NULL
 #' @param left to the left
 #' @param right to the right
 #' @param meta metainformation to display
+#' @param cpos logical
 #' @param pAttribute typically 'word' or 'lemma'
 #' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
 #' @param neighbor only show kwic if a certain word is present
@@ -26,8 +27,16 @@ NULL
 #' use("polmineR.sampleCorpus")
 #' bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
 #' kwic(bt, "Integration")
-#' kwic(bt, "Integration", left=20, right=20, meta=c("text_date", "text_name", "text_party"))
-#' kwic(bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"', left=20, right=20, meta=c("text_date", "text_name", "text_party")) 
+#' kwic(
+#'   bt, "Integration",
+#'   left=20, right=20,
+#'   meta=c("text_date", "text_name", "text_party")
+#' )
+#' kwic(
+#'   bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+#'   left=20, right=20,
+#'   meta=c("text_date", "text_name", "text_party")
+#' ) 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 
@@ -36,41 +45,53 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @docType methods
 #' @rdname kwic
 setMethod("kwic", "context", function(.Object, meta=getOption("polmineR.meta"), cpos=FALSE, neighbor=NULL, verbose=FALSE){
-  metainformation <- lapply(
-    meta,
-    function(metadat){
-      sAttr <- paste(.Object@corpus, ".", metadat, sep="")
-      strucs <- cqi_cpos2struc(sAttr, unlist(lapply(.Object@cpos, function(x)x$node[1])))
-      as.utf8(cqi_struc2str(sAttr, strucs))
-    }
-    )
-  metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
-  colnames(metainformation) <- meta
-  conc <- lapply(
+  
+  tab <- lapply(
     c("left", "node", "right"),
     function(what){
       tokens <- unlist(lapply(
         .Object@cpos, function(x) {
-          paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")
-          }))
-      Encoding(tokens) <- .Object@encoding
-      as.utf8(tokens)
+          getTokenStream(
+            x[[what]],
+            corpus=.Object@corpus,
+            encoding=.Object@encoding,
+            pAttribute=.Object@pAttribute,
+            collapse=" ",
+            beautify=TRUE
+            )
+          # paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")
+        }))
+      # Encoding(tokens) <- .Object@encoding
+      # as.utf8(tokens)
     }
   )
-  conc <- data.frame(conc, stringsAsFactors=FALSE)
-  colnames(conc) <- c("left", "node", "right")
-  if (ncol(metainformation) > 0){
-    tab <- data.frame(metainformation, conc)  
-  } else {
-    tab <- conc
+  tab <- data.frame(tab, stringsAsFactors=FALSE)
+  colnames(tab) <- c("left", "node", "right")
+  
+  if (!is.null(meta)){
+    metainformation <- lapply(
+      meta,
+      function(metadat){
+        sAttr <- paste(.Object@corpus, ".", metadat, sep="")
+        strucs <- cqi_cpos2struc(sAttr, unlist(lapply(.Object@cpos, function(x)x$node[1])))
+        as.utf8(cqi_struc2str(sAttr, strucs))
+      }
+    )
+    metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
+    colnames(metainformation) <- meta
+    tab <- data.frame(metainformation, tab)  
   }
+  
   if (length(neighbor) > 0){
     tab <- tab[grep(neighbor, apply(tab, 1, function(x)paste(x[length(x)-2], x[length(x)]))),]
   } 
+  
   conc <- new(
     'kwic',
     corpus=.Object@corpus, left=.Object@left, right=.Object@right,
-    table=tab, metadata=meta, encoding=.Object@encoding
+    table=tab,
+    metadata=ifelse(is.null(meta), as.character(c()), meta),
+    encoding=.Object@encoding
     )
   if (cpos == TRUE) conc@cpos <- .Object@cpos
   if (!is.null(neighbor) || !length(neighbor) == 0) {conc@neighbor <- neighbor}

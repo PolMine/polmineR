@@ -4,6 +4,7 @@
 \name{context}
 \alias{as.matrix,contextBundle-method}
 \alias{context}
+\alias{context,character-method}
 \alias{context,contextBundle-method}
 \alias{context,cooccurrences-method}
 \alias{context,missing-method}
@@ -16,6 +17,8 @@
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
   mc = getOption("polmineR.mc"), verbose = TRUE)
+
+\S4method{context}{character}(.Object, query, ...)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 
@@ -44,6 +47,8 @@ context}
 only if token in positivelist is present. If positivelist is a character
 vector, it is assumed to provide regex expressions (incredibly long if the
 list is long)}
+
+\item{count}{logical}
 
 \item{method}{either "LL" (default) or "pmi", if NULL, calculating
 the statistics will be skipped}

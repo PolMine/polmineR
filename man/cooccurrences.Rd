@@ -44,7 +44,10 @@ get all cooccurrences in a partition
 }
 \examples{
 \dontrun{
-bt17merkel <- partition("PLPRTXT", list(text_lp="17", text_type="speech", text_speaker="Angela Merkel"))
+bt17merkel <- partition(
+ "PLPRTXT", text_lp="17", text_type="speech",
+ text_speaker="Angela Merkel"
+)
 bt17merkelColl <- cooccurrences(bt17merkel)
 }
 }

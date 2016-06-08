@@ -5,6 +5,7 @@
 #' @param object object to be converted
 #' @param meta metainformation i.e. s-attributes) to be displayed
 #' @param cpos logical, whether to add cpos as ids in span elements
+#' @param interjections logical, whether to format interjections
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown

@@ -45,7 +45,7 @@ setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word", char=
     dummy <- lapply(
       c(1:(n*length(pAttribute))),
       function(i){
-        str <- cqi_id2str(pAttrsCols[i], TF[[i]]) %>% as.utf8(from="latin1")
+        str <- as.utf8(cqi_id2str(pAttrsCols[i], TF[[i]]), from="latin1")
         TF[, eval(paste("token_", tokenNo[i], "_", names(pAttrsCols)[i], sep="")) := str , with=TRUE] 
       })
     # remove columns with ids

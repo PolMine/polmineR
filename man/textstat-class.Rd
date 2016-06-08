@@ -14,7 +14,6 @@
 \alias{head,textstat-method}
 \alias{names,textstat-method}
 \alias{nrow,textstat-method}
-\alias{pAttribute,textstat-method}
 \alias{round,textstat-method}
 \alias{rownames,textstat-method}
 \alias{show,textstat-method}
@@ -46,8 +45,6 @@ as.bundle(object, ...)
 \S4method{subset}{textstat}(x, ...)
 
 \S4method{as.data.table}{textstat}(x)
-
-\S4method{pAttribute}{textstat}(object)
 
 \S4method{[[}{textstat}(x, i)
 

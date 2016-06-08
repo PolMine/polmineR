@@ -23,6 +23,7 @@ NULL
 #'    \item{as.data.frame}{\code{signature(object = "comp")}: get the statistics table}
 #'    }
 #' @param .Object an object
+#' @param object an object
 #' @rdname comp-class
 #' @name comp-class
 #' @docType class

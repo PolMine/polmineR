@@ -27,6 +27,10 @@ hits(.Object, ...)
 \S4method{sample}{hits}(x, size)
 }
 \arguments{
+\item{.Object}{a character, partition or partitionBundle object}
+
+\item{...}{further parameters}
+
 \item{query}{character vector}
 
 \item{sAttribute}{s-attributes}
@@ -35,11 +39,15 @@ hits(.Object, ...)
 
 \item{size}{logical}
 
+\item{freq}{locial}
+
 \item{mc}{logical}
 
 \item{verbose}{logical}
 
 \item{progress}{logical}
+
+\item{x}{a hits object}
 }
 \description{
 A potentially useful worker.
@@ -53,8 +61,4 @@ A potentially useful worker.
 
 \item{\code{query}}{Object of class \code{"character"}}
 }}
-\examples{
-\dontrun{
-}
-}
 

@@ -16,6 +16,7 @@ NULL
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
+#' @param progress logical, whether to show progress bar
 #' @param ... shortcut to define partitions
 #' @param mc logical, whether to use multicore parallelization
 #' @param verbose logical, whether to provide progress information
@@ -109,7 +110,7 @@ setMethod("partitionBundle", "character", function(
     setNames(c(1:length(cposList)), names(cposList)),
     function(i){
       if (progress == TRUE) setTxtProgressBar(pb, i)
-      new(
+      newBundle <- new(
         "partition",
         corpus=.Object,
         encoding=bundle@encoding,
@@ -118,6 +119,8 @@ setMethod("partitionBundle", "character", function(
         cpos=matrix(cposList[[i]], ncol=2),
         sAttributeStrucs=names(def)[1]
       )
+      newBundle@strucs <- cqi_cpos2struc(sAttrVar, newBundle@cpos[,1])
+      newBundle
     })
   return(bundle)
 })
