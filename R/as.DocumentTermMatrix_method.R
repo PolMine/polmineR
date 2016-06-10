@@ -145,10 +145,10 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, v
     pAttribute <- x@objects[[1]]@pAttribute
     if (verbose == TRUE) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
   }
-  stopifnot(
-    col %in% colnames(x@objects[[1]]),
+  # stopifnot(
+    #    col %in% colnames(x@objects[[1]]),
     pAttribute %in% colnames(x@objects[[1]])
-  )
+  # )
   if (verbose == TRUE) message("... generating (temporary) key column")
   if (length(pAttribute) > 1){
     lapply(
@@ -210,7 +210,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
     TF <- DT[,.N, by=c("i", "id"), with=TRUE]
     setnames(TF, old="N", new="count")
     # TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), id)), with=FALSE]
-    TF[, "pAttribute" := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), TF[["id"]])), with=TRUE]
+    TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), TF[["id"]])), with=FALSE]
     if (verbose == TRUE) message("... generating keys")
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
