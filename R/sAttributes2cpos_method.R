@@ -11,12 +11,14 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
   if (xml == "flat"){
     # The function works nicely - potentially, it can be optimized, but I have tried many things.
     # Interestingly, the for-loop is more effective than a vectorized version
-    root <- paste(.Object@corpus, '.', .Object@sAttributeStrucs, sep='')
-    meta <- data.frame(struc=c(0:(cqi_attribute_size(root)-1)), select=rep(0, times=cqi_attribute_size(root)))
+    meta <- data.frame(
+      struc=c(0:(attribute_size(.Object@corpus, .Object@sAttributeStrucs)-1)),
+      select=rep(0, times=attribute_size(.Object@corpus, .Object@sAttributeStrucs))
+      )
     if (length(.Object@sAttributes) > 0) {
       for (s in names(.Object@sAttributes)){
         sattr <- paste(.Object@corpus, ".", s, sep="")
-        meta[,2] <- as.vector(cqi_struc2str(sattr, meta[,1]))
+        meta[,2] <- as.vector(struc2str(.Object@corpus, s, meta[,1]))
         Encoding(meta[,2]) <- .Object@encoding
         if (regex==FALSE) {
           meta <- meta[which(meta[,2] %in% .Object@sAttributes[[s]]),]
@@ -31,7 +33,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     }
     if (nrow(meta) != 0){
       .Object@cpos <- matrix(
-        data=unlist(lapply(meta[,1], function(x)cqi_struc2cpos(root, x))),
+        data=unlist(lapply(meta[,1], function(x) struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
         ncol=2, byrow=TRUE
       )
       .Object@strucs <- as.numeric(meta[,1])

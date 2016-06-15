@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.5.53
-Date: 2016-06-08
+Version: 0.5.54
+Date: 2016-06-14
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -30,8 +30,7 @@ Suggests:
     miniUI,
     doSNOW,
     rJava
-Remotes:
-    github::cran/rcqp
+Remotes: github::cran/rcqp
     github::PolMine/polmineR.sampleCorpus
 VignetteBuilder: knitr
 LazyData: yes
@@ -46,16 +45,16 @@ Collate:
     'adjustEncoding_method.R'
     'generics.R'
     'textstat_class.R'
+    'bundle_class.R'
     'polmineR_package.R'
     'partition_class.R'
-    'bundle_class.R'
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
     'as.markdown_method.R'
     'comp_class.R'
     'context_class.R'
-    'cooccurrences_class.R'
     'contextBundle_class.R'
+    'cooccurrences_class.R'
     'as.sparseMatrix_method.R'
     'as.speeches_method.R'
     'blapply_method.R'
@@ -76,6 +75,7 @@ Collate:
     'count_method.R'
     'tempcorpus.R'
     'cpos_method.R'
+    'cqi_interface.R'
     'hits_class.R'
     'dispersion_method.R'
     'dispersion_methods.R'

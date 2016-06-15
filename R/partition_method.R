@@ -72,7 +72,7 @@ setMethod("partition", "character", function(
 ) {
   corpus <- .Object
   stopifnot(xml %in% c("nested", "flat"))
-  if (!corpus %in% cqi_list_corpora()) stop("corpus is not an available CWB corpus")
+  if (!corpus %in% list_corpora()) stop("corpus is not an available")
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
   if (verbose==TRUE) message('Setting up partition ', name)
@@ -122,7 +122,7 @@ setMethod("partition", "character", function(
       Partition <- sAttributes2cpos(Partition, xml, regex)
     } else {
       warning("no anchor element in corpus registry")
-      Partition@cpos <- matrix(c(0, cqi_attribute_size(paste(.Object, pAttributes(.Object)[1], sep=".")) - 1), nrow = 1)
+      Partition@cpos <- matrix(c(0, attribute_size(.Object, pAttributes(.Object)[1]) - 1), nrow = 1)
     }
   } else {
     Partition@sAttributeStrucs <- names(def)[length(def)]
@@ -153,10 +153,8 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(.Object, ...) {
-  stopifnot(getOption("polmineR.corpus") %in% rcqp::cqi_list_corpora())
-  partition(
-    .Object=getOption("polmineR.corpus"), def=.Object, ...
-    )
+  stopifnot(getOption("polmineR.corpus") %in% list_corpora())
+  partition(.Object=getOption("polmineR.corpus"), def=.Object, ...)
 })
 
 #' @rdname partition
@@ -189,11 +187,14 @@ setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), rege
   if (verbose == TRUE) message('... getting strucs and corpus positions')
   # newPartition <- sAttributes2cpos(.Object, newPartition, def, regex)
   
-  sAttr <- paste(.Object@corpus, '.', names(def), sep='')
+  # sAttr <- paste(.Object@corpus, '.', names(def), sep='')
   if (.Object@xml == "flat") {
-    str <- cqi_struc2str(sAttr, .Object@strucs)    
+    str <- struc2str(.Object@corpus, names(def), .Object@strucs)    
   } else if (.Object@xml == "nested") {
-    str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, .Object@cpos[,1]))    
+    str <- struc2str(
+      .Object@corpus, names(def),
+      cpos2struc(.Object@corpus, names(def), .Object@cpos[,1])
+      )
   }
   Encoding(str) <- newPartition@encoding
   if (regex == FALSE) {
