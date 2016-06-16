@@ -12,9 +12,7 @@
 #' @param ... further parameters
 #' @rdname blapply
 #' @exportMethod blapply
-#' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
-#' @importFrom foreach foreach
 #' @rdname blapply
 #' @examples
 #' # use(polmineR.sampleCorpus)
@@ -31,33 +29,44 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
     pb <- txtProgressBar(min = 0, max = total, style = 3)
     # progressBar <- function(n) setTxtProgressBar(pb, n)
     i <- 0 # it's just to pass R CMD check
-    retval <- foreach(i=c(1:length(x))) %do% {
-      setTxtProgressBar(pb, i)
-      f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
-    }
+    retval <- lapply(
+      c(1:length(x)),
+      function(i){
+        setTxtProgressBar(pb, i)
+        f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+      }
+    )
+    close(pb)
+    # retval <- foreach(i=c(1:length(x))) %do% {
+    #   setTxtProgressBar(pb, i)
+    #   f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+    # }
   } else {
     backend <- getOption("polmineR.backend")
     stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis"))
-    if (requireNamespace(backend, quietly=TRUE)){
-      if (backend == "doSNOW"){
-        pb <- txtProgressBar(min = 0, max = length(x), style = 3)
-        progressBar <- function(n) setTxtProgressBar(pb, n)
-        cl <- snow::makeSOCKcluster(getOption("polmineR.backend"))
-        doSNOW::registerDoSNOW(cl)
-        snow::clusterCall(cl, function() library(polmineR))
-        snow::clusterExport(cl, names(list(...)))
-        retval <- foreach(
-          i=c(1:length(x)),
-          .options.snow=list(progress=progressBar)
-        ) %dopar% {
-          f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
-        }
-        snow::stopCluster(cl)
-        close(pb)
-      } else if (backend == "doMC"){
-        doMC::registerDoMC(cores=getOption("polmineR.backend"))  
-        retval <- foreach(i=c(1:length(x))) %dopar% {
-          f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+    if (requireNamespace("foreach", quietly=TRUE)){
+      if (requireNamespace(backend, quietly=TRUE)){
+        if (backend == "doSNOW"){
+          pb <- txtProgressBar(min = 0, max = length(x), style = 3)
+          progressBar <- function(n) setTxtProgressBar(pb, n)
+          cl <- snow::makeCluster(getOption("polmineR.cores"), type="SOCK")
+          # cl <- snow::makeSOCKcluster(getOption("polmineR.backend"))
+          doSNOW::registerDoSNOW(cl)
+          snow::clusterCall(cl, function() library(polmineR))
+          snow::clusterExport(cl, names(list(...)))
+          retval <- foreach::foreach(
+            i=c(1:length(x)),
+            .options.snow=list(progress=progressBar)
+          ) %dopar% {
+            f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+          }
+          snow::stopCluster(cl)
+          close(pb)
+        } else if (backend == "doMC"){
+          doMC::registerDoMC(cores=getOption("polmineR.backend"))  
+          retval <- foreach::foreach(i=c(1:length(x))) %dopar% {
+            f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+          }
         }
       }
     }

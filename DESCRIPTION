@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.5.54
-Date: 2016-06-10
+Version: 0.5.55
+Date: 2016-06-15
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -17,6 +17,7 @@ Imports:
     DT
 Suggests:
     polmineR.sampleCorpus,
+    doSNOW,
     markdown,
     htmltools,
     xlsx,
@@ -28,11 +29,7 @@ Suggests:
     bigtabulate,
     shiny,
     miniUI,
-    doSNOW,
     rJava
-Remotes:
-    github::cran/rcqp
-    github::PolMine/polmineR.sampleCorpus
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for corpus analysis using the CWB as an efficient backend.
@@ -46,16 +43,16 @@ Collate:
     'adjustEncoding_method.R'
     'generics.R'
     'textstat_class.R'
+    'bundle_class.R'
     'polmineR_package.R'
     'partition_class.R'
-    'bundle_class.R'
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
     'as.markdown_method.R'
     'comp_class.R'
     'context_class.R'
-    'cooccurrences_class.R'
     'contextBundle_class.R'
+    'cooccurrences_class.R'
     'as.sparseMatrix_method.R'
     'as.speeches_method.R'
     'blapply_method.R'
