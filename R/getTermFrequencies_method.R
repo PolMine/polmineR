@@ -23,7 +23,7 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
   if (length(pAttribute) == 1){
     TF <- getTermFrequencies(cpos, .Object@corpus, pAttribute)
   } else {
-    idList <- lapply(pAttr, function(p) cqi_cpos2id(p, cpos))
+    idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
     names(idList) <- paste(pAttribute, "_id", sep="")
     ID <- as.data.table(idList)
     setkeyv(ID, cols=names(idList))
@@ -35,7 +35,7 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
     dummy <- lapply(
       c(1:length(pAttribute)),
       function(i){
-        str <- as.utf8(cqi_id2str(pAttr[i], TF[[pAttr_id[i]]]), from=.Object@encoding)
+        str <- as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from=.Object@encoding)
         TF[, eval(pAttribute[i]) := str , with=TRUE] 
       })
     dummy <- lapply(pAttr_id, function(x) TF[, eval(x) := NULL, with=TRUE])
@@ -50,7 +50,7 @@ setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("wor
 
 #' @rdname getTermFrequencies-method
 setMethod("getTermFrequencies", "vector", function(.Object, corpus, pAttribute){
-  ids <- cqi_cpos2id(paste(corpus, ".", pAttribute, sep=""), .Object)
+  ids <- CQI$cpos2id(corpus, pAttribute, .Object)
   count <- tabulate(ids)
   TF <- data.table(
     id=c(0:length(count)),
@@ -60,34 +60,3 @@ setMethod("getTermFrequencies", "vector", function(.Object, corpus, pAttribute){
   setnames(TF, "id", paste(pAttribute, "_id", sep=""))
   TF[count > 0]
 })
-
-
-
-# #' @rdname getTermFrequencies-method
-# setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, encoding){
-#   pAttributeIds <- .Object
-#   chunks <- split(pAttributeIds[[1]], pAttributeIds[[2]])  
-#   chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
-#   chunksTabulatedWithRownames <- lapply(
-#     chunksTabulated,
-#     function(count) .id2str(count, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
-# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
-#   )
-#   chunksTabulatedWithEnhancedRownames <- lapply(
-#     names(chunksTabulatedWithRownames),
-#     function(id){
-#       count <- chunksTabulatedWithRownames[[id]]
-#       idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
-#       Encoding(idAsStr) <- encoding
-#       idAsStr <- enc2utf8(idAsStr)
-#       count[["token"]] <- paste(count[["token"]], "//", idAsStr, sep="")
-#       setcolorder(count, c("token", "ids", "count"))
-#       setkey(count, "token")
-#       count
-#     }
-# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
-#     )
-#   retval <- rbindlist(chunksTabulatedWithEnhancedRownames)
-#   setkey(retval, "token")
-#   retval
-# })

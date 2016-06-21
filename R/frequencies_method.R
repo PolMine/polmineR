@@ -18,8 +18,8 @@ setGeneric("frequencies", function(object, ...){standardGeneric("frequencies")})
 setMethod("frequencies", "partition", function(object, query, pAttribute=getOption("polmineR.pAttribute")) {
   if (length(query)==1) {
     cpos <- .queryCpos(query, object, pAttribute)
-    attr <- paste(object@corpus, '.', pAttribute, sep='')
-    explicit <- apply(cpos, 1, function(x) paste(cqi_cpos2str(attr, x[1]:x[2]), collapse=' '))
+    # attr <- paste(object@corpus, '.', pAttribute, sep='')
+    explicit <- apply(cpos, 1, function(x) paste(CQI$cpos2str(object@corpus, pAttribute, x[1]:x[2]), collapse=' '))
     result <- table(explicit)
     bag <- data.frame(
       queryResult=names(result),
@@ -36,7 +36,7 @@ setMethod("frequencies", "partition", function(object, query, pAttribute=getOpti
   } else if (length(query>1)){
     bag <- sapply(
       query,
-      function(x)(nrow(.queryCpos(x, object,pAttribute)))
+      function(x)(nrow(.queryCpos(x, object, pAttribute)))
     )
     bag <- unlist(bag)
     bag <- bag[order(bag, decreasing=TRUE)]

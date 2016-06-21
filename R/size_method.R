@@ -8,9 +8,7 @@ NULL
 setGeneric("size", function(x){UseMethod("size")})
 
 #' @rdname size-method
-setMethod("size", "character", function(x){
-  cqi_attribute_size(paste(x, "word", sep="."))
-  })
+setMethod("size", "character", function(x) CQI$attribute_size(x, "word"))
 
 #' @rdname size-method
 #' @exportMethod size

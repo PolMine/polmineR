@@ -16,8 +16,8 @@ setGeneric("getTokenStream", function(.Object, ...) standardGeneric("getTokenStr
 
 #' @rdname getTokenStream-method
 setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, encoding=NULL, collapse=NULL, beautify=TRUE, cpos=FALSE){
-  pAttr <- paste(corpus, pAttribute, sep=".")
-  tokens <- cqi_cpos2str(pAttr, .Object)
+  # pAttr <- paste(corpus, pAttribute, sep=".")
+  tokens <- CQI$cpos2str(corpus, pAttribute, .Object)
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
     tokens <- iconv(tokens, from=encoding, to="UTF-8")
@@ -25,7 +25,7 @@ setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, enc
   if (cpos == TRUE) names(tokens) <- .Object
   if (!is.null(collapse)) {
     if (beautify == TRUE){
-      pos <- cqi_cpos2str(paste(corpus, "pos", sep="."), .Object)
+      pos <- CQI$cpos2str(corpus, "pos", .Object)
       whitespace <- rep(collapse, times = length(.Object))
       whitespace[grep("\\$[\\.;,:!?]", pos, perl=T)] <- ""
       whitespace[grep("\\)", tokens, perl=T)] <- ""

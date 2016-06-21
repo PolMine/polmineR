@@ -18,8 +18,8 @@ setMethod("as.TermDocumentMatrix", "cooccurrencesBundle", function(x, col, direc
       tabDataFrame <- data.frame(
         tabMatrixPlus,
         characterKey=paste(
-          cqi_id2str(paste(x@corpus, '.', x@pAttribute, sep=""), tabMatrixPlus[,"idMin"]), "<->",
-          cqi_id2str(paste(x@corpus, '.', x@pAttribute, sep=""), tabMatrixPlus[,"idMax"]), sep=""
+          CQI$id2str(x@corpus, x@pAttribute, tabMatrixPlus[,"idMin"]), "<->",
+          CQI$id2str(x@corpus, x@pAttribute, tabMatrixPlus[,"idMax"]), sep=""
         ),
         stringsAsFactors=FALSE
       )

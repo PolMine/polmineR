@@ -77,10 +77,18 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
 
 #' @rdname count-method
 setMethod("count", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), verbose=TRUE){
-  stopifnot(.Object %in% cqi_list_corpora())
-  pAttr <- paste(.Object, ".", pAttribute, sep="")
-  total <- cqi_attribute_size(pAttr)
-  count <- sapply(query, function(query) cqi_id2freq(pAttr, cqi_str2id(pAttr, query)))
+  stopifnot(.Object %in% CQI$list_corpora())
+  # pAttr <- paste(.Object, ".", pAttribute, sep="")
+  total <- CQI$attribute_size(.Object, pAttribute)
+  count <- sapply(
+    query,
+    function(query)
+      CQI$id2freq(
+        .Object,
+        pAttribute,
+        CQI$str2id(.Object, pAttribute, query)
+        )
+    )
   freq <- count/total
   data.table(query=query, count=count, freq=freq)
 })

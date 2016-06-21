@@ -49,7 +49,6 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' a <- context(p, "Integration", "word")
 #' }
 #' @importFrom parallel mclapply
-#' @importFrom rcqp cqi_cpos2lbound cqi_cpos2rbound
 #' @import data.table
 #' @exportMethod context
 #' @rdname context-method
@@ -99,19 +98,19 @@ setMethod(
     .verboseOutput(message="getting cpos", verbose = verbose)
     hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
-      if (verbose==TRUE) message(' -> no hits')
+      if (verbose==TRUE) message('no hits for query, returning NULL object')
       return(NULL)
     }
-    if (!is.null(sAttribute)) hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
+    if (!is.null(sAttribute)) hits <- cbind(hits, CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1]))
     hits <- lapply(c(1: nrow(hits)), function(i) hits[i,])
 
     # generate positivelist, negativelist
-    stoplistIds <- unlist(lapply(stoplist, function(x) cqi_regex2id(pAttr, x)))
+    stoplistIds <- unlist(lapply(stoplist, function(x) CQI$regex2id(.Object@corpus, pAttribute, x)))
     if (is.numeric(positivelist)){
       positivelistIds <- positivelist
       if (verbose == TRUE) message("... using ids provided as positivelist")
     } else {
-      positivelistIds <- unlist(lapply(positivelist, function(x) cqi_regex2id(pAttr, x)))
+      positivelistIds <- unlist(lapply(positivelist, function(x) CQI$regex2id(.Object@corpus, pAttribute, x)))
     }
     
     .verboseOutput(message="generating contexts", verbose = verbose)
@@ -144,7 +143,7 @@ setMethod(
       count <- function(x) return(x)
       ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
       for (i in c(1:length(pAttribute))){
-        ctxt@stat[, eval(pAttribute[i]) := as.utf8(cqi_id2str(pAttr[i], ctxt@stat[[pAttribute[i]]]))]
+        ctxt@stat[, eval(pAttribute[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[pAttribute[i]]]))]
       }
       setnames(ctxt@stat, "V1", "count_window")
       setkeyv(ctxt@stat, pAttribute)
@@ -205,33 +204,39 @@ setMethod(
 .makeLeftRightCpos <- list(
   
   "expandToCpos" = function(set, left, right, corpus.sAttribute){
+    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
+    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
     cposLeft <- c((set[1] - left):(set[1]-1))
     cposRight <- c((set[2] + 1):(set[2] + right))
     if (!is.na(corpus.sAttribute)){
-      cposLeft <- cposLeft[which(cqi_cpos2struc(corpus.sAttribute, cposLeft)==set[3])]
-      cposRight <- cposRight[which(cqi_cpos2struc(corpus.sAttribute, cposRight)==set[3])]   
+      cposLeft <- cposLeft[which(CQI$cpos2struc(corpus, sAttribute, cposLeft)==set[3])]
+      cposRight <- cposRight[which(CQI$cpos2struc(corpus, sAttribute, cposRight)==set[3])]   
     }
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
   "expandToRegion" = function(set, left, right, corpus.sAttribute){
-    cposLeft <- c((cqi_cpos2lbound(corpus.sAttribute, set[1])):(set[1] - 1))
-    cposRight <- c((set[2] + 1):(cqi_cpos2rbound(corpus.sAttribute, set[1])))
+    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
+    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
+    cposLeft <- c((CQI$cpos2lbound(corpus, sAttribute, set[1])):(set[1] - 1))
+    cposRight <- c((set[2] + 1):(CQI$cpos2rbound(corpus, sAttribute, set[1])))
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
   "expandBeyondRegion" = function(set, left, right, corpus.sAttribute){
-    queryStruc <- cqi_cpos2struc(corpus.sAttribute, set[1])
-    maxStruc <- cqi_attribute_size(corpus.sAttribute)
+    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
+    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
+    queryStruc <- CQI$cpos2struc(corpus, sAttribute, set[1])
+    maxStruc <- CQI$attribute_size(corpus, sAttribute)
     # get left min cpos
     leftStruc <- queryStruc - left
     leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
-    leftCposMin <- cqi_struc2cpos(corpus.sAttribute, leftStruc)[1]
+    leftCposMin <- CQI$struc2cpos(corpus, sAttribute, leftStruc)[1]
     cposLeft <- c(leftCposMin:(set[1]-1))
     # get right max cpos
     rightStruc <- queryStruc + right
     rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
-    rightCposMax <- cqi_struc2cpos(corpus.sAttribute, rightStruc)[2]
+    rightCposMax <- CQI$struc2cpos(corpus, sAttribute, rightStruc)[2]
     cposRight <- c((set[2] + 1):rightCposMax)
     # handing it back
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
@@ -249,12 +254,11 @@ setMethod(
   cpos <- c(cposList$left, cposList$right)
   ids <- lapply(
     ctxt@pAttribute,
-    function(pAttr) cqi_cpos2id(paste(ctxt@corpus,".", pAttr, sep=""), cpos) 
+    function(pAttr) CQI$cpos2id(ctxt@corpus, pAttr, cpos) 
     )
   
   if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
     exclude <- FALSE
-    # ids <- cqi_cpos2id(paste(ctxt@corpus,".", ctxt@pAttribute, sep=""), cpos)
     if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids[[1]])) {exclude <- TRUE}
     if (!is.null(positivelistIds)) {
       if (any(positivelistIds %in% ids[[1]]) == FALSE) { exclude <- TRUE }
@@ -281,11 +285,12 @@ setMethod("context", "character", function(.Object, query, ...){
 setMethod("context", "partitionBundle", function(.Object, query, verbose=TRUE, ...){
   contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
-    corpus.pAttribute <- paste(
-      unique(lapply(.Object@objects, function(x) x@corpus)),
-      ".", pAttribute, sep=""
-      )
-    positivelist <- unlist(lapply(positivelist, function(x) cqi_regex2id(corpus.pAttribute, x)))
+    # corpus.pAttribute <- paste(
+    #   unique(lapply(.Object@objects, function(x) x@corpus)),
+    #   ".", pAttribute, sep=""
+    #   )
+    corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
+    positivelist <- unlist(lapply(positivelist, function(x) CQI$regex2id(corpus, pAttribute, x)))
   }
   
   contextBundle@objects <- sapply(
@@ -319,6 +324,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
     size=unique(subset(.Object@stat, .Object@stat[, "node"]==query)[,"size_window"])
   )  
   if (complete == TRUE){
+    sAttribute <- names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]]
     sAttr <- paste(
       newObject@corpus, ".",
       names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]],
@@ -331,7 +337,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
       verbose=FALSE
       )
     newObject@size <- nrow(hits)
-    hits <- cbind(hits, cqi_cpos2struc(sAttr, hits[,1]))
+    hits <- cbind(hits, CQI$cpos2struc(newObject@corpus, sAttribute, hits[,1]))
     newObject@cpos <- apply(
       hits, 1, function(row) {
         .makeLeftRightCpos[["expandToCpos"]](

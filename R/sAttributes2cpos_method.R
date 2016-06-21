@@ -12,13 +12,13 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     # The function works nicely - potentially, it can be optimized, but I have tried many things.
     # Interestingly, the for-loop is more effective than a vectorized version
     meta <- data.frame(
-      struc=c(0:(attribute_size(.Object@corpus, .Object@sAttributeStrucs)-1)),
-      select=rep(0, times=attribute_size(.Object@corpus, .Object@sAttributeStrucs))
+      struc=c(0:(CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)-1)),
+      select=rep(0, times=CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs))
       )
     if (length(.Object@sAttributes) > 0) {
       for (s in names(.Object@sAttributes)){
-        sattr <- paste(.Object@corpus, ".", s, sep="")
-        meta[,2] <- as.vector(struc2str(.Object@corpus, s, meta[,1]))
+        # sattr <- paste(.Object@corpus, ".", s, sep="")
+        meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, s, meta[,1]))
         Encoding(meta[,2]) <- .Object@encoding
         if (regex==FALSE) {
           meta <- meta[which(meta[,2] %in% .Object@sAttributes[[s]]),]
@@ -33,7 +33,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     }
     if (nrow(meta) != 0){
       .Object@cpos <- matrix(
-        data=unlist(lapply(meta[,1], function(x) struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
+        data=unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
         ncol=2, byrow=TRUE
       )
       .Object@strucs <- as.numeric(meta[,1])
@@ -48,8 +48,8 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       function(x) paste(.Object@corpus, '.', x, sep='')
     )
     sAttr <- rev(sAttr)
-    strucs <- c(0:(cqi_attribute_size(sAttr[1])-1))
-    metaVector <- cqi_struc2str(sAttr[1], strucs)
+    strucs <- c(0:(CQI$attribute_size(.Object@corpus, names(.Object@sAttributes)[1])-1))
+    metaVector <- CQI$struc2str(.Object@corpus, names(.Object@sAttributes)[1], strucs)
     Encoding(metaVector) <- .Object@encoding
     if (regex == FALSE) {
       strucs <- strucs[which(metaVector %in% .Object@sAttributes[[length(.Object@sAttributes)]])]
@@ -58,12 +58,12 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       strucs <- strucs[unique(unlist(positions))]
     }
     cpos <- matrix(
-      unlist(lapply(strucs, function(x) cqi_struc2cpos(sAttr[1], x))),
+      unlist(lapply(strucs, function(x) CQI$struc2cpos(.Object@corpus, names(.Object@sAttributes)[1], x))),
       byrow=TRUE, ncol=2
     )
     if (length(sAttr) > 1){
       for (i in c(2:length(sAttr))){
-        meta <- cqi_struc2str(sAttr[i], cqi_cpos2struc(sAttr[i], cpos[,1]))
+        meta <- CQI$struc2str(.Object@corpus, names(.Object@sAttributes)[i], CQI$cpos2struc(.Object@corpus, names(.Object@sAttributes)[i], cpos[,1]))
         Encoding(meta) <- .Object@encoding
         if (regex == FALSE) {
           hits <- which(meta %in% .Object@sAttributes[[names(sAttr)[i]]])

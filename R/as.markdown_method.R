@@ -30,7 +30,6 @@ setMethod("as.markdown", "partition", function(object, meta, cpos=TRUE){
   gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
 })
 
-#' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @rdname as.markdown
 setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, interjections=TRUE){
   # in the function call, meta is actually not needed, its required by the calling function
@@ -41,7 +40,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
       object@strucs <- c(object@strucs[1]:object@strucs[length(object@strucs)])
       object@cpos <- do.call(rbind, lapply(
         object@strucs,
-        function(i) cqi_struc2cpos(paste(object@corpus, object@sAttributeStrucs, sep="."), i)
+        function(i) CQI$struc2cpos(object@corpus, object@sAttributeStrucs, i)
       ))
     }
     # this is potential double work, enrich is also performed in the html-method
@@ -67,7 +66,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
     metaChange <- TRUE
     metadata <- matrix(apply(object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
-  type <- cqi_struc2str(paste(object@corpus, sAttribute, sep="."), object@strucs)
+  type <- CQI$struc2str(object@corpus, sAttribute, object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
@@ -92,18 +91,16 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
   markdown
 })
 
-#' @importFrom rcqp cqi_struc2str cqi_cpos2str cqi_cpos2struc
 #' @rdname as.markdown
 setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
   articles <- apply(object@cpos, 1, function(row) {
     cposSeries <- c(row[1]:row[2])
-    textStruc <- cqi_cpos2struc(paste(object@corpus, ".text", sep=""), row[1])
-    pStrucs <- rcqp::cqi_cpos2struc(paste(object@corpus, ".p_type", sep=""), cposSeries)
+    textStruc <- CQI$cpos2struc(object@corpus, ".text", row[1])
+    pStrucs <- CQI$cpos2struc(object@corpus, ".p_type", cposSeries)
     chunks <- split(cposSeries, pStrucs)
-    pTypes <- rcqp::cqi_struc2str(paste(object@corpus, ".p_type", sep=""), as.numeric(names(chunks)))
+    pTypes <- CQI$struc2str(object@corpus, ".p_type", as.numeric(names(chunks)))
     article <- Map(
       function(pType, chunk){
-        # wordVector <- rcqp::cqi_cpos2str(paste(object@corpus, ".word", sep=""), chunk)
         tokens <- getTokenStream(
           matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
           corpus=object@corpus, pAttribute="word", encoding=object@encoding,
@@ -120,7 +117,7 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
     metaInformation <- sapply(
       meta,
       function(x) {
-        retval <- cqi_struc2str(paste(object@corpus, ".", x, sep=""), textStruc)
+        retval <- CQI$struc2str(object@corpus, x, textStruc)
         Encoding(retval) <- object@encoding
         retval <- as.utf8(retval)
         retval

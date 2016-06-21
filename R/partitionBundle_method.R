@@ -96,13 +96,13 @@ setMethod("partitionBundle", "character", function(
   bundle@encoding <- polmineR::parseRegistry(.Object)[["charset"]]
   stopifnot(length(def) == 1)
   sAttrVar <- paste(.Object, names(def)[1], sep=".")
-  sAttrVarStrucs <- c(0:cqi_attribute_size(sAttrVar) - 1)
-  sAttrVarValues <- cqi_struc2str(sAttrVar, sAttrVarStrucs)
+  sAttrVarStrucs <- c(0:CQI$attribute_size(.Object, names(def)[1]) - 1)
+  sAttrVarValues <- CQI$struc2str(.Object, names(def)[1], sAttrVarStrucs)
   if (!is.null(def[[1]])) {
     sAttrVarStrucs <- sAttrVarStrucs[which(sAttrVarValues %in% def[[1]])]
-    sAttrVarValues <- cqi_struc2str(sAttrVar, sAttrVarStrucs)
+    sAttrVarValues <- CQI$struc2str(.Object, names(def)[1], sAttrVarStrucs)
   }
-  cposMatrix <- do.call(rbind, lapply(sAttrVarStrucs, function(x) cqi_struc2cpos(sAttrVar, x)))
+  cposMatrix <- do.call(rbind, lapply(sAttrVarStrucs, function(x) CQI$struc2cpos(.Object, names(def)[1], x)))
   cposList <- split(cposMatrix, f=sAttrVarValues)
   if (verbose == TRUE) message("... generating the partitions")
   if (progress == TRUE) pb <- txtProgressBar(max=length(cposList), style=3)
@@ -119,7 +119,7 @@ setMethod("partitionBundle", "character", function(
         cpos=matrix(cposList[[i]], ncol=2),
         sAttributeStrucs=names(def)[1]
       )
-      newBundle@strucs <- cqi_cpos2struc(sAttrVar, newBundle@cpos[,1])
+      newBundle@strucs <- CQI$cpos2struc(.Object, names(def)[1], newBundle@cpos[,1])
       newBundle
     })
   return(bundle)
@@ -151,9 +151,9 @@ setMethod("as.partitionBundle", "context", function(.Object, mc=FALSE){
     )
     newPartition <- enrich(newPartition, size=TRUE, pAttribute=.Object@pAttribute)
     newPartition@strucs <- c(
-      cqi_cpos2struc(paste(.Object@corpus, ".", .Object@sAttribute, sep=""), newPartition@cpos[1,1])
+      CQI$cpos2struc(.Object@corpus, .Object@sAttribute, newPartition@cpos[1,1])
       :
-        cqi_cpos2struc(paste(.Object@corpus, ".", .Object@sAttribute, sep=""), newPartition@cpos[1,2])
+        CQI$cpos2struc(.Object@corpus, .Object@sAttribute, newPartition@cpos[1,2])
     )
     newPartition
   }

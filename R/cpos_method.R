@@ -31,8 +31,11 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
   if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
   if (grepl('"', query) == FALSE) {
-    pAttr <- paste(.Object, '.', pAttribute, sep='')
-    cpos <- try(cqi_id2cpos(pAttr, cqi_str2id(pAttr, query)), silent=TRUE)
+    # pAttr <- paste(.Object, '.', pAttribute, sep='')
+    cpos <- try({
+      id <- CQI$str2id(.Object, pAttribute, query)
+      CQI$id2cpos(.Object, pAttribute, id)
+    })
     if (is(cpos)[1] != "try-error"){
       hits <- matrix(c(cpos, cpos), ncol=2)
     } else {
@@ -40,8 +43,8 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
       hits = NULL
     }
   } else if (grepl('"', query) == TRUE) {
-    cqi_query(.Object, "Hits", query)
-    cpos <- try(cqi_dump_subcorpus(paste(.Object, ":Hits", sep="")), silent=TRUE)
+    CQI$query(.Object, query)
+    cpos <- try(CQI$dump_subcorpus(.Object))
     if (is(cpos)[1] == "try-error"){
       if (verbose == TRUE) message("no hits for query -> ", query)
       hits <- NULL
@@ -60,8 +63,8 @@ setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose
   hits <- cpos(.Object@corpus, query=query, pAttribute, encoding=.Object@encoding, verbose=verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
-    corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
-    strucHits <- cqi_cpos2struc(corpus.sAttribute, hits[,1])
+    # corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
+    strucHits <- CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
     if (is(hits)[1] == "integer") hits <- matrix(data=hits, ncol=2)
     if (nrow(hits) == 0) hits <- NULL

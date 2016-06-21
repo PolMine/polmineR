@@ -59,10 +59,7 @@ setMethod("kwic", "context", function(.Object, meta=getOption("polmineR.meta"), 
             collapse=" ",
             beautify=TRUE
             )
-          # paste(cqi_cpos2str(paste(.Object@corpus,'.', .Object@pAttribute, sep=""), x[[what]]), collapse=" ")
         }))
-      # Encoding(tokens) <- .Object@encoding
-      # as.utf8(tokens)
     }
   )
   tab <- data.frame(tab, stringsAsFactors=FALSE)
@@ -72,9 +69,9 @@ setMethod("kwic", "context", function(.Object, meta=getOption("polmineR.meta"), 
     metainformation <- lapply(
       meta,
       function(metadat){
-        sAttr <- paste(.Object@corpus, ".", metadat, sep="")
-        strucs <- cqi_cpos2struc(sAttr, unlist(lapply(.Object@cpos, function(x)x$node[1])))
-        as.utf8(cqi_struc2str(sAttr, strucs))
+        # sAttr <- paste(.Object@corpus, ".", metadat, sep="")
+        strucs <- CQI$cpos2struc(.Object@corpus, metadat, unlist(lapply(.Object@cpos, function(x)x$node[1])))
+        as.utf8(CQI$struc2str(.Object@corpus, metadat, strucs))
       }
     )
     metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
@@ -148,7 +145,7 @@ setMethod("kwic", "character", function(
     message("sorry, not hits")
     return(NULL)
   }
-  cposMax <- rcqp::cqi_attribute_size(paste(.Object, pAttribute, sep="."))
+  cposMax <- CQI$attribute_size(.Object, pAttribute)
   cposList <- apply(
     hits, 1,
     function(row){
