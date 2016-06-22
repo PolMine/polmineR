@@ -1,30 +1,17 @@
-planned changes:
-----------------
- * streamline label-, labels- and names-method
- * names-method for partitionCluster, keynessCluster objects
- * remove empty rows in keynessCluster-object
- * show method for keynessCluster
- * documentation to be improved (kwic, keyness)
- * minus values for statistical tests if O < E in keyness and context method
- * log likelihood test for keyness method
- * check: rename keyness to tex
- * no documentation for keynessCluster-class (e.g. if I want to know the slots)
- * in partition-constructur parallel computation of word lists
- * in egoNetwork-method parallelisation
- * egoNetwork as a method on data.frame resulting from collocations
- * write documentation for as.matrix-method
- * check: why are there no negative chiSquare-values with tail(keyness-object)
- * rename statisticalTest to method
- * include partition as slot in classes
+v0.6.0
+* this is the first version that passes all CRAN tests and that is available via CRAN
+* the 'rcqp' remains the interface to the CWB, but usage of rcqp functions is wrapped into an new new CQI.rcqp (R6) class. CQI.perl and CQI.cqpserver are introduced as alternative interfaces to prepare portability to Windows systems
+* code in the vignette and method examples will be executed conditionally, if rcqp and the polmineR.sampleCorpus are available
+* the polmineR.sampleCorpus package is available in a drat repo at www.github.com/PolMine
+* a series of bug fixes
 
 v0.5.6
   * slot tf renamed to stat, class is data.table now
   * keyness_method moved to data.tables
-  * 
+
 
 v0.5.3
   * renamed collocations to cooccurrences, seems more appropriate
-  * 
   
 v0.5.2
   * multicore for term frequency counts (param for partition)
