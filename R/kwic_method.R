@@ -24,19 +24,23 @@ NULL
 #' @docType methods
 #' @seealso To read the whole text, see the \code{\link{read}}-method.
 #' @examples
-#' use("polmineR.sampleCorpus")
-#' bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
-#' kwic(bt, "Integration")
-#' kwic(
-#'   bt, "Integration",
-#'   left=20, right=20,
-#'   meta=c("text_date", "text_name", "text_party")
-#' )
-#' kwic(
-#'   bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
-#'   left=20, right=20,
-#'   meta=c("text_date", "text_name", "text_party")
-#' ) 
+#' \dontrun{
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   use("polmineR.sampleCorpus")
+#'   bt <- partition("PLPRBTTXT", def=list(text_date=".*"), regex=TRUE)
+#'   kwic(bt, "Integration")
+#'   kwic(
+#'     bt, "Integration",
+#'     left=20, right=20,
+#'     meta=c("text_date", "text_name", "text_party")
+#'   )
+#'   kwic(
+#'     bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+#'     left=20, right=20,
+#'     meta=c("text_date", "text_name", "text_party")
+#'   ) 
+#' }
+#' }
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 

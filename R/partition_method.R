@@ -38,25 +38,27 @@
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
-#' use(polmineR.sampleCorpus)
-#' spd <- partition(
-#'   "PLPRBTTXT", text_party="SPD", text_type="speech"
-#'   )
-#' kauder <- partition(
-#' "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
-#' )
-#' merkel <- partition(
-#'   "PLPRBTTXT", text_name=".*Merkel",
-#'   pAttribute="word", regex=TRUE
-#'   )
-#' sAttributes(merkel, "text_date")
-#' sAttributes(merkel, "text_name")
-#' merkel <- partition(
-#'   "PLPRBTTXT", text_name="Angela Dorothea Merkel",
-#'   text_date="2009-11-10", text_type="speech", pAttribute="word"
-#'   )
-#' merkel <- subset(merkel, !word %in% punctuation)
-#' merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'    use(polmineR.sampleCorpus)
+#'    spd <- partition(
+#'      "PLPRBTTXT", text_party="SPD", text_type="speech"
+#'      )
+#'    kauder <- partition(
+#'    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
+#'    )
+#'    merkel <- partition(
+#'      "PLPRBTTXT", text_name=".*Merkel",
+#'      pAttribute="word", regex=TRUE
+#'      )
+#'    sAttributes(merkel, "text_date")
+#'    sAttributes(merkel, "text_name")
+#'    merkel <- partition(
+#'      "PLPRBTTXT", text_name="Angela Dorothea Merkel",
+#'      text_date="2009-11-10", text_type="speech", pAttribute="word"
+#'      )
+#'    merkel <- subset(merkel, !word %in% punctuation)
+#'    merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#' }
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
@@ -122,7 +124,7 @@ setMethod("partition", "character", function(
       Partition <- sAttributes2cpos(Partition, xml, regex)
     } else {
       warning("no anchor element in corpus registry")
-      Partition@cpos <- matrix(c(0, attribute_size(.Object, pAttributes(.Object)[1]) - 1), nrow = 1)
+      Partition@cpos <- matrix(c(0, CQI$attribute_size(.Object, pAttributes(.Object)[1]) - 1), nrow = 1)
     }
   } else {
     Partition@sAttributeStrucs <- names(def)[length(def)]
@@ -153,7 +155,7 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(.Object, ...) {
-  stopifnot(getOption("polmineR.corpus") %in% list_corpora())
+  stopifnot(getOption("polmineR.corpus") %in% CQI$list_corpora())
   partition(.Object=getOption("polmineR.corpus"), def=.Object, ...)
 })
 
@@ -189,11 +191,11 @@ setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), rege
   
   # sAttr <- paste(.Object@corpus, '.', names(def), sep='')
   if (.Object@xml == "flat") {
-    str <- struc2str(.Object@corpus, names(def), .Object@strucs)    
+    str <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)    
   } else if (.Object@xml == "nested") {
-    str <- struc2str(
+    str <- CQI$struc2str(
       .Object@corpus, names(def),
-      cpos2struc(.Object@corpus, names(def), .Object@cpos[,1])
+      CQI$cpos2struc(.Object@corpus, names(def), .Object@cpos[,1])
       )
   }
   Encoding(str) <- newPartition@encoding

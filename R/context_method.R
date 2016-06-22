@@ -44,9 +44,9 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #'   context,partitionBundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
-#' \dontrun{
-#' p <- partition("PLPRBTTXT", list(text_type="speech"))
-#' a <- context(p, "Integration", "word")
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   p <- partition("PLPRBTTXT", list(text_type="speech"))
+#'   a <- context(p, "Integration", "word")
 #' }
 #' @importFrom parallel mclapply
 #' @import data.table

@@ -49,10 +49,13 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-test <- partition("PLPRBTTXT", text_year="2009", pAttribute=NULL)
-dispersion(test, query="Integration", pAttribute="word", sAttribute="text_date")
-foo <- dispersion(test, "Integration", sAttribute=c("text_date", "text_party"))
-dispersion(test, '"Integration.*"', sAttribute=c("text_year")) # note the brackets when using regex!
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use("polmineR.sampleCorpus")
+  test <- partition("PLPRBTTXT", text_year="2009", pAttribute=NULL)
+  integration <- dispersion(test, query="Integration", pAttribute="word", sAttribute="text_date")
+  integration <- dispersion(test, "Integration", sAttribute=c("text_date", "text_party"))
+  integration <- dispersion(test, '"Integration.*"', sAttribute=c("text_year"))
+}
 }
 \author{
 Andreas Blaette

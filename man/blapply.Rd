@@ -37,9 +37,11 @@ apply a function over a list or bundle with and without verbose
 parallelization
 }
 \examples{
-# use(polmineR.sampleCorpus)
-# bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-# speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
-# foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use(polmineR.sampleCorpus)
+  bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+  speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+  foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
+}
 }
 

@@ -1,4 +1,5 @@
-#' @importFrom rcqp cqi_cpos2id cqi_cpos2str cqi_cpos2id cqi_cpos2struc
+#' @importFrom rcqp cqi_cpos2id cqi_cpos2str
+#' @importFrom rcqp cqi_cpos2id
 #' @importFrom rcqp cqi_regex2id
 #' @importFrom rcqp cqi_id2str cqi_str2id cqi_id2freq cqi_id2cpos
 #' @importFrom rcqp cqi_lexicon_size cqi_list_corpora cqi_attribute_size cqi_attributes
@@ -6,11 +7,13 @@
 #' @importFrom rcqp cqi_query cqi_dump_subcorpus
 #' @importFrom rcqp cqi_cpos2lbound cqi_cpos2rbound
 #' @importFrom rcqp cqi_struc2str cqi_cpos2str cqi_cpos2struc
-#' @importFrom rcqp cqi_struc2str cqi_cpos2str
 #' @importFrom R6 R6Class
-CQI_rcqp <- R6Class(
+#' @export CQI.rcqp
+#' @rdname CQI
+CQI.rcqp <- R6Class(
   
-  "CQI_rcqp",
+  "CQI.rcqp",
+  inherit = CQI.super,
   
   public = list(
     

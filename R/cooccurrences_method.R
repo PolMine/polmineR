@@ -18,12 +18,10 @@
 #' @name cooccurrences
 #' @rdname cooccurrences
 #' @examples
-#' \dontrun{
-#' bt17merkel <- partition(
-#'  "PLPRTXT", text_lp="17", text_type="speech",
-#'  text_speaker="Angela Merkel"
-#' )
-#' bt17merkelColl <- cooccurrences(bt17merkel)
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   merkel <- partition("PLPRBTTXT", text_type="speech", text_name=".*Merkel", regex=TRUE)
+#'   merkel <- enrich(merkel, pAttribute="word")
+#'   cooc <- cooccurrences(merkel)
 #' }
 setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
 
@@ -185,8 +183,8 @@ setMethod(
       lapply(
         c(1:length(pAttribute)),
         function(i){
-          TF[, eval(aColsStr[i]) := cqi_id2str(pAttr[i], as.utf8(TF[[aColsId[i]]])), with=TRUE]
-          TF[, eval(bColsStr[i]) := cqi_id2str(pAttr[i], as.utf8(TF[[bColsId[i]]])), with=TRUE]
+          TF[, eval(aColsStr[i]) := as.utf8(cqi_id2str(pAttr[i], TF[[aColsId[i]]])), with=TRUE]
+          TF[, eval(bColsStr[i]) := as.utf8(cqi_id2str(pAttr[i], TF[[bColsId[i]]])), with=TRUE]
           TF[, eval(aColsId[i]) := NULL]
           TF[, eval(bColsId[i]) := NULL]
         }

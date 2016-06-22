@@ -55,13 +55,15 @@ setGeneric("as.TermDocumentMatrix", function(x, ...){UseMethod("as.TermDocumentM
 setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermMatrix")})
 
 #' @examples
-#' \dontrun{
-#' foo <- as.TermDocumentMatrix(
-#'   x="ZEIT", pAttribute="word", sAttribute="text_id",
-#'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-#'   to="1951_08_gespraeche-zum-interzonenhandel.html",
-#'   robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
-#' )
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'    use("polmineR.sampleCorpus")
+#'    p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
+#'    pB <- partitionBundle(p, def=list(text_date=NULL))
+#'    pB <- enrich(pB, pAttribute="word")
+#'    tdm <- as.TermDocumentMatrix(pB, col="count")
+#'    
+#'    pB2 <- partitionBundle(p, def=list(text_date=NULL))
+#'    tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
 #' }
 #' @rdname as.DocumentTermMatrix
 setMethod(
@@ -122,7 +124,7 @@ setMethod(
     pAttributeStrings <- getTerms(x, pAttribute=pAttribute, robust=robust)
     if (!exists("sAttributeStrings")){
       if (verbose == TRUE) message("... id2str for sAttribute")
-      sAttributeStrings <- struc2str(x, sAttribute, c(fromStruc:toStruc))  
+      sAttributeStrings <- CQI$struc2str(x, sAttribute, c(fromStruc:toStruc))  
     }
     mat <- simple_triplet_matrix(
       i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
@@ -208,7 +210,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
     TF <- DT[,.N, by=c("i", "id"), with=TRUE]
     setnames(TF, old="N", new="count")
     # TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, id)), with=FALSE]
-    TF[, "pAttribute" := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]])), with=TRUE]
+    TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]])), with=FALSE]
     if (verbose == TRUE) message("... generating keys")
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)

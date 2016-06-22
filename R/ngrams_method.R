@@ -39,7 +39,7 @@ setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word", char=
     count <- function(x) return(x)
     TF <- DT[, count(.N), by=c(eval(colnames(DT))), with=TRUE]
     setnames(TF, "V1", "count")
-    pAttrsCols <- rep(pAttrs, times=n)
+    pAttrsCols <- rep(pAttribute, times=n)
     tokenNo <- unlist(lapply(c(1:n), function(x) rep(x, times=length(pAttribute))))
     # convert ids to strings
     dummy <- lapply(

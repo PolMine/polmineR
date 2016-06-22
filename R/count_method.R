@@ -26,18 +26,22 @@ NULL
 #' @aliases count-method
 #' @seealso count
 #' @examples
-#' use("polmineR.sampleCorpus")
-#' debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' count(debates, query="Arbeit") # get frequencies for one token
-#' count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
-#' count("PLPRBTTXT", c("Migration", "Integration"), "word")
+#' \dontrun{
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   use("polmineR.sampleCorpus")
+#'   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#'   x <- count(debates, "Arbeit") # get frequencies for one token
+#'   x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+#'   x <- count("PLPRBTTXT", c("Migration", "Integration"), "word")
 #' 
-#' debates <- partitionBundle(
-#'   .Object="PLPRBTTXT",
-#'   def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
-#'   regex=TRUE, mc=FALSE, verbose=FALSE
-#' )
-#' count(debates, c("Arbeit", "Integration", "Umwelt"))
+#'   debates <- partitionBundle(
+#'     .Object="PLPRBTTXT",
+#'     def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+#'     regex=TRUE, mc=FALSE, verbose=FALSE
+#'   )
+#'   aiu <- count(debates, c("Arbeit", "Integration", "Umwelt"))
+#' }
+#' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method

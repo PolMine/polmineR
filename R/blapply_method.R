@@ -17,10 +17,12 @@
 #' @importFrom foreach foreach
 #' @rdname blapply
 #' @examples
-#' # use(polmineR.sampleCorpus)
-#' # bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' # speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
-#' # foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   use(polmineR.sampleCorpus)
+#'   bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#'   foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
+#' }
 setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 
 #' @rdname blapply
@@ -37,9 +39,9 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
     }
   } else {
     backend <- getOption("polmineR.backend")
-    stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis"))
+    stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis", "doParallel"))
     if (requireNamespace(backend, quietly=TRUE)){
-      if (backend == "doSNOW"){
+      if (backend %in% c("doSNOW")){
         pb <- txtProgressBar(min = 0, max = length(x), style = 3)
         progressBar <- function(n) setTxtProgressBar(pb, n)
         cl <- snow::makeSOCKcluster(getOption("polmineR.backend"))

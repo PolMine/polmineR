@@ -33,7 +33,7 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE, mc=FALSE, verbose=TRUE, progress=TRUE){
-  stopifnot(.Object %in% rcqp::CQI$list_corpora())
+  stopifnot(.Object %in% CQI$list_corpora())
   # check availability of sAttributes before proceeding
   if (!is.null(sAttribute)) {
     stopifnot(all(sAttribute %in% sAttributes(.Object)))

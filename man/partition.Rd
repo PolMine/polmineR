@@ -7,7 +7,6 @@
 \alias{partition,list-method}
 \alias{partition,missing-method}
 \alias{partition,partition-method}
-\alias{partitionGadget}
 \title{Initialize a partition}
 \usage{
 partition(.Object, ...)
@@ -24,8 +23,6 @@ partition(.Object, ...)
 \S4method{partition}{partition}(.Object, def = NULL, name = c(""),
   regex = FALSE, pAttribute = NULL, id2str = TRUE, type = NULL,
   verbose = TRUE, mc = FALSE, ...)
-
-partitionGadget()
 }
 \arguments{
 \item{.Object}{character-vector - the CWB-corpus to be used}
@@ -83,25 +80,27 @@ or more. If two or more p-attributes are provided, The occurrence of combination
 A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
-use(polmineR.sampleCorpus)
-spd <- partition(
-  "PLPRBTTXT", text_party="SPD", text_type="speech"
-  )
-kauder <- partition(
-"PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
-)
-merkel <- partition(
-  "PLPRBTTXT", text_name=".*Merkel",
-  pAttribute="word", regex=TRUE
-  )
-sAttributes(merkel, "text_date")
-sAttributes(merkel, "text_name")
-merkel <- partition(
-  "PLPRBTTXT", text_name="Angela Dorothea Merkel",
-  text_date="2009-11-10", text_type="speech", pAttribute="word"
-  )
-merkel <- subset(merkel, !word \%in\% punctuation)
-merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+   use(polmineR.sampleCorpus)
+   spd <- partition(
+     "PLPRBTTXT", text_party="SPD", text_type="speech"
+     )
+   kauder <- partition(
+   "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
+   )
+   merkel <- partition(
+     "PLPRBTTXT", text_name=".*Merkel",
+     pAttribute="word", regex=TRUE
+     )
+   sAttributes(merkel, "text_date")
+   sAttributes(merkel, "text_name")
+   merkel <- partition(
+     "PLPRBTTXT", text_name="Angela Dorothea Merkel",
+     text_date="2009-11-10", text_type="speech", pAttribute="word"
+     )
+   merkel <- subset(merkel, !word \%in\% punctuation)
+   merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
+}
 }
 \author{
 Andreas Blaette

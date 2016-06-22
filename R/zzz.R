@@ -27,7 +27,22 @@
   
 }
 
-# CQI <- CQI_rcqp$new()
-# CQI <- cqi:::CQI$new()
-# CQI$authenticate()
 
+if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){
+  packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
+  CQI <- CQI.cqpserver$new()
+} else if (Sys.getenv("POLMINER_INTERFACE") == "perl"){
+  packageStartupMessage("Using perl scripts as interface to access CWB corpora")
+  CQI <- CQI.cqpserver$new()
+} else if (Sys.getenv("POLMINER_INTERFACE") == "cqpserver"){
+  packageStartupMessage("Using cqpserver as interface to access CWB corpora")
+  CQI <- CQI.cqpserver$new()
+} else if (Sys.getenv("POLMINER_INTERFACE") == ""){
+  if (require("rcqp", quietly = TRUE)){
+    packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
+    CQI <- CQI.rcqp$new()
+  } else {
+    packageStartupMessage("Using perl scripts as interface to access CWB corpora")
+    CQI <- CQI.perl$new()
+  }
+}

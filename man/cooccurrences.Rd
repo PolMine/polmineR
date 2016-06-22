@@ -43,12 +43,10 @@ a cooccurrences-class object
 get all cooccurrences in a partition
 }
 \examples{
-\dontrun{
-bt17merkel <- partition(
- "PLPRTXT", text_lp="17", text_type="speech",
- text_speaker="Angela Merkel"
-)
-bt17merkelColl <- cooccurrences(bt17merkel)
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  merkel <- partition("PLPRBTTXT", text_type="speech", text_name=".*Merkel", regex=TRUE)
+  merkel <- enrich(merkel, pAttribute="word")
+  cooc <- cooccurrences(merkel)
 }
 }
 \author{
