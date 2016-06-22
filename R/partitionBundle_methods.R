@@ -65,7 +65,7 @@ setMethod("merge", "partitionBundle", function(x, name=c("")){
   message('... generating corpus positions')
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
-    function(s){cqi_struc2cpos(paste(y@corpus,'.', y@sAttributeStrucs, sep=''),s)})
+    function(s){CQI$struc2cpos(y@corpus, y@sAttributeStrucs, s)})
     )))
   rownames(cpos) <- NULL
   y@cpos <- cpos

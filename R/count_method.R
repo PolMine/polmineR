@@ -26,18 +26,22 @@ NULL
 #' @aliases count-method
 #' @seealso count
 #' @examples
-#' use("polmineR.sampleCorpus")
-#' debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#' count(debates, query="Arbeit") # get frequencies for one token
-#' count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
-#' count("PLPRBTTXT", c("Migration", "Integration"), "word")
+#' \dontrun{
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   use("polmineR.sampleCorpus")
+#'   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+#'   x <- count(debates, "Arbeit") # get frequencies for one token
+#'   x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+#'   x <- count("PLPRBTTXT", c("Migration", "Integration"), "word")
 #' 
-#' debates <- partitionBundle(
-#'   .Object="PLPRBTTXT",
-#'   def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
-#'   regex=TRUE, mc=FALSE, verbose=FALSE
-#' )
-#' count(debates, c("Arbeit", "Integration", "Umwelt"))
+#'   debates <- partitionBundle(
+#'     .Object="PLPRBTTXT",
+#'     def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
+#'     regex=TRUE, mc=FALSE, verbose=FALSE
+#'   )
+#'   aiu <- count(debates, c("Arbeit", "Integration", "Umwelt"))
+#' }
+#' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
@@ -77,10 +81,18 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, 
 
 #' @rdname count-method
 setMethod("count", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), verbose=TRUE){
-  stopifnot(.Object %in% cqi_list_corpora())
-  pAttr <- paste(.Object, ".", pAttribute, sep="")
-  total <- cqi_attribute_size(pAttr)
-  count <- sapply(query, function(query) cqi_id2freq(pAttr, cqi_str2id(pAttr, query)))
+  stopifnot(.Object %in% CQI$list_corpora())
+  # pAttr <- paste(.Object, ".", pAttribute, sep="")
+  total <- CQI$attribute_size(.Object, pAttribute)
+  count <- sapply(
+    query,
+    function(query)
+      CQI$id2freq(
+        .Object,
+        pAttribute,
+        CQI$str2id(.Object, pAttribute, query)
+        )
+    )
   freq <- count/total
   data.table(query=query, count=count, freq=freq)
 })

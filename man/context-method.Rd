@@ -72,9 +72,9 @@ region. For formulating the query, CPQ syntax may be used (see
 examples). Statistical tests available are log-likelihood, t-test, pmi.
 }
 \examples{
-\dontrun{
-p <- partition("PLPRBTTXT", list(text_type="speech"))
-a <- context(p, "Integration", "word")
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  p <- partition("PLPRBTTXT", list(text_type="speech"))
+  a <- context(p, "Integration", "word")
 }
 }
 \author{

@@ -33,7 +33,7 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE, mc=FALSE, verbose=TRUE, progress=TRUE){
-  stopifnot(.Object %in% rcqp::cqi_list_corpora())
+  stopifnot(.Object %in% CQI$list_corpora())
   # check availability of sAttributes before proceeding
   if (!is.null(sAttribute)) {
     stopifnot(all(sAttribute %in% sAttributes(.Object)))
@@ -63,7 +63,7 @@ setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttrib
   DT[, query := unlist(lapply(names(corpusPositions), function(x) rep(x, times=length(corpusPositions[[x]]))))]
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
-      DT[, eval(sAttribute[i]) := cqi_struc2str(sAttrs[i], cqi_cpos2struc(sAttrs[i], DT[["cpos"]]))]
+      DT[, eval(sAttribute[i]) := CQI$struc2str(.Object, sAttribute[i], CQI$cpos2struc(.Object, sAttribute[i], DT[["cpos"]]))]
     }
     count <- function(x) return(x)
     TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
@@ -71,13 +71,13 @@ setMethod("hits", "character", function(.Object, query, sAttribute=NULL, pAttrib
     if (freq == TRUE) size <- TRUE
     if (size == TRUE){
       META <- as.data.table(
-        lapply(setNames(sAttrs, sAttribute), function(sAttr) cqi_struc2str(sAttr, c(1:(cqi_attribute_size(sAttr) -1))))
+        lapply(setNames(sAttribute, sAttribute), function(sAttr) CQI$struc2str(.Object, sAttr, c(1:(CQI$attribute_size(.Object, sAttr) -1))))
       )
       cposMatrix <- do.call(
         rbind,
         mclapply(
-          c(1:(cqi_attribute_size(sAttrs[1]) -1)),
-          function(x) cqi_struc2cpos(sAttrs[1], x), mc.cores=getOption("polmineR.cores"))
+          c(1:(CQI$attribute_size(.Object, sAttribute[1]) -1)),
+          function(x) CQI$struc2cpos(.Object, sAttribute[1], x), mc.cores=getOption("polmineR.cores"))
         )
       META[, size := cposMatrix[,2] - cposMatrix[,1] + 1]
       SIZE <- META[, sum(size), by=eval(sAttribute), with=TRUE]
@@ -101,18 +101,18 @@ setMethod("hits", "partition", function(.Object, query, sAttribute=NULL, pAttrib
   if (freq == TRUE) size <- TRUE
   sAttrs <- paste(.Object@corpus, sAttribute, sep=".")
   DT <- hits(.Object@corpus, query=query, sAttribute=NULL, pAttribute=pAttribute, mc=mc, progress=progress)@dt
-  DT[, "struc" := cqi_cpos2struc(paste(.Object@corpus, .Object@sAttributeStrucs, sep="."), DT[["cpos"]]), with=TRUE]
+  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos"]]), with=TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
-      DT[, eval(sAttribute[i]) := cqi_struc2str(sAttrs[i], cqi_cpos2struc(sAttrs[i], DT[["cpos"]]))]
+      DT[, eval(sAttribute[i]) := CQI$struc2str(.Object@corpus, sAttribute[i], CQI$cpos2struc(.Object@corpus, sAttribute[i], DT[["cpos"]]))]
     }
     count <- function(x) ifelse(is.na(x), 0, x)
     TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
     setnames(TF, old="V1", new="count")
     if (size == TRUE){
       META <- as.data.table(
-        lapply(setNames(sAttrs, sAttribute), function(sAttr) cqi_struc2str(sAttr, .Object@strucs))
+        lapply(setNames(sAttribute, sAttribute), function(sAttr) CQI$struc2str(.Object@corpus, sAttr, .Object@strucs))
       )
       META[, size := .Object@cpos[,2] - .Object@cpos[,1] + 1]
       SIZE <- META[, sum(size), by=eval(sAttribute), with=TRUE]
@@ -189,7 +189,7 @@ setMethod("hits", "partitionBundle", function(
     }
     countDT <- rbindlist(countDTlist)
     if (verbose == TRUE) message("... matching data.tables")
-    countDT[, "struc" := cqi_cpos2struc(paste(corpus, sAttributeStrucs, sep="."), countDT[["V1"]]), with=TRUE]
+    countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with=TRUE]
     setkeyv(countDT, cols="struc")
     DT <- strucDT[countDT] # merge
     DT[, "dummy" := 1, with=TRUE]

@@ -917,3 +917,94 @@
 #'   pimpedBundle
 #' })
 #' 
+
+
+
+
+# #' @rdname getTermFrequencies-method
+# setMethod("getTermFrequencies", "list", function(.Object, pAttributes, corpus, encoding){
+#   pAttributeIds <- .Object
+#   chunks <- split(pAttributeIds[[1]], pAttributeIds[[2]])  
+#   chunksTabulated <- lapply(chunks, function(x) getTermFrequencies(x))
+#   chunksTabulatedWithRownames <- lapply(
+#     chunksTabulated,
+#     function(count) .id2str(count, corpus=corpus, pAttribute=pAttributes[1], encoding=encoding)
+# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
+#   )
+#   chunksTabulatedWithEnhancedRownames <- lapply(
+#     names(chunksTabulatedWithRownames),
+#     function(id){
+#       count <- chunksTabulatedWithRownames[[id]]
+#       idAsStr <- cqi_id2str(paste(corpus, '.', pAttributes[2], sep=''), as.numeric(id))
+#       Encoding(idAsStr) <- encoding
+#       idAsStr <- enc2utf8(idAsStr)
+#       count[["token"]] <- paste(count[["token"]], "//", idAsStr, sep="")
+#       setcolorder(count, c("token", "ids", "count"))
+#       setkey(count, "token")
+#       count
+#     }
+# #    , mc.cores=ifelse(mc==FALSE, 1, mc)
+#     )
+#   retval <- rbindlist(chunksTabulatedWithEnhancedRownames)
+#   setkey(retval, "token")
+#   retval
+# })
+
+
+
+# 
+# #' @rdname partition
+# setMethod("partition", "missing", function() {
+#   if (requireNamespace("shiny", quietly=TRUE) && requireNamespace("miniUI", quietly=TRUE)){
+#     ui <- miniUI::miniPage(
+#       shiny::tags$head(shiny::tags$style(shiny::HTML("
+#                                 .form-group, .form-control, .selectize-input, .selectize-dropdown, .radio-inline{
+#                                 font-size: 90%;
+#                                 }
+#                                 "))),
+#       miniUI::gadgetTitleBar(
+#         "make partition",
+#         right = miniUI::miniTitleBarButton("done", "Generate", primary = TRUE)
+#       ),
+#       miniUI::miniContentPanel(
+#         shiny::textInput(inputId = "name", label = "Partition name:", value = "FOO"),
+#         shiny::selectInput("corpus", "Corpus:", choices = cqi_list_corpora(), selected = "PLPRTXT"),
+#         shiny::textInput(inputId = "def", label = "sAttributes:", value = 'text_year="2012"'),
+#         shiny::selectInput(inputId="pAttribute", label="pAttribute:", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
+#         shiny::radioButtons("regex", "Use regular expressions:", choices = list("TRUE", "FALSE"), inline = TRUE),
+#         shiny::radioButtons("xml", "XML type:", choices = list("flat", "nested"), inline = TRUE)
+#       ),
+#       
+#       miniUI::miniButtonBlock(
+#         shiny::actionButton("check", " check", icon=shiny::icon("stethoscope")),
+#         shiny::actionButton("save", " save", icon = shiny::icon("save"))
+#       )
+#       )
+#     
+#     server <- function(input, output, session) {
+#       shiny::observeEvent(input$done, {
+#         shiny::stopApp(
+#           partition(
+#             as.character(input$corpus),
+#             def=eval(parse(text=paste("list(", input$def, ")", sep=""))),
+#             name=input$name,
+#             pAttribute=input$pAttribute,
+#             regex=input$regex,
+#             xml=input$xml,
+#             mc=input$mc,
+#             verbose=FALSE
+#           )
+#         )
+#       })
+#       shiny::observeEvent(input$check, {
+#         print("yeah")
+#       })
+#       
+#     }
+#     shiny::runGadget(ui, server)
+#   }
+# })
+
+#' #' @export partitionGadget
+#' #' @rdname partition
+#' partitionGadget <- function() partition()

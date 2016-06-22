@@ -55,13 +55,15 @@ setGeneric("as.TermDocumentMatrix", function(x, ...){UseMethod("as.TermDocumentM
 setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermMatrix")})
 
 #' @examples
-#' \dontrun{
-#' foo <- as.TermDocumentMatrix(
-#'   x="ZEIT", pAttribute="word", sAttribute="text_id",
-#'   from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-#'   to="1951_08_gespraeche-zum-interzonenhandel.html",
-#'   robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
-#' )
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'    use("polmineR.sampleCorpus")
+#'    p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
+#'    pB <- partitionBundle(p, def=list(text_date=NULL))
+#'    pB <- enrich(pB, pAttribute="word")
+#'    tdm <- as.TermDocumentMatrix(pB, col="count")
+#'    
+#'    pB2 <- partitionBundle(p, def=list(text_date=NULL))
+#'    tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
 #' }
 #' @rdname as.DocumentTermMatrix
 setMethod(
@@ -86,15 +88,15 @@ setMethod(
         strucs <- c(fromStruc:toStruc)
         sAttributeStrings <- sAttributeStrings[strucs]
       } else {
-        toStruc <- cqi_attribute_size(sAttr) - 1
+        toStruc <- CQI$attribute_size(corpus = x, attribute = sAttribute) - 1
         fromStruc <- 0
         strucs <- c(0:toStruc) 
       }
     }
     .freqMatrix <- function(i){
       struc <- strucs[i]
-      cpos <- cqi_struc2cpos(sAttr, struc)
-      ids <- cqi_cpos2id(pAttr, c(cpos[1]:cpos[2]))
+      cpos <- CQI$struc2cpos(corpus = x, sAttribute, struc)
+      ids <- CQI$cpos2id(x, pAttribute, c(cpos[1]:cpos[2]))
       freqVector <- tabulate(ids + 1)
       noZeroCount <- which(freqVector != 0)
       freqMatrix <- matrix(
@@ -117,14 +119,12 @@ setMethod(
     }
     if (verbose == TRUE) message("... combining results")
     freqMatrixAgg <- do.call(rbind, freqMatrixList)
-    lexiconSize <- cqi_lexicon_size(pAttr)
+    lexiconSize <- CQI$lexicon_size(x, pAttribute)
     if (verbose == TRUE) message("... id2str for pAttribute")
-    # pAttributeStrings <- cqi_id2str(pAttr, c(0:lexiconSize)) # slow!
     pAttributeStrings <- getTerms(x, pAttribute=pAttribute, robust=robust)
-    # pAttributeStrings <- iconv(pAttributeStrings, from=getEncoding(x), to="UTF-8")                            
     if (!exists("sAttributeStrings")){
       if (verbose == TRUE) message("... id2str for sAttribute")
-      sAttributeStrings <- cqi_struc2str(sAttr, c(fromStruc:toStruc))  
+      sAttributeStrings <- CQI$struc2str(x, sAttribute, c(fromStruc:toStruc))  
     }
     mat <- simple_triplet_matrix(
       i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
@@ -203,14 +203,14 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
     )
     cposMatrix <- do.call(rbind, cposList)
     if (verbose == TRUE) message("... getting ids")
-    id_vector <- cqi_cpos2id(paste(x[[1]]@corpus, pAttribute, sep="."), cposMatrix[,2])
+    id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
     DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
     if (verbose == TRUE) message("... performing count")
     # TF <- DT[,.N, by=.(i, id)]
     TF <- DT[,.N, by=c("i", "id"), with=TRUE]
     setnames(TF, old="N", new="count")
-    # TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), id)), with=FALSE]
-    TF[, pAttribute := as.utf8(cqi_id2str(paste(x[[1]]@corpus, pAttribute, sep="."), TF[["id"]])), with=FALSE]
+    # TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, id)), with=FALSE]
+    TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]])), with=FALSE]
     if (verbose == TRUE) message("... generating keys")
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)

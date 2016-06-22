@@ -9,12 +9,12 @@ setGeneric("sAttributes", function(object,...){standardGeneric("sAttributes")})
 #' @rdname sAttributes-method
 setMethod("sAttributes", "character", function(object, sAttribute=NULL, unique=TRUE, regex=NULL){
   if (is.null(sAttribute)){
-    return(cqi_attributes(object, "s"))
+    return(CQI$attributes(object, "s"))
   } else {
-    if (object %in% cqi_list_corpora()) {
-      ret <- cqi_struc2str(
-        paste(object, '.', sAttribute, sep=''),
-        c(0:(cqi_attribute_size(paste(object, '.', sAttribute, sep=''))-1))
+    if (object %in% CQI$list_corpora()) {
+      ret <- CQI$struc2str(
+        object, sAttribute,
+        c(0:(CQI$attribute_size(object, sAttribute)-1))
         )
       if (!is.null(regex)) {
         ret <- grep(regex, ret, value=TRUE)
@@ -45,9 +45,9 @@ setMethod(
   "sAttributes", "partition",
   function (object, sAttribute=NULL) {
     if (is.null(sAttribute)){
-      ret <- cqi_attributes(object@corpus, "s")
+      ret <- CQI$attributes(object@corpus, "s")
     } else {
-      ret <- unique(cqi_struc2str(paste(object@corpus, '.', sAttribute, sep=''), object@strucs));
+      ret <- unique(CQI$struc2str(object@corpus, sAttribute, object@strucs));
       Encoding(ret) <- object@encoding;  
     }
     ret

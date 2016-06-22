@@ -26,20 +26,20 @@ setMethod("meta", "partition", function(.Object, sAttributes) {
         sAttributes,
         USE.NAMES=TRUE,
         function(x) { 
-          tmp <- cqi_struc2str(paste(.Object@corpus, '.', x, sep=''), .Object@strucs)
+          tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
           Encoding(tmp) <- .Object@encoding
           tmp
         }
       )
     )
   } else if (.Object@xml == "nested") {
-    meta <- vapply(sAttributes, FUN.VALUE="character", USE.NAMES=TRUE, function(x)paste(.Object@corpus, '.', x, sep=''))
+    # meta <- vapply(sAttributes, FUN.VALUE="character", USE.NAMES=TRUE, function(x)paste(.Object@corpus, '.', x, sep=''))
     tab <- data.frame(
       sapply(
-        meta,
+        sAttributes,
         USE.NAMES=TRUE,
         function(x) {
-          tmp <- cqi_struc2str(x, cqi_cpos2struc(x, .Object@cpos[,1]))
+          tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
           Encoding(tmp) <- .Object@encoding
           tmp
         }

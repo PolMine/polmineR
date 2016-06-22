@@ -13,15 +13,15 @@ setGeneric("getTerms", function(.Object, ...) standardGeneric("getTerms"))
 
 #' @rdname getTerms-method
 setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, verbose=TRUE, mc=FALSE){
-  pAttr <- paste(.Object, ".", pAttribute, sep="")
+  # pAttr <- paste(.Object, ".", pAttribute, sep="")
   corpusEncoding <- getEncoding(.Object)
-  totalNoTerms <- cqi_lexicon_size(pAttr)
+  totalNoTerms <- CQI$lexicon_size(.Object, pAttribute)
   ids <- c(0:(totalNoTerms-1))
   
   if (mc == FALSE){
-    strs <- cqi_id2str(pAttr, ids)
+    strs <- CQI$id2str(.Object, pAttribute, ids)
   } else if (mc == TRUE){
-    .getTerms <- function(ids) cqi_id2str(pAttr, ids)
+    .getTerms <- function(ids) CQI$id2str(.Object, pAttribute, ids)
     warning("... not yet implemented")
   }
   Encoding(strs) <- corpusEncoding

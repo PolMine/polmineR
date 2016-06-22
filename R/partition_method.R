@@ -38,25 +38,27 @@
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
-#' use(polmineR.sampleCorpus)
-#' spd <- partition(
-#'   "PLPRBTTXT", text_party="SPD", text_type="speech"
-#'   )
-#' kauder <- partition(
-#' "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
-#' )
-#' merkel <- partition(
-#'   "PLPRBTTXT", text_name=".*Merkel",
-#'   pAttribute="word", regex=TRUE
-#'   )
-#' sAttributes(merkel, "text_date")
-#' sAttributes(merkel, "text_name")
-#' merkel <- partition(
-#'   "PLPRBTTXT", text_name="Angela Dorothea Merkel",
-#'   text_date="2009-11-10", text_type="speech", pAttribute="word"
-#'   )
-#' merkel <- subset(merkel, !word %in% punctuation)
-#' merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'    use(polmineR.sampleCorpus)
+#'    spd <- partition(
+#'      "PLPRBTTXT", text_party="SPD", text_type="speech"
+#'      )
+#'    kauder <- partition(
+#'    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
+#'    )
+#'    merkel <- partition(
+#'      "PLPRBTTXT", text_name=".*Merkel",
+#'      pAttribute="word", regex=TRUE
+#'      )
+#'    sAttributes(merkel, "text_date")
+#'    sAttributes(merkel, "text_name")
+#'    merkel <- partition(
+#'      "PLPRBTTXT", text_name="Angela Dorothea Merkel",
+#'      text_date="2009-11-10", text_type="speech", pAttribute="word"
+#'      )
+#'    merkel <- subset(merkel, !word %in% punctuation)
+#'    merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#' }
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
@@ -72,7 +74,7 @@ setMethod("partition", "character", function(
 ) {
   corpus <- .Object
   stopifnot(xml %in% c("nested", "flat"))
-  if (!corpus %in% cqi_list_corpora()) stop("corpus is not an available CWB corpus")
+  if (!corpus %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
   if (verbose==TRUE) message('Setting up partition ', name)
@@ -122,7 +124,7 @@ setMethod("partition", "character", function(
       Partition <- sAttributes2cpos(Partition, xml, regex)
     } else {
       warning("no anchor element in corpus registry")
-      Partition@cpos <- matrix(c(0, cqi_attribute_size(paste(.Object, pAttributes(.Object)[1], sep=".")) - 1), nrow = 1)
+      Partition@cpos <- matrix(c(0, CQI$attribute_size(.Object, pAttributes(.Object)[1]) - 1), nrow = 1)
     }
   } else {
     Partition@sAttributeStrucs <- names(def)[length(def)]
@@ -153,10 +155,8 @@ setMethod("partition", "character", function(
 
 #' @rdname partition
 setMethod("partition", "list", function(.Object, ...) {
-  stopifnot(getOption("polmineR.corpus") %in% rcqp::cqi_list_corpora())
-  partition(
-    .Object=getOption("polmineR.corpus"), def=.Object, ...
-    )
+  stopifnot(getOption("polmineR.corpus") %in% CQI$list_corpora())
+  partition(.Object=getOption("polmineR.corpus"), def=.Object, ...)
 })
 
 #' @rdname partition
@@ -189,11 +189,14 @@ setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), rege
   if (verbose == TRUE) message('... getting strucs and corpus positions')
   # newPartition <- sAttributes2cpos(.Object, newPartition, def, regex)
   
-  sAttr <- paste(.Object@corpus, '.', names(def), sep='')
+  # sAttr <- paste(.Object@corpus, '.', names(def), sep='')
   if (.Object@xml == "flat") {
-    str <- cqi_struc2str(sAttr, .Object@strucs)    
+    str <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)    
   } else if (.Object@xml == "nested") {
-    str <- cqi_struc2str(sAttr, cqi_cpos2struc(sAttr, .Object@cpos[,1]))    
+    str <- CQI$struc2str(
+      .Object@corpus, names(def),
+      CQI$cpos2struc(.Object@corpus, names(def), .Object@cpos[,1])
+      )
   }
   Encoding(str) <- newPartition@encoding
   if (regex == FALSE) {
@@ -222,60 +225,3 @@ setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), rege
   newPartition
 })
 
-
-# 
-# #' @rdname partition
-# setMethod("partition", "missing", function() {
-#   if (requireNamespace("shiny", quietly=TRUE) && requireNamespace("miniUI", quietly=TRUE)){
-#     ui <- miniUI::miniPage(
-#       shiny::tags$head(shiny::tags$style(shiny::HTML("
-#                                 .form-group, .form-control, .selectize-input, .selectize-dropdown, .radio-inline{
-#                                 font-size: 90%;
-#                                 }
-#                                 "))),
-#       miniUI::gadgetTitleBar(
-#         "make partition",
-#         right = miniUI::miniTitleBarButton("done", "Generate", primary = TRUE)
-#       ),
-#       miniUI::miniContentPanel(
-#         shiny::textInput(inputId = "name", label = "Partition name:", value = "FOO"),
-#         shiny::selectInput("corpus", "Corpus:", choices = cqi_list_corpora(), selected = "PLPRTXT"),
-#         shiny::textInput(inputId = "def", label = "sAttributes:", value = 'text_year="2012"'),
-#         shiny::selectInput(inputId="pAttribute", label="pAttribute:", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
-#         shiny::radioButtons("regex", "Use regular expressions:", choices = list("TRUE", "FALSE"), inline = TRUE),
-#         shiny::radioButtons("xml", "XML type:", choices = list("flat", "nested"), inline = TRUE)
-#       ),
-#       
-#       miniUI::miniButtonBlock(
-#         shiny::actionButton("check", " check", icon=shiny::icon("stethoscope")),
-#         shiny::actionButton("save", " save", icon = shiny::icon("save"))
-#       )
-#       )
-#     
-#     server <- function(input, output, session) {
-#       shiny::observeEvent(input$done, {
-#         shiny::stopApp(
-#           partition(
-#             as.character(input$corpus),
-#             def=eval(parse(text=paste("list(", input$def, ")", sep=""))),
-#             name=input$name,
-#             pAttribute=input$pAttribute,
-#             regex=input$regex,
-#             xml=input$xml,
-#             mc=input$mc,
-#             verbose=FALSE
-#           )
-#         )
-#       })
-#       shiny::observeEvent(input$check, {
-#         print("yeah")
-#       })
-#       
-#     }
-#     shiny::runGadget(ui, server)
-#   }
-# })
-
-#' @export partitionGadget
-#' @rdname partition
-partitionGadget <- function() partition()

@@ -1,13 +1,14 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.5.55
-Date: 2016-06-15
+Version: 0.6.0
+Date: 2016-06-22
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
-    methods,
     rcqp,
+    methods,
+    R6,
     data.table,
     slam,
     Matrix,
@@ -30,6 +31,10 @@ Suggests:
     shiny,
     miniUI,
     rJava
+<<<<<<< HEAD
+=======
+Additional_repositories: https://polmine.github.io/drat/
+>>>>>>> dev
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for corpus analysis using the CWB as an efficient backend.
@@ -37,8 +42,14 @@ Description: Tools for corpus analysis using the CWB as an efficient backend.
     carry out and basic statistical operations. Beyond that, it is intended to
     serve as an interface to packages implementing advanced statistical
     procedures.
+BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
+URL: https://www.github.com/PolMine/polmineR
 Collate:
+    'CQI.R'
+    'CQI.cqpserver.R'
+    'CQI.perl.R'
+    'CQI.rcqp.R'
     'TermDocumentMatrix_methods.R'
     'adjustEncoding_method.R'
     'generics.R'
@@ -116,4 +127,5 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
+    'zzz.R'
 RoxygenNote: 5.0.1

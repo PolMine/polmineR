@@ -76,13 +76,15 @@ generated. A special case is the generation of the sparse matrix based on a
 too.
 }
 \examples{
-\dontrun{
-foo <- as.TermDocumentMatrix(
-  x="ZEIT", pAttribute="word", sAttribute="text_id",
-  from="1946_01_auf-einen-von-bomben-zerschlagenen-engel.html",
-  to="1951_08_gespraeche-zum-interzonenhandel.html",
-  robust="LESUNG", mc=TRUE, verbose=TRUE, rmBlank=TRUE
-)
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+   use("polmineR.sampleCorpus")
+   p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
+   pB <- partitionBundle(p, def=list(text_date=NULL))
+   pB <- enrich(pB, pAttribute="word")
+   tdm <- as.TermDocumentMatrix(pB, col="count")
+   
+   pB2 <- partitionBundle(p, def=list(text_date=NULL))
+   tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
 }
 }
 \author{

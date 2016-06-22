@@ -23,7 +23,7 @@ setMethod("cooccurrence", "partition", function(object, x, y, dist=5, as.charact
     retval <- nrow(cpos)
   } else {
     retval <- apply(cpos, 1, function(cposPair) {
-      paste(cqi_cpos2str(paste(object@corpus, '.', 'word', sep=''), c(cposPair[1]:cposPair[2])), collapse=" ")
+      paste(CQI$cpos2str(object@corpus, 'word', c(cposPair[1]:cposPair[2])), collapse=" ")
     })
     retval <- iconv(retval, from=object@encoding, to="UTF-8")
   }

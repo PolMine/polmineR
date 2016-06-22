@@ -7,14 +7,6 @@ NULL
 #' @include generics.R 
 NULL
 
-#' @importFrom rcqp cqi_cpos2id cqi_cpos2str cqi_cpos2id cqi_cpos2struc
-#' @importFrom rcqp cqi_regex2id
-#' @importFrom rcqp cqi_id2str cqi_str2id cqi_id2freq cqi_id2cpos
-#' @importFrom rcqp cqi_lexicon_size cqi_list_corpora cqi_attribute_size cqi_attributes
-#' @importFrom rcqp cqi_struc2str cqi_struc2cpos
-#' @importFrom rcqp cqi_query cqi_dump_subcorpus
-NULL
-
 #' @importFrom tm TermDocumentMatrix DocumentTermMatrix
 #' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
 NULL
@@ -67,33 +59,6 @@ NULL
 # setOldClass("dfmSparse") # class defined in quanteda-package
 setOldClass("igraph")
 setOldClass("html")
-
-
-.onLoad <- function (lib, pkg) {
-  options(
-    "polmineR.project" = c(""),
-		"polmineR.projectDir" = c(""),
-		"polmineR.corpus" = "PLPRBTTXT",
-		"polmineR.pAttribute" = "word",
-		"polmineR.left" = 5,
-		"polmineR.right" = 5,
-		"polmineR.minSignificance" = 3.84,
-		"polmineR.minFrequency" = 5,
-		"polmineR.filterType" = "include",
-		"polmineR.lineview" = FALSE,
-		"polmineR.meta " =  as.character(c()),
-		"polmineR.mc" = FALSE,
-		"polmineR.cores" = 2,
-		"polmineR.consoleEncoding" = "UTF-8",
-		"polmineR.smtpServer" = "",
-		"polmineR.smtpPort" = "",
-		"polmineR.email" = "",
-		"polmineR.partitionDir" = "",
-		"polmineR.browse" = FALSE,
-		"polmineR.backend" = "doSNOW",
-		"polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$"
-    )
-}
 
 
 

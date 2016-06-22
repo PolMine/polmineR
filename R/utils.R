@@ -23,23 +23,21 @@
   query <- .adjustEncoding(query, Partition@encoding)
   if (grepl('"', query) == FALSE) {
     pAttr <- paste(Partition@corpus, '.', pAttribute, sep='')
-    cpos <- try(cqi_id2cpos(pAttr, cqi_str2id(pAttr, query)), silent=TRUE)
+    cpos <- try(CQI$id2cpos(Partition@corpus, pAttribute, CQI$str2id(Partition@corpus, pAttribute, query)), silent=TRUE)
     if (is(cpos)[1] != "try-error"){
       hits <- as.matrix(data.frame(cpos, cpos))
     }
   } else if (grepl('"', query) == TRUE) {
-    cqi_query(Partition@corpus, "Hits", query)
-    cpos <- try(cqi_dump_subcorpus(paste(Partition@corpus, ":Hits", sep="")), silent=TRUE)
+    CQI$query(Partition@corpus, query)
+    cpos <- try(CQI$dump_subcorpus(Partition@corpus))
     if(is(cpos)[1] != "try-error"){
       hits <- matrix(cpos[,1:2], ncol=2)
     }
   }
   if (is(cpos)[1] != "try-error") {
-    strucHits <- cqi_cpos2struc(
-      paste(
-        Partition@corpus, ".",
-        names(Partition@sAttributes)[length(Partition@sAttributes)],
-        sep=""),
+    strucHits <- CQI$cpos2struc(
+      Partition@corpus, 
+      names(Partition@sAttributes)[length(Partition@sAttributes)],
       hits[,1]
       )
     hits <- hits[which(strucHits %in% Partition@strucs),]
@@ -51,21 +49,6 @@
     hits = NULL
   }
   hits
-}
-
-
-#' get the values of a s-attribute in a corpus
-#' 
-#' The function is called by \code{partition}
-#' 
-#' @param corpus e.g. "PLPRBTTXT"
-#' @param sattribute a structural attribute, e.g. "text_year"
-#' @return returns a character vector
-#' @author Andreas Blaette
-#' @noRd
-.sattribute2values <- function(corpus, sattribute){
-  s <- paste(corpus, ".", sattribute, sep="")
-  unique(cqi_struc2str(s, c(1:cqi_attribute_size(s))))
 }
 
 #' The current time 
@@ -170,9 +153,9 @@ flatten <- function(object){
 #' @export datesPeriod
 datesPeriod <- function(corpus, dateRange) {
   if (requireNamespace("chron", quietly=TRUE)){
-    sAttributeDate <- cqi_attributes(corpus, 's')[grep('date', cqi_attributes(corpus, 's'))]
-    sAttr <- paste(corpus, '.', sAttributeDate, sep='')
-    allDatesInCorpus <- unique(cqi_struc2str(sAttr, c(0:(cqi_attribute_size(sAttr)-1))))
+    sAttributeDate <- CQI$attributes(corpus, 's')[grep('date', CQI$attributes(corpus, 's'))]
+    # sAttr <- paste(corpus, '.', sAttributeDate, sep='')
+    allDatesInCorpus <- unique(CQI$struc2str(corpus, sAttributeDate, c(0:(CQI$attribute_size(corpus, sAttributeDate)-1))))
     daysSequence <- strftime(chron::seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
     daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
     retval <- daysInCorpus    
