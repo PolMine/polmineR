@@ -64,7 +64,7 @@ setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttri
 #' @rdname dispersion-method
 setMethod("dispersion", "hits", function(.Object, sAttribute, freq=FALSE){
   if (length(sAttribute) == 2){
-    retval <- dcast.data.table(
+    retval <- data.table::dcast.data.table(
       .Object@dt, formula(paste(sAttribute, collapse="~")),
       value.var=ifelse(freq == TRUE, "freq", "count"), fun.aggregate=sum, fill=0
       )  

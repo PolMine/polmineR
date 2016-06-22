@@ -135,11 +135,8 @@ setMethod("partition", "character", function(
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
-      stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(.Object)))
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', paste(pAttribute, collapse=", "), ')')  
-      Partition@stat <- getTermFrequencies(.Object=Partition, pAttribute=pAttribute, id2str=id2str, mc=mc)
-      Partition@pAttribute <- pAttribute
-      Partition <- sort(Partition, "count")
+      Partition <- enrich(Partition, pAttribute=pAttribute, verbose=verbose, id2str=id2str, mc=mc)
+      # Partition <- sort(Partition, "count")
     }
     if (!is.null(meta)) {
       if (verbose==TRUE) message('... setting up metadata (table and list of values)')

@@ -27,9 +27,10 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE, ...){
   if (size == TRUE) object@size <- size(object)
   if (!is.null(pAttribute)) {
-      if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
-      object@stat <- getTermFrequencies(.Object=object, pAttribute=pAttribute, id2str=id2str, mc=mc)
-      object@pAttribute <- pAttribute
+    stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
+    if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+    object@stat <- getTermFrequencies(.Object=object, pAttribute=pAttribute, id2str=id2str, mc=mc)
+    object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
     if (verbose==TRUE) message('... setting up metadata (table and list of values)')

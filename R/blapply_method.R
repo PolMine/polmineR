@@ -12,7 +12,7 @@
 #' @param ... further parameters
 #' @rdname blapply
 #' @exportMethod blapply
-#' @importFrom foreach %dopar%
+#' @importFrom foreach foreach %dopar%
 #' @rdname blapply
 #' @examples
 #' if (require(polmineR.sampleCorpus) && require(rcqp)){

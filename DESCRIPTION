@@ -18,7 +18,7 @@ Imports:
     DT
 Suggests:
     polmineR.sampleCorpus,
-    doSNOW,
+    doParallel,
     markdown,
     htmltools,
     xlsx,
@@ -31,10 +31,7 @@ Suggests:
     shiny,
     miniUI,
     rJava
-<<<<<<< HEAD
-=======
 Additional_repositories: https://polmine.github.io/drat/
->>>>>>> dev
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for corpus analysis using the CWB as an efficient backend.

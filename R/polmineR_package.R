@@ -1,12 +1,10 @@
-# roxygen2::roxygenise(package.dir="/Users/blaette/Lab/github/polmineR", roclets=c("rd", "namespace"), clean=T)
-# R CMD build polmineR --no-build-vignettes
-# R CMD check polmineR_0.4.58.tar.gz --no-build-vignettes --no-examples --no-vignettes
-NULL
-
-
 #' @include generics.R 
 NULL
 
+
+#' @importFrom graphics dotchart grid par plot points rect text
+#' @importFrom stats formula ftable setNames xtabs
+#' @importFrom utils View browseURL download.file setTxtProgressBar txtProgressBar untar write.csv
 #' @importFrom tm TermDocumentMatrix DocumentTermMatrix
 #' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
 NULL

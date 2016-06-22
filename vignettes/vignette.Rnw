@@ -6,9 +6,9 @@
 %\VignetteEngine{knitr}
 
 \begin{document}
-\title{An introduction to the \textit{polmineR-package} (v0.5.53)}
+\title{An introduction to the \textit{polmineR} (v0.6.0)}
 \author{Andreas Blaette (andreas.blaette@uni-due.de)}
-\date{June 08, 2016}
+\date{June 22, 2016}
 \maketitle
 
 <<setup, include=FALSE>>=
@@ -51,25 +51,45 @@ Apart from R packages rcqp requires (plyr, for instance) that can be installed e
 
 \subsection{Loading the package}
 
-As mentioned, the rcqp package is the most important dependency of the driller. It is important to set the CORPUS\_REGISTRY environment variable \textit{before} you load the driller and the rcqp package. Note that it will not be possible to change the path to the registry once you have loaded rcqp/the driller. This is caused by rcqp, not the driller.
+As mentioned, the rcqp package is the most important dependency of the driller. The CORPUS\_REGISTRY environment variable \textit{before} needs to be set before you load polmineR.
+
+<<require, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
+if (
+  require(rcqp, quietly = T)
+  && require(polmineR.sampleCorpus, quietly = T)
+  ){
+  execute <- TRUE
+} else {
+  execute <- FALSE
+}
+@
+
 
 <<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
-library(polmineR.sampleCorpus)
-library(polmineR)
-use("polmineR.sampleCorpus")
+if (execute){
+  library(polmineR)
+  library(polmineR.sampleCorpus)
+  use("polmineR.sampleCorpus")
+}
 @
 
 \section{Default settings}
-To keep the number of required inputs low when calling individual functions, the package stores a set of variables in an object called 'settings'.
+Default settings are stored in the general options settings.
 
 <<setDrillingControls, echo=TRUE, results="tex">>=
-options("polmineR.corpus" = "PLPRBTTXT")
-options("polmineR.left" = 15)
-options("polmineR.right" = 15)
-options("polmineR.mc" = FALSE)
+if (execute){
+  # to view all options defined for polmineR 
+  options()[grep("polmineR", names(options()))]
+  
+  # setting options
+  options("polmineR.corpus" = "PLPRBTTXT")
+  options("polmineR.left" = 15)
+  options("polmineR.right" = 15)
+  options("polmineR.mc" = FALSE)
+}
 @
 
-Note that when looking at the documentation of functions you will not always see that the settings from drillingControls are used. Where parameters default to NULL, the function will usually get the settings from the drillingControls object in the global environment.
+Various methods will get default values from the options set. See the documentation for kwic, for instance.
 
 \section{Setting up a partition}
 Usually, any session using the driller will start with initializing a partition. The return of a call of the partition function is a S4 partition object, and almost every function of the driller package will require a partition object as an input.
@@ -77,14 +97,21 @@ Usually, any session using the driller will start with initializing a partition.
 In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
 
 <<partitionInit, echo=TRUE, results="tex", tidy=FALSE>>=
-bt <- partition("PLPRBTTXT", text_type="speech")
-cdu <- partition("PLPRBTTXT", text_type="speech", text_party="CDU_CSU")
+if (execute){
+  bt <- partition("PLPRBTTXT", text_type="speech")
+  cdu <- partition(
+    "PLPRBTTXT",
+    text_type="speech", text_party="CDU_CSU"
+    )
+}
 @
 
 To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
 
 <<showPartition, echo=TRUE, results="tex", tidy=FALSE>>=
-cdu
+if (execute){
+  cdu
+}
 @
 
 Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
@@ -92,27 +119,32 @@ Note that is possible to omit steps of the initialization of a partition object,
 There are two methods to set up a partition, 'grep' and 'in'. If the method is 'in', you can provide a character vector for every s-attribute. If the method is "grep", all s-Attribute values are kept that match a regex. As an example for the 'in'-procedure, if you want a partition comprising of CDU/CSU and FDP as parties, you might formulate:\footnote{Sometimes, you will want to be more specific about the start and end date of a partition. In this case, you can set a dateRange.}
 
 <<partitionMethod, echo=TRUE, results="tex", tidy=FALSE>>=
-coalition <- partition(
-  "PLPRBTTXT",
-  text_type="speech", text_party=c("CDU_CSU", "FDP")
-  )
+if (execute){
+  coalition <- partition(
+    "PLPRBTTXT",
+    text_type="speech", text_party=c("CDU_CSU", "FDP")
+    )
+}
 @
 
 If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the function.
 
 \section{Getting a tm TermDocumentMatrix}
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
-<<cluster, echo=TRUE, results="tex", tidy=FALSE, message=FALSE>>=
-base <- partition("PLPRBTTXT", text_type="speech")
-parties <- partitionBundle(
-  base, def=list(text_party=NULL),
-  pAttribute="word", progress=TRUE, verbose=FALSE
-  )
-# tdm <- as.TermDocumentMatrix(parties, col="word")
-# class(tdm) # to see what it is
-# show(tdm)
-# m <- as.matrix(tdm) # turn it into an ordinary matrix
-# m[c("Integration", "Zuwanderung", "Migration"),]
+
+<<cluster, echo=TRUE, results="tex", tidy=FALSE, eval=FALSE, message=FALSE>>=
+if (execute){
+  base <- partition("PLPRBTTXT", text_type="speech")
+  parties <- partitionBundle(
+    base, def=list(text_party=NULL),
+    pAttribute="word", progress=TRUE, verbose=FALSE
+    )
+  tdm <- as.TermDocumentMatrix(parties, col="count")
+  class(tdm) # to see what it is
+  show(tdm)
+  m <- as.matrix(tdm) # turn it into an ordinary matrix
+  m[c("Integration", "Zuwanderung", "Migration"),]
+}
 @
 
 
@@ -121,11 +153,13 @@ The partition object has a method that will give you immediate access to view th
 
 
 <<context, echo=TRUE, results="tex", tidy=FALSE>>=
-integration <- context(
-   bt, "Integration", pAttribute="word",
-  left=20, right=20
-)
-summary(integration)
+if (execute){
+  integration <- context(
+     bt, "Integration", pAttribute="word",
+    left=20, right=20
+  )
+  summary(integration)
+}
 @
 
 Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object (here: \texttt{min@stat}).
@@ -136,65 +170,29 @@ To view some concordances, the context object can be indexed accordingly. If you
 To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.
 
 
-<<distributionReal, echo=FALSE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-# one query / one dimension
-#foo <- capture.output(oneQuery <- dispersion(
-#  '"Gerechtigkeit"',
-#  coalition,
-#  "text_party"
-#  ))
-# # multiple queries / one dimension
-#foo <- capture.output(twoQueries <- dispersion(
-#  c('"[eE]uro.*"', '"Br.ssel"'),
-#  coalition,
-#  "text_party"
-#  ))
-# multiple queries / two dimensions
-#foo <- capture.output(twoDim <- dispersion(
-#  c('"Regierung"'),
-#  bt,
-#  c("text_date", "text_party")
-#  ))
-@
-
-
-<<distributionFake1, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
-# one query / one dimension
-# foo <- capture.output(oneQuery <- dispersion(
-#   '"Gerechtigkeit"',
-#  coalition,
-#  "text_party"
-#  ))
-@
-
-<<distributionOutput1, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-#oneQuery
-@ 
-
-<<distributionFake2, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
-# multiple queries / one dimension
-#twoQueries <- dispersion(
-#  c('"[eE]uro.*"', '"Brüssel"'),
-#  coalition,
-#  "text_party"
-#  )
-@
-
-<<distributionOutput2, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-# twoQueries
-@
-
-<<distributionFake3, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
-# multiple queries / two dimensions
-# foo <- capture.output(twoDim <- distribution(
-#  c('"Regierung"'),
-#  bt,
-#  c("text_date", "text_party")
-#  ))
-@
-
-<<distributionOutput3, echo=TRUE, results="tex", message=FALSE, eval=TRUE, tidy=FALSE>>=
-# round((twoDim@rel*100000),2)[,c(1,2,3,4,6)]
+<<distributionReal, echo=TRUE, results="tex", message=FALSE, eval=FALSE, tidy=FALSE>>=
+if (execute){
+  
+  # one query / one dimension
+  oneQuery <- dispersion(
+    bt, query = '"Gerechtigkeit"',
+    "text_party", progress = F
+  )
+  
+  # # multiple queries / one dimension
+  twoQueries <- dispersion(
+    bt,
+    c('"[eE]uro.*"', '"Br.ssel"'),
+    "text_party", progress = F
+  )
+  
+  # multiple queries / two dimensions
+  twoDim <- dispersion(
+    bt, query = '"Regierung"',
+    c("text_date", "text_party"), progress = F
+  )
+  
+}
 @
 
 
@@ -202,16 +200,12 @@ To understand the occurance of a phenomenon, the distribution of query results a
 To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
 
 <<keyness, echo=TRUE, results="tex", message=FALSE, tidy=FALSE>>=
-coalition <- enrich(coalition, pAttribute="word")
-bt <- enrich(coalition, pAttribute="word")
-vocabulary <- compare(coalition, bt, included=TRUE)
+if (execute){
+  coalition <- enrich(coalition, pAttribute="word")
+  bt <- enrich(coalition, pAttribute="word")
+  vocabulary <- compare(coalition, bt, included=TRUE)
+}
 @
-
-
-\section{Visualisation}
-The results of functions can be visualised using the general functionality of R, of course. In the driller-package, you will find convenience functions/methods for visualisation. The lineChart and the bubblegraph-functions help to visualise the results of a distribution on two dimensions. 
-
-Apart from this, the wordcloud package works nicely to visualize the statistical results returned with the data frames in the stats slots of the context and the keyness function. The return of the egoNetwork function can be turned in an igraph object and displayed as a network. The wordcloud and the igraph packages are not imported to avoid an inflation of the number of dependencies.
 
 \section{Shiny}
 If the driller runs on a local installation, some shiny apps can be tested that are included in the package by calling polmineR().
@@ -219,14 +213,5 @@ If the driller runs on a local installation, some shiny apps can be tested that 
 The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.
 
 The apps are still experimental and at times may throw out errors before you get a result. They are included to demonstrate how using the driller is meant to be made more convenient in future versions of the package.
-
-\section{On this release}
-Quite deliberately, this version is not v1.0.0 but v0.4.14. In one sense, the code is not very coherent yet. I have only started to move to the lowerCamelCase naming convention with v0.4.2, and there is still a mixture of the more traditional R naming style (using dots) and lowerCamelCase.
-
-More importantly, I am very well aware that functions are not yet robust throughout. I still have not run out of ideas how the package could be made more coherent and functions more usable and faster. However, I thought that making it available and gaining feedback sufficientyl early will help tremendously to improve the quality of the package. Of course, I hope it will be useful for others. 
-
-There will be bugs I am not aware of and ideas that have not occured to me. Any kind of feedback is welcome.
-
-To get in touch: andreas.blaette@uni-due.de
 
 \end{document}

@@ -17,7 +17,6 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       )
     if (length(.Object@sAttributes) > 0) {
       for (s in names(.Object@sAttributes)){
-        # sattr <- paste(.Object@corpus, ".", s, sep="")
         meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, s, meta[,1]))
         Encoding(meta[,2]) <- .Object@encoding
         if (regex==FALSE) {
