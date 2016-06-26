@@ -1,3 +1,0 @@
-#! /bin/sh
-
-# CORPUS_REGISTRY=$(Rscript -e 'cat(system.file("corpora", "registry", package="polmineR.sampleCorpus"))')
