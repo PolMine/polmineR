@@ -10,36 +10,20 @@
 partitionBundle(.Object, ...)
 
 \S4method{partitionBundle}{partition}(.Object, def = NULL, prefix = c(""),
-  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = getOption("polmineR.mc"),
-  verbose = TRUE, progress = FALSE, ...)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, ...)
 
 \S4method{partitionBundle}{character}(.Object, def, prefix = c(""),
-  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = getOption("polmineR.mc"),
-  verbose = TRUE, progress = FALSE, ...)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, ...)
 }
 \arguments{
 \item{.Object}{character string, a partition, or a list}
 
-\item{...}{shortcut to define partitions}
+\item{...}{parameters to be passed into partition-method (see respective documentation)}
 
 \item{def}{a list that indicates the s-attribute to be variable and that
 provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))}
 
-\item{prefix}{a character vector that will serve as a prefix for partition names}
-
-\item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
-
-\item{pAttribute}{the pAttribute(s) for which term frequencies shall be retrieved}
-
-\item{regex}{logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1}
-
-\item{xml}{either 'flat' (default) or 'nested'}
-
-\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
-
-\item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
+\item{prefix}{a character vector that will be attached as a prefix to partition names}
 
 \item{mc}{logical, whether to use multicore parallelization}
 
@@ -48,11 +32,20 @@ provides a character string of values (e.g. def=list(text_year=c("2005", "2006")
 \item{progress}{logical, whether to show progress bar}
 }
 \value{
-a S4 class 'partitionBundle', which is a list with partition objects
+S4 class 'partitionBundle', with list of partition objects in slot 'objects'
 }
 \description{
 A list of partition objects with fixed s-attributes and one variable
 s-attribute is generated
+}
+\examples{
+use("polmineR.sampleCorpus")
+bt2009 <- partition("PLPRBTTXT", text_year="2009")
+pBundle <- partitionBundle(bt2009, def=list(text_speaker=NULL), progress=TRUE, pAttribute="word")
+dtm <- as.DocumentTermMatrix(pBundle, col="count")
+summary(pBundle)
+
+btBundle <- partitionBundle("PLPRBTTXT", def=list(text_speaker=NULL))
 }
 \author{
 Andreas Blaette

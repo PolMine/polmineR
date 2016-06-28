@@ -11,17 +11,28 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #' @param gap number of tokens between strucs to identify speeches
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
+#' @param progress logical
 #' @return a partitionBundle object
 #' @name as.speeches
 #' @docType methods
 #' @exportMethod as.speeches
 #' @rdname as.speeches-method
+#' @examples 
+#' use(polmineR.sampleCorpus)
+#' bt <- partition("PLPRBTTXT", text_year="2009")
+#' speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
 #' @aliases as.speeches as.speeches,partition-method
-setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=FALSE){
-  partitionByDate <- lapply(
-    sAttributes(.Object, sAttributeDates),
-    function(x) partition(.Object, def=setNames(list(x), sAttributeDates), verbose=verbose)
+setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=TRUE, progress=TRUE){
+  if (verbose) message("... getting dates")
+  dates <- sAttributes(.Object, sAttributeDates)
+  if (verbose) message("... generating partitions by date")
+  partitionByDate <- blapply(
+    lapply(dates, function(x) setNames(x, sAttributeDates)),
+    f=partition, .Object=.Object,
+    verbose=verbose, progress=progress, mc=mc
   )
+  partitionByDate <- lapply(partitionByDate, function(x) as(x, "plprPartition"))
+  if (verbose) message("... generating speeches")
   speakerNestedList <- blapply(
     partitionByDate,
     function(datePartition, ...){
@@ -34,11 +45,11 @@ setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttrib
       )
       unlist(lapply(c(1:length(nested)), function(i) nested[[i]]@objects))
     },
-    # param=list("sAttributeNames", "gap"),
     sAttributeNames=sAttributeNames, gap=gap,
-    mc=mc
+    mc=mc, progress=progress
   )
   speakerFlatList <- do.call(c, unlist(speakerNestedList, recursive=FALSE))
+  if (verbose) message("... generating names")
   partitionNames <- sapply(
     speakerFlatList,
     function(x) paste(x@sAttributes[[sAttributeNames]], sAttributes(x, sAttributeDates), x@name, sep="_")

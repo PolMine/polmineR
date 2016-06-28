@@ -26,23 +26,17 @@ setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 #' @rdname blapply
 setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALSE, ...){
   if (mc == FALSE){
-    # retval <- lapply(X=x@objects, FUN=f, ...)
     total <- length(x)
-    pb <- txtProgressBar(min = 0, max = total, style = 3)
-    # progressBar <- function(n) setTxtProgressBar(pb, n)
-    i <- 0 # it's just to pass R CMD check
+    if (progress) pb <- txtProgressBar(min = 0, max = total, style = 3)
+    i <- 0 # just to pass R CMD check
     retval <- lapply(
       c(1:length(x)),
       function(i){
-        setTxtProgressBar(pb, i)
+        if (progress) setTxtProgressBar(pb, i)
         f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
       }
     )
-    close(pb)
-    # retval <- foreach(i=c(1:length(x))) %do% {
-    #   setTxtProgressBar(pb, i)
-    #   f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
-    # }
+    if (progress) close(pb)
   } else {
     backend <- getOption("polmineR.backend")
     stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis", "doParallel"))
@@ -72,6 +66,8 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
   }
   retval
 })
+
+
 
 #' @rdname blapply
 setMethod("blapply", "bundle", function(x, f, mc=FALSE, progress=TRUE, verbose=FALSE, ...){

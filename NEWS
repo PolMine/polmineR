@@ -1,3 +1,14 @@
+v0.6.2
+* refactoring of context-method to prepare more consistent usage
+* progress bar for context-method (using blapply)
+* progress bar for partitionBundle (using blapply)
+* more coherent naming of parameters in partitionBundle-method
+* partitionBundle,character-method debugged and more robust
+* usage of blapply in as.speeches-method
+
+v0.6.1
+* configure file removed to avoid unwanted bugs
+
 v0.6.0
 * this is the first version that passes all CRAN tests and that is available via CRAN
 * the 'rcqp' remains the interface to the CWB, but usage of rcqp functions is wrapped into an new new CQI.rcqp (R6) class. CQI.perl and CQI.cqpserver are introduced as alternative interfaces to prepare portability to Windows systems

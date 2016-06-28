@@ -16,7 +16,7 @@
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
-  mc = getOption("polmineR.mc"), verbose = TRUE)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE)
 
 \S4method{context}{character}(.Object, query, ...)
 
@@ -57,6 +57,8 @@ the statistics will be skipped}
 the value from the options}
 
 \item{verbose}{report progress, defaults to TRUE}
+
+\item{progress}{logical, whether to show progress bar}
 
 \item{...}{further parameters}
 

@@ -35,6 +35,7 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the options
 #' @param verbose report progress, defaults to TRUE
+#' @param progress logical, whether to show progress bar
 #' @param ... further parameters
 #' @return depending on whether a partition or a partitionBundle serves as
 #'   input, the return will be a context object, or a contextBundle object
@@ -69,16 +70,27 @@ setMethod(
     count=TRUE,
     method="ll",
     mc=getOption("polmineR.mc"),
-    verbose=TRUE
+    verbose=TRUE,
+    progress=FALSE
   ) {
     if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){
       message("... count for pAttribute ", pAttribute, " not available")
       .Object <- enrich(.Object, pAttribute=pAttribute)
     }
-    pAttr <- paste(.Object@corpus, ".", pAttribute, sep="")
-    sAttr <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[1]
-    cposMethod <- .setMethod(left, right, sAttribute, corpus=.Object@corpus)[2]
-    
+
+    # set method for making left and right context
+    if (is.numeric(left) && is.numeric(right)){
+      if (is.null(names(left)) && is.null(names(left))){
+        cposMethod <- "expandToCpos"
+      } else {
+        cposMethod <- "expandBeyondRegion"
+        sAttribute <- unique(c(names(left), names(right)))
+      }
+    } else if (is.character(left) && is.character(right)){
+      cposMethod <- "expandToRegion"
+      sAttribute <- unique(c(left, right))
+    }
+
     # instantiate the context object
     ctxt <- new(
       "context",
@@ -98,7 +110,7 @@ setMethod(
     .verboseOutput(message="getting cpos", verbose = verbose)
     hits <- cpos(.Object, query, pAttribute[1])
     if (is.null(hits)){
-      if (verbose==TRUE) message('no hits for query, returning NULL object')
+      warning('no hits for query ', query, ' returning NULL object')
       return(NULL)
     }
     if (!is.null(sAttribute)) hits <- cbind(hits, CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1]))
@@ -115,11 +127,18 @@ setMethod(
     
     .verboseOutput(message="generating contexts", verbose = verbose)
     
-    if (mc==TRUE) {
-      bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
-    } else {
-      bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, left, right, sAttr, stoplistIds, positivelistIds, cposMethod))
-    }
+    # if (mc==TRUE) {
+    #   bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, corpus, sAttritbute, stoplistIds, positivelistIds, cposMethod))
+    # } else {
+    #   bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, left, right, corpus, sAttribute, stoplistIds, positivelistIds, cposMethod))
+    # }
+    
+    bigBag <- blapply(
+      hits, f=.surrounding,
+      mc=mc, progress=progress, verbose=verbose,
+      ctxt, left, right, corpus, sAttribute, stoplistIds, positivelistIds, cposMethod
+      )
+    
     bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
       if (verbose==TRUE) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
@@ -162,38 +181,6 @@ setMethod(
   })
 
 
-.setMethod <- function(left, right, sAttribute, corpus){
-  if (is.numeric(left) && is.numeric(right)){
-    if (is.null(names(left)) && is.null(names(left))){
-      method <- "expandToCpos"
-      if (!is.null(sAttribute)) {
-        corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
-      } else {
-        corpus.sAttribute <- NA
-      }
-    } else {
-      method <- "expandBeyondRegion"
-      sAttribute <- unique(c(names(left), names(right)))
-      if (length(sAttribute) == 1){
-        corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
-      } else {
-        warning("please check names of left and right context provided")
-      }
-    }
-  } else if (is.character(left) && is.character(right)){
-    method <- "expandToRegion"
-    sAttribute <- unique(c(left, right))
-    if (length(sAttribute) == 1){
-      corpus.sAttribute <- paste(corpus, ".", sAttribute, sep="")
-    } else {
-      warning("please check names of left and right context provided")
-    }
-  }
-  return(c(corpus.sAttribute, method))
-}
-
-
-
 
 #' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
 #' @param left no of tokens to the left
@@ -203,29 +190,23 @@ setMethod(
 #' @noRd
 .makeLeftRightCpos <- list(
   
-  "expandToCpos" = function(set, left, right, corpus.sAttribute){
-    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
-    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
+  "expandToCpos" = function(set, left, right, corpus, sAttribute){
     cposLeft <- c((set[1] - left):(set[1]-1))
     cposRight <- c((set[2] + 1):(set[2] + right))
-    if (!is.na(corpus.sAttribute)){
+    if (!is.null(sAttribute)){
       cposLeft <- cposLeft[which(CQI$cpos2struc(corpus, sAttribute, cposLeft)==set[3])]
       cposRight <- cposRight[which(CQI$cpos2struc(corpus, sAttribute, cposRight)==set[3])]   
     }
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
-  "expandToRegion" = function(set, left, right, corpus.sAttribute){
-    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
-    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
+  "expandToRegion" = function(set, left, right, corpus, sAttribute){
     cposLeft <- c((CQI$cpos2lbound(corpus, sAttribute, set[1])):(set[1] - 1))
     cposRight <- c((set[2] + 1):(CQI$cpos2rbound(corpus, sAttribute, set[1])))
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
   },
   
-  "expandBeyondRegion" = function(set, left, right, corpus.sAttribute){
-    corpus <- strsplit(corpus.sAttribute, "\\.")[[1]][1]
-    sAttribute <- strsplit(corpus.sAttribute, "\\.")[[1]][2]
+  "expandBeyondRegion" = function(set, left, right, corpus, sAttribute){
     queryStruc <- CQI$cpos2struc(corpus, sAttribute, set[1])
     maxStruc <- CQI$attribute_size(corpus, sAttribute)
     # get left min cpos
@@ -244,12 +225,10 @@ setMethod(
   
 )
 
-.surrounding <- function (set, ctxt, left, right, corpus.sAttribute, stoplistIds=NULL, positivelistIds=NULL, method) {
+.surrounding <- function (set, ctxt, left, right, corpus, sAttribute, stoplistIds=NULL, positivelistIds=NULL, method, ...) {
   cposList <- .makeLeftRightCpos[[method]](
-    set,
-    left=left,
-    right=right,
-    corpus.sAttribute=corpus.sAttribute
+    set, left=left, right=right,
+    corpus=corpus, sAttribute=sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
   ids <- lapply(
