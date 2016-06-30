@@ -21,10 +21,10 @@ kwic(.Object, ...)
 
 \S4method{kwic}{missing}(.Object, ...)
 
-\S4method{kwic}{character}(.Object, query, left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), meta = getOption("polmineR.meta"),
-  pAttribute = "word", sAttribute = NULL, cpos = FALSE, neighbor = NULL,
-  verbose = TRUE)
+\S4method{kwic}{character}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  meta = getOption("polmineR.meta"), pAttribute = "word",
+  sAttribute = NULL, cpos = FALSE, neighbor = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched}

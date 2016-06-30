@@ -11,7 +11,7 @@
 \usage{
 count(.Object, ...)
 
-\S4method{count}{partition}(.Object, query,
+\S4method{count}{partition}(.Object, query, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), mc = F, verbose = T,
   progress = F)
 

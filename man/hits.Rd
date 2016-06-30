@@ -12,7 +12,7 @@
 \usage{
 hits(.Object, ...)
 
-\S4method{hits}{character}(.Object, query, sAttribute = NULL,
+\S4method{hits}{character}(.Object, query, cqp = is.cqp, sAttribute = NULL,
   pAttribute = "word", size = TRUE, freq = FALSE, mc = FALSE,
   verbose = TRUE, progress = TRUE)
 

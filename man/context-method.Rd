@@ -12,7 +12,7 @@
 \alias{context,partitionBundle-method}
 \title{Analyze context of a node word}
 \usage{
-\S4method{context}{partition}(.Object, query,
+\S4method{context}{partition}(.Object, query, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
@@ -30,6 +30,8 @@
 \item{.Object}{a partition or a partitionBundle object}
 
 \item{query}{query, which may by a character vector or a cqpQuery object}
+
+\item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
 
 \item{pAttribute}{p-attribute of the query}
 

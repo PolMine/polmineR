@@ -18,6 +18,7 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #' 
 #' @param .Object a partition or a partitionBundle object
 #' @param query query, which may by a character vector or a cqpQuery object
+#' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
 #' @param pAttribute p-attribute of the query
 #' @param sAttribute if provided, it will be checked that cpos do not extend beyond
 #' the region defined by the s-attribute 
@@ -49,7 +50,6 @@ setGeneric("context", function(.Object, ...){standardGeneric("context")})
 #'   p <- partition("PLPRBTTXT", list(text_type="speech"))
 #'   a <- context(p, "Integration", "word")
 #' }
-#' @importFrom parallel mclapply
 #' @import data.table
 #' @exportMethod context
 #' @rdname context-method
@@ -61,7 +61,7 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query,
+    .Object, query, cqp=is.cqp,
     pAttribute=getOption("polmineR.pAttribute"),
     sAttribute=NULL,
     left=getOption("polmineR.left"),
@@ -90,7 +90,7 @@ setMethod(
       cposMethod <- "expandToRegion"
       sAttribute <- unique(c(left, right))
     }
-
+    
     # instantiate the context object
     ctxt <- new(
       "context",
@@ -108,7 +108,7 @@ setMethod(
     
     # getting counts of query in partition
     .verboseOutput(message="getting cpos", verbose = verbose)
-    hits <- cpos(.Object, query, pAttribute[1])
+    hits <- cpos(.Object, query, pAttribute[1], cqp=cqp)
     if (is.null(hits)){
       warning('no hits for query ', query, ' returning NULL object')
       return(NULL)
@@ -127,16 +127,11 @@ setMethod(
     
     .verboseOutput(message="generating contexts", verbose = verbose)
     
-    # if (mc==TRUE) {
-    #   bigBag <- mclapply(hits, function(x) .surrounding(x, ctxt, left, right, corpus, sAttritbute, stoplistIds, positivelistIds, cposMethod))
-    # } else {
-    #   bigBag <- lapply(hits, function(x) .surrounding(x, ctxt, left, right, corpus, sAttribute, stoplistIds, positivelistIds, cposMethod))
-    # }
-    
     bigBag <- blapply(
       hits, f=.surrounding,
       mc=mc, progress=progress, verbose=verbose,
-      ctxt, left, right, corpus, sAttribute, stoplistIds, positivelistIds, cposMethod
+      ctxt=ctxt, left=left, right=right, corpus=.Object@corpus, sAttribute=sAttribute,
+      stoplistIds=stoplistIds, positivelistIds=positivelistIds, method=cposMethod
       )
     
     bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
@@ -194,7 +189,7 @@ setMethod(
     cposLeft <- c((set[1] - left):(set[1]-1))
     cposRight <- c((set[2] + 1):(set[2] + right))
     if (!is.null(sAttribute)){
-      cposLeft <- cposLeft[which(CQI$cpos2struc(corpus, sAttribute, cposLeft)==set[3])]
+      cposLeft <- cposLeft[which(CQI$cpos2struc(corpus, sAttribute, cposLeft) == set[3])]
       cposRight <- cposRight[which(CQI$cpos2struc(corpus, sAttribute, cposRight)==set[3])]   
     }
     return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))

@@ -103,7 +103,7 @@ setMethod("kwic", "context", function(.Object, meta=getOption("polmineR.meta"), 
 #' @rdname kwic
 #' @exportMethod kwic
 setMethod("kwic", "partition", function(
-  .Object, query,
+  .Object, query, cqp=is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
@@ -112,7 +112,7 @@ setMethod("kwic", "partition", function(
   verbose=TRUE
 ){
   ctxt <- context(
-    .Object=.Object, query=query,
+    .Object=.Object, query=query, cqp=cqp,
     pAttribute=pAttribute, sAttribute=sAttribute,
     left=left, right=right,
     method=NULL, count=FALSE, verbose=verbose
@@ -136,7 +136,7 @@ setMethod("kwic", "missing", function(.Object, ...){
 
 #' @rdname kwic
 setMethod("kwic", "character", function(
-  .Object, query,
+  .Object, query, cqp=is.cqp,
   left=getOption("polmineR.left"),
   right=getOption("polmineR.right"),
   meta=getOption("polmineR.meta"),
@@ -144,7 +144,7 @@ setMethod("kwic", "character", function(
   neighbor=NULL,
   verbose=TRUE
 ){
-  hits <- cpos(.Object, query=query, pAttribute=pAttribute, verbose=FALSE)
+  hits <- cpos(.Object, query=query, cqp=cqp, pAttribute=pAttribute, verbose=FALSE)
   if (is.null(hits)) {
     message("sorry, not hits")
     return(NULL)

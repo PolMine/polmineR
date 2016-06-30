@@ -16,7 +16,6 @@ NULL
 #' @param verbose logical, whether to provide progress information
 #' @param ... parameters to be passed into partition-method (see respective documentation)
 #' @return S4 class 'partitionBundle', with list of partition objects in slot 'objects'
-#' @importFrom parallel mclapply
 #' @export partitionBundle
 #' @author Andreas Blaette
 #' @name partitionBundle
@@ -113,34 +112,29 @@ setMethod("as.partitionBundle", "list", function(.Object, ...){
 })
 
 #' @exportMethod as.partitionBundle
-#' @rdname context-class
-setMethod("as.partitionBundle", "context", function(.Object, mc=FALSE){
+#' @rdname partitionBundle
+setMethod("partitionBundle", "context", function(.Object, mc=getOption("polmineR.mc"), verbose=FALSE, progress=TRUE){
   newPartitionBundle <- new(
     "partitionBundle",
-    corpus=.Object@corpus,
-    encoding=.Object@encoding,
+    corpus=.Object@corpus, encoding=.Object@encoding,
     explanation="this partitionBundle is derived from a context object"
   )
-  .makeNewPartition <- function(cpos){
+  .makeNewPartition <- function(cpos, contextObject, ...){
     newPartition <- new(
       "partition",
-      corpus=.Object@corpus,
-      encoding=.Object@encoding,
-      cpos=matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2)
+      corpus=contextObject@corpus,
+      encoding=contextObject@encoding,
+      cpos=matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2),
+      stat=data.table()
     )
-    newPartition <- enrich(newPartition, size=TRUE, pAttribute=.Object@pAttribute)
+    newPartition <- enrich(newPartition, size=TRUE, pAttribute=contextObject@pAttribute, verbose=verbose)
     newPartition@strucs <- c(
-      CQI$cpos2struc(.Object@corpus, .Object@sAttribute, newPartition@cpos[1,1])
+      CQI$cpos2struc(contextObject@corpus, contextObject@sAttribute, newPartition@cpos[1,1])
       :
-        CQI$cpos2struc(.Object@corpus, .Object@sAttribute, newPartition@cpos[1,2])
+        CQI$cpos2struc(contextObject@corpus, contextObject@sAttribute, newPartition@cpos[1,2])
     )
     newPartition
   }
-  if (mc == FALSE){
-    newPartitionBundle@objects <- lapply(.Object@cpos, FUN=.makeNewPartition)  
-  } else {
-    coresToUse <- getOption("polmineR.cores")
-    newPartitionBundle@objects <- mclapply(.Object@cpos, FUN=.makeNewPartition, mc.cores=coresToUse)  
-  }
+  newPartitionBundle@objects <- blapply(.Object@cpos, f=.makeNewPartition, contextObject=.Object, mc=mc, verbose=verbose, progress=progress)
   return(newPartitionBundle)
 })

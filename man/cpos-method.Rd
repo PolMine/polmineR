@@ -12,10 +12,10 @@
 cpos(.Object, ...)
 
 \S4method{cpos}{character}(.Object, query,
-  pAttribute = getOption("polmineR.pAttribute"), encoding = NULL,
-  verbose = TRUE)
+  pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp,
+  encoding = NULL, verbose = TRUE)
 
-\S4method{cpos}{partition}(.Object, query, pAttribute = NULL,
+\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, pAttribute = NULL,
   verbose = TRUE)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)

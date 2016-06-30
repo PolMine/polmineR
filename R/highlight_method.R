@@ -51,11 +51,11 @@ setMethod("highlight", "html", function(.Object, highlight=list(), tooltips=NULL
   .Object
 })
 
-setMethod("highlight", "partition", function(.Object, html, highlight=list(), tooltips=NULL){
+setMethod("highlight", "partition", function(.Object, html, highlight=list(), cqp=is.cqp, tooltips=NULL){
   for (color in names(highlight)){
     tooltipTags <- .makeTooltipTags(color, tooltips)
     for (x in highlight[[color]]){
-      hitCpos <- cpos(.Object, query=x)
+      hitCpos <- cpos(.Object, query=x, cqp=cqp)
       if (!is.null(hitCpos)){
         for (i in c(1:nrow(hitCpos))){
           for (j in c(hitCpos[i,1]:hitCpos[i,2])){

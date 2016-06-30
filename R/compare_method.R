@@ -1,18 +1,21 @@
 #' @include partition_class.R partitionBundle_class.R ngrams_method.R
 NULL
 
-#' @rdname compare-method
 setGeneric("compare", function(x, ...){standardGeneric("compare")})
 
 
-#' compare features of two partitions
+#' compare features
+#' 
+#' The features of two objects, usually a partition defining a corpus of 
+#' interest, and a partition defining a reference corpus are compared. 
+#' The most important purpose is term extraction.
 #' 
 #' @param x a partition or partitionBundle object
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
 #' @param method the statistical test to apply (chisquare or log likelihood)
 #' @param included TRUE if coi is part of ref, defaults to FALSE
-#' @param verbose defaults to TRUE
+#' @param verbose logical, defaults to TRUE
 #' @param progress logical
 #' @param mc logical, whether to use multicore
 #' @param ... further parameters
@@ -20,9 +23,17 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
+#' @aliases compare
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod compare
+#' @examples
+#' use(polmineR.sampleCorpus)
+#' kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
+#' all <- partition("PLPRBTTXT", text_date=".*", regex=T, pAttribute="word")
+#' terms_kauder <- compare(kauder, all, included=T)
+#' top100 <- subset(terms_kauder, rank_chisquare <= 100)
+#' View(top100@stat)
 #' @rdname  compare-method
 setMethod("compare", signature=c(x="partition"), function(
   x, y,
@@ -62,35 +73,22 @@ setMethod("compare", signature=c(x="partition"), function(
 
 #' @docType methods
 #' @rdname compare-method
+#' @examples 
+#' use(polmineR.sampleCorpus)
+#' byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
+#' byName <- enrich(byName, pAttribute="word")
+#' all <- partition("PLPRBTTXT", text_date=".*", regex=T, pAttribute="word")
+#' result <- compare(byName, all, included=TRUE, progress=T)
+#' dtm <- as.DocumentTermMatrix(result, col="chisquare")
 setMethod("compare", signature=c(x="partitionBundle"), function(
   x, y, 
-  included=FALSE, method="chisquare", verbose=TRUE, mc=TRUE, progress=FALSE
+  included=FALSE, method="chisquare", verbose=TRUE, mc=getOption("polmineR.mc"), progress=FALSE
 ) {
-  kclust <- new("compBundle")
-  .compare <- function(a) {
-    compare(a, y, included=included, method=method, verbose=verbose)
-  }
-  if (mc == FALSE){
-    if (progress == FALSE){
-      kclust@objects <- lapply(setNames(x@objects, names(x@objects)), function(a) .compare(a))  
-    } else {
-      tmp <- lapply(
-        c(1:length(x@objects)),
-        function(i) {
-          .progressBar(i, length(x@objects))
-          .compare(x@objects[[i]])
-          })
-      names(tmp) <- names(x@objects)
-      kclust@objects <- tmp
-    }
-  } else if (mc == TRUE){
-    kclust@objects <- mclapply(
-      setNames(x@objects, names(x@objects)),
-      function(a) .compare(a),
-      mc.cores=getOption("polmineR.mc")
-      )
-  }
-  kclust
+  .compare <- function(x, y, included, method, ...) compare(x=x, y=y, included=included, method=method)
+  retval <- new("compBundle")
+  retval@objects <- blapply(x@objects, f=.compare, y=y, included=included, method=method, verbose=verbose, mc=mc, progress=progress)
+  names(retval@objects) <- names(x@objects)
+  retval
 })
 
 

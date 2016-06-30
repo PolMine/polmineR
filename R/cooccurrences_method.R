@@ -19,9 +19,11 @@
 #' @rdname cooccurrences
 #' @examples
 #' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#'   use(polmineR.sampleCorpus)
 #'   merkel <- partition("PLPRBTTXT", text_type="speech", text_name=".*Merkel", regex=TRUE)
 #'   merkel <- enrich(merkel, pAttribute="word")
 #'   cooc <- cooccurrences(merkel)
+#'   cooc <- cooccurrences(merkel, big=T)
 #' }
 setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
 
@@ -61,46 +63,47 @@ setMethod(
               cqi_cpos2id(paste(.Object@corpus, pAttribute, sep="."), c(.Object@cpos[i,1]: .Object@cpos[i,2]))
           )
           idPos <- cumsum(lapply(ids, length))
-          mclapply(
-            c(1:length(ids)),
-            function(i){
-              idChunk <- ids[[i]]
-              lapply(
-                c(-window:-1, 1:window),
-                function(x){
-                  idsToFill <- c(
-                    rep(NA, times=min(ifelse( x<0 , -x, 0), length(idChunk))),
-                    idChunk[
-                      ifelse(length(idChunk) <= abs(x), 0, ifelse(x<0, 1, x+1))
-                      :
-                        ifelse(length(idChunk) <= abs(x), 0, ifelse(x<0, length(idChunk)+x, length(idChunk)))
-                      ],
-                    rep(NA, times=min(ifelse(x>0, x, 0), length(idChunk)))
-                  )
-                  BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), ifelse(x <0, x + window + 1, x+window)] <- idsToFill
-                  BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), window * 2 + 1] <- idChunk
-                })
-            }, mc.cores=ifelse(is.numeric(mc), mc, 1))
+          .windowPrep <- function(i, ids, window, BIG, ...){
+            idChunk <- ids[[i]]
+            lapply(
+              c(-window:-1, 1:window),
+              function(x){
+                idsToFill <- c(
+                  rep(NA, times=min(ifelse( x<0 , -x, 0), length(idChunk))),
+                  idChunk[
+                    ifelse(length(idChunk) <= abs(x), 0, ifelse(x<0, 1, x+1))
+                    :
+                      ifelse(length(idChunk) <= abs(x), 0, ifelse(x<0, length(idChunk)+x, length(idChunk)))
+                    ],
+                  rep(NA, times=min(ifelse(x>0, x, 0), length(idChunk)))
+                )
+                BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), ifelse(x <0, x + window + 1, x+window)] <- idsToFill
+                BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), window * 2 + 1] <- idChunk
+              })
+          }
+          dummy <- blapply(as.list(c(1:length(ids))), f=.windowPrep, ids=ids, window=window, BIG=BIG, mc=mc)
           if (verbose == TRUE) message("... counting cooccurrences")
           rowIndices <- bigtabulate::bigsplit(BIG, ccols=ncol(BIG), breaks=NA, splitcol=NA)
-          tables <- mclapply(
-            names(rowIndices),
-            function(node){
-              toTabulate <- as.vector(BIG[rowIndices[[node]], c(1:(window * 2))])
-              toTabulate <- toTabulate + 1
-              tabulated <- tabulate(toTabulate)
-              idRawPresent <- which(tabulated != 0)
-              matrix(
-                data=c(
-                  rep(as.integer(node), times=length(idRawPresent)),
-                  idRawPresent - 1,
-                  tabulated[idRawPresent],
-                  rep(sum(tabulated[idRawPresent]), times=length(idRawPresent))
-                ),
-                ncol = 4
-              )
-            }, mc.cores=ifelse(is.numeric(mc), mc, 1)
-          )
+          .getTables <- function(node, rowIndices, BIG, window, ...){
+            toTabulate <- as.vector(BIG[rowIndices[[node]], c(1:(window * 2))])
+            toTabulate <- toTabulate + 1
+            tabulated <- tabulate(toTabulate)
+            idRawPresent <- which(tabulated != 0)
+            matrix(
+              data=c(
+                rep(as.integer(node), times=length(idRawPresent)),
+                idRawPresent - 1,
+                tabulated[idRawPresent],
+                rep(sum(tabulated[idRawPresent]), times=length(idRawPresent))
+              ),
+              ncol = 4
+            )
+          }
+          tables <- blapply(
+            as.list(names(rowIndices)), f=.getTables,
+            rowIndices=rowIndices, BIG=BIG, window=window,
+            mc=mc
+            )
           rm(BIG)
           countMatrices <- do.call(rbind, tables)
           TF <- data.table(countMatrices)
@@ -112,9 +115,9 @@ setMethod(
         
       } else if (big == FALSE){
         if (verbose == TRUE) message("... making windows with corpus positions")
-        .makeWindows <- function(i){
-          cposMin <- .Object@cpos[i,1]
-          cposMax <- .Object@cpos[i,2]
+        .makeWindows <- function(i, cpos, ...){
+          cposMin <- cpos[i,1]
+          cposMax <- cpos[i,2]
           if (cposMin != cposMax){
             cposRange <- c(cposMin:cposMax)
             lapply(
@@ -126,29 +129,13 @@ setMethod(
               })
           }
         }
-        if (mc == FALSE){
-          bag <- lapply(
-            c(1:nrow(.Object@cpos)),
-            function(i){
-              if (progress == TRUE) .progressBar(i=i, total=nrow(.Object@cpos))
-              .makeWindows(i)
-            }
+        bag <- blapply(as.list(c(1:nrow(.Object@cpos))), f=.makeWindows, cpos=.Object@cpos, mc=mc)
+        bCpos <- lapply(
+          bag,
+          function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]])))
           )
-          bCpos <- lapply(bag, function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]]))))
-        } else {
-          noCores <- ifelse(is.numeric(mc), mc, getOption("mc.cores", 2L))
-          bag <- mclapply(c(1:nrow(.Object@cpos)), .makeWindows, mc.cores=noCores)
-          bCpos <- mclapply(
-            bag,
-            function(x) lapply(names(x), function(y) rep(as.numeric(y), times=length(x[[y]]))),
-            mc.cores=noCores
-          )
-        }
-        if (verbose == TRUE) message("... putting together data.table")
-        DT <- data.table(
-          a_cpos=unlist(bag),
-          b_cpos=unlist(bCpos)
-        )
+        if (verbose) message("... putting together data.table")
+        DT <- data.table(a_cpos=unlist(bag), b_cpos=unlist(bCpos))
         
         if (verbose == TRUE) message("... getting token ids")
         lapply(
@@ -223,28 +210,14 @@ setMethod(
   })
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "partitionBundle", function(.Object, mc=FALSE, ...){
+setMethod("cooccurrences", "partitionBundle", function(.Object, mc=getOption("polmineR.mc"), ...){
   bundle <- new(
     "cooccurrencesBundle",
     encoding=unique(vapply(.Object@objects, function(x) x@encoding, FUN.VALUE="character")),
     corpus=unique(vapply(.Object@objects, function(x) x@corpus, FUN.VALUE="character"))
     )
-  if (mc == FALSE){
-    bundle@objects <- lapply(
-      setNames(.Object@objects, names(.Object@objects)),
-      function(x) {
-        message('Calculating cooccurrences for partition ', x@name)
-        cooccurrences(x, ...)
-      })
-    
-  } else {
-    bundle@objects <- mclapply(
-      setNames(.Object@objects, names(.Object@objects)),
-      function(x) {
-        message('Calculating cooccurrences for partition ', x@name)
-        cooccurrences(x, ...)
-      }, mc.cores=getOption("polmineR.cores"))    
-  }
+  bundle@objects <- blapply(.Object@objects, f=cooccurrences, mc=mc, ...)
+  names(bundle@objects) <- names(.Object@objects)
   bundle
 })
 

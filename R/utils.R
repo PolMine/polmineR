@@ -1,3 +1,13 @@
+#' CQP queries
+#' 
+#' Basic test whether query is a CQP query.
+#' 
+#' @rdname cqp
+#' @export is.cqp
+is.cqp <- function(query) grepl('["|\']', query)
+
+
+
 #' Get the corpus positions for a query
 #' 
 #' Get the corpus positions for a query in a given partition

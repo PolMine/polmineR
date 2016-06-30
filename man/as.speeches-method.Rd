@@ -7,7 +7,7 @@
 \title{Split partition into speeches}
 \usage{
 \S4method{as.speeches}{partition}(.Object, sAttributeDates, sAttributeNames,
-  gap = 500, mc = FALSE, verbose = FALSE)
+  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{a partition .Object}
@@ -21,6 +21,8 @@
 \item{mc}{whether to use multicore, defaults to FALSE}
 
 \item{verbose}{logical, defaults to TRUE}
+
+\item{progress}{logical}
 }
 \value{
 a partitionBundle object
@@ -28,5 +30,10 @@ a partitionBundle object
 \description{
 A method designed for corpora from the
 PolMine corpora of plenary protocols. A partition is split into speeches.
+}
+\examples{
+use(polmineR.sampleCorpus)
+bt <- partition("PLPRBTTXT", text_year="2009")
+speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
 }
 

@@ -26,12 +26,12 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), encoding=NULL, verbose=TRUE){
+setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), cqp=is.cqp, encoding=NULL, verbose=TRUE, ...){
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
-  if (grepl('"', query) == FALSE) {
-    # pAttr <- paste(.Object, '.', pAttribute, sep='')
+  if (class(cqp) == "function") cqp <- cqp(query)
+  if (cqp == FALSE) {
     cpos <- try({
       id <- CQI$str2id(.Object, pAttribute, query)
       CQI$id2cpos(.Object, pAttribute, id)
@@ -39,19 +39,19 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
     if (is(cpos)[1] != "try-error"){
       hits <- matrix(c(cpos, cpos), ncol=2)
     } else {
-      if (verbose == TRUE) message("no hits for query -> ", query)
+      if (verbose == TRUE) message("no hits for query: ", query)
       hits = NULL
     }
-  } else if (grepl('"', query) == TRUE) {
+  } else if (cqp == TRUE) {
     CQI$query(.Object, query)
     cpos <- try(CQI$dump_subcorpus(.Object))
     if (is(cpos)[1] == "try-error"){
-      if (verbose == TRUE) message("no hits for query -> ", query)
+      if (verbose == TRUE) message("no hits for query: ", query)
       hits <- NULL
     } else if (!is.null(cpos)) {
       hits <- matrix(cpos[,1:2], ncol=2)
     } else {
-      if (verbose == TRUE) message("no hits for query -> ", query)
+      if (verbose == TRUE) message("no hits for query: ", query)
       hits <- NULL
     }
   }
@@ -59,8 +59,8 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
 })
   
 #' @rdname cpos-method
-setMethod("cpos", "partition", function(.Object, query, pAttribute=NULL, verbose=TRUE){
-  hits <- cpos(.Object@corpus, query=query, pAttribute, encoding=.Object@encoding, verbose=verbose)
+setMethod("cpos", "partition", function(.Object, query, cqp=is.cqp, pAttribute=NULL, verbose=TRUE, ...){
+  hits <- cpos(.Object@corpus, query=query, cqp=cqp, pAttribute, encoding=.Object@encoding, verbose=verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
     # corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")

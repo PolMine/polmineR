@@ -5,23 +5,22 @@
 \alias{partitionBundle}
 \alias{partitionBundle,character-method}
 \alias{partitionBundle,partition-method}
-\title{Generate a list of partitions}
+\title{Generate a bundle of partitions}
 \usage{
 partitionBundle(.Object, ...)
 
-\S4method{partitionBundle}{partition}(.Object, def = NULL, prefix = c(""),
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, ...)
+\S4method{partitionBundle}{partition}(.Object, sAttribute, values = NULL,
+  prefix = c(""), mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = FALSE, ...)
 
-\S4method{partitionBundle}{character}(.Object, def, prefix = c(""),
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, ...)
+\S4method{partitionBundle}{character}(.Object, sAttribute, values = NULL,
+  prefix = c(""), mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = FALSE, ...)
 }
 \arguments{
 \item{.Object}{character string, a partition, or a list}
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
-
-\item{def}{a list that indicates the s-attribute to be variable and that
-provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))}
 
 \item{prefix}{a character vector that will be attached as a prefix to partition names}
 
@@ -30,22 +29,26 @@ provides a character string of values (e.g. def=list(text_year=c("2005", "2006")
 \item{verbose}{logical, whether to provide progress information}
 
 \item{progress}{logical, whether to show progress bar}
+
+\item{def}{a list that indicates the s-attribute to be variable and that
+provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))}
 }
 \value{
 S4 class 'partitionBundle', with list of partition objects in slot 'objects'
 }
 \description{
-A list of partition objects with fixed s-attributes and one variable
-s-attribute is generated
+A partitionBundle object is a S4 class object. 
+partitionBundle,character-method will create a bundle of partitions,
+but not yet enriched.
 }
 \examples{
 use("polmineR.sampleCorpus")
 bt2009 <- partition("PLPRBTTXT", text_year="2009")
-pBundle <- partitionBundle(bt2009, def=list(text_speaker=NULL), progress=TRUE, pAttribute="word")
+pBundle <- partitionBundle(bt2009, sAttribute="text_date", progress=TRUE, pAttribute="word")
 dtm <- as.DocumentTermMatrix(pBundle, col="count")
 summary(pBundle)
 
-btBundle <- partitionBundle("PLPRBTTXT", def=list(text_speaker=NULL))
+btBundle <- partitionBundle("PLPRBTTXT", sAttribute="text_date")
 }
 \author{
 Andreas Blaette

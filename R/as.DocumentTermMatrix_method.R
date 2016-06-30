@@ -57,23 +57,27 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 #' @examples
 #' if (require(polmineR.sampleCorpus) && require(rcqp)){
 #'    use("polmineR.sampleCorpus")
+#'    
+#'    # do-it-yourself 
 #'    p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
-#'    pB <- partitionBundle(p, def=list(text_date=NULL))
+#'    pB <- partitionBundle(p, sAttribute="text_date")
 #'    pB <- enrich(pB, pAttribute="word")
 #'    tdm <- as.TermDocumentMatrix(pB, col="count")
 #'    
-#'    pB2 <- partitionBundle(p, def=list(text_date=NULL))
+#'    # leave the counting to the as.TermDocumentMatrix-method
+#'    pB2 <- partitionBundle(p, sAttribute="text_date")
 #'    tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
+#'    
+#'    # diretissima
+#'    pB3 <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
 #' }
 #' @rdname as.DocumentTermMatrix
 setMethod(
   "as.TermDocumentMatrix", "character",
   function (
     x, pAttribute, sAttribute, from=NULL, to=NULL, strucs=NULL,
-    rmBlank=TRUE, verbose=TRUE, robust=FALSE, mc=FALSE
+    rmBlank=TRUE, verbose=TRUE, robust=FALSE, mc=FALSE, progress=TRUE
   ) {
-    sAttr <- paste(x, ".", sAttribute, sep="")
-    pAttr <- paste(x, ".", pAttribute, sep="")
     if (!is.null(strucs)){
       if (is.character(strucs)){
         sAttributeStrings <- sAttributes(x, sAttribute)
@@ -93,7 +97,7 @@ setMethod(
         strucs <- c(0:toStruc) 
       }
     }
-    .freqMatrix <- function(i){
+    .freqMatrix <- function(i, strucs, corpus, sAttribute, pAttribute, ...){
       struc <- strucs[i]
       cpos <- CQI$struc2cpos(corpus = x, sAttribute, struc)
       ids <- CQI$cpos2id(x, pAttribute, c(cpos[1]:cpos[2]))
@@ -105,18 +109,12 @@ setMethod(
       )
       cbind(rep(i, times=nrow(freqMatrix)), freqMatrix)
     }
-    if (verbose == TRUE) message("... computing term frequencies")
-    if (mc == FALSE){
-      freqMatrixList <- lapply(
-        c(1:length(strucs)), function(struc){
-          if (verbose == TRUE) message("... processing struc", struc)
-          .freqMatrix(struc)
-        })
-    } else if (mc == TRUE) {
-      coresToUse <- getOption("polmineR.cores")
-      if (verbose == TRUE) message("... using ", coresToUse, " cores")
-      freqMatrixList <- mclapply(c(1:length(strucs)), .freqMatrix, mc.cores=coresToUse)
-    }
+    if (verbose == TRUE) message("... getting counts")
+    freqMatrixList <- blapply(
+      as.list(c(1:length(strucs))), f=.freqMatrix,
+      strucs=strucs, corpus=corpus, sAttribute=sAttribute, pAttribute=pAttribute,
+      mc=mc, progress=progress
+      )
     if (verbose == TRUE) message("... combining results")
     freqMatrixAgg <- do.call(rbind, freqMatrixList)
     lexiconSize <- CQI$lexicon_size(x, pAttribute)
