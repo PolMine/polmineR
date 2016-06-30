@@ -12,8 +12,8 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), mc = F, verbose = T,
-  progress = F)
+  pAttribute = getOption("polmineR.pAttribute"),
+  mc = getOption("polmineR.cores"), verbose = T, progress = F)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
   freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
@@ -22,11 +22,17 @@ count(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"), verbose = TRUE)
 }
 \arguments{
-\item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus}
+\item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a
+character vector (length 1) providing the name of a corpus}
 
 \item{...}{further parameters}
 
-\item{query}{a character vector (one or multiple terms to be looked up), CQP syntax can be used.}
+\item{query}{a character vector (one or multiple terms to be looked up), CQP
+syntax can be used.}
+
+\item{cqp}{either logical (TRUE if query is a CQP query), or a
+function to check whether query is a CQP query or not (defaults to is.query
+auxiliary function)}
 
 \item{pAttribute}{the p-attribute(s) to use}
 
@@ -38,7 +44,8 @@ count(.Object, ...)
 
 \item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
 
-\item{total}{defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned}
+\item{total}{defaults to FALSE, if TRUE, the added value of counts (column:
+TOTAL) will be amended to the data.table that is returned}
 }
 \value{
 a \code{"data.table"}

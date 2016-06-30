@@ -20,8 +20,9 @@ hits(.Object, ...)
   pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE)
 
-\S4method{hits}{partitionBundle}(.Object, query, pAttribute = "word",
-  size = TRUE, freq = FALSE, mc = FALSE, progress = FALSE,
+\S4method{hits}{partitionBundle}(.Object, query,
+  pAttribute = getOption("polmineR.pAttribute"), size = TRUE,
+  freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
   verbose = TRUE)
 
 \S4method{sample}{hits}(x, size)
@@ -32,6 +33,10 @@ hits(.Object, ...)
 \item{...}{further parameters}
 
 \item{query}{character vector}
+
+\item{cqp}{either logical (TRUE if query is a CQP query), or a
+function to check whether query is a CQP query or not (defaults to is.query
+auxiliary function)}
 
 \item{sAttribute}{s-attributes}
 

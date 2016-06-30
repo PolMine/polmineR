@@ -23,7 +23,7 @@
 #'   merkel <- partition("PLPRBTTXT", text_type="speech", text_name=".*Merkel", regex=TRUE)
 #'   merkel <- enrich(merkel, pAttribute="word")
 #'   cooc <- cooccurrences(merkel)
-#'   cooc <- cooccurrences(merkel, big=T)
+#'   cooc <- cooccurrences(merkel, big=TRUE)
 #' }
 setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
 

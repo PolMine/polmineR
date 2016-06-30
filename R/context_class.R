@@ -22,7 +22,6 @@ NULL
 #' @slot call Object of class \code{"character"} call that generated the object
 #'     
 #' @param .Object object
-#' @param mc logical, whether to use multicore
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method

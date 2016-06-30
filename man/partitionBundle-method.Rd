@@ -4,6 +4,7 @@
 \name{partitionBundle}
 \alias{partitionBundle}
 \alias{partitionBundle,character-method}
+\alias{partitionBundle,context-method}
 \alias{partitionBundle,partition-method}
 \title{Generate a bundle of partitions}
 \usage{
@@ -16,11 +17,18 @@ partitionBundle(.Object, ...)
 \S4method{partitionBundle}{character}(.Object, sAttribute, values = NULL,
   prefix = c(""), mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE, ...)
+
+\S4method{partitionBundle}{context}(.Object, mc = getOption("polmineR.mc"),
+  verbose = FALSE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{character string, a partition, or a list}
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
+
+\item{sAttribute}{the s-attribute to vary}
+
+\item{values}{values the s-attribute provided shall assume}
 
 \item{prefix}{a character vector that will be attached as a prefix to partition names}
 
@@ -29,9 +37,6 @@ partitionBundle(.Object, ...)
 \item{verbose}{logical, whether to provide progress information}
 
 \item{progress}{logical, whether to show progress bar}
-
-\item{def}{a list that indicates the s-attribute to be variable and that
-provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))}
 }
 \value{
 S4 class 'partitionBundle', with list of partition objects in slot 'objects'

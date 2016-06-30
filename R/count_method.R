@@ -9,13 +9,19 @@ NULL
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. a differentiation by s-attributes), see \code{"dispersion"}.
 #' 
-#' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a character vector (length 1) providing the name of a corpus
-#' @param query a character vector (one or multiple terms to be looked up), CQP syntax can be used.
+#' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a
+#'   character vector (length 1) providing the name of a corpus
+#' @param query a character vector (one or multiple terms to be looked up), CQP
+#'   syntax can be used.
+#' @param cqp either logical (TRUE if query is a CQP query), or a
+#'   function to check whether query is a CQP query or not (defaults to is.query
+#'   auxiliary function)
 #' @param pAttribute the p-attribute(s) to use
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
 #' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
-#' @param total defaults to FALSE, if TRUE, the added value of counts (column: TOTAL) will be amended to the data.table that is returned
+#' @param total defaults to FALSE, if TRUE, the added value of counts (column:
+#'   TOTAL) will be amended to the data.table that is returned
 #' @param progress logical, whether to show progress
 #' @param ... further parameters
 #' @return a \code{"data.table"}

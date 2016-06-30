@@ -13,10 +13,10 @@ cpos(.Object, ...)
 
 \S4method{cpos}{character}(.Object, query,
   pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp,
-  encoding = NULL, verbose = TRUE)
+  encoding = NULL, verbose = TRUE, ...)
 
 \S4method{cpos}{partition}(.Object, query, cqp = is.cqp, pAttribute = NULL,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
 
@@ -31,6 +31,10 @@ object, a \code{"tempcorpus"} object, or a \code{"matrix"} with corpus positions
 \item{query}{a character vector (length 1) providing a (single) query: either a single token to look up, or a CQP query.}
 
 \item{pAttribute}{the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.}
+
+\item{cqp}{either logical (TRUE if query is a CQP query), or a
+function to check whether query is a CQP query or not (defaults to is.query
+auxiliary function)}
 
 \item{encoding}{the encoding of the corpus (if NULL, the
 encoding provided in the registry file of the corpus will be used)}

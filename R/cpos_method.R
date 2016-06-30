@@ -12,6 +12,9 @@ NULL
 #' @param .Object a \code{"character"} vector indicating a CWB corpus, a \code{"partition"}
 #' object, a \code{"tempcorpus"} object, or a \code{"matrix"} with corpus positions
 #' @param query a character vector (length 1) providing a (single) query: either a single token to look up, or a CQP query. 
+#' @param cqp either logical (TRUE if query is a CQP query), or a
+#'   function to check whether query is a CQP query or not (defaults to is.query
+#'   auxiliary function)
 #' @param pAttribute the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.
 #' @param encoding the encoding of the corpus (if NULL, the
 #'  encoding provided in the registry file of the corpus will be used)

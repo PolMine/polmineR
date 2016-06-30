@@ -8,7 +8,7 @@
 \title{S4 cooccurrencesBundle class}
 \usage{
 \S4method{as.TermDocumentMatrix}{cooccurrencesBundle}(x, col, directed = TRUE,
-  rel = FALSE, mc = TRUE)
+  rel = FALSE, mc = getOption("polmineR.mc"))
 }
 \arguments{
 \item{x}{a cooccurrencesBundle object}

@@ -11,7 +11,7 @@ setMethod("as.TermDocumentMatrix", "cooccurrencesBundle", function(x, col, direc
     j <- unlist(lapply(c(1:length(tabs)), function(i) rep(i, nrow(tabs[[i]]))))
     v <- unlist(lapply(tabs, function(tab) tab[,col]))
   } else if (directed == FALSE){
-    uniqueKeys4tab <- function(tab){
+    .uniqueKeys4tab <- function(tab){
       tabMatrix <- as.matrix(tab[,c("nodeId", "cooccurrenceId", col)])
       tabMatrixPlus <- t(apply(tabMatrix, 1, .minMaxId))
       colnames(tabMatrixPlus) <- c(colnames(tabMatrix), c("idMin", "idMax"))

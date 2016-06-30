@@ -41,6 +41,7 @@ NULL
 #' @param verbose bla
 #' @param robust bla
 #' @param mc logical
+#' @param progress logical, whether to show progress bar
 #' @param ... to make the check happy
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette

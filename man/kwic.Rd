@@ -14,10 +14,10 @@ kwic(.Object, ...)
 \S4method{kwic}{context}(.Object, meta = getOption("polmineR.meta"),
   cpos = FALSE, neighbor = NULL, verbose = FALSE)
 
-\S4method{kwic}{partition}(.Object, query, left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), meta = getOption("polmineR.meta"),
-  pAttribute = "word", sAttribute = NULL, cpos = TRUE, neighbor = NULL,
-  verbose = TRUE)
+\S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  meta = getOption("polmineR.meta"), pAttribute = "word",
+  sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
 
 \S4method{kwic}{missing}(.Object, ...)
 
@@ -39,7 +39,11 @@ kwic(.Object, ...)
 
 \item{verbose}{logical, whether to be talkative}
 
-\item{query}{a query, CQP-syntax can be used, then use}
+\item{query}{a query, CQP-syntax can be used}
+
+\item{cqp}{either logical (TRUE if query is a CQP query), or a
+function to check whether query is a CQP query or not (defaults to is.query
+auxiliary function)}
 
 \item{left}{to the left}
 

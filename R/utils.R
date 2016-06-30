@@ -2,6 +2,7 @@
 #' 
 #' Basic test whether query is a CQP query.
 #' 
+#' @param query query to be checked
 #' @rdname cqp
 #' @export is.cqp
 is.cqp <- function(query) grepl('["|\']', query)

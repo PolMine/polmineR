@@ -15,7 +15,7 @@ as.TermDocumentMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, pAttribute, sAttribute,
   from = NULL, to = NULL, strucs = NULL, rmBlank = TRUE,
-  verbose = TRUE, robust = FALSE, mc = FALSE)
+  verbose = TRUE, robust = FALSE, mc = FALSE, progress = TRUE)
 
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
   verbose = TRUE)
@@ -51,6 +51,8 @@ as.TermDocumentMatrix(x, ...)
 
 \item{mc}{logical}
 
+\item{progress}{logical, whether to show progress bar}
+
 \item{col}{the column to use of assembling the matrix}
 }
 \value{
@@ -78,13 +80,19 @@ too.
 \examples{
 if (require(polmineR.sampleCorpus) && require(rcqp)){
    use("polmineR.sampleCorpus")
+   
+   # do-it-yourself 
    p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
-   pB <- partitionBundle(p, def=list(text_date=NULL))
+   pB <- partitionBundle(p, sAttribute="text_date")
    pB <- enrich(pB, pAttribute="word")
    tdm <- as.TermDocumentMatrix(pB, col="count")
    
-   pB2 <- partitionBundle(p, def=list(text_date=NULL))
+   # leave the counting to the as.TermDocumentMatrix-method
+   pB2 <- partitionBundle(p, sAttribute="text_date")
    tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
+   
+   # diretissima
+   pB3 <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
 }
 }
 \author{

@@ -6,6 +6,9 @@
 \usage{
 is.cqp(query)
 }
+\arguments{
+\item{query}{query to be checked}
+}
 \description{
 Basic test whether query is a CQP query.
 }

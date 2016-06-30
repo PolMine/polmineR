@@ -28,12 +28,13 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' @references Manning / Schuetze ...
 #' @exportMethod compare
 #' @examples
-#' use(polmineR.sampleCorpus)
-#' kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
-#' all <- partition("PLPRBTTXT", text_date=".*", regex=T, pAttribute="word")
-#' terms_kauder <- compare(kauder, all, included=T)
-#' top100 <- subset(terms_kauder, rank_chisquare <= 100)
-#' View(top100@stat)
+#' if (require("polmineR.sampleCorpus")){
+#'   use(polmineR.sampleCorpus)
+#'   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
+#'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
+#'   terms_kauder <- compare(kauder, all, included=TRUE)
+#'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
+#' }
 #' @rdname  compare-method
 setMethod("compare", signature=c(x="partition"), function(
   x, y,
@@ -74,12 +75,14 @@ setMethod("compare", signature=c(x="partition"), function(
 #' @docType methods
 #' @rdname compare-method
 #' @examples 
-#' use(polmineR.sampleCorpus)
-#' byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
-#' byName <- enrich(byName, pAttribute="word")
-#' all <- partition("PLPRBTTXT", text_date=".*", regex=T, pAttribute="word")
-#' result <- compare(byName, all, included=TRUE, progress=T)
-#' dtm <- as.DocumentTermMatrix(result, col="chisquare")
+#' if (require("polmineR.sampleCorpus")){
+#'   use(polmineR.sampleCorpus)
+#'   byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
+#'   byName <- enrich(byName, pAttribute="word")
+#'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
+#'   result <- compare(byName, all, included=TRUE, progress=TRUE)
+#'   dtm <- as.DocumentTermMatrix(result, col="chisquare")
+#' }
 setMethod("compare", signature=c(x="partitionBundle"), function(
   x, y, 
   included=FALSE, method="chisquare", verbose=TRUE, mc=getOption("polmineR.mc"), progress=FALSE

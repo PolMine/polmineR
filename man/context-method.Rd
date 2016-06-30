@@ -77,8 +77,9 @@ examples). Statistical tests available are log-likelihood, t-test, pmi.
 }
 \examples{
 if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use("polmineR.sampleCorpus")
   p <- partition("PLPRBTTXT", list(text_type="speech"))
-  a <- context(p, "Integration", "word")
+  a <- context(p, query="Integration", pAttribute="word")
 }
 }
 \author{

@@ -13,7 +13,8 @@ cooccurrences(.Object, ...)
   c("NN", "ADJA")), method = "ll", big = FALSE, matrix = FALSE,
   mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
-\S4method{cooccurrences}{partitionBundle}(.Object, mc = FALSE, ...)
+\S4method{cooccurrences}{partitionBundle}(.Object,
+  mc = getOption("polmineR.mc"), ...)
 }
 \arguments{
 \item{.Object}{a partition object}
@@ -44,9 +45,11 @@ get all cooccurrences in a partition
 }
 \examples{
 if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use(polmineR.sampleCorpus)
   merkel <- partition("PLPRBTTXT", text_type="speech", text_name=".*Merkel", regex=TRUE)
   merkel <- enrich(merkel, pAttribute="word")
   cooc <- cooccurrences(merkel)
+  cooc <- cooccurrences(merkel, big=TRUE)
 }
 }
 \author{

@@ -8,8 +8,8 @@ NULL
 #' but not yet enriched.
 #' 
 #' @param .Object character string, a partition, or a list
-#' @param def a list that indicates the s-attribute to be variable and that
-#' provides a character string of values (e.g. def=list(text_year=c("2005", "2006"))
+#' @param sAttribute the s-attribute to vary
+#' @param values values the s-attribute provided shall assume
 #' @param prefix a character vector that will be attached as a prefix to partition names
 #' @param progress logical, whether to show progress bar
 #' @param mc logical, whether to use multicore parallelization
@@ -112,7 +112,7 @@ setMethod("as.partitionBundle", "list", function(.Object, ...){
 })
 
 #' @exportMethod as.partitionBundle
-#' @rdname partitionBundle
+#' @rdname partitionBundle-method
 setMethod("partitionBundle", "context", function(.Object, mc=getOption("polmineR.mc"), verbose=FALSE, progress=TRUE){
   newPartitionBundle <- new(
     "partitionBundle",

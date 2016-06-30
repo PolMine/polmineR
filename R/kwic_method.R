@@ -10,7 +10,10 @@ NULL
 #' will offer partition objects present in the global environment.
 #' 
 #' @param .Object a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched
-#' @param query a query, CQP-syntax can be used, then use 
+#' @param query a query, CQP-syntax can be used
+#' @param cqp either logical (TRUE if query is a CQP query), or a
+#'   function to check whether query is a CQP query or not (defaults to is.query
+#'   auxiliary function)
 #' @param left to the left
 #' @param right to the right
 #' @param meta metainformation to display

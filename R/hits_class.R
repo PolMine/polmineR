@@ -6,6 +6,9 @@
 #' @slot corpus a \code{"character"} vector
 #' @slot query Object of class \code{"character"}
 #' @param query character vector
+#' @param cqp either logical (TRUE if query is a CQP query), or a
+#'   function to check whether query is a CQP query or not (defaults to is.query
+#'   auxiliary function)
 #' @param sAttribute s-attributes
 #' @param pAttribute p-attribute (will be passed into cpos)
 #' @param size logical
