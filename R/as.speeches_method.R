@@ -18,8 +18,7 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #' @exportMethod as.speeches
 #' @rdname as.speeches-method
 #' @examples 
-#' if (require("polmineR.sampleCorpus)){
-#'   
+#' if (require("polmineR.sampleCorpus")){
 #'   use(polmineR.sampleCorpus)
 #'   bt <- partition("PLPRBTTXT", text_year="2009")
 #'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
@@ -34,7 +33,6 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #'   whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
 #'   termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
 #'   tdm <- trim(tdm, termsToDrop = termsToDrop)
-#'   
 #' }
 #' @aliases as.speeches as.speeches,partition-method
 setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=TRUE, progress=TRUE){

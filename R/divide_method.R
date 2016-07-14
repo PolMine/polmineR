@@ -5,6 +5,7 @@ setGeneric("divide", function(.Object, n) standardGeneric("divide"))
 #' 
 #' @param .Object object to divide
 #' @param n number of objects
+#' @rdname divide
 #' @exportMethod divide
 setMethod("divide", "matrix", function(.Object, n){
   chunkFactor <- cut(
