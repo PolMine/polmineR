@@ -305,7 +305,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
       names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]],
       sep=""
       )
-    hits <- .queryCpos(
+    hits <- cpos(
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
       pAttribute=newObject@pAttribute,

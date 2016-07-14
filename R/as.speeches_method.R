@@ -18,9 +18,24 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #' @exportMethod as.speeches
 #' @rdname as.speeches-method
 #' @examples 
-#' use(polmineR.sampleCorpus)
-#' bt <- partition("PLPRBTTXT", text_year="2009")
-#' speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#' if (require("polmineR.sampleCorpus)){
+#'   
+#'   use(polmineR.sampleCorpus)
+#'   bt <- partition("PLPRBTTXT", text_year="2009")
+#'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#'   
+#'   # step-by-step, not the fastest way
+#'   speeches <- enrich(speeches, pAttribute="word")
+#'   tdm <- as.TermDocumentMatrix(speeches, col="count")
+#'   
+#'   # fast option (counts performed when assembling the sparse matrix)
+#'   tdm <- as.TermDocumentMatrix(speeches, pAttribute="word")
+#'   termsToDropList <- noise(tdm)
+#'   whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
+#'   termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
+#'   tdm <- trim(tdm, termsToDrop = termsToDrop)
+#'   
+#' }
 #' @aliases as.speeches as.speeches,partition-method
 setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=TRUE, progress=TRUE){
   if (verbose) message("... getting dates")

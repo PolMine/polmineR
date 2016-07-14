@@ -37,6 +37,12 @@ NULL
 #' @docType package
 #' @rdname polmineR-package
 #' @name polmineR-package
+#' @examples
+#' \dontrun{
+#' # examples in the manual rely in a sample corpus that can be install as follows:
+#' drat::addRepo("PolMine", alturl="https://polmine.github.io/drat/")
+#' install.packages("polmineR.sampleCorpus")
+#' }
 NULL
 
 

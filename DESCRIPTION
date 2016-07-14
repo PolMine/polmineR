@@ -71,7 +71,6 @@ Collate:
     'compare_method.R'
     'contextBundle_methods.R'
     'context_method.R'
-    'cooccurrence_method.R'
     'cooccurrencesBundle_methods.R'
     'cooccurrencesReshaped_methods.R'
     'cooccurrences_method.R'

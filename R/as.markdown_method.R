@@ -72,7 +72,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
     if (metaChange[i] == TRUE) { 
       meta <- paste(metadata[i,], collapse=" | ", sep="")
       meta <- paste("\n###", meta, "\n", collapse="")
-      meta <- polmineR:::.adjustEncoding(meta, "latin1")
+      meta <- adjustEncoding(meta, "latin1")
     }
     tokens <- getTokenStream(
       matrix(object@cpos[i,], nrow=1),
@@ -85,7 +85,7 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
-  markdown <- polmineR:::.adjustEncoding(markdown, "UTF8")
+  markdown <- adjustEncoding(markdown, "UTF8")
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown <- gsub("\n - ", "\n", markdown)
   markdown

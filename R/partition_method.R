@@ -24,7 +24,7 @@
 #' @param .Object character-vector - the CWB-corpus to be used
 #' @param def list consisting of a set of character vectors (see
 #' details and examples)
-#' @param name name of the new partition, defaults to "noName"
+#' @param name name of the new partition, defaults to "
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
 #' @param meta a character vector
@@ -58,6 +58,20 @@
 #'      )
 #'    merkel <- subset(merkel, !word %in% punctuation)
 #'    merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#'    
+#'    # a certain defined time segment
+#'    if (require("chon")){
+#'      firstDay <- "2009-10-28"
+#'      lastDay <- "2009-11-11"
+#'      days <- strftime(
+#'        chron::seq.dates(
+#'          from = strftime(firstDay, format="%m/%d/%Y"),
+#'          to = strftime(lastDay, format="%m/%d/%Y"),
+#'          by="days"),
+#'        format="%Y-%m-%d"
+#'        )
+#'      period <- partition("PLPRBTTXT", text_date=days)
+#'    }
 #' }
 #' @import methods
 #' @exportMethod partition
@@ -68,7 +82,7 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 
 #' @rdname partition
 setMethod("partition", "character", function(
-  .Object, def=NULL, name=c(""),
+  .Object, def=NULL, name="",
   encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
   mc=FALSE, verbose=TRUE, ...
 ) {
@@ -106,12 +120,12 @@ setMethod("partition", "character", function(
       )
     )  
   if(is.null(encoding)) {
-    Partition@encoding <- .getCorpusEncoding(Partition@corpus)  
+    Partition@encoding <- getEncoding(Partition@corpus)  
   } else {
     Partition@encoding <- encoding
   }
   if (verbose==TRUE) message('... encoding of the corpus: ', Partition@encoding)
-  Partition@sAttributes <- lapply(def, function(x).adjustEncoding(x, Partition@encoding))  
+  Partition@sAttributes <- lapply(def, function(x) adjustEncoding(x, Partition@encoding))  
 
   if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
   if(is.null(def)){
@@ -172,7 +186,7 @@ setMethod("partition", "missing", function(.Object){
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
+setMethod("partition", "partition", function(.Object, def=NULL, name="", regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   newPartition <- new(
     class(.Object)[1],
@@ -180,7 +194,7 @@ setMethod("partition", "partition", function(.Object, def=NULL, name=c(""), rege
     stat=data.table()
     )
   if (verbose == TRUE) message('Setting up partition', name)
-  def <- lapply(def, function(x) .adjustEncoding(x, .Object@encoding))  
+  def <- lapply(def, function(x) adjustEncoding(x, .Object@encoding))  
   newPartition@sAttributes <- c(.Object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   if (verbose == TRUE) message('... getting strucs and corpus positions')

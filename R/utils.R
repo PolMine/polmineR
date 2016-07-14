@@ -7,78 +7,38 @@
 #' @export is.cqp
 is.cqp <- function(query) grepl('["|\']', query)
 
-
-
-#' Get the corpus positions for a query
-#' 
-#' Get the corpus positions for a query in a given partition
-#' 
-#' The function works for single words, which is the quick optin.
-#' Also, you can use the full CQP syntax. In this case, make sure to
-#' use single quotes, and double quotes for individual words
-#' (see example below). Input needs to be in UTF-8
-#' 
-#' @param query character vector length 1 providing a query (encoding: UTF-8), see details
-#' @param partition a partition object
-#' @param pAttribute either 'word' or 'lemma', not used 
-#' @return a data frame with two columns with cpos (start and end positions of hits)
-#' @author Andreas Blaette
-#' @example
-#' \dontrun{
-#' foo <- .queryCpos("Integration", partitionObject)
-#' foo <- .queryCpos('"Menschen" "mit" "Migrationshintergrund"', partitionObject)
-#' }
-#' @noRd
-.queryCpos <- function(query, Partition, pAttribute=getOption("polmineR.pAttribute"), verbose=TRUE) {
-  if (length(query) > 1) warning("query needs to be a character vector with length 1")
-  query <- .adjustEncoding(query, Partition@encoding)
-  if (grepl('"', query) == FALSE) {
-    pAttr <- paste(Partition@corpus, '.', pAttribute, sep='')
-    cpos <- try(CQI$id2cpos(Partition@corpus, pAttribute, CQI$str2id(Partition@corpus, pAttribute, query)), silent=TRUE)
-    if (is(cpos)[1] != "try-error"){
-      hits <- as.matrix(data.frame(cpos, cpos))
-    }
-  } else if (grepl('"', query) == TRUE) {
-    CQI$query(Partition@corpus, query)
-    cpos <- try(CQI$dump_subcorpus(Partition@corpus))
-    if(is(cpos)[1] != "try-error"){
-      hits <- matrix(cpos[,1:2], ncol=2)
-    }
-  }
-  if (is(cpos)[1] != "try-error") {
-    strucHits <- CQI$cpos2struc(
-      Partition@corpus, 
-      names(Partition@sAttributes)[length(Partition@sAttributes)],
-      hits[,1]
-      )
-    hits <- hits[which(strucHits %in% Partition@strucs),]
-    if (is(hits)[1] == "integer") {
-      hits <- matrix(hits, nrow=1)
-    }
-  } else {
-    if (verbose == TRUE) warning("no hits for query -> ", query)
-    hits = NULL
-  }
-  hits
+#' Takes a simple string as an imput and converts it to a valid CQP query
+#' @param queries a character vector
+#' @param normalise_case logical
+#' @param collapse whether collapse the queries into one
+#' @return a character vector
+#' @export as.cqp
+#' @rdname cqp
+#' @name as.cqp
+as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
+  cqp <- sapply(
+    queries,
+    function(query){
+      query <- gsub("\\s+", " ", query)
+      cqpRaw <- lapply(
+        unlist(strsplit(query, "\\s")),
+        function(q){
+          if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
+            retval <- q
+          } else {
+            retval <- paste('"', q, '"', sep='')
+            if (normalise_case == TRUE) retval <- paste(retval, "%c", sep=" ")
+          }
+          retval
+        })
+      paste(cqpRaw, collapse=" ")
+    })
+  if (length(cqp)>1 && collapse==TRUE){
+    cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
+  }    
+  return(cqp)
 }
 
-#' The current time 
-#' 
-#' Helper function for ouput to estimate the time that functions require
-#' @noRd
-.takeoff <- function(){strsplit(date(), ' ')[[1]][5]}
-
-#' bla
-#'
-#' is called by: 
-#' @noRd
-.restrictionsCmd <- function(sattributes) {
-  sapply(
-    names(sattributes),
-    function(x) paste("?", x,"=/",
-                      gsub('\\s','.', paste(sattributes[[x]], collapse='\\|')),
-                      "/",sep=""))
-}
 
 .umlaute2punkt <- function(cmd){
   return(gsub('[\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc]','.', cmd))
@@ -89,27 +49,6 @@ is.cqp <- function(query) grepl('["|\']', query)
 punctuation <- c(".", ",", ";", ":", "!", "?", "-", "--", "(", ")", "[", "]", "/")
 
 
-#' adjust encoding
-#' 
-#' use case: encoding of console input is UTF-8, the corpus encoding is latin-1
-#'
-#' @param characterVector the character vector to be adjusted
-#' @param partitionEncoding the encoding to be set
-#' @return a character vector with adjusted encoding
-#' @noRd
-.adjustEncoding <- function(characterVector, partitionEncoding){
-  retval <- sapply(
-    as.list(characterVector),
-    function(x) {
-      enc <- Encoding(x)
-      if ( enc != "unknown" && enc != partitionEncoding ) {
-        x <- iconv(x, from=enc, to=partitionEncoding)
-      }
-      x
-    }
-    )
-  return(retval)
-}
 
 #' flatten a nested list
 #' 
@@ -148,86 +87,9 @@ flatten <- function(object){
   return(result)
 }
 
-.filter <- list(
-  include=function(x,y) {x %in% y},
-  exclude=function(x,y) {!(x %in% y)}
-)
-
-#' generate the sattribute
-#' 
-#' Helper function for partition
-#' 
-#' @param corpus the CWB corpus used
-#' @param dateRange a character with two character strings: the start date, and the end date
-#' @return a character vector (length > 1) that can be used in sAttribute definition
-#' @author Andreas Blaette
-#' @export datesPeriod
-datesPeriod <- function(corpus, dateRange) {
-  if (requireNamespace("chron", quietly=TRUE)){
-    sAttributeDate <- CQI$attributes(corpus, 's')[grep('date', CQI$attributes(corpus, 's'))]
-    # sAttr <- paste(corpus, '.', sAttributeDate, sep='')
-    allDatesInCorpus <- unique(CQI$struc2str(corpus, sAttributeDate, c(0:(CQI$attribute_size(corpus, sAttributeDate)-1))))
-    daysSequence <- strftime(chron::seq.dates(from=strftime(dateRange[1], format="%m/%d/%Y"), to=strftime(dateRange[2], format="%m/%d/%Y"), by="days"), format="%Y-%m-%d")
-    daysInCorpus <- allDatesInCorpus[which(allDatesInCorpus %in% daysSequence)]
-    retval <- daysInCorpus    
-  } else {
-    warning("the 'chron'-package needs to be installed but is not available")
-    stop()
-  }
-  retval
-}
 
 
 
-.getCorpusEncoding <- function(corpus){
-  registry <- scan(
-    file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
-    sep="\n",
-    what="character",
-    quiet=TRUE
-  )
-  encodingLine <- registry[grep('charset\\s*=\\s*"', registry)]
-  encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
-  encoding <- toupper(encoding)
-  if (!encoding %in% iconvlist()){
-    warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
-  }
-  return(tolower(encoding))
-}
-
-#' Convert a string to a CQP query
-#' 
-#' Takes a simple string as an imput and converts it to a valid CQP query
-#' @param queries a character vector
-#' @param normalise_case logical
-#' @param collapse whether collapse the queries into one
-#' @return a character vector
-#' @export as.cqp
-#' @rdname as.cqp
-#' @name as.cqp
-as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
-  cqp <- sapply(
-    queries,
-    function(query){
-      query <- gsub("\\s+", " ", query)
-      cqpRaw <- lapply(
-        unlist(strsplit(query, "\\s")),
-        function(q){
-          if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
-            retval <- q
-          } else {
-            retval <- paste('"', q, '"', sep='')
-            if (normalise_case == TRUE) retval <- paste(retval, "%c", sep=" ")
-          }
-          retval
-        })
-      paste(cqpRaw, collapse=" ")
-      })
-  if (length(cqp)>1 && collapse==TRUE){
-    cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
-  }    
-  return(cqp)
-}
 
 #' @export .importPolMineCorpus
 .importPolMineCorpus <- function(corpus, user, pw, binaryDir=NULL){
@@ -308,41 +170,6 @@ as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
   names(unlist(availableObjectsList))
 }
 
-# used by .crosstab
-.mapMatrices <- function(matrixToMatch, matrixToAdjust){
-  colnames(matrixToAdjust)[which(colnames(matrixToAdjust)=="")] <- 'NA'
-  rownames(matrixToAdjust)[which(rownames(matrixToAdjust)=="")] <- 'NA'
-  colnames(matrixToMatch)[which(colnames(matrixToMatch)=="")] <- 'NA'
-  rownames(matrixToMatch)[which(rownames(matrixToMatch)=="")] <- 'NA'
-  missingRows <- rownames(matrixToMatch)[!rownames(matrixToMatch) %in% rownames(matrixToAdjust)]
-  if (length(missingRows) > 0){
-    matrixToAppend <- matrix(
-      data=0, nrow=length(missingRows), ncol=ncol(matrixToAdjust),
-      dimnames=list(missingRows, colnames(matrixToAdjust))
-    )
-    matrixToAdjust <- rbind(matrixToAdjust, matrixToAppend)
-  }
-  matrixToMatchOrdered <- matrixToMatch[order(rownames(matrixToMatch)),]
-  matrixToAdjustOrdered <- matrixToAdjust[order(rownames(matrixToAdjust)),]
-  matrixFinal <- matrix(
-    data=0, nrow=nrow(matrixToMatchOrdered), ncol=ncol(matrixToMatchOrdered),
-    dimnames=dimnames(matrixToMatchOrdered)
-  )
-  for (colName in colnames(matrixToAdjustOrdered)){
-    matrixFinal[,colName] <- matrixToAdjustOrdered[,colName] 
-  }
-  matrixFinal
-}
-
-.splitMatrixIntoEquallySizedParts <- function(x, n){
-  chunkFactor <- cut(
-    c(1:nrow(x)),
-    unique(c(1, floor(c(1:(n-1))*(nrow(x)/n)), nrow(x))),
-    include.lowest=TRUE
-  )
-  chunkedMatrix <- split(x, chunkFactor)
-  lapply(chunkedMatrix, function(m) matrix(m, ncol=ncol(x)))
-}
 
 
 .verboseOutput <- function(message, verbose){

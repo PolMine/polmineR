@@ -52,7 +52,7 @@ setMethod("summary", "partitionBundle", function (object) {
 #' @author Andreas Blaette
 #' @exportMethod merge
 #' @noRd
-setMethod("merge", "partitionBundle", function(x, name=c("")){
+setMethod("merge", "partitionBundle", function(x, name=""){
   y <- new("partition")
   cat('There are', length(x@objects), 'partitions to be merged\n')
   y@corpus <- unique(vapply(x@objects, FUN.VALUE="characer", function(p) p@corpus))
