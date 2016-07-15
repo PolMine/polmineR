@@ -55,6 +55,55 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
           retval <- parallel::mclapply(x, function(y) f(y, mc=FALSE, progress=FALSE, verbose=FALSE, ...))
         } else {
           stop("progress for parallel backend not yet implemented")
+          #   if (length(parallel:::children()) > 0){
+          #     warning("there have been zombie processes collected with mccollect()")
+          #     graveyard <- parallel::mccollect()
+          #   }
+          #   
+          #   pb <- txtProgressBar(min = 0, max = length(x), style = 3)
+          #   
+          #   noCores <- getOption("polmineR.cores")
+          #   breaksRaw <- unlist(lapply(c(1:noCores), function(i) rep(i, times=trunc(length(x) / noCores))))
+          #   breaks <- c(breaksRaw, rep(noCores, times=length(x)-length(breaksRaw)))
+          #   xChunks <- split(x, breaks)
+          #   dummyDir <- tempdir()
+          #   filesRemoved <- file.remove(list.files(dummyDir, full.names=T, pattern="\\.mc", include.dirs=FALSE))
+          #   noFilesRemoved <- length(filesRemoved)
+          #   if (noFilesRemoved > 0 && verbose == TRUE){
+          #     message ("... logfiles were still present im tempdir, ", length(filesRemoved), " files removed")  
+          #   }
+          #   fWrapped <- function(i, ...){
+          #     filename <- file.path(dummyDir, paste(i, "mc", sep="."))
+          #     print(filename)
+          #     cat(".", file=filename)
+          #     f(...)
+          #   }
+          #   lapply(xChunks[[1]], function(i) fWrapped(i, object=x[[i]], ...))
+          #   threadNames <- paste("thread", c(1:noCores), sep="")
+          #   
+          #   for (i in c(1:noCores)){
+          #     assign(
+          #       threadNames[i],
+          #       parallel::mcparallel(
+          #         lapply(
+          #           xChunks[[i]],
+          #           function(xChunk) {
+          #             fWrapped(i=xChunk, x[[i]], ...)
+          #           }
+          #         )),
+          #       envir=environment())
+          #   }
+          #   while (length(parallel:::selectChildren()) < noCores){
+          #     filesTargetDir <- list.files(path=dummyDir, pattern="\\.multicore")
+          #     setTxtProgressBar(pb, length(filesTargetDir))
+          #     Sys.sleep(1)
+          #   }
+          #   retval <- parallel::mccollect(
+          #     jobs=lapply(threadNames, function(x) get(x, envir=environment())),
+          #     wait=TRUE
+          #   )
+          #   dummy <- file.remove(list.files(dummyDir, full.names=T, pattern="\\.mc", include.dirs=FALSE))
+          #   retval <- unlist(retval, recursive = FALSE)
         }
       } else if (backend == "doParallel"){
         cl <- makeCluster(getOption("polmineR.cores"))
