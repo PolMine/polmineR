@@ -5,8 +5,7 @@
 \alias{blapply}
 \alias{blapply,bundle-method}
 \alias{blapply,list-method}
-\title{apply a function over a list or bundle with and without verbose
-parallelization}
+\title{apply a function over a list or bundle}
 \usage{
 blapply(x, ...)
 
@@ -33,8 +32,16 @@ will be taken from the polmineR-options}
 \item{verbose}{logical, whether to print intermediate messages}
 }
 \description{
-apply a function over a list or bundle with and without verbose
-parallelization
+Very similar to lapply, but applicable to bundle-objects, in particular.
+The purpose of the method is to supply a uniform und convenient parallel
+backend for the polmineR package. In particular, progress bars are supported
+(the naming of the method is derived from bla bla).
+}
+\details{
+Parallel backend supported so far are the parallel package (mclapply), and
+doMC, doParallel and doSNOW in combination with foreach. The parallel backend
+to be used is taken from the option 'polmineR.backend' (getOption("polmineR.backend")),
+the number of cores from the option 'polmineR.cores' (getOption("polmineR.cores")).
 }
 \examples{
 if (require(polmineR.sampleCorpus) && require(rcqp)){

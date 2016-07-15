@@ -1,6 +1,14 @@
-#' apply a function over a list or bundle with and without verbose
-#' parallelization
+#' apply a function over a list or bundle
 #' 
+#' Very similar to lapply, but applicable to bundle-objects, in particular.
+#' The purpose of the method is to supply a uniform und convenient parallel
+#' backend for the polmineR package. In particular, progress bars are supported
+#' (the naming of the method is derived from bla bla).
+#' 
+#' Parallel backend supported so far are the parallel package (mclapply), and 
+#' doMC, doParallel and doSNOW in combination with foreach. The parallel backend
+#' to be used is taken from the option 'polmineR.backend' (getOption("polmineR.backend")),
+#' the number of cores from the option 'polmineR.cores' (getOption("polmineR.cores")).
 #' @param x a list or a bundle object
 #' @param f a function that can be applied to each object contained in the
 #'   bundle, note that it should swallow the parameters mc, verbose and progress
@@ -39,25 +47,44 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
     if (progress) close(pb)
   } else {
     backend <- getOption("polmineR.backend")
-    stopifnot(backend %in% c("doMC", "doSNOW", "doMPI", "doRedis", "doParallel"))
+    stopifnot(backend %in% c("parallel", "doParallel", "doSNOW", "doMC"))
+    
     if (requireNamespace(backend, quietly=TRUE)){
-      if (backend %in% c("doSNOW")){
-        pb <- txtProgressBar(min = 0, max = length(x), style = 3)
-        progressBar <- function(n) setTxtProgressBar(pb, n)
-        cl <- snow::makeSOCKcluster(getOption("polmineR.backend"))
-        doSNOW::registerDoSNOW(cl)
-        snow::clusterCall(cl, function() library(polmineR))
-        snow::clusterExport(cl, names(list(...)))
-        retval <- foreach(
-          i=c(1:length(x)),
-          .options.snow=list(progress=progressBar)
-        ) %dopar% {
+      if (backend == "parallel"){
+        if (progress == FALSE){
+          retval <- parallel::mclapply(x, function(y) f(y, mc=FALSE, progress=FALSE, verbose=FALSE, ...))
+        } else {
+          stop("progress for parallel backend not yet implemented")
+        }
+      } else if (backend == "doParallel"){
+        cl <- makeCluster(getOption("polmineR.cores"))
+        doParallel::registerDoParallel(cl)
+        retval <- foreach(i=c(1:length(x))) %dopar% {
           f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
         }
+        stopCluster(cl)
+      } else if (backend == "doSNOW"){
+        cl <- snow::makeSOCKcluster(getOption("polmineR.cores"))
+        doSNOW::registerDoSNOW(cl)
+        snow::clusterEvalQ(cl, library(polmineR))
+        for (i in names(list(...))) assign(i, value=list(...)[[i]], envir=environment())
+        snow::clusterExport(cl, names(list(...)), envir=environment())
+        if (progress == TRUE){
+          pb <- txtProgressBar(min = 0, max = length(x), style = 3)
+          progressBar <- function(n) setTxtProgressBar(pb, n)
+          retval <- foreach(
+            i=c(1:length(x)),
+            .options.snow=list(progress=progressBar)
+          ) %dopar% f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+          close(pb)
+        } else {
+          retval <- foreach(i=c(1:length(x))) %dopar% {
+            f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
+          }
+        }
         snow::stopCluster(cl)
-        close(pb)
       } else if (backend == "doMC"){
-        doMC::registerDoMC(cores=getOption("polmineR.backend"))  
+        doMC::registerDoMC(cores=getOption("polmineR.cores"))  
         retval <- foreach(i=c(1:length(x))) %dopar% {
           f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
         }

@@ -8,7 +8,7 @@
 \alias{CQI.rcqp}
 \alias{CQI.super}
 \title{Interfaces for accessing the CWB}
-\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x6e712c8> 
+\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x8bcbae0> 
  - attr(*, "name")= chr "CQI.super_generator"
 }}
 \usage{

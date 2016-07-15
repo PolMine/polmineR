@@ -39,25 +39,25 @@ setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttrib
   if (verbose) message("... getting dates")
   dates <- sAttributes(.Object, sAttributeDates)
   if (verbose) message("... generating partitions by date")
+  toIterate <- lapply(dates, function(x) setNames(x, sAttributeDates))
   partitionByDate <- blapply(
-    lapply(dates, function(x) setNames(x, sAttributeDates)),
-    f=partition, .Object=.Object,
+    x=toIterate, .Object=.Object, f=partition, 
     verbose=verbose, progress=progress, mc=mc
   )
   partitionByDate <- lapply(partitionByDate, function(x) as(x, "plprPartition"))
   if (verbose) message("... generating speeches")
+  .splitFunction <- function(datePartition, ...){
+    nested <- lapply(
+      sAttributes(datePartition, sAttributeNames),
+      function(speakerName){
+        beforeSplit <- partition(datePartition, setNames(list(speakerName), sAttributeNames), verbose=FALSE)
+        split(beforeSplit, gap=gap, verbose=FALSE)
+      }
+    )
+    unlist(lapply(c(1:length(nested)), function(i) nested[[i]]@objects))
+  }
   speakerNestedList <- blapply(
-    partitionByDate,
-    function(datePartition, ...){
-      nested <- lapply(
-        sAttributes(datePartition, sAttributeNames),
-        function(speakerName){
-          beforeSplit <- partition(datePartition, setNames(list(speakerName), sAttributeNames), verbose=FALSE)
-          split(beforeSplit, gap=gap, verbose=FALSE)
-        }
-      )
-      unlist(lapply(c(1:length(nested)), function(i) nested[[i]]@objects))
-    },
+    x=partitionByDate, f=.splitFunction,
     sAttributeNames=sAttributeNames, gap=gap,
     mc=mc, progress=progress
   )

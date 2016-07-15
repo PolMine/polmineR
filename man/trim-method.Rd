@@ -8,7 +8,7 @@
 \alias{trim,TermDocumentMatrix-method}
 \alias{trim-method}
 \title{trim an object}
-\format{\preformatted{ chr [1:13] "." "," ";" ":" "!" "?" "-" "--" "(" ")" ...
+\format{\preformatted{ chr [1:13] "." "," ";" ":" "!" "?" "-" "--" "(" ")" "[" "]" "/"
 }}
 \usage{
 trim(object, ...)
