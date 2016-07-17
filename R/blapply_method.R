@@ -68,6 +68,10 @@ setMethod("blapply", "list", function(x, f, mc=TRUE, progress=TRUE, verbose=FALS
 })
 
 
+#' @rdname blapply
+setMethod("blapply", "vector", function(x, f, mc=FALSE, progress=TRUE, verbose=FALSE, ...){
+  blapply(as.list(x), f=f, mc=mc, progress=progress, verbose=verbose, ...)
+})
 
 #' @rdname blapply
 setMethod("blapply", "bundle", function(x, f, mc=FALSE, progress=TRUE, verbose=FALSE, ...){
