@@ -16,3 +16,12 @@ setMethod("divide", "matrix", function(.Object, n){
   chunkedMatrix <- split(.Object, chunkFactor)
   lapply(chunkedMatrix, function(m) matrix(m, ncol=ncol(.Object)))
 })
+
+setMethod("divide", "vector", function(.Object, n){
+  chunkFactor <- cut(
+    c(1:length(.Object)),
+    unique(c(1, floor(c(1:(n-1))*(length(.Object)/n)), length(.Object))),
+    include.lowest=TRUE
+  )
+  split(.Object, chunkFactor)
+})
