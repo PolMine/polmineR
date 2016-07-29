@@ -5,6 +5,9 @@ v0.6.2
 * more coherent naming of parameters in partitionBundle-method
 * partitionBundle,character-method debugged and more robust
 * usage of blapply in as.speeches-method
+* hits-method: paramter cqp defaults to FALSE for hits-method, size defaults to FALSE
+* new parameter cqp for dispersion-method
+* aggregation for dispersion-method when length(sAttribute) == 1
 
 v0.6.1
 * configure file removed to avoid unwanted bugs

@@ -39,10 +39,10 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttribute=getOption("polmineR.pAttribute"), freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
+setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = FALSE, pAttribute = getOption("polmineR.pAttribute"), freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
   dispersion(
     hits(
-      .Object=.Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
+      .Object=.Object, query=query, cqp=cqp, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
       mc=mc, verbose=verbose, progress=progress
       ),
     sAttribute=sAttribute, freq=freq
@@ -50,11 +50,11 @@ setMethod("dispersion", "partition", function(.Object, query, sAttribute, pAttri
 })
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
+setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = FALSE, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
   dispersion(
     hits(
-      .Object, query=query, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
-      mc=mc, verbose=verbose, progress=progress
+      .Object, query = query, cqp = cqp, sAttribute = sAttribute, pAttribute = pAttribute, freq = freq,
+      mc = mc, verbose = verbose, progress = progress
     ),
     sAttribute=sAttribute, freq=freq
   )
@@ -62,14 +62,20 @@ setMethod("dispersion", "character", function(.Object, query, sAttribute, pAttri
 
 
 #' @rdname dispersion-method
-setMethod("dispersion", "hits", function(.Object, sAttribute, freq=FALSE){
+setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE){
   if (length(sAttribute) == 2){
     retval <- data.table::dcast.data.table(
       .Object@dt, formula(paste(sAttribute, collapse="~")),
       value.var=ifelse(freq == TRUE, "freq", "count"), fun.aggregate=sum, fill=0
       )  
   } else if (length(sAttribute) == 1){
-    retval <- .Object@dt[, "query" := NULL, with=TRUE]
+    if (freq == FALSE){
+      sumup <- function(.SD) sum(.SD[["count"]])
+      retval <- .Object@dt[, sumup(.SD), by = c(sAttribute), with = TRUE]
+      data.table::setnames(retval, old = "V1", new = "count")
+    } else {
+      stop("not implemented for freq = TRUE")
+    }
   } else {
     warning("length(sAttribute) needs to be 1 or 2")
   }

@@ -7,8 +7,7 @@
 #' @slot query Object of class \code{"character"}
 #' @param query character vector
 #' @param cqp either logical (TRUE if query is a CQP query), or a
-#'   function to check whether query is a CQP query or not (defaults to is.query
-#'   auxiliary function)
+#'   function to check whether query is a CQP query or not
 #' @param sAttribute s-attributes
 #' @param pAttribute p-attribute (will be passed into cpos)
 #' @param size logical
@@ -35,7 +34,7 @@ setClass("hits",
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
-setMethod("hits", "character", function(.Object, query, cqp=is.cqp, sAttribute=NULL, pAttribute="word", size=TRUE, freq=FALSE, mc=FALSE, verbose=TRUE, progress=TRUE){
+setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE){
   stopifnot(.Object %in% CQI$list_corpora())
   # check availability of sAttributes before proceeding
   if (!is.null(sAttribute)) {
@@ -64,6 +63,7 @@ setMethod("hits", "character", function(.Object, query, cqp=is.cqp, sAttribute=N
     setnames(TF, old="V1", new="count")
     if (freq == TRUE) size <- TRUE
     if (size == TRUE){
+      if (verbose) message("... getting sizes")
       META <- as.data.table(
         lapply(setNames(sAttribute, sAttribute), function(sAttr) CQI$struc2str(.Object, sAttr, c(1:(CQI$attribute_size(.Object, sAttr) -1))))
       )
@@ -80,7 +80,10 @@ setMethod("hits", "character", function(.Object, query, cqp=is.cqp, sAttribute=N
       TF <- TF[SIZE]
       TF <- TF[is.na(TF[["query"]]) == FALSE]
       setnames(TF, old="V1", new="size")
-      if (freq == TRUE) TF[, freq := count / size]
+      if (freq == TRUE){
+        if (verbose) message("... frequencies")
+        TF[, freq := count / size]
+      }
     }
   } else {
     TF <- DT
