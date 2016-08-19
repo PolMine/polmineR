@@ -139,47 +139,47 @@ setMethod(
 
 #' @rdname as.DocumentTermMatrix
 #' @importFrom slam simple_triplet_matrix
-setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute=NULL, verbose=TRUE){
+setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL, verbose = TRUE){
   if (is.null(pAttribute)){
     pAttribute <- x@objects[[1]]@pAttribute
     if (verbose == TRUE) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
   }
-  # stopifnot(
-    #    col %in% colnames(x@objects[[1]]),
-    pAttribute %in% colnames(x@objects[[1]])
-  # )
   if (verbose == TRUE) message("... generating (temporary) key column")
   if (length(pAttribute) > 1){
-    lapply(
+    dummy <- lapply(
       c(1:length(x@objects)),
       function(i){
         keysRaw <- x@objects[[i]]@stat[, c(pAttribute), with=FALSE]
         keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
         x@objects[[i]]@stat[, key := keys]
       })
+    rm(dummy)
   } else {
-    lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old=pAttribute, new="key"))
+    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new="key"))
+    rm(dummy)
   }
   if (verbose == TRUE) message("... generating cumulated data.table")
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
-  
+  j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
+  DT[, "j" := j, with = FALSE]
+  DT <- DT[which(DT[["key"]] != "")] # to avoid errors
   if (verbose == TRUE) message("... getting unique keys")
   uniqueKeys <- unique(DT[["key"]])
   keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
   if (verbose == TRUE) message("... generating integer keys")
   i <- keys[ DT[["key"]] ]
-  j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
   retval <- simple_triplet_matrix(
-    i = i, j = j, v = DT[[col]],
+    i = unname(i), j = DT[["j"]], v = DT[[col]],
+    nrow = length(names(keys)), ncol = length(names(x@objects)),
     dimnames = list(Terms=names(keys), Docs=names(x@objects))
   )
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   
   if (verbose == TRUE) message("... cleaning up temporary key columns")
   if (length(pAttribute) > 1){
-    lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
+    dummy <- lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
   } else {
-    lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
+    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
   }
   attr(retval, "weighting") <- c("term frequency", "tf")
   retval
