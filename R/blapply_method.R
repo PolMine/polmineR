@@ -35,7 +35,7 @@ setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose = FALSE, ...){
   if (mc == FALSE){
     total <- length(x)
-    if (progress) pb <- txtProgressBar(min = 0, max = total, style = 3)
+    if (progress) pb <- txtProgressBar(min = 0, max = total, style = 3, width = getOption("width") - 10)
     i <- 0 # just to pass R CMD check
     retval <- lapply(
       c(1:length(x)),

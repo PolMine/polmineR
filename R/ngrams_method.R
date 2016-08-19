@@ -21,7 +21,7 @@ setGeneric("ngrams", function(.Object, ...) standardGeneric("ngrams"))
 
 
 #' @rdname ngrams
-setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word", char=NULL, progress=FALSE){
+setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word", char=NULL, progress=FALSE, ...){
   if (is.null(char)){
     cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
     # pAttrs <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep=""))
@@ -83,15 +83,19 @@ setMethod("ngrams", "partition", function(.Object, n=2, pAttribute="word", char=
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "partitionBundle", function(.Object, char=NULL, mc=FALSE, progress=FALSE, ...){
+setMethod("ngrams", "partitionBundle", function(.Object, char = NULL, mc = FALSE, progress = FALSE, ...){
   newBundle <- new("bundle")
-  newBundle@objects <- lapply(
-    c(1:length(.Object)),
-    function(i){
-      if (progress == TRUE) .progressBar(i, length(.Object))
-      ngrams(.Object@objects[[i]], char=char, ...)
-    }
-  )
+  newBundle@objects <- blapply(
+    .Object@objects, f = ngrams,
+    char = char, mc = mc, progress = progress
+    )
+#   newBundle@objects <- lapply(
+#     c(1:length(.Object)),
+#     function(i){
+#       if (progress == TRUE) .progressBar(i, length(.Object))
+#       ngrams(.Object@objects[[i]], char=char, ...)
+#     }
+#   )
   newBundle@pAttribute <- unique(unlist(lapply(newBundle@objects, function(x) x@pAttribute)))
   names(newBundle@objects) <- names(.Object)
   newBundle
