@@ -62,7 +62,7 @@ setMethod("partitionBundle", "partition", function(
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
   .Object, sAttribute, values=NULL, prefix=c(""),
-  mc=getOption("polmineR.mc"), verbose=TRUE, progress=FALSE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
 ) {
   bundle <- new(
@@ -95,8 +95,9 @@ setMethod("partitionBundle", "character", function(
     newPartition
   }
   bundle@objects <- blapply(
-    cposList, f=.makeNewPartition, corpus=.Object, encoding=bundle@encoding, sAttribute=sAttribute,
-    mc=mc, progress=progress, verbose=verbose, ...
+    cposList, f = .makeNewPartition,
+    corpus = .Object, encoding = bundle@encoding, sAttribute = sAttribute,
+    mc = mc, progress = progress, verbose = verbose, ...
     )
   for (i in c(1:length(bundle))) bundle@objects[[i]]@name <- names(cposList)[i]
   names(bundle@objects) <- names(cposList)
@@ -135,6 +136,9 @@ setMethod("partitionBundle", "context", function(.Object, mc=getOption("polmineR
     )
     newPartition
   }
-  newPartitionBundle@objects <- blapply(.Object@cpos, f=.makeNewPartition, contextObject=.Object, mc=mc, verbose=verbose, progress=progress)
+  newPartitionBundle@objects <- blapply(
+    .Object@cpos, f = .makeNewPartition,
+    contextObject = .Object, mc = mc, verbose = verbose, progress = progress
+    )
   return(newPartitionBundle)
 })
