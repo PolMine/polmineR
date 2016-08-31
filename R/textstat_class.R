@@ -74,8 +74,8 @@ setMethod("names", "textstat", function(x) x@name)
 #' @exportMethod sort
 #' @rdname textstat-class
 setMethod("sort", "textstat", function(x, by, decreasing=TRUE){
-  setkeyv(x@stat, cols=by)
-  setorderv(x@stat, cols=by, order=ifelse(decreasing == TRUE, -1, 1), na.last=TRUE)
+  setkeyv(x@stat, cols = by)
+  setorderv(x@stat, cols = by, order=ifelse(decreasing == TRUE, -1, 1), na.last=TRUE)
   return(x)
 })
 
