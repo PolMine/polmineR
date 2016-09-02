@@ -8,7 +8,7 @@
 \alias{hits,partitionBundle-method}
 \alias{hits-class}
 \alias{sample,hits-method}
-\title{hits class}
+\title{Hits Class}
 \usage{
 hits(.Object, ...)
 
@@ -16,7 +16,7 @@ hits(.Object, ...)
   pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   verbose = TRUE, progress = TRUE)
 
-\S4method{hits}{partition}(.Object, query, sAttribute = NULL,
+\S4method{hits}{partition}(.Object, query, cqp = FALSE, sAttribute = NULL,
   pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE)
 
@@ -54,7 +54,7 @@ function to check whether query is a CQP query or not}
 \item{x}{a hits object}
 }
 \description{
-A potentially useful worker.
+Backend for dispersion method.
 }
 \section{Slots}{
 

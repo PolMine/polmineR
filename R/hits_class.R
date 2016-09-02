@@ -1,6 +1,6 @@
-#' hits class
+#' Hits Class
 #' 
-#' A potentially useful worker. 
+#' Backend for dispersion method.
 #' 
 #' @slot dt a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
@@ -93,11 +93,11 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
 
 
 #' @rdname hits
-setMethod("hits", "partition", function(.Object, query, sAttribute=NULL, pAttribute="word", size=FALSE, freq=FALSE, mc=FALSE, progress=FALSE, verbose=TRUE){
+setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE){
   stopifnot(all(sAttribute %in% sAttributes(.Object@corpus)))
   if (freq == TRUE) size <- TRUE
   sAttrs <- paste(.Object@corpus, sAttribute, sep=".")
-  DT <- hits(.Object@corpus, query=query, sAttribute=NULL, pAttribute=pAttribute, mc=mc, progress=progress)@dt
+  DT <- hits(.Object@corpus, query = query, cqp = cqp, sAttribute = NULL, pAttribute = pAttribute, mc = mc, progress = progress)@dt
   DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos"]]), with=TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   if (!is.null(sAttribute)){
@@ -125,14 +125,14 @@ setMethod("hits", "partition", function(.Object, query, sAttribute=NULL, pAttrib
     # if (size == TRUE) TF[, size := .Object@size]
     # if (freq == TRUE) TF[, freq := count / size]
   }
-  new("hits", dt=TF, corpus=.Object@corpus, query=query)
+  new("hits", dt = TF, corpus = .Object@corpus, query = query)
 })
 
 
 #' @rdname hits
 setMethod("hits", "partitionBundle", function(
-  .Object, query, pAttribute=getOption("polmineR.pAttribute"), size=TRUE, freq=FALSE,
-  mc=getOption("polmineR.mc"), progress=FALSE, verbose=TRUE
+  .Object, query, pAttribute = getOption("polmineR.pAttribute"), size = TRUE, freq = FALSE,
+  mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE
   ){
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
   if (length(corpus) == 1){

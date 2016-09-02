@@ -4,11 +4,14 @@
 \name{divide}
 \alias{divide}
 \alias{divide,matrix-method}
+\alias{divide,vector-method}
 \title{divide an object into equally sized parts}
 \usage{
 divide(.Object, n)
 
 \S4method{divide}{matrix}(.Object, n)
+
+\S4method{divide}{vector}(.Object, n)
 }
 \arguments{
 \item{.Object}{object to divide}

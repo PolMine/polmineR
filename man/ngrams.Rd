@@ -6,12 +6,12 @@
 \alias{ngrams,partition-method}
 \alias{ngrams,partitionBundle-method}
 \alias{ngrams-class}
-\title{get ngrams}
+\title{Get N-Grams}
 \usage{
 ngrams(.Object, ...)
 
 \S4method{ngrams}{partition}(.Object, n = 2, pAttribute = "word",
-  char = NULL, progress = FALSE)
+  char = NULL, progress = FALSE, ...)
 
 \S4method{ngrams}{partitionBundle}(.Object, char = NULL, mc = FALSE,
   progress = FALSE, ...)
@@ -21,9 +21,9 @@ ngrams(.Object, ...)
 
 \item{...}{further parameters}
 
-\item{n}{number of tokens}
+\item{n}{number of tokens/characters}
 
-\item{pAttribute}{p-attribute}
+\item{pAttribute}{the p-attribute to use (can be > 1)}
 
 \item{char}{if NULL, tokens will be counted, else characters, keeping only those provided by a character vector}
 
@@ -32,6 +32,20 @@ ngrams(.Object, ...)
 \item{mc}{logical, whether to use multicore}
 }
 \description{
-get ngrams
+Count n-grams, either of words, or of characters.
+}
+\examples{
+use("polmineR.sampleCorpus")
+P <- partition("PLPRBTTXT", text_date = "2009-10-27")
+ngramObject <- ngrams(P, n = 2, pAttribute = "word", char = NULL)
+# a more complex scenario: get most frequent ADJA/NN-combinations
+ngramObject <- ngrams(P, n = 2, pAttribute = c("word", "pos"), char = NULL)
+ngramObject2 <- subset(
+  ngramObject,
+  ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
+  )
+ngramObject2@stat[, "1_pos" := NULL, with = FALSE][, "2_pos" := NULL, with = FALSE]
+ngramObject3 <- sort(ngramObject2, by = "count")
+head(ngramObject3)
 }
 

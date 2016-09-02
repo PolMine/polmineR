@@ -6,7 +6,6 @@
 \alias{blapply,bundle-method}
 \alias{blapply,list-method}
 \alias{blapply,vector-method}
-\alias{blapply,virtualMatrixClass-method}
 \title{apply a function over a list or bundle}
 \usage{
 blapply(x, ...)
@@ -19,10 +18,6 @@ blapply(x, ...)
 
 \S4method{blapply}{bundle}(x, f, mc = FALSE, progress = TRUE,
   verbose = FALSE, ...)
-
-\S4method{blapply}{virtualMatrixClass}(x, f, chunks = 2,
-  finalizer = list(as.matrix, as.dist, as.matrix), progress = TRUE,
-  verbose = FALSE, mc = FALSE, ...)
 }
 \arguments{
 \item{x}{a list or a bundle object}

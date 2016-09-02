@@ -17,6 +17,7 @@ setMethod("divide", "matrix", function(.Object, n){
   lapply(chunkedMatrix, function(m) matrix(m, ncol=ncol(.Object)))
 })
 
+#' @rdname divide
 setMethod("divide", "vector", function(.Object, n){
   chunkFactor <- cut(
     c(1:length(.Object)),

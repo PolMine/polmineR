@@ -102,7 +102,7 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
    merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
    
    # a certain defined time segment
-   if (require("chon")){
+   if (require("chron")){
      firstDay <- "2009-10-28"
      lastDay <- "2009-11-11"
      days <- strftime(

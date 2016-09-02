@@ -25,7 +25,10 @@ setClass(
 #' ngramObject <- ngrams(P, n = 2, pAttribute = "word", char = NULL)
 #' # a more complex scenario: get most frequent ADJA/NN-combinations
 #' ngramObject <- ngrams(P, n = 2, pAttribute = c("word", "pos"), char = NULL)
-#' ngramObject2 <- subset(ngramObject, ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN")
+#' ngramObject2 <- subset(
+#'   ngramObject,
+#'   ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
+#'   )
 #' ngramObject2@stat[, "1_pos" := NULL, with = FALSE][, "2_pos" := NULL, with = FALSE]
 #' ngramObject3 <- sort(ngramObject2, by = "count")
 #' head(ngramObject3)

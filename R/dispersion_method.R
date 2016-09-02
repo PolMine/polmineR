@@ -17,6 +17,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @param sAttribute a character vector of length 1 or 2 providing the sAttributes 
 #' @param pAttribute the p-attribute that will be looked up, typically 'word'
 #' or 'lemma'
+#' @param cqp if logical, whether the query is a CQP query (TRUE/FALSE), if it is a function that is passed in, the function will be applied to the query to guess whether query is a CQP query
 #' @param freq logical, whether to calculate normalized frequencies
 #' @param mc logical, whether to use multicore
 #' @param verbose logical, whether to be verbose
@@ -28,10 +29,19 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @examples
 #' if (require(polmineR.sampleCorpus) && require(rcqp)){
 #'   use("polmineR.sampleCorpus")
-#'   test <- partition("PLPRBTTXT", text_year="2009", pAttribute=NULL)
-#'   integration <- dispersion(test, query="Integration", pAttribute="word", sAttribute="text_date")
-#'   integration <- dispersion(test, "Integration", sAttribute=c("text_date", "text_party"))
-#'   integration <- dispersion(test, '"Integration.*"', sAttribute=c("text_year"))
+#'   test <- partition("PLPRBTTXT", text_year = "2009", pAttribute = NULL)
+#'   integration <- dispersion(
+#'     test, query = "Integration",
+#'     pAttribute = "word", sAttribute = "text_date"
+#'     )
+#'   integration <- dispersion(
+#'     test, "Integration",
+#'     sAttribute = c("text_date", "text_party")
+#'     )
+#'   integration <- dispersion(
+#'     test, '"Integration.*"',
+#'     sAttribute = "text_year", cqp = TRUE
+#'     )
 #' }
 #' @seealso count
 #' @author Andreas Blaette
@@ -39,13 +49,14 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = FALSE, pAttribute = getOption("polmineR.pAttribute"), freq=TRUE, mc=FALSE, progress=TRUE, verbose=FALSE){
+setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = FALSE, pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc=FALSE, progress = TRUE, verbose = FALSE){
   dispersion(
     hits(
-      .Object=.Object, query=query, cqp=cqp, sAttribute=sAttribute, pAttribute=pAttribute, freq=freq,
-      mc=mc, verbose=verbose, progress=progress
+      .Object = .Object, query = query, cqp = cqp,
+      sAttribute = sAttribute, pAttribute = pAttribute, freq = freq,
+      mc = mc, verbose = verbose, progress = progress
       ),
-    sAttribute=sAttribute, freq=freq
+    sAttribute = sAttribute, freq = freq
   )
 })
 
@@ -66,7 +77,7 @@ setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE){
   if (length(sAttribute) == 2){
     retval <- data.table::dcast.data.table(
       .Object@dt, formula(paste(sAttribute, collapse="~")),
-      value.var=ifelse(freq == TRUE, "freq", "count"), fun.aggregate=sum, fill=0
+      value.var = ifelse(freq == TRUE, "freq", "count"), fun.aggregate = sum, fill = 0
       )  
   } else if (length(sAttribute) == 1){
     if (freq == FALSE){
