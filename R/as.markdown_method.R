@@ -1,15 +1,15 @@
-#' turn partition into markdown
+#' Turn partition into markdown
 #' 
-#' for further processing to html
+#' The method is the worker behind the html-method.
 #' 
-#' @param object object to be converted
+#' @param .Object object to be converted
 #' @param meta metainformation i.e. s-attributes) to be displayed
 #' @param cpos logical, whether to add cpos as ids in span elements
 #' @param interjections logical, whether to format interjections
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
-setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")})
+setGeneric("as.markdown", function(.Object, ...) {standardGeneric("as.markdown")})
 
 # helper function to wrap span with id around tokens
 .wrapTokens <- function(tokens){
@@ -22,51 +22,51 @@ setGeneric("as.markdown", function(object, ...) {standardGeneric("as.markdown")}
 }
 
 #' @rdname partition-class
-setMethod("as.markdown", "partition", function(object, meta, cpos=TRUE){
-  tokens <- getTokenStream(object, pAttribute="word", cpos=cpos)
-  if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+setMethod("as.markdown", "partition", function(.Object, meta, cpos = TRUE){
+  tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos)
+  if (cpos) tokens <- .wrapTokens(tokens)
   tokens <- paste(tokens, collapse=" ")
   rawTxt <- paste(tokens, sep="\n")
   gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
 })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, interjections=TRUE){
+setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, interjections=TRUE){
   # in the function call, meta is actually not needed, its required by the calling function
   if (length(meta) == 0) stop("meta needs to be provided, either as session setting, or directly")
   if (interjections == TRUE){
-    maxNoStrucs <- object@strucs[length(object@strucs)] - object@strucs[1] + 1
-    if (maxNoStrucs != length(object@strucs)){
-      object@strucs <- c(object@strucs[1]:object@strucs[length(object@strucs)])
-      object@cpos <- do.call(rbind, lapply(
-        object@strucs,
-        function(i) CQI$struc2cpos(object@corpus, object@sAttributeStrucs, i)
+    maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1
+    if (maxNoStrucs != length(.Object@strucs)){
+      .Object@strucs <- c(.Object@strucs[1]:.Object@strucs[length(.Object@strucs)])
+      .Object@cpos <- do.call(rbind, lapply(
+        .Object@strucs,
+        function(i) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, i)
       ))
     }
     # this is potential double work, enrich is also performed in the html-method
-    object <- enrich(object, meta=meta, verbose=FALSE)
+    .Object <- enrich(.Object, meta=meta, verbose=FALSE)
   }
-  sAttribute <- grep("_type", sAttributes(object), value=T)[1]
-  if (length(object@strucs) > 1){
-    gapSize <- object@strucs[2:length(object@strucs)] - object@strucs[1:(length(object@strucs)-1)]
+  sAttribute <- grep("_type", sAttributes(.Object), value=T)[1]
+  if (length(.Object@strucs) > 1){
+    gapSize <- .Object@strucs[2:length(.Object@strucs)] - .Object@strucs[1:(length(.Object@strucs)-1)]
     gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
-    metaNo <- ncol(object@metadata)
+    metaNo <- ncol(.Object@metadata)
     metaComp <- data.frame(
-      object@metadata[2:nrow(object@metadata),],
-      object@metadata[1:(nrow(object@metadata)-1),]
+      .Object@metadata[2:nrow(.Object@metadata),],
+      .Object@metadata[1:(nrow(.Object@metadata)-1),]
       )
     metaChange <- !apply(
       metaComp, 1,
       function(x) all(x[1:metaNo] == x[(metaNo+1):length(x)])
     )
     metaChange <- c(TRUE, metaChange)
-    metadata <- apply(object@metadata, 2, function(x) as.vector(x))
+    metadata <- apply(.Object@metadata, 2, function(x) as.vector(x))
   } else {
     gap <- 0
     metaChange <- TRUE
-    metadata <- matrix(apply(object@metadata, 2, function(x) as.vector(x)), nrow=1)
+    metadata <- matrix(apply(.Object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
-  type <- CQI$struc2str(object@corpus, sAttribute, object@strucs)
+  type <- CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
@@ -75,8 +75,8 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
       meta <- adjustEncoding(meta, "latin1")
     }
     tokens <- getTokenStream(
-      matrix(object@cpos[i,], nrow=1),
-      corpus=object@corpus, pAttribute="word", encoding=object@encoding,
+      matrix(.Object@cpos[i,], nrow=1),
+      corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
       cpos=cpos
     )
     if (cpos == TRUE) tokens <- .wrapTokens(tokens)
@@ -92,23 +92,23 @@ setMethod("as.markdown", "plprPartition", function(object, meta, cpos=FALSE, int
 })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
-  articles <- apply(object@cpos, 1, function(row) {
+setMethod("as.markdown", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
+  articles <- apply(.Object@cpos, 1, function(row) {
     cposSeries <- c(row[1]:row[2])
-    textStruc <- CQI$cpos2struc(object@corpus, ".text", row[1])
-    pStrucs <- CQI$cpos2struc(object@corpus, ".p_type", cposSeries)
+    textStruc <- CQI$cpos2struc(.Object@corpus, ".text", row[1])
+    pStrucs <- CQI$cpos2struc(.Object@corpus, ".p_type", cposSeries)
     chunks <- split(cposSeries, pStrucs)
-    pTypes <- CQI$struc2str(object@corpus, ".p_type", as.numeric(names(chunks)))
+    pTypes <- CQI$struc2str(.Object@corpus, ".p_type", as.numeric(names(chunks)))
     article <- Map(
       function(pType, chunk){
         tokens <- getTokenStream(
           matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
-          corpus=object@corpus, pAttribute="word", encoding=object@encoding,
+          corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
           cpos=cpos
         )
         if (cpos == TRUE) tokens <- .wrapTokens(tokens)
         para <- paste(tokens, collapse=" ")
-        # Encoding(para) <- object@encoding
+        # Encoding(para) <- .Object@encoding
         #para <- as.utf8(para)
         para
       },
@@ -117,8 +117,8 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
     metaInformation <- sapply(
       meta,
       function(x) {
-        retval <- CQI$struc2str(object@corpus, x, textStruc)
-        Encoding(retval) <- object@encoding
+        retval <- CQI$struc2str(.Object@corpus, x, textStruc)
+        Encoding(retval) <- .Object@encoding
         retval <- as.utf8(retval)
         retval
       })
@@ -127,12 +127,12 @@ setMethod("as.markdown", "pressPartition", function(object, meta=c("text_newspap
       meta=metaInformation,
       article)
     .formattingFactory <- list(
-      meta=function(x) paste("### ", x, sep=""),
-      title=function(x) paste("## ", x, sep=""),
-      teaser=function(x) paste("_", x, "_\n", sep=""),
-      body=function(x) paste(x, "\n", sep=""),
-      highlight=function(x) paste("_", x, "_\n", sep=""),
-      headline=function(x) paste("# ", x, sep="")
+      meta = function(x) paste("### ", x, sep=""),
+      title = function(x) paste("## ", x, sep=""),
+      teaser = function(x) paste("_", x, "_\n", sep=""),
+      body = function(x) paste(x, "\n", sep=""),
+      highlight = function(x) paste("_", x, "_\n", sep=""),
+      headline = function(x) paste("# ", x, sep="")
     )
     formattedArticle <- lapply(
       c(1:length(article)),

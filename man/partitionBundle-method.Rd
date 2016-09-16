@@ -47,13 +47,14 @@ partitionBundle,character-method will create a bundle of partitions,
 but not yet enriched.
 }
 \examples{
-use("polmineR.sampleCorpus")
-bt2009 <- partition("PLPRBTTXT", text_year="2009")
-pBundle <- partitionBundle(bt2009, sAttribute="text_date", progress=TRUE, pAttribute="word")
-dtm <- as.DocumentTermMatrix(pBundle, col="count")
-summary(pBundle)
-
-btBundle <- partitionBundle("PLPRBTTXT", sAttribute="text_date")
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use("polmineR.sampleCorpus")
+  bt2009 <- partition("PLPRBTTXT", text_year="2009")
+  pBundle <- partitionBundle(bt2009, sAttribute="text_date", progress=TRUE, pAttribute="word")
+  dtm <- as.DocumentTermMatrix(pBundle, col="count")
+  summary(pBundle)
+  btBundle <- partitionBundle("PLPRBTTXT", sAttribute="text_date")
+}
 }
 \author{
 Andreas Blaette
