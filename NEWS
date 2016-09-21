@@ -1,3 +1,6 @@
+v0.6.3
+* more generic implementation of as.markdown-method to prepare use of templates
+
 v0.6.2
 * refactoring of context-method to prepare more consistent usage
 * progress bar for context-method (using blapply)

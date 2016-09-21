@@ -99,7 +99,7 @@ setMethod("partition", "character", function(
     } else {
       type <- parsedRegistry[["type"]]
       if (type %in% c("press", "plpr")){
-        if (verbose == TRUE) message("... type of the corpus is ", partitionType)
+        if (verbose == TRUE) message("... type of the corpus is ", type)
         partitionType <- paste(type, "Partition", sep="")
       } else {
         stop("partition type provided by registry is not valid")

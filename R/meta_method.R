@@ -19,19 +19,37 @@
 setGeneric("meta", function(.Object, ...) standardGeneric("meta"))
 
 #' @rdname meta-method
+setMethod("meta", "character", function(.Object, sAttributes, struc) {
+  corpusEncoding <- parseRegistry(.Object)[["encoding"]]
+  metaInformation <- sapply(
+    sAttributes,
+    function(x) {
+      retval <- CQI$struc2str(.Object, x, struc)
+      Encoding(retval) <- corpusEncoding
+      as.utf8(retval)
+    })
+  names(metaInformation) <- sAttributes
+  metaInformation
+})
+
+
+
+#' @rdname meta-method
 setMethod("meta", "partition", function(.Object, sAttributes) {
   if (.Object@xml == "flat") {
     tab <- data.frame(
-      sapply(
+      lapply(
         sAttributes,
-        USE.NAMES=TRUE,
+        # USE.NAMES = TRUE,
         function(x) { 
           tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
           Encoding(tmp) <- .Object@encoding
           tmp
         }
-      )
+      ),
+      stringsAsFactors = FALSE
     )
+    colnames(tab) <- sAttributes
   } else if (.Object@xml == "nested") {
     # meta <- vapply(sAttributes, FUN.VALUE="character", USE.NAMES=TRUE, function(x)paste(.Object@corpus, '.', x, sep=''))
     tab <- data.frame(

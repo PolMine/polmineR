@@ -1,4 +1,4 @@
-#' Return to the original text and read
+#' Display and read full text
 #' 
 #' Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
 #' a \code{"partitionBundle"}-object, skip through the partitions contained in the
@@ -48,10 +48,16 @@
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
-setMethod("read", "partition", function(.Object, meta=getOption("polmineR.meta"), highlight=list(), cqp=FALSE, tooltips=NULL, verbose=TRUE, cpos=FALSE, ...){
+setMethod(
+  "read", "partition",
+  function(
+    .Object, meta = getOption("polmineR.meta"), template = getOption("polmineR.template"),
+    highlight = list(), cqp = FALSE, tooltips = NULL,
+    verbose = TRUE, cpos = FALSE, ...
+    ){
   stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
-  fulltextHtml <- html(.Object, meta=meta, highlight=highlight, cqp=cqp, cpos=cpos, tooltips=tooltips, ...)
+  fulltextHtml <- html(.Object, meta = meta, template = template, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {
@@ -59,8 +65,10 @@ setMethod("read", "partition", function(.Object, meta=getOption("polmineR.meta")
   }
 })
 
+#' @param partitionBundle 
+#'
 #' @rdname read-method
-setMethod("read", "partitionBundle", function(.Object, highlight=list(), cqp=FALSE, cpos=FALSE, ...){
+setMethod("read", "partitionBundle", function(.Object, highlight = list(), cqp = FALSE, cpos = FALSE, ...){
   for (i in c(1:length(.Object@objects))){
     read(.Object@objects[[i]], highlight=highlight, cqp=cqp, cpos=cpos, ...)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
@@ -69,7 +77,7 @@ setMethod("read", "partitionBundle", function(.Object, highlight=list(), cqp=FAL
 })
 
 #' @rdname read-method
-setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp=FALSE, highlight=list(), cpos=FALSE, ...){
+setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp = FALSE, highlight=list(), cpos=FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]

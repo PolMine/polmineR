@@ -38,14 +38,20 @@ setMethod("html", "character", function(object){
 #' @rdname html-method
 #' @exportMethod html
 #' @docType methods
-setMethod("html", "partition", function(object, meta=getOption("polmineR.meta"), highlight=list(), cqp=FALSE, tooltips=NULL, cpos=FALSE, verbose=FALSE, ...){
+setMethod(
+  "html", "partition",
+  function(
+    object, meta = getOption("polmineR.meta"), template = getOption("polmineR.template"),
+    highlight = list(),
+    cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, ...
+    ){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     if (verbose == TRUE) message("... enriching partition with metadata")
     object <- enrich(object, meta=meta, verbose=FALSE)
     if (verbose == TRUE) message("... generating markdown")
     if (any(cqp) == TRUE) cpos <- TRUE
-    markdown <- as.markdown(object, meta, cpos=cpos, ...)
+    markdown <- as.markdown(object, meta = meta, template = template, cpos = cpos, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
       markdown,
@@ -54,7 +60,7 @@ setMethod("html", "partition", function(object, meta=getOption("polmineR.meta"),
     )
     if (verbose == TRUE) message("... markdown to html")
     if (is.null(tooltips)){
-      htmlDoc <- markdown::markdownToHTML(text=markdown)
+      htmlDoc <- markdown::markdownToHTML(text = markdown)
     } else {
       markdown_css <- scan(
         getOption("markdown.HTML.stylesheet"),
@@ -62,10 +68,10 @@ setMethod("html", "partition", function(object, meta=getOption("polmineR.meta"),
         )
       tooltips_css <- scan(
         system.file("css", "tooltips.css", package="polmineR"),
-        what="character", sep="\n", quiet=TRUE
+        what = "character", sep = "\n", quiet = TRUE
         )
-      css <- paste(c(markdown_css, tooltips_css), collapse="\n")
-      htmlDoc <- markdown::markdownToHTML(text=markdown, stylesheet=css)
+      css <- paste(c(markdown_css, tooltips_css), collapse = "\n")
+      htmlDoc <- markdown::markdownToHTML(text = markdown, stylesheet = css)
     }
     
     if (length(highlight) > 0) {

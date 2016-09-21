@@ -9,7 +9,7 @@
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
-setGeneric("as.markdown", function(.Object, ...) {standardGeneric("as.markdown")})
+setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
 # helper function to wrap span with id around tokens
 .wrapTokens <- function(tokens){
@@ -21,14 +21,76 @@ setGeneric("as.markdown", function(.Object, ...) {standardGeneric("as.markdown")
   )
 }
 
-#' @rdname partition-class
-setMethod("as.markdown", "partition", function(.Object, meta, cpos = TRUE){
-  tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos)
-  if (cpos) tokens <- .wrapTokens(tokens)
-  tokens <- paste(tokens, collapse=" ")
-  rawTxt <- paste(tokens, sep="\n")
-  gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
+#' @rdname as.markdown-method
+setMethod("as.markdown", "numeric", function(.Object, corpus, meta, template){
+  templateUsed <- templates(template)
+  corpusEncoding <- parseRegistry(corpus)[["encoding"]]
+  
+  # generate metainformation
+  documentStruc <- CQI$cpos2struc(corpus, templateUsed[["document"]][["sAttribute"]], .Object[1])
+  metaInformation <- meta(corpus, sAttributes = meta, struc = documentStruc)
+  metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
+  metaInformation <- paste(
+    templateUsed[["document"]][["format"]][1],
+    metaInformation,
+    templateUsed[["document"]][["format"]][2],
+    sep = ""
+    )
+  
+  cposSeries <- c(.Object[1]:.Object[2])
+  pStrucs <- CQI$cpos2struc(corpus, templateUsed[["paragraphs"]][["sAttribute"]], cposSeries)
+  chunks <- split(cposSeries, pStrucs)
+  pTypes <- CQI$struc2str(corpus, templateUsed[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
+  bodyList <- Map(
+    function(pType, chunk){
+      tokens <- getTokenStream(
+        chunk, corpus = corpus, pAttribute = "word",
+        encoding = corpusEncoding, cpos = cpos
+      )
+      if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+      paste(
+        templateUsed[["paragraphs"]][["format"]][[pType]][1],
+        paste(tokens, collapse=" "),
+        templateUsed[["paragraphs"]][["format"]][[pType]][2],
+        sep = ""
+      )
+    },
+    pTypes, chunks
+  )
+  article <- c(metaInformation, unlist(bodyList))
+  markdown <- paste(article, collapse="\n\n")
+  markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
+  markdown
 })
+
+
+#' @rdname partition-class
+setMethod(
+  "as.markdown", "partition",
+  function(
+    .Object,
+    meta = getOption("polmineR.meta"),
+    template = getOption("polmineR.template"),
+    cpos = TRUE
+  ){
+    # ensure that template requested is available
+    stopifnot(template %in% templates())
+    templateUsed <- templates(template)
+    if (is.null(templateUsed[["paragraphs"]])){
+      tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos)
+      if (cpos) tokens <- .wrapTokens(tokens)
+      tokens <- paste(tokens, collapse=" ")
+      rawTxt <- paste(tokens, sep="\n")
+      txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
+    } else {
+      articles <- apply(
+        .Object@cpos, 1,
+        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, template = template)
+        )
+      txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
+    }
+    txt
+  })
 
 #' @rdname as.markdown
 setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, interjections=TRUE){
@@ -90,60 +152,60 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, in
   markdown <- gsub("\n - ", "\n", markdown)
   markdown
 })
-
-#' @rdname as.markdown
-setMethod("as.markdown", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
-  articles <- apply(.Object@cpos, 1, function(row) {
-    cposSeries <- c(row[1]:row[2])
-    textStruc <- CQI$cpos2struc(.Object@corpus, ".text", row[1])
-    pStrucs <- CQI$cpos2struc(.Object@corpus, ".p_type", cposSeries)
-    chunks <- split(cposSeries, pStrucs)
-    pTypes <- CQI$struc2str(.Object@corpus, ".p_type", as.numeric(names(chunks)))
-    article <- Map(
-      function(pType, chunk){
-        tokens <- getTokenStream(
-          matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
-          corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
-          cpos=cpos
-        )
-        if (cpos == TRUE) tokens <- .wrapTokens(tokens)
-        para <- paste(tokens, collapse=" ")
-        # Encoding(para) <- .Object@encoding
-        #para <- as.utf8(para)
-        para
-      },
-      pTypes, chunks
-    )
-    metaInformation <- sapply(
-      meta,
-      function(x) {
-        retval <- CQI$struc2str(.Object@corpus, x, textStruc)
-        Encoding(retval) <- .Object@encoding
-        retval <- as.utf8(retval)
-        retval
-      })
-    metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
-    article <- c(
-      meta=metaInformation,
-      article)
-    .formattingFactory <- list(
-      meta = function(x) paste("### ", x, sep=""),
-      title = function(x) paste("## ", x, sep=""),
-      teaser = function(x) paste("_", x, "_\n", sep=""),
-      body = function(x) paste(x, "\n", sep=""),
-      highlight = function(x) paste("_", x, "_\n", sep=""),
-      headline = function(x) paste("# ", x, sep="")
-    )
-    formattedArticle <- lapply(
-      c(1:length(article)),
-      function(x) .formattingFactory[[names(article)[x]]](article[[x]])
-    )
-    markdown <- paste(formattedArticle, collapse="\n\n")
-    # markdown <- as.utf8(markdown)
-    markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
-    markdown
-  })
-  paste(c("\n", unlist(articles)), collapse='\n* * *\n')
-})
-
-
+#' 
+#' #' @rdname as.markdown
+#' setMethod("as.markdown", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
+#'   articles <- apply(.Object@cpos, 1, function(row) {
+#'     cposSeries <- c(row[1]:row[2])
+#'     textStruc <- CQI$cpos2struc(.Object@corpus, ".text", row[1])
+#'     pStrucs <- CQI$cpos2struc(.Object@corpus, ".p_type", cposSeries)
+#'     chunks <- split(cposSeries, pStrucs)
+#'     pTypes <- CQI$struc2str(.Object@corpus, ".p_type", as.numeric(names(chunks)))
+#'     article <- Map(
+#'       function(pType, chunk){
+#'         tokens <- getTokenStream(
+#'           matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
+#'           corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
+#'           cpos=cpos
+#'         )
+#'         if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+#'         para <- paste(tokens, collapse=" ")
+#'         # Encoding(para) <- .Object@encoding
+#'         #para <- as.utf8(para)
+#'         para
+#'       },
+#'       pTypes, chunks
+#'     )
+#'     metaInformation <- sapply(
+#'       meta,
+#'       function(x) {
+#'         retval <- CQI$struc2str(.Object@corpus, x, textStruc)
+#'         Encoding(retval) <- .Object@encoding
+#'         retval <- as.utf8(retval)
+#'         retval
+#'       })
+#'     metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
+#'     article <- c(
+#'       meta=metaInformation,
+#'       article)
+#'     .formattingFactory <- list(
+#'       meta = function(x) paste("### ", x, sep=""),
+#'       title = function(x) paste("## ", x, sep=""),
+#'       teaser = function(x) paste("_", x, "_\n", sep=""),
+#'       body = function(x) paste(x, "\n", sep=""),
+#'       highlight = function(x) paste("_", x, "_\n", sep=""),
+#'       headline = function(x) paste("# ", x, sep="")
+#'     )
+#'     formattedArticle <- lapply(
+#'       c(1:length(article)),
+#'       function(x) .formattingFactory[[names(article)[x]]](article[[x]])
+#'     )
+#'     markdown <- paste(formattedArticle, collapse="\n\n")
+#'     # markdown <- as.utf8(markdown)
+#'     markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
+#'     markdown
+#'   })
+#'   paste(c("\n", unlist(articles)), collapse='\n* * *\n')
+#' })
+#' 
+#' 
