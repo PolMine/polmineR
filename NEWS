@@ -1,5 +1,9 @@
 v0.6.3
 * more generic implementation of as.markdown-method to prepare use of templates
+* LICENSE file updated
+* getTokenStream,character-method: new default behavior for params left and right
+* use of templates for as.markdown-method
+* Regions and TokenStream class (not for frontend use, so far)
 
 v0.6.2
 * refactoring of context-method to prepare more consistent usage

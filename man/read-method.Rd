@@ -8,13 +8,13 @@
 \alias{read,kwic-method}
 \alias{read,partition-method}
 \alias{read,partitionBundle-method}
-\title{Return to the original text and read}
+\title{Display and read full text}
 \usage{
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = getOption("polmineR.meta"),
-  highlight = list(), cqp = FALSE, tooltips = NULL, verbose = TRUE,
-  cpos = FALSE, ...)
+  template = getOption("polmineR.template"), highlight = list(),
+  cqp = FALSE, tooltips = NULL, verbose = TRUE, cpos = FALSE, ...)
 
 \S4method{read}{partitionBundle}(.Object, highlight = list(), cqp = FALSE,
   cpos = FALSE, ...)
@@ -55,6 +55,8 @@ colors}
 \item{i}{...}
 
 \item{type}{...}
+
+\item{partitionBundle}{}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on

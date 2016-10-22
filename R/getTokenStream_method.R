@@ -1,11 +1,13 @@
-#' get token stream
+#' Get Token Stream Based on Corpus Positions.
 #' 
-#' @param .Object an object of classe \code{matrix} or \code{partition}
+#' Turn regions of a corpus defined by corpus positions into the original text.
+#' 
+#' @param .Object an object of class \code{matrix} or \code{partition}
 #' @param pAttribute the pAttribute to decode
 #' @param encoding encoding to use
 #' @param collapse character string length 1
 #' @param corpus the CWB corpus
-#' @param beautify logical, whether to correct whitespace before and after interpunctation
+#' @param beautify logical, whether to adjust whitespace before and after interpunctation
 #' @param left left corpus position
 #' @param right right corpus position
 #' @param cpos logical, whether to return cpos as names of the tokens
@@ -20,7 +22,7 @@ setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, enc
   tokens <- CQI$cpos2str(corpus, pAttribute, .Object)
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
-    tokens <- iconv(tokens, from=encoding, to="UTF-8")
+    tokens <- iconv(tokens, from = encoding, to = "UTF-8")
   }
   if (cpos == TRUE) names(tokens) <- .Object
   if (!is.null(collapse)) {
@@ -47,7 +49,9 @@ setMethod("getTokenStream", "matrix", function(.Object, ...){
 
 
 #' @rdname getTokenStream-method
-setMethod("getTokenStream", "character", function(.Object, left, right, ...){
+setMethod("getTokenStream", "character", function(.Object, left = NULL, right = NULL, ...){
+  if (is.null(left)) left <- 0
+  if (is.null(right)) right <- size(.Object) - 1
   getTokenStream(c(left:right), corpus=.Object, ...)
 })
 
@@ -57,5 +61,18 @@ setMethod("getTokenStream", "partition", function(.Object, pAttribute, collapse=
     .Object=.Object@cpos, corpus=.Object@corpus, pAttribute=pAttribute,
     encoding=.Object@encoding, collapse=collapse, cpos=cpos
     )
+})
+
+#' @rdname getTokenStream-method
+setMethod("getTokenStream", "Regions", function(.Object, pAttribute = "word"){
+  .getText <- function(.BY){
+    list(text = getTokenStream(
+      .BY[[1]]:.BY[[2]],
+      corpus = .Object@corpus, encoding = .Object@encoding,
+      pAttribute = "word",
+      collapse = " "
+    ))
+  }
+  .Object@cpos[, .getText(.BY), by = .(cpos_left, cpos_right)]
 })
 

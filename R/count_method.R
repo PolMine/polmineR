@@ -70,7 +70,7 @@ setMethod("count", "partition", function(.Object, query, cqp=is.cqp, pAttribute=
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, pAttribute=NULL, freq=FALSE, total=T, mc=F, progress=T, verbose=FALSE){
+setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL, freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE){
   if (verbose == TRUE) message("... preparatory work")
   DT <- hits(.Object, query=query, pAttribute=pAttribute, mc=mc, progress=progress, verbose=verbose)@dt
   if (verbose == TRUE) message("... wrapping things up")

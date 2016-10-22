@@ -21,7 +21,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   )
 }
 
-#' @rdname as.markdown-method
+#' @rdname as.markdown
 setMethod("as.markdown", "numeric", function(.Object, corpus, meta, template){
   templateUsed <- templates(template)
   corpusEncoding <- parseRegistry(corpus)[["encoding"]]

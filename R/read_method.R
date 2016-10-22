@@ -102,3 +102,27 @@ setMethod("read", "kwic", function(.Object, i, type=NULL){
   fulltext <- html(.Object, i=i, type=type)
   htmltools::html_print(fulltext)
 })
+
+#' @rdname read-method
+setMethod("read", "Regions", function(.Object, meta = NULL){
+  toShow <- getTokenStream(.Object)
+  if (is.null(meta) == FALSE){
+    .getMetadata <- function(.BY, meta){
+      lapply(
+        setNames(meta, meta),
+        function(M){
+          as.utf8(
+            CQI$struc2str(
+              .Object@corpus,
+              M,
+              CQI$cpos2struc(.Object@corpus, M, .BY[[1]])
+            ))
+        }
+      )
+    }
+    toShow <- toShow[, .getMetadata(.BY, meta), by = .(cpos_left, cpos_right, text)]
+  }
+  toShow[, cpos_left := NULL][, cpos_right := NULL]
+  setcolorder(toShow, c(meta, "text"))
+  show(DT::datatable(toShow))
+})

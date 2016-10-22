@@ -3,20 +3,19 @@
 \docType{methods}
 \name{as.markdown}
 \alias{as.markdown}
+\alias{as.markdown,numeric-method}
 \alias{as.markdown,plprPartition-method}
-\alias{as.markdown,pressPartition-method}
-\title{turn partition into markdown}
+\title{Turn partition into markdown}
 \usage{
-as.markdown(object, ...)
+as.markdown(.Object, ...)
 
-\S4method{as.markdown}{plprPartition}(object, meta, cpos = FALSE,
+\S4method{as.markdown}{numeric}(.Object, corpus, meta, template)
+
+\S4method{as.markdown}{plprPartition}(.Object, meta, cpos = FALSE,
   interjections = TRUE)
-
-\S4method{as.markdown}{pressPartition}(object, meta = c("text_newspaper",
-  "text_date"), cpos = FALSE)
 }
 \arguments{
-\item{object}{object to be converted}
+\item{.Object}{object to be converted}
 
 \item{...}{further arguments}
 
@@ -27,6 +26,6 @@ as.markdown(object, ...)
 \item{interjections}{logical, whether to format interjections}
 }
 \description{
-for further processing to html
+The method is the worker behind the html-method.
 }
 

@@ -16,7 +16,7 @@ setGeneric("getTermFrequencies", function(.Object, ...) standardGeneric("getTerm
 #' @param ... further parameters
 #' @rdname getTermFrequencies-method
 #' @exportMethod getTermFrequencies
-setMethod("getTermFrequencies", "partition", function(.Object, pAttribute=c("word", "pos"), id2str=TRUE, mc=TRUE){
+setMethod("getTermFrequencies", "partition", function(.Object, pAttribute = c("word", "pos"), id2str = TRUE, mc = TRUE){
   cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
   pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep=""))
   pAttr_id <- paste(pAttribute, "_id", sep="")

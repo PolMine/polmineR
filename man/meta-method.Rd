@@ -3,10 +3,13 @@
 \docType{methods}
 \name{meta}
 \alias{meta}
+\alias{meta,character-method}
 \alias{meta,partition-method}
 \title{metainformation}
 \usage{
 meta(.Object, ...)
+
+\S4method{meta}{character}(.Object, sAttributes, struc)
 
 \S4method{meta}{partition}(.Object, sAttributes)
 }

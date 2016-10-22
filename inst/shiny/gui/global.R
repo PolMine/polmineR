@@ -12,7 +12,7 @@ partitionTabPanel <- function(){
       sidebarPanel(
         actionButton("partition_go", label="", icon=icon("play", lib="glyphicon")), br(),br(),
         selectInput("partition_corpus", "corpus", choices = corpus(), selected = corpus()[1]),
-        textInput(inputId = "partition_name", label = "name", value = "FOO"),
+        textInput(inputId = "partition_name", label = "name", value = "UNDEFINED"),
         selectInput(
           inputId="partition_sAttributes", label="sAttributes", multiple = TRUE,
           choices=sAttributes(get(partitionNames[1], envir=.GlobalEnv)@corpus)
@@ -97,7 +97,15 @@ kwicTabPanel <- function(){
     sidebarLayout(
       sidebarPanel(
         actionButton("kwic_go", "Go!"), br(),br(),
-        selectInput("kwic_partition", "partition", choices=partitionNames),
+        radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "partition", inline = TRUE),
+        conditionalPanel(
+          condition = "input.kwic_object == 'corpus'",
+          selectInput("kwic_corpus", "corpus", choices = corpus()[["corpus"]])
+        ),
+        conditionalPanel(
+          condition = "input.kwic_object == 'partition'",
+          selectInput("kwic_partition", "partition", choices = partitionNames)
+        ),
         textInput("kwic_query", "query", value="Suche"),
         textInput("kwic_neighbor", "neighbor", value=""),
         selectInput(
@@ -126,26 +134,41 @@ kwicServer <- function(input, output, session){
     x <- input$kwic_partition
     new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
     new_pAttr <- pAttributes(get(x, ".GlobalEnv")@corpus)
-    updateSelectInput(session, "kwic_pAttribute", choices=new_pAttr, selected=NULL)
-    updateSelectInput(session, "kwic_meta", choices=new_sAttr, selected=NULL)
+    updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected=NULL)
+    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected=NULL)
   })
+  
+  observe({
+    x <- input$kwic_corpus
+    new_sAttr <- sAttributes(input$kwic_corpus)
+    new_pAttr <- pAttributes(input$kwic_corpus)
+    updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected = NULL)
+    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
+  })
+  
   
   output$kwic_table <- DT::renderDataTable({
     
     withProgress(
-      message="please wait", value=0, max=5, detail="preparing data",
+      message="please wait", value = 0, max = 5, detail="preparing data",
       {
         
         input$kwic_go
         # incProgress(0.5, detail = paste("Doing part", 1))
         
         isolate({
+          
+            if (input$kwic_object == "corpus"){
+              object <- input$kwic_corpus
+            } else {
+              object <- get(input$kwic_partition, '.GlobalEnv')
+            }
           kwicObject <<- polmineR::kwic(
-            .Object=get(input$kwic_partition, '.GlobalEnv'),
-            query=input$kwic_query, pAttribute=input$kwic_pAttribute,
-            left=input$kwic_left, right=input$kwic_right,
-            meta=input$kwic_meta, verbose="shiny",
-            neighbor=input$kwic_neighbor
+            .Object = object,
+            query = input$kwic_query, pAttribute = input$kwic_pAttribute,
+            left = input$kwic_left, right = input$kwic_right,
+            meta = input$kwic_meta, verbose = "shiny",
+            neighbor = input$kwic_neighbor
           )
         })
         
@@ -195,8 +218,16 @@ contextTabPanel <- function(){
       sidebarPanel(
         actionButton("context_go", "Go!"),
         br(), br(),
-        selectInput("context_partition", "partition", partitionNames[1]),
-        textInput("context_query", "query", value="Suche"),
+        radioButtons("context_object", "class", choices = list("corpus", "partition"), selected = "partition", inline = TRUE),
+        conditionalPanel(
+          condition = "input.context_object == 'corpus'",
+          selectInput("context_corpus", "corpus", corpus()[["corpus"]])
+        ),
+        conditionalPanel(
+          condition = "input.context_object == 'partition'",
+          selectInput("context_partition", "partition", partitionNames[1])
+        ),
+        textInput("context_query", "query", value = "Migrationshintergrund"),
         selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=getOption("polmineR.pAttribute"), multiple=TRUE),
         numericInput("context_left", "left", value=getOption("polmineR.left")),
         numericInput("context_right", "right", value=getOption("polmineR.right")),
@@ -217,12 +248,18 @@ contextServer <- function(input, output, session){
       message="please wait ...", value=0, max=6, detail="getting started",
       {
         input$context_go
+        print(input$context_go)
+        if (input$context_object == "corpus"){
+          object <- input$context_corpus
+        } else {
+          object <- get(input$context_partition, '.GlobalEnv')
+        }
         isolate(
           ctext <<- context(
-            .Object=get(input$context_partition, '.GlobalEnv'),
-            query=input$context_query,
-            pAttribute=input$context_pAttribute,
-            left=input$context_left, right=input$context_right,
+            .Object = object,
+            query = input$context_query,
+            pAttribute = input$context_pAttribute,
+            left = input$context_left, right = input$context_right,
             verbose="shiny"
           )
         )})

@@ -16,7 +16,8 @@ getTokenStream(.Object, ...)
 
 \S4method{getTokenStream}{matrix}(.Object, ...)
 
-\S4method{getTokenStream}{character}(.Object, left, right, ...)
+\S4method{getTokenStream}{character}(.Object, left = NULL, right = NULL,
+  ...)
 
 \S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
   cpos = FALSE)

@@ -1,7 +1,7 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.6.2
+Version: 0.6.2.9000
 Date: 2016-09-01
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
@@ -48,7 +48,9 @@ Collate:
     'CQI.cqpserver.R'
     'CQI.perl.R'
     'CQI.rcqp.R'
+    'Regions_class.R'
     'TermDocumentMatrix_methods.R'
+    'TokenStream_class.R'
     'adjustEncoding_method.R'
     'generics.R'
     'textstat_class.R'
@@ -81,6 +83,7 @@ Collate:
     'count_method.R'
     'tempcorpus.R'
     'cpos_method.R'
+    'deflate_method.R'
     'hits_class.R'
     'dispersion_method.R'
     'dispersion_methods.R'
@@ -119,12 +122,12 @@ Collate:
     'scatterplot_method.R'
     'size_method.R'
     'tTest.R'
+    'templates_method.R'
     'terms_method.R'
     'trim_method.R'
     'use_method.R'
     'utils.R'
     'view_method.R'
     'weigh_method.R'
-    'templates.R'
     'zzz.R'
 RoxygenNote: 5.0.1

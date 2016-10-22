@@ -26,7 +26,8 @@
 \alias{split}
 \title{partition class}
 \usage{
-\S4method{as.markdown}{partition}(object, meta, cpos = TRUE)
+\S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
+  template = getOption("polmineR.template"), cpos = TRUE)
 
 \S4method{freq}{partition}(.Object)
 
@@ -49,19 +50,19 @@
 \S4method{hist}{partition}(x, ...)
 }
 \arguments{
-\item{object}{a partition object}
+\item{.Object}{a partition object}
 
 \item{meta}{...}
 
 \item{cpos}{...}
-
-\item{.Object}{a partition object}
 
 \item{x}{a partition object}
 
 \item{i}{index}
 
 \item{value}{value}
+
+\item{object}{a partition object}
 
 \item{dim}{don't know}
 
