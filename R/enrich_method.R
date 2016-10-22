@@ -29,7 +29,7 @@ setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, i
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
     if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
-    object@stat <- getTermFrequencies(.Object=object, pAttribute=pAttribute, id2str=id2str, mc=mc)
+    object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)
     object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {

@@ -4,6 +4,8 @@ v0.6.3
 * getTokenStream,character-method: new default behavior for params left and right
 * use of templates for as.markdown-method
 * Regions and TokenStream class (not for frontend use, so far)
+* getTermFrequencies-method merged into count-method
+* Corpus class introduced
 
 v0.6.2
 * refactoring of context-method to prepare more consistent usage

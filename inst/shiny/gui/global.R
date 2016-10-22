@@ -1,8 +1,4 @@
-partitionNames <- c(
-  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'partition'),
-  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'pressPartition'),
-  polmineR:::.getClassObjectsAvailable('.GlobalEnv', 'plprPartition')
-)
+partitionNames <- c(getObjects('partition'), getObjects('pressPartition'), getObjects('plprPartition'))
 
 
 partitionTabPanel <- function(){

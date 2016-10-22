@@ -6,20 +6,23 @@
 \alias{count,character-method}
 \alias{count,partition-method}
 \alias{count,partitionBundle-method}
+\alias{count,vector-method}
 \alias{count-method}
-\title{get counts}
+\title{Get counts.}
 \usage{
 count(.Object, ...)
 
-\S4method{count}{partition}(.Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"),
-  mc = getOption("polmineR.cores"), verbose = T, progress = F)
+\S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
+  id2str = TRUE, pAttribute = getOption("polmineR.pAttribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
   freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
 
-\S4method{count}{character}(.Object, query,
+\S4method{count}{character}(.Object, query = NULL,
   pAttribute = getOption("polmineR.pAttribute"), verbose = TRUE)
+
+\S4method{count}{vector}(.Object, corpus, pAttribute)
 }
 \arguments{
 \item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a
@@ -33,6 +36,8 @@ syntax can be used.}
 \item{cqp}{either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
 auxiliary function)}
+
+\item{id2str}{logical, whether to add rownames (only if query is NULL)}
 
 \item{pAttribute}{the p-attribute(s) to use}
 
@@ -51,8 +56,8 @@ TOTAL) will be amended to the data.table that is returned}
 a \code{"data.table"}
 }
 \description{
-Count number of occurrences of a query (CQP syntax may be used) in a
-partition, or a partitionBundle.
+Count number of occurrences of a query (CQP syntax may be used) or, if query is NULL (default),
+of all tokens.
 }
 \examples{
 \dontrun{

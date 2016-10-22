@@ -3,11 +3,12 @@
 \docType{methods}
 \name{getTokenStream}
 \alias{getTokenStream}
+\alias{getTokenStream,Regions-method}
 \alias{getTokenStream,character-method}
 \alias{getTokenStream,matrix-method}
 \alias{getTokenStream,numeric-method}
 \alias{getTokenStream,partition-method}
-\title{get token stream}
+\title{Get Token Stream Based on Corpus Positions.}
 \usage{
 getTokenStream(.Object, ...)
 
@@ -21,9 +22,11 @@ getTokenStream(.Object, ...)
 
 \S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
   cpos = FALSE)
+
+\S4method{getTokenStream}{Regions}(.Object, pAttribute = "word")
 }
 \arguments{
-\item{.Object}{an object of classe \code{matrix} or \code{partition}}
+\item{.Object}{an object of class \code{matrix} or \code{partition}}
 
 \item{...}{further arguments}
 
@@ -35,7 +38,7 @@ getTokenStream(.Object, ...)
 
 \item{collapse}{character string length 1}
 
-\item{beautify}{logical, whether to correct whitespace before and after interpunctation}
+\item{beautify}{logical, whether to adjust whitespace before and after interpunctation}
 
 \item{cpos}{logical, whether to return cpos as names of the tokens}
 
@@ -44,6 +47,6 @@ getTokenStream(.Object, ...)
 \item{right}{right corpus position}
 }
 \description{
-get token stream
+Turn regions of a corpus defined by corpus positions into the original text.
 }
 

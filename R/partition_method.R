@@ -172,7 +172,7 @@ setMethod("partition", "list", function(.Object, ...) {
 
 #' @rdname partition
 setMethod("partition", "missing", function(.Object){
-  partitionObjects <- .getClassObjectsAvailable(".GlobalEnv", "partition")
+  partitionObjects <- getObjects(class = "partition", ns = ".GlobalEnv")
   slotsToGet <- c("name", "corpus", "size")
   data.frame(c(
     list(object=partitionObjects),
@@ -229,7 +229,7 @@ setMethod("partition", "partition", function(.Object, def=NULL, name="", regex=F
   
   newPartition@size <- size(newPartition)
   if (length(pAttribute)>0) {
-    newPartition@stat <- getTermFrequencies(.Object=newPartition, pAttribute=pAttribute, id2str=id2str, mc=mc)
+    newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, id2str = id2str, mc = mc)
     newPartition@pAttribute <- pAttribute
   }
   if (verbose == TRUE) message('... partition is set up')

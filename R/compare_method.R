@@ -134,9 +134,7 @@ setMethod("compare", "cooccurrences", function(x, y, included=FALSE, method="ll"
 })
 
 #' @rdname compare-method
-setMethod("compare", "missing", function(){
-  .getClassObjectsAvailable(".GlobalEnv", "comp")
-})
+setMethod("compare", "missing", function() getObjects(class = "comp", ns = ".GlobalEnv") )
 
 #' @rdname compare-method
 setMethod(

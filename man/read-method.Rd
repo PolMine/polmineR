@@ -3,6 +3,7 @@
 \docType{methods}
 \name{read}
 \alias{read}
+\alias{read,Regions-method}
 \alias{read,data.table-method}
 \alias{read,hits-method}
 \alias{read,kwic-method}
@@ -25,6 +26,8 @@ read(.Object, ...)
 \S4method{read}{hits}(.Object, def, i = NULL, ...)
 
 \S4method{read}{kwic}(.Object, i, type = NULL)
+
+\S4method{read}{Regions}(.Object, meta = NULL)
 }
 \arguments{
 \item{.Object}{an object to be read (\code{"partition" or "partitionBundle"})}

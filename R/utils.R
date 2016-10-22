@@ -159,12 +159,13 @@ flatten <- function(object){
 }
 
 
-# exactly the same function is included in polmineR.shiny
-#' @param ns character string, namespace to be searched
+#' Get objects of a certain class.
+#'
 #' @param class character, class to be looked for
+#' @param ns character string, namespace to be searched
 #' @return a list with the partitions found in the namespace
-#' @noRd
-.getClassObjectsAvailable <- function(ns, class) {
+#' @export getObjects
+getObjects <- function(class, ns = ".GlobalEnv") {
   rawList <- sapply(ls(ns), function(x) class(get(x, ns))[1])
   availableObjectsList <- rawList[rawList %in% class]
   names(unlist(availableObjectsList))
