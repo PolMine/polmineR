@@ -41,14 +41,14 @@ partitionServer <- function(input, output, session){
           input$partition_name,
           partition(
             as.character(input$partition_corpus),
-            def=defList,
+            def = defList,
             # def=eval(parse(text=paste("list(", def_purged, ")", sep=""))),
-            name=input$partition_name,
-            pAttribute=input$partition_pAttribute,
-            regex=input$partition_regex,
-            xml=input$partition_xml,
-            mc=FALSE,
-            verbose=TRUE
+            name = input$partition_name,
+            pAttribute = input$partition_pAttribute,
+            regex = input$partition_regex,
+            xml = input$partition_xml,
+            mc = FALSE,
+            verbose = TRUE
           ),
           envir=.GlobalEnv
         )
@@ -93,25 +93,25 @@ kwicTabPanel <- function(){
     sidebarLayout(
       sidebarPanel(
         actionButton("kwic_go", "Go!"), br(),br(),
-        radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "partition", inline = TRUE),
+        radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
         conditionalPanel(
           condition = "input.kwic_object == 'corpus'",
-          selectInput("kwic_corpus", "corpus", choices = corpus()[["corpus"]])
+          selectInput("kwic_corpus", "corpus", choices = corpus()[["corpus"]], selected = corpus()[["corpus"]][1])
         ),
         conditionalPanel(
           condition = "input.kwic_object == 'partition'",
           selectInput("kwic_partition", "partition", choices = partitionNames)
         ),
-        textInput("kwic_query", "query", value="Suche"),
-        textInput("kwic_neighbor", "neighbor", value=""),
+        textInput("kwic_query", "query", value = ""),
+        textInput("kwic_neighbor", "neighbor", value = ""),
         selectInput(
           "kwic_meta", "sAttribute",
-          choices=sAttributes(get(partitionNames[1], ".GlobalEnv")@corpus),
-          multiple=TRUE
+          choices = sAttributes(corpus()[["corpus"]][1]),
+          multiple = TRUE
         ),
         selectInput(
           "kwic_pAttribute", "pAttribute",
-          choices=pAttributes(get(partitionNames[1], ".GlobalEnv")@corpus)
+          choices = pAttributes(corpus()[["corpus"]][1])
         ),
         numericInput("kwic_left", "left", value=getOption("polmineR.left")),
         numericInput("kwic_right", "right", value=getOption("polmineR.right")),
@@ -142,35 +142,42 @@ kwicServer <- function(input, output, session){
     updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
   })
   
-  
   output$kwic_table <- DT::renderDataTable({
     
-    withProgress(
-      message="please wait", value = 0, max = 5, detail="preparing data",
-      {
+    
+    input$kwic_go
+    
+    isolate({
+      
+      if (input$kwic_go > 0 && input$kwic_query != ""){
+
+        if (input$kwic_object == "corpus"){
+          object <- input$kwic_corpus
+        } else {
+          object <- get(input$kwic_partition, '.GlobalEnv')
+        }
         
-        input$kwic_go
-        # incProgress(0.5, detail = paste("Doing part", 1))
+        withProgress(
+          message="please wait", value = 0, max = 5, detail="preparing data",
+          {
+            kwicObject <<- polmineR::kwic(
+              .Object = object,
+              query = input$kwic_query, pAttribute = input$kwic_pAttribute,
+              left = input$kwic_left, right = input$kwic_right,
+              meta = input$kwic_meta, verbose = "shiny",
+              neighbor = input$kwic_neighbor
+            )
+          }
+        ) # end withProgress
         
-        isolate({
-          
-            if (input$kwic_object == "corpus"){
-              object <- input$kwic_corpus
-            } else {
-              object <- get(input$kwic_partition, '.GlobalEnv')
-            }
-          kwicObject <<- polmineR::kwic(
-            .Object = object,
-            query = input$kwic_query, pAttribute = input$kwic_pAttribute,
-            left = input$kwic_left, right = input$kwic_right,
-            meta = input$kwic_meta, verbose = "shiny",
-            neighbor = input$kwic_neighbor
-          )
-        })
+        if (is.null(kwicObject)){
+          tab <- data.frame(left = "", node = "", right = "")
+        } else {
+          tab <- kwicObject@table
+        }
         
-        tab <- kwicObject@table
-        if (length(input$kwic_meta) == 0){
-          retval <- data.frame(no=c(1:nrow(tab)), tab)
+        if (length(input$kwic_meta) == 0 && nrow(tab) > 0){
+          retval <- data.frame(no = c(1:nrow(tab)), tab)
         } else if (length(input$kwic_meta) > 0){
           metaRow <- unlist(lapply(
             c(1:nrow(tab)),
@@ -178,18 +185,25 @@ kwicServer <- function(input, output, session){
               paste(unlist(lapply(tab[i,c(1:length(input$kwic_meta))], as.character)), collapse=" | ")
             }
           ))
-          retval <- data.frame(meta=metaRow, tab[,(length(input$kwic_meta)+1):ncol(tab)])
+          retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta)+1):ncol(tab)])
         }
-      }) # end withProgress
-    retval <- DT::datatable(retval, selection="single", rownames=FALSE) %>% 
-      DT::formatStyle("node", color="#4863A0", textAlign="center") %>%
-      DT::formatStyle("left", textAlign="right")
+        
+      } else {
+        retval <- data.frame(left = "", node = "", right = "")
+      }
+      
+    })
+    
+    # format DataTable
+    retval <- DT::datatable(retval, selection = "single", rownames = FALSE) %>% 
+      DT::formatStyle("node", color = "#4863A0", textAlign = "center") %>%
+      DT::formatStyle("left", textAlign = "right")
     if (length(input$kwic_meta) > 0){
-      retval <- DT::formatStyle(retval, "meta", fontStyle="italic", textAlign="left", borderRight="1px solid DarkGray")
+      retval <- DT::formatStyle(
+        retval, "meta", fontStyle = "italic", textAlign = "left", borderRight = "1px solid DarkGray")
     }
     retval
-  }
-  )
+  })
   
   observeEvent(
     input$kwic_table_rows_selected,
@@ -223,8 +237,8 @@ contextTabPanel <- function(){
           condition = "input.context_object == 'partition'",
           selectInput("context_partition", "partition", partitionNames[1])
         ),
-        textInput("context_query", "query", value = "Migrationshintergrund"),
-        selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected=getOption("polmineR.pAttribute"), multiple=TRUE),
+        textInput("context_query", "query", value = ""),
+        selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected = getOption("polmineR.pAttribute"), multiple=TRUE),
         numericInput("context_left", "left", value=getOption("polmineR.left")),
         numericInput("context_right", "right", value=getOption("polmineR.right")),
         br()
@@ -240,26 +254,47 @@ contextTabPanel <- function(){
 
 contextServer <- function(input, output, session){
   output$context_table <- DT::renderDataTable({
-    withProgress(
-      message="please wait ...", value=0, max=6, detail="getting started",
-      {
-        input$context_go
-        print(input$context_go)
-        if (input$context_object == "corpus"){
-          object <- input$context_corpus
+    input$context_go
+    if (input$context_object == "corpus"){
+      if (!"corpora" %in% names(.GlobalEnv)){
+        message("... creating environment 'corpora'")
+        corpora <- new.env(parent = .GlobalEnv)
+      } 
+      if (!input$context_corpus %in% ls(envir = corpora)){
+        assign(
+          input$context_corpus,
+          Corpus$new(input$context_corpus, pAttribute = input$context_pAttribute),
+          envir = corpora
+        )
+      }
+      object <- get(input$context_corpus, corpora)
+    } else {
+      object <- get(input$context_partition, '.GlobalEnv')
+    }
+    isolate({
+      
+      if (input$context_go > 0 && input$context_query != ""){
+        withProgress(
+          message = "please wait ...", value = 0, max = 6, detail = "getting started",
+          {
+            ctext <<- context(
+              .Object = object,
+              query = input$context_query,
+              pAttribute = input$context_pAttribute,
+              left = input$context_left, right = input$context_right,
+              verbose="shiny"
+            )
+          })
+        if (!is.null(ctext)){
+          return(DT::datatable(round(ctext, 2)@stat, selection="single", rownames=FALSE))
         } else {
-          object <- get(input$context_partition, '.GlobalEnv')
+          return(DT::datatable(data.frame(a = c(), b = c(), d = c())))
         }
-        isolate(
-          ctext <<- context(
-            .Object = object,
-            query = input$context_query,
-            pAttribute = input$context_pAttribute,
-            left = input$context_left, right = input$context_right,
-            verbose="shiny"
-          )
-        )})
-    DT::datatable(round(ctext, 2)@stat, selection="single", rownames=FALSE)
+        }
+    })
+    if (!exists("ctext")){
+      return(DT::datatable(data.frame(a = c(), b = c(), d = c())))
+    }
   })
   
   observeEvent(
