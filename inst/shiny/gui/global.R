@@ -1,4 +1,3 @@
-search()
 partitionNames <- c(getObjects('partition'), getObjects('pressPartition'), getObjects('plprPartition'))
 
 
@@ -11,11 +10,11 @@ partitionTabPanel <- function(){
         selectInput("partition_corpus", "corpus", choices = corpus(), selected = corpus()[1]),
         textInput(inputId = "partition_name", label = "name", value = "UNDEFINED"),
         selectInput(
-          inputId="partition_sAttributes", label="sAttributes", multiple = TRUE,
-          choices=sAttributes(get(partitionNames[1], envir=.GlobalEnv)@corpus)
+          inputId = "partition_sAttributes", label = "sAttributes", multiple = TRUE,
+          choices = sAttributes(corpus()[1, "corpus"])
         ),
         uiOutput("partition_sAttributes"),
-        selectInput(inputId="partition_pAttribute", label="pAttribute", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
+        selectInput(inputId="partition_pAttribute", label = "pAttribute", multiple = TRUE, choices=list(none = "", word = "word", lemma = "lemma")),
         radioButtons("partition_regex", "regex", choices = list("TRUE", "FALSE"), inline = TRUE),
         radioButtons("partition_xml", "xml", choices = list("flat", "nested"), inline = TRUE)
       ),
@@ -129,10 +128,12 @@ kwicServer <- function(input, output, session){
   
   observe({
     x <- input$kwic_partition
-    new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
-    new_pAttr <- pAttributes(get(x, ".GlobalEnv")@corpus)
-    updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected=NULL)
-    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected=NULL)
+    if (x != ""){
+      new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
+      new_pAttr <- pAttributes(get(x, ".GlobalEnv")@corpus)
+      updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected=NULL)
+      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected=NULL)
+    }
   })
   
   observe({
@@ -229,14 +230,14 @@ contextTabPanel <- function(){
       sidebarPanel(
         actionButton("context_go", "Go!"),
         br(), br(),
-        radioButtons("context_object", "class", choices = list("corpus", "partition"), selected = "partition", inline = TRUE),
+        radioButtons("context_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
         conditionalPanel(
           condition = "input.context_object == 'corpus'",
           selectInput("context_corpus", "corpus", corpus()[["corpus"]])
         ),
         conditionalPanel(
           condition = "input.context_object == 'partition'",
-          selectInput("context_partition", "partition", partitionNames[1])
+          selectInput("context_partition", "partition", choices = partitionNames)
         ),
         textInput("context_query", "query", value = ""),
         selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected = getOption("polmineR.pAttribute"), multiple=TRUE),
@@ -323,16 +324,24 @@ dispersionTabPanel <- function(){
       sidebarPanel(
         actionButton("dispersion_go", "Go!"),
         br(), br(),
-        selectInput("dispersion_partition", "partition", choices=partitionNames, selected=partitionNames[1]),
+        radioButtons("dispersion_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
+        conditionalPanel(
+          condition = "input.dispersion_object == 'corpus'",
+          selectInput("dispersion_corpus", "corpus", corpus()[["corpus"]])
+        ),
+        conditionalPanel(
+          condition = "input.dispersion_object == 'partition'",
+          selectInput("dispersion_partition", "partition", choices = partitionNames, selected = partitionNames[1])
+        ),
         textInput("dispersion_query", "query", value="Suche"),
         selectInput(
           "dispersion_pAttribute", "pAttribute",
-          choices=pAttributes(get(partitionNames[1], ".GlobalEnv")@corpus)
+          choices = pAttributes(corpus()[1, "corpus"])
         ),
         # radioButtons("dispersion_dims", "number of sAttributes", choices=c("1", "2"), selected="1", inline=TRUE),
         selectInput(
           "dispersion_sAttribute_1", "sAttribute",
-          choices=sAttributes(get(partitionNames[1])@corpus), multiple=FALSE
+          choices = sAttributes(corpus()[1, "corpus"]), multiple=FALSE
         ),
         radioButtons("dispersion_ts", "time series", choices=c("yes", "no"), selected="no", inline=TRUE),
         conditionalPanel(
@@ -361,15 +370,14 @@ dispersionTabPanel <- function(){
 dispersionServer <- function(input, output, session){
   observe({
     x <- input$dispersion_partition
-    new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
-    updateSelectInput(
-      session, "dispersion_pAttribute",
-      choices=pAttributes(get(x, ".GlobalEnv")@corpus), selected=NULL
-    )
-    updateSelectInput(session, "dispersion_sAttribute_1", choices=new_sAttr, selected=NULL)
-    # if (input$dispersion_dims == "2"){
-    #   updateSelectInput(session, "dispersion_sAttribute_2", choices=new_sAttr, selected=NULL)
-    # }
+    if (x != ""){
+      new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
+      updateSelectInput(
+        session, "dispersion_pAttribute",
+        choices=pAttributes(get(x, ".GlobalEnv")@corpus), selected=NULL
+      )
+      updateSelectInput(session, "dispersion_sAttribute_1", choices=new_sAttr, selected=NULL)
+    }
   })
   
   observeEvent(
