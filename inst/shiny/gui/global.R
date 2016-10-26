@@ -1,3 +1,4 @@
+search()
 partitionNames <- c(getObjects('partition'), getObjects('pressPartition'), getObjects('plprPartition'))
 
 
@@ -143,7 +144,7 @@ kwicServer <- function(input, output, session){
   })
   
   output$kwic_table <- DT::renderDataTable({
-    
+    print(search())
     
     input$kwic_go
     
