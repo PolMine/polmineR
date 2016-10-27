@@ -1,14 +1,8 @@
-library(shiny)
-library(polmineR)
-library(magrittr)
-library(DT)
-
-
 shinyServer(function(input, output, session) {
 
-  partitionServer(input, output, session)
-  kwicServer(input, output, session)
-  contextServer(input, output, session)
-  dispersionServer(input, output, session)
+  polmineR:::.partitionServer(input, output, session)
+  polmineR:::.kwicServer(input, output, session)
+  polmineR:::.contextServer(input, output, session)
+  polmineR:::.dispersionServer(input, output, session)
 
 })

@@ -1,7 +1,7 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.6.2.9000
+Version: 0.6.2.9001
 Date: 2016-09-01
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
@@ -129,5 +129,6 @@ Collate:
     'utils.R'
     'view_method.R'
     'weigh_method.R'
+    'shiny_helper_functions.R'
     'zzz.R'
 RoxygenNote: 5.0.1

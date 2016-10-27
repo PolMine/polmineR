@@ -1,7 +1,3 @@
-library(shiny)
-library(polmineR)
-library(shinythemes)
-
 shinyThemeToUse <- shinytheme("cerulean") # alternatives: flatly, cerulean
 
 shinyUI(
@@ -12,10 +8,41 @@ shinyUI(
     title = "polmineR",
     id = "polmineR",
     
-    partitionTabPanel(), # defined in global.R
-    kwicTabPanel(),
-    contextTabPanel(),
-    dispersionTabPanel()
-
+    tabPanel(
+      "partition",
+      sidebarLayout(
+        sidebarPanel = sidebarPanel(polmineR:::.partitionUiInput()),
+        mainPanel = mainPanel(polmineR:::.partitionUiOutput())
+      )),
+    
+    tabPanel(
+      "kwic",
+      sidebarLayout(
+        sidebarPanel = sidebarPanel(polmineR:::.kwicUiInput()),
+        mainPanel = mainPanel(polmineR:::.kwicUiOutput())
+      )
+    ),
+    
+    tabPanel(
+      "context",
+      sidebarLayout(
+        sidebarPanel = sidebarPanel(polmineR:::.contextUiInput()),
+        mainPanel = mainPanel(polmineR:::.contextUiOutput())
+      )
+    ),
+    
+    tabPanel(
+      "dispersion",
+      sidebarLayout(
+        sidebarPanel = sidebarPanel(polmineR:::.dispersionUiInput()),
+        mainPanel = mainPanel(
+          tabsetPanel(
+            tabPanel("Table", DT::dataTableOutput('dispersion_table')),
+            tabPanel("Plot", plotOutput('dispersion_plot'))
+          )
+        )
+      )
+    )
+    
    )
 )
