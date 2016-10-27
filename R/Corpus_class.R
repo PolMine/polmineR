@@ -1,3 +1,7 @@
+#' @exportClass Corpus
+setOldClass("Corpus")
+
+
 #' Corpus class.
 #' 
 #' @field corpus character vector, CWB corpus
@@ -10,7 +14,6 @@
 #' 
 #' @rdname Corpus-class.Rd
 #' @export Corpus
-#' @exportClass Corpus
 Corpus <- R6Class(
   "Corpus",
   public = list(

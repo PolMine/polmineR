@@ -6,19 +6,19 @@
 
 .partitionUiInput <- function(){
   list(
-    actionButton("partition_go", label="", icon=icon("play", lib="glyphicon")),
+    go = actionButton("partition_go", label="", icon=icon("play", lib="glyphicon")),
     br(),
     br(),
-    selectInput("partition_corpus", "corpus", choices = corpus(), selected = corpus()[1]),
-    textInput(inputId = "partition_name", label = "name", value = "UNDEFINED"),
-    selectInput(
+    corpus = selectInput("partition_corpus", "corpus", choices = corpus(), selected = corpus()[1]),
+    name = textInput(inputId = "partition_name", label = "name", value = "UNDEFINED"),
+    sAttributesA = selectInput(
       inputId = "partition_sAttributes", label = "sAttributes", multiple = TRUE,
       choices = sAttributes(corpus()[1, "corpus"])
     ),
-    uiOutput("partition_sAttributes"),
-    selectInput(inputId = "partition_pAttribute", label = "pAttribute", multiple = TRUE, choices = list(none = "", word = "word", lemma = "lemma")),
-    radioButtons("partition_regex", "regex", choices = list("TRUE", "FALSE"), inline = TRUE),
-    radioButtons("partition_xml", "xml", choices = list("flat", "nested"), inline = TRUE)
+    sAttributesB = uiOutput("partition_sAttributes"),
+    pAttribute = selectInput(inputId = "partition_pAttribute", label = "pAttribute", multiple = TRUE, choices = list(none = "", word = "word", lemma = "lemma")),
+    regex = radioButtons("partition_regex", "regex", choices = list("TRUE", "FALSE"), inline = TRUE),
+    xml = radioButtons("partition_xml", "xml", choices = list("flat", "nested"), inline = TRUE)
   )
 }
 
@@ -43,7 +43,6 @@
           partition(
             as.character(input$partition_corpus),
             def = defList,
-            # def=eval(parse(text=paste("list(", def_purged, ")", sep=""))),
             name = input$partition_name,
             pAttribute = input$partition_pAttribute,
             regex = input$partition_regex,
@@ -81,6 +80,26 @@
     ))
   })
   
+  retval <- observeEvent(
+    input$partition_done,
+    {
+      newPartition <- partition(
+        as.character(input$partition_corpus),
+        def = lapply(
+          setNames(input$partition_sAttributes, input$partition_sAttributes),
+          function(x) gsub('„', '"', input[[x]]) 
+        ),
+        name = input$partition_name,
+        pAttribute = input$partition_pAttribute,
+        regex = input$partition_regex,
+        xml = input$partition_xml,
+        mc = FALSE,
+        verbose = TRUE
+      )
+      stopApp(returnValue = newPartition)
+      
+    }
+    )
   
   output$partition_table <- renderDataTable(partition())
   
