@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.6.2.9001
-Date: 2016-09-01
+Version: 0.6.2.9002
+Date: 2016-10-28
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -29,6 +29,7 @@ Suggests:
     bigmemory,
     bigtabulate,
     shiny,
+    shinythemes,
     miniUI,
     rJava
 Additional_repositories: https://polmine.github.io/drat/

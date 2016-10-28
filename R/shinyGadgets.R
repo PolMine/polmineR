@@ -47,3 +47,4 @@ partitionGadget <- function(){
     warning("miniUI and/or shinythemes not installed")
   }
 }
+

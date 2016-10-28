@@ -113,34 +113,38 @@
 ##################
 
 
-.kwicUiInput <- function(){
-  list(
-    actionButton("kwic_go", "Go!"), br(),br(),
-    radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
-    conditionalPanel(
+.kwicUiInput <- function(drop = NULL){
+  divs = list(
+    go = actionButton("kwic_go", "Go!"),
+    br1 = br(),
+    br2 = br(),
+    object = radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
+    corpus = conditionalPanel(
       condition = "input.kwic_object == 'corpus'",
       selectInput("kwic_corpus", "corpus", choices = corpus()[["corpus"]], selected = corpus()[["corpus"]][1])
     ),
-    conditionalPanel(
+    partition = conditionalPanel(
       condition = "input.kwic_object == 'partition'",
       selectInput("kwic_partition", "partition", choices = partitionNames)
     ),
-    textInput("kwic_query", "query", value = ""),
-    textInput("kwic_neighbor", "neighbor", value = ""),
-    selectInput(
+    query = textInput("kwic_query", "query", value = ""),
+    neighbor = textInput("kwic_neighbor", "neighbor", value = ""),
+    sAttribute = selectInput(
       "kwic_meta", "sAttribute",
       choices = sAttributes(corpus()[["corpus"]][1]),
       multiple = TRUE
     ),
-    selectInput(
+    pAttribute = selectInput(
       "kwic_pAttribute", "pAttribute",
       choices = pAttributes(corpus()[["corpus"]][1])
     ),
-    numericInput("kwic_left", "left", value=getOption("polmineR.left")),
-    numericInput("kwic_right", "right", value=getOption("polmineR.right")),
-    radioButtons("kwic_read", "read", choices=c("TRUE", "FALSE"), selected="FALSE", inline=T),
-    br()
+    left = sliderInput("kwic_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
+    right = sliderInput("kwic_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
+    read = radioButtons("kwic_read", "read", choices = c("TRUE", "FALSE"), selected = "FALSE", inline=T),
+    br3 = br()
   )
+  if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
+  divs
 }
 
 .kwicUiOutput <- function(){
@@ -148,7 +152,7 @@
 }
 
 
-.kwicServer <- function(input, output, session){
+.kwicServer <- function(input, output, session, ...){
   
   observe({
     x <- input$kwic_partition
@@ -169,8 +173,7 @@
   })
   
   output$kwic_table <- DT::renderDataTable({
-    print(search())
-    
+
     input$kwic_go
     
     isolate({
@@ -188,9 +191,12 @@
           {
             kwicObject <<- polmineR::kwic(
               .Object = object,
-              query = input$kwic_query, pAttribute = input$kwic_pAttribute,
-              left = input$kwic_left, right = input$kwic_right,
-              meta = input$kwic_meta, verbose = "shiny",
+              query = input$kwic_query,
+              pAttribute = ifelse(is.null(input$kwic_pAttribute), "word", input$kwic_pAttribute),
+              left = input$kwic_left,
+              right = input$kwic_right,
+              meta = input$kwic_meta,
+              verbose = "shiny",
               neighbor = input$kwic_neighbor
             )
           }
