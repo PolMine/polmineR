@@ -41,7 +41,7 @@ setMethod("html", "character", function(object){
 setMethod(
   "html", "partition",
   function(
-    object, meta = getOption("polmineR.meta"), template = getOption("polmineR.template"),
+    object, meta = getOption("polmineR.meta"),
     highlight = list(),
     cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, ...
     ){
@@ -51,7 +51,7 @@ setMethod(
     object <- enrich(object, meta=meta, verbose=FALSE)
     if (verbose == TRUE) message("... generating markdown")
     if (any(cqp) == TRUE) cpos <- TRUE
-    markdown <- as.markdown(object, meta = meta, template = template, cpos = cpos, ...)
+    markdown <- as.markdown(object, meta = meta, cpos = cpos, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
       markdown,

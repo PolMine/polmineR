@@ -9,7 +9,7 @@
 \usage{
 as.markdown(.Object, ...)
 
-\S4method{as.markdown}{numeric}(.Object, corpus, meta, template)
+\S4method{as.markdown}{numeric}(.Object, corpus, meta)
 
 \S4method{as.markdown}{plprPartition}(.Object, meta, cpos = FALSE,
   interjections = TRUE)

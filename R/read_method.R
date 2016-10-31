@@ -51,13 +51,13 @@ setGeneric("read", function(.Object, ...) standardGeneric("read"))
 setMethod(
   "read", "partition",
   function(
-    .Object, meta = getOption("polmineR.meta"), template = getOption("polmineR.template"),
+    .Object, meta = getOption("polmineR.meta"),
     highlight = list(), cqp = FALSE, tooltips = NULL,
     verbose = TRUE, cpos = FALSE, ...
     ){
   stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
-  fulltextHtml <- html(.Object, meta = meta, template = template, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, ...)
+  fulltextHtml <- html(.Object, meta = meta, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {

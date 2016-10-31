@@ -27,7 +27,7 @@
 \title{partition class}
 \usage{
 \S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  template = getOption("polmineR.template"), cpos = TRUE)
+  cpos = TRUE)
 
 \S4method{freq}{partition}(.Object)
 

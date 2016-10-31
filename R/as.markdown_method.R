@@ -1,4 +1,4 @@
-#' Turn partition into markdown
+#' Generate markdown from a partition.
 #' 
 #' The method is the worker behind the html-method.
 #' 
@@ -22,25 +22,24 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 }
 
 #' @rdname as.markdown
-setMethod("as.markdown", "numeric", function(.Object, corpus, meta, template){
-  templateUsed <- templates(template)
+setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE){
   corpusEncoding <- parseRegistry(corpus)[["encoding"]]
   
   # generate metainformation
-  documentStruc <- CQI$cpos2struc(corpus, templateUsed[["document"]][["sAttribute"]], .Object[1])
+  documentStruc <- CQI$cpos2struc(corpus, getTemplate(corpus)[["document"]][["sAttribute"]], .Object[1])
   metaInformation <- meta(corpus, sAttributes = meta, struc = documentStruc)
   metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
   metaInformation <- paste(
-    templateUsed[["document"]][["format"]][1],
+    getTemplate(corpus)[["document"]][["format"]][1],
     metaInformation,
-    templateUsed[["document"]][["format"]][2],
+    getTemplate(corpus)[["document"]][["format"]][2],
     sep = ""
     )
   
   cposSeries <- c(.Object[1]:.Object[2])
-  pStrucs <- CQI$cpos2struc(corpus, templateUsed[["paragraphs"]][["sAttribute"]], cposSeries)
+  pStrucs <- CQI$cpos2struc(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], cposSeries)
   chunks <- split(cposSeries, pStrucs)
-  pTypes <- CQI$struc2str(corpus, templateUsed[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
+  pTypes <- CQI$struc2str(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
   bodyList <- Map(
     function(pType, chunk){
       tokens <- getTokenStream(
@@ -49,9 +48,9 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta, template){
       )
       if (cpos == TRUE) tokens <- .wrapTokens(tokens)
       paste(
-        templateUsed[["paragraphs"]][["format"]][[pType]][1],
+        getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][1],
         paste(tokens, collapse=" "),
-        templateUsed[["paragraphs"]][["format"]][[pType]][2],
+        getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][2],
         sep = ""
       )
     },
@@ -70,12 +69,11 @@ setMethod(
   function(
     .Object,
     meta = getOption("polmineR.meta"),
-    template = getOption("polmineR.template"),
     cpos = TRUE
   ){
     # ensure that template requested is available
-    stopifnot(template %in% templates())
-    templateUsed <- templates(template)
+    stopifnot(.Object@corpus %in% getTemplate())
+    templateUsed <- getTemplate(.Object@corpus)
     if (is.null(templateUsed[["paragraphs"]])){
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos)
       if (cpos) tokens <- .wrapTokens(tokens)
@@ -85,7 +83,7 @@ setMethod(
     } else {
       articles <- apply(
         .Object@cpos, 1,
-        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, template = template)
+        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta)
         )
       txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
     }
@@ -93,9 +91,10 @@ setMethod(
   })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, interjections=TRUE){
-  # in the function call, meta is actually not needed, its required by the calling function
-  if (length(meta) == 0) stop("meta needs to be provided, either as session setting, or directly")
+setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = FALSE, interjections = TRUE){
+  # in the function call, meta is actually not needed, required by the calling function
+  templateUsed <- getTemplate(.Object@corpus)
+  if (is.null(meta)) meta <- templateUsed[["metadata"]]
   if (interjections == TRUE){
     maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1
     if (maxNoStrucs != length(.Object@strucs)){
@@ -106,9 +105,8 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, in
       ))
     }
     # this is potential double work, enrich is also performed in the html-method
-    .Object <- enrich(.Object, meta=meta, verbose=FALSE)
+    .Object <- enrich(.Object, meta = meta, verbose=FALSE)
   }
-  sAttribute <- grep("_type", sAttributes(.Object), value=T)[1]
   if (length(.Object@strucs) > 1){
     gapSize <- .Object@strucs[2:length(.Object@strucs)] - .Object@strucs[1:(length(.Object@strucs)-1)]
     gap <- c(0, vapply(gapSize, FUN.VALUE=1, function(x) ifelse(x >1, 1, 0) ))
@@ -128,22 +126,32 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, in
     metaChange <- TRUE
     metadata <- matrix(apply(.Object@metadata, 2, function(x) as.vector(x)), nrow=1)
   }
-  type <- CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs)
+  type <- CQI$struc2str(.Object@corpus, templateUsed[["speech"]][["sAttribute"]], .Object@strucs)
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
       meta <- paste(metadata[i,], collapse=" | ", sep="")
-      meta <- paste("\n###", meta, "\n", collapse="")
+      meta <- paste(
+        templateUsed[["document"]][["format"]][1],
+        meta,
+        templateUsed[["document"]][["format"]][2],
+        collapse=""
+        )
       meta <- adjustEncoding(meta, "latin1")
     }
     tokens <- getTokenStream(
       matrix(.Object@cpos[i,], nrow=1),
-      corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
-      cpos=cpos
+      corpus = .Object@corpus, pAttribute = "word", encoding = .Object@encoding,
+      cpos = cpos
     )
     if (cpos == TRUE) tokens <- .wrapTokens(tokens)
     plainText <- paste(tokens, collapse=" ")
-    if (type[i] == "interjection") plainText <- paste("\n> ", plainText, "\n", sep="")
+    plainText <- paste(
+      templateUsed[["speech"]][["format"]][[type[i]]][1],
+      plainText,
+      templateUsed[["speech"]][["format"]][[type[i]]][1],
+      sep=""
+      )
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
@@ -152,6 +160,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta, cpos=FALSE, in
   markdown <- gsub("\n - ", "\n", markdown)
   markdown
 })
+
 #' 
 #' #' @rdname as.markdown
 #' setMethod("as.markdown", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), cpos=FALSE){

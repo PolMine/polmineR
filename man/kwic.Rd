@@ -19,7 +19,7 @@ kwic(.Object, ...)
   meta = getOption("polmineR.meta"), pAttribute = "word",
   sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
 
-\S4method{kwic}{missing}(.Object, ...)
+\S4method{kwic}{missing}()
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),

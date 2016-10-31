@@ -25,7 +25,10 @@
     "polmineR.interface" = "rcqp",
     "polmineR.template" = "default"
   )
-  
+}
+
+.onAttach <- function(lib, pkg){
+  setTemplate()
 }
 
 
