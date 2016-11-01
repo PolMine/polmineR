@@ -53,8 +53,13 @@
           envir=.GlobalEnv
         )
         partitionDf <- partition()
+        if (nrow(partitionDF) == 0){
+          partitionDF <- data.frame(
+            object = ""[0], name = ""[0], corpus = ""[0], size = integer()
+          )
+        } 
         rownames(partitionDf) <- NULL
-        output$partition_table <- renderDataTable(partitionDf)
+        output$partition_table <- DT::renderDataTable(partitionDf)
         
         for (toUpdate in selectInputToUpdate) {
           updateSelectInput(session, toUpdate, choices=partitionDf$object, selected=NULL)  
@@ -140,7 +145,10 @@
     ),
     left = sliderInput("kwic_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
     right = sliderInput("kwic_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
-    read = radioButtons("kwic_read", "read", choices = c("TRUE", "FALSE"), selected = "FALSE", inline=T),
+    read = conditionalPanel(
+      condition = "input.kwic_go == -1",
+      selectInput("kwic_read", "read", choices = Sys.time())
+    ),
     br3 = br()
   )
   if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
@@ -159,8 +167,8 @@
     if (x != ""){
       new_sAttr <- sAttributes(get(x, ".GlobalEnv")@corpus)
       new_pAttr <- pAttributes(get(x, ".GlobalEnv")@corpus)
-      updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected=NULL)
-      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected=NULL)
+      updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected = NULL)
+      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
     }
   })
   
@@ -175,10 +183,11 @@
   output$kwic_table <- DT::renderDataTable({
 
     input$kwic_go
-    
+    input$kwic_read
+
     isolate({
       
-      if (input$kwic_go > 0 && input$kwic_query != ""){
+      if ((input$kwic_go > 0 || input$kwic_read != startingTime) && input$kwic_query != ""){
 
         if (input$kwic_object == "corpus"){
           object <- input$kwic_corpus
@@ -197,7 +206,8 @@
               right = input$kwic_right,
               meta = input$kwic_meta,
               verbose = "shiny",
-              neighbor = input$kwic_neighbor
+              neighbor = input$kwic_neighbor,
+              cpos = TRUE # required for reading
             )
           }
         ) # end withProgress
@@ -241,12 +251,12 @@
     input$kwic_table_rows_selected,
     {
       if (length(input$kwic_table_rows_selected) > 0){
-        if (input$kwic_read == "TRUE"){
-          fulltext <- html(kwicObject, input$kwic_table_rows_selected, type="plpr")
-          browse(fulltext)
-        } else {
-          output$fulltext <- renderText("you do not want to read")
-        }
+        fulltext <- html(kwicObject, input$kwic_table_rows_selected, type = "plpr", verbose = TRUE)
+        fulltext <- htmltools::HTML(gsub("<head>.*?</head>", "", as.character(fulltext)))
+        fulltext <- htmltools::HTML(gsub('<blockquote>', '<blockquote style="font-size:14px">', as.character(fulltext)))
+        output$read_fulltext <- renderUI(fulltext)
+        updateNavbarPage(session, "polmineR", selected = "read")
+        # browse(fulltext)
       }
     })
   
@@ -274,8 +284,8 @@
     ),
     textInput("context_query", "query", value = ""),
     selectInput("context_pAttribute", "pAttribute:", choices=c("word", "pos", "lemma"), selected = getOption("polmineR.pAttribute"), multiple=TRUE),
-    numericInput("context_left", "left", value=getOption("polmineR.left")),
-    numericInput("context_right", "right", value=getOption("polmineR.right")),
+    sliderInput("context_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
+    sliderInput("context_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
     br()
   )
 }
@@ -291,25 +301,26 @@
 .contextServer <- function(input, output, session){
   output$context_table <- DT::renderDataTable({
     input$context_go
-    if (input$context_object == "corpus"){
-      if (!"corpora" %in% names(.GlobalEnv)){
-        message("... creating environment 'corpora'")
-        corpora <- new.env(parent = .GlobalEnv)
-      } 
-      if (!input$context_corpus %in% ls(envir = corpora)){
-        assign(
-          input$context_corpus,
-          Corpus$new(input$context_corpus, pAttribute = input$context_pAttribute),
-          envir = corpora
-        )
-      }
-      object <- get(input$context_corpus, corpora)
-    } else {
-      object <- get(input$context_partition, '.GlobalEnv')
-    }
     isolate({
-      
       if (input$context_go > 0 && input$context_query != ""){
+        
+        if (input$context_object == "corpus"){
+          if (!input$context_corpus %in% ls(envir = get("corpora", .GlobalEnv))){
+            withProgress(
+              message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
+              {assign(
+                input$context_corpus,
+                Corpus$new(input$context_corpus, pAttribute = input$context_pAttribute),
+                envir = get("corpora", .GlobalEnv)
+              )}
+              
+            )
+          }
+          object <- get(input$context_corpus, corpora)
+        } else {
+          object <- get(input$context_partition, '.GlobalEnv')
+        }
+        
         withProgress(
           message = "please wait ...", value = 0, max = 6, detail = "getting started",
           {
@@ -317,7 +328,7 @@
               .Object = object,
               query = input$context_query,
               pAttribute = input$context_pAttribute,
-              left = input$context_left, right = input$context_right,
+              left = input$context_left[1], right = input$context_right[1],
               verbose="shiny"
             )
           })
@@ -341,12 +352,20 @@
           session, "kwic_neighbor",
           value = ctext@stat[[input$context_pAttribute[1]]][input$context_table_rows_selected]
         )
-        updateSelectInput(session, "kwic_partition", selected = input$context_partition)
+        if (input$kwic_object == "partition"){
+          updateSelectInput(session, "kwic_object", selected = "partition")
+          updateSelectInput(session, "kwic_partition", selected = input$context_partition)
+        } else if (input$kwic_object == "corpus"){
+          updateSelectInput(session, "kwic_object", selected = "corpus")
+          updateSelectInput(session, "kwic_corpus", selected = input$context_corpus)
+        }
         updateTextInput(session, "kwic_query", value = input$context_query)
         updateSelectInput(session, "kwic_left", selected = input$context_left)
         updateSelectInput(session, "kwic_right", selected = input$context_right)
         updateSelectInput(session, "kwic_pAttribute", selected = input$context_pAttribute)
-        updateNavbarPage(session, "polmineR", selected = "kwic")  
+        updateNavbarPage(session, "polmineR", selected = "kwic")
+        Time <- as.character(Sys.time())
+        updateSelectInput(session, "kwic_read", choices = Time, selected = Time)
       }
     })
 }
@@ -449,6 +468,22 @@
       }
       output$dispersion_table <- DT::renderDataTable(as.data.frame(tab))
       
+    }
+  )
+}
+
+.readUiInput <- function(){}
+
+.readUiOutput <- function() uiOutput("read_fulltext")
+
+.readServer <- function(input, output, session){
+  
+  # newFulltext <- reactive(fulltext)
+  
+  observeEvent(
+    fulltext,
+    {
+        print("there is something to read!")
     }
   )
 }

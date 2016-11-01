@@ -18,16 +18,24 @@ shinyUI(
     tabPanel(
       "kwic",
       sidebarLayout(
-        sidebarPanel = sidebarPanel(polmineR:::.kwicUiInput()),
-        mainPanel = mainPanel(polmineR:::.kwicUiOutput())
+        sidebarPanel = sidebarPanel(.kwicUiInput()),
+        mainPanel = mainPanel(.kwicUiOutput())
       )
     ),
     
     tabPanel(
       "context",
       sidebarLayout(
-        sidebarPanel = sidebarPanel(polmineR:::.contextUiInput()),
-        mainPanel = mainPanel(polmineR:::.contextUiOutput())
+        sidebarPanel = sidebarPanel(.contextUiInput()),
+        mainPanel = mainPanel(.contextUiOutput())
+      )
+    ),
+    
+    tabPanel(
+      "read",
+      sidebarLayout(
+        sidebarPanel = sidebarPanel(.readUiInput()),
+        mainPanel = mainPanel(.readUiOutput())
       )
     ),
     

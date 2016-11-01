@@ -18,11 +18,11 @@ setGeneric("html", function(object, ...){standardGeneric("html")})
 
 #' @rdname html-method
 setMethod("html", "character", function(object){
-  if (requireNamespace("markdown", quietly=TRUE)){
-    mdFilename <- tempfile(fileext=".md")
-    htmlFile <- tempfile(fileext=".html")
-    cat(object, file=mdFilename)
-    markdown::markdownToHTML(file=mdFilename, output=htmlFile)  
+  if (requireNamespace("markdown", quietly = TRUE)){
+    mdFilename <- tempfile(fileext = ".md")
+    htmlFile <- tempfile(fileext = ".html")
+    cat(object, file = mdFilename)
+    markdown::markdownToHTML(file = mdFilename, output = htmlFile)  
   } else {
     warning("package 'markdown' is not installed, but necessary for this function")
     stop()
@@ -48,7 +48,7 @@ setMethod(
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     if (verbose == TRUE) message("... enriching partition with metadata")
-    object <- enrich(object, meta=meta, verbose=FALSE)
+    object <- enrich(object, meta = meta, verbose=FALSE)
     if (verbose == TRUE) message("... generating markdown")
     if (any(cqp) == TRUE) cpos <- TRUE
     markdown <- as.markdown(object, meta = meta, cpos = cpos, ...)
@@ -64,7 +64,7 @@ setMethod(
     } else {
       markdown_css <- scan(
         getOption("markdown.HTML.stylesheet"),
-        what="character", sep="\n", quiet=TRUE
+        what = "character", sep = "\n", quiet=TRUE
         )
       tooltips_css <- scan(
         system.file("css", "tooltips.css", package="polmineR"),
@@ -78,24 +78,24 @@ setMethod(
       if (length(cqp) == 1){
         if (cqp == FALSE){
           if (verbose == TRUE) message("... highlighting regular expressions")
-          htmlDoc <- highlight(htmlDoc, highlight=highlight, tooltips=tooltips)
+          htmlDoc <- highlight(htmlDoc, highlight = highlight, tooltips = tooltips)
         } else if (cqp == TRUE){
           if (verbose == TRUE) message("... highlighting CQP queries")
-          htmlDoc <- highlight(object, htmlDoc, highlight=highlight, tooltips=tooltips)
+          htmlDoc <- highlight(object, htmlDoc, highlight = highlight, tooltips = tooltips)
         }
       } else if (length(cqp) == length(highlight)){
         if (any(!cqp)){
           htmlDoc <- highlight(
             htmlDoc,
-            highlight=highlight[which(cqp == FALSE)],
-            tooltips=tooltips[which(cqp == FALSE)]
+            highlight = highlight[which(cqp == FALSE)],
+            tooltips = tooltips[which(cqp == FALSE)]
           )
         }
         if (any(cqp)){
           htmlDoc <- highlight(
             object, htmlDoc,
-            highlight=highlight[which(cqp == TRUE)],
-            tooltips=tooltips[which(cqp == TRUE)]
+            highlight = highlight[which(cqp == TRUE)],
+            tooltips = tooltips[which(cqp == TRUE)]
           )
         }
       } else {
@@ -127,18 +127,30 @@ setMethod("html", "partitionBundle", function(object, filename=c(), type="debate
 })
 
 #' @rdname html-method
-setMethod("html", "kwic", function(object, i, type){
+setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
+  
+  # getting metadata for all kwic lines is potentially not the fastes solution ...
+  if (length(object@metadata) == 0){
+    metadataDef <- get(".templates", envir = .GlobalEnv)[[object@corpus]][["metadata"]]
+    if (verbose) message("... using metadata from template: ", metadataDef)
+    if (length(metadataDef) > 0){
+      if (verbose) message("... enrichting")
+      object <- enrich(object, meta = metadataDef)
+    }
+  }
   partitionToRead <- partition(
     object@corpus,
-    def=lapply(setNames(object@metadata, object@metadata), function(x) object@table[[x]][i]),
-    type=type
+    def = lapply(setNames(object@metadata, object@metadata), function(x) object@table[[x]][i]),
+    type = type
   )
-  fulltext <- html(partitionToRead, meta=object@metadata, cpos=TRUE)
+  if (verbose) message("... generating html")
+  fulltext <- html(partitionToRead, meta = object@metadata, cpos = TRUE)
+  if (verbose) message("... generating highlights")
   fulltext <- highlight(
     fulltext,
-    highlight=list(
-      yellow=c(object@cpos[[i]][["left"]], object@cpos[[i]][["right"]]),
-      lightgreen=object@cpos[[i]][["node"]]
+    highlight = list(
+      yellow = c(object@cpos[[i]][["left"]], object@cpos[[i]][["right"]]),
+      lightgreen = object@cpos[[i]][["node"]]
     )
   )
   fulltext
