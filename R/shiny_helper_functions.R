@@ -4,7 +4,17 @@
 ##                ##
 ####################
 
-.partitionUiInput <- function(){
+
+#' Building blocks for shiny apps and widgets.
+#' 
+#' 
+#' @param input input
+#' @param output output
+#' @param session session
+#' @rdname shiny_helper_functions
+#' @export partitionUiInput
+#' @import shiny
+partitionUiInput <- function(){
   list(
     go = actionButton("partition_go", label="", icon=icon("play", lib="glyphicon")),
     br(),
@@ -23,12 +33,16 @@
 }
 
 
-.partitionUiOutput <- function(){
+#' @rdname shiny_helper_functions
+#' @export partitionUiOutput
+partitionUiOutput <- function(){
   dataTableOutput('partition_table')
 }
 
 
-.partitionServer <- function(input, output, session){
+#' @rdname shiny_helper_functions
+#' @export partitionServer
+partitionServer <- function(input, output, session){
   observeEvent(
     input$partition_go,
     {
@@ -36,7 +50,7 @@
       if (input$partition_go > 0){
         defList <- lapply(
           setNames(input$partition_sAttributes, input$partition_sAttributes),
-          function(x) gsub('„', '"', input[[x]]) 
+          function(x) gsub('\u201E', '"', input[[x]]) 
         )
         assign(
           input$partition_name,
@@ -92,7 +106,7 @@
         as.character(input$partition_corpus),
         def = lapply(
           setNames(input$partition_sAttributes, input$partition_sAttributes),
-          function(x) gsub('„', '"', input[[x]]) 
+          function(x) gsub('\u201E', '"', input[[x]]) 
         ),
         name = input$partition_name,
         pAttribute = input$partition_pAttribute,
@@ -118,7 +132,9 @@
 ##################
 
 
-.kwicUiInput <- function(drop = NULL){
+#' @rdname shiny_helper_functions
+#' @export kwicUiInput
+kwicUiInput <- function(drop = NULL){
   divs = list(
     go = actionButton("kwic_go", "Go!"),
     br1 = br(),
@@ -155,12 +171,16 @@
   divs
 }
 
-.kwicUiOutput <- function(){
+#' @rdname shiny_helper_functions
+#' @export kwicUiOutput
+kwicUiOutput <- function(){
   DT::dataTableOutput('kwic_table')
 }
 
 
-.kwicServer <- function(input, output, session, ...){
+#' @rdname shiny_helper_functions
+#' @export kwicServer
+kwicServer <- function(input, output, session, ...){
   
   observe({
     x <- input$kwic_partition
@@ -269,7 +289,9 @@
 ##              ##
 ##################
 
-.contextUiInput <- function(){
+#' @rdname shiny_helper_functions
+#' @export contextUiInput
+contextUiInput <- function(){
   list(
     actionButton("context_go", "Go!"),
     br(), br(),
@@ -290,7 +312,10 @@
   )
 }
 
-.contextUiOutput <- function(){
+
+#' @rdname shiny_helper_functions
+#' @export contextUiOutput
+contextUiOutput <- function(){
   list(
     DT::dataTableOutput('context_table'),
     textOutput("context2kwic")
@@ -298,25 +323,27 @@
 }
 
 
-.contextServer <- function(input, output, session){
+#' @rdname shiny_helper_functions
+#' @export contextServer
+contextServer <- function(input, output, session){
   output$context_table <- DT::renderDataTable({
     input$context_go
     isolate({
       if (input$context_go > 0 && input$context_query != ""){
         
         if (input$context_object == "corpus"){
-          if (!input$context_corpus %in% ls(envir = get("corpora", .GlobalEnv))){
+          if (!input$context_corpus %in% ls(envir = get(".corpora", .GlobalEnv))){
             withProgress(
               message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
               {assign(
                 input$context_corpus,
                 Corpus$new(input$context_corpus, pAttribute = input$context_pAttribute),
-                envir = get("corpora", .GlobalEnv)
+                envir = get(".corpora", .GlobalEnv)
               )}
               
             )
           }
-          object <- get(input$context_corpus, corpora)
+          object <- get(input$context_corpus, envir = get(".corpora", .GlobalEnv))
         } else {
           object <- get(input$context_partition, '.GlobalEnv')
         }
@@ -377,7 +404,10 @@
 ##                  ##
 ######################
 
-.dispersionUiInput <- function(){
+
+#' @rdname shiny_helper_functions
+#' @export dispersionUiInput
+dispersionUiInput <- function(){
   list(
     actionButton("dispersion_go", "Go!"),
     br(), br(),
@@ -409,11 +439,16 @@
   )
 }
 
-.dispersionUiOutput <- function(){
+
+#' @rdname shiny_helper_functions
+#' @export dispersionUiOutput
+dispersionUiOutput <- function(){
 }
 
 
-.dispersionServer <- function(input, output, session){
+#' @rdname shiny_helper_functions
+#' @export dispersionServer
+dispersionServer <- function(input, output, session){
   observe({
     x <- input$dispersion_partition
     if (x != ""){
@@ -451,15 +486,15 @@
             zooObject <- zoo::zoo(as.matrix(tab), order.by=as.Date(dates4zoo))
             zooObjectAggr <- switch(
               input$dispersion_ts_aggregation,
-              month = zoo:::aggregate.zoo(zooObject, zoo::as.Date(zoo::as.yearmon(zoo::index(zooObject)))),
-              quarter = zoo:::aggregate.zoo(zooObject, zoo::as.Date(zoo::as.yearqtr(zoo::index(zooObject)))),
-              year = zoo:::aggregate.zoo(zooObject, as.Date(paste(gsub("^(\\d{4}).*?$", "\\1", zoo::index(zooObject)), "-01-01", sep="")))
+              month = zoo::aggregate.zoo(zooObject, zoo::as.Date(zoo::as.yearmon(zoo::index(zooObject)))),
+              quarter = zoo::aggregate.zoo(zooObject, zoo::as.Date(zoo::as.yearqtr(zoo::index(zooObject)))),
+              year = zoo::aggregate.zoo(zooObject, as.Date(paste(gsub("^(\\d{4}).*?$", "\\1", zoo::index(zooObject)), "-01-01", sep="")))
             )
             tab <- data.frame(date=zoo::index(zooObjectAggr), zooObjectAggr)
             colnames(tab)[1] <- input$dispersion_sAttribute_1
             rownames(tab) <- NULL
           }
-          output$dispersion_plot <- renderPlot(zoo:::plot.zoo(zooObjectAggr, main=""))
+          output$dispersion_plot <- renderPlot(zoo::plot.zoo(zooObjectAggr, main=""))
         } else {
           message("package 'zoo' required, but not available")
         }
@@ -472,11 +507,20 @@
   )
 }
 
-.readUiInput <- function(){}
 
-.readUiOutput <- function() uiOutput("read_fulltext")
+#' @rdname shiny_helper_functions
+#' @export readUiInput
+readUiInput <- function(){}
 
-.readServer <- function(input, output, session){
+
+#' @rdname shiny_helper_functions
+#' @export readUiOutput
+readUiOutput <- function() uiOutput("read_fulltext")
+
+
+#' @rdname shiny_helper_functions
+#' @export readServer
+readServer <- function(input, output, session){
   
   # newFulltext <- reactive(fulltext)
   

@@ -12,18 +12,18 @@ partitionGadget <- function(){
         fillPage(
           fillRow(
             fillCol(
-              div(polmineR:::.partitionUiInput()[["corpus"]],
-                  polmineR:::.partitionUiInput()[["name"]],
-                  polmineR:::.partitionUiInput()[["pAttribute"]],
-                  polmineR:::.partitionUiInput()[["regex"]],
-                  polmineR:::.partitionUiInput()[["xml"]]
+              div(partitionUiInput()[["corpus"]],
+                  partitionUiInput()[["name"]],
+                  partitionUiInput()[["pAttribute"]],
+                  partitionUiInput()[["regex"]],
+                  partitionUiInput()[["xml"]]
               )
             ),
             fillCol(br()),
             fillCol(
               div(
-                polmineR:::.partitionUiInput()[["sAttributesA"]],
-                polmineR:::.partitionUiInput()[["sAttributesB"]]
+                partitionUiInput()[["sAttributesA"]],
+                partitionUiInput()[["sAttributesB"]]
               )
             ),
             flex = c(1,0.1, 1)
@@ -37,7 +37,7 @@ partitionGadget <- function(){
     returnValue <- runGadget(
       app = shinyApp(
         ui = partitionGadgetUI,
-        server = polmineR:::.partitionServer
+        server = partitionServer
       ),
       viewer = paneViewer()
     )
