@@ -19,6 +19,7 @@
 #' @param cqp a list of character vectors with regular expressions to
 #'   highlight relevant terms or expressions; the names of the list provide the
 #'   colors
+#' @param cutoff maximum number of tokens to display
 #' @param ... further parameters passed into read
 #' @exportMethod read
 #' @rdname read-method
@@ -51,13 +52,15 @@ setGeneric("read", function(.Object, ...) standardGeneric("read"))
 setMethod(
   "read", "partition",
   function(
-    .Object, meta = getOption("polmineR.meta"),
+    .Object, meta = NULL,
     highlight = list(), cqp = FALSE, tooltips = NULL,
-    verbose = TRUE, cpos = FALSE, ...
+    verbose = TRUE, cpos = FALSE, cutoff = getOption("polmineR.cutoff"), ...
     ){
+  if (is.null(meta)) meta <- getOption("polmineR.meta")
   stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
-  fulltextHtml <- html(.Object, meta = meta, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, ...)
+  fulltextHtml <- html(
+    .Object, meta = meta, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, cutoff = cutoff, ...)
   if(require("htmltools", quietly = TRUE)){
     htmltools::html_print(fulltextHtml)  
   } else {

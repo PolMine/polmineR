@@ -27,7 +27,7 @@
 \title{partition class}
 \usage{
 \S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  cpos = TRUE)
+  cpos = TRUE, cutoff = NULL, ...)
 
 \S4method{freq}{partition}(.Object)
 
@@ -56,6 +56,8 @@
 
 \item{cpos}{...}
 
+\item{...}{further parameters}
+
 \item{x}{a partition object}
 
 \item{i}{index}
@@ -67,8 +69,6 @@
 \item{dim}{don't know}
 
 \item{verbose}{logical, whether to be verbose}
-
-\item{...}{further parameters}
 }
 \description{
 partition class

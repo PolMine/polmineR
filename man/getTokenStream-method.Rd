@@ -13,7 +13,8 @@
 getTokenStream(.Object, ...)
 
 \S4method{getTokenStream}{numeric}(.Object, corpus, pAttribute,
-  encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE)
+  encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE,
+  cutoff = NULL)
 
 \S4method{getTokenStream}{matrix}(.Object, ...)
 
@@ -21,9 +22,9 @@ getTokenStream(.Object, ...)
   ...)
 
 \S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
-  cpos = FALSE)
+  cpos = FALSE, ...)
 
-\S4method{getTokenStream}{Regions}(.Object, pAttribute = "word")
+\S4method{getTokenStream}{Regions}(.Object, pAttribute = "word", ...)
 }
 \arguments{
 \item{.Object}{an object of class \code{matrix} or \code{partition}}
@@ -41,6 +42,8 @@ getTokenStream(.Object, ...)
 \item{beautify}{logical, whether to adjust whitespace before and after interpunctation}
 
 \item{cpos}{logical, whether to return cpos as names of the tokens}
+
+\item{cutoff}{maximum number of tokens to be reconstructed}
 
 \item{left}{left corpus position}
 

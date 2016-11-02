@@ -6,6 +6,7 @@
 #' @param meta metainformation i.e. s-attributes) to be displayed
 #' @param cpos logical, whether to add cpos as ids in span elements
 #' @param interjections logical, whether to format interjections
+#' @param cutoff maximum number of tokens to reconstruct
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
@@ -22,7 +23,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 }
 
 #' @rdname as.markdown
-setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE){
+setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
   corpusEncoding <- parseRegistry(corpus)[["encoding"]]
   
   # generate metainformation
@@ -44,7 +45,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
     function(pType, chunk){
       tokens <- getTokenStream(
         chunk, corpus = corpus, pAttribute = "word",
-        encoding = corpusEncoding, cpos = cpos
+        encoding = corpusEncoding, cpos = cpos, cutoff = cutoff
       )
       if (cpos == TRUE) tokens <- .wrapTokens(tokens)
       paste(
@@ -69,21 +70,22 @@ setMethod(
   function(
     .Object,
     meta = getOption("polmineR.meta"),
-    cpos = TRUE
+    cpos = TRUE, cutoff = NULL,
+    ...
   ){
     # ensure that template requested is available
     stopifnot(.Object@corpus %in% getTemplate())
     templateUsed <- getTemplate(.Object@corpus)
     if (is.null(templateUsed[["paragraphs"]])){
-      tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos)
+      tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
       if (cpos) tokens <- .wrapTokens(tokens)
-      tokens <- paste(tokens, collapse=" ")
-      rawTxt <- paste(tokens, sep="\n")
+      tokens <- paste(tokens, collapse = " ")
+      rawTxt <- paste(tokens, sep = "\n")
       txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
     } else {
       articles <- apply(
         .Object@cpos, 1,
-        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta)
+        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)
         )
       txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
     }
@@ -91,7 +93,7 @@ setMethod(
   })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = FALSE, interjections = TRUE){
+setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
   templateUsed <- getTemplate(.Object@corpus)
   if (is.null(meta)) meta <- templateUsed[["metadata"]]
@@ -124,9 +126,19 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
   } else {
     gap <- 0
     metaChange <- TRUE
-    metadata <- matrix(apply(.Object@metadata, 2, function(x) as.vector(x)), nrow=1)
+    metadata <- matrix(apply(.Object@metadata, 2, function(x) as.vector(x)), nrow = 1)
   }
   type <- CQI$struc2str(.Object@corpus, templateUsed[["speech"]][["sAttribute"]], .Object@strucs)
+  
+  if (is.numeric(cutoff)){
+    threshold <- min(which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff))
+    if (threshold > 1){
+      metadata <- metadata[1:threshold,]
+      .Object@cpos <- .Object@cpos[1:threshold,]
+    }
+    
+  }
+  
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
     meta <- c("")
     if (metaChange[i] == TRUE) { 
@@ -135,22 +147,22 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
         templateUsed[["document"]][["format"]][1],
         meta,
         templateUsed[["document"]][["format"]][2],
-        collapse=""
+        collapse = ""
         )
       meta <- adjustEncoding(meta, "latin1")
     }
     tokens <- getTokenStream(
-      matrix(.Object@cpos[i,], nrow=1),
+      matrix(.Object@cpos[i,], nrow = 1),
       corpus = .Object@corpus, pAttribute = "word", encoding = .Object@encoding,
       cpos = cpos
     )
     if (cpos == TRUE) tokens <- .wrapTokens(tokens)
-    plainText <- paste(tokens, collapse=" ")
+    plainText <- paste(tokens, collapse = " ")
     plainText <- paste(
       templateUsed[["speech"]][["format"]][[type[i]]][1],
       plainText,
       templateUsed[["speech"]][["format"]][[type[i]]][1],
-      sep=""
+      sep = ""
       )
     paste(meta, plainText)
   })

@@ -24,8 +24,7 @@ setMethod("html", "character", function(object){
     cat(object, file = mdFilename)
     markdown::markdownToHTML(file = mdFilename, output = htmlFile)  
   } else {
-    warning("package 'markdown' is not installed, but necessary for this function")
-    stop()
+    stop("package 'markdown' is not installed, but necessary for this function")
   }
   htmlFile
 })
@@ -43,7 +42,7 @@ setMethod(
   function(
     object, meta = getOption("polmineR.meta"),
     highlight = list(),
-    cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, ...
+    cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, cutoff = NULL, ...
     ){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
@@ -51,7 +50,7 @@ setMethod(
     object <- enrich(object, meta = meta, verbose=FALSE)
     if (verbose == TRUE) message("... generating markdown")
     if (any(cqp) == TRUE) cpos <- TRUE
-    markdown <- as.markdown(object, meta = meta, cpos = cpos, ...)
+    markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
       markdown,
@@ -111,7 +110,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname html-method
-setMethod("html", "partitionBundle", function(object, filename=c(), type="debate"){
+setMethod("html", "partitionBundle", function(object, filename = c(), type="debate"){
   markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),

@@ -5,6 +5,7 @@
 \alias{[,kwic,ANY,ANY,ANY-method}
 \alias{[,kwic-method}
 \alias{as.data.frame,kwic-method}
+\alias{enrich,kwic-method}
 \alias{kwic-class}
 \alias{show,kwic-method}
 \alias{view,kwic-method}
@@ -13,6 +14,8 @@
 \S4method{show}{kwic}(object)
 
 \S4method{as.data.frame}{kwic}(x)
+
+\S4method{enrich}{kwic}(object, meta = NULL)
 
 \S4method{view}{kwic}(.Object)
 }

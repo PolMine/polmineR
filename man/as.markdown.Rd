@@ -5,14 +5,15 @@
 \alias{as.markdown}
 \alias{as.markdown,numeric-method}
 \alias{as.markdown,plprPartition-method}
-\title{Turn partition into markdown}
+\title{Generate markdown from a partition.}
 \usage{
 as.markdown(.Object, ...)
 
-\S4method{as.markdown}{numeric}(.Object, corpus, meta)
+\S4method{as.markdown}{numeric}(.Object, corpus, meta = NULL, cpos = FALSE,
+  cutoff = NULL, ...)
 
-\S4method{as.markdown}{plprPartition}(.Object, meta, cpos = FALSE,
-  interjections = TRUE)
+\S4method{as.markdown}{plprPartition}(.Object, meta = NULL, cpos = FALSE,
+  interjections = TRUE, cutoff = NULL, ...)
 }
 \arguments{
 \item{.Object}{object to be converted}
@@ -22,6 +23,8 @@ as.markdown(.Object, ...)
 \item{meta}{metainformation i.e. s-attributes) to be displayed}
 
 \item{cpos}{logical, whether to add cpos as ids in span elements}
+
+\item{cutoff}{maximum number of tokens to reconstruct}
 
 \item{interjections}{logical, whether to format interjections}
 }

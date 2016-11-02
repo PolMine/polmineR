@@ -4,16 +4,28 @@
 \name{pAttributes}
 \alias{pAttributes}
 \alias{pAttributes,character-method}
-\title{get availables pAttributes}
+\title{Get p-attributes.}
 \usage{
 pAttributes(.Object)
 
 \S4method{pAttributes}{character}(.Object)
 }
 \arguments{
-\item{.Object}{a character string or partition object}
+\item{.Object}{a character vector (length 1) or partition object}
 }
 \description{
-get availables pAttributes
+In a CWB corpus, every token has positional attributes. While s-attributes
+cover a range of tokens, every single token in the token stream of a corpus
+will have a set of positional attributes (such as part-of-speech, or lemma).
+The available p-attributes are returned by the pAttributes-method.
+}
+\examples{
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+   use("polmineR.sampleCorpus")
+   pAttributes("PLPRBTTXT")
+}
+}
+\references{
+Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.
 }
 

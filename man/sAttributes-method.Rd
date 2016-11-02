@@ -5,27 +5,44 @@
 \alias{sAttributes}
 \alias{sAttributes,character-method}
 \alias{sAttributes,partition-method}
-\title{Print S-Attributes in a partition or corpus}
+\title{Get s-attributes.}
 \usage{
-\S4method{sAttributes}{character}(object, sAttribute = NULL, unique = TRUE,
+\S4method{sAttributes}{character}(.Object, sAttribute = NULL, unique = TRUE,
   regex = NULL)
 
-\S4method{sAttributes}{partition}(object, sAttribute = NULL)
+\S4method{sAttributes}{partition}(.Object, sAttribute = NULL)
 }
 \arguments{
-\item{object}{either a partition or a character vector specifying a CWB corpus}
+\item{.Object}{either a \code{partition} or a character vector specifying a CWB corpus}
 
-\item{sAttribute}{bla}
+\item{sAttribute}{name of a specific s-attribute}
 
 \item{unique}{logical, whether to return unique values only}
 
-\item{regex}{apply a regex}
+\item{regex}{filter return value by applying a regex}
 }
 \value{
-the S-Attributes are immediately printed
+a character vector
 }
 \description{
-Convencience function - just to access the s-sttributes in a partition
-quickly.
+Structural annotations (s-attributes) of a corpus provide metainformation for
+ranges of text. Importing XML into the Corpus Workbench (CWB) turns elements and element
+attributes into s-attributes. There are two uses of the sAttributes-method: If the 
+\code{sAttribute} parameter is NULL (default), the return value is a character vector
+with all s-attributes. If sAttribute is the name of a specific s-attribute (i.e. a 
+length 1 character vector), the respective s-attributes available in the corpus are 
+returned.
+}
+\examples{
+if (require(polmineR.sampleCorpus) && require(rcqp)){
+  use("polmineR.sampleCorpus")
+  
+  sAttributes("PLPRBTTXT")
+  sAttributes("PLPRBTTXT", "text_date") # dates of plenary meetings
+  
+  P <- partition("PLPRBTTXT", text_date = "2009-11-10")
+  sAttributes(P)
+  sAttributes(P, "text_name") # get names of speakers
+}
 }
 

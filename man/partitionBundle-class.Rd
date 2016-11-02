@@ -37,7 +37,7 @@
 
 \S4method{partitionBundle}{missing}()
 
-\S4method{sAttributes}{partitionBundle}(object, sAttribute)
+\S4method{sAttributes}{partitionBundle}(.Object, sAttribute)
 }
 \arguments{
 \item{.Object}{a partitionBundle object}

@@ -15,12 +15,12 @@ html(object, ...)
 \S4method{html}{character}(object)
 
 \S4method{html}{partition}(object, meta = getOption("polmineR.meta"),
-  template = getOption("polmineR.template"), highlight = list(),
-  cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, ...)
+  highlight = list(), cqp = FALSE, tooltips = NULL, cpos = FALSE,
+  verbose = FALSE, cutoff = NULL, ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
-\S4method{html}{kwic}(object, i, type)
+\S4method{html}{kwic}(object, i, type = NULL, verbose = FALSE)
 }
 \arguments{
 \item{object}{the object}

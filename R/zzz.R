@@ -23,7 +23,8 @@
     "polmineR.backend" = "doSNOW",
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.interface" = "rcqp",
-    "polmineR.template" = "default"
+    "polmineR.template" = "default",
+    "polmineR.cutoff" = 5000
   )
 }
 
