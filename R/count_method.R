@@ -17,6 +17,7 @@ NULL
 #'   function to check whether query is a CQP query or not (defaults to is.query
 #'   auxiliary function)
 #' @param pAttribute the p-attribute(s) to use
+#' @param corpus name of CWB corpus
 #' @param id2str logical, whether to add rownames (only if query is NULL)
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
@@ -167,8 +168,8 @@ setMethod("count", "vector", function(.Object, corpus, pAttribute){
   ids <- CQI$cpos2id(corpus, pAttribute, .Object)
   count <- tabulate(ids)
   TF <- data.table(
-    id=c(0:length(count)),
-    count=c(length(which(ids == 0)), count)
+    id = c(0:length(count)),
+    count = c(length(which(ids == 0)), count)
   )
   setkey(TF, "id")
   setnames(TF, "id", paste(pAttribute, "_id", sep=""))

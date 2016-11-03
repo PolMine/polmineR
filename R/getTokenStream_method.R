@@ -75,6 +75,6 @@ setMethod("getTokenStream", "Regions", function(.Object, pAttribute = "word", ..
       ...
     ))
   }
-  .Object@cpos[, .getText(.BY), by = .(cpos_left, cpos_right)]
+  .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
 })
 

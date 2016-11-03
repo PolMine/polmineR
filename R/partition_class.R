@@ -29,6 +29,7 @@ NULL
 #' @param cpos ...
 #' @param meta ...
 #' @param i index
+#' @param cutoff maximum number of tokens to decode
 #' @param ... further parameters
 #' @param value value
 #' @param object a partition object

@@ -24,6 +24,8 @@
 
 \item{x}{a kwic-class object}
 
+\item{meta}{sAttributes (character vector) with metainformation}
+
 \item{.Object}{a kwic object}
 }
 \description{

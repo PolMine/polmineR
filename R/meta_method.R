@@ -11,6 +11,7 @@
 #' 
 #' @param .Object a \code{"partition"} object
 #' @param sAttributes a character vector
+#' @param struc integer vector, strucs to get metadata for
 #' @param ... further parameters
 #' @return a \code{"data.frame"}
 #' @author Andreas Blaette

@@ -1,4 +1,3 @@
-#' @exportClass Corpus
 setOldClass("Corpus")
 
 
@@ -12,7 +11,7 @@ setOldClass("Corpus")
 #'   \item{one}{bla}
 #' }
 #' 
-#' @rdname Corpus-class.Rd
+#' @rdname Corpus-class
 #' @export Corpus
 Corpus <- R6Class(
   "Corpus",

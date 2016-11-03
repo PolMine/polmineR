@@ -1,14 +1,8 @@
-setMethod("aggregate", "matrix", function(x){
-  
-})
-
-setMethod("aggregate", "data.table", function(x){
-  
-})
-
+#' @include partition_class.R
+NULL
 
 #' @exportMethod aggregate
-#' @rdname partition
+#' @rdname partition-class
 setMethod("aggregate", "partition", function(x){
   if (nrow(x@cpos) == 1){
     message("NOTE: Only one region, returning the partition unchanged")

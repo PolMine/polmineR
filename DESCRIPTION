@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.6.2.9002
-Date: 2016-10-28
+Version: 0.6.3
+Date: 2016-11-03
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -28,10 +28,8 @@ Suggests:
     knitr,
     bigmemory,
     bigtabulate,
-    shiny,
-    shinythemes,
-    miniUI,
-    rJava
+    rJava,
+    shiny
 Additional_repositories: https://polmine.github.io/drat/
 VignetteBuilder: knitr
 LazyData: yes
@@ -50,16 +48,16 @@ Collate:
     'CQI.perl.R'
     'CQI.rcqp.R'
     'Corpus_class.R'
+    'generics.R'
+    'textstat_class.R'
+    'polmineR_package.R'
+    'partition_class.R'
     'Regions_class.R'
     'TermDocumentMatrix_methods.R'
     'TokenStream_class.R'
     'adjustEncoding_method.R'
     'aggregate_method.R'
-    'generics.R'
-    'textstat_class.R'
     'bundle_class.R'
-    'polmineR_package.R'
-    'partition_class.R'
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
     'as.markdown_method.R'
@@ -121,8 +119,6 @@ Collate:
     'rustyard.R'
     'sAttributes_method.R'
     'scatterplot_method.R'
-    'shinyGadgets.R'
-    'shiny_helper_functions.R'
     'size_method.R'
     'tTest.R'
     'templates_method.R'

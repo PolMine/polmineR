@@ -10,7 +10,7 @@ Class for token stream operations.
 \section{Slots}{
 
 \describe{
-\item{\code{cpos}}{a data.table that will include a column "token"}
+\item{\code{tokenStream}}{a data.table that will include a column "token"}
 
 \item{\code{corpus}}{the CWB corpus (character vector length 1)}
 

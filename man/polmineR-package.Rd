@@ -2,12 +2,8 @@
 % Please edit documentation in R/polmineR_package.R
 \docType{package}
 \name{polmineR-package}
-\alias{polmineR}
 \alias{polmineR-package}
 \title{polmineR-package}
-\usage{
-polmineR()
-}
 \description{
 Machinery for mining CWB corpora
 }

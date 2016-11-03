@@ -15,6 +15,7 @@
 #' 
 #' @param x a kwic-class object
 #' @param object an object of class \code{kwic}
+#' @param meta sAttributes (character vector) with metainformation
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}

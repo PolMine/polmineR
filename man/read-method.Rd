@@ -60,8 +60,6 @@ colors}
 \item{i}{...}
 
 \item{type}{...}
-
-\item{partitionBundle}{}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
@@ -80,7 +78,8 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
    read(merkel, meta=c("text_name", "text_date"))
    read(
      merkel,
-     highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
+     highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
+     meta = c("text_name", "text_date")
      )
    all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
    \dontrun{

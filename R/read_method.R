@@ -35,7 +35,8 @@
 #'    read(merkel, meta=c("text_name", "text_date"))
 #'    read(
 #'      merkel,
-#'      highlight=list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung")
+#'      highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
+#'      meta = c("text_name", "text_date")
 #'      )
 #'    all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
 #'    \dontrun{
@@ -68,8 +69,6 @@ setMethod(
   }
 })
 
-#' @param partitionBundle 
-#'
 #' @rdname read-method
 setMethod("read", "partitionBundle", function(.Object, highlight = list(), cqp = FALSE, cpos = FALSE, ...){
   for (i in c(1:length(.Object@objects))){
@@ -123,9 +122,10 @@ setMethod("read", "Regions", function(.Object, meta = NULL){
         }
       )
     }
-    toShow <- toShow[, .getMetadata(.BY, meta), by = .(cpos_left, cpos_right, text)]
+    toShow <- toShow[, .getMetadata(.BY, meta), by = c("cpos_left", "cpos_right", "text"), with = TRUE]
   }
-  toShow[, cpos_left := NULL][, cpos_right := NULL]
+  toShow[["cpos_left"]] <- NULL
+  toShow[["cpos_right"]] <- NULL
   setcolorder(toShow, c(meta, "text"))
   show(DT::datatable(toShow))
 })

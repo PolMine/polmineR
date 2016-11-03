@@ -8,6 +8,7 @@ NULL
 #' @param cpos logical
 #' @param verbose logical
 #' @param filename the filename
+#' @param cutoff maximum number of tokens to decode from token stream
 #' @param type the partition type
 #' @param i to be checked
 #' @param ... further parameters

@@ -29,9 +29,6 @@
 }
 
 .onAttach <- function(lib, pkg){
-  if (!".polmineR_cache" %in% ls(.GlobalEnv, all = TRUE)){
-    assign(".polmineR_cache", value = new.env(), envir = .GlobalEnv)
-  }
   setTemplate()
 }
 

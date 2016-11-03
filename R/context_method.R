@@ -253,6 +253,7 @@ setMethod(
 #' @rdname context-method
 setMethod("context", "character", function(.Object, ...) context(partition(.Object), ...))
 
+#' @rdname context-method
 setMethod("context", "Corpus", function(.Object, pAttribute = getOption("polmineR.pAttribute"), ...){
   if (nrow(.Object$stat) == 0) .Object$count(pAttribute)
   context(.Object$as.partition(), pAttribute = pAttribute, ...)
@@ -329,15 +330,3 @@ setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
   }
   return(newObject)
 })
-
-#' @rdname context-method
-setMethod("context", "missing", function(){
-  if (requireNamespace("shiny", quietly=TRUE)){
-    shiny::runApp(system.file("shiny", "context", package="polmineR"), launch.browser=TRUE)  
-    # shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/context", launch.browser=TRUE)
-  } else {
-    message("package shiny not available")
-  }
-})
-
-

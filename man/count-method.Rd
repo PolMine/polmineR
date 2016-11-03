@@ -51,6 +51,8 @@ auxiliary function)}
 
 \item{total}{defaults to FALSE, if TRUE, the added value of counts (column:
 TOTAL) will be amended to the data.table that is returned}
+
+\item{corpus}{name of CWB corpus}
 }
 \value{
 a \code{"data.table"}

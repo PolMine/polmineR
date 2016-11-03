@@ -5,7 +5,6 @@
 \alias{kwic}
 \alias{kwic,character-method}
 \alias{kwic,context-method}
-\alias{kwic,missing-method}
 \alias{kwic,partition-method}
 \title{KWIC output / concordances}
 \usage{
@@ -19,15 +18,13 @@ kwic(.Object, ...)
   meta = getOption("polmineR.meta"), pAttribute = "word",
   sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
 
-\S4method{kwic}{missing}()
-
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"), pAttribute = "word",
   sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
 }
 \arguments{
-\item{.Object}{a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched}
+\item{.Object}{a \code{partition} or \code{context} object}
 
 \item{...}{further parameters to be passed}
 
@@ -56,10 +53,6 @@ auxiliary function)}
 \description{
 Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
 applying the kwich method on either a partition or a context object.
-}
-\details{
-If you enter \code{"kwic()"} on the console, a shiny application will be launched. The app
-will offer partition objects present in the global environment.
 }
 \examples{
 \dontrun{

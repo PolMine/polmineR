@@ -1,3 +1,7 @@
+#' @include partition_class.R
+NULL
+
+
 #' Regions of a CWB corpus.
 #' 
 #' @slot cpos a data.table that will include a "cpos_left" and "cpos_right" column

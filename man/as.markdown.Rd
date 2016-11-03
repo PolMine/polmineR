@@ -20,6 +20,8 @@ as.markdown(.Object, ...)
 
 \item{...}{further arguments}
 
+\item{corpus}{name of CWB corpus}
+
 \item{meta}{metainformation i.e. s-attributes) to be displayed}
 
 \item{cpos}{logical, whether to add cpos as ids in span elements}

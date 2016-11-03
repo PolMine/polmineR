@@ -39,6 +39,8 @@ html(object, ...)
 
 \item{verbose}{logical}
 
+\item{cutoff}{maximum number of tokens to decode from token stream}
+
 \item{filename}{the filename}
 
 \item{type}{the partition type}

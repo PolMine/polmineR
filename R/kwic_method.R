@@ -6,10 +6,7 @@ NULL
 #' Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
 #' applying the kwich method on either a partition or a context object.
 #' 
-#' If you enter \code{"kwic()"} on the console, a shiny application will be launched. The app
-#' will offer partition objects present in the global environment.
-#' 
-#' @param .Object a \code{partition} or \code{context} object, if \code{missing}, a shiny application will be launched
+#' @param .Object a \code{partition} or \code{context} object
 #' @param query a query, CQP-syntax can be used
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
@@ -123,42 +120,6 @@ setMethod("kwic", "partition", function(
   kwic(.Object = ctxt, meta = meta, neighbor = neighbor, cpos = cpos)
 })
 
-#' @rdname kwic
-setMethod("kwic", "missing", function(){
-  
-  if (require("miniUI", quietly = TRUE) && require("shinythemes", quietly = TRUE) && require("shiny", quietly = TRUE) && require("magrittr", quietly = TRUE)){
-    
-    assign(
-      "partitionNames",
-      value = unlist(sapply(c("partition", "pressPartition", "plprPartition"), getObjects)),
-      envir = .GlobalEnv
-      )
-    
-    kwicGadgetUI <- shinyUI(fluidPage(
-      theme = shinytheme("cerulean"),
-      padding = 5,
-      gadgetTitleBar(
-        "KWIC",
-        left = miniTitleBarCancelButton(),
-        right = miniTitleBarButton(inputId = "kwic_go", label = "Go", primary = TRUE)
-      ),
-      div(br()),
-      sidebarLayout(
-        sidebarPanel = sidebarPanel(.kwicUiInput(drop = c("go", "br1", "br2", "pAttribute", "read"))),
-        mainPanel = mainPanel(.kwicUiOutput())
-      )
-    ))
-    
-    returnValue <- runGadget(
-      app = shinyApp(ui = kwicGadgetUI, server = .kwicServer),
-      viewer = browserViewer()
-    )
-    return(returnValue)
-    
-  } else {
-    warning("One of the following packages is missing: miniUI, shinythemes, shiny")
-  }
-})
 
 #' @rdname kwic
 setMethod("kwic", "character", function(

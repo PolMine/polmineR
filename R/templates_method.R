@@ -49,7 +49,8 @@
 #' The 
 #' 
 #' @param x either a "character" vector, if missing, the names of available templates will be returned
-#' @param value list to assign
+#' @param template template to assign (a list)
+#' @param ... further parameters
 #' @rdname templates
 setGeneric("getTemplate", function(x) standardGeneric("getTemplate"))
 
@@ -75,6 +76,7 @@ setMethod("setTemplate", "character", function(x, template) {
   .templates[[x]] <- template
 })
 
+#' @rdname templates
 setMethod("setTemplate", "missing", function(){
   for (x in grep("PLPR", corpus()[["corpus"]], value = TRUE)){
     setTemplate(x, getTemplate("plpr"))

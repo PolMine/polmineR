@@ -145,7 +145,7 @@ setMethod(
           }
         )
         if (verbose == TRUE) message("... counting window size")
-        contextDT <- DT[, nrow(.SD), by=c(eval(aColsId)), with=TRUE] 
+        contextDT <- DT[, nrow(.SD), by = c(eval(aColsId)), with = TRUE] 
         
         if (verbose == TRUE) message("... applying filter")
         if (all(pAttribute %in% names(keep))){

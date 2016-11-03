@@ -1,9 +1,0 @@
-Name: partition
-Description: make a new partition
-Binding: partitionGadget
-Interactive: true
-
-Name: KWIC
-Description: keyword-in-context
-Binding: kwic
-Interactive: true

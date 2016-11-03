@@ -4,10 +4,10 @@
 \name{context}
 \alias{as.matrix,contextBundle-method}
 \alias{context}
+\alias{context,Corpus-method}
 \alias{context,character-method}
 \alias{context,contextBundle-method}
 \alias{context,cooccurrences-method}
-\alias{context,missing-method}
 \alias{context,partition-method}
 \alias{context,partitionBundle-method}
 \title{Analyze context of a node word}
@@ -20,11 +20,12 @@
 
 \S4method{context}{character}(.Object, ...)
 
+\S4method{context}{Corpus}(.Object,
+  pAttribute = getOption("polmineR.pAttribute"), ...)
+
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
-
-\S4method{context}{missing}()
 }
 \arguments{
 \item{.Object}{a partition or a partitionBundle object}

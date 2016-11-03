@@ -19,6 +19,8 @@ meta(.Object, ...)
 \item{...}{further parameters}
 
 \item{sAttributes}{a character vector}
+
+\item{struc}{integer vector, strucs to get metadata for}
 }
 \value{
 a \code{"data.frame"}
