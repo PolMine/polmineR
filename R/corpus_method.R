@@ -23,8 +23,8 @@ setMethod("corpus", "bundle", function(object){
 setMethod("corpus", "missing", function(){
   corpora <- CQI$list_corpora()
   data.frame(
-    corpus=corpora,
-    size=unname(sapply(
+    corpus = corpora,
+    size = unname(sapply(
       setNames(corpora, corpora),
       function(x){
         CQI$attribute_size(x, CQI$attributes(x, "p")[1])

@@ -162,15 +162,27 @@ flatten <- function(object){
 #' Get objects of a certain class.
 #'
 #' @param class character, class to be looked for
-#' @param ns character string, namespace to be searched
+#' @param envir character string, namespace to be searched
 #' @return a list with the partitions found in the namespace
 #' @export getObjects
-getObjects <- function(class, ns = ".GlobalEnv") {
-  rawList <- sapply(ls(ns), function(x) class(get(x, ns))[1])
+getObjects <- function(class, envir = .GlobalEnv) {
+  rawList <- sapply(ls(envir), function(x) class(get(x, envir = envir))[1])
   availableObjectsList <- rawList[rawList %in% class]
   names(unlist(availableObjectsList))
 }
 
+#' Get slot from object.
+#' 
+#' Auxiliary function to unify access to slots of S4 or R6 object.
+#' 
+#' @export getSlot
+getSlot <- function(x, name){
+  if ("R6" %in% class(x)){
+    return(x[[name]])
+  } else {
+    return(slot(x, name))
+  }
+}
 
 
 .verboseOutput <- function(message, verbose){

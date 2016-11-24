@@ -28,8 +28,45 @@
   )
 }
 
+getSettings <- function(){
+  if (length(Sys.getenv("POLMINER_DIR"))){
+    configFilename <- file.path(Sys.getenv("POLMINER_DIR"), "polmineR.conf")
+    if (file.exists(configFilename)){
+      configDataRaw <- scan(configFilename, what = character(), sep = "\n", quiet = TRUE)
+      # remove lines with comments
+      commentLines <- grep("^\\s*#", configDataRaw)
+      if (length(commentLines) > 0) configDataRaw <- configDataRaw[-commentLines]
+      # remove comments
+      configDataRaw <- gsub("\\s*#.*?$", "", configDataRaw)
+      
+      # remove whitespace
+      settingsList <- lapply(
+        strsplit(configDataRaw, "[=|:)]"),
+        function(x) unname(sapply(x, function(y) gsub("\\s", "", y)))
+      )
+      # drop value pairs with length <> 2
+      settingsList <- lapply(which(sapply(settingsList, length) == 2), function(x) settingsList[[x]])
+      # turn into named list
+      newSettings <- as.list(sapply(settingsList, function(x) x[2]))
+      newSettings <- lapply(
+        newSettings,
+        function(x){
+          if (grepl("^\\d+$", x)){
+            return(as.numeric(x))
+          } else {
+            return(x)
+          }
+        }
+      )
+      names(newSettings) <- paste("polmineR", sapply(settingsList, function(x) x[1]), sep = ".")
+      options(newSettings)
+    }
+  }
+}
+
 .onAttach <- function(lib, pkg){
   setTemplate()
+  getSettings()
 }
 
 

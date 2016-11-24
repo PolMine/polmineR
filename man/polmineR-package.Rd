@@ -23,6 +23,10 @@ has been set up, core functions are \code{context} and
 term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
 generated (with \code{as.TermDocumentMatrix}). This opens the door to the wealth of
 statistical methods implemented in R.
+
+When the package is loaded and attached, the package will look for a file name 'polmineR.conf'
+in a directory defined by the environment variable 'POLMINER_DIR'. It will take general 
+settings for polmineR from that file. Second, templates are restored.
 }
 \examples{
 \dontrun{

@@ -4,10 +4,10 @@
 \name{partition}
 \alias{partition}
 \alias{partition,character-method}
+\alias{partition,environment-method}
 \alias{partition,list-method}
-\alias{partition,missing-method}
 \alias{partition,partition-method}
-\title{Initialize a partition}
+\title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
 
@@ -18,7 +18,8 @@ partition(.Object, ...)
 
 \S4method{partition}{list}(.Object, ...)
 
-\S4method{partition}{missing}(.Object)
+\S4method{partition}{environment}(.Object, slots = c("name", "corpus", "size",
+  "pAttribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, pAttribute = NULL, id2str = TRUE, type = NULL,

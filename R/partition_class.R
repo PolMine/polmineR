@@ -47,24 +47,24 @@ NULL
 setClass(
   "partition",
   representation(
-    name="character", 
-    corpus="character",
-    encoding="character",
-    sAttributes="list",
-    explanation="character",
-    cpos="matrix",
-    pos="list",
-    annotations="list",
-    size="numeric",
-    metadata="data.frame",
-    strucs="numeric",
-    stat="data.table",
-    pAttribute="character",
-    xml="character",
-    sAttributeStrucs="character",
-    call="character"
+    name = "character", 
+    corpus = "character",
+    encoding = "character",
+    sAttributes = "list",
+    explanation = "character",
+    cpos = "matrix",
+    pos = "list",
+    annotations = "list",
+    size = "numeric",
+    metadata = "data.frame",
+    strucs = "numeric",
+    stat = "data.table",
+    pAttribute = "character",
+    xml = "character",
+    sAttributeStrucs = "character",
+    call = "character"
   ),
-  contains=c("textstat")
+  contains = c("textstat")
 )
 
 

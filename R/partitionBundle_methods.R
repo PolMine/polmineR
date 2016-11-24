@@ -102,7 +102,7 @@ setMethod("barplot", "partitionBundle", function(height, ...){
 
 
 #' @rdname partitionBundle-class
-setMethod("partitionBundle", "missing", function() getObjects(class = "partitionBundle", ns = ".GlobalEnv"))
+setMethod("partitionBundle", "environment", function(.Object) getObjects(class = "partitionBundle", envir = .Object))
 
 
 # setMethod("plot", signature(x="partitionBundle"),

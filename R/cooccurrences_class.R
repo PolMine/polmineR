@@ -31,11 +31,12 @@ NULL
 #' @docType class
 #' @exportClass cooccurrences
 #' @rdname cooccurrences-class
-setClass("cooccurrences",
-         representation(
-           svg="character"
-         ),
-         contains=c("context", "comp", "textstat")
+setClass(
+  "cooccurrences",
+  representation(
+    svg = "character"
+  ),
+  contains = c("context", "comp", "textstat")
 )
 
 #' @rdname cooccurrences-class

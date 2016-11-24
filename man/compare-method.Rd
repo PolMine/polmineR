@@ -4,7 +4,6 @@
 \name{compare,partition-method}
 \alias{compare}
 \alias{compare,cooccurrences-method}
-\alias{compare,missing-method}
 \alias{compare,ngrams-method}
 \alias{compare,partition-method}
 \alias{compare,partitionBundle-method}
@@ -19,8 +18,6 @@
 
 \S4method{compare}{cooccurrences}(x, y, included = FALSE, method = "ll",
   mc = TRUE, verbose = TRUE)
-
-\S4method{compare}{missing}()
 
 \S4method{compare}{ngrams}(x, y, included = FALSE, method = "chisquare",
   verbose = TRUE, ...)
@@ -54,14 +51,14 @@ interest, and a partition defining a reference corpus are compared.
 The most important purpose is term extraction.
 }
 \examples{
-if (require("polmineR.sampleCorpus")){
+if (require("polmineR.sampleCorpus") && require("rcqp")){
   use(polmineR.sampleCorpus)
   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
   terms_kauder <- compare(kauder, all, included=TRUE)
   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 }
-if (require("polmineR.sampleCorpus")){
+if (require("polmineR.sampleCorpus") && require("rcqp")){
   use(polmineR.sampleCorpus)
   byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
   byName <- enrich(byName, pAttribute="word")

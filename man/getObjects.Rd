@@ -4,12 +4,12 @@
 \alias{getObjects}
 \title{Get objects of a certain class.}
 \usage{
-getObjects(class, ns = ".GlobalEnv")
+getObjects(class, envir = .GlobalEnv)
 }
 \arguments{
 \item{class}{character, class to be looked for}
 
-\item{ns}{character string, namespace to be searched}
+\item{envir}{character string, namespace to be searched}
 }
 \value{
 a list with the partitions found in the namespace

@@ -10,7 +10,7 @@
 \alias{mail,kwic-method}
 \alias{mail,partition-method}
 \alias{mail-method}
-\title{mail result}
+\title{Mail result.}
 \usage{
 mail(object, ...)
 
@@ -33,7 +33,7 @@ mail(object, ...)
   fileFormat = c("csv", "xlsx"))
 }
 \arguments{
-\item{object}{a driller object}
+\item{object}{object to deliver}
 
 \item{...}{further parameters}
 

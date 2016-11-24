@@ -1,4 +1,4 @@
-#' Initialize a partition
+#' Initialize a partition.
 #' 
 #' Set up an object of the \code{partition} class. Frequency lists are computeted and kept 
 #' in the stat-slot if pAttribute is not NULL.
@@ -82,16 +82,16 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 
 #' @rdname partition
 setMethod("partition", "character", function(
-  .Object, def=NULL, name="",
-  encoding=NULL, pAttribute=NULL, meta=NULL, regex=FALSE, xml="flat", id2str=TRUE, type=NULL,
-  mc=FALSE, verbose=TRUE, ...
+  .Object, def = NULL, name = "",
+  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE, xml = "flat",
+  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...
 ) {
   corpus <- .Object
   stopifnot(xml %in% c("nested", "flat"))
   if (!corpus %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
-  if (verbose==TRUE) message('Setting up partition ', name)
+  if (verbose == TRUE) message('Setting up partition ', name)
   if (is.null(type)){
     parsedRegistry <- parseRegistry(.Object)
     if (!"type" %in% names(parsedRegistry)){
@@ -99,7 +99,7 @@ setMethod("partition", "character", function(
     } else {
       type <- parsedRegistry[["type"]]
       if (type %in% c("press", "plpr")){
-        if (verbose == TRUE) message("... type of the corpus is ", type)
+        .verboseOutput(paste("type of the corpus is", type), verbose)
         partitionType <- paste(type, "Partition", sep="")
       } else {
         stop("partition type provided by registry is not valid")
@@ -124,10 +124,10 @@ setMethod("partition", "character", function(
   } else {
     Partition@encoding <- encoding
   }
-  if (verbose==TRUE) message('... encoding of the corpus: ', Partition@encoding)
+  .verboseOutput(paste('get encoding:', Partition@encoding), verbose)
   Partition@sAttributes <- lapply(def, function(x) adjustEncoding(x, Partition@encoding))  
 
-  if (verbose==TRUE) message('... computing corpus positions and retrieving strucs')
+  .verboseOutput('get cpos and strucs', verbose)
   if(is.null(def)){
     parsedInfo <- parseInfoFile(.Object)
     if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
@@ -145,18 +145,17 @@ setMethod("partition", "character", function(
     Partition <- sAttributes2cpos(Partition, xml, regex)  
   }
   if (!is.null(Partition)) {
-    if (verbose==TRUE) message('... computing partition size')
+    .verboseOutput('get partition size', verbose)
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
-      Partition <- enrich(Partition, pAttribute=pAttribute, verbose=verbose, id2str=id2str, mc=mc)
+      Partition <- enrich(Partition, pAttribute = pAttribute, verbose = verbose, id2str = id2str, mc = mc)
       # Partition <- sort(Partition, "count")
     }
     if (!is.null(meta)) {
-      if (verbose==TRUE) message('... setting up metadata (table and list of values)')
+      .verboseOutput('get metadata', verbose)
       Partition@metadata <- meta(Partition, sAttributes=meta)
     }
-    if (verbose==TRUE) message('... partition is set up\n')
   } else {
     message("... setting up the partition failed (returning NULL object)")
   }
@@ -171,36 +170,52 @@ setMethod("partition", "list", function(.Object, ...) {
 })
 
 #' @rdname partition
-setMethod("partition", "missing", function(.Object){
-  partitionObjects <- getObjects(class = "partition", ns = ".GlobalEnv")
-  slotsToGet <- c("name", "corpus", "size")
-  data.frame(c(
-    list(object=partitionObjects),
-    lapply(
-      setNames(slotsToGet, slotsToGet),
-      function(x) sapply(partitionObjects, function(y) slot(get(y), x))
-      )),
-    stringsAsFactors = FALSE
-  )
+setMethod("partition", "environment", function(.Object, slots = c("name", "corpus", "size", "pAttribute")){
+  partitionObjects <- getObjects(class = "partition", envir = .Object)
+  if (length(slots) > 0){
+    retval <- data.frame(
+      c(
+        list(object = partitionObjects),
+        lapply(
+          setNames(slots, slots),
+          function(x) sapply(
+            partitionObjects,
+            function(y){
+              value <- slot(get(y, envir = .Object), x)
+              if (length(value) == 0){
+                return(NA)
+              } else {
+                return(value)
+              }
+            }
+            
+          )
+        )
+      ),
+      stringsAsFactors = FALSE
+    )
+    return(retval)
+  } else {
+    return(partitionObjects)
+  }
 })
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(.Object, def=NULL, name="", regex=FALSE, pAttribute=NULL, id2str=TRUE, type=NULL, verbose=TRUE, mc=FALSE, ...){
+setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, pAttribute = NULL, id2str = TRUE, type=NULL, verbose = TRUE, mc = FALSE, ...){
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   newPartition <- new(
     class(.Object)[1],
     corpus=.Object@corpus, encoding=.Object@encoding, name=name, xml=.Object@xml,
     stat=data.table()
     )
-  if (verbose == TRUE) message('Setting up partition', name)
+  .verboseOutput(paste('Setting up partition', name), verbose)
   def <- lapply(def, function(x) adjustEncoding(x, .Object@encoding))  
   newPartition@sAttributes <- c(.Object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
-  if (verbose == TRUE) message('... getting strucs and corpus positions')
-  # newPartition <- sAttributes2cpos(.Object, newPartition, def, regex)
   
-  # sAttr <- paste(.Object@corpus, '.', names(def), sep='')
+  .verboseOutput('... getting cpos and strucs', verbose)
+  
   if (.Object@xml == "flat") {
     str <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)    
   } else if (.Object@xml == "nested") {
@@ -223,7 +238,7 @@ setMethod("partition", "partition", function(.Object, def=NULL, name="", regex=F
   }
   newPartition@strucs <- .Object@strucs[hits]
   if (length(.Object@metadata) == 2) {
-    message('... adjusting metadata')
+    .verboseOutput('... remake metadata', verbose)
     newPartition@metadata <- .Object@metadata[hits,]
   }
   
@@ -232,7 +247,6 @@ setMethod("partition", "partition", function(.Object, def=NULL, name="", regex=F
     newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, id2str = id2str, mc = mc)
     newPartition@pAttribute <- pAttribute
   }
-  if (verbose == TRUE) message('... partition is set up')
   newPartition
 })
 

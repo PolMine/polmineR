@@ -78,15 +78,17 @@ setMethod("setTemplate", "character", function(x, template) {
 
 #' @rdname templates
 setMethod("setTemplate", "missing", function(){
-  for (x in grep("PLPR", corpus()[["corpus"]], value = TRUE)){
-    setTemplate(x, getTemplate("plpr"))
-  }
-  
-  for (x in corpus()[["corpus"]]){
-    filename <- file.path(parseRegistry(x)[["HOME"]], "template.R")
-    if (file.exists(filename)){
-      source(filename)
+  # conditional on CORPUS_REGISTRY being set (for CRAN tests)
+  if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
+    for (x in grep("PLPR", corpus()[["corpus"]], value = TRUE)){
+      setTemplate(x, getTemplate("plpr"))
+    }
+    
+    for (x in corpus()[["corpus"]]){
+      filename <- file.path(parseRegistry(x)[["HOME"]], "template.R")
+      if (file.exists(filename)){
+        source(filename)
+      }
     }
   }
-  
 })

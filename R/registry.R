@@ -26,10 +26,10 @@
 resetRegistry <- function(registryDir=NULL) {
   if (!is.null(registryDir)){
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-    Sys.setenv(CORPUS_REGISTRY=registryDir)
+    Sys.setenv(CORPUS_REGISTRY = registryDir)
   } else {
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-    Sys.setenv(CORPUS_REGISTRY=getOption("polmineR_default_registry"))
+    Sys.setenv(CORPUS_REGISTRY = getOption("polmineR_default_registry"))
   }
   library.dynam.unload("rcqp", libpath=system.file(package="rcqp"))
   library.dynam(
@@ -45,10 +45,10 @@ resetRegistry <- function(registryDir=NULL) {
 #' @rdname registry
 readRegistry <- function(corpus){
   scan(
-    file=file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
-    sep="\n",
-    what="character",
-    quiet=TRUE, blank.lines.skip=FALSE
+    file = file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
+    sep = "\n",
+    what = "character",
+    quiet = TRUE, blank.lines.skip=FALSE
   )
 }
 
@@ -100,4 +100,3 @@ parseInfoFile <- function(corpus){
   }
   retval
 }
-

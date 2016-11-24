@@ -1,11 +1,11 @@
 #' @include partition_class.R comp_class.R context_class.R kwic_class.R
 NULL
 
-#' mail result
+#' Mail result.
 #' 
 #' Mail a result (to yourself).
 #' 
-#' @param object a driller object
+#' @param object object to deliver
 #' @param what what to send (defaults to "html")
 #' @param to the receiver of the mail message
 #' @param nrow the number of rows of the table (if NULL, the whole table will be sent)
@@ -14,6 +14,7 @@ NULL
 #' @param ... further parameters
 #' @aliases mail mail-method
 #' @rdname mail-method
+#' @exportMethod mail
 setGeneric("mail", function(object, ...){standardGeneric("mail")})
 
 
@@ -37,17 +38,17 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
   msg
 }
 
-.mail <- function(msg, to){
+.mail <- function(msg, to = NULL){
   server <- getOption("polmineR.smtpServer")
   smtpPort <- getOption("polmineR.smtpPort")
-  sendmailR::sendmail_options(list(smtpServer=server, smtpPort=smtpPort))
+  sendmailR::sendmail_options(list(smtpServer = server, smtpPort = smtpPort))
   if (is.null(to)){
     to <- getOption("polmineR.email")
     if (to == "") warning("email is not set in session settings")
   }
   sendmailR::sendmail(
-    from=getOption("polmineR.email"),
-    to=to, subject='driller message', msg=msg
+    from = getOption("polmineR.email"),
+    to = to, subject = 'polmineR delivers', msg = msg
   )
 }
 
@@ -55,7 +56,7 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
 #' @docType methods
 setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport.html", what="html"){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
-    msg <- list('Delivering something to read.\nSincerely yours\nThe driller\n')
+    msg <- list('Prepared and delivered by polmineR.\n')
     filename <- html(
       object, meta=NULL, browser=FALSE,
       filename=file.path(tempdir(), filename)
@@ -78,7 +79,7 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
 setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     if(is.null(nrow)) nrow <- nrow(object@stat)
-    msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+    msg <- list('Prepared and delivered by polmineR.\n')
     msg <- .attachTables(object@stat, nrow, msg, "comp", fileFormat)
     status <- .mail(msg, to)
     retval <- status$msg
@@ -95,7 +96,7 @@ setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("
 setMethod("mail", "comp", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     if(is.null(nrow)) nrow <- nrow(object@stat)
-    msg <- list('Delivering Tables.\nSincerely yours\nThe driller\n')
+    msg <- list('Prepared and delivered by polmineR.\n')
     msg <- .attachTables(object@stat, nrow, msg, "comp", fileFormat)
     status <- .mail(msg, to)
     retval <- status$msg  
@@ -109,10 +110,10 @@ setMethod("mail", "comp", function(object, to=NULL, nrow=NULL, fileFormat=c("csv
 
 #' @rdname mail-method
 #' @docType methods
-setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+setMethod("mail", "kwic", function(object, to = NULL, nrow = NULL, fileFormat = c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
-    msg <- list('Delivering kwic.\nSincerely yours\nThe driller\n')
-    if(is.null(nrow)) nrow <- nrow(object@stat)
+    msg <- list('Prepared and delivered by polmineR.\n')
+    if (is.null(nrow)) nrow <- nrow(object@table)
     msg <- .attachTables(object@table, nrow, msg, "kwic", fileFormat) 
     status <- .mail(msg, to)
     retval <- status$msg
@@ -127,7 +128,7 @@ setMethod("mail", "kwic", function(object, to=NULL, nrow=NULL, fileFormat=c("csv
 #' @docType methods
 setMethod("mail", "dispersion", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
-    msg <- list('Delivering a crosstabulation.\nSincerely yours\nThe driller\n')
+    msg <- list('Prepared and delivered by polmineR.\n')
     if(is.null(nrow)) nrow <- nrow(object@abs)
     msg <- .attachTables(object@abs, nrow, msg, "crosstabAbs", fileFormat) 
     msg <- .attachTables(object@rel, nrow, msg, "crosstabRel", fileFormat) 
@@ -144,7 +145,7 @@ setMethod("mail", "dispersion", function(object, to=NULL, nrow=NULL, fileFormat=
 #' @docType methods
 setMethod("mail", "data.frame", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
-    msg <- list('Delivering a data frame.\nSincerely yours\nThe driller\n')
+    msg <- list('Prepared and delivered by polmineR.\n')
     if(is.null(nrow)) nrow <- nrow(object)
     msg <- .attachTables(object, nrow, msg, "dataFrame", fileFormat) 
     status <- .mail(msg, to)
