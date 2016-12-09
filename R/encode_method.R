@@ -11,7 +11,7 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 #' reut21578 <- system.file("texts", "crude", package = "tm")
 #' reuters.tm <- VCorpus(DirSource(reut21578), list(reader = readReut21578XMLasPlain))
 #' reuters.tibble <- tidy(reuters.tm)
-#' reuters.tibble[["topics_cat"]] <- sapply(reuters.tibble[["topics_cat"]], function(x) paste(x, collapse = "|"))
+#' # reuters.tibble[["topics"]] <- sapply(reuters.tibble[["topics_cat"]], function(x) paste(x, collapse = "|"))
 #' reuters.tibble[["places"]] <- sapply(reuters.tibble[["places"]], function(x) paste(x, collapse = "|"))
 #' reuters.tidy <- unnest_tokens(reuters.tibble, output = "word", input = "text", to_lower = FALSE)
 #' encode(reuters.tidy, name = "reuters", sAttributes = c("language", "places"))
@@ -31,6 +31,11 @@ setMethod("encode", "data.frame", function(
     registrySuperDir <- paste("/", paste(pathElements, collapse = "/"), sep = "")
     targetDir <- grep("index", list.files(registrySuperDir), value = TRUE)
     indexedCorpusDir <- file.path(registrySuperDir, targetDir, name)
+    if (verbose){
+      cat("No directory for indexed corpus provided - suggesting to use: ", indexedCorpusDir)
+      feedback <- readline(prompt = "Y/N\n")
+      if (feedback != "Y") return(NULL)
+    }
   }
   
   if (!dir.exists(indexedCorpusDir)) dir.create(indexedCorpusDir)
