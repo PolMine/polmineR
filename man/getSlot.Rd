@@ -6,6 +6,11 @@
 \usage{
 getSlot(x, name)
 }
+\arguments{
+\item{x}{object to get slot from}
+
+\item{name}{name of the slot}
+}
 \description{
 Auxiliary function to unify access to slots of S4 or R6 object.
 }

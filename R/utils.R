@@ -175,6 +175,8 @@ getObjects <- function(class, envir = .GlobalEnv) {
 #' 
 #' Auxiliary function to unify access to slots of S4 or R6 object.
 #' 
+#' @param x object to get slot from
+#' @param name name of the slot
 #' @export getSlot
 getSlot <- function(x, name){
   if ("R6" %in% class(x)){

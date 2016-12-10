@@ -52,6 +52,8 @@ details and examples)}
 \item{mc}{whether to use multicore (for counting terms)}
 
 \item{verbose}{logical, defaults to TRUE}
+
+\item{slots}{character vector}
 }
 \value{
 An object of the S4 class 'partition'

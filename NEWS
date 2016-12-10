@@ -6,6 +6,7 @@ v0.6.3
 * Regions and TokenStream class (not for frontend use, so far)
 * getTermFrequencies-method merged into count-method
 * Corpus class introduced
+* decode- and encode-methods introduced
 
 v0.6.2
 * refactoring of context-method to prepare more consistent usage
