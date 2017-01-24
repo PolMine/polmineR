@@ -91,7 +91,7 @@ setMethod("trim", "cooccurrences", function(object, by = NULL){
     setkeyv(object@stat, keys)
     object@stat <- by@stat[object@stat]
     object@stat <- object@stat[by@stat]
-    for (toDrop in grep("i\\.", colnames(object@stat), value=T)) object@stat[, eval(toDrop) := NULL, with=TRUE]
+    for (toDrop in grep("i\\.", colnames(object@stat), value = TRUE)) object@stat[, eval(toDrop) := NULL, with=TRUE]
     object@stat[, "count_ref" := NULL]
     object@stat[, "count_coi" := NULL]
   }

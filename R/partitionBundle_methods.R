@@ -52,24 +52,24 @@ setMethod("summary", "partitionBundle", function (object) {
 #' @author Andreas Blaette
 #' @exportMethod merge
 #' @noRd
-setMethod("merge", "partitionBundle", function(x, name=""){
+setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
   y <- new("partition")
-  cat('There are', length(x@objects), 'partitions to be merged\n')
-  y@corpus <- unique(vapply(x@objects, FUN.VALUE="characer", function(p) p@corpus))
+  if (verbose) message('Partitions to be merged', length(x@objects))
+  y@corpus <- unique(vapply(x@objects, FUN.VALUE = "characer", function(p) p@corpus))
   if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
-  y@xml <- unique(vapply(x@objects, function(p)p@xml, FUN.VALUE="character"))
-  y@encoding <- unique(vapply(x@objects, function(p)p@encoding, FUN.VALUE="character"))
+  y@xml <- unique(vapply(x@objects, function(p) p@xml, FUN.VALUE = "character"))
+  y@encoding <- unique(vapply(x@objects, function(p) p@encoding, FUN.VALUE = "character"))
   y@sAttributeStrucs <- unique(vapply(x@objects, function(p) p@sAttributeStrucs, FUN.VALUE="character"))
-  message('... merging the struc vectors')
-  for (name in names(x@objects)) {y@strucs <- union(y@strucs, x@objects[[name]]@strucs)}
-  message('... generating corpus positions')
+  if (verbose) message('... merging the struc vectors')
+  for (name in names(x@objects)) y@strucs <- union(y@strucs, x@objects[[name]]@strucs)
+  if (verbose) message('... generating corpus positions')
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
-    function(s){CQI$struc2cpos(y@corpus, y@sAttributeStrucs, s)})
+    function(s) CQI$struc2cpos(y@corpus, y@sAttributeStrucs, s) )
     )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
-  y@explanation=c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', ')))
+  y@explanation = c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', ')))
   y@name <- name
   y
 })
@@ -105,10 +105,3 @@ setMethod("barplot", "partitionBundle", function(height, ...){
 setMethod("partitionBundle", "environment", function(.Object) getObjects(class = "partitionBundle", envir = .Object))
 
 
-# setMethod("plot", signature(x="partitionBundle"),
-#           function(x, y){
-#             val <- as.matrix(x, y)
-#             val <- val[rowSums(val)!=0,]
-#             data <- data.frame(rank(val[,1]), rank(val[,2]))
-#             plot(data[,1], data[,2])
-#           })

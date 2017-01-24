@@ -132,12 +132,14 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
   type <- CQI$struc2str(.Object@corpus, templateUsed[["speech"]][["sAttribute"]], .Object@strucs)
   
   if (is.numeric(cutoff)){
-    threshold <- min(which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff))
-    if (threshold > 1){
-      metadata <- metadata[1:threshold,]
-      .Object@cpos <- .Object@cpos[1:threshold,]
+    beyondCutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
+    if (length(beyondCutoff) > 0){
+      threshold <- min(beyondCutoff)
+      if (threshold > 1){
+        metadata <- metadata[1:threshold,]
+        .Object@cpos <- .Object@cpos[1:threshold,]
+      }
     }
-    
   }
   
   markdown <- sapply(c(1:nrow(metadata)), function(i) {
