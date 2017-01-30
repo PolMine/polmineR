@@ -25,46 +25,13 @@
 #'   cooc <- cooccurrences(merkel)
 #'   cooc <- cooccurrences(merkel, big=TRUE)
 #' }
-setGeneric("cooccurrences", function(.Object, ...){standardGeneric("cooccurrences")})
+setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @examples 
 #' \dontrun{
-library(polmineR)
-library(data.table)
-library(slam)
-PLPRBT <- Corpus$new("PLPRBT")
-PLPRBT$count(pAttribute = "word")
-PLPRBT$stat <- PLPRBT$stat[count >= 50]
-PLPRBT$stat <- PLPRBT$stat[-grep("^.*?(,|;|:|\\!|\\?|\\(|\\)|[|]|/|#|%|\\'|\\*|\\+).*?$", PLPRBT$stat[["word"]])]
-PLPRBT$stat <- PLPRBT$stat[-grep("^.*?\\d+.*?$", PLPRBT$stat[["word"]])]
-PLPRBT$stat <- PLPRBT$stat[-grep("^-", PLPRBT$stat[["word"]])]
-keep <- PLPRBT$stat[["word"]]
-PLPRBT_cooc <- cooccurrences("PLPRBT", keep = keep)
-rm(PLPRBT)
-PLPRBT_Matrix <- as.sparseMatrix(PLPRBT_cooc)
-rm(PLPRBT_cooc)
-PLPRBT_Matrix2 <- as(PLPRBT_Matrix, "dgTMatrix")
-rm(PLPRBT_Matrix)
-library(text2vec)
-GV <- GloVe$new(word_vectors_size = 50, vocabulary = keep, x_max = 10, learning_rate = .1) # in example learning_rate .25
-GV$fit(x = PLPRBT_Matrix2, n_iter = 20)
-vec <- GV$get_word_vectors()
-rm(GV)
-rm(PLPRBT_Matrix2)
-gc()
-foo <- coop::cosine(t(vec[1:20000,]))
-#' 5000: 1 s
-#' 10 000: 4.4 s (764.2 Mb)
-#' 20 000: 20 s (3 Gb)
-#' 30 000: 270 s (6.7 Gb)
-#' foo <- proxy::simil(vec, method = "cosine", by_rows = TRUE)
-#' 
-#' cp <- crossprod(t(vec))
-#' rtdg <- sqrt(diag(cp))
-#' cos <- cp / tcrossprod(rtdg)
-#' 
-#' 
 #' }
+#' @rdname cooccurrences
+#' @importMethodsFrom data.table melt
 setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NULL, pAttribute = "word", window = 5, method = "new", verbose = TRUE){
   startTime <- Sys.time()
   # somewhat slow, consider cwb-decode 
@@ -97,7 +64,7 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     gc()
     setnames(DT, old = paste("V", window + 1, sep = ""), new = "node")
     if (verbose) message("... melting")
-    DT2 <- melt.data.table(DT, id.vars = "node", value.name = "cooc", na.rm = TRUE)
+    DT2 <- data.table:::melt.data.table(DT, id.vars = "node", value.name = "cooc", na.rm = TRUE)
     rm(DT)
     gc()
     DT2[, variable := NULL]
