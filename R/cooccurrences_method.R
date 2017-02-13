@@ -28,7 +28,6 @@
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences
-#' @importMethodsFrom data.table melt
 setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NULL, pAttribute = "word", window = 5, method = "new", verbose = TRUE){
   startTime <- Sys.time()
   # somewhat slow, consider cwb-decode 
@@ -61,7 +60,7 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     gc()
     setnames(DT, old = paste("V", window + 1, sep = ""), new = "node")
     if (verbose) message("... melting")
-    DT2 <- data.table:::melt.data.table(DT, id.vars = "node", value.name = "cooc", na.rm = TRUE)
+    DT2 <- data.table::melt.data.table(DT, id.vars = "node", value.name = "cooc", na.rm = TRUE)
     rm(DT)
     gc()
     DT2[, variable := NULL]
@@ -83,14 +82,14 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     if (verbose) message("... foo1")
     DT5 <- DT4[ID2STR]
     rm(DT4)
-    setnames(DT5, old = c("str", "id_new"), new = c("node_token", "node_new_key"))
+    data.table::setnames(DT5, old = c("str", "id_new"), new = c("node_token", "node_new_key"))
     setkeyv(DT5, "cooc")
     if (verbose) message("... foo2")
     DT6 <- DT5[ID2STR]
     rm(DT5)
     setnames(DT6, old = "id_new", new = "cooc_new_key")
     if (verbose) message("... foo3")
-    retval <- simple_triplet_matrix(
+    retval <- slam::simple_triplet_matrix(
       i = DT6[["node_new_key"]],
       j = DT6[["cooc_new_key"]],
       v = DT6[["N"]],

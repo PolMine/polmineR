@@ -76,8 +76,8 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 setMethod(
   "as.TermDocumentMatrix", "character",
   function (
-    x, pAttribute, sAttribute, from=NULL, to=NULL, strucs=NULL,
-    rmBlank=TRUE, verbose=TRUE, robust=FALSE, mc=FALSE, progress=TRUE
+    x, pAttribute, sAttribute, from = NULL, to = NULL, strucs = NULL,
+    rmBlank = TRUE, verbose = TRUE, robust = FALSE, mc = FALSE, progress = TRUE
   ) {
     if (!is.null(strucs)){
       if (is.character(strucs)){

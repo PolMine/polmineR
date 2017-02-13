@@ -72,10 +72,10 @@ setMethod(
   "noise", "character",
   function(
     .Object, 
-    stopwordsLanguage="german", minNchar=2,
-    specialChars=getOption("polmineR.specialChars"),
-    numbers="^[0-9\\.,]+$",
-    verbose=TRUE
+    stopwordsLanguage = "german", minNchar = 2,
+    specialChars = getOption("polmineR.specialChars"),
+    numbers = "^[0-9\\.,]+$",
+    verbose = TRUE
   ){
     noiseList <- list()
     if (!is.null(stopwordsLanguage)){
@@ -93,7 +93,6 @@ setMethod(
     if (!is.null(minNchar)){
       noiseList[["minNchar"]] <- .Object[which(nchar(.Object) <= minNchar)]  
     }
-    # attr(.Object, "weighting") <- c("term frequency", "tf")
     noiseList
   })
 
