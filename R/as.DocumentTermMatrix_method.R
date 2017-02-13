@@ -1,14 +1,6 @@
 #' @include bundle_class.R partitionBundle_class.R
 NULL
 
-.rmBlank <- function(mat, verbose=TRUE){
-  if (verbose==TRUE) message("... removing empty rows")
-  matTmp <- as.sparseMatrix(mat)
-  matTmp <- matTmp[which(rowSums(matTmp) > 0),]
-  mat <- as.simple_triplet_matrix(matTmp)
-  class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  mat
-}
 
 
 #' as.TermDocumentMatrix / as.DocumentTermMatrix
@@ -34,14 +26,7 @@ NULL
 #' @param pAttribute the p-attribute
 #' @param sAttribute the s-attribute
 #' @param col the column to use of assembling the matrix
-#' @param from bla
-#' @param to bla
-#' @param strucs bla
-#' @param rmBlank bla
 #' @param verbose bla
-#' @param robust bla
-#' @param mc logical
-#' @param progress logical, whether to show progress bar
 #' @param ... to make the check happy
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
@@ -70,71 +55,44 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 #'    tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
 #'    
 #'    # diretissima
-#'    pB3 <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
+#'    tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
 #' }
 #' @rdname as.DocumentTermMatrix
-setMethod(
-  "as.TermDocumentMatrix", "character",
-  function (
-    x, pAttribute, sAttribute, from = NULL, to = NULL, strucs = NULL,
-    rmBlank = TRUE, verbose = TRUE, robust = FALSE, mc = FALSE, progress = TRUE
-  ) {
-    if (!is.null(strucs)){
-      if (is.character(strucs)){
-        sAttributeStrings <- sAttributes(x, sAttribute)
-        strucs <- which(sAttributeStrings %in% strucs)
-        sAttributeStrings <- sAttributeStrings[strucs]
-      }
-    } else {
-      if (!is.null(from) || !is.null(to)) {
-        sAttributeStrings <- sAttributes(x, sAttribute)
-        fromStruc <- grep(from, sAttributeStrings)[1]
-        toStruc <- grep(to, sAttributeStrings)[1]
-        strucs <- c(fromStruc:toStruc)
-        sAttributeStrings <- sAttributeStrings[strucs]
-      } else {
-        toStruc <- CQI$attribute_size(corpus = x, attribute = sAttribute) - 1
-        fromStruc <- 0
-        strucs <- c(0:toStruc) 
-      }
-    }
-    .freqMatrix <- function(i, strucs, corpus, sAttribute, pAttribute, ...){
-      struc <- strucs[i]
-      cpos <- CQI$struc2cpos(corpus = x, sAttribute, struc)
-      ids <- CQI$cpos2id(x, pAttribute, c(cpos[1]:cpos[2]))
-      freqVector <- tabulate(ids + 1)
-      noZeroCount <- which(freqVector != 0)
-      freqMatrix <- matrix(
-        c(noZeroCount, freqVector[noZeroCount]),
-        ncol=2, byrow=FALSE
-      )
-      cbind(rep(i, times=nrow(freqMatrix)), freqMatrix)
-    }
-    if (verbose == TRUE) message("... getting counts")
-    freqMatrixList <- blapply(
-      as.list(c(1:length(strucs))), f=.freqMatrix,
-      strucs=strucs, corpus=corpus, sAttribute=sAttribute, pAttribute=pAttribute,
-      mc=mc, progress=progress
-      )
-    if (verbose == TRUE) message("... combining results")
-    freqMatrixAgg <- do.call(rbind, freqMatrixList)
-    lexiconSize <- CQI$lexicon_size(x, pAttribute)
-    if (verbose == TRUE) message("... id2str for pAttribute")
-    pAttributeStrings <- getTerms(x, pAttribute=pAttribute, robust=robust)
-    if (!exists("sAttributeStrings")){
-      if (verbose == TRUE) message("... id2str for sAttribute")
-      sAttributeStrings <- CQI$struc2str(x, sAttribute, c(fromStruc:toStruc))  
-    }
-    mat <- simple_triplet_matrix(
-      i=freqMatrixAgg[,2], j=freqMatrixAgg[,1], v=freqMatrixAgg[,3],
-      ncol=length(strucs),
-      nrow=lexiconSize,
-      dimnames=list(Terms=pAttributeStrings, Docs=sAttributeStrings)
-    )
-    class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-    if (rmBlank == TRUE) mat <- .rmBlank(mat, verbose=verbose)
-    mat
-  })
+setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribute, verbose = TRUE) {
+  y <- as.DocumentTermMatrix(x = x, pAttribute = pAttribute, sAttribute = sAttribute, verbose = verbose)
+  as.TermDocumentMatrix(y)
+})
+
+
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE){
+  cpos_vector <- seq.int(from = 0, to = CQI$attribute_size(x, pAttribute) - 1, by = 1)
+  
+  if (verbose) message("... generate data.table with token and struc ids")
+  token_id <- CQI$cpos2id(x, pAttribute, cpos_vector)
+  struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
+  tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
+  rm(token_id, struc_id)
+  
+  if (verbose) message("... counting token per doc")
+  countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]
+  
+  if(verbose) message("... generate simple_triplet_matrix")
+  y <- simple_triplet_matrix(
+    i = countDT[["struc_id"]] + 1,
+    j = countDT[["token_id"]] + 1,
+    v = countDT[["N"]],
+  )
+  docs <- CQI$struc2str(x, sAttribute, seq.int(0, CQI$attribute_size(x, sAttribute) - 1, by = 1))
+  terms <- CQI$id2str(x, pAttribute, seq.int(0, max(countDT[["token_id"]]), by = 1))
+  terms <- as.utf8(terms)
+  dimnames(y) <- list(docs, terms)
+  class(y) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  attr(y, "weighting") <- c("term frequency", "tf")
+  y
+})
+
 
 
 #' @rdname as.DocumentTermMatrix

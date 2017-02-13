@@ -2,6 +2,8 @@
 #' 
 #' @param .Object a partition object
 #' @param window no of tokens to the left and to the right of nodes
+#' @param cpos integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used
+#' @param pAttribute the pAttribute of the tokens
 #' @param method statistical test to use (defaults to "ll")
 #' @param verbose logical, whether to be verbose
 #' @param progress logical, whether to be verbose
@@ -22,8 +24,8 @@
 #'   use(polmineR.sampleCorpus)
 #'   merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
 #'   merkel <- enrich(merkel, pAttribute = "word")
-#'   cooc <- cooccurrences(merkel)
-#'   cooc <- cooccurrences(merkel, big=TRUE)
+#'   cooc <- cooccurrences(merkel, keep = NULL)
+#'   cooc <- cooccurrences(merkel, keep = NULL, big = TRUE)
 #' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
@@ -63,13 +65,13 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     DT2 <- data.table::melt.data.table(DT, id.vars = "node", value.name = "cooc", na.rm = TRUE)
     rm(DT)
     gc()
-    DT2[, variable := NULL]
+    DT2[, "variable" := NULL, with = TRUE]
     if (verbose) message("... kicking out unwanted terms")
     DT3 <- DT2[-which(is.na(DT2[["node"]]))]
     rm(DT2)
     # DT4 <- DT3[-which(is.na(DT3[["cooc"]]))]
     if (verbose) message("... counting cooccurrences")
-    DT4 <- DT3[, .N, by = .(node, cooc)]
+    DT4 <- DT3[, .N, by = c("node", "cooc"), with = TRUE]
     rm(DT3)
     ID2STR <- data.table(
       id = keep,
@@ -77,7 +79,7 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     )
     setkeyv(ID2STR, cols = "id")
     setorderv(ID2STR, cols = "id")
-    ID2STR[, id_new := 1:nrow(ID2STR)]
+    ID2STR[, "id_new" := 1:nrow(ID2STR), with = TRUE]
     setkeyv(DT4, "node")
     if (verbose) message("... foo1")
     DT5 <- DT4[ID2STR]
@@ -114,7 +116,7 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
     cooc_vector <- unlist(coocs, recursive = FALSE, use.names = FALSE)
     DT <- data.table(node = node_vector, cooc = cooc_vector)
     rm(node_vector, cooc_vector)
-    DT2 <- DT[, .N, by = .(node, cooc)]
+    DT2 <- DT[, .N, by = c("node", "cooc"), with = TRUE]
     
   }
   message(Sys.time() - startTime)

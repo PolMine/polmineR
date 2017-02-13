@@ -16,14 +16,11 @@ NULL
 #'   [,partitionBundle-method [[,partitionBundle-method
 #'   as.matrix,partitionBundle-method 
 #'   merge,partitionBundle-method
-#'   as.sparseMatrix,partitionBundle-Method as.sparseMatrix 
 #'   +,partitionBundle-method names,partitionBundle-method 
 #'   summary,partitionBundle-method +,partitionBundle,ANY-method
 #'   [,partitionBundle,ANY,ANY,ANY-method +,partitionBundle,partition-method 
 #'   +,partitionBundle,partitionBundle-method as.partitionBundle,list-method 
-#'   as.sparseMatrix,partitionBundle-method
 #'   barplot,partitionBundle-method
-#'   as.sparseMatrix,TermDocumentMatrix-method
 #' @param x a partitionBundle object
 #' @param .Object a partitionBundle object
 #' @param object a partitionBundle object

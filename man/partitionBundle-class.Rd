@@ -11,10 +11,6 @@
 \alias{[[,partitionBundle-method}
 \alias{as.matrix,partitionBundle-method}
 \alias{as.partitionBundle,list-method}
-\alias{as.sparseMatrix}
-\alias{as.sparseMatrix,TermDocumentMatrix-method}
-\alias{as.sparseMatrix,partitionBundle-Method}
-\alias{as.sparseMatrix,partitionBundle-method}
 \alias{barplot,partitionBundle-method}
 \alias{merge,partitionBundle-method}
 \alias{names,partitionBundle-method}

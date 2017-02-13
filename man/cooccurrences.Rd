@@ -27,6 +27,10 @@ cooccurrences(.Object, ...)
 
 \item{keep}{list with tokens to keep}
 
+\item{cpos}{integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used}
+
+\item{pAttribute}{the pAttribute of the tokens}
+
 \item{window}{no of tokens to the left and to the right of nodes}
 
 \item{method}{statistical test to use (defaults to "ll")}
@@ -52,8 +56,8 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
   use(polmineR.sampleCorpus)
   merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
   merkel <- enrich(merkel, pAttribute = "word")
-  cooc <- cooccurrences(merkel)
-  cooc <- cooccurrences(merkel, big=TRUE)
+  cooc <- cooccurrences(merkel, keep = NULL)
+  cooc <- cooccurrences(merkel, keep = NULL, big = TRUE)
 }
 }
 \author{

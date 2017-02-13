@@ -28,6 +28,14 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 #' @importFrom slam as.simple_triplet_matrix
 #' @rdname trim-method
 setMethod("trim", "TermDocumentMatrix", function(object, termsToKeep=NULL, termsToDrop=NULL, docsToKeep=NULL, docsToDrop=NULL, verbose=TRUE){
+  .rmBlank <- function(mat, verbose=TRUE){
+    if (verbose==TRUE) message("... removing empty rows")
+    matTmp <- as.sparseMatrix(mat)
+    matTmp <- matTmp[which(rowSums(matTmp) > 0),]
+    mat <- as.simple_triplet_matrix(matTmp)
+    class(mat) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+    mat
+  }
   if (!is.null(docsToKeep)){
     object <- object[,which(colnames(object) %in% docsToKeep)]
   }
