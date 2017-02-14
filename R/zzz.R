@@ -1,4 +1,8 @@
+if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
+
 .onLoad <- function (lib, pkg) {
+  
+  if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   
   options(
     "polmineR.project" = c(""),
@@ -65,6 +69,7 @@ getSettings <- function(){
 }
 
 .onAttach <- function(lib, pkg){
+  if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   setTemplate()
   getSettings()
 }

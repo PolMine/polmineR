@@ -54,11 +54,13 @@ Apart from R packages rcqp requires (plyr, for instance) that can be installed e
 As mentioned, the rcqp package is the most important dependency of the driller. The CORPUS\_REGISTRY environment variable \textit{before} needs to be set before you load polmineR.
 
 <<require, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
-if (
-  require(rcqp, quietly = T)
-  && require(polmineR.sampleCorpus, quietly = T)
+if ("CORPUS_REGISTRY" %in% names(Sys.getenv())){
+  if (require(rcqp, quietly = T) && require(polmineR.sampleCorpus, quietly = T)
   ){
-  execute <- TRUE
+    execute <- TRUE
+  } else {
+    execute <- FALSE
+  }
 } else {
   execute <- FALSE
 }
