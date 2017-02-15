@@ -1,12 +1,11 @@
 Package: polmineR
 Type: Package
 Title: Toolset for Corpus Analysis
-Version: 0.6.4
-Date: 2017-02-13
+Version: 0.7.0
+Date: 2017-02-14
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
-    rcqp,
     methods,
     R6,
     data.table,
@@ -18,13 +17,12 @@ Imports:
     DT
 Suggests:
     polmineR.sampleCorpus,
+    rcqp,
     doParallel,
     markdown,
     htmltools,
     xlsx,
     sendmailR,
-    koRpus,
-    chron,
     knitr,
     bigmemory,
     bigtabulate,
@@ -75,7 +73,6 @@ Collate:
     'chisquare_method.R'
     'ngrams_method.R'
     'compare_method.R'
-    'contextBundle_methods.R'
     'context_method.R'
     'cooccurrencesBundle_methods.R'
     'cooccurrencesReshaped_methods.R'

@@ -20,7 +20,7 @@ will have a set of positional attributes (such as part-of-speech, or lemma).
 The available p-attributes are returned by the pAttributes-method.
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
+\dontrun{
    use("polmineR.sampleCorpus")
    pAttributes("PLPRBTTXT")
 }

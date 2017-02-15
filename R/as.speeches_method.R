@@ -18,7 +18,7 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #' @exportMethod as.speeches
 #' @rdname as.speeches-method
 #' @examples 
-#' if (require("polmineR.sampleCorpus") && require("rcqp")){
+#' \dontrun{
 #'   use(polmineR.sampleCorpus)
 #'   bt <- partition("PLPRBTTXT", text_year="2009")
 #'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")

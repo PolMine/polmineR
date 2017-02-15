@@ -39,7 +39,7 @@
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
 #' @examples
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'    use(polmineR.sampleCorpus)
 #'    spd <- partition(
 #'      "PLPRBTTXT", text_party="SPD", text_type="speech"

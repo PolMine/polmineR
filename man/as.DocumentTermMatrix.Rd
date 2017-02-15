@@ -67,21 +67,21 @@ generated. A special case is the generation of the sparse matrix based on a
 too.
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
-   use("polmineR.sampleCorpus")
+\dontrun{
+use("polmineR.sampleCorpus")
+ 
+# do-it-yourself 
+p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
+pB <- partitionBundle(p, sAttribute="text_date")
+pB <- enrich(pB, pAttribute="word")
+tdm <- as.TermDocumentMatrix(pB, col="count")
    
-   # do-it-yourself 
-   p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
-   pB <- partitionBundle(p, sAttribute="text_date")
-   pB <- enrich(pB, pAttribute="word")
-   tdm <- as.TermDocumentMatrix(pB, col="count")
+ # leave the counting to the as.TermDocumentMatrix-method
+pB2 <- partitionBundle(p, sAttribute="text_date")
+tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
    
-   # leave the counting to the as.TermDocumentMatrix-method
-   pB2 <- partitionBundle(p, sAttribute="text_date")
-   tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
-   
-   # diretissima
-   tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
+# diretissima
+tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
 }
 }
 \author{

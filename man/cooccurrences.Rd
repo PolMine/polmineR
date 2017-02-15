@@ -52,7 +52,7 @@ a cooccurrences-class object
 Get cooccurrence statistics.
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
+\dontrun{
   use(polmineR.sampleCorpus)
   merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
   merkel <- enrich(merkel, pAttribute = "word")

@@ -51,7 +51,7 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-if (require("polmineR.sampleCorpus") && require("rcqp")){
+\dontrun{
   use("polmineR.sampleCorpus")
   test <- partition("PLPRBTTXT", text_year = "2009", pAttribute = NULL)
   integration <- dispersion(

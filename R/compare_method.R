@@ -28,7 +28,7 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' @references Manning / Schuetze ...
 #' @exportMethod compare
 #' @examples
-#' if (require("polmineR.sampleCorpus") && require("rcqp")){
+#' \dontrun{
 #'   use(polmineR.sampleCorpus)
 #'   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
 #'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
@@ -75,7 +75,7 @@ setMethod("compare", signature=c(x="partition"), function(
 #' @docType methods
 #' @rdname compare-method
 #' @examples 
-#' if (require("polmineR.sampleCorpus") && require("rcqp")){
+#' \dontrun{
 #'   use(polmineR.sampleCorpus)
 #'   byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
 #'   byName <- enrich(byName, pAttribute="word")

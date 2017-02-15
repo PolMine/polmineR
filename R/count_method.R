@@ -35,7 +35,7 @@ NULL
 #' @seealso count
 #' @examples
 #' \dontrun{
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
 #'   x <- count(debates, "Arbeit") # get frequencies for one token

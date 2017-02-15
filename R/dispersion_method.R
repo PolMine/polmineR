@@ -27,7 +27,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @seealso \code{crosstab-class}
 #' @exportMethod dispersion
 #' @examples
-#' if (require("polmineR.sampleCorpus") && require("rcqp")){
+#' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   test <- partition("PLPRBTTXT", text_year = "2009", pAttribute = NULL)
 #'   integration <- dispersion(

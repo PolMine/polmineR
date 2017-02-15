@@ -10,7 +10,7 @@
 #' @rdname pAttributes
 #' @name pAttributes
 #' @examples 
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'    use("polmineR.sampleCorpus")
 #'    pAttributes("PLPRBTTXT")
 #' }

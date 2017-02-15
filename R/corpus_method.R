@@ -21,14 +21,20 @@ setMethod("corpus", "bundle", function(object){
 
 #' @rdname corpus-method
 setMethod("corpus", "missing", function(){
-  corpora <- CQI$list_corpora()
-  data.frame(
-    corpus = corpora,
-    size = unname(sapply(
-      setNames(corpora, corpora),
-      function(x){
-        CQI$attribute_size(x, CQI$attributes(x, "p")[1])
-      })),
-    stringsAsFactors = FALSE
-  )
+  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1 && is(CQI) == "CQI.rcqp"){
+    corpora <- CQI$list_corpora()
+    y <- data.frame(
+      corpus = corpora,
+      size = unname(sapply(
+        setNames(corpora, corpora),
+        function(x){
+          CQI$attribute_size(x, CQI$attributes(x, "p")[1])
+        })),
+      stringsAsFactors = FALSE
+    )
+  } else {
+    y <- data.frame(corpus = character(), size = integer())
+  }
+  y
+
 })

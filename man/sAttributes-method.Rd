@@ -34,7 +34,7 @@ length 1 character vector), the respective s-attributes available in the corpus 
 returned.
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
+\dontrun{
   use("polmineR.sampleCorpus")
   
   sAttributes("PLPRBTTXT")

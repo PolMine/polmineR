@@ -83,7 +83,7 @@ or more. If two or more p-attributes are provided, The occurrence of combination
 A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
+\dontrun{
    use(polmineR.sampleCorpus)
    spd <- partition(
      "PLPRBTTXT", text_party="SPD", text_type="speech"

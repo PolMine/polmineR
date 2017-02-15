@@ -22,7 +22,7 @@ NULL
 #' @docType methods
 #' @rdname partitionBundle-method
 #' @examples
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   bt2009 <- partition("PLPRBTTXT", text_year="2009")
 #'   pBundle <- partitionBundle(bt2009, sAttribute="text_date", progress=TRUE, pAttribute="word")

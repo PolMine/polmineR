@@ -67,27 +67,26 @@ a \code{"partitionBundle"}-object, skip through the partitions contained in the
 bundle.
 }
 \examples{
-if (require(polmineR.sampleCorpus) && require(rcqp)){
-   use("polmineR.sampleCorpus")
-   options("polmineR.meta" = "text_date")
-   merkel <- partition(
-     "PLPRBTTXT",
-     text_date="2009-11-10", text_name="Angela Dorothea Merkel",
-     type="plpr"
-   )
-   read(merkel, meta=c("text_name", "text_date"))
-   read(
-     merkel,
-     highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
-     meta = c("text_name", "text_date")
-     )
-   all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
-   \dontrun{
-   speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
-   read(speeches)
-   migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
-   read(migVocab, col="Integration", partitionBundle=speeches)
-   }
+\dontrun{
+use("polmineR.sampleCorpus")
+options("polmineR.meta" = "text_date")
+merkel <- partition(
+  "PLPRBTTXT",
+   text_date="2009-11-10", text_name="Angela Dorothea Merkel",
+   type="plpr"
+ )
+ read(merkel, meta=c("text_name", "text_date"))
+ read(
+   merkel,
+   highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
+   meta = c("text_name", "text_date")
+)
+all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+   
+speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
+read(speeches)
+migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
+read(migVocab, col="Integration", partitionBundle=speeches)
 }
 }
 \seealso{

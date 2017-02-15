@@ -23,7 +23,7 @@
 #' @importFrom foreach foreach %dopar%
 #' @rdname blapply
 #' @examples
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use(polmineR.sampleCorpus)
 #'   bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
 #'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")

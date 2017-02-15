@@ -46,7 +46,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   context,partitionBundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   p <- partition("PLPRBTTXT", list(text_type="speech"))
 #'   a <- context(p, query="Integration", pAttribute="word")

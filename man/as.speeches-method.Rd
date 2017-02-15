@@ -32,7 +32,7 @@ A method designed for corpora from the
 PolMine corpora of plenary protocols. A partition is split into speeches.
 }
 \examples{
-if (require("polmineR.sampleCorpus") && require("rcqp")){
+\dontrun{
   use(polmineR.sampleCorpus)
   bt <- partition("PLPRBTTXT", text_year="2009")
   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")

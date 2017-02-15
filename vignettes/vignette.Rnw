@@ -70,6 +70,7 @@ if ("CORPUS_REGISTRY" %in% names(Sys.getenv())){
 <<load, echo=TRUE, results="tex", out.width=60, tidy=FALSE>>=
 if (execute){
   library(polmineR)
+  CQI <- CQI.rcqp$new()
   library(polmineR.sampleCorpus)
   use("polmineR.sampleCorpus")
 }

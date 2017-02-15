@@ -45,7 +45,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #' @aliases sAttributes sAttributes,character-method sAttributes,partition-method
 #' @rdname sAttributes-method
 #' @examples 
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   
 #'   sAttributes("PLPRBTTXT")

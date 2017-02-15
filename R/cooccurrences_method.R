@@ -20,7 +20,7 @@
 #' @name cooccurrences
 #' @rdname cooccurrences
 #' @examples
-#' if (require(polmineR.sampleCorpus) && require(rcqp)){
+#' \dontrun{
 #'   use(polmineR.sampleCorpus)
 #'   merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
 #'   merkel <- enrich(merkel, pAttribute = "word")
@@ -146,7 +146,7 @@ setMethod(
       # turn tokens to keep to id 
       if (!is.null(keep)){
         if (all(pAttribute %in% names(keep))){
-          keepId <- lapply(setNames(names(keep), names(keep)), function(x) cqi_str2id(pAttr[[x]], keep[[x]]))  
+          keepId <- lapply(setNames(names(keep), names(keep)), function(x) CQI$str2id(.Object@corpus, x, keep[[x]]))  
         } else {
           stop("Count not performed for all pAttributes to keep.")
         }
@@ -159,7 +159,7 @@ setMethod(
           ids <- lapply(
             c(1:nrow(.Object@cpos)),
             function(i) 
-              cqi_cpos2id(paste(.Object@corpus, pAttribute, sep="."), c(.Object@cpos[i,1]: .Object@cpos[i,2]))
+              CQI$cpos2id(.Object@corpus, pAttribute, c(.Object@cpos[i,1]: .Object@cpos[i,2]))
           )
           idPos <- cumsum(lapply(ids, length))
           .windowPrep <- function(i, ids, window, BIG, ...){
@@ -239,8 +239,8 @@ setMethod(
         if (verbose == TRUE) message("... getting token ids")
         lapply(
           pAttribute, function(x){
-            DT[, eval(aColsId[x]) := cqi_cpos2id(pAttr[[x]], DT[["a_cpos"]]), with = TRUE]
-            DT[, eval(bColsId[x]) := cqi_cpos2id(pAttr[[x]], DT[["b_cpos"]]), with = TRUE]
+            DT[, eval(aColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["a_cpos"]]), with = TRUE]
+            DT[, eval(bColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["b_cpos"]]), with = TRUE]
           }
         )
         if (verbose == TRUE) message("... counting window size")
@@ -274,14 +274,14 @@ setMethod(
       lapply(
         c(1:length(pAttribute)),
         function(i){
-          TF[, eval(aColsStr[i]) := as.utf8(cqi_id2str(pAttr[i], TF[[aColsId[i]]])), with=TRUE]
-          TF[, eval(bColsStr[i]) := as.utf8(cqi_id2str(pAttr[i], TF[[bColsId[i]]])), with=TRUE]
+          TF[, eval(aColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[aColsId[i]]])), with = TRUE]
+          TF[, eval(bColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[bColsId[i]]])), with=TRUE]
           TF[, eval(aColsId[i]) := NULL]
           TF[, eval(bColsId[i]) := NULL]
         }
       )
       setkeyv(TF, cols=aColsStr)
-      setkeyv(.Object@stat, cols=pAttribute)
+      setkeyv(.Object@stat, cols = pAttribute)
       TF[, "count_a" := .Object@stat[TF][["count"]]]
       setkeyv(TF, cols=bColsStr)
       TF[, "count_b" := .Object@stat[TF][["count"]]]
