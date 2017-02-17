@@ -6,20 +6,26 @@
 \alias{size,DocumentTermMatrix-method}
 \alias{size,character-method}
 \alias{size,partition-method}
-\title{get corpus size}
+\title{Get number of tokens.}
 \usage{
-size(x)
+size(x, ...)
 
-\S4method{size}{character}(x)
+\S4method{size}{character}(x, sAttribute = NULL, verbose = TRUE)
 
-\S4method{size}{partition}(x)
+\S4method{size}{partition}(x, sAttribute = NULL)
 
 \S4method{size}{DocumentTermMatrix}(x)
 }
 \arguments{
-\item{x}{object}
+\item{x}{object to get size(s) for}
+
+\item{...}{further arguments}
+
+\item{sAttribute}{character vector with s-attributes (one or more)}
+
+\item{verbose}{logical, whether to print messages}
 }
 \description{
-get corpus size
+Get number of tokens.
 }
 

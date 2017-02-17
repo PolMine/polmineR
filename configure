@@ -1,3 +1,4 @@
 #! /bin/sh
 
-export CORPUS_REGISTRY=/
+CORPUS_REGISTRY=/
+export CORPUS_REGISTRY
