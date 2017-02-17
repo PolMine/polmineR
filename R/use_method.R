@@ -1,9 +1,10 @@
-#' use corpus
+#' Use packaged corpus.
 #' 
 #' Use a cwb corpus shipped in a package or return to default registry.
 #' 
 #' @param pkg the package with a cwb corpus that shall be used, defaults to "default"
 #' (will reset original registry)
+#' @return the function returns invisibly the registry that was previously set
 #' @export use
 #' @rdname use
 #' @name use
@@ -18,5 +19,5 @@ use <- function(pkg="default"){
     registryDir <- system.file("extdata", "cwb", "registry", package=pkg)
     previousRegistry <- resetRegistry(registryDir)
   }
-  previousRegistry
+  invisible(previousRegistry)
 }  

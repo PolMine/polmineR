@@ -31,12 +31,12 @@ resetRegistry <- function(registryDir=NULL) {
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
     Sys.setenv(CORPUS_REGISTRY = getOption("polmineR_default_registry"))
   }
-  library.dynam.unload("rcqp", libpath=system.file(package="rcqp"))
+  library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
   library.dynam(
-    "rcqp", package="rcqp",
-    lib.loc=gsub("^(.*?)/rcqp$", "\\1", system.file(package="rcqp"))
+    "rcqp", package = "rcqp",
+    lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
   )
-  oldRegistry
+  invisible(oldRegistry)
 }
 
 
