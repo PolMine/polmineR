@@ -1,30 +1,32 @@
-#' Hits Class
+#' Get Hits.
 #' 
-#' Backend for dispersion method.
+#' Get hits for a (set of) queries, optionally with s-attribute values. If
+#' the query character vector is named, the names of the query occurr in
+#' the data.table that is returned rather than the queries.
 #' 
 #' @slot dt a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
 #' @slot query Object of class \code{"character"}
-#' @param query character vector
+#' @param query a (optionally named) character vector with one or more queries
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not
 #' @param sAttribute s-attributes
 #' @param pAttribute p-attribute (will be passed into cpos)
-#' @param size logical
-#' @param freq locial
+#' @param size logical - return size of subcorpus
+#' @param freq locial - return relative frequencies
 #' @param x a hits object
 #' @param .Object a character, partition or partitionBundle object
-#' @param mc logical
-#' @param progress logical
+#' @param mc logical, whether to use multicore
+#' @param progress logical, whether to show progress bar
 #' @param verbose logical
 #' @param ... further parameters
 #' @exportClass hits
 #' @rdname hits
 setClass("hits",
          representation(
-           dt="data.table",
-           corpus="character",
-           query="character"
+           dt = "data.table",
+           corpus = "character",
+           query = "character"
          )
 )
 
@@ -35,51 +37,49 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE){
-  stopifnot(.Object %in% CQI$list_corpora())
-  # check availability of sAttributes before proceeding
-  if (!is.null(sAttribute)) {
-    stopifnot(all(sAttribute %in% sAttributes(.Object)))
-    sAttrs <- paste(.Object, sAttribute, sep=".")
-    names(sAttrs) <- sAttribute
-  }
-  corpusPositions <- blapply(
-    as.list(query), f=cpos,
-    .Object=.Object, cqp=cqp, pAttribute=pAttribute,
-    verbose=F, mc=mc, progress=progress
+  stopifnot(.Object %in% CQI$list_corpora(), length(.Object) == 1)
+  if (!is.null(sAttribute)) stopifnot(all(sAttribute %in% sAttributes(.Object)))
+  
+  cpos_list <- blapply(
+    as.list(query), f = cpos,
+    .Object = .Object, cqp = cqp, pAttribute = pAttribute,
+    verbose = FALSE, mc = mc, progress = progress
     )
-  corpusPositions <- lapply(corpusPositions, function(x) x[,1])
-  names(corpusPositions) <- query
-  for (i in c(length(query):1)) {
-    if (is.null(corpusPositions[[i]])) corpusPositions[[i]] <- NULL
+  cpos_list <- lapply(cpos_list, function(x) x[,1])
+  
+  if (is.null(names(query))){
+    names(cpos_list) <- query
+  } else {
+    names(cpos_list) <- names(query)
   }
-  DT <- data.table(cpos=unlist(corpusPositions))
-  DT[, query := unlist(lapply(names(corpusPositions), function(x) rep(x, times=length(corpusPositions[[x]]))))]
+  
+  for (i in c(length(query):1)){
+    if (is.null(cpos_list[[i]])){
+      warning("no hits for query: ", query[i])
+      cpos_list[[i]] <- NULL
+    }
+  }
+
+  DT <- data.table(
+    cpos = unlist(cpos_list),
+    query = unlist(lapply(names(cpos_list), function(x) rep(x, times=length(cpos_list[[x]]))))
+    )
+  
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
-      DT[, eval(sAttribute[i]) := CQI$struc2str(.Object, sAttribute[i], CQI$cpos2struc(.Object, sAttribute[i], DT[["cpos"]]))]
+      sAttributeValues <- CQI$struc2str(.Object, sAttribute[i], CQI$cpos2struc(.Object, sAttribute[i], DT[["cpos"]]))
+      DT[, eval(sAttribute[i]) := sAttributeValues]
     }
-    count <- function(x) return(x)
-    TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
-    setnames(TF, old="V1", new="count")
+    TF <- DT[, .N, by = c(eval(c("query", sAttribute))), with = TRUE]
+    setnames(TF, old = "N", new="count")
+    
     if (freq == TRUE) size <- TRUE
     if (size == TRUE){
       if (verbose) message("... getting sizes")
-      META <- as.data.table(
-        lapply(setNames(sAttribute, sAttribute), function(sAttr) CQI$struc2str(.Object, sAttr, c(1:(CQI$attribute_size(.Object, sAttr) -1))))
-      )
-      cposMatrix <- do.call(
-        rbind,
-        lapply(
-          c(1:(CQI$attribute_size(.Object, sAttribute[1]) -1)),
-          function(x) CQI$struc2cpos(.Object, sAttribute[1], x))
-        )
-      META[, size := cposMatrix[,2] - cposMatrix[,1] + 1]
-      SIZE <- META[, sum(size), by=eval(sAttribute), with=TRUE]
-      setkeyv(SIZE, cols=sAttribute)
-      setkeyv(TF, cols=sAttribute)
+      SIZE <- size(.Object, sAttribute = sAttribute)
+      setkeyv(TF, cols = sAttribute)
       TF <- TF[SIZE]
       TF <- TF[is.na(TF[["query"]]) == FALSE]
-      setnames(TF, old="V1", new="size")
       if (freq == TRUE){
         if (verbose) message("... frequencies")
         TF[, freq := count / size]
@@ -88,7 +88,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
   } else {
     TF <- DT
   }
-  new("hits", dt=TF, corpus=.Object, query=query)
+  new("hits", dt = TF, corpus = .Object, query = query)
 })
 
 
@@ -96,34 +96,26 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
 setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE){
   stopifnot(all(sAttribute %in% sAttributes(.Object@corpus)))
   if (freq == TRUE) size <- TRUE
-  sAttrs <- paste(.Object@corpus, sAttribute, sep=".")
+  
   DT <- hits(.Object@corpus, query = query, cqp = cqp, sAttribute = NULL, pAttribute = pAttribute, mc = mc, progress = progress)@dt
-  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos"]]), with=TRUE]
+  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos"]]), with = TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
+  
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
       DT[, eval(sAttribute[i]) := CQI$struc2str(.Object@corpus, sAttribute[i], CQI$cpos2struc(.Object@corpus, sAttribute[i], DT[["cpos"]]))]
     }
-    count <- function(x) ifelse(is.na(x), 0, x)
-    TF <- DT[, count(.N), by=c(eval(c("query", sAttribute))), with=TRUE]
-    setnames(TF, old="V1", new="count")
+    TF <- DT[, .N, by = c(eval(c("query", sAttribute))), with = TRUE]
+    setnames(TF, old = "N", new = "count")
     if (size == TRUE){
-      META <- as.data.table(
-        lapply(setNames(sAttribute, sAttribute), function(sAttr) CQI$struc2str(.Object@corpus, sAttr, .Object@strucs))
-      )
-      META[, size := .Object@cpos[,2] - .Object@cpos[,1] + 1]
-      SIZE <- META[, sum(size), by=eval(sAttribute), with=TRUE]
-      setkeyv(SIZE, cols=sAttribute)
-      setkeyv(TF, cols=sAttribute)
+      SIZE <- size(.Object, sAttribute = sAttribute)
+      setkeyv(TF, cols = sAttribute)
       TF <- TF[SIZE]
-      setnames(TF, old="V1", new="size")
       TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0, x))]
       if (freq == TRUE) TF[, freq := count / size]
     }
   } else {
     TF <- DT
-    # if (size == TRUE) TF[, size := .Object@size]
-    # if (freq == TRUE) TF[, freq := count / size]
   }
   new("hits", dt = TF, corpus = .Object@corpus, query = query)
 })
@@ -168,19 +160,14 @@ setMethod("hits", "partitionBundle", function(
     countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with=TRUE]
     setkeyv(countDT, cols="struc")
     DT <- strucDT[countDT] # merge
-    # DT[, "dummy" := 1, with=TRUE]
-    # count <- function(x) return(x)
-    # TF <- DT[, count(.N), by=c("partition", "query"), with=TRUE]
     TF <- DT[, .N, by=c("partition", "query")]
-    # TF <- DT[, count(.N), by=.(partition, query)]
-    # setnames(TF, old="V1", new="count")
     setnames(TF, old="N", new="count")
     if (freq == TRUE) size <- TRUE
     if (size == TRUE){
       TF[, size := sapply(.Object@objects, function(x) x@size)[TF[["partition"]]]]
     }
     if (freq == TRUE) TF[, freq := count / size]
-    return(new("hits", dt=TF, corpus=corpus))
+    return(new("hits", dt = TF, corpus = corpus))
   } else {
     message("not implemented")
   }
@@ -188,10 +175,13 @@ setMethod("hits", "partitionBundle", function(
 
 #' @rdname hits
 setMethod("sample", "hits", function(x, size){
-  if (size > nrow(x@dt)) size <- nrow(x@dt)
+  if (size > nrow(x@dt)){
+    warning("size exceeds nrow of the data.table of the hits object")
+    size <- nrow(x@dt)
+  }
   new(
     "hits",
-    dt=x@dt[sample(c(1:nrow(x@dt)), size=size)],
-    corpus=x@corpus, query=x@query
+    dt = x@dt[sample(c(1:nrow(x@dt)), size = size)],
+    corpus = x@corpus, query = x@query
   )
 })

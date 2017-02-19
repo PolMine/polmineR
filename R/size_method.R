@@ -1,23 +1,72 @@
 #' @include partition_class.R TermDocumentMatrix_methods.R
 NULL
 
-#' get corpus size
+#' Get number of tokens.
 #' 
-#' @param x object
+#' @param x object to get size(s) for
+#' @param sAttribute character vector with s-attributes (one or more)
+#' @param verbose logical, whether to print messages
+#' @param ... further arguments
 #' @rdname size-method
-setGeneric("size", function(x){UseMethod("size")})
+setGeneric("size", function(x, ...) UseMethod("size"))
 
 #' @rdname size-method
-setMethod("size", "character", function(x) CQI$attribute_size(x, "word"))
+setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
+  if (is.null(sAttribute)){
+    return(CQI$attribute_size(x, "word"))
+  } else {
+    stopifnot(all(sAttribute %in% sAttributes(x)))
+    dt <- as.data.table(
+      lapply(
+        setNames(sAttribute, sAttribute),
+        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr) - 1))))
+    )
+    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
+      if (verbose) message ("... cwb-s-decode utility found, going to use it")
+      cmd <- c("cwb-s-decode", "-v", "-r", Sys.getenv("CORPUS_REGISTRY"), x, "-S", sAttribute[1])
+      decode_result <- system(paste(cmd, collapse = " "), intern = TRUE)
+      cpos_matrix <- do.call(rbind, lapply(strsplit(decode_result, "\\t"), as.integer))
+    } else {
+      cpos_matrix <- do.call(
+        rbind,
+        lapply(
+          c(0:(CQI$attribute_size(x, sAttribute[1]) - 1)),
+          function(x) CQI$struc2cpos(x, sAttribute[1], x))
+      )
+    }
+  
+    dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1]
+    y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
+    setnames(y, old = "V1", new = "size")
+    setkeyv(y, cols = sAttribute)
+    return(y)
+  }
+})
 
 #' @rdname size-method
 #' @exportMethod size
-setMethod("size", "partition", function(x) sum(x@cpos[,2]-x@cpos[,1]+1))
+setMethod("size", "partition", function(x, sAttribute = NULL){
+  if (is.null(sAttribute)){
+    return( sum(x@cpos[,2] - x@cpos[,1] + 1) )
+  } else {
+    dt <- as.data.table(
+      lapply(
+        setNames(sAttribute, sAttribute),
+        function(sAttr) as.utf8(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
+      )
+    )
+    dt[, size := x@cpos[,2] - x@cpos[,1] + 1]
+    y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
+    setnames(y, old = "V1", new = "size")
+    setkeyv(y, cols = sAttribute)
+    return(y)
+  }
+  })
 
 
 #' @rdname size-method
 setMethod("size", "DocumentTermMatrix", function(x){
-  setNames(tapply(x$v, INDEX=x$i, sum), x[["dimnames"]][["Docs"]])
+  setNames(tapply(x$v, INDEX = x$i, sum), x[["dimnames"]][["Docs"]])
 })
 
 #' @rdname TermDocumentMatrix

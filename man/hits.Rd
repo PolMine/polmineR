@@ -8,7 +8,7 @@
 \alias{hits,partitionBundle-method}
 \alias{hits-class}
 \alias{sample,hits-method}
-\title{Hits Class}
+\title{Get Hits.}
 \usage{
 hits(.Object, ...)
 
@@ -32,7 +32,7 @@ hits(.Object, ...)
 
 \item{...}{further parameters}
 
-\item{query}{character vector}
+\item{query}{a (optionally named) character vector with one or more queries}
 
 \item{cqp}{either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not}
@@ -41,20 +41,22 @@ function to check whether query is a CQP query or not}
 
 \item{pAttribute}{p-attribute (will be passed into cpos)}
 
-\item{size}{logical}
+\item{size}{logical - return size of subcorpus}
 
-\item{freq}{locial}
+\item{freq}{locial - return relative frequencies}
 
-\item{mc}{logical}
+\item{mc}{logical, whether to use multicore}
 
 \item{verbose}{logical}
 
-\item{progress}{logical}
+\item{progress}{logical, whether to show progress bar}
 
 \item{x}{a hits object}
 }
 \description{
-Backend for dispersion method.
+Get hits for a (set of) queries, optionally with s-attribute values. If
+the query character vector is named, the names of the query occurr in
+the data.table that is returned rather than the queries.
 }
 \section{Slots}{
 

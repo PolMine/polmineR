@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
-Title: Toolset for Corpus Analysis
-Version: 0.7.0
-Date: 2017-02-14
+Title: Toolkit for Corpus Analysis
+Version: 0.7.0.9002
+Date: 2017-02-17
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -31,11 +31,14 @@ Suggests:
 Additional_repositories: https://polmine.github.io/drat/
 VignetteBuilder: knitr
 LazyData: yes
-Description: Tools for corpus analysis using the CWB as an efficient backend.
-    The package offers basic functionality to flexibly create subcorpora and to
-    carry out and basic statistical operations. Beyond that, it is intended to
-    serve as an interface to packages implementing advanced statistical
-    procedures.
+Description: Tools for corpus analysis using the CWB as an efficient backend
+    for indexing and querying large corpora. The package offers functionality to
+    flexibly create subcorpora ("partitions") and to carry out basic statistical
+    operations (count, cooccurrences etc.). The original full text of documents
+    can be reconstructed and inspected at any time. Beyond that, the package
+    is intended to serve as an interface to packages implementing advanced
+    statistical procedures. Respective data structures (document term matrices, term
+    cooccurrence matrices etc.) can be created based on the indexed corpora.
 BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
@@ -86,7 +89,6 @@ Collate:
     'decode_method.R'
     'hits_class.R'
     'dispersion_method.R'
-    'dispersion_methods.R'
     'divide_method.R'
     'dotplot_method.R'
     'encode_method.R'
