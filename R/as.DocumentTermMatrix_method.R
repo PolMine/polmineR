@@ -113,13 +113,13 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
       })
     rm(dummy)
   } else {
-    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new="key"))
+    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new = "key"))
     rm(dummy)
   }
   if (verbose == TRUE) message("... generating cumulated data.table")
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
   j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
-  DT[, "j" := j, with = FALSE]
+  DT[, "j" := j]
   DT <- DT[which(DT[["key"]] != "")] # to avoid errors
   if (verbose == TRUE) message("... getting unique keys")
   uniqueKeys <- unique(DT[["key"]])

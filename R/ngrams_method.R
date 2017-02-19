@@ -86,15 +86,15 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
     charSoup <- paste(charSoup[which(!is.na(charSoup))], sep="", collapse="")
     charSoupTotal <- nchar(charSoup)
     ngrams <- sapply(
-      c(1:(charSoupTotal-n+1)),
+      c(1:(charSoupTotal - n + 1)),
       function(x) {
         if (progress == TRUE) .progressBar(x, charSoupTotal)
-        substr(charSoup, x, x+n-1)
+        substr(charSoup, x, x + n - 1)
         })
     tabledNgrams <- table(ngrams)
     TF <- data.table(
-      ngram=names(tabledNgrams),
-      count=unname(as.vector(tabledNgrams))
+      ngram = names(tabledNgrams),
+      count = unname(as.vector(tabledNgrams))
       )
   }
   new(
@@ -106,11 +106,11 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "partitionBundle", function(.Object, char = NULL, mc = FALSE, progress = FALSE, ...){
+setMethod("ngrams", "partitionBundle", function(.Object, n = 2, char = NULL, pAttribute = "word", mc = FALSE, progress = FALSE, ...){
   newBundle <- new("bundle")
   newBundle@objects <- blapply(
     .Object@objects, f = ngrams,
-    char = char, mc = mc, progress = progress
+    n = n, pAttribute = pAttribute, char = char, mc = mc, progress = progress
     )
 #   newBundle@objects <- lapply(
 #     c(1:length(.Object)),
