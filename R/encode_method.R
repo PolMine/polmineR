@@ -31,7 +31,7 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 #'   )
 #' encode(reuters.tidy, name = "reuters", sAttributes = c("language", "places"))
 #' }
-#' @rdname encode
+#' @rdname encode-method
 #' @exportMethod encode
 setMethod("encode", "data.frame", function(
   .Object, name, pAttributes = "word", sAttributes = NULL,

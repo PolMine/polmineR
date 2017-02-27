@@ -22,22 +22,21 @@ setMethod("summary", "cooccurrences", function(object){
 })
 
 #' @rdname cooccurrences-class
-#' @importFrom parallel mcparallel mccollect
 setMethod("as.sparseMatrix", "cooccurrences", function(x, col, mc=FALSE){
   uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"cooccurrence"]))
   keyVector <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
   splittedTab <- split(x=x@stat[,c(col, "cooccurrence")], f=x@stat[,"node"])
   system.time(
-  if (mc==FALSE){
+  if (mc == FALSE){
     bag <- list()
     bag[["i"]] <- unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times=nrow(splittedTab[[n]]))))) #nodes
     bag[["j"]] <- unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]]))) # cooccurrences
     bag[["x"]] <- unname(unlist(lapply(splittedTab, function(tab) tab[,col]))) # values
-  } else if (mc==TRUE) {
-    i <- mcparallel(unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times=nrow(splittedTab[[n]])))))) #nodes
-    j <- mcparallel(unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]])))) # cooccurrences
-    x <- mcparallel(unname(unlist(lapply(splittedTab, function(tab) tab[,col])))) # values
-    bag <- mccollect(list(i,j,x), wait=TRUE)
+  } else if (mc == TRUE) {
+    i <- parallel:::mcparallel(unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times=nrow(splittedTab[[n]])))))) #nodes
+    j <- parallel:::mcparallel(unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]])))) # cooccurrences
+    x <- parallel:::mcparallel(unname(unlist(lapply(splittedTab, function(tab) tab[,col])))) # values
+    bag <- parallel:::mccollect(list(i,j,x), wait=TRUE)
     names(bag) <- c("i", "j", "x")
   }
   )

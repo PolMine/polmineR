@@ -1,10 +1,10 @@
-v0.7.0
+v0.7.1
 * size-method now allows for a param 'sAttribute'
 * hits-method reworked, allows for names query vectors
+* first version that can be installed on windows
 
 v0.7.0
-* rcqp hat moved to suggests, to facilitate installation
-
+* rcqp package moved to suggests, to facilitate installation
 
 
 v0.6.3
