@@ -2,18 +2,18 @@
 % Please edit documentation in R/bundle_class.R
 \docType{class}
 \name{bundle-class}
+\alias{+,bundle,bundle-method}
+\alias{+,bundle,textstat-method}
+\alias{[[,bundle-method}
+\alias{as.bundle,list-method}
+\alias{as.bundle,textstat-method}
+\alias{as.matrix,bundle-method}
 \alias{bundle-class}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
 \alias{names<-,bundle,character-method}
-\alias{unique,bundle-method}
-\alias{+,bundle,bundle-method}
-\alias{+,bundle,textstat-method}
-\alias{[[,bundle-method}
-\alias{as.matrix,bundle-method}
 \alias{sample,bundle-method}
-\alias{as.bundle,list-method}
-\alias{as.bundle,textstat-method}
+\alias{unique,bundle-method}
 \title{bundle class}
 \usage{
 \S4method{length}{bundle}(x)
@@ -68,7 +68,7 @@ in one S4 object.
 
 \item{\code{pAttribute}}{Object of class \code{"character"}}
 }}
-
 \author{
 Andreas Blaette
 }
+

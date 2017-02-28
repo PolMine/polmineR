@@ -46,3 +46,21 @@ setMethod("enrich", "partitionBundle", function(object, mc=FALSE, progress=TRUE,
   blapply(x=object, f=enrich, mc=mc, progress=progress, verbose=verbose, ...)  
 })
 
+
+#' @rdname kwic-class
+setMethod("enrich", "kwic", function(object, meta = NULL){
+  if (length(meta) > 0){
+    metainformation <- lapply(
+      meta,
+      function(metadat){
+        strucs <- CQI$cpos2struc(object@corpus, metadat, unlist(lapply(object@cpos, function(x)x$node[1])))
+        as.utf8(CQI$struc2str(object@corpus, metadat, strucs))
+      }
+    )
+    metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
+    colnames(metainformation) <- meta
+    object@table <- data.frame(metainformation, object@table)
+    object@metadata <- c(meta, object@metadata)
+  }
+  object
+})

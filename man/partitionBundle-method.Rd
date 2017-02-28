@@ -3,9 +3,9 @@
 \docType{methods}
 \name{partitionBundle}
 \alias{partitionBundle}
-\alias{partitionBundle,partition-method}
 \alias{partitionBundle,character-method}
 \alias{partitionBundle,context-method}
+\alias{partitionBundle,partition-method}
 \title{Generate a bundle of partitions}
 \usage{
 partitionBundle(.Object, ...)
@@ -56,9 +56,10 @@ but not yet enriched.
   btBundle <- partitionBundle("PLPRBTTXT", sAttribute="text_date")
 }
 }
-\seealso{
-\code{\link{partition}} and \code{\link{bundle-class}}
-}
 \author{
 Andreas Blaette
 }
+\seealso{
+\code{\link{partition}} and \code{\link{bundle-class}}
+}
+

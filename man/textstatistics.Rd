@@ -3,9 +3,9 @@
 \docType{methods}
 \name{ll}
 \alias{ll}
+\alias{ll,comp-method}
 \alias{ll,context-method}
 \alias{ll,cooccurrences-method}
-\alias{ll,comp-method}
 \alias{pmi}
 \alias{pmi,context-method}
 \title{text statistics}
@@ -30,3 +30,4 @@ pmi(.Object)
 \description{
 text statistics
 }
+

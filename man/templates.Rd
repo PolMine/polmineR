@@ -34,3 +34,4 @@ When the polmineR package is loaded, an environment .templates will be assigned 
 environment that will is used when preparing the html output for reading the text in a partition.
 The
 }
+

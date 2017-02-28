@@ -3,9 +3,9 @@
 \docType{methods}
 \name{enrich}
 \alias{enrich}
-\alias{enrich-method}
 \alias{enrich,partition-method}
 \alias{enrich,partitionBundle-method}
+\alias{enrich-method}
 \title{enrich an object}
 \usage{
 enrich(object, ...)
@@ -39,3 +39,4 @@ enrich(object, ...)
 Method to fill slots of a partition or partitionBundle object that 
 have not been set up previously. See the respective documentation:
 }
+

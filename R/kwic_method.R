@@ -14,8 +14,8 @@ NULL
 #' @param left to the left
 #' @param right to the right
 #' @param meta metainformation to display
-#' @param cpos logical
-#' @param pAttribute typically 'word' or 'lemma'
+#' @param cpos logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned
+#' @param pAttribute p-attribute, defaults to 'word'
 #' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
 #' @param neighbor only show kwic if a certain word is present
 #' @param verbose logical, whether to be talkative

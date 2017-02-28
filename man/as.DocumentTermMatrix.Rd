@@ -2,14 +2,14 @@
 % Please edit documentation in R/as.DocumentTermMatrix_method.R
 \docType{methods}
 \name{as.TermDocumentMatrix}
-\alias{as.TermDocumentMatrix}
 \alias{as.DocumentTermMatrix}
-\alias{as.TermDocumentMatrix,character-method}
-\alias{as.DocumentTermMatrix,character-method}
-\alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.DocumentTermMatrix,bundle-method}
-\alias{as.TermDocumentMatrix,partitionBundle-method}
+\alias{as.DocumentTermMatrix,character-method}
 \alias{as.DocumentTermMatrix,partitionBundle-method}
+\alias{as.TermDocumentMatrix}
+\alias{as.TermDocumentMatrix,bundle-method}
+\alias{as.TermDocumentMatrix,character-method}
+\alias{as.TermDocumentMatrix,partitionBundle-method}
 \title{as.TermDocumentMatrix / as.DocumentTermMatrix}
 \usage{
 as.TermDocumentMatrix(x, ...)
@@ -89,3 +89,4 @@ Andreas Blaette
 
 me
 }
+

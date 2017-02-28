@@ -1,14 +1,18 @@
+#' @rdname encode-method
 setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 
 #' Encode CWB Corpus.
 #' 
 #' @param .Object a data.frame to encode
 #' @param name name of the (new) CWB corpus
+#' @param corpus the name of the CWB corpus
 #' @param pAttributes columns of .Object with tokens (such as word/pos/lemma)
+#' @param sAttribute a single s-attribute
 #' @param sAttributes columns of .Object that will be encoded as structural attributes
 #' @param registry path to the corpus registry
 #' @param indexedCorpusDir directory where to create directory for indexed corpus files
 #' @param verbose logical, whether to be verbose
+#' @param ... further parameters
 #' @examples 
 #' \dontrun{
 #' library(tm)

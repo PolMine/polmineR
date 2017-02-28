@@ -27,3 +27,4 @@ getTerms(.Object, ...)
 \description{
 get terms available in a corpus or partition
 }
+

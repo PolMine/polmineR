@@ -16,3 +16,4 @@ getEncoding(.Object)
 \description{
 get the encoding of a corpus
 }
+

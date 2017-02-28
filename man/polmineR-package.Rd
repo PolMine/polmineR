@@ -35,10 +35,11 @@ drat::addRepo("PolMine", alturl="https://polmine.github.io/drat/")
 install.packages("polmineR.sampleCorpus")
 }
 }
-\references{
-http://polmine.sowi.uni-due.de
-}
 \author{
 Andreas Blaette (andreas.blaette@uni-due.de)
 }
+\references{
+http://polmine.sowi.uni-due.de
+}
 \keyword{package}
+

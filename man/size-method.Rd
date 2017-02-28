@@ -3,9 +3,9 @@
 \docType{methods}
 \name{size}
 \alias{size}
+\alias{size,DocumentTermMatrix-method}
 \alias{size,character-method}
 \alias{size,partition-method}
-\alias{size,DocumentTermMatrix-method}
 \title{Get number of tokens.}
 \usage{
 size(x, ...)
@@ -28,3 +28,4 @@ size(x, ...)
 \description{
 Get number of tokens.
 }
+

@@ -3,11 +3,11 @@
 \docType{class}
 \name{comp-class}
 \alias{comp-class}
+\alias{compBundle-class}
 \alias{compCooccurrences-class}
 \alias{compNgrams-class}
-\alias{compBundle-class}
-\alias{summary,comp-method}
 \alias{show,comp-method}
+\alias{summary,comp-method}
 \alias{summary,compBundle-method}
 \alias{view,comp-method}
 \title{S4 class for comparing corpora}
@@ -59,7 +59,7 @@ object resulting from compare-method
 
 \item{\code{objects}}{an object of class \code{list}}
 }}
-
 \author{
 Andreas Blaette
 }
+

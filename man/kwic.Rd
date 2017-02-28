@@ -3,9 +3,9 @@
 \docType{methods}
 \name{kwic}
 \alias{kwic}
+\alias{kwic,character-method}
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
-\alias{kwic,character-method}
 \title{KWIC output / concordances}
 \usage{
 kwic(.Object, ...)
@@ -30,7 +30,7 @@ kwic(.Object, ...)
 
 \item{meta}{metainformation to display}
 
-\item{cpos}{logical}
+\item{cpos}{logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned}
 
 \item{neighbor}{only show kwic if a certain word is present}
 
@@ -46,7 +46,7 @@ auxiliary function)}
 
 \item{right}{to the right}
 
-\item{pAttribute}{typically 'word' or 'lemma'}
+\item{pAttribute}{p-attribute, defaults to 'word'}
 
 \item{sAttribute}{if provided, the s-attribute will be used to check the boundaries of the text}
 }
@@ -76,3 +76,4 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
 \seealso{
 To read the whole text, see the \code{\link{read}}-method.
 }
+

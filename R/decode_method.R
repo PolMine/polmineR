@@ -1,3 +1,4 @@
+#' @rdname decode
 setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 
 
@@ -7,6 +8,8 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' 
 #' @param .Object the corpus to decode (character vector)
 #' @param verbose logical
+#' @param sAttribute the s-attribute to decode
+#' @param ... further parameters
 #' @rdname decode
 #' @examples
 #' \dontrun{

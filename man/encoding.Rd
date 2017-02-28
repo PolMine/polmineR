@@ -3,9 +3,9 @@
 \docType{methods}
 \name{encoding}
 \alias{encoding}
-\alias{encoding<-}
 \alias{encoding,partition-method}
 \alias{encoding,partitionBundle-method}
+\alias{encoding<-}
 \title{get/set encoding slot of an object}
 \usage{
 encoding(object)
@@ -24,3 +24,4 @@ encoding(object) <- value
 \description{
 Method for partition, partitionBundle objects.
 }
+

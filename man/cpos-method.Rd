@@ -4,9 +4,9 @@
 \name{cpos}
 \alias{cpos}
 \alias{cpos,character-method}
+\alias{cpos,matrix-method}
 \alias{cpos,partition-method}
 \alias{cpos,tempcorpus-method}
-\alias{cpos,matrix-method}
 \title{get corpus positions}
 \usage{
 cpos(.Object, ...)
@@ -57,3 +57,4 @@ start end end corpus positions of the matches for a query (CQP syntax can
 be used.) If the cpos-method is called on a \code{"matrix"} object,  the cpos
 matrix is unfolded.
 }
+

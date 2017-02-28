@@ -1,7 +1,7 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.0.9004
+Version: 0.7.1
 Date: 2017-02-27
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
@@ -12,10 +12,10 @@ Imports:
     slam,
     Matrix,
     tm,
-    parallel,
     foreach,
     DT
 Suggests:
+    parallel,
     polmineR.sampleCorpus,
     rcqp,
     doParallel,
@@ -42,7 +42,7 @@ Description: Tools for corpus analysis using the CWB as an efficient backend
 BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
-Collate: 
+Collate:
     'CQI.R'
     'CQI.Rcpp.R'
     'CQI.cqpserver.R'
@@ -71,6 +71,7 @@ Collate:
     'as.sparseMatrix_method.R'
     'as.speeches_method.R'
     'blapply_method.R'
+    'kwic_method.R'
     'kwic_class.R'
     'browse_method.R'
     'chisquare_method.R'
@@ -102,8 +103,6 @@ Collate:
     'highlight_method.R'
     'html_method.R'
     'html_methods.R'
-    'kwic_method.R'
-    'kwic_methods.R'
     'll_method.R'
     'mail_method.R'
     'means_method.R'
@@ -132,4 +131,4 @@ Collate:
     'view_method.R'
     'weigh_method.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1

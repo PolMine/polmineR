@@ -4,8 +4,8 @@
 \name{partition}
 \alias{partition}
 \alias{partition,character-method}
-\alias{partition,list-method}
 \alias{partition,environment-method}
+\alias{partition,list-method}
 \alias{partition,partition-method}
 \title{Initialize a partition.}
 \usage{
@@ -122,3 +122,4 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 \author{
 Andreas Blaette
 }
+

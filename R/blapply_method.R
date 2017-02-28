@@ -81,8 +81,8 @@ setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose 
           for (core in c(1:getOption("polmineR.cores"))){
             assign(
               threadNames[core],
-              mcparallel(lapply(xChunks[[core]], function(x) fWrapped(x, ...))),
-              envir=environment()
+              parallel:::mcparallel(lapply(xChunks[[core]], function(x) fWrapped(x, ...))),
+              envir = environment()
               )
           }
           while (length(parallel:::selectChildren()) < noCores){

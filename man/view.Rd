@@ -14,3 +14,4 @@ view(.Object, ...)
 \description{
 browse an object using View()
 }
+

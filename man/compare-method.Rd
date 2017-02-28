@@ -2,11 +2,11 @@
 % Please edit documentation in R/compare_method.R
 \docType{methods}
 \name{compare,partition-method}
-\alias{compare,partition-method}
 \alias{compare}
-\alias{compare,partitionBundle-method}
 \alias{compare,cooccurrences-method}
 \alias{compare,ngrams-method}
+\alias{compare,partition-method}
+\alias{compare,partitionBundle-method}
 \title{compare features}
 \usage{
 \S4method{compare}{partition}(x, y, included = FALSE, method = "chisquare",
@@ -67,9 +67,10 @@ The most important purpose is term extraction.
   dtm <- as.DocumentTermMatrix(result, col="chisquare")
 }
 }
-\references{
-Manning / Schuetze ...
-}
 \author{
 Andreas Blaette
 }
+\references{
+Manning / Schuetze ...
+}
+

@@ -20,12 +20,11 @@ Corpus class.
 
 \item{\code{count}}{data.table with counts}
 }}
-
 \section{Methods}{
 
 \describe{
   \item{one}{bla}
 }
 }
-
 \keyword{datasets}
+
