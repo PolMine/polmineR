@@ -4,10 +4,10 @@
 \alias{use}
 \title{Use packaged corpus.}
 \usage{
-use(pkg = "default")
+use(pkg = NULL)
 }
 \arguments{
-\item{pkg}{the package with a cwb corpus that shall be used, defaults to "default"
+\item{pkg}{the package with a cwb corpus that shall be used (defaults to NULL, to return to default registry)
 (will reset original registry)}
 }
 \value{

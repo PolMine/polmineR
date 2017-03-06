@@ -152,7 +152,7 @@ setMethod("encode", "data.table", function(.Object, corpus, sAttribute){
   
   cmd <- c(
     "cwb-s-encode",
-    "-d", parseRegistry(corpus)[["HOME"]],
+    "-d", RegistryFile$new(corpus)$getHome(),
     "-f", tmp_file,
     "-V", sAttribute
   )

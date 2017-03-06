@@ -1,26 +1,29 @@
 setGeneric("sAttributes2cpos", function(.Object, ...) standardGeneric("sAttributes2cpos"))
 
-#' Get the cpos for a partition based on sattributes
+#' Get corpus positions based on s-attributes.
 #' 
-#' Augment the partition object
+#' Based on the sAttributes as defined in the respective slot of the partition
+#' object, corpus positions (matrix in the cpos slot) is generated.
 #' 
 #' @param partition the rudimentary partition object
-#' @return an augmented partition object (includes now cpos and strucs)
+#' @param xml either "flat" or "nested"
+#' @param regex logical
+#' @return An augmented partition object, with cpos and strucs slots filled.
 #' @noRd
 setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
   if (xml == "flat"){
     # The function works nicely - potentially, it can be optimized, but I have tried many things.
     # Interestingly, the for-loop is more effective than a vectorized version
-    meta <- data.frame(
-      struc=c(0:(CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)-1)),
-      select=rep(0, times=CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs))
-      )
+    # an Rcpp-implementation of struc2str is not faster
+    # potential for optimization: struc2str
+    maxAttr <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)
+    meta <- data.frame(struc = c(0:(maxAttr-1)), select = rep(0, times = maxAttr))
     if (length(.Object@sAttributes) > 0) {
-      for (s in names(.Object@sAttributes)){
-        meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, s, meta[,1]))
+      for (sAttr in names(.Object@sAttributes)){
+        meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, sAttr, meta[,1]))
         Encoding(meta[,2]) <- .Object@encoding
-        if (regex==FALSE) {
-          meta <- meta[which(meta[,2] %in% .Object@sAttributes[[s]]),]
+        if (regex == FALSE) {
+          meta <- meta[which(meta[,2] %in% .Object@sAttributes[[sAttr]]),]
         } else {
           lines <- lapply(.Object@sAttributes[[s]], function(x) grep(x, meta[,2]))
           meta <- meta[unique(unlist(lines)),]
@@ -32,8 +35,8 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     }
     if (nrow(meta) != 0){
       .Object@cpos <- matrix(
-        data=unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
-        ncol=2, byrow=TRUE
+        data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
+        ncol = 2, byrow = TRUE
       )
       .Object@strucs <- as.numeric(meta[,1])
     } else {
@@ -43,8 +46,8 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
   } else if (xml == "nested"){
     sAttr <- vapply(
       names(.Object@sAttributes),
-      USE.NAMES=TRUE, FUN.VALUE="character",
-      function(x) paste(.Object@corpus, '.', x, sep='')
+      USE.NAMES = TRUE, FUN.VALUE = "character",
+      function(x) paste(.Object@corpus, '.', x, sep = '')
     )
     sAttr <- rev(sAttr)
     strucs <- c(0:(CQI$attribute_size(.Object@corpus, names(.Object@sAttributes)[1])-1))

@@ -32,7 +32,7 @@ hits(.Object, ...)
 
 \item{...}{further parameters}
 
-\item{query}{a (optionally named) character vector with one or more queries}
+\item{query}{a (optionally named, see datails) character vector with one or more queries}
 
 \item{cqp}{either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not}
@@ -43,7 +43,7 @@ function to check whether query is a CQP query or not}
 
 \item{size}{logical - return size of subcorpus}
 
-\item{freq}{locial - return relative frequencies}
+\item{freq}{logcial - return relative frequencies}
 
 \item{mc}{logical, whether to use multicore}
 
@@ -54,9 +54,15 @@ function to check whether query is a CQP query or not}
 \item{x}{a hits object}
 }
 \description{
-Get hits for a (set of) queries, optionally with s-attribute values. If
-the query character vector is named, the names of the query occurr in
+Get hits for a (set of) queries, optionally with s-attribute values.
+}
+\details{
+If the query character vector is named, the names of the query occurr in
 the data.table that is returned rather than the queries.
+
+If freq is TRUE, the data.table returned in the DT-slot will deliberately
+include the subsets of the partition/corpus with no hits (query is NA,
+count is 0).
 }
 \section{Slots}{
 

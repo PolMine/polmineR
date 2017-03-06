@@ -4,10 +4,15 @@
 #' in the stat-slot if pAttribute is not NULL.
 #' 
 #' The function sets up a partition based on a list of s-attributes with respective values.
-#' The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-#' The values of the list may contain regular expressions. To use regular expression syntax, set the 
+#' 
+#' The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
+#' text_year="2013"), or - for convencience - directly.
+#' 
+#' The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
 #' parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
-#' used in R needs to be used (double backlashes etc.).
+#' used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
+#' of the character vector needs to be 1. If regex is \code{"FALSE"}, the length of the character
+#' vectors can be > 1, matching s-attributes are identifies with the operator \code{in}.
 #' 
 #' The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
 #' parameter \code{xml} (default is "flat"). If you generate a partition based on a 
@@ -28,7 +33,7 @@
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
 #' @param meta a character vector
-#' @param regex logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1
+#' @param regex logical (defaults to FALSE)
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
@@ -94,11 +99,11 @@ setMethod("partition", "character", function(
   if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
   if (verbose == TRUE) message('Setting up partition ', name)
   if (is.null(type)){
-    parsedRegistry <- parseRegistry(.Object)
-    if (!"type" %in% names(parsedRegistry)){
+    corpusProperties <- RegistryFile$new(.Object)$getProperties()
+    if (!"type" %in% names(corpusProperties)){
       partitionType <- "partition"
     } else {
-      type <- parsedRegistry[["type"]]
+      type <- corpusProperties[["type"]]
       if (type %in% c("press", "plpr")){
         .verboseOutput(paste("type of the corpus is", type), verbose)
         partitionType <- paste(type, "Partition", sep="")
@@ -130,10 +135,10 @@ setMethod("partition", "character", function(
 
   .verboseOutput('get cpos and strucs', verbose)
   if(is.null(def)){
-    parsedInfo <- parseInfoFile(.Object)
-    if ("ANCHOR_ELEMENT" %in% names(parsedInfo)){
+    corpusProperties <- RegistryFile$new(.Object)$getProperties()
+    if ("anchor" %in% names(corpusProperties)){
       def <- list()
-      def[[parsedInfo["ANCHOR_ELEMENT"]]] <- ".*"
+      def[[corpusProperties["anchor"]]] <- ".*"
       regex <- TRUE
       Partition@sAttributeStrucs <- names(def)[length(def)]
       Partition <- sAttributes2cpos(Partition, xml, regex)
@@ -207,8 +212,8 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   newPartition <- new(
     class(.Object)[1],
-    corpus=.Object@corpus, encoding=.Object@encoding, name=name, xml=.Object@xml,
-    stat=data.table()
+    corpus = .Object@corpus, encoding = .Object@encoding, name = name, xml = .Object@xml,
+    stat = data.table()
     )
   .verboseOutput(paste('Setting up partition', name), verbose)
   def <- lapply(def, function(x) adjustEncoding(x, .Object@encoding))  
@@ -235,7 +240,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   if (class(newCpos) == "matrix"){
     newPartition@cpos <- newCpos
   } else if (class(newCpos) == "integer") {
-    newPartition@cpos <- matrix(newCpos, ncol=2, byrow=TRUE)     
+    newPartition@cpos <- matrix(newCpos, ncol = 2, byrow = TRUE)     
   }
   newPartition@strucs <- .Object@strucs[hits]
   if (length(.Object@metadata) == 2) {

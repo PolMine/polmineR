@@ -85,7 +85,7 @@ setMethod("setTemplate", "missing", function(){
     }
     
     for (x in corpus()[["corpus"]]){
-      filename <- file.path(parseRegistry(x)[["HOME"]], "template.R")
+      filename <- file.path(RegistryFile$new(x)$getHome(), "template.R")
       if (file.exists(filename)){
         source(filename)
       }

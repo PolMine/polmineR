@@ -68,7 +68,7 @@ setMethod("partitionBundle", "character", function(
 ) {
   bundle <- new(
     "partitionBundle",
-    corpus=.Object, encoding = polmineR::parseRegistry(.Object)[["charset"]],
+    corpus = .Object, encoding = RegistryFile$new(.Object)$getEncoding(),
     call=deparse(match.call())
   )
   strucs <- c(0:(CQI$attribute_size(.Object, sAttribute) - 1))

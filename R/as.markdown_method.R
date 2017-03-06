@@ -25,7 +25,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
 #' @rdname as.markdown
 setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
-  corpusEncoding <- parseRegistry(corpus)[["encoding"]]
+  corpusEncoding <- RegistryFile$new(corpus)$getEncoding()
   
   # generate metainformation
   documentStruc <- CQI$cpos2struc(corpus, getTemplate(corpus)[["document"]][["sAttribute"]], .Object[1])

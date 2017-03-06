@@ -1,19 +1,24 @@
 #' Get Hits.
 #' 
-#' Get hits for a (set of) queries, optionally with s-attribute values. If
-#' the query character vector is named, the names of the query occurr in
+#' Get hits for a (set of) queries, optionally with s-attribute values.
+#' 
+#' If the query character vector is named, the names of the query occurr in
 #' the data.table that is returned rather than the queries.
+#' 
+#' If freq is TRUE, the data.table returned in the DT-slot will deliberately
+#' include the subsets of the partition/corpus with no hits (query is NA,
+#' count is 0).
 #' 
 #' @slot dt a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
 #' @slot query Object of class \code{"character"}
-#' @param query a (optionally named) character vector with one or more queries
+#' @param query a (optionally named, see datails) character vector with one or more queries
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not
 #' @param sAttribute s-attributes
 #' @param pAttribute p-attribute (will be passed into cpos)
 #' @param size logical - return size of subcorpus
-#' @param freq locial - return relative frequencies
+#' @param freq logcial - return relative frequencies
 #' @param x a hits object
 #' @param .Object a character, partition or partitionBundle object
 #' @param mc logical, whether to use multicore

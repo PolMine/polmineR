@@ -1,3 +1,8 @@
+v0.7.2
+* updated documentation of partition-method.
+* documentation of hits-method improved
+* use-methode: default value for pkg ist NULL (return to default registry), function more robust
+
 v0.7.1
 * size-method now allows for a param 'sAttribute'
 * hits-method reworked, allows for names query vectors

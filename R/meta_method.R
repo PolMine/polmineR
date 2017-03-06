@@ -21,7 +21,7 @@ setGeneric("meta", function(.Object, ...) standardGeneric("meta"))
 
 #' @rdname meta-method
 setMethod("meta", "character", function(.Object, sAttributes, struc) {
-  corpusEncoding <- parseRegistry(.Object)[["encoding"]]
+  corpusEncoding <- RegistryFile$new(.Object)$getEncoding()
   metaInformation <- sapply(
     sAttributes,
     function(x) {

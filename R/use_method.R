@@ -2,21 +2,24 @@
 #' 
 #' Use a cwb corpus shipped in a package or return to default registry.
 #' 
-#' @param pkg the package with a cwb corpus that shall be used, defaults to "default"
+#' @param pkg the package with a cwb corpus that shall be used (defaults to NULL, to return to default registry)
 #' (will reset original registry)
 #' @return the function returns invisibly the registry that was previously set
 #' @export use
 #' @rdname use
 #' @name use
-use <- function(pkg="default"){
-  pkgSub <- as.character(substitute(pkg))
-  if (exists(pkgSub) == FALSE && pkgSub != "default") {
-    registryDir <- system.file("extdata", "cwb", "registry", package=pkgSub)
-    previousRegistry <- resetRegistry(registryDir)
-  } else if (pkg=="default"){
+use <- function(pkg = NULL){
+  if (pkg %in% unname(installed.packages()[,"Package"])) {
+    registryDir <- system.file("extdata", "cwb", "registry", package = pkg)
+    if (dir.exists(registryDir)){
+      previousRegistry <- resetRegistry(registryDir)
+    } else {
+      stop("pkg exists, but is not a standardized package")
+    }
+  } else if (is.null(pkg)){
     previousRegistry <- resetRegistry(getOption("polmineR_default_registry"))
   } else {
-    registryDir <- system.file("extdata", "cwb", "registry", package=pkg)
+    registryDir <- system.file("extdata", "cwb", "registry", package = pkg)
     previousRegistry <- resetRegistry(registryDir)
   }
   invisible(previousRegistry)

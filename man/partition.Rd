@@ -41,7 +41,7 @@ details and examples)}
 
 \item{meta}{a character vector}
 
-\item{regex}{logical (defaults to FALSE), if TRUE, the s-attributes provided will be handeled as regular expressions; the length of the character vectors with s-attributes then needs to be 1}
+\item{regex}{logical (defaults to FALSE)}
 
 \item{xml}{either 'flat' (default) or 'nested'}
 
@@ -64,10 +64,15 @@ in the stat-slot if pAttribute is not NULL.
 }
 \details{
 The function sets up a partition based on a list of s-attributes with respective values.
-The s-attributes defining the partition are a list, e.g. list(text_type="speech", text_year="2013").
-The values of the list may contain regular expressions. To use regular expression syntax, set the 
+
+The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
+text_year="2013"), or - for convencience - directly.
+
+The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
 parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
-used in R needs to be used (double backlashes etc.).
+used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
+of the character vector needs to be 1. If regex is \code{"FALSE"}, the length of the character
+vectors can be > 1, matching s-attributes are identifies with the operator \code{in}.
 
 The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
 parameter \code{xml} (default is "flat"). If you generate a partition based on a 

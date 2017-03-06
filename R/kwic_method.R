@@ -156,7 +156,7 @@ setMethod("kwic", "character", function(
     left = left, right = right, 
     cpos = cposList,
     pAttribute = pAttribute,
-    encoding = parseRegistry(.Object)[["charset"]]
+    encoding = RegistryFile$new(.Object)$getEncoding()
     )
   if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
   kwic(.Object = ctxt, meta = meta, neighbor = neighbor, cpos = cpos)

@@ -134,7 +134,7 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
     metadataDef <- get(".templates", envir = .GlobalEnv)[[object@corpus]][["metadata"]]
     if (verbose) message("... using metadata from template: ", metadataDef)
     if (length(metadataDef) > 0){
-      if (verbose) message("... enrichting")
+      if (verbose) message("... enriching")
       object <- enrich(object, meta = metadataDef)
     }
   }

@@ -13,8 +13,8 @@ cooccurrences(.Object, ...)
 \S4method{cooccurrences}{character}(.Object, keep = NULL, cpos = NULL,
   pAttribute = "word", window = 5, method = "new", verbose = TRUE)
 
-\S4method{cooccurrences}{partition}(.Object, window = 5, keep = list(pos =
-  c("NN", "ADJA")), method = "ll", big = FALSE, tcm = FALSE, mc = FALSE,
+\S4method{cooccurrences}{partition}(.Object, window = 5, keep = NULL,
+  method = "ll", big = FALSE, tcm = FALSE, mc = FALSE,
   progress = TRUE, verbose = TRUE, ...)
 
 \S4method{cooccurrences}{partitionBundle}(.Object,

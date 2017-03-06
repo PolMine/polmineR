@@ -126,7 +126,7 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
 #' @rdname cooccurrences
 setMethod(
   "cooccurrences", "partition",
-  function(.Object, window = 5, keep = list(pos = c("NN", "ADJA")), method = "ll", big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
+  function(.Object, window = 5, keep = NULL, method = "ll", big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
     if (require("rcqp", quietly = TRUE)){
       pAttribute <- .Object@pAttribute
       if (length(pAttribute) == 0) stop("The partition is required to included counts. Enrich the object first!")
