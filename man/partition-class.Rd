@@ -30,7 +30,7 @@
 \S4method{aggregate}{partition}(x)
 
 \S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  cpos = TRUE, cutoff = NULL, ...)
+  template = getTemplate(.Object), cpos = TRUE, cutoff = NULL, ...)
 
 \S4method{freq}{partition}(.Object)
 

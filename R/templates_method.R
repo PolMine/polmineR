@@ -16,7 +16,8 @@ setMethod("getTemplate", "character", function(.Object){
   if (.Object %in% names(getOption("polmineR.templates"))){
     return(getOption("polmineR.templates")[[.Object]])
   } else {
-    stop("the template requested is not available")
+    warning("the template requested is not available")
+    return(NULL)
   }
 })
 

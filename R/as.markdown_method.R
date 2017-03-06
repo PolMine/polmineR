@@ -70,14 +70,13 @@ setMethod(
   "as.markdown", "partition",
   function(
     .Object,
-    meta = getOption("polmineR.meta"),
+    meta = getOption("polmineR.meta"), template = getTemplate(.Object),
     cpos = TRUE, cutoff = NULL,
     ...
   ){
     # ensure that template requested is available
-    stopifnot(.Object@corpus %in% getTemplate())
-    templateUsed <- getTemplate(.Object@corpus)
-    if (is.null(templateUsed[["paragraphs"]])){
+    stopifnot(is.null(template))
+    if (is.null(template[["paragraphs"]])){
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
       if (cpos) tokens <- .wrapTokens(tokens)
       tokens <- paste(tokens, collapse = " ")
@@ -94,10 +93,9 @@ setMethod(
   })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
+setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, template = getTemplate(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
-  templateUsed <- getTemplate(.Object@corpus)
-  if (is.null(meta)) meta <- templateUsed[["metadata"]]
+  if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections == TRUE){
     maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1
     if (maxNoStrucs != length(.Object@strucs)){
@@ -129,7 +127,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
     metaChange <- TRUE
     metadata <- matrix(apply(.Object@metadata, 2, function(x) as.vector(x)), nrow = 1)
   }
-  type <- CQI$struc2str(.Object@corpus, templateUsed[["speech"]][["sAttribute"]], .Object@strucs)
+  type <- CQI$struc2str(.Object@corpus, template[["speech"]][["sAttribute"]], .Object@strucs)
   
   if (is.numeric(cutoff)){
     beyondCutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
@@ -147,9 +145,9 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
     if (metaChange[i] == TRUE) { 
       meta <- paste(metadata[i,], collapse=" | ", sep="")
       meta <- paste(
-        templateUsed[["document"]][["format"]][1],
+        template[["document"]][["format"]][1],
         meta,
-        templateUsed[["document"]][["format"]][2],
+        template[["document"]][["format"]][2],
         collapse = ""
         )
       meta <- adjustEncoding(meta, "latin1")
@@ -162,9 +160,9 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, cpos = 
     if (cpos == TRUE) tokens <- .wrapTokens(tokens)
     plainText <- paste(tokens, collapse = " ")
     plainText <- paste(
-      templateUsed[["speech"]][["format"]][[type[i]]][1],
+      template[["speech"]][["format"]][[type[i]]][1],
       plainText,
-      templateUsed[["speech"]][["format"]][[type[i]]][1],
+      template[["speech"]][["format"]][[type[i]]][1],
       sep = ""
       )
     paste(meta, plainText)

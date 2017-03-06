@@ -19,6 +19,7 @@ NULL
 #' @param pAttribute the p-attribute(s) to use
 #' @param corpus name of CWB corpus
 #' @param id2str logical, whether to add rownames (only if query is NULL)
+#' @param sort logical, whether to sort stat
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
 #' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
@@ -119,9 +120,19 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), verbose = TRUE){
+setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, verbose = TRUE){
   if (is.null(query)){
-    if (length(system("which cwb-lexdecode", intern = TRUE) > 0)){
+    if (require("polmineR.Rcpp", quietly = TRUE)){
+      TF <- data.table(
+        count = polmineR.Rcpp::getCounts(corpus = .Object, pAttribute = pAttribute)
+      )
+      TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
+      Encoding(TF[["token"]]) <- "unknown"
+      colnames(TF) <- c("count", pAttribute)
+      setkeyv(TF, pAttribute)
+      if (sort == TRUE) setorderv(TF, cols = pAttribute)
+      setcolorder(TF, c(pAttribute, "count"))
+    } else if (length(system("which cwb-lexdecode", intern = TRUE) > 0)){
       # check whether cwb-lexdecode command line tool is available
       # cwb-lexdecode will be significantly faster than using rcqp
       cmd <- paste(c("cwb-lexdecode", "-f", "-P", pAttribute, .Object), collapse = " ")
@@ -136,9 +147,9 @@ setMethod("count", "character", function(.Object, query = NULL, pAttribute = get
       colnames(TF) <- c(pAttribute, "count")
       # TF[[pAttribute]] <- enctutf8(TF[[pAttribute]])
       setkeyv(TF, pAttribute)
-      setorderv(TF, cols = pAttribute)
+      if (sort) setorderv(TF, cols = pAttribute)
     } else {
-      TF <- count(1:(size(.Object) - 1), .Object, pAttribute = pAttribute)
+      TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
     }
     return(TF)
   } else {

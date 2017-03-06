@@ -251,12 +251,16 @@ setMethod(
 
 
 #' @rdname context-method
-setMethod("context", "character", function(.Object, ...) context(partition(.Object), ...))
+setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
+  C <- Corpus$new(.Object)
+  C$count(pAttribute)
+  context(C$as.partition(), query = query, pAttribute = pAttribute, ...)
+})
 
 #' @rdname context-method
-setMethod("context", "Corpus", function(.Object, pAttribute = getOption("polmineR.pAttribute"), ...){
+setMethod("context", "Corpus", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
   if (nrow(.Object$stat) == 0) .Object$count(pAttribute)
-  context(.Object$as.partition(), pAttribute = pAttribute, ...)
+  context(.Object$as.partition(), query = query, pAttribute = pAttribute, ...)
 })
 
 #' @docType methods

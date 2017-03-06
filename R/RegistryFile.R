@@ -175,7 +175,7 @@ RegistryFile <- setRefClass(
     
     write = function(filename = NULL){
       if (!is.null(filename)) .self$filename <- filename
-      message("... writing registry to file: ", .self$filename)
+      message("... writing registry: ", .self$filename)
       cat(.self$txt, file = .self$filename, sep = "\n")
     },
     

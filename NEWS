@@ -2,6 +2,9 @@ v0.7.2
 * updated documentation of partition-method.
 * documentation of hits-method improved
 * use-methode: default value for pkg ist NULL (return to default registry), function more robust
+* Rework for parsing the registry
+* rework of templates, are part of options now (see ?setTemplate, ?getTemplate)
+* experimental use of polmineR.Rcpp-package for fast counts for whole corpus
 
 v0.7.1
 * size-method now allows for a param 'sAttribute'
