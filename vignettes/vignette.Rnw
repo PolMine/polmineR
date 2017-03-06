@@ -157,11 +157,11 @@ The partition object has a method that will give you immediate access to view th
 
 <<context, echo=TRUE, results="tex", tidy=FALSE>>=
 if (execute){
-  integration <- context(
-     bt, "Integration", pAttribute="word",
-    left=20, right=20
-  )
-  summary(integration)
+  # integration <- context(
+  #    bt, "Integration", pAttribute="word",
+  #   left = 20, right = 20
+  # )
+  # summary(integration)
 }
 @
 
@@ -204,9 +204,9 @@ To identify the specific vocabulary of a corpus of interest, a keyness test base
 
 <<keyness, echo=TRUE, results="tex", message=FALSE, tidy=FALSE>>=
 if (execute){
-  coalition <- enrich(coalition, pAttribute="word")
-  bt <- enrich(coalition, pAttribute="word")
-  vocabulary <- compare(coalition, bt, included=TRUE)
+  # coalition <- enrich(coalition, pAttribute="word")
+  # bt <- enrich(coalition, pAttribute="word")
+  # vocabulary <- compare(coalition, bt, included=TRUE)
 }
 @
 

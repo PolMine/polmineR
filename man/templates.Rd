@@ -7,27 +7,24 @@
 \alias{getTemplate,missing-method}
 \alias{setTemplate}
 \alias{setTemplate,character-method}
-\alias{setTemplate,missing-method}
 \title{Manage templates.}
 \usage{
-getTemplate(x)
+getTemplate(.Object, ...)
 
-\S4method{getTemplate}{character}(x)
+\S4method{getTemplate}{character}(.Object)
 
-\S4method{getTemplate}{missing}()
+\S4method{getTemplate}{missing}(.Object)
 
-setTemplate(x, ...)
+setTemplate(.Object, ...)
 
-\S4method{setTemplate}{character}(x, template)
-
-\S4method{setTemplate}{missing}()
+\S4method{setTemplate}{character}(.Object, template)
 }
 \arguments{
-\item{x}{either a "character" vector, if missing, the names of available templates will be returned}
-
 \item{...}{further parameters}
 
 \item{template}{template to assign (a list)}
+
+\item{x}{either a "character" vector, if missing, the names of available templates will be returned}
 }
 \description{
 When the polmineR package is loaded, an environment .templates will be assigned to the global 

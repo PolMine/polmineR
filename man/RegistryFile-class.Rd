@@ -8,6 +8,12 @@
 \arguments{
 \item{corpus}{name of the CWB corpus}
 
+\item{new}{a new value to set}
+
+\item{filename}{a filename}
+
+\item{package}{name of a package}
+
 \item{registry}{directory of the registry (defaults to CORPUS_Registry environment variable)}
 }
 \description{
@@ -16,9 +22,7 @@ Read, parse and modify registry file.
 \section{Fields}{
 
 \describe{
-\item{\code{corpus}}{corpus name}
-
-\item{\code{dir}}{registry directory}
+\item{\code{registryDir}}{registry directory}
 
 \item{\code{encoding}}{corpus encoding}
 
@@ -53,7 +57,8 @@ Read, parse and modify registry file.
 
 \item{\code{getProperties()}}{Get corpus properties.}
 
-\item{\code{initialize(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))}}{Initialize a new RegistryFile object.}
+\item{\code{initialize(corpus = NULL, registry = Sys.getenv("CORPUS_REGISTRY"),
+  package = NULL, filename = NULL)}}{Initialize a new RegistryFile object.}
 
 \item{\code{parse()}}{Parse the registry file.}
 

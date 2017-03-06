@@ -1,5 +1,51 @@
 if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
 
+default_templates <- list(
+  
+  plain = list(
+    document = list(
+      sAttribute = "text",
+      format = c("### ", "")
+    )
+  ),
+  
+  article = list(
+    document = list(
+      sAttribute = "text",
+      format = c("### ", "")
+    ),
+    paragraphs = list(
+      sAttribute = "p_type",
+      format = list(
+        meta = c("### ", ""),
+        title = c("## ", ""),
+        teaser = c("_", "_\n"),
+        body = c("", "\n"),
+        highlight = c("_", "_\n"),
+        headline = c("# ", "")
+      )
+    )
+  ),
+  
+  plpr = list(
+    metadata = c("text_speaker", "text_date", "text_party"),
+    document = list(
+      sAttribute = "text",
+      format = c("\n### ", "\n")
+    ),
+    speech = list(
+      sAttribute = "text_type",
+      format = list(
+        speech = c("", ""),
+        interjection = c("\n> ", "\n")
+      )
+    )
+  )
+  
+)
+
+
+
 .onLoad <- function (lib, pkg) {
   
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
@@ -28,6 +74,7 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.interface" = "rcqp",
     "polmineR.template" = "default",
+    "polmineR.templates" = default_templates,
     "polmineR.cutoff" = 5000
   )
 }
