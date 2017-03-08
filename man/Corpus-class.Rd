@@ -8,6 +8,9 @@
 \usage{
 Corpus
 }
+\arguments{
+\item{id2str}{logical, whether to perform id2str when doing count}
+}
 \description{
 Corpus class.
 }

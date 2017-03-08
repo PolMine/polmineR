@@ -34,10 +34,14 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       }
     }
     if (nrow(meta) != 0){
-      .Object@cpos <- matrix(
-        data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
-        ncol = 2, byrow = TRUE
-      )
+      if (require("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
+        .Object@cpos <- polmineR.Rcpp::getRegionMatrix(.Object@corpus, .Object@sAttributeStrucs, meta[,1])
+      } else {
+        .Object@cpos <- matrix(
+          data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
+          ncol = 2, byrow = TRUE
+        )
+      }
       .Object@strucs <- as.numeric(meta[,1])
     } else {
       warning("returning a NULL object")

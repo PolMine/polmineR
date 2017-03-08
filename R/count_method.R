@@ -120,27 +120,34 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, verbose = TRUE){
+setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
     if (require("polmineR.Rcpp", quietly = TRUE)){
+      if (verbose) message("... using polmineR.Rcpp for fast counting")
       TF <- data.table(
         count = polmineR.Rcpp::getCounts(corpus = .Object, pAttribute = pAttribute)
       )
-      TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
-      Encoding(TF[["token"]]) <- "unknown"
-      colnames(TF) <- c("count", pAttribute)
-      setkeyv(TF, pAttribute)
-      if (sort == TRUE) setorderv(TF, cols = pAttribute)
-      setcolorder(TF, c(pAttribute, "count"))
+      if (id2str){
+        TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
+        Encoding(TF[["token"]]) <- "unknown"
+        colnames(TF) <- c("count", pAttribute)
+        setkeyv(TF, pAttribute)
+        setcolorder(TF, c(pAttribute, "count"))
+        if (sort == TRUE) setorderv(TF, cols = pAttribute)
+      } else {
+        setkeyv(TF, "id")
+      }
     } else if (length(system("which cwb-lexdecode", intern = TRUE) > 0)){
       # check whether cwb-lexdecode command line tool is available
       # cwb-lexdecode will be significantly faster than using rcqp
+      if (verbose) message("... using cwb-lexdecode for counting")
       cmd <- paste(c("cwb-lexdecode", "-f", "-P", pAttribute, .Object), collapse = " ")
       lexdecodeResult <- system(cmd, intern = TRUE)
       Encoding(lexdecodeResult) <- getEncoding(.Object)
       lexdecodeList <- strsplit(lexdecodeResult, "\t")
       TF <- data.table(
         token = sapply(lexdecodeList, function(x) x[2]),
+        id = c(0:(length(lexdecodeList) - 1)),
         count = as.integer(sapply(lexdecodeList, function(x) x[1]))
       )
       Encoding(TF[["token"]]) <- "unknown"

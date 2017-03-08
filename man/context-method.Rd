@@ -18,9 +18,10 @@
   stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE)
 
-\S4method{context}{character}(.Object, ...)
+\S4method{context}{character}(.Object, query,
+  pAttribute = getOption("polmineR.pAttribute"), ...)
 
-\S4method{context}{Corpus}(.Object,
+\S4method{context}{Corpus}(.Object, query,
   pAttribute = getOption("polmineR.pAttribute"), ...)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)

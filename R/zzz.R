@@ -75,7 +75,8 @@ default_templates <- list(
     "polmineR.interface" = "rcqp",
     "polmineR.template" = "default",
     "polmineR.templates" = default_templates,
-    "polmineR.cutoff" = 5000
+    "polmineR.cutoff" = 5000,
+    "polmineR.Rcpp" = TRUE
   )
 }
 

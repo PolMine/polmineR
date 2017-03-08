@@ -24,17 +24,17 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname enrich-method
-setMethod("enrich", "partition", function(object, size=FALSE, pAttribute=NULL, id2str=TRUE, meta=NULL, verbose=TRUE, mc=FALSE, ...){
+setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NULL, id2str = TRUE, meta = NULL, verbose = TRUE, mc=FALSE, ...){
   if (size == TRUE) object@size <- size(object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
-    if (verbose==TRUE) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+    if (verbose) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
     object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)
     object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
-    if (verbose==TRUE) message('... setting up metadata (table and list of values)')
-    object@metadata <- meta(object, sAttributes=meta)
+    if (verbose) message('... setting up metadata (table and list of values)')
+    object@metadata <- meta(object, sAttributes = meta)
   }
   object
 })

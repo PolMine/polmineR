@@ -128,6 +128,7 @@ setMethod(
   "cooccurrences", "partition",
   function(.Object, window = 5, keep = NULL, method = "ll", big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
     if (require("rcqp", quietly = TRUE)){
+      if (verbose) message("... taking preparatory steps")
       pAttribute <- .Object@pAttribute
       if (length(pAttribute) == 0) stop("The partition is required to included counts. Enrich the object first!")
       coll <- new(
@@ -211,7 +212,6 @@ setMethod(
           stop("MISSING DEPENDENCIES: Packages bigmemory and/or bigtabulate are not installed") 
         }
         
-        
       } else if (big == FALSE){
         if (verbose == TRUE) message("... making windows with corpus positions")
         .makeWindows <- function(i, cpos, ...){
@@ -258,12 +258,11 @@ setMethod(
           }
         }
         
-        if (verbose == TRUE) message("... counting co-occurrences")
-        # TF <- DT[, nrow(.SD), by=c(eval(c(aColsId, bColsId))), with=TRUE] # not fast
+        if (verbose) message("... counting co-occurrences")
         TF <- DT[, .N, by = c(eval(c(aColsId, bColsId))), with = TRUE]
         setnames(TF, "N", "count_ab")
         
-        if (verbose == TRUE) message("... adding window size")
+        if (verbose) message("... adding window size")
         setkeyv(contextDT, cols = aColsId)
         setkeyv(TF, cols = aColsId)
         TF <- contextDT[TF]
@@ -280,7 +279,7 @@ setMethod(
           TF[, eval(bColsId[i]) := NULL]
         }
       )
-      setkeyv(TF, cols=aColsStr)
+      setkeyv(TF, cols = aColsStr)
       setkeyv(.Object@stat, cols = pAttribute)
       TF[, "count_a" := .Object@stat[TF][["count"]]]
       setkeyv(TF, cols=bColsStr)

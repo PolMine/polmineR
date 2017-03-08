@@ -20,7 +20,8 @@ count(.Object, ...)
   freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
 
 \S4method{count}{character}(.Object, query = NULL,
-  pAttribute = getOption("polmineR.pAttribute"), verbose = TRUE)
+  pAttribute = getOption("polmineR.pAttribute"), sort = FALSE,
+  id2str = TRUE, verbose = TRUE)
 
 \S4method{count}{vector}(.Object, corpus, pAttribute)
 }
@@ -51,6 +52,8 @@ auxiliary function)}
 
 \item{total}{defaults to FALSE, if TRUE, the added value of counts (column:
 TOTAL) will be amended to the data.table that is returned}
+
+\item{sort}{logical, whether to sort stat}
 
 \item{corpus}{name of CWB corpus}
 }

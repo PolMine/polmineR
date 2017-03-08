@@ -31,7 +31,7 @@ resetRegistry <- function(registryDir = NULL, verbose = TRUE) {
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
     Sys.setenv(CORPUS_REGISTRY = getOption("polmineR_default_registry"))
   }
-  if (verbose) message("... new CORPUS_REGISTRY: ", registryDir)
+  if (verbose) message("... reseting CORPUS_REGISTRY environment variable")
   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
     if (verbose) message("... unloading rcqp library")
     library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
@@ -43,6 +43,10 @@ resetRegistry <- function(registryDir = NULL, verbose = TRUE) {
     "rcqp", package = "rcqp",
     lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
   )
-  if (("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])) && verbose == TRUE) message("OK") 
+  if (("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])) && verbose == TRUE){
+    message("... status: OK") 
+  } else {
+    massage("... status: WARNING - rcqp dynamic library not loaded")
+  }
   invisible(oldRegistry)
 }

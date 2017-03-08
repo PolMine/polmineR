@@ -6,9 +6,9 @@
 \alias{pAttributes,character-method}
 \title{Get p-attributes.}
 \usage{
-pAttributes(.Object)
+pAttributes(.Object, ...)
 
-\S4method{pAttributes}{character}(.Object)
+\S4method{pAttributes}{character}(.Object, pAttribute = NULL)
 }
 \arguments{
 \item{.Object}{a character vector (length 1) or partition object}

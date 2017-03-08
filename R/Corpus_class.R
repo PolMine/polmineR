@@ -6,6 +6,7 @@ setOldClass("Corpus")
 #' @field corpus character vector, CWB corpus
 #' @field encoding encoding of the corpus
 #' @field count data.table with counts
+#' @param id2str logical, whether to perform id2str when doing count
 #' @section Methods:
 #' \describe{
 #'   \item{one}{bla}
@@ -31,9 +32,9 @@ Corpus <- R6Class(
       if (!is.null(pAttribute)) self$count(pAttribute)
     }, 
     
-    count = function(pAttribute = getOption("polmineR.pAttribute")){
+    count = function(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE){
       self$pAttribute <- pAttribute
-      self$stat <- count(self$corpus, pAttribute = pAttribute)
+      self$stat <- count(self$corpus, pAttribute = pAttribute, id2str = id2str)
     },
     
     as.partition = function(){

@@ -62,7 +62,7 @@ setMethod(
   signature(.Object="partition"),
   function
   (
-    .Object, query, cqp=is.cqp,
+    .Object, query, cqp = is.cqp,
     pAttribute = getOption("polmineR.pAttribute"),
     sAttribute = NULL,
     left = getOption("polmineR.left"),
@@ -109,7 +109,7 @@ setMethod(
     
     # getting counts of query in partition
     .verboseOutput(message="getting cpos", verbose = verbose)
-    hits <- cpos(.Object, query, pAttribute[1], cqp=cqp)
+    hits <- cpos(.Object, query, pAttribute[1], cqp = cqp)
     if (is.null(hits)){
       warning('no hits for query ', query, ' returning NULL object')
       return(NULL)
@@ -126,18 +126,18 @@ setMethod(
       positivelistIds <- unlist(lapply(positivelist, function(x) CQI$regex2id(.Object@corpus, pAttribute, x)))
     }
     
-    .verboseOutput(message="generating contexts", verbose = verbose)
+    .verboseOutput(message = "generating contexts", verbose = verbose)
     
     bigBag <- blapply(
-      hits, f=.surrounding,
-      mc=mc, progress=progress, verbose=verbose,
-      ctxt=ctxt, left=left, right=right, corpus=.Object@corpus, sAttribute=sAttribute,
-      stoplistIds=stoplistIds, positivelistIds=positivelistIds, method=cposMethod
+      hits, f = .surrounding,
+      mc = mc, progress = progress, verbose = verbose,
+      ctxt = ctxt, left = left, right = right, corpus = .Object@corpus, sAttribute = sAttribute,
+      stoplistIds = stoplistIds, positivelistIds = positivelistIds, method = cposMethod
       )
     
     bigBag <- bigBag[!sapply(bigBag, is.null)] # remove empty contexts
     if (!is.null(stoplistIds) || !is.null(positivelistIds)){
-      if (verbose==TRUE) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
+      if (verbose) message("... hits filtered because stopword(s) occur / elements of positive list do not in context: ", (length(hits)-length(bigBag)))
     }
     ctxt@cpos <- lapply(bigBag, function(x) x$cpos)
     ctxt@size <- length(unlist(lapply(bigBag, function(x) unname(unlist(x$cpos)))))
@@ -155,21 +155,20 @@ setMethod(
       names(idList) <- pAttribute
       ID <- as.data.table(idList)
       setkeyv(ID, pAttribute)
-      count <- function(x) return(x)
-      ctxt@stat <- ID[, count(.N), by=c(eval(pAttribute)), with=TRUE]
+      ctxt@stat <- ID[, .N, by = c(eval(pAttribute)), with=TRUE]
       for (i in c(1:length(pAttribute))){
         ctxt@stat[, eval(pAttribute[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[pAttribute[i]]]))]
       }
-      setnames(ctxt@stat, "V1", "count_window")
+      setnames(ctxt@stat, "N", "count_window")
       setkeyv(ctxt@stat, pAttribute)
     }
     
     # statistical tests
     if (!is.null(method)){
-      ctxt@stat[, "count_partition" := merge(ctxt@stat, .Object@stat, all.x=TRUE, all.y=FALSE)[["count"]]]
+      ctxt@stat[, "count_partition" := merge(ctxt@stat, .Object@stat, all.x = TRUE, all.y = FALSE)[["count"]]]
       for (test in method){
         .verboseOutput(message = paste("statistical test:", test), verbose = verbose)
-        ctxt <- do.call(test, args = list(.Object=ctxt))  
+        ctxt <- do.call(test, args = list(.Object = ctxt))  
       }
       colnamesOld <- colnames(ctxt@stat)
     }
@@ -193,13 +192,13 @@ setMethod(
       cposLeft <- cposLeft[which(CQI$cpos2struc(corpus, sAttribute, cposLeft) == set[3])]
       cposRight <- cposRight[which(CQI$cpos2struc(corpus, sAttribute, cposRight)==set[3])]   
     }
-    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+    return(list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight))
   },
   
   "expandToRegion" = function(set, left, right, corpus, sAttribute){
     cposLeft <- c((CQI$cpos2lbound(corpus, sAttribute, set[1])):(set[1] - 1))
     cposRight <- c((set[2] + 1):(CQI$cpos2rbound(corpus, sAttribute, set[1])))
-    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+    return(list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight))
   },
   
   "expandBeyondRegion" = function(set, left, right, corpus, sAttribute){
@@ -216,15 +215,15 @@ setMethod(
     rightCposMax <- CQI$struc2cpos(corpus, sAttribute, rightStruc)[2]
     cposRight <- c((set[2] + 1):rightCposMax)
     # handing it back
-    return(list(left=cposLeft, node=c(set[1]:set[2]), right=cposRight))
+    return(list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight))
   }
   
 )
 
-.surrounding <- function (set, ctxt, left, right, corpus, sAttribute, stoplistIds=NULL, positivelistIds=NULL, method, ...) {
+.surrounding <- function (set, ctxt, left, right, corpus, sAttribute, stoplistIds = NULL, positivelistIds = NULL, method, ...) {
   cposList <- .makeLeftRightCpos[[method]](
-    set, left=left, right=right,
-    corpus=corpus, sAttribute=sAttribute
+    set, left = left, right=right,
+    corpus = corpus, sAttribute = sAttribute
     )
   cpos <- c(cposList$left, cposList$right)
   ids <- lapply(
@@ -234,9 +233,9 @@ setMethod(
   
   if (!is.null(stoplistIds) || !is.null(positivelistIds)) {
     exclude <- FALSE
-    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids[[1]])) {exclude <- TRUE}
+    if (!is.null(stoplistIds)) if (any(stoplistIds %in% ids[[1]])) exclude <- TRUE
     if (!is.null(positivelistIds)) {
-      if (any(positivelistIds %in% ids[[1]]) == FALSE) { exclude <- TRUE }
+      if (any(positivelistIds %in% ids[[1]]) == FALSE) exclude <- TRUE
     }
   } else { 
     exclude <- FALSE
@@ -244,7 +243,7 @@ setMethod(
   if (exclude == TRUE){
     retval <- NULL
   } else {
-    retval <- list(cpos=cposList, ids=ids)
+    retval <- list(cpos = cposList, ids = ids)
   }
   return(retval)
 }

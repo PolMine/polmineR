@@ -13,6 +13,7 @@ use <- function(pkg = NULL){
     registryDir <- system.file("extdata", "cwb", "registry", package = pkg)
     if (dir.exists(registryDir)){
       previousRegistry <- resetRegistry(registryDir)
+      setTemplate()
     } else {
       stop("pkg exists, but is not a standardized package")
     }

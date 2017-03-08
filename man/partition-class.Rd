@@ -34,7 +34,7 @@
 
 \S4method{freq}{partition}(.Object)
 
-\S4method{pAttributes}{partition}(.Object)
+\S4method{pAttributes}{partition}(.Object, pAttribute = NULL)
 
 \S4method{[}{partition,ANY,ANY,ANY}(x, i)
 
