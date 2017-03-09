@@ -38,7 +38,7 @@
 install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...){
   for (package in pkgs){
     if (package %in% available.packages(contrib.url(repos = repo))){
-      if (lib %in% names(list(...))){
+      if ("lib" %in% names(list(...))){
         destdir <- list(...)[["lib"]]
       } else {
         destdir <- .libPaths()[1]

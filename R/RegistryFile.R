@@ -182,6 +182,9 @@ RegistryFile <- setRefClass(
     adjustHome = function(){
       if (.self$package %in% installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
+        if (.Platform$OS.type == "windows"){
+          newDir <- gsub("^.*?/", "/", newDir)
+        }
         .self$setHome(new = newDir)
         .self$write()
       } else {

@@ -74,17 +74,27 @@ setMethod("count", "partition", function(
     ))
     data.table(query = query, count = no, freq = no/.Object@size)
   } else {
-    cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
     pAttr_id <- paste(pAttribute, "_id", sep="")
     if (length(pAttribute) == 1){
-      TF <- count(cpos, .Object@corpus, pAttribute)
+      if (require("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
+        countMatrix <- polmineR.Rcpp::regionsToCountMatrix(
+          corpus = .Object@corpus, pAttribute = pAttribute,
+          matrix = .Object@cpos
+          )
+        TF <- as.data.table(countMatrix)
+        setnames(TF, old = c("V1", "V2"), new = c(pAttr_id, "count"))
+      } else {
+        cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+        TF <- count(cpos, .Object@corpus, pAttribute)
+      }
+      
     } else {
+      cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
       idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
       names(idList) <- paste(pAttribute, "_id", sep="")
       ID <- as.data.table(idList)
-      setkeyv(ID, cols=names(idList))
-      count <- function(x) return(x)
-      TF <- ID[, count(.N), by=c(eval(names(idList))), with=TRUE]
+      setkeyv(ID, cols = names(idList))
+      TF <- ID[, .N, by=c(eval(names(idList))), with=TRUE]
       setnames(TF, "V1", "count")
     }
     if (id2str == TRUE){
@@ -95,9 +105,9 @@ setMethod("count", "partition", function(
           TF[, eval(pAttribute[i]) := str , with=TRUE] 
         })
       dummy <- lapply(pAttr_id, function(x) TF[, eval(x) := NULL, with=TRUE])
-      setcolorder(TF, neworder=c(pAttribute, "count"))
+      setcolorder(TF, neworder = c(pAttribute, "count"))
     } else {
-      setcolorder(TF, neworder=c(pAttr_id, "count"))
+      setcolorder(TF, neworder = c(pAttr_id, "count"))
     }
     return(TF)
   }
