@@ -34,7 +34,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       }
     }
     if (nrow(meta) != 0){
-      if (require("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
+      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
         .Object@cpos <- polmineR.Rcpp::getRegionMatrix(.Object@corpus, .Object@sAttributeStrucs, meta[,1])
       } else {
         .Object@cpos <- matrix(

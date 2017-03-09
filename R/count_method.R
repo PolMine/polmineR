@@ -76,7 +76,7 @@ setMethod("count", "partition", function(
   } else {
     pAttr_id <- paste(pAttribute, "_id", sep="")
     if (length(pAttribute) == 1){
-      if (require("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
+      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
         countMatrix <- polmineR.Rcpp::regionsToCountMatrix(
           corpus = .Object@corpus, pAttribute = pAttribute,
           matrix = .Object@cpos
@@ -132,10 +132,10 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 #' @rdname count-method
 setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
-    if (require("polmineR.Rcpp", quietly = TRUE)){
+    if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
       if (verbose) message("... using polmineR.Rcpp for fast counting")
       TF <- data.table(
-        count = polmineR.Rcpp::getCounts(corpus = .Object, pAttribute = pAttribute)
+        count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute)
       )
       if (id2str){
         TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
@@ -145,9 +145,10 @@ setMethod("count", "character", function(.Object, query = NULL, pAttribute = get
         setcolorder(TF, c(pAttribute, "count"))
         if (sort == TRUE) setorderv(TF, cols = pAttribute)
       } else {
+        TF[, id := 0:(nrow(TF) - 1)]
         setkeyv(TF, "id")
       }
-    } else if (length(system("which cwb-lexdecode", intern = TRUE) > 0)){
+    } else if (getOption("polmineR.cwb-lexdecode") == TRUE){
       # check whether cwb-lexdecode command line tool is available
       # cwb-lexdecode will be significantly faster than using rcqp
       if (verbose) message("... using cwb-lexdecode for counting")
@@ -161,7 +162,7 @@ setMethod("count", "character", function(.Object, query = NULL, pAttribute = get
         count = as.integer(sapply(lexdecodeList, function(x) x[1]))
       )
       Encoding(TF[["token"]]) <- "unknown"
-      colnames(TF) <- c(pAttribute, "count")
+      colnames(TF) <- c(pAttribute, "id", "count")
       # TF[[pAttribute]] <- enctutf8(TF[[pAttribute]])
       setkeyv(TF, pAttribute)
       if (sort) setorderv(TF, cols = pAttribute)

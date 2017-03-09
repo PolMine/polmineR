@@ -78,6 +78,25 @@ default_templates <- list(
     "polmineR.cutoff" = 5000,
     "polmineR.Rcpp" = TRUE
   )
+  
+  if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
+    options("polmineR.cwb-s-decode" = TRUE)
+  } else {
+    options("polmineR.cwb-s-decode" = FALSE)
+  }
+  
+  if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+    options("polmineR.cwb-encode" = TRUE)
+  } else {
+    options("polmineR.cwb-encode" = FALSE)
+  }
+  
+  if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+    options("polmineR.cwb-lexdecode" = TRUE)
+  } else {
+    options("polmineR.cwb-lexdecode" = FALSE)
+  }
+  
 }
 
 getSettings <- function(){
