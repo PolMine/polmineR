@@ -101,7 +101,7 @@ RegistryFile <- setRefClass(
       
       if (length(.self$txt) == 0) .self$read()
       .self$home <- gsub("^HOME\\s+(.*?)\\s*$", "\\1", grep("^HOME.*?$", .self$txt, value = TRUE), perl = TRUE)
-      invisible(.self$home)
+      .self$home
     },
     
     getInfo = function(){

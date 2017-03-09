@@ -15,10 +15,37 @@ install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...)
 }
 \description{
 Convenience function for making the installation of indexed CWB corpora
-wrapped into R data packages as easy as possible.
+wrapped into R data packages as easy as possible. Packaged corpora can
+then be used by calling \code{\link{use}}.
+}
+\details{
+The function combines two steps necessary to install a CWB corpus wrapped into
+a R data package. First, it calls \code{install.packages}, then it 
+resets the path pointing to the directory with the indexed corpus
+files in the registry file.
+
+The corpus will be installed to the standard library directory for installing R packages
+(\code{.libPaths{}[1]}). Another location can be used by stating the param 'lib'
+explicitly (see documentation for \code{\link{install.packages}}).
+
+See examples how to check whether the directory has been set correctly.
+
+An installed data package with a CWB corpus is assumed to include a directory
+\code{/extdata/cwb/registry} for registry files and a directory
+\code{/extdata/cwb/indexed_corpora} for the inexed corpus files.
 }
 \examples{
-\dontrun{
+\donttest{
+install.corpus("plprbt.pvs2017")
+# is equivalent to:
+install.corpus("plprbt.pvs2017", repo = "http://polmine.sowi.uni-due.de/packages")
+RegistryFile(package = "plprbt.pvs2017")$adjustHome()
+# check the directory that has been set
+RegistryFile$new(package = "plprbt.pvs2017")$getHome()
 }
+}
+\seealso{
+For managing registry files, see class \code{\link{RegistryFile}}, see \code{\link{use}}
+for switching to a packaged corpus.
 }
 
