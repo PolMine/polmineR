@@ -53,7 +53,8 @@ setMethod("enrich", "kwic", function(object, meta = NULL){
     metainformation <- lapply(
       meta,
       function(metadat){
-        strucs <- CQI$cpos2struc(object@corpus, metadat, unlist(lapply(object@cpos, function(x)x$node[1])))
+        cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]]][position == 0][, .SD[1], by = hit_no][["cpos"]]
+        strucs <- CQI$cpos2struc(object@corpus, metadat, cposToGet)
         as.utf8(CQI$struc2str(object@corpus, metadat, strucs))
       }
     )

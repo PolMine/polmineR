@@ -50,45 +50,43 @@ setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 #' @rdname kwic
 setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta"), cpos = TRUE, neighbor = NULL, verbose=FALSE){
   
-  tab <- lapply(
-    c("left", "node", "right"),
-    function(what){
-      tokens <- unlist(lapply(
-        .Object@cpos, function(x) {
-          getTokenStream(
-            x[[what]],
-            corpus = .Object@corpus,
-            encoding = .Object@encoding,
-            pAttribute = .Object@pAttribute,
-            collapse = " ",
-            beautify=TRUE
-            )
-        }))
-    }
-  )
-  tab <- data.frame(tab, stringsAsFactors = FALSE)
-  colnames(tab) <- c("left", "node", "right")
+  DT <- copy(.Object@cpos) # do not accidentily store things
+  setorderv(DT, cols = c("hit_no", "cpos"))
+  decoded_pAttr <- CQI$id2str(
+    .Object@corpus, .Object@pAttribute[1],
+    DT[[paste(.Object@pAttribute[1], "id", sep = "_")]]
+    )
+  decoded_pAttr2 <- as.utf8(decoded_pAttr)
+  DT[, .Object@pAttribute[1] := decoded_pAttr2, with = TRUE]
+  DT[, direction := sign(position)]
   
   if (length(neighbor) > 0){
-    rowsToKeep <- grep(neighbor, apply(tab, 1, function(x)paste(x[length(x)-2], x[length(x)])))
-    tab <- tab[rowsToKeep,]
-    if (length(rowsToKeep) > 0){
-      .Object@cpos <- lapply(rowsToKeep, function(i) .Object@cpos[[i]])
+    leftRightDT <- DT[direction != 0]
+    hitsToKeep <- leftRightDT[grep(neighbor, leftRightDT[[.Object@pAttribute[1]]])][["hit_no"]]
+    DT <- DT[hit_no %in% hitsToKeep]
+    if (length(hitsToKeep) > 0 && cpos == TRUE){
+      .Object@cpos <- DT
     } else {
-      .Object@cpos <- NULL
+      .Object@cpos <- data.table()
     }
   } 
+  
+  # paste left and right context
+  DT2 <- DT[, paste(word, collapse = " "), by = .(hit_no, direction)]
+  tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
+  setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+  
   
   if (is.null(meta)) meta <- character()
   conc <- new(
     'kwic',
     corpus = .Object@corpus, left = .Object@left, right = .Object@right,
-    table = tab,
-    metadata = meta,
-    encoding = .Object@encoding
+    table = as.data.frame(tab),
+    metadata = if (length(meta) == 0) character() else meta,
+    encoding = .Object@encoding,
+    cpos = if (cpos) DT else data.table()
     )
-  if (cpos == TRUE) conc@cpos <- .Object@cpos
-  
+
   conc <- enrich(conc, meta)
   if (!is.null(neighbor) || !length(neighbor) == 0) conc@neighbor <- neighbor
   
@@ -143,18 +141,35 @@ setMethod("kwic", "character", function(
       left <- c((row[1] - left - 1):(row[1] - 1))
       right <- c((row[2] + 1):(row[2] + right + 1))
       list(
-        left=left[left > 0],
-        node=c(row[1]:row[2]),
-        right=right[right <= cposMax]
+        left = left[left > 0],
+        node = c(row[1]:row[2]),
+        right = right[right <= cposMax]
         )
     }
     )
+  DT <- data.table(
+    hit_no = unlist(lapply(1:length(cposList), function(i) rep(i, times = length(unlist(cposList[[i]]))))),
+    cpos = unname(unlist(cposList)),
+    position = unlist(lapply(
+      cposList,
+      function(x) lapply(
+        names(x),
+        function(x2)
+          switch(
+            x2,
+            left = rep(-1, times = length(x[[x2]])),
+            node = rep(0, times = length(x[[x2]])),
+            right = rep(1, times = length(x[[x2]])))
+        )))
+  )
+  DT[[paste(pAttribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, pAttribute, DT[["cpos"]])
+  
   ctxt <- new(
     "context",
     count = nrow(hits), stat = data.table(),
     corpus = .Object,
     left = left, right = right, 
-    cpos = cposList,
+    cpos = DT,
     pAttribute = pAttribute,
     encoding = RegistryFile$new(.Object)$getEncoding()
     )

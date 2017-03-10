@@ -31,7 +31,7 @@ setClass(
   "kwic",
   slots = c(
     corpus = "character",
-    cpos = "list",
+    cpos = "data.table",
     metadata = "character",
     left = "numeric",
     right = "numeric",
@@ -53,7 +53,9 @@ NULL
 setMethod("show", "kwic", function(object){
   lineview <- getOption("polmineR.lineview")
   if (lineview == FALSE){
-    retvalRaw <- datatable(object@table)
+    df <- object@table
+    df[["hit_no"]] <- NULL
+    retvalRaw <- datatable(df)
     retvalRaw <- formatStyle(retvalRaw, "node", color="blue", textAlign="center")
     retval <- formatStyle(retvalRaw, "left", textAlign="right")
   } else {

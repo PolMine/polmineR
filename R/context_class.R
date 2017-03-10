@@ -28,16 +28,16 @@ NULL
 #' @docType class
 #' @exportClass context
 setClass("context",
-         representation(query="character",
-                        count="numeric",
-                        partition="character",
-                        partitionSize="numeric",
-                        left="numeric",
-                        right="numeric",
-                        size="numeric",
-                        sAttribute="character",
-                        cpos="list",
-                        call="character"
+         representation(query = "character",
+                        count = "numeric",
+                        partition = "character",
+                        partitionSize = "numeric",
+                        left = "numeric",
+                        right = "numeric",
+                        size = "numeric",
+                        sAttribute = "character",
+                        cpos = "data.table",
+                        call = "character"
          ),
          contains=c("comp", "textstat")
 )

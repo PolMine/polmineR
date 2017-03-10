@@ -132,7 +132,6 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   # getting metadata for all kwic lines is potentially not the fastes solution ...
   if (length(object@metadata) == 0){
     metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
-    # metadataDef <- get(".templates", envir = .GlobalEnv)[[object@corpus]][["metadata"]]
     if (verbose) message("... using metadata from template: ", metadataDef)
     if (length(metadataDef) > 0){
       if (verbose) message("... enriching")
@@ -150,8 +149,8 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   fulltext <- highlight(
     fulltext,
     highlight = list(
-      yellow = c(object@cpos[[i]][["left"]], object@cpos[[i]][["right"]]),
-      lightgreen = object@cpos[[i]][["node"]]
+      yellow = object@cpos[hit_no == i][position != 0][["cpos"]],
+      lightgreen = object@cpos[hit_no == i][position == 0][["cpos"]]
     )
   )
   fulltext

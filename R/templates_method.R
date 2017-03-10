@@ -41,14 +41,16 @@ setMethod("setTemplate", "character", function(.Object, template){
   options("polmineR.templates" = templateList)
 })
 
-setMethod("setTemplate", "missing", function(.Object){
+setMethod("setTemplate", "missing", function(.Object, verbose = FALSE){
   if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
     for (.Object in grep("PLPR", corpus()[["corpus"]], value = TRUE)){
+      if (verbose) message("template plpr for ", .Object)
       setTemplate(.Object, getTemplate("plpr"))
     }
     for (C in corpus()[["corpus"]]){
-      filename <- file.path(RegistryFile$new(.Object)$getHome(), "template.R")
+      filename <- file.path(RegistryFile$new(C)$getHome(), "template.R")
       if (file.exists(filename)){
+        if (verbose) message("customized template found for ", C)
         setTemplate(C, eval(parse(filename)))
       }
     }
