@@ -25,7 +25,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
         if (regex == FALSE) {
           meta <- meta[which(meta[,2] %in% .Object@sAttributes[[sAttr]]),]
         } else {
-          lines <- lapply(.Object@sAttributes[[s]], function(x) grep(x, meta[,2]))
+          lines <- lapply(.Object@sAttributes[[sAttr]], function(x) grep(x, meta[,2]))
           meta <- meta[unique(unlist(lines)),]
         }
       }

@@ -47,10 +47,10 @@ setMethod(
     ){
   if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
-    if (verbose == TRUE) message("... enriching partition with metadata")
+    if (verbose) message("... enriching partition with metadata")
     object <- enrich(object, meta = meta, verbose=FALSE)
-    if (verbose == TRUE) message("... generating markdown")
-    if (any(cqp) == TRUE) cpos <- TRUE
+    if (verbose) message("... generating markdown")
+    if (any(cqp)) cpos <- TRUE
     markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
     markdown <- paste(
       paste('## Corpus: ', object@corpus, '\n* * *\n\n'),

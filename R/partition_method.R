@@ -118,11 +118,8 @@ setMethod("partition", "character", function(
     "Partition",
     new(
       partitionType,
-      stat = data.table(),
-      call = deparse(match.call()),
-      corpus = .Object,
-      name = name,
-      xml = xml
+      stat = data.table(), call = deparse(match.call()),
+      corpus = .Object, name = name, xml = xml
       )
     )  
   if(is.null(encoding)) {
@@ -131,21 +128,11 @@ setMethod("partition", "character", function(
     Partition@encoding <- encoding
   }
   .verboseOutput(paste('get encoding:', Partition@encoding), verbose)
-  Partition@sAttributes <- lapply(def, function(x) adjustEncoding(x, Partition@encoding))  
+  Partition@sAttributes <- lapply(def, function(x) adjustEncoding(x, Partition@encoding))
 
   .verboseOutput('get cpos and strucs', verbose)
   if(is.null(def)){
-    corpusProperties <- RegistryFile$new(.Object)$getProperties()
-    if ("anchor" %in% names(corpusProperties)){
-      def <- list()
-      def[[corpusProperties["anchor"]]] <- ".*"
-      regex <- TRUE
-      Partition@sAttributeStrucs <- names(def)[length(def)]
-      Partition <- sAttributes2cpos(Partition, xml, regex)
-    } else {
-      warning("no anchor element in corpus registry")
-      Partition@cpos <- matrix(c(0, CQI$attribute_size(.Object, pAttributes(.Object)[1]) - 1), nrow = 1)
-    }
+    stop("no sAttributes provided to define partition")
   } else {
     Partition@sAttributeStrucs <- names(def)[length(def)]
     Partition <- sAttributes2cpos(Partition, xml, regex)  

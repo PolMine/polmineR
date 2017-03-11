@@ -75,7 +75,9 @@ setMethod(
     ...
   ){
     # ensure that template requested is available
-    stopifnot(is.null(template))
+    if (is.null(template)){
+      stop("template needed for formatting a partition of corpus ", .Object@corpus , " is missing, use setTemplate()")
+    }
     if (is.null(template[["paragraphs"]])){
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
       if (cpos) tokens <- .wrapTokens(tokens)
