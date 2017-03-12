@@ -187,7 +187,7 @@ getSlot <- function(x, name){
 }
 
 
-.verboseOutput <- function(message, verbose){
+.verboseOutput <- function(message, verbose = TRUE){
   if (verbose == TRUE){
     message(paste("...", message))
   } else if (verbose == "shiny"){

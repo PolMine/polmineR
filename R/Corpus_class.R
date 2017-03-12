@@ -47,6 +47,10 @@ Corpus <- R6Class(
         size = self$size,
         pAttribute = self$pAttribute
       )
+    },
+    
+    getInfo = function(as.html = FALSE){
+      RegistryFile$new(self$corpus)$getInfo()
     }
   )
 )

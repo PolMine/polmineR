@@ -6,6 +6,7 @@ v0.7.2
 * rework of templates, are part of options now (see ?setTemplate, ?getTemplate)
 * experimental use of polmineR.Rcpp-package for fast counts for whole corpus
 * new convenience function install.corpus to install CWB corpus wrapped into R data package
+* adjustments to make package compatible with polmineR.shiny
 
 v0.7.1
 * size-method now allows for a param 'sAttribute'

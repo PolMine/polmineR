@@ -1,4 +1,4 @@
-#' get corpus
+#' Get corpus.
 #' 
 #' Calling \code{corpus()} will return the corpora available. If object 
 #' is a partition or partitionBundle-object, the corpus the respective

@@ -28,12 +28,15 @@ setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NUL
   if (size == TRUE) object@size <- size(object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
-    if (verbose) message('... computing term frequencies (for p-attribute ', pAttribute, ')')  
+    .verboseOutput(
+      message = paste('computing term frequencies for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
+      verbose = verbose
+      )  
     object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)
     object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
-    if (verbose) message('... setting up metadata (table and list of values)')
+    .verboseOutput(message = 'setting up metadata (table and list of values)', verbose = verbose)
     object@metadata <- meta(object, sAttributes = meta)
   }
   object
