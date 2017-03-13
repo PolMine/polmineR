@@ -72,9 +72,13 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   } 
   
   # paste left and right context
-  DT2 <- DT[, paste(word, collapse = " "), by = .(hit_no, direction)]
-  tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
-  setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+  if (nrow(DT) > 0){
+    DT2 <- DT[, paste(word, collapse = " "), by = .(hit_no, direction)]
+    tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
+    setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+  } else {
+    tab <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
+  }
   
   
   if (is.null(meta)) meta <- character()
