@@ -3,11 +3,10 @@ NULL
 
 #' Get counts.
 #' 
-#' Count number of occurrences of a query (CQP syntax may be used) or, if query is NULL (default),
-#' of all tokens.
+#' Count all tokens, or number of occurrences of a query (CQP syntax may be used).
 #' 
 #' @seealso  For a metadata-based breakdown of counts
-#' (i.e. a differentiation by s-attributes), see \code{"dispersion"}.
+#' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
 #' 
 #' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a
 #'   character vector (length 1) providing the name of a corpus
@@ -63,18 +62,18 @@ setMethod("count", "partition", function(
     if (progress) verbose <- FALSE
     .getNumberOfHits <- function(query, partition, cqp, pAttribute, ...) {
       if (verbose) message("... processing query ", query)
-      cposResult <- cpos(.Object=.Object, query=query, cqp=cqp, pAttribute=pAttribute, verbose=FALSE)
+      cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
       ifelse(is.null(cposResult), 0, nrow(cposResult))
     }
     no <- as.integer(blapply(
       as.list(query),
-      f=.getNumberOfHits,
-      partition=.Object, cqp=cqp, pAttribute=pAttribute,
-      mc=mc, verbose=verbose, progress=progress
+      f = .getNumberOfHits,
+      partition = .Object, cqp = cqp, pAttribute = pAttribute,
+      mc = mc, verbose = verbose, progress = progress
     ))
     data.table(query = query, count = no, freq = no/.Object@size)
   } else {
-    pAttr_id <- paste(pAttribute, "_id", sep="")
+    pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
       if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
         countMatrix <- polmineR.Rcpp::regionsToCountMatrix(
@@ -87,25 +86,23 @@ setMethod("count", "partition", function(
         cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
         TF <- count(cpos, .Object@corpus, pAttribute)
       }
-      
     } else {
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
       idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
-      names(idList) <- paste(pAttribute, "_id", sep="")
+      names(idList) <- paste(pAttribute, "id", sep = "_")
       ID <- as.data.table(idList)
       setkeyv(ID, cols = names(idList))
-      TF <- ID[, .N, by=c(eval(names(idList))), with=TRUE]
+      TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
       setnames(TF, "V1", "count")
     }
-    if (id2str == TRUE){
+    if (id2str){
       dummy <- lapply(
         c(1:length(pAttribute)),
         function(i){
-          str <- as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from=.Object@encoding)
-          TF[, eval(pAttribute[i]) := str , with=TRUE] 
+          str <- as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from = .Object@encoding)
+          TF[, eval(pAttribute[i]) := str , with = TRUE] 
         })
-      dummy <- lapply(pAttr_id, function(x) TF[, eval(x) := NULL, with=TRUE])
-      setcolorder(TF, neworder = c(pAttribute, "count"))
+      setcolorder(TF, neworder = c(pAttribute, pAttr_id, "count"))
     } else {
       setcolorder(TF, neworder = c(pAttr_id, "count"))
     }
@@ -133,43 +130,47 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
     if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
-      if (verbose) message("... using polmineR.Rcpp for fast counting")
-      TF <- data.table(
-        count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute)
-      )
-      if (id2str){
+      if (verbose) message("... using polmineR.Rcpp for counting")
+      TF <- data.table(count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute))
+      TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
+      setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
+      if (id2str == FALSE){
+        setkeyv(TF, paste(pAttribute, "id", sep = "_"))
+        setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
+      } else {
         TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
-        colnames(TF) <- c("count", pAttribute)
+        setnames(TF, old = "token", new = pAttribute)
         setkeyv(TF, pAttribute)
-        setcolorder(TF, c(pAttribute, "count"))
-        if (sort == TRUE) setorderv(TF, cols = pAttribute)
-      } else {
-        TF[, id := 0:(nrow(TF) - 1)]
-        setkeyv(TF, "id")
+        setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
+        if (sort) setorderv(TF, cols = pAttribute)
       }
-    } else if (getOption("polmineR.cwb-lexdecode") == TRUE){
-      # check whether cwb-lexdecode command line tool is available
+      return(TF)
+    } else if (getOption("polmineR.cwb-lexdecode")){
       # cwb-lexdecode will be significantly faster than using rcqp
       if (verbose) message("... using cwb-lexdecode for counting")
-      cmd <- paste(c("cwb-lexdecode", "-f", "-P", pAttribute, .Object), collapse = " ")
+      cmd <- paste(c("cwb-lexdecode", "-f", "-n", "-P", pAttribute, .Object), collapse = " ")
       lexdecodeResult <- system(cmd, intern = TRUE)
       Encoding(lexdecodeResult) <- getEncoding(.Object)
       lexdecodeList <- strsplit(lexdecodeResult, "\t")
       TF <- data.table(
-        token = sapply(lexdecodeList, function(x) x[2]),
-        id = c(0:(length(lexdecodeList) - 1)),
-        count = as.integer(sapply(lexdecodeList, function(x) x[1]))
+        token = sapply(lexdecodeList, function(x) x[3]),
+        id = sapply(lexdecodeList, function(x) x[1]),
+        count = as.integer(sapply(lexdecodeList, function(x) x[2]))
       )
       Encoding(TF[["token"]]) <- "unknown"
-      colnames(TF) <- c(pAttribute, "id", "count")
-      # TF[[pAttribute]] <- enctutf8(TF[[pAttribute]])
+      colnames(TF) <- c(pAttribute, paste(pAttribute, "id", sep = "_"), "count")
       setkeyv(TF, pAttribute)
       if (sort) setorderv(TF, cols = pAttribute)
+      return(TF)
     } else {
       TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
+      if (id2str){
+        TF[, token := CQI$id2str(.Object, pAttribute, TF[[paste(pAttribute, "id", sep = "_")]])]
+        setnames(TF, old = "token", new = pAttribute)
+        setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
+      }
     }
-    return(TF)
   } else {
     stopifnot(.Object %in% CQI$list_corpora())
     total <- CQI$attribute_size(.Object, pAttribute)
@@ -201,7 +202,7 @@ setMethod("count", "vector", function(.Object, corpus, pAttribute){
     count = c(length(which(ids == 0)), count)
   )
   setkey(TF, "id")
-  setnames(TF, "id", paste(pAttribute, "_id", sep=""))
+  setnames(TF, "id", paste(pAttribute, "id", sep = "_"))
   TF[count > 0]
 })
 

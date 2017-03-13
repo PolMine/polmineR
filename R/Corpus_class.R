@@ -1,4 +1,4 @@
-setOldClass("Corpus")
+# setOldClass("Corpus")
 
 
 #' Corpus class.

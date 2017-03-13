@@ -29,7 +29,7 @@ setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NUL
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
     .verboseOutput(
-      message = paste('computing term frequencies for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
+      message = paste('getting counts for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
       verbose = verbose
       )  
     object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)

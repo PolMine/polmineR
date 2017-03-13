@@ -1,6 +1,6 @@
 #' Get cooccurrence statistics.
 #' 
-#' @param .Object a partition object
+#' @param .Object a partition object, or a character vector with a CWB corpus
 #' @param window no of tokens to the left and to the right of nodes
 #' @param cpos integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used
 #' @param pAttribute the pAttribute of the tokens
@@ -126,194 +126,190 @@ setMethod("cooccurrences", "character", function(.Object, keep = NULL, cpos = NU
 #' @rdname cooccurrences
 setMethod(
   "cooccurrences", "partition",
-  function(.Object, window = 5, keep = NULL, method = "ll", big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
-    if (require("rcqp", quietly = TRUE)){
-      if (verbose) message("... taking preparatory steps")
-      pAttribute <- .Object@pAttribute
-      if (length(pAttribute) == 0) stop("The partition is required to included counts. Enrich the object first!")
-      coll <- new(
-        "cooccurrences",
-        pAttribute = pAttribute, corpus = .Object@corpus, encoding = .Object@encoding,
-        left = window, right = window, partitionSize = .Object@size, stat = data.table()
-      )
-      coll@call <- deparse(match.call())
-      coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
-      pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep = ""))
-      aColsId <- setNames(paste("a_", pAttribute, "_id", sep=""), pAttribute)
-      bColsId <- setNames(paste("b_", pAttribute, "_id", sep=""), pAttribute)
-      aColsStr <- setNames(paste("a_", pAttribute, sep=""), pAttribute)
-      bColsStr <- setNames(paste("b_", pAttribute, sep=""), pAttribute)
+  function(.Object, query = NULL, window = 5, keep = NULL, method = "ll", big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
+    if (verbose) message("... taking preparatory steps")
+    pAttribute <- .Object@pAttribute
+    if (length(pAttribute) == 0) stop("The partition is required to included counts. Enrich the object first!")
+    coll <- new(
+      "cooccurrences",
+      pAttribute = pAttribute, corpus = .Object@corpus, encoding = .Object@encoding,
+      left = window, right = window, partitionSize = .Object@size, stat = data.table()
+    )
+    coll@call <- deparse(match.call())
+    coll@partition <- strsplit(deparse(sys.call(-1)), "\\(|\\)|,")[[1]][2]
+    pAttr <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep = ""))
+    aColsId <- setNames(paste("a_", pAttribute, "_id", sep=""), pAttribute)
+    bColsId <- setNames(paste("b_", pAttribute, "_id", sep=""), pAttribute)
+    aColsStr <- setNames(paste("a_", pAttribute, sep=""), pAttribute)
+    bColsStr <- setNames(paste("b_", pAttribute, sep=""), pAttribute)
+    
+    # turn tokens to keep to id 
+    if (!is.null(keep)){
+      if (all(pAttribute %in% names(keep))){
+        keepId <- lapply(setNames(names(keep), names(keep)), function(x) CQI$str2id(.Object@corpus, x, keep[[x]]))  
+      } else {
+        stop("Count not performed for all pAttributes to keep.")
+      }
+    }
+    
+    if (big == TRUE){
+      if (requireNamespace("bigmemory", quietly = TRUE) && requireNamespace("bigtabulate", quietly = TRUE) ) {
+        if (verbose == TRUE) message("... generating context tables")
+        BIG <- bigmemory::big.matrix(ncol = window * 2 + 1, nrow = .Object@size, ...)
+        ids <- lapply(
+          c(1:nrow(.Object@cpos)),
+          function(i) 
+            CQI$cpos2id(.Object@corpus, pAttribute, c(.Object@cpos[i,1]: .Object@cpos[i,2]))
+        )
+        idPos <- cumsum(lapply(ids, length))
+        .windowPrep <- function(i, ids, window, BIG, ...){
+          idChunk <- ids[[i]]
+          lapply(
+            c(-window:-1, 1:window),
+            function(x){
+              idsToFill <- c(
+                rep(NA, times = min(ifelse( x < 0 , -x, 0), length(idChunk))),
+                idChunk[
+                  ifelse(length(idChunk) <= abs(x), 0, ifelse(x < 0, 1, x + 1))
+                  :
+                    ifelse(length(idChunk) <= abs(x), 0, ifelse(x < 0, length(idChunk)+x, length(idChunk)))
+                  ],
+                rep(NA, times=min(ifelse(x > 0, x, 0), length(idChunk)))
+              )
+              BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), ifelse(x < 0, x + window + 1, x+window)] <- idsToFill
+              BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), window * 2 + 1] <- idChunk
+            })
+        }
+        dummy <- blapply(as.list(c(1:length(ids))), f = .windowPrep, ids = ids, window = window, BIG = BIG, mc = mc)
+        if (verbose == TRUE) message("... counting cooccurrences")
+        rowIndices <- bigtabulate::bigsplit(BIG, ccols = ncol(BIG), breaks=NA, splitcol=NA)
+        .getTables <- function(node, rowIndices, BIG, window, ...){
+          toTabulate <- as.vector(BIG[rowIndices[[node]], c(1:(window * 2))])
+          toTabulate <- toTabulate + 1
+          tabulated <- tabulate(toTabulate)
+          idRawPresent <- which(tabulated != 0)
+          matrix(
+            data=c(
+              rep(as.integer(node), times=length(idRawPresent)),
+              idRawPresent - 1,
+              tabulated[idRawPresent],
+              rep(sum(tabulated[idRawPresent]), times=length(idRawPresent))
+            ),
+            ncol = 4
+          )
+        }
+        tables <- blapply(
+          as.list(names(rowIndices)), f=.getTables,
+          rowIndices = rowIndices, BIG = BIG, window = window,
+          mc = mc
+        )
+        rm(BIG)
+        countMatrices <- do.call(rbind, tables)
+        TF <- data.table(countMatrices)
+        setnames(TF, c(aColsId[1], bColsId[1], "count_ab", "size_window"))
+      } else {
+        stop("MISSING DEPENDENCIES: Packages bigmemory and/or bigtabulate are not installed") 
+      }
       
-      # turn tokens to keep to id 
+    } else if (big == FALSE){
+      if (verbose == TRUE) message("... making windows with corpus positions")
+      .makeWindows <- function(i, cpos, ...){
+        cposMin <- cpos[i,1]
+        cposMax <- cpos[i,2]
+        if (cposMin != cposMax){
+          cposRange <- cposMin:cposMax
+          lapply(
+            setNames(cposRange, cposRange),
+            function(x) {
+              cpos <- c((x - window):(x-1), (x + 1):(x + window))
+              cpos <- cpos[which(cpos >= cposMin)]
+              cpos[which(cpos <= cposMax)]
+            })
+        }
+      }
+      bag <- blapply(as.list(c(1:nrow(.Object@cpos))), f = .makeWindows, cpos = .Object@cpos, mc = mc)
+      bCpos <- lapply(
+        bag,
+        function(x) lapply(names(x), function(y) rep(as.numeric(y), times = length(x[[y]])))
+      )
+      if (verbose) message("... putting together data.table")
+      DT <- data.table(a_cpos = unlist(bag), b_cpos = unlist(bCpos))
+      
+      if (verbose == TRUE) message("... getting token ids")
+      lapply(
+        pAttribute, function(x){
+          DT[, eval(aColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["a_cpos"]]), with = TRUE]
+          DT[, eval(bColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["b_cpos"]]), with = TRUE]
+        }
+      )
+      if (verbose == TRUE) message("... counting window size")
+      # contextDT <- DT[, nrow(.SD), by = c(eval(aColsId)), with = TRUE] 
+      contextDT <- DT[, .N, by = c(eval(aColsId)), with = TRUE] 
+      setnames(contextDT, "N", "size_window")
+      
+      if (verbose == TRUE) message("... applying filter")
       if (!is.null(keep)){
         if (all(pAttribute %in% names(keep))){
-          keepId <- lapply(setNames(names(keep), names(keep)), function(x) CQI$str2id(.Object@corpus, x, keep[[x]]))  
-        } else {
-          stop("Count not performed for all pAttributes to keep.")
+          for (x in names(keep)){
+            DT <- DT[DT[[aColsId[x]]] %in% keepId[[x]]]
+            DT <- DT[DT[[bColsId[x]]] %in% keepId[[x]]]
+          }
         }
       }
       
-      if (big == TRUE){
-        if (requireNamespace("bigmemory", quietly = TRUE) && requireNamespace("bigtabulate", quietly = TRUE) ) {
-          if (verbose == TRUE) message("... generating context tables")
-          BIG <- bigmemory::big.matrix(ncol = window * 2 + 1, nrow = .Object@size, ...)
-          ids <- lapply(
-            c(1:nrow(.Object@cpos)),
-            function(i) 
-              CQI$cpos2id(.Object@corpus, pAttribute, c(.Object@cpos[i,1]: .Object@cpos[i,2]))
-          )
-          idPos <- cumsum(lapply(ids, length))
-          .windowPrep <- function(i, ids, window, BIG, ...){
-            idChunk <- ids[[i]]
-            lapply(
-              c(-window:-1, 1:window),
-              function(x){
-                idsToFill <- c(
-                  rep(NA, times = min(ifelse( x < 0 , -x, 0), length(idChunk))),
-                  idChunk[
-                    ifelse(length(idChunk) <= abs(x), 0, ifelse(x < 0, 1, x + 1))
-                    :
-                      ifelse(length(idChunk) <= abs(x), 0, ifelse(x < 0, length(idChunk)+x, length(idChunk)))
-                    ],
-                  rep(NA, times=min(ifelse(x > 0, x, 0), length(idChunk)))
-                )
-                BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), ifelse(x < 0, x + window + 1, x+window)] <- idsToFill
-                BIG[c(ifelse(i == 1, 1, idPos[i-1]+1):idPos[i]), window * 2 + 1] <- idChunk
-              })
-          }
-          dummy <- blapply(as.list(c(1:length(ids))), f = .windowPrep, ids = ids, window = window, BIG = BIG, mc = mc)
-          if (verbose == TRUE) message("... counting cooccurrences")
-          rowIndices <- bigtabulate::bigsplit(BIG, ccols = ncol(BIG), breaks=NA, splitcol=NA)
-          .getTables <- function(node, rowIndices, BIG, window, ...){
-            toTabulate <- as.vector(BIG[rowIndices[[node]], c(1:(window * 2))])
-            toTabulate <- toTabulate + 1
-            tabulated <- tabulate(toTabulate)
-            idRawPresent <- which(tabulated != 0)
-            matrix(
-              data=c(
-                rep(as.integer(node), times=length(idRawPresent)),
-                idRawPresent - 1,
-                tabulated[idRawPresent],
-                rep(sum(tabulated[idRawPresent]), times=length(idRawPresent))
-              ),
-              ncol = 4
-            )
-          }
-          tables <- blapply(
-            as.list(names(rowIndices)), f=.getTables,
-            rowIndices = rowIndices, BIG = BIG, window = window,
-            mc = mc
-            )
-          rm(BIG)
-          countMatrices <- do.call(rbind, tables)
-          TF <- data.table(countMatrices)
-          setnames(TF, c(aColsId[1], bColsId[1], "count_ab", "size_window"))
-        } else {
-          stop("MISSING DEPENDENCIES: Packages bigmemory and/or bigtabulate are not installed") 
-        }
-        
-      } else if (big == FALSE){
-        if (verbose == TRUE) message("... making windows with corpus positions")
-        .makeWindows <- function(i, cpos, ...){
-          cposMin <- cpos[i,1]
-          cposMax <- cpos[i,2]
-          if (cposMin != cposMax){
-            cposRange <- cposMin:cposMax
-            lapply(
-              setNames(cposRange, cposRange),
-              function(x) {
-                cpos <- c((x - window):(x-1), (x + 1):(x + window))
-                cpos <- cpos[which(cpos >= cposMin)]
-                cpos[which(cpos <= cposMax)]
-              })
-          }
-        }
-        bag <- blapply(as.list(c(1:nrow(.Object@cpos))), f = .makeWindows, cpos = .Object@cpos, mc = mc)
-        bCpos <- lapply(
-          bag,
-          function(x) lapply(names(x), function(y) rep(as.numeric(y), times = length(x[[y]])))
-          )
-        if (verbose) message("... putting together data.table")
-        DT <- data.table(a_cpos = unlist(bag), b_cpos = unlist(bCpos))
-        
-        if (verbose == TRUE) message("... getting token ids")
-        lapply(
-          pAttribute, function(x){
-            DT[, eval(aColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["a_cpos"]]), with = TRUE]
-            DT[, eval(bColsId[x]) := CQI$cpos2id(.Object@corpus, x, DT[["b_cpos"]]), with = TRUE]
-          }
-        )
-        if (verbose == TRUE) message("... counting window size")
-        # contextDT <- DT[, nrow(.SD), by = c(eval(aColsId)), with = TRUE] 
-        contextDT <- DT[, .N, by = c(eval(aColsId)), with = TRUE] 
-        setnames(contextDT, "N", "size_window")
-        
-        if (verbose == TRUE) message("... applying filter")
-        if (!is.null(keep)){
-          if (all(pAttribute %in% names(keep))){
-            for (x in names(keep)){
-              DT <- DT[DT[[aColsId[x]]] %in% keepId[[x]]]
-              DT <- DT[DT[[bColsId[x]]] %in% keepId[[x]]]
-            }
-          }
-        }
-        
-        if (verbose) message("... counting co-occurrences")
-        TF <- DT[, .N, by = c(eval(c(aColsId, bColsId))), with = TRUE]
-        setnames(TF, "N", "count_ab")
-        
-        if (verbose) message("... adding window size")
-        setkeyv(contextDT, cols = aColsId)
-        setkeyv(TF, cols = aColsId)
-        TF <- contextDT[TF]
-        
-      }
+      if (verbose) message("... counting co-occurrences")
+      TF <- DT[, .N, by = c(eval(c(aColsId, bColsId))), with = TRUE]
+      setnames(TF, "N", "count_ab")
       
-      if (verbose == TRUE) message("... converting ids to strings")
-      lapply(
-        c(1:length(pAttribute)),
-        function(i){
-          TF[, eval(aColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[aColsId[i]]])), with = TRUE]
-          TF[, eval(bColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[bColsId[i]]])), with=TRUE]
-          TF[, eval(aColsId[i]) := NULL]
-          TF[, eval(bColsId[i]) := NULL]
-        }
-      )
-      setkeyv(TF, cols = aColsStr)
-      setkeyv(.Object@stat, cols = pAttribute)
-      TF[, "count_a" := .Object@stat[TF][["count"]]]
-      setkeyv(TF, cols=bColsStr)
-      TF[, "count_b" := .Object@stat[TF][["count"]]]
-      setcolorder(TF, c(aColsStr, bColsStr, "count_ab", "count_a", "count_b", "size_window"))
-      if (tcm == FALSE){
-        coll@stat <- TF
-        if ("ll" %in% method) {
-          message('... g2-Test')
-          coll <- ll(coll)
-          coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
-        }
-        return(coll)
-      } else if (tcm == TRUE){
-        concatenate <- function(x) paste(x, collapse = "//")
-        if (length(pAttribute) > 1){
-          TF[, "strKeyA" := apply(TF[, eval(paste("a", pAttribute, sep = "_")), with = FALSE], 1, concatenate)]
-          TF[, "strKeyB" := apply(TF[, eval(paste("b", pAttribute, sep = "_")), with = FALSE], 1, concatenate)]
-        } else {
-          setnames(TF, old = paste("a", pAttribute, sep = "_"), new = "strKeyA")
-          setnames(TF, old = paste("b", pAttribute, sep = "_"), new = "strKeyB")
-        }
-        uniqueKey <- unique(c(TF[["strKeyA"]], TF[["strKeyB"]]))
-        keys <- setNames(c(1:length(uniqueKey)), uniqueKey)
-        i <- unname(keys[TF[["strKeyA"]]])
-        j <- unname(keys[TF[["strKeyB"]]])
-        retval <- simple_triplet_matrix(
-          i = i, j = j, v = TF[["count_ab"]],
-          dimnames = list(a = names(keys)[1:max(i)], b = names(keys)[1:max(j)])
-        )
-        return(retval)
+      if (verbose) message("... adding window size")
+      setkeyv(contextDT, cols = aColsId)
+      setkeyv(TF, cols = aColsId)
+      TF <- contextDT[TF]
+      
+    }
+    
+    if (verbose == TRUE) message("... converting ids to strings")
+    lapply(
+      c(1:length(pAttribute)),
+      function(i){
+        TF[, eval(aColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[aColsId[i]]])), with = TRUE]
+        TF[, eval(bColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[bColsId[i]]])), with=TRUE]
+        TF[, eval(aColsId[i]) := NULL]
+        TF[, eval(bColsId[i]) := NULL]
+      }
+    )
+    setkeyv(TF, cols = aColsStr)
+    setkeyv(.Object@stat, cols = pAttribute)
+    TF[, "count_a" := .Object@stat[TF][["count"]]]
+    setkeyv(TF, cols=bColsStr)
+    TF[, "count_b" := .Object@stat[TF][["count"]]]
+    setcolorder(TF, c(aColsStr, bColsStr, "count_ab", "count_a", "count_b", "size_window"))
+    if (tcm == FALSE){
+      coll@stat <- TF
+      if ("ll" %in% method) {
+        message('... g2-Test')
+        coll <- ll(coll)
+        coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
+      }
+      return(coll)
+    } else if (tcm == TRUE){
+      concatenate <- function(x) paste(x, collapse = "//")
+      if (length(pAttribute) > 1){
+        TF[, "strKeyA" := apply(TF[, eval(paste("a", pAttribute, sep = "_")), with = FALSE], 1, concatenate)]
+        TF[, "strKeyB" := apply(TF[, eval(paste("b", pAttribute, sep = "_")), with = FALSE], 1, concatenate)]
       } else {
-        message("rcqp needs to be available")
+        setnames(TF, old = paste("a", pAttribute, sep = "_"), new = "strKeyA")
+        setnames(TF, old = paste("b", pAttribute, sep = "_"), new = "strKeyB")
       }
+      uniqueKey <- unique(c(TF[["strKeyA"]], TF[["strKeyB"]]))
+      keys <- setNames(c(1:length(uniqueKey)), uniqueKey)
+      i <- unname(keys[TF[["strKeyA"]]])
+      j <- unname(keys[TF[["strKeyB"]]])
+      retval <- simple_triplet_matrix(
+        i = i, j = j, v = TF[["count_ab"]],
+        dimnames = list(a = names(keys)[1:max(i)], b = names(keys)[1:max(j)])
+      )
+      return(retval)
     }
   })
 

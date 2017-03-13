@@ -56,11 +56,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @name context
 #' @docType methods
 #' @aliases context,partition-method
-setMethod(
-  f = "context",
-  signature(.Object="partition"),
-  function
-  (
+setMethod(f = "context", "partition", function(
     .Object, query, cqp = is.cqp,
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
@@ -70,12 +66,6 @@ setMethod(
     mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
   ) {
     
-    # enrich partition if necessary
-    if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){
-      message("... adding missing count for pAttribute ", pAttribute, " to partition")
-      .Object <- enrich(.Object, pAttribute = pAttribute)
-    }
-
     # set method for making left and right context
     if (is.numeric(left) && is.numeric(right)){
       if (is.null(names(left)) && is.null(names(left))){
@@ -92,15 +82,12 @@ setMethod(
     # generate the context object (ctxt)
     ctxt <- new(
       "context",
-      query = query, pAttribute = pAttribute,
-      stat = data.table(),
-      corpus = .Object@corpus,
+      query = query, pAttribute = pAttribute, corpus = .Object@corpus,
+      stat = data.table(), cpos = data.table(),
       left = if (is.character(left)) 0 else left,
       right = if (is.character(right)) 0 else right,
-      encoding = .Object@encoding, 
-      partition = .Object@name,
+      encoding = .Object@encoding,partition = .Object@name,
       partitionSize = as.numeric(.Object@size),
-      cpos = data.table(),
       sAttribute = if (!is.null(sAttribute)) sAttribute else character()
     )
     # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
@@ -166,12 +153,19 @@ setMethod(
         newColumnUtf8 <- as.utf8(newColumn)
         ctxt@stat[, eval(pAttribute[i]) := newColumnUtf8]
       }
-      setkeyv(ctxt@stat, pAttribute)
     }
     
     # statistical tests
     if (!is.null(method)){
-      setkeyv(.Object@stat, cols = pAttribute)
+      
+      # enrich partition if necessary
+      if (!all(paste(pAttribute, "id", sep = "_") %in% colnames(.Object@stat))){
+        message("... adding missing count for pAttribute ", pAttribute, " to partition")
+        .Object <- enrich(.Object, pAttribute = pAttribute, id2str = FALSE)
+      }
+      
+      setkeyv(.Object@stat, cols = paste(pAttribute, "id", sep = "_"))
+      # key still set to id-columns from 
       ctxt@stat <- .Object@stat[ctxt@stat]
       setnames(ctxt@stat, old = "count", new = "count_partition")
       for (test in method){
@@ -179,6 +173,20 @@ setMethod(
         ctxt <- do.call(test, args = list(.Object = ctxt))  
       }
     }
+    
+    # finishing
+    if (nrow(ctxt@stat) > 0){
+      setkeyv(ctxt@stat, pAttribute)
+      for (x in grep("_id$", colnames(ctxt@stat), value = TRUE)) ctxt@stat[[x]] <- NULL
+      setcolorder(
+        ctxt@stat,
+        c(pAttribute, colnames(ctxt@stat)[-which(colnames(ctxt@stat) %in% pAttribute)])
+        )
+      setorderv(ctxt@stat, cols = method[1], order = -1L)
+      
+    }
+    
+    
     ctxt
   })
 
@@ -235,7 +243,7 @@ setMethod(
 #' @rdname context-method
 setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
   C <- Corpus$new(.Object)
-  C$count(pAttribute)
+  C$count(pAttribute, id2str = FALSE)
   context(C$as.partition(), query = query, pAttribute = pAttribute, ...)
 })
 
