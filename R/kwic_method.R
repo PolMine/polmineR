@@ -113,7 +113,7 @@ setMethod("kwic", "partition", function(
     .Object = .Object, query = query, cqp = cqp,
     pAttribute = pAttribute, sAttribute = sAttribute,
     left = left, right = right,
-    method = NULL, count = FALSE, verbose = verbose
+    count = FALSE, verbose = verbose
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
@@ -133,7 +133,7 @@ setMethod("kwic", "character", function(
   neighbor = NULL,
   verbose = TRUE
 ){
-  hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose=FALSE)
+  hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
   if (is.null(hits)) {
     message("sorry, not hits")
     return(NULL)

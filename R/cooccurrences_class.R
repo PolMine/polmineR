@@ -33,9 +33,6 @@ NULL
 #' @rdname cooccurrences-class
 setClass(
   "cooccurrences",
-  representation(
-    svg = "character"
-  ),
   contains = c("context", "comp", "textstat")
 )
 
@@ -79,4 +76,36 @@ setClass("cooccurrencesBundle",
          ),
          contains=c("bundle")
 )
+
+#' @docType methods
+setMethod('summary', 'cooccurrences',
+          function(object) {
+            cat("\n** Context object - general information: **\n")
+            cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
+            cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
+            cat(sprintf("%-20s", "Node:"), object@query, "\n")
+            cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
+            cat(sprintf("%-20s", "Node count:"), object@count, "\n")
+            cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
+            # return(.statisticalSummary(object))
+            
+          })
+
+
+
+#' @docType methods
+setMethod('show', 'cooccurrences', function(object) {
+  roundedTextstatObject <- as.data.frame(round(object))
+  if (Sys.getenv("RSTUDIO") == "1"){
+    View(roundedTextstatObject)
+  } else {
+    if (getOption("polmineR.browse") == TRUE){
+      browse(roundedTextstatObject)  
+    } else {
+      return(roundedTextstatObject) 
+    }
+  }
+})
+
+
 

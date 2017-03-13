@@ -61,8 +61,7 @@ TOTAL) will be amended to the data.table that is returned}
 a \code{"data.table"}
 }
 \description{
-Count number of occurrences of a query (CQP syntax may be used) or, if query is NULL (default),
-of all tokens.
+Count all tokens, or number of occurrences of a query (CQP syntax may be used).
 }
 \examples{
 \dontrun{
@@ -84,7 +83,7 @@ of all tokens.
 }
 \seealso{
 For a metadata-based breakdown of counts
-(i.e. a differentiation by s-attributes), see \code{"dispersion"}.
+(i.e. tabulation by s-attributes), see \code{"dispersion"}.
 
 count
 }

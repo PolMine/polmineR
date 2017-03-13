@@ -7,7 +7,7 @@ NULL
 #' 
 #' @slot query Object of class \code{"character"} node examined
 #' @slot count Object of class \code{"numeric"} number of hits
-#' @slot partition Object of class \code{"character"} the partition the analysis is based on
+#' @slot partition Object of class \code{"partition"} the partition the analysis is based on
 #' @slot partitionSize Object of class \code{"numeric"} the size of the partition
 #' @slot left Object of class \code{"numeric"} number of tokens to the left
 #' @slot right Object of class \code{"numeric"} number of tokens to the right
@@ -30,7 +30,7 @@ NULL
 setClass("context",
          representation(query = "character",
                         count = "numeric",
-                        partition = "character",
+                        partition = "partition",
                         partitionSize = "numeric",
                         left = "numeric",
                         right = "numeric",
@@ -41,34 +41,3 @@ setClass("context",
          ),
          contains=c("comp", "textstat")
 )
-
-#' @docType methods
-setMethod('summary', 'context',
-          function(object) {
-            cat("\n** Context object - general information: **\n")
-            cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
-            cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
-            cat(sprintf("%-20s", "Node:"), object@query, "\n")
-            cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
-            cat(sprintf("%-20s", "Node count:"), object@count, "\n")
-            cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
-            # return(.statisticalSummary(object))
-            
-          })
-
-
-
-#' @docType methods
-setMethod('show', 'context', function(object) {
-  roundedTextstatObject <- as.data.frame(round(object))
-  if (Sys.getenv("RSTUDIO") == "1"){
-    View(roundedTextstatObject)
-  } else {
-    if (getOption("polmineR.browse") == TRUE){
-      browse(roundedTextstatObject)  
-    } else {
-      return(roundedTextstatObject) 
-    }
-  }
-})
-

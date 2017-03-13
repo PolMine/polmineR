@@ -1,8 +1,6 @@
 #' @include partition_class.R partitionBundle_class.R
 NULL
 
-
-
 #' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
@@ -30,8 +28,6 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   vector, it is assumed to provide regex expressions (incredibly long if the
 #'   list is long)
 #' @param count logical
-#' @param method either "LL" (default) or "pmi", if NULL, calculating
-#'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the options
 #' @param verbose report progress, defaults to TRUE
@@ -58,11 +54,10 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @aliases context,partition-method
 setMethod(f = "context", "partition", function(
     .Object, query, cqp = is.cqp,
-    pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+    pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL,
     count = TRUE,
-    method = "ll",
     mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
   ) {
     
@@ -86,7 +81,8 @@ setMethod(f = "context", "partition", function(
       stat = data.table(), cpos = data.table(),
       left = if (is.character(left)) 0 else left,
       right = if (is.character(right)) 0 else right,
-      encoding = .Object@encoding,partition = .Object@name,
+      encoding = .Object@encoding,
+      partition = .Object,
       partitionSize = as.numeric(.Object@size),
       sAttribute = if (!is.null(sAttribute)) sAttribute else character()
     )
@@ -141,7 +137,7 @@ setMethod(f = "context", "partition", function(
     ctxt@count <- nrow(ctxt@cpos[position != 0])
     
     # put together raw stat table
-    if (count == TRUE || length(method) > 0){
+    if (count){
       .verboseOutput(message = "counting tokens", verbose = verbose)
       
       setkeyv(ctxt@cpos, paste(pAttribute, "id", sep = "_"))
@@ -154,39 +150,6 @@ setMethod(f = "context", "partition", function(
         ctxt@stat[, eval(pAttribute[i]) := newColumnUtf8]
       }
     }
-    
-    # statistical tests
-    if (!is.null(method)){
-      
-      # enrich partition if necessary
-      if (!all(paste(pAttribute, "id", sep = "_") %in% colnames(.Object@stat))){
-        message("... adding missing count for pAttribute ", pAttribute, " to partition")
-        .Object <- enrich(.Object, pAttribute = pAttribute, id2str = FALSE)
-      }
-      
-      setkeyv(.Object@stat, cols = paste(pAttribute, "id", sep = "_"))
-      # key still set to id-columns from 
-      ctxt@stat <- .Object@stat[ctxt@stat]
-      setnames(ctxt@stat, old = "count", new = "count_partition")
-      for (test in method){
-        .verboseOutput(message = paste("statistical test:", test), verbose = verbose)
-        ctxt <- do.call(test, args = list(.Object = ctxt))  
-      }
-    }
-    
-    # finishing
-    if (nrow(ctxt@stat) > 0){
-      setkeyv(ctxt@stat, pAttribute)
-      for (x in grep("_id$", colnames(ctxt@stat), value = TRUE)) ctxt@stat[[x]] <- NULL
-      setcolorder(
-        ctxt@stat,
-        c(pAttribute, colnames(ctxt@stat)[-which(colnames(ctxt@stat) %in% pAttribute)])
-        )
-      setorderv(ctxt@stat, cols = method[1], order = -1L)
-      
-    }
-    
-    
     ctxt
   })
 
@@ -247,11 +210,6 @@ setMethod("context", "character", function(.Object, query, pAttribute = getOptio
   context(C$as.partition(), query = query, pAttribute = pAttribute, ...)
 })
 
-#' @rdname context-method
-setMethod("context", "Corpus", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
-  if (nrow(.Object$stat) == 0) .Object$count(pAttribute)
-  context(.Object$as.partition(), query = query, pAttribute = pAttribute, ...)
-})
 
 #' @docType methods
 #' @rdname context-method

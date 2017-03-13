@@ -31,7 +31,7 @@ class to organize information of context analysis
 
 \item{\code{count}}{Object of class \code{"numeric"} number of hits}
 
-\item{\code{partition}}{Object of class \code{"character"} the partition the analysis is based on}
+\item{\code{partition}}{Object of class \code{"partition"} the partition the analysis is based on}
 
 \item{\code{partitionSize}}{Object of class \code{"numeric"} the size of the partition}
 

@@ -25,7 +25,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @docType methods
 #' @rdname enrich-method
 setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NULL, id2str = TRUE, meta = NULL, verbose = TRUE, mc=FALSE, ...){
-  if (size == TRUE) object@size <- size(object)
+  if (size) object@size <- size(object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
     .verboseOutput(

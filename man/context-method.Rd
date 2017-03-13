@@ -13,9 +13,9 @@
 \title{Analyze context of a node word}
 \usage{
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  stoplist = NULL, positivelist = NULL, count = TRUE, method = "ll",
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  stoplist = NULL, positivelist = NULL, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE)
 
 \S4method{context}{character}(.Object, query,
@@ -35,14 +35,14 @@
 
 \item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
 
+\item{left}{no of tokens and to the left of the node word}
+
+\item{right}{no of tokens to the right of the node word}
+
 \item{pAttribute}{p-attribute of the query}
 
 \item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
-
-\item{left}{no of tokens and to the left of the node word}
-
-\item{right}{no of tokens to the right of the node word}
 
 \item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
 context}
@@ -54,9 +54,6 @@ list is long)}
 
 \item{count}{logical}
 
-\item{method}{either "LL" (default) or "pmi", if NULL, calculating
-the statistics will be skipped}
-
 \item{mc}{whether to use multicore; if NULL (default), the function will get
 the value from the options}
 
@@ -67,6 +64,9 @@ the value from the options}
 \item{...}{further parameters}
 
 \item{complete}{enhance completely}
+
+\item{method}{either "LL" (default) or "pmi", if NULL, calculating
+the statistics will be skipped}
 }
 \value{
 depending on whether a partition or a partitionBundle serves as
