@@ -130,52 +130,54 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute 
 setMethod("hits", "partitionBundle", function(
   .Object, query, pAttribute = getOption("polmineR.pAttribute"), size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE
-  ){
+){
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
-  if (length(corpus) == 1){
-    corpusEncoding <- .Object@objects[[1]]@encoding
-    sAttributeStrucs <- unique(unlist(lapply(.Object@objects, function(x) x@sAttributeStrucs)))
-    stopifnot(length(sAttributeStrucs) == 1)
-    # combine strucs and partition names into an overall data.table
-    if (verbose == TRUE) message("... preparing struc table")
-    strucDT <- data.table(
-      struc=unlist(lapply(.Object@objects, function(x) x@strucs)),
-      partition=unlist(lapply(.Object@objects, function(x) rep(x@name, times=length(x@strucs))))
-    )
-    setkey(strucDT, cols="struc")
-    # perform counts
-    if (verbose == TRUE) message("... performing counts")
-    .query <- function(toFind, corpus, encoding, ...) {
-      cposMatrix <- cpos(.Object=corpus, query=toFind, encoding=encoding)
-      if (!is.null(cposMatrix)){
-        dt <- data.table(cposMatrix)
-        dt[, query := toFind]
-        return(dt)
-      } else {
-        return(NULL)
-      }
+  if (length(corpus) > 1) stop("partitonBundle not derived from one corpus")
+  corpusEncoding <- .Object@objects[[1]]@encoding
+  sAttributeStrucs <- unique(unlist(lapply(.Object@objects, function(x) x@sAttributeStrucs)))
+  stopifnot(length(sAttributeStrucs) == 1)
+  # combine strucs and partition names into an overall data.table
+  if (verbose) message("... preparing struc table")
+  strucDT <- data.table(
+    struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
+    partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
+  )
+  setkey(strucDT, cols = "struc")
+  # perform counts
+  
+  if (verbose) message("... now performing counts")
+  if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
+  .query <- function(toFind, corpus, encoding, ...) {
+    cposMatrix <- cpos(.Object = corpus, query = toFind, encoding = encoding, verbose = verbose)
+    if (!is.null(cposMatrix)){
+      dt <- data.table(cposMatrix)
+      dt[, query := toFind]
+      return(dt)
+    } else {
+      return(NULL)
     }
-    countDTlist <- blapply(
-      as.list(query), f=.query,
-      corpus=corpus, encoding=corpusEncoding,
-      mc=mc, progress=progress, verbose=F
-      )
-    countDT <- rbindlist(countDTlist)
-    if (verbose == TRUE) message("... matching data.tables")
-    countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with=TRUE]
-    setkeyv(countDT, cols="struc")
-    DT <- strucDT[countDT] # merge
-    TF <- DT[, .N, by=c("partition", "query")]
-    setnames(TF, old="N", new="count")
-    if (freq == TRUE) size <- TRUE
-    if (size == TRUE){
-      TF[, size := sapply(.Object@objects, function(x) x@size)[TF[["partition"]]]]
-    }
-    if (freq == TRUE) TF[, freq := count / size]
-    return(new("hits", dt = TF, corpus = corpus))
-  } else {
-    message("not implemented")
   }
+  countDTlist <- blapply(
+    as.list(query), f = .query,
+    corpus = corpus, encoding = corpusEncoding,
+    mc = mc, progress = progress, verbose = F
+  )
+  countDT <- rbindlist(countDTlist)
+  if (verbose) message("... matching data.tables")
+  countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with = TRUE]
+  countDT[, "V1" := NULL, with = TRUE][, "V2" := NULL, with = TRUE]
+  setkeyv(countDT, cols = "struc")
+  setkeyv(strucDT, cols = "struc")
+  DT <- strucDT[countDT] # merge
+  DT2 <- DT[-which(is.na(DT[["partition"]]) == TRUE)] # remove hits that are not in partitionBundle
+  TF <- DT2[, .N, by = c("partition", "query")]
+  setnames(TF, old = "N", new = "count")
+  if (freq) size <- TRUE
+  if (size){
+    TF[, size := sapply(.Object@objects, function(x) x@size)[TF[["partition"]]]]
+  }
+  if (freq == TRUE) TF[, freq := count / size]
+  new("hits", dt = TF, corpus = corpus)
 })
 
 #' @rdname hits

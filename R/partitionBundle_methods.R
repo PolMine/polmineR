@@ -54,7 +54,7 @@ setMethod("summary", "partitionBundle", function (object) {
 #' @noRd
 setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
   y <- new("partition")
-  if (verbose) message('Partitions to be merged', length(x@objects))
+  if (verbose) message('Number of partitions to be merged: ', length(x@objects))
   y@corpus <- unique(vapply(x@objects, FUN.VALUE = "characer", function(p) p@corpus))
   if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
   y@xml <- unique(vapply(x@objects, function(p) p@xml, FUN.VALUE = "character"))
@@ -69,6 +69,7 @@ setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
     )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
+  y@size <- size(y)
   y@explanation = c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', ')))
   y@name <- name
   y
