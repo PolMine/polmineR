@@ -38,7 +38,7 @@ punctuation
 \description{
 Method to trim and adjust objects by 
 applying thresholds, minimum frequencies etc. It can be applied to 'context',
-'comp', 'context', 'partition' and 'partitionBundle' objects.
+'features', 'context', 'partition' and 'partitionBundle' objects.
 }
 \author{
 Andreas Blaette

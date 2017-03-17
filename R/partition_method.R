@@ -45,10 +45,8 @@
 #' @author Andreas Blaette
 #' @examples
 #' \dontrun{
-#'    use(polmineR.sampleCorpus)
-#'    spd <- partition(
-#'      "PLPRBTTXT", text_party="SPD", text_type="speech"
-#'      )
+#'    use("polmineR.sampleCorpus")
+#'    spd <- partition("PLPRBTTXT", text_party="SPD", text_type="speech")
 #'    kauder <- partition(
 #'    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
 #'    )

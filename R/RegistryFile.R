@@ -15,6 +15,7 @@
 #' @field name corpus name
 #' @field info path to info file
 #' @export RegistryFile
+#' @importFrom utils installed.packages
 RegistryFile <- setRefClass(
   
   "RegistryFile",
@@ -180,7 +181,7 @@ RegistryFile <- setRefClass(
     },
     
     adjustHome = function(){
-      if (.self$package %in% installed.packages()){
+      if (.self$package %in% utils::installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
         if (.Platform$OS.type == "windows"){
           newDir <- gsub("^.*?/", "/", newDir)

@@ -89,10 +89,8 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
 \dontrun{
-   use(polmineR.sampleCorpus)
-   spd <- partition(
-     "PLPRBTTXT", text_party="SPD", text_type="speech"
-     )
+   use("polmineR.sampleCorpus")
+   spd <- partition("PLPRBTTXT", text_party="SPD", text_type="speech")
    kauder <- partition(
    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
    )

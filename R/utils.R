@@ -145,7 +145,7 @@ flatten <- function(object){
 }
 
 
-# used by compare,cooccurrences-method
+# used by features,cooccurrences-method
 # listed here because it may be used by other methods
 .minMaxId <- function(row){
   if (row["nodeId"] == row["cooccurrenceId"]){

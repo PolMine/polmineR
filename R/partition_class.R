@@ -25,6 +25,7 @@ NULL
 #' @slot sAttributeStrucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
 #' @param .Object a partition object
+#' @param pAttribute a p-attribute (for enriching)
 #' @param x a partition object
 #' @param cpos ...
 #' @param meta ...
@@ -33,8 +34,9 @@ NULL
 #' @param ... further parameters
 #' @param value value
 #' @param object a partition object
-#' @param dim don't know
+#' @param dim dimensions
 #' @param verbose logical, whether to be verbose
+#' @param template template to use
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partitionBundle 
 #'   as.partitionBundle,partition-method export export,partition-method split

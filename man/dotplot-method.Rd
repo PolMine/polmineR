@@ -3,7 +3,7 @@
 \docType{methods}
 \name{dotplot}
 \alias{dotplot}
-\alias{dotplot,comp-method}
+\alias{dotplot,features-method}
 \alias{dotplot,partition-method}
 \alias{dotplot,textstat-method}
 \title{dotplot}
@@ -12,7 +12,7 @@ dotplot(.Object, ...)
 
 \S4method{dotplot}{textstat}(.Object, col = NULL, n = 20, ...)
 
-\S4method{dotplot}{comp}(.Object, col = NULL, n = 20, ...)
+\S4method{dotplot}{features}(.Object, col = NULL, n = 20, ...)
 
 \S4method{dotplot}{partition}(.Object, col = "count", n = 20, ...)
 }

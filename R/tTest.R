@@ -1,7 +1,7 @@
 #' perform t-test
 #' 
 #' S4 method for context object to perform t-test
-#' @param .Object a context or comp object
+#' @param .Object a context or features object
 #' @rdname tTest
 #' @name tTest
 setGeneric("tTest", function(.Object){standardGeneric("tTest")})

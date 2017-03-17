@@ -67,7 +67,7 @@ a \code{"partitionBundle"}-object, skip through the partitions contained in the
 bundle.
 }
 \examples{
-\dontrun{
+\donttest{
 use("polmineR.sampleCorpus")
 options("polmineR.meta" = "text_date")
 merkel <- partition(

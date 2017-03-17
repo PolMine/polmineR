@@ -7,6 +7,21 @@
 #' @param ... further parameters
 setGeneric("view", function(.Object, ...) standardGeneric("view"))
 
+#' @rdname partition-class
+setMethod("view", "partition", function(.Object){
+  tableToView <- .Object@stat
+  View(tableToView)
+})
+
+
+#' @rdname partition-class
+setMethod("view", "cooccurrences", function(.Object){
+  tableToView <- .Object@stat
+  View(tableToView)
+})
+
+
+
 #' @rdname kwic-class
 #' @param .Object a kwic object
 setMethod("view", "kwic", function(.Object){
@@ -16,7 +31,7 @@ setMethod("view", "kwic", function(.Object){
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
-  .Object <- round(.Object, digits=3)
+  .Object <- round(.Object, digits = 3)
   View(.Object@stat)
 })
 
@@ -37,8 +52,8 @@ setMethod("view", "context", function(.Object){
 })
 
 #' @exportMethod view
-#' @rdname comp-class
-setMethod("view", "comp", function(.Object){
+#' @rdname features-class
+setMethod("view", "features", function(.Object){
   .Object <- round(.Object, 2)
   whatToView <- c(
     paste("rank", .Object@method, sep="_"),
@@ -46,7 +61,7 @@ setMethod("view", "comp", function(.Object){
     "count_coi", "count_ref", "exp_coi",
     .Object@method
   )
-  View(.Object@stat[, whatToView, with=FALSE], title="comp")
+  View(.Object@stat[, whatToView, with=FALSE], title = "features")
 })
 
 #' @rdname cooccurrences-class

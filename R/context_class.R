@@ -1,4 +1,4 @@
-#' @include textstat_class.R comp_class.R
+#' @include textstat_class.R features_class.R
 NULL
 
 #' S4 context class
@@ -39,5 +39,5 @@ setClass("context",
                         cpos = "data.table",
                         call = "character"
          ),
-         contains=c("comp", "textstat")
+         contains = c("features", "textstat")
 )

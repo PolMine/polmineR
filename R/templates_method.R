@@ -3,8 +3,9 @@
 #' Templates are used to format the markdown/html output of partitions. Upon loading 
 #' the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'.
 #' 
-#' @param x either a "character" vector, if missing, the names of available templates will be returned
+#' @param .Object object 
 #' @param template template to assign (a list)
+#' @param verbose logical, whether to be verbose
 #' @param ... further parameters
 #' @exportMethod getTemplate
 #' @exportMethod setTemplate
@@ -41,6 +42,7 @@ setMethod("setTemplate", "character", function(.Object, template){
   options("polmineR.templates" = templateList)
 })
 
+#' @rdname templates
 setMethod("setTemplate", "missing", function(.Object, verbose = FALSE){
   if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
     for (.Object in grep("PLPR", corpus()[["corpus"]], value = TRUE)){

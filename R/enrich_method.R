@@ -1,5 +1,5 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include comp_class.R
+#' @include features_class.R
 NULL
 
 #' enrich an object
@@ -56,7 +56,8 @@ setMethod("enrich", "kwic", function(object, meta = NULL){
     metainformation <- lapply(
       meta,
       function(metadat){
-        cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]]][position == 0][, .SD[1], by = hit_no][["cpos"]]
+        cposToGet <- object@cpos[which(object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
+        # cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]] ]  [position == 0][, .SD[1], by = hit_no][["cpos"]]
         strucs <- CQI$cpos2struc(object@corpus, metadat, cposToGet)
         as.utf8(CQI$struc2str(object@corpus, metadat, strucs))
       }

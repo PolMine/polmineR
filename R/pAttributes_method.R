@@ -6,6 +6,8 @@
 #' The available p-attributes are returned by the pAttributes-method.
 #' 
 #' @param .Object a character vector (length 1) or partition object
+#' @param ... further arguments
+#' @param pAttribute p-attribute to decode
 #' @exportMethod pAttributes
 #' @rdname pAttributes
 #' @name pAttributes

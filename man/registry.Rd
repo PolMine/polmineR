@@ -8,6 +8,8 @@ resetRegistry(registryDir = NULL, verbose = TRUE)
 }
 \arguments{
 \item{registryDir}{path to the registry directory to be used}
+
+\item{verbose}{logical, whether to be verbose}
 }
 \value{
 the registry directory used before resetting CORPUS_REGISTRY
@@ -27,11 +29,11 @@ To get the path to a package that contains a CWB corpus, use
 \code{system.file}.
 }
 \examples{
-\dontrun{
+\donttest{
 sampleCorpusPkgDir <- system.file(package="polmineR.sampleCorpus")
 sampleCorpusRegistryDir <- file.path(sampleCorpusPkgDir, "extdata", "cwb", "registry")
 oldRegistryDir <- resetRegistry(sampleCorpusRegistryDir)
-sampleCorpusPartition <- partition("PLPRBTTXT", def=list(text_id=".*"), method="grep", verbose=F)
+sampleCorpusPartition <- partition("PLPRBTTXT", text_speaker = "Volker Kauder")
 resetRegistry(oldRegistryDir)
 }
 }

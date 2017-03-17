@@ -1,12 +1,12 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include comp_class.R
+#' @include features_class.R
 NULL
 
 #' trim an object
 #' 
 #' Method to trim and adjust objects by 
 #' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'comp', 'context', 'partition' and 'partitionBundle' objects.
+#' 'features', 'context', 'partition' and 'partitionBundle' objects.
 #' 
 #' @param object the object to be trimmed
 #' @param termsToKeep ...

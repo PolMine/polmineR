@@ -30,7 +30,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
         }
       }
       if (nrow(meta) == 0) {
-        warning(paste("no strucs found for the values provided for s-attribute", s))
+        warning(paste("no strucs found for the values provided for s-attribute", sAttr))
       }
     }
     if (nrow(meta) != 0){

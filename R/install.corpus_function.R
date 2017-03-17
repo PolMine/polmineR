@@ -35,9 +35,10 @@
 #' # check the directory that has been set
 #' RegistryFile$new(package = "plprbt.pvs2017")$getHome()
 #' }
+#' @importFrom utils available.packages contrib.url install.packages
 install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...){
   for (package in pkgs){
-    if (package %in% available.packages(contrib.url(repos = repo))){
+    if (package %in% utils::available.packages(utils::contrib.url(repos = repo))){
       if ("lib" %in% names(list(...))){
         destdir <- list(...)[["lib"]]
       } else {

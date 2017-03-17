@@ -9,6 +9,8 @@ v0.7.2
 * adjustments to make package compatible with polmineR.shiny
 * cpos-method to get hits more robust if there are not matches for string
 * hits-method removes NAs
+* compare-method renamed to features-method
+* warnings caused by startup on windows removed
 
 v0.7.1
 * size-method now allows for a param 'sAttribute'

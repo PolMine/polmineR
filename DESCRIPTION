@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.1.9011
-Date: 2017-03-13
+Version: 0.7.1.9012
+Date: 2017-03-17
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -13,7 +13,8 @@ Imports:
     Matrix,
     tm,
     foreach,
-    DT
+    DT,
+    utils
 Suggests:
     parallel,
     polmineR.sampleCorpus,
@@ -29,7 +30,7 @@ Suggests:
     bigtabulate,
     rJava,
     shiny
-Additional_repositories: https://polmine.github.io/drat/
+Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
 Description: Tools for corpus analysis using the CWB as an efficient backend
@@ -66,7 +67,7 @@ Collate:
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
     'as.markdown_method.R'
-    'comp_class.R'
+    'features_class.R'
     'context_class.R'
     'contextBundle_class.R'
     'cooccurrences_class.R'
@@ -77,8 +78,6 @@ Collate:
     'kwic_class.R'
     'browse_method.R'
     'chisquare_method.R'
-    'ngrams_method.R'
-    'compare_method.R'
     'context_method.R'
     'cooccurrences_method.R'
     'corpus_method.R'
@@ -94,6 +93,8 @@ Collate:
     'encode_method.R'
     'encoding_method.R'
     'enrich_method.R'
+    'ngrams_method.R'
+    'features_method.R'
     'freq_method.R'
     'frequencies_method.R'
     'getEncoding_method.R'

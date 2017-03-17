@@ -149,8 +149,8 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   fulltext <- highlight(
     fulltext,
     highlight = list(
-      yellow = object@cpos[hit_no == i][position != 0][["cpos"]],
-      lightgreen = object@cpos[hit_no == i][position == 0][["cpos"]]
+      yellow = object@cpos[which(object@cpos[["hit_no"]] == i)][which(object@cpos[["position"]] != 0)][["cpos"]],
+      lightgreen = object@cpos[which(object@cpos[["hit_no"]] == i)][which(object@cpos[["position"]] != 0)][["cpos"]]
     )
   )
   fulltext

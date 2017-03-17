@@ -10,6 +10,14 @@ vignette: >
 
 ---
 
+```{r, eval = TRUE, message = FALSE}
+execute <- FALSE
+if ("CORPUS_REGISTRY" %in% names(Sys.getenv())){
+  if (require(rcqp, quietly = T) && require(polmineR.sampleCorpus, quietly = T)) execute <- TRUE
+}
+```
+
+
 
 # Purpose
 
@@ -46,10 +54,10 @@ Before installing polmineR, the package 'rcqp' needs to be installed. In turn, r
 install.packages("plyr")
 ```
 
-Windows binaries for the rcqp package are not available at CRAN, but can be installed from a so-called 'drat' repository of the PolMine presence at GitHub:
+Windows binaries for the rcqp package are not available at CRAN, but can be installed from a repository of packages entertained at the server of the PolMine project:
 
 ```{r, eval = FALSE}
-install.packages("rcqp", repos = "http://github.polmine.io/drat", type = "win.binary")
+install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "win.binary")
 ```
 
 To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package available at the 'drat' repository uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.
@@ -60,7 +68,7 @@ Before proceeding to install polmineR, we install dependencies that are not inst
 install.packages(pkgs = c("htmltools", "htmlwidgets", "magrittr", "iterators", "NLP"))
 ```
 
-The latest stable version of polmineR can now be installed from CRAN
+The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically. 
 
 ```{r, eval = FALSE}
 install.packages("polmineR")
@@ -73,12 +81,13 @@ install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-The installation may throw warnings. There are two types of warnings you can ignore at this stage:
+The installation may throw warnings. There are three warnings you can ignore at this stage:
 
-* The environment variable CORPUS_REGISTRY is not defined.
-* package 'rcqp' is not installed for 'arch = x64'
+(a) "WARNING: this package has a configure script / It probably needs manual configuration".
+(b) The environment variable CORPUS_REGISTRY is not defined.
+(c) package 'rcqp' is not installed for 'arch = x64'.
 
-As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable "CORPUS_REGISTRY" can be set as follows in R:
+The configure script is for Linux/MacOS installation, its sole purpose is to pass tests for uploading the package to CRAN. As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable "CORPUS_REGISTRY" can be set as follows in R:
 
 ```{r, eval = FALSE}
 Sys.setenv(CORPUS_REGISTRY = "C:/PATH/TO/YOUR/REGISTRY")
@@ -86,9 +95,15 @@ Sys.setenv(CORPUS_REGISTRY = "C:/PATH/TO/YOUR/REGISTRY")
 
 To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file '.Renviron' or '.Renviron.site' when calling the help for the startup process(`?Startup`).
 
-One important note concerning the CORPUS_REGISTRY environment variable: The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name ("C:/Users/Donald Dock/Documents"), for instance. We do not yet know any workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as "C:/cwb").
+Two important notes concerning problems with the CORPUS_REGISTRY environment variable that may cause serious headaches:
 
-Note again: polmineR uses the convenience offered by the RStudio IDE, and working with RStudio is highly recommended. However, as polmineR is currently only available for 32bit R, you may have to check in the settings of RStudio that it will call 32bit R. Check the startup message. If everything works, check whether polmineR can be loaded.
+* The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name ("C:/Users/Donald Duck/Documents"), for instance. We do not yet know any workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as "C:/cwb").
+
+* If you keep data on another volume than your system files, your R packages etc. (eg. volume 'C:' for system files, and 'D:' for data and user files), make sure to set the working directory (`setwd()`) is set to any directory on the volume with the directory defined via CORPUS_REGISTRY. CWB/rcqp will assume that the CORPUS_REGISTRY directory is on the same volume as the current working directory (which can be identified by calling `getwd()`).
+
+Finally: polmineR if optimized for working with RStudio. However, as polmineR is currently only available for 32bit R, you may have to check in the settings of RStudio that it will call 32bit R. To be sure, check the startup message.
+
+If everything works, check whether polmineR can be loaded.
 
 ```{r, eval = FALSE}
 library(polmineR)
@@ -112,19 +127,6 @@ Apart from R packages rcqp requires (plyr, for instance) that can be installed e
 # Loading the package
 
 As mentioned, the rcqp package is the most important dependency of the driller. The CORPUS_REGISTRY environment variable *before* needs to be set before you load polmineR.
-
-```{r}
-if ("CORPUS_REGISTRY" %in% names(Sys.getenv())){
-  if (require(rcqp, quietly = T) && require(polmineR.sampleCorpus, quietly = T)
-  ){
-    execute <- TRUE
-  } else {
-    execute <- FALSE
-  }
-} else {
-  execute <- FALSE
-}
-```
 
 
 ```{r}
@@ -201,7 +203,7 @@ If you work with a flat XML structure, the order of the provided s-attributes ma
 
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
 
-```{r}
+```{r, eval = FALSE}
 if (execute){
   base <- partition("PLPRBTTXT", text_type="speech")
   parties <- partitionBundle(
@@ -242,7 +244,7 @@ To view some concordances, the context object can be indexed accordingly. If you
 To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.
 
 
-```{r}
+```{r, eval = FALSE}
 if (execute){
   
   # one query / one dimension

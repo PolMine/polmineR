@@ -1,4 +1,4 @@
-#' @include textstat_class.R comp_class.R context_class.R
+#' @include textstat_class.R features_class.R context_class.R
 NULL
 
 #' text statistics
@@ -50,7 +50,7 @@ setMethod("ll", "cooccurrences", function(.Object){
 })
 
 #' @rdname textstatistics
-setMethod("ll", "comp", function(.Object){
+setMethod("ll", "features", function(.Object){
   exp_total <- (.Object@stat[["count_coi"]] + .Object@stat[["count_ref"]]) / (.Object@sizeCoi + .Object@sizeRef)
   .Object@stat[, "exp_coi" := .Object@sizeCoi * exp_total]
   .Object@stat[, "exp_ref" := .Object@sizeRef * exp_total]

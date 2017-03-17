@@ -24,7 +24,7 @@
 #' @exportMethod read
 #' @rdname read-method
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' use("polmineR.sampleCorpus")
 #' options("polmineR.meta" = "text_date")
 #' merkel <- partition(

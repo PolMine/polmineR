@@ -30,11 +30,10 @@
 #' @rdname cooccurrences
 #' @examples
 #' \dontrun{
-#'   use(polmineR.sampleCorpus)
-#'   merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
-#'   merkel <- enrich(merkel, pAttribute = "word")
-#'   cooc <- cooccurrences(merkel, keep = NULL)
-#'   cooc <- cooccurrences(merkel, keep = NULL, big = TRUE)
+#' use("polmineR.sampleCorpus")
+#' merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
+#' merkel <- enrich(merkel, pAttribute = "word")
+#' cooc <- cooccurrences(merkel, query = "Deutschland")
 #' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
@@ -96,6 +95,9 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     setkeyv(.Object@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
     setkeyv(.Object@partition@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
     .Object@stat <- .Object@partition@stat[.Object@stat]
+    if (paste("i", .Object@pAttribute, sep = ".") %in% colnames(.Object@stat)){
+      .Object@stat[, eval(paste("i", .Object@pAttribute, sep = ".")) := NULL, with = TRUE]
+    }
     setnames(.Object@stat, old = "count", new = "count_partition")
     for (test in method){
       .verboseOutput(message = paste("statistical test:", test), verbose = verbose)

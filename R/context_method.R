@@ -7,10 +7,12 @@ NULL
 #' @noRd
 setGeneric("context", function(.Object, ...) standardGeneric("context") )
 
-#' Analyze context of a node word
+#' Analyze context of a node word.
 #' 
-#' Retrieve the word context of a token, checking for the boundaries of a XML
-#' region. For formulating the query, CPQ syntax may be used (see
+#' Retrieve the word context of a token, optionally checking for boundaries of a XML
+#' region.
+#' 
+#' For formulating the query, CPQ syntax may be used (see
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
 #' @param .Object a partition or a partitionBundle object
@@ -134,14 +136,14 @@ setMethod(f = "context", "partition", function(
     ctxt@size <- nrow(ctxt@cpos)
     ctxt@sizeCoi <- as.integer(ctxt@size)
     ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
-    ctxt@count <- nrow(ctxt@cpos[position != 0])
+    ctxt@count <- length(which(ctxt@cpos[["position"]] != 0))
     
     # put together raw stat table
     if (count){
       .verboseOutput(message = "counting tokens", verbose = verbose)
       
       setkeyv(ctxt@cpos, paste(pAttribute, "id", sep = "_"))
-      ctxt@stat <- ctxt@cpos[position != 0][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
+      ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
       setnames(ctxt@stat, "N", "count_window")
       
       for (i in c(1:length(pAttribute))){

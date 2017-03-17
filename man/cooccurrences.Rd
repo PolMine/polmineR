@@ -14,15 +14,14 @@ cooccurrences(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, keep = NULL, cpos = NULL,
-  method = "new", mc = getOption("polmineR.mc"), verbose = TRUE,
+  method = "ll", mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  big = FALSE, tcm = FALSE, mc = FALSE, progress = TRUE,
-  verbose = TRUE, ...)
+  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
 \S4method{cooccurrences}{context}(.Object, method = "ll", verbose = TRUE)
 }
@@ -72,11 +71,10 @@ Get cooccurrence statistics.
 }
 \examples{
 \dontrun{
-  use(polmineR.sampleCorpus)
-  merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
-  merkel <- enrich(merkel, pAttribute = "word")
-  cooc <- cooccurrences(merkel, keep = NULL)
-  cooc <- cooccurrences(merkel, keep = NULL, big = TRUE)
+use("polmineR.sampleCorpus")
+merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
+merkel <- enrich(merkel, pAttribute = "word")
+cooc <- cooccurrences(merkel, query = "Deutschland")
 }
 }
 \author{

@@ -8,6 +8,7 @@
 #' @param cpos logical, whether to add cpos as ids in span elements
 #' @param interjections logical, whether to format interjections
 #' @param cutoff maximum number of tokens to reconstruct
+#' @param template a template for formatting output
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown

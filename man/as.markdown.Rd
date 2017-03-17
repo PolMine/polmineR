@@ -29,6 +29,8 @@ as.markdown(.Object, ...)
 
 \item{cutoff}{maximum number of tokens to reconstruct}
 
+\item{template}{a template for formatting output}
+
 \item{interjections}{logical, whether to format interjections}
 }
 \description{
