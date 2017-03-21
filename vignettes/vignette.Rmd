@@ -10,41 +10,242 @@ vignette: >
 
 ---
 
-```{r, eval = TRUE, message = FALSE}
-execute <- FALSE
-if ("CORPUS_REGISTRY" %in% names(Sys.getenv())){
-  if (require(rcqp, quietly = T) && require(polmineR.sampleCorpus, quietly = T)) execute <- TRUE
+```{r, eval = TRUE, message = FALSE, echo = FALSE}
+runcode <- FALSE
+if ("CORPUS_REGISTRY" %in% names(Sys.getenv()) && nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
+  library(data.table)
+  if (require(rcqp, quietly = T) && require(polmineR.sampleCorpus, quietly = T)) runcode <- TRUE
 }
 ```
 
 
-
-# Purpose
+## Purpose
 
 The purpose of the package *polmineR* is to facilitate the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
 
-There are quite a few R packages for text mining already, it is quite unnecessary to implement again what has already been implemented. Thus, this package is also meant to serve as an interface between the [Corpus Workbench (CWB)](http://cwb.sourceforge.net/), an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods. There are several relevant packages on [CRAN]{http://cran.r-project.org/web/views/NaturalLanguageProcessing.html}.
+Key aims for developing the package are:
+* To keep the original text accessible. A seamless integration of qualitative and quantitative steps in corpus analysis supports validation, based on inspecting the text behind the numbers.
+* To provide a library with standard tasks.  It is  an open source platform that will make text mining more productive, avoiding prohibitive costs to reimplement basics, or to run many lines of code to perform a basic tasks.
+* To create a package that makes the creation and analysis of subcorpora ('partitions') easy. A particular strength of the package is to support contrastive/comparative research.
+* To offer performance for users with an ordinary infrastructure. The package picks up the idea of a three-tier software design. Corpus data are managed and indexed by using the Corpus Workbench (CWB).
+* To support sharing consolidated and documented data, following the ideas of reproducible research.
 
-Quantitative text analytics may bear the risk to get out of touch with the original text. The driller seeks to keep the actual text analysed accessible. This is a further reason why the CWB is used as a backend. Apart from the speed of text processing, the Corpus Query Processor (CQP) and the [CQP syntax](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) provide a great machinery to query corpora. Queries found can be viewed with a concordancer.
+There are a few R packages for text mining already. The CRAN tast view is a good place to learn about these, see There are several relevant packages on [CRAN]{http://cran.r-project.org/web/views/NaturalLanguageProcessing.html}. It is not necessary to reimplement what has already been implemented. Thus, this package is also meant to serve as an interface between the [Corpus Workbench (CWB)](http://cwb.sourceforge.net/), an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods.
 
-Using a combination of R and the CWB implies a software architecture you will also find in the [TXM project](http://sourceforge.net/projects/txm/). TXM, among other things, offers a rich functionality for importing corpora into the CWB. A very specific concern of the driller is to provide the means to examine and to compare subcorpora that are generated based on the metainformation stored as structural attributes to the CWB corpus. In line with the French tradition of discourse analysis (and for technical reasons), these subcorpora are called partitions here. The driller may be particularly useful for analyses of diachronic variation and synchronic change.
-
-# Corpora
+Apart from the speed of text processing, the Corpus Query Processor (CQP) and the [CQP syntax](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) provide a great machinery to query corpora. Using a combination of R and the CWB implies a software architecture you will also find in the [TXM project](http://sourceforge.net/projects/txm/). TXM, among other things, offers a rich functionality for importing corpora into the CWB. A very specific concern of the driller is to provide the means to examine and to compare subcorpora that are generated based on the metainformation stored as structural attributes to the CWB corpus. In line with the French tradition of discourse analysis (and for technical reasons), these subcorpora are calle
 
 The *polmineR* is an instrument to analyse corpora imported to the CWB. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes).  Typically, the p-attributes will be 'word', 'pos' (for part-of-speech) and 'lemma' (for the lemmatized word form). 
 
-The driller was developed for analysing corpora with a flat XML strucutre. Future versions of the driller will be able to process nested XML. Yet so far,  it is generally speaking necessary that all metadata are attributes of one XML element. This may be unproblematic if you work with a corpus of newspaper articles, for instance (attributes might be 'date', 'author', 'newspaper', 'page' etc.). For the corpora of plenary debates that were the impetus to develop the package, a respective transformation generated the flat XML structure.
-
-In the package, two (very small) sample corpora from the PolMine project are included. The corpus "PLPRBTTXT" is a set of five plenary protocols (out of several hundred) of the German Bundestag. The sample corpus can only be used if the respective registry files contain the path to the binary files of the indexed corpora. The setting is managed by a configure file that is called when the package is installed.
+In the package, two (very small) sample corpora from the PolMine project are included. The corpus "PLPRBTTXT" is a set of five plenary protocols (out of several thousand) of the German Bundestag. The sample corpus can only be used if the respective registry files contain the path to the binary files of the indexed corpora. The setting is managed by a configure file that is called when the package is installed.
 
 The sample corpora are encoded in latin-1, the traditional encoding used by the CWB. The package is not yet entirely generic as far as encodings are concerned. Problems may still arise when using a utf-8 encoded corpus. Future versions of the driller will be generic in this respect.
 
 
-## Installation
+## Getting started
+
+The annex of the vignette includes a detailed explanation how to install polmineR on Windows (32bit R only, so far), MacOS, and Linux. Once you have installed polmineR, check that the environment variable CORPUS_REGISTRY is set.
+
+```{r, eval = FALSE}
+Sys.getenv("CORPUS_REGISTRY")
+```
+
+See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently. If the CORPUS_REGISTRY variable is set correctly, i.e. pointing to the directory with the registry files describing the corpora, load the polmineR.
+
+```{r, eval = runcode}
+library(polmineR)
+```
+
+If you want to use a CWB corpus packaged in a R data package, you can call use with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset.
+
+```{r, eval = runcode}
+use("europarl.en")
+```
+
+If you want to use the English Europarl corpus, you can download it from a repository at the PolMine server.
+
+```{r, eval = FALSE}
+install.corpus("europarl.en", repo = "http://polmine.sowi.uni-due.de/packages")
+```
+
+Use the corpus-method to check whether which corpora are accessible. It should be the EUROPARL-EN corpus in our case (the names of CWB corpora are always written upper case).
+
+```{r, eval = runcode}
+corpus()
+```
+
+Many functions in the polmineR package use settings that are stored in the general options settings. You can see these settings as follows:
+
+```{r, eval = runcode, message = FALSE, results = 'hide'}
+options()[grep("polmineR", names(options()))]
+```
+
+A few methods (such as kwic, or cooccurrences) will use these settings, if no explicit other value is provided. Here are a few examples how to change settings.
+
+```{r}  
+options("polmineR.left" = 15)
+options("polmineR.right" = 15)
+options("polmineR.mc" = FALSE)
+```
+
+To speed up computations, the polmineR package will sometimes try to use alternative, faster ways to access CWB corpora than the rcqp package. A few computations that are performance critical (for setting up partitions, or to count term frequencies) are implemented in a supplementary package called polmineR.Rcpp. It can be installed from GitHub, but note that it requires an installation of the Corpus Workbench to be present on your system.
+
+```{r, eval = FALSE}
+devtools::install_github("PolMineR/polmineR")
+```
+
+When loading the polmineR package, it is checked whether that plugin is present. 
+
+```{r, eval = runcode}
+getOption("polmineR.Rcpp")
+```
+
+## Working with corpora: Core methods
+
+### Keyword-in-context (kwic)
+
+The kwic method applied to the name of a corpus will return an output that will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 'meta' parameter.
+
+```{r, eval = FALSE}
+kwic("EUROPARL-EN", "Islam")
+kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name"))
+```
+
+You can also use the CQP query syntax for formulating queries.
+
+```{r, eval = FALSE}
+kwic("EUROPARL-EN", '"Geneva" "Convention"')
+kwic("EUROPARL-EN", '"[Ss]ocial" "justice"')
+```
+
+Consult tutorials for the [CQP tutorial](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) to learn more about that.
 
 
+### Getting counts and frequencies
 
-# Windows
+```{r}
+count("EUROPARL-EN", "France")
+count("EUROPARL-EN", c("France", "Germany", "Britain", "Spain", "Italy", "Denmark", "Poland"))
+count("EUROPARL-EN", '"[pP]opulism"')
+```
+
+### Dispersions
+
+```{r}
+dispersion("EUROPARL-EN", "populism", sAttribute = "text_year")
+dispersion("EUROPARL-EN", '"[pP]opulism"', sAttribute = "text_year", cqp = TRUE)
+```
+
+### Cooccurrences
+
+```{r}
+br <- cooccurrences("EUROPARL-EN", query = "Brussels")
+eu <- cooccurrences("EUROPARL-EN", query = '"European" "Union"', left = 10, right = 10)
+subset(eu, rank_ll <= 100)@stat[["word"]]
+```
+
+## Working with subcorpora - partitions
+
+Usually, any session using the driller will start with initializing a partition. The return of a call of the partition function is a S4 partition object, and almost every function of the driller package will require a partition object as an input.
+
+In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
+
+```{r, eval = runcode, message = FALSE, results = 'hide'}
+ep2006 <- partition("EUROPARL-EN", text_year = "2006")
+```
+
+To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
+
+```{r, eval = runcode}
+ep2006
+```
+
+Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
+
+There are two methods to set up a partition, 'grep' and 'in'. If the method is 'in', you can provide a character vector for every s-attribute. If the method is "grep", all s-Attribute values are kept that match a regex. As an example for the 'in'-procedure, if you want a partition comprising of CDU/CSU and FDP as parties, you might formulate:\footnote{Sometimes, you will want to be more specific about the start and end date of a partition. In this case, you can set a dateRange.}
+
+```{r, eval = runcode, message = FALSE}
+barroso <- partition("EUROPARL-EN", speaker_name = "Barroso", regex = TRUE)
+sAttributes(barroso, "speaker_name")
+```
+
+If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the function.
+
+
+## Getting a tm TermDocumentMatrix
+
+For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
+
+```{r, eval = FALSE}
+speakers <- partitionBundle(
+  "EUROPARL-EN", sAttribute = "speaker_id",
+  progress = FALSE, verbose = FALSE
+)
+speakers <- enrich(speakers, pAttribute = "word")
+tdm <- as.TermDocumentMatrix(speakers, col = "count")
+class(tdm) # to see what it is
+show(tdm)
+m <- as.matrix(tdm) # turn it into an ordinary matrix
+m[c("Barroso", "Schulz"),]
+```
+
+
+## Cooccurrences
+
+The partition object has a method that will give you immediate access to view the concordances of a (single-word) word found in a partition by indexing the partition object accordingly. This a shortcut that may be useful at times. Usually, the context function will be called first, the summary method will give some information on the resulting context object.
+
+
+```{r, eval = runcode, message = FALSE}
+ep2002 <- partition("EUROPARL-EN", text_year = "2006")
+terror <- cooccurrences(ep2002, "terrorism", pAttribute = "lemma", left = 10, right = 10)
+```
+
+
+Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object.
+
+To view some concordances, the context object can be indexed accordingly. If you put a query in double brackets, it is used as a filter, giving you those concordances containing this query. If you run R in a console, you may use xterm color highlighting. The colors can be set via drillingControls. This applies also for the metainformation you receive as output.
+
+
+## Distribution of queries
+
+To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.
+
+
+```{r, eval = runcode}
+# one query / one dimension
+oneQuery <- dispersion(ep2002, query = 'terrorism', "text_date", progress = FALSE)
+
+# # multiple queries / one dimension
+twoQueries <- dispersion(ep2002, query= c("war", "peace"), "text_date", progress = FALSE)
+```
+
+
+## Getting features
+
+To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
+
+```{r, eval = runcode, message = FALSE}
+ep2002 <- partition("EUROPARL-EN", text_year = "2002")
+ep2002 <- enrich(ep2002, pAttribute = "word")
+
+epPre911 <- partition("EUROPARL-EN", text_year = as.character(1997:2001))
+epPre911 <- enrich(epPre911, pAttribute = "word")
+
+F <- features(ep2002, epPre911, included = FALSE)
+subset(F, rank_chisquare <= 50)@stat[["word"]]
+```
+
+## Shiny
+
+If the driller runs on a local installation, some shiny apps can be tested that are included in the package by calling polmineR().
+
+The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.
+
+The apps are still experimental and at times may throw out errors before you get a result. They are included to demonstrate how using the driller is meant to be made more convenient in future versions of the package.
+
+
+## Annex I: Installing polmineR
+
+### Windows
 
 At this stage, polmineR will only run under 32bit R. Usually, an R installation will include both 32bit and 64bit R. Make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools > Global Options will open a dialogue where you can choose 32bit R.
 
@@ -60,12 +261,13 @@ Windows binaries for the rcqp package are not available at CRAN, but can be inst
 install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "win.binary")
 ```
 
-To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package available at the 'drat' repository uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.
+To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package we offer uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.
 
 Before proceeding to install polmineR, we install dependencies that are not installed automatically.
 
 ```{r, eval = FALSE}
 install.packages(pkgs = c("htmltools", "htmlwidgets", "magrittr", "iterators", "NLP"))
+install.packages("rcqp")
 ```
 
 The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically. 
@@ -83,9 +285,9 @@ devtools::install_github("PolMine/polmineR", ref = "dev")
 
 The installation may throw warnings. There are three warnings you can ignore at this stage:
 
-(a) "WARNING: this package has a configure script / It probably needs manual configuration".
-(b) The environment variable CORPUS_REGISTRY is not defined.
-(c) package 'rcqp' is not installed for 'arch = x64'.
+* "WARNING: this package has a configure script / It probably needs manual configuration".
+* The environment variable CORPUS_REGISTRY is not defined.
+* package 'rcqp' is not installed for 'arch = x64'.
 
 The configure script is for Linux/MacOS installation, its sole purpose is to pass tests for uploading the package to CRAN. As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable "CORPUS_REGISTRY" can be set as follows in R:
 
@@ -111,181 +313,123 @@ corpus() # to see corpora available at your system
 ```
 
 
-# MacOS
+### MacOS
 
-# Linux
-
-The driller relies on a few packages (see DESCRIPTION): The tm and the rcqp package are crucial.
-
-The tm package offers a wealth of functions for textmining. It is imported primarly because of the TermDocumentMatrix class and related methods. Once an object of that class has been generated, all tm functions can be used. There are quite a few packages that use the tm TermDocumentMatrix as an input (e.g. topicmodels or lsa). So in a sense, tm is not just a dependency but the link that pushes the R world of text mining open once you have extracted information from a CWB corpus using the driller.
-
-Installation of the rcqp package can be tricky. The rcqp package is however core for the whole driller project. It provides the API for connecting to the CWB.
-
-Apart from R packages rcqp requires (plyr, for instance) that can be installed easily with install.packages(), rcqp requires a few non-R libraries (pkg-config, libffi, gettext, glib). The installation files are easily found in the web. Then the ./configure, make, make install procedure is needed. A tricky hurdle is that pkg-config requires glib, and glib requires pkg-config. A workaround is to start the pkg-config installation with ./configure --without-internal-glib. To install glib on a Mac, I found it useful to use homebrew as an installer (brew install glib).
-
-
-# Loading the package
-
-As mentioned, the rcqp package is the most important dependency of the driller. The CORPUS_REGISTRY environment variable *before* needs to be set before you load polmineR.
-
-
-```{r}
-if (execute){
-  library(polmineR)
-  CQI <- CQI.rcqp$new()
-  library(polmineR.sampleCorpus)
-  use("polmineR.sampleCorpus")
-}
-```
-
-
-# Default settings
-
-Default settings are stored in the general options settings.
-
-```{r}
-if (execute){
-  # to view all options defined for polmineR 
-  options()[grep("polmineR", names(options()))]
-  
-  # setting options
-  options("polmineR.corpus" = "PLPRBTTXT")
-  options("polmineR.left" = 15)
-  options("polmineR.right" = 15)
-  options("polmineR.mc" = FALSE)
-}
-```
-
-Various methods will get default values from the options set. See the documentation for kwic, for instance.
-
-
-# Setting up a partition
-
-Usually, any session using the driller will start with initializing a partition. The return of a call of the partition function is a S4 partition object, and almost every function of the driller package will require a partition object as an input.
-
-In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.
-
-```{r}
-if (execute){
-  bt <- partition("PLPRBTTXT", text_type="speech")
-  cdu <- partition(
-    "PLPRBTTXT",
-    text_type="speech", text_party="CDU_CSU"
-    )
-}
-```
-
-To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
-
-```{r}
-if (execute){
-  cdu
-}
-```
-
-Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.
-
-There are two methods to set up a partition, 'grep' and 'in'. If the method is 'in', you can provide a character vector for every s-attribute. If the method is "grep", all s-Attribute values are kept that match a regex. As an example for the 'in'-procedure, if you want a partition comprising of CDU/CSU and FDP as parties, you might formulate:\footnote{Sometimes, you will want to be more specific about the start and end date of a partition. In this case, you can set a dateRange.}
-
-```{r}
-if (execute){
-  coalition <- partition(
-    "PLPRBTTXT",
-    text_type="speech", text_party=c("CDU_CSU", "FDP")
-    )
-}
-```
-
-If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the function.
-
-
-# Getting a tm TermDocumentMatrix
-
-For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.
+If R is installed on your system, the easiest way to get and install polmineR is to download binaries for Mac from the repository we host at the PolMine server
 
 ```{r, eval = FALSE}
-if (execute){
-  base <- partition("PLPRBTTXT", text_type="speech")
-  parties <- partitionBundle(
-    base, def=list(text_party=NULL),
-    pAttribute="word", progress=TRUE, verbose=FALSE
-    )
-  tdm <- as.TermDocumentMatrix(parties, col="count")
-  class(tdm) # to see what it is
-  show(tdm)
-  m <- as.matrix(tdm) # turn it into an ordinary matrix
-  m[c("Integration", "Zuwanderung", "Migration"),]
-}
+install.packages("polmineR", repos = "http://polmine.sowi.uni-due.de", type = "binary")
+```
+
+If you want to work with the most recent development version, or if you want to to compile the package yourself, the procedure is as follows.
+
+First, you will need an installation of Xcode, which you can get it via the Mac App Store. 
+
+To compile the C library in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Macports or brew makes things much easier.
+
+If you want to use Macports, get it from https://www.macports.org/. After installing Macports, it is necessary to restart the computer.
+
+We will also need the Command Line Tool for Xcode. It can be installed from a terminal with:
+
+```{sh, eval = FALSE}
+xcode-select -- install
+```
+
+Next, an update of Macports is necessary.
+
+```{sh, eval = FALSE}
+sudo port -v selfupdate
+```
+
+Now we can install the libraries rcqp will require. Again, from the terminal.
+
+```{sh, eval = FALSE}
+sudo port install glib2
+sudo port install pkgconfig
+sudo port install pcre
+```
+
+Alternatively, if you prefer brew (which we do), after installing brew:
+
+```{sh, eval = FALSE}
+brew install glib
+brew install pcre
+brew install pkg-config
 ```
 
 
-# Context analysis
-
-The partition object has a method that will give you immediate access to view the concordances of a (single-word) word found in a partition by indexing the partition object accordingly. This a shortcut that may be useful at times. Usually, the context function will be called first, the summary method will give some information on the resulting context object.
-
-
-```{r}
-if (execute){
-  # integration <- context(
-  #    bt, "Integration", pAttribute="word",
-  #   left = 20, right = 20
-  # )
-  # summary(integration)
-}
-```
-
-Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object.
-
-To view some concordances, the context object can be indexed accordingly. If you put a query in double brackets, it is used as a filter, giving you those concordances containing this query. If you run R in a console, you may use xterm color highlighting. The colors can be set via drillingControls. This applies also for the metainformation you receive as output.
-
-
-# Distribution of queries
-
-To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.
-
+One the system requirements are there, the next steps can be done from R.  Before installing rcqp, and then polmineR, we install a few packages manually. In the R console:
 
 ```{r, eval = FALSE}
-if (execute){
-  
-  # one query / one dimension
-  oneQuery <- dispersion(
-    bt, query = '"Gerechtigkeit"',
-    "text_party", progress = F
-  )
-  
-  # # multiple queries / one dimension
-  twoQueries <- dispersion(
-    bt,
-    c('"[eE]uro.*"', '"Br.ssel"'),
-    "text_party", progress = F
-  )
-  
-  # multiple queries / two dimensions
-  twoDim <- dispersion(
-    bt, query = '"Regierung"',
-    c("text_date", "text_party"), progress = F
-  )
-  
-}
+install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm“))
+```
+
+Now rcqp can be installed, and then polmineR
+
+```{r, eval = FALSE}
+install.packages("rcqp")
+install.packages("polmineR")
+```
+
+If you like to work with the development version, that can be installed from GitHub.
+
+```{r, eval = FALSE}
+devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 
-# Compare
+### Linux
 
-To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.
+The pcre, glib and pkg-config libraries can be installed using apt-get.
+
+```{sh,  eval = FALSE}
+sudo apt-get install libglib2.0-dev
+sudo apt-get install libssl-dev
+sudo apt-get install libcurl4-openssl-dev
+```	
+
+The system requirements will now be fulfilled, to install dependencies for rcqp/polmineR, and then the two packages from within R.
+
+```{r, eval = FALSE}
+install.packages("RUnit", "devtools", "plyr", "tm")
+install.packages("rcqp")
+install.packages("polmineR")
+```
+
+
+## Annex II: CWB corpora and the CORPUS_REGISTRY environment variable
+
+Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a 'registry' directory, and an 'indexed_corpora' directory. The files in the registry directory ('registry' in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR.
+
+The CORPUS_REGISTRY environment variable can be set manually from the R console:
+
+```{r, eval = FALSE}
+Sys.setenv(CORPUS_REGISTRY "/PATH/TO/YOUR/REGISTRY/DIRECTORY")
+```
+
+To check whether and how the environment variable is set:
 
 ```{r}
-if (execute){
-  # coalition <- enrich(coalition, pAttribute="word")
-  # bt <- enrich(coalition, pAttribute="word")
-  # vocabulary <- compare(coalition, bt, included=TRUE)
-}
+Sys.getenv("CORPUS_REGISTRY")
 ```
 
-# Shiny
+You can set the environment variable permanently to avoid having to set it each time before you want to use polmineR. A good way is to inlude the following line in the file .Renviron in your home directory:
 
-If the driller runs on a local installation, some shiny apps can be tested that are included in the package by calling polmineR().
+```{r, evla = FALSE}
+CORPUS_REGISTRY="/PATH/TO/YOUR/REGISTRY/DIRECTORY"
+```
 
-The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.
+There are a few other options to have environment variables set at every time you launch polmineR. To learn about these, use the help for the R startup procedure.
 
-The apps are still experimental and at times may throw out errors before you get a result. They are included to demonstrate how using the driller is meant to be made more convenient in future versions of the package.
+```{r, eval = FALSE}
+?Startup 
+```
+
+
+
+```{r, eval = runcode, message = FALSE, results = 'hide'}
+library(polmineR)
+CQI <- CQI.rcqp$new()
+use("polmineR.sampleCorpus")
+```
+

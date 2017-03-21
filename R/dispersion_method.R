@@ -61,7 +61,7 @@ setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = 
 })
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = FALSE, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
+setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = is.cqp, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
   dispersion(
     hits(
       .Object, query = query, cqp = cqp, sAttribute = sAttribute, pAttribute = pAttribute, freq = freq,

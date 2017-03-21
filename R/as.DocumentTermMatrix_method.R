@@ -67,7 +67,7 @@ setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribu
 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE){
-  cpos_vector <- seq.int(from = 0, to = CQI$attribute_size(x, pAttribute) - 1, by = 1)
+  cpos_vector <- seq.int(from = 0, to = CQI$attribute_size(x, pAttribute, type = "p") - 1, by = 1)
   
   if (verbose) message("... generate data.table with token and struc ids")
   token_id <- CQI$cpos2id(x, pAttribute, cpos_vector)
@@ -84,7 +84,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
     j = countDT[["token_id"]] + 1,
     v = countDT[["N"]],
   )
-  docs <- CQI$struc2str(x, sAttribute, seq.int(0, CQI$attribute_size(x, sAttribute) - 1, by = 1))
+  docs <- CQI$struc2str(x, sAttribute, seq.int(0, CQI$attribute_size(x, sAttribute, type = "s") - 1, by = 1))
   terms <- CQI$id2str(x, pAttribute, seq.int(0, max(countDT[["token_id"]]), by = 1))
   terms <- as.utf8(terms)
   dimnames(y) <- list(docs, terms)

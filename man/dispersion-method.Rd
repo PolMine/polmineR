@@ -14,7 +14,7 @@ dispersion(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE,
   progress = TRUE, verbose = FALSE)
 
-\S4method{dispersion}{character}(.Object, query, sAttribute, cqp = FALSE,
+\S4method{dispersion}{character}(.Object, query, sAttribute, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE,
   progress = TRUE, verbose = TRUE)
 

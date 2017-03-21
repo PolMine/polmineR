@@ -187,7 +187,7 @@ setMethod(f = "context", "partition", function(
   "expandBeyondRegion" = function(set, left, right, corpus, sAttribute){
     stop("NOT Implemented at present")
     queryStruc <- CQI$cpos2struc(corpus, sAttribute, set[1])
-    maxStruc <- CQI$attribute_size(corpus, sAttribute)
+    maxStruc <- CQI$attribute_size(corpus, sAttribute, type = "s")
     # get left min cpos
     leftStruc <- queryStruc - left
     leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)

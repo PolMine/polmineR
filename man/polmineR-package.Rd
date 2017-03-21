@@ -39,6 +39,9 @@ Andreas Blaette (andreas.blaette@uni-due.de)
 }
 \references{
 http://polmine.sowi.uni-due.de
+
+Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
+Cham: Springer.
 }
 \keyword{package}
 

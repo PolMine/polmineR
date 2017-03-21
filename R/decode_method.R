@@ -18,7 +18,7 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' @exportMethod decode
 setMethod("decode", "Corpus", function(.Object, verbose = TRUE){
   if (require(package = "tibble", quietly = TRUE)){
-    maxCpos <- CQI$attribute_size(.Object$corpus, "word") - 1
+    maxCpos <- CQI$attribute_size(.Object$corpus, "word", type = "p") - 1
     pAttributeList <- lapply(
       pAttributes(.Object$corpus),
       function(x){

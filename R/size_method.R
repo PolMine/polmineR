@@ -13,13 +13,13 @@ setGeneric("size", function(x, ...) UseMethod("size"))
 #' @rdname size-method
 setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
   if (is.null(sAttribute)){
-    return(CQI$attribute_size(x, "word"))
+    return(CQI$attribute_size(x, "word", type = "p"))
   } else {
     stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
       lapply(
         setNames(sAttribute, sAttribute),
-        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr) - 1))))
+        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr, type = "s") - 1))))
     )
     if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
       if (verbose) message ("... cwb-s-decode utility found, going to use it")
@@ -30,7 +30,7 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
       cpos_matrix <- do.call(
         rbind,
         lapply(
-          c(0:(CQI$attribute_size(x, sAttribute[1]) - 1)),
+          c(0:(CQI$attribute_size(x, sAttribute[1], type = "s") - 1)),
           function(x) CQI$struc2cpos(x, sAttribute[1], x))
       )
     }

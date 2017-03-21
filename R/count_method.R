@@ -150,7 +150,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
     if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
       if (verbose) message("... using polmineR.Rcpp for counting")
@@ -196,18 +196,36 @@ setMethod("count", "character", function(.Object, query = NULL, pAttribute = get
     }
   } else {
     stopifnot(.Object %in% CQI$list_corpora())
-    total <- CQI$attribute_size(.Object, pAttribute)
+    total <- CQI$attribute_size(.Object, pAttribute, type = "p")
+    if (class(cqp) == "function") cqp <- cqp(query)
+    if (cqp == FALSE){
+      count <- sapply(
+        query,
+        function(query)
+          CQI$id2freq(
+            .Object,
+            pAttribute,
+            CQI$str2id(.Object, pAttribute, query)
+          )
+      )
+      freq <- count/total
+      return(data.table(query = query, count = count, freq = freq))
+    } else if (cqp == TRUE){
     count <- sapply(
       query,
-      function(query)
-        CQI$id2freq(
-          .Object,
-          pAttribute,
-          CQI$str2id(.Object, pAttribute, query)
-        )
-    )
+      function(query){
+        cpos_matrix <- cpos(.Object, query, cqp = cqp, pAttribute = pAttribute, encoding = getEncoding(.Object))
+        if (!is.null(cpos_matrix)){
+          return( nrow(cpos_matrix) )
+        } else {
+          return( 0 )
+        }
+        
+      }
+      )
     freq <- count/total
     return(data.table(query = query, count = count, freq = freq))
+    }
   }
 })
 

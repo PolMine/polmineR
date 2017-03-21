@@ -20,7 +20,7 @@ count(.Object, ...)
   freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE,
   verbose = FALSE)
 
-\S4method{count}{character}(.Object, query = NULL,
+\S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sort = FALSE,
   id2str = TRUE, verbose = TRUE)
 

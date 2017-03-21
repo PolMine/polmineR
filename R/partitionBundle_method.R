@@ -71,7 +71,7 @@ setMethod("partitionBundle", "character", function(
     corpus = .Object, encoding = RegistryFile$new(.Object)$getEncoding(),
     call=deparse(match.call())
   )
-  strucs <- c(0:(CQI$attribute_size(.Object, sAttribute) - 1))
+  strucs <- c(0:(CQI$attribute_size(.Object, sAttribute, "s") - 1))
   if (!is.null(values)) {
     toKeep <- which(values %in% CQI$struc2str(.Object, sAttribute, strucs))
     strucs <- strucs[toKeep]

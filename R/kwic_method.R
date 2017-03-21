@@ -139,7 +139,7 @@ setMethod("kwic", "character", function(
     message("sorry, not hits")
     return(NULL)
   }
-  cposMax <- CQI$attribute_size(.Object, pAttribute)
+  cposMax <- CQI$attribute_size(.Object, pAttribute, type = "p")
   cposList <- apply(
     hits, 1,
     function(row){

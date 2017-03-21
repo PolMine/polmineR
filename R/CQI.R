@@ -15,3 +15,19 @@ CQI.super <- R6Class(
     test = function()message("hi there")
   )
 )
+
+#' @param interface the way to interface to the Corpus Workbench
+#' @rdname CQI
+#' @export resetInterface
+resetInterface <- function(interface = c("rcqp", "perl", "Rcpp", "cqpserver")){
+  unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
+  newCQI <- switch(
+    interface,
+    rcqp = CQI.rcqp$new(),
+    perl = CQI.perl$new(),
+    Rcpp = CQI.Rcpp$new(),
+    cqpserver = CQI.cqpserver$new()
+  )
+  assign("CQI", newCQI, envir = getNamespace("polmineR"))
+  lockBinding(env = getNamespace("polmineR"), sym = "CQI")
+}

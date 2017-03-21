@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Andreas Blätte (andreas.blaette@uni-due.de)" />
+
+<meta name="date" content="2017-03-17" />
+
+<title>polmineR</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">polmineR</h1>
+<h4 class="author"><em>Andreas Blätte (<a href="mailto:andreas.blaette@uni-due.de">andreas.blaette@uni-due.de</a>)</em></h4>
+<h4 class="date"><em>2017-03-17</em></h4>
+
+
+
+<div id="purpose" class="section level2">
+<h2>Purpose</h2>
+<p>The purpose of the package <em>polmineR</em> is to facilitate the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.</p>
+<p>There are quite a few R packages for text mining already, it is quite unnecessary to implement again what has already been implemented. Thus, this package is also meant to serve as an interface between the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>, an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods. There are several relevant packages on [CRAN]{<a href="http://cran.r-project.org/web/views/NaturalLanguageProcessing.html" class="uri">http://cran.r-project.org/web/views/NaturalLanguageProcessing.html</a>}.</p>
+<p>Quantitative text analytics may bear the risk to get out of touch with the original text. The driller seeks to keep the actual text analysed accessible. This is a further reason why the CWB is used as a backend. Apart from the speed of text processing, the Corpus Query Processor (CQP) and the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP syntax</a> provide a great machinery to query corpora. Queries found can be viewed with a concordancer.</p>
+<p>Using a combination of R and the CWB implies a software architecture you will also find in the <a href="http://sourceforge.net/projects/txm/">TXM project</a>. TXM, among other things, offers a rich functionality for importing corpora into the CWB. A very specific concern of the driller is to provide the means to examine and to compare subcorpora that are generated based on the metainformation stored as structural attributes to the CWB corpus. In line with the French tradition of discourse analysis (and for technical reasons), these subcorpora are called partitions here. The driller may be particularly useful for analyses of diachronic variation and synchronic change.</p>
+</div>
+<div id="corpora" class="section level2">
+<h2>Corpora</h2>
+<p>The <em>polmineR</em> is an instrument to analyse corpora imported to the CWB. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes). Typically, the p-attributes will be ‘word’, ‘pos’ (for part-of-speech) and ‘lemma’ (for the lemmatized word form).</p>
+<p>The driller was developed for analysing corpora with a flat XML strucutre. Future versions of the driller will be able to process nested XML. Yet so far, it is generally speaking necessary that all metadata are attributes of one XML element. This may be unproblematic if you work with a corpus of newspaper articles, for instance (attributes might be ‘date’, ‘author’, ‘newspaper’, ‘page’ etc.). For the corpora of plenary debates that were the impetus to develop the package, a respective transformation generated the flat XML structure.</p>
+<p>In the package, two (very small) sample corpora from the PolMine project are included. The corpus “PLPRBTTXT” is a set of five plenary protocols (out of several hundred) of the German Bundestag. The sample corpus can only be used if the respective registry files contain the path to the binary files of the indexed corpora. The setting is managed by a configure file that is called when the package is installed.</p>
+<p>The sample corpora are encoded in latin-1, the traditional encoding used by the CWB. The package is not yet entirely generic as far as encodings are concerned. Problems may still arise when using a utf-8 encoded corpus. Future versions of the driller will be generic in this respect.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<div id="windows" class="section level3">
+<h3>Windows</h3>
+<p>At this stage, polmineR will only run under 32bit R. Usually, an R installation will include both 32bit and 64bit R. Make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools &gt; Global Options will open a dialogue where you can choose 32bit R.</p>
+<p>Before installing polmineR, the package ‘rcqp’ needs to be installed. In turn, rcqp requires plyr, which should be installed first.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;plyr&quot;</span>)</code></pre></div>
+<p>Windows binaries for the rcqp package are not available at CRAN, but can be installed from a repository of packages entertained at the server of the PolMine project:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://polmine.sowi.uni-due.de/packages&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;win.binary&quot;</span>)</code></pre></div>
+<p>To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package we offer uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.</p>
+<p>Before proceeding to install polmineR, we install dependencies that are not installed automatically.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">&quot;htmltools&quot;</span>, <span class="st">&quot;htmlwidgets&quot;</span>, <span class="st">&quot;magrittr&quot;</span>, <span class="st">&quot;iterators&quot;</span>, <span class="st">&quot;NLP&quot;</span>))
+<span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>)</code></pre></div>
+<p>The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+<p>The development version of the package, which may include the most recent updates and features, can be installed from GitHub. The easiest way to do this is to use a mechanism offered by the package devtools.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</code></pre></div>
+<p>The installation may throw warnings. There are three warnings you can ignore at this stage:</p>
+<ul>
+<li>“WARNING: this package has a configure script / It probably needs manual configuration”.</li>
+<li>The environment variable CORPUS_REGISTRY is not defined.</li>
+<li>package ‘rcqp’ is not installed for ‘arch = x64’.</li>
+</ul>
+<p>The configure script is for Linux/MacOS installation, its sole purpose is to pass tests for uploading the package to CRAN. As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable “CORPUS_REGISTRY” can be set as follows in R:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">&quot;C:/PATH/TO/YOUR/REGISTRY&quot;</span>)</code></pre></div>
+<p>To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file ‘.Renviron’ or ‘.Renviron.site’ when calling the help for the startup process(<code>?Startup</code>).</p>
+<p>Two important notes concerning problems with the CORPUS_REGISTRY environment variable that may cause serious headaches:</p>
+<ul>
+<li><p>The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name (“C:/Users/Donald Duck/Documents”), for instance. We do not yet know any workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as “C:/cwb”).</p></li>
+<li><p>If you keep data on another volume than your system files, your R packages etc. (eg. volume ‘C:’ for system files, and ‘D:’ for data and user files), make sure to set the working directory (<code>setwd()</code>) is set to any directory on the volume with the directory defined via CORPUS_REGISTRY. CWB/rcqp will assume that the CORPUS_REGISTRY directory is on the same volume as the current working directory (which can be identified by calling <code>getwd()</code>).</p></li>
+</ul>
+<p>Finally: polmineR if optimized for working with RStudio. However, as polmineR is currently only available for 32bit R, you may have to check in the settings of RStudio that it will call 32bit R. To be sure, check the startup message.</p>
+<p>If everything works, check whether polmineR can be loaded.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)
+<span class="kw">corpus</span>() <span class="co"># to see corpora available at your system</span></code></pre></div>
+</div>
+<div id="macos" class="section level3">
+<h3>MacOS</h3>
+<p>If R is installed on your system, the easiest way to get and install polmineR is to download binaries for Mac from the repository we host at the PolMine server</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://polmine.sowi.uni-due.de&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;binary&quot;</span>)</code></pre></div>
+<p>If you want to work with the most recent development version, or if you want to to compile the package yourself, the procedure is as follows.</p>
+<p>First, you will need an installation of Xcode, which you can get it via the Mac App Store.</p>
+<div id="installation-using-macports" class="section level4">
+<h4>Installation using Macports</h4>
+<p>To compile the C library in the rcqp package, there are system requirements that need to be fulfilled. Using Macports (or, alternatively, brew) as a package manager, facilitates things: <a href="https://www.macports.org/" class="uri">https://www.macports.org/</a> After installing Macports, it is necessary to restart the computer.</p>
+<p>We will also need the Command Line Tool for Xcode. It can be installed from a terminal with:</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">xcode-select</span> -- install</code></pre></div>
+<p>Next, an update of Macports is necessary.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">sudo</span> port -v selfupdate</code></pre></div>
+<p>Now we can install the libraries rcqp will require. Again, from the terminal.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">sudo</span> port install glib2
+<span class="kw">sudo</span> port install pkgconfig
+<span class="kw">sudo</span> port install pcre</code></pre></div>
+</div>
+<div id="installation-of-glib2-pkgconfig-and-pcre-brew" class="section level4">
+<h4>Installation of glib2, pkgconfig and pcre: brew</h4>
+<p>[still needs to be written]</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">brew</span> install glib
+<span class="kw">brew</span> install pcre
+<span class="kw">brew</span> install pkg-config</code></pre></div>
+</div>
+<div id="installing-the-packages" class="section level4">
+<h4>Installing the packages</h4>
+<p>Before installing rcqp, and then polmineR, we install a few packages manually. In the R console:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">&quot;RUnit&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;plyr&quot;</span>, <span class="st">&quot;tm“))</span></code></pre></div>
+<p>Now rcqp can be installed, and then polmineR</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+<p>If you like to work with the development version, that can be installed from GitHub.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="linux" class="section level3">
+<h3>Linux</h3>
+<p>The pcre, glib and pkg-config libraries can be installed using apt-get.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libglib2.0-dev
+<span class="kw">sudo</span> apt-get install libssl-dev
+<span class="kw">sudo</span> apt-get install libcurl4-openssl-dev</code></pre></div>
+<p>The system requirements will now be fulfilled, to install dependencies for rcqp/polmineR, and then the two packages from within R.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;RUnit&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;plyr&quot;</span>, <span class="st">&quot;tm&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="loading-the-package" class="section level2">
+<h2>Loading the package</h2>
+<p>As mentioned, the rcqp package is the most important dependency of the driller. The CORPUS_REGISTRY environment variable <em>before</em> needs to be set before you load polmineR.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)
+CQI &lt;-<span class="st"> </span>CQI.rcqp$<span class="kw">new</span>()
+<span class="kw">use</span>(<span class="st">&quot;polmineR.sampleCorpus&quot;</span>)</code></pre></div>
+</div>
+<div id="settings" class="section level2">
+<h2>Settings</h2>
+<p>Default settings are stored in the general options settings.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># to view all options defined for polmineR </span>
+<span class="kw">options</span>()[<span class="kw">grep</span>(<span class="st">&quot;polmineR&quot;</span>, <span class="kw">names</span>(<span class="kw">options</span>()))]
+  
+<span class="co"># setting options</span>
+<span class="kw">options</span>(<span class="st">&quot;polmineR.corpus&quot;</span> =<span class="st"> &quot;PLPRBTTXT&quot;</span>)
+<span class="kw">options</span>(<span class="st">&quot;polmineR.left&quot;</span> =<span class="st"> </span><span class="dv">15</span>)
+<span class="kw">options</span>(<span class="st">&quot;polmineR.right&quot;</span> =<span class="st"> </span><span class="dv">15</span>)
+<span class="kw">options</span>(<span class="st">&quot;polmineR.mc&quot;</span> =<span class="st"> </span><span class="ot">FALSE</span>)</code></pre></div>
+<p>Various methods will get default values from the options set. See the documentation for kwic, for instance.</p>
+</div>
+<div id="setting-up-a-partition" class="section level2">
+<h2>Setting up a partition</h2>
+<p>Usually, any session using the driller will start with initializing a partition. The return of a call of the partition function is a S4 partition object, and almost every function of the driller package will require a partition object as an input.</p>
+<p>In this example, I set up a partition with the speeches, not the interjections, deliverd by members of the CDU parliamentary group in the parliament of Northrhine-Westfalia. Attributes are handed over as a list. Setting up a partition sometimes consumes some time, so you will get messages about progress.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bt &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type =</span> <span class="st">&quot;speech&quot;</span>)
+cdu &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type =</span> <span class="st">&quot;speech&quot;</span>, <span class="dt">text_party =</span> <span class="st">&quot;CDU_CSU&quot;</span>)</code></pre></div>
+<p>To get some basic information about the partition that has been set up, the ‘show’-method can be used. It is also called when you simply type the name of the partition object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cdu</code></pre></div>
+<pre><code>## ** partition object **
+## corpus:              PLPRBTTXT 
+## name:                 
+## sAttributes:         text_type = speech 
+##                      text_party = CDU_CSU 
+## cpos:                570 pairs of corpus positions
+## size:                56811 tokens
+## count:               not available</code></pre>
+<p>Note that is possible to omit steps of the initialization of a partition object, thus speeding up the initialization significantly. Setting up a table with metadata and retrieving term frequencies can be switched off (metadata=FALSE, tf=FALSE). Other functions (context, distribution) however require respective information and do not work if the partition object lacks this information. Setting up a partition may be a bit slow, but generates information that allows further analytical steps based on a partition object to be much quicker.</p>
+<p>There are two methods to set up a partition, ‘grep’ and ‘in’. If the method is ‘in’, you can provide a character vector for every s-attribute. If the method is “grep”, all s-Attribute values are kept that match a regex. As an example for the ‘in’-procedure, if you want a partition comprising of CDU/CSU and FDP as parties, you might formulate:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">coalition &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type=</span><span class="st">&quot;speech&quot;</span>, <span class="dt">text_party=</span><span class="kw">c</span>(<span class="st">&quot;CDU_CSU&quot;</span>, <span class="st">&quot;FDP&quot;</span>))</code></pre></div>
+<p>If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the function.</p>
+</div>
+<div id="getting-a-tm-termdocumentmatrix" class="section level2">
+<h2>Getting a tm TermDocumentMatrix</h2>
+<p>For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionCluster and then applying a method to get the matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">base &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type =</span> <span class="st">&quot;speech&quot;</span>)
+parties &lt;-<span class="st"> </span><span class="kw">partitionBundle</span>(
+  base, <span class="dt">sAttribute =</span> <span class="st">&quot;text_party&quot;</span>,
+  <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>
+)
+tdm &lt;-<span class="st"> </span><span class="kw">as.TermDocumentMatrix</span>(parties, <span class="dt">col =</span> <span class="st">&quot;count&quot;</span>)
+<span class="kw">class</span>(tdm) <span class="co"># to see what it is</span>
+<span class="kw">show</span>(tdm)
+m &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(tdm) <span class="co"># turn it into an ordinary matrix</span>
+m[<span class="kw">c</span>(<span class="st">&quot;Integration&quot;</span>, <span class="st">&quot;Zuwanderung&quot;</span>, <span class="st">&quot;Migration&quot;</span>),]</code></pre></div>
+</div>
+<div id="cooccurrences" class="section level2">
+<h2>Cooccurrences</h2>
+<p>The partition object has a method that will give you immediate access to view the concordances of a (single-word) word found in a partition by indexing the partition object accordingly. This a shortcut that may be useful at times. Usually, the context function will be called first, the summary method will give some information on the resulting context object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">integration &lt;-<span class="st"> </span><span class="kw">cooccurrences</span>(bt, <span class="st">&quot;Integration&quot;</span>, <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>, <span class="dt">left =</span> <span class="dv">20</span>, <span class="dt">right =</span> <span class="dv">20</span>)</code></pre></div>
+<p>Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot “stat” of the context object.</p>
+<p>To view some concordances, the context object can be indexed accordingly. If you put a query in double brackets, it is used as a filter, giving you those concordances containing this query. If you run R in a console, you may use xterm color highlighting. The colors can be set via drillingControls. This applies also for the metainformation you receive as output.</p>
+</div>
+<div id="distribution-of-queries" class="section level2">
+<h2>Distribution of queries</h2>
+<p>To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the ‘distribution’ function. The query may use the CQP syntax. The function is a wrapper for three different functions. Which one is called will depend on the number of queries provided and whether one or two s-attributes are provided as dimensions. The output depends on the input and the respective function that is called.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># one query / one dimension</span>
+oneQuery &lt;-<span class="st"> </span><span class="kw">dispersion</span>(bt, <span class="dt">query =</span> <span class="st">'Arbeit'</span>, <span class="st">&quot;text_party&quot;</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># # multiple queries / one dimension</span>
+twoQueries &lt;-<span class="st"> </span><span class="kw">dispersion</span>(bt, <span class="dt">query=</span> <span class="kw">c</span>(<span class="st">&quot;Europa&quot;</span>, <span class="st">&quot;Brüssel&quot;</span>), <span class="st">&quot;text_party&quot;</span>, <span class="dt">progress =</span> F)</code></pre></div>
+<pre><code>## Warning in .local(.Object, ...): no hits for query: Brüssel</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># multiple queries / two dimensions</span>
+twoDim &lt;-<span class="st"> </span><span class="kw">dispersion</span>(bt, <span class="dt">query =</span> <span class="st">&quot;Regierung&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;text_date&quot;</span>, <span class="st">&quot;text_party&quot;</span>), <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+</div>
+<div id="getting-features" class="section level2">
+<h2>Getting features</h2>
+<p>To identify the specific vocabulary of a corpus of interest, a keyness test based on the chi square test can be performed. The following example also shows how a partitio can be used based on a grep procedue.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">coalition &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type=</span><span class="st">&quot;speech&quot;</span>, <span class="dt">text_party=</span><span class="kw">c</span>(<span class="st">&quot;CDU_CSU&quot;</span>, <span class="st">&quot;FDP&quot;</span>))
+coalition &lt;-<span class="st"> </span><span class="kw">enrich</span>(coalition, <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>)
+
+bt &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;PLPRBTTXT&quot;</span>, <span class="dt">text_type =</span> <span class="st">&quot;speech&quot;</span>)
+bt &lt;-<span class="st"> </span><span class="kw">enrich</span>(coalition, <span class="dt">pAttribute=</span><span class="st">&quot;word&quot;</span>)
+
+vocabulary &lt;-<span class="st"> </span><span class="kw">features</span>(coalition, bt, <span class="dt">included=</span><span class="ot">TRUE</span>)</code></pre></div>
+</div>
+<div id="shiny" class="section level2">
+<h2>Shiny</h2>
+<p>If the driller runs on a local installation, some shiny apps can be tested that are included in the package by calling polmineR().</p>
+<p>The apps will search the global environment for partition objects and offer to choose one of these from a drop-down menu. Thus, for using the apps, relevant partition objects should be generated first during a command-line R session. Then you may start calling the apps.</p>
+<p>The apps are still experimental and at times may throw out errors before you get a result. They are included to demonstrate how using the driller is meant to be made more convenient in future versions of the package.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

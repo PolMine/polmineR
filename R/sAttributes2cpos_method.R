@@ -16,7 +16,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     # Interestingly, the for-loop is more effective than a vectorized version
     # an Rcpp-implementation of struc2str is not faster
     # potential for optimization: struc2str
-    maxAttr <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)
+    maxAttr <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs, type = "s")
     meta <- data.frame(struc = c(0:(maxAttr-1)), select = rep(0, times = maxAttr))
     if (length(.Object@sAttributes) > 0) {
       for (sAttr in names(.Object@sAttributes)){
@@ -54,7 +54,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       function(x) paste(.Object@corpus, '.', x, sep = '')
     )
     sAttr <- rev(sAttr)
-    strucs <- c(0:(CQI$attribute_size(.Object@corpus, names(.Object@sAttributes)[1])-1))
+    strucs <- c(0:(CQI$attribute_size(.Object@corpus, names(.Object@sAttributes)[1], type = "s")-1))
     metaVector <- CQI$struc2str(.Object@corpus, names(.Object@sAttributes)[1], strucs)
     Encoding(metaVector) <- .Object@encoding
     if (regex == FALSE) {

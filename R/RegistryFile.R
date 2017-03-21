@@ -136,6 +136,16 @@ RegistryFile <- setRefClass(
       invisible(.self$pAttributes)
     },
     
+    getSAttributes = function(){
+      
+      "Get the sAttributes."
+      
+      if (length(.self$txt) == 0) .self$read()
+      sAttrLines <- grep("\\[annotations\\]", .self$txt)
+      gsub("^STRUCTURE\\s+(.*?)\\t.*?$", "\\1", .self$txt[sAttrLines])
+      
+    },
+    
     getProperties = function(){
       
       "Get corpus properties."

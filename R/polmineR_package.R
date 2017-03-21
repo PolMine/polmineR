@@ -42,6 +42,9 @@ NULL
 #' @docType package
 #' @rdname polmineR-package
 #' @name polmineR-package
+#' @references 
+#' Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
+#' Cham: Springer.
 #' @examples
 #' \donttest{
 #' # examples in the manual rely in a sample corpus that can be install as follows:

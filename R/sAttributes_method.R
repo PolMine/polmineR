@@ -14,7 +14,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
     if (.Object %in% CQI$list_corpora()) {
       ret <- CQI$struc2str(
         .Object, sAttribute,
-        c(0:(CQI$attribute_size(.Object, sAttribute)-1))
+        c(0:(CQI$attribute_size(.Object, sAttribute, type = "s")-1))
         )
       if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
       if (unique == TRUE) ret <- unique(ret)

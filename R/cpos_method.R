@@ -37,7 +37,7 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding=NULL, verbose=TRUE, ...){
+setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
   if (is.null(encoding)) encoding <- getEncoding(.Object) 
   query <- adjustEncoding(query, encoding)
@@ -60,7 +60,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
     }
   } else if (cqp == TRUE) {
     CQI$query(.Object, query)
-    cpos <- try(CQI$dump_subcorpus(.Object))
+    cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
     if (is(cpos)[1] == "try-error"){
       if (verbose) message("no hits for query: ", query)
       hits <- NULL

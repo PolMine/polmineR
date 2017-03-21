@@ -51,3 +51,4 @@ resetRegistry <- function(registryDir = NULL, verbose = TRUE) {
   }
   invisible(oldRegistry)
 }
+
