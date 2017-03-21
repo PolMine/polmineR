@@ -1,9 +1,9 @@
 #' Initialize a partition.
 #' 
-#' Set up an object of the \code{partition} class. Frequency lists are computeted and kept 
-#' in the stat-slot if pAttribute is not NULL.
+#' Create a subcorpus stored in an object of the \code{partition} class.
+#' Counts are performed for the p-attribute defined by the parameter \code{pAttribute}.
 #' 
-#' The function sets up a partition based on a list of s-attributes with respective values.
+#' The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
 #' 
 #' The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
 #' text_year="2013"), or - for convencience - directly.
@@ -26,6 +26,7 @@
 #' \code{stat}-slot of the partition-object. The length of the pAttribute character vector may be 1
 #' or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
 #' A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
+#' 
 #' @param .Object character-vector - the CWB-corpus to be used
 #' @param def list consisting of a set of character vectors (see
 #' details and examples)
@@ -43,6 +44,7 @@
 #' @param ... parameters passed into the partition-method
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
+#' @seealso \code{\link{partition-class}}
 #' @examples
 #' \dontrun{
 #'    use("polmineR.sampleCorpus")
