@@ -13,7 +13,7 @@
 \S4method{sAttributes}{partition}(.Object, sAttribute = NULL)
 }
 \arguments{
-\item{.Object}{either a \code{partition} or a character vector specifying a CWB corpus}
+\item{.Object}{either a \code{partition} object or a character vector specifying a CWB corpus}
 
 \item{sAttribute}{name of a specific s-attribute}
 
@@ -26,12 +26,17 @@ a character vector
 }
 \description{
 Structural annotations (s-attributes) of a corpus provide metainformation for
-ranges of text. Importing XML into the Corpus Workbench (CWB) turns elements and element
-attributes into s-attributes. There are two uses of the sAttributes-method: If the 
+regions of tokens. Gain access to the s-attributes available for a corpus or partition,
+or the values of s-attributes in a corpus/partition with the \code{sAttributes}-method.
+}
+\details{
+Importing XML into the Corpus Workbench (CWB) turns elements and element
+attributes into so-called s-attributes. There are two uses of the sAttributes-method: If the 
 \code{sAttribute} parameter is NULL (default), the return value is a character vector
-with all s-attributes. If sAttribute is the name of a specific s-attribute (i.e. a 
-length 1 character vector), the respective s-attributes available in the corpus are 
-returned.
+with all s-attributes present in a corpus.
+
+If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
+values of the s-attributes available in the corpus/partition are returned.
 }
 \examples{
 \dontrun{

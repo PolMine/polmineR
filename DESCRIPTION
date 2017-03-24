@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.1.9013
-Date: 2017-03-21
+Version: 0.7.2
+Date: 2017-03-23
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -17,8 +17,8 @@ Imports:
     utils
 Suggests:
     parallel,
-    polmineR.sampleCorpus,
     polmineR.Rcpp,
+    europarl.en,
     rcqp,
     doParallel,
     markdown,
@@ -33,14 +33,14 @@ Suggests:
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
-Description: Tools for corpus analysis using the CWB as an efficient backend
-    for indexing and querying large corpora. The package offers functionality to
-    flexibly create subcorpora ("partitions") and to carry out basic statistical
-    operations (count, cooccurrences etc.). The original full text of documents
+Description: Library for corpus analysis using the Corpus Workbench as an
+    efficient back end for indexing and querying large corpora. The package offers
+    functionality to flexibly create partitions and to carry out basic statistical
+    operations (count, co-occurrences etc.). The original full text of documents
     can be reconstructed and inspected at any time. Beyond that, the package
     is intended to serve as an interface to packages implementing advanced
     statistical procedures. Respective data structures (document term matrices, term
-    cooccurrence matrices etc.) can be created based on the indexed corpora.
+    co-occurrence matrices etc.) can be created based on the indexed corpora.
 BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR

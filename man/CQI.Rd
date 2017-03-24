@@ -8,13 +8,10 @@
 \alias{CQI.perl}
 \alias{CQI.rcqp}
 \alias{CQI.super}
-\alias{resetInterface}
 \title{Interfaces for accessing the CWB}
 \format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{
 CQI.super
-
-resetInterface(interface = c("rcqp", "perl", "Rcpp", "cqpserver"))
 
 CQI.Rcpp
 
@@ -23,9 +20,6 @@ CQI.cqpserver
 CQI.perl
 
 CQI.rcqp
-}
-\arguments{
-\item{interface}{the way to interface to the Corpus Workbench}
 }
 \description{
 The package offers three different interfaces to the Corpus
