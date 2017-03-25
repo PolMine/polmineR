@@ -36,6 +36,7 @@
 #' RegistryFile$new(package = "plprbt.pvs2017")$getHome()
 #' }
 #' @importFrom utils available.packages contrib.url install.packages
+#' @rdname install.corpus
 install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...){
   for (package in pkgs){
     if (package %in% utils::available.packages(utils::contrib.url(repos = repo))){
@@ -55,4 +56,27 @@ install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages
       stop("package ", package, " is not available")
     }
   }
+}
+
+
+#' @rdname install.corpus
+installed.corpora <- function(){
+  matrices <- lapply(
+    .libPaths(),
+    function(lib){
+      vectors <- lapply(
+        installed.packages(lib.loc = lib)[,"Package"],
+        function(package){
+          c(
+            package = package,
+            lib = lib,
+            registry = system.file(package = package, "extdata", "cwb", "registry")
+          )
+        }
+      )
+      do.call(rbind, vectors)
+    }
+  )
+  M <- data.table(do.call(rbind, matrices))
+  M[which(nchar(M[["registry"]]) > 0)]
 }
