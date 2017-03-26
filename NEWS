@@ -1,3 +1,9 @@
+v0.7.3
+* new installed.corpora() convenience function to list all data packages with corpora
+* view-method and show-method for cooccurrences-objects now successfully redirect
+output to RStudio viewer
+
+
 v0.7.2
 * updated documentation of partition-method.
 * documentation of hits-method improved

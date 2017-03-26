@@ -26,11 +26,11 @@ NULL
 #' @exportClass textstat
 setClass("textstat",
          representation(
-           corpus="character",
-           pAttribute="character",
-           encoding="character",
-           stat="data.table",
-           name="character"
+           corpus = "character",
+           pAttribute = "character",
+           encoding = "character",
+           stat = "data.table",
+           name = "character"
          )
 )
 

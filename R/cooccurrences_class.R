@@ -89,10 +89,10 @@ setMethod('summary', 'cooccurrences',
 
 
 #' @docType methods
-setMethod('show', 'cooccurrences', function(object) {
-  roundedTextstatObject <- as.data.frame(round(object))
+setMethod("show", "cooccurrences", function(object) {
+  object <- round(object)
   if (Sys.getenv("RSTUDIO") == "1"){
-    View(roundedTextstatObject)
+    get("View", envir = .GlobalEnv)(object@stat)
   } else {
     if (getOption("polmineR.browse") == TRUE){
       browse(roundedTextstatObject)  

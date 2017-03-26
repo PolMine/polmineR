@@ -4,7 +4,7 @@ author: "Andreas Blätte (andreas.blaette@uni-due.de)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Introduction to polmineR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 
@@ -339,7 +339,6 @@ Before proceeding to install polmineR, we install dependencies that are not inst
 
 ```{r, eval = FALSE}
 install.packages(pkgs = c("htmltools", "htmlwidgets", "magrittr", "iterators", "NLP"))
-install.packages("rcqp")
 ```
 
 The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically. 

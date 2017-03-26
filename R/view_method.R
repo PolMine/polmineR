@@ -10,14 +10,14 @@ setGeneric("view", function(.Object, ...) standardGeneric("view"))
 #' @rdname partition-class
 setMethod("view", "partition", function(.Object){
   tableToView <- .Object@stat
-  View(tableToView)
+  get("View", envir = .GlobalEnv)(tableToView)
 })
 
 
 #' @rdname partition-class
 setMethod("view", "cooccurrences", function(.Object){
   tableToView <- .Object@stat
-  View(tableToView)
+  get("View", envir = .GlobalEnv)(tableToView)
 })
 
 
@@ -26,18 +26,15 @@ setMethod("view", "cooccurrences", function(.Object){
 #' @param .Object a kwic object
 setMethod("view", "kwic", function(.Object){
   tableToView <- .Object@table
-  View(tableToView)
+  get("View", envir = .GlobalEnv)(tableToView)
 })
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
   .Object <- round(.Object, digits = 3)
-  View(.Object@stat)
+  get("View", envir = .GlobalEnv)(.Object@stat)
 })
 
-# setMethod("view", "partition", function(.Object){
-#   View(.Object@stat)
-# })
 
 #' @rdname context-class
 setMethod("view", "context", function(.Object){
@@ -48,7 +45,7 @@ setMethod("view", "context", function(.Object){
     "count_window", "count_partition", "exp_window",
     .Object@method
     )
-  View(.Object@stat[, whatToView, with=FALSE], title=.Object@query)
+  get("View", envir = .GlobalEnv)(.Object@stat[, whatToView, with=FALSE], title=.Object@query)
 })
 
 #' @exportMethod view
@@ -61,12 +58,12 @@ setMethod("view", "features", function(.Object){
     "count_coi", "count_ref", "exp_coi",
     .Object@method
   )
-  View(.Object@stat[, whatToView, with=FALSE], title = "features")
+  get("View", envir = .GlobalEnv)(.Object@stat[, whatToView, with=FALSE], title = "features")
 })
 
 #' @rdname cooccurrences-class
 setMethod(view, "cooccurrencesReshaped", function(.Object){
   .Object <- round(.Object, digits=2)
   colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
-  View(.Object@stat[, colsToView, with=FALSE])
+  get("View", envir = .GlobalEnv)(.Object@stat[, colsToView, with=FALSE])
 })
