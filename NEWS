@@ -2,6 +2,7 @@ v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora
 * view-method and show-method for cooccurrences-objects now successfully redirect
 output to RStudio viewer
+* data.table-style indexing of objects inheriting from textstat-class
 
 
 v0.7.2

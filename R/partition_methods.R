@@ -34,17 +34,6 @@ function(object){
 
 
 
-
-#' @exportMethod [
-#' @rdname partition-class
-setMethod('[', 'partition', function(x,i) count(x, query=i, method="grep"))
-
-#' @exportMethod [[
-#' @rdname partition-class
-setMethod("[[", "partition", function(x,i){
-  kwic(object=x, i)
-})
-
 #' split partition into partitionBundle
 #' 
 #' Split a partition object into a partition Bundle if gap between strucs

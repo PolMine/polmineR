@@ -16,8 +16,7 @@ setMethod("view", "partition", function(.Object){
 
 #' @rdname partition-class
 setMethod("view", "cooccurrences", function(.Object){
-  tableToView <- .Object@stat
-  get("View", envir = .GlobalEnv)(tableToView)
+  get("View", envir = .GlobalEnv)(.Object@stat)
 })
 
 
