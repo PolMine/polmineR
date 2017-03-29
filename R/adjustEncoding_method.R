@@ -27,7 +27,7 @@ as.nativeEnc <- function(x, corpusEnc){
 #' @export as.corpusEnc
 #' @rdname encodings
 as.corpusEnc <- function(x, corpusEnc){
-  y <- iconv(x, from = localeToCharset(), to = corpusEnc)
+  y <- iconv(x, from = localeToCharset()[1], to = corpusEnc)
   Encoding(y) <- corpusEnc
   y
 }
