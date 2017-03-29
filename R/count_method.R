@@ -198,7 +198,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
     stopifnot(.Object %in% CQI$list_corpora())
     total <- CQI$attribute_size(.Object, pAttribute, type = "p")
     if (class(cqp) == "function") cqp <- cqp(query)
-    if (cqp == FALSE){
+    if (cqp[1] == FALSE){
       count <- sapply(
         query,
         function(query)
