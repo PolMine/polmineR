@@ -42,7 +42,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
   if (is.null(encoding)) encoding <- getEncoding(.Object) # get encoding of the corpus
   query <- as.corpusEnc(query, encoding)
   if (class(cqp) == "function") cqp <- cqp(query)
-  if (cqp == FALSE) {
+  if (cqp[1] == FALSE) {
     if (grepl("[\\|]", query)) warning("Special character that may cause problems in query!")
     cpos <- try({
       id <- CQI$str2id(.Object, pAttribute, query)
