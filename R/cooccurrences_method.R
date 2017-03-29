@@ -44,7 +44,7 @@ setMethod("cooccurrences", "character", function(
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL,
   keep = NULL, cpos = NULL, method = "ll",
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
   ){
   if (is.null(query) == FALSE){
     C <- context(
@@ -69,7 +69,7 @@ setMethod(
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
-    mc = FALSE, progress = TRUE, verbose = TRUE, ...
+    mc = FALSE, progress = TRUE, verbose = FALSE, ...
   ){
     C <- context(
       .Object = .Object, query = query, cqp = is.cqp,
@@ -83,20 +83,22 @@ setMethod(
   })
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = TRUE){
+setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE){
   if (!is.null(method)){
     
     # enrich partition if necessary
     if (!all(paste(.Object@pAttribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
-      message("... adding missing count for pAttribute ", .Object@pAttribute, " to partition")
-      .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, id2str = FALSE)
+      if (verbose) message("... adding missing count for pAttribute ", .Object@pAttribute, " to partition")
+      .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, id2str = FALSE, verbose = verbose)
     }
     
     setkeyv(.Object@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
     setkeyv(.Object@partition@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
     .Object@stat <- .Object@partition@stat[.Object@stat]
-    if (paste("i", .Object@pAttribute, sep = ".") %in% colnames(.Object@stat)){
-      .Object@stat[, eval(paste("i", .Object@pAttribute, sep = ".")) := NULL, with = TRUE]
+    for (pAttr in .Object@pAttribute){
+      if (paste("i", pAttr, sep = ".") %in% colnames(.Object@stat)){
+        .Object@stat[, eval(paste("i", pAttr, sep = ".")) := NULL, with = TRUE]
+      }
     }
     setnames(.Object@stat, old = "count", new = "count_partition")
     for (test in method){

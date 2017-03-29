@@ -86,7 +86,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
   )
   docs <- CQI$struc2str(x, sAttribute, seq.int(0, CQI$attribute_size(x, sAttribute, type = "s") - 1, by = 1))
   terms <- CQI$id2str(x, pAttribute, seq.int(0, max(countDT[["token_id"]]), by = 1))
-  terms <- as.utf8(terms)
+  terms <- as.nativeEnc(terms, from = getEncoding(x))
   dimnames(y) <- list(docs, terms)
   class(y) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   attr(y, "weighting") <- c("term frequency", "tf")
@@ -153,7 +153,9 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
   if (!is.null(col)){
     callNextMethod()
   } else if (!is.null(pAttribute)){
+    encoding <- unique(sapply(x, function(x) x@encoding))
     if (verbose == TRUE) message("... generating corpus positions")
+    
     cposList <- lapply(
       c(1:length(x@objects)),
       function(i) cbind(i, cpos(x@objects[[i]]@cpos))
@@ -163,11 +165,9 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
     id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
     DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
     if (verbose == TRUE) message("... performing count")
-    # TF <- DT[,.N, by=.(i, id)]
-    TF <- DT[,.N, by=c("i", "id"), with=TRUE]
-    setnames(TF, old="N", new="count")
-    # TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, id)), with=FALSE]
-    TF[, pAttribute := as.utf8(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]])), with=FALSE]
+    TF <- DT[,.N, by = c("i", "id"), with=TRUE]
+    setnames(TF, old = "N", new = "count")
+    TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), encoding), with = FALSE]
     if (verbose == TRUE) message("... generating keys")
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)

@@ -55,7 +55,7 @@ setMethod("partitionBundle", "partition", function(
     progress=progress, verbose=verbose,  mc=mc,
     ...
   )
-  names(bundle@objects) <- paste(adjustEncoding(prefix, bundle@encoding), values, sep='')
+  names(bundle@objects) <- paste(as.corpusEnc(prefix, bundle@encoding), values, sep='')
   bundle
 })
 

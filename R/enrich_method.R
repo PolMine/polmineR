@@ -32,7 +32,7 @@ setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NUL
       message = paste('getting counts for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
       verbose = verbose
       )  
-    object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)
+    object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc, verbose = verbose)
     object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
@@ -59,7 +59,7 @@ setMethod("enrich", "kwic", function(object, meta = NULL){
         cposToGet <- object@cpos[which(object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
         # cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]] ]  [position == 0][, .SD[1], by = hit_no][["cpos"]]
         strucs <- CQI$cpos2struc(object@corpus, metadat, cposToGet)
-        as.utf8(CQI$struc2str(object@corpus, metadat, strucs))
+        as.nativeEnc(CQI$struc2str(object@corpus, metadat, strucs), object@encoding)
       }
     )
     metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)

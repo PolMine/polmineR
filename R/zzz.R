@@ -64,7 +64,6 @@ default_templates <- list(
     "polmineR.meta " =  as.character(c()),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = 2,
-    "polmineR.consoleEncoding" = "UTF-8",
     "polmineR.smtpServer" = "",
     "polmineR.smtpPort" = "",
     "polmineR.email" = "",

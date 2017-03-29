@@ -1,40 +1,33 @@
-#' adjust encoding
+#' Conversion between corpus and native encoding.
 #' 
-#' Utility method to help making sure that the encoding of a character string or the relevant parts of an object
-#' conform to the encoding to the corpus. 
+#' Utility functions to convert encoding between the native encoding and the 
+#' encoding of the corpus.
 #' 
-#' @param .Object the object (usually a character vector, nothing else is implemented so far)
-#' @param corpusEncoding the encoding of the corpus (e.g. "latin1")
-#' @param from encoding
-#' @param ... further parameters
+#' @param x the object (a character vector)
+#' @param corpusEnc the encoding of the corpus (e.g. "latin1", "UTF-8")
 #' @rdname encodings
-#' @name adjustEncoding
-#' @exportMethod adjustEncoding
-setGeneric("adjustEncoding", function(.Object, ...) standardGeneric("adjustEncoding"))
+#' @export as.utf8
+#' @rdname encodings
+as.utf8 <- function(x, from = "latin1"){
+  Encoding(x) <- from
+  y <- enc2utf8(x)
+  Encoding(y) <- "unknown"
+  y
+}
 
+#' @export as.nativeEnc
 #' @rdname encodings
-setMethod("adjustEncoding", "character", function(.Object, corpusEncoding){
-  sapply(
-    as.list(.Object),
-    function(x) {
-      enc <- Encoding(x)
-      if ( enc != "unknown" && enc != corpusEncoding ) {
-        x <- iconv(x, from=enc, to=corpusEncoding)
-      }
-      x
-    }
-  )
-})
+as.nativeEnc <- function(x, corpusEnc){
+  Encoding(x) <- corpusEnc
+  y <- enc2native(x)
+  Encoding(y) <- "unknown"
+  y
+}
 
-#' @exportMethod as.utf8
+#' @export as.corpusEnc
 #' @rdname encodings
-setGeneric("as.utf8", function(.Object, ...) standardGeneric("as.utf8"))
-
-#' adjustEncoding-method
-#' @rdname encodings
-setMethod("as.utf8", "character", function(.Object, from="latin1"){
-  Encoding(.Object) <- from
-  retval <- enc2utf8(.Object)
-  Encoding(retval) <- "unknown"
-  retval
-})
+as.corpusEnc <- function(x, corpusEnc){
+  y <- iconv(x, from = localeToCharset(), to = corpusEnc)
+  Encoding(y) <- corpusEnc
+  y
+}

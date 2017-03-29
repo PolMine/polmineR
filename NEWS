@@ -3,6 +3,7 @@ v0.7.3
 * view-method and show-method for cooccurrences-objects now successfully redirect
 output to RStudio viewer
 * data.table-style indexing of objects inheriting from textstat-class
+* for windows compatibility, as.corpusEnc/as.nativeEnc for encoding conversion
 
 
 v0.7.2

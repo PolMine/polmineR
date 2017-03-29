@@ -54,7 +54,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @name context
 #' @docType methods
 #' @aliases context,partition-method
-setMethod(f = "context", "partition", function(
+setMethod("context", "partition", function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
@@ -148,8 +148,8 @@ setMethod(f = "context", "partition", function(
       
       for (i in c(1:length(pAttribute))){
         newColumn <- CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[paste(pAttribute[i], "id", sep = "_")]])
-        newColumnUtf8 <- as.utf8(newColumn)
-        ctxt@stat[, eval(pAttribute[i]) := newColumnUtf8]
+        newColumnNative <- as.nativeEnc(newColumn, .Object@encoding)
+        ctxt@stat[, eval(pAttribute[i]) := newColumnNative]
       }
     }
     ctxt

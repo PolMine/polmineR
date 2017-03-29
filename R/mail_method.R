@@ -22,7 +22,7 @@ setGeneric("mail", function(object, ...){standardGeneric("mail")})
   tabTempDir <- tempdir()
   if ("csv" %in% fileFormat) {
     tabFilenameCsv <- file.path(tabTempDir, paste(filename, ".csv", sep=""))
-    write.csv(tab[c(1:nrow),], file=tabFilenameCsv, fileEncoding="latin1")
+    write.csv(tab[c(1:nrow),], file=tabFilenameCsv, fileEncoding = "latin1")
     msg[[length(msg)+1]] <- sendmailR::mime_part(tabFilenameCsv)
   }
   if ("xlsx" %in% fileFormat) {

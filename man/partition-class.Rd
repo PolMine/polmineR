@@ -4,7 +4,6 @@
 \name{partition-class}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{[[,partition-method}
 \alias{aggregate,partition-method}
 \alias{as.data.frame,partition-method}
 \alias{as.markdown,partition-method}
@@ -37,10 +36,6 @@
 \S4method{freq}{partition}(.Object)
 
 \S4method{pAttributes}{partition}(.Object, pAttribute = NULL)
-
-\S4method{[}{partition,ANY,ANY,ANY}(x, i)
-
-\S4method{[[}{partition}(x, i)
 
 \S4method{name}{partition}(x)
 
@@ -75,8 +70,6 @@
 
 \item{pAttribute}{a p-attribute (for enriching)}
 
-\item{i}{index}
-
 \item{value}{value}
 
 \item{object}{a partition object}
@@ -84,6 +77,8 @@
 \item{dim}{dimensions}
 
 \item{verbose}{logical, whether to be verbose}
+
+\item{i}{index}
 }
 \description{
 partition class

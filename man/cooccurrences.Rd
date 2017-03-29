@@ -14,16 +14,16 @@ cooccurrences(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, keep = NULL, cpos = NULL,
-  method = "ll", mc = getOption("polmineR.mc"), verbose = TRUE,
+  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
   progress = FALSE)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
-\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = TRUE)
+\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
 }
 \arguments{
 \item{.Object}{a partition object, or a character vector with a CWB corpus}

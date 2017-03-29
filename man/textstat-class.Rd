@@ -48,7 +48,7 @@ as.bundle(object, ...)
 
 \S4method{[[}{textstat}(x, i)
 
-\S4method{[}{textstat,ANY,ANY,ANY}(x, i)
+\S4method{[}{textstat,ANY,ANY,ANY}(x, i, j, by, with = TRUE)
 
 \S4method{view}{textstat}(.Object)
 }

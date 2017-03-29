@@ -153,7 +153,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
         template[["document"]][["format"]][2],
         collapse = ""
         )
-      meta <- adjustEncoding(meta, "latin1")
+      meta <- as.corpusEnc(meta, .Object@encoding)
     }
     tokens <- getTokenStream(
       matrix(.Object@cpos[i,], nrow = 1),
@@ -171,7 +171,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
-  markdown <- adjustEncoding(markdown, "UTF8")
+  markdown <- as.nativeEnc(markdown, .Object@encoding)
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown <- gsub("\n - ", "\n", markdown)
   markdown

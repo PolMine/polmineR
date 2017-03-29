@@ -92,13 +92,13 @@ setMethod("count", "partition", function(
       ID <- as.data.table(idList)
       setkeyv(ID, cols = names(idList))
       TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
-      setnames(TF, "V1", "count")
+      setnames(TF, "N", "count")
     }
     if (id2str){
       dummy <- lapply(
         c(1:length(pAttribute)),
         function(i){
-          str <- as.utf8(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from = .Object@encoding)
+          str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), .Object@encoding)
           TF[, eval(pAttribute[i]) := str , with = TRUE] 
         })
       setcolorder(TF, neworder = c(pAttribute, pAttr_id, "count"))
@@ -161,7 +161,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
         setkeyv(TF, paste(pAttribute, "id", sep = "_"))
         setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.utf8(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1))), with = TRUE]
+        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), getEncoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = pAttribute)
         setkeyv(TF, pAttribute)

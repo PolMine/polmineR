@@ -27,7 +27,7 @@ setMethod("pAttributes", "character", function(.Object, pAttribute = NULL){
   } else {
     if (pAttribute %in% pAttrs){
       tokens <- CQI$id2str(.Object, pAttribute, c(0:(CQI$lexicon_size(.Object, pAttribute) - 1)))
-      tokens <- as.utf8(tokens)
+      tokens <- as.nativeEnc(tokens, getEncoding(.Object))
       return(tokens)
     } else {
       stop("pAttribute provided is not available")
