@@ -58,7 +58,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
     } else {
       hits <- NULL
     }
-  } else if (cqp == TRUE) {
+  } else if (cqp[1] == TRUE) {
     CQI$query(.Object, query)
     cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
     if (is(cpos)[1] == "try-error"){

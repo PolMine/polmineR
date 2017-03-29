@@ -210,7 +210,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       )
       freq <- count/total
       return(data.table(query = query, count = count, freq = freq))
-    } else if (cqp == TRUE){
+    } else if (cqp[1] == TRUE){
     count <- sapply(
       query,
       function(query){
