@@ -92,7 +92,7 @@ setMethod('summary', 'cooccurrences',
 setMethod("show", "cooccurrences", function(object) {
   object <- round(object)
   if (Sys.getenv("RSTUDIO") == "1"){
-    get("View", envir = .GlobalEnv)(object@stat)
+    view(object)
   } else {
     if (getOption("polmineR.browse") == TRUE){
       browse(object@stat)  

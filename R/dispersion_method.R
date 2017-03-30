@@ -55,7 +55,7 @@ setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = 
       .Object = .Object, query = query, cqp = cqp,
       sAttribute = sAttribute, pAttribute = pAttribute, freq = freq,
       mc = mc, verbose = verbose, progress = progress
-      ),
+    ),
     sAttribute = sAttribute, freq = freq
   )
 })

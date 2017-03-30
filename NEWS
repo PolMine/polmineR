@@ -4,7 +4,9 @@ v0.7.3
 output to RStudio viewer
 * data.table-style indexing of objects inheriting from textstat-class
 * for windows compatibility, as.corpusEnc/as.nativeEnc for encoding conversion
-
+* performance gain for size-method by using polmineR.Rcpp
+* dissect-method dropped (replaced by size)
+* improved documentation of size-method
 
 v0.7.2
 * updated documentation of partition-method.

@@ -3,7 +3,12 @@ NULL
 
 #' S4 textstat class
 #' 
-#' superclass for comp and context class
+#' Superclass for features, context, and partition class.
+#' 
+#' Objects derived from the \code{textstat} class can be indexed with simple
+#' square brackets ("[") to get rows specified by an numeric/integer vector,
+#' and with double square brackets ("[[") to get specific columns from the 
+#' \code{data.table} in the slot \code{stat}.
 #' 
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
 #' @slot corpus Object of class \code{"character"}
@@ -16,7 +21,8 @@ NULL
 #' @param decreasing logical
 #' @param e1 object 1
 #' @param e2 object 2
-#' @param i index
+#' @param i vector to index data.table in stat-slot
+#' @param j vector to index data.table in stat-slot
 #' @param ... further parameters
 #' @aliases as.data.frame,textstat-method show,textstat-method
 #'   dim,textstat-method
@@ -24,6 +30,17 @@ NULL
 #'   as.DataTables,textstat-method
 #' @docType class
 #' @exportClass textstat
+#' @examples
+#' \dontrun{
+#' P <- partition("PLPRBTTXT", text_year = "2009", pAttributes = "word")
+#' C <- cooccurrences(P, query = "Arbeit")
+#' C[1:25]
+#' C[,c("word", "ll")]
+#' C[1:25, c("word", "")]
+#' C[1:25][["word"]]
+#' C[which(C[["word"]] %in% c("Arbeit", "Sozial"))]
+#' C[ C[["word"]] %in% c("Arbeit", "Sozial") ]
+#' }
 setClass("textstat",
          representation(
            corpus = "character",
@@ -123,11 +140,23 @@ setMethod("pAttribute", "textstat", function(object) object@pAttribute)
 
 #' @exportMethod [[
 #' @rdname textstat-class
-setMethod("[[", "textstat", function(x, i) x@stat[[i]] )
+setMethod("[[", "textstat", function(x, i){
+  if (nrow(x@stat) == 0){
+    warning("indexing is pointless because data.table is empty")
+  }
+  x@stat[[i]]
+})
 
 #' @exportMethod [[
 #' @rdname textstat-class
-setMethod("[", "textstat", function(x, i){
-  x@stat <- x@stat[i = i]
+setMethod("[", "textstat", function(x, i, j){
+  if (nrow(x@stat) == 0){
+    warning("indexing is pointless because data.table is empty")
+  }
+  if (missing(j)){
+    x@stat <- copy(x@stat[i = i])
+  } else {
+    x@stat <- copy(x@stat[i = i, j = j, with = FALSE])
+  }
   x
 })

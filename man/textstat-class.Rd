@@ -48,7 +48,7 @@ as.bundle(object, ...)
 
 \S4method{[[}{textstat}(x, i)
 
-\S4method{[}{textstat,ANY,ANY,ANY}(x, i)
+\S4method{[}{textstat,ANY,ANY,ANY}(x, i, j)
 
 \S4method{view}{textstat}(.Object)
 }
@@ -69,12 +69,20 @@ as.bundle(object, ...)
 
 \item{e2}{object 2}
 
-\item{i}{index}
+\item{i}{vector to index data.table in stat-slot}
+
+\item{j}{vector to index data.table in stat-slot}
 
 \item{.Object}{an object}
 }
 \description{
-superclass for comp and context class
+Superclass for features, context, and partition class.
+}
+\details{
+Objects derived from the \code{textstat} class can be indexed with simple
+square brackets ("[") to get rows specified by an numeric/integer vector,
+and with double square brackets ("[[") to get specific columns from the 
+\code{data.table} in the slot \code{stat}.
 }
 \section{Slots}{
 
@@ -89,4 +97,16 @@ superclass for comp and context class
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 }}
+\examples{
+\dontrun{
+P <- partition("PLPRBTTXT", text_year = "2009", pAttributes = "word")
+C <- cooccurrences(P, query = "Arbeit")
+C[1:25]
+C[,c("word", "ll")]
+C[1:25, c("word", "")]
+C[1:25][["word"]]
+C[which(C[["word"]] \%in\% c("Arbeit", "Sozial"))]
+C[ C[["word"]] \%in\% c("Arbeit", "Sozial") ]
+}
+}
 
