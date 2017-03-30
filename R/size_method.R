@@ -52,7 +52,7 @@ setMethod("size", "partition", function(x, sAttribute = NULL){
     dt <- as.data.table(
       lapply(
         setNames(sAttribute, sAttribute),
-        function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), x@encoding)
+        function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
       )
     )
     dt[, size := x@cpos[,2] - x@cpos[,1] + 1]

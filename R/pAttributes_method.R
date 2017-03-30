@@ -27,7 +27,7 @@ setMethod("pAttributes", "character", function(.Object, pAttribute = NULL){
   } else {
     if (pAttribute %in% pAttrs){
       tokens <- CQI$id2str(.Object, pAttribute, c(0:(CQI$lexicon_size(.Object, pAttribute) - 1)))
-      tokens <- as.nativeEnc(tokens, getEncoding(.Object))
+      tokens <- as.nativeEnc(tokens, from = getEncoding(.Object))
       return(tokens)
     } else {
       stop("pAttribute provided is not available")
@@ -35,7 +35,7 @@ setMethod("pAttributes", "character", function(.Object, pAttribute = NULL){
   }
 })
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("pAttributes", "partition", function(.Object, pAttribute = NULL){
   pAttrs <- RegistryFile$new(.Object@corpus)$getPAttributes()
   if (is.null(pAttribute)){

@@ -117,7 +117,7 @@ setMethod("read", "Regions", function(.Object, meta = NULL){
               .Object@corpus,
               M,
               CQI$cpos2struc(.Object@corpus, M, .BY[[1]])
-            ), .Object@encoding
+            ), from = .Object@encoding
             )
         }
       )

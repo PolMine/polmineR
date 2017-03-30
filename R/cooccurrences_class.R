@@ -95,9 +95,9 @@ setMethod("show", "cooccurrences", function(object) {
     get("View", envir = .GlobalEnv)(object@stat)
   } else {
     if (getOption("polmineR.browse") == TRUE){
-      browse(roundedTextstatObject)  
+      browse(object@stat)  
     } else {
-      return(roundedTextstatObject) 
+      return(object@stat) 
     }
   }
 })

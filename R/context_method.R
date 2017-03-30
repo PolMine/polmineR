@@ -148,7 +148,7 @@ setMethod("context", "partition", function(
       
       for (i in c(1:length(pAttribute))){
         newColumn <- CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[paste(pAttribute[i], "id", sep = "_")]])
-        newColumnNative <- as.nativeEnc(newColumn, .Object@encoding)
+        newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
         ctxt@stat[, eval(pAttribute[i]) := newColumnNative]
       }
     }

@@ -99,17 +99,17 @@ setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
 })
 
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("name", "partition", function(x) x@name)
 
-#' @rdname partition-class
+#' @rdname partition_class
 #' @exportMethod name<-
 setReplaceMethod("name", signature=c(x="partition", value="character"), function(x, value) {
   x@name <- value
   x
 })
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
   if ( is.null(names(object@metadata))) {
     if (verbose == TRUE) message("... required metadata missing, enriching partition")
@@ -131,19 +131,19 @@ setMethod("dissect", "partition", function(object, dim, verbose=FALSE){
 })
 
 #' @exportMethod length
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("length", "partition", function(x) x@size)
 
 
 #' @exportMethod as.data.frame
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("as.data.frame", "partition", function(x) as.data.frame(count(x)) )
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 
 
 #' @exportMethod hist
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("hist", "partition", function(x, ...){hist(x@stat[,"count"], ...)})
 
 

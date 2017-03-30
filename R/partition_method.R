@@ -44,7 +44,7 @@
 #' @param ... parameters passed into the partition-method
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
-#' @seealso \code{\link{partition-class}}
+#' @seealso \code{\link{partition_class}}
 #' @examples
 #' \dontrun{
 #'    use("polmineR.sampleCorpus")
@@ -128,7 +128,7 @@ setMethod("partition", "character", function(
     Partition@encoding <- encoding
   }
   .verboseOutput(paste('get encoding:', Partition@encoding), verbose)
-  Partition@sAttributes <- lapply(def, function(x) as.corpusEnc(x, Partition@encoding))
+  Partition@sAttributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = Partition@encoding))
 
   .verboseOutput('get cpos and strucs', verbose)
   if(is.null(def)){
@@ -203,7 +203,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     stat = data.table()
     )
   .verboseOutput(paste('Setting up partition', name), verbose)
-  def <- lapply(def, function(x) as.corpusEnc(x, .Object@encoding))  
+  def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
   newPartition@sAttributes <- c(.Object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   

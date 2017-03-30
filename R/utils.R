@@ -1,25 +1,49 @@
-#' CQP queries
+#' Tools for CQP queries.
 #' 
-#' Basic test whether query is a CQP query.
+#' Test whether a character string is a CQP query, or turn a character
+#' vector into CQP queries.
 #' 
-#' @param query query to be checked
+#' The \code{is.cqp} function guesses whether \code{query} is a CQP query 
+#' and returns the respective logical value (TRUE/FALSE).
+#' 
+#' The \code{as.cqp} function takes a character vector as input and converts it
+#' to a CQP query by putting the individual strings in quotation marks.
+#' 
+#' @param query character vector with at least one query
+#' @name cqp
+#' @references CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})
 #' @rdname cqp
 #' @export is.cqp
-is.cqp <- function(query) grepl('["|\']', query)
+#' @examples 
+#' is.cqp("migration") # will return FALSE
+#' is.cqp('"migration"') # will return TRUE
+#' is.cqp('[pos = "ADJA"] "migration"') # will return TRUE
+#' 
+#' as.cqp("migration")
+#' as.cqp(c("migration", "diversity"))
+#' as.cqp(c("migration", "diversity"), collapse = TRUE)
+#' as.cqp("migration", normalise.case = TRUE)
+#' @return \code{is.cqp} returns a logical value, \code{as.cqp} a character vector
+is.cqp <- function(query){
+  isQuery <- unique(grepl('["|\']', query))
+  if (length(isQuery) == 2){
+    stop("Test whether query is a CQP query (or not) does not result in an unambigious result. Please check queries and/or state logical value explicitly.")
+  }
+  isQuery
+} 
 
-#' Takes a simple string as an imput and converts it to a valid CQP query
-#' @param queries a character vector
-#' @param normalise_case logical
-#' @param collapse whether collapse the queries into one
-#' @return a character vector
+#' @param normalise.case logical
+#' @param collapse logical, whether to collapse the queries into one
 #' @export as.cqp
 #' @rdname cqp
 #' @name as.cqp
-as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
+as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
+  if (is.logical(normalise.case) == FALSE) stop("normalise.case needs to be a logical value")
+  if (is.logical(collapse) == FALSE) stop("collapse needs to be a logical value")
   cqp <- sapply(
-    queries,
-    function(query){
-      query <- gsub("\\s+", " ", query)
+    query,
+    function(x){
+      query <- gsub("\\s+", " ", x)
       cqpRaw <- lapply(
         unlist(strsplit(query, "\\s")),
         function(q){
@@ -27,16 +51,16 @@ as.cqp <- function(queries, normalise_case=FALSE, collapse=FALSE){
             retval <- q
           } else {
             retval <- paste('"', q, '"', sep='')
-            if (normalise_case == TRUE) retval <- paste(retval, "%c", sep=" ")
+            if (normalise.case == TRUE) retval <- paste(retval, "%c", sep = " ")
           }
           retval
         })
-      paste(cqpRaw, collapse=" ")
+      paste(cqpRaw, collapse = " ")
     })
-  if (length(cqp)>1 && collapse==TRUE){
+  if (length(cqp) > 1 && collapse == TRUE){
     cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
   }    
-  return(cqp)
+  cqp
 }
 
 

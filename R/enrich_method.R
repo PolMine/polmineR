@@ -59,7 +59,7 @@ setMethod("enrich", "kwic", function(object, meta = NULL){
         cposToGet <- object@cpos[which(object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
         # cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]] ]  [position == 0][, .SD[1], by = hit_no][["cpos"]]
         strucs <- CQI$cpos2struc(object@corpus, metadat, cposToGet)
-        as.nativeEnc(CQI$struc2str(object@corpus, metadat, strucs), object@encoding)
+        as.nativeEnc(CQI$struc2str(object@corpus, metadat, strucs), from = object@encoding)
       }
     )
     metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)

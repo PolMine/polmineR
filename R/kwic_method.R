@@ -56,7 +56,7 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
     .Object@corpus, .Object@pAttribute[1],
     DT[[paste(.Object@pAttribute[1], "id", sep = "_")]]
     )
-  decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, .Object@encoding)
+  decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, from = .Object@encoding)
   DT[, .Object@pAttribute[1] := decoded_pAttr2, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   

@@ -167,7 +167,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NUL
     if (verbose == TRUE) message("... performing count")
     TF <- DT[,.N, by = c("i", "id"), with=TRUE]
     setnames(TF, old = "N", new = "count")
-    TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), encoding), with = FALSE]
+    TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), from = encoding), with = FALSE]
     if (verbose == TRUE) message("... generating keys")
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)

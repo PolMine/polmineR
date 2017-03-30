@@ -7,14 +7,14 @@
 #' @param ... further parameters
 setGeneric("view", function(.Object, ...) standardGeneric("view"))
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("view", "partition", function(.Object){
   tableToView <- .Object@stat
   get("View", envir = .GlobalEnv)(tableToView)
 })
 
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("view", "cooccurrences", function(.Object){
   get("View", envir = .GlobalEnv)(.Object@stat)
 })

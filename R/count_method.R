@@ -98,7 +98,7 @@ setMethod("count", "partition", function(
       dummy <- lapply(
         c(1:length(pAttribute)),
         function(i){
-          str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), .Object@encoding)
+          str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from = .Object@encoding)
           TF[, eval(pAttribute[i]) := str , with = TRUE] 
         })
       setcolorder(TF, neworder = c(pAttribute, pAttr_id, "count"))
@@ -161,7 +161,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
         setkeyv(TF, paste(pAttribute, "id", sep = "_"))
         setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), getEncoding(.Object)), with = TRUE]
+        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), from = getEncoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = pAttribute)
         setkeyv(TF, pAttribute)
@@ -198,7 +198,8 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
     stopifnot(.Object %in% CQI$list_corpora())
     total <- CQI$attribute_size(.Object, pAttribute, type = "p")
     if (class(cqp) == "function") cqp <- cqp(query)
-    if (cqp[1] == FALSE){
+    if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
+    if (cqp == FALSE){
       count <- sapply(
         query,
         function(query)
@@ -210,7 +211,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       )
       freq <- count/total
       return(data.table(query = query, count = count, freq = freq))
-    } else if (cqp[1] == TRUE){
+    } else if (cqp == TRUE){
     count <- sapply(
       query,
       function(query){

@@ -25,7 +25,7 @@ setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, v
     warning("... not yet implemented")
   }
   Encoding(strs) <- corpusEncoding
-  strs <- as.nativeEnc(strs, corpusEncoding)
+  strs <- as.nativeEnc(strs, from = corpusEncoding)
   if (robust != FALSE){
     if (robust == TRUE){
       if (length(strs) != length(unique(strs))){

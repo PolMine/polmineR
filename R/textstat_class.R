@@ -127,7 +127,7 @@ setMethod("[[", "textstat", function(x, i) x@stat[[i]] )
 
 #' @exportMethod [[
 #' @rdname textstat-class
-setMethod("[", "textstat", function(x, i, j, by, with = TRUE){
-  x@stat <- x@stat[i = i, j = j, by = by, with = with]
+setMethod("[", "textstat", function(x, i){
+  x@stat <- x@stat[i = i]
   x
 })

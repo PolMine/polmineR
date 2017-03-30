@@ -29,7 +29,6 @@ NULL
 #' @param x a partition object
 #' @param cpos ...
 #' @param meta ...
-#' @param i index
 #' @param cutoff maximum number of tokens to decode
 #' @param ... further parameters
 #' @param value value
@@ -41,8 +40,8 @@ NULL
 #'   [,partition-method as.partitionBundle 
 #'   as.partitionBundle,partition-method export export,partition-method split
 #'   dissect
-#' @rdname partition-class
-#' @name partition-class
+#' @rdname partition_class
+#' @name partition_class
 #' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
@@ -70,10 +69,10 @@ setClass(
 )
 
 
-#' @rdname partition-class
+#' @rdname partition_class
 setClass("plprPartition", contains="partition")
 
-#' @rdname partition-class
+#' @rdname partition_class
 setClass("pressPartition", contains="partition")
 
 setAs(from = "partition", to = "plprPartition", function(from){

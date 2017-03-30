@@ -66,7 +66,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
 })
 
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod(
   "as.markdown", "partition",
   function(
@@ -153,7 +153,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
         template[["document"]][["format"]][2],
         collapse = ""
         )
-      meta <- as.corpusEnc(meta, .Object@encoding)
+      meta <- as.corpusEnc(meta, corpusEnc = .Object@encoding)
     }
     tokens <- getTokenStream(
       matrix(.Object@cpos[i,], nrow = 1),
@@ -171,7 +171,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
-  markdown <- as.nativeEnc(markdown, .Object@encoding)
+  markdown <- as.nativeEnc(markdown, from = .Object@encoding)
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown <- gsub("\n - ", "\n", markdown)
   markdown
