@@ -45,7 +45,7 @@ setMethod(
     highlight = list(),
     cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, cutoff = NULL, ...
     ){
-  if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
+  if (requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     if (verbose) message("... enriching partition with metadata")
     object <- enrich(object, meta = meta, verbose=FALSE)

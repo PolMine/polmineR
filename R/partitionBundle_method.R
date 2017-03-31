@@ -115,19 +115,19 @@ setMethod("as.partitionBundle", "list", function(.Object, ...){
 
 #' @exportMethod as.partitionBundle
 #' @rdname partitionBundle-method
-setMethod("partitionBundle", "context", function(.Object, mc=getOption("polmineR.mc"), verbose=FALSE, progress=TRUE){
+setMethod("partitionBundle", "context", function(.Object, mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE){
   newPartitionBundle <- new(
     "partitionBundle",
-    corpus=.Object@corpus, encoding=.Object@encoding,
-    explanation="this partitionBundle is derived from a context object"
+    corpus = .Object@corpus, encoding = .Object@encoding,
+    explanation = "this partitionBundle is derived from a context object"
   )
   .makeNewPartition <- function(cpos, contextObject, ...){
     newPartition <- new(
       "partition",
-      corpus=contextObject@corpus,
-      encoding=contextObject@encoding,
-      cpos=matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2),
-      stat=data.table()
+      corpus = contextObject@corpus,
+      encoding = contextObject@encoding,
+      cpos = matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2),
+      stat = data.table()
     )
     newPartition <- enrich(newPartition, size=TRUE, pAttribute=contextObject@pAttribute, verbose=verbose)
     newPartition@strucs <- c(

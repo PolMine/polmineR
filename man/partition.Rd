@@ -126,6 +126,7 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 Andreas Blaette
 }
 \seealso{
-\code{\link{partition_class}}
+To learn about the methods available for objects of the class partition, see
+\code{\link{partition_class}},
 }
 

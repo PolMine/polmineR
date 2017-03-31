@@ -8,7 +8,9 @@ NULL
 # by the constructur
 
 
-#' partition class
+#' Partition class and methods.
+#' 
+#' S4 partition class and methods for instances of class partition.
 #' 
 #' @slot name Object of class \code{"character"} a name that may be useful 
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on 
@@ -46,12 +48,11 @@ NULL
 #' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
+#' @seealso The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
+#' respective documentation to learn more.
 setClass(
   "partition",
   representation(
-    name = "character", 
-    corpus = "character",
-    encoding = "character",
     sAttributes = "list",
     explanation = "character",
     cpos = "matrix",
@@ -60,21 +61,19 @@ setClass(
     size = "numeric",
     metadata = "data.frame",
     strucs = "numeric",
-    stat = "data.table",
-    pAttribute = "character",
     xml = "character",
     sAttributeStrucs = "character",
     call = "character"
   ),
-  contains = c("textstat")
+  contains = "textstat"
 )
 
 
 #' @rdname partition_class
-setClass("plprPartition", contains="partition")
+setClass("plprPartition", contains = "partition")
 
 #' @rdname partition_class
-setClass("pressPartition", contains="partition")
+setClass("pressPartition", contains = "partition")
 
 setAs(from = "partition", to = "plprPartition", function(from){
   y <- new("plprPartition")
@@ -196,10 +195,6 @@ setReplaceMethod("name", signature=c(x="partition", value="character"), function
 #' @rdname partition_class
 setMethod("length", "partition", function(x) x@size)
 
-
-#' @exportMethod as.data.frame
-#' @rdname partition_class
-setMethod("as.data.frame", "partition", function(x) as.data.frame(count(x)) )
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 

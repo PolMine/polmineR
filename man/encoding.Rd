@@ -3,18 +3,18 @@
 \docType{methods}
 \name{encoding}
 \alias{encoding}
-\alias{encoding,partition-method}
-\alias{encoding,partitionBundle-method}
+\alias{encoding,bundle-method}
+\alias{encoding,textstat-method}
 \alias{encoding<-}
-\title{get/set encoding slot of an object}
+\title{Get and set encoding.}
 \usage{
 encoding(object)
 
 encoding(object) <- value
 
-\S4method{encoding}{partition}(object)
+\S4method{encoding}{textstat}(object)
 
-\S4method{encoding}{partitionBundle}(object)
+\S4method{encoding}{bundle}(object)
 }
 \arguments{
 \item{object}{the object with an 'encoding'-slot}
@@ -22,6 +22,6 @@ encoding(object) <- value
 \item{value}{value to be assigned}
 }
 \description{
-Method for partition, partitionBundle objects.
+Method for \code{textstat} objects and classes inheriting from \code{textstat}.
 }
 

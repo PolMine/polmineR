@@ -34,7 +34,7 @@ setMethod("browse", "textstat", function(object){
 })
 
 #' @rdname browse
-setMethod("browse", "context", function(object){
+setMethod("browse", "cooccurrences", function(object){
   if (require("DataTablesR", quietly=TRUE)){
     tab <- data.frame(
       token=rownames(object@stat),

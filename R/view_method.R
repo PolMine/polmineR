@@ -41,18 +41,6 @@ setMethod("view", "textstat", function(.Object){
 })
 
 
-#' @rdname context-class
-setMethod("view", "context", function(.Object){
-  .Object <- round(.Object, 2)
-  whatToView <- c(
-    paste("rank", .Object@method, sep="_"),
-    .Object@pAttribute,
-    "count_window", "count_partition", "exp_window",
-    .Object@method
-    )
-  get("View", envir = .GlobalEnv)(.Object@stat[, whatToView, with=FALSE], title=.Object@query)
-})
-
 #' @exportMethod view
 #' @rdname features-class
 setMethod("view", "features", function(.Object){

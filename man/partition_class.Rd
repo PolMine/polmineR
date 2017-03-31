@@ -5,7 +5,6 @@
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
 \alias{aggregate,partition-method}
-\alias{as.data.frame,partition-method}
 \alias{as.markdown,partition-method}
 \alias{as.partitionBundle}
 \alias{as.partitionBundle,partition-method}
@@ -25,15 +24,13 @@
 \alias{split}
 \alias{view,cooccurrences-method}
 \alias{view,partition-method}
-\title{partition class}
+\title{Partition class and methods.}
 \usage{
 \S4method{name}{partition}(x)
 
 \S4method{name}{partition,character}(x) <- value
 
 \S4method{length}{partition}(x)
-
-\S4method{as.data.frame}{partition}(x)
 
 \S4method{hist}{partition}(x, ...)
 
@@ -76,7 +73,7 @@
 \item{verbose}{logical, whether to be verbose}
 }
 \description{
-partition class
+S4 partition class and methods for instances of class partition.
 }
 \section{Slots}{
 
@@ -114,5 +111,9 @@ count in slot tf}
 }}
 \author{
 Andreas Blaette
+}
+\seealso{
+The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
+respective documentation to learn more.
 }
 

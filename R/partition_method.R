@@ -44,7 +44,8 @@
 #' @param ... parameters passed into the partition-method
 #' @return An object of the S4 class 'partition'
 #' @author Andreas Blaette
-#' @seealso \code{\link{partition_class}}
+#' @seealso To learn about the methods available for objects of the class partition, see
+#' \code{\link{partition_class}},
 #' @examples
 #' \dontrun{
 #'    use("polmineR.sampleCorpus")

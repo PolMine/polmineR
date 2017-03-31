@@ -3,7 +3,7 @@
 \docType{methods}
 \name{browse}
 \alias{browse}
-\alias{browse,context-method}
+\alias{browse,cooccurrences-method}
 \alias{browse,html-method}
 \alias{browse,kwic-method}
 \alias{browse,partition-method}
@@ -15,7 +15,7 @@ browse(object, ...)
 
 \S4method{browse}{textstat}(object)
 
-\S4method{browse}{context}(object)
+\S4method{browse}{cooccurrences}(object)
 
 \S4method{browse}{partition}(object, meta = NULL)
 

@@ -76,7 +76,7 @@ setMethod("mail", "partition", function(object, to=NULL, filename="drillerExport
 
 #' @rdname mail-method
 #' @docType methods
-setMethod("mail", "context", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
+setMethod("mail", "cooccurrences", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
   if (requireNamespace("sendmailR", quietly = TRUE)) {
     if(is.null(nrow)) nrow <- nrow(object@stat)
     msg <- list('Prepared and delivered by polmineR.\n')

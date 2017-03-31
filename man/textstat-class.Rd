@@ -46,6 +46,8 @@ as.bundle(object, ...)
 
 \S4method{as.data.table}{textstat}(x)
 
+\S4method{as.data.frame}{textstat}(x)
+
 \S4method{[[}{textstat}(x, i)
 
 \S4method{[}{textstat,ANY,ANY,ANY}(x, i, j)

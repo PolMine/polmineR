@@ -25,8 +25,9 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @author Andreas Blaette
 setClass("bundle",
          representation(
-           objects="list",
-           pAttribute="character"
+           objects = "list",
+           pAttribute = "character",
+           encoding = "character"
            )
 )
 

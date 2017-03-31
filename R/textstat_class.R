@@ -51,8 +51,6 @@ setClass("textstat",
          )
 )
 
-#' @exportMethod as.data.frame
-setMethod("as.data.frame", "textstat", function(x, ...) as.data.frame(x@stat))
 
 #' @exportMethod head
 #' @rdname textstat-class
@@ -133,6 +131,11 @@ setMethod("subset", "textstat", function(x, ...){
 #' @rdname textstat-class
 setMethod("as.data.table", "textstat", function(x) x@stat)
 
+#' @exportMethod as.data.frame
+#' @rdname textstat-class
+setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
+
+
 #' @exportMethod pAttribute
 #' @param object a textstat object
 #' @rdname pAttribute-method
@@ -160,3 +163,4 @@ setMethod("[", "textstat", function(x, i, j){
   }
   x
 })
+

@@ -109,7 +109,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
       ))
     }
     # this is potential double work, enrich is also performed in the html-method
-    .Object <- enrich(.Object, meta = meta, verbose=FALSE)
+    .Object <- enrich(.Object, meta = meta, verbose = FALSE)
   }
   if (length(.Object@strucs) > 1){
     gapSize <- .Object@strucs[2:length(.Object@strucs)] - .Object@strucs[1:(length(.Object@strucs)-1)]
@@ -171,7 +171,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
-  markdown <- as.nativeEnc(markdown, from = .Object@encoding)
+  # markdown <- as.nativeEnc(markdown, from = .Object@encoding)
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown <- gsub("\n - ", "\n", markdown)
   markdown
