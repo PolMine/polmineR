@@ -2,9 +2,12 @@
 % Please edit documentation in R/install.corpus_function.R
 \name{install.corpus}
 \alias{install.corpus}
+\alias{installed.corpora}
 \title{Install packaged corpus from repository.}
 \usage{
 install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...)
+
+installed.corpora()
 }
 \arguments{
 \item{pkgs}{names of data packages with corpora}
