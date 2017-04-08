@@ -1,9 +1,9 @@
-#' @include context_class.R textstat_class.R partition_class.R polmineR_package.R
+#' @include context_class.R textstat_class.R partition_class.R polmineR_package.R cooccurrences_class.R bundle_class.R
 NULL
 
-#' cooccurrences
+#' Cooccurrences class.
 #' 
-#' class to organize information of context analysis
+#' S4 class to organize information of context analysis
 #' 
 #' @param .Object object to work with
 #' @slot call Object of class \code{"character"} the call that generated the object
@@ -19,10 +19,7 @@ NULL
 #' @slot method  Object of class \code{"character"} statistical test(s) used
 #' @slot cutoff  Object of class \code{"list"} cutoff levels that have been applied
 #' @slot svg Object of class \code{"character"} - valid XML with svg representation
-#' @aliases cooccurrences-class [,cooccurrences-method
-#'   [,cooccurrences,ANY,ANY,ANY-method show,cooccurrences-method
-#'   summary,cooccurrences-method as.sparseMatrix,cooccurrences-method
-#'   as.igraph,cooccurrences-method trim,cooccurrences-method
+#' @aliases cooccurrences-class
 #' @docType class
 #' @exportClass cooccurrences
 #' @rdname cooccurrences-class
@@ -43,48 +40,17 @@ setClass("cooccurrencesReshaped", contains = "cooccurrences")
 #' @name cooccurrencesReshaped
 NULL
 
-#' @include cooccurrences_class.R bundle_class.R
-NULL
-
-#' S4 cooccurrencesBundle class
-#' 
-#' class to organize information of multiple context analyses
-#' 
-#' @slot objects for cooccurrenceBundle-objects - Object of class \code{"list"} - list of cooccurrence objects
-#'     
-#' @param x a cooccurrencesBundle object
-#' @param col the column to extract
-#' @param directed to be explained
-#' @param rel to be explained, too
-#' @param mc logical, whether to use multicore
-#' @name cooccurrencesBundle-class
-#' @aliases cooccurrencesBundle
-#' @docType class
-#' @exportClass kwic
-#' @rdname cooccurrencesBundle-class
-setClass("cooccurrencesBundle",
-         slots=c(
-           objects="list",
-           pAttribute="character",
-           encoding="character",
-           corpus="character"
-         ),
-         contains=c("bundle")
-)
 
 #' @docType methods
-setMethod('summary', 'cooccurrences',
-          function(object) {
-            cat("\n** Context object - general information: **\n")
-            cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
-            cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
-            cat(sprintf("%-20s", "Node:"), object@query, "\n")
-            cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
-            cat(sprintf("%-20s", "Node count:"), object@count, "\n")
-            cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
-            # return(.statisticalSummary(object))
-            
-          })
+setMethod('summary', 'cooccurrences', function(object) {
+  cat("\n** Context object: **\n")
+  cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
+  cat(sprintf("%-20s", "Partition:"), object@partition, "\n")
+  cat(sprintf("%-20s", "Node:"), object@query, "\n")
+  cat(sprintf("%-20s", "P-Attribute:"), object@pAttribute, "\n")
+  cat(sprintf("%-20s", "Node count:"), object@count, "\n")
+  cat(sprintf("%-20s", "Stat table length:"), nrow(object@stat), "\n\n")
+})
 
 
 
@@ -102,5 +68,11 @@ setMethod('show', 'cooccurrences', function(object) {
   }
 })
 
+#' @name cooccurrencesBundle-class
+#' @aliases cooccurrencesBundle
+#' @docType class
+#' @exportClass kwic
+#' @rdname cooccurrences-class
+setClass("cooccurrencesBundle", contains = "bundle")
 
 

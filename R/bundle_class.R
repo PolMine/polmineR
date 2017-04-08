@@ -25,8 +25,8 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @author Andreas Blaette
 setClass("bundle",
          representation(
-           objects="list",
-           pAttribute="character"
+           objects = "list",
+           pAttribute = "character"
            )
 )
 
@@ -44,7 +44,7 @@ setMethod("names", "bundle", function(x) names(x@objects))
 #' @exportMethod names<-
 setReplaceMethod(
   "names",
-  signature=c(x="bundle", value="character"),
+  signature = c(x = "bundle", value = "character"),
   function(x, value) {
     if ( length(value) != length(x@objects) ) {
       warning("length of value provided does not match number of partitions")
@@ -164,3 +164,33 @@ setMethod("as.bundle", "textstat", function(object){
   newBundle
 })
 
+
+#' @examples
+#' \dontrun{
+#' use("europarl.en")
+#' Ps <- partitionBundle(
+#'   "EUROPARL-EN", sAttribute = "text_year",
+#'   values = sAttributes("EUROPARL-EN", "text_year")
+#' )
+#' Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE)
+#' y <- as.data.table(Cs, col = "ll")
+#' 
+#' }
+#' @exportMethod as.data.table
+setMethod("as.data.table", "bundle", function(x, col){
+  pAttr <- unique(unlist(lapply(x@objects, function(i) i@pAttribute)))
+  if (length(pAttr)) stop("no unambigious pAttribute!")
+  dts <- lapply(
+    x@objects,
+    function(object){
+      data.table(
+        name = object@name,
+        token = object@stat[[object@pAttribute]],
+        value = object@stat[[col]]
+      )
+    }
+  )
+  DT <- rbindlist(dts)
+  y <- dcast(DT, token ~ name, value.var = "value")
+  y
+})
