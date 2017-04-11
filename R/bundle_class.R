@@ -3,7 +3,7 @@ NULL
 
 setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 
-#' bundle class
+#' Bundle class
 #' 
 #' A class to bundle several objects (partition, context, comp, cooccurrences objects)
 #' in one S4 object.
@@ -12,12 +12,12 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @slot pAttribute Object of class \code{"character"}
 #' 
 #' @param x a bundle object
-#' @param i index to address an object
+#' @param i integer to index a bundle object
 #' @param object a bundle object
-#' @param size xxx
+#' @param size number of items to choose to generate a sample
 #' @param ... further parameters
-#' @param col columns of the table to be used
-#' @param value ...
+#' @param col columns of the data.table to use to generate an object
+#' @param value character string with a name to be assigned
 #' @rdname bundle-class
 #' @name bundle-class
 #' @exportClass bundle
@@ -36,7 +36,6 @@ setClass("bundle",
 setMethod("length", "bundle", function(x) length(x@objects))
 
 
-
 #' @rdname bundle-class
 setMethod("names", "bundle", function(x) names(x@objects))
 
@@ -45,7 +44,7 @@ setMethod("names", "bundle", function(x) names(x@objects))
 #' @exportMethod names<-
 setReplaceMethod(
   "names",
-  signature=c(x="bundle", value="character"),
+  signature = c(x = "bundle", value = "character"),
   function(x, value) {
     if ( length(value) != length(x@objects) ) {
       warning("length of value provided does not match number of partitions")
@@ -114,10 +113,6 @@ setMethod('[[', 'bundle', function(x,i){
   }
 })  
 
-#' @rdname bundle-class
-setMethod("as.matrix", "bundle", function(x, col) {
-  as.matrix(as.TermDocumentMatrix(x, col))
-})
 
 #' @exportMethod sample
 #' @rdname bundle-class
@@ -165,3 +160,53 @@ setMethod("as.bundle", "textstat", function(object){
   newBundle
 })
 
+
+#' @examples
+#' \dontrun{
+#' use("europarl.en")
+#' Ps <- partitionBundle(
+#'   "EUROPARL-EN", sAttribute = "text_year",
+#'   values = sAttributes("EUROPARL-EN", "text_year")
+#' )
+#' Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE)
+#' dt <- as.data.table(Cs, col = "ll")
+#' m <- as.matrix(Cs, col = "ll")
+#' }
+#' @exportMethod as.data.table
+#' @rdname bundle-class
+setMethod("as.data.table", "bundle", function(x, col){
+  pAttr <- unique(unlist(lapply(x@objects, function(i) i@pAttribute)))
+  if (length(pAttr) > 1) stop("no unambigious pAttribute!")
+  dts <- lapply(
+    x@objects,
+    function(object){
+      data.table(
+        name = object@name,
+        token = object@stat[[object@pAttribute]],
+        value = object@stat[[col]]
+      )
+    }
+  )
+  DT <- rbindlist(dts)
+  y <- dcast(DT, token ~ name, value.var = "value")
+  y
+})
+
+
+#' @rdname bundle-class
+setMethod("as.matrix", "bundle", function(x, col){
+  dt <- as.data.table(x = x, col = col)
+  token <- dt[["token"]]
+  dt[, "token" := NULL, with = TRUE]
+  M <- as.matrix(dt)
+  rownames(M) <- token
+  M
+})
+
+#' @rdname bundle-class
+setMethod("subset", "bundle", function(x, ...){
+  for (i in 1:length(x)){
+    x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
+  }
+  x
+})

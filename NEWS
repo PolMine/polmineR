@@ -8,6 +8,9 @@ output to RStudio viewer
 * dissect-method dropped (replaced by size)
 * improved documentation of size-method
 * labels for cooccurrences-output
+* cooccurrencesBundle-class and cooccurrence-method for bundle restored
+* as.data.table for cooccurrencesBundle-class
+* count-method for whole corpus for pAttribute > 1
 
 v0.7.2
 * updated documentation of partition-method.

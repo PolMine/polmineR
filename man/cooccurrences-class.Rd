@@ -2,17 +2,12 @@
 % Please edit documentation in R/cooccurrences_class.R, R/view_method.R
 \docType{class}
 \name{cooccurrences-class}
-\alias{[,cooccurrences,ANY,ANY,ANY-method}
-\alias{[,cooccurrences-method}
-\alias{as.igraph,cooccurrences-method}
-\alias{as.sparseMatrix,cooccurrences-method}
 \alias{cooccurrences-class}
+\alias{cooccurrencesBundle}
+\alias{cooccurrencesBundle-class}
 \alias{cooccurrencesReshaped-class}
-\alias{show,cooccurrences-method}
-\alias{summary,cooccurrences-method}
-\alias{trim,cooccurrences-method}
 \alias{view,cooccurrencesReshaped-method}
-\title{cooccurrences}
+\title{Cooccurrences class.}
 \usage{
 \S4method{view}{cooccurrencesReshaped}(.Object)
 }
@@ -20,7 +15,7 @@
 \item{.Object}{object to work with}
 }
 \description{
-class to organize information of context analysis
+S4 class to organize information of context analysis
 }
 \section{Slots}{
 

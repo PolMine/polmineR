@@ -8,6 +8,11 @@ NULL
 #' If .Object is a partitonBundle, the data.table returned will have the queries
 #' in the columns, and as many rows as there are in the partitionBundle.
 #' 
+#' If .Object is a character vector (length 1) and query is NULL, the count is performed
+#' for the whole partition. The method will check whether the \code{polmineR.Rcpp} package,
+#' or the \code{cwb-lexdecode) utilities are available, and use them resepectively for 
+#' performance reasons.
+#' 
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
 #' 
@@ -152,47 +157,72 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 #' @rdname count-method
 setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
-    if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
-      if (verbose) message("... using polmineR.Rcpp for counting")
-      TF <- data.table(count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute))
-      TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
-      setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
-      if (id2str == FALSE){
-        setkeyv(TF, paste(pAttribute, "id", sep = "_"))
-        setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
-      } else {
-        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), from = getEncoding(.Object)), with = TRUE]
+    if (length(pAttribute) == 1){
+      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
+        if (verbose) message("... using polmineR.Rcpp for counting")
+        TF <- data.table(count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute))
+        TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
+        setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
+        if (id2str == FALSE){
+          setkeyv(TF, paste(pAttribute, "id", sep = "_"))
+          setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
+        } else {
+          TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), from = getEncoding(.Object)), with = TRUE]
+          Encoding(TF[["token"]]) <- "unknown"
+          setnames(TF, old = "token", new = pAttribute)
+          setkeyv(TF, pAttribute)
+          setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
+          if (sort) setorderv(TF, cols = pAttribute)
+        }
+        return(TF)
+      } else if (getOption("polmineR.cwb-lexdecode")){
+        # cwb-lexdecode will be significantly faster than using rcqp
+        if (verbose) message("... using cwb-lexdecode for counting")
+        cmd <- paste(c("cwb-lexdecode", "-f", "-n", "-P", pAttribute, .Object), collapse = " ")
+        lexdecodeResult <- system(cmd, intern = TRUE)
+        Encoding(lexdecodeResult) <- getEncoding(.Object)
+        lexdecodeList <- strsplit(lexdecodeResult, "\t")
+        TF <- data.table(
+          token = sapply(lexdecodeList, function(x) x[3]),
+          id = sapply(lexdecodeList, function(x) x[1]),
+          count = as.integer(sapply(lexdecodeList, function(x) x[2]))
+        )
         Encoding(TF[["token"]]) <- "unknown"
-        setnames(TF, old = "token", new = pAttribute)
+        colnames(TF) <- c(pAttribute, paste(pAttribute, "id", sep = "_"), "count")
         setkeyv(TF, pAttribute)
-        setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
         if (sort) setorderv(TF, cols = pAttribute)
+        return(TF)
+      } else {
+        TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
+        if (id2str){
+          TF[, "token" := CQI$id2str(.Object, pAttribute, TF[[paste(pAttribute, "id", sep = "_")]]), with = TRUE]
+          setnames(TF, old = "token", new = pAttribute)
+          setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
+        }
+        return(TF)
       }
-      return(TF)
-    } else if (getOption("polmineR.cwb-lexdecode")){
-      # cwb-lexdecode will be significantly faster than using rcqp
-      if (verbose) message("... using cwb-lexdecode for counting")
-      cmd <- paste(c("cwb-lexdecode", "-f", "-n", "-P", pAttribute, .Object), collapse = " ")
-      lexdecodeResult <- system(cmd, intern = TRUE)
-      Encoding(lexdecodeResult) <- getEncoding(.Object)
-      lexdecodeList <- strsplit(lexdecodeResult, "\t")
-      TF <- data.table(
-        token = sapply(lexdecodeList, function(x) x[3]),
-        id = sapply(lexdecodeList, function(x) x[1]),
-        count = as.integer(sapply(lexdecodeList, function(x) x[2]))
-      )
-      Encoding(TF[["token"]]) <- "unknown"
-      colnames(TF) <- c(pAttribute, paste(pAttribute, "id", sep = "_"), "count")
-      setkeyv(TF, pAttribute)
-      if (sort) setorderv(TF, cols = pAttribute)
-      return(TF)
     } else {
-      TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
+      
+      tokenStreamDT <- as.data.table(
+        li <- lapply(
+          setNames(pAttribute, paste(pAttribute, "id", sep = "_")),
+          function(pAttr){
+            if (verbose) message("... getting token stream for p-attribute: ", pAttr)
+            CQI$cpos2id(.Object, pAttr, 0:(size(.Object) - 1))
+          }
+        )
+      )
+      if (verbose) message("... counting")
+      TF <- tokenStreamDT[, .N, by = c(eval(colnames(tokenStreamDT)))]
+      setnames(TF, old = "N", new = "count")
       if (id2str){
-        TF[, "token" := CQI$id2str(.Object, pAttribute, TF[[paste(pAttribute, "id", sep = "_")]]), with = TRUE]
-        setnames(TF, old = "token", new = pAttribute)
+        for (pAttr in pAttribute){
+          if (verbose) message("... id2str for p-attribute: ", pAttr)
+          TF[, eval(pAttr) := as.nativeEnc(CQI$id2str(.Object, pAttr, TF[[paste(pAttr, "id", sep = "_")]]), from = getEncoding(.Object)), with = TRUE]
+        }
         setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
       }
+      return(TF)
     }
   } else {
     stopifnot(.Object %in% CQI$list_corpora())

@@ -24,11 +24,11 @@ NULL
 #' @examples
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")
-#'   bt2009 <- partition("PLPRBTTXT", text_year="2009")
-#'   pBundle <- partitionBundle(bt2009, sAttribute="text_date", progress=TRUE, pAttribute="word")
-#'   dtm <- as.DocumentTermMatrix(pBundle, col="count")
+#'   bt2009 <- partition("PLPRBTTXT", text_year = "2009")
+#'   pBundle <- partitionBundle(bt2009, sAttribute = "text_date", progress = TRUE, pAttribute = "word")
+#'   dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 #'   summary(pBundle)
-#'   btBundle <- partitionBundle("PLPRBTTXT", sAttribute="text_date")
+#'   btBundle <- partitionBundle("PLPRBTTXT", sAttribute = "text_date")
 #' }
 #' @seealso \code{\link{partition}} and \code{\link{bundle-class}}
 setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionBundle"))
@@ -62,14 +62,14 @@ setMethod("partitionBundle", "partition", function(
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
-  .Object, sAttribute, values=NULL, prefix=c(""),
+  .Object, sAttribute, values = NULL, prefix = c(""),
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
 ) {
   bundle <- new(
     "partitionBundle",
     corpus = .Object, encoding = RegistryFile$new(.Object)$getEncoding(),
-    call=deparse(match.call())
+    call = deparse(match.call())
   )
   strucs <- c(0:(CQI$attribute_size(.Object, sAttribute, "s") - 1))
   if (!is.null(values)) {
@@ -80,17 +80,17 @@ setMethod("partitionBundle", "character", function(
     values <- CQI$struc2str(.Object, sAttribute, strucs)
   }
   cposMatrix <- do.call(rbind, lapply(strucs, function(x) CQI$struc2cpos(.Object, sAttribute, x)))
-  cposList <- split(cposMatrix, f=values)
-  cposList <- lapply(cposList, function(x) matrix(x, ncol=2))
+  cposList <- split(cposMatrix, f = values)
+  cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
   
   if (verbose) message("... generating the partitions")
   .makeNewPartition <- function(x, corpus, encoding, sAttribute, ...){
     newPartition <- new(
       "partition",
-      corpus=corpus, encoding=encoding,
-      stat=data.table(),
-      cpos=x, size=sum(apply(x,1,function(row) row[2] - row[1] + 1)),
-      sAttributeStrucs=sAttribute
+      corpus = corpus, encoding = encoding,
+      stat = data.table(),
+      cpos = x, size = sum(apply(x,1,function(row) row[2] - row[1] + 1)),
+      sAttributeStrucs = sAttribute
     )
     newPartition@strucs <- CQI$cpos2struc(.Object, sAttribute, x[,1])
     newPartition
@@ -101,6 +101,7 @@ setMethod("partitionBundle", "character", function(
     mc = mc, progress = progress, verbose = verbose, ...
     )
   for (i in c(1:length(bundle))) bundle@objects[[i]]@name <- names(cposList)[i]
+  for (i in c(1:length(bundle))) bundle@objects[[i]]@sAttributes <- setNames(list(names(cposList)[i]), sAttribute) 
   names(bundle@objects) <- names(cposList)
   bundle
 })

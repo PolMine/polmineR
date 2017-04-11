@@ -79,7 +79,11 @@ setMethod(
       count = TRUE, 
       mc = mc, verbose = verbose, progress = progress
     )
-    return( cooccurrences(C, method = method, verbose = verbose) )
+    if (is.null(C)){
+      return(NULL)
+    } else {
+      return( cooccurrences(C, method = method, verbose = verbose) )
+    }
   })
 
 #' @rdname cooccurrences
@@ -134,15 +138,15 @@ setMethod("cooccurrences", "Corpus", function(.Object, query, pAttribute = getOp
 
 
 
-#' #' @rdname cooccurrences
-#' setMethod("cooccurrences", "partitionBundle", function(.Object, mc=getOption("polmineR.mc"), ...){
-#'   bundle <- new(
-#'     "cooccurrencesBundle",
-#'     encoding=unique(vapply(.Object@objects, function(x) x@encoding, FUN.VALUE="character")),
-#'     corpus=unique(vapply(.Object@objects, function(x) x@corpus, FUN.VALUE="character"))
-#'     )
-#'   bundle@objects <- blapply(.Object@objects, f=cooccurrences, mc=mc, ...)
-#'   names(bundle@objects) <- names(.Object@objects)
-#'   bundle
-#' })
-#' 
+#' @rdname cooccurrences
+setMethod("cooccurrences", "partitionBundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
+  bundle <- new("cooccurrencesBundle")
+  bundle@objects <- pblapply(
+    .Object@objects,
+    function(x) cooccurrences(x, query = query, mc = mc, ...) 
+    )
+  names(bundle@objects) <- names(.Object@objects)
+  for (i in 1:length(bundle@objects)) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
+  bundle
+})
+
