@@ -1,3 +1,17 @@
+v0.7.3
+* new installed.corpora() convenience function to list all data packages with corpora
+* view-method and show-method for cooccurrences-objects now successfully redirect
+output to RStudio viewer
+* data.table-style indexing of objects inheriting from textstat-class
+* for windows compatibility, as.corpusEnc/as.nativeEnc for encoding conversion
+* performance gain for size-method by using polmineR.Rcpp
+* dissect-method dropped (replaced by size)
+* improved documentation of size-method
+* labels for cooccurrences-output
+* cooccurrencesBundle-class and cooccurrence-method for bundle restored
+* as.data.table for cooccurrencesBundle-class
+* count-method for whole corpus for pAttribute > 1
+
 v0.7.2
 * updated documentation of partition-method.
 * documentation of hits-method improved
@@ -7,6 +21,10 @@ v0.7.2
 * experimental use of polmineR.Rcpp-package for fast counts for whole corpus
 * new convenience function install.corpus to install CWB corpus wrapped into R data package
 * adjustments to make package compatible with polmineR.shiny
+* cpos-method to get hits more robust if there are not matches for string
+* hits-method removes NAs
+* compare-method renamed to features-method
+* warnings caused by startup on windows removed
 
 v0.7.1
 * size-method now allows for a param 'sAttribute'

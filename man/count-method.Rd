@@ -17,9 +17,10 @@ count(.Object, ...)
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
-  freq = FALSE, total = T, mc = F, progress = T, verbose = FALSE)
+  freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE,
+  verbose = FALSE)
 
-\S4method{count}{character}(.Object, query = NULL,
+\S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sort = FALSE,
   id2str = TRUE, verbose = TRUE)
 
@@ -61,30 +62,29 @@ TOTAL) will be amended to the data.table that is returned}
 a \code{"data.table"}
 }
 \description{
-Count number of occurrences of a query (CQP syntax may be used) or, if query is NULL (default),
-of all tokens.
+Count all tokens, or number of occurrences of a query (CQP syntax may be used).
+}
+\details{
+If .Object is a partitonBundle, the data.table returned will have the queries
+in the columns, and as many rows as there are in the partitionBundle.
 }
 \examples{
-\dontrun{
 \dontrun{
   use("polmineR.sampleCorpus")
   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
   x <- count(debates, "Arbeit") # get frequencies for one token
   x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
-  x <- count("PLPRBTTXT", c("Migration", "Integration"), "word")
+  x <- count("PLPRBTTXT", query = c("Migration", "Integration"), "word")
 
   debates <- partitionBundle(
-    .Object="PLPRBTTXT",
-    def=list(text_date=sAttributes("PLPRBTTXT", "text_date")),
-    regex=TRUE, mc=FALSE, verbose=FALSE
+    "PLPRBTTXT", sAttribute = "text_date", values = NULL,
+    regex = TRUE, mc = FALSE, verbose = FALSE
   )
-  aiu <- count(debates, c("Arbeit", "Integration", "Umwelt"))
-}
 }
 }
 \seealso{
 For a metadata-based breakdown of counts
-(i.e. a differentiation by s-attributes), see \code{"dispersion"}.
+(i.e. tabulation by s-attributes), see \code{"dispersion"}.
 
 count
 }

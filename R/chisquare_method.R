@@ -1,4 +1,4 @@
-#' @include textstat_class.R comp_class.R context_class.R
+#' @include textstat_class.R features_class.R context_class.R
 NULL
 
 #' perform chisquare-text

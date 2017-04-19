@@ -8,6 +8,7 @@
 #' @param cpos logical, whether to add cpos as ids in span elements
 #' @param interjections logical, whether to format interjections
 #' @param cutoff maximum number of tokens to reconstruct
+#' @param template a template for formatting output
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
@@ -65,7 +66,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
 })
 
 
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod(
   "as.markdown", "partition",
   function(
@@ -108,7 +109,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
       ))
     }
     # this is potential double work, enrich is also performed in the html-method
-    .Object <- enrich(.Object, meta = meta, verbose=FALSE)
+    .Object <- enrich(.Object, meta = meta, verbose = FALSE)
   }
   if (length(.Object@strucs) > 1){
     gapSize <- .Object@strucs[2:length(.Object@strucs)] - .Object@strucs[1:(length(.Object@strucs)-1)]
@@ -152,7 +153,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
         template[["document"]][["format"]][2],
         collapse = ""
         )
-      meta <- adjustEncoding(meta, "latin1")
+      meta <- as.corpusEnc(meta, corpusEnc = .Object@encoding)
     }
     tokens <- getTokenStream(
       matrix(.Object@cpos[i,], nrow = 1),
@@ -170,7 +171,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     paste(meta, plainText)
   })
   markdown <- paste(markdown, collapse="\n\n")
-  markdown <- adjustEncoding(markdown, "UTF8")
+  # markdown <- as.nativeEnc(markdown, from = .Object@encoding)
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown <- gsub("\n - ", "\n", markdown)
   markdown

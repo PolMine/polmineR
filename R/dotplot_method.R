@@ -14,7 +14,7 @@ setMethod("dotplot", "textstat", function(.Object, col=NULL, n=20, ...){
 })
 
 #' @rdname dotplot-method
-setMethod("dotplot", "comp", function(.Object, col=NULL, n=20, ...){
+setMethod("dotplot", "features", function(.Object, col=NULL, n=20, ...){
   if (is.null(col)) col <- .Object@method[1]
   callNextMethod(.Object=.Object, col=col, n=n, ...)
 })

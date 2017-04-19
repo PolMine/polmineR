@@ -279,7 +279,7 @@ CQI.cqpserver <- R6Class(
       self$expect_string_list()
     },
     
-    attribute_size = function(corpus, attribute){
+    attribute_size = function(corpus, attribute, type = NULL){
       self$send_word(.cqiCmd[["CQI_CL_ATTRIBUTE_SIZE"]])
       self$send_string(paste(corpus, attribute, sep="."))
       # Sys.sleep(0.1)

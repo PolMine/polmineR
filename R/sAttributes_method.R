@@ -14,7 +14,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
     if (.Object %in% CQI$list_corpora()) {
       ret <- CQI$struc2str(
         .Object, sAttribute,
-        c(0:(CQI$attribute_size(.Object, sAttribute)-1))
+        c(0:(CQI$attribute_size(.Object, sAttribute, type = "s")-1))
         )
       if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
       if (unique == TRUE) ret <- unique(ret)
@@ -30,14 +30,18 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #' Get s-attributes.
 #' 
 #' Structural annotations (s-attributes) of a corpus provide metainformation for
-#' ranges of text. Importing XML into the Corpus Workbench (CWB) turns elements and element
-#' attributes into s-attributes. There are two uses of the sAttributes-method: If the 
+#' regions of tokens. Gain access to the s-attributes available for a corpus or partition,
+#' or the values of s-attributes in a corpus/partition with the \code{sAttributes}-method.
+#' 
+#' Importing XML into the Corpus Workbench (CWB) turns elements and element
+#' attributes into so-called s-attributes. There are two uses of the sAttributes-method: If the 
 #' \code{sAttribute} parameter is NULL (default), the return value is a character vector
-#' with all s-attributes. If sAttribute is the name of a specific s-attribute (i.e. a 
-#' length 1 character vector), the respective s-attributes available in the corpus are 
-#' returned.
+#' with all s-attributes present in a corpus.
+#' 
+#' If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
+#' values of the s-attributes available in the corpus/partition are returned.
 #'
-#' @param .Object either a \code{partition} or a character vector specifying a CWB corpus
+#' @param .Object either a \code{partition} object or a character vector specifying a CWB corpus
 #' @param sAttribute name of a specific s-attribute
 #' @return a character vector
 #' @exportMethod sAttributes
@@ -59,12 +63,20 @@ setMethod(
   "sAttributes", "partition",
   function (.Object, sAttribute = NULL) {
     if (is.null(sAttribute)){
-      ret <- CQI$attributes(.Object@corpus, "s")
+      retval <- CQI$attributes(.Object@corpus, "s")
     } else {
-      ret <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs));
-      Encoding(ret) <- .Object@encoding;  
+      if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){
+        retval <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs));
+        Encoding(retval) <- .Object@encoding;  
+      } else {
+        cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+        strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
+        retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
+        retval <- unique(retval)
+        Encoding(retval) <- .Object@encoding
+      }
     }
-    ret
+    retval
   }
 )
 

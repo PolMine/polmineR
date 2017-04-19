@@ -1,10 +1,10 @@
 #' @include partition_class.R partitionBundle_class.R ngrams_method.R
 NULL
 
-setGeneric("compare", function(x, ...){standardGeneric("compare")})
+setGeneric("features", function(x, ...) standardGeneric("features"))
 
 
-#' compare features
+#' Get features by comparison.
 #' 
 #' The features of two objects, usually a partition defining a corpus of 
 #' interest, and a partition defining a reference corpus are compared. 
@@ -23,20 +23,20 @@ setGeneric("compare", function(x, ...){standardGeneric("compare")})
 #' - absolute frequencies in the first row
 #' - ...
 #' @author Andreas Blaette
-#' @aliases compare
+#' @aliases features
 #' @docType methods
 #' @references Manning / Schuetze ...
-#' @exportMethod compare
+#' @exportMethod features
 #' @examples
 #' \dontrun{
-#'   use(polmineR.sampleCorpus)
+#'   use("polmineR.sampleCorpus")
 #'   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
 #'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
-#'   terms_kauder <- compare(kauder, all, included=TRUE)
+#'   terms_kauder <- features(x = kauder, y = all, included = TRUE)
 #'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' }
-#' @rdname  compare-method
-setMethod("compare", signature=c(x="partition"), function(
+#' @rdname  features-method
+setMethod("features", "partition", function(
   x, y,
   included=FALSE,
   method="chisquare",
@@ -44,7 +44,7 @@ setMethod("compare", signature=c(x="partition"), function(
 ) {
   if (verbose==TRUE) message ('Comparing x and y ...')
   newObject <- new(
-    'comp',
+    'features',
     encoding=x@encoding, included=included,
     corpus=x@corpus,
     sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size),
@@ -73,70 +73,70 @@ setMethod("compare", signature=c(x="partition"), function(
 
 
 #' @docType methods
-#' @rdname compare-method
+#' @rdname features-method
 #' @examples 
 #' \dontrun{
-#'   use(polmineR.sampleCorpus)
+#'   use("polmineR.sampleCorpus")
 #'   byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
 #'   byName <- enrich(byName, pAttribute="word")
 #'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
-#'   result <- compare(byName, all, included=TRUE, progress=TRUE)
+#'   result <- features(byName, all, included=TRUE, progress=TRUE)
 #'   dtm <- as.DocumentTermMatrix(result, col="chisquare")
 #' }
-setMethod("compare", signature=c(x="partitionBundle"), function(
+setMethod("features", "partitionBundle", function(
   x, y, 
   included=FALSE, method="chisquare", verbose=TRUE, mc=getOption("polmineR.mc"), progress=FALSE
 ) {
-  .compare <- function(x, y, included, method, ...) compare(x=x, y=y, included=included, method=method)
-  retval <- new("compBundle")
-  retval@objects <- blapply(x@objects, f=.compare, y=y, included=included, method=method, verbose=verbose, mc=mc, progress=progress)
+  .features <- function(x, y, included, method, ...) features(x=x, y=y, included=included, method=method)
+  retval <- new("featuresBundle")
+  retval@objects <- blapply(x@objects, f=.features, y=y, included=included, method=method, verbose=verbose, mc=mc, progress=progress)
   names(retval@objects) <- names(x@objects)
   retval
 })
 
 
-#' @rdname compare-method
-setMethod("compare", "cooccurrences", function(x, y, included = FALSE, method = "ll", mc = TRUE, verbose = TRUE){
-  newObject <- new(
-    'compCooccurrences',
-    encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@partitionSize,
-    sizeRef = ifelse(included == FALSE, y@partitionSize, y@partitionSize - x@partitionSize),
-    stat = data.table()
-  )
-  if (identical(x@pAttribute, y@pAttribute) == FALSE) {
-    warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
-  } else {
-    newObject@pAttribute <- x@pAttribute
-  }
-  if (verbose == TRUE) message("... preparing tabs for matching")
-  keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
-  setkeyv(x@stat, keys)
-  setkeyv(y@stat, keys)
-  MATCH <- y@stat[x@stat]
-  
-  # remove columns not needed
-  colsToDrop <- c(
-    "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
-    "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b",
-    "exp_partition", "i.exp_partition"
-    )
-  for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
-  setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
-  
-  if (included == TRUE) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
-  
-  newObject@stat <- MATCH
-  for (how in method){
-    if (verbose == TRUE) message("... statistical test: ", how)
-    newObject <- do.call(how, args = list(.Object = newObject))
-  }
-  newObject
-})
+#' #' @rdname features-method
+#' setMethod("features", "cooccurrences", function(x, y, included = FALSE, method = "ll", mc = TRUE, verbose = TRUE){
+#'   newObject <- new(
+#'     'compCooccurrences',
+#'     encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@partitionSize,
+#'     sizeRef = ifelse(included == FALSE, y@partitionSize, y@partitionSize - x@partitionSize),
+#'     stat = data.table()
+#'   )
+#'   if (identical(x@pAttribute, y@pAttribute) == FALSE) {
+#'     warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
+#'   } else {
+#'     newObject@pAttribute <- x@pAttribute
+#'   }
+#'   if (verbose == TRUE) message("... preparing tabs for matching")
+#'   keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
+#'   setkeyv(x@stat, keys)
+#'   setkeyv(y@stat, keys)
+#'   MATCH <- y@stat[x@stat]
+#'   
+#'   # remove columns not needed
+#'   colsToDrop <- c(
+#'     "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
+#'     "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b",
+#'     "exp_partition", "i.exp_partition"
+#'     )
+#'   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
+#'   setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
+#'   
+#'   if (included == TRUE) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
+#'   
+#'   newObject@stat <- MATCH
+#'   for (how in method){
+#'     if (verbose == TRUE) message("... statistical test: ", how)
+#'     newObject <- do.call(how, args = list(.Object = newObject))
+#'   }
+#'   newObject
+#' })
 
 
-#' @rdname compare-method
+#' @rdname features-method
 setMethod(
-  "compare", "ngrams",
+  "features", "ngrams",
   function(x, y, included=FALSE, method="chisquare", verbose=TRUE, ...){
     stopifnot(
       identical(x@pAttribute, y@pAttribute) == TRUE,
@@ -151,7 +151,7 @@ setMethod(
     setcolorder(DT, c(tokenColnames, "count_coi", "count_ref"))
     if (included == TRUE) DT[, "count_ref" := DT[["count_ref"]] - DT[["count_coi"]] ]
     newObject <- new(
-      "compareNgrams",
+      "featuresNgrams",
       encoding=x@encoding, included=included, corpus=x@corpus, sizeCoi=x@size,
       pAttribute=x@pAttribute, n=x@n,
       sizeRef=ifelse(included == FALSE, y@size, y@size-x@size),

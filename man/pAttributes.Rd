@@ -12,6 +12,10 @@ pAttributes(.Object, ...)
 }
 \arguments{
 \item{.Object}{a character vector (length 1) or partition object}
+
+\item{...}{further arguments}
+
+\item{pAttribute}{p-attribute to decode}
 }
 \description{
 In a CWB corpus, every token has positional attributes. While s-attributes

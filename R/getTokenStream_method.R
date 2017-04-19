@@ -23,7 +23,7 @@ setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, enc
   tokens <- CQI$cpos2str(corpus, pAttribute, .Object)
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
-    tokens <- iconv(tokens, from = encoding, to = "UTF-8")
+    tokens <- as.nativeEnc(tokens, from = encoding)
   }
   if (cpos == TRUE) names(tokens) <- .Object
   if (!is.null(collapse)) {

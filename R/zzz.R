@@ -64,7 +64,6 @@ default_templates <- list(
     "polmineR.meta " =  as.character(c()),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = 2,
-    "polmineR.consoleEncoding" = "UTF-8",
     "polmineR.smtpServer" = "",
     "polmineR.smtpPort" = "",
     "polmineR.email" = "",
@@ -76,25 +75,31 @@ default_templates <- list(
     "polmineR.template" = "default",
     "polmineR.templates" = default_templates,
     "polmineR.cutoff" = 5000,
-    "polmineR.Rcpp" = TRUE
+    "polmineR.Rcpp" = TRUE,
+    "polmineR.cwb-s-decode" = FALSE,
+    "polmineR.cwb-encode" = FALSE,
+    "polmineR.cwb-lexdecode" = FALSE
   )
   
-  if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
-    options("polmineR.cwb-s-decode" = TRUE)
-  } else {
-    options("polmineR.cwb-s-decode" = FALSE)
+  
+  # Some operations run faster when using the utils of the CWB (cwb-s-decode etc.)
+  # These may only be available on *nix systems, so this is checked first
+  if (.Platform$OS.type == "unix"){
+    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
+      options("polmineR.cwb-s-decode" = TRUE)
+    }
   }
   
-  if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
-    options("polmineR.cwb-encode" = TRUE)
-  } else {
-    options("polmineR.cwb-encode" = FALSE)
+  if (.Platform$OS.type == "unix"){
+    if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+      options("polmineR.cwb-encode" = TRUE)
+    }
   }
-  
-  if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
-    options("polmineR.cwb-lexdecode" = TRUE)
-  } else {
-    options("polmineR.cwb-lexdecode" = FALSE)
+
+  if (.Platform$OS.type == "unix"){
+    if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+      options("polmineR.cwb-lexdecode" = TRUE)
+    }
   }
   
 }

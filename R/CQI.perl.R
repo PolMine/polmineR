@@ -126,7 +126,7 @@ CQI.perl <- R6Class(
     
     list_corpora = function() stop("list_corpora not implemented for perl interface"),
     
-    attribute_size = function(corpus, attribute){
+    attribute_size = function(corpus, attribute, type = NULL){
       as.integer(system(sprintf(self$as.cmd(.cqi_perl[["attribute_size"]]), corpus, attribute), intern=TRUE))
     },
     

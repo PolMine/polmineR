@@ -27,7 +27,7 @@ setMethod("meta", "character", function(.Object, sAttributes, struc) {
     function(x) {
       retval <- CQI$struc2str(.Object, x, struc)
       Encoding(retval) <- corpusEncoding
-      as.utf8(retval)
+      as.nativeEnc(retval, from = corpusEncoding)
     })
   names(metaInformation) <- sAttributes
   metaInformation

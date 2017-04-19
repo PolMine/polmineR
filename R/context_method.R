@@ -1,18 +1,18 @@
 #' @include partition_class.R partitionBundle_class.R
 NULL
 
-
-
 #' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
 #' @noRd
 setGeneric("context", function(.Object, ...) standardGeneric("context") )
 
-#' Analyze context of a node word
+#' Analyze context of a node word.
 #' 
-#' Retrieve the word context of a token, checking for the boundaries of a XML
-#' region. For formulating the query, CPQ syntax may be used (see
+#' Retrieve the word context of a token, optionally checking for boundaries of a XML
+#' region.
+#' 
+#' For formulating the query, CPQ syntax may be used (see
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
 #' @param .Object a partition or a partitionBundle object
@@ -30,8 +30,6 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   vector, it is assumed to provide regex expressions (incredibly long if the
 #'   list is long)
 #' @param count logical
-#' @param method either "LL" (default) or "pmi", if NULL, calculating
-#'   the statistics will be skipped
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the options
 #' @param verbose report progress, defaults to TRUE
@@ -56,26 +54,15 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @name context
 #' @docType methods
 #' @aliases context,partition-method
-setMethod(
-  f = "context",
-  signature(.Object="partition"),
-  function
-  (
+setMethod("context", "partition", function(
     .Object, query, cqp = is.cqp,
-    pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+    pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL,
     count = TRUE,
-    method = "ll",
     mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
   ) {
     
-    # enrich partition if necessary
-    if (!identical(.Object@pAttribute, pAttribute) && !is.null(method)){
-      message("... adding missing count for pAttribute ", pAttribute, " to partition")
-      .Object <- enrich(.Object, pAttribute = pAttribute)
-    }
-
     # set method for making left and right context
     if (is.numeric(left) && is.numeric(right)){
       if (is.null(names(left)) && is.null(names(left))){
@@ -92,15 +79,13 @@ setMethod(
     # generate the context object (ctxt)
     ctxt <- new(
       "context",
-      query = query, pAttribute = pAttribute,
-      stat = data.table(),
-      corpus = .Object@corpus,
+      query = query, pAttribute = pAttribute, corpus = .Object@corpus,
+      stat = data.table(), cpos = data.table(),
       left = if (is.character(left)) 0 else left,
       right = if (is.character(right)) 0 else right,
-      encoding = .Object@encoding, 
-      partition = .Object@name,
+      encoding = .Object@encoding,
+      partition = .Object,
       partitionSize = as.numeric(.Object@size),
-      cpos = data.table(),
       sAttribute = if (!is.null(sAttribute)) sAttribute else character()
     )
     # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
@@ -151,32 +136,20 @@ setMethod(
     ctxt@size <- nrow(ctxt@cpos)
     ctxt@sizeCoi <- as.integer(ctxt@size)
     ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
-    ctxt@count <- nrow(ctxt@cpos[position != 0])
+    ctxt@count <- length(which(ctxt@cpos[["position"]] != 0))
     
     # put together raw stat table
-    if (count == TRUE || length(method) > 0){
+    if (count){
       .verboseOutput(message = "counting tokens", verbose = verbose)
       
       setkeyv(ctxt@cpos, paste(pAttribute, "id", sep = "_"))
-      ctxt@stat <- ctxt@cpos[position != 0][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
+      ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
       setnames(ctxt@stat, "N", "count_window")
       
       for (i in c(1:length(pAttribute))){
         newColumn <- CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[paste(pAttribute[i], "id", sep = "_")]])
-        newColumnUtf8 <- as.utf8(newColumn)
-        ctxt@stat[, eval(pAttribute[i]) := newColumnUtf8]
-      }
-      setkeyv(ctxt@stat, pAttribute)
-    }
-    
-    # statistical tests
-    if (!is.null(method)){
-      setkeyv(.Object@stat, cols = pAttribute)
-      ctxt@stat <- .Object@stat[ctxt@stat]
-      setnames(ctxt@stat, old = "count", new = "count_partition")
-      for (test in method){
-        .verboseOutput(message = paste("statistical test:", test), verbose = verbose)
-        ctxt <- do.call(test, args = list(.Object = ctxt))  
+        newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
+        ctxt@stat[, eval(pAttribute[i]) := newColumnNative]
       }
     }
     ctxt
@@ -214,7 +187,7 @@ setMethod(
   "expandBeyondRegion" = function(set, left, right, corpus, sAttribute){
     stop("NOT Implemented at present")
     queryStruc <- CQI$cpos2struc(corpus, sAttribute, set[1])
-    maxStruc <- CQI$attribute_size(corpus, sAttribute)
+    maxStruc <- CQI$attribute_size(corpus, sAttribute, type = "s")
     # get left min cpos
     leftStruc <- queryStruc - left
     leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
@@ -235,15 +208,10 @@ setMethod(
 #' @rdname context-method
 setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
   C <- Corpus$new(.Object)
-  C$count(pAttribute)
+  C$count(pAttribute, id2str = FALSE)
   context(C$as.partition(), query = query, pAttribute = pAttribute, ...)
 })
 
-#' @rdname context-method
-setMethod("context", "Corpus", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
-  if (nrow(.Object$stat) == 0) .Object$count(pAttribute)
-  context(.Object$as.partition(), query = query, pAttribute = pAttribute, ...)
-})
 
 #' @docType methods
 #' @rdname context-method

@@ -3,26 +3,54 @@ NULL
 
 #' Get number of tokens.
 #' 
+#' The method will get the number of tokens in a corpus or partition,
+#' or the dispersion across one or more s-attributes.
+#' 
+#' One or more s-attributes can be provided to get the dispersion of
+#' tokens across one or more dimensions. Two or more s-attributes
+#' can lead to reasonable results only if the corpus XML is flat.
+#' 
 #' @param x object to get size(s) for
 #' @param sAttribute character vector with s-attributes (one or more)
 #' @param verbose logical, whether to print messages
 #' @param ... further arguments
 #' @rdname size-method
+#' @return an integer vector if sAttribute is NULL, a \code{data.table} otherweise
+#' @seealso See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
+#' method calls the \code{size}-method to get sizes of subcorpora.
+#' @examples
+#' \dontrun{
+#' size("PLPRBTTXT")
+#' size("PLPRBTTXT", sAttribute = "text_date")
+#' size("PLPRBTTXT", sAttribute = c("text_date", "text_party"))
+#' 
+#' P <- partition("PLPRBTTXT", text_date = "2013-09-03")
+#' size(P, sAttribute = "text_name")
+#' size(P, sAttribute = "text_party")
+#'
+#' }
 setGeneric("size", function(x, ...) UseMethod("size"))
 
 #' @rdname size-method
 setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
   if (is.null(sAttribute)){
-    return(CQI$attribute_size(x, "word"))
+    return(CQI$attribute_size(x, "word", type = "p"))
   } else {
     stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
       lapply(
         setNames(sAttribute, sAttribute),
-        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr) - 1))))
+        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr, type = "s") - 1))))
     )
-    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
-      if (verbose) message ("... cwb-s-decode utility found, going to use it")
+    if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
+      if (verbose) message ("... polmineR.Rcpp available, going to use it")
+      cpos_matrix <- polmineR.Rcpp::getRegionMatrix(
+        corpus = x, sAttribute = sAttribute[1],
+        strucs = 0:(CQI$attribute_size(x, sAttribute[1], "s") - 1),
+        registry = Sys.getenv("CORPUS_REGISTRY")
+        )
+    } else if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
+      if (verbose) message ("... cwb-s-decode utility available, going to use it")
       cmd <- c("cwb-s-decode", "-v", "-r", Sys.getenv("CORPUS_REGISTRY"), x, "-S", sAttribute[1])
       decode_result <- system(paste(cmd, collapse = " "), intern = TRUE)
       cpos_matrix <- do.call(rbind, lapply(strsplit(decode_result, "\\t"), as.integer))
@@ -30,7 +58,7 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
       cpos_matrix <- do.call(
         rbind,
         lapply(
-          c(0:(CQI$attribute_size(x, sAttribute[1]) - 1)),
+          c(0:(CQI$attribute_size(x, sAttribute[1], type = "s") - 1)),
           function(x) CQI$struc2cpos(x, sAttribute[1], x))
       )
     }
@@ -49,10 +77,11 @@ setMethod("size", "partition", function(x, sAttribute = NULL){
   if (is.null(sAttribute)){
     return( sum(x@cpos[,2] - x@cpos[,1] + 1) )
   } else {
+    stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
       lapply(
         setNames(sAttribute, sAttribute),
-        function(sAttr) as.utf8(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
+        function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
       )
     )
     dt[, size := x@cpos[,2] - x@cpos[,1] + 1]
@@ -72,28 +101,4 @@ setMethod("size", "DocumentTermMatrix", function(x){
 #' @rdname TermDocumentMatrix
 setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX=x$j, sum), x[["dimnames"]][["Docs"]])
-})
-
-setGeneric("reindex", function(x) standardGeneric("reindex"))
-
-setMethod("reindex", "DocumentTermMatrix", function(x){
-  i_uniqueValues <- unique(x$i)
-  i_uniqueValuesOrdered <- i_uniqueValues[order(i_uniqueValues)]
-  i_newIndex <- rep(0, times=i_uniqueValuesOrdered[length(i_uniqueValuesOrdered)])
-  i_newIndex[i_uniqueValuesOrdered] <- c(1:length(i_uniqueValues))
-  x$i <- i_newIndex[x$i]
-  x$nrow <- length(i_uniqueValues)
-
-  j_uniqueValues <- unique(x$j)
-  j_uniqueValuesOrdered <- j_uniqueValues[order(j_uniqueValues)]
-  j_newIndex <- rep(0, times=j_uniqueValuesOrdered[length(j_uniqueValuesOrdered)])
-  j_newIndex[j_uniqueValuesOrdered] <- c(1:length(j_uniqueValues))
-  x$j <- j_newIndex[x$j]
-  x$j <- length(j_uniqueValues)
-  
-  x
-})
-
-setMethod("reindex", "TermDocumentMatrix", function(x){
-  t(reindex(t(x)))
 })

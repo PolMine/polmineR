@@ -6,7 +6,7 @@
 \alias{corpus,bundle-method}
 \alias{corpus,missing-method}
 \alias{corpus,partition-method}
-\title{get corpus}
+\title{Get corpus.}
 \usage{
 corpus(object)
 

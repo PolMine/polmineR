@@ -39,27 +39,4 @@ encode(.Object, ...)
 \description{
 Encode CWB Corpus.
 }
-\examples{
-\dontrun{
-library(tm)
-library(tibble)
-library(tidytext)
-library(plyr)
-reut21578 <- system.file("texts", "crude", package = "tm")
-reuters.tm <- VCorpus(DirSource(reut21578), list(reader = readReut21578XMLasPlain))
-reuters.tibble <- tidy(reuters.tm)
-# reuters.tibble[["topics_cat"]] <- sapply(
-  reuters.tibble[["topics_cat"]],
-  function(x) paste(x, collapse = "|")
-)
-reuters.tibble[["places"]] <- sapply(
- reuters.tibble[["places"]],
- function(x) paste(x, collapse = "|")
-)
-reuters.tidy <- unnest_tokens(
-  reuters.tibble, output = "word", input = "text", to_lower = FALSE
-  )
-encode(reuters.tidy, name = "reuters", sAttributes = c("language", "places"))
-}
-}
 

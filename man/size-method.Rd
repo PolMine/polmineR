@@ -25,7 +25,32 @@ size(x, ...)
 
 \item{verbose}{logical, whether to print messages}
 }
+\value{
+an integer vector if sAttribute is NULL, a \code{data.table} otherweise
+}
 \description{
-Get number of tokens.
+The method will get the number of tokens in a corpus or partition,
+or the dispersion across one or more s-attributes.
+}
+\details{
+One or more s-attributes can be provided to get the dispersion of
+tokens across one or more dimensions. Two or more s-attributes
+can lead to reasonable results only if the corpus XML is flat.
+}
+\examples{
+\dontrun{
+size("PLPRBTTXT")
+size("PLPRBTTXT", sAttribute = "text_date")
+size("PLPRBTTXT", sAttribute = c("text_date", "text_party"))
+
+P <- partition("PLPRBTTXT", text_date = "2013-09-03")
+size(P, sAttribute = "text_name")
+size(P, sAttribute = "text_party")
+
+}
+}
+\seealso{
+See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
+method calls the \code{size}-method to get sizes of subcorpora.
 }
 

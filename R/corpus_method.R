@@ -25,7 +25,7 @@ setMethod("corpus", "missing", function(){
     corpora <- CQI$list_corpora()
     y <- data.frame(
       corpus = corpora,
-      size = unname(sapply(corpora,function(x) CQI$attribute_size(x, CQI$attributes(x, "p")[1]))),
+      size = unname(sapply(corpora,function(x) CQI$attribute_size(x, CQI$attributes(x, "p")[1], type = "p"))),
       template = unname(sapply(corpora, function(x) x %in% names(getOption("polmineR.templates")))),
       stringsAsFactors = FALSE
     )

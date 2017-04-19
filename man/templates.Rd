@@ -8,6 +8,7 @@
 \alias{getTemplate,partition-method}
 \alias{setTemplate}
 \alias{setTemplate,character-method}
+\alias{setTemplate,missing-method}
 \title{Get and set templates.}
 \usage{
 getTemplate(.Object, ...)
@@ -21,13 +22,17 @@ getTemplate(.Object, ...)
 setTemplate(.Object, ...)
 
 \S4method{setTemplate}{character}(.Object, template)
+
+\S4method{setTemplate}{missing}(.Object, verbose = FALSE)
 }
 \arguments{
+\item{.Object}{object}
+
 \item{...}{further parameters}
 
 \item{template}{template to assign (a list)}
 
-\item{x}{either a "character" vector, if missing, the names of available templates will be returned}
+\item{verbose}{logical, whether to be verbose}
 }
 \description{
 Templates are used to format the markdown/html output of partitions. Upon loading 

@@ -15,6 +15,7 @@
 #' @field name corpus name
 #' @field info path to info file
 #' @export RegistryFile
+#' @importFrom utils installed.packages
 RegistryFile <- setRefClass(
   
   "RegistryFile",
@@ -135,6 +136,16 @@ RegistryFile <- setRefClass(
       invisible(.self$pAttributes)
     },
     
+    getSAttributes = function(){
+      
+      "Get the sAttributes."
+      
+      if (length(.self$txt) == 0) .self$read()
+      sAttrLines <- grep("\\[annotations\\]", .self$txt)
+      gsub("^STRUCTURE\\s+(.*?)\\t.*?$", "\\1", .self$txt[sAttrLines])
+      
+    },
+    
     getProperties = function(){
       
       "Get corpus properties."
@@ -180,7 +191,7 @@ RegistryFile <- setRefClass(
     },
     
     adjustHome = function(){
-      if (.self$package %in% installed.packages()){
+      if (.self$package %in% utils::installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
         if (.Platform$OS.type == "windows"){
           newDir <- gsub("^.*?/", "/", newDir)

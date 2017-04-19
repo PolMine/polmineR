@@ -4,44 +4,66 @@
 \name{cooccurrences}
 \alias{cooccurrences}
 \alias{cooccurrences,character-method}
+\alias{cooccurrences,context-method}
 \alias{cooccurrences,partition-method}
 \alias{cooccurrences,partitionBundle-method}
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
 
-\S4method{cooccurrences}{character}(.Object, keep = NULL, cpos = NULL,
-  pAttribute = "word", window = 5, method = "new", verbose = TRUE)
+\S4method{cooccurrences}{character}(.Object, query = NULL, cqp = is.cqp,
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, keep = NULL, cpos = NULL,
+  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
+  progress = FALSE)
 
-\S4method{cooccurrences}{partition}(.Object, window = 5, keep = NULL,
-  method = "ll", big = FALSE, tcm = FALSE, mc = FALSE,
-  progress = TRUE, verbose = TRUE, ...)
+\S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
-\S4method{cooccurrences}{partitionBundle}(.Object,
+\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
+
+\S4method{cooccurrences}{partitionBundle}(.Object, query,
   mc = getOption("polmineR.mc"), ...)
 }
 \arguments{
-\item{.Object}{a partition object}
+\item{.Object}{a partition object, or a character vector with a CWB corpus}
 
 \item{...}{further parameters that will be passed into bigmatrix (applies only of big=TRUE)}
+
+\item{query}{query, may by a character vector to match a token, or a CQP query}
+
+\item{cqp}{defaults to \code{is.cqp}-function, or provide TRUE/FALSE, relevant only if query is not NULL}
+
+\item{pAttribute}{the pAttribute of the tokens/the query}
+
+\item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
+the region defined by the s-attribute}
+
+\item{left}{no of tokens and to the left of the node word}
+
+\item{right}{no of tokens to the right of the node word}
+
+\item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
+context (relevant only if query is nut NULL)}
+
+\item{positivelist}{character vector or numeric vector: include a query hit
+only if token in positivelist is present. If positivelist is a character
+vector, it is assumed to provide regex expressions (incredibly long if the
+list is long) (relevant only if query is nut NULL)}
 
 \item{keep}{list with tokens to keep}
 
 \item{cpos}{integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used}
 
-\item{pAttribute}{the pAttribute of the tokens}
-
-\item{window}{no of tokens to the left and to the right of nodes}
-
 \item{method}{statistical test to use (defaults to "ll")}
 
-\item{verbose}{logical, whether to be verbose}
-
-\item{big}{logical, whether to use bigmatrix}
-
-\item{tcm}{logical, if TRUE, a term-cooccurrence matrix (sparse matrix, simple_triplet_matrix) will be returned}
-
 \item{mc}{whether to use multicore}
+
+\item{verbose}{logical, whether to be verbose}
 
 \item{progress}{logical, whether to be verbose}
 }
@@ -53,11 +75,10 @@ Get cooccurrence statistics.
 }
 \examples{
 \dontrun{
-  use(polmineR.sampleCorpus)
-  merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
-  merkel <- enrich(merkel, pAttribute = "word")
-  cooc <- cooccurrences(merkel, keep = NULL)
-  cooc <- cooccurrences(merkel, keep = NULL, big = TRUE)
+use("polmineR.sampleCorpus")
+merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
+merkel <- enrich(merkel, pAttribute = "word")
+cooc <- cooccurrences(merkel, query = "Deutschland")
 }
 }
 \author{

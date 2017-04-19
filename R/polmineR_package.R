@@ -26,8 +26,8 @@ NULL
 #' Any analysis using this package will usually start with setting up a 
 #' subcorpus/partition (with \code{partition}). A set of partitions can be
 #' generated with \code{partitionBundle}. Once a partition or a set of partitions
-#' has been set up, core functions are \code{context} and
-#' \code{compare}. Based on a partition bundle, a
+#' has been set up, core functions are \code{cooccurrences} and
+#' \code{features}. Based on a partition bundle, a
 #' term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
 #' generated (with \code{as.TermDocumentMatrix}). This opens the door to the wealth of
 #' statistical methods implemented in R.
@@ -42,11 +42,13 @@ NULL
 #' @docType package
 #' @rdname polmineR-package
 #' @name polmineR-package
+#' @references 
+#' Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
+#' Cham: Springer.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # examples in the manual rely in a sample corpus that can be install as follows:
-#' drat::addRepo("PolMine", alturl="https://polmine.github.io/drat/")
-#' install.packages("polmineR.sampleCorpus")
+#' install.corpus("polmineR.sampleCorpus")
 #' }
 NULL
 

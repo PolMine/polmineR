@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.1.9010
-Date: 2017-03-12
+Version: 0.7.2.9003
+Date: 2017-04-08
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -13,11 +13,12 @@ Imports:
     Matrix,
     tm,
     foreach,
-    DT
+    DT,
+    utils
 Suggests:
     parallel,
-    polmineR.sampleCorpus,
     polmineR.Rcpp,
+    europarl.en,
     rcqp,
     doParallel,
     markdown,
@@ -29,17 +30,17 @@ Suggests:
     bigtabulate,
     rJava,
     shiny
-Additional_repositories: https://polmine.github.io/drat/
+Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
-Description: Tools for corpus analysis using the CWB as an efficient backend
-    for indexing and querying large corpora. The package offers functionality to
-    flexibly create subcorpora ("partitions") and to carry out basic statistical
-    operations (count, cooccurrences etc.). The original full text of documents
-    can be reconstructed and inspected at any time. Beyond that, the package
-    is intended to serve as an interface to packages implementing advanced
-    statistical procedures. Respective data structures (document term matrices, term
-    cooccurrence matrices etc.) can be created based on the indexed corpora.
+Description: Library for corpus analysis using the Corpus Workbench as an
+    efficient back end for indexing and querying large corpora. The package offers
+    functionality to flexibly create partitions and to carry out basic statistical
+    operations (count, co-occurrences etc.). The original full text of documents
+    can be reconstructed and inspected at any time. Beyond that, the package is
+    intended to serve as an interface to packages implementing advanced statistical
+    procedures. Respective data structures (document term matrices, term co-
+    occurrence matrices etc.) can be created based on the indexed corpora.
 BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
@@ -66,7 +67,7 @@ Collate:
     'partitionBundle_class.R'
     'as.DocumentTermMatrix_method.R'
     'as.markdown_method.R'
-    'comp_class.R'
+    'features_class.R'
     'context_class.R'
     'contextBundle_class.R'
     'cooccurrences_class.R'
@@ -77,13 +78,8 @@ Collate:
     'kwic_class.R'
     'browse_method.R'
     'chisquare_method.R'
-    'ngrams_method.R'
-    'compare_method.R'
     'context_method.R'
-    'cooccurrencesBundle_methods.R'
-    'cooccurrencesReshaped_methods.R'
     'cooccurrences_method.R'
-    'cooccurrences_methods.R'
     'corpus_method.R'
     'dispersion_class.R'
     'count_method.R'
@@ -97,6 +93,8 @@ Collate:
     'encode_method.R'
     'encoding_method.R'
     'enrich_method.R'
+    'ngrams_method.R'
+    'features_method.R'
     'freq_method.R'
     'frequencies_method.R'
     'getEncoding_method.R'
@@ -106,6 +104,7 @@ Collate:
     'html_method.R'
     'html_methods.R'
     'install.corpus_function.R'
+    'label_method.R'
     'll_method.R'
     'mail_method.R'
     'means_method.R'
@@ -116,11 +115,11 @@ Collate:
     'partitionBundle_methods.R'
     'sAttributes2cpos_method.R'
     'partition_method.R'
-    'partition_methods.R'
     'plot_method.R'
     'pmi_method.R'
     'read_method.R'
     'registry.R'
+    'reindex_method.R'
     'rustyard.R'
     'sAttributes_method.R'
     'scatterplot_method.R'

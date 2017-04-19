@@ -56,14 +56,14 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
     .Object@corpus, .Object@pAttribute[1],
     DT[[paste(.Object@pAttribute[1], "id", sep = "_")]]
     )
-  decoded_pAttr2 <- as.utf8(decoded_pAttr)
+  decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, from = .Object@encoding)
   DT[, .Object@pAttribute[1] := decoded_pAttr2, with = TRUE]
-  DT[, direction := sign(position)]
+  DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (length(neighbor) > 0){
-    leftRightDT <- DT[direction != 0]
+    leftRightDT <- DT[which(DT[["direction"]] != 0)]
     hitsToKeep <- leftRightDT[grep(neighbor, leftRightDT[[.Object@pAttribute[1]]])][["hit_no"]]
-    DT <- DT[hit_no %in% hitsToKeep]
+    DT <- DT[which(DT[["hit_no"]] %in% hitsToKeep)]
     if (length(hitsToKeep) > 0 && cpos == TRUE){
       .Object@cpos <- DT
     } else {
@@ -72,9 +72,14 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   } 
   
   # paste left and right context
-  DT2 <- DT[, paste(word, collapse = " "), by = .(hit_no, direction)]
-  tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
-  setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+  if (nrow(DT) > 0){
+    .paste <- function(.SD) paste(.SD[["word"]], collapse = " ")
+    DT2 <- DT[, .paste(.SD), by = c("hit_no", "direction"), with = TRUE]
+    tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
+    setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+  } else {
+    tab <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
+  }
   
   
   if (is.null(meta)) meta <- character()
@@ -109,7 +114,7 @@ setMethod("kwic", "partition", function(
     .Object = .Object, query = query, cqp = cqp,
     pAttribute = pAttribute, sAttribute = sAttribute,
     left = left, right = right,
-    method = NULL, count = FALSE, verbose = verbose
+    count = FALSE, verbose = verbose
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
@@ -129,12 +134,12 @@ setMethod("kwic", "character", function(
   neighbor = NULL,
   verbose = TRUE
 ){
-  hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose=FALSE)
+  hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
   if (is.null(hits)) {
     message("sorry, not hits")
     return(NULL)
   }
-  cposMax <- CQI$attribute_size(.Object, pAttribute)
+  cposMax <- CQI$attribute_size(.Object, pAttribute, type = "p")
   cposList <- apply(
     hits, 1,
     function(row){

@@ -45,7 +45,7 @@ setMethod(
     highlight = list(),
     cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, cutoff = NULL, ...
     ){
-  if (requireNamespace("markdown", quietly=TRUE) && requireNamespace("htmltools", quietly=TRUE)){
+  if (requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     if (verbose) message("... enriching partition with metadata")
     object <- enrich(object, meta = meta, verbose=FALSE)
@@ -149,8 +149,8 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   fulltext <- highlight(
     fulltext,
     highlight = list(
-      yellow = object@cpos[hit_no == i][position != 0][["cpos"]],
-      lightgreen = object@cpos[hit_no == i][position == 0][["cpos"]]
+      yellow = object@cpos[which(object@cpos[["hit_no"]] == i)][which(object@cpos[["position"]] != 0)][["cpos"]],
+      lightgreen = object@cpos[which(object@cpos[["hit_no"]] == i)][which(object@cpos[["position"]] != 0)][["cpos"]]
     )
   )
   fulltext

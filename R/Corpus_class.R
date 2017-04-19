@@ -6,16 +6,17 @@ setOldClass("Corpus")
 #' @field corpus character vector, CWB corpus
 #' @field encoding encoding of the corpus
 #' @field count data.table with counts
-#' @param id2str logical, whether to perform id2str when doing count
 #' @section Methods:
 #' \describe{
-#'   \item{one}{bla}
+#'   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
 #' }
 #' 
 #' @rdname Corpus-class
 #' @export Corpus
 Corpus <- R6Class(
+  
   "Corpus",
+  
   public = list(
     
     corpus = NULL,

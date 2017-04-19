@@ -11,7 +11,7 @@ tTest(.Object)
 \S4method{tTest}{context}(.Object)
 }
 \arguments{
-\item{.Object}{a context or comp object}
+\item{.Object}{a context or features object}
 }
 \description{
 S4 method for context object to perform t-test

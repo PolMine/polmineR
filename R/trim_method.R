@@ -1,12 +1,12 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include comp_class.R
+#' @include features_class.R
 NULL
 
 #' trim an object
 #' 
 #' Method to trim and adjust objects by 
 #' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'comp', 'context', 'partition' and 'partitionBundle' objects.
+#' 'features', 'context', 'partition' and 'partitionBundle' objects.
 #' 
 #' @param object the object to be trimmed
 #' @param termsToKeep ...
@@ -90,21 +90,6 @@ setMethod("trim", "dispersion", function(object, drop=NULL, merge=list(old=c(), 
   }
 })
 
-#' @exportMethod subset
-#' @rdname cooccurrences-class
-setMethod("trim", "cooccurrences", function(object, by = NULL){
-  if (is.null(by) == FALSE){
-    keys <- unlist(lapply(c("a", "b"), function(what) paste(what, object@pAttribute, sep="_")))
-    setkeyv(by@stat, keys)
-    setkeyv(object@stat, keys)
-    object@stat <- by@stat[object@stat]
-    object@stat <- object@stat[by@stat]
-    for (toDrop in grep("i\\.", colnames(object@stat), value = TRUE)) object@stat[, eval(toDrop) := NULL, with=TRUE]
-    object@stat[, "count_ref" := NULL]
-    object@stat[, "count_coi" := NULL]
-  }
-  object
-})
 
 
 # #' @rdname cooccurrences-class

@@ -8,9 +8,6 @@
 \usage{
 Corpus
 }
-\arguments{
-\item{id2str}{logical, whether to perform id2str when doing count}
-}
 \description{
 Corpus class.
 }
@@ -26,7 +23,7 @@ Corpus class.
 \section{Methods}{
 
 \describe{
-  \item{one}{bla}
+  \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
 }
 }
 \keyword{datasets}

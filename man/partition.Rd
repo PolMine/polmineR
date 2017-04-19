@@ -59,11 +59,11 @@ details and examples)}
 An object of the S4 class 'partition'
 }
 \description{
-Set up an object of the \code{partition} class. Frequency lists are computeted and kept 
-in the stat-slot if pAttribute is not NULL.
+Create a subcorpus stored in an object of the \code{partition} class.
+Counts are performed for the p-attribute defined by the parameter \code{pAttribute}.
 }
 \details{
-The function sets up a partition based on a list of s-attributes with respective values.
+The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
 
 The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
 text_year="2013"), or - for convencience - directly.
@@ -89,10 +89,8 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
 \dontrun{
-   use(polmineR.sampleCorpus)
-   spd <- partition(
-     "PLPRBTTXT", text_party="SPD", text_type="speech"
-     )
+   use("polmineR.sampleCorpus")
+   spd <- partition("PLPRBTTXT", text_party="SPD", text_type="speech")
    kauder <- partition(
    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
    )
@@ -126,5 +124,9 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \author{
 Andreas Blaette
+}
+\seealso{
+To learn about the methods available for objects of the class partition, see
+\code{\link{partition_class}},
 }
 

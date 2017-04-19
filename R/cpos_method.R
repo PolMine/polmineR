@@ -1,17 +1,25 @@
 #' @include tempcorpus.R
 NULL
 
-#' get corpus positions
+#' Get corpus positions for (CQP) queries.
 #' 
-#' If the cpos-method isapplied on \code{"character"}, \code{"partition"},
-#' or \code{"tempcorpus"} object, the result is a two-column matrix with the
-#' start end end corpus positions of the matches for a query (CQP syntax can
-#' be used.) If the cpos-method is called on a \code{"matrix"} object,  the cpos
+#' Get matches for a query in a CQP corpus, optionally using the CQP syntax of the
+#' Corpus Workbench (CWB).
+#' 
+#' If the cpos-method is applied on \code{"character"}, \code{"partition"}, or
+#' \code{"tempcorpus"} object, the result is a two-column matrix with the 
+#' regions (start end end corpus positions of the matches) for a query. CQP
+#' syntax can be used. The encoding of the query is adjusted to conform to the
+#' encoding of the CWB corpus.
+#' 
+#' If the cpos-method is called on a \code{"matrix"} object,  the cpos
 #' matrix is unfolded. 
 #' 
-#' @param .Object a \code{"character"} vector indicating a CWB corpus, a \code{"partition"}
-#' object, a \code{"tempcorpus"} object, or a \code{"matrix"} with corpus positions
-#' @param query a character vector (length 1) providing a (single) query: either a single token to look up, or a CQP query. 
+#' @param .Object a \code{"character"} vector indicating a CWB corpus, a
+#'   \code{"partition"} object, a \code{"tempcorpus"} object, or a
+#'   \code{"matrix"} with corpus positions
+#' @param query a character vector (length 1) providing a (single) query: either
+#'   a single token to look up, or a CQP query.
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
 #'   auxiliary function)
@@ -29,32 +37,38 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("polmineR.pAttribute"), cqp=is.cqp, encoding=NULL, verbose=TRUE, ...){
+setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
   if (length(query) > 1) warning("query needs to be a character vector with length 1")
-  if (is.null(encoding)) encoding <- getEncoding(.Object) 
-  query <- adjustEncoding(query, encoding)
+  if (is.null(encoding)) encoding <- getEncoding(.Object) # get encoding of the corpus
+  query <- as.corpusEnc(query, corpusEnc = encoding)
   if (class(cqp) == "function") cqp <- cqp(query)
+  if (length(cqp) > 1) stop("length of cqp is larger than 1, but needs to be 1")
   if (cqp == FALSE) {
+    if (grepl("[\\|]", query)) warning("Special character that may cause problems in query!")
     cpos <- try({
       id <- CQI$str2id(.Object, pAttribute, query)
-      CQI$id2cpos(.Object, pAttribute, id)
+      if (id == -1){ # CQP will return -1 if there are no matches
+        if (verbose) message("no hits for query: ", query)
+        cpos <- NULL
+      } else {
+        cpos <- CQI$id2cpos(.Object, pAttribute, id)
+      }
     })
-    if (is(cpos)[1] != "try-error"){
-      hits <- matrix(c(cpos, cpos), ncol=2)
+    if (!is.null(cpos)){
+      hits <- matrix(c(cpos, cpos), ncol = 2)
     } else {
-      if (verbose == TRUE) message("no hits for query: ", query)
-      hits = NULL
+      hits <- NULL
     }
   } else if (cqp == TRUE) {
     CQI$query(.Object, query)
-    cpos <- try(CQI$dump_subcorpus(.Object))
+    cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
     if (is(cpos)[1] == "try-error"){
-      if (verbose == TRUE) message("no hits for query: ", query)
+      if (verbose) message("no hits for query: ", query)
       hits <- NULL
     } else if (!is.null(cpos)) {
       hits <- matrix(cpos[,1:2], ncol=2)
     } else {
-      if (verbose == TRUE) message("no hits for query: ", query)
+      if (verbose) message("no hits for query: ", query)
       hits <- NULL
     }
   }
@@ -63,7 +77,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute=getOption("po
   
 #' @rdname cpos-method
 setMethod("cpos", "partition", function(.Object, query, cqp=is.cqp, pAttribute=NULL, verbose=TRUE, ...){
-  hits <- cpos(.Object@corpus, query=query, cqp=cqp, pAttribute, encoding=.Object@encoding, verbose=verbose)
+  hits <- cpos(.Object@corpus, query=query, cqp=cqp, pAttribute, encoding = .Object@encoding, verbose=verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
     # corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")

@@ -2,7 +2,7 @@
 NULL
 
 #' @exportMethod aggregate
-#' @rdname partition-class
+#' @rdname partition_class
 setMethod("aggregate", "partition", function(x){
   if (nrow(x@cpos) == 1){
     message("NOTE: Only one region, returning the partition unchanged")

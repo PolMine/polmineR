@@ -13,7 +13,7 @@ CQI.rcqp <- R6Class(
     attributes = function(corpus, type)
       rcqp::cqi_attributes(corpus, type),
     
-    attribute_size = function(corpus, attribute)
+    attribute_size = function(corpus, attribute, type = NULL)
       rcqp::cqi_attribute_size(paste(corpus, attribute, sep=".")),
     
     lexicon_size = function(corpus, pAttribute)

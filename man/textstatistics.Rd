@@ -3,9 +3,9 @@
 \docType{methods}
 \name{ll}
 \alias{ll}
-\alias{ll,comp-method}
 \alias{ll,context-method}
 \alias{ll,cooccurrences-method}
+\alias{ll,features-method}
 \alias{pmi}
 \alias{pmi,context-method}
 \title{text statistics}
@@ -16,7 +16,7 @@ ll(.Object, ...)
 
 \S4method{ll}{cooccurrences}(.Object)
 
-\S4method{ll}{comp}(.Object)
+\S4method{ll}{features}(.Object)
 
 pmi(.Object)
 

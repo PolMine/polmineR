@@ -24,7 +24,7 @@
 #' @exportMethod read
 #' @rdname read-method
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' use("polmineR.sampleCorpus")
 #' options("polmineR.meta" = "text_date")
 #' merkel <- partition(
@@ -112,12 +112,13 @@ setMethod("read", "Regions", function(.Object, meta = NULL){
       lapply(
         setNames(meta, meta),
         function(M){
-          as.utf8(
+          as.nativeEnc(
             CQI$struc2str(
               .Object@corpus,
               M,
               CQI$cpos2struc(.Object@corpus, M, .BY[[1]])
-            ))
+            ), from = .Object@encoding
+            )
         }
       )
     }

@@ -57,6 +57,8 @@ Read, parse and modify registry file.
 
 \item{\code{getProperties()}}{Get corpus properties.}
 
+\item{\code{getSAttributes()}}{Get the sAttributes.}
+
 \item{\code{initialize(corpus = NULL, registry = Sys.getenv("CORPUS_REGISTRY"),
   package = NULL, filename = NULL)}}{Initialize a new RegistryFile object.}
 

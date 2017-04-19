@@ -1,5 +1,5 @@
 #' @include partition_class.R partitionBundle_class.R context_class.R contextBundle_class.R
-#' @include comp_class.R
+#' @include features_class.R
 NULL
 
 #' enrich an object
@@ -25,14 +25,14 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @docType methods
 #' @rdname enrich-method
 setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NULL, id2str = TRUE, meta = NULL, verbose = TRUE, mc=FALSE, ...){
-  if (size == TRUE) object@size <- size(object)
+  if (size) object@size <- size(object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
     .verboseOutput(
-      message = paste('computing term frequencies for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
+      message = paste('getting counts for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
       verbose = verbose
       )  
-    object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc)
+    object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc, verbose = verbose)
     object@pAttribute <- pAttribute
   }
   if (!is.null(meta)) {
@@ -56,9 +56,10 @@ setMethod("enrich", "kwic", function(object, meta = NULL){
     metainformation <- lapply(
       meta,
       function(metadat){
-        cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]]][position == 0][, .SD[1], by = hit_no][["cpos"]]
+        cposToGet <- object@cpos[which(object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
+        # cposToGet <- object@cpos[hit_no %in% object@table[["hit_no"]] ]  [position == 0][, .SD[1], by = hit_no][["cpos"]]
         strucs <- CQI$cpos2struc(object@corpus, metadat, cposToGet)
-        as.utf8(CQI$struc2str(object@corpus, metadat, strucs))
+        as.nativeEnc(CQI$struc2str(object@corpus, metadat, strucs), from = object@encoding)
       }
     )
     metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)
