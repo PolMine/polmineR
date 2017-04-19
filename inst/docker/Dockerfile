@@ -1,14 +1,19 @@
 FROM rocker/r-base
 
-RUN sudo apt-get install bison
-RUN sudo apt-get install flex
-RUN sudo apt-get install libglib2.0-dev
-RUN apt-get install libpcre3 libpcre3-dev
-RUN sudo apt-get install libncurses5-dev libncursesw5-dev
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils dialog
 
-RUN sudo apt-get install libcurl4-openssl-dev
-RUN sudo apt-get install libssl-dev
-RUN sudo apt-get install libssh2-1-dev
+RUN apt-get update -y && apt-get install -y bison \
+  flex \
+  libglib2.0-dev \
+  libpcre3 \
+  libpcre3-dev \
+  libncurses5-dev \
+  libncursesw5-dev \ 
+  libcurl4-openssl-dev \
+  libssl-dev
+
+#  libssh2-1 \
+#  libssh2-1-dev
 
 RUN Rscript -e 'install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))'
 RUN Rscript -e 'install.packages("rcqp")'
