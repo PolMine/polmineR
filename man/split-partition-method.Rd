@@ -2,8 +2,8 @@
 % Please edit documentation in R/partition_class.R
 \docType{methods}
 \name{split,partition-method}
-\alias{split,partition}
 \alias{split,partition-method}
+\alias{split,partition}
 \title{split partition into partitionBundle}
 \usage{
 \S4method{split}{partition}(x, gap, drop = FALSE, ...)
@@ -28,4 +28,3 @@ returned partitions will not include frequency lists. The lists can be
 prepared by applying \code{enrich} on the partitionBundle object that
 is returned.
 }
-

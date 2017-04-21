@@ -2,13 +2,15 @@
 % Please edit documentation in R/context_method.R, R/cooccurrences_method.R
 \docType{methods}
 \name{context}
-\alias{as.matrix,contextBundle-method}
 \alias{context}
-\alias{context,character-method}
-\alias{context,contextBundle-method}
-\alias{context,cooccurrences-method}
 \alias{context,partition-method}
+\alias{as.matrix,contextBundle-method}
+\alias{context,contextBundle-method}
 \alias{context,partitionBundle-method}
+\alias{context,cooccurrences-method}
+\alias{context,character-method}
+\alias{context,partitionBundle-method}
+\alias{context,cooccurrences-method}
 \alias{cooccurrences,Corpus-method}
 \title{Analyze context of a node word.}
 \usage{
@@ -87,4 +89,3 @@ examples). Statistical tests available are log-likelihood, t-test, pmi.
 \author{
 Andreas Blaette
 }
-

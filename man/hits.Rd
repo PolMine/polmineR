@@ -2,11 +2,11 @@
 % Please edit documentation in R/hits_class.R
 \docType{class}
 \name{hits-class}
+\alias{hits-class}
 \alias{hits}
 \alias{hits,character-method}
 \alias{hits,partition-method}
 \alias{hits,partitionBundle-method}
-\alias{hits-class}
 \alias{sample,hits-method}
 \title{Get Hits.}
 \usage{

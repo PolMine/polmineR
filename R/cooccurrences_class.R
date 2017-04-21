@@ -76,8 +76,7 @@ setMethod("show", "cooccurrences", function(object) {
 setClass("cooccurrencesBundle", contains = "bundle")
 
 
-#' @examples
-#' @importFram data.table copy
+#' @importFrom data.table copy
 setMethod("as.data.frame", "cooccurrencesBundle", function(x){
   dts <- lapply(
     x@objects,

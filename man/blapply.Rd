@@ -3,9 +3,9 @@
 \docType{methods}
 \name{blapply}
 \alias{blapply}
-\alias{blapply,bundle-method}
 \alias{blapply,list-method}
 \alias{blapply,vector-method}
+\alias{blapply,bundle-method}
 \title{apply a function over a list or bundle}
 \usage{
 blapply(x, ...)
@@ -55,4 +55,3 @@ the number of cores from the option 'polmineR.cores' (getOption("polmineR.cores"
   foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
 }
 }
-

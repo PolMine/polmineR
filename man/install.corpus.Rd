@@ -31,6 +31,10 @@ The corpus will be installed to the standard library directory for installing R 
 (\code{.libPaths{}[1]}). Another location can be used by stating the param 'lib'
 explicitly (see documentation for \code{\link{install.packages}}).
 
+The function can also be used to install a corpus from a password protected repository. Further
+parameters are handed over to install.packages, so you might add 
+\code{method = "wget" extra = "--user donald --password duck"}.
+
 See examples how to check whether the directory has been set correctly.
 
 An installed data package with a CWB corpus is assumed to include a directory
@@ -51,4 +55,3 @@ RegistryFile$new(package = "plprbt.pvs2017")$getHome()
 For managing registry files, see class \code{\link{RegistryFile}}, see \code{\link{use}}
 for switching to a packaged corpus.
 }
-

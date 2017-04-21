@@ -2,9 +2,10 @@
 % Please edit documentation in R/sAttributes_method.R
 \docType{methods}
 \name{sAttributes,character-method}
-\alias{sAttributes}
 \alias{sAttributes,character-method}
 \alias{sAttributes,partition-method}
+\alias{sAttributes}
+\alias{sAttributes,character-method}
 \title{Get s-attributes.}
 \usage{
 \S4method{sAttributes}{character}(.Object, sAttribute = NULL, unique = TRUE,
@@ -37,6 +38,8 @@ with all s-attributes present in a corpus.
 
 If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
 values of the s-attributes available in the corpus/partition are returned.
+
+If a character vector of s-attributes is provided, the method will return a \code{data.table}.
 }
 \examples{
 \dontrun{
@@ -45,9 +48,9 @@ values of the s-attributes available in the corpus/partition are returned.
   sAttributes("PLPRBTTXT")
   sAttributes("PLPRBTTXT", "text_date") # dates of plenary meetings
   
+  
   P <- partition("PLPRBTTXT", text_date = "2009-11-10")
   sAttributes(P)
   sAttributes(P, "text_name") # get names of speakers
 }
 }
-

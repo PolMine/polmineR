@@ -3,9 +3,9 @@
 \docType{methods}
 \name{corpus}
 \alias{corpus}
+\alias{corpus,partition-method}
 \alias{corpus,bundle-method}
 \alias{corpus,missing-method}
-\alias{corpus,partition-method}
 \title{Get corpus.}
 \usage{
 corpus(object)
@@ -24,4 +24,3 @@ Calling \code{corpus()} will return the corpora available. If object
 is a partition or partitionBundle-object, the corpus the respective
 object is derived from is returned.
 }
-

@@ -32,4 +32,3 @@ The available p-attributes are returned by the pAttributes-method.
 \references{
 Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.
 }
-

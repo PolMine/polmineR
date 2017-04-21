@@ -2,13 +2,13 @@
 % Please edit documentation in R/contextBundle_class.R
 \docType{class}
 \name{contextBundle-class}
-\alias{[,contextBundle,ANY,ANY,ANY-method}
-\alias{[,contextBundle-method}
-\alias{[[,contextBundle-method}
-\alias{as.TermContextBundle,contextBundle-method}
 \alias{contextBundle-class}
 \alias{show,contextBundle-method}
 \alias{summary,contextBundle-method}
+\alias{[,contextBundle-method}
+\alias{[,contextBundle,ANY,ANY,ANY-method}
+\alias{[[,contextBundle-method}
+\alias{as.TermContextBundle,contextBundle-method}
 \title{S4 contextBundle class}
 \description{
 class to organize information of multiple context analyses
@@ -18,6 +18,7 @@ class to organize information of multiple context analyses
 \describe{
 \item{\code{objects}}{Object of class \code{"list"} a list of context objects}
 }}
+
 \section{Methods}{
 
   \describe{

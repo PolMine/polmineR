@@ -90,7 +90,7 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 #' @rdname partition
 setMethod("partition", "character", function(
   .Object, def = NULL, name = "",
-  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE, xml = "flat",
+  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
   id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...
 ) {
   corpus <- .Object
@@ -145,10 +145,6 @@ setMethod("partition", "character", function(
     if (!is.null(pAttribute)) {
       Partition <- enrich(Partition, pAttribute = pAttribute, verbose = verbose, id2str = id2str, mc = mc)
       # Partition <- sort(Partition, "count")
-    }
-    if (!is.null(meta)) {
-      .verboseOutput('get metadata', verbose)
-      Partition@metadata <- meta(Partition, sAttributes=meta)
     }
   } else {
     message("... setting up the partition failed (returning NULL object)")

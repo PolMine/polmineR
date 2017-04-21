@@ -4,17 +4,16 @@
 \name{partition}
 \alias{partition}
 \alias{partition,character-method}
-\alias{partition,environment-method}
 \alias{partition,list-method}
+\alias{partition,environment-method}
 \alias{partition,partition-method}
 \title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
 
 \S4method{partition}{character}(.Object, def = NULL, name = "",
-  encoding = NULL, pAttribute = NULL, meta = NULL, regex = FALSE,
-  xml = "flat", id2str = TRUE, type = NULL, mc = FALSE,
-  verbose = TRUE, ...)
+  encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
+  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...)
 
 \S4method{partition}{list}(.Object, ...)
 
@@ -39,8 +38,6 @@ details and examples)}
 
 \item{pAttribute}{the pAttribute(s) for which term frequencies shall be retrieved}
 
-\item{meta}{a character vector}
-
 \item{regex}{logical (defaults to FALSE)}
 
 \item{xml}{either 'flat' (default) or 'nested'}
@@ -54,6 +51,8 @@ details and examples)}
 \item{verbose}{logical, defaults to TRUE}
 
 \item{slots}{character vector}
+
+\item{meta}{a character vector}
 }
 \value{
 An object of the S4 class 'partition'
@@ -122,11 +121,10 @@ A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
    }
 }
 }
-\author{
-Andreas Blaette
-}
 \seealso{
 To learn about the methods available for objects of the class partition, see
 \code{\link{partition_class}},
 }
-
+\author{
+Andreas Blaette
+}

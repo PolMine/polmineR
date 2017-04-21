@@ -3,9 +3,9 @@
 \docType{methods}
 \name{kwic}
 \alias{kwic}
-\alias{kwic,character-method}
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
+\alias{kwic,character-method}
 \title{KWIC output / concordances}
 \usage{
 kwic(.Object, ...)
@@ -76,4 +76,3 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
 \seealso{
 To read the whole text, see the \code{\link{read}}-method.
 }
-

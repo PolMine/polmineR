@@ -37,4 +37,3 @@ sampleCorpusPartition <- partition("PLPRBTTXT", text_speaker = "Volker Kauder")
 resetRegistry(oldRegistryDir)
 }
 }
-

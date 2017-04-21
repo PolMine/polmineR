@@ -3,9 +3,9 @@
 \docType{class}
 \name{cooccurrences-class}
 \alias{cooccurrences-class}
-\alias{cooccurrencesBundle}
-\alias{cooccurrencesBundle-class}
 \alias{cooccurrencesReshaped-class}
+\alias{cooccurrencesBundle-class}
+\alias{cooccurrencesBundle}
 \alias{view,cooccurrencesReshaped-method}
 \title{Cooccurrences class.}
 \usage{

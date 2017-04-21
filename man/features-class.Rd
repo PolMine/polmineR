@@ -3,11 +3,11 @@
 \docType{class}
 \name{features-class}
 \alias{features-class}
-\alias{featuresBundle-class}
 \alias{featuresCooccurrences-class}
 \alias{featuresNgrams-class}
-\alias{show,features-method}
+\alias{featuresBundle-class}
 \alias{summary,features-method}
+\alias{show,features-method}
 \alias{summary,featuresBundle-method}
 \alias{view,features-method}
 \title{Feature selection by comparison (S4 class).}
@@ -53,7 +53,7 @@ object resulting from features-method
 
 \item{\code{objects}}{an object of class \code{list}}
 }}
+
 \author{
 Andreas Blaette
 }
-

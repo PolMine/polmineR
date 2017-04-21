@@ -3,9 +3,9 @@
 \docType{methods}
 \name{size}
 \alias{size}
-\alias{size,DocumentTermMatrix-method}
 \alias{size,character-method}
 \alias{size,partition-method}
+\alias{size,DocumentTermMatrix-method}
 \title{Get number of tokens.}
 \usage{
 size(x, ...)
@@ -53,4 +53,3 @@ size(P, sAttribute = "text_party")
 See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
 method calls the \code{size}-method to get sizes of subcorpora.
 }
-

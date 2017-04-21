@@ -3,9 +3,10 @@
 \docType{methods}
 \name{dispersion}
 \alias{dispersion}
+\alias{dispersion,partition-method}
+\alias{dispersion}
 \alias{dispersion,character-method}
 \alias{dispersion,hits-method}
-\alias{dispersion,partition-method}
 \title{Dispersion of a query or multiple queries}
 \usage{
 dispersion(.Object, ...)
@@ -68,12 +69,11 @@ on the number of queries and dimensions provided.
     )
 }
 }
-\author{
-Andreas Blaette
-}
 \seealso{
 \code{crosstab-class}
 
 count
 }
-
+\author{
+Andreas Blaette
+}

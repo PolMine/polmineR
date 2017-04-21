@@ -13,6 +13,10 @@
 #' (\code{.libPaths{}[1]}). Another location can be used by stating the param 'lib'
 #' explicitly (see documentation for \code{\link{install.packages}}).
 #' 
+#' The function can also be used to install a corpus from a password protected repository. Further
+#' parameters are handed over to install.packages, so you might add 
+#' \code{method = "wget" extra = "--user donald --password duck"}.
+#' 
 #' See examples how to check whether the directory has been set correctly. 
 #' 
 #' An installed data package with a CWB corpus is assumed to include a directory

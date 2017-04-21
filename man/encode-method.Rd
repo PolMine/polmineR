@@ -39,4 +39,3 @@ encode(.Object, ...)
 \description{
 Encode CWB Corpus.
 }
-

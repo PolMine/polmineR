@@ -4,8 +4,8 @@
 \name{cooccurrences}
 \alias{cooccurrences}
 \alias{cooccurrences,character-method}
-\alias{cooccurrences,context-method}
 \alias{cooccurrences,partition-method}
+\alias{cooccurrences,context-method}
 \alias{cooccurrences,partitionBundle-method}
 \title{Get cooccurrence statistics.}
 \usage{
@@ -84,4 +84,3 @@ cooc <- cooccurrences(merkel, query = "Deutschland")
 \author{
 Andreas Blaette
 }
-

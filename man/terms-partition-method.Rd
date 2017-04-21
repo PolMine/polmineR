@@ -2,8 +2,8 @@
 % Please edit documentation in R/terms_method.R
 \docType{methods}
 \name{terms-partition-method}
-\alias{terms,partition-method}
 \alias{terms-partition-method}
+\alias{terms,partition-method}
 \title{get terms available in a corpus}
 \usage{
 \S4method{terms}{partition}(x, pAttribute, regex = NULL)
@@ -18,4 +18,3 @@
 \description{
 get terms available in a corpus
 }
-

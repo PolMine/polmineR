@@ -3,11 +3,11 @@
 \docType{methods}
 \name{getTokenStream}
 \alias{getTokenStream}
-\alias{getTokenStream,Regions-method}
-\alias{getTokenStream,character-method}
-\alias{getTokenStream,matrix-method}
 \alias{getTokenStream,numeric-method}
+\alias{getTokenStream,matrix-method}
+\alias{getTokenStream,character-method}
 \alias{getTokenStream,partition-method}
+\alias{getTokenStream,Regions-method}
 \title{Get Token Stream Based on Corpus Positions.}
 \usage{
 getTokenStream(.Object, ...)
@@ -52,4 +52,3 @@ getTokenStream(.Object, ...)
 \description{
 Turn regions of a corpus defined by corpus positions into the original text.
 }
-

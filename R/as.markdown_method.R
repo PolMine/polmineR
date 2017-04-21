@@ -30,7 +30,16 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
   
   # generate metainformation
   documentStruc <- CQI$cpos2struc(corpus, getTemplate(corpus)[["document"]][["sAttribute"]], .Object[1])
-  metaInformation <- meta(corpus, sAttributes = meta, struc = documentStruc)
+
+  metaInformation <- sapply(
+    meta,
+    function(x) {
+      retval <- CQI$struc2str(corpus, x, documentStruc)
+      Encoding(retval) <- corpusEncoding
+      as.nativeEnc(retval, from = corpusEncoding)
+    })
+  names(metaInformation) <- sAttributes
+  
   metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
   metaInformation <- paste(
     getTemplate(corpus)[["document"]][["format"]][1],

@@ -3,9 +3,9 @@
 \docType{methods}
 \name{frequencies}
 \alias{frequencies}
+\alias{frequencies-method}
 \alias{frequencies,partition-method}
 \alias{frequencies,partitionBundle-method}
-\alias{frequencies-method}
 \title{Frequency breakdown of the variation of query results}
 \usage{
 \S4method{frequencies}{partition}(object, query,
@@ -25,4 +25,3 @@ a matrix
 If one query is supplied, the function returns a frequency breakdown of the results of the query.
 If several queries are supplied, frequencies for the individual queries are retrieved.
 }
-

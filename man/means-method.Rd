@@ -21,4 +21,3 @@ means(.Object, ...)
 \description{
 calculate means
 }
-

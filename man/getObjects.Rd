@@ -17,4 +17,3 @@ a list with the partitions found in the namespace
 \description{
 Get objects of a certain class.
 }
-

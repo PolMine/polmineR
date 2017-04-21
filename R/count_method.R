@@ -10,12 +10,13 @@ NULL
 #' 
 #' If .Object is a character vector (length 1) and query is NULL, the count is performed
 #' for the whole partition. The method will check whether the \code{polmineR.Rcpp} package,
-#' or the \code{cwb-lexdecode) utilities are available, and use them resepectively for 
+#' or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
 #' performance reasons.
 #' 
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
 #' 
+
 #' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a
 #'   character vector (length 1) providing the name of a corpus
 #' @param query a character vector (one or multiple terms to be looked up), CQP
@@ -239,23 +240,23 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
             CQI$str2id(.Object, pAttribute, query)
           )
       )
-      freq <- count/total
+      freq <- count / total
       return(data.table(query = query, count = count, freq = freq))
     } else if (cqp == TRUE){
-    count <- sapply(
-      query,
-      function(query){
-        cpos_matrix <- cpos(.Object, query, cqp = cqp, pAttribute = pAttribute, encoding = getEncoding(.Object))
-        if (!is.null(cpos_matrix)){
-          return( nrow(cpos_matrix) )
-        } else {
-          return( 0 )
+      count <- sapply(
+        query,
+        function(query){
+          cpos_matrix <- cpos(.Object, query, cqp = cqp, pAttribute = pAttribute, encoding = getEncoding(.Object))
+          if (!is.null(cpos_matrix)){
+            return( nrow(cpos_matrix) )
+          } else {
+            return( 0 )
+          }
+          
         }
-        
-      }
-      )
-    freq <- count/total
-    return(data.table(query = query, count = count, freq = freq))
+        )
+      freq <- count / total
+      return(data.table(query = query, count = count, freq = freq))
     }
   }
 })

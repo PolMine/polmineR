@@ -16,4 +16,3 @@ the function returns invisibly the registry that was previously set
 \description{
 Use a cwb corpus shipped in a package or return to default registry.
 }
-

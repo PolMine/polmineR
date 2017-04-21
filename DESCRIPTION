@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.2.9003
-Date: 2017-04-08
+Version: 0.7.2.9004
+Date: 2017-04-21
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -26,8 +26,6 @@ Suggests:
     xlsx,
     sendmailR,
     knitr,
-    bigmemory,
-    bigtabulate,
     rJava,
     shiny
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
@@ -108,7 +106,6 @@ Collate:
     'll_method.R'
     'mail_method.R'
     'means_method.R'
-    'meta_method.R'
     'noise_method.R'
     'pAttributes_method.R'
     'partitionBundle_method.R'
@@ -133,4 +130,4 @@ Collate:
     'view_method.R'
     'weigh_method.R'
     'zzz.R'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

@@ -16,4 +16,3 @@ a partitionBundle object
 If you have a list of partitionBundles, this function will flatten the data
 structure and return a partition Bundle object.
 }
-

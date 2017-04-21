@@ -21,4 +21,3 @@ divide(.Object, n)
 \description{
 divide an object into equally sized parts
 }
-

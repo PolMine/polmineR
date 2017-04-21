@@ -3,15 +3,15 @@
 \docType{methods}
 \name{enrich}
 \alias{enrich}
+\alias{enrich-method}
 \alias{enrich,partition-method}
 \alias{enrich,partitionBundle-method}
-\alias{enrich-method}
 \title{enrich an object}
 \usage{
 enrich(object, ...)
 
 \S4method{enrich}{partition}(object, size = FALSE, pAttribute = NULL,
-  id2str = TRUE, meta = NULL, verbose = TRUE, mc = FALSE, ...)
+  id2str = TRUE, verbose = TRUE, mc = FALSE, ...)
 
 \S4method{enrich}{partitionBundle}(object, mc = FALSE, progress = TRUE,
   verbose = FALSE, ...)
@@ -27,8 +27,6 @@ enrich(object, ...)
 
 \item{id2str}{logical}
 
-\item{meta}{character vector}
-
 \item{verbose}{logical}
 
 \item{mc}{logical or, if numeric, providing the number of cores}
@@ -39,4 +37,3 @@ enrich(object, ...)
 Method to fill slots of a partition or partitionBundle object that 
 have not been set up previously. See the respective documentation:
 }
-

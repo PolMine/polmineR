@@ -9,7 +9,6 @@ NULL
 #' @param object a partition, partitionBundle or comp object
 #' @param size logical
 #' @param pAttribute character vector
-#' @param meta character vector
 #' @param verbose logical
 #' @param mc logical or, if numeric, providing the number of cores
 #' @param ... further parameters
@@ -24,7 +23,7 @@ setGeneric("enrich", function(object, ...){standardGeneric("enrich")})
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname enrich-method
-setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NULL, id2str = TRUE, meta = NULL, verbose = TRUE, mc=FALSE, ...){
+setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NULL, id2str = TRUE, verbose = TRUE, mc=FALSE, ...){
   if (size) object@size <- size(object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(object)))
@@ -34,10 +33,6 @@ setMethod("enrich", "partition", function(object, size = FALSE, pAttribute = NUL
       )  
     object@stat <- count(.Object = object, pAttribute = pAttribute, id2str = id2str, mc = mc, verbose = verbose)
     object@pAttribute <- pAttribute
-  }
-  if (!is.null(meta)) {
-    .verboseOutput(message = 'setting up metadata (table and list of values)', verbose = verbose)
-    object@metadata <- meta(object, sAttributes = meta)
   }
   object
 })

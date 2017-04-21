@@ -2,15 +2,15 @@
 % Please edit documentation in R/context_class.R, R/count_method.R
 \docType{class}
 \name{context-class}
-\alias{[,context,ANY,ANY,ANY-method}
-\alias{[,context-method}
-\alias{[[,context-method}
-\alias{as.DataTables,context-method}
 \alias{context-class}
-\alias{count,context-method}
-\alias{head,context-method}
 \alias{show,context-method}
+\alias{[,context-method}
+\alias{[,context,ANY,ANY,ANY-method}
+\alias{[[,context-method}
 \alias{summary,context-method}
+\alias{head,context-method}
+\alias{as.DataTables,context-method}
+\alias{count,context-method}
 \title{S4 context class}
 \usage{
 \S4method{count}{context}(.Object)

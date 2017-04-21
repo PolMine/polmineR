@@ -12,14 +12,27 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
     return(CQI$attributes(.Object, "s"))
   } else {
     if (.Object %in% CQI$list_corpora()) {
-      ret <- CQI$struc2str(
-        .Object, sAttribute,
-        c(0:(CQI$attribute_size(.Object, sAttribute, type = "s")-1))
+      if (length(sAttribute) == 1){
+        ret <- CQI$struc2str(
+          .Object, sAttribute,
+          c(0:(CQI$attribute_size(.Object, sAttribute, type = "s")-1))
         )
-      if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
-      if (unique == TRUE) ret <- unique(ret)
-      Encoding(ret) <- getEncoding(.Object)
-      return(ret)
+        if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
+        if (unique == TRUE) ret <- unique(ret)
+        Encoding(ret) <- getEncoding(.Object)
+        return(ret)
+      } else if (length(sAttribute) > 1){
+        corpusEncoding <- RegistryFile$new(.Object)$getEncoding()
+        metaInformation <- lapply(
+          sAttribute,
+          function(x) {
+            retval <- CQI$struc2str(.Object, x, 0:(CQI$attribute_size(.Object, x, "s")-1))
+            Encoding(retval) <- corpusEncoding
+            as.nativeEnc(retval, from = corpusEncoding)
+          })
+        names(metaInformation) <- sAttribute
+        return( as.data.table(metaInformation) )
+      }
     } else {
       warning("corpus name provided not available")
       return(NULL)
@@ -40,6 +53,8 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #' 
 #' If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
 #' values of the s-attributes available in the corpus/partition are returned.
+#' 
+#' If a character vector of s-attributes is provided, the method will return a \code{data.table}.
 #'
 #' @param .Object either a \code{partition} object or a character vector specifying a CWB corpus
 #' @param sAttribute name of a specific s-attribute
@@ -55,6 +70,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #'   sAttributes("PLPRBTTXT")
 #'   sAttributes("PLPRBTTXT", "text_date") # dates of plenary meetings
 #'   
+#'   
 #'   P <- partition("PLPRBTTXT", text_date = "2009-11-10")
 #'   sAttributes(P)
 #'   sAttributes(P, "text_name") # get names of speakers
@@ -65,18 +81,51 @@ setMethod(
     if (is.null(sAttribute)){
       retval <- CQI$attributes(.Object@corpus, "s")
     } else {
-      if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){
-        retval <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs));
-        Encoding(retval) <- .Object@encoding;  
-      } else {
-        cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-        strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
-        retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
-        retval <- unique(retval)
-        Encoding(retval) <- .Object@encoding
+      if (length(sAttribute) == 1){
+        if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){
+          retval <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs));
+          Encoding(retval) <- .Object@encoding;  
+        } else {
+          cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+          strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
+          retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
+          retval <- unique(retval)
+          Encoding(retval) <- .Object@encoding
+        }
+        return(retval)
+      } else if (length(sAttribute) > 1){
+        if (.Object@xml == "flat") {
+          tab <- data.frame(
+            lapply(
+              sAttributes,
+              # USE.NAMES = TRUE,
+              function(x) { 
+                tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
+                Encoding(tmp) <- .Object@encoding
+                tmp
+              }
+            ),
+            stringsAsFactors = FALSE
+          )
+          colnames(tab) <- sAttributes
+        } else if (.Object@xml == "nested") {
+          tab <- data.frame(
+            sapply(
+              sAttributes,
+              USE.NAMES=TRUE,
+              function(x) {
+                tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
+                Encoding(tmp) <- .Object@encoding
+                tmp
+              }
+            )
+          )
+          colnames(tab) <- names(meta)
+        }
+        return(tab)
+        
       }
     }
-    retval
   }
 )
 

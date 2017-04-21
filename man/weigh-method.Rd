@@ -3,8 +3,8 @@
 \docType{methods}
 \name{weigh}
 \alias{weigh}
-\alias{weigh,DocumentTermMatrix-method}
 \alias{weigh,TermDocumentMatrix-method}
+\alias{weigh,DocumentTermMatrix-method}
 \title{weigh a matrix}
 \usage{
 weigh(.Object, ...)
@@ -23,4 +23,3 @@ weigh(.Object, ...)
 \description{
 weigh a matrix
 }
-
