@@ -2,28 +2,25 @@
 % Please edit documentation in R/textstat_class.R, R/view_method.R
 \docType{class}
 \name{textstat-class}
-\alias{textstat-class}
-\alias{as.data.frame,textstat-method}
-\alias{show,textstat-method}
-\alias{dim,textstat-method}
-\alias{colnames,textstat-method}
-\alias{rownames,textstat-method}
-\alias{names,textstat-method}
+\alias{+,textstat,textstat-method}
+\alias{[,textstat,ANY,ANY,ANY-method}
+\alias{[[,textstat-method}
 \alias{as.DataTables,textstat-method}
-\alias{head,textstat-method}
-\alias{tail,textstat-method}
+\alias{as.bundle}
+\alias{as.data.frame,textstat-method}
+\alias{as.data.table,textstat-method}
+\alias{colnames,textstat-method}
 \alias{dim,textstat-method}
+\alias{head,textstat-method}
+\alias{names,textstat-method}
 \alias{nrow,textstat-method}
 \alias{round,textstat-method}
-\alias{colnames,textstat-method}
+\alias{rownames,textstat-method}
+\alias{show,textstat-method}
 \alias{sort,textstat-method}
-\alias{as.bundle}
-\alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
-\alias{as.data.table,textstat-method}
-\alias{as.data.frame,textstat-method}
-\alias{[[,textstat-method}
-\alias{[,textstat,ANY,ANY,ANY-method}
+\alias{tail,textstat-method}
+\alias{textstat-class}
 \alias{view,textstat-method}
 \title{S4 textstat class}
 \usage{
@@ -102,7 +99,6 @@ and with double square brackets ("[[") to get specific columns from the
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 }}
-
 \examples{
 \dontrun{
 P <- partition("PLPRBTTXT", text_year = "2009", pAttributes = "word")
@@ -115,3 +111,4 @@ C[which(C[["word"]] \%in\% c("Arbeit", "Sozial"))]
 C[ C[["word"]] \%in\% c("Arbeit", "Sozial") ]
 }
 }
+

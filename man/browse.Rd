@@ -3,12 +3,12 @@
 \docType{methods}
 \name{browse}
 \alias{browse}
-\alias{browse,textstat-method}
 \alias{browse,cooccurrences-method}
-\alias{browse,partition-method}
 \alias{browse,html-method}
 \alias{browse,kwic-method}
+\alias{browse,partition-method}
 \alias{browse,pressPartition-method}
+\alias{browse,textstat-method}
 \title{display in browser}
 \usage{
 browse(object, ...)
@@ -38,3 +38,4 @@ browse(object, ...)
 \description{
 bla
 }
+

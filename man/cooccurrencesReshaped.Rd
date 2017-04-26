@@ -12,3 +12,4 @@
 \description{
 Methods for manipulating cooccurrencesReshaped-class-objects
 }
+

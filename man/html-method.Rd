@@ -3,11 +3,11 @@
 \docType{methods}
 \name{html}
 \alias{html}
-\alias{show,html-method}
 \alias{html,character-method}
+\alias{html,kwic-method}
 \alias{html,partition-method}
 \alias{html,partitionBundle-method}
-\alias{html,kwic-method}
+\alias{show,html-method}
 \title{restore fulltext as html}
 \usage{
 html(object, ...)
@@ -50,3 +50,4 @@ html(object, ...)
 \description{
 restore fulltext as html
 }
+

@@ -55,3 +55,4 @@ RegistryFile$new(package = "plprbt.pvs2017")$getHome()
 For managing registry files, see class \code{\link{RegistryFile}}, see \code{\link{use}}
 for switching to a packaged corpus.
 }
+

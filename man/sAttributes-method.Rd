@@ -2,10 +2,9 @@
 % Please edit documentation in R/sAttributes_method.R
 \docType{methods}
 \name{sAttributes,character-method}
-\alias{sAttributes,character-method}
-\alias{sAttributes,partition-method}
 \alias{sAttributes}
 \alias{sAttributes,character-method}
+\alias{sAttributes,partition-method}
 \title{Get s-attributes.}
 \usage{
 \S4method{sAttributes}{character}(.Object, sAttribute = NULL, unique = TRUE,
@@ -54,3 +53,4 @@ If a character vector of s-attributes is provided, the method will return a \cod
   sAttributes(P, "text_name") # get names of speakers
 }
 }
+

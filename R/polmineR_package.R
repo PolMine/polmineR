@@ -50,7 +50,14 @@ NULL
 #' # examples in the manual rely in a sample corpus that can be install as follows:
 #' install.corpus("polmineR.sampleCorpus")
 #' }
-NULL
+#' @export polmineR
+polmineR <- function(){
+  if (require("shiny", quietly = TRUE)){
+    runApp(system.file("shiny", package = "polmineR"))
+  } else {
+    stop("package 'shiny' required but not installed")
+  }
+}
 
 
 #' generic methods defined in the polmineR-package

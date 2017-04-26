@@ -3,9 +3,9 @@
 \docType{methods}
 \name{encoding}
 \alias{encoding}
-\alias{encoding<-}
-\alias{encoding,textstat-method}
 \alias{encoding,bundle-method}
+\alias{encoding,textstat-method}
+\alias{encoding<-}
 \title{Get and set encoding.}
 \usage{
 encoding(object)
@@ -24,3 +24,4 @@ encoding(object) <- value
 \description{
 Method for \code{textstat} objects and classes inheriting from \code{textstat}.
 }
+

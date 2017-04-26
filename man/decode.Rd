@@ -30,3 +30,4 @@ An encoded CWB corpus is turned into a tibble.
 PLPRBTTXT <- Corpus$new("PLPRBTTXT")
 }
 }
+

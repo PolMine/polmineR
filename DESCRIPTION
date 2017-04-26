@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.2.9004
-Date: 2017-04-21
+Version: 0.7.2.9005
+Date: 2017-04-26
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -130,4 +130,4 @@ Collate:
     'view_method.R'
     'weigh_method.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1

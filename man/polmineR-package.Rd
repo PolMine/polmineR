@@ -2,8 +2,12 @@
 % Please edit documentation in R/polmineR_package.R
 \docType{package}
 \name{polmineR-package}
+\alias{polmineR}
 \alias{polmineR-package}
 \title{polmineR-package}
+\usage{
+polmineR()
+}
 \description{
 Machinery for mining CWB corpora
 }
@@ -34,13 +38,14 @@ settings for polmineR from that file. Second, templates are restored.
 install.corpus("polmineR.sampleCorpus")
 }
 }
+\author{
+Andreas Blaette (andreas.blaette@uni-due.de)
+}
 \references{
 http://polmine.sowi.uni-due.de
 
 Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
 Cham: Springer.
 }
-\author{
-Andreas Blaette (andreas.blaette@uni-due.de)
-}
 \keyword{package}
+

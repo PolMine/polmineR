@@ -14,3 +14,4 @@ getSlot(x, name)
 \description{
 Auxiliary function to unify access to slots of S4 or R6 object.
 }
+

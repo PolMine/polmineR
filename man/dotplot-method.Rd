@@ -3,9 +3,9 @@
 \docType{methods}
 \name{dotplot}
 \alias{dotplot}
-\alias{dotplot,textstat-method}
 \alias{dotplot,features-method}
 \alias{dotplot,partition-method}
+\alias{dotplot,textstat-method}
 \title{dotplot}
 \usage{
 dotplot(.Object, ...)
@@ -28,3 +28,4 @@ dotplot(.Object, ...)
 \description{
 dotplot
 }
+

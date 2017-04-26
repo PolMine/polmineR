@@ -2,12 +2,11 @@
 % Please edit documentation in R/trim_method.R, R/utils.R
 \docType{methods}
 \name{trim}
-\alias{trim}
-\alias{trim-method}
-\alias{trim,TermDocumentMatrix-method}
-\alias{trim,TermDocumentMatrix-method}
-\alias{trim,DocumentTermMatrix-method}
 \alias{punctuation}
+\alias{trim}
+\alias{trim,DocumentTermMatrix-method}
+\alias{trim,TermDocumentMatrix-method}
+\alias{trim-method}
 \title{trim an object}
 \format{An object of class \code{character} of length 13.}
 \usage{
@@ -45,3 +44,4 @@ applying thresholds, minimum frequencies etc. It can be applied to 'context',
 Andreas Blaette
 }
 \keyword{datasets}
+

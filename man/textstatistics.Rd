@@ -30,3 +30,4 @@ pmi(.Object)
 \description{
 text statistics
 }
+

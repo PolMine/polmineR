@@ -3,13 +3,13 @@
 \docType{methods}
 \name{mail}
 \alias{mail}
-\alias{mail-method}
-\alias{mail,partition-method}
 \alias{mail,cooccurrences-method}
+\alias{mail,data.frame-method}
+\alias{mail,dispersion-method}
 \alias{mail,features-method}
 \alias{mail,kwic-method}
-\alias{mail,dispersion-method}
-\alias{mail,data.frame-method}
+\alias{mail,partition-method}
+\alias{mail-method}
 \title{Mail result.}
 \usage{
 mail(object, ...)
@@ -50,3 +50,4 @@ mail(object, ...)
 \description{
 Mail a result (to yourself).
 }
+

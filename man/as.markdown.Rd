@@ -36,3 +36,4 @@ as.markdown(.Object, ...)
 \description{
 The method is the worker behind the html-method.
 }
+

@@ -49,3 +49,4 @@ PolMine corpora of plenary protocols. A partition is split into speeches.
   tdm <- trim(tdm, termsToDrop = termsToDrop)
 }
 }
+
