@@ -112,7 +112,7 @@ setMethod(
           tab <- data.frame(
             sapply(
               sAttributes,
-              USE.NAMES=TRUE,
+              USE.NAMES = TRUE,
               function(x) {
                 tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
                 Encoding(tmp) <- .Object@encoding
@@ -120,7 +120,7 @@ setMethod(
               }
             )
           )
-          colnames(tab) <- names(meta)
+          colnames(tab) <- sAttributes
         }
         return(tab)
         

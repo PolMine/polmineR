@@ -33,7 +33,6 @@
 #' @param name name of the new partition, defaults to "
 #' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
-#' @param meta a character vector
 #' @param regex logical (defaults to FALSE)
 #' @param xml either 'flat' (default) or 'nested'
 #' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)

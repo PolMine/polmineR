@@ -73,6 +73,8 @@ in one S4 object.
 \item{\code{objects}}{Object of class \code{"list"}}
 
 \item{\code{pAttribute}}{Object of class \code{"character"}}
+
+\item{\code{encoding}}{encoding of objects}
 }}
 \examples{
 \dontrun{

@@ -51,8 +51,6 @@ details and examples)}
 \item{verbose}{logical, defaults to TRUE}
 
 \item{slots}{character vector}
-
-\item{meta}{a character vector}
 }
 \value{
 An object of the S4 class 'partition'

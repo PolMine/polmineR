@@ -16,6 +16,7 @@ Imports:
     DT,
     utils
 Suggests:
+    pbapply,
     parallel,
     polmineR.Rcpp,
     europarl.en,

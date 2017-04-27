@@ -2,16 +2,29 @@
 % Please edit documentation in R/cooccurrences_class.R, R/view_method.R
 \docType{class}
 \name{cooccurrences-class}
+\alias{as.data.frame,cooccurrencesBundle-method}
 \alias{cooccurrences-class}
 \alias{cooccurrencesBundle}
 \alias{cooccurrencesBundle-class}
 \alias{cooccurrencesReshaped-class}
+\alias{show,cooccurrences-method}
+\alias{summary,cooccurrences-method}
 \alias{view,cooccurrencesReshaped-method}
 \title{Cooccurrences class.}
 \usage{
+\S4method{summary}{cooccurrences}(object)
+
+\S4method{show}{cooccurrences}(object)
+
+\S4method{as.data.frame}{cooccurrencesBundle}(x)
+
 \S4method{view}{cooccurrencesReshaped}(.Object)
 }
 \arguments{
+\item{object}{object to work with}
+
+\item{x}{object to work with}
+
 \item{.Object}{object to work with}
 }
 \description{

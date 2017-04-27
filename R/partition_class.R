@@ -36,9 +36,6 @@ NULL
 #' @param cutoff maximum number of tokens to decode
 #' @param ... further parameters
 #' @param value value
-#' @param object a partition object
-#' @param dim dimensions
-#' @param verbose logical, whether to be verbose
 #' @param template template to use
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partitionBundle 

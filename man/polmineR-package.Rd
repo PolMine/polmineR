@@ -9,7 +9,7 @@
 polmineR()
 }
 \description{
-Machinery for mining CWB corpora
+Tools for mining CWB corpora.
 }
 \details{
 The package provides functions for basic text statistics for corpora 

@@ -10,6 +10,7 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' 
 #' @slot objects Object of class \code{"list"}
 #' @slot pAttribute Object of class \code{"character"}
+#' @slot encoding encoding of objects
 #' 
 #' @param x a bundle object
 #' @param i integer to index a bundle object

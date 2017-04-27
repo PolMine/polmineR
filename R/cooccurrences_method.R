@@ -140,11 +140,19 @@ setMethod("cooccurrences", "Corpus", function(.Object, query, pAttribute = getOp
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "partitionBundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
-  bundle <- new("cooccurrencesBundle")
-  bundle@objects <- pblapply(
-    .Object@objects,
-    function(x) cooccurrences(x, query = query, mc = mc, ...) 
+  bundle <- new("cooccurrencelysBundle")
+  if (requireNamespace("pbapply", quietly = TRUE)){
+    bundle@objects <- pbapply::pblapply(
+      .Object@objects,
+      function(x) cooccurrences(x, query = query, mc = mc, ...) 
     )
+  } else {
+    bundle@objects <- lapply(
+      .Object@objects,
+      function(x) cooccurrences(x, query = query, mc = mc, ...) 
+    )
+    
+  }
   names(bundle@objects) <- names(.Object@objects)
   for (i in 1:length(bundle@objects)) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
   bundle

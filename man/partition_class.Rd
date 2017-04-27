@@ -65,12 +65,6 @@
 \item{cutoff}{maximum number of tokens to decode}
 
 \item{pAttribute}{a p-attribute (for enriching)}
-
-\item{object}{a partition object}
-
-\item{dim}{dimensions}
-
-\item{verbose}{logical, whether to be verbose}
 }
 \description{
 S4 partition class and methods for instances of class partition.

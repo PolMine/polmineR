@@ -6,6 +6,8 @@ NULL
 #' S4 class to organize information of context analysis
 #' 
 #' @param .Object object to work with
+#' @param object object to work with
+#' @param x object to work with
 #' @slot call Object of class \code{"character"} the call that generated the object
 #' @slot partition Object of class \code{"character"} the partition the analysis is based on
 #' @slot partitionSize  Object of class \code{"numeric"} the size of the partition
@@ -42,6 +44,7 @@ NULL
 
 
 #' @docType methods
+#' @rdname cooccurrences-class
 setMethod('summary', 'cooccurrences', function(object) {
   cat("\n** Context object: **\n")
   cat(sprintf("%-20s", "CWB-Korpus:"), object@corpus, "\n")
@@ -55,6 +58,7 @@ setMethod('summary', 'cooccurrences', function(object) {
 
 
 #' @docType methods
+#' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object) {
   object <- round(object)
   if (Sys.getenv("RSTUDIO") == "1"){
@@ -77,6 +81,7 @@ setClass("cooccurrencesBundle", contains = "bundle")
 
 
 #' @importFrom data.table copy
+#' @rdname cooccurrences-class
 setMethod("as.data.frame", "cooccurrencesBundle", function(x){
   dts <- lapply(
     x@objects,
