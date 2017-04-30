@@ -532,11 +532,3 @@ There are a few other options to have environment variables set at every time yo
 ?Startup 
 ```
 
-
-
-```{r, eval = runcode, message = FALSE, results = 'hide'}
-library(polmineR)
-CQI <- CQI.rcqp$new()
-use("polmineR.sampleCorpus")
-```
-
