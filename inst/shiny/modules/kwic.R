@@ -1,13 +1,3 @@
-##################
-##              ##
-##    kwic      ##
-##              ##
-##################
-
-
-#' @rdname shiny_helper_functions
-#' @importFrom DT formatStyle
-#' @export kwicUiInput
 kwicUiInput <- function(drop = NULL){
   divs = list(
     go = actionButton("kwic_go", "", icon = icon("play", lib = "glyphicon")),
@@ -48,9 +38,6 @@ kwicUiOutput <- function(){
 }
 
 
-#' @rdname shiny_helper_functions
-#' @importFrom DT formatStyle datatable
-#' @export kwicServer
 kwicServer <- function(input, output, session, ...){
   
   observe({
@@ -147,11 +134,14 @@ kwicServer <- function(input, output, session, ...){
     {
       if (length(input$kwic_table_rows_selected) > 0){
         corpusType <- RegistryFile$new(values[["kwic"]]@corpus)$getProperties()[["type"]]
-        fulltext <- html(values[["kwic"]],
-                         input$kwic_table_rows_selected,
-                         type = corpusType,
-                         verbose = TRUE
-                         )
+        if (debug) assign("kwicObject", value = values[["kwic"]], envir = .GlobalEnv)
+        fulltext <- polmineR::html(
+          values[["kwic"]],
+          input$kwic_table_rows_selected,
+          type = corpusType,
+          verbose = TRUE
+          )
+        if (debug) message("html generated")
         fulltext <- htmltools::HTML(gsub("<head>.*?</head>", "", as.character(fulltext)))
         fulltext <- htmltools::HTML(gsub('<blockquote>', '<blockquote style="font-size:14px">', as.character(fulltext)))
         output$read_fulltext <- renderUI(fulltext)

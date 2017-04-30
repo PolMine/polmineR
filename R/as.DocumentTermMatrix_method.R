@@ -48,14 +48,14 @@ setGeneric("as.DocumentTermMatrix", function(x, ...){UseMethod("as.DocumentTermM
 #' p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
 #' pB <- partitionBundle(p, sAttribute="text_date")
 #' pB <- enrich(pB, pAttribute="word")
-#' tdm <- as.TermDocumentMatrix(pB, col="count")
+#' tdm <- as.TermDocumentMatrix(pB, col = "count")
 #'    
 #'  # leave the counting to the as.TermDocumentMatrix-method
-#' pB2 <- partitionBundle(p, sAttribute="text_date")
-#' tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
+#' pB2 <- partitionBundle(p, sAttribute = "text_date")
+#' tdm <- as.TermDocumentMatrix(pB2, pAttribute = "word", verbose = TRUE)
 #'    
 #' # diretissima
-#' tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
+#' tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute = "word", sAttribute = "text_date")
 #' }
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribute, verbose = TRUE) {
@@ -100,9 +100,9 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
 setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL, verbose = TRUE){
   if (is.null(pAttribute)){
     pAttribute <- x@objects[[1]]@pAttribute
-    if (verbose == TRUE) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
+    if (verbose) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
   }
-  if (verbose == TRUE) message("... generating (temporary) key column")
+  if (verbose) message("... generating (temporary) key column")
   if (length(pAttribute) > 1){
     dummy <- lapply(
       c(1:length(x@objects)),
@@ -113,18 +113,21 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
       })
     rm(dummy)
   } else {
-    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new = "key"))
+    dummy <- lapply(
+      1:length(x@objects),
+      function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new = "key")
+      )
     rm(dummy)
   }
-  if (verbose == TRUE) message("... generating cumulated data.table")
+  if (verbose) message("... generating cumulated data.table")
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
   j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
   DT[, "j" := j]
   DT <- DT[which(DT[["key"]] != "")] # to avoid errors
-  if (verbose == TRUE) message("... getting unique keys")
+  if (verbose) message("... getting unique keys")
   uniqueKeys <- unique(DT[["key"]])
   keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
-  if (verbose == TRUE) message("... generating integer keys")
+  if (verbose) message("... generating integer keys")
   i <- keys[ DT[["key"]] ]
   retval <- simple_triplet_matrix(
     i = unname(i), j = DT[["j"]], v = DT[[col]],
@@ -149,22 +152,22 @@ setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute=NULL, col=NULL, verbose=TRUE){
+setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = NULL, col = NULL, verbose = TRUE){
   if (!is.null(col)){
     callNextMethod()
   } else if (!is.null(pAttribute)){
-    encoding <- unique(sapply(x, function(x) x@encoding))
-    if (verbose == TRUE) message("... generating corpus positions")
+    encoding <- unique(sapply(x@objects, function(y) y@encoding))
+    if (verbose) message("... generating corpus positions")
     
     cposList <- lapply(
       c(1:length(x@objects)),
       function(i) cbind(i, cpos(x@objects[[i]]@cpos))
     )
     cposMatrix <- do.call(rbind, cposList)
-    if (verbose == TRUE) message("... getting ids")
+    if (verbose) message("... getting ids")
     id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
     DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
-    if (verbose == TRUE) message("... performing count")
+    if (verbose) message("... performing count")
     TF <- DT[,.N, by = c("i", "id"), with=TRUE]
     setnames(TF, old = "N", new = "count")
     TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), from = encoding), with = FALSE]

@@ -97,7 +97,7 @@ setMethod(
         if (.Object@xml == "flat") {
           tab <- data.frame(
             lapply(
-              sAttributes,
+              sAttribute,
               # USE.NAMES = TRUE,
               function(x) { 
                 tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
@@ -107,11 +107,11 @@ setMethod(
             ),
             stringsAsFactors = FALSE
           )
-          colnames(tab) <- sAttributes
+          colnames(tab) <- sAttribute
         } else if (.Object@xml == "nested") {
           tab <- data.frame(
             sapply(
-              sAttributes,
+              sAttribute,
               USE.NAMES = TRUE,
               function(x) {
                 tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
@@ -120,9 +120,9 @@ setMethod(
               }
             )
           )
-          colnames(tab) <- sAttributes
+          colnames(tab) <- sAttribute
         }
-        return(tab)
+        return( as.data.table(tab) )
         
       }
     }

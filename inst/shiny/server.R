@@ -11,6 +11,39 @@ shinyServer(function(input, output, session) {
   countServer(input, output, session)
   
   session$onSessionEnded(function() {
-    rm(values, envir = .GlobalEnv)
+    funs <- c(
+      "cooccurrencesServer",
+      "cooccurrencesUiInput",
+      "cooccurrencesUiOutput",
+      "corpusServer",
+      "corpusUiInput",
+      "corpusUiOutput",
+      "countServer",
+      "countUiInput",
+      "countUiOutput",
+      "dispersionServer",
+      "dispersionUiInput",
+      "dispersionUiOutput",
+      "featuresServer",
+      "featuresUiInput",
+      "featuresUiOutput",
+      "getOptionsPolmineR",
+      "kwicServer",
+      "kwicUiInput",
+      "kwicUiOutput",
+      "partitionGadget",
+      "partitionServer",
+      "partitionUiInput",
+      "partitionUiOutput",
+      "readServer",
+      "readUiInput",
+      "readUiOutput",
+      "rectifySpecialChars",
+      "settingsServer",
+      "settingsTable",
+      "settingsUiInput",
+      "settingsUiOutput"
+    )
+    rm(list = funs, envir = .GlobalEnv)
   })
 })
