@@ -14,15 +14,6 @@
 #' @exportMethod as.markdown
 setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
-# helper function to wrap span with id around tokens
-.wrapTokens <- function(tokens){
-  sapply(
-    c(1:length(tokens)),
-    function(i){
-      paste('<span id="', names(tokens)[i], '">', tokens[i], "</span>", sep="")
-    }
-  )
-}
 
 #' @rdname as.markdown
 setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
@@ -58,7 +49,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
         chunk, corpus = corpus, pAttribute = "word",
         encoding = corpusEncoding, cpos = cpos, cutoff = cutoff
       )
-      if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+      if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
       paste(
         getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][1],
         paste(tokens, collapse=" "),
@@ -92,7 +83,7 @@ setMethod(
     if (is.null(template[["paragraphs"]])){
       if (verbose) message("... generating paragraphs (no template)")
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
-      if (cpos) tokens <- .wrapTokens(tokens)
+      if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
       tokens <- paste(tokens, collapse = " ")
       rawTxt <- paste(tokens, sep = "\n")
       txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
@@ -173,7 +164,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
         corpus = .Object@corpus, pAttribute = "word", encoding = .Object@encoding,
         cpos = cpos
       )
-    if (cpos) tokens <- .wrapTokens(tokens)
+    if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
     plainText <- paste(tokens, collapse = " ")
     plainText <- paste(
       template[["speech"]][["format"]][[type[i]]][1],
@@ -205,7 +196,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
 #'           corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
 #'           cpos=cpos
 #'         )
-#'         if (cpos == TRUE) tokens <- .wrapTokens(tokens)
+#'         if (cpos == TRUE) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
 #'         para <- paste(tokens, collapse=" ")
 #'         # Encoding(para) <- .Object@encoding
 #'         #para <- as.utf8(para)

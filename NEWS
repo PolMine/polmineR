@@ -12,6 +12,7 @@ output to RStudio viewer
 * as.data.table for cooccurrencesBundle-class
 * count-method for whole corpus for pAttribute > 1
 * functionality of meta-method merged into sAttributes-method (meta-method dropped)
+* speed improvements for generating html output for reading
 
 v0.7.2
 * updated documentation of partition-method.
