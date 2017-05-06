@@ -31,6 +31,7 @@ NULL
 #' @param .Object a partition object
 #' @param pAttribute a p-attribute (for enriching)
 #' @param x a partition object
+#' @param verbose logical
 #' @param cpos ...
 #' @param meta ...
 #' @param cutoff maximum number of tokens to decode

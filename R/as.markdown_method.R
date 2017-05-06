@@ -14,6 +14,16 @@
 #' @exportMethod as.markdown
 setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
+# vectorized sprintf is considerably faster than shiny::span,
+# an alternative that could be considered
+.tagTokens <- function(tokens){
+  if (is.null(names(tokens))) {
+    return( sprintf('<span token="%s">%s</span>', tokens, tokens) )
+  } else {
+    return( sprintf('<span id="%s" token="%s">%s</span>', names(tokens), tokens, tokens) )
+  }
+}
+
 
 #' @rdname as.markdown
 setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
@@ -49,10 +59,10 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
         chunk, corpus = corpus, pAttribute = "word",
         encoding = corpusEncoding, cpos = cpos, cutoff = cutoff
       )
-      if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
+      tokens <- .tagTokens(tokens)
       paste(
         getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][1],
-        paste(tokens, collapse=" "),
+        paste(tokens, collapse = " "),
         getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][2],
         sep = ""
       )
@@ -60,7 +70,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
     pTypes, chunks
   )
   article <- c(metaInformation, unlist(bodyList))
-  markdown <- paste(article, collapse="\n\n")
+  markdown <- paste(article, collapse = "\n\n")
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown
 })
@@ -83,7 +93,7 @@ setMethod(
     if (is.null(template[["paragraphs"]])){
       if (verbose) message("... generating paragraphs (no template)")
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
-      if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
+      tokens <- .tagTokens(tokens)
       tokens <- paste(tokens, collapse = " ")
       rawTxt <- paste(tokens, sep = "\n")
       txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
@@ -164,7 +174,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
         corpus = .Object@corpus, pAttribute = "word", encoding = .Object@encoding,
         cpos = cpos
       )
-    if (cpos) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
+    tokens <- .tagTokens(tokens)
     plainText <- paste(tokens, collapse = " ")
     plainText <- paste(
       template[["speech"]][["format"]][[type[i]]][1],

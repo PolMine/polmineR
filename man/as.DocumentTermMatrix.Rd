@@ -74,14 +74,14 @@ use("polmineR.sampleCorpus")
 p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
 pB <- partitionBundle(p, sAttribute="text_date")
 pB <- enrich(pB, pAttribute="word")
-tdm <- as.TermDocumentMatrix(pB, col="count")
+tdm <- as.TermDocumentMatrix(pB, col = "count")
    
  # leave the counting to the as.TermDocumentMatrix-method
-pB2 <- partitionBundle(p, sAttribute="text_date")
-tdm <- as.TermDocumentMatrix(pB2, pAttribute="word")
+pB2 <- partitionBundle(p, sAttribute = "text_date")
+tdm <- as.TermDocumentMatrix(pB2, pAttribute = "word", verbose = TRUE)
    
 # diretissima
-tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute="word", sAttribute="text_date")
+tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute = "word", sAttribute = "text_date")
 }
 }
 \author{

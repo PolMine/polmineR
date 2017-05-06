@@ -37,7 +37,8 @@
 \S4method{aggregate}{partition}(x)
 
 \S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  template = getTemplate(.Object), cpos = TRUE, cutoff = NULL, ...)
+  template = getTemplate(.Object), cpos = TRUE, cutoff = NULL,
+  verbose = FALSE, ...)
 
 \S4method{freq}{partition}(.Object)
 
@@ -63,6 +64,8 @@
 \item{cpos}{...}
 
 \item{cutoff}{maximum number of tokens to decode}
+
+\item{verbose}{logical}
 
 \item{pAttribute}{a p-attribute (for enriching)}
 }
