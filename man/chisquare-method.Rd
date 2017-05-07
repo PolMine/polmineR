@@ -3,8 +3,8 @@
 \docType{methods}
 \name{chisquare}
 \alias{chisquare}
-\alias{chisquare,context-method}
 \alias{chisquare,textstat-method}
+\alias{chisquare,context-method}
 \title{perform chisquare-text}
 \usage{
 chisquare(.Object, ...)
@@ -31,4 +31,3 @@ reason
 \author{
 Andreas Blaette
 }
-

@@ -4,8 +4,8 @@
 \name{getTemplate}
 \alias{getTemplate}
 \alias{getTemplate,character-method}
-\alias{getTemplate,missing-method}
 \alias{getTemplate,partition-method}
+\alias{getTemplate,missing-method}
 \alias{setTemplate}
 \alias{setTemplate,character-method}
 \alias{setTemplate,missing-method}
@@ -38,4 +38,3 @@ setTemplate(.Object, ...)
 Templates are used to format the markdown/html output of partitions. Upon loading 
 the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'.
 }
-

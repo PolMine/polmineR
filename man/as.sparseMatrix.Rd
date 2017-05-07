@@ -3,9 +3,9 @@
 \docType{methods}
 \name{as.sparseMatrix}
 \alias{as.sparseMatrix}
+\alias{as.sparseMatrix,simple_triplet_matrix-method}
 \alias{as.sparseMatrix,TermDocumentMatrix-method}
 \alias{as.sparseMatrix,bundle-method}
-\alias{as.sparseMatrix,simple_triplet_matrix-method}
 \title{Type conversion - get sparseMatrix.}
 \usage{
 as.sparseMatrix(x, ...)
@@ -26,4 +26,3 @@ as.sparseMatrix(x, ...)
 \description{
 Turn objects into the sparseMatrix as defined in the Matrix package.
 }
-

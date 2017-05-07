@@ -3,12 +3,12 @@
 \docType{methods}
 \name{read}
 \alias{read}
-\alias{read,Regions-method}
+\alias{read,partition-method}
+\alias{read,partitionBundle-method}
 \alias{read,data.table-method}
 \alias{read,hits-method}
 \alias{read,kwic-method}
-\alias{read,partition-method}
-\alias{read,partitionBundle-method}
+\alias{read,Regions-method}
 \title{Display and read full text}
 \usage{
 read(.Object, ...)
@@ -92,4 +92,3 @@ read(migVocab, col="Integration", partitionBundle=speeches)
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.
 }
-

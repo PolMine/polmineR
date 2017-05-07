@@ -20,11 +20,12 @@ Corpus class.
 
 \item{\code{count}}{data.table with counts}
 }}
+
 \section{Methods}{
 
 \describe{
   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
 }
 }
-\keyword{datasets}
 
+\keyword{datasets}

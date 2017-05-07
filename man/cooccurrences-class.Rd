@@ -2,13 +2,13 @@
 % Please edit documentation in R/cooccurrences_class.R, R/view_method.R
 \docType{class}
 \name{cooccurrences-class}
-\alias{as.data.frame,cooccurrencesBundle-method}
 \alias{cooccurrences-class}
-\alias{cooccurrencesBundle}
-\alias{cooccurrencesBundle-class}
 \alias{cooccurrencesReshaped-class}
-\alias{show,cooccurrences-method}
 \alias{summary,cooccurrences-method}
+\alias{show,cooccurrences-method}
+\alias{cooccurrencesBundle-class}
+\alias{cooccurrencesBundle}
+\alias{as.data.frame,cooccurrencesBundle-method}
 \alias{view,cooccurrencesReshaped-method}
 \title{Cooccurrences class.}
 \usage{

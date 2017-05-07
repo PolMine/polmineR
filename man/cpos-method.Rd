@@ -4,9 +4,9 @@
 \name{cpos}
 \alias{cpos}
 \alias{cpos,character-method}
-\alias{cpos,matrix-method}
 \alias{cpos,partition-method}
 \alias{cpos,tempcorpus-method}
+\alias{cpos,matrix-method}
 \title{Get corpus positions for (CQP) queries.}
 \usage{
 cpos(.Object, ...)
@@ -66,4 +66,3 @@ encoding of the CWB corpus.
 If the cpos-method is called on a \code{"matrix"} object,  the cpos
 matrix is unfolded.
 }
-

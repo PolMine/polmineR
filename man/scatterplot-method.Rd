@@ -3,8 +3,8 @@
 \docType{methods}
 \name{scatterplot}
 \alias{scatterplot}
-\alias{scatterplot,data.frame-method}
 \alias{scatterplot-method}
+\alias{scatterplot,data.frame-method}
 \title{word scatterplot}
 \usage{
 \S4method{scatterplot}{data.frame}(object, xmax = c(), ymax = c(),
@@ -32,4 +32,3 @@ plot a word scatterplot
 \author{
 Andreas Blaette
 }
-

@@ -2,20 +2,20 @@
 % Please edit documentation in R/bundle_class.R
 \docType{class}
 \name{bundle-class}
-\alias{+,bundle,bundle-method}
-\alias{+,bundle,textstat-method}
-\alias{[[,bundle-method}
-\alias{as.bundle,list-method}
-\alias{as.bundle,textstat-method}
-\alias{as.data.table,bundle-method}
-\alias{as.matrix,bundle-method}
 \alias{bundle-class}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
 \alias{names<-,bundle,character-method}
-\alias{sample,bundle-method}
-\alias{subset,bundle-method}
 \alias{unique,bundle-method}
+\alias{+,bundle,bundle-method}
+\alias{+,bundle,textstat-method}
+\alias{[[,bundle-method}
+\alias{sample,bundle-method}
+\alias{as.bundle,list-method}
+\alias{as.bundle,textstat-method}
+\alias{as.data.table,bundle-method}
+\alias{as.matrix,bundle-method}
+\alias{subset,bundle-method}
 \title{Bundle class}
 \usage{
 \S4method{length}{bundle}(x)
@@ -76,6 +76,7 @@ in one S4 object.
 
 \item{\code{encoding}}{encoding of objects}
 }}
+
 \examples{
 \dontrun{
 use("europarl.en")
@@ -91,4 +92,3 @@ m <- as.matrix(Cs, col = "ll")
 \author{
 Andreas Blaette
 }
-

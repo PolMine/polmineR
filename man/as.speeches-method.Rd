@@ -34,19 +34,18 @@ PolMine corpora of plenary protocols. A partition is split into speeches.
 \examples{
 \dontrun{
   use("polmineR.sampleCorpus")
-  bt <- partition("PLPRBTTXT", text_year="2009")
-  speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+  bt <- partition("PLPRBTTXT", text_year = "2009")
+  speeches <- as.speeches(bt, sAttributeDates = "text_date", sAttributeNames = "text_name")
   
   # step-by-step, not the fastest way
-  speeches <- enrich(speeches, pAttribute="word")
-  tdm <- as.TermDocumentMatrix(speeches, col="count")
+  speeches <- enrich(speeches, pAttribute = "word")
+  tdm <- as.TermDocumentMatrix(speeches, col = "count")
   
   # fast option (counts performed when assembling the sparse matrix)
-  tdm <- as.TermDocumentMatrix(speeches, pAttribute="word")
-  termsToDropList <- noise(tdm)
-  whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
-  termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
-  tdm <- trim(tdm, termsToDrop = termsToDrop)
+  # tdm <- as.TermDocumentMatrix(speeches, pAttribute = "word")
+  # termsToDropList <- noise(tdm)
+  # whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
+  # termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
+  # tdm <- trim(tdm, termsToDrop = termsToDrop)
 }
 }
-

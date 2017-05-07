@@ -2,8 +2,8 @@
 % Please edit documentation in R/tempcorpus.R
 \docType{class}
 \name{tempcorpus-class}
-\alias{tempcorpus}
 \alias{tempcorpus-class}
+\alias{tempcorpus}
 \title{S4 class to capture core information on a temporary CWB corpus}
 \usage{
 tempcorpus(.Object, ...)

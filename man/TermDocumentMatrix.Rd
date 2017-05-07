@@ -14,4 +14,3 @@
 \description{
 Methods for TermDocumentMatrix / DocumentTermMatrix
 }
-

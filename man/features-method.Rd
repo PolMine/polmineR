@@ -2,10 +2,10 @@
 % Please edit documentation in R/features_method.R
 \docType{methods}
 \name{features,partition-method}
-\alias{features}
-\alias{features,ngrams-method}
 \alias{features,partition-method}
+\alias{features}
 \alias{features,partitionBundle-method}
+\alias{features,ngrams-method}
 \title{Get features by comparison.}
 \usage{
 \S4method{features}{partition}(x, y, included = FALSE, method = "chisquare",
@@ -101,10 +101,9 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
   dtm <- as.DocumentTermMatrix(result, col="chisquare")
 }
 }
-\author{
-Andreas Blaette
-}
 \references{
 Manning / Schuetze ...
 }
-
+\author{
+Andreas Blaette
+}

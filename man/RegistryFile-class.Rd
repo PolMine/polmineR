@@ -2,8 +2,8 @@
 % Please edit documentation in R/RegistryFile.R
 \docType{class}
 \name{RegistryFile-class}
-\alias{RegistryFile}
 \alias{RegistryFile-class}
+\alias{RegistryFile}
 \title{Read, parse and modify registry file.}
 \arguments{
 \item{corpus}{name of the CWB corpus}
@@ -40,6 +40,7 @@ Read, parse and modify registry file.
 
 \item{\code{info}}{path to info file}
 }}
+
 \section{Methods}{
 
 \describe{

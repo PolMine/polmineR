@@ -2,10 +2,10 @@
 % Please edit documentation in R/ngrams_method.R
 \docType{class}
 \name{ngrams-class}
+\alias{ngrams-class}
 \alias{ngrams}
 \alias{ngrams,partition-method}
 \alias{ngrams,partitionBundle-method}
-\alias{ngrams-class}
 \title{Get N-Grams}
 \usage{
 ngrams(.Object, ...)
@@ -50,4 +50,3 @@ Count n-grams, either of words, or of characters.
   head(ngramObject3)
  }
 }
-

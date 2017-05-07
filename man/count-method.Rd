@@ -3,11 +3,11 @@
 \docType{methods}
 \name{count}
 \alias{count}
-\alias{count,character-method}
+\alias{count-method}
 \alias{count,partition-method}
 \alias{count,partitionBundle-method}
+\alias{count,character-method}
 \alias{count,vector-method}
-\alias{count-method}
 \title{Get counts.}
 \usage{
 count(.Object, ...)
@@ -93,4 +93,3 @@ For a metadata-based breakdown of counts
 
 count
 }
-
