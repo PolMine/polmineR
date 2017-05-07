@@ -62,9 +62,9 @@ install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages
   }
 }
 
-
 #' @rdname install.corpus
-installed.corpora <- function(){
+#' @export packaged.corpora
+packaged.corpora <- function(){
   matrices <- lapply(
     .libPaths(),
     function(lib){
@@ -82,5 +82,6 @@ installed.corpora <- function(){
     }
   )
   M <- data.table(do.call(rbind, matrices))
-  M[which(nchar(M[["registry"]]) > 0)]
+  M <- M[which(nchar(M[["registry"]]) > 0)]
+  return(M)
 }

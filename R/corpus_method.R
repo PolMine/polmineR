@@ -1,8 +1,12 @@
 #' Get corpus.
 #' 
-#' Calling \code{corpus()} will return the corpora available. If object 
-#' is a partition or partitionBundle-object, the corpus the respective
-#' object is derived from is returned.
+#' Calling \code{corpus()} will return the corpora available. If the 
+#' param 'packges' (logical) is TRUE, packages that include a corpus
+#' are returned.
+#' 
+#' If object is a partition or partitionBundle-object, the corpus the
+#' respective object is derived from is returned.
+#' 
 #' @param object the object
 #' @exportMethod corpus
 #' @rdname corpus-method
@@ -32,6 +36,5 @@ setMethod("corpus", "missing", function(){
   } else {
     y <- data.frame(corpus = character(), size = integer())
   }
-  y
-
+  return(y)
 })

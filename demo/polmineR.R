@@ -1,12 +1,15 @@
 library(polmineR)
 
-message("Make sure that the CORPUS_REGISTRY environment variable is set ...")
-  
+
+# check whether CORPUS_REGISTRY environment variable is set
 Sys.getenv("CORPUS_REGISTRY")
+readline("press key to continue ...")
 
-message("Check which corpora are available ...")
-
+# check corpora that are available
 corpus()
+readline("press key to continue ...")
+
+
 
 use("europarl.en")
 
