@@ -46,7 +46,7 @@ NULL
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#'   x <- count(debates, "Arbeit") # get frequencies for one token
+#'   x <- count(debates, query = "Arbeit") # get frequencies for one token
 #'   x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
 #'   x <- count("PLPRBTTXT", query = c("Migration", "Integration"), "word")
 #' 
@@ -76,7 +76,7 @@ setMethod("count", "partition", function(
       partition = .Object, cqp = cqp, pAttribute = pAttribute,
       mc = mc, verbose = verbose, progress = progress
     ))
-    data.table(query = query, count = no, freq = no/.Object@size)
+    return( data.table(query = query, count = no, freq = no/.Object@size) )
   } else {
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){

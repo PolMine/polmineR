@@ -195,6 +195,7 @@ setMethod("as.data.table", "bundle", function(x, col){
 
 
 #' @rdname bundle-class
+#' @exportMethod as.matrix
 setMethod("as.matrix", "bundle", function(x, col){
   dt <- as.data.table(x = x, col = col)
   token <- dt[["token"]]

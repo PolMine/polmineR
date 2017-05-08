@@ -38,10 +38,12 @@
 #'    highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
 #'    meta = c("text_name", "text_date")
 #' )
+#' 
 #' all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
-#'    
-#' speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
-#' read(speeches)
+#' speeches <- as.speeches(
+#'   all, sAttributeDates = "text_date", sAttributeNames = "text_name", gap = 500
+#' )
+#' read(speeches, meta = c("text_date", "text_name"))
 #' migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
 #' read(migVocab, col="Integration", partitionBundle=speeches)
 #' }
@@ -70,8 +72,8 @@ setMethod(
 
 #' @rdname read-method
 setMethod("read", "partitionBundle", function(.Object, highlight = list(), cqp = FALSE, cpos = FALSE, ...){
-  for (i in c(1:length(.Object@objects))){
-    read(.Object@objects[[i]], highlight=highlight, cqp=cqp, cpos=cpos, ...)
+  for (i in 1:length(.Object@objects)){
+    read(.Object@objects[[i]], highlight = highlight, cqp = cqp, cpos = cpos, ...)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
   }

@@ -81,10 +81,12 @@ merkel <- partition(
    highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
    meta = c("text_name", "text_date")
 )
+
 all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
-   
-speeches <- as.speeches(all, sAttributeDates="text_date", sAttributeNames="text_name", gap=500)
-read(speeches)
+speeches <- as.speeches(
+  all, sAttributeDates = "text_date", sAttributeNames = "text_name", gap = 500
+)
+read(speeches, meta = c("text_date", "text_name"))
 migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
 read(migVocab, col="Integration", partitionBundle=speeches)
 }
