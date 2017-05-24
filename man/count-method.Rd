@@ -77,14 +77,18 @@ performance reasons.
 \dontrun{
   use("polmineR.sampleCorpus")
   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-  x <- count(debates, "Arbeit") # get frequencies for one token
-  x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
-  x <- count("PLPRBTTXT", query = c("Migration", "Integration"), "word")
+  count(debates, query = "Arbeit") # get frequencies for one token
+  count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+  
+  count("PLPRBTTXT", query = c("Migration", "Integration"), pAttribute = "word")
 
   debates <- partitionBundle(
     "PLPRBTTXT", sAttribute = "text_date", values = NULL,
     regex = TRUE, mc = FALSE, verbose = FALSE
   )
+  y <- count(debates, query = "Arbeit", pAttribute = "word")
+  y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
+  
 }
 }
 \seealso{

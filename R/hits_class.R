@@ -169,8 +169,9 @@ setMethod("hits", "partitionBundle", function(
   setkeyv(countDT, cols = "struc")
   setkeyv(strucDT, cols = "struc")
   DT <- strucDT[countDT] # merge
-  DT2 <- DT[-which(is.na(DT[["partition"]]) == TRUE)] # remove hits that are not in partitionBundle
-  TF <- DT2[, .N, by = c("partition", "query")]
+  nas <- which(is.na(DT[["partition"]]) == TRUE)
+  if (length(nas) > 0) DT <- DT[-nas] # remove hits that are not in partitionBundle
+  TF <- DT[, .N, by = c("partition", "query")]
   setnames(TF, old = "N", new = "count")
   if (freq) size <- TRUE
   if (size){

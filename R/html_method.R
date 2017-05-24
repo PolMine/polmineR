@@ -136,6 +136,8 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
       if (verbose) message("... enriching")
       object <- enrich(object, meta = metadataDef)
     }
+  } else {
+    metadataDef <- object@metadata
   }
   partitionToRead <- partition(
     object@corpus,

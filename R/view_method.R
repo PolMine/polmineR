@@ -16,10 +16,14 @@ setMethod("view", "partition", function(.Object){
 
 #' @rdname partition_class
 setMethod("view", "cooccurrences", function(.Object){
-  attr(.Object@stat[["count_partition"]], "label") <- "observed in partition"
-  attr(.Object@stat[["count_window"]], "label") <- "observed in window"
-  attr(.Object@stat[["exp_window"]], "label") <- "expected in window"
-  attr(.Object@stat[["exp_partition"]], "label") <- "expected in partition"
+  if ("count_partition" %in% colnames(.Object))
+    attr(.Object@stat[["count_partition"]], "label") <- "observed in partition"
+  if ("count_window" %in% colnames(.Object))
+    attr(.Object@stat[["count_window"]], "label") <- "observed in window"
+  if ("exp_window" %in% colnames(.Object))
+    attr(.Object@stat[["exp_window"]], "label") <- "expected in window"
+  if ("exp_partition" %in% colnames(.Object))
+    attr(.Object@stat[["exp_partition"]], "label") <- "expected in partition"
   if ("ll" %in% colnames(.Object)) attr(.Object@stat[["ll"]], "label") <- "log likelihood"
   if ("rank_ll" %in% colnames(.Object)) attr(.Object@stat[["rank_ll"]], "label") <- "rank"
   get("View", envir = .GlobalEnv)(.Object@stat)

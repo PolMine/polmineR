@@ -20,14 +20,15 @@ NULL
 #' method calls the \code{size}-method to get sizes of subcorpora.
 #' @examples
 #' \dontrun{
+#' use("polmineR.sampleCorpus")
 #' size("PLPRBTTXT")
 #' size("PLPRBTTXT", sAttribute = "text_date")
 #' size("PLPRBTTXT", sAttribute = c("text_date", "text_party"))
 #' 
-#' P <- partition("PLPRBTTXT", text_date = "2013-09-03")
+#' P <- partition("PLPRBTTXT", text_date = "2009-11-11")
 #' size(P, sAttribute = "text_name")
 #' size(P, sAttribute = "text_party")
-#'
+#' size(P, sAttribute = c("text_name", "text_party"))
 #' }
 setGeneric("size", function(x, ...) UseMethod("size"))
 

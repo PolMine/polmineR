@@ -32,14 +32,15 @@ NULL
 #' @exportClass textstat
 #' @examples
 #' \dontrun{
-#' P <- partition("PLPRBTTXT", text_year = "2009", pAttributes = "word")
-#' C <- cooccurrences(P, query = "Arbeit")
-#' C[1:25]
-#' C[,c("word", "ll")]
-#' C[1:25, c("word", "")]
-#' C[1:25][["word"]]
-#' C[which(C[["word"]] %in% c("Arbeit", "Sozial"))]
-#' C[ C[["word"]] %in% c("Arbeit", "Sozial") ]
+#' use("polmineR.sampleCorpus")
+#' P <- partition("PLPRBTTXT", text_year = "2009", pAttribute = "word")
+#' y <- cooccurrences(P, query = "Arbeit")
+#' y[1:25]
+#' y[,c("word", "ll")]
+#' y[1:25, "word"]
+#' y[1:25][["word"]]
+#' y[which(y[["word"]] %in% c("Arbeit", "Sozial"))]
+#' y[ y[["word"]] %in% c("Arbeit", "Sozial") ]
 #' }
 setClass("textstat",
          representation(

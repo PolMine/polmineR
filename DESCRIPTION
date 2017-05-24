@@ -2,7 +2,7 @@ Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
 Version: 0.7.3
-Date: 2017-04-28
+Date: 2017-05-18
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -12,7 +12,6 @@ Imports:
     slam,
     Matrix,
     tm,
-    foreach,
     DT,
     utils
 Suggests:
@@ -30,6 +29,7 @@ Suggests:
     knitr,
     rJava,
     shiny,
+    testthat
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes

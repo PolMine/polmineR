@@ -46,14 +46,18 @@ NULL
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#'   x <- count(debates, query = "Arbeit") # get frequencies for one token
-#'   x <- count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
-#'   x <- count("PLPRBTTXT", query = c("Migration", "Integration"), "word")
+#'   count(debates, query = "Arbeit") # get frequencies for one token
+#'   count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
+#'   
+#'   count("PLPRBTTXT", query = c("Migration", "Integration"), pAttribute = "word")
 #' 
 #'   debates <- partitionBundle(
 #'     "PLPRBTTXT", sAttribute = "text_date", values = NULL,
 #'     regex = TRUE, mc = FALSE, verbose = FALSE
 #'   )
+#'   y <- count(debates, query = "Arbeit", pAttribute = "word")
+#'   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
+#'   
 #' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
@@ -68,7 +72,7 @@ setMethod("count", "partition", function(
     .getNumberOfHits <- function(query, partition, cqp, pAttribute, ...) {
       if (verbose) message("... processing query ", query)
       cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
-      ifelse(is.null(cposResult), 0, nrow(cposResult))
+      if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
     }
     no <- as.integer(blapply(
       as.list(query),
@@ -81,6 +85,7 @@ setMethod("count", "partition", function(
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
       if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
+        if (verbose) message("... using polmineR.Rcpp")
         countMatrix <- polmineR.Rcpp::regionsToCountMatrix(
           corpus = .Object@corpus, pAttribute = pAttribute,
           matrix = .Object@cpos
@@ -92,6 +97,7 @@ setMethod("count", "partition", function(
         TF <- count(cpos, .Object@corpus, pAttribute)
       }
     } else {
+      if (verbose) message("... using rcqp")
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
       idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
       names(idList) <- paste(pAttribute, "id", sep = "_")
