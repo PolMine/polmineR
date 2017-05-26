@@ -19,7 +19,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param query query, which may by a character vector or a cqpQuery object
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
 #' @param pAttribute p-attribute of the query
-#' @param sAttribute if provided, it will be checked that cpos do not extend beyond
+#' @param sAttribute if provided, it will be checked that corpus positions do not extend beyond
 #' the region defined by the s-attribute 
 #' @param left no of tokens and to the left of the node word
 #' @param right no of tokens to the right of the node word
