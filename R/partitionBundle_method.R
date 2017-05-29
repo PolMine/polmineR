@@ -35,14 +35,14 @@ setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionB
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "partition", function(
-  .Object, sAttribute, values=NULL, prefix=c(""),
-  mc=getOption("polmineR.mc"), verbose=TRUE, progress=FALSE,
+  .Object, sAttribute, values = NULL, prefix = "",
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
 ) {
   bundle <- new(
     "partitionBundle",
-    corpus=.Object@corpus, sAttributesFixed=.Object@sAttributes,
-    encoding=.Object@encoding, call=deparse(match.call())
+    corpus = .Object@corpus, sAttributesFixed = .Object@sAttributes,
+    encoding = .Object@encoding, call = deparse(match.call())
   )
   if (is.null(values)){
     if (verbose) message('... getting values for sAttribute: ', sAttribute)
@@ -50,9 +50,9 @@ setMethod("partitionBundle", "partition", function(
     if (verbose) message('... number of partitions to be generated: ', length(values))
   }
   bundle@objects <- blapply(
-    lapply(setNames(values, rep(sAttribute, times=length(values))), function(x) setNames(x, sAttribute)),
-    f=partition, .Object=.Object,
-    progress=progress, verbose=verbose,  mc=mc,
+    lapply(setNames(values, rep(sAttribute, times = length(values))), function(x) setNames(x, sAttribute)),
+    f = function(def, .Object, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
+    .Object = .Object, progress = progress, verbose = verbose,  mc = mc,
     ...
   )
   names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep='')
@@ -62,7 +62,7 @@ setMethod("partitionBundle", "partition", function(
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
-  .Object, sAttribute, values = NULL, prefix = c(""),
+  .Object, sAttribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
 ) {
