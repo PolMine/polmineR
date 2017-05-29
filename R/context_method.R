@@ -24,11 +24,12 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param left no of tokens and to the left of the node word
 #' @param right no of tokens to the right of the node word
 #' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
-#'   context
-#' @param positivelist character vector or numeric vector: include a query hit
+#'   context. See positivelist for further explanation.
+#' @param positivelist character vector or numeric/integer vector: include a query hit
 #'   only if token in positivelist is present. If positivelist is a character
-#'   vector, it is assumed to provide regex expressions (incredibly long if the
-#'   list is long)
+#'   vector, it may include regular expressions (see parameter regex)
+#' @param regex logical, defaults to FALSE - whether stoplist and/or positivelist are
+#'   regular expressions 
 #' @param count logical
 #' @param mc whether to use multicore; if NULL (default), the function will get
 #'   the value from the options
@@ -46,7 +47,12 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   p <- partition("PLPRBTTXT", list(text_type="speech"))
-#'   a <- context(p, query="Integration", pAttribute="word")
+#'   y <- context(p, query = "Integration", pAttribute = "word")
+#'   y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
+#'   y <- context(
+#'     p, query = "Integration", pAttribute = "word",
+#'     positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
+#'     )
 #' }
 #' @import data.table
 #' @exportMethod context
@@ -58,7 +64,7 @@ setMethod("context", "partition", function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
-    stoplist = NULL, positivelist = NULL,
+    stoplist = NULL, positivelist = NULL, regex = FALSE,
     count = TRUE,
     mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
   ) {
@@ -91,11 +97,13 @@ setMethod("context", "partition", function(
     # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
     
     # getting counts of query in partition
-    .verboseOutput(message = "getting cpos", verbose = verbose)
+    .verboseOutput(message = "getting corpus positions", verbose = verbose)
     hits <- cpos(.Object, query, pAttribute[1], cqp = cqp)
     if (is.null(hits)){
-      warning('No hits for query ', query, ' (returning NULL object)')
+      warning('No hits for query ', query, ' (returning NULL)')
       return(NULL)
+    } else {
+      if (verbose) message("... number of hits: ", nrow(hits))
     }
     colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
     
@@ -112,26 +120,56 @@ setMethod("context", "partition", function(
         )
       }
     )
-    cpos_matrix <- do.call(rbind, matrix_list)
+    cpos_matrix <- do.call(rbind, matrix_list) # potentially slow, move to Rcpp later
     ctxt@cpos <- data.table(cpos_matrix)
     setnames(ctxt@cpos, old = c("V2", "V3"), new = c("cpos", "position"))
     
-    # generate positivelist, negativelist
-    # DOES NOT WORK RIGHT NOW!
-    stoplistIds <- unlist(lapply(stoplist, function(x) CQI$regex2id(.Object@corpus, pAttribute, x)))
-    if (is.numeric(positivelist)){
-      positivelistIds <- positivelist
-      if (verbose == TRUE) message("... using ids provided as positivelist")
-    } else {
-      positivelistIds <- unlist(lapply(positivelist, function(x) CQI$regex2id(.Object@corpus, pAttribute, x)))
-    }
+    # add decoded tokens (ids at this stage)
+    ctxt <- enrich(ctxt, pAttribute = pAttribute, id2str = FALSE)
+    # for (pAttr in pAttribute){
+    #   ctxt@cpos[[paste(pAttr, "id", sep = "_")]] <- CQI$cpos2id(.Object@corpus, pAttr, ctxt@cpos[["cpos"]])
+    # }
     
+    # generate positivelist/stoplist with ids and apply it
+    if (!is.null(positivelist)){
+      if (verbose) message("... filtering by positivelist")
+      before <- length(unique(ctxt@cpos[["hit_no"]]))
+      positivelistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
+      .keepPositives <- function(.SD){
+        pAttr <- paste(pAttribute[1], "id", sep = "_")
+        positives <- which(.SD[[pAttr]] %in% positivelistIds)
+        positives <- positives[ -which(.SD[["position"]] == 0) ] # exclude node
+        if (any(positives)) return( .SD ) else return( NULL )
+      }
+      ctxt@cpos <- ctxt@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
+      after <- length(unique(ctxt@cpos[["hit_no"]]))
+      if (verbose) message("... number of hits droped due to positivelist: ", before - after)
+      if (nrow(ctxt@cpos) == 0) {
+        warning("no remaining hits after applying positivelist, returning NULL object")
+        return( NULL )
+      }
+    }
+    if (!is.null(stoplist)){
+      if (verbose) message("... applying stoplist")
+      before <- length(unique(ctxt@cpos[["hit_no"]]))
+      stoplistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
+      .dropNegatives <- function(.SD){
+        pAttr <- paste(pAttribute[1], "id", sep = "_")
+        negatives <- which(.SD[[pAttr]] %in% stoplistIds)
+        negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
+        if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
+      }
+      ctxt@cpos <- ctxt@cpos[, .dropNegatives(.SD), by = "hit_no", with = TRUE]
+      after <- length(unique(ctxt@cpos[["hit_no"]]))
+      if (verbose) message("... number of hits droped due to stoplist: ", before - after)
+      if (nrow(ctxt@cpos) == 0) {
+        warning("no remaining hits after applying stoplist, returning NULL object")
+        return( NULL )
+      }
+      
+    }
+
     .verboseOutput(message = "generating contexts", verbose = verbose)
-    
-    # add decoded tokens
-    for (pAttr in pAttribute){
-      ctxt@cpos[[paste(pAttr, "id", sep = "_")]] <- CQI$cpos2id(.Object@corpus, pAttr, ctxt@cpos[["cpos"]])
-    }
     
     ctxt@size <- nrow(ctxt@cpos)
     ctxt@sizeCoi <- as.integer(ctxt@size)

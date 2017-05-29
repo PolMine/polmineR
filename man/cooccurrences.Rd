@@ -14,9 +14,9 @@ cooccurrences(.Object, ...)
 \S4method{cooccurrences}{character}(.Object, query = NULL, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  stoplist = NULL, positivelist = NULL, keep = NULL, cpos = NULL,
-  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
-  progress = FALSE)
+  stoplist = NULL, positivelist = NULL, regex = FALSE, keep = NULL,
+  cpos = NULL, method = "ll", mc = getOption("polmineR.mc"),
+  verbose = FALSE, progress = FALSE)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
@@ -54,6 +54,8 @@ context (relevant only if query is nut NULL)}
 only if token in positivelist is present. If positivelist is a character
 vector, it is assumed to provide regex expressions (incredibly long if the
 list is long) (relevant only if query is nut NULL)}
+
+\item{regex}{logical, whether stoplist/positivelist are dealt with as regular expressions}
 
 \item{keep}{list with tokens to keep}
 

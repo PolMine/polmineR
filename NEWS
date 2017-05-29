@@ -1,3 +1,10 @@
+v0.7.4
+* applying stoplists and positivelists working again for context-method
+* matches-method to learn about matches for CQP queries replacing frequencies-method
+* Rework of enrich-method, including documentation.
+* param 'neighbor' dropped from kwic,context-method; params positivelist and negativelist offer equivalent functionality
+* highlight-method for (newly exported) kwic-method (for validation purposes)
+
 v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora
 * view-method and show-method for cooccurrences-objects now successfully redirect

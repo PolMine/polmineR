@@ -4,7 +4,9 @@ NULL
 #' KWIC output / concordances
 #' 
 #' Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
-#' applying the kwich method on either a partition or a context object.
+#' applying the kwic method on either a partition or a context object.
+#' 
+#' If a positivelist ist supplied, the tokens will be highlighted.
 #' 
 #' @param .Object a \code{partition} or \code{context} object
 #' @param query a query, CQP-syntax can be used
@@ -17,7 +19,9 @@ NULL
 #' @param cpos logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned
 #' @param pAttribute p-attribute, defaults to 'word'
 #' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
-#' @param neighbor only show kwic if a certain word is present
+#' @param stoplist terms or ids to prevent a concordance from occurring in results
+#' @param positivelist terms or ids required for a concordance to occurr in results
+#' @param regex logical, whether stoplist/positivelist is processed as regular expression
 #' @param verbose logical, whether to be talkative
 #' @param ... further parameters to be passed
 #' @rdname kwic
@@ -45,10 +49,11 @@ NULL
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 
 
+
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta"), cpos = TRUE, neighbor = NULL, verbose=FALSE){
+setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE){
   
   DT <- copy(.Object@cpos) # do not accidentily store things
   setorderv(DT, cols = c("hit_no", "cpos"))
@@ -60,41 +65,17 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   DT[, .Object@pAttribute[1] := decoded_pAttr2, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
-  if (length(neighbor) > 0){
-    leftRightDT <- DT[which(DT[["direction"]] != 0)]
-    hitsToKeep <- leftRightDT[grep(neighbor, leftRightDT[[.Object@pAttribute[1]]])][["hit_no"]]
-    DT <- DT[which(DT[["hit_no"]] %in% hitsToKeep)]
-    if (length(hitsToKeep) > 0 && cpos == TRUE){
-      .Object@cpos <- DT
-    } else {
-      .Object@cpos <- data.table()
-    }
-  } 
-  
-  # paste left and right context
-  if (nrow(DT) > 0){
-    .paste <- function(.SD) paste(.SD[["word"]], collapse = " ")
-    DT2 <- DT[, .paste(.SD), by = c("hit_no", "direction"), with = TRUE]
-    tab <- dcast(data = DT2, formula = hit_no~direction, value.var = "V1")
-    setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
-  } else {
-    tab <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
-  }
-  
-  
   if (is.null(meta)) meta <- character()
   conc <- new(
     'kwic',
     corpus = .Object@corpus, left = .Object@left, right = .Object@right,
-    table = as.data.frame(tab),
     metadata = if (length(meta) == 0) character() else meta,
     encoding = .Object@encoding,
     cpos = if (cpos) DT else data.table()
     )
 
-  conc <- enrich(conc, meta)
-  if (!is.null(neighbor) || !length(neighbor) == 0) conc@neighbor <- neighbor
-  
+  conc <- enrich(conc, table = TRUE)
+  conc <- enrich(conc, meta = meta)
   conc
 })
 
@@ -107,20 +88,28 @@ setMethod("kwic", "partition", function(
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
   pAttribute = "word", sAttribute = NULL, cpos = TRUE,
-  neighbor = NULL,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE
 ){
+  # the actual work is done by the kwic,context-method
+  # this method prepares a context-object and applies the
+  # kwic method to that object
   ctxt <- context(
     .Object = .Object, query = query, cqp = cqp,
     pAttribute = pAttribute, sAttribute = sAttribute,
     left = left, right = right,
+    stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = FALSE, verbose = verbose
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
     return(NULL)
     }
-  kwic(.Object = ctxt, meta = meta, neighbor = neighbor, cpos = cpos)
+  retval <- kwic(.Object = ctxt, meta = meta, cpos = cpos)
+  if (!is.null(positivelist)){
+    retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
+  }
+  retval
 })
 
 
@@ -131,7 +120,6 @@ setMethod("kwic", "character", function(
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
   pAttribute = "word", sAttribute = NULL, cpos = TRUE,
-  neighbor = NULL,
   verbose = TRUE
 ){
   hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
@@ -172,8 +160,7 @@ setMethod("kwic", "character", function(
   ctxt <- new(
     "context",
     count = nrow(hits), stat = data.table(),
-    corpus = .Object,
-    left = left, right = right, 
+    corpus = .Object, left = left, right = right, 
     cpos = DT,
     pAttribute = pAttribute,
     encoding = RegistryFile$new(.Object)$getEncoding()

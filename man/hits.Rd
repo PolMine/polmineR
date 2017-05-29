@@ -8,6 +8,7 @@
 \alias{hits,partition-method}
 \alias{hits,partitionBundle-method}
 \alias{sample,hits-method}
+\alias{hits,context-method}
 \title{Get Hits.}
 \usage{
 hits(.Object, ...)
@@ -26,6 +27,8 @@ hits(.Object, ...)
   verbose = TRUE)
 
 \S4method{sample}{hits}(x, size)
+
+\S4method{hits}{context}(.Object, sAttribute = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a character, partition or partitionBundle object}

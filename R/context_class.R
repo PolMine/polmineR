@@ -5,6 +5,10 @@ NULL
 #' 
 #' class to organize information of context analysis
 #' 
+#' @details Objects of the class \code{context} include a \code{data.table} in the
+#' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
+#' "cpos" and "position".
+#' 
 #' @slot query Object of class \code{"character"} node examined
 #' @slot count Object of class \code{"numeric"} number of hits
 #' @slot partition Object of class \code{"partition"} the partition the analysis is based on
@@ -22,7 +26,7 @@ NULL
 #' @slot call Object of class \code{"character"} call that generated the object
 #'     
 #' @param .Object object
-#' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
+#' @aliases context_class show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
 #' @docType class

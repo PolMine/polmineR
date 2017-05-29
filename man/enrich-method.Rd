@@ -4,36 +4,24 @@
 \name{enrich}
 \alias{enrich}
 \alias{enrich-method}
-\alias{enrich,partition-method}
-\alias{enrich,partitionBundle-method}
-\title{enrich an object}
+\title{Enrich an object.}
 \usage{
-enrich(object, ...)
-
-\S4method{enrich}{partition}(object, size = FALSE, pAttribute = NULL,
-  id2str = TRUE, verbose = TRUE, mc = FALSE, ...)
-
-\S4method{enrich}{partitionBundle}(object, mc = FALSE, progress = TRUE,
-  verbose = FALSE, ...)
+enrich(.Object, ...)
 }
 \arguments{
-\item{object}{a partition, partitionBundle or comp object}
+\item{.Object}{a partition, partitionBundle or comp object}
 
 \item{...}{further parameters}
-
-\item{size}{logical}
-
-\item{pAttribute}{character vector}
-
-\item{id2str}{logical}
-
-\item{verbose}{logical}
-
-\item{mc}{logical or, if numeric, providing the number of cores}
-
-\item{progress}{logical, whether to show progress bar}
 }
 \description{
-Method to fill slots of a partition or partitionBundle object that 
-have not been set up previously. See the respective documentation:
+Methods to enrich objects with additional (statistical) information. The methods are documented
+with the classes to which they adhere. See the references in the \code{seealso}-section.
+}
+\seealso{
+The enrich method is defined for the following classes:
+"partition", (see \code{\link{partition_class}}),
+"partitionBundle" (see \code{\link{partitionBundle-class}}),
+"kwic" (see \code{\link{kwic-class}}), and
+"context" (see \code{\link{context-class}}). See the linked documentation
+to learn how the enrich method can be applied to respective objects.
 }

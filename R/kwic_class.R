@@ -2,13 +2,18 @@
 #' 
 #' S4 class for organizing information for concordance output
 #' 
+#' @details The \code{enrich} method is used to generate the actual output for
+#' the kwic method. If param \code{table} is \code{TRUE}, corpus positions will
+#' be turned into a data.frame with the concordance lines. If param \code{meta}
+#' is a character vector with s-attributes, the respective s-attributes will be
+#' added as columns to the table with concordance lines.
+#' 
 #' @slot metadata Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed
 #' @slot left words to the left
 #' @slot right words to the right
 #' @slot corpus the CWB corpus
 #' @slot cpos the corpus positions
 #' @slot table Object of class \code{"data.frame"} a table with the relevant information for kwic output
-#' @slot neighbor Object of class \code{"character"} neighbor, if applicable
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @slot labels Object of class \code{"character"}
 #' @slot categories Object of class \code{"character"}
@@ -16,6 +21,7 @@
 #' @param x a kwic-class object
 #' @param object an object of class \code{kwic}
 #' @param meta sAttributes (character vector) with metainformation
+#' @param table logical, whether to turn cpos data.table into data.frame for output
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}
@@ -35,7 +41,6 @@ setClass(
     metadata = "character",
     left = "numeric",
     right = "numeric",
-    neighbor = "character",
     table = "data.frame",
     encoding = "character",
     labels = "character",
@@ -55,14 +60,14 @@ setMethod("show", "kwic", function(object){
   if (lineview == FALSE){
     df <- object@table
     df[["hit_no"]] <- NULL
-    retvalRaw <- datatable(df)
+    retvalRaw <- datatable(df, escape = FALSE)
     retvalRaw <- formatStyle(retvalRaw, "node", color="blue", textAlign="center")
     retval <- formatStyle(retvalRaw, "left", textAlign="right")
   } else {
     object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
     object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse=" "))
     for (x in c("left", "node", "right")) object@table[[x]] <- NULL
-    retval <- datatable(object@table, escape=FALSE)
+    retval <- DT::datatable(object@table, escape = FALSE)
   }
   show(retval)
 })

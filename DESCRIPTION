@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.3
-Date: 2017-05-24
+Version: 0.7.3.9002
+Date: 2017-05-28
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -44,7 +44,7 @@ Description: Library for corpus analysis using the Corpus Workbench as an
 BugReports: https://github.com/PolMine/polmineR/issues
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
-Collate:
+Collate: 
     'CQI.R'
     'CQI.Rcpp.R'
     'CQI.cqpserver.R'
@@ -96,7 +96,6 @@ Collate:
     'ngrams_method.R'
     'features_method.R'
     'freq_method.R'
-    'frequencies_method.R'
     'getEncoding_method.R'
     'getTerms_method.R'
     'getTokenStream_method.R'
@@ -107,11 +106,11 @@ Collate:
     'label_method.R'
     'll_method.R'
     'mail_method.R'
+    'matches_method.R'
     'means_method.R'
     'noise_method.R'
     'pAttributes_method.R'
     'partitionBundle_method.R'
-    'partitionBundle_methods.R'
     'sAttributes2cpos_method.R'
     'partition_method.R'
     'plot_method.R'

@@ -11,17 +11,18 @@
 kwic(.Object, ...)
 
 \S4method{kwic}{context}(.Object, meta = getOption("polmineR.meta"),
-  cpos = TRUE, neighbor = NULL, verbose = FALSE)
+  cpos = TRUE, verbose = FALSE)
 
 \S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"), pAttribute = "word",
-  sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
+  sAttribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
+  regex = FALSE, verbose = TRUE)
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"), pAttribute = "word",
-  sAttribute = NULL, cpos = TRUE, neighbor = NULL, verbose = TRUE)
+  sAttribute = NULL, cpos = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{partition} or \code{context} object}
@@ -31,8 +32,6 @@ kwic(.Object, ...)
 \item{meta}{metainformation to display}
 
 \item{cpos}{logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned}
-
-\item{neighbor}{only show kwic if a certain word is present}
 
 \item{verbose}{logical, whether to be talkative}
 
@@ -49,10 +48,19 @@ auxiliary function)}
 \item{pAttribute}{p-attribute, defaults to 'word'}
 
 \item{sAttribute}{if provided, the s-attribute will be used to check the boundaries of the text}
+
+\item{stoplist}{terms or ids to prevent a concordance from occurring in results}
+
+\item{positivelist}{terms or ids required for a concordance to occurr in results}
+
+\item{regex}{logical, whether stoplist/positivelist is processed as regular expression}
 }
 \description{
 Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
-applying the kwich method on either a partition or a context object.
+applying the kwic method on either a partition or a context object.
+}
+\details{
+If a positivelist ist supplied, the tokens will be highlighted.
 }
 \examples{
 \dontrun{

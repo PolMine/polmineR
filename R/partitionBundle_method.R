@@ -1,4 +1,4 @@
-#' @include context_class.R
+#' @include partitionBundle_class.R context_class.R
 NULL
 
 #' Generate a bundle of partitions
@@ -144,3 +144,6 @@ setMethod("partitionBundle", "context", function(.Object, mc = getOption("polmin
     )
   return(newPartitionBundle)
 })
+
+#' @rdname partitionBundle-class
+setMethod("partitionBundle", "environment", function(.Object) getObjects(class = "partitionBundle", envir = .Object))

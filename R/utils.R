@@ -63,6 +63,36 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
   cqp
 }
 
+#' Get ID for token.
+#' 
+#' Helper function for context method. Get ids for tokens.
+#' 
+#' @param corpus the CWB corpus to use
+#' @param pAttribute the p-attribute to use
+#' @param token character tokens to turn into ids (character vector length >= 1)
+#' @param regex logical
+#' @noRd
+.token2id <- function(corpus, pAttribute, token = NULL, regex = FALSE){
+  stopifnot(
+    corpus %in% CQI$list_corpora(),
+    pAttribute %in% CQI$attributes(corpus, type = "p")
+    )
+  if (is.null(token)) return( NULL )
+  if (is.numeric(token)){
+    return( token ) # do nothing if token is already numeric (i.e. presumably integer)
+  } else {
+    if (regex){
+      retval <- unlist(lapply(
+        token,
+        function(x) CQI$regex2id(corpus = corpus, pAttribute = pAttribute, regex = x))
+      )
+    } else {
+      retval <- CQI$str2id(corpus = corpus, pAttribute = pAttribute, str = token)
+    }
+    return( retval )
+  }
+}
+
 
 .umlaute2punkt <- function(cmd){
   return(gsub('[\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc]','.', cmd))
