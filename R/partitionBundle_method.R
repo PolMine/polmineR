@@ -63,7 +63,7 @@ setMethod("partitionBundle", "partition", function(
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
   .Object, sAttribute, values = NULL, prefix = "",
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat",
   ...
 ) {
   bundle <- new(
@@ -71,38 +71,50 @@ setMethod("partitionBundle", "character", function(
     corpus = .Object, encoding = RegistryFile$new(.Object)$getEncoding(),
     call = deparse(match.call())
   )
-  strucs <- c(0:(CQI$attribute_size(.Object, sAttribute, "s") - 1))
+  strucs <- 0:(CQI$attribute_size(.Object, sAttribute, "s") - 1)
+  names(strucs) <- CQI$struc2str(.Object, sAttribute, strucs)
   if (!is.null(values)) {
-    toKeep <- which(values %in% CQI$struc2str(.Object, sAttribute, strucs))
-    strucs <- strucs[toKeep]
-    values <- values[toKeep]
-  } else {
-    values <- CQI$struc2str(.Object, sAttribute, strucs)
+    valuesToKeep <- values[which(values %in% names(strucs))]
+    strucs <- strucs[valuesToKeep]
   }
-  cposMatrix <- do.call(rbind, lapply(strucs, function(x) CQI$struc2cpos(.Object, sAttribute, x)))
+
+  values <- names(strucs)
+  strucs <- unname(strucs)
+  
+  if (verbose) message("... getting matrix with regions for s-attribute: ", sAttribute)
+  if (require("polmineR.Rcpp", quietly = TRUE)){
+    cposMatrix <- polmineR.Rcpp::get_region_matrix(
+      corpus = .Object, s_attribute = sAttribute, strucs = strucs,
+      registry = Sys.getenv("CORPUS_REGISTRY")
+      )
+  } else {
+    cposMatrix <- do.call(rbind, lapply(strucs, function(x) CQI$struc2cpos(.Object, sAttribute, x)))
+  }
+  
   cposList <- split(cposMatrix, f = values)
   cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
   
   if (verbose) message("... generating the partitions")
-  .makeNewPartition <- function(x, corpus, encoding, sAttribute, ...){
+  .makeNewPartition <- function(i, corpus, encoding, sAttribute, cposList, xml, ...){
     newPartition <- new(
       "partition",
       corpus = corpus, encoding = encoding,
       stat = data.table(),
-      cpos = x, size = sum(apply(x,1,function(row) row[2] - row[1] + 1)),
-      sAttributeStrucs = sAttribute
+      cpos = cposList[[i]],
+      size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1)),
+      name = names(cposList)[i],
+      sAttributes = setNames(list(names(cposList)[i]), sAttribute),
+      sAttributeStrucs = sAttribute,
+      xml = xml,
+      strucs = CQI$cpos2struc(.Object, sAttribute, cposList[[i]][,1])
     )
-    newPartition@strucs <- CQI$cpos2struc(.Object, sAttribute, x[,1])
-    newPartition
   }
   bundle@objects <- blapply(
-    cposList, f = .makeNewPartition,
-    corpus = .Object, encoding = bundle@encoding, sAttribute = sAttribute,
+    setNames(as.list(1:length(cposList)), names(cposList)),
+    f = .makeNewPartition,
+    corpus = .Object, encoding = bundle@encoding, sAttribute = sAttribute, cposList, xml = xml,
     mc = mc, progress = progress, verbose = verbose, ...
     )
-  for (i in c(1:length(bundle))) bundle@objects[[i]]@name <- names(cposList)[i]
-  for (i in c(1:length(bundle))) bundle@objects[[i]]@sAttributes <- setNames(list(names(cposList)[i]), sAttribute) 
-  names(bundle@objects) <- names(cposList)
   bundle
 })
 

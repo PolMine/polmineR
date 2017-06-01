@@ -88,13 +88,14 @@ setMethod("highlight", "html", function(.Object, highlight = list(), tooltips = 
   )
 })
 
+#' @param perl logical, whether to use perl-style regular expressions for highlighting when regex is TRUE
 #' @rdname kwic-class
-setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, tooltips = NULL, verbose = TRUE){
+setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, tooltips = NULL, verbose = TRUE){
   for (color in names(highlight)){
     if (regex){
       regexMatchList <- lapply(
         highlight[[color]],
-        function(expr) grep(expr, .Object@cpos[["word"]])
+        function(expr) grep(expr, .Object@cpos[["word"]], perl = perl)
         )
       toHighlight <- 1:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
     } else {

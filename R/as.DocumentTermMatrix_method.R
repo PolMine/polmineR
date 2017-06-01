@@ -132,7 +132,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
   retval <- simple_triplet_matrix(
     i = unname(i), j = DT[["j"]], v = DT[[col]],
     nrow = length(names(keys)), ncol = length(names(x@objects)),
-    dimnames = list(Terms=names(keys), Docs=names(x@objects))
+    dimnames = list(Terms=names(keys), Docs = names(x@objects))
   )
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   
@@ -140,7 +140,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
   if (length(pAttribute) > 1){
     dummy <- lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
   } else {
-    dummy <- lapply(c(1:length(x@objects)), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
+    dummy <- lapply(1:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
   }
   attr(retval, "weighting") <- c("term frequency", "tf")
   retval
@@ -189,4 +189,21 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = N
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, pAttribute=NULL, col=NULL, verbose=TRUE){
   as.DocumentTermMatrix(as.TermDocumentMatrix(x=x, pAttribute=pAttribute, col=col, verbose=verbose))
+})
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.TermDocumentMatrix", "context", function(x, pAttribute, verbose = TRUE){
+  if (!paste(pAttribute, "id", "_") %in% colnames(x@cpos)){
+    x <- enrich(x, pAttribute = pAttribute, cpos2id = FALSE)
+  }
+  CPOS <- x@cpos[which(x@cpos[["position"]] != 0)]
+  CPOS2 <- CPOS[, .N, by = c("hit_no", paste(pAttribute, "id", sep = "_"))]
+  simple_triplet_matrix(
+    i = CPOS2[["hit_no"]],
+    j = CPOS2[[paste(pAttribute, "id", sep = "_")]],
+    v = CPOS2[["N"]],
+    dim = c(max(CPOS2[["hit_no"]])), max(CPOS2[[paste(pAttribute, "id", sep = "_")]]),
+    dimnames = list(
+    )
+  )
 })

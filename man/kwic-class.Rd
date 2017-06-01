@@ -8,6 +8,7 @@
 \alias{[,kwic-method}
 \alias{show,kwic-method}
 \alias{as.data.frame,kwic-method}
+\alias{length,kwic-method}
 \alias{enrich,kwic-method}
 \alias{highlight,kwic-method}
 \alias{view,kwic-method}
@@ -17,10 +18,12 @@
 
 \S4method{as.data.frame}{kwic}(x)
 
+\S4method{length}{kwic}(x)
+
 \S4method{enrich}{kwic}(.Object, meta = NULL, table = FALSE)
 
 \S4method{highlight}{kwic}(.Object, highlight = list(), regex = FALSE,
-  tooltips = NULL, verbose = TRUE)
+  perl = TRUE, tooltips = NULL, verbose = TRUE)
 
 \S4method{view}{kwic}(.Object)
 }
@@ -34,6 +37,8 @@
 \item{meta}{sAttributes (character vector) with metainformation}
 
 \item{table}{logical, whether to turn cpos data.table into data.frame for output}
+
+\item{perl}{logical, whether to use perl-style regular expressions for highlighting when regex is TRUE}
 }
 \description{
 S4 class for organizing information for concordance output
@@ -75,3 +80,12 @@ added as columns to the table with concordance lines.
   }
 }
 
+\examples{
+\dontrun{
+use("polmineR.sampleCorpus")
+K <- kwic("PLPRBTTXT", "Integration")
+length(K)
+K[1]
+K[1:5]
+}
+}

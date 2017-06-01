@@ -14,7 +14,7 @@ setClass(
 #' @param n number of tokens/characters
 #' @param pAttribute the p-attribute to use (can be > 1)
 #' @param char if NULL, tokens will be counted, else characters, keeping only those provided by a character vector
-#' @param mc logical, whether to use multicore
+#' @param mc logical, whether to use multicore, passed into call to \code{blapply} (see respective documentation)
 #' @param progress logical
 #' @param ... further parameters
 #' @exportMethod ngrams
@@ -40,40 +40,42 @@ setGeneric("ngrams", function(.Object, ...) standardGeneric("ngrams"))
 #' @rdname ngrams
 setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", char = NULL, progress = FALSE, ...){
   if (is.null(char)){
+    
     cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-    # pAttrs <- sapply(pAttribute, function(x) paste(.Object@corpus, ".", x, sep=""))
+    
     idListBase <- lapply(
       setNames(pAttribute, pAttribute),
       function(pAttr) CQI$cpos2id(.Object@corpus, pAttr, cpos)
       )
+    
     idList <- list()
     j <- 0
-    for (i in c(1:n)){
+    for (i in 1:n){
       for (pAttr in pAttribute){
         j <- j + 1
-        idList[[j]] <- c(idListBase[[pAttr]][c(i:(length(idListBase[[pAttr]]) - (n-i)))])
-        names(idList)[j] <- paste("id", i, pAttr, sep="_")
+        idList[[j]] <- idListBase[[pAttr]][i:(length(idListBase[[pAttr]]) - (n-i))]
+        names(idList)[j] <- paste("id", i, pAttr, sep = "_")
       }
     }
+    
     DT <- as.data.table(idList)
-    # count <- function(x) return(x)
-    # TF1 <- DT[, count(.N), by=c(eval(colnames(DT))), with=TRUE]
-    # setnames(TF, "V1", "count")
-    TF <- DT[, .N, by=c(eval(colnames(DT))), with=TRUE]
+    TF <- DT[, .N, by = c(eval(colnames(DT))), with = TRUE]
     setnames(TF, "N", "count")
     pAttrsCols <- rep(pAttribute, times = n)
-    tokenNo <- unlist(lapply(c(1:n), function(x) rep(x, times=length(pAttribute))))
+    tokenNo <- unlist(lapply(1:n, function(x) rep(x, times = length(pAttribute))))
+    
     # convert ids to strings
     dummy <- lapply(
-      c(1:(n * length(pAttribute))),
+      1:(n * length(pAttribute)),
       function(i){
         str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttrsCols[i], TF[[i]]), from = .Object@encoding)
-        TF[, eval(paste(tokenNo[i], pAttrsCols[i], sep="_")) := str , with = TRUE] 
+        TF[, eval(paste(tokenNo[i], pAttrsCols[i], sep = "_")) := str , with = TRUE] 
       })
+    
     # remove columns with ids
     lapply(
       grep("id_", colnames(TF), value=TRUE),
-      function(x) TF[, eval(x) := NULL, with=TRUE]
+      function(x) TF[, eval(x) := NULL, with = TRUE]
     )
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
@@ -86,9 +88,9 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
     charSoup <- paste(charSoup[which(!is.na(charSoup))], sep="", collapse="")
     charSoupTotal <- nchar(charSoup)
     ngrams <- sapply(
-      c(1:(charSoupTotal - n + 1)),
+      1:(charSoupTotal - n + 1),
       function(x) {
-        if (progress == TRUE) .progressBar(x, charSoupTotal)
+        if (progress) .progressBar(x, charSoupTotal)
         substr(charSoup, x, x + n - 1)
         })
     tabledNgrams <- table(ngrams)

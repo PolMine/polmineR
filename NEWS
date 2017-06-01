@@ -4,6 +4,9 @@ v0.7.4
 * Rework of enrich-method, including documentation.
 * param 'neighbor' dropped from kwic,context-method; params positivelist and negativelist offer equivalent functionality
 * highlight-method for (newly exported) kwic-method (for validation purposes)
+* performance improvement for partitionBundle,character-method
+* a new Labels class and label method for generating test data
+* bug removed for partitionBundle,character-class, and performance improved
 
 v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora

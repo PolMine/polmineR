@@ -70,7 +70,7 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
     'kwic',
     corpus = .Object@corpus, left = .Object@left, right = .Object@right,
     metadata = if (length(meta) == 0) character() else meta,
-    encoding = .Object@encoding,
+    encoding = .Object@encoding, labels = Labels$new(),
     cpos = if (cpos) DT else data.table()
     )
 
@@ -123,10 +123,7 @@ setMethod("kwic", "character", function(
   verbose = TRUE
 ){
   hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
-  if (is.null(hits)) {
-    message("sorry, not hits")
-    return(NULL)
-  }
+  if (is.null(hits)) { message("sorry, not hits"); return(NULL)}
   cposMax <- CQI$attribute_size(.Object, pAttribute, type = "p")
   cposList <- apply(
     hits, 1,
@@ -166,6 +163,6 @@ setMethod("kwic", "character", function(
     encoding = RegistryFile$new(.Object)$getEncoding()
     )
   if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
-  kwic(.Object = ctxt, meta = meta, neighbor = neighbor, cpos = cpos)
+  kwic(.Object = ctxt, meta = meta, cpos = cpos)
 })
 

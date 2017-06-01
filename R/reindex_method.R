@@ -3,8 +3,8 @@ setGeneric("reindex", function(x) standardGeneric("reindex"))
 setMethod("reindex", "DocumentTermMatrix", function(x){
   i_uniqueValues <- unique(x$i)
   i_uniqueValuesOrdered <- i_uniqueValues[order(i_uniqueValues)]
-  i_newIndex <- rep(0, times=i_uniqueValuesOrdered[length(i_uniqueValuesOrdered)])
-  i_newIndex[i_uniqueValuesOrdered] <- c(1:length(i_uniqueValues))
+  i_newIndex <- rep(0, times = i_uniqueValuesOrdered[length(i_uniqueValuesOrdered)])
+  i_newIndex[i_uniqueValuesOrdered] <- 1:length(i_uniqueValues)
   x$i <- i_newIndex[x$i]
   x$nrow <- length(i_uniqueValues)
   
@@ -13,7 +13,7 @@ setMethod("reindex", "DocumentTermMatrix", function(x){
   j_newIndex <- rep(0, times=j_uniqueValuesOrdered[length(j_uniqueValuesOrdered)])
   j_newIndex[j_uniqueValuesOrdered] <- c(1:length(j_uniqueValues))
   x$j <- j_newIndex[x$j]
-  x$j <- length(j_uniqueValues)
+  x$ncol <- length(j_uniqueValues)
   
   x
 })

@@ -32,7 +32,16 @@
 #' @docType class
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
+#' @examples
+#' \dontrun{
+#' use("polmineR.sampleCorpus")
+#' K <- kwic("PLPRBTTXT", "Integration")
+#' length(K)
+#' K[1]
+#' K[1:5]
+#' }
 #' @rdname kwic-class
+#' @include Labels.R
 setClass(
   "kwic",
   slots = c(
@@ -43,7 +52,7 @@ setClass(
     right = "numeric",
     table = "data.frame",
     encoding = "character",
-    labels = "character",
+    labels = "Labels",
     categories = "character"
   )
 )
@@ -66,7 +75,7 @@ setMethod("show", "kwic", function(object){
   } else {
     object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
     object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse=" "))
-    for (x in c("left", "node", "right")) object@table[[x]] <- NULL
+    for (x in c("left", "node", "right", "hit_no")) object@table[[x]] <- NULL
     retval <- DT::datatable(object@table, escape = FALSE)
   }
   show(retval)
@@ -87,10 +96,13 @@ setMethod("as.data.frame", "kwic", function(x){
   metaColumnsNo <- length(colnames(x@table)) - 3
   metadata <- apply(x@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
   data.frame(
-    meta=metadata,
-    left=x@table$left,
-    node=x@table$node,
-    right=x@table$right
+    meta = metadata,
+    left = x@table$left,
+    node = x@table$node,
+    right = x@table$right
   )
 })
 
+
+#' @rdname kwic-class
+setMethod("length", "kwic", function(x) nrow(x@table) )

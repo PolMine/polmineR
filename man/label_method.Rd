@@ -5,12 +5,14 @@
 \alias{label<-}
 \title{Assign and get labels.}
 \usage{
-label(x)
+label(x, ...)
 
 label(x) <- value
 }
 \arguments{
 \item{x}{object}
+
+\item{...}{further parameters}
 
 \item{value}{length (character vector, length 1)}
 }
