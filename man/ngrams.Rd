@@ -29,7 +29,7 @@ ngrams(.Object, ...)
 
 \item{progress}{logical}
 
-\item{mc}{logical, whether to use multicore}
+\item{mc}{logical, whether to use multicore, passed into call to \code{blapply} (see respective documentation)}
 }
 \description{
 Count n-grams, either of words, or of characters.

@@ -10,7 +10,9 @@
 \alias{as.DocumentTermMatrix,bundle-method}
 \alias{as.TermDocumentMatrix,partitionBundle-method}
 \alias{as.DocumentTermMatrix,partitionBundle-method}
-\title{as.TermDocumentMatrix / as.DocumentTermMatrix}
+\alias{as.DocumentTermMatrix,context-method}
+\alias{as.TermDocumentMatrix,context-method}
+\title{Generate TermDocumentMatrix / DocumentTermMatrix.}
 \usage{
 as.TermDocumentMatrix(x, ...)
 
@@ -30,6 +32,10 @@ as.TermDocumentMatrix(x, ...)
 
 \S4method{as.DocumentTermMatrix}{partitionBundle}(x, pAttribute = NULL,
   col = NULL, verbose = TRUE)
+
+\S4method{as.DocumentTermMatrix}{context}(x, pAttribute, verbose = TRUE)
+
+\S4method{as.TermDocumentMatrix}{context}(x, pAttribute, verbose = TRUE)
 }
 \arguments{
 \item{x}{some object}

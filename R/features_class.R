@@ -1,4 +1,4 @@
-#' @include textstat_class.R
+#' @include textstat_class.R bundle_class.R
 NULL
 
 
@@ -49,7 +49,7 @@ setClass("featuresNgrams", representation(n="integer"), contains=c("features", "
 
 #' @slot objects an object of class \code{list}
 #' @rdname features-class
-setClass("featuresBundle", slots=c(objects="list"), contains=c("bundle"))
+setClass("featuresBundle", slots = c(objects = "list"), contains = "bundle")
 
 
 

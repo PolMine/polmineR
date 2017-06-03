@@ -1,9 +1,9 @@
-#' @include bundle_class.R partitionBundle_class.R
+#' @include bundle_class.R partitionBundle_class.R context_class.R
 NULL
 
 
 
-#' as.TermDocumentMatrix / as.DocumentTermMatrix
+#' Generate TermDocumentMatrix / DocumentTermMatrix.
 #' 
 #' Method for type conversion, to generate the classes
 #' \code{"TermDocumentMatrix"} or \code{"DocumentTermMatrix"} contained in the
@@ -166,7 +166,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = N
     cposMatrix <- do.call(rbind, cposList)
     if (verbose) message("... getting ids")
     id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
-    DT <- data.table(i=cposMatrix[,1], id=id_vector, key=c("i", "id"))
+    DT <- data.table(i = cposMatrix[,1], id = id_vector, key = c("i", "id"))
     if (verbose) message("... performing count")
     TF <- DT[,.N, by = c("i", "id"), with=TRUE]
     setnames(TF, old = "N", new = "count")
@@ -192,18 +192,49 @@ setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, pAttribute=NUL
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "context", function(x, pAttribute, verbose = TRUE){
+setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = TRUE){
   if (!paste(pAttribute, "id", "_") %in% colnames(x@cpos)){
-    x <- enrich(x, pAttribute = pAttribute, cpos2id = FALSE)
+    if (verbose) message("... adding token ids for p-attribute: ", pAttribute)
+    x <- enrich(x, pAttribute = pAttribute)
   }
+  
+  if (verbose) message("... dropping nodes")
   CPOS <- x@cpos[which(x@cpos[["position"]] != 0)]
+  
+  if (verbose) message("... counting tokens in context")
   CPOS2 <- CPOS[, .N, by = c("hit_no", paste(pAttribute, "id", sep = "_"))]
-  simple_triplet_matrix(
-    i = CPOS2[["hit_no"]],
-    j = CPOS2[[paste(pAttribute, "id", sep = "_")]],
-    v = CPOS2[["N"]],
-    dim = c(max(CPOS2[["hit_no"]])), max(CPOS2[[paste(pAttribute, "id", sep = "_")]]),
-    dimnames = list(
+  
+  # create new index for hits
+  # may be necessary if negativelist/positivelist has been applied
+  if (verbose) message("... creating new index for hits")
+  hits <- unique(CPOS[["hit_no"]])
+  hits <- hits[order(hits, decreasing = FALSE)]
+  hit_index_new <- 1:length(hits)
+  names(hit_index_new) <- as.character(hits)
+  CPOS2[, i := hit_index_new[as.character(CPOS2[["hit_no"]])]]
+  
+  # create new index for word_ids
+  if (verbose) message("... creating new index for tokens")
+  uniqueIDs <- unique(CPOS2[[paste(pAttribute, "id", sep = "_")]])
+  uniqueIDs <- uniqueIDs[order(uniqueIDs, decreasing = FALSE)]
+  idIndexNew <- setNames(1:length(uniqueIDs), as.character(uniqueIDs))
+  decodedTokens <- as.nativeEnc(
+    CQI$id2str(x@corpus, pAttribute, uniqueIDs),
+    from = x@encoding
     )
+  CPOS2[, j := idIndexNew[as.character(CPOS2[[paste(pAttribute, "id", sep = "_")]])]]
+  
+  if (verbose) message("... putting together matrix")
+  dtm <- simple_triplet_matrix(
+    i = CPOS2[["i"]], j = CPOS2[["j"]], v = CPOS2[["N"]],
+    dimnames = list(Docs = as.character(1:max(CPOS2[["i"]])), Terms = decodedTokens)
   )
+  class(dtm) <- c("DocumentTermMatrix", "simple_triplet_matrix")
+  attr(dtm, "weighting") <- c("term frequency", "tf")
+  dtm
+})
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.TermDocumentMatrix", "context", function(x, pAttribute, verbose = TRUE){
+  as.DocumentTermMatrix(x = x, pAttribute = pAttribute, verbose = verbose)
 })
