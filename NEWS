@@ -6,7 +6,8 @@ v0.7.4
 * highlight-method for (newly exported) kwic-method (for validation purposes)
 * performance improvement for partitionBundle,character-method
 * a new Labels class and label method for generating test data
-* bug removed for partitionBundle,character-class, and performance improved
+* bug removed and performance improvements for partitionBundle,character-class
+* for context-method: param sAttribute working again to check boundaries of match regions
 
 v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora

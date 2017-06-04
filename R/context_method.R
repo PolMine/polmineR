@@ -66,7 +66,7 @@ setMethod("context", "partition", function(
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL, regex = FALSE,
     count = TRUE,
-    mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE
+    mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE
   ) {
     
     # set method for making left and right context
@@ -107,7 +107,6 @@ setMethod("context", "partition", function(
     }
     colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
     
-    if (!is.null(sAttribute)) hits <- cbind(hits, struc_hit = CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1]))
     hits <- cbind(hits, hit_no = 1:nrow(hits))
     
     # create matrix_list (expanded form), then data.table in ctxt@cpos 
@@ -126,10 +125,7 @@ setMethod("context", "partition", function(
     
     # add decoded tokens (ids at this stage)
     ctxt <- enrich(ctxt, pAttribute = pAttribute, id2str = FALSE)
-    # for (pAttr in pAttribute){
-    #   ctxt@cpos[[paste(pAttr, "id", sep = "_")]] <- CQI$cpos2id(.Object@corpus, pAttr, ctxt@cpos[["cpos"]])
-    # }
-    
+
     # generate positivelist/stoplist with ids and apply it
     if (!is.null(positivelist)){
       if (verbose) message("... filtering by positivelist")
@@ -149,6 +145,7 @@ setMethod("context", "partition", function(
         return( NULL )
       }
     }
+    
     if (!is.null(stoplist)){
       if (verbose) message("... applying stoplist")
       before <- length(unique(ctxt@cpos[["hit_no"]]))
@@ -174,7 +171,12 @@ setMethod("context", "partition", function(
     ctxt@size <- nrow(ctxt@cpos)
     ctxt@sizeCoi <- as.integer(ctxt@size)
     ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
-    ctxt@count <- length(which(ctxt@cpos[["position"]] != 0))
+    ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
+    
+    # check that windows do not transgress s-attribute
+    if (verbose) message("... checking that context positions to not transgress regions")
+    ctxt <- enrich(ctxt, sAttribute = sAttribute)
+    ctxt <- trim(ctxt, sAttribute = sAttribute, verbose = verbose, progress = progress)
     
     # put together raw stat table
     if (count){
@@ -204,8 +206,8 @@ setMethod("context", "partition", function(
 .makeLeftRightCpos <- list(
   
   "expandToCpos" = function(set, left, right, corpus, sAttribute){
-    cposLeft <- c((set[1] - left):(set[1] -1))
-    cposRight <- c((set[2] + 1):(set[2] + right))
+    cposLeft <- (set[1] - left):(set[1] -1)
+    cposRight <- (set[2] + 1):(set[2] + right)
     matrix(
       c(
         c(cposLeft, set[1]:set[2], cposRight),
@@ -244,10 +246,10 @@ setMethod("context", "partition", function(
 
 
 #' @rdname context-method
-setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
+setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL, ...){
   C <- Corpus$new(.Object)
   C$count(pAttribute, id2str = FALSE)
-  context(C$as.partition(), query = query, pAttribute = pAttribute, ...)
+  context(C$as.partition(), query = query, pAttribute = pAttribute, sAttribute = NULL, ...)
 })
 
 

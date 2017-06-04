@@ -91,6 +91,34 @@ setMethod("trim", "dispersion", function(object, drop=NULL, merge=list(old=c(), 
 })
 
 
+#' @rdname context-class
+setMethod("trim", "context", function(object, sAttribute = NULL, verbose = TRUE, progress = TRUE){
+  
+  if(!is.null(sAttribute)){
+    stopifnot(length(sAttribute) == 1)
+    sAttrCol <- paste(sAttribute, "int", sep = "_")
+    if (!sAttrCol %in% colnames(object@cpos)){
+      object <- enrich(object, sAttribute = sAttribute)
+    }
+    setnames(object@cpos, old = sAttrCol, new = "struc")
+    
+    position <- 0 # work around to make data.table syntax pass R CMD check
+    struc <- 0 # work around to make data.table syntax pass R CMD check
+    
+    if (verbose) message("... checking boundaries of regions")
+    if (progress) pb <- txtProgressBar(min = 1, max = object@count, style = 3)
+    .checkBoundary <- function(.SD, .GRP){
+      if (progress) setTxtProgressBar(pb, value = .GRP)
+      struc_hit <- .SD[position == 0][["struc"]][1]
+      .SD[struc == struc_hit]
+    }
+    object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "hit_no"]
+    close(pb)
+    setnames(object@cpos, old = "struc", new = sAttrCol)
+  }
+  
+  object
+})
 
 # #' @rdname cooccurrences-class
 # setMethod("trim", "cooccurrences", function(object, mc=TRUE, reshape=FALSE, by=NULL, ...){
