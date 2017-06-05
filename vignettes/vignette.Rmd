@@ -421,27 +421,52 @@ corpus()
 
 ### MacOS
 
-If R is installed on your system, the easiest way to get and install polmineR is to download binaries for Mac from the repository we host at the PolMine server
+The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. The Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/) is what you need.
 
-```{r, eval = FALSE}
-install.packages("polmineR", repos = "http://polmine.sowi.uni-due.de", type = "binary")
+#### Installing 'polmineR'
+
+The latest release of polmineR can be installed from CRAN using the usual \code{install.packages}-function.
+
+```{r mac_install_polmineR_cran, eval = FALSE}
+install.packages("polmineR")
 ```
 
-If you want to work with the most recent development version, or if you want to to compile the package yourself, the procedure is as follows.
+The development version of \code{polmineR} can be installed using devtools:
 
-First, you will need an installation of Xcode, which you can get it via the Mac App Store. 
+```{r}
+install.packages("devtools") # unless devtools is already installed
+devtools::install_github("PolMine/polmineR", ref = "dev")
+```
 
-To compile the C library in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Macports or brew makes things much easier.
 
-If you want to use Macports, get it from https://www.macports.org/. After installing Macports, it is necessary to restart the computer.
+#### Installing 'rcqp'
 
-We will also need the Command Line Tool for Xcode. It can be installed from a terminal with:
+The default interface of the polmineR package to access CWB indexed corpora is the package 'rcqp'. Accessing corpora will not work before you have installed the interface. The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:
+
+```{r}
+install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "mac.binary")
+```
+
+If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.
+
+First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tool for Xcode. It can be installed from a terminal with:
 
 ```{sh, eval = FALSE}
 xcode-select -- install
 ```
 
-Next, an update of Macports is necessary.
+To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.
+
+We recommend to use 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage]'(https://brew.sh/index_de.html). The following commands will install the C libraries the rcqp package relies on:
+
+```{sh, eval = FALSE}
+brew -v install pkg-config
+brew -v install glib --universal
+brew -v install pcre --universal
+brew -v install readline
+```
+
+If you are more comfortable with using Macports, get it from https://www.macports.org/. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.
 
 ```{sh, eval = FALSE}
 sudo port -v selfupdate
@@ -455,23 +480,13 @@ sudo port install pkgconfig
 sudo port install pcre
 ```
 
-Alternatively, if you prefer brew (which we do), after installing brew:
-
-```{sh, eval = FALSE}
-brew -v install pkg-config
-brew -v install glib --universal
-brew -v install pcre --universal
-brew -v install readline
-```
-
-
-One the system requirements are there, the next steps can be done from R.  Before installing rcqp, and then polmineR, we install a few packages manually. In the R console:
+Once the system requirements are there, the next steps can be done from R.  Before installing rcqp, and then polmineR, we install a few packages. In the R console:
 
 ```{r, eval = FALSE}
-install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm“))
+install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))
 ```
 
-Now rcqp can be installed, and then polmineR
+Now rcqp can be installed, and then polmineR:
 
 ```{r, eval = FALSE}
 install.packages("rcqp")
@@ -495,7 +510,7 @@ sudo apt-get install libssl-dev
 sudo apt-get install libcurl4-openssl-dev
 ```	
 
-The system requirements will now be fulfilled, to install dependencies for rcqp/polmineR, and then the two packages from within R.
+The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
 
 ```{r, eval = FALSE}
 install.packages("RUnit", "devtools", "plyr", "tm")
