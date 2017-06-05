@@ -8,6 +8,7 @@ v0.7.4
 * a new Labels class and label method for generating test data
 * bug removed for partitionBundle,character-class, and performance improved
 * Improved explanation of the installation procedure for Mac in the package vignette
+* for context-method: param sAttribute working again to check boundaries of match regions
 
 v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora

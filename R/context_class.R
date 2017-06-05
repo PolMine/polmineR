@@ -1,7 +1,7 @@
 #' @include textstat_class.R features_class.R
 NULL
 
-#' S4 context class
+#' Context class (S4).
 #' 
 #' class to organize information of context analysis
 #' 
@@ -9,9 +9,9 @@ NULL
 #' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
 #' "cpos" and "position".
 #' 
-#' @slot query Object of class \code{"character"} node examined
+#' @slot query Object of class \code{"character"}, the query/node examined
 #' @slot count Object of class \code{"numeric"} number of hits
-#' @slot partition Object of class \code{"partition"} the partition the analysis is based on
+#' @slot partition Object of class \code{"partition"}, the partition the context object is based on
 #' @slot partitionSize Object of class \code{"numeric"} the size of the partition
 #' @slot left Object of class \code{"numeric"} number of tokens to the left
 #' @slot right Object of class \code{"numeric"} number of tokens to the right
@@ -32,16 +32,17 @@ NULL
 #' @docType class
 #' @exportClass context
 setClass("context",
-         representation(query = "character",
-                        count = "numeric",
-                        partition = "partition",
-                        partitionSize = "numeric",
-                        left = "numeric",
-                        right = "numeric",
-                        size = "numeric",
-                        sAttribute = "character",
-                        cpos = "data.table",
-                        call = "character"
+         slots = c(
+           query = "character",
+           count = "numeric",
+           partition = "partition",
+           partitionSize = "numeric",
+           left = "numeric",
+           right = "numeric",
+           size = "numeric",
+           sAttribute = "character",
+           cpos = "data.table",
+           call = "character"
          ),
          contains = c("features", "textstat")
 )
