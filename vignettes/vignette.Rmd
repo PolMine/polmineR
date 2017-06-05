@@ -457,7 +457,7 @@ xcode-select -- install
 
 To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.
 
-We recommend to use 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage]'(https://brew.sh/index_de.html). The following commands will install the C libraries the rcqp package relies on:
+We recommend to use 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands will install the C libraries the rcqp package relies on:
 
 ```{sh, eval = FALSE}
 brew -v install pkg-config
