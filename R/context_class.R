@@ -1,9 +1,9 @@
 #' @include textstat_class.R features_class.R
 NULL
 
-#' Context class (S4).
+#' Context class.
 #' 
-#' class to organize information of context analysis
+#' Class to organize information of context analysis.
 #' 
 #' @details Objects of the class \code{context} include a \code{data.table} in the
 #' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
@@ -30,6 +30,7 @@ NULL
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
 #' @docType class
+#' @rdname context-class
 #' @exportClass context
 setClass("context",
          slots = c(
@@ -46,3 +47,16 @@ setClass("context",
          ),
          contains = c("features", "textstat")
 )
+
+#' @rdname context-class
+setMethod("sample", "kwic", function(x, size){
+  hits_unique <- unique(x@cpos[["hit_no"]])
+  if (size > length(hits_unique)){
+    warning("argument size exceeds number of hits, returning original object")
+    return(x)
+  }
+  x@cpos <- x@cpos[which(x@cpos[["hit_no"]] %in% sample(hits_unique, size = size))]
+  x@count <- size
+  x@size <- length(which(x@cpos[["position"]] != 0))
+  x
+})

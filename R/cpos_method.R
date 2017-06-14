@@ -1,7 +1,7 @@
 #' @include tempcorpus.R
 NULL
 
-#' Get corpus positions for (CQP) queries.
+#' Get corpus positions for a query or queries.
 #' 
 #' Get matches for a query in a CQP corpus, optionally using the CQP syntax of the
 #' Corpus Workbench (CWB).
@@ -38,56 +38,63 @@ setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
 setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
-  if (length(query) > 1) warning("query needs to be a character vector with length 1")
   if (is.null(encoding)) encoding <- getEncoding(.Object) # get encoding of the corpus
   query <- as.corpusEnc(query, corpusEnc = encoding)
   if (class(cqp) == "function") cqp <- cqp(query)
   if (length(cqp) > 1) stop("length of cqp is larger than 1, but needs to be 1")
   if (cqp == FALSE) {
-    if (grepl("[\\|]", query)) warning("Special character that may cause problems in query!")
-    cpos <- try({
-      id <- CQI$str2id(.Object, pAttribute, query)
-      if (id == -1){ # CQP will return -1 if there are no matches
-        if (verbose) message("no hits for query: ", query)
-        cpos <- NULL
-      } else {
-        cpos <- CQI$id2cpos(.Object, pAttribute, id)
+    if (any(grepl("[\\|]", query))) warning("Special character that may cause problems in query!")
+    hitList <- lapply(
+      query,
+      function(Q){
+        cpos <- try({
+          id <- CQI$str2id(.Object, pAttribute, Q)
+          if (id == -1){ # CQP will return -1 if there are no matches
+            if (verbose) message("no hits for query: ", Q)
+            cpos <- NULL
+          } else {
+            cpos <- CQI$id2cpos(.Object, pAttribute, id)
+          }
+        })
+        if (!is.null(cpos)) matrix(c(cpos, cpos), ncol = 2) else NULL
       }
-    })
-    if (!is.null(cpos)){
-      hits <- matrix(c(cpos, cpos), ncol = 2)
-    } else {
-      hits <- NULL
-    }
+    )
+    hits <- do.call(rbind, hitList)
   } else if (cqp == TRUE) {
-    CQI$query(.Object, query)
-    cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
-    if (is(cpos)[1] == "try-error"){
-      if (verbose) message("no hits for query: ", query)
-      hits <- NULL
-    } else if (!is.null(cpos)) {
-      hits <- matrix(cpos[,1:2], ncol=2)
-    } else {
-      if (verbose) message("no hits for query: ", query)
-      hits <- NULL
-    }
+    hitList <- lapply(
+      query,
+      function(Q){
+        CQI$query(.Object, Q)
+        cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
+        if (is(cpos)[1] == "try-error"){
+          if (verbose) message("no hits for query: ", Q)
+          hits <- NULL
+        } else if (!is.null(cpos)) {
+          hits <- matrix(cpos[,1:2], ncol = 2)
+        } else {
+          if (verbose) message("no hits for query: ", Q)
+          hits <- NULL
+        }
+        hits
+      }
+    )
+    do.call(rbind, hitList)
   }
   hits
 })
   
 #' @rdname cpos-method
-setMethod("cpos", "partition", function(.Object, query, cqp=is.cqp, pAttribute=NULL, verbose=TRUE, ...){
-  hits <- cpos(.Object@corpus, query=query, cqp=cqp, pAttribute, encoding = .Object@encoding, verbose=verbose)
+setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, pAttribute = NULL, verbose = TRUE, ...){
+  hits <- cpos(.Object@corpus, query = query, cqp = cqp, pAttribute, encoding = .Object@encoding, verbose = verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
-    # corpus.sAttribute <- paste(.Object@corpus, ".", sAttribute, sep="")
     strucHits <- CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
-    if (is(hits)[1] == "integer") hits <- matrix(data=hits, ncol=2)
+    if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2)
     if (nrow(hits) == 0) hits <- NULL
   }
-  if (is(hits)[1] == "integer") hits <- matrix(hits, ncol=2)
-  return(hits)
+  if (is(hits)[1] == "integer") hits <- matrix(hits, ncol = 2)
+  hits
 })
 
 #' @param shift logical, if true, the cpos resulting from the query performed on

@@ -106,3 +106,17 @@ setMethod("as.data.frame", "kwic", function(x){
 
 #' @rdname kwic-class
 setMethod("length", "kwic", function(x) nrow(x@table) )
+
+#' @rdname kwic-class
+setMethod("sample", "kwic", function(x, size){
+  hits_unique <- unique(x@cpos[["hit_no"]])
+  if (size > length(hits_unique)){
+    warning("argument size exceeds number of hits, returning original object")
+    return(x)
+  }
+  x@cpos <- x@cpos[which(x@cpos[["hit_no"]] %in% sample(hits_unique, size = size))]
+  x <- enrich(x, table = TRUE)
+  x <- enrich(x, meta = x@metadata)
+  x
+  
+})

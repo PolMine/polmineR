@@ -18,10 +18,10 @@
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE)
 
 \S4method{context}{character}(.Object, query,
-  pAttribute = getOption("polmineR.pAttribute"), ...)
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL, ...)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 

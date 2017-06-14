@@ -7,7 +7,7 @@
 \alias{cpos,partition-method}
 \alias{cpos,tempcorpus-method}
 \alias{cpos,matrix-method}
-\title{Get corpus positions for (CQP) queries.}
+\title{Get corpus positions for a query or queries.}
 \usage{
 cpos(.Object, ...)
 

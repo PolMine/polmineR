@@ -9,6 +9,7 @@
 \alias{show,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{length,kwic-method}
+\alias{sample,kwic-method}
 \alias{enrich,kwic-method}
 \alias{highlight,kwic-method}
 \alias{view,kwic-method}
@@ -19,6 +20,8 @@
 \S4method{as.data.frame}{kwic}(x)
 
 \S4method{length}{kwic}(x)
+
+\S4method{sample}{kwic}(x, size)
 
 \S4method{enrich}{kwic}(.Object, meta = NULL, table = FALSE)
 
