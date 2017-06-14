@@ -79,7 +79,7 @@ setMethod(
   "sAttributes", "partition",
   function (.Object, sAttribute = NULL) {
     if (is.null(sAttribute)){
-      retval <- CQI$attributes(.Object@corpus, "s")
+      return( CQI$attributes(.Object@corpus, "s") )
     } else {
       if (length(sAttribute) == 1){
         if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){

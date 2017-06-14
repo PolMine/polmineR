@@ -186,7 +186,7 @@ setMethod("context", "partition", function(
       ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
       setnames(ctxt@stat, "N", "count_window")
       
-      for (i in c(1:length(pAttribute))){
+      for ( i in 1:length(pAttribute) ){
         newColumn <- CQI$id2str(.Object@corpus, pAttribute[i], ctxt@stat[[paste(pAttribute[i], "id", sep = "_")]])
         newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
         ctxt@stat[, eval(pAttribute[i]) := newColumnNative]
