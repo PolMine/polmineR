@@ -146,7 +146,6 @@ getSettings <- function(){
   getSettings()
 }
 
-
 if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){
   packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
   CQI <- CQI.rcqp$new()
@@ -156,7 +155,7 @@ if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){
 } else if (Sys.getenv("POLMINER_INTERFACE") == "cqpserver"){
   packageStartupMessage("Using cqpserver as interface to access CWB corpora")
   CQI <- CQI.cqpserver$new()
-} else if (Sys.getenv("POLMINER_INTERFACE") == ""){
+} else {
   if (require("rcqp")){
     packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
     CQI <- CQI.rcqp$new()
