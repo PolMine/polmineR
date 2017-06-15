@@ -506,12 +506,15 @@ install.packages("polmineR")
 
 ## Annex II: CWB corpora and the CORPUS_REGISTRY environment variable
 
-Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a 'registry' directory, and an 'indexed_corpora' directory. The files in the registry directory ('registry' in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR.
+Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a 'registry' directory, and an 'indexed_corpora' directory. The files in the registry directory ('registry' in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR. Note that you need to set the environment to the 'registry' folder, not the files that are located in this directory.
 
 The CORPUS_REGISTRY environment variable can be set manually from the R console:
 
 ```{r, eval = FALSE}
-Sys.setenv(CORPUS_REGISTRY "/PATH/TO/YOUR/REGISTRY/DIRECTORY")
+Sys.setenv(CORPUS_REGISTRY = "/PATH/TO/YOUR/REGISTRY/DIRECTORY")
+
+# For example the path could look like this:
+# Sys.setenv(CORPUS_REGISTRY = "/Library/Frameworks/R.framework/Versions/3.3/Resources/library/plprbt/extdata/cwb/registry")
 ```
 
 To check whether and how the environment variable is set:
