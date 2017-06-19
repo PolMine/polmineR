@@ -18,8 +18,7 @@ NULL
 #' @param .Object a \code{"character"} vector indicating a CWB corpus, a
 #'   \code{"partition"} object, a \code{"tempcorpus"} object, or a
 #'   \code{"matrix"} with corpus positions
-#' @param query a character vector (length 1) providing a (single) query: either
-#'   a single token to look up, or a CQP query.
+#' @param query a character vector providing one or multiple queries (token or CQP query)
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
 #'   auxiliary function)

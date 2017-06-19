@@ -4,7 +4,7 @@
 \name{getEncoding}
 \alias{getEncoding}
 \alias{getEncoding,character-method}
-\title{get the encoding of a corpus}
+\title{Get the encoding of a corpus.}
 \usage{
 getEncoding(.Object)
 
@@ -14,5 +14,5 @@ getEncoding(.Object)
 \item{.Object}{the corpus name}
 }
 \description{
-get the encoding of a corpus
+Parse the registry file and get the encoding of a corpus.
 }

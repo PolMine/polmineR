@@ -121,10 +121,12 @@ RegistryFile <- setRefClass(
       if (length(.self$txt) == 0) .self$read()
       encodingLine <- .self$txt[grep('charset\\s*=\\s*"', .self$txt)]
       .self$encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
+      # utf8 is not recognized by iconv on some mac systems
+      if (.self$encoding == "utf8") .self$encoding <- "UTF-8"
       if (!toupper(.self$encoding) %in% iconvlist()){
         warning('Please check encoding in the registry file (charset="..." provides unknown encoding) or provide encoding explicitly')
       }
-      invisible(.self$encoding)
+      .self$encoding
     },
     
     getPAttributes = function(){
@@ -152,7 +154,7 @@ RegistryFile <- setRefClass(
       
       if (length(.self$txt) == 0) .self$read()
       propertiesLines <- grep("^##::", .self$txt)
-      propertiesNames <- sapply(propertiesLines, function(x) sub("^##::\\s+(.*?)\\s+=.*?$", "\\1", .self$txt[x]))
+      propertiesNames <- sapply(propertiesLines, function(x) sub("^##::\\s*(.*?)\\s*=.*?$", "\\1", .self$txt[x]))
       .self$properties <- lapply(
         setNames(propertiesLines, propertiesNames),
         function(x) strsplit(gsub('^##::.*?=\\s"(.*?)".*?$', "\\1", .self$txt[x]), "\\|")[[1]]
