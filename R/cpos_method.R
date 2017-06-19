@@ -78,7 +78,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
         hits
       }
     )
-    do.call(rbind, hitList)
+    hits <- do.call(rbind, hitList)
   }
   hits
 })
