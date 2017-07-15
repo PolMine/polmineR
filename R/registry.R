@@ -24,30 +24,35 @@
 #' @return the registry directory used before resetting CORPUS_REGISTRY
 #' @export resetRegistry
 #' @rdname registry
-resetRegistry <- function(registryDir = NULL, verbose = TRUE) {
-  if (!is.null(registryDir)){
+#' @name resetRegistry
+resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
+  if (verbose) message("... reseting CORPUS_REGISTRY environment variable:")
+  if (dir.exists(registryDir)){
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
     Sys.setenv(CORPUS_REGISTRY = registryDir)
+    message("    ", registryDir)
   } else {
-    oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-    Sys.setenv(CORPUS_REGISTRY = getOption("polmineR_default_registry"))
+    stop("registryDir does not exist")
   }
-  if (verbose) message("... reseting CORPUS_REGISTRY environment variable")
+  
   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
+    
     if (verbose) message("... unloading rcqp library")
     library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
+    
+    if (verbose) message("... reloading rcqp library")
+    library.dynam(
+      "rcqp", package = "rcqp",
+      lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
+    )
+    if (("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])) && verbose == TRUE){
+      message("... status: OK") 
+    } else {
+      message("... status: WARNING - rcqp dynamic library not loaded")
+    }
+    
   } else {
     
-  }
-  if (verbose) message("... reloading rcqp library")
-  library.dynam(
-    "rcqp", package = "rcqp",
-    lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
-  )
-  if (("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])) && verbose == TRUE){
-    message("... status: OK") 
-  } else {
-    message("... status: WARNING - rcqp dynamic library not loaded")
   }
   invisible(oldRegistry)
 }

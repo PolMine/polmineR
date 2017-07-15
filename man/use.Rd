@@ -2,17 +2,31 @@
 % Please edit documentation in R/use_method.R
 \name{use}
 \alias{use}
-\title{Use packaged corpus.}
+\title{Use a packaged corpus.}
 \usage{
-use(pkg = NULL)
+use(pkg = NULL, dir = getOption("polmineR.defaultRegistry"))
 }
 \arguments{
-\item{pkg}{the package with a cwb corpus that shall be used (defaults to NULL, to return to default registry)
-(will reset original registry)}
+\item{pkg}{the package with a cwb corpus that shall be used (defaults to NULL)}
+
+\item{dir}{a registry directory, defaults to \code{getOption("polmineR.defaultRegistry")}}
 }
 \value{
 the function returns invisibly the registry that was previously set
 }
 \description{
-Use a cwb corpus shipped in a package or return to default registry.
+Use a CWB corpus shipped in a package, or reset registry directory.
+}
+\details{
+If \code{pkg} is the name of a data package with a CWB indexed corpus,
+the function will reset the CORPUS_REGISTRY environment variable and restart
+\code{rcqp} to point to the registry directory in the package.
+
+If \code{pkg} is NULL (default), calling \code{use} will 
+reset the registry directory to the directory defined by \code{dir}
+(defaults to the option \code{polmineR.defaultRegistry}, to return to the registry
+that was used when loading \code{polmineR}).
+}
+\seealso{
+the worker to reset the registry is \code{\link{resetRegistry}}
 }

@@ -78,7 +78,8 @@ default_templates <- list(
     "polmineR.Rcpp" = TRUE,
     "polmineR.cwb-s-decode" = FALSE,
     "polmineR.cwb-encode" = FALSE,
-    "polmineR.cwb-lexdecode" = FALSE
+    "polmineR.cwb-lexdecode" = FALSE,
+    "polmineR.defaultRegistry" = Sys.getenv("CORPUS_REGISTRY")
   )
   
   
@@ -102,6 +103,18 @@ default_templates <- list(
     }
   }
   
+}
+
+.onAttach <- function(libname, pkgname) {
+  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
+    packageStartupMessage(
+      "The CORPUS_REGISTRY environment variable is not defined. ",
+      "See the package vignette to learn how to set it!"
+      )
+  } else {
+    packageStartupMessage("registry directory: ", getOption("polmineR.defaultRegistry"))
+  }
+  packageStartupMessage("Interface used: ", class(CQI)[1])
 }
 
 getSettings <- function(){
