@@ -12,6 +12,9 @@ v0.7.4
 * sample-method for objects of class kwic and context
 * kwic, cpos, and context method will accept queries of length > 1
 * use-function and resetRegistry-function reworked
+* more explicit startup message to get info about version, registry and interface
+* encoding issues solved for size-method, hits-method and dispersion-method
+* use-function will now work for users working with polmineR.Rcpp as interface
 
 v0.7.3
 * new installed.corpora() convenience function to list all data packages with corpora

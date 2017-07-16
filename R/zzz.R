@@ -1,49 +1,5 @@
 if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
 
-default_templates <- list(
-  
-  plain = list(
-    document = list(
-      sAttribute = "text",
-      format = c("### ", "")
-    )
-  ),
-  
-  article = list(
-    document = list(
-      sAttribute = "text",
-      format = c("### ", "")
-    ),
-    paragraphs = list(
-      sAttribute = "p_type",
-      format = list(
-        meta = c("### ", ""),
-        title = c("## ", ""),
-        teaser = c("_", "_\n"),
-        body = c("", "\n"),
-        highlight = c("_", "_\n"),
-        headline = c("# ", "")
-      )
-    )
-  ),
-  
-  plpr = list(
-    metadata = c("text_speaker", "text_date", "text_party"),
-    document = list(
-      sAttribute = "text",
-      format = c("\n### ", "\n")
-    ),
-    speech = list(
-      sAttribute = "text_type",
-      format = list(
-        speech = c("", ""),
-        interjection = c("\n> ", "\n")
-      )
-    )
-  )
-  
-)
-
 
 
 .onLoad <- function (lib, pkg) {
@@ -73,7 +29,7 @@ default_templates <- list(
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.interface" = "rcqp",
     "polmineR.template" = "default",
-    "polmineR.templates" = default_templates,
+    "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
     "polmineR.Rcpp" = TRUE,
     "polmineR.cwb-s-decode" = FALSE,
@@ -86,36 +42,15 @@ default_templates <- list(
   # Some operations run faster when using the utils of the CWB (cwb-s-decode etc.)
   # These may only be available on *nix systems, so this is checked first
   if (.Platform$OS.type == "unix"){
-    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
+    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1)
       options("polmineR.cwb-s-decode" = TRUE)
-    }
-  }
-  
-  if (.Platform$OS.type == "unix"){
-    if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+    if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-encode" = TRUE)
-    }
-  }
-
-  if (.Platform$OS.type == "unix"){
-    if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2){
+    if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-lexdecode" = TRUE)
-    }
   }
-  
 }
 
-.onAttach <- function(libname, pkgname) {
-  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
-    packageStartupMessage(
-      "The CORPUS_REGISTRY environment variable is not defined. ",
-      "See the package vignette to learn how to set it!"
-      )
-  } else {
-    packageStartupMessage("registry directory: ", getOption("polmineR.defaultRegistry"))
-  }
-  packageStartupMessage("Interface used: ", class(CQI)[1])
-}
 
 getSettings <- function(){
   if (length(Sys.getenv("POLMINER_DIR"))){
@@ -157,6 +92,18 @@ getSettings <- function(){
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   setTemplate()
   getSettings()
+  polmineRMessage <- paste("polmineR", packageVersion("polmineR"), sep = " ")
+  packageStartupMessage(polmineRMessage, "\n", paste(rep("-", times = nchar(polmineRMessage)), collapse = ""))
+  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
+    packageStartupMessage(
+      "The CORPUS_REGISTRY environment variable is not defined. ",
+      "See the package vignette to learn how to set it!"
+    )
+  } else {
+    packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
+  }
+  packageStartupMessage("interface: ", class(CQI)[1])
+  
 }
 
 if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){

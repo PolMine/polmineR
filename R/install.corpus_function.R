@@ -25,6 +25,8 @@
 #' 
 #' @param pkgs names of data packages with corpora
 #' @param repo URL of the repository 
+#' @param lib directory for R packages, defaults to \code{.libPaths()[1]}; the path may not 
+#' include a whitespace sign
 #' @param ... further parameters that will be passed into \code{install.packages}
 #' @export install.corpus
 #' @name install.corpus
@@ -41,19 +43,21 @@
 #' }
 #' @importFrom utils available.packages contrib.url install.packages
 #' @rdname install.corpus
-install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...){
+install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", lib = .libPaths()[1], ...){
   for (package in pkgs){
     if (package %in% utils::available.packages(utils::contrib.url(repos = repo))){
-      if ("lib" %in% names(list(...))){
-        destdir <- list(...)[["lib"]]
-      } else {
-        destdir <- .libPaths()[1]
+      if (grepl("\\s", lib)){
+        stop(
+          "There is a whitespace sign in the directory specified by 'lib'. ",
+          "The corpus library will not swallow a directory with a whitespace sign. ",
+          "Please provide another directory."
+          )
       }
-      if (file.access(destdir, "6") == -1){
+      if (file.access(lib, "6") == -1){
         stop("You do not have write permissions for directory ", destdir,
              ". Please run R with the required privileges, or provide another directory (param 'lib').")
       } else {
-        install.packages(pkgs = package, repos = repo, ...)
+        install.packages(pkgs = package, repos = repo, lib = lib, ...)
         RegistryFile$new(package = package)$adjustHome()
       }
     } else {
@@ -83,5 +87,5 @@ packaged.corpora <- function(){
   )
   M <- data.table(do.call(rbind, matrices))
   M <- M[which(nchar(M[["registry"]]) > 0)]
-  return(M)
+  M
 }

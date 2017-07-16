@@ -35,7 +35,7 @@ CQI.rcqp <- R6Class(
       rcqp::cqi_id2str(paste(corpus, pAttribute, sep="."), id),
     
     struc2str = function(corpus, sAttribute, struc)
-      rcqp::cqi_struc2str(paste(corpus, sAttribute, sep="."), struc),
+      rcqp::cqi_struc2str(paste(corpus, sAttribute, sep = "."), struc),
     
     regex2id = function(corpus, pAttribute, regex)
       rcqp::cqi_regex2id(paste(corpus, pAttribute, sep="."), regex),

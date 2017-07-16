@@ -13,7 +13,8 @@ Imports:
     Matrix,
     tm,
     DT,
-    utils
+    utils,
+    jsonlite
 Suggests:
     pbapply,
     parallel,

@@ -15,7 +15,7 @@ setGeneric("getTemplate", function(.Object, ...) standardGeneric("getTemplate"))
 #' @rdname templates
 setMethod("getTemplate", "character", function(.Object){
   if (.Object %in% names(getOption("polmineR.templates"))){
-    return(getOption("polmineR.templates")[[.Object]])
+    return( getOption("polmineR.templates")[[.Object]] )
   } else {
     warning("the template requested is not available")
     return(NULL)
@@ -36,25 +36,22 @@ setMethod("getTemplate", "missing", function(.Object){
 setGeneric("setTemplate", function(.Object, ... ) standardGeneric("setTemplate"))
 
 #' @rdname templates
-setMethod("setTemplate", "character", function(.Object, template){
+setMethod("setTemplate", "character", function(.Object){
+  stopifnot(.Object %in% corpus()[["corpus"]])
   templateList <- getOption("polmineR.templates")
-  templateList[[.Object]] <- template
-  options("polmineR.templates" = templateList)
+  filename <- file.path(RegistryFile$new(.Object)$getHome(), "template.json")
+  if (file.exists(filename)){
+    templateList[[.Object]] <- jsonlite::fromJSON(txt = filename) 
+    options("polmineR.templates" = templateList)
+    invisible(templateList[[.Object]])
+  }
 })
 
+
 #' @rdname templates
+#' @importFrom jsonlite fromJSON
 setMethod("setTemplate", "missing", function(.Object, verbose = FALSE){
   if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
-    for (.Object in grep("PLPR", corpus()[["corpus"]], value = TRUE)){
-      if (verbose) message("template plpr for ", .Object)
-      setTemplate(.Object, getTemplate("plpr"))
-    }
-    for (C in corpus()[["corpus"]]){
-      filename <- file.path(RegistryFile$new(C)$getHome(), "template.R")
-      if (file.exists(filename)){
-        if (verbose) message("customized template found for ", C)
-        setTemplate(C, eval(parse(filename)))
-      }
-    }
+    for (x in corpus()[["corpus"]]) setTemplate(x)
   }
 })

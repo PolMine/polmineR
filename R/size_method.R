@@ -41,7 +41,11 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
     dt <- as.data.table(
       lapply(
         setNames(sAttribute, sAttribute),
-        function(sAttr) CQI$struc2str(x, sAttr, c(0:(CQI$attribute_size(x, sAttr, type = "s") - 1))))
+        function(sAttr){
+          sAttrDecoded <- CQI$struc2str(x, sAttr, 0:(CQI$attribute_size(x, sAttr, type = "s") - 1))
+          as.nativeEnc(sAttrDecoded, from = getEncoding(x))
+        }
+      )
     )
     if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
       if (verbose) message ("... polmineR.Rcpp available, going to use it")

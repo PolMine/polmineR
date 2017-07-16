@@ -56,7 +56,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
   
   if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
 
-  for (i in c(length(query):1)){
+  for (i in length(query):1){
     if (is.null(cpos_list[[i]])){
       warning("no hits for query: ", query[i])
       cpos_list[[i]] <- NULL
@@ -70,15 +70,16 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
     )
   
   if (!is.null(sAttribute)){
-    for (i in c(1:length(sAttribute))){
+    for (i in 1:length(sAttribute)){
       sAttributeValues <- CQI$struc2str(.Object, sAttribute[i], CQI$cpos2struc(.Object, sAttribute[i], DT[["cpos_left"]]))
+      sAttributeValues <- as.nativeEnc(sAttributeValues, from = getEncoding(.Object))
       DT[, eval(sAttribute[i]) := sAttributeValues]
     }
     TF <- DT[, .N, by = c(eval(c("query", sAttribute))), with = TRUE]
     setnames(TF, old = "N", new = "count")
     
-    if (freq == TRUE) size <- TRUE
-    if (size == TRUE){
+    if (freq) size <- TRUE
+    if (size){
       if (verbose) message("... getting sizes")
       SIZE <- size(.Object, sAttribute = sAttribute)
       setkeyv(TF, cols = sAttribute)
@@ -107,7 +108,9 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute 
   
   if (!is.null(sAttribute)){
     for (i in c(1:length(sAttribute))){
-      DT[, eval(sAttribute[i]) := CQI$struc2str(.Object@corpus, sAttribute[i], CQI$cpos2struc(.Object@corpus, sAttribute[i], DT[["cpos_left"]]))]
+      sAttrString <- CQI$struc2str(.Object@corpus, sAttribute[i], CQI$cpos2struc(.Object@corpus, sAttribute[i], DT[["cpos_left"]]))
+      sAttrString <- as.nativeEnc(sAttrString, from = .Object@encoding)
+      DT[, eval(sAttribute[i]) := sAttrString]
     }
     TF <- DT[, .N, by = c(eval(c("query", sAttribute))), with = TRUE]
     setnames(TF, old = "N", new = "count")

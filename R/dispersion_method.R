@@ -61,13 +61,13 @@ setMethod("dispersion", "partition", function(.Object, query, sAttribute, cqp = 
 })
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = is.cqp, pAttribute=getOption("polmineR.pAttribute"), freq=FALSE, mc=FALSE, progress=TRUE, verbose=TRUE){
+setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE){
   dispersion(
     hits(
       .Object, query = query, cqp = cqp, sAttribute = sAttribute, pAttribute = pAttribute, freq = freq,
       mc = mc, verbose = verbose, progress = progress
     ),
-    sAttribute=sAttribute, freq=freq
+    sAttribute = sAttribute, freq = freq
   )
 })
 
@@ -77,7 +77,7 @@ setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE){
   if (length(sAttribute) == 2){
     retval <- data.table::dcast.data.table(
       .Object@dt, formula(paste(sAttribute, collapse="~")),
-      value.var = ifelse(freq == TRUE, "freq", "count"), fun.aggregate = sum, fill = 0
+      value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0
       )  
   } else if (length(sAttribute) == 1){
     if (freq == FALSE){
@@ -85,7 +85,7 @@ setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE){
       retval <- .Object@dt[, sumup(.SD), by = c(sAttribute), with = TRUE]
       data.table::setnames(retval, old = "V1", new = "count")
     } else {
-      stop("not implemented for freq = TRUE")
+      retval <- .Object@dt
     }
   } else {
     warning("length(sAttribute) needs to be 1 or 2")

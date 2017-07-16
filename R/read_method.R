@@ -58,7 +58,7 @@ setMethod(
     highlight = list(), cqp = FALSE, tooltips = NULL,
     verbose = TRUE, cpos = FALSE, cutoff = getOption("polmineR.cutoff"), ...
     ){
-  if (is.null(meta)) meta <- getOption("polmineR.meta")
+  if (is.null(meta)) meta <- getOption("polmineR.templates")[[.Object@corpus]][["metadata"]]
   stopifnot(all(meta %in% sAttributes(.Object@corpus)))
   if (any(cqp) == TRUE) cpos <- TRUE
   fulltextHtml <- html(
