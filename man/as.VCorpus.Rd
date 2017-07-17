@@ -7,6 +7,9 @@
 \usage{
 \S4method{as.VCorpus}{partitionBundle}(x)
 }
+\arguments{
+\item{x}{a partitionBundle object}
+}
 \description{
 Coerce partitionBundle to VCorpus.
 }

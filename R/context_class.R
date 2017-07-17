@@ -26,6 +26,10 @@ NULL
 #' @slot call Object of class \code{"character"} call that generated the object
 #'     
 #' @param .Object object
+#' @param x a context object
+#' @param size integer indicating sample size
+#' @param object a context object
+#' @param progress logical, whether to show progress bar
 #' @aliases context_class show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
@@ -49,7 +53,7 @@ setClass("context",
 )
 
 #' @rdname context-class
-setMethod("sample", "kwic", function(x, size){
+setMethod("sample", "context", function(x, size){
   hits_unique <- unique(x@cpos[["hit_no"]])
   if (size > length(hits_unique)){
     warning("argument size exceeds number of hits, returning original object")

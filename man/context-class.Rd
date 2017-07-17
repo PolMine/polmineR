@@ -12,13 +12,13 @@
 \alias{summary,context-method}
 \alias{head,context-method}
 \alias{as.DataTables,context-method}
-\alias{sample,kwic-method}
+\alias{sample,context-method}
 \alias{count,context-method}
 \alias{enrich,context-method}
 \alias{trim,context-method}
 \title{Context class.}
 \usage{
-\S4method{sample}{kwic}(x, size)
+\S4method{sample}{context}(x, size)
 
 \S4method{count}{context}(.Object)
 
@@ -29,6 +29,10 @@
   progress = TRUE)
 }
 \arguments{
+\item{x}{a context object}
+
+\item{size}{integer indicating sample size}
+
 \item{.Object}{object}
 
 \item{sAttribute}{s-attribute(s) to add to data.table in cpos-slot}
@@ -38,6 +42,10 @@
 \item{id2str}{logical, whether to convert integer ids to expressive strings}
 
 \item{verbose}{logical, whether to be talkative}
+
+\item{object}{a context object}
+
+\item{progress}{logical, whether to show progress bar}
 }
 \description{
 Class to organize information of context analysis.

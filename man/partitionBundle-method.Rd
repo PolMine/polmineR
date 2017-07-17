@@ -37,6 +37,8 @@ partitionBundle(.Object, ...)
 \item{verbose}{logical, whether to provide progress information}
 
 \item{progress}{logical, whether to show progress bar}
+
+\item{xml}{logical}
 }
 \value{
 S4 class 'partitionBundle', with list of partition objects in slot 'objects'

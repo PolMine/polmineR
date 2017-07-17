@@ -54,7 +54,7 @@ install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages
           )
       }
       if (file.access(lib, "6") == -1){
-        stop("You do not have write permissions for directory ", destdir,
+        stop("You do not have write permissions for directory ", lib,
              ". Please run R with the required privileges, or provide another directory (param 'lib').")
       } else {
         install.packages(pkgs = package, repos = repo, lib = lib, ...)

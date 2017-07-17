@@ -13,6 +13,7 @@ NULL
 #' @param prefix a character vector that will be attached as a prefix to partition names
 #' @param progress logical, whether to show progress bar
 #' @param mc logical, whether to use multicore parallelization
+#' @param xml logical
 #' @param verbose logical, whether to provide progress information
 #' @param ... parameters to be passed into partition-method (see respective documentation)
 #' @return S4 class 'partitionBundle', with list of partition objects in slot 'objects'

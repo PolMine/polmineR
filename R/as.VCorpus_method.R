@@ -1,5 +1,6 @@
 #' Coerce partitionBundle to VCorpus.
 #' 
+#' @param x a partitionBundle object
 #' @importFrom tm as.VCorpus
 #' @exportMethod as.VCorpus
 #' @rdname as.VCorpus

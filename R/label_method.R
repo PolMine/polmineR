@@ -2,6 +2,7 @@
 #' 
 #' @param x object
 #' @param value length (character vector, length 1)
+#' @param n label index
 #' @param ... further parameters
 #' @rdname label_method
 #' @exportMethod label
@@ -11,6 +12,7 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 setGeneric("label<-", function(x, value) standardGeneric("label<-"))
 
 #' @importFrom utils menu
+#' @rdname label_method
 setMethod("label", "kwic", function(x, n = NULL){
   if (is.null(n)) n <- 1:length(x)
   for (i in n){

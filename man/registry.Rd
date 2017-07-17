@@ -4,7 +4,8 @@
 \alias{resetRegistry}
 \title{Reload using new CORPUS_REGISTRY.}
 \usage{
-resetRegistry(registryDir = NULL, verbose = TRUE)
+resetRegistry(registryDir = getOption("polmineR.defaultRegistry"),
+  verbose = TRUE)
 }
 \arguments{
 \item{registryDir}{path to the registry directory to be used}

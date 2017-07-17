@@ -22,6 +22,11 @@
 #' @param object an object of class \code{kwic}
 #' @param meta sAttributes (character vector) with metainformation
 #' @param table logical, whether to turn cpos data.table into data.frame for output
+#' @param size integer, the subset size for sampling
+#' @param highlight a list
+#' @param regex logical, whether to use regular expressions
+#' @param tooltips a list
+#' @param verbose logical
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}

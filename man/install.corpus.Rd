@@ -5,7 +5,8 @@
 \alias{packaged.corpora}
 \title{Install packaged corpus from repository.}
 \usage{
-install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", ...)
+install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages",
+  lib = .libPaths()[1], ...)
 
 packaged.corpora()
 }
@@ -13,6 +14,9 @@ packaged.corpora()
 \item{pkgs}{names of data packages with corpora}
 
 \item{repo}{URL of the repository}
+
+\item{lib}{directory for R packages, defaults to \code{.libPaths()[1]}; the path may not 
+include a whitespace sign}
 
 \item{...}{further parameters that will be passed into \code{install.packages}}
 }

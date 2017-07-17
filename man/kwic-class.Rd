@@ -35,13 +35,23 @@
 
 \item{x}{a kwic-class object}
 
+\item{size}{integer, the subset size for sampling}
+
 \item{.Object}{a kwic object}
 
 \item{meta}{sAttributes (character vector) with metainformation}
 
 \item{table}{logical, whether to turn cpos data.table into data.frame for output}
 
+\item{highlight}{a list}
+
+\item{regex}{logical, whether to use regular expressions}
+
 \item{perl}{logical, whether to use perl-style regular expressions for highlighting when regex is TRUE}
+
+\item{tooltips}{a list}
+
+\item{verbose}{logical}
 }
 \description{
 S4 class for organizing information for concordance output

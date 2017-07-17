@@ -433,7 +433,7 @@ install.packages("polmineR")
 
 The development version of \code{polmineR} can be installed using devtools:
 
-```{r}
+```{r, eval = FALSE}
 install.packages("devtools") # unless devtools is already installed
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
@@ -443,8 +443,11 @@ devtools::install_github("PolMine/polmineR", ref = "dev")
 
 The default interface of the polmineR package to access CWB indexed corpora is the package 'rcqp'. Accessing corpora will not work before you have installed the interface. The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:
 
-```{r}
-install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "mac.binary")
+```{r, eval = FALSE}
+install.packages("rcqp",
+                 repos = "http://polmine.sowi.uni-due.de/packages",
+                 type = "mac.binary"
+                 )
 ```
 
 If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.

@@ -21,7 +21,7 @@ getTemplate(.Object, ...)
 
 setTemplate(.Object, ...)
 
-\S4method{setTemplate}{character}(.Object, template)
+\S4method{setTemplate}{character}(.Object)
 
 \S4method{setTemplate}{missing}(.Object, verbose = FALSE)
 }
@@ -29,8 +29,6 @@ setTemplate(.Object, ...)
 \item{.Object}{object}
 
 \item{...}{further parameters}
-
-\item{template}{template to assign (a list)}
 
 \item{verbose}{logical, whether to be verbose}
 }

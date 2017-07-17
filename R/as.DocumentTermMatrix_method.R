@@ -211,7 +211,7 @@ setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = 
   hits <- hits[order(hits, decreasing = FALSE)]
   hit_index_new <- 1:length(hits)
   names(hit_index_new) <- as.character(hits)
-  CPOS2[, i := hit_index_new[as.character(CPOS2[["hit_no"]])]]
+  CPOS2[, "i" := hit_index_new[as.character(CPOS2[["hit_no"]])], with = TRUE]
   
   # create new index for word_ids
   if (verbose) message("... creating new index for tokens")
@@ -222,7 +222,7 @@ setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = 
     CQI$id2str(x@corpus, pAttribute, uniqueIDs),
     from = x@encoding
     )
-  CPOS2[, j := idIndexNew[as.character(CPOS2[[paste(pAttribute, "id", sep = "_")]])]]
+  CPOS2[, "j" := idIndexNew[as.character(CPOS2[[paste(pAttribute, "id", sep = "_")]])], with = TRUE]
   
   if (verbose) message("... putting together matrix")
   dtm <- simple_triplet_matrix(

@@ -4,7 +4,6 @@
 #' the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'.
 #' 
 #' @param .Object object 
-#' @param template template to assign (a list)
 #' @param verbose logical, whether to be verbose
 #' @param ... further parameters
 #' @exportMethod getTemplate

@@ -7,7 +7,6 @@
 #' @param html character vector with a website
 #' @param highlight a \code{"list"} of character vectors, the names need to provide the colors
 #' @param tooltips a \code{"list"} of character vectors, all names need to be included in lists of the highlight-list
-#' @param cqp logical, whether to use CQP syntax
 #' @param ... further parameters
 #' @name highlight
 #' @rdname highlight
