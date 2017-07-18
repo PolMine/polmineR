@@ -124,7 +124,7 @@ setMethod("context", "partition", function(
     setnames(ctxt@cpos, old = c("V2", "V3"), new = c("cpos", "position"))
     
     # add decoded tokens (ids at this stage)
-    ctxt <- enrich(ctxt, pAttribute = pAttribute, id2str = FALSE)
+    ctxt <- enrich(ctxt, pAttribute = pAttribute, id2str = FALSE, verbose = verbose)
 
     # generate positivelist/stoplist with ids and apply it
     if (!is.null(positivelist)){
@@ -175,7 +175,7 @@ setMethod("context", "partition", function(
     
     # check that windows do not transgress s-attribute
     if (verbose) message("... checking that context positions to not transgress regions")
-    ctxt <- enrich(ctxt, sAttribute = sAttribute)
+    ctxt <- enrich(ctxt, sAttribute = sAttribute, verbose = verbose)
     ctxt <- trim(ctxt, sAttribute = sAttribute, verbose = verbose, progress = progress)
     
     # put together raw stat table
@@ -280,7 +280,7 @@ setMethod("context", "partitionBundle", function(.Object, query, verbose=TRUE, .
 
 #' @param complete enhance completely
 #' @rdname context-method
-setMethod("context", "cooccurrences", function(.Object, query, complete=FALSE){
+setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE){
   newObject <- new(
     "context",
     query=query,

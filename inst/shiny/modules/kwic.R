@@ -14,7 +14,7 @@ kwicUiInput <- function(drop = NULL){
       selectInput("kwic_partition", "partition", choices = character())
     ),
     query = textInput("kwic_query", "query", value = ""),
-    neighbor = textInput("kwic_neighbor", "neighbor", value = ""),
+    positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
     sAttribute = selectInput(
       "kwic_meta", "sAttribute",
       choices = sAttributes(corpus()[["corpus"]][1]),
@@ -85,7 +85,7 @@ kwicServer <- function(input, output, session, ...){
               right = input$kwic_window,
               meta = input$kwic_meta,
               verbose = "shiny",
-              neighbor = input$kwic_neighbor,
+              # positivelist = input$kwic_positivelist,
               cpos = TRUE # required for reading
             )
           }

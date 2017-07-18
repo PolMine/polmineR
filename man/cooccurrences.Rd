@@ -22,7 +22,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  mc = FALSE, progress = TRUE, verbose = FALSE)
 
 \S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
 

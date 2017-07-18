@@ -70,7 +70,7 @@ setMethod(
     pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
-    mc = FALSE, progress = TRUE, verbose = FALSE, ...
+    mc = FALSE, progress = TRUE, verbose = FALSE
   ){
     C <- context(
       .Object = .Object, query = query, cqp = is.cqp,
@@ -81,11 +81,13 @@ setMethod(
       mc = mc, verbose = verbose, progress = progress
     )
     if (is.null(C)){
-      return(NULL)
+      retval <- NULL
     } else {
-      return( cooccurrences(C, method = method, verbose = verbose) )
+      retval <- cooccurrences(C, method = method, verbose = verbose)
     }
-  })
+    retval
+  }
+)
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE){
@@ -155,7 +157,10 @@ setMethod("cooccurrences", "partitionBundle", function(.Object, query, mc = getO
     
   }
   names(bundle@objects) <- names(.Object@objects)
-  for (i in 1:length(bundle@objects)) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
+  for (i in 1:length(bundle@objects)){
+    if (!is.null(bundle@objects[[i]])) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
+  }
+  for (i in rev(which(sapply(bundle@objects, is.null)))) bundle@objects[[i]] <- NULL
   bundle
 })
 

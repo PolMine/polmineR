@@ -20,6 +20,7 @@
 \alias{name<-,partition,character-method}
 \alias{length,partition-method}
 \alias{hist,partition-method}
+\alias{length,partition-method}
 \alias{aggregate,partition-method}
 \alias{as.markdown,partition-method}
 \alias{enrich,partition-method}
@@ -37,6 +38,8 @@
 \S4method{length}{partition}(x)
 
 \S4method{hist}{partition}(x, ...)
+
+\S4method{length}{partition}(x)
 
 \S4method{aggregate}{partition}(x)
 

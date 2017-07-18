@@ -98,7 +98,7 @@ cooccurrencesServer <- function(input, output, session){
       if (length(input$cooccurrences_table_rows_selected) > 0){
         updateTextInput(session, "kwic_query", value = values[["cooccurrences"]]@query)
         updateTextInput(
-          session, "kwic_neighbor",
+          session, "kwic_positivelist",
           value = values[["cooccurrences"]]@stat[[input$cooccurrences_pAttribute[1]]][input$cooccurrences_table_rows_selected]
         )
         if (input$kwic_object == "partition"){
@@ -133,7 +133,7 @@ cooccurrencesServer <- function(input, output, session){
 
 #' @rdname polmineR_gui
 setMethod("cooccurrences", "missing", function(){
-  if (requireNamespace("shiny", quietly=TRUE)){
+  if (requireNamespace("shiny", quietly = TRUE)){
     shiny::runApp(system.file("shiny", "cooccurrences", package = "polmineR"), launch.browser = TRUE)  
     # shiny::runApp("/Users/blaette/Lab/github/polmineR/inst/shiny/cooccurrences", launch.browser=TRUE)
   } else {

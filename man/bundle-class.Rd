@@ -84,7 +84,7 @@ Ps <- partitionBundle(
   "EUROPARL-EN", sAttribute = "text_year",
   values = sAttributes("EUROPARL-EN", "text_year")
 )
-Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE)
+Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE, progress = TRUE)
 dt <- as.data.table(Cs, col = "ll")
 m <- as.matrix(Cs, col = "ll")
 }

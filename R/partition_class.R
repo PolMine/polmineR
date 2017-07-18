@@ -205,4 +205,5 @@ setAs("partition", "data.table", function(from) data.table(count(from)) )
 #' @rdname partition_class
 setMethod("hist", "partition", function(x, ...){hist(x@stat[,"count"], ...)})
 
-
+#' @rdname partition_class
+setMethod("length", "partition", function(x) 1)
