@@ -3,30 +3,40 @@
 \docType{methods}
 \name{decode}
 \alias{decode}
-\alias{decode,Corpus-method}
 \alias{decode,character-method}
-\title{Decode corpus.}
+\title{Decode corpus or s-attribute.}
 \usage{
 decode(.Object, ...)
 
-\S4method{decode}{Corpus}(.Object, verbose = TRUE)
-
-\S4method{decode}{character}(.Object, sAttribute, verbose = TRUE)
+\S4method{decode}{character}(.Object, sAttribute = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{the corpus to decode (character vector)}
 
 \item{...}{further parameters}
 
-\item{verbose}{logical}
-
 \item{sAttribute}{the s-attribute to decode}
+
+\item{verbose}{logical}
+}
+\value{
+a \code{data.table}
 }
 \description{
-An encoded CWB corpus is turned into a tibble.
+Decode either a corpus, or a s-attribute.
 }
 \examples{
 \dontrun{
-PLPRBTTXT <- Corpus$new("PLPRBTTXT")
+use("polmineR.sampleCorpus")
+
+# Scenario 1: Decode one s-attribute
+dt <- decode("PLPRBTTXT", sAttribute = "text_date")
+
+# Scenario 2: Decode corpus entirely
+dt <- decode("PLPRBTTXT")
+
 }
+}
+\seealso{
+\code{\link{encode}}
 }

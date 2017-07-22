@@ -2,13 +2,25 @@
 % Please edit documentation in R/install.corpus_function.R
 \name{install.corpus}
 \alias{install.corpus}
+\alias{remove.corpus}
+\alias{rename.corpus}
+\alias{copy.corpus}
 \alias{packaged.corpora}
+\alias{copy.corpus}
+\alias{rename.corpus}
+\alias{remove.corpus}
 \title{Install packaged corpus from repository.}
 \usage{
 install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages",
   lib = .libPaths()[1], ...)
 
 packaged.corpora()
+
+copy.corpus(old, new, verbose = TRUE)
+
+rename.corpus(old, new, verbose = TRUE)
+
+remove.corpus(old)
 }
 \arguments{
 \item{pkgs}{names of data packages with corpora}
@@ -19,6 +31,10 @@ packaged.corpora()
 include a whitespace sign}
 
 \item{...}{further parameters that will be passed into \code{install.packages}}
+
+\item{old}{name of the (old) corpus}
+
+\item{new}{name of the (new) corpus}
 }
 \description{
 Convenience function for making the installation of indexed CWB corpora

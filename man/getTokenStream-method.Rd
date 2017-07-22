@@ -7,7 +7,7 @@
 \alias{getTokenStream,matrix-method}
 \alias{getTokenStream,character-method}
 \alias{getTokenStream,partition-method}
-\alias{getTokenStream,Regions-method}
+\alias{getTokenStream,regions-method}
 \title{Get Token Stream Based on Corpus Positions.}
 \usage{
 getTokenStream(.Object, ...)
@@ -24,7 +24,7 @@ getTokenStream(.Object, ...)
 \S4method{getTokenStream}{partition}(.Object, pAttribute, collapse = NULL,
   cpos = FALSE, ...)
 
-\S4method{getTokenStream}{Regions}(.Object, pAttribute = "word", ...)
+\S4method{getTokenStream}{regions}(.Object, pAttribute = "word", ...)
 }
 \arguments{
 \item{.Object}{an object of class \code{matrix} or \code{partition}}

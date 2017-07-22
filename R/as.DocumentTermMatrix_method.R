@@ -74,6 +74,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
   struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
   tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
   rm(token_id, struc_id)
+  tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
   
   if (verbose) message("... counting token per doc")
   countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]

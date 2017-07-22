@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.4
-Date: 2017-07-17
+Version: 0.7.4.9001
+Date: 2017-07-19
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -54,16 +54,15 @@ Collate:
     'Corpus_class.R'
     'Labels.R'
     'Partition.R'
-    'generics.R'
-    'textstat_class.R'
-    'polmineR_package.R'
-    'partition_class.R'
-    'Regions_class.R'
     'RegistryFile.R'
     'TermDocumentMatrix_methods.R'
     'Textstat.R'
     'TokenStream_class.R'
     'adjustEncoding_method.R'
+    'generics.R'
+    'textstat_class.R'
+    'polmineR_package.R'
+    'partition_class.R'
     'aggregate_method.R'
     'bundle_class.R'
     'features_class.R'
@@ -93,6 +92,7 @@ Collate:
     'dispersion_method.R'
     'divide_method.R'
     'dotplot_method.R'
+    'regions_class.R'
     'encode_method.R'
     'encoding_method.R'
     'enrich_method.R'

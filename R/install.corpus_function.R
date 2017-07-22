@@ -23,6 +23,8 @@
 #' \code{/extdata/cwb/registry} for registry files and a directory
 #' \code{/extdata/cwb/indexed_corpora} for the inexed corpus files.
 #' 
+#' @param old name of the (old) corpus
+#' @param new name of the (new) corpus
 #' @param pkgs names of data packages with corpora
 #' @param repo URL of the repository 
 #' @param lib directory for R packages, defaults to \code{.libPaths()[1]}; the path may not 
@@ -43,6 +45,7 @@
 #' }
 #' @importFrom utils available.packages contrib.url install.packages
 #' @rdname install.corpus
+#' @aliases remove.corpus rename.corpus copy.corpus
 install.corpus <- function(pkgs, repo = "http://polmine.sowi.uni-due.de/packages", lib = .libPaths()[1], ...){
   for (package in pkgs){
     if (package %in% utils::available.packages(utils::contrib.url(repos = repo))){
@@ -89,3 +92,109 @@ packaged.corpora <- function(){
   M <- M[which(nchar(M[["registry"]]) > 0)]
   M
 }
+
+#' @rdname install.corpus
+#' @export copy.corpus
+copy.corpus <- function(old, new, verbose = TRUE){
+  stopifnot(old %in% CQI$list_corpora())
+  
+  # copy data directory
+  if (verbose) message("... copying data directory")
+  R <- RegistryFile$new(old)
+  newDataDir <- file.path(dirname(R$getHome()), tolower(new))
+  if (file.exists(newDataDir)){
+    if (!readline(prompt = "Data directory already exists. Proceed anyway (Y for yes)? ") == "Y")
+      stop("Aborting the operation.")
+  } else {
+    dir.create(newDataDir)
+  }
+  filesToCopy <- list.files(R$getHome(), full.names = TRUE)
+  success <- pbapply::pblapply(
+    filesToCopy,
+    function(x){
+      file.copy(from = x, to = newDataDir, recursive = TRUE)
+    })
+  if (!all(unlist(success))){
+    stop("copying the data directory failed")
+  } else {
+    message("... copying data directory succeeded")
+  }
+  
+  # generate copy of registry file
+  if (verbose) message("... make copy of registry file")
+  newRegistryFile <- file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(new))
+  if (file.exists(newRegistryFile)){
+    if (readline(prompt = "New registry file already exists. Proceed anyway (Y for yes)? ") == "Y"){
+      file.remove(newRegistryFile)
+    } else {
+      stop("Aborting the operation.")
+    }
+      
+  }
+  success <- file.copy(
+    from = file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(old)),
+    to = file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(new))
+  )
+  if (!success){
+    stop("copying the registry file failed")
+  } else {
+    message("... copying registry file succeeded")
+  }
+  
+  # modify the new registry file 
+  if (verbose) message("... updating new registry file")
+  newRegistry <- RegistryFile$new(new)
+  newRegistry$setId(tolower(new))
+  newRegistry$setHome(new = newDataDir)
+  newRegistry$write()
+}
+
+#' @rdname install.corpus
+#' @export rename.corpus
+rename.corpus <- function(old, new, verbose = TRUE){
+  
+  # check that old corpus exists
+  stopifnot(old %in% CQI$list_corpora())
+  # check that new corpus does not yet exist
+  if (toupper(new) %in% CQI$list_corpora()){
+    stop("Corpus provided by 'new' already exists - do not overwrite an existing corpus")
+  }
+  
+  # rename registry file
+  if (verbose) message("... renaming registry file")
+  registry_old <- file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(old))
+  registry_new <- file.path(dirname(registry_old), tolower(new))
+  success <- file.rename(from = registry_old, to = registry_new)
+  if (!success) stop("renaming the registry file failed")
+  
+  # rename data directory
+  if (verbose) message("... renaming data directory")
+  R <- RegistryFile$new(filename = registry_new)
+  data_directory_old <- R$getHome()
+  data_directory_new <- file.path(dirname(data_directory_old), tolower(new))
+  success <- file.rename(from = data_directory_old, to = data_directory_new)
+  if (!success) stop("renaming the data directory failed")
+  
+  # modify and save registry file
+  if (verbose) message("... modifying and saving registry file")
+  R$setHome(new = data_directory_new)
+  R$setId(new = tolower(new))
+  R$write()
+}
+
+#' @rdname install.corpus
+#' @export remove.corpus
+remove.corpus <- function(old){
+  
+  stopifnot(old %in% CQI$list_corpora()) # check that corpus exists
+  
+  data_directory <- RegistryFile$new(old)$getHome()
+  if (readline(prompt = "Are you sure you want to delete the data directory (Y for yes): ") == "Y"){
+    for (x in list.files(data_directory, full.names = TRUE)) file.remove(x)
+    file.remove(data_directory)
+  }
+  if (readline(prompt = "Are you sure you want to delete the registry file (Y for yes): ") == "Y"){
+    file.remove(file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(old)))
+  }
+}
+

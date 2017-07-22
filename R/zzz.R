@@ -35,6 +35,7 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
     "polmineR.cwb-s-decode" = FALSE,
     "polmineR.cwb-encode" = FALSE,
     "polmineR.cwb-lexdecode" = FALSE,
+    "polmineR.cwb-regedit" = FALSE,
     "polmineR.defaultRegistry" = Sys.getenv("CORPUS_REGISTRY")
   )
   
@@ -48,6 +49,9 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
       options("polmineR.cwb-encode" = TRUE)
     if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-lexdecode" = TRUE)
+    if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)
+      options("polmineR.cwb-regedit" = TRUE)
+    
   }
 }
 

@@ -5,7 +5,8 @@
 \alias{encode}
 \alias{encode,data.frame-method}
 \alias{encode,data.table-method}
-\title{Encode CWB Corpus.}
+\alias{encode,regions-method}
+\title{Encode s-attribute or corpus.}
 \usage{
 encode(.Object, ...)
 
@@ -13,10 +14,12 @@ encode(.Object, ...)
   sAttributes = NULL, registry = Sys.getenv("CORPUS_REGISTRY"),
   indexedCorpusDir = NULL, verbose = TRUE)
 
-\S4method{encode}{data.table}(.Object, corpus, sAttribute)
+\S4method{encode}{data.table}(.Object, corpus, sAttribute, verbose = TRUE)
+
+\S4method{encode}{regions}(.Object, sAttribute, values, verbose = TRUE)
 }
 \arguments{
-\item{.Object}{a data.frame to encode}
+\item{.Object}{a \code{data.frame} to encode}
 
 \item{...}{further parameters}
 
@@ -37,5 +40,38 @@ encode(.Object, ...)
 \item{sAttribute}{a single s-attribute}
 }
 \description{
-Encode CWB Corpus.
+If .Object is a \code{data.frame}, it needs to have a column with the token
+stream (column name 'word'), and further columns with either p-attriutes,
+or s-attributes. The corpus will be encoded successively, starting with the
+p-attributes.
+}
+\details{
+If .Object is a \code{data.table}, it is assumed to have three columns: The
+left corpus position, the right corpus position and the value of a s-attribute
+that will be encoded.
+}
+\examples{
+\donttest{
+library(tm)
+reut21578 <- system.file("texts", "crude", package = "tm")
+reuters.tm <- VCorpus(DirSource(reut21578), list(reader = readReut21578XMLasPlain))
+
+library(tidytext)
+reuters.tibble <- tidy(reuters.tm)
+reuters.tibble[["topics_cat"]] <- sapply(
+  reuters.tibble[["topics_cat"]],
+  function(x) paste(reuters.tibble[["topics_cat"]], collapse = "|")
+)
+reuters.tibble[["places"]] <- sapply(
+  reuters.tibble[["places"]],
+  function(x) paste(x, collapse = "|")
+)
+reuters.tidy <- unnest_tokens(
+  reuters.tibble, output = "word", input = "text", to_lower = FALSE
+)
+encode(
+  reuters.tidy, name = "reuters",
+  sAttributes = c("language", "places")
+)
+}
 }

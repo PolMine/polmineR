@@ -1,3 +1,6 @@
+#' @include regions_class.R
+NULL
+
 #' Display and read full text
 #' 
 #' Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
@@ -107,7 +110,7 @@ setMethod("read", "kwic", function(.Object, i, type=NULL){
 })
 
 #' @rdname read-method
-setMethod("read", "Regions", function(.Object, meta = NULL){
+setMethod("read", "regions", function(.Object, meta = NULL){
   toShow <- getTokenStream(.Object)
   if (is.null(meta) == FALSE){
     .getMetadata <- function(.BY, meta){

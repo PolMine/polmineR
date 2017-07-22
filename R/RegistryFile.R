@@ -1,5 +1,13 @@
 #' Read, parse and modify registry file.
 #' 
+#' The class includes methods to read, modify and write a registry file.
+#' Several operations could be accomplished with the 'cwb-regedit' tool,
+#' the functions defined here ensure that manipulating the registry is 
+#' possible without a full installation of the CWB.
+#' 
+#' An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
+#' includes an explanation of the registry file format. 
+#' 
 #' @param corpus name of the CWB corpus
 #' @param new a new value to set
 #' @param filename a filename
@@ -96,6 +104,17 @@ RegistryFile <- setRefClass(
       invisible(.self$id)
     },
     
+    setId = function(new){
+      
+      "Set the id of a corpus"
+      
+      if (length(.self$txt) == 0) .self$read()
+      idline <- grep("^ID\\s+.*?$", .self$txt)
+      .self$txt[idline] <- sprintf("ID %s", new)
+      .self$id <- new
+    
+    },
+    
     getHome = function(){
       
       "Get the home directory of a corpus."
@@ -144,8 +163,61 @@ RegistryFile <- setRefClass(
       
       if (length(.self$txt) == 0) .self$read()
       sAttrLines <- grep("\\[annotations\\]", .self$txt)
-      gsub("^STRUCTURE\\s+(.*?)\\t.*?$", "\\1", .self$txt[sAttrLines])
+      gsub("^STRUCTURE\\s+(.*?)\\s.*?$", "\\1", .self$txt[sAttrLines], perl = TRUE)
       
+    },
+    
+    addSAttribute = function(sAttribute){
+      
+      "Add an s-attribute."
+      
+      if (sAttribute %in% .self$getSAttributes()){
+        stop("doing nothing - sAttribute already declared")
+      }
+      if (getOption("polmineR.cwb-regedit") == FALSE){
+        sAttrLines <- grep("\\[annotations\\]", .self$txt)
+        if (length(sAttrLines) == 0){
+          sAttrLine <- grep("^##\\ss-attributes", .self$txt) + 1
+          .self$txt <- c(
+            .self$txt[1:(sAttrLine + 1)],
+            "",
+            sprintf("STRUCTURE %s # [annotations]", sAttribute),
+            .self$txt[(sAttrLine + 2):length(.self$txt)]
+          )
+        } else {
+          sAttrLines <- grep("\\[annotations\\]", .self$txt)
+          .self$txt <- c(
+            .self$txt[1:sAttrLines[length(sAttrLines)]],
+            sprintf("STRUCTURE %s # [annotations]", sAttribute),
+            .self$txt[(sAttrLines[length(sAttrLines)] + 2):length(.self$txt)]
+          )
+        }
+      } else {
+        cmd <- c(
+          "cwb-regedit",
+          "-r", Sys.getenv("CORPUS_REGISTRY"),
+          tolower(.self$getId()),
+          ":add", ":s", sAttribute
+        )
+        system(paste(cmd, collapse = " "))
+        .self$read()
+      }
+      .self$getSAttributes()
+    },
+    
+    dropSAttribute = function(sAttribute){
+      
+      "Drop a s-attribute."
+      
+      if (!sAttribute %in% .self$getSAttributes()){
+        stop("doing nothing - sAttribute not yet declared")
+      }
+      sAttrLine <- grep(sprintf("$STRUCTURE %s", sAttribute), .self$txt)
+      .self$txt <- c(
+        .self$txt[1:(sAttrLine - 1)],
+        .self$txt[(sAttrLine + 1):length(.self$txt)]
+      )
+      .self$getSAttributes()
     },
     
     getProperties = function(){
@@ -160,6 +232,27 @@ RegistryFile <- setRefClass(
         function(x) strsplit(gsub('^##::.*?=\\s"(.*?)".*?$', "\\1", .self$txt[x]), "\\|")[[1]]
       )
       invisible(.self$properties)
+    },
+    
+    setProperty = function(property, value){
+      
+      "Set a corpus property."
+      
+      props <- .self$getProperties()
+      new_line <- sprintf('##:: %s = "%s"', property, value)
+      if (property %in% names(props)){
+        line_no <- grep(sprintf("^##::\\s*%s", property), .self$txt)
+        .self$txt[line_no] <- new_line
+      } else {
+        property_lines <- grep("^##::", .self$txt)
+        last_property_line <- property_lines[length(property_lines)]
+        .self$txt <- c(
+          .self$txt[1:last_property_line],
+          new_line,
+          .self$txt[(last_property_line + 1):length(.self$txt)]
+        )
+      }
+      .self$getProperties()
     },
     
     parse = function(){
@@ -177,6 +270,9 @@ RegistryFile <- setRefClass(
     },
     
     setHome = function(new){
+      
+      "Set the home directory to a new location."
+      
       if (dir.exists(new)){
         home_position <- grep("^HOME.*?$", .self$txt)
         .self$txt[home_position] <- paste("HOME", new, sep = " ")
@@ -187,12 +283,18 @@ RegistryFile <- setRefClass(
     },
     
     write = function(filename = NULL){
+      
+      "Write registry file to disk."
+      
       if (!is.null(filename)) .self$filename <- filename
       message("... writing registry: ", .self$filename)
       cat(.self$txt, file = .self$filename, sep = "\n")
     },
     
     adjustHome = function(){
+      
+      "Reset the home directory. This will usually be necessary after installing a data package."
+      
       if (.self$package %in% utils::installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
         if (.Platform$OS.type == "windows"){
