@@ -115,7 +115,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   if (interjections){
     maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1
     if (maxNoStrucs != length(.Object@strucs)){
-      .Object@strucs <- c(.Object@strucs[1]:.Object@strucs[length(.Object@strucs)])
+      .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
       if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
         .Object@cpos <- polmineR.Rcpp::get_region_matrix(
@@ -133,13 +133,12 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   }
   
   # detect where a change of metainformation occurs
+  metadata <- as.matrix(sAttributes(.Object, sAttribute = meta)) # somewhat slow
   if (length(.Object@strucs) > 1){
-    metadata <- as.matrix(sAttributes(.Object, sAttribute = meta)) # somewhat slow
     metaChange <- sapply(2:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1,]))
     metaChange <- c(TRUE, metaChange)
   } else {
     metaChange <- TRUE
-    metadata <- matrix(apply(metadata, 2, function(x) as.vector(x)), nrow = 1)
   }
   
   type <- CQI$struc2str(.Object@corpus, template[["speech"]][["sAttribute"]], .Object@strucs)
@@ -158,7 +157,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   markdown <- sapply(
     1:nrow(metadata),
     function(i) {
-      meta <- c("")
+      meta <- ""
       if (metaChange[i] == TRUE) { 
         meta <- paste(metadata[i,], collapse=" | ", sep="")
         meta <- paste(
@@ -189,61 +188,3 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   markdown <- gsub("\n - ", "\n", markdown)
   markdown
 })
-
-#' 
-#' #' @rdname as.markdown
-#' setMethod("as.markdown", "pressPartition", function(.Object, meta=c("text_newspaper", "text_date"), cpos=FALSE){
-#'   articles <- apply(.Object@cpos, 1, function(row) {
-#'     cposSeries <- c(row[1]:row[2])
-#'     textStruc <- CQI$cpos2struc(.Object@corpus, ".text", row[1])
-#'     pStrucs <- CQI$cpos2struc(.Object@corpus, ".p_type", cposSeries)
-#'     chunks <- split(cposSeries, pStrucs)
-#'     pTypes <- CQI$struc2str(.Object@corpus, ".p_type", as.numeric(names(chunks)))
-#'     article <- Map(
-#'       function(pType, chunk){
-#'         tokens <- getTokenStream(
-#'           matrix(c(chunk[1], chunk[length(chunk)]), nrow=1),
-#'           corpus=.Object@corpus, pAttribute="word", encoding=.Object@encoding,
-#'           cpos=cpos
-#'         )
-#'         if (cpos == TRUE) tokens <- sprintf('<span id="%s">%s</span>', names(tokens), tokens)
-#'         para <- paste(tokens, collapse=" ")
-#'         # Encoding(para) <- .Object@encoding
-#'         #para <- as.utf8(para)
-#'         para
-#'       },
-#'       pTypes, chunks
-#'     )
-#'     metaInformation <- sapply(
-#'       meta,
-#'       function(x) {
-#'         retval <- CQI$struc2str(.Object@corpus, x, textStruc)
-#'         Encoding(retval) <- .Object@encoding
-#'         retval <- as.utf8(retval)
-#'         retval
-#'       })
-#'     metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
-#'     article <- c(
-#'       meta=metaInformation,
-#'       article)
-#'     .formattingFactory <- list(
-#'       meta = function(x) paste("### ", x, sep=""),
-#'       title = function(x) paste("## ", x, sep=""),
-#'       teaser = function(x) paste("_", x, "_\n", sep=""),
-#'       body = function(x) paste(x, "\n", sep=""),
-#'       highlight = function(x) paste("_", x, "_\n", sep=""),
-#'       headline = function(x) paste("# ", x, sep="")
-#'     )
-#'     formattedArticle <- lapply(
-#'       c(1:length(article)),
-#'       function(x) .formattingFactory[[names(article)[x]]](article[[x]])
-#'     )
-#'     markdown <- paste(formattedArticle, collapse="\n\n")
-#'     # markdown <- as.utf8(markdown)
-#'     markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
-#'     markdown
-#'   })
-#'   paste(c("\n", unlist(articles)), collapse='\n* * *\n')
-#' })
-#' 
-#' 

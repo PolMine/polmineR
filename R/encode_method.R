@@ -5,14 +5,20 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 
 #' Encode s-attribute or corpus.
 #' 
-#' If .Object is a \code{data.frame}, it needs to have a column with the token
-#' stream (column name 'word'), and further columns with either p-attriutes,
+#' If \code{.Object} is a \code{data.frame}, it needs to have a column with the token
+#' stream (column name 'word'), and further columns with either p-attributes,
 #' or s-attributes. The corpus will be encoded successively, starting with the
 #' p-attributes.
 #' 
-#' If .Object is a \code{data.table}, it is assumed to have three columns: The
+#' If \code{.Object} is a \code{data.table}, it is assumed to have three columns: The
 #' left corpus position, the right corpus position and the value of a s-attribute
-#' that will be encoded.
+#' that will be encoded. The method is used to add s-attributes to a corpus.
+#' 
+#' If \code{.Object} is a (character) \code{vector}, there are two usages. If the corpus
+#' defined by the parameter \code{corpus} does not yet exist, the vector is taken as
+#' the word token stream. A new registry file, and a new data directory will be generated.  If
+#' the \code{corpus} already exists, a new p-attribute will be added to the pre-existing
+#' corpus.
 #' 
 #' @param .Object a \code{data.frame} to encode
 #' @param name name of the (new) CWB corpus
@@ -53,70 +59,23 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 setMethod("encode", "data.frame", function(
   .Object, name, pAttributes = "word", sAttributes = NULL,
   registry = Sys.getenv("CORPUS_REGISTRY"),
-  indexedCorpusDir = NULL,
+  dataDir = NULL,
   verbose = TRUE
 ){
   
-  if (!require("plyr", quietly = FALSE)){
-    stop("package 'plyr' required but not available")
-  }
+  if (!require("plyr", quietly = FALSE)) stop("package 'plyr' required but not available")
   
-  # generate indexedCorpusDir if not provided explicitly
-  if (is.null(indexedCorpusDir)){
-    pathElements <- strsplit(registry, "/")[[1]]
-    pathElements <- pathElements[which(pathElements != "")]
-    pathElements <- pathElements[1:(length(pathElements) - 1)]
-    registrySuperDir <- paste("/", paste(pathElements, collapse = "/"), sep = "")
-    targetDir <- grep("index", list.files(registrySuperDir), value = TRUE)
-    indexedCorpusDir <- file.path(registrySuperDir, targetDir, name)
-    if (verbose){
-      cat("No directory for indexed corpus provided - suggesting to use: ", indexedCorpusDir)
-      feedback <- readline(prompt = "Y/N\n")
-      if (feedback != "Y") return(NULL)
-    }
-  }
-  
-  if (!dir.exists(indexedCorpusDir)) dir.create(indexedCorpusDir)
-  
+  if (!"id" %in% colnames(.Object)) stop("column 'id' required")
+
   # starting basically - pAttribute 'word'
-  
-  if (verbose) message("... indexing s-attribute word")
-  vrtTmpFile <- tempfile()
-  cat(.Object[["word"]], file = vrtTmpFile, sep = "\n")
-  
-  cwbEncodeCmd <- paste(
-    c(
-      "cwb-encode",
-      "-d", indexedCorpusDir, # directory with indexed corpus files
-      "-f", vrtTmpFile, # vrt file
-      "-R", file.path(registry, name) # filename of registry file
-    ),
-    collapse = " "
-  )
-  system(cwbEncodeCmd)
-  
+  encode(.Object[["word"]], corpus = name, dataDir = dataDir)
+
   # add other pAttributes than 'word'
   if (length(pAttributes > 1)){
     for (newAttribute in pAttributes[which(pAttributes != "word")]){
-      if (verbose) message("... indexing p-attribute ", newAttribute)
-      cwbEncodeCmd <- paste(
-        c(
-          "cwb-encode",
-          "-d", indexedCorpusDir, # directory with indexed corpus files
-          "-f", vrtTmpFile, # vrt file
-          "-R", file.path(registry, name), # filename of registry file
-          "-p", "-", "-P", newAttribute
-        ),
-        collapse = " "
-      )
-      system(cwbEncodeCmd)
+      encode(.Object[[newAttribute]], pAttribute = newAttribute)
     }
   }
-  
-  # call cwb-make
-  if (verbose) message("... calling cwb-make")
-  cwbMakeCmd <- paste(c("cwb-make", "-V", name), collapse = " ")
-  system(cwbMakeCmd)
   
   .Object[["cpos"]] <- 0:(nrow(.Object) - 1)
   
@@ -138,7 +97,6 @@ setMethod("encode", "data.frame", function(
       cpos_left = as.character(newTab[["cpos_left"]]),
       cpos_right = as.character(newTab[["cpos_right"]]),
       value = as.character(newTab[[sAttr]])
-      
     )
     encode(
       dt, corpus = toupper(name),
@@ -183,4 +141,98 @@ setMethod("encode", "regions", function(.Object, sAttribute, values, verbose = T
   dt <- as.data.table(.Object, values = values)
   encode(dt, corpus = .Object@corpus, sAttribute = sAttribute, verbose = verbose)
   invisible(dt)
+})
+
+#' @rdname encode-method
+setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAttribute = NULL, dataDir = NULL, verbose = TRUE){
+  
+  vrtTmpFile <- tempfile()
+  
+  if (corpus %in% corpus()[["corpus"]]){
+    
+    if (length(.Object) != size(corpus))
+      stop("Length of character vector must be identical with size of corpus - not TRUE.")
+
+    if (is.null(pAttribute))
+      stop("pAttribute needs to be defined")
+    
+    if (pAttribute %in% pAttributes(corpus))
+      stop("pAttribute already exists")
+    
+    if (any(grepl("^\\s*<.*?>\\s*$", words)))
+      warning("there is markup in the character vector - cwb-encode will issue warnings")
+
+    # ensure that encoding of .Object vector is encoding of corpus
+    if (verbose) message("... checking encoding")
+    if (!getEncoding(corpus) %in% names(table(Encoding(.Object)))){
+      if (verbose) message("... encoding of vector different from corpus - assuming it to be that of the locale")
+      .Object <- as.corpusEnc(.Object, from = localeToCharset()[1], corpusEnc = getEncoding(corpus))
+    }
+
+    if (verbose) message("... writing vector to disk for p-attribute ", pAttribute)
+    cat(.Object, file = vrtTmpFile, sep = "\n")
+    
+    if (verbose) message("... calling cwb-encode")
+    cwbEncodeCmdVec <- c(
+      "cwb-encode",
+      "-d", RegistryFile$new(corpus)$getHome(), # directory with indexed corpus files
+      "-f", vrtTmpFile,
+      "-R", file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus)),
+      "-p", "-", "-P", pAttribute
+    )
+    cwbEncodeCmd <- paste0(cwbEncodeCmdVec, collapse = " ")
+    system(cwbEncodeCmd)
+    
+    if (verbose) message("... calling cwb-make")
+    
+  } else {
+    
+    if (verbose) message("Creating new CWB indexed corpus ", corpus)
+    
+    encodingInput <- unique(Encoding(.Object))
+    if (length(encodingInput) == 1){
+      
+    } else if (length(encodingInput) == 2){
+      
+    } else {
+      stop("please check encoding of the input character vector - more than one encoding found")
+    }
+    
+    if (verbose) message("... writing token stream to disk")
+    cat(.Object, file = vrtTmpFile, sep = "\n")
+    
+    if (verbose) message("... check for data directory")
+    if (is.null(dataDir)){
+      superDir <- dirname(Sys.getenv("CORPUS_REGISTRY"))
+      targetDir <- grep("index", list.files(superDir), value = TRUE, perl = TRUE)
+      if (length(targetDir) != 1) stop("no dataDir provided, no candidate found")
+      dataDir <- file.path(superDir, targetDir, tolower(corpus))
+      feedback <- readline(
+        prompt = sprintf(
+          "No directory for indexed corpus provided - suggesting to use: %s (Y/N) ",
+          dataDir
+        )
+      )
+      if (feedback != "Y") stop("aborting")
+      if (!file.exists(dataDir)) dir.create(dataDir)
+    }
+    
+    if (verbose) message("... running cwb-encode")
+    cwbEncodeCmdVec <- c(
+      "cwb-encode",
+      "-d", dataDir, # directory with indexed corpus files
+      "-f", vrtTmpFile,
+      "-R", file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus))
+    )
+    cwbEncodeCmd <- paste0(cwbEncodeCmdVec,collapse = " ")
+    system(cwbEncodeCmd)
+    
+  }
+  
+  if (verbose) message("... running cwb-make")
+  cwbMakeCmd <- paste0(
+    c("cwb-make", "-V", corpus, "-r", Sys.getenv("CORPUS_REGISTRY")),
+    collapse = " "
+    )
+  system(cwbMakeCmd)
 })

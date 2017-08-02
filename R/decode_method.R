@@ -40,8 +40,9 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
         "-r", Sys.getenv("CORPUS_REGISTRY"), .Object,
         "-S", sAttribute
       )
+      cmd <- paste(cmd, collapse = " ", sep = " ")
       if (verbose) message(cmd)
-      raw <- system(paste(cmd, collapse = " ", sep = " "), intern = TRUE)
+      raw <- system(cmd, intern = TRUE)
       Encoding(raw) <- getEncoding(.Object)
       raw2 <- as.nativeEnc(x = raw, from = getEncoding(.Object))
       y <- as.data.table(do.call(rbind, strsplit(raw2, "\\t")), stringsAsFactors = FALSE)
