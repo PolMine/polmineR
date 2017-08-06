@@ -111,7 +111,7 @@ setMethod("encode", "data.table", function(.Object, corpus, sAttribute, verbose 
   stopifnot(ncol(.Object) == 3)
   
   if (verbose) message("... preparing data")
-  .Object[[1]] <- as.character(as.integer(.Object[[1]]))
+  .Object[[1]] <- as.character(as.integer(.Object[[1]])) # ensure that cpos are integers
   .Object[[2]] <- as.character(as.integer(.Object[[2]]))
   lines <- apply(.Object, 1, function(x) paste(x, collapse = "\t"))
   lines <- paste(lines, "\n", sep = "")
@@ -159,7 +159,7 @@ setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAtt
     if (pAttribute %in% pAttributes(corpus))
       stop("pAttribute already exists")
     
-    if (any(grepl("^\\s*<.*?>\\s*$", words)))
+    if (any(grepl("^\\s*<.*?>\\s*$", .Object)))
       warning("there is markup in the character vector - cwb-encode will issue warnings")
 
     # ensure that encoding of .Object vector is encoding of corpus
@@ -173,6 +173,7 @@ setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAtt
     cat(.Object, file = vrtTmpFile, sep = "\n")
     
     if (verbose) message("... calling cwb-encode")
+    pAttrsOld <- RegistryFile$new(corpus)$getPAttributes()
     cwbEncodeCmdVec <- c(
       "cwb-encode",
       "-d", RegistryFile$new(corpus)$getHome(), # directory with indexed corpus files
@@ -183,7 +184,9 @@ setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAtt
     cwbEncodeCmd <- paste0(cwbEncodeCmdVec, collapse = " ")
     system(cwbEncodeCmd)
     
-    if (verbose) message("... calling cwb-make")
+    # cwb-encode may drop attributes from registry file apart from the newly encoded one ... 
+    missingAttrs <- pAttrsOld[!pAttrsOld %in% RegistryFile$new(corpus)$getPAttributes()]
+    for (attr in missingAttrs) RegistryFile$new(corpus)$addPAttribute(attr)
     
   } else {
     
@@ -225,6 +228,7 @@ setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAtt
       "-R", file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(corpus))
     )
     cwbEncodeCmd <- paste0(cwbEncodeCmdVec,collapse = " ")
+    
     system(cwbEncodeCmd)
     
   }
@@ -235,4 +239,5 @@ setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAtt
     collapse = " "
     )
   system(cwbMakeCmd)
+  use(dir = Sys.getenv("CORPUS_REGISTRY"))
 })

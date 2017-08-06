@@ -157,6 +157,24 @@ RegistryFile <- setRefClass(
       invisible(.self$pAttributes)
     },
     
+    addPAttribute = function(pAttribute){
+      
+      "Add an p-attribute."
+      
+      if (pAttribute %in% .self$getPAttributes()){
+        stop("doing nothing - sAttribute already declared")
+      }
+      pAttrLines <- grep("^ATTRIBUTE", .self$txt)
+      .self$txt <- c(
+        .self$txt[1:pAttrLines[length(pAttrLines)]],
+        sprintf("ATTRIBUTE %s", pAttribute),
+        .self$txt[(pAttrLines[length(pAttrLines)] + 2):length(.self$txt)]
+      )
+      .self$write()
+      .self$getPAttributes()
+    },
+    
+    
     getSAttributes = function(){
       
       "Get the sAttributes."
@@ -175,17 +193,24 @@ RegistryFile <- setRefClass(
         stop("doing nothing - sAttribute already declared")
       }
       if (getOption("polmineR.cwb-regedit") == FALSE){
-        sAttrLines <- grep("\\[annotations\\]", .self$txt)
+        sAttrLines <- grep("^STRUCTURE", .self$txt)
         if (length(sAttrLines) == 0){
-          sAttrLine <- grep("^##\\ss-attributes", .self$txt) + 1
-          .self$txt <- c(
-            .self$txt[1:(sAttrLine + 1)],
-            "",
-            sprintf("STRUCTURE %s # [annotations]", sAttribute),
-            .self$txt[(sAttrLine + 2):length(.self$txt)]
-          )
+          if (grepl("^##\\ss-attributes", .self$txt)){
+            sAttrLine <- grep("^##\\ss-attributes", .self$txt) + 1
+            .self$txt <- c(
+              .self$txt[1:(sAttrLine + 1)],
+              "",
+              sprintf("STRUCTURE %s # [annotations]", sAttribute),
+              .self$txt[(sAttrLine + 2):length(.self$txt)]
+            )
+          } else {
+            .self$txt <- c(
+              .self$txt, "##", "## s-attributes (structural markup)", "##",
+              sprintf("STRUCTURE %s # [annotations]", sAttribute)
+              )
+          }
         } else {
-          sAttrLines <- grep("\\[annotations\\]", .self$txt)
+          sAttrLines <- grep("^STRUCTURE", .self$txt)
           .self$txt <- c(
             .self$txt[1:sAttrLines[length(sAttrLines)]],
             sprintf("STRUCTURE %s # [annotations]", sAttribute),
@@ -195,7 +220,7 @@ RegistryFile <- setRefClass(
       } else {
         cmd <- c(
           "cwb-regedit",
-          "-r", Sys.getenv("CORPUS_REGISTRY"),
+          sprintf("--registry=%s", Sys.getenv("CORPUS_REGISTRY")),
           tolower(.self$getId()),
           ":add", ":s", sAttribute
         )
