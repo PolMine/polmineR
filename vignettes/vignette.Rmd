@@ -431,7 +431,7 @@ The latest release of polmineR can be installed from CRAN using the usual `insta
 install.packages("polmineR")
 ```
 
-The development version of \code{polmineR} can be installed using devtools:
+The development version of *polmineR* can be installed using devtools:
 
 ```{r, eval = FALSE}
 install.packages("devtools") # unless devtools is already installed
@@ -441,24 +441,33 @@ devtools::install_github("PolMine/polmineR", ref = "dev")
 
 #### Installing 'rcqp'
 
-The default interface of the polmineR package to access CWB indexed corpora is the package 'rcqp'. Accessing corpora will not work before you have installed the interface. The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:
+The default interface of the polmineR package to access CWB indexed corpora is the package 'rcqp'. Accessing corpora will not work before you have installed the interface.
+
+##### Installing precompiled binary of rcqp from the PolMine server
+
+The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:
 
 ```{r, eval = FALSE}
-install.packages("rcqp",
-                 repos = "http://polmine.sowi.uni-due.de/packages",
-                 type = "mac.binary"
-                 )
+install.packages(
+  "rcqp",
+  repos = "http://polmine.sowi.uni-due.de/packages",
+  type = "mac.binary"
+  )
 ```
+
+##### Building rcqp from source
 
 If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.
 
 First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tool for Xcode. It can be installed from a terminal with:
 
 ```{sh, eval = FALSE}
-xcode-select -- install
+xcode-select --install
 ```
 
 To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.
+
+*Option 1: Using Homebrew*
 
 We recommend to use 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands will install the C libraries the rcqp package relies on:
 
@@ -469,7 +478,9 @@ brew -v install pcre --universal
 brew -v install readline
 ```
 
-If you are more comfortable with using Macports, get it from https://www.macports.org/. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.
+*Option 2: Using Macports*
+
+If you prefer using Macports, get it from https://www.macports.org/. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.
 
 ```{sh, eval = FALSE}
 sudo port -v selfupdate
@@ -482,6 +493,8 @@ sudo port install glib2
 sudo port install pkgconfig
 sudo port install pcre
 ```
+
+*Install dependencies and rcqp*
 
 Once the system requirements are there, the next steps can be done from R.  Before installing rcqp, and then polmineR, we install a few packages. In the R console:
 
