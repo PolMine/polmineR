@@ -425,7 +425,7 @@ The following instructions for Mac users assume that R is installed on your syst
 
 #### Installing 'polmineR'
 
-The latest release of polmineR can be installed from CRAN using the usual \code{install.packages}-function.
+The latest release of polmineR can be installed from CRAN using the usual `install.packages`-function.
 
 ```{r mac_install_polmineR_cran, eval = FALSE}
 install.packages("polmineR")
