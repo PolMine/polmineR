@@ -459,7 +459,7 @@ install.packages(
 
 If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.
 
-First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tool for Xcode. It can be installed from a terminal with:
+First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
 
 ```{sh, eval = FALSE}
 xcode-select --install
