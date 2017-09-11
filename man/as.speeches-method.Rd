@@ -6,8 +6,10 @@
 \alias{as.speeches,partition-method}
 \title{Split partition into speeches}
 \usage{
-\S4method{as.speeches}{partition}(.Object, sAttributeDates, sAttributeNames,
-  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
+\S4method{as.speeches}{partition}(.Object,
+  sAttributeDates = getTemplate(.Object)[["metadata"]]["date"],
+  sAttributeNames = getTemplate(.Object)[["metadata"]]["name"], gap = 500,
+  mc = FALSE, verbose = TRUE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{a partition .Object}

@@ -6,17 +6,21 @@
 \alias{encode,data.frame-method}
 \alias{encode,data.table-method}
 \alias{encode,regions-method}
+\alias{encode,character-method}
 \title{Encode s-attribute or corpus.}
 \usage{
 encode(.Object, ...)
 
 \S4method{encode}{data.frame}(.Object, name, pAttributes = "word",
   sAttributes = NULL, registry = Sys.getenv("CORPUS_REGISTRY"),
-  indexedCorpusDir = NULL, verbose = TRUE)
+  dataDir = NULL, verbose = TRUE)
 
 \S4method{encode}{data.table}(.Object, corpus, sAttribute, verbose = TRUE)
 
 \S4method{encode}{regions}(.Object, sAttribute, values, verbose = TRUE)
+
+\S4method{encode}{character}(.Object, corpus, encoding = NULL,
+  pAttribute = NULL, dataDir = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{data.frame} to encode}
@@ -31,24 +35,30 @@ encode(.Object, ...)
 
 \item{registry}{path to the corpus registry}
 
-\item{indexedCorpusDir}{directory where to create directory for indexed corpus files}
-
 \item{verbose}{logical, whether to be verbose}
 
 \item{corpus}{the name of the CWB corpus}
 
 \item{sAttribute}{a single s-attribute}
+
+\item{indexedCorpusDir}{directory where to create directory for indexed corpus files}
 }
 \description{
-If .Object is a \code{data.frame}, it needs to have a column with the token
-stream (column name 'word'), and further columns with either p-attriutes,
+If \code{.Object} is a \code{data.frame}, it needs to have a column with the token
+stream (column name 'word'), and further columns with either p-attributes,
 or s-attributes. The corpus will be encoded successively, starting with the
 p-attributes.
 }
 \details{
-If .Object is a \code{data.table}, it is assumed to have three columns: The
+If \code{.Object} is a \code{data.table}, it is assumed to have three columns: The
 left corpus position, the right corpus position and the value of a s-attribute
-that will be encoded.
+that will be encoded. The method is used to add s-attributes to a corpus.
+
+If \code{.Object} is a (character) \code{vector}, there are two usages. If the corpus
+defined by the parameter \code{corpus} does not yet exist, the vector is taken as
+the word token stream. A new registry file, and a new data directory will be generated.  If
+the \code{corpus} already exists, a new p-attribute will be added to the pre-existing
+corpus.
 }
 \examples{
 \donttest{

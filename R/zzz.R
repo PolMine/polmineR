@@ -1,7 +1,6 @@
 if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
 
 
-
 .onLoad <- function (lib, pkg) {
   
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
@@ -97,8 +96,8 @@ getSettings <- function(){
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   setTemplate()
   getSettings()
-  polmineRMessage <- paste("polmineR", packageVersion("polmineR"), sep = " ")
-  packageStartupMessage(polmineRMessage, "\n", paste(rep("-", times = nchar(polmineRMessage)), collapse = ""))
+  packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
+  
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
     packageStartupMessage(
       "The CORPUS_REGISTRY environment variable is not defined. ",
@@ -107,25 +106,7 @@ getSettings <- function(){
   } else {
     packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   }
+  
   packageStartupMessage("interface: ", class(CQI)[1])
   
-}
-
-if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){
-  packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
-  CQI <- CQI.rcqp$new()
-} else if (Sys.getenv("POLMINER_INTERFACE") == "perl"){
-  packageStartupMessage("Using perl scripts as interface to access CWB corpora")
-  CQI <- CQI.cqpserver$new()
-} else if (Sys.getenv("POLMINER_INTERFACE") == "cqpserver"){
-  packageStartupMessage("Using cqpserver as interface to access CWB corpora")
-  CQI <- CQI.cqpserver$new()
-} else {
-  if (require("rcqp")){
-    packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
-    CQI <- CQI.rcqp$new()
-  } else {
-    packageStartupMessage("Using perl scripts as interface to access CWB corpora")
-    CQI <- CQI.perl$new()
-  }
 }

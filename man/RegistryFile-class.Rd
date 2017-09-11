@@ -51,6 +51,8 @@ includes an explanation of the registry file format.
 \section{Methods}{
 
 \describe{
+\item{\code{addPAttribute(pAttribute)}}{Add an p-attribute.}
+
 \item{\code{addSAttribute(sAttribute)}}{Add an s-attribute.}
 
 \item{\code{adjustHome()}}{Reset the home directory. This will usually be necessary after installing a data package.}

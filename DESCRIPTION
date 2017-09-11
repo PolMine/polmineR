@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.4.9003
-Date: 2017-08-04
+Version: 0.7.4.9004
+Date: 2017-09-07
 Author: Andreas Blaette
 Maintainer: Andreas Blaette <andreas.blaette@uni-due.de>
 Imports:
@@ -47,10 +47,7 @@ License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
 Collate: 
     'CQI.R'
-    'CQI.Rcpp.R'
     'CQI.cqpserver.R'
-    'CQI.perl.R'
-    'CQI.rcqp.R'
     'Corpus_class.R'
     'Labels.R'
     'Partition.R'
