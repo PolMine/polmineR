@@ -6,8 +6,8 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   
   options(
-    "polmineR.project" = c(""),
-    "polmineR.projectDir" = c(""),
+    "polmineR.project" = "",
+    "polmineR.projectDir" = "",
     "polmineR.corpus" = "PLPRBTTXT",
     "polmineR.pAttribute" = "word",
     "polmineR.left" = 5,
@@ -16,7 +16,7 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
     "polmineR.minFrequency" = 5,
     "polmineR.filterType" = "include",
     "polmineR.lineview" = FALSE,
-    "polmineR.meta " =  as.character(c()),
+    "polmineR.meta " =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = 2,
     "polmineR.smtpServer" = "",

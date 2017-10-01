@@ -80,7 +80,7 @@ reuters.tidy <- unnest_tokens(
   reuters.tibble, output = "word", input = "text", to_lower = FALSE
 )
 encode(
-  reuters.tidy, name = "reuters",
+  reuters.tidy, name = "reuters2",
   sAttributes = c("language", "places")
 )
 }
