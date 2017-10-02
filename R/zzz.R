@@ -1,14 +1,13 @@
 if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
 
 
-
 .onLoad <- function (lib, pkg) {
   
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   
   options(
-    "polmineR.project" = c(""),
-    "polmineR.projectDir" = c(""),
+    "polmineR.project" = "",
+    "polmineR.projectDir" = "",
     "polmineR.corpus" = "PLPRBTTXT",
     "polmineR.pAttribute" = "word",
     "polmineR.left" = 5,
@@ -17,7 +16,7 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
     "polmineR.minFrequency" = 5,
     "polmineR.filterType" = "include",
     "polmineR.lineview" = FALSE,
-    "polmineR.meta " =  as.character(c()),
+    "polmineR.meta " =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = 2,
     "polmineR.smtpServer" = "",
@@ -35,6 +34,7 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
     "polmineR.cwb-s-decode" = FALSE,
     "polmineR.cwb-encode" = FALSE,
     "polmineR.cwb-lexdecode" = FALSE,
+    "polmineR.cwb-regedit" = FALSE,
     "polmineR.defaultRegistry" = Sys.getenv("CORPUS_REGISTRY")
   )
   
@@ -48,6 +48,9 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
       options("polmineR.cwb-encode" = TRUE)
     if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-lexdecode" = TRUE)
+    if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)
+      options("polmineR.cwb-regedit" = TRUE)
+    
   }
 }
 
@@ -93,8 +96,8 @@ getSettings <- function(){
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   setTemplate()
   getSettings()
-  polmineRMessage <- paste("polmineR", packageVersion("polmineR"), sep = " ")
-  packageStartupMessage(polmineRMessage, "\n", paste(rep("-", times = nchar(polmineRMessage)), collapse = ""))
+  packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
+  
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
     packageStartupMessage(
       "The CORPUS_REGISTRY environment variable is not defined. ",
@@ -103,25 +106,7 @@ getSettings <- function(){
   } else {
     packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   }
+  
   packageStartupMessage("interface: ", class(CQI)[1])
   
-}
-
-if (Sys.getenv("POLMINER_INTERFACE") == "rcqp"){
-  packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
-  CQI <- CQI.rcqp$new()
-} else if (Sys.getenv("POLMINER_INTERFACE") == "perl"){
-  packageStartupMessage("Using perl scripts as interface to access CWB corpora")
-  CQI <- CQI.cqpserver$new()
-} else if (Sys.getenv("POLMINER_INTERFACE") == "cqpserver"){
-  packageStartupMessage("Using cqpserver as interface to access CWB corpora")
-  CQI <- CQI.cqpserver$new()
-} else {
-  if (require("rcqp")){
-    packageStartupMessage("Using the rcqp package as interface to access CWB corpora")
-    CQI <- CQI.rcqp$new()
-  } else {
-    packageStartupMessage("Using perl scripts as interface to access CWB corpora")
-    CQI <- CQI.perl$new()
-  }
 }

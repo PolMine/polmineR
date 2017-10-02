@@ -35,43 +35,65 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #'   # tdm <- trim(tdm, termsToDrop = termsToDrop)
 #' }
 #' @aliases as.speeches as.speeches,partition-method
-setMethod("as.speeches", "partition", function(.Object, sAttributeDates, sAttributeNames,  gap=500, mc=FALSE, verbose=TRUE, progress=TRUE){
+setMethod(
+  "as.speeches", "partition",
+  function(.Object,
+           sAttributeDates = getTemplate(.Object)[["metadata"]]["date"],
+           sAttributeNames = getTemplate(.Object)[["metadata"]]["name"],
+           gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
+           ){
+  
+  # as a first step, create partitions by date
   if (verbose) message("... getting dates")
   dates <- sAttributes(.Object, sAttributeDates)
   if (verbose) message("... generating partitions by date")
-  toIterate <- lapply(dates, function(x) setNames(x, sAttributeDates))
-  partitionByDate <- blapply(
-    x = toIterate, .Object = .Object, f = partition, 
-    verbose = verbose, progress = progress, mc = mc
-  )
-  partitionByDate <- lapply(partitionByDate, function(x) as(x, "plprPartition"))
+  if (length(dates) > 1){
+    toIterate <- lapply(dates, function(x) setNames(x, sAttributeDates))
+    partitionByDate <- blapply(
+      x = toIterate, .Object = .Object, f = partition, 
+      verbose = verbose, progress = progress, mc = mc,
+      type = "plpr"
+    )
+  } else {
+    partitionByDate <- list(.Object)
+  }
+  
   if (verbose) message("... generating speeches")
-  .splitFunction <- function(datePartition, ...){
+  .splitBySpeakers <- function(datePartition, ...){
     nested <- lapply(
       sAttributes(datePartition, sAttributeNames),
       function(speakerName){
-        beforeSplit <- partition(datePartition, setNames(list(speakerName), sAttributeNames), verbose=FALSE)
-        split(beforeSplit, gap = gap, verbose=FALSE)
+        beforeSplit <- partition(datePartition, setNames(list(speakerName), sAttributeNames), verbose = FALSE)
+        split(beforeSplit, gap = gap, verbose = FALSE)
       }
     )
-    unlist(lapply(c(1:length(nested)), function(i) nested[[i]]@objects))
+    unlist(lapply(1:length(nested), function(i) nested[[i]]@objects))
   }
   speakerNestedList <- blapply(
-    x = partitionByDate, f = .splitFunction,
+    x = partitionByDate, f = .splitBySpeakers,
     sAttributeNames = sAttributeNames, gap = gap,
     mc = mc, progress = progress
   )
-  speakerFlatList <- do.call(c, unlist(speakerNestedList, recursive=FALSE))
+  speakerFlatList <- do.call(c, unlist(speakerNestedList, recursive = FALSE))
   if (verbose) message("... generating names")
   partitionNames <- sapply(
     speakerFlatList,
-    function(x) paste(x@sAttributes[[sAttributeNames]], sAttributes(x, sAttributeDates), x@name, sep="_")
+    function(x){
+      paste(x@sAttributes[[sAttributeNames]], sAttributes(x, sAttributeDates), x@name, sep = "_")
+    }
   )
-  for (i in c(1:length(speakerFlatList))) name(speakerFlatList[[i]]) <- partitionNames[i]
+  for (i in 1:length(speakerFlatList)) name(speakerFlatList[[i]]) <- partitionNames[i]
   
   # at this stage, the list may contain partitions of size 0, that need to be dropped
   toDrop <- which(sapply(speakerFlatList, function(x) size(x)) == 0)
   if (length(toDrop) > 0) for (i in rev(toDrop)) speakerFlatList[[i]] <- NULL
   
-  as.bundle(speakerFlatList)
+  # the resulting list may be totally unordered - reorder now
+  if (verbose) message("... reordering partitions")
+  speakerFlatListOrdered <- lapply(
+    order(sapply(speakerFlatList, function(x) x@cpos[1,1])),
+    function(i) speakerFlatList[[i]]
+  )
+  
+  as.bundle(speakerFlatListOrdered)
 })

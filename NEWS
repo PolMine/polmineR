@@ -1,3 +1,12 @@
+v0.7.5
+* class 'Regions' renamed to class 'regions' as a matter of consistency
+* data type of slot cpos of class 'regions' is a matrix now
+* rework and improved documentation for decode- and encode-methods
+* new functions copy.corpus and rename.corpus
+* as.DocumentTermMatrix-method checks for strucs with value -1 
+* improved as.speeches-method: reordering of speeches, default values
+* blapply-method: verbose output will be suppressed of progress is TRUE
+
 v0.7.4
 * applying stoplists and positivelists working again for context-method
 * matches-method to learn about matches for CQP queries replacing frequencies-method

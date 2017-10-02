@@ -8,7 +8,7 @@
 \alias{read,data.table-method}
 \alias{read,hits-method}
 \alias{read,kwic-method}
-\alias{read,Regions-method}
+\alias{read,regions-method}
 \title{Display and read full text}
 \usage{
 read(.Object, ...)
@@ -27,7 +27,7 @@ read(.Object, ...)
 
 \S4method{read}{kwic}(.Object, i, type = NULL)
 
-\S4method{read}{Regions}(.Object, meta = NULL)
+\S4method{read}{regions}(.Object, meta = NULL)
 }
 \arguments{
 \item{.Object}{an object to be read (\code{"partition" or "partitionBundle"})}

@@ -135,44 +135,45 @@ setMethod("show", "partition",
 #' @rdname split-partition-method 
 #' @exportMethod split
 #' @docType methods
-setMethod("split", "partition", function(x, gap, drop=FALSE, ...){
+setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
   # if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
   cpos <- x@cpos
   if (nrow(cpos) > 1){
     distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
-    beginning <- c(1, ifelse(distance>gap, 1, 0))
-    no <- vapply(1:length(beginning), FUN.VALUE=1, function(x) ifelse (beginning[x]==1, sum(beginning[1:x]), 0))
-    for (i in (1:length(no))) no[i] <- ifelse (no[i]==0, no[i-1], no[i])
+    beginning <- c(1, ifelse(distance > gap, 1, 0))
+    no <- vapply(
+      1:length(beginning),
+      FUN.VALUE = 1,
+      function(x) ifelse (beginning[x] == 1, sum(beginning[1:x]), 0)
+      )
+    for (i in 1:length(no)) no[i] <- ifelse (no[i] == 0, no[i-1], no[i])
     strucsClassified <- cbind(x@strucs, no)
     strucList <- split(strucsClassified[,1], strucsClassified[,2])
     cposClassified <- cbind(cpos, no)
     cposList1 <- split(cposClassified[,1], cposClassified[,3])
     cposList2 <- split(cposClassified[,2], cposClassified[,3])
-    bundleRaw <- lapply(c(1:length(strucList)), function(i) {
-      p <- new(
-        class(x)[1],
-        strucs=strucList[[i]],
-        cpos=cbind(cposList1[[i]], cposList2[[i]]),
-        corpus=x@corpus, encoding=x@encoding,
-        sAttributes=x@sAttributes,
-        xml=x@xml, sAttributeStrucs=x@sAttributeStrucs,
-        explanation=c("partition results from split, sAttributes do not necessarily define partition"),
-        name=paste(x@name, i, collapse="_", sep=""),
-        stat=data.table()
-      )
-      if (is.null(names(x@metadata))){
-        meta <- NULL
-      } else {
-        meta <- colnames(x@metadata)
-      }
-      p <- enrich(
-        p, size=TRUE,
-        pAttribute=NULL,
-        meta=meta,
-        verbose=FALSE
-      )
-      p
-    })
+    bundleRaw <- lapply(
+      1:length(strucList),
+      function(i) {
+        p <- new(
+          class(x)[1],
+          strucs = strucList[[i]],
+          cpos = cbind(cposList1[[i]], cposList2[[i]]),
+          corpus = x@corpus, encoding = x@encoding,
+          sAttributes = x@sAttributes,
+          xml = x@xml, sAttributeStrucs = x@sAttributeStrucs,
+          explanation = c("partition results from split, sAttributes do not necessarily define partition"),
+          name = paste(x@name, i, collapse = "_", sep = ""),
+          stat = data.table()
+        )
+        if (is.null(names(x@metadata))){
+          meta <- NULL
+        } else {
+          meta <- colnames(x@metadata)
+        }
+        p <- enrich(p, size = TRUE, pAttribute = NULL, meta = meta, verbose = FALSE)
+        p
+      })
   } else {
     bundleRaw <- list(x)
   }

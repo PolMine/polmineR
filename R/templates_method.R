@@ -41,6 +41,9 @@ setMethod("setTemplate", "character", function(.Object){
   filename <- file.path(RegistryFile$new(.Object)$getHome(), "template.json")
   if (file.exists(filename)){
     templateList[[.Object]] <- jsonlite::fromJSON(txt = filename) 
+    if ("metadata" %in% names(templateList[[.Object]])){
+      templateList[[.Object]][["metadata"]] <- unlist(templateList[[.Object]][["metadata"]])
+    }
     options("polmineR.templates" = templateList)
     invisible(templateList[[.Object]])
   }

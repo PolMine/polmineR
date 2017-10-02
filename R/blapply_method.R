@@ -35,7 +35,11 @@ setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose 
   if (mc == FALSE){
     if (requireNamespace("pbapply", quietly = TRUE)){
       if (progress){
-        retval <- pbapply::pblapply(X = x, FUN = f, ..., cl = 1)
+        arg_list <- c(list(X = x, FUN = f, cl = 1), list(...))
+        if ("verbose" %in% names(formals(f)) || "..." %in% names(formals(f))) 
+          arg_list <- c(list(verbose = FALSE), arg_list)
+        retval <- do.call(what = pbapply::pblapply, args = arg_list)
+        # retval <- pbapply::pblapply(X = x, FUN = f, ..., cl = 1)
       } else {
         retval <- lapply(X = x, FUN = f, ...)
       }
@@ -46,18 +50,24 @@ setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose 
         pb <- txtProgressBar(min = 0, max = total, style = 3, width = getOption("width") - 10)
         i <- 0 # just to pass R CMD check
         retval <- lapply(
-          c(1:length(x)),
+          1:length(x),
           function(i){
             setTxtProgressBar(pb, i)
-            f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+            arg_list <- c(list(x[[i]], mc = FALSE, progress = FALSE), list(...))
+            if ("verbose" %in% names(formals(f)) || "..." %in% names(formals(f))) 
+              arg_list <- c(list(verbose = FALSE), arg_list)
+            do.call(what = f, args = arg_list)
+            # f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
           }
         )
         close(pb)
       } else {
         i <- 0 # just to pass R CMD check
         retval <- lapply(
-          c(1:length(x)),
-          function(i) f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+          1:length(x),
+          function(i){
+            f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+          }
         )
       }
       return(retval)
@@ -65,10 +75,13 @@ setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose 
   } else {
     if (progress){
       if (requireNamespace("pbapply", quietly = TRUE)){
-        retval <- pbapply::pblapply(
-          X = x, FUN = f, ..., cl = getOption("polmineR.cores")
-        )
+        
+        arg_list <- c(list(X = x, FUN = f, cl = getOption("polmineR.cores")), list(...))
+        if ("verbose" %in% names(formals(f)) || "..." %in% names(formals(f)))
+          arg_list <- c(list(verbose = FALSE), arg_list)
+        retval <- do.call(what = pbapply::pblapply, args = arg_list)
         return( retval )
+        
       } else {
         stop("Package 'pbapply' needed but not installed to have progress bars and use multicore")
       }
@@ -78,105 +91,13 @@ setMethod("blapply", "list", function(x, f, mc = TRUE, progress = TRUE, verbose 
         return (retval)
       }
     }
-#     backend <- getOption("polmineR.backend")
-#     stopifnot(backend %in% c("parallel", "doParallel", "doSNOW", "doMC"))
-#     
-#     if (requireNamespace(backend, quietly = TRUE)){
-#       if (backend == "parallel" && Sys.info()["sysname"] != "Windows"){
-#         if (progress == FALSE){
-#           retval <- parallel::mclapply(x, function(y) f(y, mc=FALSE, progress=FALSE, verbose=FALSE, ...))
-#         } else {
-#           pb <- txtProgressBar(min = 0, max = length(x), style = 3, width = getOption("width") - 10)
-#           noCores <- getOption("polmineR.cores")
-#           breaksRaw <- unlist(lapply(c(1:noCores), function(i) rep(i, times=trunc(length(x) / noCores))))
-#           breaks <- c(breaksRaw, rep(noCores, times=length(x)-length(breaksRaw)))
-#           xChunks <- split(x, breaks)
-#           # dummyDir <- tempdir()
-#           progressFile <- tempfile()
-#           file.remove(progressFile)
-#           # filesRemoved <- file.remove(list.files(dummyDir, full.names=T, pattern="\\.mc", include.dirs=FALSE))
-#           # if (verbose == TRUE) message ("... cleaning tempdir (", length(filesRemoved), " files removed)")
-# #           fWrapped <- function(i, core, x, ...){
-# #             cat("", file=file.path(dummyDir, paste(as.character(core), as.character(i), "mc", sep=".")))
-# #             f(x, ...)
-# #           }
-#           fWrapped <- function(x, ...){
-#             cat(".", file = progressFile, append = TRUE)
-#             f(x, ...)
-#           }
-#           if (length(parallel:::children()) > 0){
-#             warning("there have been zombie processes collected with mccollect()")
-#             graveyard <- parallel:::mccollect()
-#           }
-#           threadNames <- paste("thread", c(1:getOption("polmineR.cores")), sep="")
-#           startTime <- Sys.time()
-#           for (core in c(1:getOption("polmineR.cores"))){
-#             assign(
-#               threadNames[core],
-#               parallel:::mcparallel(lapply(xChunks[[core]], function(x) fWrapped(x, ...))),
-#               envir = environment()
-#               )
-#           }
-#           while (length(parallel:::selectChildren()) < noCores){
-#             # filesTargetDir <- list.files(path=dummyDir, pattern="\\.multicore")
-#             progressStatus <- nchar(scan(file = progressFile, what = "character"))
-#             # setTxtProgressBar(pb, length(filesTargetDir))
-#             setTxtProgressBar(pb, progressStatus)
-#             Sys.sleep(1)
-#           }
-#           retval <- parallel:::mccollect(
-#             jobs=lapply(threadNames, function(x) get(x, envir=environment())),
-#             wait=TRUE
-#           )
-#           # filesTargetDir <- list.files(path=dummyDir, pattern="\\.multicore")
-#           # setTxtProgressBar(pb, length(x))
-#           setTxtProgressBar(pb, nchar(scan(file = progressFile, what = "character")))
-#           # dummy <- file.remove(list.files(dummyDir, full.names=T, pattern="\\.multicore", include.dirs=FALSE))
-#           file.remove(progressFile)
-#           retval <- unlist(retval, recursive = FALSE)
-#         }
-#       } else if (backend == "doParallel"){
-#         cl <- parallel::makeCluster(getOption("polmineR.cores"))
-#         doParallel::registerDoParallel(cl)
-#         retval <- foreach(i = c(1:length(x))) %dopar% {
-#           f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
-#         }
-#         parallel::stopCluster(cl)
-#       } else if (backend == "doSNOW"){
-#         cl <- snow::makeSOCKcluster(getOption("polmineR.cores"))
-#         doSNOW::registerDoSNOW(cl)
-#         snow::clusterEvalQ(cl, library(polmineR))
-#         for (i in names(list(...))) assign(i, value=list(...)[[i]], envir=environment())
-#         snow::clusterExport(cl, names(list(...)), envir=environment())
-#         if (progress == TRUE){
-#           pb <- txtProgressBar(min = 0, max = length(x), style = 3, width = (getOption("width") - 10))
-#           progressBar <- function(n) setTxtProgressBar(pb, n)
-#           retval <- foreach(
-#             i=c(1:length(x)),
-#             .options.snow = list(progress = progressBar)
-#           ) %dopar% f(x[[i]], mc = FALSE, progress = FALSE, verbose = FALSE, ...)
-#           close(pb)
-#         } else {
-#           retval <- foreach(i=c(1:length(x))) %dopar% {
-#             f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
-#           }
-#         }
-#         snow::stopCluster(cl)
-#       } else if (backend == "doMC"){
-#         doMC::registerDoMC(cores=getOption("polmineR.cores"))  
-#         retval <- foreach(i=c(1:length(x))) %dopar% {
-#           f(x[[i]], mc=FALSE, progress=FALSE, verbose=FALSE, ...)
-#         }
-#       }
-#     }
   }
-  # retval
 })
 
 
 #' @rdname blapply
 setMethod("blapply", "vector", function(x, f, mc=FALSE, progress=TRUE, verbose=FALSE, ...){
-  blapply(as.list(x), f=f, mc=mc, progress=progress, verbose=verbose, ...)
+  blapply(as.list(x), f = f, mc = mc, progress = progress, verbose = verbose, ...)
 })
 
 #' @rdname blapply

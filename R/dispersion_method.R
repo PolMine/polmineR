@@ -73,7 +73,7 @@ setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = 
 
 
 #' @rdname dispersion-method
-setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE){
+setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE, verbose = TRUE){
   if (length(sAttribute) == 2){
     retval <- data.table::dcast.data.table(
       .Object@dt, formula(paste(sAttribute, collapse="~")),

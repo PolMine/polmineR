@@ -25,7 +25,7 @@ setMethod("corpus", "bundle", function(object){
 
 #' @rdname corpus-method
 setMethod("corpus", "missing", function(){
-  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1 && is(CQI) == "CQI.rcqp"){
+  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
     corpora <- CQI$list_corpora()
     y <- data.frame(
       corpus = corpora,

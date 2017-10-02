@@ -19,7 +19,8 @@ dispersion(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE,
   progress = TRUE, verbose = TRUE)
 
-\S4method{dispersion}{hits}(.Object, sAttribute, freq = FALSE)
+\S4method{dispersion}{hits}(.Object, sAttribute, freq = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a partition object}

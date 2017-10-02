@@ -17,7 +17,14 @@
 \item{registry}{directory of the registry (defaults to CORPUS_Registry environment variable)}
 }
 \description{
-Read, parse and modify registry file.
+The class includes methods to read, modify and write a registry file.
+Several operations could be accomplished with the 'cwb-regedit' tool,
+the functions defined here ensure that manipulating the registry is 
+possible without a full installation of the CWB.
+}
+\details{
+An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
+includes an explanation of the registry file format.
 }
 \section{Fields}{
 
@@ -44,6 +51,14 @@ Read, parse and modify registry file.
 \section{Methods}{
 
 \describe{
+\item{\code{addPAttribute(pAttribute)}}{Add an p-attribute.}
+
+\item{\code{addSAttribute(sAttribute)}}{Add an s-attribute.}
+
+\item{\code{adjustHome()}}{Reset the home directory. This will usually be necessary after installing a data package.}
+
+\item{\code{dropSAttribute(sAttribute)}}{Drop a s-attribute.}
+
 \item{\code{getEncoding()}}{Get the encoding.}
 
 \item{\code{getHome()}}{Get the home directory of a corpus.}
@@ -66,5 +81,13 @@ Read, parse and modify registry file.
 \item{\code{parse()}}{Parse the registry file.}
 
 \item{\code{read()}}{Read file from disc, as character vector in field 'txt'.}
+
+\item{\code{setHome(new)}}{Set the home directory to a new location.}
+
+\item{\code{setId(new)}}{Set the id of a corpus}
+
+\item{\code{setProperty(property, value)}}{Set a corpus property.}
+
+\item{\code{write(filename = NULL)}}{Write registry file to disk.}
 }}
 

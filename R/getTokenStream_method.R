@@ -1,3 +1,6 @@
+#' @include regions_class.R
+NULL
+
 #' Get Token Stream Based on Corpus Positions.
 #' 
 #' Turn regions of a corpus defined by corpus positions into the original text.
@@ -65,7 +68,7 @@ setMethod("getTokenStream", "partition", function(.Object, pAttribute, collapse 
 })
 
 #' @rdname getTokenStream-method
-setMethod("getTokenStream", "Regions", function(.Object, pAttribute = "word", ...){
+setMethod("getTokenStream", "regions", function(.Object, pAttribute = "word", ...){
   .getText <- function(.BY){
     list(text = getTokenStream(
       .BY[[1]]:.BY[[2]],
