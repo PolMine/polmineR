@@ -4,8 +4,7 @@
 [![Travis-CI Build Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://travis-ci.org/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
 
-R-package 'polmineR'
-===================
+# R-package 'polmineR'
 
 ### Purpose
 The focus of the package 'polmineR' is the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
@@ -30,6 +29,9 @@ The polmineR-package was specifically developed to make full use of the XML anno
 - *dispersion*: Analyse the dispersion of a query across one or two dimensions (absolute and relative frequencies);
 - *cooccurrences*: Analyse the context of a query (including some statistics);
 - *features*: Compare partitions to identify features / keywords (using statistical tests such as chi square).
+
+[![kwic()](http://polmine.sowi.uni-due.de/gallery/kwic.png)](http://polmine.sowi.uni-due.de/gallery/kwic.png)
+
 
 ### State of affairs
 The most recent stable version is available at CRAN. Development versions are available via GitHub.
