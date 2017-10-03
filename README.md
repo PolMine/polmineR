@@ -23,7 +23,9 @@ The polmineR relies on the _Open Corpus Workbench_ (CWB) as a backend and uses t
 ### Background
 The polmineR-package was specifically developed to make full use of the XML annotation structure of the corpora created in the PolMine project (see polmine.sowi.uni-due.de). The core PolMine corpora are corpora of plenary protocols. In these corpora, speakers, parties etc. are structurally annotated. The polmineR-package is meant to help making full use of the rich annotation structure.
 
-### Core functions
+### Installation
+
+### Core Functions
 - *partition*: Set up a partition (i.e. subcorpus);
 - *count*: Count features
 - *dispersion*: Analyse the dispersion of a query across one or two dimensions (absolute and relative frequencies);
@@ -33,11 +35,5 @@ The polmineR-package was specifically developed to make full use of the XML anno
 [![kwic()](http://polmine.sowi.uni-due.de/gallery/kwic.png)](http://polmine.sowi.uni-due.de/gallery/kwic.png)
 
 
-### State of affairs
-The most recent stable version is available at CRAN. Development versions are available via GitHub.
-
-### Installation
-The package can be installed on MacOS, Linux, and Windows. On Windows, installation is limited to the 32bit version of R. See the wiki for installation instructions.
-
 ### Feedback
-Getting feedback is most welcome! I want this to be a useful package not just for me. Please do get in touch: Andreas Blaette, University of Duisburg-Essen (andreas.blaette@uni-due.de).
+Getting feedback is most welcome! Please do get in touch: Andreas Blaette, University of Duisburg-Essen (andreas.blaette@uni-due.de).
