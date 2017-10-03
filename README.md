@@ -153,6 +153,8 @@ merkel <- partition("GERMAPARL", text_speaker = "Angela Merkel", text_date = "20
 read(merkel)
 ```
 
+[![read()](http://polmine.sowi.uni-due.de/gallery/read.png)](http://polmine.sowi.uni-due.de/gallery/read.png)
+
 ### as.TermDocumentMatrix (for text mining purposes)
 
 Many advanced methods in text mining require term document matrices as input. Based on the metadata of a corpus, these data structures can be obtained in a fast and flexible manner, for performing topic modelling, machine learning etc.

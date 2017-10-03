@@ -145,6 +145,8 @@ merkel <- partition("GERMAPARL", text_speaker = "Angela Merkel", text_date = "20
 read(merkel)
 ```
 
+[![read()](http://polmine.sowi.uni-due.de/gallery/read.png)](http://polmine.sowi.uni-due.de/gallery/read.png)
+
 
 ### as.TermDocumentMatrix (for text mining purposes)
 
