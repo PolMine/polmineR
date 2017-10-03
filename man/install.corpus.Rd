@@ -35,6 +35,8 @@ include a whitespace sign}
 \item{old}{name of the (old) corpus}
 
 \item{new}{name of the (new) corpus}
+
+\item{verbose}{logical, whether to be verbose}
 }
 \description{
 Convenience function for making the installation of indexed CWB corpora

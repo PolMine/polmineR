@@ -29,6 +29,7 @@
 #' @param repo URL of the repository 
 #' @param lib directory for R packages, defaults to \code{.libPaths()[1]}; the path may not 
 #' include a whitespace sign
+#' @param verbose logical, whether to be verbose
 #' @param ... further parameters that will be passed into \code{install.packages}
 #' @export install.corpus
 #' @name install.corpus

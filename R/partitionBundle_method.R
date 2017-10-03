@@ -46,14 +46,14 @@ setMethod("partitionBundle", "partition", function(
     encoding = .Object@encoding, call = deparse(match.call())
   )
   if (is.null(values)){
-    if (verbose) message('... getting values for sAttribute: ', sAttribute)
+    if (verbose) message('... getting values for s-attribute ', sAttribute)
     values <- sAttributes(.Object, sAttribute)
     if (verbose) message('... number of partitions to be generated: ', length(values))
   }
   bundle@objects <- blapply(
     lapply(setNames(values, rep(sAttribute, times = length(values))), function(x) setNames(x, sAttribute)),
-    f = function(def, .Object, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
-    .Object = .Object, progress = progress, verbose = verbose,  mc = mc,
+    f = function(def, .Object, verbose = FALSE, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
+    .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc,
     ...
   )
   names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep='')

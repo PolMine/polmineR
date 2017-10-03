@@ -42,5 +42,6 @@ use <- function(pkg = NULL, lib.loc = .libPaths(), dir = getOption("polmineR.def
     }
     
   }
-  invisible(previousRegistry)
+  # the variable previousRegistry is not necessarily defined
+  if (exists("previousRegistry")) invisible(previousRegistry) else invisible(NULL)
 }  

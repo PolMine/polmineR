@@ -3,6 +3,7 @@
 \docType{class}
 \name{regions}
 \alias{regions}
+\alias{regions-class}
 \alias{as.regions}
 \alias{as.data.table,regions-method}
 \title{Regions of a CWB corpus.}
@@ -10,6 +11,11 @@
 as.regions(x)
 
 \S4method{as.data.table}{regions}(x, values = NULL)
+}
+\arguments{
+\item{x}{object of class \code{regions}}
+
+\item{values}{values to assign to a column that will be added}
 }
 \description{
 A coerce-method is available to coerce a \code{partition} object to a

@@ -88,7 +88,7 @@ This package may serve as an example how CWB indexed corpora can be shared using
 The standard interface used by the polmineR package to extract information from CWB indexed corpora is the package 'rcqp'. The interface is defined in a class called 'CQI'. To check which interface is used:
 
 ```{r, eval = runcode}
-class(CQI)
+class(polmineR:::CQI)
 ```
 If you see "CQI.perl" leading the character vector that is returned, something went wrong. Accessing the corpora using perl scripts incurs an incredible performence loss. Reset the interface as follows:
 

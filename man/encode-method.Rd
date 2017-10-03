@@ -19,8 +19,8 @@ encode(.Object, ...)
 
 \S4method{encode}{regions}(.Object, sAttribute, values, verbose = TRUE)
 
-\S4method{encode}{character}(.Object, corpus, encoding = NULL,
-  pAttribute = NULL, dataDir = NULL, verbose = TRUE)
+\S4method{encode}{character}(.Object, corpus, pAttribute = NULL,
+  dataDir = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{data.frame} to encode}
@@ -35,13 +35,17 @@ encode(.Object, ...)
 
 \item{registry}{path to the corpus registry}
 
+\item{dataDir}{data directory for indexed corpus files}
+
 \item{verbose}{logical, whether to be verbose}
 
 \item{corpus}{the name of the CWB corpus}
 
 \item{sAttribute}{a single s-attribute}
 
-\item{indexedCorpusDir}{directory where to create directory for indexed corpus files}
+\item{values}{values for regions}
+
+\item{pAttribute}{a single p-attribute}
 }
 \description{
 If \code{.Object} is a \code{data.frame}, it needs to have a column with the token

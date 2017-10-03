@@ -24,10 +24,12 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 #' @param name name of the (new) CWB corpus
 #' @param corpus the name of the CWB corpus
 #' @param pAttributes columns of .Object with tokens (such as word/pos/lemma)
+#' @param pAttribute a single p-attribute
 #' @param sAttribute a single s-attribute
 #' @param sAttributes columns of .Object that will be encoded as structural attributes
 #' @param registry path to the corpus registry
-#' @param indexedCorpusDir directory where to create directory for indexed corpus files
+#' @param dataDir data directory for indexed corpus files
+#' @param values values for regions
 #' @param verbose logical, whether to be verbose
 #' @param ... further parameters
 #' @rdname encode-method
@@ -144,7 +146,7 @@ setMethod("encode", "regions", function(.Object, sAttribute, values, verbose = T
 })
 
 #' @rdname encode-method
-setMethod("encode", "character", function(.Object, corpus, encoding = NULL, pAttribute = NULL, dataDir = NULL, verbose = TRUE){
+setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, dataDir = NULL, verbose = TRUE){
   
   vrtTmpFile <- tempfile()
   

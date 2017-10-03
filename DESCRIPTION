@@ -30,7 +30,8 @@ Suggests:
     knitr,
     rJava,
     shiny,
-    testthat
+    testthat,
+    tidytext
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes

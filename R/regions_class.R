@@ -10,6 +10,8 @@ NULL
 #' @slot cpos a two-column \code{data.table} that will include a "cpos_left" and "cpos_right" column
 #' @slot corpus the CWB corpus (character vector length 1)
 #' @slot encoding the encoding of the CWB corpus (character vector length 1)
+#' @param x object of class \code{regions}
+#' @param values values to assign to a column that will be added
 #' @exportClass regions
 #' @rdname regions_class
 #' @name regions
@@ -20,6 +22,7 @@ NULL
 #' R <- as.regions(P)
 #' encode(R, sAttribute = "text_foo", values = "Jens")
 #' }
+#' @aliases regions-class
 setClass(
   "regions",
   representation = list(
