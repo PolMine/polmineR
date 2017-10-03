@@ -78,7 +78,7 @@ size(barroso)
 Partitions can be bundled into partitionBundle objects, and most methods can be applied to a whole corpus, a partition, or a partitionBundle object alike. Consult the package vignette to learn more.
 
 
-### count
+### count (using CQP syntax)
 
 Counting occurrences of a feature in a corpus, a partition or in the partitions of a partitionBundle is a basic operation. By offering access to the query syntax of the Corpus Query Processor (CQP), the polmineR package makes accessible a query syntax that goes far beyond regular expressions. See the [CQP documentation](http://www.ims.uni-stuttgart.de/forschung/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.2up.pdf) to learn more.
 
@@ -89,7 +89,7 @@ count("EUROPARL-EN", '"[pP]opulism"')
 ```
 
 
-### dispersion
+### dispersion (across one or two dimensions)
 
 The dispersion method is there to analyse the dispersion of a query, or a set of queries across one or two dimensions (absolute and relative frequencies). The CQP syntax can be used.
 
