@@ -8,8 +8,8 @@ addons:
     - libssl-dev
     - libcurl4-openssl-dev
 
-r_github_packages:
-  - PolMine/polmineR.Rcpp
+before_install:
+  - Rscript -e 'devtools::install_github("PolMine/polmineR.Rcpp")'
 
 r_packages:
   - RUnit
