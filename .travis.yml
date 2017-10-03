@@ -9,6 +9,7 @@ addons:
     - libcurl4-openssl-dev
 
 before_install:
+  - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'devtools::install_github("PolMine/polmineR.Rcpp")'
 
 r_packages:
