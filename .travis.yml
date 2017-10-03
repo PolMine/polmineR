@@ -1,0 +1,27 @@
+language: r
+cache: packages
+
+addons:
+  apt:
+    packages:
+    - libglib2.0-dev
+    - libssl-dev
+    - libcurl4-openssl-dev
+
+r_packages:
+  - RUnit
+  - devtools
+  - plyr
+  - tm
+  - rcqp
+  - covr
+
+warnings_are_errors: false
+
+notifications:
+  email:
+  on_success: change
+  on_failure: change
+
+after_success:
+  - Rscript -e 'library(covr); codecov(token = "36cf23e7-4231-4329-b680-f052fece17dc")'
