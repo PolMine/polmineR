@@ -113,7 +113,6 @@ To switch to the interface offered by polmineR.Rcpp, proceed as follows:
 unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
 assign("CQI", CQI.Rcpp$new(), envir = getNamespace("polmineR"))
 lockBinding(env = getNamespace("polmineR"), sym = "CQI")
-}
 ```
 
 The checks performed when submitting a package at CRAN issue a note when the 'unlockBinding' function appears in the source code of the package. This is why a function for reset the interface is not included in the package.
