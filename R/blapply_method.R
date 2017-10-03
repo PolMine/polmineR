@@ -28,6 +28,7 @@
 #'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
 #'   foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
 #' }
+#' @importFrom pbapply pblapply
 setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 
 #' @rdname blapply

@@ -14,9 +14,9 @@ Imports:
     tm,
     DT,
     utils,
-    jsonlite
+    jsonlite,
+    pbapply
 Suggests:
-    pbapply,
     parallel,
     polmineR.Rcpp,
     europarl.en,

@@ -24,13 +24,149 @@ polmineR
 Core Functions
 --------------
 
--   *partition*: Set up a partition (i.e. subcorpus);
--   *count*: Count features
--   *dispersion*: Analyse the dispersion of a query across one or two dimensions (absolute and relative frequencies);
--   *cooccurrences*: Analyse the context of a query (including some statistics);
--   *features*: Compare partitions to identify features / keywords (using statistical tests such as chi square).
+``` r
+library(polmineR)
+#> polmineR 0.7.5
+#> registry:  /Users/blaette/Data/cwb/registry
+#> interface: CQI.rcqp
+```
+
+### install.corpus (and use packaged corpus)
+
+Indexed corpora wrapped into R data packages can be installed from a (private) package repository.
+
+``` r
+install.corpus("GermaParl")
+install.corpus("europarl.en")
+```
+
+Calling the use function is necessary activate a corpus included in a data package.
+
+``` r
+use("europarl.en") # activate the corpus in the europarl-en package
+#> ... reseting CORPUS_REGISTRY environment variable:
+#>     /Library/Frameworks/R.framework/Versions/3.4/Resources/library/europarl.en/extdata/cwb/registry
+#> ... unloading rcqp library
+#> ... reloading rcqp library
+#> ... status: OK
+```
+
+An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. To assist the preparation of corpora, consider the ctk package (corpus toolkit) as a companion package to polmineR.
+
+### partition (and partitionBundle)
+
+All methods can be applied to a whole corpus, are to partitions (i.e. subcorpora). Use the metadata of a corpus (so-called s-attributes) to define a subcorpus.
+
+``` r
+ep2005 <- partition("EUROPARL-EN", text_year = "2006")
+#> Setting up partition
+#> ... get encoding: latin1
+#> ... get cpos and strucs
+#> ... get partition size
+size(ep2005)
+#> [1] 3100529
+```
+
+``` r
+barroso <- partition("EUROPARL-EN", speaker_name = "Barroso", regex = TRUE)
+#> Setting up partition
+#> ... get encoding: latin1
+#> ... get cpos and strucs
+#> ... get partition size
+size(barroso)
+#> [1] 98142
+```
+
+Partitions can be bundled into partitionBundle objects, and most methods can be applied to a whole corpus, a partition, or a partitionBundle object alike. Consult the package vignette to learn more.
+
+### count
+
+Counting occurrences of a feature in a corpus, a partition or in the partitions of a partitionBundle is a basic operation. By offering access to the query syntax of the Corpus Query Processor (CQP), the polmineR package makes accessible a query syntax that goes far beyond regular expressions. See the [CQP documentation](http://www.ims.uni-stuttgart.de/forschung/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.2up.pdf) to learn more.
+
+``` r
+count("EUROPARL-EN", "France")
+#>     query count         freq
+#> 1: France  5517 0.0001399122
+count("EUROPARL-EN", c("France", "Germany", "Britain", "Spain", "Italy", "Denmark", "Poland"))
+#>      query count         freq
+#> 1:  France  5517 1.399122e-04
+#> 2: Germany  4196 1.064114e-04
+#> 3: Britain  1708 4.331523e-05
+#> 4:   Spain  3378 8.566676e-05
+#> 5:   Italy  3209 8.138089e-05
+#> 6: Denmark  1615 4.095673e-05
+#> 7:  Poland  1820 4.615557e-05
+count("EUROPARL-EN", '"[pP]opulism"')
+#>            query count         freq
+#> 1: "[pP]opulism"   107 2.713542e-06
+```
+
+### dispersion
+
+The dispersion method is there to analyse the dispersion of a query, or a set of queries across one or two dimensions (absolute and relative frequencies). The CQP syntax can be used.
+
+``` r
+populism <- dispersion("EUROPARL-EN", "populism", sAttribute = "text_year", progress = FALSE)
+popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', sAttribute = "text_year", cqp = TRUE, progress = FALSE)
+```
+
+### cooccurrences (to analyse collocations)
+
+The cooccurrences method is used to analyse the context of a query (including some statistics).
+
+``` r
+islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
+islam <- subset(islam, rank_ll <= 100)
+dotplot(islam)
+islam
+```
+
+[![cooccurrences()](http://polmine.sowi.uni-due.de/gallery/cooccurrences.png)](http://polmine.sowi.uni-due.de/gallery/cooccurrences.png)
+
+### features (keyword extraction)
+
+Compare partitions to identify features / keywords (using statistical tests such as chi square).
+
+``` r
+ep2002 <- partition("EUROPARL-EN", text_year = "2002", pAttribute = "word")
+epPre911 <- partition("EUROPARL-EN", text_year = as.character(1997:2001), pAttribute = "word")
+y <- features(ep2002, epPre911, included = FALSE)
+```
+
+### kwic (also known as concordances)
+
+So what happens in the context of a word, or a CQP query? To attain valid research results, reading will often be necessary. The kwic method will help, and uses the conveniences of DataTables, outputted in the Viewer pane of RStudio.
+
+``` r
+kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name"))
+```
 
 [![kwic()](http://polmine.sowi.uni-due.de/gallery/kwic.png)](http://polmine.sowi.uni-due.de/gallery/kwic.png)
+
+### read (the full text)
+
+Corpus analysis involves moving from text to numbers, and back again. Use the read method, to inspect the full text of a partition (a speech given by chancellor Angela Merkel in this case).
+
+``` r
+use("GermaParl")
+merkel <- partition("GERMAPARL", text_speaker = "Angela Merkel", text_date = "2013-09-03")
+read(merkel)
+```
+
+### as.TermDocumentMatrix (for text mining purposes)
+
+Many advanced methods in text mining require term document matrices as input. Based on the metadata of a corpus, these data structures can be obtained in a fast and flexible manner, for performing topic modelling, machine learning etc.
+
+``` r
+use("europarl.en")
+speakers <- partitionBundle(
+  "EUROPARL-EN", sAttribute = "speaker_id",
+  progress = FALSE, verbose = FALSE
+)
+speakers <- enrich(speakers, pAttribute = "word")
+tdm <- as.TermDocumentMatrix(speakers, col = "count")
+dim(tdm)
+```
 
 Installation
 ------------
