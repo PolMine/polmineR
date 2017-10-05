@@ -94,14 +94,16 @@
     </div>
 
     
-    <p>Count all tokens, or number of occurrences of a query (CQP syntax may be used).</p>
+    <p>Count all tokens, or number of occurrences of a query (CQP syntax may be
+used), or matches for the query.</p>
     
 
     <pre class="usage"><span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>),
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>),
   <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='co'># S4 method for partitionBundle</span>
@@ -111,8 +113,8 @@
 
 <span class='co'># S4 method for character</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># S4 method for vector</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>pAttribute</span>)</pre>
@@ -139,6 +141,10 @@ syntax can be used.</p></td>
       <td><p>either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
 auxiliary function)</p></td>
+    </tr>
+    <tr>
+      <th>breakdown</th>
+      <td><p>logical, whether to count occurrences for different matches for a query</p></td>
     </tr>
     <tr>
       <th>id2str</th>
@@ -185,12 +191,15 @@ TOTAL) will be amended to the data.table that is returned</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If .Object is a partitonBundle, the data.table returned will have the queries
+    <p>If .Object is a <code>partitonBundle</code>, the data.table returned will have the queries
 in the columns, and as many rows as there are in the partitionBundle.</p>
 <p>If .Object is a character vector (length 1) and query is NULL, the count is performed
 for the whole partition. The method will check whether the <code>polmineR.Rcpp</code> package,
 or the <code>cwb-lexdecode</code> utilities are available, and use them resepectively for 
 performance reasons.</p>
+<p>If <code>breakdown</code> is <code>TRUE</code> and one query is supplied, the function
+returns a frequency breakdown of the results of the query. If several queries
+are supplied, frequencies for the individual queries are retrieved.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -215,6 +224,10 @@ performance reasons.</p>
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Migration"</span>, <span class='st'>"Zukunft"</span>), <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 
+  <span class='fu'>matching</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+  <span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)
+  <span class='fu'>matching</span>(<span class='no'>P</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='no'>TURE</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -27,7 +27,7 @@ Core Functions
 ``` r
 library(polmineR)
 #> polmineR 0.7.5
-#> registry:  /Users/blaette/Data/cwb/registry
+#> registry:  /Library/Frameworks/R.framework/Versions/3.4/Resources/library/polmineR.sampleCorpus/extdata/cwb/registry
 #> interface: CQI.rcqp
 ```
 
