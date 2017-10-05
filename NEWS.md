@@ -1,3 +1,8 @@
+# v0.7.6
+* functionality of matches-method (breakdown of frequencies of matches) integrated
+into count-method (new param breakdown)
+
+
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency
 * data type of slot cpos of class 'regions' is a matrix now

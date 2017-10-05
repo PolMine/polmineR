@@ -1,5 +1,5 @@
-#' @rdname matches
-setGeneric("matches", function(.Object, ...) standardGeneric("matches") )
+#' @rdname matching
+setGeneric("matching", function(.Object, ...) standardGeneric("matching") )
 
 #' Matches for queries. 
 #'
@@ -13,49 +13,26 @@ setGeneric("matches", function(.Object, ...) standardGeneric("matches") )
 #' whether query is a CQP query (defaults to helper function \code{is.cqp})
 #' @param ... further parameters
 #' @return a data.table
-#' @exportMethod matches
+#' @exportMethod matching
 #' @docType methods
-#' @rdname matches
-#' @name matches
+#' @rdname matching
+#' @name matching
 #' @examples 
 #' \dontrun{
 #' use("polmineR.sampleCorpus")
-#' matches("PLPRBTTXT", '"Integration.*"')
+#' matching("PLPRBTTXT", '"Integration.*"')
 #' 
 #' P <- partition("PLPRBTTXT", text_date = "2009-11-11")
-#' matches(P, '"Integration.*"')
+#' matching(P, '"Integration.*"')
 #' }
-#' @aliases matches,partition-method
+#' @aliases matching,partition-method
 #' @seealso \code{\link{hits-class}}
-setMethod("matches", "partition", function(.Object, query, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute")){
-  dts <- lapply(
-    query,
-    function(x){
-      cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, pAttribute = pAttribute)
-      if (is.null(cposHits)) return( NULL )
-      hitsString <- apply(
-        cposHits, 1,
-        function(x) paste(CQI$cpos2str(.Object@corpus, pAttribute, x[1]:x[2]), collapse = ' ')
-      )
-      result <- table(hitsString)
-      dt <- data.table(query = x, match = names(result), count = as.vector(unname(result)))
-      if (nrow(dt) > 0){
-        Encoding(dt[["match"]]) <- .Object@encoding
-        dt[["match"]] <- as.nativeEnc(dt[["match"]], from = .Object@encoding)
-        setorderv(dt, cols = "count", order = -1L)
-        dt[["share"]] <- round(dt[["count"]] / sum(dt[["count"]]) * 100, 2)
-      } else {
-        dt <- NULL
-      }
-      dt
-    }
-  )
-  rbindlist(dts)
+setMethod("matching", "partition", function(.Object, query, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute")){
 })
 
-#' @rdname matches
-setMethod("matches", "character", function(.Object, query, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute")){
+#' @rdname matching
+setMethod("matching", "character", function(.Object, query, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute")){
   C <- Corpus$new(.Object)
   C$pAttribute <- pAttribute
-  matches(.Object = C$as.partition(), query = query, cqp = cqp, pAttribute = pAttribute)
+  matching(.Object = C$as.partition(), query = query, cqp = cqp, pAttribute = pAttribute)
 })

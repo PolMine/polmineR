@@ -13,7 +13,8 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
-  id2str = TRUE, pAttribute = getOption("polmineR.pAttribute"),
+  breakdown = FALSE, id2str = TRUE,
+  pAttribute = getOption("polmineR.pAttribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
 
 \S4method{count}{partitionBundle}(.Object, query, pAttribute = NULL,
@@ -21,8 +22,8 @@ count(.Object, ...)
   verbose = FALSE)
 
 \S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), sort = FALSE,
-  id2str = TRUE, verbose = TRUE)
+  pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE,
+  sort = FALSE, id2str = TRUE, verbose = TRUE)
 
 \S4method{count}{vector}(.Object, corpus, pAttribute)
 }
@@ -38,6 +39,8 @@ syntax can be used.}
 \item{cqp}{either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
 auxiliary function)}
+
+\item{breakdown}{logical, whether to count occurrences for different matches for a query}
 
 \item{id2str}{logical, whether to add rownames (only if query is NULL)}
 
@@ -62,16 +65,21 @@ TOTAL) will be amended to the data.table that is returned}
 a \code{"data.table"}
 }
 \description{
-Count all tokens, or number of occurrences of a query (CQP syntax may be used).
+Count all tokens, or number of occurrences of a query (CQP syntax may be
+used), or matches for the query.
 }
 \details{
-If .Object is a partitonBundle, the data.table returned will have the queries
+If .Object is a \code{partitonBundle}, the data.table returned will have the queries
 in the columns, and as many rows as there are in the partitionBundle.
 
 If .Object is a character vector (length 1) and query is NULL, the count is performed
 for the whole partition. The method will check whether the \code{polmineR.Rcpp} package,
 or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
 performance reasons.
+
+If \code{breakdown} is \code{TRUE} and one query is supplied, the function
+returns a frequency breakdown of the results of the query. If several queries
+are supplied, frequencies for the individual queries are retrieved.
 }
 \examples{
 \dontrun{
@@ -89,6 +97,10 @@ performance reasons.
   y <- count(debates, query = "Arbeit", pAttribute = "word")
   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
   
+  matching("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
+
+  P <- partition("PLPRBTTXT", text_date = "2009-11-11")
+  matching(P, '"Integration.*"', breakdown = TURE)
 }
 }
 \seealso{

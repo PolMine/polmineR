@@ -3,9 +3,10 @@ NULL
 
 #' Get counts.
 #' 
-#' Count all tokens, or number of occurrences of a query (CQP syntax may be used).
+#' Count all tokens, or number of occurrences of a query (CQP syntax may be
+#' used), or matches for the query.
 #' 
-#' If .Object is a partitonBundle, the data.table returned will have the queries
+#' If .Object is a \code{partitonBundle}, the data.table returned will have the queries
 #' in the columns, and as many rows as there are in the partitionBundle.
 #' 
 #' If .Object is a character vector (length 1) and query is NULL, the count is performed
@@ -13,10 +14,13 @@ NULL
 #' or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
 #' performance reasons.
 #' 
+#' If \code{breakdown} is \code{TRUE} and one query is supplied, the function
+#' returns a frequency breakdown of the results of the query. If several queries
+#' are supplied, frequencies for the individual queries are retrieved.
+#' 
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
 #' 
-
 #' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a
 #'   character vector (length 1) providing the name of a corpus
 #' @param query a character vector (one or multiple terms to be looked up), CQP
@@ -31,6 +35,7 @@ NULL
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
 #' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
+#' @param breakdown logical, whether to count occurrences for different matches for a query
 #' @param total defaults to FALSE, if TRUE, the added value of counts (column:
 #'   TOTAL) will be amended to the data.table that is returned
 #' @param progress logical, whether to show progress
@@ -58,29 +63,60 @@ NULL
 #'   y <- count(debates, query = "Arbeit", pAttribute = "word")
 #'   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
 #'   
+#'   matching("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
+#' 
+#'   P <- partition("PLPRBTTXT", text_date = "2009-11-11")
+#'   matching(P, '"Integration.*"', breakdown = TURE)
 #' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
 setMethod("count", "partition", function(
-  .Object, query = NULL, cqp = is.cqp, 
+  .Object, query = NULL, cqp = is.cqp, breakdown = FALSE,
   id2str = TRUE, pAttribute = getOption("polmineR.pAttribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE
   ){
+  stopifnot( is.logical(breakdown) == TRUE)
   if (!is.null(query)){
     if (progress) verbose <- FALSE
-    .getNumberOfHits <- function(query, partition, cqp, pAttribute, ...) {
-      if (verbose) message("... processing query ", query)
-      cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
-      if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
+    if (breakdown == TRUE){
+      dts <- lapply(
+        query,
+        function(x){
+          cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, pAttribute = pAttribute)
+          if (is.null(cposHits)) return( NULL )
+          hitsString <- apply(
+            cposHits, 1,
+            function(x) paste(CQI$cpos2str(.Object@corpus, pAttribute, x[1]:x[2]), collapse = ' ')
+          )
+          result <- table(hitsString)
+          dt <- data.table(query = x, match = names(result), count = as.vector(unname(result)))
+          if (nrow(dt) > 0){
+            Encoding(dt[["match"]]) <- .Object@encoding
+            dt[["match"]] <- as.nativeEnc(dt[["match"]], from = .Object@encoding)
+            setorderv(dt, cols = "count", order = -1L)
+            dt[["share"]] <- round(dt[["count"]] / sum(dt[["count"]]) * 100, 2)
+          } else {
+            dt <- NULL
+          }
+          dt
+        }
+      )
+      return( rbindlist(dts) )
+    } else if (breakdown == FALSE){
+      .getNumberOfHits <- function(query, partition, cqp, pAttribute, ...) {
+        if (verbose) message("... processing query ", query)
+        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
+        if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
+      }
+      no <- as.integer(blapply(
+        as.list(query),
+        f = .getNumberOfHits,
+        partition = .Object, cqp = cqp, pAttribute = pAttribute,
+        mc = mc, verbose = verbose, progress = progress
+      ))
+      return( data.table(query = query, count = no, freq = no/.Object@size) )
     }
-    no <- as.integer(blapply(
-      as.list(query),
-      f = .getNumberOfHits,
-      partition = .Object, cqp = cqp, pAttribute = pAttribute,
-      mc = mc, verbose = verbose, progress = progress
-    ))
-    return( data.table(query = query, count = no, freq = no/.Object@size) )
   } else {
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
@@ -162,7 +198,7 @@ setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), sort = FALSE, id2str = TRUE, verbose = TRUE){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE, sort = FALSE, id2str = TRUE, verbose = TRUE){
   if (is.null(query)){
     if (length(pAttribute) == 1){
       if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
@@ -240,29 +276,29 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       count <- sapply(
         query,
         function(query)
-          CQI$id2freq(
-            .Object,
-            pAttribute,
-            CQI$str2id(.Object, pAttribute, query)
-          )
+          CQI$id2freq(.Object, pAttribute, CQI$str2id(.Object, pAttribute, query))
       )
-      freq <- count / total
-      return(data.table(query = query, count = count, freq = freq))
+      return(data.table(query = query, count = count, freq = count / total))
     } else if (cqp == TRUE){
-      count <- sapply(
-        query,
-        function(query){
-          cpos_matrix <- cpos(.Object, query, cqp = cqp, pAttribute = pAttribute, encoding = getEncoding(.Object))
-          if (!is.null(cpos_matrix)){
-            return( nrow(cpos_matrix) )
-          } else {
-            return( 0 )
-          }
-          
-        }
-        )
-      freq <- count / total
-      return(data.table(query = query, count = count, freq = freq))
+      if (breakdown == FALSE){
+        count <- sapply(
+          query,
+          function(query){
+            cpos_matrix <- cpos(.Object, query, cqp = cqp, pAttribute = pAttribute, encoding = getEncoding(.Object))
+            if (!is.null(cpos_matrix)){
+              return( nrow(cpos_matrix) )
+            } else {
+              return( 0 )
+            }
+            
+          })
+        return( data.table(query = query, count = count, freq = count / total) )
+      } else {
+        C <- Corpus$new(.Object)
+        C$pAttribute <- pAttribute
+        retval <- matching(.Object = C$as.partition(), query = query, cqp = cqp, pAttribute = pAttribute)
+        return( retval )
+      }
     }
   }
 })
@@ -277,7 +313,7 @@ setMethod("count", "vector", function(.Object, corpus, pAttribute){
   ids <- CQI$cpos2id(corpus, pAttribute, .Object)
   count <- tabulate(ids)
   TF <- data.table(
-    id = c(0:length(count)),
+    id = 0:length(count),
     count = c(length(which(ids == 0)), count)
   )
   setkey(TF, "id")

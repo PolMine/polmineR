@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Andreas Blätte (andreas.blaette@uni-due.de)" />
+
+<meta name="date" content="2017-10-05" />
+
+<title>Introducing the polmineR-package</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introducing the ‘polmineR’-package</h1>
+<h4 class="author"><em>Andreas Blätte (<a href="mailto:andreas.blaette@uni-due.de">andreas.blaette@uni-due.de</a>)</em></h4>
+<h4 class="date"><em>2017-10-05</em></h4>
+
+
+
+<div id="purpose" class="section level2">
+<h2>Purpose</h2>
+<p>The purpose of the package <em>polmineR</em> is to facilitate the interactive analysis of corpora using R. Apart from performance and usability, key considerations for developing the package are:</p>
+<ul>
+<li><p>To provide a library with standard tasks such as concordances/keyword-in-context, cooccurrence statistics, or keyword extraction.</p></li>
+<li><p>To keep the original text accessible and to offer a seamless integration of qualitative and quantitative steps in corpus analysis that facilitates validation.</p></li>
+<li><p>To create a package that makes the creation and analysis of subcorpora (‘partitions’) easy. A particular strength of the package is to support research on synchronic and diachronic change of language use.</p></li>
+<li><p>To offer performance for users with a standard infrastructure. The package picks up the idea of a three-tier software design. Corpus data are managed and indexed using the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>.</p></li>
+<li><p>To support sharing consolidated and documented data, following the ideas of reproducible research.</p></li>
+</ul>
+<p>The ‘polmineR’ package supplements R packages that are already widely used for text mining. The CRAN task view is a good place to learn about relevant packages, see <a href="https://CRAN.R-project.org/view=NaturalLanguageProcessing">CRAN</a>. The polmineR is intended to be an interface between the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>, an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods.</p>
+<p>Apart from the speed of text processing, the Corpus Query Processor (CQP) and the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP syntax</a> provide a powerful and widely used syntax to query corpora. This is not an unique idea. Using a combination of R and the CWB implies a software architecture you will also find in the <a href="http://sourceforge.net/projects/txm/">TXM project</a>, or with <a href="http://cwb.sourceforge.net/cqpweb.php">CQPweb</a>. The ‘polmineR’ package offers a library with the grammer of corpus analysis below a graphical user interface (GUI). It is a toolset to perform simple tasts efficiently as well as to implement complex workflows.</p>
+<p>Advanced user will need a good understanding of the Corpus Workbench. The <a href="http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf">Corpus Encoding Tutorial</a> is an authoritative text for that. <a href="https://cran.r-project.org/package=rcqp">The vignette of the rcqp package</a> includes an excellent explanation of the CWB data-model.</p>
+<p>The most important thing users need to now is the difference between “s” and “p” attributes. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes). Typically, the p-attributes will be ‘word’, ‘pos’ (for part-of-speech) and ‘lemma’ (for the lemmatized word form).</p>
+</div>
+<div id="getting-started" class="section level2">
+<h2>Getting started</h2>
+<div id="check-that-the-corpus_registry-environment-variable-is-set" class="section level5">
+<h5>Check that the CORPUS_REGISTRY environment variable is set</h5>
+<p>The annex of the vignette includes a detailed explanation how to install polmineR on Windows, MacOS, and Linux. Once you have installed polmineR, check that the environment variable CORPUS_REGISTRY is set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">&quot;CORPUS_REGISTRY&quot;</span>)</code></pre></div>
+<p>The CORPUS_REGISTRY environment variable supplies the directory with registry files that describe where the CWB will find the files of an indexed corpus, and the s- and p-attributes. See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.</p>
+</div>
+<div id="loading-polminer" class="section level5">
+<h5>Loading polmineR</h5>
+<p>If the CORPUS_REGISTRY variable is set correctly, i.e. pointing to the directory with the registry files describing the corpora, load the polmineR.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)</code></pre></div>
+</div>
+<div id="using-and-installing-packaged-corpora" class="section level5">
+<h5>Using and installing packaged corpora</h5>
+<p>If you want to use a CWB corpus packaged in a R data package, you can call ‘use’ with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset. In the followings examples, the CWB encoded English version of the Europarl wrapped into a data package will be used.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">use</span>(<span class="st">&quot;europarl.en&quot;</span>)</code></pre></div>
+<p>Note that the use-function will call the resetRegistry-function that can also be used to set again the original path to the directory with registry files. If you want to use the English Europarl corpus, you can download it from a repository at the PolMine server.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.corpus</span>(<span class="st">&quot;europarl.en&quot;</span>, <span class="dt">repo =</span> <span class="st">&quot;http://polmine.sowi.uni-due.de/packages&quot;</span>)</code></pre></div>
+<p>This package may serve as an example how CWB indexed corpora can be shared using an adapted version of standard R functions. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.</p>
+</div>
+<div id="setting-the-interface-to-the-corpus-workbench" class="section level5">
+<h5>Setting the interface to the Corpus Workbench</h5>
+<p>The standard interface used by the polmineR package to extract information from CWB indexed corpora is the package ‘rcqp’. The interface is defined in a class called ‘CQI’. To check which interface is used:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(polmineR<span class="op">:::</span>CQI)</code></pre></div>
+<pre><code>## [1] &quot;CQI.rcqp&quot;  &quot;CQI.super&quot; &quot;R6&quot;</code></pre>
+<p>If you see “CQI.perl” leading the character vector that is returned, something went wrong. Accessing the corpora using perl scripts incurs an incredible performence loss. Reset the interface as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>), <span class="dt">sym =</span> <span class="st">&quot;CQI&quot;</span>)
+<span class="kw">assign</span>(<span class="st">&quot;CQI&quot;</span>, CQI.rcqp<span class="op">$</span><span class="kw">new</span>(), <span class="dt">envir =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>))
+<span class="kw">lockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>), <span class="dt">sym =</span> <span class="st">&quot;CQI&quot;</span>)
+<span class="er">}</span></code></pre></div>
+<p>An alternative interface is provided by the package ‘polmineR.Rcpp’, [available at GitHub][<a href="https://github.com/PolMine/polmineR.Rcpp" class="uri">https://github.com/PolMine/polmineR.Rcpp</a>] so far. This (experimental) package includes a few functions that speed up tasks such as counting terms, or preparing partitions. To install and use ‘polmineR.Rcpp’:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR.Rcpp&quot;</span>)
+<span class="kw">setCorpusWorkbenchInterface</span>(<span class="st">&quot;Rcpp&quot;</span>)</code></pre></div>
+<p>To switch to the interface offered by polmineR.Rcpp, proceed as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>), <span class="dt">sym =</span> <span class="st">&quot;CQI&quot;</span>)
+<span class="kw">assign</span>(<span class="st">&quot;CQI&quot;</span>, CQI.Rcpp<span class="op">$</span><span class="kw">new</span>(), <span class="dt">envir =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>))
+<span class="kw">lockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">&quot;polmineR&quot;</span>), <span class="dt">sym =</span> <span class="st">&quot;CQI&quot;</span>)</code></pre></div>
+<p>The checks performed when submitting a package at CRAN issue a note when the ‘unlockBinding’ function appears in the source code of the package. This is why a function for reset the interface is not included in the package.</p>
+</div>
+<div id="checking-that-corpora-are-available" class="section level5">
+<h5>Checking that corpora are available</h5>
+<p>Use the corpus-method to check whether which corpora are accessible. It should be the EUROPARL-EN corpus in our case (the names of CWB corpora are always written upper case).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">corpus</span>()</code></pre></div>
+<pre><code>##        corpus     size template
+## 1 EUROPARL-EN 39431862    FALSE</code></pre>
+</div>
+<div id="session-settings" class="section level5">
+<h5>Session settings</h5>
+<p>Many functions in the polmineR package use settings that are stored in the general options settings. You can see these settings as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>()[<span class="kw">grep</span>(<span class="st">&quot;polmineR&quot;</span>, <span class="kw">names</span>(<span class="kw">options</span>()))]</code></pre></div>
+<p>Several methods (such as kwic, or cooccurrences) will use these settings, if no explicit other value is provided. Here are a few examples how to change settings.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="st">&quot;polmineR.left&quot;</span> =<span class="st"> </span><span class="dv">15</span>)
+<span class="kw">options</span>(<span class="st">&quot;polmineR.right&quot;</span> =<span class="st"> </span><span class="dv">15</span>)
+<span class="kw">options</span>(<span class="st">&quot;polmineR.mc&quot;</span> =<span class="st"> </span><span class="ot">FALSE</span>)</code></pre></div>
+<p>To speed up computations, the polmineR package will sometimes try to use alternative, faster ways to access CWB corpora than the rcqp package. A few computations that are performance critical (for setting up partitions, or to count term frequencies) are implemented in the plugin package polmineR.Rcpp that has been mentioned before. It can be installed from GitHub. Note that it requires an installation of the Corpus Workbench to be present on your system (see installation instructions in the annex).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;PolMineR/polmineR&quot;</span>)</code></pre></div>
+<p>When loading the polmineR package, it is checked whether that plugin is present.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getOption</span>(<span class="st">&quot;polmineR.Rcpp&quot;</span>)</code></pre></div>
+<p>If you want to suppress using the polmineR.Rcpp functionality:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="st">&quot;polmineR.Rcpp&quot;</span> =<span class="st"> </span><span class="ot">FALSE</span>)</code></pre></div>
+</div>
+</div>
+<div id="working-with-corpora-core-methods" class="section level2">
+<h2>Working with corpora: Core methods</h2>
+<p>Core analytical tasks are implemented as methods (S4 class system), i.e. the bevaviour of the methods changes depending on the object that is supplied. Almost all methods can be applied to corpora as well as partitions (subcorpora). As an easy entry, methods applied to corpora are explained first.</p>
+<div id="keyword-in-context-kwic" class="section level5">
+<h5>Keyword-in-context (kwic)</h5>
+<p>The kwic method applied to the name of a corpus will return a KWIC object, output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the ‘meta’ parameter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kwic</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">&quot;Islam&quot;</span>)
+<span class="kw">kwic</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">&quot;Islam&quot;</span>, <span class="dt">meta =</span> <span class="kw">c</span>(<span class="st">&quot;text_date&quot;</span>, <span class="st">&quot;speaker_name&quot;</span>))</code></pre></div>
+<p>You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kwic</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">'&quot;Geneva&quot; &quot;Convention&quot;'</span>)
+<span class="kw">kwic</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">'&quot;[Ss]ocial&quot; &quot;justice&quot;'</span>)</code></pre></div>
+<p>Explaining the CQP syntax goes beyon this vignette. Consult the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP tutorial</a> to learn more about the CQP syntax.</p>
+</div>
+<div id="getting-counts-and-frequencies" class="section level5">
+<h5>Getting counts and frequencies</h5>
+<p>You can count one or several hits in a corpus.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">count</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">&quot;France&quot;</span>)</code></pre></div>
+<pre><code>##     query count         freq
+## 1: France  5517 0.0001399122</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">count</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;France&quot;</span>, <span class="st">&quot;Germany&quot;</span>, <span class="st">&quot;Britain&quot;</span>, <span class="st">&quot;Spain&quot;</span>, <span class="st">&quot;Italy&quot;</span>, <span class="st">&quot;Denmark&quot;</span>, <span class="st">&quot;Poland&quot;</span>))</code></pre></div>
+<pre><code>##      query count         freq
+## 1:  France  5517 1.399122e-04
+## 2: Germany  4196 1.064114e-04
+## 3: Britain  1708 4.331523e-05
+## 4:   Spain  3378 8.566676e-05
+## 5:   Italy  3209 8.138089e-05
+## 6: Denmark  1615 4.095673e-05
+## 7:  Poland  1820 4.615557e-05</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">count</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">'&quot;[pP]opulism&quot;'</span>)</code></pre></div>
+<pre><code>##            query count         freq
+## 1: &quot;[pP]opulism&quot;   107 2.713542e-06</code></pre>
+</div>
+<div id="dispersions" class="section level5">
+<h5>Dispersions</h5>
+<p>… get dispersions of counts accross one (or two) dimensions …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw">dispersion</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">&quot;populism&quot;</span>, <span class="dt">sAttribute =</span> <span class="st">&quot;text_year&quot;</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
+popRegex &lt;-<span class="st"> </span><span class="kw">dispersion</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="st">'&quot;[pP]opulism&quot;'</span>, <span class="dt">sAttribute =</span> <span class="st">&quot;text_year&quot;</span>, <span class="dt">cqp =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<p>Note that it is a data.table that is returned. Visualising the result as a barplot …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">barplot</span>(<span class="dt">height =</span> popRegex[,count], <span class="dt">names.arg =</span> popRegex[,text_year], <span class="dt">las =</span> <span class="dv">2</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="cooccurrences" class="section level5">
+<h5>Cooccurrences</h5>
+<p>… get cooccurrence statistics …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">br &lt;-<span class="st"> </span><span class="kw">cooccurrences</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">query =</span> <span class="st">&quot;Brussels&quot;</span>)
+eu &lt;-<span class="st"> </span><span class="kw">cooccurrences</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">query =</span> <span class="st">'&quot;European&quot; &quot;Union&quot;'</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)
+<span class="kw">subset</span>(eu, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>)<span class="op">@</span>stat[[<span class="st">&quot;word&quot;</span>]][<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>]</code></pre></div>
+<pre><code>##  [1] &quot;the&quot;       &quot;,&quot;         &quot;of&quot;        &quot;I&quot;         &quot;to&quot;       
+##  [6] &quot;.&quot;         &quot;within&quot;    &quot;States&quot;    &quot;The&quot;       &quot;its&quot;      
+## [11] &quot;countries&quot; &quot;in&quot;        &quot;we&quot;        &quot;this&quot;      &quot;that&quot;</code></pre>
+</div>
+</div>
+<div id="working-with-subcorpora---partitions" class="section level2">
+<h2>Working with subcorpora - partitions</h2>
+<p>Easily creating partitions (i.e. subcorpora) based on s-attributes is a strength of the ‘polmineR’ package. So if we want to work with the speeches given in the European Parliament in 2006:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2006 &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">text_year =</span> <span class="st">&quot;2006&quot;</span>)</code></pre></div>
+<p>To get some basic information about the partition that has been set up, the ‘show’-method can be used. It is also called when you simply type the name of the partition object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2006</code></pre></div>
+<pre><code>## ** partition object **
+## corpus:              EUROPARL-EN 
+## name:                 
+## sAttributes:         text_year = 2006 
+## cpos:                46 pairs of corpus positions
+## size:                3100529 tokens
+## count:               not available</code></pre>
+<p>To evaluate s-attributes, regular expressions can be used.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">barroso &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">speaker_name =</span> <span class="st">&quot;Barroso&quot;</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)
+<span class="kw">sAttributes</span>(barroso, <span class="st">&quot;speaker_name&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;Barroso&quot;             &quot;José Manuel Barroso&quot;</code></pre>
+<p>If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the partition-function.</p>
+</div>
+<div id="cooccurrences-1" class="section level2">
+<h2>Cooccurrences</h2>
+<p>The cooccurrences-method can be applied to partition-objects.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2002 &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">text_year =</span> <span class="st">&quot;2006&quot;</span>)
+terror &lt;-<span class="st"> </span><span class="kw">cooccurrences</span>(ep2002, <span class="st">&quot;terrorism&quot;</span>, <span class="dt">pAttribute =</span> <span class="st">&quot;lemma&quot;</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</code></pre></div>
+<p>Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot “stat” of the context object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">terror<span class="op">@</span>stat[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,][,.(lemma, count_partition, rank_ll)]</code></pre></div>
+<pre><code>##             lemma count_partition rank_ll
+##  1:         fight            1047       1
+##  2:       against            2822       2
+##  3:        combat             623       3
+##  4:         crime             533       4
+##  5:      organise             441       5
+##  6:           war             449       6
+##  7:        threat             445       7
+##  8:           and           84531       8
+##  9:   immigration             601       9
+## 10: international            1876      10</code></pre>
+</div>
+<div id="distribution-of-queries" class="section level2">
+<h2>Distribution of queries</h2>
+<p>To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the ‘distribution’ function. The query may use the CQP syntax.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># one query / one dimension</span>
+oneQuery &lt;-<span class="st"> </span><span class="kw">dispersion</span>(ep2002, <span class="dt">query =</span> <span class="st">'terrorism'</span>, <span class="st">&quot;text_date&quot;</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># # multiple queries / one dimension</span>
+twoQueries &lt;-<span class="st"> </span><span class="kw">dispersion</span>(ep2002, <span class="dt">query=</span> <span class="kw">c</span>(<span class="st">&quot;war&quot;</span>, <span class="st">&quot;peace&quot;</span>), <span class="st">&quot;text_date&quot;</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+</div>
+<div id="getting-features" class="section level2">
+<h2>Getting features</h2>
+<p>To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2002 &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">text_year =</span> <span class="st">&quot;2002&quot;</span>)
+ep2002 &lt;-<span class="st"> </span><span class="kw">enrich</span>(ep2002, <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>)
+
+epPre911 &lt;-<span class="st"> </span><span class="kw">partition</span>(<span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">text_year =</span> <span class="kw">as.character</span>(<span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>))
+epPre911 &lt;-<span class="st"> </span><span class="kw">enrich</span>(epPre911, <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>)
+
+F &lt;-<span class="st"> </span><span class="kw">features</span>(ep2002, epPre911, <span class="dt">included =</span> <span class="ot">FALSE</span>)
+<span class="kw">subset</span>(F, rank_chisquare <span class="op">&lt;=</span><span class="st"> </span><span class="dv">50</span>)<span class="op">@</span>stat[[<span class="st">&quot;word&quot;</span>]]</code></pre></div>
+<pre><code>##  [1] &quot;2002&quot;         &quot;Johannesburg&quot; &quot;Seville&quot;      &quot;Barcelona&quot;   
+##  [5] &quot;'s&quot;           &quot;2003&quot;         &quot;Copenhagen&quot;   &quot;terrorism&quot;   
+##  [9] &quot;02&quot;           &quot;candidate&quot;    &quot;Spanish&quot;      &quot;2002/&quot;       
+## [13] &quot;Palestinian&quot;  &quot;Kaliningrad&quot;  &quot;,&quot;            &quot;Aznar&quot;       
+## [17] &quot;enlargement&quot;  &quot;asbestos&quot;     &quot;Danish&quot;       &quot;Sharon&quot;      
+## [21] &quot;Prestige&quot;     &quot;biofuels&quot;     &quot;2004&quot;         &quot;Convention&quot;  
+## [25] &quot;2003.&quot;        &quot;Galicia&quot;      &quot;2001/&quot;        &quot;137(1&quot;       
+## [29] &quot;Summit&quot;       &quot;Iraq&quot;         &quot;Criminal&quot;     &quot;GM&quot;          
+## [33] &quot;Sky&quot;          &quot;Presidency&quot;   &quot;competences&quot;  &quot;ICC&quot;         
+## [37] &quot;Galileo&quot;      &quot;Cotonou&quot;      &quot;Haarder&quot;      &quot;Israel&quot;      
+## [41] &quot;sustainable&quot;  &quot;however&quot;      &quot;cod&quot;          &quot;Valencia&quot;    
+## [45] &quot;Arafat&quot;       &quot;mid-term&quot;     &quot;COM(2001&quot;     &quot;Afghanistan&quot; 
+## [49] &quot;Explanation&quot;  &quot;medicinal&quot;</code></pre>
+</div>
+<div id="getting-a-tm-termdocumentmatrix" class="section level2">
+<h2>Getting a tm TermDocumentMatrix</h2>
+<p>For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">speakers &lt;-<span class="st"> </span><span class="kw">partitionBundle</span>(
+  <span class="st">&quot;EUROPARL-EN&quot;</span>, <span class="dt">sAttribute =</span> <span class="st">&quot;speaker_id&quot;</span>,
+  <span class="dt">progress =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>
+)
+speakers &lt;-<span class="st"> </span><span class="kw">enrich</span>(speakers, <span class="dt">pAttribute =</span> <span class="st">&quot;word&quot;</span>)
+tdm &lt;-<span class="st"> </span><span class="kw">as.TermDocumentMatrix</span>(speakers, <span class="dt">col =</span> <span class="st">&quot;count&quot;</span>)
+<span class="kw">class</span>(tdm) <span class="co"># to see what it is</span>
+<span class="kw">show</span>(tdm)
+m &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(tdm) <span class="co"># turn it into an ordinary matrix</span>
+m[<span class="kw">c</span>(<span class="st">&quot;Barroso&quot;</span>, <span class="st">&quot;Schulz&quot;</span>),]</code></pre></div>
+</div>
+<div id="moving-on" class="section level2">
+<h2>Moving on</h2>
+<p>The package includes many features that go beyond this vignette. It is a key aim in the project to develop respective documentation in the vignette and the man pages for the individual functions further. Feedback is very welcome!</p>
+</div>
+<div id="annex-i-installing-polminer" class="section level2">
+<h2>Annex I: Installing polmineR</h2>
+<div id="windows-32-bit-i386" class="section level3">
+<h3>Windows (32 bit / i386)</h3>
+<p>At this stage, an easy way to install polmineR is available only for 32bit R. Usually, an R installation will include both 32bit and 64bit R. So if you want to keep things simple, make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools &gt; Global Options will open a dialogue where you can choose 32bit R.</p>
+<p>Before installing polmineR, the package ‘rcqp’ needs to be installed. In turn, rcqp requires plyr, which should be installed first.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;plyr&quot;</span>)</code></pre></div>
+<p>To avoid compiling C code in a package, packages with compiled binaries are very handy. Windows binaries for the rcqp package are not available at CRAN, but can be installed from a repository of packages entertained at the server of the PolMine project:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://polmine.sowi.uni-due.de/packages&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;win.binary&quot;</span>)</code></pre></div>
+<p>To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package we offer uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.</p>
+<p>Before proceeding to install polmineR, we install dependencies that are not installed automatically.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">&quot;htmltools&quot;</span>, <span class="st">&quot;htmlwidgets&quot;</span>, <span class="st">&quot;magrittr&quot;</span>, <span class="st">&quot;iterators&quot;</span>, <span class="st">&quot;NLP&quot;</span>))</code></pre></div>
+<p>The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+<p>The development version of the package, which may include the most recent updates and features, can be installed from GitHub. The easiest way to do this is to use a mechanism offered by the package devtools.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</code></pre></div>
+<p>The installation may throw warnings. There are three warnings you can ignore at this stage:</p>
+<ul>
+<li>“WARNING: this package has a configure script / It probably needs manual configuration”.</li>
+<li>The environment variable CORPUS_REGISTRY is not defined.</li>
+<li>package ‘rcqp’ is not installed for ‘arch = x64’.</li>
+</ul>
+<p>The configure script is for Linux/MacOS installation, its sole purpose is to pass tests for uploading the package to CRAN. As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable “CORPUS_REGISTRY” can be set as follows in R:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">&quot;C:/PATH/TO/YOUR/REGISTRY&quot;</span>)</code></pre></div>
+<p>To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file ‘.Renviron’ or ‘.Renviron.site’ when calling the help for the startup process(<code>?Startup</code>).</p>
+<p>Two important notes concerning problems with the CORPUS_REGISTRY environment variable that may cause serious headaches:</p>
+<ul>
+<li><p>The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name (“C:/Users/Donald Duck/Documents”), for instance. We do not yet know any workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as “C:/cwb”).</p></li>
+<li><p>If you keep data on another volume than your system files, your R packages etc. (eg. volume ‘C:’ for system files, and ‘D:’ for data and user files), make sure to set the working directory (<code>setwd()</code>) is set to any directory on the volume with the directory defined via CORPUS_REGISTRY. CWB/rcqp will assume that the CORPUS_REGISTRY directory is on the same volume as the current working directory (which can be identified by calling <code>getwd()</code>).</p></li>
+</ul>
+<p>Finally: polmineR if optimized for working with RStudio. It you work with 32bit R, you may have to check in the settings of RStudio that it will call 32bit R. To be sure, check the startup message.</p>
+<p>If everything works, check whether polmineR can be loaded.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)
+<span class="kw">corpus</span>() <span class="co"># to see corpora available at your system</span></code></pre></div>
+</div>
+<div id="windows-64-bit-x86" class="section level3">
+<h3>Windows (64 bit / x86)</h3>
+<p>At this stage, 64 bit support is still experimental. Apart from an installation of 64 bit R, you will need to install Rtools, available <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a>. Rtools is a collection of tools necessary to build and compile R packages on a Windows machine.</p>
+<p>To interface to a core C library of the Corpus Workbench (CWB), you will need an installation of a 64 bit AND a 32 bit version of the CWB.</p>
+<p>The “official” 32 bit version of the CWB is available <a href="https://sourceforge.net/projects/cwb/files/cwb/cwb-3.4-beta/">here</a>. Installation instructions are available at the <a href="http://cwb.sourceforge.net/beta.php">CWB Website</a>. The 32 bit version should be installed in the directory “C:Files”, with admin rights.</p>
+<p>The 64 bit version, prepared by Andreas Blaette, is available <a href="http://polmine.sowi.uni-due.de/public/?dir=CWB">here</a>. Install this 64 bit CWB version to “C:Files (x86)”. In the unzipped downloaded zip file, you will find a bat file that will do the installation. Take care that you run the file with administrator rights. Without these rights, no files will be copied.</p>
+<p>The interface to the Corpus Workbench is the package polmineR.Rcpp, <a href="https://www.github.com/PolMine/polminer.Rcpp">available at GitHub</a>. If you use git, you can clone that repository, otherwise, you can download a zip file.</p>
+<p>The downloaded zip file needs to be unzipped again. Then, in the directory with the ‘polmineR.Rcpp’-directory, run:</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">R</span> CMD build polmineR.Rcpp
+<span class="ex">R</span> CMD INSTALL polmineR.Rcpp_0.1.0.tar.gz</code></pre></div>
+<p>If you read closely what is going on during the compilation, you will see a few warnings that libraries are not found. If creating the package is not aborted, nothing is wrong. R CMD build will look for the 64 bit files in the directory with the 32 bit dlls first and discover that they do not work for 64 bit, only then will it move to the correct location.</p>
+<p>One polmineR.Rcpp is installed, proceed with the instructions for installing polmineR in a 32 bit context. Future binary releases of the polmineR.Rcpp package may make things easier. Anyway, the proof of concept is there that polmineR will work on a 64 bit Windows machine too.</p>
+<p>Finally, you need to make sure that polmineR will interface to CWB indexed corpora using polmineR.Rcpp, and not with rcqp (the default). To set the interface accordingly:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setCorpusWorkbenchInterface</span>(<span class="st">&quot;Rcpp&quot;</span>)</code></pre></div>
+<p>To test whether corpora are available:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">corpus</span>()</code></pre></div>
+<pre><code>##        corpus     size template
+## 1 EUROPARL-EN 39431862    FALSE</code></pre>
+</div>
+<div id="macos" class="section level3">
+<h3>MacOS</h3>
+<p>The following instructions for Mac users assume that R is installed on your system. Binaries are available from the <a href="https://cran.r-project.org/bin/macosx/">Homepage of the R Project</a>. An installation of RStudio is highly recommended. The Open Source License version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a> is what you need.</p>
+<div id="installing-polminer" class="section level4">
+<h4>Installing ‘polmineR’</h4>
+<p>The latest release of polmineR can be installed from CRAN using the usual <code>install.packages</code>-function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+<p>The development version of <em>polmineR</em> can be installed using devtools:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>) <span class="co"># unless devtools is already installed</span>
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</code></pre></div>
+</div>
+<div id="installing-rcqp" class="section level4">
+<h4>Installing ‘rcqp’</h4>
+<p>The default interface of the polmineR package to access CWB indexed corpora is the package ‘rcqp’. Accessing corpora will not work before you have installed the interface.</p>
+<div id="installing-precompiled-binary-of-rcqp-from-the-polmine-server" class="section level5">
+<h5>Installing precompiled binary of rcqp from the PolMine server</h5>
+<p>The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(
+  <span class="st">&quot;rcqp&quot;</span>,
+  <span class="dt">repos =</span> <span class="st">&quot;http://polmine.sowi.uni-due.de/packages&quot;</span>,
+  <span class="dt">type =</span> <span class="st">&quot;mac.binary&quot;</span>
+  )</code></pre></div>
+</div>
+<div id="building-rcqp-from-source" class="section level5">
+<h5>Building rcqp from source</h5>
+<p>If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.</p>
+<p>First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">xcode-select</span> --install</code></pre></div>
+<p>To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.</p>
+<p><em>Option 1: Using Homebrew</em></p>
+<p>We recommend to use ‘Homebrew’. To install Homebrew, follow the instructions on the <a href="https://brew.sh/index_de.html">Homebrew Homepage</a>. The following commands will install the C libraries the rcqp package relies on:</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">brew</span> -v install pkg-config
+<span class="ex">brew</span> -v install glib --universal
+<span class="ex">brew</span> -v install pcre --universal
+<span class="ex">brew</span> -v install readline</code></pre></div>
+<p><em>Option 2: Using Macports</em></p>
+<p>If you prefer using Macports, get it from <a href="https://www.macports.org/" class="uri">https://www.macports.org/</a>. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> port -v selfupdate</code></pre></div>
+<p>Now we can install the libraries rcqp will require. Again, from the terminal.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> port install glib2
+<span class="fu">sudo</span> port install pkgconfig
+<span class="fu">sudo</span> port install pcre</code></pre></div>
+<p><em>Install dependencies and rcqp</em></p>
+<p>Once the system requirements are there, the next steps can be done from R. Before installing rcqp, and then polmineR, we install a few packages. In the R console:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">&quot;RUnit&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;plyr&quot;</span>, <span class="st">&quot;tm&quot;</span>))</code></pre></div>
+<p>Now rcqp can be installed, and then polmineR:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+<p>If you like to work with the development version, that can be installed from GitHub.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;PolMine/polmineR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;dev&quot;</span>)</code></pre></div>
+</div>
+</div>
+</div>
+<div id="linux" class="section level3">
+<h3>Linux</h3>
+<p>The pcre, glib and pkg-config libraries can be installed using apt-get.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install libglib2.0-dev
+<span class="fu">sudo</span> apt-get install libssl-dev
+<span class="fu">sudo</span> apt-get install libcurl4-openssl-dev</code></pre></div>
+<p>The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;RUnit&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;plyr&quot;</span>, <span class="st">&quot;tm&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;rcqp&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;polmineR&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="annex-ii-cwb-corpora-and-the-corpus_registry-environment-variable" class="section level2">
+<h2>Annex II: CWB corpora and the CORPUS_REGISTRY environment variable</h2>
+<p>Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a ‘registry’ directory, and an ‘indexed_corpora’ directory. The files in the registry directory (‘registry’ in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR. Note that you need to set the environment to the ‘registry’ folder, not the files that are located in this directory.</p>
+<p>The CORPUS_REGISTRY environment variable can be set manually from the R console:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">&quot;/PATH/TO/YOUR/REGISTRY/DIRECTORY&quot;</span>)
+
+<span class="co"># For example the path could look like this:</span>
+<span class="co"># Sys.setenv(CORPUS_REGISTRY = &quot;/Library/Frameworks/R.framework/Versions/3.3/Resources/library/plprbt/extdata/cwb/registry&quot;)</span></code></pre></div>
+<p>To check whether and how the environment variable is set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">&quot;CORPUS_REGISTRY&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;/Library/Frameworks/R.framework/Versions/3.4/Resources/library/europarl.en/extdata/cwb/registry&quot;</code></pre>
+<p>You can set the environment variable permanently to avoid having to set it each time before you want to use polmineR. A good way is to inlude the following line in the file .Renviron in your home directory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CORPUS_REGISTRY=<span class="st">&quot;/PATH/TO/YOUR/REGISTRY/DIRECTORY&quot;</span></code></pre></div>
+<p>There are a few other options to have environment variables set at every time you launch polmineR. To learn about these, use the help for the R startup procedure.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?Startup </code></pre></div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
