@@ -6,3 +6,4 @@
 ^README-.*\.png$
 ^paper\.Rmd$
 .travis.yml$
+^_pkgdown\\.yml$

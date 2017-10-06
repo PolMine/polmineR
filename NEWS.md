@@ -1,6 +1,9 @@
-# v0.7.6
+# v0.7.6 (in preparation)
 * functionality of matches-method (breakdown of frequencies of matches) integrated
 into count-method (new param breakdown)
+* corpus REUTERS included (as data for testsuite)
+* adjust data directory of REUTERS corpus upon loading package
+* a pkgdown-generated website is included in the docs directory
 
 
 # v0.7.5

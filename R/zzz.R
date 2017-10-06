@@ -94,6 +94,19 @@ getSettings <- function(){
 #' @importFrom utils packageVersion
 .onAttach <- function(lib, pkg){
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
+  
+  # adjust dataDir, if it has not yet been set
+  REUTERS <- RegistryFile$new(
+    "REUTERS",
+    filename = system.file(package = "polmineR", "extdata", "cwb", "registry", "reuters")
+  )
+  correctDataDir <- system.file(package = "polmineR", "extdata", "cwb", "indexed_corpora", "reuters")
+  if (REUTERS$getHome() != correctDataDir){
+
+    REUTERS$setHome(new = correctDataDir) 
+    REUTERS$write(verbose = FALSE)
+  }
+
   setTemplate()
   getSettings()
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))

@@ -13,6 +13,7 @@
 #' @param filename a filename
 #' @param package name of a package
 #' @param registry directory of the registry (defaults to CORPUS_Registry environment variable)
+#' @param verbose logical, whether to output information
 #' @field registryDir registry directory
 #' @field encoding corpus encoding
 #' @field txt registry as character vector 
@@ -77,12 +78,7 @@ RegistryFile <- setRefClass(
       
       "Read file from disc, as character vector in field 'txt'."
       
-      .self$txt <- scan(
-        file = file.path(.self$filename),
-        sep = "\n",
-        what = "character",
-        quiet = TRUE, blank.lines.skip = FALSE
-      )
+      .self$txt <- readLines(.self$filename)
       invisible(.self$txt)
     },
     
@@ -307,12 +303,12 @@ RegistryFile <- setRefClass(
       }
     },
     
-    write = function(filename = NULL){
+    write = function(filename = NULL, verbose = TRUE){
       
       "Write registry file to disk."
       
       if (!is.null(filename)) .self$filename <- filename
-      message("... writing registry: ", .self$filename)
+      if (verbose) message("... writing registry: ", .self$filename)
       cat(.self$txt, file = .self$filename, sep = "\n")
     },
     
