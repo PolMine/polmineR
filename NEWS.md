@@ -4,6 +4,7 @@ into count-method (new param breakdown)
 * corpus REUTERS included (as data for testsuite)
 * adjust data directory of REUTERS corpus upon loading package
 * a pkgdown-generated website is included in the docs directory
+* consistent use of .verboseOutput helper function to make shiny app work
 
 
 # v0.7.5

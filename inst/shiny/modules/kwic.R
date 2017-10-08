@@ -1,4 +1,5 @@
 kwicUiInput <- function(drop = NULL){
+  
   divs = list(
     go = actionButton("kwic_go", "", icon = icon("play", lib = "glyphicon")),
     mail = actionButton("kwic_mail", "", icon = icon("envelope", lib = "glyphicon")),
@@ -14,7 +15,7 @@ kwicUiInput <- function(drop = NULL){
       selectInput("kwic_partition", "partition", choices = character())
     ),
     query = textInput("kwic_query", "query", value = ""),
-    positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
+    # positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
     sAttribute = selectInput(
       "kwic_meta", "sAttribute",
       choices = sAttributes(corpus()[["corpus"]][1]),
@@ -77,10 +78,11 @@ kwicServer <- function(input, output, session, ...){
         withProgress(
           message = "please wait", value = 0, max = 5, detail = "preparing data",
           {
+            print("yeah")
             values[["kwic"]] <- polmineR::kwic(
               .Object = object,
               query = rectifySpecialChars(input$kwic_query),
-              pAttribute = ifelse(is.null(input$kwic_pAttribute), "word", input$kwic_pAttribute),
+              pAttribute = if (is.null(input$kwic_pAttribute)) "word" else input$kwic_pAttribute,
               left = input$kwic_window,
               right = input$kwic_window,
               meta = input$kwic_meta,

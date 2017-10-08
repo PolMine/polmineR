@@ -103,7 +103,10 @@ setMethod("context", "partition", function(
       warning('No hits for query ', query, ' (returning NULL)')
       return(NULL)
     } else {
-      if (verbose) message("... number of hits: ", nrow(hits))
+      .verboseOutput(
+        message = sprintf("number of hits: %d", nrow(hits)),
+        verbose = verbose
+        )
     }
     colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
     
@@ -128,7 +131,7 @@ setMethod("context", "partition", function(
 
     # generate positivelist/stoplist with ids and apply it
     if (!is.null(positivelist)){
-      if (verbose) message("... filtering by positivelist")
+      .verboseOutput("filtering by positivelist", verbose)
       before <- length(unique(ctxt@cpos[["hit_no"]]))
       positivelistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
       .keepPositives <- function(.SD){
@@ -139,7 +142,10 @@ setMethod("context", "partition", function(
       }
       ctxt@cpos <- ctxt@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
       after <- length(unique(ctxt@cpos[["hit_no"]]))
-      if (verbose) message("... number of hits droped due to positivelist: ", before - after)
+      .verboseOutput(
+        sprintf("number of hits droped due to positivelist: %d", before - after),
+        verbose
+      )
       if (nrow(ctxt@cpos) == 0) {
         warning("no remaining hits after applying positivelist, returning NULL object")
         return( NULL )
@@ -147,7 +153,7 @@ setMethod("context", "partition", function(
     }
     
     if (!is.null(stoplist)){
-      if (verbose) message("... applying stoplist")
+      .verboseOutput("applying stoplist", verbose)
       before <- length(unique(ctxt@cpos[["hit_no"]]))
       stoplistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
       .dropNegatives <- function(.SD){
@@ -158,7 +164,7 @@ setMethod("context", "partition", function(
       }
       ctxt@cpos <- ctxt@cpos[, .dropNegatives(.SD), by = "hit_no", with = TRUE]
       after <- length(unique(ctxt@cpos[["hit_no"]]))
-      if (verbose) message("... number of hits droped due to stoplist: ", before - after)
+      .verboseOutput(sprintf("number of hits droped due to stoplist: %d", before - after), verbose)
       if (nrow(ctxt@cpos) == 0) {
         warning("no remaining hits after applying stoplist, returning NULL object")
         return( NULL )
@@ -174,7 +180,7 @@ setMethod("context", "partition", function(
     ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
     
     # check that windows do not transgress s-attribute
-    if (verbose) message("... checking that context positions to not transgress regions")
+    .verboseOutput("checking that context positions to not transgress regions", verbose)
     ctxt <- enrich(ctxt, sAttribute = sAttribute, verbose = verbose)
     ctxt <- trim(ctxt, sAttribute = sAttribute, verbose = verbose, progress = progress)
     
@@ -255,7 +261,7 @@ setMethod("context", "character", function(.Object, query, pAttribute = getOptio
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionBundle", function(.Object, query, verbose=TRUE, ...){
+setMethod("context", "partitionBundle", function(.Object, query, verbose = TRUE, ...){
   contextBundle <- new("contextBundle", query=query, pAttribute=pAttribute)
   if (!is.numeric(positivelist)){
     # corpus.pAttribute <- paste(
@@ -269,7 +275,7 @@ setMethod("context", "partitionBundle", function(.Object, query, verbose=TRUE, .
   contextBundle@objects <- sapply(
     .Object@objects,
     function(x) {
-      if (verbose == TRUE) message("... proceeding to partition ", x@name)
+      if (verbose) message("... proceeding to partition ", x@name)
       context(x, query, ...)
       },
     simplify = TRUE,
@@ -308,7 +314,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
       pAttribute=newObject@pAttribute,
-      verbose=FALSE
+      verbose = FALSE
       )
     newObject@size <- nrow(hits)
     hits <- cbind(hits, CQI$cpos2struc(newObject@corpus, sAttribute, hits[,1]))

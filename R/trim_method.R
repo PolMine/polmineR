@@ -29,7 +29,7 @@ setGeneric("trim", function(object, ...){standardGeneric("trim")})
 #' @rdname trim-method
 setMethod("trim", "TermDocumentMatrix", function(object, termsToKeep=NULL, termsToDrop=NULL, docsToKeep=NULL, docsToDrop=NULL, verbose=TRUE){
   .rmBlank <- function(mat, verbose=TRUE){
-    if (verbose==TRUE) message("... removing empty rows")
+    .verboseOutput("... removing empty rows", verbose)
     matTmp <- as.sparseMatrix(mat)
     matTmp <- matTmp[which(rowSums(matTmp) > 0),]
     mat <- as.simple_triplet_matrix(matTmp)
@@ -105,7 +105,7 @@ setMethod("trim", "context", function(object, sAttribute = NULL, verbose = TRUE,
     position <- 0 # work around to make data.table syntax pass R CMD check
     struc <- 0 # work around to make data.table syntax pass R CMD check
     
-    if (verbose) message("... checking boundaries of regions")
+    .verboseOutput("... checking boundaries of regions", verbose)
     if (progress) pb <- txtProgressBar(min = 1, max = object@count, style = 3)
     .checkBoundary <- function(.SD, .GRP){
       if (progress) setTxtProgressBar(pb, value = .GRP)
