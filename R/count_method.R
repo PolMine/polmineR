@@ -63,10 +63,10 @@ NULL
 #'   y <- count(debates, query = "Arbeit", pAttribute = "word")
 #'   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
 #'   
-#'   matching("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
+#'   count("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
 #' 
 #'   P <- partition("PLPRBTTXT", text_date = "2009-11-11")
-#'   matching(P, '"Integration.*"', breakdown = TURE)
+#'   count(P, '"Integration.*"', breakdown = TRUE)
 #' }
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
@@ -144,7 +144,7 @@ setMethod("count", "partition", function(
     }
     if (id2str){
       dummy <- lapply(
-        c(1:length(pAttribute)),
+        1:length(pAttribute),
         function(i){
           str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttribute[i], TF[[pAttr_id[i]]]), from = .Object@encoding)
           TF[, eval(pAttribute[i]) := str , with = TRUE] 
@@ -297,7 +297,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       } else {
         C <- Corpus$new(.Object)
         C$pAttribute <- pAttribute
-        retval <- matching(.Object = C$as.partition(), query = query, cqp = cqp, pAttribute = pAttribute)
+        retval <- count(.Object = C$as.partition(), query = query, cqp = cqp, pAttribute = pAttribute, breakdown = TRUE)
         return( retval )
       }
     }

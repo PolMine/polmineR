@@ -108,7 +108,6 @@ Collate:
     'label_method.R'
     'll_method.R'
     'mail_method.R'
-    'matches_method.R'
     'means_method.R'
     'noise_method.R'
     'pAttributes_method.R'

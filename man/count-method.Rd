@@ -97,10 +97,10 @@ are supplied, frequencies for the individual queries are retrieved.
   y <- count(debates, query = "Arbeit", pAttribute = "word")
   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
   
-  matching("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
+  count("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
 
   P <- partition("PLPRBTTXT", text_date = "2009-11-11")
-  matching(P, '"Integration.*"', breakdown = TURE)
+  count(P, '"Integration.*"', breakdown = TRUE)
 }
 }
 \seealso{

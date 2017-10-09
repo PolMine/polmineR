@@ -59,7 +59,7 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
   } else {
     newObject@pAttribute <- x@pAttribute
   }
-  if (verbose == TRUE) message("... preparing tabs for matching")
+  .message("preparing tabs for matching", verbose = verbose)
   keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
   setkeyv(x@stat, keys)
   setkeyv(y@stat, keys)
@@ -78,7 +78,7 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
   
   newObject@stat <- MATCH
   for (how in method){
-    if (verbose == TRUE) message("... statistical test: ", how)
+    .message("statistical test: ", how, verbose = verbose)
     newObject <- do.call(how, args = list(.Object = newObject))
   }
   newObject
@@ -88,7 +88,7 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
 \dontrun{
   use("polmineR.sampleCorpus")
   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
-  all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
+  all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
   terms_kauder <- features(x = kauder, y = all, included = TRUE)
   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 }

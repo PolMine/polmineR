@@ -15,6 +15,8 @@
 \item{package}{name of a package}
 
 \item{registry}{directory of the registry (defaults to CORPUS_Registry environment variable)}
+
+\item{verbose}{logical, whether to output information}
 }
 \description{
 The class includes methods to read, modify and write a registry file.
@@ -88,6 +90,6 @@ includes an explanation of the registry file format.
 
 \item{\code{setProperty(property, value)}}{Set a corpus property.}
 
-\item{\code{write(filename = NULL)}}{Write registry file to disk.}
+\item{\code{write(filename = NULL, verbose = TRUE)}}{Write registry file to disk.}
 }}
 
