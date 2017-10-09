@@ -54,3 +54,9 @@ test_that("count (multiple queries)", {
     c(25, 7, 3)
   )
 })
+
+
+test_that("count - breakdown", {
+  y <- count("REUTERS", query = '"remain.*"', breakdown = TRUE)
+  expect_equal(sum(y[["count"]]), 5)
+})
