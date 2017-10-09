@@ -22,7 +22,7 @@ corpusServer <- function(input, output, session){
     {
       infoFile <- RegistryFile$new(input$corpus_corpus)$getInfo()
       if (file.exists(infoFile)){
-        content <- scan(file = infoFile, what = character(), sep = "\n")
+        content <- readLines(infoFile)
         if (grepl(".md$", infoFile)){
             content <- markdown::markdownToHTML(text = content)
             content <-  htmltools::HTML(gsub("^.*<body>(.*?)</body>.*?$", "\\1", as.character(content)))

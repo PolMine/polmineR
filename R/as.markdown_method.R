@@ -85,20 +85,20 @@ setMethod(
     cpos = TRUE, cutoff = NULL, verbose = FALSE,
     ...
   ){
-    if (verbose) message("... as.markdown")
+    .message("as.markdown", verbose = verbose)
     # ensure that template requested is available
     if (is.null(template)){
       stop("template needed for formatting a partition of corpus ", .Object@corpus , " is missing, use setTemplate()")
     }
     if (is.null(template[["paragraphs"]])){
-      if (verbose) message("... generating paragraphs (no template)")
+      .message("generating paragraphs (no template)", verbose = verbose)
       tokens <- getTokenStream(.Object, pAttribute = "word", cpos = cpos, cutoff = cutoff, ...)
       tokens <- .tagTokens(tokens)
       tokens <- paste(tokens, collapse = " ")
       rawTxt <- paste(tokens, sep = "\n")
       txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
     } else {
-      if (verbose) message("... generating paragraphs (template for paras)")
+      .message("generating paragraphs (template for paras)", verbose = verbose)
       articles <- apply(
         .Object@cpos, 1,
         function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)

@@ -97,7 +97,7 @@ setMethod("partition", "character", function(
   if (!corpus %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   if (!all(names(def) %in% sAttributes(.Object))) stop("not all sAttributes are available")
-  if (verbose == TRUE) message('Setting up partition ', name)
+  .message('Setting up partition ', name, verbose = verbose)
   if (is.null(type)){
     corpusProperties <- RegistryFile$new(.Object)$getProperties()
     if (!"type" %in% names(corpusProperties)){
@@ -105,8 +105,8 @@ setMethod("partition", "character", function(
     } else {
       type <- corpusProperties[["type"]]
       if (type %in% c("press", "plpr")){
-        .verboseOutput(paste("type of the corpus is", type), verbose)
-        partitionType <- paste(type, "Partition", sep="")
+        .message("type of the corpus is", type, verbose = verbose)
+        partitionType <- paste(type, "Partition", sep = "")
       } else {
         stop("partition type provided by registry is not valid")
       }
@@ -127,10 +127,10 @@ setMethod("partition", "character", function(
   } else {
     Partition@encoding <- encoding
   }
-  .verboseOutput(paste('get encoding:', Partition@encoding), verbose)
+  .message('get encoding:', Partition@encoding, verbose = verbose)
   Partition@sAttributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = Partition@encoding))
 
-  .verboseOutput('get cpos and strucs', verbose)
+  .message('get cpos and strucs', verbose = verbose)
   if(is.null(def)){
     stop("no sAttributes provided to define partition")
   } else {
@@ -138,7 +138,7 @@ setMethod("partition", "character", function(
     Partition <- sAttributes2cpos(Partition, xml, regex)  
   }
   if (!is.null(Partition)) {
-    .verboseOutput('get partition size', verbose)
+    .message('get partition size', verbose = verbose)
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
@@ -198,12 +198,12 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     corpus = .Object@corpus, encoding = .Object@encoding, name = name, xml = .Object@xml,
     stat = data.table()
     )
-  .verboseOutput(paste('Setting up partition', name), verbose)
+  .message('Setting up partition', name, verbose = verbose)
   def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
   newPartition@sAttributes <- c(.Object@sAttributes, def)
   newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
   
-  .verboseOutput('... getting cpos and strucs', verbose)
+  .message('getting cpos and strucs', verbose = verbose)
   
   if (.Object@xml == "flat") {
     str <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)    
@@ -227,7 +227,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   }
   newPartition@strucs <- .Object@strucs[hits]
   if (length(.Object@metadata) == 2) {
-    .verboseOutput('... remake metadata', verbose)
+    .message('remake metadata', verbose = verbose)
     newPartition@metadata <- .Object@metadata[hits,]
   }
   

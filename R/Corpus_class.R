@@ -52,6 +52,23 @@ Corpus <- R6Class(
     
     getInfo = function(as.html = FALSE){
       RegistryFile$new(self$corpus)$getInfo()
+    },
+    
+    showInfo = function(){
+      infoFile <- self$getInfo()
+      if (file.exists(infoFile)){
+        content <- readLines(infoFile)
+        if (grepl(".md$", infoFile)){
+          content <- markdown::markdownToHTML(text = content)
+          content <-  htmltools::HTML(gsub("^.*<body>(.*?)</body>.*?$", "\\1", as.character(content)))
+        } else {
+          content <- htmltools::HTML(content)
+        }
+      } else {
+        content <- htmltools::HTML("</br><i>corpus info file does not exist</i>")
+      }
+      htmltools::html_print(content)
+      invisible(content)
     }
   )
 )

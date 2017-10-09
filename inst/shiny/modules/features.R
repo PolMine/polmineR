@@ -43,6 +43,21 @@ featuresUiOutput <- function(){
 #' @export featuresServer
 featuresServer <- function(input, output, session){
   
+  # the sole purpose of the following block is to show empty table
+  output$features_table <- DT::renderDataTable({
+    input$features_go
+    isolate({
+      if (input$features_go == 0){
+        return(data.frame(
+          word = character(), count_coi = integer(), count_ref = integer(),
+          exp_coi = numeric(), chisquare = numeric(), rank_chisquare = integer(), 
+        ))
+      }
+    })
+  })
+  
+  
+  
   retval <- data.frame(a = ""[0], b = ""[0], c = ""[0])
   
   observeEvent(
@@ -69,9 +84,12 @@ featuresServer <- function(input, output, session){
       }
       
       message("... starting feature extraction")
-      featuresObject <- compare(x = x, y = y, included = as.logical(input$features_included))
+      featuresObject <- features(x = x, y = y, included = as.logical(input$features_included))
       featuresObject <- round(featuresObject, 2)
       retval <- as.data.frame(featuresObject@stat)
+      retval[["word_id.x"]] <- NULL
+      retval[["word_id.y"]] <- NULL
+      
       values[["features"]] <- featuresObject
       output$features_table <- DT::renderDataTable(
         DT::datatable(retval, selection = "single", rownames = FALSE)

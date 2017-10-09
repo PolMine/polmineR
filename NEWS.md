@@ -4,7 +4,9 @@ into count-method (new param breakdown)
 * corpus REUTERS included (as data for testsuite)
 * adjust data directory of REUTERS corpus upon loading package
 * a pkgdown-generated website is included in the docs directory
-* consistent use of .verboseOutput helper function to make shiny app work
+* consistent use of .message helper function to make shiny app work
+* bug removed for count-method when options("polmineR.cwb-lexdecode") is TRUE and
+options("polmineR.Rcpp") is FALSE
 
 
 # v0.7.5

@@ -95,7 +95,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     
     # enrich partition if necessary
     if (!all(paste(.Object@pAttribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
-      if (verbose) message("... adding missing count for pAttribute ", .Object@pAttribute, " to partition")
+      .message("adding missing count for pAttribute ", .Object@pAttribute, " to partition", verbose = verbose)
       .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, id2str = FALSE, verbose = verbose)
     }
     
@@ -109,7 +109,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     }
     setnames(.Object@stat, old = "count", new = "count_partition")
     for (test in method){
-      .verboseOutput(message = paste("statistical test:", test), verbose = verbose)
+      .message("statistical test:", test, verbose = verbose)
       .Object <- do.call(test, args = list(.Object = .Object))  
     }
   }

@@ -97,15 +97,15 @@ setMethod("summary", "partitionBundle", function (object) {
 #' @noRd
 setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
   y <- new("partition")
-  if (verbose) message('Number of partitions to be merged: ', length(x@objects))
+  .message('number of partitions to be merged: ', length(x@objects), verbose = verbose)
   y@corpus <- unique(vapply(x@objects, FUN.VALUE = "characer", function(p) p@corpus))
   if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
   y@xml <- unique(vapply(x@objects, function(p) p@xml, FUN.VALUE = "character"))
   y@encoding <- unique(vapply(x@objects, function(p) p@encoding, FUN.VALUE = "character"))
   y@sAttributeStrucs <- unique(vapply(x@objects, function(p) p@sAttributeStrucs, FUN.VALUE="character"))
-  if (verbose) message('... merging the struc vectors')
+  .message('merging the struc vectors', verbose = verbose)
   for (name in names(x@objects)) y@strucs <- union(y@strucs, x@objects[[name]]@strucs)
-  if (verbose) message('... generating corpus positions')
+  .message('generating corpus positions', verbose = verbose)
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
     function(s) CQI$struc2cpos(y@corpus, y@sAttributeStrucs, s) )

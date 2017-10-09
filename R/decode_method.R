@@ -41,7 +41,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
         "-S", sAttribute
       )
       cmd <- paste(cmd, collapse = " ", sep = " ")
-      if (verbose) message(cmd)
+      .message(cmd, verbose = verbose)
       raw <- system(cmd, intern = TRUE)
       Encoding(raw) <- getEncoding(.Object)
       raw2 <- as.nativeEnc(x = raw, from = getEncoding(.Object))
@@ -60,7 +60,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     pAttributeList <- lapply(
       pAttributes(.Object),
       function(x){
-        if (verbose) message("... decoding pAttribute ", x)
+        .message("decoding pAttribute ", x, verbose)
         tokens <- getTokenStream(.Object, pAttribute = x)
         Encoding(tokens) <- getEncoding(.Object)
         as.nativeEnc(tokens, from = getEncoding(.Object))
@@ -71,7 +71,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     sAttributeList <- lapply(
       sAttributes(.Object),
       function(x){
-        if (verbose) message("... decoding sAttribute ", x)
+        .message("decoding sAttribute ", x, verbose = verbose)
         struc <- CQI$cpos2struc(.Object, x, 0:maxCpos)
         str <- CQI$struc2str(.Object, x, struc)
         Encoding(str) <- getEncoding(.Object)
@@ -81,7 +81,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     names(sAttributeList) <- sAttributes(.Object)
     
     
-    if (verbose) message("... assembling data.table")
+    .message("assembling data.table", verbose)
     combinedList <- c(
       list(cpos = 0:maxCpos),
       pAttributeList,

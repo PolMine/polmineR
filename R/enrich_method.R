@@ -29,10 +29,7 @@ setMethod("enrich", "partition", function(.Object, size = FALSE, pAttribute = NU
   if (size) .Object@size <- size(.Object)
   if (!is.null(pAttribute)) {
     stopifnot(is.character(pAttribute) == TRUE, length(pAttribute) <= 2, all(pAttribute %in% pAttributes(.Object)))
-    .verboseOutput(
-      message = paste('getting counts for p-attribute(s):', paste(pAttribute, collapse = ", "), sep = " "),
-      verbose = verbose
-      )  
+    .message('getting counts for p-attribute(s):', paste(pAttribute, collapse = ", "), verbose = verbose)  
     .Object@stat <- count(.Object = .Object, pAttribute = pAttribute, id2str = id2str, mc = mc, verbose = verbose)
     .Object@pAttribute <- pAttribute
   }
@@ -98,24 +95,24 @@ setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute =
   # .Object2@stat <- copy(.Object@stat)
   if (!is.null(sAttribute)){
     # check that all s-attributes are available
-    .verboseOutput("... checking that all s-attributes are available", verbose)
+    .message("checking that all s-attributes are available", verbose = verbose)
     stopifnot( all(sAttribute %in% CQI$attributes(.Object@corpus, type = "s")) )
     
     for (sAttr in sAttribute){
-      .verboseOutput(sprintf("get struc for s-attribute: %s", sAttr), verbose)
+      .message("get struc for s-attribute:", sAttr, verbose = verbose)
       strucs <- CQI$cpos2struc(.Object@corpus, sAttr, .Object@cpos[["cpos"]])
       if (id2str == FALSE){
         colname_struc <- paste(sAttr, "int", sep = "_")
         if (colname_struc %in% colnames(.Object@cpos)){
-          .verboseOutput(sprintf("... already present, skipping assignment of column: %s", colname_struc), verbose)
+          .message("already present, skipping assignment of column:", colname_struc, verbose = verbose)
         } else {
           .Object@cpos[[colname_struc]] <- strucs
         }
       } else {
         if (sAttr %in% colnames(.Object@cpos)){
-          .verboseOutput(sprintf("... already present, skipping assignment of column: %s", sAttr), verbose)
+          .message("already present, skipping assignment of column:", sAttr, verbose = verbose)
         } else {
-          .verboseOutput(sprintf("... get string for s-attribute: %s", sAttr), verbose)
+          .message("get string for s-attribute:", sAttr, verbose = verbose)
           strings <- CQI$struc2str(.Object@corpus, sAttr, strucs)
           .Object@cpos[[sAttr]] <- as.nativeEnc(strings, from = .Object@encoding)
         }
@@ -124,18 +121,18 @@ setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute =
   }
   if (!is.null(pAttribute)){
     # check that all p-attributes are available
-    .verboseOutput("... checking that all p-attributes are available", verbose)
+    .message("checking that all p-attributes are available", verbose = verbose)
     stopifnot( all(pAttribute %in% CQI$attributes(.Object@corpus, type = "p")) )
     
     # add ids
     for (pAttr in pAttribute){
       colname <- paste(pAttr, "id", sep = "_")
       if (colname %in% colnames(.Object@cpos)){
-        .verboseOutput(sprintf("already present - skip getting ids for p-attribute: %s", pAttr), verbose)
+        .message("already present - skip getting ids for p-attribute:", pAttr, verbose = verbose)
       } else {
-        .verboseOutput(sprintf("getting token id for p-attribute: %s", pAttr), verbose)
+        .message("getting token id for p-attribute:", pAttr, verbose = verbose)
         ids <- CQI$cpos2id(.Object@corpus, pAttr, .Object@cpos[["cpos"]])
-        .verboseOutput("assigning to data.table", verbose)
+        .message("assigning to data.table", verbose = verbose)
         .Object@cpos[[colname]] <- ids
       }
     }
@@ -144,9 +141,9 @@ setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute =
     if (id2str){
       for (pAttr in pAttribute){
         if (pAttr %in% colnames(.Object@cpos)){
-          .verboseOutput(sprintf("already present - skip getting strings for p-attribute: %s", pAttr), verbose)
+          .message("already present - skip getting strings for p-attribute:", pAttr, verbose = verbose)
         } else {
-          .verboseOutput(sprintf("... id2str for p-attribute: %s", pAttr), verbose)
+          .message("id2str for p-attribute:", pAttr, verbose = verbose)
           decoded <- CQI$id2str(.Object@corpus, pAttr, .Object@cpos[[paste(pAttr, "id", sep = "_")]])
           .Object@cpos[[pAttr]] <- as.nativeEnc(decoded, from = .Object@encoding)
           .Object@cpos[[paste(pAttr, "id", sep = "_")]] <- NULL

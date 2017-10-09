@@ -44,9 +44,9 @@ setMethod(
            ){
   
   # as a first step, create partitions by date
-  if (verbose) message("... getting dates")
+  .message("getting dates", verbose = verbose)
   dates <- sAttributes(.Object, sAttributeDates)
-  if (verbose) message("... generating partitions by date")
+  .message("generating partitions by date", verbose = verbose)
   if (length(dates) > 1){
     toIterate <- lapply(dates, function(x) setNames(x, sAttributeDates))
     partitionByDate <- blapply(
@@ -58,7 +58,7 @@ setMethod(
     partitionByDate <- list(.Object)
   }
   
-  if (verbose) message("... generating speeches")
+  .message("generating speeches", verbose = verbose)
   .splitBySpeakers <- function(datePartition, ...){
     nested <- lapply(
       sAttributes(datePartition, sAttributeNames),
@@ -75,7 +75,7 @@ setMethod(
     mc = mc, progress = progress
   )
   speakerFlatList <- do.call(c, unlist(speakerNestedList, recursive = FALSE))
-  if (verbose) message("... generating names")
+  .message("generating names", verbose = verbose)
   partitionNames <- sapply(
     speakerFlatList,
     function(x){
@@ -89,7 +89,7 @@ setMethod(
   if (length(toDrop) > 0) for (i in rev(toDrop)) speakerFlatList[[i]] <- NULL
   
   # the resulting list may be totally unordered - reorder now
-  if (verbose) message("... reordering partitions")
+  .message("reordering partitions", verbose = verbose)
   speakerFlatListOrdered <- lapply(
     order(sapply(speakerFlatList, function(x) x@cpos[1,1])),
     function(i) speakerFlatList[[i]]

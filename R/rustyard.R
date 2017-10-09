@@ -121,7 +121,7 @@
 #     }
 #     retval 
 #   }
-#   if (verbose == TRUE) message('... performing frequency counts')
+#   .message('performing frequency counts', verbose = verbose)
 #   if (mc == FALSE){
 #     bag <- lapply(c(1:nrow(object@cpos)), function(i) {
 #       if (progress==TRUE) .progressBar(i=i, total=nrow(object@cpos))
@@ -141,7 +141,7 @@
 #   }
 #   # nodes <- lapply(bag, function(x) x$nodes)
 #   # neighbourhood <- lapply(bag, function(x) x$neighbourhood)
-#   if (verbose == TRUE) message("... aggregating and trimming counts")
+#   .message("aggregating and trimming counts", verbose = verbose)
 #   idFrame <- data.table(
 #     nodeId=unlist(lapply(bag, function(x) x[["nodeIds"]])),
 #     nodePos=unlist(lapply(bag, function(x) x[["nodePos"]])),
@@ -640,9 +640,9 @@
 #' .distributionCrosstab <- function(object, query, pAttribute, rows, cols, verbose=TRUE) {
 #'   dispObject <- new("dispersion", dim=c(rows, cols), query=query)
 #'   object <- enrich(object, meta=c(rows, cols))
-#'   if (verbose==TRUE) message("... getting the shares of words in sub-partitions")
+#'   .message("getting the shares of words in sub-partitions", verbose = verbose)
 #'   dispObject@sizes <- dissect(object, dim=c(rows, cols), verbose=FALSE)
-#'   if (verbose==TRUE) message ('... getting frequencies')
+#'   .message ('getting frequencies', verbose = verbose)
 #'   countRaw <- .tfDispersion(object, query, dim=c(rows, cols), pAttribute)
 #'   dispObject@count <- .mapMatrices(matrixToMatch=dispObject@sizes, matrixToAdjust=countRaw)
 #'   dispObject@count[is.na(dispObject@count)] <- 0
@@ -745,7 +745,7 @@
 #' #' @seealso .query.distribution, multiword.distribution
 #' #' @noRd
 #' .queriesDistribution <- function(object, queries, pAttribute, sAttribute, freq, mc, verbose){
-#'   if (verbose == TRUE) message("... retrieving frequencies for the ", length(queries), " queries given")
+#'   .message("retrieving frequencies for the ", length(queries, verbose = verbose), " queries given")
 #'   queriesUnique <- unique(queries)
 #'   if (length(queriesUnique) != length(queries)) {
 #'     warning("Please note: Not all queries are unique, this analysis will use only unique queries!")
@@ -768,12 +768,12 @@
 #'     queryHits <- lapply(
 #'       setNames(queries, queries),
 #'       function(query) {
-#'         if (verbose == TRUE) message('... processing query: ', query)
+#'         .message('processing query: ', query, verbose = verbose)
 #'         .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE)
 #'       }
 #'     )
 #'   } else if (mc == TRUE) {
-#'     if (verbose == TRUE) message("... getting counts from corpus (parallel processing)")
+#'     .message("getting counts from corpus (parallel processing, verbose = verbose)")
 #'     queryHits <- mclapply(
 #'       setNames(queries, queries),
 #'       function(query) .queryDistribution(object, query, pAttribute, sAttribute, freq=FALSE),
@@ -802,7 +802,7 @@
 #'   mergedDF <- rbind(subcorpusToMerge, queryHits4)
 #'   tabulatedDF <- xtabs(no~partition+query, data=mergedDF)
 #'   #   for (query in queries) {
-#'   #     if (verbose == TRUE) message("... adjusting data.frames")
+#'   #     .message("adjusting data.frames", verbose = verbose)
 #'   #     # incoming <- .queryDistribution(part, pAttribute, query, sAttribute, freq=FALSE)
 #'   #     incoming <- queryHits[[query]]
 #'   #     if (!is.null(incoming)){
@@ -829,7 +829,7 @@
 #'   tabulatedDF4 <- tabulatedDF3[,queries]
 #'   dispersionObject@count <- t(tabulatedDF4)
 #'   if (freq == TRUE){
-#'     if (verbose == TRUE) message("... calculating normalized frequencies")
+#'     .message("calculating normalized frequencies", verbose = verbose)
 #'     dispersionObject@freq <- t(apply(
 #'       dispersionObject@count, 1,
 #'       function(x)x/as.vector(dispersionObject@sizes)
@@ -841,7 +841,7 @@
 
 # 
 # if ( nrow(object@metadata) == 0) {
-#   if (verbose == TRUE) message("... required metadata missing, fixing this")
+#   .message("required metadata missing, fixing this", verbose = verbose)
 #   object <- enrich(object, meta=dim)
 # }
 # if (class(query) == "cqpQuery"){

@@ -46,7 +46,7 @@ shinyUI(
     ),
     
     tabPanel(
-      "keywords",
+      "features",
       sidebarLayout(
         sidebarPanel = sidebarPanel(featuresUiInput()),
         mainPanel = mainPanel(featuresUiOutput())

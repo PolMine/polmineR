@@ -31,41 +31,58 @@ setGeneric("features", function(x, ...) standardGeneric("features"))
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")
 #'   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
-#'   all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
+#'   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
 #'   terms_kauder <- features(x = kauder, y = all, included = TRUE)
 #'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' }
 #' @rdname  features-method
 setMethod("features", "partition", function(
   x, y,
-  included=FALSE,
-  method="chisquare",
-  verbose=FALSE
+  included = FALSE,
+  method = "chisquare",
+  verbose = FALSE
 ) {
-  if (verbose==TRUE) message ('Comparing x and y ...')
+  
+  if (length(x@pAttribute) == 0) stop("no count performed for x")
+  
+  # if y is a character vector, create a partition from corpus
+  if (is.character(y)){
+    stopifnot(length(y) == 1)
+    stopifnot(y %in% corpus()[["corpus"]])
+    if (y == x@corpus && included == FALSE){
+      included <- TRUE
+      warning("x is derived from corpus y, but included is FALSE - setting to TRUE")
+    }
+    
+    refCorpus <- Corpus$new(y)
+    refCorpus$count(pAttribute = x@pAttribute)
+    y <- refCorpus$as.partition()
+  }
+  
+  .message ('Comparing x and y ...', verbose = verbose)
   newObject <- new(
     'features',
-    encoding=x@encoding, included=included,
-    corpus=x@corpus,
-    sizeCoi=x@size, sizeRef=ifelse(included==FALSE, y@size, y@size-x@size),
-    stat=data.table()
+    encoding = x@encoding, included = included, corpus = x@corpus,
+    sizeCoi = x@size, sizeRef = if (included) y@size - x@size else y@size,
+    stat = data.table()
     )
   newObject@call <- deparse(match.call())
+  
   # check whether count-lists are available for the pAttribute given
-  if (length(x@pAttribute) == 0 || length(y@pAttribute) == 0) stop("no count performed for x and y")
+  if (length(x@pAttribute) == 0 || length(y@pAttribute) == 0) stop("no count performed for x and/or y")
   if (identical(x@pAttribute, y@pAttribute) == FALSE){
     stop("mismatch of pAttribute of x and y")
   } else {
     newObject@pAttribute <- x@pAttribute
     pAttribute <- x@pAttribute
   }
-  if (verbose==TRUE) message("... combining frequency lists")
+  .message("combining frequency lists", verbose = verbose)
   newObject@stat <- merge(x@stat, y@stat, by=pAttribute)
   setnames(newObject@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
   if (included == TRUE) newObject@stat[, "count_ref" := newObject@stat[["count_ref"]] - newObject@stat[["count_coi"]] ]
   for (how in method){
-    if (verbose==TRUE) message("... statistical test: ", how)
-    newObject <- do.call(how, args=list(.Object=newObject))
+    .message("statistical test: ", how, verbose = verbose)
+    newObject <- do.call(how, args = list(.Object = newObject))
   }
   newObject
 })
@@ -108,7 +125,7 @@ setMethod("features", "partitionBundle", function(
 #'   } else {
 #'     newObject@pAttribute <- x@pAttribute
 #'   }
-#'   if (verbose == TRUE) message("... preparing tabs for matching")
+#'   .message("preparing tabs for matching", verbose = verbose)
 #'   keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
 #'   setkeyv(x@stat, keys)
 #'   setkeyv(y@stat, keys)
@@ -127,7 +144,7 @@ setMethod("features", "partitionBundle", function(
 #'   
 #'   newObject@stat <- MATCH
 #'   for (how in method){
-#'     if (verbose == TRUE) message("... statistical test: ", how)
+#'     .message("statistical test: ", how, verbose = verbose)
 #'     newObject <- do.call(how, args = list(.Object = newObject))
 #'   }
 #'   newObject
@@ -137,7 +154,7 @@ setMethod("features", "partitionBundle", function(
 #' @rdname features-method
 setMethod(
   "features", "ngrams",
-  function(x, y, included=FALSE, method="chisquare", verbose=TRUE, ...){
+  function(x, y, included = FALSE, method = "chisquare", verbose = TRUE, ...){
     stopifnot(
       identical(x@pAttribute, y@pAttribute) == TRUE,
       x@n == y@n,
@@ -158,7 +175,7 @@ setMethod(
       stat=DT
       )
     for (how in method){
-      if (verbose==TRUE) message("... statistical test: ", how)
+      .message("statistical test: ", how, verbose = verbose)
       newObject <- do.call(how, args=list(.Object=newObject))
     }
     newObject

@@ -69,14 +69,14 @@ setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribu
 setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE){
   cpos_vector <- seq.int(from = 0, to = CQI$attribute_size(x, pAttribute, type = "p") - 1, by = 1)
   
-  if (verbose) message("... generate data.table with token and struc ids")
+  .message("generate data.table with token and struc ids", verbose = verbose)
   token_id <- CQI$cpos2id(x, pAttribute, cpos_vector)
   struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
   tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
   rm(token_id, struc_id)
   tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
   
-  if (verbose) message("... counting token per doc")
+  .message("counting token per doc", verbose = verbose)
   countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]
   
   if(verbose) message("... generate simple_triplet_matrix")
@@ -101,9 +101,9 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
 setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL, verbose = TRUE){
   if (is.null(pAttribute)){
     pAttribute <- x@objects[[1]]@pAttribute
-    if (verbose) message("... using the pAttribute-slot of the first object in the bundle as pAttribute: ", pAttribute)
+    .message("using the pAttribute-slot of the first object in the bundle as pAttribute:", pAttribute, verbose = verbose)
   }
-  if (verbose) message("... generating (temporary) key column")
+  .message("generating (temporary) key column", verbose = verbose)
   if (length(pAttribute) > 1){
     dummy <- lapply(
       c(1:length(x@objects)),
@@ -120,15 +120,15 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
       )
     rm(dummy)
   }
-  if (verbose) message("... generating cumulated data.table")
+  .message("generating cumulated data.table", verbose = verbose)
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
   j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
   DT[, "j" := j]
   DT <- DT[which(DT[["key"]] != "")] # to avoid errors
-  if (verbose) message("... getting unique keys")
+  .message("getting unique keys", verbose = verbose)
   uniqueKeys <- unique(DT[["key"]])
   keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
-  if (verbose) message("... generating integer keys")
+  .message("generating integer keys", verbose = verbose)
   i <- keys[ DT[["key"]] ]
   retval <- simple_triplet_matrix(
     i = unname(i), j = DT[["j"]], v = DT[[col]],
@@ -137,7 +137,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
   )
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   
-  if (verbose == TRUE) message("... cleaning up temporary key columns")
+  .message("cleaning up temporary key columns", verbose = verbose)
   if (length(pAttribute) > 1){
     dummy <- lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
   } else {
@@ -158,24 +158,24 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = N
     callNextMethod()
   } else if (!is.null(pAttribute)){
     encoding <- unique(sapply(x@objects, function(y) y@encoding))
-    if (verbose) message("... generating corpus positions")
+    .message("generating corpus positions", verbose = verbose)
     
     cposList <- lapply(
       c(1:length(x@objects)),
       function(i) cbind(i, cpos(x@objects[[i]]@cpos))
     )
     cposMatrix <- do.call(rbind, cposList)
-    if (verbose) message("... getting ids")
+    .message("getting ids", verbose = verbose)
     id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
     DT <- data.table(i = cposMatrix[,1], id = id_vector, key = c("i", "id"))
-    if (verbose) message("... performing count")
+    .message("performing count", verbose = verbose)
     TF <- DT[,.N, by = c("i", "id"), with=TRUE]
     setnames(TF, old = "N", new = "count")
     TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), from = encoding), with = FALSE]
-    if (verbose == TRUE) message("... generating keys")
+    .message("generating keys", verbose = verbose)
     uniqueTerms <- unique(TF[[pAttribute]])
     keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
-    if (verbose == TRUE) message("... generating simple triplet matrix")
+    .message("generating simple triplet matrix", verbose = verbose)
     retval <- simple_triplet_matrix(
       i = keys[ TF[[pAttribute]] ], j = TF[["i"]], v = TF[["count"]],
       dimnames = list(Terms=names(keys), Docs=names(x@objects))
@@ -195,19 +195,19 @@ setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, pAttribute=NUL
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = TRUE){
   if (!paste(pAttribute, "id", "_") %in% colnames(x@cpos)){
-    if (verbose) message("... adding token ids for p-attribute: ", pAttribute)
+    .message("adding token ids for p-attribute:", pAttribute, verbose = verbose)
     x <- enrich(x, pAttribute = pAttribute)
   }
   
-  if (verbose) message("... dropping nodes")
+  .message("dropping nodes", verbose = verbose)
   CPOS <- x@cpos[which(x@cpos[["position"]] != 0)]
   
-  if (verbose) message("... counting tokens in context")
+  .message("counting tokens in context", verbose = verbose)
   CPOS2 <- CPOS[, .N, by = c("hit_no", paste(pAttribute, "id", sep = "_"))]
   
   # create new index for hits
   # may be necessary if negativelist/positivelist has been applied
-  if (verbose) message("... creating new index for hits")
+  .message("creating new index for hits", verbose = verbose)
   hits <- unique(CPOS[["hit_no"]])
   hits <- hits[order(hits, decreasing = FALSE)]
   hit_index_new <- 1:length(hits)
@@ -215,7 +215,7 @@ setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = 
   CPOS2[, "i" := hit_index_new[as.character(CPOS2[["hit_no"]])], with = TRUE]
   
   # create new index for word_ids
-  if (verbose) message("... creating new index for tokens")
+  .message("creating new index for tokens", verbose = verbose)
   uniqueIDs <- unique(CPOS2[[paste(pAttribute, "id", sep = "_")]])
   uniqueIDs <- uniqueIDs[order(uniqueIDs, decreasing = FALSE)]
   idIndexNew <- setNames(1:length(uniqueIDs), as.character(uniqueIDs))
@@ -225,7 +225,7 @@ setMethod("as.DocumentTermMatrix", "context", function(x, pAttribute, verbose = 
     )
   CPOS2[, "j" := idIndexNew[as.character(CPOS2[[paste(pAttribute, "id", sep = "_")]])], with = TRUE]
   
-  if (verbose) message("... putting together matrix")
+  .message("putting together matrix", verbose = verbose)
   dtm <- simple_triplet_matrix(
     i = CPOS2[["i"]], j = CPOS2[["j"]], v = CPOS2[["N"]],
     dimnames = list(Docs = as.character(1:max(CPOS2[["i"]])), Terms = decodedTokens)

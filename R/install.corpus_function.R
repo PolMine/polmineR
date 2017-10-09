@@ -100,7 +100,7 @@ copy.corpus <- function(old, new, verbose = TRUE){
   stopifnot(old %in% CQI$list_corpora())
   
   # copy data directory
-  if (verbose) message("... copying data directory")
+  .message("copying data directory", verbose = verbose)
   R <- RegistryFile$new(old)
   newDataDir <- file.path(dirname(R$getHome()), tolower(new))
   if (file.exists(newDataDir)){
@@ -122,7 +122,7 @@ copy.corpus <- function(old, new, verbose = TRUE){
   }
   
   # generate copy of registry file
-  if (verbose) message("... make copy of registry file")
+  .message("make copy of registry file", verbose = verbose)
   newRegistryFile <- file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(new))
   if (file.exists(newRegistryFile)){
     if (readline(prompt = "New registry file already exists. Proceed anyway (Y for yes)? ") == "Y"){
@@ -143,7 +143,7 @@ copy.corpus <- function(old, new, verbose = TRUE){
   }
   
   # modify the new registry file 
-  if (verbose) message("... updating new registry file")
+  .message("updating new registry file", verbose = verbose)
   newRegistry <- RegistryFile$new(new)
   newRegistry$setId(tolower(new))
   newRegistry$setHome(new = newDataDir)
@@ -162,14 +162,14 @@ rename.corpus <- function(old, new, verbose = TRUE){
   }
   
   # rename registry file
-  if (verbose) message("... renaming registry file")
+  .message("renaming registry file", verbose = verbose)
   registry_old <- file.path(Sys.getenv("CORPUS_REGISTRY"), tolower(old))
   registry_new <- file.path(dirname(registry_old), tolower(new))
   success <- file.rename(from = registry_old, to = registry_new)
   if (!success) stop("renaming the registry file failed")
   
   # rename data directory
-  if (verbose) message("... renaming data directory")
+  .message("renaming data directory", verbose = verbose)
   R <- RegistryFile$new(filename = registry_new)
   data_directory_old <- R$getHome()
   data_directory_new <- file.path(dirname(data_directory_old), tolower(new))
@@ -177,7 +177,7 @@ rename.corpus <- function(old, new, verbose = TRUE){
   if (!success) stop("renaming the data directory failed")
   
   # modify and save registry file
-  if (verbose) message("... modifying and saving registry file")
+  .message("modifying and saving registry file", verbose = verbose)
   R$setHome(new = data_directory_new)
   R$setId(new = tolower(new))
   R$write()

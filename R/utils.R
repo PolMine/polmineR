@@ -241,7 +241,8 @@ getSlot <- function(x, name){
 }
 
 
-.verboseOutput <- function(message, verbose = TRUE){
+.message <- function(..., verbose = TRUE){
+  message <- paste(unlist(list(...)), collapse = " ")
   if (verbose == TRUE){
     message(paste("...", message))
   } else if (verbose == "shiny"){

@@ -49,7 +49,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
         cpos <- try({
           id <- CQI$str2id(.Object, pAttribute, Q)
           if (id == -1){ # CQP will return -1 if there are no matches
-            if (verbose) message("no hits for query: ", Q)
+            .message("no hits for query: ", Q, verbose = verbose)
             cpos <- NULL
           } else {
             cpos <- CQI$id2cpos(.Object, pAttribute, id)
@@ -66,12 +66,12 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
         CQI$query(.Object, Q)
         cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
         if (is(cpos)[1] == "try-error"){
-          if (verbose) message("no hits for query: ", Q)
+          .message("no hits for query: ", Q, verbose = verbose)
           hits <- NULL
         } else if (!is.null(cpos)) {
           hits <- matrix(cpos[,1:2], ncol = 2)
         } else {
-          if (verbose) message("no hits for query: ", Q)
+          .message("no hits for query: ", Q, verbose = verbose)
           hits <- NULL
         }
         hits

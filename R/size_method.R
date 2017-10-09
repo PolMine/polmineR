@@ -48,14 +48,14 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
       )
     )
     if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
-      if (verbose) message ("... polmineR.Rcpp available, going to use it")
+      .message ("polmineR.Rcpp available, going to use it", verbose = verbose)
       cpos_matrix <- polmineR.Rcpp::getRegionMatrix(
         corpus = x, sAttribute = sAttribute[1],
         strucs = 0:(CQI$attribute_size(x, sAttribute[1], "s") - 1),
         registry = Sys.getenv("CORPUS_REGISTRY")
         )
     } else if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
-      if (verbose) message ("... cwb-s-decode utility available, going to use it")
+      .message ("cwb-s-decode utility available, going to use it", verbose = verbose)
       cmd <- c("cwb-s-decode", "-v", "-r", Sys.getenv("CORPUS_REGISTRY"), x, "-S", sAttribute[1])
       decode_result <- system(paste(cmd, collapse = " "), intern = TRUE)
       cpos_matrix <- do.call(rbind, lapply(strsplit(decode_result, "\\t"), as.integer))

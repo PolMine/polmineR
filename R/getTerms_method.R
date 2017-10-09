@@ -29,7 +29,7 @@ setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, v
   if (robust != FALSE){
     if (robust == TRUE){
       if (length(strs) != length(unique(strs))){
-        if (verbose == TRUE) message("... counting to hunt down villains")
+        .message("counting to hunt down villains", verbose = verbose)
         strCount <- table(strs)
         villainNames <- names(which(strCount > 1))
       }      
@@ -37,7 +37,7 @@ setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, v
       villainNames <- robust
     }
     for (villainName in villainNames){
-      if (verbose == TRUE) message("... this is a villain: ", villainName)
+      .message("this is a villain: ", villainName, verbose = verbose)
       villainPos <- which(villainName == strs)
       for (i in c(1:length(villainPos))){
         if (i >= 2) strs[villainPos[i]] <- paste(villainName, "_", i, sep="")

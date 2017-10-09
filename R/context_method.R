@@ -97,16 +97,13 @@ setMethod("context", "partition", function(
     # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
     
     # getting counts of query in partition
-    .verboseOutput(message = "getting corpus positions", verbose = verbose)
+    .message("getting corpus positions", verbose = verbose)
     hits <- cpos(.Object, query, pAttribute[1], cqp = cqp)
     if (is.null(hits)){
       warning('No hits for query ', query, ' (returning NULL)')
       return(NULL)
     } else {
-      .verboseOutput(
-        message = sprintf("number of hits: %d", nrow(hits)),
-        verbose = verbose
-        )
+      .message("number of hits:", nrow(hits), verbose = verbose)
     }
     colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
     
@@ -131,7 +128,7 @@ setMethod("context", "partition", function(
 
     # generate positivelist/stoplist with ids and apply it
     if (!is.null(positivelist)){
-      .verboseOutput("filtering by positivelist", verbose)
+      .message("filtering by positivelist", verbose = verbose)
       before <- length(unique(ctxt@cpos[["hit_no"]]))
       positivelistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
       .keepPositives <- function(.SD){
@@ -142,10 +139,7 @@ setMethod("context", "partition", function(
       }
       ctxt@cpos <- ctxt@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
       after <- length(unique(ctxt@cpos[["hit_no"]]))
-      .verboseOutput(
-        sprintf("number of hits droped due to positivelist: %d", before - after),
-        verbose
-      )
+      .message("number of hits droped due to positivelist:", before - after, verbose = verbose)
       if (nrow(ctxt@cpos) == 0) {
         warning("no remaining hits after applying positivelist, returning NULL object")
         return( NULL )
@@ -153,7 +147,7 @@ setMethod("context", "partition", function(
     }
     
     if (!is.null(stoplist)){
-      .verboseOutput("applying stoplist", verbose)
+      .message("applying stoplist", verbose = verbose)
       before <- length(unique(ctxt@cpos[["hit_no"]]))
       stoplistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
       .dropNegatives <- function(.SD){
@@ -164,7 +158,7 @@ setMethod("context", "partition", function(
       }
       ctxt@cpos <- ctxt@cpos[, .dropNegatives(.SD), by = "hit_no", with = TRUE]
       after <- length(unique(ctxt@cpos[["hit_no"]]))
-      .verboseOutput(sprintf("number of hits droped due to stoplist: %d", before - after), verbose)
+      .message("number of hits droped due to stoplist:", before - after, verbose = verbose)
       if (nrow(ctxt@cpos) == 0) {
         warning("no remaining hits after applying stoplist, returning NULL object")
         return( NULL )
@@ -172,7 +166,7 @@ setMethod("context", "partition", function(
       
     }
 
-    .verboseOutput(message = "generating contexts", verbose = verbose)
+    .message("generating contexts", verbose = verbose)
     
     ctxt@size <- nrow(ctxt@cpos)
     ctxt@sizeCoi <- as.integer(ctxt@size)
@@ -180,13 +174,13 @@ setMethod("context", "partition", function(
     ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
     
     # check that windows do not transgress s-attribute
-    .verboseOutput("checking that context positions to not transgress regions", verbose)
+    .message("checking that context positions to not transgress regions", verbose = verbose)
     ctxt <- enrich(ctxt, sAttribute = sAttribute, verbose = verbose)
     ctxt <- trim(ctxt, sAttribute = sAttribute, verbose = verbose, progress = progress)
     
     # put together raw stat table
     if (count){
-      .verboseOutput(message = "counting tokens", verbose = verbose)
+      .message("counting tokens", verbose = verbose)
       
       setkeyv(ctxt@cpos, paste(pAttribute, "id", sep = "_"))
       ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(pAttribute, "id", sep = "_"))), with = TRUE]
@@ -275,7 +269,7 @@ setMethod("context", "partitionBundle", function(.Object, query, verbose = TRUE,
   contextBundle@objects <- sapply(
     .Object@objects,
     function(x) {
-      if (verbose) message("... proceeding to partition ", x@name)
+      .message("proceeding to partition ", x@name, verbose = verbose)
       context(x, query, ...)
       },
     simplify = TRUE,

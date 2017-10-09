@@ -30,14 +30,14 @@ setMethod(
   noiseList <- list()
   # min count
   if (!is.null(minTotal)){
-    if (verbose == TRUE) message("... minTotal ")
+    .message("minTotal ", verbose = verbose)
     tfTotal <- slam::col_sums(.Object)
     noiseList[["minTotal"]] <- names(tfTotal[which(tfTotal < minTotal)])
   }
   
   # min tf idf mean
   if (!is.null(minTfIdfMean)){
-    if (verbose == TRUE) message("... minTfIdfMean ")
+    .message("minTfIdfMean ", verbose = verbose)
     dtmTfidf <- weigh(.Object, method="tfidf")
     tfidfMeans <- means(dtmTfidf, dim=1)
     noiseList[["minTfIdf"]] <- names(tfidfMeans[which(tfidfMeans < minTfIdfMean)])
@@ -46,7 +46,7 @@ setMethod(
   
   # reduce sparsity
   if (!is.null(sparse)){
-    if (verbose == TRUE) message("... sparsity ")
+    .message("sparsity ", verbose = verbose)
     ncolOld <- ncol(.Object)
     dtmTmp <- tm::removeSparseTerms(.Object, sparse=sparse)
     noiseList[["sparse"]] <-  colnames(.Object)[which(!colnames(.Object) %in% colnames(dtmTmp))]
@@ -79,15 +79,15 @@ setMethod(
   ){
     noiseList <- list()
     if (!is.null(stopwordsLanguage)){
-      if (verbose == TRUE) message("... stopwords")
+      .message("stopwords", verbose = verbose)
       noiseList[["stopwords"]] <- .Object[which(.Object %in% tm::stopwords(stopwordsLanguage))]
     }
     if (!is.null(specialChars)){
-      if (verbose == TRUE) message("... specialCharsRegex")
+      .message("specialCharsRegex", verbose = verbose)
       noiseList[["specialChars"]] <- .Object[which(!c(1:length(.Object)) %in% grep(specialChars, .Object))]  
     }
     if (!is.null(numbers)){
-      if (verbose == TRUE) message("... numbers")
+      .message("numbers", verbose = verbose)
       noiseList[["numbers"]] <- grep(numbers, .Object, value=T)
     }
     if (!is.null(minNchar)){

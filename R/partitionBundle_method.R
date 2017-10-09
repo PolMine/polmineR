@@ -46,9 +46,9 @@ setMethod("partitionBundle", "partition", function(
     encoding = .Object@encoding, call = deparse(match.call())
   )
   if (is.null(values)){
-    if (verbose) message('... getting values for s-attribute ', sAttribute)
+    .message('getting values for s-attribute ', sAttribute, verbose = verbose)
     values <- sAttributes(.Object, sAttribute)
-    if (verbose) message('... number of partitions to be generated: ', length(values))
+    .message('number of partitions to be generated: ', length(values), verbose = verbose)
   }
   bundle@objects <- blapply(
     lapply(setNames(values, rep(sAttribute, times = length(values))), function(x) setNames(x, sAttribute)),
@@ -82,7 +82,7 @@ setMethod("partitionBundle", "character", function(
   values <- names(strucs)
   strucs <- unname(strucs)
   
-  if (verbose) message("... getting matrix with regions for s-attribute: ", sAttribute)
+  .message("getting matrix with regions for s-attribute: ", sAttribute, verbose = verbose)
   if (require("polmineR.Rcpp", quietly = TRUE)){
     cposMatrix <- polmineR.Rcpp::get_region_matrix(
       corpus = .Object, s_attribute = sAttribute, strucs = strucs,
@@ -95,7 +95,7 @@ setMethod("partitionBundle", "character", function(
   cposList <- split(cposMatrix, f = values)
   cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
   
-  if (verbose) message("... generating the partitions")
+  .message("generating the partitions", verbose = verbose)
   .makeNewPartition <- function(i, corpus, encoding, sAttribute, cposList, xml, ...){
     newPartition <- new(
       "partition",

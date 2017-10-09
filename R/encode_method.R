@@ -94,7 +94,7 @@ setMethod("encode", "data.frame", function(
     })
   
   for (sAttr in sAttributes){
-    if (verbose) message("... encoding s-attribute ", sAttr)
+    .message("encoding s-attribute ", sAttr, verbose = verbose)
     dt <- data.table(
       cpos_left = as.character(newTab[["cpos_left"]]),
       cpos_right = as.character(newTab[["cpos_right"]]),
@@ -112,7 +112,7 @@ setMethod("encode", "data.frame", function(
 setMethod("encode", "data.table", function(.Object, corpus, sAttribute, verbose = TRUE){
   stopifnot(ncol(.Object) == 3)
   
-  if (verbose) message("... preparing data")
+  .message("preparing data", verbose = verbose)
   .Object[[1]] <- as.character(as.integer(.Object[[1]])) # ensure that cpos are integers
   .Object[[2]] <- as.character(as.integer(.Object[[2]]))
   lines <- apply(.Object, 1, function(x) paste(x, collapse = "\t"))
@@ -120,7 +120,7 @@ setMethod("encode", "data.table", function(.Object, corpus, sAttribute, verbose 
   tmp_file <- tempfile()
   cat(lines, file = tmp_file)
   
-  if (verbose) message("... running cwb-s-encode")
+  .message("running cwb-s-encode", verbose = verbose)
   cmd <- c(
     "cwb-s-encode",
     "-d", RegistryFile$new(corpus)$getHome(),
@@ -130,7 +130,7 @@ setMethod("encode", "data.table", function(.Object, corpus, sAttribute, verbose 
   system(paste(cmd, collapse = " "))
   
   if (!sAttribute %in% sAttributes(corpus)){
-    if (verbose) message("... adding sAttribute to registry")
+    .message("adding sAttribute to registry", verbose = verbose)
     R <- RegistryFile$new(corpus)
     R$read()
     R$addSAttribute(sAttribute)
@@ -165,16 +165,16 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
       warning("there is markup in the character vector - cwb-encode will issue warnings")
 
     # ensure that encoding of .Object vector is encoding of corpus
-    if (verbose) message("... checking encoding")
+    .message("checking encoding", verbose = verbose)
     if (!getEncoding(corpus) %in% names(table(Encoding(.Object)))){
-      if (verbose) message("... encoding of vector different from corpus - assuming it to be that of the locale")
+      .message("encoding of vector different from corpus - assuming it to be that of the locale", verbose = verbose)
       .Object <- as.corpusEnc(.Object, from = localeToCharset()[1], corpusEnc = getEncoding(corpus))
     }
 
-    if (verbose) message("... writing vector to disk for p-attribute ", pAttribute)
+    .message("writing vector to disk for p-attribute ", pAttribute, verbose = verbose)
     cat(.Object, file = vrtTmpFile, sep = "\n")
     
-    if (verbose) message("... calling cwb-encode")
+    .message("calling cwb-encode", verbose = verbose)
     pAttrsOld <- RegistryFile$new(corpus)$getPAttributes()
     cwbEncodeCmdVec <- c(
       "cwb-encode",
@@ -192,7 +192,7 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
     
   } else {
     
-    if (verbose) message("Creating new CWB indexed corpus ", corpus)
+    .message("Creating new CWB indexed corpus ", corpus, verbose = verbose)
     
     encodingInput <- unique(Encoding(.Object))
     if (length(encodingInput) == 1){
@@ -203,10 +203,10 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
       stop("please check encoding of the input character vector - more than one encoding found")
     }
     
-    if (verbose) message("... writing token stream to disk")
+    .message("writing token stream to disk", verbose = verbose)
     cat(.Object, file = vrtTmpFile, sep = "\n")
     
-    if (verbose) message("... check for data directory")
+    .message("check for data directory", verbose = verbose)
     if (is.null(dataDir)){
       superDir <- dirname(Sys.getenv("CORPUS_REGISTRY"))
       targetDir <- grep("index", list.files(superDir), value = TRUE, perl = TRUE)
@@ -222,7 +222,7 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
       if (!file.exists(dataDir)) dir.create(dataDir)
     }
     
-    if (verbose) message("... running cwb-encode")
+    .message("running cwb-encode", verbose = verbose)
     cwbEncodeCmdVec <- c(
       "cwb-encode",
       "-d", dataDir, # directory with indexed corpus files
@@ -235,7 +235,7 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
     
   }
   
-  if (verbose) message("... running cwb-make")
+  .message("running cwb-make", verbose = verbose)
   cwbMakeCmd <- paste0(
     c("cwb-make", "-V", corpus, "-r", Sys.getenv("CORPUS_REGISTRY")),
     collapse = " "

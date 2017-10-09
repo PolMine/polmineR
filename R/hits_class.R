@@ -80,13 +80,13 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
     
     if (freq) size <- TRUE
     if (size){
-      if (verbose) message("... getting sizes")
+      .message("getting sizes", verbose = verbose)
       SIZE <- size(.Object, sAttribute = sAttribute)
       setkeyv(TF, cols = sAttribute)
       TF <- TF[SIZE]
       TF <- TF[is.na(TF[["query"]]) == FALSE]
       if (freq == TRUE){
-        if (verbose) message("... frequencies")
+        .message("frequencies", verbose = verbose)
         TF[, freq := count / size]
       }
     }
@@ -139,7 +139,7 @@ setMethod("hits", "partitionBundle", function(
   sAttributeStrucs <- unique(unlist(lapply(.Object@objects, function(x) x@sAttributeStrucs)))
   stopifnot(length(sAttributeStrucs) == 1)
   # combine strucs and partition names into an overall data.table
-  if (verbose) message("... preparing struc table")
+  .message("preparing struc table", verbose = verbose)
   strucDT <- data.table(
     struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
     partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
@@ -147,7 +147,7 @@ setMethod("hits", "partitionBundle", function(
   setkey(strucDT, cols = "struc")
   # perform counts
   
-  if (verbose) message("... now performing counts")
+  .message("now performing counts", verbose = verbose)
   if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
   .query <- function(toFind, corpus, encoding, ...) {
     cposMatrix <- cpos(.Object = corpus, query = toFind, encoding = encoding, verbose = verbose)
@@ -165,7 +165,7 @@ setMethod("hits", "partitionBundle", function(
     mc = mc, progress = progress, verbose = F
   )
   countDT <- rbindlist(countDTlist)
-  if (verbose) message("... matching data.tables")
+  .message("matching data.tables", verbose = verbose)
   countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with = TRUE]
   countDT[, "V1" := NULL, with = TRUE][, "V2" := NULL, with = TRUE]
   setkeyv(countDT, cols = "struc")
@@ -200,7 +200,7 @@ setMethod("sample", "hits", function(x, size){
 setMethod("hits", "context", function(.Object, sAttribute = NULL, verbose = TRUE){
   ctxtMin <- .Object@cpos[which(.Object@cpos[["position"]] == 0)]
   
-  if (verbose) message("... compressing data.table")
+  .message("compressing data.table", verbose = verbose)
   .makeCpos <- function(.SD){
     list(
       cpos_left = min(.SD[["cpos"]]),
@@ -209,7 +209,7 @@ setMethod("hits", "context", function(.Object, sAttribute = NULL, verbose = TRUE
   }
   DT <- ctxtMin[, .makeCpos(.SD), by = "hit_no"]
   
-  if (verbose) message("... adding sAttributes")
+  .message("adding sAttributes", verbose = verbose)
   for (x in sAttribute){
     strucs <- CQI$cpos2struc(.Object@corpus, x, DT[["cpos_left"]])
     str <- CQI$struc2str(.Object@corpus, x, strucs)

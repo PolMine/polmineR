@@ -48,7 +48,7 @@ setMethod(
   if (requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     
-    if (verbose) message("... generating markdown")
+    .message("generating markdown", verbose = verbose)
     if (any(cqp)) cpos <- TRUE
     markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
     markdown <- paste(
@@ -57,7 +57,7 @@ setMethod(
       '\n* * *\n',
       collapse="\n"
     )
-    if (verbose == TRUE) message("... markdown to html")
+    .message("markdown to html", verbose = verbose)
     if (is.null(tooltips)){
       htmlDoc <- markdown::markdownToHTML(text = markdown)
     } else {
@@ -76,10 +76,10 @@ setMethod(
     if (length(highlight) > 0) {
       if (length(cqp) == 1){
         if (cqp == FALSE){
-          if (verbose == TRUE) message("... highlighting regular expressions")
+          .message("highlighting regular expressions", verbose = verbose)
           htmlDoc <- highlight(htmlDoc, highlight = highlight, tooltips = tooltips)
         } else if (cqp){
-          if (verbose) message("... highlighting CQP queries")
+          .message("highlighting CQP queries", verbose = verbose)
           htmlDoc <- highlight(object, htmlDoc, highlight = highlight, tooltips = tooltips)
         }
       } else if (length(cqp) == length(highlight)){
@@ -131,9 +131,9 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   # getting metadata for all kwic lines is potentially not the fastes solution ...
   if (length(object@metadata) == 0){
     metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
-    if (verbose) message("... using metadata from template: ", paste(metadataDef, collapse = " / "))
+    .message("using metadata from template: ", paste(metadataDef, collapse = " / "), verbose = verbose)
     if (length(metadataDef) > 0){
-      if (verbose) message("... enriching")
+      .message("enriching", verbose = verbose)
       object <- enrich(object, meta = metadataDef)
     }
   } else {
@@ -144,9 +144,9 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
     def = lapply(setNames(metadataDef, metadataDef), function(x) object@table[[x]][i]),
     type = type
   )
-  if (verbose) message("... generating html")
+  .message("generating html", verbose = verbose)
   fulltext <- polmineR::html(partitionToRead, meta = metadataDef, cpos = TRUE)
-  if (verbose) message("... generating highlights")
+  .message("generating highlights", verbose = verbose)
   tabSubset <- object@cpos[which(object@cpos[["hit_no"]] == i)]
   cposContext <- tabSubset[which(tabSubset[["position"]] != 0)][["cpos"]]
   cposNode <- tabSubset[which(tabSubset[["position"]] == 0)][["cpos"]]

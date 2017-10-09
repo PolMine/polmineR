@@ -308,7 +308,7 @@ RegistryFile <- setRefClass(
       "Write registry file to disk."
       
       if (!is.null(filename)) .self$filename <- filename
-      if (verbose) message("... writing registry: ", .self$filename)
+      .message("writing registry: ", .self$filename, verbose = verbose)
       cat(.self$txt, file = .self$filename, sep = "\n")
     },
     
