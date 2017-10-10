@@ -1,8 +1,15 @@
-if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
+# not sure whether it is necessary to have this outside .onLoad or .onAttach
+# included to pass CRAN tests - check on occasion, whether this is really necessary
+if (Sys.getenv("CORPUS_REGISTRY") == ""){
+  Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+}
 
 .onLoad <- function (lib, pkg) {
   
-  if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
+  # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
+  if (Sys.getenv("CORPUS_REGISTRY") == ""){
+    Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+  }
   
   # polmineR:::CQI
   CQI <- switch(
@@ -64,61 +71,28 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
 }
 
 
-getSettings <- function(){
-  if (length(Sys.getenv("POLMINER_DIR"))){
-    configFilename <- file.path(Sys.getenv("POLMINER_DIR"), "polmineR.conf")
-    if (file.exists(configFilename)){
-      configDataRaw <- scan(configFilename, what = character(), sep = "\n", quiet = TRUE)
-      # remove lines with comments
-      commentLines <- grep("^\\s*#", configDataRaw)
-      if (length(commentLines) > 0) configDataRaw <- configDataRaw[-commentLines]
-      # remove comments
-      configDataRaw <- gsub("\\s*#.*?$", "", configDataRaw)
-      
-      # remove whitespace
-      settingsList <- lapply(
-        strsplit(configDataRaw, "[=|:)]"),
-        function(x) unname(sapply(x, function(y) gsub("\\s", "", y)))
-      )
-      # drop value pairs with length <> 2
-      settingsList <- lapply(which(sapply(settingsList, length) == 2), function(x) settingsList[[x]])
-      # turn into named list
-      newSettings <- as.list(sapply(settingsList, function(x) x[2]))
-      newSettings <- lapply(
-        newSettings,
-        function(x){
-          if (grepl("^\\d+$", x)){
-            return(as.numeric(x))
-          } else {
-            return(x)
-          }
-        }
-      )
-      names(newSettings) <- paste("polmineR", sapply(settingsList, function(x) x[1]), sep = ".")
-      options(newSettings)
-    }
-  }
-}
-
 #' @importFrom utils packageVersion
 .onAttach <- function(lib, pkg){
-  if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
+  
+  # same as in .onLoad, potentially duplicated - included to be sure
+  if (Sys.getenv("CORPUS_REGISTRY") == ""){
+    Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+  }
+  
   
   # adjust dataDir, if it has not yet been set
   REUTERS <- RegistryFile$new(
     "REUTERS",
-    filename = system.file(package = "polmineR", "extdata", "cwb", "registry", "reuters")
+    filename = system.file(package = pkg, "extdata", "cwb", "registry", "reuters")
   )
-  correctDataDir <- system.file(package = "polmineR", "extdata", "cwb", "indexed_corpora", "reuters")
+  correctDataDir <- system.file(package = pkg, "extdata", "cwb", "indexed_corpora", "reuters")
   if (REUTERS$getHome() != correctDataDir){
-
     REUTERS$setHome(new = correctDataDir) 
     REUTERS$write(verbose = FALSE)
   }
 
   setTemplate()
-  getSettings()
-  
+
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){

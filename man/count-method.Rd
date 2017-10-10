@@ -8,6 +8,7 @@
 \alias{count,partitionBundle-method}
 \alias{count,character-method}
 \alias{count,vector-method}
+\alias{count,Corpus-method}
 \title{Get counts.}
 \usage{
 count(.Object, ...)
@@ -26,6 +27,8 @@ count(.Object, ...)
   sort = FALSE, id2str = TRUE, verbose = TRUE)
 
 \S4method{count}{vector}(.Object, corpus, pAttribute)
+
+\S4method{count}{Corpus}(.Object, query = NULL, pAttribute)
 }
 \arguments{
 \item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a

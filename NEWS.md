@@ -7,6 +7,10 @@ into count-method (new param breakdown)
 * consistent use of .message helper function to make shiny app work
 * bug removed for count-method when options("polmineR.cwb-lexdecode") is TRUE and
 options("polmineR.Rcpp") is FALSE
+* if CORPUS_REGISTRY is not defined, the registry directory in the package will
+be used, making REUTERS corpus available
+* getSettings-function removed, was not sufficiently useful, and was superseded by
+template mechanism
 
 
 # v0.7.5
