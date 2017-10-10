@@ -65,12 +65,12 @@ An installed data package with a CWB corpus is assumed to include a directory
 }
 \examples{
 \donttest{
-install.corpus("plprbt.pvs2017")
+install.corpus("GermaParl")
 # is equivalent to:
-install.corpus("plprbt.pvs2017", repo = "http://polmine.sowi.uni-due.de/packages")
-RegistryFile(package = "plprbt.pvs2017")$adjustHome()
+install.corpus("GermaParl", repo = "http://polmine.sowi.uni-due.de/packages")
+RegistryFile(package = "GermaParl")$adjustHome()
 # check the directory that has been set
-RegistryFile$new(package = "plprbt.pvs2017")$getHome()
+RegistryFile$new(package = "GermaParl")$getHome()
 }
 }
 \seealso{

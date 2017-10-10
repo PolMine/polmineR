@@ -62,6 +62,8 @@ if (Sys.getenv("CORPUS_REGISTRY") == ""){
       options("polmineR.cwb-s-decode" = TRUE)
     if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-encode" = TRUE)
+    if (system("cwb-s-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
+      options("polmineR.cwb-s-encode" = TRUE)
     if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-lexdecode" = TRUE)
     if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)

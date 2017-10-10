@@ -37,12 +37,12 @@
 #' for switching to a packaged corpus. 
 #' @examples
 #' \donttest{
-#' install.corpus("plprbt.pvs2017")
+#' install.corpus("GermaParl")
 #' # is equivalent to:
-#' install.corpus("plprbt.pvs2017", repo = "http://polmine.sowi.uni-due.de/packages")
-#' RegistryFile(package = "plprbt.pvs2017")$adjustHome()
+#' install.corpus("GermaParl", repo = "http://polmine.sowi.uni-due.de/packages")
+#' RegistryFile(package = "GermaParl")$adjustHome()
 #' # check the directory that has been set
-#' RegistryFile$new(package = "plprbt.pvs2017")$getHome()
+#' RegistryFile$new(package = "GermaParl")$getHome()
 #' }
 #' @importFrom utils available.packages contrib.url install.packages
 #' @rdname install.corpus

@@ -8,7 +8,7 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 #' If \code{.Object} is a \code{data.frame}, it needs to have a column with the token
 #' stream (column name 'word'), and further columns with either p-attributes,
 #' or s-attributes. The corpus will be encoded successively, starting with the
-#' p-attributes.
+#' p-attributes in the columns defined by \code{pAttributes}.
 #' 
 #' If \code{.Object} is a \code{data.table}, it is assumed to have three columns: The
 #' left corpus position, the right corpus position and the value of a s-attribute
@@ -53,10 +53,15 @@ setGeneric("encode", function(.Object, ...) standardGeneric("encode"))
 #' reuters.tidy <- unnest_tokens(
 #'   reuters.tibble, output = "word", input = "text", to_lower = FALSE
 #' )
-#' encode(
-#'   reuters.tidy, name = "reuters2",
-#'   sAttributes = c("language", "places")
-#' )
+#' 
+#' tmpCwbDir <- tempdir()
+#' registryDir <- file.path(tmpCwbDir, "registry")
+#' dir.create(registryDir)
+#' dir.create(file.path(tmpCwbDir, "indexed_corpora"))
+#' resetRegistry(registryDir = registryDir)
+#' 
+#' encode(reuters.tidy, name = "reuters", sAttributes = c("language", "places"))
+#' corpus()
 #' }
 setMethod("encode", "data.frame", function(
   .Object, name, pAttributes = "word", sAttributes = NULL,
@@ -212,13 +217,15 @@ setMethod("encode", "character", function(.Object, corpus, pAttribute = NULL, da
       targetDir <- grep("index", list.files(superDir), value = TRUE, perl = TRUE)
       if (length(targetDir) != 1) stop("no dataDir provided, no candidate found")
       dataDir <- file.path(superDir, targetDir, tolower(corpus))
-      feedback <- readline(
-        prompt = sprintf(
-          "No directory for indexed corpus provided - suggesting to use: %s (Y/N) ",
-          dataDir
+      if (interactive()){
+        feedback <- readline(
+          prompt = sprintf(
+            "No directory for indexed corpus provided - suggesting to use: %s (Y/N) ",
+            dataDir
+          )
         )
-      )
-      if (feedback != "Y") stop("aborting")
+        if (feedback != "Y") stop("aborting")
+      }
       if (!file.exists(dataDir)) dir.create(dataDir)
     }
     

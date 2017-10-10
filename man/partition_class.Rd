@@ -98,6 +98,11 @@
 }
 \description{
 S4 partition class and methods for instances of class partition.
+
+The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
+i.e. it checks for each new row in the matrix whether it increments the end
+of the previous region (by 1), and ensure that the cpos matrix defines
+disjoined regions.
 }
 \section{Slots}{
 
@@ -134,6 +139,15 @@ count in slot tf}
 \item{\code{call}}{Object of class \code{"character"} the call that generated the partition}
 }}
 
+\examples{
+P <- new(
+  "partition",
+  cpos = matrix(data = c(1:10, 20:29), ncol = 2, byrow = TRUE),
+  stat = data.table::data.table()
+)
+P2 <- aggregate(P)
+P2@cpos
+}
 \seealso{
 The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
 respective documentation to learn more.

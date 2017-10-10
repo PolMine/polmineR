@@ -51,7 +51,7 @@ encode(.Object, ...)
 If \code{.Object} is a \code{data.frame}, it needs to have a column with the token
 stream (column name 'word'), and further columns with either p-attributes,
 or s-attributes. The corpus will be encoded successively, starting with the
-p-attributes.
+p-attributes in the columns defined by \code{pAttributes}.
 }
 \details{
 If \code{.Object} is a \code{data.table}, it is assumed to have three columns: The
@@ -83,9 +83,14 @@ reuters.tibble[["places"]] <- sapply(
 reuters.tidy <- unnest_tokens(
   reuters.tibble, output = "word", input = "text", to_lower = FALSE
 )
-encode(
-  reuters.tidy, name = "reuters2",
-  sAttributes = c("language", "places")
-)
+
+tmpCwbDir <- tempdir()
+registryDir <- file.path(tmpCwbDir, "registry")
+dir.create(registryDir)
+dir.create(file.path(tmpCwbDir, "indexed_corpora"))
+resetRegistry(registryDir = registryDir)
+
+encode(reuters.tidy, name = "reuters", sAttributes = c("language", "places"))
+corpus()
 }
 }

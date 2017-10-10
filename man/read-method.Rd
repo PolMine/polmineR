@@ -78,7 +78,7 @@ merkel <- partition(
  read(merkel, meta=c("text_name", "text_date"))
  read(
    merkel,
-   highlight = list(yellow=c("Deutschland", "Bundesrepublik"), lightgreen="Regierung"),
+   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
    meta = c("text_name", "text_date")
 )
 
@@ -88,7 +88,7 @@ speeches <- as.speeches(
 )
 read(speeches, meta = c("text_date", "text_name"))
 migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
-read(migVocab, col="Integration", partitionBundle=speeches)
+read(migVocab, col = "Integration", partitionBundle = speeches)
 }
 }
 \seealso{
