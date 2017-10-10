@@ -1,14 +1,14 @@
 # not sure whether it is necessary to have this outside .onLoad or .onAttach
 # included to pass CRAN tests - check on occasion, whether this is really necessary
 if (Sys.getenv("CORPUS_REGISTRY") == ""){
-  Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+  Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
 }
 
-.onLoad <- function (lib, pkg) {
+.onLoad <- function (libname, pkgname) {
   
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
-    Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+    Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
   }
   
   # polmineR:::CQI
@@ -74,20 +74,20 @@ if (Sys.getenv("CORPUS_REGISTRY") == ""){
 
 
 #' @importFrom utils packageVersion
-.onAttach <- function(lib, pkg){
+.onAttach <- function(libname, pkgname){
   
   # same as in .onLoad, potentially duplicated - included to be sure
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
-    Sys.setenv("CORPUS_REGISTRY" = file.path(lib, pkg, "extdata", "cwb", "registry"))
+    Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
   }
   
   
   # adjust dataDir, if it has not yet been set
   REUTERS <- RegistryFile$new(
     "REUTERS",
-    filename = system.file(package = pkg, "extdata", "cwb", "registry", "reuters")
+    filename = system.file(package = pkgname, "extdata", "cwb", "registry", "reuters")
   )
-  correctDataDir <- system.file(package = pkg, "extdata", "cwb", "indexed_corpora", "reuters")
+  correctDataDir <- system.file(package = pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
   if (REUTERS$getHome() != correctDataDir){
     REUTERS$setHome(new = correctDataDir) 
     REUTERS$write(verbose = FALSE)
