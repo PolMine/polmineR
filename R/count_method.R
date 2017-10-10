@@ -322,6 +322,10 @@ setMethod("count", "vector", function(.Object, corpus, pAttribute){
   TF[count > 0]
 })
 
+#' @rdname count-method
+setMethod("count", "Corpus", function(.Object, query = NULL, pAttribute){
+  count(.Object$as.partition(), query = query, pAttribute = pAttribute)
+})
 
 #' @rdname dispersion-class
 setMethod("count", "dispersion", function(.Object) .Object@count)

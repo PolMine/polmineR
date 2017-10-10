@@ -579,11 +579,3 @@ CQI.cqpserver <- R6Class(
     
   )
 )
-
-CQI <- switch(
-  Sys.getenv("POLMINER_INTERFACE"),
-  "rcqp" = CQI.rcqp$new(),
-  "perl" = CQI.cqpserver$new(),
-  "cqpserver" = CQI.cqpserver$new(),
-  if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
-)

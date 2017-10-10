@@ -4,6 +4,16 @@ if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   
   if (Sys.getenv("CORPUS_REGISTRY") == "") Sys.setenv("CORPUS_REGISTRY" = "/")
   
+  # polmineR:::CQI
+  CQI <- switch(
+    Sys.getenv("POLMINER_INTERFACE"),
+    "rcqp" = CQI.rcqp$new(),
+    "perl" = CQI.cqpserver$new(),
+    "cqpserver" = CQI.cqpserver$new(),
+    if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
+  )
+  assign("CQI", CQI, envir = parent.env(environment()))
+  
   options(
     "polmineR.project" = "",
     "polmineR.projectDir" = "",
@@ -108,6 +118,7 @@ getSettings <- function(){
 
   setTemplate()
   getSettings()
+  
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){

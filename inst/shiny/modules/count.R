@@ -12,7 +12,11 @@ countUiInput <- function(){
       condition = "input.count_object == 'partition'",
       selectInput("count_partition", "partition", choices = character())
     ),
-    textInput("count_query", "query", value = "")
+    textInput("count_query", "query", value = ""),
+    selectInput(
+      "count_pAttribute", "pAttribute",
+      choices = pAttributes(corpus()[1, "corpus"])
+    )
   )
 }
 
@@ -31,10 +35,11 @@ countServer <- function(input, output, session){
   output$count_table <- DT::renderDataTable({
     input$count_go
     isolate({
-      if (input$count_go > 0 && input$count_query == ""){
+      if (input$count_go > 0){
         
-        if (input$count_object == "corpus"){
+        if (input$count_object == "corpus" && input$count_query == ""){
           if (!input$count_corpus %in% names(values$corpora)){
+            print("x")
             withProgress(
               message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
               {
@@ -43,18 +48,21 @@ countServer <- function(input, output, session){
               
             )
           }
+        } else {
+          
         }
         
         .Object <- switch(
           input$count_object,
-          corpus = values$corpora(input$count_corpus),
+          corpus = values$corpora[[input$count_corpus]],
           partition = values$partition[[input$count_partition]]
         )
         
         if (input$count_query == ""){
           return(getSlot(.Object, "stat"))
         } else {
-          return(count(.Object, query = input$count_query))
+          retval <- count(.Object, query = input$count_query, pAttribute = input$count_pAttribute)
+          return( retval )
         }
 
       } else {
