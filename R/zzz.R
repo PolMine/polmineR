@@ -1,8 +1,8 @@
 # not sure whether it is necessary to have this outside .onLoad or .onAttach
 # included to pass CRAN tests - check on occasion, whether this is really necessary
-if (Sys.getenv("CORPUS_REGISTRY") == ""){
-  Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
-}
+# if (Sys.getenv("CORPUS_REGISTRY") == ""){
+#   Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
+# }
 
 .onLoad <- function (libname, pkgname) {
   
