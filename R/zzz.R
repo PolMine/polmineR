@@ -101,7 +101,7 @@
   print(REUTERS$getHome())
   print(list.files(REUTERS$getHome()))
 
-  setTemplate()
+  # setTemplate()
 
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
@@ -114,6 +114,6 @@
     packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   }
   
-  packageStartupMessage("interface: ", class(CQI)[1])
+  # packageStartupMessage("interface: ", class(CQI)[1])
   print("f")
 }
