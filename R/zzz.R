@@ -92,8 +92,14 @@
   if (REUTERS$getHome() != correctDataDir){
     REUTERS$setHome(new = correctDataDir) 
     REUTERS$write(verbose = FALSE)
-    print("e")
+    print(REUTERS$getHome())
   }
+  REUTERS <- RegistryFile$new(
+    "REUTERS",
+    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
+  )
+  print(REUTERS$getHome())
+  print(list.files(REUTERS$getHome()))
 
   setTemplate()
 
