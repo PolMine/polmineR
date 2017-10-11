@@ -82,17 +82,15 @@
   }
   
   # adjust dataDir, if it has not yet been set
-  print("a")
   REUTERS <- RegistryFile$new(
     "REUTERS",
     filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
   )
-  print("b")
   correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
+  print(correctDataDir)
+  print(REUTERS$getHome())
   if (REUTERS$getHome() != correctDataDir){
-    print("c")
     REUTERS$setHome(new = correctDataDir) 
-    print("d")
     REUTERS$write(verbose = FALSE)
     print("e")
   }
@@ -111,5 +109,5 @@
   }
   
   packageStartupMessage("interface: ", class(CQI)[1])
-  
+  print("f")
 }
