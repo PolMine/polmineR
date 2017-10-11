@@ -81,13 +81,12 @@
     Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
   }
   
-  
   # adjust dataDir, if it has not yet been set
   REUTERS <- RegistryFile$new(
     "REUTERS",
-    filename = system.file(package = pkgname, "extdata", "cwb", "registry", "reuters")
+    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
   )
-  correctDataDir <- system.file(package = pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
+  correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
   if (REUTERS$getHome() != correctDataDir){
     REUTERS$setHome(new = correctDataDir) 
     REUTERS$write(verbose = FALSE)
