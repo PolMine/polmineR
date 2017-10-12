@@ -94,7 +94,7 @@
     REUTERS$write(verbose = FALSE)
   }
 
-  # setTemplate()
+  setTemplate()
 
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
