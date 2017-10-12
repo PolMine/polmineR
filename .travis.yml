@@ -18,6 +18,7 @@ r_packages:
   - devtools
   - plyr
   - tm
+  - tidytext
   - rcqp
   - covr
 
