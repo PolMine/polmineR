@@ -94,7 +94,8 @@
     REUTERS$write(verbose = FALSE)
   }
 
-  setTemplate()
+  # rcqp not found?
+  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
 
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
