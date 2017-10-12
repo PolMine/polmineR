@@ -8,10 +8,12 @@
   
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
-    Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
+    polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
+    Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
+    resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
   }
   
-  # polmineR:::CQI
+  # polmineR:::CQI - assign it to package namespace
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
     "rcqp" = CQI.rcqp$new(),
@@ -77,9 +79,9 @@
 .onAttach <- function(libname, pkgname){
   
   # same as in .onLoad, potentially duplicated - included to be sure
-  if (Sys.getenv("CORPUS_REGISTRY") == ""){
-    Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
-  }
+  # if (Sys.getenv("CORPUS_REGISTRY") == ""){
+  #   Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
+  # }
   
   # adjust dataDir, if it has not yet been set
   REUTERS <- RegistryFile$new(
@@ -87,21 +89,12 @@
     filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
   )
   correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
-  print(correctDataDir)
-  print(REUTERS$getHome())
   if (REUTERS$getHome() != correctDataDir){
     REUTERS$setHome(new = correctDataDir) 
     REUTERS$write(verbose = FALSE)
-    print(REUTERS$getHome())
   }
-  REUTERS <- RegistryFile$new(
-    "REUTERS",
-    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
-  )
-  print(REUTERS$getHome())
-  print(list.files(REUTERS$getHome()))
 
-  # setTemplate()
+  setTemplate()
 
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   
@@ -114,6 +107,5 @@
     packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   }
   
-  # packageStartupMessage("interface: ", class(CQI)[1])
-  print("f")
+  packageStartupMessage("interface: ", class(CQI)[1])
 }
