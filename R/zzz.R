@@ -1,10 +1,15 @@
-# not sure whether it is necessary to have this outside .onLoad or .onAttach
-# included to pass CRAN tests - check on occasion, whether this is really necessary
-# if (Sys.getenv("CORPUS_REGISTRY") == ""){
-#   Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
-# }
-
 .onLoad <- function (libname, pkgname) {
+  
+  # adjust dataDir, if it has not yet been set
+  REUTERS <- RegistryFile$new(
+    "REUTERS",
+    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
+  )
+  correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
+  if (REUTERS$getHome() != correctDataDir){
+    REUTERS$setHome(new = correctDataDir) 
+    REUTERS$write(verbose = FALSE)
+  }
   
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
@@ -70,43 +75,17 @@
       options("polmineR.cwb-lexdecode" = TRUE)
     if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)
       options("polmineR.cwb-regedit" = TRUE)
-    
   }
+  
+  # rcqp is not always accessible here - setTemplates would not work with perl interface
+  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
+  
 }
 
 
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
-  
-  # same as in .onLoad, potentially duplicated - included to be sure
-  # if (Sys.getenv("CORPUS_REGISTRY") == ""){
-  #   Sys.setenv("CORPUS_REGISTRY" = file.path(libname, pkgname, "extdata", "cwb", "registry"))
-  # }
-  
-  # adjust dataDir, if it has not yet been set
-  REUTERS <- RegistryFile$new(
-    "REUTERS",
-    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
-  )
-  correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
-  if (REUTERS$getHome() != correctDataDir){
-    REUTERS$setHome(new = correctDataDir) 
-    REUTERS$write(verbose = FALSE)
-  }
-
-  # rcqp not found?
-  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
-
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
-  
-  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
-    packageStartupMessage(
-      "The CORPUS_REGISTRY environment variable is not defined. ",
-      "See the package vignette to learn how to set it!"
-    )
-  } else {
-    packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
-  }
-  
+  packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   packageStartupMessage("interface: ", class(CQI)[1])
 }

@@ -36,7 +36,6 @@ setGeneric("setTemplate", function(.Object, ... ) standardGeneric("setTemplate")
 
 #' @rdname templates
 setMethod("setTemplate", "character", function(.Object){
-  print(Sys.getenv("CORPUS_REGISTRY"))
   stopifnot(.Object %in% CQI$list_corpora())
   templateList <- getOption("polmineR.templates")
   filename <- file.path(RegistryFile$new(.Object)$getHome(), "template.json")
