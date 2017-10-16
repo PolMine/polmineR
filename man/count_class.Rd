@@ -3,6 +3,7 @@
 \docType{class}
 \name{count_class}
 \alias{count_class}
+\alias{count-class}
 \title{Count class.}
 \description{
 S4 class to organize counts. The classes \code{polmineR} and

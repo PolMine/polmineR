@@ -15,8 +15,9 @@ NULL
 #' @exportClass count
 #' @docType class
 #' @author Andreas Blaette
+#' @aliases count-class
 #' @seealso The \code{count}-class inherits from the \code{\link{textstat-class}}
-setClass("count", contains = "textstat")
+setClass("count", representation = list(size = "integer"), contains = "textstat")
 
 setAs(from = "partition", to = "count", def = function(from){
   if (nrow(from@stat) == 0){
@@ -28,6 +29,7 @@ setAs(from = "partition", to = "count", def = function(from){
     pAttribute = from@pAttribute,
     corpus = from@corpus,
     encoding = from@encoding,
+    size = from@size,
     name = from@name
     )
 })

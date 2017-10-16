@@ -4,12 +4,16 @@
 \name{features,partition-method}
 \alias{features,partition-method}
 \alias{features}
+\alias{features,count-method}
 \alias{features,partitionBundle-method}
 \alias{features,ngrams-method}
 \title{Get features by comparison.}
 \usage{
 \S4method{features}{partition}(x, y, included = FALSE, method = "chisquare",
   verbose = FALSE)
+
+\S4method{features}{count}(x, y, included = FALSE, method = "chisquare",
+  verbose = TRUE)
 
 \S4method{features}{partitionBundle}(x, y, included = FALSE,
   method = "chisquare", verbose = TRUE, mc = getOption("polmineR.mc"),
@@ -88,6 +92,14 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
 \dontrun{
   use("polmineR.sampleCorpus")
   kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
+  all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
+  terms_kauder <- features(x = kauder, y = all, included = TRUE)
+  top100 <- subset(terms_kauder, rank_chisquare <= 100)
+}
+\dontrun{
+  use("polmineR.sampleCorpus")
+  kauder <- partition("PLPRBTTXT", text_name = "Volker Kauder", pAttribute = "word")
+  x <- as(kauder, "count")
   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
   terms_kauder <- features(x = kauder, y = all, included = TRUE)
   top100 <- subset(terms_kauder, rank_chisquare <= 100)

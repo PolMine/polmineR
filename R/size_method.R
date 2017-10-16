@@ -80,7 +80,7 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
 #' @exportMethod size
 setMethod("size", "partition", function(x, sAttribute = NULL){
   if (is.null(sAttribute)){
-    return( sum(x@cpos[,2] - x@cpos[,1] + 1) )
+    return( sum(x@cpos[,2] - x@cpos[,1] + 1L) )
   } else {
     stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
@@ -89,7 +89,7 @@ setMethod("size", "partition", function(x, sAttribute = NULL){
         function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
       )
     )
-    dt[, size := x@cpos[,2] - x@cpos[,1] + 1]
+    dt[, size := x@cpos[,2] - x@cpos[,1] + 1L]
     y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
     setnames(y, old = "V1", new = "size")
     setkeyv(y, cols = sAttribute)
@@ -105,5 +105,5 @@ setMethod("size", "DocumentTermMatrix", function(x){
 
 #' @rdname TermDocumentMatrix
 setMethod("size", "TermDocumentMatrix", function(x){
-  setNames(tapply(x$v, INDEX=x$j, sum), x[["dimnames"]][["Docs"]])
+  setNames(tapply(x$v, INDEX = x$j, sum), x[["dimnames"]][["Docs"]])
 })

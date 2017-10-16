@@ -45,8 +45,10 @@ setMethod("features", "partition", function(
   
   # check that counts are available
   if (length(x@pAttribute) == 0) stop("no count performed for x - enrich the object!")
-  if (length(y@pAttribute) == 0) stop("no count performed for y - enrich the object!")
-  if (!identical(x@pAttribute, y@pAttribute)) stop("mismatch of pAttribute of x and y")
+  if (!is.character(y)){
+    if (length(y@pAttribute) == 0) stop("no count performed for y - enrich the object!")
+    if (!identical(x@pAttribute, y@pAttribute)) stop("mismatch of pAttribute of x and y")
+  }
 
   # if y is a character vector, create a partition from corpus
   if (is.character(y)){
@@ -85,6 +87,46 @@ setMethod("features", "partition", function(
 })
 
 
+#' @examples
+#' \dontrun{
+#'   use("polmineR.sampleCorpus")
+#'   kauder <- partition("PLPRBTTXT", text_name = "Volker Kauder", pAttribute = "word")
+#'   x <- as(kauder, "count")
+#'   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
+#'   y <- as(all, "count")
+#'   z <- features(x, y, included = TRUE)
+#'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
+#' }
+#' @rdname  features-method
+setMethod("features", "count", function(x, y, included = FALSE, method = "chisquare", verbose = TRUE){
+  stopifnot(
+    x@encoding == y@encoding,
+    identical(x@pAttribute, y@pAttribute)
+    )
+  z <- new(
+    "features",
+    encoding = x@encoding, included = included,
+    corpus = unique(c(x@corpus, y@corpus)),
+    sizeCoi = x@size,
+    sizeRef = if (included) y@size - x@size else y@size,
+    pAttribute = x@pAttribute,
+    stat = data.table()
+  )
+
+  .message("combining frequency lists", verbose = verbose)
+  # merge.data.table - good option, because keys would be used if present
+  z@stat <- merge(x@stat, y@stat, by = z@pAttribute) 
+  
+  setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
+  if (included) z@stat[, "count_ref" := z@stat[["count_ref"]] - z@stat[["count_coi"]] ]
+  
+  for (how in method){
+    .message("statistical test: ", how, verbose = verbose)
+    z <- do.call(how, args = list(.Object = z))
+  }
+  z
+})
+
 
 #' @docType methods
 #' @rdname features-method
@@ -109,43 +151,6 @@ setMethod("features", "partitionBundle", function(
 })
 
 
-#' #' @rdname features-method
-#' setMethod("features", "cooccurrences", function(x, y, included = FALSE, method = "ll", mc = TRUE, verbose = TRUE){
-#'   newObject <- new(
-#'     'compCooccurrences',
-#'     encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@partitionSize,
-#'     sizeRef = ifelse(included == FALSE, y@partitionSize, y@partitionSize - x@partitionSize),
-#'     stat = data.table()
-#'   )
-#'   if (identical(x@pAttribute, y@pAttribute) == FALSE) {
-#'     warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
-#'   } else {
-#'     newObject@pAttribute <- x@pAttribute
-#'   }
-#'   .message("preparing tabs for matching", verbose = verbose)
-#'   keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
-#'   setkeyv(x@stat, keys)
-#'   setkeyv(y@stat, keys)
-#'   MATCH <- y@stat[x@stat]
-#'   
-#'   # remove columns not needed
-#'   colsToDrop <- c(
-#'     "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
-#'     "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b",
-#'     "exp_partition", "i.exp_partition"
-#'     )
-#'   for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
-#'   setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
-#'   
-#'   if (included == TRUE) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
-#'   
-#'   newObject@stat <- MATCH
-#'   for (how in method){
-#'     .message("statistical test: ", how, verbose = verbose)
-#'     newObject <- do.call(how, args = list(.Object = newObject))
-#'   }
-#'   newObject
-#' })
 
 
 #' @rdname features-method

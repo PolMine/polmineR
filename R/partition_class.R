@@ -60,7 +60,7 @@ setClass(
     cpos = "matrix",
     pos = "list",
     annotations = "list",
-    size = "numeric",
+    size = "integer",
     metadata = "data.frame",
     strucs = "numeric",
     xml = "character",
