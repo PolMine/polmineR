@@ -47,6 +47,20 @@ setClass("featuresCooccurrences", contains=c("features", "textstat"))
 #' @exportClass featuresNgrams
 setClass("featuresNgrams", representation(n="integer"), contains=c("features", "textstat"))
 
+setAs(from = "features", to = "featuresNgrams", def = function(from){
+  new(
+    "featuresNgrams",
+    corpus = from@corpus,
+    pAttribute = from@pAttribute,
+    encoding = from@pAttribute,
+    stat = from@stat,
+    sizeCoi = from@sizeCoi,
+    sizeRef = from@sizeRef,
+    method = from@method,
+    included = from@included
+  )
+})
+
 #' @slot objects an object of class \code{list}
 #' @rdname features-class
 setClass("featuresBundle", slots = c(objects = "list"), contains = "bundle")

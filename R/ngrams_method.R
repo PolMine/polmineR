@@ -2,7 +2,7 @@
 #' @rdname ngrams
 setClass(
   "ngrams",
-  representation(n = "integer", size = "integer"),
+  representation(n = "integer"),
   contains = c("count", "textstat")
 )
 

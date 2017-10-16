@@ -1,7 +1,7 @@
 #' @include partition_class.R partitionBundle_class.R ngrams_method.R
 NULL
 
-setGeneric("features", function(x, ...) standardGeneric("features"))
+setGeneric("features", function(x, y, ...) standardGeneric("features"))
 
 
 #' Get features by comparison.
@@ -13,15 +13,14 @@ setGeneric("features", function(x, ...) standardGeneric("features"))
 #' @param x a partition or partitionBundle object
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
+#' @param by the columns used for merging, if NULL (default), the pAttribute of
+#'   x will be used
 #' @param method the statistical test to apply (chisquare or log likelihood)
 #' @param included TRUE if coi is part of ref, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @param progress logical
 #' @param mc logical, whether to use multicore
 #' @param ... further parameters
-#' @return The function returns a data frame with the following structure:
-#' - absolute frequencies in the first row
-#' - ...
 #' @author Andreas Blaette
 #' @aliases features
 #' @docType methods
@@ -64,26 +63,10 @@ setMethod("features", "partition", function(
   }
   
   .message ('Comparing x and y ...', verbose = verbose)
-  z <- new(
-    "features",
-    encoding = x@encoding, included = included, corpus = x@corpus,
-    sizeCoi = x@size, sizeRef = if (included) y@size - x@size else y@size,
-    pAttribute = x@pAttribute,
-    stat = data.table()
+  features(
+    x = as(x, "count"), y = as(y, "count"), 
+    included = included, method = method, verbose = verbose
     )
-  z@call <- deparse(match.call())
-  
-  .message("combining frequency lists", verbose = verbose)
-  # merge.data.table - good option, because keys would be used if present
-  z@stat <- merge(x@stat, y@stat, by = z@pAttribute) 
-  
-  setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
-  if (included) z@stat[, "count_ref" := z@stat[["count_ref"]] - z@stat[["count_coi"]] ]
-  for (how in method){
-    .message("statistical test: ", how, verbose = verbose)
-    z <- do.call(how, args = list(.Object = z))
-  }
-  z
 })
 
 
@@ -98,7 +81,7 @@ setMethod("features", "partition", function(
 #'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' }
 #' @rdname  features-method
-setMethod("features", "count", function(x, y, included = FALSE, method = "chisquare", verbose = TRUE){
+setMethod("features", "count", function(x, y, by = NULL, included = FALSE, method = "chisquare", verbose = TRUE){
   stopifnot(
     x@encoding == y@encoding,
     identical(x@pAttribute, y@pAttribute)
@@ -115,7 +98,8 @@ setMethod("features", "count", function(x, y, included = FALSE, method = "chisqu
 
   .message("combining frequency lists", verbose = verbose)
   # merge.data.table - good option, because keys would be used if present
-  z@stat <- merge(x@stat, y@stat, by = z@pAttribute) 
+  if (is.null(by)) by <- z@pAttribute
+  z@stat <- merge(x@stat, y@stat, by = by) 
   
   setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
   if (included) z@stat[, "count_ref" := z@stat[["count_ref"]] - z@stat[["count_coi"]] ]
@@ -141,11 +125,11 @@ setMethod("features", "count", function(x, y, included = FALSE, method = "chisqu
 #' }
 setMethod("features", "partitionBundle", function(
   x, y, 
-  included=FALSE, method="chisquare", verbose=TRUE, mc=getOption("polmineR.mc"), progress=FALSE
+  included = FALSE, method = "chisquare", verbose = TRUE, mc = getOption("polmineR.mc"), progress = FALSE
 ) {
-  .features <- function(x, y, included, method, ...) features(x=x, y=y, included=included, method=method)
+  .features <- function(x, y, included, method, ...) features(x = x, y = y, included = included, method = method)
   retval <- new("featuresBundle")
-  retval@objects <- blapply(x@objects, f=.features, y=y, included=included, method=method, verbose=verbose, mc=mc, progress=progress)
+  retval@objects <- blapply(x@objects, f = .features, y = y, included = included, method = method, verbose = verbose, mc=mc, progress=progress)
   names(retval@objects) <- names(x@objects)
   retval
 })
@@ -163,23 +147,13 @@ setMethod(
       all(method %in% c("chisquare", "ll"))
     )
     tokenColnames <- sapply(1:x@n, function(i) paste(i, x@pAttribute, sep = "_"))
-    setkeyv(x@stat, cols = tokenColnames)
-    setkeyv(y@stat, cols = tokenColnames)
-    DT <- y@stat[x@stat]
-    setnames(DT, c("count", "i.count"), c("count_ref", "count_coi"))
-    setcolorder(DT, c(tokenColnames, "count_coi", "count_ref"))
-    if (included) DT[, "count_ref" := DT[["count_ref"]] - DT[["count_coi"]] ]
-    newObject <- new(
-      "featuresNgrams",
-      encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@size,
-      pAttribute = x@pAttribute, n = x@n,
-      sizeRef = if(included) y@size-x@size else y@size,
-      stat=DT
-      )
-    for (how in method){
-      .message("statistical test: ", how, verbose = verbose)
-      newObject <- do.call(how, args = list(.Object = newObject))
-    }
-    newObject
-  })
+    z <- callNextMethod(
+      x = x, y = y, by = tokenColnames,
+      included = included, method = method, verbose = verbose
+    )
+    z <- as(z, "featuresNgrams")
+    z@n <- x@n
+    z
+  }
+)
 

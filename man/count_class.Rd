@@ -14,9 +14,14 @@ S4 class to organize counts. The classes \code{polmineR} and
 \describe{
 \item{\code{stat}}{Object of class \code{data.table}}
 
-\item{\code{corpus}}{Object of class \code{"character"} the CWB corpus the partition is based on}
+\item{\code{corpus}}{Object of class \code{character} the CWB corpus the partition is based on}
 
-\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+\item{\code{encoding}}{Object of class \code{character} encoding of the corpus}
+
+\item{\code{name}}{Object of class \code{character}, a name for the object}
+
+\item{\code{size}}{Object of class \code{integer}, the size of the partition or
+corpus the count is based upon}
 }}
 
 \seealso{

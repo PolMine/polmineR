@@ -12,8 +12,8 @@
 \S4method{features}{partition}(x, y, included = FALSE, method = "chisquare",
   verbose = FALSE)
 
-\S4method{features}{count}(x, y, included = FALSE, method = "chisquare",
-  verbose = TRUE)
+\S4method{features}{count}(x, y, by = NULL, included = FALSE,
+  method = "chisquare", verbose = TRUE)
 
 \S4method{features}{partitionBundle}(x, y, included = FALSE,
   method = "chisquare", verbose = TRUE, mc = getOption("polmineR.mc"),
@@ -34,59 +34,19 @@ ref}
 
 \item{verbose}{logical, defaults to TRUE}
 
+\item{by}{the columns used for merging, if NULL (default), the pAttribute of
+x will be used}
+
 \item{mc}{logical, whether to use multicore}
 
 \item{progress}{logical}
 
 \item{...}{further parameters}
 }
-\value{
-The function returns a data frame with the following structure:
-- absolute frequencies in the first row
-- ...
-}
 \description{
 The features of two objects, usually a partition defining a corpus of 
 interest, and a partition defining a reference corpus are compared. 
 The most important purpose is term extraction.
-
-#' @rdname features-method
-setMethod("features", "cooccurrences", function(x, y, included = FALSE, method = "ll", mc = TRUE, verbose = TRUE){
-  newObject <- new(
-    'compCooccurrences',
-    encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@partitionSize,
-    sizeRef = ifelse(included == FALSE, y@partitionSize, y@partitionSize - x@partitionSize),
-    stat = data.table()
-  )
-  if (identical(x@pAttribute, y@pAttribute) == FALSE) {
-    warning("BEWARE: cooccurrences objects are not based on the same pAttribute!")
-  } else {
-    newObject@pAttribute <- x@pAttribute
-  }
-  .message("preparing tabs for matching", verbose = verbose)
-  keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@pAttribute, sep="_"))) 
-  setkeyv(x@stat, keys)
-  setkeyv(y@stat, keys)
-  MATCH <- y@stat[x@stat]
-  
-  # remove columns not needed
-  colsToDrop <- c(
-    "ll", "i.ll", "exp_window", "i.exp_window", "rank_ll", "i.rank_ll",
-    "size_window", "i.size_window", "count_a", "i.count_a", "count_b", "i.count_b",
-    "exp_partition", "i.exp_partition"
-    )
-  for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with=TRUE]
-  setnames(MATCH, old=c("count_ab", "i.count_ab"), new=c("count_ref", "count_coi"))
-  
-  if (included == TRUE) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
-  
-  newObject@stat <- MATCH
-  for (how in method){
-    .message("statistical test: ", how, verbose = verbose)
-    newObject <- do.call(how, args = list(.Object = newObject))
-  }
-  newObject
-})
 }
 \examples{
 \dontrun{
@@ -101,7 +61,8 @@ setMethod("features", "cooccurrences", function(x, y, included = FALSE, method =
   kauder <- partition("PLPRBTTXT", text_name = "Volker Kauder", pAttribute = "word")
   x <- as(kauder, "count")
   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
-  terms_kauder <- features(x = kauder, y = all, included = TRUE)
+  y <- as(all, "count")
+  z <- features(x, y, included = TRUE)
   top100 <- subset(terms_kauder, rank_chisquare <= 100)
 }
 \dontrun{

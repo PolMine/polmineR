@@ -43,3 +43,18 @@ test_that(
     )
   }
 )
+
+test_that(
+  "features (comparing count with count)",
+  {
+    a <- partition("REUTERS", places = "qatar", pAttribute = "word")
+    x <- as(a, "count")
+    b <- partition("REUTERS", places = ".*", regex = TRUE, pAttribute = "word")
+    y <- as(b, "count")
+    z <- features(x, y, included = TRUE)
+    expect_equal(
+      z@stat[["word"]][1:5], c("budget", "riyals", "billion", "Abdul", "Aziz")
+    )
+    expect_equal(sum(z@stat[["count_coi"]][1:5]), 29)  
+  }
+)
