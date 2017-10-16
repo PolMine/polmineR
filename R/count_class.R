@@ -1,0 +1,33 @@
+#' @include polmineR_package.R textstat_class.R
+NULL
+
+
+#' Count class.
+#' 
+#' S4 class to organize counts. The classes \code{polmineR} and
+#' \code{ngrams} inherit from the class.
+#' 
+#' @slot stat Object of class \code{data.table}
+#' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on 
+#' @slot encoding Object of class \code{"character"} encoding of the corpus 
+#' @rdname count_class
+#' @name count_class
+#' @exportClass count
+#' @docType class
+#' @author Andreas Blaette
+#' @seealso The \code{count}-class inherits from the \code{\link{textstat-class}}
+setClass("count", contains = "textstat")
+
+setAs(from = "partition", to = "count", def = function(from){
+  if (nrow(from@stat) == 0){
+    stop("The input partiton does not include a data.table in its slot 'stat' - aborting.")
+  }
+  new(
+    "count",
+    stat = from@stat,
+    pAttribute = from@pAttribute,
+    corpus = from@corpus,
+    encoding = from@encoding,
+    name = from@name
+    )
+})

@@ -1,14 +1,15 @@
 .onLoad <- function (libname, pkgname) {
   
   # adjust dataDir, if it has not yet been set
-  REUTERS <- RegistryFile$new(
-    "REUTERS",
-    filename = file.path(libname, pkgname, "extdata", "cwb", "registry", "reuters")
-  )
-  correctDataDir <- file.path(libname, pkgname, "extdata", "cwb", "indexed_corpora", "reuters")
-  if (REUTERS$getHome() != correctDataDir){
-    REUTERS$setHome(new = correctDataDir) 
-    REUTERS$write(verbose = FALSE)
+  cwbTmpDir <- file.path(libname, pkgname, "extdata", "cwb")
+  reutersTmpRegistry <- file.path(cwbTmpDir, "registry", "reuters")
+  reutersTmpDataDir <- file.path(cwbTmpDir, "indexed_corpora", "reuters")
+  if (file.exists(reutersTmpRegistry)){
+    REUTERS <- RegistryFile$new("REUTERS", filename = reutersTmpRegistry)
+    if (REUTERS$getHome() != reutersTmpDataDir){
+      REUTERS$setHome(new = reutersTmpDataDir) 
+      REUTERS$write(verbose = FALSE)
+    }
   }
   
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package

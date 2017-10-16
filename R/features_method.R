@@ -43,48 +43,45 @@ setMethod("features", "partition", function(
   verbose = FALSE
 ) {
   
-  if (length(x@pAttribute) == 0) stop("no count performed for x")
-  
+  # check that counts are available
+  if (length(x@pAttribute) == 0) stop("no count performed for x - enrich the object!")
+  if (length(y@pAttribute) == 0) stop("no count performed for y - enrich the object!")
+  if (!identical(x@pAttribute, y@pAttribute)) stop("mismatch of pAttribute of x and y")
+
   # if y is a character vector, create a partition from corpus
   if (is.character(y)){
-    stopifnot(length(y) == 1)
-    stopifnot(y %in% corpus()[["corpus"]])
+    stopifnot(length(y) == 1) # can only compare to exactly one 
+    stopifnot(y %in% CQI$list_corpora()) # make sure that it is a corpus that is available
     if (y == x@corpus && included == FALSE){
       included <- TRUE
       warning("x is derived from corpus y, but included is FALSE - setting to TRUE")
     }
-    
     refCorpus <- Corpus$new(y)
     refCorpus$count(pAttribute = x@pAttribute)
     y <- refCorpus$as.partition()
   }
   
   .message ('Comparing x and y ...', verbose = verbose)
-  newObject <- new(
-    'features',
+  z <- new(
+    "features",
     encoding = x@encoding, included = included, corpus = x@corpus,
     sizeCoi = x@size, sizeRef = if (included) y@size - x@size else y@size,
+    pAttribute = x@pAttribute,
     stat = data.table()
     )
-  newObject@call <- deparse(match.call())
+  z@call <- deparse(match.call())
   
-  # check whether count-lists are available for the pAttribute given
-  if (length(x@pAttribute) == 0 || length(y@pAttribute) == 0) stop("no count performed for x and/or y")
-  if (identical(x@pAttribute, y@pAttribute) == FALSE){
-    stop("mismatch of pAttribute of x and y")
-  } else {
-    newObject@pAttribute <- x@pAttribute
-    pAttribute <- x@pAttribute
-  }
   .message("combining frequency lists", verbose = verbose)
-  newObject@stat <- merge(x@stat, y@stat, by=pAttribute)
-  setnames(newObject@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
-  if (included == TRUE) newObject@stat[, "count_ref" := newObject@stat[["count_ref"]] - newObject@stat[["count_coi"]] ]
+  # merge.data.table - good option, because keys would be used if present
+  z@stat <- merge(x@stat, y@stat, by = z@pAttribute) 
+  
+  setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
+  if (included) z@stat[, "count_ref" := z@stat[["count_ref"]] - z@stat[["count_coi"]] ]
   for (how in method){
     .message("statistical test: ", how, verbose = verbose)
-    newObject <- do.call(how, args = list(.Object = newObject))
+    z <- do.call(how, args = list(.Object = z))
   }
-  newObject
+  z
 })
 
 
@@ -156,27 +153,27 @@ setMethod(
   "features", "ngrams",
   function(x, y, included = FALSE, method = "chisquare", verbose = TRUE, ...){
     stopifnot(
-      identical(x@pAttribute, y@pAttribute) == TRUE,
+      identical(x@pAttribute, y@pAttribute),
       x@n == y@n,
       all(method %in% c("chisquare", "ll"))
     )
-    tokenColnames <- unlist(lapply(c(1:x@n), function(i) paste("token_", i, "_", x@pAttribute, sep="")))
-    setkeyv(x@stat, cols=tokenColnames)
-    setkeyv(y@stat, cols=tokenColnames)
+    tokenColnames <- sapply(1:x@n, function(i) paste(i, x@pAttribute, sep = "_"))
+    setkeyv(x@stat, cols = tokenColnames)
+    setkeyv(y@stat, cols = tokenColnames)
     DT <- y@stat[x@stat]
     setnames(DT, c("count", "i.count"), c("count_ref", "count_coi"))
     setcolorder(DT, c(tokenColnames, "count_coi", "count_ref"))
-    if (included == TRUE) DT[, "count_ref" := DT[["count_ref"]] - DT[["count_coi"]] ]
+    if (included) DT[, "count_ref" := DT[["count_ref"]] - DT[["count_coi"]] ]
     newObject <- new(
       "featuresNgrams",
-      encoding=x@encoding, included=included, corpus=x@corpus, sizeCoi=x@size,
-      pAttribute=x@pAttribute, n=x@n,
-      sizeRef=ifelse(included == FALSE, y@size, y@size-x@size),
+      encoding = x@encoding, included = included, corpus = x@corpus, sizeCoi = x@size,
+      pAttribute = x@pAttribute, n = x@n,
+      sizeRef = if(included) y@size-x@size else y@size,
       stat=DT
       )
     for (how in method){
       .message("statistical test: ", how, verbose = verbose)
-      newObject <- do.call(how, args=list(.Object=newObject))
+      newObject <- do.call(how, args = list(.Object = newObject))
     }
     newObject
   })

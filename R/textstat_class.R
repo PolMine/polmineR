@@ -12,7 +12,7 @@ NULL
 #' 
 #' @slot pAttribute Object of class \code{"character"} p-attribute of the query
 #' @slot corpus Object of class \code{"character"}
-#' @slot stat Object of class \code{"data.frame"} statistics of the analysis
+#' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot name name of the object
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @param .Object an object

@@ -11,6 +11,7 @@ options("polmineR.Rcpp") is FALSE
 be used, making REUTERS corpus available
 * getSettings-function removed, was not sufficiently useful, and was superseded by
 template mechanism
+* new class 'count' introduced to organize results from count operations
 
 
 # v0.7.5

@@ -1,4 +1,4 @@
-#' @include polmineR_package.R textstat_class.R generics.R
+#' @include polmineR_package.R textstat_class.R count_class.R generics.R
 NULL
 
 
@@ -67,7 +67,7 @@ setClass(
     sAttributeStrucs = "character",
     call = "character"
   ),
-  contains = "textstat"
+  contains = c("count", "textstat")
 )
 
 

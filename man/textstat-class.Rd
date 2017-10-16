@@ -96,7 +96,7 @@ and with double square brackets ("[[") to get specific columns from the
 
 \item{\code{corpus}}{Object of class \code{"character"}}
 
-\item{\code{stat}}{Object of class \code{"data.frame"} statistics of the analysis}
+\item{\code{stat}}{Object of class \code{"data.table"} statistics of the analysis}
 
 \item{\code{name}}{name of the object}
 

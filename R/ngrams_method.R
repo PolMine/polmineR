@@ -2,8 +2,8 @@
 #' @rdname ngrams
 setClass(
   "ngrams",
-  representation(n="integer", size="integer"),
-  contains=c("textstat")
+  representation(n = "integer", size = "integer"),
+  contains = c("count", "textstat")
 )
 
 #' Get N-Grams
@@ -53,7 +53,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
     for (i in 1:n){
       for (pAttr in pAttribute){
         j <- j + 1
-        idList[[j]] <- idListBase[[pAttr]][i:(length(idListBase[[pAttr]]) - (n-i))]
+        idList[[j]] <- idListBase[[pAttr]][i:(length(idListBase[[pAttr]]) - (n - i))]
         names(idList)[j] <- paste("id", i, pAttr, sep = "_")
       }
     }
@@ -74,18 +74,18 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
     
     # remove columns with ids
     lapply(
-      grep("id_", colnames(TF), value=TRUE),
+      grep("id_", colnames(TF), value = TRUE),
       function(x) TF[, eval(x) := NULL, with = TRUE]
     )
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
-    charSoupBase <- getTokenStream(.Object, pAttribute=pAttribute[1], collapse="")
+    charSoupBase <- getTokenStream(.Object, pAttribute = pAttribute[1], collapse = "")
     charSoup <- unlist(strsplit(charSoupBase, ""))
     if (char[1] != ""){
       charSoup <- unname(unlist(sapply(charSoup, function(x) ifelse(x %in% char, x, NA))))
       if (any(is.na(charSoup))) charSoup[-which(is.na(charSoup))]
     }
-    charSoup <- paste(charSoup[which(!is.na(charSoup))], sep="", collapse="")
+    charSoup <- paste(charSoup[which(!is.na(charSoup))], sep = "", collapse = "")
     charSoupTotal <- nchar(charSoup)
     ngrams <- sapply(
       1:(charSoupTotal - n + 1),
@@ -103,7 +103,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
     "ngrams",
     n = as.integer(n), corpus = .Object@corpus, encoding = .Object@encoding,
     size = as.integer(length(.Object)), stat = TF, name = .Object@name,
-    pAttribute = ifelse(is.null(char), pAttribute, "ngram")
+    pAttribute = if (is.null(char)) pAttribute else "ngram"
     )
 })
 

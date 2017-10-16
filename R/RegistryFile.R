@@ -26,9 +26,9 @@
 #' @export RegistryFile
 #' @importFrom utils installed.packages
 RegistryFile <- setRefClass(
-  
+
   "RegistryFile",
-  
+
   fields = list(
     "package" = "character",
     "registryDir" = "character",
@@ -42,13 +42,13 @@ RegistryFile <- setRefClass(
     "name" = "character",
     "info" = "character"
   ),
-  
+
   methods = list(
-    
+
     initialize = function(corpus = NULL, registry = Sys.getenv("CORPUS_REGISTRY"), package = NULL, filename = NULL){
-      
+
       "Initialize a new RegistryFile object."
-      
+
       if (!is.null(filename)){
         if (file.exists(filename)){
           .self$filename <- filename
@@ -71,68 +71,68 @@ RegistryFile <- setRefClass(
         .self$filename <- file.path(.self$registryDir, tolower(corpus))
       }
       .self$read()
-      
+
     },
-    
+
     read = function(){
-      
+
       "Read file from disc, as character vector in field 'txt'."
-      
+
       .self$txt <- readLines(.self$filename)
       invisible(.self$txt)
     },
-    
+
     getName = function(){
-      
+
       "Get the name of a corpus."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$name <- gsub("^NAME\\s+(.*?)\\s*$", "\\1", grep("^NAME.*?$", .self$txt, value = TRUE), perl = TRUE)
       invisible(.self$name)
     },
-    
+
     getId = function(){
-      
+
       "Get the id of a corpus."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$id <- gsub("^ID\\s+(.*?)\\s*$", "\\1", grep("^ID.*?$", .self$txt, value = TRUE), perl = TRUE)
       invisible(.self$id)
     },
-    
+
     setId = function(new){
-      
+
       "Set the id of a corpus"
-      
+
       if (length(.self$txt) == 0) .self$read()
       idline <- grep("^ID\\s+.*?$", .self$txt)
       .self$txt[idline] <- sprintf("ID %s", new)
       .self$id <- new
-    
+
     },
-    
+
     getHome = function(){
-      
+
       "Get the home directory of a corpus."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$home <- gsub("^HOME\\s+(.*?)\\s*$", "\\1", grep("^HOME.*?$", .self$txt, value = TRUE), perl = TRUE)
       .self$home
     },
-    
+
     getInfo = function(){
-      
+
       "Get path to the info file."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$info <- gsub("^INFO\\s+(.*?)\\s*$", "\\1", grep("^INFO.*?$", .self$txt, value = TRUE), perl = TRUE)
       invisible(.self$info)
     },
-    
+
     getEncoding = function(){
-      
+
       "Get the encoding."
-      
+
       if (length(.self$txt) == 0) .self$read()
       encodingLine <- .self$txt[grep('charset\\s*=\\s*"', .self$txt)]
       .self$encoding <- sub('^.*charset\\s*=\\s*"(.+?)".*$', "\\1", encodingLine)
@@ -143,20 +143,20 @@ RegistryFile <- setRefClass(
       }
       .self$encoding
     },
-    
+
     getPAttributes = function(){
-      
+
       "Get the pAttributes."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$pAttributes <- gsub("^ATTRIBUTE\\s+(.*?)$", "\\1", grep("^ATTRIBUTE", .self$txt, value = TRUE))
       invisible(.self$pAttributes)
     },
-    
+
     addPAttribute = function(pAttribute){
-      
+
       "Add an p-attribute."
-      
+
       if (pAttribute %in% .self$getPAttributes()){
         stop("doing nothing - sAttribute already declared")
       }
@@ -169,22 +169,22 @@ RegistryFile <- setRefClass(
       .self$write()
       .self$getPAttributes()
     },
-    
-    
+
+
     getSAttributes = function(){
-      
+
       "Get the sAttributes."
-      
+
       if (length(.self$txt) == 0) .self$read()
       sAttrLines <- grep("\\[annotations\\]", .self$txt)
       gsub("^STRUCTURE\\s+(.*?)\\s.*?$", "\\1", .self$txt[sAttrLines], perl = TRUE)
-      
+
     },
-    
+
     addSAttribute = function(sAttribute){
-      
+
       "Add an s-attribute."
-      
+
       if (sAttribute %in% .self$getSAttributes()){
         stop("doing nothing - sAttribute already declared")
       }
@@ -225,11 +225,11 @@ RegistryFile <- setRefClass(
       }
       .self$getSAttributes()
     },
-    
+
     dropSAttribute = function(sAttribute){
-      
+
       "Drop a s-attribute."
-      
+
       if (!sAttribute %in% .self$getSAttributes()){
         stop("doing nothing - sAttribute not yet declared")
       }
@@ -240,11 +240,11 @@ RegistryFile <- setRefClass(
       )
       .self$getSAttributes()
     },
-    
+
     getProperties = function(){
-      
+
       "Get corpus properties."
-      
+
       if (length(.self$txt) == 0) .self$read()
       propertiesLines <- grep("^##::", .self$txt)
       propertiesNames <- sapply(propertiesLines, function(x) sub("^##::\\s*(.*?)\\s*=.*?$", "\\1", .self$txt[x]))
@@ -254,11 +254,11 @@ RegistryFile <- setRefClass(
       )
       invisible(.self$properties)
     },
-    
+
     setProperty = function(property, value){
-      
+
       "Set a corpus property."
-      
+
       props <- .self$getProperties()
       new_line <- sprintf('##:: %s = "%s"', property, value)
       if (property %in% names(props)){
@@ -275,11 +275,11 @@ RegistryFile <- setRefClass(
       }
       .self$getProperties()
     },
-    
+
     parse = function(){
-      
+
       "Parse the registry file."
-      
+
       if (length(.self$txt) == 0) .self$read()
       .self$getHome()
       .self$getId()
@@ -289,11 +289,11 @@ RegistryFile <- setRefClass(
       .self$getEncoding()
       .self$getProperties()
     },
-    
+
     setHome = function(new){
-      
+
       "Set the home directory to a new location."
-      
+
       if (dir.exists(new)){
         home_position <- grep("^HOME.*?$", .self$txt)
         .self$txt[home_position] <- paste("HOME", new, sep = " ")
@@ -302,20 +302,20 @@ RegistryFile <- setRefClass(
         stop("directory does not exist")
       }
     },
-    
+
     write = function(filename = NULL, verbose = TRUE){
-      
+
       "Write registry file to disk."
-      
+
       if (!is.null(filename)) .self$filename <- filename
       .message("writing registry: ", .self$filename, verbose = verbose)
       cat(.self$txt, file = .self$filename, sep = "\n")
     },
-    
+
     adjustHome = function(){
-      
+
       "Reset the home directory. This will usually be necessary after installing a data package."
-      
+
       if (.self$package %in% utils::installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
         if (.Platform$OS.type == "windows"){
@@ -327,6 +327,6 @@ RegistryFile <- setRefClass(
         stop("adjustHome method to be used only for installed packages")
       }
     }
-    
+
   )
 )
