@@ -339,7 +339,7 @@ install.packages("rcqp")
 
 A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.
 
-```{r}
+```{r, eval = FALSE}
 library(polmineR)
 corpus()
 ```

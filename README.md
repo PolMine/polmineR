@@ -346,8 +346,6 @@ A quick check that polmineR is installed correctly is to load the library, and t
 ``` r
 library(polmineR)
 corpus()
-#>        corpus     size template
-#> 1 EUROPARL-EN 39431862    FALSE
 ```
 
 You should see a message that rcqp is the interface used, and that the REUTERS corpus is on your system.
