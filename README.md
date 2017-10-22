@@ -26,8 +26,8 @@ Core Functions
 
 ``` r
 library(polmineR)
-#> polmineR 0.7.5.9001
-#> registry:  /Library/Frameworks/R.framework/Versions/3.4/Resources/library/polmineR/extdata/cwb/registry
+#> polmineR 0.7.5.9004
+#> registry:  /Users/blaette/Data/cwb/registry
 #> interface: CQI.rcqp
 ```
 
@@ -44,7 +44,7 @@ Calling the use function is necessary activate a corpus included in a data packa
 
 ``` r
 use("europarl.en") # activate the corpus in the europarl-en package
-#> ... reseting CORPUS_REGISTRY environment variable:
+#> ... resetting CORPUS_REGISTRY environment variable:
 #>     /Library/Frameworks/R.framework/Versions/3.4/Resources/library/europarl.en/extdata/cwb/registry
 #> ... unloading rcqp library
 #> ... reloading rcqp library
@@ -59,7 +59,7 @@ All methods can be applied to a whole corpus, are to partitions (i.e. subcorpora
 
 ``` r
 ep2005 <- partition("EUROPARL-EN", text_year = "2006")
-#> Setting up partition
+#> ... Setting up partition
 #> ... get encoding: latin1
 #> ... get cpos and strucs
 #> ... get partition size
@@ -69,7 +69,7 @@ size(ep2005)
 
 ``` r
 barroso <- partition("EUROPARL-EN", speaker_name = "Barroso", regex = TRUE)
-#> Setting up partition
+#> ... Setting up partition
 #> ... get encoding: latin1
 #> ... get cpos and strucs
 #> ... get partition size
@@ -276,7 +276,7 @@ corpus()
 
 ### MacOS
 
-The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. The Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/) is what you need.
+The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. Obtain the Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
 
 #### Installing 'polmineR'
 
@@ -299,7 +299,7 @@ The default interface of the polmineR package to access CWB indexed corpora is t
 
 ##### Installing precompiled binary of rcqp from the PolMine server
 
-The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:
+The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server. The precompiled package includes the C library 'rcqp.so' and compilations of all dependencies.
 
 ``` r
 install.packages(
@@ -319,11 +319,11 @@ First, you will need an installation of Xcode, which you can get it via the Mac 
 xcode-select --install
 ```
 
-To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.
+Please make sure that you agree to the license.
 
-*Option 1: Using Homebrew*
+Second, an installation of XQuartz is required, it can be obtained from [www.xquartz.org](https://www.xquartz.org/).
 
-We recommend to use 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands will install the C libraries the rcqp package relies on:
+Third, to compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands need to be executed from a terminal window. They will install the C libraries the rcqp package relies on:
 
 ``` sh
 brew -v install pkg-config
@@ -332,42 +332,25 @@ brew -v install pcre --universal
 brew -v install readline
 ```
 
-*Option 2: Using Macports*
+If you prefer using Macports, get it from <https://www.macports.org/>. After installing Macports, it is necessary to restart the computer. Update Macports and install the required libraries (glib2, pkgconfig, pcre).
 
-If you prefer using Macports, get it from <https://www.macports.org/>. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.
-
-``` sh
-sudo port -v selfupdate
-```
-
-Now we can install the libraries rcqp will require. Again, from the terminal.
-
-``` sh
-sudo port install glib2
-sudo port install pkgconfig
-sudo port install pcre
-```
-
-*Install dependencies and rcqp*
-
-Once the system requirements are there, the next steps can be done from R. Before installing rcqp, and then polmineR, we install a few packages. In the R console:
+Fourth, install dependencies of rcqp, and finally rcqp. That can be done from within R.
 
 ``` r
 install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))
-```
-
-Now rcqp can be installed, and then polmineR:
-
-``` r
 install.packages("rcqp")
-install.packages("polmineR")
 ```
 
-If you like to work with the development version, that can be installed from GitHub.
+A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.
 
 ``` r
-devtools::install_github("PolMine/polmineR", ref = "dev")
+library(polmineR)
+corpus()
+#>        corpus     size template
+#> 1 EUROPARL-EN 39431862    FALSE
 ```
+
+You should see a message that rcqp is the interface used, and that the REUTERS corpus is on your system.
 
 ### Linux
 
