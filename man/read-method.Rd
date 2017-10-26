@@ -9,7 +9,7 @@
 \alias{read,hits-method}
 \alias{read,kwic-method}
 \alias{read,regions-method}
-\title{Display and read full text}
+\title{Display full text.}
 \usage{
 read(.Object, ...)
 
@@ -36,56 +36,69 @@ read(.Object, ...)
 \item{...}{further parameters passed into read}
 
 \item{meta}{a character vector supplying s-attributes for the metainformation
-to be printed, if not stated explicitly, session settings will be used}
+to be printed; if not stated explicitly, session settings will be used}
 
-\item{highlight}{a list}
+\item{highlight}{a named list of character vectors (see details)}
 
 \item{cqp}{a list of character vectors with regular expressions to
 highlight relevant terms or expressions; the names of the list provide the
 colors}
 
-\item{tooltips}{a list}
+\item{tooltips}{a named list (names are colors, vectors are tooltips)}
 
 \item{verbose}{logical}
 
-\item{cpos}{logical}
+\item{cpos}{logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
+tag of a html element surrounding the tokens}
 
 \item{cutoff}{maximum number of tokens to display}
 
 \item{template}{template to format output}
 
-\item{col}{column}
+\item{col}{column of \code{data.table} with terms to be highlighted}
 
 \item{partitionBundle}{a partitionBundle object}
 
-\item{def}{...}
+\item{def}{a named list used to define a partition (names are s-attributes, vectors are
+values of s-attributes)}
 
-\item{i}{...}
+\item{i}{if \code{.Object} is an object of the classes \code{kwic} or \code{hits},
+the ith kwic line or hit to derive a partition to be inspected from}
 
-\item{type}{...}
+\item{type}{the partition type, see documentation for \code{partition}-method}
 }
 \description{
 Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
 a \code{"partitionBundle"}-object, skip through the partitions contained in the
 bundle.
 }
+\details{
+To prepare the html output, the method \code{read} will call \code{html} and
+\code{as.markdown} subsequently, the latter method being the actual worker. Consult
+these methods to understand how preparing the output works.
+
+The param \code{highlight} can be used to highlight terms. It is expected to be a
+named list of character vectors, the names providing the colors, and the vectors
+the terms to be highlighted.
+}
 \examples{
 \donttest{
 use("polmineR.sampleCorpus")
-options("polmineR.meta" = "text_date")
+template <- jsonlite::fromJSON(system.file(package = "polmineR", "templates", "plpr.template.json"))
+options(polmineR.templates = list("PLPRBTTXT" = template))
 merkel <- partition(
   "PLPRBTTXT",
-   text_date="2009-11-10", text_name="Angela Dorothea Merkel",
-   type="plpr"
+   text_date = "2009-11-10", text_name = "Angela Dorothea Merkel",
+   type = "plpr"
  )
- read(merkel, meta=c("text_name", "text_date"))
+ read(merkel, meta = c("text_name", "text_date"))
  read(
    merkel,
    highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
    meta = c("text_name", "text_date")
 )
 
-all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+all <- partition("PLPRBTTXT", list(text_id = ".*"), regex = TRUE, type = "plpr")
 speeches <- as.speeches(
   all, sAttributeDates = "text_date", sAttributeNames = "text_name", gap = 500
 )

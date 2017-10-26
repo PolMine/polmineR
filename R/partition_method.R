@@ -232,7 +232,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   }
   
   newPartition@size <- size(newPartition)
-  if (length(pAttribute)>0) {
+  if (length(pAttribute) > 0) {
     newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, id2str = id2str, mc = mc)
     newPartition@pAttribute <- pAttribute
   }

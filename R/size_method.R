@@ -80,7 +80,7 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
 #' @exportMethod size
 setMethod("size", "partition", function(x, sAttribute = NULL){
   if (is.null(sAttribute)){
-    return( sum(x@cpos[,2] - x@cpos[,1] + 1L) )
+    return( sum(as.integer(x@cpos[,2]) - as.integer(x@cpos[,1]) + 1L) )
   } else {
     stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
@@ -93,7 +93,7 @@ setMethod("size", "partition", function(x, sAttribute = NULL){
     y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
     setnames(y, old = "V1", new = "size")
     setkeyv(y, cols = sAttribute)
-    return(y)
+    return( y )
   }
   })
 

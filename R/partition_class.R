@@ -105,14 +105,11 @@ setMethod("show", "partition",
               if (length(s)>1) {for (i in length(s)){cat(sprintf("%-20s", " "), s[i], '\n')}}
             } 
             cat(sprintf("%-21s", "cpos:"))
-            if (nrow(object@cpos)==0) {cat("not available\n")}
-            else {cat(nrow(object@cpos), "pairs of corpus positions\n")}
+            if (nrow(object@cpos) == 0) cat("not available\n") else cat(nrow(object@cpos), "pairs of corpus positions\n")
             cat(sprintf("%-21s", "size:"))
-            if (is.null(object@size)) {cat("not available\n")}
-            else {cat(object@size, "tokens\n")}
+            if (is.null(object@size)) cat("not available\n") else cat(object@size, "tokens\n")
             cat(sprintf("%-21s", "count:"))
-            if (length(object@pAttribute) == 0) {cat("not available\n")}
-            else {cat("available for ", object@pAttribute, "\n")}
+            if (length(object@pAttribute) == 0) cat("not available\n") else cat("available for ", object@pAttribute, "\n")
           })
 
 

@@ -21,8 +21,8 @@ setMethod("highlight", "partition", function(.Object, html, highlight=list(), cq
     for (x in highlight[[color]]){
       hitCpos <- cpos(.Object, query=x, cqp=cqp)
       if (!is.null(hitCpos)){
-        for (i in c(1:nrow(hitCpos))){
-          for (j in c(hitCpos[i,1]:hitCpos[i,2])){
+        for (i in 1:nrow(hitCpos)){
+          for (j in hitCpos[i,1]:hitCpos[i,2]){
             html <- gsub(
               paste('<span id="', j, '">(.*?)</span>', sep=""),
               paste(

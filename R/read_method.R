@@ -1,25 +1,36 @@
 #' @include regions_class.R
 NULL
 
-#' Display and read full text
+#' Display full text.
 #' 
 #' Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
 #' a \code{"partitionBundle"}-object, skip through the partitions contained in the
 #' bundle.
 #' 
+#' To prepare the html output, the method \code{read} will call \code{html} and
+#' \code{as.markdown} subsequently, the latter method being the actual worker. Consult
+#' these methods to understand how preparing the output works.
+#' 
+#' The param \code{highlight} can be used to highlight terms. It is expected to be a
+#' named list of character vectors, the names providing the colors, and the vectors
+#' the terms to be highlighted.
+#' 
 #' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
-#'   to be printed, if not stated explicitly, session settings will be used
+#'   to be printed; if not stated explicitly, session settings will be used
 #' @param template template to format output
-#' @param highlight a list
-#' @param tooltips a list
+#' @param highlight a named list of character vectors (see details)
+#' @param tooltips a named list (names are colors, vectors are tooltips)
 #' @param verbose logical
-#' @param cpos logical
-#' @param col column
+#' @param cpos logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
+#' tag of a html element surrounding the tokens
+#' @param col column of \code{data.table} with terms to be highlighted
 #' @param partitionBundle a partitionBundle object
-#' @param def ...
-#' @param i ...
-#' @param type ...
+#' @param def a named list used to define a partition (names are s-attributes, vectors are
+#' values of s-attributes)
+#' @param i if \code{.Object} is an object of the classes \code{kwic} or \code{hits},
+#' the ith kwic line or hit to derive a partition to be inspected from
+#' @param type the partition type, see documentation for \code{partition}-method
 #' @param cqp a list of character vectors with regular expressions to
 #'   highlight relevant terms or expressions; the names of the list provide the
 #'   colors
@@ -30,20 +41,21 @@ NULL
 #' @examples
 #' \donttest{
 #' use("polmineR.sampleCorpus")
-#' options("polmineR.meta" = "text_date")
+#' template <- jsonlite::fromJSON(system.file(package = "polmineR", "templates", "plpr.template.json"))
+#' options(polmineR.templates = list("PLPRBTTXT" = template))
 #' merkel <- partition(
 #'   "PLPRBTTXT",
-#'    text_date="2009-11-10", text_name="Angela Dorothea Merkel",
-#'    type="plpr"
+#'    text_date = "2009-11-10", text_name = "Angela Dorothea Merkel",
+#'    type = "plpr"
 #'  )
-#'  read(merkel, meta=c("text_name", "text_date"))
+#'  read(merkel, meta = c("text_name", "text_date"))
 #'  read(
 #'    merkel,
 #'    highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
 #'    meta = c("text_name", "text_date")
 #' )
 #' 
-#' all <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE, type="plpr")
+#' all <- partition("PLPRBTTXT", list(text_id = ".*"), regex = TRUE, type = "plpr")
 #' speeches <- as.speeches(
 #'   all, sAttributeDates = "text_date", sAttributeNames = "text_name", gap = 500
 #' )
@@ -99,22 +111,22 @@ setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp = FA
   partitionsToGet <- DT[["partition"]]
   if (col == "TOTAL") col <- colnames(.Object)[2:(ncol(.Object)-1)]
   toRead <- as.bundle(lapply(partitionsToGet, function(x) partitionBundle@objects[[x]]))
-  read(toRead, highlight=list(yellow=col), cqp=cqp, ...)
+  read(toRead, highlight = list(yellow = col), cqp=cqp, ...)
 })
 
 #' @rdname read-method
-setMethod("read", "hits", function(.Object, def, i=NULL, ...){
+setMethod("read", "hits", function(.Object, def, i = NULL, ...){
   if (is.null(i)){
     for (i in 1:nrow(.Object@dt)){
       sAttrs <- lapply(setNames(def, def), function(x) .Object@dt[[x]][i])
-      read(partition(.Object@corpus, def=sAttrs, ...))
+      read(partition(.Object@corpus, def = sAttrs, ...))
       readline(">> ")
     }
   }
 })
 
 #' @rdname read-method
-setMethod("read", "kwic", function(.Object, i, type=NULL){
+setMethod("read", "kwic", function(.Object, i, type = NULL){
   fulltext <- html(.Object, i = i, type = type)
   htmltools::html_print(fulltext)
 })
