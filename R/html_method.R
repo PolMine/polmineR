@@ -41,21 +41,35 @@ setMethod("html", "character", function(object){
 setMethod(
   "html", "partition",
   function(
-    object, meta = getOption("polmineR.meta"),
+    object, meta = NULL,
     highlight = list(),
     cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE, cutoff = NULL, ...
     ){
   if (requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
+    if (is.null(meta)) meta <- names(object@sAttributes)
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     
     .message("generating markdown", verbose = verbose)
     if (any(cqp)) cpos <- TRUE
     markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
     markdown <- paste(
-      paste('## Corpus: ', object@corpus, '\n* * *\n\n'),
+      paste(
+        "## Corpus: ",
+        object@corpus,
+        "\n\n",
+        paste(
+          "### ",
+          paste(
+            sapply(meta, function(x) sprintf("%s: %s", x, paste(sAttributes(object, x), collapse = "|"))),
+            collapse = " // "
+          )
+        ),
+        "\n* * *\n\n",
+        sep = ""
+        ),
       markdown,
       '\n* * *\n',
-      collapse="\n"
+      collapse = "\n"
     )
     .message("markdown to html", verbose = verbose)
     if (is.null(tooltips)){

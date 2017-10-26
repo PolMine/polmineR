@@ -10,6 +10,7 @@ NULL
 #' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed, if not stated explicitly, session settings will be used
+#' @param template template to format output
 #' @param highlight a list
 #' @param tooltips a list
 #' @param verbose logical
@@ -59,19 +60,28 @@ setMethod(
   function(
     .Object, meta = NULL,
     highlight = list(), cqp = FALSE, tooltips = NULL,
-    verbose = TRUE, cpos = FALSE, cutoff = getOption("polmineR.cutoff"), ...
-    ){
-  if (is.null(meta)) meta <- getOption("polmineR.templates")[[.Object@corpus]][["metadata"]]
-  stopifnot(all(meta %in% sAttributes(.Object@corpus)))
-  if (any(cqp) == TRUE) cpos <- TRUE
-  fulltextHtml <- html(
-    .Object, meta = meta, highlight = highlight, cqp = cqp, cpos = cpos, tooltips = tooltips, cutoff = cutoff, ...)
-  if(require("htmltools", quietly = TRUE)){
-    htmltools::html_print(fulltextHtml)  
-  } else {
-    warning("package htmltools required, but not available")
-  }
-})
+    verbose = TRUE, cpos = FALSE, cutoff = getOption("polmineR.cutoff"), 
+    template = getTemplate(.Object),
+    ...
+  ){
+    if (is.null(meta)){
+      templateMeta <- getOption("polmineR.templates")[[.Object@corpus]][["metadata"]]
+      meta <- if (is.null(templateMeta)) names(.Object@sAttributes) else templateMeta
+    }
+    stopifnot(all(meta %in% sAttributes(.Object@corpus)))
+    if (any(cqp)) cpos <- TRUE
+    fulltextHtml <- html(
+      .Object, meta = meta, highlight = highlight, cqp = cqp,
+      cpos = cpos, tooltips = tooltips, cutoff = cutoff, 
+      template = template,
+      ...
+    )
+    if (require("htmltools", quietly = TRUE)){
+      htmltools::html_print(fulltextHtml)  
+    } else {
+      warning("package htmltools required, but not available")
+    }
+  })
 
 #' @rdname read-method
 setMethod("read", "partitionBundle", function(.Object, highlight = list(), cqp = FALSE, cpos = FALSE, ...){
@@ -83,7 +93,7 @@ setMethod("read", "partitionBundle", function(.Object, highlight = list(), cqp =
 })
 
 #' @rdname read-method
-setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp = FALSE, highlight=list(), cpos=FALSE, ...){
+setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp = FALSE, highlight = list(), cpos = FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]
@@ -95,7 +105,7 @@ setMethod("read", "data.table", function(.Object, col, partitionBundle, cqp = FA
 #' @rdname read-method
 setMethod("read", "hits", function(.Object, def, i=NULL, ...){
   if (is.null(i)){
-    for (i in c(1:nrow(.Object@dt))){
+    for (i in 1:nrow(.Object@dt)){
       sAttrs <- lapply(setNames(def, def), function(x) .Object@dt[[x]][i])
       read(partition(.Object@corpus, def=sAttrs, ...))
       readline(">> ")
@@ -105,7 +115,7 @@ setMethod("read", "hits", function(.Object, def, i=NULL, ...){
 
 #' @rdname read-method
 setMethod("read", "kwic", function(.Object, i, type=NULL){
-  fulltext <- html(.Object, i=i, type=type)
+  fulltext <- html(.Object, i = i, type = type)
   htmltools::html_print(fulltext)
 })
 

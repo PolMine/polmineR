@@ -14,9 +14,9 @@ html(object, ...)
 
 \S4method{html}{character}(object)
 
-\S4method{html}{partition}(object, meta = getOption("polmineR.meta"),
-  highlight = list(), cqp = FALSE, tooltips = NULL, cpos = FALSE,
-  verbose = FALSE, cutoff = NULL, ...)
+\S4method{html}{partition}(object, meta = NULL, highlight = list(),
+  cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE,
+  cutoff = NULL, ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 

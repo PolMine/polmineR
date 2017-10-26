@@ -21,18 +21,3 @@ NULL
 #' @aliases count-class
 #' @seealso The \code{count}-class inherits from the \code{\link{textstat-class}}
 setClass("count", representation = list(size = "integer"), contains = "textstat")
-
-setAs(from = "partition", to = "count", def = function(from){
-  if (nrow(from@stat) == 0){
-    stop("The input partiton does not include a data.table in its slot 'stat' - aborting.")
-  }
-  new(
-    "count",
-    stat = from@stat,
-    pAttribute = from@pAttribute,
-    corpus = from@corpus,
-    encoding = from@encoding,
-    size = from@size,
-    name = from@name
-    )
-})

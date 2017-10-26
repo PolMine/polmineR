@@ -44,9 +44,13 @@ setMethod("setTemplate", "character", function(.Object){
     if ("metadata" %in% names(templateList[[.Object]])){
       templateList[[.Object]][["metadata"]] <- unlist(templateList[[.Object]][["metadata"]])
     }
-    options("polmineR.templates" = templateList)
-    invisible(templateList[[.Object]])
+  } else {
+    templateList[[.Object]] <- jsonlite::fromJSON(
+      txt = system.file(package = "polmineR", "templates", "plain.template.json")
+      )
   }
+  options("polmineR.templates" = templateList)
+  invisible(templateList[[.Object]])
 })
 
 

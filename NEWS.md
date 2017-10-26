@@ -12,6 +12,8 @@ be used, making REUTERS corpus available
 * getSettings-function removed, was not sufficiently useful, and was superseded by
 template mechanism
 * new class 'count' introduced to organize results from count operations
+* at startup, default template is assigned for corpora without explicitly defined templates
+to make read() work in a basic fashion
 
 
 # v0.7.5

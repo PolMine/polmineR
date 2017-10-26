@@ -15,7 +15,8 @@ read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
   cqp = FALSE, tooltips = NULL, verbose = TRUE, cpos = FALSE,
-  cutoff = getOption("polmineR.cutoff"), ...)
+  cutoff = getOption("polmineR.cutoff"), template = getTemplate(.Object),
+  ...)
 
 \S4method{read}{partitionBundle}(.Object, highlight = list(), cqp = FALSE,
   cpos = FALSE, ...)
@@ -50,6 +51,8 @@ colors}
 \item{cpos}{logical}
 
 \item{cutoff}{maximum number of tokens to display}
+
+\item{template}{template to format output}
 
 \item{col}{column}
 

@@ -201,6 +201,21 @@ setMethod("length", "partition", function(x) x@size)
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 
+setAs(from = "partition", to = "count", def = function(from){
+  if (nrow(from@stat) == 0){
+    stop("The input partiton does not include a data.table in its slot 'stat' - aborting.")
+  }
+  new(
+    "count",
+    stat = from@stat,
+    pAttribute = from@pAttribute,
+    corpus = from@corpus,
+    encoding = from@encoding,
+    size = from@size,
+    name = from@name
+  )
+})
+
 
 #' @exportMethod hist
 #' @rdname partition_class
