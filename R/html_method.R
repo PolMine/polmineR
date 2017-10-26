@@ -52,25 +52,6 @@ setMethod(
     .message("generating markdown", verbose = verbose)
     if (any(cqp)) cpos <- TRUE
     markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
-    markdown <- paste(
-      paste(
-        "## Corpus: ",
-        object@corpus,
-        "\n\n",
-        paste(
-          "### ",
-          paste(
-            sapply(meta, function(x) sprintf("%s: %s", x, paste(sAttributes(object, x), collapse = "|"))),
-            collapse = " // "
-          )
-        ),
-        "\n* * *\n\n",
-        sep = ""
-        ),
-      markdown,
-      '\n* * *\n',
-      collapse = "\n"
-    )
     .message("markdown to html", verbose = verbose)
     if (is.null(tooltips)){
       htmlDoc <- markdown::markdownToHTML(text = markdown)

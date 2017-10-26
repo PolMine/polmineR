@@ -106,6 +106,26 @@ setMethod(
       txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
     }
     txt
+    txt <- paste(
+      paste(
+        "## Corpus: ",
+        .Object@corpus,
+        "\n\n",
+        paste(
+          "### ",
+          paste(
+            sapply(meta, function(x) sprintf("%s: %s", x, paste(sAttributes(.Object, x), collapse = "|"))),
+            collapse = " // "
+          )
+        ),
+        "\n* * *\n\n",
+        sep = ""
+      ),
+      txt,
+      '\n* * *\n',
+      collapse = "\n"
+    )
+    txt
   })
 
 #' @rdname as.markdown

@@ -35,7 +35,7 @@ setGeneric("size", function(x, ...) UseMethod("size"))
 #' @rdname size-method
 setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
   if (is.null(sAttribute)){
-    return(CQI$attribute_size(x, "word", type = "p"))
+    return( CQI$attribute_size(x, "word", type = "p") )
   } else {
     stopifnot(all(sAttribute %in% sAttributes(x)))
     dt <- as.data.table(
