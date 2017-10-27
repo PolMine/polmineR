@@ -67,7 +67,7 @@ Corpus <- R6Class(
       } else {
         content <- htmltools::HTML("</br><i>corpus info file does not exist</i>")
       }
-      htmltools::html_print(content)
+      if (interactive()) htmltools::html_print(content)
       invisible(content)
     }
   )

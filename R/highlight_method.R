@@ -15,20 +15,17 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
 #' @rdname partition_class
-setMethod("highlight", "partition", function(.Object, html, highlight=list(), cqp=is.cqp, tooltips=NULL){
+setMethod("highlight", "partition", function(.Object, html, highlight = list(), cqp = is.cqp, tooltips = NULL){
   for (color in names(highlight)){
     # tooltipTags <- .makeTooltipTags(color, tooltips)
     for (x in highlight[[color]]){
-      hitCpos <- cpos(.Object, query=x, cqp=cqp)
+      hitCpos <- cpos(.Object, query = x, cqp = cqp)
       if (!is.null(hitCpos)){
         for (i in 1:nrow(hitCpos)){
           for (j in hitCpos[i,1]:hitCpos[i,2]){
             html <- gsub(
-              paste('<span id="', j, '">(.*?)</span>', sep=""),
-              paste(
-                paste('<span id="', j, '"><span style="background-color:', color, '">', sep=""),
-                # tooltipTags[["start"]], "\\1", tooltipTags[["end"]], '</span></span>', sep=""
-              ),
+              sprintf('<span id="%d">(.*?)</span>', i),
+              sprintf('<span id="%d"><span style="background-color:%s">', j, color),
               html
             )
           }

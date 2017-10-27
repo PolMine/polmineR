@@ -12,6 +12,12 @@
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
+#' @examples
+#' use("polmineR")
+#' P <- partition("REUTERS", places = "argentina")
+#' as.markdown(P)
+#' as.markdown(P, meta = c("id", "places"))
+#' read(P, meta = c("id", "places"))
 setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
 # vectorized sprintf is considerably faster than shiny::span,
@@ -49,7 +55,7 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
     sep = ""
     )
   
-  cposSeries <- c(.Object[1]:.Object[2])
+  cposSeries <- .Object[1]:.Object[2]
   pStrucs <- CQI$cpos2struc(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], cposSeries)
   chunks <- split(cposSeries, pStrucs)
   pTypes <- CQI$struc2str(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
@@ -106,25 +112,13 @@ setMethod(
       txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
     }
     txt
-    txt <- paste(
-      paste(
-        "## Corpus: ",
-        .Object@corpus,
-        "\n\n",
-        paste(
-          "### ",
-          paste(
-            sapply(meta, function(x) sprintf("%s: %s", x, paste(sAttributes(.Object, x), collapse = "|"))),
-            collapse = " // "
-          )
-        ),
-        "\n* * *\n\n",
-        sep = ""
-      ),
-      txt,
-      '\n* * *\n',
-      collapse = "\n"
+    metaInfo <- paste(
+      sapply(meta, function(x) sprintf("%s: %s", x, paste(sAttributes(.Object, x), collapse = "|"))),
+      collapse = " // "
     )
+    corpusInfo <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
+    header <- paste(corpusInfo, paste("### ", metaInfo), "\n* * *\n\n", sep = "")
+    txt <- paste(header, txt, '\n* * *\n', collapse = "\n")
     txt
   })
 

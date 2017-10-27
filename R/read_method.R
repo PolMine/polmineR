@@ -89,7 +89,7 @@ setMethod(
       ...
     )
     if (require("htmltools", quietly = TRUE)){
-      htmltools::html_print(fulltextHtml)  
+      if (interactive()) htmltools::html_print(fulltextHtml)  
     } else {
       warning("package htmltools required, but not available")
     }
@@ -128,7 +128,7 @@ setMethod("read", "hits", function(.Object, def, i = NULL, ...){
 #' @rdname read-method
 setMethod("read", "kwic", function(.Object, i, type = NULL){
   fulltext <- html(.Object, i = i, type = type)
-  htmltools::html_print(fulltext)
+  if (interactive()) htmltools::html_print(fulltext)
 })
 
 #' @rdname read-method
