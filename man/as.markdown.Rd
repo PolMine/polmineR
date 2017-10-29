@@ -36,3 +36,10 @@ as.markdown(.Object, ...)
 \description{
 The method is the worker behind the html-method.
 }
+\examples{
+use("polmineR")
+P <- partition("REUTERS", places = "argentina")
+as.markdown(P)
+as.markdown(P, meta = c("id", "places"))
+read(P, meta = c("id", "places"))
+}

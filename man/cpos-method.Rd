@@ -7,6 +7,7 @@
 \alias{cpos,partition-method}
 \alias{cpos,tempcorpus-method}
 \alias{cpos,matrix-method}
+\alias{cpos,hits-method}
 \title{Get corpus positions for a query or queries.}
 \usage{
 cpos(.Object, ...)
@@ -21,6 +22,8 @@ cpos(.Object, ...)
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
 
 \S4method{cpos}{matrix}(.Object)
+
+\S4method{cpos}{hits}(.Object)
 }
 \arguments{
 \item{.Object}{a \code{"character"} vector indicating a CWB corpus, a
@@ -62,6 +65,8 @@ regions (start end end corpus positions of the matches) for a query. CQP
 syntax can be used. The encoding of the query is adjusted to conform to the
 encoding of the CWB corpus.
 
-If the cpos-method is called on a \code{"matrix"} object,  the cpos
-matrix is unfolded.
+If the cpos-method is called on a \code{matrix} object,  the cpos
+matrix is unfolded, the return value is an integer vector with the individual
+corpus positions. Equally, if \code{.Object} is a \code{hits} object,
+an integer vector is returned with the individual corpus positions.
 }

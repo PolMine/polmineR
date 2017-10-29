@@ -1,48 +1,47 @@
-a {
-    color: black;
+ /* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
-a.tooltip {
-  position: relative;
-  text-decoration: none;
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 1s;
 }
-a.tooltip:after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 130%;
-  left: 20%;
-  background: #ffcb66;
-    padding: 5px 15px;
-  color: black;
-  -webkit-border-radius: 10px;
-  -moz-border-radius   : 10px;
-  border-radius        : 10px;
-  white-space: nowrap;
-  opacity: 0;
-  -webkit-transition: all 0.4s ease;
-  -moz-transition   : all 0.4s ease;
-  transition   : all 0.4s ease;
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
 }
-a.tooltip:before {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-top: 20px solid #ffcb66;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  -webkit-transition: all 0.4s ease;
-  -moz-transition   : all 0.4s ease;
-  transition   : all 0.4s ease;
-  opacity: 0;
-  left: 30%;
-  bottom: 90%;
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
-a.tooltip:hover:after {
-  bottom: 100%;
-}
-a.tooltip:hover:before {
-  bottom: 70%;
-}
-a.tooltip:hover:after, a:hover:before {
-  opacity: 1;
-}
+

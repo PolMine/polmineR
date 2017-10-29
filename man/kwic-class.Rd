@@ -47,8 +47,6 @@
 
 \item{regex}{logical, whether to use regular expressions}
 
-\item{perl}{logical, whether to use perl-style regular expressions for highlighting when regex is TRUE}
-
 \item{tooltips}{a list}
 
 \item{verbose}{logical}

@@ -3,11 +3,7 @@
 #' Highlight tokens based on exact match, a regular expression or corpus
 #' position in kwic output or html document.
 #' 
-#' @param .Object a \code{html} or \code{character} object with html, or a 
-#'   \code{kwic} object
-#' @param highlight a \code{"list"} of character or integer vectors, the names 
-#'   need to provide the colors, the values of the vector the term to be matched
-#'   or a corpus position
+#' @param .Object a \code{html} or \code{character} object with html
 #' @param tooltips a named \code{"list"} of character vectors (length 1), the 
 #'   names need to match colors in the list provided to param \code{highlight}, 
 #'   the value of the character vector is the tooltip to be displayed
@@ -94,7 +90,7 @@ setMethod("highlight", "character", function(.Object, highlight = list(), toolti
   }
   as.character(doc)
 })
-    
+
 #' @rdname highlight
 setMethod("highlight", "html", function(.Object, highlight = list(), tooltips = NULL){
   htmltools::HTML(
@@ -109,7 +105,7 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
       regexMatchList <- lapply(
         highlight[[color]],
         function(expr) grep(expr, .Object@cpos[["word"]], perl = perl)
-        )
+      )
       toHighlight <- 1:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
     } else {
       toHighlight <- .Object@cpos[["word"]] %in% highlight[[color]]

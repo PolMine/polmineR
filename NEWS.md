@@ -14,7 +14,7 @@ template mechanism
 * new class 'count' introduced to organize results from count operations
 * at startup, default template is assigned for corpora without explicitly defined templates
 to make read() work in a basic fashion
-
+* new cpos,hits-method to support highlight method
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

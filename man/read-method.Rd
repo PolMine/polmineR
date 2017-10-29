@@ -14,7 +14,7 @@
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
-  cqp = FALSE, tooltips = NULL, verbose = TRUE, cpos = FALSE,
+  cqp = FALSE, tooltips = NULL, verbose = TRUE, cpos = TRUE,
   cutoff = getOption("polmineR.cutoff"), template = getTemplate(.Object),
   ...)
 

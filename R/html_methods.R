@@ -4,19 +4,11 @@ NULL
 setOldClass("html")
 
 
-setMethod("print", "html", function(x) {
-  if (requireNamespace("htmltools", quietly=T)){
-    if (interactive()) htmltools::html_print(x)
-  } else {
-    warning("package 'htmltools' needs to be installed, but is not available")
-  }
-})
-
-setMethod("show", "html", function(object) {
-  if (requireNamespace("htmltools", quietly=T)){
+#' @export print.html
+print.html <- function(object){
+  if (requireNamespace("htmltools", quietly = TRUE)){
     htmltools::html_print(object)
   } else {
     warning("package 'htmltools' needs to be installed, but is not available")
   }  
-})
-
+}

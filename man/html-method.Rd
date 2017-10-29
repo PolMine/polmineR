@@ -8,45 +8,65 @@
 \alias{html,partition-method}
 \alias{html,partitionBundle-method}
 \alias{html,kwic-method}
-\title{restore fulltext as html}
+\title{Generate html from object.}
 \usage{
 html(object, ...)
 
 \S4method{html}{character}(object)
 
-\S4method{html}{partition}(object, meta = NULL, highlight = list(),
-  cqp = FALSE, tooltips = NULL, cpos = FALSE, verbose = FALSE,
-  cutoff = NULL, ...)
+\S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
+  verbose = FALSE, cutoff = NULL, ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
 \S4method{html}{kwic}(object, i, type = NULL, verbose = FALSE)
 }
 \arguments{
-\item{object}{the object}
+\item{object}{the object the fulltext output will be based on}
 
-\item{...}{further parameters}
+\item{...}{further parameters that are passed into \code{as.markdown}}
 
-\item{meta}{metadata for output}
+\item{meta}{metadata for output, if NULL (default), the s-attributes defining
+a partition will be used}
 
-\item{highlight}{list with regex to be highlighted}
+\item{cpos}{logical, if TRUE (default), all tokens will be wrapped by 
+elements with id attribute indicating corpus positions}
 
-\item{cqp}{logical}
+\item{verbose}{logical, whether to be verbose}
 
-\item{tooltips}{tooltips for highlighted text}
-
-\item{cpos}{logical}
-
-\item{verbose}{logical}
-
-\item{cutoff}{maximum number of tokens to decode from token stream}
+\item{cutoff}{maximum number of tokens to decode from token stream, passed
+into \code{as.markdown}}
 
 \item{filename}{the filename}
 
 \item{type}{the partition type}
 
-\item{i}{to be checked}
+\item{i}{if object is a \code{kwic}-object, the index of the concordance for
+which the fulltext is to be generated}
 }
 \description{
-restore fulltext as html
+Prepare a html document to inspect the full text.
+}
+\examples{
+use("polmineR")
+P <- partition("REUTERS", places = "argentina")
+H <- html(P)
+H # show full text in viewer pane
+
+# html-method can be used in a pipe
+if (require("magrittr")){
+  partition("REUTERS", places = "argentina") \%>\% html()
+}
+
+# use html-method to get from concordance to full text
+K <- kwic("REUTERS", query = "barrels")
+html(K, i = 1)
+html(K, i = 2)
+for (i in 1:length(K)) {
+  show(html(K, i = i))
+  if (interactive()){
+    userinput <- readline("press 'q' to quit or any other key to continue")
+    if (userinput == "q") break
+  }
+}
 }

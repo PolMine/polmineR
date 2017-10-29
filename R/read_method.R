@@ -72,7 +72,7 @@ setMethod(
   function(
     .Object, meta = NULL,
     highlight = list(), cqp = FALSE, tooltips = NULL,
-    verbose = TRUE, cpos = FALSE, cutoff = getOption("polmineR.cutoff"), 
+    verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
     template = getTemplate(.Object),
     ...
   ){
@@ -82,12 +82,37 @@ setMethod(
     }
     stopifnot(all(meta %in% sAttributes(.Object@corpus)))
     if (any(cqp)) cpos <- TRUE
-    fulltextHtml <- html(
-      .Object, meta = meta, highlight = highlight, cqp = cqp,
-      cpos = cpos, tooltips = tooltips, cutoff = cutoff, 
-      template = template,
-      ...
-    )
+    fulltextHtml <- html(.Object, meta = meta,  cpos = cpos, cutoff = cutoff,  template = template, ...)
+    
+    # if (length(highlight) > 0) {
+    #   if (length(cqp) == 1){
+    #     if (cqp == FALSE){
+    #       .message("highlighting regular expressions", verbose = verbose)
+    #       htmlDoc <- highlight(htmlDoc, highlight = highlight, tooltips = tooltips)
+    #     } else if (cqp){
+    #       .message("highlighting CQP queries", verbose = verbose)
+    #       htmlDoc <- highlight(object, htmlDoc, highlight = highlight, tooltips = tooltips)
+    #     }
+    #   } else if (length(cqp) == length(highlight)){
+    #     if (any(!cqp)){
+    #       htmlDoc <- highlight(
+    #         htmlDoc,
+    #         highlight = highlight[which(cqp == FALSE)],
+    #         tooltips = tooltips[which(cqp == FALSE)]
+    #       )
+    #     }
+    #     if (any(cqp)){
+    #       htmlDoc <- highlight(
+    #         object, htmlDoc,
+    #         highlight = highlight[which(cqp == TRUE)],
+    #         tooltips = tooltips[which(cqp == TRUE)]
+    #       )
+    #     }
+    #   } else {
+    #     message("length of cqp needs to be 1 or identical with the length of highlight")
+    #   }
+    # }
+    
     if (require("htmltools", quietly = TRUE)){
       if (interactive()) htmltools::html_print(fulltextHtml)  
     } else {

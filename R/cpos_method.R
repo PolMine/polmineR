@@ -12,8 +12,10 @@ NULL
 #' syntax can be used. The encoding of the query is adjusted to conform to the
 #' encoding of the CWB corpus.
 #' 
-#' If the cpos-method is called on a \code{"matrix"} object,  the cpos
-#' matrix is unfolded. 
+#' If the cpos-method is called on a \code{matrix} object,  the cpos
+#' matrix is unfolded, the return value is an integer vector with the individual
+#' corpus positions. Equally, if \code{.Object} is a \code{hits} object,
+#' an integer vector is returned with the individual corpus positions.
 #' 
 #' @param .Object a \code{"character"} vector indicating a CWB corpus, a
 #'   \code{"partition"} object, a \code{"tempcorpus"} object, or a
@@ -113,7 +115,7 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift=TRUE){
   ), collapse=" ")
   cpos <- system(cqpCmd, intern=TRUE)
   cposMatrix <- do.call(rbind, lapply(strsplit(cpos, "\t"), as.integer))
-  cposMatrix <- cposMatrix[,c(1:2)]
+  cposMatrix <- cposMatrix[,1:2]
   if (shift == TRUE) cposMatrix <- apply(cposMatrix, 2, function(x) x + .Object@cpos[1,1])
   cposMatrix
 })
@@ -121,4 +123,9 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift=TRUE){
 #' @rdname cpos-method
 setMethod("cpos", "matrix", function(.Object){
   as.vector(unlist(apply(.Object, 1, function(row) c(row[1]:row[2]))))  
+})
+
+#' @rdname cpos-method
+setMethod("cpos", "hits", function(.Object){
+  cpos(as.matrix(.Object@dt[, c("cpos_left", "cpos_right")]))
 })
