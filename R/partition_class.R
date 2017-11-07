@@ -33,10 +33,6 @@ NULL
 #' @param x a partition object
 #' @param verbose logical
 #' @param cpos ...
-#' @param html ...
-#' @param highlight ... 
-#' @param cqp ...
-#' @param tooltips ...
 #' @param meta ...
 #' @param cutoff maximum number of tokens to decode
 #' @param ... further parameters
@@ -212,6 +208,30 @@ setAs(from = "partition", to = "count", def = function(from){
     name = from@name
   )
 })
+
+#' @importFrom jsonlite fromJSON
+setAs(
+  from = "json", to = "partition",
+  def = function(from){
+    slotsToMake <- getSlots("partition")
+    slotsToMake <- slotsToMake[-which(names(slotsToMake) %in% c("stat", "metadata", "call"))]
+    partitionList <- fromJSON(from)
+    newPartition <- new("partition")
+    for (x in names(slotsToMake)){
+      slot(newPartition, x) <- as(partitionList[[x]], slotsToMake[x])
+    }
+    newPartition
+  }
+)
+
+#' @importFrom jsonlite toJSON
+setAs(
+  from = "partition", to = "json",
+  def = function(from){
+    slotsToGet <- slotNames("partition")[-which(slotNames("partition") %in% c("stat", "metadata", "call"))]
+    toJSON(lapply(setNames(slotsToGet, slotsToGet), function(x) slot(from, x)))
+  }
+)
 
 
 #' @exportMethod hist

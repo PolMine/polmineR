@@ -109,7 +109,7 @@ setMethod(
         .Object@cpos, 1,
         function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)
         )
-      txt <- paste(c("\n", unlist(articles)), collapse='\n* * *\n')
+      txt <- paste(c("\n", unlist(articles)), collapse = '\n* * *\n')
     }
     txt
     metaInfo <- paste(
@@ -117,8 +117,8 @@ setMethod(
       collapse = " // "
     )
     corpusInfo <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
-    header <- paste(corpusInfo, paste("### ", metaInfo), "\n* * *\n\n", sep = "")
-    txt <- paste(header, txt, '\n* * *\n', collapse = "\n")
+    header <- paste(corpusInfo, paste("### ", metaInfo), "\n\n", sep = "")
+    txt <- paste(header, txt, '\n', collapse = "\n")
     txt
   })
 

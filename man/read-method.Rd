@@ -14,15 +14,15 @@
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
-  cqp = FALSE, tooltips = NULL, verbose = TRUE, cpos = TRUE,
+  tooltips = list(), verbose = TRUE, cpos = TRUE,
   cutoff = getOption("polmineR.cutoff"), template = getTemplate(.Object),
   ...)
 
-\S4method{read}{partitionBundle}(.Object, highlight = list(), cqp = FALSE,
-  cpos = FALSE, ...)
+\S4method{read}{partitionBundle}(.Object, highlight = list(), cpos = TRUE,
+  ...)
 
-\S4method{read}{data.table}(.Object, col, partitionBundle, cqp = FALSE,
-  highlight = list(), cpos = FALSE, ...)
+\S4method{read}{data.table}(.Object, col, partitionBundle, highlight = list(),
+  cpos = FALSE, ...)
 
 \S4method{read}{hits}(.Object, def, i = NULL, ...)
 
@@ -39,10 +39,6 @@ read(.Object, ...)
 to be printed; if not stated explicitly, session settings will be used}
 
 \item{highlight}{a named list of character vectors (see details)}
-
-\item{cqp}{a list of character vectors with regular expressions to
-highlight relevant terms or expressions; the names of the list provide the
-colors}
 
 \item{tooltips}{a named list (names are colors, vectors are tooltips)}
 
@@ -79,7 +75,13 @@ these methods to understand how preparing the output works.
 
 The param \code{highlight} can be used to highlight terms. It is expected to be a
 named list of character vectors, the names providing the colors, and the vectors
-the terms to be highlighted.
+the terms to be highlighted. To add tooltips, use the param \code{tooltips}.
+
+The method \code{read} is a high-level function that calls the aforementioned methods.
+Results obtained through \code{read} can also be obtained through combining these
+methods in a pipe using the package \code{magrittr}. That may offer more flexibility,
+e.g. to highlight matches for CQP queries. See examples and the documentation for the
+different methods to learn more.
 }
 \examples{
 \donttest{
@@ -97,14 +99,6 @@ merkel <- partition(
    highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
    meta = c("text_name", "text_date")
 )
-
-all <- partition("PLPRBTTXT", list(text_id = ".*"), regex = TRUE, type = "plpr")
-speeches <- as.speeches(
-  all, sAttributeDates = "text_date", sAttributeNames = "text_name", gap = 500
-)
-read(speeches, meta = c("text_date", "text_name"))
-migVocab <- count(speeches, query=c("Migration", "Integration", "Zuwanderung"))
-read(migVocab, col = "Integration", partitionBundle = speeches)
 }
 }
 \seealso{

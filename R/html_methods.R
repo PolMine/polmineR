@@ -5,9 +5,10 @@ setOldClass("html")
 
 
 #' @export print.html
-print.html <- function(object){
+#' @rdname html-method
+print.html <- function(x, ...){
   if (requireNamespace("htmltools", quietly = TRUE)){
-    htmltools::html_print(object)
+    htmltools::html_print(x)
   } else {
     warning("package 'htmltools' needs to be installed, but is not available")
   }  

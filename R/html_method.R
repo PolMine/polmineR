@@ -5,11 +5,18 @@ NULL
 #' 
 #' Prepare a html document to inspect the full text.
 #' 
+#' If param \code{charoffset} is \code{TRUE}, character offset positions will be
+#' added to tags that embrace tokens. This may be useful, if exported html document
+#' is annotated with a tools that stores annotations with character offset positions.
+#' 
 #' @param object the object the fulltext output will be based on
+#' @param x object of class \code{html} to print
 #' @param meta metadata for output, if NULL (default), the s-attributes defining
 #'   a partition will be used
-#' @param cpos logical, if TRUE (default), all tokens will be wrapped by 
+#' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
 #'   elements with id attribute indicating corpus positions
+#' @param charoffset logical, if \code{TRUE}, character offset positions are
+#'   added to elements embracing tokens
 #' @param verbose logical, whether to be verbose
 #' @param filename the filename
 #' @param cutoff maximum number of tokens to decode from token stream, passed
@@ -58,13 +65,46 @@ setMethod("html", "character", function(object){
 })
 
 
+#' @importFrom xml2 read_html xml_find_all xml_text xml_parent xml_attr xml_attr<- xml_name
+#' @importFrom stringi stri_extract_all_boundaries
+#' @rdname html-method
+.addCharacterOffset <- function(x){
+  
+  # check that required dependencies are present
+  if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' missing")
+  if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' missing")
+  
+  doc <- read_html(x)
+  textnodes <- xml_find_all(doc, xpath = "//body//text()")
+  nodetext <- sapply(textnodes, xml_text)
+  nchar_textnodes <- sapply(nodetext, nchar)
+  no_linesplit <- sapply(stri_extract_all_boundaries(nodetext), function(x) length(grep("\\n", x)))
+  nchar_textnodes <- nchar_textnodes - ifelse(no_linesplit > 0, 1, 0)
+  offset <- c(0, cumsum(nchar_textnodes)[1:(length(nchar_textnodes) - 1)])
+  dummy <- lapply(
+    1:length(textnodes),
+    function(i){
+      if (!grepl("^\\s*$", nodetext[i])){
+        parent <- xml2::xml_parent(textnodes[[i]])
+        if (xml_name(parent) == "span"){
+          xml_attr(parent, "left") <- as.character(offset[i])
+          xml_attr(parent, "right") <- offset[i] + nchar(nodetext[i])
+        }
+      }
+      return(NULL)
+    }
+  )
+  return( as.character(doc) )
+}
+
+
 
 #' @rdname html-method
 #' @exportMethod html
 #' @docType methods
 setMethod(
   "html", "partition",
-  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, ...){
+  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, ...){
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
@@ -84,9 +124,11 @@ setMethod(
       readLines(system.file("css", "tooltips.css", package = "polmineR"))
       ), collapse = "\n", sep = "\n"
     )
-    htmlDoc <- markdown::markdownToHTML(text = markdown, stylesheet = css)
-    htmlDocFinal <- htmltools::HTML(htmlDoc)
-    htmlDocFinal
+    doc <- markdown::markdownToHTML(text = markdown, stylesheet = css)
+    
+    if (charoffset) doc <- .addCharacterOffset(doc)
+    
+    htmltools::HTML(doc)
   }
 )
 
@@ -106,6 +148,7 @@ setMethod("html", "partitionBundle", function(object, filename = c(), type = "de
   }
   if (is.null(filename)) browseURL(htmlFile)
 })
+
 
 #' @rdname html-method
 setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){

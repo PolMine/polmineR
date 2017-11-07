@@ -12,9 +12,11 @@ be used, making REUTERS corpus available
 * getSettings-function removed, was not sufficiently useful, and was superseded by
 template mechanism
 * new class 'count' introduced to organize results from count operations
-* at startup, default template is assigned for corpora without explicitly defined templates
-to make read() work in a basic fashion
+* at startup, default template is assigned for corpora without explicitly defined templates to make read() work in a basic fashion
 * new cpos,hits-method to support highlight method
+* tooltips-method to reorder functionality of html/highlight/tooltip-methods
+* param charoffset added to html-method 
+* coerce-method from partition to json and vice versa, potentially useful for storing partitions
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

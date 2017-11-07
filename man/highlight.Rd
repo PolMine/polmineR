@@ -5,14 +5,17 @@
 \alias{highlight}
 \alias{highlight,character-method}
 \alias{highlight,html-method}
+\alias{highlight,kwic-method}
 \title{Highlight tokens.}
 \usage{
 highlight(.Object, ...)
 
-\S4method{highlight}{character}(.Object, highlight = list(),
-  tooltips = NULL)
+\S4method{highlight}{character}(.Object, highlight = list())
 
-\S4method{highlight}{html}(.Object, highlight = list(), tooltips = NULL)
+\S4method{highlight}{html}(.Object, highlight = list())
+
+\S4method{highlight}{kwic}(.Object, highlight = list(), regex = FALSE,
+  perl = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{.Object}{a \code{html} or \code{character} object with html, or a 
@@ -24,14 +27,12 @@ highlight(.Object, ...)
 need to provide the colors, the values of the vector the term to be matched
 or a corpus position}
 
-\item{tooltips}{a named \code{"list"} of character vectors (length 1), the 
-names need to match colors in the list provided to param \code{highlight}, 
-the value of the character vector is the tooltip to be displayed}
-
 \item{regex}{logical, whether character vectors give regular expressions}
 
 \item{perl}{logical, whether to use perl-style regular expressions for
 highlighting when regex is TRUE}
+
+\item{verbose}{logical, whether to output verbose messages}
 }
 \description{
 Highlight tokens based on exact match, a regular expression or corpus
@@ -41,7 +42,7 @@ position in kwic output or html document.
 use("polmineR")
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)
-Y <- highlight(H, list(lightgreen = "higher"), tooltips = list(lightgreen = "green!"))
+Y <- highlight(H, list(lightgreen = "higher"))
 htmltools::html_print(Y)
 
 # highlight matches for a CQP query
@@ -54,14 +55,10 @@ highlight(
 if (require("magrittr")){
   P \%>\% html() \%>\% highlight(list(lightgreen = "1986"))
   P \%>\% html() \%>\% highlight(list(lightgreen = c("1986", "higher")))
-  P \%>\% html() \%>\% highlight(list(lightgreen = 4020:4023))
-  P \%>\% html() \%>\% highlight(
-    list(lightgreen = 4020:4023),
-    tooltips = list(lightgreen = "foo")
-    )
-  
+  P \%>\% html() \%>\% highlight(list(lightgreen = 4020:4023))   
 }
 
+# use highlight for kwic output
 K <- kwic("REUTERS", query = "barrel")
 K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
 K2

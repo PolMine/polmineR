@@ -31,7 +31,8 @@ Suggests:
     shiny,
     testthat,
     tidytext,
-    magrittr
+    magrittr,
+    stringi
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
@@ -126,6 +127,7 @@ Collate:
     'tTest.R'
     'templates_method.R'
     'terms_method.R'
+    'tooltips_method.R'
     'trim_method.R'
     'use_function.R'
     'utils.R'

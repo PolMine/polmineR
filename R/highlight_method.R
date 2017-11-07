@@ -8,12 +8,10 @@
 #' @param highlight a \code{"list"} of character or integer vectors, the names 
 #'   need to provide the colors, the values of the vector the term to be matched
 #'   or a corpus position
-#' @param tooltips a named \code{"list"} of character vectors (length 1), the 
-#'   names need to match colors in the list provided to param \code{highlight}, 
-#'   the value of the character vector is the tooltip to be displayed
 #' @param regex logical, whether character vectors give regular expressions
 #' @param perl logical, whether to use perl-style regular expressions for
 #'   highlighting when regex is TRUE
+#' @param verbose logical, whether to output verbose messages
 #' @param ... further parameters (unused)
 #' @name highlight
 #' @rdname highlight
@@ -22,7 +20,7 @@
 #' use("polmineR")
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
-#' Y <- highlight(H, list(lightgreen = "higher"), tooltips = list(lightgreen = "green!"))
+#' Y <- highlight(H, list(lightgreen = "higher"))
 #' htmltools::html_print(Y)
 #' 
 #' # highlight matches for a CQP query
@@ -35,14 +33,10 @@
 #' if (require("magrittr")){
 #'   P %>% html() %>% highlight(list(lightgreen = "1986"))
 #'   P %>% html() %>% highlight(list(lightgreen = c("1986", "higher")))
-#'   P %>% html() %>% highlight(list(lightgreen = 4020:4023))
-#'   P %>% html() %>% highlight(
-#'     list(lightgreen = 4020:4023),
-#'     tooltips = list(lightgreen = "foo")
-#'     )
-#'   
+#'   P %>% html() %>% highlight(list(lightgreen = 4020:4023))   
 #' }
 #' 
+#' # use highlight for kwic output
 #' K <- kwic("REUTERS", query = "barrel")
 #' K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
 #' K2
@@ -51,7 +45,7 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
 #' @rdname highlight
-setMethod("highlight", "character", function(.Object, highlight = list(), tooltips = NULL){
+setMethod("highlight", "character", function(.Object, highlight = list()){
   if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' needs to be installed for highlighting using cpos/ids")
   doc <- xml2::read_html(.Object)
   for (color in names(highlight)){
@@ -67,25 +61,6 @@ setMethod("highlight", "character", function(.Object, highlight = list(), toolti
           nodes,
           function(node){
             xml2::xml_set_attr(node, attr = "style", value = sprintf("background-color:%s", color))
-            if (color %in% names(tooltips)){
-              # turn node to a child of itself
-              xml2::xml_add_child(.x = node, .value = node, copy = TRUE)
-              
-              # make div for a tooltip
-              xml2::xml_text(node) <- ""
-              xml2::xml_name(node) <- "span"
-              xml2::xml_attrs(node) <- c(class = "tooltip")
-              
-              # create actual tooltip node
-              children <- xml2::xml_children(node)
-              xml2::xml_add_child(.x = node, .value = children[[1]], copy = TRUE)
-              children <- xml2::xml_children(node)
-              tipnode <- children[[length(children)]]
-              xml2::xml_text(tipnode) <- tooltips[[color]]
-              xml2::xml_name(tipnode) <- "span"
-              xml2::xml_attrs(tipnode) <- c(class = "tooltiptext")
-              
-            }
             NULL
           }
         )
@@ -96,14 +71,14 @@ setMethod("highlight", "character", function(.Object, highlight = list(), toolti
 })
     
 #' @rdname highlight
-setMethod("highlight", "html", function(.Object, highlight = list(), tooltips = NULL){
+setMethod("highlight", "html", function(.Object, highlight = list()){
   htmltools::HTML(
-    highlight(as.character(.Object), highlight = highlight, tooltips = tooltips)
+    highlight(as.character(.Object), highlight = highlight)
   )
 })
 
-#' @rdname kwic-class
-setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, tooltips = NULL, verbose = TRUE){
+#' @rdname highlight
+setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, verbose = TRUE){
   for (color in names(highlight)){
     if (regex){
       regexMatchList <- lapply(

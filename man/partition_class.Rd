@@ -83,14 +83,6 @@
 \item{id2str}{logical}
 
 \item{mc}{logical or, if numeric, providing the number of cores}
-
-\item{html}{...}
-
-\item{highlight}{...}
-
-\item{cqp}{...}
-
-\item{tooltips}{...}
 }
 \description{
 S4 partition class and methods for instances of class partition.
