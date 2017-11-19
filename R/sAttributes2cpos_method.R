@@ -17,7 +17,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
     # an Rcpp-implementation of struc2str is not faster
     # potential for optimization: struc2str
     maxAttr <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs, type = "s")
-    meta <- data.frame(struc = c(0:(maxAttr-1)), select = rep(0, times = maxAttr))
+    meta <- data.frame(struc = 0:(maxAttr-1), select = rep(0, times = maxAttr))
     if (length(.Object@sAttributes) > 0) {
       for (sAttr in names(.Object@sAttributes)){
         meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, sAttr, meta[,1]))
@@ -48,33 +48,38 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml, regex){
       .Object <- NULL    
     }
   } else if (xml == "nested"){
-    sAttr <- vapply(
-      names(.Object@sAttributes),
-      USE.NAMES = TRUE, FUN.VALUE = "character",
-      function(x) paste(.Object@corpus, '.', x, sep = '')
-    )
-    sAttr <- rev(sAttr)
-    strucs <- c(0:(CQI$attribute_size(.Object@corpus, names(.Object@sAttributes)[1], type = "s")-1))
-    metaVector <- CQI$struc2str(.Object@corpus, names(.Object@sAttributes)[1], strucs)
-    Encoding(metaVector) <- .Object@encoding
+    sAttrNames <- rev(names(.Object@sAttributes))
+    strucs <- 0:(CQI$attribute_size(.Object@corpus, sAttrNames[1], type = "s") - 1)
+    sAttrValues <- CQI$struc2str(.Object@corpus, sAttrNames[1], strucs)
+    Encoding(sAttrValues) <- .Object@encoding
     if (regex == FALSE) {
-      strucs <- strucs[which(metaVector %in% .Object@sAttributes[[length(.Object@sAttributes)]])]
+      strucs <- strucs[ which(sAttrValues %in% .Object@sAttributes[[ sAttrNames[1] ]]) ]
     } else {
-      positions <- lapply(.Object@sAttributes[[length(.Object@sAttributes)]], function(x) grep(x, metaVector))
-      strucs <- strucs[unique(unlist(positions))]
+      matchList <- lapply(.Object@sAttributes[[ sAttrNames[1] ]], function(x) grep(x, sAttrValues))
+      strucs <- strucs[ unique(unlist(matchList)) ]
     }
-    cpos <- matrix(
-      unlist(lapply(strucs, function(x) CQI$struc2cpos(.Object@corpus, names(.Object@sAttributes)[1], x))),
-      byrow=TRUE, ncol=2
-    )
-    if (length(sAttr) > 1){
-      for (i in c(2:length(sAttr))){
-        meta <- CQI$struc2str(.Object@corpus, names(.Object@sAttributes)[i], CQI$cpos2struc(.Object@corpus, names(.Object@sAttributes)[i], cpos[,1]))
-        Encoding(meta) <- .Object@encoding
+    
+    # turn strucs into cpos matrix, using polmineR.Rcpp, if available
+    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
+      cpos <- polmineR.Rcpp::get_region_matrix(
+        corpus = .Object@corpus, s_attribute = sAttrNames[1],
+        registry = Sys.getenv("CORPUS_REGISTRY"), struc = strucs
+      )
+    } else {
+      cpos <- matrix(
+        unlist(lapply(strucs, function(x) CQI$struc2cpos(.Object@corpus, sAttrNames[1], x))),
+        byrow = TRUE, ncol = 2
+      )
+    }
+    
+    if (length(sAttrNames) > 1){
+      for (i in 2:length(sAttrNames)){
+        sAttrValues <- CQI$struc2str(.Object@corpus, sAttrNames[i], CQI$cpos2struc(.Object@corpus, sAttrNames[i], cpos[,1]))
+        Encoding(sAttrValues) <- .Object@encoding
         if (regex == FALSE) {
-          hits <- which(meta %in% .Object@sAttributes[[names(sAttr)[i]]])
+          hits <- which(meta %in% .Object@sAttributes[[ sAttrNames[i] ]])
         } else if (regex == TRUE) {
-          hits <- unique(unlist(lapply(.Object@sAttributes[[names(sAttr)[i]]], function(x) grep(x, meta))))
+          hits <- unique(unlist(lapply(.Object@sAttributes[[ sAttrNames[i] ]], function(x) grep(x, meta))))
         }
         cpos <- cpos[hits,]
         strucs <- strucs[hits]

@@ -38,6 +38,15 @@ Corpus <- R6Class(
       self$stat <- count(self$corpus, pAttribute = pAttribute, id2str = id2str)
     },
     
+    # copy = function(registryDir, dataDir = NULL){
+    #   indexedCorpusDirPkg
+    #   lapply(
+    #     list.files(indexedCorpusDirPkg, full.names = TRUE),
+    #     function(x) file.copy(from=x, to=file.path(indexedCorporaDir, registryFile))
+    #   )
+    #   
+    # },
+    
     as.partition = function(){
       new(
         "partition",

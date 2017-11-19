@@ -1,4 +1,4 @@
-#' Install packaged corpus from repository. 
+#' Install and manage corpora. 
 #' 
 #' Convenience function for making the installation of indexed CWB corpora
 #' wrapped into R data packages as easy as possible. Packaged corpora can

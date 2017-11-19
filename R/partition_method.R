@@ -131,7 +131,7 @@ setMethod("partition", "character", function(
   Partition@sAttributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = Partition@encoding))
 
   .message('get cpos and strucs', verbose = verbose)
-  if(is.null(def)){
+  if (is.null(def)){
     stop("no sAttributes provided to define partition")
   } else {
     Partition@sAttributeStrucs <- names(def)[length(def)]
@@ -143,10 +143,9 @@ setMethod("partition", "character", function(
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
       Partition <- enrich(Partition, pAttribute = pAttribute, verbose = verbose, id2str = id2str, mc = mc)
-      # Partition <- sort(Partition, "count")
     }
   } else {
-    message("... setting up the partition failed (returning NULL object)")
+    warning("... setting up the partition failed (returning NULL object)")
   }
   Partition
 })
