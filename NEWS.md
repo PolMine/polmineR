@@ -17,6 +17,8 @@ template mechanism
 * tooltips-method to reorder functionality of html/highlight/tooltip-methods
 * param charoffset added to html-method 
 * coerce-method from partition to json and vice versa, potentially useful for storing partitions
+* sAttributes2cpos to work properly with nested xml
+* partition,partition-method reworked to work properly with nested XML
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

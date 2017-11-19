@@ -129,6 +129,14 @@ RegistryFile <- setRefClass(
       invisible(.self$info)
     },
 
+    setInfo = function(new){
+      
+      "Reset path to info file."
+      
+      infoLine <- grep("^INFO\\s+.*?$", .self$txt)
+      .self$txt[infoLine] <- sprintf("INFO %s", new)
+    },
+    
     getEncoding = function(){
 
       "Get the encoding."

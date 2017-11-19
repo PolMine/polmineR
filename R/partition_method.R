@@ -190,46 +190,57 @@ setMethod("partition", "environment", function(.Object, slots = c("name", "corpu
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, pAttribute = NULL, id2str = TRUE, type=NULL, verbose = TRUE, mc = FALSE, ...){
+setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, pAttribute = NULL, id2str = TRUE, xml = NULL, verbose = TRUE, mc = FALSE, ...){
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
+  if (!all(names(def) %in% sAttributes(.Object))) stop("some or all s-attributes provided are not available")
+  if (length(def) > 1) stop("only one s-attribute allowed")
+  if (!is.null(xml)) stopifnot(xml %in% c("flat", "nested"))
+  
   newPartition <- new(
-    class(.Object)[1],
-    corpus = .Object@corpus, encoding = .Object@encoding, name = name, xml = .Object@xml,
+    class(.Object)[1], corpus = .Object@corpus, encoding = .Object@encoding, name = name,
+    xml = if (is.null(xml)) .Object@xml else xml,
     stat = data.table()
     )
   .message('Setting up partition', name, verbose = verbose)
   def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
   newPartition@sAttributes <- c(.Object@sAttributes, def)
-  newPartition@sAttributeStrucs <- names(newPartition@sAttributes)[length(newPartition@sAttributes)]
+  newPartition@sAttributeStrucs <- names(def)[1]
   
   .message('getting cpos and strucs', verbose = verbose)
   
   if (.Object@xml == "flat") {
-    str <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)    
+    sAttrValues <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)
+    Encoding(sAttrValues) <- newPartition@encoding
+    hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
+    newCposMatrix <- .Object@cpos[hits,]
+    newPartition@cpos <- switch(
+      class(newCposMatrix),
+      "matrix" = newCposMatrix,
+      "integer"= matrix(newCposMatrix, ncol = 2, byrow = TRUE)
+    )
+    newPartition@strucs <- .Object@strucs[hits]
   } else if (.Object@xml == "nested") {
-    str <- CQI$struc2str(
-      .Object@corpus, names(def),
-      CQI$cpos2struc(.Object@corpus, names(def), .Object@cpos[,1])
+    cposVec <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+    newStrucs <- CQI$cpos2struc(.Object@corpus, names(def)[1], cposVec)
+    sAttrValues <- CQI$struc2str(.Object@corpus, names(def), newStrucs)
+    Encoding(sAttrValues) <- .Object@encoding
+    hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
+    newPartition@strucs <- unique(newStrucs[hits])
+    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
+      newPartition@cpos <- polmineR.Rcpp::get_region_matrix(
+        corpus = .Object@corpus, s_attribute = names(def),
+        registry = Sys.getenv("CORPUS_REGISTRY"), struc = newPartition@strucs
       )
+    } else {
+      newPartition@cpos <- matrix(
+        unlist(lapply(
+          newPartition@strucs,
+          function(x) CQI$struc2cpos(.Object@corpus, names(def), x))
+          ),
+        byrow = TRUE, ncol = 2
+      )
+    }
   }
-  Encoding(str) <- newPartition@encoding
-  if (regex == FALSE) {
-    hits <- which(str %in% def[[1]])
-  } else if (regex == TRUE) {
-    hits <- grep(def[[1]], str)
-  }
-  newCpos <- .Object@cpos[hits,]
-  if (class(newCpos) == "matrix"){
-    newPartition@cpos <- newCpos
-  } else if (class(newCpos) == "integer") {
-    newPartition@cpos <- matrix(newCpos, ncol = 2, byrow = TRUE)     
-  }
-  newPartition@strucs <- .Object@strucs[hits]
-  if (length(.Object@metadata) == 2) {
-    .message('remake metadata', verbose = verbose)
-    newPartition@metadata <- .Object@metadata[hits,]
-  }
-  
   newPartition@size <- size(newPartition)
   if (length(pAttribute) > 0) {
     newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, id2str = id2str, mc = mc)
