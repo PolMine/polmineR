@@ -15,18 +15,19 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
       if (length(sAttribute) == 1){
         ret <- CQI$struc2str(
           .Object, sAttribute,
-          c(0:(CQI$attribute_size(.Object, sAttribute, type = "s")-1))
+          0:(CQI$attribute_size(.Object, sAttribute, type = "s") - 1)
         )
         if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
-        if (unique == TRUE) ret <- unique(ret)
+        if (unique) ret <- unique(ret)
         Encoding(ret) <- getEncoding(.Object)
+        ret <- as.nativeEnc(ret, from = .Object@encoding)
         return(ret)
       } else if (length(sAttribute) > 1){
         corpusEncoding <- RegistryFile$new(.Object)$getEncoding()
         metaInformation <- lapply(
           sAttribute,
           function(x) {
-            retval <- CQI$struc2str(.Object, x, 0:(CQI$attribute_size(.Object, x, "s")-1))
+            retval <- CQI$struc2str(.Object, x, 0:(CQI$attribute_size(.Object, x, "s") - 1))
             Encoding(retval) <- corpusEncoding
             as.nativeEnc(retval, from = corpusEncoding)
           })
@@ -83,15 +84,15 @@ setMethod(
     } else {
       if (length(sAttribute) == 1){
         if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){
-          retval <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs));
-          Encoding(retval) <- .Object@encoding;  
+          retval <- unique(CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs))
         } else {
           cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
           strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
           retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
           retval <- unique(retval)
-          Encoding(retval) <- .Object@encoding
         }
+        Encoding(retval) <- .Object@encoding
+        retval <- as.nativeEnc(retval, from = .Object@encoding)
         return(retval)
       } else if (length(sAttribute) > 1){
         if (.Object@xml == "flat") {
@@ -102,7 +103,7 @@ setMethod(
               function(x) { 
                 tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
                 Encoding(tmp) <- .Object@encoding
-                tmp
+                as.nativeEnc(tmp, from = .Object@encoding)
               }
             ),
             stringsAsFactors = FALSE
@@ -116,7 +117,7 @@ setMethod(
               function(x) {
                 tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
                 Encoding(tmp) <- .Object@encoding
-                tmp
+                as.nativeEnc(tmp, from = .Object@encoding)
               }
             )
           )

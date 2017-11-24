@@ -88,6 +88,8 @@ includes an explanation of the registry file format.
 
 \item{\code{setId(new)}}{Set the id of a corpus}
 
+\item{\code{setInfo(new)}}{Reset path to info file.}
+
 \item{\code{setProperty(property, value)}}{Set a corpus property.}
 
 \item{\code{write(filename = NULL, verbose = TRUE)}}{Write registry file to disk.}

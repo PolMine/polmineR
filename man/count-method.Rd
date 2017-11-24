@@ -106,6 +106,9 @@ are supplied, frequencies for the individual queries are retrieved.
   count(P, '"Integration.*"', breakdown = TRUE)
 }
 }
+\references{
+Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
+}
 \seealso{
 For a metadata-based breakdown of counts
 (i.e. tabulation by s-attributes), see \code{"dispersion"}.

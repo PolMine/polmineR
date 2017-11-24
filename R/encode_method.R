@@ -114,17 +114,18 @@ setMethod("encode", "data.frame", function(
 })
 
 #' @rdname encode-method
+#' @importFrom data.table fwrite
 setMethod("encode", "data.table", function(.Object, corpus, sAttribute, verbose = TRUE){
   stopifnot(ncol(.Object) == 3)
   
   .message("preparing data", verbose = verbose)
   .Object[[1]] <- as.character(as.integer(.Object[[1]])) # ensure that cpos are integers
   .Object[[2]] <- as.character(as.integer(.Object[[2]]))
-  lines <- apply(.Object, 1, function(x) paste(x, collapse = "\t"))
-  lines <- paste(lines, "\n", sep = "")
+  .Object[[3]] <- as.corpusEnc(.Object[[3]], corpusEnc = getEncoding(corpus))
+    
   tmp_file <- tempfile()
-  cat(lines, file = tmp_file)
-  
+  data.table::fwrite(x = .Object, file = tmp_file, quote = FALSE, sep = "\t", col.names = FALSE)
+
   .message("running cwb-s-encode", verbose = verbose)
   cmd <- c(
     "cwb-s-encode",

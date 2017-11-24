@@ -129,7 +129,6 @@ setMethod("show", "partition",
 #' @exportMethod split
 #' @docType methods
 setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
-  # if (length(x@metadata) == 0) warning("no metadata, method potentially fails -> please check what happens")
   cpos <- x@cpos
   if (nrow(cpos) > 1){
     distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
@@ -155,7 +154,7 @@ setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
           corpus = x@corpus, encoding = x@encoding,
           sAttributes = x@sAttributes,
           xml = x@xml, sAttributeStrucs = x@sAttributeStrucs,
-          explanation = c("partition results from split, sAttributes do not necessarily define partition"),
+          explanation = "partition results from split, sAttributes do not necessarily define partition",
           name = paste(x@name, i, collapse = "_", sep = ""),
           stat = data.table()
         )
@@ -168,6 +167,7 @@ setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
         p
       })
   } else {
+    x@name <- paste(x@name, 1, collapse = "_", sep = "")
     bundleRaw <- list(x)
   }
   names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@name))

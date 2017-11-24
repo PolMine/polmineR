@@ -6,7 +6,7 @@
 \alias{kwic,context-method}
 \alias{kwic,partition-method}
 \alias{kwic,character-method}
-\title{KWIC output / concordances}
+\title{KWIC/concordance output.}
 \usage{
 kwic(.Object, ...)
 
@@ -80,6 +80,12 @@ if (require(polmineR.sampleCorpus) && require(rcqp)){
   ) 
 }
 }
+}
+\references{
+Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).
+
+Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
+Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 }
 \seealso{
 To read the whole text, see the \code{\link{read}}-method.

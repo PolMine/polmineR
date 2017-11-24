@@ -39,10 +39,10 @@ install.corpus("polmineR.sampleCorpus")
 }
 }
 \references{
-http://polmine.sowi.uni-due.de
+Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
+Cham et al: Springer.
 
-Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
-Cham: Springer.
+Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
 }
 \author{
 Andreas Blaette (andreas.blaette@uni-due.de)

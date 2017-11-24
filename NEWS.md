@@ -19,6 +19,8 @@ template mechanism
 * coerce-method from partition to json and vice versa, potentially useful for storing partitions
 * sAttributes2cpos to work properly with nested xml
 * partition,partition-method reworked to work properly with nested XML
+* encoding of return value of sAttributes will be locale
+* references added to methods count, kwic, cooccurrences, features.
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

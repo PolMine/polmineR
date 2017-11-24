@@ -63,7 +63,7 @@ setMethod(
     nested <- lapply(
       sAttributes(datePartition, sAttributeNames),
       function(speakerName){
-        beforeSplit <- partition(datePartition, setNames(list(speakerName), sAttributeNames), verbose = FALSE)
+        beforeSplit <- partition(datePartition, def = setNames(list(speakerName), sAttributeNames), verbose = FALSE)
         split(beforeSplit, gap = gap, verbose = FALSE)
       }
     )

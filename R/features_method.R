@@ -26,6 +26,11 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' @docType methods
 #' @references Manning / Schuetze ...
 #' @exportMethod features
+#' @references 
+#' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 121-149 (ch. 6).
+#' 
+#' Manning, Christopher D.; Schütze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
+#' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")

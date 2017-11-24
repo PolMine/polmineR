@@ -2,7 +2,7 @@ Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
 Version: 0.7.5.9007
-Date: 2017-11-19
+Date: 2017-11-24
 Authors@R: c(person("Andreas Blaette", "Developer", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -12,6 +12,8 @@ Imports:
     Matrix,
     tm,
     DT,
+    xml2,
+    stringi,
     utils,
     jsonlite,
     pbapply
@@ -23,7 +25,6 @@ Suggests:
     doParallel,
     markdown,
     htmltools,
-    xml2,
     xlsx,
     sendmailR,
     knitr,
@@ -85,10 +86,10 @@ Collate:
     'corpus_method.R'
     'dispersion_class.R'
     'count_method.R'
+    'hits_class.R'
     'tempcorpus.R'
     'cpos_method.R'
     'decode_method.R'
-    'hits_class.R'
     'dispersion_method.R'
     'divide_method.R'
     'dotplot_method.R'

@@ -1,4 +1,4 @@
-#' @include tempcorpus.R
+#' @include tempcorpus.R hits_class.R
 NULL
 
 #' Get corpus positions for a query or queries.

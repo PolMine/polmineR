@@ -47,6 +47,8 @@ NULL
 #' @name count
 #' @aliases count-method
 #' @seealso count
+#' @references 
+#' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
 #' @examples
 #' \dontrun{
 #'   use("polmineR.sampleCorpus")

@@ -21,7 +21,7 @@ partition(.Object, ...)
   "pAttribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
-  regex = FALSE, pAttribute = NULL, id2str = TRUE, type = NULL,
+  regex = FALSE, pAttribute = NULL, id2str = TRUE, xml = NULL,
   verbose = TRUE, mc = FALSE, ...)
 }
 \arguments{

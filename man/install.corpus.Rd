@@ -9,7 +9,7 @@
 \alias{copy.corpus}
 \alias{rename.corpus}
 \alias{remove.corpus}
-\title{Install packaged corpus from repository.}
+\title{Install and manage corpora.}
 \usage{
 install.corpus(pkgs, repo = "http://polmine.sowi.uni-due.de/packages",
   lib = .libPaths()[1], ...)
