@@ -17,10 +17,10 @@
 as.TermDocumentMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, pAttribute, sAttribute,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{character}(x, pAttribute, sAttribute,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
   verbose = TRUE)
@@ -40,13 +40,13 @@ as.TermDocumentMatrix(x, ...)
 \arguments{
 \item{x}{some object}
 
-\item{...}{to make the check happy}
+\item{...}{s-attribute definitions used for subsetting the corpus, compare partition-method}
 
 \item{pAttribute}{the p-attribute}
 
 \item{sAttribute}{the s-attribute}
 
-\item{verbose}{bla}
+\item{verbose}{logial, whether to output progress messages}
 
 \item{col}{the column to use of assembling the matrix}
 }
@@ -78,7 +78,7 @@ use("polmineR.sampleCorpus")
  
 # do-it-yourself 
 p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
-pB <- partitionBundle(p, sAttribute="text_date")
+pB <- partitionBundle(p, sAttribute = "text_date")
 pB <- enrich(pB, pAttribute="word")
 tdm <- as.TermDocumentMatrix(pB, col = "count")
    
@@ -92,6 +92,4 @@ tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute = "word", sAttribute = "tex
 }
 \author{
 Andreas Blaette
-
-me
 }
