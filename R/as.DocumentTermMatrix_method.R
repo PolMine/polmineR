@@ -80,8 +80,28 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
   
   if (
     length(sAttrSelect) == 0
-    && length(unique(CQI$stru2str(x, sAttribute, struc_vector))) == CQI$attribute_size(x, sAttribute, type = "s")
+    && length(unique(CQI$struc2str(x, sAttribute, struc_vector))) == CQI$attribute_size(x, sAttribute, type = "s")
     ){
+    
+    token_id <- CQI$cpos2id(x, pAttribute, cpos_vector)
+    struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
+    tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
+    rm(token_id, struc_id)
+    tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
+    
+    if (verbose) message("... counting token per doc")
+    countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]
+    
+    if(verbose) message("... generate simple_triplet_matrix")
+    dtm <- simple_triplet_matrix(
+      i = countDT[["struc_id"]] + 1,
+      j = countDT[["token_id"]] + 1,
+      v = countDT[["N"]],
+    )
+    docs <- CQI$struc2str(x, sAttribute, 0:(CQI$attribute_size(x, sAttribute, type = "s") - 1))
+    terms <- CQI$id2str(x, pAttribute, 0:max(countDT[["token_id"]]))
+    terms <- as.nativeEnc(terms, from = getEncoding(x))
+    dimnames(dtm) <- list(docs, terms)
     
   } else {
     if (length(sAttrSelect) >= 1){
@@ -89,7 +109,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
         sAttrSub <- names(sAttrSelect)[i]
         .message("subsetting data.table by s-attribute", sAttrSub, verbose = verbose)
         struc_id <- CQI$cpos2struc(x, sAttrSub, tokenStreamDT[["cpos"]])
-        struc_values <- CQI$struc2str(x, sAttrSub, struc)
+        struc_values <- CQI$struc2str(x, sAttrSub, struc_id)
         tokenStreamDT <- tokenStreamDT[ which(struc_values %in% as.character(sAttrSelect[[i]])) ]
       }
     }
