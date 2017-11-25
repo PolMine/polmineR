@@ -21,6 +21,8 @@ template mechanism
 * partition,partition-method reworked to work properly with nested XML
 * encoding of return value of sAttributes will be locale
 * references added to methods count, kwic, cooccurrences, features.
+* as.DocumentTermMatrix,character-method reworked to allow for subsetting and divergence of
+strucs and struc_str
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

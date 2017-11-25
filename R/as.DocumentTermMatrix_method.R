@@ -27,7 +27,7 @@ NULL
 #' @param sAttribute the s-attribute
 #' @param col the column to use of assembling the matrix
 #' @param verbose bla
-#' @param ... to make the check happy
+#' @param ... s-attribute definitions for preliminary subsetting
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
 #' @exportMethod as.TermDocumentMatrix
@@ -66,32 +66,57 @@ setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribu
 
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE){
-  cpos_vector <- seq.int(from = 0, to = CQI$attribute_size(x, pAttribute, type = "p") - 1, by = 1)
+setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE, ...){
   
   .message("generate data.table with token and struc ids", verbose = verbose)
+  cpos_vector <- 0:(CQI$attribute_size(x, pAttribute, type = "p") - 1)
   token_id <- CQI$cpos2id(x, pAttribute, cpos_vector)
+  struc_vector <- 0:(CQI$attribute_size(x, sAttribute, type = "s") - 1)
   struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
-  tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
-  rm(token_id, struc_id)
+  tokenStreamDT <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
   tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
+  rm(token_id, struc_id, cpos_vector)
+  
+  sAttrSelect <- list(...)
+  if (length(sAttrSelect) >= 1){
+    for (i in 1:length(sAttrSelect)){
+      sAttrSub <- names(sAttrSelect)[i]
+      .message("subsetting data.table by s-attribute", sAttrSub, verbose = verbose)
+      struc <- CQI$cpos2struc(x, sAttrSub, tokenStreamDT[["cpos"]])
+      values <- CQI$struc2str(x, sAttrSub, struc)
+      tokenStreamDT <- tokenStreamDT[ which(values %in% as.character(sAttrSelect[[i]])) ]
+    }
+  }
+  
+  .message("generate unique document ids", verbose = verbose)
+  struc_values <- CQI$struc2str(x, sAttribute, tokenStreamDT[["struc_id"]])
+  unique_struc_values <- unique(struc_values)
+  doc_index <- setNames(object = 1:length(unique_struc_values), nm = unique_struc_values)
+  tokenStreamDT[["doc_id"]] <- doc_index[ struc_values ]
+  tokenStreamDT[, "struc_id" := NULL][, "cpos" := NULL]
   
   .message("counting token per doc", verbose = verbose)
-  countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]
+  countDT <- tokenStreamDT[, .N, by = c("token_id", "doc_id"), with = TRUE]
+  unique_token_ids <- unique(tokenStreamDT[["token_id"]])
+  new_token_index <- setNames(1:length(unique_token_ids), as.character(unique_token_ids))
+  countDT[["new_token_id"]] <- new_token_index[ as.character(countDT[["token_id"]]) ]
+  names(new_token_index) <- CQI$id2str(x, pAttribute, as.integer(names(new_token_index)))
   
-  if(verbose) message("... generate simple_triplet_matrix")
-  y <- simple_triplet_matrix(
-    i = countDT[["struc_id"]] + 1,
-    j = countDT[["token_id"]] + 1,
+  .message("generate simple_triplet_matrix", verbose = verbose)
+  dtm <- simple_triplet_matrix(
+    i = countDT[["doc_id"]],
+    j = countDT[["new_token_id"]],
     v = countDT[["N"]],
   )
-  docs <- CQI$struc2str(x, sAttribute, seq.int(0, CQI$attribute_size(x, sAttribute, type = "s") - 1, by = 1))
-  terms <- CQI$id2str(x, pAttribute, seq.int(0, max(countDT[["token_id"]]), by = 1))
-  terms <- as.nativeEnc(terms, from = getEncoding(x))
-  dimnames(y) <- list(docs, terms)
-  class(y) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  attr(y, "weighting") <- c("term frequency", "tf")
-  y
+  
+  .message("add row and column labels", verbose = verbose)
+  terms <- as.nativeEnc(names(new_token_index), from = getEncoding(x))
+  documents <- as.nativeEnc(names(doc_index), from = getEncoding(x))
+  
+  dimnames(dtm) <- list(documents, terms)
+  class(dtm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  attr(dtm, "weighting") <- c("term frequency", "tf")
+  dtm
 })
 
 

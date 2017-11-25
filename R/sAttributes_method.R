@@ -20,7 +20,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
         if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
         if (unique) ret <- unique(ret)
         Encoding(ret) <- getEncoding(.Object)
-        ret <- as.nativeEnc(ret, from = .Object@encoding)
+        ret <- as.nativeEnc(ret, from = getEncoding(.Object))
         return(ret)
       } else if (length(sAttribute) > 1){
         corpusEncoding <- RegistryFile$new(.Object)$getEncoding()
