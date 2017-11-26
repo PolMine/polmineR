@@ -2,30 +2,42 @@
 NULL
 
 
-
 #' Generate TermDocumentMatrix / DocumentTermMatrix.
 #' 
-#' Method for type conversion, to generate the classes
-#' \code{"TermDocumentMatrix"} or \code{"DocumentTermMatrix"} contained in the
-#' \code{"tm"} package. The classes inherit from the
-#' \code{"simple_triplet_matrix"}-class defined in the \code{"slam"}-package. A
-#' \code{"DocumentTermMatrix"} is required as input by the \code{"topicmodels"}
-#' package, for instance.
-#'
-#' The type conversion-method can be applied on object of the class
-#' \code{"bundle"}, or classes inheriting from the \code{"bundle"} class. If
-#' counts or some other measure is present in the \code{"stat"} slots of the
-#' objects in the bundle, then the values in the column indicated by
-#' \code{"col"} will be turned into the values of the sparse matrix that is
-#' generated. A special case is the generation of the sparse matrix based on a
-#' \code{"partitionBundle"} that does not yet include counts. In this case, a 
-#' \code{"pAttribute"} needs to be provided, then counting will be performed,
-#' too.
+#' Method to generate the classes \code{TermDocumentMatrix} or 
+#' \code{DocumentTermMatrix} as defined in the \code{tm} package. These classes
+#' inherit from the \code{simple_triplet_matrix}-class defined in the 
+#' \code{slam}-package. There are many text mining applications for 
+#' document-term matrices. A \code{DocumentTermMatrix} is required as input by
+#' the \code{topicmodels} package, for instance.
 #' 
-#' @param x some object
-#' @param pAttribute the p-attribute
-#' @param sAttribute the s-attribute
-#' @param col the column to use of assembling the matrix
+#' The method can be applied on objects of the class 
+#' \code{character}, \code{bundle}, or classes inheriting from the
+#' \code{bundle} class.
+#' 
+#' If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
+#' \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
+#' subsets of the corpus based on the \code{sAttribute} provided. Counts are
+#' performed for the \code{pAttribute}. Further parameters provided (passed in
+#' as \code{...} are interpreted as s-attributes that define a subset of the
+#' corpus for splitting it according to \code{sAttribute}. If struc values for
+#' \code{sAttribute} are not unique, the necessary aggregation is performed, slowing
+#' things somewhat down.
+#' 
+#' If \code{x} is a \code{bundle} or a class inheriting from it, the counts or
+#' whatever measure is present in the \code{stat} slots (in the column
+#' indicated by \code{col}) will be turned into the values of the sparse
+#' matrix that is generated. A special case is the generation of the sparse
+#' matrix based on a \code{partitionBundle} that does not yet include counts.
+#' In this case, a \code{pAttribute} needs to be provided. Then counting will
+#' be performed, too.
+#' 
+#' @param x a \code{character} vector indicating a corpus, or an object of class
+#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partitionBundle})
+#' @param pAttribute p-attribute counting is be based on
+#' @param sAttribute s-attribute that defines content of columns, or rows
+#' @param col the column of \code{data.table} in slot \code{stat} (if \code{x}
+#'   is a \code{bundle}) to use of assembling the matrix
 #' @param verbose logial, whether to output progress messages
 #' @param ... s-attribute definitions used for subsetting the corpus, compare partition-method
 #' @return a TermDocumentMatrix
@@ -66,6 +78,19 @@ setMethod("as.TermDocumentMatrix", "character",function (x, pAttribute, sAttribu
 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribute, verbose = TRUE, ...){
+  
+  stopifnot(
+    length(x) == 1,
+    x %in% CQI$list_corpora(),
+    is.character(pAttribute),
+    length(pAttribute) == 1,
+    pAttribute %in% CQI$attributes(x, "p"),
+    is.character(sAttribute),
+    length(sAttribute) == 1,
+    sAttribute %in% CQI$attributes(x, "s"),
+    is.logical(verbose),
+    all(name(list(...)) %in% CQI$attributes(x, "s"))
+    )
   
   .message("generate data.table with token and struc ids", verbose = verbose)
   cpos_vector <- 0:(CQI$attribute_size(x, pAttribute, type = "p") - 1)
