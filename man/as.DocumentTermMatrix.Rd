@@ -61,10 +61,10 @@ Method to generate the classes \code{TermDocumentMatrix} or
 inherit from the \code{simple_triplet_matrix}-class defined in the 
 \code{slam}-package. There are many text mining applications for 
 document-term matrices. A \code{DocumentTermMatrix} is required as input by
-the \code{"topicmodels"} package, for instance.
+the \code{topicmodels} package, for instance.
 }
 \details{
-The type conversion-method can be applied on objects of the class 
+The method can be applied on objects of the class 
 \code{character}, \code{bundle}, or classes inheriting from the
 \code{bundle} class.
 
@@ -78,7 +78,7 @@ corpus for splitting it according to \code{sAttribute}. If struc values for
 things somewhat down.
 
 If \code{x} is a \code{bundle} or a class inheriting from it, the counts or
-whatever measure is present in the \code{"stat"} slots (in the column
+whatever measure is present in the \code{stat} slots (in the column
 indicated by \code{col}) will be turned into the values of the sparse
 matrix that is generated. A special case is the generation of the sparse
 matrix based on a \code{partitionBundle} that does not yet include counts.

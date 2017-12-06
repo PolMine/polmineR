@@ -27,6 +27,7 @@
     "rcqp" = CQI.rcqp$new(),
     "perl" = CQI.cqpserver$new(),
     "cqpserver" = CQI.cqpserver$new(),
+    "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
   assign("CQI", CQI, envir = parent.env(environment()))

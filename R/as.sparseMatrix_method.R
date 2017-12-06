@@ -12,7 +12,7 @@ setOldClass("simple_triplet_matrix")
 #' @param ... further parameters
 #' @exportMethod as.sparseMatrix
 #' @rdname as.sparseMatrix
-setGeneric("as.sparseMatrix", function(x,...){standardGeneric("as.sparseMatrix")})
+setGeneric("as.sparseMatrix", function(x,...) standardGeneric("as.sparseMatrix"))
 
 
 #' @docType methods

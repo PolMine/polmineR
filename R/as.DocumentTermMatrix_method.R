@@ -89,7 +89,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
     length(sAttribute) == 1,
     sAttribute %in% CQI$attributes(x, "s"),
     is.logical(verbose),
-    all(name(list(...)) %in% CQI$attributes(x, "s"))
+    all(names(list(...)) %in% CQI$attributes(x, "s"))
     )
   
   .message("generate data.table with token and struc ids", verbose = verbose)
@@ -99,7 +99,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, pAttribute, sAttribu
   struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
   tokenStreamDT <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
   tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
-  rm(token_id, struc_id, cpos_vector)
+  rm(token_id, struc_id)
   
   sAttrSelect <- list(...)
   

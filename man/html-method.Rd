@@ -19,7 +19,8 @@ html(object, ...)
 .addCharacterOffset(x)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
-  verbose = FALSE, cutoff = NULL, charoffset = FALSE, ...)
+  verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
+  ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
@@ -48,6 +49,9 @@ into \code{as.markdown}}
 \item{charoffset}{logical, if \code{TRUE}, character offset positions are
 added to elements embracing tokens}
 
+\item{beautify}{logical, if \code{TRUE}, whitespace before interpunctuation
+will be removed}
+
 \item{filename}{the filename}
 
 \item{type}{the partition type}
@@ -67,20 +71,21 @@ is annotated with a tools that stores annotations with character offset position
 use("polmineR")
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)
-H # show full text in viewer pane
+if (interactive()) H # show full text in viewer pane
 
 # html-method can be used in a pipe
 if (require("magrittr")){
-  partition("REUTERS", places = "argentina") \%>\% html()
+  H <- partition("REUTERS", places = "argentina") \%>\% html()
 }
 
 # use html-method to get from concordance to full text
 K <- kwic("REUTERS", query = "barrels")
-html(K, i = 1)
-html(K, i = 2)
+H <- html(K, i = 1)
+H <- html(K, i = 2)
 for (i in 1:length(K)) {
-  show(html(K, i = i))
+  H <- html(K, i = i)
   if (interactive()){
+    show(H)
     userinput <- readline("press 'q' to quit or any other key to continue")
     if (userinput == "q") break
   }

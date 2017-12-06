@@ -23,6 +23,8 @@ template mechanism
 * references added to methods count, kwic, cooccurrences, features.
 * as.DocumentTermMatrix,character-method reworked to allow for subsetting and divergence of
 strucs and struc_str
+* html,partition-method has new option beautify, to remove whitespace before interpunctuation
+* output error removed in html,partition-method (that misinterprets `` as code block)
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

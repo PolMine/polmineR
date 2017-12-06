@@ -8,7 +8,7 @@ setOldClass("html")
 #' @rdname html-method
 print.html <- function(x, ...){
   if (requireNamespace("htmltools", quietly = TRUE)){
-    htmltools::html_print(x)
+    if (interactive()) htmltools::html_print(x)
   } else {
     warning("package 'htmltools' needs to be installed, but is not available")
   }  

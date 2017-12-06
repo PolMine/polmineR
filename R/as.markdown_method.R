@@ -17,7 +17,7 @@
 #' P <- partition("REUTERS", places = "argentina")
 #' as.markdown(P)
 #' as.markdown(P, meta = c("id", "places"))
-#' read(P, meta = c("id", "places"))
+#' if (interactive()) read(P, meta = c("id", "places"))
 setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
 # vectorized sprintf is considerably faster than shiny::span,

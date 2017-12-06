@@ -43,23 +43,23 @@ use("polmineR")
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)
 Y <- highlight(H, list(lightgreen = "higher"))
-htmltools::html_print(Y)
+if (interactive()) htmltools::html_print(Y)
 
 # highlight matches for a CQP query
-highlight(
+H2 <- highlight(
   H,
   highlight = list(yellow = cpos(hits(P, query = '"\\\\d+\\\\.*\\\\d*"', cqp = TRUE)))
 )
 
 # the method can be used in pipe
 if (require("magrittr")){
-  P \%>\% html() \%>\% highlight(list(lightgreen = "1986"))
-  P \%>\% html() \%>\% highlight(list(lightgreen = c("1986", "higher")))
-  P \%>\% html() \%>\% highlight(list(lightgreen = 4020:4023))   
+  P \%>\% html() \%>\% highlight(list(lightgreen = "1986")) -> H
+  P \%>\% html() \%>\% highlight(list(lightgreen = c("1986", "higher"))) -> H
+  P \%>\% html() \%>\% highlight(list(lightgreen = 4020:4023)) -> H
 }
 
 # use highlight for kwic output
 K <- kwic("REUTERS", query = "barrel")
 K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
-K2
+if (interactive()) K2
 }

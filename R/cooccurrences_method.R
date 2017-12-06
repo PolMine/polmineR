@@ -32,7 +32,7 @@
 #' @references 
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).
 #' 
-#' Manning, Christopher D.; Schütze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
+#' Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
 #' \dontrun{

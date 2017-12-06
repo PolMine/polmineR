@@ -41,5 +41,5 @@ use("polmineR")
 P <- partition("REUTERS", places = "argentina")
 as.markdown(P)
 as.markdown(P, meta = c("id", "places"))
-read(P, meta = c("id", "places"))
+if (interactive()) read(P, meta = c("id", "places"))
 }

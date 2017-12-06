@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.5.9007
-Date: 2017-11-24
+Version: 0.7.5.9009
+Date: 2017-11-28
 Authors@R: c(person("Andreas Blaette", "Developer", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -32,8 +32,7 @@ Suggests:
     shiny,
     testthat,
     tidytext,
-    magrittr,
-    stringi
+    magrittr
 Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes

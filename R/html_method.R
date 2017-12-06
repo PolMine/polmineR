@@ -15,6 +15,8 @@ NULL
 #'   a partition will be used
 #' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
 #'   elements with id attribute indicating corpus positions
+#' @param beautify logical, if \code{TRUE}, whitespace before interpunctuation
+#'   will be removed
 #' @param charoffset logical, if \code{TRUE}, character offset positions are
 #'   added to elements embracing tokens
 #' @param verbose logical, whether to be verbose
@@ -31,20 +33,21 @@ NULL
 #' use("polmineR")
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
-#' H # show full text in viewer pane
+#' if (interactive()) H # show full text in viewer pane
 #' 
 #' # html-method can be used in a pipe
 #' if (require("magrittr")){
-#'   partition("REUTERS", places = "argentina") %>% html()
+#'   H <- partition("REUTERS", places = "argentina") %>% html()
 #' }
 #' 
 #' # use html-method to get from concordance to full text
 #' K <- kwic("REUTERS", query = "barrels")
-#' html(K, i = 1)
-#' html(K, i = 2)
+#' H <- html(K, i = 1)
+#' H <- html(K, i = 2)
 #' for (i in 1:length(K)) {
-#'   show(html(K, i = i))
+#'   H <- html(K, i = i)
 #'   if (interactive()){
+#'     show(H)
 #'     userinput <- readline("press 'q' to quit or any other key to continue")
 #'     if (userinput == "q") break
 #'   }
@@ -66,6 +69,7 @@ setMethod("html", "character", function(object){
 
 
 #' @importFrom xml2 read_html xml_find_all xml_text xml_parent xml_attr xml_attr<- xml_name
+#' @importFrom xml2 xml_attrs xml_remove
 #' @importFrom stringi stri_extract_all_boundaries
 #' @rdname html-method
 .addCharacterOffset <- function(x){
@@ -97,6 +101,46 @@ setMethod("html", "character", function(object){
   return( as.character(doc) )
 }
 
+#' @importFrom xml2 xml_find_first xml_text<-
+.beautify <- function(x){
+  doc <- xml2::read_html(x)
+  lapply(
+    c(",", ".", ":", ";", "!", "?"),
+    function(interpunctuation){
+      nodes <- xml2::xml_find_all(
+        doc,
+        xpath = sprintf("//span[starts-with(@token, '%s')]", interpunctuation)
+        )
+      if (length(nodes) >= 1){
+        lapply(
+          1:length(nodes),
+          function(j){
+            precedingTextNode <- xml_find_first(
+              nodes[[j]],
+              xpath = "./preceding-sibling::text()[1]"
+            )
+            if (!is.na(xml_text(precedingTextNode))){
+              if (xml_text(precedingTextNode) == " ") xml_text(precedingTextNode) <- ""
+            }
+          }
+        )
+      }
+    }
+  )
+  
+  # remove continuing double quotes
+  nodes <- xml_find_all(doc, xpath = sprintf('//span[@token = "%s"]', "''"))
+  if (length(nodes) >= 2){
+    cpos <- as.integer(sapply(lapply(nodes, xml_attrs), function(x) x["id"]))
+    for (i in 2:length(cpos)){
+      if (cpos[i-1] + 1 == cpos[i]){
+        nodeToRemove <- xml_find_first(doc, xpath = sprintf('//span[@id = "%d"]', cpos[i]))
+        if (length(nodeToRemove) > 0) xml_remove(nodeToRemove)
+      }
+    }
+  }
+  as.character(doc)
+}
 
 
 #' @rdname html-method
@@ -104,7 +148,7 @@ setMethod("html", "character", function(object){
 #' @docType methods
 setMethod(
   "html", "partition",
-  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, ...){
+  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, ...){
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
@@ -112,7 +156,7 @@ setMethod(
     if (all(meta %in% sAttributes(object)) != TRUE) warning("not all sAttributes provided as meta are available")
     
     .message("generating markdown", verbose = verbose)
-    markdown <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
+    md <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
     
     .message("markdown to html", verbose = verbose)
     # the css for tooltips is included in the html document by default,
@@ -124,7 +168,12 @@ setMethod(
       readLines(system.file("css", "tooltips.css", package = "polmineR"))
       ), collapse = "\n", sep = "\n"
     )
-    doc <- markdown::markdownToHTML(text = markdown, stylesheet = css)
+    md <- gsub('“', '"', md)
+    md <- gsub('”', '"', md)
+    md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
+    doc <- markdown::markdownToHTML(text = md, stylesheet = css)
+    
+    if (beautify) doc <- .beautify(doc)
     
     if (charoffset) doc <- .addCharacterOffset(doc)
     

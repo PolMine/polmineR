@@ -27,7 +27,7 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' @seealso \code{\link{encode}}
 setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = TRUE){
   
-  stopifnot(.Object %in% CQI$list_corpora()) # check that corpus is available
+  stopifnot(.Object %in% CQI$list_corpora()) # ensure that corpus is available
   
   if (!is.null(sAttribute)){
     
@@ -35,20 +35,25 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     
     if (getOption("polmineR.cwb-s-decode")){
       
+      .message("run cwb-s-decode to obtain corpus positions", verbose = verbose)
       cmd <- c(
         "cwb-s-decode",
         "-r", Sys.getenv("CORPUS_REGISTRY"), .Object,
         "-S", sAttribute
       )
       cmd <- paste(cmd, collapse = " ", sep = " ")
-      .message(cmd, verbose = verbose)
       raw <- system(cmd, intern = TRUE)
+      
+      .message("adjust encoding", verbose = verbose)
       Encoding(raw) <- getEncoding(.Object)
       raw2 <- as.nativeEnc(x = raw, from = getEncoding(.Object))
+      
+      .message("convert cwb output to data.table", verbose = verbose)
       y <- as.data.table(do.call(rbind, strsplit(raw2, "\\t")), stringsAsFactors = FALSE)
       y[[1]] <- as.integer(y[[1]])
       y[[2]] <- as.integer(y[[2]])
       colnames(y) <- c("cpos_left", "cpos_right", sAttribute)
+      return( y )
       
     } else {
       stop("cwb-s-decode utility required to be present for decoding a s-attribute")
