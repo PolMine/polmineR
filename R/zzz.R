@@ -23,18 +23,6 @@
   }
   print("0005")
   
-  # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
-  if (Sys.getenv("CORPUS_REGISTRY") == ""){
-    polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
-    if (.Platform$OS.type == "windows"){
-      polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
-    }
-    Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
-    print("0006")
-    resetRegistry(registryDir = polmineRPackageRegistry, verbose = TRUE)
-    print("0007")
-  }
-  
   # polmineR:::CQI - assign it to package namespace
   print("a")
   CQI <- switch(
@@ -48,6 +36,21 @@
   print("b")
   if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
   print("c")
+  
+  # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
+  # this needs to be done after assigning CQI, as resetRegistry will call setTemplate
+  if (Sys.getenv("CORPUS_REGISTRY") == ""){
+    polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
+    if (.Platform$OS.type == "windows"){
+      polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
+    }
+    Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
+    print("0006")
+    resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
+    print("0007")
+  }
+  
+  
   
   options(
     "polmineR.project" = "",
