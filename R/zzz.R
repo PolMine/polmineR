@@ -93,7 +93,7 @@
 
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
-  (sprintf("polmineR %s", packageVersion("polmineR")))
+  packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
 }
