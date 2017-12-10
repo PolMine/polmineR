@@ -31,7 +31,7 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
-  assign("CQI", CQI, envir = parent.env(environment()))
+  if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment()))
   
   options(
     "polmineR.project" = "",
