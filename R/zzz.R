@@ -26,7 +26,7 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
-  assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
+  assign("CQI", CQI, envir = parent.env(environment()))
 
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   # this needs to be done after assigning CQI, as resetRegistry will call setTemplate
