@@ -40,22 +40,22 @@ resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), v
     library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
     
     .message("reloading rcqp library", verbose = verbose)
-    capture.output(
+    dummy <- capture.output(
       library.dynam(
         "rcqp", package = "rcqp",
         lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
       ),
       type = "output"
     )
-    if (("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])) && verbose == TRUE){
-      message("... status: OK") 
+    if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
+      .message("... status: OK", verbose = verbose) 
     } else {
-      message("... status: WARNING - rcqp dynamic library not loaded")
+      .message("... status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
     }
     
   } else {
     .message("reloading rcqp library", verbose = verbose)
-    capture.output(
+    dummy <- capture.output(
       library.dynam(
         "rcqp", package = "rcqp",
         lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))

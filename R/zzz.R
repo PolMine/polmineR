@@ -1,6 +1,5 @@
 .onLoad <- function (libname, pkgname) {
   
-  print("foo")
   # adjust dataDir, if it has not yet been set
   cwbTmpDir <- file.path(libname, pkgname, "extdata", "cwb")
   if (.Platform$OS.type == "windows") cwbTmpDir <- gsub("^[A-Z]?:?(.*)$", "\\1", cwbTmpDir)
