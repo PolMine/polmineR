@@ -1,6 +1,5 @@
 .onLoad <- function (libname, pkgname) {
   
-  print("0000")
   # adjust dataDir, if it has not yet been set
   cwbTmpDir <- file.path(libname, pkgname, "extdata", "cwb")
   if (.Platform$OS.type == "windows") cwbTmpDir <- gsub("^[A-Z]?:?(.*)$", "\\1", cwbTmpDir)
@@ -9,22 +8,16 @@
   reutersTmpDataDir <- file.path(cwbTmpDir, "indexed_corpora", "reuters")
   # checking whether the registry file exists is necessary to circumvent a 
   # devtools::document-problem
-  print("0001")
   if (file.exists(reutersTmpRegistry)){
     REUTERS <- RegistryFile$new("REUTERS", filename = reutersTmpRegistry)
     if (REUTERS$getHome() != reutersTmpDataDir){
-      print("0002")
       REUTERS$setHome(new = reutersTmpDataDir) 
-      print("0003")
       REUTERS$setInfo(new = sprintf("%s/info.md", reutersTmpDataDir))
-      print("0004")
       REUTERS$write(verbose = FALSE)
     }
   }
-  print("0005")
-  
+
   # polmineR:::CQI - assign it to package namespace
-  print("a")
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
     "rcqp" = CQI.rcqp$new(),
@@ -33,10 +26,8 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
-  print("b")
-  if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
-  print("c")
-  
+  assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
+
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   # this needs to be done after assigning CQI, as resetRegistry will call setTemplate
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
@@ -45,9 +36,7 @@
       polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
     }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
-    print("0006")
     resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
-    print("0007")
   }
   
   
@@ -102,13 +91,7 @@
   }
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
-  if (exists("CQI")){
-    print("CQI ok")
-    if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
-  } else {
-    print("no CQI 2")
-    packageStartupMessage("CQI may be missing")
-  }
+  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
 }
 
 
