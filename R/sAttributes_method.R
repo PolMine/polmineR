@@ -9,7 +9,7 @@ setGeneric("sAttributes", function(.Object, ...){standardGeneric("sAttributes")}
 #' @rdname sAttributes-method
 setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, unique = TRUE, regex = NULL){
   if (is.null(sAttribute)){
-    return(CQI$attributes(.Object, "s"))
+    return( CQI$attributes(.Object, "s") )
   } else {
     if (.Object %in% CQI$list_corpora()) {
       if (length(sAttribute) == 1){

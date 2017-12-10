@@ -25,6 +25,9 @@ template mechanism
 strucs and struc_str
 * html,partition-method has new option beautify, to remove whitespace before interpunctuation
 * output error removed in html,partition-method (that misinterprets `` as code block)
+* the class Corpus now has a slot sAttribute to keep/manage a data.table with corpus positions
+and struc values, and there is a new partition,Corpus-method. In compbination, it will be a lot
+faster to derive a partition, particularly if you need to do that repeatedly
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency

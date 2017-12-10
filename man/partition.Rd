@@ -7,6 +7,7 @@
 \alias{partition,list-method}
 \alias{partition,environment-method}
 \alias{partition,partition-method}
+\alias{partition,Corpus-method}
 \title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
@@ -23,6 +24,10 @@ partition(.Object, ...)
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, pAttribute = NULL, id2str = TRUE, xml = NULL,
   verbose = TRUE, mc = FALSE, ...)
+
+\S4method{partition}{Corpus}(.Object, def = NULL, name = "",
+  encoding = NULL, regex = FALSE, xml = "flat", type = NULL,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{.Object}{character-vector - the CWB-corpus to be used}

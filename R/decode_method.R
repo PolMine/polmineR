@@ -25,39 +25,69 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' }
 #' @exportMethod decode
 #' @seealso \code{\link{encode}}
+#' @importFrom data.table fread
 setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = TRUE){
   
   stopifnot(.Object %in% CQI$list_corpora()) # ensure that corpus is available
   
   if (!is.null(sAttribute)){
     
-    stopifnot(sAttribute %in% sAttributes(.Object)) # check that s-attribute is available
+    stopifnot(sAttribute %in% sAttributes(.Object)) 
     
-    if (getOption("polmineR.cwb-s-decode")){
+    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
       
-      .message("run cwb-s-decode to obtain corpus positions", verbose = verbose)
+      .message("using polmineR.Rcpp to get regions", verbose = verbose)
+      regions <- polmineR.Rcpp::get_region_matrix(
+        .Object, s_attribute = sAttribute[1],
+        strucs = 0:(CQI$attribute_size(.Object, sAttribute[1]) - 1),
+        registry = Sys.getenv("CORPUS_REGISTRY")
+      )
+      y <- data.table(regions)
+      colnames(y) <- c("cpos_left", "cpos_right")
+    } else if (getOption("polmineR.cwb-s-decode")){
+      .message("run cwb-s-decode to get corpus positions", verbose = verbose)
+      tmpfile <- tempfile()
       cmd <- c(
         "cwb-s-decode",
         "-r", Sys.getenv("CORPUS_REGISTRY"), .Object,
-        "-S", sAttribute
+        "-S", sAttribute[1],
+        ">", tmpfile
       )
-      cmd <- paste(cmd, collapse = " ", sep = " ")
-      raw <- system(cmd, intern = TRUE)
+      system(paste(cmd, collapse = " ", sep = " "), intern = FALSE)
       
-      .message("adjust encoding", verbose = verbose)
-      Encoding(raw) <- getEncoding(.Object)
-      raw2 <- as.nativeEnc(x = raw, from = getEncoding(.Object))
+      .message("read in result from tmpfile", verbose = verbose)
+      y <- data.table::fread(input = tmpfile, sep = "\t", header = FALSE)
       
-      .message("convert cwb output to data.table", verbose = verbose)
-      y <- as.data.table(do.call(rbind, strsplit(raw2, "\\t")), stringsAsFactors = FALSE)
-      y[[1]] <- as.integer(y[[1]])
-      y[[2]] <- as.integer(y[[2]])
-      colnames(y) <- c("cpos_left", "cpos_right", sAttribute)
-      return( y )
+      .message("consolidate table", verbose = verbose)
+      colnames(y) <- c("cpos_left", "cpos_right", sAttribute[1])
+      y[, "cpos_left" := as.integer(y[["cpos_left"]])]
+      y[, "cpos_right" := as.integer(y[["cpos_right"]])]
+      Encoding(y[[sAttribute[1]]]) <- getEncoding(.Object)
+      y[[ sAttribute[1] ]] <- as.nativeEnc(x = y[[sAttribute [1] ]], from = getEncoding(.Object))
       
     } else {
-      stop("cwb-s-decode utility required to be present for decoding a s-attribute")
+      .message("... getting corpus positions for strucs")
+      regionList <- lapply(
+        0:(CQI$attribute_size(.Object, sAttribute[1]) - 1),
+        function(i) CQI$struc2cpos(.Object, sAttribute[1], i)
+      )
+      regions <- do.call(cbind, regionList)
+      y <- data.table(t(regions))
+      colnames(y) <- c("cpos_left", "cpos_right")
     }
+    
+    if (sAttribute[1] %in% colnames(y)) sAttribute <- sAttribute[-1]
+    for (sAttr in sAttribute){
+      .message("decoding s-attribute", sAttr)
+      sAttrMax <- CQI$attribute_size(.Object, sAttr)
+      if (sAttrMax != nrow(y)) stop(
+        "s-attribute", sAttr, " has ", sAttrMax, " values, but s-sattribute ",
+        sAttr, " has only ", nrow(y), " - decode will only work for flat XML with strucs with identical length"
+      )
+      y[[sAttr]] <- sAttributes(.Object, sAttribute = sAttr, unique = FALSE)
+    }
+    
+    return( y )
     
   } else {
     

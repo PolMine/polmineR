@@ -167,7 +167,12 @@ dim(tdm)
 ## Installation
 
 
-### Windows (32 bit / i386)
+### Windows 
+
+The following instructions assume that you have installed R. If not, install it from[CRAN](https://cran.r-project.org/bin/windows/base/). An installation of [RStudio](https://www.rstudio.com/products/rstudio/download/#download) is highly recommended.
+
+
+#### Windows (32 bit / i386)
 
 At this stage, an easy way to install polmineR is available only for 32bit R. Usually, an R installation will include both 32bit and 64bit R. So if you want to keep things simple, make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools > Global Options will open a dialogue where you can choose 32bit R.
 

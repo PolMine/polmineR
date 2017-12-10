@@ -10,6 +10,7 @@
     REUTERS <- RegistryFile$new("REUTERS", filename = reutersTmpRegistry)
     if (REUTERS$getHome() != reutersTmpDataDir){
       REUTERS$setHome(new = reutersTmpDataDir) 
+      REUTERS$setInfo(new = sprintf("%s/info.md", reutersTmpDataDir))
       REUTERS$write(verbose = FALSE)
     }
   }
@@ -82,14 +83,17 @@
   }
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
-  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
-  
+  if (exists(CQI)){
+    if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
+  } else {
+    packageStartupMessage("CQI may be missing")
+  }
 }
 
 
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
-  packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
+  (sprintf("polmineR %s", packageVersion("polmineR")))
   packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   packageStartupMessage("interface: ", class(CQI)[1])
 }

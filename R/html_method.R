@@ -168,8 +168,8 @@ setMethod(
       readLines(system.file("css", "tooltips.css", package = "polmineR"))
       ), collapse = "\n", sep = "\n"
     )
-    md <- gsub('“', '"', md)
-    md <- gsub('”', '"', md)
+    md <- gsub('\u201c', '"', md)
+    md <- gsub('\u201D', '"', md)
     md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
     doc <- markdown::markdownToHTML(text = md, stylesheet = css)
     

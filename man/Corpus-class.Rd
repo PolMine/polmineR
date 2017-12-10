@@ -9,23 +9,62 @@
 Corpus
 }
 \description{
-Corpus class.
+The R6 \code{Corpus} class offers a set of methods to retrieve and manage CWB
+indexed corpora.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{corpus}}{character vector, CWB corpus}
+\item{\code{corpus}}{character vector (length 1), a CWB corpus}
 
-\item{\code{encoding}}{encoding of the corpus}
+\item{\code{encoding}}{encoding of the corpus (typically 'UTF-8' or 'latin1'), assigned
+automatically upon initialization of the corpus}
 
-\item{\code{count}}{data.table with counts}
+\item{\code{cpos}}{a two-column \code{matrix} with regions of a corpus underlying the
+s-attributes of the \code{data.table} in field \code{sAttributes}}
+
+\item{\code{sAttributes}}{a \code{data.table} with the values of a set of sAttributes}
+
+\item{\code{stat}}{a \code{data.table} with counts}
 }}
+
+\section{Arguments}{
+
+\describe{
+  \item{corpus}{a corpus}
+  \item{pAttribute}{p-attribute, to perform count}
+  \item{sAttributes}{s-attributes}
+  \item{id2str}{logical, whether to turn token ids into strings upon counting}
+  \item{as.html}{logical}
+}
+}
 
 \section{Methods}{
 
 \describe{
+  \item{\code{initialize(corpus, pAttribute = NULL, sAttributes = NULL)}}{Initialize a new object of class \code{Corpus}.}
   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
+  \item{\code{as.partition()}}{turn \code{Corpus} into a partition}
+  \item{\code{getInfo(as.html = FALSE)}}{}
+  \item{\code{showInfo()}}{}
 }
 }
 
+\examples{
+use("polmineR")
+REUTERS <- Corpus$new("REUTERS")
+infofile <- REUTERS$getInfo()
+if (interactive()) REUTERS$showInfo()
+
+# use Corpus class to manage counts
+REUTERS <- Corpus$new("REUTERS", pAttribute = "word")
+REUTERS$stat
+
+# use Corpus class for creating partitions
+REUTERS <- Corpus$new("REUTERS", sAttributes = c("id", "places"))
+usa <- partition(REUTERS, places = "usa")
+sa <- partition(REUTERS, places = "saudi-arabia", regex = TRUE)
+
+reut <- REUTERS$as.partition()
+}
 \keyword{datasets}
