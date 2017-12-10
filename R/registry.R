@@ -26,17 +26,18 @@
 #' @rdname registry
 #' @name resetRegistry
 resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
+  print(registryDir)
   .message("resetting CORPUS_REGISTRY environment variable:", verbose = verbose)
   if (dir.exists(registryDir)){
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
     Sys.setenv(CORPUS_REGISTRY = registryDir)
-    message("    ", registryDir)
+    .message("    ", registryDir, verbose = verbose)
   } else {
     stop("registryDir does not exist")
   }
   
   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
-    
+    print("1")
     .message("unloading rcqp library", verbose = verbose)
     library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
     
@@ -52,6 +53,7 @@ resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), v
     }
     
   } else {
+    print("2")
     .message("reloading rcqp library", verbose = verbose)
     library.dynam(
       "rcqp", package = "rcqp",

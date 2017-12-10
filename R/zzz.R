@@ -24,7 +24,6 @@
       polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
     }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
-    print("foo")
     resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
   }
   
