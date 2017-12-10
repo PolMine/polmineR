@@ -30,7 +30,9 @@
       polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
     }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
+    print("0006")
     resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
+    print("0007")
   }
   
   # polmineR:::CQI - assign it to package namespace
