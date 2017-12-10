@@ -83,7 +83,7 @@
   }
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
-  if (exists(CQI)){
+  if (exists("CQI")){
     if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
   } else {
     packageStartupMessage("CQI may be missing")
