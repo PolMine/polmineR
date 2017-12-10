@@ -36,7 +36,7 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
-  if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment()))
+  if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
   
   options(
     "polmineR.project" = "",
@@ -91,6 +91,7 @@
   if (exists("CQI")){
     if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
   } else {
+    print("no CQI 2")
     packageStartupMessage("CQI may be missing")
   }
 }
