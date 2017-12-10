@@ -89,6 +89,7 @@
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
   if (exists("CQI")){
+    print("CQI ok")
     if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
   } else {
     print("no CQI 2")
