@@ -39,8 +39,6 @@
     resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
   }
   
-  
-  
   options(
     "polmineR.project" = "",
     "polmineR.projectDir" = "",
