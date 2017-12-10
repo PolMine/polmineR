@@ -30,7 +30,7 @@ resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), v
   if (dir.exists(registryDir)){
     oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
     Sys.setenv(CORPUS_REGISTRY = registryDir)
-    .message("    ", registryDir, verbose = verbose)
+    .message("setting registry:", registryDir, verbose = verbose)
   } else {
     stop("registryDir does not exist")
   }
@@ -54,14 +54,16 @@ resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), v
     }
     
   } else {
-    .message("reloading rcqp library", verbose = verbose)
-    dummy <- capture.output(
-      library.dynam(
-        "rcqp", package = "rcqp",
-        lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
-      ),
-      type = "output"
-    )
+    if (requireNamespace("rcqp", quietly = TRUE)){
+      .message("loading rcqp library", verbose = verbose)
+      dummy <- capture.output(
+        library.dynam(
+          "rcqp", package = "rcqp",
+          lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
+        ),
+        type = "output"
+      )
+    }
   }
   setTemplate()
   invisible(oldRegistry)
