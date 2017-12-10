@@ -31,7 +31,7 @@
     }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
     print("0006")
-    resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
+    resetRegistry(registryDir = polmineRPackageRegistry, verbose = TRUE)
     print("0007")
   }
   
