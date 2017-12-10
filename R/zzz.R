@@ -28,6 +28,7 @@
   }
   
   # polmineR:::CQI - assign it to package namespace
+  print("a")
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
     "rcqp" = CQI.rcqp$new(),
@@ -36,7 +37,9 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)) CQI.rcqp$new() else CQI.perl$new()
   )
+  print("b")
   if (exists("CQI")) assign("CQI", CQI, envir = parent.env(environment())) else print("no CQI")
+  print("c")
   
   options(
     "polmineR.project" = "",
