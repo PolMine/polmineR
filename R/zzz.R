@@ -9,14 +9,19 @@
   reutersTmpDataDir <- file.path(cwbTmpDir, "indexed_corpora", "reuters")
   # checking whether the registry file exists is necessary to circumvent a 
   # devtools::document-problem
+  print("0001")
   if (file.exists(reutersTmpRegistry)){
     REUTERS <- RegistryFile$new("REUTERS", filename = reutersTmpRegistry)
     if (REUTERS$getHome() != reutersTmpDataDir){
+      print("0002")
       REUTERS$setHome(new = reutersTmpDataDir) 
+      print("0003")
       REUTERS$setInfo(new = sprintf("%s/info.md", reutersTmpDataDir))
+      print("0004")
       REUTERS$write(verbose = FALSE)
     }
   }
+  print("0005")
   
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
