@@ -327,7 +327,7 @@ RegistryFile <- setRefClass(
       if (.self$package %in% utils::installed.packages()){
         newDir <- system.file("extdata", "cwb", "indexed_corpora", .self$getId(), package = .self$package)
         if (.Platform$OS.type == "windows"){
-          newDir <- gsub("^.*?/", "/", newDir)
+          newDir <- gsub("^[A-Z]?:?(.*)$", "\\1", newDir)
         }
         .self$setHome(new = newDir)
         .self$write()
