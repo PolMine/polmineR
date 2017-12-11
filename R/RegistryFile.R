@@ -184,8 +184,8 @@ RegistryFile <- setRefClass(
       "Get the sAttributes."
 
       if (length(.self$txt) == 0) .self$read()
-      sAttrLines <- grep("\\[annotations\\]", .self$txt)
-      gsub("^STRUCTURE\\s+(.*?)\\s.*?$", "\\1", .self$txt[sAttrLines], perl = TRUE)
+      sAttrLines <- grep("^STRUCTURE.*?$", .self$txt)
+      gsub("^STRUCTURE\\s+(.*?)(|\\s+.*?)$", "\\1", .self$txt[sAttrLines], perl = TRUE)
 
     },
 
