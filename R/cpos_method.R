@@ -35,6 +35,7 @@ NULL
 #' @exportMethod cpos
 #' @rdname cpos-method
 #' @name cpos
+#' @importFrom data.table fread
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
@@ -65,18 +66,45 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
     hitList <- lapply(
       query,
       function(Q){
-        CQI$query(.Object, Q)
-        cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
-        if (is(cpos)[1] == "try-error"){
-          .message("no hits for query: ", Q, verbose = verbose)
-          hits <- NULL
-        } else if (!is.null(cpos)) {
-          hits <- matrix(cpos[,1:2], ncol = 2)
-        } else {
-          .message("no hits for query: ", Q, verbose = verbose)
-          hits <- NULL
+        if (class(CQI)[1] == "CQI.rcqp"){
+          CQI$query(.Object, Q)
+          cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
+          if (is(cpos)[1] == "try-error"){
+            .message("no hits for query: ", Q, verbose = verbose)
+            hits <- NULL
+          } else if (!is.null(cpos)) {
+            hits <- matrix(cpos[,1:2], ncol = 2)
+          } else {
+            .message("no hits for query: ", Q, verbose = verbose)
+            hits <- NULL
+          }
+          return(hits)
+        } else if (class(CQI)[1] == "CQI.Rcpp"){
+          if (options("polmineR.cqp") == TRUE){
+            batchfile <- tempfile()
+            cqpresult <- tempfile()
+            
+            batchCmdCQP <- c(
+              sprintf("%s;\n", .Object),
+              sprintf("TMP = %s;\n", query),
+              "dump TMP;\n"
+            )
+            cat(paste(batchCmdCQP, sep = " ", collapse = " "), file = batchfile)
+            
+            cqpCmd <- if (.Platform$OS.type == "windows") '"C:\\Program Files\\CWB\\bin\\cqp.exe"' else "cqp"
+            cmdCWB <- c(
+              cqpCmd, "-r", Sys.getenv("CORPUS_REGISTRY"),
+              "-f", batchfile,
+              ">", cqpresult
+            )
+            do.call(
+              what = if (.Platform$OS.type == "windows") "shell" else "system",
+              args = list(paste(cmdCWB, collapse = " "), intern = FALSE)
+            )
+            dt <- fread(cqpresult, sep = "\t")
+            if (nrow(dt) > 0) return( as.matrix(dt)[,1:2] ) else return( NULL )
+          }
         }
-        hits
       }
     )
     hits <- do.call(rbind, hitList)
@@ -129,3 +157,5 @@ setMethod("cpos", "matrix", function(.Object){
 setMethod("cpos", "hits", function(.Object){
   cpos(as.matrix(.Object@dt[, c("cpos_left", "cpos_right")]))
 })
+
+

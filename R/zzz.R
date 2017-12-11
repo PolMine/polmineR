@@ -21,7 +21,7 @@
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
     "rcqp" = CQI.rcqp$new(),
-    "perl" = CQI.cqpserver$new(),
+    "perl" = CQI.perl$new(),
     "cqpserver" = CQI.cqpserver$new(),
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("polmineR.Rcpp", lib.loc = .libPaths(), quietly = TRUE)){
@@ -92,6 +92,8 @@
       options("polmineR.cwb-lexdecode" = TRUE)
     if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)
       options("polmineR.cwb-regedit" = TRUE)
+    if (system("cqp -h", intern = FALSE, ignore.stderr = TRUE) == 1)
+      options("polmineR.cqp" = TRUE)
   }
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
