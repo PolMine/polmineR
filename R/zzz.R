@@ -58,7 +58,7 @@
     "polmineR.lineview" = FALSE,
     "polmineR.meta " =  character(),
     "polmineR.mc" = FALSE,
-    "polmineR.cores" = 2,
+    "polmineR.cores" = if (.Platform$OS.type == "windows") 1 else 2,
     "polmineR.smtpServer" = "",
     "polmineR.smtpPort" = "",
     "polmineR.email" = "",
