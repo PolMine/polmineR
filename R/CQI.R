@@ -107,7 +107,7 @@ CQI.Rcpp <- R6Class(
       }
     },
     
-    attribute_size = function(corpus, attribute, type){
+    attribute_size = function(corpus, attribute, type = "s"){
       polmineR.Rcpp::attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     

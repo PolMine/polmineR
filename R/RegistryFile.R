@@ -185,8 +185,8 @@ RegistryFile <- setRefClass(
 
       if (length(.self$txt) == 0) .self$read()
       sAttrLines <- grep("^STRUCTURE.*?$", .self$txt)
-      gsub("^STRUCTURE\\s+(.*?)(|\\s+.*?)$", "\\1", .self$txt[sAttrLines], perl = TRUE)
-
+      y <- gsub("^STRUCTURE\\s+(.*?)(|\\s+.*?)$", "\\1", .self$txt[sAttrLines], perl = TRUE)
+      return(y)
     },
 
     addSAttribute = function(sAttribute){

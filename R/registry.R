@@ -25,6 +25,7 @@
 #' @export resetRegistry
 #' @rdname registry
 #' @name resetRegistry
+#' @importFrom utils capture.output
 resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
   .message("resetting CORPUS_REGISTRY environment variable:", verbose = verbose)
   if (dir.exists(registryDir)){

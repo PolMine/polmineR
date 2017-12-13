@@ -91,7 +91,11 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
             )
             cat(paste(batchCmdCQP, sep = " ", collapse = " "), file = batchfile)
             
-            cqpCmd <- if (.Platform$OS.type == "windows") '"C:\\Program Files\\CWB\\bin\\cqp.exe"' else "cqp"
+            if (.Platform$OS.type == "windows"){
+              cqpCmd <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
+            } else {
+              cqpCmd <- "cqp"
+            }
             cmdCWB <- c(
               cqpCmd, "-r", Sys.getenv("CORPUS_REGISTRY"),
               "-f", batchfile,
@@ -101,7 +105,8 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
               what = if (.Platform$OS.type == "windows") "shell" else "system",
               args = list(paste(cmdCWB, collapse = " "), intern = FALSE)
             )
-            dt <- fread(cqpresult, sep = "\t")
+            dt <- try(fread(cqpresult, sep = "\t"), silent = TRUE)
+            if (class(dt)[1] == "try-error") return( NULL )
             if (nrow(dt) > 0) return( as.matrix(dt)[,1:2] ) else return( NULL )
           }
         }
