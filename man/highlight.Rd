@@ -48,7 +48,7 @@ if (interactive()) htmltools::html_print(Y)
 # highlight matches for a CQP query
 H2 <- highlight(
   H,
-  highlight = list(yellow = cpos(hits(P, query = '"\\\\d+\\\\.*\\\\d*"', cqp = TRUE)))
+  highlight = list(yellow = cpos(hits(P, query = '"prod.*"', cqp = TRUE)))
 )
 
 # the method can be used in pipe

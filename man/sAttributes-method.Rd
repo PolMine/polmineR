@@ -11,7 +11,7 @@
 \S4method{sAttributes}{character}(.Object, sAttribute = NULL, unique = TRUE,
   regex = NULL)
 
-\S4method{sAttributes}{partition}(.Object, sAttribute = NULL)
+\S4method{sAttributes}{partition}(.Object, sAttribute = NULL, unique = TRUE)
 }
 \arguments{
 \item{.Object}{either a \code{partition} object or a character vector specifying a CWB corpus}

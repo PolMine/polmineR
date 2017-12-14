@@ -102,7 +102,7 @@ setMethod("partitionBundle", "character", function(
       corpus = corpus, encoding = encoding,
       stat = data.table(),
       cpos = cposList[[i]],
-      size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1)),
+      size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1L)),
       name = names(cposList)[i],
       sAttributes = setNames(list(names(cposList)[i]), sAttribute),
       sAttributeStrucs = sAttribute,

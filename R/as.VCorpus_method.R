@@ -12,10 +12,19 @@
 #' VC <- as.VCorpus(PB)
 #' }
 setMethod("as.VCorpus", "partitionBundle", function(x){
+  sAttrLengths <- sapply(sAttributes(x@objects[[1]]@corpus), function(sAttr) CQI$attribute_size(x@objects[[1]]@corpus, sAttr, type = "s"))
+  if (length(unique(sAttrLengths)) == length(sAttrLengths)){
+    sAttrToGet <- sAttributes(x@objects[[1]]@corpus)
+  } else {
+    message("Using only the s-attributes that have the same length as the s-attribute in the slot sAttributeStrucs ",
+            "of the first partition")
+    sAttrToGet <- names(sAttrLengths[which(sAttrLengths == sAttrLengths[x@objects[[1]]@sAttributeStrucs])])
+  }
+  
   content <- blapply(
     x@objects,
     function(P){
-      metadata <- sapply(sAttributes(P), function(sAttr) sAttributes(P, sAttr)[1])
+      metadata <- sapply(sAttrToGet, function(sAttr) sAttributes(P, sAttr)[1])
       class(metadata) <- "TextDocumentMeta"
       doc <- list(
         meta = metadata,

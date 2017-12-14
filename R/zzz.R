@@ -24,10 +24,10 @@
     "perl" = CQI.perl$new(),
     "cqpserver" = CQI.cqpserver$new(),
     "Rcpp" = CQI.Rcpp$new(),
-    if (requireNamespace("polmineR.Rcpp", lib.loc = .libPaths(), quietly = TRUE)){
-      CQI.Rcpp$new()
-    } else if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
+    if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
       CQI.rcqp$new()
+    } else if (requireNamespace("polmineR.Rcpp", lib.loc = .libPaths(), quietly = TRUE)){
+      CQI.Rcpp$new()
     } else {
       CQI.perl$new()
     }

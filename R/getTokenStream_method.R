@@ -28,14 +28,14 @@ setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, enc
     Encoding(tokens) <- encoding
     tokens <- as.nativeEnc(tokens, from = encoding)
   }
-  if (cpos == TRUE) names(tokens) <- .Object
+  if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
-    if (beautify == TRUE){
+    if (beautify){
       pos <- CQI$cpos2str(corpus, "pos", .Object)
       whitespace <- rep(collapse, times = length(.Object))
-      whitespace[grep("\\$[\\.;,:!?]", pos, perl=T)] <- ""
-      whitespace[grep("\\)", tokens, perl=T)] <- ""
-      whitespace[grep("\\(", tokens, perl=T) + 1] <- ""
+      whitespace[grep("\\$[\\.;,:!?]", pos, perl = T)] <- ""
+      whitespace[grep("\\)", tokens, perl = T)] <- ""
+      whitespace[grep("\\(", tokens, perl = T) + 1] <- ""
       whitespace[1] <- ""
       tokens <- paste(paste(whitespace, tokens, sep=""), collapse="")
     } else {
@@ -47,7 +47,7 @@ setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, enc
 
 #' @rdname getTokenStream-method
 setMethod("getTokenStream", "matrix", function(.Object, ...){
-  cposVector <- as.vector(unlist(apply(.Object, 1, function(row) c(row[1]:row[2]))))
+  cposVector <- as.vector(unlist(apply(.Object, 1, function(row) row[1]:row[2])))
   getTokenStream(cposVector, ...)
 })
 
@@ -56,7 +56,7 @@ setMethod("getTokenStream", "matrix", function(.Object, ...){
 setMethod("getTokenStream", "character", function(.Object, left = NULL, right = NULL, ...){
   if (is.null(left)) left <- 0
   if (is.null(right)) right <- size(.Object) - 1
-  getTokenStream(c(left:right), corpus = .Object, ...)
+  getTokenStream(left:right, corpus = .Object, ...)
 })
 
 #' @rdname getTokenStream-method

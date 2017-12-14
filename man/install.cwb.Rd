@@ -7,5 +7,7 @@
 install.cwb()
 }
 \description{
-Install Corpus Workbench
+Install precompiled version of the Corpus Workbench in the directory
+extdata/cwb/CWB. This is a precondition to offer full CQP functionality
+on Windows systems.
 }

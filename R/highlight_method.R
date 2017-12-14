@@ -26,7 +26,7 @@
 #' # highlight matches for a CQP query
 #' H2 <- highlight(
 #'   H,
-#'   highlight = list(yellow = cpos(hits(P, query = '"\\d+\\.*\\d*"', cqp = TRUE)))
+#'   highlight = list(yellow = cpos(hits(P, query = '"prod.*"', cqp = TRUE)))
 #' )
 #' 
 #' # the method can be used in pipe
@@ -69,7 +69,7 @@ setMethod("highlight", "character", function(.Object, highlight = list()){
   }
   as.character(doc)
 })
-    
+
 #' @rdname highlight
 setMethod("highlight", "html", function(.Object, highlight = list()){
   htmltools::HTML(
@@ -84,7 +84,7 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
       regexMatchList <- lapply(
         highlight[[color]],
         function(expr) grep(expr, .Object@cpos[["word"]], perl = perl)
-        )
+      )
       toHighlight <- 1:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
     } else {
       toHighlight <- .Object@cpos[["word"]] %in% highlight[[color]]

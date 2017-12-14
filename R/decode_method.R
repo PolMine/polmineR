@@ -95,7 +95,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     pAttributeList <- lapply(
       pAttributes(.Object),
       function(x){
-        .message("decoding pAttribute ", x, verbose)
+        .message("decoding pAttribute", x, verbose = verbose)
         tokens <- getTokenStream(.Object, pAttribute = x)
         Encoding(tokens) <- getEncoding(.Object)
         as.nativeEnc(tokens, from = getEncoding(.Object))

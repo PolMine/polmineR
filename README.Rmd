@@ -310,6 +310,7 @@ install.packages(
   )
 ```
 
+
 ##### Building rcqp from source
 
 If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.
@@ -351,21 +352,53 @@ corpus()
 
 You should see a message that rcqp is the interface used, and that the REUTERS corpus is on your system.
 
-### Linux
 
-The pcre, glib and pkg-config libraries can be installed using apt-get.
+### Linux (Ubuntu)
 
-```{sh,  eval = FALSE}
-sudo apt-get install libglib2.0-dev
-sudo apt-get install libssl-dev
-sudo apt-get install libcurl4-openssl-dev
-```	
+If you have not yet installed R, there is a good instruction at [ubuntuuser](https://wiki.ubuntuusers.de/R/). To install base R, enter in the terminal.
 
-The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
-
-```{r, eval = FALSE}
-install.packages("RUnit", "devtools", "plyr", "tm")
-install.packages("rcqp")
-install.packages("polmineR")
+```{sh}
+sudo apt-get install r-base
 ```
 
+Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update.
+
+```{sh}
+sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9
+sudo add-apt-repository 'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+It is highly recommended to install [RStudio](https://www.rstudio.com/products/rstudio/download/#download), a powerful IDE for R. Output of polmineR methods is generally optimized to be displayed using RStudio facilities. If you are working on a remote server, running RStudio Server may be an interesting option to consider.
+
+The Corpus Workbench will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.
+
+```{sh,  eval = FALSE}
+sudo apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev
+sudo apt-get install libxml2-dev
+sudo apt-get install libprotobuf-dev
+```
+
+The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR. It is recommended to install polmineR with all suggested dependencies, which may take a while.
+
+```{r, eval = FALSE}
+install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))
+install.packages("rcqp")
+install.packages("polmineR", dependencies = c("Depends", "Imports", "Suggests"))
+```
+
+Use devtools to install the development version of polmineR from GitHub.
+
+```{r, eval = FALSE}
+install.packages("devtools")
+devtools::install_github("PolMine/polmineR", ref = "dev")
+```
+
+Finally, you may want to install packaged corpora to run examples in the vignette, and the manual packages.
+
+```{r, eval = FALSE}
+library(polmineR)
+install.corpus("polmineR.sampleCorpus")
+install.corpus("EUROPARL-EN")
+```
