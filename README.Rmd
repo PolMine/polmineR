@@ -174,21 +174,17 @@ The following instructions assume that you have installed R. If not, install it 
 
 #### Windows (32 bit / i386)
 
-At this stage, an easy way to install polmineR is available only for 32bit R. Usually, an R installation will include both 32bit and 64bit R. So if you want to keep things simple, make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools > Global Options will open a dialogue where you can choose 32bit R.
-
 Before installing polmineR, the package 'rcqp' needs to be installed. In turn, rcqp requires plyr, which should be installed first.
 
 ```{r, eval = FALSE}
 install.packages("plyr")
 ```
 
-To avoid compiling C code in a package, packages with compiled binaries are very handy. Windows binaries for the rcqp package are not available at CRAN, but can be installed from a repository of packages entertained at the server of the PolMine project:
+Windows binaries for the rcqp package are not available at CRAN, and cannot be compiled on Windows itself, but a cross-compilation can be installed from a repository of packages hosted at the server of the PolMine project:
 
 ```{r, eval = FALSE}
 install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "win.binary")
 ```
-
-To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package we offer uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.
 
 Before proceeding to install polmineR, we install dependencies that are not installed automatically.
 
@@ -239,33 +235,17 @@ corpus() # to see corpora available at your system
 ```
 
 
-### Windows (64 bit / x86)
+#### Windows (64 bit)
 
-At this stage, 64 bit support is still experimental. Apart from an installation of 64 bit R, you will need to install Rtools, available [here](https://cran.r-project.org/bin/windows/Rtools/). Rtools is a collection of tools necessary to build and compile R packages on a Windows machine.
-
-To interface to a core C library of the Corpus Workbench (CWB), you will need an installation of a 64 bit AND a 32 bit version of the CWB. 
-
-The "official" 32 bit version of the CWB is available [here](https://sourceforge.net/projects/cwb/files/cwb/cwb-3.4-beta/). Installation instructions are available at the [CWB Website](http://cwb.sourceforge.net/beta.php). The 32 bit version should be installed in the directory "C:\Program Files", with admin rights.
-
-The 64 bit version, prepared by Andreas Blaette, is available [here](http://polmine.sowi.uni-due.de/public/?dir=CWB). Install this 64 bit CWB version to "C:\Program Files (x86)". In the unzipped downloaded zip file, you will find a bat file that will do the installation. Take care that you run the file with administrator rights. Without these rights, no files will be copied.
-
-The interface to the Corpus Workbench is the package polmineR.Rcpp, [available at GitHub](https://www.github.com/PolMine/polminer.Rcpp). If you use git, you can clone that repository, otherwise, you can download a zip file.
-
-The downloaded zip file needs to be unzipped again. Then, in the directory with the 'polmineR.Rcpp'-directory, run:
-
-```{sh, eval = FALSE}
-R CMD build polmineR.Rcpp
-R CMD INSTALL polmineR.Rcpp_0.1.0.tar.gz
-```
-
-If you read closely what is going on during the compilation, you will see a few warnings that libraries are not found. If creating the package is not aborted, nothing is wrong. R CMD build will look for the 64 bit files in the directory with the 32 bit dlls first and discover that they do not work for 64 bit, only then will it move to the correct location.
-
-One polmineR.Rcpp is installed, proceed with the instructions for installing polmineR in a 32 bit context. Future binary releases of the polmineR.Rcpp package may make things easier. Anyway, the proof of concept is there that polmineR will work on a 64 bit Windows machine too.
-
-Finally, you need to make sure that polmineR will interface to CWB indexed corpora using polmineR.Rcpp, and not with rcqp (the default). To set the interface accordingly:
-
-```{r, eval = FALSE}
-setCorpusWorkbenchInterface("Rcpp")
+```{r}
+install.packages(
+  "polmineR.Rcpp",
+  repos = "http://polmine.sowi.uni-due.de/packages",
+  type = "win.binary"
+  )
+devtools::install_github("PolMine/polmineR", ref = "dev")
+library(polmineR)
+install.cwb()
 ```
 
 To test whether corpora are available:
@@ -273,6 +253,8 @@ To test whether corpora are available:
 ```{r, eval = FALSE}
 corpus()
 ```
+
+
 
 ### MacOS
 

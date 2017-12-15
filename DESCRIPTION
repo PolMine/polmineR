@@ -28,7 +28,6 @@ Suggests:
     xlsx,
     sendmailR,
     knitr,
-    rJava,
     shiny,
     testthat,
     tidytext,
