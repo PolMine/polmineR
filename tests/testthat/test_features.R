@@ -1,4 +1,5 @@
 library(polmineR)
+use("polmineR")
 testthat::context("features")
 
 test_that(
