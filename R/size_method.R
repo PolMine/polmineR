@@ -63,7 +63,7 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
       cpos_matrix <- do.call(
         rbind,
         lapply(
-          c(0:(CQI$attribute_size(x, sAttribute[1], type = "s") - 1)),
+          0:(CQI$attribute_size(x, sAttribute[1], type = "s") - 1),
           function(x) CQI$struc2cpos(x, sAttribute[1], x))
       )
     }

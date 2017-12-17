@@ -1,4 +1,5 @@
 library(polmineR)
+use("polmineR")
 testthat::context("as.TermDocumentMatrix")
 
 test_that(
