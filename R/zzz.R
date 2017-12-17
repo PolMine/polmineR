@@ -100,7 +100,7 @@
     cwb <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
     if (cwb == "") cwb <- 'C:/"Program Files"/CWB/bin/cqp.exe'
     tryCatch(
-      expr = {cqpVersion <- shell(sprintf("%s -v", cwb, intern = TRUE))},
+      expr = {cqpVersion <- shell(sprintf("%s -v", cwb), intern = TRUE)},
       warning = function(x) options("polmineR.cqp" = FALSE)
     )
     if (exists("cqpVersion")){
