@@ -97,8 +97,15 @@
   }
   
   if (.Platform$OS.type == "windows"){
-    # if (shell('"C:\\Program Files\\CWB\\bin\\cqp.exe" -v', intern = TRUE)[2] == "The IMS Open Corpus Workbench (CWB)")
-    #   options("polmineR.cqp" = TRUE)
+    tryCatch(
+      expr = {cqpVersion <- shell(sprintf("%s -v", system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")), intern = TRUE)},
+      warning = function(x) options("polmineR.cqp" = FALSE)
+    )
+    if (exists("cqpVersion")){
+      if (grepl("The IMS Open Corpus Workbench", cqpVersion[2])) options("polmineR.cqp" = TRUE)
+    } else {
+      options("polmineR.cqp" = FALSE)
+    }
   }
   
   # rcqp is not always accessible here - setTemplates would not work with perl interface
