@@ -92,7 +92,13 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
             cat(paste(batchCmdCQP, sep = " ", collapse = " "), file = batchfile)
             
             if (.Platform$OS.type == "windows"){
-              cqpCmd <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
+              if (getOption("polmineR.cqp")){
+                cqpCmd <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
+                if (cqpCmd == "") cqpCmd <- 'C:/"Program Files"/CWB/bin/cqp.exe'
+              } else {
+                stop("On Windows, an installation of the CWB is required to run ",
+                     "CQP queries. Use install.cwb() and try again.")
+              }
             } else {
               cqpCmd <- "cqp"
             }
