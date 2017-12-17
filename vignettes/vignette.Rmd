@@ -578,7 +578,7 @@ sudo apt-get install texlive-full texlive-xetex
 
 Now install the remaining packages from within R.
 
-```{r}
+```{r, eval = FALSE}
 devtools::install_github("PolMine/polmineR.Rcpp")
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
