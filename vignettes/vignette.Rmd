@@ -325,7 +325,7 @@ The following instructions assume that you have installed R. If not, install it 
 
 For 64bit Windows, an interface included in the package polmineR.Rcpp is offered. It can be installed from the R package repository on the Webserver of the PolMine project as follows.
 
-```{r}
+```{r, eval = FALSE}
 install.packages(
   "polmineR.Rcpp",
   repos = "http://polmine.sowi.uni-due.de/packages",
@@ -335,20 +335,20 @@ install.packages(
 
 Now the official CRAN version of polmineR can be installed.
 
-```{r}
+```{r, eval = FALSE}
 install.packages("polmineR")
 ```
 
 To install the most recent development version that is hosted in a GitHub repository, use the convenient installation mechanism offered by the devtools package.
 
-```{r}
+```{r, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 To have access to the syntax of CQP when forming queries, an installation of the CWB needs to be on your system. The install.cwb-function of polmineR will download the CWB binaries and puts it into a subfolder of the polmineR package.
 
-```{r}
+```{r, eval = FALSE}
 library(polmineR)
 install.cwb()
 ```
