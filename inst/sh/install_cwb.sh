@@ -23,4 +23,3 @@ make test
 make install
 
 cd ..
-rm -r tmp
