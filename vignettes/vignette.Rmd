@@ -598,7 +598,7 @@ Sys.setenv(CORPUS_REGISTRY = "/PATH/TO/YOUR/REGISTRY/DIRECTORY")
 
 To check whether and how the environment variable is set:
 
-```{r}
+```{r, eval = FALSE}
 Sys.getenv("CORPUS_REGISTRY")
 ```
 
