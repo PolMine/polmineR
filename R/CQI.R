@@ -84,6 +84,8 @@ CQI.rcqp <- R6Class(
   )
 )
 
+
+
 #' @export CQI.Rcpp
 #' @rdname CQI
 CQI.Rcpp <- R6Class(
@@ -174,6 +176,124 @@ CQI.Rcpp <- R6Class(
   
 )
 
+
+.cqi_perl = list(
+  
+  corpus_size = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "PLPRBT";',
+    '$Word = $C->attribute("word", "p");',
+    '$corpus_size = $Word->max_cpos;',
+    'print $corpus_size;'
+  ),
+  
+  attribute_size = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '$lex_size = $Word->max_id;',
+    'print $lex_size;'
+  ),
+  
+  str2freq = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("word", "p");',
+    '$id = $Word->str2id("internet");',
+    '$f = $Word->id2freq($id);',
+    'print $f;'
+  ),
+  
+  id2freq = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '@id = (%s);',
+    'foreach $id (@id) {print $Word->id2freq($id); print "\n";};'
+    # '@freq = $Word->idlist2freq(@id);',
+    # 'foreach $freq (@freq){print $freq; print "\n";};'
+  ),
+  
+  id2cpos = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '$id = (%s);',
+    '@cpos = $Word->id2cpos($id);',
+    'foreach $cpos (@cpos) {print $cpos; print "\n";};'
+  ),
+  
+  id2str = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '@id = (%s);',
+    'foreach $id (@id) {print $Word->id2str($id); print "\n";};'
+  ),
+  
+  str2id = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    # '@str = ("Migration", "Integration");',
+    '@str = (%s);',
+    # '@foo = (%s);',
+    'foreach $str (@str) {print $Word->str2id($str); print "\n";};'
+  ),
+  
+  cpos2struc = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$S = $C->attribute("%s", "s");',
+    '@cpos = (%s);',
+    'foreach $cpos (@cpos) {$num = $S->cpos2struc($cpos); print $num; print "\n";};'
+  ),
+  
+  struc2cpos = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$S = $C->attribute("%s", "s");',
+    '@struc = (%s);',
+    # 'foreach $struc (@struc) {$num = $S->struc2cpos($struc); print $num; print "\n";};'
+    'foreach $struc (@struc) {@cpos = $S->struc2cpos($struc); foreach $cpos (@cpos) {print $cpos; print "\n";}};'
+  ),
+  
+  struc2str = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$S = $C->attribute("%s", "s");',
+    '@struc = (%s);',
+    'foreach $struc (@struc) {print $S->struc2str($struc); print "\n";};'
+  ),
+  
+  cpos2str = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '@cpos = (%s);',
+    'foreach $cpos (@cpos) {$token = $Word->cpos2str($cpos); print $token; print "\n";};'
+  ),
+  
+  cpos2id = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '@cpos = (%s);',
+    'foreach $cpos (@cpos) {$id = $Word->cpos2id($cpos); print $id; print "\n";};'
+    # 'foreach $cpos (@cpos) {print $Word->cpos2id($cpos); print "\n";};'
+  ),
+  
+  regex2id = c(
+    'use CWB::CL;',
+    '$C = new CWB::CL::Corpus "%s";',
+    '$Word = $C->attribute("%s", "p");',
+    '$regex = "%s";',
+    '@id = $Word->regex2id($regex, "cd");',
+    'foreach $id (@id){print $id; print "\n";};'
+  )
+)
+
+
 #' @rdname CQI
 #' @export CQI.perl
 CQI.perl <- R6Class(
@@ -190,7 +310,7 @@ CQI.perl <- R6Class(
     },
     
     attribute_size = function(corpus, attribute, type = NULL){
-      as.integer(system(sprintf(self$as.cmd(.cqi_perl[["attribute_size"]]), corpus, attribute), intern=TRUE))
+      as.integer(system(sprintf(self$as.cmd(.cqi_perl[["attribute_size"]]), corpus, attribute), intern = TRUE))
     },
     
     lexicon_size = function(corpus, pAttribute){
@@ -279,7 +399,7 @@ CQI.perl <- R6Class(
       as.integer(
         system(
           sprintf(self$as.cmd(.cqi_perl[["id2cpos"]]), corpus, pAttribute, paste(id, collapse=",")),
-          intern=TRUE
+          intern = TRUE
         )
       )
     },

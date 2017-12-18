@@ -510,13 +510,13 @@ You should see a message that rcqp is the interface used, and that the REUTERS c
 
 If you have not yet installed R on your Ubuntu machine, there is a good instruction at [ubuntuuser](https://wiki.ubuntuusers.de/R/). To install base R, enter in the terminal.
 
-```{sh}
+```{sh, eval = FALSE}
 sudo apt-get install r-base r-recommended
 ```
 
 Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.
 
-```{sh}
+```{sh, eval = FALSE}
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9
 sudo add-apt-repository 'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'
 sudo apt-get update

@@ -176,7 +176,7 @@ The following instructions assume that you have installed R. If not, install it 
 
 For 64bit Windows, an interface included in the package polmineR.Rcpp is offered. It can be installed from the R package repository on the Webserver of the PolMine project as follows.
 
-```{r}
+```{r, eval = FALSE}
 install.packages(
   "polmineR.Rcpp",
   repos = "http://polmine.sowi.uni-due.de/packages",
@@ -186,20 +186,20 @@ install.packages(
 
 Now the official CRAN version of polmineR can be installed.
 
-```{r}
+```{r, eval = FALSE}
 install.packages("polmineR")
 ```
 
 To install the most recent development version that is hosted in a GitHub repository, use the convenient installation mechanism offered by the devtools package.
 
-```{r}
+```{r, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 To have access to the syntax of CQP when forming queries, an installation of the CWB needs to be on your system. The install.cwb-function of polmineR will download the CWB binaries and puts it into a subfolder of the polmineR package.
 
-```{r}
+```{r, eval = FALSE}
 library(polmineR)
 install.cwb()
 ```
@@ -361,13 +361,13 @@ You should see a message that rcqp is the interface used, and that the REUTERS c
 
 If you have not yet installed R on your Ubuntu machine, there is a good instruction at [ubuntuuser](https://wiki.ubuntuusers.de/R/). To install base R, enter in the terminal.
 
-```{sh}
+```{sh, eval = FALSE}
 sudo apt-get install r-base r-recommended
 ```
 
 Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.
 
-```{sh}
+```{sh, eval = FALSE}
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9
 sudo add-apt-repository 'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'
 sudo apt-get update
@@ -429,7 +429,7 @@ sudo apt-get install texlive-full texlive-xetex
 
 Now install the remaining packages from within R.
 
-```{r}
+```{r, eval = FALSE}
 devtools::install_github("PolMine/polmineR.Rcpp")
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
