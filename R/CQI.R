@@ -184,7 +184,10 @@ CQI.perl <- R6Class(
     
     as.cmd = function(cmd) paste("perl -e '", paste(cmd, collapse = " "), "'", sep=""),
     
-    list_corpora = function() stop("list_corpora not implemented for perl interface"),
+    list_corpora = function(){
+      # stop("list_corpora not implemented for perl interface")
+      toupper(list.files( Sys.getenv("CORPUS_REGISTRY") )) # very hacky ...
+    },
     
     attribute_size = function(corpus, attribute, type = NULL){
       as.integer(system(sprintf(self$as.cmd(.cqi_perl[["attribute_size"]]), corpus, attribute), intern=TRUE))
