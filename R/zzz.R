@@ -39,8 +39,8 @@
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
     polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
     if (.Platform$OS.type == "windows"){
-      polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
       options("polmineR.volume" = gsub("^([A-Z]?:?).*$", "\\1", polmineRPackageRegistry))
+      polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
     }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
     resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
