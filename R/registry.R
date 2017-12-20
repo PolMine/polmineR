@@ -28,13 +28,14 @@
 #' @importFrom utils capture.output
 resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
   .message("resetting CORPUS_REGISTRY environment variable:", verbose = verbose)
-  if (dir.exists(registryDir)){
-    oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-    Sys.setenv(CORPUS_REGISTRY = registryDir)
-    .message("setting registry:", registryDir, verbose = verbose)
+  if (.Platform$OS.type == "windows"){
+    stopifnot(file.exists(file.path(getOption("polmineR.volume"), registryDir)))
   } else {
-    stop("registryDir does not exist")
+    stopifnot(file.exists(registryDir))
   }
+  oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
+  Sys.setenv(CORPUS_REGISTRY = registryDir)
+  .message("setting registry:", registryDir, verbose = verbose)
   
   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
     .message("unloading rcqp library", verbose = verbose)
