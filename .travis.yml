@@ -13,6 +13,8 @@ addons:
 before_install:
   - sudo ./inst/sh/install_cwb.sh
   - Rscript -e 'install.packages("devtools")'
+  - Rscript -e 'install.packages("rmarkdown")'
+  - Rscript -e 'install.packages("rcqp")'
   - Rscript -e 'devtools::install_github("PolMine/polmineR.Rcpp")'
 
 r_packages:
