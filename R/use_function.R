@@ -18,7 +18,7 @@
 #' @export use
 #' @rdname use
 #' @name use
-#' @seealso the worker to reset the registry is \code{\link{resetRegistry}}
+#' @seealso the worker to reset the registry is \code{resetRegistry}
 use <- function(pkg = NULL, lib.loc = .libPaths(), dir = getOption("polmineR.defaultRegistry")){
   if (!is.null(pkg)){
     if (pkg %in% unname(installed.packages(lib.loc = lib.loc)[,"Package"])) {
