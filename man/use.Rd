@@ -31,5 +31,5 @@ reset the registry directory to the directory defined by \code{dir}
 that was used when loading \code{polmineR}).
 }
 \seealso{
-the worker to reset the registry is \code{\link{resetRegistry}}
+the worker to reset the registry is \code{resetRegistry}
 }
