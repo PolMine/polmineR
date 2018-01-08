@@ -38,8 +38,8 @@ CQI.rcqp <- R6Class(
     lexicon_size = function(corpus, pAttribute)
       rcqp::cqi_lexicon_size(paste(corpus, pAttribute, sep=".")),
     
-    cpos2struc = function(corpus, pAttribute, cpos)
-      rcqp::cqi_cpos2struc(paste(corpus, pAttribute, sep="."), cpos),
+    cpos2struc = function(corpus, sAttribute, cpos)
+      rcqp::cqi_cpos2struc(paste(corpus, sAttribute, sep = "."), cpos),
     
     cpos2str = function(corpus, pAttribute, cpos)
       rcqp::cqi_cpos2str(paste(corpus, pAttribute, sep="."), cpos),
@@ -117,8 +117,8 @@ CQI.Rcpp <- R6Class(
       polmineR.Rcpp::lexicon_size(corpus = corpus, p_attribute = pAttribute, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
-    cpos2struc = function(corpus, pAttribute, cpos){
-      polmineR.Rcpp::cpos2struc(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+    cpos2struc = function(corpus, sAttribute, cpos){
+      polmineR.Rcpp::cpos2struc(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2str = function(corpus, pAttribute, cpos){

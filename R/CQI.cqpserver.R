@@ -303,9 +303,9 @@ CQI.cqpserver <- R6Class(
       self$expect_string()
     },
     
-    cpos2struc = function(corpus, pAttribute, cpos){
+    cpos2struc = function(corpus, sAttribute, cpos){
       self$send_word(.cqiCmd[["CQI_CL_CPOS2STRUC"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, sAttribute, sep="."))
       self$send_int_list(cpos)
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
