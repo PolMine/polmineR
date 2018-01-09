@@ -29,7 +29,8 @@
 resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
   .message("resetting CORPUS_REGISTRY environment variable:", verbose = verbose)
   if (.Platform$OS.type == "windows"){
-    stopifnot(file.exists(file.path(getOption("polmineR.volume"), registryDir)))
+    if (grepl("^[A-Z]:.*$", registryDir)) registryDir <- gsub("^[A-Z]:(.*)$", "\\1", registryDir)
+    stopifnot(file.path(getOption("polmineR.volume"), registryDir))
   } else {
     stopifnot(file.exists(registryDir))
   }
