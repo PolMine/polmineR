@@ -276,6 +276,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
     if (class(cqp) == "function") cqp <- cqp(query)
     if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
     if (cqp == FALSE){
+      query <- as.corpusEnc(query, corpusEnc = getEncoding(.Object))
       count <- sapply(
         query,
         function(query)

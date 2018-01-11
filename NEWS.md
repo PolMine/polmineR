@@ -29,6 +29,7 @@ strucs and struc_str
 and struc values, and there is a new partition,Corpus-method. In compbination, it will be a lot
 faster to derive a partition, particularly if you need to do that repeatedly
 * a new function install.cwb() provides a convenient way to install CWB in the package 
+* added a missing encoding conversion for the count method
 
 # v0.7.5
 * class 'Regions' renamed to class 'regions' as a matter of consistency
