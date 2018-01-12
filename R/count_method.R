@@ -1,6 +1,3 @@
-#' @include dispersion_class.R
-NULL
-
 #' Get counts.
 #' 
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be
@@ -329,6 +326,3 @@ setMethod("count", "vector", function(.Object, corpus, pAttribute){
 setMethod("count", "Corpus", function(.Object, query = NULL, pAttribute){
   count(.Object$as.partition(), query = query, pAttribute = pAttribute)
 })
-
-#' @rdname dispersion-class
-setMethod("count", "dispersion", function(.Object) .Object@count)

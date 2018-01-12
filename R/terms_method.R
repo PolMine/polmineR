@@ -1,7 +1,7 @@
 #' @include partition_class.R
 NULL
 
-#' get terms available in a corpus
+#' Get terms available in a corpus
 #' 
 #' @param x a partition object
 #' @param pAttribute the pAttribute to be queried

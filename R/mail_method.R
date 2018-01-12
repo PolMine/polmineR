@@ -124,22 +124,6 @@ setMethod("mail", "kwic", function(object, to = NULL, nrow = NULL, fileFormat = 
   retval
 })
 
-#' @rdname mail-method
-#' @docType methods
-setMethod("mail", "dispersion", function(object, to=NULL, nrow=NULL, fileFormat=c("csv", "xlsx")){
-  if (requireNamespace("sendmailR", quietly = TRUE)) {
-    msg <- list('Prepared and delivered by polmineR.\n')
-    if(is.null(nrow)) nrow <- nrow(object@abs)
-    msg <- .attachTables(object@abs, nrow, msg, "crosstabAbs", fileFormat) 
-    msg <- .attachTables(object@rel, nrow, msg, "crosstabRel", fileFormat) 
-    status <- .mail(msg, to)
-    retval <- status$msg  
-  } else {
-    warning("the sendmailR package cannnot be loaded but is necessary for this method")
-    stop()
-  }
-  retval
-})
 
 #' @rdname mail-method
 #' @docType methods
