@@ -17,6 +17,8 @@ setOldClass("Corpus")
 #' @section Arguments:
 #' \describe{
 #'   \item{corpus}{a corpus}
+#'   \item{registryDir}{the directory where the registry file resides}
+#'   \item{dataDir}{the data directory of the corpus}
 #'   \item{pAttribute}{p-attribute, to perform count}
 #'   \item{sAttributes}{s-attributes}
 #'   \item{id2str}{logical, whether to turn token ids into strings upon counting}
@@ -57,6 +59,8 @@ Corpus <- R6Class(
   public = list(
     
     corpus = NULL,
+    registryDir = NULL,
+    dataDir = NULL,
     encoding = NULL,
     cpos = NULL,
     pAttribute = NULL,
@@ -65,15 +69,21 @@ Corpus <- R6Class(
     stat = data.table(),
     
     initialize = function(corpus, pAttribute = NULL, sAttributes = NULL){
+      
       stopifnot(is.character(corpus), length(corpus) == 1)
       if (!corpus %in% polmineR::corpus()[["corpus"]]) warning("corpus may not be available")
       self$corpus <- corpus
+      
+      self$registryDir <- Sys.getenv("CORPUS_REGISTRY")
+      self$dataDir <- RegistryFile$new(corpus)$getHome()
       self$encoding <- getEncoding(corpus)
       self$size <- size(corpus)
+      
       if (!is.null(pAttribute)){
         stopifnot(pAttribute %in% pAttributes(corpus))
         self$count(pAttribute)
       }
+      
       if (!is.null(sAttributes)){
         dt <- decode(corpus, sAttribute = sAttributes)
         self$cpos <- as.matrix(dt[, 1:2])
@@ -81,6 +91,58 @@ Corpus <- R6Class(
         self$sAttributes[["struc"]] <- 0:(nrow(self$sAttributes) - 1)
         setcolorder(self$sAttributes, neworder = c(ncol(self$sAttributes), 1:(ncol(self$sAttributes) - 1)))
       }
+      
+      invisible(self)
+    },
+    
+    getRegions = function(sAttribute){
+      rngFile <- file.path(self$dataDir, paste(sAttribute, "avx", sep = "."))
+      rngFileSize <- file.info(rngFile)$size
+      rngFileCon <- file(description = rngFile, open = "rb")
+      rng <- readBin(con = rngFileCon, what = integer(), size = 4L, n = rngFileSize, endian = "big")
+      close(rngFileCon)
+      dt <- data.table(matrix(rng, ncol = 2, byrow = TRUE))
+      colnames(dt) <- c("cpos", "offset")
+      y <- dt[,{list(cpos_left = .SD[["cpos"]][1], cpos_right = .SD[["cpos"]][nrow(.SD)])}, by = offset]
+      y[, offset := NULL][, struc := seq.int(from = 0, to = nrow(y) - 1)]
+      y
+    },
+    
+    getStructuralAttributes = function(sAttribute){
+      avsFile <- file.path(self$dataDir, paste(sAttribute, "avs", sep = "."))
+      avxFile <- file.path(self$dataDir, paste(sAttribute, "avx", sep = "."))
+      avs <- readBin(con = avsFile, what = character(), n = file.info(avsFile)$size) # n needs to be estimated
+      avx <- readBin(con = avxFile, what = integer(), size = 4L, n = file.info(avxFile)$size, endian = "big")
+      offset <- avx[seq.int(from = 2, to = length(avx), by = 2)]
+      levels <- sort(unique.default(offset))
+      rank <- match(offset, levels)
+      avs[rank]
+    },
+    
+    count2 = function(pAttribute){
+      
+      cntFile <- file.path(self$dataDir, paste(pAttribute, "corpus.cnt", sep = "."))
+      cntFileSize <- file.info(cntFile)$size
+      cntFileCon <- file(description = cntFile, open = "rb")
+      dt <- data.table(
+        count = readBin(con = cntFileCon, what = integer(), size = 4L, n = cntFileSize, endian = "big")
+      )
+      close(cntFileCon)
+      
+      lexiconFile <- file.path(self$dataDir, paste(pAttribute, "lexicon", sep = "."))
+      lexiconFileSize <- file.info(lexiconFile)$size
+      lexiconFileCon <- file(description = lexiconFile, open = "rb")
+      dt[[pAttribute]] <- readBin(con = cntFileCon, what = character(), n = cntFileSize)
+      close(lexiconFileCon)
+      
+      dt
+
+      # the idx file: offset positions
+      # idxFile <- file.path(self$dataDir, "word.lexicon.idx")
+      # idxFileSize <- file.info(idxFile)$size
+      # idxFileCon <- file(description = idxFile, open = "rb")
+      # idx <- readBin(con = idxFileCon, what = integer(), size = 4L, n = idxFileSize, endian = "big")
+      # close(idxFileCon)
     },
     
     # summary = function(sAttributes = c(period = "text_lp", date = "text_date", dummy = "text_id")){

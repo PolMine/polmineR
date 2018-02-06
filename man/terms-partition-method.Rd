@@ -4,7 +4,7 @@
 \name{terms-partition-method}
 \alias{terms-partition-method}
 \alias{terms,partition-method}
-\title{get terms available in a corpus}
+\title{Get terms available in a corpus}
 \usage{
 \S4method{terms}{partition}(x, pAttribute, regex = NULL)
 }
@@ -16,5 +16,5 @@
 \item{regex}{a regex to filter results}
 }
 \description{
-get terms available in a corpus
+Get terms available in a corpus
 }

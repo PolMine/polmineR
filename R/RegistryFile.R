@@ -71,7 +71,7 @@ RegistryFile <- setRefClass(
         .self$filename <- file.path(.self$registryDir, tolower(corpus))
       }
       .self$read()
-
+      invisible(.self)
     },
 
     read = function(){
@@ -126,6 +126,7 @@ RegistryFile <- setRefClass(
 
       if (length(.self$txt) == 0) .self$read()
       .self$info <- gsub("^INFO\\s+(.*?)\\s*$", "\\1", grep("^INFO.*?$", .self$txt, value = TRUE), perl = TRUE)
+      if (grepl('".*?"', .self$info)) .self$info <- gsub('"(.*?)"', "\\1", .self$info)
       .self$info
     },
 

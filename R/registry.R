@@ -51,9 +51,9 @@ resetRegistry <- function(registryDir = getOption("polmineR.defaultRegistry"), v
       type = "output"
     )
     if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
-      .message("... status: OK", verbose = verbose) 
+      .message("status: OK", verbose = verbose) 
     } else {
-      .message("... status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
+      .message("status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
     }
     
   } else {

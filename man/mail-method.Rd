@@ -8,7 +8,6 @@
 \alias{mail,cooccurrences-method}
 \alias{mail,features-method}
 \alias{mail,kwic-method}
-\alias{mail,dispersion-method}
 \alias{mail,data.frame-method}
 \title{Mail result.}
 \usage{
@@ -24,9 +23,6 @@ mail(object, ...)
   fileFormat = c("csv", "xlsx"))
 
 \S4method{mail}{kwic}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
-
-\S4method{mail}{dispersion}(object, to = NULL, nrow = NULL,
   fileFormat = c("csv", "xlsx"))
 
 \S4method{mail}{data.frame}(object, to = NULL, nrow = NULL,
