@@ -63,7 +63,7 @@ The most important purpose is term extraction.
   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
   y <- as(all, "count")
   z <- features(x, y, included = TRUE)
-  top100 <- subset(terms_kauder, rank_chisquare <= 100)
+  top100 <- subset(z, rank_chisquare <= 100)
 }
 \dontrun{
   use("polmineR.sampleCorpus")

@@ -27,9 +27,9 @@ setMethod("chisquare", "textstat", function(.Object){
   count_notx_coi <- size_coi - count_x_coi
   count_notx_ref <- size_ref - count_x_ref
   count_notx_total <- size_total - count_x_total
-  options(digits=20)
-  exp_x_coi <- (count_x_total/size_total) * size_coi
-  exp_x_ref <- (count_x_total/size_total) * size_ref
+  options(digits = 20)
+  exp_x_coi <- (count_x_total / size_total) * size_coi
+  exp_x_ref <- (count_x_total / size_total) * size_ref
   exp_notx_coi <- (count_notx_total/size_total) * size_coi
   exp_notx_ref <- (count_notx_total/size_total) * size_ref
   chi1 <- ((exp_x_coi - count_x_coi)**2) / exp_x_coi
@@ -38,11 +38,11 @@ setMethod("chisquare", "textstat", function(.Object){
   chi4 <- ((exp_notx_ref - count_notx_ref)**2) / exp_notx_ref
   chi <- chi1 + chi2 + chi3 + chi4
   chi <- chi * apply(cbind(count_x_coi, exp_x_coi), 1, function(x) ifelse(x[1] > x[2], 1, -1))
-  options(digits=7)
+  options(digits = 7)
   .Object@stat[, "exp_coi" := exp_x_coi]
   .Object@stat[, "chisquare" := chi]
-  .Object <- sort(.Object, by="chisquare")
-  .Object@stat[, "rank_chisquare" := c(1:nrow(.Object@stat))]
+  .Object <- sort(.Object, by = "chisquare")
+  .Object@stat[, "rank_chisquare" := 1:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "chisquare")
   return(.Object)
 })

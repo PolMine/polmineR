@@ -32,6 +32,8 @@ s-attributes of the \code{data.table} in field \code{sAttributes}}
 
 \describe{
   \item{corpus}{a corpus}
+  \item{registryDir}{the directory where the registry file resides}
+  \item{dataDir}{the data directory of the corpus}
   \item{pAttribute}{p-attribute, to perform count}
   \item{sAttributes}{s-attributes}
   \item{id2str}{logical, whether to turn token ids into strings upon counting}

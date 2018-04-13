@@ -5,7 +5,7 @@
 \title{Use a packaged corpus.}
 \usage{
 use(pkg = NULL, lib.loc = .libPaths(),
-  dir = getOption("polmineR.defaultRegistry"))
+  dir = getOption("polmineR.defaultRegistry"), verbose = TRUE)
 }
 \arguments{
 \item{pkg}{package with a CWB indexed corpus to use (defaults to NULL)}
@@ -13,6 +13,8 @@ use(pkg = NULL, lib.loc = .libPaths(),
 \item{lib.loc}{a character vector with path names of \code{R} libraries}
 
 \item{dir}{a registry directory, defaults to \code{getOption("polmineR.defaultRegistry")}}
+
+\item{verbose}{logical, whether to output status messages}
 }
 \value{
 the function returns invisibly the registry that was previously set

@@ -3,6 +3,7 @@
 \docType{class}
 \name{hits-class}
 \alias{hits-class}
+\alias{as.data.table,hits-method}
 \alias{hits}
 \alias{hits,character-method}
 \alias{hits,partition-method}
@@ -11,6 +12,8 @@
 \alias{hits,context-method}
 \title{Get Hits.}
 \usage{
+\S4method{as.data.table}{hits}(x, keep.rownames = FALSE, ...)
+
 hits(.Object, ...)
 
 \S4method{hits}{character}(.Object, query, cqp = FALSE, sAttribute = NULL,
@@ -31,9 +34,11 @@ hits(.Object, ...)
 \S4method{hits}{context}(.Object, sAttribute = NULL, verbose = TRUE)
 }
 \arguments{
-\item{.Object}{a character, partition or partitionBundle object}
+\item{x}{a hits object}
 
 \item{...}{further parameters}
+
+\item{.Object}{a character, partition or partitionBundle object}
 
 \item{query}{a (optionally named, see datails) character vector with one or more queries}
 
@@ -53,8 +58,6 @@ function to check whether query is a CQP query or not}
 \item{verbose}{logical}
 
 \item{progress}{logical, whether to show progress bar}
-
-\item{x}{a hits object}
 }
 \description{
 Get hits for a (set of) queries, optionally with s-attribute values.

@@ -83,7 +83,7 @@ setMethod("features", "partition", function(
 #'   all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
 #'   y <- as(all, "count")
 #'   z <- features(x, y, included = TRUE)
-#'   top100 <- subset(terms_kauder, rank_chisquare <= 100)
+#'   top100 <- subset(z, rank_chisquare <= 100)
 #' }
 #' @rdname  features-method
 setMethod("features", "count", function(x, y, by = NULL, included = FALSE, method = "chisquare", verbose = TRUE){

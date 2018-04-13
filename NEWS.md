@@ -1,7 +1,8 @@
 # v0.7.7 
 * removed depracated classes: dispersion, Textstat (reference class), Partition (reference class)
 * divide-methode moved to package polmineR.misc
-
+* bug removed: size of ngrams object was always 1
+* dotplot-method added for featuresNgrams
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated

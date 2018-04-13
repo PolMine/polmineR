@@ -102,7 +102,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, pAttribute = "word", c
   new(
     "ngrams",
     n = as.integer(n), corpus = .Object@corpus, encoding = .Object@encoding,
-    size = as.integer(length(.Object)), stat = TF, name = .Object@name,
+    size = as.integer(size(.Object)), stat = TF, name = .Object@name,
     pAttribute = if (is.null(char)) pAttribute else "ngram"
     )
 })

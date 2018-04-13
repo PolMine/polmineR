@@ -5,21 +5,24 @@
 \alias{dotplot}
 \alias{dotplot,textstat-method}
 \alias{dotplot,features-method}
+\alias{dotplot,featuresNgrams-method}
 \alias{dotplot,partition-method}
 \title{dotplot}
 \usage{
 dotplot(.Object, ...)
 
-\S4method{dotplot}{textstat}(.Object, col = NULL, n = 20, ...)
+\S4method{dotplot}{textstat}(.Object, col, n = 20L, ...)
 
-\S4method{dotplot}{features}(.Object, col = NULL, n = 20, ...)
+\S4method{dotplot}{features}(.Object, col = NULL, n = 20L, ...)
 
-\S4method{dotplot}{partition}(.Object, col = "count", n = 20, ...)
+\S4method{dotplot}{featuresNgrams}(.Object, col = NULL, n = 20L, ...)
+
+\S4method{dotplot}{partition}(.Object, col = "count", n = 20L, ...)
 }
 \arguments{
 \item{.Object}{object}
 
-\item{...}{further arguments that will be passed into the dotchart function}
+\item{...}{further arguments that will be passed into the \code{dotchart} function}
 
 \item{col}{column}
 

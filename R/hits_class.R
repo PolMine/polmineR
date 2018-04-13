@@ -35,6 +35,8 @@ setClass("hits",
          )
 )
 
+#' @rdname hits
+setMethod("as.data.table", "hits", function(x, ...) x@dt)
 
 #' @rdname hits
 #' @exportMethod hits
