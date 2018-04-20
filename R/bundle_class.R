@@ -163,7 +163,6 @@ setMethod("as.bundle", "textstat", function(object){
 
 
 #' @examples
-#' \dontrun{
 #' use("europarl.en")
 #' Ps <- partitionBundle(
 #'   "EUROPARL-EN", sAttribute = "text_year",
@@ -172,7 +171,6 @@ setMethod("as.bundle", "textstat", function(object){
 #' Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE, progress = TRUE)
 #' dt <- as.data.table(Cs, col = "ll")
 #' m <- as.matrix(Cs, col = "ll")
-#' }
 #' @exportMethod as.data.table
 #' @rdname bundle-class
 setMethod("as.data.table", "bundle", function(x, col){

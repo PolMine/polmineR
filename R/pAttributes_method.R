@@ -12,10 +12,8 @@
 #' @rdname pAttributes
 #' @name pAttributes
 #' @examples 
-#' \dontrun{
-#'    use("polmineR.sampleCorpus")
-#'    pAttributes("PLPRBTTXT")
-#' }
+#'    use("polmineR")
+#'    pAttributes("GERMAPARLMINI")
 #' @references Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.
 setGeneric("pAttributes", function(.Object, ...) standardGeneric("pAttributes"))
 

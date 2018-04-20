@@ -22,12 +22,10 @@
 #' @exportMethod blapply
 #' @rdname blapply
 #' @examples
-#' \dontrun{
-#'   use("polmineR.sampleCorpus")
-#'   bt <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
-#'   speeches <- as.speeches(bt, sAttributeDates="text_date", sAttributeNames="text_name")
+#'   use("polmineR")
+#'   bt <- partition("GERMAPARLMINI", date = ".*", regex=TRUE)
+#'   speeches <- as.speeches(bt, sAttributeDates = "date", sAttributeNames = "speaker")
 #'   foo <- blapply(speeches, function(x, ...) slot(x, "cpos"))
-#' }
 #' @importFrom pbapply pblapply
 setGeneric("blapply", function(x, ...) standardGeneric("blapply"))
 

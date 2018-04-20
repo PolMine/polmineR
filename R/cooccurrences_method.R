@@ -35,12 +35,10 @@
 #' Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
-#' \dontrun{
-#' use("polmineR.sampleCorpus")
-#' merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
+#' use("polmineR")
+#' merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 #' merkel <- enrich(merkel, pAttribute = "word")
 #' cooc <- cooccurrences(merkel, query = "Deutschland")
-#' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences

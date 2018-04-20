@@ -5,12 +5,10 @@
 #' @exportMethod as.VCorpus
 #' @rdname as.VCorpus
 #' @examples
-#' \dontrun{
-#' use("polmineR.sampleCorpus")
-#' P <- partition("PLPRBTTXT", text_date = "2009-11-10")
-#' PB <- partitionBundle(P, sAttribute = "text_speaker")
+#' use("polmineR")
+#' P <- partition("GERMAPARLMINI", date = "2009-11-10")
+#' PB <- partitionBundle(P, sAttribute = "speaker")
 #' VC <- as.VCorpus(PB)
-#' }
 setMethod("as.VCorpus", "partitionBundle", function(x){
   sAttrLengths <- sapply(sAttributes(x@objects[[1]]@corpus), function(sAttr) CQI$attribute_size(x@objects[[1]]@corpus, sAttr, type = "s"))
   if (length(unique(sAttrLengths)) == length(sAttrLengths)){

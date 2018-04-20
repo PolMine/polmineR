@@ -34,13 +34,11 @@
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
 #' @examples
-#' \dontrun{
-#' use("polmineR.sampleCorpus")
-#' K <- kwic("PLPRBTTXT", "Integration")
+#' use("polmineR")
+#' K <- kwic("GERMAPARLMINI", "Integration")
 #' length(K)
 #' K[1]
 #' K[1:5]
-#' }
 #' @rdname kwic-class
 #' @include Labels.R
 setClass(

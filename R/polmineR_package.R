@@ -47,10 +47,6 @@ NULL
 #' 
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
 #' @examples
-#' \donttest{
-#' # examples in the manual rely in a sample corpus that can be install as follows:
-#' install.corpus("polmineR.sampleCorpus")
-#' }
 #' @export polmineR
 polmineR <- function(){
   if (requireNamespace("shiny", quietly = TRUE)){

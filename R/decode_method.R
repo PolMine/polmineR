@@ -13,16 +13,13 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' @return a \code{data.table}
 #' @rdname decode
 #' @examples
-#' \dontrun{
-#' use("polmineR.sampleCorpus")
+#' use("polmineR")
 #' 
 #' # Scenario 1: Decode one s-attribute
-#' dt <- decode("PLPRBTTXT", sAttribute = "text_date")
+#' dt <- decode("GERMAPARLMINI", sAttribute = "date")
 #' 
 #' # Scenario 2: Decode corpus entirely
-#' dt <- decode("PLPRBTTXT")
-#' 
-#' }
+#' dt <- decode("GERMAPARLMINI")
 #' @exportMethod decode
 #' @seealso \code{\link{encode}}
 #' @importFrom data.table fread

@@ -62,17 +62,15 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #' @aliases sAttributes sAttributes,character-method sAttributes,partition-method
 #' @rdname sAttributes-method
 #' @examples 
-#' \dontrun{
-#'   use("polmineR.sampleCorpus")
+#'   use("polmineR")
 #'   
-#'   sAttributes("PLPRBTTXT")
-#'   sAttributes("PLPRBTTXT", "text_date") # dates of plenary meetings
+#'   sAttributes("GERMAPARLMINI")
+#'   sAttributes("GERMAPARLMINI", "date") # dates of plenary meetings
 #'   
 #'   
-#'   P <- partition("PLPRBTTXT", text_date = "2009-11-10")
+#'   P <- partition("PLPRBTTXT", date = "2009-11-10")
 #'   sAttributes(P)
-#'   sAttributes(P, "text_name") # get names of speakers
-#' }
+#'   sAttributes(P, "speaker") # get names of speakers
 setMethod(
   "sAttributes", "partition",
   function (.Object, sAttribute = NULL, unique = TRUE) {

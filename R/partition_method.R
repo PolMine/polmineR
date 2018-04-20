@@ -5,8 +5,8 @@
 #' 
 #' The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
 #' 
-#' The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
-#' text_year="2013"), or - for convencience - directly.
+#' The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
+#' year="2013"), or - for convencience - directly.
 #' 
 #' The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
 #' parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
@@ -46,21 +46,20 @@
 #' @seealso To learn about the methods available for objects of the class partition, see
 #' \code{\link{partition_class}},
 #' @examples
-#' \dontrun{
-#'    use("polmineR.sampleCorpus")
-#'    spd <- partition("PLPRBTTXT", text_party="SPD", text_type="speech")
+#'    use("polmineR")
+#'    spd <- partition("GERMAPARLMINI", party = "SPD", interjection = "speech")
 #'    kauder <- partition(
-#'    "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
+#'    "GERMAPARLMINI", speaker = "Volker Kauder", pAttribute="word"
 #'    )
 #'    merkel <- partition(
-#'      "PLPRBTTXT", text_name=".*Merkel",
+#'      "GERMAPARLMINI", speaker = ".*Merkel",
 #'      pAttribute="word", regex=TRUE
 #'      )
-#'    sAttributes(merkel, "text_date")
-#'    sAttributes(merkel, "text_name")
+#'    sAttributes(merkel, "date")
+#'    sAttributes(merkel, "speaker")
 #'    merkel <- partition(
-#'      "PLPRBTTXT", text_name="Angela Dorothea Merkel",
-#'      text_date="2009-11-10", text_type="speech", pAttribute="word"
+#'      "GERMAPARLMINI", speaker = "Angela Dorothea Merkel",
+#'      date = "2009-11-10", interjection = "speech", pAttribute = "word"
 #'      )
 #'    merkel <- subset(merkel, !word %in% punctuation)
 #'    merkel <- subset(merkel, !word %in% tm::stopwords("de"))
@@ -76,9 +75,8 @@
 #'          by="days"),
 #'        format="%Y-%m-%d"
 #'        )
-#'      period <- partition("PLPRBTTXT", text_date=days)
+#'      period <- partition("GERMAPARLMINI", date = days)
 #'    }
-#' }
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition

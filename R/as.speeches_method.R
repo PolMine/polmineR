@@ -18,10 +18,9 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #' @exportMethod as.speeches
 #' @rdname as.speeches-method
 #' @examples 
-#' \dontrun{
-#'   use("polmineR.sampleCorpus")
-#'   bt <- partition("PLPRBTTXT", text_year = "2009")
-#'   speeches <- as.speeches(bt, sAttributeDates = "text_date", sAttributeNames = "text_name")
+#'   use("polmineR")
+#'   bt <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
+#'   speeches <- as.speeches(bt, sAttributeDates = "date", sAttributeNames = "speaker")
 #'   
 #'   # step-by-step, not the fastest way
 #'   speeches <- enrich(speeches, pAttribute = "word")
@@ -33,7 +32,6 @@ setGeneric("as.speeches", function(.Object, ...)standardGeneric("as.speeches"))
 #'   # whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
 #'   # termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
 #'   # tdm <- trim(tdm, termsToDrop = termsToDrop)
-#' }
 #' @aliases as.speeches as.speeches,partition-method
 setMethod(
   "as.speeches", "partition",

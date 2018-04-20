@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.6.9003
-Date: 2018-04-13
+Version: 0.7.6.9004
+Date: 2018-04-20
 Authors@R: c(person("Andreas Blaette", "Developer", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -44,6 +44,7 @@ Description: Library for corpus analysis using the Corpus Workbench as an
     procedures. Respective data structures (document term matrices, term co-
     occurrence matrices etc.) can be created based on the indexed corpora.
 BugReports: https://github.com/PolMine/polmineR/issues
+Biarch: true
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
 Collate: 

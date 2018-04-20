@@ -44,16 +44,14 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   context,partitionBundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
-#' \dontrun{
-#'   use("polmineR.sampleCorpus")
-#'   p <- partition("PLPRBTTXT", list(text_type="speech"))
+#'   use("polmineR")
+#'   p <- partition("GERMAPARLMINI", interjection = "speech")
 #'   y <- context(p, query = "Integration", pAttribute = "word")
 #'   y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
 #'   y <- context(
 #'     p, query = "Integration", pAttribute = "word",
 #'     positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
 #'     )
-#' }
 #' @import data.table
 #' @exportMethod context
 #' @rdname context-method

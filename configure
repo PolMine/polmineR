@@ -2,3 +2,5 @@
 
 CORPUS_REGISTRY=/
 export CORPUS_REGISTRY
+
+${R_HOME}/bin/Rscript ./tools/setpaths.R --args "$R_PACKAGE_DIR"

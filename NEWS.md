@@ -3,6 +3,8 @@
 * divide-methode moved to package polmineR.misc
 * bug removed: size of ngrams object was always 1
 * dotplot-method added for featuresNgrams
+* sample corpus GermaParlMini added to the package (replacing suggested package polmineR.sampleCorpus)
+* configuration mechanism added to set path to data directory in registry file upon installation 
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated
