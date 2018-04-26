@@ -9,7 +9,7 @@
     "Rcpp" = CQI.Rcpp$new(),
     if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
       CQI.rcqp$new()
-    } else if (requireNamespace("polmineR.Rcpp", lib.loc = .libPaths(), quietly = TRUE)){
+    } else if (requireNamespace("RcppCWB", lib.loc = .libPaths(), quietly = TRUE)){
       CQI.Rcpp$new()
     } else {
       CQI.perl$new()
@@ -54,7 +54,7 @@
     "polmineR.template" = "default",
     "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
-    "polmineR.Rcpp" = TRUE,
+    "polmineR.RcppCWB" = TRUE,
     "polmineR.cwb-s-decode" = FALSE,
     "polmineR.cwb-encode" = FALSE,
     "polmineR.cwb-lexdecode" = FALSE,

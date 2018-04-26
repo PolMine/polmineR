@@ -46,7 +46,6 @@ NULL
 #' Cham et al: Springer.
 #' 
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
-#' @examples
 #' @export polmineR
 polmineR <- function(){
   if (requireNamespace("shiny", quietly = TRUE)){

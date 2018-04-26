@@ -34,10 +34,9 @@ A method designed for corpora from the
 PolMine corpora of plenary protocols. A partition is split into speeches.
 }
 \examples{
-\dontrun{
-  use("polmineR.sampleCorpus")
-  bt <- partition("PLPRBTTXT", text_year = "2009")
-  speeches <- as.speeches(bt, sAttributeDates = "text_date", sAttributeNames = "text_name")
+  use("polmineR")
+  bt <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
+  speeches <- as.speeches(bt, sAttributeDates = "date", sAttributeNames = "speaker")
   
   # step-by-step, not the fastest way
   speeches <- enrich(speeches, pAttribute = "word")
@@ -49,5 +48,4 @@ PolMine corpora of plenary protocols. A partition is split into speeches.
   # whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
   # termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
   # tdm <- trim(tdm, termsToDrop = termsToDrop)
-}
 }

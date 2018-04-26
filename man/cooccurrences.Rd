@@ -76,12 +76,10 @@ a cooccurrences-class object
 Get cooccurrence statistics.
 }
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
-merkel <- partition("PLPRBTTXT", text_type = "speech", text_name = ".*Merkel", regex = TRUE)
+use("polmineR")
+merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 merkel <- enrich(merkel, pAttribute = "word")
 cooc <- cooccurrences(merkel, query = "Deutschland")
-}
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).

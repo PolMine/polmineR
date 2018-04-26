@@ -67,8 +67,8 @@ Counts are performed for the p-attribute defined by the parameter \code{pAttribu
 \details{
 The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
 
-The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
-text_year="2013"), or - for convencience - directly.
+The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
+year="2013"), or - for convencience - directly.
 
 The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
 parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
@@ -90,39 +90,26 @@ or more. If two or more p-attributes are provided, The occurrence of combination
 A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }
 \examples{
-\dontrun{
-   use("polmineR.sampleCorpus")
-   spd <- partition("PLPRBTTXT", text_party="SPD", text_type="speech")
-   kauder <- partition(
-   "PLPRBTTXT", text_name="Volker Kauder", pAttribute="word"
-   )
-   merkel <- partition(
-     "PLPRBTTXT", text_name=".*Merkel",
-     pAttribute="word", regex=TRUE
-     )
-   sAttributes(merkel, "text_date")
-   sAttributes(merkel, "text_name")
-   merkel <- partition(
-     "PLPRBTTXT", text_name="Angela Dorothea Merkel",
-     text_date="2009-11-10", text_type="speech", pAttribute="word"
-     )
-   merkel <- subset(merkel, !word \%in\% punctuation)
-   merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
+use("polmineR")
+spd <- partition("GERMAPARLMINI", party = "SPD", interjection = "speech")
+kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute = "word")
+merkel <- partition("GERMAPARLMINI", speaker = ".*Merkel", pAttribute = "word", regex = TRUE)
+sAttributes(merkel, "date")
+sAttributes(merkel, "speaker")
+merkel <- partition(
+  "GERMAPARLMINI", speaker = "Angela Dorothea Merkel",
+  date = "2009-11-10", interjection = "speech", pAttribute = "word"
+  )
+merkel <- subset(merkel, !word \%in\% punctuation)
+merkel <- subset(merkel, !word \%in\% tm::stopwords("de"))
    
-   # a certain defined time segment
-   if (require("chron")){
-     firstDay <- "2009-10-28"
-     lastDay <- "2009-11-11"
-     days <- strftime(
-       chron::seq.dates(
-         from = strftime(firstDay, format="\%m/\%d/\%Y"),
-         to = strftime(lastDay, format="\%m/\%d/\%Y"),
-         by="days"),
-       format="\%Y-\%m-\%d"
-       )
-     period <- partition("PLPRBTTXT", text_date=days)
-   }
-}
+# a certain defined time segment
+days <- seq(
+  from = as.Date("2009-10-28"),
+  to = as.Date("2009-11-11"),
+  by = "1 day"
+)
+period <- partition("GERMAPARLMINI", date = days)
 }
 \seealso{
 To learn about the methods available for objects of the class partition, see

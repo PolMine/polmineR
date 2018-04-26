@@ -33,9 +33,9 @@ A coerce-method is available to coerce a \code{partition} object to a
 
 \examples{
 \donttest{
-use("polmineR.sampleCorpus")
-P <- partition("PLPRBTTXT", text_date = "2009-11-12", text_name = "Jens Spahn")
+use("polmineR")
+P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
-encode(R, sAttribute = "text_foo", values = "Jens")
+encode(R, sAttribute = "foo", values = "Jens")
 }
 }

@@ -74,16 +74,16 @@ setMethod("dispersion", "character", function(.Object, query, sAttribute, cqp = 
 setMethod("dispersion", "hits", function(.Object, sAttribute, freq = FALSE, verbose = TRUE){
   if (length(sAttribute) == 2){
     retval <- data.table::dcast.data.table(
-      .Object@dt, formula(paste(sAttribute, collapse="~")),
+      .Object@stat, formula(paste(sAttribute, collapse = "~")),
       value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0
       )  
   } else if (length(sAttribute) == 1){
     if (freq == FALSE){
       sumup <- function(.SD) sum(.SD[["count"]])
-      retval <- .Object@dt[, sumup(.SD), by = c(sAttribute), with = TRUE]
+      retval <- .Object@stat[, sumup(.SD), by = c(sAttribute), with = TRUE]
       data.table::setnames(retval, old = "V1", new = "count")
     } else {
-      retval <- .Object@dt
+      retval <- .Object@stat
     }
   } else {
     warning("length(sAttribute) needs to be 1 or 2")

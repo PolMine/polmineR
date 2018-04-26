@@ -35,9 +35,8 @@ ngrams(.Object, ...)
 Count n-grams, either of words, or of characters.
 }
 \examples{
-\dontrun{
-  use("polmineR.sampleCorpus")
-  P <- partition("PLPRBTTXT", text_date = "2009-10-27")
+  use("polmineR")
+  P <- partition("GERMAPARLMINI", date = "2009-10-27")
   ngramObject <- ngrams(P, n = 2, pAttribute = "word", char = NULL)
   # a more complex scenario: get most frequent ADJA/NN-combinations
   ngramObject <- ngrams(P, n = 2, pAttribute = c("word", "pos"), char = NULL)
@@ -48,5 +47,4 @@ Count n-grams, either of words, or of characters.
   ngramObject2@stat[, "1_pos" := NULL, with = FALSE][, "2_pos" := NULL, with = FALSE]
   ngramObject3 <- sort(ngramObject2, by = "count")
   head(ngramObject3)
- }
 }

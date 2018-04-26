@@ -24,10 +24,8 @@ will have a set of positional attributes (such as part-of-speech, or lemma).
 The available p-attributes are returned by the pAttributes-method.
 }
 \examples{
-\dontrun{
-   use("polmineR.sampleCorpus")
-   pAttributes("PLPRBTTXT")
-}
+   use("polmineR")
+   pAttributes("GERMAPARLMINI")
 }
 \references{
 Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.

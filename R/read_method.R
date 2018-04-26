@@ -109,8 +109,8 @@ setMethod("read", "data.table", function(.Object, col, partitionBundle, highligh
 #' @rdname read-method
 setMethod("read", "hits", function(.Object, def, i = NULL, ...){
   if (is.null(i)){
-    for (i in 1:nrow(.Object@dt)){
-      sAttrs <- lapply(setNames(def, def), function(x) .Object@dt[[x]][i])
+    for (i in 1:nrow(.Object@stat)){
+      sAttrs <- lapply(setNames(def, def), function(x) .Object@stat[[x]][i])
       read(partition(.Object@corpus, def = sAttrs, ...))
       readline(">> ")
     }

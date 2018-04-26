@@ -76,7 +76,7 @@ If .Object is a \code{partitonBundle}, the data.table returned will have the que
 in the columns, and as many rows as there are in the partitionBundle.
 
 If .Object is a character vector (length 1) and query is NULL, the count is performed
-for the whole partition. The method will check whether the \code{polmineR.Rcpp} package,
+for the whole partition. The method will check whether the \code{RcppCWB} package,
 or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
 performance reasons.
 
@@ -85,26 +85,24 @@ returns a frequency breakdown of the results of the query. If several queries
 are supplied, frequencies for the individual queries are retrieved.
 }
 \examples{
-\dontrun{
-  use("polmineR.sampleCorpus")
-  debates <- partition("PLPRBTTXT", list(text_id=".*"), regex=TRUE)
+  use("polmineR")
+  debates <- partition("GERMAPARLMINI", date = ".*", regex=TRUE)
   count(debates, query = "Arbeit") # get frequencies for one token
   count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
   
-  count("PLPRBTTXT", query = c("Migration", "Integration"), pAttribute = "word")
+  count("GERMAPARLMINI", query = c("Migration", "Integration"), pAttribute = "word")
 
   debates <- partitionBundle(
-    "PLPRBTTXT", sAttribute = "text_date", values = NULL,
+    "GERMAPARLMINI", sAttribute = "date", values = NULL,
     regex = TRUE, mc = FALSE, verbose = FALSE
   )
   y <- count(debates, query = "Arbeit", pAttribute = "word")
   y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
   
-  count("PLPRBTTXT", '"Integration.*"', breakdown = TRUE)
+  count("GERMAPARLMINI", '"Integration.*"', breakdown = TRUE)
 
-  P <- partition("PLPRBTTXT", text_date = "2009-11-11")
+  P <- partition("GERMAPARLMINI", date = "2009-11-11")
   count(P, '"Integration.*"', breakdown = TRUE)
-}
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).

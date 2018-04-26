@@ -7,7 +7,7 @@
 #' in the columns, and as many rows as there are in the partitionBundle.
 #' 
 #' If .Object is a character vector (length 1) and query is NULL, the count is performed
-#' for the whole partition. The method will check whether the \code{polmineR.Rcpp} package,
+#' for the whole partition. The method will check whether the \code{RcppCWB} package,
 #' or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
 #' performance reasons.
 #' 
@@ -117,10 +117,10 @@ setMethod("count", "partition", function(
   } else {
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
-      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
-        .message("using polmineR.Rcpp", verbose = verbose)
-        countMatrix <- polmineR.Rcpp::regionsToCountMatrix(
-          corpus = .Object@corpus, pAttribute = pAttribute,
+      if (requireNamespace("RcppCWB", quietly = TRUE) && (getOption("polmineR.RcppCWB") == TRUE)){
+        .message("using RcppCWB", verbose = verbose)
+        countMatrix <- RcppCWB::region_matrix_to_count_matrix(
+          corpus = .Object@corpus, p_attribute = pAttribute,
           matrix = .Object@cpos
           )
         TF <- as.data.table(countMatrix)
@@ -157,9 +157,9 @@ setMethod("count", "partition", function(
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query, pAttribute = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE){
+setMethod("count", "partitionBundle", function(.Object, query, cqp = FALSE, pAttribute = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE){
   .message("getting hits for query/queries", verbose = verbose)
-  DT <- hits(.Object, query = query, pAttribute = pAttribute, mc = mc, progress = progress, verbose = verbose)@dt
+  DT <- hits(.Object, query = query, cqp = cqp, pAttribute = pAttribute, mc = mc, progress = progress, verbose = verbose)@stat
   .message("rearranging table", verbose = verbose)
   DT_cast <- dcast.data.table(DT, partition~query, value.var = "count", fill = 0)
   
@@ -199,9 +199,9 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
   stopifnot(.Object %in% CQI$list_corpora())
   if (is.null(query)){
     if (length(pAttribute) == 1){
-      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
-        .message("using polmineR.Rcpp for counting", verbose = verbose)
-        TF <- data.table(count = polmineR.Rcpp::getCountVector(corpus = .Object, pAttribute = pAttribute))
+      if (requireNamespace("RcppCWB", quietly = TRUE) && getOption("polmineR.RcppCWB") == TRUE){
+        .message("using RcppCWB for counting", verbose = verbose)
+        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = pAttribute))
         TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
         setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
         if (id2str == FALSE){

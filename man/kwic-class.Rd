@@ -80,11 +80,9 @@ added as columns to the table with concordance lines.
 }
 
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
-K <- kwic("PLPRBTTXT", "Integration")
+use("polmineR")
+K <- kwic("GERMAPARLMINI", "Integration")
 length(K)
 K[1]
 K[1:5]
-}
 }

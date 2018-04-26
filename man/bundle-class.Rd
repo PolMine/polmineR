@@ -78,7 +78,6 @@ in one S4 object.
 }}
 
 \examples{
-\dontrun{
 use("europarl.en")
 Ps <- partitionBundle(
   "EUROPARL-EN", sAttribute = "text_year",
@@ -87,7 +86,6 @@ Ps <- partitionBundle(
 Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE, progress = TRUE)
 dt <- as.data.table(Cs, col = "ll")
 m <- as.matrix(Cs, col = "ll")
-}
 }
 \author{
 Andreas Blaette

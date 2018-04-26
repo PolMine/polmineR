@@ -29,12 +29,3 @@ It may not be the most artful way to do things, but it works.
 To get the path to a package that contains a CWB corpus, use
 \code{system.file}.
 }
-\examples{
-\donttest{
-sampleCorpusPkgDir <- system.file(package="polmineR.sampleCorpus")
-sampleCorpusRegistryDir <- file.path(sampleCorpusPkgDir, "extdata", "cwb", "registry")
-oldRegistryDir <- resetRegistry(sampleCorpusRegistryDir)
-sampleCorpusPartition <- partition("PLPRBTTXT", text_speaker = "Volker Kauder")
-resetRegistry(oldRegistryDir)
-}
-}

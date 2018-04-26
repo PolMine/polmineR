@@ -86,22 +86,20 @@ In this case, a \code{pAttribute} needs to be provided. Then counting will
 be performed, too.
 }
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
+use("polmineR")
  
 # do-it-yourself 
-p <- partition("PLPRBTTXT", text_date=".*", regex=TRUE)
-pB <- partitionBundle(p, sAttribute = "text_date")
+p <- partition("GERMAPARLMINI", date=".*", regex=TRUE)
+pB <- partitionBundle(p, sAttribute = "date")
 pB <- enrich(pB, pAttribute="word")
 tdm <- as.TermDocumentMatrix(pB, col = "count")
    
  # leave the counting to the as.TermDocumentMatrix-method
-pB2 <- partitionBundle(p, sAttribute = "text_date")
+pB2 <- partitionBundle(p, sAttribute = "date")
 tdm <- as.TermDocumentMatrix(pB2, pAttribute = "word", verbose = TRUE)
    
 # diretissima
-tdm <- as.TermDocumentMatrix("PLPRBTTXT", pAttribute = "word", sAttribute = "text_date")
-}
+tdm <- as.TermDocumentMatrix("GERMAPARLMINI", pAttribute = "word", sAttribute = "date")
 }
 \author{
 Andreas Blaette

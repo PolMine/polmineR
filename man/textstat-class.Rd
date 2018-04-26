@@ -104,9 +104,8 @@ and with double square brackets ("[[") to get specific columns from the
 }}
 
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
-P <- partition("PLPRBTTXT", text_year = "2009", pAttribute = "word")
+use("polmineR")
+P <- partition("GERMAPARLMINI", date = ".*", pAttribute = "word", regex = TRUE)
 y <- cooccurrences(P, query = "Arbeit")
 y[1:25]
 y[,c("word", "ll")]
@@ -114,5 +113,4 @@ y[1:25, "word"]
 y[1:25][["word"]]
 y[which(y[["word"]] \%in\% c("Arbeit", "Sozial"))]
 y[ y[["word"]] \%in\% c("Arbeit", "Sozial") ]
-}
 }

@@ -131,10 +131,10 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     if (maxNoStrucs != length(.Object@strucs)){
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
-      if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
-        .Object@cpos <- polmineR.Rcpp::get_region_matrix(
+      if (requireNamespace("RcppCWB", quietly = TRUE)){
+        .Object@cpos <- RcppCWB::get_region_matrix(
           corpus = .Object@corpus, s_attribute = .Object@sAttributeStrucs,
-          registry = Sys.getenv("CORPUS_REGISTRY"), struc = .Object@strucs
+          registry = Sys.getenv("CORPUS_REGISTRY"), strucs = .Object@strucs
         )
         
       } else {

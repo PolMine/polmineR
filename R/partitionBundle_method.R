@@ -81,8 +81,8 @@ setMethod("partitionBundle", "character", function(
   strucs <- unname(strucs)
   
   .message("getting matrix with regions for s-attribute: ", sAttribute, verbose = verbose)
-  if (require("polmineR.Rcpp", quietly = TRUE)){
-    cposMatrix <- polmineR.Rcpp::get_region_matrix(
+  if (require("RcppCWB", quietly = TRUE)){
+    cposMatrix <- RcppCWB::get_region_matrix(
       corpus = .Object, s_attribute = sAttribute, strucs = strucs,
       registry = Sys.getenv("CORPUS_REGISTRY")
       )

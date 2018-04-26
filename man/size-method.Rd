@@ -38,17 +38,15 @@ tokens across one or more dimensions. Two or more s-attributes
 can lead to reasonable results only if the corpus XML is flat.
 }
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
-size("PLPRBTTXT")
-size("PLPRBTTXT", sAttribute = "text_date")
-size("PLPRBTTXT", sAttribute = c("text_date", "text_party"))
+use("polmineR")
+size("GERMAPARLMINI")
+size("GERMAPARLMINI", sAttribute = "date")
+size("GERMAPARLMINI", sAttribute = c("date", "party"))
 
-P <- partition("PLPRBTTXT", text_date = "2009-11-11")
-size(P, sAttribute = "text_name")
-size(P, sAttribute = "text_party")
-size(P, sAttribute = c("text_name", "text_party"))
-}
+P <- partition("GERMAPARLMINI", date = "2009-11-11")
+size(P, sAttribute = "speaker")
+size(P, sAttribute = "party")
+size(P, sAttribute = c("speaker", "party"))
 }
 \seealso{
 See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}

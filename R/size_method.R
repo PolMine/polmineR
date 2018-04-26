@@ -24,7 +24,7 @@ NULL
 #' size("GERMAPARLMINI", sAttribute = "date")
 #' size("GERMAPARLMINI", sAttribute = c("date", "party"))
 #' 
-#' P <- partition("PLPRBTTXT", date = "2009-11-11")
+#' P <- partition("GERMAPARLMINI", date = "2009-11-11")
 #' size(P, sAttribute = "speaker")
 #' size(P, sAttribute = "party")
 #' size(P, sAttribute = c("speaker", "party"))
@@ -45,11 +45,11 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
         }
       )
     )
-    if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && (getOption("polmineR.Rcpp") == TRUE)){
-      .message ("polmineR.Rcpp available, going to use it", verbose = verbose)
-      cpos_matrix <- polmineR.Rcpp::getRegionMatrix(
-        corpus = x, sAttribute = sAttribute[1],
-        strucs = 0:(CQI$attribute_size(x, sAttribute[1], "s") - 1),
+    if (requireNamespace("RcppCWB", quietly = TRUE) && (getOption("polmineR.RcppCWB") == TRUE)){
+      .message ("RcppCWB available, going to use it", verbose = verbose)
+      cpos_matrix <- RcppCWB::get_region_matrix(
+        corpus = x, s_attribute = sAttribute[1],
+        strucs = 0L:(CQI$attribute_size(x, sAttribute[1], "s") - 1L),
         registry = Sys.getenv("CORPUS_REGISTRY")
         )
     } else if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){

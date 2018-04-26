@@ -9,9 +9,12 @@
 #' include the subsets of the partition/corpus with no hits (query is NA,
 #' count is 0).
 #' 
-#' @slot dt a \code{"data.table"}
+#' @slot stat a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
 #' @slot query Object of class \code{"character"}
+#' @slot pAttribute p-attribute that has been queried
+#' @slot encoding encoding of the corpus
+#' @slot name name of the object
 #' @param query a (optionally named, see datails) character vector with one or more queries
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not
@@ -27,16 +30,12 @@
 #' @param ... further parameters
 #' @exportClass hits
 #' @rdname hits
-setClass("hits",
-         representation(
-           dt = "data.table",
-           corpus = "character",
-           query = "character"
-         )
+setClass(
+  "hits",
+  representation(query = "character"),
+  contains = "textstat"
 )
 
-#' @rdname hits
-setMethod("as.data.table", "hits", function(x, ...) x@dt)
 
 #' @rdname hits
 #' @exportMethod hits
@@ -95,7 +94,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
   } else {
     TF <- DT
   }
-  new("hits", dt = TF, corpus = .Object, query = query)
+  new("hits", stat = TF, corpus = .Object, query = query)
 })
 
 
@@ -104,7 +103,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute 
   stopifnot(all(sAttribute %in% sAttributes(.Object@corpus)))
   if (freq) size <- TRUE
   
-  DT <- hits(.Object@corpus, query = query, cqp = cqp, sAttribute = NULL, pAttribute = pAttribute, mc = mc, progress = progress)@dt
+  DT <- hits(.Object@corpus, query = query, cqp = cqp, sAttribute = NULL, pAttribute = pAttribute, mc = mc, progress = progress)@stat
   DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos_left"]]), with = TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   
@@ -126,13 +125,13 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute 
   } else {
     TF <- DT
   }
-  new("hits", dt = TF, corpus = .Object@corpus, query = query)
+  new("hits", stat = TF, corpus = .Object@corpus, query = query)
 })
 
 
 #' @rdname hits
 setMethod("hits", "partitionBundle", function(
-  .Object, query, pAttribute = getOption("polmineR.pAttribute"), size = TRUE, freq = FALSE,
+  .Object, query, cqp = FALSE, pAttribute = getOption("polmineR.pAttribute"), size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE
 ){
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
@@ -152,7 +151,7 @@ setMethod("hits", "partitionBundle", function(
   .message("now performing counts", verbose = verbose)
   if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
   .query <- function(toFind, corpus, encoding, ...) {
-    cposMatrix <- cpos(.Object = corpus, query = toFind, encoding = encoding, verbose = verbose)
+    cposMatrix <- cpos(.Object = corpus, query = toFind, cqp = cqp, encoding = encoding, verbose = verbose)
     if (!is.null(cposMatrix)){
       dt <- data.table(cposMatrix)
       dt[, query := toFind]
@@ -182,18 +181,18 @@ setMethod("hits", "partitionBundle", function(
     TF[, size := sapply(.Object@objects, function(x) x@size)[TF[["partition"]]]]
   }
   if (freq == TRUE) TF[, freq := count / size]
-  new("hits", dt = TF, corpus = corpus)
+  new("hits", stat = TF, corpus = corpus)
 })
 
 #' @rdname hits
 setMethod("sample", "hits", function(x, size){
-  if (size > nrow(x@dt)){
+  if (size > nrow(x@stat)){
     warning("size exceeds nrow of the data.table of the hits object")
-    size <- nrow(x@dt)
+    size <- nrow(x@stat)
   }
   new(
     "hits",
-    dt = x@dt[sample(c(1:nrow(x@dt)), size = size)],
+    dt = x@stat[sample(1L:nrow(x@stat), size = size)],
     corpus = x@corpus, query = x@query
   )
 })
@@ -218,5 +217,5 @@ setMethod("hits", "context", function(.Object, sAttribute = NULL, verbose = TRUE
     DT[, eval(x) := str]
   }
   
-  new("hits", dt = DT, corpus = .Object@corpus, query = .Object@query)
+  new("hits", stat = DT, corpus = .Object@corpus, query = .Object@query)
 })

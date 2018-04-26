@@ -49,30 +49,24 @@ interest, and a partition defining a reference corpus are compared.
 The most important purpose is term extraction.
 }
 \examples{
-\dontrun{
-  use("polmineR.sampleCorpus")
-  kauder <- partition("PLPRBTTXT", text_name="Volker Kauder", pAttribute="word")
-  all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
+  use("polmineR")
+  kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute="word")
+  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
   terms_kauder <- features(x = kauder, y = all, included = TRUE)
   top100 <- subset(terms_kauder, rank_chisquare <= 100)
-}
-\dontrun{
-  use("polmineR.sampleCorpus")
-  kauder <- partition("PLPRBTTXT", text_name = "Volker Kauder", pAttribute = "word")
+  use("polmineR")
+  kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute = "word")
   x <- as(kauder, "count")
-  all <- partition("PLPRBTTXT", text_date = ".*", regex = TRUE, pAttribute = "word")
+  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
   y <- as(all, "count")
   z <- features(x, y, included = TRUE)
   top100 <- subset(z, rank_chisquare <= 100)
-}
-\dontrun{
-  use("polmineR.sampleCorpus")
-  byName <- partitionBundle("PLPRBTTXT", sAttribute="text_name")
-  byName <- enrich(byName, pAttribute="word")
-  all <- partition("PLPRBTTXT", text_date=".*", regex=TRUE, pAttribute="word")
-  result <- features(byName, all, included=TRUE, progress=TRUE)
-  dtm <- as.DocumentTermMatrix(result, col="chisquare")
-}
+  use("polmineR")
+  byName <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
+  byName <- enrich(byName, pAttribute = "word")
+  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
+  result <- features(byName, all, included = TRUE, progress = TRUE)
+  dtm <- as.DocumentTermMatrix(result, col = "chisquare")
 }
 \references{
 Manning / Schuetze ...

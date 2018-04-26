@@ -26,16 +26,13 @@ a \code{data.table}
 Decode either a corpus, or a s-attribute.
 }
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
+use("polmineR")
 
 # Scenario 1: Decode one s-attribute
-dt <- decode("PLPRBTTXT", sAttribute = "text_date")
+dt <- decode("GERMAPARLMINI", sAttribute = "date")
 
 # Scenario 2: Decode corpus entirely
-dt <- decode("PLPRBTTXT")
-
-}
+dt <- decode("GERMAPARLMINI")
 }
 \seealso{
 \code{\link{encode}}

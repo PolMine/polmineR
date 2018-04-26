@@ -8,6 +8,8 @@
 #' @rdname CQI
 #' @export CQI.super
 #' @importFrom R6 R6Class
+#' @importFrom RcppCWB cl_attribute_size cl_lexicon_size cl_cpos2struc cl_cpos2id cl_struc2cpos cl_id2str cl_struc2str
+#' @importFrom RcppCWB cl_id2str cl_struc2str cl_regex2id cl_str2id cl_id2freq cl_id2cpos cl_cpos2lbound cl_cpos2rbound
 #' @aliases CQI
 CQI.super <- R6Class(
   "CQI.super",
@@ -110,59 +112,59 @@ CQI.Rcpp <- R6Class(
     },
     
     attribute_size = function(corpus, attribute, type = "s"){
-      polmineR.Rcpp::attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     lexicon_size = function(corpus, pAttribute){
-      polmineR.Rcpp::lexicon_size(corpus = corpus, p_attribute = pAttribute, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_lexicon_size(corpus = corpus, p_attribute = pAttribute, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2struc = function(corpus, sAttribute, cpos){
-      polmineR.Rcpp::cpos2struc(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_cpos2struc(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2str = function(corpus, pAttribute, cpos){
-      polmineR.Rcpp::cpos2str(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_cpos2str(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2id = function(corpus, pAttribute, cpos){
-      polmineR.Rcpp::cpos2id(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_cpos2id(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     struc2cpos = function(corpus, sAttribute, struc){
-      polmineR.Rcpp::struc2cpos(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_struc2cpos(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     id2str = function(corpus, pAttribute, id){
-      polmineR.Rcpp::id2str(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_id2str(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     struc2str = function(corpus, sAttribute, struc){
-      polmineR.Rcpp::struc2str(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_struc2str(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     regex2id = function(corpus, pAttribute, regex){
-      polmineR.Rcpp::regex2id(corpus = corpus, p_attribute = pAttribute, regex = regex, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_regex2id(corpus = corpus, p_attribute = pAttribute, regex = regex, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     str2id = function(corpus, pAttribute, str){
-      polmineR.Rcpp::str2id(corpus = corpus, p_attribute = pAttribute, str = str, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_str2id(corpus = corpus, p_attribute = pAttribute, str = str, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     id2freq = function(corpus, pAttribute, id){
-      polmineR.Rcpp::id2freq(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_id2freq(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     id2cpos = function(corpus, pAttribute, id){
-      polmineR.Rcpp::id2cpos(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_id2cpos(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2lbound = function(corpus, sAttribute, cpos){
-      polmineR.Rcpp::cpos2lbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_cpos2lbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     cpos2rbound = function(corpus, sAttribute, cpos){
-      polmineR.Rcpp::cpos2rbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
+      cl_cpos2rbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY"))
     },
     
     query = function(corpus, query)

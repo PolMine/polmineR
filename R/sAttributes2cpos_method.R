@@ -37,8 +37,10 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml = "flat", regex
       }
     }
     if (nrow(meta) != 0){
-      if (requireNamespace("polmineR.Rcpp", quietly = TRUE) && getOption("polmineR.Rcpp") == TRUE){
-        .Object@cpos <- polmineR.Rcpp::getRegionMatrix(.Object@corpus, .Object@sAttributeStrucs, meta[,1])
+      if (requireNamespace("RcppCWB", quietly = TRUE) && getOption("polmineR.RcppCWB") == TRUE){
+        .Object@cpos <- RcppCWB::get_region_matrix(
+          corpus = .Object@corpus, s_attribute = .Object@sAttributeStrucs, strucs = meta[,1]
+          )
       } else {
         .Object@cpos <- matrix(
           data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, x))),
@@ -62,11 +64,11 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml = "flat", regex
       strucs <- strucs[ unique(unlist(matchList)) ]
     }
     
-    # turn strucs into cpos matrix, using polmineR.Rcpp, if available
-    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
-      cpos <- polmineR.Rcpp::get_region_matrix(
+    # turn strucs into cpos matrix, using RcppCWB, if available
+    if (requireNamespace("RcppCWB", quietly = TRUE)){
+      cpos <- RcppCWB::get_region_matrix(
         corpus = .Object@corpus, s_attribute = sAttrNames[1],
-        registry = Sys.getenv("CORPUS_REGISTRY"), struc = strucs
+        registry = Sys.getenv("CORPUS_REGISTRY"), strucs = strucs
       )
     } else {
       cpos <- matrix(

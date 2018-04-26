@@ -14,10 +14,8 @@
 Coerce partitionBundle to VCorpus.
 }
 \examples{
-\dontrun{
-use("polmineR.sampleCorpus")
-P <- partition("PLPRBTTXT", text_date = "2009-11-10")
-PB <- partitionBundle(P, sAttribute = "text_speaker")
+use("polmineR")
+P <- partition("GERMAPARLMINI", date = "2009-11-10")
+PB <- partitionBundle(P, sAttribute = "speaker")
 VC <- as.VCorpus(PB)
-}
 }

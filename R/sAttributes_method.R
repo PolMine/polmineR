@@ -68,7 +68,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
 #'   sAttributes("GERMAPARLMINI", "date") # dates of plenary meetings
 #'   
 #'   
-#'   P <- partition("PLPRBTTXT", date = "2009-11-10")
+#'   P <- partition("GERMAPARLMINI", date = "2009-11-10")
 #'   sAttributes(P)
 #'   sAttributes(P, "speaker") # get names of speakers
 setMethod(

@@ -46,37 +46,26 @@
 #' @seealso To learn about the methods available for objects of the class partition, see
 #' \code{\link{partition_class}},
 #' @examples
-#'    use("polmineR")
-#'    spd <- partition("GERMAPARLMINI", party = "SPD", interjection = "speech")
-#'    kauder <- partition(
-#'    "GERMAPARLMINI", speaker = "Volker Kauder", pAttribute="word"
-#'    )
-#'    merkel <- partition(
-#'      "GERMAPARLMINI", speaker = ".*Merkel",
-#'      pAttribute="word", regex=TRUE
-#'      )
-#'    sAttributes(merkel, "date")
-#'    sAttributes(merkel, "speaker")
-#'    merkel <- partition(
-#'      "GERMAPARLMINI", speaker = "Angela Dorothea Merkel",
-#'      date = "2009-11-10", interjection = "speech", pAttribute = "word"
-#'      )
-#'    merkel <- subset(merkel, !word %in% punctuation)
-#'    merkel <- subset(merkel, !word %in% tm::stopwords("de"))
+#' use("polmineR")
+#' spd <- partition("GERMAPARLMINI", party = "SPD", interjection = "speech")
+#' kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute = "word")
+#' merkel <- partition("GERMAPARLMINI", speaker = ".*Merkel", pAttribute = "word", regex = TRUE)
+#' sAttributes(merkel, "date")
+#' sAttributes(merkel, "speaker")
+#' merkel <- partition(
+#'   "GERMAPARLMINI", speaker = "Angela Dorothea Merkel",
+#'   date = "2009-11-10", interjection = "speech", pAttribute = "word"
+#'   )
+#' merkel <- subset(merkel, !word %in% punctuation)
+#' merkel <- subset(merkel, !word %in% tm::stopwords("de"))
 #'    
-#'    # a certain defined time segment
-#'    if (require("chron")){
-#'      firstDay <- "2009-10-28"
-#'      lastDay <- "2009-11-11"
-#'      days <- strftime(
-#'        chron::seq.dates(
-#'          from = strftime(firstDay, format="%m/%d/%Y"),
-#'          to = strftime(lastDay, format="%m/%d/%Y"),
-#'          by="days"),
-#'        format="%Y-%m-%d"
-#'        )
-#'      period <- partition("GERMAPARLMINI", date = days)
-#'    }
+#' # a certain defined time segment
+#' days <- seq(
+#'   from = as.Date("2009-10-28"),
+#'   to = as.Date("2009-11-11"),
+#'   by = "1 day"
+#' )
+#' period <- partition("GERMAPARLMINI", date = days)
 #' @import methods
 #' @exportMethod partition
 #' @rdname partition
@@ -228,10 +217,10 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     Encoding(sAttrValues) <- .Object@encoding
     hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
     newPartition@strucs <- unique(newStrucs[hits])
-    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
-      newPartition@cpos <- polmineR.Rcpp::get_region_matrix(
+    if (requireNamespace("RcppCWB", quietly = TRUE)){
+      newPartition@cpos <- RcppCWB::get_region_matrix(
         corpus = .Object@corpus, s_attribute = names(def),
-        registry = Sys.getenv("CORPUS_REGISTRY"), struc = newPartition@strucs
+        registry = Sys.getenv("CORPUS_REGISTRY"), strucs = newPartition@strucs
       )
     } else {
       newPartition@cpos <- matrix(

@@ -31,12 +31,12 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     
     stopifnot(sAttribute %in% sAttributes(.Object)) 
     
-    if (requireNamespace("polmineR.Rcpp", quietly = TRUE)){
+    if (requireNamespace("RcppCWB", quietly = TRUE)){
       
-      .message("using polmineR.Rcpp to get regions", verbose = verbose)
-      regions <- polmineR.Rcpp::get_region_matrix(
+      .message("using RcppCWB to get regions", verbose = verbose)
+      regions <- RcppCWB::get_region_matrix(
         .Object, s_attribute = sAttribute[1],
-        strucs = 0:(CQI$attribute_size(.Object, sAttribute[1]) - 1),
+        strucs = 0L:(CQI$attribute_size(.Object, sAttribute[1]) - 1L),
         registry = Sys.getenv("CORPUS_REGISTRY")
       )
       y <- data.table(regions)

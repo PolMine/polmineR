@@ -37,10 +37,10 @@ test_that(
     y <- ngrams(b, pAttribute = "word")
     z <- features(x, y)
     expect_equal(
-      z@stat[["1_word"]][1:5], c("of", "oil", "said", "world", "said")
+      z@stat[["1_word"]][1:5], c("billion", "Abdul", "Sheikh", "Aziz", "1985")
     )
     expect_equal(
-      z@stat[["2_word"]][1:5], c("the", "prices", "the", "oil", "that")
+      z@stat[["2_word"]][1:5], c("riyals", "Aziz", "Abdul", "said", "86")
     )
   }
 )

@@ -117,7 +117,7 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
 #' @rdname features-method
 #' @examples 
 #'   use("polmineR")
-#'   byName <- partitionBundle("GERMAPARLMINI", sAttribute = "name")
+#'   byName <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
 #'   byName <- enrich(byName, pAttribute = "word")
 #'   all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
 #'   result <- features(byName, all, included = TRUE, progress = TRUE)

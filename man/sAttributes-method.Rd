@@ -42,15 +42,13 @@ values of the s-attributes available in the corpus/partition are returned.
 If a character vector of s-attributes is provided, the method will return a \code{data.table}.
 }
 \examples{
-\dontrun{
-  use("polmineR.sampleCorpus")
+  use("polmineR")
   
-  sAttributes("PLPRBTTXT")
-  sAttributes("PLPRBTTXT", "text_date") # dates of plenary meetings
+  sAttributes("GERMAPARLMINI")
+  sAttributes("GERMAPARLMINI", "date") # dates of plenary meetings
   
   
-  P <- partition("PLPRBTTXT", text_date = "2009-11-10")
+  P <- partition("GERMAPARLMINI", date = "2009-11-10")
   sAttributes(P)
-  sAttributes(P, "text_name") # get names of speakers
-}
+  sAttributes(P, "speaker") # get names of speakers
 }

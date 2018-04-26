@@ -115,7 +115,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
             if (class(dt)[1] == "try-error") return( NULL )
             if (nrow(dt) > 0) return( as.matrix(dt)[,1:2] ) else return( NULL )
           } else {
-            warning("If polmineR.Rcpp is used to access CWB corpus, a CQP/CWB installation ",
+            warning("If RcppCWB is used to access CWB corpus, a CQP/CWB installation ",
                     "is required to use CQP syntax. Consider calling install.cwb(), and ",
                     "see ?install.cwb for further information.")
             return( NULL )
@@ -171,7 +171,7 @@ setMethod("cpos", "matrix", function(.Object){
 
 #' @rdname cpos-method
 setMethod("cpos", "hits", function(.Object){
-  cpos(as.matrix(.Object@dt[, c("cpos_left", "cpos_right")]))
+  cpos(as.matrix(.Object@stat[, c("cpos_left", "cpos_right")]))
 })
 
 

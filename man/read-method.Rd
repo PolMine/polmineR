@@ -85,19 +85,19 @@ different methods to learn more.
 }
 \examples{
 \donttest{
-use("polmineR.sampleCorpus")
+use("polmineR")
 template <- jsonlite::fromJSON(system.file(package = "polmineR", "templates", "plpr.template.json"))
-options(polmineR.templates = list("PLPRBTTXT" = template))
+options(polmineR.templates = list("GERMAPARLMINI" = template))
 merkel <- partition(
-  "PLPRBTTXT",
-   text_date = "2009-11-10", text_name = "Angela Dorothea Merkel",
+  "GERMAPARLMINI",
+   date = "2009-11-10", speaker = "Angela Dorothea Merkel",
    type = "plpr"
  )
- read(merkel, meta = c("text_name", "text_date"))
+ read(merkel, meta = c("speaker", "date"))
  read(
    merkel,
    highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
-   meta = c("text_name", "text_date")
+   meta = c("speaker", "date")
 )
 }
 }

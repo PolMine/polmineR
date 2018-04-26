@@ -28,7 +28,6 @@ ATTRIBUTE pos
 ## s-attributes (structural markup)
 ##
 
-STRUCTURE text
 STRUCTURE interjection
 STRUCTURE date
 STRUCTURE party
