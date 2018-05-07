@@ -21,7 +21,7 @@ hits(.Object, ...)
   pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE)
 
-\S4method{hits}{partitionBundle}(.Object, query,
+\S4method{hits}{partitionBundle}(.Object, query, cqp = FALSE,
   pAttribute = getOption("polmineR.pAttribute"), size = TRUE,
   freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
   verbose = TRUE)

@@ -75,7 +75,7 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 
 .getPartitionType <- function(corpus, type, verbose){
   if (is.null(type)){
-    corpusProperties <- RegistryFile$new(corpus)$getProperties()
+    corpusProperties <- corpus_get_properties(corpus)
     if (!"type" %in% names(corpusProperties)){
       partitionType <- "partition"
     } else {

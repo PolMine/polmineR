@@ -34,6 +34,3 @@ dt <- decode("GERMAPARLMINI", sAttribute = "date")
 # Scenario 2: Decode corpus entirely
 dt <- decode("GERMAPARLMINI")
 }
-\seealso{
-\code{\link{encode}}
-}

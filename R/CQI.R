@@ -9,7 +9,7 @@
 #' @export CQI.super
 #' @importFrom R6 R6Class
 #' @importFrom RcppCWB cl_attribute_size cl_lexicon_size cl_cpos2struc cl_cpos2id cl_struc2cpos cl_id2str cl_struc2str
-#' @importFrom RcppCWB cl_id2str cl_struc2str cl_regex2id cl_str2id cl_id2freq cl_id2cpos cl_cpos2lbound cl_cpos2rbound
+#' @importFrom RcppCWB cl_id2str cl_struc2str cl_regex2id cl_str2id cl_cpos2str cl_id2freq cl_id2cpos cl_cpos2lbound cl_cpos2rbound
 #' @aliases CQI
 CQI.super <- R6Class(
   "CQI.super",
@@ -105,9 +105,9 @@ CQI.Rcpp <- R6Class(
     
     attributes = function(corpus, type){
       if (type == "p"){
-        return( RegistryFile$new(corpus)$getPAttributes() )
+        return( corpus_get_p_attributes(corpus) )
       } else if (type == "s"){
-        return( RegistryFile$new(corpus)$getSAttributes() )
+        return( corpus_get_s_attributes(corpus) )
       }
     },
     

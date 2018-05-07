@@ -24,7 +24,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
       ret <- as.nativeEnc(ret, from = getEncoding(.Object))
       return(ret)
     } else if (length(sAttribute) > 1){
-      corpusEncoding <- RegistryFile$new(.Object)$getEncoding()
+      corpusEncoding <- corpus_get_encoding(.Object)
       metaInformation <- lapply(
         sAttribute,
         function(x) {

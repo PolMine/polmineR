@@ -38,7 +38,7 @@ setGeneric("setTemplate", function(.Object, ... ) standardGeneric("setTemplate")
 setMethod("setTemplate", "character", function(.Object){
   stopifnot(.Object %in% CQI$list_corpora())
   templateList <- getOption("polmineR.templates")
-  filename <- file.path(RegistryFile$new(.Object)$getHome(), "template.json")
+  filename <- file.path(corpus_get_home(.Object), "template.json")
   if (file.exists(filename)){
     templateList[[.Object]] <- jsonlite::fromJSON(txt = filename) 
     if ("metadata" %in% names(templateList[[.Object]])){

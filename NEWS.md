@@ -7,6 +7,8 @@
 * configuration mechanism added to set path to data directory in registry file upon installation 
 * class hits now inherits from class 'textstat', exposing a set of generic functions (such as dim, nrow etc.); slot 'dt' changed to 'stat' for this purpose
 * count,partitionBundle and hits,partitionBundle: cqp parameter added
+* RegistryFile class replaced by a set of leightweight-functions (corpus_...)
+* encode-method moved to cwbtools package
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated

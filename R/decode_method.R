@@ -21,7 +21,6 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' # Scenario 2: Decode corpus entirely
 #' dt <- decode("GERMAPARLMINI")
 #' @exportMethod decode
-#' @seealso \code{\link{encode}}
 #' @importFrom data.table fread
 setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = TRUE){
   

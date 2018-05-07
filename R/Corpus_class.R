@@ -75,7 +75,7 @@ Corpus <- R6Class(
       self$corpus <- corpus
       
       self$registryDir <- Sys.getenv("CORPUS_REGISTRY")
-      self$dataDir <- RegistryFile$new(corpus)$getHome()
+      self$dataDir <- corpus_get_home(corpus)
       self$encoding <- getEncoding(corpus)
       self$size <- size(corpus)
       
@@ -208,7 +208,7 @@ Corpus <- R6Class(
     },
     
     getInfo = function(as.html = FALSE){
-      RegistryFile$new(self$corpus)$getInfo()
+      corpus_get_info(self$corpus)
     },
     
     showInfo = function(){
