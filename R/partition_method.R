@@ -129,7 +129,7 @@ setMethod("partition", "character", function(
     Partition <- sAttributes2cpos(Partition, xml, regex)  
   }
   if (!is.null(Partition)) {
-    .message('get partition size', verbose = verbose)
+    # get partition size
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
@@ -289,7 +289,7 @@ setMethod("partition", "Corpus", function(
     return( NULL )
   }
   
-  .message('get partition size', verbose = verbose)
+  # get partition size
   y@size <- size(y)
   y
 })

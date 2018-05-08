@@ -16,7 +16,7 @@ setMethod("getTerms", "character", function(.Object, pAttribute, robust=FALSE, v
   # pAttr <- paste(.Object, ".", pAttribute, sep="")
   corpusEncoding <- getEncoding(.Object)
   totalNoTerms <- CQI$lexicon_size(.Object, pAttribute)
-  ids <- c(0:(totalNoTerms-1))
+  ids <- 0:(totalNoTerms - 1)
   
   if (mc == FALSE){
     strs <- CQI$id2str(.Object, pAttribute, ids)

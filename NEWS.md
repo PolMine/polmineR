@@ -9,6 +9,7 @@
 * count,partitionBundle and hits,partitionBundle: cqp parameter added
 * RegistryFile class replaced by a set of leightweight-functions (corpus_...)
 * encode-method moved to cwbtools package
+* getTerms,character-method and terms,partition-method merged
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated
