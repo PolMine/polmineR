@@ -56,7 +56,7 @@ for (corpus in list.files(registryDir)){
       registry[infoFileLine] <- sprintf('INFO "%s"', infoFileNew)
     } else {
       registry[grep("^HOME", registry)] <- sprintf("HOME %s", homeDir)
-      registry[infoFileLine] <- sprintf("INFO %s", %s)
+      registry[infoFileLine] <- sprintf("INFO %s", infoFileNew)
     }
   }
   
