@@ -9,5 +9,5 @@
 setGeneric("getEncoding", function(.Object) standardGeneric("getEncoding"))
 
 #' @rdname getEncoding-method
-setMethod("getEncoding", "character", function(.Object) corpus_get_encoding(.Object))
+setMethod("getEncoding", "character", function(.Object) registry_get_encoding(.Object))
 

@@ -4,7 +4,7 @@
 \name{decode}
 \alias{decode}
 \alias{decode,character-method}
-\title{Decode corpus or s-attribute.}
+\title{Decode Structural Attribute or Entire Corpus.}
 \usage{
 decode(.Object, ...)
 
@@ -23,13 +23,26 @@ decode(.Object, ...)
 a \code{data.table}
 }
 \description{
-Decode either a corpus, or a s-attribute.
+If a \code{s_attribute} is a character vector providing one or several structural attributes,
+the return value is a \code{data.table} with the left and right corpus positions in the first
+and second columns ("cpos_left" and "cpos_right"). Values of further columns are the decoded
+s-attributes. The name of the s-attribute is the column name. An error is thrown if the
+lengths of structural attributes differ (i.e. if there is a nested data structure).
+}
+\details{
+If \code{s_attribute} is NULL, the token stream is decoded for all positional attributes that
+are present. Structural attributes are reported in additional columns. Decoding the entire
+corpus may be useful to make a transition to processing data following the 'tidy' approach,
+or to manipulate the corpus data and to re-encode the corpus.
+
+The return value is a \code{data.table}.
 }
 \examples{
 use("polmineR")
 
-# Scenario 1: Decode one s-attribute
+# Scenario 1: Decode one or two s-attributes
 dt <- decode("GERMAPARLMINI", sAttribute = "date")
+dt <- decode("GERMAPARLMINI", sAttribute = c("date", "speaker"))
 
 # Scenario 2: Decode corpus entirely
 dt <- decode("GERMAPARLMINI")

@@ -10,21 +10,11 @@ vignette: >
 
 ---
 
-
-```{r, eval = TRUE, message = FALSE, echo = FALSE}
-runcode <- FALSE
-if ("CORPUS_REGISTRY" %in% names(Sys.getenv()) && nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
-  library(data.table)
-  if (require("rcqp", quietly = T) && require("europarl.en", quietly = T)) runcode <- TRUE
-}
-```
- 
-
 ## Purpose
 
 The purpose of the package *polmineR* is to facilitate the interactive analysis of corpora using R. Apart from performance and usability, key considerations for developing the package are:
 
-* To provide a library with standard tasks such as concordances/keyword-in-context, cooccurrence statistics, or keyword extraction.
+* To provide a library with standard tasks such as concordances/keyword-in-context, cooccurrence statistics, or feature extraction.
 
 * To keep the original text accessible and to offer a seamless integration of qualitative and quantitative steps in corpus analysis that facilitates validation.
 
@@ -38,9 +28,9 @@ The 'polmineR' package supplements R packages that are already widely used for t
 
 Apart from the speed of text processing, the Corpus Query Processor (CQP) and the [CQP syntax](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) provide a powerful and widely used syntax to query corpora. This is not an unique idea. Using a combination of R and the CWB implies a software architecture you will also find in the [TXM project](http://sourceforge.net/projects/txm/), or with [CQPweb](http://cwb.sourceforge.net/cqpweb.php). The 'polmineR' package offers a library with the grammer of corpus analysis below a graphical user interface (GUI). It is a toolset to perform simple tasts efficiently as well as to implement complex workflows.
 
-Advanced user will need a good understanding of the Corpus Workbench. The [Corpus Encoding Tutorial](http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf) is an authoritative text for that. [The vignette of the rcqp package](https://cran.r-project.org/package=rcqp) includes an excellent explanation of the CWB data-model.
+Advanced user will benefit from acquiring a good understanding of the Corpus Workbench. The [Corpus Encoding Tutorial](http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf) is an authoritative text for that. [The vignette of the rcqp package](https://cran.r-project.org/package=rcqp) includes an excellent explanation of the CWB data-model.
 
-The most important thing users need to now is the difference between "s" and "p" attributes. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes).  Typically, the p-attributes will be 'word', 'pos' (for part-of-speech) and 'lemma' (for the lemmatized word form). 
+The most important thing users need to now is the difference between "s"- and "p"-attributes. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes).  Typically, the p-attributes will be 'word', 'pos' (for part-of-speech) and 'lemma' (for the lemmatized word form). 
 
 
 ## Getting started
@@ -53,75 +43,42 @@ The annex of the vignette includes a detailed explanation how to install polmine
 Sys.getenv("CORPUS_REGISTRY")
 ```
 
-
-The CORPUS_REGISTRY environment variable supplies the directory with registry files that describe where the CWB will find the files of an indexed corpus, and the s- and p-attributes. See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.
+The CORPUS_REGISTRY environment variable defines the directory with registry files that describe where the CWB will find the files of an indexed corpus, and the s- and p-attributes. See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.
 
 
 ##### Loading polmineR
 
-If the CORPUS_REGISTRY variable is set correctly, i.e. pointing to the directory with the registry files describing the corpora, load the polmineR.
+If the CORPUS_REGISTRY variable is set correctly, i.e. pointing to the directory with the registry files describing the corpora, load the polmineR package.
 
-```{r, eval = runcode, message = FALSE}
+```{r, message = FALSE}
 library(polmineR)
 ```
 
 
 ##### Using and installing packaged corpora
 
-If you want to use a CWB corpus packaged in a R data package, you can call 'use' with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset. In the followings examples, the CWB encoded English version of the Europarl wrapped into a data package will be used.
+If you want to use a CWB corpus packaged in a R data package, you can call ´use´ with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset. In the followings examples, the REUTERS corpus will be used for demonstration purposes. It is a sampe of Reuters articles that is included in the tm package (cp. https://www.scss.tcd.ie/~luzs/t/cs4ll4/sw/reuters21578-xml/) and may already be known for many R users.
 
-```{r, eval = runcode, message = FALSE}
-use("europarl.en")
+```{r, message = FALSE}
+use("polmineR")
 ```
 
 
-Note that the use-function will call the resetRegistry-function that can also be used to set again the original path to the directory with registry files. If you want to use the English Europarl corpus, you can download it from a repository at the PolMine server.
+Note that the `use`-function will call the resetRegistry-function that can also be used to set again the original path to the directory with registry files. If you want to use corpora, you can download the EuroParl and the GermaParl data packages from a CRAN-like repository hosted by the PolMine Project.
 
 ```{r, eval = FALSE}
-install.corpus("europarl.en", repo = "http://polmine.sowi.uni-due.de/packages")
+install.packages("europarl.en", repo = "http://polmine.sowi.uni-due.de/packages")
+install.packages("GermaParl", repo = "http://polmine.sowi.uni-due.de/packages")
 ```
 
-This package may serve as an example how CWB indexed corpora can be shared using an adapted version of standard R functions. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.
+Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.
 
-##### Setting the interface to the Corpus Workbench
-
-The standard interface used by the polmineR package to extract information from CWB indexed corpora is the package 'rcqp'. The interface is defined in a class called 'CQI'. To check which interface is used:
-
-```{r, eval = runcode}
-class(polmineR:::CQI)
-```
-If you see "CQI.perl" leading the character vector that is returned, something went wrong. Accessing the corpora using perl scripts incurs an incredible performence loss. Reset the interface as follows:
-
-```{r, eval = FALSE}
-unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
-assign("CQI", CQI.rcqp$new(), envir = getNamespace("polmineR"))
-lockBinding(env = getNamespace("polmineR"), sym = "CQI")
-}
-```
-
-
-An alternative interface is provided by the package 'polmineR.Rcpp', [available at GitHub][https://github.com/PolMine/polmineR.Rcpp] so far. This (experimental) package includes a few functions that speed up tasks such as counting terms, or preparing partitions. To install and use 'polmineR.Rcpp':
-
-```{r, eval = FALSE}
-devtools::install_github("PolMine/polmineR.Rcpp")
-setCorpusWorkbenchInterface("Rcpp")
-```
-
-To switch to the interface offered by polmineR.Rcpp, proceed as follows:
-
-```{r, eval = FALSE}
-unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
-assign("CQI", CQI.Rcpp$new(), envir = getNamespace("polmineR"))
-lockBinding(env = getNamespace("polmineR"), sym = "CQI")
-```
-
-The checks performed when submitting a package at CRAN issue a note when the 'unlockBinding' function appears in the source code of the package. This is why a function for reset the interface is not included in the package.
 
 ##### Checking that corpora are available
 
-Use the corpus-method to check whether which corpora are accessible. It should be the EUROPARL-EN corpus in our case (the names of CWB corpora are always written upper case).
+Use the corpus-method to check which corpora are accessible. It should be the REUTERS corpus in our case (the names of CWB corpora are always written upper case). In addition to the English REUTERS corpus, a small subset of the GermaParl corpus ("GERMAPARLMINI") is included in the polmineR package.
 
-```{r, eval = runcode, message = FALSE}
+```{r, eval = TRUE, message = FALSE}
 corpus()
 ```
 
@@ -142,24 +99,6 @@ options("polmineR.right" = 15)
 options("polmineR.mc" = FALSE)
 ```
 
-To speed up computations, the polmineR package will sometimes try to use alternative, faster ways to access CWB corpora than the rcqp package. A few computations that are performance critical (for setting up partitions, or to count term frequencies) are implemented in the plugin package polmineR.Rcpp that has been mentioned before. It can be installed from GitHub. Note that it requires an installation of the Corpus Workbench to be present on your system (see installation instructions in the annex).
-
-```{r, eval = FALSE}
-devtools::install_github("PolMineR/polmineR")
-```
-
-When loading the polmineR package, it is checked whether that plugin is present. 
-
-```{r, eval = FALSE}
-getOption("polmineR.Rcpp")
-```
-
-If you want to suppress using the polmineR.Rcpp functionality:
-
-```{r, eval = FALSE}
-options("polmineR.Rcpp" = FALSE)
-```
-
 
 ## Working with corpora: Core methods
 
@@ -168,18 +107,19 @@ Core analytical tasks are implemented as methods (S4 class system), i.e. the bev
 
 ##### Keyword-in-context (kwic)
 
-The kwic method applied to the name of a corpus will return a KWIC object, output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 'meta' parameter.
+The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 'meta' parameter.
 
-```{r, eval = FALSE}
-kwic("EUROPARL-EN", "Islam")
-kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name"))
+```{r, eval = TRUE}
+kwic("REUTERS", "oil")
+kwic("REUTERS", "oil", meta = "places")
+kwic("REUTERS", "oil", meta = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.
 
-```{r, eval = FALSE}
-kwic("EUROPARL-EN", '"Geneva" "Convention"')
-kwic("EUROPARL-EN", '"[Ss]ocial" "justice"')
+```{r, eval = TRUE}
+kwic("REUTERS", '"OPEC.*"')
+kwic("REUTERS", '"oil" "price.*"')
 ```
 
 Explaining the CQP syntax goes beyon this vignette. Consult the [CQP tutorial](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) to learn more about the CQP syntax.
@@ -189,25 +129,28 @@ Explaining the CQP syntax goes beyon this vignette. Consult the [CQP tutorial](h
 
 You can count one or several hits in a corpus.
 
-```{r, eval = runcode}
-count("EUROPARL-EN", "France")
-count("EUROPARL-EN", c("France", "Germany", "Britain", "Spain", "Italy", "Denmark", "Poland"))
-count("EUROPARL-EN", '"[pP]opulism"')
+```{r, eval = TRUE}
+count("REUTERS", "Kuwait")
+count("REUTERS", c("Kuwait", "USA", "Bahrain"))
+count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
 ```
 
 ##### Dispersions
 
 ... get dispersions of counts accross one (or two) dimensions ...
 
-```{r, eval = runcode, message = FALSE}
-pop <- dispersion("EUROPARL-EN", "populism", sAttribute = "text_year", progress = FALSE)
-popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', sAttribute = "text_year", cqp = TRUE, progress = FALSE)
+```{r, eval = TRUE, message = FALSE}
+oil <- dispersion("REUTERS", query = "oil", sAttribute = "id", progress = FALSE)
+saudi_arabia <- dispersion(
+  "REUTERS", query = '"Saudi" "Arabia.*"',
+  sAttribute = "id", cqp = TRUE, progress = FALSE
+  )
 ```
 
 Note that it is a data.table that is returned. Visualising the result as a barplot ...
 
-```{r, eval = runcode}
-barplot(height = popRegex[,count], names.arg = popRegex[,text_year], las = 2)
+```{r, eval = TRUE}
+barplot(height = saudi_arabia[["count"]], names.arg = saudi_arabia[["id"]], las = 2)
 ```
 
 
@@ -215,32 +158,33 @@ barplot(height = popRegex[,count], names.arg = popRegex[,text_year], las = 2)
 
 ... get cooccurrence statistics ...
 
-```{r, eval = runcode, message = FALSE}
-br <- cooccurrences("EUROPARL-EN", query = "Brussels")
-eu <- cooccurrences("EUROPARL-EN", query = '"European" "Union"', left = 10, right = 10)
-subset(eu, rank_ll <= 100)@stat[["word"]][1:15]
+```{r, eval = TRUE, message = FALSE}
+oil <- cooccurrences("REUTERS", query = "oil")
+sa <- cooccurrences("REUTERS", query = '"Saudi" "Arabia.*"', left = 10, right = 10)
+top5 <- subset(oil, rank_ll <= 5)
+as.data.frame(top5)
 ```
 
 
 ## Working with subcorpora - partitions
 
-Easily creating partitions (i.e. subcorpora) based on s-attributes is a strength of the 'polmineR' package. So if we want to work with the speeches given in the European Parliament in 2006:
+Easily creating partitions (i.e. subcorpora) based on s-attributes is an important feature of the 'polmineR' package. So if we want to work with the articles in the REUTERS corpus related to Kuaweit in 2006:
 
-```{r, eval = runcode, message = FALSE, results = 'hide'}
-ep2006 <- partition("EUROPARL-EN", text_year = "2006")
+```{r, eval = TRUE, message = FALSE, results = 'hide'}
+kuwait <- partition("REUTERS", places = "kuwait", regex = TRUE)
 ```
 
 To get some basic information about the partition that has been set up, the 'show'-method can be used. It is also called when you simply type the name of the partition object.
 
-```{r, eval = runcode}
-ep2006
+```{r, eval = TRUE}
+kuwait
 ```
 
 To evaluate s-attributes, regular expressions can be used.
 
-```{r, eval = runcode, message = FALSE}
-barroso <- partition("EUROPARL-EN", speaker_name = "Barroso", regex = TRUE)
-sAttributes(barroso, "speaker_name")
+```{r, eval = TRUE, message = FALSE}
+saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+sAttributes(saudi_arabia, "id")
 ```
 
 If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the partition-function.
@@ -250,15 +194,16 @@ If you work with a flat XML structure, the order of the provided s-attributes ma
 
 The cooccurrences-method can be applied to partition-objects.
 
-```{r, eval = runcode, message = FALSE}
-ep2002 <- partition("EUROPARL-EN", text_year = "2006")
-terror <- cooccurrences(ep2002, "terrorism", pAttribute = "lemma", left = 10, right = 10)
+```{r, eval = TRUE, message = FALSE}
+saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+oil <- cooccurrences(saudi_arabia, "oil", pAttribute = "word", left = 10, right = 10)
 ```
 
-Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object.
+Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object. Alternatively, you can get the table with the statistics using ´as.data.frame´.
 
-```{r, eval = runcode}
-terror@stat[1:10,][,.(lemma, count_partition, rank_ll)]
+```{r, eval = TRUE}
+df <- as.data.frame(oil)
+df[1:5, c("word", "ll", "rank_ll")]
 ```
 
 
@@ -266,12 +211,9 @@ terror@stat[1:10,][,.(lemma, count_partition, rank_ll)]
 
 To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax.
 
-```{r, eval = runcode}
-# one query / one dimension
-oneQuery <- dispersion(ep2002, query = 'terrorism', "text_date", progress = FALSE)
-
-# # multiple queries / one dimension
-twoQueries <- dispersion(ep2002, query= c("war", "peace"), "text_date", progress = FALSE)
+```{r, eval = TRUE}
+q1 <- dispersion(saudi_arabia, query = 'oil', "id", progress = FALSE)
+q2 <- dispersion(saudi_arabia, query = c("oil", "barrel"), "id", progress = FALSE)
 ```
 
 
@@ -279,15 +221,13 @@ twoQueries <- dispersion(ep2002, query= c("war", "peace"), "text_date", progress
 
 To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.
 
-```{r, eval = runcode, message = FALSE}
-ep2002 <- partition("EUROPARL-EN", text_year = "2002")
-ep2002 <- enrich(ep2002, pAttribute = "word")
+```{r, eval = TRUE, message = FALSE}
+qatar <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+qatar <- enrich(qatar, pAttribute = "word")
 
-epPre911 <- partition("EUROPARL-EN", text_year = as.character(1997:2001))
-epPre911 <- enrich(epPre911, pAttribute = "word")
-
-F <- features(ep2002, epPre911, included = FALSE)
-subset(F, rank_chisquare <= 50)@stat[["word"]]
+qatar_features <- features(qatar, "REUTERS", included = TRUE)
+y <- subset(qatar_features, rank_chisquare <= 10.83 & count_coi >= 5)
+as.data.frame(y)[,c("word", "count_coi", "count_ref", "chisquare")]
 ```
 
 
@@ -295,17 +235,14 @@ subset(F, rank_chisquare <= 50)@stat[["word"]]
 
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.
 
-```{r, eval = FALSE}
-speakers <- partitionBundle(
-  "EUROPARL-EN", sAttribute = "speaker_id",
-  progress = FALSE, verbose = FALSE
-)
-speakers <- enrich(speakers, pAttribute = "word")
-tdm <- as.TermDocumentMatrix(speakers, col = "count")
+```{r, eval = TRUE}
+articles <- partitionBundle("REUTERS", sAttribute = "id", progress = FALSE)
+articles <- enrich(articles, pAttribute = "word", verbose = FALSE)
+tdm <- as.TermDocumentMatrix(articles, col = "count", verbose = FALSE)
 class(tdm) # to see what it is
 show(tdm)
 m <- as.matrix(tdm) # turn it into an ordinary matrix
-m[c("Barroso", "Schulz"),]
+m[c("oil", "barrel"),]
 ```
 
 
@@ -321,19 +258,15 @@ The package includes many features that go beyond this vignette. It is a key aim
 The following instructions assume that you have installed R. If not, install it from[CRAN](https://cran.r-project.org/bin/windows/base/). An installation of [RStudio](https://www.rstudio.com/products/rstudio/download/#download) is highly recommended.
 
 
-#### Windows (64 bit)
+#### Windows (32 and 64 bit)
 
-For 64bit Windows, an interface included in the package polmineR.Rcpp is offered. It can be installed from the R package repository on the Webserver of the PolMine project as follows.
+For 64bit Windows, an interface included in the package RcppCWB is offered. It can be installed from the R package repository on the Webserver of the PolMine project as follows. It will be installed automatically when you install polmineR. If that does not happen, you can do it manually.
 
 ```{r, eval = FALSE}
-install.packages(
-  "polmineR.Rcpp",
-  repos = "http://polmine.sowi.uni-due.de/packages",
-  type = "win.binary"
-  )
+install.packages("RcppCWB")
 ```
 
-Now the official CRAN version of polmineR can be installed.
+Then install polmineR.
 
 ```{r, eval = FALSE}
 install.packages("polmineR")
@@ -346,90 +279,57 @@ install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-To have access to the syntax of CQP when forming queries, an installation of the CWB needs to be on your system. The install.cwb-function of polmineR will download the CWB binaries and puts it into a subfolder of the polmineR package.
-
-```{r, eval = FALSE}
-library(polmineR)
-install.cwb()
-```
-
-During the download and installation, you may see the following message: "Please make sure that 'D:\PATH\TO\YOUR\R\LIBRARY\polmineR\extdata\cwb\CWB\bin' is in your 'path' so you can call CWB programs from the command prompt!" Adding this path to the PATH environment variable is actually not necessary, because functions in the polmineR package will know where to look for the CWB.
-
 Finally, as a basic test whether the REUTERS corpus included in the polmineR package (for testing and demonstration purposes) is available, run:
 
 ```{r, eval = FALSE}
+use("polmineR")
 corpus()
 ```
 
 
-#### Windows (32 bit / i386)
+### macOS
 
-If you work with a 32bit Windows machine, the rcqp package can be used to access CWB indexed corpora. rcqp requires plyr, which should be installed first.
+The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. Get the Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
 
-```{r, eval = FALSE}
-install.packages("plyr")
+
+##### Installing RcppCWB
+
+To install polmineR on macOS, you first need to install RcppCWB.
+
+First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
+
+```{sh, eval = FALSE}
+xcode-select --install
 ```
 
-Windows binaries for the rcqp package are not available at CRAN. A cross-compilation can be installed from a repository of packages hosted at the server of the PolMine project:
+Please make sure that you agree to the license.
 
-```{r, eval = FALSE}
-install.packages("rcqp", repos = "http://polmine.sowi.uni-due.de/packages", type = "win.binary")
+Second, an installation of XQuartz is required, it can be obtained from [www.xquartz.org](https://www.xquartz.org/).
+
+Third, to compile the C code in the RcppCWB package, there are system requirements that need to be fulfilled. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands then need to be executed from a terminal window. They will install the dependencies that the RcppCWB package relies on:
+
+```{sh, eval = FALSE}
+brew -v install pkg-config
+brew -v install glib --universal
+brew -v install pcre --universal
+brew -v install readline
 ```
 
-Before proceeding to install polmineR, we install dependencies that are not installed automatically.
+Fourth, install RcppCWB.
 
 ```{r, eval = FALSE}
-install.packages(pkgs = c("htmltools", "htmlwidgets", "magrittr", "iterators", "NLP"))
+install.packages("RcppCWB")
 ```
 
-The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on will be installed automatically. 
-
-```{r, eval = FALSE}
-install.packages("polmineR")
-```
-
-The development version of the package, which may include the most recent updates and features, can be installed from GitHub. The easiest way to do this is to use a mechanism offered by the package devtools.
-
-```{r, eval = FALSE}
-install.packages("devtools")
-devtools::install_github("PolMine/polmineR", ref = "dev")
-```
-
-The installation may throw warnings. There are three warnings you can ignore at this stage:
-
-* "WARNING: this package has a configure script / It probably needs manual configuration".
-* The environment variable CORPUS_REGISTRY is not defined.
-* package 'rcqp' is not installed for 'arch = x64'.
-
-If everything works, check whether polmineR can be loaded.
+A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.
 
 ```{r, eval = FALSE}
 library(polmineR)
-corpus() # to see corpora available at your system
+corpus()
 ```
 
+You should see a message that "CQI.Rcpp" is the interface used, and that the REUTERS corpus is on your system.
 
-
-#### Setting the CORPUS_REGISTRY environment variable
-
-The environment variable "CORPUS_REGISTRY" can be set as follows in R:
-
-```{r, eval = FALSE}
-Sys.setenv(CORPUS_REGISTRY = "C:/PATH/TO/YOUR/REGISTRY")
-```
-
-To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file '.Renviron' or '.Renviron.site' when calling the help for the startup process(`?Startup`).
-
-Two important notes concerning problems with the CORPUS_REGISTRY environment variable that may cause serious headaches on Windows machines:
-
-* The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name ("C:/Users/Donald Duck/Documents"), for instance. There is no known workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as "C:/cwb").
-
-* If you keep data on another volume than your system files, your R packages etc. (eg. volume 'C:' for system files, and 'D:' for data and user files), make sure to set the working directory (`setwd()`) is set to any directory on the volume with the directory defined via CORPUS_REGISTRY. CWB/rcqp will assume that the CORPUS_REGISTRY directory is on the same volume as the current working directory (which can be identified by calling `getwd()`).
-
-
-### MacOS
-
-The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. Get the Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
 
 #### Installing 'polmineR'
 
@@ -445,63 +345,6 @@ The development version of *polmineR* can be installed using devtools:
 install.packages("devtools") # unless devtools is already installed
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
-
-
-#### Installing 'rcqp'
-
-The default interface of the polmineR package to access CWB indexed corpora is the package 'rcqp'. Accessing corpora will not work before you have installed the interface.
-
-##### Installing precompiled binary of rcqp from the PolMine server
-
-The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server. The precompiled package includes the C library 'rcqp.so' and compilations of all dependencies.
-
-```{r, eval = FALSE}
-install.packages(
-  "rcqp",
-  repos = "http://polmine.sowi.uni-due.de/packages",
-  type = "mac.binary"
-  )
-```
-
-
-##### Building rcqp from source
-
-If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.
-
-First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
-
-```{sh, eval = FALSE}
-xcode-select --install
-```
-
-Please make sure that you agree to the license.
-
-Second, an installation of XQuartz is required, it can be obtained from [www.xquartz.org](https://www.xquartz.org/).
-
-Third, to compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands then need to be executed from a terminal window. They will install the C libraries that the rcqp package relies on:
-
-```{sh, eval = FALSE}
-brew -v install pkg-config
-brew -v install glib --universal
-brew -v install pcre --universal
-brew -v install readline
-```
-
-Fourth, install dependencies of rcqp, and finally rcqp. That can be done from within R.
-
-```{r, eval = FALSE}
-install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))
-install.packages("rcqp")
-```
-
-A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.
-
-```{r, eval = FALSE}
-library(polmineR)
-corpus()
-```
-
-You should see a message that rcqp is the interface used, and that the REUTERS corpus is on your system.
 
 
 ### Linux (Ubuntu)
@@ -540,8 +383,7 @@ sudo apt-get install libprotobuf-dev
 The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
 
 ```{r, eval = FALSE}
-install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))
-install.packages("rcqp")
+install.packages("RcppCWB")
 install.packages("polmineR")
 ```
 
@@ -552,16 +394,58 @@ install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-You may want to install packaged corpora to run examples in the vignette, and the man packages.
+Finally, check the installation.
 
 ```{r, eval = FALSE}
 library(polmineR)
-install.corpus("polmineR.sampleCorpus")
-install.corpus("europarl.en")
+use("polmineR")
 ```
 
 
-#### polmineR - Full installation
+#### Annex I: Setting the CORPUS_REGISTRY environment variable
+
+The environment variable "CORPUS_REGISTRY" can be set as follows in R:
+
+```{r, eval = FALSE}
+Sys.setenv(CORPUS_REGISTRY = "C:/PATH/TO/YOUR/REGISTRY")
+```
+
+To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file '.Renviron' or '.Renviron.site' when calling the help for the startup process(`?Startup`).
+
+
+#### Annex II: Setting the interface to the Corpus Workbench
+
+The standard interface used by the polmineR package to extract information from CWB indexed corpora is the package 'RcppCWB'. The interface is defined in a class called 'CQI'. To check which interface is used:
+
+```{r, eval = TRUE}
+class(polmineR:::CQI)
+```
+
+If you see "CQI.perl" leading the character vector that is returned, something went wrong. Accessing the corpora using perl scripts incurs an incredible performence loss. Reset the interface as follows:
+
+```{r, eval = FALSE}
+unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
+assign("CQI", CQI.rcqp$new(), envir = getNamespace("polmineR"))
+lockBinding(env = getNamespace("polmineR"), sym = "CQI")
+```
+
+
+An alternative interface is provided by the package 'rcqp', [available at GitHub][https://github.com/PolMine/polmineR.Rcpp] so far.  To install and use 'rcqp':
+
+```{r, eval = FALSE}
+install.packages("rcqp")
+```
+
+To switch to the interface offered by polmineR.Rcpp, proceed as follows:
+
+```{r, eval = FALSE}
+unlockBinding(env = getNamespace("polmineR"), sym = "CQI")
+assign("CQI", CQI.Rcpp$new(), envir = getNamespace("polmineR"))
+lockBinding(env = getNamespace("polmineR"), sym = "CQI")
+```
+
+
+#### Annex III: polmineR - Full installation
 
 To have access to all package functions and to run all package tests, the installation of further system requirements and packages is required. The xlsx dependency requires that rJava is installed and configured for R. That is done on the shell:
 
@@ -583,7 +467,8 @@ devtools::install_github("PolMine/polmineR.Rcpp")
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
 
-## Annex II: CWB corpora and the CORPUS_REGISTRY environment variable
+
+## Annex IV: CWB corpora and the CORPUS_REGISTRY environment variable
 
 Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a 'registry' directory, and an 'indexed_corpora' directory. The files in the registry directory ('registry' in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR. Note that you need to set the environment to the 'registry' folder, not the files that are located in this directory.
 
@@ -591,9 +476,6 @@ The CORPUS_REGISTRY environment variable can be set manually from the R console:
 
 ```{r, eval = FALSE}
 Sys.setenv(CORPUS_REGISTRY = "/PATH/TO/YOUR/REGISTRY/DIRECTORY")
-
-# For example the path could look like this:
-# Sys.setenv(CORPUS_REGISTRY = "/Library/Frameworks/R.framework/Versions/3.3/Resources/library/plprbt/extdata/cwb/registry")
 ```
 
 To check whether and how the environment variable is set:

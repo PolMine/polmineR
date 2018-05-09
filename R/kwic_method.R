@@ -163,7 +163,7 @@ setMethod("kwic", "character", function(
     corpus = .Object, left = left, right = right, 
     cpos = DT,
     pAttribute = pAttribute,
-    encoding = corpus_get_encoding(.Object)
+    encoding = registry_get_encoding(.Object)
     )
   if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
   kwic(.Object = ctxt, meta = meta, cpos = cpos)

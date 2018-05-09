@@ -66,61 +66,18 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
     hitList <- lapply(
       query,
       function(Q){
-        if (class(CQI)[1] == "CQI.rcqp"){
-          CQI$query(.Object, Q)
-          cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
-          if (is(cpos)[1] == "try-error"){
-            .message("no hits for query: ", Q, verbose = verbose)
-            hits <- NULL
-          } else if (!is.null(cpos)) {
-            hits <- matrix(cpos[,1:2], ncol = 2)
-          } else {
-            .message("no hits for query: ", Q, verbose = verbose)
-            hits <- NULL
-          }
-          return(hits)
-        } else if (class(CQI)[1] == "CQI.Rcpp"){
-          if (options("polmineR.cqp") == TRUE){
-            batchfile <- tempfile()
-            cqpresult <- tempfile()
-            
-            batchCmdCQP <- c(
-              sprintf("%s;\n", .Object),
-              sprintf("TMP = %s;\n", query),
-              "dump TMP;\n"
-            )
-            cat(paste(batchCmdCQP, sep = " ", collapse = " "), file = batchfile)
-            
-            if (.Platform$OS.type == "windows"){
-              if (getOption("polmineR.cqp")){
-                cqpCmd <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
-                if (cqpCmd == "") cqpCmd <- 'C:/"Program Files"/CWB/bin/cqp.exe'
-              } else {
-                stop("On Windows, an installation of the CWB is required to run ",
-                     "CQP queries. Use install.cwb() and try again.")
-              }
-            } else {
-              cqpCmd <- "cqp"
-            }
-            cmdCWB <- c(
-              cqpCmd, "-r", Sys.getenv("CORPUS_REGISTRY"),
-              "-f", batchfile,
-              ">", cqpresult
-            )
-            do.call(
-              what = if (.Platform$OS.type == "windows") "shell" else "system",
-              args = list(paste(cmdCWB, collapse = " "), intern = FALSE)
-            )
-            dt <- try(fread(cqpresult, sep = "\t"), silent = TRUE)
-            if (class(dt)[1] == "try-error") return( NULL )
-            if (nrow(dt) > 0) return( as.matrix(dt)[,1:2] ) else return( NULL )
-          } else {
-            warning("If RcppCWB is used to access CWB corpus, a CQP/CWB installation ",
-                    "is required to use CQP syntax. Consider calling install.cwb(), and ",
-                    "see ?install.cwb for further information.")
-            return( NULL )
-          }
+        CQI$query(.Object, Q)
+        cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
+        if (is(cpos)[1] == "try-error"){
+          .message("no hits for query: ", Q, verbose = verbose)
+          hits <- NULL
+        } else if (!is.null(cpos)) {
+          hits <- matrix(cpos[,1:2], ncol = 2)
+        } else {
+          .message("no hits for query: ", Q, verbose = verbose)
+          hits <- NULL
         }
+        return(hits)
       }
     )
     hits <- do.call(rbind, hitList)

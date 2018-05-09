@@ -6,7 +6,7 @@
 \alias{size,character-method}
 \alias{size,partition-method}
 \alias{size,DocumentTermMatrix-method}
-\title{Get number of tokens.}
+\title{Get Number of Tokens.}
 \usage{
 size(x, ...)
 

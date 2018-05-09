@@ -27,20 +27,14 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @seealso \code{crosstab-class}
 #' @exportMethod dispersion
 #' @examples
-#'   use("polmineR")
-#'   test <- partition("GERMAPARLMINI", date = ".*", pAttribute = NULL, regex = TRUE)
-#'   integration <- dispersion(
-#'     test, query = "Integration",
-#'     pAttribute = "word", sAttribute = "date"
-#'     )
-#'   integration <- dispersion(
-#'     test, "Integration",
-#'     sAttribute = c("date", "party")
-#'     )
-#'   integration <- dispersion(
-#'     test, '"Integration.*"',
-#'     sAttribute = "date", cqp = TRUE
-#'     )
+#' use("polmineR")
+#' test <- partition("GERMAPARLMINI", date = ".*", pAttribute = NULL, regex = TRUE)
+#' integration <- dispersion(
+#'   test, query = "Integration",
+#'   pAttribute = "word", sAttribute = "date"
+#' )
+#' integration <- dispersion(test, "Integration", sAttribute = c("date", "party"))
+#' integration <- dispersion(test, '"Integration.*"', sAttribute = "date", cqp = TRUE)
 #' @seealso count
 #' @author Andreas Blaette
 #' @docType methods

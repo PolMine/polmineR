@@ -19,7 +19,7 @@ setGeneric("pAttributes", function(.Object, ...) standardGeneric("pAttributes"))
 
 #' @rdname pAttributes
 setMethod("pAttributes", "character", function(.Object, pAttribute = NULL){
-  pAttrs <- corpus_get_p_attributes(.Object)
+  pAttrs <- registry_get_p_attributes(.Object)
   if (is.null(pAttribute)){
     return( pAttrs )
   } else {
@@ -35,7 +35,7 @@ setMethod("pAttributes", "character", function(.Object, pAttribute = NULL){
 
 #' @rdname partition_class
 setMethod("pAttributes", "partition", function(.Object, pAttribute = NULL){
-  pAttrs <- corpus_get_p_attributes(.Object@corpus)
+  pAttrs <- registry_get_p_attributes(.Object@corpus)
   if (is.null(pAttribute)){
     return( pAttrs )
   } else {

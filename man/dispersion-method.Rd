@@ -53,20 +53,14 @@ in sub-partitions defined by one or two dimensions. This is a wrapper function, 
 on the number of queries and dimensions provided.
 }
 \examples{
-  use("polmineR")
-  test <- partition("GERMAPARLMINI", date = ".*", pAttribute = NULL, regex = TRUE)
-  integration <- dispersion(
-    test, query = "Integration",
-    pAttribute = "word", sAttribute = "date"
-    )
-  integration <- dispersion(
-    test, "Integration",
-    sAttribute = c("date", "party")
-    )
-  integration <- dispersion(
-    test, '"Integration.*"',
-    sAttribute = "date", cqp = TRUE
-    )
+use("polmineR")
+test <- partition("GERMAPARLMINI", date = ".*", pAttribute = NULL, regex = TRUE)
+integration <- dispersion(
+  test, query = "Integration",
+  pAttribute = "word", sAttribute = "date"
+)
+integration <- dispersion(test, "Integration", sAttribute = c("date", "party"))
+integration <- dispersion(test, '"Integration.*"', sAttribute = "date", cqp = TRUE)
 }
 \seealso{
 \code{crosstab-class}

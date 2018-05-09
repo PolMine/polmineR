@@ -5,8 +5,7 @@
 \alias{CQI.super}
 \alias{CQI}
 \alias{CQI.rcqp}
-\alias{CQI.Rcpp}
-\alias{CQI.perl}
+\alias{CQI.RcppCWB}
 \alias{CQI.cqpserver}
 \alias{CQI.cqpserver}
 \title{Interfaces for accessing the CWB}
@@ -16,9 +15,7 @@ CQI.super
 
 CQI.rcqp
 
-CQI.Rcpp
-
-CQI.perl
+CQI.RcppCWB
 
 CQI.cqpserver
 

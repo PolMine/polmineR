@@ -24,14 +24,25 @@ Use a CWB corpus shipped in a package, or reset registry directory.
 }
 \details{
 If \code{pkg} is the name of a data package with a CWB indexed corpus,
-the function will reset the CORPUS_REGISTRY environment variable and restart
-\code{rcqp} to point to the registry directory in the package.
+the function will reset the CORPUS_REGISTRY environment variable and
+re-direct the interfacing libraries (RcppCWB or rcqp) to the registry
+directory in the package. The registry directory is assumed to be the
+./extdata/cwb/registry subdirectory of the installed package.
 
 If \code{pkg} is NULL (default), calling \code{use} will 
 reset the registry directory to the directory defined by \code{dir}
 (defaults to the option \code{polmineR.defaultRegistry}, to return to the registry
 that was used when loading \code{polmineR}).
+
+When resetting the registry directory, templates for formatting fulltext
+output are reloaded.
+}
+\examples{
+# to get the registry directory of the sample data in the polmineR package
+system.file(package = "polmineR", "extdata", "cwb", "registry")
+
+use("polmineR")
 }
 \seealso{
-the worker to reset the registry is \code{resetRegistry}
+the worker to reset the registry is \code{registry_reset}
 }

@@ -67,7 +67,7 @@ setMethod("partitionBundle", "character", function(
 ) {
   bundle <- new(
     "partitionBundle",
-    corpus = .Object, encoding = corpus_get_encoding(.Object),
+    corpus = .Object, encoding = registry_get_encoding(.Object),
     call = deparse(match.call())
   )
   strucs <- 0:(CQI$attribute_size(.Object, sAttribute, "s") - 1)

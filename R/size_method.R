@@ -1,7 +1,7 @@
 #' @include partition_class.R TermDocumentMatrix_methods.R
 NULL
 
-#' Get number of tokens.
+#' Get Number of Tokens.
 #' 
 #' The method will get the number of tokens in a corpus or partition,
 #' or the dispersion across one or more s-attributes.
@@ -45,28 +45,13 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
         }
       )
     )
-    if (requireNamespace("RcppCWB", quietly = TRUE) && (getOption("polmineR.RcppCWB") == TRUE)){
-      .message ("RcppCWB available, going to use it", verbose = verbose)
-      cpos_matrix <- RcppCWB::get_region_matrix(
-        corpus = x, s_attribute = sAttribute[1],
-        strucs = 0L:(CQI$attribute_size(x, sAttribute[1], "s") - 1L),
-        registry = Sys.getenv("CORPUS_REGISTRY")
-        )
-    } else if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1){
-      .message ("cwb-s-decode utility available, going to use it", verbose = verbose)
-      cmd <- c("cwb-s-decode", "-v", "-r", Sys.getenv("CORPUS_REGISTRY"), x, "-S", sAttribute[1])
-      decode_result <- system(paste(cmd, collapse = " "), intern = TRUE)
-      cpos_matrix <- do.call(rbind, lapply(strsplit(decode_result, "\\t"), as.integer))
-    } else {
-      cpos_matrix <- do.call(
-        rbind,
-        lapply(
-          0:(CQI$attribute_size(x, sAttribute[1], type = "s") - 1),
-          function(x) CQI$struc2cpos(x, sAttribute[1], x))
-      )
-    }
-  
-    dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1]
+    cpos_matrix <- RcppCWB::get_region_matrix(
+      corpus = x, s_attribute = sAttribute[1],
+      strucs = 0L:(CQI$attribute_size(x, sAttribute[1], "s") - 1L),
+      registry = Sys.getenv("CORPUS_REGISTRY")
+    )
+    
+    dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
     y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
     setnames(y, old = "V1", new = "size")
     setkeyv(y, cols = sAttribute)

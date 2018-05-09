@@ -4,29 +4,26 @@
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
     "rcqp" = CQI.rcqp$new(),
-    "perl" = CQI.perl$new(),
     "cqpserver" = CQI.cqpserver$new(),
-    "Rcpp" = CQI.Rcpp$new(),
-    if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
+    "RcppCWB" = CQI.RcppCWB$new(),
+    if (requireNamespace("RcppCWB", lib.loc = .libPaths(), quietly = TRUE)){
+      CQI.RcppCWB$new()
+    } else if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
       CQI.rcqp$new()
-    } else if (requireNamespace("RcppCWB", lib.loc = .libPaths(), quietly = TRUE)){
-      CQI.Rcpp$new()
-    } else {
-      CQI.perl$new()
     }
   )
   assign("CQI", CQI, envir = parent.env(environment()))
 
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
-  # this needs to be done after assigning CQI, as resetRegistry will call setTemplate
+  # this needs to be done after assigning CQI, as registry_reset will call setTemplate
   if (Sys.getenv("CORPUS_REGISTRY") == ""){
     polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
-    if (.Platform$OS.type == "windows"){
-      options("polmineR.volume" = gsub("^([A-Z]?:?).*$", "\\1", polmineRPackageRegistry))
-      polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
-    }
+    # if (.Platform$OS.type == "windows"){
+    #   options("polmineR.volume" = gsub("^([A-Z]?:?).*$", "\\1", polmineRPackageRegistry))
+    #   polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
+    # }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
-    resetRegistry(registryDir = polmineRPackageRegistry, verbose = FALSE)
+    registry_reset(registryDir = polmineRPackageRegistry, verbose = FALSE)
   }
   
   options(
@@ -48,14 +45,11 @@
     "polmineR.email" = "",
     "polmineR.partitionDir" = "",
     "polmineR.browse" = FALSE,
-    "polmineR.backend" = "doSNOW",
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
-    "polmineR.interface" = "rcqp",
+    "polmineR.interface" = "RcppCWB",
     "polmineR.template" = "default",
     "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
-    "polmineR.RcppCWB" = TRUE,
-    "polmineR.cwb-s-decode" = FALSE,
     "polmineR.cwb-encode" = FALSE,
     "polmineR.cwb-lexdecode" = FALSE,
     "polmineR.cwb-regedit" = FALSE,
@@ -63,15 +57,11 @@
   )
   
   
-  # Some operations run faster when using the utils of the CWB (cwb-s-decode etc.)
+  # Some operations run faster when using the utils of the CWB
   # These may only be available on *nix systems, so this is checked first
   if (.Platform$OS.type == "unix"){
-    if (system("cwb-s-decode -h", intern = FALSE, ignore.stderr =  TRUE) == 1)
-      options("polmineR.cwb-s-decode" = TRUE)
     if (system("cwb-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-encode" = TRUE)
-    if (system("cwb-s-encode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
-      options("polmineR.cwb-s-encode" = TRUE)
     if (system("cwb-lexdecode -h", intern = FALSE, ignore.stderr =  TRUE) == 2)
       options("polmineR.cwb-lexdecode" = TRUE)
     if (system("cwb-regedit -h", intern = FALSE, ignore.stderr = TRUE) == 255)
@@ -80,27 +70,17 @@
       options("polmineR.cqp" = TRUE)
   }
   
-  if (.Platform$OS.type == "windows"){
-    cwb <- system.file(package = "polmineR", "extdata", "cwb", "CWB", "bin", "cqp.exe")
-    if (cwb == "") cwb <- 'C:/"Program Files"/CWB/bin/cqp.exe'
-    tryCatch(
-      expr = {cqpVersion <- shell(sprintf("%s -v", cwb), intern = TRUE)},
-      warning = function(x) options("polmineR.cqp" = FALSE)
-    )
-    if (exists("cqpVersion")){
-      if (grepl("The IMS Open Corpus Workbench", cqpVersion[2])) options("polmineR.cqp" = TRUE)
-    } else {
-      options("polmineR.cqp" = FALSE)
-    }
-  }
-  
   # rcqp is not always accessible here - setTemplates would not work with perl interface
-  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.Rcpp")) setTemplate()
+  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.RcppCWB")) setTemplate()
+  NULL
 }
 
 
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
+  # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,
+  # but for some (unknown) reason, a package crash occurrs, when CQP is initialized
+  # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
   packageStartupMessage(sprintf("polmineR %s", packageVersion("polmineR")))
   packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
   packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")

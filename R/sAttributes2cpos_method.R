@@ -37,7 +37,7 @@ setMethod("sAttributes2cpos", "partition", function(.Object, xml = "flat", regex
       }
     }
     if (nrow(meta) != 0){
-      if (requireNamespace("RcppCWB", quietly = TRUE) && getOption("polmineR.RcppCWB") == TRUE){
+      if (requireNamespace("RcppCWB", quietly = TRUE)){
         .Object@cpos <- RcppCWB::get_region_matrix(
           corpus = .Object@corpus, s_attribute = .Object@sAttributeStrucs, strucs = meta[,1]
           )

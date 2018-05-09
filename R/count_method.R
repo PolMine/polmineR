@@ -117,7 +117,7 @@ setMethod("count", "partition", function(
   } else {
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
-      if (requireNamespace("RcppCWB", quietly = TRUE) && (getOption("polmineR.RcppCWB") == TRUE)){
+      if (requireNamespace("RcppCWB", quietly = TRUE)){
         .message("using RcppCWB", verbose = verbose)
         countMatrix <- RcppCWB::region_matrix_to_count_matrix(
           corpus = .Object@corpus, p_attribute = pAttribute,
@@ -199,7 +199,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
   stopifnot(.Object %in% CQI$list_corpora())
   if (is.null(query)){
     if (length(pAttribute) == 1){
-      if (requireNamespace("RcppCWB", quietly = TRUE) && getOption("polmineR.RcppCWB") == TRUE){
+      if (requireNamespace("RcppCWB", quietly = TRUE)){
         .message("using RcppCWB for counting", verbose = verbose)
         TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = pAttribute))
         TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
@@ -249,7 +249,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
           setNames(pAttribute, paste(pAttribute, "id", sep = "_")),
           function(pAttr){
             .message("getting token stream for p-attribute: ", pAttr, verbose = verbose)
-            CQI$cpos2id(.Object, pAttr, 0:(size(.Object) - 1))
+            CQI$cpos2id(.Object, pAttr, 0L:(size(.Object) - 1L))
           }
         )
       )
@@ -274,8 +274,11 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       query <- as.corpusEnc(query, corpusEnc = getEncoding(.Object))
       count <- sapply(
         query,
-        function(query)
-          CQI$id2freq(.Object, pAttribute, CQI$str2id(.Object, pAttribute, query))
+        function(query){
+          query_id <- CQI$str2id(.Object, pAttribute, query)
+          # if there is no id for query, query_id will be -5
+          if (query_id >= 0) CQI$id2freq(.Object, pAttribute, query_id) else 0
+        }
       )
       return(data.table(query = query, count = count, freq = count / total))
     } else if (cqp == TRUE){
