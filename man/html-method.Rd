@@ -24,7 +24,8 @@ html(object, ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
-\S4method{html}{kwic}(object, i, type = NULL, verbose = FALSE)
+\S4method{html}{kwic}(object, i, sAttribute = NULL, type = NULL,
+  verbose = FALSE)
 
 \method{print}{html}(x, ...)
 }
@@ -58,6 +59,9 @@ will be removed}
 
 \item{i}{if object is a \code{kwic}-object, the index of the concordance for
 which the fulltext is to be generated}
+
+\item{sAttribute}{structural attributes that will be used to define the partition 
+where the match occurred}
 }
 \description{
 Prepare a html document to inspect the full text.
@@ -76,18 +80,18 @@ if (interactive()) H # show full text in viewer pane
 # html-method can be used in a pipe
 if (require("magrittr")){
   H <- partition("REUTERS", places = "argentina") \%>\% html()
-}
-
-# use html-method to get from concordance to full text
-K <- kwic("REUTERS", query = "barrels")
-H <- html(K, i = 1)
-H <- html(K, i = 2)
-for (i in 1:length(K)) {
-  H <- html(K, i = i)
-  if (interactive()){
-    show(H)
-    userinput <- readline("press 'q' to quit or any other key to continue")
-    if (userinput == "q") break
+  # use html-method to get from concordance to full text
+  K <- kwic("REUTERS", query = "barrels")
+  H <- html(K, i = 1, sAttribute = "id")
+  H <- html(K, i = 2, sAttribute = "id")
+  for (i in 1:length(K)) {
+    H <- html(K, i = i, sAttribute = "id")
+    if (interactive()){
+      show(H)
+      userinput <- readline("press 'q' to quit or any other key to continue")
+      if (userinput == "q") break
+    }
   }
 }
+
 }

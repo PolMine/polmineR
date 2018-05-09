@@ -12,7 +12,9 @@ NULL
 #' @param object the object the fulltext output will be based on
 #' @param x object of class \code{html} to print
 #' @param meta metadata for output, if NULL (default), the s-attributes defining
-#'   a partition will be used
+#' a partition will be used
+#' @param sAttribute structural attributes that will be used to define the partition 
+#' where the match occurred
 #' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
 #'   elements with id attribute indicating corpus positions
 #' @param beautify logical, if \code{TRUE}, whitespace before interpunctuation
@@ -38,20 +40,20 @@ NULL
 #' # html-method can be used in a pipe
 #' if (require("magrittr")){
 #'   H <- partition("REUTERS", places = "argentina") %>% html()
-#' }
-#' 
-#' # use html-method to get from concordance to full text
-#' K <- kwic("REUTERS", query = "barrels")
-#' H <- html(K, i = 1)
-#' H <- html(K, i = 2)
-#' for (i in 1:length(K)) {
-#'   H <- html(K, i = i)
-#'   if (interactive()){
-#'     show(H)
-#'     userinput <- readline("press 'q' to quit or any other key to continue")
-#'     if (userinput == "q") break
+#'   # use html-method to get from concordance to full text
+#'   K <- kwic("REUTERS", query = "barrels")
+#'   H <- html(K, i = 1, sAttribute = "id")
+#'   H <- html(K, i = 2, sAttribute = "id")
+#'   for (i in 1:length(K)) {
+#'     H <- html(K, i = i, sAttribute = "id")
+#'     if (interactive()){
+#'       show(H)
+#'       userinput <- readline("press 'q' to quit or any other key to continue")
+#'       if (userinput == "q") break
+#'     }
 #'   }
 #' }
+#' 
 setGeneric("html", function(object, ...){standardGeneric("html")})
 
 
@@ -200,10 +202,14 @@ setMethod("html", "partitionBundle", function(object, filename = c(), type = "de
 
 
 #' @rdname html-method
-setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
+setMethod("html", "kwic", function(object, i, sAttribute = NULL, type = NULL, verbose = FALSE){
   
   # getting metadata for all kwic lines is potentially not the fastes solution ...
-  if (length(object@metadata) == 0){
+  if (!is.null(sAttribute)){
+    if (!sAttribute %in% sAttributes(object@corpus)) stop("sAttribute provided is not available")
+    metadataDef <- sAttribute
+    object <- enrich(object, meta = metadataDef)
+  } else if (length(object@metadata) == 0){
     metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
     .message("using metadata from template: ", paste(metadataDef, collapse = " / "), verbose = verbose)
     if (length(metadataDef) > 0){
@@ -213,6 +219,7 @@ setMethod("html", "kwic", function(object, i, type = NULL, verbose = FALSE){
   } else {
     metadataDef <- object@metadata
   }
+  
   partitionToRead <- partition(
     object@corpus,
     def = lapply(setNames(metadataDef, metadataDef), function(x) object@table[[x]][i]),
