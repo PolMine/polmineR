@@ -41,7 +41,7 @@ for (corpus in list.files(registryDir)){
   
   homeDir <- file.path(packageDir, "extdata", "cwb", "indexed_corpora", corpus)
   infoFileLine <- grep("^INFO", registry)
-  infoFileBasename <- basename(gsub("^INFO\\s+(.*?)\\s*$", "\\1", registry[infoFileLine]))
+  infoFileBasename <- basename(gsub('^INFO\\s+(.*?)"*\\s*$', "\\1", registry[infoFileLine]))
   infoFileNew <- file.path(homeDir, infoFileBasename)
   
   # On Windows, the CWB tools will digest the path including the volume
