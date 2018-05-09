@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^polmineR.Rproj
+^cran-comments\.md$
 ^CONDUCT\.md$
 ^README\.Rmd$
 ^README-.*\.png$
@@ -8,3 +9,4 @@
 .travis.yml$
 ^_pkgdown\.yml$
 ^docs$
+^appveyor.yml$

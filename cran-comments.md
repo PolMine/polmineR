@@ -13,12 +13,16 @@ The RcppCWB package I heavily rely on does not yet compile Solaris, so propably 
 * Ubuntu 14.04 (on travis-ci), R 3.5.0
 * Ubuntu 14.04 (project server), R 3.4.3
 * win-builder (devel and release), R. 3.5.0
-* Windows/AppVeyor, R 3.5.0
 
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
+When building on Windows, you may see the following NOTE: "Package suggested but not available for checking: 'rcqp'"
+The RcppCWB provides the main interface for querying corpora, so this is no impediment for Windows users.
+
+Apart from this, there were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
+
+
 
 
 ## Downstream dependencies

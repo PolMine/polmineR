@@ -4,9 +4,6 @@ cache: packages
 addons:
   apt:
     packages:
-    - libglib2.0-dev
-    - libssl-dev
-    - libcurl4-openssl-dev
     - libxml2-dev
     - default-jdk
 
@@ -14,16 +11,13 @@ before_install:
   - sudo ./inst/sh/install_cwb.sh
   - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'install.packages("rmarkdown")'
-  - Rscript -e 'install.packages("rcqp")'
-  - Rscript -e 'devtools::install_github("PolMine/polmineR.Rcpp")'
+  - Rscript -e 'install.packages("RcppCWB")'
 
 r_packages:
-  - RUnit
   - devtools
   - plyr
   - tm
   - tidytext
-  - rcqp
   - covr
 
 warnings_are_errors: false
