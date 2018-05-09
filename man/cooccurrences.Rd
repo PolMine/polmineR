@@ -11,7 +11,7 @@
 \usage{
 cooccurrences(.Object, ...)
 
-\S4method{cooccurrences}{character}(.Object, query = NULL, cqp = is.cqp,
+\S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, keep = NULL,

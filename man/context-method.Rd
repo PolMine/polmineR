@@ -20,8 +20,11 @@
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE)
 
-\S4method{context}{character}(.Object, query,
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL, ...)
+\S4method{context}{character}(.Object, query, cqp = is.cqp,
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE)
 
 \S4method{context}{partitionBundle}(.Object, query, verbose = TRUE, ...)
 

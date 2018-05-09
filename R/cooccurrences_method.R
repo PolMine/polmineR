@@ -43,25 +43,23 @@ setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrence
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "character", function(
-  .Object, query = NULL, cqp = is.cqp,
+  .Object, query, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
-  ){
-  if (is.null(query) == FALSE){
-    C <- context(
-      .Object = .Object, query = query, cqp = is.cqp,
-      pAttribute = pAttribute, sAttribute = sAttribute,
-      left = left, right = right,
-      stoplist = stoplist, positivelist = positivelist, regex = regex,
-      count = TRUE, 
-      mc = mc, verbose = verbose, progress = progress
-    )
-    return( cooccurrences(C, method = method, verbose = verbose) )
-  } else {
-  }
+){
+  if (missing(query)) stop("query missing - it is not possible to calculate cooccurrences")
+  C <- context(
+    .Object = .Object, query = query, cqp = is.cqp,
+    pAttribute = pAttribute, sAttribute = sAttribute,
+    left = left, right = right,
+    stoplist = stoplist, positivelist = positivelist, regex = regex,
+    count = TRUE, 
+    mc = mc, verbose = verbose, progress = progress
+  )
+  if (is.null(C)) invisible(NULL) else cooccurrences(C, method = method, verbose = verbose)
 })
 
 #' @rdname cooccurrences
@@ -84,7 +82,7 @@ setMethod(
       mc = mc, verbose = verbose, progress = progress
     )
     if (is.null(C)){
-      retval <- NULL
+      retval <- invisible(NULL)
     } else {
       retval <- cooccurrences(C, method = method, verbose = verbose)
     }
@@ -99,7 +97,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     # enrich partition if necessary
     if (!all(paste(.Object@pAttribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
       .message("adding missing count for pAttribute ", .Object@pAttribute, " to partition", verbose = verbose)
-      .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, id2str = FALSE, verbose = verbose)
+      .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, decode = FALSE, verbose = verbose)
     }
     
     setkeyv(.Object@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
@@ -137,7 +135,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 
 #' @rdname context-method
 setMethod("cooccurrences", "Corpus", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
-  if (nrow(.Object$stat) == 0) .Object$count(pAttribute, id2str = FALSE)
+  if (nrow(.Object$stat) == 0) .Object$count(pAttribute, decode = FALSE)
   P <- .Object$as.partition()
   cooccurrences(P, query = query, pAttribute = pAttribute, ...)
 })

@@ -15,7 +15,8 @@ kwicUiInput <- function(drop = NULL){
       selectInput("kwic_partition", "partition", choices = character())
     ),
     query = textInput("kwic_query", "query", value = ""),
-    # positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
+    cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
+    positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
     sAttribute = selectInput(
       "kwic_meta", "sAttribute",
       choices = sAttributes(corpus()[["corpus"]][1]),
@@ -79,25 +80,31 @@ kwicServer <- function(input, output, session, ...){
           message = "please wait", value = 0, max = 5, detail = "preparing data",
           {
             print("yeah")
-            values[["kwic"]] <- polmineR::kwic(
+            K <- polmineR::kwic(
               .Object = object,
               query = rectifySpecialChars(input$kwic_query),
+              cqp = if (input$kwic_cqp == "yes") TRUE else FALSE,
               pAttribute = if (is.null(input$kwic_pAttribute)) "word" else input$kwic_pAttribute,
               left = input$kwic_window,
               right = input$kwic_window,
               meta = input$kwic_meta,
               verbose = "shiny",
-              # positivelist = input$kwic_positivelist,
+              positivelist = if (length(input$kwic_positivelist) > 0) input$kwic_positivelist else NULL,
               cpos = TRUE # required for reading
             )
+            print(K)
+            values[["kwic"]] <- K
           }
         ) # end withProgress
         
         if (is.null(values[["kwic"]])){
+          print("no hits 1")
           retval <- data.frame(left = character(), node = character(), right = character())
         } else if (nrow(values[["kwic"]]@table) == 0){
+          print("no hits 2")
           retval <- data.frame(left = character(), node = character(), right = character())
         } else {
+          print("presumably hits")
           tab <- values[["kwic"]]@table
           tab[["hit_no"]] <- NULL
           if (length(input$kwic_meta) == 0){
@@ -135,7 +142,8 @@ kwicServer <- function(input, output, session, ...){
     input$kwic_table_rows_selected,
     {
       if (length(input$kwic_table_rows_selected) > 0){
-        corpusType <- RegistryFile$new(values[["kwic"]]@corpus)$getProperties()[["type"]]
+        corpus_properties <- registry_get_properties(corpus = values[["kwic"]]@corpus)
+        corpusType <- if ("type" %in% names(corpus_properties)) corpus_properties["type"] else NULL
         if (debug) assign("kwicObject", value = values[["kwic"]], envir = .GlobalEnv)
         fulltext <- polmineR::html(
           values[["kwic"]],

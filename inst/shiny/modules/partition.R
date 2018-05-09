@@ -81,7 +81,7 @@ partitionServer <- function(input, output, session){
                 def = defList,
                 name = input$partition_name,
                 pAttribute = input$partition_pAttribute,
-                regex = input$partition_regex,
+                regex = if (input$partition_regex == "TRUE") TRUE else FALSE,
                 xml = input$partition_xml,
                 mc = FALSE,
                 verbose = "shiny"

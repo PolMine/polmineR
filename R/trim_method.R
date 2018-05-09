@@ -60,7 +60,7 @@ setMethod("trim", "DocumentTermMatrix", function(object, ...){
 
 
 #' @rdname context-class
-setMethod("trim", "context", function(object, sAttribute = NULL, verbose = TRUE, progress = TRUE){
+setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = NULL, pAttribute = pAttributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE){
   
   if(!is.null(sAttribute)){
     stopifnot(length(sAttribute) == 1)
@@ -83,6 +83,44 @@ setMethod("trim", "context", function(object, sAttribute = NULL, verbose = TRUE,
     object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "hit_no"]
     close(pb)
     setnames(object@cpos, old = "struc", new = sAttrCol)
+  }
+  
+  if (!is.null(positivelist)){
+    .message("filtering by positivelist", verbose = verbose)
+    before <- length(unique(object@cpos[["hit_no"]]))
+    positivelistIds <- .token2id(corpus = object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
+    .keepPositives <- function(.SD){
+      pAttr <- paste(pAttribute[1], "id", sep = "_")
+      positives <- which(.SD[[pAttr]] %in% positivelistIds)
+      positives <- positives[ -which(.SD[["position"]] == 0) ] # exclude node
+      if (any(positives)) return( .SD ) else return( NULL )
+    }
+    object@cpos <- object@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
+    after <- length(unique(object@cpos[["hit_no"]]))
+    .message("number of hits droped due to positivelist:", before - after, verbose = verbose)
+    if (nrow(object@cpos) == 0) {
+      warning("no remaining hits after applying positivelist, returning NULL object")
+      return( invisible(NULL) )
+    }
+  }
+  
+  if (!is.null(stoplist)){
+    .message("applying stoplist", verbose = verbose)
+    before <- length(unique(object@cpos[["hit_no"]]))
+    stoplistIds <- .token2id(corpus = object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
+    .dropNegatives <- function(.SD){
+      pAttr <- paste(pAttribute[1], "id", sep = "_")
+      negatives <- which(.SD[[pAttr]] %in% stoplistIds)
+      negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
+      if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
+    }
+    object@cpos <- object@cpos[, .dropNegatives(.SD), by = "hit_no", with = TRUE]
+    after <- length(unique(object@cpos[["hit_no"]]))
+    .message("number of hits droped due to stoplist:", before - after, verbose = verbose)
+    if (nrow(object@cpos) == 0) {
+      warning("no remaining hits after applying stoplist, returning NULL object")
+      return( NULL )
+    }
   }
   
   object

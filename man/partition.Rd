@@ -14,7 +14,7 @@ partition(.Object, ...)
 
 \S4method{partition}{character}(.Object, def = NULL, name = "",
   encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...)
+  decode = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...)
 
 \S4method{partition}{list}(.Object, ...)
 
@@ -22,7 +22,7 @@ partition(.Object, ...)
   "pAttribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
-  regex = FALSE, pAttribute = NULL, id2str = TRUE, xml = NULL,
+  regex = FALSE, pAttribute = NULL, decode = TRUE, xml = NULL,
   verbose = TRUE, mc = FALSE, ...)
 
 \S4method{partition}{Corpus}(.Object, def = NULL, name = "",
@@ -47,7 +47,7 @@ details and examples)}
 
 \item{xml}{either 'flat' (default) or 'nested'}
 
-\item{id2str}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
+\item{decode}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
 
 \item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
 

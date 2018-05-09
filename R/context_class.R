@@ -29,6 +29,9 @@ NULL
 #' @param x a context object
 #' @param size integer indicating sample size
 #' @param object a context object
+#' @param positivelist tokens that are required to be present to keep a match
+#' @param stoplist tokens that are used to exclude a match
+#' @param regex logical, whether positivlist / stoplist is interpreted as regular expressions
 #' @param progress logical, whether to show progress bar
 #' @aliases context_class show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method

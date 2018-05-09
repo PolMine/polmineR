@@ -36,7 +36,7 @@ s-attributes of the \code{data.table} in field \code{sAttributes}}
   \item{dataDir}{the data directory of the corpus}
   \item{pAttribute}{p-attribute, to perform count}
   \item{sAttributes}{s-attributes}
-  \item{id2str}{logical, whether to turn token ids into strings upon counting}
+  \item{decode}{logical, whether to turn token ids into strings upon counting}
   \item{as.html}{logical}
 }
 }
@@ -45,7 +45,7 @@ s-attributes of the \code{data.table} in field \code{sAttributes}}
 
 \describe{
   \item{\code{initialize(corpus, pAttribute = NULL, sAttributes = NULL)}}{Initialize a new object of class \code{Corpus}.}
-  \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
+  \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), decode = TRUE)}}{Perform counts.}
   \item{\code{as.partition()}}{turn \code{Corpus} into a partition}
   \item{\code{getInfo(as.html = FALSE)}}{}
   \item{\code{showInfo()}}{}

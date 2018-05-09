@@ -14,7 +14,7 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
-  breakdown = FALSE, id2str = TRUE,
+  breakdown = FALSE, decode = TRUE,
   pAttribute = getOption("polmineR.pAttribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
 
@@ -24,7 +24,7 @@ count(.Object, ...)
 
 \S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
   pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE,
-  sort = FALSE, id2str = TRUE, verbose = TRUE)
+  sort = FALSE, decode = TRUE, verbose = TRUE)
 
 \S4method{count}{vector}(.Object, corpus, pAttribute)
 
@@ -45,7 +45,7 @@ auxiliary function)}
 
 \item{breakdown}{logical, whether to count occurrences for different matches for a query}
 
-\item{id2str}{logical, whether to add rownames (only if query is NULL)}
+\item{decode}{logical, whether to add rownames (only if query is NULL)}
 
 \item{pAttribute}{the p-attribute(s) to use}
 

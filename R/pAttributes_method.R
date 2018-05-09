@@ -50,3 +50,6 @@ setMethod("pAttributes", "partition", function(.Object, pAttribute = NULL){
     }
   }
 })
+
+#' @rdname context-class
+setMethod("pAttributes", "context", function(.Object) .Object@pAttribute)

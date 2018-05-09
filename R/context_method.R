@@ -99,9 +99,14 @@ setMethod("context", "partition", function(
     hits <- cpos(.Object, query, pAttribute[1], cqp = cqp)
     if (is.null(hits)){
       warning('No hits for query ', query, ' (returning NULL)')
-      return(NULL)
+      return(invisible(NULL))
     } else {
-      .message("number of hits:", nrow(hits), verbose = verbose)
+      if (nrow(hits) == 0){
+        warning('No hits for query ', query, ' (returning NULL)')
+        return(invisible(NULL))
+      } else {
+        .message("number of hits:", nrow(hits), verbose = verbose)
+      }
     }
     colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
     
@@ -122,47 +127,11 @@ setMethod("context", "partition", function(
     setnames(ctxt@cpos, old = c("V2", "V3"), new = c("cpos", "position"))
     
     # add decoded tokens (ids at this stage)
-    ctxt <- enrich(ctxt, pAttribute = pAttribute, id2str = FALSE, verbose = verbose)
+    ctxt <- enrich(ctxt, pAttribute = pAttribute, decode = FALSE, verbose = verbose)
 
     # generate positivelist/stoplist with ids and apply it
-    if (!is.null(positivelist)){
-      .message("filtering by positivelist", verbose = verbose)
-      before <- length(unique(ctxt@cpos[["hit_no"]]))
-      positivelistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
-      .keepPositives <- function(.SD){
-        pAttr <- paste(pAttribute[1], "id", sep = "_")
-        positives <- which(.SD[[pAttr]] %in% positivelistIds)
-        positives <- positives[ -which(.SD[["position"]] == 0) ] # exclude node
-        if (any(positives)) return( .SD ) else return( NULL )
-      }
-      ctxt@cpos <- ctxt@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
-      after <- length(unique(ctxt@cpos[["hit_no"]]))
-      .message("number of hits droped due to positivelist:", before - after, verbose = verbose)
-      if (nrow(ctxt@cpos) == 0) {
-        warning("no remaining hits after applying positivelist, returning NULL object")
-        return( NULL )
-      }
-    }
-    
-    if (!is.null(stoplist)){
-      .message("applying stoplist", verbose = verbose)
-      before <- length(unique(ctxt@cpos[["hit_no"]]))
-      stoplistIds <- .token2id(corpus = .Object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
-      .dropNegatives <- function(.SD){
-        pAttr <- paste(pAttribute[1], "id", sep = "_")
-        negatives <- which(.SD[[pAttr]] %in% stoplistIds)
-        negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
-        if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
-      }
-      ctxt@cpos <- ctxt@cpos[, .dropNegatives(.SD), by = "hit_no", with = TRUE]
-      after <- length(unique(ctxt@cpos[["hit_no"]]))
-      .message("number of hits droped due to stoplist:", before - after, verbose = verbose)
-      if (nrow(ctxt@cpos) == 0) {
-        warning("no remaining hits after applying stoplist, returning NULL object")
-        return( NULL )
-      }
-      
-    }
+    if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+    if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
 
     .message("generating contexts", verbose = verbose)
     
@@ -244,10 +213,22 @@ setMethod("context", "partition", function(
 
 
 #' @rdname context-method
-setMethod("context", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL, ...){
+setMethod("context", "character", function(
+  .Object, query, cqp = is.cqp,
+  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE
+  ){
   C <- Corpus$new(.Object)
-  C$count(pAttribute, id2str = FALSE)
-  context(C$as.partition(), query = query, pAttribute = pAttribute, sAttribute = NULL, ...)
+  C$count(pAttribute, decode = FALSE)
+  context(
+    C$as.partition(), query = query, cqp = is.cqp,
+    pAttribute = pAttribute, sAttribute = sAttribute,
+    stoplist = stoplist, positivelist = positivelist, regex = regex,
+    count = count, mc = mc, verbose = verbose, progress = progress
+    )
 })
 
 

@@ -22,6 +22,7 @@ cooccurrencesUiInput <- function(){
       selectInput("cooccurrences_partition", "partition", choices = character())
     ),
     textInput("cooccurrences_query", "query", value = ""),
+    cqp = radioButtons("cooccurrences_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     selectInput("cooccurrences_pAttribute", "pAttribute:", choices = c("word", "pos", "lemma"), selected = getOption("polmineR.pAttribute"), multiple = TRUE),
     sliderInput("cooccurrences_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
     br()
@@ -53,7 +54,7 @@ cooccurrencesServer <- function(input, output, session){
               message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
               {
                 C <- Corpus$new(input$cooccurrences_corpus)
-                C$count(pAttribute = input$cooccurrences_pAttribute, id2str = FALSE)
+                C$count(pAttribute = input$cooccurrences_pAttribute, decode = FALSE)
                 values$corpora[[input$cooccurrences_corpus]] <- C
               }
               
@@ -70,6 +71,7 @@ cooccurrencesServer <- function(input, output, session){
             values[["cooccurrences"]] <- cooccurrences(
               .Object = object,
               query = rectifySpecialChars(input$cooccurrences_query),
+              cqp = if (input$cooccurrences_cqp == "yes") TRUE else FALSE,
               pAttribute = input$cooccurrences_pAttribute,
               left = input$cooccurrences_window[1], right = input$cooccurrences_window[1],
               verbose = "shiny"
@@ -79,7 +81,12 @@ cooccurrencesServer <- function(input, output, session){
         if (!is.null(values[["cooccurrences"]])){
           return(DT::datatable(round(values[["cooccurrences"]], 2)@stat, selection = "single", rownames = FALSE))
         } else {
-          return(DT::datatable(data.frame(a = c(), b = c(), d = c())))
+          y <- data.frame(
+            word = ""[0], count_window = ""[0], count_partition = ""[0],
+            exp_window = integer(), exp_partition = integer(), ll = integer(),
+            rank_ll = integer()
+          )
+          return(DT::datatable(y))
         }
       } else {
         retval <- data.frame(
@@ -108,6 +115,7 @@ cooccurrencesServer <- function(input, output, session){
           updateSelectInput(session, "kwic_object", selected = "corpus")
           updateSelectInput(session, "kwic_corpus", selected = input$cooccurrences_corpus)
         }
+        updateSelectInput(session, "kwic_cqp", selected = input$cooccurrences_cqp)
         updateTextInput(session, "kwic_query", value = input$cooccurrences_query)
         updateSelectInput(session, "kwic_window", selected = input$cooccurrences_window)
         updateSelectInput(session, "kwic_pAttribute", selected = input$cooccurrences_pAttribute)

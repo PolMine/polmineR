@@ -18,7 +18,7 @@ The RcppCWB package I heavily rely on does not yet compile Solaris, so propably 
 ## R CMD check results
 
 When building on Windows, you may see the following NOTE: "Package suggested but not available for checking: 'rcqp'"
-The RcppCWB provides the main interface for querying corpora, so this is no impediment for Windows users.
+The RcppCWB provides the main interface for querying corpora, so this is no impediment for Windows users. If 
 
 Apart from this, there were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
 

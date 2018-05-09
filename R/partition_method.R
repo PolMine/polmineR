@@ -35,7 +35,7 @@
 #' @param pAttribute the pAttribute(s) for which term frequencies shall be retrieved
 #' @param regex logical (defaults to FALSE)
 #' @param xml either 'flat' (default) or 'nested'
-#' @param id2str whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
+#' @param decode whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
 #' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc whether to use multicore (for counting terms)
 #' @param verbose logical, defaults to TRUE
@@ -99,7 +99,7 @@ setGeneric("partition", function(.Object, ...){standardGeneric("partition")})
 setMethod("partition", "character", function(
   .Object, def = NULL, name = "",
   encoding = NULL, pAttribute = NULL, regex = FALSE, xml = "flat",
-  id2str = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...
+  decode = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...
 ) {
   corpus <- .Object
   stopifnot(xml %in% c("nested", "flat"))
@@ -133,7 +133,7 @@ setMethod("partition", "character", function(
     Partition@size <- size(Partition)
     if (!is.null(pAttribute)) if (pAttribute[1] == FALSE) {pAttribute <- NULL}
     if (!is.null(pAttribute)) {
-      Partition <- enrich(Partition, pAttribute = pAttribute, verbose = verbose, id2str = id2str, mc = mc)
+      Partition <- enrich(Partition, pAttribute = pAttribute, verbose = verbose, decode = decode, mc = mc)
     }
   } else {
     warning("... setting up the partition failed (returning NULL object)")
@@ -181,7 +181,7 @@ setMethod("partition", "environment", function(.Object, slots = c("name", "corpu
 
 
 #' @rdname partition
-setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, pAttribute = NULL, id2str = TRUE, xml = NULL, verbose = TRUE, mc = FALSE, ...){
+setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, pAttribute = NULL, decode = TRUE, xml = NULL, verbose = TRUE, mc = FALSE, ...){
   if (length(list(...)) != 0 && is.null(def)) def <- list(...)
   if (!all(names(def) %in% sAttributes(.Object))) stop("some or all s-attributes provided are not available")
   if (length(def) > 1) stop("only one s-attribute allowed")
@@ -234,7 +234,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   }
   newPartition@size <- size(newPartition)
   if (length(pAttribute) > 0) {
-    newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, id2str = id2str, mc = mc)
+    newPartition@stat <- count(.Object = newPartition, pAttribute = pAttribute, decode = decode, mc = mc)
     newPartition@pAttribute <- pAttribute
   }
   newPartition

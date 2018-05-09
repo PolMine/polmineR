@@ -27,7 +27,7 @@
 #'   auxiliary function)
 #' @param pAttribute the p-attribute(s) to use
 #' @param corpus name of CWB corpus
-#' @param id2str logical, whether to add rownames (only if query is NULL)
+#' @param decode logical, whether to add rownames (only if query is NULL)
 #' @param sort logical, whether to sort stat
 #' @param mc logical, whether to use multicore (defaults to FALSE)
 #' @param verbose logical, whether to be verbose
@@ -70,7 +70,7 @@ setGeneric("count", function(.Object, ...){standardGeneric("count")})
 #' @rdname count-method
 setMethod("count", "partition", function(
   .Object, query = NULL, cqp = is.cqp, breakdown = FALSE,
-  id2str = TRUE, pAttribute = getOption("polmineR.pAttribute"),
+  decode = TRUE, pAttribute = getOption("polmineR.pAttribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE
   ){
   stopifnot( is.logical(breakdown) == TRUE)
@@ -139,7 +139,7 @@ setMethod("count", "partition", function(
       TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
       setnames(TF, "N", "count")
     }
-    if (id2str){
+    if (decode){
       dummy <- lapply(
         1:length(pAttribute),
         function(i){
@@ -195,16 +195,15 @@ setMethod("count", "partitionBundle", function(.Object, query, cqp = FALSE, pAtt
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE, sort = FALSE, id2str = TRUE, verbose = TRUE){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE){
   stopifnot(.Object %in% CQI$list_corpora())
   if (is.null(query)){
     if (length(pAttribute) == 1){
       if (requireNamespace("RcppCWB", quietly = TRUE)){
-        .message("using RcppCWB for counting", verbose = verbose)
         TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = pAttribute))
         TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
         setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
-        if (id2str == FALSE){
+        if (decode == FALSE){
           setkeyv(TF, paste(pAttribute, "id", sep = "_"))
           setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
         } else {
@@ -235,7 +234,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
         return(TF)
       } else {
         TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
-        if (id2str){
+        if (decode){
           TF[, "token" := CQI$id2str(.Object, pAttribute, TF[[paste(pAttribute, "id", sep = "_")]]), with = TRUE]
           setnames(TF, old = "token", new = pAttribute)
           setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
@@ -256,9 +255,9 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
       .message("counting", verbose = verbose)
       TF <- tokenStreamDT[, .N, by = c(eval(colnames(tokenStreamDT)))]
       setnames(TF, old = "N", new = "count")
-      if (id2str){
+      if (decode){
         for (pAttr in pAttribute){
-          .message("id2str for p-attribute: ", pAttr, verbose = verbose)
+          .message("decode p-attribute: ", pAttr, verbose = verbose)
           TF[, eval(pAttr) := as.nativeEnc(CQI$id2str(.Object, pAttr, TF[[paste(pAttr, "id", sep = "_")]]), from = getEncoding(.Object)), with = TRUE]
         }
         setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))

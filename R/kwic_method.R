@@ -106,7 +106,7 @@ setMethod("kwic", "partition", function(
   )
   if (is.null(ctxt)){
     message("... no occurrence of query")
-    return(NULL)
+    return(invisible(NULL))
     }
   retval <- kwic(.Object = ctxt, meta = meta, cpos = cpos)
   if (!is.null(positivelist)){
@@ -123,10 +123,14 @@ setMethod("kwic", "character", function(
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
   pAttribute = "word", sAttribute = NULL, cpos = TRUE,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE
 ){
   hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
-  if (is.null(hits)) { message("sorry, not hits"); return(NULL)}
+  if (is.null(hits)){
+      message("sorry, not hits")
+      return(invisible(NULL))
+  }
   cposMax <- CQI$attribute_size(.Object, pAttribute, type = "p")
   cposList <- apply(
     hits, 1,
@@ -165,6 +169,11 @@ setMethod("kwic", "character", function(
     pAttribute = pAttribute,
     encoding = registry_get_encoding(.Object)
     )
+  
+  # generate positivelist/stoplist with ids and apply it
+  if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+  if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
+  
   if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
   kwic(.Object = ctxt, meta = meta, cpos = cpos)
 })

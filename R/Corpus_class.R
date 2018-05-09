@@ -21,14 +21,14 @@ setOldClass("Corpus")
 #'   \item{dataDir}{the data directory of the corpus}
 #'   \item{pAttribute}{p-attribute, to perform count}
 #'   \item{sAttributes}{s-attributes}
-#'   \item{id2str}{logical, whether to turn token ids into strings upon counting}
+#'   \item{decode}{logical, whether to turn token ids into strings upon counting}
 #'   \item{as.html}{logical}
 #' }
 #' 
 #' @section Methods:
 #' \describe{
 #'   \item{\code{initialize(corpus, pAttribute = NULL, sAttributes = NULL)}}{Initialize a new object of class \code{Corpus}.}
-#'   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)}}{Perform counts.}
+#'   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), decode = TRUE)}}{Perform counts.}
 #'   \item{\code{as.partition()}}{turn \code{Corpus} into a partition}
 #'   \item{\code{getInfo(as.html = FALSE)}}{}
 #'   \item{\code{showInfo()}}{}
@@ -181,9 +181,9 @@ Corpus <- R6Class(
     #   tab
     # },
     
-    count = function(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE){
+    count = function(pAttribute = getOption("polmineR.pAttribute"), decode = TRUE){
       self$pAttribute <- pAttribute
-      self$stat <- count(self$corpus, pAttribute = pAttribute, id2str = id2str)
+      self$stat <- count(self$corpus, pAttribute = pAttribute, decode = decode)
     },
     
     # copy = function(registryDir, dataDir = NULL){

@@ -46,7 +46,7 @@
   verbose = FALSE, ...)
 
 \S4method{enrich}{partition}(.Object, size = FALSE, pAttribute = NULL,
-  id2str = TRUE, verbose = TRUE, mc = FALSE, ...)
+  decode = TRUE, verbose = TRUE, mc = FALSE, ...)
 
 \S4method{pAttributes}{partition}(.Object, pAttribute = NULL)
 
@@ -77,7 +77,7 @@
 
 \item{pAttribute}{a p-attribute (for enriching)}
 
-\item{id2str}{logical}
+\item{decode}{logical}
 
 \item{mc}{logical or, if numeric, providing the number of cores}
 }
