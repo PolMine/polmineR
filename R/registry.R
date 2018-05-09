@@ -24,14 +24,7 @@
 #' x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 #' registry_reset(registryDir = x)
 registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
-  # if (.Platform$OS.type == "windows"){
-  #   if (grepl("^[A-Z]:.*$", registryDir)) registryDir <- gsub("^[A-Z]:(.*)$", "\\1", registryDir)
-  #   if(!file.exists(file.path(getOption("polmineR.volume"), registryDir))){
-  #     stop("registry directory does not exist")
-  #   }
-  # } else {
-    if(!file.exists(registryDir)) stop("registry directory does not exist")
-  # }
+  if(!file.exists(registryDir)) stop("registry directory does not exist")
   oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
   Sys.setenv(CORPUS_REGISTRY = registryDir)
   .message("setting registry:", registryDir, verbose = verbose)

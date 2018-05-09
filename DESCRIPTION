@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.6.9005
-Date: 2018-04-26
+Version: 0.7.7
+Date: 2018-05-09
 Authors@R: c(person("Andreas Blaette", "Developer", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -17,7 +17,7 @@ Imports:
     utils,
     jsonlite,
     pbapply,
-    RcppCWB (>= 0.2.1)
+    RcppCWB (>= 0.2.2)
 Suggests:
     parallel,
     rcqp,
@@ -30,7 +30,6 @@ Suggests:
     testthat,
     tidytext,
     magrittr
-Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an

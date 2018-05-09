@@ -16,12 +16,8 @@
 
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
   # this needs to be done after assigning CQI, as registry_reset will call setTemplate
-  if (Sys.getenv("CORPUS_REGISTRY") == ""){
+  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
     polmineRPackageRegistry <- file.path(libname, pkgname, "extdata", "cwb", "registry")
-    # if (.Platform$OS.type == "windows"){
-    #   options("polmineR.volume" = gsub("^([A-Z]?:?).*$", "\\1", polmineRPackageRegistry))
-    #   polmineRPackageRegistry <- gsub("^[A-Z]?:?(.*)$", "\\1", polmineRPackageRegistry)
-    # }
     Sys.setenv("CORPUS_REGISTRY" = polmineRPackageRegistry)
     registry_reset(registryDir = polmineRPackageRegistry, verbose = FALSE)
   }
