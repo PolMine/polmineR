@@ -1,5 +1,10 @@
 ## General remarks
 
+After having published 'RcppCWB' as a portable backend to 'polmineR', this is the first release of the 'polmineR' package that can installed without complications on Windows machines.
+
+The package includes some test data, and basic package tests. The dependency on a data package I hosted at a CRAN-like repository on one of my project servers ('europarl.en') could be dropped. In the next upcoming release, I plan to further reduce the number of dependencies.
+
+The RcppCWB package I heavily rely on does not yet compile Solaris, so propably 'polmineR' will not work on Solaris either. Once I have resolved the issue with RcppCWB on Solaris, this issue should disappear.
 
 
 ## Test environments
@@ -13,9 +18,7 @@
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs or NOTEs on the Linux / macOS environments I used. 
-
-On Windows, there is a NOTE concerning package size: "installed size is  5.5Mb | sub-directories of 1Mb or more: libs 5.2Mb". This results from the dependency on pcre, and glib. A potential way to reduce package size may be to find a workaround on the glib dependency in Windows, but I would have to figure out in an upcoming version whether this can be realized.
+There were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
 
 
 ## Downstream dependencies

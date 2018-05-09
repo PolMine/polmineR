@@ -3,7 +3,7 @@ Type: Package
 Title: Toolkit for Corpus Analysis
 Version: 0.7.7
 Date: 2018-05-09
-Authors@R: c(person("Andreas Blaette", "Developer", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
+Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
     R6,
