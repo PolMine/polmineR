@@ -3,17 +3,17 @@
 ##
 
 # long descriptive name for the corpus
-NAME ""
+NAME "Reuters Sample Corpus"
 # corpus ID (must be lowercase in registry!)
 ID   reuters
 # path to binary data files
-HOME /Users/blaette/Lab/github/polmineR/inst/extdata/cwb/indexed_corpora/reuters
+HOME /PATH/TO/INDEXED/CORPUS/DIR/reuters
 # optional info file (displayed by "info;" command in CQP)
-INFO /Users/blaette/Data/cwb/indexed_corpora/reuters/.info
+INFO /PATH/TO/INDEXED/CORPUS/DIR/.info.md
 
 # corpus properties provide additional information about the corpus:
 ##:: charset = "latin1"	# character encoding of corpus data
-##:: language = "??"	# insert ISO code for language (de, en, fr, ...)
+##:: language = "en"	# insert ISO code for language (de, en, fr, ...)
 #========================================================================#
 
 
