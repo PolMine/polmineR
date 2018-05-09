@@ -1,4 +1,4 @@
-# setpaths.R - last modification: 2018-04-09
+# setpaths.R - last modification: 2018-05-09
 # author: Andreas Blaette (andreas.blaette@uni-due.de)
 # 
 #
@@ -41,22 +41,22 @@ for (corpus in list.files(registryDir)){
   
   homeDir <- file.path(packageDir, "extdata", "cwb", "indexed_corpora", corpus)
   infoFileLine <- grep("^INFO", registry)
-  infoFileBasename <- basename(gsub("^INFO\\s+(.*?)$", "\\1", registry[infoFileLine]))
+  infoFileBasename <- basename(gsub("^INFO\\s+(.*?)\\s*$", "\\1", registry[infoFileLine]))
   infoFileNew <- file.path(homeDir, infoFileBasename)
   
   # On Windows, the CWB tools will digest the path including the volume
   # declaration only if the path declaration is quoted; on macOS, wrapping the
   # path is only necessary, if there is a whitespace in the path
   if (.Platform$OS.type == "windows"){
-    registry[grep("^HOME", registry)] <- paste("HOME", sprintf('"%s"', homeDir), sep = " ")
-    registry[infoFileLine] <- paste("INFO", sprintf('"%s"', infoFileNew, sep = " "))
+    registry[grep("^HOME", registry)] <- sprintf('HOME "%s"', homeDir)
+    registry[infoFileLine] <- sprintf('INFO "%s"', infoFileNew)
   } else {
     if (grepl(" ", homeDir)){
-      registry[grep("^HOME", registry)] <- paste("HOME", sprintf('"%s"', homeDir), sep = " ")
-      registry[infoFileLine] <- paste("INFO", sprintf('"%s"', infoFileNew, sep = " "))
+      registry[grep("^HOME", registry)] <- sprintf('HOME "%s"', homeDir)
+      registry[infoFileLine] <- sprintf('INFO "%s"', infoFileNew)
     } else {
-      registry[grep("^HOME", registry)] <- paste("HOME", homeDir , sep = " ")
-      registry[infoFileLine] <- paste("INFO", infoFileNew, sep = " ")
+      registry[grep("^HOME", registry)] <- sprintf("HOME %s", homeDir)
+      registry[infoFileLine] <- sprintf("INFO %s", %s)
     }
   }
   
