@@ -20,9 +20,7 @@ Imports:
     RcppCWB (>= 0.2.1)
 Suggests:
     parallel,
-    europarl.en,
     rcqp,
-    doParallel,
     markdown,
     htmltools,
     xlsx,

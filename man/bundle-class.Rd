@@ -78,12 +78,12 @@ in one S4 object.
 }}
 
 \examples{
-use("europarl.en")
+use("polmineR")
 Ps <- partitionBundle(
-  "EUROPARL-EN", sAttribute = "text_year",
-  values = sAttributes("EUROPARL-EN", "text_year")
+  "REUTERS", sAttribute = "id",
+  values = sAttributes("REUTERS", "id")
 )
-Cs <- cooccurrences(Ps, query = "Europe", cqp = FALSE, verbose = FALSE, progress = TRUE)
+Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
 dt <- as.data.table(Cs, col = "ll")
 m <- as.matrix(Cs, col = "ll")
 }

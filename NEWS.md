@@ -10,6 +10,7 @@
 * RegistryFile class replaced by a set of leightweight-functions (corpus_...)
 * encode-method moved to cwbtools package
 * getTerms,character-method and terms,partition-method merged
+* examples using EUROPARL corpus have been replaced by REUTERS corpus (including vignette)
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated
