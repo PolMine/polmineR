@@ -63,7 +63,7 @@ registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), 
 }
 
 .registry_eval <- function(corpus, registry, regex){
-  a <- readLines(file.path(registry, corpus))
+  a <- readLines(file.path(registry, tolower(corpus)))
   b <- stringi::stri_match_all_regex(str = a, pattern  = regex, omit_no_match = TRUE)
   do.call(rbind, b)[,2]
 }
@@ -136,7 +136,7 @@ registry_get_s_attributes = function(corpus, registry = Sys.getenv("CORPUS_REGIS
 #' @rdname registry_eval
 registry_get_properties = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   x <- stri_match_all_regex(
-    readLines(file.path(registry, corpus)),
+    readLines(file.path(registry, tolower(corpus))),
     pattern = '^##::\\s*(.*?)\\s*=\\s*"(.*?)".*?$',
     omit_no_match = TRUE
   )
