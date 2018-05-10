@@ -6,7 +6,7 @@
 #' want to use a corpus delivered in a R package,
 #' 
 #' Resetting the CORPUS_REGISTRY environment variable is also necessary for the
-#' interface to CWB corpora (packages 'RcppCWB', or 'rcqp'). 
+#' interface to CWB corpora. 
 #' 
 #' To get the path to a package that contains a CWB corpus, use
 #' \code{system.file} (see examples).
@@ -40,24 +40,25 @@ registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), 
     } else {
       .message("status: FAIL", verbose = verbose)
     }
-  } else if (class(CQI)[1] == "CQI.rcqp" && ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]]))){
-    .message("unloading rcqp library", verbose = verbose)
-    library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
-    
-    .message("reloading rcqp library", verbose = verbose)
-    dummy <- capture.output(
-      library.dynam(
-        "rcqp", package = "rcqp",
-        lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
-      ),
-      type = "output"
-    )
-    if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
-      .message("status: OK", verbose = verbose) 
-    } else {
-      .message("status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
-    }
-  }
+  } 
+  #   else if (class(CQI)[1] == "CQI.rcqp" && ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]]))){
+  #   .message("unloading rcqp library", verbose = verbose)
+  #   library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
+  #   
+  #   .message("reloading rcqp library", verbose = verbose)
+  #   dummy <- capture.output(
+  #     library.dynam(
+  #       "rcqp", package = "rcqp",
+  #       lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
+  #     ),
+  #     type = "output"
+  #   )
+  #   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
+  #     .message("status: OK", verbose = verbose) 
+  #   } else {
+  #     .message("status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
+  #   }
+  # }
   setTemplate()
   invisible(oldRegistry)
 }

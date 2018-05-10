@@ -64,21 +64,15 @@ applying the kwic method on either a partition or a context object.
 If a positivelist ist supplied, the tokens will be highlighted.
 }
 \examples{
-if (require(rcqp)){
-  use("polmineR")
-  bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
-  kwic(bt, "Integration")
-  kwic(
-    bt, "Integration",
-    left=20, right=20,
-    meta=c("date", "speaker", "party")
-  )
-  kwic(
-    bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
-    left = 20, right = 20,
-    meta = c("date", "speaker", "party")
-  ) 
-}
+use("polmineR")
+bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
+kwic(bt, "Integration")
+kwic(bt, "Integration", left = 20, right = 20, meta = c("date", "speaker", "party"))
+kwic(
+  bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+  left = 20, right = 20,
+  meta = c("date", "speaker", "party")
+) 
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).

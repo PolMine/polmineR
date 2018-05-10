@@ -3,14 +3,10 @@
   # polmineR:::CQI - assign it to package namespace
   CQI <- switch(
     Sys.getenv("POLMINER_INTERFACE"),
-    "rcqp" = CQI.rcqp$new(),
+#    "rcqp" = CQI.rcqp$new(),
     "cqpserver" = CQI.cqpserver$new(),
     "RcppCWB" = CQI.RcppCWB$new(),
-    if (requireNamespace("RcppCWB", lib.loc = .libPaths(), quietly = TRUE)){
-      CQI.RcppCWB$new()
-    } else if (requireNamespace("rcqp", lib.loc = .libPaths(), quietly = TRUE)){
-      CQI.rcqp$new()
-    }
+    CQI.RcppCWB$new()
   )
   assign("CQI", CQI, envir = parent.env(environment()))
 

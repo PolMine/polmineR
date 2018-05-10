@@ -4,7 +4,6 @@
 \name{CQI.super}
 \alias{CQI.super}
 \alias{CQI}
-\alias{CQI.rcqp}
 \alias{CQI.RcppCWB}
 \alias{CQI.cqpserver}
 \alias{CQI.cqpserver}
@@ -13,8 +12,6 @@
 \usage{
 CQI.super
 
-CQI.rcqp
-
 CQI.RcppCWB
 
 CQI.cqpserver
@@ -22,10 +19,9 @@ CQI.cqpserver
 CQI.cqpserver
 }
 \description{
-The package offers three different interfaces to the Corpus
-Workbench (CWB): The package 'rcqp', via cqpserver, and by
-calling Perl scripts. An object called 'CQI' will be instantiated
-in the environment of the polmineR package; the class will 
+The package offers two different interfaces to the Corpus Workbench (CWB):
+The package 'RcppCWB', or via cqpserver. An object called 'CQI' will be
+instantiated in the environment of the polmineR package; the class will
 provide the functionality to access CWB corpora.
 }
 \keyword{datasets}

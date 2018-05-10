@@ -117,7 +117,7 @@ setMethod("count", "partition", function(
   } else {
     pAttr_id <- paste(pAttribute, "id", sep = "_")
     if (length(pAttribute) == 1){
-      if (requireNamespace("RcppCWB", quietly = TRUE)){
+      if (class(CQI)[1] == "CQI.RcppCWB"){
         .message("using RcppCWB", verbose = verbose)
         countMatrix <- RcppCWB::region_matrix_to_count_matrix(
           corpus = .Object@corpus, p_attribute = pAttribute,
@@ -129,16 +129,17 @@ setMethod("count", "partition", function(
         cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
         TF <- count(cpos, .Object@corpus, pAttribute)
       }
-    } else {
-      .message("using rcqp", verbose = verbose)
-      cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-      idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
-      names(idList) <- paste(pAttribute, "id", sep = "_")
-      ID <- as.data.table(idList)
-      setkeyv(ID, cols = names(idList))
-      TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
-      setnames(TF, "N", "count")
-    }
+    } 
+    #   else {
+    #   .message("using rcqp", verbose = verbose)
+    #   cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+    #   idList <- lapply(pAttribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
+    #   names(idList) <- paste(pAttribute, "id", sep = "_")
+    #   ID <- as.data.table(idList)
+    #   setkeyv(ID, cols = names(idList))
+    #   TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
+    #   setnames(TF, "N", "count")
+    # }
     if (decode){
       dummy <- lapply(
         1:length(pAttribute),

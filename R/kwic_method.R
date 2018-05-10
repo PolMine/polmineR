@@ -33,21 +33,15 @@ NULL
 #' Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
 #' Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 #' @examples
-#' if (require(rcqp)){
-#'   use("polmineR")
-#'   bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
-#'   kwic(bt, "Integration")
-#'   kwic(
-#'     bt, "Integration",
-#'     left=20, right=20,
-#'     meta=c("date", "speaker", "party")
-#'   )
-#'   kwic(
-#'     bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
-#'     left = 20, right = 20,
-#'     meta = c("date", "speaker", "party")
-#'   ) 
-#' }
+#' use("polmineR")
+#' bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
+#' kwic(bt, "Integration")
+#' kwic(bt, "Integration", left = 20, right = 20, meta = c("date", "speaker", "party"))
+#' kwic(
+#'   bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+#'   left = 20, right = 20,
+#'   meta = c("date", "speaker", "party")
+#' ) 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
 

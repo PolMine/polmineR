@@ -20,7 +20,6 @@ Imports:
     RcppCWB (>= 0.2.2)
 Suggests:
     parallel,
-    rcqp,
     markdown,
     htmltools,
     xlsx,
