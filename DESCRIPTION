@@ -30,7 +30,6 @@ Suggests:
     testthat,
     tidytext,
     magrittr
-Additional_repositories: http://polmine.sowi.uni-due.de/packages
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an
