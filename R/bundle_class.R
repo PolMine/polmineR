@@ -24,12 +24,23 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @exportClass bundle
 #' @docType class
 #' @author Andreas Blaette
-setClass("bundle",
-         representation(
-           objects = "list",
-           pAttribute = "character",
-           encoding = "character"
-           )
+#' @examples
+#' parties <- sAttributes("GERMAPARLMINI", "party")
+#' parties <- parties[-which(parties == "NA")]
+#' party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
+#' length(party_bundle)
+#' names(party_bundle)
+#' party_bundle <- enrich(party_bundle, pAttribute = "word")
+#' summary(party_bundle)
+#' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
+#' summary(parties_big)
+setClass(
+  "bundle",
+  representation(
+    objects = "list",
+    pAttribute = "character",
+    encoding = "character"
+  )
 )
 
 
@@ -69,7 +80,7 @@ setMethod("unique", "bundle", function(x){
   objectNames <- names(x)
   uniqueObjectNames <- unique(objectNames)
   uniquePos <- sapply(uniqueObjectNames, function(x) grep(x, objectNames)[1])
-  objectsToDrop <- which(c(1:length(objectNames)) %in% uniquePos == FALSE)
+  objectsToDrop <- which(1:length(objectNames) %in% uniquePos == FALSE)
   objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
   for (pos in objectsToDrop) x@objects[pos] <- NULL
   x
@@ -83,7 +94,7 @@ setMethod("unique", "bundle", function(x){
 #' @param e1 object 1
 #' @param e2 object 2
 #' @docType methods
-setMethod("+", signature(e1="bundle", e2="bundle"), function(e1, e2){
+setMethod("+", signature(e1 = "bundle", e2 = "bundle"), function(e1, e2){
   newObjectClass <- unique(c(is(e1)[1], is(e2)[1]))
   if (length(newObjectClass) > 1) stop("the two objects do not have the same length")
   new(
@@ -96,7 +107,7 @@ setMethod("+", signature(e1="bundle", e2="bundle"), function(e1, e2){
 
 #' @exportMethod +
 #' @rdname bundle-class
-setMethod("+", signature(e1="bundle", e2="textstat"), function(e1, e2){
+setMethod("+", signature(e1 = "bundle", e2 = "textstat"), function(e1, e2){
   e1@objects[[length(e1@objects)+1]] <- e2
   names(e1@objects)[length(e1@objects)] <- e2@name
   e1
@@ -110,33 +121,28 @@ setMethod('[[', 'bundle', function(x,i){
   if (length(i) == 1){
     return(x@objects[[i]])
   } else {
-    return(as.bundle(lapply(i, function(j) x@objects[[j]])))
+    return( as.bundle(lapply(i, function(j) x[[j]])) )
   }
 })  
 
 
 #' @exportMethod sample
 #' @rdname bundle-class
-setMethod("sample", "bundle", function(x, size){
-  x[[sample(c(1:length(x)), size=size)]]
-})
+setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = size)]])
 
 
-setAs(from="list", to="bundle", def=function(from){
+setAs(from = "list", to = "bundle", def = function(from){
   uniqueClass <- unique(unlist(lapply(from, class)))
   stopifnot(length(uniqueClass) == 1)
-  newObjectClass <- ifelse(
-    grepl("[pP]artition", uniqueClass),
-    "partitionBundle", "bundle"
-    )
-  newBundle <- new(
+  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partitionBundle" else "bundle"
+  y <- new(
     newObjectClass,
-    objects=from,
-    corpus=unique(unlist(lapply(from, function(x) x@corpus))),
-    encoding=unique(unlist(lapply(from, function(x) x@encoding)))
+    objects = from,
+    corpus = unique(unlist(lapply(from, function(x) x@corpus))),
+    encoding = unique(unlist(lapply(from, function(x) x@encoding)))
   )
-  names(newBundle@objects) <- vapply(from, function(x) x@name, FUN.VALUE="character")
-  newBundle
+  names(y@objects) <- vapply(from, function(x) x@name, FUN.VALUE = "character")
+  y
 })
 
 
@@ -205,8 +211,6 @@ setMethod("as.matrix", "bundle", function(x, col){
 
 #' @rdname bundle-class
 setMethod("subset", "bundle", function(x, ...){
-  for (i in 1:length(x)){
-    x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
-  }
+  for (i in 1:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
   x
 })

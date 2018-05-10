@@ -12,6 +12,7 @@
 * getTerms,character-method and terms,partition-method merged
 * examples using EUROPARL corpus have been replaced by REUTERS corpus (including vignette)
 * param id2str has been renamed to decode in all functions to avoid unwanted behavior
+* robust indexing of bundle objects for subsetting
 
 # v0.7.6
 * functionality of matches-method (breakdown of frequencies of matches) integrated

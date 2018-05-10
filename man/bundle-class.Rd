@@ -78,6 +78,15 @@ in one S4 object.
 }}
 
 \examples{
+parties <- sAttributes("GERMAPARLMINI", "party")
+parties <- parties[-which(parties == "NA")]
+party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
+length(party_bundle)
+names(party_bundle)
+party_bundle <- enrich(party_bundle, pAttribute = "word")
+summary(party_bundle)
+parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
+summary(parties_big)
 use("polmineR")
 Ps <- partitionBundle(
   "REUTERS", sAttribute = "id",

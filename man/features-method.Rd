@@ -49,24 +49,30 @@ interest, and a partition defining a reference corpus are compared.
 The most important purpose is term extraction.
 }
 \examples{
-  use("polmineR")
-  kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute="word")
-  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
-  terms_kauder <- features(x = kauder, y = all, included = TRUE)
-  top100 <- subset(terms_kauder, rank_chisquare <= 100)
-  use("polmineR")
-  kauder <- partition("GERMAPARLMINI", speaker = "Volker Kauder", pAttribute = "word")
-  x <- as(kauder, "count")
-  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
-  y <- as(all, "count")
-  z <- features(x, y, included = TRUE)
-  top100 <- subset(z, rank_chisquare <= 100)
-  use("polmineR")
-  byName <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
-  byName <- enrich(byName, pAttribute = "word")
-  all <- partition("GERMAPARLMINI", date = ".*", regex = TRUE, pAttribute = "word")
-  result <- features(byName, all, included = TRUE, progress = TRUE)
-  dtm <- as.DocumentTermMatrix(result, col = "chisquare")
+use("polmineR")
+
+kauder <- partition(
+  "GERMAPARLMINI",
+  speaker = "Volker Kauder", interjection = "speech",
+  pAttribute="word"
+  )
+all <- partition("GERMAPARLMINI", interjection = "speech", pAttribute = "word")
+
+terms_kauder <- features(x = kauder, y = all, included = TRUE)
+top100 <- subset(terms_kauder, rank_chisquare <= 100)
+head(top100)
+
+# a different way is to compare count objects
+kauder_count <- as(kauder, "count")
+all_count <- as(all, "count")
+terms_kauder <- features(kauder_count, all_count, included = TRUE)
+top100 <- subset(z, rank_chisquare <= 100)
+head(top100)
+
+speakers <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
+speakers <- enrich(speakers, pAttribute = "word")
+speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
+dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
 }
 \references{
 Manning / Schuetze ...
