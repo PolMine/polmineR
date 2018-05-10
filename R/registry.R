@@ -26,14 +26,19 @@
 registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
   if(!file.exists(registryDir)) stop("registry directory does not exist")
   oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-  Sys.setenv(CORPUS_REGISTRY = registryDir)
-  .message("setting registry:", registryDir, verbose = verbose)
+  if (registryDir == oldRegistry){
+    .message(sprintf("registry already set to: %s (unchanged)", registryDir), verbose = verbose)
+  } else {
+    Sys.setenv(CORPUS_REGISTRY = registryDir)
+    .message("setting registry:", registryDir, verbose = verbose)
+  }
   
   if (class(CQI)[1] == "CQI.RcppCWB"){
     if (!cqp_is_initialized()){
+      .message("initializing CQP", verbose = verbose)
       cqp_initialize(registry = registryDir)
     } else {
-      cqp_reset_registry(registry = registryDir)
+      if (registryDir != oldRegistry) cqp_reset_registry(registry = registryDir)
     }
     if (cqp_is_initialized() && (cqp_get_registry() == registryDir)){
       .message("status: OK", verbose = verbose)

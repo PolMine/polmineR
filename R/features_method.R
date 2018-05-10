@@ -49,7 +49,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' kauder_count <- as(kauder, "count")
 #' all_count <- as(all, "count")
 #' terms_kauder <- features(kauder_count, all_count, included = TRUE)
-#' top100 <- subset(z, rank_chisquare <= 100)
+#' top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' head(top100)
 #' 
 #' speakers <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
