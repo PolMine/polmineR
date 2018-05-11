@@ -3,17 +3,14 @@
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be
 #' used), or matches for the query.
 #' 
-#' If .Object is a \code{partitonBundle}, the data.table returned will have the queries
-#' in the columns, and as many rows as there are in the partitionBundle.
+#' If .Object is a \code{partitonBundle}, the data.table returned will have the
+#' queries in the columns, and as many rows as there are in the partitionBundle.
 #' 
-#' If .Object is a character vector (length 1) and query is NULL, the count is performed
-#' for the whole partition. The method will check whether the \code{RcppCWB} package,
-#' or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
-#' performance reasons.
-#' 
-#' If \code{breakdown} is \code{TRUE} and one query is supplied, the function
-#' returns a frequency breakdown of the results of the query. If several queries
-#' are supplied, frequencies for the individual queries are retrieved.
+#' If .Object is a character vector (length 1) and query is NULL, the count is
+#' performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
+#' query is supplied, the function returns a frequency breakdown of the results
+#' of the query. If several queries are supplied, frequencies for the individual
+#' queries are retrieved.
 #' 
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
@@ -200,48 +197,21 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, pA
   stopifnot(.Object %in% CQI$list_corpora())
   if (is.null(query)){
     if (length(pAttribute) == 1){
-      if (requireNamespace("RcppCWB", quietly = TRUE)){
-        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = pAttribute))
-        TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
-        setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
-        if (decode == FALSE){
-          setkeyv(TF, paste(pAttribute, "id", sep = "_"))
-          setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
-        } else {
-          TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), from = getEncoding(.Object)), with = TRUE]
-          Encoding(TF[["token"]]) <- "unknown"
-          setnames(TF, old = "token", new = pAttribute)
-          setkeyv(TF, pAttribute)
-          setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
-          if (sort) setorderv(TF, cols = pAttribute)
-        }
-        return(TF)
-      } else if (getOption("polmineR.cwb-lexdecode")){
-        # cwb-lexdecode will be significantly faster than using rcqp
-        .message("using cwb-lexdecode for counting", verbose = verbose)
-        cmd <- paste(c("cwb-lexdecode", "-f", "-n", "-P", pAttribute, .Object), collapse = " ")
-        lexdecodeResult <- system(cmd, intern = TRUE)
-        Encoding(lexdecodeResult) <- getEncoding(.Object)
-        lexdecodeList <- strsplit(lexdecodeResult, "\t")
-        TF <- data.table(
-          token = sapply(lexdecodeList, function(x) x[3]),
-          id = as.integer(sapply(lexdecodeList, function(x) x[1])),
-          count = as.integer(sapply(lexdecodeList, function(x) x[2]))
-        )
-        Encoding(TF[["token"]]) <- "unknown"
-        colnames(TF) <- c(pAttribute, paste(pAttribute, "id", sep = "_"), "count")
-        setkeyv(TF, pAttribute)
-        if (sort) setorderv(TF, cols = pAttribute)
-        return(TF)
+      TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = pAttribute))
+      TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
+      setnames(TF, old = "id", new = paste(pAttribute, "id", sep = "_"))
+      if (decode == FALSE){
+        setkeyv(TF, paste(pAttribute, "id", sep = "_"))
+        setcolorder(TF, c(paste(pAttribute, "id", sep = "_"), "count"))
       } else {
-        TF <- count(0:(size(.Object) - 1), .Object, pAttribute = pAttribute)
-        if (decode){
-          TF[, "token" := CQI$id2str(.Object, pAttribute, TF[[paste(pAttribute, "id", sep = "_")]]), with = TRUE]
-          setnames(TF, old = "token", new = pAttribute)
-          setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
-        }
-        return(TF)
+        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, pAttribute, 0:(nrow(TF) - 1)), from = getEncoding(.Object)), with = TRUE]
+        Encoding(TF[["token"]]) <- "unknown"
+        setnames(TF, old = "token", new = pAttribute)
+        setkeyv(TF, pAttribute)
+        setcolorder(TF, c(pAttribute, paste(pAttribute, "id", sep = "_"), "count"))
+        if (sort) setorderv(TF, cols = pAttribute)
       }
+      return(TF)
     } else {
       
       tokenStreamDT <- as.data.table(

@@ -89,7 +89,7 @@ kwicServer <- function(input, output, session, ...){
               right = input$kwic_window,
               meta = input$kwic_meta,
               verbose = "shiny",
-              positivelist = if (length(input$kwic_positivelist) > 0) input$kwic_positivelist else NULL,
+              positivelist = if (nchar(input$kwic_positivelist) > 0) input$kwic_positivelist else NULL,
               cpos = TRUE # required for reading
             )
             print(K)

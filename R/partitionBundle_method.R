@@ -70,7 +70,7 @@ setMethod("partitionBundle", "character", function(
     corpus = .Object, encoding = registry_get_encoding(.Object),
     call = deparse(match.call())
   )
-  strucs <- 0:(CQI$attribute_size(.Object, sAttribute, "s") - 1)
+  strucs <- 0L:(CQI$attribute_size(.Object, sAttribute, "s") - 1L)
   names(strucs) <- CQI$struc2str(.Object, sAttribute, strucs)
   if (!is.null(values)) {
     valuesToKeep <- values[which(values %in% names(strucs))]
@@ -78,17 +78,14 @@ setMethod("partitionBundle", "character", function(
   }
 
   values <- names(strucs)
+  Encoding(values) <- bundle@encoding
   strucs <- unname(strucs)
   
   .message("getting matrix with regions for s-attribute: ", sAttribute, verbose = verbose)
-  if (require("RcppCWB", quietly = TRUE)){
-    cposMatrix <- RcppCWB::get_region_matrix(
-      corpus = .Object, s_attribute = sAttribute, strucs = strucs,
-      registry = Sys.getenv("CORPUS_REGISTRY")
-      )
-  } else {
-    cposMatrix <- do.call(rbind, lapply(strucs, function(x) CQI$struc2cpos(.Object, sAttribute, x)))
-  }
+  cposMatrix <- RcppCWB::get_region_matrix(
+    corpus = .Object, s_attribute = sAttribute, strucs = strucs,
+    registry = Sys.getenv("CORPUS_REGISTRY")
+  )
   
   cposList <- split(cposMatrix, f = values)
   cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
@@ -109,7 +106,7 @@ setMethod("partitionBundle", "character", function(
     )
   }
   bundle@objects <- blapply(
-    setNames(as.list(1:length(cposList)), names(cposList)),
+    setNames(as.list(1L:length(cposList)), names(cposList)),
     f = .makeNewPartition,
     corpus = .Object, encoding = bundle@encoding, sAttribute = sAttribute, cposList, xml = xml,
     mc = mc, progress = progress, verbose = verbose, ...

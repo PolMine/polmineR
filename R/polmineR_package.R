@@ -48,6 +48,7 @@ NULL
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
 #' @export polmineR
 #' @importFrom RcppCWB cqp_initialize cqp_is_initialized
+#' @importFrom parallel detectCores
 polmineR <- function(){
   if (requireNamespace("shiny", quietly = TRUE)){
     shiny::runApp(system.file("shiny", package = "polmineR"))

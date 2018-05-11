@@ -72,17 +72,14 @@ Count all tokens, or number of occurrences of a query (CQP syntax may be
 used), or matches for the query.
 }
 \details{
-If .Object is a \code{partitonBundle}, the data.table returned will have the queries
-in the columns, and as many rows as there are in the partitionBundle.
+If .Object is a \code{partitonBundle}, the data.table returned will have the
+queries in the columns, and as many rows as there are in the partitionBundle.
 
-If .Object is a character vector (length 1) and query is NULL, the count is performed
-for the whole partition. The method will check whether the \code{RcppCWB} package,
-or the \code{cwb-lexdecode} utilities are available, and use them resepectively for 
-performance reasons.
-
-If \code{breakdown} is \code{TRUE} and one query is supplied, the function
-returns a frequency breakdown of the results of the query. If several queries
-are supplied, frequencies for the individual queries are retrieved.
+If .Object is a character vector (length 1) and query is NULL, the count is
+performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
+query is supplied, the function returns a frequency breakdown of the results
+of the query. If several queries are supplied, frequencies for the individual
+queries are retrieved.
 }
 \examples{
   use("polmineR")
