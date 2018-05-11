@@ -1,3 +1,7 @@
+# v0.7.7.9001
+* upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used
+* startup messages adjust slightly
+
 # v0.7.7 
 * removed depracated classes: dispersion, Textstat (reference class), Partition (reference class)
 * divide-methode moved to package polmineR.misc
