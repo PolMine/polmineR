@@ -34,11 +34,12 @@ cpos(.Object, ...)
 
 \item{query}{a character vector providing one or multiple queries (token or CQP query)}
 
-\item{pAttribute}{the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.}
+\item{pAttribute}{the p-attribute to search. Needs to be stated only if query
+is not a CQP query. Defaults to NULL.}
 
-\item{cqp}{either logical (TRUE if query is a CQP query), or a
-function to check whether query is a CQP query or not (defaults to is.query
-auxiliary function)}
+\item{cqp}{either logical (TRUE if query is a CQP query), or a function to
+check whether query is a CQP query or not (defaults to is.query auxiliary
+function)}
 
 \item{encoding}{the encoding of the corpus (if NULL, the
 encoding provided in the registry file of the corpus will be used)}
@@ -50,9 +51,11 @@ the tempcorpus will be shifted so that they match the positions of the
 corpus from which the tempcorpus was generated}
 }
 \value{
-Unless .Object is a \code{"matrix"}, you get a matrix with two columns, the first column giving the start cpos of the hits obtained,
-the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
-If there are no hits, a NULL object will be returned.
+Unless .Object is a \code{"matrix"}, you get a matrix with two
+  columns, the first column giving the left/starting corpus positions (cpos)
+  of the hits obtained, the second column giving the right/ending cpos of the
+  respective hit. The number of rows is the number of hits. If there are no
+  hits, a NULL object will is returned.
 }
 \description{
 Get matches for a query in a CQP corpus, optionally using the CQP syntax of the

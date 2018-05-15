@@ -44,14 +44,14 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   context,partitionBundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
-#'   use("polmineR")
-#'   p <- partition("GERMAPARLMINI", interjection = "speech")
-#'   y <- context(p, query = "Integration", pAttribute = "word")
-#'   y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
-#'   y <- context(
-#'     p, query = "Integration", pAttribute = "word",
-#'     positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
-#'     )
+#' use("polmineR")
+#' p <- partition("GERMAPARLMINI", interjection = "speech")
+#' y <- context(p, query = "Integration", pAttribute = "word")
+#' y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
+#' y <- context(
+#'   p, query = "Integration", pAttribute = "word",
+#'   positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
+#' )
 #' @import data.table
 #' @exportMethod context
 #' @rdname context-method
@@ -101,9 +101,9 @@ setMethod("context", "partition", function(
       warning('No hits for query ', query, ' (returning NULL)')
       return(invisible(NULL))
     } else {
-      if (nrow(hits) == 0){
+      if (is.null(hits)){
         warning('No hits for query ', query, ' (returning NULL)')
-        return(invisible(NULL))
+        return( invisible(NULL) )
       } else {
         .message("number of hits:", nrow(hits), verbose = verbose)
       }
@@ -114,7 +114,7 @@ setMethod("context", "partition", function(
     
     # create matrix_list (expanded form), then data.table in ctxt@cpos 
     matrix_list <- lapply(
-      1:nrow(hits),
+      1L:nrow(hits),
       function(i){
         cbind(
           hit_no = i,

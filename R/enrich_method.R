@@ -90,9 +90,6 @@ setMethod("enrich", "kwic", function(.Object, meta = NULL, table = FALSE){
 #' @param decode logical, whether to convert integer ids to expressive strings
 #' @param verbose logical, whether to be talkative
 setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute = NULL, decode = FALSE, verbose = TRUE){
-  # .Object2 <- .Object
-  # .Object2@cpos <- copy(.Object@cpos)
-  # .Object2@stat <- copy(.Object@stat)
   if (!is.null(sAttribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)

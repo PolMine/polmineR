@@ -21,17 +21,20 @@ NULL
 #'   \code{"partition"} object, a \code{"tempcorpus"} object, or a
 #'   \code{"matrix"} with corpus positions
 #' @param query a character vector providing one or multiple queries (token or CQP query)
-#' @param cqp either logical (TRUE if query is a CQP query), or a
-#'   function to check whether query is a CQP query or not (defaults to is.query
-#'   auxiliary function)
-#' @param pAttribute the p-attribute to search. Needs to be stated only if query is not a CQP query. Defaults to NULL.
+#' @param cqp either logical (TRUE if query is a CQP query), or a function to
+#'   check whether query is a CQP query or not (defaults to is.query auxiliary
+#'   function)
+#' @param pAttribute the p-attribute to search. Needs to be stated only if query
+#'   is not a CQP query. Defaults to NULL.
 #' @param encoding the encoding of the corpus (if NULL, the
 #'  encoding provided in the registry file of the corpus will be used)
 #' @param verbose logical, whether to be talkative
 #' @param ... further arguments
-#' @return Unless .Object is a \code{"matrix"}, you get a matrix with two columns, the first column giving the start cpos of the hits obtained,
-#' the second column giving the end cpos of the respective hit. The number of rows is the number of hits.
-#' If there are no hits, a NULL object will be returned.
+#' @return Unless .Object is a \code{"matrix"}, you get a matrix with two
+#'   columns, the first column giving the left/starting corpus positions (cpos)
+#'   of the hits obtained, the second column giving the right/ending cpos of the
+#'   respective hit. The number of rows is the number of hits. If there are no
+#'   hits, a NULL object will is returned.
 #' @exportMethod cpos
 #' @rdname cpos-method
 #' @name cpos
@@ -51,7 +54,7 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
       function(Q){
         cpos <- try({
           id <- CQI$str2id(.Object, pAttribute, Q)
-          if (id == -1){ # CQP will return -1 if there are no matches
+          if (id < 0){ # CQP will return -1 or another negative value if there are no matches
             .message("no hits for query: ", Q, verbose = verbose)
             cpos <- NULL
           } else {
@@ -82,7 +85,8 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
     )
     hits <- do.call(rbind, hitList)
   }
-  if (nrow(hits) == 0) invisible(NULL) else hits
+  if (is.null(hits)) return( hits )
+  if (nrow(hits) == 0) invisible( NULL ) else hits
 })
   
 #' @rdname cpos-method

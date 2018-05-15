@@ -121,11 +121,8 @@ setMethod("kwic", "character", function(
   verbose = TRUE
 ){
   hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
-  if (is.null(hits)){
-      message("sorry, not hits")
-      return(invisible(NULL))
-  }
-  cposMax <- CQI$attribute_size(.Object, pAttribute, type = "p")
+  if (is.null(hits)){message("sorry, not hits"); return(invisible(NULL))}
+  cpos_max <- CQI$attribute_size(.Object, pAttribute, type = "p")
   cposList <- apply(
     hits, 1,
     function(row){
@@ -134,10 +131,10 @@ setMethod("kwic", "character", function(
       list(
         left = left[left > 0],
         node = c(row[1]:row[2]),
-        right = right[right <= cposMax]
+        right = right[right <= cpos_max]
         )
     }
-    )
+  )
   DT <- data.table(
     hit_no = unlist(lapply(1:length(cposList), function(i) rep(i, times = length(unlist(cposList[[i]]))))),
     cpos = unname(unlist(cposList)),
@@ -151,7 +148,7 @@ setMethod("kwic", "character", function(
             left = rep(-1, times = length(x[[x2]])),
             node = rep(0, times = length(x[[x2]])),
             right = rep(1, times = length(x[[x2]])))
-        )))
+      )))
   )
   DT[[paste(pAttribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, pAttribute, DT[["cpos"]])
   
@@ -162,7 +159,7 @@ setMethod("kwic", "character", function(
     cpos = DT,
     pAttribute = pAttribute,
     encoding = registry_get_encoding(.Object)
-    )
+  )
   
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)

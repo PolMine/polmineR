@@ -85,14 +85,14 @@ For formulating the query, CPQ syntax may be used (see
 examples). Statistical tests available are log-likelihood, t-test, pmi.
 }
 \examples{
-  use("polmineR")
-  p <- partition("GERMAPARLMINI", interjection = "speech")
-  y <- context(p, query = "Integration", pAttribute = "word")
-  y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
-  y <- context(
-    p, query = "Integration", pAttribute = "word",
-    positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
-    )
+use("polmineR")
+p <- partition("GERMAPARLMINI", interjection = "speech")
+y <- context(p, query = "Integration", pAttribute = "word")
+y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
+y <- context(
+  p, query = "Integration", pAttribute = "word",
+  positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
+)
 }
 \author{
 Andreas Blaette
