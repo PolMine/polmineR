@@ -57,7 +57,7 @@ install.corpus("europarl.en")
 Calling the use function is necessary activate a corpus included in a data package.
 
 ```{r use, eval = TRUE}
-use("europarl.en") # activate the corpus in the europarl-en package
+use("polmineR") # activate the corpus in the europarl-en package
 ```
 
 An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. To assist the preparation of corpora, consider the ctk package (corpus toolkit) as a companion package to polmineR.
