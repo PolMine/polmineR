@@ -39,6 +39,7 @@ setClass(
   representation(
     objects = "list",
     pAttribute = "character",
+    corpus = "character",
     encoding = "character"
   )
 )
@@ -66,9 +67,7 @@ setReplaceMethod(
       warning("value needs to be a character vector")
       stop()
     }
-    for (i in c(1:length(x@objects))){
-      x@objects[[i]]@name <- value[i]
-    }
+    for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
     names(x@objects) <- value
     x
   }
@@ -141,7 +140,7 @@ setAs(from = "list", to = "bundle", def = function(from){
     corpus = unique(unlist(lapply(from, function(x) x@corpus))),
     encoding = unique(unlist(lapply(from, function(x) x@encoding)))
   )
-  names(y@objects) <- vapply(from, function(x) x@name, FUN.VALUE = "character")
+  names(y@objects) <- unlist(unname(lapply(from, function(x) x@name)))
   y
 })
 
@@ -214,3 +213,7 @@ setMethod("subset", "bundle", function(x, ...){
   for (i in 1:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
   x
 })
+
+#' @rdname bundle-class
+#' @exportMethod as.list
+setMethod("as.list", "bundle", function(x) x@objects)

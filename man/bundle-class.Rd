@@ -16,6 +16,7 @@
 \alias{as.data.table,bundle-method}
 \alias{as.matrix,bundle-method}
 \alias{subset,bundle-method}
+\alias{as.list,bundle-method}
 \title{Bundle class}
 \usage{
 \S4method{length}{bundle}(x)
@@ -43,6 +44,8 @@
 \S4method{as.matrix}{bundle}(x, col)
 
 \S4method{subset}{bundle}(x, ...)
+
+\S4method{as.list}{bundle}(x)
 }
 \arguments{
 \item{x}{a bundle object}

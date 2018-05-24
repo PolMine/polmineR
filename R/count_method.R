@@ -192,7 +192,40 @@ setMethod("count", "partitionBundle", function(.Object, query = NULL, cqp = FALS
     }
     return(DT_cast)
   } else {
-    
+    corpus <- corpus(.Object)
+    if (length(corpus) > 1) stop("partitions in partitionBundle must be derived from the same corpus")
+    if (verbose) message("... unfolding corpus positions")
+    cpos_list <- lapply(
+      .Object@objects,
+      function(x) data.table(name = x@name, cpos = cpos(x@cpos))
+      )
+    DT <- rbindlist(cpos_list)
+    rm(cpos_list)
+    if (verbose) message(sprintf("... adding ids for p-attribute '%s'", pAttribute))
+    DT[["id"]] <- CQI$cpos2id(corpus = corpus, pAttribute = pAttribute, cpos = DT[["cpos"]])
+    if (verbose) message("... performing count")
+    CNT <- DT[,.N, by = c("name", "id")]
+    rm(DT)
+    setnames(CNT, old = "N", new = "count")
+    if (verbose) message("... adding decoded p-attribute")
+    CNT[[pAttribute]] <- CQI$id2str(corpus = corpus, pAttribute = pAttribute, id = CNT[["id"]])
+    if (verbose) message("... creating bundle of count objects")
+    CNT_list <- split(CNT, by = "name")
+    rm(CNT)
+    y <- lapply(
+      1L:length(CNT_list),
+      function(i){
+        new(
+          "count",
+          corpus = corpus, encoding = .Object@objects[[1]]@encoding,
+          pAttribute = pAttribute,
+          stat = CNT_list[[i]],
+          name = names(CNT_list)[[i]]
+        )
+      }
+    )
+    y2 <- as.bundle(y)
+    return( y2 )
   }
 })
 

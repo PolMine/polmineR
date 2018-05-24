@@ -18,7 +18,7 @@ count(.Object, ...)
   pAttribute = getOption("polmineR.pAttribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
 
-\S4method{count}{partitionBundle}(.Object, query, cqp = FALSE,
+\S4method{count}{partitionBundle}(.Object, query = NULL, cqp = FALSE,
   pAttribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
   progress = TRUE, verbose = FALSE)
 

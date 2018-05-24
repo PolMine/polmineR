@@ -54,7 +54,8 @@ setMethod("partitionBundle", "partition", function(
     .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc,
     ...
   )
-  names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep='')
+  names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep = "")
+  for (i in 1L:length(bundle@objects)) bundle@objects[[i]]@name <- names(bundle@objects)[[i]]
   bundle
 })
 
@@ -66,9 +67,9 @@ setMethod("partitionBundle", "character", function(
   ...
 ) {
   bundle <- new(
-    "partitionBundle",
-    corpus = .Object, encoding = registry_get_encoding(.Object),
-    call = deparse(match.call())
+    Class = "partitionBundle",
+    corpus = .Object,
+    encoding = registry_get_encoding(.Object)
   )
   strucs <- 0L:(CQI$attribute_size(.Object, sAttribute, "s") - 1L)
   names(strucs) <- CQI$struc2str(.Object, sAttribute, strucs)

@@ -180,28 +180,28 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
   .message("generating (temporary) key column", verbose = verbose)
   if (length(pAttribute) > 1){
     dummy <- lapply(
-      c(1:length(x@objects)),
+      1L:length(x@objects),
       function(i){
-        keysRaw <- x@objects[[i]]@stat[, c(pAttribute), with=FALSE]
+        keysRaw <- x@objects[[i]]@stat[, c(pAttribute), with = FALSE]
         keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
         x@objects[[i]]@stat[, key := keys]
       })
     rm(dummy)
   } else {
     dummy <- lapply(
-      1:length(x@objects),
+      1L:length(x@objects),
       function(i) setnames(x@objects[[i]]@stat, old = pAttribute, new = "key")
       )
     rm(dummy)
   }
   .message("generating cumulated data.table", verbose = verbose)
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
-  j <- unlist(lapply(c(1:length(x@objects)), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
+  j <- unlist(lapply(1L:length(x@objects), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
   DT[, "j" := j]
   DT <- DT[which(DT[["key"]] != "")] # to avoid errors
   .message("getting unique keys", verbose = verbose)
   uniqueKeys <- unique(DT[["key"]])
-  keys <- setNames(c(1:length(uniqueKeys)), uniqueKeys)
+  keys <- setNames(1L:length(uniqueKeys), uniqueKeys)
   .message("generating integer keys", verbose = verbose)
   i <- keys[ DT[["key"]] ]
   retval <- simple_triplet_matrix(
@@ -213,17 +213,17 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, pAttribute = NULL,
   
   .message("cleaning up temporary key columns", verbose = verbose)
   if (length(pAttribute) > 1){
-    dummy <- lapply(c(1:length(x@objects)), function(i) x@objects[[i]]@stat[, key := NULL])
+    dummy <- lapply(1:length(x@objects), function(i) x@objects[[i]]@stat[, key := NULL])
   } else {
-    dummy <- lapply(1:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old="key", new=pAttribute))
+    dummy <- lapply(1:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old = "key", new = pAttribute))
   }
   attr(retval, "weighting") <- c("term frequency", "tf")
   retval
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "bundle", function(x, col) {
-  as.DocumentTermMatrix(as.TermDocumentMatrix(x=x, col=col))
+setMethod("as.DocumentTermMatrix", "bundle", function(x, col, pAttribute = NULL, verbose = TRUE) {
+  as.DocumentTermMatrix(as.TermDocumentMatrix(x = x, col = col, pAttribute = pAttribute, verbose = verbose))
 })
 
 #' @rdname as.DocumentTermMatrix

@@ -33,15 +33,13 @@ NULL
 #' @exportClass partitionBundle
 #' @author Andreas Blaette
 setClass("partitionBundle",
-         representation(objects = "list", 
-                        corpus = "character",
-                        sAttributesFixed = "list",
-                        encoding = "character",
-                        explanation = "character",
-                        xml = "character",
-                        call = "character"
+         representation(
+           sAttributesFixed = "list",
+           explanation = "character",
+           xml = "character",
+           call = "character"
          ),
-         contains = c("bundle")
+         contains = "bundle"
 )
 
 #' @rdname partitionBundle-class

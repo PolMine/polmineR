@@ -1,3 +1,7 @@
+# v0.7.9
+* new as.list,bundle-method for convenience
+* as.bundle is more generic now, so that any kind of object can be coerced to a bundle now
+
 # v0.7.8
 * upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used
 * startup messages adjusted slightly
