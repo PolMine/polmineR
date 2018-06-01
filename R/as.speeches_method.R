@@ -35,6 +35,13 @@ as.speeches <- function(
   gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
 ){
   
+  stopifnot(
+    is.character(s_attribute_date),
+    length(s_attribute_date) == 1,
+    is.character(s_attribute_name),
+    length(s_attribute_name) == 1,
+    is.character(.Object) || is.partition(.Object)
+  )
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
   if (length(sAttributes(.Object, s_attribute_date)) > 1){

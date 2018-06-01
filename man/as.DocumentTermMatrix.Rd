@@ -25,7 +25,8 @@ as.TermDocumentMatrix(x, ...)
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
   verbose = TRUE)
 
-\S4method{as.DocumentTermMatrix}{bundle}(x, col)
+\S4method{as.DocumentTermMatrix}{bundle}(x, col, pAttribute = NULL,
+  verbose = TRUE)
 
 \S4method{as.TermDocumentMatrix}{partitionBundle}(x, pAttribute = NULL,
   col = NULL, verbose = TRUE)

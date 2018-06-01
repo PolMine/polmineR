@@ -21,6 +21,7 @@
 \alias{length,partition-method}
 \alias{hist,partition-method}
 \alias{length,partition-method}
+\alias{is.partition}
 \alias{aggregate,partition-method}
 \alias{as.markdown,partition-method}
 \alias{enrich,partition-method}
@@ -38,6 +39,8 @@
 \S4method{hist}{partition}(x, ...)
 
 \S4method{length}{partition}(x)
+
+is.partition(x)
 
 \S4method{aggregate}{partition}(x)
 

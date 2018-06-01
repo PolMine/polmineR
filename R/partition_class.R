@@ -240,3 +240,7 @@ setMethod("hist", "partition", function(x, ...){hist(x@stat[,"count"], ...)})
 
 #' @rdname partition_class
 setMethod("length", "partition", function(x) 1)
+
+#' @rdname partition_class
+#' @export is.partition
+is.partition <- function(x) "partition" %in% is(x)
