@@ -57,7 +57,7 @@ but not yet enriched.
   btBundle <- partitionBundle("GERMAPARLMINI", sAttribute = "date")
 }
 \seealso{
-\code{\link{partition}} and \code{\link{bundle-class}}
+\code{\link{partition}} and \code{\link{bundle}}
 }
 \author{
 Andreas Blaette

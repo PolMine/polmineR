@@ -1,4 +1,4 @@
-#' @include textstat_class.R bundle_class.R
+#' @include textstat_class.R bundle.R
 NULL
 
 

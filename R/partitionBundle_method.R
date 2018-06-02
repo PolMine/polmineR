@@ -29,7 +29,7 @@ NULL
 #'   dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 #'   summary(pBundle)
 #'   btBundle <- partitionBundle("GERMAPARLMINI", sAttribute = "date")
-#' @seealso \code{\link{partition}} and \code{\link{bundle-class}}
+#' @seealso \code{\link{partition}} and \code{\link{bundle}}
 setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionBundle"))
 
 #' @rdname partitionBundle-method
@@ -120,7 +120,7 @@ setGeneric("as.partitionBundle", function(.Object, ...) standardGeneric("as.part
 
 #' @rdname partitionBundle-class
 setMethod("as.partitionBundle", "list", function(.Object, ...){
-  as(.Object, "bundle") # defined in bundle_class.R
+  as(.Object, "bundle") # defined in bundle.R
 })
 
 #' @exportMethod as.partitionBundle

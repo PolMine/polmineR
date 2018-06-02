@@ -1,13 +1,13 @@
-#' @include bundle_class.R textstat_class.R
+#' @include textstat_class.R
 NULL
 
-setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 
-#' Bundle class
+#' Bundle Class
 #' 
 #' A class to bundle several objects (partition, context, comp, cooccurrences objects)
 #' in one S4 object.
 #' 
+#' @slot corpus the CWB corpus the objects in the bundle are based on
 #' @slot objects Object of class \code{"list"}
 #' @slot pAttribute Object of class \code{"character"}
 #' @slot encoding encoding of objects
@@ -19,8 +19,9 @@ setGeneric("as.bundle", function(object,...){standardGeneric("as.bundle")})
 #' @param ... further parameters
 #' @param col columns of the data.table to use to generate an object
 #' @param value character string with a name to be assigned
-#' @rdname bundle-class
+#' @rdname bundle
 #' @name bundle-class
+#' @aliases bundle
 #' @exportClass bundle
 #' @docType class
 #' @author Andreas Blaette
@@ -44,16 +45,17 @@ setClass(
   )
 )
 
+setGeneric("as.bundle", function(object,...) standardGeneric("as.bundle"))
 
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("length", "bundle", function(x) length(x@objects))
 
 
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("names", "bundle", function(x) names(x@objects))
 
 
-#' @rdname bundle-class
+#' @rdname bundle
 #' @exportMethod names<-
 setReplaceMethod(
   "names",
@@ -74,7 +76,7 @@ setReplaceMethod(
 )
 
 
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("unique", "bundle", function(x){
   objectNames <- names(x)
   uniqueObjectNames <- unique(objectNames)
@@ -89,7 +91,7 @@ setMethod("unique", "bundle", function(x){
 
 
 #' @exportMethod +
-#' @rdname bundle-class
+#' @rdname bundle
 #' @param e1 object 1
 #' @param e2 object 2
 #' @docType methods
@@ -105,7 +107,7 @@ setMethod("+", signature(e1 = "bundle", e2 = "bundle"), function(e1, e2){
 })
 
 #' @exportMethod +
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("+", signature(e1 = "bundle", e2 = "textstat"), function(e1, e2){
   e1@objects[[length(e1@objects)+1]] <- e2
   names(e1@objects)[length(e1@objects)] <- e2@name
@@ -115,7 +117,7 @@ setMethod("+", signature(e1 = "bundle", e2 = "textstat"), function(e1, e2){
 
 
 #' @exportMethod [[
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod('[[', 'bundle', function(x,i){
   if (length(i) == 1){
     return(x@objects[[i]])
@@ -126,7 +128,7 @@ setMethod('[[', 'bundle', function(x,i){
 
 
 #' @exportMethod sample
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = size)]])
 
 
@@ -145,7 +147,7 @@ setAs(from = "list", to = "bundle", def = function(from){
 })
 
 
-#' @rdname bundle-class
+#' @rdname bundle
 #' @exportMethod as.bundle
 setMethod("as.bundle", "list", function(object, ...){
   as(object, "bundle")
@@ -153,7 +155,7 @@ setMethod("as.bundle", "list", function(object, ...){
 
 #' @docType methods
 #' @exportMethod as.partitionBundle
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("as.bundle", "textstat", function(object){
   newBundle <- new(
     paste(is(object)[1], "Bundle", sep=""),
@@ -177,7 +179,7 @@ setMethod("as.bundle", "textstat", function(object){
 #' dt <- as.data.table(Cs, col = "ll")
 #' m <- as.matrix(Cs, col = "ll")
 #' @exportMethod as.data.table
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("as.data.table", "bundle", function(x, col){
   pAttr <- unique(unlist(lapply(x@objects, function(i) i@pAttribute)))
   if (length(pAttr) > 1) stop("no unambigious pAttribute!")
@@ -197,7 +199,7 @@ setMethod("as.data.table", "bundle", function(x, col){
 })
 
 
-#' @rdname bundle-class
+#' @rdname bundle
 #' @exportMethod as.matrix
 setMethod("as.matrix", "bundle", function(x, col){
   dt <- as.data.table(x = x, col = col)
@@ -208,12 +210,12 @@ setMethod("as.matrix", "bundle", function(x, col){
   M
 })
 
-#' @rdname bundle-class
+#' @rdname bundle
 setMethod("subset", "bundle", function(x, ...){
   for (i in 1:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
   x
 })
 
-#' @rdname bundle-class
+#' @rdname bundle
 #' @exportMethod as.list
 setMethod("as.list", "bundle", function(x) x@objects)

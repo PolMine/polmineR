@@ -1,33 +1,40 @@
-#' Split Partition Into Speeches
+#' Split Corpus or Partition Into Speeches
 #' 
-#' A partition is split into speeches. 
+#' Split entire corpus or a partition into speeches. The heuristic is to split
+#' the corpus/partition into partitions on day-to-day basis first, using the
+#' s-attribute provided by \code{s_attribute_date}. These subcorpora are then
+#' splitted into speeches by speaker name, using s-attribute
+#' \code{s_attribute_name}. If there is a gap larger than the number of tokens
+#' supplied by argument \code{gap}, contributions of a speaker are assumed to be
+#' two seperate speeches.
 #' 
 #' @param .Object a partition .Object
 #' @param s_attribute_date the s-attribute that provides the dates of sessions
 #' @param s_attribute_name the s-attribute that provides the names of speakers
-#' @param gap number of tokens between strucs to identify speeches
+#' @param gap number of tokens between strucs assumed to make the difference
+#'   whether a speech has been interrupted (by an interjection or question), or
+#'   whether to assume seperate speeches
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @param progress logical
-#' @return a partitionBundle object
+#' @return A \code{partitionBundle}, the names of the objects in the bundle are
+#'   the speaker name, the date of the speech and an index for the number of the
+#'   speech on a given day, concatenated by underscores.
 #' @name as.speeches
 #' @export as.speeches
 #' @rdname as.speeches
 #' @examples 
 #' use("polmineR")
-#' bt <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-#' speeches <- as.speeches(bt, s_attribute_date = "date", s_attribute_name = "speaker")
-#'   
-#' # step-by-step, not the fastest way
-#' speeches <- enrich(speeches, pAttribute = "word")
-#' tdm <- as.TermDocumentMatrix(speeches, col = "count")
-#'   
-#' # fast option (counts performed when assembling the sparse matrix)
-#' # tdm <- as.TermDocumentMatrix(speeches, pAttribute = "word")
-#' # termsToDropList <- noise(tdm)
-#' # whatToDrop <- c("stopwords", "specialChars", "numbers", "minNchar")
-#' # termsToDrop <- unlist(lapply(whatToDrop, function(x) termsToDropList[[x]]))
-#' # tdm <- trim(tdm, termsToDrop = termsToDrop)
+#' speeches <- as.speeches(
+#'   "GERMAPARLMINI",
+#'   s_attribute_date = "date", s_attribute_name = "speaker"
+#' )
+#' speeches_count <- count(speeches, pAttribute = "word")
+#' tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
+#' 
+#' bt <- partition("GERMAPARLMINI", date = "2009-10-27")
+#' speeches <- as.speeches(bt, s_attribute_name = "speaker")
+#' summary(speeches)
 as.speeches <- function(
   .Object,
   s_attribute_date = grep("date", sAttributes(.Object), value = TRUE),

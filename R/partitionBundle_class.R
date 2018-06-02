@@ -1,4 +1,4 @@
-#' @include partition_class.R bundle_class.R
+#' @include partition_class.R bundle.R
 NULL
 
 #' Bundle of partitions (partitionBundle class).

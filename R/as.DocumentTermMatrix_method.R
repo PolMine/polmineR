@@ -1,4 +1,4 @@
-#' @include bundle_class.R partitionBundle_class.R context_class.R
+#' @include bundle.R partitionBundle_class.R context_class.R
 NULL
 
 

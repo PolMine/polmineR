@@ -1,4 +1,4 @@
-#' @include context_class.R bundle_class.R
+#' @include context_class.R bundle.R
 NULL
 
 #' S4 contextBundle class
