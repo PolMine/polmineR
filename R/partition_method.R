@@ -213,6 +213,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   } else if (.Object@xml == "nested") {
     cposVec <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
     newStrucs <- CQI$cpos2struc(.Object@corpus, names(def)[1], cposVec)
+    newStrucs <- newStrucs[which(newStrucs >= 0)]
     sAttrValues <- CQI$struc2str(.Object@corpus, names(def), newStrucs)
     Encoding(sAttrValues) <- .Object@encoding
     hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])

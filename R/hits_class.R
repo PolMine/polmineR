@@ -108,7 +108,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute 
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   
   if (!is.null(sAttribute)){
-    for (i in c(1:length(sAttribute))){
+    for (i in 1:length(sAttribute)){
       sAttrString <- CQI$struc2str(.Object@corpus, sAttribute[i], CQI$cpos2struc(.Object@corpus, sAttribute[i], DT[["cpos_left"]]))
       sAttrString <- as.nativeEnc(sAttrString, from = .Object@encoding)
       DT[, eval(sAttribute[i]) := sAttrString]

@@ -22,7 +22,10 @@ setGeneric("getTokenStream", function(.Object, ...) standardGeneric("getTokenStr
 
 #' @rdname getTokenStream-method
 setMethod("getTokenStream", "numeric", function(.Object, corpus, pAttribute, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL){
-  if (!is.null(cutoff)) .Object <- .Object[1:cutoff]
+  if (!is.null(cutoff)){
+    # apply cutoff only if the number of tokens it provides is smaller than the length of .Object
+    if (cutoff < length(.Object)) .Object <- .Object[1:cutoff]
+  }
   tokens <- CQI$cpos2str(corpus, pAttribute, .Object)
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
@@ -62,8 +65,8 @@ setMethod("getTokenStream", "character", function(.Object, left = NULL, right = 
 #' @rdname getTokenStream-method
 setMethod("getTokenStream", "partition", function(.Object, pAttribute, collapse = NULL, cpos = FALSE, ...){
   getTokenStream(
-    .Object=.Object@cpos, corpus=.Object@corpus, pAttribute = pAttribute,
-    encoding=.Object@encoding, collapse = collapse, cpos = cpos, ...
+    .Object = .Object@cpos, corpus = .Object@corpus, pAttribute = pAttribute,
+    encoding = .Object@encoding, collapse = collapse, cpos = cpos, ...
     )
 })
 

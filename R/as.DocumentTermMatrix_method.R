@@ -235,7 +235,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = N
     .message("generating corpus positions", verbose = verbose)
     
     cposList <- lapply(
-      c(1:length(x@objects)),
+      1L:length(x@objects),
       function(i) cbind(i, cpos(x@objects[[i]]@cpos))
     )
     cposMatrix <- do.call(rbind, cposList)
@@ -243,19 +243,19 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, pAttribute = N
     id_vector <- CQI$cpos2id(x[[1]]@corpus, pAttribute, cposMatrix[,2])
     DT <- data.table(i = cposMatrix[,1], id = id_vector, key = c("i", "id"))
     .message("performing count", verbose = verbose)
-    TF <- DT[,.N, by = c("i", "id"), with=TRUE]
+    TF <- DT[,.N, by = c("i", "id"), with = TRUE]
     setnames(TF, old = "N", new = "count")
     TF[, pAttribute := as.nativeEnc(CQI$id2str(x[[1]]@corpus, pAttribute, TF[["id"]]), from = encoding), with = FALSE]
     .message("generating keys", verbose = verbose)
     uniqueTerms <- unique(TF[[pAttribute]])
-    keys <- setNames(c(1:length(uniqueTerms)), uniqueTerms)
+    keys <- setNames(1L:length(uniqueTerms), uniqueTerms)
     .message("generating simple triplet matrix", verbose = verbose)
-    retval <- simple_triplet_matrix(
+    stm <- simple_triplet_matrix(
       i = keys[ TF[[pAttribute]] ], j = TF[["i"]], v = TF[["count"]],
-      dimnames = list(Terms=names(keys), Docs=names(x@objects))
+      dimnames = list(Terms = names(keys), Docs = names(x@objects))
     )
-    class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-    return(retval)
+    class(stm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+    return( stm )
   } else {
     message("... doing nothing, as pAttribute and col is NULL")
   }

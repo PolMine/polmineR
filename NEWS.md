@@ -3,6 +3,9 @@
 * as.bundle is more generic now, so that any kind of object can be coerced to a bundle now
 * as.speeches-method turned into function that allows partition and corpus as input
 * is.partition-function introduced
+* sAttributes,partition-method in line with RcppCWB requirements (no negative values of strucs)
+* count repaired for muliple p-attributes
+* bug removed causing a crash for as.markdown-method when cutoff is larger than number of tokens
 
 # v0.7.8
 * upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used

@@ -93,6 +93,14 @@ as.speeches <- function(
     order(sapply(speaker_list, function(x) x@cpos[1,1])),
     function(i) speaker_list[[i]]
   )
+  corpus <- if (is.character(.Object)) .Object else .Object@corpus
+  properties <- registry_get_properties(corpus = corpus)
+  if ("type" %in% names(properties)){
+    if (properties[["type"]] == "plpr"){
+      .message("coercing partitions to plprPartitions", verbose = verbose)
+      speaker_list_ordered <- lapply(speaker_list_ordered, function(x) as(x, "plprPartition"))
+    }
+  }
   
   as.bundle(speaker_list_ordered)
 }

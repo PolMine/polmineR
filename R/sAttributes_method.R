@@ -16,7 +16,7 @@ setMethod("sAttributes", "character", function(.Object, sAttribute = NULL, uniqu
     if (length(sAttribute) == 1){
       ret <- CQI$struc2str(
         .Object, sAttribute,
-        0:(CQI$attribute_size(.Object, sAttribute, type = "s") - 1)
+        0L:(CQI$attribute_size(.Object, sAttribute, type = "s") - 1L)
       )
       if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
       if (unique) ret <- unique(ret)
@@ -89,6 +89,9 @@ setMethod(
         } else {
           cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
           strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
+          # filtering out negative struc values is necessary, because RcppCWB
+          # will complain about negative values
+          strucs <- strucs[which(strucs > 0)]
           retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
           if (unique) retval <- unique(retval)
         }

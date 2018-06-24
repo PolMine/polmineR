@@ -14,7 +14,7 @@ INFO /Users/blaette/Lab/tmp/GermaParlMini/indexed_corpora/germaparlmini/.info
 # corpus properties provide additional information about the corpus:
 ##:: charset  = "latin1" # character encoding of corpus data
 ##:: language = "de"     # insert ISO code for language (de, en, fr, ...)
-
+##:: type = "plpr"
 
 ##
 ## p-attributes (token annotations)
