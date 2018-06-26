@@ -3,6 +3,11 @@
 * as.bundle is more generic now, so that any kind of object can be coerced to a bundle now
 * as.speeches-method turned into function that allows partition and corpus as input
 * is.partition-function introduced
+* polmineR will now work with a temporary registry in the temporary session directory
+* a (new) registry_move() function is used to copy files to the tmp registry
+* the (new) registry() function will get the temporary registry directory
+* the use() function will add the registry file of a package to the tmp registry
+
 
 # v0.7.8
 * upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used

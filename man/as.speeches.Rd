@@ -4,9 +4,9 @@
 \alias{as.speeches}
 \title{Split Corpus or Partition Into Speeches}
 \usage{
-as.speeches(.Object, s_attribute_date = grep("date", sAttributes(.Object),
-  value = TRUE), s_attribute_name = grep("name", sAttributes(.Object), value =
-  TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
+as.speeches(.Object, s_attribute_date = grep("date", s_attributes(.Object),
+  value = TRUE), s_attribute_name = grep("name", s_attributes(.Object), value
+  = TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{a partition .Object}

@@ -2,10 +2,12 @@
 % Please edit documentation in R/registry.R
 \name{registry_reset}
 \alias{registry_reset}
+\alias{registry}
 \title{Reset Registry Directory.}
 \usage{
-registry_reset(registryDir = getOption("polmineR.defaultRegistry"),
-  verbose = TRUE)
+registry_reset(registryDir = registry(), verbose = TRUE)
+
+registry()
 }
 \arguments{
 \item{registryDir}{path to the registry directory to be used}
@@ -20,6 +22,10 @@ A utility function to reset the environment variable CORPUS_REGISTRY. That may
 be necessary if you want use a CWB corpus that is not stored in the usual
 place. In particular, resetting the environment variable is required if you
 want to use a corpus delivered in a R package,
+
+The \code{polmineR} package uses a subdirectory of the per-session temporary directory
+as a (temporary) registry. The \code{registry} function will return the path 
+to this directory.
 }
 \details{
 Resetting the CORPUS_REGISTRY environment variable is also necessary for the
@@ -31,6 +37,7 @@ To get the path to a package that contains a CWB corpus, use
 \examples{
 x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 registry_reset(registryDir = x)
+registry()
 }
 \seealso{
 To conveniently reset registry, see \code{\link{use}}.

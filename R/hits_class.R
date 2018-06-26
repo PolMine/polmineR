@@ -1,41 +1,5 @@
-#' Get Hits.
-#' 
-#' Get hits for a (set of) queries, optionally with s-attribute values.
-#' 
-#' If the query character vector is named, the names of the query occurr in
-#' the data.table that is returned rather than the queries.
-#' 
-#' If freq is TRUE, the data.table returned in the DT-slot will deliberately
-#' include the subsets of the partition/corpus with no hits (query is NA,
-#' count is 0).
-#' 
-#' @slot stat a \code{"data.table"}
-#' @slot corpus a \code{"character"} vector
-#' @slot query Object of class \code{"character"}
-#' @slot pAttribute p-attribute that has been queried
-#' @slot encoding encoding of the corpus
-#' @slot name name of the object
-#' @param query a (optionally named, see datails) character vector with one or more queries
-#' @param cqp either logical (TRUE if query is a CQP query), or a
-#'   function to check whether query is a CQP query or not
-#' @param sAttribute s-attributes
-#' @param pAttribute p-attribute (will be passed into cpos)
-#' @param size logical - return size of subcorpus
-#' @param freq logcial - return relative frequencies
-#' @param x a hits object
-#' @param .Object a character, partition or partitionBundle object
-#' @param mc logical, whether to use multicore
-#' @param progress logical, whether to show progress bar
-#' @param verbose logical
-#' @param ... further parameters
-#' @exportClass hits
-#' @rdname hits
-setClass(
-  "hits",
-  representation(query = "character"),
-  contains = "textstat"
-)
-
+#' @include S4classes.R
+NULL
 
 #' @rdname hits
 #' @exportMethod hits
@@ -44,7 +8,7 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE){
   stopifnot(.Object %in% CQI$list_corpora(), length(.Object) == 1)
-  if (!is.null(sAttribute)) stopifnot(all(sAttribute %in% sAttributes(.Object)))
+  if (!is.null(sAttribute)) stopifnot(all(sAttribute %in% s_attributes(.Object)))
   
   cpos_list <- blapply(
     x = as.list(query),
@@ -73,7 +37,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
   if (!is.null(sAttribute)){
     for (i in 1:length(sAttribute)){
       sAttributeValues <- CQI$struc2str(.Object, sAttribute[i], CQI$cpos2struc(.Object, sAttribute[i], DT[["cpos_left"]]))
-      sAttributeValues <- as.nativeEnc(sAttributeValues, from = getEncoding(.Object))
+      sAttributeValues <- as.nativeEnc(sAttributeValues, from = registry_get_encoding(.Object))
       DT[, eval(sAttribute[i]) := sAttributeValues]
     }
     TF <- DT[, .N, by = c(eval(c("query", sAttribute))), with = TRUE]
@@ -100,7 +64,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, sAttribute 
 
 #' @rdname hits
 setMethod("hits", "partition", function(.Object, query, cqp = FALSE, sAttribute = NULL, pAttribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE){
-  stopifnot(all(sAttribute %in% sAttributes(.Object@corpus)))
+  stopifnot(all(sAttribute %in% s_attributes(.Object@corpus)))
   if (freq) size <- TRUE
   
   DT <- hits(.Object@corpus, query = query, cqp = cqp, sAttribute = NULL, pAttribute = pAttribute, mc = mc, progress = progress)@stat

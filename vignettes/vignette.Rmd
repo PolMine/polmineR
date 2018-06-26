@@ -60,7 +60,7 @@ library(polmineR)
 If you want to use a CWB corpus packaged in a R data package, you can call ´use´ with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset. In the followings examples, the REUTERS corpus will be used for demonstration purposes. It is a sampe of Reuters articles that is included in the tm package (cp. https://www.scss.tcd.ie/~luzs/t/cs4ll4/sw/reuters21578-xml/) and may already be known for many R users.
 
 ```{r, message = FALSE}
-use("polmineR")
+# use("polmineR")
 ```
 
 

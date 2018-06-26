@@ -1,49 +1,7 @@
-#' @include textstat_class.R
+#' @include textstat.R S4classes.R
 NULL
 
 
-#' Bundle Class
-#' 
-#' A class to bundle several objects (partition, context, comp, cooccurrences objects)
-#' in one S4 object.
-#' 
-#' @slot corpus the CWB corpus the objects in the bundle are based on
-#' @slot objects Object of class \code{"list"}
-#' @slot pAttribute Object of class \code{"character"}
-#' @slot encoding encoding of objects
-#' 
-#' @param x a bundle object
-#' @param i integer to index a bundle object
-#' @param object a bundle object
-#' @param size number of items to choose to generate a sample
-#' @param ... further parameters
-#' @param col columns of the data.table to use to generate an object
-#' @param value character string with a name to be assigned
-#' @rdname bundle
-#' @name bundle-class
-#' @aliases bundle
-#' @exportClass bundle
-#' @docType class
-#' @author Andreas Blaette
-#' @examples
-#' parties <- sAttributes("GERMAPARLMINI", "party")
-#' parties <- parties[-which(parties == "NA")]
-#' party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
-#' length(party_bundle)
-#' names(party_bundle)
-#' party_bundle <- enrich(party_bundle, pAttribute = "word")
-#' summary(party_bundle)
-#' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
-#' summary(parties_big)
-setClass(
-  "bundle",
-  representation(
-    objects = "list",
-    pAttribute = "character",
-    corpus = "character",
-    encoding = "character"
-  )
-)
 
 setGeneric("as.bundle", function(object,...) standardGeneric("as.bundle"))
 
@@ -173,7 +131,7 @@ setMethod("as.bundle", "textstat", function(object){
 #' use("polmineR")
 #' Ps <- partitionBundle(
 #'   "REUTERS", sAttribute = "id",
-#'   values = sAttributes("REUTERS", "id")
+#'   values = s_attributes("REUTERS", "id")
 #' )
 #' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
 #' dt <- as.data.table(Cs, col = "ll")
