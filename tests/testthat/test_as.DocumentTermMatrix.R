@@ -5,7 +5,7 @@ testthat::context("as.TermDocumentMatrix")
 test_that(
   "generate as.TermDocumentMatrix from corpus",
   {
-    dtm <- as.DocumentTermMatrix("REUTERS", pAttribute = "word", sAttribute = "id")
+    dtm <- as.DocumentTermMatrix("REUTERS", p_attribute = "word", sAttribute = "id")
     expect_equal(
       length(sAttributes("REUTERS", "id")), dim(dtm)[1]
     )

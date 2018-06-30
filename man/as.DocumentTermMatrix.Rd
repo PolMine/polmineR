@@ -16,27 +16,27 @@
 \usage{
 as.TermDocumentMatrix(x, ...)
 
-\S4method{as.TermDocumentMatrix}{character}(x, pAttribute, sAttribute,
+\S4method{as.TermDocumentMatrix}{character}(x, p_attribute, sAttribute,
   verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{character}(x, pAttribute, sAttribute,
+\S4method{as.DocumentTermMatrix}{character}(x, p_attribute, sAttribute,
   verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{bundle}(x, col, pAttribute = NULL,
-  verbose = TRUE)
+\S4method{as.TermDocumentMatrix}{bundle}(x, col, p_attribute = NULL,
+  verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{bundle}(x, col, pAttribute = NULL,
-  verbose = TRUE)
+\S4method{as.DocumentTermMatrix}{bundle}(x, col, p_attribute = NULL,
+  verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{partitionBundle}(x, pAttribute = NULL,
-  col = NULL, verbose = TRUE)
+\S4method{as.TermDocumentMatrix}{partitionBundle}(x, p_attribute = NULL,
+  col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{partitionBundle}(x, pAttribute = NULL,
-  col = NULL, verbose = TRUE)
+\S4method{as.DocumentTermMatrix}{partitionBundle}(x, p_attribute = NULL,
+  col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{context}(x, pAttribute, verbose = TRUE)
+\S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{context}(x, pAttribute, verbose = TRUE)
+\S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{a \code{character} vector indicating a corpus, or an object of class
@@ -44,7 +44,7 @@ as.TermDocumentMatrix(x, ...)
 
 \item{...}{s-attribute definitions used for subsetting the corpus, compare partition-method}
 
-\item{pAttribute}{p-attribute counting is be based on}
+\item{p_attribute}{p-attribute counting is be based on}
 
 \item{sAttribute}{s-attribute that defines content of columns, or rows}
 
@@ -72,7 +72,7 @@ The method can be applied on objects of the class
 If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
 \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
 subsets of the corpus based on the \code{sAttribute} provided. Counts are
-performed for the \code{pAttribute}. Further parameters provided (passed in
+performed for the \code{p_attribute}. Further parameters provided (passed in
 as \code{...} are interpreted as s-attributes that define a subset of the
 corpus for splitting it according to \code{sAttribute}. If struc values for
 \code{sAttribute} are not unique, the necessary aggregation is performed, slowing
@@ -83,7 +83,7 @@ whatever measure is present in the \code{stat} slots (in the column
 indicated by \code{col}) will be turned into the values of the sparse
 matrix that is generated. A special case is the generation of the sparse
 matrix based on a \code{partitionBundle} that does not yet include counts.
-In this case, a \code{pAttribute} needs to be provided. Then counting will
+In this case, a \code{p_attribute} needs to be provided. Then counting will
 be performed, too.
 }
 \examples{
@@ -92,15 +92,15 @@ use("polmineR")
 # do-it-yourself 
 p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
 pB <- partitionBundle(p, sAttribute = "date")
-pB <- enrich(pB, pAttribute="word")
+pB <- enrich(pB, p_attribute="word")
 tdm <- as.TermDocumentMatrix(pB, col = "count")
    
  # leave the counting to the as.TermDocumentMatrix-method
 pB2 <- partitionBundle(p, sAttribute = "date")
-tdm <- as.TermDocumentMatrix(pB2, pAttribute = "word", verbose = TRUE)
+tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
    
 # diretissima
-tdm <- as.TermDocumentMatrix("GERMAPARLMINI", pAttribute = "word", sAttribute = "date")
+tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", sAttribute = "date")
 }
 \author{
 Andreas Blaette

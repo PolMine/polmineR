@@ -13,7 +13,7 @@ setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 #' @param specialChars special characters to drop
 #' @param numbers regex, to drop numbers
 #' @param verbose logical
-#' @param pAttribute relevant if applied to a textstat object
+#' @param p_attribute relevant if applied to a textstat object
 #' @param sparse will be passed into \code{"removeSparseTerms"} from \code{"tm"}-package
 #' @param stopwordsLanguage e.g. "german", to get stopwords defined in the tm package
 #' @param minNchar min char length ti qualify a term as non-noise
@@ -25,11 +25,11 @@ setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 setMethod(
   "noise", "DocumentTermMatrix",
   function(
-    .Object, minTotal=2, minTfIdfMean = 0.005, sparse=0.995,
-    stopwordsLanguage="german", minNchar=2,
-    specialChars=getOption("polmineR.specialChars"),
-    numbers="^[0-9\\.,]+$",
-    verbose=TRUE
+    .Object, minTotal = 2, minTfIdfMean = 0.005, sparse = 0.995,
+    stopwordsLanguage = "german", minNchar = 2,
+    specialChars = getOption("polmineR.specialChars"),
+    numbers = "^[0-9\\.,]+$",
+    verbose = TRUE
     ){
   noiseList <- list()
   # min count
@@ -100,7 +100,11 @@ setMethod(
     noiseList
   })
 
+
 #' @rdname noise
-setMethod("noise", "textstat", function(.Object, pAttribute, ...){
-  noise(.Object@stat[[pAttribute]], ...)
+setMethod("noise", "textstat", function(.Object, p_attribute, ...){
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  
+  noise(.Object@stat[[p_attribute]], ...)
 })

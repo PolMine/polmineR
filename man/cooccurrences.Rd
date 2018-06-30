@@ -12,17 +12,17 @@
 cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, keep = NULL,
   cpos = NULL, method = "ll", mc = getOption("polmineR.mc"),
-  verbose = FALSE, progress = FALSE)
+  verbose = FALSE, progress = FALSE, ...)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = FALSE)
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
 \S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
 
@@ -38,7 +38,7 @@ cooccurrences(.Object, ...)
 
 \item{cqp}{defaults to \code{is.cqp}-function, or provide TRUE/FALSE, relevant only if query is not NULL}
 
-\item{pAttribute}{the pAttribute of the tokens/the query}
+\item{p_attribute}{the p-attribute of the tokens/the query}
 
 \item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
@@ -78,7 +78,7 @@ Get cooccurrence statistics.
 \examples{
 use("polmineR")
 merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
-merkel <- enrich(merkel, pAttribute = "word")
+merkel <- enrich(merkel, p_attribute = "word")
 cooc <- cooccurrences(merkel, query = "Deutschland")
 }
 \references{

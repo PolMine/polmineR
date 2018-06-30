@@ -32,7 +32,7 @@
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
 
 \S4method{cooccurrences}{Corpus}(.Object, query,
-  pAttribute = getOption("polmineR.pAttribute"), ...)
+  p_attribute = getOption("polmineR.pAttribute"), ...)
 }
 \arguments{
 \item{.Object}{a partition or a partitionBundle object}
@@ -72,8 +72,6 @@ the value from the options}
 \item{...}{further parameters}
 
 \item{complete}{enhance completely}
-
-\item{pAttribute}{depracated}
 }
 \value{
 depending on whether a partition or a partitionBundle serves as

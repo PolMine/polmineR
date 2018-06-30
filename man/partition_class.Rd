@@ -30,7 +30,7 @@
 \alias{view,cooccurrences-method}
 \title{Partition class and methods.}
 \usage{
-\S4method{p_attributes}{partition}(.Object, pAttribute = NULL)
+\S4method{p_attributes}{partition}(.Object, p_attribute = NULL, ...)
 
 \S4method{name}{partition}(x)
 
@@ -52,7 +52,7 @@ partition_add_cpos(.Object, xml = "flat", regex = FALSE)
   template = getTemplate(.Object), cpos = TRUE, cutoff = NULL,
   verbose = FALSE, ...)
 
-\S4method{enrich}{partition}(.Object, size = FALSE, pAttribute = NULL,
+\S4method{enrich}{partition}(.Object, size = FALSE, p_attribute = NULL,
   decode = TRUE, verbose = TRUE, mc = FALSE, ...)
 
 \S4method{view}{partition}(.Object)
@@ -62,13 +62,13 @@ partition_add_cpos(.Object, xml = "flat", regex = FALSE)
 \arguments{
 \item{.Object}{a partition object}
 
-\item{pAttribute}{a p-attribute (for enriching)}
+\item{p_attribute}{a p-attribute (for enriching)}
+
+\item{...}{further parameters}
 
 \item{x}{a partition object}
 
 \item{value}{value}
-
-\item{...}{further parameters}
 
 \item{xml}{either "flat" or "nested"}
 

@@ -69,7 +69,7 @@ setMethod("as.data.frame", "cooccurrencesBundle", function(x){
 #' @param query query, may by a character vector to match a token, or a CQP query
 #' @param cqp defaults to \code{is.cqp}-function, or provide TRUE/FALSE, relevant only if query is not NULL
 #' @param cpos integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used
-#' @param pAttribute the pAttribute of the tokens/the query
+#' @param p_attribute the p-attribute of the tokens/the query
 #' @param sAttribute if provided, it will be checked that cpos do not extend beyond
 #' the region defined by the s-attribute 
 #' @param left no of tokens and to the left of the node word
@@ -102,23 +102,25 @@ setMethod("as.data.frame", "cooccurrencesBundle", function(x){
 #' @examples
 #' use("polmineR")
 #' merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
-#' merkel <- enrich(merkel, pAttribute = "word")
+#' merkel <- enrich(merkel, p_attribute = "word")
 #' cooc <- cooccurrences(merkel, query = "Deutschland")
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "character", function(
   .Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  ...
 ){
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   if (missing(query)) stop("query missing - it is not possible to calculate cooccurrences")
   C <- context(
     .Object = .Object, query = query, cqp = is.cqp,
-    pAttribute = pAttribute, sAttribute = sAttribute,
+    p_attribute = p_attribute, sAttribute = sAttribute,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = TRUE, 
@@ -133,14 +135,16 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+    p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
-    mc = FALSE, progress = TRUE, verbose = FALSE
+    mc = FALSE, progress = TRUE, verbose = FALSE,
+    ...
   ){
+    if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
     C <- context(
       .Object = .Object, query = query, cqp = is.cqp,
-      pAttribute = pAttribute, sAttribute = sAttribute,
+      p_attribute = p_attribute, sAttribute = sAttribute,
       left = left, right = right,
       stoplist = stoplist, positivelist = positivelist,
       count = TRUE, 
@@ -161,8 +165,8 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     
     # enrich partition if necessary
     if (!all(paste(.Object@pAttribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
-      .message("adding missing count for pAttribute ", .Object@pAttribute, " to partition", verbose = verbose)
-      .Object@partition <- enrich(.Object@partition, pAttribute = .Object@pAttribute, decode = FALSE, verbose = verbose)
+      .message("adding missing count for p-attribute ", .Object@pAttribute, " to partition", verbose = verbose)
+      .Object@partition <- enrich(.Object@partition, p_attribute = .Object@pAttribute, decode = FALSE, verbose = verbose)
     }
     
     setkeyv(.Object@stat, cols = paste(.Object@pAttribute, "id", sep = "_"))
@@ -199,10 +203,11 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 
 
 #' @rdname context-method
-setMethod("cooccurrences", "Corpus", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), ...){
-  if (nrow(.Object$stat) == 0) .Object$count(pAttribute, decode = FALSE)
+setMethod("cooccurrences", "Corpus", function(.Object, query, p_attribute = getOption("polmineR.pAttribute"), ...){
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if (nrow(.Object$stat) == 0) .Object$count(p_attribute, decode = FALSE)
   P <- .Object$as.partition()
-  cooccurrences(P, query = query, pAttribute = pAttribute, ...)
+  cooccurrences(P, query = query, p_attribute = p_attribute, ...)
 })
 
 

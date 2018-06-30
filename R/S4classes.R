@@ -178,7 +178,7 @@ setClass("count", representation = list(size = "integer"), contains = "textstat"
 #' @slot sAttributeStrucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
 #' @param .Object a partition object
-#' @param pAttribute a p-attribute (for enriching)
+#' @param p_attribute a p-attribute (for enriching)
 #' @param x a partition object
 #' @param verbose logical
 #' @param cpos ...

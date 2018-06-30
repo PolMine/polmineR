@@ -10,7 +10,7 @@ NULL
 #' 
 #' @param .Object a character vector (length 1) or partition object
 #' @param ... further arguments
-#' @param pAttribute p-attribute to decode
+#' @param p_attribute p-attribute to decode
 #' @exportMethod p_attributes
 #' @rdname p_attributes
 #' @name p_attributes
@@ -21,30 +21,32 @@ NULL
 setGeneric("p_attributes", function(.Object, ...) standardGeneric("p_attributes"))
 
 #' @rdname p_attributes
-setMethod("p_attributes", "character", function(.Object, pAttribute = NULL){
+setMethod("p_attributes", "character", function(.Object, p_attribute = NULL, ...){
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   pAttrs <- registry_get_p_attributes(.Object)
-  if (is.null(pAttribute)){
+  if (is.null(p_attribute)){
     return( pAttrs )
   } else {
-    if (pAttribute %in% pAttrs){
-      tokens <- CQI$id2str(.Object, pAttribute, c(0:(CQI$lexicon_size(.Object, pAttribute) - 1)))
+    if (p_attribute %in% pAttrs){
+      tokens <- CQI$id2str(.Object, p_attribute, c(0:(CQI$lexicon_size(.Object, p_attribute) - 1)))
       tokens <- as.nativeEnc(tokens, from = registry_get_encoding(.Object))
       return(tokens)
     } else {
-      stop("pAttribute provided is not available")
+      stop("p_attribute provided is not available")
     }
   }
 })
 
 #' @rdname partition_class
-setMethod("p_attributes", "partition", function(.Object, pAttribute = NULL){
+setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...){
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   pAttrs <- registry_get_p_attributes(.Object@corpus)
-  if (is.null(pAttribute)){
+  if (is.null(p_attribute)){
     return( pAttrs )
   } else {
-    if (pAttribute %in% pAttrs){
-      if (pAttribute %in% .Object@pAttribute && length(pAttribute) == 1){
-        return(.Object@stat[[pAttribute]])
+    if (p_attribute %in% pAttrs){
+      if (p_attribute %in% .Object@pAttribute && length(p_attribute) == 1){
+        return(.Object@stat[[p_attribute]])
       } else {
         return(unique(get_token_stream(.Object)))
       }
