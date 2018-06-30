@@ -38,11 +38,11 @@ NULL
 #' 
 #' If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
 #' \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
-#' subsets of the corpus based on the \code{sAttribute} provided. Counts are
+#' subsets of the corpus based on the \code{s_attribute} provided. Counts are
 #' performed for the \code{p_attribute}. Further parameters provided (passed in
 #' as \code{...} are interpreted as s-attributes that define a subset of the
-#' corpus for splitting it according to \code{sAttribute}. If struc values for
-#' \code{sAttribute} are not unique, the necessary aggregation is performed, slowing
+#' corpus for splitting it according to \code{s_attribute}. If struc values for
+#' \code{s_attribute} are not unique, the necessary aggregation is performed, slowing
 #' things somewhat down.
 #' 
 #' If \code{x} is a \code{bundle} or a class inheriting from it, the counts or
@@ -56,7 +56,7 @@ NULL
 #' @param x a \code{character} vector indicating a corpus, or an object of class
 #'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partitionBundle})
 #' @param p_attribute p-attribute counting is be based on
-#' @param sAttribute s-attribute that defines content of columns, or rows
+#' @param s_attribute s-attribute that defines content of columns, or rows
 #' @param col the column of \code{data.table} in slot \code{stat} (if \code{x}
 #'   is a \code{bundle}) to use of assembling the matrix
 #' @param verbose logial, whether to output progress messages
@@ -77,29 +77,36 @@ setGeneric("as.DocumentTermMatrix", function(x, ...) UseMethod("as.DocumentTermM
 #'  
 #' # do-it-yourself 
 #' p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-#' pB <- partitionBundle(p, sAttribute = "date")
+#' pB <- partitionBundle(p, s_attribute = "date")
 #' pB <- enrich(pB, p_attribute="word")
 #' tdm <- as.TermDocumentMatrix(pB, col = "count")
 #'    
 #'  # leave the counting to the as.TermDocumentMatrix-method
-#' pB2 <- partitionBundle(p, sAttribute = "date")
+#' pB2 <- partitionBundle(p, s_attribute = "date")
 #' tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
 #'    
 #' # diretissima
-#' tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", sAttribute = "date")
+#' tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
 #' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, sAttribute, verbose = TRUE, ...) {
+setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attribute, verbose = TRUE, ...) {
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  y <- as.DocumentTermMatrix(x = x, p_attribute = p_attribute, sAttribute = sAttribute, verbose = verbose, ...)
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  y <- as.DocumentTermMatrix(x = x, p_attribute = p_attribute, s_attribute = s_attribute, verbose = verbose, ...)
   as.TermDocumentMatrix(y)
 })
 
 
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, sAttribute, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attribute, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  dot_list <- list(...)
+  if ("sAttribute" %in% names(dot_list)){
+    s_attribute <- list(...)[["sAttribute"]]
+    dot_list[["sAttribute"]] <- NULL
+  }
   
   stopifnot(
     length(x) == 1,
@@ -107,31 +114,31 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, sAttrib
     is.character(p_attribute),
     length(p_attribute) == 1,
     p_attribute %in% CQI$attributes(x, "p"),
-    is.character(sAttribute),
-    length(sAttribute) == 1,
-    sAttribute %in% CQI$attributes(x, "s"),
+    is.character(s_attribute),
+    length(s_attribute) == 1,
+    s_attribute %in% CQI$attributes(x, "s"),
     is.logical(verbose),
-    all(names(list(...)) %in% CQI$attributes(x, "s"))
+    all(names(dot_list) %in% CQI$attributes(x, "s"))
   )
   
   .message("generate data.table with token and struc ids", verbose = verbose)
   cpos_vector <- 0:(CQI$attribute_size(x, p_attribute, type = "p") - 1)
   token_id <- CQI$cpos2id(x, p_attribute, cpos_vector)
-  struc_vector <- 0:(CQI$attribute_size(x, sAttribute, type = "s") - 1)
-  struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
+  struc_vector <- 0:(CQI$attribute_size(x, s_attribute, type = "s") - 1)
+  struc_id <- CQI$cpos2struc(x, s_attribute, cpos_vector)
   tokenStreamDT <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
   tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
   rm(token_id, struc_id)
   
-  sAttrSelect <- list(...)
+  sAttrSelect <- dot_list
   
   if (
     length(sAttrSelect) == 0
-    && length(unique(CQI$struc2str(x, sAttribute, struc_vector))) == CQI$attribute_size(x, sAttribute, type = "s")
+    && length(unique(CQI$struc2str(x, s_attribute, struc_vector))) == CQI$attribute_size(x, s_attribute, type = "s")
   ){
     
     token_id <- CQI$cpos2id(x, p_attribute, cpos_vector)
-    struc_id <- CQI$cpos2struc(x, sAttribute, cpos_vector)
+    struc_id <- CQI$cpos2struc(x, s_attribute, cpos_vector)
     tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
     rm(token_id, struc_id)
     tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
@@ -145,7 +152,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, sAttrib
       j = countDT[["token_id"]] + 1,
       v = countDT[["N"]],
     )
-    docs <- CQI$struc2str(x, sAttribute, 0:(CQI$attribute_size(x, sAttribute, type = "s") - 1))
+    docs <- CQI$struc2str(x, s_attribute, 0:(CQI$attribute_size(x, s_attribute, type = "s") - 1))
     terms <- CQI$id2str(x, p_attribute, 0:max(countDT[["token_id"]]))
     terms <- as.nativeEnc(terms, from = registry_get_encoding(x))
     dimnames(dtm) <- list(docs, terms)
@@ -161,7 +168,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, sAttrib
       }
     }
     .message("generate unique document ids", verbose = verbose)
-    struc_values <- CQI$struc2str(x, sAttribute, tokenStreamDT[["struc_id"]])
+    struc_values <- CQI$struc2str(x, s_attribute, tokenStreamDT[["struc_id"]])
     unique_struc_values <- unique(struc_values)
     doc_index <- setNames(object = 1:length(unique_struc_values), nm = unique_struc_values)
     tokenStreamDT[["doc_id"]] <- doc_index[ struc_values ]

@@ -10,7 +10,7 @@ NULL
 #' @examples
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' PB <- partitionBundle(P, sAttribute = "speaker")
+#' PB <- partitionBundle(P, s_attribute = "speaker")
 #' VC <- as.VCorpus(PB)
 setMethod("as.VCorpus", "partitionBundle", function(x){
   sAttrLengths <- sapply(s_attributes(x@objects[[1]]@corpus), function(sAttr) CQI$attribute_size(x@objects[[1]]@corpus, sAttr, type = "s"))

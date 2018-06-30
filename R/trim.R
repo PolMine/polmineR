@@ -60,13 +60,15 @@ setMethod("trim", "DocumentTermMatrix", function(object, ...){
 
 
 #' @rdname context-class
-setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE){
+setMethod("trim", "context", function(object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE, ...){
   
-  if (!is.null(sAttribute)){
-    stopifnot(length(sAttribute) == 1)
-    sAttrCol <- paste(sAttribute, "int", sep = "_")
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  if (!is.null(s_attribute)){
+    stopifnot(length(s_attribute) == 1)
+    sAttrCol <- paste(s_attribute, "int", sep = "_")
     if (!sAttrCol %in% colnames(object@cpos)){
-      object <- enrich(object, sAttribute = sAttribute)
+      object <- enrich(object, s_attribute = s_attribute)
     }
     setnames(object@cpos, old = sAttrCol, new = "struc")
     

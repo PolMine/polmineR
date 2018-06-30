@@ -55,7 +55,7 @@ as.speeches <- function(
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
   if (length(s_attributes(.Object, s_attribute_date)) > 1){
-    partition_bundle_dates <- partitionBundle(.Object, sAttribute = s_attribute_date)
+    partition_bundle_dates <- partitionBundle(.Object, s_attribute = s_attribute_date)
   } else {
     partition_bundle_dates <- list(.Object)
   }

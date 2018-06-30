@@ -86,20 +86,21 @@ setMethod("enrich", "kwic", function(.Object, meta = NULL, table = FALSE){
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname context-class
-#' @param sAttribute s-attribute(s) to add to data.table in cpos-slot
+#' @param s_attribute s-attribute(s) to add to data.table in cpos-slot
 #' @param p_attribute p-attribute(s) to add to data.table in cpos-slot
 #' @param decode logical, whether to convert integer ids to expressive strings
 #' @param verbose logical, whether to be talkative
-setMethod("enrich", "context", function(.Object, sAttribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
+setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
-  if (!is.null(sAttribute)){
+  if (!is.null(s_attribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
-    stopifnot( all(sAttribute %in% CQI$attributes(.Object@corpus, type = "s")) )
+    stopifnot( all(s_attribute %in% CQI$attributes(.Object@corpus, type = "s")) )
     
-    for (sAttr in sAttribute){
+    for (sAttr in s_attribute){
       .message("get struc for s-attribute:", sAttr, verbose = verbose)
       strucs <- CQI$cpos2struc(.Object@corpus, sAttr, .Object@cpos[["cpos"]])
       if (decode == FALSE){

@@ -13,7 +13,7 @@ NULL
 #' @param x object of class \code{html} to print
 #' @param meta metadata for output, if NULL (default), the s-attributes defining
 #' a partition will be used
-#' @param sAttribute structural attributes that will be used to define the partition 
+#' @param s_attribute structural attributes that will be used to define the partition 
 #' where the match occurred
 #' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
 #'   elements with id attribute indicating corpus positions
@@ -42,10 +42,10 @@ NULL
 #'   H <- partition("REUTERS", places = "argentina") %>% html()
 #'   # use html-method to get from concordance to full text
 #'   K <- kwic("REUTERS", query = "barrels")
-#'   H <- html(K, i = 1, sAttribute = "id")
-#'   H <- html(K, i = 2, sAttribute = "id")
+#'   H <- html(K, i = 1, s_attribute = "id")
+#'   H <- html(K, i = 2, s_attribute = "id")
 #'   for (i in 1:length(K)) {
-#'     H <- html(K, i = i, sAttribute = "id")
+#'     H <- html(K, i = i, s_attribute = "id")
 #'     if (interactive()){
 #'       show(H)
 #'       userinput <- readline("press 'q' to quit or any other key to continue")
@@ -54,7 +54,7 @@ NULL
 #'   }
 #' }
 #' 
-setGeneric("html", function(object, ...){standardGeneric("html")})
+setGeneric("html", function(object, ...) standardGeneric("html") )
 
 
 #' @rdname html-method
@@ -202,12 +202,14 @@ setMethod("html", "partitionBundle", function(object, filename = c(), type = "de
 
 
 #' @rdname html-method
-setMethod("html", "kwic", function(object, i, sAttribute = NULL, type = NULL, verbose = FALSE){
+setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, verbose = FALSE, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   # getting metadata for all kwic lines is potentially not the fastes solution ...
-  if (!is.null(sAttribute)){
-    if (!sAttribute %in% s_attributes(object@corpus)) stop("s-attribute provided is not available")
-    metadataDef <- sAttribute
+  if (!is.null(s_attribute)){
+    if (!s_attribute %in% s_attributes(object@corpus)) stop("s-attribute provided is not available")
+    metadataDef <- s_attribute
     object <- enrich(object, meta = metadataDef)
   } else if (length(object@metadata) == 0){
     metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]

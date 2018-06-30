@@ -11,34 +11,37 @@ NULL
 #' can lead to reasonable results only if the corpus XML is flat.
 #' 
 #' @param x object to get size(s) for
-#' @param sAttribute character vector with s-attributes (one or more)
+#' @param s_attribute character vector with s-attributes (one or more)
 #' @param verbose logical, whether to print messages
 #' @param ... further arguments
 #' @rdname size-method
-#' @return an integer vector if sAttribute is NULL, a \code{data.table} otherweise
+#' @return an integer vector if s_attribute is NULL, a \code{data.table} otherweise
 #' @seealso See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
 #' method calls the \code{size}-method to get sizes of subcorpora.
 #' @examples
 #' use("polmineR")
 #' size("GERMAPARLMINI")
-#' size("GERMAPARLMINI", sAttribute = "date")
-#' size("GERMAPARLMINI", sAttribute = c("date", "party"))
+#' size("GERMAPARLMINI", s_attribute = "date")
+#' size("GERMAPARLMINI", s_attribute = c("date", "party"))
 #' 
 #' P <- partition("GERMAPARLMINI", date = "2009-11-11")
-#' size(P, sAttribute = "speaker")
-#' size(P, sAttribute = "party")
-#' size(P, sAttribute = c("speaker", "party"))
+#' size(P, s_attribute = "speaker")
+#' size(P, s_attribute = "party")
+#' size(P, s_attribute = c("speaker", "party"))
 setGeneric("size", function(x, ...) UseMethod("size"))
 
 #' @rdname size-method
-setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
-  if (is.null(sAttribute)){
+setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  if (is.null(s_attribute)){
     return( CQI$attribute_size(x, "word", type = "p") )
   } else {
-    stopifnot(all(sAttribute %in% s_attributes(x)))
+    stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- as.data.table(
       lapply(
-        setNames(sAttribute, sAttribute),
+        setNames(s_attribute, s_attribute),
         function(sAttr){
           sAttrDecoded <- CQI$struc2str(x, sAttr, 0:(CQI$attribute_size(x, sAttr, type = "s") - 1))
           as.nativeEnc(sAttrDecoded, from = registry_get_encoding(x))
@@ -46,36 +49,39 @@ setMethod("size", "character", function(x, sAttribute = NULL, verbose = TRUE){
       )
     )
     cpos_matrix <- RcppCWB::get_region_matrix(
-      corpus = x, s_attribute = sAttribute[1],
-      strucs = 0L:(CQI$attribute_size(x, sAttribute[1], "s") - 1L),
+      corpus = x, s_attribute = s_attribute[1],
+      strucs = 0L:(CQI$attribute_size(x, s_attribute[1], "s") - 1L),
       registry = Sys.getenv("CORPUS_REGISTRY")
     )
     
     dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
-    y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
+    y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
     setnames(y, old = "V1", new = "size")
-    setkeyv(y, cols = sAttribute)
+    setkeyv(y, cols = s_attribute)
     return(y)
   }
 })
 
 #' @rdname size-method
 #' @exportMethod size
-setMethod("size", "partition", function(x, sAttribute = NULL){
-  if (is.null(sAttribute)){
+setMethod("size", "partition", function(x, s_attribute = NULL, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  if (is.null(s_attribute)){
     return( sum(as.integer(x@cpos[,2]) - as.integer(x@cpos[,1]) + 1L) )
   } else {
-    stopifnot(all(sAttribute %in% s_attributes(x)))
+    stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- as.data.table(
       lapply(
-        setNames(sAttribute, sAttribute),
+        setNames(s_attribute, s_attribute),
         function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
       )
     )
     dt[, size := x@cpos[,2] - x@cpos[,1] + 1L]
-    y <- dt[, sum(size), by = eval(sAttribute), with = TRUE]
+    y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
     setnames(y, old = "V1", new = "size")
-    setkeyv(y, cols = sAttribute)
+    setkeyv(y, cols = s_attribute)
     return( y )
   }
   })

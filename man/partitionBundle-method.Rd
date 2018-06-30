@@ -10,11 +10,11 @@
 \usage{
 partitionBundle(.Object, ...)
 
-\S4method{partitionBundle}{partition}(.Object, sAttribute, values = NULL,
+\S4method{partitionBundle}{partition}(.Object, s_attribute, values = NULL,
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE, ...)
 
-\S4method{partitionBundle}{character}(.Object, sAttribute, values = NULL,
+\S4method{partitionBundle}{character}(.Object, s_attribute, values = NULL,
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE, xml = "flat", ...)
 
@@ -26,7 +26,7 @@ partitionBundle(.Object, ...)
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
 
-\item{sAttribute}{the s-attribute to vary}
+\item{s_attribute}{the s-attribute to vary}
 
 \item{values}{values the s-attribute provided shall assume}
 
@@ -51,10 +51,10 @@ but not yet enriched.
 \examples{
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-pBundle <- partitionBundle(bt2009, sAttribute = "date", progress = TRUE, pAttribute = "word")
+pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, pAttribute = "word")
 dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 summary(pBundle)
-btBundle <- partitionBundle("GERMAPARLMINI", sAttribute = "date")
+btBundle <- partitionBundle("GERMAPARLMINI", s_attribute = "date")
 }
 \seealso{
 \code{\link{partition}} and \code{\link{bundle}}

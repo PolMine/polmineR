@@ -25,7 +25,7 @@
 #' @examples
 #' parties <- s_attributes("GERMAPARLMINI", "party")
 #' parties <- parties[-which(parties == "NA")]
-#' party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
+#' party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
 #' length(party_bundle)
 #' names(party_bundle)
 #' party_bundle <- enrich(party_bundle, pAttribute = "word")
@@ -405,7 +405,7 @@ setClass(
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 #' R <- as.regions(P)
-#' encode(R, sAttribute = "foo", values = "Jens")
+#' encode(R, s_attribute = "foo", values = "Jens")
 #' }
 #' @aliases regions-class
 setClass(
@@ -546,7 +546,7 @@ setClass("pressPartition", contains = "partition")
 #' @param .Object a partitionBundle object
 #' @param object a partitionBundle object
 #' @param i integer index
-#' @param sAttribute the s-attribute to use
+#' @param s_attribute the s-attribute to use
 #' @param height height
 #' @param ... further parameters
 #' @rdname partitionBundle-class

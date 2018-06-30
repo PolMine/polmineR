@@ -36,6 +36,6 @@ A coerce-method is available to coerce a \code{partition} object to a
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
-encode(R, sAttribute = "foo", values = "Jens")
+encode(R, s_attribute = "foo", values = "Jens")
 }
 }

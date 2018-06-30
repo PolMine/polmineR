@@ -99,8 +99,8 @@ setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, p_attribut
 
   hits <- cpos(.Object@corpus, query = query, cqp = cqp, p_attribute, encoding = .Object@encoding, verbose = verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
-    sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
-    strucHits <- CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1])
+    s_attribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
+    strucHits <- CQI$cpos2struc(.Object@corpus, s_attribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
     if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2)
     if (nrow(hits) == 0) hits <- NULL

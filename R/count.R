@@ -58,7 +58,7 @@ NULL
 #'   count("GERMAPARLMINI", query = c("Migration", "Integration"), p_attribute = "word")
 #' 
 #'   debates <- partitionBundle(
-#'     "GERMAPARLMINI", sAttribute = "date", values = NULL,
+#'     "GERMAPARLMINI", s_attribute = "date", values = NULL,
 #'     regex = TRUE, mc = FALSE, verbose = FALSE
 #'   )
 #'   y <- count(debates, query = "Arbeit", p_attribute = "word")

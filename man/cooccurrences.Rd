@@ -12,7 +12,7 @@
 cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, keep = NULL,
   cpos = NULL, method = "ll", mc = getOption("polmineR.mc"),
@@ -20,7 +20,7 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
   mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
@@ -40,7 +40,7 @@ cooccurrences(.Object, ...)
 
 \item{p_attribute}{the p-attribute of the tokens/the query}
 
-\item{sAttribute}{if provided, it will be checked that cpos do not extend beyond
+\item{s_attribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
 
 \item{left}{no of tokens and to the left of the node word}

@@ -24,12 +24,12 @@
 
 \S4method{sample}{context}(x, size)
 
-\S4method{enrich}{context}(.Object, sAttribute = NULL, p_attribute = NULL,
+\S4method{enrich}{context}(.Object, s_attribute = NULL, p_attribute = NULL,
   decode = FALSE, verbose = TRUE, ...)
 
-\S4method{trim}{context}(object, sAttribute = NULL, positivelist = NULL,
+\S4method{trim}{context}(object, s_attribute = NULL, positivelist = NULL,
   p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL,
-  verbose = TRUE, progress = TRUE)
+  verbose = TRUE, progress = TRUE, ...)
 }
 \arguments{
 \item{.Object}{object}
@@ -38,7 +38,7 @@
 
 \item{size}{integer indicating sample size}
 
-\item{sAttribute}{s-attribute(s) to add to data.table in cpos-slot}
+\item{s_attribute}{s-attribute(s) to add to data.table in cpos-slot}
 
 \item{p_attribute}{p-attribute(s) to add to data.table in cpos-slot}
 

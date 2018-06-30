@@ -16,10 +16,10 @@
 \usage{
 as.TermDocumentMatrix(x, ...)
 
-\S4method{as.TermDocumentMatrix}{character}(x, p_attribute, sAttribute,
+\S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute,
   verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{character}(x, p_attribute, sAttribute,
+\S4method{as.DocumentTermMatrix}{character}(x, p_attribute, s_attribute,
   verbose = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, p_attribute = NULL,
@@ -46,7 +46,7 @@ as.TermDocumentMatrix(x, ...)
 
 \item{p_attribute}{p-attribute counting is be based on}
 
-\item{sAttribute}{s-attribute that defines content of columns, or rows}
+\item{s_attribute}{s-attribute that defines content of columns, or rows}
 
 \item{verbose}{logial, whether to output progress messages}
 
@@ -71,11 +71,11 @@ The method can be applied on objects of the class
 
 If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
 \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
-subsets of the corpus based on the \code{sAttribute} provided. Counts are
+subsets of the corpus based on the \code{s_attribute} provided. Counts are
 performed for the \code{p_attribute}. Further parameters provided (passed in
 as \code{...} are interpreted as s-attributes that define a subset of the
-corpus for splitting it according to \code{sAttribute}. If struc values for
-\code{sAttribute} are not unique, the necessary aggregation is performed, slowing
+corpus for splitting it according to \code{s_attribute}. If struc values for
+\code{s_attribute} are not unique, the necessary aggregation is performed, slowing
 things somewhat down.
 
 If \code{x} is a \code{bundle} or a class inheriting from it, the counts or
@@ -91,16 +91,16 @@ use("polmineR")
  
 # do-it-yourself 
 p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-pB <- partitionBundle(p, sAttribute = "date")
+pB <- partitionBundle(p, s_attribute = "date")
 pB <- enrich(pB, p_attribute="word")
 tdm <- as.TermDocumentMatrix(pB, col = "count")
    
  # leave the counting to the as.TermDocumentMatrix-method
-pB2 <- partitionBundle(p, sAttribute = "date")
+pB2 <- partitionBundle(p, s_attribute = "date")
 tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
    
 # diretissima
-tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", sAttribute = "date")
+tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
 }
 \author{
 Andreas Blaette

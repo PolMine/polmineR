@@ -113,7 +113,7 @@ NULL
 #' but not yet enriched.
 #' 
 #' @param .Object character string, a partition, or a list
-#' @param sAttribute the s-attribute to vary
+#' @param s_attribute the s-attribute to vary
 #' @param values values the s-attribute provided shall assume
 #' @param prefix a character vector that will be attached as a prefix to partition names
 #' @param progress logical, whether to show progress bar
@@ -130,31 +130,34 @@ NULL
 #' @examples
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-#' pBundle <- partitionBundle(bt2009, sAttribute = "date", progress = TRUE, pAttribute = "word")
+#' pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, pAttribute = "word")
 #' dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 #' summary(pBundle)
-#' btBundle <- partitionBundle("GERMAPARLMINI", sAttribute = "date")
+#' btBundle <- partitionBundle("GERMAPARLMINI", s_attribute = "date")
 #' @seealso \code{\link{partition}} and \code{\link{bundle}}
 setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionBundle"))
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "partition", function(
-  .Object, sAttribute, values = NULL, prefix = "",
+  .Object, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
 ) {
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
   bundle <- new(
     "partitionBundle",
     corpus = .Object@corpus, sAttributesFixed = .Object@sAttributes,
     encoding = .Object@encoding, call = deparse(match.call())
   )
   if (is.null(values)){
-    .message('getting values for s-attribute ', sAttribute, verbose = verbose)
-    values <- s_attributes(.Object, sAttribute)
+    .message('getting values for s-attribute ', s_attribute, verbose = verbose)
+    values <- s_attributes(.Object, s_attribute)
     .message('number of partitions to be generated: ', length(values), verbose = verbose)
   }
   bundle@objects <- blapply(
-    lapply(setNames(values, rep(sAttribute, times = length(values))), function(x) setNames(x, sAttribute)),
+    lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
     f = function(def, .Object, verbose = FALSE, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
     .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc,
     ...
@@ -167,17 +170,20 @@ setMethod("partitionBundle", "partition", function(
 
 #' @rdname partitionBundle-method
 setMethod("partitionBundle", "character", function(
-  .Object, sAttribute, values = NULL, prefix = "",
+  .Object, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat",
   ...
 ) {
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
   bundle <- new(
     Class = "partitionBundle",
     corpus = .Object,
     encoding = registry_get_encoding(.Object)
   )
-  strucs <- 0L:(CQI$attribute_size(.Object, sAttribute, "s") - 1L)
-  names(strucs) <- CQI$struc2str(.Object, sAttribute, strucs)
+  strucs <- 0L:(CQI$attribute_size(.Object, s_attribute, "s") - 1L)
+  names(strucs) <- CQI$struc2str(.Object, s_attribute, strucs)
   if (!is.null(values)) {
     valuesToKeep <- values[which(values %in% names(strucs))]
     strucs <- strucs[valuesToKeep]
@@ -187,9 +193,9 @@ setMethod("partitionBundle", "character", function(
   Encoding(values) <- bundle@encoding
   strucs <- unname(strucs)
   
-  .message("getting matrix with regions for s-attribute: ", sAttribute, verbose = verbose)
+  .message("getting matrix with regions for s-attribute: ", s_attribute, verbose = verbose)
   cposMatrix <- RcppCWB::get_region_matrix(
-    corpus = .Object, s_attribute = sAttribute, strucs = strucs,
+    corpus = .Object, s_attribute = s_attribute, strucs = strucs,
     registry = Sys.getenv("CORPUS_REGISTRY")
   )
   
@@ -197,7 +203,7 @@ setMethod("partitionBundle", "character", function(
   cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
   
   .message("generating the partitions", verbose = verbose)
-  .makeNewPartition <- function(i, corpus, encoding, sAttribute, cposList, xml, ...){
+  .makeNewPartition <- function(i, corpus, encoding, s_attribute, cposList, xml, ...){
     newPartition <- new(
       "partition",
       corpus = corpus, encoding = encoding,
@@ -205,16 +211,16 @@ setMethod("partitionBundle", "character", function(
       cpos = cposList[[i]],
       size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1L)),
       name = names(cposList)[i],
-      sAttributes = setNames(list(names(cposList)[i]), sAttribute),
-      sAttributeStrucs = sAttribute,
+      sAttributes = setNames(list(names(cposList)[i]), s_attribute),
+      sAttributeStrucs = s_attribute,
       xml = xml,
-      strucs = CQI$cpos2struc(.Object, sAttribute, cposList[[i]][,1])
+      strucs = CQI$cpos2struc(.Object, s_attribute, cposList[[i]][,1])
     )
   }
   bundle@objects <- blapply(
     setNames(as.list(1L:length(cposList)), names(cposList)),
     f = .makeNewPartition,
-    corpus = .Object, encoding = bundle@encoding, sAttribute = sAttribute, cposList, xml = xml,
+    corpus = .Object, encoding = bundle@encoding, s_attribute = s_attribute, cposList, xml = xml,
     mc = mc, progress = progress, verbose = verbose, ...
   )
   bundle

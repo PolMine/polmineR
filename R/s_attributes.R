@@ -6,33 +6,37 @@ setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"
 
 #' @param unique logical, whether to return unique values only
 #' @param regex filter return value by applying a regex
+#' @param ... to maintain backward compatibility, of argument \code{sAttribute} is used
 #' @rdname s_attributes-method
-setMethod("s_attributes", "character", function(.Object, sAttribute = NULL, unique = TRUE, regex = NULL){
+setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
   if (!.Object %in% CQI$list_corpora()) stop("corpus name provided not available")
   
-  if (is.null(sAttribute)){
+  if (is.null(s_attribute)){
     return( CQI$attributes(.Object, "s") )
   } else {
-    if (length(sAttribute) == 1){
+    if (length(s_attribute) == 1){
       ret <- CQI$struc2str(
-        .Object, sAttribute,
-        0:(CQI$attribute_size(.Object, sAttribute, type = "s") - 1)
+        .Object, s_attribute,
+        0:(CQI$attribute_size(.Object, s_attribute, type = "s") - 1)
       )
       if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
       if (unique) ret <- unique(ret)
       Encoding(ret) <- registry_get_encoding(.Object)
       ret <- as.nativeEnc(ret, from = registry_get_encoding(.Object))
       return(ret)
-    } else if (length(sAttribute) > 1){
+    } else if (length(s_attribute) > 1){
       corpusEncoding <- registry_get_encoding(.Object)
       metaInformation <- lapply(
-        sAttribute,
+        s_attribute,
         function(x) {
           retval <- CQI$struc2str(.Object, x, 0:(CQI$attribute_size(.Object, x, "s") - 1))
           Encoding(retval) <- corpusEncoding
           as.nativeEnc(retval, from = corpusEncoding)
         })
-      names(metaInformation) <- sAttribute
+      names(metaInformation) <- s_attribute
       return( as.data.table(metaInformation) )
     }
   }
@@ -46,16 +50,16 @@ setMethod("s_attributes", "character", function(.Object, sAttribute = NULL, uniq
 #' 
 #' Importing XML into the Corpus Workbench (CWB) turns elements and element
 #' attributes into so-called s-attributes. There are two uses of the s_attributes-method: If the 
-#' \code{sAttribute} parameter is NULL (default), the return value is a character vector
+#' \code{s_attribute} parameter is NULL (default), the return value is a character vector
 #' with all s-attributes present in a corpus.
 #' 
-#' If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
+#' If s_attribute is the name of a specific s-attribute (a length 1 character vector), the
 #' values of the s-attributes available in the corpus/partition are returned.
 #' 
 #' If a character vector of s-attributes is provided, the method will return a \code{data.table}.
 #'
 #' @param .Object either a \code{partition} object or a character vector specifying a CWB corpus
-#' @param sAttribute name of a specific s-attribute
+#' @param s_attribute name of a specific s-attribute
 #' @return a character vector
 #' @exportMethod s_attributes
 #' @docType methods
@@ -72,33 +76,34 @@ setMethod("s_attributes", "character", function(.Object, sAttribute = NULL, uniq
 #' s_attributes(P, "speaker") # get names of speakers
 setMethod(
   "s_attributes", "partition",
-  function (.Object, sAttribute = NULL, unique = TRUE) {
-    if (is.null(sAttribute)){
+  function (.Object, s_attribute = NULL, unique = TRUE, ...) {
+    if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+    if (is.null(s_attribute)){
       return( CQI$attributes(.Object@corpus, "s") )
     } else {
-      if (length(sAttribute) == 1){
-        if (.Object@xml == "flat" || .Object@sAttributeStrucs == sAttribute){
+      if (length(s_attribute) == 1){
+        if (.Object@xml == "flat" || .Object@sAttributeStrucs == s_attribute){
           len1 <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)
-          len2 <- CQI$attribute_size(.Object@corpus, sAttribute)
+          len2 <- CQI$attribute_size(.Object@corpus, s_attribute)
           if (len1 != len2){
-            stop("XML is stated to be flat, but sAttributeStrucs hat length ", len1, " and sAttribute length ", len2)
+            stop("XML is stated to be flat, but sAttributeStrucs hat length ", len1, " and s_attribute length ", len2)
           }
-          retval <- CQI$struc2str(.Object@corpus, sAttribute, .Object@strucs)
+          retval <- CQI$struc2str(.Object@corpus, s_attribute, .Object@strucs)
           if (unique) retval <- unique(retval)
         } else {
           cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-          strucs <- CQI$cpos2struc(.Object@corpus, sAttribute, cposVector)
-          retval <- CQI$struc2str(.Object@corpus, sAttribute, strucs)
+          strucs <- CQI$cpos2struc(.Object@corpus, s_attribute, cposVector)
+          retval <- CQI$struc2str(.Object@corpus, s_attribute, strucs)
           if (unique) retval <- unique(retval)
         }
         Encoding(retval) <- .Object@encoding
         retval <- as.nativeEnc(retval, from = .Object@encoding)
         return(retval)
-      } else if (length(sAttribute) > 1){
+      } else if (length(s_attribute) > 1){
         if (.Object@xml == "flat") {
           tab <- data.frame(
             lapply(
-              sAttribute,
+              s_attribute,
               # USE.NAMES = TRUE,
               function(x) { 
                 tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
@@ -108,11 +113,11 @@ setMethod(
             ),
             stringsAsFactors = FALSE
           )
-          colnames(tab) <- sAttribute
+          colnames(tab) <- s_attribute
         } else if (.Object@xml == "nested") {
           tab <- data.frame(
             sapply(
-              sAttribute,
+              s_attribute,
               USE.NAMES = TRUE,
               function(x) {
                 tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
@@ -121,7 +126,7 @@ setMethod(
               }
             )
           )
-          colnames(tab) <- sAttribute
+          colnames(tab) <- s_attribute
         }
         return( as.data.table(tab) )
         
@@ -132,6 +137,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname partitionBundle-class
-setMethod("s_attributes", "partitionBundle", function(.Object, sAttribute)
-  lapply(.Object@objects, function(x) s_attributes(x, sAttribute))
-)
+setMethod("s_attributes", "partitionBundle", function(.Object, s_attribute, ...){
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  lapply(.Object@objects, function(x) s_attributes(x, s_attribute))
+})

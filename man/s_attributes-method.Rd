@@ -8,20 +8,22 @@
 \alias{s_attributes,character-method}
 \title{Get s-attributes.}
 \usage{
-\S4method{s_attributes}{character}(.Object, sAttribute = NULL,
-  unique = TRUE, regex = NULL)
+\S4method{s_attributes}{character}(.Object, s_attribute = NULL,
+  unique = TRUE, regex = NULL, ...)
 
-\S4method{s_attributes}{partition}(.Object, sAttribute = NULL,
-  unique = TRUE)
+\S4method{s_attributes}{partition}(.Object, s_attribute = NULL,
+  unique = TRUE, ...)
 }
 \arguments{
 \item{.Object}{either a \code{partition} object or a character vector specifying a CWB corpus}
 
-\item{sAttribute}{name of a specific s-attribute}
+\item{s_attribute}{name of a specific s-attribute}
 
 \item{unique}{logical, whether to return unique values only}
 
 \item{regex}{filter return value by applying a regex}
+
+\item{...}{to maintain backward compatibility, of argument \code{sAttribute} is used}
 }
 \value{
 a character vector
@@ -34,10 +36,10 @@ or the values of s-attributes in a corpus/partition with the \code{s_attributes}
 \details{
 Importing XML into the Corpus Workbench (CWB) turns elements and element
 attributes into so-called s-attributes. There are two uses of the s_attributes-method: If the 
-\code{sAttribute} parameter is NULL (default), the return value is a character vector
+\code{s_attribute} parameter is NULL (default), the return value is a character vector
 with all s-attributes present in a corpus.
 
-If sAttribute is the name of a specific s-attribute (a length 1 character vector), the
+If s_attribute is the name of a specific s-attribute (a length 1 character vector), the
 values of the s-attributes available in the corpus/partition are returned.
 
 If a character vector of s-attributes is provided, the method will return a \code{data.table}.

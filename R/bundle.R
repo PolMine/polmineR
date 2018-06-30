@@ -130,7 +130,7 @@ setMethod("as.bundle", "textstat", function(object){
 #' @examples
 #' use("polmineR")
 #' Ps <- partitionBundle(
-#'   "REUTERS", sAttribute = "id",
+#'   "REUTERS", s_attribute = "id",
 #'   values = s_attributes("REUTERS", "id")
 #' )
 #' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)

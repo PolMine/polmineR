@@ -150,7 +150,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   }
   
   # detect where a change of metainformation occurs
-  metadata <- as.matrix(s_attributes(.Object, sAttribute = meta)) # somewhat slow
+  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta)) # somewhat slow
   if (length(.Object@strucs) > 1){
     metaChange <- sapply(2:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1,]))
     metaChange <- c(TRUE, metaChange)

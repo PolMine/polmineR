@@ -165,8 +165,8 @@ setMethod("context", "partition", function(
   
   # check that windows do not transgress s-attribute
   .message("checking that context positions to not transgress regions", verbose = verbose)
-  ctxt <- enrich(ctxt, sAttribute = s_attribute, verbose = verbose)
-  ctxt <- trim(ctxt, sAttribute = s_attribute, verbose = verbose, progress = progress)
+  ctxt <- enrich(ctxt, s_attribute = s_attribute, verbose = verbose)
+  ctxt <- trim(ctxt, s_attribute = s_attribute, verbose = verbose, progress = progress)
   
   # put together raw stat table
   if (count){

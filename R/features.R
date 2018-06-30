@@ -101,7 +101,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' head(top100)
 #' 
-#' speakers <- partitionBundle("GERMAPARLMINI", sAttribute = "speaker")
+#' speakers <- partitionBundle("GERMAPARLMINI", s_attribute = "speaker")
 #' speakers <- enrich(speakers, pAttribute = "word")
 #' speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 #' dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")

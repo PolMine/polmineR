@@ -86,7 +86,7 @@ in one S4 object.
 \examples{
 parties <- s_attributes("GERMAPARLMINI", "party")
 parties <- parties[-which(parties == "NA")]
-party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
+party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
 length(party_bundle)
 names(party_bundle)
 party_bundle <- enrich(party_bundle, pAttribute = "word")
@@ -95,7 +95,7 @@ parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 summary(parties_big)
 use("polmineR")
 Ps <- partitionBundle(
-  "REUTERS", sAttribute = "id",
+  "REUTERS", s_attribute = "id",
   values = s_attributes("REUTERS", "id")
 )
 Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)

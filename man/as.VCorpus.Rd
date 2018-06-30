@@ -16,6 +16,6 @@ Coerce partitionBundle to VCorpus.
 \examples{
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-10")
-PB <- partitionBundle(P, sAttribute = "speaker")
+PB <- partitionBundle(P, s_attribute = "speaker")
 VC <- as.VCorpus(PB)
 }

@@ -19,7 +19,7 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' 
 #' @param .Object the corpus to decode (character vector)
 #' @param verbose logical
-#' @param sAttribute the s-attribute to decode
+#' @param s_attribute the s-attribute to decode
 #' @param ... further parameters
 #' @return a \code{data.table}
 #' @rdname decode
@@ -27,44 +27,46 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' use("polmineR")
 #' 
 #' # Scenario 1: Decode one or two s-attributes
-#' dt <- decode("GERMAPARLMINI", sAttribute = "date")
-#' dt <- decode("GERMAPARLMINI", sAttribute = c("date", "speaker"))
+#' dt <- decode("GERMAPARLMINI", s_attribute = "date")
+#' dt <- decode("GERMAPARLMINI", s_attribute = c("date", "speaker"))
 #' 
 #' # Scenario 2: Decode corpus entirely
 #' dt <- decode("GERMAPARLMINI")
 #' @exportMethod decode
 #' @importFrom data.table fread
 #' @importFrom RcppCWB get_region_matrix
-setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = TRUE){
+setMethod("decode", "character", function(.Object, s_attribute = NULL, verbose = TRUE, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   stopifnot(
     length(.Object) == 1, # cannot process more than one corpus
     .Object %in% CQI$list_corpora() # make that corpus is available
     ) 
   
-  if (!is.null(sAttribute)){
+  if (!is.null(s_attribute)){
     
     stopifnot(
-      sAttribute %in% s_attributes(.Object) # s-attribute needs to be available
+      s_attribute %in% s_attributes(.Object) # s-attribute needs to be available
       ) 
 
     regions <- get_region_matrix(
-      .Object, s_attribute = sAttribute[1],
-      strucs = 0L:(CQI$attribute_size(.Object, sAttribute[1]) - 1L),
+      .Object, s_attribute = s_attribute[1],
+      strucs = 0L:(CQI$attribute_size(.Object, s_attribute[1]) - 1L),
       registry = Sys.getenv("CORPUS_REGISTRY")
     )
     y <- data.table(regions)
     colnames(y) <- c("cpos_left", "cpos_right")
     
-    if (sAttribute[1] %in% colnames(y)) sAttribute <- sAttribute[-1]
-    for (sAttr in sAttribute){
+    if (s_attribute[1] %in% colnames(y)) s_attribute <- s_attribute[-1]
+    for (sAttr in s_attribute){
       .message("decoding s-attribute: ", sAttr)
       sAttrMax <- CQI$attribute_size(.Object, sAttr)
       if (sAttrMax != nrow(y)) stop(
-        "s-attribute", sAttr, " has ", sAttrMax, " values, but s-sattribute ",
+        "s-attribute", sAttr, " has ", sAttrMax, " values, but s-s_attribute ",
         sAttr, " has only ", nrow(y), " - decode will only work for flat XML with strucs with identical length"
       )
-      y[[sAttr]] <- s_attributes(.Object, sAttribute = sAttr, unique = FALSE)
+      y[[sAttr]] <- s_attributes(.Object, s_attribute = sAttr, unique = FALSE)
     }
     
     return( y )
@@ -86,7 +88,7 @@ setMethod("decode", "character", function(.Object, sAttribute = NULL, verbose = 
     sAttributeList <- lapply(
       s_attributes(.Object),
       function(x){
-        .message("decoding sAttribute:", x, verbose = verbose)
+        .message("decoding s-attribute:", x, verbose = verbose)
         struc <- CQI$cpos2struc(.Object, x, 0L:maxCpos)
         str <- CQI$struc2str(.Object, x, struc)
         Encoding(str) <- registry_get_encoding(.Object)

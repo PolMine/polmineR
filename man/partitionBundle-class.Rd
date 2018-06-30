@@ -42,7 +42,7 @@
 \S4method{enrich}{partitionBundle}(.Object, mc = FALSE, progress = TRUE,
   verbose = FALSE, ...)
 
-\S4method{s_attributes}{partitionBundle}(.Object, sAttribute)
+\S4method{s_attributes}{partitionBundle}(.Object, s_attribute, ...)
 }
 \arguments{
 \item{object}{a partitionBundle object}
@@ -63,7 +63,7 @@
 
 \item{verbose}{logical}
 
-\item{sAttribute}{the s-attribute to use}
+\item{s_attribute}{the s-attribute to use}
 }
 \description{
 Class and methods to manage bundles of partitions.

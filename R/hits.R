@@ -50,7 +50,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, s_attribute
     if (freq) size <- TRUE
     if (size){
       .message("getting sizes", verbose = verbose)
-      SIZE <- size(.Object, sAttribute = s_attribute)
+      SIZE <- size(.Object, s_attribute = s_attribute)
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
       TF <- TF[is.na(TF[["query"]]) == FALSE]
@@ -88,7 +88,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
     TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
     setnames(TF, old = "N", new = "count")
     if (size){
-      SIZE <- size(.Object, sAttribute = s_attribute)
+      SIZE <- size(.Object, s_attribute = s_attribute)
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
       TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0, x))]

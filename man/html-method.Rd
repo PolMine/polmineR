@@ -24,8 +24,8 @@ html(object, ...)
 
 \S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
 
-\S4method{html}{kwic}(object, i, sAttribute = NULL, type = NULL,
-  verbose = FALSE)
+\S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL,
+  verbose = FALSE, ...)
 
 \method{print}{html}(x, ...)
 }
@@ -60,7 +60,7 @@ will be removed}
 \item{i}{if object is a \code{kwic}-object, the index of the concordance for
 which the fulltext is to be generated}
 
-\item{sAttribute}{structural attributes that will be used to define the partition 
+\item{s_attribute}{structural attributes that will be used to define the partition 
 where the match occurred}
 }
 \description{
@@ -82,10 +82,10 @@ if (require("magrittr")){
   H <- partition("REUTERS", places = "argentina") \%>\% html()
   # use html-method to get from concordance to full text
   K <- kwic("REUTERS", query = "barrels")
-  H <- html(K, i = 1, sAttribute = "id")
-  H <- html(K, i = 2, sAttribute = "id")
+  H <- html(K, i = 1, s_attribute = "id")
+  H <- html(K, i = 2, s_attribute = "id")
   for (i in 1:length(K)) {
-    H <- html(K, i = i, sAttribute = "id")
+    H <- html(K, i = i, s_attribute = "id")
     if (interactive()){
       show(H)
       userinput <- readline("press 'q' to quit or any other key to continue")
