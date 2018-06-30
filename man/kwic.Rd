@@ -15,15 +15,15 @@ kwic(.Object, ...)
 
 \S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  meta = getOption("polmineR.meta"), pAttribute = "word",
-  sAttribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
-  regex = FALSE, verbose = TRUE)
+  meta = getOption("polmineR.meta"), p_attribute = "word",
+  s_attribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
+  regex = FALSE, verbose = TRUE, ...)
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  meta = getOption("polmineR.meta"), pAttribute = "word",
-  sAttribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
-  regex = FALSE, verbose = TRUE)
+  meta = getOption("polmineR.meta"), p_attribute = "word",
+  s_attribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
+  regex = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{.Object}{a \code{partition} or \code{context} object}
@@ -46,9 +46,9 @@ auxiliary function)}
 
 \item{right}{to the right}
 
-\item{pAttribute}{p-attribute, defaults to 'word'}
+\item{p_attribute}{p-attribute, defaults to 'word'}
 
-\item{sAttribute}{if provided, the s-attribute will be used to check the boundaries of the text}
+\item{s_attribute}{if provided, the s-attribute will be used to check the boundaries of the text}
 
 \item{stoplist}{terms or ids to prevent a concordance from occurring in results}
 

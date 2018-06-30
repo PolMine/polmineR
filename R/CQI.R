@@ -48,44 +48,44 @@ CQI.RcppCWB <- R6Class(
     attribute_size = function(corpus, attribute, type = "s")
       cl_attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    lexicon_size = function(corpus, pAttribute)
-      cl_lexicon_size(corpus = corpus, p_attribute = pAttribute, registry = Sys.getenv("CORPUS_REGISTRY")),
+    lexicon_size = function(corpus, p_attribute)
+      cl_lexicon_size(corpus = corpus, p_attribute = p_attribute, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    cpos2struc = function(corpus, sAttribute, cpos)
-      cl_cpos2struc(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+    cpos2struc = function(corpus, s_attribute, cpos)
+      cl_cpos2struc(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    cpos2str = function(corpus, pAttribute, cpos)
-      cl_cpos2str(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+    cpos2str = function(corpus, p_attribute, cpos)
+      cl_cpos2str(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    cpos2id = function(corpus, pAttribute, cpos)
-      cl_cpos2id(corpus = corpus, p_attribute = pAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+    cpos2id = function(corpus, p_attribute, cpos)
+      cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    struc2cpos = function(corpus, sAttribute, struc)
-      cl_struc2cpos(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
+    struc2cpos = function(corpus, s_attribute, struc)
+      cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    id2str = function(corpus, pAttribute, id)
-      cl_id2str(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+    id2str = function(corpus, p_attribute, id)
+      cl_id2str(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    struc2str = function(corpus, sAttribute, struc)
-      cl_struc2str(corpus = corpus, s_attribute = sAttribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
+    struc2str = function(corpus, s_attribute, struc)
+      cl_struc2str(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    regex2id = function(corpus, pAttribute, regex)
-      cl_regex2id(corpus = corpus, p_attribute = pAttribute, regex = regex, registry = Sys.getenv("CORPUS_REGISTRY")),
+    regex2id = function(corpus, p_attribute, regex)
+      cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = regex, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    str2id = function(corpus, pAttribute, str)
-      cl_str2id(corpus = corpus, p_attribute = pAttribute, str = str, registry = Sys.getenv("CORPUS_REGISTRY")),
+    str2id = function(corpus, p_attribute, str)
+      cl_str2id(corpus = corpus, p_attribute = p_attribute, str = str, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    id2freq = function(corpus, pAttribute, id)
-      cl_id2freq(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+    id2freq = function(corpus, p_attribute, id)
+      cl_id2freq(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    id2cpos = function(corpus, pAttribute, id)
-      cl_id2cpos(corpus = corpus, p_attribute = pAttribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+    id2cpos = function(corpus, p_attribute, id)
+      cl_id2cpos(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    cpos2lbound = function(corpus, sAttribute, cpos)
-      cl_cpos2lbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+    cpos2lbound = function(corpus, s_attribute, cpos)
+      cl_cpos2lbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
     
-    cpos2rbound = function(corpus, sAttribute, cpos)
-      cl_cpos2rbound(corpus = corpus, s_attribute = sAttribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+    cpos2rbound = function(corpus, s_attribute, cpos)
+      cl_cpos2rbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
     
     query = function(corpus, query){
       if (!RcppCWB::cqp_is_initialized()) cqp_initialize()
@@ -239,9 +239,9 @@ CQI.cqpserver <- R6Class(
       self$expect_int()
     },
     
-    lexicon_size = function(corpus, pAttribute){
+    lexicon_size = function(corpus, p_attribute){
       self$send_word(.cqiCmd[["CQI_CL_LEXICON_SIZE"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       self$expect_int()
@@ -255,36 +255,36 @@ CQI.cqpserver <- R6Class(
       self$expect_string()
     },
     
-    cpos2struc = function(corpus, pAttribute, cpos){
+    cpos2struc = function(corpus, p_attribute, cpos){
       self$send_word(.cqiCmd[["CQI_CL_CPOS2STRUC"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_int_list(cpos)
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       self$expect_int_list()
     },
     
-    cpos2str = function(corpus, pAttribute, cpos){
+    cpos2str = function(corpus, p_attribute, cpos){
       self$send_word(.cqiCmd[["CQI_CL_CPOS2STR"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_int_list(cpos)
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       self$expect_string_list()
     },
     
-    cpos2id = function(corpus, pAttribute, cpos){
+    cpos2id = function(corpus, p_attribute, cpos){
       self$send_word(.cqiCmd[["CQI_CL_CPOS2ID"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_int_list(cpos)
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       self$expect_int_list()
     },
     
-    struc2cpos = function(corpus, sAttribute, struc){
+    struc2cpos = function(corpus, s_attribute, struc){
       self$send_word(.cqiCmd[["CQI_CL_STRUC2CPOS"]])
-      self$send_string(paste(corpus, sAttribute, sep="."))
+      self$send_string(paste(corpus, s_attribute, sep="."))
       self$send_int(struc)
       # Sys.sleep(0.1)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
@@ -293,53 +293,53 @@ CQI.cqpserver <- R6Class(
       c(cposLeft, cposRight)
     },
     
-    id2str = function(corpus, pAttribute, ids){
+    id2str = function(corpus, p_attribute, ids){
       self$send_word(.cqiCmd[["CQI_CL_ID2STR"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_int_list(ids)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       # Sys.sleep(0.1)
       self$expect_string_list()
     },
     
-    struc2str = function(corpus, sAttribute, struc){
+    struc2str = function(corpus, s_attribute, struc){
       self$send_word(.cqiCmd[["CQI_CL_STRUC2STR"]])
-      self$send_string(paste(corpus, sAttribute, sep="."))
+      self$send_string(paste(corpus, s_attribute, sep="."))
       self$send_int_list(struc)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       # Sys.sleep(0.1)
       self$expect_string_list()
     },
     
-    regex2id = function(corpus, pAttribute, regex){
+    regex2id = function(corpus, p_attribute, regex){
       
     },
     
-    str2id = function(corpus, pAttribute, strs){
+    str2id = function(corpus, p_attribute, strs){
       self$send_word(.cqiCmd[["CQI_CL_STR2ID"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_string_list(strs)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.01)
       # Sys.sleep(0.1)
       self$expect_int_list()
     },
     
-    id2freq = function(corpus, pAttribute, id){
+    id2freq = function(corpus, p_attribute, id){
     },
     
-    id2cpos = function(corpus, pAttribute, id){
+    id2cpos = function(corpus, p_attribute, id){
       self$send_word(.cqiCmd[["CQI_CL_ID2CPOS"]])
-      self$send_string(paste(corpus, pAttribute, sep="."))
+      self$send_string(paste(corpus, p_attribute, sep="."))
       self$send_int(id)
       while (socketSelect(list(self$connection)) == FALSE) Sys.sleep(0.1)
       self$read_word()
       self$read_int_list()
     },
     
-    cpos2lbound = function(corpus, sAttribute, cpos){
+    cpos2lbound = function(corpus, s_attribute, cpos){
     },
     
-    cpos2rbound = function(corpus, sAttribute, cpos){
+    cpos2rbound = function(corpus, s_attribute, cpos){
     },
     
     query = function(corpus, query){

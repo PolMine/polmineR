@@ -70,7 +70,7 @@ Collate:
     'kwic.R'
     'browse.R'
     'chisquare.R'
-    'hits_class.R'
+    'hits.R'
     'tempcorpus.R'
     'cpos.R'
     'cqpserver.R'

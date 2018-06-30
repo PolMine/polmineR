@@ -86,10 +86,13 @@ setMethod("enrich", "kwic", function(.Object, meta = NULL, table = FALSE){
 #' @docType methods
 #' @rdname context-class
 #' @param sAttribute s-attribute(s) to add to data.table in cpos-slot
-#' @param pAttribute p-attribute(s) to add to data.table in cpos-slot
+#' @param p_attribute p-attribute(s) to add to data.table in cpos-slot
 #' @param decode logical, whether to convert integer ids to expressive strings
 #' @param verbose logical, whether to be talkative
-setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute = NULL, decode = FALSE, verbose = TRUE){
+setMethod("enrich", "context", function(.Object, sAttribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  
   if (!is.null(sAttribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
@@ -116,13 +119,13 @@ setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute =
       }
     }
   }
-  if (!is.null(pAttribute)){
+  if (!is.null(p_attribute)){
     # check that all p-attributes are available
     .message("checking that all p-attributes are available", verbose = verbose)
-    stopifnot( all(pAttribute %in% CQI$attributes(.Object@corpus, type = "p")) )
+    stopifnot( all(p_attribute %in% CQI$attributes(.Object@corpus, type = "p")) )
     
     # add ids
-    for (pAttr in pAttribute){
+    for (pAttr in p_attribute){
       colname <- paste(pAttr, "id", sep = "_")
       if (colname %in% colnames(.Object@cpos)){
         .message("already present - skip getting ids for p-attribute:", pAttr, verbose = verbose)
@@ -136,7 +139,7 @@ setMethod("enrich", "context", function(.Object, sAttribute = NULL, pAttribute =
     
     # add 
     if (decode){
-      for (pAttr in pAttribute){
+      for (pAttr in p_attribute){
         if (pAttr %in% colnames(.Object@cpos)){
           .message("already present - skip getting strings for p-attribute:", pAttr, verbose = verbose)
         } else {

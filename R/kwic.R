@@ -81,8 +81,8 @@ NULL
 #' @param right to the right
 #' @param meta metainformation to display
 #' @param cpos logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned
-#' @param pAttribute p-attribute, defaults to 'word'
-#' @param sAttribute if provided, the s-attribute will be used to check the boundaries of the text
+#' @param p_attribute p-attribute, defaults to 'word'
+#' @param s_attribute if provided, the s-attribute will be used to check the boundaries of the text
 #' @param stoplist terms or ids to prevent a concordance from occurring in results
 #' @param positivelist terms or ids required for a concordance to occurr in results
 #' @param regex logical, whether stoplist/positivelist is processed as regular expression
@@ -107,7 +107,7 @@ NULL
 #'   meta = c("date", "speaker", "party")
 #' ) 
 #' @exportMethod kwic
-setGeneric("kwic", function(.Object, ...){standardGeneric("kwic")})
+setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 
 
 
@@ -148,16 +148,20 @@ setMethod("kwic", "partition", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
-  pAttribute = "word", sAttribute = NULL, cpos = TRUE,
+  p_attribute = "word", s_attribute = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
-  verbose = TRUE
+  verbose = TRUE, ...
 ){
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
   # the actual work is done by the kwic,context-method
   # this method prepares a context-object and applies the
   # kwic method to that object
   ctxt <- context(
     .Object = .Object, query = query, cqp = cqp,
-    pAttribute = pAttribute, sAttribute = sAttribute,
+    p_attribute = p_attribute, s_attribute = s_attribute,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = FALSE, verbose = verbose
@@ -180,13 +184,17 @@ setMethod("kwic", "character", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   meta = getOption("polmineR.meta"),
-  pAttribute = "word", sAttribute = NULL, cpos = TRUE,
+  p_attribute = "word", s_attribute = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
-  verbose = TRUE
+  verbose = TRUE, ...
 ){
-  hits <- cpos(.Object, query = query, cqp = cqp, pAttribute = pAttribute, verbose = FALSE)
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  hits <- cpos(.Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
   if (is.null(hits)){message("sorry, not hits"); return(invisible(NULL))}
-  cpos_max <- CQI$attribute_size(.Object, pAttribute, type = "p")
+  cpos_max <- CQI$attribute_size(.Object, p_attribute, type = "p")
   cposList <- apply(
     hits, 1,
     function(row){
@@ -214,14 +222,14 @@ setMethod("kwic", "character", function(
             right = rep(1, times = length(x[[x2]])))
       )))
   )
-  DT[[paste(pAttribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, pAttribute, DT[["cpos"]])
+  DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])
   
   ctxt <- new(
     "context",
     count = nrow(hits), stat = data.table(),
     corpus = .Object, left = left, right = right, 
     cpos = DT,
-    pAttribute = pAttribute,
+    pAttribute = p_attribute,
     encoding = registry_get_encoding(.Object)
   )
   
@@ -229,7 +237,7 @@ setMethod("kwic", "character", function(
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   
-  if (!is.null(sAttribute)) ctxt@sAttribute <- sAttribute
+  if (!is.null(s_attribute)) ctxt@sAttribute <- s_attribute
   kwic(.Object = ctxt, meta = meta, cpos = cpos)
 })
 

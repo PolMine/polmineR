@@ -60,9 +60,9 @@ setMethod("trim", "DocumentTermMatrix", function(object, ...){
 
 
 #' @rdname context-class
-setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = NULL, pAttribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE){
+setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE){
   
-  if(!is.null(sAttribute)){
+  if (!is.null(sAttribute)){
     stopifnot(length(sAttribute) == 1)
     sAttrCol <- paste(sAttribute, "int", sep = "_")
     if (!sAttrCol %in% colnames(object@cpos)){
@@ -88,9 +88,9 @@ setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = 
   if (!is.null(positivelist)){
     .message("filtering by positivelist", verbose = verbose)
     before <- length(unique(object@cpos[["hit_no"]]))
-    positivelistIds <- .token2id(corpus = object@corpus, pAttribute = pAttribute, token = positivelist, regex = regex)
+    positivelistIds <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
     .keepPositives <- function(.SD){
-      pAttr <- paste(pAttribute[1], "id", sep = "_")
+      pAttr <- paste(p_attribute[1], "id", sep = "_")
       positives <- which(.SD[[pAttr]] %in% positivelistIds)
       positives <- positives[ -which(.SD[["position"]] == 0) ] # exclude node
       if (any(positives)) return( .SD ) else return( NULL )
@@ -107,9 +107,9 @@ setMethod("trim", "context", function(object, sAttribute = NULL, positivelist = 
   if (!is.null(stoplist)){
     .message("applying stoplist", verbose = verbose)
     before <- length(unique(object@cpos[["hit_no"]]))
-    stoplistIds <- .token2id(corpus = object@corpus, pAttribute = pAttribute, token = stoplist, regex = regex)
+    stoplistIds <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
     .dropNegatives <- function(.SD){
-      pAttr <- paste(pAttribute[1], "id", sep = "_")
+      pAttr <- paste(p_attribute[1], "id", sep = "_")
       negatives <- which(.SD[[pAttr]] %in% stoplistIds)
       negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
       if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference

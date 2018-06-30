@@ -1,4 +1,4 @@
-#' @include tempcorpus.R hits_class.R S4classes.R
+#' @include tempcorpus.R hits.R S4classes.R
 NULL
 
 #' Get corpus positions for a query or queries.
@@ -24,7 +24,7 @@ NULL
 #' @param cqp either logical (TRUE if query is a CQP query), or a function to
 #'   check whether query is a CQP query or not (defaults to is.query auxiliary
 #'   function)
-#' @param pAttribute the p-attribute to search. Needs to be stated only if query
+#' @param p_attribute the p-attribute to search. Needs to be stated only if query
 #'   is not a CQP query. Defaults to NULL.
 #' @param encoding the encoding of the corpus (if NULL, the
 #'  encoding provided in the registry file of the corpus will be used)
@@ -42,7 +42,10 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
+setMethod("cpos", "character", function(.Object, query, p_attribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  
   if (is.null(encoding)) encoding <- registry_get_encoding(.Object) # get encoding of the corpus
   query <- as.corpusEnc(query, corpusEnc = encoding)
   if (class(cqp) == "function") cqp <- cqp(query)
@@ -53,12 +56,12 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
       query,
       function(Q){
         cpos <- try({
-          id <- CQI$str2id(.Object, pAttribute, Q)
+          id <- CQI$str2id(.Object, p_attribute, Q)
           if (id < 0){ # CQP will return -1 or another negative value if there are no matches
             .message("no hits for query: ", Q, verbose = verbose)
             cpos <- NULL
           } else {
-            cpos <- CQI$id2cpos(.Object, pAttribute, id)
+            cpos <- CQI$id2cpos(.Object, p_attribute, id)
           }
         })
         if (!is.null(cpos)) matrix(c(cpos, cpos), ncol = 2) else NULL
@@ -90,8 +93,11 @@ setMethod("cpos", "character", function(.Object, query, pAttribute = getOption("
 })
   
 #' @rdname cpos-method
-setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, pAttribute = NULL, verbose = TRUE, ...){
-  hits <- cpos(.Object@corpus, query = query, cqp = cqp, pAttribute, encoding = .Object@encoding, verbose = verbose)
+setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, p_attribute = NULL, verbose = TRUE, ...){
+  
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+
+  hits <- cpos(.Object@corpus, query = query, cqp = cqp, p_attribute, encoding = .Object@encoding, verbose = verbose)
   if (!is.null(hits) && length(.Object@sAttributes) > 0){
     sAttribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
     strucHits <- CQI$cpos2struc(.Object@corpus, sAttribute, hits[,1])

@@ -13,10 +13,10 @@
 cpos(.Object, ...)
 
 \S4method{cpos}{character}(.Object, query,
-  pAttribute = getOption("polmineR.pAttribute"), cqp = is.cqp,
+  p_attribute = getOption("polmineR.pAttribute"), cqp = is.cqp,
   encoding = NULL, verbose = TRUE, ...)
 
-\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, pAttribute = NULL,
+\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, p_attribute = NULL,
   verbose = TRUE, ...)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
@@ -34,7 +34,7 @@ cpos(.Object, ...)
 
 \item{query}{a character vector providing one or multiple queries (token or CQP query)}
 
-\item{pAttribute}{the p-attribute to search. Needs to be stated only if query
+\item{p_attribute}{the p-attribute to search. Needs to be stated only if query
 is not a CQP query. Defaults to NULL.}
 
 \item{cqp}{either logical (TRUE if query is a CQP query), or a function to

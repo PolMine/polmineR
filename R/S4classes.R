@@ -252,6 +252,7 @@ setClass(
 #' @param stoplist tokens that are used to exclude a match
 #' @param regex logical, whether positivlist / stoplist is interpreted as regular expressions
 #' @param progress logical, whether to show progress bar
+#' @param ... to maintain backwards compatibility if argument \code{pAttribute} is still used
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
@@ -466,8 +467,8 @@ setClass(
 #' @param query a (optionally named, see datails) character vector with one or more queries
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not
-#' @param sAttribute s-attributes
-#' @param pAttribute p-attribute (will be passed into cpos)
+#' @param s_attribute s-attributes
+#' @param p_attribute p-attribute
 #' @param size logical - return size of subcorpus
 #' @param freq logcial - return relative frequencies
 #' @param x a hits object

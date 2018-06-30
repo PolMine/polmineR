@@ -15,20 +15,20 @@ count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
   breakdown = FALSE, decode = TRUE,
-  pAttribute = getOption("polmineR.pAttribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE)
+  p_attribute = getOption("polmineR.pAttribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE, ...)
 
 \S4method{count}{partitionBundle}(.Object, query = NULL, cqp = FALSE,
-  pAttribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
-  progress = TRUE, verbose = FALSE)
+  p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
+  progress = TRUE, verbose = FALSE, ...)
 
 \S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), breakdown = FALSE,
-  sort = FALSE, decode = TRUE, verbose = TRUE)
+  p_attribute = getOption("polmineR.pAttribute"), breakdown = FALSE,
+  sort = FALSE, decode = TRUE, verbose = TRUE, ...)
 
-\S4method{count}{vector}(.Object, corpus, pAttribute)
+\S4method{count}{vector}(.Object, corpus, p_attribute, ...)
 
-\S4method{count}{Corpus}(.Object, query = NULL, pAttribute)
+\S4method{count}{Corpus}(.Object, query = NULL, p_attribute)
 }
 \arguments{
 \item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a
@@ -47,7 +47,7 @@ auxiliary function)}
 
 \item{decode}{logical, whether to add rownames (only if query is NULL)}
 
-\item{pAttribute}{the p-attribute(s) to use}
+\item{p_attribute}{the p-attribute(s) to use}
 
 \item{mc}{logical, whether to use multicore (defaults to FALSE)}
 
@@ -87,14 +87,14 @@ queries are retrieved.
   count(debates, query = "Arbeit") # get frequencies for one token
   count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens
   
-  count("GERMAPARLMINI", query = c("Migration", "Integration"), pAttribute = "word")
+  count("GERMAPARLMINI", query = c("Migration", "Integration"), p_attribute = "word")
 
   debates <- partitionBundle(
     "GERMAPARLMINI", sAttribute = "date", values = NULL,
     regex = TRUE, mc = FALSE, verbose = FALSE
   )
-  y <- count(debates, query = "Arbeit", pAttribute = "word")
-  y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), pAttribute = "word")
+  y <- count(debates, query = "Arbeit", p_attribute = "word")
+  y <- count(debates, query = c("Arbeit", "Migration", "Zukunft"), p_attribute = "word")
   
   count("GERMAPARLMINI", '"Integration.*"', breakdown = TRUE)
 

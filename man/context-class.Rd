@@ -24,11 +24,11 @@
 
 \S4method{sample}{context}(x, size)
 
-\S4method{enrich}{context}(.Object, sAttribute = NULL, pAttribute = NULL,
-  decode = FALSE, verbose = TRUE)
+\S4method{enrich}{context}(.Object, sAttribute = NULL, p_attribute = NULL,
+  decode = FALSE, verbose = TRUE, ...)
 
 \S4method{trim}{context}(object, sAttribute = NULL, positivelist = NULL,
-  pAttribute = p_attributes(object), regex = FALSE, stoplist = NULL,
+  p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL,
   verbose = TRUE, progress = TRUE)
 }
 \arguments{
@@ -40,11 +40,13 @@
 
 \item{sAttribute}{s-attribute(s) to add to data.table in cpos-slot}
 
-\item{pAttribute}{p-attribute(s) to add to data.table in cpos-slot}
+\item{p_attribute}{p-attribute(s) to add to data.table in cpos-slot}
 
 \item{decode}{logical, whether to convert integer ids to expressive strings}
 
 \item{verbose}{logical, whether to be talkative}
+
+\item{...}{to maintain backwards compatibility if argument \code{pAttribute} is still used}
 
 \item{object}{a context object}
 

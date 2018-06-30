@@ -39,7 +39,7 @@ setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...){
   } else {
     ids <- region_matrix_to_ids(corpus = x@corpus, p_attribute = p_attribute, matrix = x@cpos)
     ids_unique <- unique(ids)
-    y <- CQI$id2str(corpus = x@corpus, pAttribute = p_attribute, id = ids_unique)
+    y <- CQI$id2str(corpus = x@corpus, p_attribute = p_attribute, id = ids_unique)
     Encoding(y) <- x@encoding
   }
   y <- enc2utf8(y)

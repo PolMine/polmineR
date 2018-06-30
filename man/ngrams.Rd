@@ -10,11 +10,11 @@
 \usage{
 ngrams(.Object, ...)
 
-\S4method{ngrams}{partition}(.Object, n = 2, pAttribute = "word",
+\S4method{ngrams}{partition}(.Object, n = 2, p_attribute = "word",
   char = NULL, progress = FALSE, ...)
 
 \S4method{ngrams}{partitionBundle}(.Object, n = 2, char = NULL,
-  pAttribute = "word", mc = FALSE, progress = FALSE, ...)
+  p_attribute = "word", mc = FALSE, progress = FALSE, ...)
 }
 \arguments{
 \item{.Object}{object of class \code{partition}}
@@ -23,7 +23,7 @@ ngrams(.Object, ...)
 
 \item{n}{number of tokens/characters}
 
-\item{pAttribute}{the p-attribute to use (can be > 1)}
+\item{p_attribute}{the p-attribute to use (can be > 1)}
 
 \item{char}{if NULL, tokens will be counted, else characters, keeping only those provided by a character vector}
 
@@ -37,10 +37,10 @@ Count n-grams, either of words, or of characters.
 \examples{
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-10-27")
-ngramObject <- ngrams(P, n = 2, pAttribute = "word", char = NULL)
+ngramObject <- ngrams(P, n = 2, p_attribute = "word", char = NULL)
 
 # a more complex scenario: get most frequent ADJA/NN-combinations
-ngramObject <- ngrams(P, n = 2, pAttribute = c("word", "pos"), char = NULL)
+ngramObject <- ngrams(P, n = 2, p_attribute = c("word", "pos"), char = NULL)
 ngramObject2 <- subset(
  ngramObject,
  ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"

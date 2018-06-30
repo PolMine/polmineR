@@ -16,17 +16,17 @@
 \usage{
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
-  pAttribute = getOption("polmineR.pAttribute"), sAttribute = NULL,
+  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE)
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
 
-\S4method{context}{partitionBundle}(.Object, query, pAttribute,
+\S4method{context}{partitionBundle}(.Object, query, p_attribute,
   verbose = TRUE, ...)
 
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
@@ -45,9 +45,9 @@
 
 \item{right}{no of tokens to the right of the node word}
 
-\item{pAttribute}{p-attribute of the query}
+\item{p_attribute}{p-attribute of the query}
 
-\item{sAttribute}{if provided, it will be checked that corpus positions do not extend beyond
+\item{s_attribute}{if provided, it will be checked that corpus positions do not extend beyond
 the region defined by the s-attribute}
 
 \item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
@@ -72,6 +72,8 @@ the value from the options}
 \item{...}{further parameters}
 
 \item{complete}{enhance completely}
+
+\item{pAttribute}{depracated}
 }
 \value{
 depending on whether a partition or a partitionBundle serves as
@@ -88,10 +90,10 @@ examples). Statistical tests available are log-likelihood, t-test, pmi.
 \examples{
 use("polmineR")
 p <- partition("GERMAPARLMINI", interjection = "speech")
-y <- context(p, query = "Integration", pAttribute = "word")
-y <- context(p, query = "Integration", pAttribute = "word", positivelist = "Bildung")
+y <- context(p, query = "Integration", p_attribute = "word")
+y <- context(p, query = "Integration", p_attribute = "word", positivelist = "Bildung")
 y <- context(
-  p, query = "Integration", pAttribute = "word",
+  p, query = "Integration", p_attribute = "word",
   positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
 )
 }
