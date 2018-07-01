@@ -96,7 +96,7 @@ partition_add_cpos(.Object, xml = "flat", regex = FALSE)
 S4 partition class and methods for instances of class partition.
 
 \code{partition_add_cpos} will generate the matrix with corpus positions (regions)
-based on the sAttributes as defined in the respective slot of the partition
+based on the s-attributes as defined in the respective slot of the partition
 object. The result is found in the slot \code{cpos} of the \code{partition}
 object that is returned.
 
@@ -114,7 +114,7 @@ disjoined regions.
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 
-\item{\code{sAttributes}}{Object of class \code{"list"} s-attributes specifying the partition}
+\item{\code{s_attributes}}{Object of class \code{"list"} s-attributes specifying the partition}
 
 \item{\code{explanation}}{Object of class \code{"character"} an explanation of the partition}
 
@@ -130,12 +130,12 @@ disjoined regions.
 
 \item{\code{strucs}}{Object of class \code{"numeric"} the strucs defining the partition}
 
-\item{\code{pAttribute}}{Object of class \code{"character"} indicating the pAttribute of the
+\item{\code{p_attribute}}{Object of class \code{"character"} indicating the p_attribute of the
 count in slot tf}
 
 \item{\code{xml}}{Object of class \code{"character"} whether the xml is flat or nested}
 
-\item{\code{sAttributeStrucs}}{Object of class \code{"character"} the base node}
+\item{\code{s_attribute_strucs}}{Object of class \code{"character"} the base node}
 
 \item{\code{call}}{Object of class \code{"character"} the call that generated the partition}
 }}

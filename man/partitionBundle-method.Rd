@@ -51,7 +51,7 @@ but not yet enriched.
 \examples{
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, pAttribute = "word")
+pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
 dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 summary(pBundle)
 btBundle <- partitionBundle("GERMAPARLMINI", s_attribute = "date")

@@ -32,7 +32,7 @@ NULL
 #'   "GERMAPARLMINI",
 #'   s_attribute_date = "date", s_attribute_name = "speaker"
 #' )
-#' speeches_count <- count(speeches, pAttribute = "word")
+#' speeches_count <- count(speeches, p_attribute = "word")
 #' tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
 #' 
 #' bt <- partition("GERMAPARLMINI", date = "2009-10-27")
@@ -81,7 +81,7 @@ as.speeches <- function(
   partition_names <- sapply(
     speaker_list,
     function(x){
-      paste(x@sAttributes[[s_attribute_name]], s_attributes(x, s_attribute_date), x@name, sep = "_")
+      paste(x@s_attributes[[s_attribute_name]], s_attributes(x, s_attribute_date), x@name, sep = "_")
     }
   )
   for (i in 1L:length(speaker_list)) name(speaker_list[[i]]) <- partition_names[i]

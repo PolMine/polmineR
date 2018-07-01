@@ -45,16 +45,16 @@ setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...
     return( pAttrs )
   } else {
     if (p_attribute %in% pAttrs){
-      if (p_attribute %in% .Object@pAttribute && length(p_attribute) == 1){
+      if (p_attribute %in% .Object@p_attribute && length(p_attribute) == 1){
         return(.Object@stat[[p_attribute]])
       } else {
         return(unique(get_token_stream(.Object)))
       }
     } else {
-      stop("pAttribute provided is not available")
+      stop("p-attribute provided is not available")
     }
   }
 })
 
 #' @rdname context-class
-setMethod("p_attributes", "context", function(.Object) .Object@pAttribute)
+setMethod("p_attributes", "context", function(.Object) .Object@p_attribute)

@@ -6,8 +6,8 @@ setAs(from = "features", to = "featuresNgrams", def = function(from){
   new(
     "featuresNgrams",
     corpus = from@corpus,
-    pAttribute = from@pAttribute,
-    encoding = from@pAttribute,
+    p_attribute = from@p_attribute,
+    encoding = from@p_attribute,
     stat = from@stat,
     sizeCoi = from@sizeCoi,
     sizeRef = from@sizeRef,
@@ -62,7 +62,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' @param x a partition or partitionBundle object
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
-#' @param by the columns used for merging, if NULL (default), the pAttribute of
+#' @param by the columns used for merging, if NULL (default), the p-attribute of
 #'   x will be used
 #' @param method the statistical test to apply (chisquare or log likelihood)
 #' @param included TRUE if coi is part of ref, defaults to FALSE
@@ -86,9 +86,9 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' kauder <- partition(
 #'   "GERMAPARLMINI",
 #'   speaker = "Volker Kauder", interjection = "speech",
-#'   pAttribute="word"
+#'   p_attribute = "word"
 #'   )
-#' all <- partition("GERMAPARLMINI", interjection = "speech", pAttribute = "word")
+#' all <- partition("GERMAPARLMINI", interjection = "speech", p_attribute = "word")
 #'
 #' terms_kauder <- features(x = kauder, y = all, included = TRUE)
 #' top100 <- subset(terms_kauder, rank_chisquare <= 100)
@@ -102,7 +102,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' head(top100)
 #' 
 #' speakers <- partitionBundle("GERMAPARLMINI", s_attribute = "speaker")
-#' speakers <- enrich(speakers, pAttribute = "word")
+#' speakers <- enrich(speakers, p_attribute = "word")
 #' speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 #' dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
 #' @rdname  features-method
@@ -114,10 +114,10 @@ setMethod("features", "partition", function(
 ) {
   
   # check that counts are available
-  if (length(x@pAttribute) == 0) stop("no count performed for x - enrich the object!")
+  if (length(x@p_attribute) == 0) stop("no count performed for x - enrich the object!")
   if (!is.character(y)){
-    if (length(y@pAttribute) == 0) stop("no count performed for y - enrich the object!")
-    if (!identical(x@pAttribute, y@pAttribute)) stop("mismatch of pAttribute of x and y")
+    if (length(y@p_attribute) == 0) stop("no count performed for y - enrich the object!")
+    if (!identical(x@p_attribute, y@p_attribute)) stop("mismatch of p-attribute of x and y")
   }
   
   # if y is a character vector, create a partition from corpus
@@ -129,7 +129,7 @@ setMethod("features", "partition", function(
       warning("x is derived from corpus y, but included is FALSE - setting to TRUE")
     }
     refCorpus <- Corpus$new(y)
-    refCorpus$count(pAttribute = x@pAttribute)
+    refCorpus$count(p_attribute = x@p_attribute)
     y <- refCorpus$as.partition()
   }
   
@@ -145,7 +145,7 @@ setMethod("features", "partition", function(
 setMethod("features", "count", function(x, y, by = NULL, included = FALSE, method = "chisquare", verbose = TRUE){
   stopifnot(
     x@encoding == y@encoding,
-    identical(x@pAttribute, y@pAttribute)
+    identical(x@p_attribute, y@p_attribute)
   )
   z <- new(
     "features",
@@ -153,13 +153,13 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
     corpus = unique(c(x@corpus, y@corpus)),
     sizeCoi = x@size,
     sizeRef = if (included) y@size - x@size else y@size,
-    pAttribute = x@pAttribute,
+    p_attribute = x@p_attribute,
     stat = data.table()
   )
   
   .message("combining frequency lists", verbose = verbose)
   # merge.data.table - good option, because keys would be used if present
-  if (is.null(by)) by <- z@pAttribute
+  if (is.null(by)) by <- z@p_attribute
   z@stat <- merge(x@stat, y@stat, by = by) 
   
   setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
@@ -193,11 +193,11 @@ setMethod(
   "features", "ngrams",
   function(x, y, included = FALSE, method = "chisquare", verbose = TRUE, ...){
     stopifnot(
-      identical(x@pAttribute, y@pAttribute),
+      identical(x@p_attribute, y@p_attribute),
       x@n == y@n,
       all(method %in% c("chisquare", "ll"))
     )
-    tokenColnames <- sapply(1:x@n, function(i) paste(i, x@pAttribute, sep = "_"))
+    tokenColnames <- sapply(1:x@n, function(i) paste(i, x@p_attribute, sep = "_"))
     z <- callNextMethod(
       x = x, y = y, by = tokenColnames,
       included = included, method = method, verbose = verbose

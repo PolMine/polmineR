@@ -22,7 +22,7 @@ hits(.Object, ...)
   progress = FALSE, verbose = TRUE, ...)
 
 \S4method{hits}{partitionBundle}(.Object, query, cqp = FALSE,
-  p_attribute = getOption("polmineR.pAttribute"), size = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"), size = TRUE,
   freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
   verbose = TRUE, ...)
 
@@ -76,7 +76,7 @@ count is 0).
 
 \item{\code{query}}{Object of class \code{"character"}}
 
-\item{\code{pAttribute}}{p-attribute that has been queried}
+\item{\code{p_attribute}}{p-attribute that has been queried}
 
 \item{\code{encoding}}{encoding of the corpus}
 

@@ -8,8 +8,8 @@ setMethod("show", "partitionBundle", function (object) {
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@objects), '\n')
   # same code as in show-method for partition
   sFix <- unlist(lapply(
-    names(object@sAttributesFixed),
-    function(x) paste(x, "=", paste(object@sAttributesFixed[[x]], collapse="/"))
+    names(object@s_attributes_fixed),
+    function(x) paste(x, "=", paste(object@s_attributes_fixed[[x]], collapse="/"))
   ))
   cat(sprintf("%-25s", "s-attributes Fixed:"), sFix[1], '\n')
   if (length(sFix)>1) {for (i in length(sFix)){cat(sprintf("%-25s", " "), sFix[i], '\n')}}
@@ -23,7 +23,7 @@ setMethod("summary", "partitionBundle", function (object) {
     token=unlist(lapply(object@objects, function(x) x@size)),
     stringsAsFactors=FALSE
   )
-  pAttr <- unique(unlist(lapply(object@objects, function(x) x@pAttribute)))
+  pAttr <- unique(unlist(lapply(object@objects, function(x) x@p_attribute)))
   if (length(pAttr) == 1){
     raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@stat))))
     raw <- do.call(data.frame, raw)
@@ -60,13 +60,13 @@ setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
   if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
   y@xml <- unique(vapply(x@objects, function(p) p@xml, FUN.VALUE = "character"))
   y@encoding <- unique(vapply(x@objects, function(p) p@encoding, FUN.VALUE = "character"))
-  y@sAttributeStrucs <- unique(vapply(x@objects, function(p) p@sAttributeStrucs, FUN.VALUE="character"))
+  y@s_attribute_strucs <- unique(vapply(x@objects, function(p) p@s_attribute_strucs, FUN.VALUE = "character"))
   .message('merging the struc vectors', verbose = verbose)
   for (name in names(x@objects)) y@strucs <- union(y@strucs, x@objects[[name]]@strucs)
   .message('generating corpus positions', verbose = verbose)
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
-    function(s) CQI$struc2cpos(y@corpus, y@sAttributeStrucs, s) )
+    function(s) CQI$struc2cpos(y@corpus, y@s_attribute_strucs, s) )
   )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
@@ -130,7 +130,7 @@ NULL
 #' @examples
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-#' pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, pAttribute = "word")
+#' pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
 #' dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 #' summary(pBundle)
 #' btBundle <- partitionBundle("GERMAPARLMINI", s_attribute = "date")
@@ -148,7 +148,7 @@ setMethod("partitionBundle", "partition", function(
   
   bundle <- new(
     "partitionBundle",
-    corpus = .Object@corpus, sAttributesFixed = .Object@sAttributes,
+    corpus = .Object@corpus, s_attributes_fixed = .Object@s_attributes,
     encoding = .Object@encoding, call = deparse(match.call())
   )
   if (is.null(values)){
@@ -211,8 +211,8 @@ setMethod("partitionBundle", "character", function(
       cpos = cposList[[i]],
       size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1L)),
       name = names(cposList)[i],
-      sAttributes = setNames(list(names(cposList)[i]), s_attribute),
-      sAttributeStrucs = s_attribute,
+      s_attributes = setNames(list(names(cposList)[i]), s_attribute),
+      s_attribute_strucs = s_attribute,
       xml = xml,
       strucs = CQI$cpos2struc(.Object, s_attribute, cposList[[i]][,1])
     )
@@ -250,11 +250,11 @@ setMethod("partitionBundle", "context", function(.Object, mc = getOption("polmin
       cpos = matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2),
       stat = data.table()
     )
-    newPartition <- enrich(newPartition, size=TRUE, pAttribute=contextObject@pAttribute, verbose=verbose)
+    newPartition <- enrich(newPartition, size=TRUE, p_attribute=contextObject@p_attribute, verbose=verbose)
     newPartition@strucs <- c(
-      CQI$cpos2struc(contextObject@corpus, contextObject@sAttribute, newPartition@cpos[1,1])
+      CQI$cpos2struc(contextObject@corpus, contextObject@s_attribute, newPartition@cpos[1,1])
       :
-        CQI$cpos2struc(contextObject@corpus, contextObject@sAttribute, newPartition@cpos[1,2])
+        CQI$cpos2struc(contextObject@corpus, contextObject@s_attribute, newPartition@cpos[1,2])
     )
     newPartition
   }

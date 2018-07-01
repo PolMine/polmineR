@@ -42,7 +42,7 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, p_attribute = getOption("polmineR.pAttribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
+setMethod("cpos", "character", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -98,8 +98,8 @@ setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, p_attribut
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
   hits <- cpos(.Object@corpus, query = query, cqp = cqp, p_attribute, encoding = .Object@encoding, verbose = verbose)
-  if (!is.null(hits) && length(.Object@sAttributes) > 0){
-    s_attribute <- names(.Object@sAttributes)[length(.Object@sAttributes)]
+  if (!is.null(hits) && length(.Object@s_attributes) > 0){
+    s_attribute <- names(.Object@s_attributes)[length(.Object@s_attributes)]
     strucHits <- CQI$cpos2struc(.Object@corpus, s_attribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
     if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2)

@@ -78,7 +78,7 @@ in one S4 object.
 
 \item{\code{objects}}{Object of class \code{"list"}}
 
-\item{\code{pAttribute}}{Object of class \code{"character"}}
+\item{\code{p_attribute}}{Object of class \code{"character"}}
 
 \item{\code{encoding}}{encoding of objects}
 }}
@@ -89,7 +89,7 @@ parties <- parties[-which(parties == "NA")]
 party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
 length(party_bundle)
 names(party_bundle)
-party_bundle <- enrich(party_bundle, pAttribute = "word")
+party_bundle <- enrich(party_bundle, p_attribute = "word")
 summary(party_bundle)
 parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 summary(parties_big)

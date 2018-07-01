@@ -13,7 +13,7 @@
 cpos(.Object, ...)
 
 \S4method{cpos}{character}(.Object, query,
-  p_attribute = getOption("polmineR.pAttribute"), cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
   encoding = NULL, verbose = TRUE, ...)
 
 \S4method{cpos}{partition}(.Object, query, cqp = is.cqp, p_attribute = NULL,

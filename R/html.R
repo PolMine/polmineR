@@ -154,7 +154,7 @@ setMethod(
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
-    if (is.null(meta)) meta <- names(object@sAttributes)
+    if (is.null(meta)) meta <- names(object@s_attributes)
     if (all(meta %in% s_attributes(object)) != TRUE) warning("not all s-attributes provided as meta are available")
     
     .message("generating markdown", verbose = verbose)

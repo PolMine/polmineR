@@ -19,7 +19,7 @@
   
   options(
     "polmineR.corpus" = "REUTERS",
-    "polmineR.pAttribute" = "word",
+    "polmineR.p_attribute" = "word",
     "polmineR.left" = 5,
     "polmineR.right" = 5,
     "polmineR.lineview" = FALSE,

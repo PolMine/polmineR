@@ -54,8 +54,8 @@ setOldClass("Corpus")
 #' @field encoding encoding of the corpus (typically 'UTF-8' or 'latin1'), assigned
 #' automatically upon initialization of the corpus
 #' @field cpos a two-column \code{matrix} with regions of a corpus underlying the
-#' s-attributes of the \code{data.table} in field \code{sAttributes}
-#' @field sAttributes a \code{data.table} with the values of a set of sAttributes
+#' s-attributes of the \code{data.table} in field \code{s_attributes}
+#' @field s_attributes a \code{data.table} with the values of a set of s-attributes
 #' @field stat a \code{data.table} with counts
 #' 
 #' @section Arguments:
@@ -63,16 +63,16 @@ setOldClass("Corpus")
 #'   \item{corpus}{a corpus}
 #'   \item{registryDir}{the directory where the registry file resides}
 #'   \item{dataDir}{the data directory of the corpus}
-#'   \item{pAttribute}{p-attribute, to perform count}
-#'   \item{sAttributes}{s-attributes}
+#'   \item{p_attribute}{p-attribute, to perform count}
+#'   \item{s_attributes}{s-attributes}
 #'   \item{decode}{logical, whether to turn token ids into strings upon counting}
 #'   \item{as.html}{logical}
 #' }
 #' 
 #' @section Methods:
 #' \describe{
-#'   \item{\code{initialize(corpus, pAttribute = NULL, sAttributes = NULL)}}{Initialize a new object of class \code{Corpus}.}
-#'   \item{\code{count(pAttribute = getOption("polmineR.pAttribute"), decode = TRUE)}}{Perform counts.}
+#'   \item{\code{initialize(corpus, p_attribute = NULL, s_attributes = NULL)}}{Initialize a new object of class \code{Corpus}.}
+#'   \item{\code{count(p_attribute = getOption("polmineR.p_attribute"), decode = TRUE)}}{Perform counts.}
 #'   \item{\code{as.partition()}}{turn \code{Corpus} into a partition}
 #'   \item{\code{getInfo(as.html = FALSE)}}{}
 #'   \item{\code{showInfo()}}{}
@@ -87,11 +87,11 @@ setOldClass("Corpus")
 #' if (interactive()) REUTERS$showInfo()
 #' 
 #' # use Corpus class to manage counts
-#' REUTERS <- Corpus$new("REUTERS", pAttribute = "word")
+#' REUTERS <- Corpus$new("REUTERS", p_attribute = "word")
 #' REUTERS$stat
 #' 
 #' # use Corpus class for creating partitions
-#' REUTERS <- Corpus$new("REUTERS", sAttributes = c("id", "places"))
+#' REUTERS <- Corpus$new("REUTERS", s_attributes = c("id", "places"))
 #' usa <- partition(REUTERS, places = "usa")
 #' sa <- partition(REUTERS, places = "saudi-arabia", regex = TRUE)
 #' 
@@ -107,12 +107,12 @@ Corpus <- R6Class(
     dataDir = NULL,
     encoding = NULL,
     cpos = NULL,
-    pAttribute = NULL,
-    sAttributes = NULL,
+    p_attribute = NULL,
+    s_attributes = NULL,
     size = NULL,
     stat = data.table(),
     
-    initialize = function(corpus, pAttribute = NULL, sAttributes = NULL){
+    initialize = function(corpus, p_attribute = NULL, s_attributes = NULL){
       
       stopifnot(is.character(corpus), length(corpus) == 1)
       if (!corpus %in% polmineR::corpus()[["corpus"]]) warning("corpus may not be available")
@@ -123,24 +123,24 @@ Corpus <- R6Class(
       self$encoding <- registry_get_encoding(corpus)
       self$size <- size(corpus)
       
-      if (!is.null(pAttribute)){
-        stopifnot(pAttribute %in% p_attributes(corpus))
-        self$count(pAttribute)
+      if (!is.null(p_attribute)){
+        stopifnot(p_attribute %in% p_attributes(corpus))
+        self$count(p_attribute)
       }
       
-      if (!is.null(sAttributes)){
-        dt <- decode(corpus, sAttribute = sAttributes)
+      if (!is.null(s_attributes)){
+        dt <- decode(corpus, s_attribute = s_attributes)
         self$cpos <- as.matrix(dt[, 1:2])
-        self$sAttributes <- dt[, 3:ncol(dt)]
-        self$sAttributes[["struc"]] <- 0:(nrow(self$sAttributes) - 1)
-        setcolorder(self$sAttributes, neworder = c(ncol(self$sAttributes), 1:(ncol(self$sAttributes) - 1)))
+        self$s_attributes <- dt[, 3:ncol(dt)]
+        self$s_attributes[["struc"]] <- 0:(nrow(self$s_attributes) - 1)
+        setcolorder(self$s_attributes, neworder = c(ncol(self$s_attributes), 1:(ncol(self$s_attributes) - 1)))
       }
       
       invisible(self)
     },
     
-    getRegions = function(sAttribute){
-      rngFile <- file.path(self$dataDir, paste(sAttribute, "avx", sep = "."))
+    getRegions = function(s_attribute){
+      rngFile <- file.path(self$dataDir, paste(s_attribute, "avx", sep = "."))
       rngFileSize <- file.info(rngFile)$size
       rngFileCon <- file(description = rngFile, open = "rb")
       rng <- readBin(con = rngFileCon, what = integer(), size = 4L, n = rngFileSize, endian = "big")
@@ -152,9 +152,9 @@ Corpus <- R6Class(
       y
     },
     
-    getStructuralAttributes = function(sAttribute){
-      avsFile <- file.path(self$dataDir, paste(sAttribute, "avs", sep = "."))
-      avxFile <- file.path(self$dataDir, paste(sAttribute, "avx", sep = "."))
+    getStructuralAttributes = function(s_attribute){
+      avsFile <- file.path(self$dataDir, paste(s_attribute, "avs", sep = "."))
+      avxFile <- file.path(self$dataDir, paste(s_attribute, "avx", sep = "."))
       avs <- readBin(con = avsFile, what = character(), n = file.info(avsFile)$size) # n needs to be estimated
       avx <- readBin(con = avxFile, what = integer(), size = 4L, n = file.info(avxFile)$size, endian = "big")
       offset <- avx[seq.int(from = 2, to = length(avx), by = 2)]
@@ -163,9 +163,9 @@ Corpus <- R6Class(
       avs[rank]
     },
     
-    count2 = function(pAttribute){
+    count2 = function(p_attribute){
       
-      cntFile <- file.path(self$dataDir, paste(pAttribute, "corpus.cnt", sep = "."))
+      cntFile <- file.path(self$dataDir, paste(p_attribute, "corpus.cnt", sep = "."))
       cntFileSize <- file.info(cntFile)$size
       cntFileCon <- file(description = cntFile, open = "rb")
       dt <- data.table(
@@ -173,10 +173,10 @@ Corpus <- R6Class(
       )
       close(cntFileCon)
       
-      lexiconFile <- file.path(self$dataDir, paste(pAttribute, "lexicon", sep = "."))
+      lexiconFile <- file.path(self$dataDir, paste(p_attribute, "lexicon", sep = "."))
       lexiconFileSize <- file.info(lexiconFile)$size
       lexiconFileCon <- file(description = lexiconFile, open = "rb")
-      dt[[pAttribute]] <- readBin(con = cntFileCon, what = character(), n = cntFileSize)
+      dt[[p_attribute]] <- readBin(con = cntFileCon, what = character(), n = cntFileSize)
       close(lexiconFileCon)
       
       dt
@@ -189,19 +189,19 @@ Corpus <- R6Class(
       # close(idxFileCon)
     },
     
-    # summary = function(sAttributes = c(period = "text_lp", date = "text_date", dummy = "text_id")){
+    # summary = function(s_attributes = c(period = "text_lp", date = "text_date", dummy = "text_id")){
     #   # generate bundle, each of which will be evaluated in consecutive steps
     #   lpCluster <- partitionBundle(
     #     self$corpus,
-    #     def = setNames(list(".*"), sAttributes["dummy"]),
-    #     var = setNames(list(NULL), sAttributes["period"]),
+    #     def = setNames(list(".*"), s_attributes["dummy"]),
+    #     var = setNames(list(NULL), s_attributes["period"]),
     #     regex = TRUE, mc = FALSE
     #   )
     #   # extract data
     #   corpusData <- lapply(
     #     lpCluster@objects,
     #     function(x) {
-    #       dates <- as.Date(sAttributes(x, sAttributes["date"]))
+    #       dates <- as.Date(s_attributes(x, s_attributes["date"]))
     #       c(
     #         first = as.character(min(dates, na.rm = TRUE)),
     #         last = as.character(max(dates, na.rm = TRUE)),
@@ -225,9 +225,9 @@ Corpus <- R6Class(
     #   tab
     # },
     
-    count = function(pAttribute = getOption("polmineR.pAttribute"), decode = TRUE){
-      self$pAttribute <- pAttribute
-      self$stat <- count(self$corpus, pAttribute = pAttribute, decode = decode)
+    count = function(p_attribute = getOption("polmineR.p_attribute"), decode = TRUE){
+      self$p_attribute <- p_attribute
+      self$stat <- count(self$corpus, p_attribute = p_attribute, decode = decode)
     },
     
     # copy = function(registryDir, dataDir = NULL){
@@ -247,7 +247,7 @@ Corpus <- R6Class(
         cpos = matrix(c(0, (size(self$corpus) - 1)), nrow = 1),
         stat = self$stat,
         size = self$size,
-        pAttribute = if (is.null(self$pAttribute)) character() else self$pAttribute
+        p_attribute = if (is.null(self$p_attribute)) character() else self$p_attribute
       )
     },
     

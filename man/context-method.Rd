@@ -16,12 +16,12 @@
 \usage{
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
@@ -32,7 +32,7 @@
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
 
 \S4method{cooccurrences}{Corpus}(.Object, query,
-  p_attribute = getOption("polmineR.pAttribute"), ...)
+  p_attribute = getOption("polmineR.p_attribute"), ...)
 }
 \arguments{
 \item{.Object}{a partition or a partitionBundle object}

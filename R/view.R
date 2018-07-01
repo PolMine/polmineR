@@ -54,7 +54,7 @@ setMethod("view", "features", function(.Object){
   .Object <- round(.Object, 2)
   whatToView <- c(
     paste("rank", .Object@method, sep="_"),
-    .Object@pAttribute,
+    .Object@p_attribute,
     "count_coi", "count_ref", "exp_coi",
     .Object@method
   )

@@ -139,14 +139,14 @@ setMethod("as.bundle", "textstat", function(object){
 #' @exportMethod as.data.table
 #' @rdname bundle
 setMethod("as.data.table", "bundle", function(x, col){
-  pAttr <- unique(unlist(lapply(x@objects, function(i) i@pAttribute)))
-  if (length(pAttr) > 1) stop("no unambigious pAttribute!")
+  pAttr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
+  if (length(pAttr) > 1) stop("no unambigious p-attribute!")
   dts <- lapply(
     x@objects,
     function(object){
       data.table(
         name = object@name,
-        token = object@stat[[object@pAttribute]],
+        token = object@stat[[object@p_attribute]],
         value = object@stat[[col]]
       )
     }

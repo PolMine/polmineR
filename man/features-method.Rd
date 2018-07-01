@@ -34,7 +34,7 @@ ref}
 
 \item{verbose}{logical, defaults to TRUE}
 
-\item{by}{the columns used for merging, if NULL (default), the pAttribute of
+\item{by}{the columns used for merging, if NULL (default), the p-attribute of
 x will be used}
 
 \item{mc}{logical, whether to use multicore}
@@ -54,9 +54,9 @@ use("polmineR")
 kauder <- partition(
   "GERMAPARLMINI",
   speaker = "Volker Kauder", interjection = "speech",
-  pAttribute="word"
+  p_attribute = "word"
   )
-all <- partition("GERMAPARLMINI", interjection = "speech", pAttribute = "word")
+all <- partition("GERMAPARLMINI", interjection = "speech", p_attribute = "word")
 
 terms_kauder <- features(x = kauder, y = all, included = TRUE)
 top100 <- subset(terms_kauder, rank_chisquare <= 100)
@@ -70,7 +70,7 @@ top100 <- subset(terms_kauder, rank_chisquare <= 100)
 head(top100)
 
 speakers <- partitionBundle("GERMAPARLMINI", s_attribute = "speaker")
-speakers <- enrich(speakers, pAttribute = "word")
+speakers <- enrich(speakers, p_attribute = "word")
 speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
 }

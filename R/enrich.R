@@ -32,7 +32,7 @@ setMethod("enrich", "partition", function(.Object, size = FALSE, p_attribute = N
     stopifnot(is.character(p_attribute) == TRUE, length(p_attribute) <= 2, all(p_attribute %in% p_attributes(.Object)))
     .message('getting counts for p-attribute(s):', paste(p_attribute, collapse = ", "), verbose = verbose)  
     .Object@stat <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)
-    .Object@pAttribute <- p_attribute
+    .Object@p_attribute <- p_attribute
   }
   .Object
 })

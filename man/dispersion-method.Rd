@@ -12,11 +12,11 @@
 dispersion(.Object, ...)
 
 \S4method{dispersion}{partition}(.Object, query, s_attribute, cqp = FALSE,
-  p_attribute = getOption("polmineR.pAttribute"), freq = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
   mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
 \S4method{dispersion}{character}(.Object, query, s_attribute, cqp = is.cqp,
-  p_attribute = getOption("polmineR.pAttribute"), freq = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
   mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
 \S4method{dispersion}{hits}(.Object, s_attribute, freq = FALSE,

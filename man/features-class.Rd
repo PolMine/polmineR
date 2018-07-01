@@ -33,7 +33,7 @@ object resulting from features-method
 \describe{
 \item{\code{corpus}}{Object of class \code{"character"}}
 
-\item{\code{pAttribute}}{Object of class \code{"character"}}
+\item{\code{p_attribute}}{Object of class \code{"character"}}
 
 \item{\code{encoding}}{Object of class \code{"character"}}
 

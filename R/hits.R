@@ -76,7 +76,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
   if (freq) size <- TRUE
   
   DT <- hits(.Object@corpus, query = query, cqp = cqp, s_attribute = NULL, p_attribute = p_attribute, mc = mc, progress = progress)@stat
-  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@sAttributeStrucs, DT[["cpos_left"]]), with = TRUE]
+  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@s_attribute_strucs, DT[["cpos_left"]]), with = TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   
   if (!is.null(s_attribute)){
@@ -103,7 +103,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
 
 #' @rdname hits
 setMethod("hits", "partitionBundle", function(
-  .Object, query, cqp = FALSE, p_attribute = getOption("polmineR.pAttribute"), size = TRUE, freq = FALSE,
+  .Object, query, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
   
@@ -112,8 +112,8 @@ setMethod("hits", "partitionBundle", function(
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
   if (length(corpus) > 1) stop("partitonBundle not derived from one corpus")
   corpusEncoding <- .Object@objects[[1]]@encoding
-  sAttributeStrucs <- unique(unlist(lapply(.Object@objects, function(x) x@sAttributeStrucs)))
-  stopifnot(length(sAttributeStrucs) == 1)
+  s_attribute_strucs <- unique(unlist(lapply(.Object@objects, function(x) x@s_attribute_strucs)))
+  stopifnot(length(s_attribute_strucs) == 1)
   # combine strucs and partition names into an overall data.table
   .message("preparing struc table", verbose = verbose)
   strucDT <- data.table(
@@ -142,7 +142,7 @@ setMethod("hits", "partitionBundle", function(
   )
   countDT <- rbindlist(countDTlist)
   .message("matching data.tables", verbose = verbose)
-  countDT[, "struc" := CQI$cpos2struc(corpus, sAttributeStrucs, countDT[["V1"]]), with = TRUE]
+  countDT[, "struc" := CQI$cpos2struc(corpus, s_attribute_strucs, countDT[["V1"]]), with = TRUE]
   countDT[, "V1" := NULL, with = TRUE][, "V2" := NULL, with = TRUE]
   setkeyv(countDT, cols = "struc")
   setkeyv(strucDT, cols = "struc")

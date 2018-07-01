@@ -86,9 +86,9 @@ in the "cpos"-slot of a \code{context}-object.
 
 \item{\code{size}}{Object of class \code{"numeric"} number of tokens in the right and left context}
 
-\item{\code{sAttribute}}{Object of class \code{"character"} s-attribute}
+\item{\code{s_attribute}}{Object of class \code{"character"} s-attribute}
 
-\item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
+\item{\code{p_attribute}}{Object of class \code{"character"} p-attribute of the query}
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus used}
 

@@ -6,7 +6,7 @@
 #' 
 #' @slot corpus the CWB corpus the objects in the bundle are based on
 #' @slot objects Object of class \code{"list"}
-#' @slot pAttribute Object of class \code{"character"}
+#' @slot p_attribute Object of class \code{"character"}
 #' @slot encoding encoding of objects
 #' 
 #' @param x a bundle object
@@ -28,7 +28,7 @@
 #' party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
 #' length(party_bundle)
 #' names(party_bundle)
-#' party_bundle <- enrich(party_bundle, pAttribute = "word")
+#' party_bundle <- enrich(party_bundle, p_attribute = "word")
 #' summary(party_bundle)
 #' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 #' summary(parties_big)
@@ -36,7 +36,7 @@ setClass(
   "bundle",
   representation(
     objects = "list",
-    pAttribute = "character",
+    p_attribute = "character",
     corpus = "character",
     encoding = "character"
   )
@@ -55,7 +55,7 @@ setClass(
 #' and with double square brackets ("[[") to get specific columns from the 
 #' \code{data.table} in the slot \code{stat}.
 #' 
-#' @slot pAttribute Object of class \code{"character"} p-attribute of the query
+#' @slot p_attribute Object of class \code{"character"} p-attribute of the query
 #' @slot corpus Object of class \code{"character"}
 #' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot name name of the object
@@ -76,7 +76,7 @@ setClass(
 #' @exportClass textstat
 #' @examples
 #' use("polmineR")
-#' P <- partition("GERMAPARLMINI", date = ".*", pAttribute = "word", regex = TRUE)
+#' P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 #' y <- cooccurrences(P, query = "Arbeit")
 #' y[1:25]
 #' y[,c("word", "ll")]
@@ -87,7 +87,7 @@ setClass(
 setClass("textstat",
          representation(
            corpus = "character",
-           pAttribute = "character",
+           p_attribute = "character",
            encoding = "character",
            stat = "data.table",
            name = "character"
@@ -99,7 +99,7 @@ setClass("textstat",
 #' object resulting from features-method
 #' 
 #' @slot corpus Object of class \code{"character"} 
-#' @slot pAttribute Object of class \code{"character"} 
+#' @slot p_attribute Object of class \code{"character"} 
 #' @slot encoding Object of class \code{"character"}  
 #' @slot corpus Object of class \code{"character"}  
 #' @slot stat Object of class \code{"data.frame"} 
@@ -119,7 +119,7 @@ setClass("textstat",
 setClass("features",
          representation(
            corpus = "character",
-           pAttribute = "character",
+           p_attribute = "character",
            encoding = "character",
            stat = "data.table",
            sizeCoi = "numeric",
@@ -164,7 +164,7 @@ setClass("count", representation = list(size = "integer"), contains = "textstat"
 #' @slot name Object of class \code{"character"} a name that may be useful 
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on 
 #' @slot encoding Object of class \code{"character"} encoding of the corpus 
-#' @slot sAttributes Object of class \code{"list"} s-attributes specifying the partition 
+#' @slot s_attributes Object of class \code{"list"} s-attributes specifying the partition 
 #' @slot explanation Object of class \code{"character"} an explanation of the partition 
 #' @slot cpos Object of class \code{"matrix"} corpus positions
 #' @slot annotations Object of class \code{"list"}
@@ -172,10 +172,10 @@ setClass("count", representation = list(size = "integer"), contains = "textstat"
 #' @slot size Object of class \code{"numeric"} total size of the partition 
 #' @slot metadata Object of class \code{"data.frame"} metadata information 
 #' @slot strucs Object of class \code{"numeric"} the strucs defining the partition 
-#' @slot pAttribute Object of class \code{"character"} indicating the pAttribute of the
+#' @slot p_attribute Object of class \code{"character"} indicating the p_attribute of the
 #' count in slot tf
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested 
-#' @slot sAttributeStrucs Object of class \code{"character"} the base node 
+#' @slot s_attribute_strucs Object of class \code{"character"} the base node 
 #' @slot call Object of class \code{"character"} the call that generated the partition 
 #' @param .Object a partition object
 #' @param p_attribute a p-attribute (for enriching)
@@ -200,7 +200,7 @@ setClass("count", representation = list(size = "integer"), contains = "textstat"
 setClass(
   "partition",
   representation(
-    sAttributes = "list",
+    s_attributes = "list",
     explanation = "character",
     cpos = "matrix",
     pos = "list",
@@ -209,7 +209,7 @@ setClass(
     metadata = "data.frame",
     strucs = "numeric",
     xml = "character",
-    sAttributeStrucs = "character",
+    s_attribute_strucs = "character",
     call = "character"
   ),
   contains = c("count", "textstat")
@@ -235,8 +235,8 @@ setClass(
 #' @slot left Object of class \code{"numeric"} number of tokens to the left
 #' @slot right Object of class \code{"numeric"} number of tokens to the right
 #' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
-#' @slot sAttribute Object of class \code{"character"} s-attribute
-#' @slot pAttribute Object of class \code{"character"} p-attribute of the query
+#' @slot s_attribute Object of class \code{"character"} s-attribute
+#' @slot p_attribute Object of class \code{"character"} p-attribute of the query
 #' @slot corpus Object of class \code{"character"} the CWB corpus used
 #' @slot stat Object of class \code{"data.table"} statistics of the analysis
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
@@ -268,7 +268,7 @@ setClass("context",
            left = "numeric",
            right = "numeric",
            size = "numeric",
-           sAttribute = "character",
+           s_attribute = "character",
            cpos = "data.table",
            call = "character"
          ),
@@ -290,7 +290,7 @@ setClass("context",
 #' @slot partitionSize  Object of class \code{"numeric"} the size of the partition
 #' @slot left  Object of class \code{"numeric"} number of tokens to the right
 #' @slot right  Object of class \code{"numeric"} number of tokens to the left
-#' @slot pAttribute  Object of class \code{"character"} p-attribute of the query
+#' @slot p_attribute  Object of class \code{"character"} p-attribute of the query
 #' @slot corpus  Object of class \code{"character"} the CWB corpus used
 #' @slot stat  Object of class \code{"data.frame"} statistics of the analysis
 #' @slot encoding  Object of class \code{"character"} encoding of the corpus
@@ -320,7 +320,7 @@ setClass(
 #' is a character vector with s-attributes, the respective s-attributes will be
 #' added as columns to the table with concordance lines.
 #' 
-#' @slot metadata Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed
+#' @slot metadata Object of class \code{"character"} keeping the s-attributes of the metadata that are to be displayed
 #' @slot left words to the left
 #' @slot right words to the right
 #' @slot corpus the CWB corpus
@@ -332,7 +332,7 @@ setClass(
 #' 
 #' @param x a kwic-class object
 #' @param object an object of class \code{kwic}
-#' @param meta sAttributes (character vector) with metainformation
+#' @param meta s-attributes (character vector) with metainformation
 #' @param table logical, whether to turn cpos data.table into data.frame for output
 #' @param size integer, the subset size for sampling
 #' @section Methods:
@@ -461,7 +461,7 @@ setClass(
 #' @slot stat a \code{"data.table"}
 #' @slot corpus a \code{"character"} vector
 #' @slot query Object of class \code{"character"}
-#' @slot pAttribute p-attribute that has been queried
+#' @slot p_attribute p-attribute that has been queried
 #' @slot encoding encoding of the corpus
 #' @slot name name of the object
 #' @param query a (optionally named, see datails) character vector with one or more queries
@@ -509,7 +509,7 @@ setClass("contextBundle",
          representation(
            objects = "list",
            query = "character",
-           pAttribute = "character"
+           p_attribute = "character"
          ),
          contains = "bundle"
 )
@@ -528,7 +528,7 @@ setClass("pressPartition", contains = "partition")
 #' 
 #' @slot objects Object of class \code{"list"} the partitions making up the bundle
 #' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on
-#' @slot sAttributesFixed Object of class \code{"list"} fixed sAttributes
+#' @slot s_attributes_fixed Object of class \code{"list"} fixed s-attributes
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @slot explanation Object of class \code{"character"} an explanation of the partition
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested
@@ -555,7 +555,7 @@ setClass("pressPartition", contains = "partition")
 #' @author Andreas Blaette
 setClass("partitionBundle",
          representation(
-           sAttributesFixed = "list",
+           s_attributes_fixed = "list",
            explanation = "character",
            xml = "character",
            call = "character"

@@ -34,7 +34,7 @@ setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...){
   if (!is.null(regex)) stopifnot(is.character(regex))
   
   # if count has been performed for partition use stat table
-  if (identical(p_attribute, x@pAttribute)){
+  if (identical(p_attribute, x@p_attribute)){
     y <- x@stat[[p_attribute]]
   } else {
     ids <- region_matrix_to_ids(corpus = x@corpus, p_attribute = p_attribute, matrix = x@cpos)

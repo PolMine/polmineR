@@ -101,7 +101,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
     "ngrams",
     n = as.integer(n), corpus = .Object@corpus, encoding = .Object@encoding,
     size = as.integer(size(.Object)), stat = TF, name = .Object@name,
-    pAttribute = if (is.null(char)) p_attribute else "ngram"
+    p_attribute = if (is.null(char)) p_attribute else "ngram"
     )
 })
 
@@ -122,7 +122,7 @@ setMethod("ngrams", "partitionBundle", function(.Object, n = 2, char = NULL, p_a
 #       ngrams(.Object@objects[[i]], char=char, ...)
 #     }
 #   )
-  newBundle@pAttribute <- unique(unlist(lapply(newBundle@objects, function(x) x@pAttribute)))
+  newBundle@p_attribute <- unique(unlist(lapply(newBundle@objects, function(x) x@p_attribute)))
   names(newBundle@objects) <- names(.Object)
   newBundle
 })

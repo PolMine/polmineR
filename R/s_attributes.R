@@ -82,11 +82,11 @@ setMethod(
       return( CQI$attributes(.Object@corpus, "s") )
     } else {
       if (length(s_attribute) == 1){
-        if (.Object@xml == "flat" || .Object@sAttributeStrucs == s_attribute){
-          len1 <- CQI$attribute_size(.Object@corpus, .Object@sAttributeStrucs)
+        if (.Object@xml == "flat" || .Object@s_attribute_strucs == s_attribute){
+          len1 <- CQI$attribute_size(.Object@corpus, .Object@s_attribute_strucs)
           len2 <- CQI$attribute_size(.Object@corpus, s_attribute)
           if (len1 != len2){
-            stop("XML is stated to be flat, but sAttributeStrucs hat length ", len1, " and s_attribute length ", len2)
+            stop("XML is stated to be flat, but s_attribute_strucs hat length ", len1, " and s_attribute length ", len2)
           }
           retval <- CQI$struc2str(.Object@corpus, s_attribute, .Object@strucs)
           if (unique) retval <- unique(retval)

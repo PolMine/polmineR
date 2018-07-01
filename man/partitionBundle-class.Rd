@@ -75,7 +75,7 @@ Class and methods to manage bundles of partitions.
 
 \item{\code{corpus}}{Object of class \code{"character"} the CWB corpus the partition is based on}
 
-\item{\code{sAttributesFixed}}{Object of class \code{"list"} fixed sAttributes}
+\item{\code{s_attributes_fixed}}{Object of class \code{"list"} fixed s-attributes}
 
 \item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
 

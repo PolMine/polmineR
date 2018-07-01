@@ -95,7 +95,7 @@ and with double square brackets ("[[") to get specific columns from the
 \section{Slots}{
 
 \describe{
-\item{\code{pAttribute}}{Object of class \code{"character"} p-attribute of the query}
+\item{\code{p_attribute}}{Object of class \code{"character"} p-attribute of the query}
 
 \item{\code{corpus}}{Object of class \code{"character"}}
 
@@ -108,7 +108,7 @@ and with double square brackets ("[[") to get specific columns from the
 
 \examples{
 use("polmineR")
-P <- partition("GERMAPARLMINI", date = ".*", pAttribute = "word", regex = TRUE)
+P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 y <- cooccurrences(P, query = "Arbeit")
 y[1:25]
 y[,c("word", "ll")]

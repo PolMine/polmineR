@@ -73,7 +73,7 @@ setGeneric("count", function(.Object, ...){standardGeneric("count")})
 #' @rdname count-method
 setMethod("count", "partition", function(
   .Object, query = NULL, cqp = is.cqp, breakdown = FALSE,
-  decode = TRUE, p_attribute = getOption("polmineR.pAttribute"),
+  decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...
 ){
@@ -216,7 +216,7 @@ setMethod("count", "partitionBundle", function(.Object, query = NULL, cqp = FALS
         new(
           "count",
           corpus = corpus, encoding = .Object@objects[[1]]@encoding,
-          pAttribute = p_attribute,
+          p_attribute = p_attribute,
           stat = CNT_list[[i]],
           name = names(CNT_list)[[i]]
         )
@@ -228,7 +228,7 @@ setMethod("count", "partitionBundle", function(.Object, query = NULL, cqp = FALS
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_attribute = getOption("polmineR.pAttribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -305,7 +305,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         return( data.table(query = query, count = count, freq = count / total) )
       } else {
         C <- Corpus$new(.Object)
-        C$pAttribute <- p_attribute
+        C$p_attribute <- p_attribute
         retval <- count(.Object = C$as.partition(), query = query, cqp = cqp, p_attribute = p_attribute, breakdown = TRUE)
         return( retval )
       }

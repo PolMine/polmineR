@@ -89,7 +89,7 @@ setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
 #' @exportMethod p_attributes
 #' @param object a textstat object
 #' @rdname textstat-class
-setMethod("p_attributes", "textstat", function(.Object) .Object@pAttribute)
+setMethod("p_attributes", "textstat", function(.Object) .Object@p_attribute)
 
 #' @exportMethod [[
 #' @rdname textstat-class

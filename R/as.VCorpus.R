@@ -17,9 +17,9 @@ setMethod("as.VCorpus", "partitionBundle", function(x){
   if (length(unique(sAttrLengths)) == length(sAttrLengths)){
     sAttrToGet <- s_attributes(x@objects[[1]]@corpus)
   } else {
-    message("Using only the s-attributes that have the same length as the s-attribute in the slot sAttributeStrucs ",
+    message("Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs ",
             "of the first partition")
-    sAttrToGet <- names(sAttrLengths[which(sAttrLengths == sAttrLengths[x@objects[[1]]@sAttributeStrucs])])
+    sAttrToGet <- names(sAttrLengths[which(sAttrLengths == sAttrLengths[x@objects[[1]]@s_attribute_strucs])])
   }
   
   content <- blapply(

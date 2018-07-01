@@ -119,11 +119,11 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   DT <- copy(.Object@cpos) # do not accidentily store things
   setorderv(DT, cols = c("hit_no", "cpos"))
   decoded_pAttr <- CQI$id2str(
-    .Object@corpus, .Object@pAttribute[1],
-    DT[[paste(.Object@pAttribute[1], "id", sep = "_")]]
+    .Object@corpus, .Object@p_attribute[1],
+    DT[[paste(.Object@p_attribute[1], "id", sep = "_")]]
   )
   decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, from = .Object@encoding)
-  DT[, .Object@pAttribute[1] := decoded_pAttr2, with = TRUE]
+  DT[, .Object@p_attribute[1] := decoded_pAttr2, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(meta)) meta <- character()
@@ -229,7 +229,7 @@ setMethod("kwic", "character", function(
     count = nrow(hits), stat = data.table(),
     corpus = .Object, left = left, right = right, 
     cpos = DT,
-    pAttribute = p_attribute,
+    p_attribute = p_attribute,
     encoding = registry_get_encoding(.Object)
   )
   
@@ -237,7 +237,7 @@ setMethod("kwic", "character", function(
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   
-  if (!is.null(s_attribute)) ctxt@sAttribute <- s_attribute
+  if (!is.null(s_attribute)) ctxt@s_attribute <- s_attribute
   kwic(.Object = ctxt, meta = meta, cpos = cpos)
 })
 

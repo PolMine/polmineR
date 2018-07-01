@@ -80,7 +80,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 setMethod("context", "partition", function(
   .Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
@@ -106,14 +106,14 @@ setMethod("context", "partition", function(
   # generate the context object (ctxt)
   ctxt <- new(
     "context",
-    query = query, pAttribute = p_attribute, corpus = .Object@corpus,
+    query = query, p_attribute = p_attribute, corpus = .Object@corpus,
     stat = data.table(), cpos = data.table(),
     left = if (is.character(left)) 0 else left,
     right = if (is.character(right)) 0 else right,
     encoding = .Object@encoding,
     partition = .Object,
     partitionSize = as.numeric(.Object@size),
-    sAttribute = if (!is.null(s_attribute)) s_attribute else character()
+    s_attribute = if (!is.null(s_attribute)) s_attribute else character()
   )
   # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
   
@@ -150,7 +150,7 @@ setMethod("context", "partition", function(
   setnames(ctxt@cpos, old = c("V2", "V3"), new = c("cpos", "position"))
   
   # add decoded tokens (ids at this stage)
-  ctxt <- enrich(ctxt, pAttribute = p_attribute, decode = FALSE, verbose = verbose)
+  ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
   
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
@@ -238,7 +238,7 @@ setMethod("context", "partition", function(
 #' @rdname context-method
 setMethod("context", "character", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.pAttribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -266,7 +266,7 @@ setMethod("context", "partitionBundle", function(.Object, query, p_attribute, ve
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  contextBundle <- new("contextBundle", query = query, pAttribute = p_attribute)
+  contextBundle <- new("contextBundle", query = query, p_attribute = p_attribute)
   if (!is.numeric(positivelist)){
     corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
     positivelist <- unlist(lapply(positivelist, function(x) CQI$regex2id(corpus, p_attribute, x)))
@@ -294,7 +294,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     partitionSize = .Object@partitionSize,
     left = .Object@left,
     right = .Object@right,
-    pAttribute = .Object@pAttribute,
+    p_attribute = .Object@p_attribute,
     corpus = .Object@corpus,
     encoding = .Object@encoding,
     method = .Object@method,
@@ -304,16 +304,16 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
   )  
   stop("due to refactoring the context method, this does not work at present")
   if (complete == TRUE){
-    s_attribute <- names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]]
+    s_attribute <- names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]]
     sAttr <- paste(
       newObject@corpus, ".",
-      names(get(newObject@partition, ".GlobalEnv")@sAttributes)[[1]],
+      names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
       sep=""
     )
     hits <- cpos(
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
-      p_attribute=newObject@pAttribute,
+      p_attribute=newObject@p_attribute,
       verbose = FALSE
     )
     newObject@size <- nrow(hits)

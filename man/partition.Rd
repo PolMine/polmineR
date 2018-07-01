@@ -19,7 +19,7 @@ partition(.Object, ...)
 \S4method{partition}{list}(.Object, ...)
 
 \S4method{partition}{environment}(.Object, slots = c("name", "corpus", "size",
-  "pAttribute"))
+  "p_attribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, p_attribute = NULL, decode = TRUE, xml = NULL,
@@ -41,7 +41,7 @@ details and examples)}
 
 \item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
 
-\item{p_attribute}{the pAttribute(s) for which term frequencies shall be retrieved}
+\item{p_attribute}{the p_attribute(s) for which term frequencies shall be retrieved}
 
 \item{regex}{logical (defaults to FALSE)}
 
@@ -62,7 +62,7 @@ An object of the S4 class 'partition'
 }
 \description{
 Create a subcorpus stored in an object of the \code{partition} class.
-Counts are performed for the p-attribute defined by the parameter \code{pAttribute}.
+Counts are performed for the p-attribute defined by the parameter \code{p_attribute}.
 }
 \details{
 The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
@@ -84,8 +84,8 @@ order of the s-attributes provided reflects the hierarchy of the XML: The top-le
 need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
 elements at the end.
 
-If pAttribute is not NULL, a count of tokens in the corpus will be performed and kept in the
-\code{stat}-slot of the partition-object. The length of the pAttribute character vector may be 1
+If p_attribute is not NULL, a count of tokens in the corpus will be performed and kept in the
+\code{stat}-slot of the partition-object. The length of the p_attribute character vector may be 1
 or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
 A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
 }

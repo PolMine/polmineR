@@ -15,7 +15,7 @@ setGeneric("dotplot", function(.Object, ...) standardGeneric("dotplot") )
 setMethod("dotplot", "textstat", function(.Object, col, n = 20L, ...){
   if (missing(col)) stop("unable to output dotplot without col being specified")
   if (length(col) > 1L) stop("col needs to be a vector of length one")
-  dotchart(x = .Object@stat[[col]][n:1L], labels = .Object@stat[[.Object@pAttribute[1]]][n:1L], ...)
+  dotchart(x = .Object@stat[[col]][n:1L], labels = .Object@stat[[.Object@p_attribute[1]]][n:1L], ...)
 })
 
 #' @rdname dotplot-method

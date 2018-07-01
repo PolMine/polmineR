@@ -41,7 +41,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @exportMethod dispersion
 #' @rdname dispersion-method
 #' @name dispersion
-setMethod("dispersion", "partition", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+setMethod("dispersion", "partition", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
@@ -57,7 +57,7 @@ setMethod("dispersion", "partition", function(.Object, query, s_attribute, cqp =
 })
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.pAttribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
+setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
   
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]

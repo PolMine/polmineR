@@ -136,14 +136,14 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
       # fill regions matrix to include interjections
       if (requireNamespace("RcppCWB", quietly = TRUE)){
         .Object@cpos <- RcppCWB::get_region_matrix(
-          corpus = .Object@corpus, s_attribute = .Object@sAttributeStrucs,
+          corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs,
           registry = Sys.getenv("CORPUS_REGISTRY"), strucs = .Object@strucs
         )
         
       } else {
         .Object@cpos <- do.call(rbind, lapply(
           .Object@strucs,
-          function(i) CQI$struc2cpos(.Object@corpus, .Object@sAttributeStrucs, i)
+          function(i) CQI$struc2cpos(.Object@corpus, .Object@s_attribute_strucs, i)
         ))
       }
     }

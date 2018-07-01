@@ -34,7 +34,7 @@
 
 \item{.Object}{a kwic object}
 
-\item{meta}{sAttributes (character vector) with metainformation}
+\item{meta}{s-attributes (character vector) with metainformation}
 
 \item{table}{logical, whether to turn cpos data.table into data.frame for output}
 }
@@ -51,7 +51,7 @@ added as columns to the table with concordance lines.
 \section{Slots}{
 
 \describe{
-\item{\code{metadata}}{Object of class \code{"character"} keeping the sAttributes of the metadata that are to be displayed}
+\item{\code{metadata}}{Object of class \code{"character"} keeping the s-attributes of the metadata that are to be displayed}
 
 \item{\code{left}}{words to the left}
 
