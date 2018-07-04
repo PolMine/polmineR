@@ -1,7 +1,6 @@
-
 #' Bundle Class
 #' 
-#' A class to bundle several objects (partition, context, comp, cooccurrences objects)
+#' A class to bundle several objects (\code{partition}, \code{context}, \code{features}, \code{cooccurrences} objects)
 #' in one S4 object.
 #' 
 #' @slot corpus the CWB corpus the objects in the bundle are based on
@@ -25,7 +24,7 @@
 #' @examples
 #' parties <- s_attributes("GERMAPARLMINI", "party")
 #' parties <- parties[-which(parties == "NA")]
-#' party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
+#' party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 #' length(party_bundle)
 #' names(party_bundle)
 #' party_bundle <- enrich(party_bundle, p_attribute = "word")
@@ -48,7 +47,7 @@ setClass(
 
 #' S4 textstat class
 #' 
-#' Superclass for features, context, and partition class.
+#' Superclass for \code{features}, \code{context}, and \code{partition} class.
 #' 
 #' Objects derived from the \code{textstat} class can be indexed with simple
 #' square brackets ("[") to get rows specified by an numeric/integer vector,
@@ -103,8 +102,8 @@ setClass("textstat",
 #' @slot encoding Object of class \code{"character"}  
 #' @slot corpus Object of class \code{"character"}  
 #' @slot stat Object of class \code{"data.frame"} 
-#' @slot sizeCoi Object of class \code{"numeric"} 
-#' @slot sizeRef Object of class \code{"numeric"} 
+#' @slot size_coi Object of class \code{"numeric"} 
+#' @slot size_ref Object of class \code{"numeric"} 
 #' @slot included Object of class \code{"logical"} whether corpus of interest is included in reference corpus
 #' @slot method Object of class \code{"character"} statisticalTest used
 #' @slot call Object of class \code{"character"} the call that generated the object
@@ -122,8 +121,8 @@ setClass("features",
            p_attribute = "character",
            encoding = "character",
            stat = "data.table",
-           sizeCoi = "numeric",
-           sizeRef = "numeric",
+           size_coi = "numeric",
+           size_ref = "numeric",
            method = "character",
            included = "logical",
            call = "character"
@@ -150,7 +149,10 @@ setClass("features",
 #' @author Andreas Blaette
 #' @aliases count-class
 #' @seealso The \code{count}-class inherits from the \code{\link{textstat-class}}
-setClass("count", representation = list(size = "integer"), contains = "textstat")
+setClass("count",
+         representation = list(size = "integer"),
+         contains = "textstat"
+         )
 
 
 
@@ -188,8 +190,8 @@ setClass("count", representation = list(size = "integer"), contains = "textstat"
 #' @param value value
 #' @param template template to use
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
-#'   [,partition-method as.partitionBundle 
-#'   as.partitionBundle,partition-method export export,partition-method split
+#'   [,partition-method as.partition_bundle 
+#'   as.partition_bundle,partition-method export export,partition-method split
 #' @rdname partition_class
 #' @name partition_class
 #' @exportClass partition
@@ -231,7 +233,7 @@ setClass(
 #' @slot query Object of class \code{"character"}, the query/node examined
 #' @slot count Object of class \code{"numeric"} number of hits
 #' @slot partition Object of class \code{"partition"}, the partition the context object is based on
-#' @slot partitionSize Object of class \code{"numeric"} the size of the partition
+#' @slot size_partition Object of class \code{"numeric"} the size of the partition
 #' @slot left Object of class \code{"numeric"} number of tokens to the left
 #' @slot right Object of class \code{"numeric"} number of tokens to the right
 #' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
@@ -264,7 +266,7 @@ setClass("context",
            query = "character",
            count = "numeric",
            partition = "partition",
-           partitionSize = "numeric",
+           size_partition = "numeric",
            left = "numeric",
            right = "numeric",
            size = "numeric",
@@ -287,7 +289,7 @@ setClass("context",
 #' @param x object to work with
 #' @slot call Object of class \code{"character"} the call that generated the object
 #' @slot partition Object of class \code{"character"} the partition the analysis is based on
-#' @slot partitionSize  Object of class \code{"numeric"} the size of the partition
+#' @slot size_partition  Object of class \code{"numeric"} the size of the partition
 #' @slot left  Object of class \code{"numeric"} number of tokens to the right
 #' @slot right  Object of class \code{"numeric"} number of tokens to the left
 #' @slot p_attribute  Object of class \code{"character"} p-attribute of the query
@@ -379,11 +381,11 @@ setClass(
 #' @rdname tempcorpus
 setClass(
   "tempcorpus",
-  slots=c(
-    cpos="matrix",
-    dir="character",
-    registry="character",
-    indexed="character"
+  slots = c(
+    cpos = "matrix",
+    dir = "character",
+    registry = "character",
+    indexed = "character"
   ))
 
 
@@ -422,18 +424,18 @@ setClass(
 
 
 #' @rdname features-class
-#' @exportClass featuresCooccurrences
-setClass("featuresCooccurrences", contains=c("features", "textstat"))
+#' @exportClass features_cooccurrences
+setClass("features_cooccurrences", contains = c("features", "textstat"))
 
 
 #' @rdname features-class
-#' @exportClass featuresNgrams
-setClass("featuresNgrams", representation(n="integer"), contains=c("features", "textstat"))
+#' @exportClass features_ngrams
+setClass("features_ngrams", representation(n = "integer"), contains = c("features", "textstat"))
 
 
 #' @slot objects an object of class \code{list}
 #' @rdname features-class
-setClass("featuresBundle", slots = c(objects = "list"), contains = "bundle")
+setClass("features_bundle", slots = c(objects = "list"), contains = "bundle")
 
 
 
@@ -472,7 +474,7 @@ setClass(
 #' @param size logical - return size of subcorpus
 #' @param freq logcial - return relative frequencies
 #' @param x a hits object
-#' @param .Object a character, partition or partitionBundle object
+#' @param .Object a character, \code{partition} or \code{partition_bundle} object
 #' @param mc logical, whether to use multicore
 #' @param progress logical, whether to show progress bar
 #' @param verbose logical
@@ -486,7 +488,7 @@ setClass(
 )
 
 
-#' S4 contextBundle class
+#' S4 context_bundle class
 #' 
 #' class to organize information of multiple context analyses
 #' 
@@ -500,12 +502,12 @@ setClass(
 #'     \item{[[}{specific cooccurrences}
 #'    }
 #'     
-#' @name contextBundle-class
-#' @aliases show,contextBundle-method summary,contextBundle-method [,contextBundle-method [,contextBundle,ANY,ANY,ANY-method [[,contextBundle-method as.TermContextBundle,contextBundle-method
+#' @name context_bundle-class
+#' @aliases show,context_bundle-method summary,context_bundle-method [,context_bundle-method [,context_bundle,ANY,ANY,ANY-method [[,context_bundle-method
 #' @docType class
 #' @exportClass kwic
-#' @rdname contextBundle-class
-setClass("contextBundle",
+#' @rdname context_bundle-class
+setClass("context_bundle",
          representation(
            objects = "list",
            query = "character",
@@ -522,7 +524,7 @@ setClass("plprPartition", contains = "partition")
 setClass("pressPartition", contains = "partition")
 
 
-#' Bundle of partitions (partitionBundle class).
+#' Bundle of partitions (partition_bundle class).
 #' 
 #' Class and methods to manage bundles of partitions. 
 #' 
@@ -532,28 +534,28 @@ setClass("pressPartition", contains = "partition")
 #' @slot encoding Object of class \code{"character"} encoding of the corpus
 #' @slot explanation Object of class \code{"character"} an explanation of the partition
 #' @slot xml Object of class \code{"character"} whether the xml is flat or nested
-#' @slot call Object of class \code{"character"} the call that generated the partitionBundle
-#' @aliases partitionBundle-class
-#'   [,partitionBundle-method [[,partitionBundle-method
-#'   as.matrix,partitionBundle-method 
-#'   merge,partitionBundle-method
-#'   +,partitionBundle-method names,partitionBundle-method 
-#'   summary,partitionBundle-method +,partitionBundle,ANY-method
-#'   [,partitionBundle,ANY,ANY,ANY-method +,partitionBundle,partition-method 
-#'   +,partitionBundle,partitionBundle-method as.partitionBundle,list-method 
-#'   barplot,partitionBundle-method
-#' @param x a partitionBundle object
-#' @param .Object a partitionBundle object
-#' @param object a partitionBundle object
+#' @slot call Object of class \code{"character"} the call that generated the \code{partition_bundle}
+#' @aliases partition_bundle-class
+#'   [,partition_bundle-method [[,partition_bundle-method
+#'   as.matrix,partition_bundle-method 
+#'   merge,partition_bundle-method
+#'   +,partition_bundle-method names,partition_bundle-method 
+#'   summary,partition_bundle-method +,partition_bundle,ANY-method
+#'   [,partition_bundle,ANY,ANY,ANY-method +,partition_bundle,partition-method 
+#'   +,partition_bundle,partition_bundle-method as.partition_bundle,list-method 
+#'   barplot,partition_bundle-method
+#' @param x a \code{partition_bundle} object
+#' @param .Object a \code{partition_bundle} object
+#' @param object a \code{partition_bundle} object
 #' @param i integer index
 #' @param s_attribute the s-attribute to use
 #' @param height height
 #' @param ... further parameters
-#' @rdname partitionBundle-class
-#' @name partitionBundle-class
-#' @exportClass partitionBundle
+#' @rdname partition_bundle-class
+#' @name partition_bundle-class
+#' @exportClass partition_bundle
 #' @author Andreas Blaette
-setClass("partitionBundle",
+setClass("partition_bundle",
          representation(
            s_attributes_fixed = "list",
            explanation = "character",
@@ -570,9 +572,9 @@ setClass("partitionBundle",
 setClass("cooccurrencesReshaped", contains = "cooccurrences")
 
 
-#' @name cooccurrencesBundle-class
-#' @aliases cooccurrencesBundle
+#' @name cooccurrences_bundle-class
+#' @aliases cooccurrences_bundle
 #' @docType class
-#' @exportClass cooccurrencesBundle
+#' @exportClass cooccurrences_bundle
 #' @rdname cooccurrences-class
-setClass("cooccurrencesBundle", contains = "bundle")
+setClass("cooccurrences_bundle", contains = "bundle")

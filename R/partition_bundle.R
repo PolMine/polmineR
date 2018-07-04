@@ -2,9 +2,9 @@
 NULL
 
 
-#' @rdname partitionBundle-class
-setMethod("show", "partitionBundle", function (object) {
-  cat('** PartitionBundle object: **\n')
+#' @rdname partition_bundle-class
+setMethod("show", "partition_bundle", function (object) {
+  cat('** partition_bundle object: **\n')
   cat(sprintf('%-25s', 'Number of partitions:'), length(object@objects), '\n')
   # same code as in show-method for partition
   sFix <- unlist(lapply(
@@ -16,8 +16,8 @@ setMethod("show", "partitionBundle", function (object) {
   cat("\n")
 })
 
-#' @rdname partitionBundle-class
-setMethod("summary", "partitionBundle", function (object) {
+#' @rdname partition_bundle-class
+setMethod("summary", "partition_bundle", function (object) {
   summary <- data.frame(
     partition=names(object@objects),
     token=unlist(lapply(object@objects, function(x) x@size)),
@@ -53,7 +53,7 @@ setMethod("summary", "partitionBundle", function (object) {
 #' @author Andreas Blaette
 #' @exportMethod merge
 #' @noRd
-setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
+setMethod("merge", "partition_bundle", function(x, name = "", verbose = TRUE){
   y <- new("partition")
   .message('number of partitions to be merged: ', length(x@objects), verbose = verbose)
   y@corpus <- unique(vapply(x@objects, FUN.VALUE = "characer", function(p) p@corpus))
@@ -79,8 +79,8 @@ setMethod("merge", "partitionBundle", function(x, name = "", verbose = TRUE){
 
 
 #' @exportMethod [
-#' @rdname partitionBundle-class
-setMethod('[', 'partitionBundle', function(x,i){
+#' @rdname partition_bundle-class
+setMethod('[', 'partition_bundle', function(x,i){
   a <- unname(unlist(lapply(x@objects, function(y) y@stat[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
@@ -95,21 +95,21 @@ setMethod('[', 'partitionBundle', function(x,i){
 
 
 #' @exportMethod barplot
-#' @rdname partitionBundle-class
-setMethod("barplot", "partitionBundle", function(height, ...){
+#' @rdname partition_bundle-class
+setMethod("barplot", "partition_bundle", function(height, ...){
   tab <- summary(height)
   tab <- tab[order(tab[, "token"], decreasing=TRUE),]
   barplot(tab$token, names.arg=tab$partition, ...)
 })
 
 
-#' @include partitionBundle.R context.R
+#' @include partition_bundle.R context.R
 NULL
 
 #' Generate a bundle of partitions
 #' 
-#' A partitionBundle object is a S4 class object. 
-#' partitionBundle,character-method will create a bundle of partitions,
+#' A \code{partition_bundle} object is a S4 class object. 
+#' partition_bundle,character-method will create a bundle of partitions,
 #' but not yet enriched.
 #' 
 #' @param .Object character string, a partition, or a list
@@ -121,24 +121,24 @@ NULL
 #' @param xml logical
 #' @param verbose logical, whether to provide progress information
 #' @param ... parameters to be passed into partition-method (see respective documentation)
-#' @return S4 class 'partitionBundle', with list of partition objects in slot 'objects'
-#' @export partitionBundle
+#' @return S4 class \code{partition_bundle}, with list of partition objects in slot 'objects'
+#' @export partition_bundle
 #' @author Andreas Blaette
-#' @name partitionBundle
+#' @name partition_bundle
 #' @docType methods
-#' @rdname partitionBundle-method
+#' @rdname partition_bundle-method
 #' @examples
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-#' pBundle <- partitionBundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+#' pBundle <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
 #' dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 #' summary(pBundle)
-#' btBundle <- partitionBundle("GERMAPARLMINI", s_attribute = "date")
+#' btBundle <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 #' @seealso \code{\link{partition}} and \code{\link{bundle}}
-setGeneric("partitionBundle", function(.Object, ...) standardGeneric("partitionBundle"))
+setGeneric("partition_bundle", function(.Object, ...) standardGeneric("partition_bundle"))
 
-#' @rdname partitionBundle-method
-setMethod("partitionBundle", "partition", function(
+#' @rdname partition_bundle-method
+setMethod("partition_bundle", "partition", function(
   .Object, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   ...
@@ -147,7 +147,7 @@ setMethod("partitionBundle", "partition", function(
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   bundle <- new(
-    "partitionBundle",
+    "partition_bundle",
     corpus = .Object@corpus, s_attributes_fixed = .Object@s_attributes,
     encoding = .Object@encoding, call = deparse(match.call())
   )
@@ -168,8 +168,8 @@ setMethod("partitionBundle", "partition", function(
 })
 
 
-#' @rdname partitionBundle-method
-setMethod("partitionBundle", "character", function(
+#' @rdname partition_bundle-method
+setMethod("partition_bundle", "character", function(
   .Object, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat",
   ...
@@ -178,7 +178,7 @@ setMethod("partitionBundle", "character", function(
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   bundle <- new(
-    Class = "partitionBundle",
+    Class = "partition_bundle",
     corpus = .Object,
     encoding = registry_get_encoding(.Object)
   )
@@ -227,20 +227,20 @@ setMethod("partitionBundle", "character", function(
 })
 
 
-setGeneric("as.partitionBundle", function(.Object, ...) standardGeneric("as.partitionBundle"))
+setGeneric("as.partition_bundle", function(.Object, ...) standardGeneric("as.partition_bundle"))
 
-#' @rdname partitionBundle-class
-setMethod("as.partitionBundle", "list", function(.Object, ...){
+#' @rdname partition_bundle-class
+setMethod("as.partition_bundle", "list", function(.Object, ...){
   as(.Object, "bundle") # defined in bundle.R
 })
 
-#' @exportMethod as.partitionBundle
-#' @rdname partitionBundle-method
-setMethod("partitionBundle", "context", function(.Object, mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE){
-  newPartitionBundle <- new(
-    "partitionBundle",
+#' @exportMethod as.partition_bundle
+#' @rdname partition_bundle-method
+setMethod("partition_bundle", "context", function(.Object, mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE){
+  retval <- new(
+    "partition_bundle",
     corpus = .Object@corpus, encoding = .Object@encoding,
-    explanation = "this partitionBundle is derived from a context object"
+    explanation = "this partition_bundle is derived from a context object"
   )
   .makeNewPartition <- function(cpos, contextObject, ...){
     newPartition <- new(
@@ -258,14 +258,14 @@ setMethod("partitionBundle", "context", function(.Object, mc = getOption("polmin
     )
     newPartition
   }
-  newPartitionBundle@objects <- blapply(
+  retval@objects <- blapply(
     .Object@cpos, f = .makeNewPartition,
     contextObject = .Object, mc = mc, verbose = verbose, progress = progress
   )
-  return(newPartitionBundle)
+  retval
 })
 
-#' @rdname partitionBundle-class
-setMethod("partitionBundle", "environment", function(.Object) getObjects(class = "partitionBundle", envir = .Object))
+#' @rdname partition_bundle-class
+setMethod("partition_bundle", "environment", function(.Object) getObjects(class = "partition_bundle", envir = .Object))
 
 

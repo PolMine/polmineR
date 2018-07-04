@@ -45,20 +45,20 @@ setMethod("show", "partition",
 
 
 
-#' split partition into partitionBundle
+#' split partition into partition_bundle
 #' 
-#' Split a partition object into a partition Bundle if gap between strucs
+#' Split a partition object into a \code{partition_bundle} if gap between strucs
 #' exceeds a minimum number of tokens specified by 'gap'. Relevant to 
 #' split up a plenary protocol into speeches. Note: To speed things up, the
 #' returned partitions will not include frequency lists. The lists can be
-#' prepared by applying \code{enrich} on the partitionBundle object that
+#' prepared by applying \code{enrich} on the \code{partition_bundle} object that
 #' is returned.
 #' 
 #' @param x a partition object
 #' @param gap an integer specifying the minimum gap for performing the split
 #' @param drop not yet implemented
 #' @param ... further arguments
-#' @return a partitionBundle
+#' @return a \code{partition_bundle}
 #' @aliases split,partition
 #' @rdname split-partition-method 
 #' @exportMethod split

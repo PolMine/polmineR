@@ -21,7 +21,7 @@ providing further functionality for text mining (e.g. tm).
   
 Any analysis using this package will usually start with setting up a 
 subcorpus/partition (with \code{partition}). A set of partitions can be
-generated with \code{partitionBundle}. Once a partition or a set of partitions
+generated with \code{partition_bundle}. Once a partition or a set of partitions
 has been set up, core functions are \code{cooccurrences} and
 \code{features}. Based on a partition bundle, a
 term-document matrix (class 'TermDocumentMatrix' from the tm package) can be

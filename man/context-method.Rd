@@ -4,12 +4,12 @@
 \name{context}
 \alias{context}
 \alias{context,partition-method}
-\alias{as.matrix,contextBundle-method}
-\alias{context,contextBundle-method}
-\alias{context,partitionBundle-method}
+\alias{as.matrix,context_bundle-method}
+\alias{context,context_bundle-method}
+\alias{context,partition_bundle-method}
 \alias{context,cooccurrences-method}
 \alias{context,character-method}
-\alias{context,partitionBundle-method}
+\alias{context,partition_bundle-method}
 \alias{context,cooccurrences-method}
 \alias{cooccurrences,Corpus-method}
 \title{Analyze context of a node word.}
@@ -26,7 +26,7 @@
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
 
-\S4method{context}{partitionBundle}(.Object, query, p_attribute,
+\S4method{context}{partition_bundle}(.Object, query, p_attribute,
   verbose = TRUE, ...)
 
 \S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
@@ -35,7 +35,7 @@
   p_attribute = getOption("polmineR.p_attribute"), ...)
 }
 \arguments{
-\item{.Object}{a partition or a partitionBundle object}
+\item{.Object}{a partition or a partition_bundle object}
 
 \item{query}{query, which may by a character vector or a cqpQuery object}
 
@@ -74,8 +74,8 @@ the value from the options}
 \item{complete}{enhance completely}
 }
 \value{
-depending on whether a partition or a partitionBundle serves as
-  input, the return will be a context object, or a contextBundle object
+depending on whether a partition or a partition_bundle serves as
+  input, the return will be a context object, or a \code{context_bundle} object
 }
 \description{
 Retrieve the word context of a token, optionally checking for boundaries of a XML

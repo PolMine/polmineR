@@ -106,23 +106,16 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "partitionBundle", function(.Object, n = 2, char = NULL, p_attribute = "word", mc = FALSE, progress = FALSE, ...){
+setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_attribute = "word", mc = FALSE, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  newBundle <- new("bundle")
-  newBundle@objects <- blapply(
+  retval <- new("bundle")
+  retval@objects <- blapply(
     .Object@objects, f = ngrams,
     n = n, p_attribute = p_attribute, char = char, mc = mc, progress = progress
     )
-#   newBundle@objects <- lapply(
-#     c(1:length(.Object)),
-#     function(i){
-#       if (progress == TRUE) .progressBar(i, length(.Object))
-#       ngrams(.Object@objects[[i]], char=char, ...)
-#     }
-#   )
-  newBundle@p_attribute <- unique(unlist(lapply(newBundle@objects, function(x) x@p_attribute)))
-  names(newBundle@objects) <- names(.Object)
-  newBundle
+  retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
+  names(retval@objects) <- names(.Object)
+  retval
 })

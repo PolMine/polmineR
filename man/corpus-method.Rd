@@ -25,6 +25,6 @@ param 'packges' (logical) is TRUE, packages that include a corpus
 are returned.
 }
 \details{
-If object is a partition or partitionBundle-object, the corpus the
+If object is a partition or partition_bundle-object, the corpus the
 respective object is derived from is returned.
 }

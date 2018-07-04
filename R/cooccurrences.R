@@ -44,7 +44,7 @@ setMethod("show", "cooccurrences", function(object) {
 
 #' @importFrom data.table copy
 #' @rdname cooccurrences-class
-setMethod("as.data.frame", "cooccurrencesBundle", function(x){
+setMethod("as.data.frame", "cooccurrences_bundle", function(x){
   dts <- lapply(
     x@objects,
     function(object) copy(object@stat)[, "a" := object@query, with = TRUE]
@@ -216,20 +216,12 @@ setMethod("cooccurrences", "Corpus", function(.Object, query, p_attribute = getO
 
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "partitionBundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
-  bundle <- new("cooccurrencesBundle")
-  if (requireNamespace("pbapply", quietly = TRUE)){
-    bundle@objects <- pbapply::pblapply(
-      .Object@objects,
-      function(x) cooccurrences(x, query = query, mc = mc, ...) 
-    )
-  } else {
-    bundle@objects <- lapply(
-      .Object@objects,
-      function(x) cooccurrences(x, query = query, mc = mc, ...) 
-    )
-    
-  }
+setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
+  bundle <- new("cooccurrences_bundle")
+  bundle@objects <- pbapply::pblapply(
+    .Object@objects,
+    function(x) cooccurrences(x, query = query, mc = mc, ...) 
+  )
   names(bundle@objects) <- names(.Object@objects)
   for (i in 1L:length(bundle@objects)){
     if (!is.null(bundle@objects[[i]])) bundle@objects[[i]]@name <- .Object@objects[[i]]@name

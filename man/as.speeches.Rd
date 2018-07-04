@@ -26,7 +26,7 @@ whether to assume seperate speeches}
 \item{progress}{logical}
 }
 \value{
-A \code{partitionBundle}, the names of the objects in the bundle are
+A \code{partition_bundle}, the names of the objects in the bundle are
   the speaker name, the date of the speech and an index for the number of the
   speech on a given day, concatenated by underscores.
 }

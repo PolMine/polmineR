@@ -7,7 +7,7 @@
 \alias{html,character-method}
 \alias{.addCharacterOffset}
 \alias{html,partition-method}
-\alias{html,partitionBundle-method}
+\alias{html,partition_bundle-method}
 \alias{html,kwic-method}
 \alias{print.html}
 \title{Generate html from object.}
@@ -22,7 +22,7 @@ html(object, ...)
   verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
   ...)
 
-\S4method{html}{partitionBundle}(object, filename = c(), type = "debate")
+\S4method{html}{partition_bundle}(object, filename = c(), type = "debate")
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL,
   verbose = FALSE, ...)

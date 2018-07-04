@@ -1,18 +1,18 @@
 #' @include S4classes.R
 NULL
 
-#' Coerce partitionBundle to VCorpus.
+#' Coerce partition_bundle to VCorpus.
 #' 
-#' @param x a partitionBundle object
+#' @param x a \code{partition_bundle} object
 #' @importFrom tm as.VCorpus
 #' @exportMethod as.VCorpus
 #' @rdname as.VCorpus
 #' @examples
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' PB <- partitionBundle(P, s_attribute = "speaker")
+#' PB <- partition_bundle(P, s_attribute = "speaker")
 #' VC <- as.VCorpus(PB)
-setMethod("as.VCorpus", "partitionBundle", function(x){
+setMethod("as.VCorpus", "partition_bundle", function(x){
   sAttrLengths <- sapply(s_attributes(x@objects[[1]]@corpus), function(sAttr) CQI$attribute_size(x@objects[[1]]@corpus, sAttr, type = "s"))
   if (length(unique(sAttrLengths)) == length(sAttrLengths)){
     sAttrToGet <- s_attributes(x@objects[[1]]@corpus)

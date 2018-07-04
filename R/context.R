@@ -17,7 +17,7 @@ setMethod("sample", "context", function(x, size){
 
 
 
-#' @include partition.R partitionBundle.R
+#' @include partition.R partition_bundle.R
 NULL
 
 #' @param ... further arguments
@@ -34,7 +34,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' For formulating the query, CPQ syntax may be used (see
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
-#' @param .Object a partition or a partitionBundle object
+#' @param .Object a partition or a partition_bundle object
 #' @param query query, which may by a character vector or a cqpQuery object
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
 #' @param p_attribute p-attribute of the query
@@ -55,12 +55,12 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param verbose report progress, defaults to TRUE
 #' @param progress logical, whether to show progress bar
 #' @param ... further parameters
-#' @return depending on whether a partition or a partitionBundle serves as
-#'   input, the return will be a context object, or a contextBundle object
+#' @return depending on whether a partition or a partition_bundle serves as
+#'   input, the return will be a context object, or a \code{context_bundle} object
 #' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,contextBundle-method
-#'   context,contextBundle-method
-#'   context,partitionBundle-method context,cooccurrences-method
+#' @aliases context context,partition-method as.matrix,context_bundle-method
+#'   context,context_bundle-method
+#'   context,partition_bundle-method context,cooccurrences-method
 #'   context,cooccurrences-method
 #' @examples
 #' use("polmineR")
@@ -112,7 +112,7 @@ setMethod("context", "partition", function(
     right = if (is.character(right)) 0 else right,
     encoding = .Object@encoding,
     partition = .Object,
-    partitionSize = as.numeric(.Object@size),
+    size_partition = as.numeric(.Object@size),
     s_attribute = if (!is.null(s_attribute)) s_attribute else character()
   )
   # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
@@ -159,8 +159,8 @@ setMethod("context", "partition", function(
   .message("generating contexts", verbose = verbose)
   
   ctxt@size <- nrow(ctxt@cpos)
-  ctxt@sizeCoi <- as.integer(ctxt@size)
-  ctxt@sizeRef <- as.integer(ctxt@partitionSize - ctxt@sizeCoi)
+  ctxt@size_coi <- as.integer(ctxt@size)
+  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi)
   ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
   
   # check that windows do not transgress s-attribute
@@ -262,17 +262,17 @@ setMethod("context", "character", function(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partitionBundle", function(.Object, query, p_attribute, verbose = TRUE, ...){
+setMethod("context", "partition_bundle", function(.Object, query, p_attribute, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  contextBundle <- new("contextBundle", query = query, p_attribute = p_attribute)
+  retval <- new("context_bundle", query = query, p_attribute = p_attribute)
   if (!is.numeric(positivelist)){
     corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
     positivelist <- unlist(lapply(positivelist, function(x) CQI$regex2id(corpus, p_attribute, x)))
   }
   
-  contextBundle@objects <- sapply(
+  retval@objects <- sapply(
     .Object@objects,
     function(x) {
       .message("proceeding to partition ", x@name, verbose = verbose)
@@ -281,7 +281,7 @@ setMethod("context", "partitionBundle", function(.Object, query, p_attribute, ve
     simplify = TRUE,
     USE.NAMES = TRUE
   )
-  contextBundle
+retval
 })
 
 #' @param complete enhance completely
@@ -291,7 +291,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     "context",
     query = query,
     partition = .Object@partition,
-    partitionSize = .Object@partitionSize,
+    size_partition = .Object@partition_size,
     left = .Object@left,
     right = .Object@right,
     p_attribute = .Object@p_attribute,
@@ -339,12 +339,12 @@ NULL
 
 #' @docType methods
 #' @noRd
-setMethod("summary", "contextBundle", function(object, top = 3){
-  partitionSizes <- unlist(lapply(object@objects, function(x) x@partitionSize))
+setMethod("summary", "context_bundle", function(object, top = 3){
+  sizes_partition <- unlist(lapply(object@objects, function(x) x@partition_size))
   counts <- unlist(lapply(object@objects, function(x) x@frequency))
   overview <- data.frame(
-    count=counts,
-    freq=round(counts/partitionSizes*100000,2)
+    count = counts,
+    freq = round(counts / sizes_partition * 100000, 2)
   )
   overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))))
   colnames(overview)[3:6] <- criticalValue <- c(">10.83", ">7.88", ">6.63", ">3.84")
@@ -354,7 +354,7 @@ setMethod("summary", "contextBundle", function(object, top = 3){
 
 #' @docType methods
 #' @noRd
-setMethod("show", "contextBundle", function(object){
+setMethod("show", "context_bundle", function(object){
   summary(object)
 })
 

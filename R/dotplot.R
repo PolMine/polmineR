@@ -25,7 +25,7 @@ setMethod("dotplot", "features", function(.Object, col = NULL, n = 20L, ...){
 })
 
 #' @rdname dotplot-method
-setMethod("dotplot", "featuresNgrams", function(.Object, col = NULL, n = 20L, ...){
+setMethod("dotplot", "features_ngrams", function(.Object, col = NULL, n = 20L, ...){
   if (is.null(col)) col <- .Object@method[1]
   dt_subset <- .Object@stat[n:1L][,grep("^\\d+_.*$", colnames(.Object)), with = FALSE][,n := 1L:.N]
   ngram_vector <- dt_subset[,paste(unlist(.SD[1,]), collapse = " "), by = c("n")][["V1"]]

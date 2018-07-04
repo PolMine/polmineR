@@ -8,8 +8,8 @@
 \alias{show,partition-method}
 \alias{[,partition,ANY,ANY,ANY-method}
 \alias{[,partition-method}
-\alias{as.partitionBundle}
-\alias{as.partitionBundle,partition-method}
+\alias{as.partition_bundle}
+\alias{as.partition_bundle,partition-method}
 \alias{export}
 \alias{export,partition-method}
 \alias{split}

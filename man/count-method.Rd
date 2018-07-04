@@ -5,7 +5,7 @@
 \alias{count}
 \alias{count-method}
 \alias{count,partition-method}
-\alias{count,partitionBundle-method}
+\alias{count,partition_bundle-method}
 \alias{count,character-method}
 \alias{count,vector-method}
 \alias{count,Corpus-method}
@@ -18,7 +18,7 @@ count(.Object, ...)
   p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE, ...)
 
-\S4method{count}{partitionBundle}(.Object, query = NULL, cqp = FALSE,
+\S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
   p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
   progress = TRUE, verbose = FALSE, ...)
 
@@ -31,7 +31,7 @@ count(.Object, ...)
 \S4method{count}{Corpus}(.Object, query = NULL, p_attribute)
 }
 \arguments{
-\item{.Object}{a \code{"partition"} or \code{"partitionBundle"} object, or a
+\item{.Object}{a \code{partition} or \code{partition_bundle} object, or a
 character vector (length 1) providing the name of a corpus}
 
 \item{...}{further parameters}
@@ -72,8 +72,8 @@ Count all tokens, or number of occurrences of a query (CQP syntax may be
 used), or matches for the query.
 }
 \details{
-If .Object is a \code{partitonBundle}, the data.table returned will have the
-queries in the columns, and as many rows as there are in the partitionBundle.
+If .Object is a \code{partiton_bundle}, the data.table returned will have the
+queries in the columns, and as many rows as there are in the \code{partition_bundle}.
 
 If .Object is a character vector (length 1) and query is NULL, the count is
 performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
@@ -89,7 +89,7 @@ queries are retrieved.
   
   count("GERMAPARLMINI", query = c("Migration", "Integration"), p_attribute = "word")
 
-  debates <- partitionBundle(
+  debates <- partition_bundle(
     "GERMAPARLMINI", s_attribute = "date", values = NULL,
     regex = TRUE, mc = FALSE, verbose = FALSE
   )
@@ -106,7 +106,7 @@ Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuu
 }
 \seealso{
 For a metadata-based breakdown of counts
-(i.e. tabulation by s-attributes), see \code{"dispersion"}.
+(i.e. tabulation by s-attributes), see \code{dispersion}.
 
 count
 }

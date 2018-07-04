@@ -7,7 +7,7 @@ NULL
 #' param 'packges' (logical) is TRUE, packages that include a corpus
 #' are returned.
 #' 
-#' If object is a partition or partitionBundle-object, the corpus the
+#' If object is a partition or partition_bundle-object, the corpus the
 #' respective object is derived from is returned.
 #' 
 #' @param object the object
@@ -191,7 +191,7 @@ Corpus <- R6Class(
     
     # summary = function(s_attributes = c(period = "text_lp", date = "text_date", dummy = "text_id")){
     #   # generate bundle, each of which will be evaluated in consecutive steps
-    #   lpCluster <- partitionBundle(
+    #   lpCluster <- partition_bundle(
     #     self$corpus,
     #     def = setNames(list(".*"), s_attributes["dummy"]),
     #     var = setNames(list(NULL), s_attributes["period"]),

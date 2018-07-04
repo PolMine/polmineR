@@ -4,11 +4,11 @@
 \name{cooccurrences-class}
 \alias{cooccurrences-class}
 \alias{cooccurrencesReshaped-class}
-\alias{cooccurrencesBundle-class}
-\alias{cooccurrencesBundle}
+\alias{cooccurrences_bundle-class}
+\alias{cooccurrences_bundle}
 \alias{summary,cooccurrences-method}
 \alias{show,cooccurrences-method}
-\alias{as.data.frame,cooccurrencesBundle-method}
+\alias{as.data.frame,cooccurrences_bundle-method}
 \alias{view,cooccurrencesReshaped-method}
 \title{Cooccurrences class.}
 \usage{
@@ -16,7 +16,7 @@
 
 \S4method{show}{cooccurrences}(object)
 
-\S4method{as.data.frame}{cooccurrencesBundle}(x)
+\S4method{as.data.frame}{cooccurrences_bundle}(x)
 
 \S4method{view}{cooccurrencesReshaped}(.Object)
 }
@@ -37,7 +37,7 @@ S4 class to organize information of context analysis
 
 \item{\code{partition}}{Object of class \code{"character"} the partition the analysis is based on}
 
-\item{\code{partitionSize}}{Object of class \code{"numeric"} the size of the partition}
+\item{\code{size_partition}}{Object of class \code{"numeric"} the size of the partition}
 
 \item{\code{left}}{Object of class \code{"numeric"} number of tokens to the right}
 

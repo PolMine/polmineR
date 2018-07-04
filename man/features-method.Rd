@@ -5,7 +5,7 @@
 \alias{features,partition-method}
 \alias{features}
 \alias{features,count-method}
-\alias{features,partitionBundle-method}
+\alias{features,partition_bundle-method}
 \alias{features,ngrams-method}
 \title{Get features by comparison.}
 \usage{
@@ -15,7 +15,7 @@
 \S4method{features}{count}(x, y, by = NULL, included = FALSE,
   method = "chisquare", verbose = TRUE)
 
-\S4method{features}{partitionBundle}(x, y, included = FALSE,
+\S4method{features}{partition_bundle}(x, y, included = FALSE,
   method = "chisquare", verbose = TRUE, mc = getOption("polmineR.mc"),
   progress = FALSE)
 
@@ -23,7 +23,7 @@
   verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{a partition or partitionBundle object}
+\item{x}{a partition or partition_bundle object}
 
 \item{y}{a partition object, it is assumed that the coi is a subcorpus of
 ref}
@@ -69,7 +69,7 @@ terms_kauder <- features(kauder_count, all_count, included = TRUE)
 top100 <- subset(terms_kauder, rank_chisquare <= 100)
 head(top100)
 
-speakers <- partitionBundle("GERMAPARLMINI", s_attribute = "speaker")
+speakers <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 speakers <- enrich(speakers, p_attribute = "word")
 speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")

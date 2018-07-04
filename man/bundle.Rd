@@ -68,7 +68,7 @@
 \item{col}{columns of the data.table to use to generate an object}
 }
 \description{
-A class to bundle several objects (partition, context, comp, cooccurrences objects)
+A class to bundle several objects (\code{partition}, \code{context}, \code{features}, \code{cooccurrences} objects)
 in one S4 object.
 }
 \section{Slots}{
@@ -86,7 +86,7 @@ in one S4 object.
 \examples{
 parties <- s_attributes("GERMAPARLMINI", "party")
 parties <- parties[-which(parties == "NA")]
-party_bundle <- partitionBundle("GERMAPARLMINI", s_attribute = "party")
+party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 length(party_bundle)
 names(party_bundle)
 party_bundle <- enrich(party_bundle, p_attribute = "word")
@@ -94,7 +94,7 @@ summary(party_bundle)
 parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 summary(parties_big)
 use("polmineR")
-Ps <- partitionBundle(
+Ps <- partition_bundle(
   "REUTERS", s_attribute = "id",
   values = s_attributes("REUTERS", "id")
 )

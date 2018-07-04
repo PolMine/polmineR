@@ -4,7 +4,7 @@ NULL
 #' Display full text.
 #' 
 #' Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
-#' a \code{"partitionBundle"}-object, skip through the partitions contained in the
+#' a \code{partition_bundle}-object, skip through the partitions contained in the
 #' bundle. 
 #' 
 #' To prepare the html output, the method \code{read} will call \code{html} and
@@ -21,7 +21,7 @@ NULL
 #' e.g. to highlight matches for CQP queries. See examples and the documentation for the
 #' different methods to learn more.
 #' 
-#' @param .Object an object to be read (\code{"partition" or "partitionBundle"})
+#' @param .Object an object to be read (\code{"partition" or "partition_bundle"})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed; if not stated explicitly, session settings will be used
 #' @param template template to format output
@@ -31,7 +31,7 @@ NULL
 #' @param cpos logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
 #' tag of a html element surrounding the tokens
 #' @param col column of \code{data.table} with terms to be highlighted
-#' @param partitionBundle a partitionBundle object
+#' @param partition_bundle a \code{partition_bundle} object
 #' @param def a named list used to define a partition (names are s-attributes, vectors are
 #' values of s-attributes)
 #' @param i if \code{.Object} is an object of the classes \code{kwic} or \code{hits},
@@ -88,7 +88,7 @@ setMethod(
   })
 
 #' @rdname read-method
-setMethod("read", "partitionBundle", function(.Object, highlight = list(), cpos = TRUE, ...){
+setMethod("read", "partition_bundle", function(.Object, highlight = list(), cpos = TRUE, ...){
   for (i in 1:length(.Object@objects)){
     read(.Object@objects[[i]], highlight = highlight, cpos = cpos, ...)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
@@ -97,12 +97,12 @@ setMethod("read", "partitionBundle", function(.Object, highlight = list(), cpos 
 })
 
 #' @rdname read-method
-setMethod("read", "data.table", function(.Object, col, partitionBundle, highlight = list(), cpos = FALSE, ...){
+setMethod("read", "data.table", function(.Object, col, partition_bundle, highlight = list(), cpos = FALSE, ...){
   stopifnot(col %in% colnames(.Object))
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]
   if (col == "TOTAL") col <- colnames(.Object)[2:(ncol(.Object)-1)]
-  toRead <- as.bundle(lapply(partitionsToGet, function(x) partitionBundle@objects[[x]]))
+  toRead <- as.bundle(lapply(partitionsToGet, function(x) partition_bundle@objects[[x]]))
   read(toRead, highlight = list(yellow = col), ...)
 })
 

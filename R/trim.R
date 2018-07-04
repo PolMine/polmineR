@@ -1,12 +1,12 @@
-#' @include partition.R partitionBundle.R context.R S4classes.R
+#' @include partition.R partition_bundle.R context.R S4classes.R
 #' @include features.R
 NULL
 
 #' trim an object
 #' 
 #' Method to trim and adjust objects by 
-#' applying thresholds, minimum frequencies etc. It can be applied to 'context',
-#' 'features', 'context', 'partition' and 'partitionBundle' objects.
+#' applying thresholds, minimum frequencies etc. It can be applied to \code{context},
+#' \code{features}, \code{context}, \code{partition} and \code{partition_bundle} objects.
 #' 
 #' @param object the object to be trimmed
 #' @param termsToKeep ...

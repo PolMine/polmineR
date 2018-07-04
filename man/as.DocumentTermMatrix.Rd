@@ -8,8 +8,8 @@
 \alias{as.DocumentTermMatrix,character-method}
 \alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.DocumentTermMatrix,bundle-method}
-\alias{as.TermDocumentMatrix,partitionBundle-method}
-\alias{as.DocumentTermMatrix,partitionBundle-method}
+\alias{as.TermDocumentMatrix,partition_bundle-method}
+\alias{as.DocumentTermMatrix,partition_bundle-method}
 \alias{as.DocumentTermMatrix,context-method}
 \alias{as.TermDocumentMatrix,context-method}
 \title{Generate TermDocumentMatrix / DocumentTermMatrix.}
@@ -28,10 +28,10 @@ as.TermDocumentMatrix(x, ...)
 \S4method{as.DocumentTermMatrix}{bundle}(x, col, p_attribute = NULL,
   verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{partitionBundle}(x, p_attribute = NULL,
+\S4method{as.TermDocumentMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{partitionBundle}(x, p_attribute = NULL,
+\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
@@ -40,7 +40,7 @@ as.TermDocumentMatrix(x, ...)
 }
 \arguments{
 \item{x}{a \code{character} vector indicating a corpus, or an object of class
-\code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partitionBundle})}
+\code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle})}
 
 \item{...}{s-attribute definitions used for subsetting the corpus, compare partition-method}
 
@@ -82,7 +82,7 @@ If \code{x} is a \code{bundle} or a class inheriting from it, the counts or
 whatever measure is present in the \code{stat} slots (in the column
 indicated by \code{col}) will be turned into the values of the sparse
 matrix that is generated. A special case is the generation of the sparse
-matrix based on a \code{partitionBundle} that does not yet include counts.
+matrix based on a \code{partition_bundle} that does not yet include counts.
 In this case, a \code{p_attribute} needs to be provided. Then counting will
 be performed, too.
 }
@@ -91,12 +91,12 @@ use("polmineR")
  
 # do-it-yourself 
 p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-pB <- partitionBundle(p, s_attribute = "date")
+pB <- partition_bundle(p, s_attribute = "date")
 pB <- enrich(pB, p_attribute="word")
 tdm <- as.TermDocumentMatrix(pB, col = "count")
    
  # leave the counting to the as.TermDocumentMatrix-method
-pB2 <- partitionBundle(p, s_attribute = "date")
+pB2 <- partition_bundle(p, s_attribute = "date")
 tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
    
 # diretissima

@@ -19,7 +19,7 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 })
 
 
-#' @include bundle.R partitionBundle.R context.R S4classes.R
+#' @include bundle.R partition_bundle.R context.R S4classes.R
 NULL
 
 
@@ -49,12 +49,12 @@ NULL
 #' whatever measure is present in the \code{stat} slots (in the column
 #' indicated by \code{col}) will be turned into the values of the sparse
 #' matrix that is generated. A special case is the generation of the sparse
-#' matrix based on a \code{partitionBundle} that does not yet include counts.
+#' matrix based on a \code{partition_bundle} that does not yet include counts.
 #' In this case, a \code{p_attribute} needs to be provided. Then counting will
 #' be performed, too.
 #' 
 #' @param x a \code{character} vector indicating a corpus, or an object of class
-#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partitionBundle})
+#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle})
 #' @param p_attribute p-attribute counting is be based on
 #' @param s_attribute s-attribute that defines content of columns, or rows
 #' @param col the column of \code{data.table} in slot \code{stat} (if \code{x}
@@ -77,12 +77,12 @@ setGeneric("as.DocumentTermMatrix", function(x, ...) UseMethod("as.DocumentTermM
 #'  
 #' # do-it-yourself 
 #' p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-#' pB <- partitionBundle(p, s_attribute = "date")
+#' pB <- partition_bundle(p, s_attribute = "date")
 #' pB <- enrich(pB, p_attribute="word")
 #' tdm <- as.TermDocumentMatrix(pB, col = "count")
 #'    
 #'  # leave the counting to the as.TermDocumentMatrix-method
-#' pB2 <- partitionBundle(p, s_attribute = "date")
+#' pB2 <- partition_bundle(p, s_attribute = "date")
 #' tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
 #'    
 #' # diretissima
@@ -262,7 +262,7 @@ setMethod("as.DocumentTermMatrix", "bundle", function(x, col, p_attribute = NULL
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
+setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   if (!is.null(col)){
     callNextMethod()
@@ -298,7 +298,7 @@ setMethod("as.TermDocumentMatrix", "partitionBundle", function(x, p_attribute = 
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "partitionBundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   as.DocumentTermMatrix(as.TermDocumentMatrix(x = x, p_attribute = p_attribute, col = col, verbose = verbose))
 })

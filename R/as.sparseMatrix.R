@@ -1,4 +1,4 @@
-#' @include S4classes.R polmineR.R partition.R partitionBundle.R context.R cooccurrences.R TermDocumentMatrix.R 
+#' @include S4classes.R polmineR.R partition.R partition_bundle.R context.R cooccurrences.R TermDocumentMatrix.R 
 NULL
 
 setOldClass("simple_triplet_matrix")
@@ -43,8 +43,8 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x, ...){
 #' @docType methods
 #' @rdname as.sparseMatrix
 setMethod("as.sparseMatrix", "bundle", function(x, col){
-  message("... converting partitionBundle to TermDocumentMatrix")
-  tdm_stm <- as.TermDocumentMatrix(x=x, col=col)
+  message("... converting partition_bundle to TermDocumentMatrix")
+  tdm_stm <- as.TermDocumentMatrix(x = x, col = col)
   message("... converting TermDocumentMatrix to Matrix")
   retval <-  as.sparseMatrix(tdm_stm)
   return(retval)

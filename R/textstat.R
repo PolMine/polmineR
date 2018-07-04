@@ -50,10 +50,10 @@ setGeneric("as.bundle", function(object, ...) standardGeneric("as.bundle"))
 
 setMethod("as.bundle", "textstat", function(object){
   new(
-    paste(is(object)[1], "Bundle", sep=""),
-    objects=setNames(list(object), object@name),
-    corpus=object@corpus,
-    encoding=object@encoding
+    paste(is(object)[1], "_bundle", sep = ""),
+    objects = setNames(list(object), object@name),
+    corpus = object@corpus,
+    encoding = object@encoding
   )
 })
 
@@ -62,12 +62,12 @@ setMethod("as.bundle", "textstat", function(object){
 #' @exportMethod +
 #' @docType methods
 #' @rdname textstat-class
-setMethod("+", signature(e1="textstat", e2="textstat"), function(e1, e2){
+setMethod("+", signature(e1 = "textstat", e2 = "textstat"), function(e1, e2){
   if (e1@corpus != e2@corpus) warning("Please be careful - partition is from a different CWB corpus")
-  newBundle <- as.bundle(e1)
-  newBundle@objects[[length(newBundle@objects)+1]] <- e2
-  names(newBundle@objects)[length(newBundle@objects)] <- e2@name
-  newBundle
+  retval <- as.bundle(e1)
+  retval@objects[[length(retval@objects) + 1L]] <- e2
+  names(retval@objects)[length(retval@objects)] <- e2@name
+  retval
 })
 
 #' @exportMethod subset

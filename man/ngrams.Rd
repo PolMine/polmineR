@@ -5,7 +5,7 @@
 \alias{ngrams-class}
 \alias{ngrams}
 \alias{ngrams,partition-method}
-\alias{ngrams,partitionBundle-method}
+\alias{ngrams,partition_bundle-method}
 \title{Get N-Grams}
 \usage{
 ngrams(.Object, ...)
@@ -13,7 +13,7 @@ ngrams(.Object, ...)
 \S4method{ngrams}{partition}(.Object, n = 2, p_attribute = "word",
   char = NULL, progress = FALSE, ...)
 
-\S4method{ngrams}{partitionBundle}(.Object, n = 2, char = NULL,
+\S4method{ngrams}{partition_bundle}(.Object, n = 2, char = NULL,
   p_attribute = "word", mc = FALSE, progress = FALSE, ...)
 }
 \arguments{

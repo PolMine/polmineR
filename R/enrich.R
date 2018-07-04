@@ -1,4 +1,4 @@
-#' @include partition.R partitionBundle.R context.R S4classes.R
+#' @include partition.R partition_bundle.R context.R S4classes.R
 #' @include features.R
 NULL
 
@@ -6,14 +6,14 @@ NULL
 #' 
 #' Methods to enrich objects with additional (statistical) information. The methods are documented
 #' with the classes to which they adhere. See the references in the \code{seealso}-section.
-#' @param .Object a partition, partitionBundle or comp object
+#' @param .Object a \code{partition}, \code{partition_bundle} or comp object
 #' @param ... further parameters
 #' @aliases enrich enrich-method
 #' @docType methods
 #' @rdname enrich-method
 #' @seealso The enrich method is defined for the following classes:
 #' "partition", (see \code{\link{partition_class}}),
-#' "partitionBundle" (see \code{\link{partitionBundle-class}}),
+#' "partition_bundle" (see \code{\link{partition_bundle-class}}),
 #' "kwic" (see \code{\link{kwic-class}}), and
 #' "context" (see \code{\link{context-class}}). See the linked documentation
 #' to learn how the enrich method can be applied to respective objects.
@@ -42,8 +42,8 @@ setMethod("enrich", "partition", function(.Object, size = FALSE, p_attribute = N
 #' @param verbose logical
 #' @exportMethod enrich
 #' @docType methods
-#' @rdname partitionBundle-class
-setMethod("enrich", "partitionBundle", function(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+#' @rdname partition_bundle-class
+setMethod("enrich", "partition_bundle", function(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   blapply(x = .Object, f = enrich, mc = mc, progress = progress, verbose = verbose, ...)  
 })
 

@@ -6,7 +6,7 @@
 \alias{hits}
 \alias{hits,character-method}
 \alias{hits,partition-method}
-\alias{hits,partitionBundle-method}
+\alias{hits,partition_bundle-method}
 \alias{sample,hits-method}
 \alias{hits,context-method}
 \title{Get Hits.}
@@ -21,7 +21,7 @@ hits(.Object, ...)
   p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE, ...)
 
-\S4method{hits}{partitionBundle}(.Object, query, cqp = FALSE,
+\S4method{hits}{partition_bundle}(.Object, query, cqp = FALSE,
   p_attribute = getOption("polmineR.p_attribute"), size = TRUE,
   freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
   verbose = TRUE, ...)
@@ -31,7 +31,7 @@ hits(.Object, ...)
 \S4method{hits}{context}(.Object, s_attribute = NULL, verbose = TRUE, ...)
 }
 \arguments{
-\item{.Object}{a character, partition or partitionBundle object}
+\item{.Object}{a character, \code{partition} or \code{partition_bundle} object}
 
 \item{...}{further parameters}
 

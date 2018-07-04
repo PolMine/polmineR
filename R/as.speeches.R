@@ -20,7 +20,7 @@ NULL
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @param progress logical
-#' @return A \code{partitionBundle}, the names of the objects in the bundle are
+#' @return A \code{partition_bundle}, the names of the objects in the bundle are
 #'   the speaker name, the date of the speech and an index for the number of the
 #'   speech on a given day, concatenated by underscores.
 #' @name as.speeches
@@ -55,7 +55,7 @@ as.speeches <- function(
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
   if (length(s_attributes(.Object, s_attribute_date)) > 1){
-    partition_bundle_dates <- partitionBundle(.Object, s_attribute = s_attribute_date)
+    partition_bundle_dates <- partition_bundle(.Object, s_attribute = s_attribute_date)
   } else {
     partition_bundle_dates <- list(.Object)
   }

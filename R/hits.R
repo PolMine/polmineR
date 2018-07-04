@@ -102,7 +102,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
 
 
 #' @rdname hits
-setMethod("hits", "partitionBundle", function(
+setMethod("hits", "partition_bundle", function(
   .Object, query, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
@@ -110,7 +110,7 @@ setMethod("hits", "partitionBundle", function(
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
   corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
-  if (length(corpus) > 1) stop("partitonBundle not derived from one corpus")
+  if (length(corpus) > 1) stop("partiton_bundle not derived from one corpus")
   corpusEncoding <- .Object@objects[[1]]@encoding
   s_attribute_strucs <- unique(unlist(lapply(.Object@objects, function(x) x@s_attribute_strucs)))
   stopifnot(length(s_attribute_strucs) == 1)
@@ -148,7 +148,7 @@ setMethod("hits", "partitionBundle", function(
   setkeyv(strucDT, cols = "struc")
   DT <- strucDT[countDT] # merge
   nas <- which(is.na(DT[["partition"]]) == TRUE)
-  if (length(nas) > 0) DT <- DT[-nas] # remove hits that are not in partitionBundle
+  if (length(nas) > 0) DT <- DT[-nas] # remove hits that are not in partition_bundle
   TF <- DT[, .N, by = c("partition", "query")]
   setnames(TF, old = "N", new = "count")
   if (freq) size <- TRUE

@@ -1,4 +1,4 @@
-#' @include partition.R partitionBundle.R S4classes.R
+#' @include partition.R partition_bundle.R S4classes.R
 NULL
 
 #' Generate html from object.
@@ -185,7 +185,7 @@ setMethod(
 
 #' @docType methods
 #' @rdname html-method
-setMethod("html", "partitionBundle", function(object, filename = c(), type = "debate"){
+setMethod("html", "partition_bundle", function(object, filename = c(), type = "debate"){
   markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
   markdown <- paste(
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),

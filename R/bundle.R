@@ -93,7 +93,7 @@ setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = si
 setAs(from = "list", to = "bundle", def = function(from){
   uniqueClass <- unique(unlist(lapply(from, class)))
   stopifnot(length(uniqueClass) == 1)
-  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partitionBundle" else "bundle"
+  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partition_bundle" else "bundle"
   y <- new(
     newObjectClass,
     objects = from,
@@ -112,24 +112,24 @@ setMethod("as.bundle", "list", function(object, ...){
 })
 
 #' @docType methods
-#' @exportMethod as.partitionBundle
+#' @exportMethod as.partition_bundle
 #' @rdname bundle
 setMethod("as.bundle", "textstat", function(object){
-  newBundle <- new(
-    paste(is(object)[1], "Bundle", sep=""),
-    objects=list(object),
-    corpus=object@corpus,
-    encoding=object@encoding,
-    explanation=c("derived from a partition object")
+  retval <- new(
+    paste(is(object)[1], "_bundle", sep = ""),
+    objects = list(object),
+    corpus = object@corpus,
+    encoding = object@encoding,
+    explanation = c("derived from a partition object")
   )
-  names(newBundle@objects)[1] <- object@name
-  newBundle
+  names(retval@objects)[1] <- object@name
+  retval
 })
 
 
 #' @examples
 #' use("polmineR")
-#' Ps <- partitionBundle(
+#' Ps <- partition_bundle(
 #'   "REUTERS", s_attribute = "id",
 #'   values = s_attributes("REUTERS", "id")
 #' )

@@ -1,4 +1,4 @@
-#' @include polmineR.R textstat.R partition.R context.R partitionBundle.R corpus.R S4classes.R
+#' @include polmineR.R textstat.R partition.R context.R partition_bundle.R corpus.R S4classes.R
 NULL
 
 
@@ -9,8 +9,8 @@ NULL
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be
 #' used), or matches for the query.
 #' 
-#' If .Object is a \code{partitonBundle}, the data.table returned will have the
-#' queries in the columns, and as many rows as there are in the partitionBundle.
+#' If .Object is a \code{partiton_bundle}, the data.table returned will have the
+#' queries in the columns, and as many rows as there are in the \code{partition_bundle}.
 #' 
 #' If .Object is a character vector (length 1) and query is NULL, the count is
 #' performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
@@ -19,9 +19,9 @@ NULL
 #' queries are retrieved.
 #' 
 #' @seealso  For a metadata-based breakdown of counts
-#' (i.e. tabulation by s-attributes), see \code{"dispersion"}.
+#' (i.e. tabulation by s-attributes), see \code{dispersion}.
 #' 
-#' @param .Object a \code{"partition"} or \code{"partitionBundle"} object, or a
+#' @param .Object a \code{partition} or \code{partition_bundle} object, or a
 #'   character vector (length 1) providing the name of a corpus
 #' @param query a character vector (one or multiple terms to be looked up), CQP
 #'   syntax can be used.
@@ -57,7 +57,7 @@ NULL
 #'   
 #'   count("GERMAPARLMINI", query = c("Migration", "Integration"), p_attribute = "word")
 #' 
-#'   debates <- partitionBundle(
+#'   debates <- partition_bundle(
 #'     "GERMAPARLMINI", s_attribute = "date", values = NULL,
 #'     regex = TRUE, mc = FALSE, verbose = FALSE
 #'   )
@@ -150,7 +150,7 @@ setMethod("count", "partition", function(
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partitionBundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
@@ -191,7 +191,7 @@ setMethod("count", "partitionBundle", function(.Object, query = NULL, cqp = FALS
     return(DT_cast)
   } else {
     corpus <- corpus(.Object)
-    if (length(corpus) > 1) stop("partitions in partitionBundle must be derived from the same corpus")
+    if (length(corpus) > 1) stop("partitions in partition_bundle must be derived from the same corpus")
     if (verbose) message("... unfolding corpus positions")
     cpos_list <- lapply(
       .Object@objects,

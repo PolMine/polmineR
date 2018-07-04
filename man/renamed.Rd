@@ -7,6 +7,8 @@
 \alias{getTokenStream}
 \alias{getTerms}
 \alias{getEncoding}
+\alias{partitionBundle}
+\alias{as.partitionBundle}
 \title{Renamed Functions}
 \usage{
 sAttributes(...)
@@ -18,6 +20,10 @@ getTokenStream(...)
 getTerms(...)
 
 getEncoding(...)
+
+partitionBundle(...)
+
+as.partitionBundle(...)
 }
 \arguments{
 \item{...}{argument that are passed to the renamed function}

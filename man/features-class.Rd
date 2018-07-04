@@ -5,10 +5,10 @@
 \alias{features-class}
 \alias{featuresCooccurrences-class}
 \alias{featuresNgrams-class}
-\alias{featuresBundle-class}
+\alias{features_bundle-class}
 \alias{summary,features-method}
 \alias{show,features-method}
-\alias{summary,featuresBundle-method}
+\alias{summary,features_bundle-method}
 \alias{view,features-method}
 \title{Feature selection by comparison (S4 class).}
 \usage{
@@ -16,7 +16,7 @@
 
 \S4method{show}{features}(object)
 
-\S4method{summary}{featuresBundle}(object)
+\S4method{summary}{features_bundle}(object)
 
 \S4method{view}{features}(.Object)
 }
@@ -41,9 +41,9 @@ object resulting from features-method
 
 \item{\code{stat}}{Object of class \code{"data.frame"}}
 
-\item{\code{sizeCoi}}{Object of class \code{"numeric"}}
+\item{\code{size_coi}}{Object of class \code{"numeric"}}
 
-\item{\code{sizeRef}}{Object of class \code{"numeric"}}
+\item{\code{size_ref}}{Object of class \code{"numeric"}}
 
 \item{\code{included}}{Object of class \code{"logical"} whether corpus of interest is included in reference corpus}
 

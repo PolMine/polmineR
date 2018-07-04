@@ -11,13 +11,13 @@ setGeneric("t_test", function(.Object){standardGeneric("t_test")})
 
 #' @rdname t_test
 setMethod("t_test", "context", function(.Object){
-  pRandom <- (.Object@stat[["count_partition"]] / .Object@partitionSize) * ( .Object@count / .Object@partitionSize)
-  pSample <- .Object@stat[["count_window"]] / .Object@partitionSize
-  tValues <- (pSample - pRandom) / sqrt( pSample / .Object@partitionSize )
-  .Object@stat[, "t" := tValues]
-  .Object <- sort(.Object, by="t")
-  .Object@stat[, "rank_t" := c(1:nrow(.Object@stat))]
+  p_random <- (.Object@stat[["count_partition"]] / .Object@size_partition) * ( .Object@count / .Object@size_partition)
+  p_sample <- .Object@stat[["count_window"]] / .Object@size_partition
+  t_values <- (p_sample - p_random) / sqrt( p_sample / .Object@size_partition )
+  .Object@stat[, "t" := t_values]
+  .Object <- sort(.Object, by = "t")
+  .Object@stat[, "rank_t" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "t")
-  return(.Object)
+  .Object
 })
 

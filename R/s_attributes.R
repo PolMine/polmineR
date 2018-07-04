@@ -136,8 +136,8 @@ setMethod(
 )
 
 #' @docType methods
-#' @rdname partitionBundle-class
-setMethod("s_attributes", "partitionBundle", function(.Object, s_attribute, ...){
+#' @rdname partition_bundle-class
+setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...){
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   lapply(.Object@objects, function(x) s_attributes(x, s_attribute))
 })

@@ -18,8 +18,8 @@ setGeneric("chisquare", function(.Object, ...){standardGeneric("chisquare")})
 
 #' @rdname chisquare-method
 setMethod("chisquare", "textstat", function(.Object){
-  size_coi <- .Object@sizeCoi
-  size_ref <- .Object@sizeRef
+  size_coi <- .Object@size_coi
+  size_ref <- .Object@size_ref
   size_total <- size_coi + size_ref
   count_x_coi <- .Object@stat[["count_coi"]]
   count_x_ref <- .Object@stat[["count_ref"]]

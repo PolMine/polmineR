@@ -106,24 +106,24 @@ punctuation <- c(".", ",", ";", ":", "!", "?", "-", "--", "(", ")", "[", "]", "/
 
 #' flatten a nested list
 #' 
-#' If you have a list of partitionBundles, this function will flatten the data
-#' structure and return a partition Bundle object.
+#' If you have a list of \code{partition_bundle} objects, this function will flatten the data
+#' structure and return a \code{partition_bundle} object.
 #' 
-#' @param object a list (with partitionBundle objects)
-#' @return a partitionBundle object
+#' @param object a list (with \code{partition_bundle} objects)
+#' @return a \code{partition_bundle} object
 #' @export flatten
 #' @rdname flatten
 #' @name flatten
 flatten <- function(object){
-  newBundle <- new("partitionBundle")
-  for (i in 1:length(object)){
+  retval <- new("partition_bundle")
+  for (i in 1L:length(object)){
     if(!is.null(object[[i]])){
-      if (length(object[[i]]@objects) > 0){
-        newBundle <- newBundle + object[[i]]
+      if (length(object[[i]]@objects) > 0L){
+        retval <- retval + object[[i]]
       }
     }
   } 
-  newBundle
+  retval
 }
 
 .statisticalSummary <- function(object) {

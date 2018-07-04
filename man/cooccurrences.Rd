@@ -6,7 +6,7 @@
 \alias{cooccurrences,character-method}
 \alias{cooccurrences,partition-method}
 \alias{cooccurrences,context-method}
-\alias{cooccurrences,partitionBundle-method}
+\alias{cooccurrences,partition_bundle-method}
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
@@ -26,7 +26,7 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
 
-\S4method{cooccurrences}{partitionBundle}(.Object, query,
+\S4method{cooccurrences}{partition_bundle}(.Object, query,
   mc = getOption("polmineR.mc"), ...)
 }
 \arguments{

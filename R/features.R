@@ -2,15 +2,15 @@
 NULL
 
 
-setAs(from = "features", to = "featuresNgrams", def = function(from){
+setAs(from = "features", to = "features_ngrams", def = function(from){
   new(
-    "featuresNgrams",
+    "features_ngrams",
     corpus = from@corpus,
     p_attribute = from@p_attribute,
     encoding = from@p_attribute,
     stat = from@stat,
-    sizeCoi = from@sizeCoi,
-    sizeRef = from@sizeRef,
+    size_coi = from@size_coi,
+    size_ref = from@size_ref,
     method = from@method,
     included = from@included
   )
@@ -39,7 +39,7 @@ setMethod("show", "features", function(object){
 
 
 #' @rdname features-class
-setMethod("summary", "featuresBundle", function(object){
+setMethod("summary", "features_bundle", function(object){
   tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
   tab
@@ -47,7 +47,7 @@ setMethod("summary", "featuresBundle", function(object){
 
 
 
-#' @include partition.R partitionBundle.R ngrams.R
+#' @include partition.R partition_bundle.R ngrams.R
 NULL
 
 setGeneric("features", function(x, y, ...) standardGeneric("features"))
@@ -59,7 +59,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' interest, and a partition defining a reference corpus are compared. 
 #' The most important purpose is term extraction.
 #' 
-#' @param x a partition or partitionBundle object
+#' @param x a partition or partition_bundle object
 #' @param y a partition object, it is assumed that the coi is a subcorpus of
 #' ref
 #' @param by the columns used for merging, if NULL (default), the p-attribute of
@@ -101,7 +101,7 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' head(top100)
 #' 
-#' speakers <- partitionBundle("GERMAPARLMINI", s_attribute = "speaker")
+#' speakers <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' speakers <- enrich(speakers, p_attribute = "word")
 #' speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 #' dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
@@ -151,8 +151,8 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
     "features",
     encoding = x@encoding, included = included,
     corpus = unique(c(x@corpus, y@corpus)),
-    sizeCoi = x@size,
-    sizeRef = if (included) y@size - x@size else y@size,
+    size_coi = x@size,
+    size_ref = if (included) y@size - x@size else y@size,
     p_attribute = x@p_attribute,
     stat = data.table()
   )
@@ -174,12 +174,12 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
 
 
 #' @rdname features-method
-setMethod("features", "partitionBundle", function(
+setMethod("features", "partition_bundle", function(
   x, y, 
   included = FALSE, method = "chisquare", verbose = TRUE, mc = getOption("polmineR.mc"), progress = FALSE
 ) {
   .features <- function(x, y, included, method, ...) features(x = x, y = y, included = included, method = method)
-  retval <- new("featuresBundle")
+  retval <- new("features_bundle")
   retval@objects <- blapply(x@objects, f = .features, y = y, included = included, method = method, verbose = verbose, mc=mc, progress=progress)
   names(retval@objects) <- names(x@objects)
   retval
@@ -202,7 +202,7 @@ setMethod(
       x = x, y = y, by = tokenColnames,
       included = included, method = method, verbose = verbose
     )
-    z <- as(z, "featuresNgrams")
+    z <- as(z, "features_ngrams")
     z@n <- x@n
     z
   }

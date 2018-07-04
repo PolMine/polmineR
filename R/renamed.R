@@ -28,3 +28,11 @@ getTerms <- function(...) terms(...)
 #' @export getEncoding
 #' @rdname renamed
 getEncoding <- function(...) registry_get_encoding(...)
+
+#' @export partitionBundle
+#' @rdname renamed
+partitionBundle <- function(...) partition_bundle(...)
+
+#' @export as.partitionBundle
+#' @rdname renamed
+as.partitionBundle <- function(...) as.partition_bundle(...)
