@@ -6,7 +6,8 @@
 \alias{partition_bundle,partition-method}
 \alias{partition_bundle,character-method}
 \alias{partition_bundle,context-method}
-\title{Generate a bundle of partitions}
+\alias{partition_bundle,partition_bundle-method}
+\title{Generate bundle of partitions.}
 \usage{
 partition_bundle(.Object, ...)
 
@@ -20,9 +21,12 @@ partition_bundle(.Object, ...)
 
 \S4method{partition_bundle}{context}(.Object, mc = getOption("polmineR.mc"),
   verbose = FALSE, progress = TRUE)
+
+\S4method{partition_bundle}{partition_bundle}(.Object, s_attribute,
+  prefix = character(), progress = TRUE, mc = getOption("polmineR.mc"))
 }
 \arguments{
-\item{.Object}{character string, a partition, or a list}
+\item{.Object}{A \code{partition}, a length-one \code{character} vector supplying a CWB corpus, or a \code{partition_bundle}}
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
 
@@ -44,9 +48,16 @@ partition_bundle(.Object, ...)
 S4 class \code{partition_bundle}, with list of partition objects in slot 'objects'
 }
 \description{
-A \code{partition_bundle} object is a S4 class object. 
-partition_bundle,character-method will create a bundle of partitions,
-but not yet enriched.
+Use \code{partition_bundle} to create a \code{partition_bundle} object, which
+combines a set of \code{partition} objects.
+}
+\details{
+Applying the \code{partition_bundle}-method to a \code{partition_bundle}-object will iterate
+through the \code{partition} objects in the \code{object}-slot in the \code{partition_bundle}, and apply
+\code{partition_bundle} on each \code{partition}, splitting it up by the s-attribute provided by the 
+argument \code{s_attribute}. The return value is a \code{partition_bundle}, the names of which will be
+the names of the incoming \code{partition_bundle} concatenated with the s-attribute values used for splitting.
+The argument \code{prefix} can be used to achieve a more descriptive name.
 }
 \examples{
 use("polmineR")
@@ -55,6 +66,11 @@ pBundle <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_att
 dtm <- as.DocumentTermMatrix(pBundle, col = "count")
 summary(pBundle)
 btBundle <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+# split up objects in partition_bundle by using partition_bundle-method
+use("polmineR")
+pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+pb2 <- partition_bundle(pb, s_attribute = "speaker", progress = FALSE)
+summary(pb2)
 }
 \seealso{
 \code{\link{partition}} and \code{\link{bundle}}

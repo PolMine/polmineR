@@ -23,16 +23,16 @@
   verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{a partition or partition_bundle object}
+\item{x}{A \code{partition} or \code{partition_bundle} object.}
 
-\item{y}{a partition object, it is assumed that the coi is a subcorpus of
+\item{y}{A \code{partition} object, it is assumed that the coi is a subcorpus of
 ref}
 
 \item{included}{TRUE if coi is part of ref, defaults to FALSE}
 
 \item{method}{the statistical test to apply (chisquare or log likelihood)}
 
-\item{verbose}{logical, defaults to TRUE}
+\item{verbose}{A \code{logical} value, defaults to TRUE}
 
 \item{by}{the columns used for merging, if NULL (default), the p-attribute of
 x will be used}
@@ -44,8 +44,8 @@ x will be used}
 \item{...}{further parameters}
 }
 \description{
-The features of two objects, usually a partition defining a corpus of 
-interest, and a partition defining a reference corpus are compared. 
+The features of two objects, usually a \code{partition} defining a corpus of 
+interest (coi), and a \code{partition} defining a reference corpus (ref) are compared. 
 The most important purpose is term extraction.
 }
 \examples{
@@ -75,8 +75,6 @@ speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE
 dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
 }
 \references{
-Manning / Schuetze ...
-
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 121-149 (ch. 6).
 
 Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language

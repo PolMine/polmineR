@@ -5,7 +5,7 @@
 \alias{dotplot}
 \alias{dotplot,textstat-method}
 \alias{dotplot,features-method}
-\alias{dotplot,featuresNgrams-method}
+\alias{dotplot,features_ngrams-method}
 \alias{dotplot,partition-method}
 \title{dotplot}
 \usage{
@@ -15,7 +15,7 @@ dotplot(.Object, ...)
 
 \S4method{dotplot}{features}(.Object, col = NULL, n = 20L, ...)
 
-\S4method{dotplot}{featuresNgrams}(.Object, col = NULL, n = 20L, ...)
+\S4method{dotplot}{features_ngrams}(.Object, col = NULL, n = 20L, ...)
 
 \S4method{dotplot}{partition}(.Object, col = "count", n = 20L, ...)
 }

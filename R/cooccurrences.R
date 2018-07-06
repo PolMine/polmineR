@@ -1,13 +1,13 @@
 #' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R
 NULL
 
-#' Methods for manipulating cooccurrencesReshaped-class-objects
+#' Methods for manipulating \code{cooccurrences_reshaped}-class-objects
 #' 
 #' @param x cooccurrences for a corpus of interest
 #' @param y cooccurrences for a reference corpus
-#' @rdname cooccurrencesReshaped
-#' @aliases cooccurrencesReshaped merge,cooccurrencesReshaped-method
-#' @name cooccurrencesReshaped
+#' @rdname cooccurrences_reshaped
+#' @aliases cooccurrences_reshaped merge,cooccurrences_reshaped-method
+#' @name cooccurrences_reshaped
 NULL
 
 
@@ -153,11 +153,7 @@ setMethod(
       count = TRUE, 
       mc = mc, verbose = verbose, progress = progress
     )
-    if (is.null(C)){
-      retval <- invisible(NULL)
-    } else {
-      retval <- cooccurrences(C, method = method, verbose = verbose)
-    }
+    retval <- if (is.null(C)) invisible(NULL) else cooccurrences(C, method = method, verbose = verbose)
     retval
   }
 )

@@ -3,38 +3,44 @@
 \docType{methods}
 \name{as.markdown}
 \alias{as.markdown}
-\alias{as.markdown,numeric-method}
+\alias{as.markdown,partition-method}
 \alias{as.markdown,plprPartition-method}
-\title{Generate markdown from a partition.}
+\title{Get markdown-formatted full text of a partition.}
 \usage{
 as.markdown(.Object, ...)
 
-\S4method{as.markdown}{numeric}(.Object, corpus, meta = NULL, cpos = FALSE,
-  cutoff = NULL, ...)
+\S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
+  template = getTemplate(.Object), cpos = TRUE, cutoff = NULL,
+  verbose = FALSE, ...)
 
 \S4method{as.markdown}{plprPartition}(.Object, meta = NULL,
   template = getTemplate(.Object), cpos = FALSE, interjections = TRUE,
   cutoff = NULL, ...)
 }
 \arguments{
-\item{.Object}{object to be converted}
+\item{.Object}{The object to be converted, a \code{partition}, or a class
+inheriting from \code{partition}, such as \code{plprPartition}.}
 
 \item{...}{further arguments}
 
-\item{corpus}{name of CWB corpus}
+\item{meta}{The metainformation (s-attributes) to be displayed.}
 
-\item{meta}{metainformation i.e. s-attributes) to be displayed}
+\item{template}{A template for formating output.}
 
-\item{cpos}{logical, whether to add cpos as ids in span elements}
+\item{cpos}{A \code{logical} value, whether to add cpos as ids in span elements.}
 
-\item{cutoff}{maximum number of tokens to reconstruct}
+\item{cutoff}{The maximum number of tokens to reconstruct, to avoid that full text is
+excessively long.}
 
-\item{template}{a template for formatting output}
+\item{verbose}{A \code{logical} value, whether to output messages.}
 
-\item{interjections}{logical, whether to format interjections}
+\item{interjections}{A \code{logical} value, whether to format interjections.}
 }
 \description{
-The method is the worker behind the html-method.
+The method is the worker behind the \code{read}-method, which will be called
+usually to reconstruct the full text of a \code{partition} and read it. The
+\code{as.markdown}-method can be customized for different classes inheriting
+from the \code{partition}-class.
 }
 \examples{
 use("polmineR")

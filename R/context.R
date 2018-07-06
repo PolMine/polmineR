@@ -79,7 +79,8 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @aliases context,partition-method
 setMethod("context", "partition", function(
   .Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -91,7 +92,9 @@ setMethod("context", "partition", function(
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
 
   # set method for making left and right context
-  if (is.numeric(left) && is.numeric(right)){
+  left <- as.integer(left)
+  right <- as.integer(right)
+  if (is.integer(left) && is.integer(right)){
     if (is.null(names(left)) && is.null(names(left))){
       cposMethod <- "expandToCpos"
     } else {
@@ -108,11 +111,11 @@ setMethod("context", "partition", function(
     "context",
     query = query, p_attribute = p_attribute, corpus = .Object@corpus,
     stat = data.table(), cpos = data.table(),
-    left = if (is.character(left)) 0 else left,
-    right = if (is.character(right)) 0 else right,
+    left = if (is.character(left)) 0L else as.integer(left),
+    right = if (is.character(right)) 0L else as.integer(right),
     encoding = .Object@encoding,
     partition = .Object,
-    size_partition = as.numeric(.Object@size),
+    size_partition = as.integer(.Object@size),
     s_attribute = if (!is.null(s_attribute)) s_attribute else character()
   )
   # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
@@ -291,9 +294,9 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     "context",
     query = query,
     partition = .Object@partition,
-    size_partition = .Object@partition_size,
-    left = .Object@left,
-    right = .Object@right,
+    size_partition = as.integer(.Object@partition_size),
+    left = as.integer(.Object@left),
+    right = as.integer(.Object@right),
     p_attribute = .Object@p_attribute,
     corpus = .Object@corpus,
     encoding = .Object@encoding,
@@ -322,9 +325,9 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
       hits, 1, function(row) {
         .makeLeftRightCpos[["expandToCpos"]](
           row,
-          left=newObject@left,
-          right=newObject@right,
-          s_attribute=sAttr
+          left = newObject@left,
+          right = newObject@right,
+          s_attribute = sAttr
         )
       }    
     )

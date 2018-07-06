@@ -7,6 +7,10 @@
 * a (new) registry_move() function is used to copy files to the tmp registry
 * the (new) registry() function will get the temporary registry directory
 * the use() function will add the registry file of a package to the tmp registry
+* a bug removed that has prevented the name<- method to work properly for bundle objects
+* new partition_bundle,partition_bundle-method introduced
+* naming of methods and functions, classes and most arguments moved to snake_case, maintaining backwards compatibility
+* utility function getObjects not exported any more
 
 
 # v0.7.8

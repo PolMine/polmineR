@@ -215,7 +215,8 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       function(i){
         new(
           "count",
-          corpus = corpus, encoding = .Object@objects[[1]]@encoding,
+          corpus = corpus,
+          encoding = .Object@objects[[1]]@encoding,
           p_attribute = p_attribute,
           stat = CNT_list[[i]],
           name = names(CNT_list)[[i]]
@@ -336,3 +337,8 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
 setMethod("count", "Corpus", function(.Object, query = NULL, p_attribute){
   count(.Object$as.partition(), query = query, p_attribute = p_attribute)
 })
+
+
+#' @exportMethod hist
+#' @rdname count_class
+setMethod("hist", "count", function(x, ...) hist(x@stat[,"count"], ...) )

@@ -66,21 +66,21 @@ setMethod("show", "partition",
 setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
   cpos <- x@cpos
   if (nrow(cpos) > 1L){
-    distance <- cpos[,1][2:nrow(cpos)] - cpos[,2][1:(nrow(cpos)-1)]
-    beginning <- c(1, ifelse(distance > gap, 1, 0))
+    distance <- cpos[,1][2L:nrow(cpos)] - cpos[,2][1L:(nrow(cpos) - 1L)]
+    beginning <- c(1L, ifelse(distance > gap, 1L, 0L))
     no <- vapply(
-      1:length(beginning),
-      FUN.VALUE = 1,
-      function(x) ifelse (beginning[x] == 1, sum(beginning[1:x]), 0)
+      1L:length(beginning),
+      FUN.VALUE = 1L,
+      function(x) ifelse (beginning[x] == 1L, sum(beginning[1L:x]), 0L)
       )
-    for (i in 1:length(no)) no[i] <- ifelse (no[i] == 0, no[i-1], no[i])
+    for (i in 1L:length(no)) no[i] <- ifelse (no[i] == 0, no[i - 1L], no[i])
     strucsClassified <- cbind(x@strucs, no)
     strucList <- split(strucsClassified[,1], strucsClassified[,2])
     cposClassified <- cbind(cpos, no)
     cposList1 <- split(cposClassified[,1], cposClassified[,3])
     cposList2 <- split(cposClassified[,2], cposClassified[,3])
     bundleRaw <- lapply(
-      1:length(strucList),
+      1L:length(strucList),
       function(i) {
         p <- new(
           class(x)[1],
@@ -93,12 +93,8 @@ setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
           name = paste(x@name, i, collapse = "_", sep = ""),
           stat = data.table()
         )
-        if (is.null(names(x@metadata))){
-          meta <- NULL
-        } else {
-          meta <- colnames(x@metadata)
-        }
-        p <- enrich(p, size = TRUE, p_attribute = NULL, meta = meta, verbose = FALSE)
+        meta <- if (is.null(names(x@metadata))) NULL else colnames(x@metadata)
+        p@size <- size(p)
         p
       })
   } else {
@@ -111,20 +107,8 @@ setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
 })
 
 
-#' @rdname partition_class
-setMethod("name", "partition", function(x) x@name)
-
-#' @rdname partition_class
-#' @exportMethod name<-
-setReplaceMethod("name", signature=c(x="partition", value="character"), function(x, value) {
-  x@name <- value
-  x
-})
 
 
-#' @exportMethod length
-#' @rdname partition_class
-setMethod("length", "partition", function(x) x@size)
 
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
@@ -169,19 +153,14 @@ setAs(
 )
 
 
-#' @exportMethod hist
-#' @rdname partition_class
-setMethod("hist", "partition", function(x, ...) hist(x@stat[,"count"], ...) )
-
-#' @rdname partition_class
-setMethod("length", "partition", function(x) 1)
-
+#' @details The \code{is.partition} function returns a \code{logical} value whether \code{x}
+#' is a \code{partition}, or not.
 #' @rdname partition_class
 #' @export is.partition
 is.partition <- function(x) "partition" %in% is(x)
 
 
-#' \code{partition_add_cpos} will generate the matrix with corpus positions (regions)
+#' @details \code{partition_add_cpos} will generate the matrix with corpus positions (regions)
 #' based on the s-attributes as defined in the respective slot of the partition
 #' object. The result is found in the slot \code{cpos} of the \code{partition}
 #' object that is returned.
@@ -189,8 +168,8 @@ is.partition <- function(x) "partition" %in% is(x)
 #' @param partition partition object with list of s-attributes
 #' @param xml either "flat" or "nested"
 #' @param regex logical
-#' @rdname partition_class
-partition_add_cpos <- function(.Object, xml = "flat", regex = FALSE){
+#' @noRd
+.partition_add_cpos <- function(.Object, xml = "flat", regex = FALSE){
   stopifnot(xml %in% c("flat", "nested"))
   stopifnot(is.logical(regex))
   if (xml == "flat"){
@@ -199,7 +178,7 @@ partition_add_cpos <- function(.Object, xml = "flat", regex = FALSE){
     # an Rcpp-implementation of struc2str is not faster
     # potential for optimization: struc2str
     maxAttr <- CQI$attribute_size(.Object@corpus, .Object@s_attribute_strucs, type = "s")
-    meta <- data.frame(struc = 0:(maxAttr - 1), select = rep(0, times = maxAttr))
+    meta <- data.frame(struc = 0L:(maxAttr - 1L), select = rep(0L, times = maxAttr))
     if (length(.Object@s_attributes) > 0) {
       for (sAttr in names(.Object@s_attributes)){
         meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, sAttr, meta[,1]))
@@ -223,10 +202,10 @@ partition_add_cpos <- function(.Object, xml = "flat", regex = FALSE){
       } else {
         .Object@cpos <- matrix(
           data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@s_attribute_strucs, x))),
-          ncol = 2, byrow = TRUE
+          ncol = 2L, byrow = TRUE
         )
       }
-      .Object@strucs <- as.numeric(meta[,1])
+      .Object@strucs <- as.integer(meta[,1])
     } else {
       warning("returning a NULL object")
       .Object <- NULL    
@@ -252,7 +231,7 @@ partition_add_cpos <- function(.Object, xml = "flat", regex = FALSE){
     } else {
       cpos <- matrix(
         unlist(lapply(strucs, function(x) CQI$struc2cpos(.Object@corpus, sAttrNames[1], x))),
-        byrow = TRUE, ncol = 2
+        byrow = TRUE, ncol = 2L
       )
     }
     
@@ -414,7 +393,7 @@ setMethod("partition", "character", function(
     stop("no s-attributes provided to define partition")
   } else {
     Partition@s_attribute_strucs <- names(def)[length(def)]
-    Partition <- partition_add_cpos(Partition, xml, regex)  
+    Partition <- .partition_add_cpos(Partition, xml, regex)  
   }
   if (!is.null(Partition)) {
     # get partition size
@@ -438,7 +417,7 @@ setMethod("partition", "list", function(.Object, ...) {
 
 #' @rdname partition
 setMethod("partition", "environment", function(.Object, slots = c("name", "corpus", "size", "p_attribute")){
-  partitionObjects <- getObjects(class = "partition", envir = .Object)
+  partitionObjects <- .get_objects(class = "partition", envir = .Object)
   if (length(slots) > 0){
     retval <- data.frame(
       c(
@@ -449,13 +428,8 @@ setMethod("partition", "environment", function(.Object, slots = c("name", "corpu
             partitionObjects,
             function(y){
               value <- slot(get(y, envir = .Object), x)
-              if (length(value) == 0){
-                return(NA)
-              } else {
-                return(value)
-              }
+              if (length(value) == 0) NA else value
             }
-            
           )
         )
       ),

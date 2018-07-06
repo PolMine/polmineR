@@ -19,15 +19,16 @@ NULL
 #' to learn how the enrich method can be applied to respective objects.
 setGeneric("enrich", function(.Object, ...){standardGeneric("enrich")})
 
-#' @param size logical
-#' @param mc logical or, if numeric, providing the number of cores
-#' @param decode logical
+#' @details The \code{enrich}-method will add a count of tokens defined by argument
+#' \code{p_attribute} to slot \code{stat} of the \code{partition} object.
+#' @param mc \code{logical} or, if numeric, providing the number of cores
+#' @param decode \code{logical} value, whether to decode token ids into strings when performing count
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname partition_class
-setMethod("enrich", "partition", function(.Object, size = FALSE, p_attribute = NULL, decode = TRUE, verbose = TRUE, mc = FALSE, ...){
+setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = TRUE, verbose = TRUE, mc = FALSE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if (size) .Object@size <- size(.Object)
+  
   if (!is.null(p_attribute)) {
     stopifnot(is.character(p_attribute) == TRUE, length(p_attribute) <= 2, all(p_attribute %in% p_attributes(.Object)))
     .message('getting counts for p-attribute(s):', paste(p_attribute, collapse = ", "), verbose = verbose)  

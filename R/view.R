@@ -10,14 +10,8 @@ NULL
 #' @param ... further parameters
 setGeneric("view", function(.Object, ...) standardGeneric("view"))
 
-#' @rdname partition_class
-setMethod("view", "partition", function(.Object){
-  tableToView <- .Object@stat
-  get("View", envir = .GlobalEnv)(tableToView)
-})
 
-
-#' @rdname partition_class
+#' @rdname cooccurrences-class
 setMethod("view", "cooccurrences", function(.Object){
   if ("count_partition" %in% colnames(.Object))
     attr(.Object@stat[["count_partition"]], "label") <- "observed in partition"
@@ -43,7 +37,6 @@ setMethod("view", "kwic", function(.Object){
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
-  .Object <- round(.Object, digits = 3)
   get("View", envir = .GlobalEnv)(.Object@stat)
 })
 
@@ -62,8 +55,8 @@ setMethod("view", "features", function(.Object){
 })
 
 #' @rdname cooccurrences-class
-setMethod(view, "cooccurrencesReshaped", function(.Object){
-  .Object <- round(.Object, digits=2)
+setMethod(view, "cooccurrences_reshaped", function(.Object){
+  .Object <- round(.Object, digits = 2)
   colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
   get("View", envir = .GlobalEnv)(.Object@stat[, colsToView, with=FALSE])
 })

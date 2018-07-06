@@ -1,17 +1,22 @@
 #' @include S4classes.R
 NULL
 
-#' Generate markdown from a partition.
+#' Get markdown-formatted full text of a partition.
 #' 
-#' The method is the worker behind the html-method.
+#' The method is the worker behind the \code{read}-method, which will be called
+#' usually to reconstruct the full text of a \code{partition} and read it. The
+#' \code{as.markdown}-method can be customized for different classes inheriting
+#' from the \code{partition}-class.
 #' 
-#' @param .Object object to be converted
-#' @param corpus name of CWB corpus
-#' @param meta metainformation i.e. s-attributes) to be displayed
-#' @param cpos logical, whether to add cpos as ids in span elements
-#' @param interjections logical, whether to format interjections
-#' @param cutoff maximum number of tokens to reconstruct
-#' @param template a template for formatting output
+#' @param .Object The object to be converted, a \code{partition}, or a class
+#'   inheriting from \code{partition}, such as \code{plprPartition}.
+#' @param meta The metainformation (s-attributes) to be displayed.
+#' @param cpos A \code{logical} value, whether to add cpos as ids in span elements.
+#' @param interjections A \code{logical} value, whether to format interjections.
+#' @param cutoff The maximum number of tokens to reconstruct, to avoid that full text is
+#' excessively long.
+#' @param template A template for formating output.
+#' @param verbose A \code{logical} value, whether to output messages.
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
@@ -34,8 +39,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 }
 
 
-#' @rdname as.markdown
-setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
+.as.markdown <- function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
   corpusEncoding <- registry_get_encoding(corpus)
   
   # generate metainformation
@@ -82,10 +86,10 @@ setMethod("as.markdown", "numeric", function(.Object, corpus, meta = NULL, cpos 
   markdown <- paste(article, collapse = "\n\n")
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
   markdown
-})
+}
 
 
-#' @rdname partition_class
+#' @rdname as.markdown
 setMethod(
   "as.markdown", "partition",
   function(
@@ -110,7 +114,7 @@ setMethod(
       .message("generating paragraphs (template for paras)", verbose = verbose)
       articles <- apply(
         .Object@cpos, 1,
-        function(row) as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)
+        function(row) .as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)
         )
       txt <- paste(c("\n", unlist(articles)), collapse = '\n* * *\n')
     }
@@ -130,7 +134,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   # in the function call, meta is actually not needed, required by the calling function
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){
-    maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1
+    maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
     if (maxNoStrucs != length(.Object@strucs)){
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
@@ -151,8 +155,8 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   
   # detect where a change of metainformation occurs
   metadata <- as.matrix(s_attributes(.Object, s_attribute = meta)) # somewhat slow
-  if (length(.Object@strucs) > 1){
-    metaChange <- sapply(2:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1,]))
+  if (length(.Object@strucs) > 1L){
+    metaChange <- sapply(2L:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1L,]))
     metaChange <- c(TRUE, metaChange)
   } else {
     metaChange <- TRUE

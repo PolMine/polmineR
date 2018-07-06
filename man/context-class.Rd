@@ -78,7 +78,7 @@ in the "cpos"-slot of a \code{context}-object.
 
 \item{\code{partition}}{Object of class \code{"partition"}, the partition the context object is based on}
 
-\item{\code{size_partition}}{Object of class \code{"numeric"} the size of the partition}
+\item{\code{size_partition}}{Object of class \code{"integer"} the size of the partition}
 
 \item{\code{left}}{Object of class \code{"numeric"} number of tokens to the left}
 

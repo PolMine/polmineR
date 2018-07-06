@@ -20,7 +20,8 @@ kwic(.Object, ...)
   regex = FALSE, verbose = TRUE, ...)
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  left = as.integer(getOption("polmineR.left")),
+  right = as.integer(getOption("polmineR.right")),
   meta = getOption("polmineR.meta"), p_attribute = "word",
   s_attribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
   regex = FALSE, verbose = TRUE, ...)

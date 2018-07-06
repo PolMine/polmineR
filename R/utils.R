@@ -218,8 +218,8 @@ flatten <- function(object){
 #' @param class character, class to be looked for
 #' @param envir character string, namespace to be searched
 #' @return a list with the partitions found in the namespace
-#' @export getObjects
-getObjects <- function(class, envir = .GlobalEnv) {
+#' @noRd
+.get_objects <- function(class, envir = .GlobalEnv) {
   rawList <- sapply(ls(envir), function(x) class(get(x, envir = envir))[1])
   availableObjectsList <- rawList[rawList %in% class]
   names(unlist(availableObjectsList))

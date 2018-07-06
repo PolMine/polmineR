@@ -61,13 +61,13 @@ added as columns to the table with concordance lines.
 
 \item{\code{cpos}}{the corpus positions}
 
-\item{\code{table}}{Object of class \code{"data.frame"} a table with the relevant information for kwic output}
+\item{\code{table}}{Object of class \code{data.frame} a table with the relevant information for kwic output}
 
-\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+\item{\code{encoding}}{Object of class \code{character} encoding of the corpus}
 
-\item{\code{labels}}{Object of class \code{"character"}}
+\item{\code{labels}}{Object of class \code{character}}
 
-\item{\code{categories}}{Object of class \code{"character"}}
+\item{\code{categories}}{Object of class \code{character}}
 }}
 
 \section{Methods}{

@@ -129,9 +129,12 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   if (is.null(meta)) meta <- character()
   conc <- new(
     'kwic',
-    corpus = .Object@corpus, left = .Object@left, right = .Object@right,
+    corpus = .Object@corpus,
+    left = as.integer(.Object@left),
+    right = as.integer(.Object@right),
     metadata = if (length(meta) == 0) character() else meta,
-    encoding = .Object@encoding, labels = Labels$new(),
+    encoding = .Object@encoding,
+    labels = Labels$new(),
     cpos = if (cpos) DT else data.table()
   )
   
@@ -181,8 +184,8 @@ setMethod("kwic", "partition", function(
 #' @rdname kwic
 setMethod("kwic", "character", function(
   .Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"),
+  left = as.integer(getOption("polmineR.left")),
+  right = as.integer(getOption("polmineR.right")),
   meta = getOption("polmineR.meta"),
   p_attribute = "word", s_attribute = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
@@ -217,9 +220,9 @@ setMethod("kwic", "character", function(
         function(x2)
           switch(
             x2,
-            left = rep(-1, times = length(x[[x2]])),
-            node = rep(0, times = length(x[[x2]])),
-            right = rep(1, times = length(x[[x2]])))
+            left = rep(-1L, times = length(x[[x2]])),
+            node = rep(0L, times = length(x[[x2]])),
+            right = rep(1L, times = length(x[[x2]])))
       )))
   )
   DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])
@@ -227,7 +230,9 @@ setMethod("kwic", "character", function(
   ctxt <- new(
     "context",
     count = nrow(hits), stat = data.table(),
-    corpus = .Object, left = left, right = right, 
+    corpus = .Object,
+    left = as.integer(left),
+    right = as.integer(right), 
     cpos = DT,
     p_attribute = p_attribute,
     encoding = registry_get_encoding(.Object)

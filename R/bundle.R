@@ -23,7 +23,7 @@ setReplaceMethod(
       warning("length of value provided does not match number of partitions")
       stop()
     }
-    if ( !is.character(name(x)) ){
+    if ( !is.character(names(x)) ){
       warning("value needs to be a character vector")
       stop()
     }
@@ -170,7 +170,7 @@ setMethod("as.matrix", "bundle", function(x, col){
 
 #' @rdname bundle
 setMethod("subset", "bundle", function(x, ...){
-  for (i in 1:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
+  for (i in 1L:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
   x
 })
 

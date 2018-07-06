@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.8.9003
-Date: 2018-06-24
+Version: 0.7.8.9004
+Date: 2018-07-06
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -47,12 +47,12 @@ URL: https://www.github.com/PolMine/polmineR
 Collate: 
     'CQI.R'
     'Labels.R'
+    'polmineR.R'
     'S4classes.R'
     'p_attributes.R'
     'textstat.R'
     'bundle.R'
     'corpus.R'
-    'polmineR.R'
     'count.R'
     'partition.R'
     'partition_bundle.R'

@@ -19,9 +19,9 @@ setMethod("show", "partition_bundle", function (object) {
 #' @rdname partition_bundle-class
 setMethod("summary", "partition_bundle", function (object) {
   summary <- data.frame(
-    partition=names(object@objects),
-    token=unlist(lapply(object@objects, function(x) x@size)),
-    stringsAsFactors=FALSE
+    partition = names(object@objects),
+    token = unlist(lapply(object@objects, function(x) x@size)),
+    stringsAsFactors = FALSE
   )
   pAttr <- unique(unlist(lapply(object@objects, function(x) x@p_attribute)))
   if (length(pAttr) == 1){
@@ -37,22 +37,15 @@ setMethod("summary", "partition_bundle", function (object) {
 
 
 
-#' Merge the partitions in a bundle into one partition
-#' 
-#' The partitions in a bundle object will be merged into one new partition
-#' 
-#' The function aggregates several partitions into one partition. The
+#' @details The \code{merge}-method aggregates several partitions into one partition. The
 #' prerequisite for this function to work properly is that there are no
 #' overlaps of the different partitions that are to be summarized.
 #' Encodings and the root node need to be identical, too.
-#' 
-#' @param x a bundle object
 #' @param name the name for the new partition
 #' @return An object of the class 'partition. See partition for the
 #' details on the class.
-#' @author Andreas Blaette
 #' @exportMethod merge
-#' @noRd
+#' @rdname partition_bundle-class
 setMethod("merge", "partition_bundle", function(x, name = "", verbose = TRUE){
   y <- new("partition")
   .message('number of partitions to be merged: ', length(x@objects), verbose = verbose)
@@ -84,10 +77,10 @@ setMethod('[', 'partition_bundle', function(x,i){
   a <- unname(unlist(lapply(x@objects, function(y) y@stat[i,2])))
   sizes <- unlist(lapply(x@objects, function(y) y@size))
   dist <- data.frame(
-    partition=names(x@objects),
-    count=a,
-    freq=round(a/sizes*100000,2),
-    row.names=c(1:length(x@objects))
+    partition = names(x@objects),
+    count = a,
+    freq = round(a / sizes * 100000, 2),
+    row.names = 1L:length(x@objects)
   )
   dist
 }
@@ -98,7 +91,7 @@ setMethod('[', 'partition_bundle', function(x,i){
 #' @rdname partition_bundle-class
 setMethod("barplot", "partition_bundle", function(height, ...){
   tab <- summary(height)
-  tab <- tab[order(tab[, "token"], decreasing=TRUE),]
+  tab <- tab[order(tab[, "token"], decreasing = TRUE),]
   barplot(tab$token, names.arg=tab$partition, ...)
 })
 
@@ -106,13 +99,12 @@ setMethod("barplot", "partition_bundle", function(height, ...){
 #' @include partition_bundle.R context.R
 NULL
 
-#' Generate a bundle of partitions
+#' Generate bundle of partitions.
 #' 
-#' A \code{partition_bundle} object is a S4 class object. 
-#' partition_bundle,character-method will create a bundle of partitions,
-#' but not yet enriched.
+#' Use \code{partition_bundle} to create a \code{partition_bundle} object, which
+#' combines a set of \code{partition} objects.
 #' 
-#' @param .Object character string, a partition, or a list
+#' @param .Object A \code{partition}, a length-one \code{character} vector supplying a CWB corpus, or a \code{partition_bundle}
 #' @param s_attribute the s-attribute to vary
 #' @param values values the s-attribute provided shall assume
 #' @param prefix a character vector that will be attached as a prefix to partition names
@@ -157,7 +149,7 @@ setMethod("partition_bundle", "partition", function(
     .message('number of partitions to be generated: ', length(values), verbose = verbose)
   }
   bundle@objects <- blapply(
-    lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
+    lapply(setNames(values, rep(s_attribute, times = length(values))),function(x) setNames(x, s_attribute)),
     f = function(def, .Object, verbose = FALSE, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
     .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc,
     ...
@@ -266,6 +258,33 @@ setMethod("partition_bundle", "context", function(.Object, mc = getOption("polmi
 })
 
 #' @rdname partition_bundle-class
-setMethod("partition_bundle", "environment", function(.Object) getObjects(class = "partition_bundle", envir = .Object))
+setMethod("partition_bundle", "environment", function(.Object) .get_objects(class = "partition_bundle", envir = .Object))
 
 
+#' @details Applying the \code{partition_bundle}-method to a \code{partition_bundle}-object will iterate
+#' through the \code{partition} objects in the \code{object}-slot in the \code{partition_bundle}, and apply
+#' \code{partition_bundle} on each \code{partition}, splitting it up by the s-attribute provided by the 
+#' argument \code{s_attribute}. The return value is a \code{partition_bundle}, the names of which will be
+#' the names of the incoming \code{partition_bundle} concatenated with the s-attribute values used for splitting.
+#' The argument \code{prefix} can be used to achieve a more descriptive name.
+#' @examples
+#' # split up objects in partition_bundle by using partition_bundle-method
+#' use("polmineR")
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+#' pb2 <- partition_bundle(pb, s_attribute = "speaker", progress = FALSE)
+#' summary(pb2)
+#' @rdname partition_bundle-method
+setMethod("partition_bundle", "partition_bundle", function(.Object, s_attribute, prefix = character(), progress = TRUE, mc = getOption("polmineR.mc")){
+  
+  if (is.logical(mc)) mc <- if (isTRUE(mc)) as.integer(getOption("polmineR.cores")) else 1L
+  mc <- as.integer(mc)
+  stopifnot(length(mc) == 1L, !is.na(mc), is.integer(mc))
+  
+  iterfun <- function(p){
+    pb <- partition_bundle(p, s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
+    names(pb) <- paste(name(p), paste(prefix, names(pb), sep = if (length(prefix) > 0) "_" else ""), sep = "_")
+    pb@objects
+  }
+  partition_list_nested <- if (progress) pblapply(.Object@objects, iterfun, cl = mc) else lapply(.Object@objects, iterfun)
+  as.partition_bundle(unlist(partition_list_nested))
+})

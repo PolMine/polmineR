@@ -69,7 +69,7 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (is.null(s_attribute)){
-    return( sum(as.integer(x@cpos[,2]) - as.integer(x@cpos[,1]) + 1L) )
+    return( sum(as.integer(x@cpos[,2L]) - as.integer(x@cpos[,1L]) + 1L) )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- as.data.table(

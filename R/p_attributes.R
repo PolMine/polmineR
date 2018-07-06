@@ -37,6 +37,10 @@ setMethod("p_attributes", "character", function(.Object, p_attribute = NULL, ...
   }
 })
 
+#' @details The \code{p_attributes}-method returns the p-attributes defined for the
+#' corpus the partition is derived from, if argument \code{p_attribute} is \code{NULL}
+#' (the default). If \code{p_attribute} is defined, the unique values for the p-attribute
+#' are returned.
 #' @rdname partition_class
 setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]

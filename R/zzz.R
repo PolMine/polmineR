@@ -85,6 +85,6 @@
   # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
   
   packageStartupMessage(sprintf("polmineR v%s", packageVersion("polmineR")))
-  packageStartupMessage("registry:  ", Sys.getenv("CORPUS_REGISTRY"))
+  packageStartupMessage("session registry:  ", Sys.getenv("CORPUS_REGISTRY"))
   # packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
 }

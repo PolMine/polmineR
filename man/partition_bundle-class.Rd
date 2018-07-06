@@ -19,6 +19,7 @@
 \alias{barplot,partition_bundle-method}
 \alias{show,partition_bundle-method}
 \alias{summary,partition_bundle-method}
+\alias{merge,partition_bundle-method}
 \alias{[,partition_bundle,ANY,ANY,ANY-method}
 \alias{barplot,partition_bundle-method}
 \alias{as.partition_bundle,list-method}
@@ -30,6 +31,8 @@
 \S4method{show}{partition_bundle}(object)
 
 \S4method{summary}{partition_bundle}(object)
+
+\S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
 
 \S4method{[}{partition_bundle,ANY,ANY,ANY}(x, i)
 
@@ -49,6 +52,10 @@
 
 \item{x}{a \code{partition_bundle} object}
 
+\item{name}{the name for the new partition}
+
+\item{verbose}{logical}
+
 \item{i}{integer index}
 
 \item{height}{height}
@@ -61,12 +68,20 @@
 
 \item{progress}{logical}
 
-\item{verbose}{logical}
-
 \item{s_attribute}{the s-attribute to use}
+}
+\value{
+An object of the class 'partition. See partition for the
+details on the class.
 }
 \description{
 Class and methods to manage bundles of partitions.
+}
+\details{
+The \code{merge}-method aggregates several partitions into one partition. The
+prerequisite for this function to work properly is that there are no
+overlaps of the different partitions that are to be summarized.
+Encodings and the root node need to be identical, too.
 }
 \section{Slots}{
 
@@ -87,5 +102,7 @@ Class and methods to manage bundles of partitions.
 }}
 
 \author{
+Andreas Blaette
+
 Andreas Blaette
 }

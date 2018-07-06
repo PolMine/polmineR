@@ -68,19 +68,24 @@
 \item{col}{columns of the data.table to use to generate an object}
 }
 \description{
-A class to bundle several objects (\code{partition}, \code{context}, \code{features}, \code{cooccurrences} objects)
-in one S4 object.
+A \code{bundle} is used to combine several objects (\code{partition}, \code{context},
+\code{features}, \code{cooccurrences} objects) into one S4 class object. Typically,
+a class inheriting from the \code{bundle} superclass will be used. When working with a
+\code{context_bundle}, a \code{features_bundle}, a \code{cooccurrences_bundle}, or a
+\code{context_bundle}, a similar set of standard methods is available to perform 
+transformations.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{corpus}}{the CWB corpus the objects in the bundle are based on}
+\item{\code{corpus}}{The CWB corpus the objects in the \code{bundle} are based on, a length 1 
+\code{character} vector.}
 
-\item{\code{objects}}{Object of class \code{"list"}}
+\item{\code{objects}}{An object of class \code{"list"}}
 
 \item{\code{p_attribute}}{Object of class \code{"character"}}
 
-\item{\code{encoding}}{encoding of objects}
+\item{\code{encoding}}{The encoding of the corpus.}
 }}
 
 \examples{

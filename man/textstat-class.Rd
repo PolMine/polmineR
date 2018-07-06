@@ -10,6 +10,8 @@
 \alias{rownames,textstat-method}
 \alias{names,textstat-method}
 \alias{as.DataTables,textstat-method}
+\alias{name,textstat-method}
+\alias{name<-,textstat,character-method}
 \alias{head,textstat-method}
 \alias{tail,textstat-method}
 \alias{dim,textstat-method}
@@ -28,6 +30,10 @@
 \alias{view,textstat-method}
 \title{S4 textstat class}
 \usage{
+\S4method{name}{textstat}(x)
+
+\S4method{name}{textstat,character}(x) <- value
+
 \S4method{head}{textstat}(x, ...)
 
 \S4method{tail}{textstat}(x, ...)
@@ -63,6 +69,9 @@ as.bundle(object, ...)
 \arguments{
 \item{x}{textstat object}
 
+\item{value}{A \code{character} vector to assign as name to slot \code{name}
+of a \code{textstat} class object.}
+
 \item{...}{further parameters}
 
 \item{digits}{no of digits}
@@ -84,13 +93,16 @@ as.bundle(object, ...)
 \item{j}{vector to index data.table in stat-slot}
 }
 \description{
-Superclass for features, context, and partition class.
+Superclass for \code{features}, \code{context}, and \code{partition} class.
 }
 \details{
 Objects derived from the \code{textstat} class can be indexed with simple
 square brackets ("[") to get rows specified by an numeric/integer vector,
 and with double square brackets ("[[") to get specific columns from the 
 \code{data.table} in the slot \code{stat}.
+
+\code{textstat} objects can have a name, which can be retrieved, and set using
+the \code{name}-method and \code{name<-}, respectively.
 }
 \section{Slots}{
 
