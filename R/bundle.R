@@ -1,49 +1,7 @@
-#' @include textstat_class.R
+#' @include textstat.R S4classes.R
 NULL
 
 
-#' Bundle Class
-#' 
-#' A class to bundle several objects (partition, context, comp, cooccurrences objects)
-#' in one S4 object.
-#' 
-#' @slot corpus the CWB corpus the objects in the bundle are based on
-#' @slot objects Object of class \code{"list"}
-#' @slot pAttribute Object of class \code{"character"}
-#' @slot encoding encoding of objects
-#' 
-#' @param x a bundle object
-#' @param i integer to index a bundle object
-#' @param object a bundle object
-#' @param size number of items to choose to generate a sample
-#' @param ... further parameters
-#' @param col columns of the data.table to use to generate an object
-#' @param value character string with a name to be assigned
-#' @rdname bundle
-#' @name bundle-class
-#' @aliases bundle
-#' @exportClass bundle
-#' @docType class
-#' @author Andreas Blaette
-#' @examples
-#' parties <- sAttributes("GERMAPARLMINI", "party")
-#' parties <- parties[-which(parties == "NA")]
-#' party_bundle <- partitionBundle("GERMAPARLMINI", sAttribute = "party")
-#' length(party_bundle)
-#' names(party_bundle)
-#' party_bundle <- enrich(party_bundle, pAttribute = "word")
-#' summary(party_bundle)
-#' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
-#' summary(parties_big)
-setClass(
-  "bundle",
-  representation(
-    objects = "list",
-    pAttribute = "character",
-    corpus = "character",
-    encoding = "character"
-  )
-)
 
 setGeneric("as.bundle", function(object,...) standardGeneric("as.bundle"))
 
@@ -65,7 +23,7 @@ setReplaceMethod(
       warning("length of value provided does not match number of partitions")
       stop()
     }
-    if ( !is.character(name(x)) ){
+    if ( !is.character(names(x)) ){
       warning("value needs to be a character vector")
       stop()
     }
@@ -135,7 +93,7 @@ setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = si
 setAs(from = "list", to = "bundle", def = function(from){
   uniqueClass <- unique(unlist(lapply(from, class)))
   stopifnot(length(uniqueClass) == 1)
-  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partitionBundle" else "bundle"
+  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partition_bundle" else "bundle"
   y <- new(
     newObjectClass,
     objects = from,
@@ -154,26 +112,26 @@ setMethod("as.bundle", "list", function(object, ...){
 })
 
 #' @docType methods
-#' @exportMethod as.partitionBundle
+#' @exportMethod as.partition_bundle
 #' @rdname bundle
 setMethod("as.bundle", "textstat", function(object){
-  newBundle <- new(
-    paste(is(object)[1], "Bundle", sep=""),
-    objects=list(object),
-    corpus=object@corpus,
-    encoding=object@encoding,
-    explanation=c("derived from a partition object")
+  retval <- new(
+    paste(is(object)[1], "_bundle", sep = ""),
+    objects = list(object),
+    corpus = object@corpus,
+    encoding = object@encoding,
+    explanation = c("derived from a partition object")
   )
-  names(newBundle@objects)[1] <- object@name
-  newBundle
+  names(retval@objects)[1] <- object@name
+  retval
 })
 
 
 #' @examples
 #' use("polmineR")
-#' Ps <- partitionBundle(
-#'   "REUTERS", sAttribute = "id",
-#'   values = sAttributes("REUTERS", "id")
+#' Ps <- partition_bundle(
+#'   "REUTERS", s_attribute = "id",
+#'   values = s_attributes("REUTERS", "id")
 #' )
 #' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
 #' dt <- as.data.table(Cs, col = "ll")
@@ -181,14 +139,14 @@ setMethod("as.bundle", "textstat", function(object){
 #' @exportMethod as.data.table
 #' @rdname bundle
 setMethod("as.data.table", "bundle", function(x, col){
-  pAttr <- unique(unlist(lapply(x@objects, function(i) i@pAttribute)))
-  if (length(pAttr) > 1) stop("no unambigious pAttribute!")
+  pAttr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
+  if (length(pAttr) > 1) stop("no unambigious p-attribute!")
   dts <- lapply(
     x@objects,
     function(object){
       data.table(
         name = object@name,
-        token = object@stat[[object@pAttribute]],
+        token = object@stat[[object@p_attribute]],
         value = object@stat[[col]]
       )
     }
@@ -212,7 +170,7 @@ setMethod("as.matrix", "bundle", function(x, col){
 
 #' @rdname bundle
 setMethod("subset", "bundle", function(x, ...){
-  for (i in 1:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
+  for (i in 1L:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
   x
 })
 

@@ -1,5 +1,3 @@
-.write_registry <- function(text, con) writeLines(text = text, con = con, sep = "\n")
-
 .onLoad <- function (libname, pkgname) {
   
   # polmineR:::CQI - assign it to package namespace
@@ -21,7 +19,7 @@
   
   options(
     "polmineR.corpus" = "REUTERS",
-    "polmineR.pAttribute" = "word",
+    "polmineR.p_attribute" = "word",
     "polmineR.left" = 5,
     "polmineR.right" = 5,
     "polmineR.lineview" = FALSE,
@@ -44,6 +42,8 @@
 }
 
 
+
+
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
   
@@ -51,47 +51,40 @@
   # directory that will set paths in the registry files for corpora correctly
   # upon installation. However, configure / configure.win may not be executed
   # when a pre-compiled package is distributed. Therefore, the following lines
-  # check upon whenever loading polmineR whether the paths are set correctly,
-  # and adjust them if necessary.
-  pkg_cwb_dir <- file.path(libname, pkgname, "extdata", "cwb")
-  pkg_registry_dir <- file.path(pkg_cwb_dir, "registry")
-  pkg_indexed_corpora_dir <- file.path(pkg_cwb_dir, "indexed_corpora")
-  
-  for (corpus in list.files(pkg_registry_dir)){
-    registry_file <- file.path(pkg_registry_dir, corpus)
-    registry <- readLines(registry_file)
-    
-    home_line_no <- grep("^HOME", registry)
-    info_line_no <- grep("^INFO", registry)
-    registry_home_dir <- gsub('^HOME\\s+"*(.*?)"*\\s*$', "\\1", registry[home_line_no])
-    registry_info_file <- gsub('^INFO\\s+"*(.*?)"*\\s*$', "\\1", registry[info_line_no])
-    
-    pkg_home_dir <- file.path(pkg_indexed_corpora_dir, corpus)
-    if (!identical(x = registry_home_dir, y = pkg_home_dir)){
-      packageStartupMessage(sprintf("data directory set for: %s", corpus))
-      info_file_new <- file.path(pkg_home_dir, basename(registry_info_file), fsep = "/")
-      # quote paths on Windows, and unix-likes, if path includes whitespace
-      if (.Platform$OS.type == "windows"){
-        registry[home_line_no] <- sprintf('HOME "%s"', pkg_home_dir)
-        registry[info_line_no] <- sprintf('INFO "%s"', info_file_new)
-      } else {
-        if (grepl("\\s+", pkg_home_dir)){
-          registry[grep("^HOME", registry)] <- sprintf('HOME "%s"', pkg_home_dir)
-          registry[info_line_no] <- sprintf('INFO "%s"', info_file_new)
-        } else {
-          registry[grep("^HOME", registry)] <- sprintf("HOME %s", pkg_home_dir)
-          registry[info_line_no] <- sprintf("INFO %s", info_file_new)
-        }
-      }
-      .write_registry(text = registry, con = registry_file)
+  # create a temporary registry, if necessary.
+
+  pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
+  pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
+  polmineR_registry_dir <- registry()
+  if (!file.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+
+  if (Sys.getenv("CORPUS_REGISTRY") != ""){
+    for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
+      file.copy(
+        from = file.path(Sys.getenv("CORPUS_REGISTRY"), corpus),
+        to = file.path(polmineR_registry_dir, corpus)
+        )
     }
   }
+
+  for (corpus in list.files(pkg_registry_dir)){
+    registry_move(
+      corpus = corpus,
+      registry = pkg_registry_dir,
+      registry_new = polmineR_registry_dir,
+      home_dir_new = file.path(pkg_indexed_corpora_dir, tolower(corpus))
+    )
+  }
   
+  Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
+  
+  # if (cqp_is_initialized()) cqp_reset_registry(tmp_registry_dir)
+
   # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,
   # but for some (unknown) reason, a package crash occurrs, when CQP is initialized
   # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
   
   packageStartupMessage(sprintf("polmineR v%s", packageVersion("polmineR")))
-  packageStartupMessage("registry:  ", getOption("polmineR.defaultRegistry"))
-  packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
+  packageStartupMessage("session registry:  ", Sys.getenv("CORPUS_REGISTRY"))
+  # packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
 }

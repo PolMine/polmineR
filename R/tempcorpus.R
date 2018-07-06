@@ -1,19 +1,5 @@
-#' S4 class to capture core information on a temporary CWB corpus 
-#' 
-#' @slot cpos matrix with start/end corpus positions
-#' @slot dir directory where the tempcorpus is stored
-#' @slot registry directory of the registry dir (subdirectory of dir)
-#' @slot indexed directory of the dir with the indexed files
-#' @exportClass tempcorpus
-#' @rdname tempcorpus
-setClass(
-  "tempcorpus",
-  slots=c(
-    cpos="matrix",
-    dir="character",
-    registry="character",
-    indexed="character"
-  ))
+#' @include S4classes.R
+NULL
 
 #' create a tempcorpus
 #' 
@@ -40,7 +26,7 @@ setMethod("tempcorpus", "partition", function(.Object){
     "-e", as.character(.Object@cpos[nrow(.Object@cpos), 2]),
     "-r", Sys.getenv("CORPUS_REGISTRY"),
     "-Cx", .Object@corpus,
-    paste(unlist(lapply(pAttributes(.Object), function(x) c("-P", x))), collapse=" "),
+    paste(unlist(lapply(p_attributes(.Object), function(x) c("-P", x))), collapse=" "),
     "|",
     "cwb-encode", "-d", tempcorpus@indexed, "-x", "-S", "corpus+name+start+end",
     "-R", file.path(tempcorpus@registry, "tmpcorpus")

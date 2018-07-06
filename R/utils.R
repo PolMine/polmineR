@@ -68,14 +68,14 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
 #' Helper function for context method. Get ids for tokens.
 #' 
 #' @param corpus the CWB corpus to use
-#' @param pAttribute the p-attribute to use
+#' @param p_attribute the p-attribute to use
 #' @param token character tokens to turn into ids (character vector length >= 1)
 #' @param regex logical
 #' @noRd
-.token2id <- function(corpus, pAttribute, token = NULL, regex = FALSE){
+.token2id <- function(corpus, p_attribute, token = NULL, regex = FALSE){
   stopifnot(
     corpus %in% CQI$list_corpora(),
-    pAttribute %in% CQI$attributes(corpus, type = "p")
+    p_attribute %in% CQI$attributes(corpus, type = "p")
     )
   if (is.null(token)) return( NULL )
   if (is.numeric(token)){
@@ -84,10 +84,10 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
     if (regex){
       retval <- unlist(lapply(
         token,
-        function(x) CQI$regex2id(corpus = corpus, pAttribute = pAttribute, regex = x))
+        function(x) CQI$regex2id(corpus = corpus, p_attribute = p_attribute, regex = x))
       )
     } else {
-      retval <- CQI$str2id(corpus = corpus, pAttribute = pAttribute, str = token)
+      retval <- CQI$str2id(corpus = corpus, p_attribute = p_attribute, str = token)
     }
     return( retval )
   }
@@ -106,24 +106,24 @@ punctuation <- c(".", ",", ";", ":", "!", "?", "-", "--", "(", ")", "[", "]", "/
 
 #' flatten a nested list
 #' 
-#' If you have a list of partitionBundles, this function will flatten the data
-#' structure and return a partition Bundle object.
+#' If you have a list of \code{partition_bundle} objects, this function will flatten the data
+#' structure and return a \code{partition_bundle} object.
 #' 
-#' @param object a list (with partitionBundle objects)
-#' @return a partitionBundle object
+#' @param object a list (with \code{partition_bundle} objects)
+#' @return a \code{partition_bundle} object
 #' @export flatten
 #' @rdname flatten
 #' @name flatten
 flatten <- function(object){
-  newBundle <- new("partitionBundle")
-  for (i in 1:length(object)){
+  retval <- new("partition_bundle")
+  for (i in 1L:length(object)){
     if(!is.null(object[[i]])){
-      if (length(object[[i]]@objects) > 0){
-        newBundle <- newBundle + object[[i]]
+      if (length(object[[i]]@objects) > 0L){
+        retval <- retval + object[[i]]
       }
     }
   } 
-  newBundle
+  retval
 }
 
 .statisticalSummary <- function(object) {
@@ -218,8 +218,8 @@ flatten <- function(object){
 #' @param class character, class to be looked for
 #' @param envir character string, namespace to be searched
 #' @return a list with the partitions found in the namespace
-#' @export getObjects
-getObjects <- function(class, envir = .GlobalEnv) {
+#' @noRd
+.get_objects <- function(class, envir = .GlobalEnv) {
   rawList <- sapply(ls(envir), function(x) class(get(x, envir = envir))[1])
   availableObjectsList <- rawList[rawList %in% class]
   names(unlist(availableObjectsList))

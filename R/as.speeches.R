@@ -1,3 +1,6 @@
+#' @include S4classes.R
+NULL
+
 #' Split Corpus or Partition Into Speeches
 #' 
 #' Split entire corpus or a partition into speeches. The heuristic is to split
@@ -17,7 +20,7 @@
 #' @param mc whether to use multicore, defaults to FALSE
 #' @param verbose logical, defaults to TRUE
 #' @param progress logical
-#' @return A \code{partitionBundle}, the names of the objects in the bundle are
+#' @return A \code{partition_bundle}, the names of the objects in the bundle are
 #'   the speaker name, the date of the speech and an index for the number of the
 #'   speech on a given day, concatenated by underscores.
 #' @name as.speeches
@@ -29,7 +32,7 @@
 #'   "GERMAPARLMINI",
 #'   s_attribute_date = "date", s_attribute_name = "speaker"
 #' )
-#' speeches_count <- count(speeches, pAttribute = "word")
+#' speeches_count <- count(speeches, p_attribute = "word")
 #' tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
 #' 
 #' bt <- partition("GERMAPARLMINI", date = "2009-10-27")
@@ -37,8 +40,8 @@
 #' summary(speeches)
 as.speeches <- function(
   .Object,
-  s_attribute_date = grep("date", sAttributes(.Object), value = TRUE),
-  s_attribute_name = grep("name", sAttributes(.Object), value = TRUE),
+  s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
+  s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
 ){
   
@@ -51,8 +54,8 @@ as.speeches <- function(
   )
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
-  if (length(sAttributes(.Object, s_attribute_date)) > 1){
-    partition_bundle_dates <- partitionBundle(.Object, sAttribute = s_attribute_date)
+  if (length(s_attributes(.Object, s_attribute_date)) > 1){
+    partition_bundle_dates <- partition_bundle(.Object, s_attribute = s_attribute_date)
   } else {
     partition_bundle_dates <- list(.Object)
   }
@@ -60,7 +63,7 @@ as.speeches <- function(
   .message("generating speeches", verbose = verbose)
   .split_by_speakers <- function(partition_date, ...){
     nested <- lapply(
-      sAttributes(partition_date, s_attribute_name),
+      s_attributes(partition_date, s_attribute_name),
       function(speaker_name){
         partition_bundle_names <- partition(partition_date, def = setNames(list(speaker_name), s_attribute_name), verbose = FALSE)
         split(partition_bundle_names, gap = gap, verbose = FALSE)
@@ -78,7 +81,7 @@ as.speeches <- function(
   partition_names <- sapply(
     speaker_list,
     function(x){
-      paste(x@sAttributes[[s_attribute_name]], sAttributes(x, s_attribute_date), x@name, sep = "_")
+      paste(x@s_attributes[[s_attribute_name]], s_attributes(x, s_attribute_date), x@name, sep = "_")
     }
   )
   for (i in 1L:length(speaker_list)) name(speaker_list[[i]]) <- partition_names[i]

@@ -4,9 +4,9 @@
 \alias{as.speeches}
 \title{Split Corpus or Partition Into Speeches}
 \usage{
-as.speeches(.Object, s_attribute_date = grep("date", sAttributes(.Object),
-  value = TRUE), s_attribute_name = grep("name", sAttributes(.Object), value =
-  TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
+as.speeches(.Object, s_attribute_date = grep("date", s_attributes(.Object),
+  value = TRUE), s_attribute_name = grep("name", s_attributes(.Object), value
+  = TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{a partition .Object}
@@ -26,7 +26,7 @@ whether to assume seperate speeches}
 \item{progress}{logical}
 }
 \value{
-A \code{partitionBundle}, the names of the objects in the bundle are
+A \code{partition_bundle}, the names of the objects in the bundle are
   the speaker name, the date of the speech and an index for the number of the
   speech on a given day, concatenated by underscores.
 }
@@ -45,7 +45,7 @@ speeches <- as.speeches(
   "GERMAPARLMINI",
   s_attribute_date = "date", s_attribute_name = "speaker"
 )
-speeches_count <- count(speeches, pAttribute = "word")
+speeches_count <- count(speeches, p_attribute = "word")
 tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
 
 bt <- partition("GERMAPARLMINI", date = "2009-10-27")

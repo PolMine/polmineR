@@ -6,12 +6,6 @@ watson.tts.process(
   11
 )
 
-watson.tts.process(
-  creds = "~/Lab/tmp/watson.json",
-  "Ja das ist ja eine schöne Überraschung.",
-  10
-)
-
 # check whether CORPUS_REGISTRY environment variable is set
 Sys.getenv("CORPUS_REGISTRY")
 readline("press key to continue ...")

@@ -18,27 +18,24 @@
 #' @name registry_reset
 #' @importFrom utils capture.output
 #' @importFrom stringi stri_match_all_regex
-#' @importFrom RcppCWB cqp_reset_registry cqp_get_registry
+#' @importFrom RcppCWB cqp_reset_registry cqp_get_registry cqp_initialize
 #' @seealso To conveniently reset registry, see \code{\link{use}}.
 #' @examples
 #' x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 #' registry_reset(registryDir = x)
-registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), verbose = TRUE) {
-  if(!file.exists(registryDir)) stop("registry directory does not exist")
-  oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
-  if (registryDir == oldRegistry){
-    .message(sprintf("registry already set to: %s (unchanged)", registryDir), verbose = verbose)
-  } else {
-    Sys.setenv(CORPUS_REGISTRY = registryDir)
-    .message("setting registry:", registryDir, verbose = verbose)
-  }
+registry_reset <- function(registryDir = registry(), verbose = TRUE) {
   
+  if (!file.exists(registryDir)) stop("registry directory does not exist")
+  oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
+  
+  Sys.setenv(CORPUS_REGISTRY = registryDir)
+
   if (class(CQI)[1] == "CQI.RcppCWB"){
     if (!cqp_is_initialized()){
       .message("initializing CQP", verbose = verbose)
       cqp_initialize(registry = registryDir)
     } else {
-      if (registryDir != oldRegistry) cqp_reset_registry(registry = registryDir)
+      cqp_reset_registry(registry = registryDir)
     }
     if (cqp_is_initialized() && (cqp_get_registry() == registryDir)){
       .message("status: OK", verbose = verbose)
@@ -46,24 +43,7 @@ registry_reset <- function(registryDir = getOption("polmineR.defaultRegistry"), 
       .message("status: FAIL", verbose = verbose)
     }
   } 
-  #   else if (class(CQI)[1] == "CQI.rcqp" && ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]]))){
-  #   .message("unloading rcqp library", verbose = verbose)
-  #   library.dynam.unload("rcqp", libpath = system.file(package = "rcqp"))
-  #   
-  #   .message("reloading rcqp library", verbose = verbose)
-  #   dummy <- capture.output(
-  #     library.dynam(
-  #       "rcqp", package = "rcqp",
-  #       lib.loc = gsub("^(.*?)/rcqp$", "\\1", system.file(package = "rcqp"))
-  #     ),
-  #     type = "output"
-  #   )
-  #   if ("rcqp" %in% sapply(library.dynam(), function(x) x[["name"]])){
-  #     .message("status: OK", verbose = verbose) 
-  #   } else {
-  #     .message("status: WARNING - rcqp dynamic library not loaded", verbose = verbose)
-  #   }
-  # }
+
   setTemplate()
   invisible(oldRegistry)
 }
@@ -150,3 +130,30 @@ registry_get_properties = function(corpus, registry = Sys.getenv("CORPUS_REGISTR
   setNames(m[,3], m[,2])
 }
 
+
+#' @noRd
+registry_move <- function(corpus, registry, registry_new, home_dir_new){
+  registry <- readLines(file.path(registry, tolower(corpus)))
+  
+  home_line_no <- grep("^HOME", registry)
+  registry[home_line_no] <- sprintf("HOME \"%s\"", file.path(home_dir_new))
+  
+  info_line_no <- grep("^INFO", registry)
+  registry_info_file <- gsub('^INFO\\s+"?(.*?)"?\\s*$', "\\1", registry[info_line_no])
+  info_file_new <- file.path(home_dir_new, basename(registry_info_file), fsep = "/")
+  registry[info_line_no] <- sprintf("INFO \"%s\"", info_file_new)
+  
+  writeLines(text = registry, con = file.path(registry_new, corpus), sep = "\n")
+  invisible(NULL)
+}
+
+#' Get Registry Directory
+#' 
+#' The \code{polmineR} package uses a subdirectory of the per-session temporary directory
+#' as a (temporary) registry. The \code{registry} function will return the path 
+#' to this directory.
+#' 
+#' @export registry
+#' @examples
+#' registry()
+registry <- function() file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
