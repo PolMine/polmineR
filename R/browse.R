@@ -91,7 +91,7 @@ setMethod("browse", "kwic", function(object, colnames=NULL){
  
 #' @rdname browse
 #' @exportMethod browse
-setMethod("browse", "pressPartition", function(object, meta = c("text_newspaper", "text_date")){
-  callNextMethod(object=object, meta=meta)
+setMethod("browse", "press_partition", function(object, meta = c("text_newspaper", "text_date")){
+  callNextMethod(object = object, meta = meta)
 })
 

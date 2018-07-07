@@ -105,13 +105,14 @@ NULL
 #' combines a set of \code{partition} objects.
 #' 
 #' @param .Object A \code{partition}, a length-one \code{character} vector supplying a CWB corpus, or a \code{partition_bundle}
-#' @param s_attribute the s-attribute to vary
-#' @param values values the s-attribute provided shall assume
-#' @param prefix a character vector that will be attached as a prefix to partition names
-#' @param progress logical, whether to show progress bar
-#' @param mc logical, whether to use multicore parallelization
+#' @param s_attribute The s-attribute to vary
+#' @param values Values the s-attribute provided shall assume.
+#' @param prefix A character vector that will be attached as a prefix to partition names.
+#' @param progress Logical, whether to show progress bar.
+#' @param mc Logical, whether to use multicore parallelization.
 #' @param xml logical
-#' @param verbose logical, whether to provide progress information
+#' @param type The type of \code{partition} to generate.
+#' @param verbose Logical, whether to provide progress information.
 #' @param ... parameters to be passed into partition-method (see respective documentation)
 #' @return S4 class \code{partition_bundle}, with list of partition objects in slot 'objects'
 #' @export partition_bundle
@@ -122,10 +123,10 @@ NULL
 #' @examples
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-#' pBundle <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
-#' dtm <- as.DocumentTermMatrix(pBundle, col = "count")
-#' summary(pBundle)
-#' btBundle <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+#' pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+#' dtm <- as.DocumentTermMatrix(pb, col = "count")
+#' summary(pb)
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 #' @seealso \code{\link{partition}} and \code{\link{bundle}}
 setGeneric("partition_bundle", function(.Object, ...) standardGeneric("partition_bundle"))
 
@@ -133,7 +134,7 @@ setGeneric("partition_bundle", function(.Object, ...) standardGeneric("partition
 setMethod("partition_bundle", "partition", function(
   .Object, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
-  ...
+  type = get_type(.Object), ...
 ) {
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
@@ -149,9 +150,9 @@ setMethod("partition_bundle", "partition", function(
     .message('number of partitions to be generated: ', length(values), verbose = verbose)
   }
   bundle@objects <- blapply(
-    lapply(setNames(values, rep(s_attribute, times = length(values))),function(x) setNames(x, s_attribute)),
-    f = function(def, .Object, verbose = FALSE, ...) partition(.Object = .Object, def = def, verbose = FALSE, ...),
-    .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc,
+    lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
+    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type, verbose = FALSE, ...),
+    .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc, type = type,
     ...
   )
   names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep = "")
@@ -163,7 +164,7 @@ setMethod("partition_bundle", "partition", function(
 #' @rdname partition_bundle-method
 setMethod("partition_bundle", "character", function(
   .Object, s_attribute, values = NULL, prefix = "",
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat",
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat", type = get_type(.Object),
   ...
 ) {
   
@@ -195,9 +196,9 @@ setMethod("partition_bundle", "character", function(
   cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
   
   .message("generating the partitions", verbose = verbose)
-  .makeNewPartition <- function(i, corpus, encoding, s_attribute, cposList, xml, ...){
+  .makeNewPartition <- function(i, corpus, encoding, s_attribute, cposList, xml, type, ...){
     newPartition <- new(
-      "partition",
+      Class = paste(c(type, "partition"), collapse = "_"),
       corpus = corpus, encoding = encoding,
       stat = data.table(),
       cpos = cposList[[i]],
@@ -213,7 +214,7 @@ setMethod("partition_bundle", "character", function(
     setNames(as.list(1L:length(cposList)), names(cposList)),
     f = .makeNewPartition,
     corpus = .Object, encoding = bundle@encoding, s_attribute = s_attribute, cposList, xml = xml,
-    mc = mc, progress = progress, verbose = verbose, ...
+    mc = mc, progress = progress, verbose = verbose, type = type, ...
   )
   bundle
 })
@@ -272,6 +273,7 @@ setMethod("partition_bundle", "environment", function(.Object) .get_objects(clas
 #' use("polmineR")
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 #' pb2 <- partition_bundle(pb, s_attribute = "speaker", progress = FALSE)
+#' 
 #' summary(pb2)
 #' @rdname partition_bundle-method
 setMethod("partition_bundle", "partition_bundle", function(.Object, s_attribute, prefix = character(), progress = TRUE, mc = getOption("polmineR.mc")){

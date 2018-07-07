@@ -13,11 +13,11 @@ partition_bundle(.Object, ...)
 
 \S4method{partition_bundle}{partition}(.Object, s_attribute, values = NULL,
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = FALSE, ...)
+  progress = FALSE, type = get_type(.Object), ...)
 
 \S4method{partition_bundle}{character}(.Object, s_attribute, values = NULL,
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = FALSE, xml = "flat", ...)
+  progress = FALSE, xml = "flat", type = get_type(.Object), ...)
 
 \S4method{partition_bundle}{context}(.Object, mc = getOption("polmineR.mc"),
   verbose = FALSE, progress = TRUE)
@@ -30,17 +30,19 @@ partition_bundle(.Object, ...)
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
 
-\item{s_attribute}{the s-attribute to vary}
+\item{s_attribute}{The s-attribute to vary}
 
-\item{values}{values the s-attribute provided shall assume}
+\item{values}{Values the s-attribute provided shall assume.}
 
-\item{prefix}{a character vector that will be attached as a prefix to partition names}
+\item{prefix}{A character vector that will be attached as a prefix to partition names.}
 
-\item{mc}{logical, whether to use multicore parallelization}
+\item{mc}{Logical, whether to use multicore parallelization.}
 
-\item{verbose}{logical, whether to provide progress information}
+\item{verbose}{Logical, whether to provide progress information.}
 
-\item{progress}{logical, whether to show progress bar}
+\item{progress}{Logical, whether to show progress bar.}
+
+\item{type}{The type of \code{partition} to generate.}
 
 \item{xml}{logical}
 }
@@ -62,14 +64,15 @@ The argument \code{prefix} can be used to achieve a more descriptive name.
 \examples{
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-pBundle <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
-dtm <- as.DocumentTermMatrix(pBundle, col = "count")
-summary(pBundle)
-btBundle <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+dtm <- as.DocumentTermMatrix(pb, col = "count")
+summary(pb)
+pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 # split up objects in partition_bundle by using partition_bundle-method
 use("polmineR")
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 pb2 <- partition_bundle(pb, s_attribute = "speaker", progress = FALSE)
+
 summary(pb2)
 }
 \seealso{

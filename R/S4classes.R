@@ -560,23 +560,23 @@ setClass("context_bundle",
 
 
 #' @rdname partition_class
-setClass("plprPartition", contains = "partition")
+setClass("plpr_partition", contains = "partition")
 
 #' @rdname partition_class
-setClass("pressPartition", contains = "partition")
+setClass("press_partition", contains = "partition")
 
 
 #' Bundle of partitions (partition_bundle class).
 #' 
 #' Class and methods to manage bundles of partitions. 
 #' 
-#' @slot objects Object of class \code{"list"} the partitions making up the bundle
-#' @slot corpus Object of class \code{"character"} the CWB corpus the partition is based on
-#' @slot s_attributes_fixed Object of class \code{"list"} fixed s-attributes
-#' @slot encoding Object of class \code{"character"} encoding of the corpus
-#' @slot explanation Object of class \code{"character"} an explanation of the partition
-#' @slot xml Object of class \code{"character"} whether the xml is flat or nested
-#' @slot call Object of class \code{"character"} the call that generated the \code{partition_bundle}
+#' @slot objects Object of class \code{list} the partitions making up the bundle
+#' @slot corpus Object of class \code{character} the CWB corpus the partition is based on
+#' @slot s_attributes_fixed Object of class \code{list} fixed s-attributes
+#' @slot encoding Object of class \code{character} encoding of the corpus
+#' @slot explanation Object of class \code{character} an explanation of the partition
+#' @slot xml Object of class \code{character} whether the xml is flat or nested
+#' @slot call Object of class \code{character} the call that generated the \code{partition_bundle}
 #' @aliases partition_bundle-class
 #'   [,partition_bundle-method [[,partition_bundle-method
 #'   as.matrix,partition_bundle-method 
@@ -638,3 +638,36 @@ setClassUnion(
   name = "subcorpus",
   members = c("regions", "partition")
 )
+
+
+#' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
+#' i.e. it checks for each new row in the matrix whether it increments the end
+#' of the previous region (by 1), and ensure that the cpos matrix defines
+#' disjoined regions.
+#' 
+#' @param x An object of a class belonging to the virtual class \code{subcorpus}, i.e. a 
+#' \code{partition} or \code{regions} object.
+#' @exportMethod aggregate
+#' @rdname subcorpus
+#' @examples 
+#' P <- new(
+#'   "partition",
+#'   cpos = matrix(data = c(1:10, 20:29), ncol = 2, byrow = TRUE),
+#'   stat = data.table::data.table()
+#' )
+#' P2 <- aggregate(P)
+#' P2@cpos
+setMethod("aggregate", "subcorpus", function(x){
+  if (nrow(x@cpos) == 1L){
+    message("NOTE: Only one region, returning the partition unchanged")
+    return(x)
+  }
+  jumps <- x@cpos[2L:nrow(x@cpos), 1L] - x@cpos[1L:(nrow(x@cpos) - 1L), 2L]
+  jumpsWhere <- c(0L, which(jumps > 1L), nrow(x@cpos)) + 1L
+  rework <- lapply(
+    1L:(length(jumpsWhere) - 1L),
+    function(i) c(x@cpos[jumpsWhere[i], 1L], x@cpos[jumpsWhere[i + 1L] - 1L, 2L])
+  )
+  x@cpos <- do.call(rbind, rework)
+  x
+})

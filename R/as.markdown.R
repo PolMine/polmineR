@@ -9,7 +9,7 @@ NULL
 #' from the \code{partition}-class.
 #' 
 #' @param .Object The object to be converted, a \code{partition}, or a class
-#'   inheriting from \code{partition}, such as \code{plprPartition}.
+#'   inheriting from \code{partition}, such as \code{plpr_partition}.
 #' @param meta The metainformation (s-attributes) to be displayed.
 #' @param cpos A \code{logical} value, whether to add cpos as ids in span elements.
 #' @param interjections A \code{logical} value, whether to format interjections.
@@ -130,7 +130,7 @@ setMethod(
   })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, template = getTemplate(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
+setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, template = getTemplate(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){
@@ -138,18 +138,11 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
     if (maxNoStrucs != length(.Object@strucs)){
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
-      if (requireNamespace("RcppCWB", quietly = TRUE)){
-        .Object@cpos <- RcppCWB::get_region_matrix(
-          corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs,
-          registry = Sys.getenv("CORPUS_REGISTRY"), strucs = .Object@strucs
-        )
-        
-      } else {
-        .Object@cpos <- do.call(rbind, lapply(
-          .Object@strucs,
-          function(i) CQI$struc2cpos(.Object@corpus, .Object@s_attribute_strucs, i)
-        ))
-      }
+      .Object@cpos <- RcppCWB::get_region_matrix(
+        corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs,
+        registry = Sys.getenv("CORPUS_REGISTRY"), strucs = .Object@strucs
+      )
+      
     }
   }
   
@@ -176,7 +169,7 @@ setMethod("as.markdown", "plprPartition", function(.Object, meta = NULL, templat
   }
   
   markdown <- sapply(
-    1:nrow(metadata),
+    1L:nrow(metadata),
     function(i) {
       meta <- ""
       if (metaChange[i] == TRUE) { 

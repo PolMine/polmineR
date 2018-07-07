@@ -8,7 +8,7 @@
 \alias{browse,partition-method}
 \alias{browse,html-method}
 \alias{browse,kwic-method}
-\alias{browse,pressPartition-method}
+\alias{browse,press_partition-method}
 \title{Display in browser}
 \usage{
 browse(object, ...)
@@ -23,7 +23,7 @@ browse(object, ...)
 
 \S4method{browse}{kwic}(object, colnames = NULL)
 
-\S4method{browse}{pressPartition}(object, meta = c("text_newspaper",
+\S4method{browse}{press_partition}(object, meta = c("text_newspaper",
   "text_date"))
 }
 \arguments{

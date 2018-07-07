@@ -1,7 +1,7 @@
 #' @include partition.R S4classes.R
 NULL
 
-#' Get Terms Occurring in Partition or Corpus.
+#' Get terms in \code{partition} or corpus.
 #' 
 #' @param x an atomic \code{character} vector with a corpus id or \code{partition} object
 #' @param p_attribute the p-attribute to be analyzed

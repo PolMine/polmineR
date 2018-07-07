@@ -1,7 +1,7 @@
 #' @include S4classes.R
 NULL
 
-#' Split Corpus or Partition Into Speeches
+#' Split corpus or partition into speeches.
 #' 
 #' Split entire corpus or a partition into speeches. The heuristic is to split
 #' the corpus/partition into partitions on day-to-day basis first, using the
@@ -11,14 +11,14 @@ NULL
 #' supplied by argument \code{gap}, contributions of a speaker are assumed to be
 #' two seperate speeches.
 #' 
-#' @param .Object a partition .Object
-#' @param s_attribute_date the s-attribute that provides the dates of sessions
-#' @param s_attribute_name the s-attribute that provides the names of speakers
-#' @param gap number of tokens between strucs assumed to make the difference
+#' @param .Object A \code{partition}, or length-one character vector indicating a CWB corpus.
+#' @param s_attribute_date The s-attribute that provides the dates of sessions.
+#' @param s_attribute_name The s-attribute that provides the names of speakers.
+#' @param gap Number of tokens between strucs assumed to make the difference
 #'   whether a speech has been interrupted (by an interjection or question), or
-#'   whether to assume seperate speeches
-#' @param mc whether to use multicore, defaults to FALSE
-#' @param verbose logical, defaults to TRUE
+#'   whether to assume seperate speeches.
+#' @param mc Whether to use multicore, defaults to \code{FALSE}.
+#' @param verbose A logical value, defaults to \code{TRUE}.
 #' @param progress logical
 #' @return A \code{partition_bundle}, the names of the objects in the bundle are
 #'   the speaker name, the date of the speech and an index for the number of the
@@ -100,8 +100,8 @@ as.speeches <- function(
   properties <- registry_get_properties(corpus = corpus)
   if ("type" %in% names(properties)){
     if (properties[["type"]] == "plpr"){
-      .message("coercing partitions to plprPartitions", verbose = verbose)
-      speaker_list_ordered <- lapply(speaker_list_ordered, function(x) as(x, "plprPartition"))
+      .message("coercing partitions to plpr_partitions", verbose = verbose)
+      speaker_list_ordered <- lapply(speaker_list_ordered, function(x) as(x, "plpr_partition"))
     }
   }
   

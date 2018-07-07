@@ -174,26 +174,26 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     # add rows for partitions withous hits (all 0)
     missingPartitions <- names(.Object)[which(!names(.Object) %in% DT_cast[[1]])]
     if (length(missingPartitions) > 0){
-      queryColnames <- colnames(DT_cast)[2:ncol(DT_cast)]
+      queryColnames <- colnames(DT_cast)[2L:ncol(DT_cast)]
       DTnewList <- c(
         list(partition = missingPartitions),
-        lapply(setNames(queryColnames, queryColnames), function(Q) rep(0, times = length(missingPartitions)))
+        lapply(setNames(queryColnames, queryColnames), function(Q) rep(0L, times = length(missingPartitions)))
       )
-      DTnomatch <- data.table(data.frame(DTnewList))
+      DTnomatch <- data.table(data.frame(DTnewList, stringsAsFactors = FALSE))
       DT_cast <- rbindlist(list(DT_cast, DTnomatch))
     }
     
     # add columns for quits without hits (all 0)
-    missingQueries <- query[!query %in% colnames(DT_cast)[2:ncol(DT_cast)]]
+    missingQueries <- query[!query %in% colnames(DT_cast)[2L:ncol(DT_cast)]]
     if (length(missingQueries) > 0){
       for (q in missingQueries){
-        DT_cast[, eval(q) := rep(0, times = nrow(DT_cast)), with = TRUE]
+        DT_cast[, eval(q) := rep(0L, times = nrow(DT_cast)), with = TRUE]
       }
     }
     
     if (total){
       .message("adding total number of hits (col 'TOTAL', verbose = verbose)")
-      DT_cast[, "TOTAL" := rowSums(DT_cast[, 2:ncol(DT_cast), with = FALSE]), with = TRUE]
+      DT_cast[, "TOTAL" := rowSums(DT_cast[, 2L:ncol(DT_cast), with = FALSE]), with = TRUE]
     }
     return(DT_cast)
   } else {

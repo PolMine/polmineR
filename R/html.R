@@ -86,9 +86,9 @@ setMethod("html", "character", function(object){
   nchar_textnodes <- sapply(nodetext, nchar)
   no_linesplit <- sapply(stri_extract_all_boundaries(nodetext), function(x) length(grep("\\n", x)))
   nchar_textnodes <- nchar_textnodes - ifelse(no_linesplit > 0, 1, 0)
-  offset <- c(0, cumsum(nchar_textnodes)[1:(length(nchar_textnodes) - 1)])
+  offset <- c(0L, cumsum(nchar_textnodes)[1L:(length(nchar_textnodes) - 1L)])
   dummy <- lapply(
-    1:length(textnodes),
+    1L:length(textnodes),
     function(i){
       if (!grepl("^\\s*$", nodetext[i])){
         parent <- xml2::xml_parent(textnodes[[i]])
@@ -191,11 +191,11 @@ setMethod("html", "partition_bundle", function(object, filename = c(), type = "d
     paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
     markdown,
     '\n* * *\n',
-    collapse="\n")
+    collapse = "\n")
   if (is.null(filename)) {
     htmlFile <- html(markdown)
   } else {
-    cat(markdown, file=filename)    
+    cat(markdown, file = filename)    
   }
   if (is.null(filename)) browseURL(htmlFile)
 })

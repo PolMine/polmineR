@@ -85,13 +85,15 @@ registry_get_id = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")){
 #' @export registry_get_home
 #' @rdname registry_eval
 registry_get_home = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
-  .registry_eval(corpus = corpus, registry = registry, regex = "^HOME\\s+(.*?)\\s*$")
+  y <- .registry_eval(corpus = corpus, registry = registry, regex = '^HOME\\s+"?(.*?)"?\\s*$')
+  normalizePath(path = y, winslash = "/", mustWork = FALSE)
 }
 
 #' @export registry_get_info
 #' @rdname registry_eval
 registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
-  .registry_eval(corpus = corpus, registry = registry, regex = "^INFO\\s+(.*?)\\s*$")
+  y <- .registry_eval(corpus = corpus, registry = registry, regex = '^INFO\\s+"?(.*?)"?\\s*$')
+  normalizePath(path = y, winslash = "/", mustWork = FALSE)
 }
 
 

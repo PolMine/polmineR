@@ -5,7 +5,7 @@
 \alias{terms}
 \alias{terms,partition-method}
 \alias{terms,character-method}
-\title{Get Terms Occurring in Partition or Corpus.}
+\title{Get terms in \code{partition} or corpus.}
 \usage{
 \S4method{terms}{partition}(x, p_attribute, regex = NULL, ...)
 
@@ -24,7 +24,7 @@
 \item{robust}{logical, whether to check for potential failures}
 }
 \description{
-Get Terms Occurring in Partition or Corpus.
+Get terms in \code{partition} or corpus.
 }
 \examples{
 use("polmineR")

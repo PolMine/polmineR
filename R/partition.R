@@ -8,8 +8,8 @@ NULL
 
 
 
-setAs(from = "partition", to = "plprPartition", function(from){
-  y <- new("plprPartition")
+setAs(from = "partition", to = "plpr_partition", function(from){
+  y <- new("plpr_partition")
   for (z in slotNames(from)) slot(y, z) <- slot(from, z)
   y
 })
@@ -332,36 +332,15 @@ is.partition <- function(x) "partition" %in% is(x)
 #' @aliases partition
 setGeneric("partition", function(.Object, ...) standardGeneric("partition") )
 
-.getPartitionType <- function(corpus, type, verbose){
-  if (is.null(type)){
-    corpusProperties <- registry_get_properties(corpus)
-    if (!"type" %in% names(corpusProperties)){
-      partitionType <- "partition"
-    } else {
-      type <- corpusProperties[["type"]]
-      if (type %in% c("press", "plpr")){
-        .message("type of the corpus is", type, verbose = verbose)
-        partitionType <- paste(type, "Partition", sep = "")
-      } else {
-        stop("partition type provided by registry is not valid")
-      }
-    }
-  } else {
-    if (type %in% c("press", "plpr")) partitionType <- paste(type, "Partition", sep = "")
-  }
-  partitionType
-}
-
 
 
 #' @rdname partition
 setMethod("partition", "character", function(
   .Object, def = NULL, name = "",
   encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...
+  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
 ) {
   
-  corpus <- .Object
   stopifnot(xml %in% c("nested", "flat"))
   
   dot_list <- list(...)
@@ -370,42 +349,40 @@ setMethod("partition", "character", function(
     dot_list[["pAttribute"]] <- NULL
   }
 
-  if (!corpus %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
+  if (!.Object %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(dot_list) != 0 && is.null(def)) def <- dot_list
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
-  .message('Setting up partition ', name, verbose = verbose)
-  partitionType <- .getPartitionType(corpus = .Object, type = type, verbose = verbose)
   assign(
-    "Partition",
+    "p",
     new(
-      partitionType,
-      stat = data.table(), call = deparse(match.call()),
+      paste(c(type, "partition"), collapse = "_"),
+      stat = data.table(), # call = deparse(match.call()),
       corpus = .Object, name = name, xml = xml
     )
   )  
   
-  Partition@encoding <- if (is.null(encoding)) registry_get_encoding(Partition@corpus) else encoding
-  .message('get encoding:', Partition@encoding, verbose = verbose)
-  Partition@s_attributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = Partition@encoding))
+  p@encoding <- if (is.null(encoding)) registry_get_encoding(p@corpus) else encoding
+  .message('get encoding:', p@encoding, verbose = verbose)
+  p@s_attributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = p@encoding))
   
   .message('get cpos and strucs', verbose = verbose)
   if (is.null(def)){
     stop("no s-attributes provided to define partition")
   } else {
-    Partition@s_attribute_strucs <- names(def)[length(def)]
-    Partition <- .partition_add_cpos(Partition, xml, regex)  
+    p@s_attribute_strucs <- names(def)[length(def)]
+    p <- .partition_add_cpos(p, xml, regex)  
   }
-  if (!is.null(Partition)) {
+  if (!is.null(p)) {
     # get partition size
-    Partition@size <- size(Partition)
+    p@size <- size(p)
     if (!is.null(p_attribute)) if (p_attribute[1] == FALSE) p_attribute <- NULL
     if (!is.null(p_attribute)) {
-      Partition <- enrich(Partition, p_attribute = p_attribute, verbose = verbose, decode = decode, mc = mc)
+      p <- enrich(p, p_attribute = p_attribute, verbose = verbose, decode = decode, mc = mc)
     }
   } else {
     warning("... setting up the partition failed (returning NULL object)")
   }
-  Partition
+  p
 })
 
 
@@ -499,12 +476,13 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   newPartition
 })
 
+
 #' @rdname partition
 #' @importFrom data.table copy
 setMethod("partition", "Corpus", function(
   .Object, def = NULL, name = "",
   encoding = NULL, regex = FALSE, xml = "flat",
-  type = NULL, verbose = TRUE, ...
+  type = get_type(.Object), verbose = TRUE, ...
 ) {
   
   # some checks to start with
@@ -518,11 +496,10 @@ setMethod("partition", "Corpus", function(
   .message('encoding of the corpus is:', encoding, verbose = verbose)
   
   .message('initialize partition ', name, verbose = verbose)
-  partitionType <- .getPartitionType(corpus = .Object$corpus, type = type, verbose = verbose)
   assign(
     "y",
     new(
-      partitionType,
+      paste(c(type, "partition"), collapse = "_"),
       stat = data.table(), corpus = .Object$corpus, name = name, xml = xml,
       encoding = encoding,
       s_attributes = lapply(def, function(x) as.corpusEnc(x, corpusEnc = encoding))

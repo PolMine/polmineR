@@ -4,7 +4,7 @@
 \name{as.markdown}
 \alias{as.markdown}
 \alias{as.markdown,partition-method}
-\alias{as.markdown,plprPartition-method}
+\alias{as.markdown,plpr_partition-method}
 \title{Get markdown-formatted full text of a partition.}
 \usage{
 as.markdown(.Object, ...)
@@ -13,13 +13,13 @@ as.markdown(.Object, ...)
   template = getTemplate(.Object), cpos = TRUE, cutoff = NULL,
   verbose = FALSE, ...)
 
-\S4method{as.markdown}{plprPartition}(.Object, meta = NULL,
+\S4method{as.markdown}{plpr_partition}(.Object, meta = NULL,
   template = getTemplate(.Object), cpos = FALSE, interjections = TRUE,
   cutoff = NULL, ...)
 }
 \arguments{
 \item{.Object}{The object to be converted, a \code{partition}, or a class
-inheriting from \code{partition}, such as \code{plprPartition}.}
+inheriting from \code{partition}, such as \code{plpr_partition}.}
 
 \item{...}{further arguments}
 

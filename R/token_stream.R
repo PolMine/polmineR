@@ -29,7 +29,8 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  if (!is.null(cutoff)) .Object <- .Object[1L:cutoff]
+  # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
+  if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
   tokens <- CQI$cpos2str(corpus, p_attribute, .Object)
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
@@ -40,11 +41,11 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
     if (beautify){
       pos <- CQI$cpos2str(corpus, "pos", .Object)
       whitespace <- rep(collapse, times = length(.Object))
-      whitespace[grep("\\$[\\.;,:!?]", pos, perl = T)] <- ""
-      whitespace[grep("\\)", tokens, perl = T)] <- ""
-      whitespace[grep("\\(", tokens, perl = T) + 1] <- ""
+      whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
+      whitespace[grep("\\)", tokens, perl = TRUE)] <- ""
+      whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
       whitespace[1] <- ""
-      tokens <- paste(paste(whitespace, tokens, sep=""), collapse="")
+      tokens <- paste(paste(whitespace, tokens, sep = ""), collapse="")
     } else {
       tokens <- paste(tokens, collapse = collapse)  
     }
@@ -54,14 +55,14 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "matrix", function(.Object, ...){
-  cposVector <- as.vector(unlist(apply(.Object, 1L, function(row) row[1L]:row[2L])))
-  get_token_stream(cposVector, ...)
+  cpos_vector <- as.vector(unlist(apply(.Object, 1L, function(row) row[1L]:row[2L])))
+  get_token_stream(cpos_vector, ...)
 })
 
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "character", function(.Object, left = NULL, right = NULL, ...){
-  if (is.null(left)) left <- 0
+  if (is.null(left)) left <- 0L
   if (is.null(right)) right <- size(.Object) - 1L
   get_token_stream(left:right, corpus = .Object, ...)
 })
@@ -69,7 +70,7 @@ setMethod("get_token_stream", "character", function(.Object, left = NULL, right 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "partition", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){
   get_token_stream(
-    .Object = .Object@cpos, corpus=.Object@corpus, p_attribute = p_attribute,
+    .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
     encoding = .Object@encoding, collapse = collapse, cpos = cpos,
     ...
     )

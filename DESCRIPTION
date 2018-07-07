@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.8.9004
-Date: 2018-07-06
+Version: 0.7.8.9005
+Date: 2018-07-07
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de"))
 Imports:
     methods,
@@ -60,7 +60,6 @@ Collate:
     'features.R'
     'context.R'
     'TermDocumentMatrix.R'
-    'aggregate.R'
     'as.VCorpus.R'
     'as.markdown.R'
     'cooccurrences.R'
@@ -100,6 +99,7 @@ Collate:
     'token_stream.R'
     'tooltips.R'
     'trim.R'
+    'type.R'
     'use.R'
     'utils.R'
     'view.R'

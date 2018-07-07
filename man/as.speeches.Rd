@@ -2,26 +2,26 @@
 % Please edit documentation in R/as.speeches.R
 \name{as.speeches}
 \alias{as.speeches}
-\title{Split Corpus or Partition Into Speeches}
+\title{Split corpus or partition into speeches.}
 \usage{
 as.speeches(.Object, s_attribute_date = grep("date", s_attributes(.Object),
   value = TRUE), s_attribute_name = grep("name", s_attributes(.Object), value
   = TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
 }
 \arguments{
-\item{.Object}{a partition .Object}
+\item{.Object}{A \code{partition}, or length-one character vector indicating a CWB corpus.}
 
-\item{s_attribute_date}{the s-attribute that provides the dates of sessions}
+\item{s_attribute_date}{The s-attribute that provides the dates of sessions.}
 
-\item{s_attribute_name}{the s-attribute that provides the names of speakers}
+\item{s_attribute_name}{The s-attribute that provides the names of speakers.}
 
-\item{gap}{number of tokens between strucs assumed to make the difference
+\item{gap}{Number of tokens between strucs assumed to make the difference
 whether a speech has been interrupted (by an interjection or question), or
-whether to assume seperate speeches}
+whether to assume seperate speeches.}
 
-\item{mc}{whether to use multicore, defaults to FALSE}
+\item{mc}{Whether to use multicore, defaults to \code{FALSE}.}
 
-\item{verbose}{logical, defaults to TRUE}
+\item{verbose}{A logical value, defaults to \code{TRUE}.}
 
 \item{progress}{logical}
 }

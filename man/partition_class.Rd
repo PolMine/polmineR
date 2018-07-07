@@ -13,8 +13,8 @@
 \alias{export}
 \alias{export,partition-method}
 \alias{split}
-\alias{plprPartition-class}
-\alias{pressPartition-class}
+\alias{plpr_partition-class}
+\alias{press_partition-class}
 \alias{p_attributes,partition-method}
 \alias{is.partition}
 \alias{enrich,partition-method}

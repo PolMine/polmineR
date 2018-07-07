@@ -14,7 +14,8 @@ partition(.Object, ...)
 
 \S4method{partition}{character}(.Object, def = NULL, name = "",
   encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = NULL, mc = FALSE, verbose = TRUE, ...)
+  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE,
+  ...)
 
 \S4method{partition}{list}(.Object, ...)
 
@@ -26,8 +27,8 @@ partition(.Object, ...)
   verbose = TRUE, mc = FALSE, ...)
 
 \S4method{partition}{Corpus}(.Object, def = NULL, name = "",
-  encoding = NULL, regex = FALSE, xml = "flat", type = NULL,
-  verbose = TRUE, ...)
+  encoding = NULL, regex = FALSE, xml = "flat",
+  type = get_type(.Object), verbose = TRUE, ...)
 }
 \arguments{
 \item{.Object}{character-vector - the CWB-corpus to be used}
