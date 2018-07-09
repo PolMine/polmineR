@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode corpus or s-attribute. — decode • polmineR</title>
+<title>Decode Structural Attribute or Entire Corpus. — decode • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,29 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Decode Structural Attribute or Entire Corpus. — decode" />
+
+<meta property="og:description" content="If a s_attribute is a character vector providing one or several structural attributes,
+the return value is a data.table with the left and right corpus positions in the first
+and second columns (&quot;cpos_left&quot; and &quot;cpos_right&quot;). Values of further columns are the decoded
+s-attributes. The name of the s-attribute is the column name. An error is thrown if the
+lengths of structural attributes differ (i.e. if there is a nested data structure)." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +63,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +93,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,22 +108,31 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode corpus or s-attribute.</h1>
+    <h1>Decode Structural Attribute or Entire Corpus.</h1>
+    
+    <div class="hidden name"><code>decode.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Decode either a corpus, or a s-attribute.</p>
+    <p>If a <code>s_attribute</code> is a character vector providing one or several structural attributes,
+the return value is a <code>data.table</code> with the left and right corpus positions in the first
+and second columns ("cpos_left" and "cpos_right"). Values of further columns are the decoded
+s-attributes. The name of the s-attribute is the column name. An error is thrown if the
+lengths of structural attributes differ (i.e. if there is a nested data structure).</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -114,7 +144,7 @@
       <td><p>further parameters</p></td>
     </tr>
     <tr>
-      <th>sAttribute</th>
+      <th>s_attribute</th>
       <td><p>the s-attribute to decode</p></td>
     </tr>
     <tr>
@@ -127,22 +157,21 @@
 
     <p>a <code>data.table</code></p>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code><a href='encode-method.html'>encode</a></code></p>
+    <p>If <code>s_attribute</code> is NULL, the token stream is decoded for all positional attributes that
+are present. Structural attributes are reported in additional columns. Decoding the entire
+corpus may be useful to make a transition to processing data following the 'tidy' approach,
+or to manipulate the corpus data and to re-encode the corpus.</p>
+<p>The return value is a <code>data.table</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-
-<span class='co'># Scenario 1: Decode one s-attribute</span>
-<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='st'>"text_date"</span>)
-
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
+<span class='co'># Scenario 1: Decode one or two s-attributes</span>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"date"</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute:  date</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"date"</span>, <span class='st'>"speaker"</span>))</div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute:  date</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute:  speaker</span></div><div class='input'>
 <span class='co'># Scenario 2: Decode corpus entirely</span>
-<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"PLPRBTTXT"</span>)
-
-<span class='co'># }</span></pre>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"GERMAPARLMINI"</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... decoding p-attribute: pos</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: interjection</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: date</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: party</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: speaker</span></div><div class='output co'>#&gt; <span class='message'>... assembling data.table</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -151,7 +180,7 @@
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
@@ -161,15 +190,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Corpus class. — Corpus" />
+
+<meta property="og:description" content="The R6 Corpus class offers a set of methods to retrieve and manage CWB
+indexed corpora." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,15 +105,20 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Corpus class.</h1>
+    
+    <div class="hidden name"><code>Corpus-class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Corpus class.</p>
+    <p>The R6 <code>Corpus</code> class offers a set of methods to retrieve and manage CWB
+indexed corpora.</p>
     
+    </div>
 
     <pre class="usage"><span class='no'>Corpus</span></pre>
         
@@ -107,19 +130,62 @@
 
     
     <dl class='dl-horizontal'>
-<dt><code>corpus</code></dt><dd><p>character vector, CWB corpus</p></dd>
-    <dt><code>encoding</code></dt><dd><p>encoding of the corpus</p></dd>
-    <dt><code>count</code></dt><dd><p>data.table with counts</p></dd>
+<dt><code>corpus</code></dt><dd><p>character vector (length 1), a CWB corpus</p></dd>
+    <dt><code>encoding</code></dt><dd><p>encoding of the corpus (typically 'UTF-8' or 'latin1'), assigned
+automatically upon initialization of the corpus</p></dd>
+    <dt><code>cpos</code></dt><dd><p>a two-column <code>matrix</code> with regions of a corpus underlying the
+s-attributes of the <code>data.table</code> in field <code>s_attributes</code></p></dd>
+    <dt><code>s_attributes</code></dt><dd><p>a <code>data.table</code> with the values of a set of s-attributes</p></dd>
+    <dt><code>stat</code></dt><dd><p>a <code>data.table</code> with counts</p></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+
+    
+    <dl class='dl-horizontal'>
+  <dt>corpus</dt><dd><p>a corpus</p></dd>
+  <dt>registryDir</dt><dd><p>the directory where the registry file resides</p></dd>
+  <dt>dataDir</dt><dd><p>the data directory of the corpus</p></dd>
+  <dt>p_attribute</dt><dd><p>p-attribute, to perform count</p></dd>
+  <dt>s_attributes</dt><dd><p>s-attributes</p></dd>
+  <dt>decode</dt><dd><p>logical, whether to turn token ids into strings upon counting</p></dd>
+  <dt>as.html</dt><dd><p>logical</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
     <dl class='dl-horizontal'>
-  <dt><code><a href='count-method.html'>count(pAttribute = getOption("polmineR.pAttribute"), id2str = TRUE)</a></code></dt><dd><p>Perform counts.</p></dd>
+  <dt><code>initialize(corpus, p_attribute = NULL, s_attributes = NULL)</code></dt><dd><p>Initialize a new object of class <code>Corpus</code>.</p></dd>
+  <dt><code><a href='count-method.html'>count(p_attribute = getOption("polmineR.p_attribute"), decode = TRUE)</a></code></dt><dd><p>Perform counts.</p></dd>
+  <dt><code>as.partition()</code></dt><dd><p>turn <code>Corpus</code> into a partition</p></dd>
+  <dt><code>getInfo(as.html = FALSE)</code></dt><dd><p></p></dd>
+  <dt><code>showInfo()</code></dt><dd><p></p></dd>
 </dl>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>)
+<span class='no'>infofile</span> <span class='kw'>&lt;-</span> <span class='no'>REUTERS</span>$<span class='fu'>getInfo</span>()
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='no'>REUTERS</span>$<span class='fu'>showInfo</span>()
+
+<span class='co'># use Corpus class to manage counts</span>
+<span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+<span class='no'>REUTERS</span>$<span class='no'>stat</span></div><div class='output co'>#&gt;              word word_id count
+#&gt;    1:          03     728     1
+#&gt;    2:           1     709     3
+#&gt;    3:         1.1     964     1
+#&gt;    4:        1.11    1189     1
+#&gt;    5:        1.15    1185     1
+#&gt;   ---                          
+#&gt; 1188:   yesterday     693     4
+#&gt; 1189: yesterday's     683     1
+#&gt; 1190:         you     157     1
+#&gt; 1191:        zero     612     2
+#&gt; 1192:        zone     915     2</div><div class='input'>
+<span class='co'># use Corpus class for creating partitions</span>
+<span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"id"</span>, <span class='st'>"places"</span>))</div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute:  places</span></div><div class='input'><span class='no'>usa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"usa"</span>)</div><div class='output co'>#&gt; <span class='message'>... encoding of the corpus is: latin1</span></div><div class='output co'>#&gt; <span class='message'>... initialize partition  </span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>sa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"saudi-arabia"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... encoding of the corpus is: latin1</span></div><div class='output co'>#&gt; <span class='message'>... initialize partition  </span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'>
+<span class='no'>reut</span> <span class='kw'>&lt;-</span> <span class='no'>REUTERS</span>$<span class='fu'>as.partition</span>()</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -129,23 +195,30 @@
 
       <li><a href="#fields">Fields</a></li>
 
+      <li><a href="#arguments">Arguments</a></li>
+
       <li><a href="#methods">Methods</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

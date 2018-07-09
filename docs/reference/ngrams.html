@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Get N-Grams — ngrams-class" />
+
+<meta property="og:description" content="Count n-grams, either of words, or of characters." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +59,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +89,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,27 +104,31 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get N-Grams</h1>
+    
+    <div class="hidden name"><code>ngrams.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Count n-grams, either of words, or of characters.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+<span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
   <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partitionBundle</span>
+<span class='co'># S4 method for partition_bundle</span>
 <span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -123,7 +144,7 @@
       <td><p>number of tokens/characters</p></td>
     </tr>
     <tr>
-      <th>pAttribute</th>
+      <th>p_attribute</th>
       <td><p>the p-attribute to use (can be &gt; 1)</p></td>
     </tr>
     <tr>
@@ -142,21 +163,14 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-  <span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)
-  <span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-  <span class='co'># a more complex scenario: get most frequent ADJA/NN-combinations</span>
-  <span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>), <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-  <span class='no'>ngramObject2</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(
-    <span class='no'>ngramObject</span>,
-    <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"1_pos"</span>]] <span class='kw'>==</span> <span class='st'>"ADJA"</span>  <span class='kw'>&amp;</span> <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"2_pos"</span>]] <span class='kw'>==</span> <span class='st'>"NN"</span>
-    )
-  <span class='no'>ngramObject2</span>@<span class='kw'>stat</span>[, <span class='st'>"1_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>][, <span class='st'>"2_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>]
-  <span class='no'>ngramObject3</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='no'>ngramObject2</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
-  <span class='fu'>head</span>(<span class='no'>ngramObject3</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='co'># }</span></pre>
+<span class='co'># a more complex scenario: get most frequent ADJA/NN-combinations</span>
+<span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>), <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='no'>ngramObject2</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(
+ <span class='no'>ngramObject</span>,
+ <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"1_pos"</span>]] <span class='kw'>==</span> <span class='st'>"ADJA"</span>  <span class='kw'>&amp;</span> <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"2_pos"</span>]] <span class='kw'>==</span> <span class='st'>"NN"</span>
+ )</div><div class='output co'>#&gt; <span class='error'>Error in eval(e, x, parent.frame()): Objekt 'ngramObject' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject2</span>@<span class='kw'>stat</span>[, <span class='st'>"1_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>][, <span class='st'>"2_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject3</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='no'>ngramObject2</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in sort(ngramObject2, by = "count"): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>ngramObject3</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(ngramObject3): Objekt 'ngramObject3' nicht gefunden</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -171,15 +185,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

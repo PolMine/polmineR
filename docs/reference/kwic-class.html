@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="kwic (S4 class) — kwic-class" />
+
+<meta property="og:description" content="S4 class for organizing information for concordance output" />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +59,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +89,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,15 +104,19 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>kwic (S4 class)</h1>
+    
+    <div class="hidden name"><code>kwic-class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>S4 class for organizing information for concordance output</p>
     
+    </div>
 
     <pre class="usage"><span class='co'># S4 method for kwic</span>
 <span class='fu'>show</span>(<span class='no'>object</span>)
@@ -113,13 +134,9 @@
 <span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>table</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='co'># S4 method for kwic</span>
-<span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>perl</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>tooltips</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='co'># S4 method for kwic</span>
 <span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -140,31 +157,11 @@
     </tr>
     <tr>
       <th>meta</th>
-      <td><p>sAttributes (character vector) with metainformation</p></td>
+      <td><p>s-attributes (character vector) with metainformation</p></td>
     </tr>
     <tr>
       <th>table</th>
       <td><p>logical, whether to turn cpos data.table into data.frame for output</p></td>
-    </tr>
-    <tr>
-      <th>highlight</th>
-      <td><p>a list</p></td>
-    </tr>
-    <tr>
-      <th>regex</th>
-      <td><p>logical, whether to use regular expressions</p></td>
-    </tr>
-    <tr>
-      <th>perl</th>
-      <td><p>logical, whether to use perl-style regular expressions for highlighting when regex is TRUE</p></td>
-    </tr>
-    <tr>
-      <th>tooltips</th>
-      <td><p>a list</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>logical</p></td>
     </tr>
     </table>
     
@@ -180,15 +177,15 @@ added as columns to the table with concordance lines.</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>metadata</code></dt><dd><p>Object of class <code>"character"</code> keeping the sAttributes of the metadata that are to be displayed</p></dd>
+<dt><code>metadata</code></dt><dd><p>Object of class <code>"character"</code> keeping the s-attributes of the metadata that are to be displayed</p></dd>
     <dt><code>left</code></dt><dd><p>words to the left</p></dd>
     <dt><code>right</code></dt><dd><p>words to the right</p></dd>
     <dt><code>corpus</code></dt><dd><p>the CWB corpus</p></dd>
     <dt><code>cpos</code></dt><dd><p>the corpus positions</p></dd>
-    <dt><code>table</code></dt><dd><p>Object of class <code>"data.frame"</code> a table with the relevant information for kwic output</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>"character"</code> encoding of the corpus</p></dd>
-    <dt><code>labels</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>categories</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
+    <dt><code>table</code></dt><dd><p>Object of class <code>data.frame</code> a table with the relevant information for kwic output</p></dd>
+    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code> encoding of the corpus</p></dd>
+    <dt><code>labels</code></dt><dd><p>Object of class <code>character</code></p></dd>
+    <dt><code>categories</code></dt><dd><p>Object of class <code>character</code></p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
@@ -201,13 +198,9 @@ added as columns to the table with concordance lines.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='st'>"Integration"</span>)
-<span class='fu'>length</span>(<span class='no'>K</span>)
-<span class='no'>K</span>[<span class='fl'>1</span>]
-<span class='no'>K</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"Integration"</span>)
+<span class='fu'>length</span>(<span class='no'>K</span>)</div><div class='output co'>#&gt; [1] 23</div><div class='input'><span class='no'>K</span>[<span class='fl'>1</span>]
+<span class='no'>K</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -228,15 +221,18 @@ added as columns to the table with concordance lines.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

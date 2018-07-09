@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Get Hits. — hits-class" />
+
+<meta property="og:description" content="Get hits for a (set of) queries, optionally with s-attribute values." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +59,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +89,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,46 +104,50 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get Hits.</h1>
+    
+    <div class="hidden name"><code>hits.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Get hits for a (set of) queries, optionally with s-attribute values.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partitionBundle</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='co'># S4 method for partition_bundle</span>
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for hits</span>
 <span class='fu'>sample</span>(<span class='no'>x</span>, <span class='no'>size</span>)
 
 <span class='co'># S4 method for context</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>a character, partition or partitionBundle object</p></td>
+      <td><p>a character, <code>partition</code> or <code>partition_bundle</code> object</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -142,12 +163,12 @@
 function to check whether query is a CQP query or not</p></td>
     </tr>
     <tr>
-      <th>sAttribute</th>
+      <th>s_attribute</th>
       <td><p>s-attributes</p></td>
     </tr>
     <tr>
-      <th>pAttribute</th>
-      <td><p>p-attribute (will be passed into cpos)</p></td>
+      <th>p_attribute</th>
+      <td><p>p-attribute</p></td>
     </tr>
     <tr>
       <th>size</th>
@@ -187,9 +208,12 @@ count is 0).</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>dt</code></dt><dd><p>a <code>"data.table"</code></p></dd>
+<dt><code>stat</code></dt><dd><p>a <code>"data.table"</code></p></dd>
     <dt><code>corpus</code></dt><dd><p>a <code>"character"</code> vector</p></dd>
     <dt><code>query</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
+    <dt><code>p_attribute</code></dt><dd><p>p-attribute that has been queried</p></dd>
+    <dt><code>encoding</code></dt><dd><p>encoding of the corpus</p></dd>
+    <dt><code>name</code></dt><dd><p>name of the object</p></dd>
 </dl>
     
 
@@ -209,15 +233,18 @@ count is 0).</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

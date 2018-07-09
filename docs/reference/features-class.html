@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Feature selection by comparison (S4 class). — features-class • polmineR</title>
+<title>Feature selection by comparison. — features-class • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Feature selection by comparison. — features-class" />
+
+<meta property="og:description" content="The  features-method returns a features-object. Several
+features-objects can be combined into a features_bundle-object." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,15 +105,20 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Feature selection by comparison (S4 class).</h1>
+    <h1>Feature selection by comparison.</h1>
+    
+    <div class="hidden name"><code>features-class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>object resulting from features-method</p>
+    <p>The  <code>features</code>-method returns a <code>features</code>-object. Several
+<code>features</code>-objects can be combined into a <code>features_bundle</code>-object.</p>
     
+    </div>
 
     <pre class="usage"><span class='co'># S4 method for features</span>
 <span class='fu'>summary</span>(<span class='no'>object</span>)
@@ -103,40 +126,46 @@
 <span class='co'># S4 method for features</span>
 <span class='fu'>show</span>(<span class='no'>object</span>)
 
-<span class='co'># S4 method for featuresBundle</span>
+<span class='co'># S4 method for features_bundle</span>
 <span class='fu'>summary</span>(<span class='no'>object</span>)
 
 <span class='co'># S4 method for features</span>
 <span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>an object</p></td>
+      <td><p>A <code>features</code> or <code>features_bundle</code> object.</p></td>
     </tr>
     <tr>
       <th>.Object</th>
-      <td><p>an object</p></td>
+      <td><p>a <code>features</code> object.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>A set of <code>features</code> objects can be combined into a <code>features_bundle</code>.
+Typically, a <code>features_bundle</code> will result from applying the <code>features</code>-method
+on a <code>partition_bundle</code>. See the documentation for <code>bundle</code> to learn about
+the methods for <code>bundle</code> objects that are available for a <code>features_bundle</code>.</p>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
     <dl class='dl-horizontal'>
-<dt><code>corpus</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>pAttribute</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>corpus</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>stat</code></dt><dd><p>Object of class <code>"data.frame"</code></p></dd>
-    <dt><code>sizeCoi</code></dt><dd><p>Object of class <code>"numeric"</code></p></dd>
-    <dt><code>sizeRef</code></dt><dd><p>Object of class <code>"numeric"</code></p></dd>
-    <dt><code>included</code></dt><dd><p>Object of class <code>"logical"</code> whether corpus of interest is included in reference corpus</p></dd>
-    <dt><code>method</code></dt><dd><p>Object of class <code>"character"</code> statisticalTest used</p></dd>
-    <dt><code>call</code></dt><dd><p>Object of class <code>"character"</code> the call that generated the object</p></dd>
-    <dt><code>objects</code></dt><dd><p>an object of class <code>list</code></p></dd>
+<dt><code>corpus</code></dt><dd><p>The CWB corpus the features are derived from, a <code>character</code> vector of length 1.</p></dd>
+    <dt><code>p_attribute</code></dt><dd><p>Object of class <code>character</code>.</p></dd>
+    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code>.</p></dd>
+    <dt><code>corpus</code></dt><dd><p>Object of class <code>character</code>.</p></dd>
+    <dt><code>stat</code></dt><dd><p>Object of class <code>data.frame</code>.</p></dd>
+    <dt><code>size_coi</code></dt><dd><p>Object of class <code>integer</code>.</p></dd>
+    <dt><code>size_ref</code></dt><dd><p>Object of class <code>integer</code>.</p></dd>
+    <dt><code>included</code></dt><dd><p>Object of class <code>logical</code> whether corpus of interest is included in reference corpus</p></dd>
+    <dt><code>method</code></dt><dd><p>Object of class <code>character</code> statisticalTest used</p></dd>
+    <dt><code>call</code></dt><dd><p>Object of class <code>character</code> the call that generated the object</p></dd>
 </dl>
     
 
@@ -146,6 +175,8 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#slots">Slots</a></li>
           </ul>
 
@@ -158,15 +189,18 @@ Andreas Blaette
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Analyze context of a node word. — context" />
+
+<meta property="og:description" content="Retrieve the word context of a token, optionally checking for boundaries of a XML
+region." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,44 +105,52 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Analyze context of a node word.</h1>
+    
+    <div class="hidden name"><code>context-method.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Retrieve the word context of a token, optionally checking for boundaries of a XML
 region.</p>
     
+    </div>
 
     <pre class="usage"><span class='co'># S4 method for partition</span>
 <span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.left"</span>), <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.right"</span>),
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>count</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.left"</span>), <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.right"</span>),
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>count</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partitionBundle</span>
-<span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='co'># S4 method for partition_bundle</span>
+<span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='no'>p_attribute</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for cooccurrences</span>
 <span class='fu'>context</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>complete</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='co'># S4 method for Corpus</span>
 <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>.Object</span>, <span class='no'>query</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='no'>...</span>)</pre>
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>a partition or a partitionBundle object</p></td>
+      <td><p>a partition or a partition_bundle object</p></td>
     </tr>
     <tr>
       <th>query</th>
@@ -143,11 +169,11 @@ region.</p>
       <td><p>no of tokens to the right of the node word</p></td>
     </tr>
     <tr>
-      <th>pAttribute</th>
+      <th>p_attribute</th>
       <td><p>p-attribute of the query</p></td>
     </tr>
     <tr>
-      <th>sAttribute</th>
+      <th>s_attribute</th>
       <td><p>if provided, it will be checked that corpus positions do not extend beyond
 the region defined by the s-attribute</p></td>
     </tr>
@@ -196,8 +222,8 @@ the value from the options</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>depending on whether a partition or a partitionBundle serves as
-  input, the return will be a context object, or a contextBundle object</p>
+    <p>depending on whether a partition or a partition_bundle serves as
+  input, the return will be a context object, or a <code>context_bundle</code> object</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -206,16 +232,10 @@ examples). Statistical tests available are log-likelihood, t-test, pmi.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-  <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='fu'>list</span>(<span class='kw'>text_type</span><span class='kw'>=</span><span class='st'>"speech"</span>))
-  <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-  <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='st'>"Bildung"</span>)
-  <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(
-    <span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-    <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"[aA]rbeit.*"</span>, <span class='st'>"Ausbildung"</span>), <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-    )
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 23</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... counting tokens</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='st'>"Bildung"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 23</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... filtering by positivelist</span></div><div class='output co'>#&gt; <span class='message'>... number of hits droped due to positivelist: 18</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... counting tokens</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(
+  <span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"[aA]rbeit.*"</span>, <span class='st'>"Ausbildung"</span>), <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 23</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... filtering by positivelist</span></div><div class='output co'>#&gt; <span class='message'>... number of hits droped due to positivelist: 21</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... counting tokens</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -238,15 +258,18 @@ Andreas Blaette
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

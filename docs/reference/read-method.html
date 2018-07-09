@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Display and read full text — read • polmineR</title>
+<title>Display full text. — read • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,27 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Display full text. — read" />
+
+<meta property="og:description" content="Generate text (i.e. html) and display it in the viewer pane of RStudio for
+reading it. If called on a partition_bundle-object, skip through the
+partitions contained in the bundle." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +61,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +91,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,31 +106,36 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Display and read full text</h1>
+    <h1>Display full text.</h1>
+    
+    <div class="hidden name"><code>read-method.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
-a <code>"partitionBundle"</code>-object, skip through the partitions contained in the
-bundle.</p>
+    <p>Generate text (i.e. html) and display it in the viewer pane of RStudio for
+reading it. If called on a <code>partition_bundle</code>-object, skip through the
+partitions contained in the bundle.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>tooltips</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cutoff"</span>), <span class='no'>...</span>)
+  <span class='kw'>tooltips</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cutoff"</span>), <span class='kw'>template</span> <span class='kw'>=</span> <span class='fu'><a href='templates.html'>get_template</a></span>(<span class='no'>.Object</span>),
+  <span class='no'>...</span>)
 
-<span class='co'># S4 method for partitionBundle</span>
-<span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='co'># S4 method for partition_bundle</span>
+<span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>)
 
 <span class='co'># S4 method for data.table</span>
-<span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='no'>col</span>, <span class='no'>partitionBundle</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='no'>col</span>, <span class='no'>partition_bundle</span>,
   <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for hits</span>
@@ -123,12 +147,12 @@ bundle.</p>
 <span class='co'># S4 method for regions</span>
 <span class='fu'>read</span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>an object to be read (<code>"partition" or "partitionBundle"</code>)</p></td>
+      <td><p>an object to be read (<code>"partition" or "partition_bundle"</code>)</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -137,21 +161,15 @@ bundle.</p>
     <tr>
       <th>meta</th>
       <td><p>a character vector supplying s-attributes for the metainformation
-to be printed, if not stated explicitly, session settings will be used</p></td>
+to be printed; if not stated explicitly, session settings will be used</p></td>
     </tr>
     <tr>
       <th>highlight</th>
-      <td><p>a list</p></td>
-    </tr>
-    <tr>
-      <th>cqp</th>
-      <td><p>a list of character vectors with regular expressions to
-highlight relevant terms or expressions; the names of the list provide the
-colors</p></td>
+      <td><p>a named list of character vectors (see details)</p></td>
     </tr>
     <tr>
       <th>tooltips</th>
-      <td><p>a list</p></td>
+      <td><p>a named list (names are colors, vectors are tooltips)</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -159,69 +177,76 @@ colors</p></td>
     </tr>
     <tr>
       <th>cpos</th>
-      <td><p>logical</p></td>
+      <td><p>logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
+tag of a html element surrounding the tokens</p></td>
     </tr>
     <tr>
       <th>cutoff</th>
       <td><p>maximum number of tokens to display</p></td>
     </tr>
     <tr>
-      <th>col</th>
-      <td><p>column</p></td>
+      <th>template</th>
+      <td><p>template to format output</p></td>
     </tr>
     <tr>
-      <th>partitionBundle</th>
-      <td><p>a partitionBundle object</p></td>
+      <th>col</th>
+      <td><p>column of <code>data.table</code> with terms to be highlighted</p></td>
+    </tr>
+    <tr>
+      <th>partition_bundle</th>
+      <td><p>a <code>partition_bundle</code> object</p></td>
     </tr>
     <tr>
       <th>def</th>
-      <td><p>...</p></td>
+      <td><p>a named list used to define a partition (names are s-attributes, vectors are
+values of s-attributes)</p></td>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>...</p></td>
+      <td><p>if <code>.Object</code> is an object of the classes <code>kwic</code> or <code>hits</code>,
+the ith kwic line or hit to derive a partition to be inspected from</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>...</p></td>
+      <td><p>the partition type, see documentation for <code>partition</code>-method</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>To prepare the html output, the method <code>read</code> will call <code>html</code> and
+<code>as.markdown</code> subsequently, the latter method being the actual worker.
+Consult these methods to understand how preparing the output works.</p>
+<p>The param <code>highlight</code> can be used to highlight terms. It is expected to
+be a named list of character vectors, the names providing the colors, and the
+vectors the terms to be highlighted. To add tooltips, use the param
+<code>tooltips</code>.</p>
+<p>The method <code>read</code> is a high-level function that calls the methods
+mentioned before. Results obtained through <code>read</code> can also be obtained
+through combining these methods in a pipe using the package <code>magrittr</code>.
+That may offer more flexibility, e.g. to highlight matches for CQP queries.
+See examples and the documentation for the different methods to learn more.</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>For concordances / a keword-in-context display, see <code><a href='kwic.html'>kwic</a></code>.</p>
+    <div class='dont-index'><p>For concordances / a keword-in-context display, see <code><a href='kwic.html'>kwic</a></code>.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-<span class='fu'>options</span>(<span class='st'>"polmineR.meta"</span> <span class='kw'>=</span> <span class='st'>"text_date"</span>)
-<span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(
-  <span class='st'>"PLPRBTTXT"</span>,
-   <span class='kw'>text_date</span><span class='kw'>=</span><span class='st'>"2009-11-10"</span>, <span class='kw'>text_name</span><span class='kw'>=</span><span class='st'>"Angela Dorothea Merkel"</span>,
-   <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"plpr"</span>
- )
- <span class='fu'>read</span>(<span class='no'>merkel</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"text_name"</span>, <span class='st'>"text_date"</span>))
- <span class='fu'>read</span>(
-   <span class='no'>merkel</span>,
-   <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>yellow</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"Deutschland"</span>, <span class='st'>"Bundesrepublik"</span>), <span class='kw'>lightgreen</span><span class='kw'>=</span><span class='st'>"Regierung"</span>),
-   <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"text_name"</span>, <span class='st'>"text_date"</span>)
-)
-
-<span class='no'>all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='fu'>list</span>(<span class='kw'>text_id</span><span class='kw'>=</span><span class='st'>".*"</span>), <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"plpr"</span>)
-<span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.speeches-method.html'>as.speeches</a></span>(
-  <span class='no'>all</span>, <span class='kw'>sAttributeDates</span> <span class='kw'>=</span> <span class='st'>"text_date"</span>, <span class='kw'>sAttributeNames</span> <span class='kw'>=</span> <span class='st'>"text_name"</span>, <span class='kw'>gap</span> <span class='kw'>=</span> <span class='fl'>500</span>
-)
-<span class='fu'>read</span>(<span class='no'>speeches</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"text_date"</span>, <span class='st'>"text_name"</span>))
-<span class='no'>migVocab</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>speeches</span>, <span class='kw'>query</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"Migration"</span>, <span class='st'>"Integration"</span>, <span class='st'>"Zuwanderung"</span>))
-<span class='fu'>read</span>(<span class='no'>migVocab</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>"Integration"</span>, <span class='kw'>partitionBundle</span><span class='kw'>=</span><span class='no'>speeches</span>)
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>read</span>(<span class='no'>merkel</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"speaker"</span>, <span class='st'>"date"</span>))
+<span class='fu'>read</span>(
+  <span class='no'>merkel</span>,
+  <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>yellow</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Deutschland"</span>, <span class='st'>"Bundesrepublik"</span>), <span class='kw'>lightgreen</span> <span class='kw'>=</span> <span class='st'>"Regierung"</span>),
+  <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"speaker"</span>, <span class='st'>"date"</span>)
+)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
@@ -232,15 +257,18 @@ colors</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

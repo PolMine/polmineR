@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="polmineR-package — polmineR-package" />
+
+<meta property="og:description" content="A library for corpus analysis using the Corpus Workbench (CWB) as an
+efficient back end for indexing and querying large corpora." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,50 +105,103 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>polmineR-package</h1>
+    
+    <div class="hidden name"><code>polmineR-package.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Tools for mining CWB corpora.</p>
+    <p>A library for corpus analysis using the Corpus Workbench (CWB) as an
+efficient back end for indexing and querying large corpora.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>polmineR</span>()</pre>
         
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The package provides functions for basic text statistics for corpora 
-that are managed by the Corpus Workbench (CWB). A core feature is to generate
-subcorpora/partitions based on metadata. The package is also meant to serve
-as an interface between the CWB and R-packages implementing more
-sophisticated statistical procedures (e.g. lsa, lda, topicmodels) or
-providing further functionality for text mining (e.g. tm).</p>  
-<p>Any analysis using this package will usually start with setting up a 
-subcorpus/partition (with <code>partition</code>). A set of partitions can be
-generated with <code>partitionBundle</code>. Once a partition or a set of partitions
-has been set up, core functions are <code>cooccurrences</code> and
-<code>features</code>. Based on a partition bundle, a
-term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
-generated (with <code>as.TermDocumentMatrix</code>). This opens the door to the wealth of
-statistical methods implemented in R.</p>
-<p>When the package is loaded and attached, the package will look for a file name 'polmineR.conf'
-in a directory defined by the environment variable 'POLMINER_DIR'. It will take general 
-settings for polmineR from that file. Second, templates are restored.</p>
+    <p>The package offers functionality to flexibly create partitions and to carry
+out basic statistical operations (count, co-occurrences etc.). The original
+full text of documents can be reconstructed and inspected at any time. Beyond
+that, the package is intended to serve as an interface to packages
+implementing advanced statistical procedures. Respective data structures
+(document term matrices, term co- occurrence matrices etc.) can be created
+based on the indexed corpora.</p>
+<p>A session registry directory (see <code><a href='registry.html'>registry()</a></code>) combines the registry
+files for corpora that may reside in anywhere on the system. Upon loading
+<code>polmineR</code>, the files in the registry directory defined by the
+environment variable CORPUS_REGISTRY are copied to the session registry
+directory. To see whether the environment variable CORPUS_REGISTRY is set,
+use the `Sys.getenv()`-function. Corpora wrapped in R data packages can be
+activated using the function <code><a href='use.html'>use()</a></code>.</p>
+<p>The package includes a draft shiny app that can be called using
+<code>polmineR()</code>.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>http://polmine.sowi.uni-due.de</p>
-<p>Jockers, Matthew L. (2014): Text Analysis with R for Students of Literature.
-Cham: Springer.</p>
+    <p>Jockers, Matthew L. (2014): <em>Text Analysis with R for Students of Literature</em>.
+Cham et al: Springer.</p>
+<p>Baker, Paul (2006): <em>Using Corpora in Discourse Analysis</em>. London: continuum.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># examples in the manual rely in a sample corpus that can be install as follows:</span>
-<span class='fu'><a href='install.corpus.html'>install.corpus</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>) <span class='co'># activate demo corpora included in the package</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
+<span class='co'># Core methods applied to corpus</span>
+
+<span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt;    query count       freq
+#&gt; 1:   oil    78 0.01925926</div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"oil"</span>, <span class='st'>"barrel"</span>))</div><div class='output co'>#&gt;     query count        freq
+#&gt; 1:    oil    78 0.019259259
+#&gt; 2: barrel    15 0.003703704</div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"Saudi" "Arab.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;               query          match count share
+#&gt; 1: "Saudi" "Arab.*"   Saudi Arabia     6    50
+#&gt; 2: "Saudi" "Arab.*" Saudi Arabia's     3    25
+#&gt; 3: "Saudi" "Arab.*"  Saudi Arabian     3    25</div><div class='input'><span class='fu'>dispersion</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt;      id count
+#&gt;  1: 127     5
+#&gt;  2: 144    12
+#&gt;  3: 191     2
+#&gt;  4: 194     1
+#&gt;  5: 236     6
+#&gt;  6: 237     4
+#&gt;  7: 242     2
+#&gt;  8: 246     5
+#&gt;  9: 248     6
+#&gt; 10: 273     5
+#&gt; 11: 349     4
+#&gt; 12: 352     4
+#&gt; 13: 353     4
+#&gt; 14: 368     3
+#&gt; 15: 489     4
+#&gt; 16: 502     5
+#&gt; 17: 543     2
+#&gt; 18: 704     3
+#&gt; 19: 708     1</div><div class='input'><span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+
+
+<span class='co'># Core methods applied to partition</span>
+
+<span class='no'>kuwait</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt; <span class='message'>... processing query oil</span></div><div class='output co'>#&gt;    query count       freq
+#&gt; 1:   oil    14 0.02121212</div><div class='input'><span class='fu'>dispersion</span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt;     id count
+#&gt; 1: 236     6
+#&gt; 2: 349     4
+#&gt; 3: 353     4</div><div class='input'><span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 14</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='input'><span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+
+
+<span class='co'># Go back to full text</span>
+
+<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='fl'>127</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'><a href='read-method.html'>read</a></span>(<span class='no'>p</span>)
+<span class='no'>h</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='html-method.html'>html</a></span>(<span class='no'>p</span>)
+<span class='no'>h_highlighted</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='no'>h</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>yellow</span> <span class='kw'>=</span> <span class='st'>"oil"</span>))
+<span class='no'>h_highlighted</span>
+
+
+<span class='co'># Generate term document matrix</span>
+
+<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>pb</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+<span class='no'>tdm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.DocumentTermMatrix.html'>as.TermDocumentMatrix</a></span>(<span class='no'>cnt</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='message'>... using the p_attribute-slot of the first object in the bundle as p_attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating (temporary) key column</span></div><div class='output co'>#&gt; <span class='message'>... generating cumulated data.table</span></div><div class='output co'>#&gt; <span class='message'>... getting unique keys</span></div><div class='output co'>#&gt; <span class='message'>... generating integer keys</span></div><div class='output co'>#&gt; <span class='message'>... cleaning up temporary key columns</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -152,15 +223,18 @@ Andreas Blaette (andreas.blaette@uni-due.de)
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

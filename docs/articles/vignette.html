@@ -8,14 +8,17 @@
 <title>Introducing the ‘polmineR’-package • polmineR</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Introducing the ‘polmineR’-package">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -24,12 +27,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -50,7 +57,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -63,250 +70,269 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Introducing the ‘polmineR’-package</h1>
                         <h4 class="author">Andreas Blätte (<a href="mailto:andreas.blaette@uni-due.de">andreas.blaette@uni-due.de</a>)</h4>
             
-            <h4 class="date">2017-10-06</h4>
-          </div>
+            <h4 class="date">2018-07-09</h4>
+      
+      
+      <div class="hidden name"><code>vignette.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <div id="purpose" class="section level2">
 <h2 class="hasAnchor">
 <a href="#purpose" class="anchor"></a>Purpose</h2>
-<p>The purpose of the package <em>polmineR</em> is to facilitate the interactive analysis of corpora using R. Apart from performance and usability, key considerations for developing the package are:</p>
+<p>The purpose of the package <em>polmineR</em> is to offer a toolset for the interactive analysis of corpora using R. Apart from performance and usability, key considerations for developing the package are:</p>
 <ul>
-<li><p>To provide a library with standard tasks such as concordances/keyword-in-context, cooccurrence statistics, or keyword extraction.</p></li>
+<li><p>To provide a library with standard tasks such as concordances/keyword-in-context, cooccurrence statistics, feature extraction, or preparation of term-document-matrics.</p></li>
 <li><p>To keep the original text accessible and to offer a seamless integration of qualitative and quantitative steps in corpus analysis that facilitates validation.</p></li>
-<li><p>To create a package that makes the creation and analysis of subcorpora (‘partitions’) easy. A particular strength of the package is to support research on synchronic and diachronic change of language use.</p></li>
-<li><p>To offer performance for users with a standard infrastructure. The package picks up the idea of a three-tier software design. Corpus data are managed and indexed using the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>.</p></li>
+<li><p>To make the creation and analysis of subcorpora (‘partitions’) as easy as possible. A particular strength of the package is to support research on synchronic and diachronic change of language use.</p></li>
+<li><p>To offer performance for users with a standard infrastructure. The package is developed based on the idea of a three-tier software design. Corpus data are managed and indexed using the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>, which serves as a backend.</p></li>
 <li><p>To support sharing consolidated and documented data, following the ideas of reproducible research.</p></li>
 </ul>
-<p>The ‘polmineR’ package supplements R packages that are already widely used for text mining. The CRAN task view is a good place to learn about relevant packages, see <a href="https://CRAN.R-project.org/view=NaturalLanguageProcessing">CRAN</a>. The polmineR is intended to be an interface between the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>, an efficient system for storing and querying large corpora, and existing packages for mining text with advanced statistical methods.</p>
-<p>Apart from the speed of text processing, the Corpus Query Processor (CQP) and the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP syntax</a> provide a powerful and widely used syntax to query corpora. This is not an unique idea. Using a combination of R and the CWB implies a software architecture you will also find in the <a href="http://sourceforge.net/projects/txm/">TXM project</a>, or with <a href="http://cwb.sourceforge.net/cqpweb.php">CQPweb</a>. The ‘polmineR’ package offers a library with the grammer of corpus analysis below a graphical user interface (GUI). It is a toolset to perform simple tasts efficiently as well as to implement complex workflows.</p>
-<p>Advanced user will need a good understanding of the Corpus Workbench. The <a href="http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf">Corpus Encoding Tutorial</a> is an authoritative text for that. <a href="https://cran.r-project.org/package=rcqp">The vignette of the rcqp package</a> includes an excellent explanation of the CWB data-model.</p>
-<p>The most important thing users need to now is the difference between “s” and “p” attributes. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora, and positional attributes (p-attributes). Typically, the p-attributes will be ‘word’, ‘pos’ (for part-of-speech) and ‘lemma’ (for the lemmatized word form).</p>
+<p>The <em>polmineR</em> package supplements R packages that are already widely used for text mining. The <a href="https://CRAN.R-project.org/view=NaturalLanguageProcessing">CRAN NLP task view</a> is a good place to learn about relevant packages. The <em>polmineR</em> package is intended to be an interface between the <a href="http://cwb.sourceforge.net/">Corpus Workbench (CWB)</a>, an efficient system for storing and querying large corpora, and existing packages for text mining and text statistics.</p>
+<p>Apart from the speed of text processing, the Corpus Query Processor (CQP) and the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP syntax</a> provide a powerful and widely used syntax to query corpora. This is not an unique idea. Using a combination of R and the CWB implies a software architecture you will also find in the <a href="http://sourceforge.net/projects/txm/">TXM project</a>, or with <a href="http://cwb.sourceforge.net/cqpweb.php">CQPweb</a>. The <em>polmineR</em> package offers a library with the grammer of corpus analysis below a graphical user interface (GUI). It is a toolset to perform simple tasts efficiently as well as to implement complex workflows.</p>
+<p>Advanced users will benefit from acquiring a good understanding of the Corpus Workbench. The <a href="http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf">Corpus Encoding Tutorial</a> is an authoritative text for that. <a href="https://cran.r-project.org/src/contrib/Archive/rcqp/">The vignette of the rcqp package</a>, albeit archived, includes an excellent explanation of the CWB data-model. The inferface used now to use CWB/CQP functionality is the <a href="https://CRAN.R-project.org/package=RcppCWB">RcppCWB package</a>.</p>
+<p>A basic issue to understand is the difference between <em>s</em>- and <em>p</em>-attributes. The CWB distinguishes structural attributes (s-attributes) that will contain the metainformation that can be used to generate subcorpora/partitions, and positional attributes (p-attributes). Typically, the p-attributes will be ‘word’, ‘pos’ (for part-of-speech) and ‘lemma’ (for the lemmatized word form).</p>
 </div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
-<div id="check-that-the-corpus_registry-environment-variable-is-set" class="section level5">
-<h5 class="hasAnchor">
-<a href="#check-that-the-corpus_registry-environment-variable-is-set" class="anchor"></a>Check that the CORPUS_REGISTRY environment variable is set</h5>
-<p>The annex of the vignette includes a detailed explanation how to install polmineR on Windows, MacOS, and Linux. Once you have installed polmineR, check that the environment variable CORPUS_REGISTRY is set.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">"CORPUS_REGISTRY"</span>)</code></pre></div>
-<p>The CORPUS_REGISTRY environment variable supplies the directory with registry files that describe where the CWB will find the files of an indexed corpus, and the s- and p-attributes. See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.</p>
+<p>CRAN releases of <em>polmineR</em> can be installed with the usual call of <code>install.packages()</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<p>Binaries are available for Windows, and everything should work out of the box. On macOS and Linux, system requirements need to be fulfilled. The annex of the vignette includes a detailed explanation how to install <em>polmineR</em> on macOS, and Linux.</p>
+<div id="loading-polminer" class="section level4">
+<h4 class="hasAnchor">
+<a href="#loading-polminer" class="anchor"></a>Loading polmineR</h4>
+<p>The <em>polmineR</em> package is loaded just like any other package.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a></code></pre></div>
+<pre><code>## polmineR v0.7.8.9006</code></pre>
+<pre><code>## session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpU2pGAr/polmineR_registry</code></pre>
+<p>Upon loading the package, the package version is reported. As <em>polmineR</em> is under active development, please check whether a more recent version is available at CRAN. Development versions are available at GitHub.</p>
+<p>In addition, you will see an information on the <em>session registry</em>, which needs some further explanation.</p>
 </div>
-<div id="loading-polminer" class="section level5">
-<h5 class="hasAnchor">
-<a href="#loading-polminer" class="anchor"></a>Loading polmineR</h5>
-<p>If the CORPUS_REGISTRY variable is set correctly, i.e. pointing to the directory with the registry files describing the corpora, load the polmineR.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)</code></pre></div>
-</div>
+<div id="the-session-registry-directory" class="section level4">
+<h4 class="hasAnchor">
+<a href="#the-session-registry-directory" class="anchor"></a>The session registry directory</h4>
+<p>Indexed corpus data may be stored at different locations on your machine. CWB users will usually have a data directory with subdirectories for every single corpus. But corpus data may also reside within R packages, or anywhere else.</p>
+<p>It is not necessary to move indexed corpora to one single location. The only recommendation is to have them on a device that can be accessed sufficiently fast. Corpora are not fully loaded into memory, but information is retrieved from disk on a ‘on demand’-basis. Thus, storing corpus data on a SSD may be faster than a hard drive.</p>
+<p>The CWB will look up information on the corpora in a directory called <em>registry</em> that is defined by the environment variable CORPUS_REGISTRY. Starting with version v0.7.9, the <em>polmineR</em> package creates a temporary registry directory in the temporary session directory. To get the path of the session registry directory, call <code><a href="../reference/registry.html">registry()</a></code>. The output is the session registry you have seen when loading <em>polmineR</em>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/registry.html">registry</a></span>()</a></code></pre></div>
+<pre><code>## [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpU2pGAr/polmineR_registry"</code></pre>
+<p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">Sys.getenv</span>(<span class="st">"CORPUS_REGISTRY"</span>)</a></code></pre></div>
+<p>See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.</p>
 <div id="using-and-installing-packaged-corpora" class="section level5">
 <h5 class="hasAnchor">
 <a href="#using-and-installing-packaged-corpora" class="anchor"></a>Using and installing packaged corpora</h5>
-<p>If you want to use a CWB corpus packaged in a R data package, you can call ‘use’ with the name of the R package. To access the corpus in the data package, the CORPUS_REGISTRY environment variable will be reset. In the followings examples, the CWB encoded English version of the Europarl wrapped into a data package will be used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/use.html">use</a></span>(<span class="st">"europarl.en"</span>)</code></pre></div>
-<p>Note that the use-function will call the resetRegistry-function that can also be used to set again the original path to the directory with registry files. If you want to use the English Europarl corpus, you can download it from a repository at the PolMine server.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/install.corpus.html">install.corpus</a></span>(<span class="st">"europarl.en"</span>, <span class="dt">repo =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</code></pre></div>
-<p>This package may serve as an example how CWB indexed corpora can be shared using an adapted version of standard R functions. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.</p>
-</div>
-<div id="setting-the-interface-to-the-corpus-workbench" class="section level5">
-<h5 class="hasAnchor">
-<a href="#setting-the-interface-to-the-corpus-workbench" class="anchor"></a>Setting the interface to the Corpus Workbench</h5>
-<p>The standard interface used by the polmineR package to extract information from CWB indexed corpora is the package ‘rcqp’. The interface is defined in a class called ‘CQI’. To check which interface is used:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(polmineR<span class="op">:::</span>CQI)</code></pre></div>
-<pre><code>## [1] "CQI.rcqp"  "CQI.super" "R6"</code></pre>
-<p>If you see “CQI.perl” leading the character vector that is returned, something went wrong. Accessing the corpora using perl scripts incurs an incredible performence loss. Reset the interface as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>), <span class="dt">sym =</span> <span class="st">"CQI"</span>)
-<span class="kw">assign</span>(<span class="st">"CQI"</span>, CQI.rcqp<span class="op">$</span><span class="kw">new</span>(), <span class="dt">envir =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>))
-<span class="kw">lockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>), <span class="dt">sym =</span> <span class="st">"CQI"</span>)
-<span class="er">}</span></code></pre></div>
-<p>An alternative interface is provided by the package ‘polmineR.Rcpp’, [available at GitHub][<a href="https://github.com/PolMine/polmineR.Rcpp" class="uri">https://github.com/PolMine/polmineR.Rcpp</a>] so far. This (experimental) package includes a few functions that speed up tasks such as counting terms, or preparing partitions. To install and use ‘polmineR.Rcpp’:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR.Rcpp"</span>)
-<span class="kw">setCorpusWorkbenchInterface</span>(<span class="st">"Rcpp"</span>)</code></pre></div>
-<p>To switch to the interface offered by polmineR.Rcpp, proceed as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>), <span class="dt">sym =</span> <span class="st">"CQI"</span>)
-<span class="kw">assign</span>(<span class="st">"CQI"</span>, CQI.Rcpp<span class="op">$</span><span class="kw">new</span>(), <span class="dt">envir =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>))
-<span class="kw">lockBinding</span>(<span class="dt">env =</span> <span class="kw">getNamespace</span>(<span class="st">"polmineR"</span>), <span class="dt">sym =</span> <span class="st">"CQI"</span>)</code></pre></div>
-<p>The checks performed when submitting a package at CRAN issue a note when the ‘unlockBinding’ function appears in the source code of the package. This is why a function for reset the interface is not included in the package.</p>
+<p>If you want to use a corpus wrapped into a R data package, call <code><a href="../reference/use.html">use()</a></code> with the name of the R package. The function will add the registry files describing the corpora in the package to the session registry directory introduced before.</p>
+<p>In the followings examples, the REUTERS corpus included in the <em>polmineR</em> package will be used for demonstration purposes. It is a sample of Reuters articles that is included in the tm package (cp. <a href="http://www.daviddlewis.com/resources/testcollections/reuters21578/" class="uri">http://www.daviddlewis.com/resources/testcollections/reuters21578/</a>), and may already be known to some R users.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<p>If you want to use corpora, you can download the EuroParl and the GermaParl data packages from a CRAN-like repository hosted by the PolMine Project.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"europarl.en"</span>, <span class="dt">repo =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">install.packages</span>(<span class="st">"GermaParl"</span>, <span class="dt">repo =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</a></code></pre></div>
+<p>We some advantages to use R data packages for shipping corpora. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.</p>
 </div>
 <div id="checking-that-corpora-are-available" class="section level5">
 <h5 class="hasAnchor">
 <a href="#checking-that-corpora-are-available" class="anchor"></a>Checking that corpora are available</h5>
-<p>Use the corpus-method to check whether which corpora are accessible. It should be the EUROPARL-EN corpus in our case (the names of CWB corpora are always written upper case).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</code></pre></div>
-<pre><code>##        corpus     size template
-## 1 EUROPARL-EN 39431862    FALSE</code></pre>
+<p>The <code><a href="../reference/corpus-method.html">corpus()</a></code>-method can be used to check which corpora are described in the registry and accessible. The REUTERS corpus in our case (note that the names of CWB corpora are always written upper case). In addition to the English REUTERS corpus, a small subset of the GermaParl corpus (“GERMAPARLMINI”) is included in the <em>polmineR</em> package.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</a></code></pre></div>
+<pre><code>##           corpus      size template
+## 1         ARENEN  28842158     TRUE
+## 2     AUSTROPARL  70308143     TRUE
+## 3          BTPDF 139526576     TRUE
+## 4  GERMAPARLMINI    222201     TRUE
+## 5       KEYWORDS  44734138     TRUE
+## 6    KEYWORDS_DE   7525003     TRUE
+## 7    KEYWORDS_EN  36956586     TRUE
+## 8    KEYWORDS_FR  18904184     TRUE
+## 9   KEYWORDS_FR2  18904184     TRUE
+## 10         NEXIS 164740428     TRUE
+## 11        PLPRBT       -11     TRUE
+## 12     PLPRBTTXT  83405660     TRUE
+## 13       PLPRTXT  83195275     TRUE
+## 14    REPUBBLICA  26270819     TRUE
+## 15       REUTERS      4050     TRUE
+## 16          UNGA  43072609     TRUE
+## 17      WPRGAGGR   8913223     TRUE
+## 18          ZEIT 327839748     TRUE</code></pre>
 </div>
 <div id="session-settings" class="section level5">
 <h5 class="hasAnchor">
 <a href="#session-settings" class="anchor"></a>Session settings</h5>
-<p>Many functions in the polmineR package use settings that are stored in the general options settings. You can see these settings as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>()[<span class="kw">grep</span>(<span class="st">"polmineR"</span>, <span class="kw">names</span>(<span class="kw">options</span>()))]</code></pre></div>
-<p>Several methods (such as kwic, or cooccurrences) will use these settings, if no explicit other value is provided. Here are a few examples how to change settings.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="st">"polmineR.left"</span> =<span class="st"> </span><span class="dv">15</span>)
-<span class="kw">options</span>(<span class="st">"polmineR.right"</span> =<span class="st"> </span><span class="dv">15</span>)
-<span class="kw">options</span>(<span class="st">"polmineR.mc"</span> =<span class="st"> </span><span class="ot">FALSE</span>)</code></pre></div>
-<p>To speed up computations, the polmineR package will sometimes try to use alternative, faster ways to access CWB corpora than the rcqp package. A few computations that are performance critical (for setting up partitions, or to count term frequencies) are implemented in the plugin package polmineR.Rcpp that has been mentioned before. It can be installed from GitHub. Note that it requires an installation of the Corpus Workbench to be present on your system (see installation instructions in the annex).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMineR/polmineR"</span>)</code></pre></div>
-<p>When loading the polmineR package, it is checked whether that plugin is present.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getOption</span>(<span class="st">"polmineR.Rcpp"</span>)</code></pre></div>
-<p>If you want to suppress using the polmineR.Rcpp functionality:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="st">"polmineR.Rcpp"</span> =<span class="st"> </span><span class="ot">FALSE</span>)</code></pre></div>
+<p>Many methods in the <em>polmineR</em> package use default settings that are set in the general options settings. Following a convention, settings relevant for the <em>polmineR</em> package simplystart with ‘polmineR.’ Inspect the settings as follows:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">options</span>()[<span class="kw">grep</span>(<span class="st">"polmineR"</span>, <span class="kw">names</span>(<span class="kw">options</span>()))]</a></code></pre></div>
+<p>Several methods (such as kwic, or cooccurrences) will use these settings, if no explicit other value is provided. You can see this in the usage section of help pages (<code><a href="../reference/kwic.html">?kwic</a></code>, for instance). To change settings, this is how.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">options</span>(<span class="st">"polmineR.left"</span> =<span class="st"> </span><span class="dv">15</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">options</span>(<span class="st">"polmineR.right"</span> =<span class="st"> </span><span class="dv">15</span>)</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">options</span>(<span class="st">"polmineR.mc"</span> =<span class="st"> </span><span class="ot">FALSE</span>)</a></code></pre></div>
+</div>
 </div>
 </div>
 <div id="working-with-corpora-core-methods" class="section level2">
 <h2 class="hasAnchor">
 <a href="#working-with-corpora-core-methods" class="anchor"></a>Working with corpora: Core methods</h2>
-<p>Core analytical tasks are implemented as methods (S4 class system), i.e. the bevaviour of the methods changes depending on the object that is supplied. Almost all methods can be applied to corpora as well as partitions (subcorpora). As an easy entry, methods applied to corpora are explained first.</p>
+<p>Core analytical tasks are implemented as methods (S4 class system), i.e. the bevaviour of the methods changes depending on the object that is supplied. Almost all methods can be applied to corpora (indicated by a length-one character vector) as well as partitions (subcorpora). As a quick start, methods applied to corpora are explained first.</p>
 <div id="keyword-in-context-kwic" class="section level5">
 <h5 class="hasAnchor">
 <a href="#keyword-in-context-kwic" class="anchor"></a>Keyword-in-context (kwic)</h5>
-<p>The kwic method applied to the name of a corpus will return a KWIC object, output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the ‘meta’ parameter.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>)
-<span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>, <span class="dt">meta =</span> <span class="kw">c</span>(<span class="st">"text_date"</span>, <span class="st">"speaker_name"</span>))</code></pre></div>
+<p>The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the ‘meta’ parameter.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"REUTERS"</span>, <span class="st">"oil"</span>)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"REUTERS"</span>, <span class="st">"oil"</span>, <span class="dt">meta =</span> <span class="st">"places"</span>)</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"REUTERS"</span>, <span class="st">"oil"</span>, <span class="dt">meta =</span> <span class="kw">c</span>(<span class="st">"id"</span>, <span class="st">"places"</span>))</a></code></pre></div>
 <p>You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"Geneva" "Convention"'</span>)
-<span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[Ss]ocial" "justice"'</span>)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"REUTERS"</span>, <span class="st">'"OPEC.*"'</span>)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(<span class="st">"REUTERS"</span>, <span class="st">'"oil" "price.*"'</span>)</a></code></pre></div>
 <p>Explaining the CQP syntax goes beyon this vignette. Consult the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP tutorial</a> to learn more about the CQP syntax.</p>
 </div>
 <div id="getting-counts-and-frequencies" class="section level5">
 <h5 class="hasAnchor">
 <a href="#getting-counts-and-frequencies" class="anchor"></a>Getting counts and frequencies</h5>
 <p>You can count one or several hits in a corpus.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"France"</span>)</code></pre></div>
-<pre><code>##     query count         freq
-## 1: France  5517 0.0001399122</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="kw">c</span>(<span class="st">"France"</span>, <span class="st">"Germany"</span>, <span class="st">"Britain"</span>, <span class="st">"Spain"</span>, <span class="st">"Italy"</span>, <span class="st">"Denmark"</span>, <span class="st">"Poland"</span>))</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"REUTERS"</span>, <span class="st">"Kuwait"</span>)</a></code></pre></div>
+<pre><code>##     query count        freq
+## 1: Kuwait    15 0.003703704</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"REUTERS"</span>, <span class="kw">c</span>(<span class="st">"Kuwait"</span>, <span class="st">"USA"</span>, <span class="st">"Bahrain"</span>))</a></code></pre></div>
 <pre><code>##      query count         freq
-## 1:  France  5517 1.399122e-04
-## 2: Germany  4196 1.064114e-04
-## 3: Britain  1708 4.331523e-05
-## 4:   Spain  3378 8.566676e-05
-## 5:   Italy  3209 8.138089e-05
-## 6: Denmark  1615 4.095673e-05
-## 7:  Poland  1820 4.615557e-05</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>)</code></pre></div>
-<pre><code>##            query count         freq
-## 1: "[pP]opulism"   107 2.713542e-06</code></pre>
+## 1:  Kuwait    15 0.0037037037
+## 2:     USA     0 0.0000000000
+## 3: Bahrain     1 0.0002469136</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(<span class="st">"REUTERS"</span>, <span class="kw">c</span>(<span class="st">'"United" "States"'</span>, <span class="st">'"Saudi" "Arabia.*"'</span>), <span class="dt">cqp =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>##                 query count         freq
+## 1:  "United" "States"     2 0.0004938272
+## 2: "Saudi" "Arabia.*"    12 0.0029629630</code></pre>
 </div>
 <div id="dispersions" class="section level5">
 <h5 class="hasAnchor">
 <a href="#dispersions" class="anchor"></a>Dispersions</h5>
-<p>… get dispersions of counts accross one (or two) dimensions …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw">dispersion</span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"populism"</span>, <span class="dt">sAttribute =</span> <span class="st">"text_year"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
-popRegex &lt;-<span class="st"> </span><span class="kw">dispersion</span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>, <span class="dt">sAttribute =</span> <span class="st">"text_year"</span>, <span class="dt">cqp =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p>Note that it is a data.table that is returned. Visualising the result as a barplot …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">barplot</span>(<span class="dt">height =</span> popRegex[,count], <span class="dt">names.arg =</span> popRegex[,text_year], <span class="dt">las =</span> <span class="dv">2</span>)</code></pre></div>
-<p><img src="vignette_files/figure-html/unnamed-chunk-20-1.png" width="672"></p>
+<p>Use the <code>dispersion()</code>-method to get dispersions of counts accross one (or two) dimensions.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">oil &lt;-<span class="st"> </span><span class="kw">dispersion</span>(<span class="st">"REUTERS"</span>, <span class="dt">query =</span> <span class="st">"oil"</span>, <span class="dt">sAttribute =</span> <span class="st">"id"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">saudi_arabia &lt;-<span class="st"> </span><span class="kw">dispersion</span>(</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="st">"REUTERS"</span>, <span class="dt">query =</span> <span class="st">'"Saudi" "Arabia.*"'</span>,</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">  <span class="dt">sAttribute =</span> <span class="st">"id"</span>, <span class="dt">cqp =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">  )</a></code></pre></div>
+<p>Note that it is a data.table that is returned. You can proceed to a visualisation easily.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">barplot</span>(<span class="dt">height =</span> saudi_arabia[[<span class="st">"count"</span>]], <span class="dt">names.arg =</span> saudi_arabia[[<span class="st">"id"</span>]], <span class="dt">las =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><img src="vignette_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 </div>
 <div id="cooccurrences" class="section level5">
 <h5 class="hasAnchor">
 <a href="#cooccurrences" class="anchor"></a>Cooccurrences</h5>
-<p>… get cooccurrence statistics …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">br &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">query =</span> <span class="st">"Brussels"</span>)
-eu &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">query =</span> <span class="st">'"European" "Union"'</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)
-<span class="kw">subset</span>(eu, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>)<span class="op">@</span>stat[[<span class="st">"word"</span>]][<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>]</code></pre></div>
-<pre><code>##  [1] "the"       ","         "of"        "I"         "to"       
-##  [6] "."         "within"    "States"    "The"       "its"      
-## [11] "countries" "in"        "we"        "this"      "that"</code></pre>
+<p>To analyse the neighborhood of a token, or the match for a CQP query, use <code><a href="../reference/cooccurrences.html">cooccurrences()</a></code>.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">oil &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">query =</span> <span class="st">"oil"</span>)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">sa &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">query =</span> <span class="st">'"Saudi" "Arabia.*"'</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">top5 &lt;-<span class="st"> </span><span class="kw">subset</span>(oil, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="kw">as.data.frame</span>(top5)</a></code></pre></div>
+<pre><code>##       word count_partition count_window exp_window exp_partition       ll
+## 1   prices              47           48   28.06074      18.93926 51.53564
+## 2      oil              78           30   46.56889      31.43111 26.38412
+## 3     said              73           55   43.58370      29.41630 25.59149
+## 4 industry              10           14    5.97037       4.02963 23.86295
+## 5       is              25           24   14.92593      10.07407 22.79780
+##   rank_ll
+## 1       1
+## 2       2
+## 3       3
+## 4       4
+## 5       5</code></pre>
 </div>
 </div>
 <div id="working-with-subcorpora---partitions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#working-with-subcorpora---partitions" class="anchor"></a>Working with subcorpora - partitions</h2>
-<p>Easily creating partitions (i.e. subcorpora) based on s-attributes is a strength of the ‘polmineR’ package. So if we want to work with the speeches given in the European Parliament in 2006:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2006 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2006"</span>)</code></pre></div>
+<p>Working with partitions (i.e. subcorpora) based on s-attributes is an important feature of the ‘polmineR’ package. So if we want to work with the articles in the REUTERS corpus related to Kuaweit in 2006:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">kuwait &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">places =</span> <span class="st">"kuwait"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>To get some basic information about the partition that has been set up, the ‘show’-method can be used. It is also called when you simply type the name of the partition object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2006</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">kuwait</a></code></pre></div>
 <pre><code>## ** partition object **
-## corpus:              EUROPARL-EN 
+## corpus:              REUTERS 
 ## name:                 
-## sAttributes:         text_year = 2006 
-## cpos:                46 pairs of corpus positions
-## size:                3100529 tokens
+## s-attributes:        places = kuwait 
+## cpos:                3 pairs of corpus positions
+## size:                660 tokens
 ## count:               not available</code></pre>
 <p>To evaluate s-attributes, regular expressions can be used.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">barroso &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">speaker_name =</span> <span class="st">"Barroso"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)
-<span class="kw"><a href="../reference/sAttributes-method.html">sAttributes</a></span>(barroso, <span class="st">"speaker_name"</span>)</code></pre></div>
-<pre><code>## [1] "Barroso"             "José Manuel Barroso"</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">saudi_arabia &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">places =</span> <span class="st">"saudi-arabia"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw"><a href="../reference/s_attributes-method.html">s_attributes</a></span>(saudi_arabia, <span class="st">"id"</span>)</a></code></pre></div>
+<pre><code>## [1] "242" "248" "273" "349" "352"</code></pre>
 <p>If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the partition-function.</p>
 </div>
 <div id="cooccurrences-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cooccurrences-1" class="anchor"></a>Cooccurrences</h2>
 <p>The cooccurrences-method can be applied to partition-objects.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2006"</span>)
-terror &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(ep2002, <span class="st">"terrorism"</span>, <span class="dt">pAttribute =</span> <span class="st">"lemma"</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</code></pre></div>
-<p>Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot “stat” of the context object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">terror<span class="op">@</span>stat[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,][,.(lemma, count_partition, rank_ll)]</code></pre></div>
-<pre><code>##             lemma count_partition rank_ll
-##  1:         fight            1047       1
-##  2:       against            2822       2
-##  3:        combat             623       3
-##  4:         crime             533       4
-##  5:      organise             441       5
-##  6:           war             449       6
-##  7:        threat             445       7
-##  8:           and           84531       8
-##  9:   immigration             601       9
-## 10: international            1876      10</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">saudi_arabia &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">places =</span> <span class="st">"saudi-arabia"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">oil &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cooccurrences.html">cooccurrences</a></span>(saudi_arabia, <span class="st">"oil"</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</a></code></pre></div>
+<p>Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot “stat” of the context object. Alternatively, you can get the table with the statistics using ´as.data.frame´.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(oil)</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">df[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="kw">c</span>(<span class="st">"word"</span>, <span class="st">"ll"</span>, <span class="st">"rank_ll"</span>)]</a></code></pre></div>
+<pre><code>##       word        ll rank_ll
+## 1 adhering 12.769590       1
+## 2   prices 12.629860       2
+## 3       by  9.353565       3
+## 4     will  9.030516       4
+## 5      GCC  7.851100       7</code></pre>
 </div>
 <div id="distribution-of-queries" class="section level2">
 <h2 class="hasAnchor">
 <a href="#distribution-of-queries" class="anchor"></a>Distribution of queries</h2>
 <p>To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the ‘distribution’ function. The query may use the CQP syntax.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># one query / one dimension</span>
-oneQuery &lt;-<span class="st"> </span><span class="kw">dispersion</span>(ep2002, <span class="dt">query =</span> <span class="st">'terrorism'</span>, <span class="st">"text_date"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
-
-<span class="co"># # multiple queries / one dimension</span>
-twoQueries &lt;-<span class="st"> </span><span class="kw">dispersion</span>(ep2002, <span class="dt">query=</span> <span class="kw">c</span>(<span class="st">"war"</span>, <span class="st">"peace"</span>), <span class="st">"text_date"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">q1 &lt;-<span class="st"> </span><span class="kw">dispersion</span>(saudi_arabia, <span class="dt">query =</span> <span class="st">'oil'</span>, <span class="dt">s_attribute =</span> <span class="st">"id"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">q2 &lt;-<span class="st"> </span><span class="kw">dispersion</span>(saudi_arabia, <span class="dt">query =</span> <span class="kw">c</span>(<span class="st">"oil"</span>, <span class="st">"barrel"</span>), <span class="dt">s_attribute =</span> <span class="st">"id"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 </div>
 <div id="getting-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-features" class="anchor"></a>Getting features</h2>
 <p>To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2002"</span>)
-ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/enrich-method.html">enrich</a></span>(ep2002, <span class="dt">pAttribute =</span> <span class="st">"word"</span>)
-
-epPre911 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="kw">as.character</span>(<span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>))
-epPre911 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/enrich-method.html">enrich</a></span>(epPre911, <span class="dt">pAttribute =</span> <span class="st">"word"</span>)
-
-F &lt;-<span class="st"> </span><span class="kw"><a href="../reference/features-method.html">features</a></span>(ep2002, epPre911, <span class="dt">included =</span> <span class="ot">FALSE</span>)
-<span class="kw">subset</span>(F, rank_chisquare <span class="op">&lt;=</span><span class="st"> </span><span class="dv">50</span>)<span class="op">@</span>stat[[<span class="st">"word"</span>]]</code></pre></div>
-<pre><code>##  [1] "2002"         "Johannesburg" "Seville"      "Barcelona"   
-##  [5] "'s"           "2003"         "Copenhagen"   "terrorism"   
-##  [9] "02"           "candidate"    "Spanish"      "2002/"       
-## [13] "Palestinian"  "Kaliningrad"  ","            "Aznar"       
-## [17] "enlargement"  "asbestos"     "Danish"       "Sharon"      
-## [21] "Prestige"     "biofuels"     "2004"         "Convention"  
-## [25] "2003."        "Galicia"      "2001/"        "137(1"       
-## [29] "Summit"       "Iraq"         "Criminal"     "GM"          
-## [33] "Sky"          "Presidency"   "competences"  "ICC"         
-## [37] "Galileo"      "Cotonou"      "Haarder"      "Israel"      
-## [41] "sustainable"  "however"      "cod"          "Valencia"    
-## [45] "Arafat"       "mid-term"     "COM(2001"     "Afghanistan" 
-## [49] "Explanation"  "medicinal"</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">qatar &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.html">partition</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">places =</span> <span class="st">"saudi-arabia"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">qatar &lt;-<span class="st"> </span><span class="kw"><a href="../reference/enrich-method.html">enrich</a></span>(qatar, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">qatar_features &lt;-<span class="st"> </span><span class="kw"><a href="../reference/features.html">features</a></span>(qatar, <span class="st">"REUTERS"</span>, <span class="dt">included =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">y &lt;-<span class="st"> </span><span class="kw">subset</span>(qatar_features, rank_chisquare <span class="op">&lt;=</span><span class="st"> </span><span class="fl">10.83</span> <span class="op">&amp;</span><span class="st"> </span>count_coi <span class="op">&gt;=</span><span class="st"> </span><span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb35-6" data-line-number="6"><span class="kw">as.data.frame</span>(y)[,<span class="kw">c</span>(<span class="st">"word"</span>, <span class="st">"count_coi"</span>, <span class="st">"count_ref"</span>, <span class="st">"chisquare"</span>)]</a></code></pre></div>
+<pre><code>##      word count_coi count_ref chisquare
+## 1   Saudi        18         0  49.22244
+## 2   Nazer         7         0  19.08998
+## 3  accord         7         0  19.08998
+## 4  market        14         6  19.03495
+## 5       8         6         0  16.35879
+## 6  Arabia         6         0  16.35879
+## 7 sources         7         2  11.90069</code></pre>
 </div>
 <div id="getting-a-tm-termdocumentmatrix" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-a-tm-termdocumentmatrix" class="anchor"></a>Getting a tm TermDocumentMatrix</h2>
 <p>For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">speakers &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partitionBundle-method.html">partitionBundle</a></span>(
-  <span class="st">"EUROPARL-EN"</span>, <span class="dt">sAttribute =</span> <span class="st">"speaker_id"</span>,
-  <span class="dt">progress =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>
-)
-speakers &lt;-<span class="st"> </span><span class="kw"><a href="../reference/enrich-method.html">enrich</a></span>(speakers, <span class="dt">pAttribute =</span> <span class="st">"word"</span>)
-tdm &lt;-<span class="st"> </span><span class="kw"><a href="../reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix</a></span>(speakers, <span class="dt">col =</span> <span class="st">"count"</span>)
-<span class="kw">class</span>(tdm) <span class="co"># to see what it is</span>
-<span class="kw">show</span>(tdm)
-m &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(tdm) <span class="co"># turn it into an ordinary matrix</span>
-m[<span class="kw">c</span>(<span class="st">"Barroso"</span>, <span class="st">"Schulz"</span>),]</code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">articles &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition_bundle-method.html">partition_bundle</a></span>(<span class="st">"REUTERS"</span>, <span class="dt">s_attribute =</span> <span class="st">"id"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## ... getting matrix with regions for s-attribute:  id</code></pre>
+<pre><code>## ... generating the partitions</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1">articles_count &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count-method.html">count</a></span>(articles, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb40-2" data-line-number="2">tdm &lt;-<span class="st"> </span><span class="kw"><a href="../reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix</a></span>(articles_count, <span class="dt">col =</span> <span class="st">"count"</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb40-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb40-4" data-line-number="4"><span class="kw">class</span>(tdm) <span class="co"># to see what it is</span></a></code></pre></div>
+<pre><code>## [1] "TermDocumentMatrix"    "simple_triplet_matrix"</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">show</span>(tdm)</a></code></pre></div>
+<pre><code>## &lt;&lt;TermDocumentMatrix (terms: 1192, documents: 20)&gt;&gt;
+## Non-/sparse entries: 2409/21431
+## Sparsity           : 90%
+## Maximal term length: 15
+## Weighting          : term frequency (tf)</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">m &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(tdm) <span class="co"># turn it into an ordinary matrix</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2">m[<span class="kw">c</span>(<span class="st">"oil"</span>, <span class="st">"barrel"</span>),]</a></code></pre></div>
+<pre><code>##         Docs
+## Terms    127 144 191 194 211 236 237 242 246 248 273 349 352 353 368 489
+##   oil      5  12   2   1   0   6   4   2   5   6   5   4   4   4   3   4
+##   barrel   2   0   1   1   0   3   0   0   0   2   2   0   1   0   0   1
+##         Docs
+## Terms    502 543 704 708
+##   oil      5   2   3   1
+##   barrel   1   1   0   0</code></pre>
 </div>
 <div id="moving-on" class="section level2">
 <h2 class="hasAnchor">
@@ -316,148 +342,97 @@ m[<span class="kw">c</span>(<span class="st">"Barroso"</span>, <span class="st">
 <div id="annex-i-installing-polminer" class="section level2">
 <h2 class="hasAnchor">
 <a href="#annex-i-installing-polminer" class="anchor"></a>Annex I: Installing polmineR</h2>
-<div id="windows-32-bit-i386" class="section level3">
+<div id="windows" class="section level3">
 <h3 class="hasAnchor">
-<a href="#windows-32-bit-i386" class="anchor"></a>Windows (32 bit / i386)</h3>
-<p>At this stage, an easy way to install polmineR is available only for 32bit R. Usually, an R installation will include both 32bit and 64bit R. So if you want to keep things simple, make sure that you work with 32bit version. If you work with RStudio (highly recommended), the menu Tools &gt; Global Options will open a dialogue where you can choose 32bit R.</p>
-<p>Before installing polmineR, the package ‘rcqp’ needs to be installed. In turn, rcqp requires plyr, which should be installed first.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"plyr"</span>)</code></pre></div>
-<p>To avoid compiling C code in a package, packages with compiled binaries are very handy. Windows binaries for the rcqp package are not available at CRAN, but can be installed from a repository of packages entertained at the server of the PolMine project:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"rcqp"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>, <span class="dt">type =</span> <span class="st">"win.binary"</span>)</code></pre></div>
-<p>To explain: Compiling the C code in the rcqp package on a windows machine is not yet possible. The package we offer uses a cross-compilation of these C libraries, i.e. binaries that have been prepared for windows on a MacOS/Linux machine.</p>
-<p>Before proceeding to install polmineR, we install dependencies that are not installed automatically.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">"htmltools"</span>, <span class="st">"htmlwidgets"</span>, <span class="st">"magrittr"</span>, <span class="st">"iterators"</span>, <span class="st">"NLP"</span>))</code></pre></div>
-<p>The latest stable version of polmineR can now be installed from CRAN. Several other packages that polmineR depends on, or that dependencies depend on may be installed automatically.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</code></pre></div>
-<p>The development version of the package, which may include the most recent updates and features, can be installed from GitHub. The easiest way to do this is to use a mechanism offered by the package devtools.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
-devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</code></pre></div>
-<p>The installation may throw warnings. There are three warnings you can ignore at this stage:</p>
-<ul>
-<li>“WARNING: this package has a configure script / It probably needs manual configuration”.</li>
-<li>The environment variable CORPUS_REGISTRY is not defined.</li>
-<li>package ‘rcqp’ is not installed for ‘arch = x64’.</li>
-</ul>
-<p>The configure script is for Linux/MacOS installation, its sole purpose is to pass tests for uploading the package to CRAN. As mentioned, windows binaries are not yet available for 64bit R at present, so that can be ignored. The environment variable “CORPUS_REGISTRY” can be set as follows in R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">"C:/PATH/TO/YOUR/REGISTRY"</span>)</code></pre></div>
-<p>To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file ‘.Renviron’ or ‘.Renviron.site’ when calling the help for the startup process(<code>?Startup</code>).</p>
-<p>Two important notes concerning problems with the CORPUS_REGISTRY environment variable that may cause serious headaches:</p>
-<ul>
-<li><p>The path can not be processed, if there is any whitespace in the path pointing to the registry. Whitespace may occur in the user name (“C:/Users/Donald Duck/Documents”), for instance. We do not yet know any workaround to make rcqp/CWB process whitespace. The recommendation is to create a directory at a path without whitespace to keep the registry and the indexed_corpora (a directory such as “C:/cwb”).</p></li>
-<li><p>If you keep data on another volume than your system files, your R packages etc. (eg. volume ‘C:’ for system files, and ‘D:’ for data and user files), make sure to set the working directory (<code>setwd()</code>) is set to any directory on the volume with the directory defined via CORPUS_REGISTRY. CWB/rcqp will assume that the CORPUS_REGISTRY directory is on the same volume as the current working directory (which can be identified by calling <code>getwd()</code>).</p></li>
-</ul>
-<p>Finally: polmineR if optimized for working with RStudio. It you work with 32bit R, you may have to check in the settings of RStudio that it will call 32bit R. To be sure, check the startup message.</p>
-<p>If everything works, check whether polmineR can be loaded.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(polmineR)
-<span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>() <span class="co"># to see corpora available at your system</span></code></pre></div>
+<a href="#windows" class="anchor"></a>Windows</h3>
+<p>The following instructions assume that you have installed R. If not, install it from<a href="https://cran.r-project.org/bin/windows/base/">CRAN</a>. An installation of <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a> is highly recommended.</p>
+<div id="windows-32-and-64-bit" class="section level4">
+<h4 class="hasAnchor">
+<a href="#windows-32-and-64-bit" class="anchor"></a>Windows (32 and 64 bit)</h4>
+<p>Install <em>polmineR</em> and all dependencies the conventional way.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<p>To install the most recent development version, hosted in a GitHub repository, use the convenient installation mechanism offered by the devtools package.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb47-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
+<p>Finally, as a basic test whether the REUTERS corpus included in the polmineR package (for testing and demonstration purposes) is available, run:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw"><a href="../reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
+<a class="sourceLine" id="cb48-2" data-line-number="2"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</a></code></pre></div>
 </div>
-<div id="windows-64-bit-x86" class="section level3">
-<h3 class="hasAnchor">
-<a href="#windows-64-bit-x86" class="anchor"></a>Windows (64 bit / x86)</h3>
-<p>At this stage, 64 bit support is still experimental. Apart from an installation of 64 bit R, you will need to install Rtools, available <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a>. Rtools is a collection of tools necessary to build and compile R packages on a Windows machine.</p>
-<p>To interface to a core C library of the Corpus Workbench (CWB), you will need an installation of a 64 bit AND a 32 bit version of the CWB.</p>
-<p>The “official” 32 bit version of the CWB is available <a href="https://sourceforge.net/projects/cwb/files/cwb/cwb-3.4-beta/">here</a>. Installation instructions are available at the <a href="http://cwb.sourceforge.net/beta.php">CWB Website</a>. The 32 bit version should be installed in the directory “C:Files”, with admin rights.</p>
-<p>The 64 bit version, prepared by Andreas Blaette, is available <a href="http://polmine.sowi.uni-due.de/public/?dir=CWB">here</a>. Install this 64 bit CWB version to “C:Files (x86)”. In the unzipped downloaded zip file, you will find a bat file that will do the installation. Take care that you run the file with administrator rights. Without these rights, no files will be copied.</p>
-<p>The interface to the Corpus Workbench is the package polmineR.Rcpp, <a href="https://www.github.com/PolMine/polminer.Rcpp">available at GitHub</a>. If you use git, you can clone that repository, otherwise, you can download a zip file.</p>
-<p>The downloaded zip file needs to be unzipped again. Then, in the directory with the ‘polmineR.Rcpp’-directory, run:</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">R</span> CMD build polmineR.Rcpp
-<span class="ex">R</span> CMD INSTALL polmineR.Rcpp_0.1.0.tar.gz</code></pre></div>
-<p>If you read closely what is going on during the compilation, you will see a few warnings that libraries are not found. If creating the package is not aborted, nothing is wrong. R CMD build will look for the 64 bit files in the directory with the 32 bit dlls first and discover that they do not work for 64 bit, only then will it move to the correct location.</p>
-<p>One polmineR.Rcpp is installed, proceed with the instructions for installing polmineR in a 32 bit context. Future binary releases of the polmineR.Rcpp package may make things easier. Anyway, the proof of concept is there that polmineR will work on a 64 bit Windows machine too.</p>
-<p>Finally, you need to make sure that polmineR will interface to CWB indexed corpora using polmineR.Rcpp, and not with rcqp (the default). To set the interface accordingly:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setCorpusWorkbenchInterface</span>(<span class="st">"Rcpp"</span>)</code></pre></div>
-<p>To test whether corpora are available:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</code></pre></div>
-<pre><code>##        corpus     size template
-## 1 EUROPARL-EN 39431862    FALSE</code></pre>
 </div>
 <div id="macos" class="section level3">
 <h3 class="hasAnchor">
-<a href="#macos" class="anchor"></a>MacOS</h3>
-<p>The following instructions for Mac users assume that R is installed on your system. Binaries are available from the <a href="https://cran.r-project.org/bin/macosx/">Homepage of the R Project</a>. An installation of RStudio is highly recommended. The Open Source License version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a> is what you need.</p>
-<div id="installing-polminer" class="section level4">
-<h4 class="hasAnchor">
-<a href="#installing-polminer" class="anchor"></a>Installing ‘polmineR’</h4>
-<p>The latest release of polmineR can be installed from CRAN using the usual <code>install.packages</code>-function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</code></pre></div>
-<p>The development version of <em>polmineR</em> can be installed using devtools:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>) <span class="co"># unless devtools is already installed</span>
-devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</code></pre></div>
-</div>
-<div id="installing-rcqp" class="section level4">
-<h4 class="hasAnchor">
-<a href="#installing-rcqp" class="anchor"></a>Installing ‘rcqp’</h4>
-<p>The default interface of the polmineR package to access CWB indexed corpora is the package ‘rcqp’. Accessing corpora will not work before you have installed the interface.</p>
-<div id="installing-precompiled-binary-of-rcqp-from-the-polmine-server" class="section level5">
+<a href="#macos" class="anchor"></a>macOS</h3>
+<p>The following instructions for Mac users assume that R is installed on your system. Binaries are available from the <a href="https://cran.r-project.org/bin/macosx/">Homepage of the R Project</a>. An installation of RStudio is highly recommended. Get the Open Source License version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a>.</p>
+<div id="installing-rcppcwb" class="section level5">
 <h5 class="hasAnchor">
-<a href="#installing-precompiled-binary-of-rcqp-from-the-polmine-server" class="anchor"></a>Installing precompiled binary of rcqp from the PolMine server</h5>
-<p>The easiest way to get rcqp for Mac is install a precompiled binary that is available at the PolMine server:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(
-  <span class="st">"rcqp"</span>,
-  <span class="dt">repos =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>,
-  <span class="dt">type =</span> <span class="st">"mac.binary"</span>
-  )</code></pre></div>
-</div>
-<div id="building-rcqp-from-source" class="section level5">
-<h5 class="hasAnchor">
-<a href="#building-rcqp-from-source" class="anchor"></a>Building rcqp from source</h5>
-<p>If you want to get rcqp from CRAN and/or if you want to to compile the C code yourself, the procedure is as follows.</p>
+<a href="#installing-rcppcwb" class="anchor"></a>Installing RcppCWB</h5>
+<p>To install polmineR on macOS, you first need to install RcppCWB.</p>
 <p>First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">xcode-select</span> --install</code></pre></div>
-<p>To compile the C code in the rcqp package, there are system requirements that need to be fulfilled. Using a package manager such as Homebrew or Macports makes things considerably easier.</p>
-<p><em>Option 1: Using Homebrew</em></p>
-<p>We recommend to use ‘Homebrew’. To install Homebrew, follow the instructions on the <a href="https://brew.sh/index_de.html">Homebrew Homepage</a>. The following commands will install the C libraries the rcqp package relies on:</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">brew</span> -v install pkg-config
-<span class="ex">brew</span> -v install glib --universal
-<span class="ex">brew</span> -v install pcre --universal
-<span class="ex">brew</span> -v install readline</code></pre></div>
-<p><em>Option 2: Using Macports</em></p>
-<p>If you prefer using Macports, get it from <a href="https://www.macports.org/" class="uri">https://www.macports.org/</a>. After installing Macports, it is necessary to restart the computer. Next, an update of Macports is necessary.</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> port -v selfupdate</code></pre></div>
-<p>Now we can install the libraries rcqp will require. Again, from the terminal.</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> port install glib2
-<span class="fu">sudo</span> port install pkgconfig
-<span class="fu">sudo</span> port install pcre</code></pre></div>
-<p><em>Install dependencies and rcqp</em></p>
-<p>Once the system requirements are there, the next steps can be done from R. Before installing rcqp, and then polmineR, we install a few packages. In the R console:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="dt">pkgs =</span> <span class="kw">c</span>(<span class="st">"RUnit"</span>, <span class="st">"devtools"</span>, <span class="st">"plyr"</span>, <span class="st">"tm"</span>))</code></pre></div>
-<p>Now rcqp can be installed, and then polmineR:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"rcqp"</span>)
-<span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</code></pre></div>
-<p>If you like to work with the development version, that can be installed from GitHub.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="ex">xcode-select</span> --install</a></code></pre></div>
+<p>Please make sure that you agree to the license.</p>
+<p>Second, an installation of XQuartz is required, it can be obtained from <a href="https://www.xquartz.org/">www.xquartz.org</a>.</p>
+<p>Third, to compile the C code in the RcppCWB package, there are system requirements that need to be fulfilled. Using a package manager makes things considerably easier. We recommend using ‘Homebrew’. To install Homebrew, follow the instructions on the <a href="https://brew.sh/index_de.html">Homebrew Homepage</a>. The following commands then need to be executed from a terminal window. They will install the dependencies that the RcppCWB package relies on:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="ex">brew</span> -v install pkg-config</a>
+<a class="sourceLine" id="cb50-2" data-line-number="2"><span class="ex">brew</span> -v install glib --universal</a>
+<a class="sourceLine" id="cb50-3" data-line-number="3"><span class="ex">brew</span> -v install pcre --universal</a>
+<a class="sourceLine" id="cb50-4" data-line-number="4"><span class="ex">brew</span> -v install readline</a></code></pre></div>
+<p>Fourth, install RcppCWB.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"RcppCWB"</span>)</a></code></pre></div>
+<p>Now everything is ready to install polmineR.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<p>A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a>
+<a class="sourceLine" id="cb53-2" data-line-number="2"><span class="kw"><a href="../reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
+<a class="sourceLine" id="cb53-3" data-line-number="3"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</a></code></pre></div>
+<p>The development version of <em>polmineR</em> can be installed using devtools:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>) <span class="co"># unless devtools is already installed</span></a>
+<a class="sourceLine" id="cb54-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
 </div>
 </div>
-</div>
-<div id="linux" class="section level3">
+<div id="linux-ubuntu" class="section level3">
 <h3 class="hasAnchor">
-<a href="#linux" class="anchor"></a>Linux</h3>
-<p>The pcre, glib and pkg-config libraries can be installed using apt-get.</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install libglib2.0-dev
-<span class="fu">sudo</span> apt-get install libssl-dev
-<span class="fu">sudo</span> apt-get install libcurl4-openssl-dev</code></pre></div>
+<a href="#linux-ubuntu" class="anchor"></a>Linux (Ubuntu)</h3>
+<div id="installing-r" class="section level4">
+<h4 class="hasAnchor">
+<a href="#installing-r" class="anchor"></a>Installing R</h4>
+<p>If you have not yet installed R on your Ubuntu machine, there is a good instruction at <a href="https://wiki.ubuntuusers.de/R/">ubuntuuser</a>. To install base R, enter in the terminal.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb55-1" data-line-number="1"><span class="fu">sudo</span> apt-get install r-base r-recommended</a></code></pre></div>
+<p>Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb56-1" data-line-number="1"><span class="fu">sudo</span> apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9</a>
+<a class="sourceLine" id="cb56-2" data-line-number="2"><span class="fu">sudo</span> add-apt-repository <span class="st">'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'</span></a>
+<a class="sourceLine" id="cb56-3" data-line-number="3"><span class="fu">sudo</span> apt-get update</a>
+<a class="sourceLine" id="cb56-4" data-line-number="4"><span class="fu">sudo</span> apt-get upgrade</a></code></pre></div>
+</div>
+<div id="installing-rstudio" class="section level4">
+<h4 class="hasAnchor">
+<a href="#installing-rstudio" class="anchor"></a>Installing RStudio</h4>
+<p>It is highly recommended to install <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a>. Output of polmineR methods is generally optimized to be displayed using RStudio facilities. If you are working on a remote server, running RStudio Server may be an interesting option to consider.</p>
+</div>
+<div id="base-installation-of-polminer" class="section level4">
+<h4 class="hasAnchor">
+<a href="#base-installation-of-polminer" class="anchor"></a>Base Installation of polmineR</h4>
+<p>The Corpus Workbench will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="fu">sudo</span> apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev</a>
+<a class="sourceLine" id="cb57-2" data-line-number="2"><span class="fu">sudo</span> apt-get install libxml2-dev</a>
+<a class="sourceLine" id="cb57-3" data-line-number="3"><span class="fu">sudo</span> apt-get install libprotobuf-dev</a></code></pre></div>
 <p>The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"RUnit"</span>, <span class="st">"devtools"</span>, <span class="st">"plyr"</span>, <span class="st">"tm"</span>)
-<span class="kw">install.packages</span>(<span class="st">"rcqp"</span>)
-<span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"RcppCWB"</span>)</a>
+<a class="sourceLine" id="cb58-2" data-line-number="2"><span class="kw">install.packages</span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<p>Use devtools to install the development version of polmineR from GitHub.</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb59-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
+<p>Finally, check the installation.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a>
+<a class="sourceLine" id="cb60-2" data-line-number="2"><span class="kw"><a href="../reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
+<a class="sourceLine" id="cb60-3" data-line-number="3"><span class="kw"><a href="../reference/corpus-method.html">corpus</a></span>()</a></code></pre></div>
 </div>
+<div id="annex-ii-setting-the-corpus_registry-environment-variable" class="section level4">
+<h4 class="hasAnchor">
+<a href="#annex-ii-setting-the-corpus_registry-environment-variable" class="anchor"></a>Annex II: Setting the CORPUS_REGISTRY environment variable</h4>
+<p>The environment variable “CORPUS_REGISTRY” can be set as follows in R:</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">"C:/PATH/TO/YOUR/REGISTRY"</span>)</a></code></pre></div>
+<p>To set the environment variable CORPUS_REGISTRY permanently, see the instructions R offer how to find the file ‘.Renviron’ or ‘.Renviron.site’ when calling the help for the startup process(<code>?Startup</code>).</p>
 </div>
-<div id="annex-ii-cwb-corpora-and-the-corpus_registry-environment-variable" class="section level2">
-<h2 class="hasAnchor">
-<a href="#annex-ii-cwb-corpora-and-the-corpus_registry-environment-variable" class="anchor"></a>Annex II: CWB corpora and the CORPUS_REGISTRY environment variable</h2>
-<p>Indexed corpora can be stored in two different locations. The conventional way is to keep CWB corpora in a directory with two subdirectories, a ‘registry’ directory, and an ‘indexed_corpora’ directory. The files in the registry directory (‘registry’ in short) describe the main features of a corpus, and where it is stored. It is necessary to inform rcqp, the package used by polmineR to access corpora, about the registry directory. That is done using the CORPUS_REGISTRY environment variable. It needs be defined before loading rcqp and polmineR. Note that you need to set the environment to the ‘registry’ folder, not the files that are located in this directory.</p>
-<p>The CORPUS_REGISTRY environment variable can be set manually from the R console:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.setenv</span>(<span class="dt">CORPUS_REGISTRY =</span> <span class="st">"/PATH/TO/YOUR/REGISTRY/DIRECTORY"</span>)
-
-<span class="co"># For example the path could look like this:</span>
-<span class="co"># Sys.setenv(CORPUS_REGISTRY = "/Library/Frameworks/R.framework/Versions/3.3/Resources/library/plprbt/extdata/cwb/registry")</span></code></pre></div>
-<p>To check whether and how the environment variable is set:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">"CORPUS_REGISTRY"</span>)</code></pre></div>
-<pre><code>## [1] "/Library/Frameworks/R.framework/Versions/3.4/Resources/library/europarl.en/extdata/cwb/registry"</code></pre>
-<p>You can set the environment variable permanently to avoid having to set it each time before you want to use polmineR. A good way is to inlude the following line in the file .Renviron in your home directory:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CORPUS_REGISTRY=<span class="st">"/PATH/TO/YOUR/REGISTRY/DIRECTORY"</span></code></pre></div>
-<p>There are a few other options to have environment variables set at every time you launch polmineR. To learn about these, use the help for the R startup procedure.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?Startup </code></pre></div>
 </div>
 </div>
   </div>
@@ -477,7 +452,6 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
       <li><a href="#getting-a-tm-termdocumentmatrix">Getting a tm TermDocumentMatrix</a></li>
       <li><a href="#moving-on">Moving on</a></li>
       <li><a href="#annex-i-installing-polminer">Annex I: Installing polmineR</a></li>
-      <li><a href="#annex-ii-cwb-corpora-and-the-corpus_registry-environment-variable">Annex II: CWB corpora and the CORPUS_REGISTRY environment variable</a></li>
       </ul>
 </div>
       </div>
@@ -486,15 +460,17 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 
 
       <footer><div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

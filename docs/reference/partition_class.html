@@ -18,13 +18,27 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Partition class and methods. — partition_class" />
+
+<meta property="og:description" content="The partition class is used to manage subcorpora. It is an S4 class, and
+a set of methods is defined for the class. The class inherits
+from the classes count and textstat." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +61,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +91,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,158 +106,106 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Partition class and methods.</h1>
+    
+    <div class="hidden name"><code>partition_class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>S4 partition class and methods for instances of class partition.</p>
+    <p>The <code>partition</code> class is used to manage subcorpora. It is an S4 class, and
+a set of methods is defined for the class. The class inherits
+from the classes <code>count</code> and <code>textstat</code>.</p>
     
+    </div>
 
     <pre class="usage"><span class='co'># S4 method for partition</span>
-<span class='fu'><a href='polmineR-generics.html'>name</a></span>(<span class='no'>x</span>)
+<span class='fu'><a href='p_attributes.html'>p_attributes</a></span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partition,character</span>
-<span class='fu'><a href='polmineR-generics.html'>name</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'>length</span>(<span class='no'>x</span>)
+<span class='fu'>is.partition</span>(<span class='no'>x</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>hist</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'>length</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'>aggregate</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='as.markdown.html'>as.markdown</a></span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>),
-  <span class='kw'>template</span> <span class='kw'>=</span> <span class='fu'><a href='templates.html'>getTemplate</a></span>(<span class='no'>.Object</span>), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>.Object</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='dispersion-class.html'>freq</a></span>(<span class='no'>.Object</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='no'>.Object</span>, <span class='no'>html</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>, <span class='kw'>tooltips</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='pAttributes.html'>pAttributes</a></span>(<span class='no'>.Object</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)
-
-<span class='co'># S4 method for cooccurrences</span>
-<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)</pre>
+<span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a partition object</p></td>
+      <th>.Object</th>
+      <td><p>a <code>partition</code> object</p></td>
     </tr>
     <tr>
-      <th>value</th>
-      <td><p>value</p></td>
+      <th>p_attribute</th>
+      <td><p>a p-attribute (for enriching) / performing count.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters</p></td>
+      <td><p>further parameters passed into <code>count</code> when calling <code>enrich</code>, and ...</p></td>
     </tr>
     <tr>
-      <th>.Object</th>
-      <td><p>a partition object</p></td>
+      <th>x</th>
+      <td><p>a <code>partition</code> object</p></td>
     </tr>
     <tr>
-      <th>meta</th>
-      <td><p>...</p></td>
-    </tr>
-    <tr>
-      <th>template</th>
-      <td><p>template to use</p></td>
-    </tr>
-    <tr>
-      <th>cpos</th>
-      <td><p>...</p></td>
-    </tr>
-    <tr>
-      <th>cutoff</th>
-      <td><p>maximum number of tokens to decode</p></td>
+      <th>decode</th>
+      <td><p><code>logical</code> value, whether to decode token ids into strings when performing count</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical</p></td>
-    </tr>
-    <tr>
-      <th>size</th>
-      <td><p>logical</p></td>
-    </tr>
-    <tr>
-      <th>pAttribute</th>
-      <td><p>a p-attribute (for enriching)</p></td>
-    </tr>
-    <tr>
-      <th>id2str</th>
-      <td><p>logical</p></td>
+      <td><p><code>logical</code> value, whether to output messages</p></td>
     </tr>
     <tr>
       <th>mc</th>
-      <td><p>logical or, if numeric, providing the number of cores</p></td>
-    </tr>
-    <tr>
-      <th>html</th>
-      <td><p>...</p></td>
-    </tr>
-    <tr>
-      <th>highlight</th>
-      <td><p>...</p></td>
-    </tr>
-    <tr>
-      <th>cqp</th>
-      <td><p>...</p></td>
-    </tr>
-    <tr>
-      <th>tooltips</th>
-      <td><p>...</p></td>
+      <td><p><code>logical</code> or, if numeric, providing the number of cores</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>As <code>partition</code> objects inherit from <code>count</code> and <code>textstat</code> class, methods
+available are <code>view</code> to inspect the table in the <code>stat</code> slot, <code>name</code> and 
+<code>name&lt;-</code> to retrieve/set the name of an object, and more.</p>
+<p>The <code>p_attributes</code>-method returns the p-attributes defined for the
+corpus the partition is derived from, if argument <code>p_attribute</code> is <code>NULL</code>
+(the default). If <code>p_attribute</code> is defined, the unique values for the p-attribute
+are returned.</p>
+<p>The <code>is.partition</code> function returns a <code>logical</code> value whether <code>x</code>
+is a <code>partition</code>, or not.</p>
+<p>The <code>enrich</code>-method will add a count of tokens defined by argument
+<code>p_attribute</code> to slot <code>stat</code> of the <code>partition</code> object.</p>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
     <dl class='dl-horizontal'>
-<dt><code>name</code></dt><dd><p>Object of class <code>"character"</code> a name that may be useful</p></dd>
-    <dt><code>corpus</code></dt><dd><p>Object of class <code>"character"</code> the CWB corpus the partition is based on</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>"character"</code> encoding of the corpus</p></dd>
-    <dt><code>sAttributes</code></dt><dd><p>Object of class <code>"list"</code> s-attributes specifying the partition</p></dd>
-    <dt><code>explanation</code></dt><dd><p>Object of class <code>"character"</code> an explanation of the partition</p></dd>
-    <dt><code>cpos</code></dt><dd><p>Object of class <code>"matrix"</code> corpus positions</p></dd>
-    <dt><code>annotations</code></dt><dd><p>Object of class <code>"list"</code></p></dd>
-    <dt><code>pos</code></dt><dd><p>Object of class <code>"list"</code> with tables "abs", "rel" and "max"</p></dd>
-    <dt><code>size</code></dt><dd><p>Object of class <code>"numeric"</code> total size of the partition</p></dd>
-    <dt><code>metadata</code></dt><dd><p>Object of class <code>"data.frame"</code> metadata information</p></dd>
-    <dt><code>strucs</code></dt><dd><p>Object of class <code>"numeric"</code> the strucs defining the partition</p></dd>
-    <dt><code>pAttribute</code></dt><dd><p>Object of class <code>"character"</code> indicating the pAttribute of the
-count in slot tf</p></dd>
-    <dt><code>xml</code></dt><dd><p>Object of class <code>"character"</code> whether the xml is flat or nested</p></dd>
-    <dt><code>sAttributeStrucs</code></dt><dd><p>Object of class <code>"character"</code> the base node</p></dd>
-    <dt><code>call</code></dt><dd><p>Object of class <code>"character"</code> the call that generated the partition</p></dd>
+<dt><code>name</code></dt><dd><p>A name to identify the object (<code>character</code> vector with length 1); useful when multiple
+<code>partition</code> objects are combined to a <code>partition_bundle</code>.</p></dd>
+    <dt><code>corpus</code></dt><dd><p>The CWB indexed corpus the partition is derived from (<code>character</code> vector with length 1).</p></dd>
+    <dt><code>encoding</code></dt><dd><p>Encoding of the corpus (<code>character</code> vector with length 1).</p></dd>
+    <dt><code>s_attributes</code></dt><dd><p>A named <code>list</code> with the s-attributes specifying the partition.</p></dd>
+    <dt><code>explanation</code></dt><dd><p>Object of class <code>character</code>, an explanation of the partition.</p></dd>
+    <dt><code>cpos</code></dt><dd><p>A <code>matrix</code> with left and right corpus positions defining regions (two columns).</p></dd>
+    <dt><code>annotations</code></dt><dd><p>Object of class <code>list</code>.</p></dd>
+    <dt><code>size</code></dt><dd><p>Total size of the partition (<code>integer</code> vector, length 1).</p></dd>
+    <dt><code>stat</code></dt><dd><p>An (optional) <code>data.table</code> with counts. If present, speeds up computation of cooccurrences,
+as count is already present.</p></dd>
+    <dt><code>metadata</code></dt><dd><p>Object of class <code>data.frame</code>, metadata information.</p></dd>
+    <dt><code>strucs</code></dt><dd><p>Object of class <code>intger</code>, the strucs defining the partition.</p></dd>
+    <dt><code>p_attribute</code></dt><dd><p>Object of class <code>character</code> indicating the p_attribute of the
+count in slot <code>stat</code>.</p></dd>
+    <dt><code>xml</code></dt><dd><p>Object of class <code>character</code>, whether the xml is flat or nested.</p></dd>
+    <dt><code>s_attribute_strucs</code></dt><dd><p>Object of class <code>character</code> the base node</p></dd>
+    <dt><code>call</code></dt><dd><p>Object of class <code>character</code> the call that generated the partition</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>The <code>partition</code>-class inherits from the <code><a href='textstat-class.html'>textstat-class</a></code>, see
-respective documentation to learn more.</p>
+    <div class='dont-index'><p>The <code>partition</code>-class inherits from the <code><a href='textstat-class.html'>textstat-class</a></code>, see
+respective documentation to learn more.</p></div>
     
 
   </div>
@@ -247,6 +214,8 @@ respective documentation to learn more.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#slots">Slots</a></li>
 
       <li><a href="#see-also">See also</a></li>
@@ -261,15 +230,18 @@ Andreas Blaette
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

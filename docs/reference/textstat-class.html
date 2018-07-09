@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="S4 textstat class — textstat-class" />
+
+<meta property="og:description" content="Superclass for features, context, and partition class." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +59,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +89,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,17 +104,27 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>S4 textstat class</h1>
+    
+    <div class="hidden name"><code>textstat-class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Superclass for features, context, and partition class.</p>
+    <p>Superclass for <code>features</code>, <code>context</code>, and <code>partition</code> class.</p>
     
+    </div>
 
     <pre class="usage"># S4 method for textstat
+name(x)
+
+# S4 method for textstat,character
+name(x) <- value
+
+# S4 method for textstat
 head(x, ...)
 
 # S4 method for textstat
@@ -133,6 +160,9 @@ as.data.table(x)
 as.data.frame(x)
 
 # S4 method for textstat
+p_attributes(.Object)
+
+# S4 method for textstat
 [[(x, i)
 
 # S4 method for textstat,ANY,ANY,ANY
@@ -141,12 +171,17 @@ as.data.frame(x)
 # S4 method for textstat
 view(.Object)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
       <td><p>textstat object</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>A <code>character</code> vector to assign as name to slot <code>name</code>
+of a <code>textstat</code> class object.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -166,7 +201,7 @@ view(.Object)</pre>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>an object</p></td>
+      <td><p>a textstat object</p></td>
     </tr>
     <tr>
       <th>e1</th>
@@ -177,16 +212,16 @@ view(.Object)</pre>
       <td><p>object 2</p></td>
     </tr>
     <tr>
+      <th>.Object</th>
+      <td><p>an object</p></td>
+    </tr>
+    <tr>
       <th>i</th>
       <td><p>vector to index data.table in stat-slot</p></td>
     </tr>
     <tr>
       <th>j</th>
       <td><p>vector to index data.table in stat-slot</p></td>
-    </tr>
-    <tr>
-      <th>.Object</th>
-      <td><p>an object</p></td>
     </tr>
     </table>
     
@@ -196,31 +231,23 @@ view(.Object)</pre>
 square brackets ("[") to get rows specified by an numeric/integer vector,
 and with double square brackets ("[[") to get specific columns from the 
 <code>data.table</code> in the slot <code>stat</code>.</p>
+<p><code>textstat</code> objects can have a name, which can be retrieved, and set using
+the <code>name</code>-method and <code>name&lt;-</code>, respectively.</p>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
     <dl class='dl-horizontal'>
-<dt><code>pAttribute</code></dt><dd><p>Object of class <code>"character"</code> p-attribute of the query</p></dd>
+<dt><code>p_attribute</code></dt><dd><p>Object of class <code>"character"</code> p-attribute of the query</p></dd>
     <dt><code>corpus</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>stat</code></dt><dd><p>Object of class <code>"data.frame"</code> statistics of the analysis</p></dd>
+    <dt><code>stat</code></dt><dd><p>Object of class <code>"data.table"</code> statistics of the analysis</p></dd>
     <dt><code>name</code></dt><dd><p>name of the object</p></dd>
     <dt><code>encoding</code></dt><dd><p>Object of class <code>"character"</code> encoding of the corpus</p></dd>
 </dl>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_year</span> <span class='kw'>=</span> <span class='st'>"2009"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>P</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>)
-<span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>]
-<span class='no'>y</span>[,<span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"ll"</span>)]
-<span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>, <span class='st'>"word"</span>]
-<span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>]<span class='kw'>[[</span><span class='st'>"word"</span>]]
-<span class='no'>y</span>[<span class='fu'>which</span>(<span class='no'>y</span><span class='kw'>[[</span><span class='st'>"word"</span>]] <span class='kw'>%in%</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Sozial"</span>))]
-<span class='no'>y</span>[ <span class='no'>y</span><span class='kw'>[[</span><span class='st'>"word"</span>]] <span class='kw'>%in%</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Sozial"</span>) ]
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='error'>Error in rep(0L, times = maxAttr): ungültiges 'times' Argument</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>P</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in cooccurrences(P, query = "Arbeit"): Objekt 'P' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[,<span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"ll"</span>)]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>, <span class='st'>"word"</span>]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>25</span>]<span class='kw'>[[</span><span class='st'>"word"</span>]]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[<span class='fu'>which</span>(<span class='no'>y</span><span class='kw'>[[</span><span class='st'>"word"</span>]] <span class='kw'>%in%</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Sozial"</span>))]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div><div class='input'><span class='no'>y</span>[ <span class='no'>y</span><span class='kw'>[[</span><span class='st'>"word"</span>]] <span class='kw'>%in%</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Sozial"</span>) ]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'y' nicht gefunden</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -239,15 +266,18 @@ and with double square brackets ("[[") to get specific columns from the
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

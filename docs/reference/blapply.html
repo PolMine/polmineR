@@ -18,13 +18,28 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="apply a function over a list or bundle — blapply" />
+
+<meta property="og:description" content="Very similar to lapply, but applicable to bundle-objects, in particular.
+The purpose of the method is to supply a uniform und convenient parallel
+backend for the polmineR package. In particular, progress bars are supported
+(the naming of the method is derived from bla bla)." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +62,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +92,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,18 +107,22 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>apply a function over a list or bundle</h1>
+    
+    <div class="hidden name"><code>blapply.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Very similar to lapply, but applicable to bundle-objects, in particular.
 The purpose of the method is to supply a uniform und convenient parallel
 backend for the polmineR package. In particular, progress bars are supported
 (the naming of the method is derived from bla bla).</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>blapply</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
@@ -114,7 +138,7 @@ backend for the polmineR package. In particular, progress bars are supported
 <span class='fu'>blapply</span>(<span class='no'>x</span>, <span class='no'>f</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -146,29 +170,15 @@ will be taken from the polmineR-options</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Parallel backend supported so far are the parallel package (mclapply), and 
-doMC, doParallel and doSNOW in combination with foreach. The parallel backend
-to be used is taken from the option 'polmineR.backend' (getOption("polmineR.backend")),
-the number of cores from the option 'polmineR.cores' (getOption("polmineR.cores")).</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-  <span class='no'>bt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='fu'>list</span>(<span class='kw'>text_id</span><span class='kw'>=</span><span class='st'>".*"</span>), <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-  <span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.speeches-method.html'>as.speeches</a></span>(<span class='no'>bt</span>, <span class='kw'>sAttributeDates</span><span class='kw'>=</span><span class='st'>"text_date"</span>, <span class='kw'>sAttributeNames</span><span class='kw'>=</span><span class='st'>"text_name"</span>)
-  <span class='no'>foo</span> <span class='kw'>&lt;-</span> <span class='fu'>blapply</span>(<span class='no'>speeches</span>, <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>) <span class='fu'>slot</span>(<span class='no'>x</span>, <span class='st'>"cpos"</span>))
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>bt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.speeches.html'>as.speeches</a></span>(<span class='no'>bt</span>, <span class='kw'>s_attribute_date</span> <span class='kw'>=</span> <span class='st'>"date"</span>, <span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... generating partitions by date</span></div><div class='output co'>#&gt; <span class='message'>... getting values for s-attribute  date</span></div><div class='output co'>#&gt; <span class='message'>... number of partitions to be generated:  5</span></div><div class='output co'>#&gt; <span class='message'>... generating speeches</span></div><div class='output co'>#&gt; <span class='message'>... generating names</span></div><div class='output co'>#&gt; <span class='message'>... reordering partitions</span></div><div class='output co'>#&gt; <span class='message'>... coercing partitions to plpr_partitions</span></div><div class='input'><span class='no'>foo</span> <span class='kw'>&lt;-</span> <span class='fu'>blapply</span>(<span class='no'>speeches</span>, <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>) <span class='fu'>slot</span>(<span class='no'>x</span>, <span class='st'>"cpos"</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#details">Details</a></li>
-      
+            
       <li><a href="#examples">Examples</a></li>
     </ul>
 
@@ -177,15 +187,18 @@ the number of cores from the option 'polmineR.cores' (getOption("polmineR.cores"
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

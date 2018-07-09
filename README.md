@@ -9,6 +9,7 @@ Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://t
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
+[![DOI](https://zenodo.org/badge/17337554.svg)](https://zenodo.org/badge/latestdoi/17337554)
 
 # polmineR
 
@@ -56,7 +57,7 @@ package and the location of a so-called ‘registry’-directory.
 ``` r
 library(polmineR)
 #> polmineR v0.7.8.9006
-#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpfFaIMx/polmineR_registry
+#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmp6DocjV/polmineR_registry
 ```
 
 The session registry directory is populated with files that describe the
@@ -65,16 +66,17 @@ corpora that are present and accessible on the user’s system.
 ### Install and use packaged corpora
 
 Indexed corpora wrapped into R data packages can be installed from a
-(private) package repository.
+(private) package
+repository.
 
 ``` r
-install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de")
-install.packages("europarl.en", repos = "http://polmine.sowi.uni-due.de")
+install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de/packages")
+install.packages("europarl.en", repos = "http://polmine.sowi.uni-due.de/packages")
 ```
 
-Calling the `use()`-function is necessary activate a corpus included in
-a data package. The registry files describing the corpora in a package
-are added to the session registry directory.
+Calling the `use()`-function will activate a corpus included in a data
+package. The registry files describing the corpora in a package are
+added to the session registry directory.
 
 ``` r
 use("europarl.en") # activate the corpus in the europarl-en package

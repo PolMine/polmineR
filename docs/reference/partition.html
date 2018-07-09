@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Initialize a partition. — partition" />
+
+<meta property="og:description" content="Create a subcorpus stored in an object of the partition class.
+Counts are performed for the p-attribute defined by the parameter p_attribute." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,37 +105,47 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Initialize a partition.</h1>
+    
+    <div class="hidden name"><code>partition.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Create a subcorpus stored in an object of the <code>partition</code> class.
-Counts are performed for the p-attribute defined by the parameter <code>pAttribute</code>.</p>
+Counts are performed for the p-attribute defined by the parameter <code>p_attribute</code>.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>def</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='st'>"flat"</span>,
-  <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='st'>"flat"</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='get_type.html'>get_type</a></span>(<span class='no'>.Object</span>), <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>)
 
 <span class='co'># S4 method for list</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for environment</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>slots</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"name"</span>, <span class='st'>"corpus"</span>, <span class='st'>"size"</span>,
-  <span class='st'>"pAttribute"</span>))
+  <span class='st'>"p_attribute"</span>))
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>def</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for Corpus</span>
+<span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>def</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='st'>"flat"</span>,
+  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='get_type.html'>get_type</a></span>(<span class='no'>.Object</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -142,8 +170,8 @@ details and examples)</p></td>
       <td><p>encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b</p></td>
     </tr>
     <tr>
-      <th>pAttribute</th>
-      <td><p>the pAttribute(s) for which term frequencies shall be retrieved</p></td>
+      <th>p_attribute</th>
+      <td><p>the p_attribute(s) for which term frequencies shall be retrieved</p></td>
     </tr>
     <tr>
       <th>regex</th>
@@ -154,7 +182,7 @@ details and examples)</p></td>
       <td><p>either 'flat' (default) or 'nested'</p></td>
     </tr>
     <tr>
-      <th>id2str</th>
+      <th>decode</th>
       <td><p>whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)</p></td>
     </tr>
     <tr>
@@ -182,8 +210,8 @@ details and examples)</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.</p>
-<p>The s-attributes defining the partition can be passed in as a list, e.g. list(text_type="speech",
-text_year="2013"), or - for convencience - directly.</p>
+<p>The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
+year="2013"), or - for convencience - directly.</p>
 <p>The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
 parameter regex to <code>"TRUE"</code>. Regular expressions are passed into grep, i.e. the regex syntax
 used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
@@ -191,56 +219,36 @@ of the character vector needs to be 1. If regex is <code>"FALSE"</code>, the len
 vectors can be &gt; 1, matching s-attributes are identifies with the operator <code>in</code>.</p>
 <p>The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
 parameter <code>xml</code> (default is "flat"). If you generate a partition based on a 
-flat XML structure, some performance gain may be achieved when ordering the sAttributes
+flat XML structure, some performance gain may be achieved when ordering the s-attributes
 with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
-order of the sAttributes provided reflects the hierarchy of the XML: The top-level elements
+order of the s-attributes provided reflects the hierarchy of the XML: The top-level elements
 need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
 elements at the end.</p>
-<p>If pAttribute is not NULL, a count of tokens in the corpus will be performed and kept in the
-<code>stat</code>-slot of the partition-object. The length of the pAttribute character vector may be 1
+<p>If p_attribute is not NULL, a count of tokens in the corpus will be performed and kept in the
+<code>stat</code>-slot of the partition-object. The length of the p_attribute character vector may be 1
 or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
 A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>To learn about the methods available for objects of the class partition, see
-<code><a href='partition_class.html'>partition_class</a></code>,</p>
+    <div class='dont-index'><p>To learn about the methods available for objects of the class partition, see
+<code><a href='partition_class.html'>partition_class</a></code>,</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-   <span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-   <span class='no'>spd</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_party</span><span class='kw'>=</span><span class='st'>"SPD"</span>, <span class='kw'>text_type</span><span class='kw'>=</span><span class='st'>"speech"</span>)
-   <span class='no'>kauder</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(
-   <span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_name</span><span class='kw'>=</span><span class='st'>"Volker Kauder"</span>, <span class='kw'>pAttribute</span><span class='kw'>=</span><span class='st'>"word"</span>
-   )
-   <span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(
-     <span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_name</span><span class='kw'>=</span><span class='st'>".*Merkel"</span>,
-     <span class='kw'>pAttribute</span><span class='kw'>=</span><span class='st'>"word"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>
-     )
-   <span class='fu'><a href='sAttributes-method.html'>sAttributes</a></span>(<span class='no'>merkel</span>, <span class='st'>"text_date"</span>)
-   <span class='fu'><a href='sAttributes-method.html'>sAttributes</a></span>(<span class='no'>merkel</span>, <span class='st'>"text_name"</span>)
-   <span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(
-     <span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_name</span><span class='kw'>=</span><span class='st'>"Angela Dorothea Merkel"</span>,
-     <span class='kw'>text_date</span><span class='kw'>=</span><span class='st'>"2009-11-10"</span>, <span class='kw'>text_type</span><span class='kw'>=</span><span class='st'>"speech"</span>, <span class='kw'>pAttribute</span><span class='kw'>=</span><span class='st'>"word"</span>
-     )
-   <span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>merkel</span>, !<span class='no'>word</span> <span class='kw'>%in%</span> <span class='no'>punctuation</span>)
-   <span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>merkel</span>, !<span class='no'>word</span> <span class='kw'>%in%</span> <span class='kw pkg'>tm</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tm/topics/stopwords'>stopwords</a></span>(<span class='st'>"de"</span>))
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>spd</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>party</span> <span class='kw'>=</span> <span class='st'>"SPD"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>kauder</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Volker Kauder"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>".*Merkel"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>merkel</span>, <span class='st'>"date"</span>)</div><div class='output co'>#&gt; [1] "2009-10-28" "2009-11-10"</div><div class='input'><span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>merkel</span>, <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; [1] "Angela Dorothea Merkel"</div><div class='input'><span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(
+  <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Angela Dorothea Merkel"</span>,
+  <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>
+  )</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>merkel</span>, !<span class='no'>word</span> <span class='kw'>%in%</span> <span class='no'>punctuation</span>)
+<span class='no'>merkel</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>merkel</span>, !<span class='no'>word</span> <span class='kw'>%in%</span> <span class='kw pkg'>tm</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/tm/topics/stopwords'>stopwords</a></span>(<span class='st'>"de"</span>))
 
-   <span class='co'># a certain defined time segment</span>
-   <span class='kw'>if</span> (<span class='fu'>require</span>(<span class='st'>"chron"</span>)){
-     <span class='no'>firstDay</span> <span class='kw'>&lt;-</span> <span class='st'>"2009-10-28"</span>
-     <span class='no'>lastDay</span> <span class='kw'>&lt;-</span> <span class='st'>"2009-11-11"</span>
-     <span class='no'>days</span> <span class='kw'>&lt;-</span> <span class='fu'>strftime</span>(
-       <span class='kw pkg'>chron</span><span class='kw ns'>::</span><span class='fu'>seq.dates</span>(
-         <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>strftime</span>(<span class='no'>firstDay</span>, <span class='kw'>format</span><span class='kw'>=</span><span class='st'>"%m/%d/%Y"</span>),
-         <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>strftime</span>(<span class='no'>lastDay</span>, <span class='kw'>format</span><span class='kw'>=</span><span class='st'>"%m/%d/%Y"</span>),
-         <span class='kw'>by</span><span class='kw'>=</span><span class='st'>"days"</span>),
-       <span class='kw'>format</span><span class='kw'>=</span><span class='st'>"%Y-%m-%d"</span>
-       )
-     <span class='no'>period</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_date</span><span class='kw'>=</span><span class='no'>days</span>)
-   }
-<span class='co'># }</span></pre>
+<span class='co'># a certain defined time segment</span>
+<span class='no'>days</span> <span class='kw'>&lt;-</span> <span class='fu'>seq</span>(
+  <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'>as.Date</span>(<span class='st'>"2009-10-28"</span>),
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>as.Date</span>(<span class='st'>"2009-11-11"</span>),
+  <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"1 day"</span>
+)
+<span class='no'>period</span> <span class='kw'>&lt;-</span> <span class='fu'>partition</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='no'>days</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -265,15 +273,18 @@ Andreas Blaette
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

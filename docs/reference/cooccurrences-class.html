@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Cooccurrences class. — cooccurrences-class" />
+
+<meta property="og:description" content="S4 class to organize information of context analysis" />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +59,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +89,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,15 +104,19 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Cooccurrences class.</h1>
+    
+    <div class="hidden name"><code>cooccurrences-class.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>S4 class to organize information of context analysis</p>
     
+    </div>
 
     <pre class="usage"><span class='co'># S4 method for cooccurrences</span>
 <span class='fu'>summary</span>(<span class='no'>object</span>)
@@ -103,13 +124,16 @@
 <span class='co'># S4 method for cooccurrences</span>
 <span class='fu'>show</span>(<span class='no'>object</span>)
 
-<span class='co'># S4 method for cooccurrencesBundle</span>
+<span class='co'># S4 method for cooccurrences_bundle</span>
 <span class='fu'>as.data.frame</span>(<span class='no'>x</span>)
 
-<span class='co'># S4 method for cooccurrencesReshaped</span>
+<span class='co'># S4 method for cooccurrences</span>
+<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)
+
+<span class='co'># S4 method for cooccurrences_reshaped</span>
 <span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -130,19 +154,19 @@
 
     
     <dl class='dl-horizontal'>
-<dt><code>call</code></dt><dd><p>Object of class <code>"character"</code> the call that generated the object</p></dd>
-    <dt><code>partition</code></dt><dd><p>Object of class <code>"character"</code> the partition the analysis is based on</p></dd>
-    <dt><code>partitionSize</code></dt><dd><p>Object of class <code>"numeric"</code> the size of the partition</p></dd>
-    <dt><code>left</code></dt><dd><p>Object of class <code>"numeric"</code> number of tokens to the right</p></dd>
-    <dt><code>right</code></dt><dd><p>Object of class <code>"numeric"</code> number of tokens to the left</p></dd>
-    <dt><code>pAttribute</code></dt><dd><p>Object of class <code>"character"</code> p-attribute of the query</p></dd>
-    <dt><code>corpus</code></dt><dd><p>Object of class <code>"character"</code> the CWB corpus used</p></dd>
-    <dt><code>stat</code></dt><dd><p>Object of class <code>"data.frame"</code> statistics of the analysis</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>"character"</code> encoding of the corpus</p></dd>
-    <dt><code>pos</code></dt><dd><p>Object of class <code>"character"</code> part-of-speech tags filtered</p></dd>
-    <dt><code>method</code></dt><dd><p>Object of class <code>"character"</code> statistical test(s) used</p></dd>
-    <dt><code>cutoff</code></dt><dd><p>Object of class <code>"list"</code> cutoff levels that have been applied</p></dd>
-    <dt><code>svg</code></dt><dd><p>Object of class <code>"character"</code> - valid XML with svg representation</p></dd>
+<dt><code>call</code></dt><dd><p>Object of class <code>character</code> the call that generated the object</p></dd>
+    <dt><code>partition</code></dt><dd><p>Object of class <code>character</code> the partition the analysis is based on</p></dd>
+    <dt><code>size_partition</code></dt><dd><p>Object of class <code>integer</code> the size of the partition</p></dd>
+    <dt><code>left</code></dt><dd><p>Object of class <code>numeric</code> number of tokens to the right</p></dd>
+    <dt><code>right</code></dt><dd><p>Object of class <code>numeric</code> number of tokens to the left</p></dd>
+    <dt><code>p_attribute</code></dt><dd><p>Object of class <code>character</code> p-attribute of the query</p></dd>
+    <dt><code>corpus</code></dt><dd><p>Object of class <code>character</code> the CWB corpus used</p></dd>
+    <dt><code>stat</code></dt><dd><p>Object of class <code>data.table</code> statistics of the analysis</p></dd>
+    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code> encoding of the corpus</p></dd>
+    <dt><code>pos</code></dt><dd><p>Object of class <code>character</code> part-of-speech tags filtered</p></dd>
+    <dt><code>method</code></dt><dd><p>Object of class <code>character</code> statistical test(s) used</p></dd>
+    <dt><code>cutoff</code></dt><dd><p>Object of class <code>list</code> cutoff levels that have been applied</p></dd>
+    <dt><code>svg</code></dt><dd><p>Object of class <code>character</code> - valid XML with svg representation</p></dd>
 </dl>
     
 
@@ -160,15 +184,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate markdown from a partition. — as.markdown • polmineR</title>
+<title>Get markdown-formatted full text of a partition. — as.markdown • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,28 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Get markdown-formatted full text of a partition. — as.markdown" />
+
+<meta property="og:description" content="The method is the worker behind the read-method, which will be called
+usually to reconstruct the full text of a partition and read it. The
+as.markdown-method can be customized for different classes inheriting
+from the partition-class." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +62,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +92,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,86 +107,103 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate markdown from a partition.</h1>
+    <h1>Get markdown-formatted full text of a partition.</h1>
+    
+    <div class="hidden name"><code>as.markdown.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>The method is the worker behind the html-method.</p>
+    <p>The method is the worker behind the <code>read</code>-method, which will be called
+usually to reconstruct the full text of a <code>partition</code> and read it. The
+<code>as.markdown</code>-method can be customized for different classes inheriting
+from the <code>partition</code>-class.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>as.markdown</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for numeric</span>
-<span class='fu'>as.markdown</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='co'># S4 method for partition</span>
+<span class='fu'>as.markdown</span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>template</span> <span class='kw'>=</span> <span class='fu'><a href='templates.html'>get_template</a></span>(<span class='no'>.Object</span>), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for plprPartition</span>
+<span class='co'># S4 method for plpr_partition</span>
 <span class='fu'>as.markdown</span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>template</span> <span class='kw'>=</span> <span class='fu'><a href='templates.html'>getTemplate</a></span>(<span class='no'>.Object</span>), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>interjections</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>template</span> <span class='kw'>=</span> <span class='fu'><a href='templates.html'>get_template</a></span>(<span class='no'>.Object</span>), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>interjections</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>object to be converted</p></td>
+      <td><p>The object to be converted, a <code>partition</code>, or a class
+inheriting from <code>partition</code>, such as <code>plpr_partition</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
       <td><p>further arguments</p></td>
     </tr>
     <tr>
-      <th>corpus</th>
-      <td><p>name of CWB corpus</p></td>
-    </tr>
-    <tr>
       <th>meta</th>
-      <td><p>metainformation i.e. s-attributes) to be displayed</p></td>
-    </tr>
-    <tr>
-      <th>cpos</th>
-      <td><p>logical, whether to add cpos as ids in span elements</p></td>
-    </tr>
-    <tr>
-      <th>cutoff</th>
-      <td><p>maximum number of tokens to reconstruct</p></td>
+      <td><p>The metainformation (s-attributes) to be displayed.</p></td>
     </tr>
     <tr>
       <th>template</th>
-      <td><p>a template for formatting output</p></td>
+      <td><p>A template for formating output.</p></td>
+    </tr>
+    <tr>
+      <th>cpos</th>
+      <td><p>A <code>logical</code> value, whether to add cpos as ids in span elements.</p></td>
+    </tr>
+    <tr>
+      <th>cutoff</th>
+      <td><p>The maximum number of tokens to reconstruct, to avoid that full text is
+excessively long.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>A <code>logical</code> value, whether to output messages.</p></td>
     </tr>
     <tr>
       <th>interjections</th>
-      <td><p>logical, whether to format interjections</p></td>
+      <td><p>A <code>logical</code> value, whether to format interjections.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"argentina"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>as.markdown</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; [1] "## Corpus: REUTERS\n\n###  \n\n &lt;span id=\"3997\" token=\"Argentine\"&gt;Argentine&lt;/span&gt; &lt;span id=\"3998\" token=\"crude\"&gt;crude&lt;/span&gt; &lt;span id=\"3999\" token=\"oil\"&gt;oil&lt;/span&gt; &lt;span id=\"4000\" token=\"production\"&gt;production&lt;/span&gt; &lt;span id=\"4001\" token=\"was\"&gt;was&lt;/span&gt; &lt;span id=\"4002\" token=\"down\"&gt;down&lt;/span&gt; &lt;span id=\"4003\" token=\"10.8\"&gt;10.8&lt;/span&gt; &lt;span id=\"4004\" token=\"pct\"&gt;pct&lt;/span&gt; &lt;span id=\"4005\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4006\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4007\" token=\"1987\"&gt;1987&lt;/span&gt; &lt;span id=\"4008\" token=\"to\"&gt;to&lt;/span&gt; &lt;span id=\"4009\" token=\"12.32\"&gt;12.32&lt;/span&gt; &lt;span id=\"4010\" token=\"mln\"&gt;mln&lt;/span&gt; &lt;span id=\"4011\" token=\"barrels\"&gt;barrels&lt;/span&gt; &lt;span id=\"4012\" token=\"from\"&gt;from&lt;/span&gt; &lt;span id=\"4013\" token=\"13.81\"&gt;13.81&lt;/span&gt; &lt;span id=\"4014\" token=\"mln\"&gt;mln&lt;/span&gt; &lt;span id=\"4015\" token=\"barrels\"&gt;barrels&lt;/span&gt; &lt;span id=\"4016\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4017\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4018\" token=\"1986\"&gt;1986&lt;/span&gt; &lt;span id=\"4019\" token=\"Yacimientos\"&gt;Yacimientos&lt;/span&gt; &lt;span id=\"4020\" token=\"Petroliferos\"&gt;Petroliferos&lt;/span&gt; &lt;span id=\"4021\" token=\"Fiscales\"&gt;Fiscales&lt;/span&gt; &lt;span id=\"4022\" token=\"said\"&gt;said&lt;/span&gt; &lt;span id=\"4023\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4024\" token=\"1987\"&gt;1987&lt;/span&gt; &lt;span id=\"4025\" token=\"natural\"&gt;natural&lt;/span&gt; &lt;span id=\"4026\" token=\"gas\"&gt;gas&lt;/span&gt; &lt;span id=\"4027\" token=\"output\"&gt;output&lt;/span&gt; &lt;span id=\"4028\" token=\"totalled\"&gt;totalled&lt;/span&gt; &lt;span id=\"4029\" token=\"1.15\"&gt;1.15&lt;/span&gt; &lt;span id=\"4030\" token=\"billion\"&gt;billion&lt;/span&gt; &lt;span id=\"4031\" token=\"cubic\"&gt;cubic&lt;/span&gt; &lt;span id=\"4032\" token=\"metrers\"&gt;metrers&lt;/span&gt; &lt;span id=\"4033\" token=\"3.6\"&gt;3.6&lt;/span&gt; &lt;span id=\"4034\" token=\"pct\"&gt;pct&lt;/span&gt; &lt;span id=\"4035\" token=\"higher\"&gt;higher&lt;/span&gt; &lt;span id=\"4036\" token=\"than\"&gt;than&lt;/span&gt; &lt;span id=\"4037\" token=\"1.11\"&gt;1.11&lt;/span&gt; &lt;span id=\"4038\" token=\"billion\"&gt;billion&lt;/span&gt; &lt;span id=\"4039\" token=\"cubic\"&gt;cubic&lt;/span&gt; &lt;span id=\"4040\" token=\"metres\"&gt;metres&lt;/span&gt; &lt;span id=\"4041\" token=\"produced\"&gt;produced&lt;/span&gt; &lt;span id=\"4042\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4043\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4044\" token=\"1986\"&gt;1986&lt;/span&gt; &lt;span id=\"4045\" token=\"Yacimientos\"&gt;Yacimientos&lt;/span&gt; &lt;span id=\"4046\" token=\"Petroliferos\"&gt;Petroliferos&lt;/span&gt; &lt;span id=\"4047\" token=\"Fiscales\"&gt;Fiscales&lt;/span&gt; &lt;span id=\"4048\" token=\"added\"&gt;added&lt;/span&gt; &lt;span id=\"4049\" token=\"Reuter\"&gt;Reuter&lt;/span&gt; \n"</div><div class='input'><span class='fu'>as.markdown</span>(<span class='no'>P</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"id"</span>, <span class='st'>"places"</span>))</div><div class='output co'>#&gt; [1] "## Corpus: REUTERS\n\n###  id: 708 // places: argentina\n\n &lt;span id=\"3997\" token=\"Argentine\"&gt;Argentine&lt;/span&gt; &lt;span id=\"3998\" token=\"crude\"&gt;crude&lt;/span&gt; &lt;span id=\"3999\" token=\"oil\"&gt;oil&lt;/span&gt; &lt;span id=\"4000\" token=\"production\"&gt;production&lt;/span&gt; &lt;span id=\"4001\" token=\"was\"&gt;was&lt;/span&gt; &lt;span id=\"4002\" token=\"down\"&gt;down&lt;/span&gt; &lt;span id=\"4003\" token=\"10.8\"&gt;10.8&lt;/span&gt; &lt;span id=\"4004\" token=\"pct\"&gt;pct&lt;/span&gt; &lt;span id=\"4005\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4006\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4007\" token=\"1987\"&gt;1987&lt;/span&gt; &lt;span id=\"4008\" token=\"to\"&gt;to&lt;/span&gt; &lt;span id=\"4009\" token=\"12.32\"&gt;12.32&lt;/span&gt; &lt;span id=\"4010\" token=\"mln\"&gt;mln&lt;/span&gt; &lt;span id=\"4011\" token=\"barrels\"&gt;barrels&lt;/span&gt; &lt;span id=\"4012\" token=\"from\"&gt;from&lt;/span&gt; &lt;span id=\"4013\" token=\"13.81\"&gt;13.81&lt;/span&gt; &lt;span id=\"4014\" token=\"mln\"&gt;mln&lt;/span&gt; &lt;span id=\"4015\" token=\"barrels\"&gt;barrels&lt;/span&gt; &lt;span id=\"4016\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4017\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4018\" token=\"1986\"&gt;1986&lt;/span&gt; &lt;span id=\"4019\" token=\"Yacimientos\"&gt;Yacimientos&lt;/span&gt; &lt;span id=\"4020\" token=\"Petroliferos\"&gt;Petroliferos&lt;/span&gt; &lt;span id=\"4021\" token=\"Fiscales\"&gt;Fiscales&lt;/span&gt; &lt;span id=\"4022\" token=\"said\"&gt;said&lt;/span&gt; &lt;span id=\"4023\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4024\" token=\"1987\"&gt;1987&lt;/span&gt; &lt;span id=\"4025\" token=\"natural\"&gt;natural&lt;/span&gt; &lt;span id=\"4026\" token=\"gas\"&gt;gas&lt;/span&gt; &lt;span id=\"4027\" token=\"output\"&gt;output&lt;/span&gt; &lt;span id=\"4028\" token=\"totalled\"&gt;totalled&lt;/span&gt; &lt;span id=\"4029\" token=\"1.15\"&gt;1.15&lt;/span&gt; &lt;span id=\"4030\" token=\"billion\"&gt;billion&lt;/span&gt; &lt;span id=\"4031\" token=\"cubic\"&gt;cubic&lt;/span&gt; &lt;span id=\"4032\" token=\"metrers\"&gt;metrers&lt;/span&gt; &lt;span id=\"4033\" token=\"3.6\"&gt;3.6&lt;/span&gt; &lt;span id=\"4034\" token=\"pct\"&gt;pct&lt;/span&gt; &lt;span id=\"4035\" token=\"higher\"&gt;higher&lt;/span&gt; &lt;span id=\"4036\" token=\"than\"&gt;than&lt;/span&gt; &lt;span id=\"4037\" token=\"1.11\"&gt;1.11&lt;/span&gt; &lt;span id=\"4038\" token=\"billion\"&gt;billion&lt;/span&gt; &lt;span id=\"4039\" token=\"cubic\"&gt;cubic&lt;/span&gt; &lt;span id=\"4040\" token=\"metres\"&gt;metres&lt;/span&gt; &lt;span id=\"4041\" token=\"produced\"&gt;produced&lt;/span&gt; &lt;span id=\"4042\" token=\"in\"&gt;in&lt;/span&gt; &lt;span id=\"4043\" token=\"January\"&gt;January&lt;/span&gt; &lt;span id=\"4044\" token=\"1986\"&gt;1986&lt;/span&gt; &lt;span id=\"4045\" token=\"Yacimientos\"&gt;Yacimientos&lt;/span&gt; &lt;span id=\"4046\" token=\"Petroliferos\"&gt;Petroliferos&lt;/span&gt; &lt;span id=\"4047\" token=\"Fiscales\"&gt;Fiscales&lt;/span&gt; &lt;span id=\"4048\" token=\"added\"&gt;added&lt;/span&gt; &lt;span id=\"4049\" token=\"Reuter\"&gt;Reuter&lt;/span&gt; \n"</div><div class='input'><span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='fu'><a href='read-method.html'>read</a></span>(<span class='no'>P</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"id"</span>, <span class='st'>"places"</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

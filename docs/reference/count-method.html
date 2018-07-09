@@ -18,13 +18,26 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Get counts. — count" />
+
+<meta property="og:description" content="Count all tokens, or number of occurrences of a query (CQP syntax may be
+used), or matches for the query." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +60,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">polmineR</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">polmineR</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,13 +90,14 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -87,148 +105,181 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get counts.</h1>
+    
+    <div class="hidden name"><code>count-method.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Count all tokens, or number of occurrences of a query (CQP syntax may be
 used), or matches for the query.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>),
-  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>),
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partitionBundle</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>total</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='co'># S4 method for partition_bundle</span>
+<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>total</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.pAttribute"</span>), <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>id2str</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for vector</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>pAttribute</span>)</pre>
+<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attribute</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for Corpus</span>
+<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>p_attribute</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>a <code>"partition"</code> or <code>"partitionBundle"</code> object, or a
-character vector (length 1) providing the name of a corpus</p></td>
+      <td><p>A <code>partition</code> or <code>partition_bundle</code>, or a length-one
+character vector providing the name of a corpus.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters</p></td>
+      <td><p>Further arguments.</p></td>
     </tr>
     <tr>
       <th>query</th>
-      <td><p>a character vector (one or multiple terms to be looked up), CQP
-syntax can be used.</p></td>
+      <td><p>A character vector (one or multiple terms), CQP syntax can be
+used.</p></td>
     </tr>
     <tr>
       <th>cqp</th>
-      <td><p>either logical (TRUE if query is a CQP query), or a
+      <td><p>Either logical (<code>TRUE</code> if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
-auxiliary function)</p></td>
+auxiliary function).</p></td>
     </tr>
     <tr>
       <th>breakdown</th>
-      <td><p>logical, whether to count occurrences for different matches for a query</p></td>
+      <td><p>Logical, whether to report number of occurrences for
+different matches for a query.</p></td>
     </tr>
     <tr>
-      <th>id2str</th>
-      <td><p>logical, whether to add rownames (only if query is NULL)</p></td>
+      <th>decode</th>
+      <td><p>Logical, whether to turn token ids into decoded strings (only
+if query is NULL).</p></td>
     </tr>
     <tr>
-      <th>pAttribute</th>
-      <td><p>the p-attribute(s) to use</p></td>
+      <th>p_attribute</th>
+      <td><p>The p-attribute(s) to use.</p></td>
     </tr>
     <tr>
       <th>mc</th>
-      <td><p>logical, whether to use multicore (defaults to FALSE)</p></td>
+      <td><p>Logical, whether to use multicore (defaults to <code>FALSE</code>).</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical, whether to be verbose</p></td>
+      <td><p>Logical, whether to be verbose.</p></td>
     </tr>
     <tr>
       <th>progress</th>
-      <td><p>logical, whether to show progress</p></td>
+      <td><p>Logical, whether to show progress bar.</p></td>
     </tr>
     <tr>
       <th>freq</th>
-      <td><p>logical, if FALSE, counts will be reported, if TRUE, frequencies</p></td>
+      <td><p>Logical, if <code>FALSE</code>, counts will be reported, if TRUE,
+(relative) frequencies are added to table.</p></td>
     </tr>
     <tr>
       <th>total</th>
-      <td><p>defaults to FALSE, if TRUE, the added value of counts (column:
-TOTAL) will be amended to the data.table that is returned</p></td>
+      <td><p>Defaults to <code>FALSE</code>, if <code>TRUE</code>, the total value of
+counts (column named 'TOTAL') will be amended to the <code>data.table</code> that
+is returned.</p></td>
     </tr>
     <tr>
       <th>sort</th>
-      <td><p>logical, whether to sort stat</p></td>
+      <td><p>Logical, whether to sort table with counts (in stat slot).</p></td>
     </tr>
     <tr>
       <th>corpus</th>
-      <td><p>name of CWB corpus</p></td>
+      <td><p>The name of a CWB corpus.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>"data.table"</code></p>
+    <p>A <code>data.table</code> if argument query is used, a <code>count</code>-object,
+  if query is <code>NULL</code> and <code>.Object</code> is a character vector (referring 
+  to a corpus) or a <code>partition</code>, a <code>count_bundle</code>-object, if <code>.Object</code>
+  is a <code>partition_bundle</code>.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If .Object is a <code>partitonBundle</code>, the data.table returned will have the queries
-in the columns, and as many rows as there are in the partitionBundle.</p>
-<p>If .Object is a character vector (length 1) and query is NULL, the count is performed
-for the whole partition. The method will check whether the <code>polmineR.Rcpp</code> package,
-or the <code>cwb-lexdecode</code> utilities are available, and use them resepectively for 
-performance reasons.</p>
+    <p>If .Object is a <code>partiton_bundle</code>, the data.table returned will have the
+queries in the columns, and as many rows as there are in the
+<code>partition_bundle</code>.</p>
+<p>If .Object is a length-one character vector and query is NULL, the count is
+performed for the whole partition.</p>
 <p>If <code>breakdown</code> is <code>TRUE</code> and one query is supplied, the function
 returns a frequency breakdown of the results of the query. If several queries
 are supplied, frequencies for the individual queries are retrieved.</p>
     
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Baker, Paul (2006): <em>Using Corpora in Discourse Analysis</em>. London: continuum, p. 47-69 (ch. 3).</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>For a metadata-based breakdown of counts
-(i.e. tabulation by s-attributes), see <code>"dispersion"</code>.</p>
-<p>count</p>
+    <div class='dont-index'><p>For a metadata-based breakdown of counts
+(i.e. tabulation by s-attributes), see <code>dispersion</code>.</p>
+<p>count</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR.sampleCorpus"</span>)
-  <span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='fu'>list</span>(<span class='kw'>text_id</span><span class='kw'>=</span><span class='st'>".*"</span>), <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-  <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span>
-  <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Freizeit"</span>, <span class='st'>"Zukunft"</span>)) <span class='co'># get frequencies for multiple tokens</span>
-
-  <span class='fu'>count</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Migration"</span>, <span class='st'>"Integration"</span>), <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-
-  <span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partitionBundle-method.html'>partitionBundle</a></span>(
-    <span class='st'>"PLPRBTTXT"</span>, <span class='kw'>sAttribute</span> <span class='kw'>=</span> <span class='st'>"text_date"</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-    <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-  )
-  <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>, <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-  <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Migration"</span>, <span class='st'>"Zukunft"</span>), <span class='kw'>pAttribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-
-  <span class='fu'>matching</span>(<span class='st'>"PLPRBTTXT"</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-  <span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"PLPRBTTXT"</span>, <span class='kw'>text_date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)
-  <span class='fu'>matching</span>(<span class='no'>P</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='no'>TURE</span>)
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span></div><div class='output co'>#&gt; <span class='message'>... processing query Arbeit</span></div><div class='output co'>#&gt;     query count         freq
+#&gt; 1: Arbeit   159 0.0007155683</div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Freizeit"</span>, <span class='st'>"Zukunft"</span>)) <span class='co'># get frequencies for multiple tokens</span></div><div class='output co'>#&gt;       query count         freq
+#&gt; 1:   Arbeit   159 7.155683e-04
+#&gt; 2: Freizeit     1 4.500430e-06
+#&gt; 3:  Zukunft   142 6.390610e-04</div><div class='input'>
+<span class='fu'>count</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Migration"</span>, <span class='st'>"Integration"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt;          query count         freq
+#&gt; 1:   Migration     3 1.350129e-05
+#&gt; 2: Integration    23 1.035099e-04</div><div class='input'>
+<span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
+  <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"date"</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... adding total number of hits (col 'TOTAL', verbose = verbose)</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Migration"</span>, <span class='st'>"Zukunft"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... adding total number of hits (col 'TOTAL', verbose = verbose)</span></div><div class='input'>
+<span class='fu'>count</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;               query                       match count share
+#&gt;  1: "Integration.*"                 Integration    23 53.49
+#&gt;  2: "Integration.*"         Integrationspolitik     9 20.93
+#&gt;  3: "Integration.*"           Integrationskurse     2  4.65
+#&gt;  4: "Integration.*"        Integrationsangebote     1  2.33
+#&gt;  5: "Integration.*"    Integrationsbereitschaft     1  2.33
+#&gt;  6: "Integration.*"         Integrationserfolge     1  2.33
+#&gt;  7: "Integration.*"     Integrationsfähigkeiten     1  2.33
+#&gt;  8: "Integration.*"       Integrationskarrieren     1  2.33
+#&gt;  9: "Integration.*" Integrationspartnerschaften     1  2.33
+#&gt; 10: "Integration.*"            Integrationsplan     1  2.33
+#&gt; 11: "Integration.*"      Integrationspolitik.Es     1  2.33
+#&gt; 12: "Integration.*"       Integrationsverträgen     1  2.33</div><div class='input'>
+<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>P</span>, <span class='st'>'"Integration.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;              query                    match count share
+#&gt; 1: "Integration.*"              Integration    15 48.39
+#&gt; 2: "Integration.*"      Integrationspolitik     8 25.81
+#&gt; 3: "Integration.*"        Integrationskurse     2  6.45
+#&gt; 4: "Integration.*"     Integrationsangebote     1  3.23
+#&gt; 5: "Integration.*" Integrationsbereitschaft     1  3.23
+#&gt; 6: "Integration.*"      Integrationserfolge     1  3.23
+#&gt; 7: "Integration.*"  Integrationsfähigkeiten     1  3.23
+#&gt; 8: "Integration.*"    Integrationskarrieren     1  3.23
+#&gt; 9: "Integration.*"   Integrationspolitik.Es     1  3.23</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -238,6 +289,8 @@ are supplied, frequencies for the individual queries are retrieved.</p>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
 
       <li><a href="#see-also">See also</a></li>
       
@@ -249,15 +302,18 @@ are supplied, frequencies for the individual queries are retrieved.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andreas Blaette Developer.</p>
+  <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
