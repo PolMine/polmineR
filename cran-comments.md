@@ -1,6 +1,6 @@
 ## General remarks
 
-This release addresses an issue raised by Kurt Hornik concerning 'RcppCWB' that occurs with 'polmineR', too: A required path within a 'registry'-file within the package is not adjusted by the configure/configure.win when installing a binary package. The previous version did the adjustment during .onLoad() mechanism, changing a file in the package directory -- thus violating CRAN requirements. The new version of polmineR uses a temporary session registry .
+This release addresses a parallel issue raised by Kurt Hornik concerning my other package 'RcppCWB': A required path within a 'registry'-file within the package is not adjusted by the configure/configure.win when installing a binary package. The previous version did the adjustment during .onLoad() mechanism, changing a file in the package directory -- thus violating CRAN requirements. The new version of polmineR uses a temporary session registry instead.
 
 The 'RcppCWB' dependency does not yet compile Solaris, so 'polmineR' will not work on Solaris. Once I have resolved the issue with 'RcppCWB' on Solaris, this issue should disappear.
 
@@ -16,6 +16,8 @@ The 'RcppCWB' dependency does not yet compile Solaris, so 'polmineR' will not wo
 ## R CMD check results
 
 There were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
+
+
 ## Downstream dependencies
 
 I have also checked downstream dependencies using devtools::revdep(),
