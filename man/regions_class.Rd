@@ -32,10 +32,7 @@ A coerce-method is available to coerce a \code{partition} object to a
 }}
 
 \examples{
-\donttest{
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
-encode(R, s_attribute = "foo", values = "Jens")
-}
 }

@@ -85,22 +85,14 @@ That may offer more flexibility, e.g. to highlight matches for CQP queries.
 See examples and the documentation for the different methods to learn more.
 }
 \examples{
-\donttest{
 use("polmineR")
-template <- jsonlite::fromJSON(system.file(package = "polmineR", "templates", "plpr.template.json"))
-options(polmineR.templates = list("GERMAPARLMINI" = template))
-merkel <- partition(
-  "GERMAPARLMINI",
-   date = "2009-11-10", speaker = "Angela Dorothea Merkel",
-   type = "plpr"
- )
- read(merkel, meta = c("speaker", "date"))
- read(
-   merkel,
-   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
-   meta = c("speaker", "date")
+merkel <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Merkel", regex = TRUE)
+read(merkel, meta = c("speaker", "date"))
+read(
+  merkel,
+  highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
+  meta = c("speaker", "date")
 )
-}
 }
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.
