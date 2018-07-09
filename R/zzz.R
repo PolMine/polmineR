@@ -10,7 +10,7 @@
   assign("CQI", CQI, envir = parent.env(environment()))
 
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
-  # this needs to be done after assigning CQI, as registry_reset will call setTemplate
+  # this needs to be done after assigning CQI, as registry_reset will call set_template
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
     pkg_registry_dir <- file.path(libname, pkgname, "extdata", "cwb", "registry")
     Sys.setenv("CORPUS_REGISTRY" = pkg_registry_dir)
@@ -36,8 +36,8 @@
     "polmineR.defaultRegistry" = Sys.getenv("CORPUS_REGISTRY")
   )
   
-  # rcqp is not always accessible here - setTemplates would not work with perl interface
-  if (class(CQI)[1] %in% c("CQI.rcqp", "CQI.RcppCWB")) setTemplate()
+  # rcqp is not always accessible here - set_templates would not work with perl interface
+  if (class(CQI)[1] == "CQI.RcppCWB") set_template()
   NULL
 }
 

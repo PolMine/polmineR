@@ -15,7 +15,7 @@ read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
   tooltips = list(), verbose = TRUE, cpos = TRUE,
-  cutoff = getOption("polmineR.cutoff"), template = getTemplate(.Object),
+  cutoff = getOption("polmineR.cutoff"), template = get_template(.Object),
   ...)
 
 \S4method{read}{partition_bundle}(.Object, highlight = list(), cpos = TRUE,
@@ -64,24 +64,25 @@ the ith kwic line or hit to derive a partition to be inspected from}
 \item{type}{the partition type, see documentation for \code{partition}-method}
 }
 \description{
-Generate text (i.e. html) and read it in the viewer pane of RStudio. If called on
-a \code{partition_bundle}-object, skip through the partitions contained in the
-bundle.
+Generate text (i.e. html) and display it in the viewer pane of RStudio for
+reading it. If called on a \code{partition_bundle}-object, skip through the
+partitions contained in the bundle.
 }
 \details{
 To prepare the html output, the method \code{read} will call \code{html} and
-\code{as.markdown} subsequently, the latter method being the actual worker. Consult
-these methods to understand how preparing the output works.
+\code{as.markdown} subsequently, the latter method being the actual worker.
+Consult these methods to understand how preparing the output works.
 
-The param \code{highlight} can be used to highlight terms. It is expected to be a
-named list of character vectors, the names providing the colors, and the vectors
-the terms to be highlighted. To add tooltips, use the param \code{tooltips}.
+The param \code{highlight} can be used to highlight terms. It is expected to
+be a named list of character vectors, the names providing the colors, and the
+vectors the terms to be highlighted. To add tooltips, use the param
+\code{tooltips}.
 
-The method \code{read} is a high-level function that calls the aforementioned methods.
-Results obtained through \code{read} can also be obtained through combining these
-methods in a pipe using the package \code{magrittr}. That may offer more flexibility,
-e.g. to highlight matches for CQP queries. See examples and the documentation for the
-different methods to learn more.
+The method \code{read} is a high-level function that calls the methods
+mentioned before. Results obtained through \code{read} can also be obtained
+through combining these methods in a pipe using the package \code{magrittr}.
+That may offer more flexibility, e.g. to highlight matches for CQP queries.
+See examples and the documentation for the different methods to learn more.
 }
 \examples{
 \donttest{

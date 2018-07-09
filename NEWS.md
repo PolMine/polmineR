@@ -18,6 +18,7 @@
 * new argument 'type' added to partition_bundle
 * new method 'get_type' introduced to make getting corpus type more robust
 * bug removed that has caused a crash when cutoff is larger than number of tokens in a partition when calling get_token_stream
+* count-method will now return count-object if query is NULL, making it easier to write pipes
 
 # v0.7.8
 * upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used

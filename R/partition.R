@@ -470,7 +470,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   }
   newPartition@size <- size(newPartition)
   if (length(p_attribute) > 0) {
-    newPartition@stat <- count(.Object = newPartition, p_attribute = p_attribute, decode = decode, mc = mc)
+    newPartition@stat <- count(.Object = newPartition, p_attribute = p_attribute, decode = decode, mc = mc)@stat
     newPartition@p_attribute <- p_attribute
   }
   newPartition
@@ -509,16 +509,16 @@ setMethod("partition", "Corpus", function(
   
   .message('get cpos and strucs', verbose = verbose)
   dt <- copy(.Object$s_attributes)
-  for (sAttr in names(def)){
+  for (s_attr in names(def)){
     if (regex){
-      dt <- dt[unique(unlist(lapply(def[[sAttr]], function(x) grep(x, dt[[sAttr]]))))]
+      dt <- dt[unique(unlist(lapply(def[[s_attr]], function(x) grep(x, dt[[s_attr]]))))]
     } else {
-      dt <- dt[which(dt[[sAttr]] %in% def[[sAttr]])]
+      dt <- dt[which(dt[[s_attr]] %in% def[[s_attr]])]
     }
   }
   y@s_attribute_strucs <- names(def)[length(def)]
   y@strucs <- dt[["struc"]]
-  y@cpos <- .Object$cpos[dt[["struc"]] + 1,]
+  y@cpos <- .Object$cpos[dt[["struc"]] + 1L,]
   
   if (nrow(y@cpos) == 0){
     warning("... setting up the partition failed (returning NULL object)")

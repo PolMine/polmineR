@@ -10,7 +10,7 @@ test_that("count",{
   expect_true(is.integer(dt[["word_id"]]))
   expect_true(is.character(dt[["word"]]))
   expect_equal(sum(dt[["count"]]), 4050)
-  expect_equal(dt[word == "barrel"][["count"]], 15)
+  expect_equal(dt@stat[word == "barrel"][["count"]], 15)
 })
 
 

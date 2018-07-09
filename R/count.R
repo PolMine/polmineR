@@ -8,39 +8,48 @@ NULL
 #' 
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be
 #' used), or matches for the query.
-#' 
+#'
 #' If .Object is a \code{partiton_bundle}, the data.table returned will have the
-#' queries in the columns, and as many rows as there are in the \code{partition_bundle}.
-#' 
-#' If .Object is a character vector (length 1) and query is NULL, the count is
-#' performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
-#' query is supplied, the function returns a frequency breakdown of the results
-#' of the query. If several queries are supplied, frequencies for the individual
-#' queries are retrieved.
+#' queries in the columns, and as many rows as there are in the
+#' \code{partition_bundle}.
+#'
+#' If .Object is a length-one character vector and query is NULL, the count is
+#' performed for the whole partition.
+#'
+#' If \code{breakdown} is \code{TRUE} and one query is supplied, the function
+#' returns a frequency breakdown of the results of the query. If several queries
+#' are supplied, frequencies for the individual queries are retrieved.
 #' 
 #' @seealso  For a metadata-based breakdown of counts
 #' (i.e. tabulation by s-attributes), see \code{dispersion}.
 #' 
-#' @param .Object a \code{partition} or \code{partition_bundle} object, or a
-#'   character vector (length 1) providing the name of a corpus
-#' @param query a character vector (one or multiple terms to be looked up), CQP
-#'   syntax can be used.
-#' @param cqp either logical (TRUE if query is a CQP query), or a
+#' @param .Object A \code{partition} or \code{partition_bundle}, or a length-one
+#'   character vector providing the name of a corpus.
+#' @param query A character vector (one or multiple terms), CQP syntax can be
+#'   used.
+#' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
-#'   auxiliary function)
-#' @param p_attribute the p-attribute(s) to use
-#' @param corpus name of CWB corpus
-#' @param decode logical, whether to add rownames (only if query is NULL)
-#' @param sort logical, whether to sort stat
-#' @param mc logical, whether to use multicore (defaults to FALSE)
-#' @param verbose logical, whether to be verbose
-#' @param freq logical, if FALSE, counts will be reported, if TRUE, frequencies
-#' @param breakdown logical, whether to count occurrences for different matches for a query
-#' @param total defaults to FALSE, if TRUE, the added value of counts (column:
-#'   TOTAL) will be amended to the data.table that is returned
-#' @param progress logical, whether to show progress
-#' @param ... further parameters
-#' @return a \code{"data.table"}
+#'   auxiliary function).
+#' @param p_attribute The p-attribute(s) to use.
+#' @param corpus The name of a CWB corpus.
+#' @param decode Logical, whether to turn token ids into decoded strings (only
+#'   if query is NULL).
+#' @param sort Logical, whether to sort table with counts (in stat slot).
+#' @param mc Logical, whether to use multicore (defaults to \code{FALSE}).
+#' @param verbose Logical, whether to be verbose.
+#' @param freq Logical, if \code{FALSE}, counts will be reported, if TRUE,
+#'   (relative) frequencies are added to table.
+#' @param breakdown Logical, whether to report number of occurrences for
+#'   different matches for a query.
+#' @param total Defaults to \code{FALSE}, if \code{TRUE}, the total value of
+#'   counts (column named 'TOTAL') will be amended to the \code{data.table} that
+#'   is returned.
+#' @param progress Logical, whether to show progress bar.
+#' @param ... Further arguments.
+#' @return A \code{data.table} if argument query is used, a \code{count}-object,
+#'   if query is \code{NULL} and \code{.Object} is a character vector (referring 
+#'   to a corpus) or a \code{partition}, a \code{count_bundle}-object, if \code{.Object}
+#'   is a \code{partition_bundle}.
 #' @exportMethod count
 #' @docType methods
 #' @rdname count-method
@@ -83,7 +92,7 @@ setMethod("count", "partition", function(
   stopifnot( is.logical(breakdown) == TRUE)
   if (!is.null(query)){
     if (progress) verbose <- FALSE
-    if (breakdown == TRUE){
+    if (breakdown){
       dts <- lapply(
         query,
         function(x){
@@ -150,7 +159,16 @@ setMethod("count", "partition", function(
     } else {
       setcolorder(TF, neworder = c(pAttr_id, "count"))
     }
-    return(TF)
+    y <- new(
+      Class = "count",
+      corpus = .Object@corpus,
+      p_attribute = p_attribute,
+      encoding = .Object@encoding,
+      stat = TF,
+      name = character(),
+      size = .Object@size
+    )
+    return(y)
   }
 })
 
@@ -223,14 +241,22 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
         new(
           "count",
           corpus = corpus,
-          encoding = .Object@objects[[1]]@encoding,
+          encoding = .Object@objects[[i]]@encoding,
           p_attribute = p_attribute,
           stat = CNT_list[[i]],
-          name = names(CNT_list)[[i]]
+          name = names(CNT_list)[[i]],
+          size = size(.Object@objects[[i]])
         )
       }
     )
-    y2 <- as.bundle(y)
+    names(y) <- names(.Object)
+    y2 <- new(
+      Class = "count_bundle",
+      objects = y,
+      p_attribute = p_attribute,
+      corpus = corpus,
+      encoding = unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
+    )
     return( y2 )
   }
 })
@@ -257,7 +283,6 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
         if (sort) setorderv(TF, cols = p_attribute)
       }
-      return(TF)
     } else {
       
       tokenStreamDT <- as.data.table(
@@ -279,8 +304,17 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         }
         setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
       }
-      return(TF)
     }
+    y <- new(
+      Class = "count",
+      corpus = .Object,
+      p_attribute = p_attribute,
+      encoding = registry_get_encoding(.Object),
+      stat = TF,
+      name = character(),
+      size = size(.Object)
+    )
+    return(y)
   } else {
     stopifnot(.Object %in% CQI$list_corpora())
     total <- CQI$attribute_size(.Object, p_attribute, type = "p")
@@ -297,7 +331,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         }
       )
       return(data.table(query = query, count = count, freq = count / total))
-    } else if (cqp == TRUE){
+    } else if (cqp){
       if (breakdown == FALSE){
         count <- sapply(
           query,

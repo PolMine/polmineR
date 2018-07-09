@@ -32,7 +32,7 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
   if (!is.null(p_attribute)) {
     stopifnot(is.character(p_attribute) == TRUE, length(p_attribute) <= 2, all(p_attribute %in% p_attributes(.Object)))
     .message('getting counts for p-attribute(s):', paste(p_attribute, collapse = ", "), verbose = verbose)  
-    .Object@stat <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)
+    .Object@stat <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)@stat
     .Object@p_attribute <- p_attribute
   }
   .Object
@@ -57,7 +57,11 @@ setMethod("enrich", "kwic", function(.Object, meta = NULL, table = FALSE){
       function(metadat){
         cposToGet <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
         strucs <- CQI$cpos2struc(.Object@corpus, metadat, cposToGet)
-        as.nativeEnc(CQI$struc2str(.Object@corpus, metadat, strucs), from = .Object@encoding)
+        strucs_invalid <- which(strucs < 0)
+        if (length(strucs_invalid) > 0) strucs[strucs_invalid] <- 0
+        struc_values <- CQI$struc2str(.Object@corpus, metadat, strucs)
+        if (length(strucs_invalid) > 0) struc_values[strucs_invalid] <- ""
+        as.nativeEnc(struc_values, from = .Object@encoding)
       }
     )
     metainformation <- data.frame(metainformation, stringsAsFactors = FALSE)

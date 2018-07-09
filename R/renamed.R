@@ -36,3 +36,11 @@ partitionBundle <- function(...) partition_bundle(...)
 #' @export as.partitionBundle
 #' @rdname renamed
 as.partitionBundle <- function(...) as.partition_bundle(...)
+
+#' @export setTemplate
+#' @rdname renamed
+setTemplate <- function(...) set_template(...)
+
+#' @export getTemplate
+#' @rdname renamed
+getTemplate <- function(...) get_template(...)

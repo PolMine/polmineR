@@ -219,11 +219,10 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
       })
     rm(dummy)
   } else {
-    dummy <- lapply(
+    lapply(
       1L:length(x@objects),
       function(i) setnames(x@objects[[i]]@stat, old = p_attribute, new = "key")
     )
-    rm(dummy)
   }
   .message("generating cumulated data.table", verbose = verbose)
   DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))

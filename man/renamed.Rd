@@ -9,6 +9,8 @@
 \alias{getEncoding}
 \alias{partitionBundle}
 \alias{as.partitionBundle}
+\alias{setTemplate}
+\alias{getTemplate}
 \title{Renamed Functions}
 \usage{
 sAttributes(...)
@@ -24,6 +26,10 @@ getEncoding(...)
 partitionBundle(...)
 
 as.partitionBundle(...)
+
+setTemplate(...)
+
+getTemplate(...)
 }
 \arguments{
 \item{...}{argument that are passed to the renamed function}

@@ -10,11 +10,11 @@
 as.markdown(.Object, ...)
 
 \S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  template = getTemplate(.Object), cpos = TRUE, cutoff = NULL,
+  template = get_template(.Object), cpos = TRUE, cutoff = NULL,
   verbose = FALSE, ...)
 
 \S4method{as.markdown}{plpr_partition}(.Object, meta = NULL,
-  template = getTemplate(.Object), cpos = FALSE, interjections = TRUE,
+  template = get_template(.Object), cpos = FALSE, interjections = TRUE,
   cutoff = NULL, ...)
 }
 \arguments{

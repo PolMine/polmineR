@@ -50,16 +50,13 @@ use <- function(pkg = NULL, lib.loc = .libPaths(), dir = getOption("polmineR.def
         registry_new = registry(),
         home_dir_new = system.file("extdata", "cwb", "indexed_corpora", tolower(corpus), package = pkg, lib.loc = lib.loc)
         )
-      setTemplate(toupper(corpus))
+      set_template(toupper(corpus))
     }
-    # registry_reset(registryDir = registry())
-    # options("polmineR.templates" = list())
-    # setTemplate()
   } else {
     if (dir.exists(dir)){
       previousRegistry <- registry_reset(dir, verbose = verbose)
       options("polmineR.templates" = list())
-      setTemplate()
+      set_template()
     } else {
       warning("directory provided does not exist")
     }

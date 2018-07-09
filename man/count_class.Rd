@@ -4,6 +4,7 @@
 \name{count_class}
 \alias{count_class}
 \alias{count-class}
+\alias{count_bundle-class}
 \alias{length,count-method}
 \alias{hist,count-method}
 \title{Count class.}

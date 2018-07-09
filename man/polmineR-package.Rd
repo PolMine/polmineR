@@ -9,28 +9,65 @@
 polmineR()
 }
 \description{
-Tools for mining CWB corpora.
+A library for corpus analysis using the Corpus Workbench (CWB) as an
+efficient back end for indexing and querying large corpora.
 }
 \details{
-The package provides functions for basic text statistics for corpora 
-that are managed by the Corpus Workbench (CWB). A core feature is to generate
-subcorpora/partitions based on metadata. The package is also meant to serve
-as an interface between the CWB and R-packages implementing more
-sophisticated statistical procedures (e.g. lsa, lda, topicmodels) or
-providing further functionality for text mining (e.g. tm).
-  
-Any analysis using this package will usually start with setting up a 
-subcorpus/partition (with \code{partition}). A set of partitions can be
-generated with \code{partition_bundle}. Once a partition or a set of partitions
-has been set up, core functions are \code{cooccurrences} and
-\code{features}. Based on a partition bundle, a
-term-document matrix (class 'TermDocumentMatrix' from the tm package) can be
-generated (with \code{as.TermDocumentMatrix}). This opens the door to the wealth of
-statistical methods implemented in R.
+The package offers functionality to flexibly create partitions and to carry
+out basic statistical operations (count, co-occurrences etc.). The original
+full text of documents can be reconstructed and inspected at any time. Beyond
+that, the package is intended to serve as an interface to packages
+implementing advanced statistical procedures. Respective data structures
+(document term matrices, term co- occurrence matrices etc.) can be created
+based on the indexed corpora.
 
-When the package is loaded and attached, the package will look for a file name 'polmineR.conf'
-in a directory defined by the environment variable 'POLMINER_DIR'. It will take general 
-settings for polmineR from that file. Second, templates are restored.
+A session registry directory (see \code{registry()}) combines the registry
+files for corpora that may reside in anywhere on the system. Upon loading
+\code{polmineR}, the files in the registry directory defined by the
+environment variable CORPUS_REGISTRY are copied to the session registry
+directory. To see whether the environment variable CORPUS_REGISTRY is set,
+use the `Sys.getenv()`-function. Corpora wrapped in R data packages can be
+activated using the function \code{use()}.
+
+The package includes a draft shiny app that can be called using
+\code{polmineR()}.
+}
+\examples{
+use("polmineR") # activate demo corpora included in the package
+
+# Core methods applied to corpus
+
+count("REUTERS", query = "oil")
+count("REUTERS", query = c("oil", "barrel"))
+count("REUTERS", query = '"Saudi" "Arab.*"', breakdown = TRUE, cqp = TRUE)
+dispersion("REUTERS", query = "oil", s_attribute = "id")
+kwic("REUTERS", query = "oil")
+cooccurrences("REUTERS", query = "oil")
+
+
+# Core methods applied to partition
+
+kuwait <- partition("REUTERS", places = "kuwait", regex = TRUE)
+count(kuwait, query = "oil")
+dispersion(kuwait, query = "oil", s_attribute = "id")
+kwic(kuwait, query = "oil", meta = "id")
+cooccurrences(kuwait, query = "oil")
+
+
+# Go back to full text
+
+p <- partition("REUTERS", id = 127)
+read(p)
+h <- html(p)
+h_highlighted <- highlight(h, highlight = list(yellow = "oil"))
+h_highlighted
+
+
+# Generate term document matrix
+
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+cnt <- count(pb, p_attribute = "word")
+tdm <- as.TermDocumentMatrix(cnt, col = "count")
 }
 \references{
 Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.

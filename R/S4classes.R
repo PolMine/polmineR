@@ -184,6 +184,12 @@ setClass("count",
          contains = "textstat"
          )
 
+#' @docType class
+#' @exportClass count_bundle
+#' @rdname count_class
+setClass("count_bundle", contains = "bundle")
+
+
 
 #' @details The \code{length}-method is synonymous with the \code{size}-method
 #' and will return the size of the \code{corpus} or \code{partition} a count

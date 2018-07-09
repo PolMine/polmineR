@@ -227,7 +227,7 @@ Corpus <- R6Class(
     
     count = function(p_attribute = getOption("polmineR.p_attribute"), decode = TRUE){
       self$p_attribute <- p_attribute
-      self$stat <- count(self$corpus, p_attribute = p_attribute, decode = decode)
+      self$stat <- count(self$corpus, p_attribute = p_attribute, decode = decode)@stat
     },
     
     # copy = function(registryDir, dataDir = NULL){

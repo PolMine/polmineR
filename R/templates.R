@@ -9,13 +9,13 @@ NULL
 #' @param .Object object 
 #' @param verbose logical, whether to be verbose
 #' @param ... further parameters
-#' @exportMethod getTemplate
-#' @exportMethod setTemplate
+#' @exportMethod get_template
+#' @exportMethod set_template
 #' @rdname templates
-setGeneric("getTemplate", function(.Object, ...) standardGeneric("getTemplate"))
+setGeneric("get_template", function(.Object, ...) standardGeneric("get_template"))
 
 #' @rdname templates
-setMethod("getTemplate", "character", function(.Object){
+setMethod("get_template", "character", function(.Object){
   if (.Object %in% names(getOption("polmineR.templates"))){
     return( getOption("polmineR.templates")[[.Object]] )
   } else {
@@ -25,20 +25,20 @@ setMethod("getTemplate", "character", function(.Object){
 })
 
 #' @rdname templates
-setMethod("getTemplate", "partition", function(.Object){
+setMethod("get_template", "partition", function(.Object){
   getOption("polmineR.templates")[[.Object@corpus]]
 })
 
 #' @rdname templates
-setMethod("getTemplate", "missing", function(.Object){
+setMethod("get_template", "missing", function(.Object){
   return( names(getOption("polmineR.templates")) ) 
 })
 
 #' @rdname templates
-setGeneric("setTemplate", function(.Object, ... ) standardGeneric("setTemplate"))
+setGeneric("set_template", function(.Object, ... ) standardGeneric("set_template"))
 
 #' @rdname templates
-setMethod("setTemplate", "character", function(.Object){
+setMethod("set_template", "character", function(.Object){
   stopifnot(.Object %in% CQI$list_corpora())
   templateList <- getOption("polmineR.templates")
   filename <- file.path(registry_get_home(.Object), "template.json")
@@ -59,8 +59,8 @@ setMethod("setTemplate", "character", function(.Object){
 
 #' @rdname templates
 #' @importFrom jsonlite fromJSON
-setMethod("setTemplate", "missing", function(.Object, verbose = FALSE){
+setMethod("set_template", "missing", function(.Object, verbose = FALSE){
   if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
-    for (x in CQI$list_corpora()) setTemplate(x)
+    for (x in CQI$list_corpora()) set_template(x)
   }
 })

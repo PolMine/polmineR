@@ -69,7 +69,7 @@ setMethod(
     .Object, meta = NULL,
     highlight = list(), tooltips = list(),
     verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
-    template = getTemplate(.Object),
+    template = get_template(.Object),
     ...
   ){
     if (is.null(meta)){

@@ -201,17 +201,17 @@ setMethod("kwic", "character", function(
   cposList <- apply(
     hits, 1,
     function(row){
-      left <- c((row[1] - left - 1):(row[1] - 1))
-      right <- c((row[2] + 1):(row[2] + right + 1))
+      left <- c((row[1] - left - 1L):(row[1] - 1L))
+      right <- c((row[2] + 1L):(row[2] + right + 1L))
       list(
-        left = left[left > 0],
+        left = left[left > 0L],
         node = c(row[1]:row[2]),
         right = right[right <= cpos_max]
       )
     }
   )
   DT <- data.table(
-    hit_no = unlist(lapply(1:length(cposList), function(i) rep(i, times = length(unlist(cposList[[i]]))))),
+    hit_no = unlist(lapply(1L:length(cposList), function(i) rep(i, times = length(unlist(cposList[[i]]))))),
     cpos = unname(unlist(cposList)),
     position = unlist(lapply(
       cposList,
@@ -228,14 +228,20 @@ setMethod("kwic", "character", function(
   DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])
   
   ctxt <- new(
-    "context",
-    count = nrow(hits), stat = data.table(),
+    Class = "context",
+    query = character(),
+    count = nrow(hits),
+    stat = data.table(),
     corpus = .Object,
+    size_partition = integer(),
+    size = integer(),
     left = as.integer(left),
     right = as.integer(right), 
     cpos = DT,
+    s_attribute = character(),
     p_attribute = p_attribute,
-    encoding = registry_get_encoding(.Object)
+    encoding = registry_get_encoding(.Object),
+    partition = new("partition", stat = data.table())
   )
   
   # generate positivelist/stoplist with ids and apply it

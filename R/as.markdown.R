@@ -43,7 +43,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   corpusEncoding <- registry_get_encoding(corpus)
   
   # generate metainformation
-  documentStruc <- CQI$cpos2struc(corpus, getTemplate(corpus)[["document"]][["sAttribute"]], .Object[1])
+  documentStruc <- CQI$cpos2struc(corpus, get_template(corpus)[["document"]][["sAttribute"]], .Object[1])
 
   metaInformation <- sapply(
     meta,
@@ -56,16 +56,16 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   
   metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
   metaInformation <- paste(
-    getTemplate(corpus)[["document"]][["format"]][1],
+    get_template(corpus)[["document"]][["format"]][1],
     metaInformation,
-    getTemplate(corpus)[["document"]][["format"]][2],
+    get_template(corpus)[["document"]][["format"]][2],
     sep = ""
     )
   
   cposSeries <- .Object[1]:.Object[2]
-  pStrucs <- CQI$cpos2struc(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], cposSeries)
+  pStrucs <- CQI$cpos2struc(corpus, get_template(corpus)[["paragraphs"]][["sAttribute"]], cposSeries)
   chunks <- split(cposSeries, pStrucs)
-  pTypes <- CQI$struc2str(corpus, getTemplate(corpus)[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
+  pTypes <- CQI$struc2str(corpus, get_template(corpus)[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
   bodyList <- Map(
     function(pType, chunk){
       tokens <- get_token_stream(
@@ -74,9 +74,9 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
       )
       tokens <- .tagTokens(tokens)
       paste(
-        getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][1],
+        get_template(corpus)[["paragraphs"]][["format"]][[pType]][1],
         paste(tokens, collapse = " "),
-        getTemplate(corpus)[["paragraphs"]][["format"]][[pType]][2],
+        get_template(corpus)[["paragraphs"]][["format"]][[pType]][2],
         sep = ""
       )
     },
@@ -94,14 +94,14 @@ setMethod(
   "as.markdown", "partition",
   function(
     .Object,
-    meta = getOption("polmineR.meta"), template = getTemplate(.Object),
+    meta = getOption("polmineR.meta"), template = get_template(.Object),
     cpos = TRUE, cutoff = NULL, verbose = FALSE,
     ...
   ){
     .message("as.markdown", verbose = verbose)
     # ensure that template requested is available
     if (is.null(template)){
-      stop("template needed for formatting a partition of corpus ", .Object@corpus , " is missing, use setTemplate()")
+      stop("template needed for formatting a partition of corpus ", .Object@corpus , " is missing, use set_template()")
     }
     if (is.null(template[["paragraphs"]])){
       .message("generating paragraphs (no template)", verbose = verbose)
@@ -130,7 +130,7 @@ setMethod(
   })
 
 #' @rdname as.markdown
-setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, template = getTemplate(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
+setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, template = get_template(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){

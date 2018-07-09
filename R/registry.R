@@ -44,7 +44,7 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
     }
   } 
 
-  setTemplate()
+  set_template()
   invisible(oldRegistry)
 }
 
@@ -145,6 +145,12 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
   info_file_new <- file.path(home_dir_new, basename(registry_info_file), fsep = "/")
   registry[info_line_no] <- sprintf("INFO \"%s\"", info_file_new)
   
+  # RcppCWB v0.2.4 does not digest declarations of s-attributes when they are followed up
+  # by # [attributes], the usual output CWB indexing generates - so remove it
+  sattr_lines <- grep("^STRUCTURE", registry)
+  sattrs_declared <- gsub("^STRUCTURE\\s+(.*?)(\\s.*$|$)", "\\1", registry[sattr_lines])
+  registry[sattr_lines] <- sprintf("STRUCTURE %s", sattrs_declared)
+
   writeLines(text = registry, con = file.path(registry_new, corpus), sep = "\n")
   invisible(NULL)
 }

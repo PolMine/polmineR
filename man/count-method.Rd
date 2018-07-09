@@ -31,41 +31,48 @@ count(.Object, ...)
 \S4method{count}{Corpus}(.Object, query = NULL, p_attribute)
 }
 \arguments{
-\item{.Object}{a \code{partition} or \code{partition_bundle} object, or a
-character vector (length 1) providing the name of a corpus}
+\item{.Object}{A \code{partition} or \code{partition_bundle}, or a length-one
+character vector providing the name of a corpus.}
 
-\item{...}{further parameters}
+\item{...}{Further arguments.}
 
-\item{query}{a character vector (one or multiple terms to be looked up), CQP
-syntax can be used.}
+\item{query}{A character vector (one or multiple terms), CQP syntax can be
+used.}
 
-\item{cqp}{either logical (TRUE if query is a CQP query), or a
+\item{cqp}{Either logical (\code{TRUE} if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
-auxiliary function)}
+auxiliary function).}
 
-\item{breakdown}{logical, whether to count occurrences for different matches for a query}
+\item{breakdown}{Logical, whether to report number of occurrences for
+different matches for a query.}
 
-\item{decode}{logical, whether to add rownames (only if query is NULL)}
+\item{decode}{Logical, whether to turn token ids into decoded strings (only
+if query is NULL).}
 
-\item{p_attribute}{the p-attribute(s) to use}
+\item{p_attribute}{The p-attribute(s) to use.}
 
-\item{mc}{logical, whether to use multicore (defaults to FALSE)}
+\item{mc}{Logical, whether to use multicore (defaults to \code{FALSE}).}
 
-\item{verbose}{logical, whether to be verbose}
+\item{verbose}{Logical, whether to be verbose.}
 
-\item{progress}{logical, whether to show progress}
+\item{progress}{Logical, whether to show progress bar.}
 
-\item{freq}{logical, if FALSE, counts will be reported, if TRUE, frequencies}
+\item{freq}{Logical, if \code{FALSE}, counts will be reported, if TRUE,
+(relative) frequencies are added to table.}
 
-\item{total}{defaults to FALSE, if TRUE, the added value of counts (column:
-TOTAL) will be amended to the data.table that is returned}
+\item{total}{Defaults to \code{FALSE}, if \code{TRUE}, the total value of
+counts (column named 'TOTAL') will be amended to the \code{data.table} that
+is returned.}
 
-\item{sort}{logical, whether to sort stat}
+\item{sort}{Logical, whether to sort table with counts (in stat slot).}
 
-\item{corpus}{name of CWB corpus}
+\item{corpus}{The name of a CWB corpus.}
 }
 \value{
-a \code{"data.table"}
+A \code{data.table} if argument query is used, a \code{count}-object,
+  if query is \code{NULL} and \code{.Object} is a character vector (referring 
+  to a corpus) or a \code{partition}, a \code{count_bundle}-object, if \code{.Object}
+  is a \code{partition_bundle}.
 }
 \description{
 Count all tokens, or number of occurrences of a query (CQP syntax may be
@@ -73,13 +80,15 @@ used), or matches for the query.
 }
 \details{
 If .Object is a \code{partiton_bundle}, the data.table returned will have the
-queries in the columns, and as many rows as there are in the \code{partition_bundle}.
+queries in the columns, and as many rows as there are in the
+\code{partition_bundle}.
 
-If .Object is a character vector (length 1) and query is NULL, the count is
-performed for the whole partition. If \code{breakdown} is \code{TRUE} and one
-query is supplied, the function returns a frequency breakdown of the results
-of the query. If several queries are supplied, frequencies for the individual
-queries are retrieved.
+If .Object is a length-one character vector and query is NULL, the count is
+performed for the whole partition.
+
+If \code{breakdown} is \code{TRUE} and one query is supplied, the function
+returns a frequency breakdown of the results of the query. If several queries
+are supplied, frequencies for the individual queries are retrieved.
 }
 \examples{
 use("polmineR")
