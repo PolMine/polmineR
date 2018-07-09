@@ -1,8 +1,8 @@
 ## General remarks
 
-The 'RcppCWB' dependency of 'polmineR' has just been updated with some stricter requirements on input values. This caused tests included in 'polmineR' (v0.7.7) to fail. As announced in my message when submitting RcppCWB v0.2.3, this submission of polmineR (v0.7.8) fixes this issue.
+This release addresses an issue raised by Kurt Hornik concerning 'RcppCWB' that occurs with 'polmineR', too: A required path within a 'registry'-file within the package is not adjusted by the configure/configure.win when installing a binary package. The previous version did the adjustment during .onLoad() mechanism, changing a file in the package directory -- thus violating CRAN requirements. The new version of polmineR uses a temporary session registry .
 
-One remaining matter: The 'RcppCWB' package does not yet compile Solaris, so 'polmineR' will not work on Solaris. Once I have resolved the issue with 'RcppCWB' on Solaris, this issue should disappear.
+The 'RcppCWB' dependency does not yet compile Solaris, so 'polmineR' will not work on Solaris. Once I have resolved the issue with 'RcppCWB' on Solaris, this issue should disappear.
 
 
 ## Test environments

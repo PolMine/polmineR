@@ -2,10 +2,11 @@ library(polmineR)
 
 testthat::context("testing polmineR")
 
-if (requireNamespace("polmineR.sampleCorpus", quietly = TRUE)){
-  use("polmineR.sampleCorpus")
-  test_that("", {
-    expect_equal(length(sAttributes("PLPRBTTXT", "text_date")), 5)
-  })
-}
-
+test_that(
+  "corpora present",
+  {
+    use("polmineR")
+    expect_equal("GERMAPARLMINI" %in% corpus()[["corpus"]], TRUE)
+    expect_equal("REUTERS" %in% corpus()[["corpus"]], TRUE)
+  }
+)
