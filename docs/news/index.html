@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
       </span>
     </div>
 
@@ -108,12 +108,784 @@
       
     </div>
 
+    <div id="polminer-0-7-9" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-9" class="anchor"></a>polmineR 0.7.9<small> 2018-07-09 </small>
+</h1>
+<ul>
+<li>new as.list,bundle-method for convenience, to access slot objects</li>
+<li>as.bundle is more generic now, so that any kind of object can be coerced to a bundle now</li>
+<li>as.speeches-method turned into function that allows partition and corpus as input</li>
+<li>is.partition-function introduced</li>
+<li>sAttributes,partition-method in line with RcppCWB requirements (no negative values of strucs)</li>
+<li>count repaired for muliple p-attributes</li>
+<li>bug removed causing a crash for as.markdown-method when cutoff is larger than number of tokens</li>
+<li>polmineR will now work with a temporary registry in the temporary session directory</li>
+<li>a (new) registry_move() function is used to copy files to the tmp registry</li>
+<li>the (new) registry() function will get the temporary registry directory</li>
+<li>the use() function will add the registry file of a package to the tmp registry</li>
+<li>a bug removed that has prevented the name&lt;- method to work properly for bundle objects</li>
+<li>new partition_bundle,partition_bundle-method introduced</li>
+<li>naming of methods and functions, classes and most arguments moved to snake_case, maintaining backwards compatibility</li>
+<li>utility function getObjects not exported any more</li>
+<li>for count,partition_bundle-method, column ‘partition’ will be a character vector now (not factor)</li>
+<li>new argument ‘type’ added to partition_bundle</li>
+<li>new method ‘get_type’ introduced to make getting corpus type more robust</li>
+<li>bug removed that has caused a crash when cutoff is larger than number of tokens in a partition when calling get_token_stream</li>
+<li>count-method will now return count-object if query is NULL, making it easier to write pipes</li>
+</ul>
+</div>
+    <div id="polminer-0-7-8" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-8" class="anchor"></a>polmineR 0.7.8<small> 2018-05-15 </small>
+</h1>
+<ul>
+<li>upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used</li>
+<li>startup messages adjusted slightly</li>
+</ul>
+</div>
+    <div id="polminer-0-7-7" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-7" class="anchor"></a>polmineR 0.7.7<small> 2018-05-10 </small>
+</h1>
+<ul>
+<li>removed depracated classes: dispersion, Textstat (reference class), Partition (reference class)</li>
+<li>divide-methode moved to package polmineR.misc</li>
+<li>bug removed: size of ngrams object was always 1</li>
+<li>dotplot-method added for featuresNgrams</li>
+<li>sample corpus GermaParlMini added to the package (replacing suggested package polmineR.sampleCorpus)</li>
+<li>configuration mechanism added to set path to data directory in registry file upon installation</li>
+<li>class hits now inherits from class ‘textstat’, exposing a set of generic functions (such as dim, nrow etc.); slot ‘dt’ changed to ‘stat’ for this purpose</li>
+<li>count,partitionBundle and hits,partitionBundle: cqp parameter added</li>
+<li>RegistryFile class replaced by a set of leightweight-functions (corpus_…)</li>
+<li>encode-method moved to cwbtools package</li>
+<li>getTerms,character-method and terms,partition-method merged</li>
+<li>examples using EUROPARL corpus have been replaced by REUTERS corpus (including vignette)</li>
+<li>param id2str has been renamed to decode in all functions to avoid unwanted behavior</li>
+<li>robust indexing of bundle objects for subsetting</li>
+<li>optional settings have been cleaned</li>
+<li>reliance on cwb command line tools removed</li>
+<li>encoding issue with names of partitionBundle solved</li>
+</ul>
+</div>
+    <div id="polminer-0-7-6" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-6" class="anchor"></a>polmineR 0.7.6<small> Unreleased </small>
+</h1>
+<ul>
+<li>functionality of matches-method (breakdown of frequencies of matches) integrated into count-method (new param breakdown)</li>
+<li>corpus REUTERS included (as data for testsuite)</li>
+<li>adjust data directory of REUTERS corpus upon loading package</li>
+<li>a pkgdown-generated website is included in the docs directory</li>
+<li>consistent use of .message helper function to make shiny app work</li>
+<li>bug removed for count-method when options(“polmineR.cwb-lexdecode”) is TRUE and options(“polmineR.Rcpp”) is FALSE</li>
+<li>if CORPUS_REGISTRY is not defined, the registry directory in the package will be used, making REUTERS corpus available</li>
+<li>getSettings-function removed, was not sufficiently useful, and was superseded by template mechanism</li>
+<li>new class ‘count’ introduced to organize results from count operations</li>
+<li>at startup, default template is assigned for corpora without explicitly defined templates to make read() work in a basic fashion</li>
+<li>new cpos,hits-method to support highlight method</li>
+<li>tooltips-method to reorder functionality of html/highlight/tooltip-methods</li>
+<li>param charoffset added to html-method</li>
+<li>coerce-method from partition to json and vice versa, potentially useful for storing partitions</li>
+<li>sAttributes2cpos to work properly with nested xml</li>
+<li>partition,partition-method reworked to work properly with nested XML</li>
+<li>encoding of return value of sAttributes will be locale</li>
+<li>references added to methods count, kwic, cooccurrences, features.</li>
+<li>as.DocumentTermMatrix,character-method reworked to allow for subsetting and divergence of strucs and struc_str</li>
+<li>html,partition-method has new option beautify, to remove whitespace before interpunctuation</li>
+<li>output error removed in html,partition-method (that misinterprets `` as code block)</li>
+<li>the class Corpus now has a slot sAttribute to keep/manage a data.table with corpus positions and struc values, and there is a new partition,Corpus-method. In compbination, it will be a lot faster to derive a partition, particularly if you need to do that repeatedly</li>
+<li>a new function install.cwb() provides a convenient way to install CWB in the package</li>
+<li>added a missing encoding conversion for the count method</li>
+</ul>
+</div>
+    <div id="polminer-0-7-5" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-5" class="anchor"></a>polmineR 0.7.5<small> 2017-10-04 </small>
+</h1>
+<ul>
+<li>class ‘Regions’ renamed to class ‘regions’ as a matter of consistency</li>
+<li>data type of slot cpos of class ‘regions’ is a matrix now</li>
+<li>rework and improved documentation for decode- and encode-methods</li>
+<li>new functions copy.corpus and rename.corpus</li>
+<li>as.DocumentTermMatrix-method checks for strucs with value -1</li>
+<li>improved as.speeches-method: reordering of speeches, default values</li>
+<li>blapply-method: verbose output will be suppressed of progress is TRUE</li>
+</ul>
+</div>
+    <div id="polminer-0-7-4" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-4" class="anchor"></a>polmineR 0.7.4<small> 2017-07-17 </small>
+</h1>
+<ul>
+<li>applying stoplists and positivelists working again for context-method</li>
+<li>matches-method to learn about matches for CQP queries replacing frequencies-method</li>
+<li>Rework of enrich-method, including documentation.</li>
+<li>param ‘neighbor’ dropped from kwic,context-method; params positivelist and negativelist offer equivalent functionality</li>
+<li>highlight-method for (newly exported) kwic-method (for validation purposes)</li>
+<li>performance improvement for partitionBundle,character-method</li>
+<li>a new Labels class and label method for generating test data</li>
+<li>bug removed for partitionBundle,character-class, and performance improved</li>
+<li>Improved explanation of the installation procedure for Mac in the package vignette</li>
+<li>for context-method: param sAttribute working again to check boundaries of match regions</li>
+<li>sample-method for objects of class kwic and context</li>
+<li>kwic, cpos, and context method will accept queries of length &gt; 1</li>
+<li>use-function and resetRegistry-function reworked</li>
+<li>more explicit startup message to get info about version, registry and interface</li>
+<li>encoding issues solved for size-method, hits-method and dispersion-method</li>
+<li>use-function will now work for users working with polmineR.Rcpp as interface</li>
+</ul>
+</div>
+    <div id="polminer-0-7-3" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-3" class="anchor"></a>polmineR 0.7.3<small> 2017-05-24 </small>
+</h1>
+<ul>
+<li>new installed.corpora() convenience function to list all data packages with corpora</li>
+<li>view-method and show-method for cooccurrences-objects now successfully redirect output to RStudio viewer</li>
+<li>data.table-style indexing of objects inheriting from textstat-class</li>
+<li>for windows compatibility, as.corpusEnc/as.nativeEnc for encoding conversion</li>
+<li>performance gain for size-method by using polmineR.Rcpp</li>
+<li>dissect-method dropped (replaced by size)</li>
+<li>improved documentation of size-method</li>
+<li>labels for cooccurrences-output</li>
+<li>cooccurrencesBundle-class and cooccurrence-method for bundle restored</li>
+<li>as.data.table for cooccurrencesBundle-class</li>
+<li>count-method for whole corpus for pAttribute &gt; 1</li>
+<li>functionality of meta-method merged into sAttributes-method (meta-method dropped)</li>
+<li>speed improvements for generating html output for reading</li>
+<li>previously unexported highlight-method now exported, and more robust than before (using xml2)</li>
+<li>progress bars for multicore operations now generated by pbapply package</li>
+<li>starting to use testthat for unit testing</li>
+</ul>
+</div>
+    <div id="polminer-0-7-2" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-2" class="anchor"></a>polmineR 0.7.2<small> 2017-03-24 </small>
+</h1>
+<ul>
+<li>updated documentation of partition-method.</li>
+<li>documentation of hits-method improved</li>
+<li>use-methode: default value for pkg ist NULL (return to default registry), function more robust</li>
+<li>Rework for parsing the registry</li>
+<li>rework of templates, are part of options now (see ?setTemplate, ?getTemplate)</li>
+<li>experimental use of polmineR.Rcpp-package for fast counts for whole corpus</li>
+<li>new convenience function install.corpus to install CWB corpus wrapped into R data package</li>
+<li>adjustments to make package compatible with polmineR.shiny</li>
+<li>cpos-method to get hits more robust if there are not matches for string</li>
+<li>hits-method removes NAs</li>
+<li>compare-method renamed to features-method</li>
+<li>warnings caused by startup on windows removed</li>
+</ul>
+</div>
+    <div id="polminer-0-7-1" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-1" class="anchor"></a>polmineR 0.7.1<small> 2017-02-27 </small>
+</h1>
+<ul>
+<li>size-method now allows for a param ‘sAttribute’</li>
+<li>hits-method reworked, allows for names query vectors</li>
+<li>first version that can be installed on windows</li>
+</ul>
+</div>
+    <div id="polminer-0-7-0" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-0" class="anchor"></a>polmineR 0.7.0<small> 2017-02-14 </small>
+</h1>
+<ul>
+<li>rcqp package moved to suggests, to facilitate installation</li>
+</ul>
+</div>
+    <div id="polminer-0-6-3" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-6-3" class="anchor"></a>polmineR 0.6.3<small> Unreleased </small>
+</h1>
+<ul>
+<li>more generic implementation of as.markdown-method to prepare use of templates</li>
+<li>LICENSE file updated</li>
+<li>getTokenStream,character-method: new default behavior for params left and right</li>
+<li>use of templates for as.markdown-method</li>
+<li>Regions and TokenStream class (not for frontend use, so far)</li>
+<li>getTermFrequencies-method merged into count-method</li>
+<li>Corpus class introduced</li>
+<li>decode- and encode-methods introduced</li>
+</ul>
+</div>
+    <div id="polminer-0-6-2" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-6-2" class="anchor"></a>polmineR 0.6.2<small> 2016-09-07 </small>
+</h1>
+<ul>
+<li>refactoring of context-method to prepare more consistent usage</li>
+<li>progress bar for context-method (using blapply)</li>
+<li>progress bar for partitionBundle (using blapply)</li>
+<li>more coherent naming of parameters in partitionBundle-method</li>
+<li>partitionBundle,character-method debugged and more robust</li>
+<li>usage of blapply in as.speeches-method</li>
+<li>hits-method: paramter cqp defaults to FALSE for hits-method, size defaults to FALSE</li>
+<li>new parameter cqp for dispersion-method</li>
+<li>aggregation for dispersion-method when length(sAttribute) == 1</li>
+<li>bugfix for ngrams-method, sample code for the method</li>
+</ul>
+</div>
+    <div id="polminer-0-6-1" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-6-1" class="anchor"></a>polmineR 0.6.1<small> 2016-06-23 </small>
+</h1>
+<ul>
+<li>configure file removed to avoid unwanted bugs</li>
+</ul>
+</div>
+    <div id="polminer-0-6-0" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-6-0" class="anchor"></a>polmineR 0.6.0<small> 2016-06-22 </small>
+</h1>
+<ul>
+<li>this is the first version that passes all CRAN tests and that is available via CRAN</li>
+<li>the ‘rcqp’ remains the interface to the CWB, but usage of rcqp functions is wrapped into an new new CQI.rcqp (R6) class. CQI.perl and CQI.cqpserver are introduced as alternative interfaces to prepare portability to Windows systems</li>
+<li>code in the vignette and method examples will be executed conditionally, if rcqp and the polmineR.sampleCorpus are available</li>
+<li>the polmineR.sampleCorpus package is available in a drat repo at www.github.com/PolMine</li>
+<li>a series of bug fixes</li>
+</ul>
+</div>
+    <div id="polminer-0-5-6" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-5-6" class="anchor"></a>polmineR 0.5.6<small> Unreleased </small>
+</h1>
+<ul>
+<li>slot tf renamed to stat, class is data.table now</li>
+<li>keyness_method moved to data.tables</li>
+</ul>
+</div>
+    <div id="polminer-0-5-3" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-5-3" class="anchor"></a>polmineR 0.5.3<small> Unreleased </small>
+</h1>
+<ul>
+<li>renamed collocations to cooccurrences, seems more appropriate</li>
+</ul>
+</div>
+    <div id="polminer-0-5-2" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-5-2" class="anchor"></a>polmineR 0.5.2<small> Unreleased </small>
+</h1>
+<ul>
+<li>multicore for term frequency counts (param for partition)</li>
+</ul>
+</div>
+    <div id="polminer-0-5-0" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-5-0" class="anchor"></a>polmineR 0.5.0<small> Unreleased </small>
+</h1>
+<ul>
+<li>renamed xxxCluster to xxxBundle, bundle-superclass introduced</li>
+<li>slot label/labels renamed to name/names</li>
+<li>name/names-method instead of label/labels</li>
+</ul>
+</div>
+    <div id="polminer-0-4-57" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-57" class="anchor"></a>polmineR 0.4.57<small> Unreleased </small>
+</h1>
+<ul>
+<li>debugging of tf,partition-method: There was an error, if all hits for a query in a corpus were obtained outside of the partition</li>
+<li>tf,context-method to provide quick access to number of query results</li>
+<li>view-method as a wrapper for View</li>
+<li>multicore for tf-method if cqp=TRUE</li>
+</ul>
+</div>
+    <div id="polminer-0-4-56" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-56" class="anchor"></a>polmineR 0.4.56<small> Unreleased </small>
+</h1>
+<ul>
+<li>pAttributes-method for character, and partition objects for easy access to inspect available p-attributes</li>
+<li>(hidden) helper functions .parseRegistry and .parseInfoFile</li>
+<li>automatic detection of corpus type, if .info file is available</li>
+<li>def parameter of partition-method may be NULL, and anchor element will be read from .info-file</li>
+</ul>
+</div>
+    <div id="polminer-0-4-49" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-49" class="anchor"></a>polmineR 0.4.49<small> Unreleased </small>
+</h1>
+<ul>
+<li>cooccurences method for partition objects</li>
+</ul>
+</div>
+    <div id="polminer-0-4-46" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-46" class="anchor"></a>polmineR 0.4.46<small> Unreleased </small>
+</h1>
+<ul>
+<li>multicore for keyness,partitionCluster-method</li>
+</ul>
+</div>
+    <div id="polminer-0-4-45" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-45" class="anchor"></a>polmineR 0.4.45<small> Unreleased </small>
+</h1>
+<ul>
+<li>bubblegraph-method removed, turned into an independent package (available at github.com/ablaette/bubblegraph)</li>
+<li>tag-method using the treetag function from the koRpus package</li>
+</ul>
+</div>
+    <div id="polminer-0-4-41" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-41" class="anchor"></a>polmineR 0.4.41<small> Unreleased </small>
+</h1>
+<ul>
+<li>DataTables-functionality moved to DataTablesR-package which is imported</li>
+</ul>
+</div>
+    <div id="polminer-0-4-40" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-40" class="anchor"></a>polmineR 0.4.40<small> Unreleased </small>
+</h1>
+<ul>
+<li>browse-method for textstat objects: use DataTables.js</li>
+</ul>
+</div>
+    <div id="polminer-0-4-39" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-39" class="anchor"></a>polmineR 0.4.39<small> Unreleased </small>
+</h1>
+<ul>
+<li>reshape collocations-class-objects with trim(object, reshape=TRUE)</li>
+<li>collocationsReshaped-class</li>
+<li>keynessCollocations-class</li>
+</ul>
+</div>
+    <div id="polminer-0-4-37" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-37" class="anchor"></a>polmineR 0.4.37<small> Unreleased </small>
+</h1>
+<ul>
+<li>turned partition in a character-method</li>
+<li>verbose=FALSE really implemented for</li>
+</ul>
+</div>
+    <div id="polminer-0-36" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-36" class="anchor"></a>polmineR 0.36<small> Unreleased </small>
+</h1>
+<ul>
+<li>context,collocations-method</li>
+<li>call-slot in most objects</li>
+<li>as.TermDocumentMatrix,collocations-method finalized</li>
+</ul>
+</div>
+    <div id="polminer-0-35" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-35" class="anchor"></a>polmineR 0.35<small> Unreleased </small>
+</h1>
+<ul>
+<li>textstat-class introduced to serve as superclass for keyness- and context- classes</li>
+<li>chisquare-, ll-, pmi-methods for statistics</li>
+<li>collocations-method introduced</li>
+<li>multicore for partition-constructor (parallel preparation of tf-lists)</li>
+<li>parallelisation of as.sparseMatrix,collocations-method</li>
+<li>introduction of keyness,collocations-method</li>
+</ul>
+</div>
+    <div id="polminer-0-4-34" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-34" class="anchor"></a>polmineR 0.4.34<small> Unreleased </small>
+</h1>
+<ul>
+<li>plot-method for partitionCluster</li>
+<li>rm.blank-functionality extended</li>
+</ul>
+</div>
+    <div id="polminer-0-4-33" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-33" class="anchor"></a>polmineR 0.4.33<small> Unreleased </small>
+</h1>
+<ul>
+<li>code re-ordered</li>
+</ul>
+</div>
+    <div id="polminer-0-4-32" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-32" class="anchor"></a>polmineR 0.4.32<small> Unreleased </small>
+</h1>
+<ul>
+<li>meta,character-method to learn about a corpus without first generating a partition</li>
+<li>rudimentary barplot-method for partitionCluster</li>
+<li>functionality to remove empty rows in DocumentTermMatrix upon construction</li>
+<li>tf/idf-weighting included in as.TermDocumentMatrix</li>
+<li>summary-method for keynessCluster-class</li>
+<li>[[- method for keynessCluster-class</li>
+</ul>
+</div>
+    <div id="polminer-0-4-31" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-31" class="anchor"></a>polmineR 0.4.31<small> Unreleased </small>
+</h1>
+<ul>
+<li>some changes to context method:
+<ul>
+<li>whether to use multicore can be stated explicitly</li>
+<li>stopwords renamed to stoplist, and a positivelist is introduced</li>
+</ul>
+</li>
+<li>individual documentation for partitionCluster enrich-method</li>
+<li>NULL object returned for partition call if s-attribute/value-combination not available</li>
+<li>call to dispersion (2dim): metadata are set up if not available</li>
+<li>as.data.frame-method for context and keyness class to access statistics table more easily</li>
+</ul>
+</div>
+    <div id="polminer-0-4-30" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-30" class="anchor"></a>polmineR 0.4.30<small> Unreleased </small>
+</h1>
+<ul>
+<li>minor bug fixes</li>
+</ul>
+</div>
+    <div id="polminer-0-4-29" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-29" class="anchor"></a>polmineR 0.4.29<small> Unreleased </small>
+</h1>
+<ul>
+<li>controls() function for setting drillingControls</li>
+<li>mail concordances</li>
+<li>rework of kwic as a S4 method for partition and context class</li>
+<li>speeches method</li>
+<li>tf for partitionCluster improved</li>
+</ul>
+</div>
+    <div id="polminer-0-4-28" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-28" class="anchor"></a>polmineR 0.4.28<small> Unreleased </small>
+</h1>
+<ul>
+<li>reorganization of the code in files so that shift to S4 methods is reflected</li>
+<li>documentation for trim method</li>
+<li>documentation for enrich method</li>
+<li>addPos method integrated into enrich method [to be checked]</li>
+<li>addPos is kept as a method, but not exported into namespace</li>
+<li>set up of missing metadata for dispersion</li>
+<li>warning if labels are missing in tf method for partitionCluster</li>
+<li>Encoding of partition labels adjusted to encoding of console</li>
+<li>adjust encoding for input to partitionCluster</li>
+<li>speeches method is drafted at end of partition.R [final development, debugging]</li>
+<li>context method: no explicit statement of posFilter required [to be checked]</li>
+<li>methods for adjusting crosstab objects fused into trim,crosstab-method [BUG, needs to be checked]</li>
+</ul>
+</div>
+    <div id="polminer-0-4-27" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-27" class="anchor"></a>polmineR 0.4.27<small> Unreleased </small>
+</h1>
+<ul>
+<li>context and contextCluster functions turned into methods</li>
+</ul>
+</div>
+    <div id="polminer-0-4-26" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-26" class="anchor"></a>polmineR 0.4.26<small> Unreleased </small>
+</h1>
+<ul>
+<li>extended export functionality: mail statistics</li>
+<li>parameters for partition and partitionCluster call simplified (tf, meta)</li>
+<li>sAttributes method for character vectors to get sAttributes of corpus</li>
+</ul>
+</div>
+    <div id="polminer-0-4-25" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-25" class="anchor"></a>polmineR 0.4.25<small> Unreleased </small>
+</h1>
+<ul>
+<li>html method to inspect partitions</li>
+</ul>
+</div>
+    <div id="polminer-0-4-24" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-24" class="anchor"></a>polmineR 0.4.24<small> Unreleased </small>
+</h1>
+<ul>
+<li>tf method for partition and partitionCluster</li>
+<li>summary for partitionCluster</li>
+<li>selective setup of metadata for speeding up things</li>
+</ul>
+</div>
+    <div id="polminer-0-4-23" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-23" class="anchor"></a>polmineR 0.4.23<small> Unreleased </small>
+</h1>
+<ul>
+<li>stopwords option introduced in context function for filtering and brute disambiguation</li>
+<li>cqpQuery class thrown out again - it does not improve usability</li>
+<li>partitionCluster and contextCluster are now S4 classes, with some more methods</li>
+<li>adjust function is now trim method for contextCluster objects</li>
+</ul>
+</div>
+    <div id="polminer-0-4-22" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-22" class="anchor"></a>polmineR 0.4.22<small> Unreleased </small>
+</h1>
+<ul>
+<li>zoom function added to specify partitions</li>
+<li>partitionCluster faster as it relies on zoom function</li>
+<li>context function will work on character vectors and cqpQuery object</li>
+<li>some modifications of backend functions</li>
+</ul>
+</div>
+    <div id="polminer-0-4-21" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-21" class="anchor"></a>polmineR 0.4.21<small> Unreleased </small>
+</h1>
+<ul>
+<li>technical update: automatic generation of NAMESPACE file with roxygen</li>
+</ul>
+</div>
+    <div id="polminer-0-4-20" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-20" class="anchor"></a>polmineR 0.4.20<small> Unreleased </small>
+</h1>
+<ul>
+<li>new cqpQuery-class introduced</li>
+<li>distribution-function renamed as dispersion</li>
+<li>trim function for sorting tables</li>
+</ul>
+</div>
+    <div id="polminer-0-4-19" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-19" class="anchor"></a>polmineR 0.4.19<small> Unreleased </small>
+</h1>
+<ul>
+<li>documentation streamlined, package fully roxygenized</li>
+</ul>
+</div>
+    <div id="polminer-0-4-18" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-18" class="anchor"></a>polmineR 0.4.18<small> Unreleased </small>
+</h1>
+<ul>
+<li>using options (not exported list drillingControls)</li>
+<li>getting Encoding of corpus from registry</li>
+</ul>
+</div>
+    <div id="polminer-0-4-17" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-17" class="anchor"></a>polmineR 0.4.17<small> Unreleased </small>
+</h1>
+<ul>
+<li>method ‘addPos’ added for partition object, and keyness objects</li>
+</ul>
+</div>
+    <div id="polminer-0-4-16" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-16" class="anchor"></a>polmineR 0.4.16<small> Unreleased </small>
+</h1>
+<ul>
+<li>inclusion of sample Data</li>
+</ul>
+</div>
+    <div id="polminer-0-4-15" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-15" class="anchor"></a>polmineR 0.4.15<small> Unreleased </small>
+</h1>
+<ul>
+<li>reduction of dependencies for publication of the package on CRAN</li>
+</ul>
+</div>
+    <div id="polminer-0-4-14" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-14" class="anchor"></a>polmineR 0.4.14<small> Unreleased </small>
+</h1>
+<ul>
+<li>adapting partition and distribution functions to cope with nested xml</li>
+</ul>
+</div>
+    <div id="polminer-0-4-13" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-13" class="anchor"></a>polmineR 0.4.13<small> Unreleased </small>
+</h1>
+<ul>
+<li>wordCloud visualization</li>
+<li>usability of concordances improved</li>
+</ul>
+</div>
+    <div id="polminer-0-4-12" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-12" class="anchor"></a>polmineR 0.4.12<small> Unreleased </small>
+</h1>
+<ul>
+<li>partitionMerge changed so that it will use full functionality of partition-function</li>
+<li>helper functions for distribution on two dimensions improved, tremendous gain in speed</li>
+<li>started to fill in sample code into vignette</li>
+</ul>
+</div>
+    <div id="polminer-0-4-12-1" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-12-1" class="anchor"></a>polmineR 0.4.12<small> Unreleased </small>
+</h1>
+<ul>
+<li>new function for frequency counts at partition setup</li>
+</ul>
+</div>
+    <div id="polminer-0-4-11" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-11" class="anchor"></a>polmineR 0.4.11<small> Unreleased </small>
+</h1>
+<ul>
+<li>inclusion of shiny apps</li>
+<li>function ‘distribution’ as wrapper for functions to inspect distribution</li>
+</ul>
+</div>
+    <div id="polminer-0-4-10" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-10" class="anchor"></a>polmineR 0.4.10<small> Unreleased </small>
+</h1>
+<ul>
+<li>improved usability of the package, started to use lowerCamelCase</li>
+</ul>
+</div>
+    <div id="polminer-0-4-9" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-9" class="anchor"></a>polmineR 0.4.9<small> Unreleased </small>
+</h1>
+<ul>
+<li>partition can now be called without explicitly stating a label</li>
+<li>partition does not require sAttributes to be set, function .sattributes2cpos streamlined</li>
+<li>no labels in partition.cluster</li>
+<li>in context, the pos.filter can also be set as an exclusion</li>
+</ul>
+</div>
+    <div id="polminer-0-4-8" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-8" class="anchor"></a>polmineR 0.4.8<small> Unreleased </small>
+</h1>
+<ul>
+<li>started to make functions more usable by shortening function names, ‘partition.init’ is now ‘partition’</li>
+<li>xterm highlighting for collocates</li>
+<li>context can be called with parameters given by drillingControls</li>
+</ul>
+</div>
+    <div id="polminer-0-4-7" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-7" class="anchor"></a>polmineR 0.4.7<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>xtermStyle used for kwic output on console</p></li>
+<li><p>partition object can be indexed</p></li>
+</ul>
+</div>
+    <div id="polminer-0-4-6" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-6" class="anchor"></a>polmineR 0.4.6<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>partition.init expanded to allow for the generation of partitions with specified start and end dates</p></li>
+<li><p>wordscore analysis adapted so that it can be really used for performing wordscore analysis</p></li>
+</ul>
+</div>
+    <div id="polminer-0-4-5" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-5" class="anchor"></a>polmineR 0.4.5<small> Unreleased </small>
+</h1>
+<ul>
+<li>export functionality to tm introduced with as.TermDocumentMatrix.partitioncluster</li>
+</ul>
+</div>
+    <div id="polminer-0-4-4" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-4" class="anchor"></a>polmineR 0.4.4<small> Unreleased </small>
+</h1>
+<ul>
+<li>combine.collocates improved (new columns for plotting)</li>
+</ul>
+</div>
+    <div id="polminer-0-4-3" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-3" class="anchor"></a>polmineR 0.4.3<small> Unreleased </small>
+</h1>
+<ul>
+<li>bug-fix for partition.merge</li>
+</ul>
+</div>
+    <div id="polminer-0-4-1" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-4-1" class="anchor"></a>polmineR 0.4.1<small> Unreleased </small>
+</h1>
+<ul>
+<li>partition.init can be used without setting up frequency lists and metadata. This may be useful, if a quick partition.init is desired and term frequencies and/or metadata are not needed.</li>
+<li>partition.init can handle sattribute-lists with length == 1. partition.init will still not work, if no sattributes are given.</li>
+<li>query.crosstab has been renamed to crosstab</li>
+<li>crosstab will accept special characters (transforming them to .)</li>
+</ul>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#polminer-0-7-9">0.7.9</a></li>
+        <li><a href="#polminer-0-7-8">0.7.8</a></li>
+        <li><a href="#polminer-0-7-7">0.7.7</a></li>
+        <li><a href="#polminer-0-7-6">0.7.6</a></li>
+        <li><a href="#polminer-0-7-5">0.7.5</a></li>
+        <li><a href="#polminer-0-7-4">0.7.4</a></li>
+        <li><a href="#polminer-0-7-3">0.7.3</a></li>
+        <li><a href="#polminer-0-7-2">0.7.2</a></li>
+        <li><a href="#polminer-0-7-1">0.7.1</a></li>
+        <li><a href="#polminer-0-7-0">0.7.0</a></li>
+        <li><a href="#polminer-0-6-3">0.6.3</a></li>
+        <li><a href="#polminer-0-6-2">0.6.2</a></li>
+        <li><a href="#polminer-0-6-1">0.6.1</a></li>
+        <li><a href="#polminer-0-6-0">0.6.0</a></li>
+        <li><a href="#polminer-0-5-6">0.5.6</a></li>
+        <li><a href="#polminer-0-5-3">0.5.3</a></li>
+        <li><a href="#polminer-0-5-2">0.5.2</a></li>
+        <li><a href="#polminer-0-5-0">0.5.0</a></li>
+        <li><a href="#polminer-0-4-57">0.4.57</a></li>
+        <li><a href="#polminer-0-4-56">0.4.56</a></li>
+        <li><a href="#polminer-0-4-49">0.4.49</a></li>
+        <li><a href="#polminer-0-4-46">0.4.46</a></li>
+        <li><a href="#polminer-0-4-45">0.4.45</a></li>
+        <li><a href="#polminer-0-4-41">0.4.41</a></li>
+        <li><a href="#polminer-0-4-40">0.4.40</a></li>
+        <li><a href="#polminer-0-4-39">0.4.39</a></li>
+        <li><a href="#polminer-0-4-37">0.4.37</a></li>
+        <li><a href="#polminer-0-36">0.36</a></li>
+        <li><a href="#polminer-0-35">0.35</a></li>
+        <li><a href="#polminer-0-4-34">0.4.34</a></li>
+        <li><a href="#polminer-0-4-33">0.4.33</a></li>
+        <li><a href="#polminer-0-4-32">0.4.32</a></li>
+        <li><a href="#polminer-0-4-31">0.4.31</a></li>
+        <li><a href="#polminer-0-4-30">0.4.30</a></li>
+        <li><a href="#polminer-0-4-29">0.4.29</a></li>
+        <li><a href="#polminer-0-4-28">0.4.28</a></li>
+        <li><a href="#polminer-0-4-27">0.4.27</a></li>
+        <li><a href="#polminer-0-4-26">0.4.26</a></li>
+        <li><a href="#polminer-0-4-25">0.4.25</a></li>
+        <li><a href="#polminer-0-4-24">0.4.24</a></li>
+        <li><a href="#polminer-0-4-23">0.4.23</a></li>
+        <li><a href="#polminer-0-4-22">0.4.22</a></li>
+        <li><a href="#polminer-0-4-21">0.4.21</a></li>
+        <li><a href="#polminer-0-4-20">0.4.20</a></li>
+        <li><a href="#polminer-0-4-19">0.4.19</a></li>
+        <li><a href="#polminer-0-4-18">0.4.18</a></li>
+        <li><a href="#polminer-0-4-17">0.4.17</a></li>
+        <li><a href="#polminer-0-4-16">0.4.16</a></li>
+        <li><a href="#polminer-0-4-15">0.4.15</a></li>
+        <li><a href="#polminer-0-4-14">0.4.14</a></li>
+        <li><a href="#polminer-0-4-13">0.4.13</a></li>
+        <li><a href="#polminer-0-4-12">0.4.12</a></li>
+        <li><a href="#polminer-0-4-12-1">0.4.12</a></li>
+        <li><a href="#polminer-0-4-11">0.4.11</a></li>
+        <li><a href="#polminer-0-4-10">0.4.10</a></li>
+        <li><a href="#polminer-0-4-9">0.4.9</a></li>
+        <li><a href="#polminer-0-4-8">0.4.8</a></li>
+        <li><a href="#polminer-0-4-7">0.4.7</a></li>
+        <li><a href="#polminer-0-4-6">0.4.6</a></li>
+        <li><a href="#polminer-0-4-5">0.4.5</a></li>
+        <li><a href="#polminer-0-4-4">0.4.4</a></li>
+        <li><a href="#polminer-0-4-3">0.4.3</a></li>
+        <li><a href="#polminer-0-4-1">0.4.1</a></li>
       </ul>
     </div>
   </div>
