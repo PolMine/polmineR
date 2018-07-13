@@ -34,7 +34,13 @@
 
 <meta property="og:description" content="The partition class is used to manage subcorpora. It is an S4 class, and
 a set of methods is defined for the class. The class inherits
-from the classes count and textstat." />
+from the classes count and textstat.
+The split-method will split a partition object into a
+partition_bundle if gap between strucs exceeds a minimum number of
+tokens specified by 'gap'. Relevant to split up a plenary protocol into
+speeches. Note: To speed things up, the returned partitions will not include
+frequency lists. The lists can be prepared by applying enrich on the
+partition_bundle object that is returned." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,11 +125,20 @@ from the classes count and textstat." />
     <p>The <code>partition</code> class is used to manage subcorpora. It is an S4 class, and
 a set of methods is defined for the class. The class inherits
 from the classes <code>count</code> and <code>textstat</code>.</p>
+<p>The <code>split</code>-method will split a partition object into a
+<code>partition_bundle</code> if gap between strucs exceeds a minimum number of
+tokens specified by 'gap'. Relevant to split up a plenary protocol into
+speeches. Note: To speed things up, the returned partitions will not include
+frequency lists. The lists can be prepared by applying <code>enrich</code> on the
+<code>partition_bundle</code> object that is returned.</p>
     
     </div>
 
     <pre class="usage"><span class='co'># S4 method for partition</span>
 <span class='fu'><a href='p_attributes.html'>p_attributes</a></span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for partition</span>
+<span class='fu'>split</span>(<span class='no'>x</span>, <span class='no'>gap</span>, <span class='no'>...</span>)
 
 <span class='fu'>is.partition</span>(<span class='no'>x</span>)
 
@@ -151,6 +166,10 @@ from the classes <code>count</code> and <code>textstat</code>.</p>
       <td><p>a <code>partition</code> object</p></td>
     </tr>
     <tr>
+      <th>gap</th>
+      <td><p>An integer value specifying the minimum gap between regions for performing the split.</p></td>
+    </tr>
+    <tr>
       <th>decode</th>
       <td><p><code>logical</code> value, whether to decode token ids into strings when performing count</p></td>
     </tr>
@@ -161,6 +180,10 @@ from the classes <code>count</code> and <code>textstat</code>.</p>
     <tr>
       <th>mc</th>
       <td><p><code>logical</code> or, if numeric, providing the number of cores</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>A <code>partition</code> object.</p></td>
     </tr>
     </table>
     

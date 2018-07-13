@@ -59,7 +59,7 @@ countServer <- function(input, output, session){
         )
         
         if (input$count_query == ""){
-          return(getSlot(.Object, "stat"))
+          return(polmineR:::.get_slot(.Object, "stat"))
         } else {
           retval <- count(.Object, query = input$count_query, pAttribute = input$count_pAttribute)
           return( retval )

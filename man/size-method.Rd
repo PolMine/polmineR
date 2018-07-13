@@ -6,6 +6,7 @@
 \alias{size,character-method}
 \alias{size,partition-method}
 \alias{size,DocumentTermMatrix-method}
+\alias{size,TermDocumentMatrix-method}
 \title{Get Number of Tokens.}
 \usage{
 size(x, ...)
@@ -15,6 +16,8 @@ size(x, ...)
 \S4method{size}{partition}(x, s_attribute = NULL, ...)
 
 \S4method{size}{DocumentTermMatrix}(x)
+
+\S4method{size}{TermDocumentMatrix}(x)
 }
 \arguments{
 \item{x}{object to get size(s) for}

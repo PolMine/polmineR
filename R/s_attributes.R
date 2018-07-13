@@ -1,6 +1,7 @@
 #' @include partition.R S4classes.R
 NULL
 
+#' @rdname s_attributes-method
 setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"))
 
 
@@ -8,6 +9,8 @@ setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"
 #' @param regex filter return value by applying a regex
 #' @param ... to maintain backward compatibility, of argument \code{sAttribute} is used
 #' @rdname s_attributes-method
+#' @name s_attributes
+#' @aliases s_attributes,character-method
 setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
@@ -63,7 +66,6 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
 #' @return a character vector
 #' @exportMethod s_attributes
 #' @docType methods
-#' @aliases s_attributes s_attributes,character-method s_attributes,partition-method
 #' @rdname s_attributes-method
 #' @examples 
 #' use("polmineR")

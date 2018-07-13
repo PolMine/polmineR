@@ -30,11 +30,7 @@ setMethod("summary", "features", function(object){.statisticalSummary(object)})
 setMethod("show", "features", function(object){
   cat("the statistics table has", nrow(object@stat), "rows\n")
   cat("pos attributest have been added: ")
-  if ("pos" %in% colnames(object@stat)){
-    cat("YES\n")
-  } else {
-    cat("NO\n")
-  }
+  if ("pos" %in% colnames(object@stat)) cat("YES\n") else "NO\n"
 })
 
 
@@ -49,9 +45,6 @@ setMethod("summary", "features_bundle", function(object){
 
 #' @include partition.R partition_bundle.R ngrams.R
 NULL
-
-setGeneric("features", function(x, y, ...) standardGeneric("features"))
-
 
 #' Get features by comparison.
 #' 
@@ -104,7 +97,13 @@ setGeneric("features", function(x, y, ...) standardGeneric("features"))
 #' speakers <- enrich(speakers, p_attribute = "word")
 #' speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 #' dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
-#' @rdname  features
+#' @rdname features
+#' @name features
+setGeneric("features", function(x, y, ...) standardGeneric("features"))
+
+
+
+#' @rdname features
 setMethod("features", "partition", function(
   x, y,
   included = FALSE,

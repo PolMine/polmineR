@@ -14,6 +14,7 @@ NULL
 #' @return a table
 #' @author Andreas Blaette
 #' @rdname chisquare-method
+#' @keywords textstatistics
 setGeneric("chisquare", function(.Object, ...){standardGeneric("chisquare")})
 
 #' @rdname chisquare-method

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get features by comparison. — features,partition-method • polmineR</title>
+<title>Get features by comparison. — features • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Get features by comparison. — features,partition-method" />
+<meta property="og:title" content="Get features by comparison. — features" />
 
 <meta property="og:description" content="The features of two objects, usually a partition defining a corpus of 
 interest (coi), and a partition defining a reference corpus (ref) are compared. 
@@ -122,7 +122,9 @@ The most important purpose is term extraction.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for partition</span>
+    <pre class="usage"><span class='fu'>features</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for partition</span>
 <span class='fu'>features</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"chisquare"</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
@@ -152,6 +154,10 @@ The most important purpose is term extraction.</p>
 ref</p></td>
     </tr>
     <tr>
+      <th>...</th>
+      <td><p>further parameters</p></td>
+    </tr>
+    <tr>
       <th>included</th>
       <td><p>TRUE if coi is part of ref, defaults to FALSE</p></td>
     </tr>
@@ -175,10 +181,6 @@ x will be used</p></td>
     <tr>
       <th>progress</th>
       <td><p>logical</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>further parameters</p></td>
     </tr>
     </table>
     
@@ -232,7 +234,7 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
 #&gt; 6:  108.1352              6</div><div class='input'>
 <span class='no'>speakers</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  speaker</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>speakers</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>speakers</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='no'>speaker_terms</span> <span class='kw'>&lt;-</span> <span class='fu'>features</span>(<span class='no'>speakers</span><span class='kw'>[[</span><span class='fl'>1</span>:<span class='fl'>5</span>]], <span class='no'>all</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>dtm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.DocumentTermMatrix.html'>as.DocumentTermMatrix</a></span>(<span class='no'>speaker_terms</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"chisquare"</span>)</div><div class='output co'>#&gt; <span class='message'>... using the p_attribute-slot of the first object in the bundle as p_attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating (temporary) key column</span></div><div class='output co'>#&gt; <span class='message'>... generating cumulated data.table</span></div><div class='output co'>#&gt; <span class='message'>... getting unique keys</span></div><div class='output co'>#&gt; <span class='message'>... generating integer keys</span></div><div class='output co'>#&gt; <span class='message'>... cleaning up temporary key columns</span></div></pre>
+<span class='no'>dtm</span> <span class='kw'>&lt;-</span> <span class='fu'>as.DocumentTermMatrix</span>(<span class='no'>speaker_terms</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"chisquare"</span>)</div><div class='output co'>#&gt; <span class='message'>... using the p_attribute-slot of the first object in the bundle as p_attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating (temporary) key column</span></div><div class='output co'>#&gt; <span class='message'>... generating cumulated data.table</span></div><div class='output co'>#&gt; <span class='message'>... getting unique keys</span></div><div class='output co'>#&gt; <span class='message'>... generating integer keys</span></div><div class='output co'>#&gt; <span class='message'>... cleaning up temporary key columns</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

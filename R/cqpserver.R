@@ -8,9 +8,7 @@
 #' @param debugMode logical, whether to run debug mode
 #' @param exec logical, whether to start the server right away, or return
 #' a command that can be run in the shall
-#' @export startServer
-#' @rdname cqpserver
-#' @name cqpserver
+#' @noRd
 startServer <- function(
   registryDir=Sys.getenv("CORPUS_REGISTRY"),
   initFile=system.file("init", "cqpserver.init", package="cqi"),

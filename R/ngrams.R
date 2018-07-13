@@ -15,6 +15,7 @@ NULL
 #' @param ... further parameters
 #' @exportMethod ngrams
 #' @rdname ngrams
+#' @name ngrams
 #' @examples 
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-10-27")

@@ -1,6 +1,28 @@
 #' @include S4classes.R
 NULL
 
+#' Get Hits.
+#' 
+#' Get hits for a (set of) queries, optionally with s-attribute values.
+#' 
+#' If the query character vector is named, the names of the query occurr in
+#' the data.table that is returned rather than the queries.
+#' 
+#' If freq is TRUE, the data.table returned in the DT-slot will deliberately
+#' include the subsets of the partition/corpus with no hits (query is NA,
+#' count is 0).
+#' @param query a (optionally named, see datails) character vector with one or more queries
+#' @param cqp either logical (TRUE if query is a CQP query), or a
+#'   function to check whether query is a CQP query or not
+#' @param s_attribute s-attributes
+#' @param p_attribute p-attribute
+#' @param size logical - return size of subcorpus
+#' @param freq logcial - return relative frequencies
+#' @param .Object a character, \code{partition} or \code{partition_bundle} object
+#' @param mc logical, whether to use multicore
+#' @param progress logical, whether to show progress bar
+#' @param verbose logical
+#' @param ... further parameters
 #' @rdname hits
 #' @exportMethod hits
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
@@ -159,7 +181,9 @@ setMethod("hits", "partition_bundle", function(
   new("hits", stat = TF, corpus = corpus)
 })
 
-#' @rdname hits
+#' @param x A \code{hits} object.
+#' @param size A non-negative integer giving the number of items to choose.
+#' @rdname hits_class
 setMethod("sample", "hits", function(x, size){
   if (size > nrow(x@stat)){
     warning("size exceeds nrow of the data.table of the hits object")

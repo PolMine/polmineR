@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get s-attributes. — s_attributes,character-method • polmineR</title>
+<title>Get s-attributes. — s_attributes • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Get s-attributes. — s_attributes,character-method" />
+<meta property="og:title" content="Get s-attributes. — s_attributes" />
 
 <meta property="og:description" content="Structural annotations (s-attributes) of a corpus provide metainformation for
 regions of tokens. Gain access to the s-attributes available for a corpus or partition,
@@ -122,7 +122,9 @@ or the values of s-attributes in a corpus/partition with the <code>s_attributes<
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for character</span>
+    <pre class="usage"><span class='fu'>s_attributes</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for character</span>
 <span class='fu'>s_attributes</span>(<span class='no'>.Object</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>unique</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
@@ -138,6 +140,10 @@ or the values of s-attributes in a corpus/partition with the <code>s_attributes<
       <td><p>either a <code>partition</code> object or a character vector specifying a CWB corpus</p></td>
     </tr>
     <tr>
+      <th>...</th>
+      <td><p>to maintain backward compatibility, of argument <code>sAttribute</code> is used</p></td>
+    </tr>
+    <tr>
       <th>s_attribute</th>
       <td><p>name of a specific s-attribute</p></td>
     </tr>
@@ -148,10 +154,6 @@ or the values of s-attributes in a corpus/partition with the <code>s_attributes<
     <tr>
       <th>regex</th>
       <td><p>filter return value by applying a regex</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>to maintain backward compatibility, of argument <code>sAttribute</code> is used</p></td>
     </tr>
     </table>
     

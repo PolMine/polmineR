@@ -104,15 +104,12 @@ punctuation <- c(".", ",", ";", ":", "!", "?", "-", "--", "(", ")", "[", "]", "/
 
 
 
-#' flatten a nested list
-#' 
-#' If you have a list of \code{partition_bundle} objects, this function will flatten the data
+#' \code{flatten} may be useful if you have a list of \code{partition_bundle} objects. This function will flatten the data
 #' structure and return a \code{partition_bundle} object.
 #' 
-#' @param object a list (with \code{partition_bundle} objects)
 #' @return a \code{partition_bundle} object
 #' @export flatten
-#' @rdname flatten
+#' @rdname partition_bundle-class
 #' @name flatten
 flatten <- function(object){
   retval <- new("partition_bundle")
@@ -225,19 +222,10 @@ flatten <- function(object){
   names(unlist(availableObjectsList))
 }
 
-#' Get slot from object.
-#' 
-#' Auxiliary function to unify access to slots of S4 or R6 object.
-#' 
-#' @param x object to get slot from
-#' @param name name of the slot
-#' @export getSlot
-getSlot <- function(x, name){
-  if ("R6" %in% class(x)){
-    return(x[[name]])
-  } else {
-    return(slot(x, name))
-  }
+
+# used in shiny app
+.get_slot <- function(x, name){
+  if ("R6" %in% class(x)) x[[name]] else slot(x, name)
 }
 
 

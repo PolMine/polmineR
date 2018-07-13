@@ -73,7 +73,6 @@ setMethod("html", "character", function(object){
 #' @importFrom xml2 read_html xml_find_all xml_text xml_parent xml_attr xml_attr<- xml_name
 #' @importFrom xml2 xml_attrs xml_remove
 #' @importFrom stringi stri_extract_all_boundaries
-#' @rdname html-method
 .addCharacterOffset <- function(x){
   
   # check that required dependencies are present

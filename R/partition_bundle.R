@@ -71,6 +71,8 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = TRUE){
 
 
 
+#' @details Using brackets can be used to retrieve the count for a token from the 
+#' \code{partition} objects in a \code{partition_bundle}.
 #' @exportMethod [
 #' @rdname partition_bundle-class
 setMethod('[', 'partition_bundle', function(x,i){

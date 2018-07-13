@@ -118,16 +118,30 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-package-basics" class="hasAnchor"><a href="#section-package-basics" class="anchor"></a>Package Basics</h2>
+          <p class="section-desc"><p>Getting started with polmineR (CLI And GUI usage).</p></p>
         </th>
       </tr>
       <tr>
         
         <td>
-          <p><code><a href="CQI.html">CQI.super</a></code> <code><a href="CQI.html">CQI.RcppCWB</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> </p>
+          <p><code><a href="polmineR.html">polmineR()</a></code> </p>
         </td>
-        <td><p>Interfaces for accessing the CWB</p></td>
+        <td><p>polmineR-package</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-corpora-and-subcorpora" class="hasAnchor"><a href="#section-corpora-and-subcorpora" class="anchor"></a>Corpora and subcorpora</h2>
+          <p class="section-desc"><p>Corpora, subcorpora/partitions, and partition_bundle objects are the point of departure for any analysis using polmineR. Constructors introduced in the next section require an understanding of basic methods and classes to generate and manage (sub-)corpora</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="use.html">use()</a></code> </p>
+        </td>
+        <td><p>Use a packaged corpus.</p></td>
       </tr><tr>
         
         <td>
@@ -137,279 +151,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="Labels-class.html">Labels-class</a></code> </p>
-        </td>
-        <td><p>Labels class.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="TermDocumentMatrix.html">size(<i>&lt;TermDocumentMatrix&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Methods for TermDocumentMatrix / DocumentTermMatrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.DocumentTermMatrix.html">as.TermDocumentMatrix()</a></code> <code><a href="as.DocumentTermMatrix.html">as.DocumentTermMatrix(<i>&lt;character&gt;</i>)</a></code> <code><a href="as.DocumentTermMatrix.html">as.DocumentTermMatrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="as.DocumentTermMatrix.html">as.DocumentTermMatrix(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="as.DocumentTermMatrix.html">as.DocumentTermMatrix(<i>&lt;context&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Generate TermDocumentMatrix / DocumentTermMatrix.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.VCorpus.html">as.VCorpus(<i>&lt;partition_bundle&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Coerce partition_bundle to VCorpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.markdown.html">as.markdown()</a></code> </p>
-        </td>
-        <td><p>Get markdown-formatted full text of a partition.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.sparseMatrix.html">as.sparseMatrix()</a></code> </p>
-        </td>
-        <td><p>Type conversion - get sparseMatrix.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as.speeches.html">as.speeches()</a></code> </p>
-        </td>
-        <td><p>Split corpus or partition into speeches.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="blapply.html">blapply()</a></code> </p>
-        </td>
-        <td><p>apply a function over a list or bundle</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="browse.html">browse()</a></code> </p>
-        </td>
-        <td><p>Display in browser</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names<-`(<i>&lt;bundle&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Bundle Class</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="chisquare-method.html">chisquare()</a></code> </p>
-        </td>
-        <td><p>perform chisquare-text</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="context-class.html">p_attributes(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">count(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">sample(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">enrich(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">trim(<i>&lt;context&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Context class.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="context-method.html">context(<i>&lt;partition&gt;</i>)</a></code> <code><a href="context-method.html">context(<i>&lt;character&gt;</i>)</a></code> <code><a href="context-method.html">context(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="context-method.html">context(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="context-method.html">cooccurrences(<i>&lt;Corpus&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Analyze context of a node word.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="context_bundle-class.html">context_bundle-class</a></code> </p>
-        </td>
-        <td><p>S4 context_bundle class</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cooccurrences-class.html">summary(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">show(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">as.data.frame(<i>&lt;cooccurrences_bundle&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">view(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">view(<i>&lt;cooccurrences_reshaped&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Cooccurrences class.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cooccurrences.html">cooccurrences()</a></code> </p>
-        </td>
-        <td><p>Get cooccurrence statistics.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cooccurrences_reshaped.html">cooccurrences_reshaped</a></code> </p>
-        </td>
-        <td><p>Methods for manipulating <code>cooccurrences_reshaped</code>-class-objects</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="corpus-method.html">corpus()</a></code> </p>
         </td>
         <td><p>Get corpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count-method.html">count()</a></code> </p>
-        </td>
-        <td><p>Get counts.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="count_class.html">length(<i>&lt;count&gt;</i>)</a></code> <code><a href="count_class.html">hist(<i>&lt;count&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Count class.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cpos-method.html">cpos()</a></code> </p>
-        </td>
-        <td><p>Get corpus positions for a query or queries.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cqp.html">is.cqp()</a></code> <code><a href="cqp.html">as.cqp()</a></code> </p>
-        </td>
-        <td><p>Tools for CQP queries.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cqpserver.html">startServer()</a></code> </p>
-        </td>
-        <td><p>start CQP server</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="decode.html">decode()</a></code> </p>
-        </td>
-        <td><p>Decode Structural Attribute or Entire Corpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dispersion-method.html">dispersion()</a></code> </p>
-        </td>
-        <td><p>Dispersion of a query or multiple queries</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dotplot-method.html">dotplot()</a></code> </p>
-        </td>
-        <td><p>dotplot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="encoding.html">encoding()</a></code> <code><a href="encoding.html">`encoding<-`()</a></code> </p>
-        </td>
-        <td><p>Get and set encoding.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="encodings.html">as.utf8()</a></code> <code><a href="encodings.html">as.nativeEnc()</a></code> <code><a href="encodings.html">as.corpusEnc()</a></code> </p>
-        </td>
-        <td><p>Conversion between corpus and native encoding.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="enrich-method.html">enrich()</a></code> </p>
-        </td>
-        <td><p>Enrich an object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="features-class.html">summary(<i>&lt;features&gt;</i>)</a></code> <code><a href="features-class.html">show(<i>&lt;features&gt;</i>)</a></code> <code><a href="features-class.html">summary(<i>&lt;features_bundle&gt;</i>)</a></code> <code><a href="features-class.html">view(<i>&lt;features&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Feature selection by comparison.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="features.html">features(<i>&lt;partition&gt;</i>)</a></code> <code><a href="features.html">features(<i>&lt;count&gt;</i>)</a></code> <code><a href="features.html">features(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="features.html">features(<i>&lt;ngrams&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get features by comparison.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="flatten.html">flatten()</a></code> </p>
-        </td>
-        <td><p>flatten a nested list</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getSlot.html">getSlot()</a></code> </p>
-        </td>
-        <td><p>Get slot from object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_token_stream-method.html">get_token_stream()</a></code> </p>
-        </td>
-        <td><p>Get Token Stream Based on Corpus Positions.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_type.html">get_type()</a></code> </p>
-        </td>
-        <td><p>Get corpus/partition type.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="highlight.html">highlight()</a></code> </p>
-        </td>
-        <td><p>Highlight tokens.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hits.html">hits()</a></code> <code><a href="hits.html">sample(<i>&lt;hits&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get Hits.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="html-method.html">html()</a></code> <code><a href="html-method.html">.addCharacterOffset()</a></code> <code><a href="html-method.html">print(<i>&lt;html&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Generate html from object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="kwic-class.html">show(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.data.frame(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">length(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">sample(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">enrich(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">view(<i>&lt;kwic&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>kwic (S4 class)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="kwic.html">kwic()</a></code> </p>
-        </td>
-        <td><p>KWIC/concordance output.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="label_method.html">label()</a></code> <code><a href="label_method.html">`label<-`()</a></code> </p>
-        </td>
-        <td><p>Assign and get labels.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mail-method.html">mail()</a></code> </p>
-        </td>
-        <td><p>Mail result.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="means-method.html">means()</a></code> </p>
-        </td>
-        <td><p>calculate means</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ngrams.html">ngrams()</a></code> </p>
-        </td>
-        <td><p>Get N-Grams</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="noise.html">noise()</a></code> </p>
-        </td>
-        <td><p>detect noise</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="p_attributes.html">p_attributes()</a></code> </p>
-        </td>
-        <td><p>Get p-attributes.</p></td>
       </tr><tr>
         
         <td>
@@ -419,81 +163,27 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="partition_bundle-class.html">show(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">summary(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">merge(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">`[`(<i>&lt;partition_bundle&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">barplot(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">as.partition_bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">partition_bundle(<i>&lt;environment&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">enrich(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">s_attributes(<i>&lt;partition_bundle&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Bundle of partitions (partition_bundle class).</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="partition_bundle-method.html">partition_bundle()</a></code> </p>
         </td>
         <td><p>Generate bundle of partitions.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> </p>
+          <p><code><a href="p_attributes.html">p_attributes()</a></code> </p>
         </td>
-        <td><p>Partition class and methods.</p></td>
+        <td><p>Get p-attributes.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="polmineR-generics.html">name()</a></code> <code><a href="polmineR-generics.html">`name<-`()</a></code> <code><a href="polmineR-generics.html">`browse<-`()</a></code> </p>
-        </td>
-        <td><p>generic methods defined in the polmineR-package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="polmineR-package.html">polmineR()</a></code> </p>
-        </td>
-        <td><p>polmineR-package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read-method.html">read()</a></code> </p>
-        </td>
-        <td><p>Display full text.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="regions_class.html">as.regions()</a></code> <code><a href="regions_class.html">as.data.table(<i>&lt;regions&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Regions of a CWB corpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="registry.html">registry_reset()</a></code> <code><a href="registry.html">registry()</a></code> </p>
-        </td>
-        <td><p>Reset Registry Directory.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="registry_eval.html">registry_get_name()</a></code> <code><a href="registry_eval.html">registry_get_id()</a></code> <code><a href="registry_eval.html">registry_get_home()</a></code> <code><a href="registry_eval.html">registry_get_info()</a></code> <code><a href="registry_eval.html">registry_get_encoding()</a></code> <code><a href="registry_eval.html">registry_get_p_attributes()</a></code> <code><a href="registry_eval.html">registry_get_s_attributes()</a></code> <code><a href="registry_eval.html">registry_get_properties()</a></code> </p>
-        </td>
-        <td><p>Evaluate registry file.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="renamed.html">sAttributes()</a></code> <code><a href="renamed.html">pAttributes()</a></code> <code><a href="renamed.html">getTokenStream()</a></code> <code><a href="renamed.html">getTerms()</a></code> <code><a href="renamed.html">getEncoding()</a></code> <code><a href="renamed.html">partitionBundle()</a></code> <code><a href="renamed.html">as.partitionBundle()</a></code> <code><a href="renamed.html">setTemplate()</a></code> <code><a href="renamed.html">getTemplate()</a></code> </p>
-        </td>
-        <td><p>Renamed Functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="s_attributes-method.html">s_attributes(<i>&lt;character&gt;</i>)</a></code> <code><a href="s_attributes-method.html">s_attributes(<i>&lt;partition&gt;</i>)</a></code> </p>
+          <p><code><a href="s_attributes-method.html">s_attributes()</a></code> </p>
         </td>
         <td><p>Get s-attributes.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="size-method.html">size()</a></code> </p>
+          <p><code><a href="as.speeches.html">as.speeches()</a></code> </p>
         </td>
-        <td><p>Get Number of Tokens.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="split-partition-method.html">split(<i>&lt;partition&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>split partition into partition_bundle</p></td>
+        <td><p>Split corpus or partition into speeches.</p></td>
       </tr><tr>
         
         <td>
@@ -503,21 +193,91 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="t_test.html">t_test()</a></code> </p>
+          <p><code><a href="regions_class.html">as.regions()</a></code> <code><a href="regions_class.html">as.data.table(<i>&lt;regions&gt;</i>)</a></code> </p>
         </td>
-        <td><p>perform t-test</p></td>
+        <td><p>Regions of a CWB corpus.</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="tempcorpus.html">tempcorpus()</a></code> </p>
         </td>
-        <td><p>S4 class to capture core information on a temporary CWB corpus</p></td>
+        <td><p>create a tempcorpus</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="templates.html">get_template()</a></code> <code><a href="templates.html">set_template()</a></code> </p>
+          <p><code><a href="tempcorpus_class.html">tempcorpus_class</a></code> </p>
         </td>
-        <td><p>Get and set templates.</p></td>
+        <td><p>S4 class to capture core information on a temporary CWB corpus</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-methods-i-basic-vocabulary" class="hasAnchor"><a href="#section-methods-i-basic-vocabulary" class="anchor"></a>Methods I: Basic Vocabulary</h2>
+          <p class="section-desc"><p>Data analysis using polmineR will usually start by calling a constructor method resulting in an S4 class object with the name of the calling method. All methods basic vocabulary can be applied to corpora (defined by a character vector), to partitions, and to partition_bundle objects, some are applicable to additional classes. These methods are designed to be used in a pipe.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="kwic.html">kwic()</a></code> </p>
+        </td>
+        <td><p>KWIC/concordance output.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hits.html">hits()</a></code> </p>
+        </td>
+        <td><p>Get Hits.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="count-method.html">count()</a></code> </p>
+        </td>
+        <td><p>Get counts.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dispersion-method.html">dispersion()</a></code> </p>
+        </td>
+        <td><p>Dispersion of a query or multiple queries</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ngrams.html">ngrams()</a></code> </p>
+        </td>
+        <td><p>Get N-Grams</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="context-method.html">context()</a></code> </p>
+        </td>
+        <td><p>Analyze context of a node word.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cooccurrences.html">cooccurrences()</a></code> </p>
+        </td>
+        <td><p>Get cooccurrence statistics.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="features.html">features()</a></code> </p>
+        </td>
+        <td><p>Get features by comparison.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-methods-ii-processing-objects" class="hasAnchor"><a href="#section-methods-ii-processing-objects" class="anchor"></a>Methods II: Processing Objects</h2>
+          <p class="section-desc"><p>The polmineR package offers a repertoire to modify base objects, and for type conversion. Methods for modyfing classes and type conversion.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="size-method.html">size()</a></code> </p>
+        </td>
+        <td><p>Get Number of Tokens.</p></td>
       </tr><tr>
         
         <td>
@@ -527,21 +287,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`name<-`(<i>&lt;textstat&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">head(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">tail(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">dim(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">nrow(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">colnames(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.frame(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`[[`(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`[`(<i>&lt;textstat&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
+          <p><code><a href="label_method.html">label()</a></code> <code><a href="label_method.html">`label<-`()</a></code> </p>
         </td>
-        <td><p>S4 textstat class</p></td>
+        <td><p>Assign and get labels.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="textstatistics.html">ll()</a></code> <code><a href="textstatistics.html">pmi()</a></code> </p>
+          <p><code><a href="enrich-method.html">enrich()</a></code> </p>
         </td>
-        <td><p>text statistics</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tooltips.html">tooltips()</a></code> </p>
-        </td>
-        <td><p>Add tooltips to html document.</p></td>
+        <td><p>Enrich an object.</p></td>
       </tr><tr>
         
         <td>
@@ -551,9 +305,107 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="use.html">use()</a></code> </p>
+          <p><code><a href="noise.html">noise()</a></code> </p>
         </td>
-        <td><p>Use a packaged corpus.</p></td>
+        <td><p>detect noise</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="encoding.html">encoding()</a></code> <code><a href="encoding.html">`encoding<-`()</a></code> </p>
+        </td>
+        <td><p>Get and set encoding.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.DocumentTermMatrix.html">as.TermDocumentMatrix()</a></code> <code><a href="as.DocumentTermMatrix.html">as.DocumentTermMatrix()</a></code> </p>
+        </td>
+        <td><p>Generate TermDocumentMatrix / DocumentTermMatrix.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.sparseMatrix.html">as.sparseMatrix()</a></code> </p>
+        </td>
+        <td><p>Type conversion - get sparseMatrix.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.VCorpus.html">as.VCorpus(<i>&lt;partition_bundle&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Coerce partition_bundle to VCorpus.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="chisquare-method.html">chisquare()</a></code> </p>
+        </td>
+        <td><p>perform chisquare-text</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="textstatistics.html">ll()</a></code> <code><a href="textstatistics.html">pmi()</a></code> </p>
+        </td>
+        <td><p>text statistics</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="t_test.html">t_test()</a></code> </p>
+        </td>
+        <td><p>perform t-test</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="means-method.html">means()</a></code> </p>
+        </td>
+        <td><p>calculate means</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="weigh-method.html">weigh()</a></code> </p>
+        </td>
+        <td><p>Apply Weight to Matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mail-method.html">mail()</a></code> </p>
+        </td>
+        <td><p>Mail result.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dotplot-method.html">dotplot()</a></code> </p>
+        </td>
+        <td><p>dotplot</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-methods-iii-fulltext-output" class="hasAnchor"><a href="#section-methods-iii-fulltext-output" class="anchor"></a>Methods III: Fulltext Output</h2>
+          <p class="section-desc"><p>A key consideration of polmineR is to combine quantitative and qualitative steps of analysis in a workflow. A set of methods is exposed to generate and enhance fulltext output.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="read-method.html">read()</a></code> </p>
+        </td>
+        <td><p>Display full text.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="html-method.html">html()</a></code> <code><a href="html-method.html">print(<i>&lt;html&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Generate html from object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="as.markdown.html">as.markdown()</a></code> </p>
+        </td>
+        <td><p>Get markdown-formatted full text of a partition.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="browse.html">browse()</a></code> </p>
+        </td>
+        <td><p>Display in browser</p></td>
       </tr><tr>
         
         <td>
@@ -563,9 +415,219 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="weigh-method.html">weigh()</a></code> </p>
+          <p><code><a href="highlight.html">highlight()</a></code> </p>
         </td>
-        <td><p>Apply Weight to Matrix</p></td>
+        <td><p>Highlight tokens.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tooltips.html">tooltips()</a></code> </p>
+        </td>
+        <td><p>Add tooltips to html document.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="templates.html">get_template()</a></code> <code><a href="templates.html">set_template()</a></code> </p>
+        </td>
+        <td><p>Get and set templates.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_type.html">get_type()</a></code> </p>
+        </td>
+        <td><p>Get corpus/partition type.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-the-textstat-class-childs" class="hasAnchor"><a href="#section-the-textstat-class-childs" class="anchor"></a>The 'textstat' Class &amp; Childs</h2>
+          <p class="section-desc"><p>The main feature of the textstat class and of classes inheriting from it is that it keeps statistical information about a corpus or partition in a data.table in the field ‘stat’. Methods defined for the textstat superclass are available for its child classes, unless they are overloaded in a specified manner.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`name<-`(<i>&lt;textstat&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">tail(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">dim(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">nrow(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">colnames(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.frame(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`[[`(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">`[`(<i>&lt;textstat&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>S4 textstat class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="count_class.html">length(<i>&lt;count&gt;</i>)</a></code> <code><a href="count_class.html">hist(<i>&lt;count&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Count class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ngrams_class.html">ngrams_class</a></code> </p>
+        </td>
+        <td><p>Ngrams class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">split(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Partition class and methods.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hits_class.html">sample(<i>&lt;hits&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Hits class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="context-class.html">p_attributes(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">count(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">sample(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">enrich(<i>&lt;context&gt;</i>)</a></code> <code><a href="context-class.html">trim(<i>&lt;context&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Context class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cooccurrences-class.html">summary(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">show(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">as.data.frame(<i>&lt;cooccurrences_bundle&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">view(<i>&lt;cooccurrences&gt;</i>)</a></code> <code><a href="cooccurrences-class.html">view(<i>&lt;cooccurrences_reshaped&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Cooccurrences class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="features-class.html">summary(<i>&lt;features&gt;</i>)</a></code> <code><a href="features-class.html">show(<i>&lt;features&gt;</i>)</a></code> <code><a href="features-class.html">summary(<i>&lt;features_bundle&gt;</i>)</a></code> <code><a href="features-class.html">view(<i>&lt;features&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Feature selection by comparison.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-the-kwic-labels-classes" class="hasAnchor"><a href="#section-the-kwic-labels-classes" class="anchor"></a>The 'kwic' &amp; 'Labels' Classes</h2>
+          <p class="section-desc"><p>xxx</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="kwic-class.html">show(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.data.frame(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">length(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">sample(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">enrich(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">view(<i>&lt;kwic&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>kwic (S4 class)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="Labels-class.html">Labels-class</a></code> </p>
+        </td>
+        <td><p>Labels class.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-the-bundle-class-childs" class="hasAnchor"><a href="#section-the-bundle-class-childs" class="anchor"></a>The 'bundle' Class &amp; Childs</h2>
+          <p class="section-desc"><p>S4 classes for managing text analysis.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names<-`(<i>&lt;bundle&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Bundle Class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="partition_bundle-class.html">show(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">summary(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">merge(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">`[`(<i>&lt;partition_bundle&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">barplot(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">as.partition_bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">partition_bundle(<i>&lt;environment&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">enrich(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">s_attributes(<i>&lt;partition_bundle&gt;</i>)</a></code> <code><a href="partition_bundle-class.html">flatten()</a></code> </p>
+        </td>
+        <td><p>Bundle of partitions (partition_bundle class).</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="context_bundle-class.html">context_bundle-class</a></code> </p>
+        </td>
+        <td><p>S4 context_bundle class</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="blapply.html">blapply()</a></code> </p>
+        </td>
+        <td><p>apply a function over a list or bundle</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-low-level-cwb-access" class="hasAnchor"><a href="#section-low-level-cwb-access" class="anchor"></a>Low-level CWB Access</h2>
+          <p class="section-desc"><p>The API used to access CWB indexed corpora is the RcppCWB package. A set of functions in the polmineR package serves as an intermediate interface to access corpus data.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="registry.html">registry()</a></code> </p>
+        </td>
+        <td><p>Get session registry directory.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="registry_reset.html">registry_reset()</a></code> </p>
+        </td>
+        <td><p>Reset registry directory.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="registry_eval.html">registry_get_name()</a></code> <code><a href="registry_eval.html">registry_get_id()</a></code> <code><a href="registry_eval.html">registry_get_home()</a></code> <code><a href="registry_eval.html">registry_get_info()</a></code> <code><a href="registry_eval.html">registry_get_encoding()</a></code> <code><a href="registry_eval.html">registry_get_p_attributes()</a></code> <code><a href="registry_eval.html">registry_get_s_attributes()</a></code> <code><a href="registry_eval.html">registry_get_properties()</a></code> </p>
+        </td>
+        <td><p>Evaluate registry file.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="CQI.html">CQI.super</a></code> <code><a href="CQI.html">CQI.RcppCWB</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> </p>
+        </td>
+        <td><p>Interfaces for accessing the CWB</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cpos-method.html">cpos()</a></code> </p>
+        </td>
+        <td><p>Get corpus positions for a query or queries.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_token_stream-method.html">get_token_stream()</a></code> </p>
+        </td>
+        <td><p>Get Token Stream Based on Corpus Positions.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="decode.html">decode()</a></code> </p>
+        </td>
+        <td><p>Decode Structural Attribute or Entire Corpus.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cqp.html">is.cqp()</a></code> <code><a href="cqp.html">as.cqp()</a></code> </p>
+        </td>
+        <td><p>Tools for CQP queries.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utility-functions" class="hasAnchor"><a href="#section-utility-functions" class="anchor"></a>Utility Functions</h2>
+          <p class="section-desc"><p>Exported utility functions / helpers.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="encodings.html">as.utf8()</a></code> <code><a href="encodings.html">as.nativeEnc()</a></code> <code><a href="encodings.html">as.corpusEnc()</a></code> </p>
+        </td>
+        <td><p>Conversion between corpus and native encoding.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-backwards-compatibility" class="hasAnchor"><a href="#section-backwards-compatibility" class="anchor"></a>Backwards Compatibility</h2>
+          <p class="section-desc"><p>Starting with v0.7.9, the coding style of the polmineR-package has moved from camelCase to snake_case. A set of ‘old style’-functions ensures backwards compatibility and that old code will not break.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="renamed.html">sAttributes()</a></code> <code><a href="renamed.html">pAttributes()</a></code> <code><a href="renamed.html">getTokenStream()</a></code> <code><a href="renamed.html">getTerms()</a></code> <code><a href="renamed.html">getEncoding()</a></code> <code><a href="renamed.html">partitionBundle()</a></code> <code><a href="renamed.html">as.partitionBundle()</a></code> <code><a href="renamed.html">setTemplate()</a></code> <code><a href="renamed.html">getTemplate()</a></code> </p>
+        </td>
+        <td><p>Renamed Functions</p></td>
       </tr>
     </tbody>
     </table>
@@ -574,7 +636,17 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-package-basics">Package Basics</a></li>
+      <li><a href="#section-corpora-and-subcorpora">Corpora and subcorpora</a></li>
+      <li><a href="#section-methods-i-basic-vocabulary">Methods I: Basic Vocabulary</a></li>
+      <li><a href="#section-methods-ii-processing-objects">Methods II: Processing Objects</a></li>
+      <li><a href="#section-methods-iii-fulltext-output">Methods III: Fulltext Output</a></li>
+      <li><a href="#section-the-textstat-class-childs">The 'textstat' Class &amp; Childs</a></li>
+      <li><a href="#section-the-kwic-labels-classes">The 'kwic' &amp; 'Labels' Classes</a></li>
+      <li><a href="#section-the-bundle-class-childs">The 'bundle' Class &amp; Childs</a></li>
+      <li><a href="#section-low-level-cwb-access">Low-level CWB Access</a></li>
+      <li><a href="#section-utility-functions">Utility Functions</a></li>
+      <li><a href="#section-backwards-compatibility">Backwards Compatibility</a></li>
     </ul>
   </div>
 </div>

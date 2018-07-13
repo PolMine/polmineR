@@ -20,10 +20,9 @@ setMethod("sample", "context", function(x, size){
 #' @include partition.R partition_bundle.R
 NULL
 
-#' @param ... further arguments
 #' @exportMethod context
 #' @docType methods
-#' @noRd
+#' @rdname context-method
 setGeneric("context", function(.Object, ...) standardGeneric("context") )
 
 #' Analyze context of a node word.
@@ -58,10 +57,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @return depending on whether a partition or a partition_bundle serves as
 #'   input, the return will be a context object, or a \code{context_bundle} object
 #' @author Andreas Blaette
-#' @aliases context context,partition-method as.matrix,context_bundle-method
-#'   context,context_bundle-method
-#'   context,partition_bundle-method context,cooccurrences-method
-#'   context,cooccurrences-method
+#' @aliases as.matrix,context_bundle-method context,partition-method
 #' @examples
 #' use("polmineR")
 #' p <- partition("GERMAPARLMINI", interjection = "speech")
@@ -76,7 +72,6 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @rdname context-method
 #' @name context
 #' @docType methods
-#' @aliases context,partition-method
 setMethod("context", "partition", function(
   .Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"),

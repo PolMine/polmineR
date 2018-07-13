@@ -7,6 +7,8 @@ NULL
 #' generated that is stored in a temporary directory.
 #' @param .Object a partition object
 #' @param ... further parameters
+#' @rdname tempcorpus
+#' @name tempcorpus
 setGeneric("tempcorpus", function(.Object, ...) standardGeneric("tempcorpus"))
 
 setMethod("tempcorpus", "partition", function(.Object){

@@ -1,14 +1,6 @@
 #' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R
 NULL
 
-#' Methods for manipulating \code{cooccurrences_reshaped}-class-objects
-#' 
-#' @param x cooccurrences for a corpus of interest
-#' @param y cooccurrences for a reference corpus
-#' @rdname cooccurrences_reshaped
-#' @aliases cooccurrences_reshaped merge,cooccurrences_reshaped-method
-#' @name cooccurrences_reshaped
-NULL
 
 
 #' @docType methods
@@ -201,7 +193,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 })
 
 
-#' @rdname context-method
+#' @rdname cooccurrences
 setMethod("cooccurrences", "Corpus", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   if (nrow(.Object$stat) == 0) .Object$count(p_attribute, decode = FALSE)

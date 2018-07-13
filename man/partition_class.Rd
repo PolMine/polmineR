@@ -16,11 +16,14 @@
 \alias{plpr_partition-class}
 \alias{press_partition-class}
 \alias{p_attributes,partition-method}
+\alias{split,partition-method}
 \alias{is.partition}
 \alias{enrich,partition-method}
 \title{Partition class and methods.}
 \usage{
 \S4method{p_attributes}{partition}(.Object, p_attribute = NULL, ...)
+
+\S4method{split}{partition}(x, gap, ...)
 
 is.partition(x)
 
@@ -28,13 +31,15 @@ is.partition(x)
   verbose = TRUE, mc = FALSE, ...)
 }
 \arguments{
-\item{.Object}{a \code{partition} object}
+\item{.Object}{A \code{partition} object.}
 
 \item{p_attribute}{a p-attribute (for enriching) / performing count.}
 
 \item{...}{further parameters passed into \code{count} when calling \code{enrich}, and ...}
 
-\item{x}{a \code{partition} object}
+\item{x}{A \code{partition} object.}
+
+\item{gap}{An integer value specifying the minimum gap between regions for performing the split.}
 
 \item{decode}{\code{logical} value, whether to decode token ids into strings when performing count}
 
@@ -46,6 +51,13 @@ is.partition(x)
 The \code{partition} class is used to manage subcorpora. It is an S4 class, and
 a set of methods is defined for the class. The class inherits
 from the classes \code{count} and \code{textstat}.
+
+The \code{split}-method will split a partition object into a
+\code{partition_bundle} if gap between strucs exceeds a minimum number of
+tokens specified by 'gap'. Relevant to split up a plenary protocol into
+speeches. Note: To speed things up, the returned partitions will not include
+frequency lists. The lists can be prepared by applying \code{enrich} on the
+\code{partition_bundle} object that is returned.
 }
 \details{
 As \code{partition} objects inherit from \code{count} and \code{textstat} class, methods

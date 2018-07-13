@@ -4,6 +4,7 @@
 \name{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix}
 \alias{as.DocumentTermMatrix}
+\alias{as.DocumentTermMatrix}
 \alias{as.TermDocumentMatrix,character-method}
 \alias{as.DocumentTermMatrix,character-method}
 \alias{as.TermDocumentMatrix,bundle-method}
@@ -15,6 +16,8 @@
 \title{Generate TermDocumentMatrix / DocumentTermMatrix.}
 \usage{
 as.TermDocumentMatrix(x, ...)
+
+as.DocumentTermMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute,
   verbose = TRUE, ...)

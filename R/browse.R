@@ -12,8 +12,6 @@ NULL
 #' @exportMethod browse
 setGeneric("browse", function(object, ...) standardGeneric("browse"))
 
-#' @rdname polmineR-generics
-setGeneric("browse<-", function(x, value) standardGeneric("browse<-"))
 
 #' @rdname browse
 setMethod("browse", "textstat", function(object){

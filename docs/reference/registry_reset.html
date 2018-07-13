@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get session registry directory. — registry • polmineR</title>
+<title>Reset registry directory. — registry_reset • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,11 +30,12 @@
 
 
 
-<meta property="og:title" content="Get session registry directory. — registry" />
+<meta property="og:title" content="Reset registry directory. — registry_reset" />
 
-<meta property="og:description" content="The polmineR package uses a subdirectory of the per-session temporary directory
-as a (temporary) registry. The registry function will return the path 
-to this directory." />
+<meta property="og:description" content="A utility function to reset the environment variable CORPUS_REGISTRY. That may
+be necessary if you want use a CWB corpus that is not stored in the usual
+place. In particular, resetting the environment variable is required if you
+want to use a corpus delivered in a R package," />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,29 +110,66 @@ to this directory." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get session registry directory.</h1>
+    <h1>Reset registry directory.</h1>
     
-    <div class="hidden name"><code>registry.Rd</code></div>
+    <div class="hidden name"><code>registry_reset.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The <code>polmineR</code> package uses a subdirectory of the per-session temporary directory
-as a (temporary) registry. The <code>registry</code> function will return the path 
-to this directory.</p>
+    <p>A utility function to reset the environment variable CORPUS_REGISTRY. That may
+be necessary if you want use a CWB corpus that is not stored in the usual
+place. In particular, resetting the environment variable is required if you
+want to use a corpus delivered in a R package,</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>registry</span>()</pre>
-        
+    <pre class="usage"><span class='fu'>registry_reset</span>(<span class='kw'>registryDir</span> <span class='kw'>=</span> <span class='fu'><a href='registry.html'>registry</a></span>(), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>registryDir</th>
+      <td><p>path to the registry directory to be used</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>logical, whether to be verbose</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>the registry directory used before resetting CORPUS_REGISTRY</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Resetting the CORPUS_REGISTRY environment variable is also necessary for the
+interface to CWB corpora.</p>
+<p>To get the path to a package that contains a CWB corpus, use
+<code>system.file</code> (see examples).</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>To conveniently reset registry, see <code><a href='use.html'>use</a></code>.</p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>registry</span>()</div><div class='output co'>#&gt; [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpuNQAvA/polmineR_registry"</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>, <span class='st'>"extdata"</span>, <span class='st'>"cwb"</span>, <span class='st'>"registry"</span>)
+<span class='fu'>registry_reset</span>(<span class='kw'>registryDir</span> <span class='kw'>=</span> <span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='message'>... status: OK</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-            
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

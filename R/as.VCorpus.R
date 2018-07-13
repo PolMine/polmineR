@@ -7,6 +7,8 @@ NULL
 #' @importFrom tm as.VCorpus
 #' @exportMethod as.VCorpus
 #' @rdname as.VCorpus
+#' @name as.VCorpus
+#' @aliases as.VCorpus,partition_bundle-method
 #' @examples
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-11-10")

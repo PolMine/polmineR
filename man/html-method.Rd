@@ -5,7 +5,6 @@
 \alias{html}
 \alias{show,html-method}
 \alias{html,character-method}
-\alias{.addCharacterOffset}
 \alias{html,partition-method}
 \alias{html,partition_bundle-method}
 \alias{html,kwic-method}
@@ -15,8 +14,6 @@
 html(object, ...)
 
 \S4method{html}{character}(object)
-
-.addCharacterOffset(x)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
   verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
@@ -33,8 +30,6 @@ html(object, ...)
 \item{object}{the object the fulltext output will be based on}
 
 \item{...}{further parameters that are passed into \code{as.markdown}}
-
-\item{x}{object of class \code{html} to print}
 
 \item{meta}{metadata for output, if NULL (default), the s-attributes defining
 a partition will be used}
@@ -62,6 +57,8 @@ which the fulltext is to be generated}
 
 \item{s_attribute}{structural attributes that will be used to define the partition 
 where the match occurred}
+
+\item{x}{object of class \code{html} to print}
 }
 \description{
 Prepare a html document to inspect the full text.

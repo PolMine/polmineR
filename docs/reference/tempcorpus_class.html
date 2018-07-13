@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get session registry directory. — registry • polmineR</title>
+<title>S4 class to capture core information on a temporary CWB corpus — tempcorpus_class • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,11 +30,9 @@
 
 
 
-<meta property="og:title" content="Get session registry directory. — registry" />
+<meta property="og:title" content="S4 class to capture core information on a temporary CWB corpus — tempcorpus_class" />
 
-<meta property="og:description" content="The polmineR package uses a subdirectory of the per-session temporary directory
-as a (temporary) registry. The registry function will return the path 
-to this directory." />
+<meta property="og:description" content="S4 class to capture core information on a temporary CWB corpus" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,31 +107,36 @@ to this directory." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get session registry directory.</h1>
+    <h1>S4 class to capture core information on a temporary CWB corpus</h1>
     
-    <div class="hidden name"><code>registry.Rd</code></div>
+    <div class="hidden name"><code>tempcorpus_class.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The <code>polmineR</code> package uses a subdirectory of the per-session temporary directory
-as a (temporary) registry. The <code>registry</code> function will return the path 
-to this directory.</p>
+    <p>S4 class to capture core information on a temporary CWB corpus</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>registry</span>()</pre>
         
+    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>registry</span>()</div><div class='output co'>#&gt; [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpuNQAvA/polmineR_registry"</div></pre>
+    
+    <dl class='dl-horizontal'>
+<dt><code>cpos</code></dt><dd><p>matrix with start/end corpus positions</p></dd>
+    <dt><code>dir</code></dt><dd><p>directory where the tempcorpus is stored</p></dd>
+    <dt><code>registry</code></dt><dd><p>directory of the registry dir (subdirectory of dir)</p></dd>
+    <dt><code>indexed</code></dt><dd><p>directory of the dir with the indexed files</p></dd>
+</dl>
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#slots">Slots</a></li>
+          </ul>
 
   </div>
 </div>

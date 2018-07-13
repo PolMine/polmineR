@@ -92,7 +92,7 @@ setMethod("size", "DocumentTermMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$i, sum), x[["dimnames"]][["Docs"]])
 })
 
-#' @rdname TermDocumentMatrix
+#' @rdname size-method
 setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$j, sum), x[["dimnames"]][["Docs"]])
 })

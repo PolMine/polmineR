@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get Hits. — hits-class • polmineR</title>
+<title>Get Hits. — hits • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Get Hits. — hits-class" />
+<meta property="og:title" content="Get Hits. — hits" />
 
 <meta property="og:description" content="Get hits for a (set of) queries, optionally with s-attribute values." />
 <meta name="twitter:card" content="summary" />
@@ -136,9 +136,6 @@
   <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for hits</span>
-<span class='fu'>sample</span>(<span class='no'>x</span>, <span class='no'>size</span>)
-
 <span class='co'># S4 method for context</span>
 <span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
@@ -204,18 +201,6 @@ the data.table that is returned rather than the queries.</p>
 include the subsets of the partition/corpus with no hits (query is NA,
 count is 0).</p>
     
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
-    
-    <dl class='dl-horizontal'>
-<dt><code>stat</code></dt><dd><p>a <code>"data.table"</code></p></dd>
-    <dt><code>corpus</code></dt><dd><p>a <code>"character"</code> vector</p></dd>
-    <dt><code>query</code></dt><dd><p>Object of class <code>"character"</code></p></dd>
-    <dt><code>p_attribute</code></dt><dd><p>p-attribute that has been queried</p></dd>
-    <dt><code>encoding</code></dt><dd><p>encoding of the corpus</p></dd>
-    <dt><code>name</code></dt><dd><p>name of the object</p></dd>
-</dl>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -224,8 +209,6 @@ count is 0).</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#slots">Slots</a></li>
           </ul>
 
   </div>

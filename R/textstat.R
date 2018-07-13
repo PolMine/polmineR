@@ -3,26 +3,25 @@ NULL
 
 
 #' @exportMethod head
-#' @rdname textstat-class
 setMethod("head", "textstat", function(x, ...) head(x@stat, ...) )
 
 #' @exportMethod tail
-#' @rdname textstat-class
 setMethod("tail", "textstat", function(x, ...) tail(x@stat, ...) )
 
 #' @exportMethod dim
-#' @rdname textstat-class
 setMethod("dim", "textstat", function(x) dim(x@stat))
 
 #' @exportMethod nrow
-#' @param x textstat object
-#' @rdname textstat-class
 setMethod("nrow", "textstat", function(x) nrow(x@stat))
+
+#' @exportMethod ncol
+setMethod("ncol", "textstat", function(x) ncol(x@stat))
+
 
 #' @param digits no of digits
 #' @rdname textstat-class
 #' @exportMethod round
-setMethod("round", "textstat", function(x, digits=2){
+setMethod("round", "textstat", function(x, digits = 2L){
   columnClasses <- sapply(x@stat, function(column) is(column)[1])
   numericColumns <- which(columnClasses == "numeric")
   for (i in numericColumns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
@@ -30,7 +29,6 @@ setMethod("round", "textstat", function(x, digits=2){
 })
 
 #' @exportMethod colnames
-#' @rdname textstat-class
 setMethod("colnames", "textstat", function(x) colnames(x@stat))
 
 #' @exportMethod names
@@ -38,9 +36,9 @@ setMethod("names", "textstat", function(x) x@name)
 
 #' @exportMethod sort
 #' @rdname textstat-class
-setMethod("sort", "textstat", function(x, by, decreasing=TRUE){
+setMethod("sort", "textstat", function(x, by, decreasing = TRUE){
   setkeyv(x@stat, cols = by)
-  setorderv(x@stat, cols = by, order=ifelse(decreasing == TRUE, -1, 1), na.last=TRUE)
+  setorderv(x@stat, cols = by, order = ifelse(decreasing == TRUE, -1L, 1L), na.last = TRUE)
   return(x)
 })
 
@@ -78,11 +76,9 @@ setMethod("subset", "textstat", function(x, ...){
 })
 
 #' @exportMethod as.data.table
-#' @rdname textstat-class
 setMethod("as.data.table", "textstat", function(x) x@stat)
 
 #' @exportMethod as.data.frame
-#' @rdname textstat-class
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
 
 
@@ -92,7 +88,6 @@ setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
 setMethod("p_attributes", "textstat", function(.Object) .Object@p_attribute)
 
 #' @exportMethod [[
-#' @rdname textstat-class
 setMethod("[[", "textstat", function(x, i){
   if (nrow(x@stat) == 0){
     warning("indexing is pointless because data.table is empty")
@@ -100,8 +95,7 @@ setMethod("[[", "textstat", function(x, i){
   x@stat[[i]]
 })
 
-#' @exportMethod [[
-#' @rdname textstat-class
+#' @exportMethod [
 setMethod("[", "textstat", function(x, i, j){
   if (nrow(x@stat) == 0){
     warning("indexing is pointless because data.table is empty")

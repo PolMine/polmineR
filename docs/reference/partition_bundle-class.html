@@ -32,7 +32,9 @@
 
 <meta property="og:title" content="Bundle of partitions (partition_bundle class). — partition_bundle-class" />
 
-<meta property="og:description" content="Class and methods to manage bundles of partitions." />
+<meta property="og:description" content="Class and methods to manage bundles of partitions.
+flatten may be useful if you have a list of partition_bundle objects. This function will flatten the data
+structure and return a partition_bundle object." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,6 +117,8 @@
     <div class="ref-description">
     
     <p>Class and methods to manage bundles of partitions.</p>
+<p><code>flatten</code> may be useful if you have a list of <code>partition_bundle</code> objects. This function will flatten the data
+structure and return a <code>partition_bundle</code> object.</p>
     
     </div>
 
@@ -144,7 +148,9 @@ enrich(.Object, mc = FALSE, progress = TRUE,
   verbose = FALSE, ...)
 
 # S4 method for partition_bundle
-s_attributes(.Object, s_attribute, ...)</pre>
+s_attributes(.Object, s_attribute, ...)
+
+flatten(object)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -199,6 +205,7 @@ s_attributes(.Object, s_attribute, ...)</pre>
 
     <p>An object of the class 'partition. See partition for the
 details on the class.</p>
+<p>a <code>partition_bundle</code> object</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -206,6 +213,8 @@ details on the class.</p>
 prerequisite for this function to work properly is that there are no
 overlaps of the different partitions that are to be summarized.
 Encodings and the root node need to be identical, too.</p>
+<p>Using brackets can be used to retrieve the count for a token from the 
+<code>partition</code> objects in a <code>partition_bundle</code>.</p>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 

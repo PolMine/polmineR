@@ -45,25 +45,18 @@ setMethod("show", "partition",
 
 
 
-#' split partition into partition_bundle
-#' 
-#' Split a partition object into a \code{partition_bundle} if gap between strucs
-#' exceeds a minimum number of tokens specified by 'gap'. Relevant to 
-#' split up a plenary protocol into speeches. Note: To speed things up, the
-#' returned partitions will not include frequency lists. The lists can be
-#' prepared by applying \code{enrich} on the \code{partition_bundle} object that
-#' is returned.
-#' 
-#' @param x a partition object
-#' @param gap an integer specifying the minimum gap for performing the split
-#' @param drop not yet implemented
-#' @param ... further arguments
-#' @return a \code{partition_bundle}
-#' @aliases split,partition
-#' @rdname split-partition-method 
+#' The \code{split}-method will split a partition object into a
+#' \code{partition_bundle} if gap between strucs exceeds a minimum number of
+#' tokens specified by 'gap'. Relevant to split up a plenary protocol into
+#' speeches. Note: To speed things up, the returned partitions will not include
+#' frequency lists. The lists can be prepared by applying \code{enrich} on the
+#' \code{partition_bundle} object that is returned.
+#' @param x A \code{partition} object.
+#' @param gap An integer value specifying the minimum gap between regions for performing the split.
+#' @rdname partition_class
 #' @exportMethod split
 #' @docType methods
-setMethod("split", "partition", function(x, gap, drop = FALSE, ...){
+setMethod("split", "partition", function(x, gap, ...){
   cpos <- x@cpos
   if (nrow(cpos) > 1L){
     distance <- cpos[,1][2L:nrow(cpos)] - cpos[,2][1L:(nrow(cpos) - 1L)]

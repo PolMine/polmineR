@@ -10,41 +10,33 @@
 \alias{rownames,textstat-method}
 \alias{names,textstat-method}
 \alias{as.DataTables,textstat-method}
-\alias{name,textstat-method}
-\alias{name<-,textstat,character-method}
 \alias{head,textstat-method}
 \alias{tail,textstat-method}
-\alias{dim,textstat-method}
 \alias{nrow,textstat-method}
+\alias{ncol,textstat-method}
+\alias{as.data.table,textstat-method}
 \alias{round,textstat-method}
-\alias{colnames,textstat-method}
+\alias{sort,textstat-method}
+\alias{[,textstat,ANY,ANY,ANY-method}
+\alias{[[,textstat-method}
+\alias{name}
+\alias{name<-}
+\alias{name,textstat-method}
+\alias{name<-,textstat,character-method}
+\alias{round,textstat-method}
 \alias{sort,textstat-method}
 \alias{as.bundle}
 \alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
-\alias{as.data.table,textstat-method}
-\alias{as.data.frame,textstat-method}
 \alias{p_attributes,textstat-method}
-\alias{[[,textstat-method}
-\alias{[,textstat,ANY,ANY,ANY-method}
 \alias{view,textstat-method}
-\title{S4 textstat class}
+\title{S4 textstat superclass.}
 \usage{
 \S4method{name}{textstat}(x)
 
 \S4method{name}{textstat,character}(x) <- value
 
-\S4method{head}{textstat}(x, ...)
-
-\S4method{tail}{textstat}(x, ...)
-
-\S4method{dim}{textstat}(x)
-
-\S4method{nrow}{textstat}(x)
-
-\S4method{round}{textstat}(x, digits = 2)
-
-\S4method{colnames}{textstat}(x)
+\S4method{round}{textstat}(x, digits = 2L)
 
 \S4method{sort}{textstat}(x, by, decreasing = TRUE)
 
@@ -54,52 +46,63 @@ as.bundle(object, ...)
 
 \S4method{subset}{textstat}(x, ...)
 
-\S4method{as.data.table}{textstat}(x)
-
-\S4method{as.data.frame}{textstat}(x)
-
 \S4method{p_attributes}{textstat}(.Object)
-
-\S4method{[[}{textstat}(x, i)
-
-\S4method{[}{textstat,ANY,ANY,ANY}(x, i, j)
 
 \S4method{view}{textstat}(.Object)
 }
 \arguments{
-\item{x}{textstat object}
+\item{x}{A \code{textstat} object.}
 
 \item{value}{A \code{character} vector to assign as name to slot \code{name}
 of a \code{textstat} class object.}
 
-\item{...}{further parameters}
-
 \item{digits}{no of digits}
 
-\item{by}{by}
+\item{by}{Column that will serve as the key for sorting.}
 
-\item{decreasing}{logical}
+\item{decreasing}{Logical, whether to return decreasing order.}
 
 \item{object}{a textstat object}
 
-\item{e1}{object 1}
+\item{...}{Further arguments.}
 
-\item{e2}{object 2}
+\item{e1}{A \code{texstat} object.}
 
-\item{.Object}{an object}
+\item{e2}{Another \code{texstat} object.}
 
-\item{i}{vector to index data.table in stat-slot}
-
-\item{j}{vector to index data.table in stat-slot}
+\item{.Object}{A \code{textstat} object.}
 }
 \description{
-Superclass for \code{features}, \code{context}, and \code{partition} class.
+The \code{textstat}-class (technically an S4 class) serves as a superclass
+for the classes \code{features}, \code{context}, and \code{partition}.
+Usually, the class will not be used directly. It offers a set of standard
+generic methods (such as \code{head}, \code{tail}, \code{dim}, \code{nrow},
+\code{colnames}) its childs inherit. The core feature of \code{textstat} and
+its childs is a \code{data.table} in the slot \code{stat} for keeping data on
+text statistics of a corpus, or a \code{partition}.
 }
 \details{
+A \code{head}-method will return the first rows of the \code{data.table} in
+the \code{stat}-slot. Use argument \code{n} to specify the number of rows.
+
+A \code{tail}-method will return the last rows of the \code{data.table} in
+the \code{stat}-slot. Use argument \code{n} to specify the number of rows.
+
+The methods \code{dim}, \code{nrow} and \code{ncol} will return information
+on the dimensions, the number of rows, or the number of columns of the
+\code{data.table} in the \code{stat}-slot, respectively.
+
 Objects derived from the \code{textstat} class can be indexed with simple
 square brackets ("[") to get rows specified by an numeric/integer vector,
 and with double square brackets ("[[") to get specific columns from the 
 \code{data.table} in the slot \code{stat}.
+
+The \code{colnames}-method will return the column names of the \code{data-table}
+in the slot \code{stat}.
+
+The methods \code{as.data.table}, and \code{as.data.frame} will extract the
+\code{data.table} in the slot \code{stat} as a \code{data.table}, or
+\code{data.frame}, respectively.
 
 \code{textstat} objects can have a name, which can be retrieved, and set using
 the \code{name}-method and \code{name<-}, respectively.
@@ -107,21 +110,34 @@ the \code{name}-method and \code{name<-}, respectively.
 \section{Slots}{
 
 \describe{
-\item{\code{p_attribute}}{Object of class \code{"character"} p-attribute of the query}
+\item{\code{p_attribute}}{Object of class \code{character}, p-attribute of the query.}
 
-\item{\code{corpus}}{Object of class \code{"character"}}
+\item{\code{corpus}}{A corpus specified by a length-one \code{character} vector.}
 
-\item{\code{stat}}{Object of class \code{"data.table"} statistics of the analysis}
+\item{\code{stat}}{A \code{data.table} with statistical information.}
 
-\item{\code{name}}{name of the object}
+\item{\code{name}}{The name of the object.}
 
-\item{\code{encoding}}{Object of class \code{"character"} encoding of the corpus}
+\item{\code{encoding}}{A length-one \code{character} vector, the encoding of the corpus.}
 }}
 
 \examples{
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 y <- cooccurrences(P, query = "Arbeit")
+
+# Standard generic methods known from data.frames work for objects inheriting
+# from the textstat class
+
+head(y)
+tail(y)
+nrow(y)
+ncol(y)
+dim(y)
+colnames(y)
+
+# Use brackets for indexing 
+
 y[1:25]
 y[,c("word", "ll")]
 y[1:25, "word"]

@@ -1,11 +1,6 @@
 #' @include S4classes.R bundle.R partition_bundle.R context.R
 NULL
 
-#' Methods for TermDocumentMatrix / DocumentTermMatrix
-#' 
-#' @param x object
-#' @rdname TermDocumentMatrix
-#' @name TermDocumentMatrix
 setOldClass("TermDocumentMatrix")
 setOldClass("DocumentTermMatrix")
 
@@ -61,12 +56,15 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 #' @return a TermDocumentMatrix
 #' @author Andreas Blaette
 #' @exportMethod as.TermDocumentMatrix
-#' @exportMethod as.DocumentTermMatrix
 #' @docType methods
 #' @rdname as.DocumentTermMatrix
 #' @name as.TermDocumentMatrix
 #' @aliases as.DocumentTermMatrix
 setGeneric("as.TermDocumentMatrix", function(x, ...) UseMethod("as.TermDocumentMatrix") )
+
+
+#' @exportMethod as.DocumentTermMatrix
+#' @rdname as.DocumentTermMatrix
 setGeneric("as.DocumentTermMatrix", function(x, ...) UseMethod("as.DocumentTermMatrix") )
 
 #' @examples

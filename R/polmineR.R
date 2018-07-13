@@ -39,8 +39,8 @@ NULL
 #' @author Andreas Blaette (andreas.blaette@@uni-due.de)
 #' @keywords package
 #' @docType package
-#' @rdname polmineR-package
-#' @name polmineR-package
+#' @rdname polmineR
+#' @name polmineR
 #' @references 
 #' Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
 #' Cham et al: Springer.
@@ -94,19 +94,6 @@ polmineR <- function(){
 }
 
 
-#' generic methods defined in the polmineR-package
-#' 
-#' The package defines a set of generic functions. This doc file
-#' only provides an overview. Please consult the documentation
-#' of the classes to learn which methods can be applied to a class
-#' of a certain type.
-#' 
-#' @rdname polmineR-generics
-#' @param x object
-#' @param value value
-#' @name polmineR-generics
-NULL
-
 
 # setOldClass("dfmSparse") # class defined in quanteda-package
 setOldClass("igraph")
@@ -114,11 +101,11 @@ setOldClass("html")
 
 
 #' @exportMethod name
-#' @rdname polmineR-generics
+#' @noRd
 setGeneric("name", function(x) standardGeneric("name"))
 
 #' @exportMethod name<-
-#' @rdname polmineR-generics
+#' @noRd
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
 

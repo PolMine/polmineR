@@ -1,4 +1,4 @@
-#' Reset Registry Directory.
+#' Reset registry directory.
 #' 
 #' A utility function to reset the environment variable CORPUS_REGISTRY. That may
 #' be necessary if you want use a CWB corpus that is not stored in the usual
@@ -14,7 +14,7 @@
 #' @param verbose logical, whether to be verbose
 #' @return the registry directory used before resetting CORPUS_REGISTRY
 #' @export registry_reset
-#' @rdname registry
+#' @rdname registry_reset
 #' @name registry_reset
 #' @importFrom utils capture.output
 #' @importFrom stringi stri_match_all_regex
@@ -155,13 +155,15 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
   invisible(NULL)
 }
 
-#' Get Registry Directory
+#' Get session registry directory.
 #' 
 #' The \code{polmineR} package uses a subdirectory of the per-session temporary directory
 #' as a (temporary) registry. The \code{registry} function will return the path 
 #' to this directory.
 #' 
 #' @export registry
+#' @rdname registry
+#' @name registry
 #' @examples
 #' registry()
 registry <- function() file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
