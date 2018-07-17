@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use a packaged corpus. — use • polmineR</title>
+<title>Add corpora in R data packages to session registry. — use • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Use a packaged corpus. — use" />
+<meta property="og:title" content="Add corpora in R data packages to session registry. — use" />
 
-<meta property="og:description" content="Use a CWB corpus shipped in a package, or reset registry directory." />
+<meta property="og:description" content="Use CWB indexed corpora in R data packages by adding registry file to session
+registry." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,76 +108,66 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use a packaged corpus.</h1>
+    <h1>Add corpora in R data packages to session registry.</h1>
     
     <div class="hidden name"><code>use.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Use a CWB corpus shipped in a package, or reset registry directory.</p>
+    <p>Use CWB indexed corpora in R data packages by adding registry file to session
+registry.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>use</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lib.loc</span> <span class='kw'>=</span> <span class='fu'>.libPaths</span>(),
-  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.defaultRegistry"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>use</span>(<span class='no'>pkg</span>, <span class='kw'>lib.loc</span> <span class='kw'>=</span> <span class='fu'>.libPaths</span>(), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>pkg</th>
-      <td><p>package with a CWB indexed corpus to use (defaults to NULL)</p></td>
+      <td><p>A package including at least one CWB indexed corpus.</p></td>
     </tr>
     <tr>
       <th>lib.loc</th>
-      <td><p>a character vector with path names of <code>R</code> libraries</p></td>
-    </tr>
-    <tr>
-      <th>dir</th>
-      <td><p>a registry directory, defaults to <code>getOption("polmineR.defaultRegistry")</code></p></td>
+      <td><p>A character vector with path names of <code>R</code> libraries.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical, whether to output status messages</p></td>
+      <td><p>Logical, whether to output status messages.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the function returns invisibly the registry that was previously set</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If <code>pkg</code> is the name of a data package with a CWB indexed corpus,
-the function will reset the CORPUS_REGISTRY environment variable and
-re-direct the interfacing libraries (RcppCWB or rcqp) to the registry
-directory in the package. The registry directory is assumed to be the
-./extdata/cwb/registry subdirectory of the installed package.</p>
-<p>If <code>pkg</code> is NULL (default), calling <code>use</code> will 
-reset the registry directory to the directory defined by <code>dir</code>
-(defaults to the option <code>polmineR.defaultRegistry</code>, to return to the registry
-that was used when loading <code>polmineR</code>).</p>
-<p>When resetting the registry directory, templates for formatting fulltext
-output are reloaded.</p>
+    <p>pkg is expected to be an installed data package that includes CWB indexed
+corpora. The <code>use</code>-function will add the registry files describing the
+corpus (or the corpora) to the session registry directory and adjust the path
+pointing to the data in the package.</p>
+<p>The registry files within the package are assumed to be in the subdirectory
+<code>./extdata/cwb/registry</code> of the installed package. The data directories
+for corpora are assumed to be in a subdirectory named after the corpus (lower
+case) in the package subdirectory <code>./extdata/cwb/indexed_corpora/</code>. When
+adding a corpus to the registry, templates for formatting fulltext output are
+reloaded.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>the worker to reset the registry is <code>registry_reset</code></p></div>
+    <div class='dont-index'><p>To get the session registry registry, see <code><a href='registry.html'>registry</a></code>;
+  to reset the registry, see <code><a href='registry_reset.html'>registry_reset</a></code>.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># to get the registry directory of the sample data in the polmineR package</span>
-<span class='fu'>system.file</span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>, <span class='st'>"extdata"</span>, <span class='st'>"cwb"</span>, <span class='st'>"registry"</span>)</div><div class='output co'>#&gt; [1] "/Users/blaette/Lab/github/polmineR/inst/extdata/cwb/registry"</div><div class='input'>
-<span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='fu'><a href='corpus-method.html'>corpus</a></span>()</div><div class='output co'>#&gt;          corpus size template
+#&gt; 1 GERMAPARLMINI  -11     TRUE
+#&gt; 2       REUTERS  -11     TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>

@@ -4,7 +4,6 @@
 \name{partition}
 \alias{partition}
 \alias{partition,character-method}
-\alias{partition,list-method}
 \alias{partition,environment-method}
 \alias{partition,partition-method}
 \alias{partition,Corpus-method}
@@ -16,8 +15,6 @@ partition(.Object, ...)
   encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
   decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE,
   ...)
-
-\S4method{partition}{list}(.Object, ...)
 
 \S4method{partition}{environment}(.Object, slots = c("name", "corpus", "size",
   "p_attribute"))
@@ -31,64 +28,55 @@ partition(.Object, ...)
   type = get_type(.Object), verbose = TRUE, ...)
 }
 \arguments{
-\item{.Object}{character-vector - the CWB-corpus to be used}
+\item{.Object}{A length-one character-vector, the CWB corpus to be used.}
 
-\item{...}{parameters passed into the partition-method}
+\item{...}{Arguments to define partition (see examples).}
 
-\item{def}{list consisting of a set of character vectors (see
-details and examples)}
+\item{def}{A named list of character vectors of s-attribute values, the names
+are the s-attributes (see details and examples)}
 
-\item{name}{name of the new partition, defaults to "}
+\item{name}{A name for the new \code{partition} object, defaults to "".}
 
-\item{encoding}{encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b}
+\item{encoding}{The encoding of the corpus (typically "LATIN1 or "(UTF-8)),
+if NULL, the encoding provided in the registry file of the corpus
+(charset="...") will be used.}
 
-\item{p_attribute}{the p_attribute(s) for which term frequencies shall be retrieved}
+\item{p_attribute}{The p-attribute(s) for which a count is performed.}
 
-\item{regex}{logical (defaults to FALSE)}
+\item{regex}{A logical value (defaults to FALSE).}
 
-\item{xml}{either 'flat' (default) or 'nested'}
+\item{xml}{Either 'flat' (default) or 'nested'.}
 
-\item{decode}{whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)}
+\item{decode}{Logical, whether to turn token ids to strings (set FALSE to
+minimize object size / memory consumption) in data.table with counts.}
 
-\item{type}{character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")}
+\item{type}{A length-one character vector specifying the type of corpus / partition (e.g. "plpr")}
 
-\item{mc}{whether to use multicore (for counting terms)}
+\item{mc}{Whether to use multicore (for counting terms).}
 
-\item{verbose}{logical, defaults to TRUE}
-
-\item{slots}{character vector}
+\item{verbose}{Logical, whether to be verbose.}
 }
 \value{
-An object of the S4 class 'partition'
+An object of the S4 class \code{partition}.
 }
 \description{
-Create a subcorpus stored in an object of the \code{partition} class.
-Counts are performed for the p-attribute defined by the parameter \code{p_attribute}.
+Create a subcorpus and keep it in an object of the \code{partition} class. If
+defined, counts are performed for the p-attribute defined by the parameter
+\code{p_attribute}.
 }
 \details{
-The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
+If \code{.Object} is a length-one character vector, a
+  subcorpus/partition for the corpus defined be \code{.Object} is generated.
 
-The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
-year="2013"), or - for convencience - directly.
+If \code{.Object} is an environment (typically \code{.GlobalEnv}),
+  the \code{partition} objects present in the environment are listed.
 
-The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
-parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
-used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
-of the character vector needs to be 1. If regex is \code{"FALSE"}, the length of the character
-vectors can be > 1, matching s-attributes are identifies with the operator \code{in}.
+If \code{.Object} is a \code{partition} object, a subcorpus of the
+  subcorpus is generated.
 
-The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
-parameter \code{xml} (default is "flat"). If you generate a partition based on a 
-flat XML structure, some performance gain may be achieved when ordering the s-attributes
-with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
-order of the s-attributes provided reflects the hierarchy of the XML: The top-level elements
-need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
-elements at the end.
-
-If p_attribute is not NULL, a count of tokens in the corpus will be performed and kept in the
-\code{stat}-slot of the partition-object. The length of the p_attribute character vector may be 1
-or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
-A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
+If \code{.Object} is a \code{Corpus} object, preparing the
+  \code{partition} may work more efficiently than if \code{.Object} is a
+  length-one character vector.
 }
 \examples{
 use("polmineR")
@@ -113,8 +101,8 @@ days <- seq(
 period <- partition("GERMAPARLMINI", date = days)
 }
 \seealso{
-To learn about the methods available for objects of the class partition, see
-\code{\link{partition_class}},
+To learn about the methods available for objects of the class
+  \code{partition}, see \code{\link{partition_class}},
 }
 \author{
 Andreas Blaette

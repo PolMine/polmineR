@@ -1,3 +1,7 @@
+# polmineR 0.7.9.9001
+* The `use`-function is limited now to activating the corpus in data packages. Having
+introduced the session registry, switching registry directories is not needed any more.
+
 # polmineR 0.7.9
 
 * new as.list,bundle-method for convenience, to access slot objects

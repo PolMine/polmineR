@@ -32,8 +32,9 @@
 
 <meta property="og:title" content="Initialize a partition. — partition" />
 
-<meta property="og:description" content="Create a subcorpus stored in an object of the partition class.
-Counts are performed for the p-attribute defined by the parameter p_attribute." />
+<meta property="og:description" content="Create a subcorpus and keep it in an object of the partition class. If
+defined, counts are performed for the p-attribute defined by the parameter
+p_attribute." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,8 +116,9 @@ Counts are performed for the p-attribute defined by the parameter p_attribute." 
 
     <div class="ref-description">
     
-    <p>Create a subcorpus stored in an object of the <code>partition</code> class.
-Counts are performed for the p-attribute defined by the parameter <code>p_attribute</code>.</p>
+    <p>Create a subcorpus and keep it in an object of the <code>partition</code> class. If
+defined, counts are performed for the p-attribute defined by the parameter
+<code>p_attribute</code>.</p>
     
     </div>
 
@@ -127,9 +129,6 @@ Counts are performed for the p-attribute defined by the parameter <code>p_attrib
   <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='st'>"flat"</span>,
   <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='get_type.html'>get_type</a></span>(<span class='no'>.Object</span>), <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='no'>...</span>)
-
-<span class='co'># S4 method for list</span>
-<span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for environment</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>slots</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"name"</span>, <span class='st'>"corpus"</span>, <span class='st'>"size"</span>,
@@ -150,89 +149,78 @@ Counts are performed for the p-attribute defined by the parameter <code>p_attrib
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>character-vector - the CWB-corpus to be used</p></td>
+      <td><p>A length-one character-vector, the CWB corpus to be used.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>parameters passed into the partition-method</p></td>
+      <td><p>Arguments to define partition (see examples).</p></td>
     </tr>
     <tr>
       <th>def</th>
-      <td><p>list consisting of a set of character vectors (see
-details and examples)</p></td>
+      <td><p>A named list of character vectors of s-attribute values, the names
+are the s-attributes (see details and examples)</p></td>
     </tr>
     <tr>
       <th>name</th>
-      <td><p>name of the new partition, defaults to "</p></td>
+      <td><p>A name for the new <code>partition</code> object, defaults to "".</p></td>
     </tr>
     <tr>
       <th>encoding</th>
-      <td><p>encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b</p></td>
+      <td><p>The encoding of the corpus (typically "LATIN1 or "(UTF-8)),
+if NULL, the encoding provided in the registry file of the corpus
+(charset="...") will be used.</p></td>
     </tr>
     <tr>
       <th>p_attribute</th>
-      <td><p>the p_attribute(s) for which term frequencies shall be retrieved</p></td>
+      <td><p>The p-attribute(s) for which a count is performed.</p></td>
     </tr>
     <tr>
       <th>regex</th>
-      <td><p>logical (defaults to FALSE)</p></td>
+      <td><p>A logical value (defaults to FALSE).</p></td>
     </tr>
     <tr>
       <th>xml</th>
-      <td><p>either 'flat' (default) or 'nested'</p></td>
+      <td><p>Either 'flat' (default) or 'nested'.</p></td>
     </tr>
     <tr>
       <th>decode</th>
-      <td><p>whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)</p></td>
+      <td><p>Logical, whether to turn token ids to strings (set FALSE to
+minimize object size / memory consumption) in data.table with counts.</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")</p></td>
+      <td><p>A length-one character vector specifying the type of corpus / partition (e.g. "plpr")</p></td>
     </tr>
     <tr>
       <th>mc</th>
-      <td><p>whether to use multicore (for counting terms)</p></td>
+      <td><p>Whether to use multicore (for counting terms).</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical, defaults to TRUE</p></td>
-    </tr>
-    <tr>
-      <th>slots</th>
-      <td><p>character vector</p></td>
+      <td><p>Logical, whether to be verbose.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of the S4 class 'partition'</p>
+    <p>An object of the S4 class <code>partition</code>.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.</p>
-<p>The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
-year="2013"), or - for convencience - directly.</p>
-<p>The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
-parameter regex to <code>"TRUE"</code>. Regular expressions are passed into grep, i.e. the regex syntax
-used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
-of the character vector needs to be 1. If regex is <code>"FALSE"</code>, the length of the character
-vectors can be &gt; 1, matching s-attributes are identifies with the operator <code>in</code>.</p>
-<p>The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
-parameter <code>xml</code> (default is "flat"). If you generate a partition based on a 
-flat XML structure, some performance gain may be achieved when ordering the s-attributes
-with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
-order of the s-attributes provided reflects the hierarchy of the XML: The top-level elements
-need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
-elements at the end.</p>
-<p>If p_attribute is not NULL, a count of tokens in the corpus will be performed and kept in the
-<code>stat</code>-slot of the partition-object. The length of the p_attribute character vector may be 1
-or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
-A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".</p>
+    <p>If <code>.Object</code> is a length-one character vector, a subcorpus/partition
+for the corpus defined be <code>.Object</code> is generated.</p>
+<p>If <code>.Object</code> is an environment (typically <code>.GlobalEnv</code>),
+  the <code>partition</code> objects present in the environment are listed.</p>
+<p>If <code>.Object</code> is a <code>partition</code> object, a subcorpus of the
+  subcorpus is generated.</p>
+<p>If <code>.Object</code> is a <code>Corpus</code> object, preparing the
+  <code>partition</code> may work more efficiently than if <code>.Object</code> is a
+  length-one character vector.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>To learn about the methods available for objects of the class partition, see
-<code><a href='partition_class.html'>partition_class</a></code>,</p></div>
+    <div class='dont-index'><p>To learn about the methods available for objects of the class
+  <code>partition</code>, see <code><a href='partition_class.html'>partition_class</a></code>,</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

@@ -45,7 +45,7 @@ setMethod("show", "partition",
 
 
 
-#' The \code{split}-method will split a partition object into a
+#' @details The \code{split}-method will split a partition object into a
 #' \code{partition_bundle} if gap between strucs exceeds a minimum number of
 #' tokens specified by 'gap'. Relevant to split up a plenary protocol into
 #' speeches. Note: To speed things up, the returned partitions will not include
@@ -65,7 +65,7 @@ setMethod("split", "partition", function(x, gap, ...){
       1L:length(beginning),
       FUN.VALUE = 1L,
       function(x) ifelse (beginning[x] == 1L, sum(beginning[1L:x]), 0L)
-      )
+    )
     for (i in 1L:length(no)) no[i] <- ifelse (no[i] == 0, no[i - 1L], no[i])
     strucsClassified <- cbind(x@strucs, no)
     strucList <- split(strucsClassified[,1], strucsClassified[,2])
@@ -146,18 +146,17 @@ setAs(
 )
 
 
-#' @details The \code{is.partition} function returns a \code{logical} value whether \code{x}
-#' is a \code{partition}, or not.
+#' @details The \code{is.partition} function returns a \code{logical} value
+#'   whether \code{x} is a \code{partition}, or not.
 #' @rdname partition_class
 #' @export is.partition
 is.partition <- function(x) "partition" %in% is(x)
 
 
-#' @details \code{partition_add_cpos} will generate the matrix with corpus positions (regions)
-#' based on the s-attributes as defined in the respective slot of the partition
-#' object. The result is found in the slot \code{cpos} of the \code{partition}
-#' object that is returned.
-#' 
+#' @details \code{partition_add_cpos} will generate the matrix with corpus
+#'   positions (regions) based on the s-attributes as defined in the respective
+#'   slot of the partition object. The result is found in the slot \code{cpos}
+#'   of the \code{partition} object that is returned.
 #' @param partition partition object with list of s-attributes
 #' @param xml either "flat" or "nested"
 #' @param regex logical
@@ -253,51 +252,58 @@ is.partition <- function(x) "partition" %in% is(x)
 
 #' Initialize a partition.
 #' 
-#' Create a subcorpus stored in an object of the \code{partition} class.
-#' Counts are performed for the p-attribute defined by the parameter \code{p_attribute}.
+#' Create a subcorpus and keep it in an object of the \code{partition} class. If
+#' defined, counts are performed for the p-attribute defined by the parameter
+#' \code{p_attribute}.
 #' 
-#' The function sets up a partition (subcorpus) based on a list of s-attributes with respective values.
+#' The function sets up a \code{partition} object based on s-attribute values.
+#' The s-attributes defining the partition can be passed in as a list, e.g.
+#' \code{list(interjection="speech", year = "2013")}, or directly (see
+#' examples).
 #' 
-#' The s-attributes defining the partition can be passed in as a list, e.g. list(interjection="speech",
-#' year="2013"), or - for convencience - directly.
+#' The s-attribute values defining the partition may use regular expressions. To
+#' use regular expressions, set the parameter regex to \code{TRUE}. Regular
+#' expressions are passed into \code{grep}, i.e. the regex syntax used in R
+#' needs to be used (double backlashes etc.). If regex is \code{FALSE}, the
+#' length of the character vectors can be > 1, matching s-attributes are
+#' identifies with the operator \code{%in%}.
 #' 
-#' The values defining the partition may contain regular expressions. To use regular expression syntax, set the 
-#' parameter regex to \code{"TRUE"}. Regular expressions are passed into grep, i.e. the regex syntax
-#' used in R needs to be used (double backlashes etc.). If regular expressions are used, the length
-#' of the character vector needs to be 1. If regex is \code{"FALSE"}, the length of the character
-#' vectors can be > 1, matching s-attributes are identifies with the operator \code{in}.
+#' The XML imported into the CWB may be "flat" or "nested". This needs to be
+#' indicated with the parameter \code{xml} (default is "flat"). If you generate
+#' a \code{partition} based on a flat XML structure, some performance gain may be
+#' achieved when ordering the s-attributes with decreasingly restrictive
+#' conditions. If you have a nested XML, it is mandatory that the order of the
+#' s-attributes provided reflects the hierarchy of the XML: The top-level
+#' elements need to be positioned at the beginning of the list with the
+#' s-attributes, the the most restrictive elements at the end.
 #' 
-#' The XML imported into the CWB may be "flat" or "nested". This needs to be indicated with the
-#' parameter \code{xml} (default is "flat"). If you generate a partition based on a 
-#' flat XML structure, some performance gain may be achieved when ordering the s-attributes
-#' with decreasingly restrictive conditions. If you have a nested XML, it is mandatory that the
-#' order of the s-attributes provided reflects the hierarchy of the XML: The top-level elements
-#' need to be positioned at the beginning of the list with the s-attributes, the the most restrictive
-#' elements at the end.
+#' If \code{p_attribute} is not NULL, a count of tokens in the corpus will be
+#' performed and kept in the \code{stat}-slot of the partition-object. The
+#' length of the \code{p_attribute} character vector may be 1 or more. If two or
+#' more p-attributes are provided, The occurrence of combinations will be
+#' counted. A typical scenario is to combine the p-attributes "word" or "lemma"
+#' and "pos".
 #' 
-#' If p_attribute is not NULL, a count of tokens in the corpus will be performed and kept in the
-#' \code{stat}-slot of the partition-object. The length of the p_attribute character vector may be 1
-#' or more. If two or more p-attributes are provided, The occurrence of combinations will be counted.
-#' A typical scenario is to combine the p-attributes "word" or "lemma" and "pos".
-#' 
-#' @param .Object character-vector - the CWB-corpus to be used
-#' @param def list consisting of a set of character vectors (see
-#' details and examples)
-#' @param name name of the new partition, defaults to "
-#' @param encoding encoding of the corpus (typically "LATIN1 or "(UTF-8)), if NULL, the encoding provided in the registry file of the corpus (charset="...") will be used b
-#' @param p_attribute the p_attribute(s) for which term frequencies shall be retrieved
-#' @param regex logical (defaults to FALSE)
-#' @param xml either 'flat' (default) or 'nested'
-#' @param decode whether to turn token ids to strings (set FALSE to minimize object.size / memory consumption)
-#' @param type character vector (length 1) specifying the type of corpus / partition (e.g. "plpr")
-#' @param mc whether to use multicore (for counting terms)
-#' @param verbose logical, defaults to TRUE
-#' @param slots character vector
-#' @param ... parameters passed into the partition-method
-#' @return An object of the S4 class 'partition'
+#' @param .Object A length-one character-vector, the CWB corpus to be used.
+#' @param def A named list of character vectors of s-attribute values, the names
+#'   are the s-attributes (see details and examples)
+#' @param name A name for the new \code{partition} object, defaults to "".
+#' @param encoding The encoding of the corpus (typically "LATIN1 or "(UTF-8)),
+#'   if NULL, the encoding provided in the registry file of the corpus
+#'   (charset="...") will be used.
+#' @param p_attribute The p-attribute(s) for which a count is performed.
+#' @param regex A logical value (defaults to FALSE).
+#' @param xml Either 'flat' (default) or 'nested'.
+#' @param decode Logical, whether to turn token ids to strings (set FALSE to
+#'   minimize object size / memory consumption) in data.table with counts.
+#' @param type A length-one character vector specifying the type of corpus / partition (e.g. "plpr")
+#' @param mc Whether to use multicore (for counting terms).
+#' @param verbose Logical, whether to be verbose.
+#' @param ... Arguments to define partition (see examples).
+#' @return An object of the S4 class \code{partition}.
 #' @author Andreas Blaette
-#' @seealso To learn about the methods available for objects of the class partition, see
-#' \code{\link{partition_class}},
+#' @seealso To learn about the methods available for objects of the class
+#'   \code{partition}, see \code{\link{partition_class}},
 #' @examples
 #' use("polmineR")
 #' spd <- partition("GERMAPARLMINI", party = "SPD", interjection = "speech")
@@ -327,6 +333,8 @@ setGeneric("partition", function(.Object, ...) standardGeneric("partition") )
 
 
 
+#' @details If \code{.Object} is a length-one character vector, a
+#'   subcorpus/partition for the corpus defined be \code{.Object} is generated.
 #' @rdname partition
 setMethod("partition", "character", function(
   .Object, def = NULL, name = "",
@@ -341,7 +349,7 @@ setMethod("partition", "character", function(
     p_attribute <- dot_list[["pAttribute"]]
     dot_list[["pAttribute"]] <- NULL
   }
-
+  
   if (!.Object %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(dot_list) != 0 && is.null(def)) def <- dot_list
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
@@ -378,13 +386,8 @@ setMethod("partition", "character", function(
   p
 })
 
-
-#' @rdname partition
-setMethod("partition", "list", function(.Object, ...) {
-  stopifnot(getOption("polmineR.corpus") %in% CQI$list_corpora())
-  partition(.Object = getOption("polmineR.corpus"), def = .Object, ...)
-})
-
+#' @details If \code{.Object} is an environment (typically \code{.GlobalEnv}),
+#'   the \code{partition} objects present in the environment are listed.
 #' @rdname partition
 setMethod("partition", "environment", function(.Object, slots = c("name", "corpus", "size", "p_attribute")){
   partitionObjects <- .get_objects(class = "partition", envir = .Object)
@@ -411,7 +414,8 @@ setMethod("partition", "environment", function(.Object, slots = c("name", "corpu
   }
 })
 
-
+#' @details If \code{.Object} is a \code{partition} object, a subcorpus of the
+#'   subcorpus is generated.
 #' @rdname partition
 setMethod("partition", "partition", function(.Object, def = NULL, name = "", regex = FALSE, p_attribute = NULL, decode = TRUE, xml = NULL, verbose = TRUE, mc = FALSE, ...){
   
@@ -470,6 +474,9 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
 })
 
 
+#' @details If \code{.Object} is a \code{Corpus} object, preparing the
+#'   \code{partition} may work more efficiently than if \code{.Object} is a
+#'   length-one character vector.
 #' @rdname partition
 #' @importFrom data.table copy
 setMethod("partition", "Corpus", function(

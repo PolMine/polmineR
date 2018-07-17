@@ -242,10 +242,10 @@ setMethod("partition_bundle", "context", function(.Object, mc = getOption("polmi
       "partition",
       corpus = contextObject@corpus,
       encoding = contextObject@encoding,
-      cpos = matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol=2),
+      cpos = matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol = 2),
       stat = data.table()
     )
-    newPartition <- enrich(newPartition, size=TRUE, p_attribute=contextObject@p_attribute, verbose=verbose)
+    newPartition <- enrich(newPartition, size = TRUE, p_attribute = contextObject@p_attribute, verbose = verbose)
     newPartition@strucs <- c(
       CQI$cpos2struc(contextObject@corpus, contextObject@s_attribute, newPartition@cpos[1,1])
       :

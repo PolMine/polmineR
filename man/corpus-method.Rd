@@ -3,28 +3,36 @@
 \docType{methods}
 \name{corpus}
 \alias{corpus}
-\alias{corpus,partition-method}
+\alias{corpus,textstat-method}
 \alias{corpus,bundle-method}
 \alias{corpus,missing-method}
-\title{Get corpus.}
+\title{Get corpus/corpora available or used.}
 \usage{
 corpus(object)
 
-\S4method{corpus}{partition}(object)
+\S4method{corpus}{textstat}(object)
 
 \S4method{corpus}{bundle}(object)
 
 \S4method{corpus}{missing}()
 }
 \arguments{
-\item{object}{the object}
+\item{object}{An object inheriting from the \code{textstat} or \code{bundle} superclasses.}
 }
 \description{
-Calling \code{corpus()} will return the corpora available. If the 
-param 'packges' (logical) is TRUE, packages that include a corpus
-are returned.
+Calling \code{corpus()} will return a \code{data.frame} listing the corpora
+described in the active registry directory, and some basic information on the
+corpora. If \code{object} is an object inheriting from the \code{textstat},
+or the \code{bundle} class, the corpus used to generate the object is
+returned.
 }
-\details{
-If object is a partition or partition_bundle-object, the corpus the
-respective object is derived from is returned.
+\examples{
+use("polmineR")
+corpus()
+
+p <- partition("REUTERS", places = "kuwait")
+corpus(p)
+
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+corpus(pb)
 }

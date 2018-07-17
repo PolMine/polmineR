@@ -111,8 +111,8 @@
 <a href="#loading-polminer" class="anchor"></a>Loading polmineR</h4>
 <p>The <em>polmineR</em> package is loaded just like any other package.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a></code></pre></div>
-<pre><code>## polmineR v0.7.9</code></pre>
-<pre><code>## session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpd37mHO/polmineR_registry</code></pre>
+<pre><code>## polmineR v0.7.9.9001</code></pre>
+<pre><code>## session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpAAF1Vm/polmineR_registry</code></pre>
 <p>Upon loading the package, the package version is reported. As <em>polmineR</em> is under active development, please check whether a more recent version is available at CRAN. Development versions are available at GitHub.</p>
 <p>In addition, you will see an information on the <em>session registry</em>, which needs some further explanation.</p>
 </div>
@@ -123,7 +123,7 @@
 <p>It is not necessary to move indexed corpora to one single location. The only recommendation is to have them on a device that can be accessed sufficiently fast. Corpora are not fully loaded into memory, but information is retrieved from disk on a ‘on demand’-basis. Thus, storing corpus data on a SSD may be faster than a hard drive.</p>
 <p>The CWB will look up information on the corpora in a directory called <em>registry</em> that is defined by the environment variable CORPUS_REGISTRY. Starting with version v0.7.9, the <em>polmineR</em> package creates a temporary registry directory in the temporary session directory. To get the path of the session registry directory, call <code><a href="../reference/registry.html">registry()</a></code>. The output is the session registry you have seen when loading <em>polmineR</em>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/registry.html">registry</a></span>()</a></code></pre></div>
-<pre><code>## [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpd37mHO/polmineR_registry"</code></pre>
+<pre><code>## [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpAAF1Vm/polmineR_registry"</code></pre>
 <p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">Sys.getenv</span>(<span class="st">"CORPUS_REGISTRY"</span>)</a></code></pre></div>
 <p>See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.</p>

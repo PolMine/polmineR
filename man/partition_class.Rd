@@ -51,13 +51,6 @@ is.partition(x)
 The \code{partition} class is used to manage subcorpora. It is an S4 class, and
 a set of methods is defined for the class. The class inherits
 from the classes \code{count} and \code{textstat}.
-
-The \code{split}-method will split a partition object into a
-\code{partition_bundle} if gap between strucs exceeds a minimum number of
-tokens specified by 'gap'. Relevant to split up a plenary protocol into
-speeches. Note: To speed things up, the returned partitions will not include
-frequency lists. The lists can be prepared by applying \code{enrich} on the
-\code{partition_bundle} object that is returned.
 }
 \details{
 As \code{partition} objects inherit from \code{count} and \code{textstat} class, methods
@@ -69,8 +62,15 @@ corpus the partition is derived from, if argument \code{p_attribute} is \code{NU
 (the default). If \code{p_attribute} is defined, the unique values for the p-attribute
 are returned.
 
-The \code{is.partition} function returns a \code{logical} value whether \code{x}
-is a \code{partition}, or not.
+The \code{split}-method will split a partition object into a
+\code{partition_bundle} if gap between strucs exceeds a minimum number of
+tokens specified by 'gap'. Relevant to split up a plenary protocol into
+speeches. Note: To speed things up, the returned partitions will not include
+frequency lists. The lists can be prepared by applying \code{enrich} on the
+\code{partition_bundle} object that is returned.
+
+The \code{is.partition} function returns a \code{logical} value
+  whether \code{x} is a \code{partition}, or not.
 
 The \code{enrich}-method will add a count of tokens defined by argument
 \code{p_attribute} to slot \code{stat} of the \code{partition} object.

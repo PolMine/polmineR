@@ -1,26 +1,32 @@
 #' @include partition.R bundle.R S4classes.R
 NULL
 
-#' Get corpus.
+#' Get corpus/corpora available or used.
 #' 
-#' Calling \code{corpus()} will return the corpora available. If the 
-#' param 'packges' (logical) is TRUE, packages that include a corpus
-#' are returned.
-#' 
-#' If object is a partition or partition_bundle-object, the corpus the
-#' respective object is derived from is returned.
-#' 
-#' @param object the object
+#' Calling \code{corpus()} will return a \code{data.frame} listing the corpora
+#' described in the active registry directory, and some basic information on the
+#' corpora. If \code{object} is an object inheriting from the \code{textstat},
+#' or the \code{bundle} class, the corpus used to generate the object is
+#' returned.
+#' @param object An object inheriting from the \code{textstat} or \code{bundle} superclasses.
 #' @exportMethod corpus
 #' @rdname corpus-method
+#' @examples
+#' use("polmineR")
+#' corpus()
+#' 
+#' p <- partition("REUTERS", places = "kuwait")
+#' corpus(p)
+#' 
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
+#' corpus(pb)
 setGeneric("corpus", function(object) standardGeneric("corpus"))
 
 
 #' @rdname corpus-method
-setMethod("corpus", "partition", function(object) object@corpus)
+setMethod("corpus", "textstat", function(object) object@corpus)
 
 
-#' @exportMethod corpus
 #' @rdname corpus-method
 setMethod("corpus", "bundle", function(object){
   unique(sapply(object@objects, function(x) x@corpus))

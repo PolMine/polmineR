@@ -2,47 +2,39 @@
 % Please edit documentation in R/use.R
 \name{use}
 \alias{use}
-\title{Use a packaged corpus.}
+\title{Add corpora in R data packages to session registry.}
 \usage{
-use(pkg = NULL, lib.loc = .libPaths(),
-  dir = getOption("polmineR.defaultRegistry"), verbose = TRUE)
+use(pkg, lib.loc = .libPaths(), verbose = TRUE)
 }
 \arguments{
-\item{pkg}{package with a CWB indexed corpus to use (defaults to NULL)}
+\item{pkg}{A package including at least one CWB indexed corpus.}
 
-\item{lib.loc}{a character vector with path names of \code{R} libraries}
+\item{lib.loc}{A character vector with path names of \code{R} libraries.}
 
-\item{dir}{a registry directory, defaults to \code{getOption("polmineR.defaultRegistry")}}
-
-\item{verbose}{logical, whether to output status messages}
-}
-\value{
-the function returns invisibly the registry that was previously set
+\item{verbose}{Logical, whether to output status messages.}
 }
 \description{
-Use a CWB corpus shipped in a package, or reset registry directory.
+Use CWB indexed corpora in R data packages by adding registry file to session
+registry.
 }
 \details{
-If \code{pkg} is the name of a data package with a CWB indexed corpus,
-the function will reset the CORPUS_REGISTRY environment variable and
-re-direct the interfacing libraries (RcppCWB or rcqp) to the registry
-directory in the package. The registry directory is assumed to be the
-./extdata/cwb/registry subdirectory of the installed package.
+{pkg} is expected to be an installed data package that includes CWB indexed
+corpora. The \code{use}-function will add the registry files describing the
+corpus (or the corpora) to the session registry directory and adjust the path
+pointing to the data in the package.
 
-If \code{pkg} is NULL (default), calling \code{use} will 
-reset the registry directory to the directory defined by \code{dir}
-(defaults to the option \code{polmineR.defaultRegistry}, to return to the registry
-that was used when loading \code{polmineR}).
-
-When resetting the registry directory, templates for formatting fulltext
-output are reloaded.
+The registry files within the package are assumed to be in the subdirectory
+\code{./extdata/cwb/registry} of the installed package. The data directories
+for corpora are assumed to be in a subdirectory named after the corpus (lower
+case) in the package subdirectory \code{./extdata/cwb/indexed_corpora/}. When
+adding a corpus to the registry, templates for formatting fulltext output are
+reloaded.
 }
 \examples{
-# to get the registry directory of the sample data in the polmineR package
-system.file(package = "polmineR", "extdata", "cwb", "registry")
-
 use("polmineR")
+corpus()
 }
 \seealso{
-the worker to reset the registry is \code{registry_reset}
+To get the session registry registry, see \code{\link{registry}};
+  to reset the registry, see \code{\link{registry_reset}}.
 }
