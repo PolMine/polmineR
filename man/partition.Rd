@@ -55,6 +55,9 @@ minimize object size / memory consumption) in data.table with counts.}
 \item{mc}{Whether to use multicore (for counting terms).}
 
 \item{verbose}{Logical, whether to be verbose.}
+
+\item{slots}{Object slots that will be reported columns of \code{data.frame}
+summarizing \code{partition} objects in environment.}
 }
 \value{
 An object of the S4 class \code{partition}.

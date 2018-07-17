@@ -386,6 +386,8 @@ setMethod("partition", "character", function(
   p
 })
 
+#' @param slots Object slots that will be reported columns of \code{data.frame}
+#'   summarizing \code{partition} objects in environment.
 #' @details If \code{.Object} is an environment (typically \code{.GlobalEnv}),
 #'   the \code{partition} objects present in the environment are listed.
 #' @rdname partition
