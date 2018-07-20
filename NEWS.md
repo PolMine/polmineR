@@ -1,6 +1,17 @@
 # polmineR 0.7.9.9001
 * The `use`-function is limited now to activating the corpus in data packages. Having
 introduced the session registry, switching registry directories is not needed any more.
+* The `partition_bundle`-method for `context`-objects has been reworked entirely (and is working again);
+a new `partition`-method for `context`-objects has been introduced. Buth steps are intended for workflows
+for dictionary-based sentiment analysis.
+* A new `summary`-method for `partition`-class objects is introduced. If the Object has been weighed, the list
+that is returned will include a report on weights.
+* The `partition_bundle`-class, rather than inheriting from `bundle`-class directly, will now inherit from the `count_bundle`-class
+* The `weigh`-method is now implemented for the classes `count` and `count_bundle`. Via inheritance, it will also be available for `partition` and `partition_bundle`. Useful for dictionary-based sentiment analysis, for instance. There is an example that explains the workflow.
+* The `as.regions`-function has been turned into a `as.regions`-method to have a more generic tool.
+* The `size_coi`-slot of the `context`-object included the node; the node (i.e. matches for queries) is excluded now from the count of the size_coi.
+* Some refactoring of the `context`-method, so that full use of data.table speeds up things.
+* 
 
 # polmineR 0.7.9
 

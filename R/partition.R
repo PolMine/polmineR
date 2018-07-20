@@ -532,3 +532,28 @@ setMethod("partition", "Corpus", function(
   y
 })
 
+
+#' @param node A logical value, whether to include the node (i.e. query matches) in the region matrix
+#' generated when creating a \code{partition} from a \code{context}-object.
+#' @rdname partition
+setMethod("partition", "context", function(.Object, node = TRUE){
+  stopifnot(is.logical(node))
+  r <- as.regions(.Object, node = node)
+  y <- as(object = r, Class = "partition")
+  
+  y@name <- .Object@name
+  y@p_attribute = .Object@p_attribute
+  y@size <- size(y)
+
+  # Second, generate a list with data.table objects with counts
+  DT <- copy(.Object@cpos)
+  if (!node) DT <- subset(DT, DT[["position"]] != 0)
+  y@stat <- DT[, .N, by = c("hit_no", paste(.Object@p_attribute, "id", sep = "_"))]
+  
+  setnames(y@stat, old = "N", new = "count")
+  for (p_attr in .Object@p_attribute){
+    y@stat[[p_attr]] <- CQI$id2str(corpus = .Object@corpus, p_attribute = p_attr, id = y@stat[[paste(p_attr, "id", sep = "_")]])
+  }
+  y
+})
+

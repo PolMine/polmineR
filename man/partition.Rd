@@ -7,6 +7,7 @@
 \alias{partition,environment-method}
 \alias{partition,partition-method}
 \alias{partition,Corpus-method}
+\alias{partition,context-method}
 \title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
@@ -26,6 +27,8 @@ partition(.Object, ...)
 \S4method{partition}{Corpus}(.Object, def = NULL, name = "",
   encoding = NULL, regex = FALSE, xml = "flat",
   type = get_type(.Object), verbose = TRUE, ...)
+
+\S4method{partition}{context}(.Object, node = TRUE)
 }
 \arguments{
 \item{.Object}{A length-one character-vector, the CWB corpus to be used.}
@@ -58,6 +61,9 @@ minimize object size / memory consumption) in data.table with counts.}
 
 \item{slots}{Object slots that will be reported columns of \code{data.frame}
 summarizing \code{partition} objects in environment.}
+
+\item{node}{A logical value, whether to include the node (i.e. query matches) in the region matrix
+generated when creating a \code{partition} from a \code{context}-object.}
 }
 \value{
 An object of the S4 class \code{partition}.

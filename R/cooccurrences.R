@@ -64,10 +64,10 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param p_attribute the p-attribute of the tokens/the query
 #' @param s_attribute if provided, it will be checked that cpos do not extend beyond
 #' the region defined by the s-attribute 
-#' @param left no of tokens and to the left of the node word
-#' @param right no of tokens to the right of the node word
-#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
-#'   context (relevant only if query is nut NULL)
+#' @param left Number of tokens to the left of the query match.
+#' @param right Number of tokens to the right of the query match.
+#' @param stoplist Exclude a query hit from analysis if stopword(s) is/are in
+#'   context (relevant only if query is not NULL).
 #' @param positivelist character vector or numeric vector: include a query hit
 #'   only if token in positivelist is present. If positivelist is a character
 #'   vector, it is assumed to provide regex expressions (incredibly long if the
@@ -156,6 +156,9 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     
     # enrich partition if necessary
     if (!all(paste(.Object@p_attribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
+      # It may not seem logical that counts are performed for all p-attribute-combinations if
+      # we deal with more than p-attribute. But doing it selectively is much, much slower
+      # than the the comprehensive approach.
       .message("adding missing count for p-attribute ", .Object@p_attribute, " to partition", verbose = verbose)
       .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = verbose)
     }
@@ -163,9 +166,9 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     setkeyv(.Object@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
     setkeyv(.Object@partition@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
     .Object@stat <- .Object@partition@stat[.Object@stat]
-    for (pAttr in .Object@p_attribute){
-      if (paste("i", pAttr, sep = ".") %in% colnames(.Object@stat)){
-        .Object@stat[, eval(paste("i", pAttr, sep = ".")) := NULL, with = TRUE]
+    for (p_attr in .Object@p_attribute){
+      if (paste("i", p_attr, sep = ".") %in% colnames(.Object@stat)){
+        .Object@stat[, eval(paste("i", p_attr, sep = ".")) := NULL, with = TRUE]
       }
     }
     setnames(.Object@stat, old = "count", new = "count_partition")

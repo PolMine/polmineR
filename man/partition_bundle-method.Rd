@@ -19,8 +19,7 @@ partition_bundle(.Object, ...)
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE, xml = "flat", type = get_type(.Object), ...)
 
-\S4method{partition_bundle}{context}(.Object, mc = getOption("polmineR.mc"),
-  verbose = FALSE, progress = TRUE)
+\S4method{partition_bundle}{context}(.Object, node = TRUE)
 
 \S4method{partition_bundle}{partition_bundle}(.Object, s_attribute,
   prefix = character(), progress = TRUE, mc = getOption("polmineR.mc"))
@@ -45,6 +44,9 @@ partition_bundle(.Object, ...)
 \item{type}{The type of \code{partition} to generate.}
 
 \item{xml}{logical}
+
+\item{node}{A logical value, whether to include the node (i.e. query matches) in the region matrix
+generated when creating a \code{partition} from a \code{context}-object.}
 }
 \value{
 S4 class \code{partition_bundle}, with list of partition objects in slot 'objects'

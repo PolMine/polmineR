@@ -4,6 +4,7 @@
 \name{bundle-class}
 \alias{bundle-class}
 \alias{bundle}
+\alias{name<-,bundle,character-method}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
 \alias{names<-,bundle,character-method}
@@ -20,6 +21,8 @@
 \alias{as.list,bundle-method}
 \title{Bundle Class}
 \usage{
+\S4method{name}{bundle,character}(x) <- value
+
 \S4method{length}{bundle}(x)
 
 \S4method{names}{bundle}(x)

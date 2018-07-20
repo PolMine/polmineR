@@ -12,28 +12,14 @@ setMethod("show", "partition_bundle", function (object) {
     function(x) paste(x, "=", paste(object@s_attributes_fixed[[x]], collapse="/"))
   ))
   cat(sprintf("%-25s", "s-attributes Fixed:"), sFix[1], '\n')
-  if (length(sFix)>1) {for (i in length(sFix)){cat(sprintf("%-25s", " "), sFix[i], '\n')}}
+  if (length(sFix) > 1) for (i in length(sFix)) cat(sprintf("%-25s", " "), sFix[i], '\n')
   cat("\n")
 })
 
 #' @rdname partition_bundle-class
-setMethod("summary", "partition_bundle", function (object) {
-  summary <- data.frame(
-    partition = names(object@objects),
-    token = unlist(lapply(object@objects, function(x) x@size)),
-    stringsAsFactors = FALSE
+setMethod("summary", "partition_bundle", function (object)
+  do.call(rbind, lapply(object@objects, function(x) data.frame(summary(x))))
   )
-  pAttr <- unique(unlist(lapply(object@objects, function(x) x@p_attribute)))
-  if (length(pAttr) == 1){
-    raw <- lapply(pAttr, function(x) unlist(lapply(object@objects, function(y) nrow(y@stat))))
-    raw <- do.call(data.frame, raw)
-    colnames(raw) <- paste("unique_", pAttr, sep="")
-    summary <- data.frame(summary, raw, stringsAsFactors=FALSE)
-  }
-  rownames(summary) <- c(1:nrow(summary))
-  summary
-})
-
 
 
 
@@ -229,35 +215,57 @@ setMethod("as.partition_bundle", "list", function(.Object, ...){
   as(.Object, "bundle") # defined in bundle.R
 })
 
+
+#' @param node A logical value, whether to include the node (i.e. query matches) in the region matrix
+#' generated when creating a \code{partition} from a \code{context}-object.
 #' @exportMethod as.partition_bundle
 #' @rdname partition_bundle-method
-setMethod("partition_bundle", "context", function(.Object, mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE){
-  retval <- new(
+setMethod("partition_bundle", "context", function(.Object, node = TRUE){
+  
+  stopifnot(is.logical(node))
+  
+  DT <- copy(.Object@cpos)
+  setkeyv(x = DT, cols = c("hit_no", "cpos"))
+  if (!node) DT <- subset(DT, DT[["position"]] != 0)
+  
+  # First step, generate a list of data.tables with regions
+  .cpos_left_right <- function(.SD) list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
+  DT_list <- list(left = subset(DT, DT[["position"]] < 0), right = subset(DT, DT[["position"]] > 0))
+  if (node) DT_list[["node"]] <- subset(DT, DT[["position"]] == 0)
+  DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "hit_no"]))
+  setorderv(DT_regions, cols = "hit_no")
+  regions_list <- split(DT_regions, by = "hit_no")
+  
+  # Second, generate a list with data.table objects with counts
+  CNT <- DT[, .N, by = c("hit_no", paste(.Object@p_attribute, "id", sep = "_"))]
+  setnames(CNT, old = "N", new = "count")
+  for (p_attr in .Object@p_attribute){
+    CNT[[p_attr]] <- CQI$id2str(corpus = .Object@corpus, p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]])
+  }
+  count_list <- split(CNT, by = "hit_no")
+  
+  partition_objects <- lapply(
+    1L:length(.Object),
+    function(i){
+      new(
+        "partition",
+        corpus = .Object@corpus,
+        encoding = .Object@encoding,
+        cpos = as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")]),
+        xml = .Object@partition@xml,
+        p_attribute = .Object@p_attribute,
+        stat = count_list[[i]][, "hit_no" := NULL]
+      )
+    }
+  )
+  new(
     "partition_bundle",
-    corpus = .Object@corpus, encoding = .Object@encoding,
+    corpus = .Object@corpus,
+    encoding = .Object@encoding,
+    p_attribute = .Object@p_attribute,
+    objects = partition_objects,
     explanation = "this partition_bundle is derived from a context object"
   )
-  .makeNewPartition <- function(cpos, contextObject, ...){
-    newPartition <- new(
-      "partition",
-      corpus = contextObject@corpus,
-      encoding = contextObject@encoding,
-      cpos = matrix(c(cpos[["left"]][1], cpos[["right"]][length(cpos[["right"]])]), ncol = 2),
-      stat = data.table()
-    )
-    newPartition <- enrich(newPartition, size = TRUE, p_attribute = contextObject@p_attribute, verbose = verbose)
-    newPartition@strucs <- c(
-      CQI$cpos2struc(contextObject@corpus, contextObject@s_attribute, newPartition@cpos[1,1])
-      :
-        CQI$cpos2struc(contextObject@corpus, contextObject@s_attribute, newPartition@cpos[1,2])
-    )
-    newPartition
-  }
-  retval@objects <- blapply(
-    .Object@cpos, f = .makeNewPartition,
-    contextObject = .Object, mc = mc, verbose = verbose, progress = progress
-  )
-  retval
 })
 
 #' @rdname partition_bundle-class

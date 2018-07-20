@@ -47,12 +47,12 @@ cooccurrences(.Object, ...)
 \item{s_attribute}{if provided, it will be checked that cpos do not extend beyond
 the region defined by the s-attribute}
 
-\item{left}{no of tokens and to the left of the node word}
+\item{left}{Number of tokens to the left of the query match.}
 
-\item{right}{no of tokens to the right of the node word}
+\item{right}{Number of tokens to the right of the query match.}
 
-\item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
-context (relevant only if query is nut NULL)}
+\item{stoplist}{Exclude a query hit from analysis if stopword(s) is/are in
+context (relevant only if query is not NULL).}
 
 \item{positivelist}{character vector or numeric vector: include a query hit
 only if token in positivelist is present. If positivelist is a character

@@ -84,7 +84,11 @@ setMethod(
       return( CQI$attributes(.Object@corpus, "s") )
     } else {
       if (length(s_attribute) == 1){
-        if (.Object@xml == "flat" || .Object@s_attribute_strucs == s_attribute){
+        # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
+        # is necessary because there are scenarios when these slots are not defined.
+        xml_is_flat <- if (length(.Object@xml) > 0) if (.Object@xml == "flat") TRUE else FALSE else FALSE
+        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
+        if (xml_is_flat || s_attr_strucs){
           len1 <- CQI$attribute_size(.Object@corpus, .Object@s_attribute_strucs)
           len2 <- CQI$attribute_size(.Object@corpus, s_attribute)
           if (len1 != len2){

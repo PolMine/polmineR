@@ -50,6 +50,15 @@ setClass(
 )
 
 
+#' @exportMethod name<-
+#' @rdname bundle
+setReplaceMethod("name", signature = c(x = "bundle", value = "character"), function(x, value) {
+  names(x@objects) <- value
+  for (i in 1L:length(x)) x@objects[[i]]@name <- value[[i]]
+  x
+})
+
+
 
 
 
@@ -269,6 +278,7 @@ setMethod("length", "count", function(x) x@size)
 #' @slot xml Object of class \code{character}, whether the xml is flat or nested.
 #' @slot s_attribute_strucs Object of class \code{character} the base node 
 #' @slot call Object of class \code{character} the call that generated the partition 
+#' @param object A \code{partition} object.
 #' @param .Object A \code{partition} object.
 #' @param p_attribute a p-attribute (for enriching) / performing count.
 #' @param verbose \code{logical} value, whether to output messages
@@ -301,7 +311,37 @@ setClass(
 )
 
 
-
+#' @rdname partition_class
+setMethod("summary", "partition", function(object){
+  y <- list(
+    name = if (length(name(object)) > 0) name(object) else NA,
+    size = size(object)
+    )
+  if (nrow(object@stat) > 0){
+    y[["p_attribute"]] <- paste(object@p_attribute, collapse = "|")
+    y[["unique"]] <- nrow(object@stat)
+    if ("weight" %in% colnames(object@stat)){
+      dt_positive <- subset(object@stat, object@stat[["weight"]] > 0)
+      if (nrow(dt_positive) > 0){
+        y[["positive_n"]] <- sum(dt_positive[["count"]])
+        y[["positive_share"]] <- y[["positive_n"]] / y[["size"]]
+        y[["positive_weighed"]] <- sum(dt_positive[["count"]] * dt_positive[["weight"]])
+      } else {
+        y <- c(y, list(positive_n = 0, positive_share = 0, positive_weighed = 0))
+      }
+      
+      dt_negative <- subset(object@stat, object@stat[["weight"]] < 0)
+      if (nrow(dt_negative) > 0){
+        y[["negative_n"]] <- sum(dt_negative[["count"]])
+        y[["negative_share"]] <- y[["negative_n"]] / y[["size"]]
+        y[["negative_weighed"]] <- sum(dt_negative[["count"]] * dt_negative[["weight"]])
+      } else {
+        y <- c(y, list(negative_n = 0, negative_share = 0, negative_weighed = 0))
+      }
+    }
+  }
+  y
+})
 
 
 
@@ -313,21 +353,21 @@ setClass(
 #' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
 #' "cpos" and "position".
 #' 
-#' @slot query Object of class \code{"character"}, the query/node examined
-#' @slot count Object of class \code{"numeric"} number of hits
-#' @slot partition Object of class \code{"partition"}, the partition the context object is based on
-#' @slot size_partition Object of class \code{"integer"} the size of the partition
-#' @slot left Object of class \code{"numeric"} number of tokens to the left
-#' @slot right Object of class \code{"numeric"} number of tokens to the right
-#' @slot size Object of class \code{"numeric"} number of tokens in the right and left context
-#' @slot s_attribute Object of class \code{"character"} s-attribute
-#' @slot p_attribute Object of class \code{"character"} p-attribute of the query
-#' @slot corpus Object of class \code{"character"} the CWB corpus used
-#' @slot stat Object of class \code{"data.table"} statistics of the analysis
-#' @slot encoding Object of class \code{"character"} encoding of the corpus
-#' @slot cpos Object of class \code{"list"} corpus positions of the hits
-#' @slot method Object of class \code{"character"} statistical test used
-#' @slot call Object of class \code{"character"} call that generated the object
+#' @slot query The query used/node examined (\code{character}).
+#' @slot count An \code{integer} value, the number of hits.
+#' @slot partition The \code{partition} the \code{context} object is based on.
+#' @slot size_partition A length-one \code{integer}, the size of the partition.
+#' @slot left An \code{integer} value, the number of tokens to the left.
+#' @slot right An \code{integer} value, the number of tokens to the right.
+#' @slot size An \code{integer} value, number of tokens in the right and left context of the node.
+#' @slot s_attribute An s-attribute (\code{character}).
+#' @slot p_attribute The p-attribute of the query (\code{character}).
+#' @slot corpus The CWB corpus used (\code{character}).
+#' @slot stat A \code{data.table}, the statistics of the analysis.
+#' @slot encoding Object of class \code{character}, encoding of the corpus.
+#' @slot cpos A \code{data.table}, with the columns hit_no, cpos, position, word_id.
+#' @slot method A \code{character}-vector, statistical test used.
+#' @slot call Object of class \code{character}, call that generated the object.
 #'     
 #' @param .Object object
 #' @param x a context object
@@ -347,7 +387,7 @@ setClass(
 setClass("context",
          slots = c(
            query = "character",
-           count = "numeric",
+           count = "integer",
            partition = "partition",
            size_partition = "integer",
            left = "integer",
@@ -360,7 +400,10 @@ setClass("context",
          contains = c("features", "textstat")
 )
 
-
+#' @details The \code{length}-method will return the number of hits that were achieved.
+#' @rdname context-class
+#' @exportMethod length
+setMethod("length", "context", function(x) as.integer(x@count))
 
 
 #' Cooccurrences class.
@@ -630,7 +673,7 @@ setClass("partition_bundle",
            xml = "character",
            call = "character"
          ),
-         contains = "bundle"
+         contains = "count_bundle"
 )
 
 
