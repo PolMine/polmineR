@@ -6,37 +6,39 @@
 \alias{highlight,character-method}
 \alias{highlight,html-method}
 \alias{highlight,kwic-method}
-\title{Highlight tokens.}
+\title{Highlight tokens in output.}
 \usage{
 highlight(.Object, ...)
 
-\S4method{highlight}{character}(.Object, highlight = list())
+\S4method{highlight}{character}(.Object, highlight = list(), ...)
 
-\S4method{highlight}{html}(.Object, highlight = list())
+\S4method{highlight}{html}(.Object, highlight = list(), ...)
 
 \S4method{highlight}{kwic}(.Object, highlight = list(), regex = FALSE,
-  perl = TRUE, verbose = TRUE)
+  perl = TRUE, verbose = TRUE, ...)
 }
 \arguments{
-\item{.Object}{a \code{html} or \code{character} object with html, or a 
-\code{kwic} object}
+\item{.Object}{A \code{html}, \code{character}, a \code{kwic} object.}
 
-\item{...}{further parameters (unused)}
+\item{...}{Terms to be highlighted can be passed in as named character
+vectors of terms (or regular expressions); the name then needs to be a
+valid color name.}
 
-\item{highlight}{a \code{"list"} of character or integer vectors, the names 
+\item{highlight}{A \code{list} of character or integer vectors, the names
 need to provide the colors, the values of the vector the term to be matched
-or a corpus position}
+or a corpus position.}
 
-\item{regex}{logical, whether character vectors give regular expressions}
+\item{regex}{Logical, whether character vectors are interpreted as regular
+expressions.}
 
-\item{perl}{logical, whether to use perl-style regular expressions for
-highlighting when regex is TRUE}
+\item{perl}{Logical, whether to use perl-style regular expressions for
+highlighting when regex is \code{TRUE}.}
 
-\item{verbose}{logical, whether to output verbose messages}
+\item{verbose}{Logical, whether to output messages.}
 }
 \description{
-Highlight tokens based on exact match, a regular expression or corpus
-position in kwic output or html document.
+Highlight tokens in fulltext based on exact match, a regular expression or
+corpus position in \code{kwic} output or \code{html} document.
 }
 \examples{
 use("polmineR")

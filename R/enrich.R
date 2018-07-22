@@ -139,7 +139,6 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
       } else {
         .message("getting token id for p-attribute:", pAttr, verbose = verbose)
         ids <- CQI$cpos2id(.Object@corpus, pAttr, .Object@cpos[["cpos"]])
-        .message("assigning to data.table", verbose = verbose)
         .Object@cpos[[colname]] <- ids
       }
     }

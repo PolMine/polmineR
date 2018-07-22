@@ -17,9 +17,11 @@ setMethod("show", "partition_bundle", function (object) {
 })
 
 #' @rdname partition_bundle-class
-setMethod("summary", "partition_bundle", function (object)
-  do.call(rbind, lapply(object@objects, function(x) data.frame(summary(x))))
-  )
+setMethod("summary", "partition_bundle", function (object){
+  y <- do.call(rbind, lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE)))
+  rownames(y) <- NULL
+  y
+})
 
 
 

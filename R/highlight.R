@@ -2,21 +2,23 @@
 NULL
 
 
-#' Highlight tokens.
-#' 
-#' Highlight tokens based on exact match, a regular expression or corpus
-#' position in kwic output or html document.
-#' 
-#' @param .Object a \code{html} or \code{character} object with html, or a 
-#'   \code{kwic} object
-#' @param highlight a \code{"list"} of character or integer vectors, the names 
+#' Highlight tokens in output.
+#'
+#' Highlight tokens in fulltext based on exact match, a regular expression or
+#' corpus position in \code{kwic} output or \code{html} document.
+#'
+#' @param .Object A \code{html}, \code{character}, a \code{kwic} object.
+#' @param highlight A \code{list} of character or integer vectors, the names
 #'   need to provide the colors, the values of the vector the term to be matched
-#'   or a corpus position
-#' @param regex logical, whether character vectors give regular expressions
-#' @param perl logical, whether to use perl-style regular expressions for
-#'   highlighting when regex is TRUE
-#' @param verbose logical, whether to output verbose messages
-#' @param ... further parameters (unused)
+#'   or a corpus position.
+#' @param regex Logical, whether character vectors are interpreted as regular
+#'   expressions.
+#' @param perl Logical, whether to use perl-style regular expressions for
+#'   highlighting when regex is \code{TRUE}.
+#' @param verbose Logical, whether to output messages.
+#' @param ... Terms to be highlighted can be passed in as named character
+#'   vectors of terms (or regular expressions); the name then needs to be a
+#'   valid color name.
 #' @name highlight
 #' @rdname highlight
 #' @exportMethod highlight
@@ -49,7 +51,8 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
 #' @rdname highlight
-setMethod("highlight", "character", function(.Object, highlight = list()){
+setMethod("highlight", "character", function(.Object, highlight = list(), ...){
+  if (length(list(...)) > 0) highlight <- list(...)
   if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' needs to be installed for highlighting using cpos/ids")
   doc <- xml2::read_html(.Object)
   for (color in names(highlight)){
@@ -75,21 +78,23 @@ setMethod("highlight", "character", function(.Object, highlight = list()){
 })
 
 #' @rdname highlight
-setMethod("highlight", "html", function(.Object, highlight = list()){
+setMethod("highlight", "html", function(.Object, highlight = list(), ...){
+  if (length(list(...)) > 0) highlight <- list(...)
   htmltools::HTML(
     highlight(as.character(.Object), highlight = highlight)
   )
 })
 
 #' @rdname highlight
-setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, verbose = TRUE){
+setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, verbose = TRUE, ...){
+  if (length(list(...)) > 0) highlight <- list(...)
   for (color in names(highlight)){
     if (regex){
       regexMatchList <- lapply(
         highlight[[color]],
         function(expr) grep(expr, .Object@cpos[["word"]], perl = perl)
       )
-      toHighlight <- 1:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
+      toHighlight <- 1L:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
     } else {
       toHighlight <- .Object@cpos[["word"]] %in% highlight[[color]]
     }

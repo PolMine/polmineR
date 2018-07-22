@@ -1,13 +1,13 @@
 #' @include S4classes.R
 NULL
 
-#' Add tooltips to html document.
+#' Add tooltips to text output.
 #' 
 #' Highlight tokens based on exact match, a regular expression or corpus
-#' position in kwic output or html document.
+#' position in \code{kwic} output or html document.
 #' 
-#' @param .Object a \code{html} or \code{character} object with html
-#' @param tooltips a named \code{"list"} of character vectors (length 1), the 
+#' @param .Object A \code{html} or \code{character} object with html.
+#' @param tooltips A named \code{list} of character vectors (length 1), the 
 #'   names need to match colors in the list provided to param \code{highlight}, 
 #'   the value of the character vector is the tooltip to be displayed
 #' @name tooltips
@@ -17,7 +17,7 @@ NULL
 #' use("polmineR")
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
-#' Y <- highlight(H, list(lightgreen = "higher"))
+#' Y <- highlight(H, lightgreen = "higher")
 #' T <- tooltips(Y, list(lightgreen = "Further information"))
 #' T
 #' 
