@@ -425,7 +425,6 @@ setMethod("length", "context", function(x) as.integer(x@count))
 #' @slot pos  Object of class \code{character} part-of-speech tags filtered
 #' @slot method  Object of class \code{character} statistical test(s) used
 #' @slot cutoff  Object of class \code{list} cutoff levels that have been applied
-#' @slot svg Object of class \code{character} - valid XML with svg representation
 #' @aliases cooccurrences-class
 #' @docType class
 #' @exportClass cooccurrences

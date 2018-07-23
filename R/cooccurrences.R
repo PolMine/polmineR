@@ -179,7 +179,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   }
   
   # finishing
-  if (nrow(.Object@stat) > 0){
+  if (nrow(.Object@stat) > 0L){
     setkeyv(.Object@stat, .Object@p_attribute)
     for (x in grep("_id$", colnames(.Object@stat), value = TRUE)) .Object@stat[[x]] <- NULL
     setcolorder(
@@ -189,9 +189,14 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     setorderv(.Object@stat, cols = method[1], order = -1L)
   }
   
-  retval <- new("cooccurrences")
-  slotsToGet <- slotNames(retval)[-grep("partition", slotNames(retval))]
-  for (x in slotsToGet) slot(retval, x) <- slot(.Object, x)
+  retval <- new(
+    "cooccurrences",
+    stat = data.table(), cpos = data.table(),
+    partition = new("partition", stat = data.table(), size = 0L),
+    count = 0L
+    )
+  slots_to_get <- slotNames(retval)[-grep("partition", slotNames(retval))]
+  for (x in slots_to_get) slot(retval, x) <- slot(.Object, x)
   retval
 })
 

@@ -18,17 +18,16 @@
   }
   
   options(
-    "polmineR.corpus" = "REUTERS",
     "polmineR.p_attribute" = "word",
-    "polmineR.left" = 5,
-    "polmineR.right" = 5,
+    "polmineR.left" = 5L,
+    "polmineR.right" = 5L,
     "polmineR.lineview" = FALSE,
     "polmineR.meta " =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
-    "polmineR.smtpServer" = "",
-    "polmineR.smtpPort" = "",
-    "polmineR.email" = "",
+    "polmineR.smtp_server" = if (length(getOption("polmineR.smtp_server")) > 0) getOption("polmineR.smtp_server") else "",
+    "polmineR.smtp_port" = if (length(getOption("polmineR.smtp_port")) > 0) getOption("polmineR.smtp_port") else "",
+    "polmineR.email" = if (length(getOption("polmineR.email")) > 0) getOption("polmineR.email") else "",
     "polmineR.browse" = FALSE,
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.templates" = list(),

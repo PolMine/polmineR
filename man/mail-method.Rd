@@ -4,45 +4,34 @@
 \name{mail}
 \alias{mail}
 \alias{mail-method}
-\alias{mail,partition-method}
-\alias{mail,cooccurrences-method}
-\alias{mail,features-method}
-\alias{mail,kwic-method}
+\alias{mail,textstat-method}
 \alias{mail,data.frame-method}
+\alias{mail,kwic-method}
 \title{Mail result.}
 \usage{
-mail(object, ...)
+mail(.Object, ...)
 
-\S4method{mail}{partition}(object, to = NULL,
-  filename = "drillerExport.html", what = "html")
+\S4method{mail}{textstat}(.Object, to = getOption("polmineR.email"),
+  rows = 1L:min(250L, nrow(.Object)))
 
-\S4method{mail}{cooccurrences}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
+\S4method{mail}{data.frame}(.Object, to = getOption("polmineR.email"),
+  filename = tempfile(fileext = ".xlsx"), rows = 1L:min(250L,
+  nrow(.Object)))
 
-\S4method{mail}{features}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
-
-\S4method{mail}{kwic}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
-
-\S4method{mail}{data.frame}(object, to = NULL, nrow = NULL,
-  fileFormat = c("csv", "xlsx"))
+\S4method{mail}{kwic}(.Object, to = getOption("polmineR.email"),
+  rows = 1L:min(250L, nrow(.Object)))
 }
 \arguments{
-\item{object}{object to deliver}
+\item{.Object}{The object to deliver.}
 
-\item{...}{further parameters}
+\item{...}{Further parameters.}
 
-\item{to}{the receiver of the mail message}
+\item{to}{The recipient of the mail message.}
 
-\item{filename}{filename}
+\item{rows}{The number of rows of the table (if NULL, the whole table will be sent).}
 
-\item{what}{what to send (defaults to "html")}
-
-\item{nrow}{the number of rows of the table (if NULL, the whole table will be sent)}
-
-\item{fileFormat}{csv or xlsx, or both}
+\item{filename}{The filename of the (temporary) xlsx-file that is generated.}
 }
 \description{
-Mail a result (to yourself).
+Send out a mail with the statistics of an object attached as an xlsx-file.
 }

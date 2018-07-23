@@ -22,7 +22,7 @@ Imports:
 Suggests:
     markdown,
     htmltools,
-    xlsx,
+    openxlsx,
     sendmailR,
     knitr,
     shiny,
@@ -93,6 +93,7 @@ Collate:
     'renamed.R'
     's_attributes.R'
     'size.R'
+    'store.R'
     't_test.R'
     'templates.R'
     'terms.R'

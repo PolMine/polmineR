@@ -15,7 +15,7 @@ setMethod("ll", "context", function(.Object){
   size_window <- .Object@size
   size_partition <- .Object@size_partition
   .Object@stat[, "exp_window" := size_window * (.Object@stat[["count_partition"]] / size_partition)]
-  .Object@stat[, "exp_partition" := (size_partition - size_window) * .Object@stat[["count_partition"]] / size_partition]
+  .Object@stat[, "exp_partition" := (size_partition - size_window) * (.Object@stat[["count_partition"]] / size_partition)]
   .Object@stat[, "ll" := 2 * (.Object@stat[["count_window"]] * log(.Object@stat[["count_window"]]/.Object@stat[["exp_window"]]) + (.Object@stat[["count_partition"]] - .Object@stat[["exp_window"]]) * log((.Object@stat[["count_partition"]] - .Object@stat[["exp_window"]])/.Object@stat[["exp_partition"]]))]
   direction <- ifelse(.Object@stat[["count_window"]] < .Object@stat[["exp_window"]], -1, 1)
   .Object@stat[, "ll" := ll * direction]
