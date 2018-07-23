@@ -14,6 +14,7 @@ that is returned will include a report on weights.
 * Some refactoring of the `context`-method, so that full use of data.table speeds up things.
 * `highlight`-method allows definitions of terms to be highlighted to be passed in via three dots (...);
 no explicit list necessary.
+* `highlight`-method implemented now for class `kwic`.
 
 # polmineR 0.7.9
 

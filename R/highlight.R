@@ -2,15 +2,19 @@
 NULL
 
 
-#' Highlight tokens in output.
+#' Highlight tokens in text output.
 #'
 #' Highlight tokens in fulltext based on exact match, a regular expression or
 #' corpus position in \code{kwic} output or \code{html} document.
 #'
+#' If \code{highlight} is a character vector, the names of the vector are
+#' interpreted as colors. If \code{highlight} is a list, the names of the list
+#' are considered as colors. Values can be character values or integer values
+#' with token ids. Colors are inserted into the output html and need to be
+#' digestable for the browser used.
+#' 
 #' @param .Object A \code{html}, \code{character}, a \code{kwic} object.
-#' @param highlight A \code{list} of character or integer vectors, the names
-#'   need to provide the colors, the values of the vector the term to be matched
-#'   or a corpus position.
+#' @param highlight A character vector, or a list of character or integer vectors.
 #' @param regex Logical, whether character vectors are interpreted as regular
 #'   expressions.
 #' @param perl Logical, whether to use perl-style regular expressions for
@@ -46,6 +50,10 @@ NULL
 #' K <- kwic("REUTERS", query = "barrel")
 #' K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
 #' if (interactive()) K2
+#' 
+#' # use character vector for output, not list
+#' K2 <- highlight(K, highlight = c(green = "pric.", red = "reduction", red = "decrease", orange = "dropped"), regex = TRUE)
+#' if (interactive()) K2
 setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
@@ -53,6 +61,7 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 #' @rdname highlight
 setMethod("highlight", "character", function(.Object, highlight = list(), ...){
   if (length(list(...)) > 0) highlight <- list(...)
+  if (is.character(highlight)) highlight <- split(x = unname(highlight), f = names(highlight))
   if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' needs to be installed for highlighting using cpos/ids")
   doc <- xml2::read_html(.Object)
   for (color in names(highlight)){
@@ -88,6 +97,7 @@ setMethod("highlight", "html", function(.Object, highlight = list(), ...){
 #' @rdname highlight
 setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, verbose = TRUE, ...){
   if (length(list(...)) > 0) highlight <- list(...)
+  if (is.character(highlight)) highlight <- split(x = unname(highlight), f = names(highlight))
   for (color in names(highlight)){
     if (regex){
       regexMatchList <- lapply(

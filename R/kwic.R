@@ -9,15 +9,19 @@ setMethod("show", "kwic", function(object){
   if (lineview == FALSE){
     df <- object@table
     df[["hit_no"]] <- NULL
-    retvalRaw <- datatable(df, escape = FALSE)
-    retvalRaw <- formatStyle(retvalRaw, "node", color="blue", textAlign="center")
-    retval <- formatStyle(retvalRaw, "left", textAlign="right")
+    retvalRaw <- DT::datatable(df, escape = FALSE)
+    retvalRaw <- formatStyle(retvalRaw, "node", color = "blue", textAlign = "center")
+    retval <- formatStyle(retvalRaw, "left", textAlign = "right")
   } else {
     object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
-    object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse=" "))
+    object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
     for (x in c("left", "node", "right", "hit_no")) object@table[[x]] <- NULL
     retval <- DT::datatable(object@table, escape = FALSE)
   }
+  retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(
+      name = "tooltips", version = "0.0.0",
+      src = system.file(package = "polmineR", "css"), stylesheet = "tooltips.css"
+    )
   show(retval)
 })
 

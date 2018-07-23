@@ -7,27 +7,33 @@ NULL
 #' position in \code{kwic} output or html document.
 #' 
 #' @param .Object A \code{html} or \code{character} object with html.
-#' @param tooltips A named \code{list} of character vectors (length 1), the 
-#'   names need to match colors in the list provided to param \code{highlight}, 
-#'   the value of the character vector is the tooltip to be displayed
+#' @param tooltips A named \code{list} of character vectors, the names need to
+#'   match colors in the list provided to param \code{highlight}. The value of
+#'   the character vector is the tooltip to be displayed.
+#' @param regex Logical, whether character vector values of argument
+#'   \code{tooltips} are interpreted as regular expressions.
+#' @param ... Further arguments are interpreted as assignments of tooltips to
+#'   tokens.
 #' @name tooltips
 #' @rdname tooltips
 #' @exportMethod tooltips
 #' @examples
 #' use("polmineR")
+#' 
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
 #' Y <- highlight(H, lightgreen = "higher")
 #' T <- tooltips(Y, list(lightgreen = "Further information"))
-#' T
+#' if (interactive()) T
 #' 
+#' # Using the tooltips-method in a pipe ...
 #' if (require("magrittr")){
 #'   P %>%
 #'     html() %>%
-#'     highlight(list(yellow = c("barrels", "oil", "gas"))) %>%
+#'     highlight(yellow = c("barrels", "oil", "gas")) %>%
 #'     tooltips(list(yellow = "energy"))
 #' }
-setGeneric("tooltips", function(.Object, tooltips) standardGeneric("tooltips"))
+setGeneric("tooltips", function(.Object, tooltips, ...) standardGeneric("tooltips"))
 
 
 
@@ -70,4 +76,50 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
 setMethod("tooltips", "html", function(.Object, tooltips = list()){
   if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
   htmltools::HTML(tooltips(as.character(.Object), tooltips = tooltips))
+})
+
+
+#' @rdname tooltips
+setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
+  if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
+  
+  if (length(list(...)) > 0) tooltips <- list(...)
+  
+  # If argument tooltips is a list, turn it into named character vector,
+  # the names of the list will then be the names of the vector.
+  if (is.list(tooltips)) tooltips <- do.call(
+    c,
+    lapply(
+      1L:length(tooltips),
+      function(i) setNames(tooltips[[i]], rep(names(tooltips)[[i]], times = length(tooltips[[i]])))
+      )
+  )
+  
+  if (regex){
+    pb <- txtProgressBar(min = 0, max = length(tooltips))
+    for (i in 1L:length(tooltips)){
+      .Object@cpos[["word"]] <- ifelse(
+        grepl(sprintf("^(<.*?>|)%s(<.*?>|)$", unname(tooltips[[i]])), .Object@cpos[["word"]]),
+        sprintf('<span class="tooltip">%s<span class="tooltiptext">%s</span></span>', .Object@cpos[["word"]], names(tooltips)[[i]]),
+        .Object@cpos[["word"]]
+      )
+      setTxtProgressBar(pb, value = i)
+    }
+    close(pb)
+  } else {
+    tips_rev <- setNames(object = names(tooltips), nm = unname(tooltips))
+    if (length(names(tips_rev)) > length(unique(names(tips_rev)))){
+      tips_rev <- sapply(split(x = unname(tips_rev), f = names(tips_rev)), function(x) x[1])
+    }
+    words <- gsub("^(<.*?>|)(.*?)(<.*?>|)$", "\\2", .Object@cpos[["word"]], perl = TRUE)
+    tips_vec <- tips_rev[words]
+    
+    .Object@cpos[["word"]] <- ifelse(
+      is.na(tips_vec),
+      .Object@cpos[["word"]],
+      sprintf('<span class="tooltip">%s<span class="tooltiptext">%s</span></span>', .Object@cpos[["word"]], tips_vec)
+    )
+  }
+  .Object <- enrich(.Object, table = TRUE)
+  .Object
 })

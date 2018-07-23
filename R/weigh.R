@@ -103,7 +103,9 @@ setMethod("weigh", "DocumentTermMatrix", function(.Object, method = "tfidf"){
 #' words_positive <- SentiWS[weight > 0][["word"]]
 #' words_negative <- SentiWS[weight < 0][["word"]]
 #' kwic("GERMAPARL", query = "Islam", positivelist = c(words_positive, words_negative)) %>%
-#'   highlight(lightgreen = words_positive, orange = words_negative)
+#'   highlight(lightgreen = words_positive, orange = words_negative) %>%
+#'   tooltips(setNames(SentiWS[["word"]], SentiWS[["weight"]]))
+#'   
 #' }
 #' }
 #' @rdname weigh-method

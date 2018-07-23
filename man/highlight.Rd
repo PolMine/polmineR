@@ -6,7 +6,7 @@
 \alias{highlight,character-method}
 \alias{highlight,html-method}
 \alias{highlight,kwic-method}
-\title{Highlight tokens in output.}
+\title{Highlight tokens in text output.}
 \usage{
 highlight(.Object, ...)
 
@@ -24,9 +24,7 @@ highlight(.Object, ...)
 vectors of terms (or regular expressions); the name then needs to be a
 valid color name.}
 
-\item{highlight}{A \code{list} of character or integer vectors, the names
-need to provide the colors, the values of the vector the term to be matched
-or a corpus position.}
+\item{highlight}{A character vector, or a list of character or integer vectors.}
 
 \item{regex}{Logical, whether character vectors are interpreted as regular
 expressions.}
@@ -39,6 +37,13 @@ highlighting when regex is \code{TRUE}.}
 \description{
 Highlight tokens in fulltext based on exact match, a regular expression or
 corpus position in \code{kwic} output or \code{html} document.
+}
+\details{
+If \code{highlight} is a character vector, the names of the vector are
+interpreted as colors. If \code{highlight} is a list, the names of the list
+are considered as colors. Values can be character values or integer values
+with token ids. Colors are inserted into the output html and need to be
+digestable for the browser used.
 }
 \examples{
 use("polmineR")
@@ -63,5 +68,9 @@ if (require("magrittr")){
 # use highlight for kwic output
 K <- kwic("REUTERS", query = "barrel")
 K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
+if (interactive()) K2
+
+# use character vector for output, not list
+K2 <- highlight(K, highlight = c(green = "pric.", red = "reduction", red = "decrease", orange = "dropped"), regex = TRUE)
 if (interactive()) K2
 }

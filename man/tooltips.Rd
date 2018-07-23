@@ -5,37 +5,48 @@
 \alias{tooltips}
 \alias{tooltips,character-method}
 \alias{tooltips,html-method}
-\title{Add tooltips to html document.}
+\alias{tooltips,kwic-method}
+\title{Add tooltips to text output.}
 \usage{
-tooltips(.Object, tooltips)
+tooltips(.Object, tooltips, ...)
 
 \S4method{tooltips}{character}(.Object, tooltips = list())
 
 \S4method{tooltips}{html}(.Object, tooltips = list())
+
+\S4method{tooltips}{kwic}(.Object, tooltips, regex = FALSE, ...)
 }
 \arguments{
-\item{.Object}{a \code{html} or \code{character} object with html}
+\item{.Object}{A \code{html} or \code{character} object with html.}
 
-\item{tooltips}{a named \code{"list"} of character vectors (length 1), the 
-names need to match colors in the list provided to param \code{highlight}, 
-the value of the character vector is the tooltip to be displayed}
+\item{tooltips}{A named \code{list} of character vectors, the names need to
+match colors in the list provided to param \code{highlight}. The value of
+the character vector is the tooltip to be displayed.}
+
+\item{...}{Further arguments are interpreted as assignments of tooltips to
+tokens.}
+
+\item{regex}{Logical, whether character vector values of argument
+\code{tooltips} are interpreted as regular expressions.}
 }
 \description{
 Highlight tokens based on exact match, a regular expression or corpus
-position in kwic output or html document.
+position in \code{kwic} output or html document.
 }
 \examples{
 use("polmineR")
+
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)
-Y <- highlight(H, list(lightgreen = "higher"))
+Y <- highlight(H, lightgreen = "higher")
 T <- tooltips(Y, list(lightgreen = "Further information"))
-T
+if (interactive()) T
 
+# Using the tooltips-method in a pipe ...
 if (require("magrittr")){
   P \%>\%
     html() \%>\%
-    highlight(list(yellow = c("barrels", "oil", "gas"))) \%>\%
+    highlight(yellow = c("barrels", "oil", "gas")) \%>\%
     tooltips(list(yellow = "energy"))
 }
 }
