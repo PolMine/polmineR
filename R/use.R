@@ -29,6 +29,7 @@ NULL
 #' corpus()
 #' @seealso To get the session registry registry, see \code{\link{registry}};
 #'   to reset the registry, see \code{\link{registry_reset}}.
+#' @importFrom RcppCWB cqp_reset_registry 
 use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
   
   if (!pkg %in% unname(installed.packages(lib.loc = lib.loc)[,"Package"]))
@@ -48,6 +49,9 @@ use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
     )
     set_template(toupper(corpus))
   }
+  # If CQP has been initialized before, it will not yet now about the
+  # corpora that have been added
+  if (cqp_is_initialized()) cqp_reset_registry(registry())
   
   invisible(NULL)
 }  
