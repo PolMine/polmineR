@@ -86,6 +86,7 @@ setMethod("context", "partition", function(
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
   left <- as.integer(left) # input may be numeric
   right <- as.integer(right) # input may be numeric
   
@@ -239,7 +240,11 @@ setMethod("context", "character", function(
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
 
   C <- Corpus$new(.Object)
-  # C$count(p_attribute, decode = FALSE)
+  # There is a potential overhead of performing the count here: When context-method
+  # is called by kwic, the count is not needed. However, if context is called by
+  # cooccurrences, it is much, much faster (for one p-attribute) having done the 
+  # count here for the entire corpus.
+  if (length(p_attribute) == 1L) C$count(p_attribute, decode = FALSE)
   context(
     C$as.partition(), query = query, cqp = is.cqp,
     p_attribute = p_attribute, s_attribute = s_attribute,

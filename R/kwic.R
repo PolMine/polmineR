@@ -1,28 +1,37 @@
 #' @include S4classes.R
 NULL
 
+setOldClass("htmlwidget")
+
+setAs(
+  from = "kwic",
+  to = "htmlwidget",
+  def = function(from){
+    if (getOption("polmineR.lineview")){
+      from@table[["node"]] <- paste('<span style="color:steelblue">', from@table[["node"]], '</span>', sep="")
+      from@table[["text"]] <- apply(from@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
+      for (x in c("left", "node", "right", "hit_no")) from@table[[x]] <- NULL
+      retval <- DT::datatable(from@table, escape = FALSE)
+    } else {
+      from@table[["hit_no"]] <- NULL
+      retval <- DT::datatable(from@table, escape = FALSE)
+      retval <- DT::formatStyle(retval, "node", color = "blue", textAlign = "center")
+      retval <- DT::formatStyle(retval, "left", textAlign = "right")
+    }
+    retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(
+      name = "tooltips", version = "0.0.0",
+      src = system.file(package = "polmineR", "css"), stylesheet = "tooltips.css"
+    )
+    retval
+  }
+)
+
 #' @rdname kwic-class
 #' @docType method
 #' @importFrom DT datatable formatStyle
 setMethod("show", "kwic", function(object){
-  lineview <- getOption("polmineR.lineview")
-  if (lineview == FALSE){
-    df <- object@table
-    df[["hit_no"]] <- NULL
-    retvalRaw <- DT::datatable(df, escape = FALSE)
-    retvalRaw <- formatStyle(retvalRaw, "node", color = "blue", textAlign = "center")
-    retval <- formatStyle(retvalRaw, "left", textAlign = "right")
-  } else {
-    object@table[["node"]] <- paste('<span style="color:steelblue">', object@table[["node"]], '</span>', sep="")
-    object@table[["text"]] <- apply(object@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
-    for (x in c("left", "node", "right", "hit_no")) object@table[[x]] <- NULL
-    retval <- DT::datatable(object@table, escape = FALSE)
-  }
-  retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(
-      name = "tooltips", version = "0.0.0",
-      src = system.file(package = "polmineR", "css"), stylesheet = "tooltips.css"
-    )
-  show(retval)
+  retval <- as(object, "htmlwidget")
+  if (interactive()) show(retval)
 })
 
 

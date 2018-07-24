@@ -15,6 +15,8 @@ that is returned will include a report on weights.
 * `highlight`-method allows definitions of terms to be highlighted to be passed in via three dots (...);
 no explicit list necessary.
 * `highlight`-method implemented now for class `kwic`.
+* A coerce-method to turn a kwic-object into a htmlwidget has been singled out from the show,kwic-method. Now it is possible to generate a htmlwidget from a kwic object, and to include the widget into a Rmarkdown document.
+* The script configure.win has been removed so that installation works on Windows without an installation of Rtools.
 
 # polmineR 0.7.9
 

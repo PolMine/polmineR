@@ -159,8 +159,8 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
       # It may not seem logical that counts are performed for all p-attribute-combinations if
       # we deal with more than p-attribute. But doing it selectively is much, much slower
       # than the the comprehensive approach.
-      .message("adding missing count for p-attribute ", .Object@p_attribute, " to partition", verbose = verbose)
-      .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = verbose)
+      .message("enrichtung partition by missing count for p-attribute: ", .Object@p_attribute, verbose = verbose)
+      .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = FALSE)
     }
     
     setkeyv(.Object@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))

@@ -268,9 +268,18 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
   
   stopifnot(.Object %in% CQI$list_corpora())
   if (is.null(query)){
-    if (length(p_attribute) == 1){
-      TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = p_attribute))
-      TF[, "id" := 0:(nrow(TF) - 1), with = TRUE]
+    if (length(p_attribute) == 1L){
+      cnt_file <- file.path(
+        registry_get_home(.Object, registry = Sys.getenv("CORPUS_REGISTRY")),
+        sprintf("%s.corpus.cnt", p_attribute)
+      )
+      if (file.exists(cnt_file)){
+        cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
+        TF <- data.table(count = cnt)
+      } else {
+        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = p_attribute))
+      }
+      TF[, "id" := 0L:(nrow(TF) - 1L), with = TRUE]
       setnames(TF, old = "id", new = paste(p_attribute, "id", sep = "_"))
       if (decode == FALSE){
         setkeyv(TF, paste(p_attribute, "id", sep = "_"))
