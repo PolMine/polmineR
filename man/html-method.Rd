@@ -17,7 +17,7 @@ html(object, ...)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
   verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
-  ...)
+  height = NULL, ...)
 
 \S4method{html}{partition_bundle}(object, filename = c(), type = "debate")
 
@@ -47,6 +47,9 @@ added to elements embracing tokens}
 
 \item{beautify}{logical, if \code{TRUE}, whitespace before interpunctuation
 will be removed}
+
+\item{height}{A character vector that will be inserted into the html as an optional
+height of a scroll box.}
 
 \item{filename}{the filename}
 

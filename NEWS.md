@@ -19,6 +19,10 @@ no explicit list necessary.
 * The script configure.win has been removed so that installation works on Windows without an installation of Rtools.
 * When calling `use()`, the registry directory is reset for CQP, so that the new corpus is 
 available for using it with CQP syntax.
+* new coerce-method to turn textstat-objects into an htmlwidget (DataTable), very useful for 
+Rmarkdown documents such as slides.
+* A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed
+a fulltext output to a Rmarkdown document.
 
 # polmineR 0.7.9
 

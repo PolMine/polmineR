@@ -12,6 +12,9 @@ NULL
 #' @importFrom Matrix rowSums colSums
 NULL
 
+setOldClass("htmlwidget")
+
+
 #' polmineR-package
 #' 
 #' A library for corpus analysis using the Corpus Workbench (CWB) as an

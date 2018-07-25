@@ -1,6 +1,8 @@
 #' @include polmineR.R
 NULL
 
+
+
 #' Bundle Class
 #' 
 #' A \code{bundle} is used to combine several objects (\code{partition}, \code{context},

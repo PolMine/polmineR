@@ -1,7 +1,6 @@
 #' @include S4classes.R
 NULL
 
-setOldClass("htmlwidget")
 
 setAs(
   from = "kwic",

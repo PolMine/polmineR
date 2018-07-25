@@ -108,3 +108,15 @@ setMethod("[", "textstat", function(x, i, j){
   x
 })
 
+setAs(from = "textstat", to = "htmlwidget", def = function(from) DT::datatable(from@stat))
+setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
+  dt <- copy(round(from)@stat)
+  colnames(dt) <- gsub("count_", "n_", colnames(dt))
+  DT::datatable(dt, rownames = FALSE)
+})
+setAs(from = "features", to = "htmlwidget", def = function(from){
+  dt <- copy(round(from)@stat)
+  for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
+  colnames(dt) <- gsub("count_", "n_", colnames(dt))
+  DT::datatable(dt)
+})

@@ -185,9 +185,19 @@ To analyse the neighborhood of a token, or the match for a CQP query, use `coocc
 oil <- cooccurrences("REUTERS", query = "oil")
 sa <- cooccurrences("REUTERS", query = '"Saudi" "Arabia.*"', left = 10, right = 10)
 top5 <- subset(oil, rank_ll <= 5)
-as.data.frame(top5)
 ```
 
+In an interactive session, simply type `top5` in the terminal, and the output will be shown in the data viewer. To inspect the output in the viewer pane, you can coerce the object to a htmlwidget. This is also a good way how to include the table in a Rmarkdown document.
+
+```{r}
+as(top5, "htmlwidget")
+```
+
+For further operations, get the the table with the statistical results by applying the `as.data.frame()`-method.
+
+```{r, eval = TRUE}
+as.data.frame(top5)
+```
 
 ## Working with subcorpora - partitions
 
@@ -213,7 +223,7 @@ s_attributes(saudi_arabia, "id")
 If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the partition-function.
 
 
-## Cooccurrences
+##### Cooccurrences
 
 The cooccurrences-method can be applied to partition-objects.
 
@@ -230,7 +240,7 @@ df[1:5, c("word", "ll", "rank_ll")]
 ```
 
 
-## Distribution of queries
+##### Distribution of queries
 
 To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax.
 
@@ -240,21 +250,27 @@ q2 <- dispersion(saudi_arabia, query = c("oil", "barrel"), s_attribute = "id", p
 ```
 
 
-## Getting features
+##### Getting features
 
 To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.
 
 ```{r, eval = TRUE, message = FALSE}
-qatar <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
-qatar <- enrich(qatar, p_attribute = "word")
+saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+saudi_arabia <- enrich(saudi_arabia, p_attribute = "word")
 
-qatar_features <- features(qatar, "REUTERS", included = TRUE)
-y <- subset(qatar_features, rank_chisquare <= 10.83 & count_coi >= 5)
-as.data.frame(y)[,c("word", "count_coi", "count_ref", "chisquare")]
+saudi_arabia_features <- features(saudi_arabia, "REUTERS", included = TRUE)
+saudi_arabia_features_min <- subset(saudi_arabia_features, rank_chisquare <= 10.83 & count_coi >= 5)
+as(round(saudi_arabia_features_min), "htmlwidget")
 ```
 
+To extract the statistical information, you can also use the `as.data.frame`-method.
 
-## Getting a tm TermDocumentMatrix
+```{r, eval = TRUE, message = FALSE}
+df <- as.data.frame(saudi_arabia_features_min)
+df_min <- df[,c("word", "count_coi", "count_ref", "chisquare")]
+```
+
+##### Getting a tm TermDocumentMatrix
 
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.
 
@@ -267,6 +283,17 @@ class(tdm) # to see what it is
 show(tdm)
 m <- as.matrix(tdm) # turn it into an ordinary matrix
 m[c("oil", "barrel"),]
+```
+
+
+##### Reading
+
+A key consideration of the polmineR package is to offer tools for combining quantitative and qualitative approaches to text analysis. Use the `html()`-method, or the `read()`-method to return to the full text. In this example, we define a maximum height for the output, which is useful when including full text output in a Rmarkdown document.
+
+```{r, eval = TRUE, message = FALSE}
+P <- partition("REUTERS", id = "248")
+H <- html(P, height = "250px")
+H
 ```
 
 

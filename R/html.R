@@ -21,6 +21,8 @@ NULL
 #'   will be removed
 #' @param charoffset logical, if \code{TRUE}, character offset positions are
 #'   added to elements embracing tokens
+#' @param height A character vector that will be inserted into the html as an optional
+#'   height of a scroll box.
 #' @param verbose logical, whether to be verbose
 #' @param filename the filename
 #' @param cutoff maximum number of tokens to decode from token stream, passed
@@ -133,8 +135,8 @@ setMethod("html", "character", function(object){
   nodes <- xml_find_all(doc, xpath = sprintf('//span[@token = "%s"]', "''"))
   if (length(nodes) >= 2){
     cpos <- as.integer(sapply(lapply(nodes, xml_attrs), function(x) x["id"]))
-    for (i in 2:length(cpos)){
-      if (cpos[i-1] + 1 == cpos[i]){
+    for (i in 2L:length(cpos)){
+      if (cpos[i - 1L] + 1L == cpos[i]){
         nodeToRemove <- xml_find_first(doc, xpath = sprintf('//span[@id = "%d"]', cpos[i]))
         if (length(nodeToRemove) > 0) xml_remove(nodeToRemove)
       }
@@ -149,7 +151,7 @@ setMethod("html", "character", function(object){
 #' @docType methods
 setMethod(
   "html", "partition",
-  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, ...){
+  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, height = NULL, ...){
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
@@ -173,6 +175,17 @@ setMethod(
     md <- gsub('\u201D', '"', md)
     md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
     doc <- markdown::markdownToHTML(text = md, stylesheet = css)
+    
+    if (!is.null(height)){
+      fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
+      doc <- sprintf(
+        fmt,
+        gsub("^(.*?)<body>\n.*?</body>.*?$", "\\1", doc),
+        height,
+        gsub("^.*?<body>\n(.*?)</body>.*?$", "\\1", doc)
+      )
+      doc <- gsub("<h3>", '<h3 class="fulltext">', doc)
+    }
     
     if (beautify) doc <- .beautify(doc)
     

@@ -32,9 +32,9 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 # an alternative that could be considered
 .tagTokens <- function(tokens){
   if (is.null(names(tokens))) {
-    return( sprintf('<span token="%s">%s</span>', tokens, tokens) )
+    return( sprintf('<span token="%s" class="fulltext">%s</span>', tokens, tokens) )
   } else {
-    return( sprintf('<span id="%s" token="%s">%s</span>', names(tokens), tokens, tokens) )
+    return( sprintf('<span id="%s" token="%s" class="fulltext">%s</span>', names(tokens), tokens, tokens) )
   }
 }
 
