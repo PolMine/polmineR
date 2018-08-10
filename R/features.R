@@ -21,8 +21,26 @@ setAs(from = "features", to = "features_ngrams", def = function(from){
 #' @exportMethod summary
 #' @docType methods
 #' @rdname features-class
-setMethod("summary", "features", function(object){.statisticalSummary(object)})
-
+setMethod("summary", "features", function(object) {
+  if (object@method %in% c("ll", "chisquare")){
+    critical_value <- c(3.84, 6.63, 7.88, 10.83)
+    propability <- c(0.05, 0.01, 0.005, 0.001)
+    no <- vapply(
+      critical_value,
+      function(x) length(which(object@stat[[object@method]] > x)),
+      FUN.VALUE = 1L
+    )
+    result <- data.frame(
+      "propability" = propability,
+      "critical_value" = critical_value,
+      "N" = no
+      )
+    result <- result[order(result$propability, decreasing = FALSE), ]
+    return(result)
+  } else {
+    return(NULL) 
+  }
+})
 
 #' @exportMethod show
 #' @docType methods

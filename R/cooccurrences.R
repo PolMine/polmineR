@@ -2,21 +2,6 @@
 NULL
 
 
-
-#' @docType methods
-#' @rdname cooccurrences-class
-setMethod('summary', 'cooccurrences', function(object) {
-  cat("\n** Context object: **\n")
-  cat(sprintf("%-20s", "CWB corpus:"), object@corpus, "\n")
-  cat(sprintf("%-20s", "partition:"), object@partition, "\n")
-  cat(sprintf("%-20s", "node:"), object@query, "\n")
-  cat(sprintf("%-20s", "p-Attribute:"), object@p_attribute, "\n")
-  cat(sprintf("%-20s", "node count:"), object@count, "\n")
-  cat(sprintf("%-20s", "stat table length:"), nrow(object@stat), "\n\n")
-})
-
-
-
 #' @docType methods
 #' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object) {

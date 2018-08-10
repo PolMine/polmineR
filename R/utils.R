@@ -133,9 +133,12 @@ flatten <- function(object){
       FUN.VALUE=1
     )
     result <- data.frame(propability, criticalValue, no)
-    result <- result[order(result$propability, decreasing=FALSE),]
+    result <- result[order(result$propability, decreasing = FALSE),]
+    return(result)
+  } else {
+    
   }
-  return(result)
+  
 }
 
 
