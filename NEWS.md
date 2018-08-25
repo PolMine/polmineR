@@ -21,8 +21,8 @@ no explicit list necessary.
 available for using it with CQP syntax.
 * new coerce-method to turn textstat-objects into an htmlwidget (DataTable), very useful for 
 Rmarkdown documents such as slides.
-* A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed
-a fulltext output to a Rmarkdown document.
+* A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.
+* A new as.character,kwic-method
 
 # polmineR 0.7.9
 

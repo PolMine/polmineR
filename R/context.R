@@ -34,7 +34,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
 #' 
 #' @param .Object a partition or a partition_bundle object
-#' @param query query, which may by a character vector or a cqpQuery object
+#' @param query A query, which may by a character vector or a CQP query.
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
 #' @param p_attribute p-attribute of the query
 #' @param s_attribute if provided, it will be checked that corpus positions do not extend beyond

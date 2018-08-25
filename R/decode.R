@@ -40,7 +40,7 @@ setMethod("decode", "character", function(.Object, s_attribute = NULL, verbose =
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   stopifnot(
-    length(.Object) == 1, # cannot process more than one corpus
+    length(.Object) == 1L, # cannot process more than one corpus
     .Object %in% CQI$list_corpora() # make that corpus is available
     ) 
   

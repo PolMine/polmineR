@@ -34,6 +34,25 @@ setMethod("show", "kwic", function(object){
 })
 
 
+#' @rdname kwic-class
+#' @docType method
+#' @exportMethod as.character
+#' @examples 
+#' oil <- kwic("REUTERS", query = "oil")
+#' as.character(oil)
+setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
+  if (!is.null(fmt)) x@table[["node"]] <- sprintf(fmt, x@table[["node"]])
+  apply(
+    x@table, 1L,
+    function(row) paste(
+      row["left"],
+      row["node"],
+      row["right"],
+      sep = " "
+    )
+  )
+})
+
 #' @docType methods
 #' @noRd
 setMethod('[', 'kwic',
