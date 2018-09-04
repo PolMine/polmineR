@@ -23,6 +23,7 @@ available for using it with CQP syntax.
 Rmarkdown documents such as slides.
 * A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.
 * A new as.character,kwic-method
+* Bug removed from s_attributes,partition_method: "fast track" was activated without preconditions.
 
 # polmineR 0.7.9
 
