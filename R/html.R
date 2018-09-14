@@ -222,11 +222,11 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
   if (!is.null(s_attribute)){
     if (!s_attribute %in% s_attributes(object@corpus)) stop("s-attribute provided is not available")
     metadataDef <- s_attribute
-    object <- enrich(object, meta = metadataDef)
-  } else if (length(object@metadata) == 0){
+    object <- enrich(object, s_attributes = metadataDef)
+  } else if (length(object@metadata) == 0L){
     metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
     .message("using metadata from template: ", paste(metadataDef, collapse = " / "), verbose = verbose)
-    if (length(metadataDef) > 0){
+    if (length(metadataDef) > 0L){
       .message("enriching", verbose = verbose)
       object <- enrich(object, meta = metadataDef)
     }

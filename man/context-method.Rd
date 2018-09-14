@@ -15,12 +15,12 @@ context(.Object, ...)
 
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
@@ -35,20 +35,21 @@ context(.Object, ...)
 
 \item{...}{further parameters}
 
-\item{query}{query, which may by a character vector or a cqpQuery object}
+\item{query}{A query, which may by a character vector or a CQP query.}
 
 \item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
 
-\item{left}{no of tokens and to the left of the node word}
+\item{left}{Number of tokens to the left of the query match.}
 
-\item{right}{no of tokens to the right of the node word}
+\item{right}{Number of tokens to the right of the query match.}
 
-\item{p_attribute}{p-attribute of the query}
+\item{p_attribute}{The p-attribute of the query.}
 
-\item{s_attribute}{if provided, it will be checked that corpus positions do not extend beyond
-the region defined by the s-attribute}
+\item{boundary}{If provided, a length-one character vector specifying a
+s-attribute. It will be checked that corpus positions do not extend beyond
+the region defined by the s-attribute.}
 
-\item{stoplist}{exclude a query hit from analysis if stopword(s) is/are in
+\item{stoplist}{Exclude match for query if stopword(s) is/are are present in
 context. See positivelist for further explanation.}
 
 \item{positivelist}{character vector or numeric/integer vector: include a query hit

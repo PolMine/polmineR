@@ -6,6 +6,7 @@
 \alias{[,kwic,ANY,ANY,ANY-method}
 \alias{[,kwic-method}
 \alias{show,kwic-method}
+\alias{as.character,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{length,kwic-method}
 \alias{sample,kwic-method}
@@ -15,13 +16,15 @@
 \usage{
 \S4method{show}{kwic}(object)
 
+\S4method{as.character}{kwic}(x, fmt = "<i>\%s</i>")
+
 \S4method{as.data.frame}{kwic}(x)
 
 \S4method{length}{kwic}(x)
 
 \S4method{sample}{kwic}(x, size)
 
-\S4method{enrich}{kwic}(.Object, meta = NULL, table = FALSE)
+\S4method{enrich}{kwic}(.Object, s_attributes = NULL, table = FALSE, ...)
 
 \S4method{view}{kwic}(.Object)
 }
@@ -30,13 +33,17 @@
 
 \item{x}{a kwic-class object}
 
+\item{fmt}{A format string passed into \code{sprintf} to format the node of a KWIC display.}
+
 \item{size}{integer, the subset size for sampling}
 
 \item{.Object}{a kwic object}
 
-\item{meta}{s-attributes (character vector) with metainformation}
+\item{s_attributes}{Character vector of s-attributes with metainformation.}
 
 \item{table}{logical, whether to turn cpos data.table into data.frame for output}
+
+\item{...}{Used for backwards compatibility.}
 }
 \description{
 S4 class for organizing information for concordance output
@@ -44,7 +51,7 @@ S4 class for organizing information for concordance output
 \details{
 The \code{enrich} method is used to generate the actual output for
 the kwic method. If param \code{table} is \code{TRUE}, corpus positions will
-be turned into a data.frame with the concordance lines. If param \code{meta}
+be turned into a data.frame with the concordance lines. If param \code{s_attributes}
 is a character vector with s-attributes, the respective s-attributes will be
 added as columns to the table with concordance lines.
 }
@@ -84,4 +91,6 @@ K <- kwic("GERMAPARLMINI", "Integration")
 length(K)
 K[1]
 K[1:5]
+oil <- kwic("REUTERS", query = "oil")
+as.character(oil)
 }

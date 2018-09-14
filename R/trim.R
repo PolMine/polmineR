@@ -65,7 +65,7 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (!is.null(s_attribute)){
-    stopifnot(length(s_attribute) == 1)
+    stopifnot(length(s_attribute) == 1L)
     sAttrCol <- paste(s_attribute, "int", sep = "_")
     if (!sAttrCol %in% colnames(object@cpos)){
       object <- enrich(object, s_attribute = s_attribute)

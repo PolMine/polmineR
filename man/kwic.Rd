@@ -10,20 +10,20 @@
 \usage{
 kwic(.Object, ...)
 
-\S4method{kwic}{context}(.Object, meta = getOption("polmineR.meta"),
-  cpos = TRUE, verbose = FALSE)
+\S4method{kwic}{context}(.Object, s_attributes = getOption("polmineR.meta"),
+  cpos = TRUE, verbose = FALSE, ...)
 
 \S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  meta = getOption("polmineR.meta"), p_attribute = "word",
-  s_attribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
+  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
+  boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
   regex = FALSE, verbose = TRUE, ...)
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
-  meta = getOption("polmineR.meta"), p_attribute = "word",
-  s_attribute = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
+  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
+  boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
   regex = FALSE, verbose = TRUE, ...)
 }
 \arguments{
@@ -31,7 +31,7 @@ kwic(.Object, ...)
 
 \item{...}{further parameters to be passed}
 
-\item{meta}{metainformation to display}
+\item{s_attributes}{Structural attributes (s-attributes) to include into output table as metainformation.}
 
 \item{cpos}{logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned}
 
@@ -49,7 +49,7 @@ auxiliary function)}
 
 \item{p_attribute}{p-attribute, defaults to 'word'}
 
-\item{s_attribute}{if provided, the s-attribute will be used to check the boundaries of the text}
+\item{boundary}{if provided, the s-attribute will be used to check the boundaries of the text}
 
 \item{stoplist}{terms or ids to prevent a concordance from occurring in results}
 
@@ -66,13 +66,13 @@ If a positivelist ist supplied, the tokens will be highlighted.
 }
 \examples{
 use("polmineR")
-bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
+bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex = TRUE)
 kwic(bt, "Integration")
-kwic(bt, "Integration", left = 20, right = 20, meta = c("date", "speaker", "party"))
+kwic(bt, "Integration", left = 20, right = 20, s_attributes = c("date", "speaker", "party"))
 kwic(
   bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
   left = 20, right = 20,
-  meta = c("date", "speaker", "party")
+  s_attributes = c("date", "speaker", "party")
 ) 
 }
 \references{

@@ -111,9 +111,17 @@ setMethod("read", "hits", function(.Object, def, i = NULL, ...){
 })
 
 #' @rdname read-method
-setMethod("read", "kwic", function(.Object, i, type = NULL){
-  fulltext <- html(.Object, i = i, type = type)
-  if (interactive()) htmltools::html_print(fulltext)
+setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_properties(corpus(.Object))[["type"]]){
+  if (is.null(i)){
+    for (i in 1L:length(.Object)){
+      read(.Object, i = i, type = type)
+      user <- readline(prompt = "Hit 'q' to quit or any other key to continue.\n")
+      if (user == "q") return(invisible(NULL))
+    }
+  } else {
+    fulltext <- html(.Object, i = i, type = type)
+    if (interactive()) htmltools::html_print(fulltext)
+  }
 })
 
 #' @rdname read-method

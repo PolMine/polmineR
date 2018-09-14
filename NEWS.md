@@ -24,6 +24,9 @@ Rmarkdown documents such as slides.
 * A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.
 * A new as.character,kwic-method
 * Bug removed from s_attributes,partition_method: "fast track" was activated without preconditions.
+* As a matter of consistency, the argument 'meta' has been renamed to s_attributes for the kwic,context-method, and for the enrich,kwic-method
+* To avoid confusion (with argument s_attributes), the argument s_attribute to check for integrity within 
+a struc has been renamed into boundary.
 
 # polmineR 0.7.9
 

@@ -37,6 +37,7 @@ setMethod("show", "kwic", function(object){
 #' @rdname kwic-class
 #' @docType method
 #' @exportMethod as.character
+#' @param fmt A format string passed into \code{sprintf} to format the node of a KWIC display.
 #' @examples 
 #' oil <- kwic("REUTERS", query = "oil")
 #' as.character(oil)
@@ -64,8 +65,8 @@ setMethod('[', 'kwic',
 
 #' @rdname kwic-class
 setMethod("as.data.frame", "kwic", function(x){
-  metaColumnsNo <- length(colnames(x@table)) - 3
-  metadata <- apply(x@table, 1, function(row) paste(row[c(1:metaColumnsNo)], collapse="<br/>"))
+  metaColumnsNo <- length(colnames(x@table)) - 3L
+  metadata <- apply(x@table, 1, function(row) paste(row[1L:metaColumnsNo], collapse="<br/>"))
   data.frame(
     meta = metadata,
     left = x@table$left,
@@ -87,7 +88,7 @@ setMethod("sample", "kwic", function(x, size){
   }
   x@cpos <- x@cpos[which(x@cpos[["hit_no"]] %in% sample(hits_unique, size = size))]
   x <- enrich(x, table = TRUE)
-  x <- enrich(x, meta = x@metadata)
+  x <- enrich(x, s_attributes = x@metadata)
   x
   
 })
@@ -110,10 +111,10 @@ NULL
 #'   auxiliary function)
 #' @param left to the left
 #' @param right to the right
-#' @param meta metainformation to display
+#' @param s_attributes Structural attributes (s-attributes) to include into output table as metainformation.
 #' @param cpos logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned
 #' @param p_attribute p-attribute, defaults to 'word'
-#' @param s_attribute if provided, the s-attribute will be used to check the boundaries of the text
+#' @param boundary if provided, the s-attribute will be used to check the boundaries of the text
 #' @param stoplist terms or ids to prevent a concordance from occurring in results
 #' @param positivelist terms or ids required for a concordance to occurr in results
 #' @param regex logical, whether stoplist/positivelist is processed as regular expression
@@ -129,13 +130,13 @@ NULL
 #' Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 #' @examples
 #' use("polmineR")
-#' bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex=TRUE)
+#' bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex = TRUE)
 #' kwic(bt, "Integration")
-#' kwic(bt, "Integration", left = 20, right = 20, meta = c("date", "speaker", "party"))
+#' kwic(bt, "Integration", left = 20, right = 20, s_attributes = c("date", "speaker", "party"))
 #' kwic(
 #'   bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
 #'   left = 20, right = 20,
-#'   meta = c("date", "speaker", "party")
+#'   s_attributes = c("date", "speaker", "party")
 #' ) 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
@@ -145,7 +146,9 @@ setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE){
+setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE, ...){
+  
+  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   DT <- copy(.Object@cpos) # do not accidentily store things
   setorderv(DT, cols = c("hit_no", "cpos"))
@@ -157,20 +160,20 @@ setMethod("kwic", "context", function(.Object, meta = getOption("polmineR.meta")
   DT[, .Object@p_attribute[1] := decoded_pAttr2, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
-  if (is.null(meta)) meta <- character()
+  if (is.null(s_attributes)) s_attributes <- character()
   conc <- new(
     'kwic',
     corpus = .Object@corpus,
     left = as.integer(.Object@left),
     right = as.integer(.Object@right),
-    metadata = if (length(meta) == 0) character() else meta,
+    metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
     labels = Labels$new(),
     cpos = if (cpos) DT else data.table()
   )
   
   conc <- enrich(conc, table = TRUE)
-  conc <- enrich(conc, meta = meta)
+  conc <- enrich(conc, s_attributes = s_attributes)
   conc
 })
 
@@ -181,21 +184,23 @@ setMethod("kwic", "partition", function(
   .Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  meta = getOption("polmineR.meta"),
-  p_attribute = "word", s_attribute = NULL, cpos = TRUE,
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
+  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   # the actual work is done by the kwic,context-method
   # this method prepares a context-object and applies the
   # kwic method to that object
   ctxt <- context(
     .Object = .Object, query = query, cqp = cqp,
-    p_attribute = p_attribute, s_attribute = s_attribute,
+    p_attribute = p_attribute, boundary = boundary,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = FALSE, verbose = verbose
@@ -204,7 +209,7 @@ setMethod("kwic", "partition", function(
     message("... no occurrence of query")
     return(invisible(NULL))
   }
-  retval <- kwic(.Object = ctxt, meta = meta, cpos = cpos)
+  retval <- kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
   if (!is.null(positivelist)){
     retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
   }
@@ -217,17 +222,22 @@ setMethod("kwic", "character", function(
   .Object, query, cqp = is.cqp,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
-  meta = getOption("polmineR.meta"),
-  p_attribute = "word", s_attribute = NULL, cpos = TRUE,
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
+  if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
+  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   hits <- cpos(.Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
-  if (is.null(hits)){message("sorry, not hits"); return(invisible(NULL))}
+  if (is.null(hits)){
+    message("sorry, not hits");
+    return(invisible(NULL))
+  }
   cpos_max <- CQI$attribute_size(.Object, p_attribute, type = "p")
   cposList <- apply(
     hits, 1,
@@ -269,7 +279,7 @@ setMethod("kwic", "character", function(
     left = as.integer(left),
     right = as.integer(right), 
     cpos = DT,
-    s_attribute = character(),
+    boundary = character(),
     p_attribute = p_attribute,
     encoding = registry_get_encoding(.Object),
     partition = new("partition", stat = data.table())
@@ -279,7 +289,7 @@ setMethod("kwic", "character", function(
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   
-  if (!is.null(s_attribute)) ctxt@s_attribute <- s_attribute
-  kwic(.Object = ctxt, meta = meta, cpos = cpos)
+  if (!is.null(boundary)) ctxt@boundary <- boundary
+  kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
 })
 

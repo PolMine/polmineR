@@ -97,7 +97,7 @@ in the "cpos"-slot of a \code{context}-object.
 
 \item{\code{size}}{An \code{integer} value, number of tokens in the right and left context of the node.}
 
-\item{\code{s_attribute}}{An s-attribute (\code{character}).}
+\item{\code{boundary}}{An s-attribute (\code{character}).}
 
 \item{\code{p_attribute}}{The p-attribute of the query (\code{character}).}
 

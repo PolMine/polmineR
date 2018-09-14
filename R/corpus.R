@@ -26,6 +26,8 @@ setGeneric("corpus", function(object) standardGeneric("corpus"))
 #' @rdname corpus-method
 setMethod("corpus", "textstat", function(object) object@corpus)
 
+#' @rdname corpus-method
+setMethod("corpus", "kwic", function(object) object@corpus)
 
 #' @rdname corpus-method
 setMethod("corpus", "bundle", function(object){

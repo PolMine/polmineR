@@ -362,7 +362,7 @@ setMethod("summary", "partition", function(object){
 #' @slot left An \code{integer} value, the number of tokens to the left.
 #' @slot right An \code{integer} value, the number of tokens to the right.
 #' @slot size An \code{integer} value, number of tokens in the right and left context of the node.
-#' @slot s_attribute An s-attribute (\code{character}).
+#' @slot boundary An s-attribute (\code{character}).
 #' @slot p_attribute The p-attribute of the query (\code{character}).
 #' @slot corpus The CWB corpus used (\code{character}).
 #' @slot stat A \code{data.table}, the statistics of the analysis.
@@ -395,7 +395,7 @@ setClass("context",
            left = "integer",
            right = "integer",
            size = "integer",
-           s_attribute = "character",
+           boundary = "character",
            cpos = "data.table",
            call = "character"
          ),
@@ -445,7 +445,7 @@ setClass(
 #' 
 #' @details The \code{enrich} method is used to generate the actual output for
 #' the kwic method. If param \code{table} is \code{TRUE}, corpus positions will
-#' be turned into a data.frame with the concordance lines. If param \code{meta}
+#' be turned into a data.frame with the concordance lines. If param \code{s_attributes}
 #' is a character vector with s-attributes, the respective s-attributes will be
 #' added as columns to the table with concordance lines.
 #' 
@@ -461,9 +461,10 @@ setClass(
 #' 
 #' @param x a kwic-class object
 #' @param object an object of class \code{kwic}
-#' @param meta s-attributes (character vector) with metainformation
+#' @param s_attributes Character vector of s-attributes with metainformation.
 #' @param table logical, whether to turn cpos data.table into data.frame for output
 #' @param size integer, the subset size for sampling
+#' @param ... Used for backwards compatibility.
 #' @section Methods:
 #'   \describe{
 #'    \item{[}{indexing for seeing only some concordances}

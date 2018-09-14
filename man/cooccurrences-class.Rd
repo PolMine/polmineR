@@ -6,15 +6,12 @@
 \alias{cooccurrences_reshaped-class}
 \alias{cooccurrences_bundle-class}
 \alias{cooccurrences_bundle}
-\alias{summary,cooccurrences-method}
 \alias{show,cooccurrences-method}
 \alias{as.data.frame,cooccurrences_bundle-method}
 \alias{view,cooccurrences-method}
 \alias{view,cooccurrences_reshaped-method}
 \title{Cooccurrences class.}
 \usage{
-\S4method{summary}{cooccurrences}(object)
-
 \S4method{show}{cooccurrences}(object)
 
 \S4method{as.data.frame}{cooccurrences_bundle}(x)

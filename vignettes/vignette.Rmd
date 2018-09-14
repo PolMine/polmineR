@@ -129,12 +129,12 @@ Core analytical tasks are implemented as methods (S4 class system), i.e. the bev
 
 ##### Keyword-in-context (kwic)
 
-The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 'meta' parameter.
+The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 's_attributes' argument.
 
 ```{r, eval = TRUE}
 kwic("REUTERS", "oil")
-kwic("REUTERS", "oil", meta = "places")
-kwic("REUTERS", "oil", meta = c("id", "places"))
+kwic("REUTERS", "oil", s_attributes = "places")
+kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.

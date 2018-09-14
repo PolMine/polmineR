@@ -36,12 +36,13 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param .Object a partition or a partition_bundle object
 #' @param query A query, which may by a character vector or a CQP query.
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
-#' @param p_attribute p-attribute of the query
-#' @param s_attribute if provided, it will be checked that corpus positions do not extend beyond
-#' the region defined by the s-attribute 
-#' @param left no of tokens and to the left of the node word
-#' @param right no of tokens to the right of the node word
-#' @param stoplist exclude a query hit from analysis if stopword(s) is/are in
+#' @param p_attribute The p-attribute of the query.
+#' @param boundary If provided, a length-one character vector specifying a
+#'   s-attribute. It will be checked that corpus positions do not extend beyond
+#'   the region defined by the s-attribute.
+#' @param left Number of tokens to the left of the query match.
+#' @param right Number of tokens to the right of the query match.
+#' @param stoplist Exclude match for query if stopword(s) is/are are present in
 #'   context. See positivelist for further explanation.
 #' @param positivelist character vector or numeric/integer vector: include a query hit
 #'   only if token in positivelist is present. If positivelist is a character
@@ -77,7 +78,7 @@ setMethod("context", "partition", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
@@ -85,7 +86,8 @@ setMethod("context", "partition", function(
 ) {
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
+  if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   
   left <- as.integer(left) # input may be numeric
   right <- as.integer(right) # input may be numeric
@@ -100,7 +102,7 @@ setMethod("context", "partition", function(
     encoding = .Object@encoding,
     partition = .Object,
     size_partition = as.integer(.Object@size),
-    s_attribute = if (!is.null(s_attribute)) s_attribute else character()
+    boundary = if (!is.null(boundary)) boundary else character()
   )
   # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
   
@@ -117,7 +119,7 @@ setMethod("context", "partition", function(
   
   hits <- cbind(hits, hit_no = 1L:nrow(hits))
   
-  ctxt@cpos <- .make_context_dt(hits, left, right, corpus, s_attribute)
+  ctxt@cpos <- .make_context_dt(hits, left, right, corpus)
   
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
@@ -135,8 +137,8 @@ setMethod("context", "partition", function(
   
   # check that windows do not transgress s-attribute
   .message("checking that context positions to not transgress regions", verbose = verbose)
-  ctxt <- enrich(ctxt, s_attribute = s_attribute, verbose = verbose)
-  ctxt <- trim(ctxt, s_attribute = s_attribute, verbose = verbose, progress = progress)
+  ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose)
+  ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
   
   # put together raw stat table
   if (count){
@@ -163,7 +165,7 @@ setMethod("context", "partition", function(
 #' @param s_attribute the integrity of the s_attribute to be checked
 #' @return a list!
 #' @noRd
-.make_context_dt <- function(hit_matrix, left, right, corpus, s_attribute){
+.make_context_dt <- function(hit_matrix, left, right, corpus, s_attribute = NULL){
   
   DT <- data.table(hit_matrix)
   
@@ -228,7 +230,7 @@ setMethod("context", "partition", function(
 #' @rdname context-method
 setMethod("context", "character", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -237,7 +239,8 @@ setMethod("context", "character", function(
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
 
   C <- Corpus$new(.Object)
   # There is a potential overhead of performing the count here: When context-method
@@ -247,7 +250,7 @@ setMethod("context", "character", function(
   if (length(p_attribute) == 1L) C$count(p_attribute, decode = FALSE)
   context(
     C$as.partition(), query = query, cqp = is.cqp,
-    p_attribute = p_attribute, s_attribute = s_attribute,
+    p_attribute = p_attribute, boundary = boundary,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count, mc = mc, verbose = verbose, progress = progress
   )
@@ -294,7 +297,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     method = .Object@method,
     stat = subset(.Object@stat, .Object@stat[, "node"]==query),
     call = deparse(match.call()),
-    size = unique(subset(.Object@stat, .Object@stat[, "node"]==query)[,"size_window"])
+    size = unique(subset(.Object@stat, .Object@stat[, "node"] == query)[,"size_window"])
   )  
   stop("due to refactoring the context method, this does not work at present")
   if (complete == TRUE){
@@ -307,7 +310,7 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     hits <- cpos(
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
-      p_attribute=newObject@p_attribute,
+      p_attribute = newObject@p_attribute,
       verbose = FALSE
     )
     newObject@size <- nrow(hits)
