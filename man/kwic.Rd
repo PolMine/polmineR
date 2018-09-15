@@ -24,56 +24,79 @@ kwic(.Object, ...)
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",
   boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
-  regex = FALSE, verbose = TRUE, ...)
+  regex = FALSE, verbose = TRUE, progress = TRUE, ...)
 }
 \arguments{
-\item{.Object}{a \code{partition} or \code{context} object}
+\item{.Object}{A (length-one) \code{character} vector with the name of a CWB
+corpus, a \code{partition} or \code{context} object.}
 
-\item{...}{further parameters to be passed}
+\item{...}{Further arguments, used to ensure backwards compatibility.}
 
 \item{s_attributes}{Structural attributes (s-attributes) to include into output table as metainformation.}
 
-\item{cpos}{logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned}
+\item{cpos}{Kogical, if TRUE, the corpus positions ("cpos") if the hits will be included in the \code{kwic}-object that is returned.}
 
-\item{verbose}{logical, whether to be talkative}
+\item{verbose}{Logical, whether to output progress messages}
 
-\item{query}{a query, CQP-syntax can be used}
+\item{query}{A query, CQP-syntax can be used.}
 
-\item{cqp}{either logical (TRUE if query is a CQP query), or a
-function to check whether query is a CQP query or not (defaults to is.query
-auxiliary function)}
+\item{cqp}{Either a logical value (\code{TRUE} if \code{query} is a CQP
+query), or a function to check whether query is a CQP query or not
+(defaults to auxiliary function \code{is.query}).}
 
-\item{left}{to the left}
+\item{left}{Number of tokens to the left of query match.}
 
-\item{right}{to the right}
+\item{right}{Number of tokens to the right of query match.}
 
-\item{p_attribute}{p-attribute, defaults to 'word'}
+\item{p_attribute}{The p-attribute, defaults to 'word'.}
 
-\item{boundary}{if provided, the s-attribute will be used to check the boundaries of the text}
+\item{boundary}{If provided, a length-one character vector stating an s-attribute that will be used to check the boundaries of the text.}
 
-\item{stoplist}{terms or ids to prevent a concordance from occurring in results}
+\item{stoplist}{Terms or ids to prevent a concordance from occurring in results.}
 
-\item{positivelist}{terms or ids required for a concordance to occurr in results}
+\item{positivelist}{Terms or ids required for a concordance to occurr in results}
 
-\item{regex}{logical, whether stoplist/positivelist is processed as regular expression}
+\item{regex}{Logical, whether stoplist/positivelist is interpreted as regular expression}
+
+\item{progress}{Logical, whether to show progress bars.}
 }
 \description{
-Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
-applying the kwic method on either a partition or a context object.
+Prepare and show concordances / keyword-in-context (kwic).
 }
 \details{
-If a positivelist ist supplied, the tokens will be highlighted.
+The method works with a whole CWB corpus defined by a  character vector, and
+can be applied on a \code{partition}- or a \code{context} object.
+
+If a \code{positivelist} ist supplied, only concordances will be kept if at
+least one of the terms from the \code{positivelist} occurrs in the context of
+the query match. Use argument \code{regex} if the positivelist should be
+interpreted as regular expressions. Tokens from the positivelist will be
+highlighted in the output table.
 }
 \examples{
 use("polmineR")
-bt <- partition("GERMAPARLMINI", def = list(date = ".*"), regex = TRUE)
-kwic(bt, "Integration")
-kwic(bt, "Integration", left = 20, right = 20, s_attributes = c("date", "speaker", "party"))
+kwic("GERMAPARLMINI", "Integration")
 kwic(
-  bt, '"Integration" [] "(Menschen|Migrant.*|Personen)"',
+  "GERMAPARLMINI",
+  "Integration", left = 20, right = 20,
+  s_attributes = c("date", "speaker", "party")
+)
+kwic(
+  "GERMAPARLMINI",
+  '"Integration" [] "(Menschen|Migrant.*|Personen)"', cqp = TRUE,
   left = 20, right = 20,
   s_attributes = c("date", "speaker", "party")
-) 
+)
+
+kwic(
+  "GERMAPARLMINI",
+  '"Sehr" "geehrte"', cqp = TRUE,
+  boundary = "date"
+)
+
+P <- partition("GERMAPARLMINI", date = "2009-11-10")
+kwic(P, query = "Integration")
+kwic(P, query = '"Sehr" "geehrte"', cqp = TRUE, boundary = "date")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).

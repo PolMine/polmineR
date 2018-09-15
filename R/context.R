@@ -136,9 +136,12 @@ setMethod("context", "partition", function(
   ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
   
   # check that windows do not transgress s-attribute
-  .message("checking that context positions to not transgress regions", verbose = verbose)
-  ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose)
-  ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
+  if (!is.null(boundary)){
+    stopifnot(boundary %in% registry_get_s_attributes(ctxt@corpus))
+    .message("checking that context positions to not transgress regions", verbose = verbose)
+    ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose)
+    ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
+  }
   
   # put together raw stat table
   if (count){
