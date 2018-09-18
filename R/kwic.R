@@ -45,6 +45,9 @@ setMethod("show", "kwic", function(object){
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname kwic-class
+#' @param pagelength The number of kwic lines displayed per page in the
+#'   datatables htmlwidget that is returned.
+#' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
   y$x$options$pageLength <- pagelength

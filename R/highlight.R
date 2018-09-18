@@ -52,7 +52,15 @@ NULL
 #' if (interactive()) K2
 #' 
 #' # use character vector for output, not list
-#' K2 <- highlight(K, highlight = c(green = "pric.", red = "reduction", red = "decrease", orange = "dropped"), regex = TRUE)
+#' K2 <- highlight(
+#'   K,
+#'   highlight = c(
+#'     green = "pric.",
+#'     red = "reduction",
+#'     red = "decrease",
+#'     orange = "dropped"),
+#'     regex = TRUE
+#' )
 #' if (interactive()) K2
 setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 

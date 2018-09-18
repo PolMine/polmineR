@@ -3,8 +3,7 @@
 * The `use`-function is limited now to activating the corpus in data packages. Having
 introduced the session registry, switching registry directories is not needed any more.
 * The `partition_bundle`-method for `context`-objects has been reworked entirely (and is working again);
-a new `partition`-method for `context`-objects has been introduced. Buth steps are intended for workflows
-for dictionary-based sentiment analysis.
+a new `partition`-method for `context`-objects has been introduced. Buth steps are intended for workflows for dictionary-based sentiment analysis.
 * A new `summary`-method for `partition`-class objects is introduced. If the Object has been weighed, the list
 that is returned will include a report on weights.
 * The `partition_bundle`-class, rather than inheriting from `bundle`-class directly, will now inherit from the `count_bundle`-class
@@ -17,10 +16,8 @@ no explicit list necessary.
 * `highlight`-method implemented now for class `kwic`.
 * A coerce-method to turn a kwic-object into a htmlwidget has been singled out from the show,kwic-method. Now it is possible to generate a htmlwidget from a kwic object, and to include the widget into a Rmarkdown document.
 * The script configure.win has been removed so that installation works on Windows without an installation of Rtools.
-* When calling `use()`, the registry directory is reset for CQP, so that the new corpus is 
-available for using it with CQP syntax.
-* new coerce-method to turn textstat-objects into an htmlwidget (DataTable), very useful for 
-Rmarkdown documents such as slides.
+* When calling `use()`, the registry directory is reset for CQP, so that the new corpus is available for using it with CQP syntax.
+* new coerce-method to turn textstat-objects into an htmlwidget (DataTable), very useful for  Rmarkdown documents such as slides.
 * A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.
 * A new as.character,kwic-method
 * Bug removed from s_attributes,partition_method: "fast track" was activated without preconditions.

@@ -9,6 +9,7 @@
 \alias{knit_print,kwic-method}
 \alias{as.character,kwic-method}
 \alias{[,kwic,ANY,ANY,ANY-method}
+\alias{subset,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{length,kwic-method}
 \alias{sample,kwic-method}
@@ -25,6 +26,8 @@
 
 \S4method{[}{kwic,ANY,ANY,ANY}(x, i)
 
+\S4method{subset}{kwic}(x, ...)
+
 \S4method{as.data.frame}{kwic}(x)
 
 \S4method{length}{kwic}(x)
@@ -40,9 +43,17 @@
 
 \item{x}{A \code{kwic} class object.}
 
+\item{pagelength}{The number of kwic lines displayed per page in the
+datatables htmlwidget that is returned.}
+
+\item{options}{Chunk options.}
+
 \item{...}{Used for backwards compatibility.}
 
 \item{fmt}{A format string passed into \code{sprintf} to format the node of a KWIC display.}
+
+\item{i}{Single integer value, the kwic line for which the fulltext shall be
+inspected.}
 
 \item{size}{An \code{integer}, subset size for sampling.}
 
@@ -55,7 +66,7 @@
 \description{
 S4 class for organizing information for kwic/concordance output. A set of
 standard generics (\code{show}, \code{as.character}, \code{as.data.frame},
-\code{length}, \code{sample}) as well as indexing is implemented to process
+\code{length}, \code{sample}, \code{subset}) as well as indexing is implemented to process
 kwic class objects (see 'Usage'). See section 'Details' for the
 \code{enrich}, \code{view} and \code{knit_print} methods.
 }
@@ -64,6 +75,10 @@ The \code{knit_print} will be called by knitr when processing code
   chunks in Rmarkdown documents to include a \code{htmlwidget} into the
   resulting html document. It may be necessary to explicitly state
   "render=knit_print" in the chunk options.
+
+The \code{subset}-method will apply \code{subset} to the table in
+  the slot \code{table}, for filtering query results based on metadata (i.e.
+  s-attributes) that need to be present.
 
 The \code{enrich} method is used to generate the actual output for
 the kwic method. If param \code{table} is \code{TRUE}, corpus positions will

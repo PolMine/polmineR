@@ -463,6 +463,8 @@ setClass(
 #' @param s_attributes Character vector of s-attributes with metainformation.
 #' @param table Logical, whether to turn cpos \code{data.table} into \code{data.frame} for output.
 #' @param size An \code{integer}, subset size for sampling.
+#' @param i Single integer value, the kwic line for which the fulltext shall be
+#'   inspected.
 #' @param ... Used for backwards compatibility.
 #'   
 #' @name kwic-class

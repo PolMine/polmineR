@@ -76,6 +76,11 @@ of a \code{textstat} class object.}
 \item{e2}{Another \code{texstat} object.}
 
 \item{.Object}{A \code{textstat} object.}
+
+\item{pagelength}{The number of kwic lines displayed per page in the
+datatables htmlwidget that is returned.}
+
+\item{options}{Chunk options.}
 }
 \description{
 The \code{textstat}-class (technically an S4 class) serves as a superclass

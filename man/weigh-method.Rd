@@ -38,7 +38,16 @@ library(data.table)
 if (require("zoo") && require("devtools") && require("magrittr")){
 
 # Source in function 'get_sentiws' from a GitHub gist
-devtools::source_url("https://gist.githubusercontent.com/PolMine/70eeb095328070c18bd00ee087272adf/raw/c2eee2f48b11e6d893c19089b444f25b452d2adb/sentiws.R")
+gist_url <- file.path(
+  "gist.githubusercontent.com",
+  "PolMine",
+  "70eeb095328070c18bd00ee087272adf",
+  "raw",
+  "c2eee2f48b11e6d893c19089b444f25b452d2adb",
+  "sentiws.R"
+ )
+  
+devtools::source_url(sprintf("https://\%s", gist_url))
 SentiWS <- get_sentiws()
 
 # Do the statistical word context analysis
