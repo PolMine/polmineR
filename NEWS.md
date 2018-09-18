@@ -27,6 +27,10 @@ Rmarkdown documents such as slides.
 * As a matter of consistency, the argument 'meta' has been renamed to s_attributes for the kwic,context-method, and for the enrich,kwic-method
 * To avoid confusion (with argument s_attributes), the argument s_attribute to check for integrity within 
 a struc has been renamed into boundary.
+* A new `knit_print()`-method for textstat- and kwic-objects, to offer a seamless inclusion of analyses in  Rmarkdown documents.
+* Bug removed that would swallow metadata/s-attributes display in kwic output after highlighting.
+* A new subset,kwic-method offers functionality to filter concordances based on metadata.
+
 
 # polmineR 0.7.9
 

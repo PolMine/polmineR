@@ -43,7 +43,7 @@ install.packages("polmineR")
 
 Binaries are available for Windows, and everything should work out of the box. On macOS and Linux, system requirements need to be fulfilled. The annex of the vignette includes a detailed explanation how to install *polmineR* on macOS, and Linux.
 
-#### Loading polmineR
+### Loading polmineR
 
 The *polmineR* package is loaded just like any other package.
 
@@ -55,7 +55,7 @@ Upon loading the package, the package version is reported. As *polmineR* is unde
 
 In addition, you will see an information on the *session registry*, which needs some further explanation.
 
-#### The session registry directory
+### The session registry directory
 
 Indexed corpus data may be stored at different locations on your machine. CWB users will usually have a data directory with subdirectories for every single corpus. But corpus data may also reside within R packages, or anywhere else.
 
@@ -76,7 +76,7 @@ Sys.getenv("CORPUS_REGISTRY")
 See the annex for an explanation how to set the CORPUS_REGISTRY environment variable for the current R session, or permanently.
 
 
-##### Using and installing packaged corpora
+#### Using and installing packaged corpora
 
 If you want to use a corpus wrapped into a R data package, call `use()` with the name of the R package. The function will add the registry files describing the corpora in the package to the session registry directory introduced before.
 
@@ -96,7 +96,7 @@ install.packages("GermaParl", repo = "http://polmine.sowi.uni-due.de/packages")
 We some advantages to use R data packages for shipping corpora. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.
 
 
-##### Checking that corpora are available
+#### Checking that corpora are available
 
 The `corpus()`-method can be used to check which corpora are described in the registry and accessible. The REUTERS corpus in our case (note that the names of CWB corpora are always written upper case). In addition to the English REUTERS corpus, a small subset of the GermaParl corpus ("GERMAPARLMINI") is included in the *polmineR* package.
 
@@ -105,7 +105,7 @@ corpus()
 ```
 
 
-##### Session settings
+#### Session settings
 
 Many methods in the *polmineR* package use default settings that are set in the general options settings. Following a convention, settings relevant for the *polmineR* package simplystart with 'polmineR.' Inspect the settings as follows:
 
@@ -127,27 +127,40 @@ options("polmineR.mc" = FALSE)
 Core analytical tasks are implemented as methods (S4 class system), i.e. the bevaviour of the methods changes depending on the object that is supplied. Almost all methods can be applied to corpora (indicated by a length-one character vector) as well as partitions (subcorpora). As a quick start, methods applied to corpora are explained first.
 
 
-##### Keyword-in-context (kwic)
+### Keyword-in-context (kwic)
 
-The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. You can include metadata from the corpus using the 's_attributes' argument.
+```{r, echo = FALSE, message = FALSE}
+options("polmineR.pagelength" = 3L)
+```
 
-```{r, eval = TRUE}
+The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
+
+```{r, eval = TRUE, render = knit_print}
 kwic("REUTERS", "oil")
+```
+
+You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
+
+```{r, render = knit_print}
 kwic("REUTERS", "oil", s_attributes = "places")
+```
+
+But you can display any number of s-attributes.
+
+```{r, render = knit_print}
 kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.
 
-```{r, eval = TRUE}
-kwic("REUTERS", '"OPEC.*"')
+```{r, render = knit_print}
 kwic("REUTERS", '"oil" "price.*"')
 ```
 
 Explaining the CQP syntax goes beyon this vignette. Consult the [CQP tutorial](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) to learn more about the CQP syntax.
 
 
-##### Getting counts and frequencies
+### Getting counts and frequencies
 
 You can count one or several hits in a corpus.
 
@@ -158,7 +171,7 @@ count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
 ```
 
 
-##### Dispersions
+### Dispersions
 
 Use the `dispersion()`-method to get dispersions of counts accross one (or two) dimensions.
 
@@ -177,7 +190,7 @@ barplot(height = saudi_arabia[["count"]], names.arg = saudi_arabia[["id"]], las 
 ```
 
 
-##### Cooccurrences
+### Cooccurrences
 
 To analyse the neighborhood of a token, or the match for a CQP query, use `cooccurrences()`.
 
@@ -189,8 +202,8 @@ top5 <- subset(oil, rank_ll <= 5)
 
 In an interactive session, simply type `top5` in the terminal, and the output will be shown in the data viewer. To inspect the output in the viewer pane, you can coerce the object to a htmlwidget. This is also a good way how to include the table in a Rmarkdown document.
 
-```{r}
-as(top5, "htmlwidget")
+```{r, render = knit_print}
+top5
 ```
 
 For further operations, get the the table with the statistical results by applying the `as.data.frame()`-method.
@@ -223,7 +236,7 @@ s_attributes(saudi_arabia, "id")
 If you work with a flat XML structure, the order of the provided s-attributes may be relevant for speeding up the set up of the partition. For a nested XML, it is important that with the order, you move from ancestors to childs. For further information, see the documentation of the partition-function.
 
 
-##### Cooccurrences
+### Cooccurrences
 
 The cooccurrences-method can be applied to partition-objects.
 
@@ -240,7 +253,7 @@ df[1:5, c("word", "ll", "rank_ll")]
 ```
 
 
-##### Distribution of queries
+### Distribution of queries
 
 To understand the occurance of a phenomenon, the distribution of query results across one or two dimensions will often be interesing. This is done via the 'distribution' function. The query may use the CQP syntax.
 
@@ -250,7 +263,7 @@ q2 <- dispersion(saudi_arabia, query = c("oil", "barrel"), s_attribute = "id", p
 ```
 
 
-##### Getting features
+### Getting features
 
 To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.
 
@@ -270,7 +283,7 @@ df <- as.data.frame(saudi_arabia_features_min)
 df_min <- df[,c("word", "count_coi", "count_ref", "chisquare")]
 ```
 
-##### Getting a tm TermDocumentMatrix
+### Getting a tm TermDocumentMatrix
 
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.
 
@@ -286,7 +299,7 @@ m[c("oil", "barrel"),]
 ```
 
 
-##### Reading
+### Reading
 
 A key consideration of the polmineR package is to offer tools for combining quantitative and qualitative approaches to text analysis. Use the `html()`-method, or the `read()`-method to return to the full text. In this example, we define a maximum height for the output, which is useful when including full text output in a Rmarkdown document.
 

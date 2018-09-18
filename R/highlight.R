@@ -96,7 +96,7 @@ setMethod("highlight", "html", function(.Object, highlight = list(), ...){
 
 #' @rdname highlight
 setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FALSE, perl = TRUE, verbose = TRUE, ...){
-  if (length(list(...)) > 0) highlight <- list(...)
+  if (length(list(...)) > 0L) highlight <- list(...)
   if (is.character(highlight)) highlight <- split(x = unname(highlight), f = names(highlight))
   for (color in names(highlight)){
     if (regex){
@@ -117,5 +117,6 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
     }
   }
   .Object <- enrich(.Object, table = TRUE)
+  .Object <- enrich(.Object, s_attributes = .Object@metadata)
   .Object
 })

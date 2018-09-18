@@ -30,7 +30,25 @@ setAs(
 #' @importFrom DT datatable formatStyle
 setMethod("show", "kwic", function(object){
   retval <- as(object, "htmlwidget")
-  if (interactive()) show(retval)
+  if (interactive()){
+    show(retval)
+  } else{
+    return( retval )
+  }
+})
+
+
+#' @details The \code{knit_print} will be called by knitr when processing code
+#'   chunks in Rmarkdown documents to include a \code{htmlwidget} into the
+#'   resulting html document. It may be necessary to explicitly state
+#'   "render=knit_print" in the chunk options.
+#' @importFrom knitr knit_print
+#' @exportMethod knit_print
+#' @rdname kwic-class
+setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
+  y <- as(x, "htmlwidget")
+  y$x$options$pageLength <- pagelength
+  knit_print(y, options = options)
 })
 
 
@@ -55,13 +73,19 @@ setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
 })
 
 #' @docType methods
-#' @noRd
+#' @rdname kwic-class
 setMethod('[', 'kwic',
           function(x,i) {
             x@table <- x@table[i,]
             x
           }        
 )
+
+#' @details The \code{subset}-method will apply \code{subset} to the table in
+#'   the slot \code{table}, for filtering query results based on metadata (i.e.
+#'   s-attributes) that need to be present.
+#' @rdname kwic-class
+setMethod("subset", "kwic", function(x, ...) {x@table <- subset(x@table, ...); x})
 
 #' @rdname kwic-class
 setMethod("as.data.frame", "kwic", function(x){
@@ -118,19 +142,28 @@ NULL
 #'   (defaults to auxiliary function \code{is.query}).
 #' @param left Number of tokens to the left of query match.
 #' @param right Number of tokens to the right of query match.
-#' @param s_attributes Structural attributes (s-attributes) to include into output table as metainformation.
-#' @param cpos Kogical, if TRUE, the corpus positions ("cpos") if the hits will be included in the \code{kwic}-object that is returned.
+#' @param s_attributes Structural attributes (s-attributes) to include into
+#'   output table as metainformation.
+#' @param cpos Logical, if \code{TRUE}, the corpus positions ("cpos") if the hits will
+#'   be included in the \code{kwic}-object that is returned.
 #' @param p_attribute The p-attribute, defaults to 'word'.
-#' @param boundary If provided, a length-one character vector stating an s-attribute that will be used to check the boundaries of the text.
-#' @param stoplist Terms or ids to prevent a concordance from occurring in results.
-#' @param positivelist Terms or ids required for a concordance to occurr in results
-#' @param regex Logical, whether stoplist/positivelist is interpreted as regular expression
+#' @param boundary If provided, a length-one character vector stating an
+#'   s-attribute that will be used to check the boundaries of the text.
+#' @param stoplist Terms or ids to prevent a concordance from occurring in
+#'   results.
+#' @param positivelist Terms or ids required for a concordance to occurr in
+#'   results
+#' @param regex Logical, whether stoplist/positivelist is interpreted as regular
+#'   expression
 #' @param verbose Logical, whether to output progress messages
 #' @param progress Logical, whether to show progress bars.
 #' @param ... Further arguments, used to ensure backwards compatibility.
 #' @rdname kwic
 #' @docType methods
-#' @seealso To read the whole text, see the \code{\link{read}}-method.
+#' @seealso The return value is a \code{\link{kwic-class}} object; the
+#'   documentation for the class explains the methods applicable to
+#'   \code{\link{kwic-class}} objects. To read the whole text, see the
+#'   \code{\link{read}}-method.
 #' @references 
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).
 #'

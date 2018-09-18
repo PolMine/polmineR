@@ -109,14 +109,25 @@ setMethod("[", "textstat", function(x, i, j){
 })
 
 setAs(from = "textstat", to = "htmlwidget", def = function(from) DT::datatable(from@stat))
+
 setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
   DT::datatable(dt, rownames = FALSE)
 })
+
 setAs(from = "features", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
   DT::datatable(dt)
+})
+
+#' @importFrom knitr knit_print
+#' @exportMethod knit_print
+#' @rdname textstat-class
+setMethod("knit_print", "textstat", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
+  y <- as(x, "htmlwidget")
+  y$x$options$pageLength <- pagelength
+  knit_print(y, options = options)
 })

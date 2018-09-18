@@ -102,7 +102,7 @@ setMethod("read", "data.table", function(.Object, col, partition_bundle, highlig
 #' @rdname read-method
 setMethod("read", "hits", function(.Object, def, i = NULL, ...){
   if (is.null(i)){
-    for (i in 1:nrow(.Object@stat)){
+    for (i in 1L:nrow(.Object@stat)){
       sAttrs <- lapply(setNames(def, def), function(x) .Object@stat[[x]][i])
       read(partition(.Object@corpus, def = sAttrs, ...))
       readline(">> ")
@@ -111,7 +111,12 @@ setMethod("read", "hits", function(.Object, def, i = NULL, ...){
 })
 
 #' @rdname read-method
-setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_properties(corpus(.Object))[["type"]]){
+setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_properties(corpus(.Object))["type"]){
+  
+  # if registry file does not have 'type' corpus property, a named NA vector arrives
+  if (length(type) > 0L) if (is.na(type)) type <- NULL
+  if (!is.null(type)) type <- unname(type)
+
   if (is.null(i)){
     for (i in 1L:length(.Object)){
       read(.Object, i = i, type = type)

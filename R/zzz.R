@@ -22,6 +22,7 @@
     "polmineR.left" = 5L,
     "polmineR.right" = 5L,
     "polmineR.lineview" = FALSE,
+    "polmineR.pagelength" = 10L,
     "polmineR.meta " =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,

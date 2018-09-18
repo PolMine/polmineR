@@ -32,9 +32,11 @@ corpus, a \code{partition} or \code{context} object.}
 
 \item{...}{Further arguments, used to ensure backwards compatibility.}
 
-\item{s_attributes}{Structural attributes (s-attributes) to include into output table as metainformation.}
+\item{s_attributes}{Structural attributes (s-attributes) to include into
+output table as metainformation.}
 
-\item{cpos}{Kogical, if TRUE, the corpus positions ("cpos") if the hits will be included in the \code{kwic}-object that is returned.}
+\item{cpos}{Logical, if \code{TRUE}, the corpus positions ("cpos") if the hits will
+be included in the \code{kwic}-object that is returned.}
 
 \item{verbose}{Logical, whether to output progress messages}
 
@@ -50,13 +52,17 @@ query), or a function to check whether query is a CQP query or not
 
 \item{p_attribute}{The p-attribute, defaults to 'word'.}
 
-\item{boundary}{If provided, a length-one character vector stating an s-attribute that will be used to check the boundaries of the text.}
+\item{boundary}{If provided, a length-one character vector stating an
+s-attribute that will be used to check the boundaries of the text.}
 
-\item{stoplist}{Terms or ids to prevent a concordance from occurring in results.}
+\item{stoplist}{Terms or ids to prevent a concordance from occurring in
+results.}
 
-\item{positivelist}{Terms or ids required for a concordance to occurr in results}
+\item{positivelist}{Terms or ids required for a concordance to occurr in
+results}
 
-\item{regex}{Logical, whether stoplist/positivelist is interpreted as regular expression}
+\item{regex}{Logical, whether stoplist/positivelist is interpreted as regular
+expression}
 
 \item{progress}{Logical, whether to show progress bars.}
 }
@@ -105,5 +111,8 @@ Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literatur
 Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 }
 \seealso{
-To read the whole text, see the \code{\link{read}}-method.
+The return value is a \code{\link{kwic-class}} object; the
+  documentation for the class explains the methods applicable to
+  \code{\link{kwic-class}} objects. To read the whole text, see the
+  \code{\link{read}}-method.
 }

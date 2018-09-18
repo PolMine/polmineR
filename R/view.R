@@ -29,7 +29,7 @@ setMethod("view", "cooccurrences", function(.Object){
 
 
 #' @rdname kwic-class
-#' @param .Object a kwic object
+#' @param .Object A \code{kwic} class object.
 setMethod("view", "kwic", function(.Object){
   tableToView <- .Object@table
   get("View", envir = .GlobalEnv)(tableToView)

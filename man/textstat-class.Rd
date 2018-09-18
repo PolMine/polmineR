@@ -29,6 +29,7 @@
 \alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
 \alias{p_attributes,textstat-method}
+\alias{knit_print,textstat-method}
 \alias{view,textstat-method}
 \title{S4 textstat superclass.}
 \usage{
@@ -47,6 +48,10 @@ as.bundle(object, ...)
 \S4method{subset}{textstat}(x, ...)
 
 \S4method{p_attributes}{textstat}(.Object)
+
+\S4method{knit_print}{textstat}(x,
+  pagelength = getOption("polmineR.pagelength"),
+  options = knitr::opts_chunk, ...)
 
 \S4method{view}{textstat}(.Object)
 }

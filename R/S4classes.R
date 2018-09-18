@@ -441,40 +441,36 @@ setClass(
 
 #' kwic (S4 class)
 #' 
-#' S4 class for organizing information for concordance output
+#' S4 class for organizing information for kwic/concordance output. A set of
+#' standard generics (\code{show}, \code{as.character}, \code{as.data.frame},
+#' \code{length}, \code{sample}, \code{subset}) as well as indexing is implemented to process
+#' kwic class objects (see 'Usage'). See section 'Details' for the
+#' \code{enrich}, \code{view} and \code{knit_print} methods.
 #' 
-#' @details The \code{enrich} method is used to generate the actual output for
-#' the kwic method. If param \code{table} is \code{TRUE}, corpus positions will
-#' be turned into a data.frame with the concordance lines. If param \code{s_attributes}
-#' is a character vector with s-attributes, the respective s-attributes will be
-#' added as columns to the table with concordance lines.
+#' @slot metadata A \code{character} vector with s-attributes of the metadata
+#'   that are to be displayed.
+#' @slot left An \code{integer} value, words to the left of the query match. 
+#' @slot right An \code{integer} value, words to the right of the query match.
+#' @slot corpus Length-one \code{character} vector, the CWB corpus.
+#' @slot cpos A \code{data.table} with the columns "hit_no", "cpos", "position", "word_id", "word" and "direction".
+#' @slot table A \code{data.frame}, a table with columns "left", "node", "right", and metadata, if the object has been enriched.
+#' @slot encoding A length-one \code{character} vector with the encoding of the corpus.
+#' @slot labels A \code{character} vector with labels.
+#' @slot categories A \code{character} vector.
 #' 
-#' @slot metadata Object of class \code{"character"} keeping the s-attributes of the metadata that are to be displayed
-#' @slot left words to the left
-#' @slot right words to the right
-#' @slot corpus the CWB corpus
-#' @slot cpos the corpus positions
-#' @slot table Object of class \code{data.frame} a table with the relevant information for kwic output
-#' @slot encoding Object of class \code{character} encoding of the corpus
-#' @slot labels Object of class \code{character}
-#' @slot categories Object of class \code{character}
-#' 
-#' @param x a kwic-class object
-#' @param object an object of class \code{kwic}
+#' @param x A \code{kwic} class object.
+#' @param object A \code{kwic} class object.
 #' @param s_attributes Character vector of s-attributes with metainformation.
-#' @param table logical, whether to turn cpos data.table into data.frame for output
-#' @param size integer, the subset size for sampling
+#' @param table Logical, whether to turn cpos \code{data.table} into \code{data.frame} for output.
+#' @param size An \code{integer}, subset size for sampling.
 #' @param ... Used for backwards compatibility.
-#' @section Methods:
-#'   \describe{
-#'    \item{[}{indexing for seeing only some concordances}
-#'    \item{show}{get kwic output}
-#'   }
 #'   
 #' @name kwic-class
 #' @docType class
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
+#' @seealso The constructor for generating kwic objects is the
+#'   \code{\link{kwic}} method.
 #' @examples
 #' use("polmineR")
 #' K <- kwic("GERMAPARLMINI", "Integration")

@@ -18,13 +18,13 @@ Imports:
     jsonlite,
     parallel,
     pbapply,
-    RcppCWB (>= 0.2.2)
+    RcppCWB (>= 0.2.2),
+    knitr
 Suggests:
     markdown,
     htmltools,
     openxlsx,
     sendmailR,
-    knitr,
     shiny,
     shinythemes,
     testthat,
