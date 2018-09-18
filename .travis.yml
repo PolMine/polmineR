@@ -19,6 +19,7 @@ r_packages:
   - tm
   - tidytext
   - covr
+  - rmarkdown
 
 warnings_are_errors: false
 
