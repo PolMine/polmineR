@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Mail result. — mail" />
 
-<meta property="og:description" content="Mail a result (to yourself)." />
+<meta property="og:description" content="Send out a mail with the statistics of an object attached as an xlsx-file." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -114,62 +114,47 @@
 
     <div class="ref-description">
     
-    <p>Mail a result (to yourself).</p>
+    <p>Send out a mail with the statistics of an object attached as an xlsx-file.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>mail</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>mail</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for partition</span>
-<span class='fu'>mail</span>(<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='st'>"drillerExport.html"</span>, <span class='kw'>what</span> <span class='kw'>=</span> <span class='st'>"html"</span>)
-
-<span class='co'># S4 method for cooccurrences</span>
-<span class='fu'>mail</span>(<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fileFormat</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"csv"</span>, <span class='st'>"xlsx"</span>))
-
-<span class='co'># S4 method for features</span>
-<span class='fu'>mail</span>(<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fileFormat</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"csv"</span>, <span class='st'>"xlsx"</span>))
-
-<span class='co'># S4 method for kwic</span>
-<span class='fu'>mail</span>(<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fileFormat</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"csv"</span>, <span class='st'>"xlsx"</span>))
+<span class='co'># S4 method for textstat</span>
+<span class='fu'>mail</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.email"</span>),
+  <span class='kw'>rows</span> <span class='kw'>=</span> <span class='fl'>1L</span>:<span class='fu'>min</span>(<span class='fl'>250L</span>, <span class='fu'>nrow</span>(<span class='no'>.Object</span>)))
 
 <span class='co'># S4 method for data.frame</span>
-<span class='fu'>mail</span>(<span class='no'>object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fileFormat</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"csv"</span>, <span class='st'>"xlsx"</span>))</pre>
+<span class='fu'>mail</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.email"</span>),
+  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='fu'>tempfile</span>(<span class='kw'>fileext</span> <span class='kw'>=</span> <span class='st'>".xlsx"</span>), <span class='kw'>rows</span> <span class='kw'>=</span> <span class='fl'>1L</span>:<span class='fu'>min</span>(<span class='fl'>250L</span>,
+  <span class='fu'>nrow</span>(<span class='no'>.Object</span>)))
+
+<span class='co'># S4 method for kwic</span>
+<span class='fu'>mail</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.email"</span>),
+  <span class='kw'>rows</span> <span class='kw'>=</span> <span class='fl'>1L</span>:<span class='fu'>min</span>(<span class='fl'>250L</span>, <span class='fu'>nrow</span>(<span class='no'>.Object</span>)))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>object to deliver</p></td>
+      <th>.Object</th>
+      <td><p>The object to deliver.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters</p></td>
+      <td><p>Further parameters.</p></td>
     </tr>
     <tr>
       <th>to</th>
-      <td><p>the receiver of the mail message</p></td>
+      <td><p>The recipient of the mail message.</p></td>
+    </tr>
+    <tr>
+      <th>rows</th>
+      <td><p>The number of rows of the table (if NULL, the whole table will be sent).</p></td>
     </tr>
     <tr>
       <th>filename</th>
-      <td><p>filename</p></td>
-    </tr>
-    <tr>
-      <th>what</th>
-      <td><p>what to send (defaults to "html")</p></td>
-    </tr>
-    <tr>
-      <th>nrow</th>
-      <td><p>the number of rows of the table (if NULL, the whole table will be sent)</p></td>
-    </tr>
-    <tr>
-      <th>fileFormat</th>
-      <td><p>csv or xlsx, or both</p></td>
+      <td><p>The filename of the (temporary) xlsx-file that is generated.</p></td>
     </tr>
     </table>
     

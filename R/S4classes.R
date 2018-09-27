@@ -135,12 +135,14 @@ setReplaceMethod("name", signature = c(x = "bundle", value = "character"), funct
 #' 
 #' # Use brackets for indexing 
 #' 
+#' \dontrun{
 #' y[1:25]
 #' y[,c("word", "ll")]
 #' y[1:25, "word"]
 #' y[1:25][["word"]]
 #' y[which(y[["word"]] %in% c("Arbeit", "Sozial"))]
 #' y[ y[["word"]] %in% c("Arbeit", "Sozial") ]
+#' }
 setClass("textstat",
          representation(
            corpus = "character",
@@ -477,8 +479,8 @@ setClass(
 #' use("polmineR")
 #' K <- kwic("GERMAPARLMINI", "Integration")
 #' length(K)
-#' K[1]
-#' K[1:5]
+#' K_min <- K[1]
+#' K_min <- K[1:5]
 #' @rdname kwic-class
 #' @include Labels.R
 setClass(

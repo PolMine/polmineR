@@ -65,7 +65,7 @@ returned." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -131,6 +131,9 @@ returned.</p>
 <span class='co'># S4 method for textstat</span>
 <span class='fu'>corpus</span>(<span class='no'>object</span>)
 
+<span class='co'># S4 method for kwic</span>
+<span class='fu'>corpus</span>(<span class='no'>object</span>)
+
 <span class='co'># S4 method for bundle</span>
 <span class='fu'>corpus</span>(<span class='no'>object</span>)
 
@@ -151,22 +154,25 @@ returned.</p>
     <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='fu'>corpus</span>()</div><div class='output co'>#&gt;           corpus      size template
 #&gt; 1         ARENEN  28842158     TRUE
 #&gt; 2     AUSTROPARL  70308143     TRUE
-#&gt; 3          BTPDF 139526576     TRUE
-#&gt; 4  GERMAPARLMINI    222201     TRUE
-#&gt; 5       KEYWORDS  44734138     TRUE
-#&gt; 6    KEYWORDS_DE   7525003     TRUE
-#&gt; 7    KEYWORDS_EN  36956586     TRUE
-#&gt; 8    KEYWORDS_FR  18904184     TRUE
-#&gt; 9   KEYWORDS_FR2  18904184     TRUE
-#&gt; 10         NEXIS 164740428     TRUE
-#&gt; 11        PLPRBT       -11     TRUE
-#&gt; 12     PLPRBTTXT  83405660     TRUE
-#&gt; 13       PLPRTXT  83195275     TRUE
-#&gt; 14    REPUBBLICA  26270819     TRUE
-#&gt; 15       REUTERS      4050     TRUE
-#&gt; 16          UNGA  43072609     TRUE
-#&gt; 17      WPRGAGGR   8913223     TRUE
-#&gt; 18          ZEIT 327839748     TRUE</div><div class='input'>
+#&gt; 3           BT18   2855137     TRUE
+#&gt; 4           BT19   2855170     TRUE
+#&gt; 5          BTPDF 139526576     TRUE
+#&gt; 6             BY    169593     TRUE
+#&gt; 7  GERMAPARLMINI    222201     TRUE
+#&gt; 8       KEYWORDS  44734138     TRUE
+#&gt; 9    KEYWORDS_DE   7525003     TRUE
+#&gt; 10   KEYWORDS_EN  36956586     TRUE
+#&gt; 11   KEYWORDS_FR  18904184     TRUE
+#&gt; 12  KEYWORDS_FR2  18904184     TRUE
+#&gt; 13         NEXIS 164740428     TRUE
+#&gt; 14        PLPRBT       -11     TRUE
+#&gt; 15     PLPRBTTXT  83405660     TRUE
+#&gt; 16       PLPRTXT  83195275     TRUE
+#&gt; 17    REPUBBLICA  26270819     TRUE
+#&gt; 18       REUTERS      4050     TRUE
+#&gt; 19          UNGA  43072609     TRUE
+#&gt; 20      WPRGAGGR   8913223     TRUE
+#&gt; 21          ZEIT 327839748     TRUE</div><div class='input'>
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>corpus</span>(<span class='no'>p</span>)</div><div class='output co'>#&gt; [1] "REUTERS"</div><div class='input'>
 <span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='fu'>corpus</span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "REUTERS"</div></pre>
   </div>

@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -124,14 +124,20 @@
 <span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"tfidf"</span>)
 
 <span class='co'># S4 method for DocumentTermMatrix</span>
-<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"tfidf"</span>)</pre>
+<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"tfidf"</span>)
+
+<span class='co'># S4 method for count</span>
+<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='no'>with</span>)
+
+<span class='co'># S4 method for count_bundle</span>
+<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='no'>with</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>the matrix to be weighed</p></td>
+      <td><p>A <code>matrix</code>, or a <code>count</code>-object.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -141,15 +147,80 @@
       <th>method</th>
       <td><p>the kind of weight to apply</p></td>
     </tr>
+    <tr>
+      <th>with</th>
+      <td><p>A <code>data.table</code> used to weigh p-attributes. A column 'weight' with term weights is
+required, and columns with the p-attributes of <code>.Object</code> for matching.</p></td>
+    </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>library</span>(<span class='no'>data.table</span>)
+<span class='kw'>if</span> (<span class='fu'>require</span>(<span class='st'>"zoo"</span>) <span class='kw'>&amp;&amp;</span> <span class='fu'>require</span>(<span class='st'>"devtools"</span>) <span class='kw'>&amp;&amp;</span> <span class='fu'>require</span>(<span class='st'>"magrittr"</span>)){
+
+<span class='co'># Source in function 'get_sentiws' from a GitHub gist</span>
+<span class='no'>gist_url</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span>(
+  <span class='st'>"gist.githubusercontent.com"</span>,
+  <span class='st'>"PolMine"</span>,
+  <span class='st'>"70eeb095328070c18bd00ee087272adf"</span>,
+  <span class='st'>"raw"</span>,
+  <span class='st'>"c2eee2f48b11e6d893c19089b444f25b452d2adb"</span>,
+  <span class='st'>"sentiws.R"</span>
+ )
+
+<span class='kw pkg'>devtools</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/devtools/topics/source_url'>source_url</a></span>(<span class='fu'>sprintf</span>(<span class='st'>"https://%s"</span>, <span class='no'>gist_url</span>))
+<span class='no'>SentiWS</span> <span class='kw'>&lt;-</span> <span class='fu'>get_sentiws</span>()
+
+<span class='co'># Do the statistical word context analysis</span>
+<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"GermaParl"</span>)
+<span class='fu'>options</span>(<span class='st'>"polmineR.left"</span> <span class='kw'>=</span> <span class='fl'>10L</span>)
+<span class='fu'>options</span>(<span class='st'>"polmineR.right"</span> <span class='kw'>=</span> <span class='fl'>10L</span>)
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>context</span>(<span class='st'>"GERMAPARL"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Islam"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>)) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='kw'>node</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://www.rdocumentation.org/packages/magrittr/topics/aliases'>set_names</a></span>(<span class='fu'>s_attributes</span>(<span class='no'>.</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"date"</span>)) <span class='kw'>%&gt;%</span>
+  <span class='fu'>weigh</span>(<span class='kw'>with</span> <span class='kw'>=</span> <span class='no'>SentiWS</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>summary</span>()
+
+<span class='co'># Aggregate by year</span>
+<span class='no'>df</span><span class='kw'>[[</span><span class='st'>"year"</span>]] <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/zoo/topics/yearmon'>as.Date</a></span>(<span class='no'>df</span><span class='kw'>[[</span><span class='st'>"name"</span>]]) <span class='kw'>%&gt;%</span> <span class='fu'>format</span>(<span class='st'>"%Y-01-01"</span>)
+<span class='no'>df_year</span> <span class='kw'>&lt;-</span> <span class='fu'>aggregate</span>(<span class='no'>df</span>[,<span class='fu'>c</span>(<span class='st'>"size"</span>, <span class='st'>"positive_n"</span>, <span class='st'>"negative_n"</span>)], <span class='fu'>list</span>(<span class='no'>df</span><span class='kw'>[[</span><span class='st'>"year"</span>]]), <span class='no'>sum</span>)
+<span class='fu'>colnames</span>(<span class='no'>df_year</span>)[<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='st'>"year"</span>
+
+<span class='co'># Use shares instead of absolute counts </span>
+<span class='no'>df_year</span>$<span class='no'>negative_share</span> <span class='kw'>&lt;-</span> <span class='no'>df_year</span>$<span class='no'>negative_n</span> / <span class='no'>df_year</span>$<span class='no'>size</span>
+<span class='no'>df_year</span>$<span class='no'>positive_share</span> <span class='kw'>&lt;-</span> <span class='no'>df_year</span>$<span class='no'>positive_n</span> / <span class='no'>df_year</span>$<span class='no'>size</span>
+
+<span class='co'># Turn it into zoo object, and plot it</span>
+<span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/zoo/topics/zoo'>zoo</a></span>(
+  <span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>df_year</span>[, <span class='fu'>c</span>(<span class='st'>"positive_share"</span>, <span class='st'>"negative_share"</span>)],
+  <span class='kw'>order.by</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/zoo/topics/yearmon'>as.Date</a></span>(<span class='no'>df_year</span>[,<span class='st'>"year"</span>])
+)
+<span class='fu'>plot</span>(
+  <span class='no'>Z</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"polarity"</span>, <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
+  <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Word context of 'Islam': Share of positive/negative vocabulary"</span>,
+  <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
+  <span class='kw'>cex.main</span> <span class='kw'>=</span> <span class='fl'>0.8</span>
+)
+
+<span class='co'># Note that we can uses the kwic-method to check for the validity of our findings</span>
+<span class='no'>words_positive</span> <span class='kw'>&lt;-</span> <span class='no'>SentiWS</span>[<span class='no'>weight</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>]<span class='kw'>[[</span><span class='st'>"word"</span>]]
+<span class='no'>words_negative</span> <span class='kw'>&lt;-</span> <span class='no'>SentiWS</span>[<span class='no'>weight</span> <span class='kw'>&lt;</span> <span class='fl'>0</span>]<span class='kw'>[[</span><span class='st'>"word"</span>]]
+<span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"GERMAPARL"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Islam"</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='no'>words_positive</span>, <span class='no'>words_negative</span>)) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='kw'>lightgreen</span> <span class='kw'>=</span> <span class='no'>words_positive</span>, <span class='kw'>orange</span> <span class='kw'>=</span> <span class='no'>words_negative</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='tooltips.html'>tooltips</a></span>(<span class='fu'>setNames</span>(<span class='no'>SentiWS</span><span class='kw'>[[</span><span class='st'>"word"</span>]], <span class='no'>SentiWS</span><span class='kw'>[[</span><span class='st'>"weight"</span>]]))
+
+}
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

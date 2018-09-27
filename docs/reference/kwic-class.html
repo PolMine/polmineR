@@ -32,7 +32,11 @@
 
 <meta property="og:title" content="kwic (S4 class) — kwic-class" />
 
-<meta property="og:description" content="S4 class for organizing information for concordance output" />
+<meta property="og:description" content="S4 class for organizing information for kwic/concordance output. A set of
+standard generics (show, as.character, as.data.frame,
+length, sample, subset) as well as indexing is implemented to process
+kwic class objects (see 'Usage'). See section 'Details' for the
+enrich, view and knit_print methods." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +65,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -114,62 +118,108 @@
 
     <div class="ref-description">
     
-    <p>S4 class for organizing information for concordance output</p>
+    <p>S4 class for organizing information for kwic/concordance output. A set of
+standard generics (<code>show</code>, <code>as.character</code>, <code>as.data.frame</code>,
+<code>length</code>, <code>sample</code>, <code>subset</code>) as well as indexing is implemented to process
+kwic class objects (see 'Usage'). See section 'Details' for the
+<code>enrich</code>, <code>view</code> and <code>knit_print</code> methods.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for kwic</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+    <pre class="usage"># S4 method for kwic
+show(object)
 
-<span class='co'># S4 method for kwic</span>
-<span class='fu'>as.data.frame</span>(<span class='no'>x</span>)
+# S4 method for kwic
+knit_print(x, pagelength = getOption("polmineR.pagelength"),
+  options = knitr::opts_chunk, ...)
 
-<span class='co'># S4 method for kwic</span>
-<span class='fu'>length</span>(<span class='no'>x</span>)
+# S4 method for kwic
+as.character(x, fmt = "<i>%s</i>")
 
-<span class='co'># S4 method for kwic</span>
-<span class='fu'>sample</span>(<span class='no'>x</span>, <span class='no'>size</span>)
+# S4 method for kwic,ANY,ANY,ANY
+[(x, i)
 
-<span class='co'># S4 method for kwic</span>
-<span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>table</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+# S4 method for kwic
+subset(x, ...)
 
-<span class='co'># S4 method for kwic</span>
-<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>.Object</span>)</pre>
+# S4 method for kwic
+as.data.frame(x)
+
+# S4 method for kwic
+length(x)
+
+# S4 method for kwic
+sample(x, size)
+
+# S4 method for kwic
+enrich(.Object, s_attributes = NULL, table = FALSE, ...)
+
+# S4 method for kwic
+view(.Object)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>an object of class <code>kwic</code></p></td>
+      <td><p>A <code>kwic</code> class object.</p></td>
     </tr>
     <tr>
       <th>x</th>
-      <td><p>a kwic-class object</p></td>
+      <td><p>A <code>kwic</code> class object.</p></td>
+    </tr>
+    <tr>
+      <th>pagelength</th>
+      <td><p>The number of kwic lines displayed per page in the
+datatables htmlwidget that is returned.</p></td>
+    </tr>
+    <tr>
+      <th>options</th>
+      <td><p>Chunk options.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Used for backwards compatibility.</p></td>
+    </tr>
+    <tr>
+      <th>fmt</th>
+      <td><p>A format string passed into <code>sprintf</code> to format the node of a KWIC display.</p></td>
+    </tr>
+    <tr>
+      <th>i</th>
+      <td><p>Single integer value, the kwic line for which the fulltext shall be
+inspected.</p></td>
     </tr>
     <tr>
       <th>size</th>
-      <td><p>integer, the subset size for sampling</p></td>
+      <td><p>An <code>integer</code>, subset size for sampling.</p></td>
     </tr>
     <tr>
       <th>.Object</th>
-      <td><p>a kwic object</p></td>
+      <td><p>A <code>kwic</code> class object.</p></td>
     </tr>
     <tr>
-      <th>meta</th>
-      <td><p>s-attributes (character vector) with metainformation</p></td>
+      <th>s_attributes</th>
+      <td><p>Character vector of s-attributes with metainformation.</p></td>
     </tr>
     <tr>
       <th>table</th>
-      <td><p>logical, whether to turn cpos data.table into data.frame for output</p></td>
+      <td><p>Logical, whether to turn cpos <code>data.table</code> into <code>data.frame</code> for output.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The <code>enrich</code> method is used to generate the actual output for
+    <p>The <code>knit_print</code> will be called by knitr when processing code
+  chunks in Rmarkdown documents to include a <code>htmlwidget</code> into the
+  resulting html document. It may be necessary to explicitly state
+  "render=knit_print" in the chunk options.</p>
+<p>The <code>subset</code>-method will apply <code>subset</code> to the table in
+  the slot <code>table</code>, for filtering query results based on metadata (i.e.
+  s-attributes) that need to be present.</p>
+<p>The <code>enrich</code> method is used to generate the actual output for
 the kwic method. If param <code>table</code> is <code>TRUE</code>, corpus positions will
-be turned into a data.frame with the concordance lines. If param <code>meta</code>
+be turned into a data.frame with the concordance lines. If param <code>s_attributes</code>
 is a character vector with s-attributes, the respective s-attributes will be
 added as columns to the table with concordance lines.</p>
     
@@ -177,30 +227,107 @@ added as columns to the table with concordance lines.</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>metadata</code></dt><dd><p>Object of class <code>"character"</code> keeping the s-attributes of the metadata that are to be displayed</p></dd>
-    <dt><code>left</code></dt><dd><p>words to the left</p></dd>
-    <dt><code>right</code></dt><dd><p>words to the right</p></dd>
-    <dt><code>corpus</code></dt><dd><p>the CWB corpus</p></dd>
-    <dt><code>cpos</code></dt><dd><p>the corpus positions</p></dd>
-    <dt><code>table</code></dt><dd><p>Object of class <code>data.frame</code> a table with the relevant information for kwic output</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code> encoding of the corpus</p></dd>
-    <dt><code>labels</code></dt><dd><p>Object of class <code>character</code></p></dd>
-    <dt><code>categories</code></dt><dd><p>Object of class <code>character</code></p></dd>
+<dt><code>metadata</code></dt><dd><p>A <code>character</code> vector with s-attributes of the metadata
+that are to be displayed.</p></dd>
+    <dt><code>left</code></dt><dd><p>An <code>integer</code> value, words to the left of the query match.</p></dd>
+    <dt><code>right</code></dt><dd><p>An <code>integer</code> value, words to the right of the query match.</p></dd>
+    <dt><code>corpus</code></dt><dd><p>Length-one <code>character</code> vector, the CWB corpus.</p></dd>
+    <dt><code>cpos</code></dt><dd><p>A <code>data.table</code> with the columns "hit_no", "cpos", "position", "word_id", "word" and "direction".</p></dd>
+    <dt><code>table</code></dt><dd><p>A <code>data.frame</code>, a table with columns "left", "node", "right", and metadata, if the object has been enriched.</p></dd>
+    <dt><code>encoding</code></dt><dd><p>A length-one <code>character</code> vector with the encoding of the corpus.</p></dd>
+    <dt><code>labels</code></dt><dd><p>A <code>character</code> vector with labels.</p></dd>
+    <dt><code>categories</code></dt><dd><p>A <code>character</code> vector.</p></dd>
 </dl>
     
-    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    
-    <p></p><dl class='dl-horizontal'>
-   <dt>[</dt><dd><p>indexing for seeing only some concordances</p></dd>
-   <dt>show</dt><dd><p>get kwic output</p></dd>
-  </dl>
+    <div class='dont-index'><p>The constructor for generating kwic objects is the
+  <code><a href='kwic.html'>kwic</a></code> method.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"Integration"</span>)
-<span class='fu'>length</span>(<span class='no'>K</span>)</div><div class='output co'>#&gt; [1] 23</div><div class='input'><span class='no'>K</span>[<span class='fl'>1</span>]
-<span class='no'>K</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]</div></pre>
+<span class='fu'>length</span>(<span class='no'>K</span>)</div><div class='output co'>#&gt; [1] 23</div><div class='input'><span class='no'>K_min</span> <span class='kw'>&lt;-</span> <span class='no'>K</span>[<span class='fl'>1</span>]
+<span class='no'>K_min</span> <span class='kw'>&lt;-</span> <span class='no'>K</span>[<span class='fl'>1</span>:<span class='fl'>5</span>]
+<span class='no'>oil</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='fu'>as.character</span>(<span class='no'>oil</span>)</div><div class='output co'>#&gt;  [1] "cut its contract prices for crude &lt;i&gt;oil&lt;/i&gt; by 1.50 dlrs a barrel The"                             
+#&gt;  [2] "made in the light of falling &lt;i&gt;oil&lt;/i&gt; product prices and a weak crude"                            
+#&gt;  [3] "product prices and a weak crude &lt;i&gt;oil&lt;/i&gt; market a company spokeswoman said Diamond"               
+#&gt;  [4] "latest in a line of U.S &lt;i&gt;oil&lt;/i&gt; companies that have cut its contract"                            
+#&gt;  [5] "the last two days citing weak &lt;i&gt;oil&lt;/i&gt; markets Reuter OPEC may be forced"                         
+#&gt;  [6] "to halt the current slide in &lt;i&gt;oil&lt;/i&gt; prices oil industry analysts said The"                      
+#&gt;  [7] "the current slide in oil prices &lt;i&gt;oil&lt;/i&gt; industry analysts said The movement to"                  
+#&gt;  [8] "analysts said The movement to higher &lt;i&gt;oil&lt;/i&gt; prices was never to be as"                          
+#&gt;  [9] "Energy Research Associates CERA Analysts and &lt;i&gt;oil&lt;/i&gt; industry sources said the problem OPEC"     
+#&gt; [10] "the problem OPEC faces is excess &lt;i&gt;oil&lt;/i&gt; supply in world oil markets OPEC's"                     
+#&gt; [11] "is excess oil supply in world &lt;i&gt;oil&lt;/i&gt; markets OPEC's problem is not a"                           
+#&gt; [12] "in that way said Paul Mlotok &lt;i&gt;oil&lt;/i&gt; analyst with Salomon Brothers Inc He"                       
+#&gt; [13] "wishes to regain the initiative in &lt;i&gt;oil&lt;/i&gt; prices But some other analysts were"                  
+#&gt; [14] "manager for one of the major &lt;i&gt;oil&lt;/i&gt; companies who spoke on condition that"                      
+#&gt; [15] "the winter demand to sell their &lt;i&gt;oil&lt;/i&gt; but in late March and April"                             
+#&gt; [16] "said that the demand for OPEC &lt;i&gt;oil&lt;/i&gt; has been rising through the first"                         
+#&gt; [17] "its production Demand for their OPEC &lt;i&gt;oil&lt;/i&gt; is clearly above 15.8 mln bpd"                      
+#&gt; [18] "price it will pay for crude &lt;i&gt;oil&lt;/i&gt; 64 Canadian cts a barrel effective"                          
+#&gt; [19] "Texaco Canada last changed its crude &lt;i&gt;oil&lt;/i&gt; postings on Feb 19 Reuter Marathon"                 
+#&gt; [20] "pay for all grades of crude &lt;i&gt;oil&lt;/i&gt; one dlr a barrel effective today"                            
+#&gt; [21] "an emergency OPEC meeting to review &lt;i&gt;oil&lt;/i&gt; policies after recent weakness in world"             
+#&gt; [22] "policies after recent weakness in world &lt;i&gt;oil&lt;/i&gt; prices Sheikh Ali al Khalifa al"                 
+#&gt; [23] "organisation Traders and analysts in international &lt;i&gt;oil&lt;/i&gt; markets estimate OPEC is producing up"
+#&gt; [24] "delivered a challenge to any international &lt;i&gt;oil&lt;/i&gt; company that declared Kuwait sold below"      
+#&gt; [25] "Kuwait had guaranteed markets for its &lt;i&gt;oil&lt;/i&gt; because of its local and international"            
+#&gt; [26] "pricing committee Referring to pressure by &lt;i&gt;oil&lt;/i&gt; companies on OPEC members in apparent"        
+#&gt; [27] "a new report To counter falling &lt;i&gt;oil&lt;/i&gt; revenues the government has launched a"                  
+#&gt; [28] "months to boost exports outside the &lt;i&gt;oil&lt;/i&gt; sector and attract new investment Indonesia"         
+#&gt; [29] "last year s fall in world &lt;i&gt;oil&lt;/i&gt; prices which forced it to devalue"                             
+#&gt; [30] "petroleum industry Growth in the non &lt;i&gt;oil&lt;/i&gt; sector is low because of weak"                      
+#&gt; [31] "in halting the current decline in &lt;i&gt;oil&lt;/i&gt; prices Oil industry sources said yesterday"            
+#&gt; [32] "Arab producers had had difficulty selling &lt;i&gt;oil&lt;/i&gt; at official OPEC prices but Kuwait"            
+#&gt; [33] "3.7500 03 yesterday REUTER The Gulf &lt;i&gt;oil&lt;/i&gt; state of Qatar recovering slightly from"             
+#&gt; [34] "from last year's decline in world &lt;i&gt;oil&lt;/i&gt; prices announced its first budget since"               
+#&gt; [35] "87 budget due to uncertainty surrounding &lt;i&gt;oil&lt;/i&gt; revenues Sheikh Abdul Aziz said that"           
+#&gt; [36] "There was also no projection for &lt;i&gt;oil&lt;/i&gt; revenue Qatar an OPEC member has"                       
+#&gt; [37] "Our expectations of positive signs regarding &lt;i&gt;oil&lt;/i&gt; price trends foremost among them OPEC's"    
+#&gt; [38] "December's OPEC accord to boost world &lt;i&gt;oil&lt;/i&gt; prices and stabilise the market the"               
+#&gt; [39] "the recent fall in free market &lt;i&gt;oil&lt;/i&gt; prices Nazer said Saudi Arabia is"                        
+#&gt; [40] "and it will never sell its &lt;i&gt;oil&lt;/i&gt; at prices below the pronounced prices"                        
+#&gt; [41] "followed a year of turmoil on &lt;i&gt;oil&lt;/i&gt; markets which saw prices slump briefly"                    
+#&gt; [42] "accord was shown clearly in the &lt;i&gt;oil&lt;/i&gt; market He said contacts among members"                   
+#&gt; [43] "prices Traders and analysts in international &lt;i&gt;oil&lt;/i&gt; markets estimate OPEC is producing up"      
+#&gt; [44] "was over producing REUTER Saudi crude &lt;i&gt;oil&lt;/i&gt; output last month fell to an"                      
+#&gt; [45] "3.8 mln bpd in January Gulf &lt;i&gt;oil&lt;/i&gt; sources said They said exports from"                         
+#&gt; [46] "last December to back new official &lt;i&gt;oil&lt;/i&gt; prices averaging 18 dlrs a barrel"                    
+#&gt; [47] "dlr below Opec levels Saudi Arabian &lt;i&gt;oil&lt;/i&gt; minister Hisham Nazer yesterday reiterated the"      
+#&gt; [48] "Jubail export refineries They put crude &lt;i&gt;oil&lt;/i&gt; exports through Yanbu at 100,000 bpd"            
+#&gt; [49] "around 200,000 bpd each REUTER Deputy &lt;i&gt;oil&lt;/i&gt; ministers from six Gulf Arab states"               
+#&gt; [50] "today to discuss coordination of crude &lt;i&gt;oil&lt;/i&gt; marketing the official Emirates news agency"      
+#&gt; [51] "Doha by Gulf Cooperation Council GCC &lt;i&gt;oil&lt;/i&gt; ministers to help each other market"                
+#&gt; [52] "help each other market their crude &lt;i&gt;oil&lt;/i&gt; Four of the GCC states Saudi"                         
+#&gt; [53] "December's OPEC accord to boost world &lt;i&gt;oil&lt;/i&gt; prices and stabilize the market the"               
+#&gt; [54] "the recent fall in free market &lt;i&gt;oil&lt;/i&gt; prices Nazer said Saudi Arabia is"                        
+#&gt; [55] "and it will never sell its &lt;i&gt;oil&lt;/i&gt; at prices below the pronounced prices"                        
+#&gt; [56] "OPEC agreed to cut its total &lt;i&gt;oil&lt;/i&gt; output ceiling by 7.25 pct and"                             
+#&gt; [57] "18 dollars a barrel Reuter Kuwait's &lt;i&gt;oil&lt;/i&gt; minister said in a newspaper interview"              
+#&gt; [58] "after the recent weakness in world &lt;i&gt;oil&lt;/i&gt; prices Sheikh Ali al Khalifa al"                      
+#&gt; [59] "barrels of crude daily bpd Crude &lt;i&gt;oil&lt;/i&gt; prices fell sharply last week as"                       
+#&gt; [60] "fell sharply last week as international &lt;i&gt;oil&lt;/i&gt; traders and analysts estimated the 13"           
+#&gt; [61] "Philadelphia was closed when a Cypriot &lt;i&gt;oil&lt;/i&gt; tanker Seapride II ran aground after"             
+#&gt; [62] "said He said there was no &lt;i&gt;oil&lt;/i&gt; spill but the ship is lodged"                                  
+#&gt; [63] "on the high tide After delivering &lt;i&gt;oil&lt;/i&gt; to a refinery in Paulsboro New"                        
+#&gt; [64] "present and future impact of low &lt;i&gt;oil&lt;/i&gt; prices on the domestic oil industry"                    
+#&gt; [65] "low oil prices on the domestic &lt;i&gt;oil&lt;/i&gt; industry U.S policy now is to"                            
+#&gt; [66] "also called for new research for &lt;i&gt;oil&lt;/i&gt; exploration and development techniques It predicted"    
+#&gt; [67] "instead that such moves as increasing &lt;i&gt;oil&lt;/i&gt; reserves and more exploration and development"     
+#&gt; [68] "present and future impact of low &lt;i&gt;oil&lt;/i&gt; prices on the domestic oil industry"                    
+#&gt; [69] "low oil prices on the domestic &lt;i&gt;oil&lt;/i&gt; industry U.S policy now is to"                            
+#&gt; [70] "also called for new research for &lt;i&gt;oil&lt;/i&gt; exploration and development techniques It predicted"    
+#&gt; [71] "the full economic benefits of cheap &lt;i&gt;oil&lt;/i&gt; But the group did not strongly"                      
+#&gt; [72] "instead that such moves as increasing &lt;i&gt;oil&lt;/i&gt; reserves and more exploration and development"     
+#&gt; [73] "lowered its posted prices for crude &lt;i&gt;oil&lt;/i&gt; one to 1.50 dlrs a barrel"                           
+#&gt; [74] "for West Coast grades of crude &lt;i&gt;oil&lt;/i&gt; the company said Reuter The New"                          
+#&gt; [75] "On April one NYMEX will allow &lt;i&gt;oil&lt;/i&gt; traders that do not hold a"                                
+#&gt; [76] "spokeswoman This will change the way &lt;i&gt;oil&lt;/i&gt; is transacted in the real world"                    
+#&gt; [77] "will serve the industry because the &lt;i&gt;oil&lt;/i&gt; market does not close when NYMEX"                    
+#&gt; [78] "a CFTC spokeswoman Reuter Argentine crude &lt;i&gt;oil&lt;/i&gt; production was down 10.8 pct in"               </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -211,7 +338,7 @@ added as columns to the table with concordance lines.</p>
 
       <li><a href="#slots">Slots</a></li>
 
-      <li><a href="#methods">Methods</a></li>
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

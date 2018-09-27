@@ -63,7 +63,7 @@ or the values of s-attributes in a corpus/partition with the s_attributes-method
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -174,8 +174,26 @@ values of the s-attributes available in the corpus/partition are returned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
-<span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>)</div><div class='output co'>#&gt; [1] "interjection" "date"         "party"        "speaker"     </div><div class='input'><span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"date"</span>) <span class='co'># dates of plenary meetings</span></div><div class='output co'>#&gt; <span class='error'>Error in check_strucs(corpus = corpus, s_attribute = s_attribute, strucs = struc,     registry = registry): all values of vector strucs need to be &gt;= 0</span></div><div class='input'>
-<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='error'>Error in rep(0L, times = maxAttr): ungültiges 'times' Argument</span></div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; <span class='error'>Error in s_attributes(P): Objekt 'P' nicht gefunden</span></div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>, <span class='st'>"speaker"</span>) <span class='co'># get names of speakers</span></div><div class='output co'>#&gt; <span class='error'>Error in s_attributes(P, "speaker"): Objekt 'P' nicht gefunden</span></div></pre>
+<span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>)</div><div class='output co'>#&gt; [1] "interjection" "date"         "party"        "speaker"     </div><div class='input'><span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"date"</span>) <span class='co'># dates of plenary meetings</span></div><div class='output co'>#&gt; [1] "2009-10-27" "2009-10-28" "2009-11-10" "2009-11-11" "2009-11-12"</div><div class='input'>
+<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; [1] "interjection" "date"         "party"        "speaker"     </div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>, <span class='st'>"speaker"</span>) <span class='co'># get names of speakers</span></div><div class='output co'>#&gt;  [1] "Norbert Lammert"             "Angela Dorothea Merkel"     
+#&gt;  [3] "Frank-Walter Steinmeier"     "Birgit Homburger"           
+#&gt;  [5] "Wolfgang Thierse"            "Oskar Lafontaine"           
+#&gt;  [7] "Jürgen Trittin"              "Volker Kauder"              
+#&gt;  [9] "Joachim Poß"                 "Hans-Peter Friedrich"       
+#&gt; [11] "Agnes Krumwiede"             "Gerda Hasselfeldt"          
+#&gt; [13] "Arnold Vaatz"                "Guido Westerwelle"          
+#&gt; [15] "Gernot Erler"                "Andreas Schockenhoff"       
+#&gt; [17] "Jan  van Aken"               "Frithjof Schmidt"           
+#&gt; [19] "Dirk Niebel"                 "Sascha Raabe"               
+#&gt; [21] "Angelica Schwall-Düren"      "Karl-Theodor  zu Guttenberg"
+#&gt; [23] "Wolfgang Gehrcke"            "Omid Nouripour"             
+#&gt; [25] "Petra Pau"                   "Ilse Aigner"                
+#&gt; [27] "Waltraud Wolff"              "Hans-Michael Goldmann"      
+#&gt; [29] "Katrin Göring-Eckardt"       "Kirsten Tackmann"           
+#&gt; [31] "Ulrike Höfken"               "Peter Bleser"               
+#&gt; [33] "Elvira Drobinski-Weiß"       "Christel Happach-Kasan"     
+#&gt; [35] "Caren Lay"                   "Johannes Röring"            
+#&gt; [37] "Wilhelm Priesmeier"         </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

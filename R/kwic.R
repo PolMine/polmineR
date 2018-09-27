@@ -174,28 +174,28 @@ NULL
 #' Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 #' @examples
 #' use("polmineR")
-#' kwic("GERMAPARLMINI", "Integration")
-#' kwic(
+#' K <- kwic("GERMAPARLMINI", "Integration")
+#' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   "Integration", left = 20, right = 20,
 #'   s_attributes = c("date", "speaker", "party")
 #' )
-#' kwic(
+#' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   '"Integration" [] "(Menschen|Migrant.*|Personen)"', cqp = TRUE,
 #'   left = 20, right = 20,
 #'   s_attributes = c("date", "speaker", "party")
 #' )
 #' 
-#' kwic(
+#' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   '"Sehr" "geehrte"', cqp = TRUE,
 #'   boundary = "date"
 #' )
 #' 
 #' P <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' kwic(P, query = "Integration")
-#' kwic(P, query = '"Sehr" "geehrte"', cqp = TRUE, boundary = "date")
+#' K <- kwic(P, query = "Integration")
+#' K <- kwic(P, query = '"Sehr" "geehrte"', cqp = TRUE, boundary = "date")
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 

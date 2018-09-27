@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Highlight tokens. — highlight • polmineR</title>
+<title>Highlight tokens in text output. — highlight • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,10 @@
 
 
 
-<meta property="og:title" content="Highlight tokens. — highlight" />
+<meta property="og:title" content="Highlight tokens in text output. — highlight" />
 
-<meta property="og:description" content="Highlight tokens based on exact match, a regular expression or corpus
-position in kwic output or html document." />
+<meta property="og:description" content="Highlight tokens in fulltext based on exact match, a regular expression or
+corpus position in kwic output or html document." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -62,7 +62,7 @@ position in kwic output or html document." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -108,62 +108,70 @@ position in kwic output or html document." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Highlight tokens.</h1>
+    <h1>Highlight tokens in text output.</h1>
     
     <div class="hidden name"><code>highlight.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Highlight tokens based on exact match, a regular expression or corpus
-position in kwic output or html document.</p>
+    <p>Highlight tokens in fulltext based on exact match, a regular expression or
+corpus position in <code>kwic</code> output or <code>html</code> document.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>())
+<span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='no'>...</span>)
 
 <span class='co'># S4 method for html</span>
-<span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>())
+<span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='no'>...</span>)
 
 <span class='co'># S4 method for kwic</span>
 <span class='fu'>highlight</span>(<span class='no'>.Object</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>perl</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>perl</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>a <code>html</code> or <code>character</code> object with html, or a 
-<code>kwic</code> object</p></td>
+      <td><p>A <code>html</code>, <code>character</code>, a <code>kwic</code> object.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters (unused)</p></td>
+      <td><p>Terms to be highlighted can be passed in as named character
+vectors of terms (or regular expressions); the name then needs to be a
+valid color name.</p></td>
     </tr>
     <tr>
       <th>highlight</th>
-      <td><p>a <code>"list"</code> of character or integer vectors, the names 
-need to provide the colors, the values of the vector the term to be matched
-or a corpus position</p></td>
+      <td><p>A character vector, or a list of character or integer vectors.</p></td>
     </tr>
     <tr>
       <th>regex</th>
-      <td><p>logical, whether character vectors give regular expressions</p></td>
+      <td><p>Logical, whether character vectors are interpreted as regular
+expressions.</p></td>
     </tr>
     <tr>
       <th>perl</th>
-      <td><p>logical, whether to use perl-style regular expressions for
-highlighting when regex is TRUE</p></td>
+      <td><p>Logical, whether to use perl-style regular expressions for
+highlighting when regex is <code>TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical, whether to output verbose messages</p></td>
+      <td><p>Logical, whether to output messages.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If <code>highlight</code> is a character vector, the names of the vector are
+interpreted as colors. If <code>highlight</code> is a list, the names of the list
+are considered as colors. Values can be character values or integer values
+with token ids. Colors are inserted into the output html and need to be
+digestable for the browser used.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -186,13 +194,27 @@ highlighting when regex is TRUE</p></td>
 <span class='co'># use highlight for kwic output</span>
 <span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"barrel"</span>)
 <span class='no'>K2</span> <span class='kw'>&lt;-</span> <span class='fu'>highlight</span>(<span class='no'>K</span>, <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>yellow</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"oil"</span>, <span class='st'>"price"</span>)))
+<span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='no'>K2</span>
+
+<span class='co'># use character vector for output, not list</span>
+<span class='no'>K2</span> <span class='kw'>&lt;-</span> <span class='fu'>highlight</span>(
+  <span class='no'>K</span>,
+  <span class='kw'>highlight</span> <span class='kw'>=</span> <span class='fu'>c</span>(
+    <span class='kw'>green</span> <span class='kw'>=</span> <span class='st'>"pric."</span>,
+    <span class='kw'>red</span> <span class='kw'>=</span> <span class='st'>"reduction"</span>,
+    <span class='kw'>red</span> <span class='kw'>=</span> <span class='st'>"decrease"</span>,
+    <span class='kw'>orange</span> <span class='kw'>=</span> <span class='st'>"dropped"</span>),
+    <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
 <span class='kw'>if</span> (<span class='fu'>interactive</span>()) <span class='no'>K2</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#details">Details</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

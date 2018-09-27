@@ -62,7 +62,7 @@ regions object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@ regions object." />
     
     </div>
 
-    <pre class="usage"><span class='fu'>as.regions</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>as.regions</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for regions</span>
 <span class='fu'>as.data.table</span>(<span class='no'>x</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
@@ -133,10 +133,18 @@ regions object." />
       <td><p>object of class <code>regions</code></p></td>
     </tr>
     <tr>
+      <th>...</th>
+      <td><p>Further arguments.</p></td>
+    </tr>
+    <tr>
       <th>values</th>
       <td><p>values to assign to a column that will be added</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <code>as.regions</code>-method coerces objects to a <code>regions</code>-object.</p>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
@@ -156,6 +164,8 @@ regions object." />
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#slots">Slots</a></li>
       
       <li><a href="#examples">Examples</a></li>

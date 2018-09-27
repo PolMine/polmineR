@@ -63,7 +63,7 @@ p_attribute." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -142,7 +142,10 @@ defined, counts are performed for the p-attribute defined by the parameter
 <span class='co'># S4 method for Corpus</span>
 <span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>def</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xml</span> <span class='kw'>=</span> <span class='st'>"flat"</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='get_type.html'>get_type</a></span>(<span class='no'>.Object</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='get_type.html'>get_type</a></span>(<span class='no'>.Object</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for context</span>
+<span class='fu'>partition</span>(<span class='no'>.Object</span>, <span class='kw'>node</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -199,6 +202,16 @@ minimize object size / memory consumption) in data.table with counts.</p></td>
       <th>verbose</th>
       <td><p>Logical, whether to be verbose.</p></td>
     </tr>
+    <tr>
+      <th>slots</th>
+      <td><p>Object slots that will be reported columns of <code>data.frame</code>
+summarizing <code>partition</code> objects in environment.</p></td>
+    </tr>
+    <tr>
+      <th>node</th>
+      <td><p>A logical value, whether to include the node (i.e. query matches) in the region matrix
+generated when creating a <code>partition</code> from a <code>context</code>-object.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -207,8 +220,8 @@ minimize object size / memory consumption) in data.table with counts.</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If <code>.Object</code> is a length-one character vector, a subcorpus/partition
-for the corpus defined be <code>.Object</code> is generated.</p>
+    <p>If <code>.Object</code> is a length-one character vector, a
+  subcorpus/partition for the corpus defined be <code>.Object</code> is generated.</p>
 <p>If <code>.Object</code> is an environment (typically <code>.GlobalEnv</code>),
   the <code>partition</code> objects present in the environment are listed.</p>
 <p>If <code>.Object</code> is a <code>partition</code> object, a subcorpus of the

@@ -57,21 +57,21 @@ setOldClass("htmlwidget")
 #' 
 #' # Core methods applied to corpus
 #' 
-#' count("REUTERS", query = "oil")
-#' count("REUTERS", query = c("oil", "barrel"))
-#' count("REUTERS", query = '"Saudi" "Arab.*"', breakdown = TRUE, cqp = TRUE)
-#' dispersion("REUTERS", query = "oil", s_attribute = "id")
-#' kwic("REUTERS", query = "oil")
-#' cooccurrences("REUTERS", query = "oil")
+#' C <- count("REUTERS", query = "oil")
+#' C <- count("REUTERS", query = c("oil", "barrel"))
+#' C <- count("REUTERS", query = '"Saudi" "Arab.*"', breakdown = TRUE, cqp = TRUE)
+#' D <- dispersion("REUTERS", query = "oil", s_attribute = "id")
+#' K <- kwic("REUTERS", query = "oil")
+#' CO <- cooccurrences("REUTERS", query = "oil")
 #' 
 #' 
 #' # Core methods applied to partition
 #' 
 #' kuwait <- partition("REUTERS", places = "kuwait", regex = TRUE)
-#' count(kuwait, query = "oil")
-#' dispersion(kuwait, query = "oil", s_attribute = "id")
-#' kwic(kuwait, query = "oil", meta = "id")
-#' cooccurrences(kuwait, query = "oil")
+#' C <- count(kuwait, query = "oil")
+#' D <- dispersion(kuwait, query = "oil", s_attribute = "id")
+#' K <- kwic(kuwait, query = "oil", meta = "id")
+#' CO <- cooccurrences(kuwait, query = "oil")
 #'
 #'
 #' # Go back to full text

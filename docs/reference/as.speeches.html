@@ -67,7 +67,7 @@ two seperate speeches." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -182,15 +182,15 @@ whether to assume seperate speeches.</p></td>
   <span class='kw'>s_attribute_date</span> <span class='kw'>=</span> <span class='st'>"date"</span>, <span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>
 )</div><div class='output co'>#&gt; <span class='message'>... generating partitions by date</span></div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  date</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='output co'>#&gt; <span class='message'>... generating speeches</span></div><div class='output co'>#&gt; <span class='message'>... generating names</span></div><div class='output co'>#&gt; <span class='message'>... reordering partitions</span></div><div class='output co'>#&gt; <span class='message'>... coercing partitions to plpr_partitions</span></div><div class='input'><span class='no'>speeches_count</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>speeches</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='no'>tdm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.DocumentTermMatrix.html'>as.TermDocumentMatrix</a></span>(<span class='no'>speeches_count</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='message'>... using the p_attribute-slot of the first object in the bundle as p_attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating (temporary) key column</span></div><div class='output co'>#&gt; <span class='message'>... generating cumulated data.table</span></div><div class='output co'>#&gt; <span class='message'>... getting unique keys</span></div><div class='output co'>#&gt; <span class='message'>... generating integer keys</span></div><div class='output co'>#&gt; <span class='message'>... cleaning up temporary key columns</span></div><div class='input'>
-<span class='no'>bt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'>as.speeches</span>(<span class='no'>bt</span>, <span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... generating partitions by date</span></div><div class='output co'>#&gt; <span class='message'>... generating speeches</span></div><div class='output co'>#&gt; <span class='message'>... generating names</span></div><div class='output co'>#&gt; <span class='message'>... reordering partitions</span></div><div class='output co'>#&gt; <span class='message'>... coercing partitions to plpr_partitions</span></div><div class='input'><span class='fu'>summary</span>(<span class='no'>speeches</span>)</div><div class='output co'>#&gt;                            partition token
-#&gt; 1     Heinz Riesenhuber_2009-10-27_1  4766
-#&gt; 2         Volker Kauder_2009-10-27_1    38
-#&gt; 3       Norbert Lammert_2009-10-27_1  4441
-#&gt; 4     Gerda Hasselfeldt_2009-10-27_1    23
-#&gt; 5      Wolfgang Thierse_2009-10-27_1    14
-#&gt; 6    Hermann Otto Solms_2009-10-27_1    17
-#&gt; 7             Petra Pau_2009-10-27_1    25
-#&gt; 8 Katrin Göring-Eckardt_2009-10-27_1    17</div></pre>
+<span class='no'>bt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'>as.speeches</span>(<span class='no'>bt</span>, <span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... generating partitions by date</span></div><div class='output co'>#&gt; <span class='message'>... generating speeches</span></div><div class='output co'>#&gt; <span class='message'>... generating names</span></div><div class='output co'>#&gt; <span class='message'>... reordering partitions</span></div><div class='output co'>#&gt; <span class='message'>... coercing partitions to plpr_partitions</span></div><div class='input'><span class='fu'>summary</span>(<span class='no'>speeches</span>)</div><div class='output co'>#&gt;                                 name size
+#&gt; 1     Heinz Riesenhuber_2009-10-27_1 4766
+#&gt; 2         Volker Kauder_2009-10-27_1   38
+#&gt; 3       Norbert Lammert_2009-10-27_1 4441
+#&gt; 4     Gerda Hasselfeldt_2009-10-27_1   23
+#&gt; 5      Wolfgang Thierse_2009-10-27_1   14
+#&gt; 6    Hermann Otto Solms_2009-10-27_1   17
+#&gt; 7             Petra Pau_2009-10-27_1   25
+#&gt; 8 Katrin Göring-Eckardt_2009-10-27_1   17</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

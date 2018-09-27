@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -108,12 +108,35 @@
       
     </div>
 
-    <div id="polminer-0-7-9-9001" class="section level1">
+    <div id="polminer-0-7-10" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-9-9001" class="anchor"></a>polmineR 0.7.9.9001<small> Unreleased </small>
+<a href="#polminer-0-7-10" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
 </h1>
 <ul>
 <li>The <code>use</code>-function is limited now to activating the corpus in data packages. Having introduced the session registry, switching registry directories is not needed any more.</li>
+<li>The <code>partition_bundle</code>-method for <code>context</code>-objects has been reworked entirely (and is working again); a new <code>partition</code>-method for <code>context</code>-objects has been introduced. Buth steps are intended for workflows for dictionary-based sentiment analysis.</li>
+<li>A new <code>summary</code>-method for <code>partition</code>-class objects is introduced. If the Object has been weighed, the list that is returned will include a report on weights.</li>
+<li>The <code>partition_bundle</code>-class, rather than inheriting from <code>bundle</code>-class directly, will now inherit from the <code>count_bundle</code>-class</li>
+<li>The <code>weigh</code>-method is now implemented for the classes <code>count</code> and <code>count_bundle</code>. Via inheritance, it will also be available for <code>partition</code> and <code>partition_bundle</code>. Useful for dictionary-based sentiment analysis, for instance. There is an example that explains the workflow.</li>
+<li>The <code>as.regions</code>-function has been turned into a <code>as.regions</code>-method to have a more generic tool.</li>
+<li>The <code>size_coi</code>-slot of the <code>context</code>-object included the node; the node (i.e. matches for queries) is excluded now from the count of the size_coi.</li>
+<li>Some refactoring of the <code>context</code>-method, so that full use of data.table speeds up things.</li>
+<li>
+<code>highlight</code>-method allows definitions of terms to be highlighted to be passed in via three dots (…); no explicit list necessary.</li>
+<li>
+<code>highlight</code>-method implemented now for class <code>kwic</code>.</li>
+<li>A coerce-method to turn a kwic-object into a htmlwidget has been singled out from the show,kwic-method. Now it is possible to generate a htmlwidget from a kwic object, and to include the widget into a Rmarkdown document.</li>
+<li>The script configure.win has been removed so that installation works on Windows without an installation of Rtools.</li>
+<li>When calling <code><a href="../reference/use.html">use()</a></code>, the registry directory is reset for CQP, so that the new corpus is available for using it with CQP syntax.</li>
+<li>new coerce-method to turn textstat-objects into an htmlwidget (DataTable), very useful for Rmarkdown documents such as slides.</li>
+<li>A new argument height for the <code><a href="../reference/html-method.html">html()</a></code>-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.</li>
+<li>A new as.character,kwic-method</li>
+<li>Bug removed from s_attributes,partition_method: “fast track” was activated without preconditions.</li>
+<li>As a matter of consistency, the argument ‘meta’ has been renamed to s_attributes for the kwic,context-method, and for the enrich,kwic-method</li>
+<li>To avoid confusion (with argument s_attributes), the argument s_attribute to check for integrity within a struc has been renamed into boundary.</li>
+<li>A new <code>knit_print()</code>-method for textstat- and kwic-objects, to offer a seamless inclusion of analyses in Rmarkdown documents.</li>
+<li>Bug removed that would swallow metadata/s-attributes display in kwic output after highlighting.</li>
+<li>A new subset,kwic-method offers functionality to filter concordances based on metadata.</li>
 </ul>
 </div>
     <div id="polminer-0-7-9" class="section level1">
@@ -831,7 +854,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#polminer-0-7-9-9001">0.7.9.9001</a></li>
+        <li><a href="#polminer-0-7-10">0.7.10</a></li>
         <li><a href="#polminer-0-7-9">0.7.9</a></li>
         <li><a href="#polminer-0-7-8">0.7.8</a></li>
         <li><a href="#polminer-0-7-7">0.7.7</a></li>

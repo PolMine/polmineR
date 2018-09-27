@@ -113,8 +113,8 @@ that are to be displayed.}
 use("polmineR")
 K <- kwic("GERMAPARLMINI", "Integration")
 length(K)
-K[1]
-K[1:5]
+K_min <- K[1]
+K_min <- K[1:5]
 oil <- kwic("REUTERS", query = "oil")
 as.character(oil)
 }

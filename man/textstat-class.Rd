@@ -148,10 +148,12 @@ colnames(y)
 
 # Use brackets for indexing 
 
+\dontrun{
 y[1:25]
 y[,c("word", "ll")]
 y[1:25, "word"]
 y[1:25][["word"]]
 y[which(y[["word"]] \%in\% c("Arbeit", "Sozial"))]
 y[ y[["word"]] \%in\% c("Arbeit", "Sozial") ]
+}
 }

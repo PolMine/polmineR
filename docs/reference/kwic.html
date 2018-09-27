@@ -32,8 +32,7 @@
 
 <meta property="og:title" content="KWIC/concordance output. — kwic" />
 
-<meta property="og:description" content="Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
-applying the kwic method on either a partition or a context object." />
+<meta property="og:description" content="Prepare and show concordances / keyword-in-context (kwic)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -62,7 +61,7 @@ applying the kwic method on either a partition or a context object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
       </span>
     </div>
 
@@ -115,98 +114,114 @@ applying the kwic method on either a partition or a context object." />
 
     <div class="ref-description">
     
-    <p>Prepare and show concordances / keyword-in-context (kwic). The same result can be achieved by 
-applying the kwic method on either a partition or a context object.</p>
+    <p>Prepare and show concordances / keyword-in-context (kwic).</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for context</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>),
-  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.left"</span>), <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.right"</span>),
-  <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
 <span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'>as.integer</span>(<span class='fu'>getOption</span>(<span class='st'>"polmineR.left"</span>)),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'>as.integer</span>(<span class='fu'>getOption</span>(<span class='st'>"polmineR.right"</span>)),
-  <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>a <code>partition</code> or <code>context</code> object</p></td>
+      <td><p>A (length-one) <code>character</code> vector with the name of a CWB
+corpus, a <code>partition</code> or <code>context</code> object.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters to be passed</p></td>
+      <td><p>Further arguments, used to ensure backwards compatibility.</p></td>
     </tr>
     <tr>
-      <th>meta</th>
-      <td><p>metainformation to display</p></td>
+      <th>s_attributes</th>
+      <td><p>Structural attributes (s-attributes) to include into
+output table as metainformation.</p></td>
     </tr>
     <tr>
       <th>cpos</th>
-      <td><p>logical, if TRUE, the corpus positions ("cpos") if the hits will be handed over to the kwic-object that is returned</p></td>
+      <td><p>Logical, if <code>TRUE</code>, the corpus positions ("cpos") if the hits will
+be included in the <code>kwic</code>-object that is returned.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical, whether to be talkative</p></td>
+      <td><p>Logical, whether to output progress messages</p></td>
     </tr>
     <tr>
       <th>query</th>
-      <td><p>a query, CQP-syntax can be used</p></td>
+      <td><p>A query, CQP-syntax can be used.</p></td>
     </tr>
     <tr>
       <th>cqp</th>
-      <td><p>either logical (TRUE if query is a CQP query), or a
-function to check whether query is a CQP query or not (defaults to is.query
-auxiliary function)</p></td>
+      <td><p>Either a logical value (<code>TRUE</code> if <code>query</code> is a CQP
+query), or a function to check whether query is a CQP query or not
+(defaults to auxiliary function <code>is.query</code>).</p></td>
     </tr>
     <tr>
       <th>left</th>
-      <td><p>to the left</p></td>
+      <td><p>Number of tokens to the left of query match.</p></td>
     </tr>
     <tr>
       <th>right</th>
-      <td><p>to the right</p></td>
+      <td><p>Number of tokens to the right of query match.</p></td>
     </tr>
     <tr>
       <th>p_attribute</th>
-      <td><p>p-attribute, defaults to 'word'</p></td>
+      <td><p>The p-attribute, defaults to 'word'.</p></td>
     </tr>
     <tr>
-      <th>s_attribute</th>
-      <td><p>if provided, the s-attribute will be used to check the boundaries of the text</p></td>
+      <th>boundary</th>
+      <td><p>If provided, a length-one character vector stating an
+s-attribute that will be used to check the boundaries of the text.</p></td>
     </tr>
     <tr>
       <th>stoplist</th>
-      <td><p>terms or ids to prevent a concordance from occurring in results</p></td>
+      <td><p>Terms or ids to prevent a concordance from occurring in
+results.</p></td>
     </tr>
     <tr>
       <th>positivelist</th>
-      <td><p>terms or ids required for a concordance to occurr in results</p></td>
+      <td><p>Terms or ids required for a concordance to occurr in
+results</p></td>
     </tr>
     <tr>
       <th>regex</th>
-      <td><p>logical, whether stoplist/positivelist is processed as regular expression</p></td>
+      <td><p>Logical, whether stoplist/positivelist is interpreted as regular
+expression</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Logical, whether to show progress bars.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If a positivelist ist supplied, the tokens will be highlighted.</p>
+    <p>The method works with a whole CWB corpus defined by a  character vector, and
+can be applied on a <code>partition</code>- or a <code>context</code> object.</p>
+<p>If a <code>positivelist</code> ist supplied, only concordances will be kept if at
+least one of the terms from the <code>positivelist</code> occurrs in the context of
+the query match. Use argument <code>regex</code> if the positivelist should be
+interpreted as regular expressions. Tokens from the positivelist will be
+highlighted in the output table.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -216,15 +231,32 @@ Cham et al: Springer, pp. 73-87 (chs. 8 &amp; 9).</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>To read the whole text, see the <code><a href='read-method.html'>read</a></code>-method.</p></div>
+    <div class='dont-index'><p>The return value is a <code><a href='kwic-class.html'>kwic-class</a></code> object; the
+  documentation for the class explains the methods applicable to
+  <code><a href='kwic-class.html'>kwic-class</a></code> objects. To read the whole text, see the
+  <code><a href='read-method.html'>read</a></code>-method.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>bt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>def</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>), <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>kwic</span>(<span class='no'>bt</span>, <span class='st'>"Integration"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 23</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='input'><span class='fu'>kwic</span>(<span class='no'>bt</span>, <span class='st'>"Integration"</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"date"</span>, <span class='st'>"speaker"</span>, <span class='st'>"party"</span>))</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 23</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='input'><span class='fu'>kwic</span>(
-  <span class='no'>bt</span>, <span class='st'>'"Integration" [] "(Menschen|Migrant.*|Personen)"'</span>,
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"Integration"</span>)
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(
+  <span class='st'>"GERMAPARLMINI"</span>,
+  <span class='st'>"Integration"</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"date"</span>, <span class='st'>"speaker"</span>, <span class='st'>"party"</span>)
+)
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(
+  <span class='st'>"GERMAPARLMINI"</span>,
+  <span class='st'>'"Integration" [] "(Menschen|Migrant.*|Personen)"'</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>meta</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"date"</span>, <span class='st'>"speaker"</span>, <span class='st'>"party"</span>)
-)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 3</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div></pre>
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"date"</span>, <span class='st'>"speaker"</span>, <span class='st'>"party"</span>)
+)
+
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(
+  <span class='st'>"GERMAPARLMINI"</span>,
+  <span class='st'>'"Sehr" "geehrte"'</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='st'>"date"</span>
+)</div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... checking that all s-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... get struc for s-attribute: date</span></div><div class='output co'>#&gt; <span class='message'>... checking boundaries of regions</span></div><div class='output co'>#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  10%  |                                                                              |==========                                                            |  15%  |                                                                              |==============                                                        |  20%  |                                                                              |==================                                                    |  25%  |                                                                              |=====================                                                 |  30%  |                                                                              |========================                                              |  35%  |                                                                              |============================                                          |  40%  |                                                                              |================================                                      |  45%  |                                                                              |===================================                                   |  50%  |                                                                              |======================================                                |  55%  |                                                                              |==========================================                            |  60%  |                                                                              |==============================================                        |  65%  |                                                                              |=================================================                     |  70%  |                                                                              |====================================================                  |  75%  |                                                                              |========================================================              |  80%  |                                                                              |============================================================          |  85%  |                                                                              |===============================================================       |  90%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</div><div class='input'>
+<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='no'>P</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 7</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='no'>P</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"Sehr" "geehrte"'</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='st'>"date"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 6</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... checking that all s-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... get struc for s-attribute: date</span></div><div class='output co'>#&gt; <span class='message'>... checking boundaries of regions</span></div><div class='output co'>#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
