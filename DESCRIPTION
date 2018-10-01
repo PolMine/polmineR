@@ -30,7 +30,8 @@ Suggests:
     shinythemes,
     testthat,
     tidytext,
-    magrittr
+    magrittr,
+    covr
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an

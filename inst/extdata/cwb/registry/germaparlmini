@@ -7,9 +7,9 @@ NAME "GermaParlMini - excerpt from the GermaParl corpus of plenary protocols of 
 # corpus ID (must be lowercase in registry!)
 ID   germaparlmini
 # path to binary data files
-HOME /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpxNaDfJ/R_LIBSb4ed6c7e2039/polmineR/extdata/cwb/indexed_corpora/germaparlmini
+HOME /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpxJv2CJ/R_LIBS5443778aeb29/polmineR/extdata/cwb/indexed_corpora/germaparlmini
 # optional info file (displayed by "info;" command in CQP)
-INFO /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpxNaDfJ/R_LIBSb4ed6c7e2039/polmineR/extdata/cwb/indexed_corpora/germaparlmini/.info
+INFO /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpxJv2CJ/R_LIBS5443778aeb29/polmineR/extdata/cwb/indexed_corpora/germaparlmini/.info
 
 # corpus properties provide additional information about the corpus:
 ##:: charset  = "latin1" # character encoding of corpus data
