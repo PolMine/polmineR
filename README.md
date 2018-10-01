@@ -9,7 +9,7 @@ Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://t
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
-[![DOI](https://zenodo.org/badge/17337554.svg)](https://zenodo.org/badge/latestdoi/17337554)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1442381.svg)](https://doi.org/10.5281/zenodo.1442381)
 
 # polmineR
 
@@ -57,7 +57,7 @@ package and the location of a so-called ‘registry’-directory.
 ``` r
 library(polmineR)
 #> polmineR v0.7.10
-#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmp1kgNnO/polmineR_registry
+#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpg5d9Fn/polmineR_registry
 ```
 
 The session registry directory is populated with files that describe the

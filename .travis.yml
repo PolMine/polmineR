@@ -21,6 +21,9 @@ r_packages:
   - covr
   - rmarkdown
 
+r_github_packages:
+  - r-lib/covr
+
 warnings_are_errors: false
 
 notifications:
