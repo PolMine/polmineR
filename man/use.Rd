@@ -29,12 +29,16 @@ for corpora are assumed to be in a subdirectory named after the corpus (lower
 case) in the package subdirectory \code{./extdata/cwb/indexed_corpora/}. When
 adding a corpus to the registry, templates for formatting fulltext output are
 reloaded.
+
+If the path to the data directory in a package includes a non-ASCII character,
+binary data files of the corpora in package are copied to a subdirectory of the
+per-session temporary data directory.
 }
 \examples{
 use("polmineR")
 corpus()
 }
 \seealso{
-To get the session registry registry, see \code{\link{registry}};
+To get the session registry directory, see \code{\link{registry}};
   to reset the registry, see \code{\link{registry_reset}}.
 }

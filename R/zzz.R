@@ -55,8 +55,11 @@
 
   pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
   pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
+  
   polmineR_registry_dir <- registry()
-  if (!file.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  if (!dir.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  
+  if (!dir.exists(data_dir())) dir.create(data_dir())
 
   if (Sys.getenv("CORPUS_REGISTRY") != ""){
     for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
@@ -83,8 +86,9 @@
   # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,
   # but for some (unknown) reason, a package crash occurrs, when CQP is initialized
   # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
-  
-  packageStartupMessage(sprintf("polmineR v%s", packageVersion("polmineR")))
-  packageStartupMessage("session registry:  ", Sys.getenv("CORPUS_REGISTRY"))
-  # packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
+}
+
+.onDetach <- function(libpath){
+  unlink(registry(), recursive = TRUE, force = TRUE)
+  unlink(data_dir(), recursive = TRUE, force = TRUE)
 }

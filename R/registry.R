@@ -155,15 +155,83 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
   invisible(NULL)
 }
 
-#' Get session registry directory.
+#' Get registry and data directories.
 #' 
-#' The \code{polmineR} package uses a subdirectory of the per-session temporary directory
-#' as a (temporary) registry. The \code{registry} function will return the path 
-#' to this directory.
+#' The Corpus Workbench (CWB) uses a registry directory with (txt) files
+#' describing corpora in a standardized format. The binary files of a corpus are
+#' stored in a data directory defined in the registry directory. The
+#' \code{registry} and \code{data_dir} functions return the respective
+#' direcories within a package, if the argument \code{pkg} is used, or the
+#' temporary registry and data directory in the per-session temporary directory,
+#' if \code{pkg} is \code{NULL} (default value).
+#'
+#' @details Upon loading the polmineR package, there is a check whether the
+#'   environment variable \code{CORPUS_REGISTRY} is defined. In case it is, the
+#'   registry files in the directory defined by the \code{CORPUS_REGISTRY}
+#'   environment variable are copied to the temporary registry directory, which
+#'   serves as the central place to store all registry files for all corpora, be
+#'   it system corpora, corpora included in R packages, or temporary corpora.
 #' 
+#' @param pkg A character string with the name of a single package; if \code{NULL} (default),
+#' the temporary registry and data directory is returned.
+#' @return A path to a (registry or data) directory, or NULL, if package does not exist
+#' or is not a package including a corpus.
 #' @export registry
 #' @rdname registry
 #' @name registry
 #' @examples
-#' registry()
-registry <- function() file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
+#' registry() # returns temporary registry directory
+#' registry(pkg = "polmineR") # returns registry directory in polmineR-package
+#' 
+#' data_dir()
+#' data_dir(pkg = "polmineR")
+registry <- function(pkg = NULL){
+  if (is.null(pkg)){
+    y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
+    return(y)
+  } else {
+    stopifnot(
+      is.character(pkg),
+      length(pkg) == 1L
+    )
+    if (!pkg %in% rownames(installed.packages())){
+      warning(sprintf("package '%s' does not exist", pkg))
+      return( NULL )
+    } else {
+      y <- system.file(package = pkg, "extdata", "cwb", "registry")
+      if (y == ""){
+        warning(sprintf("no registry directory in package '%s'", pkg))
+        return( NULL )
+      } else {
+        return( y )
+      }
+    }
+  }
+}
+
+
+#' @export data_dir
+#' @rdname registry
+data_dir <- function(pkg = NULL){
+  if (is.null(pkg)){
+    y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_data_dir", fsep = "/")
+    return(y)
+  } else {
+    stopifnot(
+      is.character(pkg),
+      length(pkg) == 1L
+    )
+    if (!pkg %in% rownames(installed.packages())){
+      warning(sprintf("package '%s' does not exist", pkg))
+      return( NULL )
+    } else {
+      y <- system.file(package = pkg, "extdata", "cwb", "indexed_corpora")
+      if (y == ""){
+        warning(sprintf("no registry directory in package '%s'", pkg))
+        return( NULL )
+      } else {
+        return( y )
+      }
+    }
+  }
+}

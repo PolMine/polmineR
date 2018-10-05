@@ -2,15 +2,42 @@
 % Please edit documentation in R/registry.R
 \name{registry}
 \alias{registry}
-\title{Get session registry directory.}
+\alias{data_dir}
+\title{Get registry and data directories.}
 \usage{
-registry()
+registry(pkg = NULL)
+
+data_dir(pkg = NULL)
+}
+\arguments{
+\item{pkg}{A character string with the name of a single package; if \code{NULL} (default),
+the temporary registry and data directory is returned.}
+}
+\value{
+A path to a (registry or data) directory, or NULL, if package does not exist
+or is not a package including a corpus.
 }
 \description{
-The \code{polmineR} package uses a subdirectory of the per-session temporary directory
-as a (temporary) registry. The \code{registry} function will return the path 
-to this directory.
+The Corpus Workbench (CWB) uses a registry directory with (txt) files
+describing corpora in a standardized format. The binary files of a corpus are
+stored in a data directory defined in the registry directory. The
+\code{registry} and \code{data_dir} functions return the respective
+direcories within a package, if the argument \code{pkg} is used, or the
+temporary registry and data directory in the per-session temporary directory,
+if \code{pkg} is \code{NULL} (default value).
+}
+\details{
+Upon loading the polmineR package, there is a check whether the
+  environment variable \code{CORPUS_REGISTRY} is defined. In case it is, the
+  registry files in the directory defined by the \code{CORPUS_REGISTRY}
+  environment variable are copied to the temporary registry directory, which
+  serves as the central place to store all registry files for all corpora, be
+  it system corpora, corpora included in R packages, or temporary corpora.
 }
 \examples{
-registry()
+registry() # returns temporary registry directory
+registry(pkg = "polmineR") # returns registry directory in polmineR-package
+
+data_dir()
+data_dir(pkg = "polmineR")
 }

@@ -1,3 +1,19 @@
+polmineR 0.7.10.9001
+====================
+  * New functionality to store corpora in a temporary data directory which is a subdirectory
+of the per-session temporary directory. A new function `data_dir()` will return this temporary
+data directory.
+  * The `use()`-function will now check for non-ASCII characters in the path to binary corpus data and 
+move the corpus data to a temporary data directory (subdirectory of the directory returned 
+by `data_dir()`, if necessary. A remaining issue with using  CWB indexed corpora is thus addressed. The 
+temporary files are removed when detaching the package.
+  * The functions `registry()` and `data_dir()` now accept an argument `pkg`, and will return
+the path to the registry directory / the data directory within a package, if the argument is
+used.
+  * Startup messages indicating the package version of polmineR and the registry path are omitted now,
+they do not appear necessary any more.
+
+
 polmineR 0.7.10
 ===============
 
