@@ -56,8 +56,8 @@ package and the location of a so-called ‘registry’-directory.
 
 ``` r
 library(polmineR)
-#> polmineR v0.7.10
-#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpxih9zZ/polmineR_registry
+#> polmineR v0.7.10.9001
+#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpe923aa/polmineR_registry
 ```
 
 The session registry directory is populated with files that describe the
