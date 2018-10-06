@@ -68,7 +68,6 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   p, query = "Integration", p_attribute = "word",
 #'   positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
 #' )
-#' @import data.table
 #' @exportMethod context
 #' @rdname context-method
 #' @name context

@@ -143,6 +143,7 @@ setReplaceMethod("name", signature = c(x = "bundle", value = "character"), funct
 #' y[which(y[["word"]] %in% c("Arbeit", "Sozial"))]
 #' y[ y[["word"]] %in% c("Arbeit", "Sozial") ]
 #' }
+#' @aliases as.data.table
 setClass("textstat",
          representation(
            corpus = "character",

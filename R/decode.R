@@ -104,7 +104,7 @@ setMethod("decode", "character", function(.Object, s_attribute = NULL, verbose =
       pAttributeList,
       sAttributeList
     )
-    y <- as.data.table(combinedList)
+    y <- data.table::as.data.table(combinedList)
     
   }
   y

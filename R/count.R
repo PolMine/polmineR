@@ -137,13 +137,13 @@ setMethod("count", "partition", function(
         corpus = .Object@corpus, p_attribute = p_attribute,
         matrix = .Object@cpos
       )
-      TF <- as.data.table(countMatrix)
+      TF <- data.table::as.data.table(countMatrix)
       setnames(TF, old = c("V1", "V2"), new = c(pAttr_id, "count"))
     } else {
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
       idList <- lapply(p_attribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
       names(idList) <- paste(p_attribute, "id", sep = "_")
-      ID <- as.data.table(idList)
+      ID <- data.table::as.data.table(idList)
       setkeyv(ID, cols = names(idList))
       TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
       setnames(TF, "N", "count")
@@ -294,7 +294,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
       }
     } else {
       
-      tokenStreamDT <- as.data.table(
+      tokenStreamDT <- data.table::as.data.table(
         li <- lapply(
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
           function(pAttr){
@@ -378,7 +378,7 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
     id = 0:length(count),
     count = c(length(which(ids == 0)), count)
   )
-  setkey(TF, "id")
+  setkeyv(TF, cols = "id")
   setnames(TF, "id", paste(p_attribute, "id", sep = "_"))
   TF[count > 0]
 })

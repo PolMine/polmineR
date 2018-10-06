@@ -40,7 +40,7 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
           as.nativeEnc(retval, from = corpusEncoding)
         })
       names(metaInformation) <- s_attribute
-      return( as.data.table(metaInformation) )
+      return( data.table::as.data.table(metaInformation) )
     }
   }
 })
@@ -137,7 +137,7 @@ setMethod(
           )
           colnames(tab) <- s_attribute
         }
-        return( as.data.table(tab) )
+        return( data.table::as.data.table(tab) )
         
       }
     }

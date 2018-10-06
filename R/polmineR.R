@@ -7,10 +7,14 @@ NULL
 #' @importFrom utils View browseURL download.file setTxtProgressBar txtProgressBar untar write.csv
 #' @importFrom tm TermDocumentMatrix DocumentTermMatrix
 #' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
-NULL
-
+#' @importFrom data.table data.table setorderv dcast setnames setkeyv setcolorder as.data.table rbindlist setkey dcast.data.table
 #' @importFrom Matrix rowSums colSums
 NULL
+
+# defined globaly to avoid R CMD check errors, as recommende by vignette in data.table package
+`:=` <- function(...) NULL
+.BY <- .GRP <- .SD <- .N <- NULL
+
 
 setOldClass("htmlwidget")
 
@@ -111,4 +115,6 @@ setGeneric("name", function(x) standardGeneric("name"))
 #' @noRd
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
-
+#' @rdname textstat-class
+#' @exportMethod as.data.table
+setGeneric("as.data.table", function(x, ...) standardGeneric("as.data.table"))

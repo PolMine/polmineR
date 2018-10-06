@@ -142,7 +142,7 @@ setMethod("hits", "partition_bundle", function(
     struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
     partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
   )
-  setkey(strucDT, cols = "struc")
+  setkeyv(strucDT, cols = "struc")
   # perform counts
   
   .message("now performing counts", verbose = verbose)

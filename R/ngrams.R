@@ -57,7 +57,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
       }
     }
     
-    DT <- as.data.table(idList)
+    DT <- data.table::as.data.table(idList)
     TF <- DT[, .N, by = c(eval(colnames(DT))), with = TRUE]
     setnames(TF, "N", "count")
     pAttrsCols <- rep(p_attribute, times = n)

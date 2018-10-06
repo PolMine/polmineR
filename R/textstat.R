@@ -75,6 +75,7 @@ setMethod("subset", "textstat", function(x, ...){
   x
 })
 
+
 #' @exportMethod as.data.table
 setMethod("as.data.table", "textstat", function(x) x@stat)
 

@@ -213,7 +213,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
       function(i){
         keysRaw <- x@objects[[i]]@stat[, c(p_attribute), with = FALSE]
         keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
-        x@objects[[i]]@stat[, key := keys]
+        x@objects[[i]]@stat[, "key" := keys]
       })
     rm(dummy)
   } else {
@@ -241,7 +241,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   
   .message("cleaning up temporary key columns", verbose = verbose)
   if (length(p_attribute) > 1){
-    dummy <- lapply(1L:length(x@objects), function(i) x@objects[[i]]@stat[, key := NULL])
+    dummy <- lapply(1L:length(x@objects), function(i) x@objects[[i]]@stat[, "key" := NULL])
   } else {
     dummy <- lapply(1L:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old = "key", new = p_attribute))
   }
