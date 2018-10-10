@@ -29,6 +29,9 @@
 
 \item{x}{object to work with}
 
+\item{digits}{Integer indicating the number of decimal places (round) or
+significant digits (signif) to be used.}
+
 \item{.Object}{object to work with}
 }
 \description{

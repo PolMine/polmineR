@@ -26,6 +26,11 @@
 \arguments{
 \item{object}{A \code{features} or \code{features_bundle} object.}
 
+\item{x}{A \code{features} object.}
+
+\item{digits}{Integer indicating the number of decimal places (round) or
+significant digits (signif) to be used.}
+
 \item{.Object}{a \code{features} object.}
 }
 \description{

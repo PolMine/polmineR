@@ -14,6 +14,8 @@ setMethod("format", "textstat", function(x, digits = 2L){
   dt
 })
 
+#' @param digits Integer indicating the number of decimal places (round) or
+#'   significant digits (signif) to be used.
 #' @rdname cooccurrences-class
 #' @exportMethod format
 setMethod("format", "cooccurrences", function(x, digits = 2L){
@@ -35,6 +37,9 @@ setMethod("format", "cooccurrences", function(x, digits = 2L){
 })
 
 
+#' @param x A \code{features} object.
+#' @param digits Integer indicating the number of decimal places (round) or
+#'   significant digits (signif) to be used.
 #' @rdname features-class
 setMethod("format", "features", function(x, digits = 2L){
   dt <- copy(x@stat)

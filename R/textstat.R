@@ -114,19 +114,25 @@ setMethod("[", "textstat", function(x, i, j){
   x
 })
 
-setAs(from = "textstat", to = "htmlwidget", def = function(from) DT::datatable(from@stat))
+setAs(from = "textstat", to = "htmlwidget", def = function(from){
+  DT::datatable(from@stat, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
+})
 
 setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
-  DT::datatable(dt, rownames = FALSE)
+  DT::datatable(
+    dt,
+    options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE),
+    rownames = FALSE
+  )
 })
 
 setAs(from = "features", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
-  DT::datatable(dt)
+  DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
 })
 
 #' @importFrom knitr knit_print
@@ -137,6 +143,6 @@ setAs(from = "features", to = "htmlwidget", def = function(from){
 #' @param options Chunk options.   
 setMethod("knit_print", "textstat", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
-  y$x$options$pageLength <- pagelength
+  # y$x$options$pageLength <- pagelength
   knit_print(y, options = options)
 })

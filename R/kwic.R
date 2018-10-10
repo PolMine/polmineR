@@ -10,10 +10,10 @@ setAs(
       from@table[["node"]] <- paste('<span style="color:steelblue">', from@table[["node"]], '</span>', sep="")
       from@table[["text"]] <- apply(from@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
       for (x in c("left", "node", "right", "hit_no")) from@table[[x]] <- NULL
-      retval <- DT::datatable(from@table, escape = FALSE)
+      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
     } else {
       from@table[["hit_no"]] <- NULL
-      retval <- DT::datatable(from@table, escape = FALSE)
+      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
       retval <- DT::formatStyle(retval, "node", color = "blue", textAlign = "center")
       retval <- DT::formatStyle(retval, "left", textAlign = "right")
     }
@@ -50,7 +50,7 @@ setMethod("show", "kwic", function(object){
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
-  y$x$options$pageLength <- pagelength
+  # y$x$options$pageLength <- pagelength
   knit_print(y, options = options)
 })
 

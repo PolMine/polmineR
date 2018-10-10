@@ -16,8 +16,11 @@ they do not appear necessary any more.
 which is certainly the recommended approach.
   * To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table
 package is loaded after polmineR, no more warnings.
-* Wrote some documentation for the `round()`-method for `textstat`-objects that will show
+  * Wrote some documentation for the `round()`-method for `textstat`-objects that will show
 up in documentation of `textstat` class.
+  * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful 
+  when including tables in Rmarkdown documents.
+  * The coerce-methodes to turn textstat, cooccurrences, features and kwic objects into htmlwidgets do now set the pageLength.
 
 
 polmineR 0.7.10
