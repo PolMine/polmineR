@@ -1,7 +1,7 @@
 #' @include S4classes.R
 NULL
 
-#' browse an object using View()
+#' Inspect object using View().
 #' 
 #' @exportMethod view
 #' @rdname view
@@ -13,17 +13,8 @@ setGeneric("view", function(.Object, ...) standardGeneric("view"))
 
 #' @rdname cooccurrences-class
 setMethod("view", "cooccurrences", function(.Object){
-  if ("count_partition" %in% colnames(.Object))
-    attr(.Object@stat[["count_partition"]], "label") <- "observed in partition"
-  if ("count_window" %in% colnames(.Object))
-    attr(.Object@stat[["count_window"]], "label") <- "observed in window"
-  if ("exp_window" %in% colnames(.Object))
-    attr(.Object@stat[["exp_window"]], "label") <- "expected in window"
-  if ("exp_partition" %in% colnames(.Object))
-    attr(.Object@stat[["exp_partition"]], "label") <- "expected in partition"
-  if ("ll" %in% colnames(.Object)) attr(.Object@stat[["ll"]], "label") <- "log likelihood"
-  if ("rank_ll" %in% colnames(.Object)) attr(.Object@stat[["rank_ll"]], "label") <- "rank"
-  get("View", envir = .GlobalEnv)(.Object@stat)
+  dt <- format(.Object)
+  get("View", envir = .GlobalEnv)(dt)
 })
 
 
@@ -37,26 +28,21 @@ setMethod("view", "kwic", function(.Object){
 
 #' @rdname textstat-class
 setMethod("view", "textstat", function(.Object){
-  get("View", envir = .GlobalEnv)(.Object@stat)
+  dt <- format(.Object)
+  get("View", envir = .GlobalEnv)(dt, title = "textstat")
 })
 
 
 #' @exportMethod view
 #' @rdname features-class
 setMethod("view", "features", function(.Object){
-  .Object <- round(.Object, 2)
-  whatToView <- c(
-    paste("rank", .Object@method, sep="_"),
-    .Object@p_attribute,
-    "count_coi", "count_ref", "exp_coi",
-    .Object@method
-  )
-  get("View", envir = .GlobalEnv)(.Object@stat[, whatToView, with=FALSE], title = "features")
+  dt <- format(.Object)
+  get("View", envir = .GlobalEnv)(dt, title = "features")
 })
 
 #' @rdname cooccurrences-class
 setMethod(view, "cooccurrences_reshaped", function(.Object){
   .Object <- round(.Object, digits = 2)
   colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
-  get("View", envir = .GlobalEnv)(.Object@stat[, colsToView, with=FALSE])
+  get("View", envir = .GlobalEnv)(.Object@stat[, colsToView, with = FALSE])
 })

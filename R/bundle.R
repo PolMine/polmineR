@@ -134,11 +134,11 @@ setMethod("as.bundle", "textstat", function(object){
 #'   values = s_attributes("REUTERS", "id")
 #' )
 #' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-#' dt <- as.data.table(Cs, col = "ll")
+#' dt <- polmineR:::as.data.table.bundle(Cs, col = "ll")
 #' m <- as.matrix(Cs, col = "ll")
-#' @exportMethod as.data.table
+#' @export as.data.table.bundle
 #' @rdname bundle
-setMethod("as.data.table", "bundle", function(x, col){
+as.data.table.bundle <- function(x, col){
   pAttr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
   if (length(pAttr) > 1) stop("no unambigious p-attribute!")
   dts <- lapply(
@@ -154,7 +154,7 @@ setMethod("as.data.table", "bundle", function(x, col){
   DT <- rbindlist(dts)
   y <- dcast(DT, token ~ name, value.var = "value")
   y
-})
+}
 
 
 #' @rdname bundle

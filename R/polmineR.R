@@ -115,6 +115,3 @@ setGeneric("name", function(x) standardGeneric("name"))
 #' @noRd
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
-#' @rdname textstat-class
-#' @exportMethod as.data.table
-setGeneric("as.data.table", function(x, ...) standardGeneric("as.data.table"))

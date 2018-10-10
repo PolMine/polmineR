@@ -15,7 +15,7 @@
 \alias{sample,bundle-method}
 \alias{as.bundle,list-method}
 \alias{as.bundle,textstat-method}
-\alias{as.data.table,bundle-method}
+\alias{as.data.table.bundle}
 \alias{as.matrix,bundle-method}
 \alias{subset,bundle-method}
 \alias{as.list,bundle-method}
@@ -43,7 +43,7 @@
 
 \S4method{as.bundle}{textstat}(object)
 
-\S4method{as.data.table}{bundle}(x, col)
+\method{as.data.table}{bundle}(x, col)
 
 \S4method{as.matrix}{bundle}(x, col)
 
@@ -107,7 +107,7 @@ Ps <- partition_bundle(
   values = s_attributes("REUTERS", "id")
 )
 Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-dt <- as.data.table(Cs, col = "ll")
+dt <- polmineR:::as.data.table.bundle(Cs, col = "ll")
 m <- as.matrix(Cs, col = "ll")
 }
 \author{

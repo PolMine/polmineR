@@ -5,15 +5,11 @@ NULL
 #' @docType methods
 #' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object) {
-  object <- round(object)
-  if (Sys.getenv("RSTUDIO") == "1"){
-    view(object)
+  y <- format(object, digits = 2L)
+  if (Sys.getenv("RSTUDIO") == "1" && interactive()){
+    view(y)
   } else {
-    if (getOption("polmineR.browse") == TRUE){
-      browse(object@stat)  
-    } else {
-      return(object@stat) 
-    }
+    if (getOption("polmineR.browse")) browse(object@stat) else return(y) 
   }
 })
 

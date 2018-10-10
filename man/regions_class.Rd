@@ -5,12 +5,12 @@
 \alias{regions}
 \alias{regions-class}
 \alias{as.regions}
-\alias{as.data.table,regions-method}
+\alias{as.data.table.regions}
 \title{Regions of a CWB corpus.}
 \usage{
 as.regions(x, ...)
 
-\S4method{as.data.table}{regions}(x, values = NULL)
+\method{as.data.table}{regions}(x, values = NULL)
 }
 \arguments{
 \item{x}{object of class \code{regions}}

@@ -12,6 +12,12 @@ the path to the registry directory / the data directory within a package, if the
 used.
   * Startup messages indicating the package version of polmineR and the registry path are omitted now,
 they do not appear necessary any more.
+  * The *data.table* had still been imported in its entirety, now the package is imported selectively,
+which is certainly the recommended approach.
+  * To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table
+package is loaded after polmineR, no more warnings.
+* Wrote some documentation for the `round()`-method for `textstat`-objects that will show
+up in documentation of `textstat` class.
 
 
 polmineR 0.7.10

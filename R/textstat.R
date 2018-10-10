@@ -21,10 +21,14 @@ setMethod("ncol", "textstat", function(x) ncol(x@stat))
 #' @param digits no of digits
 #' @rdname textstat-class
 #' @exportMethod round
+#' @details The \code{round()}-method looks up all numeric columns in the
+#'   \code{data.table} in the \code{stat}-slot of the \code{textstat} object and
+#'   rounds values of these columns to the number of decimal places specified by
+#'   argument \code{digits}.
 setMethod("round", "textstat", function(x, digits = 2L){
-  columnClasses <- sapply(x@stat, function(column) is(column)[1])
-  numericColumns <- which(columnClasses == "numeric")
-  for (i in numericColumns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
+  column_classes <- sapply(x@stat, function(column) is(column)[1])
+  numeric_columns <- which(column_classes == "numeric")
+  for (i in numeric_columns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
   x
 })
 
@@ -76,8 +80,9 @@ setMethod("subset", "textstat", function(x, ...){
 })
 
 
-#' @exportMethod as.data.table
-setMethod("as.data.table", "textstat", function(x) x@stat)
+#' @rdname textstat-class
+#' @export as.data.table.textstat
+as.data.table.textstat <- function(x) x@stat
 
 #' @exportMethod as.data.frame
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )

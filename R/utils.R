@@ -240,3 +240,18 @@ flatten <- function(object){
     shiny::incProgress(amount = 1, detail = message)
   }
 }
+
+
+#' Round numeric columns of data.table
+#' 
+#' The object is modified in place, return value is NULL.
+#' 
+#' @param x A \code{data.table}.
+#' @param digits Number of digits.
+#' @noRd
+round.data.table <- function(x, digits = 2L){
+  column_classes <- sapply(x, function(column) is(column)[1])
+  numeric_columns <- which(column_classes == "numeric")
+  for (i in numeric_columns) x[, colnames(x)[i] := round(x[[i]], digits)]
+  invisible( NULL )
+}
