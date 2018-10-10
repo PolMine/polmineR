@@ -19,7 +19,7 @@
 \alias{barplot,partition_bundle-method}
 \alias{show,partition_bundle-method}
 \alias{summary,partition_bundle-method}
-\alias{merge,partition_bundle-method}
+\alias{merge,partition_bundle,ANY-method}
 \alias{[,partition_bundle,ANY,ANY,ANY-method}
 \alias{barplot,partition_bundle-method}
 \alias{as.partition_bundle,list-method}
@@ -33,7 +33,7 @@
 
 \S4method{summary}{partition_bundle}(object)
 
-\S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
+\S4method{merge}{partition_bundle,ANY}(x, name = "", verbose = TRUE)
 
 \S4method{[}{partition_bundle,ANY,ANY,ANY}(x, i)
 
