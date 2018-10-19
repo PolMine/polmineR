@@ -12,7 +12,7 @@ NULL
 setGeneric("tempcorpus", function(.Object, ...) standardGeneric("tempcorpus"))
 
 setMethod("tempcorpus", "partition", function(.Object){
-  tmpCorpusDir <- tempdir()
+  tmpCorpusDir <- normalizePath(tempdir(), winslash = "/")
   tempcorpus <- new(
     "tempcorpus",
     dir = tmpCorpusDir,

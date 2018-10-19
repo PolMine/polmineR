@@ -4,12 +4,14 @@
 \alias{use}
 \title{Add corpora in R data packages to session registry.}
 \usage{
-use(pkg, lib.loc = .libPaths(), verbose = TRUE)
+use(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{pkg}{A package including at least one CWB indexed corpus.}
 
 \item{lib.loc}{A character vector with path names of \code{R} libraries.}
+
+\item{tmp}{Whether to use a temporary data directory.}
 
 \item{verbose}{Logical, whether to output status messages.}
 }

@@ -285,7 +285,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         setkeyv(TF, paste(p_attribute, "id", sep = "_"))
         setcolorder(TF, c(paste(p_attribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, p_attribute, 0:(nrow(TF) - 1)), from = registry_get_encoding(.Object)), with = TRUE]
+        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, p_attribute, 0L:(nrow(TF) - 1L)), from = registry_get_encoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = p_attribute)
         setkeyv(TF, p_attribute)

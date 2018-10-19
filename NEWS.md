@@ -1,26 +1,20 @@
-polmineR 0.7.10.9001
+polmineR 0.7.10.9002
 ====================
-  * New functionality to store corpora in a temporary data directory which is a subdirectory
-of the per-session temporary directory. A new function `data_dir()` will return this temporary
-data directory.
+  * New functionality to store corpora in a temporary data directory which is a subdirectory of the per-session temporary directory. A new function `data_dir()` will return this temporary data directory.
   * The `use()`-function will now check for non-ASCII characters in the path to binary corpus data and 
-move the corpus data to a temporary data directory (subdirectory of the directory returned 
-by `data_dir()`, if necessary. A remaining issue with using  CWB indexed corpora is thus addressed. The 
+move the corpus data to a temporary data directory (subdirectory of the directory returned  by `data_dir()`, if necessary. A remaining issue with using  CWB indexed corpora is thus addressed. The 
 temporary files are removed when detaching the package.
-  * The functions `registry()` and `data_dir()` now accept an argument `pkg`, and will return
-the path to the registry directory / the data directory within a package, if the argument is
+  * The functions `registry()` and `data_dir()` now accept an argument `pkg`, and will return the path to the registry directory / the data directory within a package, if the argument is
 used.
-  * Startup messages indicating the package version of polmineR and the registry path are omitted now,
-they do not appear necessary any more.
-  * The *data.table* had still been imported in its entirety, now the package is imported selectively,
-which is certainly the recommended approach.
-  * To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table
-package is loaded after polmineR, no more warnings.
-  * Wrote some documentation for the `round()`-method for `textstat`-objects that will show
-up in documentation of `textstat` class.
+  * Startup messages indicating the package version of polmineR and the registry path are omitted now, they do not appear necessary any more.
+  * The *data.table* had still been imported in its entirety, now the package is imported selectively, which is certainly the recommended approach.
+  * To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table package is loaded after polmineR, no more warnings.
+  * Wrote some documentation for the `round()`-method for `textstat`-objects that will show up in documentation of `textstat` class.
   * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful 
   when including tables in Rmarkdown documents.
   * The coerce-methodes to turn textstat, cooccurrences, features and kwic objects into htmlwidgets do now set the pageLength.
+  * Added an argument `tmp` to `use()` to force using a temporary directory.
+  * Any usage of `tempdir()` is wrapped into normalizePath(..., winslash = "/"), to avoid mixture of file separators in a path, which may cause problems on Windows systems.
 
 
 polmineR 0.7.10

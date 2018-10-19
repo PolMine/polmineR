@@ -24,6 +24,7 @@ NULL
 #' 
 #' @param pkg A package including at least one CWB indexed corpus.
 #' @param lib.loc A character vector with path names of \code{R} libraries.
+#' @param tmp Whether to use a temporary data directory.
 #' @param verbose Logical, whether to output status messages.
 #' @export use
 #' @rdname use
@@ -35,7 +36,7 @@ NULL
 #'   to reset the registry, see \code{\link{registry_reset}}.
 #' @importFrom RcppCWB cqp_reset_registry 
 #' @importFrom stringi stri_enc_mark
-use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
+use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   if (!pkg %in% unname(installed.packages(lib.loc = lib.loc)[,"Package"]))
     stop("Could not find package specified. Please check for typos,",
@@ -53,7 +54,7 @@ use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
       package = pkg, lib.loc = lib.loc
     )
     
-    if (stri_enc_mark(corpus_data_srcdir) != "ASCII"){
+    if ((stri_enc_mark(corpus_data_srcdir) != "ASCII") || (tmp == TRUE)){
       corpus_data_targetdir <- file.path(data_dir(), tolower(corpus))
       
       if (!dir.exists(corpus_data_targetdir)) 

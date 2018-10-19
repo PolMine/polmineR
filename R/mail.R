@@ -33,8 +33,9 @@ setGeneric("mail", function(.Object, ...) standardGeneric("mail") )
 #' @docType methods
 setMethod("mail", "textstat", function(.Object, to = getOption("polmineR.email"), rows = 1L:min(250L, nrow(.Object))){
   filename <- file.path(
-    tempdir(),
-    if (length(.Object@name) > 0) paste(.Object@name, "xlsx", sep = ".") else paste(is(.Object)[1], "xlsx", sep = ".")
+    normalizePath(tempdir(), winslash = "/"),
+    if (length(.Object@name) > 0) paste(.Object@name, "xlsx", sep = ".") else paste(is(.Object)[1], "xlsx", sep = "."),
+    fsep = "/"
     )
   mail(.Object@stat, to = to, filename = filename, rows = rows)
 })
@@ -58,6 +59,6 @@ setMethod("mail", "data.frame", function(.Object, to = getOption("polmineR.email
 #' @rdname mail-method
 #' @docType methods
 setMethod("mail", "kwic", function(.Object, to = getOption("polmineR.email"), rows = 1L:min(250L, nrow(.Object))){
-  filename <- file.path(tempdir(), "kwic.xlsx")
+  filename <- file.path(normalizePath(tempdir(), winslash = "/"), "kwic.xlsx", fsep = "/")
   mail(.Object@table, to = to, filename = filename, rows = rows)
 })
