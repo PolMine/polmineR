@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.10.9002
-Date: 2018-10-11
+Version: 0.7.10.9004
+Date: 2018-10-27
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")))
 Imports:
     methods,
@@ -31,7 +31,8 @@ Suggests:
     testthat,
     tidytext,
     magrittr,
-    covr
+    covr,
+    igraph
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an

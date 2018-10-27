@@ -28,13 +28,13 @@ test_that(
 )
 
 test_that(
-  "kwic-method for partition",
+  "cooccurrences-method for partition",
   {
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     expect_equal(
       cooccurrences(P, query = "oil", pAttribute = "word")@stat[["word"]][1:5],
-      c("prices", "each", "other", "market", "crude")
+      c("prices", "each", "market", "other", "crude")
     )
     
     expect_equal(
@@ -53,4 +53,27 @@ test_that(
     )
   }
 )
+
+
+test_that(
+  "Identity of cooccurrences and Cooccurrences",
+  {
+    stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
+    r <- Cooccurrences$new(x = "REUTERS", p_attribute = "word", window = 5L, drop = stopwords)$
+      count()$
+      trim(action = "drop", by.id = TRUE)$
+      ll()
+
+    a <- data.table::as.data.table(cooccurrences(r, query = "oil"))
+    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))[!word %in% stopwords]
+
+    expect_equal(a[["word"]], b[["word"]])
+    expect_equal(a[["count_partition"]], b[["count_partition"]])
+    expect_equal(a[["count_window"]], b[["count_window"]])
+    expect_equal(a[["exp_window"]], b[["exp_window"]])
+    expect_equal(a[["exp_partition"]], b[["exp_partition"]])
+    expect_equal(a[["ll"]], b[["ll"]])
+  }
+)
+
 

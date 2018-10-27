@@ -8,6 +8,7 @@
 \alias{cooccurrences,context-method}
 \alias{cooccurrences,Corpus-method}
 \alias{cooccurrences,partition_bundle-method}
+\alias{cooccurrences,Cooccurrences-method}
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
@@ -32,6 +33,8 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{partition_bundle}(.Object, query,
   mc = getOption("polmineR.mc"), ...)
+
+\S4method{cooccurrences}{Cooccurrences}(.Object, query)
 }
 \arguments{
 \item{.Object}{a partition object, or a character vector with a CWB corpus}

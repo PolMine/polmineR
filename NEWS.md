@@ -15,6 +15,9 @@ used.
   * The coerce-methodes to turn textstat, cooccurrences, features and kwic objects into htmlwidgets do now set the pageLength.
   * Added an argument `tmp` to `use()` to force using a temporary directory.
   * Any usage of `tempdir()` is wrapped into normalizePath(..., winslash = "/"), to avoid mixture of file separators in a path, which may cause problems on Windows systems.
+  * In the calculation of cooccurrences, the node has previously been included in the window size.
+  This has been corrected.
+  * The `Cooccurrences`-class has been migrated from the experimental polmineR.graph package to polmineR. A `cooccurrenes()`-method results in a subset of `Cooccurrences`-class object and is the basis for ensuring that results are identical.
 
 
 polmineR 0.7.10

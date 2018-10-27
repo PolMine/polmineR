@@ -12,14 +12,14 @@ setGeneric("ll", function(.Object, ...) standardGeneric("ll") )
 
 #' @rdname textstatistics
 setMethod("ll", "context", function(.Object){
-  size_window <- .Object@size
+  size_window <- .Object@size_coi
   size_partition <- .Object@size_partition
   .Object@stat[, "exp_window" := size_window * (.Object@stat[["count_partition"]] / size_partition)]
   .Object@stat[, "exp_partition" := (size_partition - size_window) * (.Object@stat[["count_partition"]] / size_partition)]
   .Object@stat[, "ll" := 2 * (.Object@stat[["count_window"]] * log(.Object@stat[["count_window"]]/.Object@stat[["exp_window"]]) + (.Object@stat[["count_partition"]] - .Object@stat[["exp_window"]]) * log((.Object@stat[["count_partition"]] - .Object@stat[["exp_window"]])/.Object@stat[["exp_partition"]]))]
   direction <- ifelse(.Object@stat[["count_window"]] < .Object@stat[["exp_window"]], -1L, 1L)
   .Object@stat[, "ll" := ll * direction]
-  .Object <- sort(.Object, by="ll")
+  .Object <- sort(.Object, by = "ll")
   .Object@stat[, "rank_ll" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "ll")
   .Object
