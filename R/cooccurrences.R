@@ -283,7 +283,7 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
 #'   window = 5L,
 #'   drop = stopwords
 #' )
-#' r$count()
+#' r$count(parsimonious = TRUE)
 #' r$trim(action = "drop", by.id = TRUE)
 #' r$ll()
 #' r$subset(ll > 11.83 & ab_count >= 5)
@@ -302,8 +302,8 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
 #' b <- data.table::as.data.table(b)
 #' b <- b[!word %in% stopwords]
 #' 
-#' # now let's check whether resulty are identical
-#' all(b[["word"]][1:50] == a[["word"]][1:50])
+#' # now let's check whether results are identical
+#' all(b[["word"]][1:5] == a[["word"]][1:5])
 #' @importFrom slam simple_triplet_matrix
 #' @export Cooccurrences
 #' @rdname CooccurrencesR6
@@ -381,36 +381,89 @@ Cooccurrences <- R6::R6Class(
       message("not yet implemented")
     },
     
-    count = function(){
+    count = function(parsimonious = TRUE){
       
       if (length(self$p_attribute) == 1L){
-        if (self$verbose) message("... getting window matrix (using Rcpp)")
-        window_matrix <- RcppCWB::get_cbow_matrix(
-          corpus = self$corpus, p_attribute = self$p_attribute,
-          registry = Sys.getenv("CORPUS_REGISTRY"),
-          matrix = self$partition@cpos, window = self$window
-        )
-        window_dt <- as.data.table(window_matrix)
         
-        rm(window_matrix); gc()
-        
-        setnames(window_dt, old = paste("V", self$window + 1, sep = ""), new = "a_id")
-        if (self$verbose) message("... melting")
-        cooc_dt <- data.table::melt.data.table(window_dt, id.vars = "a_id", value.name = "b_id")
-        
-        rm(window_dt); gc()
-        
-        cooc_dt[, "variable" := NULL, with = TRUE]
-        
-        if (self$verbose) message("... kicking out -1")
-        dt_min <- cooc_dt[b_id != -1]
-        self$window_sizes <- dt_min[, .N, by = "a_id"]
-        setnames(self$window_sizes, old = "N", new = "size_window")
-        if (self$verbose) message("... counting cooccurrences")
-        self$stat <- dt_min[, .N, by = c("a_id", "b_id"), with = TRUE]
-        setnames(self$stat, "N", "ab_count")
-        setkeyv(self$stat, "a_id")
-        
+        if (parsimonious){
+          
+          positions <- c(-self$window:-1L, 1L:self$window)
+          
+          make_cnt_table <- function(i){
+            id_list <- lapply(
+              1L:nrow(self$partition@cpos),
+              function(i){
+                corpus_positions <- self$partition@cpos[i,1]:self$partition@cpos[i,2]
+                RcppCWB::cl_cpos2id(
+                  corpus = self$corpus,
+                  p_attribute = self$p_attribute,
+                  cpos = corpus_positions
+                )
+              }
+            )
+            id_dt_list <- lapply(
+              id_list,
+              function(ids){
+                data.table(
+                  a_id = if (i < 0) ids[(abs(i) + 1L):length(ids)] else ids[1L:(length(ids) - abs(i))],
+                  b_id = if (i < 0) ids[1L:(length(ids) - abs(i))] else ids[(abs(i) + 1L):length(ids)]
+                )
+              }
+            )
+            rbindlist(id_dt_list)[, .N, by = c("a_id", "b_id")]
+          }
+          
+          pb <- txtProgressBar(min = 1L, max = length(positions), style = 3)
+          setTxtProgressBar(pb, value = 1L)
+          self$stat <- make_cnt_table(positions[1])
+          setkeyv(self$stat, cols = c("a_id", "b_id"))
+          for (i in positions[2L:length(positions)]){
+            setTxtProgressBar(pb, value = which(positions == i))
+            dt <- make_cnt_table(i)
+            setkeyv(dt, cols = c("a_id", "b_id"))
+            self$stat <- merge(self$stat, dt, all = TRUE)
+            rm(dt); gc()
+            self$stat[, "N" := ifelse(is.na(N.x), 0L, N.x) + ifelse(is.na(N.y), 0L, N.y)]
+            self$stat[, "N.x" := NULL][, "N.y" := NULL]
+            # self$stat <- dt[self$stat][, "N" := ifelse(is.na(N), 0, N)][, "N" := N + i.N][, "i.N" := NULL]
+            
+          }
+          close(pb)
+          setnames(self$stat, old = "N", new = "ab_count")
+          
+          self$window_sizes <- self$stat[, {sum(.SD[["ab_count"]])}, by = "a_id"]
+          setnames(self$window_sizes, old = "V1", new = "size_window")
+          
+
+        } else {
+          if (self$verbose) message("... getting window matrix (using RcppCWB)")
+          window_matrix <- RcppCWB::get_cbow_matrix(
+            corpus = self$corpus, p_attribute = self$p_attribute,
+            registry = Sys.getenv("CORPUS_REGISTRY"),
+            matrix = self$partition@cpos, window = self$window
+          )
+          window_dt <- as.data.table(window_matrix)
+          
+          rm(window_matrix); gc()
+          
+          setnames(window_dt, old = paste("V", self$window + 1, sep = ""), new = "a_id")
+          if (self$verbose) message("... melting")
+          cooc_dt <- data.table::melt.data.table(window_dt, id.vars = "a_id", value.name = "b_id")
+          
+          rm(window_dt); gc()
+          
+          cooc_dt[, "variable" := NULL, with = TRUE]
+          
+          if (self$verbose) message("... kicking out -1")
+          dt_min <- cooc_dt[b_id != -1]
+          self$window_sizes <- dt_min[, .N, by = "a_id"]
+          setnames(self$window_sizes, old = "N", new = "size_window")
+          if (self$verbose) message("... counting cooccurrences")
+          self$stat <- dt_min[, .N, by = c("a_id", "b_id"), with = TRUE]
+          setnames(self$stat, "N", "ab_count")
+          setkeyv(self$stat, "a_id")
+        }
+
       } else {
         
         if (length(self$p_attribute) == 0) stop("The partition is required to included counts. Enrich the object first!")

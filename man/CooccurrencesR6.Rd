@@ -86,7 +86,7 @@ r <- Cooccurrences$new(
   window = 5L,
   drop = stopwords
 )
-r$count()
+r$count(parsimonious = TRUE)
 r$trim(action = "drop", by.id = TRUE)
 r$ll()
 r$subset(ll > 11.83 & ab_count >= 5)
@@ -106,6 +106,6 @@ b <- data.table::as.data.table(b)
 b <- b[!word \%in\% stopwords]
 
 # now let's check whether resulty are identical
-all(b[["word"]][1:50] == a[["word"]][1:50])
+all(b[["word"]][1:5] == a[["word"]][1:50])
 }
 \keyword{datasets}
