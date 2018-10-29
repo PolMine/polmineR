@@ -424,7 +424,7 @@ Cooccurrences <- R6::R6Class(
           
           if (self$verbose) message("... building data.table with counts")
           
-          if (self$verbose) message("Processing tokens at position -", window)
+          if (self$verbose) message("Processing tokens at position -", self$window)
           self$stat <- make_cnt_table(positions[1])
           setkeyv(self$stat, cols = c("a_id", "b_id"))
           for (i in positions[2L:length(positions)]){
