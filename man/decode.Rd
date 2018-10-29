@@ -4,12 +4,15 @@
 \name{decode}
 \alias{decode}
 \alias{decode,character-method}
+\alias{decode,partition-method}
 \title{Decode Structural Attribute or Entire Corpus.}
 \usage{
 decode(.Object, ...)
 
 \S4method{decode}{character}(.Object, s_attribute = NULL, verbose = TRUE,
   ...)
+
+\S4method{decode}{partition}(.Object)
 }
 \arguments{
 \item{.Object}{the corpus to decode (character vector)}
@@ -47,4 +50,10 @@ dt <- decode("GERMAPARLMINI", s_attribute = c("date", "speaker"))
 
 # Scenario 2: Decode corpus entirely
 dt <- decode("GERMAPARLMINI")
+\dontrun{
+P <- partition("REUTERS", places = "kuwait", regex = TRUE)
+dt <- decode(P)
+dt[, "word" := NULL]
+dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))}, by = "struc"]
+}
 }

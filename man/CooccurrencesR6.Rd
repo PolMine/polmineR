@@ -105,7 +105,7 @@ b <- cooccurrences("REUTERS", query = "oil")
 b <- data.table::as.data.table(b)
 b <- b[!word \%in\% stopwords]
 
-# now let's check whether resulty are identical
-all(b[["word"]][1:5] == a[["word"]][1:50])
+# now let's check whether results are identical
+all(b[["word"]][1:5] == a[["word"]][1:5])
 }
 \keyword{datasets}
