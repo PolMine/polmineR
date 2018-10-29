@@ -390,6 +390,9 @@ Cooccurrences <- R6::R6Class(
           positions <- c(-self$window:-1L, 1L:self$window)
           
           make_cnt_table <- function(i){
+            
+            if (self$verbose) message("... creating id list for position ", i)
+
             id_list <- lapply(
               1L:nrow(self$partition@cpos),
               function(i){
@@ -401,6 +404,9 @@ Cooccurrences <- R6::R6Class(
                 )
               }
             )
+            
+            if (self$verbose) message("... creating data.table for position ", i)
+            
             id_dt_list <- lapply(
               id_list,
               function(ids){
@@ -410,26 +416,29 @@ Cooccurrences <- R6::R6Class(
                 )
               }
             )
+            
+            if (self$verbose) message("... merging  data.tables for position ", i)
+            
             rbindlist(id_dt_list)[, .N, by = c("a_id", "b_id")]
           }
           
-          pb <- txtProgressBar(min = 1L, max = length(positions), style = 3)
-          setTxtProgressBar(pb, value = 1L)
+          if (self$verbose) message("... building data.table with counts")
+          
+          if (self$verbose) message("Processing tokens at position -", window)
           self$stat <- make_cnt_table(positions[1])
           setkeyv(self$stat, cols = c("a_id", "b_id"))
           for (i in positions[2L:length(positions)]){
-            setTxtProgressBar(pb, value = which(positions == i))
+            if (self$verbose) message("Processing tokens at position ", i)
             dt <- make_cnt_table(i)
             setkeyv(dt, cols = c("a_id", "b_id"))
             self$stat <- merge(self$stat, dt, all = TRUE)
             rm(dt); gc()
             self$stat[, "N" := ifelse(is.na(N.x), 0L, N.x) + ifelse(is.na(N.y), 0L, N.y)]
             self$stat[, "N.x" := NULL][, "N.y" := NULL]
-            # self$stat <- dt[self$stat][, "N" := ifelse(is.na(N), 0, N)][, "N" := N + i.N][, "i.N" := NULL]
-            
           }
-          close(pb)
           setnames(self$stat, old = "N", new = "ab_count")
+          
+          if (self$verbose) message("... data.table with sizes")
           
           self$window_sizes <- self$stat[, {sum(.SD[["ab_count"]])}, by = "a_id"]
           setnames(self$window_sizes, old = "V1", new = "size_window")
