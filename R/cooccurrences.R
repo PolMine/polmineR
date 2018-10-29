@@ -387,54 +387,39 @@ Cooccurrences <- R6::R6Class(
         
         if (parsimonious){
           
-          positions <- c(-self$window:-1L, 1L:self$window)
-          
-          make_cnt_table <- function(i){
+          for (i in c(-self$window:-1L, 1L:self$window)){
             
-            if (self$verbose) message("... creating id list for position ", i)
-
+            if (self$verbose) message("Processing tokens at position: ", i)
+            
             id_list <- lapply(
               1L:nrow(self$partition@cpos),
               function(i){
                 corpus_positions <- self$partition@cpos[i,1]:self$partition@cpos[i,2]
-                RcppCWB::cl_cpos2id(
-                  corpus = self$corpus,
-                  p_attribute = self$p_attribute,
-                  cpos = corpus_positions
-                )
+                RcppCWB::cl_cpos2id(corpus = self$corpus, p_attribute = self$p_attribute, cpos = corpus_positions)
               }
             )
             
-            if (self$verbose) message("... creating data.table for position ", i)
-            
-            id_dt_list <- lapply(
+            node_vector <- unlist(lapply(
               id_list,
-              function(ids){
-                data.table(
-                  a_id = if (i < 0) ids[(abs(i) + 1L):length(ids)] else ids[1L:(length(ids) - abs(i))],
-                  b_id = if (i < 0) ids[1L:(length(ids) - abs(i))] else ids[(abs(i) + 1L):length(ids)]
-                )
-              }
-            )
+              function(ids) if (i < 0) ids[(abs(i) + 1L):length(ids)] else ids[1L:(length(ids) - abs(i))]
+            ))
             
-            if (self$verbose) message("... merging  data.tables for position ", i)
+            collocate_vector <- unlist(lapply(
+              id_list,
+              function(ids) if (i < 0) ids[1L:(length(ids) - abs(i))] else ids[(abs(i) + 1L):length(ids)]
+            ))
             
-            rbindlist(id_dt_list)[, .N, by = c("a_id", "b_id")]
-          }
-          
-          if (self$verbose) message("... building data.table with counts")
-          
-          if (self$verbose) message("Processing tokens at position -", self$window)
-          self$stat <- make_cnt_table(positions[1])
-          setkeyv(self$stat, cols = c("a_id", "b_id"))
-          for (i in positions[2L:length(positions)]){
-            if (self$verbose) message("Processing tokens at position ", i)
-            dt <- make_cnt_table(i)
+            dt <- data.table(a_id = node_vector, b_id = collocate_vector) [, .N, by = c("a_id", "b_id")]
             setkeyv(dt, cols = c("a_id", "b_id"))
-            self$stat <- merge(self$stat, dt, all = TRUE)
-            rm(dt); gc()
-            self$stat[, "N" := ifelse(is.na(N.x), 0L, N.x) + ifelse(is.na(N.y), 0L, N.y)]
-            self$stat[, "N.x" := NULL][, "N.y" := NULL]
+            
+            if (i == -self$window){
+              self$stat <- dt
+            } else {
+              self$stat <- merge(self$stat, dt, all = TRUE)
+              rm(dt); gc()
+              self$stat[, "N" := ifelse(is.na(N.x), 0L, N.x) + ifelse(is.na(N.y), 0L, N.y)]
+              self$stat[, "N.x" := NULL][, "N.y" := NULL]
+            }
           }
           setnames(self$stat, old = "N", new = "ab_count")
           
@@ -442,7 +427,6 @@ Cooccurrences <- R6::R6Class(
           
           self$window_sizes <- self$stat[, {sum(.SD[["ab_count"]])}, by = "a_id"]
           setnames(self$window_sizes, old = "V1", new = "size_window")
-          
 
         } else {
           if (self$verbose) message("... getting window matrix (using RcppCWB)")
