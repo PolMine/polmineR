@@ -59,13 +59,12 @@ test_that(
   "Identity of cooccurrences and Cooccurrences",
   {
     stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
-    r <- Cooccurrences$new(x = "REUTERS", p_attribute = "word", window = 5L, drop = stopwords)$
-      count()$
-      trim(action = "drop", by.id = TRUE)$
-      ll()
+    r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
+    r <- ll(r)
 
     a <- data.table::as.data.table(cooccurrences(r, query = "oil"))
-    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))[!word %in% stopwords]
+    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))
+    # [!word %in% stopwords]
 
     expect_equal(a[["word"]], b[["word"]])
     expect_equal(a[["count_partition"]], b[["count_partition"]])

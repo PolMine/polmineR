@@ -421,15 +421,13 @@ setMethod("length", "context", function(x) as.integer(x@count))
 #' @slot call Object of class \code{character} the call that generated the object
 #' @slot partition Object of class \code{character} the partition the analysis is based on
 #' @slot size_partition  Object of class \code{integer} the size of the partition
-#' @slot left  Object of class \code{numeric} number of tokens to the right
-#' @slot right  Object of class \code{numeric} number of tokens to the left
+#' @slot left  Object of class \code{integer} number of tokens to the left.
+#' @slot right  Object of class \code{integer} number of tokens to the right.
 #' @slot p_attribute  Object of class \code{character} p-attribute of the query
 #' @slot corpus  Object of class \code{character} the CWB corpus used
 #' @slot stat  Object of class \code{data.table} statistics of the analysis
 #' @slot encoding  Object of class \code{character} encoding of the corpus
-#' @slot pos  Object of class \code{character} part-of-speech tags filtered
 #' @slot method  Object of class \code{character} statistical test(s) used
-#' @slot cutoff  Object of class \code{list} cutoff levels that have been applied
 #' @aliases cooccurrences-class
 #' @docType class
 #' @exportClass cooccurrences

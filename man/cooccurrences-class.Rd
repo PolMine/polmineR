@@ -46,9 +46,9 @@ S4 class to organize information of context analysis
 
 \item{\code{size_partition}}{Object of class \code{integer} the size of the partition}
 
-\item{\code{left}}{Object of class \code{numeric} number of tokens to the right}
+\item{\code{left}}{Object of class \code{integer} number of tokens to the left.}
 
-\item{\code{right}}{Object of class \code{numeric} number of tokens to the left}
+\item{\code{right}}{Object of class \code{integer} number of tokens to the right.}
 
 \item{\code{p_attribute}}{Object of class \code{character} p-attribute of the query}
 
@@ -58,10 +58,6 @@ S4 class to organize information of context analysis
 
 \item{\code{encoding}}{Object of class \code{character} encoding of the corpus}
 
-\item{\code{pos}}{Object of class \code{character} part-of-speech tags filtered}
-
 \item{\code{method}}{Object of class \code{character} statistical test(s) used}
-
-\item{\code{cutoff}}{Object of class \code{list} cutoff levels that have been applied}
 }}
 

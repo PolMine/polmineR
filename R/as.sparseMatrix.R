@@ -51,4 +51,31 @@ setMethod("as.sparseMatrix", "bundle", function(x, col){
 })
 
 
+#' @details Returns a simple triplet
+#'   matrix based on the counts of term cooccurrences. If counts are not yet
+#'   present, that is done first.
+#' @exportMethod as.sparseMatrix
+#' @rdname all-cooccurrences-class
+setMethod("as.sparseMatrix", "Cooccurrences", function(x, col){
+  uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"cooccurrence"]))
+  keyVector <- setNames(1L:length(uniqueTerms), uniqueTerms)
+  splittedTab <- split(x = x@stat[,c(col, "cooccurrence")], f = x@stat[,"node"])
+  
+  bag <- list()
+  i <- unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times = nrow(splittedTab[[n]]))))) #nodes
+  j <- unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]]))) # cooccurrences
+  v <- unname(unlist(lapply(splittedTab, function(tab) tab[,col]))) # values
+  
+  sparseMatrix(
+    i = i,
+    j = j,
+    x = v, 
+    dims = c(length(uniqueTerms), length(uniqueTerms)),
+    dimnames = list(names(keyVector), names(keyVector)),
+    giveCsparse = TRUE
+  )   
+})
+
+
+
 
