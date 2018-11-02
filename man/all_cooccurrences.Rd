@@ -39,15 +39,16 @@ Cooccurrences(.Object, ...)
 Get all cooccurrences.
 }
 \examples{
-\dontrun{
 stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
 r <- Cooccurrences(.Object = "REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
-r <- ll(r)
+ll(r)
 r <- subset(r, ll > 11.83 & ab_count >= 5)
+decode(r)
 data.table::setorderv(r@stat, cols = "ll", order = -1L)
 head(r, 25)
 
 if (requireNamespace("igraph", quietly = TRUE)){
+  r@partition <- enrich(r@partition, p_attribute = "word")
   g <- as_igraph(r, as.undirected = TRUE)
   plot(g)
 }
@@ -55,11 +56,10 @@ if (requireNamespace("igraph", quietly = TRUE)){
 a <- cooccurrences(r, query = "oil")
 a <- data.table::as.data.table(a)
 
-b <- Cooccurrences("REUTERS", query = "oil")
+b <- cooccurrences("REUTERS", query = "oil", left = 5, right = 5, p_attribute = "word")
 b <- data.table::as.data.table(b)
 b <- b[!word \%in\% stopwords]
 
 # now let's check whether results are identical
 all(b[["word"]][1:5] == a[["word"]][1:5])
-}
 }

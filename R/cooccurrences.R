@@ -1,4 +1,4 @@
-#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R
+#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R
 NULL
 
 
@@ -222,7 +222,6 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
 #' @slot corpus  Length-one \code{character} vector, the CWB corpus used.
 #' @slot stat  A \code{data.table} with the statistical analysis of cooccurrences.
 #' @slot encoding  Length-one \code{character} vector, the encoding of the corpus.
-#' @slot method  A \code{character} vector stating the statistical test(s) used.
 #' @slot keep A \code{list} of named character vectors, names are p-attributes.
 #' @slot drop A \code{list} of named character vectors, names are p-attributes.
 #' @slot partition A \code{partition}.
@@ -241,7 +240,6 @@ setClass(
     keep = "list",
     drop = "list",
     partition = "partition",
-    method = "character",
     window_sizes = "data.table",
     minimized = "logical"
   )
@@ -249,6 +247,7 @@ setClass(
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
+  tests <- "ll"["ll" %in% colnames(.Object)]
   y <- new(
     "cooccurrences",
     corpus = .Object@corpus,
@@ -264,19 +263,21 @@ setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
     cpos = data.table(),
     call = character(),
     stat = subset(.Object@stat, .Object@stat[[paste("a", .Object@p_attribute, sep = "_")]] == query),
-    method = .Object@method,
+    method = tests,
     included = FALSE,
     size_ref = size(.Object@partition) - sum(.Object@window_sizes),
     size_coi = sum(.Object@window_sizes)
   )
-  y@stat[, "a_word_id" := NULL][, "b_word_id" := NULL][, "size_window" := NULL][, "a_word" := NULL][, "a_count" := NULL]
+  for (colname in c("a_word_id", "b_word_id", "size_window", "a_word", "a_count"))
+    if (colname %in% colnames(y)) y@stat[, eval(colname) := NULL, with = TRUE]
+  
   setnames(
     y@stat,
     old = c("ab_count", "b_count", "exp_coi", "exp_ref", "b_word"),
     new = c("count_window", "count_partition", "exp_window", "exp_partition", "word")
   )
-  setorderv(y@stat, cols = y@method[1], order = -1L)
-  y@stat[[paste("rank", y@method[1], sep = "_")]] <- 1L:nrow(y@stat)
+  setorderv(y@stat, cols = tests[1], order = -1L)
+  y@stat[[paste("rank", tests[1], sep = "_")]] <- 1L:nrow(y@stat)
   y
 })
 
@@ -314,15 +315,16 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
 #' @examples 
-#' \dontrun{
 #' stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
 #' r <- Cooccurrences(.Object = "REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
-#' r <- ll(r)
+#' ll(r)
 #' r <- subset(r, ll > 11.83 & ab_count >= 5)
+#' decode(r)
 #' data.table::setorderv(r@stat, cols = "ll", order = -1L)
 #' head(r, 25)
 #' 
 #' if (requireNamespace("igraph", quietly = TRUE)){
+#'   r@partition <- enrich(r@partition, p_attribute = "word")
 #'   g <- as_igraph(r, as.undirected = TRUE)
 #'   plot(g)
 #' }
@@ -330,13 +332,12 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' a <- cooccurrences(r, query = "oil")
 #' a <- data.table::as.data.table(a)
 #' 
-#' b <- Cooccurrences("REUTERS", query = "oil")
+#' b <- cooccurrences("REUTERS", query = "oil", left = 5, right = 5, p_attribute = "word")
 #' b <- data.table::as.data.table(b)
 #' b <- b[!word %in% stopwords]
 #' 
 #' # now let's check whether results are identical
 #' all(b[["word"]][1:5] == a[["word"]][1:5])
-#' }
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
@@ -350,7 +351,6 @@ setMethod("Cooccurrences", "partition", function(
     left = as.integer(left),
     right = as.integer(right),
     p_attribute = p_attribute,
-    method = character(),
     stat = data.table(),
     window_sizes = data.table(),
     name = character(),
@@ -517,35 +517,30 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
 #' @rdname all-cooccurrences-class
 setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   
-  .Object@method <- c(.Object@method, "ll")
-  
   if (verbose) message("... adding window size")
   
   setkeyv(.Object@window_sizes, "a_id")
   setkeyv(.Object@stat, "a_id")
-  DT <- .Object@window_sizes[.Object@stat]
+  .Object@stat[, "size_window" := .Object@window_sizes[.Object@stat][["size_window"]]]
   
   if (length(.Object@p_attribute) == 1L){
     
-    DT[, "a" := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = DT[["a_id"]]), from = registry_get_encoding(.Object@corpus))]
-    DT[, "b" := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = DT[["b_id"]]), from = registry_get_encoding(.Object@corpus))]
-    DT[, "a_id" := NULL][, "b_id" := NULL]
-    if (nrow(.Object@partition@stat) == 0L)
-      .Object@partition@stat <- count(.Object@partition, p_attribute = .Object@p_attribute)@stat
-    setkeyv(.Object@partition@stat, .Object@p_attribute)
-    setkeyv(DT, cols = "a")
-    DT2 <- .Object@partition@stat[DT]
+    # if ("a_id" %in% colnames(.Object)) decode(.Object)
     
-    rm(DT); gc()
-    setnames(DT2, old = c(.Object@p_attribute, "count", paste(.Object@p_attribute, "id", sep = "_")), new = c("a", "a_count", paste("a", .Object@p_attribute, "id", sep = "_")))
+    cnt <- if (nrow(.Object@partition@stat) > 0L)
+      .Object@partition@stat
+    else 
+      count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
     
-    setkeyv(DT2, cols = "b")
+    setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
     
-    .Object@stat <- .Object@partition@stat[DT2]
-    rm(DT2); gc()
-    
-    setnames(.Object@stat, old = c(.Object@p_attribute, "count", paste(.Object@p_attribute, "id", sep = "_")), new = c("b", "b_count", paste("b", .Object@p_attribute, "id", sep = "_")))
-    setnames(.Object@stat, old = c("a", "b"), new = c(paste("a", .Object@p_attribute, sep = "_"), paste("b", .Object@p_attribute, sep = "_")))
+    setkeyv(.Object@stat, cols = "a_id")
+    .Object@stat[, "a_count" := cnt[.Object@stat][["count"]] ]
+
+    setkeyv(.Object@stat, cols = "b_id")
+    .Object@stat[, "b_count" := cnt[.Object@stat][["count"]] ]
+
+    # setnames(.Object@stat, old = c("a", "b"), new = c(paste("a", .Object@p_attribute, sep = "_"), paste("b", .Object@p_attribute, sep = "_")))
     
   } else {
     # if (verbose == TRUE) message("... converting ids to strings")
@@ -593,7 +588,6 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
     # }
     
   }
-  
   
   if (verbose) message('... g2-Test')
   
@@ -698,6 +692,7 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
 #' @param vertex_attributes Vertex attributes to add to nodes.
 #' @param as.undirected Logical, whether to return directed or undirected graph.
 #' @rdname all-cooccurrences-class
+#' @export as_igraph
 as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE){
   
   if (!requireNamespace("igraph", quietly = TRUE))
@@ -750,3 +745,27 @@ as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex
 #   x@stat <- x@stat[DT2]
 #   x
 # }
+
+
+#' @exportMethod decode
+#' @rdname all-cooccurrences-class
+#' @details For reasons of memory efficiency, the initial \code{data.table} in
+#'   the slot \code{stat} of a \code{Cooccurrences}-object will identify tokens by an
+#'   integer id, not by the string of the token. The \code{decode()}-method will
+#'   replace these integer columns with human-readable character vectors. Due to
+#'   the reference logic of the \code{data.table} object, this is an in-place
+#'   operation, peformed without copying the table. The modified object is
+#'   returned invisibly; usually it will not be necessary to catch the return
+#'   value.
+setMethod("decode", "Cooccurrences", function(.Object){
+  .Object@stat[, paste("a", .Object@p_attribute, sep = "_") := as.nativeEnc(
+    cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .Object@stat[["a_id"]]),
+    from = registry_get_encoding(.Object@corpus))
+    ]
+  .Object@stat[, paste("b", .Object@p_attribute, sep = "_") := as.nativeEnc(
+    cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .Object@stat[["b_id"]]),
+    from = registry_get_encoding(.Object@corpus))
+    ]
+  .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
+  invisible(.Object)
+})

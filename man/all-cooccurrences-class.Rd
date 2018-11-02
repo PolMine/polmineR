@@ -6,6 +6,7 @@
 \alias{as.simple_triplet_matrix,Cooccurrences-method}
 \alias{ll,Cooccurrences-method}
 \alias{as_igraph}
+\alias{decode,Cooccurrences-method}
 \alias{as.sparseMatrix,Cooccurrences-method}
 \title{Cooccurrences class for corpus/partition.}
 \usage{
@@ -15,6 +16,8 @@
 
 as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
   vertex_attributes = "count", as.undirected = TRUE)
+
+\S4method{decode}{Cooccurrences}(.Object)
 
 \S4method{as.sparseMatrix}{Cooccurrences}(x, col)
 }
@@ -42,6 +45,15 @@ Transform cooccurrence igraph object.
 Return a sparse matrix with the term
   cooccurrence matrix.
 
+For reasons of memory efficiency, the initial \code{data.table} in
+  the slot \code{stat} of a \code{Cooccurrences}-object will identify tokens by an
+  integer id, not by the string of the token. The \code{decode()}-method will
+  replace these integer columns with human-readable character vectors. Due to
+  the reference logic of the \code{data.table} object, this is an in-place
+  operation, peformed without copying the table. The modified object is
+  returned invisibly; usually it will not be necessary to catch the return
+  value.
+
 Returns a simple triplet
   matrix based on the counts of term cooccurrences. If counts are not yet
   present, that is done first.
@@ -60,8 +72,6 @@ Returns a simple triplet
 \item{\code{stat}}{A \code{data.table} with the statistical analysis of cooccurrences.}
 
 \item{\code{encoding}}{Length-one \code{character} vector, the encoding of the corpus.}
-
-\item{\code{method}}{A \code{character} vector stating the statistical test(s) used.}
 
 \item{\code{keep}}{A \code{list} of named character vectors, names are p-attributes.}
 
