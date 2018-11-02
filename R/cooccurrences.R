@@ -393,13 +393,14 @@ setMethod("Cooccurrences", "partition", function(
       dt <- data.table(a_id = node_vector, b_id = collocate_vector) [, .N, by = c("a_id", "b_id")]
       setkeyv(dt, cols = c("a_id", "b_id"))
       
-      if (!is.null(stoplist)) dt <- dt[!dt[["a_id"]] %in% stoplist_ids]
+      a_id <- 0L; b_id <- 0L # to pass R CMD check
+      if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids]
       
       if (i == -left){
-        y@stat <- dt
-        y@window_sizes <- y@stat[, {sum(.SD[["N"]])}, by = "a_id"]
+        y@window_sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setnames(y@window_sizes, old = "V1", new = "size_window")
         setkeyv(y@window_sizes, cols = "a_id")
+        y@stat <- dt[!b_id %in% stoplist_ids]
       } else {
         sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setkeyv(sizes, cols = "a_id")
@@ -407,7 +408,7 @@ setMethod("Cooccurrences", "partition", function(
         y@window_sizes[, "size_window" := ifelse(is.na(y@window_sizes[["size_window"]]), 0L, y@window_sizes[["size_window"]]) + ifelse(is.na(y@window_sizes[["V1"]]), 0L, y@window_sizes[["V1"]])]
         y@window_sizes[, "V1" := NULL]
         
-        if (is.null(stoplist)) dt <- dt[!dt[["b_id"]] %in% stoplist_ids]
+        if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids][!b_id %in% stoplist_ids]
         
         y@stat <- merge(y@stat, dt, all = TRUE)
         y@stat[, "N" := ifelse(is.na(y@stat[["N.x"]]), 0L, y@stat[["N.x"]]) + ifelse(is.na(y@stat[["N.y"]]), 0L, y@stat[["N.y"]])]

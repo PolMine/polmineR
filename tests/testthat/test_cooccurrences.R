@@ -63,8 +63,7 @@ test_that(
     r <- ll(r)
 
     a <- data.table::as.data.table(cooccurrences(r, query = "oil"))
-    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))
-    # [!word %in% stopwords]
+    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))[!word %in% stopwords]
 
     expect_equal(a[["word"]], b[["word"]])
     expect_equal(a[["count_partition"]], b[["count_partition"]])
