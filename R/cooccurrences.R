@@ -338,6 +338,34 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' 
 #' # now let's check whether results are identical
 #' all(b[["word"]][1:5] == a[["word"]][1:5])
+#' 
+#' 
+#' stopwords <- unlist(noise(terms("GERMAPARLMINI", p_attribute = "word"), stopwordsLanguage = "german"))
+#' 
+#' plpr_partition <- partition("GERMAPARLMINI", date = "2009-11-10", interjection = "speech", p_attribute = "word")
+#' plpr_cooc <- Cooccurrences(
+#'   plpr_partition, p_attribute = "word",
+#'   left = 3L, right = 3L,
+#'   stoplist = stopwords,
+#'   verbose = TRUE
+#' )
+#' decode(plpr_cooc)
+#' ll(plpr_cooc)
+#' 
+#' merkel <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE, p_attribute = "word")
+#' merkel_cooc <- Cooccurrences(
+#'   merkel, p_attribute = "word",
+#'   left = 3L, right = 3L,
+#'   stoplist = stopwords, 
+#'   verbose = TRUE
+#' )
+#' decode(merkel_cooc)
+#' ll(merkel_cooc)
+#' 
+#' merkel_min <- subset(
+#'   merkel_cooc,
+#'   by = subset(features(merkel_cooc, plpr_cooc), rank_ll <= 50)
+#'   )
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
@@ -382,12 +410,30 @@ setMethod("Cooccurrences", "partition", function(
 
       node_vector <- unlist(lapply(
         id_list,
-        function(ids) if (i < 0) ids[(abs(i) + 1L):length(ids)] else ids[1L:(length(ids) - abs(i))]
+        function(ids){
+          if (i < 0){
+            from <- -i + 1L
+            to <- length(ids)
+            if (to > from) return(ids[from:to]) else return(NULL)
+          } else {
+            to <- length(ids) - i
+            if (to > 1L) return(ids[1L:to]) else return(NULL)
+          }
+        }
       ))
       
       collocate_vector <- unlist(lapply(
         id_list,
-        function(ids) if (i < 0) ids[1L:(length(ids) - abs(i))] else ids[(abs(i) + 1L):length(ids)]
+        function(ids){
+          if (i < 0){
+            to <- length(ids) + i
+            if (to > 1L) return(ids[1L:to]) else return(NULL)
+          } else {
+            from <- i + 1L
+            to <- length(ids)
+            if (to > from) return(ids[from:to]) else return(NULL)
+          }
+        }
       ))
       
       dt <- data.table(a_id = node_vector, b_id = collocate_vector) [, .N, by = c("a_id", "b_id")]
@@ -400,7 +446,7 @@ setMethod("Cooccurrences", "partition", function(
         y@window_sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setnames(y@window_sizes, old = "V1", new = "size_window")
         setkeyv(y@window_sizes, cols = "a_id")
-        y@stat <- dt[!b_id %in% stoplist_ids]
+        if (!is.null(stoplist)) y@stat <- dt[!b_id %in% stoplist_ids] else y@stat <- dt
       } else {
         sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setkeyv(sizes, cols = "a_id")
@@ -631,14 +677,16 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
   
   # remove columns not needed
   setnames(MATCH, old = c("ab_count", "i.ab_count"), new = c("count_ref", "count_coi"))
-  colsToKeep <- c(keys, "count_ref", "count_coi")
-  colsToDrop <- colnames(MATCH)[!colnames(MATCH) %in% colsToKeep]
-  for (drop in colsToDrop) MATCH[, eval(drop) := NULL, with = TRUE]
+  cols_to_keep <- c(keys, "count_ref", "count_coi")
+  cols_to_drop <- colnames(MATCH)[!colnames(MATCH) %in% cols_to_keep]
+  for (drop in cols_to_drop) MATCH[, eval(drop) := NULL, with = TRUE]
   if (included) MATCH[, "count_ref" := MATCH[["count_ref"]] - MATCH[["count_coi"]] ]
   
-  compObject <- new(
+  retval <- new(
     "features",
-    included = FALSE, corpus = x@corpus, size_coi = x@partition@size,
+    included = FALSE,
+    corpus = x@corpus,
+    size_coi = x@partition@size,
     size_ref = if (included) y@partition@size - x@partition@size else y@partition@size,
     p_attribute = x@p_attribute,
     stat = MATCH
@@ -646,9 +694,9 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
   
   for (how in method){
     if (verbose) message("... statistical test: ", how)
-    compObject <- do.call(how, args = list(.Object = compObject))
+    retval <- do.call(how, args = list(.Object = retval))
   }
-  compObject@stat
+  retval
 })
 
     
@@ -685,66 +733,72 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
 
 
 
-#' Transform cooccurrence igraph object.
-#' 
+#' @details The \code{as_igraph()}-function can be used to turn an object of the \code{Cooccurrences}-class 
+#' into an \code{igraph}-object.
 #' @param x A \code{Cooccurrences} class object.
 #' @param edge_attributes Attributes from stat \code{data.table} in x to add to edges.
 #' @param vertex_attributes Vertex attributes to add to nodes.
 #' @param as.undirected Logical, whether to return directed or undirected graph.
+#' @param drop A character vector indicating names of nodes to drop from
+#'   \code{igraph} object that is prepared.
 #' @rdname all-cooccurrences-class
 #' @export as_igraph
-as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE){
+as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE, drop = c("\u0084", "\u0093")){
   
   if (!requireNamespace("igraph", quietly = TRUE))
     stop("Package 'igraph' is required for as.igraph()-method, but not yet installed.")
   
   if (!all(edge_attributes %in% colnames(x@stat)))
-    warning("edgeAttribute supplied is not available")
+    warning("edge_attribute supplied is not available")
   
-  tab <- as.data.frame(x@stat)
-  aColsStr <- paste("a", x@p_attribute, sep = "_")
-  bColsStr <- paste("b", x@p_attribute, sep = "_")
-  if (length(x@p_attribute) == 1L){
-    tab[["node"]] <- tab[[aColsStr]]
-    tab[["collocate"]] <- tab[[bColsStr]]
+  a_cols <- paste("a", x@p_attribute, sep = "_")
+  b_cols <- paste("b", x@p_attribute, sep = "_")
+  
+  if (length(x@p_attribute) > 1L){
+    x@stat[, "node" := do.call(paste, c(x@stat[, b_cols], sep = "//"))]
+    x@stat[, "collocate" := do.call(paste, c(x@stat[, a_cols], sep = "//"))]
+    g <- igraph::graph_from_data_frame(x@stat[, c("node", "collocate", edge_attributes), with = FALSE])
   } else {
-    tab[["node"]] <- apply(tab, 1, function(x) paste(x[aColsStr], collapse = "//"))
-    tab[["collocate"]] <- apply(tab, 1, function(x) paste(x[bColsStr], collapse="//"))
+    g <- igraph::graph_from_data_frame(x@stat[, c(a_cols, b_cols, edge_attributes), with = FALSE])
   }
-  g <- igraph::graph_from_data_frame(tab[, c("node", "collocate", edge_attributes)])
+  
   if ("count" %in% vertex_attributes){
-    TF <- data.table::copy(x@partition@stat) # this will be a data.frame
     if (length(x@p_attribute) == 1){
-      TF[, "key" := TF[[x@p_attribute]] ]
+      setkeyv(x@partition@stat, x@p_attribute)
+      igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
     } else{
-      TF[, "key" := apply(TF, 1, function(row) paste(row[x@p_attribute], collapse = "//"))]
+      x@partition@stat[, "key" := do.call(paste, c(x@partition@stat[, x@p_attribute], sep = "//"))]
+      # x@partition@stat[, "key" := apply(x@partition@stat, 1, function(row) paste(row[x@p_attribute], collapse = "//"))]
+      setkeyv(x@partition@stat, cols = "key")
+      igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
     }
-    setkeyv(TF, cols = "key")
-    tfVector <- TF[names(igraph::V(g))][["count"]]
-    igraph::V(g)$count <- tfVector
-    igraph::V(g)$freq <- round((tfVector / x@partition@size) * 100000, 3)
+    igraph::V(g)$freq <- round((igraph::V(g)$count / x@partition@size) * 100000, 3)
   }
   if (as.undirected) g <- igraph::as.undirected(g, edge.attr.comb = "concat")
-  g <- igraph::delete_vertices(g, igraph::V(g)[name == "\u0084"])
-  g <- igraph::delete_vertices(g, igraph::V(g)[name == "\u0093"])
+  if (length(drop) > 0) for (x in drop) g <- igraph::delete_vertices(g, igraph::V(g)[name == x])
   g
 }
 
 
-# select_features <- function(x, reference, included = FALSE, method = "ll", n = 250){
-#   DT <- features(x = x, reference = reference, included = included, method = method, verbose = self$verbose)
-#   keys <- unlist(lapply(c("a", "b"), function(what) paste(what, x@p_attribute, sep = "_")))
-#   rowsToKeep <- c(keys, "rank_ll")
-#   DT <- DT[, rowsToKeep, with = FALSE]
-#   DT[, keep := ifelse(rank_ll <= n, TRUE, FALSE)]
-#   DT[, rank_ll := NULL]
-#   DT2 <- DT[DT[["keep"]] == TRUE]
-#   
-#   setkeyv(x@stat, keys)
-#   setkeyv(DT2, keys)
-#   x@stat <- x@stat[DT2]
-#   x
-# }
+#' @details The \code{subset} method, as a particular feature, allows a
+#'   \code{Coocccurrences}-object to be subsetted by a \code{featurs}-Object
+#'   resulting from a features extraction that compares two Cooccurrences
+#'   objects.
+#' @param by A \code{features}-class object.
+#' @param ... Further arguments passed into a further call of \code{subset}.
+#' @rdname all-cooccurrences-class
+#' @exportMethod subset
+setMethod("subset", "Cooccurrences", function(x, ..., by){
+  if (!missing(by)){
+    if (is(by)[1] != "features") stop("If 'by' is provided, a features object is expected")
+    keys <- unlist(lapply(c("a", "b"), function(what) paste(what, x@p_attribute, sep = "_")))
+    setkeyv(x@stat, keys)
+    setkeyv(by@stat, keys)
+    x@stat <- x@stat[by@stat]
+  }
+  x@stat <- subset(copy(x@stat), ...)
+  x
+})
 
 
 #' @exportMethod decode
@@ -766,6 +820,6 @@ setMethod("decode", "Cooccurrences", function(.Object){
     cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .Object@stat[["b_id"]]),
     from = registry_get_encoding(.Object@corpus))
     ]
-  .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
+  # .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
   invisible(.Object)
 })

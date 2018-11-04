@@ -6,6 +6,7 @@
 \alias{as.simple_triplet_matrix,Cooccurrences-method}
 \alias{ll,Cooccurrences-method}
 \alias{as_igraph}
+\alias{subset,Cooccurrences-method}
 \alias{decode,Cooccurrences-method}
 \alias{as.sparseMatrix,Cooccurrences-method}
 \title{Cooccurrences class for corpus/partition.}
@@ -15,7 +16,10 @@
 \S4method{ll}{Cooccurrences}(.Object, verbose = TRUE)
 
 as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
-  vertex_attributes = "count", as.undirected = TRUE)
+  vertex_attributes = "count", as.undirected = TRUE, drop = c("\\u0084",
+  "\\u0093"))
+
+\S4method{subset}{Cooccurrences}(x, ..., by)
 
 \S4method{decode}{Cooccurrences}(.Object)
 
@@ -34,16 +38,29 @@ as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
 
 \item{as.undirected}{Logical, whether to return directed or undirected graph.}
 
+\item{drop}{A character vector indicating names of nodes to drop from
+\code{igraph} object that is prepared.}
+
+\item{...}{Further arguments passed into a further call of \code{subset}.}
+
+\item{by}{A \code{features}-class object.}
+
 \item{col}{A column to extract.}
 }
 \description{
 The class inherits from the \code{textstat}-class.
-
-Transform cooccurrence igraph object.
 }
 \details{
 Return a sparse matrix with the term
   cooccurrence matrix.
+
+The \code{as_igraph()}-function can be used to turn an object of the \code{Cooccurrences}-class 
+into an \code{igraph}-object.
+
+The \code{subset} method, as a particular feature, allows a
+  \code{Coocccurrences}-object to be subsetted by a \code{featurs}-Object
+  resulting from a features extraction that compares two Cooccurrences
+  objects.
 
 For reasons of memory efficiency, the initial \code{data.table} in
   the slot \code{stat} of a \code{Cooccurrences}-object will identify tokens by an

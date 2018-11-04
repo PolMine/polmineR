@@ -62,4 +62,32 @@ b <- b[!word \%in\% stopwords]
 
 # now let's check whether results are identical
 all(b[["word"]][1:5] == a[["word"]][1:5])
+
+
+stopwords <- unlist(noise(terms("GERMAPARLMINI", p_attribute = "word"), stopwordsLanguage = "german"))
+
+plpr_partition <- partition("GERMAPARLMINI", date = "2009-11-10", interjection = "speech", p_attribute = "word")
+plpr_cooc <- Cooccurrences(
+  plpr_partition, p_attribute = "word",
+  left = 3L, right = 3L,
+  stoplist = stopwords,
+  verbose = TRUE
+)
+decode(plpr_cooc)
+ll(plpr_cooc)
+
+merkel <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE, p_attribute = "word")
+merkel_cooc <- Cooccurrences(
+  merkel, p_attribute = "word",
+  left = 3L, right = 3L,
+  stoplist = stopwords, 
+  verbose = TRUE
+)
+decode(merkel_cooc)
+ll(merkel_cooc)
+
+merkel_min <- subset(
+  merkel_cooc,
+  by = subset(features(merkel_cooc, plpr_cooc), rank_ll <= 50)
+  )
 }
