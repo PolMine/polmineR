@@ -524,37 +524,45 @@ setMethod("Cooccurrences", "partition", function(
 
 
 
-  
-#' @details Return a sparse matrix with the term
-#'   cooccurrence matrix.
+#' @details The \code{as.simple_triplet_matrix}-method will transform a
+#'   \code{Cooccurrences} object into a sparse matrix. For reasons of memory
+#'   efficiency, decoding token ids is performed within the method at the
+#'   latests possible stage. It is NOT necessary that decoded tokens are present
+#'   in the table in the \code{Cooccurrences} object.
 #' @exportMethod as.simple_triplet_matrix
-#' @importFrom slam simple_triplet_matrix
 #' @rdname all-cooccurrences-class
+#' @examples
+#' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+#' m <- as.simple_triplet_matrix(X)
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   
-  message("... creating data.table for reindexing")  
-  ID2STR <- data.table(id = unique(x@stat[["a_id"]]))
-  ID2STR[ , "str" := as.nativeEnc(cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = ID2STR[["id"]]), from = getEncoding(x@corpus))]
-  setkeyv(ID2STR, cols = "id")
-  setorderv(ID2STR, cols = "id")
-  ID2STR[, "id_new" := 1L:nrow(ID2STR), with = TRUE]
+  if (length(x@p_attribute) > 1L) stop("Method only works if one and only one p-attribute is used.")
+  unique_tokens <- unique(x@stat[["a_word"]], x@stat[["b_word"]])
+  
+  
+  message("... creating data.table for reindexing")
+  dt <- data.table(id = unique(x@stat[["a_id"]]))
+  setkeyv(dt, cols = "id")
+  setorderv(dt, cols = "id")
+  dt[, "id_new" := 1L:nrow(dt), with = TRUE]
   setkeyv(x@stat, "a_id")
   
   message("... id2str for a")
-  coocCount2 <- x@stat[ID2STR]
-  data.table::setnames(coocCount2, old = c("str", "id_new"), new = c("a_token", "a_new_key"))
-  setkeyv(coocCount2, "b_id")
+  x@stat[, "a_new_key" := x@stat[dt][["id_new"]]]
+  setkeyv(x@stat, "b_id")
   message("... id2str for b")
-  coocCount3 <- coocCount2[ID2STR]
-  rm(coocCount2)
-  setnames(coocCount3, old = c("str", "id_new"), new = c("b_token", "b_new_key"))
+  x@stat[, "b_new_key" := x@stat[dt][["id_new"]]]
   message("... preparing simple_triplet_matrix")
-  retval <- slam::simple_triplet_matrix(
-    i = coocCount3[["a_new_key"]],
-    j = coocCount3[["b_new_key"]],
-    v = coocCount3[["ab_count"]],
-    dimnames = list(ID2STR[["str"]], ID2STR[["str"]])
+  decoded_tokens <- as.nativeEnc(
+    cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = dt[["id"]]),
+    from = getEncoding(x@corpus)
   )
+  rm(dt); gc()
+  retval <- slam::simple_triplet_matrix(
+    i = x@stat[["a_new_key"]], j = x@stat[["b_new_key"]], v = x@stat[["ab_count"]],
+    dimnames = list(decoded_tokens, decoded_tokens)
+  )
+  x@stat[, "a_new_key" := NULL][, "b_new_key" := NULL]
   retval
 })
 

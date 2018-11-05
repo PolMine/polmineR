@@ -51,8 +51,11 @@ as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
 The class inherits from the \code{textstat}-class.
 }
 \details{
-Return a sparse matrix with the term
-  cooccurrence matrix.
+The \code{as.simple_triplet_matrix}-method will transform a
+  \code{Cooccurrences} object into a sparse matrix. For reasons of memory
+  efficiency, decoding token ids is performed within the method at the
+  latests possible stage. It is NOT necessary that decoded tokens are present
+  in the table in the \code{Cooccurrences} object.
 
 The \code{as_igraph()}-function can be used to turn an object of the \code{Cooccurrences}-class 
 into an \code{igraph}-object.
@@ -102,3 +105,7 @@ context of a token identified by id.}
 \item{\code{minimized}}{Logical, whether the object has been minimized.}
 }}
 
+\examples{
+X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+m <- as.simple_triplet_matrix(X)
+}

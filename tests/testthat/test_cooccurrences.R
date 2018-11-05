@@ -60,6 +60,36 @@ test_that(
   {
     stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
     r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
+    stm <- as.simple_triplet_matrix(r)
+    
+    coocs <- list(
+      c("oil", "prices"),
+      c("Saudi", "Arabia"),
+      c("Sheikh", "Ali"),
+      c("barrel", "dlrs")
+    )
+    lapply(
+      coocs,
+      function(tokens){
+        print(coocs)
+        a2b <- as.integer(as.matrix(stm[tokens[1], tokens[2]]))
+        b2a <- as.integer(as.matrix(stm[tokens[2], tokens[1]]))
+        expect_equal(a2b, b2a)
+        
+        a2b_cqp <- count("REUTERS", sprintf('"%s" []{0,4} "%s"', tokens[1], tokens[2]), cqp = TRUE)
+        b2a_cqp <- count("REUTERS", sprintf('"%s" []{0,4} "%s"', tokens[2], tokens[1]), cqp = TRUE)
+        expect_equal(a2b_cqp[["count"]] + b2a_cqp[["count"]], a2b)
+        
+        expect_equal(
+          a2b,
+          cooccurrences("REUTERS", query = tokens[1])@stat[word == tokens[2]][["count_window"]]
+        )
+        
+        NULL
+    })
+    
+    
+    
     ll(r)
     decode(r)
 
