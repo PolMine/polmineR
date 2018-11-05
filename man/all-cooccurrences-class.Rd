@@ -23,7 +23,7 @@ as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
 
 \S4method{decode}{Cooccurrences}(.Object)
 
-\S4method{as.sparseMatrix}{Cooccurrences}(x, col)
+\S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count")
 }
 \arguments{
 \item{x}{A \code{Cooccurrences} class object.}
@@ -74,9 +74,8 @@ For reasons of memory efficiency, the initial \code{data.table} in
   returned invisibly; usually it will not be necessary to catch the return
   value.
 
-Returns a simple triplet
-  matrix based on the counts of term cooccurrences. If counts are not yet
-  present, that is done first.
+Returns a \code{sparseMatrix} based on the counts of term cooccurrences. At this stage,
+it is required that decoded tokens are present.
 }
 \section{Slots}{
 
@@ -108,4 +107,8 @@ context of a token identified by id.}
 \examples{
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 m <- as.simple_triplet_matrix(X)
+X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+decode(X)
+sm <- as.sparseMatrix(X)
+stm <- as.simple_triplet_matrix(X)
 }

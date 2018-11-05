@@ -27,6 +27,39 @@ setMethod("as.sparseMatrix", "simple_triplet_matrix", function(x, ...){
     )
 })
 
+
+#' @details Returns a \code{sparseMatrix} based on the counts of term cooccurrences. At this stage,
+#' it is required that decoded tokens are present.
+#' @exportMethod as.sparseMatrix
+#' @rdname all-cooccurrences-class
+#' @examples 
+#' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+#' decode(X)
+#' sm <- as.sparseMatrix(X)
+#' stm <- as.simple_triplet_matrix(X)
+setMethod("as.sparseMatrix", "Cooccurrences", function(x, col = "ab_count"){
+  a_col <- paste("a", x@p_attribute, sep = "_")
+  b_col <- paste("b", x@p_attribute, sep = "_")
+  unique_terms <- unique(c(x@stat[[a_col]], x@stat[[b_col]]))
+  key_vector <- setNames(1L:length(unique_terms), unique_terms)
+  splitted_tab <- split(x = x@stat[,c(col, b_col), with = FALSE], f = x@stat[[a_col]])
+  
+  i <- unname(unlist(lapply(names(splitted_tab), function(n) rep(key_vector[n], times = nrow(splitted_tab[[n]]))))) #nodes
+  j <- unname(unlist(lapply(splitted_tab, function(tab) key_vector[tab[[b_col]] ]))) # cooccurrences
+  v <- unname(unlist(lapply(splitted_tab, function(tab) tab[[col]]))) # values
+  
+  sparseMatrix(
+    i = i,
+    j = j,
+    x = v, 
+    dims = c(length(unique_terms), length(unique_terms)),
+    dimnames = list(names(key_vector), names(key_vector)),
+    giveCsparse = TRUE
+  )   
+})
+
+
+
 #' @importFrom Matrix sparseMatrix
 #' @rdname as.sparseMatrix
 setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x, ...){
@@ -48,32 +81,6 @@ setMethod("as.sparseMatrix", "bundle", function(x, col){
   message("... converting TermDocumentMatrix to Matrix")
   retval <-  as.sparseMatrix(tdm_stm)
   return(retval)
-})
-
-
-#' @details Returns a simple triplet
-#'   matrix based on the counts of term cooccurrences. If counts are not yet
-#'   present, that is done first.
-#' @exportMethod as.sparseMatrix
-#' @rdname all-cooccurrences-class
-setMethod("as.sparseMatrix", "Cooccurrences", function(x, col){
-  uniqueTerms <- unique(c(x@stat[,"node"], x@stat[,"cooccurrence"]))
-  keyVector <- setNames(1L:length(uniqueTerms), uniqueTerms)
-  splittedTab <- split(x = x@stat[,c(col, "cooccurrence")], f = x@stat[,"node"])
-  
-  bag <- list()
-  i <- unname(unlist(lapply(names(splittedTab), function(n) rep(keyVector[n], times = nrow(splittedTab[[n]]))))) #nodes
-  j <- unname(unlist(lapply(splittedTab, function(tab) keyVector[tab[,"cooccurrence"]]))) # cooccurrences
-  v <- unname(unlist(lapply(splittedTab, function(tab) tab[,col]))) # values
-  
-  sparseMatrix(
-    i = i,
-    j = j,
-    x = v, 
-    dims = c(length(uniqueTerms), length(uniqueTerms)),
-    dimnames = list(names(keyVector), names(keyVector)),
-    giveCsparse = TRUE
-  )   
 })
 
 

@@ -62,12 +62,16 @@ test_that(
     r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
     stm <- as.simple_triplet_matrix(r)
     
+    decode(r)
+    spm <- as.sparseMatrix(r)
+    
     coocs <- list(
       c("oil", "prices"),
       c("Saudi", "Arabia"),
       c("Sheikh", "Ali"),
       c("barrel", "dlrs")
     )
+    
     lapply(
       coocs,
       function(tokens){
@@ -76,9 +80,13 @@ test_that(
         b2a <- as.integer(as.matrix(stm[tokens[2], tokens[1]]))
         expect_equal(a2b, b2a)
         
+        expect_equal(spm[tokens[1], tokens[2]], spm[tokens[2], tokens[1]])
+        
         a2b_cqp <- count("REUTERS", sprintf('"%s" []{0,4} "%s"', tokens[1], tokens[2]), cqp = TRUE)
         b2a_cqp <- count("REUTERS", sprintf('"%s" []{0,4} "%s"', tokens[2], tokens[1]), cqp = TRUE)
         expect_equal(a2b_cqp[["count"]] + b2a_cqp[["count"]], a2b)
+        
+        expect_equal(a2b_cqp[["count"]] + b2a_cqp[["count"]], spm[tokens[1], tokens[2]])
         
         expect_equal(
           a2b,

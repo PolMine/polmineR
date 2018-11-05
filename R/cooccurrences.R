@@ -1,4 +1,4 @@
-#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R
+#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R as.sparseMatrix.R
 NULL
 
 
@@ -536,28 +536,34 @@ setMethod("Cooccurrences", "partition", function(
 #' m <- as.simple_triplet_matrix(X)
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   
+  verbose <- interactive()
+  
   if (length(x@p_attribute) > 1L) stop("Method only works if one and only one p-attribute is used.")
   unique_tokens <- unique(x@stat[["a_word"]], x@stat[["b_word"]])
   
   
-  message("... creating data.table for reindexing")
+  if (verbose) message("... creating data.table for reindexing")
   dt <- data.table(id = unique(x@stat[["a_id"]]))
   setkeyv(dt, cols = "id")
   setorderv(dt, cols = "id")
   dt[, "id_new" := 1L:nrow(dt), with = TRUE]
   setkeyv(x@stat, "a_id")
   
-  message("... id2str for a")
+  if (verbose) message("... reindexing a")
   x@stat[, "a_new_key" := x@stat[dt][["id_new"]]]
   setkeyv(x@stat, "b_id")
-  message("... id2str for b")
+  
+  if (verbose) message("... reindexing b")
   x@stat[, "b_new_key" := x@stat[dt][["id_new"]]]
-  message("... preparing simple_triplet_matrix")
+  
+  if (verbose) message("... decoding tokens")
   decoded_tokens <- as.nativeEnc(
     cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = dt[["id"]]),
     from = getEncoding(x@corpus)
   )
   rm(dt); gc()
+  
+  if (verbose) message("... creating simple triplet matrix")
   retval <- slam::simple_triplet_matrix(
     i = x@stat[["a_new_key"]], j = x@stat[["b_new_key"]], v = x@stat[["ab_count"]],
     dimnames = list(decoded_tokens, decoded_tokens)
@@ -738,6 +744,10 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
 #   x@stat <- FIN
 #   x
 # }
+
+
+
+
 
 
 
