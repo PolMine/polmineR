@@ -14,12 +14,14 @@ as.sparseMatrix(x, ...)
 
 \S4method{as.sparseMatrix}{TermDocumentMatrix}(x, ...)
 
-\S4method{as.sparseMatrix}{bundle}(x, col)
+\S4method{as.sparseMatrix}{bundle}(x, col, ...)
 }
 \arguments{
 \item{x}{object to convert}
 
-\item{...}{further parameters}
+\item{...}{Further arguments that are passed to a call to
+\code{sparseMatrix}. Can be used, for instance to set \code{giveCsparse} to
+\code{FALSE} to get a \code{dgTMatrix}, not a \code{dgCMatrix}.}
 
 \item{col}{column name to get values from (if x is a bundle)}
 }

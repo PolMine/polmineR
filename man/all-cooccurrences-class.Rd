@@ -23,7 +23,7 @@ as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
 
 \S4method{decode}{Cooccurrences}(.Object)
 
-\S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count")
+\S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count", ...)
 }
 \arguments{
 \item{x}{A \code{Cooccurrences} class object.}

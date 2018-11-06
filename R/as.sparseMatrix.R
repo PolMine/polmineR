@@ -9,7 +9,9 @@ setOldClass("simple_triplet_matrix")
 #' 
 #' @param x object to convert
 #' @param col column name to get values from (if x is a bundle)
-#' @param ... further parameters
+#' @param ... Further arguments that are passed to a call to
+#'   \code{sparseMatrix}. Can be used, for instance to set \code{giveCsparse} to
+#'   \code{FALSE} to get a \code{dgTMatrix}, not a \code{dgCMatrix}.
 #' @exportMethod as.sparseMatrix
 #' @rdname as.sparseMatrix
 setGeneric("as.sparseMatrix", function(x,...) standardGeneric("as.sparseMatrix"))
@@ -37,25 +39,21 @@ setMethod("as.sparseMatrix", "simple_triplet_matrix", function(x, ...){
 #' decode(X)
 #' sm <- as.sparseMatrix(X)
 #' stm <- as.simple_triplet_matrix(X)
-setMethod("as.sparseMatrix", "Cooccurrences", function(x, col = "ab_count"){
-  a_col <- paste("a", x@p_attribute, sep = "_")
-  b_col <- paste("b", x@p_attribute, sep = "_")
-  unique_terms <- unique(c(x@stat[[a_col]], x@stat[[b_col]]))
-  key_vector <- setNames(1L:length(unique_terms), unique_terms)
-  splitted_tab <- split(x = x@stat[,c(col, b_col), with = FALSE], f = x@stat[[a_col]])
+setMethod("as.sparseMatrix", "Cooccurrences", function(x, col = "ab_count", ...){
   
-  i <- unname(unlist(lapply(names(splitted_tab), function(n) rep(key_vector[n], times = nrow(splitted_tab[[n]]))))) #nodes
-  j <- unname(unlist(lapply(splitted_tab, function(tab) key_vector[tab[[b_col]] ]))) # cooccurrences
-  v <- unname(unlist(lapply(splitted_tab, function(tab) tab[[col]]))) # values
+  decoded_tokens <- reindex(x)
+  retval <- sparseMatrix(
+    i = x@stat[["a_new_index"]],
+    j = x@stat[["b_new_index"]],
+    x = x@stat[[col]], 
+    dims = c(length(decoded_tokens), length(decoded_tokens)),
+    dimnames = list(decoded_tokens, decoded_tokens),
+    ...
+  ) 
   
-  sparseMatrix(
-    i = i,
-    j = j,
-    x = v, 
-    dims = c(length(unique_terms), length(unique_terms)),
-    dimnames = list(names(key_vector), names(key_vector)),
-    giveCsparse = TRUE
-  )   
+  # restore original data.table and remove columns generated during reindexing
+  x@stat[, "a_new_index" := NULL][, "b_new_index" := NULL]
+  retval
 })
 
 
@@ -75,11 +73,11 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x, ...){
 
 #' @docType methods
 #' @rdname as.sparseMatrix
-setMethod("as.sparseMatrix", "bundle", function(x, col){
+setMethod("as.sparseMatrix", "bundle", function(x, col, ...){
   message("... converting partition_bundle to TermDocumentMatrix")
   tdm_stm <- as.TermDocumentMatrix(x = x, col = col)
   message("... converting TermDocumentMatrix to Matrix")
-  retval <-  as.sparseMatrix(tdm_stm)
+  retval <-  as.sparseMatrix(tdm_stm, ...)
   return(retval)
 })
 
