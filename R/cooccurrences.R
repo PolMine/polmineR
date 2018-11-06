@@ -312,6 +312,7 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' @importFrom RcppCWB cl_id2str cl_str2id cl_cpos2id
 #' @import methods
 #' @importFrom RcppCWB get_cbow_matrix
+#' @importFrom parallel mclapply 
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
 #' @examples 
@@ -366,6 +367,50 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #'   merkel_cooc,
 #'   by = subset(features(merkel_cooc, plpr_cooc), rank_ll <= 50)
 #'   )
+#'   
+#'   
+#' protocol <- partition(
+#'   "GERMAPARLMINI",
+#'   date = "2009-11-10",
+#'   p_attribute = c("word", "pos"),
+#'   interjection = "speech"
+#' )
+#' protocol_cooc <- Cooccurrences(
+#'   protocol,
+#'   p_attribute = c("word", "pos"),
+#'   left = 3L, right = 3L
+#'   )
+#' ll(protocol_cooc)
+#' decode(protocol_cooc)
+#' 
+#' merkel <- partition(
+#'   "GERMAPARLMINI",
+#'   speaker = "Merkel",
+#'   date = "2009-11-10",
+#'   interjection = "speech",
+#'   regex = TRUE,
+#'   p_attribute = c("word", "pos")
+#' )
+#' merkel_cooc <- Cooccurrences(
+#'   merkel,
+#'   p_attribute = c("word", "pos"),
+#'   left = 3L, right = 3L,
+#'   verbose = TRUE
+#' )
+#' ll(merkel_cooc)
+#' decode(merkel_cooc)
+#' 
+#' f <- features(merkel_cooc, protocol_cooc)
+#' f <- subset(f, a_pos %in% c("NN", "ADJA"))
+#' f <- subset(f, b_pos %in% c("NN", "ADJA"))
+#' f <- f[1:50]
+#' 
+#' merkel_min <- subset(merkel_cooc, by = f)
+#' 
+#' if (requireNamespace("igraph", quietly = TRUE)){
+#'   g <- as_igraph(merkel_min, as.undirected = TRUE)
+#'   plot(g)
+#' }
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
@@ -467,57 +512,59 @@ setMethod("Cooccurrences", "partition", function(
     
   } else {
     
-    if (length(.Object@p_attribute) == 0) stop("The partition is required to included counts. Enrich the object first!")
+    if (length(.Object@p_attribute) == 0)
+      stop("The partition is required to included counts. Enrich the object first!")
     
-    pAttr <- sapply(p_attribute, function(x) paste(.Object@corpus, x, sep = "."))
-    aColsId <- setNames(paste("a", p_attribute, "id", sep="_"), p_attribute)
-    bColsId <- setNames(paste("b", p_attribute, "id", sep="_"), p_attribute)
-    aColsStr <- setNames(paste("a", p_attribute, sep="_"), p_attribute)
-    bColsStr <- setNames(paste("b", p_attribute, sep="_"), p_attribute)
+    a_cols_id <- setNames(paste("a", p_attribute, "id", sep = "_"), p_attribute)
+    b_cols_id <- setNames(paste("b", p_attribute, "id", sep = "_"), p_attribute)
+    a_cols_str <- setNames(paste("a", p_attribute, sep = "_"), p_attribute)
+    b_cols_str <- setNames(paste("b", p_attribute, sep = "_"), p_attribute)
     
-    .makeWindows <- function(i, cpos, ...){
-      cposMin <- cpos[i,1]
-      cposMax <- cpos[i,2]
-      if (cposMin != cposMax){
-        cposRange <- cposMin:cposMax
+    .make_window <- function(i){
+      cpos_min <- .Object@cpos[i,1]
+      cpos_max <- .Object@cpos[i,2]
+      if (cpos_min < cpos_max){
+        range <- cpos_min:cpos_max
         lapply(
-          setNames(cposRange, cposRange),
+          setNames(range, range),
           function(x) {
             cpos <- c((x - left):(x - 1L), (x + 1L):(x + right))
-            cpos <- cpos[which(cpos >= cposMin)]
-            cpos[which(cpos <= cposMax)]
+            cpos <- cpos[which(cpos >= cpos_min)]
+            cpos[which(cpos <= cpos_max)]
           })
       }
     }
-    bag <- blapply(as.list(1L:nrow(.Object@cpos)), f = .makeWindows, cpos = .Object@cpos, mc = mc)
-    bCpos <- lapply(
+    
+    if (progress){
+      bag <- pblapply(1L:nrow(.Object@cpos), .make_window, cl = mc)
+    } else{
+      bag <- if (mc) lapply(1L:nrow(.Object@cpos), .make_window) else mclapply(1L:nrow(.Object@cpos), .make_window)
+    }
+      
+    
+    b_cpos <- lapply(
       bag,
-      function(x) lapply(names(x), function(y) rep(as.numeric(y), times = length(x[[y]])))
+      function(x) lapply(names(x), function(y) rep(as.integer(y), times = length(x[[y]])))
     )
     if (verbose) message("... putting together data.table")
-    DT <- data.table(a_cpos = unlist(bag), b_cpos = unlist(bCpos))
+    dt <- data.table(a_cpos = unlist(bag), b_cpos = unlist(b_cpos))
     
     if (verbose) message("... getting token ids")
     lapply(
-      p_attribute, function(x){
-        DT[, eval(aColsId[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = DT[["a_cpos"]]), with = TRUE]
-        DT[, eval(bColsId[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = DT[["b_cpos"]]), with = TRUE]
+      p_attribute,
+      function(x){
+        dt[, eval(a_cols_id[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = dt[["a_cpos"]]), with = TRUE]
+        dt[, eval(b_cols_id[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = dt[["b_cpos"]]), with = TRUE]
       }
     )
     if (verbose) message("... counting window size")
     
-    contextDT <- DT[, .N, by = c(eval(aColsId)), with = TRUE]
-    setnames(contextDT, "N", "size_window")
-    y@window_sizes <- contextDT
-    
+    y@window_sizes <- dt[, .N, by = c(eval(a_cols_id)), with = TRUE]
+    setnames(y@window_sizes, "N", "size_window")
+
     if (verbose) message("... counting co-occurrences")
-    TF <- DT[, .N, by = c(eval(c(aColsId, bColsId))), with = TRUE]
-    setnames(TF, "N", "ab_count")
-    
-    if (verbose) message("... adding window size")
-    setkeyv(contextDT, cols = aColsId)
-    setkeyv(TF, cols = aColsId)
-    TF <- contextDT[TF]
+    y@stat <- dt[, .N, by = c(eval(c(a_cols_id, b_cols_id))), with = TRUE]
+    setnames(y@stat, "N", "ab_count")
   }
   y
 })
@@ -539,29 +586,8 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   verbose <- interactive()
   
   decoded_tokens <- reindex(x)
-  # if (length(x@p_attribute) > 1L) stop("Method only works if one and only one p-attribute is used.")
-  # 
-  # if (verbose) message("... creating data.table for reindexing")
-  # dt <- data.table(id = unique(x@stat[["a_id"]]))
-  # setkeyv(dt, cols = "id")
-  # setorderv(dt, cols = "id")
-  # dt[, "id_new" := 1L:nrow(dt), with = TRUE]
-  # setkeyv(x@stat, "a_id")
-  # 
-  # if (verbose) message("... reindexing a")
-  # x@stat[, "a_new_key" := x@stat[dt][["id_new"]]]
-  # setkeyv(x@stat, "b_id")
-  # 
-  # if (verbose) message("... reindexing b")
-  # x@stat[, "b_new_key" := x@stat[dt][["id_new"]]]
-  # 
-  # if (verbose) message("... decoding tokens")
-  # decoded_tokens <- as.nativeEnc(
-  #   cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = dt[["id"]]),
-  #   from = getEncoding(x@corpus)
-  # )
-  # rm(dt); gc()
-  
+  if (length(x@p_attribute) > 1L) stop("Method only works if one and only one p-attribute is used.")
+
   if (verbose) message("... creating simple triplet matrix")
   retval <- slam::simple_triplet_matrix(
     i = x@stat[["a_new_index"]], j = x@stat[["b_new_index"]], v = x@stat[["ab_count"]],
@@ -578,77 +604,27 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
 #' @rdname all-cooccurrences-class
 setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   
+  a_cols_id <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", .Object@p_attribute, "id", sep = "_")
+  b_cols_id <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", .Object@p_attribute, "id", sep = "_")
+  
   if (verbose) message("... adding window size")
   
-  setkeyv(.Object@window_sizes, "a_id")
-  setkeyv(.Object@stat, "a_id")
+  setkeyv(.Object@window_sizes, a_cols_id)
+  setkeyv(.Object@stat, a_cols_id)
   .Object@stat[, "size_window" := .Object@window_sizes[.Object@stat][["size_window"]]]
   
-  if (length(.Object@p_attribute) == 1L){
-    
-    # if ("a_id" %in% colnames(.Object)) decode(.Object)
-    
-    cnt <- if (nrow(.Object@partition@stat) > 0L)
-      .Object@partition@stat
-    else 
-      count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
-    
-    setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
-    
-    setkeyv(.Object@stat, cols = "a_id")
-    .Object@stat[, "a_count" := cnt[.Object@stat][["count"]] ]
-
-    setkeyv(.Object@stat, cols = "b_id")
-    .Object@stat[, "b_count" := cnt[.Object@stat][["count"]] ]
-
-    # setnames(.Object@stat, old = c("a", "b"), new = c(paste("a", .Object@p_attribute, sep = "_"), paste("b", .Object@p_attribute, sep = "_")))
-    
-  } else {
-    # if (verbose == TRUE) message("... converting ids to strings")
-    # lapply(
-    #   c(1:length(p_attribute)),
-    #   function(i){
-    #     TF[, eval(aColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, p_attribute[i], TF[[aColsId[i]]])), with = TRUE]
-    #     TF[, eval(bColsStr[i]) := as.utf8(CQI$id2str(.Object@corpus, p_attribute[i], TF[[bColsId[i]]])), with=TRUE]
-    #     TF[, eval(aColsId[i]) := NULL]
-    #     TF[, eval(bColsId[i]) := NULL]
-    #   }
-    # )
-    # setkeyv(TF, cols = aColsStr)
-    # setkeyv(.Object@stat, cols = p_attribute)
-    # TF[, "count_a" := .Object@stat[TF][["count"]]]
-    # setkeyv(TF, cols=bColsStr)
-    # TF[, "count_b" := .Object@stat[TF][["count"]]]
-    # setcolorder(TF, c(aColsStr, bColsStr, "ab_count", "count_a", "count_b", "size_window"))
-    # if (tcm == FALSE){
-    #   coll@stat <- TF
-    #   if ("ll" %in% method) {
-    #     message('... g2-Test')
-    #     coll <- ll(coll)
-    #     coll@stat <- setorderv(coll@stat, cols="ll", order=-1)
-    #   }
-    #   return(coll)
-    # } else if (tcm == TRUE){
-    #   concatenate <- function(x) paste(x, collapse = "//")
-    #   if (length(p_attribute) > 1){
-    #     TF[, "strKeyA" := apply(TF[, eval(paste("a", p_attribute, sep = "_")), with = FALSE], 1, concatenate)]
-    #     TF[, "strKeyB" := apply(TF[, eval(paste("b", p_attribute, sep = "_")), with = FALSE], 1, concatenate)]
-    #   } else {
-    #     setnames(TF, old = paste("a", p_attribute, sep = "_"), new = "strKeyA")
-    #     setnames(TF, old = paste("b", p_attribute, sep = "_"), new = "strKeyB")
-    #   }
-    #   uniqueKey <- unique(c(TF[["strKeyA"]], TF[["strKeyB"]]))
-    #   keys <- setNames(c(1:length(uniqueKey)), uniqueKey)
-    #   i <- unname(keys[TF[["strKeyA"]]])
-    #   j <- unname(keys[TF[["strKeyB"]]])
-    #   retval <- simple_triplet_matrix(
-    #     i = i, j = j, v = TF[["ab_count"]],
-    #     dimnames = list(a = names(keys)[1:max(i)], b = names(keys)[1:max(j)])
-    #   )
-    #   return(retval)
-    # }
-    
-  }
+  cnt <- if (nrow(.Object@partition@stat) > 0L)
+    .Object@partition@stat
+  else 
+    count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
+  
+  setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
+  
+  setkeyv(.Object@stat, cols = a_cols_id)
+  .Object@stat[, "a_count" := cnt[.Object@stat][["count"]] ]
+  
+  setkeyv(.Object@stat, cols = b_cols_id)
+  .Object@stat[, "b_count" := cnt[.Object@stat][["count"]] ]
   
   if (verbose) message('... g2-Test')
   
@@ -680,10 +656,9 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' @exportMethod features
 setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method = "ll", verbose = TRUE){
   
-  if (!identical(x@p_attribute, y@p_attribute)) {
+  if (!identical(x@p_attribute, y@p_attribute))
     warning("BEWARE: cooccurrences objects are not based on the same p_attribute!")
-  }
-  
+
   if (verbose) message("... preparing tabs for matching")
   keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@p_attribute, sep = "_"))) 
   setkeyv(x@stat, keys)
@@ -774,8 +749,8 @@ as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex
   b_cols <- paste("b", x@p_attribute, sep = "_")
   
   if (length(x@p_attribute) > 1L){
-    x@stat[, "node" := do.call(paste, c(x@stat[, b_cols], sep = "//"))]
-    x@stat[, "collocate" := do.call(paste, c(x@stat[, a_cols], sep = "//"))]
+    x@stat[, "node" := do.call(paste, c(x@stat[, b_cols, with = FALSE], sep = "//"))]
+    x@stat[, "collocate" := do.call(paste, c(x@stat[, a_cols, with = FALSE], sep = "//"))]
     g <- igraph::graph_from_data_frame(x@stat[, c("node", "collocate", edge_attributes), with = FALSE])
   } else {
     g <- igraph::graph_from_data_frame(x@stat[, c(a_cols, b_cols, edge_attributes), with = FALSE])
@@ -786,7 +761,7 @@ as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex
       setkeyv(x@partition@stat, x@p_attribute)
       igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
     } else{
-      x@partition@stat[, "key" := do.call(paste, c(x@partition@stat[, x@p_attribute], sep = "//"))]
+      x@partition@stat[, "key" := do.call(paste, c(x@partition@stat[, x@p_attribute, with = FALSE], sep = "//"))]
       # x@partition@stat[, "key" := apply(x@partition@stat, 1, function(row) paste(row[x@p_attribute], collapse = "//"))]
       setkeyv(x@partition@stat, cols = "key")
       igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
@@ -831,14 +806,18 @@ setMethod("subset", "Cooccurrences", function(x, ..., by){
 #'   returned invisibly; usually it will not be necessary to catch the return
 #'   value.
 setMethod("decode", "Cooccurrences", function(.Object){
-  .Object@stat[, paste("a", .Object@p_attribute, sep = "_") := as.nativeEnc(
-    cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .Object@stat[["a_id"]]),
-    from = registry_get_encoding(.Object@corpus))
-    ]
-  .Object@stat[, paste("b", .Object@p_attribute, sep = "_") := as.nativeEnc(
-    cl_id2str(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .Object@stat[["b_id"]]),
-    from = registry_get_encoding(.Object@corpus))
-    ]
+  for (p_attr in .Object@p_attribute){
+    a_col <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", p_attr, "id", sep = "_")
+    .Object@stat[, paste("a", p_attr, sep = "_") := as.nativeEnc(
+      cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = .Object@stat[[a_col]]),
+      from = registry_get_encoding(.Object@corpus))
+      ]
+    b_col <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", p_attr, "id", sep = "_")
+    .Object@stat[, paste("b", p_attr, sep = "_") := as.nativeEnc(
+      cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = .Object@stat[[b_col]]),
+      from = registry_get_encoding(.Object@corpus))
+      ]
+  }
   # .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
   invisible(.Object)
 })

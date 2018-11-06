@@ -90,4 +90,48 @@ merkel_min <- subset(
   merkel_cooc,
   by = subset(features(merkel_cooc, plpr_cooc), rank_ll <= 50)
   )
+  
+  
+protocol <- partition(
+  "GERMAPARLMINI",
+  date = "2009-11-10",
+  p_attribute = c("word", "pos"),
+  interjection = "speech"
+)
+protocol_cooc <- Cooccurrences(
+  protocol,
+  p_attribute = c("word", "pos"),
+  left = 3L, right = 3L
+  )
+ll(protocol_cooc)
+decode(protocol_cooc)
+
+merkel <- partition(
+  "GERMAPARLMINI",
+  speaker = "Merkel",
+  date = "2009-11-10",
+  interjection = "speech",
+  regex = TRUE,
+  p_attribute = c("word", "pos")
+)
+merkel_cooc <- Cooccurrences(
+  merkel,
+  p_attribute = c("word", "pos"),
+  left = 3L, right = 3L,
+  verbose = TRUE
+)
+ll(merkel_cooc)
+decode(merkel_cooc)
+
+f <- features(merkel_cooc, protocol_cooc)
+f <- subset(f, a_pos \%in\% c("NN", "ADJA"))
+f <- subset(f, b_pos \%in\% c("NN", "ADJA"))
+f <- f[1:50]
+
+merkel_min <- subset(merkel_cooc, by = f)
+
+if (requireNamespace("igraph", quietly = TRUE)){
+  g <- as_igraph(merkel_min, as.undirected = TRUE)
+  plot(g)
+}
 }
