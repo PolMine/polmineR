@@ -3,9 +3,10 @@
 \docType{class}
 \name{Cooccurrences-class}
 \alias{Cooccurrences-class}
+\alias{as_igraph}
 \alias{as.simple_triplet_matrix,Cooccurrences-method}
 \alias{ll,Cooccurrences-method}
-\alias{as_igraph}
+\alias{as_igraph,Cooccurrences-method}
 \alias{subset,Cooccurrences-method}
 \alias{decode,Cooccurrences-method}
 \alias{as.sparseMatrix,Cooccurrences-method}
@@ -15,9 +16,9 @@
 
 \S4method{ll}{Cooccurrences}(.Object, verbose = TRUE)
 
-as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
-  vertex_attributes = "count", as.undirected = TRUE, drop = c("\\u0084",
-  "\\u0093"))
+\S4method{as_igraph}{Cooccurrences}(x, edge_attributes = c("ll", "ab_count",
+  "rank_ll"), vertex_attributes = "count", as.undirected = TRUE,
+  drop = c("\\u0084", "\\u0093"))
 
 \S4method{subset}{Cooccurrences}(x, ..., by)
 
@@ -48,16 +49,21 @@ as_igraph(x, edge_attributes = c("ll", "ab_count", "rank_ll"),
 \item{col}{A column to extract.}
 }
 \description{
-The class inherits from the \code{textstat}-class.
+The \code{Cooccurrences}-class stores the information for all cooccurrences
+in a corpus. As this data can be bulky, in-place modifications of the
+\code{data.table} in the stat-slot of a \code{Cooccurrences}-object are used
+wherever possible, to avoid copying potentially large objects whenever
+possible. The class inherits from the \code{textstat}-class, so that methods
+for \code{textstat}-objects are inherited (see examples).
 }
 \details{
 The \code{as.simple_triplet_matrix}-method will transform a
   \code{Cooccurrences} object into a sparse matrix. For reasons of memory
   efficiency, decoding token ids is performed within the method at the
-  latests possible stage. It is NOT necessary that decoded tokens are present
+  as late as possible. It is NOT necessary that decoded tokens are present
   in the table in the \code{Cooccurrences} object.
 
-The \code{as_igraph()}-function can be used to turn an object of the \code{Cooccurrences}-class 
+The \code{as_igraph}-method can be used to turn an object of the \code{Cooccurrences}-class 
 into an \code{igraph}-object.
 
 The \code{subset} method, as a particular feature, allows a
@@ -80,11 +86,11 @@ it is required that decoded tokens are present.
 \section{Slots}{
 
 \describe{
-\item{\code{left}}{Single \code{integer} value, number of tokens to the left.}
+\item{\code{left}}{Single \code{integer} value, number of tokens to the left of the node.}
 
-\item{\code{right}}{Single \code{integer} value, number of tokens to the right.}
+\item{\code{right}}{Single \code{integer} value, number of tokens to the right of the node.}
 
-\item{\code{p_attribute}}{A \code{character} vector, the p-attribute the evaluation of the corpus is based on.}
+\item{\code{p_attribute}}{A \code{character} vector, the p-attribute(s) the evaluation of the corpus is based on.}
 
 \item{\code{corpus}}{Length-one \code{character} vector, the CWB corpus used.}
 
@@ -92,11 +98,7 @@ it is required that decoded tokens are present.
 
 \item{\code{encoding}}{Length-one \code{character} vector, the encoding of the corpus.}
 
-\item{\code{keep}}{A \code{list} of named character vectors, names are p-attributes.}
-
-\item{\code{drop}}{A \code{list} of named character vectors, names are p-attributes.}
-
-\item{\code{partition}}{A \code{partition}.}
+\item{\code{partition}}{The \code{partition} that is the basis for computations.}
 
 \item{\code{window_sizes}}{A \code{data.table} linking the number of tokens in the
 context of a token identified by id.}
@@ -111,4 +113,11 @@ X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 decode(X)
 sm <- as.sparseMatrix(X)
 stm <- as.simple_triplet_matrix(X)
+}
+\seealso{
+See the documentation of the \code{\link{Cooccurrences}}-method
+  (including examples) for procedures to get and filter cooccurrence
+  information. See the documentation for the \code{\link{textstat-class}}
+  explaining which methods for this superclass of the
+  \code{Cooccurrences}-class which are available.
 }

@@ -83,7 +83,7 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       .SD[struc == struc_hit]
     }
     object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "hit_no"]
-    close(pb)
+    if (progress) close(pb)
     setnames(object@cpos, old = "struc", new = sAttrCol)
   }
   

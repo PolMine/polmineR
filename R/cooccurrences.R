@@ -5,11 +5,11 @@ NULL
 #' @docType methods
 #' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object) {
-  y <- format(object, digits = 2L)
+  object@stat <- format(object, digits = 2L)
   if (Sys.getenv("RSTUDIO") == "1" && interactive() && is.na(Sys.getenv("NOT_CRAN", unset = NA))){
-    view(y)
+    view(object)
   } else {
-    if (getOption("polmineR.browse")) browse(object@stat) else return(y) 
+    if (getOption("polmineR.browse")) browse(object@stat) else return(object@stat) 
   }
 })
 
@@ -211,34 +211,41 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
 
 #' Cooccurrences class for corpus/partition.
 #' 
-#' The class inherits from the \code{textstat}-class.
+#' The \code{Cooccurrences}-class stores the information for all cooccurrences
+#' in a corpus. As this data can be bulky, in-place modifications of the
+#' \code{data.table} in the stat-slot of a \code{Cooccurrences}-object are used
+#' wherever possible, to avoid copying potentially large objects whenever
+#' possible. The class inherits from the \code{textstat}-class, so that methods
+#' for \code{textstat}-objects are inherited (see examples).
 #' 
 #' @param .Object A \code{Cooccurrences}-class object.
 #' @param verbose Logical.
 #' @param col A column to extract.
-#' @slot left  Single \code{integer} value, number of tokens to the left.
-#' @slot right  Single \code{integer} value, number of tokens to the right.
-#' @slot p_attribute  A \code{character} vector, the p-attribute the evaluation of the corpus is based on.
+#' @slot left  Single \code{integer} value, number of tokens to the left of the node.
+#' @slot right  Single \code{integer} value, number of tokens to the right of the node.
+#' @slot p_attribute  A \code{character} vector, the p-attribute(s) the evaluation of the corpus is based on.
 #' @slot corpus  Length-one \code{character} vector, the CWB corpus used.
 #' @slot stat  A \code{data.table} with the statistical analysis of cooccurrences.
 #' @slot encoding  Length-one \code{character} vector, the encoding of the corpus.
-#' @slot keep A \code{list} of named character vectors, names are p-attributes.
-#' @slot drop A \code{list} of named character vectors, names are p-attributes.
-#' @slot partition A \code{partition}.
+#' @slot partition The \code{partition} that is the basis for computations.
+#' @seealso See the documentation of the \code{\link{Cooccurrences}}-method
+#'   (including examples) for procedures to get and filter cooccurrence
+#'   information. See the documentation for the \code{\link{textstat-class}}
+#'   explaining which methods for this superclass of the
+#'   \code{Cooccurrences}-class which are available.
 #' @slot window_sizes A \code{data.table} linking the number of tokens in the
 #'   context of a token identified by id.
 #' @slot minimized Logical, whether the object has been minimized.
 #' @docType class
 #' @exportClass Cooccurrences
 #' @rdname all-cooccurrences-class
+#' @aliases as_igraph
 setClass(
   "Cooccurrences",
   contains = "textstat", # slots inherited: corpus, p_attribute, encoding, stat, name
   slots = c(
     left = "integer",
     right = "integer",
-    keep = "list",
-    drop = "list",
     partition = "partition",
     window_sizes = "data.table",
     minimized = "logical"
@@ -283,30 +290,49 @@ setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
 
 
 
-#' @exportMethod Cooccurrences
-#' @rdname all_cooccurrences
+#' @noRd
 setGeneric("Cooccurrences", function(.Object, ...) standardGeneric("Cooccurrences"))
 
 
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
-setMethod("Cooccurrences", "character", function(.Object, ...){
-  Cooccurrences(Corpus$new(.Object)$as.partition(), ...)
+#' @aliases Cooccurrences
+setMethod("Cooccurrences", "character", function(
+  .Object, p_attribute, left, right,
+  stoplist = NULL,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+){
+  Cooccurrences(
+    Corpus$new(.Object)$as.partition(),
+    p_attribute = p_attribute,
+    left = left, right = right, stoplist = stoplist,
+    mc = mc, verbose = verbose, progress = progress)
 })
 
 
-#' Get all cooccurrences.
+#' Get all cooccurrences in corpus/partition.
+#' 
+#' Obtain all cooccurrences in a corpus, or a \code{partition}. The result is a
+#' \code{Cooccurrences}-class object which includes a \code{data.table} with
+#' counts of cooccurrences. See the documentation entry for the
+#' \code{Cooccurrences}-class for methods to process \code{Cooccurrences}-class
+#' objects.
+#' 
+#' The implementation uses a \code{data.table} to store information and makes
+#' heavy use of the reference logic of the \code{data.table} package, to avoid
+#' copying potentially large objects, and to be parsimonious with limited
+#' memory. The behaviour resulting from in-place changes may be uncommon, see
+#' examples.
 #' 
 #' @param .Object A length-one character vector indicating a corpus, or a
 #'   \code{partition} object.
-#' @param p_attribute The positional attribute.
-#' @param left Size of left context.
-#' @param right Size of right context.
-#' @param stoplist Tokens to drop.
-#' @param mc Logical.
-#' @param progress Logical.
-#' @param verbose Logical.
-#' @param ... Further arguments.
+#' @param p_attribute Positional attributes to evaluate.
+#' @param left A scalar \code{integer} value, size of left context.
+#' @param right A scalar \code{integer} value, size of right context.
+#' @param stoplist Tokens to exclude from the analysis.
+#' @param mc Logical value, whether to use multiple cores.
+#' @param progress Logical value, whether to display a progress bar.
+#' @param verbose Logical value, whether to output messages.
 #' @importFrom parallel mcparallel mccollect
 #' @importFrom data.table data.table melt.data.table as.data.table
 #' @importFrom RcppCWB cl_id2str cl_str2id cl_cpos2id
@@ -315,12 +341,27 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' @importFrom parallel mclapply 
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
+#' @seealso To learn about methods available for the object that is returned,
+#'   see the documentation of the \code{\link{Cooccurrences-class}}. See the
+#'   \code{\link{cooccurrences}}-method (starting with a lower case c) to get
+#'   the cooccurrences for the match for a query, which may also be a CQP query.
 #' @examples 
-#' stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
-#' r <- Cooccurrences(.Object = "REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
-#' ll(r)
+#' # In a first scenario, we get all cooccurrences for the REUTERS corpus,
+#' # excluding stopwords
+#' 
+#' stopwords <- unname(unlist(
+#'   noise(
+#'     terms("REUTERS", p_attribute = "word"),
+#'     stopwordsLanguage = "en"
+#'     )
+#'   ))
+#' r <- Cooccurrences(
+#'   .Object = "REUTERS", p_attribute = "word",
+#'   left = 5L, right = 5L, stoplist = stopwords
+#' )
+#' ll(r) # note that the table in the stat slot is augmented in-place
 #' r <- subset(r, ll > 11.83 & ab_count >= 5)
-#' decode(r)
+#' decode(r) # in-place modification, again
 #' data.table::setorderv(r@stat, cols = "ll", order = -1L)
 #' head(r, 25)
 #' 
@@ -330,6 +371,10 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #'   plot(g)
 #' }
 #' 
+#' # The next scenario is a cross-check that extracting cooccurrences from
+#' # from a Cooccurrences-class object with all cooccurrences and the result
+#' # for getting cooccurrences for a single object are identical
+#' 
 #' a <- cooccurrences(r, query = "oil")
 #' a <- data.table::as.data.table(a)
 #' 
@@ -337,13 +382,23 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' b <- data.table::as.data.table(b)
 #' b <- b[!word %in% stopwords]
 #' 
-#' # now let's check whether results are identical
-#' all(b[["word"]][1:5] == a[["word"]][1:5])
+#' all(b[["word"]][1:5] == a[["word"]][1:5]) # needs to be identical!
 #' 
 #' 
-#' stopwords <- unlist(noise(terms("GERMAPARLMINI", p_attribute = "word"), stopwordsLanguage = "german"))
+#' stopwords <- unlist(noise(
+#'   terms("GERMAPARLMINI", p_attribute = "word"),
+#'   stopwordsLanguage = "german"
+#'   )
+#' )
 #' 
-#' plpr_partition <- partition("GERMAPARLMINI", date = "2009-11-10", interjection = "speech", p_attribute = "word")
+#' # We now filter cooccurrences by keeping only the statistically 
+#' # significant cooccurrens, identified by comparison with cooccurrences
+#' # derived from a reference corpus
+#' 
+#' plpr_partition <- partition(
+#'   "GERMAPARLMINI", date = "2009-11-10", interjection = "speech",
+#'   p_attribute = "word"
+#' )
 #' plpr_cooc <- Cooccurrences(
 #'   plpr_partition, p_attribute = "word",
 #'   left = 3L, right = 3L,
@@ -353,7 +408,11 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #' decode(plpr_cooc)
 #' ll(plpr_cooc)
 #' 
-#' merkel <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE, p_attribute = "word")
+#' merkel <- partition(
+#'   "GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech",
+#'   regex = TRUE,
+#'   p_attribute = "word"
+#' )
 #' merkel_cooc <- Cooccurrences(
 #'   merkel, p_attribute = "word",
 #'   left = 3L, right = 3L,
@@ -368,7 +427,11 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 #'   by = subset(features(merkel_cooc, plpr_cooc), rank_ll <= 50)
 #'   )
 #'   
-#'   
+#' # Esentially the same procedure as in the previous example, but with 
+#' # two positional attributes, so that part-of-speech annotation is 
+#' # used for additional filtering.
+#'    
+#'          
 #' protocol <- partition(
 #'   "GERMAPARLMINI",
 #'   date = "2009-11-10",
@@ -414,8 +477,7 @@ setMethod("Cooccurrences", "character", function(.Object, ...){
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
-  ...
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
 ){
   y <- new(
     "Cooccurrences",
@@ -574,7 +636,7 @@ setMethod("Cooccurrences", "partition", function(
 #' @details The \code{as.simple_triplet_matrix}-method will transform a
 #'   \code{Cooccurrences} object into a sparse matrix. For reasons of memory
 #'   efficiency, decoding token ids is performed within the method at the
-#'   latests possible stage. It is NOT necessary that decoded tokens are present
+#'   as late as possible. It is NOT necessary that decoded tokens are present
 #'   in the table in the \code{Cooccurrences} object.
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
@@ -725,9 +787,10 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
 
 
 
+#' @noRd
+setGeneric("as_igraph", function(x, ...) standardGeneric("as_igraph"))
 
-
-#' @details The \code{as_igraph()}-function can be used to turn an object of the \code{Cooccurrences}-class 
+#' @details The \code{as_igraph}-method can be used to turn an object of the \code{Cooccurrences}-class 
 #' into an \code{igraph}-object.
 #' @param x A \code{Cooccurrences} class object.
 #' @param edge_attributes Attributes from stat \code{data.table} in x to add to edges.
@@ -736,8 +799,8 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
 #' @param drop A character vector indicating names of nodes to drop from
 #'   \code{igraph} object that is prepared.
 #' @rdname all-cooccurrences-class
-#' @export as_igraph
-as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE, drop = c("\u0084", "\u0093")){
+#' @exportMethod as_igraph
+setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE, drop = c("\u0084", "\u0093")){
   
   if (!requireNamespace("igraph", quietly = TRUE))
     stop("Package 'igraph' is required for as.igraph()-method, but not yet installed.")
@@ -758,6 +821,8 @@ as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex
   
   if ("count" %in% vertex_attributes){
     if (length(x@p_attribute) == 1){
+      if (!x@p_attribute %in% colnames(x@partition@stat))
+        x@partition <- enrich(x@partition, p_attribute = x@p_attribute)
       setkeyv(x@partition@stat, x@p_attribute)
       igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
     } else{
@@ -771,7 +836,7 @@ as_igraph = function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex
   if (as.undirected) g <- igraph::as.undirected(g, edge.attr.comb = "concat")
   if (length(drop) > 0) for (x in drop) g <- igraph::delete_vertices(g, igraph::V(g)[name == x])
   g
-}
+})
 
 
 #' @details The \code{subset} method, as a particular feature, allows a
