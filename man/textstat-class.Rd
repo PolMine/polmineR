@@ -53,9 +53,7 @@ as.bundle(object, ...)
 
 \S4method{p_attributes}{textstat}(.Object)
 
-\S4method{knit_print}{textstat}(x,
-  pagelength = getOption("polmineR.pagelength"),
-  options = knitr::opts_chunk, ...)
+\S4method{knit_print}{textstat}(x, options = knitr::opts_chunk, ...)
 
 \S4method{format}{textstat}(x, digits = 2L)
 
@@ -82,9 +80,6 @@ of a \code{textstat} class object.}
 \item{e2}{Another \code{texstat} object.}
 
 \item{.Object}{A \code{textstat} object.}
-
-\item{pagelength}{The number of kwic lines displayed per page in the
-datatables htmlwidget that is returned.}
 
 \item{options}{Chunk options.}
 }

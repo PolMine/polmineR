@@ -1,5 +1,5 @@
-polmineR 0.7.10.9002
-====================
+polmineR 0.7.11
+===============
   * New functionality to store corpora in a temporary data directory which is a subdirectory of the per-session temporary directory. A new function `data_dir()` will return this temporary data directory.
   * The `use()`-function will now check for non-ASCII characters in the path to binary corpus data and 
 move the corpus data to a temporary data directory (subdirectory of the directory returned  by `data_dir()`, if necessary. A remaining issue with using  CWB indexed corpora is thus addressed. The 
@@ -18,6 +18,9 @@ used.
   * In the calculation of cooccurrences, the node has previously been included in the window size.
   This has been corrected.
   * The `Cooccurrences`-class has been migrated from the experimental polmineR.graph package to polmineR. A `cooccurrenes()`-method results in a subset of `Cooccurrences`-class object and is the basis for ensuring that results are identical.
+  * The `kwic()`-method for corpora returned one surplus token to the left and to the right of the query. This bug has been removed.
+  * The object returned by the kwic,character-method did not include the correct position of matches in the cpos slot. Corrected.
+  * New methods for `partition_bundle` objects [[<-, $, $<-
 
 
 polmineR 0.7.10

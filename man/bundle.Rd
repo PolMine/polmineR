@@ -12,6 +12,9 @@
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
 \alias{[[,bundle-method}
+\alias{[[<-,bundle-method}
+\alias{$,bundle-method}
+\alias{$<-,bundle-method}
 \alias{sample,bundle-method}
 \alias{as.bundle,list-method}
 \alias{as.bundle,textstat-method}
@@ -36,6 +39,12 @@
 \S4method{+}{bundle,textstat}(e1, e2)
 
 \S4method{[[}{bundle}(x, i)
+
+\S4method{[[}{bundle}(x, i) <- value
+
+\S4method{$}{bundle}(x, name)
+
+\S4method{$}{bundle}(x, name) <- value
 
 \S4method{sample}{bundle}(x, size)
 
@@ -101,6 +110,15 @@ party_bundle <- enrich(party_bundle, p_attribute = "word")
 summary(party_bundle)
 parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 summary(parties_big)
+p <- partition("GERMAPARLMINI", date = "2009-11-11")
+pb <- partition_bundle(p, s_attribute = "party")
+names(pb)
+pb[["NA"]] <- NULL
+names(pb)
+pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+pb$SPD # access partition names "SPD" in partition_bundle pb
+pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+pb$"NA" <- NULL # quotation needed if name is "NA"
 use("polmineR")
 Ps <- partition_bundle(
   "REUTERS", s_attribute = "id",

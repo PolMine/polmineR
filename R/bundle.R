@@ -84,6 +84,37 @@ setMethod('[[', 'bundle', function(x,i){
   }
 })  
 
+#' @exportMethod [[<-
+#' @rdname bundle
+#' @examples
+#' p <- partition("GERMAPARLMINI", date = "2009-11-11")
+#' pb <- partition_bundle(p, s_attribute = "party")
+#' names(pb)
+#' pb[["NA"]] <- NULL
+#' names(pb)
+setMethod("[[<-", "bundle", function(x,i, value){
+  x@objects[[i]] <- value
+  x}
+)
+
+#' @param name The name of an object in the \code{bundle} object.
+#' @exportMethod $
+#' @rdname bundle
+#' @examples
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' pb$SPD # access partition names "SPD" in partition_bundle pb
+setMethod("$", "bundle", function(x,name) x@objects[[name]])
+
+
+#' @exportMethod $<-
+#' @rdname bundle
+#' @examples
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' pb$"NA" <- NULL # quotation needed if name is "NA"
+setMethod("$<-", "bundle", function(x,name, value){
+  x@objects[[name]] <- value
+  x}
+)
 
 #' @exportMethod sample
 #' @rdname bundle

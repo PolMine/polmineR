@@ -222,7 +222,7 @@ setMethod("as.partition_bundle", "list", function(.Object, ...){
 #' generated when creating a \code{partition} from a \code{context}-object.
 #' @exportMethod as.partition_bundle
 #' @rdname partition_bundle-method
-setMethod("partition_bundle", "context", function(.Object, node = TRUE){
+setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress = TRUE, mc = 1L){
   
   stopifnot(is.logical(node))
   
@@ -246,20 +246,18 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE){
   }
   count_list <- split(CNT, by = "hit_no")
   
-  partition_objects <- lapply(
-    1L:length(.Object),
-    function(i){
-      new(
-        "partition",
-        corpus = .Object@corpus,
-        encoding = .Object@encoding,
-        cpos = as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")]),
-        xml = .Object@partition@xml,
-        p_attribute = .Object@p_attribute,
-        stat = count_list[[i]][, "hit_no" := NULL]
-      )
-    }
-  )
+  .fn <- function(i){
+    new(
+      "partition",
+      corpus = .Object@corpus,
+      encoding = .Object@encoding,
+      cpos = as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")]),
+      xml = .Object@partition@xml,
+      p_attribute = .Object@p_attribute,
+      stat = count_list[[i]][, "hit_no" := NULL]
+    )
+  }
+  partition_objects <- if (progress) pblapply(1L:length(.Object), .fn, cl = mc) else lapply(1L:length(.Object), .fn)
   new(
     "partition_bundle",
     corpus = .Object@corpus,

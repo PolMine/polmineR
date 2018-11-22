@@ -833,8 +833,10 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
     }
     igraph::V(g)$freq <- round((igraph::V(g)$count / x@partition@size) * 100000, 3)
   }
+  
   if (as.undirected) g <- igraph::as.undirected(g, edge.attr.comb = "concat")
   if (length(drop) > 0) for (x in drop) g <- igraph::delete_vertices(g, igraph::V(g)[name == x])
+  
   g
 })
 
@@ -885,4 +887,8 @@ setMethod("decode", "Cooccurrences", function(.Object){
   }
   # .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
   invisible(.Object)
+})
+
+setMethod("kwic", "Cooccurrences", function(.Object){
+  
 })

@@ -66,12 +66,7 @@ setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
   if (!is.null(fmt)) x@table[["node"]] <- sprintf(fmt, x@table[["node"]])
   apply(
     x@table, 1L,
-    function(row) paste(
-      row["left"],
-      row["node"],
-      row["right"],
-      sep = " "
-    )
+    function(row) paste(row["left"], row["node"], row["right"], sep = " ")
   )
 })
 
@@ -300,8 +295,8 @@ setMethod("kwic", "character", function(
   cposList <- apply(
     hits, 1,
     function(row){
-      left <- c((row[1] - left - 1L):(row[1] - 1L))
-      right <- c((row[2] + 1L):(row[2] + right + 1L))
+      left <- c((row[1] - left ):(row[1] - 1L))
+      right <- c((row[2] + 1L):(row[2] + right))
       list(
         left = left[left > 0L],
         node = row[1]:row[2],
@@ -319,9 +314,10 @@ setMethod("kwic", "character", function(
         function(x2)
           switch(
             x2,
-            left = rep(-1L, times = length(x[[x2]])),
+            left = if (length(x[[x2]]) == 0) integer() else rev((-1L:-left)[1L:length(x[[x2]])]),
             node = rep(0L, times = length(x[[x2]])),
-            right = rep(1L, times = length(x[[x2]])))
+            right = if (length(x[[x2]]) == 0) integer() else (1L:right)[1L:length(x[[x2]])]
+          )
       )))
   )
   DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])

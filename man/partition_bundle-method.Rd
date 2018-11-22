@@ -19,7 +19,8 @@ partition_bundle(.Object, ...)
   prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = FALSE, xml = "flat", type = get_type(.Object), ...)
 
-\S4method{partition_bundle}{context}(.Object, node = TRUE)
+\S4method{partition_bundle}{context}(.Object, node = TRUE, progress = TRUE,
+  mc = 1L)
 
 \S4method{partition_bundle}{partition_bundle}(.Object, s_attribute,
   prefix = character(), progress = TRUE, mc = getOption("polmineR.mc"))
