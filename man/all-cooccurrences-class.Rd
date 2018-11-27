@@ -9,6 +9,7 @@
 \alias{as_igraph,Cooccurrences-method}
 \alias{subset,Cooccurrences-method}
 \alias{decode,Cooccurrences-method}
+\alias{kwic,Cooccurrences-method}
 \alias{as.sparseMatrix,Cooccurrences-method}
 \title{Cooccurrences class for corpus/partition.}
 \usage{
@@ -23,6 +24,9 @@
 \S4method{subset}{Cooccurrences}(x, ..., by)
 
 \S4method{decode}{Cooccurrences}(.Object)
+
+\S4method{kwic}{Cooccurrences}(.Object, left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), verbose = TRUE, progress = TRUE)
 
 \S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count", ...)
 }
@@ -45,6 +49,12 @@
 \item{...}{Further arguments passed into a further call of \code{subset}.}
 
 \item{by}{A \code{features}-class object.}
+
+\item{left}{Number of tokens to the left of the node.}
+
+\item{right}{Number of tokens to the right of the node.}
+
+\item{progress}{Logical, whether to show progress bar.}
 
 \item{col}{A column to extract.}
 }
@@ -79,6 +89,11 @@ For reasons of memory efficiency, the initial \code{data.table} in
   operation, peformed without copying the table. The modified object is
   returned invisibly; usually it will not be necessary to catch the return
   value.
+
+The \code{kwic}-method will add a column to the \code{data.table} in
+  the \code{stat}-slot with the concordances that are behind a statistical
+  finding, and to the \code{data.table} in the \code{stat}-slot of the
+  \code{partition} in the slot \code{partition}. It is an in-place operation.
 
 Returns a \code{sparseMatrix} based on the counts of term cooccurrences. At this stage,
 it is required that decoded tokens are present.

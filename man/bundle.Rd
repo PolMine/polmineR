@@ -71,6 +71,8 @@
 
 \item{i}{integer to index a bundle object}
 
+\item{name}{The name of an object in the \code{bundle} object.}
+
 \item{size}{number of items to choose to generate a sample}
 
 \item{object}{a bundle object}

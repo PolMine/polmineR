@@ -25,7 +25,7 @@
 #' as.cqp("migration", normalise.case = TRUE)
 #' @return \code{is.cqp} returns a logical value, \code{as.cqp} a character vector
 is.cqp <- function(query){
-  isQuery <- unique(grepl('["|\']', query))
+  isQuery <- unique(grepl('["\']', query))
   if (length(isQuery) == 2){
     stop("Test whether query is a CQP query (or not) does not result in an unambigious result. Please check queries and/or state logical value explicitly.")
   }

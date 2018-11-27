@@ -450,6 +450,7 @@ setClass(
 #' 
 #' @slot metadata A \code{character} vector with s-attributes of the metadata
 #'   that are to be displayed.
+#' @slot p_attribute The p-attribute for which the context has been generated.
 #' @slot left An \code{integer} value, words to the left of the query match. 
 #' @slot right An \code{integer} value, words to the right of the query match.
 #' @slot corpus Length-one \code{character} vector, the CWB corpus.
@@ -487,6 +488,7 @@ setClass(
   slots = c(
     corpus = "character",
     cpos = "data.table",
+    p_attribute = "character",
     metadata = "character",
     left = "integer",
     right = "integer",

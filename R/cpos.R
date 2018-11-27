@@ -51,7 +51,7 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
   if (class(cqp) == "function") cqp <- cqp(query)
   if (length(cqp) > 1) stop("length of cqp is larger than 1, but needs to be 1")
   if (cqp == FALSE) {
-    if (any(grepl("[\\|]", query))) warning("Special character that may cause problems in query!")
+    # if (any(grepl("[]", query))) warning("Special character that may cause problems in query!")
     hitList <- lapply(
       query,
       function(Q){

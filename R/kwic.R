@@ -215,17 +215,18 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   
   if (is.null(s_attributes)) s_attributes <- character()
   conc <- new(
-    'kwic',
+    "kwic",
     corpus = .Object@corpus,
     left = as.integer(.Object@left),
     right = as.integer(.Object@right),
+    p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
     labels = Labels$new(),
     cpos = if (cpos) DT else data.table()
   )
   
-  conc <- enrich(conc, table = TRUE)
+  conc <- enrich(conc, table = TRUE, p_attribute = .Object@p_attribute)
   conc <- enrich(conc, s_attributes = s_attributes)
   conc
 })

@@ -118,7 +118,7 @@ setMethod("context", "partition", function(
   
   hits <- cbind(hits, hit_no = 1L:nrow(hits))
   
-  ctxt@cpos <- .make_context_dt(hits, left, right, corpus)
+  ctxt@cpos <- .make_context_dt(hit_matrix = hits, left = left, right = right, corpus = .Object@corpus)
   
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
@@ -165,6 +165,7 @@ setMethod("context", "partition", function(
 #' @param left no of tokens to the left
 #' @param right no of tokens to the right
 #' @param s_attribute the integrity of the s_attribute to be checked
+#' @importFrom data.table between
 #' @return a list!
 #' @noRd
 .make_context_dt <- function(hit_matrix, left, right, corpus, s_attribute = NULL){
@@ -190,6 +191,7 @@ setMethod("context", "partition", function(
       }
       Y <- DT[, fn(.SD), by = c("hit_no")]
       setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
+      Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
       return(Y)
       
     } else {

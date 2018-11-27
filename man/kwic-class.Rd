@@ -92,6 +92,8 @@ added as columns to the table with concordance lines.
 \item{\code{metadata}}{A \code{character} vector with s-attributes of the metadata
 that are to be displayed.}
 
+\item{\code{p_attribute}}{The p-attribute for which the context has been generated.}
+
 \item{\code{left}}{An \code{integer} value, words to the left of the query match.}
 
 \item{\code{right}}{An \code{integer} value, words to the right of the query match.}

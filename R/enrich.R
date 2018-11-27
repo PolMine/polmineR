@@ -80,7 +80,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, table = FALSE
   
   if (table){
     if (nrow(.Object@cpos) > 0){
-      .paste <- function(.SD) paste(.SD[["word"]], collapse = " ")
+      .paste <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
       DT2 <- .Object@cpos[, .paste(.SD), by = c("hit_no", "direction"), with = TRUE]
       tab <- dcast(data = DT2, formula = hit_no ~ direction, value.var = "V1")
       setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))

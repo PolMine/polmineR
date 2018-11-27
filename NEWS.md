@@ -21,6 +21,8 @@ used.
   * The `kwic()`-method for corpora returned one surplus token to the left and to the right of the query. This bug has been removed.
   * The object returned by the kwic,character-method did not include the correct position of matches in the cpos slot. Corrected.
   * New methods for `partition_bundle` objects [[<-, $, $<-
+  * Bug removed that occurrs when context window reaches beyond beginning or end of a corpus (#48).
+  * A slot `p_attribute` has been added to the `kwic`-class; `kwic()`-methods and methods to process `kwic`-objects are now able to use the attribute thus indicated, and not just the p-attribute "word".
 
 
 polmineR 0.7.10

@@ -1,4 +1,4 @@
-#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R as.sparseMatrix.R
+#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R as.sparseMatrix.R  kwic.R
 NULL
 
 
@@ -793,6 +793,9 @@ setGeneric("as_igraph", function(x, ...) standardGeneric("as_igraph"))
 #' @details The \code{as_igraph}-method can be used to turn an object of the \code{Cooccurrences}-class 
 #' into an \code{igraph}-object.
 #' @param x A \code{Cooccurrences} class object.
+#' @param left Number of tokens to the left of the node.
+#' @param right Number of tokens to the right of the node.
+#' @param progress Logical, whether to show progress bar.
 #' @param edge_attributes Attributes from stat \code{data.table} in x to add to edges.
 #' @param vertex_attributes Vertex attributes to add to nodes.
 #' @param as.undirected Logical, whether to return directed or undirected graph.
@@ -808,6 +811,8 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
   if (!all(edge_attributes %in% colnames(x@stat)))
     warning("edge_attribute supplied is not available")
   
+  if ("kwic" %in% colnames(x)) edge_attributes <- unique(c(edge_attributes, "kwic"))
+
   a_cols <- paste("a", x@p_attribute, sep = "_")
   b_cols <- paste("b", x@p_attribute, sep = "_")
   
@@ -818,9 +823,13 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
   } else {
     g <- igraph::graph_from_data_frame(x@stat[, c(a_cols, b_cols, edge_attributes), with = FALSE])
   }
+  if ("kwic" %in% igraph::edge_attr_names(g)){
+    igraph::E(g)$info <- unlist(lapply(igraph::E(g)$kwic, function(x) x[1]))
+    g <- igraph::delete_edge_attr(g, "kwic")
+  }
   
   if ("count" %in% vertex_attributes){
-    if (length(x@p_attribute) == 1){
+    if (length(x@p_attribute) == 1L){
       if (!x@p_attribute %in% colnames(x@partition@stat))
         x@partition <- enrich(x@partition, p_attribute = x@p_attribute)
       setkeyv(x@partition@stat, x@p_attribute)
@@ -834,9 +843,13 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
     igraph::V(g)$freq <- round((igraph::V(g)$count / x@partition@size) * 100000, 3)
   }
   
+  if ("kwic" %in% colnames(x@partition)){
+    setkeyv(x@partition@stat, cols = x@p_attribute[1])
+    igraph::V(g)$info <- unlist(lapply(igraph::V(g)$name, function(n) x@partition@stat[n][["kwic"]]))
+  }
+  
   if (as.undirected) g <- igraph::as.undirected(g, edge.attr.comb = "concat")
   if (length(drop) > 0) for (x in drop) g <- igraph::delete_vertices(g, igraph::V(g)[name == x])
-  
   g
 })
 
@@ -889,6 +902,73 @@ setMethod("decode", "Cooccurrences", function(.Object){
   invisible(.Object)
 })
 
-setMethod("kwic", "Cooccurrences", function(.Object){
+
+#' @details The \code{kwic}-method will add a column to the \code{data.table} in
+#'   the \code{stat}-slot with the concordances that are behind a statistical
+#'   finding, and to the \code{data.table} in the \code{stat}-slot of the
+#'   \code{partition} in the slot \code{partition}. It is an in-place operation.
+#' @rdname all-cooccurrences-class
+setMethod("kwic", "Cooccurrences", function(
+  .Object,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  verbose = TRUE, progress = TRUE
+  ){
+  message("... getting context of nodes")
   
+  stopifnot(length(.Object@p_attribute) == 1)
+  
+  token <- unique(c(
+    .Object@stat[[paste("a", .Object@p_attribute, sep = "_")]],
+    .Object@stat[[paste("b", .Object@p_attribute, sep = "_")]]
+    ))
+  names(token) <- token
+  
+  .fn_ctxt <- function(x) context(.Object@partition, query = x, left = left * 2L, right = right * 2L, p_attribute = .Object@p_attribute, cqp = FALSE, verbose = FALSE)
+  context_list <- if (progress) pblapply(token, .fn_ctxt) else lapply(token, .fn_ctxt)
+  
+  if (verbose) message("... getting kwic for nodes")
+  .get_kwic_for_nodes <- function(x){
+    if (x %in% names(context_list)){
+      a <- context_list[[x]]
+      a@cpos <- a@cpos[between(a@cpos[["position"]], lower = -left, upper = right)]
+      # k <- kwic(a, left = left, right = right, p_attribute = .Object@p_attribute, verbose = FALSE)
+      k <- kwic(a)
+      vec <- as.character(k, fmt = '<span style="background-color:yellow">%s</span>')
+      el <- paste(vec, collapse = "<br/>")
+      return( unlist(el) )
+    } else {
+      return( character() )
+    }
+  }
+  if (nrow(.Object@partition@stat) == 0){
+    .Object@partition@stat <- data.table(terms(.Object@partition, p_attribute = .Object@p_attribute))
+    colnames(.Object@partition@stat) <- .Object@p_attribute
+  }
+  setkeyv(.Object@partition@stat, cols = .Object@p_attribute)
+  .Object@partition@stat <- .Object@partition@stat[unname(token)]
+  nodes <- .Object@partition@stat[[.Object@p_attribute]]
+  node_kwic <- if (progress) pblapply(nodes, .get_kwic_for_nodes) else lapply(nodes, .get_kwic_for_nodes)
+  .Object@partition@stat[, "kwic" := node_kwic]
+
+  if (verbose) message("... creating edge data")
+  .Object@stat[, "i" := 1L:nrow(.Object@stat)]
+  .fn_edges <- function(.SD){
+    context_min <- trim(
+      context_list[[ .SD[[paste("a", .Object@p_attribute, sep = "_")]][1] ]],
+      positivelist = as.corpusEnc(.SD[[paste("b", .Object@p_attribute, sep = "_")]][1], corpusEnc = .Object@partition@encoding),
+      verbose = FALSE
+    )
+    if (is.null(context_min)){
+      return("")
+    } else {
+      K <- kwic(context_min, verbose = FALSE)
+      K <- highlight(K, yellow = .SD[[2]][1])
+      y <- as.character(K, fmt = '<b style="background-color:yellow">%s</b>')
+      paste(y, collapse = "</br>")
+    }
+  }
+  .Object@stat[, "kwic" := .Object@stat[, .fn_edges(.SD), by = "i"][["V1"]] ]
+  .Object@stat[, "i" := NULL]
+
+  invisible(.Object)
 })
