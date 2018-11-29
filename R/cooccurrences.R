@@ -333,7 +333,6 @@ setMethod("Cooccurrences", "character", function(
 #' @param mc Logical value, whether to use multiple cores.
 #' @param progress Logical value, whether to display a progress bar.
 #' @param verbose Logical value, whether to output messages.
-#' @importFrom parallel mcparallel
 #' @importFrom data.table data.table melt.data.table as.data.table
 #' @importFrom RcppCWB cl_id2str cl_str2id cl_cpos2id
 #' @import methods
