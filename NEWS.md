@@ -26,6 +26,7 @@ used.
   * When generating a `partition_bundle` using the `as.speeches()`-method, an error may have occurred when an empty partition has been generated accidentaly. Has been removed. (#50)
   * The `as.VCorpus()`-method is not available if the `tm`-package has been loaded previously. A coerce method (`as(OBJECT, "VCorpus")) solves the issue. The `as.VCorpus()`-method is still around, but serves as a wrapper for the formal coerce-method (#55).
   * The argument `verbose` as used by the `use()`-method did not have any effect. Now, messages are not reported as would be expected, if `verbose` is `FALSE`. On this occasion, I took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora. (#47)
+  * A new function `check_cqp_query()` offers a preliminary check whether a CQP query may be faulty. It is used by the `cpos()`-method, if the new argument `check` is TRUE, and all higher-level functions calling `cpos()` also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.
 
 
 polmineR 0.7.10
