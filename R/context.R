@@ -36,6 +36,8 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param .Object a partition or a partition_bundle object
 #' @param query A query, which may by a character vector or a CQP query.
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute of the query.
 #' @param boundary If provided, a length-one character vector specifying a
 #'   s-attribute. It will be checked that corpus positions do not extend beyond
@@ -73,7 +75,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @name context
 #' @docType methods
 setMethod("context", "partition", function(
-  .Object, query, cqp = is.cqp,
+  .Object, query, cqp = is.cqp, check = TRUE,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
@@ -107,7 +109,7 @@ setMethod("context", "partition", function(
   
   # getting counts of query in partition
   .message("getting corpus positions", verbose = verbose)
-  hits <- cpos(.Object, query, p_attribute[1], cqp = cqp)
+  hits <- cpos(.Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp, check = check)
   if (is.null(hits)){
     warning('No hits for query ', query, ' (returning NULL)')
     return( invisible(NULL) )
@@ -287,7 +289,7 @@ retval
 
 #' @param complete enhance completely
 #' @rdname context-method
-setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE){
+setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, complete = FALSE){
   newObject <- new(
     "context",
     query = query,
@@ -309,13 +311,13 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     sAttr <- paste(
       newObject@corpus, ".",
       names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
-      sep=""
+      sep = ""
     )
     hits <- cpos(
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
       p_attribute = newObject@p_attribute,
-      verbose = FALSE
+      verbose = FALSE, check = check
     )
     newObject@size <- nrow(hits)
     hits <- cbind(hits, CQI$cpos2struc(newObject@corpus, s_attribute, hits[,1]))

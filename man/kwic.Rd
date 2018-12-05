@@ -19,7 +19,7 @@ kwic(.Object, ...)
   boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
   regex = FALSE, verbose = TRUE, ...)
 
-\S4method{kwic}{character}(.Object, query, cqp = is.cqp,
+\S4method{kwic}{character}(.Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",
@@ -63,6 +63,9 @@ results}
 
 \item{regex}{Logical, whether stoplist/positivelist is interpreted as regular
 expression}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{progress}{Logical, whether to show progress bars.}
 }

@@ -13,7 +13,7 @@
 \usage{
 context(.Object, ...)
 
-\S4method{context}{partition}(.Object, query, cqp = is.cqp,
+\S4method{context}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
@@ -28,7 +28,8 @@ context(.Object, ...)
 \S4method{context}{partition_bundle}(.Object, query, p_attribute,
   verbose = TRUE, ...)
 
-\S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
+\S4method{context}{cooccurrences}(.Object, query, check = TRUE,
+  complete = FALSE)
 }
 \arguments{
 \item{.Object}{a partition or a partition_bundle object}
@@ -38,6 +39,9 @@ context(.Object, ...)
 \item{query}{A query, which may by a character vector or a CQP query.}
 
 \item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{left}{Number of tokens to the left of the query match.}
 

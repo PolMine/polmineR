@@ -30,6 +30,8 @@ NULL
 #' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
 #'   auxiliary function).
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute(s) to use.
 #' @param corpus The name of a CWB corpus.
 #' @param decode Logical, whether to turn token ids into decoded strings (only
@@ -81,7 +83,7 @@ setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
 setMethod("count", "partition", function(
-  .Object, query = NULL, cqp = is.cqp, breakdown = FALSE,
+  .Object, query = NULL, cqp = is.cqp, check = TRUE, breakdown = FALSE,
   decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...
@@ -96,7 +98,7 @@ setMethod("count", "partition", function(
       dts <- lapply(
         query,
         function(x){
-          cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, p_attribute = p_attribute)
+          cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
           if (is.null(cposHits)) return( NULL )
           hitsString <- apply(
             cposHits, 1,
@@ -119,7 +121,7 @@ setMethod("count", "partition", function(
     } else if (breakdown == FALSE){
       .getNumberOfHits <- function(query, partition, cqp, p_attribute, ...) {
         .message("processing query", query, verbose = verbose)
-        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
+        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
         if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
       }
       no <- as.integer(blapply(
@@ -262,7 +264,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -345,7 +347,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         count <- sapply(
           query,
           function(query){
-            cpos_matrix <- cpos(.Object, query, cqp = cqp, p_attribute = p_attribute, encoding = registry_get_encoding(.Object))
+            cpos_matrix <- cpos(.Object, query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = registry_get_encoding(.Object))
             if (!is.null(cpos_matrix)){
               return( nrow(cpos_matrix) )
             } else {

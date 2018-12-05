@@ -138,6 +138,8 @@ NULL
 #' @param cqp Either a logical value (\code{TRUE} if \code{query} is a CQP
 #'   query), or a function to check whether query is a CQP query or not
 #'   (defaults to auxiliary function \code{is.query}).
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param left Number of tokens to the left of query match.
 #' @param right Number of tokens to the right of query match.
 #' @param s_attributes Structural attributes (s-attributes) to include into
@@ -273,7 +275,7 @@ setMethod("kwic", "partition", function(
 
 #' @rdname kwic
 setMethod("kwic", "character", function(
-  .Object, query, cqp = is.cqp,
+  .Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
@@ -287,7 +289,7 @@ setMethod("kwic", "character", function(
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
-  hits <- cpos(.Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
+  hits <- cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   if (is.null(hits)){
     message("sorry, not hits");
     return(invisible(NULL))

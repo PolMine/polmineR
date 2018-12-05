@@ -11,15 +11,15 @@
 \usage{
 hits(.Object, ...)
 
-\S4method{hits}{character}(.Object, query, cqp = FALSE, s_attribute = NULL,
-  p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
-  verbose = TRUE, progress = TRUE, ...)
+\S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
+  s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE,
+  mc = FALSE, verbose = TRUE, progress = TRUE, ...)
 
 \S4method{hits}{partition}(.Object, query, cqp = FALSE, s_attribute = NULL,
   p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
   progress = FALSE, verbose = TRUE, ...)
 
-\S4method{hits}{partition_bundle}(.Object, query, cqp = FALSE,
+\S4method{hits}{partition_bundle}(.Object, query, cqp = FALSE, check = TRUE,
   p_attribute = getOption("polmineR.p_attribute"), size = TRUE,
   freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
   verbose = TRUE, ...)
@@ -35,6 +35,9 @@ hits(.Object, ...)
 
 \item{cqp}{either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{s_attribute}{s-attributes}
 
