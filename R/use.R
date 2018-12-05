@@ -47,7 +47,7 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   for (corpus in list.files(registry_dir)){
     
-    .message(sprintf("activating corpus: %s", corpus))
+    .message(sprintf("activating corpus: %s", toupper(corpus)), verbose = verbose)
     
     corpus_data_srcdir <- system.file(
       "extdata", "cwb", "indexed_corpora", tolower(corpus),

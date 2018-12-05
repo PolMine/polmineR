@@ -17,10 +17,10 @@ NULL
 #' where the match occurred
 #' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
 #'   elements with id attribute indicating corpus positions
-#' @param beautify logical, if \code{TRUE}, whitespace before interpunctuation
-#'   will be removed
-#' @param charoffset logical, if \code{TRUE}, character offset positions are
-#'   added to elements embracing tokens
+#' @param beautify Logical, if \code{TRUE}, whitespace before interpunctuation
+#'   will be removed.
+#' @param charoffset Logical, if \code{TRUE}, character offset positions are
+#'   added to elements embracing tokens.
 #' @param height A character vector that will be inserted into the html as an optional
 #'   height of a scroll box.
 #' @param verbose logical, whether to be verbose

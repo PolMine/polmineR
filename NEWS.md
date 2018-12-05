@@ -23,6 +23,8 @@ used.
   * New methods for `partition_bundle` objects [[<-, $, $<-
   * Bug removed that occurrs when context window reaches beyond beginning or end of a corpus (#48).
   * A slot `p_attribute` has been added to the `kwic`-class; `kwic()`-methods and methods to process `kwic`-objects are now able to use the attribute thus indicated, and not just the p-attribute "word".
+  * When generating a `partition_bundle` using the `as.speeches()`-method, an error may have occurred when an empty partition has been generated accidentaly. Has been removed. (#50)
+  * The `as.VCorpus()`-method is not available if the `tm`-package has been loaded previously. A coerce method (`as(OBJECT, "VCorpus")) solves the issue. The `as.VCorpus()`-method is still around, but serves as a wrapper for the formal coerce-method (#55).
 
 
 polmineR 0.7.10
@@ -38,6 +40,7 @@ a new `partition`-method for `context`-objects has been introduced. Buth steps a
   * A `coerce()`-method to turn a `kwic`-object into a htmlwidget has been singled out from the `show()`-method for `kwic`-objects. Now it is possible to generate a htmlwidget from a kwic object, and to include the widget into a Rmarkdown document.
   * A new `coerce()`-method to turn `textstat`-objects into an htmlwidget (DataTable), very useful for  Rmarkdown documents such as slides.
   * A new argument height for the `html()`-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.
+  * The argument `verbose` as used by the `use()`-method did not have any effect. Now, messages are not reported as would be expected, if `verbose` is `FALSE`. On this occasion, I took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora.
 
 
 ### MINOR IMPROVEMENTS
