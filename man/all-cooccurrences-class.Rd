@@ -5,7 +5,6 @@
 \alias{Cooccurrences-class}
 \alias{as_igraph}
 \alias{as.simple_triplet_matrix,Cooccurrences-method}
-\alias{ll,Cooccurrences-method}
 \alias{as_igraph,Cooccurrences-method}
 \alias{subset,Cooccurrences-method}
 \alias{decode,Cooccurrences-method}
@@ -14,8 +13,6 @@
 \title{Cooccurrences class for corpus/partition.}
 \usage{
 \S4method{as.simple_triplet_matrix}{Cooccurrences}(x)
-
-\S4method{ll}{Cooccurrences}(.Object, verbose = TRUE)
 
 \S4method{as_igraph}{Cooccurrences}(x, edge_attributes = c("ll", "ab_count",
   "rank_ll"), vertex_attributes = "count", as.undirected = TRUE,
@@ -33,10 +30,6 @@
 \arguments{
 \item{x}{A \code{Cooccurrences} class object.}
 
-\item{.Object}{A \code{Cooccurrences}-class object.}
-
-\item{verbose}{Logical.}
-
 \item{edge_attributes}{Attributes from stat \code{data.table} in x to add to edges.}
 
 \item{vertex_attributes}{Vertex attributes to add to nodes.}
@@ -50,9 +43,13 @@
 
 \item{by}{A \code{features}-class object.}
 
+\item{.Object}{A \code{Cooccurrences}-class object.}
+
 \item{left}{Number of tokens to the left of the node.}
 
 \item{right}{Number of tokens to the right of the node.}
+
+\item{verbose}{Logical.}
 
 \item{progress}{Logical, whether to show progress bar.}
 

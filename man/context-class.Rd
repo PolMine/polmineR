@@ -83,19 +83,32 @@ in the "cpos"-slot of a \code{context}-object.
 \section{Slots}{
 
 \describe{
-\item{\code{query}}{The query used/node examined (\code{character}).}
+\item{\code{query}}{The query examined (\code{character}).}
 
-\item{\code{count}}{An \code{integer} value, the number of hits.}
+\item{\code{count}}{An \code{integer} value, the number of hits for the query.}
 
 \item{\code{partition}}{The \code{partition} the \code{context} object is based on.}
 
-\item{\code{size_partition}}{A length-one \code{integer}, the size of the partition.}
+\item{\code{size_partition}}{The size of the partition, a length-one \code{integer} vector.}
 
-\item{\code{left}}{An \code{integer} value, the number of tokens to the left.}
+\item{\code{left}}{A length-one \code{integer} value, the number of tokens to the left of the query match.}
 
-\item{\code{right}}{An \code{integer} value, the number of tokens to the right.}
+\item{\code{right}}{An \code{integer} value, the number of tokens to the right of the query match.}
 
-\item{\code{size}}{An \code{integer} value, number of tokens in the right and left context of the node.}
+\item{\code{size}}{A length-one \code{integer} value, the number of tokens covered by
+the \code{context}-object, i.e. the number of tokens in the right and left context
+of the node as well as query matches.}
+
+\item{\code{size_match}}{A length-one \code{integer} value, the number of tokens
+matches by the query. Identical with the value in slot \code{count} if the query
+is \emph{not} a CQP query.}
+
+\item{\code{size_coi}}{A length-one \code{integer} value, the number of tokens in the
+right and left context of the node (excluding query matches).}
+
+\item{\code{size_ref}}{A length-one \code{integer} value, the number of tokens in the
+partition, without tokens matched and the tokens in the left and right
+context.}
 
 \item{\code{boundary}}{An s-attribute (\code{character}).}
 

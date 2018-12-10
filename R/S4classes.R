@@ -358,13 +358,23 @@ setMethod("summary", "partition", function(object){
 #' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
 #' "cpos" and "position".
 #' 
-#' @slot query The query used/node examined (\code{character}).
-#' @slot count An \code{integer} value, the number of hits.
+#' @slot query The query examined (\code{character}).
+#' @slot count An \code{integer} value, the number of hits for the query.
 #' @slot partition The \code{partition} the \code{context} object is based on.
-#' @slot size_partition A length-one \code{integer}, the size of the partition.
-#' @slot left An \code{integer} value, the number of tokens to the left.
-#' @slot right An \code{integer} value, the number of tokens to the right.
-#' @slot size An \code{integer} value, number of tokens in the right and left context of the node.
+#' @slot size_partition The size of the partition, a length-one \code{integer} vector.
+#' @slot left A length-one \code{integer} value, the number of tokens to the left of the query match.
+#' @slot right An \code{integer} value, the number of tokens to the right of the query match.
+#' @slot size A length-one \code{integer} value, the number of tokens covered by
+#'   the \code{context}-object, i.e. the number of tokens in the right and left context
+#'   of the node as well as query matches.
+#' @slot size_match A length-one \code{integer} value, the number of tokens
+#'   matches by the query. Identical with the value in slot \code{count} if the query
+#'   is \emph{not} a CQP query.
+#' @slot size_coi A length-one \code{integer} value, the number of tokens in the
+#'   right and left context of the node (excluding query matches).
+#' @slot size_ref A length-one \code{integer} value, the number of tokens in the
+#'   partition, without tokens matched and the tokens in the left and right
+#'   context.
 #' @slot boundary An s-attribute (\code{character}).
 #' @slot p_attribute The p-attribute of the query (\code{character}).
 #' @slot corpus The CWB corpus used (\code{character}).
@@ -395,6 +405,7 @@ setClass("context",
            count = "integer",
            partition = "partition",
            size_partition = "integer",
+           size_match = "integer",
            left = "integer",
            right = "integer",
            size = "integer",

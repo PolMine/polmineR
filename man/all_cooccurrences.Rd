@@ -62,8 +62,8 @@ r <- Cooccurrences(
   left = 5L, right = 5L, stoplist = stopwords
 )
 ll(r) # note that the table in the stat slot is augmented in-place
-r <- subset(r, ll > 11.83 & ab_count >= 5)
 decode(r) # in-place modification, again
+r <- subset(r, ll > 11.83 & ab_count >= 5)
 data.table::setorderv(r@stat, cols = "ll", order = -1L)
 head(r, 25)
 

@@ -94,6 +94,10 @@ Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuu
 Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 }
+\seealso{
+See the documentation for the \code{\link{ll}}-method for an
+  explanation of the computation of the log-likelihood statistic.
+}
 \author{
 Andreas Blaette
 }

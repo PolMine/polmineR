@@ -1,4 +1,4 @@
-#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R ll.R decode.R as.sparseMatrix.R  kwic.R
+#' @include context.R textstat.R partition.R polmineR.R cooccurrences.R bundle.R S4classes.R decode.R as.sparseMatrix.R  kwic.R
 NULL
 
 
@@ -61,6 +61,8 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param mc whether to use multicore
 #' @param ... further parameters that will be passed into bigmatrix (applies only of big=TRUE)
 #' @return a cooccurrences-class object
+#' @seealso See the documentation for the \code{\link{ll}}-method for an
+#'   explanation of the computation of the log-likelihood statistic.
 #' @exportMethod cooccurrences
 #' @docType methods
 #' @author Andreas Blaette
@@ -153,6 +155,30 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
       }
     }
     setnames(.Object@stat, old = "count", new = "count_partition")
+    
+    count_ref <- .Object@stat[["count_partition"]] - .Object@stat[["count_coi"]]
+    
+    # If may appear very odd, but count_ref may assume values < 0
+    # consider the times "Intermediate" and "West" are counted as cooccurrences
+    # of "Texas" in the following example:
+    # "Texas Intermediate and West Texas Sour"
+    # For hits for a query that include the query in the window, tokens may be 
+    # counted several times, which may result in a count for the token that is
+    # higher than the overall occurrence of the token in the corpus
+    # The solution is to count again tokens in cpos, but this time controlling 
+    # for corpus positions
+    if (TRUE){
+      .Object@stat[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
+    } else {
+      multi_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)][, .N, by = c("cpos", paste(.Object@p_attribute, "id", sep = "_")), with = TRUE]
+      multicount_min <- multi_min[multi_min[["N"]] > 1L][, "cpos" := NULL]
+      multicount_min[, "N" := (multicount_min[["N"]] - 1)]
+      multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(.Object@p_attribute, "id", sep = "_"))]
+      setkeyv(multicount_min2, cols = paste(.Object@p_attribute, "id", sep = "_"))
+      dt <- multicount_min2[.Object@stat]
+      .Object@stat[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
+    }
+    
     for (test in method){
       .message("statistical test:", test, verbose = verbose)
       .Object <- do.call(test, args = list(.Object = .Object))  
@@ -162,7 +188,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   # finishing
   if (nrow(.Object@stat) > 0L){
     setkeyv(.Object@stat, .Object@p_attribute)
-    for (x in grep("_id$", colnames(.Object@stat), value = TRUE)) .Object@stat[[x]] <- NULL
+    # for (x in grep("_id$", colnames(.Object@stat), value = TRUE)) .Object@stat[[x]] <- NULL
     setcolorder(
       .Object@stat,
       c(.Object@p_attribute, colnames(.Object@stat)[-which(colnames(.Object@stat) %in% .Object@p_attribute)])
@@ -275,13 +301,13 @@ setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
     size_ref = size(.Object@partition) - sum(.Object@window_sizes),
     size_coi = sum(.Object@window_sizes)
   )
-  for (colname in c("a_word_id", "b_word_id", "size_window", "a_word", "a_count"))
+  for (colname in c("a_word_id", "b_word_id", "size_coi", "a_word", "a_count"))
     if (colname %in% colnames(y)) y@stat[, eval(colname) := NULL, with = TRUE]
   
   setnames(
     y@stat,
-    old = c("ab_count", "b_count", "exp_coi", "exp_ref", "b_word"),
-    new = c("count_window", "count_partition", "exp_window", "exp_partition", "word")
+    old = c("ab_count", "b_count", "b_word"),
+    new = c("count_coi", "count_ref", "word")
   )
   setorderv(y@stat, cols = tests[1], order = -1L)
   y@stat[[paste("rank", tests[1], sep = "_")]] <- 1L:nrow(y@stat)
@@ -359,8 +385,8 @@ setMethod("Cooccurrences", "character", function(
 #'   left = 5L, right = 5L, stoplist = stopwords
 #' )
 #' ll(r) # note that the table in the stat slot is augmented in-place
-#' r <- subset(r, ll > 11.83 & ab_count >= 5)
 #' decode(r) # in-place modification, again
+#' r <- subset(r, ll > 11.83 & ab_count >= 5)
 #' data.table::setorderv(r@stat, cols = "ll", order = -1L)
 #' head(r, 25)
 #' 
@@ -550,14 +576,14 @@ setMethod("Cooccurrences", "partition", function(
       
       if (i == -left){
         y@window_sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
-        setnames(y@window_sizes, old = "V1", new = "size_window")
+        setnames(y@window_sizes, old = "V1", new = "size_coi")
         setkeyv(y@window_sizes, cols = "a_id")
         if (!is.null(stoplist)) y@stat <- dt[!b_id %in% stoplist_ids] else y@stat <- dt
       } else {
         sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setkeyv(sizes, cols = "a_id")
         y@window_sizes <- merge(y@window_sizes, sizes, all = TRUE)
-        y@window_sizes[, "size_window" := ifelse(is.na(y@window_sizes[["size_window"]]), 0L, y@window_sizes[["size_window"]]) + ifelse(is.na(y@window_sizes[["V1"]]), 0L, y@window_sizes[["V1"]])]
+        y@window_sizes[, "size_coi" := ifelse(is.na(y@window_sizes[["size_coi"]]), 0L, y@window_sizes[["size_coi"]]) + ifelse(is.na(y@window_sizes[["V1"]]), 0L, y@window_sizes[["V1"]])]
         y@window_sizes[, "V1" := NULL]
         
         if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids][!b_id %in% stoplist_ids]
@@ -621,7 +647,7 @@ setMethod("Cooccurrences", "partition", function(
     if (verbose) message("... counting window size")
     
     y@window_sizes <- dt[, .N, by = c(eval(a_cols_id)), with = TRUE]
-    setnames(y@window_sizes, "N", "size_window")
+    setnames(y@window_sizes, "N", "size_coi")
 
     if (verbose) message("... counting co-occurrences")
     y@stat <- dt[, .N, by = c(eval(c(a_cols_id, b_cols_id))), with = TRUE]
@@ -661,56 +687,6 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
 })
 
 
-#' @exportMethod ll
-#' @rdname all-cooccurrences-class
-setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
-  
-  a_cols_id <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", .Object@p_attribute, "id", sep = "_")
-  b_cols_id <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", .Object@p_attribute, "id", sep = "_")
-  
-  if (verbose) message("... adding window size")
-  
-  setkeyv(.Object@window_sizes, a_cols_id)
-  setkeyv(.Object@stat, a_cols_id)
-  .Object@stat[, "size_window" := .Object@window_sizes[.Object@stat][["size_window"]]]
-  
-  cnt <- if (nrow(.Object@partition@stat) > 0L)
-    .Object@partition@stat
-  else 
-    count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
-  
-  setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
-  
-  setkeyv(.Object@stat, cols = a_cols_id)
-  .Object@stat[, "a_count" := cnt[.Object@stat][["count"]] ]
-  
-  setkeyv(.Object@stat, cols = b_cols_id)
-  .Object@stat[, "b_count" := cnt[.Object@stat][["count"]] ]
-  
-  if (verbose) message('... g2-Test')
-  
-  exp_total <- .Object@stat[["b_count"]] / .Object@partition@size
-  count_ref <- .Object@stat[["b_count"]] - .Object@stat[["ab_count"]]
-  count_ref <- ifelse(count_ref < 0L, 0L, count_ref)
-  .Object@stat[, "exp_coi" := .Object@stat[["size_window"]] * exp_total]
-  .Object@stat[, "exp_ref" := (.Object@partition@size - .Object@stat[["size_window"]]) * exp_total]
-  
-  A <- .Object@stat[["ab_count"]] / .Object@stat[["exp_coi"]]
-  B <- .Object@stat[["b_count"]] - .Object@stat[["exp_coi"]]
-  C <- B / .Object@stat[["exp_ref"]]
-  D <- ifelse(C > 0, log(C), log(0.0000001))
-  E <- B * D
-  ll_value <- 2 * (.Object@stat[["ab_count"]] * log(A) + E)
-  
-  direction <- ifelse(.Object@stat[["ab_count"]] < .Object@stat[["exp_coi"]], -1L, 1L)
-  .Object@stat[, "ll" := ll_value * direction]
-  
-  setorderv(.Object@stat, cols = "ll", order = -1)
-  .Object@stat[, "rank_ll" := 1L:nrow(.Object@stat)]
-  
-  invisible(.Object)
-  
-})
 
 
 #' @rdname features

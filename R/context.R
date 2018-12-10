@@ -132,8 +132,9 @@ setMethod("context", "partition", function(
   .message("generating contexts", verbose = verbose)
   
   ctxt@size <- nrow(ctxt@cpos)
-  ctxt@size_coi <- as.integer(ctxt@size) - (sum(hits[,2] - hits[,1]) + nrow(hits))
-  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi)
+  ctxt@size_match <- as.integer(sum(hits[,2] - hits[,1]) + nrow(hits))
+  ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
+  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
   ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
   
   # check that windows do not transgress s-attribute
@@ -150,7 +151,7 @@ setMethod("context", "partition", function(
     
     setkeyv(ctxt@cpos, paste(p_attribute, "id", sep = "_"))
     ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(p_attribute, "id", sep = "_"))), with = TRUE]
-    setnames(ctxt@stat, "N", "count_window")
+    setnames(ctxt@stat, "N", "count_coi")
     
     for ( i in 1L:length(p_attribute) ){
       newColumn <- CQI$id2str(.Object@corpus, p_attribute[i], ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]])
@@ -256,6 +257,7 @@ setMethod("context", "character", function(
   if (length(p_attribute) == 1L) C$count(p_attribute, decode = FALSE)
   context(
     C$as.partition(), query = query, cqp = is.cqp,
+    left = left, right = right,
     p_attribute = p_attribute, boundary = boundary,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count, mc = mc, verbose = verbose, progress = progress
