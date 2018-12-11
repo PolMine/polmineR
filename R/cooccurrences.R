@@ -135,55 +135,59 @@ setMethod(
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE){
+  
+  
+  # enrich partition if necessary
+  if (!all(paste(.Object@p_attribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
+    # It may not seem logical that counts are performed for all p-attribute-combinations if
+    # we deal with more than p-attribute. But doing it selectively is much, much slower
+    # than the the comprehensive approach.
+    .message("enrichtung partition by missing count for p-attribute: ", .Object@p_attribute, verbose = verbose)
+    .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = FALSE)
+  }
+  
+  setkeyv(.Object@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
+  setkeyv(.Object@partition@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
+  .Object@stat <- .Object@partition@stat[.Object@stat]
+  for (p_attr in .Object@p_attribute){
+    if (paste("i", p_attr, sep = ".") %in% colnames(.Object@stat)){
+      .Object@stat[, eval(paste("i", p_attr, sep = ".")) := NULL, with = TRUE]
+    }
+  }
+  setnames(.Object@stat, old = "count", new = "count_partition")
+  
+  count_ref <- .Object@stat[["count_partition"]] - .Object@stat[["count_coi"]]
+  
+  # If may appear very odd, but count_ref may assume values < 0
+  # consider the times "Intermediate" and "West" are counted as cooccurrences
+  # of "Texas" in the following example:
+  # "Texas Intermediate and West Texas Sour"
+  # For hits for a query that include the query in the window, tokens may be 
+  # counted several times, which may result in a count for the token that is
+  # higher than the overall occurrence of the token in the corpus
+  # The solution is to count again tokens in cpos, but this time controlling 
+  # for corpus positions
+  if (TRUE){
+    .Object@stat[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
+  } else {
+    multi_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)][, .N, by = c("cpos", paste(.Object@p_attribute, "id", sep = "_")), with = TRUE]
+    multicount_min <- multi_min[multi_min[["N"]] > 1L][, "cpos" := NULL]
+    multicount_min[, "N" := (multicount_min[["N"]] - 1)]
+    multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(.Object@p_attribute, "id", sep = "_"))]
+    setkeyv(multicount_min2, cols = paste(.Object@p_attribute, "id", sep = "_"))
+    dt <- multicount_min2[.Object@stat]
+    .Object@stat[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
+  }
+  
+  
   if (!is.null(method)){
-    
-    # enrich partition if necessary
-    if (!all(paste(.Object@p_attribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
-      # It may not seem logical that counts are performed for all p-attribute-combinations if
-      # we deal with more than p-attribute. But doing it selectively is much, much slower
-      # than the the comprehensive approach.
-      .message("enrichtung partition by missing count for p-attribute: ", .Object@p_attribute, verbose = verbose)
-      .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = FALSE)
-    }
-    
-    setkeyv(.Object@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
-    setkeyv(.Object@partition@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
-    .Object@stat <- .Object@partition@stat[.Object@stat]
-    for (p_attr in .Object@p_attribute){
-      if (paste("i", p_attr, sep = ".") %in% colnames(.Object@stat)){
-        .Object@stat[, eval(paste("i", p_attr, sep = ".")) := NULL, with = TRUE]
-      }
-    }
-    setnames(.Object@stat, old = "count", new = "count_partition")
-    
-    count_ref <- .Object@stat[["count_partition"]] - .Object@stat[["count_coi"]]
-    
-    # If may appear very odd, but count_ref may assume values < 0
-    # consider the times "Intermediate" and "West" are counted as cooccurrences
-    # of "Texas" in the following example:
-    # "Texas Intermediate and West Texas Sour"
-    # For hits for a query that include the query in the window, tokens may be 
-    # counted several times, which may result in a count for the token that is
-    # higher than the overall occurrence of the token in the corpus
-    # The solution is to count again tokens in cpos, but this time controlling 
-    # for corpus positions
-    if (TRUE){
-      .Object@stat[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
-    } else {
-      multi_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)][, .N, by = c("cpos", paste(.Object@p_attribute, "id", sep = "_")), with = TRUE]
-      multicount_min <- multi_min[multi_min[["N"]] > 1L][, "cpos" := NULL]
-      multicount_min[, "N" := (multicount_min[["N"]] - 1)]
-      multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(.Object@p_attribute, "id", sep = "_"))]
-      setkeyv(multicount_min2, cols = paste(.Object@p_attribute, "id", sep = "_"))
-      dt <- multicount_min2[.Object@stat]
-      .Object@stat[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
-    }
-    
     for (test in method){
       .message("statistical test:", test, verbose = verbose)
       .Object <- do.call(test, args = list(.Object = .Object))  
     }
   }
+  
+  
   
   # finishing
   if (nrow(.Object@stat) > 0L){
@@ -201,7 +205,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     stat = data.table(), cpos = data.table(),
     partition = new("partition", stat = data.table(), size = 0L),
     count = 0L
-    )
+  )
   slots_to_get <- slotNames(retval)[-grep("partition", slotNames(retval))]
   for (x in slots_to_get) slot(retval, x) <- slot(.Object, x)
   retval
@@ -268,7 +272,7 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
 #' @aliases as_igraph
 setClass(
   "Cooccurrences",
-  contains = "textstat", # slots inherited: corpus, p_attribute, encoding, stat, name
+  contains = "features", # slots inherited: corpus, p_attribute, encoding, stat, size_coi, size_ref, method, included, call, name
   slots = c(
     left = "integer",
     right = "integer",

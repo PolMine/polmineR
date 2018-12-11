@@ -394,3 +394,4 @@ setMethod("count", "Corpus", function(.Object, query = NULL, p_attribute){
 #' @exportMethod hist
 #' @rdname count_class
 setMethod("hist", "count", function(x, ...) hist(x@stat[,"count"], ...) )
+

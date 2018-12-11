@@ -22,17 +22,18 @@ setMethod("format", "cooccurrences", function(x, digits = 2L){
   dt <- copy(x@stat)
   round(dt, digits = digits)
   
-  if ("count_partition" %in% colnames(dt))
-    attr(dt[["count_partition"]], "label") <- "observed in partition"
-  if ("count_window" %in% colnames(dt))
-    attr(dt[["count_window"]], "label") <- "observed in window"
-  if ("exp_window" %in% colnames(dt))
-    attr(dt[["exp_window"]], "label") <- "expected in window"
-  if ("exp_partition" %in% colnames(dt))
-    attr(dt[["exp_partition"]], "label") <- "expected in partition"
+  if ("count_ref" %in% colnames(dt))
+    attr(dt[["count_ref"]], "label") <- "observed in ref"
+  if ("count_coi" %in% colnames(dt))
+    attr(dt[["count_coi"]], "label") <- "observed in coi"
+  if ("exp_coi" %in% colnames(dt))
+    attr(dt[["exp_coi"]], "label") <- "expected in coi"
+  if ("exp_ref" %in% colnames(dt))
+    attr(dt[["exp_ref"]], "label") <- "expected in ref"
   if ("ll" %in% colnames(dt)) attr(dt[["ll"]], "label") <- "log likelihood"
   if ("rank_ll" %in% colnames(dt)) attr(dt[["rank_ll"]], "label") <- "rank"
-  
+  if ("count_partition" %in% colnames(dt)) dt[, "count_partition" := NULL]
+  for (x in grep("_id", colnames(dt), value = TRUE)) dt[[x]] <- NULL
   dt
 })
 

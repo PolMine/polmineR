@@ -23,6 +23,7 @@ setMethod("pmi", "context", function(.Object){
 #' 
 #' The log-likelihood test to detect cooccurrences is a standard approach to
 #' find collocations (Dunning 1993, Evert 2005, 2009).
+#' 
 #' (a) The basis for computing for the log-likelihood statistic is a contingency
 #' table of observationes, which is prepared for every single token in the
 #' corpus. It reports counts for a token to inspect and all other tokens in a
@@ -35,7 +36,8 @@ setMethod("pmi", "context", function(.Object){
 #' }
 #' (b) Based on the contingency table(s) with observed counts, expected values
 #' are calculated for each cell, as the product of the column and margin sums,
-#' divided by the overall number of tokens.
+#' divided by the overall number of tokens (see example).
+#' 
 #' (c) The standard formula for calculating the log-likelihood test is as
 #' follows.
 #' \deqn{G^{2} = 2 \sum{O_{ij} log(\frac{O_{ij}}{E_{ij}})}}{G2 = 2(o11 *
@@ -47,13 +49,15 @@ setMethod("pmi", "context", function(.Object){
 #' 2*((o11 * log (o11/e11)) + (o12 * log (e12/e12)))}
 #' There is a (small) gain of computational efficiency using this simplified
 #' formula and the result is almost identical with the standard formula; see
-#' however the critical discussion of Ulrike Tabbert (2015: 84ff). The
-#' implementation in the \code{ll}-method uses a vectorized approach of the
+#' however the critical discussion of Ulrike Tabbert (2015: 84ff).
+#' 
+#' The implementation in the \code{ll}-method uses a vectorized approach of the
 #' computation, which is substantially faster than iterating the rows of a
 #' table, generating individual contingency tables etc. As using the standard
 #' formula is not significantly slower than relying on the simplified formula,
 #' polmineR has moved to the standard computation.
-#' A notorious difficulty of the log likelihood statistic is that it is not
+#' 
+#' An inherent difficulty of the log likelihood statistic is that it is not
 #' possible to compute the statistical test value if the number of observed
 #' counts in the reference corpus is 0, i.e. if a term only occurrs exclusively
 #' in the neighborhood of a node word. When filtering out rare words from the
@@ -77,6 +81,66 @@ setMethod("pmi", "context", function(.Object){
 #' @param ... Further arguments (such as \code{verbose}).
 #' @exportMethod ll
 #' @rdname ll
+#' @examples 
+#' # use ll-method explicitly
+#' oil <- cooccurrences("REUTERS", query = "oil", method = NULL)
+#' oil <- ll(oil)
+#' oil_min <- subset(oil, count_coi >= 3)
+#' View(format(oil_min))
+#' summary(oil)
+#' 
+#' # use ll-method on 'Cooccurrences'-object
+#' R <- Cooccurrences("REUTERS", left = 5L, right = 5L, p_attribute = "word")
+#' ll(R)
+#' decode(R)
+#' summary(R)
+#' 
+#' # use log likelihood test for feature extraction
+#' x <- partition(
+#'   "GERMAPARLMINI", speaker = "Merkel",
+#'   interjection = "speech", regex = TRUE,
+#'   p_attribute = "word"
+#' )
+#' f <- features(x, y = "GERMAPARLMINI", included = TRUE, method = "ll")
+#' f <- features(x, y = "GERMAPARLMINI", included = TRUE, method = NULL)
+#' f <- ll(f)
+#' summary(f)
+#' 
+#' # A sample do-it-yourself calculation for log-likelihood:
+#' # Compute ll-value for query "oil", and "prices"
+#' 
+#' oil <- context("REUTERS", query = "oil", left = 5, right = 5)
+#' 
+#' # (a) prepare matrix with observed values
+#' o <- matrix(data = rep(NA, 4), ncol = 2) 
+#' o[1,1] <- as(oil, "data.table")[word == "prices"][["count_coi"]]
+#' o[1,2] <- count("REUTERS", query = "prices")[["count"]] - o[1,1]
+#' o[2,1] <- size(oil)[["coi"]] - o[1,1]
+#' o[2,2] <- size(oil)[["ref"]] - o[1,2]
+#' 
+#' 
+#' # (b) prepare matrix with expected values, calculate margin sums first
+#' r <- rowSums(o)
+#' c <- colSums(o)
+#' N <- sum(o)
+#' 
+#' e <- matrix(data = rep(NA, 4), ncol = 2) # matrix with expected values
+#' e[1,1] <- r[1] * (c[1] / N)
+#' e[1,2] <- r[1] * (c[2] / N)
+#' e[2,1] <- r[2] * (c[1] / N)
+#' e[2,2] <- r[2] * (c[2] / N)
+#' 
+#' 
+#' # (c) compute log-likelihood value
+#' ll_value <- 2 * (
+#'   o[1,1] * log(o[1,1] / e[1,1]) +
+#'   o[1,2] * log(o[1,2] / e[1,2]) +
+#'   o[2,1] * log(o[2,1] / e[2,1]) +
+#'   o[2,2] * log(o[2,2] / e[2,2])
+#' )
+#' 
+#' df <- as.data.frame(cooccurrences("REUTERS", query = "oil"))
+#' subset(df, word == "prices")[["ll"]]
 setGeneric("ll", function(.Object, ...) standardGeneric("ll") )
 
 

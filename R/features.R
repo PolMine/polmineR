@@ -22,24 +22,25 @@ setAs(from = "features", to = "features_ngrams", def = function(from){
 #' @docType methods
 #' @rdname features-class
 setMethod("summary", "features", function(object) {
-  if (object@method %in% c("ll", "chisquare")){
-    critical_value <- c(3.84, 6.63, 7.88, 10.83)
-    propability <- c(0.05, 0.01, 0.005, 0.001)
-    no <- vapply(
-      critical_value,
-      function(x) length(which(object@stat[[object@method]] > x)),
+  implemented_methods <- c("ll", "chisquare")
+  methods <- implemented_methods[implemented_methods %in% colnames(object)]
+  if (length(methods) == 0L){
+    warning("Returning NULL - no statistical test available.")
+    invisible(NULL) 
+  }
+  y <- data.table(
+    "p" = c(0.05, 0.01, 0.005, 0.001),
+    "critical_value" = c(3.84, 6.63, 7.88, 10.83)
+  )
+  for (m in methods){
+    y[[paste("N", m, sep = "_")]] <- vapply(
+      y[["critical_value"]],
+      function(x) length(which(object@stat[[m]] >= x)),
       FUN.VALUE = 1L
     )
-    result <- data.frame(
-      "propability" = propability,
-      "critical_value" = critical_value,
-      "N" = no
-      )
-    result <- result[order(result$propability, decreasing = FALSE), ]
-    return(result)
-  } else {
-    return(NULL) 
   }
+  setorderv(y, cols = "p", order = 1L)
+  return(y)
 })
 
 #' @exportMethod show
