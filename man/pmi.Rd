@@ -4,7 +4,7 @@
 \name{pmi}
 \alias{pmi}
 \alias{pmi,context-method}
-\title{Calculate Pointwise Mutual Information}
+\title{Calculate Pointwise Mutual Information.}
 \usage{
 pmi(.Object)
 
@@ -14,5 +14,8 @@ pmi(.Object)
 \item{.Object}{An object.}
 }
 \description{
-Calculate Pointwise Mutual Information
+Calculate Pointwise Mutual Information.
+}
+\seealso{
+See \code{\link{ll}}, \code{\link{chisquare}} and \code{\link{t_test}}.
 }

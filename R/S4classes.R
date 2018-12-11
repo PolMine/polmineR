@@ -422,6 +422,7 @@ setClass("context",
 setMethod("length", "context", function(x) as.integer(x@count))
 
 setAs(from = "textstat", to = "data.table", def = function(from) from@stat)
+setAs(from = "partition", to = "data.table", def = function(from) from@stat)
 
 #' Cooccurrences class.
 #' 

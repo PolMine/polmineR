@@ -7,7 +7,7 @@
 \alias{size,partition-method}
 \alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
-\alias{size,context-method}
+\alias{size,features-method}
 \title{Get Number of Tokens.}
 \usage{
 size(x, ...)
@@ -20,7 +20,7 @@ size(x, ...)
 
 \S4method{size}{TermDocumentMatrix}(x)
 
-\S4method{size}{context}(x)
+\S4method{size}{features}(x)
 }
 \arguments{
 \item{x}{object to get size(s) for}
@@ -43,7 +43,7 @@ One or more s-attributes can be provided to get the dispersion of
 tokens across one or more dimensions. Two or more s-attributes
 can lead to reasonable results only if the corpus XML is flat.
 
-The \code{size}-method for \code{context} objects will return a list
+The \code{size}-method for \code{features} objects will return a list
   with the size of the corpus of interest ("coi"), i.e. the number of tokens
   in the window, and the reference corpus ("ref"), i.e. the number of tokens
   that are not matched by the query and that are outside the window.

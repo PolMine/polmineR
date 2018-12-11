@@ -4,13 +4,14 @@ NULL
 #' @rdname pmi
 setGeneric("pmi", function(.Object) standardGeneric("pmi") )
 
-#' Calculate Pointwise Mutual Information
+#' Calculate Pointwise Mutual Information.
+#' @seealso See \code{\link{ll}}, \code{\link{chisquare}} and \code{\link{t_test}}.
 #' @param .Object An object.
 #' @rdname pmi
 setMethod("pmi", "context", function(.Object){
   .Object@stat[, "pmi" := log2((.Object@stat[["count_window"]]/.Object@size_partition)/((.Object@count/.Object@size_partition)*(.Object@stat[["count_partition"]]/.Object@size_partition)))]
-  .Object <- sort(.Object, by="pmi")
   .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  setorderv(.Object@stat, cols = "pmi")
   .Object@method <- c(.Object@method, "pmi")
   invisible(.Object)
 })
@@ -259,47 +260,108 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' 
 #' Perform Chisquare-Test based on a table with counts
 #' 
-#' This function deliberately uses a self-made chi-square test for performance
-#' reason
-#' 
-#' @param .Object object
-#' @param ... further parameters
+#' The basis for computing for the chi square test is a contingency table of
+#' observationes, which is prepared for every single token in the corpus. It
+#' reports counts for a token to inspect and all other tokens in a corpus of
+#' interest (coi) and a reference corpus (ref):
+#' \tabular{rccc}{
+#' \tab coi   \tab ref \tab TOTAL\cr
+#' count token \tab \eqn{o_{11}}{o11}  \tab \eqn{o_{12}}{o12} \tab \eqn{r_{1}}{r1}\cr
+#' other tokens \tab \eqn{o_{21}}{o21}    \tab \eqn{o_{22}}{o22} \tab \eqn{r_{2}}{r2}\cr
+#' TOTAL \tab \eqn{c_{1}}{c1}    \tab \eqn{c_{2}}{c2} \tab N\cr
+#' }
+#' Based on the contingency table, expected values are calculated for each cell,
+#' as the product of the column and margin sums, divided by the overall number
+#' of tokens (see example). The standard formula for calculating the chi-square
+#' test is computed as follows. \deqn{X^{2} = \sum{\frac{(O_{ij} -
+#' E_{ij})^2}{O_{ij}}}}{X2 = (o11 - e11)^2/e11 + (o12 - e12)^2/e12 + (o12 -
+#' e12)^2/e12 + (o22 - e22)^2/e22}
+#' Results from the chisquare test are only robust for at least 5 observed
+#' counts in the corpus of interest. Usually, results need to be filtered
+#' accordingly (see examples).
+#' @param .Object A \code{features} object, or an object inheriting from it
+#'   (\code{context}, \code{cooccurrences}).
 #' @exportMethod chisquare
-#' @return a table
+#' @return Same class as input object, with enriched table in the
+#'   \code{stat}-slot.
+#' @seealso See \code{\link{ll}}, \code{\link{pmi}} and \code{\link{t_test}}.
+#' @references Manning, Christopher D.; Schuetze, Hinrich (1999):
+#'   \emph{Foundations of Statistical Natural Language Processing}. MIT Press:
+#'   Cambridge, Mass., pp. 169-172.
+#' @references Kilgarriff, A. and Rose, T. (1998): Measures for corpus
+#'   similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
+#'   Natural Language Processing}. Granada, Spain, pp 46–52.
 #' @author Andreas Blaette
 #' @rdname chisquare-method
 #' @keywords textstatistics
-setGeneric("chisquare", function(.Object, ...){standardGeneric("chisquare")})
+#' @examples
+#' library(data.table)
+#' m <- partition(
+#'   "GERMAPARLMINI", speaker = "Merkel", interjection = "speech",
+#'   regex = TRUE, p_attribute = "word"
+#' )
+#' f <- features(m, "GERMAPARLMINI", included = TRUE)
+#' f_min <- subset(f, count_coi >= 5)
+#' summary(f_min)
+#' 
+#' # A sample do-it-yourself calculation for chisquare:
+#' 
+#' 
+#' # (a) prepare matrix with observed values
+#' o <- matrix(data = rep(NA, 4), ncol = 2) 
+#' o[1,1] <- as.data.table(m)[word == "Weg"][["count"]]
+#' o[1,2] <- count("GERMAPARLMINI", query = "Weg")[["count"]] - o[1,1]
+#' o[2,1] <- size(f)[["coi"]] - o[1,1]
+#' o[2,2] <- size(f)[["ref"]] - o[1,2]
+#' 
+#' 
+#' # prepare matrix with expected values, calculate margin sums first
+#' 
+#' r <- rowSums(o)
+#' c <- colSums(o)
+#' N <- sum(o)
+#' 
+#' e <- matrix(data = rep(NA, 4), ncol = 2) 
+#' e[1,1] <- r[1] * (c[1] / N)
+#' e[1,2] <- r[1] * (c[2] / N)
+#' e[2,1] <- r[2] * (c[1] / N)
+#' e[2,2] <- r[2] * (c[2] / N)
+#' 
+#' 
+#' # compute chisquare statistic
+#' 
+#' y <- matrix(rep(NA, 4), ncol = 2)
+#' for (i in 1:2) for (j in 1:2) y[i,j] <- (o[i,j] - e[i,j])^2 / e[i,j]
+#' chisquare_value <- sum(y)
+#' 
+#' as(f, "data.table")[word == "Weg"][["chisquare"]]
+setGeneric("chisquare", function(.Object){standardGeneric("chisquare")})
 
 #' @rdname chisquare-method
 setMethod("chisquare", "features", function(.Object){
-  size_coi <- .Object@size_coi
-  size_ref <- .Object@size_ref
-  size_total <- size_coi + size_ref
-  count_x_coi <- .Object@stat[["count_coi"]]
-  count_x_ref <- .Object@stat[["count_ref"]]
-  count_x_total <- count_x_coi + count_x_ref
-  count_notx_coi <- size_coi - count_x_coi
-  count_notx_ref <- size_ref - count_x_ref
+  size_total <- .Object@size_coi + .Object@size_ref
+  count_x_total <- .Object@stat[["count_coi"]] + .Object@stat[["count_ref"]]
+  count_notx_coi <- .Object@size_coi - .Object@stat[["count_coi"]]
+  count_notx_ref <- .Object@size_ref - .Object@stat[["count_ref"]]
   count_notx_total <- size_total - count_x_total
   options(digits = 20)
-  exp_x_coi <- (count_x_total / size_total) * size_coi
-  exp_x_ref <- (count_x_total / size_total) * size_ref
-  exp_notx_coi <- (count_notx_total/size_total) * size_coi
-  exp_notx_ref <- (count_notx_total/size_total) * size_ref
-  chi1 <- ((exp_x_coi - count_x_coi) ** 2) / exp_x_coi
-  chi2 <- ((exp_x_ref - count_x_ref) ** 2) / exp_x_ref
+  exp_x_coi <- (count_x_total / size_total) * .Object@size_coi
+  exp_x_ref <- (count_x_total / size_total) * .Object@size_ref
+  exp_notx_coi <- (count_notx_total/size_total) * .Object@size_coi
+  exp_notx_ref <- (count_notx_total/size_total) * .Object@size_ref
+  chi1 <- ((exp_x_coi - .Object@stat[["count_coi"]]) ** 2) / exp_x_coi
+  chi2 <- ((exp_x_ref - .Object@stat[["count_ref"]]) ** 2) / exp_x_ref
   chi3 <- ((exp_notx_coi - count_notx_coi) ** 2) / exp_notx_coi
   chi4 <- ((exp_notx_ref - count_notx_ref) ** 2) / exp_notx_ref
   chi <- chi1 + chi2 + chi3 + chi4
-  chi <- chi * apply(cbind(count_x_coi, exp_x_coi), 1, function(x) ifelse(x[1] > x[2], 1, -1))
+  chi <- chi * ifelse(.Object@stat[["count_coi"]] >= exp_x_coi, 1L, -1L)
   options(digits = 7)
   .Object@stat[, "exp_coi" := exp_x_coi]
   .Object@stat[, "chisquare" := chi]
-  .Object <- sort(.Object, by = "chisquare")
-  .Object@stat[, "rank_chisquare" := 1:nrow(.Object@stat)]
+  setorderv(.Object@stat, cols = "chisquare", order = -1L)
+  .Object@stat[, "rank_chisquare" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "chisquare")
-  return(.Object)
+  invisible(.Object)
 })
 
 

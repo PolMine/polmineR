@@ -97,9 +97,9 @@ setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$j, sum), x[["dimnames"]][["Docs"]])
 })
 
-#' @details The \code{size}-method for \code{context} objects will return a list
+#' @details The \code{size}-method for \code{features} objects will return a list
 #'   with the size of the corpus of interest ("coi"), i.e. the number of tokens
 #'   in the window, and the reference corpus ("ref"), i.e. the number of tokens
 #'   that are not matched by the query and that are outside the window.
 #' @rdname size-method
-setMethod("size", "context", function(x) list(coi = x@size_coi, ref = x@size_ref) )
+setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )

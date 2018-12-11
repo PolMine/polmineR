@@ -46,13 +46,12 @@ setOldClass("htmlwidget")
 #' @author Andreas Blaette (andreas.blaette@@uni-due.de)
 #' @keywords package
 #' @docType package
-#' @rdname polmineR
-#' @name polmineR
-#' @references 
-#' Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
+#' @aliases polmineR polmineR-package
+#' @rdname polmineR-package
+#' @name polmineR-package
+#' @references Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
 #' Cham et al: Springer.
-#' 
-#' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
+#' @references Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
 #' @export polmineR
 #' @importFrom RcppCWB cqp_initialize cqp_is_initialized
 #' @importFrom parallel detectCores
