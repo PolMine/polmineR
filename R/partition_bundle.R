@@ -140,10 +140,8 @@ setMethod("partition_bundle", "partition", function(
     .message('number of partitions to be generated: ', length(values), verbose = verbose)
   }
   bundle@objects <- blapply(
-    lapply(
-      setNames(values, rep(s_attribute, times = length(values))),
-      function(x) setNames(x, s_attribute)),
-    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type, verbose = FALSE, ...),
+    lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
+    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type = type, verbose = FALSE, ...),
     .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc, type = type,
     ...
   )
