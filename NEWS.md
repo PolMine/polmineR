@@ -30,6 +30,10 @@ used.
   * A new check prevents an error that has occurred when a token queried by the `context()`-method would occurr at the very beginning or very end of a corpus and the window would transgress the beginning / end of the corpus without being checked (#44).
   * A new `size()`-method for `context`-objects will return the size of the corpus of interest (coi) and the reference corpus (ref).
   * A new `count()`-method for `context`-objects will return the `data.table` in the `stat`-slot with the counts for the tokens in the window.
+  * The `as.speeches()`-function caused an error when the type of the partition was not defined. Solved (#57).
+  * Improved documentation of the `mail()`-method (#31).
+  * To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. 'C') (#39).
+  * The `decode()`-function replaces a `decode()`-method and can be applied to partitions. The return value is a data.table which can be coerced to a tibble, serving as an interface to tidytext (#37).
 
 
 polmineR 0.7.10

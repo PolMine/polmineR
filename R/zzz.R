@@ -81,6 +81,26 @@
   
   Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
   
+  if (Sys.getlocale() == "C"){
+    if (Sys.info()["sysname"] == "Darwin"){
+      packageStartupMessage(
+        "WARNING: The locale of the R session is 'C': ",
+        "The character set is not specified. You may encounter problems ",
+        "when working with corpora with a latin-1 or UTF-8 encoding that include special characters.\n",
+        "For macOS, a potential solution is to enter 'defaults write org.R-project.R force.LANG en_US.UTF-8' ",
+        "in a terminal once, replacing 'en_US' with the language/country that is relevant for you ",
+        "(see https://community.rstudio.com/t/strange-locale-problems-in-r-after-update-to-mojave/15533)."
+      )
+    } else {
+      packageStartupMessage(
+        "WARNING: The locale of the R session is 'C': ",
+        "The character set is not specified. You may encounter problems ",
+        "when working with corpora with a latin-1 or UTF-8 encoding that include special characters."
+      )
+      
+    }
+  }
+
   # if (cqp_is_initialized()) cqp_reset_registry(tmp_registry_dir)
 
   # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,

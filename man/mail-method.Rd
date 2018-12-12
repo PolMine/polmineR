@@ -7,7 +7,7 @@
 \alias{mail,textstat-method}
 \alias{mail,data.frame-method}
 \alias{mail,kwic-method}
-\title{Mail result.}
+\title{Send the result of an analysis by Email.}
 \usage{
 mail(.Object, ...)
 
@@ -26,12 +26,46 @@ mail(.Object, ...)
 
 \item{...}{Further parameters.}
 
-\item{to}{The recipient of the mail message.}
+\item{to}{An email-address, the recipient of the mail message.}
 
-\item{rows}{The number of rows of the table (if NULL, the whole table will be sent).}
+\item{rows}{The number of rows of the table included in the Excel file to be
+sent (if \code{NULL}, the whole table will be sent).}
 
 \item{filename}{The filename of the (temporary) xlsx-file that is generated.}
 }
 \description{
-Send out a mail with the statistics of an object attached as an xlsx-file.
+Send out a mail with the statistical analysis included in an object attached
+as an xlsx-file.
+}
+\details{
+The method translates the result table in the object provided into an Excel sheet
+and attaches the sheet to an Email which will be sent to the Email-address provided
+by the argument \code{to}. A pre-requirement is that the global options \code{polmineR.smtp_port} and
+\code{polmineR.smtp_server} are validly defined. See examples.
+
+Please note: At this stage, authentication is not yet supported.
+}
+\examples{
+# Get all (global) options for the polmineR package
+grep("polmineR", names(options()), value = TRUE)
+
+# Get options that need to be set
+getOption("polmineR.email")
+getOption("polmineR.smtp_server")
+getOption("polmineR.smtp_port")
+
+# Sample options (let us imagine Donald Duck had a mail-account)
+options("polmineR.email" = "donald.duck@duckmail.org")
+options("polmineR.smtp_port" = "587")
+options("polmineR.smtp_server" = "smtp.duckmail.org")
+
+# This is how you send out results when options are set
+# (Note: Mail servers that require authentication are not yet supported.)
+\dontrun{
+y <- cooccurrences("REUTERS", query = "oil")
+mail(y)
+
+k <- kwic("REUTERS", query = "oil")
+mail(k)
+}
 }

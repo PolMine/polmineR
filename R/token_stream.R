@@ -64,7 +64,7 @@ setMethod("get_token_stream", "matrix", function(.Object, ...){
 setMethod("get_token_stream", "character", function(.Object, left = NULL, right = NULL, ...){
   if (is.null(left)) left <- 0L
   if (is.null(right)) right <- size(.Object) - 1L
-  get_token_stream(left:right, corpus = .Object, ...)
+  get_token_stream(left:right, corpus = .Object, encoding = registry_get_encoding(.Object), ...)
 })
 
 #' @rdname get_token_stream-method
