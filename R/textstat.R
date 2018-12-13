@@ -114,6 +114,12 @@ setMethod("[", "textstat", function(x, i, j){
   x
 })
 
+setMethod("[", "textstat", function(x, ...){
+  if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
+  if (is.null(key(x@stat))) warning("The data.table is not yet keyed.")
+  x@stat[i]
+})
+
 setAs(from = "textstat", to = "htmlwidget", def = function(from){
   DT::datatable(from@stat, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
 })

@@ -710,9 +710,10 @@ setClass("cooccurrences_bundle", contains = "bundle")
 #' Virtual class subcorpus
 #' 
 #' The classes \code{regions} and \code{partition} can be used to define
-#' subcorpora. Unlike the \code{regions} class, the \code{partition} class may include
-#' statistical evaluations. The virtual class \code{subcorpora} is a mechanism to define
-#' methods for these classes without making \code{regions} the superclass of \code{partition}.
+#' subcorpora. Unlike the \code{regions} class, the \code{partition} class may
+#' include statistical evaluations. The virtual class \code{subcorpus} is a
+#' mechanism to define methods for these classes without making \code{regions}
+#' the superclass of \code{partition}.
 #' 
 #' @rdname subcorpus
 #' @name subcorpus
@@ -724,6 +725,7 @@ setClassUnion(
   members = c("regions", "partition")
 )
 
+setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "subcorpus"))
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
 #' i.e. it checks for each new row in the matrix whether it increments the end

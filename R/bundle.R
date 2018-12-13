@@ -27,7 +27,11 @@ setReplaceMethod(
       warning("length of value provided does not match number of partitions")
       stop()
     }
-    for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
+    # for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
+    x@objects <- lapply(
+      1L:length(x@objects),
+      function(i) {p <- x@objects[[i]];  p@name <- value[i]; p}
+    )
     names(x@objects) <- value
     x
   }

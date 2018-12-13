@@ -202,6 +202,8 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
+  if (is.null(names(x))) names(x) <- as.character(1L:length(x))
+
   if (is.null(p_attribute)){
     p_attribute <- x@objects[[1]]@p_attribute
     .message("using the p_attribute-slot of the first object in the bundle as p_attribute:", p_attribute, verbose = verbose)

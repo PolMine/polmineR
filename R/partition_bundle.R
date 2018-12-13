@@ -17,8 +17,14 @@ setMethod("show", "partition_bundle", function (object) {
 })
 
 #' @rdname partition_bundle-class
-setMethod("summary", "partition_bundle", function (object){
-  y <- do.call(rbind, lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE)))
+setMethod("summary", "partition_bundle", function (object, progress = TRUE){
+  if (progress){
+    a <- lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
+  } else {
+    a <- pblapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
+  }
+  
+  y <- do.call(rbind, a)
   rownames(y) <- NULL
   y
 })
@@ -247,11 +253,13 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
   count_list <- split(CNT, by = "hit_no")
   
   .fn <- function(i){
+    cpos_matrix <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
     new(
       "partition",
       corpus = .Object@corpus,
       encoding = .Object@encoding,
-      cpos = as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")]),
+      cpos = cpos_matrix,
+      size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L),
       xml = .Object@partition@xml,
       p_attribute = .Object@p_attribute,
       stat = count_list[[i]][, "hit_no" := NULL]

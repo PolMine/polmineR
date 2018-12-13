@@ -34,6 +34,9 @@ used.
   * Improved documentation of the `mail()`-method (#31).
   * To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. 'C') (#39).
   * The `decode()`-function replaces a `decode()`-method and can be applied to partitions. The return value is a data.table which can be coerced to a tibble, serving as an interface to tidytext (#37).
+  * There was a difficulty to generate a TermDocumentMatrix from a partition_bundle if the partitions in the partition_bundle were not named. The fix is to assign integer numbers as names to the partitions (#58).
+  * Rework of indexing textstat objects.
+  
 
 
 polmineR 0.7.10

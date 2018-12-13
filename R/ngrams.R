@@ -44,31 +44,31 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
     
     idListBase <- lapply(
       setNames(p_attribute, p_attribute),
-      function(pAttr) CQI$cpos2id(.Object@corpus, pAttr, cpos)
-      )
+      function(p_attr) CQI$cpos2id(.Object@corpus, p_attr, cpos)
+    )
     
-    idList <- list()
-    j <- 0
-    for (i in 1:n){
-      for (pAttr in p_attribute){
-        j <- j + 1
-        idList[[j]] <- idListBase[[pAttr]][i:(length(idListBase[[pAttr]]) - (n - i))]
-        names(idList)[j] <- paste("id", i, pAttr, sep = "_")
+    id_list <- list()
+    j <- 0L
+    for (i in 1L:n){
+      for (p_attr in p_attribute){
+        j <- j + 1L
+        id_list[[j]] <- id_list_base[[p_attr]][i:(length(id_list_base[[p_attr]]) - (n - i))]
+        names(id_list)[j] <- paste("id", i, p_attr, sep = "_")
       }
     }
     
     DT <- data.table::as.data.table(idList)
     TF <- DT[, .N, by = c(eval(colnames(DT))), with = TRUE]
     setnames(TF, "N", "count")
-    pAttrsCols <- rep(p_attribute, times = n)
-    tokenNo <- unlist(lapply(1:n, function(x) rep(x, times = length(p_attribute))))
+    p_attrs_cols <- rep(p_attribute, times = n)
+    token_no <- unlist(lapply(1L:n, function(x) rep(x, times = length(p_attribute))))
     
     # convert ids to strings
     dummy <- lapply(
       1:(n * length(p_attribute)),
       function(i){
-        str <- as.nativeEnc(CQI$id2str(.Object@corpus, pAttrsCols[i], TF[[i]]), from = .Object@encoding)
-        TF[, eval(paste(tokenNo[i], pAttrsCols[i], sep = "_")) := str , with = TRUE] 
+        str <- as.nativeEnc(CQI$id2str(.Object@corpus, p_attrs_cols[i], TF[[i]]), from = .Object@encoding)
+        TF[, eval(paste(tokenNo[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
       })
     
     # remove columns with ids
@@ -78,24 +78,24 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
     )
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
-    charSoupBase <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "")
-    charSoup <- unlist(strsplit(charSoupBase, ""))
+    char_soup_base <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "")
+    char_soup <- unlist(strsplit(char_soup_base, ""))
     if (char[1] != ""){
-      charSoup <- unname(unlist(sapply(charSoup, function(x) ifelse(x %in% char, x, NA))))
-      if (any(is.na(charSoup))) charSoup[-which(is.na(charSoup))]
+      char_soup <- unname(unlist(sapply(char_soup, function(x) ifelse(x %in% char, x, NA))))
+      if (any(is.na(char_soup))) charSoup[-which(is.na(char_soup))]
     }
-    charSoup <- paste(charSoup[which(!is.na(charSoup))], sep = "", collapse = "")
-    charSoupTotal <- nchar(charSoup)
+    char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
+    char_soup_total <- nchar(char_soup)
     ngrams <- sapply(
-      1:(charSoupTotal - n + 1),
+      1:(char_soup_total - n + 1),
       function(x) {
-        if (progress) .progressBar(x, charSoupTotal)
-        substr(charSoup, x, x + n - 1)
+        if (progress) .progressBar(x, char_soup_total)
+        substr(char_soup, x, x + n - 1)
         })
-    tabledNgrams <- table(ngrams)
+    tabled_ngrams <- table(ngrams)
     TF <- data.table(
-      ngram = names(tabledNgrams),
-      count = unname(as.vector(tabledNgrams))
+      ngram = names(tabled_ngrams),
+      count = unname(as.vector(tabled_ngrams))
       )
   }
   new(
