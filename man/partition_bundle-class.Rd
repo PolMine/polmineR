@@ -31,7 +31,7 @@
 \usage{
 \S4method{show}{partition_bundle}(object)
 
-\S4method{summary}{partition_bundle}(object)
+\S4method{summary}{partition_bundle}(object, progress = TRUE)
 
 \S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
 
@@ -53,6 +53,8 @@ flatten(object)
 \arguments{
 \item{object}{a \code{partition_bundle} object}
 
+\item{progress}{logical}
+
 \item{x}{a \code{partition_bundle} object}
 
 \item{name}{the name for the new partition}
@@ -68,8 +70,6 @@ flatten(object)
 \item{.Object}{a \code{partition_bundle} object}
 
 \item{mc}{logical or, if numeric, providing the number of cores}
-
-\item{progress}{logical}
 
 \item{s_attribute}{the s-attribute to use}
 }

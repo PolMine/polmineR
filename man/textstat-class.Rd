@@ -22,6 +22,7 @@
 \alias{name}
 \alias{name<-}
 \alias{name,textstat-method}
+\alias{name,character-method}
 \alias{name<-,textstat,character-method}
 \alias{round,textstat-method}
 \alias{sort,textstat-method}
@@ -36,6 +37,8 @@
 \title{S4 textstat superclass.}
 \usage{
 \S4method{name}{textstat}(x)
+
+\S4method{name}{character}(x)
 
 \S4method{name}{textstat,character}(x) <- value
 

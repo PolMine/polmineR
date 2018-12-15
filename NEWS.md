@@ -36,6 +36,10 @@ used.
   * The `decode()`-function replaces a `decode()`-method and can be applied to partitions. The return value is a data.table which can be coerced to a tibble, serving as an interface to tidytext (#37).
   * There was a difficulty to generate a TermDocumentMatrix from a partition_bundle if the partitions in the partition_bundle were not named. The fix is to assign integer numbers as names to the partitions (#58).
   * Rework of indexing textstat objects.
+  * The `ngrams()`-method will work for corpora, and a new `show()`-method for `textstat`-object generates a proper output (#27).
+  * new `corpus()`-method for character vector.
+  * new `encoding()`-method for character vector.
+  * new `name()`-method for character vector.
   
 
 

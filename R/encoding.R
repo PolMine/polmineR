@@ -3,12 +3,30 @@ NULL
 
 #' Get and set encoding.
 #' 
-#' Method for \code{textstat} objects and classes inheriting from \code{textstat}.
+#' Method for \code{textstat} objects and classes inheriting from
+#' \code{textstat}; if \code{object} is a character vector, the encoding of the
+#' corpus is returned..
 #' 
-#' @param object the object with an 'encoding'-slot
-#' @param value value to be assigned
+#' @param object A \code{textstat} or \code{bundle} object, or a length-one
+#'   character vector specifying a corpus.
+#' @param value Value to be assigned.
 #' @rdname encoding
 #' @exportMethod encoding
+#' @examples
+#' # Get encoding of a corpus.
+#' encoding("REUTERS")
+#' 
+#' # Get encoding of a partition.
+#' r <- partition("REUTERS", places = "kuwait", regex = TRUE)
+#' encoding(r)
+#' 
+#' # Get encoding of another class inheriting from textstat (count).
+#' cnt <- count("REUTERS", p_attribute = "word")
+#' encoding(cnt)
+#' 
+#' # Get encoding of objects in a bundle.
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
+#' encoding(pb)
 setGeneric("encoding", function(object) standardGeneric("encoding"))
 
 #' @rdname encoding
@@ -20,7 +38,8 @@ setMethod("encoding", "textstat", function(object) object@encoding)
 #' @rdname encoding
 setMethod("encoding", "bundle", function(object) object@encoding)
 
-
+#' @rdname encoding
+setMethod("encoding", "character", function(object) registry_get_encoding(object))
 
 
 #' Conversion between corpus and native encoding.

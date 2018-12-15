@@ -27,24 +27,28 @@ NULL
 #'  ngramObject,
 #'  ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
 #'  )
-#' ngramObject2@@stat[, "1_pos" := NULL, with = FALSE][, "2_pos" := NULL, with = FALSE]
+#' ngramObject2@@stat[, "1_pos" := NULL][, "2_pos" := NULL]
 #' ngramObject3 <- sort(ngramObject2, by = "count")
 #' head(ngramObject3)
 setGeneric("ngrams", function(.Object, ...) standardGeneric("ngrams"))
 
+#' @rdname ngrams
+setMethod("ngrams", "partition", function(.Object, ...) callNextMethod(.Object, ...))
 
 #' @rdname ngrams
-setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+setMethod("ngrams", "character", function(.Object, ...) callNextMethod(.Object, ...))
+
+
+#' @rdname ngrams
+setMethod("ngrams", "CorpusOrSubcorpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   if (is.null(char)){
     
-    cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-    
-    idListBase <- lapply(
+    id_list_base <- lapply(
       setNames(p_attribute, p_attribute),
-      function(p_attr) CQI$cpos2id(.Object@corpus, p_attr, cpos)
+      function(p_attr) get_token_stream(.Object, p_attribute = p_attr, decode = FALSE)
     )
     
     id_list <- list()
@@ -57,7 +61,7 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
       }
     }
     
-    DT <- data.table::as.data.table(idList)
+    DT <- data.table::as.data.table(id_list)
     TF <- DT[, .N, by = c(eval(colnames(DT))), with = TRUE]
     setnames(TF, "N", "count")
     p_attrs_cols <- rep(p_attribute, times = n)
@@ -65,10 +69,10 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
     
     # convert ids to strings
     dummy <- lapply(
-      1:(n * length(p_attribute)),
+      1L:(n * length(p_attribute)),
       function(i){
-        str <- as.nativeEnc(CQI$id2str(.Object@corpus, p_attrs_cols[i], TF[[i]]), from = .Object@encoding)
-        TF[, eval(paste(tokenNo[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
+        str <- as.nativeEnc(CQI$id2str(corpus(.Object), p_attrs_cols[i], TF[[i]]), from = encoding(.Object))
+        TF[, eval(paste(token_no[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
       })
     
     # remove columns with ids
@@ -82,15 +86,15 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
     char_soup <- unlist(strsplit(char_soup_base, ""))
     if (char[1] != ""){
       char_soup <- unname(unlist(sapply(char_soup, function(x) ifelse(x %in% char, x, NA))))
-      if (any(is.na(char_soup))) charSoup[-which(is.na(char_soup))]
+      if (any(is.na(char_soup))) char_soup[-which(is.na(char_soup))]
     }
     char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
     char_soup_total <- nchar(char_soup)
     ngrams <- sapply(
-      1:(char_soup_total - n + 1),
+      1L:(char_soup_total - n + 1L),
       function(x) {
         if (progress) .progressBar(x, char_soup_total)
-        substr(char_soup, x, x + n - 1)
+        substr(char_soup, x, x + n - 1L)
         })
     tabled_ngrams <- table(ngrams)
     TF <- data.table(
@@ -100,8 +104,8 @@ setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", 
   }
   new(
     "ngrams",
-    n = as.integer(n), corpus = .Object@corpus, encoding = .Object@encoding,
-    size = as.integer(size(.Object)), stat = TF, name = .Object@name,
+    n = as.integer(n), corpus = corpus(.Object), encoding = encoding(.Object),
+    size = as.integer(size(.Object)), stat = TF, name = name(.Object),
     p_attribute = if (is.null(char)) p_attribute else "ngram"
     )
 })

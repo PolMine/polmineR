@@ -15,9 +15,10 @@
 }
 \description{
 The classes \code{regions} and \code{partition} can be used to define
-subcorpora. Unlike the \code{regions} class, the \code{partition} class may include
-statistical evaluations. The virtual class \code{subcorpora} is a mechanism to define
-methods for these classes without making \code{regions} the superclass of \code{partition}.
+subcorpora. Unlike the \code{regions} class, the \code{partition} class may
+include statistical evaluations. The virtual class \code{subcorpus} is a
+mechanism to define methods for these classes without making \code{regions}
+the superclass of \code{partition}.
 }
 \details{
 The method \code{aggregate} will deflate the matrix in the slot \code{cpos},

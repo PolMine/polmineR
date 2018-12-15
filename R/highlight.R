@@ -125,6 +125,6 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
     }
   }
   .Object <- enrich(.Object, table = TRUE)
-  .Object <- enrich(.Object, s_attributes = .Object@metadata)
+  .Object <- enrich(.Object, s_attributes = unique(.Object@metadata))
   .Object
 })

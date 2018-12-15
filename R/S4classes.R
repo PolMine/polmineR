@@ -160,6 +160,9 @@ setClass("textstat",
 #' @rdname textstat-class
 setMethod("name", "textstat", function(x) x@name)
 
+#' @rdname textstat-class
+setMethod("name", "character", function(x) x)
+
 #' @param value A \code{character} vector to assign as name to slot \code{name}
 #'   of a \code{textstat} class object.
 #' @rdname textstat-class
@@ -725,7 +728,9 @@ setClassUnion(
   members = c("regions", "partition")
 )
 
+#' @exportClass CorpusOrSubcorpus
 setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "subcorpus"))
+
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
 #' i.e. it checks for each new row in the matrix whether it increments the end

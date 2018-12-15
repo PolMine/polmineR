@@ -30,6 +30,9 @@ setMethod("corpus", "textstat", function(object) object@corpus)
 setMethod("corpus", "kwic", function(object) object@corpus)
 
 #' @rdname corpus-method
+setMethod("corpus", "character", function(object) object)
+
+#' @rdname corpus-method
 setMethod("corpus", "bundle", function(object){
   unique(sapply(object@objects, function(x) x@corpus))
 })

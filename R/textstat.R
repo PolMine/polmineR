@@ -87,6 +87,17 @@ as.data.table.textstat <- function(x) x@stat
 #' @exportMethod as.data.frame
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
 
+#' @rdname cooccurrences-class
+#' @rdname textstat-class
+setMethod("show", "textstat", function(object) {
+  if (Sys.getenv("RSTUDIO") == "1" && interactive() && is.na(Sys.getenv("NOT_CRAN", unset = NA))){
+    view(object)
+  } else {
+    message(sprintf("Object of class '%s'", is(object)[1]))
+  }
+})
+
+
 
 #' @exportMethod p_attributes
 #' @param object a textstat object
@@ -102,18 +113,6 @@ setMethod("[[", "textstat", function(x, i){
 })
 
 #' @exportMethod [
-setMethod("[", "textstat", function(x, i, j){
-  if (nrow(x@stat) == 0){
-    warning("indexing is pointless because data.table is empty")
-  }
-  if (missing(j)){
-    x@stat <- copy(x@stat[i = i])
-  } else {
-    x@stat <- copy(x@stat[i = i, j = j, with = FALSE])
-  }
-  x
-})
-
 setMethod("[", "textstat", function(x, ...){
   if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
   if (is.null(key(x@stat))) warning("The data.table is not yet keyed.")

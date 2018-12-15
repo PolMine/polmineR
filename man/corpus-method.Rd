@@ -5,6 +5,7 @@
 \alias{corpus}
 \alias{corpus,textstat-method}
 \alias{corpus,kwic-method}
+\alias{corpus,character-method}
 \alias{corpus,bundle-method}
 \alias{corpus,missing-method}
 \title{Get corpus/corpora available or used.}
@@ -14,6 +15,8 @@ corpus(object)
 \S4method{corpus}{textstat}(object)
 
 \S4method{corpus}{kwic}(object)
+
+\S4method{corpus}{character}(object)
 
 \S4method{corpus}{bundle}(object)
 
