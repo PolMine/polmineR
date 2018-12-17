@@ -78,7 +78,7 @@ result table, respective \code{NA} values will usually disappear.
 oil <- cooccurrences("REUTERS", query = "oil", method = NULL)
 oil <- ll(oil)
 oil_min <- subset(oil, count_coi >= 3)
-View(format(oil_min))
+if (interactive()) View(format(oil_min))
 summary(oil)
 
 # use ll-method on 'Cooccurrences'-object

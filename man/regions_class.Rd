@@ -3,7 +3,9 @@
 \docType{class}
 \name{regions}
 \alias{regions}
+\alias{CorpusOrSubcorpus-class}
 \alias{regions-class}
+\alias{CorpusOrSubcorpus}
 \alias{as.regions}
 \alias{as.data.table.regions}
 \title{Regions of a CWB corpus.}
@@ -24,6 +26,10 @@ A coerce-method is available to coerce a \code{partition} object to a
 \code{regions} object.
 }
 \details{
+The virtual class \code{CorpusOrSubcorpus} is a way to handle corpora specified
+by a character vector, \code{region} objects, and \code{partition} objects
+in a uniform manner.
+
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
 }
 \section{Slots}{

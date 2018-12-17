@@ -97,7 +97,7 @@ Manning, Christopher D.; Schuetze, Hinrich (1999):
 
 Kilgarriff, A. and Rose, T. (1998): Measures for corpus
   similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
-  Natural Language Processing}. Granada, Spain, pp 46–52.
+  Natural Language Processing}. Granada, Spain, pp 46-52.
 }
 \seealso{
 See \code{\link{ll}}, \code{\link{pmi}} and \code{\link{t_test}}.

@@ -40,6 +40,7 @@ used.
   * new `corpus()`-method for character vector.
   * new `encoding()`-method for character vector.
   * new `name()`-method for character vector.
+  * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class") and extended documentation for `partition`-class (`?"partition-class")
   
 
 

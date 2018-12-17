@@ -87,7 +87,7 @@ setMethod("pmi", "context", function(.Object){
 #' oil <- cooccurrences("REUTERS", query = "oil", method = NULL)
 #' oil <- ll(oil)
 #' oil_min <- subset(oil, count_coi >= 3)
-#' View(format(oil_min))
+#' if (interactive()) View(format(oil_min))
 #' summary(oil)
 #' 
 #' # use ll-method on 'Cooccurrences'-object
@@ -290,7 +290,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #'   Cambridge, Mass., pp. 169-172.
 #' @references Kilgarriff, A. and Rose, T. (1998): Measures for corpus
 #'   similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
-#'   Natural Language Processing}. Granada, Spain, pp 46–52.
+#'   Natural Language Processing}. Granada, Spain, pp 46-52.
 #' @author Andreas Blaette
 #' @rdname chisquare-method
 #' @keywords textstatistics

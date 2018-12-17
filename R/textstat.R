@@ -87,7 +87,6 @@ as.data.table.textstat <- function(x) x@stat
 #' @exportMethod as.data.frame
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
 
-#' @rdname cooccurrences-class
 #' @rdname textstat-class
 setMethod("show", "textstat", function(object) {
   if (Sys.getenv("RSTUDIO") == "1" && interactive() && is.na(Sys.getenv("NOT_CRAN", unset = NA))){
@@ -113,10 +112,15 @@ setMethod("[[", "textstat", function(x, i){
 })
 
 #' @exportMethod [
+#' @importFrom data.table key
 setMethod("[", "textstat", function(x, ...){
   if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
-  if (is.null(key(x@stat))) warning("The data.table is not yet keyed.")
-  x@stat[i]
+  if (is.null(key(x@stat))) setkeyv(x@stat, cols = x@p_attribute)
+  if (missing(j)){
+    return( x@stat[i] )
+  } else {
+    return( x@stat[i,j, with = FALSE] )
+  }
 })
 
 setAs(from = "textstat", to = "htmlwidget", def = function(from){

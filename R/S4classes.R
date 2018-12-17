@@ -285,12 +285,18 @@ setMethod("length", "count", function(x) x@size)
 #' count in slot \code{stat}.
 #' @slot xml Object of class \code{character}, whether the xml is flat or nested.
 #' @slot s_attribute_strucs Object of class \code{character} the base node 
+#' @slot key Experimental, an s-attribute that is used as a key.
 #' @slot call Object of class \code{character} the call that generated the partition 
 #' @param object A \code{partition} object.
 #' @param .Object A \code{partition} object.
 #' @param p_attribute a p-attribute (for enriching) / performing count.
 #' @param verbose \code{logical} value, whether to output messages
 #' @param ... further parameters passed into \code{count} when calling \code{enrich}, and ...
+#' @param name An s-attribute that will be assigned as key to a
+#'   \code{partition}.
+#' @param e1 A first expression, a \code{partition} object in this case.
+#' @param e2 A second expression, the value of an s-attribute.
+#' @param table Values a s-attribute shall assume.
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partition_bundle 
 #'   as.partition_bundle,partition-method export export,partition-method split
@@ -313,7 +319,8 @@ setClass(
     strucs = "integer",
     xml = "character",
     s_attribute_strucs = "character",
-    call = "character"
+    call = "character",
+    key = "character"
   ),
   contains = "count"
 )
@@ -536,10 +543,42 @@ setClass(
   ))
 
 
+#' S4 class to wrap information on CWB corpora.
+#' 
+#' @param x A \code{corpus} object.
+#' @param ... Further arguments.
+#' @param name An s-attribute that will be assigned as key to a
+#'   \code{partition}.
+#' @param e1 A first expression, a \code{partition} object in this case.
+#' @param e2 A second expression, the value of an s-attribute.
+#' @param table Values a s-attribute shall assume.
+#' @slot corpus A length-one \code{character} vector, a CWB corpus.
+#' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
+#' @slot key A length-one \code{character} vector stating a s-attribute that
+#'   serves as a key.
+#' @exportClass corpus
+#' @rdname corpus_class
+#' @aliases zoom
+#' @name corpus-class
+setClass(
+  "corpus",
+  representation = list(
+    corpus = "character",
+    encoding = "character",
+    key = "character"
+  )
+)
+
+
+
 #' Regions of a CWB corpus.
 #' 
 #' A coerce-method is available to coerce a \code{partition} object to a
 #' \code{regions} object.
+#' 
+#' The virtual class \code{CorpusOrSubcorpus} is a way to handle corpora specified
+#' by a character vector, \code{region} objects, and \code{partition} objects
+#' in a uniform manner.
 #' 
 #' @slot cpos a two-column \code{data.table} that will include a "cpos_left" and "cpos_right" column
 #' @slot corpus the CWB corpus (character vector length 1)
@@ -549,6 +588,7 @@ setClass(
 #' @exportClass regions
 #' @rdname regions_class
 #' @name regions
+#' @aliases CorpusOrSubcorpus-class regions-class CorpusOrSubcorpus
 #' @examples
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
@@ -562,6 +602,7 @@ setClass(
     encoding = "character"
   )
 )
+
 
 
 

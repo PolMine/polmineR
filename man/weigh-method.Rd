@@ -29,7 +29,7 @@ weigh(.Object, ...)
 \item{with}{A \code{data.table} used to weigh p-attributes. A column 'weight' with term weights is
 required, and columns with the p-attributes of \code{.Object} for matching.}
 
-\item{progess}{Logical, whether to show a progress bar.}
+\item{progress}{Logical, whether to show a progress bar.}
 }
 \description{
 Apply Weight to Matrix

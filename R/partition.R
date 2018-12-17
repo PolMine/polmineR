@@ -557,3 +557,76 @@ setMethod("partition", "context", function(.Object, node = TRUE){
   y
 })
 
+
+################ EXPERIMENTAL ZONE
+
+#' @details The `$`-method will assign the argument \code{name} to the slot
+#'   \code{key} and return the modified object.
+#' @examples
+#' m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+#' m2 <- m$speaker
+#' m2@@key
+#' @rdname partition_class
+#' @exportMethod $
+setMethod("$", "partition", function(x, name){
+  x@key <- name
+  x
+})
+
+
+#' @examples
+#' m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+#' m$date == "2009-10-28"
+#' @rdname partition_class
+#' @exportMethod ==
+setMethod("==", "partition", function(e1, e2){
+  partition(e1, def = setNames(object = list(e2), nm = e1@key))
+})
+
+
+
+
+#' @examples
+#' s <- partition("GERMAPARLMINI", interjection = "speech")
+#' s$party != "NA"
+#' @rdname partition_class
+#' @exportMethod !=
+setMethod("!=", "partition", function(e1, e2){
+  available <- s_attributes(e1, e1@key)
+  keep <- available[!available %in% e2]
+  partition(e1, def = setNames(object = list(keep), nm = e1@key))
+})
+
+
+
+#' @examples
+#' s <- partition("GERMAPARLMINI", interjection = "speech")
+#' s$date %in% c("2009-10-27", "2009-10-28")
+#' @rdname partition_class
+#' @exportMethod %in%
+setMethod("%in%", "partition", function(x, table){
+  partition(x, def = setNames(object = list(table), nm = x@key))
+})
+
+
+#' @examples
+#' m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+#' y <- zoom(m, date == "2009-10-28")
+#' 
+#' speeches <- partition("GERMAPARLMINI", interjection = "speech")
+#' m <- zoom(speeches, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
+#' 
+#' not_unknown <- zoom(speeches, party != c("NA", "FDP"))
+#' s_attributes(not_unknown, "party")
+#' @rdname partition_class
+#' @exportMethod subset
+setMethod("zoom", "partition", function(x, ...){
+  cmds <- strsplit(deparse(substitute(...)), split = "\\s*&\\s*")[[1]]
+  x_s_attributes <- s_attributes(x)
+  for (cmd in cmds){
+    for (s_attr in x_s_attributes) cmd <- gsub(sprintf("(%s)", s_attr), "x$\\1", cmd)
+    x <- eval(parse(text = cmd))
+  }
+  x
+})
+

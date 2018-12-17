@@ -168,7 +168,7 @@ decode(merkel_cooc)
 f <- features(merkel_cooc, protocol_cooc)
 f <- subset(f, a_pos \%in\% c("NN", "ADJA"))
 f <- subset(f, b_pos \%in\% c("NN", "ADJA"))
-f <- f[1:50]
+f <- subset(f, c(rep(TRUE, times = 50), rep(FALSE, times = nrow(f) - 50)))
 
 merkel_min <- subset(merkel_cooc, by = f)
 

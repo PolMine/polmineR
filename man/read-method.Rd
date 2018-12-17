@@ -94,6 +94,13 @@ read(
   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
   meta = c("speaker", "date")
 )
+
+\dontrun{
+pb <- as.speeches("GERMAPARLMINI", s_attribute_date = "date", s_attribute_name = "speaker")
+pb <- pb[[ data.table::as.data.table(summary(pb))[size >= 500][["name"]] ]]
+pb <- pb[[ 1:10 ]]
+read(pb)
+}
 }
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.

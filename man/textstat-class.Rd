@@ -30,6 +30,7 @@
 \alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
 \alias{as.data.table.textstat}
+\alias{show,textstat-method}
 \alias{p_attributes,textstat-method}
 \alias{knit_print,textstat-method}
 \alias{format,textstat-method}
@@ -53,6 +54,8 @@ as.bundle(object, ...)
 \S4method{subset}{textstat}(x, ...)
 
 \method{as.data.table}{textstat}(x)
+
+\S4method{show}{textstat}(object)
 
 \S4method{p_attributes}{textstat}(.Object)
 

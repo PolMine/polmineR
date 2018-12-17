@@ -6,10 +6,10 @@ test_that(
   "cooccurrences-method for corpus",
   {
     y <- cooccurrences("REUTERS", query = "oil", pAttribute = "word")
-    expect_equal(y[!is.na(y@stat[["ll"]])][["word"]][1:4], c("prices", "crude", "industry", "recent"))
+    expect_equal(subset(y, !is.na(ll))[["word"]][1:4], c("prices", "crude", "industry", "recent"))
     
     y <- cooccurrences("REUTERS", query = '"barrel.*"', pAttribute = "word")
-    expect_equal(y[!is.na(y@stat[["ll"]])][["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
+    expect_equal(subset(y, !is.na(ll))[["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
     
     expect_equal(
       cooccurrences("REUTERS", query = "asdfasdf", pAttribute = "word"),
@@ -29,10 +29,10 @@ test_that(
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     y <- cooccurrences(P, query = "oil", p_attribute = "word")
-    expect_equal(y[!is.na(y@stat[["ll"]])]@stat[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
+    expect_equal(subset(y, !is.na(ll))[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
     
     y <- cooccurrences(P, query = '"barrel.*"', cqp = TRUE, p_attribute = "word")
-    expect_equal(y[is.na(y@stat[["ll"]])]@stat[["word"]][1:5], c("10", "17.52", "18", "1986","3.5"))
+    expect_equal(subset(y, is.na(ll))[["word"]][1:5], c("10", "17.52", "18", "1986","3.5"))
     
     expect_equal(
       cooccurrences(P, query = "asdfasdf", pAttribute = "word"),

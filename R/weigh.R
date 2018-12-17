@@ -5,7 +5,7 @@ NULL
 #' 
 #' @param .Object A \code{matrix}, or a \code{count}-object.
 #' @param method The kind of weight to apply.
-#' @param progess Logical, whether to show a progress bar.
+#' @param progress Logical, whether to show a progress bar.
 #' @param ... further parameters
 #' @exportMethod weigh
 #' @docType methods
