@@ -4,14 +4,26 @@ NULL
 #' @rdname pmi
 setGeneric("pmi", function(.Object) standardGeneric("pmi") )
 
-#' Calculate Pointwise Mutual Information.
+#' Calculate Pointwise Mutual Information (PMI).
+#' 
+#' Pointwise mutual information (PMI) is calculated as follows, see
+#' Manning/Schuetze (1999) for an explanation:
+#' \deqn{I(x,y) = log\frac{p(x,y)}{p(x)p(y)}}{I(x,y) = log(p(x,y)/(p(x)p(y)))}
+#' Note that the computation uses log base 2, not the natural logarithm you find
+#' in examples (e.g. \url{https://en.wikipedia.org/wiki/Pointwise_mutual_information}).
 #' @seealso See \code{\link{ll}}, \code{\link{chisquare}} and \code{\link{t_test}}.
 #' @param .Object An object.
 #' @rdname pmi
+#' @references Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
+#' Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
+#' @examples
+#' y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
+#' N <- size(y)[["partition"]]
+#' I <- log2((y[["count_coi"]]/N) / ((count(y) / N) * (y[["count_partition"]] / N)))
 setMethod("pmi", "context", function(.Object){
-  .Object@stat[, "pmi" := log2((.Object@stat[["count_window"]]/.Object@size_partition)/((.Object@count/.Object@size_partition)*(.Object@stat[["count_partition"]]/.Object@size_partition)))]
-  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  .Object@stat[, "pmi" := log2((.Object@stat[["count_coi"]]/.Object@size_partition)/((.Object@count/.Object@size_partition)*(.Object@stat[["count_partition"]]/.Object@size_partition)))]
   setorderv(.Object@stat, cols = "pmi")
+  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "pmi")
   invisible(.Object)
 })
@@ -295,6 +307,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' @rdname chisquare-method
 #' @keywords textstatistics
 #' @examples
+#' use("polmineR")
 #' library(data.table)
 #' m <- partition(
 #'   "GERMAPARLMINI", speaker = "Merkel", interjection = "speech",

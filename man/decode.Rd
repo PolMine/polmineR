@@ -2,7 +2,6 @@
 % Please edit documentation in R/decode.R
 \name{decode}
 \alias{decode}
-\alias{decode}
 \title{Decode structural attribute, partition or corpus.}
 \usage{
 decode(.Object, s_attribute = NULL, verbose = TRUE, ...)

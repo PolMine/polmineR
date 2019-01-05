@@ -15,8 +15,8 @@ ngrams(.Object, ...)
 
 \S4method{ngrams}{character}(.Object, ...)
 
-\S4method{ngrams}{CorpusOrSubcorpus}(.Object, n = 2, p_attribute = "word",
-  char = NULL, progress = FALSE, ...)
+\S4method{ngrams}{CorpusOrSubcorpus}(.Object, n = 2,
+  p_attribute = "word", char = NULL, progress = FALSE, ...)
 
 \S4method{ngrams}{partition_bundle}(.Object, n = 2, char = NULL,
   p_attribute = "word", mc = FALSE, progress = FALSE, ...)

@@ -8,7 +8,6 @@
 \alias{show,kwic-method}
 \alias{knit_print,kwic-method}
 \alias{as.character,kwic-method}
-\alias{[,kwic,ANY,ANY,ANY-method}
 \alias{subset,kwic-method}
 \alias{as.data.frame,kwic-method}
 \alias{length,kwic-method}
@@ -19,7 +18,8 @@
 \usage{
 \S4method{show}{kwic}(object)
 
-\S4method{knit_print}{kwic}(x, pagelength = getOption("polmineR.pagelength"),
+\S4method{knit_print}{kwic}(x,
+  pagelength = getOption("polmineR.pagelength"),
   options = knitr::opts_chunk, ...)
 
 \S4method{as.character}{kwic}(x, fmt = "<i>\%s</i>")
@@ -34,7 +34,8 @@
 
 \S4method{sample}{kwic}(x, size)
 
-\S4method{enrich}{kwic}(.Object, s_attributes = NULL, table = FALSE, ...)
+\S4method{enrich}{kwic}(.Object, s_attributes = NULL, table = FALSE,
+  ...)
 
 \S4method{view}{kwic}(.Object)
 }

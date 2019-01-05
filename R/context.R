@@ -135,6 +135,7 @@ setMethod("context", "partition", function(
   ctxt@size_match <- as.integer(sum(hits[,2] - hits[,1]) + nrow(hits))
   ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
   ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
+  ctxt@size_partition <- size(.Object)
   ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
   
   # check that windows do not transgress s-attribute

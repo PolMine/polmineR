@@ -12,19 +12,20 @@
 hits(.Object, ...)
 
 \S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
-  s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE,
-  mc = FALSE, verbose = TRUE, progress = TRUE, ...)
+  s_attribute = NULL, p_attribute = "word", size = FALSE,
+  freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
 
-\S4method{hits}{partition}(.Object, query, cqp = FALSE, s_attribute = NULL,
-  p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
+\S4method{hits}{partition}(.Object, query, cqp = FALSE,
+  s_attribute = NULL, p_attribute = "word", size = FALSE,
+  freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...)
+
+\S4method{hits}{partition_bundle}(.Object, query, cqp = FALSE,
+  check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
+  size = TRUE, freq = FALSE, mc = getOption("polmineR.mc"),
   progress = FALSE, verbose = TRUE, ...)
 
-\S4method{hits}{partition_bundle}(.Object, query, cqp = FALSE, check = TRUE,
-  p_attribute = getOption("polmineR.p_attribute"), size = TRUE,
-  freq = FALSE, mc = getOption("polmineR.mc"), progress = FALSE,
-  verbose = TRUE, ...)
-
-\S4method{hits}{context}(.Object, s_attribute = NULL, verbose = TRUE, ...)
+\S4method{hits}{context}(.Object, s_attribute = NULL, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{.Object}{a character, \code{partition} or \code{partition_bundle} object}

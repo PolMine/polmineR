@@ -63,7 +63,7 @@ The most important purpose is term extraction." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -139,7 +139,11 @@ The most important purpose is term extraction.</p>
 
 <span class='co'># S4 method for ngrams</span>
 <span class='fu'>features</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"chisquare"</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for Cooccurrences</span>
+<span class='fu'>features</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"ll"</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -192,7 +196,7 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='no'>kauder</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(
   <span class='st'>"GERMAPARLMINI"</span>,
   <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Volker Kauder"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>,
@@ -215,8 +219,8 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
 #&gt; 5:  108.1352              5
 #&gt; 6:  108.1352              6</div><div class='input'>
 <span class='co'># a different way is to compare count objects</span>
-<span class='no'>kauder_count</span> <span class='kw'>&lt;-</span> <span class='fu'>as</span>(<span class='no'>kauder</span>, <span class='st'>"count"</span>)
-<span class='no'>all_count</span> <span class='kw'>&lt;-</span> <span class='fu'>as</span>(<span class='no'>all</span>, <span class='st'>"count"</span>)
+<span class='no'>kauder_count</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>kauder</span>, <span class='st'>"count"</span>)
+<span class='no'>all_count</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>all</span>, <span class='st'>"count"</span>)
 <span class='no'>terms_kauder</span> <span class='kw'>&lt;-</span> <span class='fu'>features</span>(<span class='no'>kauder_count</span>, <span class='no'>all_count</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... combining frequency lists</span></div><div class='output co'>#&gt; <span class='message'>... statistical test:  chisquare</span></div><div class='input'><span class='no'>top100</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>terms_kauder</span>, <span class='no'>rank_chisquare</span> <span class='kw'>&lt;=</span> <span class='fl'>100</span>)
 <span class='fu'>head</span>(<span class='no'>top100</span>)</div><div class='output co'>#&gt;                word word_id.x count_coi word_id.y count_ref    exp_coi
 #&gt; 1:     Zusammenhalt      2538        12      2538        32 0.79902610

@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -121,6 +121,12 @@
     <pre class="usage"><span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
+<span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for character</span>
+<span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for CorpusOrSubcorpus</span>
 <span class='fu'>ngrams</span>(<span class='no'>.Object</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
   <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
@@ -163,14 +169,14 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-27"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='co'># a more complex scenario: get most frequent ADJA/NN-combinations</span>
 <span class='no'>ngramObject</span> <span class='kw'>&lt;-</span> <span class='fu'>ngrams</span>(<span class='no'>P</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>), <span class='kw'>char</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 <span class='no'>ngramObject2</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(
  <span class='no'>ngramObject</span>,
  <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"1_pos"</span>]] <span class='kw'>==</span> <span class='st'>"ADJA"</span>  <span class='kw'>&amp;</span> <span class='no'>ngramObject</span><span class='kw'>[[</span><span class='st'>"2_pos"</span>]] <span class='kw'>==</span> <span class='st'>"NN"</span>
- )</div><div class='output co'>#&gt; <span class='error'>Error in eval(e, x, parent.frame()): Objekt 'ngramObject' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject2</span>@<span class='kw'>stat</span>[, <span class='st'>"1_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>][, <span class='st'>"2_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject3</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='no'>ngramObject2</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in sort(ngramObject2, by = "count"): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>ngramObject3</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(ngramObject3): Objekt 'ngramObject3' nicht gefunden</span></div></pre>
+ )</div><div class='output co'>#&gt; <span class='error'>Error in eval(e, x, parent.frame()): Objekt 'ngramObject' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject2</span>@<span class='kw'>stat</span>[, <span class='st'>"1_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>][, <span class='st'>"2_pos"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>]</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='no'>ngramObject3</span> <span class='kw'>&lt;-</span> <span class='fu'>sort</span>(<span class='no'>ngramObject2</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in sort(ngramObject2, by = "count"): Objekt 'ngramObject2' nicht gefunden</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>ngramObject3</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(ngramObject3): Objekt 'ngramObject3' nicht gefunden</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

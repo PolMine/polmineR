@@ -48,6 +48,7 @@ memory. The behaviour resulting from in-place changes may be uncommon, see
 examples.
 }
 \examples{
+\dontrun{
 # In a first scenario, we get all cooccurrences for the REUTERS corpus,
 # excluding stopwords
 
@@ -175,6 +176,8 @@ merkel_min <- subset(merkel_cooc, by = f)
 if (requireNamespace("igraph", quietly = TRUE)){
   g <- as_igraph(merkel_min, as.undirected = TRUE)
   plot(g)
+}
+
 }
 }
 \seealso{

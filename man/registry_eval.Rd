@@ -21,9 +21,11 @@ registry_get_info(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
 
 registry_get_encoding(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
 
-registry_get_p_attributes(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
+registry_get_p_attributes(corpus,
+  registry = Sys.getenv("CORPUS_REGISTRY"))
 
-registry_get_s_attributes(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
+registry_get_s_attributes(corpus,
+  registry = Sys.getenv("CORPUS_REGISTRY"))
 
 registry_get_properties(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
 }

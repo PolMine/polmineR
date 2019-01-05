@@ -10,11 +10,11 @@
 \usage{
 store(.Object, ...)
 
-\S4method{store}{textstat}(.Object, filename = tempfile(fileext = ".xlsx"),
-  rows = 1L:nrow(.Object))
+\S4method{store}{textstat}(.Object, filename = tempfile(fileext =
+  ".xlsx"), rows = 1L:nrow(.Object))
 
-\S4method{store}{data.frame}(.Object, filename = tempfile(fileext = ".xlsx"),
-  rows = 1L:nrow(.Object))
+\S4method{store}{data.frame}(.Object, filename = tempfile(fileext =
+  ".xlsx"), rows = 1L:nrow(.Object))
 
 \S4method{store}{kwic}(.Object, filename = tempfile(fileext = ".xlsx"),
   rows = 1L:nrow(.Object))

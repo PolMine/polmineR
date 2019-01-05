@@ -49,6 +49,7 @@ counts in the corpus of interest. Usually, results need to be filtered
 accordingly (see examples).
 }
 \examples{
+use("polmineR")
 library(data.table)
 m <- partition(
   "GERMAPARLMINI", speaker = "Merkel", interjection = "speech",

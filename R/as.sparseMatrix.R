@@ -35,10 +35,12 @@ setMethod("as.sparseMatrix", "simple_triplet_matrix", function(x, ...){
 #' @exportMethod as.sparseMatrix
 #' @rdname all-cooccurrences-class
 #' @examples 
+#' \dontrun{
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 #' decode(X)
 #' sm <- as.sparseMatrix(X)
 #' stm <- as.simple_triplet_matrix(X)
+#' }
 setMethod("as.sparseMatrix", "Cooccurrences", function(x, col = "ab_count", ...){
   
   decoded_tokens <- reindex(x)

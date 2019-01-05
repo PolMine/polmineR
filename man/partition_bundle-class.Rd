@@ -18,11 +18,6 @@
 \alias{as.partition_bundle,list-method}
 \alias{barplot,partition_bundle-method}
 \alias{show,partition_bundle-method}
-\alias{summary,partition_bundle-method}
-\alias{merge,partition_bundle-method}
-\alias{[,partition_bundle,ANY,ANY,ANY-method}
-\alias{barplot,partition_bundle-method}
-\alias{as.partition_bundle,list-method}
 \alias{partition_bundle,environment-method}
 \alias{enrich,partition_bundle-method}
 \alias{s_attributes,partition_bundle-method}
@@ -43,8 +38,8 @@
 
 \S4method{partition_bundle}{environment}(.Object)
 
-\S4method{enrich}{partition_bundle}(.Object, mc = FALSE, progress = TRUE,
-  verbose = FALSE, ...)
+\S4method{enrich}{partition_bundle}(.Object, mc = FALSE,
+  progress = TRUE, verbose = FALSE, ...)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, ...)
 
@@ -81,9 +76,6 @@ a \code{partition_bundle} object
 }
 \description{
 Class and methods to manage bundles of partitions.
-
-\code{flatten} may be useful if you have a list of \code{partition_bundle} objects. This function will flatten the data
-structure and return a \code{partition_bundle} object.
 }
 \details{
 The \code{merge}-method aggregates several partitions into one partition. The

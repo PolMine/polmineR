@@ -18,11 +18,11 @@ get_token_stream(.Object, ...)
 
 \S4method{get_token_stream}{matrix}(.Object, ...)
 
-\S4method{get_token_stream}{character}(.Object, left = NULL, right = NULL,
-  ...)
+\S4method{get_token_stream}{character}(.Object, left = NULL,
+  right = NULL, ...)
 
-\S4method{get_token_stream}{partition}(.Object, p_attribute, collapse = NULL,
-  cpos = FALSE, ...)
+\S4method{get_token_stream}{partition}(.Object, p_attribute,
+  collapse = NULL, cpos = FALSE, ...)
 
 \S4method{get_token_stream}{regions}(.Object, p_attribute = "word", ...)
 }

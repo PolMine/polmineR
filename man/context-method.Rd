@@ -3,7 +3,6 @@
 \docType{methods}
 \name{context}
 \alias{context}
-\alias{context}
 \alias{as.matrix,context_bundle-method}
 \alias{context,partition-method}
 \alias{context,character-method}
@@ -13,17 +12,21 @@
 \usage{
 context(.Object, ...)
 
-\S4method{context}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+\S4method{context}{partition}(.Object, query, cqp = is.cqp,
+  check = TRUE, left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = TRUE, ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), stoplist = NULL,
+  positivelist = NULL, regex = FALSE, count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...)
 
 \S4method{context}{partition_bundle}(.Object, query, p_attribute,
   verbose = TRUE, ...)

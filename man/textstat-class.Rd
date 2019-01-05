@@ -24,13 +24,10 @@
 \alias{name,textstat-method}
 \alias{name,character-method}
 \alias{name<-,textstat,character-method}
-\alias{round,textstat-method}
-\alias{sort,textstat-method}
 \alias{as.bundle}
 \alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
 \alias{as.data.table.textstat}
-\alias{show,textstat-method}
 \alias{p_attributes,textstat-method}
 \alias{knit_print,textstat-method}
 \alias{format,textstat-method}
@@ -71,7 +68,7 @@ as.bundle(object, ...)
 \item{value}{A \code{character} vector to assign as name to slot \code{name}
 of a \code{textstat} class object.}
 
-\item{digits}{no of digits}
+\item{digits}{Number of digits.}
 
 \item{by}{Column that will serve as the key for sorting.}
 

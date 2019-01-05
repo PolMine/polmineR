@@ -63,7 +63,7 @@ or the values of s-attributes in a corpus/partition with the s_attributes-method
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -173,7 +173,7 @@ values of the s-attributes available in the corpus/partition are returned.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>)</div><div class='output co'>#&gt; [1] "interjection" "date"         "party"        "speaker"     </div><div class='input'><span class='fu'>s_attributes</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"date"</span>) <span class='co'># dates of plenary meetings</span></div><div class='output co'>#&gt; [1] "2009-10-27" "2009-10-28" "2009-11-10" "2009-11-11" "2009-11-12"</div><div class='input'>
 <span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; [1] "interjection" "date"         "party"        "speaker"     </div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>P</span>, <span class='st'>"speaker"</span>) <span class='co'># get names of speakers</span></div><div class='output co'>#&gt;  [1] "Norbert Lammert"             "Angela Dorothea Merkel"     
 #&gt;  [3] "Frank-Walter Steinmeier"     "Birgit Homburger"           

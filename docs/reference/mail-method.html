@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mail result. — mail • polmineR</title>
+<title>Send the result of an analysis by Email. — mail • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Mail result. — mail" />
+<meta property="og:title" content="Send the result of an analysis by Email. — mail" />
 
-<meta property="og:description" content="Send out a mail with the statistics of an object attached as an xlsx-file." />
+<meta property="og:description" content="Send out a mail with the statistical analysis included in an object attached
+as an xlsx-file." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +62,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -107,14 +108,15 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mail result.</h1>
+    <h1>Send the result of an analysis by Email.</h1>
     
     <div class="hidden name"><code>mail-method.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Send out a mail with the statistics of an object attached as an xlsx-file.</p>
+    <p>Send out a mail with the statistical analysis included in an object attached
+as an xlsx-file.</p>
     
     </div>
 
@@ -146,11 +148,12 @@
     </tr>
     <tr>
       <th>to</th>
-      <td><p>The recipient of the mail message.</p></td>
+      <td><p>An email-address, the recipient of the mail message.</p></td>
     </tr>
     <tr>
       <th>rows</th>
-      <td><p>The number of rows of the table (if NULL, the whole table will be sent).</p></td>
+      <td><p>The number of rows of the table included in the Excel file to be
+sent (if <code>NULL</code>, the whole table will be sent).</p></td>
     </tr>
     <tr>
       <th>filename</th>
@@ -158,13 +161,50 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>The method translates the result table in the object provided into an Excel sheet
+and attaches the sheet to an Email which will be sent to the Email-address provided
+by the argument <code>to</code>. A pre-requirement is that the global options <code>polmineR.smtp_port</code> and
+<code>polmineR.smtp_server</code> are validly defined. See examples.</p>
+<p>Please note: At this stage, authentication is not yet supported.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Get all (global) options for the polmineR package</span>
+<span class='fu'>grep</span>(<span class='st'>"polmineR"</span>, <span class='fu'>names</span>(<span class='fu'>options</span>()), <span class='kw'>value</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;  [1] "polmineR.browse"          "polmineR.cores"          
+#&gt;  [3] "polmineR.corpus_registry" "polmineR.cutoff"         
+#&gt;  [5] "polmineR.email"           "polmineR.left"           
+#&gt;  [7] "polmineR.lineview"        "polmineR.mc"             
+#&gt;  [9] "polmineR.meta "           "polmineR.p_attribute"    
+#&gt; [11] "polmineR.pagelength"      "polmineR.right"          
+#&gt; [13] "polmineR.smtp_port"       "polmineR.smtp_server"    
+#&gt; [15] "polmineR.specialChars"    "polmineR.templates"      </div><div class='input'>
+<span class='co'># Get options that need to be set</span>
+<span class='fu'>getOption</span>(<span class='st'>"polmineR.email"</span>)</div><div class='output co'>#&gt; [1] ""</div><div class='input'><span class='fu'>getOption</span>(<span class='st'>"polmineR.smtp_server"</span>)</div><div class='output co'>#&gt; [1] ""</div><div class='input'><span class='fu'>getOption</span>(<span class='st'>"polmineR.smtp_port"</span>)</div><div class='output co'>#&gt; [1] ""</div><div class='input'>
+<span class='co'># Sample options (let us imagine Donald Duck had a mail-account)</span>
+<span class='fu'>options</span>(<span class='st'>"polmineR.email"</span> <span class='kw'>=</span> <span class='st'>"donald.duck@duckmail.org"</span>)
+<span class='fu'>options</span>(<span class='st'>"polmineR.smtp_port"</span> <span class='kw'>=</span> <span class='st'>"587"</span>)
+<span class='fu'>options</span>(<span class='st'>"polmineR.smtp_server"</span> <span class='kw'>=</span> <span class='st'>"smtp.duckmail.org"</span>)
+
+<span class='co'># This is how you send out results when options are set</span>
+<span class='co'># (Note: Mail servers that require authentication are not yet supported.)</span></div><span class='co'># NOT RUN {</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='fu'>mail</span>(<span class='no'>y</span>)
+
+<span class='no'>k</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='fu'>mail</span>(<span class='no'>k</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

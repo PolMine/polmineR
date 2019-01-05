@@ -14,11 +14,11 @@ partition(.Object, ...)
 
 \S4method{partition}{character}(.Object, def = NULL, name = "",
   encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE,
-  ...)
+  decode = TRUE, type = get_type(.Object), mc = FALSE,
+  verbose = TRUE, ...)
 
-\S4method{partition}{environment}(.Object, slots = c("name", "corpus", "size",
-  "p_attribute"))
+\S4method{partition}{environment}(.Object, slots = c("name", "corpus",
+  "size", "p_attribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, p_attribute = NULL, decode = TRUE, xml = NULL,

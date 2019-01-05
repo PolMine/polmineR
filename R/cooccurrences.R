@@ -38,28 +38,31 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 
 #' Get cooccurrence statistics.
 #' 
-#' @param .Object a partition object, or a character vector with a CWB corpus
-#' @param query query, may by a character vector to match a token, or a CQP query
-#' @param cqp defaults to \code{is.cqp}-function, or provide TRUE/FALSE, relevant only if query is not NULL
-#' @param cpos integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used
-#' @param p_attribute the p-attribute of the tokens/the query
-#' @param s_attribute if provided, it will be checked that cpos do not extend beyond
-#' the region defined by the s-attribute 
+#' @param .Object A \code{partition} object, or a \code{character} vector with a CWB corpus.
+#' @param query A query, either a character vector to match a token, or a CQP query.
+#' @param cqp Defaults to \code{is.cqp}-function, or provide
+#'   \code{TRUE}/\code{FALSE}; relevant only if query is not \code{NULL}.
+#' @param cpos integer vector with corpus positions, defaults to NULL - then the
+#'   corpus positions for the whole corpus will be used
+#' @param p_attribute The p-attribute of the tokens/the query.
+#' @param s_attribute If provided, it will be checked that corpus positions of
+#'   windows do not extend beyond the region defined by the s-attribute.
 #' @param left Number of tokens to the left of the query match.
 #' @param right Number of tokens to the right of the query match.
 #' @param stoplist Exclude a query hit from analysis if stopword(s) is/are in
-#'   context (relevant only if query is not NULL).
-#' @param positivelist character vector or numeric vector: include a query hit
-#'   only if token in positivelist is present. If positivelist is a character
-#'   vector, it is assumed to provide regex expressions (incredibly long if the
-#'   list is long) (relevant only if query is nut NULL)
-#' @param regex logical, whether stoplist/positivelist are dealt with as regular expressions
-#' @param method statistical test to use (defaults to "ll")
-#' @param verbose logical, whether to be verbose
-#' @param progress logical, whether to be verbose
+#'   context (relevant only if query is not \code{NULL}).
+#' @param positivelist Character vector or numeric vector: include a query hit
+#'   only if token in \code{positivelist} is present. If \code{positivelist} is
+#'   a character vector, it is assumed to provide regex expressions (incredibly
+#'   long if the list is long) (relevant only if query is nut NULL)
+#' @param regex A \code{logical} value, whether stoplist/positivelist are
+#'   interpreted as regular expressions.
+#' @param method The statistical test(s) to use (defaults to "ll").
+#' @param verbose A \code{logical} value, whether to be verbose.
+#' @param progress A \code{logical} value, whether to output progress bar.
 #' @param keep list with tokens to keep
 #' @param mc whether to use multicore
-#' @param ... further parameters that will be passed into bigmatrix (applies only of big=TRUE)
+#' @param ... Further parameters that will be passed into bigmatrix (applies only of big = TRUE).
 #' @return a cooccurrences-class object
 #' @seealso See the documentation for the \code{\link{ll}}-method for an
 #'   explanation of the computation of the log-likelihood statistic.
@@ -69,16 +72,32 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @export cooccurrences
 #' @name cooccurrences
 #' @rdname cooccurrences
-#' @references 
-#' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).
-#' 
-#' Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
+#' @references Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).
+#' @references Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
 #' use("polmineR")
 #' merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 #' merkel <- enrich(merkel, p_attribute = "word")
 #' cooc <- cooccurrences(merkel, query = "Deutschland")
+#' 
+#' # use subset-method to filter results
+#' a <- cooccurrences("REUTERS", query = "oil")
+#' b <- subset(a, !is.na(ll))
+#' c <- subset(b, !word %in% tm::stopwords("en"))
+#' d <- subset(c, count_coi >= 5)
+#' e <- subset(c, ll >= 10.83)
+#' format(e)
+#' 
+#' # using pipe operator may be convenient
+#' if (require(magrittr)){
+#' cooccurrences("REUTERS", query = "oil") %>%
+#'   subset(!is.na(ll)) %>%
+#'   subset(!word %in% tm::stopwords("en")) %>%
+#'   subset(count_coi >= 5) %>%
+#'   subset(ll >= 10.83) %>%
+#'   format()
+#' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences
@@ -206,7 +225,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     partition = new("partition", stat = data.table(), size = 0L),
     count = 0L
   )
-  slots_to_get <- slotNames(retval)[-grep("partition", slotNames(retval))]
+  slots_to_get <- slotNames(retval)[-grep("^partition$", slotNames(retval))]
   for (x in slots_to_get) slot(retval, x) <- slot(.Object, x)
   retval
 })
@@ -375,6 +394,7 @@ setMethod("Cooccurrences", "character", function(
 #'   \code{\link{cooccurrences}}-method (starting with a lower case c) to get
 #'   the cooccurrences for the match for a query, which may also be a CQP query.
 #' @examples 
+#' \dontrun{
 #' # In a first scenario, we get all cooccurrences for the REUTERS corpus,
 #' # excluding stopwords
 #' 
@@ -502,6 +522,8 @@ setMethod("Cooccurrences", "character", function(
 #' if (requireNamespace("igraph", quietly = TRUE)){
 #'   g <- as_igraph(merkel_min, as.undirected = TRUE)
 #'   plot(g)
+#' }
+#' 
 #' }
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
@@ -670,7 +692,7 @@ setMethod("Cooccurrences", "partition", function(
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
 #' @examples
-#' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+#' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 #' m <- as.simple_triplet_matrix(X)
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   

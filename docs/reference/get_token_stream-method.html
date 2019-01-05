@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
 <span class='co'># S4 method for numeric</span>
 <span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attribute</span>,
   <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>beautify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for matrix</span>
 <span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
@@ -144,47 +144,51 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>an object of class <code>matrix</code> or <code>partition</code></p></td>
+      <td><p>An object of class <code>matrix</code> or <code>partition</code></p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further arguments</p></td>
+      <td><p>Further arguments.</p></td>
     </tr>
     <tr>
       <th>corpus</th>
-      <td><p>the CWB corpus</p></td>
+      <td><p>The CWB corpus.</p></td>
     </tr>
     <tr>
       <th>p_attribute</th>
-      <td><p>the p-attribute to decode</p></td>
+      <td><p>The p-attribute to decode.</p></td>
     </tr>
     <tr>
       <th>encoding</th>
-      <td><p>encoding to use</p></td>
+      <td><p>Encoding to use.</p></td>
     </tr>
     <tr>
       <th>collapse</th>
-      <td><p>character string length 1</p></td>
+      <td><p>Length-one character string.</p></td>
     </tr>
     <tr>
       <th>beautify</th>
-      <td><p>logical, whether to adjust whitespace before and after interpunctation</p></td>
+      <td><p>Logical, whether to adjust whitespace before and after interpunctation.</p></td>
     </tr>
     <tr>
       <th>cpos</th>
-      <td><p>logical, whether to return cpos as names of the tokens</p></td>
+      <td><p>Logical, whether to return cpos as names of the tokens.</p></td>
     </tr>
     <tr>
       <th>cutoff</th>
-      <td><p>maximum number of tokens to be reconstructed</p></td>
+      <td><p>Maximum number of tokens to be reconstructed.</p></td>
+    </tr>
+    <tr>
+      <th>decode</th>
+      <td><p>Logical, whether to decode token ids to character strings.</p></td>
     </tr>
     <tr>
       <th>left</th>
-      <td><p>left corpus position</p></td>
+      <td><p>Left corpus position.</p></td>
     </tr>
     <tr>
       <th>right</th>
-      <td><p>right corpus position</p></td>
+      <td><p>Right corpus position.</p></td>
     </tr>
     </table>
     

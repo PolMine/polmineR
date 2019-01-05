@@ -62,7 +62,7 @@ vector into CQP queries." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -122,6 +122,8 @@ vector into CQP queries.</p>
 
     <pre class="usage"><span class='fu'>is.cqp</span>(<span class='no'>query</span>)
 
+<span class='fu'>check_cqp_query</span>(<span class='no'>query</span>)
+
 <span class='fu'>as.cqp</span>(<span class='no'>query</span>, <span class='kw'>normalise.case</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -129,28 +131,34 @@ vector into CQP queries.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>query</th>
-      <td><p>character vector with at least one query</p></td>
+      <td><p>A <code>character</code> vector with at least one CQP query.</p></td>
     </tr>
     <tr>
       <th>normalise.case</th>
-      <td><p>logical</p></td>
+      <td><p>A <code>logical</code> value, if <code>TRUE</code>, a flag will be
+added to the query/queries to omit matching case.</p></td>
     </tr>
     <tr>
       <th>collapse</th>
-      <td><p>logical, whether to collapse the queries into one</p></td>
+      <td><p>A <code>logical</code> value, whether to collapse the queries into one.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>is.cqp</code> returns a logical value, <code>as.cqp</code> a character vector</p>
+    <p><code>is.cqp</code> returns a logical value, <code>as.cqp</code> a character
+  vector, <code>check_cqp_query</code> a logical value that is <code>TRUE</code> if all
+  queries are valid, or <code>FALSE</code> if not.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The <code>is.cqp</code> function guesses whether <code>query</code> is a CQP query 
-and returns the respective logical value (TRUE/FALSE).</p>
+and returns the respective logical value (<code>TRUE</code>/<code>FALSE</code>).</p>
 <p>The <code>as.cqp</code> function takes a character vector as input and converts it
 to a CQP query by putting the individual strings in quotation marks.</p>
+<p>The <code>check_cqp_query</code>-function will check that opening
+  quotation marks are matched by closing quotation marks, to prevent crashes
+  of CQP and the R session.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -162,7 +170,12 @@ to a CQP query by putting the individual strings in quotation marks.</p>
 <span class='fu'>as.cqp</span>(<span class='st'>"migration"</span>)</div><div class='output co'>#&gt;       migration 
 #&gt; "\"migration\"" </div><div class='input'><span class='fu'>as.cqp</span>(<span class='fu'>c</span>(<span class='st'>"migration"</span>, <span class='st'>"diversity"</span>))</div><div class='output co'>#&gt;       migration       diversity 
 #&gt; "\"migration\"" "\"diversity\"" </div><div class='input'><span class='fu'>as.cqp</span>(<span class='fu'>c</span>(<span class='st'>"migration"</span>, <span class='st'>"diversity"</span>), <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "(\"migration\"|\"diversity\")"</div><div class='input'><span class='fu'>as.cqp</span>(<span class='st'>"migration"</span>, <span class='kw'>normalise.case</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;          migration 
-#&gt; "\"migration\" %c" </div></pre>
+#&gt; "\"migration\" %c" </div><div class='input'>
+<span class='fu'>check_cqp_query</span>(<span class='st'>'"Integration.*"'</span>) <span class='co'># returns TRUE, the query is ok</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>check_cqp_query</span>(<span class='st'>'"Integration.*'</span>) <span class='co'># returns FALSE - closing quotation mark is missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: An issue occurred when checking query: "Integration.*</span>
+#&gt; <span class='warning'>Number of quotation marks is not divisable by 2: Opening quotation marks are not matched by closing quotation marks, or vice versa. Aborting to avoid a potential crash of CQP and the entire R session. Please check query.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'>check_cqp_query</span>(<span class='st'>"'Integration.*"</span>) <span class='co'># returns FALSE - closing quotation mark is missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: An issue occurred when checking query: 'Integration.*</span>
+#&gt; <span class='warning'>Number of quotation marks is not divisable by 2: Opening quotation marks are not matched by closing quotation marks, or vice versa. Aborting to avoid a potential crash of CQP and the entire R session. Please check query.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'>check_cqp_query</span>(<span class='fu'>c</span>(<span class='st'>"'Integration.*"</span>, <span class='st'>'"Integration.*'</span>)) <span class='co'># returns FALSE - closing quotation mark is missing</span></div><div class='output co'>#&gt; <span class='warning'>Warning: An issue occurred when checking query: 'Integration.*</span>
+#&gt; <span class='warning'>Number of quotation marks is not divisable by 2: Opening quotation marks are not matched by closing quotation marks, or vice versa. Aborting to avoid a potential crash of CQP and the entire R session. Please check query.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: An issue occurred when checking query: "Integration.*</span>
+#&gt; <span class='warning'>Number of quotation marks is not divisable by 2: Opening quotation marks are not matched by closing quotation marks, or vice versa. Aborting to avoid a potential crash of CQP and the entire R session. Please check query.</span></div><div class='output co'>#&gt; [1] FALSE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

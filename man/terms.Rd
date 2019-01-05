@@ -9,8 +9,8 @@
 \usage{
 \S4method{terms}{partition}(x, p_attribute, regex = NULL, ...)
 
-\S4method{terms}{character}(x, p_attribute, regex = NULL, robust = FALSE,
-  ...)
+\S4method{terms}{character}(x, p_attribute, regex = NULL,
+  robust = FALSE, ...)
 }
 \arguments{
 \item{x}{an atomic \code{character} vector with a corpus id or \code{partition} object}

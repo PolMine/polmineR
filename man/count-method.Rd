@@ -16,7 +16,8 @@ count(.Object, ...)
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
   check = TRUE, breakdown = FALSE, decode = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE, ...)
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...)
 
 \S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
   p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
@@ -24,7 +25,8 @@ count(.Object, ...)
 
 \S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
   check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
-  breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...)
+  breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE,
+  ...)
 
 \S4method{count}{vector}(.Object, corpus, p_attribute, ...)
 

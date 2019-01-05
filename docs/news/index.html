@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -108,6 +108,49 @@
       
     </div>
 
+    <div id="polminer-0-7-11" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-7-11" class="anchor"></a>polmineR 0.7.11<small> Unreleased </small>
+</h1>
+<ul>
+<li>New functionality to store corpora in a temporary data directory which is a subdirectory of the per-session temporary directory. A new function <code><a href="../reference/registry.html">data_dir()</a></code> will return this temporary data directory.</li>
+<li>The <code><a href="../reference/use.html">use()</a></code>-function will now check for non-ASCII characters in the path to binary corpus data and move the corpus data to a temporary data directory (subdirectory of the directory returned by <code><a href="../reference/registry.html">data_dir()</a></code>, if necessary. A remaining issue with using CWB indexed corpora is thus addressed. The temporary files are removed when detaching the package.</li>
+<li>The functions <code><a href="../reference/registry.html">registry()</a></code> and <code><a href="../reference/registry.html">data_dir()</a></code> now accept an argument <code>pkg</code>, and will return the path to the registry directory / the data directory within a package, if the argument is used.</li>
+<li>Startup messages indicating the package version of polmineR and the registry path are omitted now, they do not appear necessary any more.</li>
+<li>The <em>data.table</em> had still been imported in its entirety, now the package is imported selectively, which is certainly the recommended approach.</li>
+<li>To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table package is loaded after polmineR, no more warnings.</li>
+<li>Wrote some documentation for the <code>round()</code>-method for <code>textstat</code>-objects that will show up in documentation of <code>textstat</code> class.</li>
+<li>A <code>format()</code>-method is defined for <code>textstat</code>, <code>cooccurrences</code>, and <code>features</code>, moving the formatting of tables out of the <code><a href="../reference/view.html">view()</a></code>, and <code>print()</code>-methods. This will be useful when including tables in Rmarkdown documents.</li>
+<li>The coerce-methodes to turn textstat, cooccurrences, features and kwic objects into htmlwidgets do now set the pageLength.</li>
+<li>Added an argument <code>tmp</code> to <code><a href="../reference/use.html">use()</a></code> to force using a temporary directory.</li>
+<li>Any usage of <code>tempdir()</code> is wrapped into normalizePath(…, winslash = “/”), to avoid mixture of file separators in a path, which may cause problems on Windows systems.</li>
+<li>In the calculation of cooccurrences, the node has previously been included in the window size. This has been corrected.</li>
+<li>The <code>Cooccurrences</code>-class has been migrated from the experimental polmineR.graph package to polmineR. A <code>cooccurrenes()</code>-method results in a subset of <code>Cooccurrences</code>-class object and is the basis for ensuring that results are identical.</li>
+<li>The <code><a href="../reference/kwic.html">kwic()</a></code>-method for corpora returned one surplus token to the left and to the right of the query. This bug has been removed.</li>
+<li>The object returned by the kwic,character-method did not include the correct position of matches in the cpos slot. Corrected.</li>
+<li>New methods for <code>partition_bundle</code> objects [[&lt;-, $, $&lt;-</li>
+<li>Bug removed that occurrs when context window reaches beyond beginning or end of a corpus (#48).</li>
+<li>A slot <code>p_attribute</code> has been added to the <code>kwic</code>-class; <code><a href="../reference/kwic.html">kwic()</a></code>-methods and methods to process <code>kwic</code>-objects are now able to use the attribute thus indicated, and not just the p-attribute “word”.</li>
+<li>When generating a <code>partition_bundle</code> using the <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-method, an error may have occurred when an empty partition has been generated accidentaly. Has been removed. (#50)</li>
+<li>The <code><a href="../reference/as.VCorpus.html">as.VCorpus()</a></code>-method is not available if the <code>tm</code>-package has been loaded previously. A coerce method (<code>as(OBJECT, "VCorpus")) solves the issue. The</code>as.VCorpus()`-method is still around, but serves as a wrapper for the formal coerce-method (#55).</li>
+<li>The argument <code>verbose</code> as used by the <code><a href="../reference/use.html">use()</a></code>-method did not have any effect. Now, messages are not reported as would be expected, if <code>verbose</code> is <code>FALSE</code>. On this occasion, I took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora. (#47)</li>
+<li>A new function <code><a href="../reference/cqp.html">check_cqp_query()</a></code> offers a preliminary check whether a CQP query may be faulty. It is used by the <code><a href="../reference/cpos-method.html">cpos()</a></code>-method, if the new argument <code>check</code> is TRUE, and all higher-level functions calling <code><a href="../reference/cpos-method.html">cpos()</a></code> also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.</li>
+<li>A new check prevents an error that has occurred when a token queried by the <code>context()</code>-method would occurr at the very beginning or very end of a corpus and the window would transgress the beginning / end of the corpus without being checked (#44).</li>
+<li>A new <code><a href="../reference/size-method.html">size()</a></code>-method for <code>context</code>-objects will return the size of the corpus of interest (coi) and the reference corpus (ref).</li>
+<li>A new <code><a href="../reference/count-method.html">count()</a></code>-method for <code>context</code>-objects will return the <code>data.table</code> in the <code>stat</code>-slot with the counts for the tokens in the window.</li>
+<li>The <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-function caused an error when the type of the partition was not defined. Solved (#57).</li>
+<li>Improved documentation of the <code><a href="../reference/mail-method.html">mail()</a></code>-method (#31).</li>
+<li>To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. ‘C’) (#39).</li>
+<li>The <code>decode()</code>-function replaces a <code>decode()</code>-method and can be applied to partitions. The return value is a data.table which can be coerced to a tibble, serving as an interface to tidytext (#37).</li>
+<li>There was a difficulty to generate a TermDocumentMatrix from a partition_bundle if the partitions in the partition_bundle were not named. The fix is to assign integer numbers as names to the partitions (#58).</li>
+<li>Rework of indexing textstat objects.</li>
+<li>The <code><a href="../reference/ngrams.html">ngrams()</a></code>-method will work for corpora, and a new <code>show()</code>-method for <code>textstat</code>-object generates a proper output (#27).</li>
+<li>new <code><a href="../reference/corpus-method.html">corpus()</a></code>-method for character vector.</li>
+<li>new <code><a href="../reference/encoding.html">encoding()</a></code>-method for character vector.</li>
+<li>new <code><a href="../reference/textstat-class.html">name()</a></code>-method for character vector.</li>
+<li>Experimental functionality for a non-standard evaluation approach to create subcorpora via a <code><a href="../reference/corpus_class.html">zoom()</a></code>-method. See documentation for (new) <code>corpus</code>-class (<code>?"corpus-class") and extended documentation for</code>partition<code>-class (</code>?“partition-class”)</li>
+</ul>
+</div>
     <div id="polminer-0-7-10" class="section level1">
 <h1 class="page-header">
 <a href="#polminer-0-7-10" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
@@ -439,6 +482,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#polminer-0-7-11">0.7.11</a></li>
         <li><a href="#polminer-0-7-10">0.7.10</a></li>
         <li><a href="#polminer-0-7-9">0.7.9</a></li>
         <li><a href="#polminer-0-7-8">0.7.8</a></li>

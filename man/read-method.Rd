@@ -15,11 +15,11 @@ read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
   tooltips = list(), verbose = TRUE, cpos = TRUE,
-  cutoff = getOption("polmineR.cutoff"), template = get_template(.Object),
-  ...)
+  cutoff = getOption("polmineR.cutoff"),
+  template = get_template(.Object), ...)
 
-\S4method{read}{partition_bundle}(.Object, highlight = list(), cpos = TRUE,
-  ...)
+\S4method{read}{partition_bundle}(.Object, highlight = list(),
+  cpos = TRUE, ...)
 
 \S4method{read}{data.table}(.Object, col, partition_bundle,
   highlight = list(), cpos = FALSE, ...)

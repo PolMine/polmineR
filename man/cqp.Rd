@@ -51,10 +51,11 @@ as.cqp(c("migration", "diversity"))
 as.cqp(c("migration", "diversity"), collapse = TRUE)
 as.cqp("migration", normalise.case = TRUE)
 
-check_cqp_query('"Integration.*"') # returns TRUE, the query is ok
-check_cqp_query('"Integration.*') # returns FALSE - closing quotation mark is missing
-check_cqp_query("'Integration.*") # returns FALSE - closing quotation mark is missing
-check_cqp_query(c("'Integration.*", '"Integration.*')) # returns FALSE - closing quotation mark is missing
+
+check_cqp_query('"Integration.*"') # TRUE, the query is ok
+check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing
+check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
+check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
 }
 \references{
 CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})

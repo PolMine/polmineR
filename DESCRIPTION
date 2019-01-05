@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.10.9011
-Date: 2018-12-17
+Version: 0.7.10.9012
+Date: 2019-01-05
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")))
 Imports:
     methods,
@@ -47,6 +47,7 @@ BugReports: https://github.com/PolMine/polmineR/issues
 Biarch: true
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
+Encoding: UTF-8
 Collate: 
     'CQI.R'
     'Labels.R'
@@ -108,4 +109,4 @@ Collate:
     'view.R'
     'weigh.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

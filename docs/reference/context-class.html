@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -217,13 +217,23 @@ in the "cpos"-slot of a <code>context</code>-object.</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>query</code></dt><dd><p>The query used/node examined (<code>character</code>).</p></dd>
-    <dt><code>count</code></dt><dd><p>An <code>integer</code> value, the number of hits.</p></dd>
+<dt><code>query</code></dt><dd><p>The query examined (<code>character</code>).</p></dd>
+    <dt><code>count</code></dt><dd><p>An <code>integer</code> value, the number of hits for the query.</p></dd>
     <dt><code>partition</code></dt><dd><p>The <code>partition</code> the <code>context</code> object is based on.</p></dd>
-    <dt><code>size_partition</code></dt><dd><p>A length-one <code>integer</code>, the size of the partition.</p></dd>
-    <dt><code>left</code></dt><dd><p>An <code>integer</code> value, the number of tokens to the left.</p></dd>
-    <dt><code>right</code></dt><dd><p>An <code>integer</code> value, the number of tokens to the right.</p></dd>
-    <dt><code>size</code></dt><dd><p>An <code>integer</code> value, number of tokens in the right and left context of the node.</p></dd>
+    <dt><code>size_partition</code></dt><dd><p>The size of the partition, a length-one <code>integer</code> vector.</p></dd>
+    <dt><code>left</code></dt><dd><p>A length-one <code>integer</code> value, the number of tokens to the left of the query match.</p></dd>
+    <dt><code>right</code></dt><dd><p>An <code>integer</code> value, the number of tokens to the right of the query match.</p></dd>
+    <dt><code>size</code></dt><dd><p>A length-one <code>integer</code> value, the number of tokens covered by
+the <code>context</code>-object, i.e. the number of tokens in the right and left context
+of the node as well as query matches.</p></dd>
+    <dt><code>size_match</code></dt><dd><p>A length-one <code>integer</code> value, the number of tokens
+matches by the query. Identical with the value in slot <code>count</code> if the query
+is <em>not</em> a CQP query.</p></dd>
+    <dt><code>size_coi</code></dt><dd><p>A length-one <code>integer</code> value, the number of tokens in the
+right and left context of the node (excluding query matches).</p></dd>
+    <dt><code>size_ref</code></dt><dd><p>A length-one <code>integer</code> value, the number of tokens in the
+partition, without tokens matched and the tokens in the left and right
+context.</p></dd>
     <dt><code>boundary</code></dt><dd><p>An s-attribute (<code>character</code>).</p></dd>
     <dt><code>p_attribute</code></dt><dd><p>The p-attribute of the query (<code>character</code>).</p></dd>
     <dt><code>corpus</code></dt><dd><p>The CWB corpus used (<code>character</code>).</p></dd>

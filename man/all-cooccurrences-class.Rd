@@ -14,16 +14,18 @@
 \usage{
 \S4method{as.simple_triplet_matrix}{Cooccurrences}(x)
 
-\S4method{as_igraph}{Cooccurrences}(x, edge_attributes = c("ll", "ab_count",
-  "rank_ll"), vertex_attributes = "count", as.undirected = TRUE,
-  drop = c("\\u0084", "\\u0093"))
+\S4method{as_igraph}{Cooccurrences}(x, edge_attributes = c("ll",
+  "ab_count", "rank_ll"), vertex_attributes = "count",
+  as.undirected = TRUE, drop = c("\\u0084", "\\u0093"))
 
 \S4method{subset}{Cooccurrences}(x, ..., by)
 
 \S4method{decode}{Cooccurrences}(.Object)
 
-\S4method{kwic}{Cooccurrences}(.Object, left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), verbose = TRUE, progress = TRUE)
+\S4method{kwic}{Cooccurrences}(.Object,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), verbose = TRUE,
+  progress = TRUE)
 
 \S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count", ...)
 }
@@ -119,12 +121,14 @@ context of a token identified by id.}
 }}
 
 \examples{
-X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
+X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 m <- as.simple_triplet_matrix(X)
+\dontrun{
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 decode(X)
 sm <- as.sparseMatrix(X)
 stm <- as.simple_triplet_matrix(X)
+}
 }
 \seealso{
 See the documentation of the \code{\link{Cooccurrences}}-method

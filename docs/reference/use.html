@@ -62,7 +62,7 @@ registry." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@ registry.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>use</span>(<span class='no'>pkg</span>, <span class='kw'>lib.loc</span> <span class='kw'>=</span> <span class='fu'>.libPaths</span>(), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>use</span>(<span class='no'>pkg</span>, <span class='kw'>lib.loc</span> <span class='kw'>=</span> <span class='fu'>.libPaths</span>(), <span class='kw'>tmp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -132,6 +132,10 @@ registry.</p>
     <tr>
       <th>lib.loc</th>
       <td><p>A character vector with path names of <code>R</code> libraries.</p></td>
+    </tr>
+    <tr>
+      <th>tmp</th>
+      <td><p>Whether to use a temporary data directory.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -151,36 +155,20 @@ for corpora are assumed to be in a subdirectory named after the corpus (lower
 case) in the package subdirectory <code>./extdata/cwb/indexed_corpora/</code>. When
 adding a corpus to the registry, templates for formatting fulltext output are
 reloaded.</p>
+<p>If the path to the data directory in a package includes a non-ASCII character,
+binary data files of the corpora in package are copied to a subdirectory of the
+per-session temporary data directory.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>To get the session registry registry, see <code><a href='registry.html'>registry</a></code>;
+    <div class='dont-index'><p>To get the session registry directory, see <code><a href='registry.html'>registry</a></code>;
   to reset the registry, see <code><a href='registry_reset.html'>registry_reset</a></code>.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='fu'><a href='corpus-method.html'>corpus</a></span>()</div><div class='output co'>#&gt;           corpus      size template
-#&gt; 1         ARENEN  28842158     TRUE
-#&gt; 2     AUSTROPARL  70308143     TRUE
-#&gt; 3           BT18   2855137     TRUE
-#&gt; 4           BT19   2855170     TRUE
-#&gt; 5          BTPDF 139526576     TRUE
-#&gt; 6             BY    169593     TRUE
-#&gt; 7  GERMAPARLMINI    222201     TRUE
-#&gt; 8       KEYWORDS  44734138     TRUE
-#&gt; 9    KEYWORDS_DE   7525003     TRUE
-#&gt; 10   KEYWORDS_EN  36956586     TRUE
-#&gt; 11   KEYWORDS_FR  18904184     TRUE
-#&gt; 12  KEYWORDS_FR2  18904184     TRUE
-#&gt; 13         NEXIS 164740428     TRUE
-#&gt; 14        PLPRBT       -11     TRUE
-#&gt; 15     PLPRBTTXT  83405660     TRUE
-#&gt; 16       PLPRTXT  83195275     TRUE
-#&gt; 17    REPUBBLICA  26270819     TRUE
-#&gt; 18       REUTERS      4050     TRUE
-#&gt; 19          UNGA  43072609     TRUE
-#&gt; 20      WPRGAGGR   8913223     TRUE
-#&gt; 21          ZEIT 327839748     TRUE</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='fu'><a href='corpus-method.html'>corpus</a></span>()</div><div class='output co'>#&gt;          corpus   size template
+#&gt; 1 GERMAPARLMINI 222201     TRUE
+#&gt; 2       REUTERS   4050     TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

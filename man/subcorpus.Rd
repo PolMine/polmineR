@@ -5,7 +5,7 @@
 \alias{subcorpus}
 \alias{subcorpus-class}
 \alias{aggregate,subcorpus-method}
-\title{Virtual class subcorpus}
+\title{Virtual class subcorpus.}
 \usage{
 \S4method{aggregate}{subcorpus}(x)
 }

@@ -63,7 +63,7 @@ from the classes count and textstat." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -122,23 +122,38 @@ from the classes <code>count</code> and <code>textstat</code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for partition</span>
-<span class='fu'>summary</span>(<span class='no'>object</span>)
+    <pre class="usage"># S4 method for partition
+summary(object)
 
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='p_attributes.html'>p_attributes</a></span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+# S4 method for partition
+p_attributes(.Object, p_attribute = NULL, ...)
 
-<span class='co'># S4 method for partition</span>
-<span class='fu'>split</span>(<span class='no'>x</span>, <span class='no'>gap</span>, <span class='no'>...</span>)
+# S4 method for partition
+split(x, gap, ...)
 
-<span class='fu'>is.partition</span>(<span class='no'>x</span>)
+is.partition(x)
 
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+# S4 method for partition
+$(x, name)
 
-<span class='co'># S4 method for partition</span>
-<span class='fu'><a href='regions_class.html'>as.regions</a></span>(<span class='no'>x</span>)</pre>
+# S4 method for partition,ANY
+==(e1, e2)
+
+# S4 method for partition,ANY
+!=(e1, e2)
+
+# S4 method for partition
+%in%(x, table)
+
+# S4 method for partition
+zoom(x, ...)
+
+# S4 method for partition
+enrich(.Object, p_attribute = NULL, decode = TRUE,
+  verbose = TRUE, mc = FALSE, ...)
+
+# S4 method for partition
+as.regions(x)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +181,23 @@ from the classes <code>count</code> and <code>textstat</code>.</p>
     <tr>
       <th>gap</th>
       <td><p>An integer value specifying the minimum gap between regions for performing the split.</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>An s-attribute that will be assigned as key to a
+<code>partition</code>.</p></td>
+    </tr>
+    <tr>
+      <th>e1</th>
+      <td><p>A first expression, a <code>partition</code> object in this case.</p></td>
+    </tr>
+    <tr>
+      <th>e2</th>
+      <td><p>A second expression, the value of an s-attribute.</p></td>
+    </tr>
+    <tr>
+      <th>table</th>
+      <td><p>Values a s-attribute shall assume.</p></td>
     </tr>
     <tr>
       <th>decode</th>
@@ -198,6 +230,8 @@ frequency lists. The lists can be prepared by applying <code>enrich</code> on th
 <code>partition_bundle</code> object that is returned.</p>
 <p>The <code>is.partition</code> function returns a <code>logical</code> value
   whether <code>x</code> is a <code>partition</code>, or not.</p>
+<p>The `$`-method will assign the argument <code>name</code> to the slot
+  <code>key</code> and return the modified object.</p>
 <p>The <code>enrich</code>-method will add a count of tokens defined by argument
 <code>p_attribute</code> to slot <code>stat</code> of the <code>partition</code> object.</p>
     
@@ -222,6 +256,7 @@ as count is already present.</p></dd>
 count in slot <code>stat</code>.</p></dd>
     <dt><code>xml</code></dt><dd><p>Object of class <code>character</code>, whether the xml is flat or nested.</p></dd>
     <dt><code>s_attribute_strucs</code></dt><dd><p>Object of class <code>character</code> the base node</p></dd>
+    <dt><code>key</code></dt><dd><p>Experimental, an s-attribute that is used as a key.</p></dd>
     <dt><code>call</code></dt><dd><p>Object of class <code>character</code> the call that generated the partition</p></dd>
 </dl>
     
@@ -231,6 +266,32 @@ count in slot <code>stat</code>.</p></dd>
 respective documentation to learn more.</p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='no'>m</span>$<span class='no'>speaker</span>
+<span class='no'>m2</span>@<span class='kw'>key</span></div><div class='output co'>#&gt; [1] "speaker"</div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>m</span>$<span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-10-28"</span></div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='output co'>#&gt; ** partition object **
+#&gt; corpus:              GERMAPARLMINI 
+#&gt; name:                 
+#&gt; s-attributes:        speaker = Merkel 
+#&gt;                      date = 2009-10-28 
+#&gt; cpos:                5 pairs of corpus positions
+#&gt; size:                127 tokens
+#&gt; count:               not available</div><div class='input'><span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>s</span>$<span class='no'>party</span> <span class='kw'>!=</span> <span class='st'>"NA"</span></div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='output co'>#&gt; ** partition object **
+#&gt; corpus:              GERMAPARLMINI 
+#&gt; name:                 
+#&gt; s-attributes:        interjection = speech 
+#&gt;                      party = CDU_CSU/SPD/FDP/DIE_LINKE/B90_DIE_GRUENEN 
+#&gt; cpos:                1818 pairs of corpus positions
+#&gt; size:                161164 tokens
+#&gt; count:               not available</div><div class='input'><span class='no'>s</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>s</span>$<span class='no'>date</span> <span class='kw'>%in%</span> <span class='fu'>c</span>(<span class='st'>"2009-10-27"</span>, <span class='st'>"2009-10-28"</span>)</div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='output co'>#&gt; ** partition object **
+#&gt; corpus:              GERMAPARLMINI 
+#&gt; name:                 
+#&gt; s-attributes:        interjection = speech 
+#&gt;                      date = 2009-10-27/2009-10-28 
+#&gt; cpos:                124 pairs of corpus positions
+#&gt; size:                10958 tokens
+#&gt; count:               not available</div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus_class.html'>zoom</a></span>(<span class='no'>m</span>, <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-10-28"</span>)</div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='input'>
+<span class='no'>speeches</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus_class.html'>zoom</a></span>(<span class='no'>speeches</span>, <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-10-28"</span> <span class='kw'>&amp;</span> <span class='no'>speaker</span> <span class='kw'>==</span> <span class='st'>"Angela Dorothea Merkel"</span>)</div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='input'>
+<span class='no'>not_unknown</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus_class.html'>zoom</a></span>(<span class='no'>speeches</span>, <span class='no'>party</span> <span class='kw'>!=</span> <span class='fu'>c</span>(<span class='st'>"NA"</span>, <span class='st'>"FDP"</span>))</div><div class='output co'>#&gt; <span class='message'>... Setting up partition </span></div><div class='output co'>#&gt; <span class='message'>... getting cpos and strucs</span></div><div class='input'><span class='fu'>s_attributes</span>(<span class='no'>not_unknown</span>, <span class='st'>"party"</span>)</div><div class='output co'>#&gt; [1] "CDU_CSU"         "SPD"             "DIE_LINKE"       "B90_DIE_GRUENEN"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -242,7 +303,9 @@ respective documentation to learn more.</p></div>
       <li><a href="#slots">Slots</a></li>
 
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

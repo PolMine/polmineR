@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>perform chisquare-text — chisquare • polmineR</title>
+<title>Perform chisquare-text. — chisquare • polmineR</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="perform chisquare-text — chisquare" />
+<meta property="og:title" content="Perform chisquare-text. — chisquare" />
 
 <meta property="og:description" content="Perform Chisquare-Test based on a table with counts" />
 <meta name="twitter:card" content="summary" />
@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -107,7 +107,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>perform chisquare-text</h1>
+    <h1>Perform chisquare-text.</h1>
     
     <div class="hidden name"><code>chisquare-method.Rd</code></div>
     </div>
@@ -118,12 +118,15 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>chisquare</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>chisquare</span>(<span class='no'>.Object</span>)
 
-<span class='co'># S4 method for textstat</span>
+<span class='co'># S4 method for features</span>
 <span class='fu'>chisquare</span>(<span class='no'>.Object</span>)
 
 <span class='co'># S4 method for context</span>
+<span class='fu'>chisquare</span>(<span class='no'>.Object</span>)
+
+<span class='co'># S4 method for cooccurrences</span>
 <span class='fu'>chisquare</span>(<span class='no'>.Object</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -131,24 +134,96 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>object</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>further parameters</p></td>
+      <td><p>A <code>features</code> object, or an object inheriting from it
+(<code>context</code>, <code>cooccurrences</code>).</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a table</p>
+    <p>Same class as input object, with enriched table in the
+  <code>stat</code>-slot.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function deliberately uses a self-made chi-square test for performance
-reason</p>
+    <p>The basis for computing for the chi square test is a contingency table of
+observationes, which is prepared for every single token in the corpus. It
+reports counts for a token to inspect and all other tokens in a corpus of
+interest (coi) and a reference corpus (ref):</p><table class='table'>
+<tr><td></td><td>coi</td><td>ref</td><td>TOTAL</td></tr>
+<tr><td>count token</td><td>\(o_{11}\)</td><td>\(o_{12}\)</td><td>\(r_{1}\)</td></tr>
+<tr><td>other tokens</td><td>\(o_{21}\)</td><td>\(o_{22}\)</td><td>\(r_{2}\)</td></tr>
+<tr><td>TOTAL</td><td>\(c_{1}\)</td><td>\(c_{2}\)</td><td>N</td></tr>
+<tr><td></td><td></td><td>coi</td><td>ref</td></tr>
+</table>
+<p>Based on the contingency table, expected values are calculated for each cell,
+as the product of the column and margin sums, divided by the overall number
+of tokens (see example). The standard formula for calculating the chi-square
+test is computed as follows. $$X^{2} = \sum{\frac{(O_{ij} -
+E_{ij})^2}{O_{ij}}}$$
+Results from the chisquare test are only robust for at least 5 observed
+counts in the corpus of interest. Usually, results need to be filtered
+accordingly (see examples).</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Manning, Christopher D.; Schuetze, Hinrich (1999):
+  <em>Foundations of Statistical Natural Language Processing</em>. MIT Press:
+  Cambridge, Mass., pp. 169-172.</p>
+<p>Kilgarriff, A. and Rose, T. (1998): Measures for corpus
+  similarity and homogeneity. <em>Proc. 3rd Conf. on Empirical Methods in
+  Natural Language Processing</em>. Granada, Spain, pp 46-52.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>See <code><a href='ll.html'>ll</a></code>, <code><a href='pmi.html'>pmi</a></code> and <code><a href='t_test.html'>t_test</a></code>.</p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>library</span>(<span class='no'>data.table</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attache Paket: ‘data.table’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:polmineR’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    :=</span></div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(
+  <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>
+)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='features.html'>features</a></span>(<span class='no'>m</span>, <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>f_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/subset.data.table'>subset</a></span>(<span class='no'>f</span>, <span class='no'>count_coi</span> <span class='kw'>&gt;=</span> <span class='fl'>5</span>)
+<span class='fu'>summary</span>(<span class='no'>f_min</span>)</div><div class='output co'>#&gt;        p critical_value N_chisquare
+#&gt; 1: 0.001          10.83          60
+#&gt; 2: 0.005           7.88          77
+#&gt; 3: 0.010           6.63          80
+#&gt; 4: 0.050           3.84         113</div><div class='input'>
+<span class='co'># A sample do-it-yourself calculation for chisquare:</span>
+
+
+<span class='co'># (a) prepare matrix with observed values</span>
+<span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>NA</span>, <span class='fl'>4</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/as.data.table'>as.data.table</a></span>(<span class='no'>m</span>)[<span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"Weg"</span>]<span class='kw'>[[</span><span class='st'>"count"</span>]]
+<span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Weg"</span>)<span class='kw'>[[</span><span class='st'>"count"</span>]] - <span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>1</span>]
+<span class='no'>o</span>[<span class='fl'>2</span>,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='size-method.html'>size</a></span>(<span class='no'>f</span>)<span class='kw'>[[</span><span class='st'>"coi"</span>]] - <span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>1</span>]
+<span class='no'>o</span>[<span class='fl'>2</span>,<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='size-method.html'>size</a></span>(<span class='no'>f</span>)<span class='kw'>[[</span><span class='st'>"ref"</span>]] - <span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>2</span>]
+
+
+<span class='co'># prepare matrix with expected values, calculate margin sums first</span>
+
+<span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>rowSums</span>(<span class='no'>o</span>)
+<span class='no'>c</span> <span class='kw'>&lt;-</span> <span class='fu'>colSums</span>(<span class='no'>o</span>)
+<span class='no'>N</span> <span class='kw'>&lt;-</span> <span class='fu'>sum</span>(<span class='no'>o</span>)
+
+<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>NA</span>, <span class='fl'>4</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>e</span>[<span class='fl'>1</span>,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='no'>r</span>[<span class='fl'>1</span>] * (<span class='no'>c</span>[<span class='fl'>1</span>] / <span class='no'>N</span>)
+<span class='no'>e</span>[<span class='fl'>1</span>,<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='no'>r</span>[<span class='fl'>1</span>] * (<span class='no'>c</span>[<span class='fl'>2</span>] / <span class='no'>N</span>)
+<span class='no'>e</span>[<span class='fl'>2</span>,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='no'>r</span>[<span class='fl'>2</span>] * (<span class='no'>c</span>[<span class='fl'>1</span>] / <span class='no'>N</span>)
+<span class='no'>e</span>[<span class='fl'>2</span>,<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='no'>r</span>[<span class='fl'>2</span>] * (<span class='no'>c</span>[<span class='fl'>2</span>] / <span class='no'>N</span>)
+
+
+<span class='co'># compute chisquare statistic</span>
+
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rep</span>(<span class='fl'>NA</span>, <span class='fl'>4</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>2</span>) <span class='kw'>for</span> (<span class='no'>j</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>2</span>) <span class='no'>y</span>[<span class='no'>i</span>,<span class='no'>j</span>] <span class='kw'>&lt;-</span> (<span class='no'>o</span>[<span class='no'>i</span>,<span class='no'>j</span>] - <span class='no'>e</span>[<span class='no'>i</span>,<span class='no'>j</span>])^<span class='fl'>2</span> / <span class='no'>e</span>[<span class='no'>i</span>,<span class='no'>j</span>]
+<span class='no'>chisquare_value</span> <span class='kw'>&lt;-</span> <span class='fu'>sum</span>(<span class='no'>y</span>)
+
+<span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>f</span>, <span class='st'>"data.table"</span>)[<span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"Weg"</span>]<span class='kw'>[[</span><span class='st'>"chisquare"</span>]]</div><div class='output co'>#&gt; [1] 73.86672</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -158,7 +233,13 @@ reason</p>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-          </ul>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

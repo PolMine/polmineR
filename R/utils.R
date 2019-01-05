@@ -40,10 +40,11 @@ is.cqp <- function(query){
 #'   of CQP and the R session.
 #' @examples
 #' 
-#' check_cqp_query('"Integration.*"') # returns TRUE, the query is ok
-#' check_cqp_query('"Integration.*') # returns FALSE - closing quotation mark is missing
-#' check_cqp_query("'Integration.*") # returns FALSE - closing quotation mark is missing
-#' check_cqp_query(c("'Integration.*", '"Integration.*')) # returns FALSE - closing quotation mark is missing
+#' 
+#' check_cqp_query('"Integration.*"') # TRUE, the query is ok
+#' check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing
+#' check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
+#' check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
 check_cqp_query <- function(query){
   msg <- paste(c(
     "An issue occurred when checking query: %s\n",

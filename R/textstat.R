@@ -18,7 +18,7 @@ setMethod("nrow", "textstat", function(x) nrow(x@stat))
 setMethod("ncol", "textstat", function(x) ncol(x@stat))
 
 
-#' @param digits no of digits
+#' @param digits Number of digits.
 #' @rdname textstat-class
 #' @exportMethod round
 #' @details The \code{round()}-method looks up all numeric columns in the

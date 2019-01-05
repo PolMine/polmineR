@@ -32,7 +32,9 @@
 
 <meta property="og:title" content="Get and set encoding. — encoding" />
 
-<meta property="og:description" content="Method for textstat objects and classes inheriting from textstat." />
+<meta property="og:description" content="Method for textstat objects and classes inheriting from
+textstat; if object is a character vector, the encoding of the
+corpus is returned.." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -114,7 +116,9 @@
 
     <div class="ref-description">
     
-    <p>Method for <code>textstat</code> objects and classes inheriting from <code>textstat</code>.</p>
+    <p>Method for <code>textstat</code> objects and classes inheriting from
+<code>textstat</code>; if <code>object</code> is a character vector, the encoding of the
+corpus is returned..</p>
     
     </div>
 
@@ -126,6 +130,9 @@
 <span class='fu'>encoding</span>(<span class='no'>object</span>)
 
 <span class='co'># S4 method for bundle</span>
+<span class='fu'>encoding</span>(<span class='no'>object</span>)
+
+<span class='co'># S4 method for character</span>
 <span class='fu'>encoding</span>(<span class='no'>object</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -133,21 +140,34 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>the object with an 'encoding'-slot</p></td>
+      <td><p>A <code>textstat</code> or <code>bundle</code> object, or a length-one
+character vector specifying a corpus.</p></td>
     </tr>
     <tr>
       <th>value</th>
-      <td><p>value to be assigned</p></td>
+      <td><p>Value to be assigned.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Get encoding of a corpus.</span>
+<span class='fu'>encoding</span>(<span class='st'>"REUTERS"</span>)</div><div class='output co'>#&gt; [1] "latin1"</div><div class='input'>
+<span class='co'># Get encoding of a partition.</span>
+<span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>encoding</span>(<span class='no'>r</span>)</div><div class='output co'>#&gt; [1] "latin1"</div><div class='input'>
+<span class='co'># Get encoding of another class inheriting from textstat (count).</span>
+<span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+<span class='fu'>encoding</span>(<span class='no'>cnt</span>)</div><div class='output co'>#&gt; [1] "latin1"</div><div class='input'>
+<span class='co'># Get encoding of objects in a bundle.</span>
+<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='fu'>encoding</span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "latin1"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

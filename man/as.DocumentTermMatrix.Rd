@@ -4,7 +4,6 @@
 \name{as.TermDocumentMatrix}
 \alias{as.TermDocumentMatrix}
 \alias{as.DocumentTermMatrix}
-\alias{as.DocumentTermMatrix}
 \alias{as.TermDocumentMatrix,character-method}
 \alias{as.DocumentTermMatrix,character-method}
 \alias{as.TermDocumentMatrix,bundle-method}
@@ -37,9 +36,11 @@ as.DocumentTermMatrix(x, ...)
 \S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE,
+  ...)
 
-\S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{x}{a \code{character} vector indicating a corpus, or an object of class

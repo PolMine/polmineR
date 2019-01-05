@@ -66,7 +66,7 @@ transformations." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -153,6 +153,15 @@ unique(x)
 [[(x, i)
 
 # S4 method for bundle
+[[(x, i) <- value
+
+# S4 method for bundle
+$(x, name)
+
+# S4 method for bundle
+$(x, name) <- value
+
+# S4 method for bundle
 sample(x, size)
 
 # S4 method for list
@@ -161,7 +170,7 @@ as.bundle(object, ...)
 # S4 method for textstat
 as.bundle(object)
 
-# S4 method for bundle
+# S3 method for bundle
 as.data.table(x, col)
 
 # S4 method for bundle
@@ -195,6 +204,10 @@ as.list(x)</pre>
     <tr>
       <th>i</th>
       <td><p>integer to index a bundle object</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>The name of an object in the <code>bundle</code> object.</p></td>
     </tr>
     <tr>
       <th>size</th>
@@ -240,10 +253,20 @@ as.list(x)</pre>
 #&gt; 6             SPD 47302        word   6692</div><div class='input'><span class='no'>parties_big</span> <span class='kw'>&lt;-</span> <span class='no'>party_bundle</span><span class='kw'>[[</span><span class='fu'>c</span>(<span class='st'>"CDU_CSU"</span>, <span class='st'>"SPD"</span>)]]
 <span class='fu'>summary</span>(<span class='no'>parties_big</span>)</div><div class='output co'>#&gt;      name  size p_attribute unique
 #&gt; 1 CDU_CSU 66490        word   8486
-#&gt; 2     SPD 47302        word   6692</div><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>Ps</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
+#&gt; 2     SPD 47302        word   6692</div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='no'>p</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting values for s-attribute  party</span></div><div class='output co'>#&gt; <span class='message'>... number of partitions to be generated:  6</span></div><div class='input'><span class='fu'>names</span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "NA"              "FDP"             "SPD"             "CDU_CSU"        
+#&gt; [5] "DIE_LINKE"       "B90_DIE_GRUENEN"</div><div class='input'><span class='no'>pb</span><span class='kw'>[[</span><span class='st'>"NA"</span>]] <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+<span class='fu'>names</span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "FDP"             "SPD"             "CDU_CSU"         "DIE_LINKE"      
+#&gt; [5] "B90_DIE_GRUENEN"</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  party</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>pb</span>$<span class='no'>SPD</span> <span class='co'># access partition names "SPD" in partition_bundle pb</span></div><div class='output co'>#&gt; ** partition object **
+#&gt; corpus:              GERMAPARLMINI 
+#&gt; name:                SPD 
+#&gt; s-attributes:        party = SPD 
+#&gt; cpos:                908 pairs of corpus positions
+#&gt; size:                47302 tokens
+#&gt; count:               not available</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  party</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>pb</span>$<span class='st'>"NA"</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span> <span class='co'># quotation needed if name is "NA"</span>
+<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>Ps</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
   <span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
   <span class='kw'>values</span> <span class='kw'>=</span> <span class='fu'>s_attributes</span>(<span class='st'>"REUTERS"</span>, <span class='st'>"id"</span>)
-)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>Cs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>Ps</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No hits for query oil (returning NULL)</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.table</span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)
+)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>Cs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>Ps</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No hits for query oil (returning NULL)</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>polmineR</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/polmineR/topics/bundle'>as.data.table.bundle</a></span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>as.matrix</span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

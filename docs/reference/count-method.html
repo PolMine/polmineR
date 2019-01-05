@@ -62,7 +62,7 @@ used), or matches for the query." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@ used), or matches for the query.</p>
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>),
   <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
@@ -135,8 +135,8 @@ used), or matches for the query.</p>
 
 <span class='co'># S4 method for character</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>),
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for vector</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attribute</span>, <span class='no'>...</span>)
@@ -166,6 +166,11 @@ used.</p></td>
       <td><p>Either logical (<code>TRUE</code> if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
 auxiliary function).</p></td>
+    </tr>
+    <tr>
+      <th>check</th>
+      <td><p>A <code>logical</code> value, whether to check validity of CQP query
+using <code>check_cqp_query</code>.</p></td>
     </tr>
     <tr>
       <th>breakdown</th>
@@ -244,7 +249,7 @@ are supplied, frequencies for the individual queries are retrieved.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span></div><div class='output co'>#&gt; <span class='message'>... processing query Arbeit</span></div><div class='output co'>#&gt;     query count         freq
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span></div><div class='output co'>#&gt; <span class='message'>... processing query Arbeit</span></div><div class='output co'>#&gt;     query count         freq
 #&gt; 1: Arbeit   159 0.0007155683</div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='fu'>c</span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Freizeit"</span>, <span class='st'>"Zukunft"</span>)) <span class='co'># get frequencies for multiple tokens</span></div><div class='output co'>#&gt;       query count         freq
 #&gt; 1:   Arbeit   159 7.155683e-04
 #&gt; 2: Freizeit     1 4.500430e-06

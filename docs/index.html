@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -101,9 +101,7 @@
 <h2 class="hasAnchor">
 <a href="#core-functions" class="anchor"></a>Core Functions</h2>
 <p>Upon loading <em>polmineR</em>, a message will report the version of the package and the location of a so-called ‘registry’-directory.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">#&gt; polmineR v0.7.10</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#&gt; session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmp4yNNF6/polmineR_registry</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(polmineR)</a></code></pre></div>
 <p>The session registry directory is populated with files that describe the corpora that are present and accessible on the user’s system.</p>
 <div id="install-and-use-packaged-corpora" class="section level3">
 <h3 class="hasAnchor">
@@ -113,7 +111,7 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">install.packages</span>(<span class="st">"europarl.en"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</a></code></pre></div>
 <p>Calling the <code><a href="reference/use.html">use()</a></code>-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl.en"</span>) <span class="co"># activate the corpus in the europarl-en package</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; ... activating corpus: europarl-en</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; ... activating corpus: EUROPARL-EN</span></a></code></pre></div>
 <p>An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. The corpora described in the registry directory defined by the environment variable CORPUS_REGISTRY will be added to the session registry directory when loading polmineR.</p>
 </div>
 <div id="partition-and-partition_bundle" class="section level3">
@@ -319,10 +317,10 @@
 <li><a href="http://www.gnu.org/licenses/gpl-3.0.html"><img src="https://img.shields.io/aur/license/yaourt.svg" alt="License"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://www.r-pkg.org/badges/version/polmineR" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://cranlogs.r-pkg.org/badges/polmineR" alt="Downloads"></a></li>
-<li><a href="https://travis-ci.org/PolMine/polmineR"><img src="https://api.travis-ci.org/PolMine/polmineR.svg?branch=master" alt="Travis-CI Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/PolMine/polmineR"><img src="https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
-<li><a href="https://codecov.io/gh/PolMine/polmineR/branch/master"><img src="https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://zenodo.org/badge/latestdoi/17337554"><img src="https://zenodo.org/badge/17337554.svg" alt="DOI"></a></li>
+<li><a href="https://travis-ci.org/PolMine/polmineR"><img src="https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev" alt="Travis-CI Build Status"></a></li>
+<li><a href="https://ci.appveyor.com/project/PolMine/polmineR"><img src="https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=dev&amp;svg=true" alt="AppVeyor Build Status"></a></li>
+<li><a href="https://codecov.io/gh/PolMine/polmineR/branch/dev"><img src="https://codecov.io/gh/PolMine/polmineR/branch/dev/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://doi.org/10.5281/zenodo.1442381"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1442381.svg" alt="DOI"></a></li>
 </ul>
 </div>
 </div>

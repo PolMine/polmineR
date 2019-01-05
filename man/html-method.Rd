@@ -16,10 +16,11 @@ html(object, ...)
 \S4method{html}{character}(object)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
-  verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
-  height = NULL, ...)
+  verbose = FALSE, cutoff = NULL, charoffset = FALSE,
+  beautify = TRUE, height = NULL, ...)
 
-\S4method{html}{partition_bundle}(object, filename = c(), type = "debate")
+\S4method{html}{partition_bundle}(object, filename = c(),
+  type = "debate")
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL,
   verbose = FALSE, ...)

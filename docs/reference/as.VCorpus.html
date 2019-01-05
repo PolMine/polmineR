@@ -32,7 +32,9 @@
 
 <meta property="og:title" content="Coerce partition_bundle to VCorpus. — as.VCorpus" />
 
-<meta property="og:description" content="Coerce partition_bundle to VCorpus." />
+<meta property="og:description" content="Retrieve full text for the partition objects in a
+partition_bundle and generate a VCorpus-class object from the
+tm-package." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -114,7 +116,9 @@
 
     <div class="ref-description">
     
-    <p>Coerce partition_bundle to VCorpus.</p>
+    <p>Retrieve full text for the <code>partition</code> objects in a
+<code>partition_bundle</code> and generate a <code>VCorpus</code>-class object from the
+<code>tm</code>-package.</p>
     
     </div>
 
@@ -126,19 +130,34 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code>partition_bundle</code> object</p></td>
+      <td><p>A <code>partition_bundle</code> object.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <code>VCorpus</code> class of the <code>tm</code>-package offers an interface to
+access the functionality of the <code>tm</code>-package. Note however that
+generating a <code>VCorpus</code> to get a <code>DocumentTermMatrix</code>, or a
+<code>TermDocumentMatrix</code> is a highly inefficient detour. Applying the
+<code>as.DocumentTermMatrix</code> or <code>as.TermDocumentMatrix</code> methods on a
+<code>partition_bundle</code> is the recommended approach.</p>
+<p>If the <code>tm</code>-package has been loaded, the <code>as.VCorpus</code>-method
+included in the <code>polmineR</code>-package may become inaccessible. To deal with
+this (propable) scenario, it is possible to use a coerce-method
+(<code>as(YOUROBJECT, "VCorpus")</code>), see examples.</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>PB</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='no'>P</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting values for s-attribute  speaker</span></div><div class='output co'>#&gt; <span class='message'>... number of partitions to be generated:  37</span></div><div class='input'><span class='no'>VC</span> <span class='kw'>&lt;-</span> <span class='fu'>as.VCorpus</span>(<span class='no'>PB</span>)</div><div class='output co'>#&gt; <span class='message'>Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs of the first partition</span></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-10"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='no'>p</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting values for s-attribute  speaker</span></div><div class='output co'>#&gt; <span class='message'>... number of partitions to be generated:  37</span></div><div class='input'><span class='no'>vc</span> <span class='kw'>&lt;-</span> <span class='fu'>as.VCorpus</span>(<span class='no'>pb</span>) <span class='co'># works only, if tm-package has not yet been loaded</span></div><div class='output co'>#&gt; <span class='message'>Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs of the first partition</span></div><div class='input'><span class='no'>vc</span> <span class='kw'>&lt;-</span> <span class='fu'>as</span>(<span class='no'>pb</span>, <span class='st'>"VCorpus"</span>) <span class='co'># will work if tm-package has been loaded, too</span></div><div class='output co'>#&gt; <span class='message'>Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs of the first partition</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#details">Details</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

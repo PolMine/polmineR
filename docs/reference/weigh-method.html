@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@
 <span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='no'>with</span>)
 
 <span class='co'># S4 method for count_bundle</span>
-<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='no'>with</span>)</pre>
+<span class='fu'>weigh</span>(<span class='no'>.Object</span>, <span class='no'>with</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,12 +145,16 @@
     </tr>
     <tr>
       <th>method</th>
-      <td><p>the kind of weight to apply</p></td>
+      <td><p>The kind of weight to apply.</p></td>
     </tr>
     <tr>
       <th>with</th>
       <td><p>A <code>data.table</code> used to weigh p-attributes. A column 'weight' with term weights is
 required, and columns with the p-attributes of <code>.Object</code> for matching.</p></td>
+    </tr>
+    <tr>
+      <th>progress</th>
+      <td><p>Logical, whether to show a progress bar.</p></td>
     </tr>
     </table>
     

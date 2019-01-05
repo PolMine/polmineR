@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -121,9 +121,9 @@
     <pre class="usage"><span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
 <span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -131,7 +131,7 @@
   <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition_bundle</span>
-<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>hits</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.p_attribute"</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"polmineR.mc"</span>), <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
@@ -158,6 +158,11 @@
       <th>cqp</th>
       <td><p>either logical (TRUE if query is a CQP query), or a
 function to check whether query is a CQP query or not</p></td>
+    </tr>
+    <tr>
+      <th>check</th>
+      <td><p>A <code>logical</code> value, whether to check validity of CQP query
+using <code>check_cqp_query</code>.</p></td>
     </tr>
     <tr>
       <th>s_attribute</th>

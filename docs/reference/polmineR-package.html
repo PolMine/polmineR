@@ -62,7 +62,7 @@ efficient back end for indexing and querying large corpora." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.9</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.7.10.9011</span>
       </span>
     </div>
 
@@ -149,45 +149,21 @@ Cham et al: Springer.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>) <span class='co'># activate demo corpora included in the package</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: germaparlmini</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: reuters</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>) <span class='co'># activate demo corpora included in the package</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># Core methods applied to corpus</span>
 
-<span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt;    query count       freq
-#&gt; 1:   oil    78 0.01925926</div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"oil"</span>, <span class='st'>"barrel"</span>))</div><div class='output co'>#&gt;     query count        freq
-#&gt; 1:    oil    78 0.019259259
-#&gt; 2: barrel    15 0.003703704</div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"Saudi" "Arab.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;               query          match count share
-#&gt; 1: "Saudi" "Arab.*"   Saudi Arabia     6    50
-#&gt; 2: "Saudi" "Arab.*" Saudi Arabia's     3    25
-#&gt; 3: "Saudi" "Arab.*"  Saudi Arabian     3    25</div><div class='input'><span class='fu'>dispersion</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt;      id count
-#&gt;  1: 127     5
-#&gt;  2: 144    12
-#&gt;  3: 191     2
-#&gt;  4: 194     1
-#&gt;  5: 236     6
-#&gt;  6: 237     4
-#&gt;  7: 242     2
-#&gt;  8: 246     5
-#&gt;  9: 248     6
-#&gt; 10: 273     5
-#&gt; 11: 349     4
-#&gt; 12: 352     4
-#&gt; 13: 353     4
-#&gt; 14: 368     3
-#&gt; 15: 489     4
-#&gt; 16: 502     5
-#&gt; 17: 543     2
-#&gt; 18: 704     3
-#&gt; 19: 708     1</div><div class='input'><span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
-<span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"oil"</span>, <span class='st'>"barrel"</span>))
+<span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"Saudi" "Arab.*"'</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>D</span> <span class='kw'>&lt;-</span> <span class='fu'>dispersion</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>CO</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
 
 
 <span class='co'># Core methods applied to partition</span>
 
-<span class='no'>kuwait</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt; <span class='message'>... processing query oil</span></div><div class='output co'>#&gt;    query count       freq
-#&gt; 1:   oil    14 0.02121212</div><div class='input'><span class='fu'>dispersion</span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt;     id count
-#&gt; 1: 236     6
-#&gt; 2: 349     4
-#&gt; 3: 353     4</div><div class='input'><span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 14</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... assigning to data.table</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='input'><span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>kuwait</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt; <span class='message'>... processing query oil</span></div><div class='input'><span class='no'>D</span> <span class='kw'>&lt;-</span> <span class='fu'>dispersion</span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 14</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='input'><span class='no'>CO</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
 
 
 <span class='co'># Go back to full text</span>

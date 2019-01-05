@@ -751,7 +751,7 @@ setClass("cooccurrences_reshaped", contains = "cooccurrences")
 setClass("cooccurrences_bundle", contains = "bundle")
 
 
-#' Virtual class subcorpus
+#' Virtual class subcorpus.
 #' 
 #' The classes \code{regions} and \code{partition} can be used to define
 #' subcorpora. Unlike the \code{regions} class, the \code{partition} class may
