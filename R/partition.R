@@ -2,7 +2,7 @@
 NULL
 
 
-# this file includes the partition class, the constructor function 'partition'
+# this file includes the partition class, the constructor function "partition"
 # for generating the partition class, and the helper functions used 
 # by the constructur
 
@@ -47,12 +47,13 @@ setMethod("show", "partition",
 
 #' @details The \code{split}-method will split a partition object into a
 #' \code{partition_bundle} if gap between strucs exceeds a minimum number of
-#' tokens specified by 'gap'. Relevant to split up a plenary protocol into
+#' tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
 #' speeches. Note: To speed things up, the returned partitions will not include
 #' frequency lists. The lists can be prepared by applying \code{enrich} on the
 #' \code{partition_bundle} object that is returned.
 #' @param x A \code{partition} object.
-#' @param gap An integer value specifying the minimum gap between regions for performing the split.
+#' @param gap An integer value specifying the minimum gap between regions for
+#'   performing the split.
 #' @rdname partition_class
 #' @exportMethod split
 #' @docType methods
@@ -266,8 +267,8 @@ is.partition <- function(x) "partition" %in% is(x)
 #' expressions are passed into \code{grep}, i.e. the regex syntax used in R
 #' needs to be used (double backlashes etc.). If regex is \code{FALSE}, the
 #' length of the character vectors can be > 1, matching s-attributes are
-#' identifies with the operator \code{%in%}.
-#' 
+#' identifies with the operator '%in%'.
+#'
 #' The XML imported into the CWB may be "flat" or "nested". This needs to be
 #' indicated with the parameter \code{xml} (default is "flat"). If you generate
 #' a \code{partition} based on a flat XML structure, some performance gain may be

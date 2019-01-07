@@ -3,7 +3,6 @@ NULL
 
 
 
-
 #' Get counts.
 #' 
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be

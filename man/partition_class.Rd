@@ -62,7 +62,8 @@ is.partition(x)
 
 \item{x}{A \code{partition} object.}
 
-\item{gap}{An integer value specifying the minimum gap between regions for performing the split.}
+\item{gap}{An integer value specifying the minimum gap between regions for
+performing the split.}
 
 \item{name}{An s-attribute that will be assigned as key to a
 \code{partition}.}
@@ -85,9 +86,10 @@ a set of methods is defined for the class. The class inherits
 from the classes \code{count} and \code{textstat}.
 }
 \details{
-As \code{partition} objects inherit from \code{count} and \code{textstat} class, methods
-available are \code{view} to inspect the table in the \code{stat} slot, \code{name} and 
-\code{name<-} to retrieve/set the name of an object, and more.
+As \code{partition} objects inherit from \code{count} and
+  \code{textstat} class, methods available are \code{view} to inspect the
+  table in the \code{stat} slot, \code{name} and \code{name<-} to
+  retrieve/set the name of an object, and more.
 
 The \code{p_attributes}-method returns the p-attributes defined for the
 corpus the partition is derived from, if argument \code{p_attribute} is \code{NULL}
@@ -96,7 +98,7 @@ are returned.
 
 The \code{split}-method will split a partition object into a
 \code{partition_bundle} if gap between strucs exceeds a minimum number of
-tokens specified by 'gap'. Relevant to split up a plenary protocol into
+tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
 speeches. Note: To speed things up, the returned partitions will not include
 frequency lists. The lists can be prepared by applying \code{enrich} on the
 \code{partition_bundle} object that is returned.

@@ -42,6 +42,7 @@ used.
   * new `name()`-method for character vector.
   * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class") and extended documentation for `partition`-class (`?"partition-class")
   * Expanded documentation for `cooccurrences()`-method to explain subsetting results vs applying positivelist/negativelist (#28).
+  * The `regions`-class now inherits from a new `corpus`-class.
   
 
 

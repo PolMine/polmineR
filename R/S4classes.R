@@ -264,9 +264,10 @@ setMethod("length", "count", function(x) x@size)
 #' a set of methods is defined for the class. The class inherits
 #' from the classes \code{count} and \code{textstat}.
 #' 
-#' @details As \code{partition} objects inherit from \code{count} and \code{textstat} class, methods
-#' available are \code{view} to inspect the table in the \code{stat} slot, \code{name} and 
-#' \code{name<-} to retrieve/set the name of an object, and more.
+#' @details As \code{partition} objects inherit from \code{count} and
+#'   \code{textstat} class, methods available are \code{view} to inspect the
+#'   table in the \code{stat} slot, \code{name} and \code{name<-} to
+#'   retrieve/set the name of an object, and more.
 #' 
 #' @slot name A name to identify the object (\code{character} vector with length 1); useful when multiple
 #' \code{partition} objects are combined to a \code{partition_bundle}.
@@ -553,6 +554,8 @@ setClass(
 #' @param e2 A second expression, the value of an s-attribute.
 #' @param table Values a s-attribute shall assume.
 #' @slot corpus A length-one \code{character} vector, a CWB corpus.
+#' @slot data_dir The directory where the files for the indexed corpus are.
+#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
 #' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
 #' @slot key A length-one \code{character} vector stating a s-attribute that
 #'   serves as a key.
@@ -562,8 +565,10 @@ setClass(
 #' @name corpus-class
 setClass(
   "corpus",
-  representation = list(
+  slots = c(
     corpus = "character",
+    data_dir = "character",
+    type = "character",
     encoding = "character",
     key = "character"
   )
@@ -596,11 +601,10 @@ setClass(
 #' @aliases regions-class
 setClass(
   "regions",
-  representation = list(
-    cpos = "matrix",
-    corpus = "character",
-    encoding = "character"
-  )
+  slots = c(
+    cpos = "matrix"
+  ),
+  contains = "corpus"
 )
 
 
