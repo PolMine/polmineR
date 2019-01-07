@@ -1,48 +1,54 @@
 polmineR 0.7.11
 ===============
-  * New functionality to store corpora in a temporary data directory which is a subdirectory of the per-session temporary directory. A new function `data_dir()` will return this temporary data directory.
-  * The `use()`-function will now check for non-ASCII characters in the path to binary corpus data and 
-move the corpus data to a temporary data directory (subdirectory of the directory returned  by `data_dir()`, if necessary. A remaining issue with using  CWB indexed corpora is thus addressed. The 
-temporary files are removed when detaching the package.
-  * The functions `registry()` and `data_dir()` now accept an argument `pkg`, and will return the path to the registry directory / the data directory within a package, if the argument is
-used.
-  * Startup messages indicating the package version of polmineR and the registry path are omitted now, they do not appear necessary any more.
-  * The *data.table* had still been imported in its entirety, now the package is imported selectively, which is certainly the recommended approach.
-  * To avoid namespace conflicts, the former S4 method as.data.table is now a S3 method. If the data.table package is loaded after polmineR, no more warnings.
-  * Wrote some documentation for the `round()`-method for `textstat`-objects that will show up in documentation of `textstat` class.
-  * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful 
-  when including tables in Rmarkdown documents.
-  * The coerce-methodes to turn textstat, cooccurrences, features and kwic objects into htmlwidgets do now set the pageLength.
-  * Added an argument `tmp` to `use()` to force using a temporary directory.
-  * Any usage of `tempdir()` is wrapped into normalizePath(..., winslash = "/"), to avoid mixture of file separators in a path, which may cause problems on Windows systems.
-  * In the calculation of cooccurrences, the node has previously been included in the window size.
-  This has been corrected.
-  * The `Cooccurrences`-class has been migrated from the experimental polmineR.graph package to polmineR. A `cooccurrenes()`-method results in a subset of `Cooccurrences`-class object and is the basis for ensuring that results are identical.
-  * The `kwic()`-method for corpora returned one surplus token to the left and to the right of the query. This bug has been removed.
-  * The object returned by the kwic,character-method did not include the correct position of matches in the cpos slot. Corrected.
-  * New methods for `partition_bundle` objects [[<-, $, $<-
-  * Bug removed that occurrs when context window reaches beyond beginning or end of a corpus (#48).
+
+## NEW FEATURES
+
+  * A `Cooccurrences()`-method and a `Cooccurrences`-class have been migrated from the (experimental) polmineR.graph package to polmineR to generate and manage all cooccurrences in a corpus/`partition`. A `cooccurrenes()`-method produces a subset of `Cooccurrences`-class object and is the basis for ensuring that results are identical.
+  * New functionality to make using corpora more robust when paths include special characters: There is now a temporary data directory which is a subdirectory of the per-session temporary directory. A new function `data_dir()` will return this temporary data directory. The `use()`-function will now check for non-ASCII characters in the path to binary corpus data and move the corpus data to the temporary data directory (a subdirectory of the directory returned  by `data_dir()`), if necessary. An argument `tmp` added to `use()` will force using a temporary directory. The  temporary files are removed when the package is detached. 
+  * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class"`) and extended documentation for `partition`-class (`?"partition-class"`). A new `corpus()`-method for character vector serves as a constructor. This is a beginning of somewhat re-arranging the class structure: The `regions`-class now inherits from the new `corpus`-class, and a new `subcorpus`-class inherits from the `regions`-class.
+  * A new function `check_cqp_query()` offers a preliminary check whether a CQP query may be faulty. It is used by the `cpos()`-method, if the new argument `check` is TRUE. All higher-level functions calling `cpos()` also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.
+  * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful  when including tables in Rmarkdown documents.
+
+
+## MINOR IMPROVEMENTS
+
+  * Startup messages reporting the package version of polmineR and the registry path are omitted now.
+  * The functions `registry()` and `data_dir()` now accept an argument `pkg`. The functions will return the path to the registry directory / the data directory within a package, if the argument is used.
+  * The `data.table`-package used to be imported entirely, now the package is imported selectively. To avoid namespace conflicts, the former S4 method `as.data.table()` is now a S3 method. Warnings appearing if the `data.table` package is loaded after polmineR are now omitted.
+  * The `coerce()`-methodes to turn `textstat`, `cooccurrences`, `features` and `kwic` objects into htmlwidgets now set a `pageLength`.
+  * New methods for `partition_bundle` objects: `[[<-`, `$`, `$<-`
+  * Rework of indexing `textstat` objects.
   * A slot `p_attribute` has been added to the `kwic`-class; `kwic()`-methods and methods to process `kwic`-objects are now able to use the attribute thus indicated, and not just the p-attribute "word".
-  * When generating a `partition_bundle` using the `as.speeches()`-method, an error may have occurred when an empty partition has been generated accidentaly. Has been removed. (#50)
-  * The `as.VCorpus()`-method is not available if the `tm`-package has been loaded previously. A coerce method (`as(OBJECT, "VCorpus")) solves the issue. The `as.VCorpus()`-method is still around, but serves as a wrapper for the formal coerce-method (#55).
-  * The argument `verbose` as used by the `use()`-method did not have any effect. Now, messages are not reported as would be expected, if `verbose` is `FALSE`. On this occasion, I took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora. (#47)
-  * A new function `check_cqp_query()` offers a preliminary check whether a CQP query may be faulty. It is used by the `cpos()`-method, if the new argument `check` is TRUE, and all higher-level functions calling `cpos()` also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.
-  * A new check prevents an error that has occurred when a token queried by the `context()`-method would occurr at the very beginning or very end of a corpus and the window would transgress the beginning / end of the corpus without being checked (#44).
   * A new `size()`-method for `context`-objects will return the size of the corpus of interest (coi) and the reference corpus (ref).
+  * New `encoding()`-method for character vector.
+  * New `name()`-method for character vector.
   * A new `count()`-method for `context`-objects will return the `data.table` in the `stat`-slot with the counts for the tokens in the window.
-  * The `as.speeches()`-function caused an error when the type of the partition was not defined. Solved (#57).
-  * Improved documentation of the `mail()`-method (#31).
-  * To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. 'C') (#39).
-  * The `decode()`-function replaces a `decode()`-method and can be applied to partitions. The return value is a data.table which can be coerced to a tibble, serving as an interface to tidytext (#37).
-  * There was a difficulty to generate a TermDocumentMatrix from a partition_bundle if the partitions in the partition_bundle were not named. The fix is to assign integer numbers as names to the partitions (#58).
-  * Rework of indexing textstat objects.
+  * The `decode()`-function replaces a `decode()`-method and can be applied to partitions. The return value is a `data.table` which can be coerced to a `tibble`, serving as an interface to tidytext (#37).
   * The `ngrams()`-method will work for corpora, and a new `show()`-method for `textstat`-object generates a proper output (#27).
-  * new `corpus()`-method for character vector.
-  * new `encoding()`-method for character vector.
-  * new `name()`-method for character vector.
-  * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class") and extended documentation for `partition`-class (`?"partition-class")
+
+
+## BUG FIXES
+
+  * Any usage of `tempdir()` is wrapped into normalizePath(..., winslash = "/"), to avoid mixture of file separators in a path, which may cause problems on Windows systems.
+  * In the calculation of cooccurrences, the node has previously been included in the window size. This has been corrected.
+  * The `kwic()`-method for corpora returned one surplus token to the left and to the right of the query. The excess tokens are not removed.
+  * The object returned by the `kwic()`-method for `character`-objects method did not include the correct position of matches in the `cpos` slot. Corrected.
+  * Bug removed that occurrs when context window reaches beyond beginning or end of a corpus (#48).
+  * When generating a `partition_bundle` using the `as.speeches()`-method, an error could occur when an empty partition has been generated accidentaly. Has been removed. (#50)
+  * The `as.VCorpus()`-method is not available if the `tm`-package has been loaded previously. A coerce method (`as(OBJECT, "VCorpus")) solves the issue. The `as.VCorpus()`-method is still around, but serves as a wrapper for the formal coerce-method (#55).
+  * The argument `verbose` as used by the `use()`-method did not have any effect. Now, messages are not reported as would be expected, if `verbose` is `FALSE`. On this occasion, we took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora. (#47)
+  * A new check prevents an error that has occurred when a token queried by the `context()`-method would occurr at the very beginning or very end of a corpus and the window would transgress the beginning / end of the corpus without being checked (#44).
+  * The `as.speeches()`-function caused an error when the type of the partition was not defined. Solved (#57).
+  * To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. 'C') (#39).
+  * There was a difficulty to generate a `TermDocumentMatrix` from a `partition_bundle` if the partitions in the `partition_bundle` were not named. The fix is to assign integer numbers as names to the partitions (#58).
+
+
+## DOCUMENTATION FIXES
+
+  * Substantial rework of the documentation of the `ll()`, and `chisquare()`-methods to make the statistical procedure used transparent.
   * Expanded documentation for `cooccurrences()`-method to explain subsetting results vs applying positivelist/negativelist (#28).
-  * The `regions`-class now inherits from a new `corpus`-class.
+  * Wrote some documentation for the `round()`-method for `textstat`-objects that will show up in documentation of `textstat` class.
+  * Improved documentation of the `mail()`-method (#31).
   * In the examples for the `decode()`-function, using the REUTERS corpus replaces the usage
     of the GERMAPARLMINI corpus, to reduce time consumed when checking the package.
   

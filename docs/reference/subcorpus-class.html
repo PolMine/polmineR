@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count class. — count_class • polmineR</title>
+<title>S4 subcorpus class. — subcorpus-class • polmineR</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Count class. — count_class" />
+<meta property="og:title" content="S4 subcorpus class. — subcorpus-class" />
 
-<meta property="og:description" content="S4 class to organize counts. The classes polmineR and
-ngrams inherit from the class." />
+<meta property="og:description" content="S4 subcorpus class." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -110,58 +109,58 @@ ngrams inherit from the class." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count class.</h1>
+    <h1>S4 subcorpus class.</h1>
     
-    <div class="hidden name"><code>count_class.Rd</code></div>
+    <div class="hidden name"><code>subcorpus-class.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>S4 class to organize counts. The classes <code>polmineR</code> and
-<code>ngrams</code> inherit from the class.</p>
+    <p>S4 subcorpus class.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for count</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for count</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S4 method for subcorpus</span>
+<span class='fu'>show</span>(<span class='no'>object</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A <code>count</code> object, or a class inheriting from <code>count</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Further parameters.</p></td>
+      <th>object</th>
+      <td><p>A <code>subcorpus</code> object.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="methods-by-generic-"><a class="anchor" href="#methods-by-generic-"></a>Methods (by generic)</h2>
 
-    <p>The <code>length</code>-method is synonymous with the <code>size</code>-method
-and will return the size of the <code>corpus</code> or <code>partition</code> a count
-has been derived from.</p>
+    <ul>
+<li><p><code>show</code>: Output basic information about <code>subcorpus</code> object.</p></li>
+</ul>
     
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
     <dl class='dl-horizontal'>
-<dt><code>stat</code></dt><dd><p>Object of class <code>data.table</code></p></dd>
-    <dt><code>corpus</code></dt><dd><p>Object of class <code>character</code> the CWB corpus the partition is based on</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code> encoding of the corpus</p></dd>
-    <dt><code>name</code></dt><dd><p>Object of class <code>character</code>, a name for the object</p></dd>
-    <dt><code>size</code></dt><dd><p>Object of class <code>integer</code>, the size of the partition or
-corpus the count is based upon</p></dd>
+<dt><code>s_attributes</code></dt><dd><p>A named <code>list</code> with the structural attributes
+defining the subcorpus.</p></dd>
+    <dt><code>cpos</code></dt><dd><p>A <code>matrix</code> with left and right corpus positions defining
+regions (two columns).</p></dd>
+    <dt><code>annotations</code></dt><dd><p>Object of class <code>list</code>.</p></dd>
+    <dt><code>size</code></dt><dd><p>Total size of the subcorpus (length-one <code>integer</code> vector).</p></dd>
+    <dt><code>metadata</code></dt><dd><p>Object of class <code>data.frame</code>, metadata information.</p></dd>
+    <dt><code>strucs</code></dt><dd><p>Object of class <code>integer</code>, the strucs defining the
+subcorpus.</p></dd>
+    <dt><code>xml</code></dt><dd><p>Object of class <code>character</code>, whether the xml is "flat" or
+"nested".</p></dd>
+    <dt><code>s_attribute_strucs</code></dt><dd><p>Object of class <code>character</code>, the base node.</p></dd>
+    <dt><code>key</code></dt><dd><p>Experimental, an s-attribute that is used as a key.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code>count</code>-class inherits from the <code><a href='textstat-class.html'>textstat-class</a></code></p></div>
+    <div class='dont-index'><p>Other classes to manage corpora: <code><a href='corpus_class.html'>corpus-class</a></code>,
+  <code><a href='regions_class.html'>regions</a></code></p></div>
     
 
   </div>
@@ -170,15 +169,13 @@ corpus the count is based upon</p></dd>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#methods-by-generic-">Methods (by generic)</a></li>
 
       <li><a href="#slots">Slots</a></li>
 
       <li><a href="#see-also">See also</a></li>
           </ul>
 
-    <h2>Author</h2>
-    <p>Andreas Blaette</p>
   </div>
 </div>
 

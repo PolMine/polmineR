@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count class. — count_class • polmineR</title>
+<title>Virtual class clice. — slice • polmineR</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,13 @@
 
 
 
-<meta property="og:title" content="Count class. — count_class" />
+<meta property="og:title" content="Virtual class clice. — slice" />
 
-<meta property="og:description" content="S4 class to organize counts. The classes polmineR and
-ngrams inherit from the class." />
+<meta property="og:description" content="The classes regions and partition can be used to define
+subcorpora. Unlike the regions class, the partition class may
+include statistical evaluations. The virtual class slice is a
+mechanism to define methods for these classes without making regions
+the superclass of partition." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -110,60 +113,52 @@ ngrams inherit from the class." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count class.</h1>
+    <h1>Virtual class clice.</h1>
     
-    <div class="hidden name"><code>count_class.Rd</code></div>
+    <div class="hidden name"><code>slice.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>S4 class to organize counts. The classes <code>polmineR</code> and
-<code>ngrams</code> inherit from the class.</p>
+    <p>The classes <code>regions</code> and <code>partition</code> can be used to define
+subcorpora. Unlike the <code>regions</code> class, the <code>partition</code> class may
+include statistical evaluations. The virtual class <code>slice</code> is a
+mechanism to define methods for these classes without making <code>regions</code>
+the superclass of <code>partition</code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for count</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for count</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S4 method for slice</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/aggregate'>aggregate</a></span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A <code>count</code> object, or a class inheriting from <code>count</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Further parameters.</p></td>
+      <td><p>An object of a class belonging to the virtual class <code>slice</code>, i.e. a 
+<code>partition</code> or <code>regions</code> object.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The <code>length</code>-method is synonymous with the <code>size</code>-method
-and will return the size of the <code>corpus</code> or <code>partition</code> a count
-has been derived from.</p>
-    
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
-    
-    <dl class='dl-horizontal'>
-<dt><code>stat</code></dt><dd><p>Object of class <code>data.table</code></p></dd>
-    <dt><code>corpus</code></dt><dd><p>Object of class <code>character</code> the CWB corpus the partition is based on</p></dd>
-    <dt><code>encoding</code></dt><dd><p>Object of class <code>character</code> encoding of the corpus</p></dd>
-    <dt><code>name</code></dt><dd><p>Object of class <code>character</code>, a name for the object</p></dd>
-    <dt><code>size</code></dt><dd><p>Object of class <code>integer</code>, the size of the partition or
-corpus the count is based upon</p></dd>
-</dl>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>The <code>count</code>-class inherits from the <code><a href='textstat-class.html'>textstat-class</a></code></p></div>
+    <p>The method <code>aggregate</code> will deflate the matrix in the slot <code>cpos</code>,
+i.e. it checks for each new row in the matrix whether it increments the end
+of the previous region (by 1), and ensure that the cpos matrix defines
+disjoined regions.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'>new</span>(
+  <span class='st'>"partition"</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>20</span>:<span class='fl'>29</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>byrow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
+  <span class='kw'>stat</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/data.table/topics/data.table'>data.table</a></span>()
+)
+<span class='no'>P2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/aggregate'>aggregate</a></span>(<span class='no'>P</span>)
+<span class='no'>P2</span>@<span class='kw'>cpos</span></div><div class='output co'>#&gt;      [,1] [,2]
+#&gt; [1,]    1   10
+#&gt; [2,]   20   29</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -171,14 +166,10 @@ corpus the count is based upon</p></dd>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
-      <li><a href="#slots">Slots</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-          </ul>
-
-    <h2>Author</h2>
-    <p>Andreas Blaette</p>
   </div>
 </div>
 
