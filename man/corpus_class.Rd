@@ -76,3 +76,8 @@ m <- zoom(x, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
 not_unknown <- zoom(x, party != c("NA", "FDP"))
 s_attributes(not_unknown, "party")
 }
+\seealso{
+Other classes to manage corpora: \code{\link{regions}},
+  \code{\link{subcorpus-class}}
+}
+\concept{classes to manage corpora}

@@ -563,6 +563,7 @@ setClass(
 #' @rdname corpus_class
 #' @aliases zoom
 #' @name corpus-class
+#' @family classes to manage corpora
 setClass(
   "corpus",
   slots = c(
@@ -599,6 +600,7 @@ setClass(
 #' P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 #' R <- as.regions(P)
 #' @aliases regions-class
+#' @family classes to manage corpora
 setClass(
   "regions",
   slots = c(
@@ -608,8 +610,41 @@ setClass(
 )
 
 
+#' S4 subcorpus class.
+#' 
+#' @param object A \code{subcorpus} object.
+#' @slot s_attributes A named \code{list} with the structural attributes
+#'   defining the subcorpus.
+#' @slot cpos A \code{matrix} with left and right corpus positions defining
+#'   regions (two columns).
+#' @slot annotations Object of class \code{list}.
+#' @slot size Total size of the subcorpus (length-one \code{integer} vector).
+#' @slot metadata Object of class \code{data.frame}, metadata information.
+#' @slot strucs Object of class \code{integer}, the strucs defining the
+#'   subcorpus.
+#' @slot xml Object of class \code{character}, whether the xml is "flat" or
+#'   "nested".
+#' @slot s_attribute_strucs Object of class \code{character}, the base node.
+#' @slot key Experimental, an s-attribute that is used as a key.
+#' @family classes to manage corpora
+setClass(
+  "subcorpus",
+  slots = c(
+    s_attributes = "list",
+    cpos = "matrix",
+    size = "integer",
+    annotations = "list",
+    metadata = "data.frame",
+    strucs = "integer",
+    xml = "character",
+    s_attribute_strucs = "character",
+    key = "character"
+  ),
+  contains = "regions"
+)
 
-
+#' @describeIn subcorpus Output basic information about \code{subcorpus} object.
+setMethod("show", "subcorpus", function(object) object@size)
 
 
 #' @rdname features-class
@@ -755,26 +790,26 @@ setClass("cooccurrences_reshaped", contains = "cooccurrences")
 setClass("cooccurrences_bundle", contains = "bundle")
 
 
-#' Virtual class subcorpus.
+#' Virtual class clice.
 #' 
 #' The classes \code{regions} and \code{partition} can be used to define
 #' subcorpora. Unlike the \code{regions} class, the \code{partition} class may
-#' include statistical evaluations. The virtual class \code{subcorpus} is a
+#' include statistical evaluations. The virtual class \code{slice} is a
 #' mechanism to define methods for these classes without making \code{regions}
 #' the superclass of \code{partition}.
 #' 
-#' @rdname subcorpus
-#' @name subcorpus
+#' @rdname slice
+#' @name slice
 #' @docType class
-#' @aliases subcorpus-class
-#' @exportClass subcorpus
+#' @aliases slice-class
+#' @exportClass slice
 setClassUnion(
-  name = "subcorpus",
+  name = "slice",
   members = c("regions", "partition")
 )
 
 #' @exportClass CorpusOrSubcorpus
-setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "subcorpus"))
+setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "slice"))
 
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
@@ -782,10 +817,10 @@ setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "subcorpus"))
 #' of the previous region (by 1), and ensure that the cpos matrix defines
 #' disjoined regions.
 #' 
-#' @param x An object of a class belonging to the virtual class \code{subcorpus}, i.e. a 
+#' @param x An object of a class belonging to the virtual class \code{slice}, i.e. a 
 #' \code{partition} or \code{regions} object.
 #' @exportMethod aggregate
-#' @rdname subcorpus
+#' @rdname slice
 #' @examples 
 #' P <- new(
 #'   "partition",
@@ -794,7 +829,7 @@ setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "subcorpus"))
 #' )
 #' P2 <- aggregate(P)
 #' P2@cpos
-setMethod("aggregate", "subcorpus", function(x){
+setMethod("aggregate", "slice", function(x){
   if (nrow(x@cpos) == 1L){
     message("NOTE: Only one region, returning the partition unchanged")
     return(x)

@@ -47,3 +47,8 @@ use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
 }
+\seealso{
+Other classes to manage corpora: \code{\link{corpus-class}},
+  \code{\link{subcorpus-class}}
+}
+\concept{classes to manage corpora}
