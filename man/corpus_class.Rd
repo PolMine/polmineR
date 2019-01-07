@@ -47,6 +47,10 @@ The `$`-method will assign the argument \code{name} to the slot
 \describe{
 \item{\code{corpus}}{A length-one \code{character} vector, a CWB corpus.}
 
+\item{\code{data_dir}}{The directory where the files for the indexed corpus are.}
+
+\item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).}
+
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one \code{character} vector.}
 
 \item{\code{key}}{A length-one \code{character} vector stating a s-attribute that

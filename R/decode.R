@@ -30,18 +30,18 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' use("polmineR")
 #' 
 #' # Scenario 1: Decode one or two s-attributes
-#' dt <- decode("GERMAPARLMINI", s_attribute = "date")
-#' dt <- decode("GERMAPARLMINI", s_attribute = c("date", "speaker"))
+#' dt <- decode("REUTERS", s_attribute = "id")
+#' dt <- decode("REUTERS", s_attribute = c("topics_cat", "places"))
 #' 
 #' # Scenario 2: Decode entire corpus
-#' dt <- decode("GERMAPARLMINI")
+#' dt <- decode("REUTERS")
 #' 
 #' # Scenario 3: Decode partition
-#' p <- partition("GERMAPARLMINI", date = "2009-11-12")
+#' p <- partition("REUTERS", places = "kuwait", regex = TRUE)
 #' dt <- decode(p)
 #' 
-#' # Scenario 4: Decode partition_bundle with speeches
-#' pb <- as.speeches("GERMAPARLMINI", s_attribute_date = "date", s_attribute_name = "speaker")
+#' # Scenario 4: Decode partition_bundle
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' dts <- lapply(as.list(pb), decode)
 #' dts <- lapply(names(dts), function(n) dts[[n]][, speech_id := n])
 #' dt <- data.table::rbindlist(dts)

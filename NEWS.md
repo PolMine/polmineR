@@ -43,6 +43,8 @@ used.
   * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class") and extended documentation for `partition`-class (`?"partition-class")
   * Expanded documentation for `cooccurrences()`-method to explain subsetting results vs applying positivelist/negativelist (#28).
   * The `regions`-class now inherits from a new `corpus`-class.
+  * In the examples for the `decode()`-function, using the REUTERS corpus replaces the usage
+    of the GERMAPARLMINI corpus, to reduce time consumed when checking the package.
   
 
 
