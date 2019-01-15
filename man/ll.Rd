@@ -98,6 +98,8 @@ f <- features(x, y = "GERMAPARLMINI", included = TRUE, method = NULL)
 f <- ll(f)
 summary(f)
 
+\dontrun{
+
 # A sample do-it-yourself calculation for log-likelihood:
 # Compute ll-value for query "oil", and "prices"
 
@@ -133,6 +135,7 @@ ll_value <- 2 * (
 
 df <- as.data.frame(cooccurrences("REUTERS", query = "oil"))
 subset(df, word == "prices")[["ll"]]
+}
 }
 \references{
 Dunning, Ted (1993): Accurate Methods for the Statistics of

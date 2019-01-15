@@ -40,6 +40,7 @@ processing data following the 'tidy' approach, or to manipulate the corpus
 data and to re-encode the corpus.
 }
 \examples{
+\dontrun{
 use("polmineR")
 
 # Scenario 1: Decode one or two s-attributes
@@ -58,4 +59,5 @@ pb <- partition_bundle("REUTERS", s_attribute = "id")
 dts <- lapply(as.list(pb), decode)
 dts <- lapply(names(dts), function(n) dts[[n]][, speech_id := n])
 dt <- data.table::rbindlist(dts)
+}
 }

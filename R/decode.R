@@ -27,6 +27,7 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' @return The return value is a \code{data.table}. 
 #' @rdname decode
 #' @examples
+#' \dontrun{
 #' use("polmineR")
 #' 
 #' # Scenario 1: Decode one or two s-attributes
@@ -45,6 +46,7 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 #' dts <- lapply(as.list(pb), decode)
 #' dts <- lapply(names(dts), function(n) dts[[n]][, speech_id := n])
 #' dt <- data.table::rbindlist(dts)
+#' }
 #' @exportMethod decode
 #' @importFrom data.table fread
 #' @importFrom RcppCWB get_region_matrix

@@ -59,8 +59,9 @@ f <- features(m, "GERMAPARLMINI", included = TRUE)
 f_min <- subset(f, count_coi >= 5)
 summary(f_min)
 
-# A sample do-it-yourself calculation for chisquare:
+\dontrun{
 
+# A sample do-it-yourself calculation for chisquare:
 
 # (a) prepare matrix with observed values
 o <- matrix(data = rep(NA, 4), ncol = 2) 
@@ -90,6 +91,7 @@ for (i in 1:2) for (j in 1:2) y[i,j] <- (o[i,j] - e[i,j])^2 / e[i,j]
 chisquare_value <- sum(y)
 
 as(f, "data.table")[word == "Weg"][["chisquare"]]
+}
 }
 \references{
 Manning, Christopher D.; Schuetze, Hinrich (1999):

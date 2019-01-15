@@ -119,6 +119,8 @@ setMethod("pmi", "context", function(.Object){
 #' f <- ll(f)
 #' summary(f)
 #' 
+#' \dontrun{
+#' 
 #' # A sample do-it-yourself calculation for log-likelihood:
 #' # Compute ll-value for query "oil", and "prices"
 #' 
@@ -154,6 +156,7 @@ setMethod("pmi", "context", function(.Object){
 #' 
 #' df <- as.data.frame(cooccurrences("REUTERS", query = "oil"))
 #' subset(df, word == "prices")[["ll"]]
+#' }
 setGeneric("ll", function(.Object, ...) standardGeneric("ll") )
 
 
@@ -317,8 +320,9 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' f_min <- subset(f, count_coi >= 5)
 #' summary(f_min)
 #' 
-#' # A sample do-it-yourself calculation for chisquare:
+#' \dontrun{
 #' 
+#' # A sample do-it-yourself calculation for chisquare:
 #' 
 #' # (a) prepare matrix with observed values
 #' o <- matrix(data = rep(NA, 4), ncol = 2) 
@@ -348,6 +352,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' chisquare_value <- sum(y)
 #' 
 #' as(f, "data.table")[word == "Weg"][["chisquare"]]
+#' }
 setGeneric("chisquare", function(.Object){standardGeneric("chisquare")})
 
 #' @rdname chisquare-method
