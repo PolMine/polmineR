@@ -28,7 +28,7 @@
 
 \S4method{summary}{partition_bundle}(object, progress = TRUE)
 
-\S4method{merge}{partition_bundle,ANY}(x, name = "", verbose = TRUE)
+\S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
 
 \S4method{[}{partition_bundle,ANY,ANY,ANY}(x, i)
 

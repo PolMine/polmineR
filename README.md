@@ -5,10 +5,10 @@
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Travis-CI Build
-Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev)](https://travis-ci.org/PolMine/polmineR)
+Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://travis-ci.org/PolMine/polmineR)
 [![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=dev&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
-[![codecov](https://codecov.io/gh/PolMine/polmineR/branch/dev/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/dev)
+Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
+[![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1442381.svg)](https://doi.org/10.5281/zenodo.1442381)
 
 # polmineR
@@ -56,8 +56,6 @@ package and the location of a so-called ‘registry’-directory.
 
 ``` r
 library(polmineR)
-#> polmineR v0.7.10.9001
-#> session registry:  /private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/Rtmpe923aa/polmineR_registry
 ```
 
 The session registry directory is populated with files that describe the
@@ -80,7 +78,7 @@ added to the session registry directory.
 
 ``` r
 use("europarl.en") # activate the corpus in the europarl-en package
-#> ... activating corpus: europarl-en
+#> ... activating corpus: EUROPARL-EN
 ```
 
 An advantage of keeping corpora in data packages are the versioning and
