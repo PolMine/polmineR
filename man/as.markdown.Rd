@@ -9,13 +9,13 @@
 \usage{
 as.markdown(.Object, ...)
 
-\S4method{as.markdown}{partition}(.Object, meta = getOption("polmineR.meta"),
-  template = get_template(.Object), cpos = TRUE, cutoff = NULL,
-  verbose = FALSE, ...)
+\S4method{as.markdown}{partition}(.Object,
+  meta = getOption("polmineR.meta"), template = get_template(.Object),
+  cpos = TRUE, cutoff = NULL, verbose = FALSE, ...)
 
 \S4method{as.markdown}{plpr_partition}(.Object, meta = NULL,
-  template = get_template(.Object), cpos = FALSE, interjections = TRUE,
-  cutoff = NULL, ...)
+  template = get_template(.Object), cpos = FALSE,
+  interjections = TRUE, cutoff = NULL, ...)
 }
 \arguments{
 \item{.Object}{The object to be converted, a \code{partition}, or a class

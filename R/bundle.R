@@ -27,7 +27,11 @@ setReplaceMethod(
       warning("length of value provided does not match number of partitions")
       stop()
     }
-    for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
+    # for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
+    x@objects <- lapply(
+      1L:length(x@objects),
+      function(i) {p <- x@objects[[i]];  p@name <- value[i]; p}
+    )
     names(x@objects) <- value
     x
   }
@@ -84,6 +88,37 @@ setMethod('[[', 'bundle', function(x,i){
   }
 })  
 
+#' @exportMethod [[<-
+#' @rdname bundle
+#' @examples
+#' p <- partition("GERMAPARLMINI", date = "2009-11-11")
+#' pb <- partition_bundle(p, s_attribute = "party")
+#' names(pb)
+#' pb[["NA"]] <- NULL
+#' names(pb)
+setMethod("[[<-", "bundle", function(x,i, value){
+  x@objects[[i]] <- value
+  x}
+)
+
+#' @param name The name of an object in the \code{bundle} object.
+#' @exportMethod $
+#' @rdname bundle
+#' @examples
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' pb$SPD # access partition names "SPD" in partition_bundle pb
+setMethod("$", "bundle", function(x,name) x@objects[[name]])
+
+
+#' @exportMethod $<-
+#' @rdname bundle
+#' @examples
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' pb$"NA" <- NULL # quotation needed if name is "NA"
+setMethod("$<-", "bundle", function(x,name, value){
+  x@objects[[name]] <- value
+  x}
+)
 
 #' @exportMethod sample
 #' @rdname bundle
@@ -134,11 +169,11 @@ setMethod("as.bundle", "textstat", function(object){
 #'   values = s_attributes("REUTERS", "id")
 #' )
 #' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-#' dt <- as.data.table(Cs, col = "ll")
+#' dt <- polmineR:::as.data.table.bundle(Cs, col = "ll")
 #' m <- as.matrix(Cs, col = "ll")
-#' @exportMethod as.data.table
+#' @export as.data.table.bundle
 #' @rdname bundle
-setMethod("as.data.table", "bundle", function(x, col){
+as.data.table.bundle <- function(x, col){
   pAttr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
   if (length(pAttr) > 1) stop("no unambigious p-attribute!")
   dts <- lapply(
@@ -154,7 +189,7 @@ setMethod("as.data.table", "bundle", function(x, col){
   DT <- rbindlist(dts)
   y <- dcast(DT, token ~ name, value.var = "value")
   y
-})
+}
 
 
 #' @rdname bundle

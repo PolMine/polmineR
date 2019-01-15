@@ -39,7 +39,7 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
     return( CQI$attribute_size(x, "word", type = "p") )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
-    dt <- as.data.table(
+    dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
         function(sAttr){
@@ -72,7 +72,7 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
     return( sum(as.integer(x@cpos[,2L]) - as.integer(x@cpos[,1L]) + 1L) )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
-    dt <- as.data.table(
+    dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
         function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
@@ -96,3 +96,11 @@ setMethod("size", "DocumentTermMatrix", function(x){
 setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$j, sum), x[["dimnames"]][["Docs"]])
 })
+
+#' @details The \code{size}-method for \code{features} objects will return a
+#'   named list with the size of the corpus of interest ("coi"), i.e. the number
+#'   of tokens in the window, and the reference corpus ("ref"), i.e. the number
+#'   of tokens that are not matched by the query and that are outside the
+#'   window.
+#' @rdname size-method
+setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )

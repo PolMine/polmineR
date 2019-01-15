@@ -4,19 +4,36 @@
 \name{as.VCorpus}
 \alias{as.VCorpus}
 \alias{as.VCorpus,partition_bundle-method}
+\alias{as}
 \title{Coerce partition_bundle to VCorpus.}
 \usage{
 \S4method{as.VCorpus}{partition_bundle}(x)
 }
 \arguments{
-\item{x}{a \code{partition_bundle} object}
+\item{x}{A \code{partition_bundle} object.}
 }
 \description{
-Coerce partition_bundle to VCorpus.
+Retrieve full text for the \code{partition} objects in a
+\code{partition_bundle} and generate a \code{VCorpus}-class object from the
+\code{tm}-package.
+}
+\details{
+The \code{VCorpus} class of the \code{tm}-package offers an interface to
+access the functionality of the \code{tm}-package. Note however that
+generating a \code{VCorpus} to get a \code{DocumentTermMatrix}, or a
+\code{TermDocumentMatrix} is a highly inefficient detour. Applying the
+\code{as.DocumentTermMatrix} or \code{as.TermDocumentMatrix} methods on a
+\code{partition_bundle} is the recommended approach.
+
+If the \code{tm}-package has been loaded, the \code{as.VCorpus}-method
+included in the \code{polmineR}-package may become inaccessible. To deal with
+this (propable) scenario, it is possible to use a coerce-method
+(\code{as(YOUROBJECT, "VCorpus")}), see examples.
 }
 \examples{
 use("polmineR")
-P <- partition("GERMAPARLMINI", date = "2009-11-10")
-PB <- partition_bundle(P, s_attribute = "speaker")
-VC <- as.VCorpus(PB)
+p <- partition("GERMAPARLMINI", date = "2009-11-10")
+pb <- partition_bundle(p, s_attribute = "speaker")
+vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
+vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
 }

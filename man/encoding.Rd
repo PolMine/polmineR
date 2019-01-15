@@ -6,6 +6,7 @@
 \alias{encoding<-}
 \alias{encoding,textstat-method}
 \alias{encoding,bundle-method}
+\alias{encoding,character-method}
 \title{Get and set encoding.}
 \usage{
 encoding(object)
@@ -15,12 +16,33 @@ encoding(object) <- value
 \S4method{encoding}{textstat}(object)
 
 \S4method{encoding}{bundle}(object)
+
+\S4method{encoding}{character}(object)
 }
 \arguments{
-\item{object}{the object with an 'encoding'-slot}
+\item{object}{A \code{textstat} or \code{bundle} object, or a length-one
+character vector specifying a corpus.}
 
-\item{value}{value to be assigned}
+\item{value}{Value to be assigned.}
 }
 \description{
-Method for \code{textstat} objects and classes inheriting from \code{textstat}.
+Method for \code{textstat} objects and classes inheriting from
+\code{textstat}; if \code{object} is a character vector, the encoding of the
+corpus is returned..
+}
+\examples{
+# Get encoding of a corpus.
+encoding("REUTERS")
+
+# Get encoding of a partition.
+r <- partition("REUTERS", places = "kuwait", regex = TRUE)
+encoding(r)
+
+# Get encoding of another class inheriting from textstat (count).
+cnt <- count("REUTERS", p_attribute = "word")
+encoding(cnt)
+
+# Get encoding of objects in a bundle.
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+encoding(pb)
 }

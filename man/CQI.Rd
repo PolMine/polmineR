@@ -6,7 +6,6 @@
 \alias{CQI}
 \alias{CQI.RcppCWB}
 \alias{CQI.cqpserver}
-\alias{CQI.cqpserver}
 \title{Interfaces for accessing the CWB}
 \format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{

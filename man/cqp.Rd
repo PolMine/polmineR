@@ -3,22 +3,28 @@
 \name{cqp}
 \alias{cqp}
 \alias{is.cqp}
+\alias{check_cqp_query}
 \alias{as.cqp}
 \title{Tools for CQP queries.}
 \usage{
 is.cqp(query)
 
+check_cqp_query(query)
+
 as.cqp(query, normalise.case = FALSE, collapse = FALSE)
 }
 \arguments{
-\item{query}{character vector with at least one query}
+\item{query}{A \code{character} vector with at least one CQP query.}
 
-\item{normalise.case}{logical}
+\item{normalise.case}{A \code{logical} value, if \code{TRUE}, a flag will be
+added to the query/queries to omit matching case.}
 
-\item{collapse}{logical, whether to collapse the queries into one}
+\item{collapse}{A \code{logical} value, whether to collapse the queries into one.}
 }
 \value{
-\code{is.cqp} returns a logical value, \code{as.cqp} a character vector
+\code{is.cqp} returns a logical value, \code{as.cqp} a character
+  vector, \code{check_cqp_query} a logical value that is \code{TRUE} if all
+  queries are valid, or \code{FALSE} if not.
 }
 \description{
 Test whether a character string is a CQP query, or turn a character
@@ -26,10 +32,14 @@ vector into CQP queries.
 }
 \details{
 The \code{is.cqp} function guesses whether \code{query} is a CQP query 
-and returns the respective logical value (TRUE/FALSE).
+and returns the respective logical value (\code{TRUE}/\code{FALSE}).
 
 The \code{as.cqp} function takes a character vector as input and converts it
 to a CQP query by putting the individual strings in quotation marks.
+
+The \code{check_cqp_query}-function will check that opening
+  quotation marks are matched by closing quotation marks, to prevent crashes
+  of CQP and the R session.
 }
 \examples{
 is.cqp("migration") # will return FALSE
@@ -40,6 +50,12 @@ as.cqp("migration")
 as.cqp(c("migration", "diversity"))
 as.cqp(c("migration", "diversity"), collapse = TRUE)
 as.cqp("migration", normalise.case = TRUE)
+
+
+check_cqp_query('"Integration.*"') # TRUE, the query is ok
+check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing
+check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
+check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
 }
 \references{
 CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})

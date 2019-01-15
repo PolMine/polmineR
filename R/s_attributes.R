@@ -40,7 +40,7 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
           as.nativeEnc(retval, from = corpusEncoding)
         })
       names(metaInformation) <- s_attribute
-      return( as.data.table(metaInformation) )
+      return( data.table::as.data.table(metaInformation) )
     }
   }
 })
@@ -107,6 +107,7 @@ setMethod(
         }
         Encoding(retval) <- .Object@encoding
         retval <- as.nativeEnc(retval, from = .Object@encoding)
+        Encoding(retval) <- localeToCharset()[1]
         return(retval)
       } else if (length(s_attribute) > 1){
         if (.Object@xml == "flat") {
@@ -117,7 +118,9 @@ setMethod(
               function(x) { 
                 tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
                 Encoding(tmp) <- .Object@encoding
-                as.nativeEnc(tmp, from = .Object@encoding)
+                tmp <- as.nativeEnc(tmp, from = .Object@encoding)
+                Encoding(tmp) <- localeToCharset()[1]
+                tmp
               }
             ),
             stringsAsFactors = FALSE
@@ -132,12 +135,14 @@ setMethod(
                 tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
                 Encoding(tmp) <- .Object@encoding
                 as.nativeEnc(tmp, from = .Object@encoding)
+                Encoding(tmp) <- localeToCharset()[1]
+                tmp
               }
             )
           )
           colnames(tab) <- s_attribute
         }
-        return( as.data.table(tab) )
+        return( data.table::as.data.table(tab) )
         
       }
     }

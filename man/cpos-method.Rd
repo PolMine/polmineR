@@ -14,10 +14,10 @@ cpos(.Object, ...)
 
 \S4method{cpos}{character}(.Object, query,
   p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
-  encoding = NULL, verbose = TRUE, ...)
+  check = TRUE, encoding = NULL, verbose = TRUE, ...)
 
-\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, p_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
+  p_attribute = NULL, verbose = TRUE, ...)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
 
@@ -26,36 +26,41 @@ cpos(.Object, ...)
 \S4method{cpos}{hits}(.Object)
 }
 \arguments{
-\item{.Object}{a \code{"character"} vector indicating a CWB corpus, a
-\code{"partition"} object, a \code{"tempcorpus"} object, or a
-\code{"matrix"} with corpus positions}
+\item{.Object}{A \code{character} vector indicating a CWB corpus, a
+\code{partition} object, a \code{tempcorpus} object, or a
+\code{matrix} with corpus positions.}
 
-\item{...}{further arguments}
+\item{...}{Used for reasons of backwards compatibility to
+process arguments that have been renamed (e.g. \code{pAttribute}).}
 
-\item{query}{a character vector providing one or multiple queries (token or CQP query)}
+\item{query}{A \code{character} vector providing one or multiple queries
+(token or CQP query)}
 
-\item{p_attribute}{the p-attribute to search. Needs to be stated only if query
-is not a CQP query. Defaults to NULL.}
+\item{p_attribute}{The p-attribute to search. Needs to be stated only if query
+is not a CQP query. Defaults to \code{NULL}.}
 
-\item{cqp}{either logical (TRUE if query is a CQP query), or a function to
-check whether query is a CQP query or not (defaults to is.query auxiliary
-function)}
+\item{cqp}{Either logical (\code{TRUE} if query is a CQP query), or a function to
+check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
+function).}
 
-\item{encoding}{the encoding of the corpus (if NULL, the
-encoding provided in the registry file of the corpus will be used)}
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
-\item{verbose}{logical, whether to be talkative}
+\item{encoding}{The encoding of the corpus (if NULL, the
+encoding stated in the registry file of the corpus will be used),}
+
+\item{verbose}{A \code{logical} value, whether to show messages.}
 
 \item{shift}{logical, if true, the cpos resulting from the query performed on
 the tempcorpus will be shifted so that they match the positions of the
 corpus from which the tempcorpus was generated}
 }
 \value{
-Unless .Object is a \code{"matrix"}, you get a matrix with two
-  columns, the first column giving the left/starting corpus positions (cpos)
-  of the hits obtained, the second column giving the right/ending cpos of the
-  respective hit. The number of rows is the number of hits. If there are no
-  hits, a NULL object will is returned.
+Unless \code{.Object} is a \code{matrix}, the return value is a
+  \code{matrix} with two columns.  The first column reports the left/starting
+  corpus positions (cpos) of the hits obtained. The second column reports the
+  right/ending corpus positions of the respective hit. The number of rows is
+  the number of hits. If there are no hits, a \code{NULL} object is returned.
 }
 \description{
 Get matches for a query in a CQP corpus, optionally using the CQP syntax of the

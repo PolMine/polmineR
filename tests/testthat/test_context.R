@@ -7,12 +7,12 @@ test_that(
   "context-method for corpus",
   {
     y <- polmineR::context("REUTERS", query = "oil", pAttribute = "word")@stat
-    expect_equal(colnames(y), c("word_id", "count_window", "word"))
-    expect_equal(sum(y[["count_window"]]), 780L)
+    expect_equal(colnames(y), c("word_id", "count_coi", "word"))
+    expect_equal(sum(y[["count_coi"]]), 780L)
     
     y <- polmineR::context("REUTERS", query = '"barrel.*"', pAttribute = "word")@stat
-    expect_equal(colnames(y), c("word_id", "count_window", "word"))
-    expect_equal(sum(y[["count_window"]]), 260L)
+    expect_equal(colnames(y), c("word_id", "count_coi", "word"))
+    expect_equal(sum(y[["count_coi"]]), 260L)
     
     y <- polmineR::context("REUTERS", query = "asdfasdf", pAttribute = "word")
     expect_equal(y, NULL)
@@ -28,12 +28,12 @@ test_that(
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     y <- polmineR::context(P, query = "oil", pAttribute = "word")@stat
-    expect_equal(colnames(y), c("word_id", "count_window", "word"))
-    expect_equal(sum(y[["count_window"]]), 210L)
+    expect_equal(colnames(y), c("word_id", "count_coi", "word"))
+    expect_equal(sum(y[["count_coi"]]), 210L)
     
     y <- polmineR::context(P, query = '"barrel.*"', pAttribute = "word")@stat
-    expect_equal(colnames(y), c("word_id", "count_window", "word"))
-    expect_equal(sum(y[["count_window"]]), 70L)
+    expect_equal(colnames(y), c("word_id", "count_coi", "word"))
+    expect_equal(sum(y[["count_coi"]]), 70L)
     
     y <- polmineR::context(P, query = "asdfasdf", pAttribute = "word")
     expect_equal(y, NULL)

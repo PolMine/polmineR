@@ -7,12 +7,20 @@ NULL
 #' @importFrom utils View browseURL download.file setTxtProgressBar txtProgressBar untar write.csv
 #' @importFrom tm TermDocumentMatrix DocumentTermMatrix
 #' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
-NULL
-
+#' @importFrom data.table data.table setorderv dcast setnames setkeyv setcolorder as.data.table rbindlist setkey dcast.data.table
 #' @importFrom Matrix rowSums colSums
 NULL
 
+# defined globaly to avoid R CMD check errors, as recommende by vignette in data.table package
+`:=` <- function(...) NULL
+.BY <- .GRP <- .SD <- .N <- NULL
+
+
 setOldClass("htmlwidget")
+
+#' @exportMethod zoom
+#' @noRd
+setGeneric("zoom", function(x, ...) standardGeneric("zoom"))
 
 
 #' polmineR-package
@@ -42,13 +50,12 @@ setOldClass("htmlwidget")
 #' @author Andreas Blaette (andreas.blaette@@uni-due.de)
 #' @keywords package
 #' @docType package
-#' @rdname polmineR
-#' @name polmineR
-#' @references 
-#' Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
+#' @aliases polmineR polmineR-package
+#' @rdname polmineR-package
+#' @name polmineR-package
+#' @references Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
 #' Cham et al: Springer.
-#' 
-#' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
+#' @references Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
 #' @export polmineR
 #' @importFrom RcppCWB cqp_initialize cqp_is_initialized
 #' @importFrom parallel detectCores
@@ -110,5 +117,4 @@ setGeneric("name", function(x) standardGeneric("name"))
 #' @exportMethod name<-
 #' @noRd
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
-
 

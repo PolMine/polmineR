@@ -36,6 +36,8 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param .Object a partition or a partition_bundle object
 #' @param query A query, which may by a character vector or a CQP query.
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute of the query.
 #' @param boundary If provided, a length-one character vector specifying a
 #'   s-attribute. It will be checked that corpus positions do not extend beyond
@@ -68,13 +70,12 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   p, query = "Integration", p_attribute = "word",
 #'   positivelist = c("[aA]rbeit.*", "Ausbildung"), regex = TRUE
 #' )
-#' @import data.table
 #' @exportMethod context
 #' @rdname context-method
 #' @name context
 #' @docType methods
 setMethod("context", "partition", function(
-  .Object, query, cqp = is.cqp,
+  .Object, query, cqp = is.cqp, check = TRUE,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
@@ -108,7 +109,7 @@ setMethod("context", "partition", function(
   
   # getting counts of query in partition
   .message("getting corpus positions", verbose = verbose)
-  hits <- cpos(.Object, query, p_attribute[1], cqp = cqp)
+  hits <- cpos(.Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp, check = check)
   if (is.null(hits)){
     warning('No hits for query ', query, ' (returning NULL)')
     return( invisible(NULL) )
@@ -119,7 +120,7 @@ setMethod("context", "partition", function(
   
   hits <- cbind(hits, hit_no = 1L:nrow(hits))
   
-  ctxt@cpos <- .make_context_dt(hits, left, right, corpus)
+  ctxt@cpos <- .make_context_dt(hit_matrix = hits, left = left, right = right, corpus = .Object@corpus)
   
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
@@ -131,8 +132,10 @@ setMethod("context", "partition", function(
   .message("generating contexts", verbose = verbose)
   
   ctxt@size <- nrow(ctxt@cpos)
-  ctxt@size_coi <- as.integer(ctxt@size) - (sum(hits[,2] - hits[,1]) + nrow(hits))
-  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi)
+  ctxt@size_match <- as.integer(sum(hits[,2] - hits[,1]) + nrow(hits))
+  ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
+  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
+  ctxt@size_partition <- size(.Object)
   ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
   
   # check that windows do not transgress s-attribute
@@ -149,7 +152,7 @@ setMethod("context", "partition", function(
     
     setkeyv(ctxt@cpos, paste(p_attribute, "id", sep = "_"))
     ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(p_attribute, "id", sep = "_"))), with = TRUE]
-    setnames(ctxt@stat, "N", "count_window")
+    setnames(ctxt@stat, "N", "count_coi")
     
     for ( i in 1L:length(p_attribute) ){
       newColumn <- CQI$id2str(.Object@corpus, p_attribute[i], ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]])
@@ -166,6 +169,7 @@ setMethod("context", "partition", function(
 #' @param left no of tokens to the left
 #' @param right no of tokens to the right
 #' @param s_attribute the integrity of the s_attribute to be checked
+#' @importFrom data.table between
 #' @return a list!
 #' @noRd
 .make_context_dt <- function(hit_matrix, left, right, corpus, s_attribute = NULL){
@@ -191,6 +195,7 @@ setMethod("context", "partition", function(
       }
       Y <- DT[, fn(.SD), by = c("hit_no")]
       setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
+      Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
       return(Y)
       
     } else {
@@ -253,6 +258,7 @@ setMethod("context", "character", function(
   if (length(p_attribute) == 1L) C$count(p_attribute, decode = FALSE)
   context(
     C$as.partition(), query = query, cqp = is.cqp,
+    left = left, right = right,
     p_attribute = p_attribute, boundary = boundary,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count, mc = mc, verbose = verbose, progress = progress
@@ -286,7 +292,7 @@ retval
 
 #' @param complete enhance completely
 #' @rdname context-method
-setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE){
+setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, complete = FALSE){
   newObject <- new(
     "context",
     query = query,
@@ -308,13 +314,13 @@ setMethod("context", "cooccurrences", function(.Object, query, complete = FALSE)
     sAttr <- paste(
       newObject@corpus, ".",
       names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
-      sep=""
+      sep = ""
     )
     hits <- cpos(
       newObject@query,
       get(newObject@partition, ".GlobalEnv"),
       p_attribute = newObject@p_attribute,
-      verbose = FALSE
+      verbose = FALSE, check = check
     )
     newObject@size <- nrow(hits)
     hits <- cbind(hits, CQI$cpos2struc(newObject@corpus, s_attribute, hits[,1]))

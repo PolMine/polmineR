@@ -18,13 +18,17 @@ setMethod("nrow", "textstat", function(x) nrow(x@stat))
 setMethod("ncol", "textstat", function(x) ncol(x@stat))
 
 
-#' @param digits no of digits
+#' @param digits Number of digits.
 #' @rdname textstat-class
 #' @exportMethod round
+#' @details The \code{round()}-method looks up all numeric columns in the
+#'   \code{data.table} in the \code{stat}-slot of the \code{textstat} object and
+#'   rounds values of these columns to the number of decimal places specified by
+#'   argument \code{digits}.
 setMethod("round", "textstat", function(x, digits = 2L){
-  columnClasses <- sapply(x@stat, function(column) is(column)[1])
-  numericColumns <- which(columnClasses == "numeric")
-  for (i in numericColumns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
+  column_classes <- sapply(x@stat, function(column) is(column)[1])
+  numeric_columns <- which(column_classes == "numeric")
+  for (i in numeric_columns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
   x
 })
 
@@ -75,11 +79,23 @@ setMethod("subset", "textstat", function(x, ...){
   x
 })
 
-#' @exportMethod as.data.table
-setMethod("as.data.table", "textstat", function(x) x@stat)
+
+#' @rdname textstat-class
+#' @export as.data.table.textstat
+as.data.table.textstat <- function(x) x@stat
 
 #' @exportMethod as.data.frame
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )
+
+#' @rdname textstat-class
+setMethod("show", "textstat", function(object) {
+  if (Sys.getenv("RSTUDIO") == "1" && interactive() && is.na(Sys.getenv("NOT_CRAN", unset = NA))){
+    view(object)
+  } else {
+    message(sprintf("Object of class '%s'", is(object)[1]))
+  }
+})
+
 
 
 #' @exportMethod p_attributes
@@ -96,41 +112,43 @@ setMethod("[[", "textstat", function(x, i){
 })
 
 #' @exportMethod [
-setMethod("[", "textstat", function(x, i, j){
-  if (nrow(x@stat) == 0){
-    warning("indexing is pointless because data.table is empty")
-  }
+#' @importFrom data.table key
+setMethod("[", "textstat", function(x, ...){
+  if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
+  if (is.null(key(x@stat))) setkeyv(x@stat, cols = x@p_attribute)
   if (missing(j)){
-    x@stat <- copy(x@stat[i = i])
+    return( x@stat[i] )
   } else {
-    x@stat <- copy(x@stat[i = i, j = j, with = FALSE])
+    return( x@stat[i,j, with = FALSE] )
   }
-  x
 })
 
-setAs(from = "textstat", to = "htmlwidget", def = function(from) DT::datatable(from@stat))
+setAs(from = "textstat", to = "htmlwidget", def = function(from){
+  DT::datatable(from@stat, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
+})
 
 setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
-  DT::datatable(dt, rownames = FALSE)
+  DT::datatable(
+    dt,
+    options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE),
+    rownames = FALSE
+  )
 })
 
 setAs(from = "features", to = "htmlwidget", def = function(from){
   dt <- copy(round(from)@stat)
   for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
-  DT::datatable(dt)
+  DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
 })
 
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname textstat-class
-#' @param pagelength The number of kwic lines displayed per page in the
-#'   datatables htmlwidget that is returned.
 #' @param options Chunk options.   
-setMethod("knit_print", "textstat", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
+setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
-  y$x$options$pageLength <- pagelength
   knit_print(y, options = options)
 })

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.10
-Date: 2018-09-18
+Version: 0.7.11
+Date: 2019-01-07
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")))
 Imports:
     methods,
@@ -31,7 +31,8 @@ Suggests:
     testthat,
     tidytext,
     magrittr,
-    covr
+    covr,
+    igraph
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an
@@ -46,6 +47,7 @@ BugReports: https://github.com/PolMine/polmineR/issues
 Biarch: true
 License: GPL-3
 URL: https://www.github.com/PolMine/polmineR
+Encoding: UTF-8
 Collate: 
     'CQI.R'
     'Labels.R'
@@ -64,30 +66,28 @@ Collate:
     'TermDocumentMatrix.R'
     'as.VCorpus.R'
     'as.markdown.R'
+    'kwic.R'
+    'decode.R'
     'cooccurrences.R'
     'as.sparseMatrix.R'
     'as.speeches.R'
     'blapply.R'
-    'kwic.R'
     'browse.R'
-    'chisquare.R'
     'hits.R'
     'tempcorpus.R'
     'cpos.R'
     'cqpserver.R'
-    'decode.R'
     'dispersion.R'
     'dotplot.R'
     'encoding.R'
     'enrich.R'
+    'format.R'
     'highlight.R'
     'html.R'
     'label.R'
-    'll.R'
     'mail.R'
     'means.R'
     'noise.R'
-    'pmi.R'
     'regions.R'
     'read.R'
     'registry.R'
@@ -95,6 +95,7 @@ Collate:
     'renamed.R'
     's_attributes.R'
     'size.R'
+    'stats.R'
     'store.R'
     't_test.R'
     'templates.R'
@@ -108,4 +109,4 @@ Collate:
     'view.R'
     'weigh.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

@@ -8,70 +8,79 @@
 \alias{cooccurrences,context-method}
 \alias{cooccurrences,Corpus-method}
 \alias{cooccurrences,partition_bundle-method}
+\alias{cooccurrences,Cooccurrences-method}
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  stoplist = NULL, positivelist = NULL, regex = FALSE, keep = NULL,
-  cpos = NULL, method = "ll", mc = getOption("polmineR.mc"),
-  verbose = FALSE, progress = FALSE, ...)
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), stoplist = NULL,
+  positivelist = NULL, regex = FALSE, keep = NULL, cpos = NULL,
+  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
+  progress = FALSE, ...)
 
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
   mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
-\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
+\S4method{cooccurrences}{context}(.Object, method = "ll",
+  verbose = FALSE)
 
 \S4method{cooccurrences}{Corpus}(.Object, query,
   p_attribute = getOption("polmineR.p_attribute"), ...)
 
 \S4method{cooccurrences}{partition_bundle}(.Object, query,
   mc = getOption("polmineR.mc"), ...)
+
+\S4method{cooccurrences}{Cooccurrences}(.Object, query)
 }
 \arguments{
-\item{.Object}{a partition object, or a character vector with a CWB corpus}
+\item{.Object}{A \code{partition} object, or a \code{character} vector with a CWB corpus.}
 
-\item{...}{further parameters that will be passed into bigmatrix (applies only of big=TRUE)}
+\item{...}{Further parameters that will be passed into bigmatrix (applies only of big = TRUE).}
 
-\item{query}{query, may by a character vector to match a token, or a CQP query}
+\item{query}{A query, either a character vector to match a token, or a CQP query.}
 
-\item{cqp}{defaults to \code{is.cqp}-function, or provide TRUE/FALSE, relevant only if query is not NULL}
+\item{cqp}{Defaults to \code{is.cqp}-function, or provide
+\code{TRUE}/\code{FALSE}; relevant only if query is not \code{NULL}.}
 
-\item{p_attribute}{the p-attribute of the tokens/the query}
+\item{p_attribute}{The p-attribute of the tokens/the query.}
 
-\item{s_attribute}{if provided, it will be checked that cpos do not extend beyond
-the region defined by the s-attribute}
+\item{s_attribute}{If provided, it will be checked that corpus positions of
+windows do not extend beyond the region defined by the s-attribute.}
 
 \item{left}{Number of tokens to the left of the query match.}
 
 \item{right}{Number of tokens to the right of the query match.}
 
 \item{stoplist}{Exclude a query hit from analysis if stopword(s) is/are in
-context (relevant only if query is not NULL).}
+context (relevant only if query is not \code{NULL}).}
 
-\item{positivelist}{character vector or numeric vector: include a query hit
-only if token in positivelist is present. If positivelist is a character
-vector, it is assumed to provide regex expressions (incredibly long if the
-list is long) (relevant only if query is nut NULL)}
+\item{positivelist}{Character vector or numeric vector: include a query hit
+only if token in \code{positivelist} is present. If \code{positivelist} is
+a character vector, it is assumed to provide regex expressions (incredibly
+long if the list is long) (relevant only if query is nut NULL)}
 
-\item{regex}{logical, whether stoplist/positivelist are dealt with as regular expressions}
+\item{regex}{A \code{logical} value, whether stoplist/positivelist are
+interpreted as regular expressions.}
 
 \item{keep}{list with tokens to keep}
 
-\item{cpos}{integer vector with corpus positions, defaults to NULL - then the corpus positions for the whole corpus will be used}
+\item{cpos}{integer vector with corpus positions, defaults to NULL - then the
+corpus positions for the whole corpus will be used}
 
-\item{method}{statistical test to use (defaults to "ll")}
+\item{method}{The statistical test(s) to use (defaults to "ll").}
 
 \item{mc}{whether to use multicore}
 
-\item{verbose}{logical, whether to be verbose}
+\item{verbose}{A \code{logical} value, whether to be verbose.}
 
-\item{progress}{logical, whether to be verbose}
+\item{progress}{A \code{logical} value, whether to output progress bar.}
 }
 \value{
 a cooccurrences-class object
@@ -84,12 +93,34 @@ use("polmineR")
 merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 merkel <- enrich(merkel, p_attribute = "word")
 cooc <- cooccurrences(merkel, query = "Deutschland")
+
+# use subset-method to filter results
+a <- cooccurrences("REUTERS", query = "oil")
+b <- subset(a, !is.na(ll))
+c <- subset(b, !word \%in\% tm::stopwords("en"))
+d <- subset(c, count_coi >= 5)
+e <- subset(c, ll >= 10.83)
+format(e)
+
+# using pipe operator may be convenient
+if (require(magrittr)){
+cooccurrences("REUTERS", query = "oil") \%>\%
+  subset(!is.na(ll)) \%>\%
+  subset(!word \%in\% tm::stopwords("en")) \%>\%
+  subset(count_coi >= 5) \%>\%
+  subset(ll >= 10.83) \%>\%
+  format()
+}
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).
 
 Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
+}
+\seealso{
+See the documentation for the \code{\link{ll}}-method for an
+  explanation of the computation of the log-likelihood statistic.
 }
 \author{
 Andreas Blaette

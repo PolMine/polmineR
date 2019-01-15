@@ -4,13 +4,19 @@
 \name{ngrams}
 \alias{ngrams}
 \alias{ngrams,partition-method}
+\alias{ngrams,character-method}
+\alias{ngrams,CorpusOrSubcorpus-method}
 \alias{ngrams,partition_bundle-method}
 \title{Get N-Grams}
 \usage{
 ngrams(.Object, ...)
 
-\S4method{ngrams}{partition}(.Object, n = 2, p_attribute = "word",
-  char = NULL, progress = FALSE, ...)
+\S4method{ngrams}{partition}(.Object, ...)
+
+\S4method{ngrams}{character}(.Object, ...)
+
+\S4method{ngrams}{CorpusOrSubcorpus}(.Object, n = 2,
+  p_attribute = "word", char = NULL, progress = FALSE, ...)
 
 \S4method{ngrams}{partition_bundle}(.Object, n = 2, char = NULL,
   p_attribute = "word", mc = FALSE, progress = FALSE, ...)
@@ -44,7 +50,7 @@ ngramObject2 <- subset(
  ngramObject,
  ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
  )
-ngramObject2@stat[, "1_pos" := NULL, with = FALSE][, "2_pos" := NULL, with = FALSE]
+ngramObject2@stat[, "1_pos" := NULL][, "2_pos" := NULL]
 ngramObject3 <- sort(ngramObject2, by = "count")
 head(ngramObject3)
 }

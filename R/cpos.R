@@ -17,24 +17,28 @@ NULL
 #' corpus positions. Equally, if \code{.Object} is a \code{hits} object,
 #' an integer vector is returned with the individual corpus positions.
 #' 
-#' @param .Object a \code{"character"} vector indicating a CWB corpus, a
-#'   \code{"partition"} object, a \code{"tempcorpus"} object, or a
-#'   \code{"matrix"} with corpus positions
-#' @param query a character vector providing one or multiple queries (token or CQP query)
-#' @param cqp either logical (TRUE if query is a CQP query), or a function to
-#'   check whether query is a CQP query or not (defaults to is.query auxiliary
-#'   function)
-#' @param p_attribute the p-attribute to search. Needs to be stated only if query
-#'   is not a CQP query. Defaults to NULL.
-#' @param encoding the encoding of the corpus (if NULL, the
-#'  encoding provided in the registry file of the corpus will be used)
-#' @param verbose logical, whether to be talkative
-#' @param ... further arguments
-#' @return Unless .Object is a \code{"matrix"}, you get a matrix with two
-#'   columns, the first column giving the left/starting corpus positions (cpos)
-#'   of the hits obtained, the second column giving the right/ending cpos of the
-#'   respective hit. The number of rows is the number of hits. If there are no
-#'   hits, a NULL object will is returned.
+#' @param .Object A \code{character} vector indicating a CWB corpus, a
+#'   \code{partition} object, a \code{tempcorpus} object, or a
+#'   \code{matrix} with corpus positions.
+#' @param query A \code{character} vector providing one or multiple queries
+#'   (token or CQP query)
+#' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a function to
+#'   check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
+#'   function).
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
+#' @param p_attribute The p-attribute to search. Needs to be stated only if query
+#'   is not a CQP query. Defaults to \code{NULL}.
+#' @param encoding The encoding of the corpus (if NULL, the
+#'  encoding stated in the registry file of the corpus will be used),
+#' @param verbose A \code{logical} value, whether to show messages.
+#' @param ... Used for reasons of backwards compatibility to
+#'   process arguments that have been renamed (e.g. \code{pAttribute}).
+#' @return Unless \code{.Object} is a \code{matrix}, the return value is a
+#'   \code{matrix} with two columns.  The first column reports the left/starting
+#'   corpus positions (cpos) of the hits obtained. The second column reports the
+#'   right/ending corpus positions of the respective hit. The number of rows is
+#'   the number of hits. If there are no hits, a \code{NULL} object is returned.
 #' @exportMethod cpos
 #' @rdname cpos-method
 #' @name cpos
@@ -42,7 +46,7 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "character", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp, encoding = NULL, verbose = TRUE, ...){
+setMethod("cpos", "character", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp, check = TRUE, encoding = NULL, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -51,7 +55,7 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
   if (class(cqp) == "function") cqp <- cqp(query)
   if (length(cqp) > 1) stop("length of cqp is larger than 1, but needs to be 1")
   if (cqp == FALSE) {
-    if (any(grepl("[\\|]", query))) warning("Special character that may cause problems in query!")
+    # if (any(grepl("[]", query))) warning("Special character that may cause problems in query!")
     hitList <- lapply(
       query,
       function(Q){
@@ -72,6 +76,7 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
     hitList <- lapply(
       query,
       function(Q){
+        if (check) if (!check_cqp_query(Q)) stop("Aborting - CQP query does not pass check and may cause a crash.")
         CQI$query(.Object, Q)
         cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
         if (is(cpos)[1] == "try-error"){
@@ -93,19 +98,19 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
 })
   
 #' @rdname cpos-method
-setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, p_attribute = NULL, verbose = TRUE, ...){
+setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, check = TRUE, p_attribute = NULL, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  hits <- cpos(.Object@corpus, query = query, cqp = cqp, p_attribute, encoding = .Object@encoding, verbose = verbose)
-  if (!is.null(hits) && length(.Object@s_attributes) > 0){
+  hits <- cpos(.Object@corpus, query = query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = .Object@encoding, verbose = verbose)
+  if (!is.null(hits) && length(.Object@s_attributes) > 0L){
     s_attribute <- names(.Object@s_attributes)[length(.Object@s_attributes)]
     strucHits <- CQI$cpos2struc(.Object@corpus, s_attribute, hits[,1])
     hits <- hits[which(strucHits %in% .Object@strucs),]
-    if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2)
-    if (nrow(hits) == 0) hits <- NULL
+    if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2L)
+    if (nrow(hits) == 0L) hits <- NULL
   }
-  if (is(hits)[1] == "integer") hits <- matrix(hits, ncol = 2)
+  if (is(hits)[1] == "integer") hits <- matrix(hits, ncol = 2L)
   hits
 })
 
@@ -119,7 +124,7 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift = TRUE){
     paste("FOO = ", query, sep=""),
     "dump FOO"
   ), collapse=";"), ";", sep="")
-  cqpBatchFile=file.path(.Object@dir, "cqpBatchFile.txt")
+  cqpBatchFile = file.path(.Object@dir, "cqpBatchFile.txt")
   cat(cqpBatchCmds, file=cqpBatchFile)
   cqpCmd <- paste(c(
     "cqp", "-r", .Object@registry, "-f", cqpBatchFile
@@ -130,6 +135,7 @@ setMethod("cpos", "tempcorpus", function(.Object, query, shift = TRUE){
   if (shift) cposMatrix <- apply(cposMatrix, 2, function(x) x + .Object@cpos[1,1])
   cposMatrix
 })
+
 
 #' @rdname cpos-method
 setMethod("cpos", "matrix", function(.Object)

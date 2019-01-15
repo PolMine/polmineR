@@ -3,7 +3,6 @@
 \docType{methods}
 \name{context}
 \alias{context}
-\alias{context}
 \alias{as.matrix,context_bundle-method}
 \alias{context,partition-method}
 \alias{context,character-method}
@@ -14,21 +13,26 @@
 context(.Object, ...)
 
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  check = TRUE, left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = TRUE, ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-  stoplist = NULL, positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE, ...)
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), stoplist = NULL,
+  positivelist = NULL, regex = FALSE, count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...)
 
 \S4method{context}{partition_bundle}(.Object, query, p_attribute,
   verbose = TRUE, ...)
 
-\S4method{context}{cooccurrences}(.Object, query, complete = FALSE)
+\S4method{context}{cooccurrences}(.Object, query, check = TRUE,
+  complete = FALSE)
 }
 \arguments{
 \item{.Object}{a partition or a partition_bundle object}
@@ -38,6 +42,9 @@ context(.Object, ...)
 \item{query}{A query, which may by a character vector or a CQP query.}
 
 \item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{left}{Number of tokens to the left of the query match.}
 

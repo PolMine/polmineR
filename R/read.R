@@ -51,6 +51,13 @@ NULL
 #'   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
 #'   meta = c("speaker", "date")
 #' )
+#' 
+#' \dontrun{
+#' pb <- as.speeches("GERMAPARLMINI", s_attribute_date = "date", s_attribute_name = "speaker")
+#' pb <- pb[[ data.table::as.data.table(summary(pb))[size >= 500][["name"]] ]]
+#' pb <- pb[[ 1:10 ]]
+#' read(pb)
+#' }
 #' @seealso For concordances / a keword-in-context display, see \code{\link{kwic}}.
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
@@ -82,8 +89,9 @@ setMethod(
 
 #' @rdname read-method
 setMethod("read", "partition_bundle", function(.Object, highlight = list(), cpos = TRUE, ...){
-  for (i in 1:length(.Object@objects)){
-    read(.Object@objects[[i]], highlight = highlight, cpos = cpos, ...)
+  for (i in 1L:length(.Object@objects)){
+    y <- read(.Object@objects[[i]], highlight = highlight, cpos = cpos, ...)
+    show(y)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
   }

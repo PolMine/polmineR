@@ -55,12 +55,12 @@ setMethod("as.regions", "context", function(x, node = TRUE){
 
 
 #' @rdname regions_class
-#' @exportMethod as.data.table
-setMethod("as.data.table", "regions", function(x, values = NULL){
-  dt <- as.data.table(x@cpos)
+#' @export as.data.table.regions
+as.data.table.regions <- function(x, values = NULL){
+  dt <- data.table::as.data.table(x@cpos)
   if (!is.null(values)){
     stopifnot(length(values) == nrow(dt) || length(values) == 1)
     dt[[3]] <- values
   }
   dt
-})
+}

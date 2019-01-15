@@ -87,8 +87,8 @@ as.speeches <- function(
   for (i in 1L:length(speaker_list)) name(speaker_list[[i]]) <- partition_names[i]
   
   # at this stage, the list may contain partitions of size 0, that need to be dropped
-  empty <- which(sapply(speaker_list, function(x) size(x)) == 0)
-  if (length(empty) > 0) for (i in rev(empty)) speakerFlatList[[i]] <- NULL
+  empty_partitions <- which(sapply(speaker_list, size) == 0L)
+  if (length(empty_partitions) > 0L) for (i in rev(empty_partitions)) speaker_list[[i]] <- NULL
   
   # the resulting list may be totally unordered - reorder now
   .message("reordering partitions", verbose = verbose)

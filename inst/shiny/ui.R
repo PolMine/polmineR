@@ -1,4 +1,4 @@
-shinyThemeToUse <- shinytheme("cerulean") # alternatives: flatly, cerulean
+shinyThemeToUse <- shinytheme("cerulean") # alternative: flatly
 
 shinyUI(
   

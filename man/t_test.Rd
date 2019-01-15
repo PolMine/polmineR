@@ -4,15 +4,25 @@
 \name{t_test}
 \alias{t_test}
 \alias{t_test,context-method}
-\title{perform t-test}
+\title{Perform t-test.}
 \usage{
 t_test(.Object)
 
 \S4method{t_test}{context}(.Object)
 }
 \arguments{
-\item{.Object}{a context or features object}
+\item{.Object}{A \code{context} or \code{features} object}
 }
 \description{
-S4 method for context object to perform t-test
+S4 method to perform t-test.
+}
+\details{
+The calculation of the t-test is based on the formula
+\deqn{t = \frac{\overline{x} - \mu}{\sqrt{\frac{s^2}{N}}}}{}
+where \eqn{\mu} is the mean of the distribution, x the sample mean, \eqn{s^2}{s^2} the sample variance,
+and N the sample size.
+}
+\references{
+Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
+Processing}. MIT Press: Cambridge, Mass., pp. 163-166.
 }

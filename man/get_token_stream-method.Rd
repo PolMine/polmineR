@@ -14,40 +14,42 @@ get_token_stream(.Object, ...)
 
 \S4method{get_token_stream}{numeric}(.Object, corpus, p_attribute,
   encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE,
-  cutoff = NULL, ...)
+  cutoff = NULL, decode = TRUE, ...)
 
 \S4method{get_token_stream}{matrix}(.Object, ...)
 
-\S4method{get_token_stream}{character}(.Object, left = NULL, right = NULL,
-  ...)
+\S4method{get_token_stream}{character}(.Object, left = NULL,
+  right = NULL, ...)
 
-\S4method{get_token_stream}{partition}(.Object, p_attribute, collapse = NULL,
-  cpos = FALSE, ...)
+\S4method{get_token_stream}{partition}(.Object, p_attribute,
+  collapse = NULL, cpos = FALSE, ...)
 
 \S4method{get_token_stream}{regions}(.Object, p_attribute = "word", ...)
 }
 \arguments{
-\item{.Object}{an object of class \code{matrix} or \code{partition}}
+\item{.Object}{An object of class \code{matrix} or \code{partition}}
 
-\item{...}{further arguments}
+\item{...}{Further arguments.}
 
-\item{corpus}{the CWB corpus}
+\item{corpus}{The CWB corpus.}
 
-\item{p_attribute}{the p-attribute to decode}
+\item{p_attribute}{The p-attribute to decode.}
 
-\item{encoding}{encoding to use}
+\item{encoding}{Encoding to use.}
 
-\item{collapse}{character string length 1}
+\item{collapse}{Length-one character string.}
 
-\item{beautify}{logical, whether to adjust whitespace before and after interpunctation}
+\item{beautify}{Logical, whether to adjust whitespace before and after interpunctation.}
 
-\item{cpos}{logical, whether to return cpos as names of the tokens}
+\item{cpos}{Logical, whether to return cpos as names of the tokens.}
 
-\item{cutoff}{maximum number of tokens to be reconstructed}
+\item{cutoff}{Maximum number of tokens to be reconstructed.}
 
-\item{left}{left corpus position}
+\item{decode}{Logical, whether to decode token ids to character strings.}
 
-\item{right}{right corpus position}
+\item{left}{Left corpus position.}
+
+\item{right}{Right corpus position.}
 }
 \description{
 Turn regions of a corpus defined by corpus positions into the original text.

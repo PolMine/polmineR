@@ -30,6 +30,16 @@ setMethod("corpus", "textstat", function(object) object@corpus)
 setMethod("corpus", "kwic", function(object) object@corpus)
 
 #' @rdname corpus-method
+setMethod("corpus", "character", function(object){
+  new(
+    "corpus",
+    corpus = object,
+    encoding = registry_get_encoding(object),
+    key = character()
+    )
+})
+
+#' @rdname corpus-method
 setMethod("corpus", "bundle", function(object){
   unique(sapply(object@objects, function(x) x@corpus))
 })
@@ -281,3 +291,77 @@ Corpus <- R6Class(
     }
   )
 )
+
+
+
+#' @details The `$`-method will assign the argument \code{name} to the slot
+#'   \code{key} and return the modified object.
+#' @examples
+#' corp <- corpus("GERMAPARLMINI")
+#' corp2 <- corp$speaker
+#' corp2@@key
+#' @rdname corpus_class
+#' @exportMethod $
+setMethod("$", "corpus", function(x, name){
+  x@key <- name
+  x
+})
+
+
+#' @examples
+#' x <- corpus("GERMAPARLMINI")
+#' x$date == "2009-10-28"
+#' @rdname corpus_class
+#' @exportMethod ==
+setMethod("==", "corpus", function(e1, e2){
+  partition(e1@corpus, def = setNames(object = list(e2), nm = e1@key))
+})
+
+
+
+#' @examples
+#' x <- corpus("GERMAPARLMINI")
+#' x$party != "NA"
+#' @rdname corpus_class
+#' @exportMethod !=
+setMethod("!=", "corpus", function(e1, e2){
+  available <- s_attributes(e1@corpus, e1@key)
+  keep <- available[!available %in% e2]
+  partition(e1@corpus, def = setNames(object = list(keep), nm = e1@key))
+})
+
+
+
+#' @examples
+#' x <- corpus("GERMAPARLMINI")
+#' x$date %in% c("2009-10-27", "2009-10-28")
+#' @rdname corpus_class
+#' @exportMethod %in%
+setMethod("%in%", "corpus", function(x, table){
+  partition(x@corpus, def = setNames(object = list(table), nm = x@key))
+})
+
+
+
+#' @examples
+#' x <- corpus("GERMAPARLMINI")
+#' y <- zoom(x, date == "2009-10-28")
+#' 
+#' x <- partition("GERMAPARLMINI", interjection = "speech")
+#' m <- zoom(x, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
+#' 
+#' not_unknown <- zoom(x, party != c("NA", "FDP"))
+#' s_attributes(not_unknown, "party")
+#' @rdname corpus_class
+#' @exportMethod subset
+setMethod("zoom", "corpus", function(x, ...){
+  cmds <- strsplit(deparse(substitute(...)), split = "\\s*&\\s*")[[1]]
+  x_s_attributes <- s_attributes(x@corpus)
+  for (cmd in cmds){
+    for (s_attr in x_s_attributes) cmd <- gsub(sprintf("(%s)", s_attr), "x$\\1", cmd)
+    x <- eval(parse(text = cmd))
+  }
+  x
+})
+
+

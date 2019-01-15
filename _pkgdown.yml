@@ -12,12 +12,14 @@ reference:
       - use
       - Corpus
       - corpus
+      - corpus-class
+      - slice
       - partition
       - partition_bundle
       - p_attributes
       - s_attributes
       - as.speeches
-      - subcorpus
+      - subcorpus-class
       - regions
       - tempcorpus
       - tempcorpus_class
@@ -48,6 +50,7 @@ reference:
       - chisquare
       - ll
       - t_test
+      - pmi
       - means
       - weigh
       - mail
@@ -74,6 +77,8 @@ reference:
       - hits_class
       - context-class
       - cooccurrences-class
+      - Cooccurrences-class
+      - Cooccurrences,character-method
       - features-class
   - title: "The 'kwic' & 'Labels' Classes"
     desc: xxx
@@ -102,6 +107,7 @@ reference:
     desc: Exported utility functions / helpers.
     contents:
       - encodings
+      - store
   - title: "Backwards Compatibility"
     desc: Starting with v0.7.9, the coding style of the polmineR-package has moved from camelCase to snake_case. A set of 'old style'-functions ensures backwards compatibility and that old code will not break.
     contents:

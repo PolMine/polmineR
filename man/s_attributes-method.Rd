@@ -3,7 +3,6 @@
 \docType{methods}
 \name{s_attributes}
 \alias{s_attributes}
-\alias{s_attributes}
 \alias{s_attributes,character-method}
 \alias{s_attributes,partition-method}
 \title{Get s-attributes.}

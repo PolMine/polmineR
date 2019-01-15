@@ -1,6 +1,5 @@
 library(shiny)
 library(polmineR)
-# library(polmineR.shiny)
 library(magrittr)
 loadNamespace("DT")
 library(shinythemes)

@@ -10,10 +10,10 @@ setAs(
       from@table[["node"]] <- paste('<span style="color:steelblue">', from@table[["node"]], '</span>', sep="")
       from@table[["text"]] <- apply(from@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
       for (x in c("left", "node", "right", "hit_no")) from@table[[x]] <- NULL
-      retval <- DT::datatable(from@table, escape = FALSE)
+      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
     } else {
       from@table[["hit_no"]] <- NULL
-      retval <- DT::datatable(from@table, escape = FALSE)
+      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
       retval <- DT::formatStyle(retval, "node", color = "blue", textAlign = "center")
       retval <- DT::formatStyle(retval, "left", textAlign = "right")
     }
@@ -50,7 +50,7 @@ setMethod("show", "kwic", function(object){
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
-  y$x$options$pageLength <- pagelength
+  # y$x$options$pageLength <- pagelength
   knit_print(y, options = options)
 })
 
@@ -66,12 +66,7 @@ setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
   if (!is.null(fmt)) x@table[["node"]] <- sprintf(fmt, x@table[["node"]])
   apply(
     x@table, 1L,
-    function(row) paste(
-      row["left"],
-      row["node"],
-      row["right"],
-      sep = " "
-    )
+    function(row) paste(row["left"], row["node"], row["right"], sep = " ")
   )
 })
 
@@ -143,6 +138,8 @@ NULL
 #' @param cqp Either a logical value (\code{TRUE} if \code{query} is a CQP
 #'   query), or a function to check whether query is a CQP query or not
 #'   (defaults to auxiliary function \code{is.query}).
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param left Number of tokens to the left of query match.
 #' @param right Number of tokens to the right of query match.
 #' @param s_attributes Structural attributes (s-attributes) to include into
@@ -220,17 +217,18 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   
   if (is.null(s_attributes)) s_attributes <- character()
   conc <- new(
-    'kwic',
+    "kwic",
     corpus = .Object@corpus,
     left = as.integer(.Object@left),
     right = as.integer(.Object@right),
+    p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
     labels = Labels$new(),
     cpos = if (cpos) DT else data.table()
   )
   
-  conc <- enrich(conc, table = TRUE)
+  conc <- enrich(conc, table = TRUE, p_attribute = .Object@p_attribute)
   conc <- enrich(conc, s_attributes = s_attributes)
   conc
 })
@@ -277,7 +275,7 @@ setMethod("kwic", "partition", function(
 
 #' @rdname kwic
 setMethod("kwic", "character", function(
-  .Object, query, cqp = is.cqp,
+  .Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
@@ -291,7 +289,7 @@ setMethod("kwic", "character", function(
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
-  hits <- cpos(.Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
+  hits <- cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   if (is.null(hits)){
     message("sorry, not hits");
     return(invisible(NULL))
@@ -300,8 +298,8 @@ setMethod("kwic", "character", function(
   cposList <- apply(
     hits, 1,
     function(row){
-      left <- c((row[1] - left - 1L):(row[1] - 1L))
-      right <- c((row[2] + 1L):(row[2] + right + 1L))
+      left <- c((row[1] - left ):(row[1] - 1L))
+      right <- c((row[2] + 1L):(row[2] + right))
       list(
         left = left[left > 0L],
         node = row[1]:row[2],
@@ -319,9 +317,10 @@ setMethod("kwic", "character", function(
         function(x2)
           switch(
             x2,
-            left = rep(-1L, times = length(x[[x2]])),
+            left = if (length(x[[x2]]) == 0) integer() else rev((-1L:-left)[1L:length(x[[x2]])]),
             node = rep(0L, times = length(x[[x2]])),
-            right = rep(1L, times = length(x[[x2]])))
+            right = if (length(x[[x2]]) == 0) integer() else (1L:right)[1L:length(x[[x2]])]
+          )
       )))
   )
   DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])

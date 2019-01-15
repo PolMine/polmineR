@@ -15,11 +15,11 @@ read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
   tooltips = list(), verbose = TRUE, cpos = TRUE,
-  cutoff = getOption("polmineR.cutoff"), template = get_template(.Object),
-  ...)
+  cutoff = getOption("polmineR.cutoff"),
+  template = get_template(.Object), ...)
 
-\S4method{read}{partition_bundle}(.Object, highlight = list(), cpos = TRUE,
-  ...)
+\S4method{read}{partition_bundle}(.Object, highlight = list(),
+  cpos = TRUE, ...)
 
 \S4method{read}{data.table}(.Object, col, partition_bundle,
   highlight = list(), cpos = FALSE, ...)
@@ -94,6 +94,13 @@ read(
   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
   meta = c("speaker", "date")
 )
+
+\dontrun{
+pb <- as.speeches("GERMAPARLMINI", s_attribute_date = "date", s_attribute_name = "speaker")
+pb <- pb[[ data.table::as.data.table(summary(pb))[size >= 500][["name"]] ]]
+pb <- pb[[ 1:10 ]]
+read(pb)
+}
 }
 \seealso{
 For concordances / a keword-in-context display, see \code{\link{kwic}}.

@@ -5,17 +5,18 @@ NULL
 #' 
 #' Turn regions of a corpus defined by corpus positions into the original text.
 #' 
-#' @param .Object an object of class \code{matrix} or \code{partition}
-#' @param p_attribute the p-attribute to decode
-#' @param encoding encoding to use
-#' @param collapse character string length 1
-#' @param corpus the CWB corpus
-#' @param beautify logical, whether to adjust whitespace before and after interpunctation
-#' @param left left corpus position
-#' @param right right corpus position
-#' @param cpos logical, whether to return cpos as names of the tokens
-#' @param cutoff maximum number of tokens to be reconstructed
-#' @param ... further arguments
+#' @param .Object An object of class \code{matrix} or \code{partition}
+#' @param p_attribute The p-attribute to decode.
+#' @param encoding Encoding to use.
+#' @param collapse Length-one character string.
+#' @param corpus The CWB corpus.
+#' @param beautify Logical, whether to adjust whitespace before and after interpunctation.
+#' @param decode Logical, whether to decode token ids to character strings.
+#' @param left Left corpus position.
+#' @param right Right corpus position.
+#' @param cpos Logical, whether to return cpos as names of the tokens.
+#' @param cutoff Maximum number of tokens to be reconstructed.
+#' @param ... Further arguments.
 #' @exportMethod get_token_stream
 #' @rdname get_token_stream-method
 #' @examples 
@@ -25,13 +26,19 @@ NULL
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, ...){
+setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
-  tokens <- CQI$cpos2str(corpus, p_attribute, .Object)
+  
+  if (decode){
+    tokens <- CQI$cpos2str(corpus, p_attribute, .Object)
+  } else {
+    return( CQI$cpos2id(corpus, p_attribute, .Object) )
+  }
+  
   if (!is.null(encoding)){
     Encoding(tokens) <- encoding
     tokens <- as.nativeEnc(tokens, from = encoding)
@@ -64,7 +71,7 @@ setMethod("get_token_stream", "matrix", function(.Object, ...){
 setMethod("get_token_stream", "character", function(.Object, left = NULL, right = NULL, ...){
   if (is.null(left)) left <- 0L
   if (is.null(right)) right <- size(.Object) - 1L
-  get_token_stream(left:right, corpus = .Object, ...)
+  get_token_stream(left:right, corpus = .Object, encoding = registry_get_encoding(.Object), ...)
 })
 
 #' @rdname get_token_stream-method

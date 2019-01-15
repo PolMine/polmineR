@@ -202,6 +202,8 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
+  if (is.null(names(x))) names(x) <- as.character(1L:length(x))
+
   if (is.null(p_attribute)){
     p_attribute <- x@objects[[1]]@p_attribute
     .message("using the p_attribute-slot of the first object in the bundle as p_attribute:", p_attribute, verbose = verbose)
@@ -213,7 +215,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
       function(i){
         keysRaw <- x@objects[[i]]@stat[, c(p_attribute), with = FALSE]
         keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
-        x@objects[[i]]@stat[, key := keys]
+        x@objects[[i]]@stat[, "key" := keys]
       })
     rm(dummy)
   } else {
@@ -241,7 +243,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   
   .message("cleaning up temporary key columns", verbose = verbose)
   if (length(p_attribute) > 1){
-    dummy <- lapply(1L:length(x@objects), function(i) x@objects[[i]]@stat[, key := NULL])
+    dummy <- lapply(1L:length(x@objects), function(i) x@objects[[i]]@stat[, "key" := NULL])
   } else {
     dummy <- lapply(1L:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old = "key", new = p_attribute))
   }

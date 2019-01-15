@@ -4,9 +4,10 @@
 \alias{as.speeches}
 \title{Split corpus or partition into speeches.}
 \usage{
-as.speeches(.Object, s_attribute_date = grep("date", s_attributes(.Object),
-  value = TRUE), s_attribute_name = grep("name", s_attributes(.Object), value
-  = TRUE), gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
+as.speeches(.Object, s_attribute_date = grep("date",
+  s_attributes(.Object), value = TRUE), s_attribute_name = grep("name",
+  s_attributes(.Object), value = TRUE), gap = 500, mc = FALSE,
+  verbose = TRUE, progress = TRUE)
 }
 \arguments{
 \item{.Object}{A \code{partition}, or length-one character vector indicating a CWB corpus.}

@@ -16,10 +16,11 @@ html(object, ...)
 \S4method{html}{character}(object)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
-  verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE,
-  height = NULL, ...)
+  verbose = FALSE, cutoff = NULL, charoffset = FALSE,
+  beautify = TRUE, height = NULL, ...)
 
-\S4method{html}{partition_bundle}(object, filename = c(), type = "debate")
+\S4method{html}{partition_bundle}(object, filename = c(),
+  type = "debate")
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL,
   verbose = FALSE, ...)
@@ -42,11 +43,11 @@ elements with id attribute indicating corpus positions}
 \item{cutoff}{maximum number of tokens to decode from token stream, passed
 into \code{as.markdown}}
 
-\item{charoffset}{logical, if \code{TRUE}, character offset positions are
-added to elements embracing tokens}
+\item{charoffset}{Logical, if \code{TRUE}, character offset positions are
+added to elements embracing tokens.}
 
-\item{beautify}{logical, if \code{TRUE}, whitespace before interpunctuation
-will be removed}
+\item{beautify}{Logical, if \code{TRUE}, whitespace before interpunctuation
+will be removed.}
 
 \item{height}{A character vector that will be inserted into the html as an optional
 height of a scroll box.}

@@ -17,8 +17,14 @@ setMethod("show", "partition_bundle", function (object) {
 })
 
 #' @rdname partition_bundle-class
-setMethod("summary", "partition_bundle", function (object){
-  y <- do.call(rbind, lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE)))
+setMethod("summary", "partition_bundle", function (object, progress = TRUE){
+  if (progress){
+    a <- lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
+  } else {
+    a <- pblapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
+  }
+  
+  y <- do.call(rbind, a)
   rownames(y) <- NULL
   y
 })
@@ -141,7 +147,7 @@ setMethod("partition_bundle", "partition", function(
   }
   bundle@objects <- blapply(
     lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
-    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type, verbose = FALSE, ...),
+    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type = type, verbose = FALSE, ...),
     .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc, type = type,
     ...
   )
@@ -222,7 +228,7 @@ setMethod("as.partition_bundle", "list", function(.Object, ...){
 #' generated when creating a \code{partition} from a \code{context}-object.
 #' @exportMethod as.partition_bundle
 #' @rdname partition_bundle-method
-setMethod("partition_bundle", "context", function(.Object, node = TRUE){
+setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress = TRUE, mc = 1L){
   
   stopifnot(is.logical(node))
   
@@ -246,20 +252,20 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE){
   }
   count_list <- split(CNT, by = "hit_no")
   
-  partition_objects <- lapply(
-    1L:length(.Object),
-    function(i){
-      new(
-        "partition",
-        corpus = .Object@corpus,
-        encoding = .Object@encoding,
-        cpos = as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")]),
-        xml = .Object@partition@xml,
-        p_attribute = .Object@p_attribute,
-        stat = count_list[[i]][, "hit_no" := NULL]
-      )
-    }
-  )
+  .fn <- function(i){
+    cpos_matrix <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
+    new(
+      "partition",
+      corpus = .Object@corpus,
+      encoding = .Object@encoding,
+      cpos = cpos_matrix,
+      size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L),
+      xml = .Object@partition@xml,
+      p_attribute = .Object@p_attribute,
+      stat = count_list[[i]][, "hit_no" := NULL]
+    )
+  }
+  partition_objects <- if (progress) pblapply(1L:length(.Object), .fn, cl = mc) else lapply(1L:length(.Object), .fn)
   new(
     "partition_bundle",
     corpus = .Object@corpus,

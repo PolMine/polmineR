@@ -2,7 +2,7 @@
 % Please edit documentation in R/view.R
 \name{view}
 \alias{view}
-\title{browse an object using View()}
+\title{Inspect object using View().}
 \usage{
 view(.Object, ...)
 }
@@ -12,5 +12,5 @@ view(.Object, ...)
 \item{...}{further parameters}
 }
 \description{
-browse an object using View()
+Inspect object using View().
 }

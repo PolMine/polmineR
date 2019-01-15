@@ -14,11 +14,11 @@ partition(.Object, ...)
 
 \S4method{partition}{character}(.Object, def = NULL, name = "",
   encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE,
-  ...)
+  decode = TRUE, type = get_type(.Object), mc = FALSE,
+  verbose = TRUE, ...)
 
-\S4method{partition}{environment}(.Object, slots = c("name", "corpus", "size",
-  "p_attribute"))
+\S4method{partition}{environment}(.Object, slots = c("name", "corpus",
+  "size", "p_attribute"))
 
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, p_attribute = NULL, decode = TRUE, xml = NULL,
@@ -74,6 +74,34 @@ defined, counts are performed for the p-attribute defined by the parameter
 \code{p_attribute}.
 }
 \details{
+The function sets up a \code{partition} object based on s-attribute values.
+The s-attributes defining the partition can be passed in as a list, e.g.
+\code{list(interjection="speech", year = "2013")}, or directly (see
+examples).
+
+The s-attribute values defining the partition may use regular expressions. To
+use regular expressions, set the parameter regex to \code{TRUE}. Regular
+expressions are passed into \code{grep}, i.e. the regex syntax used in R
+needs to be used (double backlashes etc.). If regex is \code{FALSE}, the
+length of the character vectors can be > 1, matching s-attributes are
+identifies with the operator '%in%'.
+
+The XML imported into the CWB may be "flat" or "nested". This needs to be
+indicated with the parameter \code{xml} (default is "flat"). If you generate
+a \code{partition} based on a flat XML structure, some performance gain may be
+achieved when ordering the s-attributes with decreasingly restrictive
+conditions. If you have a nested XML, it is mandatory that the order of the
+s-attributes provided reflects the hierarchy of the XML: The top-level
+elements need to be positioned at the beginning of the list with the
+s-attributes, the the most restrictive elements at the end.
+
+If \code{p_attribute} is not NULL, a count of tokens in the corpus will be
+performed and kept in the \code{stat}-slot of the partition-object. The
+length of the \code{p_attribute} character vector may be 1 or more. If two or
+more p-attributes are provided, The occurrence of combinations will be
+counted. A typical scenario is to combine the p-attributes "word" or "lemma"
+and "pos".
+
 If \code{.Object} is a length-one character vector, a
   subcorpus/partition for the corpus defined be \code{.Object} is generated.
 

@@ -3,7 +3,6 @@ NULL
 
 
 
-
 #' Get counts.
 #' 
 #' Count all tokens, or number of occurrences of a query (CQP syntax may be
@@ -30,6 +29,8 @@ NULL
 #' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not (defaults to is.query
 #'   auxiliary function).
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute(s) to use.
 #' @param corpus The name of a CWB corpus.
 #' @param decode Logical, whether to turn token ids into decoded strings (only
@@ -81,7 +82,7 @@ setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
 setMethod("count", "partition", function(
-  .Object, query = NULL, cqp = is.cqp, breakdown = FALSE,
+  .Object, query = NULL, cqp = is.cqp, check = TRUE, breakdown = FALSE,
   decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...
@@ -96,7 +97,7 @@ setMethod("count", "partition", function(
       dts <- lapply(
         query,
         function(x){
-          cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, p_attribute = p_attribute)
+          cposHits <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
           if (is.null(cposHits)) return( NULL )
           hitsString <- apply(
             cposHits, 1,
@@ -119,7 +120,7 @@ setMethod("count", "partition", function(
     } else if (breakdown == FALSE){
       .getNumberOfHits <- function(query, partition, cqp, p_attribute, ...) {
         .message("processing query", query, verbose = verbose)
-        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, p_attribute = p_attribute, verbose = FALSE)
+        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
         if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
       }
       no <- as.integer(blapply(
@@ -137,13 +138,13 @@ setMethod("count", "partition", function(
         corpus = .Object@corpus, p_attribute = p_attribute,
         matrix = .Object@cpos
       )
-      TF <- as.data.table(countMatrix)
+      TF <- data.table::as.data.table(countMatrix)
       setnames(TF, old = c("V1", "V2"), new = c(pAttr_id, "count"))
     } else {
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
       idList <- lapply(p_attribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
       names(idList) <- paste(p_attribute, "id", sep = "_")
-      ID <- as.data.table(idList)
+      ID <- data.table::as.data.table(idList)
       setkeyv(ID, cols = names(idList))
       TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
       setnames(TF, "N", "count")
@@ -262,7 +263,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -285,7 +286,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         setkeyv(TF, paste(p_attribute, "id", sep = "_"))
         setcolorder(TF, c(paste(p_attribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, p_attribute, 0:(nrow(TF) - 1)), from = registry_get_encoding(.Object)), with = TRUE]
+        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, p_attribute, 0L:(nrow(TF) - 1L)), from = registry_get_encoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = p_attribute)
         setkeyv(TF, p_attribute)
@@ -294,7 +295,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
       }
     } else {
       
-      tokenStreamDT <- as.data.table(
+      tokenStreamDT <- data.table::as.data.table(
         li <- lapply(
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
           function(pAttr){
@@ -345,7 +346,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, p_
         count <- sapply(
           query,
           function(query){
-            cpos_matrix <- cpos(.Object, query, cqp = cqp, p_attribute = p_attribute, encoding = registry_get_encoding(.Object))
+            cpos_matrix <- cpos(.Object, query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = registry_get_encoding(.Object))
             if (!is.null(cpos_matrix)){
               return( nrow(cpos_matrix) )
             } else {
@@ -378,7 +379,7 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
     id = 0:length(count),
     count = c(length(which(ids == 0)), count)
   )
-  setkey(TF, "id")
+  setkeyv(TF, cols = "id")
   setnames(TF, "id", paste(p_attribute, "id", sep = "_"))
   TF[count > 0]
 })
@@ -392,3 +393,4 @@ setMethod("count", "Corpus", function(.Object, query = NULL, p_attribute){
 #' @exportMethod hist
 #' @rdname count_class
 setMethod("hist", "count", function(x, ...) hist(x@stat[,"count"], ...) )
+

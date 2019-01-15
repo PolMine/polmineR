@@ -18,8 +18,13 @@ NULL
 #' adding a corpus to the registry, templates for formatting fulltext output are
 #' reloaded.
 #' 
+#' If the path to the data directory in a package includes a non-ASCII character,
+#' binary data files of the corpora in package are copied to a subdirectory of the
+#' per-session temporary data directory.
+#' 
 #' @param pkg A package including at least one CWB indexed corpus.
 #' @param lib.loc A character vector with path names of \code{R} libraries.
+#' @param tmp Whether to use a temporary data directory.
 #' @param verbose Logical, whether to output status messages.
 #' @export use
 #' @rdname use
@@ -27,10 +32,11 @@ NULL
 #' @examples
 #' use("polmineR")
 #' corpus()
-#' @seealso To get the session registry registry, see \code{\link{registry}};
+#' @seealso To get the session registry directory, see \code{\link{registry}};
 #'   to reset the registry, see \code{\link{registry_reset}}.
 #' @importFrom RcppCWB cqp_reset_registry 
-use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
+#' @importFrom stringi stri_enc_mark
+use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   if (!pkg %in% unname(installed.packages(lib.loc = lib.loc)[,"Package"]))
     stop("Could not find package specified. Please check for typos,",
@@ -40,15 +46,45 @@ use <- function(pkg, lib.loc = .libPaths(), verbose = TRUE){
   if (!dir.exists(registry_dir)) stop("pkg exists, but is not a standardized package - registry directory missing")
   
   for (corpus in list.files(registry_dir)){
-    .message(sprintf("activating corpus: %s", corpus))
+    
+    .message(sprintf("activating corpus: %s", toupper(corpus)), verbose = verbose)
+    
+    corpus_data_srcdir <- system.file(
+      "extdata", "cwb", "indexed_corpora", tolower(corpus),
+      package = pkg, lib.loc = lib.loc
+    )
+    
+    if ((stri_enc_mark(corpus_data_srcdir) != "ASCII") || (tmp == TRUE)){
+      corpus_data_targetdir <- file.path(data_dir(), tolower(corpus))
+      
+      if (!dir.exists(corpus_data_targetdir)) 
+        dir.create(corpus_data_targetdir)
+      else 
+        file.remove(list.files(corpus_data_targetdir, full.names = TRUE))
+      
+      .message(
+        sprintf(
+          "path includes non-ASCII characters, moving binary corpus data to temporary data directory (%s/%s)",
+          data_dir(), tolower(corpus)
+        ),
+        verbose = verbose
+      )
+      for (x in list.files(corpus_data_srcdir, full.names = TRUE))
+        file.copy(from = x, to = file.path(corpus_data_targetdir, basename(x)))
+      
+    } else {
+      corpus_data_targetdir <- corpus_data_srcdir
+    }
+    
     registry_move(
       corpus = corpus,
       registry = registry_dir,
       registry_new = registry(),
-      home_dir_new = system.file("extdata", "cwb", "indexed_corpora", tolower(corpus), package = pkg, lib.loc = lib.loc)
+      home_dir_new = corpus_data_targetdir
     )
     set_template(toupper(corpus))
   }
+  
   # If CQP has been initialized before, it will not yet now about the
   # corpora that have been added
   if (cqp_is_initialized()) cqp_reset_registry(registry())

@@ -110,21 +110,21 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
     if (regex){
       regexMatchList <- lapply(
         highlight[[color]],
-        function(expr) grep(expr, .Object@cpos[["word"]], perl = perl)
+        function(expr) grep(expr, .Object@cpos[[.Object@p_attribute]], perl = perl)
       )
       toHighlight <- 1L:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
     } else {
-      toHighlight <- .Object@cpos[["word"]] %in% highlight[[color]]
+      toHighlight <- .Object@cpos[[.Object@p_attribute]] %in% highlight[[color]]
     }
     if (length(toHighlight) > 0){
-      .Object@cpos[["word"]] <- ifelse(
+      .Object@cpos[[.Object@p_attribute]] <- ifelse(
         toHighlight,
-        sprintf('<span style="background-color:%s">%s</span>', color, .Object@cpos[["word"]]),
-        .Object@cpos[["word"]]
+        sprintf('<span style="background-color:%s">%s</span>', color, .Object@cpos[[.Object@p_attribute]]),
+        .Object@cpos[[.Object@p_attribute]]
       )
     }
   }
   .Object <- enrich(.Object, table = TRUE)
-  .Object <- enrich(.Object, s_attributes = .Object@metadata)
+  .Object <- enrich(.Object, s_attributes = unique(.Object@metadata))
   .Object
 })

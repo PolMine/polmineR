@@ -4,7 +4,8 @@ NULL
 #' Apply Weight to Matrix
 #' 
 #' @param .Object A \code{matrix}, or a \code{count}-object.
-#' @param method the kind of weight to apply
+#' @param method The kind of weight to apply.
+#' @param progress Logical, whether to show a progress bar.
 #' @param ... further parameters
 #' @exportMethod weigh
 #' @docType methods
@@ -127,7 +128,11 @@ setMethod("weigh", "count", function(.Object, with){
 })
 
 #' @rdname weigh-method
-setMethod("weigh", "count_bundle", function(.Object, with){
-  .Object@objects <- lapply(.Object@objects, function(x) weigh(x, with = with))
+setMethod("weigh", "count_bundle", function(.Object, with, progress = TRUE){
+  if (progress){
+    .Object@objects <- pblapply(.Object@objects, function(x) weigh(x, with = with))
+  } else {
+    .Object@objects <- lapply(.Object@objects, function(x) weigh(x, with = with))
+  }
   .Object
 })

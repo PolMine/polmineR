@@ -10,21 +10,24 @@
 \usage{
 kwic(.Object, ...)
 
-\S4method{kwic}{context}(.Object, s_attributes = getOption("polmineR.meta"),
-  cpos = TRUE, verbose = FALSE, ...)
+\S4method{kwic}{context}(.Object,
+  s_attributes = getOption("polmineR.meta"), cpos = TRUE,
+  verbose = FALSE, ...)
 
 \S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
-  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
-  regex = FALSE, verbose = TRUE, ...)
+  boundary = NULL, cpos = TRUE, stoplist = NULL,
+  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
 
-\S4method{kwic}{character}(.Object, query, cqp = is.cqp,
+\S4method{kwic}{character}(.Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL, positivelist = NULL,
-  regex = FALSE, verbose = TRUE, progress = TRUE, ...)
+  boundary = NULL, cpos = TRUE, stoplist = NULL,
+  positivelist = NULL, regex = FALSE, verbose = TRUE,
+  progress = TRUE, ...)
 }
 \arguments{
 \item{.Object}{A (length-one) \code{character} vector with the name of a CWB
@@ -63,6 +66,9 @@ results}
 
 \item{regex}{Logical, whether stoplist/positivelist is interpreted as regular
 expression}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{progress}{Logical, whether to show progress bars.}
 }

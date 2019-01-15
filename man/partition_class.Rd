@@ -19,6 +19,11 @@
 \alias{p_attributes,partition-method}
 \alias{split,partition-method}
 \alias{is.partition}
+\alias{$,partition-method}
+\alias{==,partition,ANY-method}
+\alias{!=,partition,ANY-method}
+\alias{\%in\%,partition-method}
+\alias{zoom,partition-method}
 \alias{enrich,partition-method}
 \alias{as.regions,partition-method}
 \title{Partition class and methods.}
@@ -31,8 +36,18 @@
 
 is.partition(x)
 
-\S4method{enrich}{partition}(.Object, p_attribute = NULL, decode = TRUE,
-  verbose = TRUE, mc = FALSE, ...)
+\S4method{$}{partition}(x, name)
+
+\S4method{==}{partition,ANY}(e1, e2)
+
+\S4method{!=}{partition,ANY}(e1, e2)
+
+\S4method{\%in\%}{partition}(x, table)
+
+\S4method{zoom}{partition}(x, ...)
+
+\S4method{enrich}{partition}(.Object, p_attribute = NULL,
+  decode = TRUE, verbose = TRUE, mc = FALSE, ...)
 
 \S4method{as.regions}{partition}(x)
 }
@@ -47,7 +62,17 @@ is.partition(x)
 
 \item{x}{A \code{partition} object.}
 
-\item{gap}{An integer value specifying the minimum gap between regions for performing the split.}
+\item{gap}{An integer value specifying the minimum gap between regions for
+performing the split.}
+
+\item{name}{An s-attribute that will be assigned as key to a
+\code{partition}.}
+
+\item{e1}{A first expression, a \code{partition} object in this case.}
+
+\item{e2}{A second expression, the value of an s-attribute.}
+
+\item{table}{Values a s-attribute shall assume.}
 
 \item{decode}{\code{logical} value, whether to decode token ids into strings when performing count}
 
@@ -61,9 +86,10 @@ a set of methods is defined for the class. The class inherits
 from the classes \code{count} and \code{textstat}.
 }
 \details{
-As \code{partition} objects inherit from \code{count} and \code{textstat} class, methods
-available are \code{view} to inspect the table in the \code{stat} slot, \code{name} and 
-\code{name<-} to retrieve/set the name of an object, and more.
+As \code{partition} objects inherit from \code{count} and
+  \code{textstat} class, methods available are \code{view} to inspect the
+  table in the \code{stat} slot, \code{name} and \code{name<-} to
+  retrieve/set the name of an object, and more.
 
 The \code{p_attributes}-method returns the p-attributes defined for the
 corpus the partition is derived from, if argument \code{p_attribute} is \code{NULL}
@@ -72,13 +98,16 @@ are returned.
 
 The \code{split}-method will split a partition object into a
 \code{partition_bundle} if gap between strucs exceeds a minimum number of
-tokens specified by 'gap'. Relevant to split up a plenary protocol into
+tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
 speeches. Note: To speed things up, the returned partitions will not include
 frequency lists. The lists can be prepared by applying \code{enrich} on the
 \code{partition_bundle} object that is returned.
 
 The \code{is.partition} function returns a \code{logical} value
   whether \code{x} is a \code{partition}, or not.
+
+The `$`-method will assign the argument \code{name} to the slot
+  \code{key} and return the modified object.
 
 The \code{enrich}-method will add a count of tokens defined by argument
 \code{p_attribute} to slot \code{stat} of the \code{partition} object.
@@ -117,9 +146,30 @@ count in slot \code{stat}.}
 
 \item{\code{s_attribute_strucs}}{Object of class \code{character} the base node}
 
+\item{\code{key}}{Experimental, an s-attribute that is used as a key.}
+
 \item{\code{call}}{Object of class \code{character} the call that generated the partition}
 }}
 
+\examples{
+m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+m2 <- m$speaker
+m2@key
+m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+m$date == "2009-10-28"
+s <- partition("GERMAPARLMINI", interjection = "speech")
+s$party != "NA"
+s <- partition("GERMAPARLMINI", interjection = "speech")
+s$date \%in\% c("2009-10-27", "2009-10-28")
+m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+y <- zoom(m, date == "2009-10-28")
+
+speeches <- partition("GERMAPARLMINI", interjection = "speech")
+m <- zoom(speeches, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
+
+not_unknown <- zoom(speeches, party != c("NA", "FDP"))
+s_attributes(not_unknown, "party")
+}
 \seealso{
 The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
 respective documentation to learn more.

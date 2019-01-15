@@ -11,18 +11,21 @@
 \usage{
 partition_bundle(.Object, ...)
 
-\S4method{partition_bundle}{partition}(.Object, s_attribute, values = NULL,
-  prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = FALSE, type = get_type(.Object), ...)
+\S4method{partition_bundle}{partition}(.Object, s_attribute,
+  values = NULL, prefix = "", mc = getOption("polmineR.mc"),
+  verbose = TRUE, progress = FALSE, type = get_type(.Object), ...)
 
-\S4method{partition_bundle}{character}(.Object, s_attribute, values = NULL,
-  prefix = "", mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = FALSE, xml = "flat", type = get_type(.Object), ...)
+\S4method{partition_bundle}{character}(.Object, s_attribute,
+  values = NULL, prefix = "", mc = getOption("polmineR.mc"),
+  verbose = TRUE, progress = FALSE, xml = "flat",
+  type = get_type(.Object), ...)
 
-\S4method{partition_bundle}{context}(.Object, node = TRUE)
+\S4method{partition_bundle}{context}(.Object, node = TRUE,
+  progress = TRUE, mc = 1L)
 
 \S4method{partition_bundle}{partition_bundle}(.Object, s_attribute,
-  prefix = character(), progress = TRUE, mc = getOption("polmineR.mc"))
+  prefix = character(), progress = TRUE,
+  mc = getOption("polmineR.mc"))
 }
 \arguments{
 \item{.Object}{A \code{partition}, a length-one \code{character} vector supplying a CWB corpus, or a \code{partition_bundle}}

@@ -14,6 +14,8 @@ NULL
 #' @param query a (optionally named, see datails) character vector with one or more queries
 #' @param cqp either logical (TRUE if query is a CQP query), or a
 #'   function to check whether query is a CQP query or not
+#' @param check A \code{logical} value, whether to check validity of CQP query
+#'   using \code{check_cqp_query}.
 #' @param s_attribute s-attributes
 #' @param p_attribute p-attribute
 #' @param size logical - return size of subcorpus
@@ -28,7 +30,7 @@ NULL
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
-setMethod("hits", "character", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
+setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -39,7 +41,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, s_attribute
   cpos_list <- blapply(
     x = as.list(query),
     f = function(query, .Object, cqp, p_attribute){
-      cpos(.Object = .Object, query = query, cqp = cqp, p_attribute = p_attribute)
+      cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute)
       },
     .Object = .Object, cqp = cqp, p_attribute = p_attribute,
     verbose = FALSE, mc = mc, progress = progress
@@ -125,7 +127,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
 
 #' @rdname hits
 setMethod("hits", "partition_bundle", function(
-  .Object, query, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), size = TRUE, freq = FALSE,
+  .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
   
@@ -142,13 +144,13 @@ setMethod("hits", "partition_bundle", function(
     struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
     partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
   )
-  setkey(strucDT, cols = "struc")
+  setkeyv(strucDT, cols = "struc")
   # perform counts
   
   .message("now performing counts", verbose = verbose)
   if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
   .query <- function(toFind, corpus, encoding, ...) {
-    cposMatrix <- cpos(.Object = corpus, query = toFind, cqp = cqp, encoding = encoding, verbose = verbose)
+    cposMatrix <- cpos(.Object = corpus, query = toFind, cqp = cqp, check = check, encoding = encoding, verbose = verbose)
     if (!is.null(cposMatrix)){
       dt <- data.table(cposMatrix)
       dt[, query := toFind]

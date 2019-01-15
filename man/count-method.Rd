@@ -14,17 +14,19 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
-  breakdown = FALSE, decode = TRUE,
+  check = TRUE, breakdown = FALSE, decode = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE, ...)
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...)
 
 \S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
   p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
   progress = TRUE, verbose = FALSE, ...)
 
 \S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE,
-  sort = FALSE, decode = TRUE, verbose = TRUE, ...)
+  check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
+  breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE,
+  ...)
 
 \S4method{count}{vector}(.Object, corpus, p_attribute, ...)
 
@@ -42,6 +44,9 @@ used.}
 \item{cqp}{Either logical (\code{TRUE} if query is a CQP query), or a
 function to check whether query is a CQP query or not (defaults to is.query
 auxiliary function).}
+
+\item{check}{A \code{logical} value, whether to check validity of CQP query
+using \code{check_cqp_query}.}
 
 \item{breakdown}{Logical, whether to report number of occurrences for
 different matches for a query.}

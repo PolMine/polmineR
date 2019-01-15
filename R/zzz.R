@@ -55,8 +55,11 @@
 
   pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
   pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
+  
   polmineR_registry_dir <- registry()
-  if (!file.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  if (!dir.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  
+  if (!dir.exists(data_dir())) dir.create(data_dir())
 
   if (Sys.getenv("CORPUS_REGISTRY") != ""){
     for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
@@ -78,13 +81,34 @@
   
   Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
   
+  if (Sys.getlocale() == "C"){
+    if (Sys.info()["sysname"] == "Darwin"){
+      packageStartupMessage(
+        "WARNING: The locale of the R session is 'C': ",
+        "The character set is not specified. You may encounter problems ",
+        "when working with corpora with a latin-1 or UTF-8 encoding that include special characters.\n",
+        "For macOS, a potential solution is to enter 'defaults write org.R-project.R force.LANG en_US.UTF-8' ",
+        "in a terminal once, replacing 'en_US' with the language/country that is relevant for you ",
+        "(see https://community.rstudio.com/t/strange-locale-problems-in-r-after-update-to-mojave/15533)."
+      )
+    } else {
+      packageStartupMessage(
+        "WARNING: The locale of the R session is 'C': ",
+        "The character set is not specified. You may encounter problems ",
+        "when working with corpora with a latin-1 or UTF-8 encoding that include special characters."
+      )
+      
+    }
+  }
+
   # if (cqp_is_initialized()) cqp_reset_registry(tmp_registry_dir)
 
   # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,
   # but for some (unknown) reason, a package crash occurrs, when CQP is initialized
   # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
-  
-  packageStartupMessage(sprintf("polmineR v%s", packageVersion("polmineR")))
-  packageStartupMessage("session registry:  ", Sys.getenv("CORPUS_REGISTRY"))
-  # packageStartupMessage("interface: ", if (exists("CQI")) class(CQI)[1] else "not set")
+}
+
+.onDetach <- function(libpath){
+  unlink(registry(), recursive = TRUE, force = TRUE)
+  unlink(data_dir(), recursive = TRUE, force = TRUE)
 }

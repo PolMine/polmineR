@@ -3,14 +3,16 @@
 \docType{class}
 \name{regions}
 \alias{regions}
+\alias{CorpusOrSubcorpus-class}
 \alias{regions-class}
+\alias{CorpusOrSubcorpus}
 \alias{as.regions}
-\alias{as.data.table,regions-method}
+\alias{as.data.table.regions}
 \title{Regions of a CWB corpus.}
 \usage{
 as.regions(x, ...)
 
-\S4method{as.data.table}{regions}(x, values = NULL)
+\method{as.data.table}{regions}(x, values = NULL)
 }
 \arguments{
 \item{x}{object of class \code{regions}}
@@ -24,6 +26,10 @@ A coerce-method is available to coerce a \code{partition} object to a
 \code{regions} object.
 }
 \details{
+The virtual class \code{CorpusOrSubcorpus} is a way to handle corpora specified
+by a character vector, \code{region} objects, and \code{partition} objects
+in a uniform manner.
+
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
 }
 \section{Slots}{
@@ -41,3 +47,8 @@ use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
 }
+\seealso{
+Other classes to manage corpora: \code{\link{corpus-class}},
+  \code{\link{subcorpus-class}}
+}
+\concept{classes to manage corpora}

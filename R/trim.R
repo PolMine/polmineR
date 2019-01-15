@@ -83,7 +83,7 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       .SD[struc == struc_hit]
     }
     object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "hit_no"]
-    close(pb)
+    if (progress) close(pb)
     setnames(object@cpos, old = "struc", new = sAttrCol)
   }
   
@@ -92,10 +92,8 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
     before <- length(unique(object@cpos[["hit_no"]]))
     positivelistIds <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
     .keepPositives <- function(.SD){
-      pAttr <- paste(p_attribute[1], "id", sep = "_")
-      positives <- which(.SD[[pAttr]] %in% positivelistIds)
-      positives <- positives[ -which(.SD[["position"]] == 0) ] # exclude node
-      if (any(positives)) return( .SD ) else return( NULL )
+      neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
+      if (any(neighbors %in% positivelistIds)) return( .SD ) else return( NULL )
     }
     object@cpos <- object@cpos[, .keepPositives(.SD), by = "hit_no", with = TRUE]
     after <- length(unique(object@cpos[["hit_no"]]))

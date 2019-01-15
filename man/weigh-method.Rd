@@ -17,17 +17,19 @@ weigh(.Object, ...)
 
 \S4method{weigh}{count}(.Object, with)
 
-\S4method{weigh}{count_bundle}(.Object, with)
+\S4method{weigh}{count_bundle}(.Object, with, progress = TRUE)
 }
 \arguments{
 \item{.Object}{A \code{matrix}, or a \code{count}-object.}
 
 \item{...}{further parameters}
 
-\item{method}{the kind of weight to apply}
+\item{method}{The kind of weight to apply.}
 
 \item{with}{A \code{data.table} used to weigh p-attributes. A column 'weight' with term weights is
 required, and columns with the p-attributes of \code{.Object} for matching.}
+
+\item{progress}{Logical, whether to show a progress bar.}
 }
 \description{
 Apply Weight to Matrix

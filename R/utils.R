@@ -4,12 +4,12 @@
 #' vector into CQP queries.
 #' 
 #' The \code{is.cqp} function guesses whether \code{query} is a CQP query 
-#' and returns the respective logical value (TRUE/FALSE).
+#' and returns the respective logical value (\code{TRUE}/\code{FALSE}).
 #' 
 #' The \code{as.cqp} function takes a character vector as input and converts it
 #' to a CQP query by putting the individual strings in quotation marks.
 #' 
-#' @param query character vector with at least one query
+#' @param query A \code{character} vector with at least one CQP query.
 #' @name cqp
 #' @references CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})
 #' @rdname cqp
@@ -23,23 +23,63 @@
 #' as.cqp(c("migration", "diversity"))
 #' as.cqp(c("migration", "diversity"), collapse = TRUE)
 #' as.cqp("migration", normalise.case = TRUE)
-#' @return \code{is.cqp} returns a logical value, \code{as.cqp} a character vector
+#' @return \code{is.cqp} returns a logical value, \code{as.cqp} a character
+#'   vector, \code{check_cqp_query} a logical value that is \code{TRUE} if all
+#'   queries are valid, or \code{FALSE} if not.
 is.cqp <- function(query){
-  isQuery <- unique(grepl('["|\']', query))
-  if (length(isQuery) == 2){
+  isQuery <- unique(grepl('["\']', query))
+  if (length(isQuery) == 2)
     stop("Test whether query is a CQP query (or not) does not result in an unambigious result. Please check queries and/or state logical value explicitly.")
-  }
   isQuery
 } 
 
-#' @param normalise.case logical
-#' @param collapse logical, whether to collapse the queries into one
+#' @rdname cqp
+#' @export check_cqp_query
+#' @details The \code{check_cqp_query}-function will check that opening
+#'   quotation marks are matched by closing quotation marks, to prevent crashes
+#'   of CQP and the R session.
+#' @examples
+#' 
+#' 
+#' check_cqp_query('"Integration.*"') # TRUE, the query is ok
+#' check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing
+#' check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
+#' check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
+check_cqp_query <- function(query){
+  msg <- paste(c(
+    "An issue occurred when checking query: %s\n",
+    paste(
+      "Number of quotation marks is not divisable by 2:",
+      "Opening quotation marks are not matched by closing quotation marks, or vice versa.",
+      "Aborting to avoid a potential crash of CQP and the entire R session.",
+      "Please check query.", collapse = " "
+    )
+  ), collapse = "")
+  
+  check_results <- sapply(
+    query,
+    function(q){
+      query_ok <- TRUE
+      chars <- strsplit(q, split = "")[[1]]
+      if (length(which(chars == '"')) %% 2 != 0) query_ok <- FALSE
+      if (length(which(chars == "'")) %% 2 != 0) query_ok <- FALSE
+      if (!query_ok) warning(sprintf(msg, q))
+      query_ok
+    }
+  )
+  any(check_results)
+}
+
+
+#' @param collapse A \code{logical} value, whether to collapse the queries into one.
+#' @param normalise.case A \code{logical} value, if \code{TRUE}, a flag will be
+#'   added to the query/queries to omit matching case.
 #' @export as.cqp
 #' @rdname cqp
 #' @name as.cqp
 as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
-  if (is.logical(normalise.case) == FALSE) stop("normalise.case needs to be a logical value")
-  if (is.logical(collapse) == FALSE) stop("collapse needs to be a logical value")
+  if (!is.logical(normalise.case)) stop("normalise.case needs to be a logical value")
+  if (!is.logical(collapse)) stop("collapse needs to be a logical value")
   cqp <- sapply(
     query,
     function(x){
@@ -239,4 +279,19 @@ flatten <- function(object){
   } else if (verbose == "shiny"){
     shiny::incProgress(amount = 1, detail = message)
   }
+}
+
+
+#' Round numeric columns of data.table
+#' 
+#' The object is modified in place, return value is NULL.
+#' 
+#' @param x A \code{data.table}.
+#' @param digits Number of digits.
+#' @noRd
+round.data.table <- function(x, digits = 2L){
+  column_classes <- sapply(x, function(column) is(column)[1])
+  numeric_columns <- which(column_classes == "numeric")
+  for (i in numeric_columns) x[, colnames(x)[i] := round(x[[i]], digits)]
+  invisible( NULL )
 }

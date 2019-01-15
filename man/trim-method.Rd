@@ -5,7 +5,6 @@
 \alias{trim}
 \alias{trim-method}
 \alias{trim,TermDocumentMatrix-method}
-\alias{trim,TermDocumentMatrix-method}
 \alias{trim,DocumentTermMatrix-method}
 \alias{punctuation}
 \title{trim an object}

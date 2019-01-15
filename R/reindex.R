@@ -24,3 +24,29 @@ setMethod("reindex", "DocumentTermMatrix", function(x){
 setMethod("reindex", "TermDocumentMatrix", function(x){
   t(reindex(t(x)))
 })
+
+setMethod("reindex", "Cooccurrences", function(x){
+  
+  if (length(x@p_attribute) > 1L) stop("Method 'reindex' only works if one and only one p-attribute is used.")
+  verbose <- interactive()
+  
+  if (verbose) message("... creating data.table for reindexing")
+  dt <- data.table(id = unique(x@stat[["a_id"]]))
+  setkeyv(dt, cols = "id")
+  setorderv(dt, cols = "id")
+  dt[, "id_new" := 1L:nrow(dt), with = TRUE]
+  setkeyv(x@stat, "a_id")
+  
+  if (verbose) message("... reindexing a")
+  x@stat[, "a_new_index" := x@stat[dt][["id_new"]]]
+  setkeyv(x@stat, "b_id")
+  
+  if (verbose) message("... reindexing b")
+  x@stat[, "b_new_index" := x@stat[dt][["id_new"]]]
+  
+  if (verbose) message("... decoding tokens")
+  as.nativeEnc(
+    cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = dt[["id"]]),
+    from = getEncoding(x@corpus)
+  )
+})
