@@ -9,7 +9,7 @@ Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://t
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1442381.svg)](https://doi.org/10.5281/zenodo.1442381)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2540670.svg)](https://doi.org/10.5281/zenodo.2540670)
 
 # polmineR
 
