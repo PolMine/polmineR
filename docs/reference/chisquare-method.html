@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.10.9012</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
       </span>
     </div>
 
@@ -197,8 +197,8 @@ accordingly (see examples).</p>
 #&gt; 2: 0.005           7.88          77
 #&gt; 3: 0.010           6.63          80
 #&gt; 4: 0.050           3.84         113</div><div class='input'>
+</div><span class='co'># NOT RUN {</span>
 <span class='co'># A sample do-it-yourself calculation for chisquare:</span>
-
 
 <span class='co'># (a) prepare matrix with observed values</span>
 <span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fl'>NA</span>, <span class='fl'>4</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
@@ -227,7 +227,8 @@ accordingly (see examples).</p>
 <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>2</span>) <span class='kw'>for</span> (<span class='no'>j</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>2</span>) <span class='no'>y</span>[<span class='no'>i</span>,<span class='no'>j</span>] <span class='kw'>&lt;-</span> (<span class='no'>o</span>[<span class='no'>i</span>,<span class='no'>j</span>] - <span class='no'>e</span>[<span class='no'>i</span>,<span class='no'>j</span>])^<span class='fl'>2</span> / <span class='no'>e</span>[<span class='no'>i</span>,<span class='no'>j</span>]
 <span class='no'>chisquare_value</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sum'>sum</a></span>(<span class='no'>y</span>)
 
-<span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>f</span>, <span class='st'>"data.table"</span>)[<span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"Weg"</span>]<span class='kw'>[[</span><span class='st'>"chisquare"</span>]]</div><div class='output co'>#&gt; [1] 73.86672</div></pre>
+<span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>f</span>, <span class='st'>"data.table"</span>)[<span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"Weg"</span>]<span class='kw'>[[</span><span class='st'>"chisquare"</span>]]
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.10.9012</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
       </span>
     </div>
 
@@ -160,15 +160,15 @@ find collocations (Dunning 1993, Evert 2005, 2009).</p>
 table of observationes, which is prepared for every single token in the
 corpus. It reports counts for a token to inspect and all other tokens in a
 corpus of interest (coi) and a reference corpus (ref):</p><table class='table'>
-<tr><td></td><td>coi</td><td>ref</td><td>TOTAL</td></tr>
-<tr><td></td><td>count token</td><td></td><td>\(o_{11}\)</td></tr>
-<tr><td></td><td></td><td>\(o_{12}\)</td><td></td></tr>
-<tr><td></td><td>\(r_{1}\)</td><td></td><td></td></tr>
-<tr><td>other tokens</td><td></td><td>\(o_{21}\)</td><td></td></tr>
-<tr><td></td><td>\(o_{22}\)</td><td></td><td></td></tr>
-<tr><td>\(r_{2}\)</td><td></td><td></td><td>TOTAL</td></tr>
-<tr><td></td><td>\(c_{1}\)</td><td></td><td></td></tr>
-<tr><td>\(c_{2}\)</td><td></td><td>N</td><td></td></tr>
+<tr><td></td><td></td><td>coi</td><td>ref</td></tr>
+<tr><td>TOTAL</td><td></td><td>count token</td><td></td></tr>
+<tr><td>\(o_{11}\)</td><td></td><td></td><td>\(o_{12}\)</td></tr>
+<tr><td></td><td></td><td>\(r_{1}\)</td><td></td></tr>
+<tr><td></td><td>other tokens</td><td></td><td>\(o_{21}\)</td></tr>
+<tr><td></td><td></td><td>\(o_{22}\)</td><td></td></tr>
+<tr><td></td><td>\(r_{2}\)</td><td></td><td></td></tr>
+<tr><td>TOTAL</td><td></td><td>\(c_{1}\)</td><td></td></tr>
+<tr><td></td><td>\(c_{2}\)</td><td></td><td>N</td></tr>
 </table>
 <p>(b) Based on the contingency table(s) with observed counts, expected values
 are calculated for each cell, as the product of the column and margin sums,
@@ -244,10 +244,12 @@ result table, respective <code>NA</code> values will usually disappear.</p>
 #&gt; 2: 0.005           7.88  114
 #&gt; 3: 0.010           6.63  143
 #&gt; 4: 0.050           3.84  397</div><div class='input'>
+</div><span class='co'># NOT RUN {</span>
 <span class='co'># A sample do-it-yourself calculation for log-likelihood:</span>
 <span class='co'># Compute ll-value for query "oil", and "prices"</span>
 
-<span class='no'>oil</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='context-method.html'>context</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 78</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='output co'>#&gt; <span class='message'>... counting tokens</span></div><div class='input'>
+<span class='no'>oil</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='context-method.html'>context</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+
 <span class='co'># (a) prepare matrix with observed values</span>
 <span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fl'>NA</span>, <span class='fl'>4</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 <span class='no'>o</span>[<span class='fl'>1</span>,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>oil</span>, <span class='st'>"data.table"</span>)[<span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"prices"</span>]<span class='kw'>[[</span><span class='st'>"count_coi"</span>]]
@@ -277,7 +279,8 @@ result table, respective <code>NA</code> values will usually disappear.</p>
 )
 
 <span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.data.frame'>as.data.frame</a></span>(<span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/subset'>subset</a></span>(<span class='no'>df</span>, <span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"prices"</span>)<span class='kw'>[[</span><span class='st'>"ll"</span>]]</div><div class='output co'>#&gt; [1] 33.04579</div></pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/subset'>subset</a></span>(<span class='no'>df</span>, <span class='no'>word</span> <span class='kw'>==</span> <span class='st'>"prices"</span>)<span class='kw'>[[</span><span class='st'>"ll"</span>]]
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
