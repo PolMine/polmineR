@@ -24,13 +24,13 @@ dispersionUiInput <- function(){
     ),
     textInput("dispersion_query", "query", value = "Suche"),
     selectInput(
-      "dispersion_pAttribute", "pAttribute",
-      choices = pAttributes(corpus()[1, "corpus"])
+      "dispersion_p_Attribute", "p_attribute",
+      choices = p_attributes(corpus()[1, "corpus"])
     ),
-    # radioButtons("dispersion_dims", "number of sAttributes", choices=c("1", "2"), selected="1", inline=TRUE),
+    # radioButtons("dispersion_dims", "number of s_attributes", choices=c("1", "2"), selected="1", inline=TRUE),
     selectInput(
-      "dispersion_sAttribute_1", "sAttribute",
-      choices = sAttributes(corpus()[1, "corpus"]), multiple = FALSE
+      "dispersion_s_attribute_1", "s_attribute",
+      choices = s_attributes(corpus()[1, "corpus"]), multiple = FALSE
     ),
     radioButtons("dispersion_ts", "time series", choices = c("yes", "no"), selected = "no", inline = TRUE),
     conditionalPanel(
@@ -57,18 +57,18 @@ dispersionServer <- function(input, output, session){
   observe({
     x <- input$dispersion_partition
     if (x != "" && length(values$partitions) > 0 && x %in% names(values$partitions)){
-      new_sAttr <- sAttributes(values$partitions[[x]]@corpus)
-      new_pAttr <- pAttributes(values$partitions[[x]]@corpus)
-      updateSelectInput(session, "dispersion_pAttribute", choices = new_pAttr, selected = NULL)
-      updateSelectInput(session, "dispersion_sAttribute_1", choices = new_sAttr, selected = NULL)
+      new_sAttr <- s_attributes(values$partitions[[x]]@corpus)
+      new_pAttr <- p_attributes(values$partitions[[x]]@corpus)
+      updateSelectInput(session, "dispersion_p_attribute", choices = new_pAttr, selected = NULL)
+      updateSelectInput(session, "dispersion_s_attribute_1", choices = new_sAttr, selected = NULL)
     }
   })
   
   observe({
-    new_sAttr <- sAttributes(input$dispersion_corpus)
-    new_pAttr <- pAttributes(input$dispersion_corpus)
-    updateSelectInput(session, "dispersion_pAttribute", choices = new_pAttr, selected = NULL)
-    updateSelectInput(session, "dispersion_sAttribute_1", choices = new_sAttr, selected = NULL)
+    new_sAttr <- s_attributes(input$dispersion_corpus)
+    new_pAttr <- p_attributes(input$dispersion_corpus)
+    updateSelectInput(session, "dispersion_p_attribute", choices = new_pAttr, selected = NULL)
+    updateSelectInput(session, "dispersion_s_attribute_1", choices = new_sAttr, selected = NULL)
   })
   
   observeEvent(
@@ -84,17 +84,17 @@ dispersionServer <- function(input, output, session){
       tab <- as.data.frame(dispersion(
         object,
         query = input$dispersion_query,
-        sAttribute = input$dispersion_sAttribute_1,
-        pAttribute=input$dispersion_pAttribute
+        s_attribute = input$dispersion_s_attribute_1,
+        p_attribute = input$dispersion_p_attribute
       ))
       
       # tab[["freq"]] <- round(tab[["freq"]], 7)
       
       
       if (input$dispersion_ts == "yes"){
-        dates4zoo <- tab[[input$dispersion_sAttribute_1]]
+        dates4zoo <- tab[[input$dispersion_s_attribute_1]]
         tab4zoo <- data.table::copy(tab)
-        tab4zoo[[input$dispersion_sAttribute_1]] <- NULL
+        tab4zoo[[input$dispersion_s_attribute_1]] <- NULL
         zooObject <- zoo::zoo(as.matrix(tab4zoo), order.by = as.Date(dates4zoo))
         if (input$dispersion_ts_aggregation != "none"){
           zooObject <- switch(
@@ -105,7 +105,7 @@ dispersionServer <- function(input, output, session){
           )
           # rework data.frame
           tab <- data.frame(date = zoo::index(zooObject), zooObject)
-          colnames(tab)[1] <- input$dispersion_sAttribute_1
+          colnames(tab)[1] <- input$dispersion_s_attribute_1
           rownames(tab) <- NULL
           output$dispersion_plot <- renderPlot(zoo::plot.zoo(zooObject, main=""))
         }
@@ -113,7 +113,7 @@ dispersionServer <- function(input, output, session){
         output$dispersion_plot <- renderPlot(
           barplot(
             height = tab[["count"]],
-            names.arg = tab[[input$dispersion_sAttribute_1]]
+            names.arg = tab[[input$dispersion_s_attribute_1]]
           )
         )
       }

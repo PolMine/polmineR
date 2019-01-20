@@ -23,7 +23,7 @@ cooccurrencesUiInput <- function(){
     ),
     textInput("cooccurrences_query", "query", value = ""),
     cqp = radioButtons("cooccurrences_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
-    selectInput("cooccurrences_pAttribute", "pAttribute:", choices = c("word", "pos", "lemma"), selected = getOption("polmineR.pAttribute"), multiple = TRUE),
+    selectInput("cooccurrences_p_attribute", "p_attribute:", choices = c("word", "pos", "lemma"), selected = getOption("polmineR.p_attribute"), multiple = TRUE),
     sliderInput("cooccurrences_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
     br()
   )
@@ -54,7 +54,7 @@ cooccurrencesServer <- function(input, output, session){
               message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
               {
                 C <- Corpus$new(input$cooccurrences_corpus)
-                C$count(pAttribute = input$cooccurrences_pAttribute, decode = FALSE)
+                C$count(p_attribute = input$cooccurrences_p_attribute, decode = FALSE)
                 values$corpora[[input$cooccurrences_corpus]] <- C
               }
               
@@ -72,7 +72,7 @@ cooccurrencesServer <- function(input, output, session){
               .Object = object,
               query = rectifySpecialChars(input$cooccurrences_query),
               cqp = if (input$cooccurrences_cqp == "yes") TRUE else FALSE,
-              pAttribute = input$cooccurrences_pAttribute,
+              p_attribute = input$cooccurrences_p_attribute,
               left = input$cooccurrences_window[1], right = input$cooccurrences_window[1],
               verbose = "shiny"
             )
@@ -106,7 +106,7 @@ cooccurrencesServer <- function(input, output, session){
         updateTextInput(session, "kwic_query", value = values[["cooccurrences"]]@query)
         updateTextInput(
           session, "kwic_positivelist",
-          value = values[["cooccurrences"]]@stat[[input$cooccurrences_pAttribute[1]]][input$cooccurrences_table_rows_selected]
+          value = values[["cooccurrences"]]@stat[[input$cooccurrences_p_attribute[1]]][input$cooccurrences_table_rows_selected]
         )
         if (input$kwic_object == "partition"){
           updateSelectInput(session, "kwic_object", selected = "partition")
@@ -118,7 +118,7 @@ cooccurrencesServer <- function(input, output, session){
         updateSelectInput(session, "kwic_cqp", selected = input$cooccurrences_cqp)
         updateTextInput(session, "kwic_query", value = input$cooccurrences_query)
         updateSelectInput(session, "kwic_window", selected = input$cooccurrences_window)
-        updateSelectInput(session, "kwic_pAttribute", selected = input$cooccurrences_pAttribute)
+        updateSelectInput(session, "kwic_p_attribute", selected = input$cooccurrences_p_attribute)
         updateNavbarPage(session, "polmineR", selected = "kwic")
         values[["kwic_go"]] <- as.character(Sys.time()) # will initiate kwic preparation & display
       }

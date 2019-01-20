@@ -14,8 +14,8 @@ countUiInput <- function(){
     ),
     textInput("count_query", "query", value = ""),
     selectInput(
-      "count_pAttribute", "pAttribute",
-      choices = pAttributes(corpus()[1, "corpus"])
+      "count_p_attribute", "p_attribute",
+      choices = p_attributes(corpus()[1, "corpus"])
     )
   )
 }
@@ -43,7 +43,7 @@ countServer <- function(input, output, session){
             withProgress(
               message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
               {
-                values$corpora[[input$count_corpus]] <- Corpus$new(input$count_corpus, pAttribute = input$count_pAttribute)
+                values$corpora[[input$count_corpus]] <- Corpus$new(input$count_corpus, p_attribute = input$count_p_attribute)
               }
               
             )
@@ -61,7 +61,7 @@ countServer <- function(input, output, session){
         if (input$count_query == ""){
           return(polmineR:::.get_slot(.Object, "stat"))
         } else {
-          retval <- count(.Object, query = input$count_query, pAttribute = input$count_pAttribute)
+          retval <- count(.Object, query = input$count_query, p_attribute = input$count_p_attribute)
           return( retval )
         }
 

@@ -23,9 +23,9 @@ featuresUiInput <- function(){
       selectInput("features_partition_y", "reference partition", choices = character())
     ),
     included = radioButtons("features_included", "included", choices = list("TRUE", "FALSE"), selected = "FALSE", inline = TRUE),
-    pAttribute = selectInput(
-      "features_pAttribute", "pAttribute",
-      choices = pAttributes(corpus()[["corpus"]][1])
+    p_attribute = selectInput(
+      "features_p_attribute", "p_attribute",
+      choices = p_attributes(corpus()[["corpus"]][1])
     )
     
   )
@@ -67,8 +67,8 @@ featuresServer <- function(input, output, session){
      
        x = values$partitions[[input$features_partition_x]]
       
-      if (!identical(x@pAttribute, input$features_pAttribute)){
-         x <- enrich(x, pAttribute = input$features_pAttribute)
+      if (!identical(x@p_attribute, input$features_p_attribute)){
+         x <- enrich(x, p_attribute = input$features_p_attribute)
       }
 
       y <- switch(
@@ -78,8 +78,8 @@ featuresServer <- function(input, output, session){
       )
        
       if(input$features_object_y == "partition"){
-        if (!identical(y@pAttribute, input$features_pAttribute)){
-          y <- enrich(y, pAttribute = input$features_pAttribute)
+        if (!identical(y@p_attribute, input$features_p_attribute)){
+          y <- enrich(y, p_attribute = input$features_p_attribute)
         }
       }
       
@@ -111,7 +111,7 @@ featuresServer <- function(input, output, session){
         featuresObject <- values[["features"]]
         token <- featuresObject@stat[["word"]][input$features_table_rows_selected]
         updateTextInput(session, "kwic_query", value = token[1])
-        updateSelectInput(session, "kwic_pAttribute", selected = input$features_pAttribute)
+        updateSelectInput(session, "kwic_p_attribute", selected = input$features_p_attribute)
         updateNavbarPage(session, "polmineR", selected = "kwic")
         Time <- as.character(Sys.time())
         updateSelectInput(session, "kwic_read", choices = Time, selected = Time)

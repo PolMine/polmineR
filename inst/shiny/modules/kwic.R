@@ -17,14 +17,14 @@ kwicUiInput <- function(drop = NULL){
     query = textInput("kwic_query", "query", value = ""),
     cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
-    sAttribute = selectInput(
-      "kwic_meta", "sAttribute",
-      choices = sAttributes(corpus()[["corpus"]][1]),
+    s_attribute = selectInput(
+      "kwic_meta", "s_attribute",
+      choices = s_attributes(corpus()[["corpus"]][1]),
       multiple = TRUE
     ),
-    pAttribute = selectInput(
-      "kwic_pAttribute", "pAttribute",
-      choices = pAttributes(corpus()[["corpus"]][1])
+    p_attribute = selectInput(
+      "kwic_p_attribute", "p_attribute",
+      choices = p_attributes(corpus()[["corpus"]][1])
     ),
     window = sliderInput("kwic_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
     br3 = br()
@@ -45,18 +45,18 @@ kwicServer <- function(input, output, session, ...){
   observe({
     x <- input$kwic_partition
     if (x != "" && length(values$partitions) > 0 && input$kwic_partition %in% names(values$partitions)){
-      new_sAttr <- sAttributes(values$partitions[[input$kwic_partition]]@corpus)
-      new_pAttr <- pAttributes(values$partitions[[input$kwic_partition]]@corpus)
-      updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected = NULL)
+      new_sAttr <- s_attributes(values$partitions[[input$kwic_partition]]@corpus)
+      new_pAttr <- p_attributes(values$partitions[[input$kwic_partition]]@corpus)
+      updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
       updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
     }
   })
   
   observe({
     x <- input$kwic_corpus
-    new_sAttr <- sAttributes(input$kwic_corpus)
-    new_pAttr <- pAttributes(input$kwic_corpus)
-    updateSelectInput(session, "kwic_pAttribute", choices = new_pAttr, selected = NULL)
+    new_sAttr <- s_attributes(input$kwic_corpus)
+    new_pAttr <- p_attributes(input$kwic_corpus)
+    updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
     updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
   })
   
@@ -84,7 +84,7 @@ kwicServer <- function(input, output, session, ...){
               .Object = object,
               query = rectifySpecialChars(input$kwic_query),
               cqp = if (input$kwic_cqp == "yes") TRUE else FALSE,
-              pAttribute = if (is.null(input$kwic_pAttribute)) "word" else input$kwic_pAttribute,
+              p_attribute = if (is.null(input$kwic_p_attribute)) "word" else input$kwic_p_attribute,
               left = input$kwic_window,
               right = input$kwic_window,
               meta = input$kwic_meta,
@@ -186,7 +186,7 @@ setMethod("kwic", "missing", function(){
       ),
       div(br()),
       sidebarLayout(
-        sidebarPanel = sidebarPanel(kwicUiInput(drop = c("go", "br1", "br2", "pAttribute", "read"))),
+        sidebarPanel = sidebarPanel(kwicUiInput(drop = c("go", "br1", "br2", "p_attribute", "read"))),
         mainPanel = mainPanel(kwicUiOutput())
       )
     ))
