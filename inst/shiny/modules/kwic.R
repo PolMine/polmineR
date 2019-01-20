@@ -14,7 +14,7 @@ kwicUiInput <- function(drop = NULL){
       condition = "input.kwic_object == 'partition'",
       selectInput("kwic_partition", "partition", choices = character())
     ),
-    query = textInput("kwic_query", "query", value = ""),
+    query = textInput("kwic_query", label = "query", value = ""),
     cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
     s_attribute = selectInput(
@@ -24,7 +24,8 @@ kwicUiInput <- function(drop = NULL){
     ),
     p_attribute = selectInput(
       "kwic_p_attribute", "p_attribute",
-      choices = p_attributes(corpus()[["corpus"]][1])
+      choices = p_attributes(corpus()[["corpus"]][1]),
+      selected = "word"
     ),
     window = sliderInput("kwic_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
     br3 = br()
@@ -70,16 +71,14 @@ kwicServer <- function(input, output, session, ...){
       
       if ((input$kwic_go > 0 || values[["kwic_go"]] != values[["startingTime"]]) && input$kwic_query != ""){
         
-        if (input$kwic_object == "corpus"){
-          object <- input$kwic_corpus
-        } else {
-          object <- values$partitions[[input$kwic_partition]]
-        }
-        
+        object <- if (input$kwic_object == "corpus")
+          input$kwic_corpus
+        else
+          values$partitions[[input$kwic_partition]]
+
         withProgress(
           message = "please wait", value = 0, max = 5, detail = "preparing data",
           {
-            print("yeah")
             K <- polmineR::kwic(
               .Object = object,
               query = rectifySpecialChars(input$kwic_query),
@@ -89,7 +88,7 @@ kwicServer <- function(input, output, session, ...){
               right = input$kwic_window,
               meta = input$kwic_meta,
               verbose = "shiny",
-              positivelist = if (nchar(input$kwic_positivelist) > 0) input$kwic_positivelist else NULL,
+              positivelist = if (!is.null(input$kwic_positivelist)) input$kwic_positivelist else NULL,
               cpos = TRUE # required for reading
             )
             print(K)
@@ -98,25 +97,20 @@ kwicServer <- function(input, output, session, ...){
         ) # end withProgress
         
         if (is.null(values[["kwic"]])){
-          print("no hits 1")
           retval <- data.frame(left = character(), node = character(), right = character())
         } else if (nrow(values[["kwic"]]@table) == 0){
-          print("no hits 2")
           retval <- data.frame(left = character(), node = character(), right = character())
         } else {
-          print("presumably hits")
           tab <- values[["kwic"]]@table
           tab[["hit_no"]] <- NULL
           if (length(input$kwic_meta) == 0){
             retval <- data.frame(no = c(1:nrow(tab)), tab)
           } else if (length(input$kwic_meta)){
             metaRow <- unlist(lapply(
-              c(1:nrow(tab)),
-              function(i){
-                paste(unlist(lapply(tab[i,c(1:length(input$kwic_meta))], as.character)), collapse=" | ")
-              }
+              1L:nrow(tab),
+              function(i)paste(unlist(lapply(tab[i,1L:length(input$kwic_meta)], as.character)), collapse = " | ")
             ))
-            retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta)+1):ncol(tab)])
+            retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta) + 1L):ncol(tab)])
           }
         }
         

@@ -1,3 +1,11 @@
+polmineR 0.7.11.9000
+====================
+
+* To keep up with the renaming of functions and arguments in the package, "sAttributes" and "pAttributes" in the polmineR shiny app have been renamed ("s_attributes", and "p_attributes", respectively).
+* The shiny ap module for kwic output will not show p_attribute and `positivelist` by default.
+* The `format()`-method is used to output proper output in the cooccurrences of the shiny app.
+
+
 polmineR 0.7.11
 ===============
 

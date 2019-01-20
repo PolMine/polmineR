@@ -79,10 +79,10 @@ cooccurrencesServer <- function(input, output, session){
           })
         
         if (!is.null(values[["cooccurrences"]])){
-          return(DT::datatable(round(values[["cooccurrences"]], 2)@stat, selection = "single", rownames = FALSE))
+          return(DT::datatable(format(values[["cooccurrences"]])[!is.na(ll)], selection = "single", rownames = FALSE))
         } else {
           y <- data.frame(
-            word = ""[0], count_window = ""[0], count_partition = ""[0],
+            word = character(), count_window = character(), count_partition = character(),
             exp_window = integer(), exp_partition = integer(), ll = integer(),
             rank_ll = integer()
           )
@@ -90,7 +90,7 @@ cooccurrencesServer <- function(input, output, session){
         }
       } else {
         retval <- data.frame(
-          word = ""[0], count_window = ""[0], count_partition = ""[0],
+          word = character(), count_window = character(), count_partition = character(),
           exp_window = integer(), exp_partition = integer(), ll = integer(),
           rank_ll = integer()
         )
