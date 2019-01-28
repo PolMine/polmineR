@@ -14,9 +14,24 @@ pmi(.Object)
 \item{.Object}{An object.}
 }
 \description{
-Pointwise mutual information (PMI) is calculated as follows, see
-Manning/Schuetze (1999) for an explanation:
+Calculate Pointwise Mutual Information as an information-theoretic approach
+to find collocations.
+}
+\details{
+Pointwise mutual information (PMI) is calculated as follows (see
+Manning/Schuetze 1999):
 \deqn{I(x,y) = log\frac{p(x,y)}{p(x)p(y)}}{I(x,y) = log(p(x,y)/(p(x)p(y)))}
+
+The formula is based on maximum likelihood estimates: When we know the number
+of observations for token x, \eqn{o_{x}}{o(x)}, the number of observations
+for token y, \eqn{o_{y}}{o(y)} and the size of the corpus N, the
+propabilities for the tokens x and y, and for the co-occcurence of x and y
+are as follows:
+\deqn{p(x) = \frac{o_{x}}{N}}{p(x) = o(x) / N}
+\deqn{p(y) = \frac{o_{y}}{N}}{p(y) = o(y) / N}
+
+The term p(x,y) is the number of observed co-occurrences of x and y.
+
 Note that the computation uses log base 2, not the natural logarithm you find
 in examples (e.g. \url{https://en.wikipedia.org/wiki/Pointwise_mutual_information}).
 }
@@ -30,5 +45,7 @@ Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statisti
 Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
 }
 \seealso{
-See \code{\link{ll}}, \code{\link{chisquare}} and \code{\link{t_test}}.
+Other cooccurrence statistics: \code{\link{chisquare}},
+  \code{\link{ll}}, \code{\link{t_test}}
 }
+\concept{cooccurrence statistics}

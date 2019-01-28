@@ -157,3 +157,8 @@ Evert, Stefan (2009). Corpora and Collocations. In: A. Ludeling
 Tabbert, Ulrike (2015): \emph{Crime and Corpus. The Linguistic
   Representation of Crime in the Press}. Amsterdam: Benjamins.
 }
+\seealso{
+Other cooccurrence statistics: \code{\link{chisquare}},
+  \code{\link{pmi}}, \code{\link{t_test}}
+}
+\concept{cooccurrence statistics}

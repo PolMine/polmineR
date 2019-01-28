@@ -6,16 +6,30 @@ setGeneric("pmi", function(.Object) standardGeneric("pmi") )
 
 #' Calculate Pointwise Mutual Information (PMI).
 #' 
-#' Pointwise mutual information (PMI) is calculated as follows, see
-#' Manning/Schuetze (1999) for an explanation:
+#' Calculate Pointwise Mutual Information as an information-theoretic approach
+#' to find collocations.
+#' 
+#' Pointwise mutual information (PMI) is calculated as follows (see
+#' Manning/Schuetze 1999):
 #' \deqn{I(x,y) = log\frac{p(x,y)}{p(x)p(y)}}{I(x,y) = log(p(x,y)/(p(x)p(y)))}
+#' 
+#' The formula is based on maximum likelihood estimates: When we know the number
+#' of observations for token x, \eqn{o_{x}}{o(x)}, the number of observations
+#' for token y, \eqn{o_{y}}{o(y)} and the size of the corpus N, the
+#' propabilities for the tokens x and y, and for the co-occcurence of x and y
+#' are as follows:
+#' \deqn{p(x) = \frac{o_{x}}{N}}{p(x) = o(x) / N}
+#' \deqn{p(y) = \frac{o_{y}}{N}}{p(y) = o(y) / N}
+#' 
+#' The term p(x,y) is the number of observed co-occurrences of x and y.
+#' 
 #' Note that the computation uses log base 2, not the natural logarithm you find
 #' in examples (e.g. \url{https://en.wikipedia.org/wiki/Pointwise_mutual_information}).
-#' @seealso See \code{\link{ll}}, \code{\link{chisquare}} and \code{\link{t_test}}.
 #' @param .Object An object.
 #' @rdname pmi
 #' @references Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
+#' @family cooccurrence statistics
 #' @examples
 #' y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
 #' N <- size(y)[["partition"]]
@@ -92,6 +106,7 @@ setMethod("pmi", "context", function(.Object){
 #' @param .Object An object of class \code{cooccurrence}, \code{context}, or
 #'   \code{features}.
 #' @param ... Further arguments (such as \code{verbose}).
+#' @family cooccurrence statistics
 #' @exportMethod ll
 #' @rdname ll
 #' @examples 
@@ -184,7 +199,8 @@ setMethod("ll", "features", function(.Object){
   direction <- ifelse(.Object@stat[["count_coi"]] >= .Object@stat[["exp_coi"]], 1L, -1L)
   .Object@stat[, "ll" := 2 * bracket * direction]
   .Object@stat[, "ll" := ifelse(is.nan(ll), NA, ll)]
-  .Object <- sort(.Object, by = "ll")
+  setorderv(.Object@stat, cols = "ll", order = -1L)
+  # .Object <- sort(.Object, by = "ll")
   .Object@stat[, "rank_ll" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "ll")
   .Object
@@ -299,7 +315,6 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #' @exportMethod chisquare
 #' @return Same class as input object, with enriched table in the
 #'   \code{stat}-slot.
-#' @seealso See \code{\link{ll}}, \code{\link{pmi}} and \code{\link{t_test}}.
 #' @references Manning, Christopher D.; Schuetze, Hinrich (1999):
 #'   \emph{Foundations of Statistical Natural Language Processing}. MIT Press:
 #'   Cambridge, Mass., pp. 169-172.
@@ -307,6 +322,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #'   similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
 #'   Natural Language Processing}. Granada, Spain, pp 46-52.
 #' @author Andreas Blaette
+#' @family cooccurrence statistics
 #' @rdname chisquare-method
 #' @keywords textstatistics
 #' @examples
@@ -388,3 +404,83 @@ setMethod("chisquare", "context", function(.Object) callNextMethod(.Object))
 
 #' @rdname chisquare-method
 setMethod("chisquare", "cooccurrences", function(.Object) callNextMethod(.Object))
+
+
+#' @include S4classes.R
+NULL
+
+#' Perform t-test.
+#' 
+#' Compute t-scores to find collocations.
+#' 
+#' The calculation of the t-test is based on the formula
+#' \deqn{t = \frac{\overline{x} - \mu}{\sqrt{\frac{s^2}{N}}}}{t = (x - u) / sqrt(s^2 / N)}
+#' where \eqn{\mu}{u} is the mean of the distribution, x the sample mean,
+#' \eqn{s^2}{s^2} the sample variance, and N the sample size.
+#' 
+#' Following Manning and Schuetze (1999), to test whether two tokens (a and b)
+#' are a collocation, the sample mean \eqn{\mu}{u} is the number of observed
+#' co-occurrences of a and b divided by corpus size N:
+#' \deqn{\mu = \frac{o_{ab}}{N}}{u = o(ab) / N}
+#' 
+#' For the mean of the distribution \eqn{\overline{x}}{x}, maximum likelihood estimates
+#' are used. Given that we know the number of observations of token a, \eqn{o_{a}}{o(a)}, the
+#' number of observations of b, \eqn{o_{b}}{o(b)} and the size of the corpus N, the
+#' propabilities for the tokens a and b, and for the co-occcurence of a and be
+#' are as follows, if independence is assumed:
+#' \deqn{P(a) = \frac{o_{a}}{N}}{P(a) = o(a) / N}
+#' \deqn{P(b) = \frac{o_{b}}{N}}{P(b) = o(b) / N}
+#' \deqn{P(ab) = P(a)P(b)}{P(ab) = P(a) * P(b)}
+#' 
+#' See the examples for a sample calulation of the t-test, and Evert (2005: 83)
+#' for a critical discussion of the "highly questionable" assumptions when using
+#' the t-test for detecting co-occurrences.
+#' @param .Object A \code{context} or \code{features} object
+#' @references Manning, Christopher D.; Schuetze, Hinrich (1999):
+#'   \emph{Foundations of Statistical Natural Language Processing}. MIT Press:
+#'   Cambridge, Mass., pp. 163-166.
+#' @references Church, Kenneth W. et al. (1991): Using Statistics in Lexical
+#'   Analysis. In: Uri Zernik (ed.), \emph{Lexical Acquisition}. Hillsdale,
+#'   NJ:Lawrence Erlbaum, pp. 115-164
+#'   \url{https://www.clsp.jhu.edu/~kchurch/wwwfiles/published_1991_using_stats.ps}
+#'   
+#' @references Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
+#'   Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
+#'   \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
+#' @rdname t_test
+#' @name t_test
+#' @family cooccurrence statistics
+#' @examples
+#' use("polmineR")
+#' y <- cooccurrences("REUTERS", query = "oil", left = 1L, right = 0L, method = "t_test")
+#' # The critical value (for a = 0.005) is 2.579, so "crude" is a collocation
+#' # of "oil" according to t-test.
+#' 
+#' # A sample calculation
+#' count_oil <- count("REUTERS", query = "oil")
+#' count_crude <- count("REUTERS", query = "crude")
+#' count_crude_oil <- count("REUTERS", query = '"crude" "oil"', cqp = TRUE)
+#' 
+#' p_crude <- count_crude$count / size("REUTERS")
+#' p_oil <- count_oil$count / size("REUTERS")
+#' p_crude_oil <- p_crude * p_oil
+#' 
+#' x <- count_crude_oil$count / size("REUTERS")
+#'
+#' t_value <- (x - p_crude_oil) / sqrt(x / size("REUTERS"))
+#' # should be identical with previous result:
+#' as.data.frame(subset(y, word == "crude"))$t_test
+setGeneric("t_test", function(.Object) standardGeneric("t_test") )
+
+#' @rdname t_test
+setMethod("t_test", "context", function(.Object){
+  p_random <- (.Object@stat[["count_partition"]] / .Object@size_partition) * ( .Object@count / .Object@size_partition)
+  p_sample <- .Object@stat[["count_coi"]] / .Object@size_partition
+  t_values <- (p_sample - p_random) / sqrt( p_sample / .Object@size_partition )
+  .Object@stat[, "t-score" := t_values]
+  setorderv(x = .Object@stat, cols = "t-score", order = -1L)
+  .Object@stat[, "rank_t" := 1L:nrow(.Object@stat)]
+  .Object@method <- c(.Object@method, "t_test")
+  invisible(.Object)
+})
+

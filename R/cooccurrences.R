@@ -216,7 +216,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
       .Object@stat,
       c(.Object@p_attribute, colnames(.Object@stat)[-which(colnames(.Object@stat) %in% .Object@p_attribute)])
     )
-    setorderv(.Object@stat, cols = method[1], order = -1L)
+    # setorderv(.Object@stat, cols = method[1], order = -1L)
   }
   
   retval <- new(

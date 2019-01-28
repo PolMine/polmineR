@@ -97,7 +97,6 @@ Collate:
     'size.R'
     'stats.R'
     'store.R'
-    't_test.R'
     'templates.R'
     'terms.R'
     'token_stream.R'
