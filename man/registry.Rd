@@ -18,7 +18,7 @@ A path to a (registry or data) directory, or NULL, if package does not exist
 or is not a package including a corpus.
 }
 \description{
-The Corpus Workbench (CWB) uses a registry directory with (txt) files
+The Corpus Workbench (CWB) uses a registry directory with plain text files
 describing corpora in a standardized format. The binary files of a corpus are
 stored in a data directory defined in the registry directory. The
 \code{registry} and \code{data_dir} functions return the respective
@@ -33,6 +33,11 @@ Upon loading the polmineR package, there is a check whether the
   environment variable are copied to the temporary registry directory, which
   serves as the central place to store all registry files for all corpora, be
   it system corpora, corpora included in R packages, or temporary corpora.
+
+The Corpus Workbench may have problems to cope with a registry path
+  that includes registry non-ASCII characters. On Windows, a call to
+  \code{utils::shortPathName} will generate the short MS-DOS path name that
+  circumvents resulting problems.
 }
 \examples{
 registry() # returns temporary registry directory

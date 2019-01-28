@@ -1,9 +1,10 @@
-polmineR 0.7.11.9000
+polmineR 0.7.11.9001
 ====================
 
 * To keep up with the renaming of functions and arguments in the package, "sAttributes" and "pAttributes" in the polmineR shiny app have been renamed ("s_attributes", and "p_attributes", respectively).
 * The shiny ap module for kwic output will not show p_attribute and `positivelist` by default.
 * The `format()`-method is used to output proper output in the cooccurrences of the shiny app.
+* User names that include non-ASCII characters had been a persistent problem on Windows machines (#66). The solution now is to check for non-ASCII characters in the path to the data directory, and to use the "old" short DOS path if necessary. The worker is a modified `registry()`-function.
 
 
 polmineR 0.7.11

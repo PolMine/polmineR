@@ -157,7 +157,7 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 
 #' Get registry and data directories.
 #' 
-#' The Corpus Workbench (CWB) uses a registry directory with (txt) files
+#' The Corpus Workbench (CWB) uses a registry directory with plain text files
 #' describing corpora in a standardized format. The binary files of a corpus are
 #' stored in a data directory defined in the registry directory. The
 #' \code{registry} and \code{data_dir} functions return the respective
@@ -171,6 +171,10 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 #'   environment variable are copied to the temporary registry directory, which
 #'   serves as the central place to store all registry files for all corpora, be
 #'   it system corpora, corpora included in R packages, or temporary corpora.
+#' @details The Corpus Workbench may have problems to cope with a registry path
+#'   that includes registry non-ASCII characters. On Windows, a call to
+#'   \code{utils::shortPathName} will generate the short MS-DOS path name that
+#'   circumvents resulting problems.
 #' 
 #' @param pkg A character string with the name of a single package; if \code{NULL} (default),
 #' the temporary registry and data directory is returned.
@@ -185,9 +189,16 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 #' 
 #' data_dir()
 #' data_dir(pkg = "polmineR")
+#' @importFrom stringi stri_enc_mark
 registry <- function(pkg = NULL){
   if (is.null(pkg)){
     y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
+    
+    # The user name may include special characters. On windows, a possible solutions to avoid
+    # error messages, is to use the DOS short path name.
+    if (stri_enc_mark(y) != "ASCII"){
+      if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
+    }
     return(y)
   } else {
     stopifnot(
@@ -203,6 +214,9 @@ registry <- function(pkg = NULL){
         warning(sprintf("no registry directory in package '%s'", pkg))
         return( NULL )
       } else {
+        if (stri_enc_mark(y) != "ASCII"){
+          if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
+        }
         return( y )
       }
     }

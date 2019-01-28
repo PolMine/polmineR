@@ -55,23 +55,28 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
     )
     
     if ((stri_enc_mark(corpus_data_srcdir) != "ASCII") || (tmp == TRUE)){
-      corpus_data_targetdir <- file.path(data_dir(), tolower(corpus))
-      
-      if (!dir.exists(corpus_data_targetdir)) 
-        dir.create(corpus_data_targetdir)
-      else 
-        file.remove(list.files(corpus_data_targetdir, full.names = TRUE))
-      
-      .message(
-        sprintf(
-          "path includes non-ASCII characters, moving binary corpus data to temporary data directory (%s/%s)",
-          data_dir(), tolower(corpus)
-        ),
-        verbose = verbose
-      )
-      for (x in list.files(corpus_data_srcdir, full.names = TRUE))
-        file.copy(from = x, to = file.path(corpus_data_targetdir, basename(x)))
-      
+      if (.Platform$OS.type == "windows"){
+        corpus_data_targetdir <- gsub("\\\\", "/", utils::shortPathName(corpus_data_srcdir))
+      } else {
+        # Copying files to a temporary directory that does not include non-ASCII characters
+        # may still be necessary on macOS machines
+        
+        if (!dir.exists(corpus_data_targetdir))
+          dir.create(corpus_data_targetdir)
+        else
+          file.remove(list.files(corpus_data_targetdir, full.names = TRUE))
+        
+        .message(
+          sprintf(
+            "path includes non-ASCII characters, moving binary corpus data to temporary data directory (%s/%s)",
+            data_dir(), tolower(corpus)
+          ),
+          verbose = verbose
+        )
+        for (x in list.files(corpus_data_srcdir, full.names = TRUE))
+          file.copy(from = x, to = file.path(corpus_data_targetdir, basename(x)))
+        
+      }
     } else {
       corpus_data_targetdir <- corpus_data_srcdir
     }

@@ -34,7 +34,7 @@ CQI.RcppCWB <- R6Class(
     
     list_corpora = function(){
       # a very dull solution that does no do any checks!
-      toupper(list.files( Sys.getenv("CORPUS_REGISTRY") ))
+      toupper(list.files( registry() ))
     },
     
     attributes = function(corpus, type){
@@ -46,46 +46,46 @@ CQI.RcppCWB <- R6Class(
     },
     
     attribute_size = function(corpus, attribute, type = "s")
-      cl_attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_attribute_size(corpus = corpus, attribute = attribute, attribute_type = type, registry = registry()),
     
     lexicon_size = function(corpus, p_attribute)
-      cl_lexicon_size(corpus = corpus, p_attribute = p_attribute, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_lexicon_size(corpus = corpus, p_attribute = p_attribute, registry = registry()),
     
     cpos2struc = function(corpus, s_attribute, cpos)
-      cl_cpos2struc(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_cpos2struc(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = registry()),
     
     cpos2str = function(corpus, p_attribute, cpos)
-      cl_cpos2str(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_cpos2str(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = registry()),
     
     cpos2id = function(corpus, p_attribute, cpos)
-      cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = cpos, registry = registry()),
     
     struc2cpos = function(corpus, s_attribute, struc)
-      cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = registry()),
     
     id2str = function(corpus, p_attribute, id)
-      cl_id2str(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_id2str(corpus = corpus, p_attribute = p_attribute, id = id, registry = registry()),
     
     struc2str = function(corpus, s_attribute, struc)
-      cl_struc2str(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_struc2str(corpus = corpus, s_attribute = s_attribute, struc = struc, registry = registry()),
     
     regex2id = function(corpus, p_attribute, regex)
-      cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = regex, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = regex, registry = registry()),
     
     str2id = function(corpus, p_attribute, str)
-      cl_str2id(corpus = corpus, p_attribute = p_attribute, str = str, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_str2id(corpus = corpus, p_attribute = p_attribute, str = str, registry = registry()),
     
     id2freq = function(corpus, p_attribute, id)
-      cl_id2freq(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_id2freq(corpus = corpus, p_attribute = p_attribute, id = id, registry = registry()),
     
     id2cpos = function(corpus, p_attribute, id)
-      cl_id2cpos(corpus = corpus, p_attribute = p_attribute, id = id, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_id2cpos(corpus = corpus, p_attribute = p_attribute, id = id, registry = registry()),
     
     cpos2lbound = function(corpus, s_attribute, cpos)
-      cl_cpos2lbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_cpos2lbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = registry()),
     
     cpos2rbound = function(corpus, s_attribute, cpos)
-      cl_cpos2rbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = Sys.getenv("CORPUS_REGISTRY")),
+      cl_cpos2rbound(corpus = corpus, s_attribute = s_attribute, cpos = cpos, registry = registry()),
     
     query = function(corpus, query){
       if (!RcppCWB::cqp_is_initialized()) cqp_initialize()
