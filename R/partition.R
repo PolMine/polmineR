@@ -187,18 +187,13 @@ is.partition <- function(x) "partition" %in% is(x)
         warning(paste("no strucs found for the values provided for s-attribute", sAttr))
       }
     }
-    if (nrow(meta) != 0){
-      if (requireNamespace("RcppCWB", quietly = TRUE)){
-        .Object@cpos <- RcppCWB::get_region_matrix(
-          corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs, strucs = meta[,1]
-        )
-      } else {
-        .Object@cpos <- matrix(
-          data = unlist(lapply(meta[,1], function(x) CQI$struc2cpos(.Object@corpus, .Object@s_attribute_strucs, x))),
-          ncol = 2L, byrow = TRUE
-        )
-      }
-      .Object@strucs <- as.integer(meta[,1])
+    if (nrow(meta) != 0) {
+      .Object@cpos <- RcppCWB::get_region_matrix(
+        corpus = .Object@corpus,
+        s_attribute = .Object@s_attribute_strucs,
+        strucs = meta[, 1]
+      )
+      .Object@strucs <- as.integer(meta[, 1])
     } else {
       warning("returning a NULL object")
       .Object <- NULL    
