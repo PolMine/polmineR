@@ -5,59 +5,72 @@ NULL
 setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"))
 
 
-#' @param unique logical, whether to return unique values only
-#' @param regex filter return value by applying a regex
-#' @param ... to maintain backward compatibility, of argument \code{sAttribute} is used
+#' @param unique Logical, whether to return unique values.
+#' @param regex A regular expression passed into \code{grep} to filter return
+#'   value by applying a regex.
+#' @param ... To maintain backward compatibility, if argument \code{sAttribute}
+#'   (deprecated) is used.
 #' @rdname s_attributes-method
 #' @name s_attributes
 #' @aliases s_attributes,character-method
 setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  s_attributes(.Object = corpus(.Object), s_attribute = s_attribute, unique = unique, regex = regex, ...)
+})
+
+
+#' @examples
+#' s_attributes(corpus("GERMAPARLMINI"))
+setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
-  if (!.Object %in% CQI$list_corpora()) stop("corpus name provided not available")
+  if (!.Object@corpus %in% CQI$list_corpora()) stop("corpus name provided not available")
   
   if (is.null(s_attribute)){
-    return( CQI$attributes(.Object, "s") )
+    return( CQI$attributes(.Object@corpus, "s") )
   } else {
     if (length(s_attribute) == 1){
-      ret <- CQI$struc2str(
-        .Object, s_attribute,
-        0L:(CQI$attribute_size(.Object, s_attribute, type = "s") - 1L)
+      y <- CQI$struc2str(
+        .Object@corpus, s_attribute,
+        0L:(CQI$attribute_size(.Object@corpus, s_attribute, type = "s") - 1L)
       )
-      if (!is.null(regex)) ret <- grep(regex, ret, value = TRUE)
-      if (unique) ret <- unique(ret)
-      Encoding(ret) <- registry_get_encoding(.Object)
-      ret <- as.nativeEnc(ret, from = registry_get_encoding(.Object))
-      return(ret)
+      if (!is.null(regex)) y <- grep(regex, y, value = TRUE)
+      if (unique) y <- unique(y)
+      Encoding(y) <- .Object@encoding
+      if (.Object@encoding != localeToCharset()[1]) y <- as.nativeEnc(y, from = .Object@encoding)
+      return(y)
     } else if (length(s_attribute) > 1){
-      corpusEncoding <- registry_get_encoding(.Object)
-      metaInformation <- lapply(
+      y <- lapply(
         s_attribute,
         function(x) {
-          retval <- CQI$struc2str(.Object, x, 0:(CQI$attribute_size(.Object, x, "s") - 1))
-          Encoding(retval) <- corpusEncoding
-          as.nativeEnc(retval, from = corpusEncoding)
+          retval <- CQI$struc2str(.Object@corpus, x, 0L:(CQI$attribute_size(.Object@corpus, x, "s") - 1L))
+          Encoding(retval) <- .Object@encoding
+          as.nativeEnc(retval, from = .Object@encoding)
         })
-      names(metaInformation) <- s_attribute
-      return( data.table::as.data.table(metaInformation) )
+      names(y) <- s_attribute
+      return( data.table::as.data.table(y) )
     }
   }
 })
 
+
 #' Get s-attributes.
 #' 
-#' Structural annotations (s-attributes) of a corpus provide metainformation for
-#' regions of tokens. Gain access to the s-attributes available for a corpus or partition,
-#' or the values of s-attributes in a corpus/partition with the \code{s_attributes}-method.
+#' Structural annotations (s-attributes) of a corpus capture metainformation for
+#' regions of tokens. The \code{s_attributes}-method offers high-level access to
+#' the s-attributes present in a corpus or subcorpus, or the values of
+#' s-attributes in a corpus/partition.
 #' 
 #' Importing XML into the Corpus Workbench (CWB) turns elements and element
-#' attributes into so-called s-attributes. There are two uses of the s_attributes-method: If the 
-#' \code{s_attribute} parameter is NULL (default), the return value is a character vector
-#' with all s-attributes present in a corpus.
+#' attributes into so-called s-attributes. There are two uses of the
+#' s_attributes-method: If the \code{s_attribute} parameter is NULL (default),
+#' the return value is a \code{character} vector with all s-attributes present in a
+#' corpus.
 #' 
-#' If s_attribute is the name of a specific s-attribute (a length 1 character vector), the
-#' values of the s-attributes available in the corpus/partition are returned.
+#' If \code{s_attribute} is the name of a specific s-attribute (a length one
+#' character vector), the values of the s-attributes available in the
+#' \code{corpus}/\code{partition} are returned.
 #' 
 #' If a character vector of s-attributes is provided, the method will return a \code{data.table}.
 #'
@@ -72,7 +85,8 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
 #'   
 #' s_attributes("GERMAPARLMINI")
 #' s_attributes("GERMAPARLMINI", "date") # dates of plenary meetings
-#'   
+#' s_attributes("GERMAPARLMINI", s_attribute = c("date", "party"))  
+#'    
 #' P <- partition("GERMAPARLMINI", date = "2009-11-10")
 #' s_attributes(P)
 #' s_attributes(P, "speaker") # get names of speakers

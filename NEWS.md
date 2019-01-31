@@ -6,6 +6,10 @@ polmineR 0.7.11.9001
 * The `format()`-method is used to output proper output in the cooccurrences of the shiny app.
 * User names that include non-ASCII characters were a persistent problem on Windows machines (#66). The solution now is to check for non-ASCII characters in the path to the data directory, and to use the "old" short DOS path if necessary. The worker is a modified `registry()`-function.
 * Extended documentation for `pmi()`-method and `t_test()`-method.
+* New `s_attributes()`-method for `corpus`-class.
+* A set of experimental methods for an initial check of the feasibility of a non-standard evaluation approach to the generation of subcorpora has been dropped (`$`, `==`, `!=`, `zoom` for `corpus`-class).
+* `subset()`-method for `corpus` and `subcorpus` objects to generate subcorpora (i.e. `subcorpus` objects).
+
 
 polmineR 0.7.11
 ===============

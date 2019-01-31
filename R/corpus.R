@@ -294,74 +294,127 @@ Corpus <- R6Class(
 
 
 
-#' @details The `$`-method will assign the argument \code{name} to the slot
-#'   \code{key} and return the modified object.
+
+
+
+#' @param corpus either character or \code{corpus}
 #' @examples
-#' corp <- corpus("GERMAPARLMINI")
-#' corp2 <- corp$speaker
-#' corp2@@key
-#' @rdname corpus_class
-#' @exportMethod $
-setMethod("$", "corpus", function(x, name){
-  x@key <- name
-  x
+#' s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI")
+#' s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI")
+#' s_attributes(quote(speaker %in% "Angela Merkel"), corpus = "GERMAPARLMINI")
+#' s_attributes(quote(speaker != "Angela Merkel"), corpus = "GERMAPARLMINI")
+setMethod("s_attributes", "call", function(.Object, corpus){
+  s_attrs <- s_attributes(corpus)
+  unlist(
+    lapply(
+      .Object,
+      function(e){
+        if (is.call(e)){
+          warning("nested calls not supported at this time")
+        } else if (is.symbol(e)){
+          char <- deparse(e)
+          if (char %in% s_attrs) return(char) else return(NULL)
+        }
+      }
+    )
+  )
 })
 
 
-#' @examples
-#' x <- corpus("GERMAPARLMINI")
-#' x$date == "2009-10-28"
-#' @rdname corpus_class
-#' @exportMethod ==
-setMethod("==", "corpus", function(e1, e2){
-  partition(e1@corpus, def = setNames(object = list(e2), nm = e1@key))
-})
-
-
-
-#' @examples
-#' x <- corpus("GERMAPARLMINI")
-#' x$party != "NA"
-#' @rdname corpus_class
-#' @exportMethod !=
-setMethod("!=", "corpus", function(e1, e2){
-  available <- s_attributes(e1@corpus, e1@key)
-  keep <- available[!available %in% e2]
-  partition(e1@corpus, def = setNames(object = list(keep), nm = e1@key))
-})
-
-
-
-#' @examples
-#' x <- corpus("GERMAPARLMINI")
-#' x$date %in% c("2009-10-27", "2009-10-28")
-#' @rdname corpus_class
-#' @exportMethod %in%
-setMethod("%in%", "corpus", function(x, table){
-  partition(x@corpus, def = setNames(object = list(table), nm = x@key))
-})
-
-
-
-#' @examples
-#' x <- corpus("GERMAPARLMINI")
-#' y <- zoom(x, date == "2009-10-28")
-#' 
-#' x <- partition("GERMAPARLMINI", interjection = "speech")
-#' m <- zoom(x, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
-#' 
-#' not_unknown <- zoom(x, party != c("NA", "FDP"))
-#' s_attributes(not_unknown, "party")
-#' @rdname corpus_class
-#' @exportMethod subset
-setMethod("zoom", "corpus", function(x, ...){
-  cmds <- strsplit(deparse(substitute(...)), split = "\\s*&\\s*")[[1]]
-  x_s_attributes <- s_attributes(x@corpus)
-  for (cmd in cmds){
-    for (s_attr in x_s_attributes) cmd <- gsub(sprintf("(%s)", s_attr), "x$\\1", cmd)
-    x <- eval(parse(text = cmd))
+.df_add_s_attributes <- function(df, s_attr){
+  for (s in s_attr){
+    df[[s]] <- as.vector(CQI$struc2str(x@corpus, s, df[["struc"]]))
+    Encoding(df[[s_attr]]) <- x@encoding
+    if (x@encoding != localeToCharset()[1]){
+      df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
+    }
   }
-  x
+  df
+}
+
+.s_attributes_stop_if_nested <- function(corpus, s_attr){
+  max_attr <- unique(sapply(s_attr, function(s) CQI$attribute_size(corpus, s, type = "s")))
+  if (length(max_attr) != 1){
+    stop(
+      sprintf("Differing attribute size of s-attributes detected (%s), ", paste(s_attr, collapse = "/")),
+      "but the method does not (yet) work for nested XML / nested structural attributes."
+    )
+  }
+  max_attr
+}
+
+#' @examples
+#' a <- corpus("GERMAPARLMINI")
+#' b <- subset(a, grep("Merkel", speaker))
+#' b <- subset(a, speaker == "Angela Dorothea Merkel")
+setMethod("subset", "corpus", function(x, ...){
+  expr <- substitute(...)
+  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  
+  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
+  df <- data.frame(struc = 0L:(max_attr - 1L))
+  df <- .df_add_s_attributes(df = df, s_attr = s_attr)
+  df_min <- df[eval(expr, envir = df),]
+  
+  regions <- RcppCWB::get_region_matrix(
+    corpus = x@corpus,
+    s_attribute = s_attr[1],
+    strucs = df_min[["struc"]],
+    registry = registry()
+  )
+  new(
+    "subcorpus",
+    corpus = x@corpus,
+    encoding = x@encoding,
+    type = x@type,
+    data_dir = x@data_dir,
+    cpos = regions,
+    strucs = df_min[["struc"]],
+    s_attribute_strucs = s_attr[length(s_attr)]
+  )
 })
+
+
+#' @examples
+#' use("polmineR")
+#' a <- corpus("GERMAPARLMINI")
+#' b <- subset(a, date == "2009-11-10")
+#' c <- subset(b, speaker == "Frank-Walter Steinmeier")
+#' c_size <- sum(c@cpos[,2] - c@cpos[,1]) + nrow(c@cpos)
+#' 
+#' p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Frank-Walter Steinmeier")
+setMethod("subset", "subcorpus", function(x, ...){
+  expr <- substitute(...)
+  
+  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
+
+  if (max_attr != CQI$attribute_size(x@corpus, x@s_attribute_strucs, type = "s")){
+    stop("New s-attributes are nested in existing s-attribute defining subcorpus. ",
+         "The method does not (yet) work for nested XML / nested structural attributes.")
+  }
+  
+  df <- data.frame(
+    struc = x@strucs,
+    cpos_left = x@cpos[,1],
+    cpos_right = x@cpos[,2]
+  )
+  
+  df <- .df_add_s_attributes(df = df, s_attr = s_attr)
+  
+  df_min <- df[eval(expr, envir = df),]
+  
+  new(
+    "subcorpus",
+    corpus = x@corpus,
+    encoding = x@encoding,
+    type = x@type,
+    data_dir = x@data_dir,
+    cpos = as.matrix(df_min[, c("cpos_left", "cpos_right")]),
+    strucs = df_min[["struc"]],
+    s_attribute_strucs = s_attr[length(s_attr)]
+  )
+})
+
 
 

@@ -10,6 +10,12 @@ test_that(
     expect_equal(length(s_attrs), 4L)
     expect_equal(is.character(s_attrs), TRUE)
     expect_equal(all(s_attrs %in% c("interjection", "date", "party", "speaker")), TRUE)
+    
+    s_attrs <- s_attributes(corpus("GERMAPARLMINI"))
+    expect_equal(length(s_attrs), 4L)
+    expect_equal(is.character(s_attrs), TRUE)
+    expect_equal(all(s_attrs %in% c("interjection", "date", "party", "speaker")), TRUE)
+    
   }
 )
 
