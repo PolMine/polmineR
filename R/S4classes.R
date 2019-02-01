@@ -612,7 +612,7 @@ setClass(
 
 #' S4 subcorpus class.
 #' 
-#' @param object A \code{subcorpus} object.
+#' @param x A \code{corpus} or \code{subcorpus} object.
 #' @slot s_attributes A named \code{list} with the structural attributes
 #'   defining the subcorpus.
 #' @slot cpos A \code{matrix} with left and right corpus positions defining
@@ -625,8 +625,8 @@ setClass(
 #' @slot xml Object of class \code{character}, whether the xml is "flat" or
 #'   "nested".
 #' @slot s_attribute_strucs Object of class \code{character}, the base node.
-#' @slot key Experimental, an s-attribute that is used as a key.
 #' @family classes to manage corpora
+#' @rdname subcorpus
 setClass(
   "subcorpus",
   slots = c(
@@ -637,8 +637,7 @@ setClass(
     metadata = "data.frame",
     strucs = "integer",
     xml = "character",
-    s_attribute_strucs = "character",
-    key = "character"
+    s_attribute_strucs = "character"
   ),
   contains = "regions"
 )
@@ -790,12 +789,12 @@ setClass("cooccurrences_reshaped", contains = "cooccurrences")
 setClass("cooccurrences_bundle", contains = "bundle")
 
 
-#' Virtual class clice.
+#' Virtual class slice.
 #' 
-#' The classes \code{regions} and \code{partition} can be used to define
-#' subcorpora. Unlike the \code{regions} class, the \code{partition} class may
+#' The classes \code{subcorpus} and \code{partition} can be used to define
+#' subcorpora. Unlike the \code{subcorpus} class, the \code{partition} class may
 #' include statistical evaluations. The virtual class \code{slice} is a
-#' mechanism to define methods for these classes without making \code{regions}
+#' mechanism to define methods for these classes without making \code{subcorpus}
 #' the superclass of \code{partition}.
 #' 
 #' @rdname slice

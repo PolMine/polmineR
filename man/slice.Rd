@@ -5,7 +5,7 @@
 \alias{slice}
 \alias{slice-class}
 \alias{aggregate,slice-method}
-\title{Virtual class clice.}
+\title{Virtual class slice.}
 \usage{
 \S4method{aggregate}{slice}(x)
 }
@@ -14,10 +14,10 @@
 \code{partition} or \code{regions} object.}
 }
 \description{
-The classes \code{regions} and \code{partition} can be used to define
-subcorpora. Unlike the \code{regions} class, the \code{partition} class may
+The classes \code{subcorpus} and \code{partition} can be used to define
+subcorpora. Unlike the \code{subcorpus} class, the \code{partition} class may
 include statistical evaluations. The virtual class \code{slice} is a
-mechanism to define methods for these classes without making \code{regions}
+mechanism to define methods for these classes without making \code{subcorpus}
 the superclass of \code{partition}.
 }
 \details{

@@ -19,3 +19,24 @@ test_that(
   }
 )
 
+
+test_that(
+  "get s-attributes in a call",
+  {
+    expect_equal(
+      s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI"),
+      "speaker"
+    )
+    expect_equal(
+      s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI"),
+      "speaker"
+    )
+    expect_equal(
+      s_attributes(
+        quote(speaker == "Angela Merkel" & date == "2009-10-28"),
+        corpus = "GERMAPARLMINI"
+      ),
+      c("speaker", "date")
+    )
+  }
+)

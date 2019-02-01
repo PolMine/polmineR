@@ -1,24 +1,60 @@
 #' @include partition.R S4classes.R
 NULL
 
-#' @rdname s_attributes-method
-setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"))
-
-
+#' Get s-attributes.
+#' 
+#' Structural annotations (s-attributes) of a corpus capture metainformation for
+#' regions of tokens. The \code{s_attributes}-method offers high-level access to
+#' the s-attributes present in a corpus or subcorpus, or the values of
+#' s-attributes in a corpus/partition.
+#' 
+#' Importing XML into the Corpus Workbench (CWB) turns elements and element
+#' attributes into so-called s-attributes. There are two basic uses of the
+#' \code{s_attributes}-method: If the argument \code{s_attribute} is \code{NULL}
+#' (default), the return value is a \code{character} vector with all
+#' s-attributes present in a corpus.
+#' 
+#' If \code{s_attribute} is the name of a specific s-attribute (a length one
+#' character vector), the values of the s-attributes available in the
+#' \code{corpus}/\code{partition} are returned.
+#' 
+#' If a character vector of s-attributes is provided, the method will return a
+#' \code{data.table}.
+#'
+#' @param .Object A \code{corpus}, \code{subcorpus}, \code{partition} object, or
+#'   a \code{call}. A corpus can also be specified by a length-one character
+#'   vector.
+#' @param s_attribute The name of a specific s-attribute.
 #' @param unique Logical, whether to return unique values.
 #' @param regex A regular expression passed into \code{grep} to filter return
 #'   value by applying a regex.
 #' @param ... To maintain backward compatibility, if argument \code{sAttribute}
 #'   (deprecated) is used.
+#' @return A character vector (s-attributes, or values of s-attributes).
+#' @exportMethod s_attributes
+#' @docType methods
+#' @rdname s_attributes-method
+#' @examples 
+#' use("polmineR")
 #' @rdname s_attributes-method
 #' @name s_attributes
+setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"))
+
+
+#' @rdname s_attributes-method
 #' @aliases s_attributes,character-method
+#' @examples 
+#' 
+#' s_attributes("GERMAPARLMINI")
+#' s_attributes("GERMAPARLMINI", "date") # dates of plenary meetings
+#' s_attributes("GERMAPARLMINI", s_attribute = c("date", "party"))  
 setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   s_attributes(.Object = corpus(.Object), s_attribute = s_attribute, unique = unique, regex = regex, ...)
 })
 
 
+#' @rdname s_attributes-method
 #' @examples
 #' s_attributes(corpus("GERMAPARLMINI"))
 setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
@@ -55,41 +91,11 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
 })
 
 
-#' Get s-attributes.
-#' 
-#' Structural annotations (s-attributes) of a corpus capture metainformation for
-#' regions of tokens. The \code{s_attributes}-method offers high-level access to
-#' the s-attributes present in a corpus or subcorpus, or the values of
-#' s-attributes in a corpus/partition.
-#' 
-#' Importing XML into the Corpus Workbench (CWB) turns elements and element
-#' attributes into so-called s-attributes. There are two uses of the
-#' s_attributes-method: If the \code{s_attribute} parameter is NULL (default),
-#' the return value is a \code{character} vector with all s-attributes present in a
-#' corpus.
-#' 
-#' If \code{s_attribute} is the name of a specific s-attribute (a length one
-#' character vector), the values of the s-attributes available in the
-#' \code{corpus}/\code{partition} are returned.
-#' 
-#' If a character vector of s-attributes is provided, the method will return a \code{data.table}.
-#'
-#' @param .Object either a \code{partition} object or a character vector specifying a CWB corpus
-#' @param s_attribute name of a specific s-attribute
-#' @return a character vector
-#' @exportMethod s_attributes
-#' @docType methods
 #' @rdname s_attributes-method
-#' @examples 
-#' use("polmineR")
-#'   
-#' s_attributes("GERMAPARLMINI")
-#' s_attributes("GERMAPARLMINI", "date") # dates of plenary meetings
-#' s_attributes("GERMAPARLMINI", s_attribute = c("date", "party"))  
-#'    
-#' P <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' s_attributes(P)
-#' s_attributes(P, "speaker") # get names of speakers
+#' @examples
+#' p <- partition("GERMAPARLMINI", date = "2009-11-10")
+#' s_attributes(p)
+#' s_attributes(p, "speaker") # get names of speakers
 setMethod(
   "s_attributes", "partition",
   function (.Object, s_attribute = NULL, unique = TRUE, ...) {
@@ -169,3 +175,40 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   lapply(.Object@objects, function(x) s_attributes(x, s_attribute))
 })
+
+
+#' @details If \code{.Object} is a call, the \code{s_attributes}-method will
+#'   return a character vector with the s-attributes occurring in the call. This
+#'   usage is relevant internally to implement the \code{subset} method to
+#'   generate a \code{subcorpus} using non-standard evaluation. Usually it will
+#'   not be relevant in an interactive session.
+#' @rdname s_attributes-method
+#' @param corpus A \code{corpus}-object or a length one character vector
+#'   denoting a corpus.
+#' @examples
+#' 
+#' # Get s-attributes occurring in a call
+#' s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI")
+#' s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI")
+#' s_attributes(quote(speaker != "Angela Merkel"), corpus = "GERMAPARLMINI")
+#' s_attributes(
+#'   quote(speaker == "Angela Merkel" & date == "2009-10-28"),
+#'   corpus = "GERMAPARLMINI"
+#' )
+setMethod("s_attributes", "call", function(.Object, corpus){
+  s_attrs <- s_attributes(corpus)
+  # for the following recursive function, see http://adv-r.had.co.nz/Expressions.html
+  .fn <- function(x){
+    if (is.call(x)){
+      y <- lapply(x, .fn)
+    } else if (is.symbol(x)){
+      char <- deparse(x)
+      y <- if (char %in% s_attrs) char else NULL
+    } else {
+      y <- NULL
+    }
+    unique(unlist(y))
+  }
+  .fn(.Object)
+})
+

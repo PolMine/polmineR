@@ -10,25 +10,25 @@
 \alias{corpus,missing-method}
 \title{Get corpus/corpora available or used.}
 \usage{
-corpus(object)
+corpus(.Object)
 
-\S4method{corpus}{textstat}(object)
+\S4method{corpus}{textstat}(.Object)
 
-\S4method{corpus}{kwic}(object)
+\S4method{corpus}{kwic}(.Object)
 
-\S4method{corpus}{character}(object)
+\S4method{corpus}{character}(.Object)
 
-\S4method{corpus}{bundle}(object)
+\S4method{corpus}{bundle}(.Object)
 
 \S4method{corpus}{missing}()
 }
 \arguments{
-\item{object}{An object inheriting from the \code{textstat} or \code{bundle} superclasses.}
+\item{.Object}{An object inheriting from the \code{textstat} or \code{bundle} superclasses.}
 }
 \description{
 Calling \code{corpus()} will return a \code{data.frame} listing the corpora
 described in the active registry directory, and some basic information on the
-corpora. If \code{object} is an object inheriting from the \code{textstat},
+corpora. If \code{.Object} is an object inheriting from the \code{textstat},
 or the \code{bundle} class, the corpus used to generate the object is
 returned.
 }

@@ -5,10 +5,10 @@ NULL
 #' 
 #' Calling \code{corpus()} will return a \code{data.frame} listing the corpora
 #' described in the active registry directory, and some basic information on the
-#' corpora. If \code{object} is an object inheriting from the \code{textstat},
+#' corpora. If \code{.Object} is an object inheriting from the \code{textstat},
 #' or the \code{bundle} class, the corpus used to generate the object is
 #' returned.
-#' @param object An object inheriting from the \code{textstat} or \code{bundle} superclasses.
+#' @param .Object An object inheriting from the \code{textstat} or \code{bundle} superclasses.
 #' @exportMethod corpus
 #' @rdname corpus-method
 #' @examples
@@ -20,28 +20,28 @@ NULL
 #' 
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' corpus(pb)
-setGeneric("corpus", function(object) standardGeneric("corpus"))
+setGeneric("corpus", function(.Object) standardGeneric("corpus"))
 
 
 #' @rdname corpus-method
-setMethod("corpus", "textstat", function(object) object@corpus)
+setMethod("corpus", "textstat", function(.Object) .Object@corpus)
 
 #' @rdname corpus-method
-setMethod("corpus", "kwic", function(object) object@corpus)
+setMethod("corpus", "kwic", function(.Object) .Object@corpus)
 
 #' @rdname corpus-method
-setMethod("corpus", "character", function(object){
+setMethod("corpus", "character", function(.Object){
   new(
     "corpus",
-    corpus = object,
-    encoding = registry_get_encoding(object),
+    corpus = .Object,
+    encoding = registry_get_encoding(.Object),
     key = character()
     )
 })
 
 #' @rdname corpus-method
-setMethod("corpus", "bundle", function(object){
-  unique(sapply(object@objects, function(x) x@corpus))
+setMethod("corpus", "bundle", function(.Object){
+  unique(sapply(.Object@objects, function(x) x@corpus))
 })
 
 #' @rdname corpus-method
@@ -295,36 +295,10 @@ Corpus <- R6Class(
 
 
 
-
-
-#' @param corpus either character or \code{corpus}
-#' @examples
-#' s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI")
-#' s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI")
-#' s_attributes(quote(speaker %in% "Angela Merkel"), corpus = "GERMAPARLMINI")
-#' s_attributes(quote(speaker != "Angela Merkel"), corpus = "GERMAPARLMINI")
-setMethod("s_attributes", "call", function(.Object, corpus){
-  s_attrs <- s_attributes(corpus)
-  unlist(
-    lapply(
-      .Object,
-      function(e){
-        if (is.call(e)){
-          warning("nested calls not supported at this time")
-        } else if (is.symbol(e)){
-          char <- deparse(e)
-          if (char %in% s_attrs) return(char) else return(NULL)
-        }
-      }
-    )
-  )
-})
-
-
-.df_add_s_attributes <- function(df, s_attr){
+.df_add_s_attributes <- function(x, df, s_attr){
   for (s in s_attr){
     df[[s]] <- as.vector(CQI$struc2str(x@corpus, s, df[["struc"]]))
-    Encoding(df[[s_attr]]) <- x@encoding
+    Encoding(df[[s]]) <- x@encoding
     if (x@encoding != localeToCharset()[1]){
       df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
     }
@@ -344,16 +318,20 @@ setMethod("s_attributes", "call", function(.Object, corpus){
 }
 
 #' @examples
+#' use("polmineR")
 #' a <- corpus("GERMAPARLMINI")
-#' b <- subset(a, grep("Merkel", speaker))
-#' b <- subset(a, speaker == "Angela Dorothea Merkel")
+#' sc <- subset(a, grepl("Merkel", speaker))
+#' sc <- subset(a, speaker == "Angela Dorothea Merkel")
+#' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+#' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+#' @rdname subcorpus
 setMethod("subset", "corpus", function(x, ...){
   expr <- substitute(...)
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
-  df <- .df_add_s_attributes(df = df, s_attr = s_attr)
+  df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
   df_min <- df[eval(expr, envir = df),]
   
   regions <- RcppCWB::get_region_matrix(
@@ -376,13 +354,10 @@ setMethod("subset", "corpus", function(x, ...){
 
 
 #' @examples
-#' use("polmineR")
 #' a <- corpus("GERMAPARLMINI")
 #' b <- subset(a, date == "2009-11-10")
 #' c <- subset(b, speaker == "Frank-Walter Steinmeier")
-#' c_size <- sum(c@cpos[,2] - c@cpos[,1]) + nrow(c@cpos)
-#' 
-#' p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Frank-Walter Steinmeier")
+#' @rdname subcorpus
 setMethod("subset", "subcorpus", function(x, ...){
   expr <- substitute(...)
   
@@ -400,7 +375,7 @@ setMethod("subset", "subcorpus", function(x, ...){
     cpos_right = x@cpos[,2]
   )
   
-  df <- .df_add_s_attributes(df = df, s_attr = s_attr)
+  df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
   
   df_min <- df[eval(expr, envir = df),]
   

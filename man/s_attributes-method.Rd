@@ -4,7 +4,9 @@
 \name{s_attributes}
 \alias{s_attributes}
 \alias{s_attributes,character-method}
+\alias{s_attributes,corpus-method}
 \alias{s_attributes,partition-method}
+\alias{s_attributes,call-method}
 \title{Get s-attributes.}
 \usage{
 s_attributes(.Object, ...)
@@ -12,46 +14,78 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{character}(.Object, s_attribute = NULL,
   unique = TRUE, regex = NULL, ...)
 
+\S4method{s_attributes}{corpus}(.Object, s_attribute = NULL,
+  unique = TRUE, regex = NULL, ...)
+
 \S4method{s_attributes}{partition}(.Object, s_attribute = NULL,
   unique = TRUE, ...)
+
+\S4method{s_attributes}{call}(.Object, corpus)
 }
 \arguments{
-\item{.Object}{either a \code{partition} object or a character vector specifying a CWB corpus}
+\item{.Object}{A \code{corpus}, \code{subcorpus}, \code{partition} object, or
+a \code{call}. A corpus can also be specified by a length-one character
+vector.}
 
-\item{...}{to maintain backward compatibility, of argument \code{sAttribute} is used}
+\item{...}{To maintain backward compatibility, if argument \code{sAttribute}
+(deprecated) is used.}
 
-\item{s_attribute}{name of a specific s-attribute}
+\item{s_attribute}{The name of a specific s-attribute.}
 
-\item{unique}{logical, whether to return unique values only}
+\item{unique}{Logical, whether to return unique values.}
 
-\item{regex}{filter return value by applying a regex}
+\item{regex}{A regular expression passed into \code{grep} to filter return
+value by applying a regex.}
+
+\item{corpus}{A \code{corpus}-object or a length one character vector
+denoting a corpus.}
 }
 \value{
-a character vector
+A character vector (s-attributes, or values of s-attributes).
 }
 \description{
-Structural annotations (s-attributes) of a corpus provide metainformation for
-regions of tokens. Gain access to the s-attributes available for a corpus or partition,
-or the values of s-attributes in a corpus/partition with the \code{s_attributes}-method.
+Structural annotations (s-attributes) of a corpus capture metainformation for
+regions of tokens. The \code{s_attributes}-method offers high-level access to
+the s-attributes present in a corpus or subcorpus, or the values of
+s-attributes in a corpus/partition.
 }
 \details{
 Importing XML into the Corpus Workbench (CWB) turns elements and element
-attributes into so-called s-attributes. There are two uses of the s_attributes-method: If the 
-\code{s_attribute} parameter is NULL (default), the return value is a character vector
-with all s-attributes present in a corpus.
+attributes into so-called s-attributes. There are two basic uses of the
+\code{s_attributes}-method: If the argument \code{s_attribute} is \code{NULL}
+(default), the return value is a \code{character} vector with all
+s-attributes present in a corpus.
 
-If s_attribute is the name of a specific s-attribute (a length 1 character vector), the
-values of the s-attributes available in the corpus/partition are returned.
+If \code{s_attribute} is the name of a specific s-attribute (a length one
+character vector), the values of the s-attributes available in the
+\code{corpus}/\code{partition} are returned.
 
-If a character vector of s-attributes is provided, the method will return a \code{data.table}.
+If a character vector of s-attributes is provided, the method will return a
+\code{data.table}.
+
+If \code{.Object} is a call, the \code{s_attributes}-method will
+  return a character vector with the s-attributes occurring in the call. This
+  usage is relevant internally to implement the \code{subset} method to
+  generate a \code{subcorpus} using non-standard evaluation. Usually it will
+  not be relevant in an interactive session.
 }
 \examples{
 use("polmineR")
-  
+
 s_attributes("GERMAPARLMINI")
 s_attributes("GERMAPARLMINI", "date") # dates of plenary meetings
-  
-P <- partition("GERMAPARLMINI", date = "2009-11-10")
-s_attributes(P)
-s_attributes(P, "speaker") # get names of speakers
+s_attributes("GERMAPARLMINI", s_attribute = c("date", "party"))  
+s_attributes(corpus("GERMAPARLMINI"))
+p <- partition("GERMAPARLMINI", date = "2009-11-10")
+s_attributes(p)
+s_attributes(p, "speaker") # get names of speakers
+
+# Get s-attributes occurring in a call
+s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI")
+s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI")
+s_attributes(quote(speaker != "Angela Merkel"), corpus = "GERMAPARLMINI")
+s_attributes(
+  quote(speaker == "Angela Merkel" & date == "2009-10-28"),
+  corpus = "GERMAPARLMINI"
+)
 }
