@@ -52,6 +52,7 @@ test_that(
   {
     cooc <- cooccurrences("GERMAPARLMINI", query = "Integration")
     cooc_dt <- cooc@stat[!is.na(ll)]
+    data.table::setorderv(cooc_dt, cols = "ll", order = -1L)
     
     for (i in seq.int(from = 1L, to = 10L)){
       

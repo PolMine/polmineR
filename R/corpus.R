@@ -324,7 +324,7 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
-#' @rdname subcorpus
+#' @rdname subcorpus-class
 setMethod("subset", "corpus", function(x, ...){
   expr <- substitute(...)
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
@@ -357,7 +357,7 @@ setMethod("subset", "corpus", function(x, ...){
 #' a <- corpus("GERMAPARLMINI")
 #' b <- subset(a, date == "2009-11-10")
 #' c <- subset(b, speaker == "Frank-Walter Steinmeier")
-#' @rdname subcorpus
+#' @rdname subcorpus-class
 setMethod("subset", "subcorpus", function(x, ...){
   expr <- substitute(...)
   

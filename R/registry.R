@@ -21,8 +21,10 @@
 #' @importFrom RcppCWB cqp_reset_registry cqp_get_registry cqp_initialize
 #' @seealso To conveniently reset registry, see \code{\link{use}}.
 #' @examples
+#' \dontrun{
 #' x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 #' registry_reset(registryDir = x)
+#' }
 registry_reset <- function(registryDir = registry(), verbose = TRUE) {
   
   if (!file.exists(registryDir)) stop("registry directory does not exist")

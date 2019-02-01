@@ -613,6 +613,9 @@ setClass(
 #' S4 subcorpus class.
 #' 
 #' @param x A \code{corpus} or \code{subcorpus} object.
+#' @param ... An expression that will be used to create a subcorpus from
+#'   s-attributes.
+#' @param object A \code{subcorpus} object.
 #' @slot s_attributes A named \code{list} with the structural attributes
 #'   defining the subcorpus.
 #' @slot cpos A \code{matrix} with left and right corpus positions defining
@@ -626,7 +629,7 @@ setClass(
 #'   "nested".
 #' @slot s_attribute_strucs Object of class \code{character}, the base node.
 #' @family classes to manage corpora
-#' @rdname subcorpus
+#' @aliases subcorpus
 setClass(
   "subcorpus",
   slots = c(
@@ -642,7 +645,7 @@ setClass(
   contains = "regions"
 )
 
-#' @describeIn subcorpus Output basic information about \code{subcorpus} object.
+#' @rdname subcorpus-class
 setMethod("show", "subcorpus", function(object) object@size)
 
 

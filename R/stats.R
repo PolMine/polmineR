@@ -199,8 +199,7 @@ setMethod("ll", "features", function(.Object){
   direction <- ifelse(.Object@stat[["count_coi"]] >= .Object@stat[["exp_coi"]], 1L, -1L)
   .Object@stat[, "ll" := 2 * bracket * direction]
   .Object@stat[, "ll" := ifelse(is.nan(ll), NA, ll)]
-  setorderv(.Object@stat, cols = "ll", order = -1L)
-  # .Object <- sort(.Object, by = "ll")
+  setorderv(.Object@stat, cols = "ll", order = -1L, na.last = TRUE)
   .Object@stat[, "rank_ll" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "ll")
   .Object

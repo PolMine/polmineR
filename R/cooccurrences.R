@@ -198,6 +198,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     .Object@stat[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
   }
   
+  setkeyv(.Object@stat, .Object@p_attribute)
   
   if (!is.null(method)){
     for (test in method){
@@ -210,13 +211,10 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   
   # finishing
   if (nrow(.Object@stat) > 0L){
-    setkeyv(.Object@stat, .Object@p_attribute)
-    # for (x in grep("_id$", colnames(.Object@stat), value = TRUE)) .Object@stat[[x]] <- NULL
     setcolorder(
       .Object@stat,
       c(.Object@p_attribute, colnames(.Object@stat)[-which(colnames(.Object@stat) %in% .Object@p_attribute)])
     )
-    # setorderv(.Object@stat, cols = method[1], order = -1L)
   }
   
   retval <- new(

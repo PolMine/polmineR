@@ -28,8 +28,10 @@ To get the path to a package that contains a CWB corpus, use
 \code{system.file} (see examples).
 }
 \examples{
+\dontrun{
 x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 registry_reset(registryDir = x)
+}
 }
 \seealso{
 To conveniently reset registry, see \code{\link{use}}.

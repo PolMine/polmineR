@@ -3,16 +3,25 @@
 \docType{class}
 \name{subcorpus-class}
 \alias{subcorpus-class}
+\alias{subcorpus}
+\alias{show,subcorpus-method}
 \alias{subset,corpus-method}
 \alias{subset,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
+\S4method{show}{subcorpus}(object)
+
 \S4method{subset}{corpus}(x, ...)
 
 \S4method{subset}{subcorpus}(x, ...)
 }
 \arguments{
+\item{object}{A \code{subcorpus} object.}
+
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
+
+\item{...}{An expression that will be used to create a subcorpus from
+s-attributes.}
 }
 \description{
 S4 subcorpus class.
@@ -51,7 +60,6 @@ sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 a <- corpus("GERMAPARLMINI")
 b <- subset(a, date == "2009-11-10")
 c <- subset(b, speaker == "Frank-Walter Steinmeier")
-c_size <- sum(c@cpos[,2] - c@cpos[,1]) + nrow(c@cpos)
 }
 \seealso{
 Other classes to manage corpora: \code{\link{corpus-class}},
