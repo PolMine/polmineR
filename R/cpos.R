@@ -96,9 +96,20 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
   if (is.null(hits)) return( hits )
   if (nrow(hits) == 0) invisible( NULL ) else hits
 })
-  
+
 #' @rdname cpos-method
 setMethod("cpos", "partition", function(.Object, query, cqp = is.cqp, check = TRUE, p_attribute = NULL, verbose = TRUE, ...){
+  callNextMethod(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, ...)
+})
+
+#' @rdname cpos-method
+setMethod("cpos", "subcorpus", function(.Object, query, cqp = is.cqp, check = TRUE, p_attribute = NULL, verbose = TRUE, ...){
+  callNextMethod(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, ...)
+})
+
+  
+#' @rdname cpos-method
+setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, p_attribute = NULL, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 

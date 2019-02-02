@@ -6,7 +6,9 @@
 \alias{get_token_stream,numeric-method}
 \alias{get_token_stream,matrix-method}
 \alias{get_token_stream,character-method}
+\alias{get_token_stream,slice-method}
 \alias{get_token_stream,partition-method}
+\alias{get_token_stream,subcorpus-method}
 \alias{get_token_stream,regions-method}
 \title{Get Token Stream Based on Corpus Positions.}
 \usage{
@@ -21,7 +23,13 @@ get_token_stream(.Object, ...)
 \S4method{get_token_stream}{character}(.Object, left = NULL,
   right = NULL, ...)
 
+\S4method{get_token_stream}{slice}(.Object, p_attribute, collapse = NULL,
+  cpos = FALSE, ...)
+
 \S4method{get_token_stream}{partition}(.Object, p_attribute,
+  collapse = NULL, cpos = FALSE, ...)
+
+\S4method{get_token_stream}{subcorpus}(.Object, p_attribute,
   collapse = NULL, cpos = FALSE, ...)
 
 \S4method{get_token_stream}{regions}(.Object, p_attribute = "word", ...)

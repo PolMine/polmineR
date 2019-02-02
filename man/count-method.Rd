@@ -5,6 +5,8 @@
 \alias{count}
 \alias{count-method}
 \alias{count,partition-method}
+\alias{count,subcorpus-method}
+\alias{count,slice-method}
 \alias{count,partition_bundle-method}
 \alias{count,character-method}
 \alias{count,vector-method}
@@ -14,6 +16,18 @@
 count(.Object, ...)
 
 \S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
+  check = TRUE, breakdown = FALSE, decode = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...)
+
+\S4method{count}{subcorpus}(.Object, query = NULL, cqp = is.cqp,
+  check = TRUE, breakdown = FALSE, decode = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...)
+
+\S4method{count}{slice}(.Object, query = NULL, cqp = is.cqp,
   check = TRUE, breakdown = FALSE, decode = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,

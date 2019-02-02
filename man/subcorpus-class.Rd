@@ -4,20 +4,15 @@
 \name{subcorpus-class}
 \alias{subcorpus-class}
 \alias{subcorpus}
-\alias{show,subcorpus-method}
 \alias{subset,corpus-method}
 \alias{subset,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
-\S4method{show}{subcorpus}(object)
-
 \S4method{subset}{corpus}(x, ...)
 
 \S4method{subset}{subcorpus}(x, ...)
 }
 \arguments{
-\item{object}{A \code{subcorpus} object.}
-
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
 
 \item{...}{An expression that will be used to create a subcorpus from

@@ -97,7 +97,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
 #' s_attributes(p)
 #' s_attributes(p, "speaker") # get names of speakers
 setMethod(
-  "s_attributes", "partition",
+  "s_attributes", "slice",
   function (.Object, s_attribute = NULL, unique = TRUE, ...) {
     if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
     if (is.null(s_attribute)){
@@ -168,6 +168,19 @@ setMethod(
     }
   }
 )
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "partition", function (.Object, s_attribute = NULL, unique = TRUE, ...)
+  callNextMethod()
+)
+
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "subcorpus", function (.Object, s_attribute = NULL, unique = TRUE, ...)
+  callNextMethod()
+)
+
+
 
 #' @docType methods
 #' @rdname partition_bundle-class

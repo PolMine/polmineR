@@ -5,6 +5,8 @@
 \alias{cpos}
 \alias{cpos,character-method}
 \alias{cpos,partition-method}
+\alias{cpos,subcorpus-method}
+\alias{cpos,slice-method}
 \alias{cpos,tempcorpus-method}
 \alias{cpos,matrix-method}
 \alias{cpos,hits-method}
@@ -17,6 +19,12 @@ cpos(.Object, ...)
   check = TRUE, encoding = NULL, verbose = TRUE, ...)
 
 \S4method{cpos}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
+  p_attribute = NULL, verbose = TRUE, ...)
+
+\S4method{cpos}{subcorpus}(.Object, query, cqp = is.cqp, check = TRUE,
+  p_attribute = NULL, verbose = TRUE, ...)
+
+\S4method{cpos}{slice}(.Object, query, cqp = is.cqp, check = TRUE,
   p_attribute = NULL, verbose = TRUE, ...)
 
 \S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)

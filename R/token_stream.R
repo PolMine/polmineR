@@ -75,13 +75,25 @@ setMethod("get_token_stream", "character", function(.Object, left = NULL, right 
 })
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "partition", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){
+setMethod("get_token_stream", "slice", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){
   get_token_stream(
     .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
     encoding = .Object@encoding, collapse = collapse, cpos = cpos,
     ...
     )
 })
+
+#' @rdname get_token_stream-method
+setMethod("get_token_stream", "partition", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...)
+  callNextMethod()
+)
+
+
+#' @rdname get_token_stream-method
+setMethod("get_token_stream", "subcorpus", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...)
+  callNextMethod()
+)
+
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", ...){

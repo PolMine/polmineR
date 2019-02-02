@@ -4,15 +4,19 @@
 \name{size}
 \alias{size}
 \alias{size,character-method}
+\alias{size,slice-method}
 \alias{size,partition-method}
 \alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
 \alias{size,features-method}
+\alias{size,corpus-method}
 \title{Get Number of Tokens.}
 \usage{
 size(x, ...)
 
 \S4method{size}{character}(x, s_attribute = NULL, verbose = TRUE, ...)
+
+\S4method{size}{slice}(x, s_attribute = NULL, ...)
 
 \S4method{size}{partition}(x, s_attribute = NULL, ...)
 
@@ -21,6 +25,8 @@ size(x, ...)
 \S4method{size}{TermDocumentMatrix}(x)
 
 \S4method{size}{features}(x)
+
+\S4method{size}{corpus}(x)
 }
 \arguments{
 \item{x}{object to get size(s) for}

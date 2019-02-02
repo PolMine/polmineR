@@ -31,11 +31,12 @@ setMethod("corpus", "kwic", function(.Object) .Object@corpus)
 
 #' @rdname corpus-method
 setMethod("corpus", "character", function(.Object){
+  properties <- registry_get_properties(.Object)
   new(
     "corpus",
     corpus = .Object,
     encoding = registry_get_encoding(.Object),
-    key = character()
+    type = if ("type" %in% names(properties)) properties[["type"]] else character()
     )
 })
 
@@ -340,7 +341,7 @@ setMethod("subset", "corpus", function(x, ...){
     strucs = df_min[["struc"]],
     registry = registry()
   )
-  new(
+  y <- new(
     "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
@@ -348,8 +349,11 @@ setMethod("subset", "corpus", function(x, ...){
     data_dir = x@data_dir,
     cpos = regions,
     strucs = df_min[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)]
+    s_attribute_strucs = s_attr[length(s_attr)],
+    xml = "flat"
   )
+  y@size <- size(y)
+  y
 })
 
 
@@ -379,7 +383,7 @@ setMethod("subset", "subcorpus", function(x, ...){
   
   df_min <- df[eval(expr, envir = df),]
   
-  new(
+  y <- new(
     "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
@@ -387,9 +391,22 @@ setMethod("subset", "subcorpus", function(x, ...){
     data_dir = x@data_dir,
     cpos = as.matrix(df_min[, c("cpos_left", "cpos_right")]),
     strucs = df_min[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)]
+    s_attribute_strucs = s_attr[length(s_attr)],
+    xml = "flat"
   )
+  y@size <- size(y)
+  y
 })
 
 
+#' @exportMethod show
+#' @docType methods
+#' @rdname corpus_class
+setMethod("show", "corpus", function(object){
+  cat("** 'corpus' object **\n")
+  cat(sprintf("%-12s", "corpus ID:"), object@corpus, "\n")
+  cat(sprintf("%-12s", "encoding:"), object@encoding, "\n")
+  cat(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]", "\n")
+  cat(sprintf("%-12s", "size:"), size(object), "\n")
+})
 

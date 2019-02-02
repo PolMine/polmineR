@@ -86,6 +86,29 @@ setMethod("count", "partition", function(
   decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...
+  )
+  callNextMethod()
+)
+
+
+#' @rdname count-method
+setMethod("count", "subcorpus", function(
+  .Object, query = NULL, cqp = is.cqp, check = TRUE, breakdown = FALSE,
+  decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...
+)
+  callNextMethod()
+)
+
+
+
+#' @rdname count-method
+setMethod("count", "slice", function(
+  .Object, query = NULL, cqp = is.cqp, check = TRUE, breakdown = FALSE,
+  decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
+  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
+  ...
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]

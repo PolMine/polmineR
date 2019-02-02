@@ -10,6 +10,9 @@ polmineR 0.7.11.9001
 * A set of experimental methods for an initial check of the feasibility of a non-standard evaluation approach to the generation of subcorpora has been dropped (`$`, `==`, `!=`, `zoom` for `corpus`-class).
 * `subset()`-method for `corpus` and `subcorpus` objects to generate subcorpora (i.e. `subcorpus` objects).
 * The ordering of the table for `ll`-method had been somewhat mixed up, which is repaired now. Tokens with NA values for the ll-test will show up at the end of the table.
+* `show()` and `size()`-method for `corpus` class.
+* `cpos()`, `count()` and `s_attributes()` `get_token_stream()` for `slice`-class, and for `subcorpus` via inheritance. 
+
 
 polmineR 0.7.11
 ===============

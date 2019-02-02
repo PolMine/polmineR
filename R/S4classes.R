@@ -546,19 +546,12 @@ setClass(
 
 #' S4 class to wrap information on CWB corpora.
 #' 
-#' @param x A \code{corpus} object.
+#' @param object An object.
 #' @param ... Further arguments.
-#' @param name An s-attribute that will be assigned as key to a
-#'   \code{partition}.
-#' @param e1 A first expression, a \code{partition} object in this case.
-#' @param e2 A second expression, the value of an s-attribute.
-#' @param table Values a s-attribute shall assume.
 #' @slot corpus A length-one \code{character} vector, a CWB corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
 #' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
 #' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
-#' @slot key A length-one \code{character} vector stating a s-attribute that
-#'   serves as a key.
 #' @exportClass corpus
 #' @rdname corpus_class
 #' @aliases zoom
@@ -570,8 +563,7 @@ setClass(
     corpus = "character",
     data_dir = "character",
     type = "character",
-    encoding = "character",
-    key = "character"
+    encoding = "character"
   )
 )
 
@@ -604,7 +596,8 @@ setClass(
 setClass(
   "regions",
   slots = c(
-    cpos = "matrix"
+    cpos = "matrix",
+    size = "integer"
   ),
   contains = "corpus"
 )
@@ -615,7 +608,6 @@ setClass(
 #' @param x A \code{corpus} or \code{subcorpus} object.
 #' @param ... An expression that will be used to create a subcorpus from
 #'   s-attributes.
-#' @param object A \code{subcorpus} object.
 #' @slot s_attributes A named \code{list} with the structural attributes
 #'   defining the subcorpus.
 #' @slot cpos A \code{matrix} with left and right corpus positions defining
@@ -634,8 +626,6 @@ setClass(
   "subcorpus",
   slots = c(
     s_attributes = "list",
-    cpos = "matrix",
-    size = "integer",
     annotations = "list",
     metadata = "data.frame",
     strucs = "integer",
@@ -644,9 +634,6 @@ setClass(
   ),
   contains = "regions"
 )
-
-#' @rdname subcorpus-class
-setMethod("show", "subcorpus", function(object) object@size)
 
 
 #' @rdname features-class
@@ -807,11 +794,12 @@ setClass("cooccurrences_bundle", contains = "bundle")
 #' @exportClass slice
 setClassUnion(
   name = "slice",
-  members = c("regions", "partition")
+  members = c("subcorpus", "regions", "partition")
 )
 
+
 #' @exportClass CorpusOrSubcorpus
-setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "slice"))
+setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "partition"))
 
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},

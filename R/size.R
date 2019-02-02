@@ -64,7 +64,7 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
 
 #' @rdname size-method
 #' @exportMethod size
-setMethod("size", "partition", function(x, s_attribute = NULL, ...){
+setMethod("size", "slice", function(x, s_attribute = NULL, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
@@ -88,6 +88,11 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
 
 
 #' @rdname size-method
+setMethod("size", "partition", function(x, s_attribute = NULL, ...){
+  callNextMethod(x = x, s_attribute = s_attribute, ...)
+})
+
+#' @rdname size-method
 setMethod("size", "DocumentTermMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$i, sum), x[["dimnames"]][["Docs"]])
 })
@@ -104,3 +109,6 @@ setMethod("size", "TermDocumentMatrix", function(x){
 #'   window.
 #' @rdname size-method
 setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )
+
+#' @rdname size-method
+setMethod("size", "corpus", function(x) CQI$attribute_size(corpus = x@corpus, attribute = "word", type = "p"))
