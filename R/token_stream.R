@@ -110,3 +110,25 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
   .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
 })
 
+
+setOldClass("String")
+
+#' Decode as String.
+#'
+#' @examples
+#' use("polmineR")
+#' p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Angela Dorothea Merkel")
+#' s <- as(p, "String")
+#' @name partition_to_string
+setAs(from = "partition", to = "String", def = function(from){
+  word <- get_token_stream(from, p_attribute = "word")
+  whitespace_after <- c(ifelse(word %in% c(".", ",", ":", "!", "?", "(", "["), FALSE, TRUE)[2L:length(word)], FALSE)
+  word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
+  y <- paste(word_with_whitespace, collapse = "")
+  # to avoid importing the NLP packgage (with its rJava dependency), the following 
+  # lines are adapted from the .String_from_string() auxiliary function of the NLP package.
+  y <- enc2utf8(y)
+  class(y) <- "String"
+  y
+})
+
