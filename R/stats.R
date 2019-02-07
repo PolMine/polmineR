@@ -29,7 +29,7 @@ setGeneric("pmi", function(.Object) standardGeneric("pmi") )
 #' @rdname pmi
 #' @references Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
-#' @family cooccurrence statistics
+#' @family statistical methods
 #' @examples
 #' y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
 #' N <- size(y)[["partition"]]
@@ -106,7 +106,7 @@ setMethod("pmi", "context", function(.Object){
 #' @param .Object An object of class \code{cooccurrence}, \code{context}, or
 #'   \code{features}.
 #' @param ... Further arguments (such as \code{verbose}).
-#' @family cooccurrence statistics
+#' @family statistical methods
 #' @exportMethod ll
 #' @rdname ll
 #' @examples 
@@ -321,7 +321,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
 #'   similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
 #'   Natural Language Processing}. Granada, Spain, pp 46-52.
 #' @author Andreas Blaette
-#' @family cooccurrence statistics
+#' @family statistical methods
 #' @rdname chisquare-method
 #' @keywords textstatistics
 #' @examples
@@ -448,7 +448,7 @@ NULL
 #'   \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
 #' @rdname t_test
 #' @name t_test
-#' @family cooccurrence statistics
+#' @family statistical methods
 #' @examples
 #' use("polmineR")
 #' y <- cooccurrences("REUTERS", query = "oil", left = 1L, right = 0L, method = "t_test")
