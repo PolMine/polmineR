@@ -2,11 +2,24 @@
 % Please edit documentation in R/decode.R
 \name{decode}
 \alias{decode}
+<<<<<<< HEAD
 \title{Decode structural attribute, partition or corpus.}
+=======
+\alias{decode,character-method}
+\alias{decode,partition-method}
+\title{Decode Structural Attribute or Entire Corpus.}
+>>>>>>> decode
 \usage{
 decode(.Object, s_attribute = NULL, verbose = TRUE, ...)
 
+<<<<<<< HEAD
 decode(.Object, s_attribute = NULL, verbose = TRUE, ...)
+=======
+\S4method{decode}{character}(.Object, s_attribute = NULL, verbose = TRUE,
+  ...)
+
+\S4method{decode}{partition}(.Object)
+>>>>>>> decode
 }
 \arguments{
 \item{.Object}{The corpus or partition to decode (character vector).}
@@ -50,6 +63,7 @@ dt <- decode("REUTERS", s_attribute = c("topics_cat", "places"))
 # Scenario 2: Decode entire corpus
 dt <- decode("REUTERS")
 
+<<<<<<< HEAD
 # Scenario 3: Decode partition
 p <- partition("REUTERS", places = "kuwait", regex = TRUE)
 dt <- decode(p)
@@ -59,5 +73,14 @@ pb <- partition_bundle("REUTERS", s_attribute = "id")
 dts <- lapply(as.list(pb), decode)
 dts <- lapply(names(dts), function(n) dts[[n]][, speech_id := n])
 dt <- data.table::rbindlist(dts)
+=======
+# Scenario 2: Decode corpus entirely
+dt <- decode("GERMAPARLMINI")
+\dontrun{
+P <- partition("REUTERS", places = "kuwait", regex = TRUE)
+dt <- decode(P)
+dt[, "word" := NULL]
+dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))}, by = "struc"]
+>>>>>>> decode
 }
 }
