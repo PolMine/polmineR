@@ -6,20 +6,20 @@ setOldClass("Annotation")
 #' @examples
 #' if (requireNamespace("NLP")){
 #' library(NLP)
-#' p <- subcorpus("GERMAPARLMINI", date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+#' p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
 #' s <- as(p, "String")
 #' a <- as(p, "Annotation")
 #' 
 #' words <- s[a[a$type == "word"]]
 #' sentences <- s[a[a$type == "sentence"]]
 #' }
-setAs(from = "corpus", to = "Annotation", def = function(from){
+setAs(from = "subcorpus", to = "Annotation", def = function(from){
   
-  if (requireNamespace(package = "NLP", quietly = TRUE))
+  if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available")
   
-  word <- polmineR::get_token_stream(x, p_attribute = "word")
-  pos <- polmineR::get_token_stream(x, p_attribute = "pos")
+  word <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "word", encoding = from@encoding)
+  pos <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "pos", encoding = from@encoding)
   whitespace_after <- c(ifelse(pos %in% c("$.", "$,", ":", ",", "$"), FALSE, TRUE)[2L:length(pos)], FALSE)
   word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
   s <- paste(word_with_whitespace, collapse = "")
@@ -28,7 +28,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
-  cpos <- unlist(apply(x@cpos, 1, function(x) x[1]:x[2]))
+  cpos <- unlist(apply(from@cpos, 1, function(x) x[1]:x[2]))
   w <- NLP::Annotation(
     id = cpos,
     rep.int("word", length(cpos)),
