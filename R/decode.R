@@ -1,6 +1,56 @@
 #' @rdname decode
 setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 
+setOldClass("Annotation")
+
+#' @examples
+#' if (requireNamespace("NLP")){
+#' library(NLP)
+#' p <- subcorpus("GERMAPARLMINI", date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+#' s <- as(p, "String")
+#' a <- as(p, "Annotation")
+#' 
+#' words <- s[a[a$type == "word"]]
+#' sentences <- s[a[a$type == "sentence"]]
+#' }
+setAs(from = "corpus", to = "Annotation", def = function(from){
+  
+  if (requireNamespace(package = "NLP", quietly = TRUE))
+    stop("Package 'NLP' required but not available")
+  
+  word <- polmineR::get_token_stream(x, p_attribute = "word")
+  pos <- polmineR::get_token_stream(x, p_attribute = "pos")
+  whitespace_after <- c(ifelse(pos %in% c("$.", "$,", ":", ",", "$"), FALSE, TRUE)[2L:length(pos)], FALSE)
+  word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
+  s <- paste(word_with_whitespace, collapse = "")
+  word_length <- sapply(word, nchar)
+  left_offset <- c(1, (cumsum(sapply(word_with_whitespace, nchar)) + 1L)[1L:(length(word) - 1L)] )
+  names(left_offset) <- word
+  right_offset <- left_offset + word_length - 1L
+  names(right_offset) <- word
+  cpos <- unlist(apply(x@cpos, 1, function(x) x[1]:x[2]))
+  w <- NLP::Annotation(
+    id = cpos,
+    rep.int("word", length(cpos)),
+    start = left_offset,
+    end = right_offset
+  )
+  
+  right_offset <- left_offset + word_length
+  names(right_offset) <- word
+  m <- matrix(data = c(left_offset, right_offset), ncol = 2, byrow = FALSE)
+  f <- cut(x = 1L:length(pos), breaks = unique(c(1L, grep("\\$\\.", pos), length(pos))), include.lowest = TRUE)
+  chunks <- split(x = m, f = f)
+  sentence_left <- sapply(chunks, min)
+  sentence_right <- sapply(chunks, max) - 1L
+  s <- NLP::Annotation(
+    id = 1L:length(sentence_left),
+    rep.int("sentence", length(sentence_left)),
+    start = sentence_left,
+    end = sentence_right
+  )
+  c(w, s)
+})
 
 setAs(from = "character", to = "data.table", def = function(from){
   
@@ -132,12 +182,12 @@ setAs(from = "partition", to = "data.table", def = function(from){
 #' @exportMethod decode
 #' @rdname decode
 #' @examples
-#' \dontrun{
 #' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
 #' dt <- decode(P)
+#' 
+#' # This is how you could proceed to a table with metadata.
 #' dt[, "word" := NULL]
 #' dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))}, by = "struc"]
-#' }
 setMethod("decode", "partition", function(.Object, to = "data.table"){
   as(.Object, to)
 })
