@@ -45,7 +45,7 @@ Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statisti
 Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
 }
 \seealso{
-Other cooccurrence statistics: \code{\link{chisquare}},
+Other statistical methods: \code{\link{chisquare}},
   \code{\link{ll}}, \code{\link{t_test}}
 }
-\concept{cooccurrence statistics}
+\concept{statistical methods}

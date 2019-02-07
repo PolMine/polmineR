@@ -76,7 +76,7 @@ Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
   \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
 }
 \seealso{
-Other cooccurrence statistics: \code{\link{chisquare}},
+Other statistical methods: \code{\link{chisquare}},
   \code{\link{ll}}, \code{\link{pmi}}
 }
-\concept{cooccurrence statistics}
+\concept{statistical methods}

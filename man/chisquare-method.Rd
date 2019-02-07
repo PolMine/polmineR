@@ -103,11 +103,11 @@ Kilgarriff, A. and Rose, T. (1998): Measures for corpus
   Natural Language Processing}. Granada, Spain, pp 46-52.
 }
 \seealso{
-Other cooccurrence statistics: \code{\link{ll}},
+Other statistical methods: \code{\link{ll}},
   \code{\link{pmi}}, \code{\link{t_test}}
 }
 \author{
 Andreas Blaette
 }
-\concept{cooccurrence statistics}
+\concept{statistical methods}
 \keyword{textstatistics}
