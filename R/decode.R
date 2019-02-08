@@ -3,28 +3,22 @@ setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 
 setOldClass("Annotation")
 
-#' @examples
-#' if (requireNamespace("NLP")){
-#' library(NLP)
-#' p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
-#' s <- as(p, "String")
-#' a <- as(p, "Annotation")
-#' 
-#' words <- s[a[a$type == "word"]]
-#' sentences <- s[a[a$type == "sentence"]]
-#' }
-setAs(from = "subcorpus", to = "Annotation", def = function(from){
+
+setAs(from = "corpus", to = "Annotation", def = function(from){
+  
+  # implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
   
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available")
-  
+
   word <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "word", encoding = from@encoding)
   pos <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "pos", encoding = from@encoding)
-  whitespace_after <- c(ifelse(pos %in% c("$.", "$,", ":", ",", "$"), FALSE, TRUE)[2L:length(pos)], FALSE)
+  # no_whitespace_before <- c("!", "\\.", ":", ";", "\\?", "\\]", "\\)")
+  whitespace_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[2L:length(pos)], FALSE)
   word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
   s <- paste(word_with_whitespace, collapse = "")
   word_length <- sapply(word, nchar)
-  left_offset <- c(1, (cumsum(sapply(word_with_whitespace, nchar)) + 1L)[1L:(length(word) - 1L)] )
+  left_offset <- c(1L, (cumsum(sapply(word_with_whitespace, nchar)) + 1L)[1L:(length(word) - 1L)] )
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
@@ -35,7 +29,7 @@ setAs(from = "subcorpus", to = "Annotation", def = function(from){
     start = left_offset,
     end = right_offset
   )
-  
+
   right_offset <- left_offset + word_length
   names(right_offset) <- word
   m <- matrix(data = c(left_offset, right_offset), ncol = 2, byrow = FALSE)
@@ -51,6 +45,7 @@ setAs(from = "subcorpus", to = "Annotation", def = function(from){
   )
   c(w, s)
 })
+
 
 setAs(from = "character", to = "data.table", def = function(from){
   
@@ -87,36 +82,66 @@ setAs(from = "character", to = "data.table", def = function(from){
   data.table::as.data.table(combinedList)
 })
 
-#' Decode Structural Attribute or Entire Corpus.
+#' Decode corpus or subcorpus.
 #' 
-#' If a \code{s_attribute} is a character vector providing one or several structural attributes,
-#' the return value is a \code{data.table} with the left and right corpus positions in the first
-#' and second columns ("cpos_left" and "cpos_right"). Values of further columns are the decoded
-#' s-attributes. The name of the s-attribute is the column name. An error is thrown if the
-#' lengths of structural attributes differ (i.e. if there is a nested data structure).
+#' Decode \code{corpus} or \code{subcorpus} and return class specified by argument \code{to}.
 #' 
-#' If \code{s_attribute} is NULL, the token stream is decoded for all positional attributes that
-#' are present. Structural attributes are reported in additional columns. Decoding the entire
-#' corpus may be useful to make a transition to processing data following the 'tidy' approach,
-#' or to manipulate the corpus data and to re-encode the corpus.
+#' The primary purpose of the method is type conversion. By obtaining the corpus
+#' or subcorpus in the format specified by the argument \code{to}, the data can
+#' be processed with tools that do not rely on the Corpus Workbench (CWB).
+#' Supported output formats are \code{data.table} (which can be converted to a
+#' \code{data.frame} or \code{tibble} easily) or an \code{Annotation} object as
+#' defined in the package \code{NLP}. Another purpose of decoding the corpus can
+#' be to rework it, and to re-import it into the CWB (e.g. using the
+#' \code{cwbtools}-package).
 #' 
-#' The return value is a \code{data.table}. 
+#' An earlier version of the method included an option to decode a single
+#' s-attribute, which is not supported any more. See the \code{s_attribute_decode}
+#' function of the package RcppCWB.
 #' 
-#' @param .Object the corpus to decode (character vector)
-#' @param verbose logical
-#' @param s_attribute the s-attribute to decode
-#' @param ... further parameters
-#' @return a \code{data.table}
+#' @return The return value will correspond to the class specified by argument \code{to}. 
+#' 
+#' @param .Object The \code{corpus} or \code{subcorpus} to decode.
+#' @param ... Further arguments.
+#' @exportMethod decode
+#' @importFrom RcppCWB get_region_matrix
 #' @rdname decode
+#' @seealso To decode a structural attribute, see
+#'   \code{\link[RcppCWB]{s_attribute_decode}}, see \code{\link{as.VCorpus}} to
+#'   decode a \code{partition_bundle} object to a \code{VCorpus} object.
 #' @examples
 #' use("polmineR")
 #' 
-#' # Decode corpus entirely
-#' dt <- decode("GERMAPARLMINI")
-#' @exportMethod decode
-#' @importFrom data.table fread
-#' @importFrom RcppCWB get_region_matrix
-#' @seealso To decode a structural attribute, see \code{\link[RcppCWB]{s_attribute_decode}}.
+#' # Decode corpus as data.table
+#' dt <- decode("GERMAPARLMINI", to = "data.table")
+#' 
+#' # Decode a subcorpus
+#' sc <- subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel")
+#' dt <- decode(sc, to = "data.table")
+#' 
+#' # Decode partition
+#' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
+#' dt <- decode(P)
+#' 
+#' # Previous versions of polmineR offered an option to decode a single
+#' # s-attribute. This is how you could proceed to get a table with metadata.
+#' dt[, "word" := NULL]
+#' dt[,
+#'   {list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))},
+#'   by = "struc"
+#'   ]
+
+#' 
+#' if (requireNamespace("NLP")){
+#'   library(NLP)
+#'   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+#'   s <- as(p, "String")
+#'   a <- as(p, "Annotation")
+#' 
+#'   words <- s[a[a$type == "word"]]
+#'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+#' }
+#' @rdname decode
 setMethod("decode", "character", function(.Object, to = "data.table", ...){
   
   if (any(c("sAttribute", "s_attribute") %in% names(list(...)))){
@@ -181,13 +206,6 @@ setAs(from = "partition", to = "data.table", def = function(from){
 
 #' @exportMethod decode
 #' @rdname decode
-#' @examples
-#' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
-#' dt <- decode(P)
-#' 
-#' # This is how you could proceed to a table with metadata.
-#' dt[, "word" := NULL]
-#' dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))}, by = "struc"]
 setMethod("decode", "partition", function(.Object, to = "data.table"){
   as(.Object, to)
 })

@@ -73,6 +73,7 @@ Collate:
     'as.speeches.R'
     'blapply.R'
     'browse.R'
+    'coerce.R'
     'hits.R'
     'tempcorpus.R'
     'cpos.R'

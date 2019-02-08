@@ -32,7 +32,8 @@ get_token_stream(.Object, ...)
 \S4method{get_token_stream}{subcorpus}(.Object, p_attribute,
   collapse = NULL, cpos = FALSE, ...)
 
-\S4method{get_token_stream}{regions}(.Object, p_attribute = "word", ...)
+\S4method{get_token_stream}{regions}(.Object, p_attribute = "word",
+  collapse = NULL, cpos = FALSE, ...)
 }
 \arguments{
 \item{.Object}{An object of class \code{matrix} or \code{partition}}

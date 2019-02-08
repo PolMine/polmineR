@@ -52,7 +52,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
       whitespace[grep("\\)", tokens, perl = TRUE)] <- ""
       whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
       whitespace[1] <- ""
-      tokens <- paste(paste(whitespace, tokens, sep = ""), collapse="")
+      tokens <- paste(paste(whitespace, tokens, sep = ""), collapse = "")
     } else {
       tokens <- paste(tokens, collapse = collapse)  
     }
@@ -96,18 +96,23 @@ setMethod("get_token_stream", "subcorpus", function(.Object, p_attribute, collap
 
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", ...){
-  
-  .getText <- function(.BY){
-    list(text = get_token_stream(
-      .BY[[1]]:.BY[[2]],
-      corpus = .Object@corpus, encoding = .Object@encoding,
-      p_attribute = p_attribute,
-      collapse = " ",
-      ...
-    ))
-  }
-  .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
+setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, ...){
+  get_token_stream(
+    .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
+    encoding = .Object@encoding, collapse = collapse, cpos = cpos,
+    ...
+  )
+  # 
+  # .getText <- function(.BY){
+  #   list(text = get_token_stream(
+  #     .BY[[1]]:.BY[[2]],
+  #     corpus = .Object@corpus, encoding = .Object@encoding,
+  #     p_attribute = p_attribute,
+  #     collapse = " ",
+  #     ...
+  #   ))
+  # }
+  # .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
 })
 
 
@@ -120,9 +125,9 @@ setOldClass("String")
 #' p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Angela Dorothea Merkel")
 #' s <- as(p, "String")
 #' @name partition_to_string
-setAs(from = "partition", to = "String", def = function(from){
+setAs(from = "slice", to = "String", def = function(from){
   word <- get_token_stream(from, p_attribute = "word")
-  whitespace_after <- c(ifelse(word %in% c(".", ",", ":", "!", "?", "(", "["), FALSE, TRUE)[2L:length(word)], FALSE)
+  whitespace_after <- c(ifelse(word %in% c(".", ",", ":", "!", "?"), FALSE, TRUE)[2L:length(word)], FALSE)
   word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
   y <- paste(word_with_whitespace, collapse = "")
   # to avoid importing the NLP packgage (with its rJava dependency), the following 

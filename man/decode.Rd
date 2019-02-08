@@ -5,55 +5,73 @@
 \alias{decode}
 \alias{decode,character-method}
 \alias{decode,partition-method}
-\title{Decode Structural Attribute or Entire Corpus.}
+\title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
 
-\S4method{decode}{character}(.Object, s_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{decode}{character}(.Object, to = "data.table", ...)
 
-\S4method{decode}{partition}(.Object)
+\S4method{decode}{partition}(.Object, to = "data.table")
 }
 \arguments{
-\item{.Object}{the corpus to decode (character vector)}
+\item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
 
-\item{...}{further parameters}
-
-\item{s_attribute}{the s-attribute to decode}
-
-\item{verbose}{logical}
+\item{...}{Further arguments.}
 }
 \value{
-a \code{data.table}
+The return value will correspond to the class specified by argument \code{to}.
 }
 \description{
-If a \code{s_attribute} is a character vector providing one or several structural attributes,
-the return value is a \code{data.table} with the left and right corpus positions in the first
-and second columns ("cpos_left" and "cpos_right"). Values of further columns are the decoded
-s-attributes. The name of the s-attribute is the column name. An error is thrown if the
-lengths of structural attributes differ (i.e. if there is a nested data structure).
+Decode \code{corpus} or \code{subcorpus} and return class specified by argument \code{to}.
 }
 \details{
-If \code{s_attribute} is NULL, the token stream is decoded for all positional attributes that
-are present. Structural attributes are reported in additional columns. Decoding the entire
-corpus may be useful to make a transition to processing data following the 'tidy' approach,
-or to manipulate the corpus data and to re-encode the corpus.
+The primary purpose of the method is type conversion. By obtaining the corpus
+or subcorpus in the format specified by the argument \code{to}, the data can
+be processed with tools that do not rely on the Corpus Workbench (CWB).
+Supported output formats are \code{data.table} (which can be converted to a
+\code{data.frame} or \code{tibble} easily) or an \code{Annotation} object as
+defined in the package \code{NLP}. Another purpose of decoding the corpus can
+be to rework it, and to re-import it into the CWB (e.g. using the
+\code{cwbtools}-package).
 
-The return value is a \code{data.table}.
+An earlier version of the method included an option to decode a single
+s-attribute, which is not supported any more. See the \code{s_attribute_decode}
+function of the package RcppCWB.
 }
 \examples{
 use("polmineR")
 
-# Scenario 1: Decode one or two s-attributes
-dt <- decode("GERMAPARLMINI", s_attribute = "date")
-dt <- decode("GERMAPARLMINI", s_attribute = c("date", "speaker"))
+# Decode corpus as data.table
+dt <- decode("GERMAPARLMINI", to = "data.table")
 
-# Scenario 2: Decode corpus entirely
-dt <- decode("GERMAPARLMINI")
-\dontrun{
+# Decode a subcorpus
+sc <- subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel")
+dt <- decode(sc, to = "data.table")
+
+# Decode partition
 P <- partition("REUTERS", places = "kuwait", regex = TRUE)
 dt <- decode(P)
+
+# Previous versions of polmineR offered an option to decode a single
+# s-attribute. This is how you could proceed to get a table with metadata.
 dt[, "word" := NULL]
-dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))}, by = "struc"]
+dt[,
+  {list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))},
+  by = "struc"
+  ]
+
+if (requireNamespace("NLP")){
+  library(NLP)
+  p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+  s <- as(p, "String")
+  a <- as(p, "Annotation")
+
+  words <- s[a[a$type == "word"]]
+  sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
 }
+}
+\seealso{
+To decode a structural attribute, see
+  \code{\link[RcppCWB]{s_attribute_decode}}, see \code{\link{as.VCorpus}} to
+  decode a \code{partition_bundle} object to a \code{VCorpus} object.
 }
