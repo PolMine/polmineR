@@ -11,7 +11,7 @@ polmineR 0.7.11.9001
 * `subset()`-method for `corpus` and `subcorpus` objects to generate subcorpora (i.e. `subcorpus` objects).
 * The ordering of the table for `ll`-method had been somewhat mixed up, which is repaired now. Tokens with NA values for the ll-test will show up at the end of the table.
 * `show()` and `size()`-method for `corpus` class.
-* `cpos()`, `count()` and `s_attributes()` `get_token_stream()` for `slice`-class, and for `subcorpus` via inheritance. 
+* `cpos()`, `count()`, `p_attributes()`,  `s_attributes()` `get_token_stream()` for `slice`-class, and for `subcorpus` via inheritance. 
 * The return value of the get_token_stream,regions-method was a data.table. The behavior is now in line with the other `get_token_stream() methods
 * new `coerce()`-method to turn `partition` object into `subcorpus` object
 

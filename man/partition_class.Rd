@@ -16,7 +16,9 @@
 \alias{summary,partition-method}
 \alias{plpr_partition-class}
 \alias{press_partition-class}
+\alias{p_attributes,slice-method}
 \alias{p_attributes,partition-method}
+\alias{p_attributes,subcorpus-method}
 \alias{split,partition-method}
 \alias{is.partition}
 \alias{$,partition-method}
@@ -30,7 +32,11 @@
 \usage{
 \S4method{summary}{partition}(object)
 
+\S4method{p_attributes}{slice}(.Object, p_attribute = NULL, ...)
+
 \S4method{p_attributes}{partition}(.Object, p_attribute = NULL, ...)
+
+\S4method{p_attributes}{subcorpus}(.Object, p_attribute = NULL, ...)
 
 \S4method{split}{partition}(x, gap, ...)
 

@@ -102,6 +102,8 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' @return The return value will correspond to the class specified by argument \code{to}. 
 #' 
 #' @param .Object The \code{corpus} or \code{subcorpus} to decode.
+#' @param to The class of the returned object, stated as a length-one
+#'   \code{character} vector.
 #' @param ... Further arguments.
 #' @exportMethod decode
 #' @importFrom RcppCWB get_region_matrix
@@ -132,11 +134,16 @@ setAs(from = "character", to = "data.table", def = function(from){
 #'   ]
 
 #' 
+#' # Decode subcorpus as Annotation object
 #' if (requireNamespace("NLP")){
 #'   library(NLP)
 #'   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
 #'   s <- as(p, "String")
 #'   a <- as(p, "Annotation")
+#'   
+#'   # The beauty of having this NLP Annotation object is that you can now use 
+#'   # the different annotators of the openNLP package. Here, just a short scenario
+#'   # how you can have a look at the tokenized words and the sentences.
 #' 
 #'   words <- s[a[a$type == "word"]]
 #'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
@@ -159,7 +166,7 @@ setMethod("decode", "character", function(.Object, to = "data.table", ...){
 })
 
 
-setAs(from = "partition", to = "data.table", def = function(from){
+setAs(from = "subcorpus", to = "data.table", def = function(from){
   ts <- lapply(
     setNames(p_attributes(from), p_attributes(from)),
     function(p_attr){
@@ -206,6 +213,12 @@ setAs(from = "partition", to = "data.table", def = function(from){
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "partition", function(.Object, to = "data.table"){
+setMethod("decode", "slice", function(.Object, to = "data.table"){
   as(.Object, to)
 })
+
+#' @rdname decode
+setMethod("decode", "partition", function(.Object, to = "data.table"){
+  as(as(.Object, "subcorpus"), to)
+})
+

@@ -32,7 +32,8 @@ Suggests:
     tidytext,
     magrittr,
     covr,
-    igraph
+    igraph,
+    NLP
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an

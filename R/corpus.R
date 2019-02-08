@@ -148,7 +148,28 @@ Corpus <- R6Class(
       }
       
       if (!is.null(s_attributes)){
-        dt <- decode(corpus, s_attribute = s_attributes)
+        dts <- lapply(
+          s_attributes,
+          function(s_attr){
+            dt <- RcppCWB::s_attribute_decode(
+              corpus = corpus,
+              data_dir = registry_get_home(corpus),
+              s_attribute = s_attr,
+              encoding = registry_get_encoding(corpus),
+              method = "R"
+              )
+            setkeyv(as.data.table(dt), c("cpos_left", "cpos_right"))
+          }
+        )
+        dt <- dts[[1L]]
+        setnames(dt, old = "value", new = s_attributes[1])
+        if (length(s_attributes) > 1L){
+          for (i in 2L:(length(s_attributes))){
+            dt <- dt[ dts[[i]] ]
+            setnames(dt, old = "value", new = s_attributes[i])
+          }
+        }
+        
         self$cpos <- as.matrix(dt[, 1:2])
         self$s_attributes <- dt[, 3:ncol(dt)]
         self$s_attributes[["struc"]] <- 0:(nrow(self$s_attributes) - 1)

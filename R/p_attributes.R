@@ -6,9 +6,9 @@ NULL
 #' In a CWB corpus, every token has positional attributes. While s-attributes
 #' cover a range of tokens, every single token in the token stream of a corpus
 #' will have a set of positional attributes (such as part-of-speech, or lemma).
-#' The available p-attributes are returned by the p_attributes-method.
+#' The available p-attributes are returned by the \code{p_attributes}-method.
 #' 
-#' @param .Object a character vector (length 1) or partition object
+#' @param .Object A length-one \code{character} vector, or a \code{partition} object.
 #' @param ... further arguments
 #' @param p_attribute p-attribute to decode
 #' @exportMethod p_attributes
@@ -42,14 +42,14 @@ setMethod("p_attributes", "character", function(.Object, p_attribute = NULL, ...
 #' (the default). If \code{p_attribute} is defined, the unique values for the p-attribute
 #' are returned.
 #' @rdname partition_class
-setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...){
+setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  pAttrs <- registry_get_p_attributes(.Object@corpus)
+  p_attrs <- registry_get_p_attributes(.Object@corpus)
   if (is.null(p_attribute)){
-    return( pAttrs )
+    return( p_attrs )
   } else {
-    if (p_attribute %in% pAttrs){
-      if (p_attribute %in% .Object@p_attribute && length(p_attribute) == 1){
+    if (p_attribute %in% p_attrs){
+      if (p_attribute %in% .Object@p_attribute && length(p_attribute) == 1L){
         return(.Object@stat[[p_attribute]])
       } else {
         return(unique(get_token_stream(.Object)))
@@ -59,6 +59,13 @@ setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...
     }
   }
 })
+
+#' @rdname partition_class
+setMethod("p_attributes", "partition", function(.Object, p_attribute = NULL, ...) callNextMethod())
+
+#' @rdname partition_class
+setMethod("p_attributes", "subcorpus", function(.Object, p_attribute = NULL, ...) callNextMethod())
+
 
 #' @rdname context-class
 setMethod("p_attributes", "context", function(.Object) .Object@p_attribute)

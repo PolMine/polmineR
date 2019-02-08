@@ -4,6 +4,7 @@
 \name{decode}
 \alias{decode}
 \alias{decode,character-method}
+\alias{decode,slice-method}
 \alias{decode,partition-method}
 \title{Decode corpus or subcorpus.}
 \usage{
@@ -11,12 +12,17 @@ decode(.Object, ...)
 
 \S4method{decode}{character}(.Object, to = "data.table", ...)
 
+\S4method{decode}{slice}(.Object, to = "data.table")
+
 \S4method{decode}{partition}(.Object, to = "data.table")
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
 
 \item{...}{Further arguments.}
+
+\item{to}{The class of the returned object, stated as a length-one
+\code{character} vector.}
 }
 \value{
 The return value will correspond to the class specified by argument \code{to}.
@@ -60,11 +66,16 @@ dt[,
   by = "struc"
   ]
 
+# Decode subcorpus as Annotation object
 if (requireNamespace("NLP")){
   library(NLP)
   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
   s <- as(p, "String")
   a <- as(p, "Annotation")
+  
+  # The beauty of having this NLP Annotation object is that you can now use 
+  # the different annotators of the openNLP package. Here, just a short scenario
+  # how you can have a look at the tokenized words and the sentences.
 
   words <- s[a[a$type == "word"]]
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 

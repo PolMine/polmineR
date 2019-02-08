@@ -11,7 +11,7 @@ p_attributes(.Object, ...)
 \S4method{p_attributes}{character}(.Object, p_attribute = NULL, ...)
 }
 \arguments{
-\item{.Object}{a character vector (length 1) or partition object}
+\item{.Object}{A length-one \code{character} vector, or a \code{partition} object.}
 
 \item{...}{further arguments}
 
@@ -21,7 +21,7 @@ p_attributes(.Object, ...)
 In a CWB corpus, every token has positional attributes. While s-attributes
 cover a range of tokens, every single token in the token stream of a corpus
 will have a set of positional attributes (such as part-of-speech, or lemma).
-The available p-attributes are returned by the p_attributes-method.
+The available p-attributes are returned by the \code{p_attributes}-method.
 }
 \examples{
 use("polmineR")
