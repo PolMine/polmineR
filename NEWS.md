@@ -14,6 +14,7 @@ polmineR 0.7.11.9001
 * `cpos()`, `count()`, `p_attributes()`,  `s_attributes()` `get_token_stream()` for `slice`-class, and for `subcorpus` via inheritance. 
 * The return value of the get_token_stream,regions-method was a data.table. The behavior is now in line with the other `get_token_stream() methods
 * new `coerce()`-method to turn `partition` object into `subcorpus` object
+* For all the S4 classes in the package multiple contains have been checked, and multiple contains have been removed.
 
 polmineR 0.7.11
 ===============
