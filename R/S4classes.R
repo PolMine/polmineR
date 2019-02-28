@@ -424,7 +424,7 @@ setClass("context",
            cpos = "data.table",
            call = "character"
          ),
-         contains = c("features", "textstat")
+         contains = "features"
 )
 
 #' @details The \code{length}-method will return the number of hits that were achieved.
@@ -456,10 +456,7 @@ setAs(from = "partition", to = "data.table", def = function(from) from@stat)
 #' @docType class
 #' @exportClass cooccurrences
 #' @rdname cooccurrences-class
-setClass(
-  "cooccurrences",
-  contains = c("context", "features", "textstat")
-)
+setClass("cooccurrences", contains = "context")
 
 
 
@@ -638,12 +635,12 @@ setClass(
 
 #' @rdname features-class
 #' @exportClass features_cooccurrences
-setClass("features_cooccurrences", contains = c("features", "textstat"))
+setClass("features_cooccurrences", contains = "features")
 
 
 #' @rdname features-class
 #' @exportClass features_ngrams
-setClass("features_ngrams", representation(n = "integer"), contains = c("features", "textstat"))
+setClass("features_ngrams", representation(n = "integer"), contains = "features")
 
 
 #' @details A set of \code{features} objects can be combined into a \code{features_bundle}.
@@ -662,13 +659,7 @@ setClass("features_bundle", contains = "bundle")
 #' @rdname ngrams_class
 #' @name ngrams_class
 #' @aliases ngrams-class
-setClass(
-  "ngrams",
-  representation(
-    n = "integer"
-    ),
-  contains = c("count", "textstat")
-)
+setClass("ngrams", representation(n = "integer"), contains = "count")
 
 
 #' Hits class.
