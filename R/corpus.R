@@ -8,7 +8,10 @@ NULL
 #' corpora. If \code{.Object} is an object inheriting from the \code{textstat},
 #' or the \code{bundle} class, the corpus used to generate the object is
 #' returned.
-#' @param .Object An object inheriting from the \code{textstat} or \code{bundle} superclasses.
+#' @param .Object An object inheriting from the \code{textstat} or \code{bundle}
+#'   superclasses.
+#' @param server The name of an Open CPU server (can be an IP address) that
+#'   hosts corpora.
 #' @exportMethod corpus
 #' @rdname corpus-method
 #' @examples
@@ -20,7 +23,7 @@ NULL
 #' 
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' corpus(pb)
-setGeneric("corpus", function(.Object) standardGeneric("corpus"))
+setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 
 
 #' @rdname corpus-method
@@ -30,14 +33,23 @@ setMethod("corpus", "textstat", function(.Object) .Object@corpus)
 setMethod("corpus", "kwic", function(.Object) .Object@corpus)
 
 #' @rdname corpus-method
-setMethod("corpus", "character", function(.Object){
-  properties <- registry_get_properties(.Object)
-  new(
-    "corpus",
-    corpus = .Object,
-    encoding = registry_get_encoding(.Object),
-    type = if ("type" %in% names(properties)) properties[["type"]] else character()
+setMethod("corpus", "character", function(.Object, server = NULL){
+  if (is.null(server)){
+    properties <- registry_get_properties(.Object)
+    y <- new(
+      "corpus",
+      corpus = .Object,
+      encoding = registry_get_encoding(.Object),
+      type = if ("type" %in% names(properties)) properties[["type"]] else character()
     )
+    return(y)
+  } else {
+    y <- new(
+      "remote_corpus",
+      corpus = .Object,
+      server = server
+    )
+  }
 })
 
 #' @rdname corpus-method

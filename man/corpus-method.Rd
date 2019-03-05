@@ -10,20 +10,24 @@
 \alias{corpus,missing-method}
 \title{Get corpus/corpora available or used.}
 \usage{
-corpus(.Object)
+corpus(.Object, ...)
 
 \S4method{corpus}{textstat}(.Object)
 
 \S4method{corpus}{kwic}(.Object)
 
-\S4method{corpus}{character}(.Object)
+\S4method{corpus}{character}(.Object, server = NULL)
 
 \S4method{corpus}{bundle}(.Object)
 
 \S4method{corpus}{missing}()
 }
 \arguments{
-\item{.Object}{An object inheriting from the \code{textstat} or \code{bundle} superclasses.}
+\item{.Object}{An object inheriting from the \code{textstat} or \code{bundle}
+superclasses.}
+
+\item{server}{The name of an Open CPU server (can be an IP address) that
+hosts corpora.}
 }
 \description{
 Calling \code{corpus()} will return a \code{data.frame} listing the corpora
