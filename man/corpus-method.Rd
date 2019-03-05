@@ -26,6 +26,9 @@ corpus(.Object, ...)
 \item{.Object}{An object inheriting from the \code{textstat} or \code{bundle}
 superclasses.}
 
+\item{...}{Placeholder in the definition of the generic method for defining
+further arguments in method definitions.}
+
 \item{server}{The name of an Open CPU server (can be an IP address) that
 hosts corpora.}
 }

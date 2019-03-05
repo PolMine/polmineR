@@ -15,6 +15,7 @@ polmineR 0.7.11.9001
 * The return value of the get_token_stream,regions-method was a data.table. The behavior is now in line with the other `get_token_stream() methods
 * new `coerce()`-method to turn `partition` object into `subcorpus` object
 * For all the S4 classes in the package multiple contains have been checked, and multiple contains have been removed.
+* A new experimental `remote_corpus`-class is the basis for accessing remote corpora.
 
 polmineR 0.7.11
 ===============

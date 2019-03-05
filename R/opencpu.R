@@ -14,9 +14,13 @@
 #' @slot server The URL (can be IP address) of the OpenCPU server.
 #' @slot type The type of the corpus (e.g. "plpr").
 #' @slot encoding The encoding of the corpus.
+#' @param .Object Name of a corpus.
+#' @param x Name of a corpus.
+#' @param query A query.
+#' @param ... Further arguments passed.
 #' @name opencpu
 #' @rdname opencpu
-#' @aliases opencpu remote_corpus
+#' @aliases opencpu remote_corpus remote_corpus-class
 #' @seealso To instantiate an object of class \code{remote_corpus}, the
 #'   \code{corpus}-class can be used (by providing argument \code{server}), see
 #'   respective documentation.
@@ -73,10 +77,10 @@ setMethod("count", "remote_corpus", function(.Object, query){
 
 
 #' @rdname opencpu
-setMethod("kwic", "remote_corpus", function(.Object, query){
+setMethod("kwic", "remote_corpus", function(.Object, ...){
   resp <- httr::POST(
     url = sprintf("http:/%s/ocpu/library/polmineR/R/kwic/pb", .Object@server),
-    body = RProtoBuf::serialize_pb(list(.Object = .Object@corpus, query = query), NULL),
+    body = RProtoBuf::serialize_pb(c(.Object = .Object@corpus, list(...)), NULL),
     httr::add_headers("Content-Type" = "application/protobuf")
   )
   httr::stop_for_status(resp)

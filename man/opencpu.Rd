@@ -4,19 +4,29 @@
 \name{opencpu}
 \alias{opencpu}
 \alias{remote_corpus}
+\alias{remote_corpus-class}
 \alias{count,remote_corpus-method}
 \alias{kwic,remote_corpus-method}
 \alias{size,remote_corpus-method}
 \alias{s_attributes,remote_corpus-method}
-\title{Access corpus in OpenCPU server.}
+\title{Access corpus on OpenCPU server.}
 \usage{
 \S4method{count}{remote_corpus}(.Object, query)
 
-\S4method{kwic}{remote_corpus}(.Object, query)
+\S4method{kwic}{remote_corpus}(.Object, ...)
 
 \S4method{size}{remote_corpus}(x)
 
 \S4method{s_attributes}{remote_corpus}(.Object)
+}
+\arguments{
+\item{.Object}{Name of a corpus.}
+
+\item{query}{A query.}
+
+\item{...}{Further arguments passed.}
+
+\item{x}{Name of a corpus.}
 }
 \description{
 A CWB corpus can be hosted on an OpenCPU (see \url{www.opencpu.org}) server.
@@ -46,11 +56,11 @@ the .Renviron file. A convenient way to do this is to call
 REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))
 count(REUTERS, query = "oil")
 size(REUTERS)
-foo <- kwic(REUTERS, query = "oil")
+kwic(REUTERS, query = "oil")
 
 GERMAPARL <- new("remote_corpus", corpus = "GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
 s_attributes(GERMAPARL)
-size(GERMAPARL)
+size(x = GERMAPARL)
 count(GERMAPARL, query = "Integration")
 kwic(GERMAPARL, query = "Islam")
 }

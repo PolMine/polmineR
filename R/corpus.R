@@ -12,6 +12,8 @@ NULL
 #'   superclasses.
 #' @param server The name of an Open CPU server (can be an IP address) that
 #'   hosts corpora.
+#' @param ... Placeholder in the definition of the generic method for defining
+#'   further arguments in method definitions.
 #' @exportMethod corpus
 #' @rdname corpus-method
 #' @examples
