@@ -401,11 +401,8 @@ setMethod("subset", "character", function(x, subset){
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
    
-  # return( registry_get_s_attributes( registry_get_s_attributes(x) ) )
-  return(s_attributes(x))
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   return(s_attr)
-
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
