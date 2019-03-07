@@ -410,8 +410,7 @@ setMethod("subset", "character", function(x, subset){
   r <- eval(expr, envir = df, enclos = parent.frame())
   # r <- eval(expr, envir = df)
   df_min <- df[r,]
-  return(df_min)
-  
+
   regions <- RcppCWB::get_region_matrix(
     corpus = x,
     s_attribute = s_attr[1],
