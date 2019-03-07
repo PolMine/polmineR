@@ -64,7 +64,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   if (!.Object@corpus %in% CQI$list_corpora()) stop("corpus name provided not available")
   
   if (is.null(s_attribute)){
-    return( CQI$attributes(.Object@corpus, "s") )
+    return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
   } else {
     if (length(s_attribute) == 1){
       y <- CQI$struc2str(
