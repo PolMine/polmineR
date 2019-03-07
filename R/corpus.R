@@ -361,9 +361,13 @@ s_attributes_stop_if_nested <- function(corpus, s_attr){
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 #' @rdname subcorpus-class
-#' @param subset Logical expression indicating elements or rows to keep.
+#' @param subset A \code{logical} expression indicating elements or rows to
+#'   keep. Alternatively, a length-one \code{character} vector that will be
+#'   parsed as a logical expression.
 setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
+  if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
+  # expr <- substitute(subset)
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
@@ -395,6 +399,8 @@ setMethod("subset", "corpus", function(x, subset){
 
 setMethod("subset", "character", function(x, subset){
   expr <- substitute(subset)
+  if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
+  
   s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
@@ -479,15 +485,6 @@ setMethod("show", "corpus", function(object){
 })
 
 
-subset2 <- function(x, subset){
-  # return("this is subset2")
-  e <- substitute(subset)
-  return(e)
-  # r <- eval(e, x, parent.frame())
-  # x[r,]
-}
-
-
 #' @export subcorpus
 subcorpus <- function(x, subset){
   expr <- substitute(subset)
@@ -495,6 +492,9 @@ subcorpus <- function(x, subset){
   # return(corp@corpus)
   # s_attr <- polmineR:::s_attributes(expr, corpus = "GERMAPARL") # get s_attributes present in the expression
   s_attr <- "year"
+  requireNamespace("polmineR", quietly = TRUE)
+  polmineR::use("polmineR")
+  # return(TRUE)
 
   max_attr <- polmineR::s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   return(max_attr)
