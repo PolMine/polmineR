@@ -398,6 +398,7 @@ setMethod("subset", "corpus", function(x, subset){
 
 
 setMethod("subset", "character", function(x, subset){
+  return(TRUE)
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
   

@@ -214,12 +214,12 @@ setMethod("s_attributes", "remote_corpus", function(.Object, ...){
 #' }
 #' @rdname opencpu
 setMethod("subset", "remote_corpus", function(x, subset){
-  expr <- substitute(subset)
+  expr <- deparse(substitute(subset))
   ocpu_exec(
     fn = "subset",
     server = x@server,
     method = "protobuf",
-    do.call = TRUE,
+    do.call = FALSE,
     x = x@corpus,
     subset = expr
   )
