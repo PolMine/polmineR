@@ -59,6 +59,8 @@ a call of \code{do.call}, which offers some flexibility.}
 \item{.Object}{Name of a corpus .}
 
 \item{x}{Name of a corpus.}
+
+\item{subset}{Logical expression indicating elements or rows to keep.}
 }
 \description{
 A CWB corpus can be hosted on an OpenCPU (see

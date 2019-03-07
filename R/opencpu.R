@@ -20,6 +20,7 @@
 #' @param x Name of a corpus.
 #' @param method Whether to use Protocol Buffers ("protobuf") or JSON ("json") for 
 #' transferring data to and from OpenCPU server. Defaults to "protobuf".
+#' @param subset Logical expression indicating elements or rows to keep.
 #' @name opencpu
 #' @rdname opencpu
 #' @aliases opencpu remote_corpus remote_corpus-class
@@ -43,6 +44,10 @@
 #' s_attributes(p, s_attribute = "year")
 #' size(p)
 #' kwic(p, query = "Islam", meta = "date")
+#' 
+#' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+#' s_attributes(GERMAPARL, s_attribute = "date")
+#' subset(GERMAPARL, date == "2009-11-10")
 #' }
 #' @exportClass remote_corpus
 #' @docType class
@@ -166,7 +171,6 @@ ocpu_exec <- function(fn, server, method = "protobuf", do.call = FALSE, ...){
     y <- jsonlite::fromJSON(rawToChar(resp$content))
     return(y)
   } else if (method == "protobuf"){
-    print(url)
     resp <- httr::POST(
       url = url,
       body = RProtoBuf::serialize_pb(args, NULL),
@@ -202,16 +206,10 @@ setMethod("s_attributes", "remote_corpus", function(.Object, ...){
   ocpu_exec(fn = "s_attributes", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
 })
 
-#' @examples 
-#' \dontrun{
-#' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-#' s_attributes(GERMAPARL, s_attribute = "date")
-#' subset(GERMAPARL, date == "2009-11-10")
-#' }
 #' @rdname opencpu
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- deparse(substitute(subset))
-  ocpu_exec(
+  y <- ocpu_exec(
     fn = "subset",
     server = x@server,
     method = "protobuf",
@@ -220,6 +218,7 @@ setMethod("subset", "remote_corpus", function(x, subset){
     subset = expr,
     s_attributes = "date"
   )
+  as(y, "remote_subcorpus")
 })
 
 

@@ -5,10 +5,13 @@
 \alias{subcorpus-class}
 \alias{subcorpus}
 \alias{subset,corpus-method}
+\alias{subset,character-method}
 \alias{subset,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
-\S4method{subset}{corpus}(x, subset, s_attributes = NULL)
+\S4method{subset}{corpus}(x, subset)
+
+\S4method{subset}{character}(x, ...)
 
 \S4method{subset}{subcorpus}(x, subset)
 }
@@ -56,6 +59,17 @@ sc <- subset(a, grepl("Merkel", speaker))
 sc <- subset(a, speaker == "Angela Dorothea Merkel")
 sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+
+sc <- subset(x = a, subset = 'speaker == "Angela Dorothea Merkel"')
+sc <- subset(a, 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
+use("polmineR")
+sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
+sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
+
+sc <- subset("GERMAPARLMINI", subset = 'speaker == "Angela Dorothea Merkel"')
+sc <- subset("GERMAPARLMINI", 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
 a <- corpus("GERMAPARLMINI")
 b <- subset(a, date == "2009-11-10")
 c <- subset(b, speaker == "Frank-Walter Steinmeier")

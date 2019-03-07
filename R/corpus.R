@@ -342,6 +342,7 @@ Corpus <- R6Class(
 }
 
 #' @export s_attributes_stop_if_nested
+#' @noRd
 s_attributes_stop_if_nested <- function(corpus, s_attr){
   max_attr <- unique(sapply(s_attr, function(s) CQI$attribute_size(corpus, s, type = "s")))
   if (length(max_attr) != 1){
@@ -380,6 +381,7 @@ setMethod("subset", "corpus", function(x, subset){
   }
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  return(s_attr)
 
   
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
@@ -419,6 +421,7 @@ setMethod("subset", "corpus", function(x, subset){
 #' 
 #' sc <- subset("GERMAPARLMINI", subset = 'speaker == "Angela Dorothea Merkel"')
 #' sc <- subset("GERMAPARLMINI", 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
+#' @rdname subcorpus-class
 setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
 
 
