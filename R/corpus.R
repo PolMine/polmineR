@@ -410,9 +410,10 @@ setMethod("subset", "character", function(x, subset){
   # return(max_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
-  return(df)
+  # return(df)
   r <- eval(expr, envir = df, enclos = parent.frame())
   df_min <- df[r,]
+  return(df_min)
   
   regions <- RcppCWB::get_region_matrix(
     corpus = x,
