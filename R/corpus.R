@@ -407,6 +407,7 @@ setMethod("subset", "character", function(x, subset){
   s_attr <- "date"
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
+  return(max_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
   r <- eval(expr, envir = df, enclos = parent.frame())
