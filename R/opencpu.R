@@ -53,6 +53,7 @@ setClass(
 )
 
 
+
 setAs(from = "corpus", to = "remote_corpus", def = function(from){
   y <- new("remote_corpus")
   for (x in slotNames(from)) slot(y, x) <- slot(from, x)
@@ -121,22 +122,56 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @param server The IP/URL of the remote OpenCPU server.
 #' @param ... Further arguments passed into the method/function call.
 #' @export ocpu_exec
-ocpu_exec <- function(fn, server, method = "protobuf", ...){
+#' @examples
+#' \dontrun{
+#' # Get polmineR version installed on remote server
+#' ocpu_exec(
+#'   fn = "packageVersion",
+#'   server = Sys.getenv("OPENCPU_SERVER"),
+#'   method = "protobuf",
+#'   do.call = TRUE,
+#'   pkg = "polmineR"
+#' )
+#' 
+#' ocpu_exec(
+#'   fn = "subset",
+#'   server = Sys.getenv("OPENCPU_SERVER"),
+#'   method = "protobuf",
+#'   do.call = TRUE,
+#'   x = iris,
+#'   subset = substitute(Sepal.Width > 4.0)
+#' )
+#' }
+ocpu_exec <- function(fn, server, method = "protobuf", do.call = FALSE, ...){
+  m <- if (method == "protobuf") "pb" else "json"
+  if (!do.call){
+    url <- sprintf("%s/ocpu/library/polmineR/R/%s/%s", server, fn, m)
+    print(url)
+    args <- list(...)
+    print(args)
+  } else {
+    url <- sprintf("%s/ocpu/library/base/R/do.call/%s", server, m)
+    print(url)
+    args <- list(what = fn, args = list(...))
+    print(args)
+  }
+  
   if (method == "json"){
     # using RProtoBuf offers much more flexibility and is the default way to access
     # the remote corpus. The 'json'-method remains, just in case it may be useful in 
     # the future
     resp <- httr::POST(
-      url = sprintf("http:/%s/ocpu/library/polmineR/R/%s/json", server, fn),
-      body = list(...), 
+      url = url,
+      body = args, 
       encode = 'json'
     )
     y <- jsonlite::fromJSON(rawToChar(resp$content))
     return(y)
   } else if (method == "protobuf"){
+    print(url)
     resp <- httr::POST(
-      url = sprintf("http:/%s/ocpu/library/polmineR/R/%s/pb", server, fn),
-      body = RProtoBuf::serialize_pb(list(...), NULL),
+      url = url,
+      body = RProtoBuf::serialize_pb(args, NULL),
       httr::add_headers("Content-Type" = "application/protobuf")
     )
     httr::stop_for_status(resp)
@@ -148,44 +183,44 @@ ocpu_exec <- function(fn, server, method = "protobuf", ...){
 
 #' @rdname opencpu
 setMethod("count", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "count", server = .Object@server, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "count", server = .Object@server, method = "protobuf", do.call = FALSE, .Object = .Object@corpus, ...)
 })
 
 
 #' @rdname opencpu
 setMethod("kwic", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "kwic", server = .Object@server, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "kwic", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
 })
 
 
 #' @rdname opencpu
 setMethod("size", "remote_corpus", function(x){
-  ocpu_exec(fn = "size", server = x@server, x = x@corpus)
+  ocpu_exec(fn = "size", server = x@server, method = "protobuf", do.call = FALSE, x = x@corpus)
 })
 
 
 #' @rdname opencpu
 setMethod("s_attributes", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "s_attributes", server = .Object@server, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "s_attributes", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
 })
 
 #' @examples 
 #' \dontrun{
 #' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-#' subset(GERMAPARL, date == "2009-11-10")
+#' s_attributes(GERMAPARL, s_attribute = "date")
+#' subset(GERMAPARL, {date == "2009-11-10"})
 #' }
 #' @rdname opencpu
-setMethod("subset", "remote_corpus", function(x, ...){
-  expr <- substitute(...)
-  args <- list(x = as(x, "corpus"), subset = expr)
-  body <- RProtoBuf::serialize_pb(args, NULL)
-  resp <- httr::POST(
-    url = sprintf("http:/%s/ocpu/library/base/R/subset/pb", x@server),
-    body = body,
-    httr::add_headers("Content-Type" = "application/protobuf")
+setMethod("subset", "remote_corpus", function(x, subset){
+  expr <- substitute(subset)
+  ocpu_exec(
+    fn = "subset",
+    server = x@server,
+    method = "protobuf",
+    do.call = TRUE,
+    x = as(x, "corpus"),
+    subset = expr
   )
-  httr::stop_for_status(resp)
-  y <- RProtoBuf::unserialize_pb(resp$content)
 })
 
 
