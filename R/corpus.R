@@ -412,8 +412,9 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
   r <- eval(expr, envir = df, enclos = parent.frame())
+  df_min <- df[r,]
   # r <- eval(expr, df)
-  df_min <- subset(df, expr)
+  # df_min <- subset(df, expr)
   return(df_min)
 
   regions <- RcppCWB::get_region_matrix(
