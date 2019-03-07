@@ -398,10 +398,10 @@ setMethod("subset", "corpus", function(x, subset){
 
 
 setMethod("subset", "character", function(x, subset){
-  
+  return(is(subset))
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
-  expr <- substitute(date == "2009-11-10")
+  # expr <- substitute(date == "2009-11-10")
   s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
 
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
