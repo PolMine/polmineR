@@ -478,44 +478,45 @@ setMethod("show", "corpus", function(object){
 })
 
 
-# subset2 <- function(x, subset){
-#   # return("this is subset2")
-#   e <- substitute(subset)
-#   return(e)
-#   # r <- eval(e, x, parent.frame())
-#   # x[r,]
-# }
+subset2 <- function(x, subset){
+  # return("this is subset2")
+  e <- substitute(subset)
+  return(e)
+  # r <- eval(e, x, parent.frame())
+  # x[r,]
+}
 
 
 #' @export subcorpus
 subcorpus <- function(x, subset){
-  expr <- substitute(subset)
-  s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
-  
-  max_attr <- .s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
-  df <- data.frame(struc = 0L:(max_attr - 1L))
-  df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
-  r <- eval(expr, envir = df, enclos = parent.frame())
-  df_min <- df[r,]
-  
-  regions <- RcppCWB::get_region_matrix(
-    corpus = x,
-    s_attribute = s_attr[1],
-    strucs = df_min[["struc"]],
-    registry = registry()
-  )
-  y <- new(
-    "subcorpus",
-    corpus = x,
-    #    encoding = x@encoding,
-    #    type = x@type,
-    #    data_dir = x@data_dir,
-    cpos = regions,
-    strucs = df_min[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)],
-    xml = "flat"
-  )
-  y@size <- size(y)
-  y
+  return("this is subcorpus")
+  # expr <- substitute(subset)
+  # s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
+  # 
+  # max_attr <- .s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
+  # df <- data.frame(struc = 0L:(max_attr - 1L))
+  # df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
+  # r <- eval(expr, envir = df, enclos = parent.frame())
+  # df_min <- df[r,]
+  # 
+  # regions <- RcppCWB::get_region_matrix(
+  #   corpus = x,
+  #   s_attribute = s_attr[1],
+  #   strucs = df_min[["struc"]],
+  #   registry = registry()
+  # )
+  # y <- new(
+  #   "subcorpus",
+  #   corpus = x,
+  #   #    encoding = x@encoding,
+  #   #    type = x@type,
+  #   #    data_dir = x@data_dir,
+  #   cpos = regions,
+  #   strucs = df_min[["struc"]],
+  #   s_attribute_strucs = s_attr[length(s_attr)],
+  #   xml = "flat"
+  # )
+  # y@size <- size(y)
+  # y
 }
 
