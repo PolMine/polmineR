@@ -381,9 +381,7 @@ setMethod("subset", "corpus", function(x, subset){
   }
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  return(s_attr)
 
-  
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)

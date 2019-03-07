@@ -215,8 +215,7 @@ setMethod("subset", "remote_corpus", function(x, subset){
     method = "protobuf",
     do.call = FALSE,
     x = as(x, "corpus"),
-    subset = expr,
-    s_attributes = "date"
+    subset = expr
   )
   as(y, "remote_subcorpus")
 })
