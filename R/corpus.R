@@ -381,6 +381,7 @@ setMethod("subset", "corpus", function(x, subset, s_attributes = NULL){
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
+  return(df)
   df_min <- df[eval(expr, envir = df),]
   
   regions <- RcppCWB::get_region_matrix(
