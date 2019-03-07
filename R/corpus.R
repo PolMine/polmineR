@@ -487,9 +487,10 @@ setMethod("show", "corpus", function(object){
 # }
 
 
-#' @export subset2
-subset2 <- function(x, subset){
-  print("this is subset2")
+#' @export subcorpus
+subcorpus <- function(x, subset){
+  return("this is subset2")
+  
   # expr <- substitute(subset)
   
   # s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
