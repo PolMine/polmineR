@@ -209,7 +209,7 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 #'   corpus = "GERMAPARLMINI"
 #' )
 setMethod("s_attributes", "call", function(.Object, corpus){
-  s_attrs <- s_attributes(corpus)
+  s_attrs <- polmineR::s_attributes(corpus)
   # for the following recursive function, see http://adv-r.had.co.nz/Expressions.html
   .fn <- function(x){
     if (is.call(x)){
