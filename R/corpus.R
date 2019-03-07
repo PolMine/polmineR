@@ -46,11 +46,10 @@ setMethod("corpus", "character", function(.Object, server = NULL){
     )
     return(y)
   } else {
-    y <- new(
-      "remote_corpus",
-      corpus = .Object,
-      server = server
-    )
+    y <- ocpu_exec(fn = "corpus", server = server, .Object = .Object)
+    y <- as(y, "remote_corpus")
+    y@server <- server
+    return(y)
   }
 })
 

@@ -5,50 +5,84 @@
 \alias{opencpu}
 \alias{remote_corpus}
 \alias{remote_corpus-class}
+\alias{remote_partition-class}
+\alias{ocpu_exec}
 \alias{count,remote_corpus-method}
 \alias{kwic,remote_corpus-method}
 \alias{size,remote_corpus-method}
 \alias{s_attributes,remote_corpus-method}
+\alias{subset,remote_corpus-method}
+\alias{partition,remote_corpus-method}
+\alias{partition,remote_partition-method}
+\alias{s_attributes,remote_partition-method}
+\alias{size,remote_partition-method}
+\alias{kwic,remote_partition-method}
 \title{Access corpus on OpenCPU server.}
 \usage{
-\S4method{count}{remote_corpus}(.Object, query)
+ocpu_exec(fn, server, method = "protobuf", ...)
+
+\S4method{count}{remote_corpus}(.Object, ...)
 
 \S4method{kwic}{remote_corpus}(.Object, ...)
 
 \S4method{size}{remote_corpus}(x)
 
-\S4method{s_attributes}{remote_corpus}(.Object)
+\S4method{s_attributes}{remote_corpus}(.Object, ...)
+
+\S4method{subset}{remote_corpus}(x, ...)
+
+\S4method{partition}{remote_corpus}(.Object, ...)
+
+\S4method{partition}{remote_partition}(.Object, ...)
+
+\S4method{s_attributes}{remote_partition}(.Object, ...)
+
+\S4method{size}{remote_partition}(x)
+
+\S4method{kwic}{remote_partition}(.Object, ...)
 }
 \arguments{
-\item{.Object}{Name of a corpus.}
+\item{fn}{Name of the function/method to execute on remote server (length-one
+\code{character} vector).}
 
-\item{query}{A query.}
+\item{server}{The IP/URL of the remote OpenCPU server.}
 
-\item{...}{Further arguments passed.}
+\item{method}{Whether to use Protocol Buffers ("protobuf") or JSON ("json") for 
+transferring data to and from OpenCPU server. Defaults to "protobuf".}
+
+\item{...}{Further arguments passed into the method/function call.}
+
+\item{.Object}{Name of a corpus .}
 
 \item{x}{Name of a corpus.}
 }
 \description{
-A CWB corpus can be hosted on an OpenCPU (see \url{www.opencpu.org}) server.
-The results of polmineR functions and methods that are executed on the remote
-machine can be processed in a local R session.
+A CWB corpus can be hosted on an OpenCPU (see
+  \url{www.opencpu.org}) server. The results of polmineR functions and
+  methods that are executed on the remote machine can be processed in a local
+  R session.
 }
 \details{
-The whereabouts of an OpenCPU server can be stated in an environment variable
-"OPENCPU_SERVER". Environment variables for R sessions can be set easily in
-the .Renviron file. A convenient way to do this is to call
-\code{usethis::edit_r_environ()}.
+A limited set of methods of the \code{polmineR} package is exposed
+  to be executed on a remote OpenCPU server. See list of methods in the Usage
+  section of this documentation entry. Note that the three dots (\code{...})
+  are used to pass arguments. Hence, it is necessary to state the name of all
+  arguments to be passed explicity.
+
+The whereabouts of an OpenCPU server can be stated in an environment
+  variable "OPENCPU_SERVER". Environment variables for R sessions can be set
+  easily in the .Renviron file. A convenient way to do this is to call
+  \code{usethis::edit_r_environ()}.
+
+\code{ocpu_exec} will execute function/method \code{fn} on a OpenCPU
+  server (specified by argument \code{server}), using as a \code{method} to
+  pass data either "protobuf" or "json" ("protobuf" is much more flexible and
+  is the default), using three dots (\code{...}) to pass arguments.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{corpus}}{Length-one character vector, name of corpus on remote machine.}
-
 \item{\code{server}}{The URL (can be IP address) of the OpenCPU server.}
-
-\item{\code{type}}{The type of the corpus (e.g. "plpr").}
-
-\item{\code{encoding}}{The encoding of the corpus.}
 }}
 
 \examples{
@@ -58,11 +92,20 @@ count(REUTERS, query = "oil")
 size(REUTERS)
 kwic(REUTERS, query = "oil")
 
-GERMAPARL <- new("remote_corpus", corpus = "GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
+GERMAPARL <- corpus("GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
 s_attributes(GERMAPARL)
 size(x = GERMAPARL)
 count(GERMAPARL, query = "Integration")
 kwic(GERMAPARL, query = "Islam")
+
+p <- partition(GERMAPARL, year = 2000)
+s_attributes(p, s_attribute = "year")
+size(p)
+kwic(p, query = "Islam", meta = "date")
+}
+\dontrun{
+GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+subset(GERMAPARL, date == "2009-11-10")
 }
 }
 \seealso{
