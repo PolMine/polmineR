@@ -210,6 +210,11 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 #' )
 setMethod("s_attributes", "call", function(.Object, corpus){
   s_attrs <- s_attributes(corpus)
+  s_attrs <- if (is.character(corpus)){
+    registry_get_s_attributes(corpus = corpus, registry = registry())
+  } else {
+    registry_get_s_attributes(corpus = corpus@corpus, registry = registry())
+  }
   # for the following recursive function, see http://adv-r.had.co.nz/Expressions.html
   .fn <- function(x){
     if (is.call(x)){
