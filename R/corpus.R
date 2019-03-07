@@ -406,6 +406,7 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   } else {
     s_attr <- s_attributes
   }
+  return(s_attr)
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
