@@ -400,7 +400,6 @@ setMethod("subset", "corpus", function(x, subset){
 setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ){
-    return("AAA")
     expr <- parse(text = subset)[[1]]
   }
   
@@ -416,8 +415,9 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   # return(df)
   # r <- eval(expr, envir = df, enclos = parent.frame())
   r <- eval(expr, df)
-  return(r)
-  df_min <- df[r,]
+  df_min <- subset(df, expr)
+  # return(r)
+  # df_min <- df[r,]
   return(df_min)
 
   regions <- RcppCWB::get_region_matrix(
