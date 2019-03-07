@@ -148,14 +148,10 @@ ocpu_exec <- function(fn, server, method = "protobuf", do.call = FALSE, ...){
   m <- if (method == "protobuf") "pb" else "json"
   if (!do.call){
     url <- sprintf("%s/ocpu/library/polmineR/R/%s/%s", server, fn, m)
-    print(url)
     args <- list(...)
-    print(args)
   } else {
     url <- sprintf("%s/ocpu/library/base/R/do.call/%s", server, m)
-    print(url)
     args <- list(what = fn, args = list(...))
-    print(args)
   }
   
   if (method == "json"){

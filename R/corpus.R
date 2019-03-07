@@ -369,7 +369,11 @@ s_attributes_stop_if_nested <- function(corpus, s_attr){
 #'   parsed as a logical expression.
 setMethod("subset", "corpus", function(x, subset, s_attributes = NULL){
   expr <- substitute(subset)
-  if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
+  if (length(expr) == 1){
+    if (class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
+  } else if (length(expr) == 2){
+    if (class(expr[[2]]) == "character") expr <- parse(text = expr[[2]])[[1]]
+  }
 
   if (is.null(s_attributes)){
     s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
