@@ -413,6 +413,7 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   # return(df)
   # r <- eval(expr, envir = df, enclos = parent.frame())
   r <- eval(expr, envir = df)
+  return(r)
   df_min <- df[r,]
   return(df_min)
 
