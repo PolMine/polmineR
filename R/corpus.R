@@ -517,5 +517,5 @@ subset2 <- function(x, subset){
   )
   y@size <- size(y)
   y
-})
+}
 
