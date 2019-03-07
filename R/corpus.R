@@ -399,7 +399,10 @@ setMethod("subset", "corpus", function(x, subset){
 
 setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   expr <- substitute(subset)
-  if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
+  if (length(expr) == 1 && class(expr[[1]]) == "character" ){
+    return("AAA")
+    expr <- parse(text = subset)[[1]]
+  }
   
   if (is.null(s_attributes)){
     s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
