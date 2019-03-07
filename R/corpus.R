@@ -401,11 +401,13 @@ setMethod("subset", "character", function(x, subset){
   
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
-  return(is(expr))
+  # return(is(expr))
   s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
-  return(s_attr)
+  # return(s_attr)
+  s_attr <- "date"
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
+  return(max_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
   r <- eval(expr, envir = df, enclos = parent.frame())
