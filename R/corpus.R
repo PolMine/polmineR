@@ -412,7 +412,7 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
   # return(df)
   # r <- eval(expr, envir = df, enclos = parent.frame())
-  r <- eval(expr, envir = df)
+  r <- eval(expr, df)
   return(r)
   df_min <- df[r,]
   return(df_min)
