@@ -489,9 +489,10 @@ subset2 <- function(x, subset){
 
 #' @export subcorpus
 subcorpus <- function(x, subset){
-  expr <- substitute(subset)
-  s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
-  return(s_attr)
+  # expr <- substitute(subset)
+  return(x)
+  # s_attr <- s_attributes(expr, corpus = corpus(x)) # get s_attributes present in the expression
+  
   # 
   # max_attr <- .s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   # df <- data.frame(struc = 0L:(max_attr - 1L))
