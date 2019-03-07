@@ -411,8 +411,9 @@ setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   tab <- data.frame(struc = 0L:(max_attr - 1L))
   tab <- .df_add_s_attributes(x = corpus(x), df = tab, s_attr = s_attr)
-  r <- eval(expr, envir = df, enclos = parent.frame())
-  df_min <- df[r,]
+  return(tab)
+  r <- eval(expr, envir = tab, enclos = parent.frame())
+  df_min <- tab[r,]
   # r <- eval(expr, df)
   # df_min <- subset(df, expr)
   return(df_min)
