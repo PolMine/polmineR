@@ -8,14 +8,16 @@
 \alias{subset,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
-\S4method{subset}{corpus}(x, subset)
+\S4method{subset}{corpus}(x, subset, s_attributes = NULL)
 
 \S4method{subset}{subcorpus}(x, subset)
 }
 \arguments{
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
 
-\item{subset}{Logical expression indicating elements or rows to keep.}
+\item{subset}{A \code{logical} expression indicating elements or rows to
+keep. Alternatively, a length-one \code{character} vector that will be
+parsed as a logical expression.}
 
 \item{...}{An expression that will be used to create a subcorpus from
 s-attributes.}

@@ -360,15 +360,23 @@ s_attributes_stop_if_nested <- function(corpus, s_attr){
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+#' 
+#' sc <- subset(x = a, subset = 'speaker == "Angela Dorothea Merkel"')
+#' sc <- subset(a, 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
 #' @rdname subcorpus-class
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
-setMethod("subset", "corpus", function(x, subset){
+setMethod("subset", "corpus", function(x, subset, s_attributes = NULL){
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
-  # expr <- substitute(subset)
-  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+
+  if (is.null(s_attributes)){
+    s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  } else {
+    s_attr <- s_attributes
+  }
+  
   
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
@@ -397,47 +405,16 @@ setMethod("subset", "corpus", function(x, subset){
 })
 
 
-setMethod("subset", "character", function(x, subset, s_attributes = NULL){
-  expr <- substitute(subset)
-  if (length(expr) == 1 && class(expr[[1]]) == "character" )
-    expr <- parse(text = subset)[[1]]
-
-  if (is.null(s_attributes)){
-    s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  } else {
-    s_attr <- s_attributes
-  }
-  
-  max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
-  tab <- data.frame(struc = 0L:(max_attr - 1L))
-  tab <- .df_add_s_attributes(x = corpus(x), df = tab, s_attr = s_attr)
-  r <- eval(expr, envir = tab, enclos = parent.frame())
-  return(r)
-  df_min <- tab[r,]
-  # r <- eval(expr, df)
-  # df_min <- subset(df, expr)
-  return(df_min)
-
-  regions <- RcppCWB::get_region_matrix(
-    corpus = x,
-    s_attribute = s_attr[1],
-    strucs = df_min[["struc"]],
-    registry = registry()
-  )
-  y <- new(
-    "subcorpus",
-    corpus = x,
-#    encoding = x@encoding,
-#    type = x@type,
-#    data_dir = x@data_dir,
-    cpos = regions,
-    strucs = df_min[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)],
-    xml = "flat"
-  )
-  y@size <- size(y)
-  y
-})
+#' @examples 
+#' use("polmineR")
+#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
+#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
+#' 
+#' sc <- subset("GERMAPARLMINI", subset = 'speaker == "Angela Dorothea Merkel"')
+#' sc <- subset("GERMAPARLMINI", 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
+setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
 
 
 #' @examples
@@ -492,46 +469,4 @@ setMethod("show", "corpus", function(object){
   cat(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]", "\n")
   cat(sprintf("%-12s", "size:"), size(object), "\n")
 })
-
-
-#' @export subcorpus
-subcorpus <- function(x, subset){
-  expr <- substitute(subset)
-  corp <- polmineR::corpus(x)
-  # return(corp@corpus)
-  # s_attr <- polmineR:::s_attributes(expr, corpus = "GERMAPARL") # get s_attributes present in the expression
-  s_attr <- "year"
-  requireNamespace("polmineR", quietly = TRUE)
-  polmineR::use("polmineR")
-  # return(TRUE)
-
-  max_attr <- polmineR::s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
-  return(max_attr)
-  max_attr <- 3137472
-  df <- data.frame(struc = 0L:(max_attr - 1L))
-  # return(df)
-  df <- polmineR:::.df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
-  r <- eval(expr, envir = df, enclos = parent.frame())
-  df_min <- df[r,]
-
-  regions <- RcppCWB::get_region_matrix(
-    corpus = x,
-    s_attribute = s_attr[1],
-    strucs = df_min[["struc"]],
-    registry = registry()
-  )
-  y <- new(
-    "subcorpus",
-    corpus = x,
-    #    encoding = x@encoding,
-    #    type = x@type,
-    #    data_dir = x@data_dir,
-    cpos = regions,
-    strucs = df_min[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)],
-    xml = "flat"
-  )
-  y@size <- size(y)
-  y
-}
 

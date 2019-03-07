@@ -220,7 +220,7 @@ setMethod("subset", "remote_corpus", function(x, subset){
     server = x@server,
     method = "protobuf",
     do.call = FALSE,
-    x = x@corpus,
+    x = as(x, "corpus"),
     subset = expr
   )
 })
