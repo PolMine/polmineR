@@ -367,20 +367,20 @@ s_attributes_stop_if_nested <- function(corpus, s_attr){
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
-setMethod("subset", "corpus", function(x, subset, s_attributes = NULL){
+setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
   if (length(expr) == 1){
+    # check whether subset was an expression that was deparsed and transmitted
+    # as a character string
     if (class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
   } else if (length(expr) == 2){
+    # somewhat odly, the deparsed expression may be wrapped into a c() function
+    # call
     if (class(expr[[2]]) == "character") expr <- parse(text = expr[[2]])[[1]]
   }
 
-#  if (is.null(s_attributes)){
-    s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  # } else {
-  #   s_attr <- s_attributes
-  # }
-  
+  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+
   
   max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
