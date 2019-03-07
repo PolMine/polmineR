@@ -480,8 +480,9 @@ setMethod("show", "corpus", function(object){
 
 #' @export subset2
 subset2 <- function(x, subset){
-  e <- substitute(subset)
-  return(e)
+  return("this is subset2")
+  # e <- substitute(subset)
+  # return(e)
   # r <- eval(e, x, parent.frame())
   # x[r,]
 }
