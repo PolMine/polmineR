@@ -397,12 +397,15 @@ setMethod("subset", "corpus", function(x, subset){
 })
 
 
-setMethod("subset", "character", function(x, subset){
+setMethod("subset", "character", function(x, subset, s_attributes = NULL){
   expr <- substitute(subset)
   if (length(expr) == 1 && class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
-   
-  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  return(s_attr)
+  
+  if (is.null(s_attributes)){
+    s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  } else {
+    s_attr <- s_attributes
+  }
   
   max_attr <- s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
