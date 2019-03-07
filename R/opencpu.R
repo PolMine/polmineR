@@ -66,6 +66,28 @@ setAs(from = "remote_corpus", to = "corpus", def = function(from){
 })
 
 
+#' @exportClass remote_subcorpus
+#' @rdname opencpu
+setClass(
+  "remote_subcorpus",
+  slots = c(server = "character"),
+  contains = "subcorpus"
+)
+
+
+setAs(from = "subcorpus", to = "remote_subcorpus", def = function(from){
+  y <- new("remote_subcorpus")
+  for (x in slotNames(from)) slot(y, x) <- slot(from, x)
+  y
+})
+
+setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
+  y <- new("subcorpus")
+  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
+  y
+})
+
+
 
 #' @exportClass remote_partition
 #' @rdname opencpu

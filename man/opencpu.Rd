@@ -5,6 +5,7 @@
 \alias{opencpu}
 \alias{remote_corpus}
 \alias{remote_corpus-class}
+\alias{remote_subcorpus-class}
 \alias{remote_partition-class}
 \alias{ocpu_exec}
 \alias{count,remote_corpus-method}

@@ -360,8 +360,9 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 #' @rdname subcorpus-class
-setMethod("subset", "corpus", function(x, ...){
-  expr <- substitute(...)
+#' @param subset Logical expression indicating elements or rows to keep.
+setMethod("subset", "corpus", function(x, subset){
+  expr <- substitute(subset)
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
@@ -396,8 +397,8 @@ setMethod("subset", "corpus", function(x, ...){
 #' b <- subset(a, date == "2009-11-10")
 #' c <- subset(b, speaker == "Frank-Walter Steinmeier")
 #' @rdname subcorpus-class
-setMethod("subset", "subcorpus", function(x, ...){
-  expr <- substitute(...)
+setMethod("subset", "subcorpus", function(x, subset){
+  expr <- substitute(subset)
   
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
