@@ -399,7 +399,8 @@ setMethod("subset", "character", function(x, subset){
   max_attr <- .s_attributes_stop_if_nested(corpus = x, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = corpus(x), df = df, s_attr = s_attr)
-  df_min <- df[eval(expr, envir = df),]
+  r <- eval(expr, envir = df, enclos = parent.frame())
+  df_min <- df[r,]
   
   regions <- RcppCWB::get_region_matrix(
     corpus = x,
@@ -476,3 +477,10 @@ setMethod("show", "corpus", function(object){
   cat(sprintf("%-12s", "size:"), size(object), "\n")
 })
 
+
+#' @export subset2
+subset2 <- function(x, subset){
+  e <- substitute(subset)
+  r <- eval(e, x, parent.frame())
+  x[r,]
+}

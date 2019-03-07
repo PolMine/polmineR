@@ -120,6 +120,8 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @param fn Name of the function/method to execute on remote server (length-one
 #'   \code{character} vector).
 #' @param server The IP/URL of the remote OpenCPU server.
+#' @param do.call Logical, if \code{TRUE}, the function \code{fn} is passed into
+#'   a call of \code{do.call}, which offers some flexibility.
 #' @param ... Further arguments passed into the method/function call.
 #' @export ocpu_exec
 #' @examples
@@ -208,7 +210,7 @@ setMethod("s_attributes", "remote_corpus", function(.Object, ...){
 #' \dontrun{
 #' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
 #' s_attributes(GERMAPARL, s_attribute = "date")
-#' subset(GERMAPARL, {date == "2009-11-10"})
+#' subset(GERMAPARL, date == "2009-11-10")
 #' }
 #' @rdname opencpu
 setMethod("subset", "remote_corpus", function(x, subset){
@@ -218,7 +220,7 @@ setMethod("subset", "remote_corpus", function(x, subset){
     server = x@server,
     method = "protobuf",
     do.call = TRUE,
-    x = as(x, "corpus"),
+    x = x@corpus,
     subset = expr
   )
 })

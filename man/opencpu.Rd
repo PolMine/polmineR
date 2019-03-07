@@ -20,7 +20,7 @@
 \alias{kwic,remote_partition-method}
 \title{Access corpus on OpenCPU server.}
 \usage{
-ocpu_exec(fn, server, method = "protobuf", ...)
+ocpu_exec(fn, server, method = "protobuf", do.call = FALSE, ...)
 
 \S4method{count}{remote_corpus}(.Object, ...)
 
@@ -30,7 +30,7 @@ ocpu_exec(fn, server, method = "protobuf", ...)
 
 \S4method{s_attributes}{remote_corpus}(.Object, ...)
 
-\S4method{subset}{remote_corpus}(x, ...)
+\S4method{subset}{remote_corpus}(x, subset)
 
 \S4method{partition}{remote_corpus}(.Object, ...)
 
@@ -50,6 +50,9 @@ ocpu_exec(fn, server, method = "protobuf", ...)
 
 \item{method}{Whether to use Protocol Buffers ("protobuf") or JSON ("json") for 
 transferring data to and from OpenCPU server. Defaults to "protobuf".}
+
+\item{do.call}{Logical, if \code{TRUE}, the function \code{fn} is passed into
+a call of \code{do.call}, which offers some flexibility.}
 
 \item{...}{Further arguments passed into the method/function call.}
 
@@ -105,7 +108,27 @@ size(p)
 kwic(p, query = "Islam", meta = "date")
 }
 \dontrun{
+# Get polmineR version installed on remote server
+ocpu_exec(
+  fn = "packageVersion",
+  server = Sys.getenv("OPENCPU_SERVER"),
+  method = "protobuf",
+  do.call = TRUE,
+  pkg = "polmineR"
+)
+
+ocpu_exec(
+  fn = "subset",
+  server = Sys.getenv("OPENCPU_SERVER"),
+  method = "protobuf",
+  do.call = TRUE,
+  x = iris,
+  subset = substitute(Sepal.Width > 4.0)
+)
+}
+\dontrun{
 GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+s_attributes(GERMAPARL, s_attribute = "date")
 subset(GERMAPARL, date == "2009-11-10")
 }
 }
