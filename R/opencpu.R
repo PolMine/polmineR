@@ -150,6 +150,13 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' )
 #' }
 ocpu_exec <- function(fn, server, do.call = FALSE, ...){
+  if (!requireNamespace("httr", quietly = TRUE))
+    stop("To access a remote corpus, package 'httr' is required, but it is not yet installed.")
+  if (!requireNamespace("curl", quietly = TRUE))
+    stop("To access a remote corpus, package 'curl' is required, but it is not yet installed.")
+  if (!requireNamespace("protolite", quietly = TRUE))
+    stop("To access a remote corpus, package 'protolite' is required, but it is not yet installed.")
+
   if (!do.call){
     url <- sprintf("%s/ocpu/library/polmineR/R/%s/pb", server, fn)
     args <- list(...)
