@@ -23,7 +23,7 @@
 \usage{
 \S4method{count}{remote_subcorpus}(.Object, ...)
 
-ocpu_exec(fn, server, method = "protobuf", do.call = FALSE, ...)
+ocpu_exec(fn, server, do.call = FALSE, ...)
 
 \S4method{count}{remote_corpus}(.Object, ...)
 
@@ -55,9 +55,6 @@ ocpu_exec(fn, server, method = "protobuf", do.call = FALSE, ...)
 
 \item{server}{The IP/URL of the remote OpenCPU server.}
 
-\item{method}{Whether to use Protocol Buffers ("protobuf") or JSON ("json") for 
-transferring data to and from OpenCPU server. Defaults to "protobuf".}
-
 \item{do.call}{Logical, if \code{TRUE}, the function \code{fn} is passed into
 a call of \code{do.call}, which offers some flexibility.}
 
@@ -84,9 +81,8 @@ The whereabouts of an OpenCPU server can be stated in an environment
   \code{usethis::edit_r_environ()}.
 
 \code{ocpu_exec} will execute function/method \code{fn} on a OpenCPU
-  server (specified by argument \code{server}), using as a \code{method} to
-  pass data either "protobuf" or "json" ("protobuf" is much more flexible and
-  is the default), using three dots (\code{...}) to pass arguments.
+  server (specified by argument \code{server}), using three dots (\code{...})
+  to pass arguments.
 }
 \section{Slots}{
 
@@ -113,7 +109,7 @@ size(p)
 kwic(p, query = "Islam", meta = "date")
 
 GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-s_attributes(GERMAPARL, s_attribute = "date")
+s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
 sc <- subset(GERMAPARL, date == "2009-11-10")
 }
 \dontrun{
@@ -121,7 +117,6 @@ sc <- subset(GERMAPARL, date == "2009-11-10")
 ocpu_exec(
   fn = "packageVersion",
   server = Sys.getenv("OPENCPU_SERVER"),
-  method = "protobuf",
   do.call = TRUE,
   pkg = "polmineR"
 )
@@ -129,7 +124,6 @@ ocpu_exec(
 ocpu_exec(
   fn = "subset",
   server = Sys.getenv("OPENCPU_SERVER"),
-  method = "protobuf",
   do.call = TRUE,
   x = iris,
   subset = substitute(Sepal.Width > 4.0)

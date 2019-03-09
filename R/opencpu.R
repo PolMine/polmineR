@@ -18,8 +18,6 @@
 #' @slot server The URL (can be IP address) of the OpenCPU server.
 #' @param .Object Name of a corpus .
 #' @param x Name of a corpus.
-#' @param method Whether to use Protocol Buffers ("protobuf") or JSON ("json") for 
-#' transferring data to and from OpenCPU server. Defaults to "protobuf".
 #' @param subset Logical expression indicating elements or rows to keep.
 #' @name opencpu
 #' @rdname opencpu
@@ -46,7 +44,7 @@
 #' kwic(p, query = "Islam", meta = "date")
 #' 
 #' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-#' s_attributes(GERMAPARL, s_attribute = "date")
+#' s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
 #' sc <- subset(GERMAPARL, date == "2009-11-10")
 #' }
 #' @exportClass remote_corpus
@@ -96,7 +94,7 @@ setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
 
 #' @rdname opencpu
 setMethod("count", "remote_subcorpus", function(.Object, ...){
-  ocpu_exec(fn = "count", server = .Object@server, method = "protobuf", do.call = FALSE, .Object = as(.Object, "subcorpus"), ...)
+  ocpu_exec(fn = "count", server = .Object@server, do.call = FALSE, .Object = as(.Object, "subcorpus"), ...)
 })
 
 
@@ -124,9 +122,8 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 
 #' @rdname opencpu
 #' @details \code{ocpu_exec} will execute function/method \code{fn} on a OpenCPU
-#'   server (specified by argument \code{server}), using as a \code{method} to
-#'   pass data either "protobuf" or "json" ("protobuf" is much more flexible and
-#'   is the default), using three dots (\code{...}) to pass arguments.
+#'   server (specified by argument \code{server}), using three dots (\code{...})
+#'   to pass arguments.
 #' @param fn Name of the function/method to execute on remote server (length-one
 #'   \code{character} vector).
 #' @param server The IP/URL of the remote OpenCPU server.
@@ -140,7 +137,6 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' ocpu_exec(
 #'   fn = "packageVersion",
 #'   server = Sys.getenv("OPENCPU_SERVER"),
-#'   method = "protobuf",
 #'   do.call = TRUE,
 #'   pkg = "polmineR"
 #' )
@@ -148,49 +144,37 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' ocpu_exec(
 #'   fn = "subset",
 #'   server = Sys.getenv("OPENCPU_SERVER"),
-#'   method = "protobuf",
 #'   do.call = TRUE,
 #'   x = iris,
 #'   subset = substitute(Sepal.Width > 4.0)
 #' )
 #' }
-ocpu_exec <- function(fn, server, method = "protobuf", do.call = FALSE, ...){
-  m <- if (method == "protobuf") "pb" else "json"
+ocpu_exec <- function(fn, server, do.call = FALSE, ...){
   if (!do.call){
-    url <- sprintf("%s/ocpu/library/polmineR/R/%s/%s", server, fn, m)
+    url <- sprintf("%s/ocpu/library/polmineR/R/%s/pb", server, fn)
     args <- list(...)
   } else {
-    url <- sprintf("%s/ocpu/library/base/R/do.call/%s", server, m)
+    url <- sprintf("%s/ocpu/library/base/R/do.call/pb", server)
     args <- list(what = fn, args = list(...))
   }
   
-  if (method == "json"){
-    # using RProtoBuf offers much more flexibility and is the default way to access
-    # the remote corpus. The 'json'-method remains, just in case it may be useful in 
-    # the future
-    resp <- httr::POST(
-      url = url,
-      body = args, 
-      encode = 'json'
-    )
-    y <- jsonlite::fromJSON(rawToChar(resp$content))
-    return(y)
-  } else if (method == "protobuf"){
-    resp <- httr::POST(
-      url = url,
-      body = RProtoBuf::serialize_pb(args, NULL),
-      httr::add_headers("Content-Type" = "application/protobuf")
-    )
-    httr::stop_for_status(resp)
-    y <- RProtoBuf::unserialize_pb(resp$content)
-    return(y)
-  }
+  body <- lapply(
+    list(...),
+    function(x)
+      if (class(x) == "call")
+        deparse(x)
+    else
+      curl::form_data(protolite::serialize_pb(x), "application/protobuf")
+  )
+  resp <- httr::POST(url = url, body = body)
+  httr::stop_for_status(resp)
+  y <- protolite::unserialize_pb(resp$content)
 }
 
 
 #' @rdname opencpu
 setMethod("count", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "count", server = .Object@server, method = "protobuf", do.call = FALSE, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "count", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
 })
 
 
@@ -202,7 +186,7 @@ setMethod("kwic", "remote_corpus", function(.Object, ...){
 
 #' @rdname opencpu
 setMethod("size", "remote_corpus", function(x){
-  ocpu_exec(fn = "size", server = x@server, method = "protobuf", do.call = FALSE, x = x@corpus)
+  ocpu_exec(fn = "size", server = x@server, do.call = FALSE, x = x@corpus)
 })
 
 
@@ -213,8 +197,8 @@ setMethod("s_attributes", "remote_corpus", function(.Object, ...){
 
 #' @rdname opencpu
 setMethod("subset", "remote_corpus", function(x, subset){
-  expr <- deparse(substitute(subset))
-  y <- ocpu_exec(fn = "subset", server = x@server, method = "protobuf", do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  expr <- substitute(subset)
+  y <- ocpu_exec(fn = "subset", server = x@server, do.call = FALSE, x = as(x, "corpus"), subset = expr)
   as(y, "remote_subcorpus")
 })
 

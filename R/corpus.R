@@ -359,24 +359,12 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
-#' 
-#' sc <- subset(x = a, subset = 'speaker == "Angela Dorothea Merkel"')
-#' sc <- subset(a, 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
 #' @rdname subcorpus-class
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
 setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
-  if (length(expr) == 1){
-    # check whether subset was an expression that was deparsed and transmitted
-    # as a character string
-    if (class(expr[[1]]) == "character" ) expr <- parse(text = subset)[[1]]
-  } else if (length(expr) == 2){
-    # somewhat odly, the deparsed expression may be wrapped into a c() function
-    # call
-    if (class(expr[[2]]) == "character") expr <- parse(text = expr[[2]])[[1]]
-  }
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
 
@@ -414,9 +402,6 @@ setMethod("subset", "corpus", function(x, subset){
 #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
 #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
-#' 
-#' sc <- subset("GERMAPARLMINI", subset = 'speaker == "Angela Dorothea Merkel"')
-#' sc <- subset("GERMAPARLMINI", 'speaker == "Angela Dorothea Merkel" & date == "2009-10-28"')
 #' @rdname subcorpus-class
 setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
 

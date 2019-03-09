@@ -35,7 +35,8 @@ Suggests:
     igraph,
     NLP,
     httr,
-    RProtoBuf
+    protolite,
+    curl
 VignetteBuilder: knitr
 LazyData: yes
 Description: Library for corpus analysis using the Corpus Workbench as an
