@@ -6,6 +6,7 @@
 \alias{remote_corpus}
 \alias{remote_corpus-class}
 \alias{remote_subcorpus-class}
+\alias{count,remote_subcorpus-method}
 \alias{remote_partition-class}
 \alias{ocpu_exec}
 \alias{count,remote_corpus-method}
@@ -20,6 +21,8 @@
 \alias{kwic,remote_partition-method}
 \title{Access corpus on OpenCPU server.}
 \usage{
+\S4method{count}{remote_subcorpus}(.Object, ...)
+
 ocpu_exec(fn, server, method = "protobuf", do.call = FALSE, ...)
 
 \S4method{count}{remote_corpus}(.Object, ...)
@@ -43,6 +46,10 @@ ocpu_exec(fn, server, method = "protobuf", do.call = FALSE, ...)
 \S4method{kwic}{remote_partition}(.Object, ...)
 }
 \arguments{
+\item{.Object}{Name of a corpus .}
+
+\item{...}{Further arguments passed into the method/function call.}
+
 \item{fn}{Name of the function/method to execute on remote server (length-one
 \code{character} vector).}
 
@@ -53,10 +60,6 @@ transferring data to and from OpenCPU server. Defaults to "protobuf".}
 
 \item{do.call}{Logical, if \code{TRUE}, the function \code{fn} is passed into
 a call of \code{do.call}, which offers some flexibility.}
-
-\item{...}{Further arguments passed into the method/function call.}
-
-\item{.Object}{Name of a corpus .}
 
 \item{x}{Name of a corpus.}
 
@@ -108,6 +111,10 @@ p <- partition(GERMAPARL, year = 2000)
 s_attributes(p, s_attribute = "year")
 size(p)
 kwic(p, query = "Islam", meta = "date")
+
+GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+s_attributes(GERMAPARL, s_attribute = "date")
+sc <- subset(GERMAPARL, date == "2009-11-10")
 }
 \dontrun{
 # Get polmineR version installed on remote server
@@ -127,11 +134,6 @@ ocpu_exec(
   x = iris,
   subset = substitute(Sepal.Width > 4.0)
 )
-}
-\dontrun{
-GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-s_attributes(GERMAPARL, s_attribute = "date")
-subset(GERMAPARL, date == "2009-11-10")
 }
 }
 \seealso{

@@ -47,7 +47,7 @@
 #' 
 #' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
 #' s_attributes(GERMAPARL, s_attribute = "date")
-#' subset(GERMAPARL, date == "2009-11-10")
+#' sc <- subset(GERMAPARL, date == "2009-11-10")
 #' }
 #' @exportClass remote_corpus
 #' @docType class
@@ -93,6 +93,11 @@ setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
   y
 })
 
+
+#' @rdname opencpu
+setMethod("count", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "count", server = .Object@server, method = "protobuf", do.call = FALSE, .Object = as(.Object, "subcorpus"), ...)
+})
 
 
 #' @exportClass remote_partition
@@ -209,14 +214,7 @@ setMethod("s_attributes", "remote_corpus", function(.Object, ...){
 #' @rdname opencpu
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- deparse(substitute(subset))
-  y <- ocpu_exec(
-    fn = "subset",
-    server = x@server,
-    method = "protobuf",
-    do.call = FALSE,
-    x = as(x, "corpus"),
-    subset = expr
-  )
+  y <- ocpu_exec(fn = "subset", server = x@server, method = "protobuf", do.call = FALSE, x = as(x, "corpus"), subset = expr)
   as(y, "remote_subcorpus")
 })
 

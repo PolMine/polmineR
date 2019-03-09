@@ -340,10 +340,8 @@ Corpus <- R6Class(
   }
   df
 }
-
-#' @export s_attributes_stop_if_nested
 #' @noRd
-s_attributes_stop_if_nested <- function(corpus, s_attr){
+.s_attributes_stop_if_nested <- function(corpus, s_attr){
   max_attr <- unique(sapply(s_attr, function(s) CQI$attribute_size(corpus, s, type = "s")))
   if (length(max_attr) != 1){
     stop(
@@ -382,7 +380,7 @@ setMethod("subset", "corpus", function(x, subset){
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
 
-  max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
+  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
   df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
   # return( lapply(as.list(expr), function(x) x) )
@@ -432,7 +430,7 @@ setMethod("subset", "subcorpus", function(x, subset){
   expr <- substitute(subset)
   
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  max_attr <- s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
+  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
 
   if (max_attr != CQI$attribute_size(x@corpus, x@s_attribute_strucs, type = "s")){
     stop("New s-attributes are nested in existing s-attribute defining subcorpus. ",
