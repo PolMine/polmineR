@@ -114,8 +114,8 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
 #' @noRd
 .token2id <- function(corpus, p_attribute, token = NULL, regex = FALSE){
   stopifnot(
-    corpus %in% CQI$list_corpora(),
-    p_attribute %in% CQI$attributes(corpus, type = "p")
+    corpus %in% .list_corpora(),
+    p_attribute %in% registry_get_p_attributes(corpus)
     )
   if (is.null(token)) return( NULL )
   if (is.numeric(token)){
@@ -124,10 +124,10 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
     if (regex){
       retval <- unlist(lapply(
         token,
-        function(x) CQI$regex2id(corpus = corpus, p_attribute = p_attribute, regex = x))
-      )
+        function(x) cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = x, registry = registry())
+      ))
     } else {
-      retval <- CQI$str2id(corpus = corpus, p_attribute = p_attribute, str = token)
+      retval <- cl_str2id(corpus = corpus, p_attribute = p_attribute, str = token, registry = registry())
     }
     return( retval )
   }
@@ -295,3 +295,6 @@ round.data.table <- function(x, digits = 2L){
   for (i in numeric_columns) x[, colnames(x)[i] := round(x[[i]], digits)]
   invisible( NULL )
 }
+
+
+.list_corpora = function() toupper(list.files( registry() ))

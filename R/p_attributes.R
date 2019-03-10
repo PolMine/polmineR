@@ -28,7 +28,7 @@ setMethod("p_attributes", "character", function(.Object, p_attribute = NULL, ...
     return( pAttrs )
   } else {
     if (p_attribute %in% pAttrs){
-      tokens <- CQI$id2str(.Object, p_attribute, c(0:(CQI$lexicon_size(.Object, p_attribute) - 1)))
+      tokens <- cl_id2str(corpus = .Object, p_attribute = p_attribute, id = 0L:(cl_lexicon_size(corpus = .Object, p_attribute = p_attribute, registry = registry()) - 1L), registry = registry())
       tokens <- as.nativeEnc(tokens, from = registry_get_encoding(.Object))
       return(tokens)
     } else {

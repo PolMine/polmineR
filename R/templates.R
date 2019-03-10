@@ -39,7 +39,7 @@ setGeneric("set_template", function(.Object, ... ) standardGeneric("set_template
 
 #' @rdname templates
 setMethod("set_template", "character", function(.Object){
-  stopifnot(.Object %in% CQI$list_corpora())
+  stopifnot(.Object %in% .list_corpora())
   templateList <- getOption("polmineR.templates")
   filename <- file.path(registry_get_home(.Object), "template.json")
   if (file.exists(filename)){
@@ -61,6 +61,6 @@ setMethod("set_template", "character", function(.Object){
 #' @importFrom jsonlite fromJSON
 setMethod("set_template", "missing", function(.Object, verbose = FALSE){
   if (length(Sys.getenv("CORPUS_REGISTRY")) > 0){
-    for (x in CQI$list_corpora()) set_template(x)
+    for (x in .list_corpora()) set_template(x)
   }
 })

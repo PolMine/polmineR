@@ -60,12 +60,12 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
       query,
       function(Q){
         cpos <- try({
-          id <- CQI$str2id(.Object, p_attribute, Q)
+          id <- cl_str2id(corpus = .Object, p_attribute = p_attribute, str = Q, registry = registry())
           if (id < 0){ # CQP will return -1 or another negative value if there are no matches
             .message("no hits for query: ", Q, verbose = verbose)
             cpos <- NULL
           } else {
-            cpos <- CQI$id2cpos(.Object, p_attribute, id)
+            cpos <- cl_id2cpos(corpus = .Object, p_attribute = p_attribute, id = id, registry = registry())
           }
         })
         if (!is.null(cpos)) matrix(c(cpos, cpos), ncol = 2) else NULL
@@ -77,8 +77,9 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
       query,
       function(Q){
         if (check) if (!check_cqp_query(Q)) stop("Aborting - CQP query does not pass check and may cause a crash.")
-        CQI$query(.Object, Q)
-        cpos <- try(CQI$dump_subcorpus(.Object), silent = TRUE)
+        if (!RcppCWB::cqp_is_initialized()) cqp_initialize()
+        cqp_query(corpus = .Object, query = Q)
+        cpos <- try(cqp_dump_subcorpus(corpus = .Object), silent = TRUE)
         if (is(cpos)[1] == "try-error"){
           .message("no hits for query: ", Q, verbose = verbose)
           hits <- NULL
@@ -116,7 +117,7 @@ setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, 
   hits <- cpos(.Object@corpus, query = query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = .Object@encoding, verbose = verbose)
   if (!is.null(hits) && length(.Object@s_attributes) > 0L){
     s_attribute <- names(.Object@s_attributes)[length(.Object@s_attributes)]
-    strucHits <- CQI$cpos2struc(.Object@corpus, s_attribute, hits[,1])
+    strucHits <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute, cpos = hits[,1], registry = registry())
     hits <- hits[which(strucHits %in% .Object@strucs),]
     if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2L)
     if (nrow(hits) == 0L) hits <- NULL

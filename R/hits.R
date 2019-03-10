@@ -35,7 +35,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  stopifnot(.Object %in% CQI$list_corpora(), length(.Object) == 1)
+  stopifnot(.Object %in% .list_corpora(), length(.Object) == 1)
   if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
   cpos_list <- blapply(
@@ -63,10 +63,10 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
     )
   
   if (!is.null(s_attribute)){
-    for (i in 1:length(s_attribute)){
-      sAttributeValues <- CQI$struc2str(.Object, s_attribute[i], CQI$cpos2struc(.Object, s_attribute[i], DT[["cpos_left"]]))
-      sAttributeValues <- as.nativeEnc(sAttributeValues, from = registry_get_encoding(.Object))
-      DT[, eval(s_attribute[i]) := sAttributeValues]
+    for (i in 1L:length(s_attribute)){
+      strucs <- cl_cpos2struc(corpus = .Object, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
+      s_attr_values <- cl_struc2str(corpus = .Object, s_attribute = s_attribute[i], struc = strucs)
+      DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = registry_get_encoding(.Object))]
     }
     TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
     setnames(TF, old = "N", new = "count")
@@ -100,12 +100,12 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
   if (freq) size <- TRUE
   
   DT <- hits(.Object@corpus, query = query, cqp = cqp, s_attribute = NULL, p_attribute = p_attribute, mc = mc, progress = progress)@stat
-  DT[, "struc" := CQI$cpos2struc(.Object@corpus, .Object@s_attribute_strucs, DT[["cpos_left"]]), with = TRUE]
+  DT[, "struc" := cl_cpos2struc(corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs, cpos = DT[["cpos_left"]], registry = registry()), with = TRUE]
   DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
   
   if (!is.null(s_attribute)){
     for (i in 1L:length(s_attribute)){
-      sAttrString <- CQI$struc2str(.Object@corpus, s_attribute[i], CQI$cpos2struc(.Object@corpus, s_attribute[i], DT[["cpos_left"]]))
+      sAttrString <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
       sAttrString <- as.nativeEnc(sAttrString, from = .Object@encoding)
       DT[, eval(s_attribute[i]) := sAttrString]
     }
@@ -166,7 +166,7 @@ setMethod("hits", "partition_bundle", function(
   )
   countDT <- rbindlist(countDTlist)
   .message("matching data.tables", verbose = verbose)
-  countDT[, "struc" := CQI$cpos2struc(corpus, s_attribute_strucs, countDT[["V1"]]), with = TRUE]
+  countDT[, "struc" := cl_cpos2struc(corpus = corpus, s_attribute = s_attribute_strucs, cpos = countDT[["V1"]], registry = registry()), with = TRUE]
   countDT[, "V1" := NULL, with = TRUE][, "V2" := NULL, with = TRUE]
   setkeyv(countDT, cols = "struc")
   setkeyv(strucDT, cols = "struc")
@@ -216,8 +216,8 @@ setMethod("hits", "context", function(.Object, s_attribute = NULL, verbose = TRU
   
   .message("adding s_attributes", verbose = verbose)
   for (x in s_attribute){
-    strucs <- CQI$cpos2struc(.Object@corpus, x, DT[["cpos_left"]])
-    str <- CQI$struc2str(.Object@corpus, x, strucs)
+    strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = DT[["cpos_left"]], registry = registry())
+    str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
     DT[, eval(x) := str]
   }
   

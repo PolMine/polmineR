@@ -155,7 +155,7 @@ setMethod("context", "partition", function(
     setnames(ctxt@stat, "N", "count_coi")
     
     for ( i in 1L:length(p_attribute) ){
-      newColumn <- CQI$id2str(.Object@corpus, p_attribute[i], ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]])
+      newColumn <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]], registry = registry())
       newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
       ctxt@stat[, eval(p_attribute[i]) := newColumnNative]
     }
@@ -201,17 +201,17 @@ setMethod("context", "partition", function(
     } else {
       function(set, left, right, corpus, s_attribute){
         stop("NOT Implemented at present")
-        queryStruc <- CQI$cpos2struc(corpus, s_attribute, set[1])
-        maxStruc <- CQI$attribute_size(corpus, s_attribute, type = "s")
+        queryStruc <- cl_cpos2struc(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())
+        maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
         # get left min cpos
         leftStruc <- queryStruc - left
         leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
-        leftCposMin <- CQI$struc2cpos(corpus, s_attribute, leftStruc)[1]
+        leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
         cposLeft <- c(leftCposMin:(set[1]-1))
         # get right max cpos
         rightStruc <- queryStruc + right
         rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
-        rightCposMax <- CQI$struc2cpos(corpus, s_attribute, rightStruc)[2]
+        rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
         cposRight <- c((set[2] + 1):rightCposMax)
         # handing it back
         list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
@@ -222,8 +222,8 @@ setMethod("context", "partition", function(
   } else if (is.character(left) && is.character(right)){
     function(set, left, right, corpus, s_attribute){
       stop("NOT Implemented at present")
-      cposLeft <- c((CQI$cpos2lbound(corpus, s_attribute, set[1])):(set[1] - 1L))
-      cposRight <- c((set[2] + 1L):(CQI$cpos2rbound(corpus, s_attribute, set[1])))
+      cposLeft <- c((cl_cpos2lbound(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())):(set[1] - 1L))
+      cposRight <- c((set[2] + 1L):(cl_cpos2rbound(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())))
       list(
         left = cposLeft,
         node = c(set[1]:set[2]),
@@ -275,7 +275,10 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, v
   retval <- new("context_bundle", query = query, p_attribute = p_attribute)
   if (!is.numeric(positivelist)){
     corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
-    positivelist <- unlist(lapply(positivelist, function(x) CQI$regex2id(corpus, p_attribute, x)))
+    positivelist <- unlist(lapply(
+      positivelist,
+      function(x) cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = x, registry = registry()))
+      )
   }
   
   retval@objects <- sapply(
@@ -323,7 +326,7 @@ setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, com
       verbose = FALSE, check = check
     )
     newObject@size <- nrow(hits)
-    hits <- cbind(hits, CQI$cpos2struc(newObject@corpus, s_attribute, hits[,1]))
+    hits <- cbind(hits, cl_cpos2struc(corpus = newObject@corpus, s_attribute = s_attribute, cpos = hits[,1], registry = registry()))
     newObject@cpos <- .make_context_dt(hits, left = newObject@left, right = newObject@right, corpus = newObject@corpus, s_attribute = sAttr)
   }
   newObject

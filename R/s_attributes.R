@@ -61,15 +61,16 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
-  if (!.Object@corpus %in% CQI$list_corpora()) stop("corpus name provided not available")
+  if (!.Object@corpus %in% .list_corpora()) stop("corpus name provided not available")
   
   if (is.null(s_attribute)){
     return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
   } else {
     if (length(s_attribute) == 1){
-      y <- CQI$struc2str(
-        .Object@corpus, s_attribute,
-        0L:(CQI$attribute_size(.Object@corpus, s_attribute, type = "s") - 1L)
+      y <- cl_struc2str(
+        corpus = .Object@corpus, s_attribute = s_attribute,
+        struc = 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L),
+        registry = registry()
       )
       if (!is.null(regex)) y <- grep(regex, y, value = TRUE)
       if (unique) y <- unique(y)
@@ -80,7 +81,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       y <- lapply(
         s_attribute,
         function(x) {
-          retval <- CQI$struc2str(.Object@corpus, x, 0L:(CQI$attribute_size(.Object@corpus, x, "s") - 1L))
+          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = x, attribute_type = "s", registry = registry()) - 1L), registry = registry())
           Encoding(retval) <- .Object@encoding
           as.nativeEnc(retval, from = .Object@encoding)
         })
@@ -101,7 +102,7 @@ setMethod(
   function (.Object, s_attribute = NULL, unique = TRUE, ...) {
     if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
     if (is.null(s_attribute)){
-      return( CQI$attributes(.Object@corpus, "s") )
+      return( registry_get_s_attributes(.Object@corpus) )
     } else {
       if (length(s_attribute) == 1L){
         # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
@@ -109,20 +110,20 @@ setMethod(
         xml_is_flat <- if (length(.Object@xml) > 0) if (.Object@xml == "flat") TRUE else FALSE else FALSE
         s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
         if (xml_is_flat && s_attr_strucs){
-          len1 <- CQI$attribute_size(.Object@corpus, .Object@s_attribute_strucs)
-          len2 <- CQI$attribute_size(.Object@corpus, s_attribute)
+          len1 <- cl_attribute_size(corpus = .Object@corpus, attribute = .Object@s_attribute_strucs, attribute_type = "s", registry = registry())
+          len2 <- cl_attribute_size(corpus = .Object@corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
           if (len1 != len2){
             stop("XML is stated to be flat, but s_attribute_strucs hat length ", len1, " and s_attribute length ", len2)
           }
-          retval <- CQI$struc2str(.Object@corpus, s_attribute, .Object@strucs)
+          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = .Object@strucs, registry = registry())
           if (unique) retval <- unique(retval)
         } else {
           cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-          strucs <- CQI$cpos2struc(.Object@corpus, s_attribute, cposVector)
+          strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute, cpos = cposVector, registry = registry())
           # filtering out negative struc values is necessary, because RcppCWB
           # will complain about negative values
           strucs <- strucs[which(strucs > 0)]
-          retval <- CQI$struc2str(.Object@corpus, s_attribute, strucs)
+          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
           if (unique) retval <- unique(retval)
         }
         Encoding(retval) <- .Object@encoding
@@ -136,7 +137,7 @@ setMethod(
               s_attribute,
               # USE.NAMES = TRUE,
               function(x) { 
-                tmp <- CQI$struc2str(.Object@corpus, x, .Object@strucs)
+                tmp <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = .Object@strucs, registry = registry())
                 Encoding(tmp) <- .Object@encoding
                 tmp <- as.nativeEnc(tmp, from = .Object@encoding)
                 Encoding(tmp) <- localeToCharset()[1]
@@ -152,7 +153,7 @@ setMethod(
               s_attribute,
               USE.NAMES = TRUE,
               function(x) {
-                tmp <- CQI$struc2str(.Object@corpus, x, CQI$cpos2struc(.Object@corpus, x, .Object@cpos[,1]))
+                tmp <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry()), registry = registry())
                 Encoding(tmp) <- .Object@encoding
                 as.nativeEnc(tmp, from = .Object@encoding)
                 Encoding(tmp) <- localeToCharset()[1]

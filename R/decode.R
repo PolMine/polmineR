@@ -60,13 +60,13 @@ setAs(from = "character", to = "data.table", def = function(from){
   )
   names(p_attribute_list) <- p_attributes(from)
   
-  max_cpos <- CQI$attribute_size(from, "word", type = "p") - 1L
+  max_cpos <- cl_attribute_size(corpus = from, attribute = "word", attribute_type = "p", registry = registry()) - 1L
   s_attribute_list <- lapply(
     s_attributes(from),
     function(x){
       message("decoding s-attribute:", x)
-      struc <- CQI$cpos2struc(from, x, 0L:max_cpos)
-      str <- CQI$struc2str(from, x, struc)
+      struc <- cl_cpos2struc(corpus = from, s_attribute = x, cpos = 0L:max_cpos, registry = registry())
+      str <- cl_struc2str(corpus = from, s_attribute = x, struc = struc, registry = registry())
       Encoding(str) <- registry_get_encoding(from)
       as.nativeEnc(str, from = registry_get_encoding(from))
     }
@@ -158,7 +158,7 @@ setMethod("decode", "character", function(.Object, to = "data.table", ...){
   
   stopifnot(
     length(.Object) == 1L, # cannot process more than one corpus
-    .Object %in% CQI$list_corpora() # make that corpus is available
+    .Object %in% .list_corpora() # make that corpus is available
   )
   
   as(.Object, to)

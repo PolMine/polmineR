@@ -140,7 +140,7 @@ setMethod("features", "partition", function(
   # if y is a character vector, create a partition from corpus
   if (is.character(y)){
     stopifnot(length(y) == 1) # can only compare to exactly one 
-    stopifnot(y %in% CQI$list_corpora()) # make sure that it is a corpus that is available
+    stopifnot(y %in% .list_corpora()) # make sure that it is a corpus that is available
     if (y == x@corpus && included == FALSE){
       included <- TRUE
       warning("x is derived from corpus y, but included is FALSE - setting to TRUE")

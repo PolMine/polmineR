@@ -9,6 +9,11 @@ NULL
 #' @importFrom tm as.TermDocumentMatrix as.DocumentTermMatrix
 #' @importFrom data.table data.table setorderv dcast setnames setkeyv setcolorder as.data.table rbindlist setkey dcast.data.table
 #' @importFrom Matrix rowSums colSums
+#' @importFrom RcppCWB cqp_is_initialized cqp_initialize
+#' @importFrom R6 R6Class
+#' @importFrom RcppCWB cl_attribute_size cl_lexicon_size cl_cpos2struc cl_cpos2id cl_struc2cpos cl_id2str cl_struc2str
+#' @importFrom RcppCWB cl_id2str cl_struc2str cl_regex2id cl_str2id cl_cpos2str cl_id2freq cl_id2cpos cl_cpos2lbound cl_cpos2rbound
+#' @importFrom RcppCWB cqp_query cqp_dump_subcorpus
 NULL
 
 # defined globaly to avoid R CMD check errors, as recommende by vignette in data.table package

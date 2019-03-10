@@ -146,10 +146,11 @@ setMethod("read", "regions", function(.Object, meta = NULL){
         setNames(meta, meta),
         function(M){
           as.nativeEnc(
-            CQI$struc2str(
-              .Object@corpus,
-              M,
-              CQI$cpos2struc(.Object@corpus, M, .BY[[1]])
+            cl_struc2str(
+              corpus = .Object@corpus,
+              s_attribute = M,
+              struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = M, cpos = .BY[[1]], registry = registry()),
+              registry = registry()
             ), from = .Object@encoding
             )
         }

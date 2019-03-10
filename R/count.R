@@ -124,7 +124,7 @@ setMethod("count", "slice", function(
           if (is.null(cposHits)) return( NULL )
           hitsString <- apply(
             cposHits, 1,
-            function(x) paste(CQI$cpos2str(.Object@corpus, p_attribute, x[1]:x[2]), collapse = ' ')
+            function(x) paste(cl_cpos2str(corpus = .Object@corpus, p_attribute = p_attribute, cpos = x[1]:x[2], registry = registry()), collapse = ' ')
           )
           result <- table(hitsString)
           dt <- data.table(query = x, match = names(result), count = as.vector(unname(result)))
@@ -165,7 +165,7 @@ setMethod("count", "slice", function(
       setnames(TF, old = c("V1", "V2"), new = c(pAttr_id, "count"))
     } else {
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-      idList <- lapply(p_attribute, function(p) CQI$cpos2id(.Object@corpus, p, cpos))
+      idList <- lapply(p_attribute, function(p) cl_cpos2id(corpus = .Object@corpus, p_attribute = p, cpos = cpos, registry = registry()))
       names(idList) <- paste(p_attribute, "id", sep = "_")
       ID <- data.table::as.data.table(idList)
       setkeyv(ID, cols = names(idList))
@@ -176,8 +176,8 @@ setMethod("count", "slice", function(
       dummy <- lapply(
         1L:length(p_attribute),
         function(i){
-          str <- as.nativeEnc(CQI$id2str(.Object@corpus, p_attribute[i], TF[[pAttr_id[i]]]), from = .Object@encoding)
-          TF[, eval(p_attribute[i]) := str , with = TRUE] 
+          str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = TF[[pAttr_id[i]]], registry = registry())
+          TF[, eval(p_attribute[i]) := as.nativeEnc(str, from = .Object@encoding) , with = TRUE] 
         })
       setcolorder(TF, neworder = c(p_attribute, pAttr_id, "count"))
     } else {
@@ -249,13 +249,13 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     DT <- rbindlist(cpos_list)
     rm(cpos_list)
     if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
-    DT[["id"]] <- CQI$cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]])
+    DT[["id"]] <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
     if (verbose) message("... performing count")
     CNT <- DT[,.N, by = c("name", "id")]
     rm(DT)
     setnames(CNT, old = "N", new = "count")
     if (verbose) message("... adding decoded p-attribute")
-    CNT[[p_attribute]] <- CQI$id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]])
+    CNT[[p_attribute]] <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name")
     rm(CNT)
@@ -290,7 +290,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  stopifnot(.Object %in% CQI$list_corpora())
+  stopifnot(.Object %in% .list_corpora())
   if (is.null(query)){
     if (length(p_attribute) == 1L){
       cnt_file <- file.path(
@@ -309,7 +309,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
         setkeyv(TF, paste(p_attribute, "id", sep = "_"))
         setcolorder(TF, c(paste(p_attribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.nativeEnc(CQI$id2str(.Object, p_attribute, 0L:(nrow(TF) - 1L)), from = registry_get_encoding(.Object)), with = TRUE]
+        TF[, "token" := as.nativeEnc(cl_id2str(corpus = .Object, p_attribute = p_attribute, id = 0L:(nrow(TF) - 1L), registry = registry()), from = registry_get_encoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = p_attribute)
         setkeyv(TF, p_attribute)
@@ -321,9 +321,9 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
       tokenStreamDT <- data.table::as.data.table(
         li <- lapply(
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
-          function(pAttr){
-            .message("getting token stream for p-attribute: ", pAttr, verbose = verbose)
-            CQI$cpos2id(.Object, pAttr, 0L:(size(.Object) - 1L))
+          function(p_attr){
+            .message("getting token stream for p-attribute: ", p_attr, verbose = verbose)
+            cl_cpos2id(corpus = .Object, p_attribute = p_attr, 0L:(size(.Object) - 1L), registry = registry())
           }
         )
       )
@@ -333,7 +333,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
       if (decode){
         for (pAttr in p_attribute){
           .message("decode p-attribute: ", pAttr, verbose = verbose)
-          TF[, eval(pAttr) := as.nativeEnc(CQI$id2str(.Object, pAttr, TF[[paste(pAttr, "id", sep = "_")]]), from = registry_get_encoding(.Object)), with = TRUE]
+          TF[, eval(pAttr) := as.nativeEnc(cl_id2str(corpus = .Object, p_attribute = pAttr, id = TF[[paste(pAttr, "id", sep = "_")]], registry = registry()), from = registry_get_encoding(.Object)), with = TRUE]
         }
         setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
       }
@@ -349,8 +349,8 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
     )
     return(y)
   } else {
-    stopifnot(.Object %in% CQI$list_corpora())
-    total <- CQI$attribute_size(.Object, p_attribute, type = "p")
+    stopifnot(.Object %in% .list_corpora())
+    total <- cl_attribute_size(corpus = .Object, attribute = p_attribute, attribute_type = "p", registry = registry())
     if (class(cqp) == "function") cqp <- cqp(query)
     if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
     if (cqp == FALSE){
@@ -358,9 +358,9 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
       count <- sapply(
         query,
         function(query){
-          query_id <- CQI$str2id(.Object, p_attribute, query)
+          query_id <- cl_str2id(corpus = .Object, p_attribute = p_attribute, str = query, registry = registry())
           # if there is no id for query, query_id will be -5
-          if (query_id >= 0) CQI$id2freq(.Object, p_attribute, query_id) else 0
+          if (query_id >= 0) cl_id2freq(corpus = .Object, p_attribute = p_attribute, id = query_id, registry = registry()) else 0
         }
       )
       return(data.table(query = query, count = count, freq = count / total))
@@ -396,7 +396,7 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  ids <- CQI$cpos2id(corpus, p_attribute, .Object)
+  ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
   count <- tabulate(ids)
   TF <- data.table(
     id = 0:length(count),

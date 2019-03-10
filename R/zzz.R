@@ -1,16 +1,7 @@
 .onLoad <- function (libname, pkgname) {
   
-  # polmineR:::CQI - assign it to package namespace
-  CQI <- switch(
-    Sys.getenv("POLMINER_INTERFACE"),
-    "cqpserver" = CQI.cqpserver$new(),
-    "RcppCWB" = CQI.RcppCWB$new(),
-    CQI.RcppCWB$new()
-  )
-  assign("CQI", CQI, envir = parent.env(environment()))
 
   # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
-  # this needs to be done after assigning CQI, as registry_reset will call set_template
   if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
     pkg_registry_dir <- file.path(libname, pkgname, "extdata", "cwb", "registry")
     Sys.setenv("CORPUS_REGISTRY" = pkg_registry_dir)
@@ -37,7 +28,7 @@
   )
   
   # rcqp is not always accessible here - set_templates would not work with perl interface
-  if (class(CQI)[1] == "CQI.RcppCWB") set_template()
+  set_template()
   NULL
 }
 

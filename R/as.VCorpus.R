@@ -42,7 +42,7 @@ setMethod("as.VCorpus", "partition_bundle", function(x){
 setAs(from = "partition_bundle", to = "VCorpus", def = function(from){
   s_attr_lengths <- sapply(
     s_attributes(from@objects[[1]]@corpus),
-    function(s_attr) CQI$attribute_size(from@objects[[1]]@corpus, s_attr, type = "s")
+    function(s_attr) cl_attribute_size(corpus = from@objects[[1]]@corpus, attribute = s_attr, attribute_type = "s", registry = registry())
   )
   
   if (length(unique(s_attr_lengths)) == length(s_attr_lengths)){

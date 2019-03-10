@@ -10,7 +10,8 @@ test_that(
       length(sAttributes("REUTERS", "id")), dim(dtm)[1]
     )
     expect_equal(
-      polmineR:::CQI$lexicon_size("REUTERS", "word"), dim(dtm)[2]
+      RcppCWB::cl_lexicon_size(corpus = "REUTERS", p_attribute = "word", registry = registry()),
+      dim(dtm)[2]
     )
     expect_equal(sum(dtm[,"is"]), count("REUTERS", "is")[["count"]])
   }

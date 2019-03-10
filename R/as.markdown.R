@@ -43,12 +43,17 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   corpusEncoding <- registry_get_encoding(corpus)
   
   # generate metainformation
-  documentStruc <- CQI$cpos2struc(corpus, get_template(corpus)[["document"]][["sAttribute"]], .Object[1])
+  documentStruc <- cl_cpos2struc(
+    corpus = corpus,
+    s_attribute = get_template(corpus)[["document"]][["sAttribute"]],
+    cpos = .Object[1],
+    registry = registry()
+  )
 
   metaInformation <- sapply(
     meta,
     function(x) {
-      retval <- CQI$struc2str(corpus, x, documentStruc)
+      retval <- cl_struc2str(corpus = corpus, s_attribute = x, struc = documentStruc, registry = registry())
       Encoding(retval) <- corpusEncoding
       as.nativeEnc(retval, from = corpusEncoding)
     })
@@ -63,9 +68,9 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
     )
   
   cposSeries <- .Object[1]:.Object[2]
-  pStrucs <- CQI$cpos2struc(corpus, get_template(corpus)[["paragraphs"]][["sAttribute"]], cposSeries)
+  pStrucs <- cl_cpos2struc(corpus = corpus, s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], cpos = cposSeries, registry = registry())
   chunks <- split(cposSeries, pStrucs)
-  pTypes <- CQI$struc2str(corpus, get_template(corpus)[["paragraphs"]][["sAttribute"]], as.numeric(names(chunks)))
+  pTypes <- cl_struc2str(corpus = corpus, s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], struc = as.numeric(names(chunks)), registry = registry())
   bodyList <- Map(
     function(pType, chunk){
       tokens <- get_token_stream(
@@ -155,7 +160,7 @@ setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, templa
     metaChange <- TRUE
   }
   
-  type <- CQI$struc2str(.Object@corpus, template[["speech"]][["sAttribute"]], .Object@strucs)
+  type <- cl_struc2str(corpus = .Object@corpus, s_attribute = template[["speech"]][["sAttribute"]], struc = .Object@strucs, registry = registry())
   
   if (is.numeric(cutoff)){
     beyondCutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)

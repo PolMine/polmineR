@@ -32,20 +32,18 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
   
   Sys.setenv(CORPUS_REGISTRY = registryDir)
 
-  if (class(CQI)[1] == "CQI.RcppCWB"){
-    if (!cqp_is_initialized()){
-      .message("initializing CQP", verbose = verbose)
-      cqp_initialize(registry = registryDir)
-    } else {
-      cqp_reset_registry(registry = registryDir)
-    }
-    if (cqp_is_initialized() && (cqp_get_registry() == registryDir)){
-      .message("status: OK", verbose = verbose)
-    } else {
-      .message("status: FAIL", verbose = verbose)
-    }
-  } 
-
+  if (!cqp_is_initialized()){
+    .message("initializing CQP", verbose = verbose)
+    cqp_initialize(registry = registryDir)
+  } else {
+    cqp_reset_registry(registry = registryDir)
+  }
+  if (cqp_is_initialized() && (cqp_get_registry() == registryDir)){
+    .message("status: OK", verbose = verbose)
+  } else {
+    .message("status: FAIL", verbose = verbose)
+  }
+  
   set_template()
   invisible(oldRegistry)
 }

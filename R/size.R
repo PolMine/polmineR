@@ -36,21 +36,22 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (is.null(s_attribute)){
-    return( CQI$attribute_size(x, "word", type = "p") )
+    return( cl_attribute_size(corpus = x, attribute = "word", attribute_type = "p", registry = registry()) )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
-        function(sAttr){
-          sAttrDecoded <- CQI$struc2str(x, sAttr, 0:(CQI$attribute_size(x, sAttr, type = "s") - 1))
-          as.nativeEnc(sAttrDecoded, from = registry_get_encoding(x))
+        function(s_attr){
+          s_attr_max <- cl_attribute_size(corpus = x, attribute = s_attr, attribute_type = "s", registry = registry())
+          s_attr_vals <- cl_struc2str(corpus = x, s_attribute = s_attr, struc = 0L:(s_attr_max - 1L), registry = registry())
+          as.nativeEnc(s_attr_vals, from = registry_get_encoding(x))
         }
       )
     )
     cpos_matrix <- RcppCWB::get_region_matrix(
       corpus = x, s_attribute = s_attribute[1],
-      strucs = 0L:(CQI$attribute_size(x, s_attribute[1], "s") - 1L),
+      strucs = 0L:(cl_attribute_size(corpus = x, attribute = s_attribute[1], attribute_type = "s", registry = registry()) - 1L),
       registry = Sys.getenv("CORPUS_REGISTRY")
     )
     
@@ -75,7 +76,7 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
     dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
-        function(sAttr) as.nativeEnc(CQI$struc2str(x@corpus, sAttr, x@strucs), from = x@encoding)
+        function(sAttr) as.nativeEnc(cl_struc2str(corpus = x@corpus, s_attribute = sAttr, struc = x@strucs, registry = registry()), from = x@encoding)
       )
     )
     dt[, size := x@cpos[,2] - x@cpos[,1] + 1L]
@@ -111,4 +112,4 @@ setMethod("size", "TermDocumentMatrix", function(x){
 setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )
 
 #' @rdname size-method
-setMethod("size", "corpus", function(x) CQI$attribute_size(corpus = x@corpus, attribute = "word", type = "p"))
+setMethod("size", "corpus", function(x) cl_attribute_size(corpus = x@corpus, attribute = "word", attribute_type = "p", registry = registry()))

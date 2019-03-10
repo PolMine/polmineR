@@ -207,9 +207,10 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   
   DT <- copy(.Object@cpos) # do not accidentily store things
   setorderv(DT, cols = c("hit_no", "cpos"))
-  decoded_pAttr <- CQI$id2str(
-    .Object@corpus, .Object@p_attribute[1],
-    DT[[paste(.Object@p_attribute[1], "id", sep = "_")]]
+  decoded_pAttr <- cl_id2str(
+    corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
+    id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
+    registry = registry()
   )
   decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, from = .Object@encoding)
   DT[, .Object@p_attribute[1] := decoded_pAttr2, with = TRUE]
@@ -294,7 +295,7 @@ setMethod("kwic", "character", function(
     message("sorry, not hits");
     return(invisible(NULL))
   }
-  cpos_max <- CQI$attribute_size(.Object, p_attribute, type = "p")
+  cpos_max <- cl_attribute_size(corpus = .Object, attribute = p_attribute, attribute_type = "p", registry = registry())
   cposList <- apply(
     hits, 1,
     function(row){
@@ -323,7 +324,7 @@ setMethod("kwic", "character", function(
           )
       )))
   )
-  DT[[paste(p_attribute, "id", sep = "_")]] <- CQI$cpos2id(.Object, p_attribute, DT[["cpos"]])
+  DT[[paste(p_attribute, "id", sep = "_")]] <- cl_cpos2id(corpus = .Object, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
   
   ctxt <- new(
     Class = "context",

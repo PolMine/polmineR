@@ -53,7 +53,7 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = TRUE){
   .message('generating corpus positions', verbose = verbose)
   cpos <- data.matrix(t(data.frame(lapply(
     y@strucs,
-    function(s) CQI$struc2cpos(y@corpus, y@s_attribute_strucs, s) )
+    function(s) cl_struc2cpos(corpus = y@corpus, s_attribute = y@s_attribute_strucs, struc = s, registry = registry()) )
   )))
   rownames(cpos) <- NULL
   y@cpos <- cpos
@@ -171,8 +171,8 @@ setMethod("partition_bundle", "character", function(
     corpus = .Object,
     encoding = registry_get_encoding(.Object)
   )
-  strucs <- 0L:(CQI$attribute_size(.Object, s_attribute, "s") - 1L)
-  names(strucs) <- CQI$struc2str(.Object, s_attribute, strucs)
+  strucs <- 0L:(cl_attribute_size(corpus = .Object, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L)
+  names(strucs) <- cl_struc2str(corpus = .Object, s_attribute = s_attribute, struc = strucs, registry = registry())
   if (!is.null(values)) {
     valuesToKeep <- values[which(values %in% names(strucs))]
     strucs <- strucs[valuesToKeep]
@@ -203,7 +203,7 @@ setMethod("partition_bundle", "character", function(
       s_attributes = setNames(list(names(cposList)[i]), s_attribute),
       s_attribute_strucs = s_attribute,
       xml = xml,
-      strucs = CQI$cpos2struc(.Object, s_attribute, cposList[[i]][,1])
+      strucs = cl_cpos2struc(corpus = .Object, s_attribute = s_attribute, cpos = cposList[[i]][,1], registry = registry())
     )
   }
   bundle@objects <- blapply(
@@ -248,7 +248,7 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
   CNT <- DT[, .N, by = c("hit_no", paste(.Object@p_attribute, "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
-    CNT[[p_attr]] <- CQI$id2str(corpus = .Object@corpus, p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]])
+    CNT[[p_attr]] <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]], registry = registry())
   }
   count_list <- split(CNT, by = "hit_no")
   

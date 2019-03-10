@@ -61,10 +61,10 @@ setMethod("corpus", "bundle", function(.Object){
 #' @rdname corpus-method
 setMethod("corpus", "missing", function(){
   if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
-    corpora <- CQI$list_corpora()
+    corpora <- .list_corpora()
     y <- data.frame(
       corpus = corpora,
-      size = unname(sapply(corpora,function(x) CQI$attribute_size(x, CQI$attributes(x, "p")[1], type = "p"))),
+      size = unname(sapply(corpora,function(x) cl_attribute_size(corpus = x, attribute = registry_get_p_attributes(x)[1], attribute_type = "p", registry = registry()))),
       template = unname(sapply(corpora, function(x) x %in% names(getOption("polmineR.templates")))),
       stringsAsFactors = FALSE
     )
@@ -332,7 +332,7 @@ Corpus <- R6Class(
 
 .df_add_s_attributes <- function(x, df, s_attr){
   for (s in s_attr){
-    df[[s]] <- as.vector(CQI$struc2str(x@corpus, s, df[["struc"]]))
+    df[[s]] <- as.vector(cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry()))
     Encoding(df[[s]]) <- x@encoding
     if (x@encoding != localeToCharset()[1]){
       df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
@@ -342,7 +342,7 @@ Corpus <- R6Class(
 }
 #' @noRd
 .s_attributes_stop_if_nested <- function(corpus, s_attr){
-  max_attr <- unique(sapply(s_attr, function(s) CQI$attribute_size(corpus, s, type = "s")))
+  max_attr <- unique(sapply(s_attr, function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())))
   if (length(max_attr) != 1){
     stop(
       sprintf("Differing attribute size of s-attributes detected (%s), ", paste(s_attr, collapse = "/")),
@@ -417,7 +417,7 @@ setMethod("subset", "subcorpus", function(x, subset){
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
 
-  if (max_attr != CQI$attribute_size(x@corpus, x@s_attribute_strucs, type = "s")){
+  if (max_attr != cl_attribute_size(corpus = x@corpus, attribute = x@s_attribute_strucs, attribute_type = "s", registry = registry())){
     stop("New s-attributes are nested in existing s-attribute defining subcorpus. ",
          "The method does not (yet) work for nested XML / nested structural attributes.")
   }

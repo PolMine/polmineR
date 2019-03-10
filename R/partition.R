@@ -169,11 +169,11 @@ is.partition <- function(x) "partition" %in% is(x)
     # Interestingly, the for-loop is more effective than a vectorized version
     # an Rcpp-implementation of struc2str is not faster
     # potential for optimization: struc2str
-    maxAttr <- CQI$attribute_size(.Object@corpus, .Object@s_attribute_strucs, type = "s")
+    maxAttr <- cl_attribute_size(corpus = .Object@corpus, attribute = .Object@s_attribute_strucs, attribute_type = "s", registry = registry())
     meta <- data.frame(struc = 0L:(maxAttr - 1L), select = rep(0L, times = maxAttr))
     if (length(.Object@s_attributes) > 0) {
       for (sAttr in names(.Object@s_attributes)){
-        meta[,2] <- as.vector(CQI$struc2str(.Object@corpus, sAttr, meta[,1]))
+        meta[,2] <- as.vector(cl_struc2str(corpus = .Object@corpus, s_attribute = sAttr, struc = meta[,1], registry = registry()))
         Encoding(meta[,2]) <- .Object@encoding
         if (regex == FALSE) {
           meta <- meta[which(meta[,2] %in% .Object@s_attributes[[sAttr]]),]
@@ -199,8 +199,8 @@ is.partition <- function(x) "partition" %in% is(x)
     }
   } else if (xml == "nested"){
     sAttrNames <- rev(names(.Object@s_attributes))
-    strucs <- 0L:(CQI$attribute_size(.Object@corpus, sAttrNames[1], type = "s") - 1L)
-    sAttrValues <- CQI$struc2str(.Object@corpus, sAttrNames[1], strucs)
+    strucs <- 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = sAttrNames[1], attribute_type = "s", registry = registry()) - 1L)
+    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[1], struc = strucs, registry = registry())
     Encoding(sAttrValues) <- .Object@encoding
     if (regex == FALSE) {
       strucs <- strucs[ which(sAttrValues %in% .Object@s_attributes[[ sAttrNames[1] ]]) ]
@@ -217,14 +217,14 @@ is.partition <- function(x) "partition" %in% is(x)
       )
     } else {
       cpos <- matrix(
-        unlist(lapply(strucs, function(x) CQI$struc2cpos(.Object@corpus, sAttrNames[1], x))),
+        unlist(lapply(strucs, function(x) cl_struc2cpos(corpus = .Object@corpus, s_attribute = sAttrNames[1], struc = x, registry = registry()))),
         byrow = TRUE, ncol = 2L
       )
     }
     
     if (length(sAttrNames) > 1){
       for (i in 2L:length(sAttrNames)){
-        sAttrValues <- CQI$struc2str(.Object@corpus, sAttrNames[i], CQI$cpos2struc(.Object@corpus, sAttrNames[i], cpos[,1]))
+        sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttrNames[i], cpos = cpos[,1], registry = registry()), registry = registry())
         Encoding(sAttrValues) <- .Object@encoding
         if (regex) {
           hits <- unique(unlist(lapply(.Object@s_attributes[[ sAttrNames[i] ]], function(x) grep(x, sAttrValues))))
@@ -345,7 +345,7 @@ setMethod("partition", "character", function(
     dot_list[["pAttribute"]] <- NULL
   }
   
-  if (!.Object %in% CQI$list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
+  if (!.Object %in% .list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
   if (length(dot_list) != 0 && is.null(def)) def <- dot_list
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
   assign(
@@ -440,7 +440,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   .message('getting cpos and strucs', verbose = verbose)
   
   if (.Object@xml == "flat") {
-    sAttrValues <- CQI$struc2str(.Object@corpus, names(def), .Object@strucs)
+    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = .Object@strucs, registry = registry())
     Encoding(sAttrValues) <- newPartition@encoding
     hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
     newCposMatrix <- .Object@cpos[hits,]
@@ -452,8 +452,8 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     newPartition@strucs <- .Object@strucs[hits]
   } else if (.Object@xml == "nested") {
     cposVec <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-    newStrucs <- CQI$cpos2struc(.Object@corpus, names(def)[1], cposVec)
-    sAttrValues <- CQI$struc2str(.Object@corpus, names(def), newStrucs)
+    newStrucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = names(def)[1], cpos = cposVec, registry = registry())
+    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = newStrucs, registry = registry())
     Encoding(sAttrValues) <- .Object@encoding
     hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
     newPartition@strucs <- unique(newStrucs[hits])
@@ -547,7 +547,7 @@ setMethod("partition", "context", function(.Object, node = TRUE){
   
   setnames(y@stat, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
-    y@stat[[p_attr]] <- CQI$id2str(corpus = .Object@corpus, p_attribute = p_attr, id = y@stat[[paste(p_attr, "id", sep = "_")]])
+    y@stat[[p_attr]] <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = y@stat[[paste(p_attr, "id", sep = "_")]], registry = registry())
   }
   y
 })

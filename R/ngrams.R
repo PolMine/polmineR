@@ -71,7 +71,7 @@ setMethod("ngrams", "CorpusOrSubcorpus", function(.Object, n = 2, p_attribute = 
     dummy <- lapply(
       1L:(n * length(p_attribute)),
       function(i){
-        str <- as.nativeEnc(CQI$id2str(corpus(.Object), p_attrs_cols[i], TF[[i]]), from = encoding(.Object))
+        str <- as.nativeEnc(cl_id2str(corpus = corpus(.Object), p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
         TF[, eval(paste(token_no[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
       })
     

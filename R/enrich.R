@@ -64,10 +64,10 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, table = FALSE
       s_attributes,
       function(metadat){
         cposToGet <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
-        strucs <- CQI$cpos2struc(.Object@corpus, metadat, cposToGet)
+        strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = metadat, cpos = cposToGet, registry = registry())
         strucs_invalid <- which(strucs < 0)
         if (length(strucs_invalid) > 0) strucs[strucs_invalid] <- 0
-        struc_values <- CQI$struc2str(.Object@corpus, metadat, strucs)
+        struc_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = metadat, struc = strucs, registry = registry())
         if (length(strucs_invalid) > 0) struc_values[strucs_invalid] <- ""
         as.nativeEnc(struc_values, from = .Object@encoding)
       }
@@ -111,11 +111,11 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (!is.null(s_attribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
-    stopifnot( all(s_attribute %in% CQI$attributes(.Object@corpus, type = "s")) )
+    stopifnot( all(s_attribute %in% registry_get_s_attributes(.Object@corpus)) )
     
     for (sAttr in s_attribute){
       .message("get struc for s-attribute:", sAttr, verbose = verbose)
-      strucs <- CQI$cpos2struc(.Object@corpus, sAttr, .Object@cpos[["cpos"]])
+      strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttr, cpos = .Object@cpos[["cpos"]], registry = registry())
       if (decode == FALSE){
         colname_struc <- paste(sAttr, "int", sep = "_")
         if (colname_struc %in% colnames(.Object@cpos)){
@@ -128,7 +128,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
           .message("already present, skipping assignment of column:", sAttr, verbose = verbose)
         } else {
           .message("get string for s-attribute:", sAttr, verbose = verbose)
-          strings <- CQI$struc2str(.Object@corpus, sAttr, strucs)
+          strings <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttr, struc = strucs, registry = registry())
           .Object@cpos[[sAttr]] <- as.nativeEnc(strings, from = .Object@encoding)
         }
       }
@@ -137,7 +137,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (!is.null(p_attribute)){
     # check that all p-attributes are available
     .message("checking that all p-attributes are available", verbose = verbose)
-    stopifnot( all(p_attribute %in% CQI$attributes(.Object@corpus, type = "p")) )
+    stopifnot( all(p_attribute %in% registry_get_p_attributes(.Object@corpus)) )
     
     # add ids
     for (pAttr in p_attribute){
@@ -146,7 +146,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
         .message("already present - skip getting ids for p-attribute:", pAttr, verbose = verbose)
       } else {
         .message("getting token id for p-attribute:", pAttr, verbose = verbose)
-        ids <- CQI$cpos2id(.Object@corpus, pAttr, .Object@cpos[["cpos"]])
+        ids <- cl_cpos2id(corpus = .Object@corpus, p_attribute = pAttr, cpos = .Object@cpos[["cpos"]],  registry = registry())
         .Object@cpos[[colname]] <- ids
       }
     }
@@ -158,7 +158,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
           .message("already present - skip getting strings for p-attribute:", pAttr, verbose = verbose)
         } else {
           .message("decode p-attribute:", pAttr, verbose = verbose)
-          decoded <- CQI$id2str(.Object@corpus, pAttr, .Object@cpos[[paste(pAttr, "id", sep = "_")]])
+          decoded <- cl_id2str(corpus = .Object@corpus, p_attribute = pAttr, id = .Object@cpos[[paste(pAttr, "id", sep = "_")]], registry = registry())
           .Object@cpos[[pAttr]] <- as.nativeEnc(decoded, from = .Object@encoding)
           .Object@cpos[[paste(pAttr, "id", sep = "_")]] <- NULL
         }

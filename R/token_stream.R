@@ -34,9 +34,9 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
   
   if (decode){
-    tokens <- CQI$cpos2str(corpus, p_attribute, .Object)
+    tokens <- cl_cpos2str(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
   } else {
-    return( CQI$cpos2id(corpus, p_attribute, .Object) )
+    return( cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry()) )
   }
   
   if (!is.null(encoding)){
@@ -46,7 +46,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
     if (beautify){
-      pos <- CQI$cpos2str(corpus, "pos", .Object)
+      pos <- cl_cpos2str(corpus = corpus, p_attribute = "pos", cpos = .Object, registry = registry())
       whitespace <- rep(collapse, times = length(.Object))
       whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
       whitespace[grep("\\)", tokens, perl = TRUE)] <- ""
