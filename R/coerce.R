@@ -5,7 +5,11 @@ setAs(from = "partition", to = "subcorpus", def = function(from){
     # slots inherited from class 'corpus'
     corpus = from@corpus,
     data_dir = character(),
-    type = character(), # slot type does not exist in 'partition' class
+    type = if (grepl("^.*?_partition$", class(from))){
+        as.vector(gsub("^(.*?)_partition$", "\\1", class(from)))
+      } else {
+        character()
+      }, # slot type does not exist in 'partition' class
     encoding = from@encoding,
     
     # slots inherited from class 'regions'

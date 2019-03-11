@@ -386,6 +386,7 @@ setMethod("subset", "corpus", function(x, subset){
     cpos = regions,
     strucs = dt_min[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
+    s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]])),
     xml = "flat"
   )
   y@size <- size(y)
