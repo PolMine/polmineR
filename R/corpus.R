@@ -329,20 +329,6 @@ Corpus <- R6Class(
 
 
 
-
-.df_add_s_attributes <- function(x, df, s_attr){
-  for (s in s_attr){
-    df[[s]] <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry())
-    # df[[s]] <- as.vector()
-    Encoding(df[[s]]) <- x@encoding
-    # if (x@encoding != localeToCharset()[1]){
-    #   df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
-    # }
-  }
-  df
-}
-
-
 #' @noRd
 .s_attributes_stop_if_nested <- function(corpus, s_attr){
   max_attr <- unique(sapply(s_attr, function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())))
@@ -367,27 +353,28 @@ Corpus <- R6Class(
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
+#' @importFrom data.table setindexv
 setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
-  if (localeToCharset()[1] != x@encoding){
-    expr <- recode(expr, from = localeToCharset()[1], to = x@encoding)
-  }
+  if (localeToCharset()[1] != x@encoding)
+    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
-  df <- data.frame(struc = 0L:(max_attr - 1L))
-  for (s in s_attr){
-    df[[s]] <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry())
-    Encoding(df[[s]]) <- x@encoding
-    # df[[s]] <- as.vector()
-  }
   
-  df_min <- df[eval(expr, envir = df),]
+  dt <- data.table(struc = 0L:(max_attr - 1L))
+  for (s in s_attr){
+    str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
+    Encoding(str) <- x@encoding
+    dt[, (s) := str]
+  }
+  setindexv(dt, cols = s_attr)
+  dt_min <- dt[eval(expr, envir = dt)]
   
   regions <- RcppCWB::get_region_matrix(
     corpus = x@corpus,
     s_attribute = s_attr[1],
-    strucs = df_min[["struc"]],
+    strucs = dt_min[["struc"]],
     registry = registry()
   )
   y <- new(
@@ -397,7 +384,7 @@ setMethod("subset", "corpus", function(x, subset){
     type = x@type,
     data_dir = x@data_dir,
     cpos = regions,
-    strucs = df_min[["struc"]],
+    strucs = dt_min[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
     xml = "flat"
   )
@@ -424,6 +411,9 @@ setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
 setMethod("subset", "subcorpus", function(x, subset){
   expr <- substitute(subset)
   
+  if (localeToCharset()[1] != x@encoding)
+    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
+  
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
 
@@ -432,24 +422,27 @@ setMethod("subset", "subcorpus", function(x, subset){
          "The method does not (yet) work for nested XML / nested structural attributes.")
   }
   
-  df <- data.frame(
+  dt <- data.table(
     struc = x@strucs,
     cpos_left = x@cpos[,1],
     cpos_right = x@cpos[,2]
   )
-  
-  df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
-  
-  df_min <- df[eval(expr, envir = df),]
-  
+  for (s in s_attr){
+    str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
+    Encoding(str) <- x@encoding
+    dt[, (s) := str]
+  }
+  setindexv(dt, cols = s_attr)
+  dt_min <- dt[eval(expr, envir = dt)]
+
   y <- new(
     "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
     type = x@type,
     data_dir = x@data_dir,
-    cpos = as.matrix(df_min[, c("cpos_left", "cpos_right")]),
-    strucs = df_min[["struc"]],
+    cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
+    strucs = dt_min[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
     xml = "flat"
   )

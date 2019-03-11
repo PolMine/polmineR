@@ -87,16 +87,15 @@ as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
   y
 }
 
-setGeneric("recode", function(x, ...) standardGeneric("recode"))
-
 #' @examples
-#' y <- recode(substitute(name == "Müller"), to = "latin1")
-#' df <- data.frame(
+#' y <- .recode_call(substitute(name == "Müller"), to = "latin1")
+#' dt <- data.table(
 #'   id = 1L:3L,
 #'   name = iconv(x = c("Müller", "Höhn", "Delingöz"), from = "UTF-8", to = "latin1")
 #' )
-#' df[eval(y, envir = df),]
-setMethod("recode", "call", function(x, from = localeToCharset()[1], to){
+#' dt[eval(y, envir = df), on = "name"]
+#' @noRd
+.recode_call <- function(x, from = localeToCharset()[1], to){
   .fn <- function(x){
     if (is.call(x)){
       return( as.call(lapply(x, .fn)) )
@@ -107,4 +106,4 @@ setMethod("recode", "call", function(x, from = localeToCharset()[1], to){
     }
   }
   .fn(x)
-})
+}
