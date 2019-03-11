@@ -332,14 +332,17 @@ Corpus <- R6Class(
 
 .df_add_s_attributes <- function(x, df, s_attr){
   for (s in s_attr){
-    df[[s]] <- as.vector(cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry()))
+    df[[s]] <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry())
+    # df[[s]] <- as.vector()
     Encoding(df[[s]]) <- x@encoding
-    if (x@encoding != localeToCharset()[1]){
-      df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
-    }
+    # if (x@encoding != localeToCharset()[1]){
+    #   df[[s]] <- iconv(x = df[[s]], from = x@encoding, to = localeToCharset()[1])
+    # }
   }
   df
 }
+
+
 #' @noRd
 .s_attributes_stop_if_nested <- function(corpus, s_attr){
   max_attr <- unique(sapply(s_attr, function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())))
@@ -359,19 +362,26 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+#' sc <- subset(a, speaker == "Bärbel Höhn")
 #' @rdname subcorpus-class
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
 setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
+  if (localeToCharset()[1] != x@encoding){
+    expr <- recode(expr, from = localeToCharset()[1], to = x@encoding)
+  }
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   df <- data.frame(struc = 0L:(max_attr - 1L))
-  df <- .df_add_s_attributes(x = x, df = df, s_attr = s_attr)
-  # return( lapply(as.list(expr), function(x) x) )
+  for (s in s_attr){
+    df[[s]] <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = df[["struc"]], registry = registry())
+    Encoding(df[[s]]) <- x@encoding
+    # df[[s]] <- as.vector()
+  }
+  
   df_min <- df[eval(expr, envir = df),]
   
   regions <- RcppCWB::get_region_matrix(
