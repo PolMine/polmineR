@@ -42,6 +42,7 @@ setMethod("corpus", "character", function(.Object, server = NULL){
       "corpus",
       corpus = .Object,
       encoding = registry_get_encoding(.Object),
+      data_dir = registry_get_home(.Object),
       type = if ("type" %in% names(properties)) properties[["type"]] else character()
     )
     return(y)
@@ -356,39 +357,64 @@ Corpus <- R6Class(
 #' @importFrom data.table setindexv
 setMethod("subset", "corpus", function(x, subset){
   expr <- substitute(subset)
-  if (localeToCharset()[1] != x@encoding)
-    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
-
-  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
   
-  dt <- data.table(struc = 0L:(max_attr - 1L))
-  for (s in s_attr){
-    str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
-    Encoding(str) <- x@encoding
-    dt[, (s) := str]
+  # Adjust encoding of expression to the one of the corpus. Adjusting encodings
+  # is expensive, so the (small) epression will be adjusted to the encoding of the
+  # corpus, not vice versa
+  if (localeToCharset()[1] != x@encoding){
+    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
   }
+  
+  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+  
+  # Reading the binary file with the ranges for the whole corpus is faster than using
+  # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
+  # to read in seperate rng files.
+  rng_file <- file.path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
+  rng_size <- file.info(rng_file)[["size"]]
+  rng <- readBin(rng_file, what = integer(), size = 4L, n = rng_size / 4L, endian = "big")
+  dt <- data.table(
+    struc = 0L:((length(rng) / 2L) - 1L),
+    cpos_left = rng[seq.int(from = 1L, to = length(rng), by = 2L)],
+    cpos_right = rng[seq.int(from = 2L, to = length(rng), by = 2L)]
+  )
+  
+  # Now we add the values of the s-attributes to the data.table with regions, one at
+  # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
+  for (i in seq_along(s_attr)){
+    files <- list(
+      avs = file.path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
+      avx = file.path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
+    )
+    sizes <- lapply(files, function(file) file.info(file)[["size"]])
+    
+    avx <- readBin(files[["avx"]], what = integer(), size = 4L, n = sizes[["avx"]] / 4L, endian = "big")
+    avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
+    
+    avs <- readBin(con = files[["avs"]], what = character(), n = sizes[["avs"]])
+    if (!is.null(encoding)) Encoding(avs) <- x@encoding
+    
+    dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
+  }
+  
+  # Apply the expression.
   setindexv(dt, cols = s_attr)
   dt_min <- dt[eval(expr, envir = dt)]
   
-  regions <- RcppCWB::get_region_matrix(
-    corpus = x@corpus,
-    s_attribute = s_attr[1],
-    strucs = dt_min[["struc"]],
-    registry = registry()
-  )
+  # And assemble the subcorpus object that is returned.
   y <- new(
     "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
     type = x@type,
     data_dir = x@data_dir,
-    cpos = regions,
+    cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
     strucs = dt_min[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
     s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]])),
     xml = "flat"
   )
+  dimnames(y@cpos) <- NULL
   y@size <- size(y)
   y
 })
