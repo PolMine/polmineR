@@ -6,6 +6,7 @@
 \alias{size,character-method}
 \alias{size,slice-method}
 \alias{size,partition-method}
+\alias{size,subcorpus-method}
 \alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
 \alias{size,features-method}
@@ -19,6 +20,8 @@ size(x, ...)
 \S4method{size}{slice}(x, s_attribute = NULL, ...)
 
 \S4method{size}{partition}(x, s_attribute = NULL, ...)
+
+\S4method{size}{subcorpus}(x, s_attribute = NULL, ...)
 
 \S4method{size}{DocumentTermMatrix}(x)
 

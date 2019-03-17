@@ -79,6 +79,7 @@ setMethod("+", signature(e1 = "textstat", e2 = "textstat"), function(e1, e2){
 #' cnt <- count(sc, p_attribute = c("word", "pos"))
 #' cnt_min <- subset(cnt, pos %in% c("NN", "ADJA"))
 #' cnt_min <- subset(cnt, pos == "NE")
+#' @param subset A logical expression indicating elements or rows to keep.
 setMethod("subset", "textstat", function(x, subset){
   expr <- substitute(subset)
   x@stat <- x@stat[eval(expr, envir = x@stat)]

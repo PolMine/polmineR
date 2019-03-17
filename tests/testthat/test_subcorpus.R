@@ -5,7 +5,6 @@ testthat::context("subcorpus")
 
 test_that(
   "generate subcorpus", {
-    use("polmineR")
     p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
     gparl <- corpus("GERMAPARLMINI")
     sc1 <- subset(gparl, speaker == "Angela Dorothea Merkel")

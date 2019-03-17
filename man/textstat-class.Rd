@@ -48,7 +48,7 @@ as.bundle(object, ...)
 
 \S4method{+}{textstat,textstat}(e1, e2)
 
-\S4method{subset}{textstat}(x, ...)
+\S4method{subset}{textstat}(x, subset)
 
 \method{as.data.table}{textstat}(x)
 
@@ -81,6 +81,8 @@ of a \code{textstat} class object.}
 \item{e1}{A \code{texstat} object.}
 
 \item{e2}{Another \code{texstat} object.}
+
+\item{subset}{A logical expression indicating elements or rows to keep.}
 
 \item{.Object}{A \code{textstat} object.}
 
@@ -171,4 +173,8 @@ y[1:25][["word"]]
 y[which(y[["word"]] \%in\% c("Arbeit", "Sozial"))]
 y[ y[["word"]] \%in\% c("Arbeit", "Sozial") ]
 }
+sc <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
+cnt <- count(sc, p_attribute = c("word", "pos"))
+cnt_min <- subset(cnt, pos \%in\% c("NN", "ADJA"))
+cnt_min <- subset(cnt, pos == "NE")
 }

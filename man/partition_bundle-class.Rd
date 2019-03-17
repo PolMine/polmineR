@@ -18,7 +18,6 @@
 \alias{as.partition_bundle,list-method}
 \alias{barplot,partition_bundle-method}
 \alias{show,partition_bundle-method}
-\alias{merge,partition_bundle,ANY-method}
 \alias{partition_bundle,environment-method}
 \alias{enrich,partition_bundle-method}
 \alias{s_attributes,partition_bundle-method}
@@ -29,7 +28,7 @@
 
 \S4method{summary}{partition_bundle}(object, progress = TRUE)
 
-\S4method{merge}{partition_bundle,ANY}(x, name = "", verbose = TRUE)
+\S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
 
 \S4method{[}{partition_bundle,ANY,ANY,ANY}(x, i)
 

@@ -345,27 +345,55 @@ Corpus <- R6Class(
 #' @examples
 #' use("polmineR")
 #' a <- corpus("GERMAPARLMINI")
-#' sc <- subset(a, grepl("Merkel", speaker))
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
-#' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
-#' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 #' sc <- subset(a, speaker == "Bärbel Höhn")
+#' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+#' sc <- subset(a, grepl("Merkel", speaker))
+#' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+#' 
+#' sc <- subset(a, speaker = "Angela Dorothea Merkel")
+#' sc <- subset(a, speaker = "Bärbel Höhn")
+#' sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
+#' sc <- subset(a, speaker = "Merkel", regex = TRUE)
+#' sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
+#' sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
 #' @rdname subcorpus-class
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
 #' @importFrom data.table setindexv
-setMethod("subset", "corpus", function(x, subset, ...){
-  expr <- substitute(subset)
+#' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
+#'   defined using the three dots (...) are interpreted as regular expressions
+#'   and passed into a \code{grep} call for subsetting a table with the regions
+#'   and values of structural attributes. If \code{FALSE} (the default), values
+#'   for s-attributes must match exactly.
+setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   
-  # Adjust encoding of expression to the one of the corpus. Adjusting encodings
-  # is expensive, so the (small) epression will be adjusted to the encoding of the
-  # corpus, not vice versa
-  if (localeToCharset()[1] != x@encoding){
-    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
+  stopifnot(is.logical(regex))
+  s_attr <- character()
+  
+  if (!missing(subset)){
+    expr <- substitute(subset)
+    # Adjust the encoding of the expression to the one of the corpus. Adjusting
+    # encodings is expensive, so the (small) epression will be adjusted to the
+    # encoding of the corpus, not vice versa
+    if (localeToCharset()[1] != x@encoding)
+      expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
+    s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+    s_attr <- c(s_attr, s_attr_expr)
   }
-  
-  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+
+  dots <- list(...)
+  if (length(dots) > 0L){
+    if (!all(names(dots) %in% s_attributes(x))){
+      stop("Aborting - at least one of the s-attributes provided as an argument is not available.")
+    }
+    s_attr_dots <- names(dots)
+    s_attr <- c(s_attr, s_attr_dots)
+    if (localeToCharset()[1] != x@encoding){
+      s_attr_dots <- lapply(s_attr_dots, function(v) as.corpusEnc(v, corpusEnc = x@encoding))
+    }
+  }
   
   # Reading the binary file with the ranges for the whole corpus is faster than using
   # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
@@ -398,20 +426,43 @@ setMethod("subset", "corpus", function(x, subset, ...){
   }
   
   # Apply the expression.
-  setindexv(dt, cols = s_attr)
-  dt_min <- dt[eval(expr, envir = dt)]
+  if (!missing(subset)){
+    setindexv(dt, cols = s_attr)
+    dt <- dt[eval(expr, envir = dt)]
+  }
+  
+  if (length(dots) > 0L){
+    for (s in s_attr_dots){
+      if (regex){
+        for (i in length(dots[[s]])){
+          dt <- dt[grep(dots[[s]][i], dt[[s]])]
+        }
+      } else {
+        if (length(dots[[s]]) == 1L){
+          dt <- dt[dt[[s]] == dots[[s]]]
+        } else {
+          dt <- dt[dt[[s]] %in% dots[[s]]]
+        }
+      }
+    }
+  }
+  
   
   # And assemble the subcorpus object that is returned.
+  if (nrow(dt) == 0L){
+    warning("No matching regions found for the s-attributes provided: Returning NULL object")
+    return(NULL)
+  }
   y <- new(
     "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
     type = x@type,
     data_dir = x@data_dir,
-    cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
-    strucs = dt_min[["struc"]],
+    cpos = as.matrix(dt[, c("cpos_left", "cpos_right")]),
+    strucs = dt[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
-    s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]])),
+    s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]])),
     xml = "flat"
   )
   dimnames(y@cpos) <- NULL
@@ -427,7 +478,9 @@ setMethod("subset", "corpus", function(x, subset, ...){
 #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
 #' @rdname subcorpus-class
-setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
+setMethod("subset", "character", function(x, ...){
+  subset(x = corpus(x), ...)
+})
 
 
 #' @examples
@@ -435,7 +488,7 @@ setMethod("subset", "character", function(x, ...) subset(x = corpus(x), ...) )
 #' b <- subset(a, date == "2009-11-10")
 #' c <- subset(b, speaker == "Frank-Walter Steinmeier")
 #' @rdname subcorpus-class
-setMethod("subset", "subcorpus", function(x, subset){
+setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
   
   if (localeToCharset()[1] != x@encoding)

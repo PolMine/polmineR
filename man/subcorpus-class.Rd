@@ -9,11 +9,11 @@
 \alias{subset,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
-\S4method{subset}{corpus}(x, subset)
+\S4method{subset}{corpus}(x, subset, regex = FALSE, ...)
 
 \S4method{subset}{character}(x, ...)
 
-\S4method{subset}{subcorpus}(x, subset)
+\S4method{subset}{subcorpus}(x, subset, ...)
 }
 \arguments{
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
@@ -21,6 +21,12 @@
 \item{subset}{A \code{logical} expression indicating elements or rows to
 keep. Alternatively, a length-one \code{character} vector that will be
 parsed as a logical expression.}
+
+\item{regex}{A \code{logical} value. If \code{TRUE}, values for s-attributes
+defined using the three dots (...) are interpreted as regular expressions
+and passed into a \code{grep} call for subsetting a table with the regions
+and values of structural attributes. If \code{FALSE} (the default), values
+for s-attributes must match exactly.}
 
 \item{...}{An expression that will be used to create a subcorpus from
 s-attributes.}
@@ -55,11 +61,18 @@ subcorpus.}
 \examples{
 use("polmineR")
 a <- corpus("GERMAPARLMINI")
-sc <- subset(a, grepl("Merkel", speaker))
 sc <- subset(a, speaker == "Angela Dorothea Merkel")
-sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
-sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 sc <- subset(a, speaker == "Bärbel Höhn")
+sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+sc <- subset(a, grepl("Merkel", speaker))
+sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
+
+sc <- subset(a, speaker = "Angela Dorothea Merkel")
+sc <- subset(a, speaker = "Bärbel Höhn")
+sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
+sc <- subset(a, speaker = "Merkel", regex = TRUE)
+sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
+sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
 use("polmineR")
 sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
 sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
