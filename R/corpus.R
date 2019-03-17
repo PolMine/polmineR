@@ -355,7 +355,7 @@ Corpus <- R6Class(
 #'   keep. Alternatively, a length-one \code{character} vector that will be
 #'   parsed as a logical expression.
 #' @importFrom data.table setindexv
-setMethod("subset", "corpus", function(x, subset){
+setMethod("subset", "corpus", function(x, subset, ...){
   expr <- substitute(subset)
   
   # Adjust encoding of expression to the one of the corpus. Adjusting encodings

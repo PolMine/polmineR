@@ -94,6 +94,12 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
 })
 
 #' @rdname size-method
+setMethod("size", "subcorpus", function(x, s_attribute = NULL, ...){
+  callNextMethod()
+})
+
+
+#' @rdname size-method
 setMethod("size", "DocumentTermMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$i, sum), x[["dimnames"]][["Docs"]])
 })

@@ -74,8 +74,14 @@ setMethod("+", signature(e1 = "textstat", e2 = "textstat"), function(e1, e2){
 
 #' @exportMethod subset
 #' @rdname textstat-class
-setMethod("subset", "textstat", function(x, ...){
-  x@stat <- subset(copy(x@stat), ...)
+#' @examples
+#' sc <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
+#' cnt <- count(sc, p_attribute = c("word", "pos"))
+#' cnt_min <- subset(cnt, pos %in% c("NN", "ADJA"))
+#' cnt_min <- subset(cnt, pos == "NE")
+setMethod("subset", "textstat", function(x, subset){
+  expr <- substitute(subset)
+  x@stat <- x@stat[eval(expr, envir = x@stat)]
   x
 })
 
@@ -113,11 +119,12 @@ setMethod("[[", "textstat", function(x, i){
 
 #' @exportMethod [
 #' @importFrom data.table key
-setMethod("[", "textstat", function(x, ...){
+setMethod("[", "textstat", function(x, i, j){
   if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
   if (is.null(key(x@stat))) setkeyv(x@stat, cols = x@p_attribute)
   if (missing(j)){
-    return( x@stat[i] )
+    x@stat <- x@stat[eval(i, envir = x@stat)]
+    return(x)
   } else {
     return( x@stat[i,j, with = FALSE] )
   }
