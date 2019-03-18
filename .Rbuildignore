@@ -11,3 +11,4 @@
 ^docs$
 ^appveyor.yml$
 ^revdep$
+^uml$

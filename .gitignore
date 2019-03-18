@@ -6,3 +6,4 @@
 .RData
 ./*.Rproj
 polmineR.Rproj
+^uml/.*$
