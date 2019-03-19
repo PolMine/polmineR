@@ -4,13 +4,23 @@
 \name{dispersion}
 \alias{dispersion}
 \alias{dispersion,partition-method}
+\alias{dispersion,slice-method}
+\alias{dispersion,subcorpus-method}
 \alias{dispersion,character-method}
 \alias{dispersion,hits-method}
-\title{Dispersion of a query or multiple queries}
+\title{Dispersion of a query or multiple queries.}
 \usage{
 dispersion(.Object, ...)
 
+\S4method{dispersion}{slice}(.Object, query, s_attribute, cqp = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
 \S4method{dispersion}{partition}(.Object, query, s_attribute,
+  cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
+\S4method{dispersion}{subcorpus}(.Object, query, s_attribute,
   cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
@@ -22,37 +32,43 @@ dispersion(.Object, ...)
   verbose = TRUE, ...)
 }
 \arguments{
-\item{.Object}{a partition object}
+\item{.Object}{A \code{partition} object or a corpus provided by a character
+string.}
 
-\item{...}{further parameters}
+\item{...}{Further parameters.}
 
-\item{query}{a character vector containing one or multiple queries}
+\item{query}{A \code{character} vector stating one or multiple queries.}
 
-\item{s_attribute}{a character vector of length 1 or 2 providing the s-attributes}
+\item{s_attribute}{A \code{character} vector (length 1 or 2) providing s-attributes.}
 
-\item{cqp}{if logical, whether the query is a CQP query (TRUE/FALSE), if it is a function that is passed in, the function will be applied to the query to guess whether query is a CQP query}
+\item{cqp}{If \code{logical}, whether the query is a CQP query, if it is a
+function that is passed in, the function will be applied to the query to
+guess whether query is a CQP query}
 
-\item{p_attribute}{the p-attribute that will be looked up, typically 'word'
-or 'lemma'}
+\item{p_attribute}{Length one \code{character} vector, the p-attribute that
+will be looked up (typically 'word' or 'lemma').}
 
-\item{freq}{logical, whether to calculate normalized frequencies}
+\item{freq}{A \code{logical} value, whether to calculate normalized frequencies.}
 
-\item{mc}{logical, whether to use multicore}
+\item{mc}{A \code{logical} value, whether to use multicore.}
 
-\item{progress}{logical, whether to shop progress}
+\item{progress}{A \code{logical} value, whether to show progress.}
 
-\item{verbose}{logical, whether to be verbose}
+\item{verbose}{A \code{logical} value, whether to be verbose.}
 }
 \value{
 depends on the input, as this is a wrapper function
+
+A \code{data.table}.
 }
 \description{
-The function returns the frequencies of a query or a multiple queries
-in sub-partitions defined by one or two dimensions. This is a wrapper function, so the output will depend
-on the number of queries and dimensions provided.
+The method returns counts (optionally frequencies) of a query or a multiple
+queries in subcorpora defined by one or two s-attributes.
 }
 \examples{
 use("polmineR")
+dispersion("GERMAPARLMINI", query = "Integration", s_attribute = "date")
+
 test <- partition("GERMAPARLMINI", date = ".*", p_attribute = NULL, regex = TRUE)
 integration <- dispersion(
   test, query = "Integration",
@@ -62,7 +78,7 @@ integration <- dispersion(test, "Integration", s_attribute = c("date", "party"))
 integration <- dispersion(test, '"Integration.*"', s_attribute = "date", cqp = TRUE)
 }
 \seealso{
-\code{crosstab-class}
+The worker behind the \code{dispersion}-method is the \code{hits}-method.
 
 count
 }

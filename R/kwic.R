@@ -237,7 +237,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
 
 #' @rdname kwic
 #' @exportMethod kwic
-setMethod("kwic", "partition", function(
+setMethod("kwic", "slice", function(
   .Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
@@ -272,6 +272,33 @@ setMethod("kwic", "partition", function(
   }
   retval
 })
+
+
+#' @rdname kwic
+#' @exportMethod kwic
+setMethod("kwic", "partition", function(
+  .Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  verbose = TRUE, ...
+) callNextMethod() 
+)
+
+#' @rdname kwic
+#' @exportMethod kwic
+setMethod("kwic", "subcorpus", function(
+  .Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  verbose = TRUE, ...
+) callNextMethod() 
+)
 
 
 #' @rdname kwic

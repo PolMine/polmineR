@@ -4,16 +4,21 @@
 \name{count_class}
 \alias{count_class}
 \alias{count-class}
+\alias{summary,count-method}
 \alias{count_bundle-class}
 \alias{length,count-method}
 \alias{hist,count-method}
 \title{Count class.}
 \usage{
+\S4method{summary}{count}(object)
+
 \S4method{length}{count}(x)
 
 \S4method{hist}{count}(x, ...)
 }
 \arguments{
+\item{object}{A \code{count} object.}
+
 \item{x}{A \code{count} object, or a class inheriting from \code{count}.}
 
 \item{...}{Further parameters.}
@@ -23,6 +28,10 @@ S4 class to organize counts. The classes \code{polmineR} and
 \code{ngrams} inherit from the class.
 }
 \details{
+The \code{summary}-method in combination with a weighed
+  \code{count}-object can be used to perform a dictionary-based sentiment
+  analysis (see examples).
+
 The \code{length}-method is synonymous with the \code{size}-method
 and will return the size of the \code{corpus} or \code{partition} a count
 has been derived from.
@@ -42,6 +51,28 @@ has been derived from.
 corpus the count is based upon}
 }}
 
+\examples{
+# sample for dictionary-based sentiment analysis
+    weights <- data.table::data.table(
+    word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+    weight = c(1,1,1,-1,-1,-1)
+)
+corp <- corpus("GERMAPARLMINI")
+sc <- subset(corp, date == "2009-11-11")
+cnt <- count(sc, p_attribute = "word")
+cnt <- weigh(cnt, with = weights)
+y <- summary(cnt)
+
+# old, partition-based workflow
+p <- partition("GERMAPARLMINI", date = "2009-11-11")
+p <- enrich(p, p_attribute = "word")
+weights <- data.table::data.table(
+  word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+  weight = c(1,1,1,-1,-1,-1)
+)
+p <- weigh(p, with = weights)
+summary(p)
+}
 \seealso{
 The \code{count}-class inherits from the \code{\link{textstat-class}}
 }

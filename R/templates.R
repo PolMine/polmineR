@@ -12,6 +12,7 @@ NULL
 #' @exportMethod get_template
 #' @exportMethod set_template
 #' @rdname templates
+#' @aliases get_template,subcorpus-method
 setGeneric("get_template", function(.Object, ...) standardGeneric("get_template"))
 
 #' @rdname templates
@@ -28,6 +29,12 @@ setMethod("get_template", "character", function(.Object){
 setMethod("get_template", "partition", function(.Object){
   getOption("polmineR.templates")[[.Object@corpus]]
 })
+
+#' @rdname templates
+setMethod("get_template", "subcorpus", function(.Object){
+  getOption("polmineR.templates")[[.Object@corpus]]
+})
+
 
 #' @rdname templates
 setMethod("get_template", "missing", function(.Object){

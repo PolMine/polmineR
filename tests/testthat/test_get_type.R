@@ -9,6 +9,7 @@ test_that(
     expect_equal(get_type(partition("GERMAPARLMINI", date = "2009-10-28")), "plpr")
     expect_equal(get_type(partition_bundle("GERMAPARLMINI", s_attribute = "date")), "plpr")
     expect_equal(get_type(Corpus$new("GERMAPARLMINI")), "plpr")
+    expect_equal(get_type(subset("GERMAPARLMINI", date = "2009-11-11")), "plpr")
   }
 )
 

@@ -44,3 +44,10 @@ setTemplate <- function(...) set_template(...)
 #' @export getTemplate
 #' @rdname renamed
 getTemplate <- function(...) get_template(...)
+
+#' Defunct methods and functions.
+#' 
+#' @param ... Any arguments that may be passed into the defunct function/method.
+#' @export browse
+#' @rdname defunct
+browse <- function(...) .Defunct(new = "html")

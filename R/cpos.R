@@ -1,4 +1,4 @@
-#' @include tempcorpus.R hits.R S4classes.R
+#' @include hits.R S4classes.R
 NULL
 
 #' Get corpus positions for a query or queries.
@@ -6,11 +6,11 @@ NULL
 #' Get matches for a query in a CQP corpus, optionally using the CQP syntax of the
 #' Corpus Workbench (CWB).
 #' 
-#' If the cpos-method is applied on \code{"character"}, \code{"partition"}, or
-#' \code{"tempcorpus"} object, the result is a two-column matrix with the 
-#' regions (start end end corpus positions of the matches) for a query. CQP
-#' syntax can be used. The encoding of the query is adjusted to conform to the
-#' encoding of the CWB corpus.
+#' If the cpos-method is applied on a \code{character} or \code{partition}
+#' object, the result is a two-column matrix with the regions (start end end
+#' corpus positions of the matches) for a query. CQP syntax can be used. The
+#' encoding of the query is adjusted to conform to the encoding of the CWB
+#' corpus.
 #' 
 #' If the cpos-method is called on a \code{matrix} object,  the cpos
 #' matrix is unfolded, the return value is an integer vector with the individual
@@ -18,8 +18,7 @@ NULL
 #' an integer vector is returned with the individual corpus positions.
 #' 
 #' @param .Object A \code{character} vector indicating a CWB corpus, a
-#'   \code{partition} object, a \code{tempcorpus} object, or a
-#'   \code{matrix} with corpus positions.
+#'   \code{partition} object,  or a \code{matrix} with corpus positions.
 #' @param query A \code{character} vector providing one or multiple queries
 #'   (token or CQP query)
 #' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a function to
@@ -126,27 +125,6 @@ setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, 
   hits
 })
 
-#' @param shift logical, if true, the cpos resulting from the query performed on
-#'   the tempcorpus will be shifted so that they match the positions of the
-#'   corpus from which the tempcorpus was generated
-#' @rdname cpos-method
-setMethod("cpos", "tempcorpus", function(.Object, query, shift = TRUE){
-  cqpBatchCmds <- paste(paste(c(
-    "TMPCORPUS",
-    paste("FOO = ", query, sep=""),
-    "dump FOO"
-  ), collapse=";"), ";", sep="")
-  cqpBatchFile = file.path(.Object@dir, "cqpBatchFile.txt")
-  cat(cqpBatchCmds, file=cqpBatchFile)
-  cqpCmd <- paste(c(
-    "cqp", "-r", .Object@registry, "-f", cqpBatchFile
-  ), collapse=" ")
-  cpos <- system(cqpCmd, intern=TRUE)
-  cposMatrix <- do.call(rbind, lapply(strsplit(cpos, "\t"), as.integer))
-  cposMatrix <- cposMatrix[,1:2]
-  if (shift) cposMatrix <- apply(cposMatrix, 2, function(x) x + .Object@cpos[1,1])
-  cposMatrix
-})
 
 
 #' @rdname cpos-method

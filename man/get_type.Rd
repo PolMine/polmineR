@@ -3,6 +3,7 @@
 \docType{methods}
 \name{get_type}
 \alias{get_type}
+\alias{get_type,subcorpus-method}
 \alias{get_type,character-method}
 \alias{get_type,Corpus-method}
 \alias{get_type,partition-method}
@@ -16,6 +17,8 @@ get_type(.Object)
 \S4method{get_type}{Corpus}(.Object)
 
 \S4method{get_type}{partition}(.Object)
+
+\S4method{get_type}{subcorpus}(.Object)
 
 \S4method{get_type}{partition_bundle}(.Object)
 }

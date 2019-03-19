@@ -60,7 +60,7 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @return depending on whether a partition or a partition_bundle serves as
 #'   input, the return will be a context object, or a \code{context_bundle} object
 #' @author Andreas Blaette
-#' @aliases as.matrix,context_bundle-method context,partition-method
+#' @aliases context,slice-method as.matrix,context_bundle-method context,partition-method
 #' @examples
 #' use("polmineR")
 #' p <- partition("GERMAPARLMINI", interjection = "speech")
@@ -74,7 +74,8 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @rdname context-method
 #' @name context
 #' @docType methods
-setMethod("context", "partition", function(
+
+setMethod("context", "slice", function(
   .Object, query, cqp = is.cqp, check = TRUE,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
@@ -101,7 +102,7 @@ setMethod("context", "partition", function(
     left = if (is.character(left)) 0L else as.integer(left),
     right = if (is.character(right)) 0L else as.integer(right),
     encoding = .Object@encoding,
-    partition = .Object,
+    partition = as(.Object, "partition"),
     size_partition = as.integer(.Object@size),
     boundary = if (!is.null(boundary)) boundary else character()
   )
@@ -163,6 +164,33 @@ setMethod("context", "partition", function(
   ctxt
 })
 
+#' @rdname context-method
+setMethod("context", "partition", function(
+  .Object, query, cqp = is.cqp, check = TRUE,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...
+) callNextMethod()
+)
+
+#' @rdname context-method
+setMethod("context", "subcorpus", function(
+  .Object, query, cqp = is.cqp, check = TRUE,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...
+) callNextMethod()
+)
 
 
 #' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit

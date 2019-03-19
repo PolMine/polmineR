@@ -240,6 +240,66 @@ setClass("count",
          contains = "textstat"
          )
 
+
+#' @param object A \code{count} object.
+#' @details The \code{summary}-method in combination with a weighed
+#'   \code{count}-object can be used to perform a dictionary-based sentiment
+#'   analysis (see examples).
+#' @rdname count_class
+#' @examples
+#' # sample for dictionary-based sentiment analysis
+#'     weights <- data.table::data.table(
+#'     word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+#'     weight = c(1,1,1,-1,-1,-1)
+#' )
+#' corp <- corpus("GERMAPARLMINI")
+#' sc <- subset(corp, date == "2009-11-11")
+#' cnt <- count(sc, p_attribute = "word")
+#' cnt <- weigh(cnt, with = weights)
+#' y <- summary(cnt)
+#' 
+#' # old, partition-based workflow
+#' p <- partition("GERMAPARLMINI", date = "2009-11-11")
+#' p <- enrich(p, p_attribute = "word")
+#' weights <- data.table::data.table(
+#'   word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+#'   weight = c(1,1,1,-1,-1,-1)
+#' )
+#' p <- weigh(p, with = weights)
+#' summary(p)
+setMethod("summary", "count", function(object){
+  y <- list(
+    name = if (length(name(object)) > 0) name(object) else NA,
+    size = object@size
+  )
+  if (nrow(object@stat) > 0){
+    y[["p_attribute"]] <- paste(object@p_attribute, collapse = "|")
+    y[["unique"]] <- nrow(object@stat)
+    if ("weight" %in% colnames(object@stat)){
+      dt_positive <- subset(object@stat, object@stat[["weight"]] > 0)
+      if (nrow(dt_positive) > 0){
+        y[["positive_n"]] <- sum(dt_positive[["count"]])
+        y[["positive_share"]] <- y[["positive_n"]] / y[["size"]]
+        y[["positive_weighed"]] <- sum(dt_positive[["count"]] * dt_positive[["weight"]])
+      } else {
+        y <- c(y, list(positive_n = 0, positive_share = 0, positive_weighed = 0))
+      }
+      
+      dt_negative <- subset(object@stat, object@stat[["weight"]] < 0)
+      if (nrow(dt_negative) > 0){
+        y[["negative_n"]] <- sum(dt_negative[["count"]])
+        y[["negative_share"]] <- y[["negative_n"]] / y[["size"]]
+        y[["negative_weighed"]] <- sum(dt_negative[["count"]] * dt_negative[["weight"]])
+      } else {
+        y <- c(y, list(negative_n = 0, negative_share = 0, negative_weighed = 0))
+      }
+    }
+  }
+  y
+})
+
+
+
 #' @docType class
 #' @exportClass count_bundle
 #' @rdname count_class
@@ -288,16 +348,10 @@ setMethod("length", "count", function(x) x@size)
 #' @slot s_attribute_strucs Object of class \code{character} the base node 
 #' @slot key Experimental, an s-attribute that is used as a key.
 #' @slot call Object of class \code{character} the call that generated the partition 
-#' @param object A \code{partition} object.
 #' @param .Object A \code{partition} object.
 #' @param p_attribute a p-attribute (for enriching) / performing count.
 #' @param verbose \code{logical} value, whether to output messages
 #' @param ... further parameters passed into \code{count} when calling \code{enrich}, and ...
-#' @param name An s-attribute that will be assigned as key to a
-#'   \code{partition}.
-#' @param e1 A first expression, a \code{partition} object in this case.
-#' @param e2 A second expression, the value of an s-attribute.
-#' @param table Values a s-attribute shall assume.
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partition_bundle 
 #'   as.partition_bundle,partition-method export export,partition-method split
@@ -325,39 +379,6 @@ setClass(
   ),
   contains = "count"
 )
-
-
-#' @rdname partition_class
-setMethod("summary", "partition", function(object){
-  y <- list(
-    name = if (length(name(object)) > 0) name(object) else NA,
-    size = size(object)
-    )
-  if (nrow(object@stat) > 0){
-    y[["p_attribute"]] <- paste(object@p_attribute, collapse = "|")
-    y[["unique"]] <- nrow(object@stat)
-    if ("weight" %in% colnames(object@stat)){
-      dt_positive <- subset(object@stat, object@stat[["weight"]] > 0)
-      if (nrow(dt_positive) > 0){
-        y[["positive_n"]] <- sum(dt_positive[["count"]])
-        y[["positive_share"]] <- y[["positive_n"]] / y[["size"]]
-        y[["positive_weighed"]] <- sum(dt_positive[["count"]] * dt_positive[["weight"]])
-      } else {
-        y <- c(y, list(positive_n = 0, positive_share = 0, positive_weighed = 0))
-      }
-      
-      dt_negative <- subset(object@stat, object@stat[["weight"]] < 0)
-      if (nrow(dt_negative) > 0){
-        y[["negative_n"]] <- sum(dt_negative[["count"]])
-        y[["negative_share"]] <- y[["negative_n"]] / y[["size"]]
-        y[["negative_weighed"]] <- sum(dt_negative[["count"]] * dt_negative[["weight"]])
-      } else {
-        y <- c(y, list(negative_n = 0, negative_share = 0, negative_weighed = 0))
-      }
-    }
-  }
-  y
-})
 
 
 
@@ -521,24 +542,6 @@ setClass(
 )
 
 
-#' S4 class to capture core information on a temporary CWB corpus 
-#' 
-#' @slot cpos matrix with start/end corpus positions
-#' @slot dir directory where the tempcorpus is stored
-#' @slot registry directory of the registry dir (subdirectory of dir)
-#' @slot indexed directory of the dir with the indexed files
-#' @exportClass tempcorpus
-#' @rdname tempcorpus_class
-#' @name tempcorpus_class
-#' @aliases tempcorpus-class
-setClass(
-  "tempcorpus",
-  slots = c(
-    cpos = "matrix",
-    dir = "character",
-    registry = "character",
-    indexed = "character"
-  ))
 
 
 #' S4 class to wrap information on CWB corpora.

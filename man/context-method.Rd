@@ -3,8 +3,10 @@
 \docType{methods}
 \name{context}
 \alias{context}
+\alias{context,slice-method}
 \alias{as.matrix,context_bundle-method}
 \alias{context,partition-method}
+\alias{context,subcorpus-method}
 \alias{context,character-method}
 \alias{context,partition_bundle-method}
 \alias{context,cooccurrences-method}
@@ -12,7 +14,23 @@
 \usage{
 context(.Object, ...)
 
+\S4method{context}{slice}(.Object, query, cqp = is.cqp, check = TRUE,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = TRUE, ...)
+
 \S4method{context}{partition}(.Object, query, cqp = is.cqp,
+  check = TRUE, left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
+  progress = TRUE, ...)
+
+\S4method{context}{subcorpus}(.Object, query, cqp = is.cqp,
   check = TRUE, left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,

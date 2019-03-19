@@ -17,6 +17,10 @@ polmineR 0.7.11.9001
 * For all the S4 classes in the package multiple contains have been checked, and multiple contains have been removed.
 * A new experimental `remote_corpus`-class is the basis for accessing remote corpora.
 * The `subset()`-method for `corpus` and `subcorpus` objects has been reworked thoroughly, and now outperforms the `partition()` method. 
+* The `zoom()`-method that has been introduced experimentally has been dropped again in favor of the `subset()`-method to get `subcorpus` objects from `corpus` and `subcorpus` objects.
+* The `tempcorpus()`-method and the `tempcorpus` class have been removed from the package, having become utterly deprecated.
+* The `summary()`-method for `partition`-class objects has been turned into a method for the `count`-class, to eliminate an inconsistency. The example of a workflow has been moved to the documentation object for the `count`-class.
+* The `browse()`-methode has not proven to be useful and has been removed from the package. A new `browse()`-function is introduced to throw a warning, if browse should be called nevertheless.
 
 
 polmineR 0.7.11

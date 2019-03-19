@@ -145,3 +145,30 @@ test_that(
 )
 
 
+test_that(
+  "Cooccurences-method for subcorpus and partition objects",
+  {
+    merkel <- partition(
+      "GERMAPARLMINI",
+      speaker = "Merkel",
+      date = "2009-11-10",
+      interjection = "speech",
+      regex = TRUE,
+      p_attribute = c("word", "pos")
+    )
+    merkel_cooc <- Cooccurrences(
+      merkel,
+      p_attribute = c("word", "pos"),
+      left = 3L, right = 3L,
+      verbose = TRUE
+    )
+    ll(merkel_cooc)
+    decode(merkel_cooc)
+    
+    expect_identical(
+      unique(merkel_cooc@stat[a_word == "und"][["a_count"]]),
+      count(merkel, "und")[["count"]]
+    )
+    
+  }
+)

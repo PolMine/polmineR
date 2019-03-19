@@ -3,11 +3,17 @@
 \docType{methods}
 \name{terms}
 \alias{terms}
+\alias{terms,slice-method}
 \alias{terms,partition-method}
+\alias{terms,subcorpus-method}
 \alias{terms,character-method}
 \title{Get terms in \code{partition} or corpus.}
 \usage{
+\S4method{terms}{slice}(x, p_attribute, regex = NULL, ...)
+
 \S4method{terms}{partition}(x, p_attribute, regex = NULL, ...)
+
+\S4method{terms}{subcorpus}(x, p_attribute, regex = NULL, ...)
 
 \S4method{terms}{character}(x, p_attribute, regex = NULL,
   robust = FALSE, ...)

@@ -8,14 +8,28 @@ NULL
 setGeneric("as.regions", function(x, ...) standardGeneric("as.regions"))
 
 
-
+#' @examples 
+#' p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
+#' r <- as(p, "regions")
+#' @noRd
 setAs(from = "partition", to = "regions", function(from, to){
-  new(
-    "regions",
-    cpos = from@cpos,
-    encoding = from@encoding,
-    corpus = from@corpus
-    )
+  y <- new("regions")
+  slots_to_get <- slotNames(y)
+  slots_to_get <- slots_to_get[-which(slots_to_get %in% c("data_dir", "type"))]
+  for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
+  y
+})
+
+#' @examples 
+#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+#' r <- as(sc, "regions")
+#' @noRd
+setAs(from = "subcorpus", to = "regions", function(from, to){
+  y <- new("regions")
+  slots_to_get <- slotNames(y)
+  slots_to_get <- slots_to_get[-which(slots_to_get == "type")]
+  for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
+  y
 })
 
 

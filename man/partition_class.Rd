@@ -13,7 +13,6 @@
 \alias{export}
 \alias{export,partition-method}
 \alias{split}
-\alias{summary,partition-method}
 \alias{plpr_partition-class}
 \alias{press_partition-class}
 \alias{p_attributes,slice-method}
@@ -21,17 +20,10 @@
 \alias{p_attributes,subcorpus-method}
 \alias{split,partition-method}
 \alias{is.partition}
-\alias{$,partition-method}
-\alias{==,partition,ANY-method}
-\alias{!=,partition,ANY-method}
-\alias{\%in\%,partition-method}
-\alias{zoom,partition-method}
 \alias{enrich,partition-method}
 \alias{as.regions,partition-method}
 \title{Partition class and methods.}
 \usage{
-\S4method{summary}{partition}(object)
-
 \S4method{p_attributes}{slice}(.Object, p_attribute = NULL, ...)
 
 \S4method{p_attributes}{partition}(.Object, p_attribute = NULL, ...)
@@ -42,24 +34,12 @@
 
 is.partition(x)
 
-\S4method{$}{partition}(x, name)
-
-\S4method{==}{partition,ANY}(e1, e2)
-
-\S4method{!=}{partition,ANY}(e1, e2)
-
-\S4method{\%in\%}{partition}(x, table)
-
-\S4method{zoom}{partition}(x, ...)
-
 \S4method{enrich}{partition}(.Object, p_attribute = NULL,
   decode = TRUE, verbose = TRUE, mc = FALSE, ...)
 
 \S4method{as.regions}{partition}(x)
 }
 \arguments{
-\item{object}{A \code{partition} object.}
-
 \item{.Object}{A \code{partition} object.}
 
 \item{p_attribute}{a p-attribute (for enriching) / performing count.}
@@ -70,15 +50,6 @@ is.partition(x)
 
 \item{gap}{An integer value specifying the minimum gap between regions for
 performing the split.}
-
-\item{name}{An s-attribute that will be assigned as key to a
-\code{partition}.}
-
-\item{e1}{A first expression, a \code{partition} object in this case.}
-
-\item{e2}{A second expression, the value of an s-attribute.}
-
-\item{table}{Values a s-attribute shall assume.}
 
 \item{decode}{\code{logical} value, whether to decode token ids into strings when performing count}
 
@@ -111,9 +82,6 @@ frequency lists. The lists can be prepared by applying \code{enrich} on the
 
 The \code{is.partition} function returns a \code{logical} value
   whether \code{x} is a \code{partition}, or not.
-
-The `$`-method will assign the argument \code{name} to the slot
-  \code{key} and return the modified object.
 
 The \code{enrich}-method will add a count of tokens defined by argument
 \code{p_attribute} to slot \code{stat} of the \code{partition} object.
@@ -157,25 +125,6 @@ count in slot \code{stat}.}
 \item{\code{call}}{Object of class \code{character} the call that generated the partition}
 }}
 
-\examples{
-m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
-m2 <- m$speaker
-m2@key
-m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
-m$date == "2009-10-28"
-s <- partition("GERMAPARLMINI", interjection = "speech")
-s$party != "NA"
-s <- partition("GERMAPARLMINI", interjection = "speech")
-s$date \%in\% c("2009-10-27", "2009-10-28")
-m <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
-y <- zoom(m, date == "2009-10-28")
-
-speeches <- partition("GERMAPARLMINI", interjection = "speech")
-m <- zoom(speeches, date == "2009-10-28" & speaker == "Angela Dorothea Merkel")
-
-not_unknown <- zoom(speeches, party != c("NA", "FDP"))
-s_attributes(not_unknown, "party")
-}
 \seealso{
 The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
 respective documentation to learn more.

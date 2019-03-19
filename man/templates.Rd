@@ -3,6 +3,7 @@
 \docType{methods}
 \name{get_template}
 \alias{get_template}
+\alias{get_template,subcorpus-method}
 \alias{get_template,character-method}
 \alias{get_template,partition-method}
 \alias{get_template,missing-method}
@@ -16,6 +17,8 @@ get_template(.Object, ...)
 \S4method{get_template}{character}(.Object)
 
 \S4method{get_template}{partition}(.Object)
+
+\S4method{get_template}{subcorpus}(.Object)
 
 \S4method{get_template}{missing}(.Object)
 

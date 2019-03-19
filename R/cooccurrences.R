@@ -523,7 +523,7 @@ setMethod("Cooccurrences", "character", function(
 #' }
 #' 
 #' }
-setMethod("Cooccurrences", "partition", function(
+setMethod("Cooccurrences", "slice", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
@@ -680,6 +680,19 @@ setMethod("Cooccurrences", "partition", function(
   y
 })
 
+#' @rdname all_cooccurrences
+setMethod("Cooccurrences", "partition", function(
+  .Object, p_attribute, left, right,
+  stoplist = NULL,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+){ callNextMethod() })
+
+#' @rdname all_cooccurrences
+setMethod("Cooccurrences", "subcorpus", function(
+  .Object, p_attribute, left, right,
+  stoplist = NULL,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+){ callNextMethod() })
 
 
 #' @details The \code{as.simple_triplet_matrix}-method will transform a

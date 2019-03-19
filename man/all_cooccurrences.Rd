@@ -4,14 +4,24 @@
 \name{Cooccurrences,character-method}
 \alias{Cooccurrences,character-method}
 \alias{Cooccurrences}
+\alias{Cooccurrences,slice-method}
 \alias{Cooccurrences,partition-method}
+\alias{Cooccurrences,subcorpus-method}
 \title{Get all cooccurrences in corpus/partition.}
 \usage{
 \S4method{Cooccurrences}{character}(.Object, p_attribute, left, right,
   stoplist = NULL, mc = getOption("polmineR.mc"), verbose = FALSE,
   progress = FALSE)
 
+\S4method{Cooccurrences}{slice}(.Object, p_attribute, left, right,
+  stoplist = NULL, mc = getOption("polmineR.mc"), verbose = FALSE,
+  progress = FALSE)
+
 \S4method{Cooccurrences}{partition}(.Object, p_attribute, left, right,
+  stoplist = NULL, mc = getOption("polmineR.mc"), verbose = FALSE,
+  progress = FALSE)
+
+\S4method{Cooccurrences}{subcorpus}(.Object, p_attribute, left, right,
   stoplist = NULL, mc = getOption("polmineR.mc"), verbose = FALSE,
   progress = FALSE)
 }

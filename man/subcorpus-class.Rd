@@ -19,8 +19,8 @@
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
 
 \item{subset}{A \code{logical} expression indicating elements or rows to
-keep. Alternatively, a length-one \code{character} vector that will be
-parsed as a logical expression.}
+keep. The expression may be unevaluated (using \code{quote} or
+\code{bquote}).}
 
 \item{regex}{A \code{logical} value. If \code{TRUE}, values for s-attributes
 defined using the three dots (...) are interpreted as regular expressions
@@ -73,6 +73,20 @@ sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
 sc <- subset(a, speaker = "Merkel", regex = TRUE)
 sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
 sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
+
+who <- "Volker Kauder"
+subset(a, quote(speaker == who))
+
+for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
+   sc <- subset(a, bquote(speaker == .(who)))
+   print(size(sc))
+}
+
+b <- lapply(
+  c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
+  function(who) subset(a, bquote(speaker == .(who)))
+)
+sapply(b, size)
 use("polmineR")
 sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
 sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")

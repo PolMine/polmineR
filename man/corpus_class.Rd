@@ -5,17 +5,28 @@
 \alias{corpus-class}
 \alias{zoom}
 \alias{show,corpus-method}
+\alias{$,corpus-method}
 \title{S4 class to wrap information on CWB corpora.}
 \usage{
 \S4method{show}{corpus}(object)
+
+\S4method{$}{corpus}(x, name)
 }
 \arguments{
 \item{object}{An object.}
+
+\item{x}{An object of class \code{corpus}, or inheriting from it.}
+
+\item{name}{A (single) s-attribute.}
 
 \item{...}{Further arguments.}
 }
 \description{
 S4 class to wrap information on CWB corpora.
+}
+\details{
+Applying the `$`-method on a corpus will return the values for the
+  s-attribute stated with argument \code{name}.
 }
 \section{Slots}{
 
@@ -29,6 +40,14 @@ S4 class to wrap information on CWB corpora.
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one \code{character} vector.}
 }}
 
+\examples{
+g <- corpus("GERMAPARLMINI")
+g$date
+corpus("GERMAPARLMINI")$date
+
+sc <- subset("GERMAPARLMINI", date == "2009-10-27")
+sc$date
+}
 \seealso{
 Other classes to manage corpora: \code{\link{regions}},
   \code{\link{subcorpus-class}}

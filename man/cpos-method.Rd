@@ -7,7 +7,6 @@
 \alias{cpos,partition-method}
 \alias{cpos,subcorpus-method}
 \alias{cpos,slice-method}
-\alias{cpos,tempcorpus-method}
 \alias{cpos,matrix-method}
 \alias{cpos,hits-method}
 \title{Get corpus positions for a query or queries.}
@@ -27,16 +26,13 @@ cpos(.Object, ...)
 \S4method{cpos}{slice}(.Object, query, cqp = is.cqp, check = TRUE,
   p_attribute = NULL, verbose = TRUE, ...)
 
-\S4method{cpos}{tempcorpus}(.Object, query, shift = TRUE)
-
 \S4method{cpos}{matrix}(.Object)
 
 \S4method{cpos}{hits}(.Object)
 }
 \arguments{
 \item{.Object}{A \code{character} vector indicating a CWB corpus, a
-\code{partition} object, a \code{tempcorpus} object, or a
-\code{matrix} with corpus positions.}
+\code{partition} object,  or a \code{matrix} with corpus positions.}
 
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}
@@ -58,10 +54,6 @@ using \code{check_cqp_query}.}
 encoding stated in the registry file of the corpus will be used),}
 
 \item{verbose}{A \code{logical} value, whether to show messages.}
-
-\item{shift}{logical, if true, the cpos resulting from the query performed on
-the tempcorpus will be shifted so that they match the positions of the
-corpus from which the tempcorpus was generated}
 }
 \value{
 Unless \code{.Object} is a \code{matrix}, the return value is a
@@ -75,11 +67,11 @@ Get matches for a query in a CQP corpus, optionally using the CQP syntax of the
 Corpus Workbench (CWB).
 }
 \details{
-If the cpos-method is applied on \code{"character"}, \code{"partition"}, or
-\code{"tempcorpus"} object, the result is a two-column matrix with the 
-regions (start end end corpus positions of the matches) for a query. CQP
-syntax can be used. The encoding of the query is adjusted to conform to the
-encoding of the CWB corpus.
+If the cpos-method is applied on a \code{character} or \code{partition}
+object, the result is a two-column matrix with the regions (start end end
+corpus positions of the matches) for a query. CQP syntax can be used. The
+encoding of the query is adjusted to conform to the encoding of the CWB
+corpus.
 
 If the cpos-method is called on a \code{matrix} object,  the cpos
 matrix is unfolded, the return value is an integer vector with the individual

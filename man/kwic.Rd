@@ -4,7 +4,9 @@
 \name{kwic}
 \alias{kwic}
 \alias{kwic,context-method}
+\alias{kwic,slice-method}
 \alias{kwic,partition-method}
+\alias{kwic,subcorpus-method}
 \alias{kwic,character-method}
 \title{KWIC/concordance output.}
 \usage{
@@ -14,7 +16,21 @@ kwic(.Object, ...)
   s_attributes = getOption("polmineR.meta"), cpos = TRUE,
   verbose = FALSE, ...)
 
+\S4method{kwic}{slice}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
+  boundary = NULL, cpos = TRUE, stoplist = NULL,
+  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+
 \S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
+  boundary = NULL, cpos = TRUE, stoplist = NULL,
+  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+
+\S4method{kwic}{subcorpus}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",

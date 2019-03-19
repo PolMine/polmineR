@@ -4,6 +4,8 @@
 \name{hits}
 \alias{hits}
 \alias{hits,character-method}
+\alias{hits,slice-method}
+\alias{hits,subcorpus-method}
 \alias{hits,partition-method}
 \alias{hits,partition_bundle-method}
 \alias{hits,context-method}
@@ -14,6 +16,14 @@ hits(.Object, ...)
 \S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,
   freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
+
+\S4method{hits}{slice}(.Object, query, cqp = FALSE, s_attribute = NULL,
+  p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE,
+  progress = FALSE, verbose = TRUE, ...)
+
+\S4method{hits}{subcorpus}(.Object, query, cqp = FALSE,
+  s_attribute = NULL, p_attribute = "word", size = FALSE,
+  freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...)
 
 \S4method{hits}{partition}(.Object, query, cqp = FALSE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,
@@ -64,4 +74,12 @@ the data.table that is returned rather than the queries.
 If freq is TRUE, the data.table returned in the DT-slot will deliberately
 include the subsets of the partition/corpus with no hits (query is NA,
 count is 0).
+}
+\examples{
+y <- hits("REUTERS", query = "oil")
+y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
+
+p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+y <- hits(p, query = "oil")
+y <- hits(p, query = "oil", s_attribute = "id")
 }

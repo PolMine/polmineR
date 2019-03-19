@@ -190,6 +190,8 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
 })
 
 
+
+
 #' @rdname features
 setMethod("features", "partition_bundle", function(
   x, y, 

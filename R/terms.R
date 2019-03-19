@@ -23,8 +23,8 @@ NULL
 #' terms("GERMAPARLMINI", p_attribute = "word")
 #' terms("GERMAPARLMINI", p_attribute = "word", regex = "^Arbeit.*")
 #' @rdname terms
-#' @aliases terms,partition-method
-setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...){
+#' @aliases terms,slice-method terms,partition-method
+setMethod("terms", "slice", function(x, p_attribute, regex = NULL, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -49,6 +49,13 @@ setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...){
   }
   y
 })
+
+#' @rdname terms
+setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...) callNextMethod() )
+
+#' @rdname terms
+setMethod("terms", "subcorpus", function(x, p_attribute, regex = NULL, ...) callNextMethod() )
+
 
 #' @rdname terms
 setMethod("terms", "character", function(x, p_attribute, regex = NULL, robust = FALSE, ...){

@@ -42,6 +42,22 @@ test_that(
     scsub <- subset(sc, grepl("Merkel", speaker))
     expect_identical(size(p), size(sc))
     expect_identical(p@cpos, sc@cpos)
+    
+    # a <- corpus("GERMAPARLMINI")
+    # who <- "Volker Kauder"
+    # sc <- subset("GERMAPARLMINI", bquote(speaker == .(who)))
+    # expect_identical(size(sc), size(partition("GERMAPARLMINI", speaker = "Volker Kauder")))
+    # 
+    # some <- c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")
+    # scs <- list()
+    # for (who in ){
+    #    scs[[who]] <- subset(a, bquote(speaker == .(who)))
+    # }
+
+    # b <- lapply(some, function(who) subset(a, bquote(speaker == .(who))))
+    # names(b) <- some
+    
+    # expect_identical(scs, b)
   }
 )
 

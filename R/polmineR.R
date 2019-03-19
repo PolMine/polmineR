@@ -23,10 +23,6 @@ NULL
 
 setOldClass("htmlwidget")
 
-#' @exportMethod zoom
-#' @noRd
-setGeneric("zoom", function(x, ...) standardGeneric("zoom"))
-
 
 #' polmineR-package
 #' 

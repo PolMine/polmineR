@@ -30,6 +30,13 @@ NULL
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
+#' @examples
+#' y <- hits("REUTERS", query = "oil")
+#' y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
+#' 
+#' p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
+#' y <- hits(p, query = "oil")
+#' y <- hits(p, query = "oil", s_attribute = "id")
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
@@ -91,7 +98,7 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
 
 
 #' @rdname hits
-setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -124,6 +131,16 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
   new("hits", stat = TF, corpus = .Object@corpus, query = query)
 })
 
+#' @rdname hits
+setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+  callNextMethod()
+})
+
+
+#' @rdname hits
+setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+  callNextMethod()
+})
 
 #' @rdname hits
 setMethod("hits", "partition_bundle", function(

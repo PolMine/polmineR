@@ -357,10 +357,24 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker = "Merkel", regex = TRUE)
 #' sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
 #' sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
+#' 
+#' who <- "Volker Kauder"
+#' subset(a, quote(speaker == who))
+#' 
+#' for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
+#'    sc <- subset(a, bquote(speaker == .(who)))
+#'    print(size(sc))
+#' }
+#' 
+#' b <- lapply(
+#'   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
+#'   function(who) subset(a, bquote(speaker == .(who)))
+#' )
+#' sapply(b, size)
 #' @rdname subcorpus-class
 #' @param subset A \code{logical} expression indicating elements or rows to
-#'   keep. Alternatively, a length-one \code{character} vector that will be
-#'   parsed as a logical expression.
+#'   keep. The expression may be unevaluated (using \code{quote} or
+#'   \code{bquote}).
 #' @importFrom data.table setindexv
 #' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
@@ -368,12 +382,18 @@ Corpus <- R6Class(
 #'   and values of structural attributes. If \code{FALSE} (the default), values
 #'   for s-attributes must match exactly.
 setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
-  
   stopifnot(is.logical(regex))
   s_attr <- character()
   
   if (!missing(subset)){
     expr <- substitute(subset)
+    # The expression may also have been passed in as an unevaluated expression. In
+    # this case, it is "unwrapped". Note that parent.frames looks back two generations
+    # because the S4 Method inserts an additional layer to the original calling
+    # environment
+    if (class(try(eval(expr, envir = parent.frame(n = 1L:2L)), silent = TRUE)) == "call"){
+      expr <- eval(expr, envir = parent.frame(n = 1L:2L))
+    }
     # Adjust the encoding of the expression to the one of the corpus. Adjusting
     # encodings is expensive, so the (small) epression will be adjusted to the
     # encoding of the corpus, not vice versa
@@ -540,5 +560,23 @@ setMethod("show", "corpus", function(object){
   cat(sprintf("%-12s", "encoding:"), object@encoding, "\n")
   cat(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]", "\n")
   cat(sprintf("%-12s", "size:"), size(object), "\n")
+})
+
+
+#' @details Applying the `$`-method on a corpus will return the values for the
+#'   s-attribute stated with argument \code{name}.
+#' @examples
+#' g <- corpus("GERMAPARLMINI")
+#' g$date
+#' corpus("GERMAPARLMINI")$date
+#' 
+#' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
+#' sc$date
+#' @exportMethod $
+#' @rdname corpus_class
+#' @param x An object of class \code{corpus}, or inheriting from it.
+#' @param name A (single) s-attribute.
+setMethod("$", "corpus", function(x, name){
+  s_attributes(x, s_attribute = name)
 })
 
