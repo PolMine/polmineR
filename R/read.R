@@ -22,7 +22,7 @@ NULL
 #' That may offer more flexibility, e.g. to highlight matches for CQP queries.
 #' See examples and the documentation for the different methods to learn more.
 #' 
-#' @param .Object an object to be read (\code{"partition" or "partition_bundle"})
+#' @param .Object an object to be read (\code{partition} or {partition_bundle})
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed; if not stated explicitly, session settings will be used
 #' @param template template to format output
@@ -62,8 +62,31 @@ NULL
 setGeneric("read", function(.Object, ...) standardGeneric("read"))
 
 #' @rdname read-method
+setMethod("read", "partition",
+  function(
+    .Object, meta = NULL,
+    highlight = list(), tooltips = list(),
+    verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
+    template = get_template(.Object),
+    ...
+  ){
+    newobj <- if (is.null(get_type(.Object))){
+      "subcorpus"
+    } else {
+      switch( get_type(.Object), "plpr" = "plpr_subcorpus", "press" = "press_subcorpus" )
+    }
+    
+    read(
+      .Object = as(.Object, newobj), meta = meta, highlight = highlight, tooltips = tooltips,
+      verbose = verbose, cpos = cpos, cutoff = cutoff,
+      template = template,
+      ...
+    )
+  })
+
+#' @rdname read-method
 setMethod(
-  "read", "partition",
+  "read", "subcorpus",
   function(
     .Object, meta = NULL,
     highlight = list(), tooltips = list(),

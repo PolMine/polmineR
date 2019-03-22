@@ -147,10 +147,34 @@ setMethod("html", "character", function(object){
 
 
 #' @rdname html-method
+setMethod(
+  "html", "partition",
+  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, height = NULL, ...){
+    newobj <- if (is.null(get_type(object))){
+      "subcorpus"
+    } else {
+      switch( get_type(object), "plpr" = "plpr_subcorpus", "press" = "press_subcorpus" )
+    }
+    
+    html(
+      object = as(object, newobj),
+      meta = meta,
+      cpos = cpos,
+      verbose = verbose,
+      cutoff = cutoff,
+      charoffset = charoffset,
+      beautify = beautify,
+      height = height,
+      ...
+    )
+})
+
+
+#' @rdname html-method
 #' @exportMethod html
 #' @docType methods
 setMethod(
-  "html", "partition",
+  "html", "subcorpus",
   function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, height = NULL, ...){
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")

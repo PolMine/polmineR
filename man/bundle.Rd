@@ -4,6 +4,8 @@
 \name{bundle-class}
 \alias{bundle-class}
 \alias{bundle}
+\alias{[[,bundle-method}
+\alias{[[<-,bundle-method}
 \alias{name<-,bundle,character-method}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
@@ -11,8 +13,8 @@
 \alias{unique,bundle-method}
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
-\alias{[[,bundle-method}
-\alias{[[<-,bundle-method}
+\alias{[[,bundle,ANY-method}
+\alias{[[<-,bundle,ANY,ANY,ANY-method}
 \alias{$,bundle-method}
 \alias{$<-,bundle-method}
 \alias{sample,bundle-method}
@@ -38,9 +40,9 @@
 
 \S4method{+}{bundle,textstat}(e1, e2)
 
-\S4method{[[}{bundle}(x, i)
+\S4method{[[}{bundle,ANY}(x, i)
 
-\S4method{[[}{bundle}(x, i) <- value
+\S4method{[[}{bundle,ANY,ANY,ANY}(x, i) <- value
 
 \S4method{$}{bundle}(x, name)
 
@@ -69,13 +71,13 @@
 
 \item{e2}{object 2}
 
-\item{i}{integer to index a bundle object}
+\item{i}{An \code{integer} value to index a bundle object.}
 
 \item{name}{The name of an object in the \code{bundle} object.}
 
 \item{size}{number of items to choose to generate a sample}
 
-\item{object}{a bundle object}
+\item{object}{A \code{bundle} object.}
 
 \item{...}{further parameters}
 

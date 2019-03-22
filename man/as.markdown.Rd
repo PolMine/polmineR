@@ -4,7 +4,9 @@
 \name{as.markdown}
 \alias{as.markdown}
 \alias{as.markdown,partition-method}
+\alias{as.markdown,subcorpus-method}
 \alias{as.markdown,plpr_partition-method}
+\alias{as.markdown,plpr_subcorpus-method}
 \title{Get markdown-formatted full text of a partition.}
 \usage{
 as.markdown(.Object, ...)
@@ -13,7 +15,15 @@ as.markdown(.Object, ...)
   meta = getOption("polmineR.meta"), template = get_template(.Object),
   cpos = TRUE, cutoff = NULL, verbose = FALSE, ...)
 
+\S4method{as.markdown}{subcorpus}(.Object,
+  meta = getOption("polmineR.meta"), template = get_template(.Object),
+  cpos = TRUE, cutoff = NULL, verbose = FALSE, ...)
+
 \S4method{as.markdown}{plpr_partition}(.Object, meta = NULL,
+  template = get_template(.Object), cpos = FALSE,
+  interjections = TRUE, cutoff = NULL, ...)
+
+\S4method{as.markdown}{plpr_subcorpus}(.Object, meta = NULL,
   template = get_template(.Object), cpos = FALSE,
   interjections = TRUE, cutoff = NULL, ...)
 }

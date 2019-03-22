@@ -81,7 +81,7 @@ setMethod("+", signature(e1 = "bundle", e2 = "textstat"), function(e1, e2){
 #' @exportMethod [[
 #' @rdname bundle
 setMethod('[[', 'bundle', function(x,i){
-  if (length(i) == 1){
+  if (length(i) == 1L){
     return(x@objects[[i]])
   } else {
     return( as.bundle(lapply(i, function(j) x[[j]])) )
@@ -98,7 +98,8 @@ setMethod('[[', 'bundle', function(x,i){
 #' names(pb)
 setMethod("[[<-", "bundle", function(x,i, value){
   x@objects[[i]] <- value
-  x}
+  x
+  }
 )
 
 #' @param name The name of an object in the \code{bundle} object.

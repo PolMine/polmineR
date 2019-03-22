@@ -19,15 +19,15 @@ NULL
 #' @slot encoding The encoding of the corpus.
 #' 
 #' @param x a bundle object
-#' @param i integer to index a bundle object
-#' @param object a bundle object
+#' @param i An \code{integer} value to index a bundle object.
+#' @param object A \code{bundle} object.
 #' @param size number of items to choose to generate a sample
 #' @param ... further parameters
 #' @param col columns of the data.table to use to generate an object
 #' @param value character string with a name to be assigned
 #' @rdname bundle
 #' @name bundle-class
-#' @aliases bundle
+#' @aliases bundle [[,bundle-method [[<-,bundle-method
 #' @exportClass bundle
 #' @docType class
 #' @author Andreas Blaette
@@ -716,9 +716,7 @@ setClass(
 #' @exportClass kwic
 #' @rdname context_bundle-class
 setClass("context_bundle",
-         slots = c(
-           query = "character"
-         ),
+         slots = c(query = "character"),
          contains = "bundle"
 )
 

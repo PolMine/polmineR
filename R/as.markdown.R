@@ -93,10 +93,26 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   markdown
 }
 
-
 #' @rdname as.markdown
 setMethod(
   "as.markdown", "partition",
+  function(
+    .Object, meta = getOption("polmineR.meta"), template = get_template(.Object),
+    cpos = TRUE, cutoff = NULL, verbose = FALSE,
+    ...
+  ){
+    as.markdown(
+      .Object = as(.Object, "subcorpus"),
+      meta = meta, template = template, cpos = cpos,
+      cutoff = cutoff, verbose = verbose,
+      ...
+    )
+})
+
+
+#' @rdname as.markdown
+setMethod(
+  "as.markdown", "subcorpus",
   function(
     .Object,
     meta = getOption("polmineR.meta"), template = get_template(.Object),
@@ -136,6 +152,12 @@ setMethod(
 
 #' @rdname as.markdown
 setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, template = get_template(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
+  as.markdown(as(.Object, "plpr_subcorpus"), meta = meta, template = template, cpos = cpos, interjections = interjections, cutoff = cutoff, ...)
+})
+
+
+#' @rdname as.markdown
+setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, template = get_template(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){

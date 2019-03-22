@@ -473,8 +473,10 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     warning("No matching regions found for the s-attributes provided: Returning NULL object")
     return(NULL)
   }
+  
+  
   y <- new(
-    "subcorpus",
+    if (length(x@type) > 0L) paste(x@type, "subcorpus", sep = "_") else "subcorpus",
     corpus = x@corpus,
     encoding = x@encoding,
     type = x@type,

@@ -4,6 +4,7 @@
 \name{read}
 \alias{read}
 \alias{read,partition-method}
+\alias{read,subcorpus-method}
 \alias{read,partition_bundle-method}
 \alias{read,data.table-method}
 \alias{read,hits-method}
@@ -14,6 +15,11 @@
 read(.Object, ...)
 
 \S4method{read}{partition}(.Object, meta = NULL, highlight = list(),
+  tooltips = list(), verbose = TRUE, cpos = TRUE,
+  cutoff = getOption("polmineR.cutoff"),
+  template = get_template(.Object), ...)
+
+\S4method{read}{subcorpus}(.Object, meta = NULL, highlight = list(),
   tooltips = list(), verbose = TRUE, cpos = TRUE,
   cutoff = getOption("polmineR.cutoff"),
   template = get_template(.Object), ...)
@@ -32,7 +38,7 @@ read(.Object, ...)
 \S4method{read}{regions}(.Object, meta = NULL)
 }
 \arguments{
-\item{.Object}{an object to be read (\code{"partition" or "partition_bundle"})}
+\item{.Object}{an object to be read (\code{partition} or {partition_bundle})}
 
 \item{...}{further parameters passed into read}
 

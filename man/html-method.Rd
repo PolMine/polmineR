@@ -6,6 +6,7 @@
 \alias{show,html-method}
 \alias{html,character-method}
 \alias{html,partition-method}
+\alias{html,subcorpus-method}
 \alias{html,partition_bundle-method}
 \alias{html,kwic-method}
 \alias{print.html}
@@ -16,6 +17,10 @@ html(object, ...)
 \S4method{html}{character}(object)
 
 \S4method{html}{partition}(object, meta = NULL, cpos = TRUE,
+  verbose = FALSE, cutoff = NULL, charoffset = FALSE,
+  beautify = TRUE, height = NULL, ...)
+
+\S4method{html}{subcorpus}(object, meta = NULL, cpos = TRUE,
   verbose = FALSE, cutoff = NULL, charoffset = FALSE,
   beautify = TRUE, height = NULL, ...)
 
