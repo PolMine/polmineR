@@ -641,6 +641,13 @@ setClass(
   contains = "regions"
 )
 
+#' @rdname subcorpus-class
+setClass("plpr_subcorpus", contains = "subcorpus")
+
+#' @rdname subcorpus-class
+setClass("press_subcorpus", contains = "subcorpus")
+
+
 
 #' @rdname features-class
 #' @exportClass features_cooccurrences

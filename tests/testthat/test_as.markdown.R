@@ -1,0 +1,51 @@
+library(polmineR)
+use("polmineR")
+testthat::context("as.markdown")
+
+
+test_that(
+  "as.markdown",
+  {
+    p <- partition("REUTERS", id = "127", regex = TRUE)
+    y <- as.markdown(p)
+    refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_markdown.txt")
+    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- paste(benchmark, collapse = "\n")
+    benchmark <- paste(benchmark, "\n", sep = "")
+    expect_identical(nchar(y), nchar(benchmark))
+    expect_identical(y, benchmark)
+    
+    y <- as.character(html(p))
+    refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_html.html")
+    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- gsub("\n\n", "\n", benchmark)
+    benchmark <- paste(benchmark, collapse = "\n")
+    benchmark <- paste(benchmark, "\n", sep = "")
+    expect_identical(nchar(y), nchar(benchmark))
+    expect_identical(y, benchmark)
+  }
+)
+
+
+test_that(
+  "plpr_partition",
+  {
+    m <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Merkel", regex = TRUE)
+    y <- as.markdown(m)
+    refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_markdown.txt")
+    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- paste(benchmark, collapse = "\n")
+    expect_identical(nchar(y), nchar(benchmark))
+    expect_identical(y, benchmark)
+    
+    y <- as.character(html(m))
+    refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
+    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- gsub("\n\n", "\n", benchmark)
+    benchmark <- paste(benchmark, collapse = "\n")
+    benchmark <- paste(benchmark, "\n", sep = "")
+    expect_identical(nchar(y), nchar(benchmark))
+    expect_identical(y, benchmark)
+  }
+)
+

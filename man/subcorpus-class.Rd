@@ -4,6 +4,8 @@
 \name{subcorpus-class}
 \alias{subcorpus-class}
 \alias{subcorpus}
+\alias{plpr_subcorpus-class}
+\alias{press_subcorpus-class}
 \alias{subset,corpus-method}
 \alias{subset,character-method}
 \alias{subset,subcorpus-method}
