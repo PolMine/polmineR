@@ -551,6 +551,7 @@ setClass(
 #' @slot corpus A length-one \code{character} vector, a CWB corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
 #' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
+#' @slot name An additional name for the object that may be more telling than the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
 #' @exportClass corpus
 #' @rdname corpus_class
@@ -563,10 +564,15 @@ setClass(
     corpus = "character",
     data_dir = "character",
     type = "character",
-    encoding = "character"
+    encoding = "character",
+    name = "character"
   )
 )
 
+#' @details A \code{corpus} object can have a name, which can be retrieved using
+#' the \code{name}-method.
+#' @rdname corpus_class
+setMethod("name", "corpus", function(x) x@name)
 
 
 #' Regions of a CWB corpus.
@@ -790,10 +796,6 @@ setClassUnion(
   name = "slice",
   members = c("subcorpus", "regions", "partition")
 )
-
-
-#' @exportClass CorpusOrSubcorpus
-setClassUnion(name = "CorpusOrSubcorpus", members = c("character", "partition"))
 
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},

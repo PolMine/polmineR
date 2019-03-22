@@ -38,9 +38,24 @@ setMethod("ngrams", "partition", function(.Object, ...) callNextMethod(.Object, 
 #' @rdname ngrams
 setMethod("ngrams", "character", function(.Object, ...) callNextMethod(.Object, ...))
 
+#' @rdname ngrams
+setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+  ngrams(.Object = as(.Object, "subcorpus"), n = n, p_attribute = p_attribute, char = char, progress = progress, ...)
+})
 
 #' @rdname ngrams
-setMethod("ngrams", "CorpusOrSubcorpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+setMethod("ngrams", "subcorpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+  callNextMethod()
+})
+
+#' @rdname ngrams
+setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+  ngrams(.Object = corpus(.Object), n = n, p_attribute = p_attribute, char = char, progress = progress, ...)
+})
+
+
+#' @rdname ngrams
+setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -71,7 +86,7 @@ setMethod("ngrams", "CorpusOrSubcorpus", function(.Object, n = 2, p_attribute = 
     dummy <- lapply(
       1L:(n * length(p_attribute)),
       function(i){
-        str <- as.nativeEnc(cl_id2str(corpus = corpus(.Object), p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
+        str <- as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
         TF[, eval(paste(token_no[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
       })
     
@@ -104,7 +119,7 @@ setMethod("ngrams", "CorpusOrSubcorpus", function(.Object, n = 2, p_attribute = 
   }
   new(
     "ngrams",
-    n = as.integer(n), corpus = corpus(.Object), encoding = encoding(.Object),
+    n = as.integer(n), corpus = .Object@corpus, encoding = encoding(.Object),
     size = as.integer(size(.Object)), stat = TF, name = name(.Object),
     p_attribute = if (is.null(char)) p_attribute else "ngram"
     )

@@ -66,13 +66,19 @@ setMethod("get_token_stream", "matrix", function(.Object, ...){
   get_token_stream(cpos_vector, ...)
 })
 
+#' @rdname get_token_stream-method
+setMethod("get_token_stream", "corpus", function(.Object, left = NULL, right = NULL, ...){
+  if (is.null(left)) left <- 0L
+  if (is.null(right)) right <- size(.Object) - 1L
+  get_token_stream(left:right, corpus = .Object@corpus, encoding = encoding(.Object), ...)
+})
+
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "character", function(.Object, left = NULL, right = NULL, ...){
-  if (is.null(left)) left <- 0L
-  if (is.null(right)) right <- size(.Object) - 1L
-  get_token_stream(left:right, corpus = .Object, encoding = registry_get_encoding(.Object), ...)
+  get_token_stream(corpus(.Object), left = left, right = right, ...)
 })
+
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "slice", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){

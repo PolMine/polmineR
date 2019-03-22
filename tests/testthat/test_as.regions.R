@@ -12,6 +12,7 @@ test_that(
     r2 <- as(sc, "regions")
     
     r2@data_dir <- character()
+    r1@name <- character()
     expect_identical(r1, r2)
   }
 )

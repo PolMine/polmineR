@@ -7,9 +7,9 @@ NAME "Reuters Sample Corpus"
 # corpus ID (must be lowercase in registry!)
 ID   reuters
 # path to binary data files
-HOME /private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/Rtmpuf91BM/R_LIBS8022191d6147/polmineR/extdata/cwb/indexed_corpora/reuters
+HOME /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/reuters
 # optional info file (displayed by "info;" command in CQP)
-INFO /private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/Rtmpuf91BM/R_LIBS8022191d6147/polmineR/extdata/cwb/indexed_corpora/reuters/.info.md
+INFO /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/reuters/.info.md
 
 # corpus properties provide additional information about the corpus:
 ##:: charset = "latin1"	# character encoding of corpus data

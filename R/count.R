@@ -286,22 +286,19 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
 })
 
 #' @rdname count-method
-setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
+setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  stopifnot(.Object %in% .list_corpora())
   if (is.null(query)){
     if (length(p_attribute) == 1L){
-      cnt_file <- file.path(
-        registry_get_home(.Object, registry = Sys.getenv("CORPUS_REGISTRY")),
-        sprintf("%s.corpus.cnt", p_attribute)
+      cnt_file <- file.path(.Object@data_dir, sprintf("%s.corpus.cnt", p_attribute)
       )
       if (file.exists(cnt_file)){
         cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
         TF <- data.table(count = cnt)
       } else {
-        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object, p_attribute = p_attribute))
+        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object@corpus, p_attribute = p_attribute))
       }
       TF[, "id" := 0L:(nrow(TF) - 1L), with = TRUE]
       setnames(TF, old = "id", new = paste(p_attribute, "id", sep = "_"))
@@ -309,7 +306,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
         setkeyv(TF, paste(p_attribute, "id", sep = "_"))
         setcolorder(TF, c(paste(p_attribute, "id", sep = "_"), "count"))
       } else {
-        TF[, "token" := as.nativeEnc(cl_id2str(corpus = .Object, p_attribute = p_attribute, id = 0L:(nrow(TF) - 1L), registry = registry()), from = registry_get_encoding(.Object)), with = TRUE]
+        TF[, "token" := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute, id = 0L:(nrow(TF) - 1L), registry = registry()), from = encoding(.Object)), with = TRUE]
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = p_attribute)
         setkeyv(TF, p_attribute)
@@ -323,7 +320,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
           function(p_attr){
             .message("getting token stream for p-attribute: ", p_attr, verbose = verbose)
-            cl_cpos2id(corpus = .Object, p_attribute = p_attr, 0L:(size(.Object) - 1L), registry = registry())
+            cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attr, 0L:(size(.Object) - 1L), registry = registry())
           }
         )
       )
@@ -333,34 +330,33 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
       if (decode){
         for (pAttr in p_attribute){
           .message("decode p-attribute: ", pAttr, verbose = verbose)
-          TF[, eval(pAttr) := as.nativeEnc(cl_id2str(corpus = .Object, p_attribute = pAttr, id = TF[[paste(pAttr, "id", sep = "_")]], registry = registry()), from = registry_get_encoding(.Object)), with = TRUE]
+          TF[, eval(pAttr) := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = pAttr, id = TF[[paste(pAttr, "id", sep = "_")]], registry = registry()), from = encoding(.Object)), with = TRUE]
         }
         setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
       }
     }
     y <- new(
       Class = "count",
-      corpus = .Object,
+      corpus = .Object@corpus,
       p_attribute = p_attribute,
-      encoding = registry_get_encoding(.Object),
+      encoding = encoding(.Object),
       stat = TF,
       name = character(),
       size = size(.Object)
     )
     return(y)
   } else {
-    stopifnot(.Object %in% .list_corpora())
-    total <- cl_attribute_size(corpus = .Object, attribute = p_attribute, attribute_type = "p", registry = registry())
+    total <- cl_attribute_size(corpus = .Object@corpus, attribute = p_attribute, attribute_type = "p", registry = registry())
     if (class(cqp) == "function") cqp <- cqp(query)
     if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
     if (cqp == FALSE){
-      query <- as.corpusEnc(query, corpusEnc = registry_get_encoding(.Object))
+      query <- as.corpusEnc(query, corpusEnc = encoding(.Object))
       count <- sapply(
         query,
         function(query){
-          query_id <- cl_str2id(corpus = .Object, p_attribute = p_attribute, str = query, registry = registry())
+          query_id <- cl_str2id(corpus = .Object@corpus, p_attribute = p_attribute, str = query, registry = registry())
           # if there is no id for query, query_id will be -5
-          if (query_id >= 0) cl_id2freq(corpus = .Object, p_attribute = p_attribute, id = query_id, registry = registry()) else 0
+          if (query_id >= 0) cl_id2freq(corpus = .Object@corpus, p_attribute = p_attribute, id = query_id, registry = registry()) else 0
         }
       )
       return(data.table(query = query, count = count, freq = count / total))
@@ -369,7 +365,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
         count <- sapply(
           query,
           function(query){
-            cpos_matrix <- cpos(.Object, query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = registry_get_encoding(.Object))
+            cpos_matrix <- cpos(.Object@corpus, query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = encoding(.Object))
             if (!is.null(cpos_matrix)){
               return( nrow(cpos_matrix) )
             } else {
@@ -379,7 +375,7 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
           })
         return( data.table(query = query, count = count, freq = count / total) )
       } else {
-        C <- Corpus$new(.Object)
+        C <- Corpus$new(.Object@corpus)
         C$p_attribute <- p_attribute
         retval <- count(.Object = C$as.partition(), query = query, cqp = cqp, p_attribute = p_attribute, breakdown = TRUE)
         return( retval )
@@ -387,6 +383,24 @@ setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, ch
     }
   }
 })
+
+
+#' @rdname count-method
+setMethod("count", "character", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
+  count(
+    .Object = corpus(.Object),
+    query = query,
+    cqp = cqp,
+    check = check,
+    p_attribute = p_attribute,
+    breakdown = breakdown,
+    sort = sort,
+    decode = decode,
+    verbose = verbose,
+    ...
+  )
+})
+
 
 #' @rdname context-class
 setMethod("count", "context", function(.Object) .Object@count )

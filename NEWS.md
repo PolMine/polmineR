@@ -21,6 +21,7 @@ polmineR 0.7.11.9001
 * The `tempcorpus()`-method and the `tempcorpus` class have been removed from the package, having become utterly deprecated.
 * The `summary()`-method for `partition`-class objects has been turned into a method for the `count`-class, to eliminate an inconsistency. The example of a workflow has been moved to the documentation object for the `count`-class.
 * The `browse()`-methode has not proven to be useful and has been removed from the package. A new `browse()`-function is introduced to throw a warning, if browse should be called nevertheless.
+* The somewhat odd class `CorpusOrSubcorpus` has been removed. The `ngrams`-method now applies for `corpus` and `subcorpus` objects.
 
 
 polmineR 0.7.11

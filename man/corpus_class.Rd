@@ -4,18 +4,21 @@
 \name{corpus-class}
 \alias{corpus-class}
 \alias{zoom}
+\alias{name,corpus-method}
 \alias{show,corpus-method}
 \alias{$,corpus-method}
 \title{S4 class to wrap information on CWB corpora.}
 \usage{
+\S4method{name}{corpus}(x)
+
 \S4method{show}{corpus}(object)
 
 \S4method{$}{corpus}(x, name)
 }
 \arguments{
-\item{object}{An object.}
-
 \item{x}{An object of class \code{corpus}, or inheriting from it.}
+
+\item{object}{An object.}
 
 \item{name}{A (single) s-attribute.}
 
@@ -25,6 +28,9 @@
 S4 class to wrap information on CWB corpora.
 }
 \details{
+A \code{corpus} object can have a name, which can be retrieved using
+the \code{name}-method.
+
 Applying the `$`-method on a corpus will return the values for the
   s-attribute stated with argument \code{name}.
 }
@@ -36,6 +42,8 @@ Applying the `$`-method on a corpus will return the values for the
 \item{\code{data_dir}}{The directory where the files for the indexed corpus are.}
 
 \item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).}
+
+\item{\code{name}}{An additional name for the object that may be more telling than the corpus ID.}
 
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one \code{character} vector.}
 }}

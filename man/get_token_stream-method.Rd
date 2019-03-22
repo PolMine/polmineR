@@ -5,6 +5,7 @@
 \alias{get_token_stream}
 \alias{get_token_stream,numeric-method}
 \alias{get_token_stream,matrix-method}
+\alias{get_token_stream,corpus-method}
 \alias{get_token_stream,character-method}
 \alias{get_token_stream,slice-method}
 \alias{get_token_stream,partition-method}
@@ -19,6 +20,9 @@ get_token_stream(.Object, ...)
   cutoff = NULL, decode = TRUE, ...)
 
 \S4method{get_token_stream}{matrix}(.Object, ...)
+
+\S4method{get_token_stream}{corpus}(.Object, left = NULL, right = NULL,
+  ...)
 
 \S4method{get_token_stream}{character}(.Object, left = NULL,
   right = NULL, ...)

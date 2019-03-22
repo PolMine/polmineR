@@ -7,6 +7,8 @@
 \alias{encoding,textstat-method}
 \alias{encoding,bundle-method}
 \alias{encoding,character-method}
+\alias{encoding,corpus-method}
+\alias{encoding,subcorpus-method}
 \title{Get and set encoding.}
 \usage{
 encoding(object)
@@ -18,6 +20,10 @@ encoding(object) <- value
 \S4method{encoding}{bundle}(object)
 
 \S4method{encoding}{character}(object)
+
+\S4method{encoding}{corpus}(object)
+
+\S4method{encoding}{subcorpus}(object)
 }
 \arguments{
 \item{object}{A \code{textstat} or \code{bundle} object, or a length-one

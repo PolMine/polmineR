@@ -41,6 +41,11 @@ setMethod("encoding", "bundle", function(object) object@encoding)
 #' @rdname encoding
 setMethod("encoding", "character", function(object) registry_get_encoding(object))
 
+#' @rdname encoding
+setMethod("encoding", "corpus", function(object) object@encoding)
+
+#' @rdname encoding
+setMethod("encoding", "subcorpus", function(object) callNextMethod())
 
 #' Conversion between corpus and native encoding.
 #' 
