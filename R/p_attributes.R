@@ -10,32 +10,41 @@ NULL
 #' 
 #' @param .Object A length-one \code{character} vector, or a \code{partition} object.
 #' @param ... further arguments
-#' @param p_attribute p-attribute to decode
+#' @param p_attribute A p-attribute to decode, provided by a length-one
+#'   \code{character} vector.
 #' @exportMethod p_attributes
 #' @rdname p_attributes
 #' @name p_attributes
 #' @examples 
 #' use("polmineR")
 #' p_attributes("GERMAPARLMINI")
+#' p_attributes("REUTERS")
+#' p_attributes("REUTERS", p_attribute = "word")
 #' @references Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.
 setGeneric("p_attributes", function(.Object, ...) standardGeneric("p_attributes"))
 
 #' @rdname p_attributes
 setMethod("p_attributes", "character", function(.Object, p_attribute = NULL, ...){
+  p_attributes(.Object = corpus(.Object), p_attribute = p_attribute, ...)
+})
+
+
+#' @rdname p_attributes
+setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  pAttrs <- registry_get_p_attributes(.Object)
+  p_attrs <- registry_get_p_attributes(corpus = .Object@corpus)
   if (is.null(p_attribute)){
-    return( pAttrs )
+    return( p_attrs )
   } else {
-    if (p_attribute %in% pAttrs){
-      tokens <- cl_id2str(corpus = .Object, p_attribute = p_attribute, id = 0L:(cl_lexicon_size(corpus = .Object, p_attribute = p_attribute, registry = registry()) - 1L), registry = registry())
-      tokens <- as.nativeEnc(tokens, from = registry_get_encoding(.Object))
+    if (p_attribute %in% p_attrs){
+      tokens <- get_token_stream(.Object = .Object, p_attribute = p_attribute, ...)
       return(tokens)
     } else {
       stop("p_attribute provided is not available")
     }
   }
 })
+
 
 #' @details The \code{p_attributes}-method returns the p-attributes defined for the
 #' corpus the partition is derived from, if argument \code{p_attribute} is \code{NULL}

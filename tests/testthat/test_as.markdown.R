@@ -49,3 +49,27 @@ test_that(
   }
 )
 
+test_that(
+  "read",
+  {
+    a <- subset(corpus("REUTERS"), places = "argentina")
+    b <- html(a)
+    c <- highlight(b, lightgreen = "higher")
+    d <- tooltips(c, list(lightgreen = "Further information"))
+    
+    y <- read(
+      a, meta = "places",
+      highlight = list(lightgreen = "higher"),
+      tooltips = list(lightgreen = "Further information")
+    )
+    
+    expect_identical(d, y)
+    
+    refdoc <- system.file(package = "polmineR", "fulltext", "reading_reuters.html")
+    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- paste(benchmark, collapse = "\n")
+    benchmark <- paste(benchmark, "\n", sep = "")
+    expect_identical(nchar(y), nchar(benchmark))
+    expect_identical(as.character(y), benchmark)
+  }
+)

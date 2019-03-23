@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Corpus: REUTERS</title>
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script><style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+ /* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+</style>
+</head>
+<body>
+<h2>Corpus: REUTERS</h2>
+
+<h3>places: argentina</h3>
+
+<p><span id="3997" token="Argentine" class="fulltext">Argentine</span> <span id="3998" token="crude" class="fulltext">crude</span> <span id="3999" token="oil" class="fulltext">oil</span> <span id="4000" token="production" class="fulltext">production</span> <span id="4001" token="was" class="fulltext">was</span> <span id="4002" token="down" class="fulltext">down</span> <span id="4003" token="10.8" class="fulltext">10.8</span> <span id="4004" token="pct" class="fulltext">pct</span> <span id="4005" token="in" class="fulltext">in</span> <span id="4006" token="January" class="fulltext">January</span> <span id="4007" token="1987" class="fulltext">1987</span> <span id="4008" token="to" class="fulltext">to</span> <span id="4009" token="12.32" class="fulltext">12.32</span> <span id="4010" token="mln" class="fulltext">mln</span> <span id="4011" token="barrels" class="fulltext">barrels</span> <span id="4012" token="from" class="fulltext">from</span> <span id="4013" token="13.81" class="fulltext">13.81</span> <span id="4014" token="mln" class="fulltext">mln</span> <span id="4015" token="barrels" class="fulltext">barrels</span> <span id="4016" token="in" class="fulltext">in</span> <span id="4017" token="January" class="fulltext">January</span> <span id="4018" token="1986" class="fulltext">1986</span> <span id="4019" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4020" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4021" token="Fiscales" class="fulltext">Fiscales</span> <span id="4022" token="said" class="fulltext">said</span> <span id="4023" token="January" class="fulltext">January</span> <span id="4024" token="1987" class="fulltext">1987</span> <span id="4025" token="natural" class="fulltext">natural</span> <span id="4026" token="gas" class="fulltext">gas</span> <span id="4027" token="output" class="fulltext">output</span> <span id="4028" token="totalled" class="fulltext">totalled</span> <span id="4029" token="1.15" class="fulltext">1.15</span> <span id="4030" token="billion" class="fulltext">billion</span> <span id="4031" token="cubic" class="fulltext">cubic</span> <span id="4032" token="metrers" class="fulltext">metrers</span> <span id="4033" token="3.6" class="fulltext">3.6</span> <span id="4034" token="pct" class="fulltext">pct</span> <span class="tooltip"><span id="4035" token="higher" class="fulltext" style="background-color:lightgreen">higher</span><span class="tooltiptext">Further information</span></span> <span id="4036" token="than" class="fulltext">than</span> <span id="4037" token="1.11" class="fulltext">1.11</span> <span id="4038" token="billion" class="fulltext">billion</span> <span id="4039" token="cubic" class="fulltext">cubic</span> <span id="4040" token="metres" class="fulltext">metres</span> <span id="4041" token="produced" class="fulltext">produced</span> <span id="4042" token="in" class="fulltext">in</span> <span id="4043" token="January" class="fulltext">January</span> <span id="4044" token="1986" class="fulltext">1986</span> <span id="4045" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4046" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4047" token="Fiscales" class="fulltext">Fiscales</span> <span id="4048" token="added" class="fulltext">added</span> <span id="4049" token="Reuter" class="fulltext">Reuter</span> </p>
+
+</body>
+</html>
