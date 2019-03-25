@@ -8,7 +8,6 @@ addons:
     - default-jdk
 
 before_install:
-  - sudo ./inst/sh/install_cwb.sh
   - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'install.packages("rmarkdown")'
   - Rscript -e 'install.packages("RcppCWB")'
