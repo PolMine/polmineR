@@ -6,6 +6,7 @@ addons:
     packages:
     - libxml2-dev
     - default-jdk
+    - libprotobuf-dev
 
 before_install:
   - Rscript -e 'install.packages("devtools")'
