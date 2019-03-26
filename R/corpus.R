@@ -557,12 +557,14 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 #' @docType methods
 #' @rdname corpus_class
 setMethod("show", "corpus", function(object){
-  cat("** 'corpus' object **\n")
-  cat(sprintf("%-12s", "corpus ID:"), object@corpus, "\n")
+  cat(sprintf("** '%s' object **\n", class(object)))
+  cat(sprintf("%-12s", "corpus:"), object@corpus, "\n")
   cat(sprintf("%-12s", "encoding:"), object@encoding, "\n")
   cat(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]", "\n")
   cat(sprintf("%-12s", "size:"), size(object), "\n")
 })
+
+
 
 
 #' @details Applying the `$`-method on a corpus will return the values for the
