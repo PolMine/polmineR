@@ -5,11 +5,11 @@ NULL
 #' 
 #' Structural annotations (s-attributes) of a corpus capture metainformation for
 #' regions of tokens. The \code{s_attributes}-method offers high-level access to
-#' the s-attributes present in a corpus or subcorpus, or the values of
-#' s-attributes in a corpus/partition.
+#' the s-attributes present in a \code{corpus} or \code{subcorpus}, or the values of
+#' s-attributes in a \code{corpus}/\code{partition}.
 #' 
 #' Importing XML into the Corpus Workbench (CWB) turns elements and element
-#' attributes into so-called s-attributes. There are two basic uses of the
+#' attributes into so-called "s-attributes". There are two basic uses of the
 #' \code{s_attributes}-method: If the argument \code{s_attribute} is \code{NULL}
 #' (default), the return value is a \code{character} vector with all
 #' s-attributes present in a corpus.
@@ -18,8 +18,12 @@ NULL
 #' character vector), the values of the s-attributes available in the
 #' \code{corpus}/\code{partition} are returned.
 #' 
-#' If a character vector of s-attributes is provided, the method will return a
-#' \code{data.table}.
+#' If argument \code{unique} is \code{FALSE}, the full sequence of the
+#' s_attributes is returned, which is a useful building block for decoding a
+#' corpus.
+#' 
+#' If a character vector including several s-attributes is provided, the method
+#' will return a \code{data.table}.
 #'
 #' @param .Object A \code{corpus}, \code{subcorpus}, \code{partition} object, or
 #'   a \code{call}. A corpus can also be specified by a length-one character
@@ -67,16 +71,26 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
     return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
   } else {
     if (length(s_attribute) == 1){
-      y <- cl_struc2str(
-        corpus = .Object@corpus, s_attribute = s_attribute,
-        struc = 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L),
-        registry = registry()
-      )
-      if (!is.null(regex)) y <- grep(regex, y, value = TRUE)
-      if (unique) y <- unique(y)
-      Encoding(y) <- .Object@encoding
-      if (.Object@encoding != localeToCharset()[1]) y <- as.nativeEnc(y, from = .Object@encoding)
-      return(y)
+      avs_file <- file.path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+      avs_file_size <- file.info(avs_file)[["size"]]
+      avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
+      Encoding(avs) <- .Object@encoding
+      if (.Object@encoding != localeToCharset()[1]) avs <- as.nativeEnc(avs, from = .Object@encoding)
+      
+      if (unique){
+        return(avs)
+      } else {
+        avx_file <- file.path(.Object@data_dir, paste(s_attribute, "avx", sep = "."))
+        avx_file_size <- file.info(avx_file)[["size"]]
+
+        avx <- readBin(avx_file, what = integer(), size = 4L, n = avx_file_size / 4L, endian = "big")
+        avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
+
+        y <- avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))]
+        
+        if (!is.null(regex)) y <- grep(regex, y, value = TRUE)
+        return(y)
+      }
     } else if (length(s_attribute) > 1){
       y <- lapply(
         s_attribute,

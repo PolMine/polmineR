@@ -7,6 +7,7 @@
 \alias{[[,bundle-method}
 \alias{[[<-,bundle-method}
 \alias{name<-,bundle,character-method}
+\alias{subcorpus_bundle-class}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
 \alias{names<-,bundle,vector-method}

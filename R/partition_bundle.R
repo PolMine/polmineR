@@ -101,12 +101,12 @@ NULL
 #' combines a set of \code{partition} objects.
 #' 
 #' @param .Object A \code{partition}, a length-one \code{character} vector supplying a CWB corpus, or a \code{partition_bundle}
-#' @param s_attribute The s-attribute to vary
+#' @param s_attribute The s-attribute to vary.
 #' @param values Values the s-attribute provided shall assume.
 #' @param prefix A character vector that will be attached as a prefix to partition names.
 #' @param progress Logical, whether to show progress bar.
 #' @param mc Logical, whether to use multicore parallelization.
-#' @param xml logical
+#' @param xml A \code{logical} value.
 #' @param type The type of \code{partition} to generate.
 #' @param verbose Logical, whether to provide progress information.
 #' @param ... parameters to be passed into partition-method (see respective documentation)

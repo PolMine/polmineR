@@ -54,12 +54,12 @@ A character vector (s-attributes, or values of s-attributes).
 \description{
 Structural annotations (s-attributes) of a corpus capture metainformation for
 regions of tokens. The \code{s_attributes}-method offers high-level access to
-the s-attributes present in a corpus or subcorpus, or the values of
-s-attributes in a corpus/partition.
+the s-attributes present in a \code{corpus} or \code{subcorpus}, or the values of
+s-attributes in a \code{corpus}/\code{partition}.
 }
 \details{
 Importing XML into the Corpus Workbench (CWB) turns elements and element
-attributes into so-called s-attributes. There are two basic uses of the
+attributes into so-called "s-attributes". There are two basic uses of the
 \code{s_attributes}-method: If the argument \code{s_attribute} is \code{NULL}
 (default), the return value is a \code{character} vector with all
 s-attributes present in a corpus.
@@ -68,8 +68,12 @@ If \code{s_attribute} is the name of a specific s-attribute (a length one
 character vector), the values of the s-attributes available in the
 \code{corpus}/\code{partition} are returned.
 
-If a character vector of s-attributes is provided, the method will return a
-\code{data.table}.
+If argument \code{unique} is \code{FALSE}, the full sequence of the
+s_attributes is returned, which is a useful building block for decoding a
+corpus.
+
+If a character vector including several s-attributes is provided, the method
+will return a \code{data.table}.
 
 If \code{.Object} is a call, the \code{s_attributes}-method will
   return a character vector with the s-attributes occurring in the call. This

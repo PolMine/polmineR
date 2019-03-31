@@ -44,65 +44,6 @@ setMethod("show", "partition", function(object){
 
 
 
-#' @details The \code{split}-method will split a partition object into a
-#' \code{partition_bundle} if gap between strucs exceeds a minimum number of
-#' tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
-#' speeches. Note: To speed things up, the returned partitions will not include
-#' frequency lists. The lists can be prepared by applying \code{enrich} on the
-#' \code{partition_bundle} object that is returned.
-#' @param x A \code{partition} object.
-#' @param gap An integer value specifying the minimum gap between regions for
-#'   performing the split.
-#' @rdname partition_class
-#' @exportMethod split
-#' @docType methods
-setMethod("split", "partition", function(x, gap, ...){
-  cpos <- x@cpos
-  if (nrow(cpos) > 1L){
-    distance <- cpos[,1][2L:nrow(cpos)] - cpos[,2][1L:(nrow(cpos) - 1L)]
-    beginning <- c(1L, ifelse(distance > gap, 1L, 0L))
-    no <- vapply(
-      1L:length(beginning),
-      FUN.VALUE = 1L,
-      function(x) ifelse (beginning[x] == 1L, sum(beginning[1L:x]), 0L)
-    )
-    for (i in 1L:length(no)) no[i] <- ifelse (no[i] == 0, no[i - 1L], no[i])
-    strucsClassified <- cbind(x@strucs, no)
-    strucList <- split(strucsClassified[,1], strucsClassified[,2])
-    cposClassified <- cbind(cpos, no)
-    cposList1 <- split(cposClassified[,1], cposClassified[,3])
-    cposList2 <- split(cposClassified[,2], cposClassified[,3])
-    bundleRaw <- lapply(
-      1L:length(strucList),
-      function(i) {
-        p <- new(
-          class(x)[1],
-          strucs = strucList[[i]],
-          cpos = cbind(cposList1[[i]], cposList2[[i]]),
-          corpus = x@corpus, encoding = x@encoding,
-          s_attributes = x@s_attributes,
-          xml = x@xml, s_attribute_strucs = x@s_attribute_strucs,
-          explanation = "partition results from split, s-attributes do not necessarily define partition",
-          name = paste(x@name, i, collapse = "_", sep = ""),
-          stat = data.table()
-        )
-        meta <- if (is.null(names(x@metadata))) NULL else colnames(x@metadata)
-        p@size <- size(p)
-        p
-      })
-  } else {
-    x@name <- paste(x@name, 1, collapse = "_", sep = "")
-    bundleRaw <- list(x)
-  }
-  names(bundleRaw) <- unlist(lapply(bundleRaw, function(y) y@name))
-  bundle <- as.bundle(bundleRaw)
-  bundle
-})
-
-
-
-
-
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 

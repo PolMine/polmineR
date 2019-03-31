@@ -760,7 +760,7 @@ setClass("press_partition", contains = "partition")
 #' @exportClass partition_bundle
 #' @author Andreas Blaette
 setClass("partition_bundle",
-         representation(
+         slots = c(
            s_attributes_fixed = "list",
            explanation = "character",
            xml = "character",
@@ -770,6 +770,31 @@ setClass("partition_bundle",
 )
 
 
+#' @exportClass subcorpus_bundle
+#' @rdname bundle
+setClass("subcorpus_bundle",
+         slots = c(
+           s_attributes_fixed = "list",
+           xml = "character"
+         ),
+         contains = "bundle"
+)
+
+
+#' @export
+setAs(from = "partition_bundle", to = "subcorpus_bundle", def = function(from){
+  type <- get_type(from)
+  dest_class <- if (is.null(type)) "subcorpus" else paste(type, "subcorpus", sep = "_")
+  new(
+    "subcorpus_bundle",
+    objects = lapply(from@objects, function(x) as(x, dest_class)),
+    p_attribute = character(), # unlike a partition_bundle, a subcorpus_bundle will never include a count
+    corpus = from@corpus,
+    encoding = from@encoding,
+    s_attributes_fixed = from@s_attributes_fixed,
+    xml = from@xml
+  )
+})
 
 
 #' @rdname cooccurrences-class

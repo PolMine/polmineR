@@ -16,6 +16,8 @@ setAs(from = "partition", to = "subcorpus", def = function(from){
     cpos = from@cpos,
     size = from@size,
     
+    name = from@name,
+
     # slots defined for class 'subcorpus' on its own right
     s_attributes = from@s_attributes,
     annotations = list(),

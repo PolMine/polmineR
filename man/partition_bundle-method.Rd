@@ -32,7 +32,7 @@ partition_bundle(.Object, ...)
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
 
-\item{s_attribute}{The s-attribute to vary}
+\item{s_attribute}{The s-attribute to vary.}
 
 \item{values}{Values the s-attribute provided shall assume.}
 
@@ -46,7 +46,7 @@ partition_bundle(.Object, ...)
 
 \item{type}{The type of \code{partition} to generate.}
 
-\item{xml}{logical}
+\item{xml}{A \code{logical} value.}
 
 \item{node}{A logical value, whether to include the node (i.e. query matches) in the region matrix
 generated when creating a \code{partition} from a \code{context}-object.}

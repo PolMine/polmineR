@@ -485,7 +485,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     strucs = dt[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
     s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]])),
-    xml = "flat"
+    xml = "flat",
+    name = ""
   )
   dimnames(y@cpos) <- NULL
   y@size <- size(y)
@@ -546,7 +547,8 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
     strucs = dt_min[["struc"]],
     s_attribute_strucs = s_attr[length(s_attr)],
-    xml = "flat"
+    xml = "flat",
+    name = x@name
   )
   y@size <- size(y)
   y
