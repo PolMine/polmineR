@@ -14,16 +14,16 @@ NULL
 #' 
 #' @slot corpus The CWB corpus the objects in the \code{bundle} are based on, a length 1 
 #' \code{character} vector.
-#' @slot objects An object of class \code{"list"}
-#' @slot p_attribute Object of class \code{"character"}
+#' @slot objects An object of class \code{list}.
+#' @slot p_attribute Object of class \code{character}.
 #' @slot encoding The encoding of the corpus.
 #' 
 #' @param x a bundle object
 #' @param i An \code{integer} value to index a bundle object.
 #' @param object A \code{bundle} object.
 #' @param size number of items to choose to generate a sample
-#' @param ... further parameters
-#' @param col columns of the data.table to use to generate an object
+#' @param ... Further parameters
+#' @param col columns of the \code{data.table} to use to generate an object.
 #' @param value character string with a name to be assigned
 #' @rdname bundle
 #' @name bundle-class
@@ -777,7 +777,7 @@ setClass("subcorpus_bundle",
            s_attributes_fixed = "list",
            xml = "character"
          ),
-         contains = "bundle"
+         contains = "partition_bundle"
 )
 
 

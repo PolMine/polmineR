@@ -78,9 +78,9 @@
 
 \item{object}{A \code{bundle} object.}
 
-\item{...}{further parameters}
+\item{...}{Further parameters}
 
-\item{col}{columns of the data.table to use to generate an object}
+\item{col}{columns of the \code{data.table} to use to generate an object.}
 }
 \description{
 A \code{bundle} is used to combine several objects (\code{partition}, \code{context},
@@ -96,9 +96,9 @@ transformations.
 \item{\code{corpus}}{The CWB corpus the objects in the \code{bundle} are based on, a length 1 
 \code{character} vector.}
 
-\item{\code{objects}}{An object of class \code{"list"}}
+\item{\code{objects}}{An object of class \code{list}.}
 
-\item{\code{p_attribute}}{Object of class \code{"character"}}
+\item{\code{p_attribute}}{Object of class \code{character}.}
 
 \item{\code{encoding}}{The encoding of the corpus.}
 }}

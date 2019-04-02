@@ -82,7 +82,9 @@ if (requireNamespace("NLP")){
 }
 }
 \seealso{
-To decode a structural attribute, see
-  \code{\link[RcppCWB]{s_attribute_decode}}, see \code{\link{as.VCorpus}} to
-  decode a \code{partition_bundle} object to a \code{VCorpus} object.
+To decode a structural attribute, you can use the
+  \code{\link{s_attributes}}-method, setting argument \code{unique} as
+  \code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See
+  \code{\link{as.VCorpus}} to decode a \code{partition_bundle} object,
+  returning a \code{VCorpus} object.
 }

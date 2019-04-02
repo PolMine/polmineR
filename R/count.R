@@ -207,7 +207,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     .message("getting hits for query/queries", verbose = verbose)
     DT <- hits(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress, verbose = verbose)@stat
     .message("rearranging table", verbose = verbose)
-    DT_cast <- dcast.data.table(DT, partition~query, value.var = "count", fill = 0)
+    DT_cast <- dcast.data.table(DT, partition ~ query, value.var = "count", fill = 0)
     
     # remove counts that are not in one of the partitions
     noPartition <- which(is.na(DT_cast[["partition"]]) == TRUE)
@@ -242,14 +242,11 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     corpus <- corpus(.Object)
     if (length(corpus) > 1) stop("partitions in partition_bundle must be derived from the same corpus")
     if (verbose) message("... unfolding corpus positions")
-    cpos_list <- lapply(
-      .Object@objects,
-      function(x) data.table(name = x@name, cpos = cpos(x@cpos))
-    )
+    cpos_list <- lapply(.Object@objects, function(x) data.table(name = x@name, cpos = cpos(x@cpos)))
     DT <- rbindlist(cpos_list)
     rm(cpos_list)
     if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
-    DT[["id"]] <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
+    DT[,"id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
     if (verbose) message("... performing count")
     CNT <- DT[,.N, by = c("name", "id")]
     rm(DT)
@@ -259,7 +256,13 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name")
     rm(CNT)
-    y <- lapply(
+    y <- new(
+      Class = "count_bundle",
+      p_attribute = p_attribute,
+      corpus = corpus,
+      encoding = unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
+    )
+    y@objects <- lapply(
       1L:length(CNT_list),
       function(i){
         new(
@@ -273,15 +276,8 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
         )
       }
     )
-    names(y) <- names(.Object)
-    y2 <- new(
-      Class = "count_bundle",
-      objects = y,
-      p_attribute = p_attribute,
-      corpus = corpus,
-      encoding = unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
-    )
-    return( y2 )
+    names(y@objects) <- names(.Object)
+    return( y )
   }
 })
 

@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.11.9010
-Date: 2019-03-31
+Version: 0.7.11.9011
+Date: 2019-04-01
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")))
 Imports:
     methods,
@@ -73,6 +73,7 @@ Collate:
     'decode.R'
     'cooccurrences.R'
     'as.sparseMatrix.R'
+    'make_region_matrix.R'
     'as.speeches.R'
     'blapply.R'
     'coerce.R'

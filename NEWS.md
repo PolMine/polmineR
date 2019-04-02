@@ -24,6 +24,7 @@ polmineR 0.7.11.9001
 * The somewhat odd class `CorpusOrSubcorpus` has been removed. The `ngrams`-method now applies for `corpus` and `subcorpus` objects.
 * A refactoring of the `split()`-method for `partition`-objects improved the readability of the code, but the performance gain is minimal.
 * The `s_attributes()`-method for `corpus` objects has been reworked: It will decode binary files directly, without reliance on the corpus library functions, which is significantly faster.
+* The `subcorpus_bundle` class now inherits from `partition_bundle`. This is not intended to be a long-term solution, but facilitates the implementation of new workflows based on the `subcorpus` class rather thane the `partition` class.
 
 
 polmineR 0.7.11
