@@ -25,6 +25,8 @@ polmineR 0.7.11.9001
 * A refactoring of the `split()`-method for `partition`-objects improved the readability of the code, but the performance gain is minimal.
 * The `s_attributes()`-method for `corpus` objects has been reworked: It will decode binary files directly, without reliance on the corpus library functions, which is significantly faster.
 * The `subcorpus_bundle` class now inherits from `partition_bundle`. This is not intended to be a long-term solution, but facilitates the implementation of new workflows based on the `subcorpus` class rather thane the `partition` class.
+* The pipe operator of the magrittr package is imported now, and magrittr has moved from a suggested package to a required package.
+* The `count()`-method for `partition_bundle`-objects did not perform iconv if necessary - this has been corrected.
 
 
 polmineR 0.7.11

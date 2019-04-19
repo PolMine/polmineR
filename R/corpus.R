@@ -586,3 +586,11 @@ setMethod("$", "corpus", function(x, name){
   s_attributes(x, s_attribute = name)
 })
 
+#' @param object An object of class \code{subcorpus_bundle}.
+#' @rdname subcorpus-class
+setMethod("show", "subcorpus_bundle", function (object) {
+  cat('** subcorpus_bundle object: **\n')
+  cat(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects), '\n')
+})
+
+

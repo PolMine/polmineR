@@ -318,7 +318,7 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, v
     simplify = TRUE,
     USE.NAMES = TRUE
   )
-retval
+  retval
 })
 
 #' @param complete enhance completely

@@ -129,10 +129,7 @@ setMethod("weigh", "count", function(.Object, with){
 
 #' @rdname weigh-method
 setMethod("weigh", "count_bundle", function(.Object, with, progress = TRUE){
-  if (progress){
-    .Object@objects <- pblapply(.Object@objects, function(x) weigh(x, with = with))
-  } else {
-    .Object@objects <- lapply(.Object@objects, function(x) weigh(x, with = with))
-  }
+  .fn <- function(x) weigh(x, with = with)
+  if (progress) .Object@objects <- pblapply(.Object@objects, .fn) else lapply(.Object@objects, .fn)
   .Object
 })

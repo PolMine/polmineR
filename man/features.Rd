@@ -6,6 +6,7 @@
 \alias{features,partition-method}
 \alias{features,count-method}
 \alias{features,partition_bundle-method}
+\alias{features,count_bundle-method}
 \alias{features,ngrams-method}
 \alias{features,Cooccurrences-method}
 \title{Get features by comparison.}
@@ -20,6 +21,10 @@ features(x, y, ...)
 
 \S4method{features}{partition_bundle}(x, y, included = FALSE,
   method = "chisquare", verbose = TRUE,
+  mc = getOption("polmineR.mc"), progress = FALSE)
+
+\S4method{features}{count_bundle}(x, y, included = FALSE,
+  method = "chisquare", verbose = !progress,
   mc = getOption("polmineR.mc"), progress = FALSE)
 
 \S4method{features}{ngrams}(x, y, included = FALSE,
@@ -79,6 +84,13 @@ speakers <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 speakers <- enrich(speakers, p_attribute = "word")
 speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
 dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
+# Get features of objects in a count_bundle
+ref <- corpus("GERMAPARLMINI") \%>\% count(p_attribute = "word")
+cois <- corpus("GERMAPARLMINI") \%>\%
+  subset(speaker \%in\% c("Angela Dorothea Merkel", "Hubertus Heil")) \%>\%
+  split(s_attribute = "speaker") \%>\%
+  count(p_attribute = "word")
+y <- features(cois, ref, included = TRUE, method = "chisquare", progress = TRUE)
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 121-149 (ch. 6).

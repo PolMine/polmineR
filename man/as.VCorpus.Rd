@@ -5,7 +5,7 @@
 \alias{as.VCorpus}
 \alias{as.VCorpus,partition_bundle-method}
 \alias{as}
-\title{Coerce partition_bundle to VCorpus.}
+\title{Get VCorpus.}
 \usage{
 \S4method{as.VCorpus}{partition_bundle}(x)
 }
@@ -13,9 +13,9 @@
 \item{x}{A \code{partition_bundle} object.}
 }
 \description{
-Retrieve full text for the \code{partition} objects in a
-\code{partition_bundle} and generate a \code{VCorpus}-class object from the
-\code{tm}-package.
+Retrieve full text for the subcorpora or\code{partition} objects in a
+\code{subcorpus_bundle} or \code{partition_bundle} and generate a
+\code{VCorpus}-class object from the \code{tm}-package.
 }
 \details{
 The \code{VCorpus} class of the \code{tm}-package offers an interface to
@@ -31,9 +31,15 @@ this (propable) scenario, it is possible to use a coerce-method
 (\code{as(YOUROBJECT, "VCorpus")}), see examples.
 }
 \examples{
+\dontrun{
 use("polmineR")
-p <- partition("GERMAPARLMINI", date = "2009-11-10")
-pb <- partition_bundle(p, s_attribute = "speaker")
+
+pb <- partition("GERMAPARLMINI", date = "2009-11-10") \%>\%
+  partition_bundle(s_attribute = "speaker")
+ 
 vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
 vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
+
+vc <- corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% as("VCorpus")
+}
 }

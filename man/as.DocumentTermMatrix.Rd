@@ -9,6 +9,8 @@
 \alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.DocumentTermMatrix,bundle-method}
 \alias{as.TermDocumentMatrix,partition_bundle-method}
+\alias{as.TermDocumentMatrix,subcorpus_bundle-method}
+\alias{as.DocumentTermMatrix,subcorpus_bundle-method}
 \alias{as.DocumentTermMatrix,partition_bundle-method}
 \alias{as.DocumentTermMatrix,context-method}
 \alias{as.TermDocumentMatrix,context-method}
@@ -33,6 +35,12 @@ as.DocumentTermMatrix(x, ...)
 \S4method{as.TermDocumentMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
+\S4method{as.TermDocumentMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
+  verbose = TRUE)
+
+\S4method{as.DocumentTermMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
+  verbose = TRUE)
+
 \S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
@@ -43,36 +51,34 @@ as.DocumentTermMatrix(x, ...)
   ...)
 }
 \arguments{
-\item{x}{a \code{character} vector indicating a corpus, or an object of class
-\code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle})}
+\item{x}{A \code{character} vector indicating a corpus, or an object of class
+\code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle}).}
 
-\item{...}{s-attribute definitions used for subsetting the corpus, compare partition-method}
+\item{...}{Definitions of s-attribute used for subsetting the corpus, compare
+partition-method.}
 
-\item{p_attribute}{p-attribute counting is be based on}
+\item{p_attribute}{A p-attribute counting is be based on.}
 
-\item{s_attribute}{s-attribute that defines content of columns, or rows}
+\item{s_attribute}{An s-attribute that defines content of columns, or rows.}
 
-\item{verbose}{logial, whether to output progress messages}
+\item{verbose}{A \code{logial} value, whether to output progress messages.}
 
-\item{col}{the column of \code{data.table} in slot \code{stat} (if \code{x}
-is a \code{bundle}) to use of assembling the matrix}
+\item{col}{The column of \code{data.table} in slot \code{stat} (if \code{x}
+is a \code{bundle}) to use of assembling the matrix.}
 }
 \value{
-a TermDocumentMatrix
+A \code{TermDocumentMatrix}, or a \code{DocumentTermMatrix} object.
+  These classes are defined in the \code{tm} package, and inherit from the
+  \code{simple_triplet_matrix}-class defined in the \code{slam}-package.
 }
 \description{
-Methods to generate the classes \code{TermDocumentMatrix} or 
-\code{DocumentTermMatrix} as defined in the \code{tm} package. These classes
-inherit from the \code{simple_triplet_matrix}-class defined in the 
-\code{slam}-package. There are many text mining applications for 
-document-term matrices. A \code{DocumentTermMatrix} is required as input by
-the \code{topicmodels} package, for instance.
+Methods to generate the classes \code{TermDocumentMatrix} or
+\code{DocumentTermMatrix} as defined in the \code{tm} package.  There are
+many text mining applications for document-term matrices. A
+\code{DocumentTermMatrix} is required as input by the \code{topicmodels}
+package, for instance.
 }
 \details{
-The method can be applied on objects of the class 
-\code{character}, \code{bundle}, or classes inheriting from the
-\code{bundle} class.
-
 If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
 \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
 subsets of the corpus based on the \code{s_attribute} provided. Counts are
@@ -89,22 +95,40 @@ matrix that is generated. A special case is the generation of the sparse
 matrix based on a \code{partition_bundle} that does not yet include counts.
 In this case, a \code{p_attribute} needs to be provided. Then counting will
 be performed, too.
+
+If \code{x} is a \code{partition_bundle}, and argument \code{col} is
+  not \code{NULL}, as \code{TermDocumentMatrix} is generated based on the
+  column indicated by \code{col} of the \code{data.table} with counts in the
+  \code{stat} slots of the objects in the bundle. If \code{col} is
+  \code{NULL}, the p-attribute indicated by \code{p_attribute} is decoded,
+  and a count is performed to obtain the values of the resulting
+  \code{TermDocumentMatrix}. The same procedure applies to get a
+  \code{DocumentTermMatrix}.
+
+If \code{x} is a \code{subcorpus_bundle}, the p-attribute provided
+  by argument \code{p_attribute} is decoded, and a count is performed to
+  obtain the resulting \code{TermDocumentMatrix} or
+  \code{DocumentTermMatrix}.
 }
 \examples{
 use("polmineR")
  
-# do-it-yourself 
-p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-pB <- partition_bundle(p, s_attribute = "date")
-pB <- enrich(pB, p_attribute="word")
-tdm <- as.TermDocumentMatrix(pB, col = "count")
+# enriching partition_bundle explicitly 
+tdm <- partition("GERMAPARLMINI", date = ".*", regex = TRUE) \%>\% 
+  partition_bundle(s_attribute = "date") \%>\% 
+  enrich(p_attribute = "word") \%>\%
+  as.TermDocumentMatrix(col = "count")
    
- # leave the counting to the as.TermDocumentMatrix-method
-pB2 <- partition_bundle(p, s_attribute = "date")
-tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
+# leave the counting to the as.TermDocumentMatrix-method
+tdm <- partition_bundle("GERMAPARLMINI", s_attribute = "date") \%>\% 
+  as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
    
-# diretissima
+# obtain TermDocumentMatrix directly (fastest option)
 tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
+
+dtm <- corpus("REUTERS") \%>\%
+  split(s_attribute = "id") \%>\%
+  as.TermDocumentMatrix(p_attribute = "word")
 }
 \author{
 Andreas Blaette

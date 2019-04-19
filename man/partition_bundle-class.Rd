@@ -104,6 +104,15 @@ Using brackets can be used to retrieve the count for a token from the
 \item{\code{call}}{Object of class \code{character} the call that generated the \code{partition_bundle}}
 }}
 
+\examples{
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+barplot(pb, las = 2)
+
+sc <- corpus("GERMAPARLMINI") \%>\%
+  subset(date == "2009-11-10") \%>\%
+  split(s_attribute = "speaker") \%>\%
+  barplot(las = 2)
+}
 \author{
 Andreas Blaette
 }

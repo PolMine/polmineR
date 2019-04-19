@@ -252,16 +252,13 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     rm(DT)
     setnames(CNT, old = "N", new = "count")
     if (verbose) message("... adding decoded p-attribute")
-    CNT[[p_attribute]] <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
+    str_raw <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
+    enc <- unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
+    CNT[[p_attribute]] <- if (localeToCharset()[1] == enc) str_raw else as.nativeEnc(str_raw, from = enc)
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name")
     rm(CNT)
-    y <- new(
-      Class = "count_bundle",
-      p_attribute = p_attribute,
-      corpus = corpus,
-      encoding = unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
-    )
+    y <- new(Class = "count_bundle", p_attribute = p_attribute, corpus = corpus, encoding = enc)
     y@objects <- lapply(
       1L:length(CNT_list),
       function(i){

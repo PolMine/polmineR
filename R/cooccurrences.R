@@ -127,7 +127,7 @@ setMethod("cooccurrences", "character", function(
 
 #' @rdname cooccurrences
 setMethod(
-  "cooccurrences", "partition",
+  "cooccurrences", "slice",
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
@@ -151,6 +151,37 @@ setMethod(
     retval
   }
 )
+
+#' @rdname cooccurrences
+setMethod(
+  "cooccurrences", "partition",
+  function(
+    .Object, query, cqp = is.cqp,
+    left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+    p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+    stoplist = NULL, positivelist = NULL, keep = NULL,
+    method = "ll",
+    mc = FALSE, progress = TRUE, verbose = FALSE,
+    ...
+  ) callNextMethod()
+)
+
+
+#' @rdname cooccurrences
+setMethod(
+  "cooccurrences", "subcorpus",
+  function(
+    .Object, query, cqp = is.cqp,
+    left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+    p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+    stoplist = NULL, positivelist = NULL, keep = NULL,
+    method = "ll",
+    mc = FALSE, progress = TRUE, verbose = FALSE,
+    ...
+  ) callNextMethod()
+)
+
+
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE){
@@ -240,6 +271,17 @@ setMethod("cooccurrences", "Corpus", function(.Object, query, p_attribute = getO
 
 
 #' @rdname cooccurrences
+#' @examples
+#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
+#' pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]
+#' y <- cooccurrences(pb_min, query = "Deutschland")
+#' y[[1]]
+#' y[[2]]
+#' 
+#' y2 <- corpus("GERMAPARLMINI") %>%
+#'   subset(speaker %in% c("Hubertus Heil", "Angela Dorothea Merkel")) %>%
+#'   split(s_attribute = "speaker") %>%
+#'   cooccurrences(query = "Deutschland")
 setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
   bundle <- new("cooccurrences_bundle")
   bundle@objects <- pbapply::pblapply(
@@ -247,7 +289,7 @@ setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = get
     function(x) cooccurrences(x, query = query, mc = mc, ...) 
   )
   names(bundle@objects) <- names(.Object@objects)
-  for (i in 1L:length(bundle@objects)){
+  for (i in seq_along(bundle@objects)){
     if (!is.null(bundle@objects[[i]])) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
   }
   for (i in rev(which(sapply(bundle@objects, is.null)))) bundle@objects[[i]] <- NULL

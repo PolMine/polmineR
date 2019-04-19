@@ -103,6 +103,7 @@ setMethod("split", "subcorpus", function(
       )
     }
   )
+  if (nchar(prefix) == 0L) names(y@objects) <- names(cpos_list) else names(y) <- paste(prefix, names(cpos_list), sep = "_")
   names(y@objects) <- sapply(y@objects, function(x) x@name)
   y
 })
@@ -157,9 +158,42 @@ setMethod("split", "corpus", function(
       )
     }
   )
+  if (nchar(prefix) == 0L) names(y@objects) <- names(cpos_list) else names(y) <- paste(prefix, names(cpos_list), sep = "_")
   names(y@objects) <- sapply(y@objects, function(x) x@name)
   y
 })
 
+
+#' @details Applying the \code{split}-method to a \code{subcorpus_bundle}-object
+#'   will iterate through the subcorpus, and apply \code{split} on each
+#'   \code{subcorpus} object in the bundle, splitting it up by the s-attribute
+#'   provided by the argument \code{s_attribute}. The return value is a
+#'   \code{subcorpus_bundle}, the names of which will be the names of the
+#'   incoming \code{partition_bundle} concatenated with the s-attribute values
+#'   used for splitting. The argument \code{prefix} can be used to achieve a
+#'   more descriptive name.
+#' @examples
+#' # split up objects in partition_bundle by using partition_bundle-method
+#' use("polmineR")
+#' y <- corpus("GERMAPARLMINI") %>%
+#'   split(s_attribute = "date") %>%
+#'   split(s_attribute = "speaker")
+#' 
+#' summary(y)
+#' @rdname corpus_class
+setMethod("split", "subcorpus_bundle", function(x, s_attribute, prefix = "", progress = TRUE, mc = getOption("polmineR.mc")){
+  
+  if (is.logical(mc)) mc <- if (isTRUE(mc)) as.integer(getOption("polmineR.cores")) else 1L
+  mc <- as.integer(mc)
+  stopifnot(length(mc) == 1L, !is.na(mc), is.integer(mc))
+  
+  .fn <- function(sc){
+    y <- split(x = sc, s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
+    names(y) <- paste(name(sc), paste(prefix, names(y), sep = if (nchar(prefix) > 0) "_" else ""), sep = "_")
+    y@objects
+  }
+  li <- if (progress) pblapply(x@objects, .fn, cl = mc) else lapply(x@objects, .fn)
+  as(unlist(li), "bundle")
+})
 
 

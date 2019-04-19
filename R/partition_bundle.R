@@ -18,12 +18,8 @@ setMethod("show", "partition_bundle", function (object) {
 
 #' @rdname partition_bundle-class
 setMethod("summary", "partition_bundle", function (object, progress = TRUE){
-  if (progress){
-    a <- lapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
-  } else {
-    a <- pblapply(object@objects, function(x) data.frame(summary(x), stringsAsFactors = FALSE))
-  }
-  
+  .fn <- function(x) data.frame(summary(x), stringsAsFactors = FALSE)
+  a <- if (progress) lapply(object@objects, .fn) else pblapply(object@objects, .fn)
   y <- do.call(rbind, a)
   rownames(y) <- NULL
   y
@@ -85,10 +81,18 @@ setMethod('[', 'partition_bundle', function(x,i){
 
 #' @exportMethod barplot
 #' @rdname partition_bundle-class
+#' @examples
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
+#' barplot(pb, las = 2)
+#' 
+#' sc <- corpus("GERMAPARLMINI") %>%
+#'   subset(date == "2009-11-10") %>%
+#'   split(s_attribute = "speaker") %>%
+#'   barplot(las = 2)
 setMethod("barplot", "partition_bundle", function(height, ...){
   tab <- summary(height)
-  tab <- tab[order(tab[, "token"], decreasing = TRUE),]
-  barplot(tab$token, names.arg=tab$partition, ...)
+  tab <- tab[order(tab[["size"]], decreasing = TRUE),]
+  barplot(tab[["size"]], names.arg = tab[["name"]], ...)
 })
 
 

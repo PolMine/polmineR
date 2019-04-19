@@ -127,17 +127,23 @@ setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = si
 
 
 setAs(from = "list", to = "bundle", def = function(from){
-  uniqueClass <- unique(unlist(lapply(from, class)))
-  stopifnot(length(uniqueClass) == 1)
-  newObjectClass <- if (grepl("[pP]artition", uniqueClass)) "partition_bundle" else "bundle"
-  y <- new(
-    newObjectClass,
-    objects = from,
+  unique_class <- unique(unlist(lapply(from, class)))
+  stopifnot(length(unique_class) == 1L)
+  
+  if (grepl("subcorpus", unique_class)){
+    new_object_class <- "subcorpus_bundle"
+  } else if (grepl("[pP]artition", unique_class)){
+    new_object_class <- "partition_bundle"
+  } else {
+    new_object_class <- "bundle"
+  }
+  
+  new(
+    new_object_class,
+    objects = setNames(from, nm = unlist(unname(lapply(from, function(x) x@name)))),
     corpus = unique(unlist(lapply(from, function(x) x@corpus))),
     encoding = unique(unlist(lapply(from, function(x) x@encoding)))
   )
-  names(y@objects) <- unlist(unname(lapply(from, function(x) x@name)))
-  y
 })
 
 

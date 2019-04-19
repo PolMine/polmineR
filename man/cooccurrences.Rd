@@ -4,7 +4,9 @@
 \name{cooccurrences}
 \alias{cooccurrences}
 \alias{cooccurrences,character-method}
+\alias{cooccurrences,slice-method}
 \alias{cooccurrences,partition-method}
+\alias{cooccurrences,subcorpus-method}
 \alias{cooccurrences,context-method}
 \alias{cooccurrences,Corpus-method}
 \alias{cooccurrences,partition_bundle-method}
@@ -21,7 +23,21 @@ cooccurrences(.Object, ...)
   method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
   progress = FALSE, ...)
 
+\S4method{cooccurrences}{slice}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
 \S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
+\S4method{cooccurrences}{subcorpus}(.Object, query, cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
@@ -111,6 +127,16 @@ cooccurrences("REUTERS", query = "oil") \%>\%
   subset(ll >= 10.83) \%>\%
   format()
 }
+pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
+pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]
+y <- cooccurrences(pb_min, query = "Deutschland")
+y[[1]]
+y[[2]]
+
+y2 <- corpus("GERMAPARLMINI") \%>\%
+  subset(speaker \%in\% c("Hubertus Heil", "Angela Dorothea Merkel")) \%>\%
+  split(s_attribute = "speaker") \%>\%
+  cooccurrences(query = "Deutschland")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).

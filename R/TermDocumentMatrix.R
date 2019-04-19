@@ -17,16 +17,11 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 
 #' Generate TermDocumentMatrix / DocumentTermMatrix.
 #' 
-#' Methods to generate the classes \code{TermDocumentMatrix} or 
-#' \code{DocumentTermMatrix} as defined in the \code{tm} package. These classes
-#' inherit from the \code{simple_triplet_matrix}-class defined in the 
-#' \code{slam}-package. There are many text mining applications for 
-#' document-term matrices. A \code{DocumentTermMatrix} is required as input by
-#' the \code{topicmodels} package, for instance.
-#' 
-#' The method can be applied on objects of the class 
-#' \code{character}, \code{bundle}, or classes inheriting from the
-#' \code{bundle} class.
+#' Methods to generate the classes \code{TermDocumentMatrix} or
+#' \code{DocumentTermMatrix} as defined in the \code{tm} package.  There are
+#' many text mining applications for document-term matrices. A
+#' \code{DocumentTermMatrix} is required as input by the \code{topicmodels}
+#' package, for instance.
 #' 
 #' If \code{x} refers to a corpus (i.e. is a length 1 character vector), a
 #' \code{TermDocumentMatrix}, or \code{DocumentTermMatrix} will be generated for
@@ -45,15 +40,18 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 #' In this case, a \code{p_attribute} needs to be provided. Then counting will
 #' be performed, too.
 #' 
-#' @param x a \code{character} vector indicating a corpus, or an object of class
-#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle})
-#' @param p_attribute p-attribute counting is be based on
-#' @param s_attribute s-attribute that defines content of columns, or rows
-#' @param col the column of \code{data.table} in slot \code{stat} (if \code{x}
-#'   is a \code{bundle}) to use of assembling the matrix
-#' @param verbose logial, whether to output progress messages
-#' @param ... s-attribute definitions used for subsetting the corpus, compare partition-method
-#' @return a TermDocumentMatrix
+#' @param x A \code{character} vector indicating a corpus, or an object of class
+#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle}).
+#' @param p_attribute A p-attribute counting is be based on.
+#' @param s_attribute An s-attribute that defines content of columns, or rows.
+#' @param col The column of \code{data.table} in slot \code{stat} (if \code{x}
+#'   is a \code{bundle}) to use of assembling the matrix.
+#' @param verbose A \code{logial} value, whether to output progress messages.
+#' @param ... Definitions of s-attribute used for subsetting the corpus, compare
+#'   partition-method.
+#' @return A \code{TermDocumentMatrix}, or a \code{DocumentTermMatrix} object.
+#'   These classes are defined in the \code{tm} package, and inherit from the
+#'   \code{simple_triplet_matrix}-class defined in the \code{slam}-package.
 #' @author Andreas Blaette
 #' @exportMethod as.TermDocumentMatrix
 #' @docType methods
@@ -70,18 +68,16 @@ setGeneric("as.DocumentTermMatrix", function(x, ...) UseMethod("as.DocumentTermM
 #' @examples
 #' use("polmineR")
 #'  
-#' # do-it-yourself 
-#' p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-#' pB <- partition_bundle(p, s_attribute = "date")
-#' pB <- enrich(pB, p_attribute="word")
-#' tdm <- as.TermDocumentMatrix(pB, col = "count")
+#' # enriching partition_bundle explicitly 
+#' tdm <- partition("GERMAPARLMINI", date = ".*", regex = TRUE) %>% 
+#'   partition_bundle(s_attribute = "date") %>% 
+#'   enrich(p_attribute = "word") %>%
+#'   as.TermDocumentMatrix(col = "count")
 #'    
-#'  # leave the counting to the as.TermDocumentMatrix-method
-#' pB2 <- partition_bundle(p, s_attribute = "date")
-#' tdm <- as.TermDocumentMatrix(pB2, p_attribute = "word", verbose = TRUE)
+#' # leave the counting to the as.TermDocumentMatrix-method
+#' tdm <- partition_bundle("GERMAPARLMINI", s_attribute = "date") %>% 
+#'   as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
 #'    
-#' # diretissima
-#' tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attribute, verbose = TRUE, ...) {
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -93,6 +89,10 @@ setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attri
 
 
 
+#' @examples
+#' # obtain TermDocumentMatrix directly (fastest option)
+#' tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
+#' 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attribute, verbose = TRUE, ...){
   
@@ -257,6 +257,14 @@ setMethod("as.DocumentTermMatrix", "bundle", function(x, col, p_attribute = NULL
   as.DocumentTermMatrix(as.TermDocumentMatrix(x = x, col = col, p_attribute = p_attribute, verbose = verbose))
 })
 
+#' @details If \code{x} is a \code{partition_bundle}, and argument \code{col} is
+#'   not \code{NULL}, as \code{TermDocumentMatrix} is generated based on the
+#'   column indicated by \code{col} of the \code{data.table} with counts in the
+#'   \code{stat} slots of the objects in the bundle. If \code{col} is
+#'   \code{NULL}, the p-attribute indicated by \code{p_attribute} is decoded,
+#'   and a count is performed to obtain the values of the resulting
+#'   \code{TermDocumentMatrix}. The same procedure applies to get a
+#'   \code{DocumentTermMatrix}.
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -266,33 +274,60 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
     encoding <- unique(sapply(x@objects, function(y) y@encoding))
     .message("generating corpus positions", verbose = verbose)
     
-    cposList <- lapply(
-      1L:length(x@objects),
-      function(i) cbind(i, cpos(x@objects[[i]]@cpos))
-    )
-    cposMatrix <- do.call(rbind, cposList)
+    cpos_list <- lapply(seq_along(x@objects), function(i) cbind(i, cpos(x@objects[[i]]@cpos)))
+    cpos_matrix <- do.call(rbind, cpos_list)
     .message("getting ids", verbose = verbose)
-    id_vector <- cl_cpos2id(corpus = x[[1]]@corpus, p_attribute = p_attribute, cpos = cposMatrix[,2], registry = registry())
-    DT <- data.table(i = cposMatrix[,1], id = id_vector, key = c("i", "id"))
+    id_vector <- cl_cpos2id(
+      corpus = x[[1]]@corpus,
+      p_attribute = p_attribute,
+      cpos = cpos_matrix[,2],
+      registry = registry()
+    )
+    DT <- data.table(i = cpos_matrix[,1], id = id_vector, key = c("i", "id"))
     .message("performing count", verbose = verbose)
     TF <- DT[,.N, by = c("i", "id"), with = TRUE]
     setnames(TF, old = "N", new = "count")
     str <- cl_id2str(corpus = x[[1]]@corpus, p_attribute = p_attribute, id = TF[["id"]], registry = registry())
     TF[, (p_attribute) := as.nativeEnc(str, from = encoding)]
     .message("generating keys", verbose = verbose)
-    uniqueTerms <- unique(TF[[p_attribute]])
-    keys <- setNames(1L:length(uniqueTerms), uniqueTerms)
+    unique_terms <- unique(TF[[p_attribute]])
+    keys <- setNames(1L:length(unique_terms), unique_terms)
     .message("generating simple triplet matrix", verbose = verbose)
     retval <- simple_triplet_matrix(
-      i = keys[ TF[[p_attribute]] ], j = TF[["i"]], v = TF[["count"]],
+      i = keys[ TF[[p_attribute]] ],
+      j = TF[["i"]],
+      v = TF[["count"]],
       dimnames = list(Terms = names(keys), Docs = names(x@objects))
     )
     class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+    attr(retval, "weighting") <- c("term frequency", "tf")
     return( retval )
   } else {
     message("... doing nothing, as p_attribute and col is NULL")
   }
 })
+
+
+#' @details If \code{x} is a \code{subcorpus_bundle}, the p-attribute provided
+#'   by argument \code{p_attribute} is decoded, and a count is performed to
+#'   obtain the resulting \code{TermDocumentMatrix} or
+#'   \code{DocumentTermMatrix}.
+#' @rdname as.DocumentTermMatrix
+#' @examples
+#' dtm <- corpus("REUTERS") %>%
+#'   split(s_attribute = "id") %>%
+#'   as.TermDocumentMatrix(p_attribute = "word")
+setMethod("as.TermDocumentMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE){
+  callNextMethod()
+})
+
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.DocumentTermMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE){
+  callNextMethod()
+})
+
+
 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){

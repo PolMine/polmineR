@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.7.11.9011
-Date: 2019-04-01
+Version: 0.7.11.9012
+Date: 2019-04-15
 Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")))
 Imports:
     methods,
@@ -19,6 +19,7 @@ Imports:
     parallel,
     pbapply,
     RcppCWB (>= 0.2.2),
+    magrittr,
     knitr
 Suggests:
     markdown,
@@ -30,7 +31,6 @@ Suggests:
     shinythemes,
     testthat,
     tidytext,
-    magrittr,
     covr,
     igraph,
     NLP,

@@ -6,23 +6,31 @@
 \alias{subcorpus}
 \alias{plpr_subcorpus-class}
 \alias{press_subcorpus-class}
+\alias{summary,subcorpus-method}
 \alias{subset,corpus-method}
 \alias{subset,character-method}
 \alias{subset,subcorpus-method}
+\alias{show,subcorpus_bundle-method}
 \alias{split,subcorpus-method}
 \title{S4 subcorpus class.}
 \usage{
+\S4method{summary}{subcorpus}(object)
+
 \S4method{subset}{corpus}(x, subset, regex = FALSE, ...)
 
 \S4method{subset}{character}(x, ...)
 
 \S4method{subset}{subcorpus}(x, subset, ...)
 
+\S4method{show}{subcorpus_bundle}(object)
+
 \S4method{split}{subcorpus}(x, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(x), ...)
 }
 \arguments{
+\item{object}{An object of class \code{subcorpus_bundle}.}
+
 \item{x}{A \code{corpus} or \code{subcorpus} object.}
 
 \item{subset}{A \code{logical} expression indicating elements or rows to
@@ -80,6 +88,7 @@ subcorpus.}
 }}
 
 \examples{
+corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% summary()
 use("polmineR")
 a <- corpus("GERMAPARLMINI")
 sc <- subset(a, speaker == "Angela Dorothea Merkel")

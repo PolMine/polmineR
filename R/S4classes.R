@@ -648,6 +648,19 @@ setClass("plpr_subcorpus", contains = "subcorpus")
 setClass("press_subcorpus", contains = "subcorpus")
 
 
+#' @rdname subcorpus-class
+#' @export
+#' @examples
+#' corpus("REUTERS") %>% split(s_attribute = "id") %>% summary()
+setMethod("summary", "subcorpus", function(object){
+  list(
+    name = if (length(name(object)) > 0) name(object) else NA,
+    size = object@size
+  )
+})
+
+
+
 
 #' @rdname features-class
 #' @exportClass features_cooccurrences

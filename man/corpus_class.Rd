@@ -8,6 +8,7 @@
 \alias{show,corpus-method}
 \alias{$,corpus-method}
 \alias{split,corpus-method}
+\alias{split,subcorpus_bundle-method}
 \title{S4 class to wrap information on CWB corpora.}
 \usage{
 \S4method{name}{corpus}(x)
@@ -19,6 +20,9 @@
 \S4method{split}{corpus}(x, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(x), ...)
+
+\S4method{split}{subcorpus_bundle}(x, s_attribute, prefix = "",
+  progress = TRUE, mc = getOption("polmineR.mc"))
 }
 \arguments{
 \item{x}{An object of class \code{corpus}, or inheriting from it.}
@@ -52,6 +56,15 @@ the \code{name}-method.
 
 Applying the `$`-method on a corpus will return the values for the
   s-attribute stated with argument \code{name}.
+
+Applying the \code{split}-method to a \code{subcorpus_bundle}-object
+  will iterate through the subcorpus, and apply \code{split} on each
+  \code{subcorpus} object in the bundle, splitting it up by the s-attribute
+  provided by the argument \code{s_attribute}. The return value is a
+  \code{subcorpus_bundle}, the names of which will be the names of the
+  incoming \code{partition_bundle} concatenated with the s-attribute values
+  used for splitting. The argument \code{prefix} can be used to achieve a
+  more descriptive name.
 }
 \section{Slots}{
 
@@ -76,6 +89,13 @@ sc <- subset("GERMAPARLMINI", date == "2009-10-27")
 sc$date
 gparl <- corpus("GERMAPARLMINI")
 b <- split(gparl, s_attribute = "date")
+# split up objects in partition_bundle by using partition_bundle-method
+use("polmineR")
+y <- corpus("GERMAPARLMINI") \%>\%
+  split(s_attribute = "date") \%>\%
+  split(s_attribute = "speaker")
+
+summary(y)
 }
 \seealso{
 Other classes to manage corpora: \code{\link{regions}},

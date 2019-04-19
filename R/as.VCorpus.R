@@ -3,11 +3,11 @@ NULL
 
 setOldClass("VCorpus")
 
-#' Coerce partition_bundle to VCorpus.
+#' Get VCorpus.
 #' 
-#' Retrieve full text for the \code{partition} objects in a
-#' \code{partition_bundle} and generate a \code{VCorpus}-class object from the
-#' \code{tm}-package.
+#' Retrieve full text for the subcorpora or\code{partition} objects in a
+#' \code{subcorpus_bundle} or \code{partition_bundle} and generate a
+#' \code{VCorpus}-class object from the \code{tm}-package.
 #' 
 #' The \code{VCorpus} class of the \code{tm}-package offers an interface to
 #' access the functionality of the \code{tm}-package. Note however that
@@ -28,14 +28,18 @@ setOldClass("VCorpus")
 #' @name as.VCorpus
 #' @aliases as.VCorpus,partition_bundle-method
 #' @examples
+#' \dontrun{
 #' use("polmineR")
-#' p <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' pb <- partition_bundle(p, s_attribute = "speaker")
+#' 
+#' pb <- partition("GERMAPARLMINI", date = "2009-11-10") %>%
+#'   partition_bundle(s_attribute = "speaker")
+#'  
 #' vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
 #' vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
-setMethod("as.VCorpus", "partition_bundle", function(x){
-  as(x, "VCorpus")
-})
+#' 
+#' vc <- corpus("REUTERS") %>% split(s_attribute = "id") %>% as("VCorpus")
+#' }
+setMethod("as.VCorpus", "partition_bundle", function(x) as(x, "VCorpus") )
 
 #' @name as
 #' @rdname as.VCorpus
