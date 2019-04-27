@@ -11,7 +11,7 @@ label(x, ...)
 
 label(x) <- value
 
-\S4method{label}{kwic}(x, n = NULL)
+\S4method{label}{kwic}(x, n = NULL, value)
 }
 \arguments{
 \item{x}{object}
@@ -21,7 +21,16 @@ label(x) <- value
 \item{value}{length (character vector, length 1)}
 
 \item{n}{label index}
+
+\item{value}{a value to assign}
 }
 \description{
 Assign and get labels.
+}
+\examples{
+o <- kwic("REUTERS", query = "oil")
+label(o, 1L, FALSE)
+\dontrun{
+label(o)
+}
 }

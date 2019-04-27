@@ -10,6 +10,8 @@
 
 \item{choices}{choices to be assigned to field choices}
 
+\item{default}{The default value for the labels.}
+
 \item{expandable}{whether choices are expandable}
 }
 \description{
@@ -21,9 +23,9 @@ Labels class.
 \item{\code{labels}}{character vector with labels; if logical or numeric labels
 are intended, assign them as character vector anyway}
 
-\item{\code{choices}}{character vector, a list of choices for labels}
+\item{\code{choices}}{A \code{character} vector, a list of choices for labels.}
 
-\item{\code{expandable}}{whether choices may be expanded (logical)}
+\item{\code{expandable}}{Whether choices may be expanded (\code{logical}).}
 }}
 
 
