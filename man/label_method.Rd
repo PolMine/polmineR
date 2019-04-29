@@ -5,32 +5,68 @@
 \alias{label}
 \alias{label<-}
 \alias{label,kwic-method}
-\title{Assign and get labels.}
+\title{Assign, set and get labels.}
 \usage{
 label(x, ...)
 
 label(x) <- value
 
-\S4method{label}{kwic}(x, n = NULL, value)
+\S4method{label}{kwic}(x, n = NULL, value, js = c("DataTables",
+  "Handsontable"))
 }
 \arguments{
-\item{x}{object}
+\item{x}{An S4 object with a slot \code{labels} (e.g. an object of class
+\code{kwic}).}
 
-\item{...}{further parameters}
+\item{...}{Further arguments.}
 
-\item{value}{length (character vector, length 1)}
+\item{value}{A value to assign.}
 
-\item{n}{label index}
+\item{n}{The integer index of a label to retrieve or modify.}
 
-\item{value}{a value to assign}
+\item{js}{The javascript library to use to display tables (either "DataTables"
+or "Handsontable").}
+}
+\value{
+The modified input object is returned invisibly.
 }
 \description{
-Assign and get labels.
+This set of methods supports generating and working with labelled data. They
+rely on data in a slot \code{labels} of the S4 object to be modified.
+Operations are deliberately in-place.
+}
+\details{
+The \code{label}-method is designed to be used in a RStudio session. Calling
+it generates a shiny gadget (see
+\url{https://shiny.rstudio.com/articles/gadgets.html}) shown in the viewer
+pane of RStudio. The htmlwidget embedded in the gadget can be either based on
+the JavaScript library DataTables (default, exposed by R package \code{DT}),
+or Handsontable (exposed by R package \code{rhandsontable}). The JavaScript
+library to be used is specified with the argument \code{js}.
+
+The pinpoint is that you can modify labels. When using DataTables,
+doubleclick on the field you with to change, modify the value, and finish
+data entry by hitting enter or clicking somewhere else. When using
+Handsontable, simply click on the field you wish to change.
+
+The method returns the modified input object. Note however that changes of
+labels are deliberately in-place operations. Accordingly, the input object is
+changed even if you do not close the gadget "properly" by hitting the "Done"
+button and catch the modified object, which may be forgotten easily and would
+be painful after the work that may have been invested.
 }
 \examples{
 o <- kwic("REUTERS", query = "oil")
 label(o, 1L, FALSE)
+
 \dontrun{
-label(o)
+label(o, js = "DataTables")
+slot(o, "labels")[["labels"]] # to see changes made
+
+label(o, js = "Handsontable")
+slot(o, "labels")[["labels"]] # to see changes made
+
+enrich(o, s_attributes = "places")
+label(o, js = "Handsontable")
 }
 }

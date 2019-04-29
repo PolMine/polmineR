@@ -30,6 +30,7 @@ Suggests:
     shiny,
     shinythemes,
     miniUI,
+    rhandsontable,
     testthat,
     tidytext,
     covr,
