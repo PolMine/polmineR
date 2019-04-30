@@ -149,7 +149,12 @@ setMethod("as.speeches", "corpus", function(
       )
       razor <- cumsum(beginning)
       vec_dates <- chunks_dates[[i]][beginning]
-      speech_no <- unname(unlist(lapply(split(vec_dates, vec_dates), seq_along)))
+      # speech_no <- unlist(unname(lapply(split(vec_dates, vec_dates), seq_along)))
+      
+      dates_splitted <- split(vec_dates, vec_dates)
+      dates_splitted_ordered <- lapply(unique(vec_dates), function(d) dates_splitted[[d]])
+      speech_no <- unlist(unname(lapply(dates_splitted_ordered, seq_along)))
+      
       li_cpos <- split(mx, f = razor)
       li_strucs <- split(chunks_strucs[[i]], f = razor)
       lapply(
