@@ -7,6 +7,7 @@ addons:
     - libxml2-dev
     - default-jdk
     - libprotobuf-dev
+    - protobuf-compiler
 
 before_install:
   - Rscript -e 'install.packages("devtools")'
