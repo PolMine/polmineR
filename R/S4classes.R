@@ -37,6 +37,7 @@ NULL
 #' party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 #' length(party_bundle)
 #' names(party_bundle)
+#' get_corpus(party_bundle)
 #' party_bundle <- enrich(party_bundle, p_attribute = "word")
 #' summary(party_bundle)
 #' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
@@ -122,6 +123,12 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 #' y <- cooccurrences(P, query = "Arbeit")
+#' 
+#' # generics defined in the polmineR package
+#' x <- count("REUTERS", p_attribute = "word")
+#' name(x) <- "count_reuters"
+#' name(x)
+#' get_corpus(x)
 #' 
 #' # Standard generic methods known from data.frames work for objects inheriting
 #' # from the textstat class
@@ -520,6 +527,7 @@ setClass("cooccurrences", contains = "context")
 #' @examples
 #' use("polmineR")
 #' K <- kwic("GERMAPARLMINI", "Integration")
+#' get_corpus(K)
 #' length(K)
 #' K_min <- K[1]
 #' K_min <- K[1:5]
@@ -544,8 +552,16 @@ setClass(
 
 
 
-#' S4 class to wrap information on CWB corpora.
-#' 
+#' @title S4 class to manage CWB corpora.
+#' @description Corpora indexed using the Corpus Workbench (CWB) offer an
+#'   efficient data structure for large, linguistically annotated corpora. The
+#'   \code{corpus}-class serves to manage basic information on a CWB corpus.
+#'   Corresponding to the name of the class, use the \code{corpus}-method to
+#'   instantiate objects of class \code{corpus}. Calling the
+#'   \code{corpus}-method without an argument will return a \code{data.frame}
+#'   with basic information on the corpora that are available. This
+#'   documentation object also includes the methods to extract basic information
+#'   on \code{corpus} objects.
 #' @param object An object.
 #' @param ... Further arguments.
 #' @slot corpus A length-one \code{character} vector, a CWB corpus.
@@ -554,8 +570,7 @@ setClass(
 #' @slot name An additional name for the object that may be more telling than the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
 #' @exportClass corpus
-#' @rdname corpus_class
-#' @aliases zoom
+#' @aliases zoom corpus get_corpus
 #' @name corpus-class
 #' @family classes to manage corpora
 setClass(
@@ -571,7 +586,7 @@ setClass(
 
 #' @details A \code{corpus} object can have a name, which can be retrieved using
 #' the \code{name}-method.
-#' @rdname corpus_class
+#' @describeIn corpus Get the name of a \code{corpus} object.
 setMethod("name", "corpus", function(x) x@name)
 
 

@@ -239,8 +239,8 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     }
     return(DT_cast)
   } else {
-    corpus <- corpus(.Object)
-    if (length(corpus) > 1) stop("partitions in partition_bundle must be derived from the same corpus")
+    corpus <- get_corpus(.Object)
+    if (length(corpus) > 1L) stop("partitions in partition_bundle must be derived from the same corpus")
     if (verbose) message("... unfolding corpus positions")
     cpos_list <- lapply(.Object@objects, function(x) data.table(name = x@name, cpos = cpos(x@cpos)))
     DT <- rbindlist(cpos_list)

@@ -45,9 +45,37 @@ setTemplate <- function(...) set_template(...)
 #' @rdname renamed
 getTemplate <- function(...) get_template(...)
 
-#' Defunct methods and functions.
+#' @rdname renamed
+setMethod("corpus", "textstat", function(.Object){
+  .Defunct(new = "get_corpus", package = "polmineR")
+  get_corpus(.Object)
+})
+
+#' @rdname renamed
+setMethod("corpus", "bundle", function(.Object){
+  .Defunct(new = "get_corpus", package = "polmineR")
+  get_corpus(.Object)
+})
+
+
+#' @rdname renamed
+#' @param .Object A \code{kwic} object.
+setMethod("corpus", "kwic", function(.Object){
+  .Defunct(new = "get_corpus", package = "polmineR")
+  get_corpus(.Object)
+})
+
+
+#' @title Defunct methods and functions.
+#' @description Methods and functions not in use any more or that have been
+#'   superseded by renamed functions.
 #' 
 #' @param ... Any arguments that may be passed into the defunct function/method.
 #' @export browse
-#' @rdname defunct
-browse <- function(...) .Defunct(new = "html")
+#' @rdname polmineR-defunct
+#' @name polmineR-defunct
+browse <- function(...) .Defunct(new = "html", package = "polmineR")
+
+
+
+

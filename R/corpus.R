@@ -1,40 +1,18 @@
 #' @include partition.R bundle.R S4classes.R
 NULL
 
-#' Get corpus/corpora available or used.
-#' 
-#' Calling \code{corpus()} will return a \code{data.frame} listing the corpora
-#' described in the active registry directory, and some basic information on the
-#' corpora. If \code{.Object} is an object inheriting from the \code{textstat},
+#' @exportMethod corpus
+setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
+
+
+#' @describeIn corpus If \code{.Object} is an object inheriting from the \code{textstat},
 #' or the \code{bundle} class, the corpus used to generate the object is
 #' returned.
 #' @param .Object An object inheriting from the \code{textstat} or \code{bundle}
 #'   superclasses.
 #' @param server The name of an Open CPU server (can be an IP address) that
 #'   hosts corpora.
-#' @param ... Placeholder in the definition of the generic method for defining
-#'   further arguments in method definitions.
 #' @exportMethod corpus
-#' @rdname corpus-method
-#' @examples
-#' use("polmineR")
-#' corpus()
-#' 
-#' p <- partition("REUTERS", places = "kuwait")
-#' corpus(p)
-#' 
-#' pb <- partition_bundle("REUTERS", s_attribute = "id")
-#' corpus(pb)
-setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
-
-
-#' @rdname corpus-method
-setMethod("corpus", "textstat", function(.Object) .Object@corpus)
-
-#' @rdname corpus-method
-setMethod("corpus", "kwic", function(.Object) .Object@corpus)
-
-#' @rdname corpus-method
 setMethod("corpus", "character", function(.Object, server = NULL){
   if (is.null(server)){
     properties <- registry_get_properties(.Object)
@@ -54,12 +32,37 @@ setMethod("corpus", "character", function(.Object, server = NULL){
   }
 })
 
-#' @rdname corpus-method
-setMethod("corpus", "bundle", function(.Object){
-  unique(sapply(.Object@objects, function(x) x@corpus))
-})
 
-#' @rdname corpus-method
+
+
+#' @noRd
+setGeneric("get_corpus", function(x) standardGeneric("get_corpus"))
+
+#' @exportMethod get_corpus
+#' @rdname textstat-class
+setMethod("get_corpus", "textstat", function(x) x@corpus)
+
+#' @exportMethod get_corpus
+#' @describeIn corpus Get the corpus ID from the \code{corpus} object.
+setMethod("get_corpus", "corpus", function(x) x@corpus)
+
+#' @exportMethod get_corpus
+#' @describeIn subcorpus Get the corpus ID from the \code{subcorpus} object.
+setMethod("get_corpus", "subcorpus", function(x) x@corpus)
+
+
+#' @exportMethod get_corpus
+#' @rdname kwic-class
+setMethod("get_corpus", "kwic", function(x) x@corpus)
+
+#' @exportMethod get_corpus
+#' @rdname bundle
+setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpus)))
+
+
+#' @describeIn corpus Calling \code{corpus()} will return a \code{data.frame}
+#'   listing the corpora described in the active registry directory, and some
+#'   basic information on the corpora.
 setMethod("corpus", "missing", function(){
   if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
     corpora <- .list_corpora()
@@ -111,7 +114,7 @@ setOldClass("Corpus")
 #'   \item{\code{showInfo()}}{}
 #' }
 #' 
-#' @rdname Corpus-class
+#' @rdname Corpus_class
 #' @export Corpus
 #' @examples
 #' use("polmineR")
@@ -579,7 +582,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 
 #' @exportMethod show
 #' @docType methods
-#' @rdname corpus_class
+#' @describeIn corpus Show basic information on the \code{corpus} object.
 setMethod("show", "corpus", function(object){
   cat(sprintf("** '%s' object **\n", class(object)))
   cat(sprintf("%-12s", "corpus:"), object@corpus, "\n")
@@ -601,7 +604,7 @@ setMethod("show", "corpus", function(object){
 #' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
 #' sc$date
 #' @exportMethod $
-#' @rdname corpus_class
+#' @describeIn corpus Quick access to the structural attributes of a corpus.
 #' @param x An object of class \code{corpus}, or inheriting from it.
 #' @param name A (single) s-attribute.
 setMethod("$", "corpus", function(x, name){
