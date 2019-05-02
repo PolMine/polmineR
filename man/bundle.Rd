@@ -6,8 +6,7 @@
 \alias{bundle}
 \alias{[[,bundle-method}
 \alias{[[<-,bundle-method}
-\alias{name<-,bundle,character-method}
-\alias{subcorpus_bundle-class}
+\alias{name<-,bundle-method}
 \alias{length,bundle-method}
 \alias{names,bundle-method}
 \alias{names<-,bundle,vector-method}
@@ -25,7 +24,7 @@
 \alias{as.list,bundle-method}
 \title{Bundle Class}
 \usage{
-\S4method{name}{bundle,character}(x) <- value
+\S4method{name}{bundle}(x) <- value
 
 \S4method{length}{bundle}(x)
 

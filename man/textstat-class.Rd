@@ -23,7 +23,7 @@
 \alias{name<-}
 \alias{name,textstat-method}
 \alias{name,character-method}
-\alias{name<-,textstat,character-method}
+\alias{name<-,textstat-method}
 \alias{as.bundle}
 \alias{+,textstat,textstat-method}
 \alias{subset,textstat-method}
@@ -38,7 +38,7 @@
 
 \S4method{name}{character}(x)
 
-\S4method{name}{textstat,character}(x) <- value
+\S4method{name}{textstat}(x) <- value
 
 \S4method{round}{textstat}(x, digits = 2L)
 

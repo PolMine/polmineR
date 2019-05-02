@@ -57,7 +57,7 @@ setMethod("split", "partition", function(x, gap, ...){
 #' p <- partition("GERMAPARLMINI", date = "2009-11-11")
 #' y <- partition_bundle(p, s_attribute = "speaker")
 #' @export
-#' @rdname subcorpus-class
+#' @rdname subcorpus_bundle
 #' @inheritParams partition_bundle
 setMethod("split", "subcorpus", function(
   x, s_attribute, values = NULL, prefix = "",
@@ -113,7 +113,7 @@ setMethod("split", "subcorpus", function(
 #' gparl <- corpus("GERMAPARLMINI")
 #' b <- split(gparl, s_attribute = "date")
 #' @export
-#' @rdname corpus_class
+#' @rdname subcorpus_bundle
 #' @inheritParams partition_bundle
 setMethod("split", "corpus", function(
   x, s_attribute, values = NULL, prefix = "",
@@ -180,7 +180,7 @@ setMethod("split", "corpus", function(
 #'   split(s_attribute = "speaker")
 #' 
 #' summary(y)
-#' @rdname corpus_class
+#' @rdname subcorpus_bundle
 setMethod("split", "subcorpus_bundle", function(x, s_attribute, prefix = "", progress = TRUE, mc = getOption("polmineR.mc")){
   
   if (is.logical(mc)) mc <- if (isTRUE(mc)) as.integer(getOption("polmineR.cores")) else 1L

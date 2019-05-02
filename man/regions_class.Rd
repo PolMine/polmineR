@@ -49,6 +49,6 @@ R <- as.regions(P)
 }
 \seealso{
 Other classes to manage corpora: \code{\link{corpus-class}},
-  \code{\link{subcorpus-class}}
+  \code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}

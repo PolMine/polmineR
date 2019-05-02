@@ -85,7 +85,7 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
     setkeyv(y, cols = s_attribute)
     return( y )
   }
-  })
+})
 
 
 #' @rdname size-method
@@ -93,7 +93,8 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
   callNextMethod(x = x, s_attribute = s_attribute, ...)
 })
 
-#' @rdname size-method
+#' @describeIn subcorpus Get the size of a \code{subcorpus} object from the
+#'   respective slot of the object.
 setMethod("size", "subcorpus", function(x, s_attribute = NULL, ...){
   callNextMethod()
 })

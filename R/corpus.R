@@ -344,13 +344,48 @@ Corpus <- R6Class(
 
 #' @examples
 #' use("polmineR")
+#' 
+#' # basic example 
+#' r <- corpus("REUTERS")
+#' k <- subset(r, grepl("kuwait", places))
+#' name(k) <- "kuwait"
+#' summary(k)
+#' size(k)
+#' 
+#' # the same with a magrittr pipe
+#' corpus("REUTERS") %>%
+#'   subset(grepl("kuwait", places)) %>%
+#'   summary()
+#'   
+#' # subsetting a subcorpus in a pipe
+#' stone <- corpus("GERMAPARLMINI") %>%
+#'   subset(date == "2009-11-10") %>%
+#'   subset(speaker == "Frank-Walter Steinmeier")
+#' 
+#' # perform count for subcorpus
+#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% count(p_attribute = "word")
+#' corpus("REUTERS") %>% subset(grep("saudi-arabia", places)) %>% count('"Saudi" "Arabia"')
+#'   
+#' # keyword-in-context analysis (kwic)   
+#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% kwic("oil")
+#' 
+#' # examples for standard and non-standard evaluation
 #' a <- corpus("GERMAPARLMINI")
+#' 
+#' # subsetting a corpus object using non-standard evaluation 
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Bärbel Höhn")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker))
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 #' 
+#' # subsetting corpus specified by character vector 
+#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
+#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
+#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
+#' 
+#' # subsetting a corpus using the (old) logic of the partition-method
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker = "Bärbel Höhn")
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
@@ -358,20 +393,25 @@ Corpus <- R6Class(
 #' sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
 #' sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
 #' 
+#' # providing the value for s-attribute as a variable
 #' who <- "Volker Kauder"
 #' subset(a, quote(speaker == who))
 #' 
+#' # use bquote for quasiquotation when using a variable for subsetting in a loop
 #' for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
 #'    sc <- subset(a, bquote(speaker == .(who)))
 #'    print(size(sc))
 #' }
 #' 
+#' # equivalent procedure with lapply (DOES NOT WORK YET)
 #' b <- lapply(
 #'   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
 #'   function(who) subset(a, bquote(speaker == .(who)))
 #' )
 #' sapply(b, size)
-#' @rdname subcorpus-class
+#' @describeIn subcorpus Get a \code{subcorpus} from a corpus provided by a
+#'   \code{corpus} object or a length-one \code{character} vector, or a
+#'   \code{subcorpus}.
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
@@ -494,22 +534,12 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 })
 
 
-#' @examples 
-#' use("polmineR")
-#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
-#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
-#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
-#' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
 #' @rdname subcorpus-class
 setMethod("subset", "character", function(x, ...){
   subset(x = corpus(x), ...)
 })
 
 
-#' @examples
-#' a <- corpus("GERMAPARLMINI")
-#' b <- subset(a, date == "2009-11-10")
-#' c <- subset(b, speaker == "Frank-Walter Steinmeier")
 #' @rdname subcorpus-class
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
@@ -587,7 +617,7 @@ setMethod("$", "corpus", function(x, name){
 })
 
 #' @param object An object of class \code{subcorpus_bundle}.
-#' @rdname subcorpus-class
+#' @rdname subcorpus_bundle
 setMethod("show", "subcorpus_bundle", function (object) {
   cat('** subcorpus_bundle object: **\n')
   cat(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects), '\n')
