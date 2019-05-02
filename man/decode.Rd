@@ -67,6 +67,7 @@ dt[,
   ]
 
 # Decode subcorpus as Annotation object
+\dontrun{
 if (requireNamespace("NLP")){
   library(NLP)
   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
@@ -79,6 +80,7 @@ if (requireNamespace("NLP")){
 
   words <- s[a[a$type == "word"]]
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+}
 }
 }
 \seealso{

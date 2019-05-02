@@ -45,6 +45,20 @@ setAs(from = "regions", to = "partition", function(from, to){
   )
 })
 
+setAs(from = "subcorpus", to = "partition", function(from, to){
+  new(
+    "partition",
+    cpos = from@cpos,
+    encoding = from@encoding,
+    corpus = from@corpus,
+    strucs = from@strucs,
+    s_attribute_strucs = from@s_attribute_strucs,
+    xml = from@xml,
+    stat = data.table()
+  )
+})
+
+
 #' @rdname partition_class
 setMethod("as.regions", "partition", function(x) as(x, "regions"))
 

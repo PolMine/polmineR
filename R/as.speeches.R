@@ -44,6 +44,7 @@ NULL
 #' summary(speeches)
 setGeneric("as.speeches", function(.Object, ...) standardGeneric("as.speeches"))
 
+#' @exportMethod as.speeches
 #' @rdname as.speeches
 setMethod("as.speeches", "partition", function(
   .Object,
@@ -56,8 +57,7 @@ setMethod("as.speeches", "partition", function(
     is.character(s_attribute_date),
     length(s_attribute_date) == 1,
     is.character(s_attribute_name),
-    length(s_attribute_name) == 1,
-    is.character(.Object) || is.partition(.Object)
+    length(s_attribute_name) == 1
   )
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
@@ -114,6 +114,25 @@ setMethod("as.speeches", "partition", function(
   
   as.bundle(speaker_list_ordered)
 })
+
+
+#' @exportMethod as.speeches
+#' @rdname as.speeches
+setMethod("as.speeches", "subcorpus", function(
+  .Object,
+  s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
+  s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
+  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
+){
+  as.speeches(
+    .Object = as(.Object, "partition"),
+    s_attribute_date = s_attribute_date,
+    s_attribute_name = s_attribute_name,
+    gap = gap,
+    mc = mc, verbose = verbose, progress = progress
+  )
+}
+)
 
 
 #' @rdname as.speeches
@@ -188,15 +207,6 @@ setMethod("as.speeches", "corpus", function(
 }
 )
 
-#' @rdname as.speeches
-setMethod("as.speeches", "subcorpus", function( 
-  .Object,
-  s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
-  s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
-  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
-){
-  callNextMethod()
-})
 
 
 #' @rdname as.speeches

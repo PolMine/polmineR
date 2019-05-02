@@ -134,9 +134,9 @@ setAs(from = "character", to = "data.table", def = function(from){
 #'   {list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))},
 #'   by = "struc"
 #'   ]
-
 #' 
 #' # Decode subcorpus as Annotation object
+#' \dontrun{
 #' if (requireNamespace("NLP")){
 #'   library(NLP)
 #'   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
@@ -149,6 +149,7 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' 
 #'   words <- s[a[a$type == "word"]]
 #'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+#' }
 #' }
 #' @rdname decode
 setMethod("decode", "character", function(.Object, to = "data.table", ...){

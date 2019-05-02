@@ -93,10 +93,12 @@ basic information on the corpora.
 }}
 
 \examples{
+use("polmineR")
 g <- corpus("GERMAPARLMINI")
 g$date
 corpus("GERMAPARLMINI")$date
 
+use("polmineR")
 sc <- subset("GERMAPARLMINI", date == "2009-10-27")
 sc$date
 }

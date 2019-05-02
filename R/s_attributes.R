@@ -65,12 +65,10 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
-  if (!.Object@corpus %in% .list_corpora()) stop("corpus name provided not available")
-  
   if (is.null(s_attribute)){
     return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
   } else {
-    if (length(s_attribute) == 1){
+    if (length(s_attribute) == 1L){
       avs_file <- file.path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
@@ -122,7 +120,7 @@ setMethod(
         # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
         # is necessary because there are scenarios when these slots are not defined.
         xml_is_flat <- if (length(.Object@xml) > 0) if (.Object@xml == "flat") TRUE else FALSE else FALSE
-        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
+        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
         if (xml_is_flat && s_attr_strucs){
           len1 <- cl_attribute_size(corpus = .Object@corpus, attribute = .Object@s_attribute_strucs, attribute_type = "s", registry = registry())
           len2 <- cl_attribute_size(corpus = .Object@corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
@@ -133,10 +131,16 @@ setMethod(
           if (unique) retval <- unique(retval)
         } else {
           cposVector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-          strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute, cpos = cposVector, registry = registry())
+          strucs <- cl_cpos2struc(
+            corpus = .Object@corpus,
+            s_attribute = s_attribute,
+            cpos = cposVector,
+            registry = registry()
+          )
+          strucs <- unique(strucs)
           # filtering out negative struc values is necessary, because RcppCWB
           # will complain about negative values
-          strucs <- strucs[which(strucs > 0)]
+          strucs <- strucs[which(strucs > 0L)]
           retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
           if (unique) retval <- unique(retval)
         }
@@ -144,7 +148,7 @@ setMethod(
         retval <- as.nativeEnc(retval, from = .Object@encoding)
         Encoding(retval) <- localeToCharset()[1]
         return(retval)
-      } else if (length(s_attribute) > 1){
+      } else if (length(s_attribute) > 1L){
         if (.Object@xml == "flat") {
           tab <- data.frame(
             lapply(

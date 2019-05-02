@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^polmineR.Rproj
+^data-raw$
 ^cran-comments\.md$
 ^CONDUCT\.md$
 ^README\.Rmd$

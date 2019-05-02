@@ -30,7 +30,9 @@ test_that(
 test_that(
   "plpr_partition",
   {
-    m <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Merkel", regex = TRUE)
+    m <- partition("GERMAPARLMINI", date = "2009-10-28", speaker = "Merkel", regex = TRUE) %>%
+      as.speeches(s_attribute_name = "speaker", gap = 100) %>%
+      .[[2]]
     y <- as.markdown(m)
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_markdown.txt")
     benchmark <- readLines(refdoc, warn = FALSE)
@@ -38,7 +40,8 @@ test_that(
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
     
-    y <- as.character(html(m))
+    set_template("GERMAPARLMINI")
+    y <- as.character(read(m))
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE)
     benchmark <- gsub("\n\n", "\n", benchmark)

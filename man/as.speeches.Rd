@@ -4,8 +4,8 @@
 \name{as.speeches}
 \alias{as.speeches}
 \alias{as.speeches,partition-method}
-\alias{as.speeches,corpus-method}
 \alias{as.speeches,subcorpus-method}
+\alias{as.speeches,corpus-method}
 \alias{as.speeches,character-method}
 \title{Split corpus or partition into speeches.}
 \usage{
@@ -16,15 +16,15 @@ as.speeches(.Object, ...)
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
 
-\S4method{as.speeches}{corpus}(.Object, s_attribute_date = grep("date",
-  s_attributes(.Object), value = TRUE), s_attribute_name = grep("name",
-  s_attributes(.Object), value = TRUE), gap = 500, mc = FALSE,
-  verbose = TRUE, progress = TRUE)
-
 \S4method{as.speeches}{subcorpus}(.Object,
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE)
+
+\S4method{as.speeches}{corpus}(.Object, s_attribute_date = grep("date",
+  s_attributes(.Object), value = TRUE), s_attribute_name = grep("name",
+  s_attributes(.Object), value = TRUE), gap = 500, mc = FALSE,
+  verbose = TRUE, progress = TRUE)
 
 \S4method{as.speeches}{character}(.Object,
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),

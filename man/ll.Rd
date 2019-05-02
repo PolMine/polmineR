@@ -82,10 +82,12 @@ if (interactive()) View(format(oil_min))
 summary(oil)
 
 # use ll-method on 'Cooccurrences'-object
+\dontrun{
 R <- Cooccurrences("REUTERS", left = 5L, right = 5L, p_attribute = "word")
 ll(R)
 decode(R)
 summary(R)
+}
 
 # use log likelihood test for feature extraction
 x <- partition(
