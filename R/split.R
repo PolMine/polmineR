@@ -59,6 +59,8 @@ setMethod("split", "partition", function(x, gap, ...){
 #' @export
 #' @rdname subcorpus_bundle
 #' @inheritParams partition_bundle
+#' @param x A \code{corpus}, \code{subcorpus}, or \code{subcorpus_bundle}
+#'   object.
 setMethod("split", "subcorpus", function(
   x, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,

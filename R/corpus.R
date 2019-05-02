@@ -342,32 +342,23 @@ Corpus <- R6Class(
   max_attr
 }
 
+#' @title Subsetting corpora and subcorpora
+#' @description The structural attributes of a corpus (s-attributes) can be used
+#'   to generate subcorpora (i.e. a \code{subcorpus} class object) by applying
+#'   the \code{subset}-method. To obtain a \code{subcorpus}, the
+#'   \code{subset}-method can be applied on a corpus represented by a
+#'   \code{corpus} object, a length-one \code{character} vector (as a shortcut),
+#'   and on a \code{subcorpus} object.
+#' @rdname subset
+#' @name subset
+#' @aliases subset,corpus-method
+#' @seealso The methods applicable for the \code{subcorpus} object resulting
+#'   from subsetting a corpus or subcorpus are described in the documentation of
+#'   the \code{\link{subcorpus-class}}. Note that the \code{subset}-method can also be
+#'   applied to \code{\link{textstat-class}} objects (and objects inheriting from
+#'   this class).
 #' @examples
 #' use("polmineR")
-#' 
-#' # basic example 
-#' r <- corpus("REUTERS")
-#' k <- subset(r, grepl("kuwait", places))
-#' name(k) <- "kuwait"
-#' summary(k)
-#' size(k)
-#' 
-#' # the same with a magrittr pipe
-#' corpus("REUTERS") %>%
-#'   subset(grepl("kuwait", places)) %>%
-#'   summary()
-#'   
-#' # subsetting a subcorpus in a pipe
-#' stone <- corpus("GERMAPARLMINI") %>%
-#'   subset(date == "2009-11-10") %>%
-#'   subset(speaker == "Frank-Walter Steinmeier")
-#' 
-#' # perform count for subcorpus
-#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% count(p_attribute = "word")
-#' corpus("REUTERS") %>% subset(grep("saudi-arabia", places)) %>% count('"Saudi" "Arabia"')
-#'   
-#' # keyword-in-context analysis (kwic)   
-#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% kwic("oil")
 #' 
 #' # examples for standard and non-standard evaluation
 #' a <- corpus("GERMAPARLMINI")
@@ -409,9 +400,10 @@ Corpus <- R6Class(
 #'   function(who) subset(a, bquote(speaker == .(who)))
 #' )
 #' sapply(b, size)
-#' @describeIn subcorpus Get a \code{subcorpus} from a corpus provided by a
-#'   \code{corpus} object or a length-one \code{character} vector, or a
-#'   \code{subcorpus}.
+#' @param x A \code{corpus} or \code{subcorpus} object. A corpus may also
+#'   specified by a length-one \code{character} vector.
+#' @param ... An expression that will be used to create a subcorpus from
+#'   s-attributes.
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
@@ -534,13 +526,13 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 })
 
 
-#' @rdname subcorpus-class
+#' @rdname subset
 setMethod("subset", "character", function(x, ...){
   subset(x = corpus(x), ...)
 })
 
 
-#' @rdname subcorpus-class
+#' @rdname subset
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
   

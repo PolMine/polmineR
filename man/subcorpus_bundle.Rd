@@ -25,6 +25,9 @@
 \arguments{
 \item{object}{An object of class \code{subcorpus_bundle}.}
 
+\item{x}{A \code{corpus}, \code{subcorpus}, or \code{subcorpus_bundle}
+object.}
+
 \item{s_attribute}{The s-attribute to vary.}
 
 \item{values}{Values the s-attribute provided shall assume.}

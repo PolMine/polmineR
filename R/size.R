@@ -10,12 +10,12 @@ NULL
 #' tokens across one or more dimensions. Two or more s-attributes
 #' can lead to reasonable results only if the corpus XML is flat.
 #' 
-#' @param x object to get size(s) for
-#' @param s_attribute character vector with s-attributes (one or more)
-#' @param verbose logical, whether to print messages
-#' @param ... further arguments
+#' @param x An object to get size(s) for.
+#' @param s_attribute A \code{character} vector with s-attributes (one or more).
+#' @param verbose A \code{logical} value, whether to output messages.
+#' @param ... Further arguments (used only for backwards compatibility).
 #' @rdname size-method
-#' @return an integer vector if s_attribute is NULL, a \code{data.table} otherweise
+#' @return An \code{integer} vector if s_attribute is \code{NULL}, a \code{data.table} otherwise.
 #' @seealso See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
 #' method calls the \code{size}-method to get sizes of subcorpora.
 #' @examples

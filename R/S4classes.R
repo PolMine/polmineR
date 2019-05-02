@@ -611,16 +611,8 @@ setClass(
 
 #' The S4 subcorpus class.
 #' 
-#' @description The structural attributes of a corpus (s-attributes) can be used
-#'   to generate subcorpora (i.e. a \code{subcorpus} class object) by applying
-#'   the \code{subset}-method. To obtain a \code{subcorpus}, the
-#'   \code{subset}-method can be applied on a corpus represented by a
-#'   \code{corpus} object, a length-one \code{character} vector (as a shortcut),
-#'   and on a \code{subcorpus} object.
+#' @description Class to manage subcorpora derived from a CWB corpus.
 #' 
-#' @param x A \code{corpus} or \code{subcorpus} object.
-#' @param ... An expression that will be used to create a subcorpus from
-#'   s-attributes.
 #' @slot s_attributes A named \code{list} with the structural attributes
 #'   defining the subcorpus.
 #' @slot cpos A \code{matrix} with left and right corpus positions defining
@@ -635,12 +627,47 @@ setClass(
 #' @slot xml Object of class \code{character}, whether the xml is "flat" or
 #'   "nested".
 #' @slot s_attribute_strucs Object of class \code{character}, the base node.
+#' @param object A \code{subcorpus} object.
+#' @param x A \code{subcorpus} object.
+#' @param ... Arguments passed into \code{size}-method. Used only to maintain
+#'   backwards compatibility.
+#' @inheritParams size
 #' @seealso 
-#' \code{\link{size}} for detailed documentation on how to use the \code{size}-method.
+#' Most commonly, a \code{subcorpus} is derived from a \code{corpus} or a
+#' \code{subcorpus} using the \code{\link{subset}} method. See
+#' \code{\link{size}} for detailed documentation on how to use the
+#' \code{size}-method.
 #' @family classes to manage corpora
 #' @name subcorpus
 #' @rdname subcorpus-class
 #' @aliases subcorpus-class
+#' @examples
+#' use("polmineR")
+#' 
+#' # basic example 
+#' r <- corpus("REUTERS")
+#' k <- subset(r, grepl("kuwait", places))
+#' name(k) <- "kuwait"
+#' summary(k)
+#' size(k)
+#' 
+#' # the same with a magrittr pipe
+#' corpus("REUTERS") %>%
+#'   subset(grepl("kuwait", places)) %>%
+#'   summary()
+#'   
+#' # subsetting a subcorpus in a pipe
+#' stone <- corpus("GERMAPARLMINI") %>%
+#'   subset(date == "2009-11-10") %>%
+#'   subset(speaker == "Frank-Walter Steinmeier")
+#' 
+#' # perform count for subcorpus
+#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% count(p_attribute = "word")
+#' corpus("REUTERS") %>% subset(grep("saudi-arabia", places)) %>% count('"Saudi" "Arabia"')
+#'   
+#' # keyword-in-context analysis (kwic)   
+#' corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% kwic("oil")
+#' 
 setClass(
   "subcorpus",
   slots = c(
@@ -666,9 +693,9 @@ setMethod("summary", "subcorpus", function(object){
 
 
 #' @param value A \code{character} vector to assign as name to slot \code{name}
-#'   of a \code{subcropus} class object.
+#'   of a \code{subcorpus} class object.
 #' @describeIn subcorpus Assign name to a \code{subcorpus} object.
-#' @exportMethod Asign a name to a subcorpus class object.
+#' @exportMethod name<-
 setReplaceMethod("name", "subcorpus", function(x, value) {
   x@name <- value
   x

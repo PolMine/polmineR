@@ -29,16 +29,16 @@ size(x, ...)
 \S4method{size}{corpus}(x)
 }
 \arguments{
-\item{x}{object to get size(s) for}
+\item{x}{An object to get size(s) for.}
 
-\item{...}{further arguments}
+\item{...}{Further arguments (used only for backwards compatibility).}
 
-\item{s_attribute}{character vector with s-attributes (one or more)}
+\item{s_attribute}{A \code{character} vector with s-attributes (one or more).}
 
-\item{verbose}{logical, whether to print messages}
+\item{verbose}{A \code{logical} value, whether to output messages.}
 }
 \value{
-an integer vector if s_attribute is NULL, a \code{data.table} otherweise
+An \code{integer} vector if s_attribute is \code{NULL}, a \code{data.table} otherwise.
 }
 \description{
 The method will get the number of tokens in a corpus or partition,
