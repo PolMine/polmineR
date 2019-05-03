@@ -303,8 +303,10 @@ setMethod("kwic", "subcorpus", function(
 )
 
 
+
+
 #' @rdname kwic
-setMethod("kwic", "character", function(
+setMethod("kwic", "corpus", function(
   .Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
@@ -321,14 +323,14 @@ setMethod("kwic", "character", function(
   
   hits <- cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   if (is.null(hits)){
-    message("sorry, not hits");
+    message("sorry, not hits for query: ", query);
     return(invisible(NULL))
   }
-  cpos_max <- cl_attribute_size(corpus = .Object, attribute = p_attribute, attribute_type = "p", registry = registry())
-  cposList <- apply(
+  cpos_max <- cl_attribute_size(corpus = .Object@corpus, attribute = p_attribute, attribute_type = "p", registry = registry())
+  cpos_list <- apply(
     hits, 1,
     function(row){
-      left <- c((row[1] - left ):(row[1] - 1L))
+      left <- c((row[1] - left):(row[1] - 1L))
       right <- c((row[2] + 1L):(row[2] + right))
       list(
         left = left[left > 0L],
@@ -338,35 +340,37 @@ setMethod("kwic", "character", function(
     }
   )
   DT <- data.table(
-    hit_no = unlist(lapply(1L:length(cposList), function(i) rep(i, times = length(unlist(cposList[[i]]))))),
-    cpos = unname(unlist(cposList)),
+    hit_no = unlist(lapply(seq_along(cpos_list), function(i) rep(i, times = length(unlist(cpos_list[[i]]))))),
+    cpos = unname(unlist(cpos_list)),
     position = unlist(lapply(
-      cposList,
+      cpos_list,
       function(x) lapply(
         names(x),
         function(x2)
           switch(
             x2,
-            left = if (length(x[[x2]]) == 0) integer() else rev((-1L:-left)[1L:length(x[[x2]])]),
+            left = if (length(x[[x2]]) == 0L) integer() else rev((-1L:-left)[1L:length(x[[x2]])]),
             node = rep(0L, times = length(x[[x2]])),
-            right = if (length(x[[x2]]) == 0) integer() else (1L:right)[1L:length(x[[x2]])]
+            right = if (length(x[[x2]]) == 0L) integer() else (1L:right)[1L:length(x[[x2]])]
           )
       )))
   )
-  DT[[paste(p_attribute, "id", sep = "_")]] <- cl_cpos2id(corpus = .Object, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
+  DT[[paste(p_attribute, "id", sep = "_")]] <- cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
   
   ctxt <- new(
     Class = "context",
     query = character(),
     count = nrow(hits),
     stat = data.table(),
-    corpus = .Object,
-    size_partition = integer(), size = integer(),
-    left = as.integer(left), right = as.integer(right), 
+    corpus = .Object@corpus,
+    size_partition = integer(),
+    size = integer(),
+    left = as.integer(left),
+    right = as.integer(right), 
     cpos = DT,
     boundary = if (!is.null(boundary)) boundary else character(),
     p_attribute = p_attribute,
-    encoding = registry_get_encoding(.Object),
+    encoding = .Object@encoding,
     partition = new("partition", stat = data.table())
   )
   
@@ -377,12 +381,45 @@ setMethod("kwic", "character", function(
     ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
     ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
   }
-
+  
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   
   kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
+})
+
+
+
+
+#' @rdname kwic
+setMethod("kwic", "character", function(
+  .Object, query, cqp = is.cqp, check = TRUE,
+  left = as.integer(getOption("polmineR.left")),
+  right = as.integer(getOption("polmineR.right")),
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  verbose = TRUE, progress = TRUE, ...
+){
+  kwic(
+    .Object = corpus(.Object),
+    query = query,
+    cqp = cqp,
+    check = check,
+    left = left,
+    right = left,
+    s_attributes = s_attributes,
+    p_attribute = p_attribute,
+    boundary = boundary,
+    cpos = cpos,
+    stoplist = stoplist,
+    positivelist = positivelist,
+    regex = regex,
+    verbose = verbose,
+    progress = progress,
+    ...
+  )
 })
 
 #' @rdname kwic

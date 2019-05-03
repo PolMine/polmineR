@@ -7,6 +7,7 @@
 \alias{kwic,slice-method}
 \alias{kwic,partition-method}
 \alias{kwic,subcorpus-method}
+\alias{kwic,corpus-method}
 \alias{kwic,character-method}
 \alias{kwic,remote_corpus-method}
 \alias{kwic,remote_partition-method}
@@ -38,6 +39,14 @@ kwic(.Object, ...)
   s_attributes = getOption("polmineR.meta"), p_attribute = "word",
   boundary = NULL, cpos = TRUE, stoplist = NULL,
   positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+
+\S4method{kwic}{corpus}(.Object, query, cqp = is.cqp, check = TRUE,
+  left = as.integer(getOption("polmineR.left")),
+  right = as.integer(getOption("polmineR.right")),
+  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
+  boundary = NULL, cpos = TRUE, stoplist = NULL,
+  positivelist = NULL, regex = FALSE, verbose = TRUE,
+  progress = TRUE, ...)
 
 \S4method{kwic}{character}(.Object, query, cqp = is.cqp, check = TRUE,
   left = as.integer(getOption("polmineR.left")),

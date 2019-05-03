@@ -685,6 +685,18 @@ setAs(from = "partition", to = "corpus", def = function(from){
   )
 })
 
+setAs(from = "corpus", to = "partition", def = function(from){
+  new(
+    "partition",
+    corpus = from@corpus,
+    encoding = from@encoding,
+    cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
+    stat = data.table(),
+    size = size(from),
+    p_attribute = character()
+  )
+})
+
 #' @exportClass remote_corpus
 #' @docType class
 #' @rdname corpus-class

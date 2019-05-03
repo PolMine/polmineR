@@ -7,6 +7,7 @@
 \alias{as.matrix,context_bundle-method}
 \alias{context,partition-method}
 \alias{context,subcorpus-method}
+\alias{context,corpus-method}
 \alias{context,character-method}
 \alias{context,partition_bundle-method}
 \alias{context,cooccurrences-method}
@@ -37,6 +38,14 @@ context(.Object, ...)
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = TRUE, ...)
+
+\S4method{context}{corpus}(.Object, query, cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), stoplist = NULL,
+  positivelist = NULL, regex = FALSE, count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...)
 
 \S4method{context}{character}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,

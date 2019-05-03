@@ -3,6 +3,7 @@
 \docType{methods}
 \name{cooccurrences}
 \alias{cooccurrences}
+\alias{cooccurrences,corpus-method}
 \alias{cooccurrences,character-method}
 \alias{cooccurrences,slice-method}
 \alias{cooccurrences,partition-method}
@@ -14,6 +15,14 @@
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
+
+\S4method{cooccurrences}{corpus}(.Object, query, cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"), stoplist = NULL,
+  positivelist = NULL, regex = FALSE, keep = NULL, cpos = NULL,
+  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
+  progress = FALSE, ...)
 
 \S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,

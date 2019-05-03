@@ -59,7 +59,7 @@ NULL
 #'   subset(grepl("saudi-arabia", places)) %>%
 #'   cpos(query = '"Saudi" "Arabia"', cqp = TRUE)
 #' partition("REUTERS", places = "saudi-arabia", regex = TRUE) %>%
-#'   cpos(p, query = '"Saudi" "Arabia"', cqp = TRUE)
+#'   cpos(query = '"Saudi" "Arabia"', cqp = TRUE)
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method

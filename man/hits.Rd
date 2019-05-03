@@ -4,6 +4,7 @@
 \name{hits}
 \alias{hits}
 \alias{hits,corpus-method}
+\alias{hits,character-method}
 \alias{hits,slice-method}
 \alias{hits,subcorpus-method}
 \alias{hits,partition-method}
@@ -14,6 +15,10 @@
 hits(.Object, ...)
 
 \S4method{hits}{corpus}(.Object, query, cqp = FALSE, check = TRUE,
+  s_attribute = NULL, p_attribute = "word", size = FALSE,
+  freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
+
+\S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,
   freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
 
@@ -79,6 +84,8 @@ include the subsets of the \code{partition}/\code{corpus} with no hits (query is
 count is 0).
 }
 \examples{
+use("polmineR")
+
 # get hits for corpus object
 y <- corpus("REUTERS") \%>\% hits(query = "oil")
 y <- corpus("REUTERS") \%>\% hits(query = c("oil", "barrel"))

@@ -264,7 +264,7 @@ setMethod("context", "subcorpus", function(
 
 
 #' @rdname context-method
-setMethod("context", "character", function(
+setMethod("context", "corpus", function(
   .Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
@@ -277,19 +277,50 @@ setMethod("context", "character", function(
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
   if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
-
-  C <- Corpus$new(.Object)
+  
+  p <- as(.Object, "partition")
+  
   # There is a potential overhead of performing the count here: When context-method
   # is called by kwic, the count is not needed. However, if context is called by
   # cooccurrences, it is much, much faster (for one p-attribute) having done the 
   # count here for the entire corpus.
-  if (length(p_attribute) == 1L) C$count(p_attribute, decode = FALSE)
+  
+  if (length(p_attribute) == 1L)
+    p@stat <- count(.Object@corpus, p_attribute = p_attribute, decode = FALSE)@stat
+  
   context(
-    C$as.partition(), query = query, cqp = is.cqp,
+    p, query = query, cqp = is.cqp,
     left = left, right = right,
     p_attribute = p_attribute, boundary = boundary,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count, mc = mc, verbose = verbose, progress = progress
+  )
+})
+
+
+#' @rdname context-method
+setMethod("context", "character", function(
+  .Object, query, cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  ...
+){
+  context(
+    .Object = corpus(.Object),
+    query = query,
+    cqp = cqp,
+    p_attribute = p_attribute,
+    boundary = boundary,
+    left = left, right = right,
+    stoplist = stoplist, positivelist = positivelist, regex = regex,
+    count = count,
+    mc = mc,
+    verbose = verbose,
+    progress = progress,
+    ...
   )
 })
 

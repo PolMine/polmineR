@@ -6,6 +6,7 @@
 \alias{dispersion,partition-method}
 \alias{dispersion,slice-method}
 \alias{dispersion,subcorpus-method}
+\alias{dispersion,corpus-method}
 \alias{dispersion,character-method}
 \alias{dispersion,hits-method}
 \title{Dispersion of a query or multiple queries.}
@@ -23,6 +24,10 @@ dispersion(.Object, ...)
 \S4method{dispersion}{subcorpus}(.Object, query, s_attribute,
   cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
+\S4method{dispersion}{corpus}(.Object, query, s_attribute, cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
+  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
 \S4method{dispersion}{character}(.Object, query, s_attribute,
   cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"),

@@ -109,6 +109,7 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
 })
 
 
+#' @rdname hits
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]

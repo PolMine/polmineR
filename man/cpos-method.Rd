@@ -99,5 +99,5 @@ corpus("REUTERS") \%>\%
   subset(grepl("saudi-arabia", places)) \%>\%
   cpos(query = '"Saudi" "Arabia"', cqp = TRUE)
 partition("REUTERS", places = "saudi-arabia", regex = TRUE) \%>\%
-  cpos(p, query = '"Saudi" "Arabia"', cqp = TRUE)
+  cpos(query = '"Saudi" "Arabia"', cqp = TRUE)
 }

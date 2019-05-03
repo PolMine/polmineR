@@ -101,7 +101,7 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "character", function(
+setMethod("cooccurrences", "corpus", function(
   .Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
@@ -114,7 +114,7 @@ setMethod("cooccurrences", "character", function(
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (missing(query)) stop("query missing - it is not possible to calculate cooccurrences")
-  C <- context(
+  ctxt <- context(
     .Object = .Object, query = query, cqp = is.cqp,
     p_attribute = p_attribute, s_attribute = s_attribute,
     left = left, right = right,
@@ -122,8 +122,43 @@ setMethod("cooccurrences", "character", function(
     count = TRUE, 
     mc = mc, verbose = verbose, progress = progress
   )
-  if (is.null(C)) invisible(NULL) else cooccurrences(C, method = method, verbose = verbose)
+  if (is.null(ctxt)) invisible(NULL) else cooccurrences(ctxt, method = method, verbose = verbose)
 })
+
+
+
+#' @rdname cooccurrences
+setMethod("cooccurrences", "character", function(
+  .Object, query, cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  left = getOption("polmineR.left"), right = getOption("polmineR.right"),
+  stoplist = NULL, positivelist = NULL, regex = FALSE,
+  keep = NULL, cpos = NULL, method = "ll",
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  ...
+){
+  cooccurrences(
+    .Object = corpus(.Object),
+    query = query,
+    cqp = cqp,
+    p_attribute = p_attribute,
+    s_attribute = s_attribute,
+    left = left,
+    right = right,
+    stoplist = stoplist,
+    positivelist = positivelist,
+    regex = regex,
+    keep = keep,
+    cpos = cpos,
+    method = method,
+    mc = mc,
+    verbose = verbose,
+    progress = progress,
+    ...
+  )
+})
+
+
 
 #' @rdname cooccurrences
 setMethod(
