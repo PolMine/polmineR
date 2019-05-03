@@ -582,23 +582,24 @@ setClass(
 #' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
 #' on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
 #' class inheriting from the \code{corpus} class will handle respective
-#' information, and polmineR functions and methods can be executed from on
-#' remote machine from the local R session by calling them on the
-#' \code{remote_corpus} object. Calling the \code{corpus}-method without an
-#' argument will return a \code{data.frame} with basic information on the
-#' corpora that are available.
+#' information. A (limited) set of polmineR functions and methods can be
+#' executed on the corpus on the remote machine from the local R session by
+#' calling them on the \code{remote_corpus} object. Calling the
+#' \code{corpus}-method without an argument will return a \code{data.frame} with
+#' basic information on the corpora that are available.
 #'
-#' @details
-#' A limited set of methods of the \code{polmineR} package is exposed to be
-#' executed on a remote OpenCPU server. The whereabouts of an OpenCPU server
-#' hosting a CWB corpus can be stated in an environment variable
-#' "OPENCPU_SERVER". Environment variables for R sessions can be set easily in
-#' the \code{.Renviron} file. A convenient way to do this is to call
-#' \code{usethis::edit_r_environ()}. To instantiate an object of class
-#' \code{remote_corpus}, the \code{corpus}-class can be used (by providing
-#' argument \code{server}).
+#' @details Calling \code{corpus()} will return a \code{data.frame} listing the corpora
+#' available locally and described in the active registry directory, and some
+#' basic information on the corpora.
+#' @details A \code{corpus} object is instantiated by passing the corpus ID as
+#'   argument \code{.Object}.
+#' @details A limited set of methods of the \code{polmineR} package is exposed
+#'   to be executed on a remote OpenCPU server. As a matter of convenience, the
+#'   whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
+#'   environment variable "OPENCPU_SERVER". Environment variables for R sessions
+#'   can be set easily in the \code{.Renviron} file. A convenient way to do this
+#'   is to call \code{usethis::edit_r_environ()}.
 #'     
-#' @param ... Further arguments.
 #' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
 #'   corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
@@ -620,6 +621,26 @@ setClass(
 #'   \code{\link{as.TermDocumentMatrix}}.
 #' @family classes to manage corpora
 #' @examples
+#' use("polmineR")
+#' 
+#' # get corpora present locally
+#' corpus()
+#' 
+#' # initialize corpus object
+#' r <- corpus("REUTERS")
+#' 
+#' # apply core polmineR methods
+#' size(r)
+#' s_attributes(r)
+#' count(r, query = "oil")
+#' dispersion(r, query = "oil", s_attribute = "id")
+#' kwic(r, query = "oil")
+#' cooccurrences(r, query = "oil")
+#' 
+#' # used corpus initialization in a pipe
+#' corpus("REUTERS") %>% s_attributes()
+#' corpus("REUTERS") %>% count(query = "oil")
+#' 
 #' # working with a remote corpus
 #' \dontrun{
 #' REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))

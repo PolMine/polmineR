@@ -52,7 +52,7 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
   if (is.null(encoding)) encoding <- registry_get_encoding(.Object) # get encoding of the corpus
   query <- as.corpusEnc(query, corpusEnc = encoding)
   if (class(cqp) == "function") cqp <- cqp(query)
-  if (length(cqp) > 1) stop("length of cqp is larger than 1, but needs to be 1")
+  if (length(cqp) > 1L) stop("length of cqp is larger than 1, but needs to be 1")
   if (cqp == FALSE) {
     # if (any(grepl("[]", query))) warning("Special character that may cause problems in query!")
     hitList <- lapply(

@@ -17,13 +17,13 @@
 \S4method{corpus}{missing}()
 }
 \arguments{
-\item{.Object}{An object inheriting from the \code{textstat} or \code{bundle}
-superclasses.}
+\item{.Object}{The upper-case ID of a CWB corpus stated by a
+length-one \code{character} vector.}
 
-\item{server}{The name of an Open CPU server (can be an IP address) that
-hosts corpora.}
-
-\item{...}{Further arguments.}
+\item{server}{If \code{NULL} (default), the corpus is expected to be present
+locally. If provided, the name of an OpenCPU server (can be an IP address)
+that hosts a corpus, or several corpora. The \code{corpus}-method will then
+instantiate a \code{remote_corpus} object.}
 }
 \description{
 Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
@@ -33,33 +33,27 @@ the name of the class, the \code{corpus}-method is the initializer for
 objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
 on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
 class inheriting from the \code{corpus} class will handle respective
-information, and polmineR functions and methods can be executed from on
-remote machine from the local R session by calling them on the
-\code{remote_corpus} object. Calling the \code{corpus}-method without an
-argument will return a \code{data.frame} with basic information on the
-corpora that are available.
+information. A (limited) set of polmineR functions and methods can be
+executed on the corpus on the remote machine from the local R session by
+calling them on the \code{remote_corpus} object. Calling the
+\code{corpus}-method without an argument will return a \code{data.frame} with
+basic information on the corpora that are available.
 }
 \details{
-A limited set of methods of the \code{polmineR} package is exposed to be
-executed on a remote OpenCPU server. The whereabouts of an OpenCPU server
-hosting a CWB corpus can be stated in an environment variable
-"OPENCPU_SERVER". Environment variables for R sessions can be set easily in
-the \code{.Renviron} file. A convenient way to do this is to call
-\code{usethis::edit_r_environ()}. To instantiate an object of class
-\code{remote_corpus}, the \code{corpus}-class can be used (by providing
-argument \code{server}).
-}
-\section{Methods (by generic)}{
-\itemize{
-\item \code{corpus}: If \code{.Object} is an object inheriting from the \code{textstat},
-or the \code{bundle} class, the corpus used to generate the object is
-returned.
-
-\item \code{corpus}: Calling \code{corpus()} will return a \code{data.frame}
-listing the corpora described in the active registry directory, and some
+Calling \code{corpus()} will return a \code{data.frame} listing the corpora
+available locally and described in the active registry directory, and some
 basic information on the corpora.
-}}
 
+A \code{corpus} object is instantiated by passing the corpus ID as
+  argument \code{.Object}.
+
+A limited set of methods of the \code{polmineR} package is exposed
+  to be executed on a remote OpenCPU server. As a matter of convenience, the
+  whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
+  environment variable "OPENCPU_SERVER". Environment variables for R sessions
+  can be set easily in the \code{.Renviron} file. A convenient way to do this
+  is to call \code{usethis::edit_r_environ()}.
+}
 \section{Slots}{
 
 \describe{

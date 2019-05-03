@@ -5,13 +5,13 @@ NULL
 setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 
 
-#' @describeIn corpus If \code{.Object} is an object inheriting from the \code{textstat},
-#' or the \code{bundle} class, the corpus used to generate the object is
-#' returned.
-#' @param .Object An object inheriting from the \code{textstat} or \code{bundle}
-#'   superclasses.
-#' @param server The name of an Open CPU server (can be an IP address) that
-#'   hosts corpora.
+#' @rdname corpus-class
+#' @param .Object The upper-case ID of a CWB corpus stated by a
+#'   length-one \code{character} vector.
+#' @param server If \code{NULL} (default), the corpus is expected to be present
+#'   locally. If provided, the name of an OpenCPU server (can be an IP address)
+#'   that hosts a corpus, or several corpora. The \code{corpus}-method will then
+#'   instantiate a \code{remote_corpus} object.
 #' @exportMethod corpus
 setMethod("corpus", "character", function(.Object, server = NULL){
   if (is.null(server)){
@@ -63,9 +63,7 @@ setMethod("get_corpus", "kwic", function(x) x@corpus)
 setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpus)))
 
 
-#' @describeIn corpus Calling \code{corpus()} will return a \code{data.frame}
-#'   listing the corpora described in the active registry directory, and some
-#'   basic information on the corpora.
+#' @rdname corpus-class 
 setMethod("corpus", "missing", function(){
   if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
     corpora <- .list_corpora()
