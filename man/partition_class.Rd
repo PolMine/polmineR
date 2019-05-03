@@ -13,6 +13,7 @@
 \alias{export}
 \alias{export,partition-method}
 \alias{split}
+\alias{remote_partition-class}
 \alias{plpr_partition-class}
 \alias{press_partition-class}
 \alias{p_attributes,slice-method}

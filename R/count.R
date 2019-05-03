@@ -46,7 +46,9 @@ NULL
 #'   counts (column named 'TOTAL') will be amended to the \code{data.table} that
 #'   is returned.
 #' @param progress Logical, whether to show progress bar.
-#' @param ... Further arguments.
+#' @param ... Further arguments. If \code{.Object} is a \code{remote_corpus}
+#'   object, the three dots (\code{...}) are used to pass arguments. Hence, it is
+#'   necessary to state the names of all arguments to be passed explicity.
 #' @return A \code{data.table} if argument query is used, a \code{count}-object,
 #'   if query is \code{NULL} and \code{.Object} is a character vector (referring 
 #'   to a corpus) or a \code{partition}, a \code{count_bundle}-object, if \code{.Object}
@@ -423,4 +425,16 @@ setMethod("count", "Corpus", function(.Object, query = NULL, p_attribute){
 #' @exportMethod hist
 #' @rdname count_class
 setMethod("hist", "count", function(x, ...) hist(x@stat[,"count"], ...) )
+
+
+#' @rdname count-method
+setMethod("count", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "count", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+})
+
+
+#' @rdname count-method
+setMethod("count", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "count", server = .Object@server, do.call = FALSE, .Object = as(.Object, "subcorpus"), ...)
+})
 

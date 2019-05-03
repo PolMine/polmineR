@@ -235,7 +235,10 @@ is.partition <- function(x) "partition" %in% is(x)
 #' @param type A length-one character vector specifying the type of corpus / partition (e.g. "plpr")
 #' @param mc Whether to use multicore (for counting terms).
 #' @param verbose Logical, whether to be verbose.
-#' @param ... Arguments to define partition (see examples).
+#' @param ... Arguments to define partition (see examples). If \code{.Object} is
+#'   a \code{remote_corpus} or \code{remote_partition} object, the three dots
+#'   (\code{...}) are used to pass arguments. Hence, it is necessary to state
+#'   the names of all arguments to be passed explicity.
 #' @return An object of the S4 class \code{partition}.
 #' @author Andreas Blaette
 #' @seealso To learn about the methods available for objects of the class
@@ -493,4 +496,21 @@ setMethod("partition", "context", function(.Object, node = TRUE){
   y
 })
 
+
+#' @rdname partition
+setMethod("partition", "remote_corpus", function(.Object, ...){
+  p <- ocpu_exec(fn = "partition", server = .Object@server, .Object = .Object@corpus, ...)
+  y <- as(p, "remote_partition")
+  y@server <- .Object@server
+  y
+})
+
+
+#' @rdname partition
+setMethod("partition", "remote_partition", function(.Object, ...){
+  p <- ocpu_exec(fn = "partition", server = .Object@server, .Object = as(.Object, "partition", ...))
+  y <- as(p, "remote_partition")
+  y@server <- .Object@server
+  y
+})
 

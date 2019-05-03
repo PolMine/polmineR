@@ -6,82 +6,65 @@
 \alias{zoom}
 \alias{corpus}
 \alias{get_corpus}
-\alias{name,corpus-method}
+\alias{remote_corpus}
+\alias{remote_corpus-class}
 \alias{corpus,character-method}
-\alias{get_corpus,corpus-method}
 \alias{corpus,missing-method}
-\alias{show,corpus-method}
-\alias{$,corpus-method}
-\title{S4 class to manage CWB corpora.}
+\title{Corpus class initialization}
 \usage{
-\S4method{name}{corpus}(x)
-
 \S4method{corpus}{character}(.Object, server = NULL)
 
-\S4method{get_corpus}{corpus}(x)
-
 \S4method{corpus}{missing}()
-
-\S4method{show}{corpus}(object)
-
-\S4method{$}{corpus}(x, name)
 }
 \arguments{
-\item{x}{An object of class \code{corpus}, or inheriting from it.}
-
 \item{.Object}{An object inheriting from the \code{textstat} or \code{bundle}
 superclasses.}
 
 \item{server}{The name of an Open CPU server (can be an IP address) that
 hosts corpora.}
 
-\item{object}{An object.}
-
-\item{name}{A (single) s-attribute.}
-
 \item{...}{Further arguments.}
 }
 \description{
-Corpora indexed using the Corpus Workbench (CWB) offer an
-  efficient data structure for large, linguistically annotated corpora. The
-  \code{corpus}-class serves to manage basic information on a CWB corpus.
-  Corresponding to the name of the class, use the \code{corpus}-method to
-  instantiate objects of class \code{corpus}. Calling the
-  \code{corpus}-method without an argument will return a \code{data.frame}
-  with basic information on the corpora that are available. This
-  documentation object also includes the methods to extract basic information
-  on \code{corpus} objects.
+Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+structure for large, linguistically annotated corpora. The
+\code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
+the name of the class, the \code{corpus}-method is the initializer for
+objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
+on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
+class inheriting from the \code{corpus} class will handle respective
+information, and polmineR functions and methods can be executed from on
+remote machine from the local R session by calling them on the
+\code{remote_corpus} object. Calling the \code{corpus}-method without an
+argument will return a \code{data.frame} with basic information on the
+corpora that are available.
 }
 \details{
-A \code{corpus} object can have a name, which can be retrieved using
-the \code{name}-method.
-
-Applying the `$`-method on a corpus will return the values for the
-  s-attribute stated with argument \code{name}.
+A limited set of methods of the \code{polmineR} package is exposed to be
+executed on a remote OpenCPU server. The whereabouts of an OpenCPU server
+hosting a CWB corpus can be stated in an environment variable
+"OPENCPU_SERVER". Environment variables for R sessions can be set easily in
+the \code{.Renviron} file. A convenient way to do this is to call
+\code{usethis::edit_r_environ()}. To instantiate an object of class
+\code{remote_corpus}, the \code{corpus}-class can be used (by providing
+argument \code{server}).
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{name}: Get the name of a \code{corpus} object.
-
 \item \code{corpus}: If \code{.Object} is an object inheriting from the \code{textstat},
 or the \code{bundle} class, the corpus used to generate the object is
 returned.
 
-\item \code{get_corpus}: Get the corpus ID from the \code{corpus} object.
-
 \item \code{corpus}: Calling \code{corpus()} will return a \code{data.frame}
 listing the corpora described in the active registry directory, and some
 basic information on the corpora.
-
-\item \code{show}: Show basic information on the \code{corpus} object.
-
-\item \code{$}: Quick access to the structural attributes of a corpus.
 }}
 
 \section{Slots}{
 
 \describe{
-\item{\code{corpus}}{A length-one \code{character} vector, a CWB corpus.}
+\item{\code{corpus}}{A length-one \code{character} vector, the upper-case ID of a CWB
+corpus.}
 
 \item{\code{data_dir}}{The directory where the files for the indexed corpus are.}
 
@@ -90,19 +73,45 @@ basic information on the corpora.
 \item{\code{name}}{An additional name for the object that may be more telling than the corpus ID.}
 
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one \code{character} vector.}
+
+\item{\code{server}}{The URL (can be IP address) of the OpenCPU server. The slot is
+available only with the \code{remote_corpus} class inheriting from the
+\code{corpus} class.}
 }}
 
 \examples{
-use("polmineR")
-g <- corpus("GERMAPARLMINI")
-g$date
-corpus("GERMAPARLMINI")$date
+# working with a remote corpus
+\dontrun{
+REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))
+count(REUTERS, query = "oil")
+size(REUTERS)
+kwic(REUTERS, query = "oil")
 
-use("polmineR")
-sc <- subset("GERMAPARLMINI", date == "2009-10-27")
-sc$date
+GERMAPARL <- corpus("GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
+s_attributes(GERMAPARL)
+size(x = GERMAPARL)
+count(GERMAPARL, query = "Integration")
+kwic(GERMAPARL, query = "Islam")
+
+p <- partition(GERMAPARL, year = 2000)
+s_attributes(p, s_attribute = "year")
+size(p)
+kwic(p, query = "Islam", meta = "date")
+
+GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
+sc <- subset(GERMAPARL, date == "2009-11-10")
+}
 }
 \seealso{
+Methods to extract basic information from a \code{corpus} object are
+  covered by the \link{corpus-methods} documentation object. Use the
+  \code{\link{s_attributes}} method to get information on structural
+  attributes. Analytical methods available for \code{corpus} objects are
+  \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
+  \code{\link{kwic}}, \code{\link{cooccurrences}},
+  \code{\link{as.TermDocumentMatrix}}.
+
 Other classes to manage corpora: \code{\link{regions}},
   \code{\link{subcorpus}}
 }

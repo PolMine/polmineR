@@ -8,6 +8,8 @@
 \alias{partition,partition-method}
 \alias{partition,Corpus-method}
 \alias{partition,context-method}
+\alias{partition,remote_corpus-method}
+\alias{partition,remote_partition-method}
 \title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
@@ -29,11 +31,18 @@ partition(.Object, ...)
   type = get_type(.Object), verbose = TRUE, ...)
 
 \S4method{partition}{context}(.Object, node = TRUE)
+
+\S4method{partition}{remote_corpus}(.Object, ...)
+
+\S4method{partition}{remote_partition}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A length-one character-vector, the CWB corpus to be used.}
 
-\item{...}{Arguments to define partition (see examples).}
+\item{...}{Arguments to define partition (see examples). If \code{.Object} is
+a \code{remote_corpus} or \code{remote_partition} object, the three dots
+(\code{...}) are used to pass arguments. Hence, it is necessary to state
+the names of all arguments to be passed explicity.}
 
 \item{def}{A named list of character vectors of s-attribute values, the names
 are the s-attributes (see details and examples)}

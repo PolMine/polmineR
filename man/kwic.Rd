@@ -8,6 +8,8 @@
 \alias{kwic,partition-method}
 \alias{kwic,subcorpus-method}
 \alias{kwic,character-method}
+\alias{kwic,remote_corpus-method}
+\alias{kwic,remote_partition-method}
 \title{KWIC/concordance output.}
 \usage{
 kwic(.Object, ...)
@@ -44,12 +46,19 @@ kwic(.Object, ...)
   boundary = NULL, cpos = TRUE, stoplist = NULL,
   positivelist = NULL, regex = FALSE, verbose = TRUE,
   progress = TRUE, ...)
+
+\S4method{kwic}{remote_corpus}(.Object, ...)
+
+\S4method{kwic}{remote_partition}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A (length-one) \code{character} vector with the name of a CWB
 corpus, a \code{partition} or \code{context} object.}
 
-\item{...}{Further arguments, used to ensure backwards compatibility.}
+\item{...}{Further arguments, used to ensure backwards compatibility. If
+\code{.Object} is a \code{remote_corpus} of \code{remote_partition} object,
+the three dots (\code{...}) are used to pass arguments. Hence, it is
+necessary to state the names of all arguments to be passed explicity.}
 
 \item{s_attributes}{Structural attributes (s-attributes) to include into
 output table as metainformation.}

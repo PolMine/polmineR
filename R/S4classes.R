@@ -387,6 +387,27 @@ setClass(
   contains = "count"
 )
 
+#' @exportClass remote_partition
+#' @rdname partition_class
+setClass(
+  "remote_partition",
+  slots = c(server = "character"),
+  contains = "partition"
+)
+
+
+setAs(from = "partition", to = "remote_partition", def = function(from){
+  y <- new("remote_partition")
+  for (x in slotNames(from)) slot(y, x) <- slot(from, x)
+  y
+})
+
+setAs(from = "remote_partition", to = "partition", def = function(from){
+  y <- new("partition")
+  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
+  y
+})
+
 
 
 #' Context class.
@@ -552,27 +573,75 @@ setClass(
 
 
 
-#' @title S4 class to manage CWB corpora.
-#' @description Corpora indexed using the Corpus Workbench (CWB) offer an
-#'   efficient data structure for large, linguistically annotated corpora. The
-#'   \code{corpus}-class serves to manage basic information on a CWB corpus.
-#'   Corresponding to the name of the class, use the \code{corpus}-method to
-#'   instantiate objects of class \code{corpus}. Calling the
-#'   \code{corpus}-method without an argument will return a \code{data.frame}
-#'   with basic information on the corpora that are available. This
-#'   documentation object also includes the methods to extract basic information
-#'   on \code{corpus} objects.
-#' @param object An object.
+#' Corpus class initialization
+#' 
+#' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+#' structure for large, linguistically annotated corpora. The
+#' \code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
+#' the name of the class, the \code{corpus}-method is the initializer for
+#' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
+#' on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
+#' class inheriting from the \code{corpus} class will handle respective
+#' information, and polmineR functions and methods can be executed from on
+#' remote machine from the local R session by calling them on the
+#' \code{remote_corpus} object. Calling the \code{corpus}-method without an
+#' argument will return a \code{data.frame} with basic information on the
+#' corpora that are available.
+#'
+#' @details
+#' A limited set of methods of the \code{polmineR} package is exposed to be
+#' executed on a remote OpenCPU server. The whereabouts of an OpenCPU server
+#' hosting a CWB corpus can be stated in an environment variable
+#' "OPENCPU_SERVER". Environment variables for R sessions can be set easily in
+#' the \code{.Renviron} file. A convenient way to do this is to call
+#' \code{usethis::edit_r_environ()}. To instantiate an object of class
+#' \code{remote_corpus}, the \code{corpus}-class can be used (by providing
+#' argument \code{server}).
+#'     
 #' @param ... Further arguments.
-#' @slot corpus A length-one \code{character} vector, a CWB corpus.
+#' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
+#'   corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
 #' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
 #' @slot name An additional name for the object that may be more telling than the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
+#' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
+#'   available only with the \code{remote_corpus} class inheriting from the
+#'   \code{corpus} class.
 #' @exportClass corpus
-#' @aliases zoom corpus get_corpus
+#' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
 #' @name corpus-class
+#' @seealso Methods to extract basic information from a \code{corpus} object are
+#'   covered by the \link{corpus-methods} documentation object. Use the
+#'   \code{\link{s_attributes}} method to get information on structural
+#'   attributes. Analytical methods available for \code{corpus} objects are
+#'   \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
+#'   \code{\link{kwic}}, \code{\link{cooccurrences}},
+#'   \code{\link{as.TermDocumentMatrix}}.
 #' @family classes to manage corpora
+#' @examples
+#' # working with a remote corpus
+#' \dontrun{
+#' REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))
+#' count(REUTERS, query = "oil")
+#' size(REUTERS)
+#' kwic(REUTERS, query = "oil")
+#' 
+#' GERMAPARL <- corpus("GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
+#' s_attributes(GERMAPARL)
+#' size(x = GERMAPARL)
+#' count(GERMAPARL, query = "Integration")
+#' kwic(GERMAPARL, query = "Islam")
+#' 
+#' p <- partition(GERMAPARL, year = 2000)
+#' s_attributes(p, s_attribute = "year")
+#' size(p)
+#' kwic(p, query = "Islam", meta = "date")
+#' 
+#' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+#' s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
+#' sc <- subset(GERMAPARL, date == "2009-11-10")
+#' }
 setClass(
   "corpus",
   slots = c(
@@ -584,9 +653,38 @@ setClass(
   )
 )
 
+#' @exportClass remote_corpus
+#' @docType class
+#' @rdname corpus-class
+setClass(
+  "remote_corpus",
+  slots = c(server = "character"),
+  contains = "corpus"
+)
+
+setAs(from = "corpus", to = "remote_corpus", def = function(from){
+  y <- new("remote_corpus")
+  for (x in slotNames(from)) slot(y, x) <- slot(from, x)
+  y
+})
+
+setAs(from = "remote_corpus", to = "corpus", def = function(from){
+  y <- new("corpus")
+  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
+  y
+})
+
+
+#' Corpus class methods
+#' 
+#' A set of generic methods is available to extract basic information from
+#' objects of the \code{corpus} class.
+#' @param object An object of class \code{corpus}, or inheriting from it.
+#' @aliases name,corpus-method
+#' @name corpus-methods
+#' @rdname corpus_methods
 #' @details A \code{corpus} object can have a name, which can be retrieved using
 #' the \code{name}-method.
-#' @describeIn corpus Get the name of a \code{corpus} object.
 setMethod("name", "corpus", function(x) x@name)
 
 
@@ -695,6 +793,29 @@ setClass(
   ),
   contains = "regions"
 )
+
+#' @exportClass remote_subcorpus
+#' @rdname subcorpus-class
+setClass(
+  "remote_subcorpus",
+  slots = c(server = "character"),
+  contains = "subcorpus"
+)
+
+
+setAs(from = "subcorpus", to = "remote_subcorpus", def = function(from){
+  y <- new("remote_subcorpus")
+  for (x in slotNames(from)) slot(y, x) <- slot(from, x)
+  y
+})
+
+setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
+  y <- new("subcorpus")
+  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
+  y
+})
+
+
 
 #' @describeIn subcorpus Get named list with basic information for
 #'   \code{subcorpus} object.

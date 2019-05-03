@@ -4,6 +4,7 @@
 \name{subcorpus}
 \alias{subcorpus}
 \alias{subcorpus-class}
+\alias{remote_subcorpus-class}
 \alias{summary,subcorpus-method}
 \alias{name<-,subcorpus-method}
 \alias{plpr_subcorpus-class}

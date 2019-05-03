@@ -33,7 +33,10 @@ NULL
 #' @param regex A regular expression passed into \code{grep} to filter return
 #'   value by applying a regex.
 #' @param ... To maintain backward compatibility, if argument \code{sAttribute}
-#'   (deprecated) is used.
+#'   (deprecated) is used. If \code{.Object} is a \code{remote_corpus} or
+#'   \code{remote_subcorpus} object, the three dots (\code{...}) are used to
+#'   pass arguments. Hence, it is necessary to state the names of all arguments
+#'   to be passed explicity.
 #' @return A character vector (s-attributes, or values of s-attributes).
 #' @exportMethod s_attributes
 #' @docType methods
@@ -247,5 +250,17 @@ setMethod("s_attributes", "call", function(.Object, corpus){
     unique(unlist(y))
   }
   .fn(.Object)
+})
+
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "s_attributes", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+})
+
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "remote_partition", function(.Object, ...){
+  ocpu_exec(fn = "s_attributes", server = .Object@server, .Object = as(.Object, "partition"), ...)
 })
 

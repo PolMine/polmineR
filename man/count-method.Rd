@@ -12,6 +12,8 @@
 \alias{count,character-method}
 \alias{count,vector-method}
 \alias{count,Corpus-method}
+\alias{count,remote_corpus-method}
+\alias{count,remote_subcorpus-method}
 \title{Get counts.}
 \usage{
 count(.Object, ...)
@@ -51,12 +53,18 @@ count(.Object, ...)
 \S4method{count}{vector}(.Object, corpus, p_attribute, ...)
 
 \S4method{count}{Corpus}(.Object, query = NULL, p_attribute)
+
+\S4method{count}{remote_corpus}(.Object, ...)
+
+\S4method{count}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A \code{partition} or \code{partition_bundle}, or a length-one
 character vector providing the name of a corpus.}
 
-\item{...}{Further arguments.}
+\item{...}{Further arguments. If \code{.Object} is a \code{remote_corpus}
+object, the three dots (\code{...}) are used to pass arguments. Hence, it is
+necessary to state the names of all arguments to be passed explicity.}
 
 \item{query}{A character vector (one or multiple terms), CQP syntax can be
 used.}

@@ -157,8 +157,10 @@ NULL
 #'   expression
 #' @param verbose Logical, whether to output progress messages
 #' @param progress Logical, whether to show progress bars.
-#' @param ... Further arguments, used to ensure backwards compatibility.
-#' @rdname kwic
+#' @param ... Further arguments, used to ensure backwards compatibility. If
+#'   \code{.Object} is a \code{remote_corpus} of \code{remote_partition} object,
+#'   the three dots (\code{...}) are used to pass arguments. Hence, it is
+#'   necessary to state the names of all arguments to be passed explicity.
 #' @docType methods
 #' @seealso The return value is a \code{\link{kwic-class}} object; the
 #'   documentation for the class explains the methods applicable to
@@ -382,4 +384,15 @@ setMethod("kwic", "character", function(
   
   kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
 })
+
+#' @rdname kwic
+setMethod("kwic", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "kwic", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+})
+
+#' @rdname kwic
+setMethod("kwic", "remote_partition", function(.Object, ...){
+  ocpu_exec(fn = "kwic", server = .Object@server, .Object = as(.Object, "partition"), ...)
+})
+
 

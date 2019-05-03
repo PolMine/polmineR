@@ -42,8 +42,11 @@ setGeneric("get_corpus", function(x) standardGeneric("get_corpus"))
 #' @rdname textstat-class
 setMethod("get_corpus", "textstat", function(x) x@corpus)
 
+
 #' @exportMethod get_corpus
-#' @describeIn corpus Get the corpus ID from the \code{corpus} object.
+#' @rdname corpus_methods
+#' @details Use \code{get_corpus}-method to get the corpus ID from the slot
+#'   \code{corpus} of the \code{corpus} object.
 setMethod("get_corpus", "corpus", function(x) x@corpus)
 
 #' @exportMethod get_corpus
@@ -582,7 +585,9 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 
 #' @exportMethod show
 #' @docType methods
-#' @describeIn corpus Show basic information on the \code{corpus} object.
+#' @rdname corpus_methods
+#' @details The \code{show}-method will show basic information on the
+#'   \code{corpus} object.
 setMethod("show", "corpus", function(object){
   cat(sprintf("** '%s' object **\n", class(object)))
   cat(sprintf("%-12s", "corpus:"), object@corpus, "\n")
@@ -606,12 +611,10 @@ setMethod("show", "corpus", function(object){
 #' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
 #' sc$date
 #' @exportMethod $
-#' @describeIn corpus Quick access to the structural attributes of a corpus.
+#' @rdname corpus_methods
 #' @param x An object of class \code{corpus}, or inheriting from it.
 #' @param name A (single) s-attribute.
-setMethod("$", "corpus", function(x, name){
-  s_attributes(x, s_attribute = name)
-})
+setMethod("$", "corpus", function(x, name) s_attributes(x, s_attribute = name))
 
 #' @param object An object of class \code{subcorpus_bundle}.
 #' @rdname subcorpus_bundle
@@ -620,4 +623,11 @@ setMethod("show", "subcorpus_bundle", function (object) {
   cat(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects), '\n')
 })
 
+
+#' @rdname subset
+setMethod("subset", "remote_corpus", function(x, subset){
+  expr <- substitute(subset)
+  y <- ocpu_exec(fn = "subset", server = x@server, do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  as(y, "remote_subcorpus")
+})
 

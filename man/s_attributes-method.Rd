@@ -9,6 +9,8 @@
 \alias{s_attributes,partition-method}
 \alias{s_attributes,subcorpus-method}
 \alias{s_attributes,call-method}
+\alias{s_attributes,remote_corpus-method}
+\alias{s_attributes,remote_partition-method}
 \title{Get s-attributes.}
 \usage{
 s_attributes(.Object, ...)
@@ -29,6 +31,10 @@ s_attributes(.Object, ...)
   unique = TRUE, ...)
 
 \S4method{s_attributes}{call}(.Object, corpus)
+
+\S4method{s_attributes}{remote_corpus}(.Object, ...)
+
+\S4method{s_attributes}{remote_partition}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A \code{corpus}, \code{subcorpus}, \code{partition} object, or
@@ -36,7 +42,10 @@ a \code{call}. A corpus can also be specified by a length-one character
 vector.}
 
 \item{...}{To maintain backward compatibility, if argument \code{sAttribute}
-(deprecated) is used.}
+(deprecated) is used. If \code{.Object} is a \code{remote_corpus} or
+\code{remote_subcorpus} object, the three dots (\code{...}) are used to
+pass arguments. Hence, it is necessary to state the names of all arguments
+to be passed explicity.}
 
 \item{s_attribute}{The name of a specific s-attribute.}
 

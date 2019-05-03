@@ -120,3 +120,16 @@ setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_re
 
 #' @rdname size-method
 setMethod("size", "corpus", function(x) cl_attribute_size(corpus = x@corpus, attribute = "word", attribute_type = "p", registry = registry()))
+
+
+#' @rdname size-method
+setMethod("size", "remote_corpus", function(x){
+  ocpu_exec(fn = "size", server = x@server, do.call = FALSE, x = x@corpus)
+})
+
+#' @rdname size-method
+setMethod("size", "remote_partition", function(x){
+  ocpu_exec(fn = "size", server = x@server, x = as(x, "partition"))
+})
+
+

@@ -10,6 +10,8 @@
 \alias{size,TermDocumentMatrix-method}
 \alias{size,features-method}
 \alias{size,corpus-method}
+\alias{size,remote_corpus-method}
+\alias{size,remote_partition-method}
 \title{Get Number of Tokens.}
 \usage{
 size(x, ...)
@@ -27,6 +29,10 @@ size(x, ...)
 \S4method{size}{features}(x)
 
 \S4method{size}{corpus}(x)
+
+\S4method{size}{remote_corpus}(x)
+
+\S4method{size}{remote_partition}(x)
 }
 \arguments{
 \item{x}{An object to get size(s) for.}

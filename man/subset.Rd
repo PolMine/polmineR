@@ -6,6 +6,7 @@
 \alias{subset,corpus-method}
 \alias{subset,character-method}
 \alias{subset,subcorpus-method}
+\alias{subset,remote_corpus-method}
 \title{Subsetting corpora and subcorpora}
 \usage{
 \S4method{subset}{corpus}(x, subset, regex = FALSE, ...)
@@ -13,6 +14,8 @@
 \S4method{subset}{character}(x, ...)
 
 \S4method{subset}{subcorpus}(x, subset, ...)
+
+\S4method{subset}{remote_corpus}(x, subset)
 }
 \arguments{
 \item{x}{A \code{corpus} or \code{subcorpus} object. A corpus may also
