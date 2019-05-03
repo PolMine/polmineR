@@ -3,42 +3,47 @@
 \docType{methods}
 \name{cpos}
 \alias{cpos}
+\alias{cpos,corpus-method}
 \alias{cpos,character-method}
+\alias{cpos,slice-method}
 \alias{cpos,partition-method}
 \alias{cpos,subcorpus-method}
-\alias{cpos,slice-method}
 \alias{cpos,matrix-method}
 \alias{cpos,hits-method}
 \title{Get corpus positions for a query or queries.}
 \usage{
 cpos(.Object, ...)
 
+\S4method{cpos}{corpus}(.Object, query,
+  p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
+  check = TRUE, verbose = TRUE, ...)
+
 \S4method{cpos}{character}(.Object, query,
   p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
-  check = TRUE, encoding = NULL, verbose = TRUE, ...)
-
-\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
-  p_attribute = NULL, verbose = TRUE, ...)
-
-\S4method{cpos}{subcorpus}(.Object, query, cqp = is.cqp, check = TRUE,
-  p_attribute = NULL, verbose = TRUE, ...)
+  check = TRUE, verbose = TRUE, ...)
 
 \S4method{cpos}{slice}(.Object, query, cqp = is.cqp, check = TRUE,
-  p_attribute = NULL, verbose = TRUE, ...)
+  p_attribute = getOption("polmineR.p_attribute"), verbose = TRUE, ...)
+
+\S4method{cpos}{partition}(.Object, query, cqp = is.cqp, check = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"), verbose = TRUE, ...)
+
+\S4method{cpos}{subcorpus}(.Object, query, cqp = is.cqp, check = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"), verbose = TRUE, ...)
 
 \S4method{cpos}{matrix}(.Object)
 
 \S4method{cpos}{hits}(.Object)
 }
 \arguments{
-\item{.Object}{A \code{character} vector indicating a CWB corpus, a
-\code{partition} object,  or a \code{matrix} with corpus positions.}
+\item{.Object}{A length-one \code{character} vector indicating a CWB corpus, a
+\code{partition} object, or a \code{matrix} with corpus positions.}
 
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}
 
 \item{query}{A \code{character} vector providing one or multiple queries
-(token or CQP query)}
+(token or CQP query).}
 
 \item{p_attribute}{The p-attribute to search. Needs to be stated only if query
 is not a CQP query. Defaults to \code{NULL}.}
@@ -50,9 +55,6 @@ function).}
 \item{check}{A \code{logical} value, whether to check validity of CQP query
 using \code{check_cqp_query}.}
 
-\item{encoding}{The encoding of the corpus (if NULL, the
-encoding stated in the registry file of the corpus will be used),}
-
 \item{verbose}{A \code{logical} value, whether to show messages.}
 }
 \value{
@@ -63,18 +65,39 @@ Unless \code{.Object} is a \code{matrix}, the return value is a
   the number of hits. If there are no hits, a \code{NULL} object is returned.
 }
 \description{
-Get matches for a query in a CQP corpus, optionally using the CQP syntax of the
-Corpus Workbench (CWB).
+Get matches for a query in a CQP corpus (subcorpus, partition etc.),
+optionally using the CQP syntax of the Corpus Workbench (CWB).
 }
 \details{
-If the cpos-method is applied on a \code{character} or \code{partition}
-object, the result is a two-column matrix with the regions (start end end
-corpus positions of the matches) for a query. CQP syntax can be used. The
-encoding of the query is adjusted to conform to the encoding of the CWB
-corpus.
+If the \code{cpos()}-method is applied on a \code{character} or
+\code{partition} object, the result is a two-column \code{matrix} with the
+regions (start end end corpus positions of the matches) for a query. CQP
+syntax can be used. The encoding of the query is adjusted to conform to the
+encoding of the CWB corpus. If there are not matches, \code{NULL} is
+returned.
 
-If the cpos-method is called on a \code{matrix} object,  the cpos
+If the \code{cpos()}-method is called on a \code{matrix} object,  the cpos
 matrix is unfolded, the return value is an integer vector with the individual
-corpus positions. Equally, if \code{.Object} is a \code{hits} object,
-an integer vector is returned with the individual corpus positions.
+corpus positions.
+
+If \code{.Object} is a \code{hits} object, an \code{integer} vector is
+returned with the individual corpus positions.
+}
+\examples{
+use("polmineR")
+
+# looking up single tokens
+cpos("REUTERS", query = "oil")
+corpus("REUTERS") \%>\% cpos(query = "oil")
+corpus("REUTERS") \%>\% subset(grepl("saudi-arabia", places)) \%>\% cpos(query = "oil")
+partition("REUTERS", places = "saudi-arabia", regex = TRUE) \%>\% cpos(query = "oil")
+
+# using CQP query syntax
+cpos("REUTERS", query = '"Saudi" "Arabia"')
+corpus("REUTERS") \%>\% cpos(query = '"Saudi" "Arabia"')
+corpus("REUTERS") \%>\%
+  subset(grepl("saudi-arabia", places)) \%>\%
+  cpos(query = '"Saudi" "Arabia"', cqp = TRUE)
+partition("REUTERS", places = "saudi-arabia", regex = TRUE) \%>\%
+  cpos(p, query = '"Saudi" "Arabia"', cqp = TRUE)
 }

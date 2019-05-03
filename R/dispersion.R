@@ -78,8 +78,7 @@ setMethod("dispersion", "subcorpus", function(
 
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
-  
+setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
@@ -90,6 +89,23 @@ setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp =
       mc = mc, verbose = verbose, progress = progress
     ),
     s_attribute = s_attribute, freq = freq
+  )
+})
+
+
+#' @rdname dispersion-method
+setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
+  dispersion(
+    .Object = corpus(.Object),
+    query = query,
+    s_attribute = s_attribute,
+    cqp = cqp,
+    p_attribute = p_attribute,
+    freq = freq,
+    mc = mc,
+    progress = progress,
+    verbose = verbose,
+    ...
   )
 })
 

@@ -3,10 +3,10 @@ NULL
 
 #' Get hits for query
 #' 
-#' Get hits for a (set of) queries, optionally with s-attribute values.
+#' Get hits for queries, optionally with s-attribute values.
 #' 
-#' If the character vector provided by \code{query} is named, these names will
-#' be reported in the \code{data.table} that is returned rather than the
+#' If the \code{character} vector provided by \code{query} is named, these names
+#' will be reported in the \code{data.table} that is returned rather than the
 #' queries.
 #' 
 #' If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will deliberately
@@ -34,12 +34,81 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
 #' @examples
+#' use("polmineR")
+#' 
+#' # get hits for corpus object
+#' y <- corpus("REUTERS") %>% hits(query = "oil")
+#' y <- corpus("REUTERS") %>% hits(query = c("oil", "barrel"))
+#' y <- corpus("REUTERS") %>% hits(query = "oil", s_attribute = "places", freq = TRUE)
+#' 
+#' # specify corpus by corpus ID
 #' y <- hits("REUTERS", query = "oil")
 #' y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
 #' 
+#' # get hits for partition´
 #' p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 #' y <- hits(p, query = "oil")
 #' y <- hits(p, query = "oil", s_attribute = "id")
+#' 
+#' # get hits for subcorpus
+#' y <- corpus("REUTERS") %>%
+#'   subset(grep("saudi-arabia", places)) %>%
+#'   hits(query = "oil")
+setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
+  
+  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  
+  if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
+  
+  .fn <- function(query){
+    cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute,verbose = FALSE)
+  }
+  cpos_list <- blapply(x = as.list(query), f = .fn)
+  
+  if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
+  
+  for (i in length(query):1L){
+    if (is.null(cpos_list[[i]])){
+      warning("no hits for query: ", query[i])
+      cpos_list[[i]] <- NULL
+    }
+  }
+  
+  DT <- data.table(
+    cpos_left = unlist(lapply(cpos_list, function(x) x[,1])),
+    cpos_right = unlist(lapply(cpos_list, function(x) x[,2])),
+    query = unlist(lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]]))))
+  )
+  
+  if (!is.null(s_attribute)){
+    for (i in seq_along(s_attribute)){
+      strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
+      s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
+      DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
+    }
+    TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
+    setnames(TF, old = "N", new = "count")
+    
+    if (freq) size <- TRUE
+    if (size){
+      .message("getting sizes", verbose = verbose)
+      SIZE <- size(.Object, s_attribute = s_attribute)
+      setkeyv(TF, cols = s_attribute)
+      TF <- TF[SIZE]
+      TF <- TF[is.na(TF[["query"]]) == FALSE]
+      if (freq){
+        .message("frequencies", verbose = verbose)
+        TF[, freq := count / size]
+      }
+    }
+  } else {
+    TF <- DT
+  }
+  new("hits", stat = TF, corpus = .Object@corpus, query = query)
+})
+
+
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]

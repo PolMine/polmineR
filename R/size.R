@@ -20,38 +20,52 @@ NULL
 #' method calls the \code{size}-method to get sizes of subcorpora.
 #' @examples
 #' use("polmineR")
+#' 
+#' # for corpus object
+#' corpus("REUTERS") %>% size()
+#' corpus("REUTERS") %>% size(s_attribute = "id")
+#' corpus("GERMAPARLMINI") %>% size(s_attribute = c("date", "party"))
+#' 
+#' # for corpus specified by ID
 #' size("GERMAPARLMINI")
 #' size("GERMAPARLMINI", s_attribute = "date")
 #' size("GERMAPARLMINI", s_attribute = c("date", "party"))
 #' 
+#' # for partition object
 #' P <- partition("GERMAPARLMINI", date = "2009-11-11")
 #' size(P, s_attribute = "speaker")
 #' size(P, s_attribute = "party")
 #' size(P, s_attribute = c("speaker", "party"))
+#' 
+#' # for subcorpus
+#' sc <- corpus("GERMAPARLMINI") %>% subset(date == "2009-11-11")
+#' size(sc, s_attribute = "speaker")
+#' size(sc, s_attribute = "party")
+#' size(sc, s_attribute = c("speaker", "party"))
 setGeneric("size", function(x, ...) UseMethod("size"))
 
 #' @rdname size-method
-setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, ...){
+setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (is.null(s_attribute)){
-    return( cl_attribute_size(corpus = x, attribute = "word", attribute_type = "p", registry = registry()) )
+    return( cl_attribute_size(corpus = x@corpus, attribute = "word", attribute_type = "p", registry = registry()) )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
         function(s_attr){
-          s_attr_max <- cl_attribute_size(corpus = x, attribute = s_attr, attribute_type = "s", registry = registry())
-          s_attr_vals <- cl_struc2str(corpus = x, s_attribute = s_attr, struc = 0L:(s_attr_max - 1L), registry = registry())
-          as.nativeEnc(s_attr_vals, from = registry_get_encoding(x))
+          s_attr_max <- cl_attribute_size(corpus = x@corpus, attribute = s_attr, attribute_type = "s", registry = registry())
+          s_attr_vals <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = 0L:(s_attr_max - 1L), registry = registry())
+          as.nativeEnc(s_attr_vals, from = x@encoding)
         }
       )
     )
     cpos_matrix <- RcppCWB::get_region_matrix(
-      corpus = x, s_attribute = s_attribute[1],
-      strucs = 0L:(cl_attribute_size(corpus = x, attribute = s_attribute[1], attribute_type = "s", registry = registry()) - 1L),
+      corpus = x@corpus, s_attribute = s_attribute[1],
+      strucs = 0L:(cl_attribute_size(corpus = x@corpus, attribute = s_attribute[1], attribute_type = "s", registry = registry()) - 1L),
       registry = Sys.getenv("CORPUS_REGISTRY")
     )
     
@@ -62,6 +76,12 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
     return(y)
   }
 })
+
+#' @rdname size-method
+setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, ...){
+  size(corpus(x), s_attribute = s_attribute, verbose = verbose, ...)
+})
+
 
 #' @rdname size-method
 #' @exportMethod size
@@ -117,9 +137,6 @@ setMethod("size", "TermDocumentMatrix", function(x){
 #'   window.
 #' @rdname size-method
 setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )
-
-#' @rdname size-method
-setMethod("size", "corpus", function(x) cl_attribute_size(corpus = x@corpus, attribute = "word", attribute_type = "p", registry = registry()))
 
 
 #' @rdname size-method

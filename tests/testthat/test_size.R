@@ -15,12 +15,25 @@ test_that(
     expect_equal(sum(y[["size"]]), size("GERMAPARLMINI"))
     expect_equal(nrow(y), length(sAttributes("GERMAPARLMINI", "date")))
     expect_equal(y[["size"]][1:3], c(9341, 2793, 68316))
+    
+    y <- corpus("GERMAPARLMINI") %>% size(s_attribute = "date")
+    expect_equal(sum(y[["size"]]), size("GERMAPARLMINI"))
+    expect_equal(nrow(y), length(s_attributes("GERMAPARLMINI", "date")))
+    expect_equal(y[["size"]][1:3], c(9341, 2793, 68316))
   }
 )
 
 test_that(
   "size of corpus, two s-attributes", {
+    
+    # corpus stated by ID
     y <- size("GERMAPARLMINI", sAttribute = c("date", "party"))
+    expect_equal(length(unique(y[["party"]])), 6)
+    expect_equal(sum(y[["size"]]), size("GERMAPARLMINI"))
+    expect_equal(y[["size"]][1:3], c(17,71,25))
+    
+    # corpus object passed in
+    y <- corpus("GERMAPARLMINI") %>% size(s_attribute = c("date", "party"))
     expect_equal(length(unique(y[["party"]])), 6)
     expect_equal(sum(y[["size"]]), size("GERMAPARLMINI"))
     expect_equal(y[["size"]][1:3], c(17,71,25))

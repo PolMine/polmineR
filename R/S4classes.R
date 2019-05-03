@@ -674,6 +674,17 @@ setClass(
   )
 )
 
+setAs(from = "partition", to = "corpus", def = function(from){
+  new(
+    "corpus",
+    corpus = from@corpus,
+    data_dir = registry_get_home(corpus = from@corpus, registry = registry()),
+    type = if (class(from) == "partition") character() else gsub("^(.*?)_.*$", "\\1", class(from)),
+    encoding = from@encoding,
+    name = from@name
+  )
+})
+
 #' @exportClass remote_corpus
 #' @docType class
 #' @rdname corpus-class

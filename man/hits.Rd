@@ -3,17 +3,17 @@
 \docType{methods}
 \name{hits}
 \alias{hits}
-\alias{hits,character-method}
+\alias{hits,corpus-method}
 \alias{hits,slice-method}
 \alias{hits,subcorpus-method}
 \alias{hits,partition-method}
 \alias{hits,partition_bundle-method}
 \alias{hits,context-method}
-\title{Get Hits.}
+\title{Get hits for query}
 \usage{
 hits(.Object, ...)
 
-\S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
+\S4method{hits}{corpus}(.Object, query, cqp = FALSE, check = TRUE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,
   freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
 
@@ -38,48 +38,63 @@ hits(.Object, ...)
   ...)
 }
 \arguments{
-\item{.Object}{a character, \code{partition} or \code{partition_bundle} object}
+\item{.Object}{A length-one \code{character} vector with a corpus ID, a \code{partition} or \code{partition_bundle} object}
 
-\item{...}{further parameters}
+\item{...}{Further arguments (used for backwards compatibility).}
 
-\item{query}{a (optionally named, see datails) character vector with one or more queries}
+\item{query}{A \code{character} vector (optionally named, see details) with
+one or more queries.}
 
-\item{cqp}{either logical (TRUE if query is a CQP query), or a
-function to check whether query is a CQP query or not}
+\item{cqp}{Either a \code{logical} value (\code{TRUE} if query is a CQP
+query), or a function to check whether \code{query} is a CQP query or not.}
 
 \item{check}{A \code{logical} value, whether to check validity of CQP query
 using \code{check_cqp_query}.}
 
-\item{s_attribute}{s-attributes}
+\item{s_attribute}{A \code{character} vector of s-attributes that will be
+reported as metadata.}
 
-\item{p_attribute}{p-attribute}
+\item{p_attribute}{A \code{character} vector stating a p-attribute.}
 
-\item{size}{logical - return size of subcorpus}
+\item{size}{A \code{logical} value, whether to report the size of subcorpus.}
 
-\item{freq}{logcial - return relative frequencies}
+\item{freq}{A \code{logcial} value, whether to report relative frequencies.}
 
-\item{mc}{logical, whether to use multicore}
+\item{mc}{A \code{logical} value, whether to use multicore.}
 
-\item{verbose}{logical}
+\item{verbose}{A \code{logical} value, whether to output messages.}
 
-\item{progress}{logical, whether to show progress bar}
+\item{progress}{A \code{logical} value, whether to show progress bar.}
 }
 \description{
-Get hits for a (set of) queries, optionally with s-attribute values.
+Get hits for queries, optionally with s-attribute values.
 }
 \details{
-If the query character vector is named, the names of the query occurr in
-the data.table that is returned rather than the queries.
+If the \code{character} vector provided by \code{query} is named, these names
+will be reported in the \code{data.table} that is returned rather than the
+queries.
 
-If freq is TRUE, the data.table returned in the DT-slot will deliberately
-include the subsets of the partition/corpus with no hits (query is NA,
+If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will deliberately
+include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
 count is 0).
 }
 \examples{
+# get hits for corpus object
+y <- corpus("REUTERS") \%>\% hits(query = "oil")
+y <- corpus("REUTERS") \%>\% hits(query = c("oil", "barrel"))
+y <- corpus("REUTERS") \%>\% hits(query = "oil", s_attribute = "places", freq = TRUE)
+
+# specify corpus by corpus ID
 y <- hits("REUTERS", query = "oil")
 y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
 
+# get hits for partition´
 p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 y <- hits(p, query = "oil")
 y <- hits(p, query = "oil", s_attribute = "id")
+
+# get hits for subcorpus
+y <- corpus("REUTERS") \%>\%
+  subset(grep("saudi-arabia", places)) \%>\%
+  hits(query = "oil")
 }

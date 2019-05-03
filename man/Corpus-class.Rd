@@ -74,6 +74,26 @@ available only with the \code{remote_corpus} class inheriting from the
 }}
 
 \examples{
+use("polmineR")
+
+# get corpora present locally
+corpus()
+
+# initialize corpus object
+r <- corpus("REUTERS")
+
+# apply core polmineR methods
+size(r)
+s_attributes(r)
+count(r, query = "oil")
+dispersion(r, query = "oil", s_attribute = "id")
+kwic(r, query = "oil")
+cooccurrences(r, query = "oil")
+
+# used corpus initialization in a pipe
+corpus("REUTERS") \%>\% s_attributes()
+corpus("REUTERS") \%>\% count(query = "oil")
+
 # working with a remote corpus
 \dontrun{
 REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))

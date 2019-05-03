@@ -27,8 +27,9 @@ polmineR 0.7.11.9001
 * The `subcorpus_bundle` class now inherits from `partition_bundle`. This is not intended to be a long-term solution, but facilitates the implementation of new workflows based on the `subcorpus` class rather thane the `partition` class.
 * The pipe operator of the magrittr package is imported now, and magrittr has moved from a suggested package to a required package.
 * The `count()`-method for `partition_bundle`-objects did not perform iconv if necessary - this has been corrected.
-* The `label()`-method, present for a while, has been turned into a actual use, calling now a shiny gadget either using DataTables or
-Handsontable.
+* The `label()`-method, present for a while, has been turned into a actual use, calling now a shiny gadget either using DataTables or Handsontable.
+* The documentation for the `corpus`-class has been rewritten entirely, and the documentation for the `remote_corpus`-class has been integrated, whereas methods applicable to the `remote_corpous`-class were integrated into the documentation objects for the respective methods.
+
 
 
 
