@@ -3,9 +3,9 @@
 \docType{methods}
 \name{size}
 \alias{size}
+\alias{size,slice-method}
 \alias{size,corpus-method}
 \alias{size,character-method}
-\alias{size,slice-method}
 \alias{size,partition-method}
 \alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
@@ -19,8 +19,6 @@ size(x, ...)
 \S4method{size}{corpus}(x, s_attribute = NULL, verbose = TRUE, ...)
 
 \S4method{size}{character}(x, s_attribute = NULL, verbose = TRUE, ...)
-
-\S4method{size}{slice}(x, s_attribute = NULL, ...)
 
 \S4method{size}{partition}(x, s_attribute = NULL, ...)
 

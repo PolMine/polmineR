@@ -18,6 +18,7 @@ NULL
 #' @return An \code{integer} vector if s_attribute is \code{NULL}, a \code{data.table} otherwise.
 #' @seealso See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
 #' method calls the \code{size}-method to get sizes of subcorpora.
+#' @aliases size,slice-method
 #' @examples
 #' use("polmineR")
 #' 
@@ -77,14 +78,14 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
   }
 })
 
+#' @exportMethod size
 #' @rdname size-method
 setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, ...){
   size(corpus(x), s_attribute = s_attribute, verbose = verbose, ...)
 })
 
 
-#' @rdname size-method
-#' @exportMethod size
+#' @noRd
 setMethod("size", "slice", function(x, s_attribute = NULL, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
