@@ -336,7 +336,12 @@ Corpus <- R6Class(
 
 #' @noRd
 .s_attributes_stop_if_nested <- function(corpus, s_attr){
-  max_attr <- unique(sapply(s_attr, function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())))
+  max_attr <- unique(
+    sapply(
+      s_attr,
+      function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())
+    )
+  )
   if (length(max_attr) != 1){
     stop(
       sprintf("Differing attribute size of s-attributes detected (%s), ", paste(s_attr, collapse = "/")),

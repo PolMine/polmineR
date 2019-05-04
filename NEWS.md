@@ -29,7 +29,7 @@ polmineR 0.7.11.9001
 * The `count()`-method for `partition_bundle`-objects did not perform iconv if necessary - this has been corrected.
 * The `label()`-method, present for a while, has been turned into a actual use, calling now a shiny gadget either using DataTables or Handsontable.
 * The documentation for the `corpus`-class has been rewritten entirely, and the documentation for the `remote_corpus`-class has been integrated, whereas methods applicable to the `remote_corpous`-class were integrated into the documentation objects for the respective methods.
-
+* The former `Labels` reference class has been turned into a S4 class, because the desired reference logic can also be achieved with a `data.table` in a slot of the labels class.
 
 
 

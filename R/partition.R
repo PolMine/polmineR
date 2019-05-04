@@ -150,22 +150,16 @@ is.partition <- function(x) "partition" %in% is(x)
       strucs <- strucs[ unique(unlist(matchList)) ]
     }
     
-    # turn strucs into cpos matrix, using RcppCWB, if available
-    if (requireNamespace("RcppCWB", quietly = TRUE)){
-      cpos <- RcppCWB::get_region_matrix(
-        corpus = .Object@corpus, s_attribute = sAttrNames[1],
-        registry = Sys.getenv("CORPUS_REGISTRY"), strucs = strucs
-      )
-    } else {
-      cpos <- matrix(
-        unlist(lapply(strucs, function(x) cl_struc2cpos(corpus = .Object@corpus, s_attribute = sAttrNames[1], struc = x, registry = registry()))),
-        byrow = TRUE, ncol = 2L
-      )
-    }
+    # turn strucs into cpos matrix using RcppCWB
+    cpos <- RcppCWB::get_region_matrix(
+      corpus = .Object@corpus, s_attribute = sAttrNames[1],
+      registry = Sys.getenv("CORPUS_REGISTRY"), strucs = strucs
+    )
     
     if (length(sAttrNames) > 1){
       for (i in 2L:length(sAttrNames)){
-        sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttrNames[i], cpos = cpos[,1], registry = registry()), registry = registry())
+        strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttrNames[i], cpos = cpos[,1], registry = registry())
+        sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = strucs, registry = registry())
         Encoding(sAttrValues) <- .Object@encoding
         if (regex) {
           hits <- unique(unlist(lapply(.Object@s_attributes[[ sAttrNames[i] ]], function(x) grep(x, sAttrValues))))

@@ -2,6 +2,25 @@
 NULL
 
 
+#' Labels class and method
+#' 
+#' The \code{labels}-class in combination with the \code{label()} generic method
+#' offers the tools to implement a workflow to categorize/annotate
+#' results by assigning labels.
+#' 
+#' @slot labels A \code{data.table} that keeps the assigned labels.
+setClass("labels", slots = c(labels = "data.table"))
+
+#' @param .Object A \code{labels} object.
+#' @describeIn labels When initializing a \code{labels} class object, an
+#'   empty \code{data.table} is assigned.
+setMethod("initialize", "labels", function(.Object, n){
+  .Object@labels = data.table()
+  .Object@labels[, "keep" := rep(TRUE, times = n)]
+  .Object
+})
+
+
 
 #' Bundle Class
 #' 
@@ -553,7 +572,6 @@ setClass("cooccurrences", contains = "context")
 #' K_min <- K[1]
 #' K_min <- K[1:5]
 #' @rdname kwic-class
-#' @include Labels.R
 setClass(
   "kwic",
   slots = c(
@@ -565,7 +583,7 @@ setClass(
     right = "integer",
     table = "data.frame",
     encoding = "character",
-    labels = "Labels",
+    labels = "labels",
     categories = "character"
   )
 )
@@ -1108,3 +1126,4 @@ setMethod("aggregate", "slice", function(x){
   x@cpos <- do.call(rbind, rework)
   x
 })
+

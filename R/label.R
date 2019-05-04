@@ -1,11 +1,10 @@
 #' @include S4classes.R
 NULL
 
-#' Assign, set and get labels.
-#' 
-#' This set of methods supports generating and working with labelled data. They
-#' rely on data in a slot \code{labels} of the S4 object to be modified.
-#' Operations are deliberately in-place.
+#' @rdname labels-class
+#' @description The \code{labels} class and the \code{label}-method supports generating and
+#' working with labelled data. They rely on data in a slot \code{labels} of the
+#' S4 object to be modified. Operations are deliberately in-place.
 #'
 #' The \code{label}-method is designed to be used in a RStudio session. Calling
 #' it generates a shiny gadget (see
@@ -33,43 +32,65 @@ NULL
 #' @param js The javascript library to use to display tables (either "DataTables"
 #'   or "Handsontable").
 #' @param ... Further arguments.
-#' @rdname label_method
 #' @return The modified input object is returned invisibly.
 #' @exportMethod label
 setGeneric("label", function(x, ...) standardGeneric("label"))
 
-#' @rdname label_method
-setGeneric("label<-", function(x, value) standardGeneric("label<-"))
 
+#' @param i The row number (single \code{integer} value) of the
+#'   \code{data.table} of the \code{labels} object where a new value shall be
+#'   assigned.
+#' @param j The column number (single \code{integer} value) of the
+#'   \code{data.table} of the \code{labels} object where a new value shall be
+#'   assigned.
 #' @importFrom utils menu
 #' @importFrom DT dataTableProxy replaceData
-#' @rdname label_method
+#' @rdname labels-class
 #' @examples 
+#' use("polmineR")
+#' 
+#' # upon initializing a kwic object, there is a minimal labels object
+#' # in the labels slot of the kwic object, which we can get using the
+#' # labels-method
 #' o <- kwic("REUTERS", query = "oil")
-#' label(o, 1L, FALSE)
+#' labels(o) # see the result (a data.table)
+#' 
+#' # assign new columns as follows, using the reference semantics of the
+#' # data.table you get by calling the labels-method on an object 
+#' labels(o)[, "class" := factor(levels = c("a", "b", "c"))]
+#' labels(o)[, "description" := ""]
+#' labels(o) # see the result
+#' 
+#' # the label-method can be used to assign values; note that is an in-place
+#' # operation using the reference semantics of the data.table
+#' label(o, i = 77, j = 1, value = FALSE)
+#' label(o, i = 78, j = 1, value = FALSE)
+#' labels(o)
 #' 
 #' \dontrun{
-#' label(o, js = "DataTables")
-#' slot(o, "labels")[["labels"]] # to see changes made
+#' label(o)
+#' labels(o) # to see changes made
 #' 
-#' label(o, js = "Handsontable")
-#' slot(o, "labels")[["labels"]] # to see changes made
-#' 
+#' # maybe we want additional metadata
 #' enrich(o, s_attributes = "places")
-#' label(o, js = "Handsontable")
+#' label(o)
+#' labels(o)
+#' 
+#' #' label(o, js = "DataTables")
+#' labels(o) # to see changes made
 #' }
-setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Handsontable")){
+setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "DataTables")){
   
   if (length(js) > 1L) js <- js[1]
   
-  if (is.null(n)){
+  if (missing(i)){
     if (!requireNamespace(package = "shiny", quietly = TRUE))
       stop("Package 'shiny' is required, but not available.")
     
     if (!requireNamespace(package = "miniUI", quietly = TRUE))
       stop("Package 'shiny' is required, but not available.")
     
-    kwic_dt <- as.data.table(x@table)[, "hit_no" := NULL][, "label" := x@labels$labels]
+    kwic_dt <- data.table(as.data.table(x@table)[, "hit_no" := NULL], labels(x))
 
     if (js == "DataTables"){
       
@@ -92,13 +113,15 @@ setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Ha
             j <- input$kwic_cell_edit$col
             k <- input$kwic_cell_edit$value
             
-            shiny::isolate(
-              if (j == match("label", colnames(v$data))) {
+            shiny::isolate({
+              if (j %in% match(colnames(x@labels@labels), colnames(v$data))) {
                 new_value <- DT::coerceValue(k, v$data[i, colnames(v$data)[j]])
                 v$data[i, colnames(v$data)[j]] <<- new_value
-                label(x, n = i, value = new_value)
+                x@labels@labels[i, eval(j - ncol(x@table) + 1L) := new_value]
+              } else {
+                warning("this column cannot be edited")
               }
-            )
+            })
             DT::replaceData(proxy, v[["data"]], resetPaging = FALSE)  # replaces data displayed by the updated table
           }
         )
@@ -115,8 +138,6 @@ setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Ha
       return(invisible(y))
       
     } else if (js == "Handsontable"){
-      
-      kwic_dt[, "label" := as.logical(kwic_dt[["label"]])]
       
       if (!requireNamespace(package = "rhandsontable", quietly = TRUE))
         stop("Package 'rhandsontable' is required, but not available.")
@@ -135,7 +156,7 @@ setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Ha
         
         reset_values <- function(df){
           values[["hot"]] <- df
-          x@labels$labels <- as.character(df[["label"]])
+          for (col in colnames(labels(x))) x@labels@labels[, eval(col) := df[[col]]]
         }
         
         reactiveData <- shiny::reactive(kwic_dt)
@@ -156,13 +177,7 @@ setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Ha
             rhandsontable::hot_col(col = "node", halign = "htCenter")
         })
         
-        shiny::observeEvent(
-          input$done,
-          shiny::stopApp(
-            # returnValue = values[["hot"]]
-            returnValue = x
-            )
-          )
+        shiny::observeEvent(input$done, shiny::stopApp(returnValue = x))
       }
       
       y <- shiny::runGadget(ui, server, viewer = shiny::paneViewer(minHeight = "maximize"))
@@ -172,9 +187,14 @@ setMethod("label", "kwic", function(x, n = NULL, value, js = c("DataTables", "Ha
     }
     
   } else {
-    stopifnot(is.integer(n))
-    x@labels$labels[n] <- value
+    x@labels@labels[i, eval(j) := value]
     return(invisible(x))
   }
 })
 
+#' @param object A \code{labels} object.
+#' @exportMethod labels
+#' @describeIn labels Get the \code{data.table} with labels from the
+#'   \code{labels} object in the \code{labels} slot of the \code{kwic} class
+#'   object.
+setMethod("labels", "kwic", function(object) object@labels@labels)

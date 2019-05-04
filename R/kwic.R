@@ -227,7 +227,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
-    labels = Labels$new(n = .Object@count),
+    labels = new("labels", n = .Object@count),
     cpos = if (cpos) DT else data.table()
   )
   
