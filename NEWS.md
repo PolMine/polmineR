@@ -30,6 +30,7 @@ polmineR 0.7.11.9001
 * The `label()`-method, present for a while, has been turned into a actual use, calling now a shiny gadget either using DataTables or Handsontable.
 * The documentation for the `corpus`-class has been rewritten entirely, and the documentation for the `remote_corpus`-class has been integrated, whereas methods applicable to the `remote_corpous`-class were integrated into the documentation objects for the respective methods.
 * The former `Labels` reference class has been turned into a S4 class, because the desired reference logic can also be achieved with a `data.table` in a slot of the labels class.
+* The `Corpus` reference class will become obsolete after the introduction of the S4 `corpus` class. To maintain the functionality, new generics `get_info` and `show_info` have been introduced and defined for the `corpus` class.
 
 
 

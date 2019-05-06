@@ -119,3 +119,12 @@ setGeneric("name", function(x) standardGeneric("name"))
 #' @noRd
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
 
+
+#' @title Generic methods defined in the polmineR package
+#' @description This documentation object gives an overview over the generic
+#'   methods defined in the polmineR package that have no individual man page
+#'   but are documented directly with the classes they are defined for.
+#' @param x An S4 class object.
+#' @rdname polmineR-generics
+#' @name polmineR-generics
+NULL
