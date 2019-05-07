@@ -409,61 +409,6 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
 })
 
 
-#' @details If \code{.Object} is a \code{Corpus} object, preparing the
-#'   \code{partition} may work more efficiently than if \code{.Object} is a
-#'   length-one character vector.
-#' @rdname partition
-#' @importFrom data.table copy
-setMethod("partition", "Corpus", function(
-  .Object, def = NULL, name = "",
-  encoding = NULL, regex = FALSE, xml = "flat",
-  type = get_type(.Object), verbose = TRUE, ...
-) {
-  
-  # some checks to start with
-  if (xml == "nested") stop("applying the partition on a Corpus object is possible only for flat XML")
-  if (length(list(...)) != 0 && is.null(def)) def <- list(...)
-  if (is.null(def)) stop("no s-attributes provided to define partition")
-  if (!all(names(def) %in% colnames(.Object$s_attributes)))
-    stop("at least one s-attribute is not present in data.table in slot s_attribute of .Object")
-  
-  encoding <- if (is.null(encoding)) registry_get_encoding(.Object$corpus) else encoding
-  .message('encoding of the corpus is:', encoding, verbose = verbose)
-  
-  .message('initialize partition ', name, verbose = verbose)
-  assign(
-    "y",
-    new(
-      paste(c(type, "partition"), collapse = "_"),
-      stat = data.table(), corpus = .Object$corpus, name = name, xml = xml,
-      encoding = encoding,
-      s_attributes = lapply(def, function(x) as.corpusEnc(x, corpusEnc = encoding))
-    )
-  ) 
-  def <- y@s_attributes
-  
-  .message('get cpos and strucs', verbose = verbose)
-  dt <- copy(.Object$s_attributes)
-  for (s_attr in names(def)){
-    if (regex){
-      dt <- dt[unique(unlist(lapply(def[[s_attr]], function(x) grep(x, dt[[s_attr]]))))]
-    } else {
-      dt <- dt[which(dt[[s_attr]] %in% def[[s_attr]])]
-    }
-  }
-  y@s_attribute_strucs <- names(def)[length(def)]
-  y@strucs <- dt[["struc"]]
-  y@cpos <- .Object$cpos[dt[["struc"]] + 1L,]
-  
-  if (nrow(y@cpos) == 0){
-    warning("... setting up the partition failed (returning NULL object)")
-    return( NULL )
-  }
-  
-  # get partition size
-  y@size <- size(y)
-  y
-})
 
 
 #' @param node A logical value, whether to include the node (i.e. query matches) in the region matrix

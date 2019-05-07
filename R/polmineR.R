@@ -63,6 +63,10 @@ setOldClass("htmlwidget")
 #' @examples
 #' use("polmineR") # activate demo corpora included in the package
 #' 
+#' # The package includes two sample corpora
+#' corpus("REUTERS") %>% show_info()
+#' corpus("GERMAPARLMINI") %>% show_info()
+#' 
 #' # Core methods applied to corpus
 #' 
 #' C <- count("REUTERS", query = "oil")

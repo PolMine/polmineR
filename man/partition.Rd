@@ -6,7 +6,6 @@
 \alias{partition,character-method}
 \alias{partition,environment-method}
 \alias{partition,partition-method}
-\alias{partition,Corpus-method}
 \alias{partition,context-method}
 \alias{partition,remote_corpus-method}
 \alias{partition,remote_partition-method}
@@ -25,10 +24,6 @@ partition(.Object, ...)
 \S4method{partition}{partition}(.Object, def = NULL, name = "",
   regex = FALSE, p_attribute = NULL, decode = TRUE, xml = NULL,
   verbose = TRUE, mc = FALSE, ...)
-
-\S4method{partition}{Corpus}(.Object, def = NULL, name = "",
-  encoding = NULL, regex = FALSE, xml = "flat",
-  type = get_type(.Object), verbose = TRUE, ...)
 
 \S4method{partition}{context}(.Object, node = TRUE)
 
@@ -119,10 +114,6 @@ If \code{.Object} is an environment (typically \code{.GlobalEnv}),
 
 If \code{.Object} is a \code{partition} object, a subcorpus of the
   subcorpus is generated.
-
-If \code{.Object} is a \code{Corpus} object, preparing the
-  \code{partition} may work more efficiently than if \code{.Object} is a
-  length-one character vector.
 }
 \examples{
 use("polmineR")

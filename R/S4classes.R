@@ -747,6 +747,13 @@ setAs(from = "remote_corpus", to = "corpus", def = function(from){
 #' @rdname corpus_methods
 #' @details A \code{corpus} object can have a name, which can be retrieved using
 #' the \code{name}-method.
+#' @examples
+#' # get/show information on corpora
+#' corpus("REUTERS") %>% get_info()
+#' corpus("REUTERS") %>% show_info()
+#' corpus("GERMAPARLMINI") %>% get_info()
+#' corpus("GERMAPARLMINI") %>% show_info()
+#'
 setMethod("name", "corpus", function(x) x@name)
 
 

@@ -23,6 +23,7 @@ setMethod("get_info", "corpus", function(x){
   info
 })
 
+#' @export show_info
 #' @rdname corpus_methods
 #' @details The \code{show_info}-method will get the content of the info
 #'   file for a corpus, turn it into an html document, and show the result in

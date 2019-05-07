@@ -296,16 +296,6 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "Corpus", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), ...){
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if (nrow(.Object$stat) == 0) .Object$count(p_attribute, decode = FALSE)
-  P <- .Object$as.partition()
-  cooccurrences(P, query = query, p_attribute = p_attribute, ...)
-})
-
-
-
-#' @rdname cooccurrences
 #' @examples
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]

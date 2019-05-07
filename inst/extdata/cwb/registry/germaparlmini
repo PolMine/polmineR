@@ -9,7 +9,7 @@ ID   germaparlmini
 # path to binary data files
 HOME /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/germaparlmini
 # optional info file (displayed by "info;" command in CQP)
-INFO /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/germaparlmini/.info
+INFO /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/germaparlmini/info.md
 
 # corpus properties provide additional information about the corpus:
 ##:: charset  = "latin1" # character encoding of corpus data

@@ -293,19 +293,37 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
         cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
         TF <- data.table(count = cnt)
       } else {
-        TF <- data.table(count = RcppCWB::get_count_vector(corpus = .Object@corpus, p_attribute = p_attribute))
+        TF <- data.table(
+          count = RcppCWB::get_count_vector(corpus = .Object@corpus, p_attribute = p_attribute)
+          )
       }
-      TF[, "id" := 0L:(nrow(TF) - 1L), with = TRUE]
-      setnames(TF, old = "id", new = paste(p_attribute, "id", sep = "_"))
-      if (decode == FALSE){
-        setkeyv(TF, paste(p_attribute, "id", sep = "_"))
-        setcolorder(TF, c(paste(p_attribute, "id", sep = "_"), "count"))
+      p_attr_col_id <- paste(p_attribute, "id", sep = "_")
+      TF[, (p_attr_col_id) := 0L:(nrow(TF) - 1L)]
+
+      if (!decode){
+        setkeyv(TF, p_attr_col_id)
+        setcolorder(TF, c(p_attr_col_id, "count"))
       } else {
-        TF[, "token" := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute, id = 0L:(nrow(TF) - 1L), registry = registry()), from = encoding(.Object)), with = TRUE]
+        # somewhat surprisingly, cl_id2str a good deal faster than reading the
+        # lexicon file directly using readBin a follows:
+        # 
+        # lexicon_file <- file.path(.Object@data_dir, paste(p_attribute, "lexicon", sep = "."))
+        # lexicon_file_size <- file.info(lexicon_file)[["size"]]
+        # tokens <- readBin(con = lexicon_file, what = character(), n = lexicon_file_size)
+        # 
+        # Using a Rcpp implementation for reading in the lexion file might be a
+        # fast solution, see https://gist.github.com/hadley/6353939
+        tokens <- cl_id2str(
+          corpus = .Object@corpus,
+          p_attribute = p_attribute,
+          id = TF[[p_attr_col_id]],
+          registry = registry()
+        )
+        TF[, "token" := as.nativeEnc(tokens, from = encoding(.Object)), with = TRUE] # recode is slow
         Encoding(TF[["token"]]) <- "unknown"
         setnames(TF, old = "token", new = p_attribute)
-        setkeyv(TF, p_attribute)
-        setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
+        setkeyv(TF, p_attribute) # slow
+        setcolorder(TF, c(p_attribute, p_attr_col_id, "count"))
         if (sort) setorderv(TF, cols = p_attribute)
       }
     } else {
@@ -414,11 +432,6 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
   setkeyv(TF, cols = "id")
   setnames(TF, "id", paste(p_attribute, "id", sep = "_"))
   TF[count > 0]
-})
-
-#' @rdname count-method
-setMethod("count", "Corpus", function(.Object, query = NULL, p_attribute){
-  count(.Object$as.partition(), query = query, p_attribute = p_attribute)
 })
 
 

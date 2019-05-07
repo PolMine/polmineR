@@ -11,7 +11,6 @@
 \alias{count,corpus-method}
 \alias{count,character-method}
 \alias{count,vector-method}
-\alias{count,Corpus-method}
 \alias{count,remote_corpus-method}
 \alias{count,remote_subcorpus-method}
 \title{Get counts.}
@@ -51,8 +50,6 @@ count(.Object, ...)
   ...)
 
 \S4method{count}{vector}(.Object, corpus, p_attribute, ...)
-
-\S4method{count}{Corpus}(.Object, query = NULL, p_attribute)
 
 \S4method{count}{remote_corpus}(.Object, ...)
 

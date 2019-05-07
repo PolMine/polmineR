@@ -57,10 +57,25 @@ The \code{show_info}-method will get the content of the info
   the document is rendered as markdown.
 }
 \examples{
+# get/show information on corpora
+corpus("REUTERS") \%>\% get_info()
+corpus("REUTERS") \%>\% show_info()
+corpus("GERMAPARLMINI") \%>\% get_info()
+corpus("GERMAPARLMINI") \%>\% show_info()
+
+# show-method 
+corpus("REUTERS") \%>\% show()
+corpus("REUTERS") # show is called implicitly
+
+# get corpus ID
+corpus("REUTERS") \%>\% get_corpus()
+
+# use $ to access s_attributes quickly
 use("polmineR")
 g <- corpus("GERMAPARLMINI")
 g$date
-corpus("GERMAPARLMINI")$date
+corpus("GERMAPARLMINI")$date # 
+corpus("GERMAPARLMINI") \%>\% s_attributes(s_attribute = "date") # equivalent
 
 use("polmineR")
 sc <- subset("GERMAPARLMINI", date == "2009-10-27")

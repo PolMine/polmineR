@@ -139,15 +139,14 @@ setMethod("features", "partition", function(
   
   # if y is a character vector, create a partition from corpus
   if (is.character(y)){
-    stopifnot(length(y) == 1) # can only compare to exactly one 
+    stopifnot(length(y) == 1L) # can only compare to exactly one 
     stopifnot(y %in% .list_corpora()) # make sure that it is a corpus that is available
     if (y == x@corpus && included == FALSE){
       included <- TRUE
       warning("x is derived from corpus y, but included is FALSE - setting to TRUE")
     }
-    refCorpus <- Corpus$new(y)
-    refCorpus$count(p_attribute = x@p_attribute)
-    y <- refCorpus$as.partition()
+    ref_corpus <- corpus(y)
+    y <- count(ref_corpus, p_attribute = x@p_attribute)
   }
   
   .message ('Comparing x and y ...', verbose = verbose)
