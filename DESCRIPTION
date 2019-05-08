@@ -7,7 +7,7 @@ Authors@R: c(person("Andreas", "Blaette", role = c("aut", "cre"), email = "andre
 Imports:
     methods,
     R6,
-    data.table,
+    data.table (>= 1.12.2),
     slam,
     Matrix,
     tm,
