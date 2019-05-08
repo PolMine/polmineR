@@ -32,6 +32,7 @@ polmineR 0.7.11.9001
 * The former `Labels` reference class has been turned into a S4 class, because the desired reference logic can also be achieved with a `data.table` in a slot of the labels class.
 * The `Corpus` reference class will become obsolete after the introduction of the S4 `corpus` class. To maintain the functionality, new generics `get_info` and `show_info` have been introduced and defined for the `corpus` class.
 * The version of the data.table package now required is 1.12.2, because previous versions did not allow adding columns to a new data.table.
+* The `enrich()`-method for objects of class `kwic` now includes a new argument `extra` that will add extra tokens to the left of the windows for concordances so that qualitative inspections for query hits can work with more context.
 
 
 polmineR 0.7.11

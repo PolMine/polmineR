@@ -120,6 +120,10 @@ enrich(o, s_attributes = "places")
 label(o)
 labels(o)
 
+# to get some extra context
+o <- enrich(o, extra = 5L, table = TRUE)
+label(o)
+
 #' label(o, js = "DataTables")
 labels(o) # to see changes made
 }

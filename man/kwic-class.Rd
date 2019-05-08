@@ -38,8 +38,8 @@
 
 \S4method{sample}{kwic}(x, size)
 
-\S4method{enrich}{kwic}(.Object, s_attributes = NULL, table = FALSE,
-  ...)
+\S4method{enrich}{kwic}(.Object, s_attributes = NULL, extra = NULL,
+  table = FALSE, ...)
 
 \S4method{view}{kwic}(.Object)
 }
@@ -48,8 +48,9 @@
 
 \item{object}{A \code{kwic} class object.}
 
-\item{pagelength}{The number of kwic lines displayed per page in the
-datatables htmlwidget that is returned.}
+\item{pagelength}{An \code{integer} value, the number of kwic lines displayed
+per page in the \code{datatables} htmlwidget that is returned when
+\code{knit_print} is called on a \code{kwic} object.}
 
 \item{options}{Chunk options.}
 
@@ -65,6 +66,11 @@ inspected.}
 \item{.Object}{A \code{kwic} class object.}
 
 \item{s_attributes}{Character vector of s-attributes with metainformation.}
+
+\item{extra}{An \code{integer} value, number of extra tokens to the left and
+to the right of the windows of tokens to the left and right of a query
+match that are decoded to be displayed in a kwic output to facilitate
+interpretation.}
 
 \item{table}{Logical, whether to turn cpos \code{data.table} into \code{data.frame} for output.}
 }

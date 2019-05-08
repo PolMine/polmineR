@@ -553,6 +553,10 @@ setClass("cooccurrences", contains = "context")
 #' @param object A \code{kwic} class object.
 #' @param s_attributes Character vector of s-attributes with metainformation.
 #' @param table Logical, whether to turn cpos \code{data.table} into \code{data.frame} for output.
+#' @param extra An \code{integer} value, number of extra tokens to the left and
+#'   to the right of the windows of tokens to the left and right of a query
+#'   match that are decoded to be displayed in a kwic output to facilitate
+#'   interpretation.
 #' @param size An \code{integer}, subset size for sampling.
 #' @param i Single integer value, the kwic line for which the fulltext shall be
 #'   inspected.

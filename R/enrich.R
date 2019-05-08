@@ -55,7 +55,7 @@ setMethod("enrich", "partition_bundle", function(.Object, mc = FALSE, progress =
 #' is a character vector with s-attributes, the respective s-attributes will be
 #' added as columns to the table with concordance lines.
 #' @rdname kwic-class
-setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, table = FALSE, ...){
+setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL, table = FALSE, ...){
   
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
@@ -78,18 +78,84 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, table = FALSE
     .Object@metadata <- c(s_attributes, .Object@metadata)
   }
   
+  if (!is.null(extra)){
+    stopifnot(is.integer(extra) || is.numeric(extra))
+    if (is.numeric(extra)) extra <- as.integer(extra)
+    .fn <- function(.SD){
+      cpos_min <- min(.SD[["cpos"]])
+      cpos_max <- max(.SD[["cpos"]])
+      position_min <- min(.SD[["position"]])
+      position_max <- max(.SD[["position"]])
+      hit <- unique(.SD[["hit_no"]])
+      rbindlist(
+        list(
+          extra_left = data.table(
+            hit_no = hit,
+            cpos = (cpos_min - extra):(cpos_min - 1L),
+            position = (position_min - extra):(position_min - 1L),
+            word_id = NA,
+            word = NA,
+            direction = -2L
+          ),
+          kwic = .SD,
+          extra_right = data.table(
+            hit_no = hit,
+            cpos = (cpos_max + 1L):(cpos_max + extra),
+            position = (position_max + 1L):(position_max + extra),
+            word_id = NA,
+            word = NA,
+            direction = +2L
+          )
+        )
+      )
+    }
+    dt <- .Object@cpos[, .fn(.SD), by = "hit_no", .SDcols = 1L:ncol(.Object@cpos)]
+    corpus_size <- RcppCWB::cl_attribute_size(
+      corpus = .Object@corpus,
+      attribute = "word",
+      attribute_type = "p",
+      registry = registry()
+    )
+    .Object@cpos <- dt[cpos >= 0L][cpos <= (corpus_size - 1L)]
+    word_id_na <- is.na(.Object@cpos[["word_id"]])
+    word_id_na_index <- which(word_id_na)
+    ids_na <- RcppCWB::cl_cpos2id(
+      corpus = .Object@corpus,
+      p_attribute = "word",
+      registry = registry(),
+      cpos = .Object@cpos[["cpos"]][word_id_na]
+    )
+    str_na <- RcppCWB::cl_id2str(
+      corpus = .Object@corpus,
+      p_attribute = "word",
+      registry = registry(),
+      id = ids_na
+    )
+    .Object@cpos[word_id_na_index, "word_id" := ids_na]
+    .Object@cpos[word_id_na_index, "word" := str_na]
+  }
+  
   if (table){
     if (nrow(.Object@cpos) > 0){
-      .paste <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
-      DT2 <- .Object@cpos[, .paste(.SD), by = c("hit_no", "direction"), with = TRUE]
+      .fn <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
+      DT2 <- .Object@cpos[, .fn(.SD), by = c("hit_no", "direction"), with = TRUE]
       tab <- dcast(data = DT2, formula = hit_no ~ direction, value.var = "V1")
-      setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+      if (all(c("-2", "2") %in% colnames(tab))){
+        setnames(
+          tab,
+          old = c("-2", "-1", "0", "1", "2"),
+          new = c("left_extra", "left", "node", "right", "right_extra")
+        )
+      } else {
+        setnames(tab, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+      }
+      
     } else {
       tab <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
     }
     .Object@table <- as.data.frame(tab)
   }
-  
+
   .Object
 })
 

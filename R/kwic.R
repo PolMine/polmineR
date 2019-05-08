@@ -45,8 +45,9 @@ setMethod("show", "kwic", function(object){
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname kwic-class
-#' @param pagelength The number of kwic lines displayed per page in the
-#'   datatables htmlwidget that is returned.
+#' @param pagelength An \code{integer} value, the number of kwic lines displayed
+#'   per page in the \code{datatables} htmlwidget that is returned when
+#'   \code{knit_print} is called on a \code{kwic} object.
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
@@ -286,8 +287,9 @@ setMethod("kwic", "partition", function(
   p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
-) callNextMethod() 
-)
+){
+  callNextMethod() 
+})
 
 #' @rdname kwic
 #' @exportMethod kwic
@@ -299,8 +301,9 @@ setMethod("kwic", "subcorpus", function(
   p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
-) callNextMethod() 
-)
+){
+  callNextMethod() 
+})
 
 
 

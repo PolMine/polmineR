@@ -76,6 +76,10 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 #' label(o)
 #' labels(o)
 #' 
+#' # to get some extra context
+#' o <- enrich(o, extra = 5L, table = TRUE)
+#' label(o)
+#' 
 #' #' label(o, js = "DataTables")
 #' labels(o) # to see changes made
 #' }
@@ -91,6 +95,15 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
       stop("Package 'shiny' is required, but not available.")
     
     kwic_dt <- data.table(as.data.table(x@table)[, "hit_no" := NULL], labels(x))
+    
+    if ("left_extra" %in% colnames(kwic_dt)){
+      kwic_dt[, "left" := sprintf("<div align='right'><font color='grey'>%s</font> %s</div>", kwic_dt[["left_extra"]], kwic_dt[["left"]])]
+      kwic_dt[, "left_extra" := NULL]
+    }
+    if ("right_extra" %in% colnames(kwic_dt)){
+      kwic_dt[, "right" := sprintf("%s <font color='grey'>%s</font>", kwic_dt[["right_extra"]], kwic_dt[["right"]])]
+      kwic_dt[, "right_extra" := NULL]
+    }
 
     if (js == "DataTables"){
       
@@ -171,10 +184,11 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
           if (rhandsontable:::isErrorMessage(data)) return(NULL)
           df <- if (is.null(input$hot)) data else rhandsontable::hot_to_r(input$hot)
           reset_values(df)
-          rhandsontable::rhandsontable(df) %>%
+          rhandsontable::rhandsontable(df, allowedTags = "<font><div>") %>%
             rhandsontable::hot_table(highlightCol = TRUE, highlightRow = TRUE) %>%
-            rhandsontable::hot_col(col = "left", halign = "htRight") %>%
-            rhandsontable::hot_col(col = "node", halign = "htCenter")
+            rhandsontable::hot_col(col = "left", renderer = htmlwidgets::JS("safeHtmlRenderer")) %>%
+            rhandsontable::hot_col(col = "node", halign = "htCenter") %>%
+            rhandsontable::hot_col(col = "right", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
         })
         
         shiny::observeEvent(input$done, shiny::stopApp(returnValue = x))
