@@ -14,7 +14,7 @@
 label(x, ...)
 
 \S4method{label}{kwic}(x, i, j, value, js = c("Handsontable",
-  "DataTables"))
+  "DataTables"), ...)
 
 \S4method{labels}{kwic}(object)
 }
@@ -26,7 +26,8 @@ label(x, ...)
 \item{x}{An S4 object with a slot \code{labels} (e.g. an object of class
 \code{kwic}).}
 
-\item{...}{Further arguments.}
+\item{...}{Passed into \code{rhandsontable::rhandsontable}, can be used for
+settings such as \code{height} etc.}
 
 \item{i}{The row number (single \code{integer} value) of the
 \code{data.table} of the \code{labels} object where a new value shall be
@@ -122,6 +123,11 @@ labels(o)
 
 # to get some extra context
 o <- enrich(o, extra = 5L, table = TRUE)
+label(o)
+
+# lineview may be better when you use a lot of extra context
+options(polmineR.lineview = TRUE)
+o <- enrich(o, extra = 20L)
 label(o)
 
 #' label(o, js = "DataTables")

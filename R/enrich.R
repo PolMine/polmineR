@@ -50,10 +50,11 @@ setMethod("enrich", "partition_bundle", function(.Object, mc = FALSE, progress =
 
 
 #' @details The \code{enrich} method is used to generate the actual output for
-#' the kwic method. If param \code{table} is \code{TRUE}, corpus positions will
-#' be turned into a data.frame with the concordance lines. If param \code{s_attributes}
-#' is a character vector with s-attributes, the respective s-attributes will be
-#' added as columns to the table with concordance lines.
+#'   the kwic method. If param \code{table} is \code{TRUE}, corpus positions
+#'   will be turned into a \code{data.frame} with the concordance lines. If
+#'   param \code{s_attributes} is a character vector with s-attributes, the
+#'   respective s-attributes will be added as columns to the table with
+#'   concordance lines.
 #' @rdname kwic-class
 setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL, table = FALSE, ...){
   
@@ -79,6 +80,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
   }
   
   if (!is.null(extra)){
+    table <- TRUE # it will be necessary to regenerate the table
     stopifnot(is.integer(extra) || is.numeric(extra))
     if (is.numeric(extra)) extra <- as.integer(extra)
     .fn <- function(.SD){

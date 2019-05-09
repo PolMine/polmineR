@@ -54,3 +54,52 @@ setMethod("format", "features", function(x, digits = 2L){
   dt[, cols_to_keep, with = FALSE]
 })
 
+
+#' @rdname kwic-class
+#' @param node_color If not \code{NULL}, the html color of the node. If
+#'   supplied, the node will be wrapped in respective html tags.
+#' @param extra_color If extra context has been generated using \code{enrich},
+#'   the html color of the additional output (defaults to 'grey').
+#' @param align A \code{logical} value for preparing kwic output. If
+#'   \code{TRUE}, whether the content of the columns 'left', 'node' and 'right'
+#'   will be wrapped in html div elements that will align the output right,
+#'   centered and left, respectively.
+#' @param lineview A \code{logical} value, whether to concatenate left context,
+#'   node and right context when preparing kwic output.
+#' @details The \code{format}-method will return a \code{data.table} that can
+#'   serve as input for rendering a \code{htmlwidget}, for instance using
+#'   \code{DT::datatable} or \code{rhandsontable::rhandsontable}. It will
+#'   include html tags, so ensure that the rendering engine does not obfuscate
+#'   the html.
+#'   
+setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra_color = "grey", lineview = getOption("polmineR.lineview")){
+  if (lineview) align <- FALSE
+  y <- as.data.table(x@table)[, "hit_no" := NULL]
+  
+  if ("left_extra" %in% colnames(y)){
+    if (lineview) y[, "left" := sprintf("<u>%s</u>", y[["left"]])]
+    y[, "left" := sprintf("<font color='%s'>%s</font> %s", extra_color, y[["left_extra"]], y[["left"]])]
+    if (align) y[, "left" := sprintf("<div align='right'>%s</div>", y[["left"]])]
+    y[, "left_extra" := NULL]
+  }
+  
+  if (length(node_color) == 1L){
+    stopifnot(is.character(node_color))
+    y[, "node" := sprintf("<font color='%s'>%s</font>", node_color, y[["node"]])]
+  }
+  if (align) y[, "node" := sprintf("<div align='center'>%s</div>", y[["node"]])]
+  
+  if ("right_extra" %in% colnames(y)){
+    if (lineview) y[, "right" := sprintf("<u>%s</u>", y[["right"]])]
+    y[, "right" := sprintf("%s <font color='%s'>%s</font>", y[["right"]], extra_color, y[["right_extra"]])]
+    if (align) y[, "right" := sprintf("<div align='left'>%s</div>", y[["right"]])]
+    y[, "right_extra" := NULL]
+  }
+  
+  if (lineview){
+    y[, "concordance" := apply(y, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))]
+    for (x in c("left", "node", "right")) y[, (x) := NULL]
+  }
+  
+  y
+})

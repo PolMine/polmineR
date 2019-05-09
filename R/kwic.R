@@ -2,27 +2,17 @@
 NULL
 
 
-setAs(
-  from = "kwic",
-  to = "htmlwidget",
-  def = function(from){
-    if (getOption("polmineR.lineview")){
-      from@table[["node"]] <- paste('<span style="color:steelblue">', from@table[["node"]], '</span>', sep="")
-      from@table[["text"]] <- apply(from@table, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))
-      for (x in c("left", "node", "right", "hit_no")) from@table[[x]] <- NULL
-      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
-    } else {
-      from@table[["hit_no"]] <- NULL
-      retval <- DT::datatable(from@table, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
-      retval <- DT::formatStyle(retval, "node", color = "blue", textAlign = "center")
-      retval <- DT::formatStyle(retval, "left", textAlign = "right")
-    }
-    retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(
-      name = "tooltips", version = "0.0.0",
-      src = system.file(package = "polmineR", "css"), stylesheet = "tooltips.css"
-    )
-    retval
-  }
+setAs(from = "kwic", to = "htmlwidget", def = function(from){
+  dt <- format(from, align = FALSE)
+  retval <- DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
+  if ("node" %in% colnames(dt)) retval <- DT::formatStyle(retval, "node", textAlign = "center")
+  if ("left" %in% colnames(dt)) retval <- DT::formatStyle(retval, "left", textAlign = "right")
+  retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(
+    name = "tooltips", version = "0.0.0",
+    src = system.file(package = "polmineR", "css"), stylesheet = "tooltips.css"
+  )
+  retval
+}
 )
 
 #' @rdname kwic-class

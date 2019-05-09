@@ -31,7 +31,6 @@ NULL
 #' @param value A value to assign.
 #' @param js The javascript library to use to display tables (either "DataTables"
 #'   or "Handsontable").
-#' @param ... Further arguments.
 #' @return The modified input object is returned invisibly.
 #' @exportMethod label
 setGeneric("label", function(x, ...) standardGeneric("label"))
@@ -43,6 +42,8 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 #' @param j The column number (single \code{integer} value) of the
 #'   \code{data.table} of the \code{labels} object where a new value shall be
 #'   assigned.
+#' @param ... Passed into \code{rhandsontable::rhandsontable}, can be used for
+#'   settings such as \code{height} etc.
 #' @importFrom utils menu
 #' @importFrom DT dataTableProxy replaceData
 #' @rdname labels-class
@@ -80,10 +81,15 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 #' o <- enrich(o, extra = 5L, table = TRUE)
 #' label(o)
 #' 
+#' # lineview may be better when you use a lot of extra context
+#' options(polmineR.lineview = TRUE)
+#' o <- enrich(o, extra = 20L)
+#' label(o)
+#' 
 #' #' label(o, js = "DataTables")
 #' labels(o) # to see changes made
 #' }
-setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "DataTables")){
+setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "DataTables"), ...){
   
   if (length(js) > 1L) js <- js[1]
   
@@ -94,16 +100,7 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
     if (!requireNamespace(package = "miniUI", quietly = TRUE))
       stop("Package 'shiny' is required, but not available.")
     
-    kwic_dt <- data.table(as.data.table(x@table)[, "hit_no" := NULL], labels(x))
-    
-    if ("left_extra" %in% colnames(kwic_dt)){
-      kwic_dt[, "left" := sprintf("<div align='right'><font color='grey'>%s</font> %s</div>", kwic_dt[["left_extra"]], kwic_dt[["left"]])]
-      kwic_dt[, "left_extra" := NULL]
-    }
-    if ("right_extra" %in% colnames(kwic_dt)){
-      kwic_dt[, "right" := sprintf("%s <font color='grey'>%s</font>", kwic_dt[["right_extra"]], kwic_dt[["right"]])]
-      kwic_dt[, "right_extra" := NULL]
-    }
+    kwic_dt <- data.table(format(x), labels(x))
 
     if (js == "DataTables"){
       
@@ -147,7 +144,7 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
         shiny::observeEvent(input$done, shiny::stopApp(v[["data"]]))
       }
       
-      y <- shiny::runGadget(ui, server, viewer = shiny::paneViewer(minHeight = "maximize"))
+      y <- shiny::runGadget(ui, server, viewer = shiny::paneViewer(minHeight = NULL))
       return(invisible(y))
       
     } else if (js == "Handsontable"){
@@ -157,10 +154,7 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
       
       ui <- miniUI::miniPage(
         miniUI::gadgetTitleBar("Edit a data.frame"), 
-        miniUI::miniContentPanel(
-          rhandsontable::rHandsontableOutput("hot"),
-          shiny::uiOutput("pending")
-        )
+        miniUI::miniContentPanel(rhandsontable::rHandsontableOutput("hot", height = "auto"))
       )
       
       server <- function(input, output, session) {
@@ -184,17 +178,24 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
           if (rhandsontable:::isErrorMessage(data)) return(NULL)
           df <- if (is.null(input$hot)) data else rhandsontable::hot_to_r(input$hot)
           reset_values(df)
-          rhandsontable::rhandsontable(df, allowedTags = "<font><div>") %>%
-            rhandsontable::hot_table(highlightCol = TRUE, highlightRow = TRUE) %>%
-            rhandsontable::hot_col(col = "left", renderer = htmlwidgets::JS("safeHtmlRenderer")) %>%
-            rhandsontable::hot_col(col = "node", halign = "htCenter") %>%
-            rhandsontable::hot_col(col = "right", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          rht <- rhandsontable::rhandsontable(df, allowedTags = "<font><div><u>", ...)
+          rht <- rhandsontable::hot_cols(rht, manualColumnResize = TRUE)
+          rht <- rhandsontable::hot_table(rht, highlightCol = TRUE, highlightRow = TRUE, overflow = "auto", stretchH = "all")
+          if ("left" %in% colnames(kwic_dt))
+            rht <- rhandsontable::hot_col(rht, col = "left", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          if ("node" %in% colnames(kwic_dt))
+            rht <- rhandsontable::hot_col(rht, col = "node", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          if ("right" %in% colnames(kwic_dt))
+            rht <- rhandsontable::hot_col(rht, col = "right", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          if ("concordance" %in% colnames(kwic_dt))
+            rht <- rhandsontable::hot_col(rht, col = "concordance", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          rht
         })
         
         shiny::observeEvent(input$done, shiny::stopApp(returnValue = x))
       }
       
-      y <- shiny::runGadget(ui, server, viewer = shiny::paneViewer(minHeight = "maximize"))
+      y <- shiny::runGadget(ui, server, viewer = shiny::browserViewer())
       
       return(invisible(y))
       
