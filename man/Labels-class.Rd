@@ -4,30 +4,26 @@
 \name{labels-class}
 \alias{labels-class}
 \alias{initialize,labels-method}
-\alias{label}
-\alias{label,kwic-method}
 \alias{labels,kwic-method}
+\alias{edit,kwic-method}
 \title{Labels class and method}
 \usage{
 \S4method{initialize}{labels}(.Object, n)
 
-label(x, ...)
-
-\S4method{label}{kwic}(x, i, j, value, js = c("Handsontable",
-  "DataTables"), ...)
-
 \S4method{labels}{kwic}(object)
+
+\S4method{edit}{kwic}(name, i, j, value, js = c("Handsontable",
+  "DataTables"), ...)
 }
 \arguments{
 \item{.Object}{A \code{labels} object.}
 
 \item{n}{The integer index of a label to retrieve or modify.}
 
-\item{x}{An S4 object with a slot \code{labels} (e.g. an object of class
-\code{kwic}).}
+\item{object}{A \code{labels} object.}
 
-\item{...}{Passed into \code{rhandsontable::rhandsontable}, can be used for
-settings such as \code{height} etc.}
+\item{name}{An S4 object with a slot \code{labels} (e.g. an object of class
+\code{kwic}).}
 
 \item{i}{The row number (single \code{integer} value) of the
 \code{data.table} of the \code{labels} object where a new value shall be
@@ -42,7 +38,8 @@ assigned.}
 \item{js}{The javascript library to use to display tables (either "DataTables"
 or "Handsontable").}
 
-\item{object}{A \code{labels} object.}
+\item{...}{Passed into \code{rhandsontable::rhandsontable}, can be used for
+settings such as \code{height} etc.}
 }
 \value{
 The modified input object is returned invisibly.
@@ -79,10 +76,6 @@ be painful after the work that may have been invested.
 \itemize{
 \item \code{initialize}: When initializing a \code{labels} class object, an
 empty \code{data.table} is assigned.
-
-\item \code{labels}: Get the \code{data.table} with labels from the
-\code{labels} object in the \code{labels} slot of the \code{kwic} class
-object.
 }}
 
 \section{Slots}{
@@ -108,29 +101,29 @@ labels(o) # see the result
 
 # the label-method can be used to assign values; note that is an in-place
 # operation using the reference semantics of the data.table
-label(o, i = 77, j = 1, value = FALSE)
-label(o, i = 78, j = 1, value = FALSE)
+edit(o, i = 77, j = 1, value = FALSE)
+edit(o, i = 78, j = 1, value = FALSE)
 labels(o)
 
 \dontrun{
-label(o)
+edit(o)
 labels(o) # to see changes made
 
 # maybe we want additional metadata
 enrich(o, s_attributes = "places")
-label(o)
+edit(o)
 labels(o)
 
 # to get some extra context
 o <- enrich(o, extra = 5L, table = TRUE)
-label(o)
+edit(o)
 
 # lineview may be better when you use a lot of extra context
 options(polmineR.lineview = TRUE)
 o <- enrich(o, extra = 20L)
-label(o)
+edit(o)
 
-#' label(o, js = "DataTables")
+#' edit(o, js = "DataTables")
 labels(o) # to see changes made
 }
 }

@@ -25,17 +25,13 @@ NULL
 #' button and catch the modified object, which may be forgotten easily and would
 #' be painful after the work that may have been invested.
 #' 
-#' @param x An S4 object with a slot \code{labels} (e.g. an object of class
+#' @param name An S4 object with a slot \code{labels} (e.g. an object of class
 #'   \code{kwic}).
 #' @param n The integer index of a label to retrieve or modify.
 #' @param value A value to assign.
 #' @param js The javascript library to use to display tables (either "DataTables"
 #'   or "Handsontable").
 #' @return The modified input object is returned invisibly.
-#' @exportMethod label
-setGeneric("label", function(x, ...) standardGeneric("label"))
-
-
 #' @param i The row number (single \code{integer} value) of the
 #'   \code{data.table} of the \code{labels} object where a new value shall be
 #'   assigned.
@@ -46,7 +42,10 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 #'   settings such as \code{height} etc.
 #' @importFrom utils menu
 #' @importFrom DT dataTableProxy replaceData
+#' @importFrom utils edit
+#' @exportMethod edit
 #' @rdname labels-class
+#' @aliases labels,kwic-method
 #' @examples 
 #' use("polmineR")
 #' 
@@ -64,32 +63,41 @@ setGeneric("label", function(x, ...) standardGeneric("label"))
 #' 
 #' # the label-method can be used to assign values; note that is an in-place
 #' # operation using the reference semantics of the data.table
-#' label(o, i = 77, j = 1, value = FALSE)
-#' label(o, i = 78, j = 1, value = FALSE)
+#' edit(o, i = 77, j = 1, value = FALSE)
+#' edit(o, i = 78, j = 1, value = FALSE)
 #' labels(o)
 #' 
 #' \dontrun{
-#' label(o)
+#' edit(o)
 #' labels(o) # to see changes made
 #' 
 #' # maybe we want additional metadata
 #' enrich(o, s_attributes = "places")
-#' label(o)
+#' edit(o)
 #' labels(o)
 #' 
 #' # to get some extra context
 #' o <- enrich(o, extra = 5L, table = TRUE)
-#' label(o)
+#' edit(o)
 #' 
 #' # lineview may be better when you use a lot of extra context
 #' options(polmineR.lineview = TRUE)
 #' o <- enrich(o, extra = 20L)
-#' label(o)
+#' edit(o)
 #' 
-#' #' label(o, js = "DataTables")
+#' #' edit(o, js = "DataTables")
 #' labels(o) # to see changes made
 #' }
-setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "DataTables"), ...){
+#' @param object A \code{labels} object.
+#' @exportMethod labels
+#' @describeIn labels Get the \code{data.table} with labels from the
+#'   \code{labels} object in the \code{labels} slot of the \code{kwic} class
+#'   object.
+setMethod("labels", "kwic", function(object) object@labels@labels)
+
+
+#' @rdname labels-class
+setMethod("edit", "kwic", function(name, i, j, value, js = c("Handsontable", "DataTables"), ...){
   
   if (length(js) > 1L) js <- js[1]
   
@@ -100,17 +108,17 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
     if (!requireNamespace(package = "miniUI", quietly = TRUE))
       stop("Package 'shiny' is required, but not available.")
     
-    kwic_dt <- data.table(format(x), labels(x))
-
+    kwic_dt <- data.table(format(name), labels(name))
+    
     if (js == "DataTables"){
       
       ui <- miniUI::miniPage(
         miniUI::gadgetTitleBar(title = "KWIC Labelling Gadget"),
         miniUI::miniContentPanel(
-          DT::dataTableOutput('kwic', height = "100%")
+          shiny::fillRow(DT::dataTableOutput('kwic', height = "100%"))
         )
       )
-
+      
       server <- function(input, output, session) {
         
         v <- shiny::reactiveValues(data = kwic_dt)
@@ -124,10 +132,10 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
             k <- input$kwic_cell_edit$value
             
             shiny::isolate({
-              if (j %in% match(colnames(x@labels@labels), colnames(v$data))) {
+              if (j %in% match(colnames(name@labels@labels), colnames(v$data))) {
                 new_value <- DT::coerceValue(k, v$data[i, colnames(v$data)[j]])
                 v$data[i, colnames(v$data)[j]] <<- new_value
-                x@labels@labels[i, eval(j - ncol(x@table) + 1L) := new_value]
+                name@labels@labels[i, eval(j - ncol(name@table) + 1L) := new_value]
               } else {
                 warning("this column cannot be edited")
               }
@@ -153,8 +161,10 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
         stop("Package 'rhandsontable' is required, but not available.")
       
       ui <- miniUI::miniPage(
-        miniUI::gadgetTitleBar("Edit a data.frame"), 
-        miniUI::miniContentPanel(rhandsontable::rHandsontableOutput("hot", height = "auto"))
+        miniUI::gadgetTitleBar("kwic editing gadget"), 
+        miniUI::miniContentPanel(
+          shiny::fillRow(rhandsontable::rHandsontableOutput("hot"))
+        )
       )
       
       server <- function(input, output, session) {
@@ -163,7 +173,7 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
         
         reset_values <- function(df){
           values[["hot"]] <- df
-          for (col in colnames(labels(x))) x@labels@labels[, eval(col) := df[[col]]]
+          for (col in colnames(labels(name))) name@labels@labels[, eval(col) := df[[col]]]
         }
         
         reactiveData <- shiny::reactive(kwic_dt)
@@ -178,13 +188,23 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
           if (rhandsontable:::isErrorMessage(data)) return(NULL)
           df <- if (is.null(input$hot)) data else rhandsontable::hot_to_r(input$hot)
           reset_values(df)
-          rht <- rhandsontable::rhandsontable(df, allowedTags = "<font><div><u>", ...)
+          rht <- rhandsontable::rhandsontable(df, allowedTags = "<font><div><u>",  height = 500, ...)
+          if ("left" %in% colnames(kwic_dt)){
+            rht <- rhandsontable::hot_col(rht, col = match(c("left", "right"), colnames(kwic_dt)), colWidths = "150")
+          } else {
+            rht <- rhandsontable::hot_col(rht, col = "concordance", colWidths = "300")
+          }
+          
           rht <- rhandsontable::hot_cols(rht, manualColumnResize = TRUE)
-          rht <- rhandsontable::hot_table(rht, highlightCol = TRUE, highlightRow = TRUE, overflow = "auto", stretchH = "all")
+          rht <- rhandsontable::hot_table(rht, highlightCol = TRUE, highlightRow = TRUE, overflow = "hidden", stretchH = "all")
+          
           if ("left" %in% colnames(kwic_dt))
             rht <- rhandsontable::hot_col(rht, col = "left", renderer = htmlwidgets::JS("safeHtmlRenderer"))
-          if ("node" %in% colnames(kwic_dt))
-            rht <- rhandsontable::hot_col(rht, col = "node", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+          if ("node" %in% colnames(kwic_dt)){
+            rht <- rhandsontable::hot_col(rht, col = "node", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+            
+          }
+          
           if ("right" %in% colnames(kwic_dt))
             rht <- rhandsontable::hot_col(rht, col = "right", halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
           if ("concordance" %in% colnames(kwic_dt))
@@ -192,24 +212,17 @@ setMethod("label", "kwic", function(x, i, j, value, js = c("Handsontable", "Data
           rht
         })
         
-        shiny::observeEvent(input$done, shiny::stopApp(returnValue = x))
+        shiny::observeEvent(input$done, shiny::stopApp(returnValue = name))
       }
       
-      y <- shiny::runGadget(ui, server, viewer = shiny::browserViewer())
+      y <- shiny::runGadget(ui, server, viewer = shiny::paneViewer(minHeight = 550))
       
       return(invisible(y))
       
     }
     
   } else {
-    x@labels@labels[i, eval(j) := value]
-    return(invisible(x))
+    name@labels@labels[i, eval(j) := value]
+    return(invisible(name))
   }
 })
-
-#' @param object A \code{labels} object.
-#' @exportMethod labels
-#' @describeIn labels Get the \code{data.table} with labels from the
-#'   \code{labels} object in the \code{labels} slot of the \code{kwic} class
-#'   object.
-setMethod("labels", "kwic", function(object) object@labels@labels)

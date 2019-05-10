@@ -79,9 +79,9 @@ setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra
   if ("left_extra" %in% colnames(y)){
     if (lineview) y[, "left" := sprintf("<u>%s</u>", y[["left"]])]
     y[, "left" := sprintf("<font color='%s'>%s</font> %s", extra_color, y[["left_extra"]], y[["left"]])]
-    if (align) y[, "left" := sprintf("<div align='right'>%s</div>", y[["left"]])]
     y[, "left_extra" := NULL]
   }
+  if (align) y[, "left" := sprintf("<div align='right'>%s</div>", y[["left"]])]
   
   if (length(node_color) == 1L){
     stopifnot(is.character(node_color))
