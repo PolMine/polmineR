@@ -5,15 +5,24 @@
 \alias{labels-class}
 \alias{initialize,labels-method}
 \alias{labels,kwic-method}
+\alias{labels<-}
+\alias{labels<-,kwic,list-method}
+\alias{labels<-,textstat,list-method}
 \alias{edit,kwic-method}
 \title{Labels class and method}
 \usage{
 \S4method{initialize}{labels}(.Object, n)
 
-\S4method{labels}{kwic}(object)
+\S4method{labels}{kwic}(object, i, j, value)
 
-\S4method{edit}{kwic}(name, i, j, value, js = c("Handsontable",
-  "DataTables"), ...)
+labels(x) <- value
+
+\S4method{labels}{kwic,list}(x) <- value
+
+\S4method{labels}{textstat,list}(x) <- value
+
+\S4method{edit}{kwic}(name, viewer = shiny::paneViewer(minHeight = 550),
+  ...)
 }
 \arguments{
 \item{.Object}{A \code{labels} object.}
@@ -21,9 +30,6 @@
 \item{n}{The integer index of a label to retrieve or modify.}
 
 \item{object}{A \code{labels} object.}
-
-\item{name}{An S4 object with a slot \code{labels} (e.g. an object of class
-\code{kwic}).}
 
 \item{i}{The row number (single \code{integer} value) of the
 \code{data.table} of the \code{labels} object where a new value shall be
@@ -35,8 +41,12 @@ assigned.}
 
 \item{value}{A value to assign.}
 
-\item{js}{The javascript library to use to display tables (either "DataTables"
-or "Handsontable").}
+\item{x}{An object to be labelled.}
+
+\item{name}{An S4 object with a slot \code{labels} (e.g. an object of class
+\code{kwic}).}
+
+\item{viewer}{The viewer to use, see \code{\link[shiny]{viewer}}.}
 
 \item{...}{Passed into \code{rhandsontable::rhandsontable}, can be used for
 settings such as \code{height} etc.}
@@ -53,18 +63,10 @@ The \code{labels} class and the \code{label}-method supports generating and
 working with labelled data. They rely on data in a slot \code{labels} of the
 S4 object to be modified. Operations are deliberately in-place.
 
-The \code{label}-method is designed to be used in a RStudio session. Calling
+The \code{edit}-method is designed to be used in a RStudio session. Calling
 it generates a shiny gadget (see
 \url{https://shiny.rstudio.com/articles/gadgets.html}) shown in the viewer
-pane of RStudio. The htmlwidget embedded in the gadget can be either based on
-the JavaScript library DataTables (default, exposed by R package \code{DT}),
-or Handsontable (exposed by R package \code{rhandsontable}). The JavaScript
-library to be used is specified with the argument \code{js}.
-
-The pinpoint is that you can modify labels. When using DataTables,
-doubleclick on the field you with to change, modify the value, and finish
-data entry by hitting enter or clicking somewhere else. When using
-Handsontable, simply click on the field you wish to change.
+pane of RStudio.
 
 The method returns the modified input object. Note however that changes of
 labels are deliberately in-place operations. Accordingly, the input object is
@@ -96,13 +98,14 @@ labels(o) # see the result (a data.table)
 # assign new columns as follows, using the reference semantics of the
 # data.table you get by calling the labels-method on an object 
 labels(o)[, "class" := factor(levels = c("a", "b", "c"))]
-labels(o)[, "description" := ""]
+labels(o) <- list(name = "class", what = factor(x = "a", levels = c("a", "b", "c")))
+labels(o) <- list(name = "description", what = "")
 labels(o) # see the result
 
 # the label-method can be used to assign values; note that is an in-place
 # operation using the reference semantics of the data.table
-edit(o, i = 77, j = 1, value = FALSE)
-edit(o, i = 78, j = 1, value = FALSE)
+labels(o, i = 77, j = 1, value = FALSE)
+labels(o, i = 78, j = 1, value = FALSE)
 labels(o)
 
 \dontrun{
