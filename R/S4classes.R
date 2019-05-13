@@ -2,17 +2,13 @@
 NULL
 
 
-#' Labels class and method
-#' 
-#' The \code{labels}-class in combination with the \code{label()} generic method
-#' offers the tools to implement a workflow to categorize/annotate
-#' results by assigning labels.
-#' 
+#' @rdname annotations
 #' @slot labels A \code{data.table} that keeps the assigned labels.
 setClass("labels", slots = c(labels = "data.table"))
 
 #' @param .Object A \code{labels} object.
-#' @describeIn labels When initializing a \code{labels} class object, an
+#' @rdname annotations
+#' @details When initializing a \code{labels} class object, an
 #'   empty \code{data.table} is assigned.
 setMethod("initialize", "labels", function(.Object, n){
   .Object@labels = data.table()
@@ -120,6 +116,8 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' @slot corpus A corpus specified by a length-one \code{character} vector. 
 #' @slot stat A \code{data.table} with statistical information.
 #' @slot name The name of the object.
+#' @slot annotation_cols A \code{character} vector, column names of
+#'   \code{data.table} in slot \code{stat} that are annotations.
 #' @slot encoding A length-one \code{character} vector, the encoding of the corpus.
 #' @param .Object A \code{textstat} object.
 #' @param x A \code{textstat} object.
@@ -176,6 +174,7 @@ setClass("textstat",
            p_attribute = "character",
            encoding = "character",
            stat = "data.table",
+           annotation_cols = "character",
            name = "character"
          )
 )

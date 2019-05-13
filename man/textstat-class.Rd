@@ -149,6 +149,9 @@ The \code{format()}-method returns a pretty-printed and minimized
 
 \item{\code{name}}{The name of the object.}
 
+\item{\code{annotation_cols}}{A \code{character} vector, column names of
+\code{data.table} in slot \code{stat} that are annotations.}
+
 \item{\code{encoding}}{A length-one \code{character} vector, the encoding of the corpus.}
 }}
 
