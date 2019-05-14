@@ -34,6 +34,7 @@ polmineR 0.7.11.9001
 * The version of the data.table package now required is 1.12.2, because previous versions did not allow adding columns to a new data.table.
 * The `enrich()`-method for objects of class `kwic` now includes a new argument `extra` that will add extra tokens to the left of the windows for concordances so that qualitative inspections for query hits can work with more context.
 * The `label()`-method has been renamed as `edit()`-method now.
+* Indexing the concordances of a `kwic` object did not reduce the `cpos` table concurringly, corrected.
 
 
 polmineR 0.7.11

@@ -127,11 +127,13 @@ edit(o)
 
 # lineview may be better when you use a lot of extra context
 options(polmineR.lineview = TRUE)
+o <- kwic("REUTERS", "oil")
 o <- enrich(o, extra = 20L)
 edit(o)
 
 x <- cooccurrences("REUTERS", query = "oil")
 annotations(x) <- list(name = "keep", what = TRUE)
 annotations(x) <- list(name = "category", what = factor("a", levels = letters[1:10]))
+edit(x)
 }
 }

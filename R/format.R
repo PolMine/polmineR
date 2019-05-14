@@ -74,7 +74,7 @@ setMethod("format", "features", function(x, digits = 2L){
 #'   
 setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra_color = "grey", lineview = getOption("polmineR.lineview")){
   if (lineview) align <- FALSE
-  y <- as.data.table(x@table)[, "hit_no" := NULL]
+  y <- x@table[, "hit_no" := NULL]
   
   if ("left_extra" %in% colnames(y)){
     if (lineview) y[, "left" := sprintf("<u>%s</u>", y[["left"]])]

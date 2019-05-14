@@ -528,7 +528,7 @@ setClass("cooccurrences", contains = "context")
 
 
 
-#' kwic (S4 class)
+#' S4 kwic class
 #' 
 #' S4 class for organizing information for kwic/concordance output. A set of
 #' standard generics (\code{show}, \code{as.character}, \code{as.data.frame},
@@ -542,9 +542,12 @@ setClass("cooccurrences", contains = "context")
 #' @slot left An \code{integer} value, words to the left of the query match. 
 #' @slot right An \code{integer} value, words to the right of the query match.
 #' @slot corpus Length-one \code{character} vector, the CWB corpus.
-#' @slot cpos A \code{data.table} with the columns "hit_no", "cpos", "position", "word_id", "word" and "direction".
-#' @slot table A \code{data.frame}, a table with columns "left", "node", "right", and metadata, if the object has been enriched.
-#' @slot encoding A length-one \code{character} vector with the encoding of the corpus.
+#' @slot cpos A \code{data.table} with the columns "hit_no", "cpos", "position",
+#'   "word_id", "word" and "direction".
+#' @slot table A \code{data.table}, a table with columns "left", "node",
+#'   "right", and metadata, if the object has been enriched.
+#' @slot encoding A length-one \code{character} vector with the encoding of the
+#'   corpus.
 #' @slot labels A \code{character} vector with labels.
 #' @slot categories A \code{character} vector.
 #' 
@@ -584,7 +587,7 @@ setClass(
     metadata = "character",
     left = "integer",
     right = "integer",
-    table = "data.frame",
+    table = "data.table",
     encoding = "character",
     labels = "labels",
     categories = "character"

@@ -17,7 +17,7 @@
 \alias{enrich,kwic-method}
 \alias{format,kwic-method}
 \alias{view,kwic-method}
-\title{kwic (S4 class)}
+\title{S4 kwic class}
 \usage{
 \S4method{get_corpus}{kwic}(x)
 
@@ -60,7 +60,8 @@ per page in the \code{datatables} htmlwidget that is returned when
 
 \item{...}{Used for backwards compatibility.}
 
-\item{fmt}{A format string passed into \code{sprintf} to format the node of a KWIC display.}
+\item{fmt}{A format string passed into \code{sprintf} to format the node of a
+KWIC display.}
 
 \item{i}{Single integer value, the kwic line for which the fulltext shall be
 inspected.}
@@ -105,8 +106,14 @@ The \code{knit_print} will be called by knitr when processing code
   resulting html document. It may be necessary to explicitly state
   "render=knit_print" in the chunk options.
 
+The \code{as.character}-method will return a list of
+  \code{character} vectors, concatenating the columns "left", "node" and
+  "right" of the \code{data.table} in the \code{table}-slot of the input
+  \code{kwic}-class object. Optionally, the node can be formatted using a
+  format string that is passed into \code{sprintf}.
+
 The \code{subset}-method will apply \code{subset} to the table in
-  the slot \code{table}, for filtering query results based on metadata (i.e.
+  the slot \code{table}, e.g. for filtering query results based on metadata (i.e.
   s-attributes) that need to be present.
 
 The \code{enrich} method is used to generate the actual output for
@@ -136,11 +143,14 @@ that are to be displayed.}
 
 \item{\code{corpus}}{Length-one \code{character} vector, the CWB corpus.}
 
-\item{\code{cpos}}{A \code{data.table} with the columns "hit_no", "cpos", "position", "word_id", "word" and "direction".}
+\item{\code{cpos}}{A \code{data.table} with the columns "hit_no", "cpos", "position",
+"word_id", "word" and "direction".}
 
-\item{\code{table}}{A \code{data.frame}, a table with columns "left", "node", "right", and metadata, if the object has been enriched.}
+\item{\code{table}}{A \code{data.table}, a table with columns "left", "node",
+"right", and metadata, if the object has been enriched.}
 
-\item{\code{encoding}}{A length-one \code{character} vector with the encoding of the corpus.}
+\item{\code{encoding}}{A length-one \code{character} vector with the encoding of the
+corpus.}
 
 \item{\code{labels}}{A \code{character} vector with labels.}
 
@@ -154,8 +164,30 @@ get_corpus(K)
 length(K)
 K_min <- K[1]
 K_min <- K[1:5]
+# extract node and left and right context as character vectors
 oil <- kwic("REUTERS", query = "oil")
-as.character(oil)
+as.character(oil, fmt = NULL)
+as.character(oil) # node wrapped into <i> tag by default
+as.character(oil, fmt = "<b>\%s</b>")
+# subsetting kwic objects
+oil <- corpus("REUTERS") \%>\%
+  kwic(query = "oil") \%>\%
+  subset(grepl("prices", right))
+saudi_arabia <- corpus("REUTERS") \%>\%
+  kwic(query = "Arabia") \%>\%
+  subset(grepl("Saudi", left))
+int_spd <- corpus("GERMAPARLMINI") \%>\%
+  kwic(query = "Integration") \%>\%
+  enrich(s_attribute = "party") \%>\%
+  subset(grepl("SPD", party))
+int <- corpus("GERMAPARLMINI") \%>\%
+  kwic(query = "Integration") \%>\%
+  enrich(s_attributes = c("date", "speaker", "party")) \%>\%
+  as.data.frame()
+# enrich kwic object
+i <- corpus("GERMAPARLMINI") \%>\%
+  kwic(query = "Integration") \%>\%
+  enrich(s_attributes = c("date", "speaker", "party"))
 }
 \seealso{
 The constructor for generating kwic objects is the

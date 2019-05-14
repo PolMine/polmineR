@@ -54,3 +54,55 @@ test_that(
   }
 )
 
+test_that(
+  "as.character-method for kwic objects",
+  {
+    oil <- corpus("REUTERS") %>% kwic(query = "oil")
+    str <- as.character(oil, fmt = NULL)
+    expect_equal(length(str), 78L)
+    expect_equal(str[1], "its contract prices for crude oil by 1.50 dlrs a barrel")
+    expect_equal(
+      as.character(oil)[1],
+      "its contract prices for crude <i>oil</i> by 1.50 dlrs a barrel"
+    )
+    expect_equal(
+      as.character(corpus("REUTERS") %>% kwic(query = "oil"), fmt = "<b>%s</b>")[1],
+      "its contract prices for crude <b>oil</b> by 1.50 dlrs a barrel"
+    )
+  }
+)
+
+test_that(
+  "indexing kwic objects",
+  {
+    k <- corpus("REUTERS") %>% kwic(query = "oil")
+    k2 <- k[1:5]
+    expect_identical(unique(k2@cpos[["hit_no"]]), k2@table[["hit_no"]])
+  }
+)
+
+test_that(
+  "subsetting kwic objects",
+  {
+    oil <- corpus("REUTERS") %>% kwic(query = "oil") %>% subset(grepl("prices", right))
+    expect_identical(unique(oil@cpos[["hit_no"]]), oil@table[["hit_no"]])
+    
+    int_spd <- corpus("GERMAPARLMINI") %>%
+      kwic(query = "Integration") %>%
+      enrich(s_attribute = "party") %>%
+      subset(grepl("SPD", party))
+    expect_identical(unique(int_spd@table[["party"]]), "SPD")
+  }
+)
+
+test_that(
+  "as.data.frame for kwic-method",
+  {
+    int <- corpus("GERMAPARLMINI") %>%
+      kwic(query = "Integration") %>%
+      enrich(s_attributes = c("date", "speaker", "party")) %>%
+      as.data.frame()
+    expect_equal(int[[1]][1], "2009-10-27<br/>Heinz Riesenhuber<br/>NA")
+    
+  }
+)

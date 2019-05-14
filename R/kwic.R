@@ -49,43 +49,76 @@ setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pag
 #' @rdname kwic-class
 #' @docType method
 #' @exportMethod as.character
-#' @param fmt A format string passed into \code{sprintf} to format the node of a KWIC display.
+#' @param fmt A format string passed into \code{sprintf} to format the node of a
+#'   KWIC display.
+#' @details The \code{as.character}-method will return a list of
+#'   \code{character} vectors, concatenating the columns "left", "node" and
+#'   "right" of the \code{data.table} in the \code{table}-slot of the input
+#'   \code{kwic}-class object. Optionally, the node can be formatted using a
+#'   format string that is passed into \code{sprintf}.
 #' @examples 
+#' # extract node and left and right context as character vectors
 #' oil <- kwic("REUTERS", query = "oil")
-#' as.character(oil)
+#' as.character(oil, fmt = NULL)
+#' as.character(oil) # node wrapped into <i> tag by default
+#' as.character(oil, fmt = "<b>%s</b>")
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
-  if (!is.null(fmt)) x@table[["node"]] <- sprintf(fmt, x@table[["node"]])
-  apply(
-    x@table, 1L,
-    function(row) paste(row["left"], row["node"], row["right"], sep = " ")
-  )
+  if (!is.null(fmt)) x@table[, "node" := sprintf(fmt, x@table[["node"]])]
+  apply(x@table, 1L, function(r) paste(r["left"], r["node"], r["right"], sep = " "))
 })
 
 #' @docType methods
 #' @rdname kwic-class
-setMethod('[', 'kwic',
-          function(x,i) {
-            x@table <- x@table[i,]
-            x
-          }        
-)
+setMethod("[", "kwic", function(x, i){
+  ids <- x@table[["hit_no"]][i]
+  x@table <- x@table[which(x@table[["hit_no"]] %in% ids)]
+  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@table[["hit_no"]]]
+  x
+})
 
 #' @details The \code{subset}-method will apply \code{subset} to the table in
-#'   the slot \code{table}, for filtering query results based on metadata (i.e.
+#'   the slot \code{table}, e.g. for filtering query results based on metadata (i.e.
 #'   s-attributes) that need to be present.
 #' @rdname kwic-class
-setMethod("subset", "kwic", function(x, ...) {x@table <- subset(x@table, ...); x})
+#' @examples 
+#' # subsetting kwic objects
+#' oil <- corpus("REUTERS") %>%
+#'   kwic(query = "oil") %>%
+#'   subset(grepl("prices", right))
+#' saudi_arabia <- corpus("REUTERS") %>%
+#'   kwic(query = "Arabia") %>%
+#'   subset(grepl("Saudi", left))
+#' int_spd <- corpus("GERMAPARLMINI") %>%
+#'   kwic(query = "Integration") %>%
+#'   enrich(s_attribute = "party") %>%
+#'   subset(grepl("SPD", party))
+setMethod("subset", "kwic", function(x, ...) {
+  x@table <- subset(x@table, ...)
+  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@table[["hit_no"]]]
+  x
+})
 
 #' @rdname kwic-class
+#' @examples
+#' int <- corpus("GERMAPARLMINI") %>%
+#'   kwic(query = "Integration") %>%
+#'   enrich(s_attributes = c("date", "speaker", "party")) %>%
+#'   as.data.frame()
 setMethod("as.data.frame", "kwic", function(x){
-  metaColumnsNo <- length(colnames(x@table)) - 3L
-  metadata <- apply(x@table, 1, function(row) paste(row[1L:metaColumnsNo], collapse="<br/>"))
-  data.frame(
-    meta = metadata,
-    left = x@table$left,
-    node = x@table$node,
-    right = x@table$right
-  )
+  if (all(c("left", "node", "right") %in% colnames(x@table))){
+    meta_columns <- 1L:(grep("left", colnames(x@table)) - 2L)
+    metadata <- apply(x@table, 1, function(row) paste(row[meta_columns], collapse = "<br/>"))
+    df <- data.frame(
+      meta = metadata,
+      left = x@table[["left"]],
+      node = x@table[["node"]],
+      right = x@table[["right"]],
+      stringsAsFactors = FALSE
+    )
+  } else {
+    stop("as.data.frame,kwic-method not yet implemented for lineview")
+  }
+  df
 })
 
 
@@ -103,7 +136,6 @@ setMethod("sample", "kwic", function(x, size){
   x <- enrich(x, table = TRUE)
   x <- enrich(x, s_attributes = x@metadata)
   x
-  
 })
 
 
@@ -219,7 +251,8 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
     labels = new("labels", n = .Object@count),
-    cpos = if (cpos) DT else data.table()
+    cpos = if (cpos) DT else data.table(),
+    table = data.table()
   )
   
   conc <- enrich(conc, table = TRUE, p_attribute = .Object@p_attribute)
