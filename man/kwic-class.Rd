@@ -14,6 +14,7 @@
 \alias{as.data.frame,kwic-method}
 \alias{length,kwic-method}
 \alias{sample,kwic-method}
+\alias{merge,kwic_bundle-method}
 \alias{enrich,kwic-method}
 \alias{format,kwic-method}
 \alias{view,kwic-method}
@@ -38,6 +39,8 @@
 \S4method{length}{kwic}(x)
 
 \S4method{sample}{kwic}(x, size)
+
+\S4method{merge}{kwic_bundle}(x)
 
 \S4method{enrich}{kwic}(.Object, s_attributes = NULL, extra = NULL,
   table = FALSE, ...)
@@ -152,9 +155,10 @@ that are to be displayed.}
 \item{\code{encoding}}{A length-one \code{character} vector with the encoding of the
 corpus.}
 
-\item{\code{labels}}{A \code{character} vector with labels.}
+\item{\code{name}}{A length-one \code{character} vector naming the object.}
 
-\item{\code{categories}}{A \code{character} vector.}
+\item{\code{annotation_cols}}{A \code{character} vector designating the columns of
+the \code{data.table} in the slot \code{table} that are annotations.}
 }}
 
 \examples{
@@ -164,11 +168,18 @@ get_corpus(K)
 length(K)
 K_min <- K[1]
 K_min <- K[1:5]
+
+# using kwic_bundle class
+queries <- c("oil", "prices", "barrel")
+li <- lapply(queries, function(q) kwic("REUTERS", query = q))
+kb <- as.bundle(li)
+
 # extract node and left and right context as character vectors
 oil <- kwic("REUTERS", query = "oil")
 as.character(oil, fmt = NULL)
 as.character(oil) # node wrapped into <i> tag by default
 as.character(oil, fmt = "<b>\%s</b>")
+
 # subsetting kwic objects
 oil <- corpus("REUTERS") \%>\%
   kwic(query = "oil") \%>\%
@@ -180,10 +191,20 @@ int_spd <- corpus("GERMAPARLMINI") \%>\%
   kwic(query = "Integration") \%>\%
   enrich(s_attribute = "party") \%>\%
   subset(grepl("SPD", party))
+
+# turn kwic object into data.frame with html tags
 int <- corpus("GERMAPARLMINI") \%>\%
   kwic(query = "Integration") \%>\%
   enrich(s_attributes = c("date", "speaker", "party")) \%>\%
   as.data.frame()
+  
+# merge bundle of kwic objects into one kwic
+reuters <- corpus("REUTERS")
+queries <- c('"Saudi" "Arabia"', "oil", '"barrel.*"')
+comb <- lapply(queries, function(qu) kwic(reuters, query = qu)) \%>\%
+  as.bundle() \%>\%
+  merge()
+ 
 # enrich kwic object
 i <- corpus("GERMAPARLMINI") \%>\%
   kwic(query = "Integration") \%>\%

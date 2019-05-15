@@ -62,6 +62,7 @@ setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pag
 #' as.character(oil, fmt = NULL)
 #' as.character(oil) # node wrapped into <i> tag by default
 #' as.character(oil, fmt = "<b>%s</b>")
+#' 
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
   if (!is.null(fmt)) x@table[, "node" := sprintf(fmt, x@table[["node"]])]
   apply(x@table, 1L, function(r) paste(r["left"], r["node"], r["right"], sep = " "))
@@ -92,6 +93,7 @@ setMethod("[", "kwic", function(x, i){
 #'   kwic(query = "Integration") %>%
 #'   enrich(s_attribute = "party") %>%
 #'   subset(grepl("SPD", party))
+#'
 setMethod("subset", "kwic", function(x, ...) {
   x@table <- subset(x@table, ...)
   x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@table[["hit_no"]]]
@@ -100,10 +102,12 @@ setMethod("subset", "kwic", function(x, ...) {
 
 #' @rdname kwic-class
 #' @examples
+#' # turn kwic object into data.frame with html tags
 #' int <- corpus("GERMAPARLMINI") %>%
 #'   kwic(query = "Integration") %>%
 #'   enrich(s_attributes = c("date", "speaker", "party")) %>%
 #'   as.data.frame()
+#'   
 setMethod("as.data.frame", "kwic", function(x){
   if (all(c("left", "node", "right") %in% colnames(x@table))){
     meta_columns <- 1L:(grep("left", colnames(x@table)) - 2L)
@@ -250,7 +254,6 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
-    labels = new("labels", n = .Object@count),
     cpos = if (cpos) DT else data.table(),
     table = data.table()
   )
@@ -458,4 +461,44 @@ setMethod("kwic", "remote_partition", function(.Object, ...){
   ocpu_exec(fn = "kwic", server = .Object@server, .Object = as(.Object, "partition"), ...)
 })
 
+#' @rdname kwic-class
+#' @examples
+#' # merge bundle of kwic objects into one kwic
+#' reuters <- corpus("REUTERS")
+#' queries <- c('"Saudi" "Arabia"', "oil", '"barrel.*"')
+#' comb <- lapply(queries, function(qu) kwic(reuters, query = qu)) %>%
+#'   as.bundle() %>%
+#'   merge()
+#'  
+setMethod("merge", "kwic_bundle", function(x){
+  
+  table_list <- lapply(x@objects, function(obj) copy(obj@table))
+  cpos_list <- lapply(x@objects, function(obj) copy(obj@cpos))
+  
+  starting <- cumsum(sapply(table_list, function(tab) max(tab[["hit_no"]])))
+  starting <- c(0L, starting[-length(table_list)])
+  
+  lapply(
+    seq_along(table_list),
+    function(i) table_list[[i]][, "hit_no" := table_list[[i]][["hit_no"]] + starting[i]]
+  )
+  lapply(
+    seq_along(cpos_list),
+    function(i) cpos_list[[i]][, "hit_no" := cpos_list[[i]][["hit_no"]] + starting[i]]
+  )
 
+  new(
+    "kwic",
+    corpus = x@corpus,
+    encoding = x@encoding,
+    cpos = rbindlist(cpos_list),
+    table = rbindlist(table_list),
+    p_attribute = unique(sapply(x@objects, function(obj) obj@p_attribute)),
+    metadata = character(),
+    left = unique(sapply(x@objects, function(obj) obj@left)),
+    right = unique(sapply(x@objects, function(obj) obj@right)),
+
+    name = character(),
+    annotation_cols = character()
+  )
+})

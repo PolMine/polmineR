@@ -2,22 +2,6 @@
 NULL
 
 
-#' @rdname annotations
-#' @slot labels A \code{data.table} that keeps the assigned labels.
-setClass("labels", slots = c(labels = "data.table"))
-
-#' @param .Object A \code{labels} object.
-#' @rdname annotations
-#' @details When initializing a \code{labels} class object, an
-#'   empty \code{data.table} is assigned.
-setMethod("initialize", "labels", function(.Object, n){
-  .Object@labels = data.table()
-  .Object@labels[, "keep" := rep(TRUE, times = n)]
-  .Object
-})
-
-
-
 #' Bundle Class
 #' 
 #' A \code{bundle} is used to combine several objects (\code{partition}, \code{context},
@@ -224,18 +208,14 @@ setReplaceMethod("name", signature = "textstat", function(x, value) {
 #' @exportClass features
 #' @author Andreas Blaette
 setClass("features",
-         representation(
-           corpus = "character",
-           p_attribute = "character",
-           encoding = "character",
-           stat = "data.table",
+         slots = c(
            size_coi = "integer",
            size_ref = "integer",
            method = "character",
            included = "logical",
            call = "character"
          ),
-         contains = "textstat"
+         contains = "textstat" # inherited slots: corpus, p_attribute, encoding, stat
 )
 
 
@@ -548,8 +528,9 @@ setClass("cooccurrences", contains = "context")
 #'   "right", and metadata, if the object has been enriched.
 #' @slot encoding A length-one \code{character} vector with the encoding of the
 #'   corpus.
-#' @slot labels A \code{character} vector with labels.
-#' @slot categories A \code{character} vector.
+#' @slot name A length-one \code{character} vector naming the object.
+#' @slot annotation_cols A \code{character} vector designating the columns of
+#'   the \code{data.table} in the slot \code{table} that are annotations.
 #' 
 #' @param x A \code{kwic} class object.
 #' @param object A \code{kwic} class object.
@@ -577,6 +558,12 @@ setClass("cooccurrences", contains = "context")
 #' length(K)
 #' K_min <- K[1]
 #' K_min <- K[1:5]
+#' 
+#' # using kwic_bundle class
+#' queries <- c("oil", "prices", "barrel")
+#' li <- lapply(queries, function(q) kwic("REUTERS", query = q))
+#' kb <- as.bundle(li)
+#' 
 #' @rdname kwic-class
 setClass(
   "kwic",
@@ -589,11 +576,14 @@ setClass(
     right = "integer",
     table = "data.table",
     encoding = "character",
-    labels = "labels",
-    categories = "character"
+    name = "character",
+    annotation_cols = "character"
   )
 )
 
+
+#' @rdname features-class
+setClass("kwic_bundle", contains = "bundle")
 
 
 

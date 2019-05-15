@@ -74,7 +74,7 @@ setMethod("format", "features", function(x, digits = 2L){
 #'   
 setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra_color = "grey", lineview = getOption("polmineR.lineview")){
   if (lineview) align <- FALSE
-  y <- x@table[, "hit_no" := NULL]
+  y <- copy(x@table)[, "hit_no" := NULL]
   
   if ("left_extra" %in% colnames(y)){
     if (lineview) y[, "left" := sprintf("<u>%s</u>", y[["left"]])]
@@ -99,6 +99,7 @@ setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra
   if (lineview){
     y[, "concordance" := apply(y, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))]
     for (x in c("left", "node", "right")) y[, (x) := NULL]
+    setcolorder(y, neworder = c(x@metadata, "concordance", x@annotation_cols))
   }
   
   y

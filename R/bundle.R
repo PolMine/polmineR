@@ -134,6 +134,8 @@ setAs(from = "list", to = "bundle", def = function(from){
     new_object_class <- "subcorpus_bundle"
   } else if (grepl("[pP]artition", unique_class)){
     new_object_class <- "partition_bundle"
+  } else if (unique_class == "kwic"){
+    new_object_class <- "kwic_bundle"
   } else {
     new_object_class <- "bundle"
   }

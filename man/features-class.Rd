@@ -3,6 +3,7 @@
 \docType{class}
 \name{features-class}
 \alias{features-class}
+\alias{kwic_bundle-class}
 \alias{features_cooccurrences-class}
 \alias{features_ngrams-class}
 \alias{features_bundle-class}

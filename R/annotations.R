@@ -3,10 +3,12 @@ NULL
 
 #' Annotation functionality
 #' 
-#' Objects that contain analytical results can be annotated by creating an
-#' annotation layer using the \code{annotations}-method, and editing the
-#' enhanced object by invoking the \code{edit}-method on it. Operations are
-#' deliberately in-place, to prevent an unwanted loss of work.
+#' Objects that contain analytical results (\code{kwic} objects, objects
+#' inheriting from the \code{textstat} class) can be annotated by creating an
+#' annotation layer using the \code{annotations}-method. The augmented object
+#' can be annotated using a shiny gadget by invoking the \code{edit}-method on
+#' it. Note that operations are deliberately in-place, to prevent an unwanted
+#' loss of work.
 #'
 #' The \code{edit}-method is designed to be used in a RStudio session. It
 #' generates a shiny gadget (see
@@ -14,26 +16,23 @@ NULL
 #' pane of RStudio.
 #'
 #' The \code{edit}-method returns the modified input object. Note however that
-#' changes of labels are deliberately in-place operations. Accordingly, the
-#' input object is changed even if you do not close the gadget "properly" by
-#' hitting the "Done" button and catch the modified object. That may be
-#' forgotten easily and would be painful after the work that may have been
-#' invested.
+#' changes of annotations are deliberately in-place operations: The input object
+#' is changed even if you do not close the gadget "properly" by hitting the
+#' "Done" button and catch the modified object. That may be forgotten easily and
+#' would be painful after the work that may have been invested.
 #' 
 #' Consult the examples for the intended workflow.
 #' 
-#' @param x An object to be labelled.
-#' @param name An S4 object to be labelled.
-#' @param n The integer index of a label to retrieve or modify.
+#' @param x An object to be annotated, a \code{kwic} class object, or an object
+#'   inheriting from the \code{textstat} class.
+#' @param name An S4 object to be annotated.
 #' @param value A value to assign.
 #' @param viewer The viewer to use, see \code{\link[shiny]{viewer}}.
 #' @return The modified input object is returned invisibly.
 #' @param i The row number (single \code{integer} value) of the
-#'   \code{data.table} of the \code{labels} object where a new value shall be
-#'   assigned.
+#'   \code{data.table} where a new value shall be assigned.
 #' @param j The column number (single \code{integer} value) of the
-#'   \code{data.table} of the \code{labels} object where a new value shall be
-#'   assigned.
+#'   \code{data.table} where a new value shall be assigned.
 #' @param ... Passed into \code{rhandsontable::rhandsontable}, can be used for
 #'   settings such as \code{height} etc.
 #' @importFrom utils menu
@@ -95,9 +94,9 @@ setGeneric("annotations", function(x, ...) standardGeneric("annotations"))
 #' @rdname annotations
 setMethod("annotations", "kwic", function(x, i, j, value){
   if (missing(i)){
-    return( x@labels@labels )
+    return( x@table[, x@annotation_cols, with = FALSE] )
   } else {
-    x@labels@labels[i, eval(j) := value]
+    x@table[i, eval(j) := value]
     return( invisible(x) )
   }
 })
@@ -106,7 +105,7 @@ setMethod("annotations", "kwic", function(x, i, j, value){
 #' @rdname annotations
 setMethod("annotations", "textstat", function(x, i, j, value){
   if (missing(i)){
-    return( x@stat[, eval(x@annotation_cols), with = FALSE] )
+    return( x@stat[, x@annotation_cols, with = FALSE] )
   } else {
     x@stat[i, eval(j) := value]
     return( invisible(x) )
@@ -122,7 +121,8 @@ setGeneric("annotations<-", function(x, value) standardGeneric("annotations<-"))
 #' @rdname annotations
 #' @exportMethod annotations<-
 setReplaceMethod("annotations", signature = c(x = "kwic", value = "list"), function(x, value){
-  annotations(x)[, (value[["name"]]) := value[["what"]]]
+  x@table[, (value[["name"]]) := value[["what"]]]
+  x@annotation_cols <- c(x@annotation_cols, value[["name"]])
   x
 })
 
@@ -158,7 +158,7 @@ setMethod("edit", "kwic", function(name, viewer = shiny::paneViewer(minHeight = 
   
   .check_editing_gadget_dependencies()
 
-  kwic_dt <- data.table(format(name), annotations(name))
+  kwic_dt <- format(name)
 
   server <- function(input, output, session) {
     
@@ -167,7 +167,7 @@ setMethod("edit", "kwic", function(name, viewer = shiny::paneViewer(minHeight = 
     
     .reset_values <- function(df){
       values[["hot"]] <- df
-      for (col in colnames(annotations(name))) name@labels@labels[, eval(col) := df[[col]]]
+      for (col in name@annotation_cols) name@table[, eval(col) := df[[col]]]
     }
     
     output$hot <- rhandsontable::renderRHandsontable({
