@@ -437,6 +437,21 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
 
 #' @rdname kwic-class
 #' @exportMethod count
+#' @details Applying the \code{count}-method on a \code{kwic} object will return
+#'   a \code{count} object with the evaluation of the left and right context of
+#'   the match.
+#' @examples
+#' # use count-method on kwic object
+#' coi <- kwic("REUTERS", query = "oil") %>%
+#'   count(p_attribute = "word")
+#' 
+#' # features vs cooccurrences-method (identical results)
+#' ref <- count("REUTERS", p_attribute = "word") %>%
+#'   subset(word != "oil")
+#' slot(ref, "size") <- slot(ref, "size") - count("REUTERS", "oil")[["count"]]
+#' y_features <- features(coi, ref, method = "ll", included = TRUE)
+#' y_cooc <- cooccurrences("REUTERS", query = "oil")
+#' 
 setMethod("count", "kwic", function(.Object, p_attribute = "word"){
   cnt <- .Object@cpos[.Object@cpos[["direction"]] != 0][, .N, by = p_attribute]
   setnames(cnt, old = "N", new = "count")
@@ -445,6 +460,7 @@ setMethod("count", "kwic", function(.Object, p_attribute = "word"){
     stat = cnt,
     corpus = .Object@corpus,
     encoding = .Object@encoding,
+    p_attribute = p_attribute,
     name = .Object@name,
     size = sum(cnt[["count"]])
   )

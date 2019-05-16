@@ -122,6 +122,10 @@ kwic class objects (see 'Usage'). See section 'Details' for the
 \code{enrich}, \code{view} and \code{knit_print} methods.
 }
 \details{
+Applying the \code{count}-method on a \code{kwic} object will return
+  a \code{count} object with the evaluation of the left and right context of
+  the match.
+
 The \code{knit_print} will be called by knitr when processing code
   chunks in Rmarkdown documents to include a \code{htmlwidget} into the
   resulting html document. It may be necessary to explicitly state
@@ -191,6 +195,17 @@ K_min <- K[1:5]
 queries <- c("oil", "prices", "barrel")
 li <- lapply(queries, function(q) kwic("REUTERS", query = q))
 kb <- as.bundle(li)
+
+# use count-method on kwic object
+coi <- kwic("REUTERS", query = "oil") \%>\%
+  count(p_attribute = "word")
+
+# features vs cooccurrences-method (identical results)
+ref <- count("REUTERS", p_attribute = "word") \%>\%
+  subset(word != "oil")
+slot(ref, "size") <- slot(ref, "size") - count("REUTERS", "oil")[["count"]]
+y_features <- features(coi, ref, method = "ll", included = TRUE)
+y_cooc <- cooccurrences("REUTERS", query = "oil")
 
 # extract node and left and right context as character vectors
 oil <- kwic("REUTERS", query = "oil")
