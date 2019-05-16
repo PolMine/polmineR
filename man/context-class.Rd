@@ -73,7 +73,7 @@ Class to organize information of context analysis.
 }
 \details{
 Objects of the class \code{context} include a \code{data.table} in the
-slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
+slot \code{cpos}. The \code{data.table} will at least include the columns "match_id",
 "cpos" and "position".
 
 The \code{length}-method will return the number of hits that were achieved.
@@ -121,7 +121,7 @@ context.}
 
 \item{\code{encoding}}{Object of class \code{character}, encoding of the corpus.}
 
-\item{\code{cpos}}{A \code{data.table}, with the columns hit_no, cpos, position, word_id.}
+\item{\code{cpos}}{A \code{data.table}, with the columns match_id, cpos, position, word_id.}
 
 \item{\code{method}}{A \code{character}-vector, statistical test used.}
 

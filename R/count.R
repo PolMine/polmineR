@@ -426,7 +426,7 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
   ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
   count <- tabulate(ids)
   TF <- data.table(
-    id = 0:length(count),
+    id = 0L:length(count),
     count = c(length(which(ids == 0)), count)
   )
   setkeyv(TF, cols = "id")
@@ -434,6 +434,21 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
   TF[count > 0]
 })
 
+
+#' @rdname kwic-class
+#' @exportMethod count
+setMethod("count", "kwic", function(.Object, p_attribute = "word"){
+  cnt <- .Object@cpos[.Object@cpos[["direction"]] != 0][, .N, by = p_attribute]
+  setnames(cnt, old = "N", new = "count")
+  new(
+    "count",
+    stat = cnt,
+    corpus = .Object@corpus,
+    encoding = .Object@encoding,
+    name = .Object@name,
+    size = sum(cnt[["count"]])
+  )
+})
 
 #' @exportMethod hist
 #' @rdname count_class
