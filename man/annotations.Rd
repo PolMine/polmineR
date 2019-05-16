@@ -8,7 +8,6 @@
 \alias{annotations<-}
 \alias{annotations<-,kwic,list-method}
 \alias{annotations<-,textstat,list-method}
-\alias{edit,kwic-method}
 \alias{edit,textstat-method}
 \title{Annotation functionality}
 \usage{
@@ -23,9 +22,6 @@ annotations(x) <- value
 \S4method{annotations}{kwic,list}(x) <- value
 
 \S4method{annotations}{textstat,list}(x) <- value
-
-\S4method{edit}{kwic}(name, viewer = shiny::paneViewer(minHeight = 550),
-  ...)
 
 \S4method{edit}{textstat}(name, viewer = shiny::paneViewer(minHeight =
   550), ...)

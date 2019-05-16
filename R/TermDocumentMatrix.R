@@ -348,16 +348,16 @@ setMethod("as.DocumentTermMatrix", "neighborhood", function(x, p_attribute, verb
   cpos_min <- x@cpos[which(x@cpos[["position"]] != 0)]
   
   .message("counting tokens in context", verbose = verbose)
-  cnt <- cpos_min[, .N, by = c("hit_no", p_attr_id)]
+  cnt <- cpos_min[, .N, by = c("match_id", p_attr_id)]
   
   # create new index for hits
   # may be necessary if negativelist/positivelist has been applied
   .message("creating new index for hits", verbose = verbose)
-  hits <- unique(cpos_min[["hit_no"]])
+  hits <- unique(cpos_min[["match_id"]])
   hits <- hits[order(hits, decreasing = FALSE)]
   hit_index_new <- 1L:length(hits)
   names(hit_index_new) <- as.character(hits)
-  cnt[, "i" := hit_index_new[as.character(cnt[["hit_no"]])], with = TRUE]
+  cnt[, "i" := hit_index_new[as.character(cnt[["match_id"]])], with = TRUE]
   
   # create new index for word_ids
   .message("creating new index for tokens", verbose = verbose)

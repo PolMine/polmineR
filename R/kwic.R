@@ -71,9 +71,9 @@ setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
 #' @docType methods
 #' @rdname kwic-class
 setMethod("[", "kwic", function(x, i){
-  ids <- x@stat[["hit_no"]][i]
-  x@stat <- x@stat[which(x@stat[["hit_no"]] %in% ids)]
-  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@stat[["hit_no"]]]
+  ids <- x@stat[["match_id"]][i]
+  x@stat <- x@stat[which(x@stat[["match_id"]] %in% ids)]
+  x@cpos <- x@cpos[x@cpos[["match_id"]] %in% x@stat[["match_id"]]]
   x
 })
 
@@ -96,7 +96,7 @@ setMethod("[", "kwic", function(x, i){
 #'
 setMethod("subset", "kwic", function(x, ...) {
   x@stat <- subset(x@stat, ...)
-  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@stat[["hit_no"]]]
+  x@cpos <- x@cpos[x@cpos[["match_id"]] %in% x@stat[["match_id"]]]
   x
 })
 
@@ -131,12 +131,12 @@ setMethod("length", "kwic", function(x) nrow(x@stat) )
 
 #' @rdname kwic-class
 setMethod("sample", "kwic", function(x, size){
-  hits_unique <- unique(x@cpos[["hit_no"]])
+  hits_unique <- unique(x@cpos[["match_id"]])
   if (size > length(hits_unique)){
     warning("argument size exceeds number of hits, returning original object")
     return(x)
   }
-  x@cpos <- x@cpos[which(x@cpos[["hit_no"]] %in% sample(hits_unique, size = size))]
+  x@cpos <- x@cpos[which(x@cpos[["match_id"]] %in% sample(hits_unique, size = size))]
   x <- enrich(x, table = TRUE)
   x <- enrich(x, s_attributes = x@metadata)
   x
@@ -235,7 +235,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   DT <- copy(.Object@cpos) # do not accidentily store things
-  setorderv(DT, cols = c("hit_no", "cpos"))
+  setorderv(DT, cols = c("match_id", "cpos"))
   decoded_pAttr <- cl_id2str(
     corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
     id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
@@ -369,7 +369,7 @@ setMethod("kwic", "corpus", function(
     }
   )
   DT <- data.table(
-    hit_no = unlist(lapply(seq_along(cpos_list), function(i) rep(i, times = length(unlist(cpos_list[[i]]))))),
+    match_id = unlist(lapply(seq_along(cpos_list), function(i) rep(i, times = length(unlist(cpos_list[[i]]))))),
     cpos = unname(unlist(cpos_list)),
     position = unlist(lapply(
       cpos_list,
@@ -475,16 +475,16 @@ setMethod("merge", "kwic_bundle", function(x){
   table_list <- lapply(x@objects, function(obj) copy(obj@stat))
   cpos_list <- lapply(x@objects, function(obj) copy(obj@cpos))
   
-  starting <- cumsum(sapply(table_list, function(tab) max(tab[["hit_no"]])))
+  starting <- cumsum(sapply(table_list, function(tab) max(tab[["match_id"]])))
   starting <- c(0L, starting[-length(table_list)])
   
   lapply(
     seq_along(table_list),
-    function(i) table_list[[i]][, "hit_no" := table_list[[i]][["hit_no"]] + starting[i]]
+    function(i) table_list[[i]][, "match_id" := table_list[[i]][["match_id"]] + starting[i]]
   )
   lapply(
     seq_along(cpos_list),
-    function(i) cpos_list[[i]][, "hit_no" := cpos_list[[i]][["hit_no"]] + starting[i]]
+    function(i) cpos_list[[i]][, "match_id" := cpos_list[[i]][["match_id"]] + starting[i]]
   )
 
   new(

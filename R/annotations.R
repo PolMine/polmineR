@@ -98,7 +98,7 @@ setMethod("annotations", "kwic", function(x, i, j, value) callNextMethod())
 #' @rdname annotations
 setMethod("annotations", "textstat", function(x, i, j, value){
   if (missing(i)){
-    return( x@stat[, x@annotation_cols, with = FALSE] )
+    return( x@stat[, c("match_id", x@annotation_cols), with = FALSE] )
   } else {
     x@stat[i, eval(j) := value]
     return( invisible(x) )
@@ -143,55 +143,12 @@ setReplaceMethod("annotations", signature = c(x = "textstat", value = "list"), f
 
 #' @exportMethod edit
 #' @rdname annotations
-setMethod("edit", "kwic", function(name, viewer = shiny::paneViewer(minHeight = 550), ...){
-  
-  .check_editing_gadget_dependencies()
-
-  kwic_dt <- format(name)
-
-  server <- function(input, output, session) {
-    
-    values <- shiny::reactiveValues()
-    reactiveData <- shiny::reactive(kwic_dt)
-    
-    .reset_values <- function(df){
-      values[["hot"]] <- df
-      for (col in name@annotation_cols) name@stat[, eval(col) := df[[col]]]
-    }
-    
-    output$hot <- rhandsontable::renderRHandsontable({
-      data <- reactiveData()
-      if (rhandsontable:::isErrorMessage(data)) return(NULL)
-      df <- if (is.null(input$hot)) data else rhandsontable::hot_to_r(input$hot)
-      .reset_values(df)
-      rht <- rhandsontable::rhandsontable(df, allowedTags = "<font><div><u>",  height = 500, ...)
-      rht <- rhandsontable::hot_cols(rht, manualColumnResize = TRUE)
-      rht <- rhandsontable::hot_table(rht, highlightCol = TRUE, highlightRow = TRUE, overflow = "hidden", stretchH = "all")
-      if (all(c("left", "node", "right") %in% colnames(kwic_dt))){
-        rht <- rhandsontable::hot_col(rht, col = match(c("left", "right"), colnames(kwic_dt)), colWidths = "150")
-        rht <- rhandsontable::hot_col(rht, col = "left", readOnly = TRUE, renderer = htmlwidgets::JS("safeHtmlRenderer"))
-        rht <- rhandsontable::hot_col(rht, col = "node", readOnly = TRUE, renderer = htmlwidgets::JS("safeHtmlRenderer"))
-        rht <- rhandsontable::hot_col(rht, col = "right", readOnly = TRUE, halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
-      } else if ("concordance" %in% colnames(kwic_dt)){
-        rht <- rhandsontable::hot_col(rht, col = "concordance", colWidths = "300")
-        rht <- rhandsontable::hot_col(rht, col = "concordance", readOnly = TRUE, halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
-      }
-      rht
-    })
-    shiny::observeEvent(input$done, shiny::stopApp(returnValue = name))
-  }
-  y <- shiny::runGadget(.editing_gadget_ui(), server, viewer = viewer)
-  invisible(y)
-})
-
-
-#' @exportMethod edit
-#' @rdname annotations
 setMethod("edit", "textstat", function(name, viewer = shiny::paneViewer(minHeight = 550), ...){
+  
   .check_editing_gadget_dependencies()
-  
+
   dt <- format(name)
-  
+
   server <- function(input, output, session) {
     
     values <- shiny::reactiveValues()
@@ -207,13 +164,26 @@ setMethod("edit", "textstat", function(name, viewer = shiny::paneViewer(minHeigh
       if (rhandsontable:::isErrorMessage(data)) return(NULL)
       df <- if (is.null(input$hot)) data else rhandsontable::hot_to_r(input$hot)
       .reset_values(df)
-      rhandsontable::rhandsontable(df, height = 500, ...) %>%
-        rhandsontable::hot_cols(manualColumnResize = TRUE) %>% 
-        rhandsontable::hot_table(highlightCol = TRUE, highlightRow = TRUE, overflow = "hidden", stretchH = "all") %>%
-        rhandsontable::hot_col(col = (1L:ncol(dt))[which(!colnames(dt) %in% name@annotation_cols)], readOnly = TRUE)
+      rht <- rhandsontable::rhandsontable(df, allowedTags = "<font><div><u>",  height = 500, ...)
+      rht <- rhandsontable::hot_cols(rht, manualColumnResize = TRUE)
+      rht <- rhandsontable::hot_table(rht, highlightCol = TRUE, highlightRow = TRUE, overflow = "hidden", stretchH = "all")
+      if (all(c("left", "node", "right") %in% colnames(dt))){
+        rht <- rhandsontable::hot_col(rht, col = match(c("left", "right"), colnames(dt)), colWidths = "150")
+        rht <- rhandsontable::hot_col(rht, col = "left", readOnly = TRUE, renderer = htmlwidgets::JS("safeHtmlRenderer"))
+        rht <- rhandsontable::hot_col(rht, col = "node", readOnly = TRUE, renderer = htmlwidgets::JS("safeHtmlRenderer"))
+        rht <- rhandsontable::hot_col(rht, col = "right", readOnly = TRUE, halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+      } else if ("concordance" %in% colnames(dt)){
+        rht <- rhandsontable::hot_col(rht, col = "concordance", colWidths = "300")
+        rht <- rhandsontable::hot_col(rht, col = "concordance", readOnly = TRUE, halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
+      } else {
+        rht <- rhandsontable::hot_col(rht, col = (1L:ncol(dt))[which(!colnames(dt) %in% name@annotation_cols)], readOnly = TRUE)
+      }
+      rht
     })
     shiny::observeEvent(input$done, shiny::stopApp(returnValue = name))
   }
-  y <- shiny::runGadget(app = .editing_gadget_ui(), server, viewer = viewer)
+  y <- shiny::runGadget(.editing_gadget_ui(), server, viewer = viewer)
   invisible(y)
 })
+
+

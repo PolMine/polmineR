@@ -4,12 +4,12 @@ NULL
 
 #' @rdname context-class
 setMethod("sample", "context", function(x, size){
-  hits_unique <- unique(x@cpos[["hit_no"]])
+  hits_unique <- unique(x@cpos[["match_id"]])
   if (size > length(hits_unique)){
     warning("argument size exceeds number of hits, returning original object")
     return(x)
   }
-  x@cpos <- x@cpos[which(x@cpos[["hit_no"]] %in% sample(hits_unique, size = size))]
+  x@cpos <- x@cpos[which(x@cpos[["match_id"]] %in% sample(hits_unique, size = size))]
   x@count <- as.integer(size)
   x@size <- length(which(x@cpos[["position"]] != 0))
   x
@@ -119,7 +119,7 @@ setMethod("context", "slice", function(
   }
   colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
   
-  hits <- cbind(hits, hit_no = 1L:nrow(hits))
+  hits <- cbind(hits, match_id = 1L:nrow(hits))
   
   ctxt@cpos <- .make_context_dt(hit_matrix = hits, left = left, right = right, corpus = .Object@corpus)
   
@@ -137,7 +137,7 @@ setMethod("context", "slice", function(
   ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
   ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
   ctxt@size_partition <- size(.Object)
-  ctxt@count <- length(unique(ctxt@cpos[["hit_no"]]))
+  ctxt@count <- length(unique(ctxt@cpos[["match_id"]]))
   
   # check that windows do not transgress s-attribute
   if (!is.null(boundary)){
@@ -221,7 +221,7 @@ setMethod("context", "subcorpus", function(
             )
         )
       }
-      Y <- DT[, fn(.SD), by = c("hit_no")]
+      Y <- DT[, fn(.SD), by = c("match_id")]
       setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
       Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
       return(Y)

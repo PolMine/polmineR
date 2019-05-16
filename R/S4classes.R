@@ -413,7 +413,7 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' Class to organize information of context analysis.
 #' 
 #' @details Objects of the class \code{context} include a \code{data.table} in the
-#' slot \code{cpos}. The \code{data.table} will at least include the columns "hit_no",
+#' slot \code{cpos}. The \code{data.table} will at least include the columns "match_id",
 #' "cpos" and "position".
 #' 
 #' @slot query The query examined (\code{character}).
@@ -438,7 +438,7 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @slot corpus The CWB corpus used (\code{character}).
 #' @slot stat A \code{data.table}, the statistics of the analysis.
 #' @slot encoding Object of class \code{character}, encoding of the corpus.
-#' @slot cpos A \code{data.table}, with the columns hit_no, cpos, position, word_id.
+#' @slot cpos A \code{data.table}, with the columns match_id, cpos, position, word_id.
 #' @slot method A \code{character}-vector, statistical test used.
 #' @slot call Object of class \code{character}, call that generated the object.
 #'     
@@ -522,7 +522,7 @@ setClass("cooccurrences", contains = "context")
 #' @slot left An \code{integer} value, words to the left of the query match. 
 #' @slot right An \code{integer} value, words to the right of the query match.
 #' @slot corpus Length-one \code{character} vector, the CWB corpus.
-#' @slot cpos A \code{data.table} with the columns "hit_no", "cpos", "position",
+#' @slot cpos A \code{data.table} with the columns "match_id", "cpos", "position",
 #'   "word_id", "word" and "direction".
 #' @slot stat A \code{data.table}, a table with columns "left", "node",
 #'   "right", and metadata, if the object has been enriched.

@@ -426,7 +426,7 @@ setMethod("partition", "context", function(.Object, node = TRUE){
   # Second, generate a list with data.table objects with counts
   DT <- copy(.Object@cpos)
   if (!node) DT <- subset(DT, DT[["position"]] != 0)
-  y@stat <- DT[, .N, by = c("hit_no", paste(.Object@p_attribute, "id", sep = "_"))]
+  y@stat <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
   
   setnames(y@stat, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){

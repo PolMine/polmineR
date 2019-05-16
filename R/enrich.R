@@ -69,7 +69,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
     metainformation <- lapply(
       setNames(s_attributes, s_attributes),
       function(s_attr){
-        cpos_to_get <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "hit_no", with = TRUE][["cpos"]]
+        cpos_to_get <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "match_id", with = TRUE][["cpos"]]
         strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attr, cpos = cpos_to_get, registry = registry())
         strucs_invalid <- which(strucs < 0L)
         if (length(strucs_invalid) > 0L) strucs[strucs_invalid] <- 0L
@@ -92,11 +92,11 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       cpos_max <- max(.SD[["cpos"]])
       position_min <- min(.SD[["position"]])
       position_max <- max(.SD[["position"]])
-      hit <- unique(.SD[["hit_no"]])
+      hit <- unique(.SD[["match_id"]])
       rbindlist(
         list(
           extra_left = data.table(
-            hit_no = hit,
+            match_id = hit,
             cpos = (cpos_min - extra):(cpos_min - 1L),
             position = (position_min - extra):(position_min - 1L),
             word_id = NA,
@@ -105,7 +105,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
           ),
           kwic = .SD,
           extra_right = data.table(
-            hit_no = hit,
+            match_id = hit,
             cpos = (cpos_max + 1L):(cpos_max + extra),
             position = (position_max + 1L):(position_max + extra),
             word_id = NA,
@@ -115,7 +115,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
         )
       )
     }
-    dt <- .Object@cpos[, .fn(.SD), by = "hit_no", .SDcols = 1L:ncol(.Object@cpos)]
+    dt <- .Object@cpos[, .fn(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
     corpus_size <- RcppCWB::cl_attribute_size(
       corpus = .Object@corpus,
       attribute = "word",
@@ -144,8 +144,8 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
   if (table){
     if (nrow(.Object@cpos) > 0L){
       .fn <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
-      table_ext <- .Object@cpos[, .fn(.SD), by = c("hit_no", "direction"), with = TRUE]
-      .Object@stat <- dcast(data = table_ext, formula = hit_no ~ direction, value.var = "V1")
+      table_ext <- .Object@cpos[, .fn(.SD), by = c("match_id", "direction"), with = TRUE]
+      .Object@stat <- dcast(data = table_ext, formula = match_id ~ direction, value.var = "V1")
       if (all(c("-2", "2") %in% colnames(.Object@stat))){
         setnames(
           .Object@stat,
@@ -157,7 +157,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       }
       
     } else {
-      .Object@stat <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
+      .Object@stat <- data.table(match_id = integer(), left = character(), node = character(), right = character())
     }
   }
   .Object

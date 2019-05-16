@@ -67,15 +67,15 @@ setMethod("as.regions", "partition", function(x) as(x, "regions"))
 #' @rdname context-class
 setMethod("as.regions", "context", function(x, node = TRUE){
   DT <- copy(x@cpos)
-  setkeyv(x = DT, cols = c("hit_no", "cpos"))
+  setkeyv(x = DT, cols = c("match_id", "cpos"))
   .cpos_left_right <- function(.SD) list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
   DT_list <- list(left = subset(DT, DT[["position"]] < 0), right = subset(DT, DT[["position"]] > 0))
   if (node) DT_list[["node"]] <- subset(DT, DT[["position"]] == 0)
-  DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "hit_no"]))
-  setorderv(DT_regions, cols = "hit_no")
+  DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "match_id"]))
+  setorderv(DT_regions, cols = "match_id")
   new(
     Class = "regions",
-    cpos = as.matrix(DT_regions[, "hit_no" := NULL]),
+    cpos = as.matrix(DT_regions[, "match_id" := NULL]),
     corpus = x@corpus,
     encoding = x@encoding
   )

@@ -237,24 +237,24 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
   stopifnot(is.logical(node))
   
   DT <- copy(.Object@cpos)
-  setkeyv(x = DT, cols = c("hit_no", "cpos"))
+  setkeyv(x = DT, cols = c("match_id", "cpos"))
   if (!node) DT <- subset(DT, DT[["position"]] != 0)
   
   # First step, generate a list of data.tables with regions
   .cpos_left_right <- function(.SD) list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
   DT_list <- list(left = subset(DT, DT[["position"]] < 0), right = subset(DT, DT[["position"]] > 0))
   if (node) DT_list[["node"]] <- subset(DT, DT[["position"]] == 0)
-  DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "hit_no"]))
-  setorderv(DT_regions, cols = "hit_no")
-  regions_list <- split(DT_regions, by = "hit_no")
+  DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "match_id"]))
+  setorderv(DT_regions, cols = "match_id")
+  regions_list <- split(DT_regions, by = "match_id")
   
   # Second, generate a list with data.table objects with counts
-  CNT <- DT[, .N, by = c("hit_no", paste(.Object@p_attribute, "id", sep = "_"))]
+  CNT <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
     CNT[[p_attr]] <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]], registry = registry())
   }
-  count_list <- split(CNT, by = "hit_no")
+  count_list <- split(CNT, by = "match_id")
   
   .fn <- function(i){
     cpos_matrix <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
@@ -266,7 +266,7 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
       size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L),
       xml = .Object@partition@xml,
       p_attribute = .Object@p_attribute,
-      stat = count_list[[i]][, "hit_no" := NULL]
+      stat = count_list[[i]][, "match_id" := NULL]
     )
   }
   partition_objects <- if (progress) pblapply(1L:length(.Object), .fn, cl = mc) else lapply(1L:length(.Object), .fn)

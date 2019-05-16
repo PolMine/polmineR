@@ -302,7 +302,7 @@ setMethod("hits", "context", function(.Object, s_attribute = NULL, verbose = TRU
       cpos_right = max(.SD[["cpos"]])
       )
   }
-  DT <- ctxtMin[, .makeCpos(.SD), by = "hit_no"]
+  DT <- ctxtMin[, .makeCpos(.SD), by = "match_id"]
   
   .message("adding s_attributes", verbose = verbose)
   for (x in s_attribute){

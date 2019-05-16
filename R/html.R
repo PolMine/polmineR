@@ -266,7 +266,7 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
   .message("generating html", verbose = verbose)
   fulltext <- polmineR::html(partitionToRead, meta = metadataDef, cpos = TRUE)
   .message("generating highlights", verbose = verbose)
-  tabSubset <- object@cpos[which(object@cpos[["hit_no"]] == i)]
+  tabSubset <- object@cpos[which(object@cpos[["match_id"]] == i)]
   cposContext <- tabSubset[which(tabSubset[["position"]] != 0)][["cpos"]]
   cposNode <- tabSubset[which(tabSubset[["position"]] == 0)][["cpos"]]
   fulltext <- highlight(

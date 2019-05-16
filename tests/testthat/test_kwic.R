@@ -77,7 +77,7 @@ test_that(
   {
     k <- corpus("REUTERS") %>% kwic(query = "oil")
     k2 <- k[1:5]
-    expect_identical(unique(k2@cpos[["hit_no"]]), k2@stat[["hit_no"]])
+    expect_identical(unique(k2@cpos[["match_id"]]), k2@stat[["match_id"]])
   }
 )
 
@@ -85,7 +85,7 @@ test_that(
   "subsetting kwic objects",
   {
     oil <- corpus("REUTERS") %>% kwic(query = "oil") %>% subset(grepl("prices", right))
-    expect_identical(unique(oil@cpos[["hit_no"]]), oil@stat[["hit_no"]])
+    expect_identical(unique(oil@cpos[["match_id"]]), oil@stat[["match_id"]])
     
     int_spd <- corpus("GERMAPARLMINI") %>%
       kwic(query = "Integration") %>%
