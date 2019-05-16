@@ -92,14 +92,7 @@ setGeneric("annotations", function(x, ...) standardGeneric("annotations"))
 
 #' @exportMethod annotations
 #' @rdname annotations
-setMethod("annotations", "kwic", function(x, i, j, value){
-  if (missing(i)){
-    return( x@table[, x@annotation_cols, with = FALSE] )
-  } else {
-    x@table[i, eval(j) := value]
-    return( invisible(x) )
-  }
-})
+setMethod("annotations", "kwic", function(x, i, j, value) callNextMethod())
 
 #' @exportMethod annotations
 #' @rdname annotations
@@ -120,11 +113,7 @@ setGeneric("annotations<-", function(x, value) standardGeneric("annotations<-"))
 
 #' @rdname annotations
 #' @exportMethod annotations<-
-setReplaceMethod("annotations", signature = c(x = "kwic", value = "list"), function(x, value){
-  x@table[, (value[["name"]]) := value[["what"]]]
-  x@annotation_cols <- c(x@annotation_cols, value[["name"]])
-  x
-})
+setReplaceMethod("annotations", signature = c(x = "kwic", value = "list"), function(x, value) callNextMethod())
 
 #' @rdname annotations
 #' @exportMethod annotations<-
@@ -167,7 +156,7 @@ setMethod("edit", "kwic", function(name, viewer = shiny::paneViewer(minHeight = 
     
     .reset_values <- function(df){
       values[["hot"]] <- df
-      for (col in name@annotation_cols) name@table[, eval(col) := df[[col]]]
+      for (col in name@annotation_cols) name@stat[, eval(col) := df[[col]]]
     }
     
     output$hot <- rhandsontable::renderRHandsontable({

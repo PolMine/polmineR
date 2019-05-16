@@ -53,7 +53,7 @@ setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pag
 #'   KWIC display.
 #' @details The \code{as.character}-method will return a list of
 #'   \code{character} vectors, concatenating the columns "left", "node" and
-#'   "right" of the \code{data.table} in the \code{table}-slot of the input
+#'   "right" of the \code{data.table} in the \code{stat}-slot of the input
 #'   \code{kwic}-class object. Optionally, the node can be formatted using a
 #'   format string that is passed into \code{sprintf}.
 #' @examples 
@@ -64,21 +64,21 @@ setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pag
 #' as.character(oil, fmt = "<b>%s</b>")
 #' 
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
-  if (!is.null(fmt)) x@table[, "node" := sprintf(fmt, x@table[["node"]])]
-  apply(x@table, 1L, function(r) paste(r["left"], r["node"], r["right"], sep = " "))
+  if (!is.null(fmt)) x@stat[, "node" := sprintf(fmt, x@stat[["node"]])]
+  apply(x@stat, 1L, function(r) paste(r["left"], r["node"], r["right"], sep = " "))
 })
 
 #' @docType methods
 #' @rdname kwic-class
 setMethod("[", "kwic", function(x, i){
-  ids <- x@table[["hit_no"]][i]
-  x@table <- x@table[which(x@table[["hit_no"]] %in% ids)]
-  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@table[["hit_no"]]]
+  ids <- x@stat[["hit_no"]][i]
+  x@stat <- x@stat[which(x@stat[["hit_no"]] %in% ids)]
+  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@stat[["hit_no"]]]
   x
 })
 
 #' @details The \code{subset}-method will apply \code{subset} to the table in
-#'   the slot \code{table}, e.g. for filtering query results based on metadata (i.e.
+#'   the slot \code{stat}, e.g. for filtering query results based on metadata (i.e.
 #'   s-attributes) that need to be present.
 #' @rdname kwic-class
 #' @examples 
@@ -95,8 +95,8 @@ setMethod("[", "kwic", function(x, i){
 #'   subset(grepl("SPD", party))
 #'
 setMethod("subset", "kwic", function(x, ...) {
-  x@table <- subset(x@table, ...)
-  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@table[["hit_no"]]]
+  x@stat <- subset(x@stat, ...)
+  x@cpos <- x@cpos[x@cpos[["hit_no"]] %in% x@stat[["hit_no"]]]
   x
 })
 
@@ -109,14 +109,14 @@ setMethod("subset", "kwic", function(x, ...) {
 #'   as.data.frame()
 #'   
 setMethod("as.data.frame", "kwic", function(x){
-  if (all(c("left", "node", "right") %in% colnames(x@table))){
-    meta_columns <- 1L:(grep("left", colnames(x@table)) - 2L)
-    metadata <- apply(x@table, 1, function(row) paste(row[meta_columns], collapse = "<br/>"))
+  if (all(c("left", "node", "right") %in% colnames(x@stat))){
+    meta_columns <- 1L:(grep("left", colnames(x@stat)) - 2L)
+    metadata <- apply(x@stat, 1, function(row) paste(row[meta_columns], collapse = "<br/>"))
     df <- data.frame(
       meta = metadata,
-      left = x@table[["left"]],
-      node = x@table[["node"]],
-      right = x@table[["right"]],
+      left = x@stat[["left"]],
+      node = x@stat[["node"]],
+      right = x@stat[["right"]],
       stringsAsFactors = FALSE
     )
   } else {
@@ -127,7 +127,7 @@ setMethod("as.data.frame", "kwic", function(x){
 
 
 #' @rdname kwic-class
-setMethod("length", "kwic", function(x) nrow(x@table) )
+setMethod("length", "kwic", function(x) nrow(x@stat) )
 
 #' @rdname kwic-class
 setMethod("sample", "kwic", function(x, size){
@@ -255,7 +255,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
     cpos = if (cpos) DT else data.table(),
-    table = data.table()
+    stat = data.table()
   )
   
   conc <- enrich(conc, table = TRUE, p_attribute = .Object@p_attribute)
@@ -472,7 +472,7 @@ setMethod("kwic", "remote_partition", function(.Object, ...){
 #'  
 setMethod("merge", "kwic_bundle", function(x){
   
-  table_list <- lapply(x@objects, function(obj) copy(obj@table))
+  table_list <- lapply(x@objects, function(obj) copy(obj@stat))
   cpos_list <- lapply(x@objects, function(obj) copy(obj@cpos))
   
   starting <- cumsum(sapply(table_list, function(tab) max(tab[["hit_no"]])))
@@ -492,7 +492,7 @@ setMethod("merge", "kwic_bundle", function(x){
     corpus = x@corpus,
     encoding = x@encoding,
     cpos = rbindlist(cpos_list),
-    table = rbindlist(table_list),
+    stat = rbindlist(table_list),
     p_attribute = unique(sapply(x@objects, function(obj) obj@p_attribute)),
     metadata = character(),
     left = unique(sapply(x@objects, function(obj) obj@left)),

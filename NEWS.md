@@ -37,6 +37,9 @@ polmineR 0.7.11.9001
 * Indexing the concordances of a `kwic` object did not reduce the `cpos` table concurringly, corrected.
 * The table in the `table` slot of `kwic` objects has been turned into a `data.table`.
 * A new `kwic_bundle`-class has been introduced, a list of `kwic` objects can be turned into this new class using `as.bundle`.
+* The `table`-slot of the `kwic` class has been renamed as `stat` slot, so that the `kwic` class can now inherit from the `textstat` class.
+* The kwic class now inherits from the textstat class.
+* The `as.TermDocumentMatrix()` and the `as.DocumentTermMatrix()`-methods are now also defined for `kwic` objects. They work exactly the same as for the `context` class. To avoid having to write new methods, a new `heighborhood` virtual class has been introduced. The aforementioned methods are defined for the virtual class and are available for context and kwic class objects. 
 
 
 polmineR 0.7.11

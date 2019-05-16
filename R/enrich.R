@@ -79,7 +79,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       }
     )
     meta_dt <- data.table(data.frame(metainformation, stringsAsFactors = FALSE))
-    .Object@table <- data.table(meta_dt, .Object@table)
+    .Object@stat <- data.table(meta_dt, .Object@stat)
     .Object@metadata <- c(s_attributes, .Object@metadata)
   }
   
@@ -145,19 +145,19 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
     if (nrow(.Object@cpos) > 0L){
       .fn <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
       table_ext <- .Object@cpos[, .fn(.SD), by = c("hit_no", "direction"), with = TRUE]
-      .Object@table <- dcast(data = table_ext, formula = hit_no ~ direction, value.var = "V1")
-      if (all(c("-2", "2") %in% colnames(.Object@table))){
+      .Object@stat <- dcast(data = table_ext, formula = hit_no ~ direction, value.var = "V1")
+      if (all(c("-2", "2") %in% colnames(.Object@stat))){
         setnames(
-          .Object@table,
+          .Object@stat,
           old = c("-2", "-1", "0", "1", "2"),
           new = c("left_extra", "left", "node", "right", "right_extra")
         )
       } else {
-        setnames(.Object@table, old = c("-1", "0", "1"), new = c("left", "node", "right"))
+        setnames(.Object@stat, old = c("-1", "0", "1"), new = c("left", "node", "right"))
       }
       
     } else {
-      .Object@table <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
+      .Object@stat <- data.table(hit_no = integer(), left = character(), node = character(), right = character())
     }
   }
   .Object

@@ -92,5 +92,5 @@ setMethod("mail", "data.frame", function(.Object, to = getOption("polmineR.email
 #' @docType methods
 setMethod("mail", "kwic", function(.Object, to = getOption("polmineR.email"), rows = 1L:min(250L, nrow(.Object))){
   filename <- file.path(normalizePath(tempdir(), winslash = "/"), "kwic.xlsx", fsep = "/")
-  mail(as.data.frame(.Object@table), to = to, filename = filename, rows = rows)
+  mail(as.data.frame(.Object@stat), to = to, filename = filename, rows = rows)
 })

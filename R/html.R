@@ -260,7 +260,7 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
   
   partitionToRead <- partition(
     object@corpus,
-    def = lapply(setNames(metadataDef, metadataDef), function(x) object@table[[x]][i]),
+    def = lapply(setNames(metadataDef, metadataDef), function(x) object@stat[[x]][i]),
     type = type
   )
   .message("generating html", verbose = verbose)

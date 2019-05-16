@@ -32,6 +32,6 @@ setMethod("store", "data.frame", function(.Object, filename = tempfile(fileext =
 #' @rdname store
 setMethod("store", "kwic", function(.Object, filename = tempfile(fileext = ".xlsx"), rows = 1L:nrow(.Object)){
   if (!requireNamespace(package = "openxlsx", quietly = TRUE)) stop("Package 'openxlsx' required but not available")
-  openxlsx::write.xlsx(x = as.data.frame(.Object@table), file = filename, asTable = TRUE)
+  openxlsx::write.xlsx(x = as.data.frame(.Object@stat), file = filename, asTable = TRUE)
   filename
 })

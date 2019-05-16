@@ -6,12 +6,12 @@ test_that(
   "kwic-method for corpus",
   {
     expect_equal(
-      nrow(kwic("REUTERS", query = "oil", pAttribute = "word")@table),
+      nrow(kwic("REUTERS", query = "oil", pAttribute = "word")@stat),
       78L
       )
     
     expect_equal(
-      nrow(kwic("REUTERS", query = '"barrel.*"', pAttribute = "word")@table),
+      nrow(kwic("REUTERS", query = '"barrel.*"', pAttribute = "word")@stat),
       26L
       )
 
@@ -33,12 +33,12 @@ test_that(
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     expect_equal(
-      nrow(kwic(P, query = "oil", pAttribute = "word")@table),
+      nrow(kwic(P, query = "oil", pAttribute = "word")@stat),
       21L
     )
     
     expect_equal(
-      nrow(kwic(P, query = '"barrel.*"', cqp = TRUE, pAttribute = "word")@table),
+      nrow(kwic(P, query = '"barrel.*"', cqp = TRUE, pAttribute = "word")@stat),
       7L
       )
 
@@ -77,7 +77,7 @@ test_that(
   {
     k <- corpus("REUTERS") %>% kwic(query = "oil")
     k2 <- k[1:5]
-    expect_identical(unique(k2@cpos[["hit_no"]]), k2@table[["hit_no"]])
+    expect_identical(unique(k2@cpos[["hit_no"]]), k2@stat[["hit_no"]])
   }
 )
 
@@ -85,13 +85,13 @@ test_that(
   "subsetting kwic objects",
   {
     oil <- corpus("REUTERS") %>% kwic(query = "oil") %>% subset(grepl("prices", right))
-    expect_identical(unique(oil@cpos[["hit_no"]]), oil@table[["hit_no"]])
+    expect_identical(unique(oil@cpos[["hit_no"]]), oil@stat[["hit_no"]])
     
     int_spd <- corpus("GERMAPARLMINI") %>%
       kwic(query = "Integration") %>%
       enrich(s_attribute = "party") %>%
       subset(grepl("SPD", party))
-    expect_identical(unique(int_spd@table[["party"]]), "SPD")
+    expect_identical(unique(int_spd@stat[["party"]]), "SPD")
   }
 )
 
@@ -103,6 +103,20 @@ test_that(
       enrich(s_attributes = c("date", "speaker", "party")) %>%
       as.data.frame()
     expect_equal(int[[1]][1], "2009-10-27<br/>Heinz Riesenhuber<br/>NA")
+    
+  }
+)
+
+test_that(
+  "as.DocumentTermMatrix for kwic-class-object",
+  {
+    oil <- kwic("REUTERS", query = "oil")
+    dtm <- as.DocumentTermMatrix(oil, p_attribute = "word")
+    expect_equal(
+      slam::col_sums(dtm)[["prices"]],
+      nrow(oil@cpos[word == "prices" & direction != 0L])
+    )
+    
     
   }
 )

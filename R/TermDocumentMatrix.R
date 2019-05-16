@@ -336,51 +336,86 @@ setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, p_attribute =
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "neighborhood", function(x, p_attribute, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if (!paste(p_attribute, "id", "_") %in% colnames(x@cpos)){
+  p_attr_id <- paste(p_attribute, "id", sep = "_")
+  if (!p_attr_id %in% colnames(x@cpos)){
     .message("adding token ids for p-attribute:", p_attribute, verbose = verbose)
     x <- enrich(x, p_attribute = p_attribute)
   }
   
   .message("dropping nodes", verbose = verbose)
-  CPOS <- x@cpos[which(x@cpos[["position"]] != 0)]
+  cpos_min <- x@cpos[which(x@cpos[["position"]] != 0)]
   
   .message("counting tokens in context", verbose = verbose)
-  CPOS2 <- CPOS[, .N, by = c("hit_no", paste(p_attribute, "id", sep = "_"))]
+  cnt <- cpos_min[, .N, by = c("hit_no", p_attr_id)]
   
   # create new index for hits
   # may be necessary if negativelist/positivelist has been applied
   .message("creating new index for hits", verbose = verbose)
-  hits <- unique(CPOS[["hit_no"]])
+  hits <- unique(cpos_min[["hit_no"]])
   hits <- hits[order(hits, decreasing = FALSE)]
-  hit_index_new <- 1:length(hits)
+  hit_index_new <- 1L:length(hits)
   names(hit_index_new) <- as.character(hits)
-  CPOS2[, "i" := hit_index_new[as.character(CPOS2[["hit_no"]])], with = TRUE]
+  cnt[, "i" := hit_index_new[as.character(cnt[["hit_no"]])], with = TRUE]
   
   # create new index for word_ids
   .message("creating new index for tokens", verbose = verbose)
-  uniqueIDs <- unique(CPOS2[[paste(p_attribute, "id", sep = "_")]])
-  uniqueIDs <- uniqueIDs[order(uniqueIDs, decreasing = FALSE)]
-  idIndexNew <- setNames(1:length(uniqueIDs), as.character(uniqueIDs))
-  decodedTokens <- as.nativeEnc(
-    cl_id2str(corpus = x@corpus, p_attribute = p_attribute, id = uniqueIDs, registry = registry()),
+  unique_ids <- unique(cnt[[p_attr_id]])
+  unique_ids <- unique_ids[order(unique_ids, decreasing = FALSE)]
+  id_index_new <- setNames(1L:length(unique_ids), as.character(unique_ids))
+  decoded_tokens <- as.nativeEnc(
+    cl_id2str(
+      corpus = x@corpus,
+      p_attribute = p_attribute,
+      id = unique_ids,
+      registry = registry()
+    ),
     from = x@encoding
   )
-  CPOS2[, "j" := idIndexNew[as.character(CPOS2[[paste(p_attribute, "id", sep = "_")]])], with = TRUE]
+  cnt[, "j" := id_index_new[as.character(cnt[[p_attr_id]])], with = TRUE]
   
   .message("putting together matrix", verbose = verbose)
   dtm <- simple_triplet_matrix(
-    i = CPOS2[["i"]], j = CPOS2[["j"]], v = CPOS2[["N"]],
-    dimnames = list(Docs = as.character(1:max(CPOS2[["i"]])), Terms = decodedTokens)
+    i = cnt[["i"]],
+    j = cnt[["j"]],
+    v = cnt[["N"]],
+    dimnames = list(
+      Docs = as.character(1L:max(cnt[["i"]])),
+      Terms = decoded_tokens
+    )
   )
   class(dtm) <- c("DocumentTermMatrix", "simple_triplet_matrix")
   attr(dtm, "weighting") <- c("term frequency", "tf")
   dtm
 })
 
+
 #' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
+  callNextMethod()
+})
+
+#' @rdname kwic-class
+setMethod("as.DocumentTermMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
+  callNextMethod()
+})
+
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.TermDocumentMatrix", "neighborhood", function(x, p_attribute, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   as.DocumentTermMatrix(x = x, p_attribute = p_attribute, verbose = verbose)
 })
+
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.TermDocumentMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
+  callNextMethod()
+})
+
+#' @rdname kwic-class
+setMethod("as.TermDocumentMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
+  callNextMethod()
+})
+

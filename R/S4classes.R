@@ -224,12 +224,12 @@ setClass("features",
 #' S4 class to organize counts. The classes \code{polmineR} and
 #' \code{ngrams} inherit from the class.
 #' 
-#' @slot stat Object of class \code{data.table}
-#' @slot corpus Object of class \code{character} the CWB corpus the partition is based on 
-#' @slot encoding Object of class \code{character} encoding of the corpus 
-#' @slot name Object of class \code{character}, a name for the object
+#' @slot stat Object of class \code{data.table}.
+#' @slot corpus Object of class \code{character} the CWB corpus the partition is based on .
+#' @slot encoding Object of class \code{character}, the encoding of the corpus.
+#' @slot name Object of class \code{character}, a name for the object.
 #' @slot size Object of class \code{integer}, the size of the partition or
-#'   corpus the count is based upon
+#'   corpus the count is based upon.
 #' @rdname count_class
 #' @param ... Further parameters.
 #' @name count_class
@@ -524,7 +524,7 @@ setClass("cooccurrences", contains = "context")
 #' @slot corpus Length-one \code{character} vector, the CWB corpus.
 #' @slot cpos A \code{data.table} with the columns "hit_no", "cpos", "position",
 #'   "word_id", "word" and "direction".
-#' @slot table A \code{data.table}, a table with columns "left", "node",
+#' @slot stat A \code{data.table}, a table with columns "left", "node",
 #'   "right", and metadata, if the object has been enriched.
 #' @slot encoding A length-one \code{character} vector with the encoding of the
 #'   corpus.
@@ -535,7 +535,10 @@ setClass("cooccurrences", contains = "context")
 #' @param x A \code{kwic} class object.
 #' @param object A \code{kwic} class object.
 #' @param s_attributes Character vector of s-attributes with metainformation.
-#' @param table Logical, whether to turn cpos \code{data.table} into \code{data.frame} for output.
+#' @param table Logical, whether to turn cpos \code{data.table} into
+#'   \code{data.table} in slot \code{stat} for output.
+#' @param p_attribute A length-one \code{character} vector supplying a p-attribute.
+#' @param verbose A \code{logical} value, whether to output debugging messages.
 #' @param extra An \code{integer} value, number of extra tokens to the left and
 #'   to the right of the windows of tokens to the left and right of a query
 #'   match that are decoded to be displayed in a kwic output to facilitate
@@ -568,17 +571,12 @@ setClass("cooccurrences", contains = "context")
 setClass(
   "kwic",
   slots = c(
-    corpus = "character",
     cpos = "data.table",
-    p_attribute = "character",
     metadata = "character",
     left = "integer",
-    right = "integer",
-    table = "data.table",
-    encoding = "character",
-    name = "character",
-    annotation_cols = "character"
-  )
+    right = "integer"
+  ),
+  contains = "textstat" # inherited: corpus, encoding, p_attribute, name, annotation_cols, stat
 )
 
 
@@ -1130,3 +1128,9 @@ setMethod("aggregate", "slice", function(x){
   x
 })
 
+
+#' @rdname kwic-class
+#' @docType class
+#' @aliases neighborhood neighborhood-class
+#' @exportClass neighborhood
+setClassUnion(name = "neighborhood", members = c("context", "kwic"))
