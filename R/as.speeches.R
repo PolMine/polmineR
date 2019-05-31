@@ -144,10 +144,17 @@ setMethod("as.speeches", "corpus", function(
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
 ){
-  m <- make_region_matrix(.Object, s_attribute = s_attribute_name)
+  m <- make_region_matrix(.Object, s_attribute = s_attribute_name) # in polmineR, not exported
   dates <- s_attributes(.Object, s_attribute = s_attribute_date, unique = FALSE)
   strucs <- 0L:(nrow(m) - 1L)
   speakers <- s_attributes(.Object, s_attribute = s_attribute_name, unique = FALSE)
+  
+  if (length(dates) != length(speakers))
+    stop(
+      sprintf(
+        "Number of regions for s_attribute '%s' and s_attribute '%s' not identical - procedure will not work",
+        s_attribute_date, s_attribute_name)
+    )
 
   chunks_cpos <- split(x = m, f = speakers)
   chunks_dates <- split(x = dates, f = speakers)
@@ -159,6 +166,26 @@ setMethod("as.speeches", "corpus", function(
     seq_along(chunks_cpos),
     function(i){
       mx <- matrix(data = chunks_cpos[[i]], byrow = FALSE, ncol = 2L)
+      
+      # if we have a matrix with only one region (i.e. one row), no need for further splitting,
+      # we return a subcorpus immediately
+      if (nrow(mx) == 1L){
+        return(list(new(
+          new_class,
+          strucs = chunks_strucs[[i]],
+          cpos = mx,
+          corpus = .Object@corpus,
+          type = .Object@type,
+          encoding = .Object@encoding,
+          data_dir = .Object@data_dir,
+          s_attributes = setNames(list(chunks_dates[[i]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
+          xml = "flat",
+          s_attribute_strucs = s_attribute_name,
+          name = sprintf("%s_%s_%d", names(chunks_cpos)[[i]], chunks_dates[[i]], 1L),
+          size = mx[,2] - mx[,1] + 1L
+        )))
+      }
+      
       distance <- mx[,1][2L:nrow(mx)] - mx[,2][1L:(nrow(mx) - 1L)]
       beginning <- c(TRUE, ifelse(distance > gap, TRUE, FALSE))
       beginning <- ifelse(
@@ -198,14 +225,17 @@ setMethod("as.speeches", "corpus", function(
       )
     }
   )
+  
   retval <- new(
     "subcorpus_bundle",
-    objects = unlist(y, recursive = FALSE)
+    xml = "flat",
+    objects = unlist(y, recursive = FALSE),
+    corpus = .Object@corpus,
+    encoding = .Object@encoding
   )
   names(retval@objects) <- sapply(retval@objects, name)
   retval
-}
-)
+})
 
 
 

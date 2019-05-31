@@ -39,7 +39,8 @@ polmineR 0.7.11.9001
 * A new `kwic_bundle`-class has been introduced, a list of `kwic` objects can be turned into this new class using `as.bundle`.
 * The `table`-slot of the `kwic` class has been renamed as `stat` slot, so that the `kwic` class can now inherit from the `textstat` class.
 * The kwic class now inherits from the textstat class.
-* The `as.TermDocumentMatrix()` and the `as.DocumentTermMatrix()`-methods are now also defined for `kwic` objects. They work exactly the same as for the `context` class. To avoid having to write new methods, a new `heighborhood` virtual class has been introduced. The aforementioned methods are defined for the virtual class and are available for context and kwic class objects. 
+* The `as.TermDocumentMatrix()` and the `as.DocumentTermMatrix()`-methods are now also defined for `kwic` objects. They work exactly the same as for the `context` class. To avoid having to write new methods, a new `heighborhood` virtual class has been introduced. The aforementioned methods are defined for the virtual class and are available for context and kwic class objects.
+* The `as.speeches()`-method failed to handle situations correctly, when one speaker occurring in the corpus only contributed one single region to the entire corpus (#86), debugged.
 
 
 polmineR 0.7.11

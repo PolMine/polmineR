@@ -137,6 +137,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       registry = registry(),
       id = ids_na
     )
+    str_na <- as.nativeEnc(str_na, from = .Object@encoding)
     .Object@cpos[word_id_na_index, "word_id" := ids_na]
     .Object@cpos[word_id_na_index, "word" := str_na]
   }
@@ -183,23 +184,23 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     .message("checking that all s-attributes are available", verbose = verbose)
     stopifnot( all(s_attribute %in% registry_get_s_attributes(.Object@corpus)) )
     
-    for (sAttr in s_attribute){
-      .message("get struc for s-attribute:", sAttr, verbose = verbose)
-      strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttr, cpos = .Object@cpos[["cpos"]], registry = registry())
+    for (s_attr in s_attribute){
+      .message("get struc for s-attribute:", s_attr, verbose = verbose)
+      strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attr, cpos = .Object@cpos[["cpos"]], registry = registry())
       if (decode == FALSE){
-        colname_struc <- paste(sAttr, "int", sep = "_")
+        colname_struc <- paste(s_attr, "int", sep = "_")
         if (colname_struc %in% colnames(.Object@cpos)){
           .message("already present, skipping assignment of column:", colname_struc, verbose = verbose)
         } else {
           .Object@cpos[[colname_struc]] <- strucs
         }
       } else {
-        if (sAttr %in% colnames(.Object@cpos)){
-          .message("already present, skipping assignment of column:", sAttr, verbose = verbose)
+        if (s_attr %in% colnames(.Object@cpos)){
+          .message("already present, skipping assignment of column:", s_attr, verbose = verbose)
         } else {
-          .message("get string for s-attribute:", sAttr, verbose = verbose)
-          strings <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttr, struc = strucs, registry = registry())
-          .Object@cpos[[sAttr]] <- as.nativeEnc(strings, from = .Object@encoding)
+          .message("get string for s-attribute:", s_attr, verbose = verbose)
+          strings <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
+          .Object@cpos[[s_attr]] <- as.nativeEnc(strings, from = .Object@encoding)
         }
       }
     }
