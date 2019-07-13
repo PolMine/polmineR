@@ -41,6 +41,8 @@ polmineR 0.7.11.9001
 * The kwic class now inherits from the textstat class.
 * The `as.TermDocumentMatrix()` and the `as.DocumentTermMatrix()`-methods are now also defined for `kwic` objects. They work exactly the same as for the `context` class. To avoid having to write new methods, a new `heighborhood` virtual class has been introduced. The aforementioned methods are defined for the virtual class and are available for context and kwic class objects.
 * The `as.speeches()`-method failed to handle situations correctly, when one speaker occurring in the corpus only contributed one single region to the entire corpus (#86), debugged.
+* The `context()`-method will now take again as input character vectors for the arguments `left` and `right` to expand to the left and right boundaries of the designated region (#87).
+* Counting over a `partition_bundle` started to throw a warning that an argument arrives at the `cpos()`-method that is not used. The cause for the warning message is removed, an additional unit test has been introduced to recognize issues with the `count`-method (#90).
 
 
 polmineR 0.7.11

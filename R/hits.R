@@ -223,54 +223,43 @@ setMethod("hits", "partition_bundle", function(
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
-  if (length(corpus) > 1) stop("partiton_bundle not derived from one corpus")
-  corpusEncoding <- .Object@objects[[1]]@encoding
+  corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
+  if (length(corpus_id) > 1L) stop("partiton_bundle not derived from one corpus")
+  corpus_obj <- corpus(corpus_id)
   s_attribute_strucs <- unique(unlist(lapply(.Object@objects, function(x) x@s_attribute_strucs)))
-  stopifnot(length(s_attribute_strucs) == 1)
+  stopifnot(length(s_attribute_strucs) == 1L)
+  
   # combine strucs and partition names into an overall data.table
   .message("preparing struc table", verbose = verbose)
-  strucDT <- data.table(
+  struc_dt <- data.table(
     struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
     partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
   )
-  setkeyv(strucDT, cols = "struc")
-  # perform counts
   
+  # perform counts
   .message("now performing counts", verbose = verbose)
   if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
-  .query <- function(toFind, corpus, encoding, ...) {
-    cposMatrix <- cpos(.Object = corpus, query = toFind, cqp = cqp, check = check, encoding = encoding, verbose = verbose)
-    if (!is.null(cposMatrix)){
-      dt <- data.table(cposMatrix)
-      dt[, query := toFind]
-      return(dt)
-    } else {
-      return(NULL)
-    }
+  .fn <- function(q, corpus_obj, ...) {
+    m <- cpos(.Object = corpus_obj, query = q, cqp = cqp, check = check, verbose = verbose)
+    if (!is.null(m)) data.table(m)[, query := q] else NULL
   }
-  countDTlist <- blapply(
-    as.list(query), f = .query,
-    corpus = corpus, encoding = corpusEncoding,
-    mc = mc, progress = progress, verbose = F
-  )
-  countDT <- rbindlist(countDTlist)
-  .message("matching data.tables", verbose = verbose)
-  countDT[, "struc" := cl_cpos2struc(corpus = corpus, s_attribute = s_attribute_strucs, cpos = countDT[["V1"]], registry = registry()), with = TRUE]
-  countDT[, "V1" := NULL, with = TRUE][, "V2" := NULL, with = TRUE]
-  setkeyv(countDT, cols = "struc")
-  setkeyv(strucDT, cols = "struc")
-  DT <- strucDT[countDT] # merge
-  nas <- which(is.na(DT[["partition"]]) == TRUE)
-  if (length(nas) > 0) DT <- DT[-nas] # remove hits that are not in partition_bundle
-  TF <- DT[, .N, by = c("partition", "query")]
-  setnames(TF, old = "N", new = "count")
+  count_dt_list <- blapply(as.list(query), f = .fn, corpus_obj = corpus_obj, mc = mc, progress = progress, verbose = FALSE)
+  count_dt <- rbindlist(count_dt_list)
+  
+  .message("finalizing tables", verbose = verbose)
+  strucs <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]], registry = registry())
+  count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
+  setkeyv(count_dt, cols = "struc")
+  setkeyv(struc_dt, cols = "struc")
+  dt <- struc_dt[count_dt] # merge
+  nas <- which(is.na(dt[["partition"]]) == TRUE)
+  if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
+  tf <- dt[, .N, by = c("partition", "query")]
+  setnames(tf, old = "N", new = "count")
   if (freq) size <- TRUE
-  if (size){
-    TF[, size := sapply(.Object@objects, function(x) x@size)[TF[["partition"]]]]
-  }
-  if (freq == TRUE) TF[, freq := count / size]
-  new("hits", stat = TF, corpus = corpus)
+  if (size) tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]
+  if (freq) tf[, freq := count / size]
+  new("hits", stat = tf, corpus = corpus_id)
 })
 
 #' @param x A \code{hits} object.

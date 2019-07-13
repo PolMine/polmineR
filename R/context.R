@@ -91,8 +91,8 @@ setMethod("context", "slice", function(
   if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   
-  left <- as.integer(left) # input may be numeric
-  right <- as.integer(right) # input may be numeric
+  if (is.numeric(left)) left <- as.integer(left) # input may be numeric
+  if (is.numeric(right)) right <- as.integer(right) # input may be numeric
   
   # generate the context object (ctxt)
   ctxt <- new(
@@ -206,8 +206,7 @@ setMethod("context", "subcorpus", function(
   
   if (is.integer(left) && is.integer(right)){
     if (is.null(names(left)) && is.null(names(left))){
-      
-      fn <- function(.SD){
+      .fn <- function(.SD){
         list(
           c(
             (.SD[[1]][1] - left):(.SD[[1]][1] - 1L),
@@ -221,45 +220,50 @@ setMethod("context", "subcorpus", function(
             )
         )
       }
-      Y <- DT[, fn(.SD), by = c("match_id")]
-      setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
-      Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
-      return(Y)
-      
     } else {
-      function(set, left, right, corpus, s_attribute){
+      # set, left, right, corpus, s_attribute
+      .fn <- function(.SD){
         stop("NOT Implemented at present")
-        queryStruc <- cl_cpos2struc(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())
-        maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
+        # hit_struc <- cl_cpos2struc(corpus = corpus, s_attribute = names(left), cpos = set[1], registry = registry())
+        # maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
         # get left min cpos
-        leftStruc <- queryStruc - left
-        leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
-        leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
-        cposLeft <- c(leftCposMin:(set[1]-1))
+        # leftStruc <- queryStruc - left
+        # leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
+        # leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
+        # cposLeft <- c(leftCposMin:(set[1]-1))
         # get right max cpos
-        rightStruc <- queryStruc + right
-        rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
-        rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
-        cposRight <- c((set[2] + 1):rightCposMax)
+        # rightStruc <- queryStruc + right
+        # rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
+        # rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
+        # cposRight <- c((set[2] + 1):rightCposMax)
         # handing it back
-        list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
+        # list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
       }
-      cposMethod <- "expandBeyondRegion"
-      s_attribute <- unique(c(names(left), names(right)))
     }
   } else if (is.character(left) && is.character(right)){
-    function(set, left, right, corpus, s_attribute){
-      stop("NOT Implemented at present")
-      cposLeft <- c((cl_cpos2lbound(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())):(set[1] - 1L))
-      cposRight <- c((set[2] + 1L):(cl_cpos2rbound(corpus = corpus, s_attribute = s_attribute, cpos = set[1], registry = registry())))
+    .fn <- function(.SD){
+      cpos_left <- seq.int(
+        from = cl_cpos2lbound(corpus = corpus, s_attribute = left, cpos = .SD[[1]][1], registry = registry()),
+        to = .SD[[1]][1] - 1L
+        )
+      cpos_right <- seq.int(
+        from = .SD[[2]][1] + 1L,
+        to = cl_cpos2rbound(corpus = corpus, s_attribute = right, cpos = .SD[[2]][1], registry = registry())
+      )
       list(
-        left = cposLeft,
-        node = c(set[1]:set[2]),
-        right = cposRight
+        c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
+        c(
+          seq.int(from = -length(cpos_left), to = -1L, by = 1L),
+          rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
+          seq.int(from = 1L, to = length(cpos_right), by = 1L)
+          )
       )
     }
-    s_attribute <- unique(c(left, right))
   }
+  Y <- DT[, .fn(.SD), by = c("match_id")]
+  setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
+  Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
+  Y
 }
 
 

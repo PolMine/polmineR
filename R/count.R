@@ -235,10 +235,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       }
     }
     
-    if (total){
-      .message("adding total number of hits (col 'TOTAL', verbose = verbose)")
-      DT_cast[, "TOTAL" := rowSums(DT_cast[, 2L:ncol(DT_cast), with = FALSE]), with = TRUE]
-    }
+    if (total) DT_cast[, "TOTAL" := rowSums(DT_cast[, 2L:ncol(DT_cast), with = FALSE]), with = TRUE]
     return(DT_cast)
   } else {
     corpus <- get_corpus(.Object)

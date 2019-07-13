@@ -33,3 +33,19 @@ test_that("count - breakdown", {
   y <- count("REUTERS", query = '"remain.*"', breakdown = TRUE)
   expect_equal(sum(y[["count"]]), 5)
 })
+
+
+test_that(
+  "count over partition_bundle",
+  {
+    cnt_int_total <- corpus("GERMAPARLMINI") %>% count(query = "Integration")
+    sp_bundle <- corpus("GERMAPARLMINI") %>%
+      as.speeches(s_attribute_name = "speaker")
+    cnt_int_pb <- count(sp_bundle, query = "Integration") %>%
+      subset(Integration > 0)
+    expect_equal(sum(cnt_int_pb[["TOTAL"]]), cnt_int_total[["count"]])
+    for (i in 1L:nrow(cnt_int_pb)){
+      exp <- count(sp_bundle[[cnt_int_pb[["partition"]][i]]], query = "Integration")[["count"]]
+      expect_equal(exp, cnt_int_pb[["TOTAL"]][i])
+    }
+  })
