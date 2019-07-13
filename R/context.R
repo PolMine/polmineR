@@ -128,7 +128,9 @@ setMethod("context", "slice", function(
   
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+  if (is.null(ctxt)) return(NULL)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
+  if (is.null(ctxt)) return(NULL)
   
   .message("generating contexts", verbose = verbose)
   

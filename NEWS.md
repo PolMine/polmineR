@@ -43,6 +43,7 @@ polmineR 0.7.11.9001
 * The `as.speeches()`-method failed to handle situations correctly, when one speaker occurring in the corpus only contributed one single region to the entire corpus (#86), debugged.
 * The `context()`-method will now take again as input character vectors for the arguments `left` and `right` to expand to the left and right boundaries of the designated region (#87).
 * Counting over a `partition_bundle` started to throw a warning that an argument arrives at the `cpos()`-method that is not used. The cause for the warning message is removed, an additional unit test has been introduced to recognize issues with the `count`-method (#90).
+* The `kwic()`-method threw an error when trimming the matches by using a positivelist or a stoplist resulted in no remaining matches. The method will now return a NULL object and keep issuing a warning if no matches remain after filtering (#91).
 
 
 polmineR 0.7.11

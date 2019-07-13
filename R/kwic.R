@@ -292,13 +292,12 @@ setMethod("kwic", "slice", function(
     count = FALSE, verbose = verbose
   )
   if (is.null(ctxt)){
-    message("... no occurrence of query")
+    message("... no matches for query (or no matches left after applying stoplist/positivelist)")
     return(invisible(NULL))
   }
   retval <- kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
-  if (!is.null(positivelist)){
-    retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
-  }
+  if (!is.null(positivelist)) retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
+
   retval
 })
 
@@ -359,8 +358,8 @@ setMethod("kwic", "corpus", function(
   cpos_list <- apply(
     hits, 1,
     function(row){
-      left <- c((row[1] - left):(row[1] - 1L))
-      right <- c((row[2] + 1L):(row[2] + right))
+      left <- (row[1] - left):(row[1] - 1L)
+      right <- (row[2] + 1L):(row[2] + right)
       list(
         left = left[left > 0L],
         node = row[1]:row[2],
@@ -413,7 +412,9 @@ setMethod("kwic", "corpus", function(
   
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+  if (is.null(ctxt)) return(NULL)
   if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
+  if (is.null(ctxt)) return(NULL)
   
   kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
 })
