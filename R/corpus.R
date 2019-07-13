@@ -324,6 +324,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     data_dir = x@data_dir,
     cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
     strucs = dt_min[["struc"]],
+    s_attributes = c(x@s_attributes, lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]]))),
     s_attribute_strucs = s_attr[length(s_attr)],
     xml = "flat",
     name = x@name

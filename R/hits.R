@@ -54,18 +54,20 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
-setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
+setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
+  
+  if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
-  .fn <- function(query){
-    cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute,verbose = FALSE)
+  .fn <- function(q){
+    cpos(.Object = .Object, query = q, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   }
-  cpos_list <- blapply(x = as.list(query), f = .fn)
-  
+  cpos_list <- if (progress) pblapply(as.list(query), .fn, cl = mc) else mclapply(as.list(query), .fn, mc.cores = mc)
+
   if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
   
   for (i in length(query):1L){

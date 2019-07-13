@@ -16,7 +16,7 @@ hits(.Object, ...)
 
 \S4method{hits}{corpus}(.Object, query, cqp = FALSE, check = TRUE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,
-  freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...)
+  freq = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...)
 
 \S4method{hits}{character}(.Object, query, cqp = FALSE, check = TRUE,
   s_attribute = NULL, p_attribute = "word", size = FALSE,

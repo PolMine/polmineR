@@ -52,14 +52,12 @@ setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FAL
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
   
-  dispersion(
-    hits(
-      .Object = .Object, query = query, cqp = cqp,
-      s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
-      mc = mc, verbose = verbose, progress = progress
-    ),
-    s_attribute = s_attribute, freq = freq
+  h <- hits(
+    .Object = .Object, query = query, cqp = cqp,
+    s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
+    mc = mc, verbose = verbose, progress = progress
   )
+  dispersion(h, s_attribute = s_attribute, freq = freq)
 })
 
 #' @rdname dispersion-method
@@ -83,13 +81,11 @@ setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
   
-  dispersion(
-    hits(
-      .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
-      mc = mc, verbose = verbose, progress = progress
-    ),
-    s_attribute = s_attribute, freq = freq
+  h <- hits(
+    .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
+    mc = mc, verbose = verbose, progress = progress
   )
+  dispersion(h, s_attribute = s_attribute, freq = freq)
 })
 
 
@@ -117,20 +113,40 @@ setMethod("dispersion", "hits", function(.Object, s_attribute, freq = FALSE, ver
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
   
+  if (length(.Object@query) > 1L){
+    if (!freq){
+      .Object@stat <- .Object@stat[, {sum(.SD[["count"]])}, by = s_attribute][, "query" := paste(.Object@query, collapse = "//")]
+      setnames(.Object@stat, old = "V1", new = "count")
+      setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
+    } else {
+      .Object@stat <- .Object@stat[, "freq" := NULL][, {list(count = sum(.SD[["count"]]), size = sum(.SD[["size"]]))}, by = s_attribute]
+      .Object@stat[, "freq" := .Object@stat[["count"]] / .Object@stat[["size"]]][, "query" := paste(.Object@query, collapse = "//")]
+      setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
+    }
+  }
   
-  if (length(s_attribute) == 2){
+  
+  if (length(s_attribute) == 2L){
+    for (s_attr in s_attribute) if ("" %in% .Object@stat[[s_attr]]){
+      warning(
+        "There is a zero-length character vector for s_attribute ",
+        s_attr,
+        ", this will result in a column V1 (V2, V3, ...)."
+      )
+    }
     retval <- data.table::dcast.data.table(
       .Object@stat, formula(paste(s_attribute, collapse = "~")),
       value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0
       )  
-  } else if (length(s_attribute) == 1){
-    if (freq == FALSE){
-      sumup <- function(.SD) sum(.SD[["count"]])
-      retval <- .Object@stat[, sumup(.SD), by = c(s_attribute), with = TRUE]
-      data.table::setnames(retval, old = "V1", new = "count")
-    } else {
-      retval <- .Object@stat
-    }
+  } else if (length(s_attribute) == 1L){
+    retval <- .Object@stat
+    # if (!freq){
+    #   sumup <- function(.SD) sum(.SD[["count"]])
+    #   retval <- .Object@stat[, sumup(.SD), by = c(s_attribute), with = TRUE]
+    #   data.table::setnames(retval, old = "V1", new = "count")
+    # } else {
+    #   retval <- .Object@stat
+    # }
   } else {
     warning("length(s_attribute) needs to be 1 or 2")
   }
