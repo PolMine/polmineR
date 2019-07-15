@@ -126,7 +126,11 @@ setMethod("count", "slice", function(
           if (is.null(cposHits)) return( NULL )
           hitsString <- apply(
             cposHits, 1,
-            function(x) paste(cl_cpos2str(corpus = .Object@corpus, p_attribute = p_attribute, cpos = x[1]:x[2], registry = registry()), collapse = ' ')
+            function(x)
+              paste(
+                cl_cpos2str(corpus = .Object@corpus, p_attribute = p_attribute, cpos = x[1]:x[2], registry = registry()),
+                collapse = ' '
+              )
           )
           result <- table(hitsString)
           dt <- data.table(query = x, match = names(result), count = as.vector(unname(result)))
@@ -143,22 +147,22 @@ setMethod("count", "slice", function(
       )
       return( rbindlist(dts) )
     } else if (breakdown == FALSE){
-      .getNumberOfHits <- function(query, partition, cqp, p_attribute, ...) {
+      .fn <- function(query, obj, cqp, p_attribute, ...) {
         .message("processing query", query, verbose = verbose)
-        cposResult <- cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
+        cposResult <- cpos(.Object = obj, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
         if (is.null(cposResult)) return( 0 ) else return( nrow(cposResult) )
       }
-      no <- as.integer(blapply(
+      no <- as.integer(unlist(blapply(
         as.list(query),
-        f = .getNumberOfHits,
-        partition = .Object, cqp = cqp, p_attribute = p_attribute,
+        f = .fn,
+        obj = .Object, cqp = cqp, p_attribute = p_attribute,
         mc = mc, verbose = verbose, progress = progress
-      ))
+      )))
       return( data.table(query = query, count = no, freq = no/.Object@size) )
     }
   } else {
     pAttr_id <- paste(p_attribute, "id", sep = "_")
-    if (length(p_attribute) == 1){
+    if (length(p_attribute) == 1L){
       countMatrix <- RcppCWB::region_matrix_to_count_matrix(
         corpus = .Object@corpus, p_attribute = p_attribute,
         matrix = .Object@cpos

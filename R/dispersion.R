@@ -119,7 +119,7 @@ setMethod("dispersion", "hits", function(.Object, s_attribute, freq = FALSE, ver
       setnames(.Object@stat, old = "V1", new = "count")
       setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
     } else {
-      .Object@stat <- .Object@stat[, "freq" := NULL][, {list(count = sum(.SD[["count"]]), size = sum(.SD[["size"]]))}, by = s_attribute]
+      .Object@stat <- .Object@stat[, "freq" := NULL][, {list(count = sum(.SD[["count"]]), size = unique(.SD[["size"]]))}, by = s_attribute]
       .Object@stat[, "freq" := .Object@stat[["count"]] / .Object@stat[["size"]]][, "query" := paste(.Object@query, collapse = "//")]
       setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
     }
@@ -138,7 +138,7 @@ setMethod("dispersion", "hits", function(.Object, s_attribute, freq = FALSE, ver
       .Object@stat, formula(paste(s_attribute, collapse = "~")),
       value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0
       )  
-  } else if (length(s_attribute) == 1L){
+  } else if (length(s_attribute) <= 2L){
     retval <- .Object@stat
     # if (!freq){
     #   sumup <- function(.SD) sum(.SD[["count"]])

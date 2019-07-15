@@ -21,3 +21,46 @@ test_that(
   }
 )
 
+test_that(
+  "dispersion using multiple queries",
+  {
+    corpus_id <- "GERMAPARLMINI"
+    corpus_obj <- corpus("GERMAPARLMINI")
+    queries <- c('"Arbeit.*"', '"Sozial.*"')
+    s_attr <- "date"
+    
+    # two queries, one s-attribute, no frequencies
+    y <- dispersion(corpus_obj, query = queries, cqp = TRUE, s_attribute = s_attr, freq = FALSE)
+    for (i in 1L:nrow(y)){
+      corpus_obj_sub <- subset(corpus_obj, date = y[["date"]][i])
+      expect_equal(
+        y[["count"]][i],
+        sum(sapply(queries, function(q) polmineR::count(corpus_obj_sub, query = q, verbose = FALSE)[["count"]]))
+      )
+    }
+    
+    # two queries, one s-attribute, frequencies
+    y <- dispersion(corpus_obj, query = queries, cqp = TRUE, s_attribute = "date", freq = TRUE)
+    for (i in 1L:nrow(y)){
+      corpus_obj_sub <- subset(corpus_obj, date = y[["date"]][i])
+      s <- size(corpus_obj_sub)
+      expect_equal(
+        y[["freq"]][i],
+        sum(sapply(queries, function(q) polmineR::count(corpus_obj_sub, query = q, verbose = FALSE)[["freq"]]))
+      )
+    }
+    
+    # two queries, two s-attributes, frequencies
+    y <- dispersion(corpus_obj, query = queries, cqp = TRUE, s_attribute = c("date", "party"), freq = TRUE)
+    for (i in 1L:nrow(y)){
+      corpus_obj_sub <- subset(corpus_obj, date = y[["date"]][i]) %>% subset(party == "CDU_CSU")
+      s <- size(corpus_obj_sub)
+      expect_equal(
+        y[["CDU_CSU"]][i],
+        sum(sapply(queries, function(q) polmineR::count(corpus_obj_sub, query = q, verbose = FALSE)[["freq"]]))
+      )
+    }
+    
+  }
+)
+
