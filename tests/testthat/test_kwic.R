@@ -116,7 +116,13 @@ test_that(
       slam::col_sums(dtm)[["prices"]],
       nrow(oil@cpos[word == "prices" & direction != 0L])
     )
-    
-    
+  }
+)
+
+test_that(
+  "kwic: NULL object if positivelist removes all matches",
+  {
+    k <- corpus("GERMAPARLMINI") %>% kwic(query = 'Integration', cqp = FALSE, positivelist = "Messer")
+    expect_equal(is.null(k), TRUE)
   }
 )

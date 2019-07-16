@@ -375,11 +375,11 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       )
       return(data.table(query = query, count = count, freq = count / total))
     } else if (cqp){
-      if (breakdown == FALSE){
+      if (!breakdown){
         count <- sapply(
           query,
           function(query){
-            cpos_matrix <- cpos(.Object@corpus, query, cqp = cqp, check = check, p_attribute = p_attribute, encoding = encoding(.Object))
+            cpos_matrix <- cpos(.Object@corpus, query, cqp = cqp, check = check, p_attribute = p_attribute)
             if (!is.null(cpos_matrix)){
               return( nrow(cpos_matrix) )
             } else {

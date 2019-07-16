@@ -153,11 +153,17 @@ NULL
 #' The method works with a whole CWB corpus defined by a  character vector, and
 #' can be applied on a \code{partition}- or a \code{context} object.
 #' 
-#' If a \code{positivelist} ist supplied, only concordances will be kept if at
-#' least one of the terms from the \code{positivelist} occurrs in the context of
+#' If a \code{positivelist} is supplied, only those concordances will be kept that
+#' have one of the terms from the \code{positivelist} occurr in the context of
 #' the query match. Use argument \code{regex} if the positivelist should be
 #' interpreted as regular expressions. Tokens from the positivelist will be
 #' highlighted in the output table.
+#' 
+#' If a \code{negativelist} is supplied, concordances are removed if any of the
+#' tokens of the \code{negativelist} occurrs in the context of the query match.
+#' 
+#' @return If there are no matches, or if all (initial) matches are dropped due to the
+#' application of a positivelist, a \code{NULL} is returned.
 #' 
 #' @param .Object A (length-one) \code{character} vector with the name of a CWB
 #'   corpus, a \code{partition} or \code{context} object.
@@ -180,10 +186,10 @@ NULL
 #'   results.
 #' @param positivelist Terms or ids required for a concordance to occurr in
 #'   results
-#' @param regex Logical, whether stoplist/positivelist is interpreted as regular
-#'   expression
-#' @param verbose Logical, whether to output progress messages
-#' @param progress Logical, whether to show progress bars.
+#' @param regex Logical, whether \code{stoplist}/\code{positivelist} is interpreted as regular
+#'   expression.
+#' @param verbose A \code{logical} value, whether to print messages.
+#' @param progress A \code{logical} value, whether to show progress bar.
 #' @param ... Further arguments, used to ensure backwards compatibility. If
 #'   \code{.Object} is a \code{remote_corpus} of \code{remote_partition} object,
 #'   the three dots (\code{...}) are used to pass arguments. Hence, it is
