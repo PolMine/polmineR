@@ -46,6 +46,11 @@ polmineR 0.7.11.9001
 * The `kwic()`-method threw an error when trimming the matches by using a positivelist or a stoplist resulted in no remaining matches. The method will now return a NULL object and keep issuing a warning if no matches remain after filtering (#91).
 * Chaining subsetting calls on a corpus/subcorpus omitted filling the s_attribute slot of the `subcorpus` object, resulting in false results when counting over subcorpora. Fixed.
 * Implemented possibility to use multiple queries in `dispersion`-method (#92).
+* Started to remove bugs in the shiny app: kwic starts to work again (bug: slot table has been replaced by stat).
+* Added CQP functionality to count tab in shiny app, and to the dispersion tab.
+* The constructor method for a `corpus` object, the `corpus()` method will now 
+check whether the character vector with the corpus ID refers to an available corpus,
+whether all letters are upper case and issue informative warnings and error messages.
 
 
 polmineR 0.7.11

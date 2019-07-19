@@ -4,6 +4,8 @@ countUiInput <- function(){
   list(
     go = actionButton("count_go", label="", icon = icon("play", lib = "glyphicon")),
     radioButtons("count_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
+    cqp = radioButtons("count_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
+    breakdown = radioButtons("count_breakdown", "breakdown", choices = list("yes", "no"), selected = "no", inline = TRUE),
     conditionalPanel(
       condition = "input.count_object == 'corpus'",
       selectInput("count_corpus", "corpus", corpus()[["corpus"]])
@@ -15,7 +17,8 @@ countUiInput <- function(){
     textInput("count_query", "query", value = ""),
     selectInput(
       "count_p_attribute", "p_attribute",
-      choices = p_attributes(corpus()[1, "corpus"])
+      choices = p_attributes(corpus()[1, "corpus"]),
+      selected = "word"
     )
   )
 }
@@ -37,36 +40,33 @@ countServer <- function(input, output, session){
     isolate({
       if (input$count_go > 0){
         
-        if (input$count_object == "corpus" && input$count_query == ""){
-          if (!input$count_corpus %in% names(values$corpora)){
-            print("x")
-            withProgress(
-              message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
-              {
-                values$corpora[[input$count_corpus]] <- Corpus$new(input$count_corpus, p_attribute = input$count_p_attribute)
-              }
-              
-            )
-          }
-        } else {
-          
-        }
-        
-        .Object <- switch(
+        if (!input$count_corpus %in% names(values$corpora))
+          values$corpora[[input$count_corpus]] <- corpus(input$count_corpus)
+
+        obj <- switch(
           input$count_object,
           corpus = values$corpora[[input$count_corpus]],
           partition = values$partition[[input$count_partition]]
         )
         
         if (input$count_query == ""){
-          return(polmineR:::.get_slot(.Object, "stat"))
+          retval <- as.data.frame(count(obj, p_attribute = input$count_p_attribute)@stat)
         } else {
-          retval <- count(.Object, query = input$count_query, p_attribute = input$count_p_attribute)
-          return( retval )
+          use_cqp <- if (input$count_cqp == "yes") TRUE else FALSE
+          retval <- count(
+            .Object = obj,
+            query = rectifySpecialChars(input$count_query), # utility functions in file utils.R in module dir
+            p_attribute = input$count_p_attribute,
+            cqp = use_cqp,
+            breakdown = if (input$count_breakdown == "yes") TRUE else FALSE
+            )
         }
+        id_cols <- grep("_id", colnames(retval))
+        if (length(id_cols) > 0L) for (colname in id_cols) retval[[colname]] <- NULL
+        return(retval)
 
       } else {
-        return(data.frame(word = ""[0], count = integer()))
+        return(data.frame(word = character(), count = integer()))
       }
     })
   })

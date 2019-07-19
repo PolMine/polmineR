@@ -593,7 +593,7 @@ setClass("kwic_bundle", contains = "bundle")
 #' the name of the class, the \code{corpus}-method is the initializer for
 #' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
 #' on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
-#' class inheriting from the \code{corpus} class will handle respective
+#' class (which inherits from the \code{corpus} class) will handle respective
 #' information. A (limited) set of polmineR functions and methods can be
 #' executed on the corpus on the remote machine from the local R session by
 #' calling them on the \code{remote_corpus} object. Calling the
@@ -603,8 +603,13 @@ setClass("kwic_bundle", contains = "bundle")
 #' @details Calling \code{corpus()} will return a \code{data.frame} listing the corpora
 #' available locally and described in the active registry directory, and some
 #' basic information on the corpora.
-#' @details A \code{corpus} object is instantiated by passing the corpus ID as
-#'   argument \code{.Object}.
+#' @details A \code{corpus} object is instantiated by passing a corpus ID as
+#'   argument \code{.Object}. Following the conventions of the Corpus Workbench
+#'   (CWB), Corpus IDs are written in upper case. If \code{.Object} includes
+#'   lower case letters, the \code{corpus} object is instantiated nevertheless,
+#'   but a warning is issued to prevent bad practice. If \code{.Object} is not a
+#'   known corpus, the error message will include a suggestion if there is a
+#'   potential candidate that can be identified by \code{agrep}.
 #' @details A limited set of methods of the \code{polmineR} package is exposed
 #'   to be executed on a remote OpenCPU server. As a matter of convenience, the
 #'   whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
@@ -640,6 +645,8 @@ setClass("kwic_bundle", contains = "bundle")
 #' 
 #' # initialize corpus object
 #' r <- corpus("REUTERS")
+#' r <- corpus ("reuters") # will work, but will result in a warning
+#' 
 #' 
 #' # apply core polmineR methods
 #' size(r)

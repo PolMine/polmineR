@@ -13,8 +13,32 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   that hosts a corpus, or several corpora. The \code{corpus}-method will then
 #'   instantiate a \code{remote_corpus} object.
 #' @exportMethod corpus
+#' @importFrom RcppCWB cqp_list_corpora
 setMethod("corpus", "character", function(.Object, server = NULL){
   if (is.null(server)){
+    corpora <- cqp_list_corpora()
+    
+    # check that corpus is available 
+    if (!.Object %in% corpora){
+      uppered <- toupper(.Object)
+      if (uppered %in% corpora){
+        warning(
+          sprintf(
+            "Using corpus '%s', not '%s' - note that corpus ids are expected to be in upper case throughout.",
+            uppered, .Object
+            )
+        )
+        .Object <- uppered
+      } else {
+        proxy <- agrep(uppered, corpora, value = TRUE)
+        if (length(proxy) == 0L){
+          stop("Corpus '", .Object, "' is not available.")
+        } else {
+          stop("Corpus '", .Object, "' is not available. Maybe you meant '", proxy, "'?")
+        }
+      }
+    }
+    
     properties <- registry_get_properties(.Object)
     y <- new(
       "corpus",

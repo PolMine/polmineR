@@ -65,7 +65,7 @@ setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pag
 #' 
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
   if (!is.null(fmt)) x@stat[, "node" := sprintf(fmt, x@stat[["node"]])]
-  apply(x@stat, 1L, function(r) paste(r["left"], r["node"], r["right"], sep = " "))
+  apply(x@stat, 1L, function(r) paste(r[["left"]], r[["node"]], r[["right"]], sep = " "))
 })
 
 #' @docType methods

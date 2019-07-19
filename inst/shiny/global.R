@@ -1,8 +1,10 @@
 library(shiny)
 library(polmineR)
+library(data.table)
 library(magrittr)
 loadNamespace("DT")
 library(shinythemes)
+
 
 source("modules/cooccurrences.R")
 source("modules/dispersion.R")

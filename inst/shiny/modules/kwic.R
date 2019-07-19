@@ -98,13 +98,13 @@ kwicServer <- function(input, output, session, ...){
         
         if (is.null(values[["kwic"]])){
           retval <- data.frame(left = character(), node = character(), right = character())
-        } else if (nrow(values[["kwic"]]@table) == 0){
+        } else if (nrow(values[["kwic"]]@stat) == 0L){
           retval <- data.frame(left = character(), node = character(), right = character())
         } else {
-          tab <- values[["kwic"]]@table
-          tab[["hit_no"]] <- NULL
-          if (length(input$kwic_meta) == 0){
-            retval <- data.frame(no = c(1:nrow(tab)), tab)
+          tab <- values[["kwic"]]@stat
+          if ("match_id" %in% colnames(tab)) tab[, "match_id" := NULL]
+          if (length(input$kwic_meta) == 0L){
+            retval <- data.frame(no = 1L:nrow(tab), tab)
           } else if (length(input$kwic_meta)){
             metaRow <- unlist(lapply(
               1L:nrow(tab),
