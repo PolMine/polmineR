@@ -51,6 +51,9 @@ polmineR 0.7.11.9001
 * The constructor method for a `corpus` object, the `corpus()` method will now 
 check whether the character vector with the corpus ID refers to an available corpus,
 whether all letters are upper case and issue informative warnings and error messages.
+* The part of the shiny app for dispersions did not work at all - has been repaired, exposing more functionality of `dispersion()` (#62).
+* In the `as.speeches()`-method, the argument `verbose` was not used (#64) - this had been addressed when solved when addressing issue #86.
+* subsetting corpora using non-standard evaluation expanded (#40).
 
 
 polmineR 0.7.11

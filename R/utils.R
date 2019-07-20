@@ -272,13 +272,35 @@ flatten <- function(object){
 }
 
 
-.message <- function(..., verbose = TRUE){
-  message <- paste(unlist(list(...)), collapse = " ")
-  if (verbose == TRUE){
-    message(paste("...", message))
-  } else if (verbose == "shiny"){
-    shiny::incProgress(amount = 1, detail = message)
+.message <- function(..., verbose = TRUE, type = "message", shiny = getOption("polmineR.shiny")){
+  msg <- paste(unlist(list(...)), collapse = " ")
+  
+  # print(shiny)
+  if (is.null(shiny)) shiny <- FALSE
+  
+  
+  if (shiny){
+    print("shiny message mode")
+    if (requireNamespace(package = "shiny", quietly = TRUE)){
+      if (type %in% c("default", "message")){
+        shiny::incProgress(amount = 1, detail = msg)
+      } else {
+        print("show notification")
+        print("type")
+        print("message")
+        shiny::showNotification(msg, type = type)
+      }
+    }
+  } else {
+    if (type == "error"){
+      stop(msg)
+    } else if (type == "warning"){
+      warning(msg)
+    } else {
+      if (verbose) message(paste("...", msg))
+    }
   }
+  
 }
 
 

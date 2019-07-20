@@ -6,12 +6,16 @@ NULL
 #' Send out a mail with the statistical analysis included in an object attached
 #' as an xlsx-file.
 #' 
-#' The method translates the result table in the object provided into an Excel sheet
-#' and attaches the sheet to an Email which will be sent to the Email-address provided
-#' by the argument \code{to}. A pre-requirement is that the global options \code{polmineR.smtp_port} and
-#' \code{polmineR.smtp_server} are validly defined. See examples.
+#' The method translates the result table in the object provided into an Excel
+#' sheet (xlsx-file) and attaches the sheet to an Email which will be sent to the
+#' Email-address provided by the argument \code{to}. A pre-requirement is that
+#' the global options \code{polmineR.smtp_port} and \code{polmineR.smtp_server}
+#' are defined. See examples.
 #' 
-#' Please note: At this stage, authentication is not yet supported.
+#' Please note: At this stage, explicit authentication is not yet supported, and
+#' mail delivery will fail if authentication fails. Depending on the
+#' authentication requirements of your mail server, explicit authentication is
+#' not necessary if your logged in via VPN to your organisation.
 #' 
 #' @param .Object The object to deliver.
 #' @param to An email-address, the recipient of the mail message.
@@ -19,6 +23,8 @@ NULL
 #'   sent (if \code{NULL}, the whole table will be sent).
 #' @param filename The filename of the (temporary) xlsx-file that is generated.
 #' @param ... Further parameters.
+#' @return The method returns \code{TRUE} if the message has been sent out
+#'   successfully, and \code{FALSE}, if not.
 #' @aliases mail mail-method
 #' @rdname mail-method
 #' @exportMethod mail
@@ -50,12 +56,34 @@ setGeneric("mail", function(.Object, ...) standardGeneric("mail") )
 
 
 .mail <- function(msg, to = getOption("polmineR.email")){
-  if (to == "") stop("email is not set in session settings")
-  sendmailR::sendmail_options(list(smtpServer = getOption("polmineR.smtp_server"), smtpPort = getOption("polmineR.smtp_port")))
-  sendmailR::sendmail(
-    from = to,
-    to = to, subject = 'polmineR delivers', msg = msg
+  
+  no_email <- "Mailing KWIC table not possible: No email address is set!"
+  no_server <- "Mailing KWIC table not possible: smtp_server is no set!"
+  no_port <- "Mailing KWIC table not possible: smtp_port is no set!"
+  
+  go <- TRUE
+  if (nchar(to) == 0L){.message(no_email , type = "error"); go <- FALSE}
+  if (nchar(options("polmineR.smtp_server")) == 0L){.message(no_server, type = "error"); go <- FALSE}
+  if (nchar(options("polmineR.smtp_port")) == 0L){.message(no_port, type = "error"); go <- FALSE}
+  if (!go) return(FALSE)
+  
+  sendmailR::sendmail_options(
+    list(
+      smtpServer = getOption("polmineR.smtp_server"),
+      smtpPort = getOption("polmineR.smtp_port")
+    )
   )
+  subj <- 'polmineR delivers'
+  
+  success <- try(sendmailR::sendmail(from = to, to = to, subject = subj, msg = msg))
+  
+  if (is(success)[1] == "try-error"){
+    .message(success[1], type = "error")
+    retval <- FALSE
+  } else {
+    retval <- TRUE
+  }
+  retval
 }
 
 
@@ -82,7 +110,7 @@ setMethod("mail", "data.frame", function(.Object, to = getOption("polmineR.email
   store(.Object, filename = filename, rows = rows)
   mail_msg <- "Prepared and delivered by polmineR.\n"
   msg <- list(mail_msg, sendmailR::mime_part(filename))
-  retval <- .mail(msg, to)$msg
+  retval <- .mail(msg, to)
   unlink(filename)
   retval
 })

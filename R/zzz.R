@@ -24,7 +24,8 @@
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
-    "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY")
+    "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
+    "polmineR.shiny" = FALSE
   )
   
   # rcqp is not always accessible here - set_templates would not work with perl interface

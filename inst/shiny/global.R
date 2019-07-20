@@ -5,6 +5,7 @@ library(magrittr)
 loadNamespace("DT")
 library(shinythemes)
 
+options(polmineR.shiny = TRUE)
 
 source("modules/cooccurrences.R")
 source("modules/dispersion.R")

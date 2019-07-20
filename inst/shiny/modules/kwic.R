@@ -157,11 +157,12 @@ kwicServer <- function(input, output, session, ...){
   observeEvent(
     input$kwic_mail,
     {
-      if (input$kwic_mail > 0) polmineR:::mail(values[["kwic"]])
+      success <- polmineR::mail(values[["kwic"]])
+      if (success) showNotification(
+        sprintf("Results have been sent successfully to %s", getOption("polmineR.email"))
+      )
     }
   )
-  
-  
 }
 
 

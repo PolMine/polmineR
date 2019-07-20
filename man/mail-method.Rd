@@ -33,17 +33,25 @@ sent (if \code{NULL}, the whole table will be sent).}
 
 \item{filename}{The filename of the (temporary) xlsx-file that is generated.}
 }
+\value{
+The method returns \code{TRUE} if the message has been sent out
+  successfully, and \code{FALSE}, if not.
+}
 \description{
 Send out a mail with the statistical analysis included in an object attached
 as an xlsx-file.
 }
 \details{
-The method translates the result table in the object provided into an Excel sheet
-and attaches the sheet to an Email which will be sent to the Email-address provided
-by the argument \code{to}. A pre-requirement is that the global options \code{polmineR.smtp_port} and
-\code{polmineR.smtp_server} are validly defined. See examples.
+The method translates the result table in the object provided into an Excel
+sheet (xlsx-file) and attaches the sheet to an Email which will be sent to the
+Email-address provided by the argument \code{to}. A pre-requirement is that
+the global options \code{polmineR.smtp_port} and \code{polmineR.smtp_server}
+are defined. See examples.
 
-Please note: At this stage, authentication is not yet supported.
+Please note: At this stage, explicit authentication is not yet supported, and
+mail delivery will fail if authentication fails. Depending on the
+authentication requirements of your mail server, explicit authentication is
+not necessary if your logged in via VPN to your organisation.
 }
 \examples{
 # Get all (global) options for the polmineR package
