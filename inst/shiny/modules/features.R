@@ -43,6 +43,12 @@ featuresUiOutput <- function(){
 #' @export featuresServer
 featuresServer <- function(input, output, session){
   
+  observeEvent(
+    input$features_partition_x,
+    updateSelectInput(session, inputId = "features_p_attribute", choices = p_attributes(input$features_partition_x))
+  )
+  
+  
   # the sole purpose of the following block is to show empty table
   output$features_table <- DT::renderDataTable({
     input$features_go

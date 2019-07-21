@@ -34,6 +34,18 @@ countUiOutput <- function(){
 #' @rdname shiny_helper_functions
 #' @export countServer
 countServer <- function(input, output, session){
+  
+  observeEvent(
+    input$count_corpus,
+    updateSelectInput(session, inputId = "count_p_attribute", choices = p_attributes(input$count_corpus))
+  )
+  
+  observeEvent(
+    input$count_partition,
+    updateSelectInput(session, inputId = "count_p_attribute", choices = p_attributes(input$count_partition))
+  )
+  
+  
 
   output$count_table <- DT::renderDataTable({
     input$count_go

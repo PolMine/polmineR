@@ -43,6 +43,19 @@ cooccurrencesUiOutput <- function(){
 #' @rdname shiny_helper_functions
 #' @export cooccurrencesServer
 cooccurrencesServer <- function(input, output, session){
+  
+  observeEvent(
+    input$cooccurrences_corpus,
+    updateSelectInput(session, inputId = "cooccurrences_p_attribute", choices = p_attributes(input$cooccurrences_corpus))
+  )
+  
+  observeEvent(
+    input$cooccurrences_partition,
+    updateSelectInput(session, inputId = "cooccurrences_p_attribute", choices = p_attributes(input$cooccurrences_partition))
+  )
+  
+  
+  
   output$cooccurrences_table <- DT::renderDataTable({
     input$cooccurrences_go
     isolate({

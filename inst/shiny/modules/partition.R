@@ -114,6 +114,16 @@ partitionServer <- function(input, output, session){
     }
   )
   
+  observeEvent(
+    input$partition_corpus,
+    {
+      updateSelectInput(
+        session, inputId = "partition_p_attribute",
+        choices = p_attributes(input$partition_corpus)
+      )
+    }
+  )
+  
   output$partition_s_attributes <- renderUI({
     tagList(lapply(
       input$partition_s_attributes,
