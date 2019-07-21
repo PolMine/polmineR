@@ -54,6 +54,9 @@ whether all letters are upper case and issue informative warnings and error mess
 * The part of the shiny app for dispersions did not work at all - has been repaired, exposing more functionality of `dispersion()` (#62).
 * In the `as.speeches()`-method, the argument `verbose` was not used (#64) - this had been addressed when solved when addressing issue #86.
 * subsetting corpora using non-standard evaluation expanded (#40).
+* Rework of the way messages are printed to make it easy to implement notifications in the shiny environment.
+* Telling messages when sending out emails - on success and error (#61).
+* Default highlighting when a positivelist is supplied has been removed from the `kwic()`-method. This ensures that subsequent highlighting operations can assign new colors (#38).
 
 
 polmineR 0.7.11

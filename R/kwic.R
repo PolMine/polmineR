@@ -302,7 +302,7 @@ setMethod("kwic", "slice", function(
     return(invisible(NULL))
   }
   retval <- kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
-  if (!is.null(positivelist)) retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
+  # if (!is.null(positivelist)) retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
 
   retval
 })
