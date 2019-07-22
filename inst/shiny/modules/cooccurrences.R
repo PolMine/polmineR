@@ -51,7 +51,15 @@ cooccurrencesServer <- function(input, output, session){
   
   observeEvent(
     input$cooccurrences_partition,
-    updateSelectInput(session, inputId = "cooccurrences_p_attribute", choices = p_attributes(input$cooccurrences_partition))
+    {
+      if (input$cooccurrences_partition != ""){
+        updateSelectInput(
+          session,
+          inputId = "cooccurrences_p_attribute",
+          choices = p_attributes(input$cooccurrences_partition)
+        )
+      }
+    }
   )
   
   

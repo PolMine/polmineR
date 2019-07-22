@@ -42,7 +42,15 @@ countServer <- function(input, output, session){
   
   observeEvent(
     input$count_partition,
-    updateSelectInput(session, inputId = "count_p_attribute", choices = p_attributes(input$count_partition))
+    {
+      if (input$count_partition != ""){
+        updateSelectInput(
+          session,
+          inputId = "count_p_attribute",
+          choices = p_attributes(input$count_partition)
+        )
+      }
+    }
   )
   
   

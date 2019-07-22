@@ -73,6 +73,8 @@ dispersionServer <- function(input, output, session){
     updateSelectInput(session, "dispersion_s_attribute_1", choices = new_sAttr, selected = NULL)
   })
   
+
+
   observeEvent(
     input$dispersion_go,
     isolate({

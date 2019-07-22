@@ -45,7 +45,15 @@ featuresServer <- function(input, output, session){
   
   observeEvent(
     input$features_partition_x,
-    updateSelectInput(session, inputId = "features_p_attribute", choices = p_attributes(input$features_partition_x))
+    {
+      if (input$features_partition_x != ""){
+        updateSelectInput(
+          session,
+          inputId = "features_p_attribute",
+          choices = p_attributes(input$features_partition_x)
+        )
+      }
+    }
   )
   
   
