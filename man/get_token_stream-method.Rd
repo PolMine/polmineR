@@ -11,6 +11,7 @@
 \alias{get_token_stream,partition-method}
 \alias{get_token_stream,subcorpus-method}
 \alias{get_token_stream,regions-method}
+\alias{get_token_stream,partition_bundle-method}
 \title{Get Token Stream Based on Corpus Positions.}
 \usage{
 get_token_stream(.Object, ...)
@@ -38,6 +39,10 @@ get_token_stream(.Object, ...)
 
 \S4method{get_token_stream}{regions}(.Object, p_attribute = "word",
   collapse = NULL, cpos = FALSE, ...)
+
+\S4method{get_token_stream}{partition_bundle}(.Object,
+  p_attribute = "word", collapse = NULL, cpos = FALSE,
+  progress = FALSE, mc = FALSE, ...)
 }
 \arguments{
 \item{.Object}{An object of class \code{matrix} or \code{partition}}
@@ -63,6 +68,10 @@ get_token_stream(.Object, ...)
 \item{left}{Left corpus position.}
 
 \item{right}{Right corpus position.}
+
+\item{progress}{A length-one \code{logical} value, whether to show progress bar.}
+
+\item{mc}{Whether to use multithreading.}
 }
 \description{
 Turn regions of a corpus defined by corpus positions into the original text.
@@ -71,4 +80,8 @@ Turn regions of a corpus defined by corpus positions into the original text.
 get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
 get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
 fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
+
+# get token stream for partition_bundle
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+ts_list <- get_token_stream(pb, progress = FALSE)
 }

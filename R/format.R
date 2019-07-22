@@ -8,9 +8,13 @@
 #' @importFrom data.table copy
 setMethod("format", "textstat", function(x, digits = 2L){
   dt <- copy(x@stat) # create copy, to avoid confusion resulting from in-place modification
-  round(dt, digits = digits) # this is an in-place operation
-  id_columns <- grep("_id", colnames(dt)) # get columns with token ids
-  for (i in id_columns) dt[[i]] <- NULL # remove token id columns
+  if (is(dt)[1] == "data.table"){
+    round(dt, digits = digits) # this is an in-place operation
+    id_columns <- grep("_id", colnames(dt)) # get columns with token ids
+    for (i in id_columns) dt[[i]] <- NULL # remove token id columns
+  } else {
+    stop("No data.table in slot 'stat' of the object - cannot show output.")
+  }
   dt
 })
 

@@ -26,9 +26,13 @@ setMethod("ncol", "textstat", function(x) ncol(x@stat))
 #'   rounds values of these columns to the number of decimal places specified by
 #'   argument \code{digits}.
 setMethod("round", "textstat", function(x, digits = 2L){
-  column_classes <- sapply(x@stat, function(column) is(column)[1])
-  numeric_columns <- which(column_classes == "numeric")
-  for (i in numeric_columns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
+  if (is(x@stat)[1] == "data.table"){
+    if (nrow(x@stat) > 1L){
+      column_classes <- sapply(x@stat, function(column) is(column)[1])
+      numeric_columns <- which(column_classes == "numeric")
+      for (i in numeric_columns) x@stat[, colnames(x@stat)[i] := round(x@stat[[i]], digits)]
+    }
+  }
   x
 })
 

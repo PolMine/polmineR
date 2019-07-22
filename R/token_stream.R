@@ -16,6 +16,8 @@ NULL
 #' @param right Right corpus position.
 #' @param cpos Logical, whether to return cpos as names of the tokens.
 #' @param cutoff Maximum number of tokens to be reconstructed.
+#' @param progress A length-one \code{logical} value, whether to show progress bar.
+#' @param mc Whether to use multithreading.
 #' @param ... Further arguments.
 #' @exportMethod get_token_stream
 #' @rdname get_token_stream-method
@@ -119,6 +121,21 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
   #   ))
   # }
   # .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
+})
+
+#' @rdname get_token_stream-method
+#' @examples 
+#' 
+#' # get token stream for partition_bundle
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
+#' ts_list <- get_token_stream(pb, progress = FALSE)
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, progress = FALSE, mc = FALSE, ...){
+  .fn <- function (x) get_token_stream(x, p_attribute = p_attribute, collapse = collapse, cpos = cpos, ...)
+  if (mc == FALSE) mc <- 1L
+  if (progress)
+    pblapply(.Object@objects, .fn)
+  else 
+    if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn)
 })
 
 
