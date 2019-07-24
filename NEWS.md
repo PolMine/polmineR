@@ -57,6 +57,7 @@ whether all letters are upper case and issue informative warnings and error mess
 * Rework of the way messages are printed to make it easy to implement notifications in the shiny environment.
 * Telling messages when sending out emails - on success and error (#61).
 * Default highlighting when a positivelist is supplied has been removed from the `kwic()`-method. This ensures that subsequent highlighting operations can assign new colors (#38).
+* There is now a basic implementation of `get_token_stream()` for a `partition_bundle` object ().
 
 
 polmineR 0.7.11

@@ -146,9 +146,10 @@ setMethod("sample", "kwic", function(x, size){
 #' @include partition.R context.R
 NULL 
 
-#' KWIC/concordance output.
+#' Perform keyword-in-context (KWIC) analysis.
 #' 
-#' Prepare and show concordances / keyword-in-context (kwic).
+#' Get concordances for the matches for a query / perform keyword-in-context
+#' (kwic) analysis.
 #' 
 #' The method works with a whole CWB corpus defined by a  character vector, and
 #' can be applied on a \code{partition}- or a \code{context} object.
@@ -196,9 +197,11 @@ NULL
 #'   necessary to state the names of all arguments to be passed explicity.
 #' @docType methods
 #' @seealso The return value is a \code{\link{kwic-class}} object; the
-#'   documentation for the class explains the methods applicable to
-#'   \code{\link{kwic-class}} objects. To read the whole text, see the
-#'   \code{\link{read}}-method.
+#'   documentation for the class explains the standard generic methods
+#'   applicable to \code{\link{kwic-class}} objects. It is possible to read the
+#'   whole text where a query match occurs, see the \code{\link{read}}-method.
+#'   To highlight terms in the context of a query match, see the
+#'   \code{\link{highlight}}-method.
 #' @references 
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).
 #'
@@ -206,28 +209,47 @@ NULL
 #' Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 #' @examples
 #' use("polmineR")
+#' 
+#' # basic usage
 #' K <- kwic("GERMAPARLMINI", "Integration")
+#' if (interactive()) show(K)
+#' oil <- corpus("REUTERS") %>% kwic(query = "oil")
+#' if (interactive()) show(oil)
+#' oil <- corpus("REUTERS") %>%
+#'   kwic(query = "oil") %>%
+#'   highlight(yellow = "crude")
+#' if (interactive()) show(oil)
+#' 
+#' # increase left and right context and display metadata
 #' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   "Integration", left = 20, right = 20,
 #'   s_attributes = c("date", "speaker", "party")
 #' )
+#' if (interactive()) show(K)
+#' 
+#' # use CQP syntax for matching
 #' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   '"Integration" [] "(Menschen|Migrant.*|Personen)"', cqp = TRUE,
 #'   left = 20, right = 20,
 #'   s_attributes = c("date", "speaker", "party")
 #' )
+#' if (interactive()) show(K)
 #' 
+#' # check that boundary of region is not transgressed
 #' K <- kwic(
 #'   "GERMAPARLMINI",
 #'   '"Sehr" "geehrte"', cqp = TRUE,
+#'   left = 100, right = 100,
 #'   boundary = "date"
 #' )
+#' if (interactive()) show(K)
 #' 
-#' P <- partition("GERMAPARLMINI", date = "2009-11-10")
-#' K <- kwic(P, query = "Integration")
-#' K <- kwic(P, query = '"Sehr" "geehrte"', cqp = TRUE, boundary = "date")
+#' # use positivelist and highlight matches in context
+#' K <- kwic("GERMAPARLMINI", query = "Integration", positivelist = "[Ee]urop.*", regex = TRUE)
+#' K <- highlight(K, yellow = "[Ee]urop.*", regex = TRUE)
+#' 
 #' @exportMethod kwic
 setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 
