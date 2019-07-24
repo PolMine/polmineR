@@ -33,7 +33,6 @@ settingsServer <- function(input, output, session){
       newSetting <- list()
       newSetting <- list(input$settings_new)
       names(newSetting) <- paste("polmineR", input$settings_option, sep = ".")
-      print(newSetting)
       options(newSetting)
       settingsTable <- data.frame(
         option = getOptionsPolmineR(),

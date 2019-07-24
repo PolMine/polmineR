@@ -98,14 +98,11 @@ dispersionServer <- function(input, output, session){
       if (input$dispersion_ts == "yes"){
         dates <- tab[[input$dispersion_s_attribute_1]]
         dt <- data.table::copy(tab)
-        print(is(dt))
-        print(head(dt))
         dt[, eval(input$dispersion_s_attribute_1) := NULL]
         if ("query" %in% colnames(dt)) dt[, "query" := NULL]
         print(head(dt))
         zoo_obj <- zoo::zoo(as.matrix(dt), order.by = as.Date(dates))
-        print(head(zoo_obj))
-        
+
         if (input$dispersion_ts_aggregation != "none"){
           zoo_obj <- switch(
             input$dispersion_ts_aggregation,

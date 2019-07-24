@@ -50,7 +50,7 @@ featuresServer <- function(input, output, session){
         updateSelectInput(
           session,
           inputId = "features_p_attribute",
-          choices = p_attributes(input$features_partition_x)
+          choices = p_attributes(values[["partitions"]][[input$features_partition_x]])
         )
       }
     }
@@ -62,17 +62,18 @@ featuresServer <- function(input, output, session){
     input$features_go
     isolate({
       if (input$features_go == 0){
-        return(data.frame(
+        df <- data.frame(
           word = character(), count_coi = integer(), count_ref = integer(),
-          exp_coi = numeric(), chisquare = numeric(), rank_chisquare = integer(), 
-        ))
+          exp_coi = numeric(), chisquare = numeric(), rank_chisquare = integer() 
+        )
+        return(df)
       }
     })
   })
   
   
   
-  retval <- data.frame(a = ""[0], b = ""[0], c = ""[0])
+  retval <- data.frame(a = character(), b = character(), c = character())
   
   observeEvent(
     input$features_go,
@@ -115,7 +116,6 @@ featuresServer <- function(input, output, session){
     input$features_table_rows_selected,
     {
       if (length(input$features_table_rows_selected) > 0){
-        print("doing updates")
         updateSelectInput(session, "kwic_object", selected = "partition")
         updateSelectInput(
           session, "kwic_partition",

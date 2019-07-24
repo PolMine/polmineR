@@ -1,17 +1,14 @@
 .makePartitionDf <- function(){
   if (length(values$partitions) == 0){
-    return(
-      data.frame(name = character(), corpus = character(), size = integer())
-    )
+    df <- data.frame(name = character(), corpus = character(), size = integer())
   } else {
-    return(
-      data.frame(
-        name = sapply(values$partitions, function(x) x@name),
-        corpus = sapply(values$partitions, function(x) x@corpus),
-        size = sapply(values$partitions, function(x) x@size)
-      )
+    df <- data.frame(
+      name = sapply(values$partitions, function(x) x@name),
+      corpus = sapply(values$partitions, function(x) x@corpus),
+      size = sapply(values$partitions, function(x) x@size)
     )
   }
+  df
 }
 
 
@@ -38,7 +35,7 @@ partitionUiInput <- function(){
     name = textInput(inputId = "partition_name", label = "name", value = "unnamed"),
     s_attributesA = selectInput(
       inputId = "partition_s_attributes", label = "s_attributes", multiple = TRUE,
-      choices = s_attributes(corpus()[1, "corpus"])
+      choices = s_attributes(corpus()[["corpus"]][1])
     ),
     s_attributesB = uiOutput("partition_s_attributes"),
     p_attribute = selectInput(inputId = "partition_p_attribute", label = "p_attribute", multiple = TRUE, choices = list(none = "", word = "word", lemma = "lemma")),
@@ -72,7 +69,7 @@ partitionServer <- function(input, output, session){
         )
         # to avid an error, do nothing if no s_attribute value is available/has been entered
         if (length(input$partition_s_attributes) > 0 && !any(sapply(defList, is.null))){
-          noMessages <- 3 + if (is.null(input$partition_p_attribute)) 0 else 1
+          noMessages <- 3L + if (is.null(input$partition_p_attribute)) 0L else 1L
           withProgress(
             message = "please wait ...", value = 0, max = noMessages, detail = "getting started",
             {

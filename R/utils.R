@@ -280,7 +280,6 @@ flatten <- function(object){
   
   
   if (shiny){
-    print("shiny message mode")
     if (requireNamespace(package = "shiny", quietly = TRUE)){
       if (type %in% c("default", "message")){
         shiny::incProgress(amount = 1, detail = msg)

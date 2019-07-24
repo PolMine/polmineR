@@ -47,6 +47,12 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   }
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
+    
+    if (typeof(collapse) != "character")
+      warning("Argument 'collapse' of the get_token_stream()-method is expected to be a character vector, but it isn't.")
+    if (length(collapse) != 1L)
+      stop("Argument 'collapse' of the get_token_stream()-method is expected to be a length-one vector, but length is > 1.")
+    
     if (beautify){
       whitespace <- rep(collapse, times = length(.Object))
       if ("pos" %in% p_attributes(corpus)){

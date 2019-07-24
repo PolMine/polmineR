@@ -56,7 +56,7 @@ cooccurrencesServer <- function(input, output, session){
         updateSelectInput(
           session,
           inputId = "cooccurrences_p_attribute",
-          choices = p_attributes(input$cooccurrences_partition)
+          choices = p_attributes(values[["partitions"]][[input$cooccurrences_partition]])
         )
       }
     }

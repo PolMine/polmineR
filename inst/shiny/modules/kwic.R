@@ -91,7 +91,6 @@ kwicServer <- function(input, output, session, ...){
               positivelist = if (!is.null(input$kwic_positivelist)) input$kwic_positivelist else NULL,
               cpos = TRUE # required for reading
             )
-            print(K)
             values[["kwic"]] <- K
           }
         ) # end withProgress

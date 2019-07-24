@@ -47,7 +47,7 @@ countServer <- function(input, output, session){
         updateSelectInput(
           session,
           inputId = "count_p_attribute",
-          choices = p_attributes(input$count_partition)
+          choices = p_attributes(values[["partitions"]][[input$count_partition]])
         )
       }
     }
