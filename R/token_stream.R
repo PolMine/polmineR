@@ -48,9 +48,13 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
     if (beautify){
-      pos <- cl_cpos2str(corpus = corpus, p_attribute = "pos", cpos = .Object, registry = registry())
       whitespace <- rep(collapse, times = length(.Object))
-      whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
+      if ("pos" %in% p_attributes(corpus)){
+        pos <- cl_cpos2str(corpus = corpus, p_attribute = "pos", cpos = .Object, registry = registry())
+        whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
+      } else {
+        whitespace[grep("^[\\.;,:!?]$", tokens, perl = TRUE)] <- ""
+      }
       whitespace[grep("\\)", tokens, perl = TRUE)] <- ""
       whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
       whitespace[1] <- ""

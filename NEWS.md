@@ -60,6 +60,8 @@ whether all letters are upper case and issue informative warnings and error mess
 * There is now a basic implementation of `get_token_stream()` for a `partition_bundle` object ().
 * The `Cooccurrences()`-method will now work for `subcorpus`-objects (#88).
 * Calling `read()` on a `kwic` object works again (#84).
+* Checks for the `as.VCorpus()` method that failed are now ok (#77). The reason was that `get_token_stream()` assumed implicitly that a p-attribute "pos" is present, which is not the case for the REUTERS test corpus.
+* A minor bug in the `s_attributes`-method was removed that would make retrieving the metadata for the first strucs (index 0) of a s-attribute impossible.
 
 
 

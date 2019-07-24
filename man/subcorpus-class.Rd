@@ -105,10 +105,15 @@ corpus("REUTERS") \%>\% subset(grep("kuwait", places)) \%>\% kwic("oil")
 
 }
 \seealso{
-Most commonly, a \code{subcorpus} is derived from a \code{corpus} or a
-\code{subcorpus} using the \code{\link{subset}} method. See
-\code{\link{size}} for detailed documentation on how to use the
-\code{size}-method.
+Most commonly, a \code{subcorpus} is derived from a \code{corpus} or
+  a \code{subcorpus} using the \code{\link{subset}} method. See
+  \code{\link{size}} for detailed documentation on how to use the
+  \code{size}-method. The \code{subcorpus} class shares many features with
+  the \code{partition} class, but it is more parsimonious and does not
+  include information on statistical properties of the subcorpus (i.e. a
+  count table). In line with this logic, the \code{subcorpus} class inherits
+  from the \code{corpus} class, whereas the \code{partition} class inherits
+  from the \code{textstat} class.
 
 Other classes to manage corpora: \code{\link{corpus-class}},
   \code{\link{regions}}

@@ -17,19 +17,19 @@ test_that(
   }
 )
 
-# test_that(
-#   "generate VCorpus from subcorpus_bundle",
-#   {
-#     vcorp1 <- partition_bundle("REUTERS", s_attribute = "id") %>% 
-#       as.VCorpus()
-#     
-#     vcorp2 <- corpus("REUTERS") %>%
-#       split(s_attribute = "id") %>%
-#       as.VCorpus()
-#     
-#     expect_identical(vcorp1, vcorp2)
-#   }
-# )
+test_that(
+  "generate VCorpus from subcorpus_bundle",
+  {
+    vcorp1 <- partition_bundle("REUTERS", s_attribute = "id") %>%
+      as.VCorpus()
+
+    vcorp2 <- corpus("REUTERS") %>%
+      split(s_attribute = "id") %>%
+      as.VCorpus()
+
+    expect_identical(vcorp1, vcorp2)
+  }
+)
 
 test_that(
   "summary for subcorpus_bundle",

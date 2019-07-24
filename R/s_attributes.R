@@ -122,7 +122,7 @@ setMethod(
       if (length(s_attribute) == 1L){
         # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
         # is necessary because there are scenarios when these slots are not defined.
-        xml_is_flat <- if (length(.Object@xml) > 0) if (.Object@xml == "flat") TRUE else FALSE else FALSE
+        xml_is_flat <- if (length(.Object@xml) > 0L) if (.Object@xml == "flat") TRUE else FALSE else FALSE
         s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
         if (xml_is_flat && s_attr_strucs){
           len1 <- cl_attribute_size(corpus = .Object@corpus, attribute = .Object@s_attribute_strucs, attribute_type = "s", registry = registry())
@@ -143,7 +143,7 @@ setMethod(
           strucs <- unique(strucs)
           # filtering out negative struc values is necessary, because RcppCWB
           # will complain about negative values
-          strucs <- strucs[which(strucs > 0L)]
+          strucs <- strucs[which(strucs >= 0L)]
           retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
           if (unique) retval <- unique(retval)
         }

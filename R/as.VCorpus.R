@@ -28,9 +28,6 @@ setOldClass("VCorpus")
 #' @name as.VCorpus
 #' @aliases as.VCorpus,partition_bundle-method
 #' @examples
-#' \dontrun{
-#' use("polmineR")
-#' 
 #' pb <- partition("GERMAPARLMINI", date = "2009-11-10") %>%
 #'   partition_bundle(s_attribute = "speaker")
 #'  
@@ -38,7 +35,6 @@ setOldClass("VCorpus")
 #' vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
 #' 
 #' vc <- corpus("REUTERS") %>% split(s_attribute = "id") %>% as("VCorpus")
-#' }
 setMethod("as.VCorpus", "partition_bundle", function(x) as(x, "VCorpus") )
 
 #' @name as
@@ -49,7 +45,7 @@ setAs(from = "partition_bundle", to = "VCorpus", def = function(from){
     function(s_attr) cl_attribute_size(corpus = from@objects[[1]]@corpus, attribute = s_attr, attribute_type = "s", registry = registry())
   )
   
-  if (length(unique(s_attr_lengths)) == length(s_attr_lengths)){
+  if (length(unique(s_attr_lengths)) == 1L){
     s_attr_to_get <- s_attributes(from@objects[[1]]@corpus)
   } else {
     message("Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs ",
@@ -57,14 +53,14 @@ setAs(from = "partition_bundle", to = "VCorpus", def = function(from){
     s_attr_to_get <- names(s_attr_lengths[which(s_attr_lengths == s_attr_lengths[from@objects[[1]]@s_attribute_strucs])])
   }
   
-  content <- blapply(
+  content <- lapply(
     from@objects,
-    function(P){
-      metadata <- sapply(s_attr_to_get, function(s_attr) s_attributes(P, s_attr)[1])
+    function(p){
+      metadata <- sapply(s_attr_to_get, function(s_attr) s_attributes(p, s_attr)[1])
       class(metadata) <- "TextDocumentMeta"
       doc <- list(
         meta = metadata,
-        content = get_token_stream(P, p_attribute = "word", collapse = " ")
+        content = get_token_stream(p, p_attribute = "word", collapse = " ")
       )
       class(doc) <- c("PlainTextDocument", "TextDocument")
       doc
