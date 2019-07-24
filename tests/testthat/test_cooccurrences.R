@@ -153,8 +153,7 @@ test_that(
       speaker = "Merkel",
       date = "2009-11-10",
       interjection = "speech",
-      regex = TRUE,
-      p_attribute = c("word", "pos")
+      regex = TRUE
     )
     merkel_cooc <- Cooccurrences(
       merkel,
@@ -170,5 +169,27 @@ test_that(
       count(merkel, "und")[["count"]]
     )
     
+    #######
+    
+    merkel_sc <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-10") %>%
+      subset(grep("Merkel", speaker)) %>%
+      subset(interjection == "speech")
+      
+    merkel_cooc_sc <- Cooccurrences(
+      merkel_sc,
+      p_attribute = c("word", "pos"),
+      left = 3L, right = 3L,
+      verbose = TRUE
+    )
+    ll(merkel_cooc_sc)
+    decode(merkel_cooc_sc)
+    
+    expect_identical(
+      unique(merkel_cooc_sc@stat[a_word == "und"][["a_count"]]),
+      count(merkel_sc, "und", verbose = FALSE)[["count"]]
+    )
+    
+    expect_identical(merkel_cooc@stat, merkel_cooc_sc@stat)
   }
 )

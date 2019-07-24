@@ -54,7 +54,17 @@ setAs(from = "subcorpus", to = "partition", function(from, to){
     strucs = from@strucs,
     s_attribute_strucs = from@s_attribute_strucs,
     xml = from@xml,
-    stat = data.table()
+    size = size(from),
+    stat = data.table(),
+    ###
+    name = character(),
+    s_attributes = list(),
+    explanation = character(),
+    annotations = list(),
+    metadata = data.frame(),
+    p_attribute = character(),
+    key = character(),
+    call = character()
   )
 })
 

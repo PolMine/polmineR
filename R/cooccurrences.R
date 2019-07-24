@@ -606,7 +606,7 @@ setMethod("Cooccurrences", "slice", function(
     window_sizes = data.table(),
     name = character(),
     minimized = FALSE,
-    partition = .Object
+    partition = if ("partition" %in% is(.Object)) .Object else as(.Object, "partition")
   )
   
   
@@ -690,8 +690,9 @@ setMethod("Cooccurrences", "slice", function(
     
   } else {
     
-    if (length(.Object@p_attribute) == 0)
-      stop("The partition is required to included counts. Enrich the object first!")
+    
+    # if (length(.Object@p_attribute) == 0)
+    #  stop("The partition is required to included counts. Enrich the object first!")
     
     a_cols_id <- setNames(paste("a", p_attribute, "id", sep = "_"), p_attribute)
     b_cols_id <- setNames(paste("b", p_attribute, "id", sep = "_"), p_attribute)
@@ -747,12 +748,14 @@ setMethod("Cooccurrences", "slice", function(
   y
 })
 
+
 #' @rdname all_cooccurrences
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
 ){ callNextMethod() })
+
 
 #' @rdname all_cooccurrences
 setMethod("Cooccurrences", "subcorpus", function(
