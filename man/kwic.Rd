@@ -166,7 +166,7 @@ K <- kwic(
 )
 if (interactive()) show(K)
 
-# use positivelist and highlight 
+# use positivelist and highlight matches in context
 K <- kwic("GERMAPARLMINI", query = "Integration", positivelist = "[Ee]urop.*", regex = TRUE)
 K <- highlight(K, yellow = "[Ee]urop.*", regex = TRUE)
 

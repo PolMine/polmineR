@@ -142,21 +142,25 @@ setMethod("read", "hits", function(.Object, def, i = NULL, ...){
 })
 
 #' @rdname read-method
-setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_properties(corpus(.Object))["type"]){
+setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_properties(get_corpus(.Object))[["type"]]){
   
   # if registry file does not have 'type' corpus property, a named NA vector arrives
   if (length(type) > 0L) if (is.na(type)) type <- NULL
   if (!is.null(type)) type <- unname(type)
+  
+  if (is.null(i)) i <- seq_along(.Object)
 
-  if (is.null(i)){
-    for (i in 1L:length(.Object)){
-      read(.Object, i = i, type = type)
+  if (length(i) > 1L){
+    for (j in i){
+      read(.Object, i = j, type = type)
       user <- readline(prompt = "Hit 'q' to quit or any other key to continue.\n")
-      if (user == "q") return(invisible(NULL))
+      if (user == "q") return( invisible(NULL) )
     }
   } else {
+    i <- as.integer(i)
     fulltext <- html(.Object, i = i, type = type)
     if (interactive()) htmltools::html_print(fulltext)
+    
   }
 })
 

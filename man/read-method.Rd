@@ -33,7 +33,7 @@ read(.Object, ...)
 \S4method{read}{hits}(.Object, def, i = NULL, ...)
 
 \S4method{read}{kwic}(.Object, i = NULL,
-  type = registry_get_properties(corpus(.Object))["type"])
+  type = registry_get_properties(get_corpus(.Object))[["type"]])
 
 \S4method{read}{regions}(.Object, meta = NULL)
 }
