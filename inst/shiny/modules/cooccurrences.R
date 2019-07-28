@@ -23,7 +23,7 @@ cooccurrencesUiInput <- function(){
     ),
     textInput("cooccurrences_query", "query", value = ""),
     cqp = radioButtons("cooccurrences_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
-    selectInput("cooccurrences_p_attribute", "p_attribute:", choices = c("word", "pos", "lemma"), selected = getOption("polmineR.p_attribute"), multiple = TRUE),
+    selectInput("cooccurrences_p_attribute", "p_attribute:", choices = c("word", "pos", "lemma"), selected = "word", multiple = TRUE),
     sliderInput("cooccurrences_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
     br()
   )
@@ -45,8 +45,15 @@ cooccurrencesUiOutput <- function(){
 cooccurrencesServer <- function(input, output, session){
   
   observeEvent(
-    input$cooccurrences_corpus,
-    updateSelectInput(session, inputId = "cooccurrences_p_attribute", choices = p_attributes(input$cooccurrences_corpus))
+    input$cooccurrences_corpus,{
+      updateSelectInput(
+        session,
+        inputId = "cooccurrences_p_attribute",
+        choices = p_attributes(input$cooccurrences_corpus),
+        selected = "word"
+      )
+    }
+    
   )
   
   observeEvent(
@@ -56,7 +63,8 @@ cooccurrencesServer <- function(input, output, session){
         updateSelectInput(
           session,
           inputId = "cooccurrences_p_attribute",
-          choices = p_attributes(values[["partitions"]][[input$cooccurrences_partition]])
+          choices = p_attributes(values[["partitions"]][[input$cooccurrences_partition]]),
+          selected = "word"
         )
       }
     }
@@ -70,27 +78,16 @@ cooccurrencesServer <- function(input, output, session){
       if (input$cooccurrences_go > 0 && input$cooccurrences_query != ""){
         
         if (input$cooccurrences_object == "corpus"){
-          if (!input$cooccurrences_corpus %in% names(values$corpora)){
-            withProgress(
-              message = "preparing Corpus ...", value = 1, max = 1, detail = "counting",
-              {
-                C <- Corpus$new(input$cooccurrences_corpus)
-                C$count(p_attribute = input$cooccurrences_p_attribute, decode = FALSE)
-                values$corpora[[input$cooccurrences_corpus]] <- C
-              }
-              
-            )
-          }
-          object <- values$corpora[[input$cooccurrences_corpus]]
+          obj <- corpus(input$cooccurrences_corpus)
         } else {
-          object <- values$partitions[[input$cooccurrences_partition]]
+          obj <- values$partitions[[input$cooccurrences_partition]]
         }
         
         withProgress(
           message = "please wait ...", value = 0, max = 6, detail = "getting started",
           {
             values[["cooccurrences"]] <- cooccurrences(
-              .Object = object,
+              .Object = obj,
               query = rectifySpecialChars(input$cooccurrences_query),
               cqp = if (input$cooccurrences_cqp == "yes") TRUE else FALSE,
               p_attribute = input$cooccurrences_p_attribute,
