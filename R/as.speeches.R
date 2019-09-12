@@ -197,9 +197,17 @@ setMethod("as.speeches", "corpus", function(
       vec_dates <- chunks_dates[[i]][beginning]
       # speech_no <- unlist(unname(lapply(split(vec_dates, vec_dates), seq_along)))
       
-      dates_splitted <- split(vec_dates, vec_dates)
-      dates_splitted_ordered <- lapply(unique(vec_dates), function(d) dates_splitted[[d]])
-      speech_no <- unlist(unname(lapply(dates_splitted_ordered, seq_along)))
+      # dates_splitted <- split(vec_dates, vec_dates)
+      # dates_splitted_ordered <- lapply(unique(vec_dates), function(d) dates_splitted[[d]])
+      # speech_no <- unlist(unname(lapply(dates_splitted_ordered, seq_along)))
+      
+      unique_dates <- unique(vec_dates)
+      speech_no_aux <- setNames(rep(1L, times = length(unique_dates)), nm = unique_dates)
+      speech_no <- rep(NA, times = length(vec_dates))
+      for (k in seq_along(vec_dates)){
+        speech_no[k] <- speech_no_aux[[vec_dates[k]]]
+        speech_no_aux[[vec_dates[k]]] <- speech_no_aux[[vec_dates[k]]] + 1L
+      }
       
       li_cpos <- split(mx, f = razor)
       li_strucs <- split(chunks_strucs[[i]], f = razor)

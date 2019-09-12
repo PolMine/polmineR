@@ -244,20 +244,29 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
   } else {
     corpus <- get_corpus(.Object)
     if (length(corpus) > 1L) stop("partitions in partition_bundle must be derived from the same corpus")
-    if (verbose) message("... unfolding corpus positions")
-    cpos_list <- lapply(.Object@objects, function(x) data.table(name = x@name, cpos = cpos(x@cpos)))
-    DT <- rbindlist(cpos_list)
-    rm(cpos_list)
+    
+    if (verbose) message("... creating data.table with corpus positions")
+    cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
+    cpos_dt[, "name" := do.call(
+      c,
+      lapply(seq_along(.Object@objects), function(i) rep(x = i, times = nrow(.Object@objects[[i]]@cpos)))
+      )]
+    DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = .(name)]
+    setnames(DT, old = "V1", new = "cpos")
+    rm(cpos_dt)
+    
     if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
-    DT[,"id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
+    DT[, "id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
     if (verbose) message("... performing count")
     CNT <- DT[,.N, by = c("name", "id")]
     rm(DT)
     setnames(CNT, old = "N", new = "count")
+    
     if (verbose) message("... adding decoded p-attribute")
     str_raw <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
     enc <- unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
-    CNT[[p_attribute]] <- if (localeToCharset()[1] == enc) str_raw else as.nativeEnc(str_raw, from = enc)
+    CNT[, eval(p_attribute) := if (localeToCharset()[1] == enc) str_raw else as.nativeEnc(str_raw, from = enc)]
+    
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name")
     rm(CNT)
@@ -271,7 +280,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
           encoding = .Object@objects[[i]]@encoding,
           p_attribute = p_attribute,
           stat = CNT_list[[i]],
-          name = names(CNT_list)[[i]],
+          name = .Object@objects[[ CNT_list[[i]][["name"]][[1]] ]]@name,
           size = size(.Object@objects[[i]])
         )
       }

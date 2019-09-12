@@ -156,7 +156,9 @@ setMethod("cpos", "subcorpus", function(.Object, query, cqp = is.cqp, check = TR
 
 #' @rdname cpos-method
 setMethod("cpos", "matrix", function(.Object)
-  as.vector(unlist(apply(.Object, 1, function(row) row[1]:row[2])))  
+  # as.vector(unlist(apply(.Object, 1, function(row) row[1]:row[2])))  
+  # do.call(c, lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2]))
+  do.call(c, lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2]))
 )
 
 #' @rdname cpos-method
