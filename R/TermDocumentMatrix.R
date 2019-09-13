@@ -271,27 +271,35 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
   if (!is.null(col)){
     callNextMethod()
   } else if (!is.null(p_attribute)){
-    encoding <- unique(sapply(x@objects, function(y) y@encoding))
-    .message("generating corpus positions", verbose = verbose)
+    encoding <- unique(sapply(x@objects, slot, name = "encoding"))
     
-    cpos_list <- lapply(seq_along(x@objects), function(i) cbind(i, cpos(x@objects[[i]]@cpos)))
-    cpos_matrix <- do.call(rbind, cpos_list)
+    .message("generating corpus positions", verbose = verbose)
+    regions_dt <- data.table(do.call(rbind, lapply(x@objects, slot, name = "cpos")))
+    regions_dt[, "i" := do.call(
+      c,
+      lapply(seq_along(x@objects), function(i) rep(x = i, times = nrow(x@objects[[i]]@cpos)))
+    )]
+    DT <- regions_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = .(i)]
+    setnames(DT, old = "V1", new = "cpos")
+    rm(regions_dt)
+
     .message("getting ids", verbose = verbose)
-    id_vector <- cl_cpos2id(
-      corpus = x[[1]]@corpus,
-      p_attribute = p_attribute,
-      cpos = cpos_matrix[,2],
-      registry = registry()
-    )
-    DT <- data.table(i = cpos_matrix[,1], id = id_vector, key = c("i", "id"))
+    DT[, "id" := cl_cpos2id(corpus = x[[1]]@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
+    DT[, "cpos" := NULL]
+    setkeyv(x = DT, cols = c("i", "id"))
+
     .message("performing count", verbose = verbose)
-    TF <- DT[,.N, by = c("i", "id"), with = TRUE]
+    TF <- DT[, .N, by = c("i", "id"), with = TRUE]
+    rm(DT)
     setnames(TF, old = "N", new = "count")
     str <- cl_id2str(corpus = x[[1]]@corpus, p_attribute = p_attribute, id = TF[["id"]], registry = registry())
     TF[, (p_attribute) := as.nativeEnc(str, from = encoding)]
+    rm(str)
+    
     .message("generating keys", verbose = verbose)
     unique_terms <- unique(TF[[p_attribute]])
     keys <- setNames(1L:length(unique_terms), unique_terms)
+    
     .message("generating simple triplet matrix", verbose = verbose)
     retval <- simple_triplet_matrix(
       i = keys[ TF[[p_attribute]] ],

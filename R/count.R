@@ -242,6 +242,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (total) DT_cast[, "TOTAL" := rowSums(DT_cast[, 2L:ncol(DT_cast), with = FALSE]), with = TRUE]
     return(DT_cast)
   } else {
+    
     corpus <- get_corpus(.Object)
     if (length(corpus) > 1L) stop("partitions in partition_bundle must be derived from the same corpus")
     
@@ -264,27 +265,26 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     
     if (verbose) message("... adding decoded p-attribute")
     str_raw <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
-    enc <- unique(unlist(lapply(as.list(.Object), function(x) encoding(x))))
+    enc <- .Object@objects[[1]]@encoding
     CNT[, eval(p_attribute) := if (localeToCharset()[1] == enc) str_raw else as.nativeEnc(str_raw, from = enc)]
+    rm(str_raw)
     
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name")
     rm(CNT)
     y <- new(Class = "count_bundle", p_attribute = p_attribute, corpus = corpus, encoding = enc)
-    y@objects <- lapply(
-      1L:length(CNT_list),
-      function(i){
-        new(
-          "count",
-          corpus = corpus,
-          encoding = .Object@objects[[i]]@encoding,
-          p_attribute = p_attribute,
-          stat = CNT_list[[i]],
-          name = .Object@objects[[ CNT_list[[i]][["name"]][[1]] ]]@name,
-          size = size(.Object@objects[[i]])
-        )
-      }
-    )
+    .fn <- function(i){
+      new(
+        "count",
+        corpus = corpus,
+        encoding = .Object@objects[[i]]@encoding,
+        p_attribute = p_attribute,
+        stat = CNT_list[[i]],
+        name = .Object@objects[[ CNT_list[[i]][["name"]][[1]] ]]@name,
+        size = size(.Object@objects[[i]])
+      )
+    }
+    y@objects <- if (progress) pblapply(seq_along(CNT_list), .fn) else lapply(seq_along(CNT_list), .fn)
     names(y@objects) <- names(.Object)
     return( y )
   }

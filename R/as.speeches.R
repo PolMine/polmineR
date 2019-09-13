@@ -195,12 +195,11 @@ setMethod("as.speeches", "corpus", function(
       )
       razor <- cumsum(beginning)
       vec_dates <- chunks_dates[[i]][beginning]
-      # speech_no <- unlist(unname(lapply(split(vec_dates, vec_dates), seq_along)))
-      
-      # dates_splitted <- split(vec_dates, vec_dates)
-      # dates_splitted_ordered <- lapply(unique(vec_dates), function(d) dates_splitted[[d]])
-      # speech_no <- unlist(unname(lapply(dates_splitted_ordered, seq_along)))
-      
+
+      # The speech_no vector indicates the number of the speech at a date for the speeches
+      # referred to with the vec_dates vector. These lines have seen some revisions to 
+      # make the procedure robust. Resorting to the for loop is able to handle situations
+      # robustly when dates are not increasing throughout.
       unique_dates <- unique(vec_dates)
       speech_no_aux <- setNames(rep(1L, times = length(unique_dates)), nm = unique_dates)
       speech_no <- rep(NA, times = length(vec_dates))
