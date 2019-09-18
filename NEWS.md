@@ -65,6 +65,7 @@ whether all letters are upper case and issue informative warnings and error mess
 * Performance improved for cpos,matrix-method which unfolds a matrix with regions of corpus positions, useful for operations that require many calls.
 * The count,partition_bundle-method has been reworked and is much faster and more memory efficient. 
 * as.TermDocumentMatrix,partition_bundle optimized to work efficiently with large corpora.
+* Fixed an issue for `as.DocumentTermMatrix` that started to occur with the introduction of the `subcorpus_bundle` class (#100).
 
 
 

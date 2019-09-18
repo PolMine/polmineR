@@ -252,10 +252,19 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "bundle", function(x, col, p_attribute = NULL, verbose = TRUE, ...) {
+setMethod("as.DocumentTermMatrix", "bundle", function(x, col = NULL, p_attribute = NULL, verbose = TRUE, ...) {
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   as.DocumentTermMatrix(as.TermDocumentMatrix(x = x, col = col, p_attribute = p_attribute, verbose = verbose))
 })
+
+#' @rdname as.DocumentTermMatrix
+setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, col = NULL, p_attribute = NULL, verbose = TRUE, ...) {
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  as.DocumentTermMatrix(
+    as.TermDocumentMatrix(x = x, col = col, p_attribute = p_attribute, verbose = verbose)
+  )
+})
+
 
 #' @details If \code{x} is a \code{partition_bundle}, and argument \code{col} is
 #'   not \code{NULL}, as \code{TermDocumentMatrix} is generated based on the
@@ -325,13 +334,13 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
 #' dtm <- corpus("REUTERS") %>%
 #'   split(s_attribute = "id") %>%
 #'   as.TermDocumentMatrix(p_attribute = "word")
-setMethod("as.TermDocumentMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE){
+setMethod("as.TermDocumentMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE, ...){
   callNextMethod()
 })
 
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE){
+setMethod("as.DocumentTermMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE, ...){
   callNextMethod()
 })
 

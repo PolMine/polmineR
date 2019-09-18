@@ -3,7 +3,7 @@ use("polmineR")
 testthat::context("as.TermDocumentMatrix")
 
 test_that(
-  "generate as.TermDocumentMatrix from corpus",
+  "Generate Term-Document-Matrix from corpus using as.TermDocumentMatrix",
   {
     dtm <- as.DocumentTermMatrix("REUTERS", p_attribute = "word", sAttribute = "id")
     expect_equal(
@@ -17,3 +17,15 @@ test_that(
   }
 )
 
+
+test_that(
+  "identity of as.TermDocumentMatrix and as.DocumentTermMatrix",
+  {
+    sp <- as.speeches("GERMAPARLMINI", s_attribute_name = "speaker")
+    
+    tdm <- as.TermDocumentMatrix(sp, p_attribute = "word")
+    dtm <- as.DocumentTermMatrix(sp, p_attribute = "word")
+    
+    expect_identical(tdm, t(dtm))
+  }
+)
