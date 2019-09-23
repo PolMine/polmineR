@@ -66,6 +66,8 @@ whether all letters are upper case and issue informative warnings and error mess
 * The count,partition_bundle-method has been reworked and is much faster and more memory efficient. 
 * as.TermDocumentMatrix,partition_bundle optimized to work efficiently with large corpora.
 * Fixed an issue for `as.DocumentTermMatrix` that started to occur with the introduction of the `subcorpus_bundle` class (#100).
+* Removed a bug in the kwic,character-method that prevented using different values for right and left context (#101).
+
 
 
 

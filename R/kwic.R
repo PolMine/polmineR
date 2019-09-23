@@ -19,12 +19,8 @@ setAs(from = "kwic", to = "htmlwidget", def = function(from){
 #' @docType method
 #' @importFrom DT datatable formatStyle
 setMethod("show", "kwic", function(object){
-  retval <- as(object, "htmlwidget")
-  if (interactive()){
-    show(retval)
-  } else{
-    return( retval )
-  }
+  y <- as(object, "htmlwidget")
+  if (interactive()) show(y) else return(y)
 })
 
 
@@ -41,7 +37,6 @@ setMethod("show", "kwic", function(object){
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, pagelength = getOption("polmineR.pagelength"), options = knitr::opts_chunk, ...){
   y <- as(x, "htmlwidget")
-  # y$x$options$pageLength <- pagelength
   knit_print(y, options = options)
 })
 
@@ -264,13 +259,12 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   
   DT <- copy(.Object@cpos) # do not accidentily store things
   setorderv(DT, cols = c("match_id", "cpos"))
-  decoded_pAttr <- cl_id2str(
+  p_attr_decoded <- cl_id2str(
     corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
     id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
     registry = registry()
   )
-  decoded_pAttr2 <- as.nativeEnc(decoded_pAttr, from = .Object@encoding)
-  DT[, .Object@p_attribute[1] := decoded_pAttr2, with = TRUE]
+  DT[, .Object@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = .Object@encoding), with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(s_attributes)) s_attributes <- character()
@@ -466,7 +460,7 @@ setMethod("kwic", "character", function(
     cqp = cqp,
     check = check,
     left = left,
-    right = left,
+    right = right,
     s_attributes = s_attributes,
     p_attribute = p_attribute,
     boundary = boundary,
