@@ -207,18 +207,20 @@ setMethod("context", "subcorpus", function(
   DT <- data.table(hit_matrix)
   
   if (is.integer(left) && is.integer(right)){
+    # the kwic,corpus-method implements a very similar procedure, yet in a somewhat faster manner.
+    
     if (is.null(names(left)) && is.null(names(left))){
       .fn <- function(.SD){
         list(
           c(
-            (.SD[[1]][1] - left):(.SD[[1]][1] - 1L),
+            if (left != 0L) (.SD[[1]][1] - left):(.SD[[1]][1] - 1L) else integer(),
             .SD[[1]][1]:.SD[[2]][1],
-            (.SD[[2]][1] + 1L):(.SD[[2]][1] + right)
+            if (right != 0L) (.SD[[2]][1] + 1L):(.SD[[2]][1] + right) else integer()
             ),
           c(
-            -left:-1L,
+            if (left != 0L) -left:-1L else integer(),
             rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
-            1L:right
+            if (right != 0L) 1L:right else integer()
             )
         )
       }

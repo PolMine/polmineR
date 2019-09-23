@@ -8,10 +8,10 @@
 \alias{as.DocumentTermMatrix,character-method}
 \alias{as.TermDocumentMatrix,bundle-method}
 \alias{as.DocumentTermMatrix,bundle-method}
+\alias{as.DocumentTermMatrix,partition_bundle-method}
 \alias{as.TermDocumentMatrix,partition_bundle-method}
 \alias{as.TermDocumentMatrix,subcorpus_bundle-method}
 \alias{as.DocumentTermMatrix,subcorpus_bundle-method}
-\alias{as.DocumentTermMatrix,partition_bundle-method}
 \alias{as.DocumentTermMatrix,neighborhood-method}
 \alias{as.DocumentTermMatrix,context-method}
 \alias{as.TermDocumentMatrix,neighborhood-method}
@@ -31,17 +31,20 @@ as.DocumentTermMatrix(x, ...)
 \S4method{as.TermDocumentMatrix}{bundle}(x, col, p_attribute = NULL,
   verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{bundle}(x, col, p_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{bundle}(x, col = NULL,
+  p_attribute = NULL, verbose = TRUE, ...)
+
+\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
+  col = NULL, verbose = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
-  verbose = TRUE)
+  verbose = TRUE, ...)
 
 \S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)

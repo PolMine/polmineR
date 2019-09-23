@@ -31,13 +31,11 @@ this (propable) scenario, it is possible to use a coerce-method
 (\code{as(YOUROBJECT, "VCorpus")}), see examples.
 }
 \examples{
-# use("polmineR")
-
 pb <- partition("GERMAPARLMINI", date = "2009-11-10") \%>\%
   partition_bundle(s_attribute = "speaker")
  
-# vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
+vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
 vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
 
-# vc <- corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% as("VCorpus")
+vc <- corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% as("VCorpus")
 }

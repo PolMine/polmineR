@@ -147,16 +147,16 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       .fn <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
       table_ext <- .Object@cpos[, .fn(.SD), by = c("match_id", "direction"), with = TRUE]
       .Object@stat <- dcast(data = table_ext, formula = match_id ~ direction, value.var = "V1")
-      if (all(c("-2", "2") %in% colnames(.Object@stat))){
-        setnames(
-          .Object@stat,
-          old = c("-2", "-1", "0", "1", "2"),
-          new = c("left_extra", "left", "node", "right", "right_extra")
-        )
-      } else {
-        setnames(.Object@stat, old = c("-1", "0", "1"), new = c("left", "node", "right"))
-      }
+      setnames(.Object@stat, old = "0", new = "node")
       
+      # columns are renamed one at a time to cover the special case when either the 
+      # left or the right context are (deliberately) empty
+      
+      if ("-2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "left_extra")
+      if ("-1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "left")
+      if ("1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "1", new = "right")
+      if ("2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "right_extra")
+
     } else {
       .Object@stat <- data.table(match_id = integer(), left = character(), node = character(), right = character())
     }

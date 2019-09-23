@@ -250,9 +250,9 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
     cpos_dt[, "name" := do.call(
       c,
-      lapply(seq_along(.Object@objects), function(i) rep(x = i, times = nrow(.Object@objects[[i]]@cpos)))
+      lapply(seq_along(.Object@objects), function(i) rep(x = names(.Object@objects)[[i]], times = nrow(.Object@objects[[i]]@cpos)))
       )]
-    DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = .(name)]
+    DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "name"]
     setnames(DT, old = "V1", new = "cpos")
     rm(cpos_dt)
     

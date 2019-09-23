@@ -288,7 +288,7 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
       c,
       lapply(seq_along(x@objects), function(i) rep(x = i, times = nrow(x@objects[[i]]@cpos)))
     )]
-    DT <- regions_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = .(i)]
+    DT <- regions_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "i"]
     setnames(DT, old = "V1", new = "cpos")
     rm(regions_dt)
 

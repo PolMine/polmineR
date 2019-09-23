@@ -377,11 +377,12 @@ setMethod("kwic", "corpus", function(
     return(invisible(NULL))
   }
   cpos_max <- cl_attribute_size(corpus = .Object@corpus, attribute = p_attribute, attribute_type = "p", registry = registry())
+  
   cpos_list <- apply(
     hits, 1,
     function(row){
-      left <- (row[1] - left):(row[1] - 1L)
-      right <- (row[2] + 1L):(row[2] + right)
+      left <- if (left > 0L) (row[1] - left):(row[1] - 1L) else integer()
+      right <- if (right > 0L) (row[2] + 1L):(row[2] + right) else integer()
       list(
         left = left[left > 0L],
         node = row[1]:row[2],
@@ -405,7 +406,8 @@ setMethod("kwic", "corpus", function(
           )
       )))
   )
-  DT[[paste(p_attribute, "id", sep = "_")]] <- cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())
+
+  DT[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry()), with = TRUE]
   
   ctxt <- new(
     Class = "context",
