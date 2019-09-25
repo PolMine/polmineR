@@ -105,9 +105,15 @@ setMethod("context", "slice", function(
   }
   colnames(regions) <- c("hit_cpos_left", "hit_cpos_right")
   
-  
   ctxt <- context(.Object = regions, left = left, right = right, corpus = .Object@corpus)
-  
+  ctxt@query <- query
+  ctxt@p_attribute <- p_attribute
+  ctxt@corpus <- .Object@corpus
+  ctxt@encoding <- .Object@encoding
+  ctxt@partition <- .Object
+  ctxt@size_partition <- as.integer(.Object@size)
+  ctxt@boundary <- if (!is.null(boundary)) boundary else character()
+
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
   
@@ -120,7 +126,7 @@ setMethod("context", "slice", function(
   .message("generating contexts", verbose = verbose)
   
   ctxt@size <- nrow(ctxt@cpos)
-  ctxt@size_match <- as.integer(sum(hits[,2] - hits[,1]) + nrow(hits))
+  ctxt@size_match <- as.integer(sum(regions[,2] - regions[,1]) + nrow(regions))
   ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
   ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
   ctxt@size_partition <- size(.Object)
@@ -142,7 +148,7 @@ setMethod("context", "slice", function(
     ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(p_attribute, "id", sep = "_"))), with = TRUE]
     setnames(ctxt@stat, "N", "count_coi")
     
-    for ( i in 1L:length(p_attribute) ){
+    for (i in seq_along(p_attribute)){
       newColumn <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]], registry = registry())
       newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
       ctxt@stat[, eval(p_attribute[i]) := newColumnNative]
@@ -186,31 +192,30 @@ setMethod("context", "subcorpus", function(
 #'   CWB corpus.
 #' @rdname context-method
 setMethod("context", "matrix", function(.Object, corpus, left, right){
-  
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
 
   if (is.integer(left) && is.integer(right)){
 
     if (is.null(names(left)) && is.null(names(left))){
       
-      positions_left <- rep(list(if (left >= 1L) -left:-1L else integer()), nrow(x))
-      positions_right <- rep(list(if (right >= 1L) 1L:right else integer()), nrow(x))
-      match_length <- x[,2] - x[,1]
+      positions_left <- rep(list(if (left >= 1L) -left:-1L else integer()), nrow(.Object))
+      positions_right <- rep(list(if (right >= 1L) 1L:right else integer()), nrow(.Object))
+      match_length <- .Object[,2] - .Object[,1]
       
       dt_left <- data.table(
-        cpos = unlist(mapply(function(a,b) a + b, x[,1], positions_left, SIMPLIFY = FALSE)),
+        cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_left, SIMPLIFY = FALSE)),
         position = unlist(positions_left),
-        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = left)))
+        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = left)))
       )
       dt_right <- data.table(
-        cpos = unlist(mapply(function(a,b) a + b, x[,1], positions_right, SIMPLIFY = FALSE)),
+        cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_right, SIMPLIFY = FALSE)),
         position = unlist(positions_right),
-        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = right)))
+        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = right)))
       )
       dt_node <- data.table(
-        cpos = unlist(lapply(1L:nrow(x), function(i) x[i,1]:x[i,2])),
-        position = rep(0L, sum(match_length) + nrow(x)),
-        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = match_length[i] + 1L)))
+        cpos = unlist(lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2])),
+        position = rep(0L, sum(match_length) + nrow(.Object)),
+        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = match_length[i] + 1L)))
       )
       
       cpos_dt <- rbind(dt_left, dt_right, dt_node)

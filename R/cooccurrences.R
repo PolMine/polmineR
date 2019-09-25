@@ -174,7 +174,7 @@ setMethod(
   ){
     if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
     if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-    C <- context(
+    y <- context(
       .Object = .Object, query = query, cqp = is.cqp,
       p_attribute = p_attribute, s_attribute = s_attribute,
       left = left, right = right,
@@ -182,8 +182,7 @@ setMethod(
       count = TRUE, 
       mc = mc, verbose = verbose, progress = progress
     )
-    retval <- if (is.null(C)) invisible(NULL) else cooccurrences(C, method = method, verbose = verbose)
-    retval
+    if (is.null(y)) invisible(NULL) else cooccurrences(y, method = method, verbose = verbose)
   }
 )
 
