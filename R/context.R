@@ -94,34 +94,19 @@ setMethod("context", "slice", function(
   if (is.numeric(left)) left <- as.integer(left) # input may be numeric
   if (is.numeric(right)) right <- as.integer(right) # input may be numeric
   
-  # generate the context object (ctxt)
-  ctxt <- new(
-    "context",
-    query = query, p_attribute = p_attribute, corpus = .Object@corpus,
-    stat = data.table(), cpos = data.table(),
-    left = if (is.character(left)) 0L else as.integer(left),
-    right = if (is.character(right)) 0L else as.integer(right),
-    encoding = .Object@encoding,
-    partition = as(.Object, "partition"),
-    size_partition = as.integer(.Object@size),
-    boundary = if (!is.null(boundary)) boundary else character()
-  )
-  # ctxt@call <- deparse(match.call()) # kept seperate for debugging purposes
-  
-  # getting counts of query in partition
+  # get regions for query matches
   .message("getting corpus positions", verbose = verbose)
-  hits <- cpos(.Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp, check = check)
-  if (is.null(hits)){
+  regions <- cpos(.Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp, check = check)
+  if (is.null(regions)){
     warning('No hits for query ', query, ' (returning NULL)')
     return( invisible(NULL) )
   } else {
-    .message("number of hits:", nrow(hits), verbose = verbose)
+    .message("number of hits:", nrow(regions), verbose = verbose)
   }
-  colnames(hits) <- c("hit_cpos_left", "hit_cpos_right")
+  colnames(regions) <- c("hit_cpos_left", "hit_cpos_right")
   
-  hits <- cbind(hits, match_id = 1L:nrow(hits))
   
-  ctxt@cpos <- .make_context_dt(hit_matrix = hits, left = left, right = right, corpus = .Object@corpus)
+  ctxt <- context(.Object = regions, left = left, right = right, corpus = .Object@corpus)
   
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
@@ -194,6 +179,109 @@ setMethod("context", "subcorpus", function(
 ) callNextMethod()
 )
 
+#' @details If \code{.Object} is a \code{matrix}, the \code{context}-method will
+#'   unfold the \code{matrix} (interpreted as regions defining left and right
+#'   corpus positions) and return an elementary ... object.
+#' @param corpus A length-one \code{character} vector stating the corpus ID of a
+#'   CWB corpus.
+#' @rdname context-method
+setMethod("context", "matrix", function(.Object, corpus, left, right){
+  
+  if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
+
+  if (is.integer(left) && is.integer(right)){
+
+    if (is.null(names(left)) && is.null(names(left))){
+      
+      positions_left <- rep(list(if (left >= 1L) -left:-1L else integer()), nrow(x))
+      positions_right <- rep(list(if (right >= 1L) 1L:right else integer()), nrow(x))
+      match_length <- x[,2] - x[,1]
+      
+      dt_left <- data.table(
+        cpos = unlist(mapply(function(a,b) a + b, x[,1], positions_left, SIMPLIFY = FALSE)),
+        position = unlist(positions_left),
+        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = left)))
+      )
+      dt_right <- data.table(
+        cpos = unlist(mapply(function(a,b) a + b, x[,1], positions_right, SIMPLIFY = FALSE)),
+        position = unlist(positions_right),
+        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = right)))
+      )
+      dt_node <- data.table(
+        cpos = unlist(lapply(1L:nrow(x), function(i) x[i,1]:x[i,2])),
+        position = rep(0L, sum(match_length) + nrow(x)),
+        match_id = unlist(lapply(1L:nrow(x), function(i) rep(i, times = match_length[i] + 1L)))
+      )
+      
+      cpos_dt <- rbind(dt_left, dt_right, dt_node)
+      setorderv(cpos_dt, cols = c("match_id", "position"))
+      
+
+    } else {
+      # set, left, right, corpus, s_attribute
+      .Object <- cbind(.Object, match_id = 1L:nrow(.Object))
+      regions_dt <- data.table(.Object)
+      .fn <- function(.SD){
+        stop("NOT Implemented at present")
+        # hit_struc <- cl_cpos2struc(corpus = corpus, s_attribute = names(left), cpos = set[1], registry = registry())
+        # maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
+        # get left min cpos
+        # leftStruc <- queryStruc - left
+        # leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
+        # leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
+        # cposLeft <- c(leftCposMin:(set[1]-1))
+        # get right max cpos
+        # rightStruc <- queryStruc + right
+        # rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
+        # rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
+        # cposRight <- c((set[2] + 1):rightCposMax)
+        # handing it back
+        # list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
+      }
+      cpos_dt <- regions_dt[, .fn(.SD), by = c("match_id")]
+      setnames(cpos_dt, old = c("V1", "V2"), new = c("cpos", "position"))
+    }
+  } else if (is.character(left) && is.character(right)){
+    .fn <- function(.SD){
+      cpos_left <- seq.int(
+        from = cl_cpos2lbound(corpus = corpus, s_attribute = left, cpos = .SD[[1]][1], registry = registry()),
+        to = .SD[[1]][1] - 1L
+      )
+      cpos_right <- seq.int(
+        from = .SD[[2]][1] + 1L,
+        to = cl_cpos2rbound(corpus = corpus, s_attribute = right, cpos = .SD[[2]][1], registry = registry())
+      )
+      list(
+        c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
+        c(
+          seq.int(from = -length(cpos_left), to = -1L, by = 1L),
+          rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
+          seq.int(from = 1L, to = length(cpos_right), by = 1L)
+        )
+      )
+    }
+    cpos_dt <- regions_dt[, .fn(.SD), by = c("match_id")]
+    setnames(cpos_dt, old = c("V1", "V2"), new = c("cpos", "position"))
+    
+  }
+  
+  cpos_dt_min <- cpos_dt[between(cpos_dt[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
+
+  new(
+    "context",
+    query = character(),
+    p_attribute = character(),
+    count = nrow(.Object),
+    corpus = corpus,
+    stat = data.table(),
+    cpos = cpos_dt_min,
+    left = if (is.character(left)) 0L else as.integer(left),
+    right = if (is.character(right)) 0L else as.integer(right),
+    encoding = character(),
+    partition = new("partition", stat = data.table(), size = 0L),
+    boundary = character()
+  )
+})
 
 #' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
 #' @param left no of tokens to the left

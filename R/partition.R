@@ -284,7 +284,13 @@ setMethod("partition", "character", function(
   }
   
   if (!.Object %in% .list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
-  if (length(dot_list) != 0 && is.null(def)) def <- dot_list
+  if (is.null(def)){
+    if (length(dot_list) > 0L)
+      def <- dot_list
+    else 
+      stop("No s_attributes defining the partition offered")
+  }
+
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
   assign(
     "p",
@@ -360,8 +366,14 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     dot_list[["pAttribute"]] <- NULL
   }
   
-  if (length(dot_list) != 0L && is.null(def)) def <- dot_list
-  if (!all(names(def) %in% s_attributes(.Object))) stop("some or all s-attributes provided are not available")
+  if (is.null(def)){
+    if (length(dot_list) > 0L)
+      def <- dot_list
+    else 
+      stop("No s_attributes defining the partition offered")
+  }
+  
+  if (!all(names(def) %in% s_attributes(.Object))) stop(sprintf("some or all s-attributes provided are not available: %s", paste(names(def), collapse = ", ")))
   if (length(def) > 1L) stop("only one s-attribute allowed")
   if (!is.null(xml)) stopifnot(xml %in% c("flat", "nested"))
   
