@@ -110,7 +110,7 @@ setMethod("context", "slice", function(
   ctxt@p_attribute <- p_attribute
   ctxt@corpus <- .Object@corpus
   ctxt@encoding <- .Object@encoding
-  ctxt@partition <- .Object
+  ctxt@partition <- as(.Object, "partition")
   ctxt@size_partition <- as.integer(.Object@size)
   ctxt@boundary <- if (!is.null(boundary)) boundary else character()
 

@@ -7,6 +7,7 @@
 \alias{as.matrix,context_bundle-method}
 \alias{context,partition-method}
 \alias{context,subcorpus-method}
+\alias{context,matrix-method}
 \alias{context,corpus-method}
 \alias{context,character-method}
 \alias{context,partition_bundle-method}
@@ -38,6 +39,8 @@ context(.Object, ...)
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
   progress = TRUE, ...)
+
+\S4method{context}{matrix}(.Object, corpus, left, right)
 
 \S4method{context}{corpus}(.Object, query, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
@@ -102,6 +105,9 @@ the value from the options}
 
 \item{progress}{logical, whether to show progress bar}
 
+\item{corpus}{A length-one \code{character} vector stating the corpus ID of a
+CWB corpus.}
+
 \item{complete}{enhance completely}
 }
 \value{
@@ -115,6 +121,10 @@ region.
 \details{
 For formulating the query, CPQ syntax may be used (see
 examples). Statistical tests available are log-likelihood, t-test, pmi.
+
+If \code{.Object} is a \code{matrix}, the \code{context}-method will
+  unfold the \code{matrix} (interpreted as regions defining left and right
+  corpus positions) and return an elementary ... object.
 }
 \examples{
 use("polmineR")
