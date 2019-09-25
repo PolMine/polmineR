@@ -376,56 +376,17 @@ setMethod("kwic", "corpus", function(
     message("sorry, not hits for query: ", query);
     return(invisible(NULL))
   }
-  cpos_max <- cl_attribute_size(corpus = .Object@corpus, attribute = p_attribute, attribute_type = "p", registry = registry())
   
-  cpos_list <- apply(
-    hits, 1,
-    function(row){
-      left <- if (left > 0L) (row[1] - left):(row[1] - 1L) else integer()
-      right <- if (right > 0L) (row[2] + 1L):(row[2] + right) else integer()
-      list(
-        left = left[left > 0L],
-        node = row[1]:row[2],
-        right = right[right <= cpos_max]
-      )
-    }
-  )
-  DT <- data.table(
-    match_id = unlist(lapply(seq_along(cpos_list), function(i) rep(i, times = length(unlist(cpos_list[[i]]))))),
-    cpos = unname(unlist(cpos_list)),
-    position = unlist(lapply(
-      cpos_list,
-      function(x) lapply(
-        names(x),
-        function(x2)
-          switch(
-            x2,
-            left = if (length(x[[x2]]) == 0L) integer() else rev((-1L:-left)[1L:length(x[[x2]])]),
-            node = rep(0L, times = length(x[[x2]])),
-            right = if (length(x[[x2]]) == 0L) integer() else (1L:right)[1L:length(x[[x2]])]
-          )
-      )))
-  )
+  ctxt <- context(hits, left = left, right = right, corpus = .Object@corpus)
 
-  DT[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry()), with = TRUE]
+  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = registry()), with = TRUE]
   
-  ctxt <- new(
-    Class = "context",
-    query = character(),
-    count = nrow(hits),
-    stat = data.table(),
-    corpus = .Object@corpus,
-    size_partition = integer(),
-    size = integer(),
-    left = as.integer(left),
-    right = as.integer(right), 
-    cpos = DT,
-    boundary = if (!is.null(boundary)) boundary else character(),
-    p_attribute = p_attribute,
-    encoding = .Object@encoding,
-    partition = new("partition", stat = data.table())
-  )
-  
+  ctxt@count <- nrow(hits)
+  ctxt@boundary <- if (!is.null(boundary)) boundary else character()
+  ctxt@p_attribute <- p_attribute
+  ctxt@encoding <- .Object@encoding
+  ctxt@partition <- new("partition", stat = data.table())
+
   # check that windows do not transgress s-attribute
   if (!is.null(boundary)){
     stopifnot(boundary %in% registry_get_s_attributes(ctxt@corpus))

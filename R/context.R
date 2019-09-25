@@ -193,6 +193,9 @@ setMethod("context", "subcorpus", function(
 #' @rdname context-method
 setMethod("context", "matrix", function(.Object, corpus, left, right){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
+  
+  if (is.numeric(left)) left <- as.integer(left)
+  if (is.numeric(right)) right <- as.integer(right)
 
   if (is.integer(left) && is.integer(right)){
 
@@ -287,81 +290,6 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
     boundary = character()
   )
 })
-
-#' @param set a numeric vector with three items: left cpos of hit, right cpos of hit, struc of the hit
-#' @param left no of tokens to the left
-#' @param right no of tokens to the right
-#' @param s_attribute the integrity of the s_attribute to be checked
-#' @importFrom data.table between
-#' @return a list!
-#' @noRd
-.make_context_dt <- function(hit_matrix, left, right, corpus, s_attribute = NULL){
-  
-  DT <- data.table(hit_matrix)
-  
-  if (is.integer(left) && is.integer(right)){
-    # the kwic,corpus-method implements a very similar procedure, yet in a somewhat faster manner.
-    
-    if (is.null(names(left)) && is.null(names(left))){
-      .fn <- function(.SD){
-        list(
-          c(
-            if (left != 0L) (.SD[[1]][1] - left):(.SD[[1]][1] - 1L) else integer(),
-            .SD[[1]][1]:.SD[[2]][1],
-            if (right != 0L) (.SD[[2]][1] + 1L):(.SD[[2]][1] + right) else integer()
-            ),
-          c(
-            if (left != 0L) -left:-1L else integer(),
-            rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
-            if (right != 0L) 1L:right else integer()
-            )
-        )
-      }
-    } else {
-      # set, left, right, corpus, s_attribute
-      .fn <- function(.SD){
-        stop("NOT Implemented at present")
-        # hit_struc <- cl_cpos2struc(corpus = corpus, s_attribute = names(left), cpos = set[1], registry = registry())
-        # maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
-        # get left min cpos
-        # leftStruc <- queryStruc - left
-        # leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
-        # leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
-        # cposLeft <- c(leftCposMin:(set[1]-1))
-        # get right max cpos
-        # rightStruc <- queryStruc + right
-        # rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
-        # rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
-        # cposRight <- c((set[2] + 1):rightCposMax)
-        # handing it back
-        # list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
-      }
-    }
-  } else if (is.character(left) && is.character(right)){
-    .fn <- function(.SD){
-      cpos_left <- seq.int(
-        from = cl_cpos2lbound(corpus = corpus, s_attribute = left, cpos = .SD[[1]][1], registry = registry()),
-        to = .SD[[1]][1] - 1L
-        )
-      cpos_right <- seq.int(
-        from = .SD[[2]][1] + 1L,
-        to = cl_cpos2rbound(corpus = corpus, s_attribute = right, cpos = .SD[[2]][1], registry = registry())
-      )
-      list(
-        c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
-        c(
-          seq.int(from = -length(cpos_left), to = -1L, by = 1L),
-          rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
-          seq.int(from = 1L, to = length(cpos_right), by = 1L)
-          )
-      )
-    }
-  }
-  Y <- DT[, .fn(.SD), by = c("match_id")]
-  setnames(Y, old = c("V1", "V2"), new = c("cpos", "position"))
-  Y <- Y[between(Y[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
-  Y
-}
 
 
 #' @rdname context-method
@@ -472,23 +400,23 @@ setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, com
     size = unique(subset(.Object@stat, .Object@stat[, "node"] == query)[,"size_window"])
   )  
   stop("due to refactoring the context method, this does not work at present")
-  if (complete == TRUE){
-    s_attribute <- names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]]
-    sAttr <- paste(
-      newObject@corpus, ".",
-      names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
-      sep = ""
-    )
-    hits <- cpos(
-      newObject@query,
-      get(newObject@partition, ".GlobalEnv"),
-      p_attribute = newObject@p_attribute,
-      verbose = FALSE, check = check
-    )
-    newObject@size <- nrow(hits)
-    hits <- cbind(hits, cl_cpos2struc(corpus = newObject@corpus, s_attribute = s_attribute, cpos = hits[,1], registry = registry()))
-    newObject@cpos <- .make_context_dt(hits, left = newObject@left, right = newObject@right, corpus = newObject@corpus, s_attribute = sAttr)
-  }
+  # if (complete){
+  #   s_attribute <- names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]]
+  #   sAttr <- paste(
+  #     newObject@corpus, ".",
+  #     names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
+  #     sep = ""
+  #   )
+  #   hits <- cpos(
+  #     newObject@query,
+  #     get(newObject@partition, ".GlobalEnv"),
+  #     p_attribute = newObject@p_attribute,
+  #     verbose = FALSE, check = check
+  #   )
+  #   newObject@size <- nrow(hits)
+  #   hits <- cbind(hits, cl_cpos2struc(corpus = newObject@corpus, s_attribute = s_attribute, cpos = hits[,1], registry = registry()))
+  #   newObject@cpos <- .make_context_dt(hits, left = newObject@left, right = newObject@right, corpus = newObject@corpus, s_attribute = sAttr)
+  # }
   newObject
 })
 
