@@ -1,12 +1,33 @@
 .onLoad <- function (libname, pkgname) {
   
-
-  # if environment variable CORPUS_REGISTRY is not set, use data in the polmineR package
-  if (Sys.getenv("CORPUS_REGISTRY") %in% c("", "/")){
-    pkg_registry_dir <- file.path(libname, pkgname, "extdata", "cwb", "registry")
-    Sys.setenv("CORPUS_REGISTRY" = pkg_registry_dir)
-    registry_reset(registryDir = pkg_registry_dir, verbose = FALSE)
+  pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
+  pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
+  
+  polmineR_registry_dir <- registry()
+  if (!dir.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  
+  if (!dir.exists(data_dir())) dir.create(data_dir())
+  
+  if (Sys.getenv("CORPUS_REGISTRY") != ""){
+    for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
+      file.copy(
+        from = file.path(Sys.getenv("CORPUS_REGISTRY"), corpus),
+        to = file.path(polmineR_registry_dir, corpus)
+      )
+    }
   }
+  
+  for (corpus in list.files(pkg_registry_dir)){
+    registry_move(
+      corpus = corpus,
+      registry = pkg_registry_dir,
+      registry_new = polmineR_registry_dir,
+      home_dir_new = file.path(pkg_indexed_corpora_dir, tolower(corpus))
+    )
+  }
+  
+  Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
+  registry_reset(registryDir = registry(), verbose = FALSE)
   
   options(
     "polmineR.p_attribute" = "word",
@@ -45,33 +66,6 @@
   # when a pre-compiled package is distributed. Therefore, the following lines
   # create a temporary registry, if necessary.
 
-  pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
-  pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
-  
-  polmineR_registry_dir <- registry()
-  if (!dir.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
-  
-  if (!dir.exists(data_dir())) dir.create(data_dir())
-
-  if (Sys.getenv("CORPUS_REGISTRY") != ""){
-    for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
-      file.copy(
-        from = file.path(Sys.getenv("CORPUS_REGISTRY"), corpus),
-        to = file.path(polmineR_registry_dir, corpus)
-        )
-    }
-  }
-
-  for (corpus in list.files(pkg_registry_dir)){
-    registry_move(
-      corpus = corpus,
-      registry = pkg_registry_dir,
-      registry_new = polmineR_registry_dir,
-      home_dir_new = file.path(pkg_indexed_corpora_dir, tolower(corpus))
-    )
-  }
-  
-  Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
   
   if (Sys.getlocale() == "C"){
     if (Sys.info()["sysname"] == "Darwin"){
