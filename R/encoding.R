@@ -87,6 +87,7 @@ as.nativeEnc <- function(x, from){
 #' @rdname encodings
 #' @importFrom utils localeToCharset
 as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
+  if (is.na(from)) from <- "UTF-8"
   y <- iconv(x, from = from, to = corpusEnc)
   Encoding(y) <- corpusEnc
   y

@@ -68,6 +68,7 @@ whether all letters are upper case and issue informative warnings and error mess
 * Fixed an issue for `as.DocumentTermMatrix` that started to occur with the introduction of the `subcorpus_bundle` class (#100).
 * Removed a bug in the kwic,character-method that prevented using different values for right and left context (#101).
 * Removed a bug from the kwic,character-method, and the context,corpus-method that would result in odd behavior when either the left or right context is 0.
+* Introduction of a context,matrix-method to have a unified auxiliary function to create contexts.
 
 
 

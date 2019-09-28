@@ -208,12 +208,12 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       dt_left <- data.table(
         cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_left, SIMPLIFY = FALSE)),
         position = unlist(positions_left),
-        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = left)))
+        match_id = rep(1L:nrow(.Object), each = left)
       )
       dt_right <- data.table(
         cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_right, SIMPLIFY = FALSE)),
         position = unlist(positions_right),
-        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = right)))
+        match_id = rep(1L:nrow(.Object), each = right)
       )
       dt_node <- data.table(
         cpos = unlist(lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2])),
@@ -222,7 +222,7 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       )
       
       cpos_dt <- rbind(dt_left, dt_right, dt_node)
-      setorderv(cpos_dt, cols = c("match_id", "position"))
+      setorderv(cpos_dt, cols = c("match_id", "cpos"))
       
 
     } else {
