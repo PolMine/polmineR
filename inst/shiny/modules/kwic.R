@@ -16,7 +16,7 @@ kwicUiInput <- function(drop = NULL){
     ),
     query = textInput("kwic_query", label = "query", value = ""),
     cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
-    positivelist = textInput("kwic_positivelist", "positivelist", value = ""),
+    positivelist = textInput("kwic_positivelist", label = "positivelist", value = ""),
     s_attribute = selectInput(
       "kwic_meta", "s_attribute",
       choices = s_attributes(corpus()[["corpus"]][1]),
@@ -79,6 +79,7 @@ kwicServer <- function(input, output, session, ...){
         withProgress(
           message = "please wait", value = 0, max = 5, detail = "preparing data",
           {
+            poslist <- if (nchar(input$kwic_positivelist) >= 1L) input$kwic_positivelist else NULL
             K <- polmineR::kwic(
               .Object = object,
               query = rectifySpecialChars(input$kwic_query),
@@ -88,9 +89,10 @@ kwicServer <- function(input, output, session, ...){
               right = input$kwic_window,
               meta = input$kwic_meta,
               verbose = "shiny",
-              positivelist = if (!is.null(input$kwic_positivelist)) input$kwic_positivelist else NULL,
+              positivelist = poslist,
               cpos = TRUE # required for reading
             )
+            if (!is.null(poslist) & !is.null(K)) K <- highlight(K, yellow = poslist)
             values[["kwic"]] <- K
           }
         ) # end withProgress
@@ -121,7 +123,7 @@ kwicServer <- function(input, output, session, ...){
     })
     
     # format DataTable
-    retval <- DT::datatable(retval, selection = "single", rownames = FALSE)
+    retval <- DT::datatable(retval, selection = "single", rownames = FALSE, escape = FALSE)
     retval <- DT::formatStyle(retval, "node", color = "#4863A0", textAlign = "center")
     retval <- DT::formatStyle(retval, "left", textAlign = "right")
     if (length(input$kwic_meta) > 0){

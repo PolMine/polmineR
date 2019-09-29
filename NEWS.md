@@ -70,6 +70,7 @@ whether all letters are upper case and issue informative warnings and error mess
 * Removed a bug from the kwic,character-method, and the context,corpus-method that would result in odd behavior when either the left or right context is 0.
 * Introduction of a context,matrix-method to have a unified auxiliary function to create contexts.
 * The `as.corpusEnc`-function uses the `localeToCharset()`-function from the utils package to determine the charset of input strings. On RStudio Server, we have seen cases when the return value is NA. Then it will be assumed that the locale is UTF-8.
+* Functionality to highlight terms in kwic display has been restored for the shiny app.
 
 
 

@@ -32,7 +32,7 @@ shinyUI(
     tabPanel(
       "kwic",
       sidebarLayout(
-        sidebarPanel = sidebarPanel(kwicUiInput(drop = c("positivelist", "p_attribute"))),
+        sidebarPanel = sidebarPanel(kwicUiInput(drop = "p_attribute")),
         mainPanel = mainPanel(kwicUiOutput())
       )
     ),
