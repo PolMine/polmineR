@@ -71,6 +71,7 @@ whether all letters are upper case and issue informative warnings and error mess
 * Introduction of a context,matrix-method to have a unified auxiliary function to create contexts.
 * The `as.corpusEnc`-function uses the `localeToCharset()`-function from the utils package to determine the charset of input strings. On RStudio Server, we have seen cases when the return value is NA. Then it will be assumed that the locale is UTF-8.
 * Functionality to highlight terms in kwic display has been restored for the shiny app.
+* The documentation for the `get_token_stream()`-method has been reworked and expanded thoroughly (#65). On this occasion, test coverage for the method has been improved significantly. (Everything is tested now apart from parallelisation.)
 
 
 

@@ -191,6 +191,7 @@ setMethod("context", "subcorpus", function(
 #' @param corpus A length-one \code{character} vector stating the corpus ID of a
 #'   CWB corpus.
 #' @rdname context-method
+#' @importFrom data.table between
 setMethod("context", "matrix", function(.Object, corpus, left, right){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   

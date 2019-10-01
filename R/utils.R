@@ -284,9 +284,6 @@ flatten <- function(object){
       if (type %in% c("default", "message")){
         shiny::incProgress(amount = 1, detail = msg)
       } else {
-        print("show notification")
-        print("type")
-        print("message")
         shiny::showNotification(msg, type = type)
       }
     }

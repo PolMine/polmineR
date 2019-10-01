@@ -12,7 +12,7 @@
 \alias{get_token_stream,subcorpus-method}
 \alias{get_token_stream,regions-method}
 \alias{get_token_stream,partition_bundle-method}
-\title{Get Token Stream Based on Corpus Positions.}
+\title{Get Token Stream.}
 \usage{
 get_token_stream(.Object, ...)
 
@@ -45,25 +45,34 @@ get_token_stream(.Object, ...)
   progress = FALSE, mc = FALSE, ...)
 }
 \arguments{
-\item{.Object}{An object of class \code{matrix} or \code{partition}}
+\item{.Object}{Input object.}
 
-\item{...}{Further arguments.}
+\item{...}{Arguments that will be be passed into the
+\code{get_token_stream}-method for a \code{numeric} vector, the real
+worker.}
 
-\item{corpus}{The CWB corpus.}
+\item{corpus}{A CWB indexed corpus.}
 
-\item{p_attribute}{The p-attribute to decode.}
+\item{p_attribute}{A length-one \code{character} vector, the p-attribute to decode.}
 
-\item{encoding}{Encoding to use.}
+\item{encoding}{If not \code{NULL} (default) a length-one \code{character}
+vector stating an encoding that will be assigned to the (decoded) token
+stream.}
 
-\item{collapse}{Length-one character string.}
+\item{collapse}{If not \code{NULL} (default), a length-one \code{character}
+string passed into \code{paste} to collapse character vector into a single
+string.}
 
-\item{beautify}{Logical, whether to adjust whitespace before and after interpunctation.}
+\item{beautify}{A (length-one) \code{logical} value, whether to adjust
+whitespace before and after interpunctation.}
 
-\item{cpos}{Logical, whether to return cpos as names of the tokens.}
+\item{cpos}{A \code{logical} value, whether to return corpus positions as names of the tokens.}
 
 \item{cutoff}{Maximum number of tokens to be reconstructed.}
 
-\item{decode}{Logical, whether to decode token ids to character strings.}
+\item{decode}{A (length-one) \code{logical} value, whether to decode token
+ids to character strings. Defaults to \code{TRUE}, if \code{FALSE}, an
+integer vector with token ids is returned.}
 
 \item{left}{Left corpus position.}
 
@@ -71,15 +80,66 @@ get_token_stream(.Object, ...)
 
 \item{progress}{A length-one \code{logical} value, whether to show progress bar.}
 
-\item{mc}{Whether to use multithreading.}
+\item{mc}{Number of cores to use. If \code{FALSE} (default), only one thread
+will be used.}
 }
 \description{
-Turn regions of a corpus defined by corpus positions into the original text.
+Auxiliary method to get the fulltext of a corpus, subcorpora etc. Can be used
+to export corpus data to other tools.
+}
+\details{
+CWB indexed corpora have a fixed order of tokens which is called the
+  \emph{token stream}. Every token is assigned to a unique \emph{corpus
+  position}, Subsets of the (entire) token stream defined by a left and a
+  right corpus position are called \emph{regions}. The
+  \code{get_token_stream}-method will extract the tokens (for regions) from a
+  corpus.
+
+The primary usage of this method is to return the token
+  stream of a (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
+  \code{partition} object. The methods defined for a \code{numeric} vector or
+  a (two-column) \code{matrix} defining regions (i.e. left and right corpus
+  positions in the first and second column) are the actual workers for this
+  operation.
+
+The \code{get_token_stream} has been introduced so serve as a worker by
+  higher level methods such as \code{read}, \code{html}, and
+  \code{as.markdown}. It may however be useful for decoding a corpus so that 
+  it can be exported to other tools.
 }
 \examples{
+# Decode first words of GERMAPARLMINI corpus (first sentence)
 get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
+
+# Decode first sentence and collapse tokens into single string
 get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
+
+# Decode regions defined by two-column matrix
+region_matrix <- matrix(c(0,9,10,25), ncol = 2, byrow = TRUE)
+get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1")
+
+# Use argument 'beautify' to remove surplus whitespace
+get_token_stream(
+  region_matrix,
+  corpus = "GERMAPARLMINI",
+  p_attribute = "word",
+  encoding = "latin1",
+  collapse = " ", beautify = TRUE
+)
+
+# Decode entire corpus (corpus object / specified by corpus ID)
 fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
+corpus("GERMAPARLMINI") \%>\% get_token_stream(p_attribute = "word")
+
+# Decode subcorpus
+corpus("REUTERS") \%>\%
+  subset(id == "127") \%>\%
+  get_token_stream(p_attribute = "word")
+
+# Decode partition_bundle
+corpus("REUTERS") \%>\%
+  split(s_attribute = "id") \%>\%
+  get_token_stream(p_attribute = "word")
 
 # get token stream for partition_bundle
 pb <- partition_bundle("REUTERS", s_attribute = "id")

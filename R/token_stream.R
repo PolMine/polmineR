@@ -1,30 +1,87 @@
 #' @include regions.R S4classes.R
 NULL
 
-#' Get Token Stream Based on Corpus Positions.
+#' Get Token Stream.
 #' 
-#' Turn regions of a corpus defined by corpus positions into the original text.
+#' Auxiliary method to get the fulltext of a corpus, subcorpora etc. Can be used
+#' to export corpus data to other tools.
 #' 
-#' @param .Object An object of class \code{matrix} or \code{partition}
-#' @param p_attribute The p-attribute to decode.
-#' @param encoding Encoding to use.
-#' @param collapse Length-one character string.
-#' @param corpus The CWB corpus.
-#' @param beautify Logical, whether to adjust whitespace before and after interpunctation.
-#' @param decode Logical, whether to decode token ids to character strings.
+#' @param .Object Input object.
+#' @param p_attribute A length-one \code{character} vector, the p-attribute to decode.
+#' @param encoding If not \code{NULL} (default) a length-one \code{character}
+#'   vector stating an encoding that will be assigned to the (decoded) token
+#'   stream.
+#' @param collapse If not \code{NULL} (default), a length-one \code{character}
+#'   string passed into \code{paste} to collapse character vector into a single
+#'   string.
+#' @param corpus A CWB indexed corpus.
+#' @param beautify A (length-one) \code{logical} value, whether to adjust
+#'   whitespace before and after interpunctation.
+#' @param decode A (length-one) \code{logical} value, whether to decode token
+#'   ids to character strings. Defaults to \code{TRUE}, if \code{FALSE}, an
+#'   integer vector with token ids is returned.
 #' @param left Left corpus position.
 #' @param right Right corpus position.
-#' @param cpos Logical, whether to return cpos as names of the tokens.
+#' @param cpos A \code{logical} value, whether to return corpus positions as names of the tokens.
 #' @param cutoff Maximum number of tokens to be reconstructed.
 #' @param progress A length-one \code{logical} value, whether to show progress bar.
-#' @param mc Whether to use multithreading.
-#' @param ... Further arguments.
+#' @param mc Number of cores to use. If \code{FALSE} (default), only one thread
+#'   will be used.
+#' @param ... Arguments that will be be passed into the
+#'   \code{get_token_stream}-method for a \code{numeric} vector, the real
+#'   worker.
 #' @exportMethod get_token_stream
 #' @rdname get_token_stream-method
+#' @details CWB indexed corpora have a fixed order of tokens which is called the
+#'   \emph{token stream}. Every token is assigned to a unique \emph{corpus
+#'   position}, Subsets of the (entire) token stream defined by a left and a
+#'   right corpus position are called \emph{regions}. The
+#'   \code{get_token_stream}-method will extract the tokens (for regions) from a
+#'   corpus.
+#' @details The primary usage of this method is to return the token
+#'   stream of a (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
+#'   \code{partition} object. The methods defined for a \code{numeric} vector or
+#'   a (two-column) \code{matrix} defining regions (i.e. left and right corpus
+#'   positions in the first and second column) are the actual workers for this
+#'   operation.
+#' @details The \code{get_token_stream} has been introduced so serve as a worker by
+#'   higher level methods such as \code{read}, \code{html}, and
+#'   \code{as.markdown}. It may however be useful for decoding a corpus so that 
+#'   it can be exported to other tools.
+#'   
 #' @examples 
+#' # Decode first words of GERMAPARLMINI corpus (first sentence)
 #' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
+#' 
+#' # Decode first sentence and collapse tokens into single string
 #' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
+#' 
+#' # Decode regions defined by two-column matrix
+#' region_matrix <- matrix(c(0,9,10,25), ncol = 2, byrow = TRUE)
+#' get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1")
+#' 
+#' # Use argument 'beautify' to remove surplus whitespace
+#' get_token_stream(
+#'   region_matrix,
+#'   corpus = "GERMAPARLMINI",
+#'   p_attribute = "word",
+#'   encoding = "latin1",
+#'   collapse = " ", beautify = TRUE
+#' )
+#' 
+#' # Decode entire corpus (corpus object / specified by corpus ID)
 #' fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
+#' corpus("GERMAPARLMINI") %>% get_token_stream(p_attribute = "word")
+#' 
+#' # Decode subcorpus
+#' corpus("REUTERS") %>%
+#'   subset(id == "127") %>%
+#'   get_token_stream(p_attribute = "word")
+#' 
+#' # Decode partition_bundle
+#' corpus("REUTERS") %>%
+#'   split(s_attribute = "id") %>%
+#'   get_token_stream(p_attribute = "word")
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
 #' @rdname get_token_stream-method
@@ -45,6 +102,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
     Encoding(tokens) <- encoding
     tokens <- as.nativeEnc(tokens, from = encoding)
   }
+  
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
     
@@ -120,17 +178,6 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
     encoding = .Object@encoding, collapse = collapse, cpos = cpos,
     ...
   )
-  # 
-  # .getText <- function(.BY){
-  #   list(text = get_token_stream(
-  #     .BY[[1]]:.BY[[2]],
-  #     corpus = .Object@corpus, encoding = .Object@encoding,
-  #     p_attribute = p_attribute,
-  #     collapse = " ",
-  #     ...
-  #   ))
-  # }
-  # .Object@cpos[, .getText(.BY), by = c("cpos_left", "cpos_right"), with = TRUE]
 })
 
 #' @rdname get_token_stream-method
@@ -145,7 +192,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   if (progress)
     pblapply(.Object@objects, .fn)
   else 
-    if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn)
+    if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn, mc.cores = mc)
 })
 
 
