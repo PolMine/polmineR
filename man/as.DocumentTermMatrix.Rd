@@ -12,9 +12,7 @@
 \alias{as.TermDocumentMatrix,partition_bundle-method}
 \alias{as.TermDocumentMatrix,subcorpus_bundle-method}
 \alias{as.DocumentTermMatrix,subcorpus_bundle-method}
-\alias{as.DocumentTermMatrix,neighborhood-method}
 \alias{as.DocumentTermMatrix,context-method}
-\alias{as.TermDocumentMatrix,neighborhood-method}
 \alias{as.TermDocumentMatrix,context-method}
 \title{Generate TermDocumentMatrix / DocumentTermMatrix.}
 \usage{
@@ -49,14 +47,8 @@ as.DocumentTermMatrix(x, ...)
 \S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
   col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{neighborhood}(x, p_attribute,
-  verbose = TRUE, ...)
-
 \S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE,
   ...)
-
-\S4method{as.TermDocumentMatrix}{neighborhood}(x, p_attribute,
-  verbose = TRUE, ...)
 
 \S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE,
   ...)

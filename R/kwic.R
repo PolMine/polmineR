@@ -268,7 +268,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(s_attributes)) s_attributes <- character()
-  conc <- new(
+  y <- new(
     "kwic",
     corpus = .Object@corpus,
     left = as.integer(.Object@left),
@@ -280,9 +280,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     stat = data.table()
   )
   
-  conc <- enrich(conc, table = TRUE, p_attribute = .Object@p_attribute)
-  conc <- enrich(conc, s_attributes = s_attributes)
-  conc
+  enrich(y, table = TRUE, s_attributes = s_attributes)
 })
 
 

@@ -1139,9 +1139,3 @@ setMethod("aggregate", "slice", function(x){
   x
 })
 
-
-#' @rdname kwic-class
-#' @docType class
-#' @aliases neighborhood neighborhood-class
-#' @exportClass neighborhood
-setClassUnion(name = "neighborhood", members = c("context", "kwic"))

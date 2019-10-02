@@ -6,8 +6,6 @@
 \alias{kwic-class}
 \alias{[,kwic,ANY,ANY,ANY-method}
 \alias{[,kwic-method}
-\alias{neighborhood-class}
-\alias{neighborhood}
 \alias{get_corpus,kwic-method}
 \alias{count,kwic-method}
 \alias{as.DocumentTermMatrix,kwic-method}

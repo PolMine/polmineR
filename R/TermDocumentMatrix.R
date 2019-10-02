@@ -353,12 +353,11 @@ setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, p_attribute =
 })
 
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "neighborhood", function(x, p_attribute, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   p_attr_id <- paste(p_attribute, "id", sep = "_")
   if (!p_attr_id %in% colnames(x@cpos)){
-    .message("adding token ids for p-attribute:", p_attribute, verbose = verbose)
-    x <- enrich(x, p_attribute = p_attribute)
+    x <- enrich(x, p_attribute = p_attribute, verbose = verbose)
   }
   
   .message("dropping nodes", verbose = verbose)
@@ -408,31 +407,23 @@ setMethod("as.DocumentTermMatrix", "neighborhood", function(x, p_attribute, verb
 })
 
 
-#' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
-  callNextMethod()
+#' @rdname kwic-class
+setMethod("as.DocumentTermMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
+  as.DocumentTermMatrix(as(x, "context"), p_attribute = p_attribute, verbose = verbose, ...)
 })
 
 #' @rdname kwic-class
-setMethod("as.DocumentTermMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
-  callNextMethod()
-})
-
-
-#' @rdname as.DocumentTermMatrix
-setMethod("as.TermDocumentMatrix", "neighborhood", function(x, p_attribute, verbose = TRUE, ...){
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  as.DocumentTermMatrix(x = x, p_attribute = p_attribute, verbose = verbose)
+setMethod("as.TermDocumentMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
+  as.TermDocumentMatrix(as(x, "context"), p_attribute = p_attribute, verbose = verbose, ...)
 })
 
 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "context", function(x, p_attribute, verbose = TRUE, ...){
-  callNextMethod()
+  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  dtm <- as.DocumentTermMatrix(x = x, p_attribute = p_attribute, verbose = verbose)
+  as.TermDocumentMatrix(dtm)
 })
 
-#' @rdname kwic-class
-setMethod("as.TermDocumentMatrix", "kwic", function(x, p_attribute, verbose = TRUE, ...){
-  callNextMethod()
-})
+
 

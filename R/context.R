@@ -448,3 +448,25 @@ setMethod("show", "context_bundle", function(object){
 })
 
 
+setAs(from = "kwic", to = "context", def = function(from){
+  new(
+    "context",
+    query = "",
+    count = -1L,
+    partition = new("partition", size = 0L, stat = data.table()),
+    size_partition = -1L,
+    size_match = -1L,
+    size = -1L,
+    boundary = character(),
+    call = "",
+    left = from@left,
+    right = from@right,
+    p_attribute = from@p_attribute,
+    corpus = from@corpus,
+    stat = data.table(),
+    encoding = from@encoding,
+    cpos = from@cpos
+  )
+})
+
+
