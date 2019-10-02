@@ -88,6 +88,7 @@ polmineR 0.7.11
   * Experimental functionality for a non-standard evaluation approach to create subcorpora via a `zoom()`-method. See documentation for (new) `corpus`-class (`?"corpus-class"`) and extended documentation for `partition`-class (`?"partition-class"`). A new `corpus()`-method for character vector serves as a constructor. This is a beginning of somewhat re-arranging the class structure: The `regions`-class now inherits from the new `corpus`-class, and a new `subcorpus`-class inherits from the `regions`-class.
   * A new function `check_cqp_query()` offers a preliminary check whether a CQP query may be faulty. It is used by the `cpos()`-method, if the new argument `check` is TRUE. All higher-level functions calling `cpos()` also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.
   * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful  when including tables in Rmarkdown documents.
+  * The `highlight()`-method for `character` and `html` objects now has the arguments `regex` and `perl`, so that regular expressions can be used for highlighting (#99).
 
 
 ## MINOR IMPROVEMENTS

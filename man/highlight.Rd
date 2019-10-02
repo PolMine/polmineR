@@ -10,9 +10,11 @@
 \usage{
 highlight(.Object, ...)
 
-\S4method{highlight}{character}(.Object, highlight = list(), ...)
+\S4method{highlight}{character}(.Object, highlight = list(),
+  regex = FALSE, perl = FALSE, ...)
 
-\S4method{highlight}{html}(.Object, highlight = list(), ...)
+\S4method{highlight}{html}(.Object, highlight = list(), regex = FALSE,
+  perl = FALSE, ...)
 
 \S4method{highlight}{kwic}(.Object, highlight = list(), regex = FALSE,
   perl = TRUE, verbose = TRUE, ...)

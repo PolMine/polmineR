@@ -67,7 +67,7 @@ setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
 #' @rdname highlight
-setMethod("highlight", "character", function(.Object, highlight = list(), ...){
+setMethod("highlight", "character", function(.Object, highlight = list(), regex = FALSE, perl = FALSE, ...){
   if (length(list(...)) > 0) highlight <- list(...)
   if (is.character(highlight)) highlight <- split(x = unname(highlight), f = names(highlight))
   if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' needs to be installed for highlighting using cpos/ids")
@@ -79,7 +79,13 @@ setMethod("highlight", "character", function(.Object, highlight = list(), ...){
         if (is.numeric(x)){
           nodes <- xml2::xml_find_all(doc, xpath = sprintf('//span[@id="%d"]', x))
         } else {
-          nodes <- xml2::xml_find_all(doc, xpath = sprintf('//span[@token="%s"]', x))
+          if (!regex){
+            nodes <- xml2::xml_find_all(doc, xpath = sprintf('//span[@token="%s"]', x))
+          } else {
+            span_nodes <- xml2::xml_find_all(doc, xpath = sprintf('//span', x))
+            token_attrs <- lapply(span_nodes, function(x) xml_attrs(x, "token"))
+            nodes <- span_nodes[grep(x, sapply(token_attrs, function(x) x[["token"]]), perl = perl)]
+          }
         }
         lapply(
           nodes,
@@ -95,10 +101,10 @@ setMethod("highlight", "character", function(.Object, highlight = list(), ...){
 })
 
 #' @rdname highlight
-setMethod("highlight", "html", function(.Object, highlight = list(), ...){
-  if (length(list(...)) > 0) highlight <- list(...)
+setMethod("highlight", "html", function(.Object, highlight = list(), regex = FALSE, perl = FALSE, ...){
+  if (length(list(...)) > 0L) highlight <- list(...)
   htmltools::HTML(
-    highlight(as.character(.Object), highlight = highlight)
+    highlight(as.character(.Object), highlight = highlight, regex = regex, perl = perl)
   )
 })
 
