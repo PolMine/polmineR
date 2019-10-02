@@ -73,6 +73,8 @@ whether all letters are upper case and issue informative warnings and error mess
 * Functionality to highlight terms in kwic display has been restored for the shiny app.
 * The documentation for the `get_token_stream()`-method has been reworked and expanded thoroughly (#65). On this occasion, test coverage for the method has been improved significantly. (Everything is tested now apart from parallelisation.)
 * The `as.TermDocumentMatrix()`-method for `neighborhood`-objects returned a DocumentTermMatrix (unintendedly), this bug is removed now.
+* There is a new coerce method to turn a `kwic`-object into a `context`-object. The `neighborhood` virtual class could be discarded again, and a bug could be removed that left an `enrich()`-operation for `kwic` objects (argument `p_attribute`) ineffectual (#103).
+* A bug that prevented getting extra left and right context for `kwic` objects has been removed (#102).
 
 
 

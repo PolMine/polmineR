@@ -87,59 +87,58 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
     table <- TRUE # it will be necessary to regenerate the table
     stopifnot(is.integer(extra) || is.numeric(extra))
     if (is.numeric(extra)) extra <- as.integer(extra)
-    .fn <- function(.SD){
+    .fn_left <- function(.SD){
       cpos_min <- min(.SD[["cpos"]])
-      cpos_max <- max(.SD[["cpos"]])
       position_min <- min(.SD[["position"]])
-      position_max <- max(.SD[["position"]])
-      hit <- unique(.SD[["match_id"]])
-      rbindlist(
-        list(
-          extra_left = data.table(
-            match_id = hit,
-            cpos = (cpos_min - extra):(cpos_min - 1L),
-            position = (position_min - extra):(position_min - 1L),
-            word_id = NA,
-            word = NA,
-            direction = -2L
-          ),
-          kwic = .SD,
-          extra_right = data.table(
-            match_id = hit,
-            cpos = (cpos_max + 1L):(cpos_max + extra),
-            position = (position_max + 1L):(position_max + extra),
-            word_id = NA,
-            word = NA,
-            direction = +2L
-          )
-        )
+      hit <- .SD[["match_id"]][1]
+      list(
+        cpos = (cpos_min - extra):(cpos_min - 1L),
+        position = (position_min - extra):(position_min - 1L),
+        direction = -2L
       )
     }
-    dt <- .Object@cpos[, .fn(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
+    .fn_right <- function(.SD){
+      cpos_max <- max(.SD[["cpos"]])
+      position_max <- max(.SD[["position"]])
+      hit <- .SD[["match_id"]][1]
+      list(
+        cpos = (cpos_max + 1L):(cpos_max + extra),
+        position = (position_max + 1L):(position_max + extra),
+        direction = 2L
+      )
+    }
+    dt_left <- .Object@cpos[, .fn_left(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
+    dt_right <- .Object@cpos[, .fn_right(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
+    dt <- rbindlist(list(.Object@cpos, dt_left, dt_right), use.names = TRUE, fill = TRUE)
+    setkeyv(x = dt, cols = c("match_id", "cpos"))
+    setorderv(x = dt, cols = "cpos")
+    
     corpus_size <- RcppCWB::cl_attribute_size(
       corpus = .Object@corpus,
-      attribute = "word",
+      attribute = p_attributes(.Object),
       attribute_type = "p",
       registry = registry()
     )
     .Object@cpos <- dt[cpos >= 0L][cpos <= (corpus_size - 1L)]
-    word_id_na <- is.na(.Object@cpos[["word_id"]])
+    
+    token_id <- paste(p_attributes(.Object), "id", sep = "_")
+    word_id_na <- is.na(.Object@cpos[[token_id]])
     word_id_na_index <- which(word_id_na)
     ids_na <- RcppCWB::cl_cpos2id(
       corpus = .Object@corpus,
-      p_attribute = "word",
+      p_attribute = p_attributes(.Object),
       registry = registry(),
       cpos = .Object@cpos[["cpos"]][word_id_na]
     )
     str_na <- RcppCWB::cl_id2str(
       corpus = .Object@corpus,
-      p_attribute = "word",
+      p_attribute = p_attributes(.Object),
       registry = registry(),
       id = ids_na
     )
     str_na <- as.nativeEnc(str_na, from = .Object@encoding)
-    .Object@cpos[word_id_na_index, "word_id" := ids_na]
-    .Object@cpos[word_id_na_index, "word" := str_na]
+    .Object@cpos[word_id_na_index, (token_id) := ids_na]
+    .Object@cpos[word_id_na_index, (p_attributes(.Object)) := str_na]
   }
   
   if (table){
@@ -152,10 +151,10 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
       # columns are renamed one at a time to cover the special case when either the 
       # left or the right context are (deliberately) empty
       
-      if ("-2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "left_extra")
+      if ("-2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-2", new = "left_extra")
       if ("-1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "left")
       if ("1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "1", new = "right")
-      if ("2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "right_extra")
+      if ("2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "2", new = "right_extra")
 
     } else {
       .Object@stat <- data.table(match_id = integer(), left = character(), node = character(), right = character())
