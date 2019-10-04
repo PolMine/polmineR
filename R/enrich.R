@@ -65,24 +65,6 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
   
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
-  if (length(s_attributes) > 0L){
-    metainformation <- lapply(
-      setNames(s_attributes, s_attributes),
-      function(s_attr){
-        cpos_to_get <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "match_id", with = TRUE][["cpos"]]
-        strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attr, cpos = cpos_to_get, registry = registry())
-        strucs_invalid <- which(strucs < 0L)
-        if (length(strucs_invalid) > 0L) strucs[strucs_invalid] <- 0L
-        struc_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
-        if (length(strucs_invalid) > 0) struc_values[strucs_invalid] <- ""
-        as.nativeEnc(struc_values, from = .Object@encoding)
-      }
-    )
-    meta_dt <- data.table(data.frame(metainformation, stringsAsFactors = FALSE))
-    .Object@stat <- data.table(meta_dt, .Object@stat)
-    .Object@metadata <- c(s_attributes, .Object@metadata)
-  }
-  
   if (!is.null(extra)){
     table <- TRUE # it will be necessary to regenerate the table
     stopifnot(is.integer(extra) || is.numeric(extra))
@@ -159,6 +141,30 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
     } else {
       .Object@stat <- data.table(match_id = integer(), left = character(), node = character(), right = character())
     }
+  }
+  
+  if (length(s_attributes) > 0L){
+    .Object@metadata <- unique(c(s_attributes, .Object@metadata))
+    for (s_attr in .Object@metadata){
+      if (!s_attr %in% colnames(.Object@stat)){
+        cpos_to_get <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "match_id", with = TRUE][["cpos"]]
+        strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attr, cpos = cpos_to_get, registry = registry())
+        strucs_invalid <- which(strucs < 0L)
+        if (length(strucs_invalid) > 0L) strucs[strucs_invalid] <- 0L
+        struc_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
+        if (length(strucs_invalid) > 0L) struc_values[strucs_invalid] <- ""
+        .Object@stat[, (s_attr) := as.nativeEnc(struc_values, from = .Object@encoding)]
+      }
+    }
+    setcolorder(x = .Object@stat, neworder = c(
+      .Object@metadata,
+      if ("left_extra" %in% colnames(.Object@stat)) "left_extra" else NULL,
+      if ("left" %in% colnames(.Object@stat)) "left" else NULL,
+      "node",
+      if ("right" %in% colnames(.Object@stat)) "right" else NULL,
+      if ("right_extra" %in% colnames(.Object@stat)) "right_extra" else NULL
+      )
+    )
   }
   .Object
 })

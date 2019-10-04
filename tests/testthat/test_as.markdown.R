@@ -8,14 +8,19 @@ test_that(
   {
     p <- partition("REUTERS", id = "127", regex = TRUE)
     y <- as.markdown(p)
+    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
+    
     refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_markdown.txt")
     benchmark <- readLines(refdoc, warn = FALSE)
     benchmark <- paste(benchmark, collapse = "\n")
     benchmark <- paste(benchmark, "\n", sep = "")
+    
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
     
     y <- as.character(html(p))
+    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
+    
     refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE)
     benchmark <- gsub("\n\n", "\n", benchmark)
@@ -34,6 +39,8 @@ test_that(
       as.speeches(s_attribute_name = "speaker", gap = 100) %>%
       .[[2]]
     y <- as.markdown(m)
+    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
+    
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_markdown.txt")
     benchmark <- readLines(refdoc, warn = FALSE)
     benchmark <- paste(benchmark, collapse = "\n")
@@ -42,6 +49,8 @@ test_that(
     
     set_template("GERMAPARLMINI")
     y <- as.character(read(m))
+    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
+    
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE)
     benchmark <- gsub("\n\n", "\n", benchmark)
