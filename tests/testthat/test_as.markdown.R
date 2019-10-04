@@ -42,7 +42,7 @@ test_that(
     if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
     
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_markdown.txt")
-    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
     benchmark <- paste(benchmark, collapse = "\n")
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
@@ -52,7 +52,7 @@ test_that(
     if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
     
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
-    benchmark <- readLines(refdoc, warn = FALSE)
+    benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
     benchmark <- gsub("\n\n", "\n", benchmark)
     benchmark <- paste(benchmark, collapse = "\n")
     benchmark <- paste(benchmark, "\n", sep = "")
