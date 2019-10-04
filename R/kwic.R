@@ -105,10 +105,8 @@ setMethod("subset", "kwic", function(x, ...) {
 #'   
 setMethod("as.data.frame", "kwic", function(x){
   if (all(c("left", "node", "right") %in% colnames(x@stat))){
-    meta_columns <- 1L:(grep("left", colnames(x@stat)) - 2L)
-    metadata <- apply(x@stat, 1, function(row) paste(row[meta_columns], collapse = "<br/>"))
     df <- data.frame(
-      meta = metadata,
+      meta = do.call(paste, c(lapply(x@metadata, function(s_attr) x@stat[[s_attr]]), sep = "<br/>")),
       left = x@stat[["left"]],
       node = x@stat[["node"]],
       right = x@stat[["right"]],

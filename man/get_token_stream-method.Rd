@@ -129,15 +129,18 @@ get_token_stream(
 
 # Decode entire corpus (corpus object / specified by corpus ID)
 fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
-corpus("GERMAPARLMINI") \%>\% get_token_stream(p_attribute = "word")
+corpus("GERMAPARLMINI") \%>\%
+  get_token_stream(p_attribute = "word") \%>\%
+  head()
 
 # Decode subcorpus
 corpus("REUTERS") \%>\%
   subset(id == "127") \%>\%
-  get_token_stream(p_attribute = "word")
+  get_token_stream(p_attribute = "word") \%>\%
+  head()
 
 # Decode partition_bundle
-corpus("REUTERS") \%>\%
+pb_tokstr <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   get_token_stream(p_attribute = "word")
 
