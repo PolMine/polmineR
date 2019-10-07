@@ -64,11 +64,12 @@ setMethod("html", "character", function(object){
   if (!requireNamespace("markdown", quietly = TRUE)){
     stop("package 'markdown' is not installed, but necessary for this function")
   }
-  mdFilename <- tempfile(fileext = ".md")
-  htmlFile <- tempfile(fileext = ".html")
-  cat(object, file = mdFilename)
-  markdown::markdownToHTML(file = mdFilename, output = htmlFile)  
-  htmlFile
+  md_file <- tempfile(fileext = ".md")
+  html_file <- tempfile(fileext = ".html")
+  cat(object, file = md_file)
+  if (localeToCharset()[1] != "UTF-8") object <- iconv(object, from = localeToCharset()[1], to = "UTF-8")
+  markdown::markdownToHTML(file = md_file, output = html_file)  
+  html_file
 })
 
 
@@ -198,7 +199,13 @@ setMethod(
     md <- gsub('\u201c', '"', md)
     md <- gsub('\u201D', '"', md)
     md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
+    
+    # At this stage, the md vector will have the encoding of the locale, but the
+    # markdownToHTML function only processes UTF-8. To avoid encoding errors on 
+    # Windows machines, the encoding is iconved back and forth
+    if (.localeToCharset()[1] != "UTF-8") md <- iconv(md, from = .localeToCharset()[1], to = "UTF-8")
     doc <- markdown::markdownToHTML(text = md, stylesheet = css)
+    if (.localeToCharset()[1] != "UTF-8") md <- iconv(md, from = "UTF-8", to = .localeToCharset()[1])
     
     if (!is.null(height)){
       fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
