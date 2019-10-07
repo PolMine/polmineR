@@ -43,6 +43,7 @@ setMethod("show_info", "corpus", function(x){
   } else {
     info_html <- htmltools::HTML("</br><i>corpus info file not found</i>")
   }
+  attr(info_html, "browsable_html") <- TRUE
   if (interactive()) htmltools::html_print(info_html)
   invisible(info_html)
 })

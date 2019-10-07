@@ -94,8 +94,8 @@ See examples and the documentation for the different methods to learn more.
 \examples{
 use("polmineR")
 merkel <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Merkel", regex = TRUE)
-read(merkel, meta = c("speaker", "date"))
-read(
+if (interactive()) read(merkel, meta = c("speaker", "date"))
+if (interactive()) read(
   merkel,
   highlight = list(yellow = c("Deutschland", "Bundesrepublik"), lightgreen = "Regierung"),
   meta = c("speaker", "date")

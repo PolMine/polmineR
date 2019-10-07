@@ -43,10 +43,8 @@ T <- tooltips(Y, list(lightgreen = "Further information"))
 if (interactive()) T
 
 # Using the tooltips-method in a pipe ...
-if (require("magrittr")){
-  P \%>\%
-    html() \%>\%
-    highlight(yellow = c("barrels", "oil", "gas")) \%>\%
-    tooltips(list(yellow = "energy"))
-}
+h <- P \%>\%
+  html() \%>\%
+  highlight(yellow = c("barrels", "oil", "gas")) \%>\%
+  tooltips(list(yellow = "energy"))
 }

@@ -27,7 +27,7 @@ Imports:
 Suggests:
     markdown,
     rmarkdown,
-    htmltools,
+    htmltools (>= 0.4.0),
     openxlsx,
     sendmailR,
     shiny,

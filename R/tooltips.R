@@ -27,12 +27,10 @@ NULL
 #' if (interactive()) T
 #' 
 #' # Using the tooltips-method in a pipe ...
-#' if (require("magrittr")){
-#'   P %>%
-#'     html() %>%
-#'     highlight(yellow = c("barrels", "oil", "gas")) %>%
-#'     tooltips(list(yellow = "energy"))
-#' }
+#' h <- P %>%
+#'   html() %>%
+#'   highlight(yellow = c("barrels", "oil", "gas")) %>%
+#'   tooltips(list(yellow = "energy"))
 setGeneric("tooltips", function(.Object, tooltips, ...) standardGeneric("tooltips"))
 
 

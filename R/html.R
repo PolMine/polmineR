@@ -10,7 +10,6 @@ NULL
 #' is annotated with a tool that stores annotations with character offset positions.
 #' 
 #' @param object the object the fulltext output will be based on
-#' @param x object of class \code{html} to print
 #' @param meta metadata for output, if NULL (default), the s-attributes defining
 #' a partition will be used
 #' @param s_attribute structural attributes that will be used to define the partition 
@@ -40,23 +39,21 @@ NULL
 #' if (interactive()) H # show full text in viewer pane
 #' 
 #' # html-method can be used in a pipe
-#' if (require("magrittr")){
-#'   H <- partition("REUTERS", places = "argentina") %>% html()
+#' H <- partition("REUTERS", places = "argentina") %>% html()
 #'   
-#'   # use html-method to get full text where concordance occurrs
-#'   K <- kwic("REUTERS", query = "barrels")
-#'   H <- html(K, i = 1, s_attribute = "id")
-#'   H <- html(K, i = 2, s_attribute = "id")
-#'   for (i in 1:length(K)) {
-#'     H <- html(K, i = i, s_attribute = "id")
-#'     if (interactive()){
-#'       show(H)
-#'       userinput <- readline("press 'q' to quit or any other key to continue")
-#'       if (userinput == "q") break
-#'     }
+#' # use html-method to get full text where concordance occurrs
+#' K <- kwic("REUTERS", query = "barrels")
+#' H <- html(K, i = 1, s_attribute = "id")
+#' H <- html(K, i = 2, s_attribute = "id")
+#' for (i in 1:length(K)) {
+#'   H <- html(K, i = i, s_attribute = "id")
+#'   if (interactive()){
+#'     show(H)
+#'     userinput <- readline("press 'q' to quit or any other key to continue")
+#'     if (userinput == "q") break
 #'   }
 #' }
-#' 
+#'   
 setGeneric("html", function(object, ...) standardGeneric("html") )
 
 
@@ -229,7 +226,9 @@ setMethod(
     
     if (charoffset) doc <- .addCharacterOffset(doc)
     
-    htmltools::HTML(doc)
+    ret <- htmltools::HTML(doc)
+    attr(ret, "browsable_html") <- TRUE
+    ret
   }
 )
 
@@ -294,16 +293,3 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
 #' @include polmineR.R
 NULL
 
-setOldClass("html")
-
-
-#' @export print.html
-#' @rdname html-method
-#' @S3method print html
-print.html <- function(x, ...){
-  if (requireNamespace("htmltools", quietly = TRUE)){
-    if (interactive()) htmltools::html_print(x)
-  } else {
-    warning("package 'htmltools' needs to be installed, but is not available")
-  }  
-}

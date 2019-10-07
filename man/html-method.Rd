@@ -9,7 +9,6 @@
 \alias{html,subcorpus-method}
 \alias{html,partition_bundle-method}
 \alias{html,kwic-method}
-\alias{print.html}
 \title{Generate html from object.}
 \usage{
 html(object, ...)
@@ -29,8 +28,6 @@ html(object, ...)
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL,
   verbose = FALSE, ...)
-
-\method{print}{html}(x, ...)
 }
 \arguments{
 \item{object}{the object the fulltext output will be based on}
@@ -66,8 +63,6 @@ which the fulltext is to be generated}
 
 \item{s_attribute}{structural attributes that will be used to define the partition 
 where the match occurred}
-
-\item{x}{object of class \code{html} to print}
 }
 \description{
 Prepare a html document to inspect the full text.
@@ -84,21 +79,19 @@ H <- html(P)
 if (interactive()) H # show full text in viewer pane
 
 # html-method can be used in a pipe
-if (require("magrittr")){
-  H <- partition("REUTERS", places = "argentina") \%>\% html()
+H <- partition("REUTERS", places = "argentina") \%>\% html()
   
-  # use html-method to get full text where concordance occurrs
-  K <- kwic("REUTERS", query = "barrels")
-  H <- html(K, i = 1, s_attribute = "id")
-  H <- html(K, i = 2, s_attribute = "id")
-  for (i in 1:length(K)) {
-    H <- html(K, i = i, s_attribute = "id")
-    if (interactive()){
-      show(H)
-      userinput <- readline("press 'q' to quit or any other key to continue")
-      if (userinput == "q") break
-    }
+# use html-method to get full text where concordance occurrs
+K <- kwic("REUTERS", query = "barrels")
+H <- html(K, i = 1, s_attribute = "id")
+H <- html(K, i = 2, s_attribute = "id")
+for (i in 1:length(K)) {
+  H <- html(K, i = i, s_attribute = "id")
+  if (interactive()){
+    show(H)
+    userinput <- readline("press 'q' to quit or any other key to continue")
+    if (userinput == "q") break
   }
 }
-
+  
 }

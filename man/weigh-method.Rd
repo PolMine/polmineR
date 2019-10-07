@@ -37,7 +37,7 @@ Apply Weight to Matrix
 \examples{
 \dontrun{
 library(data.table)
-if (require("zoo") && require("devtools") && require("magrittr")){
+if (require("zoo") && require("devtools")){
 
 # Source in function 'get_sentiws' from a GitHub gist
 gist_url <- file.path(

@@ -40,16 +40,13 @@ NULL
 #' )
 #' 
 #' # the method can be used in pipe
-#' if (require("magrittr")){
-#'   P %>% html() %>% highlight(list(lightgreen = "1986")) -> H
-#'   P %>% html() %>% highlight(list(lightgreen = c("1986", "higher"))) -> H
-#'   P %>% html() %>% highlight(list(lightgreen = 4020:4023)) -> H
-#' }
+#' P %>% html() %>% highlight(list(lightgreen = "1986")) -> H
+#' P %>% html() %>% highlight(list(lightgreen = c("1986", "higher"))) -> H
+#' P %>% html() %>% highlight(list(lightgreen = 4020:4023)) -> H
 #' 
 #' # use highlight for kwic output
 #' K <- kwic("REUTERS", query = "barrel")
 #' K2 <- highlight(K, highlight = list(yellow = c("oil", "price")))
-#' if (interactive()) K2
 #' 
 #' # use character vector for output, not list
 #' K2 <- highlight(
@@ -58,10 +55,10 @@ NULL
 #'     green = "pric.",
 #'     red = "reduction",
 #'     red = "decrease",
-#'     orange = "dropped"),
-#'     regex = TRUE
+#'     orange = "dropped"
+#'   ),
+#'   regex = TRUE
 #' )
-#' if (interactive()) K2
 setGeneric("highlight", function(.Object, ...) standardGeneric("highlight"))
 
 
@@ -103,9 +100,11 @@ setMethod("highlight", "character", function(.Object, highlight = list(), regex 
 #' @rdname highlight
 setMethod("highlight", "html", function(.Object, highlight = list(), regex = FALSE, perl = FALSE, ...){
   if (length(list(...)) > 0L) highlight <- list(...)
-  htmltools::HTML(
+  ret <- htmltools::HTML(
     highlight(as.character(.Object), highlight = highlight, regex = regex, perl = perl)
   )
+  attr(ret, "browsable_html") <- TRUE
+  ret
 })
 
 #' @rdname highlight
