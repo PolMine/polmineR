@@ -157,10 +157,8 @@ setMethod("read", "kwic", function(.Object, i = NULL, type = registry_get_proper
       if (user == "q") return( invisible(NULL) )
     }
   } else {
-    i <- as.integer(i)
-    fulltext <- html(.Object, i = i, type = type)
+    fulltext <- html(.Object, i = as.integer(i), type = type)
     if (interactive()) htmltools::html_print(fulltext)
-    
   }
 })
 

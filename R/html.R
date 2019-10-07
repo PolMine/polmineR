@@ -7,7 +7,7 @@ NULL
 #' 
 #' If param \code{charoffset} is \code{TRUE}, character offset positions will be
 #' added to tags that embrace tokens. This may be useful, if exported html document
-#' is annotated with a tools that stores annotations with character offset positions.
+#' is annotated with a tool that stores annotations with character offset positions.
 #' 
 #' @param object the object the fulltext output will be based on
 #' @param x object of class \code{html} to print
@@ -42,7 +42,8 @@ NULL
 #' # html-method can be used in a pipe
 #' if (require("magrittr")){
 #'   H <- partition("REUTERS", places = "argentina") %>% html()
-#'   # use html-method to get from concordance to full text
+#'   
+#'   # use html-method to get full text where concordance occurrs
 #'   K <- kwic("REUTERS", query = "barrels")
 #'   H <- html(K, i = 1, s_attribute = "id")
 #'   H <- html(K, i = 2, s_attribute = "id")
@@ -61,9 +62,9 @@ setGeneric("html", function(object, ...) standardGeneric("html") )
 
 #' @rdname html-method
 setMethod("html", "character", function(object){
-  if (!requireNamespace("markdown", quietly = TRUE)){
+  if (!requireNamespace("markdown", quietly = TRUE))
     stop("package 'markdown' is not installed, but necessary for this function")
-  }
+  
   md_file <- tempfile(fileext = ".md")
   html_file <- tempfile(fileext = ".html")
   cat(object, file = md_file)
