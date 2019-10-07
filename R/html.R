@@ -203,9 +203,9 @@ setMethod(
     # At this stage, the md vector will have the encoding of the locale, but the
     # markdownToHTML function only processes UTF-8. To avoid encoding errors on 
     # Windows machines, the encoding is iconved back and forth
-    if (.localeToCharset()[1] != "UTF-8") md <- iconv(md, from = .localeToCharset()[1], to = "UTF-8")
+    if (localeToCharset()[1] != "UTF-8") md <- iconv(md, from = localeToCharset()[1], to = "UTF-8")
     doc <- markdown::markdownToHTML(text = md, stylesheet = css)
-    if (.localeToCharset()[1] != "UTF-8") md <- iconv(md, from = "UTF-8", to = .localeToCharset()[1])
+    if (localeToCharset()[1] != "UTF-8") md <- iconv(md, from = "UTF-8", to = localeToCharset()[1])
     
     if (!is.null(height)){
       fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
