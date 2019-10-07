@@ -139,8 +139,8 @@ setMethod("html", "character", function(object){
     cpos <- as.integer(sapply(lapply(nodes, xml_attrs), function(x) x["id"]))
     for (i in 2L:length(cpos)){
       if (cpos[i - 1L] + 1L == cpos[i]){
-        nodeToRemove <- xml_find_first(doc, xpath = sprintf('//span[@id = "%d"]', cpos[i]))
-        if (length(nodeToRemove) > 0) xml_remove(nodeToRemove)
+        node_to_remove <- xml_find_first(doc, xpath = sprintf('//span[@id = "%d"]', cpos[i]))
+        if (length(node_to_remove) > 0) xml_remove(node_to_remove)
       }
     }
   }
@@ -201,12 +201,18 @@ setMethod(
     md <- gsub('\u201D', '"', md)
     md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
     
-    # At this stage, the md vector will have the encoding of the locale, but the
-    # markdownToHTML function only processes UTF-8. To avoid encoding errors on 
-    # Windows machines, the encoding is iconved back and forth
-    if (localeToCharset()[1] != "UTF-8") md <- iconv(md, from = localeToCharset()[1], to = "UTF-8")
-    doc <- markdown::markdownToHTML(text = md, stylesheet = css)
-    if (localeToCharset()[1] != "UTF-8") md <- iconv(md, from = "UTF-8", to = localeToCharset()[1])
+    # produce result very similar to markdown::markdownToHTML, but selfmade to 
+    # circumvent encoding issue on windows (poor handling of encodings other 
+    # than UTF-8 by markdownToHTML)
+    template <- "<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n<title>%s</title>\n<style type=\"text/css\">\n%s\n</style>\n</head>\n<body>\n%s\n</body>\n</html>"
+    doc <- sprintf(
+      template,
+      sprintf("Corpus: %s", object@corpus), # title
+      css,
+      markdown::renderMarkdown(text = md)
+    )
+    
+    if (localeToCharset()[1] != "UTF-8") doc <- iconv(doc, from = "UTF-8", to = localeToCharset()[1])
     
     if (!is.null(height)){
       fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'

@@ -75,7 +75,7 @@ Prepare a html document to inspect the full text.
 \details{
 If param \code{charoffset} is \code{TRUE}, character offset positions will be
 added to tags that embrace tokens. This may be useful, if exported html document
-is annotated with a tools that stores annotations with character offset positions.
+is annotated with a tool that stores annotations with character offset positions.
 }
 \examples{
 use("polmineR")
@@ -86,7 +86,8 @@ if (interactive()) H # show full text in viewer pane
 # html-method can be used in a pipe
 if (require("magrittr")){
   H <- partition("REUTERS", places = "argentina") \%>\% html()
-  # use html-method to get from concordance to full text
+  
+  # use html-method to get full text where concordance occurrs
   K <- kwic("REUTERS", query = "barrels")
   H <- html(K, i = 1, s_attribute = "id")
   H <- html(K, i = 2, s_attribute = "id")
