@@ -443,7 +443,7 @@ NULL
 #' @references Church, Kenneth W. et al. (1991): Using Statistics in Lexical
 #'   Analysis. In: Uri Zernik (ed.), \emph{Lexical Acquisition}. Hillsdale,
 #'   NJ:Lawrence Erlbaum, pp. 115-164
-#'   \url{https://www.clsp.jhu.edu/~kchurch/wwwfiles/published_1991_using_stats.ps}
+#'   \url{https://www.researchgate.net/publication/230875926_Using_Statistics_in_Lexical_Analysis}
 #'   
 #' @references Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
 #'   Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
