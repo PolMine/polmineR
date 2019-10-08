@@ -3,33 +3,39 @@ NULL
 
 #' Generate html from object.
 #' 
-#' Prepare a html document to inspect the full text.
+#' Prepare html document to see full text.
 #' 
-#' If param \code{charoffset} is \code{TRUE}, character offset positions will be
+#' @return Returns an object of class \code{html} as used in the \code{htmltools} package. Methods
+#' such as \code{htmltools::html_print} will be available. The encoding of the html
+#' document will be UTF-8 on all systems (including Windows).
+#' 
+#' @details If param \code{charoffset} is \code{TRUE}, character offset positions will be
 #' added to tags that embrace tokens. This may be useful, if exported html document
 #' is annotated with a tool that stores annotations with character offset positions.
 #' 
-#' @param object the object the fulltext output will be based on
-#' @param meta metadata for output, if NULL (default), the s-attributes defining
-#' a partition will be used
-#' @param s_attribute structural attributes that will be used to define the partition 
-#' where the match occurred
-#' @param cpos logical, if \code{TRUE} (default), all tokens will be wrapped by 
-#'   elements with id attribute indicating corpus positions
-#' @param beautify Logical, if \code{TRUE}, whitespace before interpunctuation
-#'   will be removed.
-#' @param charoffset Logical, if \code{TRUE}, character offset positions are
-#'   added to elements embracing tokens.
-#' @param height A character vector that will be inserted into the html as an optional
-#'   height of a scroll box.
-#' @param verbose logical, whether to be verbose
-#' @param filename the filename
-#' @param cutoff maximum number of tokens to decode from token stream, passed
-#'   into \code{as.markdown}
-#' @param type the partition type
-#' @param i if object is a \code{kwic}-object, the index of the concordance for
-#'   which the fulltext is to be generated
-#' @param ... further parameters that are passed into \code{as.markdown}
+#' @param object The object the fulltext output will be based on.
+#' @param meta Metadata to include in  output, if \code{NULL} (default), the
+#'   s-attributes defining a partition will be used.
+#' @param s_attribute Structural attributes that will be used to define the partition 
+#' where the match occurred.
+#' @param cpos Length-one \code{logical} value, if \code{TRUE} (default), all
+#'   tokens will be wrapped by elements with id attribute indicating corpus
+#'   positions.
+#' @param beautify Length-one \code{logical} value, if \code{TRUE}, whitespace
+#'   before interpunctuation will be removed.
+#' @param charoffset Length-one \code{logical} value, if \code{TRUE}, character
+#'   offset positions are added to elements embracing tokens.
+#' @param height A \code{character} vector that will be inserted into the html
+#'   as an optional height of a scroll box.
+#' @param verbose Length-one \code{logical} value, whether to output progress
+#'   messages.
+#' @param filename The filename.
+#' @param cutoff An \code{integer} value, maximum number of tokens to decode
+#'   from token stream, passed into \code{as.markdown}.
+#' @param type The partition type.
+#' @param i An \code{integer} value: If \code{object} is a \code{kwic}-object,
+#'   the index of the concordance for which the fulltext is to be generated.
+#' @param ... Further parameters that are passed into \code{as.markdown}.
 #' @rdname html-method
 #' @aliases show,html-method
 #' @examples
@@ -45,7 +51,7 @@ NULL
 #' K <- kwic("REUTERS", query = "barrels")
 #' H <- html(K, i = 1, s_attribute = "id")
 #' H <- html(K, i = 2, s_attribute = "id")
-#' for (i in 1:length(K)) {
+#' for (i in 1L:length(K)) {
 #'   H <- html(K, i = i, s_attribute = "id")
 #'   if (interactive()){
 #'     show(H)
@@ -115,7 +121,7 @@ setMethod("html", "character", function(object){
         )
       if (length(nodes) >= 1){
         lapply(
-          1:length(nodes),
+          1L:length(nodes),
           function(j){
             precedingTextNode <- xml_find_first(
               nodes[[j]],
@@ -209,8 +215,6 @@ setMethod(
       markdown::renderMarkdown(text = md)
     )
     
-    if (localeToCharset()[1] != "UTF-8") doc <- iconv(doc, from = "UTF-8", to = localeToCharset()[1])
-    
     if (!is.null(height)){
       fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
       doc <- sprintf(
@@ -258,26 +262,26 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
   # getting metadata for all kwic lines is potentially not the fastes solution ...
   if (!is.null(s_attribute)){
     if (!s_attribute %in% s_attributes(object@corpus)) stop("s-attribute provided is not available")
-    metadataDef <- s_attribute
-    object <- enrich(object, s_attributes = metadataDef)
+    s_attrs <- s_attribute
+    object <- enrich(object, s_attributes = s_attrs)
   } else if (length(object@metadata) == 0L){
-    metadataDef <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
-    .message("using metadata from template: ", paste(metadataDef, collapse = " / "), verbose = verbose)
-    if (length(metadataDef) > 0L){
+    s_attrs <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
+    .message("using metadata from template: ", paste(s_attrs, collapse = " / "), verbose = verbose)
+    if (length(s_attrs) > 0L){
       .message("enriching", verbose = verbose)
-      object <- enrich(object, meta = metadataDef)
+      object <- enrich(object, meta = s_attrs)
     }
   } else {
-    metadataDef <- object@metadata
+    s_attrs <- object@metadata
   }
   
-  partitionToRead <- partition(
+  partition_to_read <- partition(
     object@corpus,
-    def = lapply(setNames(metadataDef, metadataDef), function(x) object@stat[[x]][i]),
+    def = lapply(setNames(s_attrs, s_attrs), function(x) object@stat[[x]][i]),
     type = type
   )
   .message("generating html", verbose = verbose)
-  fulltext <- polmineR::html(partitionToRead, meta = metadataDef, cpos = TRUE)
+  fulltext <- polmineR::html(partition_to_read, meta = s_attrs, cpos = TRUE)
   .message("generating highlights", verbose = verbose)
   tabSubset <- object@cpos[which(object@cpos[["match_id"]] == i)]
   cposContext <- tabSubset[which(tabSubset[["position"]] != 0)][["cpos"]]

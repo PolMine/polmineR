@@ -76,7 +76,8 @@ K2 <- highlight(
     green = "pric.",
     red = "reduction",
     red = "decrease",
-    orange = "dropped"),
-    regex = TRUE
+    orange = "dropped"
+  ),
+  regex = TRUE
 )
 }

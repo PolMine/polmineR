@@ -89,10 +89,10 @@ setOldClass("htmlwidget")
 #' # Go back to full text
 #' 
 #' p <- partition("REUTERS", id = 127)
-#' read(p)
+#' if (interactive()) read(p)
 #' h <- html(p)
 #' h_highlighted <- highlight(h, highlight = list(yellow = "oil"))
-#' h_highlighted
+#' if (interactive()) h_highlighted
 #'
 #'
 #' # Generate term document matrix

@@ -20,8 +20,19 @@ test_that(
     expect_identical(sc_p, sc1)
     expect_identical(sc_p, sc2)
     
-    p <- partition("GERMAPARLMINI", speaker = "Bärbel Höhn")
-    sc <- subset(gparl, speaker == "Bärbel Höhn")
+    # This is also a test whether special characters are digested properly. On
+    # Windows, input is assumed to be latin-1. So we iconv the input string
+    # explicitly to latin1, if we are on Windows.
+    if (.Platform$OS.type == "windows"){
+      sp <- iconv("B\u00E4rbel H\u00F6hn", from = "UTF-8", to = "latin1")
+      p <- partition("GERMAPARLMINI", speaker = sp)
+      sc <- subset(gparl, speaker == iconv("B\u00E4rbel H\u00F6hn", from = "UTF-8", to = "latin1"))
+    }
+    else {
+      sc <- subset(gparl, speaker == "B\u00E4rbel H\u00F6hn")
+      p <- partition("GERMAPARLMINI", speaker = "B\u00E4rbel H\u00F6hn")
+    }
+    
     expect_identical(size(p), size(sc))
     expect_identical(p@cpos, sc@cpos)
     expect_identical(as(p, "subcorpus"), sc)

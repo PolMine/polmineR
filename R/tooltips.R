@@ -73,7 +73,9 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
 #' @rdname tooltips
 setMethod("tooltips", "html", function(.Object, tooltips = list()){
   if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
-  htmltools::HTML(tooltips(as.character(.Object), tooltips = tooltips))
+  ret <- htmltools::HTML(tooltips(as.character(.Object), tooltips = tooltips))
+  attr(ret, "browsable_html") <- TRUE
+  ret
 })
 
 
@@ -81,7 +83,7 @@ setMethod("tooltips", "html", function(.Object, tooltips = list()){
 setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
   if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
   
-  if (length(list(...)) > 0) tooltips <- list(...)
+  if (length(list(...)) > 0L) tooltips <- list(...)
   
   # If argument tooltips is a list, turn it into named character vector,
   # the names of the list will then be the names of the vector.
@@ -94,7 +96,7 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
   )
   
   if (regex){
-    pb <- txtProgressBar(min = 0, max = length(tooltips))
+    pb <- txtProgressBar(min = 0L, max = length(tooltips))
     for (i in 1L:length(tooltips)){
       .Object@cpos[["word"]] <- ifelse(
         grepl(sprintf("^(<.*?>|)%s(<.*?>|)$", unname(tooltips[[i]])), .Object@cpos[["word"]]),

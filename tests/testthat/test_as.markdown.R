@@ -19,8 +19,7 @@ test_that(
     expect_identical(y, benchmark)
     
     y <- as.character(html(p))
-    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
-    
+
     refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
     benchmark <- gsub("\n\n", "\n", benchmark)
@@ -49,8 +48,7 @@ test_that(
     
     set_template("GERMAPARLMINI")
     y <- as.character(read(m))
-    if (.Platform$OS.type == "windows") y <- iconv(y, from = localeToCharset()[1], to = "UTF-8")
-    
+
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
     benchmark <- gsub("\n\n", "\n", benchmark)
