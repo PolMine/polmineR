@@ -14,6 +14,22 @@ test_that(
       dim(dtm)[2]
     )
     expect_equal(sum(dtm[,"is"]), count("REUTERS", "is")[["count"]])
+    
+    ## this is a more comprehensive test that ensures that a column for a document
+    # from the document-term-matrix and a simple count for this document are identical
+    
+    dtm <- as.DocumentTermMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "party")
+    spd_cnt <- as.matrix(dtm)["SPD",]
+    spd_dt <- data.table::data.table(token = names(spd_cnt), count = unname(spd_cnt))[count > 0L]
+    data.table::setorderv(spd_dt, cols = "token")
+    
+    spd_dt_obj <- corpus("GERMAPARLMINI") %>% subset(party == "SPD") %>% count(p_attribute = "word")
+    spd_cnt_2 <- spd_dt_obj@stat[, "word_id" := NULL]
+    data.table::setorderv(spd_cnt_2, cols = "word")
+    
+    expect_identical(spd_cnt_2[["count"]], spd_dt[["count"]])
+    expect_identical(spd_cnt_2[["word"]], spd_dt[["token"]])
+
   }
 )
 

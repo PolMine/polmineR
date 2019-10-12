@@ -104,88 +104,81 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
   }
   
   stopifnot(
-    length(x) == 1,
+    length(x) == 1L,
     x %in% .list_corpora(),
     is.character(p_attribute),
-    length(p_attribute) == 1,
+    length(p_attribute) == 1L,
     p_attribute %in% registry_get_p_attributes(x),
     is.character(s_attribute),
-    length(s_attribute) == 1,
+    length(s_attribute) == 1L,
     s_attribute %in% registry_get_s_attributes(x),
     is.logical(verbose),
     all(names(dot_list) %in% registry_get_s_attributes(x))
   )
   
   .message("generate data.table with token and struc ids", verbose = verbose)
-  cpos_vector <- 0:(cl_attribute_size(corpus = x, attribute = p_attribute, attribute_type = "p", registry = registry()) - 1)
+  cpos_vector <- 0L:(cl_attribute_size(corpus = x, attribute = p_attribute, attribute_type = "p", registry = registry()) - 1L)
   token_id <- cl_cpos2id(corpus = x, p_attribute = p_attribute, cpos = cpos_vector, registry = registry())
-  struc_vector <- 0:(cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1)
+  struc_vector <- 0L:(cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1)
   struc_id <- cl_cpos2struc(corpus = x, s_attribute = s_attribute, cpos = cpos_vector, registry = registry())
-  tokenStreamDT <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
-  tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
+  token_stream_dt <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
+  token_stream_dt <- token_stream_dt[which(token_stream_dt[["struc_id"]] != -1)]
   rm(token_id, struc_id)
   
-  sAttrSelect <- dot_list
+  s_attr_select <- dot_list
   
   if (
-    length(sAttrSelect) == 0
+    length(s_attr_select) == 0L
     && length(unique(cl_struc2str(corpus = x, s_attribute = s_attribute, struc = struc_vector, registry = registry()))) == cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry())
   ){
     
     token_id <- cl_cpos2id(corpus = x, p_attribute = p_attribute, cpos = cpos_vector, registry = registry())
     struc_id <- cl_cpos2struc(corpus = x, s_attribute = s_attribute, cpos = cpos_vector, registry = registry())
-    tokenStreamDT <- data.table(token_id = token_id, struc_id = struc_id)
+    token_stream_dt <- data.table(token_id = token_id, struc_id = struc_id)
     rm(token_id, struc_id)
-    tokenStreamDT <- tokenStreamDT[which(tokenStreamDT[["struc_id"]] != -1)]
+    token_stream_dt <- token_stream_dt[which(token_stream_dt[["struc_id"]] != -1)]
     
     if (verbose) message("... counting token per doc")
-    countDT <- tokenStreamDT[, .N, by = c("token_id", "struc_id"), with = TRUE]
+    count_dt <- token_stream_dt[, .N, by = c("token_id", "struc_id"), with = TRUE]
     
     if(verbose) message("... generate simple_triplet_matrix")
     dtm <- simple_triplet_matrix(
-      i = countDT[["struc_id"]] + 1,
-      j = countDT[["token_id"]] + 1,
-      v = countDT[["N"]],
+      i = count_dt[["struc_id"]] + 1L,
+      j = count_dt[["token_id"]] + 1L,
+      v = count_dt[["N"]],
     )
     docs <- cl_struc2str(corpus = x, s_attribute = s_attribute, struc = 0L:(cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L), registry = registry())
-    terms <- cl_id2str(corpus = x, p_attribute = p_attribute, id = 0L:max(countDT[["token_id"]]), registry = registry())
+    terms <- cl_id2str(corpus = x, p_attribute = p_attribute, id = 0L:max(count_dt[["token_id"]]), registry = registry())
     terms <- as.nativeEnc(terms, from = registry_get_encoding(x))
     dimnames(dtm) <- list(docs, terms)
     
   } else {
-    if (length(sAttrSelect) >= 1){
-      for (i in 1:length(sAttrSelect)){
-        sAttrSub <- names(sAttrSelect)[i]
-        .message("subsetting data.table by s-attribute", sAttrSub, verbose = verbose)
-        struc_id <- cl_cpos2struc(corpus = x, s_attribute = sAttrSub, cpos = tokenStreamDT[["cpos"]], registry = registry())
-        struc_values <- cl_struc2str(corpus = x, s_attribute = sAttrSub, struc = struc_id, registry = registry())
-        tokenStreamDT <- tokenStreamDT[ which(struc_values %in% as.character(sAttrSelect[[i]])) ]
+    if (length(s_attr_select) >= 1L){
+      for (i in 1L:length(s_attr_select)){
+        s_attr_sub <- names(s_attr_select)[i]
+        .message("subsetting data.table by s-attribute", s_attr_sub, verbose = verbose)
+        struc_id <- cl_cpos2struc(corpus = x, s_attribute = s_attr_sub, cpos = token_stream_dt[["cpos"]], registry = registry())
+        struc_values <- cl_struc2str(corpus = x, s_attribute = s_attr_sub, struc = struc_id, registry = registry())
+        token_stream_dt <- token_stream_dt[ which(struc_values %in% as.character(s_attr_select[[i]])) ]
       }
     }
     .message("generate unique document ids", verbose = verbose)
-    struc_values <- cl_struc2str(corpus = x, s_attribute = s_attribute, struc = tokenStreamDT[["struc_id"]], registry = registry())
-    unique_struc_values <- unique(struc_values)
-    doc_index <- setNames(object = 1:length(unique_struc_values), nm = unique_struc_values)
-    tokenStreamDT[["doc_id"]] <- doc_index[ struc_values ]
-    tokenStreamDT[, "struc_id" := NULL][, "cpos" := NULL]
+    struc_values <- cl_struc2str(corpus = x, s_attribute = s_attribute, struc = token_stream_dt[["struc_id"]], registry = registry())
+    s_attr_factor <- factor(struc_values)
+    token_stream_dt[, "doc_id" := as.integer(s_attr_factor)]
+    token_stream_dt[, "struc_id" := NULL][, "cpos" := NULL]
     
     .message("counting token per doc", verbose = verbose)
-    countDT <- tokenStreamDT[, .N, by = c("token_id", "doc_id"), with = TRUE]
-    unique_token_ids <- unique(tokenStreamDT[["token_id"]])
-    new_token_index <- setNames(1:length(unique_token_ids), as.character(unique_token_ids))
-    countDT[["new_token_id"]] <- new_token_index[ as.character(countDT[["token_id"]]) ]
-    names(new_token_index) <- cl_id2str(corpus = x, p_attribute = p_attribute, id = as.integer(names(new_token_index)), registry = registry())
-    
+    count_dt <- token_stream_dt[, .N, by = c("token_id", "doc_id"), with = TRUE]
+    count_dt[, "token_decoded" := cl_id2str(corpus = x, p_attribute = p_attribute, id = count_dt[["token_id"]], registry = registry()) ]
+    token_factor <- factor(count_dt[["token_decoded"]])
+
     .message("generate simple_triplet_matrix", verbose = verbose)
-    dtm <- simple_triplet_matrix(
-      i = countDT[["doc_id"]],
-      j = countDT[["new_token_id"]],
-      v = countDT[["N"]],
-    )
+    dtm <- simple_triplet_matrix(i = count_dt[["doc_id"]], j = as.integer(token_factor), v = count_dt[["N"]],)
     
     .message("add row and column labels", verbose = verbose)
-    terms <- as.nativeEnc(names(new_token_index), from = registry_get_encoding(x))
-    documents <- as.nativeEnc(names(doc_index), from = registry_get_encoding(x))
+    terms <- as.nativeEnc(levels(token_factor), from = registry_get_encoding(x))
+    documents <- as.nativeEnc(levels(s_attr_factor), from = registry_get_encoding(x))
     
     dimnames(dtm) <- list(documents, terms)
   }
