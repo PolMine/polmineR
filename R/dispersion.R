@@ -85,7 +85,27 @@ setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is
     .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
     mc = mc, verbose = verbose, progress = progress
   )
-  dispersion(h, s_attribute = s_attribute, freq = freq)
+  y <- dispersion(h, s_attribute = s_attribute, freq = freq)
+  
+  if (length(s_attribute) == 1L){
+    if (!freq){
+      s_attr_values <- s_attributes(.Object, s_attribute = s_attribute, unique = TRUE)
+      y <- y[do.call(data.table, setNames(list(s_attr_values, s_attribute), c(s_attribute, "key"))), on = s_attribute]
+      y[, "count" := ifelse(is.na(y[["count"]]), 0L, y[["count"]])]
+    }
+    if (any(is.na(y[["query"]]))) y[, "query" := unique(y[["query"]][!is.na(y[["query"]])])]
+  } else if (length(s_attribute) == 2L){
+    if (!freq){
+      s_attr_values <- s_attributes(.Object, s_attribute = s_attribute[1], unique = TRUE)
+      y <- y[do.call(data.table, setNames(list(s_attr_values, s_attribute[1]), c(s_attribute[1], "key"))), on = s_attribute[1]]
+      y[is.na(y)] <- 0L
+      
+      s_attr_values <- s_attributes(.Object, s_attribute = s_attribute[2], unique = TRUE)
+      s_attr_values_missing <- s_attr_values[!s_attr_values %in% colnames(y)]
+      for (s_attr in s_attr_values_missing) y[, (s_attr) := 0L]
+    }
+  }
+  y
 })
 
 
@@ -113,6 +133,9 @@ setMethod("dispersion", "hits", function(.Object, s_attribute, freq = FALSE, ver
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
   
+  if (!length(s_attribute) %in% c(1L, 2L))
+    stop(sprintf("Number of s-attributes is %d but only 1 or 2 s-attributes are allowed.", length(s_attribute)))
+  
   if (length(.Object@query) > 1L){
     if (!freq){
       .Object@stat <- .Object@stat[, {sum(.SD[["count"]])}, by = s_attribute][, "query" := paste(.Object@query, collapse = "//")]
@@ -136,17 +159,10 @@ setMethod("dispersion", "hits", function(.Object, s_attribute, freq = FALSE, ver
     }
     retval <- data.table::dcast.data.table(
       .Object@stat, formula(paste(s_attribute, collapse = "~")),
-      value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0
+      value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0L
       )  
-  } else if (length(s_attribute) <= 2L){
+  } else if (length(s_attribute) == 1L){
     retval <- .Object@stat
-    # if (!freq){
-    #   sumup <- function(.SD) sum(.SD[["count"]])
-    #   retval <- .Object@stat[, sumup(.SD), by = c(s_attribute), with = TRUE]
-    #   data.table::setnames(retval, old = "V1", new = "count")
-    # } else {
-    #   retval <- .Object@stat
-    # }
   } else {
     warning("length(s_attribute) needs to be 1 or 2")
   }

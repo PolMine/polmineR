@@ -92,7 +92,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         if (!is.null(regex)) y <- grep(regex, y, value = TRUE)
         return(y)
       }
-    } else if (length(s_attribute) > 1){
+    } else if (length(s_attribute) > 1L){
       y <- lapply(
         s_attribute,
         function(x) {

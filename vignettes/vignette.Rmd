@@ -5,9 +5,10 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to polmineR}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Purpose
@@ -176,7 +177,7 @@ count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
 Use the `dispersion()`-method to get dispersions of counts accross one (or two) dimensions.
 
 ```{r, eval = TRUE, message = FALSE}
-oil <- dispersion("REUTERS", query = "oil", sAttribute = "id", progress = FALSE)
+oil <- dispersion("REUTERS", query = "oil", s_attribute = "id", progress = FALSE)
 saudi_arabia <- dispersion(
   "REUTERS", query = '"Saudi" "Arabia.*"',
   sAttribute = "id", cqp = TRUE, progress = FALSE

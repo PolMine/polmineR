@@ -6,7 +6,7 @@ test_that(
   "dispersion",
   {
     y <- dispersion("GERMAPARLMINI", query = "Integration", s_attribute = "date")
-    expect_identical(y[["count"]], c(1L, 7L, 15L))
+    expect_identical(y[["count"]], c(1L, 0L, 7L, 15L, 0L))
 
     p <- partition("GERMAPARLMINI", date = "2009-11-11", p_attribute = NULL, regex = TRUE)
     int <- dispersion(p, query = "Integration", p_attribute = "word", s_attribute = "speaker")
@@ -17,7 +17,7 @@ test_that(
     expect_equal(rowSums(int[, 2:ncol(int)]), y[["count"]])
     
     integration <- dispersion("GERMAPARLMINI", '"Integration.*"', s_attribute = "date", cqp = TRUE)
-    expect_equal(integration[["count"]], c(1L, 11L, 31L))
+    expect_equal(integration[["count"]], c(1L, 0L, 11L, 31L, 0L))
   }
 )
 

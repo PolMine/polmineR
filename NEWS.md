@@ -75,7 +75,10 @@ whether all letters are upper case and issue informative warnings and error mess
 * The `as.TermDocumentMatrix()`-method for `neighborhood`-objects returned a DocumentTermMatrix (unintendedly), this bug is removed now.
 * There is a new coerce method to turn a `kwic`-object into a `context`-object. The `neighborhood` virtual class could be discarded again, and a bug could be removed that left an `enrich()`-operation for `kwic` objects (argument `p_attribute`) ineffectual (#103).
 * A bug that prevented getting extra left and right context for `kwic` objects has been removed (#102).
-
+  * An endemic encoding issue for fulltext output on Windows machines (latin1 encoding) has been solved by replacing internally `markdown::markdownToHTML` by a direct call to `markdown::renderMarkdown`. On this occassion, some overhead preparing fulltext output has been removed.
+  * The configure-script in the package that would adjust paths in the registry files for the corpora included in the package for documentation and testing purposes has been removed. Having switched to a temporary registry directory, it has lost its function.
+  * Removed a bug that occurred when using `as.DocumentTermMatrix()` on a corpus stated by corpus ID / length-one character vector (#105).
+  * Implemented feature request for `dispersion()` method for `corpus()` objects that results are reported for all values of structural attributes, including those with zero matches. (#104)
 
 
 polmineR 0.7.11
@@ -90,9 +93,6 @@ polmineR 0.7.11
   * A `format()`-method is defined for `textstat`, `cooccurrences`, and `features`, moving the formatting of tables out of the `view()`, and `print()`-methods. This will be useful  when including tables in Rmarkdown documents.
   * The `highlight()`-method for `character` and `html` objects now has the arguments `regex` and `perl`, so that regular expressions can be used for highlighting (#99).
   * The `as.data.frame()`-method for `kwic`-objects has seen a small performance improvement, and is more robust now if the order of columns changes unexpectedly.
-  * An endemic encoding issue for fulltext output on Windows machines (latin1 encoding) has been solved by replacing internally `markdown::markdownToHTML` by a direct call to `markdown::renderMarkdown`. On this occassion, some overhead preparing fulltext output has been removed.
-  * The configure-script in the package that would adjust paths in the registry files for the corpora included in the package for documentation and testing purposes has been removed. Having switched to a temporary registry directory, it has lost its function.
-  * Removed a bug that occurred when using `as.DocumentTermMatrix()` on a corpus stated by corpus ID / length-one character vector (#105).
 
 
 ## MINOR IMPROVEMENTS

@@ -98,10 +98,11 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
       SIZE <- size(.Object, s_attribute = s_attribute)
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
-      TF <- TF[is.na(TF[["query"]]) == FALSE]
+      TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
+      # TF <- TF[is.na(TF[["query"]]) == FALSE]
       if (freq){
         .message("frequencies", verbose = verbose)
-        TF[, freq := count / size]
+        TF[, "freq" := TF[["count"]] / TF[["size"]]]
       }
     }
   } else {
@@ -160,9 +161,9 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
       TF <- TF[is.na(TF[["query"]]) == FALSE]
-      if (freq == TRUE){
+      if (freq){
         .message("frequencies", verbose = verbose)
-        TF[, freq := count / size]
+        TF[, "freq" := count / size]
       }
     }
   } else {
@@ -179,7 +180,7 @@ setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = N
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   stopifnot(all(s_attribute %in% s_attributes(.Object@corpus)))
-  if (freq) size <- TRUE
+  if (freq) size <- TRUE # not possible to calculate frequencies without sizes
   
   DT <- hits(.Object@corpus, query = query, cqp = cqp, s_attribute = NULL, p_attribute = p_attribute, mc = mc, progress = progress)@stat
   DT[, "struc" := cl_cpos2struc(corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs, cpos = DT[["cpos_left"]], registry = registry()), with = TRUE]
@@ -198,7 +199,7 @@ setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = N
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
       TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0, x))]
-      if (freq) TF[, freq := count / size]
+      if (freq) TF[, "freq" := count / size]
     }
   } else {
     TF <- DT
