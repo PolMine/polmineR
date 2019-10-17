@@ -78,7 +78,7 @@ whether all letters are upper case and issue informative warnings and error mess
   * An endemic encoding issue for fulltext output on Windows machines (latin1 encoding) has been solved by replacing internally `markdown::markdownToHTML` by a direct call to `markdown::renderMarkdown`. On this occassion, some overhead preparing fulltext output has been removed.
   * The configure-script in the package that would adjust paths in the registry files for the corpora included in the package for documentation and testing purposes has been removed. Having switched to a temporary registry directory, it has lost its function.
   * Removed a bug that occurred when using `as.DocumentTermMatrix()` on a corpus stated by corpus ID / length-one character vector (#105).
-  * Implemented feature request for `dispersion()` method for `corpus()` objects that results are reported for all values of structural attributes, including those with zero matches. (#104)
+  * Implemented feature request for `dispersion()` that results are reported for all values of structural attributes, including those with zero matches. (#104)
 
 
 polmineR 0.7.11

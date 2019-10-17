@@ -114,62 +114,13 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
 
 #' @rdname hits
 setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
-  
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-
-  stopifnot(.Object %in% .list_corpora(), length(.Object) == 1)
-  if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
-  
-  cpos_list <- blapply(
-    x = as.list(query),
-    f = function(query, .Object, cqp, p_attribute){
-      cpos(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute)
-      },
-    .Object = .Object, cqp = cqp, p_attribute = p_attribute,
-    verbose = FALSE, mc = mc, progress = progress
-  )
-  
-  if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
-
-  for (i in length(query):1){
-    if (is.null(cpos_list[[i]])){
-      warning("no hits for query: ", query[i])
-      cpos_list[[i]] <- NULL
-    }
-  }
-
-  DT <- data.table(
-    cpos_left = unlist(lapply(cpos_list, function(x) x[,1])),
-    cpos_right = unlist(lapply(cpos_list, function(x) x[,2])),
-    query = unlist(lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]]))))
-    )
-  
-  if (!is.null(s_attribute)){
-    for (i in 1L:length(s_attribute)){
-      strucs <- cl_cpos2struc(corpus = .Object, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
-      s_attr_values <- cl_struc2str(corpus = .Object, s_attribute = s_attribute[i], struc = strucs)
-      DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = registry_get_encoding(.Object))]
-    }
-    TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
-    setnames(TF, old = "N", new = "count")
-    
-    if (freq) size <- TRUE
-    if (size){
-      .message("getting sizes", verbose = verbose)
-      SIZE <- size(.Object, s_attribute = s_attribute)
-      setkeyv(TF, cols = s_attribute)
-      TF <- TF[SIZE]
-      TF <- TF[is.na(TF[["query"]]) == FALSE]
-      if (freq){
-        .message("frequencies", verbose = verbose)
-        TF[, "freq" := count / size]
-      }
-    }
-  } else {
-    TF <- DT
-  }
-  new("hits", stat = TF, corpus = .Object, query = query)
+  hits(
+    .Object = corpus(.Object),
+    query = query, cqp = cqp, check = check,
+    s_attribute = s_attribute, p_attribute = p_attribute,
+    size = size, freq = freq,
+    mc = mc, verbose = verbose, progress = progress,
+    ...)
 })
 
 
@@ -188,9 +139,9 @@ setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = N
   
   if (!is.null(s_attribute)){
     for (i in 1L:length(s_attribute)){
-      sAttrString <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
-      sAttrString <- as.nativeEnc(sAttrString, from = .Object@encoding)
-      DT[, eval(s_attribute[i]) := sAttrString]
+      s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
+      s_attr_values <- as.nativeEnc(s_attr_values, from = .Object@encoding)
+      DT[, eval(s_attribute[i]) := s_attr_values]
     }
     TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
     setnames(TF, old = "N", new = "count")

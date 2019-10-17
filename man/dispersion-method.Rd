@@ -15,7 +15,7 @@ dispersion(.Object, ...)
 
 \S4method{dispersion}{slice}(.Object, query, s_attribute, cqp = FALSE,
   p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
 
 \S4method{dispersion}{partition}(.Object, query, s_attribute,
   cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
@@ -27,13 +27,13 @@ dispersion(.Object, ...)
 
 \S4method{dispersion}{corpus}(.Object, query, s_attribute, cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
-  mc = FALSE, progress = TRUE, verbose = TRUE, ...)
+  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
 
 \S4method{dispersion}{character}(.Object, query, s_attribute,
   cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...)
 
-\S4method{dispersion}{hits}(.Object, s_attribute, freq = FALSE,
+\S4method{dispersion}{hits}(.Object, source, s_attribute, freq = FALSE,
   verbose = TRUE, ...)
 }
 \arguments{
@@ -60,6 +60,10 @@ will be looked up (typically 'word' or 'lemma').}
 \item{progress}{A \code{logical} value, whether to show progress.}
 
 \item{verbose}{A \code{logical} value, whether to be verbose.}
+
+\item{source}{The source of the evaluation the hits reported in
+\code{.Object} are based on, a \code{corpus}, \code{subcorpus} or
+\code{partition} object.}
 }
 \value{
 depends on the input, as this is a wrapper function
