@@ -896,7 +896,7 @@ setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
 #' @export
 setMethod("summary", "subcorpus", function(object){
   list(
-    name = if (length(name(object)) > 0) name(object) else NA,
+    name = if (length(name(object)) > 0L) name(object) else NA,
     size = object@size
   )
 })

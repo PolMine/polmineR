@@ -79,8 +79,10 @@ whether all letters are upper case and issue informative warnings and error mess
   * The configure-script in the package that would adjust paths in the registry files for the corpora included in the package for documentation and testing purposes has been removed. Having switched to a temporary registry directory, it has lost its function.
   * Removed a bug that occurred when using `as.DocumentTermMatrix()` on a corpus stated by corpus ID / length-one character vector (#105).
   * Implemented feature request for `dispersion()` that results are reported for all values of structural attributes, including those with zero matches. (#104)
-
-
+  * A shortcoming in coerce method to turn a `subcorpus` into a `String` was removed: A semicolon was not recognized as a punctuation mark. This makes decoding subcorpora as `Annotation` more robust. The respective unit test has been updated.
+  * Creating the `remote_subcorpus`-class did not include the IP of the OpenCPU server, so that working with this classes failed. Debugged.
+  
+  
 polmineR 0.7.11
 ===============
 

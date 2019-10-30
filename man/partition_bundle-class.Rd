@@ -26,7 +26,7 @@
 \usage{
 \S4method{show}{partition_bundle}(object)
 
-\S4method{summary}{partition_bundle}(object, progress = TRUE)
+\S4method{summary}{partition_bundle}(object, progress = FALSE)
 
 \S4method{merge}{partition_bundle}(x, name = "", verbose = TRUE)
 

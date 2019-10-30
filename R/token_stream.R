@@ -210,7 +210,7 @@ setOldClass("String")
 #' @name partition_to_string
 setAs(from = "slice", to = "String", def = function(from){
   word <- get_token_stream(from, p_attribute = "word")
-  whitespace_after <- c(ifelse(word %in% c(".", ",", ":", "!", "?"), FALSE, TRUE)[2L:length(word)], FALSE)
+  whitespace_after <- c(ifelse(word %in% c(".", ",", ":", "!", "?", ";"), FALSE, TRUE)[2L:length(word)], FALSE)
   word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
   y <- paste(word_with_whitespace, collapse = "")
   # to avoid importing the NLP packgage (with its rJava dependency), the following 

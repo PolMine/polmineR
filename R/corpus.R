@@ -411,7 +411,9 @@ setMethod("show", "subcorpus_bundle", function (object) {
 #' @rdname subset
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- substitute(subset)
-  y <- ocpu_exec(fn = "subset", server = x@server, do.call = FALSE, x = as(x, "corpus"), subset = expr)
-  as(y, "remote_subcorpus")
+  sc <- ocpu_exec(fn = "subset", server = x@server, do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  y <- as(sc, "remote_subcorpus")
+  y@server <- x@server
+  y
 })
 

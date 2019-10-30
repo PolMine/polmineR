@@ -130,6 +130,6 @@ test_that(
       subset(date == "2009-11-10") %>%
       subset(speaker == "Angela Dorothea Merkel") %>%
       as("String")
-    expect_identical(nchar(y), 51343L)
+    expect_identical(nchar(y), 51328L)
   }
 )

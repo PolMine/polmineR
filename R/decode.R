@@ -6,14 +6,13 @@ setOldClass("Annotation")
 
 setAs(from = "corpus", to = "Annotation", def = function(from){
   
-  # implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
+  # Implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
   
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available")
 
   word <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "word", encoding = from@encoding)
   pos <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "pos", encoding = from@encoding)
-  # no_whitespace_before <- c("!", "\\.", ":", ";", "\\?", "\\]", "\\)")
   whitespace_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[2L:length(pos)], FALSE)
   word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
   s <- paste(word_with_whitespace, collapse = "")
@@ -152,7 +151,7 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' }
 #' }
 #' @rdname decode
-setMethod("decode", "character", function(.Object, to = "data.table", ...){
+setMethod("decode", "character", function(.Object, to = c("data.table", "Annotation"), ...){
   
   if (any(c("sAttribute", "s_attribute") %in% names(list(...)))){
     stop("Decoding an s_attribute is not supported any longer in the decode()-method of ",
@@ -161,7 +160,7 @@ setMethod("decode", "character", function(.Object, to = "data.table", ...){
   
   stopifnot(
     length(.Object) == 1L, # cannot process more than one corpus
-    .Object %in% .list_corpora() # make that corpus is available
+    .Object %in% .list_corpora() # ensure that corpus is available
   )
   
   as(.Object, to)

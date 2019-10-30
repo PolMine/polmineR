@@ -17,9 +17,9 @@ setMethod("show", "partition_bundle", function (object) {
 })
 
 #' @rdname partition_bundle-class
-setMethod("summary", "partition_bundle", function (object, progress = TRUE){
+setMethod("summary", "partition_bundle", function (object, progress = FALSE){
   .fn <- function(x) data.frame(summary(x), stringsAsFactors = FALSE)
-  a <- if (progress) lapply(object@objects, .fn) else pblapply(object@objects, .fn)
+  a <- if (!progress) lapply(object@objects, .fn) else pblapply(object@objects, .fn)
   y <- do.call(rbind, a)
   rownames(y) <- NULL
   y

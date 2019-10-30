@@ -10,7 +10,8 @@
 \usage{
 decode(.Object, ...)
 
-\S4method{decode}{character}(.Object, to = "data.table", ...)
+\S4method{decode}{character}(.Object, to = c("data.table", "Annotation"),
+  ...)
 
 \S4method{decode}{slice}(.Object, to = "data.table")
 
