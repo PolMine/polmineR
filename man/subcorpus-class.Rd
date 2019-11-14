@@ -74,6 +74,10 @@ subcorpus.}
 "nested".}
 
 \item{\code{s_attribute_strucs}}{Object of class \code{character}, the base node.}
+
+\item{\code{user}}{If the corpus on the server requires authentication, the username.}
+
+\item{\code{password}}{If the corpus on the server requires authentication, the password.}
 }}
 
 \examples{

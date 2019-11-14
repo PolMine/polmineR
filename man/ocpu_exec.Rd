@@ -5,13 +5,18 @@
 \alias{opencpu}
 \title{Execute code on OpenCPU server}
 \usage{
-ocpu_exec(fn, server, do.call = FALSE, ...)
+ocpu_exec(fn, server, user = NULL, password = NULL, do.call = FALSE,
+  ...)
 }
 \arguments{
 \item{fn}{Name of the function/method to execute on remote server (length-one
 \code{character} vector).}
 
 \item{server}{The IP/URL of the remote OpenCPU server.}
+
+\item{user}{A username required for authentication, if necessary.}
+
+\item{password}{A password required for authentication, if necessary.}
 
 \item{do.call}{Logical, if \code{TRUE}, the function \code{fn} is passed into
 a call of \code{do.call}, which offers some flexibility.}

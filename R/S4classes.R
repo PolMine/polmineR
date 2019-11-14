@@ -626,6 +626,8 @@ setClass("kwic_bundle", contains = "bundle")
 #' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
 #'   available only with the \code{remote_corpus} class inheriting from the
 #'   \code{corpus} class.
+#' @slot user If the corpus on the server requires authentication, the username.
+#' @slot password If the corpus on the server requires authentication, the password.
 #' @exportClass corpus
 #' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
 #' @name corpus-class
@@ -721,7 +723,11 @@ setAs(from = "corpus", to = "partition", def = function(from){
 #' @rdname corpus-class
 setClass(
   "remote_corpus",
-  slots = c(server = "character"),
+  slots = c(
+    server = "character",
+    user = "character",
+    password = "character"
+  ),
   contains = "corpus"
 )
 
@@ -810,6 +816,8 @@ setClass(
 #' @slot xml Object of class \code{character}, whether the xml is "flat" or
 #'   "nested".
 #' @slot s_attribute_strucs Object of class \code{character}, the base node.
+#' @slot user If the corpus on the server requires authentication, the username.
+#' @slot password If the corpus on the server requires authentication, the password.
 #' @param object A \code{subcorpus} object.
 #' @param x A \code{subcorpus} object.
 #' @param ... Arguments passed into \code{size}-method. Used only to maintain
@@ -872,7 +880,11 @@ setClass(
 #' @rdname subcorpus-class
 setClass(
   "remote_subcorpus",
-  slots = c(server = "character"),
+  slots = c(
+    server = "character",
+    user = "character",
+    password = "character"
+    ),
   contains = "subcorpus"
 )
 

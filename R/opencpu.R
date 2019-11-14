@@ -8,6 +8,8 @@
 #' @param fn Name of the function/method to execute on remote server (length-one
 #'   \code{character} vector).
 #' @param server The IP/URL of the remote OpenCPU server.
+#' @param user A username required for authentication, if necessary.
+#' @param password A password required for authentication, if necessary.
 #' @param do.call Logical, if \code{TRUE}, the function \code{fn} is passed into
 #'   a call of \code{do.call}, which offers some flexibility.
 #' @param ... Further arguments passed into the method/function call.
@@ -32,7 +34,7 @@
 #'   subset = substitute(Sepal.Width > 4.0)
 #' )
 #' }
-ocpu_exec <- function(fn, server, do.call = FALSE, ...){
+ocpu_exec <- function(fn, server, user = NULL, password = NULL, do.call = FALSE, ...){
   if (!requireNamespace("httr", quietly = TRUE))
     stop("To access a remote corpus, package 'httr' is required, but it is not yet installed.")
   if (!requireNamespace("curl", quietly = TRUE))
@@ -56,7 +58,11 @@ ocpu_exec <- function(fn, server, do.call = FALSE, ...){
     else
       curl::form_data(protolite::serialize_pb(x), "application/protobuf")
   )
-  resp <- httr::POST(url = url, body = body)
+  if (length(user) == 0L && length(password) == 0L){
+    resp <- httr::POST(url = url, body = body)
+  } else {
+    resp <- httr::POST(url = url, body = body, httr::authenticate(user = user, password = password))
+  }
   httr::stop_for_status(resp)
   y <- protolite::unserialize_pb(resp$content)
 }

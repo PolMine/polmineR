@@ -12,9 +12,13 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   locally. If provided, the name of an OpenCPU server (can be an IP address)
 #'   that hosts a corpus, or several corpora. The \code{corpus}-method will then
 #'   instantiate a \code{remote_corpus} object.
+#' @param user If the corpus resides on a remote server and requires
+#'   authentication, the respective username.
+#' @param password If the corpus resides on a remote server and requires
+#'   authentication, the respective username.
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora
-setMethod("corpus", "character", function(.Object, server = NULL){
+setMethod("corpus", "character", function(.Object, server = NULL, user = NULL, password = NULL){
   if (is.null(server)){
     corpora <- cqp_list_corpora()
     
@@ -49,9 +53,11 @@ setMethod("corpus", "character", function(.Object, server = NULL){
     )
     return(y)
   } else {
-    y <- ocpu_exec(fn = "corpus", server = server, .Object = .Object)
+    y <- ocpu_exec(fn = "corpus", server = server, user = user, password = password, .Object = .Object)
     y <- as(y, "remote_corpus")
     y@server <- server
+    y@user <- user
+    y@password <- password
     return(y)
   }
 })

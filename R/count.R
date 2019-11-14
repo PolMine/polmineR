@@ -483,7 +483,15 @@ setMethod("hist", "count", function(x, ...) hist(x@stat[,"count"], ...) )
 
 #' @rdname count-method
 setMethod("count", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "count", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+  ocpu_exec(
+    fn = "count",
+    server = .Object@server,
+    user = .Object@user,
+    password = .Object@password,
+    do.call = FALSE,
+    .Object = .Object@corpus,
+    ...
+  )
 })
 
 
