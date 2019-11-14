@@ -16,7 +16,7 @@ cpos(.Object, ...)
 
 \S4method{cpos}{corpus}(.Object, query,
   p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
-  check = TRUE, verbose = TRUE, ...)
+  regex = FALSE, check = TRUE, verbose = TRUE, ...)
 
 \S4method{cpos}{character}(.Object, query,
   p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp,
@@ -43,7 +43,7 @@ cpos(.Object, ...)
 process arguments that have been renamed (e.g. \code{pAttribute}).}
 
 \item{query}{A \code{character} vector providing one or multiple queries
-(token or CQP query).}
+(token or CQP query). Token ids (i.e. \code{integer} values) are also accepted.}
 
 \item{p_attribute}{The p-attribute to search. Needs to be stated only if query
 is not a CQP query. Defaults to \code{NULL}.}
@@ -51,6 +51,8 @@ is not a CQP query. Defaults to \code{NULL}.}
 \item{cqp}{Either logical (\code{TRUE} if query is a CQP query), or a function to
 check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
 function).}
+
+\item{regex}{Interpret \code{query} as a regular expression.}
 
 \item{check}{A \code{logical} value, whether to check validity of CQP query
 using \code{check_cqp_query}.}

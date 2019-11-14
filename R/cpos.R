@@ -23,10 +23,11 @@ NULL
 #' @param .Object A length-one \code{character} vector indicating a CWB corpus, a
 #'   \code{partition} object, or a \code{matrix} with corpus positions.
 #' @param query A \code{character} vector providing one or multiple queries
-#'   (token or CQP query).
+#'   (token or CQP query). Token ids (i.e. \code{integer} values) are also accepted.
 #' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a function to
 #'   check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
 #'   function).
+#' @param regex Interpret \code{query} as a regular expression. 
 #' @param check A \code{logical} value, whether to check validity of CQP query
 #'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute to search. Needs to be stated only if query
@@ -63,7 +64,7 @@ NULL
 setGeneric("cpos", function(.Object, ... ) standardGeneric("cpos"))
 
 #' @rdname cpos-method
-setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp, check = TRUE, verbose = TRUE, ...){
+setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("polmineR.p_attribute"), cqp = is.cqp, regex = FALSE, check = TRUE, verbose = TRUE, ...){
   
   dots <- list(...)
   if (length(dots) == 1L){
@@ -84,13 +85,30 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
       query,
       function(q){
         regions <- try({
-          id <- cl_str2id(corpus = .Object@corpus, p_attribute = p_attribute, str = q, registry = registry())
-          if (id < 0L){ # CQP will return -1 or another negative value if there are no matches
-            .message("no hits for query: ", q, verbose = verbose)
-            return( NULL )
+          if (is.character(q)){
+            if (!regex){
+              ids <- cl_str2id(corpus = .Object@corpus, p_attribute = p_attribute, str = q, registry = registry())
+            } else {
+              ids <- cl_regex2id(corpus = .Object@corpus, p_attribute = p_attribute, regex = q, registry = registry())
+            }
+          } else if (is.integer(q)){
+            ids <- q
           } else {
+            warning("Argument 'query' needs to be an integer value or a character vector.")
+          }
+          .fn <- function(id){
             regions <- cl_id2cpos(corpus = .Object@corpus, p_attribute = p_attribute, id = id, registry = registry())
-            return( matrix(c(regions, regions), ncol = 2L) )
+            matrix(c(regions, regions), ncol = 2L)
+          }
+          if (length(ids) == 1L){
+            if (ids < 0L){ # CQP will return -1 or another negative value if there are no matches
+              .message("no hits for query: ", q, verbose = verbose)
+              return( NULL )
+            } else {
+              return(.fn(ids))
+            }
+          } else {
+            return( do.call(rbind, lapply(ids, .fn)) )
           }
         })
       }

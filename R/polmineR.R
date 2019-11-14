@@ -100,11 +100,32 @@ setOldClass("htmlwidget")
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' cnt <- count(pb, p_attribute = "word")
 #' tdm <- as.TermDocumentMatrix(cnt, col = "count")
+#' @importFrom utils packageVersion
 polmineR <- function(){
-  if (requireNamespace("shiny", quietly = TRUE)){
+  # The code is adapted from the pkgload library
+  # https://github.com/r-lib/pkgload/blob/master/R/utils.R
+  .conditional_install <- function(pkg){
+    v <- tryCatch(utils::packageVersion(pkg), error = function(e) NA)
+    if (is.na(v)) {
+      msg <- sprintf("Package '%s' needed to run the shiny app.", pkg)
+      if (interactive()) {
+        message(sprintf("%s Would you like to install it?", msg))
+        if (utils::menu(c("Yes", "No")) == 1) {
+          utils::install.packages(pkg)
+        } else {
+          stop(msg, call. = FALSE)
+        }
+      } else {
+        stop(msg, call. = FALSE)
+      }
+    }
+  }
+  
+  .conditional_install("shiny")
+  .conditional_install("shinythemes")
+
+  if (requireNamespace("shiny", quietly = TRUE) && requireNamespace("shinythemes", quietly = TRUE)){
     shiny::runApp(system.file("shiny", package = "polmineR"))
-  } else {
-    stop("package 'shiny' required but not installed")
   }
 }
 

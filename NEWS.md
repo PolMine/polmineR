@@ -81,6 +81,8 @@ whether all letters are upper case and issue informative warnings and error mess
   * Implemented feature request for `dispersion()` that results are reported for all values of structural attributes, including those with zero matches. (#104)
   * A shortcoming in coerce method to turn a `subcorpus` into a `String` was removed: A semicolon was not recognized as a punctuation mark. This makes decoding subcorpora as `Annotation` more robust. The respective unit test has been updated.
   * Creating the `remote_subcorpus`-class did not include the IP of the OpenCPU server, so that working with this classes failed. Debugged.
+  * Added a new argument `regex` to the `cpos()`-method (for `corpus` objects), which will interpret argument `query` as a regular expression. This may be faster than taking `query` as an outright CQP query.
+  * Calling the polmineR shiny app via `polmineR` did not have safeguards if the suggested packages [shiny]() and [shinythemes]() were not installed. Now there will be a conditional installation of the packages required for running the shiny app.
   
   
 polmineR 0.7.11

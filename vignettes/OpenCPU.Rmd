@@ -1,0 +1,98 @@
+---
+title: "OpenCPU"
+author: "Andreas Blätte (andreas.blaette@uni-due.de)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+editor_options: 
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{OpenCPU}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+## Objective
+
+Sometimes, it is practically or legally not possible to move corpus data to a local machine. This vignette explains the usage of CWB corpora that are hosted on an [OpenCPU](https://www.opencpu.org/) server.
+
+```{r, eval = TRUE}
+library(polmineR)
+```
+
+
+## Remote Corpus
+
+The GermaParl corpus is hosted on an OpenCPU server with the IP 52.24.44.232 (subject to change). To use the corpus, use the `corpus()`-method. The only difference is that you will need to supply the IP address using the argument `server`. 
+
+```{r, eval = FALSE}
+gparl <- corpus("GERMAPARL", server = "52.24.44.232")
+```
+
+The `gparl` object is an object of class `remote_corpus`.
+
+```{r, eval = FALSE}
+is(gparl)
+```
+
+
+### Using polmineR core functionality
+
+The polmineR at this stage exposes a limited set of its functionality for remote corpora. Simple investigations in the remote corpus are possible.
+
+
+#### Get corpus size
+
+```{r, eval = FALSE}
+size(gparl)
+```
+
+
+#### Get structural annotation (metadata)
+
+```{r, eval = FALSE}
+s_attributes(gparl)
+```
+
+
+#### Subsetting
+
+```{r, eval = FALSE}
+gparl2006 <- subset(gparl, year == "2006")
+```
+
+The returned object has the class `remote_subcorpus`.
+
+```{r, eval = FALSE}
+is(gparl2006)
+```
+
+
+#### Simple count
+
+```{r, eval = FALSE}
+count(gparl, query = "Integration")
+```
+
+The `count()`-method works for `remote_subcorpus` objects, too.
+
+```{r, eval = FALSE}
+count(gparl2006, query = "Integration")
+```
+
+
+#### KWIC
+
+```{r, render = knit_print, message = FALSE, eval = FALSE}
+kwic(gparl, query = "Islam", left = 15, right = 15, meta = c("speaker", "party", "date"))
+```
+
+Works for the `remote_subcorpus`, too.
+
+```{r, render = knit_print, message = FALSE, eval = FALSE}
+kwic(gparl2006, query = "Islam", left = 15, right = 15, meta = c("speaker", "party", "date"))
+```
+
+
+## Next steps
+
+Upcoming versions of polmineR will expose further functionality. This is a simple proof-of-concept!
