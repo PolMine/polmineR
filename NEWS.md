@@ -83,6 +83,7 @@ whether all letters are upper case and issue informative warnings and error mess
   * Creating the `remote_subcorpus`-class did not include the IP of the OpenCPU server, so that working with this classes failed. Debugged.
   * Added a new argument `regex` to the `cpos()`-method (for `corpus` objects), which will interpret argument `query` as a regular expression. This may be faster than taking `query` as an outright CQP query.
   * Calling the polmineR shiny app via `polmineR` did not have safeguards if the suggested packages [shiny]() and [shinythemes]() were not installed. Now there will be a conditional installation of the packages required for running the shiny app.
+  * Removed a bug in the `context()`/`kwic()` that led to superfluous words in the right context.
   
   
 polmineR 0.7.11

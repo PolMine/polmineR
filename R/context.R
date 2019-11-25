@@ -212,7 +212,7 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
         match_id = rep(1L:nrow(.Object), each = left)
       )
       dt_right <- data.table(
-        cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_right, SIMPLIFY = FALSE)),
+        cpos = unlist(mapply(function(a, b) a + b, .Object[,2], positions_right, SIMPLIFY = FALSE)),
         position = unlist(positions_right),
         match_id = rep(1L:nrow(.Object), each = right)
       )
