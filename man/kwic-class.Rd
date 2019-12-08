@@ -225,8 +225,11 @@ int_spd <- corpus("GERMAPARLMINI") \%>\%
 
 # turn kwic object into data.frame with html tags
 int <- corpus("GERMAPARLMINI") \%>\%
-  kwic(query = "Integration") \%>\%
-  enrich(s_attributes = c("date", "speaker", "party")) \%>\%
+  kwic(query = "Integration")
+
+as.data.frame(int) # Without further metadata
+
+enrich(int, s_attributes = c("date", "speaker", "party")) \%>\%
   as.data.frame()
   
 # merge bundle of kwic objects into one kwic

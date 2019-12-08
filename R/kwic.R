@@ -99,19 +99,28 @@ setMethod("subset", "kwic", function(x, ...) {
 #' @examples
 #' # turn kwic object into data.frame with html tags
 #' int <- corpus("GERMAPARLMINI") %>%
-#'   kwic(query = "Integration") %>%
-#'   enrich(s_attributes = c("date", "speaker", "party")) %>%
+#'   kwic(query = "Integration")
+#' 
+#' as.data.frame(int) # Without further metadata
+#' 
+#' enrich(int, s_attributes = c("date", "speaker", "party")) %>%
 #'   as.data.frame()
 #'   
 setMethod("as.data.frame", "kwic", function(x){
   if (all(c("left", "node", "right") %in% colnames(x@stat))){
     df <- data.frame(
-      meta = do.call(paste, c(lapply(x@metadata, function(s_attr) x@stat[[s_attr]]), sep = "<br/>")),
       left = x@stat[["left"]],
       node = x@stat[["node"]],
       right = x@stat[["right"]],
       stringsAsFactors = FALSE
     )
+    if (length(x@metadata) > 0L){
+      df <- data.frame(
+        meta = do.call(paste, c(lapply(x@metadata, function(s_attr) x@stat[[s_attr]]), sep = "<br/>")),
+        df,
+        stringsAsFactors = FALSE
+      )
+    }
   } else {
     stop("as.data.frame,kwic-method not yet implemented for lineview")
   }

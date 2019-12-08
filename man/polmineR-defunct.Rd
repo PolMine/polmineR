@@ -6,7 +6,7 @@
 \alias{browse}
 \alias{Corpus}
 \title{Defunct methods and functions.}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 browse(...)
 
