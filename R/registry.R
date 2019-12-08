@@ -133,7 +133,15 @@ registry_get_properties = function(corpus, registry = Sys.getenv("CORPUS_REGISTR
 }
 
 
-#' @noRd
+#' @details The \code{registry_move} is an auxiliary function to create a copy
+#'   of a registry file in the directory specified by the argument
+#'   \code{registry_new}.
+#' @rdname registry
+#' @param registry The old registry directory.
+#' @param corpus The ID of the corpus for which the registry file shall be moved.
+#' @param registry_new The new registry directory.
+#' @param home_dir_new The new home directory.
+#' @export registry_move
 registry_move <- function(corpus, registry, registry_new, home_dir_new){
   registry <- readLines(file.path(registry, tolower(corpus)))
   

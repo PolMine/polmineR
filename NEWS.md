@@ -86,6 +86,8 @@ whether all letters are upper case and issue informative warnings and error mess
   * Removed a bug in the `context()`/`kwic()` that led to superfluous words in the right context.
   * Removed a bug that occurred with the `as.data.frame()`-method for `kwic`-objects when no 
     metadata were added.
+  * The `registry_move()`-function, used only internally at this stage, is exported now so 
+    that it can be used by other packages.
   
   
 polmineR 0.7.11
