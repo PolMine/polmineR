@@ -69,11 +69,11 @@ setAs(
     slotsToMake <- getSlots("partition")
     slotsToMake <- slotsToMake[-which(names(slotsToMake) %in% c("stat", "metadata", "call"))]
     partitionList <- fromJSON(from)
-    newPartition <- new("partition")
+    y <- new("partition")
     for (x in names(slotsToMake)){
-      slot(newPartition, x) <- as(partitionList[[x]], slotsToMake[x])
+      slot(y, x) <- as(partitionList[[x]], slotsToMake[x])
     }
-    newPartition
+    y
   }
 )
 
@@ -141,12 +141,12 @@ is.partition <- function(x) "partition" %in% is(x)
   } else if (xml == "nested"){
     sAttrNames <- rev(names(.Object@s_attributes))
     strucs <- 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = sAttrNames[1], attribute_type = "s", registry = registry()) - 1L)
-    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[1], struc = strucs, registry = registry())
-    Encoding(sAttrValues) <- .Object@encoding
+    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[1], struc = strucs, registry = registry())
+    Encoding(s_attr_values) <- .Object@encoding
     if (regex == FALSE) {
-      strucs <- strucs[ which(sAttrValues %in% .Object@s_attributes[[ sAttrNames[1] ]]) ]
+      strucs <- strucs[ which(s_attr_values %in% .Object@s_attributes[[ sAttrNames[1] ]]) ]
     } else {
-      matchList <- lapply(.Object@s_attributes[[ sAttrNames[1] ]], function(x) grep(x, sAttrValues))
+      matchList <- lapply(.Object@s_attributes[[ sAttrNames[1] ]], function(x) grep(x, s_attr_values))
       strucs <- strucs[ unique(unlist(matchList)) ]
     }
     
@@ -159,12 +159,12 @@ is.partition <- function(x) "partition" %in% is(x)
     if (length(sAttrNames) > 1){
       for (i in 2L:length(sAttrNames)){
         strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttrNames[i], cpos = cpos[,1], registry = registry())
-        sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = strucs, registry = registry())
-        Encoding(sAttrValues) <- .Object@encoding
+        s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = strucs, registry = registry())
+        Encoding(s_attr_values) <- .Object@encoding
         if (regex) {
-          hits <- unique(unlist(lapply(.Object@s_attributes[[ sAttrNames[i] ]], function(x) grep(x, sAttrValues))))
+          hits <- unique(unlist(lapply(.Object@s_attributes[[ sAttrNames[i] ]], function(x) grep(x, s_attr_values))))
         } else {
-          hits <- which(sAttrValues %in% .Object@s_attributes[[ sAttrNames[i] ]])
+          hits <- which(s_attr_values %in% .Object@s_attributes[[ sAttrNames[i] ]])
         }
         cpos <- cpos[hits,]
         strucs <- strucs[hits]
@@ -377,47 +377,47 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   if (length(def) > 1L) stop("only one s-attribute allowed")
   if (!is.null(xml)) stopifnot(xml %in% c("flat", "nested"))
   
-  newPartition <- new(
+  y <- new(
     class(.Object)[1], corpus = .Object@corpus, encoding = .Object@encoding, name = name,
     xml = if (is.null(xml)) .Object@xml else xml,
     stat = data.table()
   )
   .message('Setting up partition', name, verbose = verbose)
   def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
-  newPartition@s_attributes <- c(.Object@s_attributes, def)
-  newPartition@s_attribute_strucs <- names(def)[1]
+  y@s_attributes <- c(.Object@s_attributes, def)
+  y@s_attribute_strucs <- names(def)[1]
   
   .message('getting cpos and strucs', verbose = verbose)
   
   if (.Object@xml == "flat") {
-    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = .Object@strucs, registry = registry())
-    Encoding(sAttrValues) <- newPartition@encoding
-    hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
-    newCposMatrix <- .Object@cpos[hits,]
-    newPartition@cpos <- switch(
-      class(newCposMatrix),
-      "matrix" = newCposMatrix,
-      "integer"= matrix(newCposMatrix, ncol = 2, byrow = TRUE)
+    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = .Object@strucs, registry = registry())
+    Encoding(s_attr_values) <- y@encoding
+    hits <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
+    cpos_matrix_new <- .Object@cpos[hits,]
+    y@cpos <- switch(
+      class(cpos_matrix_new)[1],
+      "matrix" = cpos_matrix_new,
+      "integer"= matrix(cpos_matrix_new, ncol = 2, byrow = TRUE)
     )
-    newPartition@strucs <- .Object@strucs[hits]
+    y@strucs <- .Object@strucs[hits]
   } else if (.Object@xml == "nested") {
-    cposVec <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-    newStrucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = names(def)[1], cpos = cposVec, registry = registry())
-    sAttrValues <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = newStrucs, registry = registry())
-    Encoding(sAttrValues) <- .Object@encoding
-    hits <- if (regex) grep(def[[1]], sAttrValues) else which(sAttrValues %in% def[[1]])
-    newPartition@strucs <- unique(newStrucs[hits])
-    newPartition@cpos <- RcppCWB::get_region_matrix(
+    cpos_vec <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+    strucs_new <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = names(def)[1], cpos = cpos_vec, registry = registry())
+    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = names(def), struc = strucs_new, registry = registry())
+    Encoding(s_attr_values) <- .Object@encoding
+    hits <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
+    y@strucs <- unique(strucs_new[hits])
+    y@cpos <- RcppCWB::get_region_matrix(
       corpus = .Object@corpus, s_attribute = names(def),
-      registry = Sys.getenv("CORPUS_REGISTRY"), strucs = newPartition@strucs
+      registry = Sys.getenv("CORPUS_REGISTRY"), strucs = y@strucs
     )
   }
-  newPartition@size <- size(newPartition)
+  y@size <- size(y)
   if (length(p_attribute) > 0) {
-    newPartition@stat <- count(.Object = newPartition, p_attribute = p_attribute, decode = decode, mc = mc)@stat
-    newPartition@p_attribute <- p_attribute
+    y@stat <- count(.Object = y, p_attribute = p_attribute, decode = decode, mc = mc)@stat
+    y@p_attribute <- p_attribute
   }
-  newPartition
+  y
 })
 
 
