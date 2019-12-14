@@ -8,21 +8,25 @@
 
 <title>Changelog • polmineR</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,7 +34,9 @@
 
 
 
+
 <meta property="og:title" content="Changelog" />
+
 
 
 
@@ -42,6 +48,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -60,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -68,7 +75,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -83,6 +90,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/OpenCPU.html">OpenCPU</a>
+    </li>
+    <li>
       <a href="../articles/vignette.html">Introducing the 'polmineR'-package</a>
     </li>
   </ul>
@@ -91,7 +101,6 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -101,6 +110,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -110,19 +120,124 @@
       
     </div>
 
+    <div id="polminer-0-8-0" class="section level1">
+<h1 class="page-header">
+<a href="#polminer-0-8-0" class="anchor"></a>polmineR 0.8.0<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New Features</h2>
+<ul>
+<li>The <code>corpus</code> class has been put in a shape to become the default point of departure of most workflows. All core methods are now available for the <code>corpus</code> class, and have been implemented newly if necessary, e.g. <code>show()</code> and <code><a href="../reference/size-method.html">size()</a></code>-method. The constructor method for a <code>corpus</code> object, the <code><a href="../reference/corpus-class.html">corpus()</a></code> method will now check whether the character vector with the corpus ID refers to an available corpus, whether all letters are upper case and issue informative warnings and error messages.</li>
+<li>The <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code>-method for <code>corpus</code> objects has been reworked: It will decode binary files directly, without reliance on the corpus library functions, which is significantly faster.</li>
+<li>The <code>Corpus</code> reference class is now obsolete after the introduction of the S4 <code>corpus</code> class. To maintain the functionality not covered otherwise, new generics <code>get_info</code> and <code>show_info</code> have been introduced and defined for the <code>corpus</code> class.</li>
+<li>Methods available for the <code>subcorpus</code> class has been expanded so that this class can supersede the <code>partition</code> class: Methods newly available are <code><a href="../reference/cpos-method.html">cpos()</a></code>, <code><a href="../reference/count-method.html">count()</a></code>, <code><a href="../reference/p_attributes.html">p_attributes()</a></code>, <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code> <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code>, and <code><a href="../reference/size-method.html">size()</a></code>. Technically, there is virtual <code>slice</code>-class, from which <code>subcorpus</code> inherits (methods called via <code>callNextMethod()</code>).</li>
+<li>A new <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> to generate subcorpora (i.e. <code>subcorpus</code> objects) has been introduced. It outperforms the <code><a href="../reference/partition.html">partition()</a></code> method. The <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> objects will be the default way to work with non standard evaluation in a manner that feels “Rish”. The <code><a href="../reference/corpus-class.html">zoom()</a></code>-method that has been introduced experimentally has been dropped again in favor of the <code><a href="../reference/subset.html">subset()</a></code>-method to get <code>subcorpus</code> objects from <code>corpus</code> and <code>subcorpus</code> objects. A set of experimental methods for an initial check of the feasibility of a non-standard evaluation approach to the generation of subcorpora has been dropped (methods <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">!=</a></code>, <code>zoom</code> for <code>corpus</code>-class).</li>
+<li>To facilitate the transition from the <code>partition</code> class (inheriting from the <code>textstat</code> class) and the <code>subcorpus</code> class (inheriting from the <code>textstat</code> class), there is a new <code>coerce()</code>-method to turn a <code>partition</code> object into a <code>subcorpus</code> object.</li>
+<li>A new <code>remote_corpus</code>-class is the basis for accessing remote corpora. A <code>remote_subcorpus</code> can be derived from a <code>remote_corpus</code>. Methods available for remote corpora und subcorpora remain limited at this stage.</li>
+<li>Consolidation of the class system: For all the S4 classes in the package, multiple contains have been checked, and multiple contains have been removed.</li>
+<li>The <code>subcorpus_bundle</code> class now inherits from <code>partition_bundle</code>. This is not intended to be a long-term solution, but facilitates the implementation of new workflows based on the <code>subcorpus</code> class rather thane the <code>partition</code> class.</li>
+<li>Calling the polmineR shiny app via <code>polmineR</code> did not have safeguards if the suggested packages <a href="">shiny</a> and <a href="">shinythemes</a> were not installed. Now there will be a conditional installation of the packages required for running the shiny app.</li>
+<li>The somewhat odd class <code>CorpusOrSubcorpus</code> has been removed. The <code>ngrams</code>-method now applies for <code>corpus</code> and <code>subcorpus</code> objects.</li>
+<li>The pipe operator of the magrittr package is imported now, and magrittr has moved from a suggested package to a required package.</li>
+<li>The <code>label()</code>-method, present for a while, is superseded by a <code><a href="https://rdrr.io/r/utils/edit.html">edit()</a></code>-method now. It will call a shiny gadget either using DataTables or Handsontable. The former <code>Labels</code> reference class has been turned into a S4 class, because the desired reference logic can also be achieved with a <code>data.table</code> in a slot of the labels class.</li>
+<li>The <code>table</code>-slot of the <code>kwic</code> class has been renamed as <code>stat</code> slot (a <code>data.table</code>), so that the <code>kwic</code> class can now inherit from the <code>textstat</code> class. The <code><a href="../reference/enrich-method.html">enrich()</a></code>-method for objects of class <code>kwic</code> now includes a new argument <code>extra</code> that will add extra tokens to the left of the windows for concordances so that qualitative inspections for query hits can work with more context.</li>
+<li>The <code><a href="../reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix()</a></code> and the <code><a href="../reference/as.DocumentTermMatrix.html">as.DocumentTermMatrix()</a></code>-methods are now also defined for <code>kwic</code> objects. They work exactly the same as for the <code>context</code> class. To avoid having to write new methods, a new <code>heighborhood</code> virtual class has been introduced. The aforementioned methods are defined for the virtual class and are available for context and kwic class objects.</li>
+<li>Added CQP functionality to count tab in shiny app, and to the dispersion tab.</li>
+<li>subsetting corpora using non-standard evaluation expanded (#40).</li>
+<li>There is now a basic implementation of <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code> for a <code>partition_bundle</code> object.</li>
+<li>The <code><a href="../reference/all_cooccurrences.html">Cooccurrences()</a></code>-method is now available for <code>subcorpus</code>-objects (#88).</li>
+<li>There is a new coerce method to turn a <code>kwic</code>-object into a <code>context</code>-object. The <code>neighborhood</code> virtual class could be discarded again, and a bug could be removed that left an <code><a href="../reference/enrich-method.html">enrich()</a></code>-operation for <code>kwic</code> objects (argument <code>p_attribute</code>) ineffectual (#103).</li>
+</ul>
+</div>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h2>
+<ul>
+<li>Added a new argument <code>regex</code> to the <code><a href="../reference/cpos-method.html">cpos()</a></code>-method (for <code>corpus</code> objects), which will interpret argument <code>query</code> as a regular expression. This may be faster than taking <code>query</code> as an outright CQP query.</li>
+<li>The configure-script in the package that would adjust paths in the registry files for the corpora included in the package for documentation and testing purposes has been removed. Having switched to a temporary registry directory, it has lost its function.</li>
+<li>The version of the data.table package now required is 1.12.2, because previous versions did not allow adding columns to a new data.table.</li>
+<li>Implemented the possibility to use multiple queries in <code>dispersion</code>-method (#92).</li>
+<li>To keep up with the renaming of functions and arguments in the package, “sAttributes” and “pAttributes” in the polmineR shiny app have been renamed (“s_attributes”, and “p_attributes”, respectively).</li>
+<li>The shiny app module for kwic output will not show p_attribute and <code>positivelist</code> by default.</li>
+<li>The <code><a href="https://rdrr.io/r/base/format.html">format()</a></code>-method is used to output proper output in the cooccurrences of the shiny app.</li>
+<li>User names that include non-ASCII characters were a persistent problem on Windows machines (#66). The solution now is to check for non-ASCII characters in the path to the data directory, and to use the “old” short DOS path if necessary. The worker is a modified <code><a href="../reference/registry.html">registry()</a></code>-function.</li>
+<li>The ordering of the table for <code>ll</code>-method had been somewhat mixed up, which is repaired now. Tokens with NA values for the ll-test will show up at the end of the table.</li>
+<li>The <code><a href="../reference/registry.html">registry_move()</a></code>-function, used only internally at this stage, is exported now so that it can be used by other packages.</li>
+<li>The return value of <code>the get_token_stream()</code>-method for <code>regions</code> objects was a <code>data.table</code>. The behavior is now in line with the other <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code> methods</li>
+<li>The <code>tempcorpus()</code>-method and the <code>tempcorpus</code> class have been removed from the package, having become utterly deprecated.</li>
+<li>The <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-method for <code>partition</code>-class objects has been turned into a method for the <code>count</code>-class, to eliminate an inconsistency. The example of a workflow has been moved to the documentation object for the <code>count</code>-class.</li>
+<li>The <code><a href="../reference/polmineR-defunct.html">browse()</a></code>-method has not proven to be useful and has been removed from the package. A new <code><a href="../reference/polmineR-defunct.html">browse()</a></code>-function is introduced to throw a warning, if browse should be called nevertheless.</li>
+<li>A refactoring of the <code><a href="../reference/partition_class.html">split()</a></code>-method for <code>partition</code>-objects improved the readability of the code, but the performance gain is minimal.</li>
+<li>A new <code>kwic_bundle</code>-class has been introduced, a list of <code>kwic</code> objects can be turned into this new class using <code>as.bundle</code>.</li>
+<li>The <code><a href="../reference/context-method.html">context()</a></code>-method will now take again as input character vectors for the arguments <code>left</code> and <code>right</code> to expand to the left and right boundaries of the designated region (#87).</li>
+<li>Rework of the way messages are printed to make it easy to implement notifications in the shiny environment.</li>
+<li>Default highlighting when a positivelist is supplied has been removed from the <code><a href="../reference/kwic.html">kwic()</a></code>-method. This ensures that subsequent highlighting operations can assign new colors (#38).</li>
+<li>Implemented feature request for <code><a href="../reference/dispersion-method.html">dispersion()</a></code> that results are reported for all values of structural attributes, including those with zero matches. (#104)</li>
+<li>Performance improved for cpos,matrix-method which unfolds a matrix with regions of corpus positions, useful for operations that require many calls.</li>
+<li>The count,partition_bundle-method has been reworked and is much faster and more memory efficient.</li>
+<li>
+<code><a href="../reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix()</a></code> for <code>partition_bundle</code> optimized to work efficiently with large corpora.</li>
+<li>Introduction of a context,matrix-method to have a unified auxiliary function to create contexts.</li>
+<li>The <code>as.corpusEnc</code>-function uses the <code><a href="https://rdrr.io/r/utils/localeToCharset.html">localeToCharset()</a></code>-function from the utils package to determine the charset of input strings. On RStudio Server, we have seen cases when the return value is NA. Then it will be assumed that the locale is UTF-8.</li>
+<li>Functionality to highlight terms in kwic display has been restored for the shiny app.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Removed a bug in the <code><a href="../reference/context-method.html">context()</a></code>/<code><a href="../reference/kwic.html">kwic()</a></code> that led to superfluous words in the right context.</li>
+<li>Removed a bug that occurred with the <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code>-method for <code>kwic</code>-objects when no metadata were added.</li>
+<li>The <code><a href="../reference/count-method.html">count()</a></code>-method for <code>partition_bundle</code>-objects did not perform <code><a href="https://rdrr.io/r/base/iconv.html">iconv()</a></code> if necessary - this has been corrected.</li>
+<li>Indexing the concordances of a <code>kwic</code> object did not reduce the <code>cpos</code> table concurringly - corrected.</li>
+<li>The <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-method failed to handle situations correctly, when one speaker occurring in the corpus only contributed one single region to the entire corpus (#86), debugged.</li>
+<li>Counting over a <code>partition_bundle</code> started to throw a warning that an argument arrives at the <code><a href="../reference/cpos-method.html">cpos()</a></code>-method that is not used. The cause for the warning message is removed, an additional unit test has been introduced to recognize issues with the <code>count</code>-method (#90).</li>
+<li>The <code><a href="../reference/kwic.html">kwic()</a></code>-method threw an error when trimming the matches by using a positivelist or a stoplist resulted in no remaining matches. The method will now return a NULL object and keep issuing a warning if no matches remain after filtering (#91).</li>
+<li>Chaining subsetting calls on a corpus/subcorpus omitted filling the s_attribute slot of the <code>subcorpus</code> object, resulting in false results when counting over subcorpora. Fixed.</li>
+<li>Started to remove bugs in the shiny app: kwic starts to work again (bug: slot table has been replaced by stat).</li>
+<li>The part of the shiny app for dispersions did not work at all - has been repaired, exposing more functionality of <code><a href="../reference/dispersion-method.html">dispersion()</a></code> (#62).</li>
+<li>In the <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-method, the argument <code>verbose</code> was not used (#64) - this had been addressed when solved when addressing issue #86.</li>
+<li>Telling messages when sending out emails - on success and error (#61).</li>
+<li>A shortcoming in coerce method to turn a <code>subcorpus</code> into a <code>String</code> was removed: A semicolon was not recognized as a punctuation mark. This makes decoding subcorpora as <code>Annotation</code> more robust. The respective unit test has been updated.</li>
+<li>Calling <code><a href="../reference/read-method.html">read()</a></code> on a <code>kwic</code> object works again (#84).</li>
+<li>Checks for the <code><a href="../reference/as.VCorpus.html">as.VCorpus()</a></code> method that failed are now ok (#77). The reason was that <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code> assumed implicitly that a p-attribute “pos” is present, which is not the case for the REUTERS test corpus.</li>
+<li>A minor bug in the <code>s_attributes</code>-method was removed that would make retrieving the metadata for the first strucs (index 0) of a s-attribute impossible.</li>
+<li>Fixed an issue for <code>as.DocumentTermMatrix</code> that started to occur with the introduction of the <code>subcorpus_bundle</code> class (#100).</li>
+<li>Removed a bug in the kwic,character-method that prevented using different values for right and left context (#101).</li>
+<li>Removed a bug that occurred when using <code><a href="../reference/as.DocumentTermMatrix.html">as.DocumentTermMatrix()</a></code> on a corpus stated by corpus ID / length-one character vector (#105).</li>
+<li>Removed a bug from the kwic,character-method, and the context,corpus-method that would result in odd behavior when either the left or right context is 0.</li>
+<li>An endemic encoding issue for fulltext output on Windows machines (latin1 encoding) has been solved by replacing internally <code><a href="https://rdrr.io/pkg/markdown/man/markdownToHTML.html">markdown::markdownToHTML</a></code> by a direct call to <code><a href="https://rdrr.io/pkg/markdown/man/renderMarkdown.html">markdown::renderMarkdown</a></code>. On this occassion, some overhead preparing fulltext output has been removed.</li>
+<li>A bug that prevented getting extra left and right context for <code>kwic</code> objects has been removed (#102).</li>
+<li>The <code><a href="../reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix()</a></code>-method for <code>neighborhood</code>-objects returned a DocumentTermMatrix (unintendedly), this bug is removed now.</li>
+</ul>
+</div>
+<div id="documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h2>
+<ul>
+<li>Extended documentation for <code><a href="../reference/pmi.html">pmi()</a></code>-method and <code><a href="../reference/t_test.html">t_test()</a></code>-method.</li>
+<li>New <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code>-method for <code>corpus</code>-class.</li>
+<li>The documentation for the <code>corpus</code>-class has been rewritten entirely, and the documentation for the <code>remote_corpus</code>-class has been integrated, whereas methods applicable to the <code>remote_corpous</code>-class were integrated into the documentation objects for the respective methods.</li>
+<li>The documentation for the <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code>-method has been reworked and expanded thoroughly (#65). On this occasion, test coverage for the method has been improved significantly. (Everything is tested now apart from parallelisation.)</li>
+</ul>
+</div>
+</div>
     <div id="polminer-0-7-11" class="section level1">
 <h1 class="page-header">
 <a href="#polminer-0-7-11" class="anchor"></a>polmineR 0.7.11<small> 2019-01-08 </small>
 </h1>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>NEW FEATURES</h2>
+<a href="#new-features-1" class="anchor"></a>NEW FEATURES</h2>
 <ul>
 <li>A <code><a href="../reference/all_cooccurrences.html">Cooccurrences()</a></code>-method and a <code>Cooccurrences</code>-class have been migrated from the (experimental) polmineR.graph package to polmineR to generate and manage all cooccurrences in a corpus/<code>partition</code>. A <code>cooccurrenes()</code>-method produces a subset of <code>Cooccurrences</code>-class object and is the basis for ensuring that results are identical.</li>
 <li>New functionality to make using corpora more robust when paths include special characters: There is now a temporary data directory which is a subdirectory of the per-session temporary directory. A new function <code><a href="../reference/registry.html">data_dir()</a></code> will return this temporary data directory. The <code><a href="../reference/use.html">use()</a></code>-function will now check for non-ASCII characters in the path to binary corpus data and move the corpus data to the temporary data directory (a subdirectory of the directory returned by <code><a href="../reference/registry.html">data_dir()</a></code>), if necessary. An argument <code>tmp</code> added to <code><a href="../reference/use.html">use()</a></code> will force using a temporary directory. The temporary files are removed when the package is detached.</li>
-<li>Experimental functionality for a non-standard evaluation approach to create subcorpora via a <code><a href="../reference/corpus_class.html">zoom()</a></code>-method. See documentation for (new) <code>corpus</code>-class (<code><a href="../reference/corpus_class.html">?"corpus-class"</a></code>) and extended documentation for <code>partition</code>-class (<code><a href="../reference/partition_class.html">?"partition-class"</a></code>). A new <code><a href="../reference/corpus-method.html">corpus()</a></code>-method for character vector serves as a constructor. This is a beginning of somewhat re-arranging the class structure: The <code>regions</code>-class now inherits from the new <code>corpus</code>-class, and a new <code>subcorpus</code>-class inherits from the <code>regions</code>-class.</li>
+<li>Experimental functionality for a non-standard evaluation approach to create subcorpora via a <code><a href="../reference/corpus-class.html">zoom()</a></code>-method. See documentation for (new) <code>corpus</code>-class (<code><a href="../reference/corpus-class.html">?"corpus-class"</a></code>) and extended documentation for <code>partition</code>-class (<code><a href="../reference/partition_class.html">?"partition-class"</a></code>). A new <code><a href="../reference/corpus-class.html">corpus()</a></code>-method for character vector serves as a constructor. This is a beginning of somewhat re-arranging the class structure: The <code>regions</code>-class now inherits from the new <code>corpus</code>-class, and a new <code>subcorpus</code>-class inherits from the <code>regions</code>-class.</li>
 <li>A new function <code><a href="../reference/cqp.html">check_cqp_query()</a></code> offers a preliminary check whether a CQP query may be faulty. It is used by the <code><a href="../reference/cpos-method.html">cpos()</a></code>-method, if the new argument <code>check</code> is TRUE. All higher-level functions calling <code><a href="../reference/cpos-method.html">cpos()</a></code> also include this new argument. Faulty queries may still cause a crash of the R session, but the most common source is prevent now, hopefully.</li>
-<li>A <code><a href="https://www.rdocumentation.org/packages/base/topics/format">format()</a></code>-method is defined for <code>textstat</code>, <code>cooccurrences</code>, and <code>features</code>, moving the formatting of tables out of the <code><a href="../reference/view.html">view()</a></code>, and <code><a href="https://www.rdocumentation.org/packages/base/topics/print">print()</a></code>-methods. This will be useful when including tables in Rmarkdown documents.</li>
+<li>A <code><a href="https://rdrr.io/r/base/format.html">format()</a></code>-method is defined for <code>textstat</code>, <code>cooccurrences</code>, and <code>features</code>, moving the formatting of tables out of the <code><a href="../reference/view.html">view()</a></code>, and <code><a href="https://rdrr.io/r/base/print.html">print()</a></code>-methods. This will be useful when including tables in Rmarkdown documents.</li>
+<li>The <code><a href="../reference/highlight.html">highlight()</a></code>-method for <code>character</code> and <code>html</code> objects now has the arguments <code>regex</code> and <code>perl</code>, so that regular expressions can be used for highlighting (#99).</li>
+<li>The <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code>-method for <code>kwic</code>-objects has seen a small performance improvement, and is more robust now if the order of columns changes unexpectedly.</li>
 </ul>
 </div>
 <div id="minor-improvements" class="section level2">
@@ -133,7 +248,7 @@
 <li>The functions <code><a href="../reference/registry.html">registry()</a></code> and <code><a href="../reference/registry.html">data_dir()</a></code> now accept an argument <code>pkg</code>. The functions will return the path to the registry directory / the data directory within a package, if the argument is used.</li>
 <li>The <code>data.table</code>-package used to be imported entirely, now the package is imported selectively. To avoid namespace conflicts, the former S4 method <code>as.data.table()</code> is now a S3 method. Warnings appearing if the <code>data.table</code> package is loaded after polmineR are now omitted.</li>
 <li>The <code>coerce()</code>-methodes to turn <code>textstat</code>, <code>cooccurrences</code>, <code>features</code> and <code>kwic</code> objects into htmlwidgets now set a <code>pageLength</code>.</li>
-<li>New methods for <code>partition_bundle</code> objects: <code>[[&lt;-</code>, <code>$</code>, <code>$&lt;-</code>
+<li>New methods for <code>partition_bundle</code> objects: <code>[[&lt;-</code>, <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code>$&lt;-</code>
 </li>
 <li>Rework of indexing <code>textstat</code> objects.</li>
 <li>A slot <code>p_attribute</code> has been added to the <code>kwic</code>-class; <code><a href="../reference/kwic.html">kwic()</a></code>-methods and methods to process <code>kwic</code>-objects are now able to use the attribute thus indicated, and not just the p-attribute “word”.</li>
@@ -145,11 +260,11 @@
 <li>The <code><a href="../reference/ngrams.html">ngrams()</a></code>-method will work for corpora, and a new <code>show()</code>-method for <code>textstat</code>-object generates a proper output (#27).</li>
 </ul>
 </div>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>BUG FIXES</h2>
+<a href="#bug-fixes-1" class="anchor"></a>BUG FIXES</h2>
 <ul>
-<li>Any usage of <code><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempdir()</a></code> is wrapped into normalizePath(…, winslash = “/”), to avoid mixture of file separators in a path, which may cause problems on Windows systems.</li>
+<li>Any usage of <code><a href="https://rdrr.io/r/base/tempfile.html">tempdir()</a></code> is wrapped into normalizePath(…, winslash = “/”), to avoid mixture of file separators in a path, which may cause problems on Windows systems.</li>
 <li>In the calculation of cooccurrences, the node has previously been included in the window size. This has been corrected.</li>
 <li>The <code><a href="../reference/kwic.html">kwic()</a></code>-method for corpora returned one surplus token to the left and to the right of the query. The excess tokens are not removed.</li>
 <li>The object returned by the <code><a href="../reference/kwic.html">kwic()</a></code>-method for <code>character</code>-objects method did not include the correct position of matches in the <code>cpos</code> slot. Corrected.</li>
@@ -169,7 +284,7 @@
 <ul>
 <li>Substantial rework of the documentation of the <code><a href="../reference/ll.html">ll()</a></code>, and <code><a href="../reference/chisquare-method.html">chisquare()</a></code>-methods to make the statistical procedure used transparent.</li>
 <li>Expanded documentation for <code><a href="../reference/cooccurrences.html">cooccurrences()</a></code>-method to explain subsetting results vs applying positivelist/negativelist (#28).</li>
-<li>Wrote some documentation for the <code><a href="https://www.rdocumentation.org/packages/base/topics/Round">round()</a></code>-method for <code>textstat</code>-objects that will show up in documentation of <code>textstat</code> class.</li>
+<li>Wrote some documentation for the <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code>-method for <code>textstat</code>-objects that will show up in documentation of <code>textstat</code> class.</li>
 <li>Improved documentation of the <code><a href="../reference/mail-method.html">mail()</a></code>-method (#31).</li>
 <li>In the examples for the <code><a href="../reference/decode.html">decode()</a></code>-function, using the REUTERS corpus replaces the usage of the GERMAPARLMINI corpus, to reduce time consumed when checking the package.</li>
 </ul>
@@ -179,11 +294,11 @@
 <h1 class="page-header">
 <a href="#polminer-0-7-10" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
 </h1>
-<div id="new-features-1" class="section level3">
+<div id="new-features-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-2" class="anchor"></a>NEW FEATURES</h3>
 <ul>
-<li>The package now offers a simplified and seamless workflow for dictionary-based sentiment analysis: The <code><a href="../reference/weigh-method.html">weigh()</a></code>-method has been implemented for the classes <code>count</code> and <code>count_bundle</code>. Via inheritance, it will also be available for the <code>partition</code>- and <code>partition_bundle</code>-classes. Then, a new <code><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary()</a></code>-method for <code>partition</code>-class objects is introduced. If the object has been weighed, the list that is returned will include a report on weights. There is an example that explains the workflow.</li>
+<li>The package now offers a simplified and seamless workflow for dictionary-based sentiment analysis: The <code><a href="../reference/weigh-method.html">weigh()</a></code>-method has been implemented for the classes <code>count</code> and <code>count_bundle</code>. Via inheritance, it will also be available for the <code>partition</code>- and <code>partition_bundle</code>-classes. Then, a new <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-method for <code>partition</code>-class objects is introduced. If the object has been weighed, the list that is returned will include a report on weights. There is an example that explains the workflow.</li>
 <li>The <code>partition_bundle</code>-method for <code>context</code>-objects has been reworked entirely (and is working again); a new <code>partition</code>-method for <code>context</code>-objects has been introduced. Buth steps are intended for workflows for dictionary-based sentiment analysis.</li>
 <li>The <code><a href="../reference/highlight.html">highlight()</a></code>-method is now implemented for class <code>kwic</code>. You can highlight words in the neighborhood of a node that are part of a dictionaty.</li>
 <li>A new <code>knit_print()</code>-method for <code>textstat</code>- and <code>kwic</code>-objects offers a seamless inclusion of analyses in Rmarkdown documents.</li>
@@ -201,12 +316,12 @@
 <li>The <code><a href="../reference/regions_class.html">as.regions()</a></code>-function has been turned into a <code><a href="../reference/regions_class.html">as.regions()</a></code>-method to have a more generic tool.</li>
 <li>Some refactoring of the <code>context</code>-method, so that full use of <code>data.table</code> speeds up things.</li>
 <li>The <code><a href="../reference/highlight.html">highlight()</a></code>-method allows definitions of terms to be highlighted to be passed in via three dots (…); no explicit list necessary.</li>
-<li>A new <code><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character()</a></code>-method for kwic-class objects is introduced.</li>
+<li>A new <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code>-method for kwic-class objects is introduced.</li>
 </ul>
 </div>
-<div id="bug-fixes-1" class="section level3">
+<div id="bug-fixes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-2" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>The <code>size_coi</code>-slot (coi for corpus of interest) of the <code>context</code>-object included the node; the node (i.e. matches for queries) is excluded now from the count of size_coi.</li>
 <li>When calling <code><a href="../reference/use.html">use()</a></code>, the registry directory is reset for CQP, so that the corpora in the package that have been activated can be used with CQP syntax.</li>
@@ -506,6 +621,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#polminer-0-8-0">0.8.0</a></li>
         <li><a href="#polminer-0-7-11">0.7.11</a></li>
         <li><a href="#polminer-0-7-10">0.7.10</a></li>
         <li><a href="#polminer-0-7-9">0.7.9</a></li>
@@ -532,19 +648,23 @@
 
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

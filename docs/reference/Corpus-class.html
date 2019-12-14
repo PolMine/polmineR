@@ -6,23 +6,27 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Corpus class. — Corpus • polmineR</title>
+<title>Corpus class initialization — corpus-class • polmineR</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,11 +34,22 @@
 
 
 
-<meta property="og:title" content="Corpus class. — Corpus" />
 
-<meta property="og:description" content="The R6 Corpus class offers a set of methods to retrieve and manage CWB
-indexed corpora." />
+<meta property="og:title" content="Corpus class initialization — corpus-class" />
+<meta property="og:description" content="Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+structure for large, linguistically annotated corpora. The
+corpus-class keeps basic information on a CWB corpus. Corresponding to
+the name of the class, the corpus-method is the initializer for
+objects of the corpus class. A CWB corpus can also be hosted remotely
+on an OpenCPU server (see www.opencpu.org). The remote_corpus
+class (which inherits from the corpus class) will handle respective
+information. A (limited) set of polmineR functions and methods can be
+executed on the corpus on the remote machine from the local R session by
+calling them on the remote_corpus object. Calling the
+corpus-method without an argument will return a data.frame with
+basic information on the corpora that are available." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -46,6 +61,7 @@ indexed corpora." />
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -64,7 +80,7 @@ indexed corpora." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -72,7 +88,7 @@ indexed corpora." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -87,6 +103,9 @@ indexed corpora." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/OpenCPU.html">OpenCPU</a>
+    </li>
+    <li>
       <a href="../articles/vignette.html">Introducing the 'polmineR'-package</a>
     </li>
   </ul>
@@ -95,7 +114,6 @@ indexed corpora." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -105,107 +123,178 @@ indexed corpora." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Corpus class.</h1>
+    <h1>Corpus class initialization</h1>
     
-    <div class="hidden name"><code>Corpus-class.Rd</code></div>
+    <div class="hidden name"><code>corpus-class.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>The R6 <code>Corpus</code> class offers a set of methods to retrieve and manage CWB
-indexed corpora.</p>
-    
+    <p>Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+structure for large, linguistically annotated corpora. The
+<code>corpus</code>-class keeps basic information on a CWB corpus. Corresponding to
+the name of the class, the <code>corpus</code>-method is the initializer for
+objects of the <code>corpus</code> class. A CWB corpus can also be hosted remotely
+on an OpenCPU server (see <a href='www.opencpu.org'>www.opencpu.org</a>). The <code>remote_corpus</code>
+class (which inherits from the <code>corpus</code> class) will handle respective
+information. A (limited) set of polmineR functions and methods can be
+executed on the corpus on the remote machine from the local R session by
+calling them on the <code>remote_corpus</code> object. Calling the
+<code>corpus</code>-method without an argument will return a <code>data.frame</code> with
+basic information on the corpora that are available.</p>
     </div>
 
-    <pre class="usage"><span class='no'>Corpus</span></pre>
-        
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <pre class="usage"><span class='co'># S4 method for character</span>
+<span class='fu'>corpus</span>(<span class='no'>.Object</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>user</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>password</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-    <p>An object of class <code>R6ClassGenerator</code> of length 24.</p>
-    
-    <h2 class="hasAnchor" id="fields"><a class="anchor" href="#fields"></a>Fields</h2>
+<span class='co'># S4 method for missing</span>
+<span class='fu'>corpus</span>()</pre>
 
-    
-    <dl class='dl-horizontal'>
-<dt><code>corpus</code></dt><dd><p>character vector (length 1), a CWB corpus</p></dd>
-    <dt><code>encoding</code></dt><dd><p>encoding of the corpus (typically 'UTF-8' or 'latin1'), assigned
-automatically upon initialization of the corpus</p></dd>
-    <dt><code>cpos</code></dt><dd><p>a two-column <code>matrix</code> with regions of a corpus underlying the
-s-attributes of the <code>data.table</code> in field <code>s_attributes</code></p></dd>
-    <dt><code>s_attributes</code></dt><dd><p>a <code>data.table</code> with the values of a set of s-attributes</p></dd>
-    <dt><code>stat</code></dt><dd><p>a <code>data.table</code> with counts</p></dd>
-</dl>
-    
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>.Object</th>
+      <td><p>The upper-case ID of a CWB corpus stated by a
+length-one <code>character</code> vector.</p></td>
+    </tr>
+    <tr>
+      <th>server</th>
+      <td><p>If <code>NULL</code> (default), the corpus is expected to be present
+locally. If provided, the name of an OpenCPU server (can be an IP address)
+that hosts a corpus, or several corpora. The <code>corpus</code>-method will then
+instantiate a <code>remote_corpus</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>user</th>
+      <td><p>If the corpus resides on a remote server and requires
+authentication, the respective username.</p></td>
+    </tr>
+    <tr>
+      <th>password</th>
+      <td><p>If the corpus resides on a remote server and requires
+authentication, the respective username.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Calling <code>corpus()</code> will return a <code>data.frame</code> listing the corpora
+available locally and described in the active registry directory, and some
+basic information on the corpora.</p>
+<p>A <code>corpus</code> object is instantiated by passing a corpus ID as
+  argument <code>.Object</code>. Following the conventions of the Corpus Workbench
+  (CWB), Corpus IDs are written in upper case. If <code>.Object</code> includes
+  lower case letters, the <code>corpus</code> object is instantiated nevertheless,
+  but a warning is issued to prevent bad practice. If <code>.Object</code> is not a
+  known corpus, the error message will include a suggestion if there is a
+  potential candidate that can be identified by <code>agrep</code>.</p>
+<p>A limited set of methods of the <code>polmineR</code> package is exposed
+  to be executed on a remote OpenCPU server. As a matter of convenience, the
+  whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
+  environment variable "OPENCPU_SERVER". Environment variables for R sessions
+  can be set easily in the <code>.Renviron</code> file. A convenient way to do this
+  is to call <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_environ()</a></code>.</p>
+    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
-    <dl class='dl-horizontal'>
-  <dt>corpus</dt><dd><p>a corpus</p></dd>
-  <dt>registryDir</dt><dd><p>the directory where the registry file resides</p></dd>
-  <dt>dataDir</dt><dd><p>the data directory of the corpus</p></dd>
-  <dt>p_attribute</dt><dd><p>p-attribute, to perform count</p></dd>
-  <dt>s_attributes</dt><dd><p>s-attributes</p></dd>
-  <dt>decode</dt><dd><p>logical, whether to turn token ids into strings upon counting</p></dd>
-  <dt>as.html</dt><dd><p>logical</p></dd>
-</dl>
-    
-    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
-    
-    <dl class='dl-horizontal'>
-  <dt><code>initialize(corpus, p_attribute = NULL, s_attributes = NULL)</code></dt><dd><p>Initialize a new object of class <code>Corpus</code>.</p></dd>
-  <dt><code><a href='count-method.html'>count(p_attribute = getOption("polmineR.p_attribute"), decode = TRUE)</a></code></dt><dd><p>Perform counts.</p></dd>
-  <dt><code>as.partition()</code></dt><dd><p>turn <code>Corpus</code> into a partition</p></dd>
-  <dt><code>getInfo(as.html = FALSE)</code></dt><dd><p></p></dd>
-  <dt><code>showInfo()</code></dt><dd><p></p></dd>
+<dl class='dl-horizontal'>
+<dt><code>corpus</code></dt><dd><p>A length-one <code>character</code> vector, the upper-case ID of a CWB
+corpus.</p></dd>
+
+<dt><code>data_dir</code></dt><dd><p>The directory where the files for the indexed corpus are.</p></dd>
+
+<dt><code>type</code></dt><dd><p>The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).</p></dd>
+
+<dt><code>name</code></dt><dd><p>An additional name for the object that may be more telling than the corpus ID.</p></dd>
+
+<dt><code>encoding</code></dt><dd><p>The encoding of the corpus, given as a length-one <code>character</code> vector.</p></dd>
+
+<dt><code>server</code></dt><dd><p>The URL (can be IP address) of the OpenCPU server. The slot is
+available only with the <code>remote_corpus</code> class inheriting from the
+<code>corpus</code> class.</p></dd>
+
+<dt><code>user</code></dt><dd><p>If the corpus on the server requires authentication, the username.</p></dd>
+
+<dt><code>password</code></dt><dd><p>If the corpus on the server requires authentication, the password.</p></dd>
+
 </dl>
-    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Methods to extract basic information from a <code>corpus</code> object are
+  covered by the <a href='corpus_methods.html'>corpus-methods</a> documentation object. Use the
+  <code><a href='s_attributes-method.html'>s_attributes</a></code> method to get information on structural
+  attributes. Analytical methods available for <code>corpus</code> objects are
+  <code><a href='size-method.html'>size</a></code>, <code><a href='count-method.html'>count</a></code>, <code><a href='dispersion-method.html'>dispersion</a></code>,
+  <code><a href='kwic.html'>kwic</a></code>, <code><a href='cooccurrences.html'>cooccurrences</a></code>,
+  <code><a href='as.DocumentTermMatrix.html'>as.TermDocumentMatrix</a></code>.</p>
+<p>Other classes to manage corpora: <code><a href='regions_class.html'>regions</a></code>,
+  <code><a href='subcorpus-class.html'>subcorpus</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>)
-<span class='no'>infofile</span> <span class='kw'>&lt;-</span> <span class='no'>REUTERS</span>$<span class='fu'>getInfo</span>()
-<span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()) <span class='no'>REUTERS</span>$<span class='fu'>showInfo</span>()
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
+<span class='co'># get corpora present locally</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>()
 
-<span class='co'># use Corpus class to manage counts</span>
-<span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
-<span class='no'>REUTERS</span>$<span class='no'>stat</span></div><div class='output co'>#&gt;              word word_id count
-#&gt;    1:          03     728     1
-#&gt;    2:           1     709     3
-#&gt;    3:         1.1     964     1
-#&gt;    4:        1.11    1189     1
-#&gt;    5:        1.15    1185     1
-#&gt;   ---                          
-#&gt; 1188:   yesterday     693     4
-#&gt; 1189: yesterday's     683     1
-#&gt; 1190:         you     157     1
-#&gt; 1191:        zero     612     2
-#&gt; 1192:        zone     915     2</div><div class='input'>
-<span class='co'># use Corpus class for creating partitions</span>
-<span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"id"</span>, <span class='st'>"places"</span>))</div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: id</span></div><div class='output co'>#&gt; <span class='message'>... decoding s-attribute: places</span></div><div class='input'><span class='no'>usa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"usa"</span>)</div><div class='output co'>#&gt; <span class='message'>... encoding of the corpus is: latin1</span></div><div class='output co'>#&gt; <span class='message'>... initialize partition  </span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>sa</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"saudi-arabia"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... encoding of the corpus is: latin1</span></div><div class='output co'>#&gt; <span class='message'>... initialize partition  </span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'>
-<span class='no'>reut</span> <span class='kw'>&lt;-</span> <span class='no'>REUTERS</span>$<span class='fu'>as.partition</span>()</div></pre>
+<span class='co'># initialize corpus object</span>
+<span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"REUTERS"</span>)
+<span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span> (<span class='st'>"reuters"</span>) <span class='co'># will work, but will result in a warning</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using corpus 'REUTERS', not 'reuters' - note that corpus ids are expected to be in upper case throughout.</span></div><div class='input'>
+
+<span class='co'># apply core polmineR methods</span>
+<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='size-method.html'>size</a></span>(<span class='no'>r</span>)
+<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>r</span>)
+<span class='no'>c</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>r</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dispersion-method.html'>dispersion</a></span>(<span class='no'>r</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>r</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>r</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+
+<span class='co'># used corpus initialization in a pipe</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>()
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+
+<span class='co'># working with a remote corpus</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>REUTERS</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"OPENCPU_SERVER"</span>))
+<span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='fu'><a href='size-method.html'>size</a></span>(<span class='no'>REUTERS</span>)
+<span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>REUTERS</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+
+<span class='no'>GERMAPARL</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"GERMAPARL"</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"OPENCPU_SERVER"</span>))
+<span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>GERMAPARL</span>)
+<span class='fu'><a href='size-method.html'>size</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>GERMAPARL</span>)
+<span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>GERMAPARL</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>)
+<span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>GERMAPARL</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Islam"</span>)
+
+<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='no'>GERMAPARL</span>, <span class='kw'>year</span> <span class='kw'>=</span> <span class='fl'>2000</span>)
+<span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>p</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"year"</span>)
+<span class='fu'><a href='size-method.html'>size</a></span>(<span class='no'>p</span>)
+<span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Islam"</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='st'>"date"</span>)
+
+<span class='no'>GERMAPARL</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"OPENCPU_SERVER"</span>))
+<span class='no'>s_attrs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>GERMAPARL</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"date"</span>)
+<span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>GERMAPARL</span>, <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-11-10"</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
-      <li><a href="#format">Format</a></li>
-
-      <li><a href="#fields">Fields</a></li>
-
       <li><a href="#arguments">Arguments</a></li>
-
-      <li><a href="#methods">Methods</a></li>
-      
+      <li><a href="#details">Details</a></li>
+      <li><a href="#slots">Slots</a></li>
+      <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -213,13 +302,16 @@ s-attributes of the <code>data.table</code> in field <code>s_attributes</code></
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

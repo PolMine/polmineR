@@ -93,7 +93,7 @@ available only with the \code{remote_corpus} class inheriting from the
 use("polmineR")
 
 # get corpora present locally
-corpus()
+y <- corpus()
 
 # initialize corpus object
 r <- corpus("REUTERS")
@@ -101,16 +101,16 @@ r <- corpus ("reuters") # will work, but will result in a warning
 
 
 # apply core polmineR methods
-size(r)
-s_attributes(r)
-count(r, query = "oil")
-dispersion(r, query = "oil", s_attribute = "id")
-kwic(r, query = "oil")
-cooccurrences(r, query = "oil")
+a <- size(r)
+b <- s_attributes(r)
+c <- count(r, query = "oil")
+d <- dispersion(r, query = "oil", s_attribute = "id")
+e <- kwic(r, query = "oil")
+f <- cooccurrences(r, query = "oil")
 
 # used corpus initialization in a pipe
-corpus("REUTERS") \%>\% s_attributes()
-corpus("REUTERS") \%>\% count(query = "oil")
+y <- corpus("REUTERS") \%>\% s_attributes()
+y <- corpus("REUTERS") \%>\% count(query = "oil")
 
 # working with a remote corpus
 \dontrun{

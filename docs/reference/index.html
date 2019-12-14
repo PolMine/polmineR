@@ -8,21 +8,25 @@
 
 <title>Function reference • polmineR</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,7 +34,9 @@
 
 
 
+
 <meta property="og:title" content="Function reference" />
+
 
 
 
@@ -42,6 +48,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -60,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -68,7 +75,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -83,6 +90,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/OpenCPU.html">OpenCPU</a>
+    </li>
+    <li>
       <a href="../articles/vignette.html">Introducing the 'polmineR'-package</a>
     </li>
   </ul>
@@ -91,7 +101,6 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -101,6 +110,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -130,6 +140,12 @@
           <p><code><a href="polmineR-package.html">polmineR()</a></code> </p>
         </td>
         <td><p>polmineR-package</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="polmineR-generics.html">get_info()</a></code> <code><a href="polmineR-generics.html">show_info()</a></code> </p>
+        </td>
+        <td><p>Generic methods defined in the polmineR package</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -147,27 +163,33 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="Corpus-class.html">Corpus</a></code> </p>
+          <p><code><a href="corpus-class.html">corpus(<i>&lt;character&gt;</i>)</a></code> <code><a href="corpus-class.html">corpus(<i>&lt;missing&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Corpus class.</p></td>
+        <td><p>Corpus class initialization</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="corpus-method.html">corpus()</a></code> </p>
+          <p><code><a href="corpus_methods.html">name(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_methods.html">get_corpus(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_methods.html">show(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_methods.html">`$`(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_methods.html">get_info(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_methods.html">show_info(<i>&lt;corpus&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get corpus/corpora available or used.</p></td>
+        <td><p>Corpus class methods</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="corpus_class.html">`$`(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_class.html">`==`(<i>&lt;corpus&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="corpus_class.html">`!=`(<i>&lt;corpus&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="corpus_class.html">`%in%`(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="corpus_class.html">zoom(<i>&lt;corpus&gt;</i>)</a></code> </p>
+          <p><code><a href="subset.html">subset(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="subset.html">subset(<i>&lt;character&gt;</i>)</a></code> <code><a href="subset.html">subset(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subset.html">subset(<i>&lt;remote_corpus&gt;</i>)</a></code> </p>
         </td>
-        <td><p>S4 class to wrap information on CWB corpora.</p></td>
+        <td><p>Subsetting corpora and subcorpora</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ocpu_exec.html">ocpu_exec()</a></code> </p>
+        </td>
+        <td><p>Execute code on OpenCPU server</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="slice.html">aggregate(<i>&lt;slice&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Virtual class clice.</p></td>
+        <td><p>Virtual class slice.</p></td>
       </tr><tr>
         
         <td>
@@ -201,27 +223,21 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="subcorpus-class.html">show(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
+          <p><code><a href="subcorpus-class.html">summary(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">`name<-`(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">get_corpus(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">size(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
         </td>
-        <td><p>S4 subcorpus class.</p></td>
+        <td><p>The S4 subcorpus class.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="subcorpus_bundle.html">show(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Bundled subcorpora</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="regions_class.html">as.regions()</a></code> <code><a href="regions_class.html">as.data.table(<i>&lt;regions&gt;</i>)</a></code> </p>
         </td>
         <td><p>Regions of a CWB corpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tempcorpus.html">tempcorpus()</a></code> </p>
-        </td>
-        <td><p>create a tempcorpus</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="tempcorpus_class.html">tempcorpus_class</a></code> </p>
-        </td>
-        <td><p>S4 class to capture core information on a temporary CWB corpus</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -235,13 +251,13 @@
         <td>
           <p><code><a href="kwic.html">kwic()</a></code> </p>
         </td>
-        <td><p>KWIC/concordance output.</p></td>
+        <td><p>Perform keyword-in-context (KWIC) analysis.</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="hits.html">hits()</a></code> </p>
         </td>
-        <td><p>Get Hits.</p></td>
+        <td><p>Get hits for query</p></td>
       </tr><tr>
         
         <td>
@@ -253,7 +269,7 @@
         <td>
           <p><code><a href="dispersion-method.html">dispersion()</a></code> </p>
         </td>
-        <td><p>Dispersion of a query or multiple queries</p></td>
+        <td><p>Dispersion of a query or multiple queries.</p></td>
       </tr><tr>
         
         <td>
@@ -295,15 +311,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="terms.html">terms(<i>&lt;partition&gt;</i>)</a></code> <code><a href="terms.html">terms(<i>&lt;character&gt;</i>)</a></code> </p>
+          <p><code><a href="terms.html">terms(<i>&lt;slice&gt;</i>)</a></code> <code><a href="terms.html">terms(<i>&lt;partition&gt;</i>)</a></code> <code><a href="terms.html">terms(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="terms.html">terms(<i>&lt;character&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get terms in <code>partition</code> or corpus.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="label_method.html">label()</a></code> <code><a href="label_method.html">`label<-`()</a></code> </p>
-        </td>
-        <td><p>Assign and get labels.</p></td>
       </tr><tr>
         
         <td>
@@ -345,7 +355,7 @@
         <td>
           <p><code><a href="as.VCorpus.html">as.VCorpus(<i>&lt;partition_bundle&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Coerce partition_bundle to VCorpus.</p></td>
+        <td><p>Get VCorpus.</p></td>
       </tr><tr>
         
         <td>
@@ -411,9 +421,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="html-method.html">html()</a></code> <code><a href="html-method.html">print(<i>&lt;html&gt;</i>)</a></code> </p>
+          <p><code><a href="html-method.html">html()</a></code> </p>
         </td>
         <td><p>Generate html from object.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="annotations.html">annotations()</a></code> <code><a href="annotations.html">`annotations<-`()</a></code> <code><a href="annotations.html">edit(<i>&lt;textstat&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Annotation functionality</p></td>
       </tr><tr>
         
         <td>
@@ -423,9 +439,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="browse.html">browse()</a></code> </p>
+          <p><code><a href="polmineR-defunct.html">browse()</a></code> <code><a href="polmineR-defunct.html">Corpus</a></code> </p>
         </td>
-        <td><p>Display in browser</p></td>
+        <td><p>Defunct methods and functions.</p></td>
       </tr><tr>
         
         <td>
@@ -456,6 +472,12 @@
           <p><code><a href="get_type.html">get_type()</a></code> </p>
         </td>
         <td><p>Get corpus/partition type.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="partition_to_string.html">partition_to_string</a></code> </p>
+        </td>
+        <td><p>Decode as String.</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -467,13 +489,13 @@
       <tr>
         
         <td>
-          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">name(<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">`name<-`(<i>&lt;textstat&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">show(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">knit_print(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">format(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
+          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">name(<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">`name<-`(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">show(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">knit_print(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">get_corpus(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">format(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
         </td>
         <td><p>S4 textstat superclass.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="count_class.html">length(<i>&lt;count&gt;</i>)</a></code> <code><a href="count_class.html">hist(<i>&lt;count&gt;</i>)</a></code> </p>
+          <p><code><a href="count_class.html">summary(<i>&lt;count&gt;</i>)</a></code> <code><a href="count_class.html">length(<i>&lt;count&gt;</i>)</a></code> <code><a href="count_class.html">hist(<i>&lt;count&gt;</i>)</a></code> </p>
         </td>
         <td><p>Count class.</p></td>
       </tr><tr>
@@ -485,7 +507,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="partition_class.html">summary(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">split(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">`$`(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">`==`(<i>&lt;partition&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="partition_class.html">`!=`(<i>&lt;partition&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="partition_class.html">`%in%`(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">zoom(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">as.regions(<i>&lt;partition&gt;</i>)</a></code> </p>
+          <p><code><a href="partition_class.html">p_attributes(<i>&lt;slice&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">as.regions(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">split(<i>&lt;partition&gt;</i>)</a></code> </p>
         </td>
         <td><p>Partition class and methods.</p></td>
       </tr><tr>
@@ -515,7 +537,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;character&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;partition&gt;</i>)</a></code> </p>
+          <p><code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;character&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;slice&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;partition&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get all cooccurrences in corpus/partition.</p></td>
       </tr><tr>
@@ -535,15 +557,9 @@
       <tr>
         
         <td>
-          <p><code><a href="kwic-class.html">show(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">knit_print(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.character(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">`[`(<i>&lt;kwic&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="kwic-class.html">subset(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.data.frame(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">length(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">sample(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">enrich(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">view(<i>&lt;kwic&gt;</i>)</a></code> </p>
+          <p><code><a href="kwic-class.html">get_corpus(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">count(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.DocumentTermMatrix(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.TermDocumentMatrix(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">show(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">knit_print(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.character(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">`[`(<i>&lt;kwic&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="kwic-class.html">subset(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">as.data.frame(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">length(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">sample(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">merge(<i>&lt;kwic_bundle&gt;</i>)</a></code> <code><a href="kwic-class.html">enrich(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">format(<i>&lt;kwic&gt;</i>)</a></code> <code><a href="kwic-class.html">view(<i>&lt;kwic&gt;</i>)</a></code> </p>
         </td>
-        <td><p>kwic (S4 class)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="Labels-class.html">Labels-class</a></code> </p>
-        </td>
-        <td><p>Labels class.</p></td>
+        <td><p>S4 kwic class</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -555,7 +571,7 @@
       <tr>
         
         <td>
-          <p><code><a href="bundle.html">`name<-`(<i>&lt;bundle&gt;</i>,<i>&lt;character&gt;</i>)</a></code> <code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names<-`(<i>&lt;bundle&gt;</i>,<i>&lt;vector&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`[[<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> </p>
+          <p><code><a href="bundle.html">`name<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names<-`(<i>&lt;bundle&gt;</i>,<i>&lt;vector&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`[[<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">get_corpus(<i>&lt;bundle&gt;</i>)</a></code> </p>
         </td>
         <td><p>Bundle Class</p></td>
       </tr><tr>
@@ -587,7 +603,7 @@
       <tr>
         
         <td>
-          <p><code><a href="registry.html">registry()</a></code> <code><a href="registry.html">data_dir()</a></code> </p>
+          <p><code><a href="registry.html">registry_move()</a></code> <code><a href="registry.html">registry()</a></code> <code><a href="registry.html">data_dir()</a></code> </p>
         </td>
         <td><p>Get registry and data directories.</p></td>
       </tr><tr>
@@ -605,12 +621,6 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="CQI.html">CQI.super</a></code> <code><a href="CQI.html">CQI.RcppCWB</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> <code><a href="CQI.html">CQI.cqpserver</a></code> </p>
-        </td>
-        <td><p>Interfaces for accessing the CWB</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="cpos-method.html">cpos()</a></code> </p>
         </td>
         <td><p>Get corpus positions for a query or queries.</p></td>
@@ -619,13 +629,13 @@
         <td>
           <p><code><a href="get_token_stream-method.html">get_token_stream()</a></code> </p>
         </td>
-        <td><p>Get Token Stream Based on Corpus Positions.</p></td>
+        <td><p>Get Token Stream.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="decode.html">decode()</a></code> <code><a href="decode.html">decode()</a></code> </p>
+          <p><code><a href="decode.html">decode()</a></code> </p>
         </td>
-        <td><p>Decode structural attribute, partition or corpus.</p></td>
+        <td><p>Decode corpus or subcorpus.</p></td>
       </tr><tr>
         
         <td>
@@ -663,7 +673,7 @@
       <tr>
         
         <td>
-          <p><code><a href="renamed.html">sAttributes()</a></code> <code><a href="renamed.html">pAttributes()</a></code> <code><a href="renamed.html">getTokenStream()</a></code> <code><a href="renamed.html">getTerms()</a></code> <code><a href="renamed.html">getEncoding()</a></code> <code><a href="renamed.html">partitionBundle()</a></code> <code><a href="renamed.html">as.partitionBundle()</a></code> <code><a href="renamed.html">setTemplate()</a></code> <code><a href="renamed.html">getTemplate()</a></code> </p>
+          <p><code><a href="renamed.html">sAttributes()</a></code> <code><a href="renamed.html">pAttributes()</a></code> <code><a href="renamed.html">getTokenStream()</a></code> <code><a href="renamed.html">getTerms()</a></code> <code><a href="renamed.html">getEncoding()</a></code> <code><a href="renamed.html">partitionBundle()</a></code> <code><a href="renamed.html">as.partitionBundle()</a></code> <code><a href="renamed.html">setTemplate()</a></code> <code><a href="renamed.html">getTemplate()</a></code> <code><a href="renamed.html">corpus(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="renamed.html">corpus(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="renamed.html">corpus(<i>&lt;kwic&gt;</i>)</a></code> </p>
         </td>
         <td><p>Renamed Functions</p></td>
       </tr>
@@ -689,19 +699,23 @@
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Andreas Blaette.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

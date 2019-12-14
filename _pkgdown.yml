@@ -6,13 +6,16 @@ reference:
     desc: Getting started with polmineR (CLI And GUI usage).
     contents:
       - polmineR
+      - polmineR-generics
   - title: "Corpora and subcorpora"
     desc: Corpora, subcorpora/partitions, and partition_bundle objects are the point of departure for any analysis using polmineR. Constructors introduced in the next section require an understanding of basic methods and classes to generate and manage (sub-)corpora
     contents:
       - use
-      - Corpus
       - corpus
       - corpus-class
+      - corpus-methods
+      - subset
+      - ocpu_exec
       - slice
       - partition
       - partition_bundle
@@ -20,9 +23,8 @@ reference:
       - s_attributes
       - as.speeches
       - subcorpus-class
+      - subcorpus_bundle-class
       - regions
-      - tempcorpus
-      - tempcorpus_class
   - title: "Methods I: Basic Vocabulary"
     desc: Data analysis using polmineR will usually start by calling a constructor method resulting in an S4 class object with the name of the calling method. All methods basic vocabulary can be applied to corpora (defined by a character vector), to partitions, and to partition_bundle objects, some are applicable to additional classes. These methods are designed to be used in a pipe.
     contents:
@@ -39,7 +41,6 @@ reference:
     contents:
       - size
       - terms
-      - label
       - enrich
       - trim
       - noise
@@ -60,6 +61,7 @@ reference:
     contents: 
       - read
       - html
+      - annotations
       - as.markdown
       - browse
       - view
@@ -67,6 +69,7 @@ reference:
       - tooltips
       - get_template
       - get_type
+      - partition_to_string
   - title: "The 'textstat' Class & Childs"
     desc: The main feature of the textstat class and of classes inheriting from it is that it keeps statistical information about a corpus or partition in a data.table in the field 'stat'. Methods defined for the textstat superclass are available for its child classes, unless they are overloaded in a specified manner.
     contents:
@@ -84,7 +87,6 @@ reference:
     desc: xxx
     contents:
       - kwic-class
-      - Labels-class
   - title: "The 'bundle' Class & Childs"
     desc: S4 classes for managing text analysis.
     contents:
@@ -98,7 +100,6 @@ reference:
       - registry
       - registry_reset
       - registry_get_name
-      - CQI.super
       - cpos
       - get_token_stream
       - decode

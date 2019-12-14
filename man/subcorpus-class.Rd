@@ -87,8 +87,8 @@ use("polmineR")
 r <- corpus("REUTERS")
 k <- subset(r, grepl("kuwait", places))
 name(k) <- "kuwait"
-summary(k)
-size(k)
+y <- summary(k)
+s <- size(k)
 
 # the same with a magrittr pipe
 corpus("REUTERS") \%>\%
@@ -101,11 +101,11 @@ stone <- corpus("GERMAPARLMINI") \%>\%
   subset(speaker == "Frank-Walter Steinmeier")
 
 # perform count for subcorpus
-corpus("REUTERS") \%>\% subset(grep("kuwait", places)) \%>\% count(p_attribute = "word")
-corpus("REUTERS") \%>\% subset(grep("saudi-arabia", places)) \%>\% count('"Saudi" "Arabia"')
+n <- corpus("REUTERS") \%>\% subset(grep("kuwait", places)) \%>\% count(p_attribute = "word")
+n <- corpus("REUTERS") \%>\% subset(grep("saudi-arabia", places)) \%>\% count('"Saudi" "Arabia"')
   
 # keyword-in-context analysis (kwic)   
-corpus("REUTERS") \%>\% subset(grep("kuwait", places)) \%>\% kwic("oil")
+k <- corpus("REUTERS") \%>\% subset(grep("kuwait", places)) \%>\% kwic("oil")
 
 }
 \seealso{

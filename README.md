@@ -1,7 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![License](https://img.shields.io/aur/license/yaourt.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Travis-CI Build
@@ -69,7 +70,7 @@ repository.
 
 ``` r
 install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de/packages")
-install.packages("europarl.en", repos = "http://polmine.sowi.uni-due.de/packages")
+install.packages("europarl", repos = "http://polmine.sowi.uni-due.de/packages")
 ```
 
 Calling the `use()`-function will activate a corpus included in a data
@@ -77,8 +78,13 @@ package. The registry files describing the corpora in a package are
 added to the session registry directory.
 
 ``` r
-use("europarl.en") # activate the corpus in the europarl-en package
+use("europarl") # activate the corpus in the europarl-en package
+#> ... activating corpus: EUROPARL-DE
 #> ... activating corpus: EUROPARL-EN
+#> ... activating corpus: EUROPARL-ES
+#> ... activating corpus: EUROPARL-FR
+#> ... activating corpus: EUROPARL-IT
+#> ... activating corpus: EUROPARL-NL
 ```
 
 An advantage of keeping corpora in data packages are the versioning and

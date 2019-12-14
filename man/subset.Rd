@@ -71,12 +71,12 @@ sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
 
 # providing the value for s-attribute as a variable
 who <- "Volker Kauder"
-subset(a, quote(speaker == who))
+sc <- subset(a, quote(speaker == who))
 
 # use bquote for quasiquotation when using a variable for subsetting in a loop
 for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
    sc <- subset(a, bquote(speaker == .(who)))
-   print(size(sc))
+   if (interactive()) print(size(sc))
 }
 
 # equivalent procedure with lapply (DOES NOT WORK YET)

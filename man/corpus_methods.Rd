@@ -64,8 +64,8 @@ corpus("GERMAPARLMINI") \%>\% get_info()
 corpus("GERMAPARLMINI") \%>\% show_info()
 
 # show-method 
-corpus("REUTERS") \%>\% show()
-corpus("REUTERS") # show is called implicitly
+if (interactive()) corpus("REUTERS") \%>\% show()
+if (interactive()) corpus("REUTERS") # show is called implicitly
 
 # get corpus ID
 corpus("REUTERS") \%>\% get_corpus()

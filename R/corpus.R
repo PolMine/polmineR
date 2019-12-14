@@ -172,12 +172,12 @@ setMethod("corpus", "missing", function(){
 #' 
 #' # providing the value for s-attribute as a variable
 #' who <- "Volker Kauder"
-#' subset(a, quote(speaker == who))
+#' sc <- subset(a, quote(speaker == who))
 #' 
 #' # use bquote for quasiquotation when using a variable for subsetting in a loop
 #' for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
 #'    sc <- subset(a, bquote(speaker == .(who)))
-#'    print(size(sc))
+#'    if (interactive()) print(size(sc))
 #' }
 #' 
 #' # equivalent procedure with lapply (DOES NOT WORK YET)
@@ -384,8 +384,8 @@ setMethod("show", "corpus", function(object){
 #'   s-attribute stated with argument \code{name}.
 #' @examples
 #' # show-method 
-#' corpus("REUTERS") %>% show()
-#' corpus("REUTERS") # show is called implicitly
+#' if (interactive()) corpus("REUTERS") %>% show()
+#' if (interactive()) corpus("REUTERS") # show is called implicitly
 #' 
 #' # get corpus ID
 #' corpus("REUTERS") %>% get_corpus()

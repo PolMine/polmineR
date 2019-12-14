@@ -58,8 +58,8 @@ NULL
 #' 
 #' # assign values; note that is an in-place operation using the reference
 #' # semantics of the data.table
-#' annotations(o, i = 77, j = 1, value = FALSE)
-#' annotations(o, i = 78, j = 1, value = FALSE)
+#' # annotations(o, i = 77, j = 1, value = FALSE)
+#' # annotations(o, i = 78, j = 1, value = FALSE)
 #' annotations(o)
 #' 
 #' \dontrun{

@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![License](https://img.shields.io/aur/license/yaourt.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Travis-CI Build Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev)](https://travis-ci.org/PolMine/polmineR)
@@ -55,13 +55,13 @@ Indexed corpora wrapped into R data packages can be installed from a (private) p
 
 ```{r install.corpus, eval = FALSE}
 install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de/packages")
-install.packages("europarl.en", repos = "http://polmine.sowi.uni-due.de/packages")
+install.packages("europarl", repos = "http://polmine.sowi.uni-due.de/packages")
 ```
 
 Calling the `use()`-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.
 
 ```{r use, eval = TRUE}
-use("europarl.en") # activate the corpus in the europarl-en package
+use("europarl") # activate the corpus in the europarl-en package
 ```
 
 An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. The corpora described in the registry directory defined by the environment variable CORPUS_REGISTRY will be added to the session registry directory when loading polmineR.

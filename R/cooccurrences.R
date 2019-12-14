@@ -299,8 +299,8 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]
 #' y <- cooccurrences(pb_min, query = "Deutschland")
-#' y[[1]]
-#' y[[2]]
+#' if (interactive()) y[[1]]
+#' if (interactive()) y[[2]]
 #' 
 #' y2 <- corpus("GERMAPARLMINI") %>%
 #'   subset(speaker %in% c("Hubertus Heil", "Angela Dorothea Merkel")) %>%

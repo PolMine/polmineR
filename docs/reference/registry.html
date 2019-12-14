@@ -6,23 +6,27 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get registry and data directories. — registry • polmineR</title>
+<title>Get registry and data directories. — registry_move • polmineR</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,9 +34,9 @@
 
 
 
-<meta property="og:title" content="Get registry and data directories. — registry" />
 
-<meta property="og:description" content="The Corpus Workbench (CWB) uses a registry directory with (txt) files
+<meta property="og:title" content="Get registry and data directories. — registry_move" />
+<meta property="og:description" content="The Corpus Workbench (CWB) uses a registry directory with plain text files
 describing corpora in a standardized format. The binary files of a corpus are
 stored in a data directory defined in the registry directory. The
 registry and data_dir functions return the respective
@@ -40,6 +44,7 @@ direcories within a package, if the argument pkg is used, or the
 temporary registry and data directory in the per-session temporary directory,
 if pkg is NULL (default value)." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -51,6 +56,7 @@ if pkg is NULL (default value)." />
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -69,7 +75,7 @@ if pkg is NULL (default value)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -77,7 +83,7 @@ if pkg is NULL (default value)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -92,6 +98,9 @@ if pkg is NULL (default value)." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/OpenCPU.html">OpenCPU</a>
+    </li>
+    <li>
       <a href="../articles/vignette.html">Introducing the 'polmineR'-package</a>
     </li>
   </ul>
@@ -100,7 +109,6 @@ if pkg is NULL (default value)." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -110,6 +118,7 @@ if pkg is NULL (default value)." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -121,64 +130,83 @@ if pkg is NULL (default value)." />
     </div>
 
     <div class="ref-description">
-    
-    <p>The Corpus Workbench (CWB) uses a registry directory with (txt) files
+    <p>The Corpus Workbench (CWB) uses a registry directory with plain text files
 describing corpora in a standardized format. The binary files of a corpus are
 stored in a data directory defined in the registry directory. The
 <code>registry</code> and <code>data_dir</code> functions return the respective
 direcories within a package, if the argument <code>pkg</code> is used, or the
 temporary registry and data directory in the per-session temporary directory,
 if <code>pkg</code> is <code>NULL</code> (default value).</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>registry</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>registry_move</span>(<span class='no'>corpus</span>, <span class='no'>registry</span>, <span class='no'>registry_new</span>, <span class='no'>home_dir_new</span>)
+
+<span class='fu'>registry</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>data_dir</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>corpus</th>
+      <td><p>The ID of the corpus for which the registry file shall be moved.</p></td>
+    </tr>
+    <tr>
+      <th>registry</th>
+      <td><p>The old registry directory.</p></td>
+    </tr>
+    <tr>
+      <th>registry_new</th>
+      <td><p>The new registry directory.</p></td>
+    </tr>
+    <tr>
+      <th>home_dir_new</th>
+      <td><p>The new home directory.</p></td>
+    </tr>
     <tr>
       <th>pkg</th>
       <td><p>A character string with the name of a single package; if <code>NULL</code> (default),
 the temporary registry and data directory is returned.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A path to a (registry or data) directory, or NULL, if package does not exist
 or is not a package including a corpus.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Upon loading the polmineR package, there is a check whether the
+    <p>The <code>registry_move</code> is an auxiliary function to create a copy
+  of a registry file in the directory specified by the argument
+  <code>registry_new</code>.</p>
+<p>Upon loading the polmineR package, there is a check whether the
   environment variable <code>CORPUS_REGISTRY</code> is defined. In case it is, the
   registry files in the directory defined by the <code>CORPUS_REGISTRY</code>
   environment variable are copied to the temporary registry directory, which
   serves as the central place to store all registry files for all corpora, be
   it system corpora, corpora included in R packages, or temporary corpora.</p>
-    
+<p>The Corpus Workbench may have problems to cope with a registry path
+  that includes registry non-ASCII characters. On Windows, a call to
+  <code><a href='https://rdrr.io/r/utils/shortPathName.html'>utils::shortPathName</a></code> will generate the short MS-DOS path name that
+  circumvents resulting problems.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>registry</span>() <span class='co'># returns temporary registry directory</span></div><div class='output co'>#&gt; [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpohDZuZ/polmineR_registry"</div><div class='input'><span class='fu'>registry</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>) <span class='co'># returns registry directory in polmineR-package</span></div><div class='output co'>#&gt; [1] "/Users/blaette/Lab/github/polmineR/inst/extdata/cwb/registry"</div><div class='input'>
-<span class='fu'>data_dir</span>()</div><div class='output co'>#&gt; [1] "/private/var/folders/r6/1k6mxnbj5077980k11xvr0q40000gn/T/RtmpohDZuZ/polmineR_data_dir"</div><div class='input'><span class='fu'>data_dir</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; [1] "/Users/blaette/Lab/github/polmineR/inst/extdata/cwb/indexed_corpora"</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>registry</span>() <span class='co'># returns temporary registry directory</span></div><div class='output co'>#&gt; [1] "/private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/RtmpBSR33K/polmineR_registry"</div><div class='input'><span class='fu'>registry</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>) <span class='co'># returns registry directory in polmineR-package</span></div><div class='output co'>#&gt; [1] "/private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/RtmpYERpTf/temp_libpath146b24bb7631/polmineR/extdata/cwb/registry"</div><div class='input'>
+<span class='fu'>data_dir</span>()</div><div class='output co'>#&gt; [1] "/private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/RtmpBSR33K/polmineR_data_dir"</div><div class='input'><span class='fu'>data_dir</span>(<span class='kw'>pkg</span> <span class='kw'>=</span> <span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; [1] "/private/var/folders/m_/431fjnbs1t32_62d35wvs7pr0000gp/T/RtmpYERpTf/temp_libpath146b24bb7631/polmineR/extdata/cwb/indexed_corpora"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -186,13 +214,16 @@ or is not a package including a corpus.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
