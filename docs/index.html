@@ -188,22 +188,182 @@
 <a class="sourceLine" id="cb7-2" title="2">islam &lt;-<span class="st"> </span><span class="kw"><a href="reference/subset.html">subset</a></span>(islam, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>)</a>
 <a class="sourceLine" id="cb7-3" title="3"><span class="kw"><a href="reference/dotplot-method.html">dotplot</a></span>(islam)</a></code></pre></div>
 <p><img src="README-unnamed-chunk-4-1.png"><!-- --></p>
-<p><a href="http://polmine.sowi.uni-due.de/gallery/cooccurrences.png" class="uri">http://polmine.sowi.uni-due.de/gallery/cooccurrences.png</a></p>
 </div>
 <div id="features-keyword-extraction" class="section level3">
 <h3 class="hasAnchor">
 <a href="#features-keyword-extraction" class="anchor"></a>features (keyword extraction)</h3>
 <p>Compare partitions to identify features / keywords (using statistical tests such as chi square).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2002"</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
-<a class="sourceLine" id="cb8-2" title="2">epPre911 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
-<a class="sourceLine" id="cb8-3" title="3">y &lt;-<span class="st"> </span><span class="kw"><a href="reference/features.html">features</a></span>(ep2002, epPre911, <span class="dt">included =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">ep_<span class="dv">2002</span> &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2002"</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2">ep_pre_<span class="dv">2002</span> &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw"><a href="reference/features.html">features</a></span>(ep_<span class="dv">2002</span>, ep_pre_<span class="dv">2002</span>, <span class="dt">included =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="st">  </span><span class="kw"><a href="reference/subset.html">subset</a></span>(rank_chisquare <span class="op">&lt;=</span><span class="st"> </span><span class="dv">10</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="st">  </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="dt">format =</span> <span class="st">"markdown"</span>)</a></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">rank_chisquare</th>
+<th align="left">word</th>
+<th align="right">count_coi</th>
+<th align="right">count_ref</th>
+<th align="right">exp_coi</th>
+<th align="right">chisquare</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">2002</td>
+<td align="right">1694</td>
+<td align="right">782</td>
+<td align="right">398.96</td>
+<td align="right">5011.70</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">Johannesburg</td>
+<td align="right">479</td>
+<td align="right">21</td>
+<td align="right">80.57</td>
+<td align="right">2348.97</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">Seville</td>
+<td align="right">378</td>
+<td align="right">26</td>
+<td align="right">65.10</td>
+<td align="right">1792.96</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Barcelona</td>
+<td align="right">706</td>
+<td align="right">528</td>
+<td align="right">198.84</td>
+<td align="right">1542.16</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">’s</td>
+<td align="right">10694</td>
+<td align="right">36727</td>
+<td align="right">7641.03</td>
+<td align="right">1457.07</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">2003</td>
+<td align="right">549</td>
+<td align="right">329</td>
+<td align="right">141.47</td>
+<td align="right">1399.45</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">Copenhagen</td>
+<td align="right">575</td>
+<td align="right">430</td>
+<td align="right">161.94</td>
+<td align="right">1256.06</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">terrorism</td>
+<td align="right">1221</td>
+<td align="right">1917</td>
+<td align="right">505.63</td>
+<td align="right">1206.67</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">02</td>
+<td align="right">233</td>
+<td align="right">2</td>
+<td align="right">37.87</td>
+<td align="right">1198.75</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">candidate</td>
+<td align="right">1217</td>
+<td align="right">2088</td>
+<td align="right">532.54</td>
+<td align="right">1048.84</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="kwic-also-known-as-concordances" class="section level3">
 <h3 class="hasAnchor">
 <a href="#kwic-also-known-as-concordances" class="anchor"></a>kwic (also known as concordances)</h3>
 <p>So what happens in the context of a word, or a CQP query? To attain valid research results, reading will often be necessary. The kwic method will help, and uses the conveniences of DataTables, outputted in the Viewer pane of RStudio.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"text_date"</span>, <span class="st">"speaker_name"</span>))</a></code></pre></div>
-<p><a href="http://polmine.sowi.uni-due.de/gallery/kwic.png" class="uri">http://polmine.sowi.uni-due.de/gallery/kwic.png</a></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"text_date"</span>, <span class="st">"speaker_name"</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span>.[<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>,] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="st">  </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="dt">format =</span> <span class="st">"markdown"</span>, <span class="dt">escape =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="26%">
+<col width="31%">
+<col width="4%">
+<col width="37%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">meta</th>
+<th align="left">left</th>
+<th align="left">node</th>
+<th align="left">right</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1996-05-09<br>Oostlander</td>
+<td align="left">, as for example with</td>
+<td align="left">Islam</td>
+<td align="left">here in Europe , so</td>
+</tr>
+<tr class="even">
+<td align="left">1996-05-09<br>Féret</td>
+<td align="left">promotion of the study of</td>
+<td align="left">Islam</td>
+<td align="left">in Europe ’ , with</td>
+</tr>
+<tr class="odd">
+<td align="left">1996-05-09<br>Féret</td>
+<td align="left">seem to have forgotten that</td>
+<td align="left">Islam</td>
+<td align="left">makes no distinction between spiritual</td>
+</tr>
+<tr class="even">
+<td align="left">1996-06-05<br>von Habsburg</td>
+<td align="left">, the old arguments against</td>
+<td align="left">Islam</td>
+<td align="left">are trotted out time and</td>
+</tr>
+<tr class="odd">
+<td align="left">1996-06-05<br>von Habsburg</td>
+<td align="left">various shades of opinion within</td>
+<td align="left">Islam</td>
+<td align="left">must not simply be lumped</td>
+</tr>
+<tr class="even">
+<td align="left">1996-06-05<br>von Habsburg</td>
+<td align="left">there are various groups within</td>
+<td align="left">Islam</td>
+<td align="left">and that many of them</td>
+</tr>
+<tr class="odd">
+<td align="left">1996-07-17<br>Blot</td>
+<td align="left">represented by the growth of</td>
+<td align="left">Islam</td>
+<td align="left">to the south and east</td>
+</tr>
+<tr class="even">
+<td align="left">1996-09-18<br>Stirbois</td>
+<td align="left">rushing into the arms of</td>
+<td align="left">Islam</td>
+<td align="left">. A fortnight later ,</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="read-the-full-text" class="section level3">
 <h3 class="hasAnchor">
@@ -212,7 +372,6 @@
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)</a>
 <a class="sourceLine" id="cb10-2" title="2">merkel &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"GERMAPARL"</span>, <span class="dt">speaker =</span> <span class="st">"Angela Merkel"</span>, <span class="dt">date =</span> <span class="st">"2013-09-03"</span>)</a>
 <a class="sourceLine" id="cb10-3" title="3"><span class="kw"><a href="reference/read-method.html">read</a></span>(merkel)</a></code></pre></div>
-<p><a href="http://polmine.sowi.uni-due.de/gallery/read.png" class="uri">http://polmine.sowi.uni-due.de/gallery/read.png</a></p>
 </div>
 <div id="astermdocumentmatrix-for-text-mining-purposes" class="section level3">
 <h3 class="hasAnchor">

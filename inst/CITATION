@@ -3,7 +3,7 @@ citHeader("To cite package 'polmineR' in publications use:")
 citEntry(entry="Manual",
          title = "polmineR",
          author = person("Andreas", "Blaette", email="andreas.blaette@uni-due.de"),
-         year = "2016",
-         note = "v0.6.2",
-         textVersion = "Andreas Blaette (2016). polmineR (v0.6.2). See http://www.github.com/PolMine/polmineR"
+         year = "2019",
+         note = "v0.8.0",
+         textVersion = "Andreas Blaette (2019). polmineR (v0.8.0). See http://www.github.com/PolMine/polmineR"
 )

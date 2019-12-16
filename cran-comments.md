@@ -2,7 +2,7 @@
 
 Having reworked the class systems thoroughly, this is a major release. But as the changes are pure R changes documented in the NEWS file, nothing noteworthy for the CRAN team, I think.
 
-Only one thing: An issue that may arise with R 4.0 has been fixed. Kurt Hornik notified me that the in the upcoming R version (4.0), the 'matrix' class will inherit from the 'array' class, thus causing a error when running for instance: class(matrix(1 : 4, 2, 2)) == "matrix". I modified the code such that polmineR will comply with the upcoming changes in R-devel / R 4.0. 
+Yet this is what I should address here: An issue that may arise with R 4.0 has been fixed. Kurt Hornik notified me that the in the upcoming R version (4.0), the 'matrix' class will inherit from the 'array' class, thus causing a error when running for instance: class(matrix(1 : 4, 2, 2)) == "matrix". I modified the code such that polmineR will comply with the upcoming changes in R-devel / R 4.0. 
 
 I am grateful for the foresight of the CRAN team and the precise advice I received!
 

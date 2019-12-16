@@ -17,23 +17,24 @@ polmineR 0.8.0
   S4 `corpus` class. To maintain the functionality not covered otherwise, 
   new generics `get_info` and `show_info` have been introduced and defined 
   for the `corpus` class.
-- Methods available for the `subcorpus` class has been expanded so that this
+- Methods available for the `subcorpus` class have been expanded so that this
   class can supersede the `partition` class: Methods newly available are 
   `cpos()`, `count()`, `p_attributes()`,  `s_attributes()` `get_token_stream()`,
   and `size()`. Technically, there is virtual `slice`-class, from which
   `subcorpus` inherits (methods called via `callNextMethod()`). 
-- A new `subset()`-method for `corpus` and `subcorpus` to generate subcorpora
+- A new `subset()`-method for the `corpus` and `subcorpus` classes to generate subcorpora
   (i.e. `subcorpus` objects) has been introduced. It outperforms the
   `partition()` method. The `subset()`-method for `corpus` and `subcorpus` objects
   will be the default way to work with non standard evaluation in a manner that
-  feels "R-ish". The `zoom()`-method that has been introduced experimentally has 
+  feels "R-ish" (#40).
+- The `zoom()`-method that has been introduced experimentally has 
   been dropped again in favor of the `subset()`-method to get `subcorpus` objects 
   from `corpus` and `subcorpus` objects. A set of experimental methods for an
   initial check of the feasibility of a non-standard evaluation approach to
   the generation of subcorpora has been dropped (methods `$`, `==`, `!=`,
   `zoom` for `corpus`-class). 
 - To facilitate the transition from the `partition` class (inheriting from 
-  the `textstat` class) and the `subcorpus` class (inheriting from the `textstat`
+  the `textstat` class) to the `subcorpus` class (inheriting from the `textstat`
   class), there is a new `coerce()`-method to turn a `partition` object into 
   a `subcorpus` object.
 - A new `remote_corpus`-class is the basis for accessing remote
@@ -68,7 +69,6 @@ polmineR 0.8.0
   been introduced. The aforementioned methods are defined for the virtual class and
   are available for context and kwic class objects.
 - Added CQP functionality to count tab in shiny app, and to the dispersion tab.
-- Subsetting corpora using non-standard evaluation expanded (#40).
 - There is now a basic implementation of `get_token_stream()` for a `partition_bundle`
   object.
 - The `Cooccurrences()`-method is now available for `subcorpus`-objects (#88).
@@ -137,7 +137,7 @@ polmineR 0.8.0
   with large corpora.
 - Introduction of a context,matrix-method to have a unified auxiliary function
   to create contexts.
-- The `as.corpusEnc`-function uses the `localeToCharset()`-function from the utils
+- The `as.corpusEnc()`-function uses the `localeToCharset()`-function from the utils
   package to determine the charset of input strings. On RStudio Server, we have seen
   cases when the return value is NA. Then it will be assumed that the locale is UTF-8.
 - Functionality to highlight terms in kwic display has been restored for the shiny app.
@@ -145,7 +145,7 @@ polmineR 0.8.0
 
 ## Bug fixes
 
-- Removed a bug in the `context()`/`kwic()` that led to superfluous words in the
+- Removed a bug in the `context()`/`kwic()` method that led to superfluous words in the
   right context.
 - Removed a bug that occurred with the `as.data.frame()`-method for `kwic`-objects
   when no metadata were added.
