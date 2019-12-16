@@ -79,9 +79,9 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>OpenCPU</h1>
-                        <h4 class="author">Andreas Blätte (<a href="mailto:andreas.blaette@uni-due.de">andreas.blaette@uni-due.de</a>)</h4>
+                        <h4 class="author">Andreas Blätte (<a href="mailto:andreas.blaette@uni-due.de" class="email">andreas.blaette@uni-due.de</a>)</h4>
             
-            <h4 class="date">2019-12-14</h4>
+            <h4 class="date">2019-12-16</h4>
       
       
       <div class="hidden name"><code>OpenCPU.Rmd</code></div>
@@ -94,15 +94,15 @@
 <h2 class="hasAnchor">
 <a href="#objective" class="anchor"></a>Objective</h2>
 <p>Sometimes, it is practically or legally not possible to move corpus data to a local machine. This vignette explains the usage of CWB corpora that are hosted on an <a href="https://www.opencpu.org/">OpenCPU</a> server.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a></code></pre></div>
 </div>
 <div id="remote-corpus" class="section level2">
 <h2 class="hasAnchor">
 <a href="#remote-corpus" class="anchor"></a>Remote Corpus</h2>
 <p>The GermaParl corpus is hosted on an OpenCPU server with the IP 52.24.44.232 (subject to change). To use the corpus, use the <code><a href="../reference/corpus-class.html">corpus()</a></code>-method. The only difference is that you will need to supply the IP address using the argument <code>server</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">gparl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/corpus-class.html">corpus</a></span>(<span class="st">"GERMAPARL"</span>, <span class="dt">server =</span> <span class="st">"52.24.44.232"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">gparl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/corpus-class.html">corpus</a></span>(<span class="st">"GERMAPARL"</span>, <span class="dt">server =</span> <span class="st">"52.24.44.232"</span>)</a></code></pre></div>
 <p>The <code>gparl</code> object is an object of class <code>remote_corpus</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">is</span>(gparl)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">is</span>(gparl)</a></code></pre></div>
 <div id="using-polminer-core-functionality" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-polminer-core-functionality" class="anchor"></a>Using polmineR core functionality</h3>
@@ -110,33 +110,33 @@
 <div id="get-corpus-size" class="section level4">
 <h4 class="hasAnchor">
 <a href="#get-corpus-size" class="anchor"></a>Get corpus size</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/size-method.html">size</a></span>(gparl)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="../reference/size-method.html">size</a></span>(gparl)</a></code></pre></div>
 </div>
 <div id="get-structural-annotation-metadata" class="section level4">
 <h4 class="hasAnchor">
 <a href="#get-structural-annotation-metadata" class="anchor"></a>Get structural annotation (metadata)</h4>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/s_attributes-method.html">s_attributes</a></span>(gparl)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="../reference/s_attributes-method.html">s_attributes</a></span>(gparl)</a></code></pre></div>
 </div>
 <div id="subsetting" class="section level4">
 <h4 class="hasAnchor">
 <a href="#subsetting" class="anchor"></a>Subsetting</h4>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">gparl2006 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/subset.html">subset</a></span>(gparl, year <span class="op">==</span><span class="st"> "2006"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">gparl2006 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/subset.html">subset</a></span>(gparl, year <span class="op">==</span><span class="st"> "2006"</span>)</a></code></pre></div>
 <p>The returned object has the class <code>remote_subcorpus</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">is</span>(gparl2006)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">is</span>(gparl2006)</a></code></pre></div>
 </div>
 <div id="simple-count" class="section level4">
 <h4 class="hasAnchor">
 <a href="#simple-count" class="anchor"></a>Simple count</h4>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(gparl, <span class="dt">query =</span> <span class="st">"Integration"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(gparl, <span class="dt">query =</span> <span class="st">"Integration"</span>)</a></code></pre></div>
 <p>The <code><a href="../reference/count-method.html">count()</a></code>-method works for <code>remote_subcorpus</code> objects, too.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(gparl2006, <span class="dt">query =</span> <span class="st">"Integration"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="../reference/count-method.html">count</a></span>(gparl2006, <span class="dt">query =</span> <span class="st">"Integration"</span>)</a></code></pre></div>
 </div>
 <div id="kwic" class="section level4">
 <h4 class="hasAnchor">
 <a href="#kwic" class="anchor"></a>KWIC</h4>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(gparl, <span class="dt">query =</span> <span class="st">"Islam"</span>, <span class="dt">left =</span> <span class="dv">15</span>, <span class="dt">right =</span> <span class="dv">15</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"speaker"</span>, <span class="st">"party"</span>, <span class="st">"date"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(gparl, <span class="dt">query =</span> <span class="st">"Islam"</span>, <span class="dt">left =</span> <span class="dv">15</span>, <span class="dt">right =</span> <span class="dv">15</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"speaker"</span>, <span class="st">"party"</span>, <span class="st">"date"</span>))</a></code></pre></div>
 <p>Works for the <code>remote_subcorpus</code>, too.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(gparl2006, <span class="dt">query =</span> <span class="st">"Islam"</span>, <span class="dt">left =</span> <span class="dv">15</span>, <span class="dt">right =</span> <span class="dv">15</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"speaker"</span>, <span class="st">"party"</span>, <span class="st">"date"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw"><a href="../reference/kwic.html">kwic</a></span>(gparl2006, <span class="dt">query =</span> <span class="st">"Islam"</span>, <span class="dt">left =</span> <span class="dv">15</span>, <span class="dt">right =</span> <span class="dv">15</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"speaker"</span>, <span class="st">"party"</span>, <span class="st">"date"</span>))</a></code></pre></div>
 </div>
 </div>
 </div>

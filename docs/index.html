@@ -103,108 +103,129 @@
 <h2 class="hasAnchor">
 <a href="#core-functions" class="anchor"></a>Core Functions</h2>
 <p>Upon loading <em>polmineR</em>, a message will report the version of the package and the location of a so-called ‘registry’-directory.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a></code></pre></div>
 <p>The session registry directory is populated with files that describe the corpora that are present and accessible on the user’s system.</p>
 <div id="install-and-use-packaged-corpora" class="section level3">
 <h3 class="hasAnchor">
 <a href="#install-and-use-packaged-corpora" class="anchor"></a>Install and use packaged corpora</h3>
-<p>Indexed corpora wrapped into R data packages can be installed from a (private) package repository.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"GermaParl"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"europarl.en"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.sowi.uni-due.de/packages"</span>)</a></code></pre></div>
+<p>Indexed sample corpora wrapped into R data packages can be installed from the <a href="https://cran.r-project.org/web/packages/drat/vignettes/DratFAQ.html">drat</a>-repository of the <a href="https://polmine.github.io/">PolMine Project</a>.</p>
+<p>The GermaParl package includes only a small excerpt the GermaParl corpus for demo purposes, the europarl package does not contain data at all. Yet the packages include functionality to download the full corpora.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="cf">if</span> (<span class="op">!</span><span class="st">"GermaParl"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>())){</a>
+<a class="sourceLine" id="cb2-2" title="2">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"GermaParl"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.github.io/drat"</span>)</a>
+<a class="sourceLine" id="cb2-3" title="3">}</a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)</a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; ... activating corpus: GERMAPARLMINI</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="cf">if</span> (<span class="op">!</span><span class="st">"GERMAPARL"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()<span class="op">$</span>corpus){</a>
+<a class="sourceLine" id="cb2-7" title="7">  GermaParl<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/GermaParl/man/installation.html">germaparl_download_corpus</a></span>()</a>
+<a class="sourceLine" id="cb2-8" title="8">  <span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)</a>
+<a class="sourceLine" id="cb2-9" title="9">}</a>
+<a class="sourceLine" id="cb2-10" title="10">  </a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="cf">if</span> (<span class="op">!</span><span class="st">"europarl"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>())){</a>
+<a class="sourceLine" id="cb2-12" title="12">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"europarl"</span>, <span class="dt">repos =</span> <span class="st">"http://polmine.github.io/drat"</span>)</a>
+<a class="sourceLine" id="cb2-13" title="13">}</a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl"</span>)</a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; ... activating corpus: EUROPARL-DE</span></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; ... activating corpus: EUROPARL-EN</span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; ... activating corpus: EUROPARL-ES</span></a>
+<a class="sourceLine" id="cb2-18" title="18"><span class="co">#&gt; ... activating corpus: EUROPARL-FR</span></a>
+<a class="sourceLine" id="cb2-19" title="19"><span class="co">#&gt; ... activating corpus: EUROPARL-IT</span></a>
+<a class="sourceLine" id="cb2-20" title="20"><span class="co">#&gt; ... activating corpus: EUROPARL-NL</span></a>
+<a class="sourceLine" id="cb2-21" title="21"><span class="cf">if</span> (<span class="op">!</span><span class="st">"EUROPARL-EN"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()<span class="op">$</span>corpus){</a>
+<a class="sourceLine" id="cb2-22" title="22">  europarl<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/europarl/man/europarl.html">europarl_download</a></span>()</a>
+<a class="sourceLine" id="cb2-23" title="23">  <span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl"</span>)</a>
+<a class="sourceLine" id="cb2-24" title="24">}</a></code></pre></div>
 <p>Calling the <code><a href="reference/use.html">use()</a></code>-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl.en"</span>) <span class="co"># activate the corpus in the europarl-en package</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; ... activating corpus: EUROPARL-EN</span></a></code></pre></div>
 <p>An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. The corpora described in the registry directory defined by the environment variable CORPUS_REGISTRY will be added to the session registry directory when loading polmineR.</p>
 </div>
 <div id="partition-and-partition_bundle" class="section level3">
 <h3 class="hasAnchor">
 <a href="#partition-and-partition_bundle" class="anchor"></a>partition (and partition_bundle)</h3>
 <p>All methods can be applied to a whole corpus, as well as to partitions (i.e. subcorpora). Use the metadata of a corpus (so-called s-attributes) to define a subcorpus.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">ep2005 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2006"</span>)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; ... get encoding: latin1</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; ... get cpos and strucs</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw"><a href="reference/size-method.html">size</a></span>(ep2005)</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; [1] 3100529</span></a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">barroso &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">speaker_name =</span> <span class="st">"Barroso"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; ... get encoding: latin1</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; ... get cpos and strucs</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw"><a href="reference/size-method.html">size</a></span>(barroso)</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; [1] 98142</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">ep2005 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2006"</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt; ... get encoding: latin1</span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt; ... get cpos and strucs</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw"><a href="reference/size-method.html">size</a></span>(ep2005)</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; [1] 3100529</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">barroso &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">speaker_name =</span> <span class="st">"Barroso"</span>, <span class="dt">regex =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; ... get encoding: latin1</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; ... get cpos and strucs</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="kw"><a href="reference/size-method.html">size</a></span>(barroso)</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1] 98142</span></a></code></pre></div>
 <p>Partitions can be bundled into partition_bundle objects, and most methods can be applied to a whole corpus, a partition, or a partition_bundle object alike. Consult the package vignette to learn more.</p>
 </div>
 <div id="count-using-cqp-syntax" class="section level3">
 <h3 class="hasAnchor">
 <a href="#count-using-cqp-syntax" class="anchor"></a>count (using CQP syntax)</h3>
 <p>Counting occurrences of a feature in a corpus, a partition or in the partitions of a partition_bundle is a basic operation. By offering access to the query syntax of the Corpus Query Processor (CQP), polmineR package exposes a query syntax that goes far beyond regular expressions. See the <a href="http://www.ims.uni-stuttgart.de/forschung/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.2up.pdf">CQP documentation</a> to learn more.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"France"</span>)</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt;     query count         freq</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; 1: France  5517 0.0001399122</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"France"</span>, <span class="st">"Germany"</span>, <span class="st">"Britain"</span>, <span class="st">"Spain"</span>, <span class="st">"Italy"</span>, <span class="st">"Denmark"</span>, <span class="st">"Poland"</span>))</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt;      query count         freq</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; 1:  France  5517 1.399122e-04</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; 2: Germany  4196 1.064114e-04</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 3: Britain  1708 4.331523e-05</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; 4:   Spain  3378 8.566676e-05</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; 5:   Italy  3209 8.138089e-05</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; 6: Denmark  1615 4.095673e-05</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 7:  Poland  1820 4.615557e-05</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>)</a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt;            query count         freq</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; 1: "[pP]opulism"   107 2.713542e-06</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"France"</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt;     query count         freq</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; 1: France  5517 0.0001399122</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"France"</span>, <span class="st">"Germany"</span>, <span class="st">"Britain"</span>, <span class="st">"Spain"</span>, <span class="st">"Italy"</span>, <span class="st">"Denmark"</span>, <span class="st">"Poland"</span>))</a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt;      query count         freq</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 1:  France  5517 1.399122e-04</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 2: Germany  4196 1.064114e-04</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt; 3: Britain  1708 4.331523e-05</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt; 4:   Spain  3378 8.566676e-05</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt; 5:   Italy  3209 8.138089e-05</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt; 6: Denmark  1615 4.095673e-05</span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt; 7:  Poland  1820 4.615557e-05</span></a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="kw"><a href="reference/count-method.html">count</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>)</a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt;            query count         freq</span></a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt; 1: "[pP]opulism"   107 2.713542e-06</span></a></code></pre></div>
 </div>
 <div id="dispersion-across-one-or-two-dimensions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dispersion-across-one-or-two-dimensions" class="anchor"></a>dispersion (across one or two dimensions)</h3>
 <p>The dispersion method is there to analyse the dispersion of a query, or a set of queries across one or two dimensions (absolute and relative frequencies). The CQP syntax can be used.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">populism &lt;-<span class="st"> </span><span class="kw"><a href="reference/dispersion-method.html">dispersion</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"populism"</span>, <span class="dt">s_Attribute =</span> <span class="st">"text_year"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">popRegex &lt;-<span class="st"> </span><span class="kw"><a href="reference/dispersion-method.html">dispersion</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>, <span class="dt">s_attribute =</span> <span class="st">"text_year"</span>, <span class="dt">cqp =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">populism &lt;-<span class="st"> </span><span class="kw"><a href="reference/dispersion-method.html">dispersion</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"populism"</span>, <span class="dt">s_attribute =</span> <span class="st">"text_year"</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2">popRegex &lt;-<span class="st"> </span><span class="kw"><a href="reference/dispersion-method.html">dispersion</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">'"[pP]opulism"'</span>, <span class="dt">s_attribute =</span> <span class="st">"text_year"</span>, <span class="dt">cqp =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 </div>
 <div id="cooccurrences-to-analyse-collocations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cooccurrences-to-analyse-collocations" class="anchor"></a>cooccurrences (to analyse collocations)</h3>
 <p>The cooccurrences method is used to analyse the context of a query (including some statistics).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">islam &lt;-<span class="st"> </span><span class="kw"><a href="reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">query =</span> <span class="st">'Islam'</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">islam &lt;-<span class="st"> </span><span class="kw"><a href="reference/subset.html">subset</a></span>(islam, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw"><a href="reference/dotplot-method.html">dotplot</a></span>(islam)</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">islam</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">islam &lt;-<span class="st"> </span><span class="kw"><a href="reference/cooccurrences.html">cooccurrences</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">query =</span> <span class="st">'Islam'</span>, <span class="dt">left =</span> <span class="dv">10</span>, <span class="dt">right =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2">islam &lt;-<span class="st"> </span><span class="kw"><a href="reference/subset.html">subset</a></span>(islam, rank_ll <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="kw"><a href="reference/dotplot-method.html">dotplot</a></span>(islam)</a></code></pre></div>
+<p><img src="README-unnamed-chunk-4-1.png"><!-- --></p>
 <p><a href="http://polmine.sowi.uni-due.de/gallery/cooccurrences.png" class="uri">http://polmine.sowi.uni-due.de/gallery/cooccurrences.png</a></p>
 </div>
 <div id="features-keyword-extraction" class="section level3">
 <h3 class="hasAnchor">
 <a href="#features-keyword-extraction" class="anchor"></a>features (keyword extraction)</h3>
 <p>Compare partitions to identify features / keywords (using statistical tests such as chi square).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2002"</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">epPre911 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">y &lt;-<span class="st"> </span><span class="kw"><a href="reference/features.html">features</a></span>(ep2002, epPre911, <span class="dt">included =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">ep2002 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="st">"2002"</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2">epPre911 &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="dt">text_year =</span> <span class="dv">1997</span><span class="op">:</span><span class="dv">2001</span>, <span class="dt">p_attribute =</span> <span class="st">"word"</span>)</a>
+<a class="sourceLine" id="cb8-3" title="3">y &lt;-<span class="st"> </span><span class="kw"><a href="reference/features.html">features</a></span>(ep2002, epPre911, <span class="dt">included =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 </div>
 <div id="kwic-also-known-as-concordances" class="section level3">
 <h3 class="hasAnchor">
 <a href="#kwic-also-known-as-concordances" class="anchor"></a>kwic (also known as concordances)</h3>
 <p>So what happens in the context of a word, or a CQP query? To attain valid research results, reading will often be necessary. The kwic method will help, and uses the conveniences of DataTables, outputted in the Viewer pane of RStudio.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"text_date"</span>, <span class="st">"speaker_name"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="reference/kwic.html">kwic</a></span>(<span class="st">"EUROPARL-EN"</span>, <span class="st">"Islam"</span>, <span class="dt">meta =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"text_date"</span>, <span class="st">"speaker_name"</span>))</a></code></pre></div>
 <p><a href="http://polmine.sowi.uni-due.de/gallery/kwic.png" class="uri">http://polmine.sowi.uni-due.de/gallery/kwic.png</a></p>
 </div>
 <div id="read-the-full-text" class="section level3">
 <h3 class="hasAnchor">
 <a href="#read-the-full-text" class="anchor"></a>read (the full text)</h3>
 <p>Corpus analysis involves moving from text to numbers, and back again. Use the read method, to inspect the full text of a partition (a speech given by chancellor Angela Merkel in this case).</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">merkel &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"GERMAPARL"</span>, <span class="dt">speaker =</span> <span class="st">"Angela Merkel"</span>, <span class="dt">date =</span> <span class="st">"2013-09-03"</span>)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw"><a href="reference/read-method.html">read</a></span>(merkel)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2">merkel &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition.html">partition</a></span>(<span class="st">"GERMAPARL"</span>, <span class="dt">speaker =</span> <span class="st">"Angela Merkel"</span>, <span class="dt">date =</span> <span class="st">"2013-09-03"</span>)</a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="kw"><a href="reference/read-method.html">read</a></span>(merkel)</a></code></pre></div>
 <p><a href="http://polmine.sowi.uni-due.de/gallery/read.png" class="uri">http://polmine.sowi.uni-due.de/gallery/read.png</a></p>
 </div>
-<div id="as-termdocumentmatrix-for-text-mining-purposes" class="section level3">
+<div id="astermdocumentmatrix-for-text-mining-purposes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#as-termdocumentmatrix-for-text-mining-purposes" class="anchor"></a>as.TermDocumentMatrix (for text mining purposes)</h3>
+<a href="#astermdocumentmatrix-for-text-mining-purposes" class="anchor"></a>as.TermDocumentMatrix (for text mining purposes)</h3>
 <p>Many advanced methods in text mining require term document matrices as input. Based on the metadata of a corpus, these data structures can be obtained in a fast and flexible manner, for performing topic modelling, machine learning etc.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl.en"</span>)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">speakers &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition_bundle-method.html">partition_bundle</a></span>(</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="st">"EUROPARL-EN"</span>, <span class="dt">s_attribute =</span> <span class="st">"speaker_id"</span>,</a>
-<a class="sourceLine" id="cb12-4" data-line-number="4">  <span class="dt">progress =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5">)</a>
-<a class="sourceLine" id="cb12-6" data-line-number="6">speakers_count &lt;-<span class="st"> </span><span class="kw"><a href="reference/count-method.html">count</a></span>(speakers, <span class="dt">p_attribute =</span> <span class="st">"word"</span>, <span class="dt">progress =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb12-7" data-line-number="7">tdm &lt;-<span class="st"> </span><span class="kw"><a href="reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix</a></span>(speakers_count, <span class="dt">col =</span> <span class="st">"count"</span>)</a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(tdm)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"europarl"</span>)</a>
+<a class="sourceLine" id="cb11-2" title="2">speakers &lt;-<span class="st"> </span><span class="kw"><a href="reference/partition_bundle-method.html">partition_bundle</a></span>(</a>
+<a class="sourceLine" id="cb11-3" title="3">  <span class="st">"EUROPARL-EN"</span>, <span class="dt">s_attribute =</span> <span class="st">"speaker_id"</span>,</a>
+<a class="sourceLine" id="cb11-4" title="4">  <span class="dt">progress =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb11-5" title="5">)</a>
+<a class="sourceLine" id="cb11-6" title="6">speakers_count &lt;-<span class="st"> </span><span class="kw"><a href="reference/count-method.html">count</a></span>(speakers, <span class="dt">p_attribute =</span> <span class="st">"word"</span>, <span class="dt">progress =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb11-7" title="7">tdm &lt;-<span class="st"> </span><span class="kw"><a href="reference/as.DocumentTermMatrix.html">as.TermDocumentMatrix</a></span>(speakers_count, <span class="dt">col =</span> <span class="st">"count"</span>)</a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(tdm)</a></code></pre></div>
 </div>
 </div>
 <div id="installation" class="section level2">
@@ -215,13 +236,13 @@
 <a href="#windows" class="anchor"></a>Windows</h3>
 <p>The following instructions assume that you have installed R. If not, install it from<a href="https://cran.r-project.org/bin/windows/base/">CRAN</a>. An installation of <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a> is highly recommended.</p>
 <p>The CRAN release of polmineR can be installed using <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages()</a></code>, all dependencies will be installed, too.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
 <p>To install the most recent development version that is hosted in a GitHub repository, use the installation mechanism offered by the devtools package.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb13-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
 <p>Check the installation by loading polmineR and activating the corpora included in the package.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
 </div>
 <div id="macos" class="section level3">
 <h3 class="hasAnchor">
@@ -229,56 +250,56 @@
 <p>The following instructions for Mac users assume that R is installed on your system. Binaries are available from the <a href="https://cran.r-project.org/bin/macosx/">Homepage of the R Project</a>. An installation of RStudio is highly recommended. Get the Open Source License version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a>.</p>
 <p>At this stage, the RcppCWB dependency is not available as a pre-compiled binary and needs to be compiled. A set of system requirements needs to be fulfilled to do this.</p>
 <p>First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="ex">xcode-select</span> --install</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" title="1"><span class="ex">xcode-select</span> --install</a></code></pre></div>
 <p>Please make sure that you agree to the license.</p>
 <p>Second, an installation of XQuartz is required. It can be obtained from <a href="https://www.xquartz.org/">www.xquartz.org</a>.</p>
 <p>Third, to fulfill the system requirements of the RcppCWB package, the Glib and pcre libraries need to be installed. Using a package manager makes things considerably easier. We recommend using ‘Homebrew’. To install Homebrew, follow the instructions on the <a href="https://brew.sh/index_de.html">Homebrew Homepage</a>. The following commands then need to be executed from a terminal window. They will install the C libraries that the RcppCWB package relies on:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="ex">brew</span> -v install pkg-config</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="ex">brew</span> -v install glib --universal</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="ex">brew</span> -v install pcre --universal</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="ex">brew</span> -v install readline</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1"><span class="ex">brew</span> -v install pkg-config</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="ex">brew</span> -v install glib --universal</a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="ex">brew</span> -v install pcre --universal</a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="ex">brew</span> -v install readline</a></code></pre></div>
 <p>The latest release of polmineR can be installed from CRAN using the usual <code>install.packages</code>-function.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
 <p>The development version of <em>polmineR</em> can be installed using devtools:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>) <span class="co"># unless devtools is already installed</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>) <span class="co"># unless devtools is already installed</span></a>
+<a class="sourceLine" id="cb18-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
 <p>Check whether everything works by loading polmineR, and activating the demo corpora included in the package.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
 </div>
 <div id="linux-ubuntu" class="section level3">
 <h3 class="hasAnchor">
 <a href="#linux-ubuntu" class="anchor"></a>Linux (Ubuntu)</h3>
 <p>If you have not yet installed R on your Ubuntu machine, there is a good instruction at <a href="https://wiki.ubuntuusers.de/R/">ubuntuuser</a>. To install base R, enter in the terminal.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="fu">sudo</span> apt-get install r-base r-recommended</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" title="1"><span class="fu">sudo</span> apt-get install r-base r-recommended</a></code></pre></div>
 <p>Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="fu">sudo</span> apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="fu">sudo</span> add-apt-repository <span class="st">'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="fu">sudo</span> apt-get update</a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="fu">sudo</span> apt-get upgrade</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">sudo</span> apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9</a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="fu">sudo</span> add-apt-repository <span class="st">'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'</span></a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="fu">sudo</span> apt-get update</a>
+<a class="sourceLine" id="cb21-4" title="4"><span class="fu">sudo</span> apt-get upgrade</a></code></pre></div>
 <p>It is highly recommended to install <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a>, a powerful IDE for R. Output of polmineR methods is generally optimized to be displayed using RStudio facilities. If you are working on a remote server, running RStudio Server may be an interesting option to consider.</p>
 <p>The RcppCWB package, the interface used by polmineR to query CWB corpora, will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="fu">sudo</span> apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="fu">sudo</span> apt-get install libxml2-dev</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="fu">sudo</span> apt-get install libprotobuf-dev</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb22-1" title="1"><span class="fu">sudo</span> apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev</a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="fu">sudo</span> apt-get install libxml2-dev</a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="fu">sudo</span> apt-get install libprotobuf-dev</a></code></pre></div>
 <p>The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"RcppCWB"</span>)</a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"RcppCWB"</span>)</a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</a></code></pre></div>
 <p>Use devtools to install the development version of polmineR from GitHub.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb25-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb24-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"PolMine/polmineR"</span>, <span class="dt">ref =</span> <span class="st">"dev"</span>)</a></code></pre></div>
 <p>You may want to install packaged corpora to run examples in the vignette, and the man packages.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
-<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
-<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(polmineR)</a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="kw"><a href="reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)</a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="kw"><a href="reference/corpus-class.html">corpus</a></span>()</a></code></pre></div>
 <p>To have access to all package functions and to run all package tests, the installation of further system requirements and packages is required. The xlsx dependency requires that rJava is installed and configured for R. That is done on the shell:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="fu">sudo</span> apt-get install openjdk-8-jre</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="fu">sudo</span> R CMD javareconf</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb26-1" title="1"><span class="fu">sudo</span> apt-get install openjdk-8-jre</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="fu">sudo</span> R CMD javareconf</a></code></pre></div>
 <p>To run package tests including (re-)building the manual and vignettes, a working installation of Latex is required, too. Be aware that this may be a time-consuming operation.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="fu">sudo</span> apt-get install texlive-full texlive-xetex </a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">sudo</span> apt-get install texlive-full texlive-xetex </a></code></pre></div>
 <p>Now install the remaining packages from within R.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="dt">pkgs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"rJava"</span>, <span class="st">"xlsx"</span>, <span class="st">"tidytext"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="dt">pkgs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"rJava"</span>, <span class="st">"xlsx"</span>, <span class="st">"tidytext"</span>))</a></code></pre></div>
 </div>
 </div>
 </div>
@@ -318,7 +339,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="http://www.gnu.org/licenses/gpl-3.0.html"><img src="https://img.shields.io/aur/license/yaourt.svg" alt="License"></a></li>
+<li><a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://www.r-pkg.org/badges/version/polmineR" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://cranlogs.r-pkg.org/badges/polmineR" alt="Downloads"></a></li>
 <li><a href="https://travis-ci.org/PolMine/polmineR"><img src="https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev" alt="Travis-CI Build Status"></a></li>

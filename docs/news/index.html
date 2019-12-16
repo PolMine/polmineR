@@ -120,24 +120,24 @@
       
     </div>
 
-    <div id="polminer-0-8-0" class="section level1">
+    <div id="polminer-080" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-8-0" class="anchor"></a>polmineR 0.8.0<small> Unreleased </small>
+<a href="#polminer-080" class="anchor"></a>polmineR 0.8.0<small> Unreleased </small>
 </h1>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New Features</h2>
 <ul>
-<li>The <code>corpus</code> class has been put in a shape to become the default point of departure of most workflows. All core methods are now available for the <code>corpus</code> class, and have been implemented newly if necessary, e.g. <code>show()</code> and <code><a href="../reference/size-method.html">size()</a></code>-method. The constructor method for a <code>corpus</code> object, the <code><a href="../reference/corpus-class.html">corpus()</a></code> method will now check whether the character vector with the corpus ID refers to an available corpus, whether all letters are upper case and issue informative warnings and error messages.</li>
+<li>The <code>corpus</code> class has been put in a shape to become the default point of departure of most workflows. All core methods are now available for the <code>corpus</code> class, and have been implemented newly if necessary, e.g. <code>show()</code> and <code><a href="../reference/size-method.html">size()</a></code>-method. The constructor method for a <code>corpus</code> object, the <code><a href="../reference/corpus-class.html">corpus()</a></code> method will now check whether the character vector with the corpus ID refers to an available corpus, whether all letters are upper case and issue informative warnings and error messages.</li>
 <li>The <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code>-method for <code>corpus</code> objects has been reworked: It will decode binary files directly, without reliance on the corpus library functions, which is significantly faster.</li>
 <li>The <code>Corpus</code> reference class is now obsolete after the introduction of the S4 <code>corpus</code> class. To maintain the functionality not covered otherwise, new generics <code>get_info</code> and <code>show_info</code> have been introduced and defined for the <code>corpus</code> class.</li>
 <li>Methods available for the <code>subcorpus</code> class has been expanded so that this class can supersede the <code>partition</code> class: Methods newly available are <code><a href="../reference/cpos-method.html">cpos()</a></code>, <code><a href="../reference/count-method.html">count()</a></code>, <code><a href="../reference/p_attributes.html">p_attributes()</a></code>, <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code> <code><a href="../reference/get_token_stream-method.html">get_token_stream()</a></code>, and <code><a href="../reference/size-method.html">size()</a></code>. Technically, there is virtual <code>slice</code>-class, from which <code>subcorpus</code> inherits (methods called via <code>callNextMethod()</code>).</li>
-<li>A new <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> to generate subcorpora (i.e. <code>subcorpus</code> objects) has been introduced. It outperforms the <code><a href="../reference/partition.html">partition()</a></code> method. The <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> objects will be the default way to work with non standard evaluation in a manner that feels “Rish”. The <code><a href="../reference/corpus-class.html">zoom()</a></code>-method that has been introduced experimentally has been dropped again in favor of the <code><a href="../reference/subset.html">subset()</a></code>-method to get <code>subcorpus</code> objects from <code>corpus</code> and <code>subcorpus</code> objects. A set of experimental methods for an initial check of the feasibility of a non-standard evaluation approach to the generation of subcorpora has been dropped (methods <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">!=</a></code>, <code>zoom</code> for <code>corpus</code>-class).</li>
+<li>A new <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> to generate subcorpora (i.e. <code>subcorpus</code> objects) has been introduced. It outperforms the <code><a href="../reference/partition.html">partition()</a></code> method. The <code><a href="../reference/subset.html">subset()</a></code>-method for <code>corpus</code> and <code>subcorpus</code> objects will be the default way to work with non standard evaluation in a manner that feels “Rish”. The <code><a href="../reference/corpus-class.html">zoom()</a></code>-method that has been introduced experimentally has been dropped again in favor of the <code><a href="../reference/subset.html">subset()</a></code>-method to get <code>subcorpus</code> objects from <code>corpus</code> and <code>subcorpus</code> objects. A set of experimental methods for an initial check of the feasibility of a non-standard evaluation approach to the generation of subcorpora has been dropped (methods <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">!=</a></code>, <code>zoom</code> for <code>corpus</code>-class).</li>
 <li>To facilitate the transition from the <code>partition</code> class (inheriting from the <code>textstat</code> class) and the <code>subcorpus</code> class (inheriting from the <code>textstat</code> class), there is a new <code>coerce()</code>-method to turn a <code>partition</code> object into a <code>subcorpus</code> object.</li>
 <li>A new <code>remote_corpus</code>-class is the basis for accessing remote corpora. A <code>remote_subcorpus</code> can be derived from a <code>remote_corpus</code>. Methods available for remote corpora und subcorpora remain limited at this stage.</li>
 <li>Consolidation of the class system: For all the S4 classes in the package, multiple contains have been checked, and multiple contains have been removed.</li>
 <li>The <code>subcorpus_bundle</code> class now inherits from <code>partition_bundle</code>. This is not intended to be a long-term solution, but facilitates the implementation of new workflows based on the <code>subcorpus</code> class rather thane the <code>partition</code> class.</li>
-<li>Calling the polmineR shiny app via <code>polmineR</code> did not have safeguards if the suggested packages <a href="">shiny</a> and <a href="">shinythemes</a> were not installed. Now there will be a conditional installation of the packages required for running the shiny app.</li>
+<li>Calling the polmineR shiny app via <code>polmineR</code> did not have safeguards if the suggested packages <a href="https://CRAN.R-project.org/package=shiny">shiny</a> and <a href="https://CRAN.R-project.org/package=shinythemes">shinythemes</a> were not installed. Now there will be a conditional installation of the packages required for running the shiny app.</li>
 <li>The somewhat odd class <code>CorpusOrSubcorpus</code> has been removed. The <code>ngrams</code>-method now applies for <code>corpus</code> and <code>subcorpus</code> objects.</li>
 <li>The pipe operator of the magrittr package is imported now, and magrittr has moved from a suggested package to a required package.</li>
 <li>The <code>label()</code>-method, present for a while, is superseded by a <code><a href="https://rdrr.io/r/utils/edit.html">edit()</a></code>-method now. It will call a shiny gadget either using DataTables or Handsontable. The former <code>Labels</code> reference class has been turned into a S4 class, because the desired reference logic can also be achieved with a <code>data.table</code> in a slot of the labels class.</li>
@@ -223,9 +223,9 @@
 </ul>
 </div>
 </div>
-    <div id="polminer-0-7-11" class="section level1">
+    <div id="polminer-0711" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-11" class="anchor"></a>polmineR 0.7.11<small> 2019-01-08 </small>
+<a href="#polminer-0711" class="anchor"></a>polmineR 0.7.11<small> 2019-01-08 </small>
 </h1>
 <div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
@@ -274,7 +274,7 @@
 <li>The argument <code>verbose</code> as used by the <code><a href="../reference/use.html">use()</a></code>-method did not have any effect. Now, messages are not reported as would be expected, if <code>verbose</code> is <code>FALSE</code>. On this occasion, we took care that corpora that are activated are now reported in capital letters, which is consistent with the uppercase logic you need to follow when using corpora. (#47)</li>
 <li>A new check prevents an error that has occurred when a token queried by the <code><a href="../reference/context-method.html">context()</a></code>-method would occurr at the very beginning or very end of a corpus and the window would transgress the beginning / end of the corpus without being checked (#44).</li>
 <li>The <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-function caused an error when the type of the partition was not defined. Solved (#57).</li>
-<li>To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. ‘C’) (#39).</li>
+<li>To deal with issues resulting from an unset locale, there is a check during startup whether the locale is unset (i.e. ‘C’) (#39).</li>
 <li>There was a difficulty to generate a <code>TermDocumentMatrix</code> from a <code>partition_bundle</code> if the partitions in the <code>partition_bundle</code> were not named. The fix is to assign integer numbers as names to the partitions (#58).</li>
 </ul>
 </div>
@@ -290,9 +290,9 @@
 </ul>
 </div>
 </div>
-    <div id="polminer-0-7-10" class="section level1">
+    <div id="polminer-0710" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-10" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
+<a href="#polminer-0710" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
 </h1>
 <div id="new-features-2" class="section level3">
 <h3 class="hasAnchor">
@@ -340,9 +340,9 @@
 </ul>
 </div>
 </div>
-    <div id="polminer-0-7-9" class="section level1">
+    <div id="polminer-079" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-9" class="anchor"></a>polmineR 0.7.9<small> 2018-07-09 </small>
+<a href="#polminer-079" class="anchor"></a>polmineR 0.7.9<small> 2018-07-09 </small>
 </h1>
 <ul>
 <li>new as.list,bundle-method for convenience, to access slot objects</li>
@@ -367,18 +367,18 @@
 <li>count-method will now return count-object if query is NULL, making it easier to write pipes</li>
 </ul>
 </div>
-    <div id="polminer-0-7-8" class="section level1">
+    <div id="polminer-078" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-8" class="anchor"></a>polmineR 0.7.8<small> 2018-05-15 </small>
+<a href="#polminer-078" class="anchor"></a>polmineR 0.7.8<small> 2018-05-15 </small>
 </h1>
 <ul>
 <li>upon loading the package, check that data directories are set correctly in registry files to make sure that sample data in pre-compiled packages can be used</li>
 <li>startup messages adjusted slightly</li>
 </ul>
 </div>
-    <div id="polminer-0-7-7" class="section level1">
+    <div id="polminer-077" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-7" class="anchor"></a>polmineR 0.7.7<small> 2018-05-10 </small>
+<a href="#polminer-077" class="anchor"></a>polmineR 0.7.7<small> 2018-05-10 </small>
 </h1>
 <ul>
 <li>removed depracated classes: dispersion, Textstat (reference class), Partition (reference class)</li>
@@ -400,9 +400,9 @@
 <li>encoding issue with names of partitionBundle solved</li>
 </ul>
 </div>
-    <div id="polminer-0-7-6" class="section level1">
+    <div id="polminer-076" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-6" class="anchor"></a>polmineR 0.7.6<small> Unreleased </small>
+<a href="#polminer-076" class="anchor"></a>polmineR 0.7.6<small> Unreleased </small>
 </h1>
 <ul>
 <li>functionality of matches-method (breakdown of frequencies of matches) integrated into count-method (new param breakdown)</li>
@@ -431,9 +431,9 @@
 <li>added a missing encoding conversion for the count method</li>
 </ul>
 </div>
-    <div id="polminer-0-7-5" class="section level1">
+    <div id="polminer-075" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-5" class="anchor"></a>polmineR 0.7.5<small> 2017-10-04 </small>
+<a href="#polminer-075" class="anchor"></a>polmineR 0.7.5<small> 2017-10-04 </small>
 </h1>
 <ul>
 <li>class ‘Regions’ renamed to class ‘regions’ as a matter of consistency</li>
@@ -445,9 +445,9 @@
 <li>blapply-method: verbose output will be suppressed of progress is TRUE</li>
 </ul>
 </div>
-    <div id="polminer-0-7-4" class="section level1">
+    <div id="polminer-074" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-4" class="anchor"></a>polmineR 0.7.4<small> 2017-07-17 </small>
+<a href="#polminer-074" class="anchor"></a>polmineR 0.7.4<small> 2017-07-17 </small>
 </h1>
 <ul>
 <li>applying stoplists and positivelists working again for context-method</li>
@@ -468,9 +468,9 @@
 <li>use-function will now work for users working with polmineR.Rcpp as interface</li>
 </ul>
 </div>
-    <div id="polminer-0-7-3" class="section level1">
+    <div id="polminer-073" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-3" class="anchor"></a>polmineR 0.7.3<small> 2017-05-24 </small>
+<a href="#polminer-073" class="anchor"></a>polmineR 0.7.3<small> 2017-05-24 </small>
 </h1>
 <ul>
 <li>new installed.corpora() convenience function to list all data packages with corpora</li>
@@ -491,9 +491,9 @@
 <li>starting to use testthat for unit testing</li>
 </ul>
 </div>
-    <div id="polminer-0-7-2" class="section level1">
+    <div id="polminer-072" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-2" class="anchor"></a>polmineR 0.7.2<small> 2017-03-24 </small>
+<a href="#polminer-072" class="anchor"></a>polmineR 0.7.2<small> 2017-03-24 </small>
 </h1>
 <ul>
 <li>updated documentation of partition-method.</li>
@@ -510,9 +510,9 @@
 <li>warnings caused by startup on windows removed</li>
 </ul>
 </div>
-    <div id="polminer-0-7-1" class="section level1">
+    <div id="polminer-071" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-1" class="anchor"></a>polmineR 0.7.1<small> 2017-02-27 </small>
+<a href="#polminer-071" class="anchor"></a>polmineR 0.7.1<small> 2017-02-27 </small>
 </h1>
 <ul>
 <li>size-method now allows for a param ‘sAttribute’</li>
@@ -520,17 +520,17 @@
 <li>first version that can be installed on windows</li>
 </ul>
 </div>
-    <div id="polminer-0-7-0" class="section level1">
+    <div id="polminer-070" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-7-0" class="anchor"></a>polmineR 0.7.0<small> 2017-02-14 </small>
+<a href="#polminer-070" class="anchor"></a>polmineR 0.7.0<small> 2017-02-14 </small>
 </h1>
 <ul>
 <li>rcqp package moved to suggests, to facilitate installation</li>
 </ul>
 </div>
-    <div id="polminer-0-6-3" class="section level1">
+    <div id="polminer-063" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-6-3" class="anchor"></a>polmineR 0.6.3<small> Unreleased </small>
+<a href="#polminer-063" class="anchor"></a>polmineR 0.6.3<small> Unreleased </small>
 </h1>
 <ul>
 <li>more generic implementation of as.markdown-method to prepare use of templates</li>
@@ -543,9 +543,9 @@
 <li>decode- and encode-methods introduced</li>
 </ul>
 </div>
-    <div id="polminer-0-6-2" class="section level1">
+    <div id="polminer-062" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-6-2" class="anchor"></a>polmineR 0.6.2<small> 2016-09-07 </small>
+<a href="#polminer-062" class="anchor"></a>polmineR 0.6.2<small> 2016-09-07 </small>
 </h1>
 <ul>
 <li>refactoring of context-method to prepare more consistent usage</li>
@@ -560,17 +560,17 @@
 <li>bugfix for ngrams-method, sample code for the method</li>
 </ul>
 </div>
-    <div id="polminer-0-6-1" class="section level1">
+    <div id="polminer-061" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-6-1" class="anchor"></a>polmineR 0.6.1<small> 2016-06-23 </small>
+<a href="#polminer-061" class="anchor"></a>polmineR 0.6.1<small> 2016-06-23 </small>
 </h1>
 <ul>
 <li>configure file removed to avoid unwanted bugs</li>
 </ul>
 </div>
-    <div id="polminer-0-6-0" class="section level1">
+    <div id="polminer-060" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-6-0" class="anchor"></a>polmineR 0.6.0<small> 2016-06-22 </small>
+<a href="#polminer-060" class="anchor"></a>polmineR 0.6.0<small> 2016-06-22 </small>
 </h1>
 <ul>
 <li>this is the first version that passes all CRAN tests and that is available via CRAN</li>
@@ -580,34 +580,34 @@
 <li>a series of bug fixes</li>
 </ul>
 </div>
-    <div id="polminer-0-5-6" class="section level1">
+    <div id="polminer-056" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-5-6" class="anchor"></a>polmineR 0.5.6<small> Unreleased </small>
+<a href="#polminer-056" class="anchor"></a>polmineR 0.5.6<small> Unreleased </small>
 </h1>
 <ul>
 <li>slot tf renamed to stat, class is data.table now</li>
 <li>keyness_method moved to data.tables</li>
 </ul>
 </div>
-    <div id="polminer-0-5-3" class="section level1">
+    <div id="polminer-053" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-5-3" class="anchor"></a>polmineR 0.5.3<small> Unreleased </small>
+<a href="#polminer-053" class="anchor"></a>polmineR 0.5.3<small> Unreleased </small>
 </h1>
 <ul>
 <li>renamed collocations to cooccurrences, seems more appropriate</li>
 </ul>
 </div>
-    <div id="polminer-0-5-2" class="section level1">
+    <div id="polminer-052" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-5-2" class="anchor"></a>polmineR 0.5.2<small> Unreleased </small>
+<a href="#polminer-052" class="anchor"></a>polmineR 0.5.2<small> Unreleased </small>
 </h1>
 <ul>
 <li>multicore for term frequency counts (param for partition)</li>
 </ul>
 </div>
-    <div id="polminer-0-5-0" class="section level1">
+    <div id="polminer-050" class="section level1">
 <h1 class="page-header">
-<a href="#polminer-0-5-0" class="anchor"></a>polmineR 0.5.0<small> Unreleased </small>
+<a href="#polminer-050" class="anchor"></a>polmineR 0.5.0<small> Unreleased </small>
 </h1>
 <ul>
 <li>renamed xxxCluster to xxxBundle, bundle-superclass introduced</li>
@@ -621,27 +621,27 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#polminer-0-8-0">0.8.0</a></li>
-        <li><a href="#polminer-0-7-11">0.7.11</a></li>
-        <li><a href="#polminer-0-7-10">0.7.10</a></li>
-        <li><a href="#polminer-0-7-9">0.7.9</a></li>
-        <li><a href="#polminer-0-7-8">0.7.8</a></li>
-        <li><a href="#polminer-0-7-7">0.7.7</a></li>
-        <li><a href="#polminer-0-7-6">0.7.6</a></li>
-        <li><a href="#polminer-0-7-5">0.7.5</a></li>
-        <li><a href="#polminer-0-7-4">0.7.4</a></li>
-        <li><a href="#polminer-0-7-3">0.7.3</a></li>
-        <li><a href="#polminer-0-7-2">0.7.2</a></li>
-        <li><a href="#polminer-0-7-1">0.7.1</a></li>
-        <li><a href="#polminer-0-7-0">0.7.0</a></li>
-        <li><a href="#polminer-0-6-3">0.6.3</a></li>
-        <li><a href="#polminer-0-6-2">0.6.2</a></li>
-        <li><a href="#polminer-0-6-1">0.6.1</a></li>
-        <li><a href="#polminer-0-6-0">0.6.0</a></li>
-        <li><a href="#polminer-0-5-6">0.5.6</a></li>
-        <li><a href="#polminer-0-5-3">0.5.3</a></li>
-        <li><a href="#polminer-0-5-2">0.5.2</a></li>
-        <li><a href="#polminer-0-5-0">0.5.0</a></li>
+        <li><a href="#polminer-080">0.8.0</a></li>
+        <li><a href="#polminer-0711">0.7.11</a></li>
+        <li><a href="#polminer-0710">0.7.10</a></li>
+        <li><a href="#polminer-079">0.7.9</a></li>
+        <li><a href="#polminer-078">0.7.8</a></li>
+        <li><a href="#polminer-077">0.7.7</a></li>
+        <li><a href="#polminer-076">0.7.6</a></li>
+        <li><a href="#polminer-075">0.7.5</a></li>
+        <li><a href="#polminer-074">0.7.4</a></li>
+        <li><a href="#polminer-073">0.7.3</a></li>
+        <li><a href="#polminer-072">0.7.2</a></li>
+        <li><a href="#polminer-071">0.7.1</a></li>
+        <li><a href="#polminer-070">0.7.0</a></li>
+        <li><a href="#polminer-063">0.6.3</a></li>
+        <li><a href="#polminer-062">0.6.2</a></li>
+        <li><a href="#polminer-061">0.6.1</a></li>
+        <li><a href="#polminer-060">0.6.0</a></li>
+        <li><a href="#polminer-056">0.5.6</a></li>
+        <li><a href="#polminer-053">0.5.3</a></li>
+        <li><a href="#polminer-052">0.5.2</a></li>
+        <li><a href="#polminer-050">0.5.0</a></li>
       </ul>
     </div>
   </div>

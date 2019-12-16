@@ -51,18 +51,34 @@ The session registry directory is populated with files that describe the corpora
 
 ### Install and use packaged corpora
 
-Indexed corpora wrapped into R data packages can be installed from a (private) package repository.
+Indexed sample corpora wrapped into R data packages can be installed from the [drat](https://cran.r-project.org/web/packages/drat/vignettes/DratFAQ.html)-repository
+of the [PolMine Project](https://polmine.github.io/). 
 
-```{r install.corpus, eval = FALSE}
-install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de/packages")
-install.packages("europarl", repos = "http://polmine.sowi.uni-due.de/packages")
+The GermaParl package includes only a small excerpt the GermaParl corpus for demo
+purposes, the europarl package does not contain data at all. Yet the packages include
+functionality to download the full corpora. 
+
+```{r install.corpus, eval = TRUE}
+if (!"GermaParl" %in% rownames(installed.packages())){
+  install.packages("GermaParl", repos = "http://polmine.github.io/drat")
+}
+use("GermaParl")
+if (!"GERMAPARL" %in% corpus()$corpus){
+  GermaParl::germaparl_download_corpus()
+  use("GermaParl")
+}
+  
+if (!"europarl" %in% rownames(installed.packages())){
+  install.packages("europarl", repos = "http://polmine.github.io/drat")
+}
+use("europarl")
+if (!"EUROPARL-EN" %in% corpus()$corpus){
+  europarl::europarl_download()
+  use("europarl")
+}
 ```
 
 Calling the `use()`-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.
-
-```{r use, eval = TRUE}
-use("europarl") # activate the corpus in the europarl-en package
-```
 
 An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. The corpora described in the registry directory defined by the environment variable CORPUS_REGISTRY will be added to the session registry directory when loading polmineR.
 
@@ -99,8 +115,8 @@ count("EUROPARL-EN", '"[pP]opulism"')
 
 The dispersion method is there to analyse the dispersion of a query, or a set of queries across one or two dimensions (absolute and relative frequencies). The CQP syntax can be used.
 
-```{r, eval = FALSE, message = FALSE}
-populism <- dispersion("EUROPARL-EN", "populism", s_Attribute = "text_year", progress = FALSE)
+```{r, eval = TRUE, message = FALSE}
+populism <- dispersion("EUROPARL-EN", "populism", s_attribute = "text_year", progress = FALSE)
 popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
 ```
 
@@ -109,24 +125,24 @@ popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year"
 
 The cooccurrences method is used to analyse the context of a query (including some statistics).
 
-```{r, eval = FALSE, message = FALSE}
+```{r, eval = TRUE, message = FALSE}
 islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
 islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)
-islam
 ```
-
-[![cooccurrences()](http://polmine.sowi.uni-due.de/gallery/cooccurrences.png)](http://polmine.sowi.uni-due.de/gallery/cooccurrences.png)
 
 
 ### features (keyword extraction)
 
 Compare partitions to identify features / keywords (using statistical tests such as chi square).
 
-```{r, eval = FALSE, message = FALSE}
-ep2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
-epPre911 <- partition("EUROPARL-EN", text_year = 1997:2001, p_attribute = "word")
-y <- features(ep2002, epPre911, included = FALSE)
+```{r, eval = TRUE, message = FALSE}
+ep_2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
+ep_pre_2002 <- partition("EUROPARL-EN", text_year = 1997:2001, p_attribute = "word")
+features(ep_2002, ep_pre_2002, included = FALSE) %>%
+  subset(rank_chisquare <= 10) %>%
+  format() %>%
+  knitr::kable(format = "markdown")
 ```
 
 
@@ -135,10 +151,11 @@ y <- features(ep2002, epPre911, included = FALSE)
 So what happens in the context of a word, or a CQP query? To attain valid research results, reading will often be necessary. The kwic method will help, and uses the conveniences of DataTables, outputted in the Viewer pane of RStudio.
 
 ```{r}
-kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name"))
+kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name")) %>%
+  as.data.frame() %>%
+  .[1:8,] %>%
+  knitr::kable(format = "markdown", escape = FALSE)
 ```
-
-[![kwic()](http://polmine.sowi.uni-due.de/gallery/kwic.png)](http://polmine.sowi.uni-due.de/gallery/kwic.png)
 
 
 ### read (the full text)
@@ -151,15 +168,13 @@ merkel <- partition("GERMAPARL", speaker = "Angela Merkel", date = "2013-09-03")
 read(merkel)
 ```
 
-[![read()](http://polmine.sowi.uni-due.de/gallery/read.png)](http://polmine.sowi.uni-due.de/gallery/read.png)
-
 
 ### as.TermDocumentMatrix (for text mining purposes)
 
 Many advanced methods in text mining require term document matrices as input. Based on the metadata of a corpus, these data structures can be obtained in a fast and flexible manner, for performing topic modelling, machine learning etc.
 
 ```{r, eval = FALSE}
-use("europarl.en")
+use("europarl")
 speakers <- partition_bundle(
   "EUROPARL-EN", s_attribute = "speaker_id",
   progress = FALSE, verbose = FALSE

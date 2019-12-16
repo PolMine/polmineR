@@ -64,28 +64,45 @@ corpora that are present and accessible on the user’s system.
 
 ### Install and use packaged corpora
 
-Indexed corpora wrapped into R data packages can be installed from a
-(private) package
-repository.
+Indexed sample corpora wrapped into R data packages can be installed
+from the
+[drat](https://cran.r-project.org/web/packages/drat/vignettes/DratFAQ.html)-repository
+of the [PolMine Project](https://polmine.github.io/).
+
+The GermaParl package includes only a small excerpt the GermaParl corpus
+for demo purposes, the europarl package does not contain data at all.
+Yet the packages include functionality to download the full corpora.
 
 ``` r
-install.packages("GermaParl", repos = "http://polmine.sowi.uni-due.de/packages")
-install.packages("europarl", repos = "http://polmine.sowi.uni-due.de/packages")
-```
-
-Calling the `use()`-function will activate a corpus included in a data
-package. The registry files describing the corpora in a package are
-added to the session registry directory.
-
-``` r
-use("europarl") # activate the corpus in the europarl-en package
+if (!"GermaParl" %in% rownames(installed.packages())){
+  install.packages("GermaParl", repos = "http://polmine.github.io/drat")
+}
+use("GermaParl")
+#> ... activating corpus: GERMAPARLMINI
+if (!"GERMAPARL" %in% corpus()$corpus){
+  GermaParl::germaparl_download_corpus()
+  use("GermaParl")
+}
+  
+if (!"europarl" %in% rownames(installed.packages())){
+  install.packages("europarl", repos = "http://polmine.github.io/drat")
+}
+use("europarl")
 #> ... activating corpus: EUROPARL-DE
 #> ... activating corpus: EUROPARL-EN
 #> ... activating corpus: EUROPARL-ES
 #> ... activating corpus: EUROPARL-FR
 #> ... activating corpus: EUROPARL-IT
 #> ... activating corpus: EUROPARL-NL
+if (!"EUROPARL-EN" %in% corpus()$corpus){
+  europarl::europarl_download()
+  use("europarl")
+}
 ```
+
+Calling the `use()`-function will activate a corpus included in a data
+package. The registry files describing the corpora in a package are
+added to the session registry directory.
 
 An advantage of keeping corpora in data packages are the versioning and
 documentation mechanisms that are the hallmark of packages. Of course,
@@ -157,7 +174,7 @@ frequencies). The CQP syntax can be
 used.
 
 ``` r
-populism <- dispersion("EUROPARL-EN", "populism", s_Attribute = "text_year", progress = FALSE)
+populism <- dispersion("EUROPARL-EN", "populism", s_attribute = "text_year", progress = FALSE)
 popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
 ```
 
@@ -171,10 +188,9 @@ statistics).
 islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
 islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)
-islam
 ```
 
-<http://polmine.sowi.uni-due.de/gallery/cooccurrences.png>
+![](README-unnamed-chunk-4-1.png)<!-- -->
 
 ### features (keyword extraction)
 
@@ -183,10 +199,26 @@ tests such as chi
 square).
 
 ``` r
-ep2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
-epPre911 <- partition("EUROPARL-EN", text_year = 1997:2001, p_attribute = "word")
-y <- features(ep2002, epPre911, included = FALSE)
+ep_2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
+ep_pre_2002 <- partition("EUROPARL-EN", text_year = 1997:2001, p_attribute = "word")
+features(ep_2002, ep_pre_2002, included = FALSE) %>%
+  subset(rank_chisquare <= 10) %>%
+  format() %>%
+  knitr::kable(format = "markdown")
 ```
+
+| rank\_chisquare | word         | count\_coi | count\_ref | exp\_coi | chisquare |
+| --------------: | :----------- | ---------: | ---------: | -------: | --------: |
+|               1 | 2002         |       1694 |        782 |   398.96 |   5011.70 |
+|               2 | Johannesburg |        479 |         21 |    80.57 |   2348.97 |
+|               3 | Seville      |        378 |         26 |    65.10 |   1792.96 |
+|               4 | Barcelona    |        706 |        528 |   198.84 |   1542.16 |
+|               5 | ’s           |      10694 |      36727 |  7641.03 |   1457.07 |
+|               6 | 2003         |        549 |        329 |   141.47 |   1399.45 |
+|               7 | Copenhagen   |        575 |        430 |   161.94 |   1256.06 |
+|               8 | terrorism    |       1221 |       1917 |   505.63 |   1206.67 |
+|               9 | 02           |        233 |          2 |    37.87 |   1198.75 |
+|              10 | candidate    |       1217 |       2088 |   532.54 |   1048.84 |
 
 ### kwic (also known as concordances)
 
@@ -196,10 +228,22 @@ will help, and uses the conveniences of DataTables, outputted in the
 Viewer pane of RStudio.
 
 ``` r
-kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name"))
+kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name")) %>%
+  as.data.frame() %>%
+  .[1:8,] %>%
+  knitr::kable(format = "markdown", escape = FALSE)
 ```
 
-<http://polmine.sowi.uni-due.de/gallery/kwic.png>
+| meta                        | left                             | node  | right                                  |
+| :-------------------------- | :------------------------------- | :---- | :------------------------------------- |
+| 1996-05-09<br/>Oostlander   | , as for example with            | Islam | here in Europe , so                    |
+| 1996-05-09<br/>Féret        | promotion of the study of        | Islam | in Europe ’ , with                     |
+| 1996-05-09<br/>Féret        | seem to have forgotten that      | Islam | makes no distinction between spiritual |
+| 1996-06-05<br/>von Habsburg | , the old arguments against      | Islam | are trotted out time and               |
+| 1996-06-05<br/>von Habsburg | various shades of opinion within | Islam | must not simply be lumped              |
+| 1996-06-05<br/>von Habsburg | there are various groups within  | Islam | and that many of them                  |
+| 1996-07-17<br/>Blot         | represented by the growth of     | Islam | to the south and east                  |
+| 1996-09-18<br/>Stirbois     | rushing into the arms of         | Islam | . A fortnight later ,                  |
 
 ### read (the full text)
 
@@ -213,8 +257,6 @@ merkel <- partition("GERMAPARL", speaker = "Angela Merkel", date = "2013-09-03")
 read(merkel)
 ```
 
-<http://polmine.sowi.uni-due.de/gallery/read.png>
-
 ### as.TermDocumentMatrix (for text mining purposes)
 
 Many advanced methods in text mining require term document matrices as
@@ -223,7 +265,7 @@ obtained in a fast and flexible manner, for performing topic modelling,
 machine learning etc.
 
 ``` r
-use("europarl.en")
+use("europarl")
 speakers <- partition_bundle(
   "EUROPARL-EN", s_attribute = "speaker_id",
   progress = FALSE, verbose = FALSE
