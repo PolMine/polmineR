@@ -7,7 +7,7 @@ polmineR 0.8.0
   departure of most workflows. All core methods are now available for the 
   `corpus` class, and have been implemented newly if necessary, e.g. `show()` 
   and `size()`-method. The constructor method for a  `corpus` object, the 
-  `corpus()` method will now check whether the character vector with the corpus 
+  `corpus()` method, will now check whether the character vector with the corpus 
   ID refers to an available corpus, whether all letters are upper case and
   issue informative warnings and error messages.
 - The `s_attributes()`-method for `corpus` objects has been reworked: It will decode 
@@ -26,7 +26,7 @@ polmineR 0.8.0
   (i.e. `subcorpus` objects) has been introduced. It outperforms the
   `partition()` method. The `subset()`-method for `corpus` and `subcorpus` objects
   will be the default way to work with non standard evaluation in a manner that
-  feels "Rish". The `zoom()`-method that has been introduced experimentally has 
+  feels "R-ish". The `zoom()`-method that has been introduced experimentally has 
   been dropped again in favor of the `subset()`-method to get `subcorpus` objects 
   from `corpus` and `subcorpus` objects. A set of experimental methods for an
   initial check of the feasibility of a non-standard evaluation approach to
@@ -43,14 +43,14 @@ polmineR 0.8.0
   contains have been checked, and multiple contains have been removed.
 - The `subcorpus_bundle` class now inherits from `partition_bundle`. This is not
   intended to be a long-term solution, but facilitates the implementation of new
-  workflows based on the `subcorpus` class rather thane the `partition` class.
+  workflows based on the `subcorpus` class rather than the `partition` class.
 - Calling the polmineR shiny app via `polmineR` did not have safeguards if
   the suggested packages [shiny](https://CRAN.R-project.org/package=shiny) and [shinythemes](https://CRAN.R-project.org/package=shinythemes) were not installed. Now
   there will be a conditional installation of the packages required for running
   the shiny app.
 - The somewhat odd class `CorpusOrSubcorpus` has been removed. The `ngrams`-method
   now applies for `corpus` and `subcorpus` objects.
-- The pipe operator of the magrittr package is imported now, and magrittr has moved
+- The pipe operator of the [magrittr](https://CRAN.R-project.org/package=magrittr) package is imported now, and magrittr has moved
   from a suggested package to a required package.
 - The `label()`-method, present for a while, is superseded by a `edit()`-method now.
   It will call a shiny gadget either using DataTables or Handsontable. The former 
@@ -64,11 +64,11 @@ polmineR 0.8.0
   that qualitative inspections for query hits can work with more context.
 - The `as.TermDocumentMatrix()` and the `as.DocumentTermMatrix()`-methods are now
   also defined for `kwic` objects. They work exactly the same as for the `context`
-  class. To avoid having to write new methods, a new `heighborhood` virtual class has
+  class. To avoid having to write new methods, a new `neighborhood` virtual class has
   been introduced. The aforementioned methods are defined for the virtual class and
   are available for context and kwic class objects.
 - Added CQP functionality to count tab in shiny app, and to the dispersion tab.
-- subsetting corpora using non-standard evaluation expanded (#40).
+- Subsetting corpora using non-standard evaluation expanded (#40).
 - There is now a basic implementation of `get_token_stream()` for a `partition_bundle`
   object.
 - The `Cooccurrences()`-method is now available for `subcorpus`-objects (#88).
@@ -93,9 +93,9 @@ polmineR 0.8.0
 - To keep up with the renaming of functions and arguments in the package, "sAttributes"
   and "pAttributes" in the polmineR shiny app have been renamed ("s_attributes",
   and "p_attributes", respectively).
-- The shiny app module for kwic output will not show p_attribute and `positivelist`
+- The shiny app module for kwic output will not show `p_attribute` and `positivelist`
   by default.
-- The `format()`-method is used to output proper output in the cooccurrences of the
+- The `format()`-method is used to create proper output in the cooccurrences of the
   shiny app.
 - User names that include non-ASCII characters were a persistent problem on Windows
   machines (#66). The solution now is to check for non-ASCII characters in the path
@@ -129,9 +129,9 @@ polmineR 0.8.0
   new colors (#38).
 - Implemented feature request for `dispersion()` that results are reported for all
   values of structural attributes, including those with zero matches. (#104)
-- Performance improved for cpos,matrix-method which unfolds a matrix with regions 
+- Performance improved for the `cpos`-method for `matrix` which unfolds a matrix with regions 
   of corpus positions, useful for operations that require many calls.
-- The count,partition_bundle-method has been reworked and is much faster and more
+- The `count`-method for `partition_bundle` has been reworked and is much faster and more
   memory efficient. 
 - `as.TermDocumentMatrix()` for `partition_bundle` optimized to work efficiently
   with large corpora.
@@ -152,10 +152,10 @@ polmineR 0.8.0
 - The `count()`-method for `partition_bundle`-objects did not perform `iconv()` if
   necessary - this has been corrected.
 - Indexing the concordances of a `kwic` object did not reduce the `cpos` table
-  concurringly - corrected.
+  concurringly. This has been corrected.
 - The `as.speeches()`-method failed to handle situations correctly, when one speaker
-  occurring in the corpus only contributed one single region to the entire corpus (#86),
-  debugged.
+  occurring in the corpus only contributed one single region to the entire corpus (#86). 
+  This behavior has been debugged.
 - Counting over a `partition_bundle` started to throw a warning that an argument arrives
   at the `cpos()`-method that is not used. The cause for the warning message is removed,
   an additional unit test has been introduced to recognize issues with the
@@ -171,8 +171,8 @@ polmineR 0.8.0
 - The part of the shiny app for dispersions did not work at all - has been repaired,
   exposing more functionality of `dispersion()` (#62).
 - In the `as.speeches()`-method, the argument `verbose` was not used (#64) - this had
-  been addressed when solved when addressing issue #86.
-- Telling messages when sending out emails - on success and error (#61).
+  been addressed when solving issue #86.
+- Telling messages when sending out emails - on success and error - have been added (#61).
 - A shortcoming in coerce method to turn a `subcorpus` into a `String` was removed: 
   A semicolon was not recognized as a punctuation mark. This makes decoding subcorpora
   as `Annotation` more robust. The respective unit test has been updated.
@@ -184,15 +184,15 @@ polmineR 0.8.0
   metadata for the first strucs (index 0) of a s-attribute impossible.
 - Fixed an issue for `as.DocumentTermMatrix` that started to occur with the introduction
   of the `subcorpus_bundle` class (#100).
-- Removed a bug in the kwic,character-method that prevented using different values for
+- Removed a bug in the `kwic`-method for `character` that prevented using different values for
   right and left context (#101).
 - Removed a bug that occurred when using `as.DocumentTermMatrix()` on a corpus stated
   by corpus ID / length-one character vector (#105).
 - Removed a bug from the kwic,character-method, and the context,corpus-method that
   would result in odd behavior when either the left or right context is 0.
-- An endemic encoding issue for fulltext output on Windows machines (latin1 encoding)
+- An endemic encoding issue for full text output on Windows machines (latin1 encoding)
   has been solved by replacing internally `markdown::markdownToHTML` by a direct
-  call to `markdown::renderMarkdown`. On this occassion, some overhead preparing
+  call to `markdown::renderMarkdown`. On this occasion, some overhead preparing
   fulltext output has been removed.
 - A bug that prevented getting extra left and right context for `kwic` objects has
   been removed (#102).
@@ -210,7 +210,7 @@ polmineR 0.8.0
   objects for the respective methods.
 - The documentation for the `get_token_stream()`-method has been reworked and expanded
   thoroughly (#65). On this occasion, test coverage for the method has been improved
-  significantly. (Everything is tested now apart from parallelisation.)
+  significantly. (Everything is tested now apart from parallelization.)
 
   
 polmineR 0.7.11
