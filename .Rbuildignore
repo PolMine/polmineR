@@ -5,6 +5,7 @@
 ^cran-comments\.md$
 ^CONDUCT\.md$
 ^README\.Rmd$
+^README\.md$
 ^README-.*\.png$
 ^paper\.Rmd$
 .travis.yml$
@@ -13,3 +14,4 @@
 ^appveyor.yml$
 ^revdep$
 ^uml$
+^CRAN-RELEASE$
