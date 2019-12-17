@@ -1,3 +1,5 @@
+Introducing the polmineR package
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -12,7 +14,7 @@ Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?bran
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/dev/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/dev)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2540670.svg)](https://doi.org/10.5281/zenodo.2540670)
 
-# polmineR
+## Motivation
 
 **Purpose**: The focus of the package ‘polmineR’ is the interactive
 analysis of corpora using R. Core objectives for the development of the
@@ -65,9 +67,8 @@ corpora that are present and accessible on the user’s system.
 ### Install and use packaged corpora
 
 Indexed sample corpora wrapped into R data packages can be installed
-from the
-[drat](https://cran.r-project.org/web/packages/drat/vignettes/DratFAQ.html)-repository
-of the [PolMine Project](https://polmine.github.io/).
+from the [drat](https://CRAN.R-project.org/package=drat)-repository of
+the [PolMine Project](https://polmine.github.io/).
 
 The GermaParl package includes only a small excerpt the GermaParl corpus
 for demo purposes, the europarl package does not contain data at all.
@@ -78,6 +79,7 @@ if (!"GermaParl" %in% rownames(installed.packages())){
   install.packages("GermaParl", repos = "http://polmine.github.io/drat")
 }
 use("GermaParl")
+#> ... activating corpus: GERMAPARL
 #> ... activating corpus: GERMAPARLMINI
 if (!"GERMAPARL" %in% corpus()$corpus){
   GermaParl::germaparl_download_corpus()
@@ -175,7 +177,7 @@ used.
 
 ``` r
 populism <- dispersion("EUROPARL-EN", "populism", s_attribute = "text_year", progress = FALSE)
-popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
+pop_regex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
 ```
 
 ### cooccurrences (to analyse collocations)
@@ -190,7 +192,7 @@ islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)
 ```
 
-![](README-unnamed-chunk-4-1.png)<!-- -->
+![](README-cooccurrences_dotplot-1.png)<!-- -->
 
 ### features (keyword extraction)
 

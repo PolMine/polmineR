@@ -38,7 +38,7 @@ structure for large, linguistically annotated corpora. The
 \code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
 the name of the class, the \code{corpus}-method is the initializer for
 objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
-on an OpenCPU server (see \url{www.opencpu.org}). The \code{remote_corpus}
+on an \href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus}
 class (which inherits from the \code{corpus} class) will handle respective
 information. A (limited) set of polmineR functions and methods can be
 executed on the corpus on the remote machine from the local R session by

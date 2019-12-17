@@ -1,4 +1,5 @@
 ---
+title: Introducing the polmineR package
 output: github_document
 ---
 
@@ -13,7 +14,7 @@ output: github_document
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2540670.svg)](https://doi.org/10.5281/zenodo.2540670)
 
 
-```{r, echo = FALSE}
+```{r chunk_options, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -21,7 +22,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# polmineR
+## Motivation
 
 **Purpose**:  The focus of the package 'polmineR' is the interactive analysis of corpora using R. Core objectives for the development of the package are performance, usability, and a modular design.
 
@@ -43,7 +44,7 @@ knitr::opts_chunk$set(
 
 Upon loading *polmineR*, a message will report the version of the package and the location of a so-called 'registry'-directory. 
 
-```{r library}
+```{r load_polmineR}
 library(polmineR)
 ```
 
@@ -51,14 +52,14 @@ The session registry directory is populated with files that describe the corpora
 
 ### Install and use packaged corpora
 
-Indexed sample corpora wrapped into R data packages can be installed from the [drat](https://cran.r-project.org/web/packages/drat/vignettes/DratFAQ.html)-repository
+Indexed sample corpora wrapped into R data packages can be installed from the [drat](https://CRAN.R-project.org/package=drat)-repository
 of the [PolMine Project](https://polmine.github.io/). 
 
 The GermaParl package includes only a small excerpt the GermaParl corpus for demo
 purposes, the europarl package does not contain data at all. Yet the packages include
 functionality to download the full corpora. 
 
-```{r install.corpus, eval = TRUE}
+```{r install_corpora, eval = TRUE}
 if (!"GermaParl" %in% rownames(installed.packages())){
   install.packages("GermaParl", repos = "http://polmine.github.io/drat")
 }
@@ -87,12 +88,12 @@ An advantage of keeping corpora in data packages are the versioning and document
 
 All methods can be applied to a whole corpus, as well as to partitions (i.e. subcorpora). Use the metadata of a corpus (so-called s-attributes) to define a subcorpus.
 
-```{r partition, eval = TRUE}
+```{r create_partition, eval = TRUE}
 ep2005 <- partition("EUROPARL-EN", text_year = "2006")
 size(ep2005)
 ```
 
-```{r partition2, eval = TRUE}
+```{r create_partition2, eval = TRUE}
 barroso <- partition("EUROPARL-EN", speaker_name = "Barroso", regex = TRUE)
 size(barroso)
 ```
@@ -104,7 +105,7 @@ Partitions can be bundled into partition_bundle objects, and most methods can be
 
 Counting occurrences of a feature in a corpus, a partition or in the partitions of a partition_bundle is a basic operation. By offering access to the query syntax of the Corpus Query Processor (CQP), polmineR package exposes a query syntax that goes far beyond regular expressions. See the [CQP documentation](http://www.ims.uni-stuttgart.de/forschung/projekte/CorpusWorkbench/CQPTutorial/cqp-tutorial.2up.pdf) to learn more.
 
-```{r, eval = TRUE}
+```{r count, eval = TRUE}
 count("EUROPARL-EN", "France")
 count("EUROPARL-EN", c("France", "Germany", "Britain", "Spain", "Italy", "Denmark", "Poland"))
 count("EUROPARL-EN", '"[pP]opulism"')
@@ -115,9 +116,9 @@ count("EUROPARL-EN", '"[pP]opulism"')
 
 The dispersion method is there to analyse the dispersion of a query, or a set of queries across one or two dimensions (absolute and relative frequencies). The CQP syntax can be used.
 
-```{r, eval = TRUE, message = FALSE}
+```{r dispersion, eval = TRUE, message = FALSE}
 populism <- dispersion("EUROPARL-EN", "populism", s_attribute = "text_year", progress = FALSE)
-popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
+pop_regex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year", cqp = TRUE, progress = FALSE)
 ```
 
 
@@ -125,7 +126,7 @@ popRegex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year"
 
 The cooccurrences method is used to analyse the context of a query (including some statistics).
 
-```{r, eval = TRUE, message = FALSE}
+```{r cooccurrences_dotplot, eval = TRUE, message = FALSE}
 islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
 islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)
@@ -136,7 +137,7 @@ dotplot(islam)
 
 Compare partitions to identify features / keywords (using statistical tests such as chi square).
 
-```{r, eval = TRUE, message = FALSE}
+```{r features, eval = TRUE, message = FALSE}
 ep_2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
 ep_pre_2002 <- partition("EUROPARL-EN", text_year = 1997:2001, p_attribute = "word")
 features(ep_2002, ep_pre_2002, included = FALSE) %>%
@@ -150,7 +151,7 @@ features(ep_2002, ep_pre_2002, included = FALSE) %>%
 
 So what happens in the context of a word, or a CQP query? To attain valid research results, reading will often be necessary. The kwic method will help, and uses the conveniences of DataTables, outputted in the Viewer pane of RStudio.
 
-```{r}
+```{r kwic}
 kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name")) %>%
   as.data.frame() %>%
   .[1:8,] %>%
@@ -173,7 +174,7 @@ read(merkel)
 
 Many advanced methods in text mining require term document matrices as input. Based on the metadata of a corpus, these data structures can be obtained in a fast and flexible manner, for performing topic modelling, machine learning etc.
 
-```{r, eval = FALSE}
+```{r as_tdm, eval = FALSE}
 use("europarl")
 speakers <- partition_bundle(
   "EUROPARL-EN", s_attribute = "speaker_id",
@@ -193,20 +194,20 @@ The following instructions assume that you have installed R. If not, install it 
 
 The CRAN release of polmineR can be installed using `install.packages()`, all dependencies will be installed, too.
 
-```{r, eval = FALSE}
+```{r install_polmineR, eval = FALSE}
 install.packages("polmineR")
 ```
 
 To install the most recent development version that is hosted in a GitHub repository, use the installation mechanism offered by the devtools package.
 
-```{r, eval = FALSE}
+```{r install_devtools, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 Check the installation by loading polmineR and activating the corpora included in the package.
 
-```{r, eval = FALSE}
+```{r win_check_installation, eval = FALSE}
 library(polmineR)
 corpus()
 ```
@@ -220,7 +221,7 @@ At this stage, the RcppCWB dependency is not available as a pre-compiled binary 
 
 First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
 
-```{sh, eval = FALSE}
+```{sh install_xcode, eval = FALSE}
 xcode-select --install
 ```
 
@@ -230,7 +231,7 @@ Second, an installation of XQuartz is required. It can be obtained from [www.xqu
 
 Third, to fulfill the system requirements of the RcppCWB package, the Glib and pcre libraries need to be installed. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands then need to be executed from a terminal window. They will install the C libraries that the RcppCWB package relies on:
 
-```{sh, eval = FALSE}
+```{sh mac_brew_commands, eval = FALSE}
 brew -v install pkg-config
 brew -v install glib --universal
 brew -v install pcre --universal
@@ -246,14 +247,14 @@ install.packages("polmineR")
 
 The development version of *polmineR* can be installed using devtools:
 
-```{r, eval = FALSE}
+```{r mac_install_polmineR_dev, eval = FALSE}
 install.packages("devtools") # unless devtools is already installed
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 Check whether everything works by loading polmineR, and activating the demo corpora included in the package.
 
-```{r, eval = FALSE}
+```{r mac_check_installation, eval = FALSE}
 library(polmineR)
 use("polmineR")
 corpus()
@@ -264,13 +265,13 @@ corpus()
 
 If you have not yet installed R on your Ubuntu machine, there is a good instruction at [ubuntuuser](https://wiki.ubuntuusers.de/R/). To install base R, enter in the terminal.
 
-```{sh, eval = FALSE}
+```{sh linux_install_r_base, eval = FALSE}
 sudo apt-get install r-base r-recommended
 ```
 
 Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.
 
-```{sh, eval = FALSE}
+```{sh linux_install_r, eval = FALSE}
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9
 sudo add-apt-repository 'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'
 sudo apt-get update
@@ -281,7 +282,7 @@ It is highly recommended to install [RStudio](https://www.rstudio.com/products/r
 
 The RcppCWB package, the interface used by polmineR to query CWB corpora, will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.
 
-```{sh,  eval = FALSE}
+```{sh linux_install_system_requirements,  eval = FALSE}
 sudo apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev
 sudo apt-get install libxml2-dev
 sudo apt-get install libprotobuf-dev
@@ -289,21 +290,21 @@ sudo apt-get install libprotobuf-dev
 
 The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
 
-```{r, eval = FALSE}
+```{r linux_install_dependencies, eval = FALSE}
 install.packages("RcppCWB")
 install.packages("polmineR")
 ```
 
 Use devtools to install the development version of polmineR from GitHub.
 
-```{r, eval = FALSE}
+```{r linux_install_dev, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
 You may want to install packaged corpora to run examples in the vignette, and the man packages.
 
-```{r, eval = FALSE}
+```{r linux_check_installation, eval = FALSE}
 library(polmineR)
 use("polmineR")
 corpus()
@@ -311,19 +312,19 @@ corpus()
 
 To have access to all package functions and to run all package tests, the installation of further system requirements and packages is required. The xlsx dependency requires that rJava is installed and configured for R. That is done on the shell:
 
-```{sh, eval = FALSE}
+```{sh linux_install_java, eval = FALSE}
 sudo apt-get install openjdk-8-jre
 sudo R CMD javareconf
 ```
 
 To run package tests including (re-)building the manual and vignettes, a working installation of Latex is required, too. Be aware that this may be a time-consuming operation.
 
-```{sh, eval = FALSE}
+```{sh linux_install_texlive, eval = FALSE}
 sudo apt-get install texlive-full texlive-xetex 
 ```
 
 Now install the remaining packages from within R.
 
-```{r, eval = FALSE}
+```{r install_dependencies, eval = FALSE}
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```

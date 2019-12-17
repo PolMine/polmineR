@@ -6,6 +6,8 @@ Yet this is what I should address here: An issue that may arise with R 4.0 has b
 
 I am grateful for the foresight of the CRAN team and the precise advice I received!
 
+P.S.: This is the second take to submit polmineR v0.8.0. Flaws in the URLs linked
+pointed out by Uwe Ligges have been removed.
 
 ## Test environments
 
