@@ -125,8 +125,11 @@ setMethod("[[", "textstat", function(x, i){
 #' @exportMethod [
 #' @importFrom data.table key
 setMethod("[", "textstat", function(x, i, j){
-  if (nrow(x@stat) == 0) warning("indexing is pointless because data.table is empty")
-  if (is.null(key(x@stat))) setkeyv(x@stat, cols = x@p_attribute)
+  if (nrow(x@stat) == 0) warning("Indexing is pointless because data.table is empty")
+  if (is.character(i) && is.null(key(x@stat))){
+    if (x@p_attribute %in% colnames(x@stat)) setkeyv(x@stat, cols = x@p_attribute)
+  }
+  
   if (missing(j)){
     x@stat <- x@stat[eval(i, envir = x@stat)]
     return(x)
