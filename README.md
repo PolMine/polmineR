@@ -8,11 +8,10 @@ v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/li
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Travis-CI Build
-Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev)](https://travis-ci.org/PolMine/polmineR)
+Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://travis-ci.org/PolMine/polmineR)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=dev&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/dev/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/dev)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2540670.svg)](https://doi.org/10.5281/zenodo.2540670)
 
 ## Motivation
 
