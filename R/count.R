@@ -33,6 +33,8 @@ NULL
 #'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute(s) to use.
 #' @param corpus The name of a CWB corpus.
+#' @param phrases A region matrix with left and right corpus positions defining
+#'   regions. If provided, the denoted regions will be concatenated as phrases.
 #' @param decode Logical, whether to turn token ids into decoded strings (only
 #'   if query is NULL).
 #' @param sort Logical, whether to sort table with counts (in stat slot).
@@ -80,6 +82,10 @@ NULL
 #' 
 #' P <- partition("GERMAPARLMINI", date = "2009-11-11")
 #' count(P, '"Integration.*"', breakdown = TRUE)
+#' 
+#' sc <- corpus("GERMAPARLMINI") %>% subset(party == "SPD")
+#' regs <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE)
+#' cnt <- count(sc, phrases = regs, p_attribute = "word")
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
@@ -108,7 +114,8 @@ setMethod("count", "subcorpus", function(
 #' @rdname count-method
 setMethod("count", "slice", function(
   .Object, query = NULL, cqp = is.cqp, check = TRUE, breakdown = FALSE,
-  decode = TRUE, p_attribute = getOption("polmineR.p_attribute"),
+  decode = TRUE, phrases = NULL,
+  p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...
 ){
@@ -161,33 +168,50 @@ setMethod("count", "slice", function(
       return( data.table(query = query, count = no, freq = no/.Object@size) )
     }
   } else {
-    pAttr_id <- paste(p_attribute, "id", sep = "_")
+    p_attr_id <- paste(p_attribute, "id", sep = "_")
     if (length(p_attribute) == 1L){
-      countMatrix <- RcppCWB::region_matrix_to_count_matrix(
-        corpus = .Object@corpus, p_attribute = p_attribute,
-        matrix = .Object@cpos
-      )
-      TF <- data.table::as.data.table(countMatrix)
-      setnames(TF, old = c("V1", "V2"), new = c(pAttr_id, "count"))
+      if (is.null(phrases)){
+        count_matrix <- RcppCWB::region_matrix_to_count_matrix(
+          corpus = .Object@corpus, p_attribute = p_attribute,
+          matrix = .Object@cpos
+        )
+        TF <- data.table::as.data.table(count_matrix)
+        setnames(TF, old = c("V1", "V2"), new = c(p_attr_id, "count"))
+      } else {
+        ts <- get_token_stream(.Object, p_attribute = p_attribute, cpos = TRUE)
+        x <- data.table(cpos = as.integer(names(ts)), token = unname(ts))
+        x[, "keep" := TRUE]
+        for (i in 1L:nrow(phrases)){
+          region <- phrases[i,]
+          start <- which(x[["cpos"]] == region[1])
+          for (i in 1L:(region[2]-region[1])) x[start + i, "keep"] <- FALSE
+          x[start, "token"] <- get_token_stream(region[1]:region[2], collapse = "_", corpus = .Object@corpus, p_attribute = p_attribute)
+        }
+        TF <- x[keep == TRUE][, "keep" := NULL][, .N, by = "token"]
+        setnames(TF, old = c("token", "N"), new = c(p_attribute, "count"))
+        decode <- FALSE
+      }
     } else {
       cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
-      idList <- lapply(p_attribute, function(p) cl_cpos2id(corpus = .Object@corpus, p_attribute = p, cpos = cpos, registry = registry()))
-      names(idList) <- paste(p_attribute, "id", sep = "_")
-      ID <- data.table::as.data.table(idList)
-      setkeyv(ID, cols = names(idList))
-      TF <- ID[, .N, by = c(eval(names(idList))), with = TRUE]
+      id_list <- lapply(p_attribute, function(p) cl_cpos2id(corpus = .Object@corpus, p_attribute = p, cpos = cpos, registry = registry()))
+      names(id_list) <- paste(p_attribute, "id", sep = "_")
+      ID <- data.table::as.data.table(id_list)
+      setkeyv(ID, cols = names(id_list))
+      TF <- ID[, .N, by = c(eval(names(id_list))), with = TRUE]
       setnames(TF, "N", "count")
     }
     if (decode){
       dummy <- lapply(
-        1L:length(p_attribute),
+        seq_along(p_attribute),
         function(i){
-          str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = TF[[pAttr_id[i]]], registry = registry())
+          str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = TF[[p_attr_id[i]]], registry = registry())
           TF[, eval(p_attribute[i]) := as.nativeEnc(str, from = .Object@encoding) , with = TRUE] 
         })
-      setcolorder(TF, neworder = c(p_attribute, pAttr_id, "count"))
+      setcolorder(TF, neworder = c(p_attribute, p_attr_id, "count"))
     } else {
-      setcolorder(TF, neworder = c(pAttr_id, "count"))
+      # Reordering is conditional because if phrases have been generated, not all colnames
+      # are necessarily present
+      if (all(p_attr_id %in% colnames(TF))) setcolorder(TF, neworder = c(p_attr_id, "count"))
     }
     y <- new(
       Class = "count",

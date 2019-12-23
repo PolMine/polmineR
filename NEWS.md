@@ -1,3 +1,10 @@
+polmineR 0.8.0.9001
+===================
+
+- Introduced experimentally a feature to count phrases in the `count()`-method for 
+  `slice` class objects.
+
+
 polmineR 0.8.0
 ==============
 

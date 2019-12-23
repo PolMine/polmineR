@@ -30,7 +30,7 @@ count(.Object, ...)
   ...)
 
 \S4method{count}{slice}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, breakdown = FALSE, decode = TRUE,
+  check = TRUE, breakdown = FALSE, decode = TRUE, phrases = NULL,
   p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...)
@@ -87,6 +87,9 @@ if query is NULL).}
 
 \item{progress}{Logical, whether to show progress bar.}
 
+\item{phrases}{A region matrix with left and right corpus positions defining
+regions. If provided, the denoted regions will be concatenated as phrases.}
+
 \item{freq}{Logical, if \code{FALSE}, counts will be reported, if TRUE,
 (relative) frequencies are added to table.}
 
@@ -139,6 +142,10 @@ count("GERMAPARLMINI", '"Integration.*"', breakdown = TRUE)
 
 P <- partition("GERMAPARLMINI", date = "2009-11-11")
 count(P, '"Integration.*"', breakdown = TRUE)
+
+sc <- corpus("GERMAPARLMINI") \%>\% subset(party == "SPD")
+regs <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE)
+cnt <- count(sc, phrases = regs, p_attribute = "word")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
