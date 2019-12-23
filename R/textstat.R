@@ -126,6 +126,10 @@ setMethod("[[", "textstat", function(x, i){
 #' @importFrom data.table key
 setMethod("[", "textstat", function(x, i, j){
   if (nrow(x@stat) == 0) warning("Indexing is pointless because data.table is empty")
+  
+  # Note that i cannot be a call/expression (such as word %in% c("price", "revenue"))
+  # in the context of a S4 method
+  
   if (is.character(i) && is.null(key(x@stat))){
     if (x@p_attribute %in% colnames(x@stat)) setkeyv(x@stat, cols = x@p_attribute)
   }

@@ -1,3 +1,10 @@
+polmineR 0.8.0.9001
+===================
+
+- Indexing `Cooccurrences` objects had not been possible, now at least using integer
+  indices is possible (#114).
+
+
 polmineR 0.8.0
 ==============
 
