@@ -187,7 +187,7 @@ setMethod("count", "slice", function(
           for (i in 1L:(region[2]-region[1])) x[start + i, "keep"] <- FALSE
           x[start, "token"] <- get_token_stream(region[1]:region[2], collapse = "_", corpus = .Object@corpus, p_attribute = p_attribute)
         }
-        TF <- x[keep == TRUE][, "keep" := NULL][, .N, by = "token"]
+        TF <- x[x[["keep"]] == TRUE][, "keep" := NULL][, .N, by = "token"]
         setnames(TF, old = c("token", "N"), new = c(p_attribute, "count"))
         decode <- FALSE
       }
