@@ -46,40 +46,6 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 })
 
 
-setAs(from = "character", to = "data.table", def = function(from){
-  
-  p_attribute_list <- lapply(
-    p_attributes(from),
-    function(x){
-      message("decoding p-attribute:", x)
-      tokens <- get_token_stream(from, p_attribute = x)
-      Encoding(tokens) <- registry_get_encoding(from)
-      as.nativeEnc(tokens, from = registry_get_encoding(from))
-    }
-  )
-  names(p_attribute_list) <- p_attributes(from)
-  
-  max_cpos <- cl_attribute_size(corpus = from, attribute = "word", attribute_type = "p", registry = registry()) - 1L
-  s_attribute_list <- lapply(
-    s_attributes(from),
-    function(x){
-      message("decoding s-attribute:", x)
-      struc <- cl_cpos2struc(corpus = from, s_attribute = x, cpos = 0L:max_cpos, registry = registry())
-      str <- cl_struc2str(corpus = from, s_attribute = x, struc = struc, registry = registry())
-      Encoding(str) <- registry_get_encoding(from)
-      as.nativeEnc(str, from = registry_get_encoding(from))
-    }
-  )
-  names(s_attribute_list) <- s_attributes(from)
-  
-  message("assembling data.table")
-  combinedList <- c(
-    list(cpos = 0L:max_cpos),
-    p_attribute_list,
-    s_attribute_list
-  )
-  data.table::as.data.table(combinedList)
-})
 
 #' Decode corpus or subcorpus.
 #' 
@@ -103,6 +69,10 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' @param .Object The \code{corpus} or \code{subcorpus} to decode.
 #' @param to The class of the returned object, stated as a length-one
 #'   \code{character} vector.
+#' @param s_attributes The structural attributes to decode. If \code{NULL} (default), all
+#'   structural attributes will be decoded.
+#' @param p_attributes The positional attributes to decode. If \code{NULL} (default), all
+#'   positional attributes will be decoded.
 #' @param ... Further arguments.
 #' @exportMethod decode
 #' @importFrom RcppCWB get_region_matrix
@@ -118,9 +88,15 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' # Decode corpus as data.table
 #' dt <- decode("GERMAPARLMINI", to = "data.table")
 #' 
+#' # Decode corpus selectively
+#' dt <- decode("GERMAPARLMINI", to = "data.table", p_attributes = "word", s_attributes = "party")
+#' 
 #' # Decode a subcorpus
 #' sc <- subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel")
 #' dt <- decode(sc, to = "data.table")
+#' 
+#' # Decode subcorpus selectively
+#' dt <- decode(sc, to = "data.table", p_attributes = "word", s_attributes = "party")
 #' 
 #' # Decode partition
 #' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
@@ -151,76 +127,137 @@ setAs(from = "character", to = "data.table", def = function(from){
 #' }
 #' }
 #' @rdname decode
-setMethod("decode", "character", function(.Object, to = c("data.table", "Annotation"), ...){
-  
+setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation"), p_attributes = NULL, s_attributes = NULL){
+  if (to == "data.table"){
+
+    if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
+    if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
+    
+    if (is.null(s_attributes)) s_attributes <- s_attributes(.Object)
+    if (!all(s_attributes %in% s_attributes(.Object))) stop("Not all s_attributes provided are available.")
+
+    p_attribute_list <- lapply(
+      setNames(p_attributes, p_attributes),
+      function(p_attr){
+        message("decoding p-attribute:", p_attr)
+        get_token_stream(.Object, p_attribute = p_attr)
+      }
+    )
+
+    max_cpos <- size(.Object) - 1L
+    s_attribute_list <- lapply(
+      setNames(s_attributes, s_attributes),
+      function(s_attr){
+        message("decoding s-attribute:", s_attr)
+        corpus_id <- get_corpus(.Object)
+        struc <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attr, cpos = 0L:max_cpos, registry = registry())
+        str <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = struc, registry = registry())
+        Encoding(str) <- encoding(.Object)
+        as.nativeEnc(str, from = encoding(.Object))
+      }
+    )
+
+    message("assembling data.table")
+    combined_list <- c(
+      list(cpos = 0L:max_cpos),
+      p_attribute_list,
+      s_attribute_list
+    )
+    y <- data.table::as.data.table(combined_list)
+    
+  } else if (to == "Annotation"){
+    y <- as(.Object, "Annotation")
+  } else {
+    stop("The 'to'-argument of the decode()-method is required to be either 'data.table' or 'Annotation'.")
+  }
+  y
+})
+
+#' @exportMethod decode
+#' @rdname decode
+setMethod("decode", "character", function(.Object, to = c("data.table", "Annotation"), s_attributes = NULL, p_attributes = NULL, ...){
   if (any(c("sAttribute", "s_attribute") %in% names(list(...)))){
     stop("Decoding an s_attribute is not supported any longer in the decode()-method of ",
          "the polmineR package. See s_attribute_decode in the RcppCWB package as a substitute.")
   }
-  
-  stopifnot(
-    length(.Object) == 1L, # cannot process more than one corpus
-    .Object %in% .list_corpora() # ensure that corpus is available
-  )
-  
-  as(.Object, to)
-  
+  decode(corpus(.Object), to = to, s_attributes = s_attributes, p_attributes = p_attributes)
 })
 
 
-setAs(from = "subcorpus", to = "data.table", def = function(from){
-  ts <- lapply(
-    setNames(p_attributes(from), p_attributes(from)),
-    function(p_attr){
-      message("... decoding p_attribute ", p_attr)
-      get_token_stream(from, p_attribute = p_attr)
+
+
+
+#' @exportMethod decode
+#' @rdname decode
+setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes = NULL, p_attributes = NULL){
+  if (to == "data.table"){
+    
+    if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
+    if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
+    
+    if (is.null(s_attributes)) s_attributes <- s_attributes(.Object)
+    if (!all(s_attributes %in% s_attributes(.Object))) stop("Not all s_attributes provided are available.")
+
+    ts <- lapply(
+      setNames(p_attributes, p_attributes),
+      function(p_attr){
+        message("... decoding p_attribute ", p_attr)
+        get_token_stream(.Object, p_attribute = p_attr)
+      }
+    )
+    p_attr_dt <- as.data.table(ts)
+    p_attr_dt[, "cpos" := unlist(apply(.Object@cpos, 1, function(row) row[1]:row[2]))]
+    
+    strucs <- RcppCWB::cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attributes[1], cpos = .Object@cpos[,1])
+    
+    dts <- lapply(
+      strucs,
+      function(struc){
+        region <- RcppCWB::cl_struc2cpos(corpus = .Object@corpus, s_attribute = s_attributes[1], struc = struc)
+        data.table(struc = struc, cpos_left = region[1], cpos_right = region[2])
+      }
+    )
+    regions <- rbindlist(dts)
+    
+    s_attr_values <- lapply(
+      setNames(s_attributes, s_attributes),
+      function(s_attr){
+        message("... decoding s_attribute ", s_attr)
+        str <- RcppCWB::cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs)
+        Encoding(str) <- encoding(.Object)
+        as.nativeEnc(str, from = encoding(.Object))
+      }
+    )
+    dt <- as.data.table(s_attr_values)
+    
+    s_attr_dt <- cbind(regions, dt)
+
+    unfold <- function(.SD){
+      dt <- data.table(cpos = .SD[["cpos_left"]]:.SD[["cpos_right"]])
+      for (s_attr in s_attributes) dt[[s_attr]] <- rep(.SD[[s_attr]], times = nrow(dt))
+      dt
     }
-  )
-  p_attr_dt <- as.data.table(ts)
-  p_attr_dt[, "cpos" := unlist(apply(from@cpos, 1, function(row) row[1]:row[2]))]
-  
-  s_attrs <- s_attributes(from)
-  strucs <- RcppCWB::cl_cpos2struc(corpus = from@corpus, s_attribute = s_attrs[1], cpos = from@cpos[,1])
-  
-  dts <- lapply(
-    strucs,
-    function(struc){
-      region <- RcppCWB::cl_struc2cpos(corpus = from@corpus, s_attribute = s_attrs[1], struc = struc)
-      data.table(struc = struc, cpos_left = region[1], cpos_right = region[2])
-    }
-  )
-  regions <- rbindlist(dts)
-  
-  s_attr_values <- lapply(
-    setNames(s_attrs, s_attrs),
-    function(s_attr) RcppCWB::cl_struc2str(corpus = from@corpus, s_attribute = s_attr, struc = strucs)
-  )
-  dt <- as.data.table(s_attr_values)
-  
-  s_attr_dt <- cbind(regions, dt)
-  
-  
-  unfold <- function(.SD){
-    dt <- data.table(cpos = .SD[["cpos_left"]]:.SD[["cpos_right"]])
-    for (s_attr in s_attrs) dt[[s_attr]] <- rep(.SD[[s_attr]], times = nrow(dt))
-    dt
+    s_attr_dt_ext <- s_attr_dt[, unfold(.SD), by = "struc"]
+    
+    setkeyv(p_attr_dt, cols = "cpos")
+    setkeyv(s_attr_dt_ext, cols = "cpos")
+    y <- p_attr_dt[s_attr_dt_ext]
+    
+  } else if (to == "Annotation"){
+    y <- as(.Object, "Annotation")
   }
-  s_attr_dt_ext <- s_attr_dt[, unfold(.SD), by = "struc"]
-  
-  setkeyv(p_attr_dt, cols = "cpos")
-  setkeyv(s_attr_dt_ext, cols = "cpos")
-  p_attr_dt[s_attr_dt_ext]
+  y
+})
+
+#' @rdname decode
+setMethod("decode", "partition", function(.Object, to = "data.table", s_attributes = NULL, p_attributes = NULL){
+  callNextMethod()
 })
 
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "slice", function(.Object, to = "data.table"){
-  as(.Object, to)
-})
-
-#' @rdname decode
-setMethod("decode", "partition", function(.Object, to = "data.table"){
-  as(as(.Object, "subcorpus"), to)
+setMethod("decode", "subcorpus", function(.Object, to = "data.table", s_attributes = NULL, p_attributes = NULL){
+  callNextMethod()
 })
 

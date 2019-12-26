@@ -3,19 +3,29 @@
 \docType{methods}
 \name{decode}
 \alias{decode}
+\alias{decode,corpus-method}
 \alias{decode,character-method}
 \alias{decode,slice-method}
 \alias{decode,partition-method}
+\alias{decode,subcorpus-method}
 \title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
 
+\S4method{decode}{corpus}(.Object, to = c("data.table", "Annotation"),
+  p_attributes = NULL, s_attributes = NULL)
+
 \S4method{decode}{character}(.Object, to = c("data.table", "Annotation"),
-  ...)
+  s_attributes = NULL, p_attributes = NULL, ...)
 
-\S4method{decode}{slice}(.Object, to = "data.table")
+\S4method{decode}{slice}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL)
 
-\S4method{decode}{partition}(.Object, to = "data.table")
+\S4method{decode}{partition}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL)
+
+\S4method{decode}{subcorpus}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL)
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
@@ -24,6 +34,12 @@ decode(.Object, ...)
 
 \item{to}{The class of the returned object, stated as a length-one
 \code{character} vector.}
+
+\item{p_attributes}{The positional attributes to decode. If \code{NULL} (default), all
+positional attributes will be decoded.}
+
+\item{s_attributes}{The structural attributes to decode. If \code{NULL} (default), all
+structural attributes will be decoded.}
 }
 \value{
 The return value will correspond to the class specified by argument \code{to}.
@@ -51,9 +67,15 @@ use("polmineR")
 # Decode corpus as data.table
 dt <- decode("GERMAPARLMINI", to = "data.table")
 
+# Decode corpus selectively
+dt <- decode("GERMAPARLMINI", to = "data.table", p_attributes = "word", s_attributes = "party")
+
 # Decode a subcorpus
 sc <- subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel")
 dt <- decode(sc, to = "data.table")
+
+# Decode subcorpus selectively
+dt <- decode(sc, to = "data.table", p_attributes = "word", s_attributes = "party")
 
 # Decode partition
 P <- partition("REUTERS", places = "kuwait", regex = TRUE)

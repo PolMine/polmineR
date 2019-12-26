@@ -3,6 +3,13 @@ polmineR 0.8.0.9001
 
 - Introduced experimentally a feature to count phrases in the `count()`-method for 
   `slice` class objects.
+- The `corpus()` method for a character vector will not abort gracefully with a 
+  message if more than one corpus is offered as `.Object`.
+- The `decode()`-method now entails the possibility to decode structural and positional
+  attributes selectively, via the new argumentas `p_attributes` and `s_attributes` (#116).
+  Internally, the reliance on `coerce()`-methods has been replaced by a simpler 
+  if-else-syntax. The `as(from, "Annotation")` option persists, however.
+  
 
 
 polmineR 0.8.0
