@@ -178,17 +178,10 @@ setMethod("count", "slice", function(
         TF <- data.table::as.data.table(count_matrix)
         setnames(TF, old = c("V1", "V2"), new = c(p_attr_id, "count"))
       } else {
-        ts <- get_token_stream(.Object, p_attribute = p_attribute, cpos = TRUE)
-        x <- data.table(cpos = as.integer(names(ts)), token = unname(ts))
-        x[, "keep" := TRUE]
-        for (i in 1L:nrow(phrases)){
-          region <- phrases[i,]
-          start <- which(x[["cpos"]] == region[1])
-          for (i in 1L:(region[2]-region[1])) x[start + i, "keep"] <- FALSE
-          x[start, "token"] <- get_token_stream(region[1]:region[2], collapse = "_", corpus = .Object@corpus, p_attribute = p_attribute)
-        }
-        TF <- x[x[["keep"]] == TRUE][, "keep" := NULL][, .N, by = "token"]
-        setnames(TF, old = c("token", "N"), new = c(p_attribute, "count"))
+        token_table <- decode(.Object, p_attributes = p_attribute, s_attributes = character(), verbose = FALSE)
+        token_table_min <- concatenate(token_table, regions = phrases, col = p_attribute, corpus = .Object@corpus) # in utils.R
+        TF <- token_table_min[, .N, by = p_attribute]
+        setnames(TF, old = "N", new = "count")
         decode <- FALSE
       }
     } else {

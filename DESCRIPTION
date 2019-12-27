@@ -82,6 +82,7 @@ Collate:
     'as.speeches.R'
     'blapply.R'
     'coerce.R'
+    'concatenate.R'
     'hits.R'
     'cpos.R'
     'dispersion.R'

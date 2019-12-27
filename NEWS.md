@@ -9,6 +9,9 @@ polmineR 0.8.0.9001
   attributes selectively, via the new argumentas `p_attributes` and `s_attributes` (#116).
   Internally, the reliance on `coerce()`-methods has been replaced by a simpler 
   if-else-syntax. The `as(from, "Annotation")` option persists, however.
+- The `Cooccurrences()`-method will now accept zero values (0) for the arguments
+  `left` and `right`. Relevant for detecting bigrams / phrases.
+- A new `concatenate()` method is a worker to collapse tokens into phrases.
   
 
 
