@@ -43,6 +43,19 @@ setMethod("pmi", "context", function(.Object){
 })
 
 
+#' @rdname pmi
+setMethod("pmi", "Cooccurrences", function(.Object){
+  p_ab <- .Object@stat[["ab_count"]] / .Object@partition@size
+  p_a <- .Object@stat[["a_count"]] / .Object@partition@size
+  p_b <- .Object@stat[["b_count"]] / .Object@partition@size
+  .Object@stat[, "pmi" := log2(p_ab / (p_a * p_b))]
+  setorderv(.Object@stat, cols = "pmi", order = -1L)
+  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  .Object@method <- c(.Object@method, "pmi")
+  invisible(.Object)
+})
+
+
 
 #' Compute Log-likelihood Statistics.
 #' 
@@ -274,7 +287,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   dt[, "ll" := ll * direction]
   dt[, "ll" := ifelse(is.nan(ll), NA, ll)]
   
-  setorderv(dt, cols = "ll", order = -1)
+  setorderv(dt, cols = "ll", order = -1, na.last = TRUE)
   dt[, "rank_ll" := 1L:nrow(dt)]
   
   dt[, "o21" := NULL]

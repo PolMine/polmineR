@@ -11,7 +11,12 @@ polmineR 0.8.0.9001
   if-else-syntax. The `as(from, "Annotation")` option persists, however.
 - The `Cooccurrences()`-method will now accept zero values (0) for the arguments
   `left` and `right`. Relevant for detecting bigrams / phrases.
+- When sorting the results `data.table` of a `Cooccurrences` object, the NA values are
+  pushed to the end of the table now.
 - A new `concatenate()` method is a worker to collapse tokens into phrases.
+- Implemented pointwise mutual information (PMI) for `Cooccurrences` class objects, see
+  `pmi()`-method. 
+
   
 
 

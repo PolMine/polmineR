@@ -4,11 +4,14 @@
 \name{pmi}
 \alias{pmi}
 \alias{pmi,context-method}
+\alias{pmi,Cooccurrences-method}
 \title{Calculate Pointwise Mutual Information (PMI).}
 \usage{
 pmi(.Object)
 
 \S4method{pmi}{context}(.Object)
+
+\S4method{pmi}{Cooccurrences}(.Object)
 }
 \arguments{
 \item{.Object}{An object.}
