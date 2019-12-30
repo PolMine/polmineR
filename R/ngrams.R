@@ -61,7 +61,7 @@ setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", 
 #' y <- ngrams(dt, n = 3L, p_attribute = "word")
 setMethod("ngrams", "data.table", function(.Object, n = 2L, p_attribute = "word"){
   
-  obj <- .Object[1L:(nrow(.Object) - n + 1L), ..p_attribute]
+  obj <- .Object[1L:(nrow(.Object) - n + 1L), p_attribute, with = FALSE]
   colnames(obj) <- paste(colnames(obj), "1", sep = "_")
   
   for (i in 2L:n){

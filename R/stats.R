@@ -2,6 +2,7 @@
 NULL
 
 #' @rdname pmi
+#' @param ... Arguments methods may require.
 setGeneric("pmi", function(.Object, ...) standardGeneric("pmi") )
 
 #' Calculate Pointwise Mutual Information (PMI).
@@ -44,20 +45,25 @@ setMethod("pmi", "context", function(.Object){
 
 
 #' @rdname pmi
+#' @export
 setMethod("pmi", "Cooccurrences", function(.Object){
+  if (!"a_count" %in% colnames(.Object) || !"b_count" %in% colnames(.Object)) enrich(.Object)
   p_ab <- .Object@stat[["ab_count"]] / .Object@partition@size
   p_a <- .Object@stat[["a_count"]] / .Object@partition@size
   p_b <- .Object@stat[["b_count"]] / .Object@partition@size
   .Object@stat[, "pmi" := log2(p_ab / (p_a * p_b))]
-  setorderv(.Object@stat, cols = "pmi", order = -1L)
+  setorderv(.Object@stat, cols = "pmi", order = -1L, na.last = TRUE)
   .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
   .Object@method <- c(.Object@method, "pmi")
   invisible(.Object)
 })
 
+#' @param p_attribute The positional attribute which shall be considered. Relevant only
+#'   if ngrams have been calculated for more than one p-attribute.
 #' @param observed A \code{count}-object with the numbers of the observed
 #'   occurrences of the tokens in the input \code{ngrams} object.
 #' @rdname pmi
+#' @export
 #' @examples 
 #' use("polmineR")
 #' dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table", verbose = FALSE)
@@ -76,10 +82,10 @@ setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attribute
     setnames(.Object@stat, old = "count", new = paste(p_attribute, i, "count", sep = "_"))
   }
   
-  p_ngram <- .Object@stat[["ngram_count"]] / obs@size
+  p_ngram <- .Object@stat[["ngram_count"]] / observed@size
   denominator <- 1L
   for (i in 1L:.Object@n){
-    denominator <- denominator * .Object@stat[[paste(p_attribute, i, "count", sep = "_")]] / obs@size
+    denominator <- denominator * .Object@stat[[paste(p_attribute, i, "count", sep = "_")]] / observed@size
   }
   
   .Object@stat[, "pmi" := log2(p_ngram / denominator)]

@@ -20,6 +20,8 @@ polmineR 0.8.0.9001
   with decoded corpora.
 - Implemented the `pmi()`-method for the `ngrams()`-method, to provide a workflow for
   phrase detection.
+- A new method `enrich()` for object of class `Cooccurrences` will add columns with counts
+  for the co-occurring tokens to the `data.table` in the slot 'stat'.
   
 
   

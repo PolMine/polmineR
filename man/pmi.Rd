@@ -5,16 +5,28 @@
 \alias{pmi}
 \alias{pmi,context-method}
 \alias{pmi,Cooccurrences-method}
+\alias{pmi,ngrams-method}
 \title{Calculate Pointwise Mutual Information (PMI).}
 \usage{
-pmi(.Object)
+pmi(.Object, ...)
 
 \S4method{pmi}{context}(.Object)
 
 \S4method{pmi}{Cooccurrences}(.Object)
+
+\S4method{pmi}{ngrams}(.Object, observed,
+  p_attribute = p_attributes(.Object)[1])
 }
 \arguments{
 \item{.Object}{An object.}
+
+\item{...}{Arguments methods may require.}
+
+\item{observed}{A \code{count}-object with the numbers of the observed
+occurrences of the tokens in the input \code{ngrams} object.}
+
+\item{p_attribute}{The positional attribute which shall be considered. Relevant only
+if ngrams have been calculated for more than one p-attribute.}
 }
 \description{
 Calculate Pointwise Mutual Information as an information-theoretic approach
@@ -42,6 +54,11 @@ in examples (e.g. \url{https://en.wikipedia.org/wiki/Pointwise_mutual_informatio
 y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
 N <- size(y)[["partition"]]
 I <- log2((y[["count_coi"]]/N) / ((count(y) / N) * (y[["count_partition"]] / N)))
+use("polmineR")
+dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table", verbose = FALSE)
+n <- ngrams(dt, n = 2L, p_attribute = "word")
+obs <- count("REUTERS", p_attribute = "word")
+phrases <- pmi(n, observed = obs)
 }
 \references{
 Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
