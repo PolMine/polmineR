@@ -33,6 +33,7 @@ setGeneric("concatenate", function(.Object, ...) standardGeneric("concatenate") 
 #' @rdname concatenate
 setMethod("concatenate", "data.table", function(.Object, regions, col, corpus){
   .Object[, "keep" := TRUE]
+  if (is.null(regions)) warning("Argument 'regions' of concatenate,data.table-method is NULL: Mission may fail.")
   phrases <- concatenate(regions, corpus = corpus, p_attribute = col)
   .Object[match(regions[,1], .Object[["cpos"]]), (col) := phrases]
   drop_cpos <- as.vector(unlist(apply(regions, 1, function(row) (row[1] + 1L):row[2])))

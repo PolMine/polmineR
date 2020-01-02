@@ -120,7 +120,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
       1L:(n * length(p_attribute)),
       function(i){
         str <- as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
-        TF[, eval(paste(token_no[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
+        TF[, eval(paste(p_attrs_cols[i], token_no[i], sep = "_")) := str , with = TRUE] 
       })
     
     # remove columns with ids

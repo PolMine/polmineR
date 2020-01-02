@@ -1,5 +1,5 @@
-polmineR 0.8.0.9001
-===================
+polmineR 0.8.0.9001 - 0.8.0.9002
+================================
 
 - Introduced experimentally a feature to count phrases in the `count()`-method for 
   `slice` class objects.
@@ -22,9 +22,15 @@ polmineR 0.8.0.9001
   phrase detection.
 - A new method `enrich()` for object of class `Cooccurrences` will add columns with counts
   for the co-occurring tokens to the `data.table` in the slot 'stat'.
-  
-
-  
+- A new argument `phrases` was added to the `count()`-method for `partition_bundle` objects.
+- In the `as.speeches()`-method for `corpus` objects, setting `progress` as `FALSE` did not
+  suppress the display of a progress bar. Solved.
+- Removed a bug that occurred when counting matches for CQP queries over a `subcorpus_bundle`
+  that resulted from CQP queries being turned into invalid column names.
+- Removed an inconsistency with the naming of the columns of the `data.table` in the `stat`
+  slot of an `ngrams` object: Column names will now be "word_1" , "word_2" etc.
+- Defined an explicit method `count()` for `subcorpus_bundle` objects (just callling `callNextMethod()` internally)  - 
+  useful to see the availability of the method in the documentation object.
 
 
 polmineR 0.8.0

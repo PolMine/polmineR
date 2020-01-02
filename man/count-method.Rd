@@ -8,6 +8,7 @@
 \alias{count,subcorpus-method}
 \alias{count,slice-method}
 \alias{count,partition_bundle-method}
+\alias{count,subcorpus_bundle-method}
 \alias{count,corpus-method}
 \alias{count,character-method}
 \alias{count,vector-method}
@@ -36,8 +37,12 @@ count(.Object, ...)
   ...)
 
 \S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
-  p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
-  progress = TRUE, verbose = FALSE, ...)
+  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
+\S4method{count}{subcorpus_bundle}(.Object, query = NULL, cqp = FALSE,
+  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
 \S4method{count}{corpus}(.Object, query = NULL, cqp = is.cqp,
   check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
