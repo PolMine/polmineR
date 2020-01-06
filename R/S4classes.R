@@ -932,6 +932,39 @@ setClass("press_subcorpus", contains = "subcorpus")
 
 
 
+#' Manage and use phrases
+#' 
+#' @description Class to manage phrases.
+#' 
+#' @family classes to manage corpora
+#' @name phrases
+#' @rdname phrases-class
+#' @aliases phrases-class
+#' @examples
+#' \dontrun{
+#' obs <- corpus("GERMAPARLMINI") %>% count(p_attribute = "word")
+#' 
+#' phrases <- corpus("GERMAPARLMINI") %>%
+#'   ngrams(n = 2L, p_attribute = "word") %>%
+#'   pmi(observed = obs) %>% 
+#'   subset(ngram_count > 5L) %>%
+#'   subset(1:100) %>%
+#'   as.phrases()
+#' 
+#' dtm <- corpus("GERMAPARLMINI") %>%
+#'   as.speeches(s_attribute_name = "speaker", progress = TRUE) %>%
+#'   count(phrases = phrases@cpos, p_attribute = "word", progress = TRUE, verbose = TRUE) %>%
+#'   as.DocumentTermMatrix(col = "count", verbose = FALSE)
+#' }
+setClass(
+  "phrases",
+  # slots = c(),
+  contains = "regions"
+)
+
+
+
+
 #' @rdname features-class
 #' @exportClass features_cooccurrences
 setClass("features_cooccurrences", contains = "features")

@@ -60,17 +60,14 @@ test_that(
       ngrams(n = 2L, p_attribute = "word") %>%
       pmi(observed = obs) %>% 
       subset(ngram_count > 5L) %>%
-      subset(1:100)
-    
-    queries <- sprintf('"%s" "%s"', phrases[["word_1"]], phrases[["word_2"]])
-    
-    regions <- cpos("GERMAPARLMINI", query = queries,  cqp = TRUE)
+      subset(1:100) %>%
+      as.phrases()
     
     speeches <- corpus("GERMAPARLMINI") %>%
       as.speeches(s_attribute_name = "speaker", progress = FALSE)
     
-    cnt <- count(speeches, phrases = regions, p_attribute = "word", progress = FALSE, verbose = TRUE)
-    dtm <- as.DocumentTermMatrix(cnt, col = "count", verbose = FALSE)
+    dtm <- count(speeches, phrases = phrases, p_attribute = "word", progress = FALSE, verbose = TRUE) %>%
+      as.DocumentTermMatrix(col = "count", verbose = FALSE)
     
     queries <- c(
       "erneuerbaren_Energien" = '"erneuerbaren" "Energien"',

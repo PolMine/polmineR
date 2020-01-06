@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.8.0.9002
-Date: 2020-01-02
+Version: 0.8.0.9003
+Date: 2020-01-06
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb")
@@ -82,7 +82,6 @@ Collate:
     'as.speeches.R'
     'blapply.R'
     'coerce.R'
-    'concatenate.R'
     'hits.R'
     'cpos.R'
     'dispersion.R'
@@ -97,6 +96,7 @@ Collate:
     'means.R'
     'noise.R'
     'opencpu.R'
+    'phrases.R'
     'regions.R'
     'read.R'
     'registry.R'

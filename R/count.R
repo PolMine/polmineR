@@ -33,8 +33,8 @@ NULL
 #'   using \code{check_cqp_query}.
 #' @param p_attribute The p-attribute(s) to use.
 #' @param corpus The name of a CWB corpus.
-#' @param phrases A region matrix with left and right corpus positions defining
-#'   regions. If provided, the denoted regions will be concatenated as phrases.
+#' @param phrases A \code{phrases} object. If provided, the denoted regions will
+#'   be concatenated as phrases.
 #' @param decode Logical, whether to turn token ids into decoded strings (only
 #'   if query is NULL).
 #' @param sort Logical, whether to sort table with counts (in stat slot).
@@ -84,8 +84,9 @@ NULL
 #' count(P, '"Integration.*"', breakdown = TRUE)
 #' 
 #' sc <- corpus("GERMAPARLMINI") %>% subset(party == "SPD")
-#' regs <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE)
-#' cnt <- count(sc, phrases = regs, p_attribute = "word")
+#' phr <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE) %>%
+#'   as.phrases(corpus = "GERMAPARLMINI", enc = "latin1")
+#' cnt <- count(sc, phrases = phr, p_attribute = "word")
 setGeneric("count", function(.Object, ...){standardGeneric("count")})
 
 #' @rdname count-method
@@ -179,7 +180,7 @@ setMethod("count", "slice", function(
         setnames(TF, old = c("V1", "V2"), new = c(p_attr_id, "count"))
       } else {
         token_table <- decode(.Object, p_attributes = p_attribute, s_attributes = character(), verbose = FALSE)
-        token_table_min <- concatenate(token_table, regions = phrases, col = p_attribute, corpus = .Object@corpus) # in utils.R
+        token_table_min <- concatenate_phrases(token_table, phrases = phrases, col = p_attribute)
         TF <- token_table_min[, .N, by = p_attribute]
         setnames(TF, old = "N", new = "count")
         decode <- FALSE
@@ -299,7 +300,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
         encoding = .Object@objects[[1]]@encoding
         )]
       if (verbose) message("... generating phrases")
-      DT_min <- concatenate(DT, regions = phrases, col = p_attribute, corpus = .Object@corpus) # in utils.R
+      DT_min <- concatenate_phrases(DT, phrases = phrases, col = p_attribute) # in utils.R
       if (verbose) message("... counting")
       CNT <- DT_min[, .N, by = c("name", p_attribute)]
       setnames(CNT, old = "N", new = "count")

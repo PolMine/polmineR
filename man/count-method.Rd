@@ -92,8 +92,8 @@ if query is NULL).}
 
 \item{progress}{Logical, whether to show progress bar.}
 
-\item{phrases}{A region matrix with left and right corpus positions defining
-regions. If provided, the denoted regions will be concatenated as phrases.}
+\item{phrases}{A \code{phrases} object. If provided, the denoted regions will
+be concatenated as phrases.}
 
 \item{freq}{Logical, if \code{FALSE}, counts will be reported, if TRUE,
 (relative) frequencies are added to table.}
@@ -149,8 +149,9 @@ P <- partition("GERMAPARLMINI", date = "2009-11-11")
 count(P, '"Integration.*"', breakdown = TRUE)
 
 sc <- corpus("GERMAPARLMINI") \%>\% subset(party == "SPD")
-regs <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE)
-cnt <- count(sc, phrases = regs, p_attribute = "word")
+phr <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE) \%>\%
+  as.phrases(corpus = "GERMAPARLMINI", enc = "latin1")
+cnt <- count(sc, phrases = phr, p_attribute = "word")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
