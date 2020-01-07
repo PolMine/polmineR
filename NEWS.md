@@ -1,4 +1,4 @@
-polmineR 0.8.0.9001 - 0.8.0.9002
+polmineR 0.8.0.9001 - 0.8.0.9003
 ================================
 
 - Introduced experimentally a feature to count phrases in the `count()`-method for 
@@ -31,6 +31,8 @@ polmineR 0.8.0.9001 - 0.8.0.9002
   slot of an `ngrams` object: Column names will now be "word_1" , "word_2" etc.
 - Defined an explicit method `count()` for `subcorpus_bundle` objects (just callling `callNextMethod()` internally)  - 
   useful to see the availability of the method in the documentation object.
+- New class `phrases` and `as.phrases()`-method for `ngrams` and `matrix` objects. The
+  `count()`-method now accepts an argument `phrases`. See the documentation (`?phrases`).
 
 
 polmineR 0.8.0

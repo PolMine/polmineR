@@ -934,15 +934,28 @@ setClass("press_subcorpus", contains = "subcorpus")
 
 #' Manage and use phrases
 #' 
-#' @description Class to manage phrases.
-#' 
+#' @description Class, methods and functionality for processing phrases (lexical
+#'   units, lexical items, multi-word expressions) beyond the token level. The
+#'   envisaged workflow at this stage is to detect phrases using the
+#'   \code{ngrams}-method and to generate a \code{phrases} class object from the
+#'   \code{ngrams} object using the \code{as.phrases} method. This object can be
+#'   passed into a call of \code{count}, see examples. Further methods and
+#'   functions documented here are used internally, but may be useful.
+#' @details The \code{phrases} considers a phrase as sequence as tokens that can
+#'   be defined by region, i.e. a left and a right corpus position. This
+#'   information is kept in a region matrix in the slot "cpos" of the
+#'   \code{phrases} class. The \code{phrases} class inherits from the
+#'   \code{\link{regions}} class (which inherits from the and the
+#'   \code{\link{corpus}} class), without adding further slots.
 #' @family classes to manage corpora
 #' @name phrases
 #' @rdname phrases-class
 #' @aliases phrases-class
 #' @examples
-#' \dontrun{
-#' obs <- corpus("GERMAPARLMINI") %>% count(p_attribute = "word")
+#' # Workflow to create document-term-matrix with phrases
+#' 
+#' obs <- corpus("GERMAPARLMINI") %>%
+#'   count(p_attribute = "word")
 #' 
 #' phrases <- corpus("GERMAPARLMINI") %>%
 #'   ngrams(n = 2L, p_attribute = "word") %>%
@@ -953,9 +966,12 @@ setClass("press_subcorpus", contains = "subcorpus")
 #' 
 #' dtm <- corpus("GERMAPARLMINI") %>%
 #'   as.speeches(s_attribute_name = "speaker", progress = TRUE) %>%
-#'   count(phrases = phrases@cpos, p_attribute = "word", progress = TRUE, verbose = TRUE) %>%
+#'   count(phrases = phrases, p_attribute = "word", progress = TRUE, verbose = TRUE) %>%
 #'   as.DocumentTermMatrix(col = "count", verbose = FALSE)
-#' }
+#'   
+#' grep("erneuerbaren_Energien", colnames(dtm))
+#' grep("verpasste_Chancen", colnames(dtm))
+#' 
 setClass(
   "phrases",
   # slots = c(),

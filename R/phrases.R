@@ -1,17 +1,25 @@
-#' @rdname phrases-class
-#' @param .Object bla
-#' @param ... bla
-#' @param enc bla
-#' @param x bla
-#' @param p_attribute bla
-#' @param phrases bla
-#' @rdname phrases-class
+#' @noRd
 setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 
 
+#' @rdname phrases-class
+#' @details If \code{.Object} is an object of class \code{ngrams}, the
+#'   \code{as.phrases}-method will interpret the ngrams as CQP queries, 
+#'   look up the matching corpus positions and return an \code{phrases}
+#'   object.
+#' @param .Object Input object, either a \code{ngrams} or a \code{matrix} object.
+#' @param ... Arguments passed into internal call of \code{cpos} method.
+#' @param enc Encoding of the corpus.
+#' @param x A \code{phrases} class object.
+#' @param p_attribute The positional attribute (p-attribute) to decode.
+#' @param phrases A \code{phrases} class object.
+#' @rdname phrases-class
+#' @aliases as.phrases
 #' @export
 #' @rdname phrases-class
 #' @examples
+#' # Derive phrases object from an ngrams object
+#' 
 #' reuters_phrases <- ngrams("REUTERS", p_attribute = "word", n = 2L) %>%
 #'   pmi(observed = count("REUTERS", p_attribute = "word")) %>%
 #'   subset(ngram_count >= 5L) %>%
@@ -19,6 +27,7 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #'   as.phrases()
 #' 
 #' phr <- as.character(reuters_phrases, p_attribute = "word")
+#' 
 setMethod("as.phrases", "ngrams", function(.Object, ...){
   cols <- paste(.Object@p_attribute, 1L:.Object@n, sep = "_")
   args <- c(
@@ -34,6 +43,8 @@ setMethod("as.phrases", "ngrams", function(.Object, ...){
 #' @export
 #' @rdname phrases-class
 #' @examples 
+#' # Derive phrases from explicitly stated CQP queries
+#' 
 #' cqp_phrase_queries <- c(
 #'   '"oil" "revenue"',
 #'   '"Sheikh" "Aziz"',
@@ -43,7 +54,11 @@ setMethod("as.phrases", "ngrams", function(.Object, ...){
 #' )
 #' reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") %>%
 #'   as.phrases(corpus = "REUTERS", enc = "latin1")
-setMethod("as.phrases", "matrix", function(.Object, corpus, enc){
+#'   
+#' @details If \code{.Object} is a \code{matrix}, the \code{as.phrases}-method
+#'   will initialize a \code{phrases} object. The corpus and the encoding of the
+#'   corpus will be assigned to the object.
+setMethod("as.phrases", "matrix", function(.Object, corpus, enc = encoding(corpus)){
   new(
     "phrases",
     cpos = .Object,
@@ -56,6 +71,9 @@ setMethod("as.phrases", "matrix", function(.Object, corpus, enc){
 
 #' @export
 #' @rdname phrases-class
+#' @details Applying the \code{as.character}-method on a \code{phrases} object
+#'   will return the decoded regions, concatenated using an underscore as
+#'   seperator.
 setMethod("as.character", "phrases", function(x, p_attribute){
   tokens <- get_token_stream(x@cpos, x@corpus, p_attribute = p_attribute, x@encoding)
   splitvec <-  cut(
@@ -67,11 +85,16 @@ setMethod("as.character", "phrases", function(x, p_attribute){
 })
 
 
+#' @details The \code{concatenate_phrases} function takes a \code{data.table}
+#'   (argument \code{dt}) as input and concatenates phrases in successive rows
+#'   into a phrase.
 #' @param dt A \code{data.table}.
 #' @param col If \code{.Object} is a \code{data.table}, the column to concatenate.
 #' @param corpus A length-one \code{character} vector, the corpus ID of the corpus
 #'   from which regions / the \code{data.table} representing a decoded corpus is derived.
 #' @examples 
+#' # Use the concatenate_phrases() function on a data.table
+#'  
 #' lexical_units_cqp <- c(
 #'   '"Deutsche.*" "Bundestag.*"',
 #'   '"sozial.*" "Gerechtigkeit"',
@@ -79,11 +102,17 @@ setMethod("as.character", "phrases", function(x, p_attribute){
 #'   '"soziale.*" "Marktwirtschaft"',
 #'   '"freiheitliche.*" "Grundordnung"'
 #' )
-#' phrases_regions <- cpos("GERMAPARLMINI", query = lexical_units_cqp, cqp = TRUE)
-#' phr <- as.phrases(phrases_regions, corpus = "GERMAPARLMINI", enc = "word")
 #' 
-#' dt <- decode("GERMAPARLMINI", p_attribute = "word", s_attribute = character(), to = "data.table")
-#' y <- concatenate_phrases(dt, phrases = phr, col = "word")
+#' phr <- cpos("GERMAPARLMINI", query = lexical_units_cqp, cqp = TRUE) %>%
+#'   as.phrases(corpus = "GERMAPARLMINI", enc = "word")
+#' 
+#' dt <- corpus("GERMAPARLMINI") %>%
+#'   decode(p_attribute = "word", s_attribute = character(), to = "data.table") %>%
+#'   concatenate_phrases(phrases = phr, col = "word")
+#'   
+#' dt[word == "Deutschen_Bundestag"]
+#' dt[word == "soziale_Marktwirtschaft"]
+#'
 #' @export concatenate_phrases
 #' @rdname phrases-class
 concatenate_phrases <- function(dt, phrases, col){
