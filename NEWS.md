@@ -3,6 +3,8 @@ polmineR 0.8.0.9001
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
   indices is possible (#114).
+- Added a new Rmarkdown temlate with flexdashboard for quanlitative analysis of
+  cooccurrences and concordances.
 
 
 polmineR 0.8.0

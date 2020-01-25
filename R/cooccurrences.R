@@ -1053,3 +1053,32 @@ setMethod("kwic", "Cooccurrences", function(
 
   invisible(.Object)
 })
+
+
+# The coerce method to generate a kwic object from a cooccurrences class object is used 
+# internally. It can be used to 
+#' @export
+setAs(from = "cooccurrences", to = "kwic", function(from){
+  # Prepare a data.table that links match_id and word_id (i.e. which tokens occurr in a match?)
+  tbl <- from@cpos[, {.SD[word_id %in% from[["word_id"]]][["word_id"]]}, by = "match_id"]
+  setnames(tbl, old = "V1", new = "word_id")
+  setorderv(tbl, cols = c("match_id", "word_id"))
+  
+  # Reduce kwic to those concordances with tokens that are statistically significant, and
+  # highlight these tokens
+  y <- kwic(from)
+  y@stat <- y@stat[y@stat[["match_id"]] %in% tbl[["match_id"]]]
+  y@cpos <- y@cpos[y@cpos[["match_id"]] %in% tbl[["match_id"]]]
+  y <- highlight(y, yellow = from[["word"]])
+  
+  # Add word_id to concordances
+  y@stat <- tbl[y@stat, on = "match_id"]
+  p_attr_decoded <- cl_id2str(
+    corpus = from@corpus, p_attribute = from@p_attribute[1],
+    id = y@stat[[paste(from@p_attribute[1], "id", sep = "_")]],
+    registry = registry()
+  )
+  y@stat[, from@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = from@encoding), with = TRUE]
+  y@stat[, "word_id" := NULL]
+  y
+})

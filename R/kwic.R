@@ -264,7 +264,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
-  DT <- copy(.Object@cpos) # do not accidentily store things
+  DT <- copy(.Object@cpos) # do not accidentily modify things
   setorderv(DT, cols = c("match_id", "cpos"))
   p_attr_decoded <- cl_id2str(
     corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
