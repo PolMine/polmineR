@@ -162,77 +162,75 @@ setMethod("as.speeches", "corpus", function(
 
   new_class <- if (length(.Object@type) == 0L) "subcorpus" else paste(.Object@type, "subcorpus", sep = "_")
   
-  y <- pblapply(
-    seq_along(chunks_cpos),
-    function(i){
-      mx <- matrix(data = chunks_cpos[[i]], byrow = FALSE, ncol = 2L)
-      
-      # if we have a matrix with only one region (i.e. one row), no need for further splitting,
-      # we return a subcorpus immediately
-      if (nrow(mx) == 1L){
-        return(list(new(
+  .iter_fn <- function(i){
+    mx <- matrix(data = chunks_cpos[[i]], byrow = FALSE, ncol = 2L)
+    
+    # if we have a matrix with only one region (i.e. one row), no need for further splitting,
+    # we return a subcorpus immediately
+    if (nrow(mx) == 1L){
+      return(list(new(
+        new_class,
+        strucs = chunks_strucs[[i]],
+        cpos = mx,
+        corpus = .Object@corpus,
+        type = .Object@type,
+        encoding = .Object@encoding,
+        data_dir = .Object@data_dir,
+        s_attributes = setNames(list(chunks_dates[[i]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
+        xml = "flat",
+        s_attribute_strucs = s_attribute_name,
+        name = sprintf("%s_%s_%d", names(chunks_cpos)[[i]], chunks_dates[[i]], 1L),
+        size = mx[,2] - mx[,1] + 1L
+      )))
+    }
+    
+    distance <- mx[,1][2L:nrow(mx)] - mx[,2][1L:(nrow(mx) - 1L)]
+    beginning <- c(TRUE, ifelse(distance > gap, TRUE, FALSE))
+    beginning <- ifelse(
+      c(TRUE, chunks_dates[[i]][2L:length(chunks_dates[[i]])] == chunks_dates[[i]][1L:(length(chunks_dates[[i]]) - 1L)]),
+      beginning,
+      TRUE
+    )
+    razor <- cumsum(beginning)
+    vec_dates <- chunks_dates[[i]][beginning]
+    
+    # The speech_no vector indicates the number of the speech at a date for the speeches
+    # referred to with the vec_dates vector. These lines have seen some revisions to 
+    # make the procedure robust. Resorting to the for loop is able to handle situations
+    # robustly when dates are not increasing throughout.
+    unique_dates <- unique(vec_dates)
+    speech_no_aux <- setNames(rep(1L, times = length(unique_dates)), nm = unique_dates)
+    speech_no <- rep(NA, times = length(vec_dates))
+    for (k in seq_along(vec_dates)){
+      speech_no[k] <- speech_no_aux[[vec_dates[k]]]
+      speech_no_aux[[vec_dates[k]]] <- speech_no_aux[[vec_dates[k]]] + 1L
+    }
+    
+    li_cpos <- split(mx, f = razor)
+    li_strucs <- split(chunks_strucs[[i]], f = razor)
+    lapply(
+      seq_along(li_cpos),
+      function(j){
+        cpos_matrix <- matrix(data = li_cpos[[j]], byrow = FALSE, ncol = 2L)
+        new(
           new_class,
-          strucs = chunks_strucs[[i]],
-          cpos = mx,
+          strucs = li_strucs[[j]],
+          cpos = cpos_matrix,
           corpus = .Object@corpus,
           type = .Object@type,
           encoding = .Object@encoding,
           data_dir = .Object@data_dir,
-          s_attributes = setNames(list(chunks_dates[[i]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
+          s_attributes = setNames(list(vec_dates[[j]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
           xml = "flat",
           s_attribute_strucs = s_attribute_name,
-          name = sprintf("%s_%s_%d", names(chunks_cpos)[[i]], chunks_dates[[i]], 1L),
-          size = mx[,2] - mx[,1] + 1L
-        )))
+          name = sprintf("%s_%s_%d", names(chunks_cpos)[i], vec_dates[[j]], speech_no[[j]]),
+          size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L)
+        )
       }
-      
-      distance <- mx[,1][2L:nrow(mx)] - mx[,2][1L:(nrow(mx) - 1L)]
-      beginning <- c(TRUE, ifelse(distance > gap, TRUE, FALSE))
-      beginning <- ifelse(
-        c(TRUE, chunks_dates[[i]][2L:length(chunks_dates[[i]])] == chunks_dates[[i]][1L:(length(chunks_dates[[i]]) - 1L)]),
-        beginning,
-        TRUE
-      )
-      razor <- cumsum(beginning)
-      vec_dates <- chunks_dates[[i]][beginning]
+    )
+  }
+  y <- if (progress) pblapply(seq_along(chunks_cpos), .iter_fn) else lapply(seq_along(chunks_cpos), .iter_fn)
 
-      # The speech_no vector indicates the number of the speech at a date for the speeches
-      # referred to with the vec_dates vector. These lines have seen some revisions to 
-      # make the procedure robust. Resorting to the for loop is able to handle situations
-      # robustly when dates are not increasing throughout.
-      unique_dates <- unique(vec_dates)
-      speech_no_aux <- setNames(rep(1L, times = length(unique_dates)), nm = unique_dates)
-      speech_no <- rep(NA, times = length(vec_dates))
-      for (k in seq_along(vec_dates)){
-        speech_no[k] <- speech_no_aux[[vec_dates[k]]]
-        speech_no_aux[[vec_dates[k]]] <- speech_no_aux[[vec_dates[k]]] + 1L
-      }
-      
-      li_cpos <- split(mx, f = razor)
-      li_strucs <- split(chunks_strucs[[i]], f = razor)
-      lapply(
-        seq_along(li_cpos),
-        function(j){
-          cpos_matrix <- matrix(data = li_cpos[[j]], byrow = FALSE, ncol = 2L)
-          new(
-            new_class,
-            strucs = li_strucs[[j]],
-            cpos = cpos_matrix,
-            corpus = .Object@corpus,
-            type = .Object@type,
-            encoding = .Object@encoding,
-            data_dir = .Object@data_dir,
-            s_attributes = setNames(list(vec_dates[[j]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
-            xml = "flat",
-            s_attribute_strucs = s_attribute_name,
-            name = sprintf("%s_%s_%d", names(chunks_cpos)[i], vec_dates[[j]], speech_no[[j]]),
-            size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L)
-          )
-        }
-      )
-    }
-  )
-  
   retval <- new(
     "subcorpus_bundle",
     xml = "flat",

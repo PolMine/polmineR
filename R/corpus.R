@@ -19,6 +19,9 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora
 setMethod("corpus", "character", function(.Object, server = NULL, user = NULL, password = NULL){
+  
+  if (length(.Object) != 1L) stop("Cannot process more than one corpus at a time: Provide only one corpus ID as input.")
+  
   if (is.null(server)){
     corpora <- cqp_list_corpora()
     

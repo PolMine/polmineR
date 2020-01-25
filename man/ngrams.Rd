@@ -6,6 +6,7 @@
 \alias{ngrams,partition-method}
 \alias{ngrams,character-method}
 \alias{ngrams,subcorpus-method}
+\alias{ngrams,data.table-method}
 \alias{ngrams,corpus-method}
 \alias{ngrams,partition_bundle-method}
 \title{Get N-Grams}
@@ -26,6 +27,8 @@ ngrams(.Object, ...)
 
 \S4method{ngrams}{character}(.Object, n = 2, p_attribute = "word",
   char = NULL, progress = FALSE, ...)
+
+\S4method{ngrams}{data.table}(.Object, n = 2L, p_attribute = "word")
 
 \S4method{ngrams}{corpus}(.Object, n = 2, p_attribute = "word",
   char = NULL, progress = FALSE, ...)
@@ -65,4 +68,7 @@ ngramObject2 <- subset(
 ngramObject2@stat[, "1_pos" := NULL][, "2_pos" := NULL]
 ngramObject3 <- sort(ngramObject2, by = "count")
 head(ngramObject3)
+use("polmineR")
+dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table")
+y <- ngrams(dt, n = 3L, p_attribute = "word")
 }

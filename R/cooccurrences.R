@@ -626,7 +626,13 @@ setMethod("Cooccurrences", "slice", function(
       stoplist_ids <- unique(stoplist_ids[which(stoplist_ids >= 0)])
     }
 
-    for (i in c(-left:-1L, 1L:right)){
+    positions <- c(
+      if (left >= 1L) -left:-1L else integer(),
+      if (right >= 1L) 1L:right else integer()
+    )
+    if (length(positions) == 0L) stop("Are arguments left and right zero? No positions to iterate!")
+    
+    for (i in positions){
       
       if (verbose) message("Processing tokens at position: ", i)
 
@@ -664,7 +670,7 @@ setMethod("Cooccurrences", "slice", function(
       a_id <- 0L; b_id <- 0L # to pass R CMD check
       if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids]
       
-      if (i == -left){
+      if (identical(y@stat, data.table())){
         y@window_sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setnames(y@window_sizes, old = "V1", new = "size_coi")
         setkeyv(y@window_sizes, cols = "a_id")

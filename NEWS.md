@@ -1,10 +1,43 @@
-polmineR 0.8.0.9001
-===================
+polmineR 0.8.0.9001 - 0.8.0.9005
+================================
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
   indices is possible (#114).
 - Added a new Rmarkdown temlate with flexdashboard for quanlitative analysis of
   cooccurrences and concordances.
+- Introduced experimentally a feature to count phrases in the `count()`-method for 
+  `slice` class objects.
+- The `corpus()` method for a character vector will not abort gracefully with a 
+  message if more than one corpus is offered as `.Object`.
+- The `decode()`-method now entails the possibility to decode structural and positional
+  attributes selectively, via the new argumentas `p_attributes` and `s_attributes` (#116).
+  Internally, the reliance on `coerce()`-methods has been replaced by a simpler 
+  if-else-syntax. The `as(from, "Annotation")` option persists, however.
+- The `Cooccurrences()`-method will now accept zero values (0) for the arguments
+  `left` and `right`. Relevant for detecting bigrams / phrases.
+- When sorting the results `data.table` of a `Cooccurrences` object, the NA values are
+  pushed to the end of the table now.
+- A new `concatenate()` method is a worker to collapse tokens into phrases.
+- Implemented pointwise mutual information (PMI) for `Cooccurrences` class objects, see
+  `pmi()`-method.
+- Implemented a `ngrams()`-method for class `data.table` - useful if you need to work
+  with decoded corpora.
+- Implemented the `pmi()`-method for the `ngrams()`-method, to provide a workflow for
+  phrase detection.
+- A new method `enrich()` for object of class `Cooccurrences` will add columns with counts
+  for the co-occurring tokens to the `data.table` in the slot 'stat'.
+- A new argument `phrases` was added to the `count()`-method for `partition_bundle` objects.
+- In the `as.speeches()`-method for `corpus` objects, setting `progress` as `FALSE` did not
+  suppress the display of a progress bar. Solved.
+- Removed a bug that occurred when counting matches for CQP queries over a `subcorpus_bundle`
+  that resulted from CQP queries being turned into invalid column names.
+- Removed an inconsistency with the naming of the columns of the `data.table` in the `stat`
+  slot of an `ngrams` object: Column names will now be "word_1" , "word_2" etc.
+- Defined an explicit method `count()` for `subcorpus_bundle` objects (just callling `callNextMethod()` internally) -  useful to see the availability of the method in the documentation object.
+- New class `phrases` and `as.phrases()`-method for `ngrams` and `matrix` objects. The
+  `count()`-method now accepts an argument `phrases`. See the documentation (`?phrases`).
+- New coerce method to derive a `kwic` object from a `cooccurrences` object. Introduced to
+  serve as a basis for quantitative/qualitative workflows, e.g. integrated in a flexdashboard.
 
 
 polmineR 0.8.0

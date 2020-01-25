@@ -3,19 +3,34 @@
 \docType{methods}
 \name{decode}
 \alias{decode}
+\alias{decode,corpus-method}
 \alias{decode,character-method}
 \alias{decode,slice-method}
 \alias{decode,partition-method}
+\alias{decode,subcorpus-method}
 \title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
 
+\S4method{decode}{corpus}(.Object, to = c("data.table", "Annotation"),
+  p_attributes = NULL, s_attributes = NULL, decode = TRUE,
+  verbose = TRUE)
+
 \S4method{decode}{character}(.Object, to = c("data.table", "Annotation"),
-  ...)
+  s_attributes = NULL, p_attributes = NULL, decode = TRUE,
+  verbose = TRUE, ...)
 
-\S4method{decode}{slice}(.Object, to = "data.table")
+\S4method{decode}{slice}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL, decode = TRUE,
+  verbose = TRUE)
 
-\S4method{decode}{partition}(.Object, to = "data.table")
+\S4method{decode}{partition}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL, decode = TRUE,
+  verbose = TRUE)
+
+\S4method{decode}{subcorpus}(.Object, to = "data.table",
+  s_attributes = NULL, p_attributes = NULL, decode = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
@@ -24,12 +39,27 @@ decode(.Object, ...)
 
 \item{to}{The class of the returned object, stated as a length-one
 \code{character} vector.}
+
+\item{p_attributes}{The positional attributes to decode. If \code{NULL}
+(default), all positional attributes will be decoded.}
+
+\item{s_attributes}{The structural attributes to decode. If \code{NULL}
+(default), all structural attributes will be decoded.}
+
+\item{decode}{A \code{logical} value, whether to decode token ids and struc
+ids to character strings. If \code{FALSE}, the values of columns for p- and
+s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the
+respective columns are \code{character} vectors.}
+
+\item{verbose}{A \code{logical} value, whether to output progess messages.}
 }
 \value{
-The return value will correspond to the class specified by argument \code{to}.
+The return value will correspond to the class specified by argument
+  \code{to}.
 }
 \description{
-Decode \code{corpus} or \code{subcorpus} and return class specified by argument \code{to}.
+Decode \code{corpus} or \code{subcorpus} and return class specified by
+argument \code{to}.
 }
 \details{
 The primary purpose of the method is type conversion. By obtaining the corpus
@@ -42,8 +72,8 @@ be to rework it, and to re-import it into the CWB (e.g. using the
 \code{cwbtools}-package).
 
 An earlier version of the method included an option to decode a single
-s-attribute, which is not supported any more. See the \code{s_attribute_decode}
-function of the package RcppCWB.
+s-attribute, which is not supported any more. See the
+\code{s_attribute_decode} function of the package RcppCWB.
 }
 \examples{
 use("polmineR")
@@ -51,9 +81,15 @@ use("polmineR")
 # Decode corpus as data.table
 dt <- decode("GERMAPARLMINI", to = "data.table")
 
+# Decode corpus selectively
+dt <- decode("GERMAPARLMINI", to = "data.table", p_attributes = "word", s_attributes = "party")
+
 # Decode a subcorpus
 sc <- subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel")
 dt <- decode(sc, to = "data.table")
+
+# Decode subcorpus selectively
+dt <- decode(sc, to = "data.table", p_attributes = "word", s_attributes = "party")
 
 # Decode partition
 P <- partition("REUTERS", places = "kuwait", regex = TRUE)
@@ -61,11 +97,9 @@ dt <- decode(P)
 
 # Previous versions of polmineR offered an option to decode a single
 # s-attribute. This is how you could proceed to get a table with metadata.
+dt <- decode(P, s_attribute = "id", decode = FALSE)
 dt[, "word" := NULL]
-dt[,
-  {list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]), id = unique(.SD[["id"]]))},
-  by = "struc"
-  ]
+dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 
 # Decode subcorpus as Annotation object
 \dontrun{

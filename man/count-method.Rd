@@ -8,6 +8,7 @@
 \alias{count,subcorpus-method}
 \alias{count,slice-method}
 \alias{count,partition_bundle-method}
+\alias{count,subcorpus_bundle-method}
 \alias{count,corpus-method}
 \alias{count,character-method}
 \alias{count,vector-method}
@@ -30,14 +31,18 @@ count(.Object, ...)
   ...)
 
 \S4method{count}{slice}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, breakdown = FALSE, decode = TRUE,
+  check = TRUE, breakdown = FALSE, decode = TRUE, phrases = NULL,
   p_attribute = getOption("polmineR.p_attribute"),
   mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
   ...)
 
 \S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
-  p_attribute = NULL, freq = FALSE, total = TRUE, mc = FALSE,
-  progress = TRUE, verbose = FALSE, ...)
+  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+
+\S4method{count}{subcorpus_bundle}(.Object, query = NULL, cqp = FALSE,
+  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
+  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
 \S4method{count}{corpus}(.Object, query = NULL, cqp = is.cqp,
   check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
@@ -86,6 +91,9 @@ if query is NULL).}
 \item{verbose}{Logical, whether to be verbose.}
 
 \item{progress}{Logical, whether to show progress bar.}
+
+\item{phrases}{A \code{phrases} object. If provided, the denoted regions will
+be concatenated as phrases.}
 
 \item{freq}{Logical, if \code{FALSE}, counts will be reported, if TRUE,
 (relative) frequencies are added to table.}
@@ -139,6 +147,11 @@ count("GERMAPARLMINI", '"Integration.*"', breakdown = TRUE)
 
 P <- partition("GERMAPARLMINI", date = "2009-11-11")
 count(P, '"Integration.*"', breakdown = TRUE)
+
+sc <- corpus("GERMAPARLMINI") \%>\% subset(party == "SPD")
+phr <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE) \%>\%
+  as.phrases(corpus = "GERMAPARLMINI", enc = "latin1")
+cnt <- count(sc, phrases = phr, p_attribute = "word")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).

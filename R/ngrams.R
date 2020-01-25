@@ -55,6 +55,39 @@ setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", 
 
 
 #' @rdname ngrams
+#' @examples 
+#' use("polmineR")
+#' dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table")
+#' y <- ngrams(dt, n = 3L, p_attribute = "word")
+setMethod("ngrams", "data.table", function(.Object, n = 2L, p_attribute = "word"){
+  
+  obj <- .Object[1L:(nrow(.Object) - n + 1L), p_attribute, with = FALSE]
+  colnames(obj) <- paste(colnames(obj), "1", sep = "_")
+  
+  for (i in 2L:n){
+    for (p_attr in p_attribute){
+      new_col <- .Object[[p_attribute]][i:(nrow(.Object) - n + i)]
+      obj[, paste(p_attr, i, sep = "_") := new_col]
+    }  
+  }
+
+  cnt <- obj[, .N, by = c(eval(colnames(obj))), with = TRUE]
+  setnames(cnt, "N", "count")
+  
+  setcolorder(cnt, neworder = c(colnames(cnt)[!colnames(cnt) %in% "count"], "count"))
+  setorderv(cnt, cols = "count", order = -1L)
+  new(
+    "ngrams",
+    n = as.integer(n),
+    stat = cnt,
+    p_attribute = p_attribute,
+    corpus = NA_character_, encoding = NA_character_, size = -1L,
+    name = NA_character_, annotation_cols = NA_character_
+  )
+})
+
+
+#' @rdname ngrams
 setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -87,7 +120,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
       1L:(n * length(p_attribute)),
       function(i){
         str <- as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
-        TF[, eval(paste(token_no[i], p_attrs_cols[i], sep = "_")) := str , with = TRUE] 
+        TF[, eval(paste(p_attrs_cols[i], token_no[i], sep = "_")) := str , with = TRUE] 
       })
     
     # remove columns with ids

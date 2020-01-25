@@ -49,3 +49,37 @@ test_that(
       expect_equal(exp, cnt_int_pb[["TOTAL"]][i])
     }
   })
+
+
+test_that(
+  "count over partition_bundle with phrases",
+  {
+    obs <- corpus("GERMAPARLMINI") %>% count(p_attribute = "word")
+    
+    phrases <- corpus("GERMAPARLMINI") %>%
+      ngrams(n = 2L, p_attribute = "word") %>%
+      pmi(observed = obs) %>% 
+      subset(ngram_count > 5L) %>%
+      subset(1:100) %>%
+      as.phrases()
+    
+    speeches <- corpus("GERMAPARLMINI") %>%
+      as.speeches(s_attribute_name = "speaker", progress = FALSE)
+    
+    dtm <- count(speeches, phrases = phrases, p_attribute = "word", progress = FALSE, verbose = TRUE) %>%
+      as.DocumentTermMatrix(col = "count", verbose = FALSE)
+    
+    queries <- c(
+      "erneuerbaren_Energien" = '"erneuerbaren" "Energien"',
+      "Vereinten_Nationen" = '"Vereinten" "Nationen"',
+      "gesetzlichen_Mindestlohn" = '"gesetzlichen" "Mindestlohn"'
+    )
+    matches <- count(speeches, query = queries, cqp = TRUE, progress = FALSE) %>%
+      subset(TOTAL > 0)
+    
+    for (i in 1:nrow(matches)){
+      expect_equal(matches[['TOTAL']][i], sum(as.vector(dtm[matches$partition[i], names(queries)])))
+    }
+    
+  }
+)

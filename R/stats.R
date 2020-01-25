@@ -2,7 +2,8 @@
 NULL
 
 #' @rdname pmi
-setGeneric("pmi", function(.Object) standardGeneric("pmi") )
+#' @param ... Arguments methods may require.
+setGeneric("pmi", function(.Object, ...) standardGeneric("pmi") )
 
 #' Calculate Pointwise Mutual Information (PMI).
 #' 
@@ -42,6 +43,56 @@ setMethod("pmi", "context", function(.Object){
   invisible(.Object)
 })
 
+
+#' @rdname pmi
+#' @export
+setMethod("pmi", "Cooccurrences", function(.Object){
+  if (!"a_count" %in% colnames(.Object) || !"b_count" %in% colnames(.Object)) enrich(.Object)
+  p_ab <- .Object@stat[["ab_count"]] / .Object@partition@size
+  p_a <- .Object@stat[["a_count"]] / .Object@partition@size
+  p_b <- .Object@stat[["b_count"]] / .Object@partition@size
+  .Object@stat[, "pmi" := log2(p_ab / (p_a * p_b))]
+  setorderv(.Object@stat, cols = "pmi", order = -1L, na.last = TRUE)
+  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  .Object@method <- c(.Object@method, "pmi")
+  invisible(.Object)
+})
+
+#' @param p_attribute The positional attribute which shall be considered. Relevant only
+#'   if ngrams have been calculated for more than one p-attribute.
+#' @param observed A \code{count}-object with the numbers of the observed
+#'   occurrences of the tokens in the input \code{ngrams} object.
+#' @rdname pmi
+#' @export
+#' @examples 
+#' use("polmineR")
+#' dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table", verbose = FALSE)
+#' n <- ngrams(dt, n = 2L, p_attribute = "word")
+#' obs <- count("REUTERS", p_attribute = "word")
+#' phrases <- pmi(n, observed = obs)
+setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attributes(.Object)[1]){
+  if (length(p_attribute) > 1L) stop("pmi-method for ngrams objects not yet implemented for length(p_attribute) > 1")
+  
+  setkeyv(observed@stat, cols = p_attribute)
+  setnames(.Object@stat, old = "count", new = "ngram_count")
+  
+  for (i in 1L:.Object@n){
+    setkeyv(.Object@stat, cols = paste(p_attribute, i, sep = "_"))
+    .Object@stat <- .Object@stat[observed@stat[,c(p_attribute, "count"), with = FALSE]]
+    setnames(.Object@stat, old = "count", new = paste(p_attribute, i, "count", sep = "_"))
+  }
+  
+  p_ngram <- .Object@stat[["ngram_count"]] / observed@size
+  denominator <- 1L
+  for (i in 1L:.Object@n){
+    denominator <- denominator * .Object@stat[[paste(p_attribute, i, "count", sep = "_")]] / observed@size
+  }
+  
+  .Object@stat[, "pmi" := log2(p_ngram / denominator)]
+  setorderv(.Object@stat, cols = "pmi", order = -1L)
+  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  invisible(.Object)
+})
 
 
 #' Compute Log-likelihood Statistics.
@@ -274,7 +325,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   dt[, "ll" := ll * direction]
   dt[, "ll" := ifelse(is.nan(ll), NA, ll)]
   
-  setorderv(dt, cols = "ll", order = -1)
+  setorderv(dt, cols = "ll", order = -1, na.last = TRUE)
   dt[, "rank_ll" := 1L:nrow(dt)]
   
   dt[, "o21" := NULL]

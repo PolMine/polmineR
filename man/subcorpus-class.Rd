@@ -120,6 +120,6 @@ Most commonly, a \code{subcorpus} is derived from a \code{corpus} or
   from the \code{textstat} class.
 
 Other classes to manage corpora: \code{\link{corpus-class}},
-  \code{\link{regions}}
+  \code{\link{phrases}}, \code{\link{regions}}
 }
 \concept{classes to manage corpora}
