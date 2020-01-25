@@ -11,6 +11,8 @@
 \alias{kwic,character-method}
 \alias{kwic,remote_corpus-method}
 \alias{kwic,remote_partition-method}
+\alias{kwic,partition_bundle-method}
+\alias{kwic,subcorpus_bundle-method}
 \title{Perform keyword-in-context (KWIC) analysis.}
 \usage{
 kwic(.Object, ...)
@@ -59,6 +61,10 @@ kwic(.Object, ...)
 \S4method{kwic}{remote_corpus}(.Object, ...)
 
 \S4method{kwic}{remote_partition}(.Object, ...)
+
+\S4method{kwic}{partition_bundle}(.Object, ..., verbose = FALSE)
+
+\S4method{kwic}{subcorpus_bundle}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A (length-one) \code{character} vector with the name of a CWB
@@ -126,6 +132,12 @@ highlighted in the output table.
 
 If a \code{negativelist} is supplied, concordances are removed if any of the
 tokens of the \code{negativelist} occurrs in the context of the query match.
+
+Applying the \code{kwic}-method on a \code{partition_bundle} or
+  \code{subcorpus_bundle} will return a single \code{kwic} object that
+  includes a column 'subcorpus_name' with the name of the \code{subcorpus}
+  (or \code{partition}) in the input object where the match for a concordance
+  occurs.
 }
 \examples{
 use("polmineR")
@@ -170,6 +182,11 @@ if (interactive()) show(K)
 K <- kwic("GERMAPARLMINI", query = "Integration", positivelist = "[Ee]urop.*", regex = TRUE)
 K <- highlight(K, yellow = "[Ee]urop.*", regex = TRUE)
 
+# Apply kwic on partition_bundle/subcorpus_bundle
+gparl_2009_11_10_speeches <- corpus("GERMAPARLMINI") \%>\%
+  subset(date == "2009-11-10") \%>\%
+  as.speeches(s_attribute_name = "speaker", progress = FALSE, verbose = FALSE)
+k <- kwic(gparl_2009_11_10_speeches, query = "Integration")
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, pp. 71-93 (ch. 4).

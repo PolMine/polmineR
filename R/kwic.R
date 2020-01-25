@@ -493,3 +493,41 @@ setMethod("merge", "kwic_bundle", function(x){
     annotation_cols = character()
   )
 })
+
+
+#' @details Applying the \code{kwic}-method on a \code{partition_bundle} or
+#'   \code{subcorpus_bundle} will return a single \code{kwic} object that
+#'   includes a column 'subcorpus_name' with the name of the \code{subcorpus}
+#'   (or \code{partition}) in the input object where the match for a concordance
+#'   occurs.
+#' @examples
+#' # Apply kwic on partition_bundle/subcorpus_bundle
+#' gparl_2009_11_10_speeches <- corpus("GERMAPARLMINI") %>%
+#'   subset(date == "2009-11-10") %>%
+#'   as.speeches(s_attribute_name = "speaker", progress = FALSE, verbose = FALSE)
+#' k <- kwic(gparl_2009_11_10_speeches, query = "Integration")
+#' @rdname kwic
+setMethod("kwic", "partition_bundle", function(.Object, ..., verbose = FALSE){
+  strucs_combined <- unlist(lapply(.Object@objects, slot, "strucs"))
+  strucs_obj_name <- unname(unlist(lapply(.Object@objects, function(obj) rep(obj@name, times = length(obj@strucs)))))
+  
+  if (verbose) message("... merging subcorpora/partitions into one single subcorpus")
+  sc <- merge(.Object)
+  
+  k <- kwic(sc, ..., verbose = FALSE)
+  cols_old <- copy(colnames(k))
+  k_cpos <- k@cpos[k@cpos[["position"]] == 0][, {.SD[.SD[["cpos"]] == min(.SD[["cpos"]])]}, by = "match_id"]
+  k_cpos[, c("match_id", "cpos")][k@stat, on = "match_id"]
+  match_strucs <- cl_cpos2struc(
+    corpus = get_corpus(sc),
+    s_attribute = sc@s_attribute_strucs,
+    cpos = k_cpos[["cpos"]],
+    registry = registry()
+  )
+  k@stat[, "subcorpus_name" := strucs_obj_name[match(match_strucs, unname(strucs_combined))]]
+  setcolorder(k@stat, neworder = c("subcorpus_name", cols_old))
+  k
+})
+
+#' @rdname kwic
+setMethod("kwic", "subcorpus_bundle", function(.Object, ...) callNextMethod())

@@ -36,26 +36,38 @@ setMethod("summary", "partition_bundle", function (object, progress = FALSE){
 #' details on the class.
 #' @exportMethod merge
 #' @rdname partition_bundle-class
-setMethod("merge", "partition_bundle", function(x, name = "", verbose = TRUE){
-  y <- new("partition")
+#' @examples 
+#' 
+#' # merge partition_bundle into one partition
+#' gparl <- corpus("GERMAPARLMINI") %>%
+#'   split(s_attribute = "date") %>% 
+#'   merge()
+setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
+  corpus_id <- get_corpus(x)
+  if (length(corpus_id) >  1L) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
   .message('number of partitions to be merged: ', length(x@objects), verbose = verbose)
-  y@corpus <- unique(vapply(x@objects, FUN.VALUE = "characer", function(p) p@corpus))
-  if (length(y@corpus) >  1) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
-  y@xml <- unique(vapply(x@objects, function(p) p@xml, FUN.VALUE = "character"))
-  y@encoding <- unique(vapply(x@objects, function(p) p@encoding, FUN.VALUE = "character"))
-  y@s_attribute_strucs <- unique(vapply(x@objects, function(p) p@s_attribute_strucs, FUN.VALUE = "character"))
-  .message('merging the struc vectors', verbose = verbose)
-  for (name in names(x@objects)) y@strucs <- union(y@strucs, x@objects[[name]]@strucs)
-  .message('generating corpus positions', verbose = verbose)
-  cpos <- data.matrix(t(data.frame(lapply(
-    y@strucs,
-    function(s) cl_struc2cpos(corpus = y@corpus, s_attribute = y@s_attribute_strucs, struc = s, registry = registry()) )
-  )))
-  rownames(cpos) <- NULL
-  y@cpos <- cpos
+  
+  strucs_combined <- unname(unlist(lapply(x@objects, slot,  "strucs")))
+  if (any(table(strucs_combined) > 1L)){
+    stop("To get the concordances from a subcorpus_bundle or partition_bundle ",
+         "the objects within the bundle are assumed to be non-overlapping. The input ",
+         "object does not pass the respective check.")
+  }
+
+  y <- new(
+    "partition",
+    corpus = corpus_id,
+    stat = data.table(),
+    xml = x[[1]]@xml,
+    encoding = x[[1]]@encoding,
+    s_attribute_strucs = unique(unname(unlist(lapply(x@objects, slot,  "s_attribute_strucs")))),
+    strucs = unique(strucs_combined),
+    explanation = c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', '))),
+    size = -1L,
+    name = name
+  )
+  y@cpos <- get_region_matrix(corpus = corpus_id, s_attribute = y@s_attribute_strucs, strucs = y@strucs, registry = registry())
   y@size <- size(y)
-  y@explanation = c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', ')))
-  y@name <- name
   y
 })
 

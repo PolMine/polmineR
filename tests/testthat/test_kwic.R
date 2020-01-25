@@ -126,3 +126,23 @@ test_that(
     expect_equal(is.null(k), TRUE)
   }
 )
+
+test_that(
+  "kwic: Apply kwic on partition_bundle",
+  {
+    sp <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-10") %>%
+      split(s_attribute = "speaker")
+    kwic_table <- kwic(sp, query = "Integration") %>% slot("stat")
+    
+    # The idea of the test is that the number of concordences per subcorpus 
+    # needs to be identical with the result of a count over the partition_bundle
+    dt <- kwic_table[, .N, by = "subcorpus_name"]
+    data.table::setorderv(dt, cols = "N", order = -1L)
+    cnt <- count(sp, query = "Integration", s_attributes = "speaker", progress = FALSE)
+    cnt <- cnt[TOTAL > 0L]
+    setorderv(cnt, cols = "TOTAL", order = -1L)
+    expect_equal(dt[["subcorpus_name"]], cnt[["partition"]])
+    expect_equal(dt[["N"]], cnt[["TOTAL"]])
+  }
+)

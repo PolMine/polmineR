@@ -1066,7 +1066,7 @@ setMethod("kwic", "Cooccurrences", function(
 #' @export
 setAs(from = "cooccurrences", to = "kwic", function(from){
   # Prepare a data.table that links match_id and word_id (i.e. which tokens occurr in a match?)
-  tbl <- from@cpos[, {.SD[word_id %in% from[["word_id"]]][["word_id"]]}, by = "match_id"]
+  tbl <- from@cpos[, {.SD[.SD[["word_id"]] %in% from[["word_id"]]][["word_id"]]}, by = "match_id"]
   setnames(tbl, old = "V1", new = "word_id")
   setorderv(tbl, cols = c("match_id", "word_id"))
   

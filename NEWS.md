@@ -38,6 +38,16 @@ polmineR 0.8.0.9001 - 0.8.0.9005
   `count()`-method now accepts an argument `phrases`. See the documentation (`?phrases`).
 - New coerce method to derive a `kwic` object from a `cooccurrences` object. Introduced to
   serve as a basis for quantitative/qualitative workflows, e.g. integrated in a flexdashboard.
+- The `merge()`-method for `partition_bundle`-objects has been reworked: Substantial performance
+  improvement by relying on `RcppCWB::get_region_matrix`. Internally, the method performs a
+  check whether the `partition`/`subcorpus` objects to be merged are non-overlapping. The default
+  value for the argument `verbose` is now `FALSE`, as waiting time is much shorter.
+- The `kwic()`-method is now available for `partition_bundle`/`subcorpus_bundle`-objects (#73).
+- To make the `kwic()`-method work correctly for `partition` objects that result from a `merge()`
+  operation (and that were not created by ), the `cpos()`-method for `slice` objects will extract
+  strucs based on the s-attribute defined in the slot `s_attr_strucs` rather than the last s-attribute
+  in the list of the slot `s-attributes`.
+
 
 
 polmineR 0.8.0
