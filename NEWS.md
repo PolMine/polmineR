@@ -1,4 +1,4 @@
-polmineR 0.8.0.9001 - 0.8.0.9005
+polmineR 0.8.0.9001 - 0.8.0.9006
 ================================
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
@@ -47,6 +47,7 @@ polmineR 0.8.0.9001 - 0.8.0.9005
   operation (and that were not created by ), the `cpos()`-method for `slice` objects will extract
   strucs based on the s-attribute defined in the slot `s_attr_strucs` rather than the last s-attribute
   in the list of the slot `s-attributes`.
+- Class `subcorpus` is exported for usage in other packages.
 
 
 

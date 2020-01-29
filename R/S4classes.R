@@ -863,6 +863,7 @@ setClass(
 #' # keyword-in-context analysis (kwic)   
 #' k <- corpus("REUTERS") %>% subset(grep("kuwait", places)) %>% kwic("oil")
 #' 
+#' @exportClass subcorpus
 setClass(
   "subcorpus",
   slots = c(
