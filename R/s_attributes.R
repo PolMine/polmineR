@@ -133,7 +133,7 @@ setMethod(
           retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = .Object@strucs, registry = registry())
           if (unique) retval <- unique(retval)
         } else {
-          cpos_vector <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+          cpos_vector <- cpos(.Object@cpos)
           strucs <- cl_cpos2struc(
             corpus = .Object@corpus,
             s_attribute = s_attribute,

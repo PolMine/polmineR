@@ -21,7 +21,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
-  cpos <- unlist(apply(from@cpos, 1, function(x) x[1]:x[2]))
+  cpos <- cpos(from@cpos)
   w <- NLP::Annotation(
     id = cpos,
     rep.int("word", length(cpos)),
@@ -214,7 +214,7 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
     if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
     
-    y <- data.table(cpos = as.vector(unlist(apply(.Object@cpos, 1, function(row) row[1]:row[2]))))
+    y <- data.table(cpos = cpos(.Object@cpos))
 
     for (p_attr in p_attributes){
       if (verbose) message("... decoding p_attribute ", p_attr)

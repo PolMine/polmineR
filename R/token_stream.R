@@ -135,8 +135,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "matrix", function(.Object, ...){
-  cpos_vector <- as.vector(unlist(apply(.Object, 1L, function(row) row[1L]:row[2L])))
-  get_token_stream(cpos_vector, ...)
+  get_token_stream(cpos(.Object), ...)
 })
 
 #' @rdname get_token_stream-method

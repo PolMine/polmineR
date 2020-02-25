@@ -176,10 +176,15 @@ setMethod("cpos", "subcorpus", function(.Object, query, cqp = is.cqp, check = TR
 
 
 
+#' @details. If \code{.Object} is a \code{matrix}, it is assumed to be a region
+#' matrix, i.e. a two-column \code{matrix} with left and right corpus positions
+#' in the first and second row, respectively. For many operations, such as
+#' decoding the token stream, it is necessary to inflate the denoted regions
+#' into a vector of all corpus positions referred to by the regions defined in
+#' the matrix. The \code{cpos}-method for \code{matrix} objects will performs
+#' this task robustly.
 #' @rdname cpos-method
 setMethod("cpos", "matrix", function(.Object)
-  # as.vector(unlist(apply(.Object, 1, function(row) row[1]:row[2])))  
-  # do.call(c, lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2]))
   do.call(c, lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2]))
 )
 

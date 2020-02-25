@@ -186,7 +186,7 @@ setMethod("count", "slice", function(
         decode <- FALSE
       }
     } else {
-      cpos <- unlist(apply(.Object@cpos, 1, function(x) x[1]:x[2]))
+      cpos <- cpos(.Object@cpos)
       id_list <- lapply(p_attribute, function(p) cl_cpos2id(corpus = .Object@corpus, p_attribute = p, cpos = cpos, registry = registry()))
       names(id_list) <- paste(p_attribute, "id", sep = "_")
       ID <- data.table::as.data.table(id_list)
