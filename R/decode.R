@@ -214,7 +214,7 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
     if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
     
-    y <- data.table(cpos = unlist(apply(.Object@cpos, 1, function(row) row[1]:row[2])))
+    y <- data.table(cpos = as.vector(unlist(apply(.Object@cpos, 1, function(row) row[1]:row[2]))))
 
     for (p_attr in p_attributes){
       if (verbose) message("... decoding p_attribute ", p_attr)
@@ -245,15 +245,14 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
       
       unfold <- function(.SD){
         dt <- data.table(cpos = .SD[["cpos_left"]]:.SD[["cpos_right"]])
-        value <- .SD[[s_attr]]
-        for (s_attr in s_attributes) dt[, (s_attr) := value]
+        for (s_attr in s_attributes){
+          value <- .SD[[s_attr]]
+          dt[, (s_attr) := value]
+        }
         dt
       }
       s_attr_dt_ext <- s_attr_dt[, unfold(.SD), by = "struc"]
-      setkeyv(y, cols = "cpos")
-      setkeyv(s_attr_dt_ext, cols = "cpos")
-      y <- y[s_attr_dt_ext]
-      y[, "struc" := NULL]
+      y <- y[s_attr_dt_ext, on = "cpos"][, "struc" := NULL]
       setcolorder(y, neworder = c("cpos", p_attributes, s_attributes))
     }
   } else if (to == "Annotation"){

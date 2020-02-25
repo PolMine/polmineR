@@ -223,7 +223,7 @@ setMethod("count", "slice", function(
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
@@ -261,9 +261,9 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     return(DT_cast)
   } else {
     
-    enc <- .Object@objects[[1]]@encoding
+    enc <- encoding(.Object)
     corpus <- get_corpus(.Object)
-    if (length(corpus) > 1L) stop("partitions in partition_bundle must be derived from the same corpus")
+    if (length(corpus) > 1L) stop("The objects in the bundle must be derived from the same corpus.")
     
     if (verbose) message("... creating data.table with corpus positions")
     cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
@@ -317,7 +317,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
         encoding = .Object@objects[[i]]@encoding,
         p_attribute = p_attribute,
         stat = CNT_list[[i]],
-        name = .Object@objects[[ CNT_list[[i]][["name"]][[1]] ]]@name,
+        name = .Object@objects[[ which(names(.Object@objects) == CNT_list[[i]][["name"]][[1]]) ]]@name,
         size = size(.Object@objects[[i]])
       )
     }

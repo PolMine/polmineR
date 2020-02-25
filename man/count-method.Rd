@@ -38,7 +38,7 @@ count(.Object, ...)
 
 \S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
   p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
 
 \S4method{count}{subcorpus_bundle}(.Object, query = NULL, cqp = FALSE,
   p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,

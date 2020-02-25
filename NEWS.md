@@ -1,4 +1,4 @@
-polmineR 0.8.0.9001 - 0.8.0.9006
+polmineR 0.8.0.9001 - 0.8.0.9007
 ================================
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
@@ -48,7 +48,10 @@ polmineR 0.8.0.9001 - 0.8.0.9006
   strucs based on the s-attribute defined in the slot `s_attr_strucs` rather than the last s-attribute
   in the list of the slot `s-attributes`.
 - Class `subcorpus` is exported for usage in other packages.
-
+- The default value of the argument `progress` of the `count()`-method for `partition_bundle` objects is now FALSE.
+- A bug caused when the name of an object in a `partition_bundle` was an empty string and calling `count()` on this object has been removed (#121).
+- A bug was addressed that occurs when unfolding the region matrix where all regions have the same
+length (#124).
 
 
 polmineR 0.8.0

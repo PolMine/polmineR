@@ -315,6 +315,24 @@ round.data.table <- function(x, digits = 2L){
 }
 
 
+#' Expand region matrix to vector of corpus positions
+#' 
+#' A region matrix is a two-column \code{matrix} with left and right
+#' corpus positions in the first and second row, respectively. For
+#' many operations, such as decoding the token stream, it is necessary
+#' to inflate the denoted regions into a vector of all 
+#' corpus positions referred to by the regions defined in the matrix
+#' The \code{as_cpos_vector} utility function was developed for internal
+#' usage but may be useful to perform this task robustly.
+as_cpos_vector <- function(x){
+  stopifnot(is(x)[1] == "matrix", ncol(x) == 2L)
+  # Calling as.vector() is necessary for a scenario when all regions
+  # have the same length. Then apply() will return a matrix, which is
+  # undone by as.vector().
+  as.vector(unlist(apply(x, 1, function(row) row[1]:row[2])))
+}
+
+
 .list_corpora = function() toupper(list.files( registry() ))
 
 #' @importFrom magrittr %>%
