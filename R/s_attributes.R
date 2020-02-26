@@ -72,6 +72,11 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
     return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
   } else {
     if (length(s_attribute) == 1L){
+      if (!s_attribute %in% s_attributes(.Object)){
+        stop(
+          sprintf("The s-attribute '%s' is not defined for corpus '%s'.", s_attribute, .Object@corpus)
+        )
+      }
       avs_file <- file.path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
@@ -93,6 +98,9 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         return(y)
       }
     } else if (length(s_attribute) > 1L){
+      if (!all(s_attribute %in% s_attributes(.Object))){
+        stop(sprintf("At least one s-attribute provided is not defined for corpus '%s'.", .Object@corpus))
+      }
       y <- lapply(
         s_attribute,
         function(x) {

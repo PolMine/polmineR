@@ -1,4 +1,4 @@
-polmineR 0.8.0.9001 - 0.8.0.9007
+polmineR 0.8.0.9001 - 0.8.0.9008
 ================================
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
@@ -52,6 +52,8 @@ polmineR 0.8.0.9001 - 0.8.0.9007
 - A bug caused when the name of an object in a `partition_bundle` was an empty string and calling `count()` on this object has been removed (#121).
 - A bug was addressed that occurs when unfolding the region matrix where all regions have the same
 length (#124).
+- There is now a telling error message for the `s_attributes()` method for `corpus` objects when 
+values are requested for an s-attribute that does not exist (#122).
 
 
 polmineR 0.8.0
