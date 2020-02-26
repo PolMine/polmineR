@@ -252,7 +252,7 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
         dt
       }
       s_attr_dt_ext <- s_attr_dt[, unfold(.SD), by = "struc"]
-      y <- y[s_attr_dt_ext, on = "cpos"][, "struc" := NULL]
+      y <- y[s_attr_dt_ext, on = "cpos"]
       setcolorder(y, neworder = c("cpos", p_attributes, s_attributes))
     }
   } else if (to == "Annotation"){

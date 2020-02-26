@@ -54,6 +54,8 @@ polmineR 0.8.0.9001 - 0.8.0.9008
 length (#124).
 - There is now a telling error message for the `s_attributes()` method for `corpus` objects when 
 values are requested for an s-attribute that does not exist (#122).
+- In the `decode()`-method for `subcorpus` objects, s-attributes were not decoded appropriately (#120). Fixed. When decoding
+a corpus/subcorpus, the struc column is kept (again).
 
 
 polmineR 0.8.0
