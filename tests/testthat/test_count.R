@@ -85,3 +85,12 @@ test_that(
     
   }
 )
+
+test_that(
+  "issue warning if there are overlapping queries",
+  {
+    testthat::expect_warning(
+      corpus("REUTERS") %>% count(query = c('"price.*"', '"prices"'), cqp = TRUE)
+    )
+  }
+)

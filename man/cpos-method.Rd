@@ -9,6 +9,7 @@
 \alias{cpos,subcorpus-method}
 \alias{cpos,matrix-method}
 \alias{cpos,hits-method}
+\alias{cpos,NULL-method}
 \title{Get corpus positions for a query or queries.}
 \usage{
 cpos(.Object, ...)
@@ -67,6 +68,8 @@ cpos(.Object, ...)
 \S4method{cpos}{matrix}(.Object)
 
 \S4method{cpos}{hits}(.Object)
+
+\S4method{cpos}{`NULL`}(.Object)
 }
 \arguments{
 \item{.Object}{A length-one \code{character} vector indicating a CWB corpus, a
@@ -125,6 +128,11 @@ decoding the token stream, it is necessary to inflate the denoted regions
 into a vector of all corpus positions referred to by the regions defined in
 the matrix. The \code{cpos}-method for \code{matrix} objects will performs
 this task robustly.
+
+If \code{.Object} is \code{NULL}, the method will return an empty
+  integer vector. Used internally to handle \code{NULL} objects that may be
+  returned from the \code{cpos}-method if no matches are obtained for a
+  query.
 }
 \examples{
 use("polmineR")

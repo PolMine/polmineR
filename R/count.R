@@ -337,7 +337,7 @@ setMethod("count", "subcorpus_bundle", function(.Object, query = NULL, cqp = FAL
 
 #' @rdname count-method
 setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE, ...){
-
+  
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   if (is.null(query)){
@@ -350,11 +350,11 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       } else {
         TF <- data.table(
           count = RcppCWB::get_count_vector(corpus = .Object@corpus, p_attribute = p_attribute)
-          )
+        )
       }
       p_attr_col_id <- paste(p_attribute, "id", sep = "_")
       TF[, (p_attr_col_id) := 0L:(nrow(TF) - 1L)]
-
+      
       if (!decode){
         setkeyv(TF, p_attr_col_id)
         setcolorder(TF, c(p_attr_col_id, "count"))
@@ -414,10 +414,9 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
     )
     return(y)
   } else {
-    total <- cl_attribute_size(corpus = .Object@corpus, attribute = p_attribute, attribute_type = "p", registry = registry())
     if (class(cqp) == "function") cqp <- cqp(query)
     if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
-    if (cqp == FALSE){
+    if (isFALSE(cqp)){
       query <- as.corpusEnc(query, corpusEnc = encoding(.Object))
       count <- sapply(
         query,
@@ -427,21 +426,27 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
           if (query_id >= 0) cl_id2freq(corpus = .Object@corpus, p_attribute = p_attribute, id = query_id, registry = registry()) else 0
         }
       )
-      return(data.table(query = query, count = count, freq = count / total))
+      return(data.table(query = query, count = count, freq = count / size(.Object)))
     } else if (cqp){
       if (!breakdown){
-        count <- sapply(
+        region_matrices <- lapply(
           query,
-          function(query){
-            cpos_matrix <- cpos(.Object@corpus, query, cqp = cqp, check = check, p_attribute = p_attribute)
-            if (!is.null(cpos_matrix)){
-              return( nrow(cpos_matrix) )
-            } else {
-              return( 0L )
-            }
-            
-          })
-        return( data.table(query = query, count = count, freq = count / total) )
+          function(query) cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
+        )
+        # If any corpus position in the region matrices occurrs more than once, there 
+        # is an overlap of matches obtained for queries. A warning shall prevent that 
+        # users sum up query matches and unknowingly overestimate the total number of 
+        # query matches.
+        if (any(table(unlist(lapply(region_matrices, cpos))) > 1L)){
+          warning(
+            "The CQP queries processed result in at least one overlapping query. ",
+            "Summing up the counts for the individual query matches may result in an ",
+            "overestimation of the total number of hits. To avoid this, ",
+            "consider collapsing multiple CQP queries into one single query.")
+        }
+        counts <- sapply(region_matrices, function(m) if (!is.null(m)) nrow(m) else 0L)
+        dt <- data.table(query = query, count = counts, freq = counts / size(.Object))
+        return(dt)
       } else {
         # To avoid implementing the count()-method with breakdown = TRUE, we rely
         # on the method as it is implemented for the subcorpus class (which will

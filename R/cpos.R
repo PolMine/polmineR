@@ -194,3 +194,10 @@ setMethod("cpos", "hits", function(.Object)
 )
 
 
+#' @details If \code{.Object} is \code{NULL}, the method will return an empty
+#'   integer vector. Used internally to handle \code{NULL} objects that may be
+#'   returned from the \code{cpos}-method if no matches are obtained for a
+#'   query.
+#' @rdname cpos-method
+setMethod("cpos", "NULL", function(.Object) integer())
+
