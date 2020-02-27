@@ -631,10 +631,7 @@ setMethod("Cooccurrences", "slice", function(
     id_list <- lapply(
       1L:nrow(.Object@cpos),
       function(j)
-        RcppCWB::cl_cpos2id(
-          corpus = .Object@corpus,
-          p_attribute = p_attribute,
-          cpos = .Object@cpos[j,1]:.Object@cpos[j,2]
+        RcppCWB::cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = .Object@cpos[j,1]:.Object@cpos[j,2]
         )
     )
 

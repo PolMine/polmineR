@@ -6,7 +6,6 @@
 \alias{count-method}
 \alias{count,partition-method}
 \alias{count,subcorpus-method}
-\alias{count,slice-method}
 \alias{count,partition_bundle-method}
 \alias{count,subcorpus_bundle-method}
 \alias{count,corpus-method}
@@ -29,6 +28,7 @@ count(.Object, ...)
   mc = getOption("polmineR.cores"),
   verbose = TRUE,
   progress = FALSE,
+  phrases = NULL,
   ...
 )
 
@@ -43,21 +43,7 @@ count(.Object, ...)
   mc = getOption("polmineR.cores"),
   verbose = TRUE,
   progress = FALSE,
-  ...
-)
-
-\S4method{count}{slice}(
-  .Object,
-  query = NULL,
-  cqp = is.cqp,
-  check = TRUE,
-  breakdown = FALSE,
-  decode = TRUE,
   phrases = NULL,
-  p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"),
-  verbose = TRUE,
-  progress = FALSE,
   ...
 )
 
@@ -218,8 +204,12 @@ cnt <- count(sc, phrases = phr, p_attribute = "word")
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
 }
 \seealso{
-For a metadata-based breakdown of counts
-(i.e. tabulation by s-attributes), see \code{dispersion}.
+For a metadata-based breakdown of counts (i.e. tabulation by
+  s-attributes), see \code{\link{dispersion}}. The \code{\link{hits}} is the
+  worker behind the \code{dispersion} method and offers a similar, yet more
+  low-level functionality as compared to the \code{count} method. Using the
+  \code{\link{hits}} method may be useful to obtain the data required for
+  flexible cross-tabulations.
 
 count
 }
