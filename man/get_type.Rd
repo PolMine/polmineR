@@ -3,6 +3,7 @@
 \name{get_type}
 \alias{get_type}
 \alias{get_type,subcorpus-method}
+\alias{get_type,corpus-method}
 \alias{get_type,character-method}
 \alias{get_type,partition-method}
 \alias{get_type,partition_bundle-method}
@@ -10,6 +11,8 @@
 \title{Get corpus/partition type.}
 \usage{
 get_type(.Object)
+
+\S4method{get_type}{corpus}(.Object)
 
 \S4method{get_type}{character}(.Object)
 
@@ -47,9 +50,6 @@ is(p)
 
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 get_type(pb)
-
-gp <- Corpus$new("GERMAPARLMINI") 
-get_type(gp)
 
 get_type("REUTERS") # returns NULL - no specialized corpus
 }

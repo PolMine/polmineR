@@ -27,22 +27,21 @@
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
 #' get_type(pb)
 #' 
-#' gp <- Corpus$new("GERMAPARLMINI") 
-#' get_type(gp)
-#' 
 #' get_type("REUTERS") # returns NULL - no specialized corpus
 setGeneric("get_type", function(.Object) standardGeneric("get_type"))
+
+
+#' @rdname get_type
+setMethod("get_type", "corpus", function(.Object){
+  get_type(.Object@corpus)
+})
+
 
 #' @rdname get_type
 setMethod("get_type", "character", function(.Object){
   stopifnot(length(.Object) == 1)
   corpus_properties <- registry_get_properties(.Object)
-  if ("type" %in% names(corpus_properties)){
-    y <- corpus_properties[["type"]]
-  } else {
-    y <- NULL
-  }
-  y
+  if ("type" %in% names(corpus_properties)) corpus_properties[["type"]] else NULL
 })
 
 #' @rdname get_type

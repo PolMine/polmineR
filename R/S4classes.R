@@ -718,6 +718,7 @@ setAs(from = "corpus", to = "partition", def = function(from){
   )
 })
 
+
 #' @exportClass remote_corpus
 #' @docType class
 #' @rdname corpus-class
@@ -895,6 +896,17 @@ setAs(from = "subcorpus", to = "remote_subcorpus", def = function(from){
   for (x in slotNames(from)) slot(y, x) <- slot(from, x)
   y
 })
+
+setAs(from = "corpus", to = "subcorpus", def = function(from){
+  new(
+    "subcorpus",
+    corpus = from@corpus,
+    encoding = from@encoding,
+    cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
+    size = size(from)
+  )
+})
+
 
 setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
   y <- new("subcorpus")

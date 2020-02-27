@@ -410,13 +410,30 @@ setGeneric("Cooccurrences", function(.Object, ...) standardGeneric("Cooccurrence
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
 #' @aliases Cooccurrences
+setMethod("Cooccurrences", "corpus", function(
+  .Object, p_attribute, left, right,
+  stoplist = NULL,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+){
+  Cooccurrences(
+    as(.Object, "subcorpus"),
+    p_attribute = p_attribute,
+    left = left, right = right, stoplist = stoplist,
+    mc = mc, verbose = verbose, progress = progress)
+})
+
+
+
+#' @exportMethod Cooccurrences
+#' @rdname all_cooccurrences
+#' @aliases Cooccurrences
 setMethod("Cooccurrences", "character", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
 ){
   Cooccurrences(
-    Corpus$new(.Object)$as.partition(),
+    corpus(.Object),
     p_attribute = p_attribute,
     left = left, right = right, stoplist = stoplist,
     mc = mc, verbose = verbose, progress = progress)

@@ -123,8 +123,12 @@ registry_get_s_attributes = function(corpus, registry = Sys.getenv("CORPUS_REGIS
 #' @export registry_get_properties
 #' @rdname registry_eval
 registry_get_properties = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  registry_file <- file.path(registry, tolower(corpus))
+  if (isFALSE(file.exists(registry_file))){
+    stop("There is no registry file for corpus ", corpus, ".")
+  }
   x <- stri_match_all_regex(
-    readLines(file.path(registry, tolower(corpus))),
+    readLines(registry_file),
     pattern = '^##::\\s*(.*?)\\s*=\\s*"(.*?)".*?$',
     omit_no_match = TRUE
   )

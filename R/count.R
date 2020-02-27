@@ -154,7 +154,7 @@ setMethod("count", "slice", function(
         }
       )
       return( rbindlist(dts) )
-    } else if (breakdown == FALSE){
+    } else if (isFALSE(breakdown)){
       .fn <- function(query, obj, cqp, p_attribute, ...) {
         .message("processing query", query, verbose = verbose)
         cposResult <- cpos(.Object = obj, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
@@ -437,15 +437,18 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
             if (!is.null(cpos_matrix)){
               return( nrow(cpos_matrix) )
             } else {
-              return( 0 )
+              return( 0L )
             }
             
           })
         return( data.table(query = query, count = count, freq = count / total) )
       } else {
-        C <- Corpus$new(.Object@corpus)
-        C$p_attribute <- p_attribute
-        retval <- count(.Object = C$as.partition(), query = query, cqp = cqp, p_attribute = p_attribute, breakdown = TRUE)
+        # To avoid implementing the count()-method with breakdown = TRUE, we rely
+        # on the method as it is implemented for the subcorpus class (which will
+        # call the method for the slice class. There is an additional check whether
+        # hits are within the regions defined by the subcorpus, but this extra 
+        # cost is minimal.
+        retval <- count(as(.Object, "subcorpus"), query = query, cqp = cqp, p_attribute = p_attribute, breakdown = TRUE)
         return( retval )
       }
     }

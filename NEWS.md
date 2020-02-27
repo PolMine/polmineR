@@ -58,6 +58,11 @@ values are requested for an s-attribute that does not exist (#122).
 - A new check in `.onLoad()` whether polmineR is loaded from the repository directory will ensure
 that temporary registry files will not be gone when calling `devtools::document()` (#68).
 - The deprecated `Corpus` reference class has been dropped from the code altogether: As `roxygen::roxygenize()` started to check the documentation of R6 classes and reference classes, the poor documentation of this class started to provoke many errors. Rather than starting to write documentation for a deprecated class, getting rid of an outdated and poorly documented class appeared to be the better solution.
+- A coerce method has been defined to turn a `corpus` object into a `subcorpus` object, to recover
+functionality used (internally) that relied on the former `Corpus` reference class.
+- The `Cooccurrences()`-method is now defined for the `corpus`-class, too. The `Cooccurrences()`-method 
+for the `character` class now relies on this method.
+- The `get_type()`-method is now defined for the `corpus` class.
 
 
 polmineR 0.8.0
