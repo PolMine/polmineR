@@ -144,6 +144,9 @@ polmineR 0.8.0
   The `neighborhood` virtual class could be discarded again, and a bug could be removed
   that left an `enrich()`-operation for `kwic` objects (argument `p_attribute`)
   ineffectual (#103).
+- A potential error resulting from setting argument `cpos` to `FALSE` in the `kwic()`-method
+has been solved (#106), and the documentation of the argument has been rewritten so that
+  includes a warning to use the argument falsely.
 
 
 ## Minor changes

@@ -134,8 +134,13 @@ necessary to state the names of all arguments to be passed explicity.}
 \item{s_attributes}{Structural attributes (s-attributes) to include into
 output table as metainformation.}
 
-\item{cpos}{Logical, if \code{TRUE}, the corpus positions ("cpos") if the hits will
-be included in the \code{kwic}-object that is returned.}
+\item{cpos}{Logical, if \code{TRUE}, a \code{data.table} with the corpus
+positions ("cpos") of the hits and their surrounding context will be
+assigned to the slot "cpos" of the \code{kwic}-object that is returned.
+Defaults to \code{TRUE}, as the availability of the cpos-\code{data.table}
+will often be a prerequisite for further operations on the \code{kwic}
+object. Omitting the table may however be useful to minimize memory
+consumption.}
 
 \item{verbose}{A \code{logical} value, whether to print messages.}
 
@@ -160,8 +165,8 @@ results.}
 \item{positivelist}{Terms or ids required for a concordance to occurr in
 results}
 
-\item{regex}{Logical, whether \code{stoplist}/\code{positivelist} is interpreted as regular
-expression.}
+\item{regex}{Logical, whether \code{stoplist}/\code{positivelist} is
+interpreted as regular expression.}
 
 \item{check}{A \code{logical} value, whether to check validity of CQP query
 using \code{check_cqp_query}.}

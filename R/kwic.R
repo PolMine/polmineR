@@ -180,8 +180,13 @@ NULL
 #' @param right Number of tokens to the right of query match.
 #' @param s_attributes Structural attributes (s-attributes) to include into
 #'   output table as metainformation.
-#' @param cpos Logical, if \code{TRUE}, the corpus positions ("cpos") if the hits will
-#'   be included in the \code{kwic}-object that is returned.
+#' @param cpos Logical, if \code{TRUE}, a \code{data.table} with the corpus
+#'   positions ("cpos") of the hits and their surrounding context will be
+#'   assigned to the slot "cpos" of the \code{kwic}-object that is returned.
+#'   Defaults to \code{TRUE}, as the availability of the cpos-\code{data.table}
+#'   will often be a prerequisite for further operations on the \code{kwic}
+#'   object. Omitting the table may however be useful to minimize memory
+#'   consumption.
 #' @param p_attribute The p-attribute, defaults to 'word'.
 #' @param boundary If provided, a length-one character vector stating an
 #'   s-attribute that will be used to check the boundaries of the text.
@@ -189,8 +194,8 @@ NULL
 #'   results.
 #' @param positivelist Terms or ids required for a concordance to occurr in
 #'   results
-#' @param regex Logical, whether \code{stoplist}/\code{positivelist} is interpreted as regular
-#'   expression.
+#' @param regex Logical, whether \code{stoplist}/\code{positivelist} is
+#'   interpreted as regular expression.
 #' @param verbose A \code{logical} value, whether to print messages.
 #' @param progress A \code{logical} value, whether to show progress bar.
 #' @param ... Further arguments, used to ensure backwards compatibility. If
@@ -283,11 +288,12 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
     encoding = .Object@encoding,
-    cpos = if (cpos) DT else data.table(),
+    cpos = DT,
     stat = data.table()
   )
-  
-  enrich(y, table = TRUE, s_attributes = s_attributes)
+  y <- enrich(y, table = TRUE, s_attributes = s_attributes)
+  if (isFALSE(cpos)) y@cpos <- data.table()
+  y
 })
 
 
@@ -378,7 +384,7 @@ setMethod("kwic", "corpus", function(
   
   hits <- cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   if (is.null(hits)){
-    message("sorry, not hits for query: ", query);
+    message("No hits for query: ", query);
     return(invisible(NULL))
   }
   
