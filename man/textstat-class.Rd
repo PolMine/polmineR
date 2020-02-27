@@ -22,6 +22,7 @@
 \alias{[[,textstat-method}
 \alias{name}
 \alias{name<-}
+\alias{as.data.table}
 \alias{name,textstat-method}
 \alias{name,character-method}
 \alias{name<-,textstat-method}

@@ -38,8 +38,7 @@
 
 \S4method{partition_bundle}{environment}(.Object)
 
-\S4method{enrich}{partition_bundle}(.Object, mc = FALSE,
-  progress = TRUE, verbose = FALSE, ...)
+\S4method{enrich}{partition_bundle}(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, ...)
 

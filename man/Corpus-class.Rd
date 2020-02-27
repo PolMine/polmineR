@@ -12,8 +12,7 @@
 \alias{corpus,missing-method}
 \title{Corpus class initialization}
 \usage{
-\S4method{corpus}{character}(.Object, server = NULL, user = NULL,
-  password = NULL)
+\S4method{corpus}{character}(.Object, server = NULL, user = NULL, password = NULL)
 
 \S4method{corpus}{missing}()
 }
@@ -144,7 +143,9 @@ Methods to extract basic information from a \code{corpus} object are
   \code{\link{kwic}}, \code{\link{cooccurrences}},
   \code{\link{as.TermDocumentMatrix}}.
 
-Other classes to manage corpora: \code{\link{phrases}},
-  \code{\link{regions}}, \code{\link{subcorpus}}
+Other classes to manage corpora: 
+\code{\link{phrases}},
+\code{\link{regions}},
+\code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}

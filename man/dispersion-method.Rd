@@ -13,28 +13,72 @@
 \usage{
 dispersion(.Object, ...)
 
-\S4method{dispersion}{slice}(.Object, query, s_attribute, cqp = FALSE,
-  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
-  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+\S4method{dispersion}{slice}(
+  .Object,
+  query,
+  s_attribute,
+  cqp = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE,
+  mc = FALSE,
+  progress = FALSE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{dispersion}{partition}(.Object, query, s_attribute,
-  cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
-  freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+\S4method{dispersion}{partition}(
+  .Object,
+  query,
+  s_attribute,
+  cqp = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE,
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{dispersion}{subcorpus}(.Object, query, s_attribute,
-  cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
-  freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+\S4method{dispersion}{subcorpus}(
+  .Object,
+  query,
+  s_attribute,
+  cqp = FALSE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE,
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{dispersion}{corpus}(.Object, query, s_attribute, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), freq = FALSE,
-  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+\S4method{dispersion}{corpus}(
+  .Object,
+  query,
+  s_attribute,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE,
+  mc = FALSE,
+  progress = FALSE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{dispersion}{character}(.Object, query, s_attribute,
-  cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"),
-  freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...)
+\S4method{dispersion}{character}(
+  .Object,
+  query,
+  s_attribute,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  freq = FALSE,
+  mc = FALSE,
+  progress = TRUE,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{dispersion}{hits}(.Object, source, s_attribute, freq = FALSE,
-  verbose = TRUE, ...)
+\S4method{dispersion}{hits}(.Object, source, s_attribute, freq = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{.Object}{A \code{partition} object or a corpus provided by a character

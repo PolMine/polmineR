@@ -27,17 +27,18 @@
 
 \S4method{count}{kwic}(.Object, p_attribute = "word")
 
-\S4method{as.DocumentTermMatrix}{kwic}(x, p_attribute, verbose = TRUE,
-  ...)
+\S4method{as.DocumentTermMatrix}{kwic}(x, p_attribute, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{kwic}(x, p_attribute, verbose = TRUE,
-  ...)
+\S4method{as.TermDocumentMatrix}{kwic}(x, p_attribute, verbose = TRUE, ...)
 
 \S4method{show}{kwic}(object)
 
-\S4method{knit_print}{kwic}(x,
+\S4method{knit_print}{kwic}(
+  x,
   pagelength = getOption("polmineR.pagelength"),
-  options = knitr::opts_chunk, ...)
+  options = knitr::opts_chunk,
+  ...
+)
 
 \S4method{as.character}{kwic}(x, fmt = "<i>\%s</i>")
 
@@ -53,11 +54,15 @@
 
 \S4method{merge}{kwic_bundle}(x)
 
-\S4method{enrich}{kwic}(.Object, s_attributes = NULL, extra = NULL,
-  table = FALSE, ...)
+\S4method{enrich}{kwic}(.Object, s_attributes = NULL, extra = NULL, table = FALSE, ...)
 
-\S4method{format}{kwic}(x, node_color = "blue", align = TRUE,
-  extra_color = "grey", lineview = getOption("polmineR.lineview"))
+\S4method{format}{kwic}(
+  x,
+  node_color = "blue",
+  align = TRUE,
+  extra_color = "grey",
+  lineview = getOption("polmineR.lineview")
+)
 
 \S4method{view}{kwic}(.Object)
 }

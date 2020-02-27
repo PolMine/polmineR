@@ -46,10 +46,6 @@ setMethod("get_type", "character", function(.Object){
 })
 
 #' @rdname get_type
-setMethod("get_type", "Corpus", function(.Object) get_type(.Object$corpus))
-
-
-#' @rdname get_type
 setMethod("get_type", "partition", function(.Object) get_type(.Object@corpus))
 
 #' @rdname get_type

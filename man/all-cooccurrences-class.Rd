@@ -16,18 +16,25 @@
 \usage{
 \S4method{as.simple_triplet_matrix}{Cooccurrences}(x)
 
-\S4method{as_igraph}{Cooccurrences}(x, edge_attributes = c("ll",
-  "ab_count", "rank_ll"), vertex_attributes = "count",
-  as.undirected = TRUE, drop = c("\\u0084", "\\u0093"))
+\S4method{as_igraph}{Cooccurrences}(
+  x,
+  edge_attributes = c("ll", "ab_count", "rank_ll"),
+  vertex_attributes = "count",
+  as.undirected = TRUE,
+  drop = c("\\u0084", "\\u0093")
+)
 
 \S4method{subset}{Cooccurrences}(x, ..., by)
 
 \S4method{decode}{Cooccurrences}(.Object)
 
-\S4method{kwic}{Cooccurrences}(.Object,
+\S4method{kwic}{Cooccurrences}(
+  .Object,
   left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), verbose = TRUE,
-  progress = TRUE)
+  right = getOption("polmineR.right"),
+  verbose = TRUE,
+  progress = TRUE
+)
 
 \S4method{as.sparseMatrix}{Cooccurrences}(x, col = "ab_count", ...)
 

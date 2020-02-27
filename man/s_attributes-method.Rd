@@ -15,20 +15,15 @@
 \usage{
 s_attributes(.Object, ...)
 
-\S4method{s_attributes}{character}(.Object, s_attribute = NULL,
-  unique = TRUE, regex = NULL, ...)
+\S4method{s_attributes}{character}(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...)
 
-\S4method{s_attributes}{corpus}(.Object, s_attribute = NULL,
-  unique = TRUE, regex = NULL, ...)
+\S4method{s_attributes}{corpus}(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...)
 
-\S4method{s_attributes}{slice}(.Object, s_attribute = NULL,
-  unique = TRUE, ...)
+\S4method{s_attributes}{slice}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
-\S4method{s_attributes}{partition}(.Object, s_attribute = NULL,
-  unique = TRUE, ...)
+\S4method{s_attributes}{partition}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
-\S4method{s_attributes}{subcorpus}(.Object, s_attribute = NULL,
-  unique = TRUE, ...)
+\S4method{s_attributes}{subcorpus}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
 \S4method{s_attributes}{call}(.Object, corpus)
 

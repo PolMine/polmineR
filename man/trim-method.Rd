@@ -12,9 +12,14 @@
 \usage{
 trim(object, ...)
 
-\S4method{trim}{TermDocumentMatrix}(object, termsToKeep = NULL,
-  termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL,
-  verbose = TRUE)
+\S4method{trim}{TermDocumentMatrix}(
+  object,
+  termsToKeep = NULL,
+  termsToDrop = NULL,
+  docsToKeep = NULL,
+  docsToDrop = NULL,
+  verbose = TRUE
+)
 
 \S4method{trim}{DocumentTermMatrix}(object, ...)
 

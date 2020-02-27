@@ -5,8 +5,7 @@
 \alias{opencpu}
 \title{Execute code on OpenCPU server}
 \usage{
-ocpu_exec(fn, server, user = NULL, password = NULL, do.call = FALSE,
-  ...)
+ocpu_exec(fn, server, user = NULL, password = NULL, do.call = FALSE, ...)
 }
 \arguments{
 \item{fn}{Name of the function/method to execute on remote server (length-one

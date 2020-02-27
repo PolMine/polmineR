@@ -20,38 +20,27 @@ as.TermDocumentMatrix(x, ...)
 
 as.DocumentTermMatrix(x, ...)
 
-\S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute,
-  verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{character}(x, p_attribute, s_attribute,
-  verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{bundle}(x, col, p_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{bundle}(x, col, p_attribute = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{bundle}(x, col = NULL,
-  p_attribute = NULL, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{bundle}(x, col = NULL, p_attribute = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
-  col = NULL, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{partition_bundle}(x, p_attribute = NULL,
-  col = NULL, verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{partition_bundle}(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{as.TermDocumentMatrix}{subcorpus_bundle}(x, p_attribute = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{subcorpus_bundle}(x, p_attribute = NULL,
-  verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{subcorpus_bundle}(x, p_attribute = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL,
-  col = NULL, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{partition_bundle}(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE,
-  ...)
+\S4method{as.DocumentTermMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
 
-\S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE,
-  ...)
+\S4method{as.TermDocumentMatrix}{context}(x, p_attribute, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{character} vector indicating a corpus, or an object of class

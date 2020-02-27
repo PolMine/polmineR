@@ -18,7 +18,6 @@ NULL
 #' @param progress logical, whether to display progress bar
 #' @param verbose logical, whether to print intermediate messages
 #' @param ... further parameters
-#' @rdname blapply
 #' @exportMethod blapply
 #' @rdname blapply
 #' @examples

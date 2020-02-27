@@ -33,8 +33,14 @@
 
 is.partition(x)
 
-\S4method{enrich}{partition}(.Object, p_attribute = NULL,
-  decode = TRUE, verbose = TRUE, mc = FALSE, ...)
+\S4method{enrich}{partition}(
+  .Object,
+  p_attribute = NULL,
+  decode = TRUE,
+  verbose = TRUE,
+  mc = FALSE,
+  ...
+)
 
 \S4method{as.regions}{partition}(x)
 

@@ -16,53 +16,104 @@
 \usage{
 context(.Object, ...)
 
-\S4method{context}{slice}(.Object, query, cqp = is.cqp, check = TRUE,
+\S4method{context}{slice}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  check = TRUE,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  stoplist = NULL, positivelist = NULL, regex = FALSE,
-  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = TRUE, ...)
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
-\S4method{context}{partition}(.Object, query, cqp = is.cqp,
-  check = TRUE, left = getOption("polmineR.left"),
+\S4method{context}{partition}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  check = TRUE,
+  left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  stoplist = NULL, positivelist = NULL, regex = FALSE,
-  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = TRUE, ...)
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
-\S4method{context}{subcorpus}(.Object, query, cqp = is.cqp,
-  check = TRUE, left = getOption("polmineR.left"),
+\S4method{context}{subcorpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  check = TRUE,
+  left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
-  stoplist = NULL, positivelist = NULL, regex = FALSE,
-  count = TRUE, mc = getOption("polmineR.mc"), verbose = TRUE,
-  progress = TRUE, ...)
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
 \S4method{context}{matrix}(.Object, corpus, left, right)
 
-\S4method{context}{corpus}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+\S4method{context}{corpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
   left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), stoplist = NULL,
-  positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
-  ...)
+  right = getOption("polmineR.right"),
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
-\S4method{context}{character}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+\S4method{context}{character}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  boundary = NULL,
   left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), stoplist = NULL,
-  positivelist = NULL, regex = FALSE, count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
-  ...)
+  right = getOption("polmineR.right"),
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  count = TRUE,
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
-\S4method{context}{partition_bundle}(.Object, query, p_attribute,
-  verbose = TRUE, ...)
+\S4method{context}{partition_bundle}(.Object, query, p_attribute, verbose = TRUE, ...)
 
-\S4method{context}{cooccurrences}(.Object, query, check = TRUE,
-  complete = FALSE)
+\S4method{context}{cooccurrences}(.Object, query, check = TRUE, complete = FALSE)
 }
 \arguments{
 \item{.Object}{a partition or a partition_bundle object}

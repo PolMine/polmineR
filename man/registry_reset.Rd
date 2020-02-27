@@ -22,7 +22,7 @@ want to use a corpus delivered in a R package,
 }
 \details{
 Resetting the CORPUS_REGISTRY environment variable is also necessary for the
-interface to CWB corpora.
+interface to CWB corpora. 
 
 To get the path to a package that contains a CWB corpus, use
 \code{system.file} (see examples).

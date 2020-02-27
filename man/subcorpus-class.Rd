@@ -119,7 +119,9 @@ Most commonly, a \code{subcorpus} is derived from a \code{corpus} or
   from the \code{corpus} class, whereas the \code{partition} class inherits
   from the \code{textstat} class.
 
-Other classes to manage corpora: \code{\link{corpus-class}},
-  \code{\link{phrases}}, \code{\link{regions}}
+Other classes to manage corpora: 
+\code{\link{corpus-class}},
+\code{\link{phrases}},
+\code{\link{regions}}
 }
 \concept{classes to manage corpora}

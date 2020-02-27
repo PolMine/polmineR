@@ -138,7 +138,9 @@ dt[word == "soziale_Marktwirtschaft"]
 
 }
 \seealso{
-Other classes to manage corpora: \code{\link{corpus-class}},
-  \code{\link{regions}}, \code{\link{subcorpus}}
+Other classes to manage corpora: 
+\code{\link{corpus-class}},
+\code{\link{regions}},
+\code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}

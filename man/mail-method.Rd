@@ -11,15 +11,24 @@
 \usage{
 mail(.Object, ...)
 
-\S4method{mail}{textstat}(.Object, to = getOption("polmineR.email"),
-  rows = 1L:min(250L, nrow(.Object)))
+\S4method{mail}{textstat}(
+  .Object,
+  to = getOption("polmineR.email"),
+  rows = 1L:min(250L, nrow(.Object))
+)
 
-\S4method{mail}{data.frame}(.Object, to = getOption("polmineR.email"),
-  filename = tempfile(fileext = ".xlsx"), rows = 1L:min(250L,
-  nrow(.Object)))
+\S4method{mail}{data.frame}(
+  .Object,
+  to = getOption("polmineR.email"),
+  filename = tempfile(fileext = ".xlsx"),
+  rows = 1L:min(250L, nrow(.Object))
+)
 
-\S4method{mail}{kwic}(.Object, to = getOption("polmineR.email"),
-  rows = 1L:min(250L, nrow(.Object)))
+\S4method{mail}{kwic}(
+  .Object,
+  to = getOption("polmineR.email"),
+  rows = 1L:min(250L, nrow(.Object))
+)
 }
 \arguments{
 \item{.Object}{The object to deliver.}

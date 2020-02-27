@@ -17,46 +17,102 @@
 \usage{
 kwic(.Object, ...)
 
-\S4method{kwic}{context}(.Object,
-  s_attributes = getOption("polmineR.meta"), cpos = TRUE,
-  verbose = FALSE, ...)
+\S4method{kwic}{context}(
+  .Object,
+  s_attributes = getOption("polmineR.meta"),
+  cpos = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{kwic}{slice}(.Object, query, cqp = is.cqp,
+\S4method{kwic}{slice}(
+  .Object,
+  query,
+  cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL,
-  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word",
+  boundary = NULL,
+  cpos = TRUE,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{kwic}{partition}(.Object, query, cqp = is.cqp,
+\S4method{kwic}{partition}(
+  .Object,
+  query,
+  cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL,
-  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word",
+  boundary = NULL,
+  cpos = TRUE,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{kwic}{subcorpus}(.Object, query, cqp = is.cqp,
+\S4method{kwic}{subcorpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL,
-  positivelist = NULL, regex = FALSE, verbose = TRUE, ...)
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word",
+  boundary = NULL,
+  cpos = TRUE,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{kwic}{corpus}(.Object, query, cqp = is.cqp, check = TRUE,
+\S4method{kwic}{corpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
-  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL,
-  positivelist = NULL, regex = FALSE, verbose = TRUE,
-  progress = TRUE, ...)
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word",
+  boundary = NULL,
+  cpos = TRUE,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
-\S4method{kwic}{character}(.Object, query, cqp = is.cqp, check = TRUE,
+\S4method{kwic}{character}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  check = TRUE,
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
-  s_attributes = getOption("polmineR.meta"), p_attribute = "word",
-  boundary = NULL, cpos = TRUE, stoplist = NULL,
-  positivelist = NULL, regex = FALSE, verbose = TRUE,
-  progress = TRUE, ...)
+  s_attributes = getOption("polmineR.meta"),
+  p_attribute = "word",
+  boundary = NULL,
+  cpos = TRUE,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 
 \S4method{kwic}{remote_corpus}(.Object, ...)
 

@@ -11,16 +11,37 @@
 \usage{
 \S4method{show}{subcorpus_bundle}(object)
 
-\S4method{split}{subcorpus}(x, s_attribute, values = NULL, prefix = "",
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
-  type = get_type(x), ...)
+\S4method{split}{subcorpus}(
+  x,
+  s_attribute,
+  values = NULL,
+  prefix = "",
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = FALSE,
+  type = get_type(x),
+  ...
+)
 
-\S4method{split}{corpus}(x, s_attribute, values = NULL, prefix = "",
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
-  type = get_type(x), ...)
+\S4method{split}{corpus}(
+  x,
+  s_attribute,
+  values = NULL,
+  prefix = "",
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = FALSE,
+  type = get_type(x),
+  ...
+)
 
-\S4method{split}{subcorpus_bundle}(x, s_attribute, prefix = "",
-  progress = TRUE, mc = getOption("polmineR.mc"))
+\S4method{split}{subcorpus_bundle}(
+  x,
+  s_attribute,
+  prefix = "",
+  progress = TRUE,
+  mc = getOption("polmineR.mc")
+)
 }
 \arguments{
 \item{object}{An object of class \code{subcorpus_bundle}.}

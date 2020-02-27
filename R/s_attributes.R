@@ -40,7 +40,6 @@ NULL
 #' @return A character vector (s-attributes, or values of s-attributes).
 #' @exportMethod s_attributes
 #' @docType methods
-#' @rdname s_attributes-method
 #' @examples 
 #' use("polmineR")
 #' @rdname s_attributes-method

@@ -1,6 +1,19 @@
 .onLoad <- function (libname, pkgname) {
   
-  pkg_registry_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/")
+  # Upon loading the package, registry files available in the polmineR package, or in a directory
+  # defined by the environment variable CORPUS_REGISTRY are moved to a temporary registry.
+  # The operation is deliberately in .onLoad, and not in .onAttach, so that attaching the 
+  # package is not a prerequisite for executing the code.
+  
+  # If the package is loaded from the the files of the raw code, the extdata dir will still be 
+  # a subdirectory of the inst directory. Therefore both options are considered whether extdata
+  # is in the inst directory, or immediately in main directory of the package.
+  pkg_registry_dir_alternatives <- c(
+    file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/"),
+    file.path(normalizePath(libname, winslash = "/"), pkgname, "inst", "extdata", "cwb", "registry", fsep = "/")
+  )
+  pkg_registry_dir <- pkg_registry_dir_alternatives[dir.exists(pkg_registry_dir_alternatives)]
+  
   pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
   
   polmineR_registry_dir <- registry()
@@ -59,14 +72,7 @@
 
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
-  
-  # The package includes the files configure / configure.win in the top-level
-  # directory that will set paths in the registry files for corpora correctly
-  # upon installation. However, configure / configure.win may not be executed
-  # when a pre-compiled package is distributed. Therefore, the following lines
-  # create a temporary registry, if necessary.
 
-  
   if (Sys.getlocale() == "C"){
     if (Sys.info()["sysname"] == "Darwin"){
       packageStartupMessage(
@@ -95,6 +101,9 @@
 }
 
 .onDetach <- function(libpath){
+  # Remove all options defined when loading the package
+  do.call(options, args = sapply(grep("polmineR\\.", names(options()), value = TRUE), function(x) NULL))
+  # Remove temporary directories
   unlink(registry(), recursive = TRUE, force = TRUE)
   unlink(data_dir(), recursive = TRUE, force = TRUE)
 }

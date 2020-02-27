@@ -83,7 +83,6 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 #' @param verbose A \code{logical} value, whether to output progess messages.
 #' @exportMethod decode
 #' @importFrom RcppCWB get_region_matrix
-#' @rdname decode
 #' @seealso To decode a structural attribute, you can use the
 #'   \code{\link{s_attributes}}-method, setting argument \code{unique} as
 #'   \code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See

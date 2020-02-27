@@ -28,15 +28,28 @@
 
 \S4method{sample}{context}(x, size)
 
-\S4method{enrich}{context}(.Object, s_attribute = NULL,
-  p_attribute = NULL, decode = FALSE, verbose = TRUE, ...)
+\S4method{enrich}{context}(
+  .Object,
+  s_attribute = NULL,
+  p_attribute = NULL,
+  decode = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{as.regions}{context}(x, node = TRUE)
 
-\S4method{trim}{context}(object, s_attribute = NULL,
-  positivelist = NULL, p_attribute = p_attributes(object),
-  regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE,
-  ...)
+\S4method{trim}{context}(
+  object,
+  s_attribute = NULL,
+  positivelist = NULL,
+  p_attribute = p_attributes(object),
+  regex = FALSE,
+  stoplist = NULL,
+  verbose = TRUE,
+  progress = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a context object}

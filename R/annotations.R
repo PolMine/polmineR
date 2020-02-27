@@ -43,7 +43,7 @@ NULL
 #' @aliases annotations,kwic-method
 #' @examples 
 #' use("polmineR")
-#' 
+#' a <- 2
 #' # upon initializing a kwic object, there is a minimal labels object
 #' # in the labels slot of the kwic object, which we can get using the
 #' # annotations-method

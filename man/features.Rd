@@ -13,25 +13,40 @@
 \usage{
 features(x, y, ...)
 
-\S4method{features}{partition}(x, y, included = FALSE,
-  method = "chisquare", verbose = FALSE)
+\S4method{features}{partition}(x, y, included = FALSE, method = "chisquare", verbose = FALSE)
 
-\S4method{features}{count}(x, y, by = NULL, included = FALSE,
-  method = "chisquare", verbose = TRUE)
+\S4method{features}{count}(
+  x,
+  y,
+  by = NULL,
+  included = FALSE,
+  method = "chisquare",
+  verbose = TRUE
+)
 
-\S4method{features}{partition_bundle}(x, y, included = FALSE,
-  method = "chisquare", verbose = TRUE,
-  mc = getOption("polmineR.mc"), progress = FALSE)
+\S4method{features}{partition_bundle}(
+  x,
+  y,
+  included = FALSE,
+  method = "chisquare",
+  verbose = TRUE,
+  mc = getOption("polmineR.mc"),
+  progress = FALSE
+)
 
-\S4method{features}{count_bundle}(x, y, included = FALSE,
-  method = "chisquare", verbose = !progress,
-  mc = getOption("polmineR.mc"), progress = FALSE)
+\S4method{features}{count_bundle}(
+  x,
+  y,
+  included = FALSE,
+  method = "chisquare",
+  verbose = !progress,
+  mc = getOption("polmineR.mc"),
+  progress = FALSE
+)
 
-\S4method{features}{ngrams}(x, y, included = FALSE,
-  method = "chisquare", verbose = TRUE, ...)
+\S4method{features}{ngrams}(x, y, included = FALSE, method = "chisquare", verbose = TRUE, ...)
 
-\S4method{features}{Cooccurrences}(x, y, included = FALSE,
-  method = "ll", verbose = TRUE)
+\S4method{features}{Cooccurrences}(x, y, included = FALSE, method = "ll", verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{partition} or \code{partition_bundle} object.}

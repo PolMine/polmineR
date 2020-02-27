@@ -18,41 +18,102 @@
 \usage{
 count(.Object, ...)
 
-\S4method{count}{partition}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, breakdown = FALSE, decode = TRUE,
+\S4method{count}{partition}(
+  .Object,
+  query = NULL,
+  cqp = is.cqp,
+  check = TRUE,
+  breakdown = FALSE,
+  decode = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
-  ...)
+  mc = getOption("polmineR.cores"),
+  verbose = TRUE,
+  progress = FALSE,
+  ...
+)
 
-\S4method{count}{subcorpus}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, breakdown = FALSE, decode = TRUE,
+\S4method{count}{subcorpus}(
+  .Object,
+  query = NULL,
+  cqp = is.cqp,
+  check = TRUE,
+  breakdown = FALSE,
+  decode = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
-  ...)
+  mc = getOption("polmineR.cores"),
+  verbose = TRUE,
+  progress = FALSE,
+  ...
+)
 
-\S4method{count}{slice}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, breakdown = FALSE, decode = TRUE, phrases = NULL,
+\S4method{count}{slice}(
+  .Object,
+  query = NULL,
+  cqp = is.cqp,
+  check = TRUE,
+  breakdown = FALSE,
+  decode = TRUE,
+  phrases = NULL,
   p_attribute = getOption("polmineR.p_attribute"),
-  mc = getOption("polmineR.cores"), verbose = TRUE, progress = FALSE,
-  ...)
+  mc = getOption("polmineR.cores"),
+  verbose = TRUE,
+  progress = FALSE,
+  ...
+)
 
-\S4method{count}{partition_bundle}(.Object, query = NULL, cqp = FALSE,
-  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
-  mc = FALSE, progress = FALSE, verbose = FALSE, ...)
+\S4method{count}{partition_bundle}(
+  .Object,
+  query = NULL,
+  cqp = FALSE,
+  p_attribute = NULL,
+  phrases = NULL,
+  freq = FALSE,
+  total = TRUE,
+  mc = FALSE,
+  progress = FALSE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{count}{subcorpus_bundle}(.Object, query = NULL, cqp = FALSE,
-  p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE,
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+\S4method{count}{subcorpus_bundle}(
+  .Object,
+  query = NULL,
+  cqp = FALSE,
+  p_attribute = NULL,
+  phrases = NULL,
+  freq = FALSE,
+  total = TRUE,
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{count}{corpus}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
-  breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE,
-  ...)
+\S4method{count}{corpus}(
+  .Object,
+  query = NULL,
+  cqp = is.cqp,
+  check = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  breakdown = FALSE,
+  sort = FALSE,
+  decode = TRUE,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{count}{character}(.Object, query = NULL, cqp = is.cqp,
-  check = TRUE, p_attribute = getOption("polmineR.p_attribute"),
-  breakdown = FALSE, sort = FALSE, decode = TRUE, verbose = TRUE,
-  ...)
+\S4method{count}{character}(
+  .Object,
+  query = NULL,
+  cqp = is.cqp,
+  check = TRUE,
+  p_attribute = getOption("polmineR.p_attribute"),
+  breakdown = FALSE,
+  sort = FALSE,
+  decode = TRUE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{count}{vector}(.Object, corpus, p_attribute, ...)
 

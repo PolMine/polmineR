@@ -2,7 +2,6 @@
 setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 
 
-#' @rdname phrases-class
 #' @details If \code{.Object} is an object of class \code{ngrams}, the
 #'   \code{as.phrases}-method will interpret the ngrams as CQP queries, 
 #'   look up the matching corpus positions and return an \code{phrases}
@@ -16,7 +15,6 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #' @rdname phrases-class
 #' @aliases as.phrases
 #' @export
-#' @rdname phrases-class
 #' @examples
 #' # Derive phrases object from an ngrams object
 #' 

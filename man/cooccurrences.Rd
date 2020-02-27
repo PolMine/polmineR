@@ -15,48 +15,103 @@
 \usage{
 cooccurrences(.Object, ...)
 
-\S4method{cooccurrences}{corpus}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), stoplist = NULL,
-  positivelist = NULL, regex = FALSE, keep = NULL, cpos = NULL,
-  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
-  progress = FALSE, ...)
-
-\S4method{cooccurrences}{character}(.Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  left = getOption("polmineR.left"),
-  right = getOption("polmineR.right"), stoplist = NULL,
-  positivelist = NULL, regex = FALSE, keep = NULL, cpos = NULL,
-  method = "ll", mc = getOption("polmineR.mc"), verbose = FALSE,
-  progress = FALSE, ...)
-
-\S4method{cooccurrences}{slice}(.Object, query, cqp = is.cqp,
+\S4method{cooccurrences}{corpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  keep = NULL,
+  cpos = NULL,
+  method = "ll",
+  mc = getOption("polmineR.mc"),
+  verbose = FALSE,
+  progress = FALSE,
+  ...
+)
 
-\S4method{cooccurrences}{partition}(.Object, query, cqp = is.cqp,
+\S4method{cooccurrences}{character}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  keep = NULL,
+  cpos = NULL,
+  method = "ll",
+  mc = getOption("polmineR.mc"),
+  verbose = FALSE,
+  progress = FALSE,
+  ...
+)
 
-\S4method{cooccurrences}{subcorpus}(.Object, query, cqp = is.cqp,
+\S4method{cooccurrences}{slice}(
+  .Object,
+  query,
+  cqp = is.cqp,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
-  stoplist = NULL, positivelist = NULL, keep = NULL, method = "ll",
-  mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+  p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  keep = NULL,
+  method = "ll",
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{cooccurrences}{context}(.Object, method = "ll",
-  verbose = FALSE)
+\S4method{cooccurrences}{partition}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  keep = NULL,
+  method = "ll",
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
 
-\S4method{cooccurrences}{partition_bundle}(.Object, query,
-  mc = getOption("polmineR.mc"), ...)
+\S4method{cooccurrences}{subcorpus}(
+  .Object,
+  query,
+  cqp = is.cqp,
+  left = getOption("polmineR.left"),
+  right = getOption("polmineR.right"),
+  p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
+  stoplist = NULL,
+  positivelist = NULL,
+  keep = NULL,
+  method = "ll",
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE,
+  ...
+)
+
+\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
+
+\S4method{cooccurrences}{partition_bundle}(.Object, query, mc = getOption("polmineR.mc"), ...)
 
 \S4method{cooccurrences}{Cooccurrences}(.Object, query)
 }
