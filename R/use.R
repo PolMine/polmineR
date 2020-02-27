@@ -47,7 +47,14 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   for (corpus in list.files(registry_dir)){
     
-    .message(sprintf("activating corpus: %s", toupper(corpus)), verbose = verbose)
+    properties <- registry_get_properties(corpus)
+    additional_info <- c(
+      if ("version" %in% names(properties)) sprintf("version: %s", properties[["version"]]) else character(),
+      if ("build_date" %in% names(properties)) sprintf("build date: %s", properties[["build_date"]]) else character()
+    )
+    additional_info <- paste(additional_info, collapse = " | ")
+    if (nchar(additional_info) > 0L) additional_info <- sprintf(" (%s)", additional_info)
+    .message(sprintf("activating corpus: %s%s", toupper(corpus), additional_info), verbose = verbose)
     
     corpus_data_srcdir <- system.file(
       "extdata", "cwb", "indexed_corpora", tolower(corpus),

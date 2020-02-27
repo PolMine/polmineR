@@ -1,4 +1,4 @@
-polmineR 0.8.0.9001 - 0.8.0.9008
+polmineR 0.8.0.9001 - 0.8.0.9009
 ================================
 
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
@@ -147,6 +147,8 @@ polmineR 0.8.0
 - A potential error resulting from setting argument `cpos` to `FALSE` in the `kwic()`-method
 has been solved (#106), and the documentation of the argument has been rewritten so that
   includes a warning to use the argument falsely.
+- If the properties "version" and "build_date" are available in a registry file, the information
+will be shown when calling `use()` (#72).
 
 
 ## Minor changes
