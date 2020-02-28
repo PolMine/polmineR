@@ -63,8 +63,9 @@ functionality used (internally) that relied on the former `Corpus` reference cla
 - The `Cooccurrences()`-method is now defined for the `corpus`-class, too. The `Cooccurrences()`-method 
 for the `character` class now relies on this method.
 - The `get_type()`-method is now defined for the `corpus` class.
-- The `count()`
-
+- Upon starting the shiny app included in the package, the presence of packages "shiny" 
+and "shinythemes" is checked. If the packages are not yet present, an optional install
+is offered (#110).
 
 polmineR 0.8.0
 ==============
