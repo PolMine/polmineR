@@ -164,16 +164,25 @@ Count all tokens, or number of occurrences of a query (CQP syntax may be
 used), or matches for the query.
 }
 \details{
-If .Object is a \code{partiton_bundle}, the data.table returned will have the
-queries in the columns, and as many rows as there are in the
+If \code{.Object} is a \code{partiton_bundle}, the \code{data.table} returned will
+have the queries in the columns, and as many rows as there are in the
 \code{partition_bundle}.
 
-If .Object is a length-one character vector and query is NULL, the count is
-performed for the whole partition.
+If \code{.Object} is a length-one \code{character} vector and \code{query} is
+\code{NULL}, the count is performed for the whole partition.
 
 If \code{breakdown} is \code{TRUE} and one query is supplied, the function
 returns a frequency breakdown of the results of the query. If several queries
 are supplied, frequencies for the individual queries are retrieved.
+
+Multiple queries can be used for argument \code{query}. Some care may be
+necessary when summing up the counts for the individual queries. When the
+CQP syntax is used, different queries may yield the same match result, so that
+the sum of all individual query matches may overestimate the true number of
+unique matches. In the case of overlapping matches, a warning message is
+issued. Collapsing multiple CQP queries into a single query (separating the
+individual queries by "|" and wrapping everything in round brackets) solves
+this problem.
 }
 \examples{
 use("polmineR")
@@ -199,6 +208,14 @@ sc <- corpus("GERMAPARLMINI") \%>\% subset(party == "SPD")
 phr <- cpos(sc, query = '"Deutsche.*" "Bundestag.*"', cqp = TRUE) \%>\%
   as.phrases(corpus = "GERMAPARLMINI", enc = "latin1")
 cnt <- count(sc, phrases = phr, p_attribute = "word")
+
+# Multiple queries and overlapping query matches. The first count 
+# operation will issue a warning that matches overlap, see the second 
+# example for a solution.
+corpus("REUTERS") \%>\%
+  count(query = c('".*oil"', '"turmoil"'), cqp = TRUE)
+corpus("REUTERS") \%>\% 
+  count(query = '"(.*oil|turmoil)"', cqp =TRUE)
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
@@ -210,6 +227,4 @@ For a metadata-based breakdown of counts (i.e. tabulation by
   low-level functionality as compared to the \code{count} method. Using the
   \code{\link{hits}} method may be useful to obtain the data required for
   flexible cross-tabulations.
-
-count
 }

@@ -1,5 +1,27 @@
 .onLoad <- function (libname, pkgname) {
   
+  # Options are set before anything else mainly to catch the CORPUS_REGISTRY
+  # environment variable before it is reset.
+  options(
+    "polmineR.p_attribute" = "word",
+    "polmineR.left" = 5L,
+    "polmineR.right" = 5L,
+    "polmineR.lineview" = FALSE,
+    "polmineR.pagelength" = 10L,
+    "polmineR.meta " =  character(),
+    "polmineR.mc" = FALSE,
+    "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
+    "polmineR.smtp_server" = if (length(getOption("polmineR.smtp_server")) > 0) getOption("polmineR.smtp_server") else "",
+    "polmineR.smtp_port" = if (length(getOption("polmineR.smtp_port")) > 0) getOption("polmineR.smtp_port") else "",
+    "polmineR.email" = if (length(getOption("polmineR.email")) > 0) getOption("polmineR.email") else "",
+    "polmineR.browse" = FALSE,
+    "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
+    "polmineR.templates" = list(),
+    "polmineR.cutoff" = 5000,
+    "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
+    "polmineR.shiny" = FALSE
+  )
+  
   # Upon loading the package, registry files available in the polmineR package, or in a directory
   # defined by the environment variable CORPUS_REGISTRY are moved to a temporary registry.
   # The operation is deliberately in .onLoad, and not in .onAttach, so that attaching the 
@@ -42,26 +64,6 @@
   Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
   registry_reset(registryDir = registry(), verbose = FALSE)
   
-  options(
-    "polmineR.p_attribute" = "word",
-    "polmineR.left" = 5L,
-    "polmineR.right" = 5L,
-    "polmineR.lineview" = FALSE,
-    "polmineR.pagelength" = 10L,
-    "polmineR.meta " =  character(),
-    "polmineR.mc" = FALSE,
-    "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
-    "polmineR.smtp_server" = if (length(getOption("polmineR.smtp_server")) > 0) getOption("polmineR.smtp_server") else "",
-    "polmineR.smtp_port" = if (length(getOption("polmineR.smtp_port")) > 0) getOption("polmineR.smtp_port") else "",
-    "polmineR.email" = if (length(getOption("polmineR.email")) > 0) getOption("polmineR.email") else "",
-    "polmineR.browse" = FALSE,
-    "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
-    "polmineR.templates" = list(),
-    "polmineR.cutoff" = 5000,
-    "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
-    "polmineR.shiny" = FALSE
-  )
-  
   # rcqp is not always accessible here - set_templates would not work with perl interface
   set_template()
   NULL
@@ -101,8 +103,15 @@
 }
 
 .onDetach <- function(libpath){
+  
+  # Assign value of system variable CORPUS_REGISTRY it had before loading polmineR
+  Sys.setenv("CORPUS_REGISTRY" = getOption("polmineR.corpus_registry"))
+  
   # Remove all options defined when loading the package
   do.call(options, args = sapply(grep("polmineR\\.", names(options()), value = TRUE), function(x) NULL))
+  
+  
+  
   # Remove temporary directories
   unlink(registry(), recursive = TRUE, force = TRUE)
   unlink(data_dir(), recursive = TRUE, force = TRUE)
