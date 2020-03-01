@@ -159,7 +159,7 @@ setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
       if (interactive()){
         list(
           dom = 'Bfrtip',
-          buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          buttons = c('copy', 'csv', 'excel', 'pdf')
         )
       } else NULL
     ),
