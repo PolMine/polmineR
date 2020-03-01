@@ -47,7 +47,7 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   for (corpus in list.files(registry_dir)){
     
-    properties <- registry_get_properties(corpus)
+    properties <- registry_get_properties(corpus, registry = registry_dir)
     additional_info <- c(
       if ("version" %in% names(properties)) sprintf("version: %s", properties[["version"]]) else character(),
       if ("build_date" %in% names(properties)) sprintf("build date: %s", properties[["build_date"]]) else character()

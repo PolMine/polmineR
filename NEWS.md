@@ -66,6 +66,8 @@ for the `character` class now relies on this method.
 - Upon starting the shiny app included in the package, the presence of packages "shiny" 
 and "shinythemes" is checked. If the packages are not yet present, an optional install
 is offered (#110).
+- Solved: No longer an error when calling polmineR commands after having worked in the shiny app context (#111).
+- Zero values can be processed by `Cooccurrences()`-method (#117).
 
 polmineR 0.8.0
 ==============
