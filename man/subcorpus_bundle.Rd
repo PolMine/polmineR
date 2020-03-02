@@ -32,6 +32,7 @@
   verbose = TRUE,
   progress = FALSE,
   type = get_type(x),
+  xml = "flat",
   ...
 )
 
@@ -64,6 +65,8 @@ object.}
 \item{type}{The type of \code{partition} to generate.}
 
 \item{...}{parameters to be passed into partition-method (see respective documentation)}
+
+\item{xml}{A \code{logical} value.}
 }
 \description{
 A \code{subcorpus_bundle} object combines a set of

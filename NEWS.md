@@ -63,7 +63,11 @@ functionality used (internally) that relied on the former `Corpus` reference cla
 - The `Cooccurrences()`-method is now defined for the `corpus`-class, too. The `Cooccurrences()`-method 
 for the `character` class now relies on this method.
 - The `get_type()`-method is now defined for the `corpus` class.
-- The `count()`
+- The `corpus` class includes a (new) slot `size`, just as the `regions` and the `subcorpus` classes.
+- The `split()`-method for `corpus` objects now accepts the argument `xml`, to indicate whether the annotation structure of the corpus is flat or nested.
+- The definition of the S4 class `partition` now includes a prototype defining default values for the slots 'stat' (a `data.table`) and the slot 'size' (`NA_integer_`). This avoids that an incomplete initialization of a `partition` object will result in an error.
+- Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now
+call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
 
 
 polmineR 0.8.0

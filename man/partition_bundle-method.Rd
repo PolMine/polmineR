@@ -4,6 +4,7 @@
 \name{partition_bundle}
 \alias{partition_bundle}
 \alias{partition_bundle,partition-method}
+\alias{partition_bundle,corpus-method}
 \alias{partition_bundle,character-method}
 \alias{partition_bundle,context-method}
 \alias{partition_bundle,partition_bundle-method}
@@ -19,6 +20,19 @@ partition_bundle(.Object, ...)
   mc = getOption("polmineR.mc"),
   verbose = TRUE,
   progress = FALSE,
+  type = get_type(.Object),
+  ...
+)
+
+\S4method{partition_bundle}{corpus}(
+  .Object,
+  s_attribute,
+  values = NULL,
+  prefix = "",
+  mc = getOption("polmineR.mc"),
+  verbose = TRUE,
+  progress = FALSE,
+  xml = "flat",
   type = get_type(.Object),
   ...
 )
@@ -89,6 +103,7 @@ The argument \code{prefix} can be used to achieve a more descriptive name.
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
 pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+pb <- enrich(pb, p_attribute = "word")
 dtm <- as.DocumentTermMatrix(pb, col = "count")
 summary(pb)
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")

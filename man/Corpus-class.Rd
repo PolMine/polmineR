@@ -75,9 +75,14 @@ corpus.}
 
 \item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).}
 
-\item{\code{name}}{An additional name for the object that may be more telling than the corpus ID.}
+\item{\code{name}}{An additional name for the object that may be more telling than
+the corpus ID.}
 
-\item{\code{encoding}}{The encoding of the corpus, given as a length-one \code{character} vector.}
+\item{\code{encoding}}{The encoding of the corpus, given as a length-one
+\code{character} vector.}
+
+\item{\code{size}}{Number of tokens (size) of the corpus, a length-one \code{integer}
+vector.}
 
 \item{\code{server}}{The URL (can be IP address) of the OpenCPU server. The slot is
 available only with the \code{remote_corpus} class inheriting from the
