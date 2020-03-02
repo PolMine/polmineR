@@ -289,7 +289,7 @@ df_min <- df[,c("word", "count_coi", "count_ref", "chisquare")]
 For many applications, term-document matrices are the point of departure. The tm class TermDocumentMatrix serves as an input to several R packages implementing advanced text mining techniques. Obtaining this input from a corpus imported to the CWB will usually involve setting up a partitionBundle and then applying a method to get the matrix.
 
 ```{r, eval = TRUE}
-articles <- partition_bundle("REUTERS", s_attribute = "id", progress = FALSE)
+articles <- corpus("REUTERS") %>% partition_bundle(s_attribute = "id", progress = FALSE)
 articles_count <- count(articles, p_attribute = "word")
 tdm <- as.TermDocumentMatrix(articles_count, col = "count", verbose = FALSE)
 

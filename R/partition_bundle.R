@@ -136,6 +136,7 @@ NULL
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
 #' pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+#' pb <- enrich(pb, p_attribute = "word")
 #' dtm <- as.DocumentTermMatrix(pb, col = "count")
 #' summary(pb)
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
@@ -148,28 +149,33 @@ setMethod("partition_bundle", "partition", function(
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(.Object), ...
 ) {
-  
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  
-  bundle <- new(
-    "partition_bundle",
-    corpus = .Object@corpus, s_attributes_fixed = .Object@s_attributes,
-    encoding = .Object@encoding, call = deparse(match.call())
-  )
-  if (is.null(values)){
-    .message('getting values for s-attribute ', s_attribute, verbose = verbose)
-    values <- s_attributes(.Object, s_attribute)
-    .message('number of partitions to be generated: ', length(values), verbose = verbose)
-  }
-  bundle@objects <- blapply(
-    lapply(setNames(values, rep(s_attribute, times = length(values))), function(x) setNames(x, s_attribute)),
-    f = function(def, .Object, verbose = FALSE, type, ...) partition(.Object = .Object, def = def, type = type, verbose = FALSE, ...),
-    .Object = .Object, progress = progress, verbose = if (progress) FALSE else verbose,  mc = mc, type = type,
+  split(
+    x = as(.Object, "subcorpus"), s_attribute = s_attribute, values = values, prefix = prefix,
+    mc = mc, verbose = verbose, progress = progress,
+    type = type,
     ...
   )
-  names(bundle@objects) <- paste(as.corpusEnc(prefix, corpusEnc = bundle@encoding), values, sep = "")
-  for (i in 1L:length(bundle@objects)) bundle@objects[[i]]@name <- names(bundle@objects)[[i]]
-  bundle
+})
+
+#' @exportMethod partition_bundle
+#' @rdname partition_bundle-method
+setMethod("partition_bundle", "corpus", function(
+  .Object, s_attribute, values = NULL, prefix = "",
+  mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat", type = get_type(.Object),
+  ...
+){
+  split(
+    x = .Object,
+    s_attribute = s_attribute,
+    values = values,
+    prefix = prefix,
+    mc = mc, 
+    verbose = verbose,
+    progress = progress,
+    xml = xml,
+    type = type,
+    ...
+  )
 })
 
 
@@ -179,56 +185,11 @@ setMethod("partition_bundle", "character", function(
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE, xml = "flat", type = get_type(.Object),
   ...
 ) {
-  
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  
-  bundle <- new(
-    Class = "partition_bundle",
-    corpus = .Object,
-    encoding = registry_get_encoding(.Object)
+  partition_bundle(
+    .Object = corpus(.Object), s_attribute = s_attribute, values = values, prefix = prefix,
+    mc = mc, verbose = verbose, progress = progress,
+    xml = xml, type = type, ...
   )
-  strucs <- 0L:(cl_attribute_size(corpus = .Object, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L)
-  names(strucs) <- cl_struc2str(corpus = .Object, s_attribute = s_attribute, struc = strucs, registry = registry())
-  if (!is.null(values)) {
-    valuesToKeep <- values[which(values %in% names(strucs))]
-    strucs <- strucs[valuesToKeep]
-  }
-  
-  values <- names(strucs)
-  Encoding(values) <- bundle@encoding
-  strucs <- unname(strucs)
-  
-  .message("getting matrix with regions for s-attribute: ", s_attribute, verbose = verbose)
-  cposMatrix <- RcppCWB::get_region_matrix(
-    corpus = .Object, s_attribute = s_attribute, strucs = strucs,
-    registry = Sys.getenv("CORPUS_REGISTRY")
-  )
-  
-  cposList <- split(cposMatrix, f = values)
-  cposList <- lapply(cposList, function(x) matrix(x, ncol = 2))
-  
-  .message("generating the partitions", verbose = verbose)
-  .makeNewPartition <- function(i, corpus, encoding, s_attribute, cposList, xml, type, ...){
-    newPartition <- new(
-      Class = paste(c(type, "partition"), collapse = "_"),
-      corpus = corpus, encoding = encoding,
-      stat = data.table(),
-      cpos = cposList[[i]],
-      size = sum(apply(cposList[[i]], 1, function(row) row[2] - row[1] + 1L)),
-      name = names(cposList)[i],
-      s_attributes = setNames(list(names(cposList)[i]), s_attribute),
-      s_attribute_strucs = s_attribute,
-      xml = xml,
-      strucs = cl_cpos2struc(corpus = .Object, s_attribute = s_attribute, cpos = cposList[[i]][,1], registry = registry())
-    )
-  }
-  bundle@objects <- blapply(
-    setNames(as.list(1L:length(cposList)), names(cposList)),
-    f = .makeNewPartition,
-    corpus = .Object, encoding = bundle@encoding, s_attribute = s_attribute, cposList, xml = xml,
-    mc = mc, progress = progress, verbose = verbose, type = type, ...
-  )
-  bundle
 })
 
 

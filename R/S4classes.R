@@ -369,7 +369,7 @@ setMethod("length", "count", function(x) x@size)
 #' respective documentation to learn more.
 setClass(
   "partition",
-  representation(
+  slots = c(
     s_attributes = "list",
     explanation = "character",
     cpos = "matrix",
@@ -381,6 +381,10 @@ setClass(
     s_attribute_strucs = "character",
     call = "character",
     key = "character"
+  ),
+  prototype = list(
+    size = NA_integer_,
+    stat = data.table()
   ),
   contains = "count"
 )
@@ -621,8 +625,12 @@ setClass("kwic_bundle", contains = "bundle")
 #'   corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
 #' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
-#' @slot name An additional name for the object that may be more telling than the corpus ID.
-#' @slot encoding The encoding of the corpus, given as a length-one \code{character} vector.
+#' @slot name An additional name for the object that may be more telling than
+#'   the corpus ID.
+#' @slot encoding The encoding of the corpus, given as a length-one
+#'   \code{character} vector.
+#' @slot size Number of tokens (size) of the corpus, a length-one \code{integer}
+#'   vector.
 #' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
 #'   available only with the \code{remote_corpus} class inheriting from the
 #'   \code{corpus} class.
@@ -691,7 +699,8 @@ setClass(
     data_dir = "character",
     type = "character",
     encoding = "character",
-    name = "character"
+    name = "character",
+    size = "integer"
   )
 )
 
@@ -789,14 +798,7 @@ setMethod("name", "corpus", function(x) x@name)
 #' R <- as.regions(P)
 #' @aliases regions-class
 #' @family classes to manage corpora
-setClass(
-  "regions",
-  slots = c(
-    cpos = "matrix",
-    size = "integer"
-  ),
-  contains = "corpus"
-)
+setClass("regions", slots = c(cpos = "matrix"), contains = "corpus")
 
 
 #' The S4 subcorpus class.

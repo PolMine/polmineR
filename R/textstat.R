@@ -151,7 +151,18 @@ setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
   DT::datatable(
     dt,
-    options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE),
+    extensions = "Buttons",
+    options = c(list(
+      pageLength = getOption("polmineR.pagelength"),
+      lengthChange = FALSE
+      ),
+      if (interactive()){
+        list(
+          dom = 'Bfrtip',
+          buttons = c('copy', 'csv', 'excel', 'pdf')
+        )
+      } else NULL
+    ),
     rownames = FALSE
   )
 })

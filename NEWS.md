@@ -68,6 +68,12 @@ and "shinythemes" is checked. If the packages are not yet present, an optional i
 is offered (#110).
 - Solved: No longer an error when calling polmineR commands after having worked in the shiny app context (#111).
 - Zero values can be processed by `Cooccurrences()`-method (#117).
+- The `corpus` class includes a (new) slot `size`, just as the `regions` and the `subcorpus` classes.
+- The `split()`-method for `corpus` objects now accepts the argument `xml`, to indicate whether the annotation structure of the corpus is flat or nested.
+- The definition of the S4 class `partition` now includes a prototype defining default values for the slots 'stat' (a `data.table`) and the slot 'size' (`NA_integer_`). This avoids that an incomplete initialization of a `partition` object will result in an error.
+- Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now
+call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
+
 
 polmineR 0.8.0
 ==============

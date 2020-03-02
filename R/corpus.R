@@ -52,7 +52,8 @@ setMethod("corpus", "character", function(.Object, server = NULL, user = NULL, p
       corpus = .Object,
       encoding = registry_get_encoding(.Object),
       data_dir = registry_get_home(.Object),
-      type = if ("type" %in% names(properties)) properties[["type"]] else character()
+      type = if ("type" %in% names(properties)) properties[["type"]] else character(),
+      size = cl_attribute_size(corpus = .Object, attribute = "word", attribute_type = "p", registry = registry())
     )
     return(y)
   } else {
