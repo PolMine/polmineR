@@ -64,7 +64,7 @@ setMethod("split", "partition", function(x, gap, ...){
 setMethod("split", "subcorpus", function(
   x, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
-  type = get_type(x), ...
+  type = get_type(x)
 ) {
   
   call_history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
@@ -128,7 +128,7 @@ setMethod("split", "subcorpus", function(
 setMethod("split", "corpus", function(
   x, s_attribute, values = NULL, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
-  type = get_type(x), xml = "flat", ...
+  type = get_type(x), xml = "flat"
 ) {
   
   # Ensure that when split() is called within partition_bundle(), the resulting 

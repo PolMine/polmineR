@@ -44,33 +44,57 @@ setMethod("summary", "partition_bundle", function (object, progress = FALSE){
 #'   merge()
 setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
   corpus_id <- get_corpus(x)
-  if (length(corpus_id) >  1L) warning("WARNING: This function will not work correctly, as the bundle comprises different corpora")
-  .message('number of partitions to be merged: ', length(x@objects), verbose = verbose)
-  
-  strucs_combined <- unname(unlist(lapply(x@objects, slot,  "strucs")))
-  if (any(table(strucs_combined) > 1L)){
-    stop("To get the concordances from a subcorpus_bundle or partition_bundle ",
-         "the objects within the bundle are assumed to be non-overlapping. The input ",
-         "object does not pass the respective check.")
+  if (length(corpus_id) >  1L){
+    warning(
+      "WARNING: Merging will not work correctly, ",
+      "as the objects within the bundle are derived from different corpora."
+    )
   }
+  
+  obj_type <- unique(unname(sapply(x@objects, class)))
+  if (length(obj_type) > 1L) stop("Class of the objects within the bundle is not unique.")
+
+  .message('number of objects to be merged: ', length(x@objects), verbose = verbose)
+  
+  s_attr <- unique(unname(unlist(lapply(x@objects, slot,  "s_attribute_strucs"))))
+  strucs_combined <- unname(unlist(lapply(x@objects, slot,  "strucs")))
+  if (any(table(strucs_combined) > 1L)) stop("The objects are not non-overlapping.")
+  strucs_combined <- unique(strucs_combined)
+  strucs_combined <- strucs_combined[order(strucs_combined)]
 
   y <- new(
-    "partition",
-    corpus = corpus_id,
-    stat = data.table(),
-    xml = x[[1]]@xml,
-    encoding = x[[1]]@encoding,
-    s_attribute_strucs = unique(unname(unlist(lapply(x@objects, slot,  "s_attribute_strucs")))),
-    strucs = unique(strucs_combined),
-    explanation = c(paste("this partition is a merger of the partitions", paste(names(x@objects), collapse=', '))),
-    size = -1L,
+    obj_type,
+    corpus = corpus_id, xml = x[[1]]@xml, encoding = x[[1]]@encoding,
+    s_attribute_strucs = s_attr, strucs = strucs_combined,
     name = name
   )
-  y@cpos <- get_region_matrix(corpus = corpus_id, s_attribute = y@s_attribute_strucs, strucs = y@strucs, registry = registry())
+  y@cpos <- get_region_matrix(corpus = corpus_id, s_attribute = s_attr, strucs = strucs_combined, registry = registry())
   y@size <- size(y)
   y
 })
 
+
+#' @param name The name of the new \code{subcorpus} object.
+#' @rdname subcorpus_bundle
+setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
+  callNextMethod()
+})
+
+
+#' @param ... Further \code{subcorpus} objects to be merged with \code{x} and \code{y}.
+#' @param y A \code{subcorpus} to be merged with \code{x}.
+#' @examples
+#' 
+#' # Merge multiple subcorpus objects
+#' a <- corpus("GERMAPARLMINI") %>% subset(date == "2009-10-27")
+#' b <- corpus("GERMAPARLMINI") %>% subset(date == "2009-10-28")
+#' c <- corpus("GERMAPARLMINI") %>% subset(date == "2009-11-10")
+#' y <- merge(a, b, c)
+#' s_attributes(y, "date")
+#' @rdname subcorpus_bundle
+setMethod("merge", "subcorpus", function(x, y, ...){
+  merge(as(c(list(x), c(y, list(...))), "bundle"), name = "", verbose = FALSE)
+})
 
 
 #' @details Using brackets can be used to retrieve the count for a token from the 
@@ -135,7 +159,7 @@ NULL
 #' @examples
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-#' pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+#' pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE)
 #' pb <- enrich(pb, p_attribute = "word")
 #' dtm <- as.DocumentTermMatrix(pb, col = "count")
 #' summary(pb)

@@ -102,7 +102,7 @@ The argument \code{prefix} can be used to achieve a more descriptive name.
 \examples{
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
-pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE, p_attribute = "word")
+pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE)
 pb <- enrich(pb, p_attribute = "word")
 dtm <- as.DocumentTermMatrix(pb, col = "count")
 summary(pb)
