@@ -11,6 +11,7 @@ cooccurrencesUiInput <- function(){
   list(
     actionButton("cooccurrences_go", "", icon = icon("play", lib = "glyphicon")),
     actionButton("cooccurrences_mail", "", icon = icon("envelope", lib = "glyphicon")),
+    code = actionButton("cooccurrences_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(), br(),
     radioButtons("cooccurrences_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
     conditionalPanel(

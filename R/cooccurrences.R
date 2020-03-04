@@ -45,8 +45,9 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param cpos integer vector with corpus positions, defaults to NULL - then the
 #'   corpus positions for the whole corpus will be used
 #' @param p_attribute The p-attribute of the tokens/the query.
-#' @param s_attribute If provided, it will be checked that corpus positions of
-#'   windows do not extend beyond the region defined by the s-attribute.
+#' @param boundary If provided, it will be checked that the corpus positions of
+#'   windows do not extend beyond the left and right boundaries of the region 
+#'   defined by the s-attribute where the match occurs.
 #' @param left Number of tokens to the left of the query match.
 #' @param right Number of tokens to the right of the query match.
 #' @param stoplist Exclude a query hit from analysis if stopword(s) is/are in
@@ -103,7 +104,7 @@ setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrence
 #' @rdname cooccurrences
 setMethod("cooccurrences", "corpus", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
@@ -111,12 +112,11 @@ setMethod("cooccurrences", "corpus", function(
   ...
 ){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  
+
   if (missing(query)) stop("query missing - it is not possible to calculate cooccurrences")
   ctxt <- context(
     .Object = .Object, query = query, cqp = is.cqp,
-    p_attribute = p_attribute, s_attribute = s_attribute,
+    p_attribute = p_attribute, boundary = boundary,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = TRUE, 
@@ -130,7 +130,7 @@ setMethod("cooccurrences", "corpus", function(
 #' @rdname cooccurrences
 setMethod("cooccurrences", "character", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
@@ -142,7 +142,7 @@ setMethod("cooccurrences", "character", function(
     query = query,
     cqp = cqp,
     p_attribute = p_attribute,
-    s_attribute = s_attribute,
+    boundary = boundary,
     left = left,
     right = right,
     stoplist = stoplist,
@@ -166,17 +166,16 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
     ...
   ){
     if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-    if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
     y <- context(
       .Object = .Object, query = query, cqp = is.cqp,
-      p_attribute = p_attribute, s_attribute = s_attribute,
+      p_attribute = p_attribute, boundary = boundary,
       left = left, right = right,
       stoplist = stoplist, positivelist = positivelist,
       count = TRUE, 
@@ -192,7 +191,7 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
@@ -207,7 +206,7 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL,
+    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,

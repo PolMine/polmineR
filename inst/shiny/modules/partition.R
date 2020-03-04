@@ -29,6 +29,7 @@ partitionUiInput <- function(){
   list(
     go = actionButton("partition_go", label="", icon = icon("play", lib="glyphicon")),
     delete = actionButton("partition_delete", label = "", icon = icon("trash", lib = "glyphicon")),
+    code = actionButton("partition_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(),
     br(),
     corpus = selectInput("partition_corpus", "corpus", choices = corpus()[["corpus"]], selected = corpus()[["corpus"]][1]),

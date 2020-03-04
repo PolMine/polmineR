@@ -4,6 +4,7 @@ featuresUiInput <- function(){
   list(
     go = actionButton("features_go", label="", icon = icon("play", lib = "glyphicon")),
     actionButton("features_mail", "", icon = icon("envelope", lib = "glyphicon")),
+    code = actionButton("features_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(),
     br(),
     

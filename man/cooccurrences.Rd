@@ -20,7 +20,7 @@ cooccurrences(.Object, ...)
   query,
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   stoplist = NULL,
@@ -40,7 +40,7 @@ cooccurrences(.Object, ...)
   query,
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   stoplist = NULL,
@@ -62,7 +62,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -80,7 +80,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -98,7 +98,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -127,8 +127,9 @@ cooccurrences(.Object, ...)
 
 \item{p_attribute}{The p-attribute of the tokens/the query.}
 
-\item{s_attribute}{If provided, it will be checked that corpus positions of
-windows do not extend beyond the region defined by the s-attribute.}
+\item{boundary}{If provided, it will be checked that the corpus positions of
+windows do not extend beyond the left and right boundaries of the region 
+defined by the s-attribute where the match occurs.}
 
 \item{left}{Number of tokens to the left of the query match.}
 

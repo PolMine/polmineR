@@ -3,6 +3,7 @@ kwicUiInput <- function(drop = NULL){
   divs = list(
     go = actionButton("kwic_go", "", icon = icon("play", lib = "glyphicon")),
     mail = actionButton("kwic_mail", "", icon = icon("envelope", lib = "glyphicon")),
+    code = actionButton("kwic_code", label = "", icon = icon("code", lib = "font-awesome")),
     br1 = br(),
     br2 = br(),
     object = radioButtons("kwic_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),

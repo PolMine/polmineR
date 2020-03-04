@@ -2,7 +2,8 @@
 #' @export countUiInput
 countUiInput <- function(){
   list(
-    go = actionButton("count_go", label="", icon = icon("play", lib = "glyphicon")),
+    go = actionButton("count_go", label = "", icon = icon("play", lib = "glyphicon")),
+    code = actionButton("count_code", label = "", icon = icon("code", lib = "font-awesome")),
     radioButtons("count_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
     cqp = radioButtons("count_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     breakdown = radioButtons("count_breakdown", "breakdown", choices = list("yes", "no"), selected = "no", inline = TRUE),
@@ -53,7 +54,17 @@ countServer <- function(input, output, session){
     }
   )
   
-  
+  observeEvent(input$count_code, {
+    snippet <- sprintf(
+      'count(%s, query = "%s", p_attribute = "%s", cqp = %s, breakdown = %s)',
+      if (input$count_object == "corpus") sprintf('"%s"', input$count_corpus)  else input$count_partition,
+      input$count_query,
+      input$count_p_attribute,
+      if (input$count_cqp == "yes") "TRUE" else "FALSE", 
+      if (input$count_breakdown == "yes") "TRUE" else "FALSE"
+    )
+    showModal(modalDialog(title = "Method call", snippet))
+  })
 
   output$count_table <- DT::renderDataTable({
     input$count_go

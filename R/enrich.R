@@ -125,7 +125,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
   
   if (table){
     if (nrow(.Object@cpos) > 0L){
-      .fn <- function(.SD) paste(.SD[[.Object@p_attribute]], collapse = " ")
+      .fn <- function(.SD) paste(.SD[[.Object@p_attribute[1]]], collapse = " ")
       table_ext <- .Object@cpos[, .fn(.SD), by = c("match_id", "direction"), with = TRUE]
       .Object@stat <- dcast(data = table_ext, formula = match_id ~ direction, value.var = "V1")
       setnames(.Object@stat, old = "0", new = "node")

@@ -113,12 +113,8 @@ test_that(
   "merge-method for subcorpus_bundle",
   {
     a <- corpus("GERMAPARLMINI") %>% subset(interjection == "speech")
-    b <- split(a, s_attribute = "speaker")
-    y <- as(as(merge(b), "subcorpus"), "plpr_subcorpus")
-    y@cpos <- y@cpos[order(y@cpos[,1]),]
-    attr(y@cpos, "dimnames") <- NULL # a hack, should not be necessary
-
-    expect_identical(a@cpos, y@cpos)
+    b <- split(a, s_attribute = "speaker") %>% merge(b)
+    expect_identical(a@cpos, b@cpos)
   }
 )
 

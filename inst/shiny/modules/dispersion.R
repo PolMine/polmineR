@@ -11,7 +11,7 @@
 dispersionUiInput <- function(){
   list(
     actionButton("dispersion_go", "", icon = icon("play", lib = "glyphicon")),
-    # actionButton("dispersion_mail", "", icon = icon("envelope", lib = "glyphicon")),
+    code = actionButton("dispersion_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(), br(),
     radioButtons("dispersion_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
     conditionalPanel(

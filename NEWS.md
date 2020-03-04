@@ -72,7 +72,9 @@ is offered (#110).
 - The `split()`-method for `corpus` objects now accepts the argument `xml`, to indicate whether the annotation structure of the corpus is flat or nested.
 - The definition of the S4 class `partition` now includes a prototype defining default values for the slots 'stat' (a `data.table`) and the slot 'size' (`NA_integer_`). This avoids that an incomplete initialization of a `partition` object will result in an error.
 - Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
-- The `merge()`-method is implemented for `subcorpus_bundle` objects now, and has been implemented for `subcorpus` objects.
+- The `merge()`-method is implemented for `subcorpus_bundle` objects now, and has been implemented for `subcorpus` objects (#76).
+- Generating a `kwic` view from a `cooccurrences` object based on more than one p-attribute will work now (#119).
+- Code buttons have been added to the shiny app.
 
 polmineR 0.8.0
 ==============

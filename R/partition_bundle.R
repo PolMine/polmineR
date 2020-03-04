@@ -77,7 +77,10 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
 #' @param name The name of the new \code{subcorpus} object.
 #' @rdname subcorpus_bundle
 setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
-  callNextMethod()
+  y <- callNextMethod()
+  y@type <- get_type(y@corpus)
+  y@data_dir <- registry_get_home(corpus = y@corpus, registry = registry())
+  y
 })
 
 
