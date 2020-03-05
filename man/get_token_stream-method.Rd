@@ -51,8 +51,10 @@ get_token_stream(.Object, ...)
 \S4method{get_token_stream}{partition_bundle}(
   .Object,
   p_attribute = "word",
+  phrases = NULL,
   collapse = NULL,
   cpos = FALSE,
+  verbose = TRUE,
   progress = FALSE,
   mc = FALSE,
   ...
@@ -91,6 +93,10 @@ integer vector with token ids is returned.}
 \item{left}{Left corpus position.}
 
 \item{right}{Right corpus position.}
+
+\item{phrases}{A \code{phrases} object. Defined phrases will be concatenated.}
+
+\item{verbose}{A length-one \code{logical} value, whether to show messages.}
 
 \item{progress}{A length-one \code{logical} value, whether to show progress bar.}
 
@@ -160,5 +166,5 @@ pb_tokstr <- corpus("REUTERS") \%>\%
 
 # get token stream for partition_bundle
 pb <- partition_bundle("REUTERS", s_attribute = "id")
-ts_list <- get_token_stream(pb, progress = FALSE)
+ts_list <- get_token_stream(pb)
 }

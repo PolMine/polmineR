@@ -74,7 +74,8 @@ is offered (#110).
 - Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
 - The `merge()`-method is implemented for `subcorpus_bundle` objects now, and has been implemented for `subcorpus` objects (#76).
 - Generating a `kwic` view from a `cooccurrences` object based on more than one p-attribute will work now (#119).
-- Code buttons have been added to the shiny app.
+- Code buttons have been added to the shiny app experimentally.
+- The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
 
 polmineR 0.8.0
 ==============

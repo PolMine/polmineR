@@ -8,6 +8,7 @@ NULL
 #' 
 #' @param .Object Input object.
 #' @param p_attribute A length-one \code{character} vector, the p-attribute to decode.
+#' @param phrases A \code{phrases} object. Defined phrases will be concatenated.
 #' @param encoding If not \code{NULL} (default) a length-one \code{character}
 #'   vector stating an encoding that will be assigned to the (decoded) token
 #'   stream.
@@ -25,6 +26,7 @@ NULL
 #' @param cpos A \code{logical} value, whether to return corpus positions as names of the tokens.
 #' @param cutoff Maximum number of tokens to be reconstructed.
 #' @param progress A length-one \code{logical} value, whether to show progress bar.
+#' @param verbose A length-one \code{logical} value, whether to show messages.
 #' @param mc Number of cores to use. If \code{FALSE} (default), only one thread
 #'   will be used.
 #' @param ... Arguments that will be be passed into the
@@ -187,14 +189,53 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' 
 #' # get token stream for partition_bundle
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
-#' ts_list <- get_token_stream(pb, progress = FALSE)
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, progress = FALSE, mc = FALSE, ...){
-  .fn <- function (x) get_token_stream(x, p_attribute = p_attribute, collapse = collapse, cpos = cpos, ...)
-  if (mc == FALSE) mc <- 1L
-  if (progress)
-    pblapply(.Object@objects, .fn)
-  else 
-    if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn, mc.cores = mc)
+#' ts_list <- get_token_stream(pb)
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+
+  if (is.null(phrases)){
+    .fn <- function (x) get_token_stream(x, p_attribute = p_attribute, collapse = collapse, cpos = cpos, ...)
+    if (mc == FALSE) mc <- 1L
+    if (progress){
+      y <- pblapply(.Object@objects, .fn, cl = mc)
+    } else {
+      y <- if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn, mc.cores = mc)
+    }
+  } else {
+    
+    if (isTRUE(cpos)) stop("Argument 'cpos' is TRUE, but assigning corpus positions nonsensical when concatenating phrases.")
+    
+    corpus_id <- get_corpus(.Object)
+    if (length(corpus_id) > 1L) stop("Objects in bundle not derived from the same corpus.")
+
+    if (verbose) message("... creating vector of document ids")
+    sizes <- sapply(.Object@objects, slot, "size")
+    id_list <- lapply(seq_along(.Object), function(i) rep(x = i, times = sizes[[i]]))
+    obj_id <- do.call(c, id_list)
+    rm(id_list)
+    
+    if (verbose) message("... creating vector of corpus positions")
+    region_matrix_list <- lapply(.Object@objects, slot, "cpos")
+    region_matrix <- do.call(rbind, region_matrix_list)
+    cpos_vec <- cpos(region_matrix)
+    rm(region_matrix, region_matrix_list)
+    
+    if (verbose) message("... decoding token stream")
+    token <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute)
+
+    dt <- data.table(obj_id = obj_id, cpos = cpos_vec)
+    dt[, (p_attribute) := token]
+    
+    if (verbose) message("... concatenate phrases")
+    dt_phr <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute)
+    
+    if (verbose) message("... generating list of character vectors")
+    y <- split(x = dt_phr[[p_attribute]], f = dt_phr[["obj_id"]])
+    
+    if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
+    
+    names(y) <- names(.Object@objects)
+  }
+  y
 })
 
 
