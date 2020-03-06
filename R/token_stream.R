@@ -9,6 +9,8 @@ NULL
 #' @param .Object Input object.
 #' @param p_attribute A length-one \code{character} vector, the p-attribute to decode.
 #' @param phrases A \code{phrases} object. Defined phrases will be concatenated.
+#' @param subset A logical expression indicating elements of an intermediate \code{data.table} to 
+#'   keep. Intended to apply stoplists and other kinds of filtering.
 #' @param encoding If not \code{NULL} (default) a length-one \code{character}
 #'   vector stating an encoding that will be assigned to the (decoded) token
 #'   stream.
@@ -190,7 +192,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' # get token stream for partition_bundle
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' ts_list <- get_token_stream(pb)
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
 
   if (is.null(phrases)){
     .fn <- function (x) get_token_stream(x, p_attribute = p_attribute, collapse = collapse, cpos = cpos, ...)
@@ -229,6 +231,9 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     if (verbose) message("... concatenate phrases")
     dt_phr <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute[[1]])
     
+    expr <- substitute(subset)
+    if (!is.null(expr)) dt_phr <- dt_phr[eval(expr, envir = dt_phr)]
+
     if (length(p_attribute) > 1L){
       if (verbose) message("... concatenate multiple p-attributes")
       dt_phr[, (p_attribute[[1]]) := do.call(paste, c(lapply(p_attribute, function(p_attr) dt_phr[[p_attr]]), sep = "//"))]
@@ -239,7 +244,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     
     if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
     
-    names(y) <- names(.Object@objects)
+    names(y) <- names(.Object@objects)[unique(dt_phr[["obj_id"]])] # subsetting may have removed objs
   }
   y
 })

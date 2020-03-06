@@ -52,6 +52,7 @@ get_token_stream(.Object, ...)
   .Object,
   p_attribute = "word",
   phrases = NULL,
+  subset = NULL,
   collapse = NULL,
   cpos = FALSE,
   verbose = TRUE,
@@ -95,6 +96,9 @@ integer vector with token ids is returned.}
 \item{right}{Right corpus position.}
 
 \item{phrases}{A \code{phrases} object. Defined phrases will be concatenated.}
+
+\item{subset}{A logical expression indicating elements of an intermediate \code{data.table} to 
+keep. Intended to apply stoplists and other kinds of filtering.}
 
 \item{verbose}{A length-one \code{logical} value, whether to show messages.}
 
