@@ -219,17 +219,23 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     cpos_vec <- cpos(region_matrix)
     rm(region_matrix, region_matrix_list)
     
-    if (verbose) message("... decoding token stream")
-    token <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute)
-
     dt <- data.table(obj_id = obj_id, cpos = cpos_vec)
-    dt[, (p_attribute) := token]
     
+    for (p_attr in p_attribute){
+      if (verbose) message("... decoding token stream for p-attribute ", p_attr)
+      dt[, (p_attr) := get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attr)]
+    }
+
     if (verbose) message("... concatenate phrases")
-    dt_phr <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute)
+    dt_phr <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute[[1]])
+    
+    if (length(p_attribute) > 1L){
+      if (verbose) message("... concatenate multiple p-attributes")
+      dt_phr[, (p_attribute[[1]]) := do.call(paste, c(lapply(p_attribute, function(p_attr) dt_phr[[p_attr]]), sep = "//"))]
+    }
     
     if (verbose) message("... generating list of character vectors")
-    y <- split(x = dt_phr[[p_attribute]], f = dt_phr[["obj_id"]])
+    y <- split(x = dt_phr[[p_attribute[[1]]]], f = dt_phr[["obj_id"]])
     
     if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
     
