@@ -9,8 +9,8 @@ NULL
 #' @param .Object Input object.
 #' @param p_attribute A length-one \code{character} vector, the p-attribute to decode.
 #' @param phrases A \code{phrases} object. Defined phrases will be concatenated.
-#' @param subset A logical expression indicating elements of an intermediate \code{data.table} to 
-#'   keep. Intended to apply stoplists and other kinds of filtering.
+#' @param subset A logical expression using non-standard evaluation applied on
+#'   p-attributes.
 #' @param encoding If not \code{NULL} (default) a length-one \code{character}
 #'   vector stating an encoding that will be assigned to the (decoded) token
 #'   stream.
@@ -92,7 +92,7 @@ NULL
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
+setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -110,6 +110,13 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
     tokens <- as.nativeEnc(tokens, from = encoding)
   }
   
+  expr <- substitute(subset)
+  if (!is.null(expr)){
+    assign(p_attribute, tokens)
+    assign(p_attribute, get(p_attribute)[eval(expr)])
+    tokens <- get(p_attribute)
+  }
+
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
     

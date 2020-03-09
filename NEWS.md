@@ -76,6 +76,7 @@ is offered (#110).
 - Generating a `kwic` view from a `cooccurrences` object based on more than one p-attribute will work now (#119).
 - Code buttons have been added to the shiny app experimentally.
 - The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
+- The `decode()`-method has been defined for `integer` vectors. Internally it will decide whether decoding token ids is speeded up by reading in the lexicon file directly. The behavior can be triggered explicitly by setting the argument `boost` as `TRUE`.
 
 polmineR 0.8.0
 ==============

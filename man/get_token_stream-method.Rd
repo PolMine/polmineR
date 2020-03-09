@@ -19,6 +19,7 @@ get_token_stream(.Object, ...)
   .Object,
   corpus,
   p_attribute,
+  subset = NULL,
   encoding = NULL,
   collapse = NULL,
   beautify = TRUE,
@@ -72,6 +73,9 @@ worker.}
 
 \item{p_attribute}{A length-one \code{character} vector, the p-attribute to decode.}
 
+\item{subset}{A logical expression using non-standard evaluation applied on
+p-attributes.}
+
 \item{encoding}{If not \code{NULL} (default) a length-one \code{character}
 vector stating an encoding that will be assigned to the (decoded) token
 stream.}
@@ -96,9 +100,6 @@ integer vector with token ids is returned.}
 \item{right}{Right corpus position.}
 
 \item{phrases}{A \code{phrases} object. Defined phrases will be concatenated.}
-
-\item{subset}{A logical expression indicating elements of an intermediate \code{data.table} to 
-keep. Intended to apply stoplists and other kinds of filtering.}
 
 \item{verbose}{A length-one \code{logical} value, whether to show messages.}
 

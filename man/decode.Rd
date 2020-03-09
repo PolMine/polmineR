@@ -7,6 +7,7 @@
 \alias{decode,slice-method}
 \alias{decode,partition-method}
 \alias{decode,subcorpus-method}
+\alias{decode,integer-method}
 \title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
@@ -56,6 +57,8 @@ decode(.Object, ...)
   decode = TRUE,
   verbose = TRUE
 )
+
+\S4method{decode}{integer}(.Object, corpus, p_attributes, boost = NULL)
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
@@ -77,6 +80,16 @@ s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the
 respective columns are \code{character} vectors.}
 
 \item{verbose}{A \code{logical} value, whether to output progess messages.}
+
+\item{corpus}{A CWB indexed corpus, either a length-one \code{character} vector,
+or a \code{corpus} object.}
+
+\item{boost}{A length-one \code{logical} value, whether to speed up decoding
+a long vector of token ids by directly by reading in the lexion file from
+the data directory of a corpus. If \code{NULL} (default), the internal
+decision rule is that \code{boost} will be \code{TRUE} if the corpus is
+larger than 10 000 000 million tokens and more than 5 percent of the corpus
+are to be decoded.}
 }
 \value{
 The return value will correspond to the class specified by argument
@@ -99,6 +112,19 @@ be to rework it, and to re-import it into the CWB (e.g. using the
 An earlier version of the method included an option to decode a single
 s-attribute, which is not supported any more. See the
 \code{s_attribute_decode} function of the package RcppCWB.
+
+If \code{.Object} is an \code{integer} vector, it is assumed to be a
+  vector of integer ids of p-attributes. The \code{decode}-method will
+  translate token ids to string values as efficiently as possible. The
+  approach taken will depend on the corpus size and the share of the corpus
+  that is to be decoded. To decode a large number of integer ids, it is more
+  efficient to read the lexicon file from the data directory directly and to
+  index the lexicon with the ids rather than relying on
+  \code{RcppCWB::cl_id2str}. The internal decision rule is to use the lexicon
+  file when the corpus is larger than 10 000 000 million tokens and more than
+  5 percent of the corpus are to be decoded. The encoding of the
+  \code{character} vector that is returned will be the coding of the locale
+  (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
 }
 \examples{
 use("polmineR")
@@ -142,6 +168,9 @@ if (requireNamespace("NLP")){
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
 }
 }
+ 
+# decode vector of token ids
+y <- decode(0:20, corpus = "GERMAPARLMINI", p_attribute = "word")
 }
 \seealso{
 To decode a structural attribute, you can use the

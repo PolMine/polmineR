@@ -272,3 +272,61 @@ setMethod("decode", "subcorpus", function(.Object, to = "data.table", s_attribut
   callNextMethod()
 })
 
+
+#' @details If \code{.Object} is an \code{integer} vector, it is assumed to be a
+#'   vector of integer ids of p-attributes. The \code{decode}-method will
+#'   translate token ids to string values as efficiently as possible. The
+#'   approach taken will depend on the corpus size and the share of the corpus
+#'   that is to be decoded. To decode a large number of integer ids, it is more
+#'   efficient to read the lexicon file from the data directory directly and to
+#'   index the lexicon with the ids rather than relying on
+#'   \code{RcppCWB::cl_id2str}. The internal decision rule is to use the lexicon
+#'   file when the corpus is larger than 10 000 000 million tokens and more than
+#'   5 percent of the corpus are to be decoded. The encoding of the
+#'   \code{character} vector that is returned will be the coding of the locale
+#'   (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
+#' @param boost A length-one \code{logical} value, whether to speed up decoding
+#'   a long vector of token ids by directly by reading in the lexion file from
+#'   the data directory of a corpus. If \code{NULL} (default), the internal
+#'   decision rule is that \code{boost} will be \code{TRUE} if the corpus is
+#'   larger than 10 000 000 million tokens and more than 5 percent of the corpus
+#'   are to be decoded.
+#' @param corpus A CWB indexed corpus, either a length-one \code{character} vector,
+#'   or a \code{corpus} object.
+#' @exportMethod decode
+#' @rdname decode
+#' @examples
+#'  
+#' # decode vector of token ids
+#' y <- decode(0:20, corpus = "GERMAPARLMINI", p_attributes = "word")
+#' @importFrom stringi stri_encode
+setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = NULL){
+  stopifnot(
+    length(corpus) == 1L,
+    length(p_attributes) == 1L,
+    is.character(p_attributes)
+  )
+  corpus <- if (is.character(corpus)) corpus(corpus) else corpus
+  if (!inherits(corpus, "corpus")) stop("Argument 'corpus' is required to be a corpus object.")
+  
+  if (is.null(boost)){
+    boost <- if (corpus@size > 10000000L && length(cpos) >= (corpus@size * 0.05)) TRUE else FALSE
+  }
+  
+  if (isTRUE(boost)){
+    lexfile <- file.path(corpus@data_dir, sprintf("%s.lexicon", p_attributes), fsep = "/")
+    lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
+    Encoding(lexicon) <- corpus@encoding
+    if (!identical(corpus@encoding, localeToCharset())){
+      lexicon <- stringi::stri_encode(lexicon, from = corpus@encoding, to = localeToCharset()) # as.locale
+    }
+    y <- lexicon[.Object + 1L]
+  } else if (isFALSE(boost)){
+    y <- RcppCWB::cl_id2str(corpus = corpus@corpus, p_attribute = p_attributes, registry = registry(), id = .Object)
+    Encoding(y) <- corpus@encoding
+    if (!identical(corpus@encoding, localeToCharset())){
+      y <- stringi::stri_encode(y, from = corpus@encoding, to = localeToCharset())
+    }
+  }
+  y
+})

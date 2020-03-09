@@ -1,12 +1,14 @@
 Package: polmineR
 Type: Package
 Title: Toolkit for Corpus Analysis
-Version: 0.8.0.9012
-Date: 2020-03-05
+Version: 0.8.0.9013
+Date: 2020-03-09
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb")
   )
+Depends:
+    R (>= 3.5.0)
 Imports:
     methods,
     R6,
