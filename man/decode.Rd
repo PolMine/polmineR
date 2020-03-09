@@ -170,7 +170,7 @@ if (requireNamespace("NLP")){
 }
  
 # decode vector of token ids
-y <- decode(0:20, corpus = "GERMAPARLMINI", p_attribute = "word")
+y <- decode(0:20, corpus = "GERMAPARLMINI", p_attributes = "word")
 }
 \seealso{
 To decode a structural attribute, you can use the

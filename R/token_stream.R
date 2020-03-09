@@ -91,23 +91,21 @@ NULL
 #'   get_token_stream(p_attribute = "word")
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
+#' @inheritParams decode
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
+setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
   
-  if (decode){
-    tokens <- cl_cpos2str(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
-  } else {
-    return( cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry()) )
-  }
-  
-  if (!is.null(encoding)){
-    Encoding(tokens) <- encoding
-    tokens <- as.nativeEnc(tokens, from = encoding)
+  ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
+  if (isTRUE(decode)){
+    tokens <- decode(.Object = ids, corpus = corpus, p_attributes = p_attribute, boost = boost)
+    rm(ids)
+  } else if (isFALSE(decode)){
+    return(ids)
   }
   
   expr <- substitute(subset)

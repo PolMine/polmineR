@@ -20,6 +20,7 @@ get_token_stream(.Object, ...)
   corpus,
   p_attribute,
   subset = NULL,
+  boost = NULL,
   encoding = NULL,
   collapse = NULL,
   beautify = TRUE,
@@ -75,6 +76,13 @@ worker.}
 
 \item{subset}{A logical expression using non-standard evaluation applied on
 p-attributes.}
+
+\item{boost}{A length-one \code{logical} value, whether to speed up decoding
+a long vector of token ids by directly by reading in the lexion file from
+the data directory of a corpus. If \code{NULL} (default), the internal
+decision rule is that \code{boost} will be \code{TRUE} if the corpus is
+larger than 10 000 000 million tokens and more than 5 percent of the corpus
+are to be decoded.}
 
 \item{encoding}{If not \code{NULL} (default) a length-one \code{character}
 vector stating an encoding that will be assigned to the (decoded) token

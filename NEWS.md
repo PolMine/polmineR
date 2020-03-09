@@ -77,6 +77,7 @@ is offered (#110).
 - Code buttons have been added to the shiny app experimentally.
 - The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
 - The `decode()`-method has been defined for `integer` vectors. Internally it will decide whether decoding token ids is speeded up by reading in the lexicon file directly. The behavior can be triggered explicitly by setting the argument `boost` as `TRUE`.
+- The `get_token_stream()`-method will use the new `decode()`-method for integer values internally. The argument `boost` is used by the `get_token_stream()` to control the approach.
 
 polmineR 0.8.0
 ==============
