@@ -199,33 +199,33 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' ts_list <- get_token_stream(pb)
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
 
+  corpus_id <- get_corpus(.Object)
+  if (length(corpus_id) > 1L) stop("Objects in bundle not derived from the same corpus.")
+  
+  if (verbose) message("... creating vector of document ids")
+  sizes <- sapply(.Object@objects, slot, "size")
+  id_list <- lapply(seq_along(.Object), function(i) rep(x = i, times = sizes[[i]]))
+  obj_id <- do.call(c, id_list)
+  rm(id_list)
+  
+  if (verbose) message("... creating vector of corpus positions")
+  region_matrix_list <- lapply(.Object@objects, slot, "cpos")
+  region_matrix <- do.call(rbind, region_matrix_list)
+  cpos_vec <- cpos(region_matrix)
+  rm(region_matrix, region_matrix_list)
+
   if (is.null(phrases)){
-    .fn <- function (x) get_token_stream(x, p_attribute = p_attribute, collapse = collapse, cpos = cpos, ...)
-    if (mc == FALSE) mc <- 1L
-    if (progress){
-      y <- pblapply(.Object@objects, .fn, cl = mc)
-    } else {
-      y <- if (mc == 1L) lapply(.Object@objects, .fn) else mclapply(.Object@objects, .fn, mc.cores = mc)
-    }
+    if (verbose) message("... decoding character vectors")
+    p_attr <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute)
+    if (cpos) names(p_attr) <- cpos_vec
+    if (verbose) message("... generating list of character vectors")
+    if (!is.null(subset)) stop("using subset is not yet implemented")
+    y <- split(x = p_attr, f = obj_id)
+    names(y) <- names(.Object@objects)[unique(obj_id)] # subsetting may have removed objs
   } else {
     
     if (isTRUE(cpos)) stop("Argument 'cpos' is TRUE, but assigning corpus positions nonsensical when concatenating phrases.")
-    
-    corpus_id <- get_corpus(.Object)
-    if (length(corpus_id) > 1L) stop("Objects in bundle not derived from the same corpus.")
 
-    if (verbose) message("... creating vector of document ids")
-    sizes <- sapply(.Object@objects, slot, "size")
-    id_list <- lapply(seq_along(.Object), function(i) rep(x = i, times = sizes[[i]]))
-    obj_id <- do.call(c, id_list)
-    rm(id_list)
-    
-    if (verbose) message("... creating vector of corpus positions")
-    region_matrix_list <- lapply(.Object@objects, slot, "cpos")
-    region_matrix <- do.call(rbind, region_matrix_list)
-    cpos_vec <- cpos(region_matrix)
-    rm(region_matrix, region_matrix_list)
-    
     dt <- data.table(obj_id = obj_id, cpos = cpos_vec)
     
     for (p_attr in p_attribute){
@@ -252,11 +252,9 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     
     if (verbose) message("... generating list of character vectors")
     y <- split(x = dt_phr[[p_attribute[[1]]]], f = dt_phr[["obj_id"]])
-    
-    if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
-    
-    names(y) <- names(.Object@objects)[unique(dt_phr[["obj_id"]])] # subsetting may have removed objs
+    names(y) <- names(.Object@objects)[dt_phr[["obj_id"]]] # subsetting may have removed objs
   }
+  if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
   y
 })
 
