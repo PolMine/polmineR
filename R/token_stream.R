@@ -237,7 +237,13 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     dt_phr <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute[[1]])
     
     expr <- substitute(subset)
-    if (!is.null(expr)) dt_phr <- dt_phr[eval(expr, envir = dt_phr)]
+    if (!is.null(expr)){
+      if (verbose) message("... applying argument subset")
+      df_phr <- as.data.frame(dt_phr)
+      df_phr <- df_phr[eval(expr, envir = df_phr, enclos = .GlobalEnv),]
+      dt_phr <- as.data.table(df_phr)
+      # dt_phr <- dt_phr[eval(expr, envir = dt_phr, enclos = .GlobalEnv),] # does not work
+    }
 
     if (length(p_attribute) > 1L){
       if (verbose) message("... concatenate multiple p-attributes")
