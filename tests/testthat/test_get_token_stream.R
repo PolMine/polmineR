@@ -133,3 +133,31 @@ test_that(
     expect_identical(nchar(y), 51328L)
   }
 )
+
+
+test_that(
+  "Check workflow to filter subcorpus_bundle",
+  {
+    sp <- corpus("GERMAPARLMINI") %>% as.speeches(s_attribute_name = "speaker", progress = FALSE)
+    queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
+    phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
+    
+    kill <- tm::stopwords("de")
+    assign("kill", tm::stopwords("de"), envir = .GlobalEnv)
+    
+    ts_phr <- get_token_stream(
+      sp,
+      p_attribute = c("word", "pos"),
+      subset = {!word %in% kill  & !grepl("(\\$.$|ART)", pos)},
+      phrases = phr,
+      progress = FALSE,
+      verbose = FALSE
+    )
+    
+    testthat::expect_identical(FALSE, any(tm::stopwords("de") %in% gsub("^(.*?)//.*?$", "\\1", ts_phr[[1]])))
+    
+  }
+)
+
+
+

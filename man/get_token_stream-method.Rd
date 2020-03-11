@@ -72,10 +72,12 @@ worker.}
 
 \item{corpus}{A CWB indexed corpus.}
 
-\item{p_attribute}{A length-one \code{character} vector, the p-attribute to decode.}
+\item{p_attribute}{A length-one \code{character} vector, the p-attribute to
+decode.}
 
-\item{subset}{A logical expression using non-standard evaluation applied on
-p-attributes.}
+\item{subset}{An expression applied on p-attributes, using non-standard
+evaluation. Note that symbols used in the expression may not be used
+internally (e.g. 'stopwords').}
 
 \item{boost}{A length-one \code{logical} value, whether to speed up decoding
 a long vector of token ids by directly by reading in the lexion file from
@@ -95,7 +97,8 @@ string.}
 \item{beautify}{A (length-one) \code{logical} value, whether to adjust
 whitespace before and after interpunctation.}
 
-\item{cpos}{A \code{logical} value, whether to return corpus positions as names of the tokens.}
+\item{cpos}{A \code{logical} value, whether to return corpus positions as
+names of the tokens.}
 
 \item{cutoff}{Maximum number of tokens to be reconstructed.}
 
@@ -111,7 +114,8 @@ integer vector with token ids is returned.}
 
 \item{verbose}{A length-one \code{logical} value, whether to show messages.}
 
-\item{progress}{A length-one \code{logical} value, whether to show progress bar.}
+\item{progress}{A length-one \code{logical} value, whether to show progress
+bar.}
 
 \item{mc}{Number of cores to use. If \code{FALSE} (default), only one thread
 will be used.}
@@ -128,16 +132,16 @@ CWB indexed corpora have a fixed order of tokens which is called the
   \code{get_token_stream}-method will extract the tokens (for regions) from a
   corpus.
 
-The primary usage of this method is to return the token
-  stream of a (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
+The primary usage of this method is to return the token stream of a
+  (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
   \code{partition} object. The methods defined for a \code{numeric} vector or
   a (two-column) \code{matrix} defining regions (i.e. left and right corpus
   positions in the first and second column) are the actual workers for this
   operation.
 
-The \code{get_token_stream} has been introduced so serve as a worker by
-  higher level methods such as \code{read}, \code{html}, and
-  \code{as.markdown}. It may however be useful for decoding a corpus so that 
+The \code{get_token_stream} has been introduced so serve as a worker
+  by higher level methods such as \code{read}, \code{html}, and
+  \code{as.markdown}. It may however be useful for decoding a corpus so that
   it can be exported to other tools.
 }
 \examples{
@@ -177,7 +181,24 @@ pb_tokstr <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   get_token_stream(p_attribute = "word")
 
-# get token stream for partition_bundle
+# Get token stream for partition_bundle
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 ts_list <- get_token_stream(pb)
+
+# Workflow to filter decoded subcorpus_bundle
+\dontrun{
+sp <- corpus("GERMAPARLMINI") \%>\% as.speeches(s_attribute_name = "speaker", progress = FALSE)
+queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
+phr <- corpus("GERMAPARLMINI") \%>\% cpos(query = queries) \%>\% as.phrases(corpus = "GERMAPARLMINI")
+
+kill <- tm::stopwords("de")
+ts_phr <- get_token_stream(
+  sp,
+  p_attribute = c("word", "pos"),
+  subset = {!word \%in\% kill  & !grepl("(\\\\$.$|ART)", pos)},
+  phrases = phr,
+  progress = FALSE,
+  verbose = FALSE
+)
+}
 }

@@ -2,15 +2,17 @@
 NULL
 
 #' Get Token Stream.
-#' 
+#'
 #' Auxiliary method to get the fulltext of a corpus, subcorpora etc. Can be used
 #' to export corpus data to other tools.
-#' 
+#'
 #' @param .Object Input object.
-#' @param p_attribute A length-one \code{character} vector, the p-attribute to decode.
+#' @param p_attribute A length-one \code{character} vector, the p-attribute to
+#'   decode.
 #' @param phrases A \code{phrases} object. Defined phrases will be concatenated.
-#' @param subset A logical expression using non-standard evaluation applied on
-#'   p-attributes.
+#' @param subset An expression applied on p-attributes, using non-standard
+#'   evaluation. Note that symbols used in the expression may not be used
+#'   internally (e.g. 'stopwords').
 #' @param encoding If not \code{NULL} (default) a length-one \code{character}
 #'   vector stating an encoding that will be assigned to the (decoded) token
 #'   stream.
@@ -25,9 +27,11 @@ NULL
 #'   integer vector with token ids is returned.
 #' @param left Left corpus position.
 #' @param right Right corpus position.
-#' @param cpos A \code{logical} value, whether to return corpus positions as names of the tokens.
+#' @param cpos A \code{logical} value, whether to return corpus positions as
+#'   names of the tokens.
 #' @param cutoff Maximum number of tokens to be reconstructed.
-#' @param progress A length-one \code{logical} value, whether to show progress bar.
+#' @param progress A length-one \code{logical} value, whether to show progress
+#'   bar.
 #' @param verbose A length-one \code{logical} value, whether to show messages.
 #' @param mc Number of cores to use. If \code{FALSE} (default), only one thread
 #'   will be used.
@@ -42,28 +46,28 @@ NULL
 #'   right corpus position are called \emph{regions}. The
 #'   \code{get_token_stream}-method will extract the tokens (for regions) from a
 #'   corpus.
-#' @details The primary usage of this method is to return the token
-#'   stream of a (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
+#' @details The primary usage of this method is to return the token stream of a
+#'   (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
 #'   \code{partition} object. The methods defined for a \code{numeric} vector or
 #'   a (two-column) \code{matrix} defining regions (i.e. left and right corpus
 #'   positions in the first and second column) are the actual workers for this
 #'   operation.
-#' @details The \code{get_token_stream} has been introduced so serve as a worker by
-#'   higher level methods such as \code{read}, \code{html}, and
-#'   \code{as.markdown}. It may however be useful for decoding a corpus so that 
+#' @details The \code{get_token_stream} has been introduced so serve as a worker
+#'   by higher level methods such as \code{read}, \code{html}, and
+#'   \code{as.markdown}. It may however be useful for decoding a corpus so that
 #'   it can be exported to other tools.
-#'   
-#' @examples 
+#'
+#' @examples
 #' # Decode first words of GERMAPARLMINI corpus (first sentence)
 #' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
-#' 
+#'
 #' # Decode first sentence and collapse tokens into single string
 #' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
-#' 
+#'
 #' # Decode regions defined by two-column matrix
 #' region_matrix <- matrix(c(0,9,10,25), ncol = 2, byrow = TRUE)
 #' get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1")
-#' 
+#'
 #' # Use argument 'beautify' to remove surplus whitespace
 #' get_token_stream(
 #'   region_matrix,
@@ -72,19 +76,19 @@ NULL
 #'   encoding = "latin1",
 #'   collapse = " ", beautify = TRUE
 #' )
-#' 
+#'
 #' # Decode entire corpus (corpus object / specified by corpus ID)
 #' fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
 #' corpus("GERMAPARLMINI") %>%
 #'   get_token_stream(p_attribute = "word") %>%
 #'   head()
-#' 
+#'
 #' # Decode subcorpus
 #' corpus("REUTERS") %>%
 #'   subset(id == "127") %>%
 #'   get_token_stream(p_attribute = "word") %>%
 #'   head()
-#' 
+#'
 #' # Decode partition_bundle
 #' pb_tokstr <- corpus("REUTERS") %>%
 #'   split(s_attribute = "id") %>%
@@ -194,9 +198,27 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' @rdname get_token_stream-method
 #' @examples 
 #' 
-#' # get token stream for partition_bundle
+#' # Get token stream for partition_bundle
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' ts_list <- get_token_stream(pb)
+#' 
+#' # Workflow to filter decoded subcorpus_bundle
+#' \dontrun{
+#' sp <- corpus("GERMAPARLMINI") %>% as.speeches(s_attribute_name = "speaker", progress = FALSE)
+#' queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
+#' phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
+#' 
+#' kill <- tm::stopwords("de")
+#'
+#' ts_phr <- get_token_stream(
+#'   sp,
+#'   p_attribute = c("word", "pos"),
+#'   subset = {!word %in% kill  & !grepl("(\\$.$|ART)", pos)},
+#'   phrases = phr,
+#'   progress = FALSE,
+#'   verbose = FALSE
+#' )
+#' }
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
 
   corpus_id <- get_corpus(.Object)
@@ -239,10 +261,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     expr <- substitute(subset)
     if (!is.null(expr)){
       if (verbose) message("... applying argument subset")
-      df_phr <- as.data.frame(dt_phr)
-      df_phr <- df_phr[eval(expr, envir = df_phr, enclos = .GlobalEnv),]
-      dt_phr <- as.data.table(df_phr)
-      # dt_phr <- dt_phr[eval(expr, envir = dt_phr, enclos = .GlobalEnv),] # does not work
+      dt_phr <- dt_phr[eval(expr, envir = dt_phr, enclos = .GlobalEnv),]
     }
 
     if (length(p_attribute) > 1L){
@@ -252,7 +271,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     
     if (verbose) message("... generating list of character vectors")
     y <- split(x = dt_phr[[p_attribute[[1]]]], f = dt_phr[["obj_id"]])
-    names(y) <- names(.Object@objects)[dt_phr[["obj_id"]]] # subsetting may have removed objs
+    names(y) <- names(.Object@objects)[unique(dt_phr[["obj_id"]])] # subsetting may have removed objs
   }
   if (!is.null(collapse)) y <- lapply(y, function(x) paste(x, collapse = collapse))
   y
