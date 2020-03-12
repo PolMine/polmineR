@@ -57,6 +57,7 @@ get_token_stream(.Object, ...)
   subset = NULL,
   collapse = NULL,
   cpos = FALSE,
+  decode = TRUE,
   verbose = TRUE,
   progress = FALSE,
   mc = FALSE,
@@ -192,6 +193,7 @@ queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' 
 phr <- corpus("GERMAPARLMINI") \%>\% cpos(query = queries) \%>\% as.phrases(corpus = "GERMAPARLMINI")
 
 kill <- tm::stopwords("de")
+
 ts_phr <- get_token_stream(
   sp,
   p_attribute = c("word", "pos"),

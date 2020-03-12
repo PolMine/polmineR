@@ -4,27 +4,43 @@
 \alias{p_attributes}
 \alias{p_attributes,character-method}
 \alias{p_attributes,corpus-method}
+\alias{p_attributes,slice-method}
+\alias{p_attributes,partition_bundle-method}
 \title{Get p-attributes.}
 \usage{
 p_attributes(.Object, ...)
 
-\S4method{p_attributes}{character}(.Object, p_attribute = NULL, ...)
+\S4method{p_attributes}{character}(.Object, p_attribute = NULL)
 
-\S4method{p_attributes}{corpus}(.Object, p_attribute = NULL, ...)
+\S4method{p_attributes}{corpus}(.Object, p_attribute = NULL)
+
+\S4method{p_attributes}{slice}(.Object, p_attribute = NULL, decode = TRUE)
+
+\S4method{p_attributes}{partition_bundle}(.Object, p_attribute = NULL, decode = TRUE)
 }
 \arguments{
-\item{.Object}{A length-one \code{character} vector, or a \code{partition} object.}
+\item{.Object}{A length-one \code{character} vector, or a \code{partition}
+object.}
 
-\item{...}{further arguments}
+\item{...}{Arguments passed to \code{get_token_stream}.}
 
 \item{p_attribute}{A p-attribute to decode, provided by a length-one
 \code{character} vector.}
+
+\item{decode}{A length-one \code{logical} value. Whether to return decoded
+p-attributes or unique token ids.}
 }
 \description{
 In a CWB corpus, every token has positional attributes. While s-attributes
 cover a range of tokens, every single token in the token stream of a corpus
 will have a set of positional attributes (such as part-of-speech, or lemma).
 The available p-attributes are returned by the \code{p_attributes}-method.
+}
+\details{
+The \code{p_attributes}-method returns the p-attributes defined for the
+corpus the partition is derived from, if argument \code{p_attribute} is
+\code{NULL} (the default). If \code{p_attribute} is defined, the unique
+values for the p-attribute are returned.
 }
 \examples{
 use("polmineR")

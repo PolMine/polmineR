@@ -16,7 +16,6 @@
 \alias{remote_partition-class}
 \alias{plpr_partition-class}
 \alias{press_partition-class}
-\alias{p_attributes,slice-method}
 \alias{p_attributes,partition-method}
 \alias{p_attributes,subcorpus-method}
 \alias{is.partition}
@@ -25,11 +24,9 @@
 \alias{split,partition-method}
 \title{Partition class and methods.}
 \usage{
-\S4method{p_attributes}{slice}(.Object, p_attribute = NULL, ...)
+\S4method{p_attributes}{partition}(.Object, p_attribute = NULL, decode = TRUE)
 
-\S4method{p_attributes}{partition}(.Object, p_attribute = NULL, ...)
-
-\S4method{p_attributes}{subcorpus}(.Object, p_attribute = NULL, ...)
+\S4method{p_attributes}{subcorpus}(.Object, p_attribute = NULL, decode = TRUE)
 
 is.partition(x)
 
@@ -51,15 +48,15 @@ is.partition(x)
 
 \item{p_attribute}{a p-attribute (for enriching) / performing count.}
 
-\item{...}{further parameters passed into \code{count} when calling \code{enrich}, and ...}
+\item{decode}{\code{logical} value, whether to decode token ids into strings when performing count}
 
 \item{x}{A \code{partition} object.}
-
-\item{decode}{\code{logical} value, whether to decode token ids into strings when performing count}
 
 \item{verbose}{\code{logical} value, whether to output messages}
 
 \item{mc}{\code{logical} or, if numeric, providing the number of cores}
+
+\item{...}{further parameters passed into \code{count} when calling \code{enrich}, and ...}
 
 \item{gap}{An integer value specifying the minimum gap between regions for
 performing the split.}
@@ -74,11 +71,6 @@ As \code{partition} objects inherit from \code{count} and
   \code{textstat} class, methods available are \code{view} to inspect the
   table in the \code{stat} slot, \code{name} and \code{name<-} to
   retrieve/set the name of an object, and more.
-
-The \code{p_attributes}-method returns the p-attributes defined for the
-corpus the partition is derived from, if argument \code{p_attribute} is \code{NULL}
-(the default). If \code{p_attribute} is defined, the unique values for the p-attribute
-are returned.
 
 The \code{is.partition} function returns a \code{logical} value
   whether \code{x} is a \code{partition}, or not.

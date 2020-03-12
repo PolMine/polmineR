@@ -80,6 +80,8 @@ is offered (#110).
 - The `get_token_stream()`-method will use the new `decode()`-method for integer values internally. The argument `boost` is used by the `get_token_stream()` to control the approach.
 - Improvements of performance initially implemented for `get_token_stream` for `partition_bundle` when 
 the `phrases` argument is used are now also available when a `phrases` object is not passed in.
+- The `p_attributes` method now accepts an argument `decode`.
+- The `p_attributes`-method has been implemented for `partition_bundle` objects.
 
 polmineR 0.8.0
 ==============

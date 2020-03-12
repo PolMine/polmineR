@@ -219,7 +219,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   verbose = FALSE
 #' )
 #' }
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
 
   corpus_id <- get_corpus(.Object)
   if (length(corpus_id) > 1L) stop("Objects in bundle not derived from the same corpus.")
@@ -238,7 +238,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
 
   if (is.null(phrases)){
     if (verbose) message("... decoding character vectors")
-    p_attr <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute)
+    p_attr <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute, decode = decode)
     if (cpos) names(p_attr) <- cpos_vec
     if (verbose) message("... generating list of character vectors")
     if (!is.null(subset)) stop("using subset is not yet implemented")
