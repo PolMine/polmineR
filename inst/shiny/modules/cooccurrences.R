@@ -72,14 +72,19 @@ cooccurrencesServer <- function(input, output, session){
   
   observeEvent(input$cooccurrences_code, {
     snippet <- sprintf(
-      'cooccurrences(%s, query = "%s", cqp = %s, p_attribute = "%s", window = %s)',
+      'cooccurrences(\n  %s,\n  query = "%s",\n  cqp = %s,\n  p_attribute = "%s",\n  window = %s\n)',
       if (input$cooccurrences_object == "corpus") sprintf('"%s"', input$cooccurrences_corpus)  else input$cooccurrences_partition,
       input$cooccurrences_query,
       if (input$cooccurrences_cqp == "yes") "TRUE" else "FALSE", 
       input$cooccurrences_p_attribute,
       input$cooccurrences_window
     )
-    showModal(modalDialog(title = "Method call", snippet))
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
+    )
+    showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
   
   

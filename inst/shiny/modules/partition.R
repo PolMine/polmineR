@@ -102,6 +102,24 @@ partitionServer <- function(input, output, session){
     }
   )
   
+  observeEvent(input$partition_code, {
+    s_attrs <- paste(sapply(input$partition_s_attributes, function(x) sprintf('  %s = "%s"', x, input[[x]])), collapse = ",\n")
+    snippet <- sprintf(
+      'partition(\n  %s,\n%s,\n  p_attribute = "%s",\n  regex = %s,\n  xml = "%s"\n)',
+      input$partition_corpus,
+      s_attrs,
+      if (length(input$partition_p_attribute) == 0L) "" else input$partition_p_attribute,
+      input$partition_regex,
+      input$partition_xml
+    )
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
+    )
+    showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
+  })
+
   observeEvent(
     input$partition_corpus,
     {

@@ -63,14 +63,19 @@ kwicServer <- function(input, output, session, ...){
   
   observeEvent(input$kwic_code, {
     snippet <- sprintf(
-      'kwic(%s, query = "%s", cqp = %s, positivelist = %s, window = %s)',
+      'kwic(\n  %s,\n  query = "%s",\n  cqp = %s,\n  positivelist = %s,\n  window = %s\n)',
       if (input$kwic_object == "corpus") sprintf('"%s"', input$kwic_corpus)  else input$kwic_partition,
       input$kwic_query,
       if (input$kwic_cqp == "yes") "TRUE" else "FALSE", 
       if (input$kwic_positivelist != "") sprintf("c(%s)", paste(sprintf('"%s"', strsplit(x = input$kwic_positivelist, split = "(;\\s*|,\\s*)")[[1]]), collapse = ", ")) else "",
       input$kwic_window
     )
-    showModal(modalDialog(title = "Method call", snippet))
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
+    )
+    showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
   
   

@@ -30,6 +30,7 @@ Suggests:
     markdown,
     rmarkdown,
     htmltools (>= 0.4.0),
+    highlight,
     openxlsx,
     sendmailR,
     shiny,

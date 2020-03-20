@@ -3,7 +3,6 @@
 featuresUiInput <- function(){
   list(
     go = actionButton("features_go", label="", icon = icon("play", lib = "glyphicon")),
-    actionButton("features_mail", "", icon = icon("envelope", lib = "glyphicon")),
     code = actionButton("features_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(),
     br(),
@@ -56,6 +55,23 @@ featuresServer <- function(input, output, session){
       }
     }
   )
+  
+  observeEvent(input$features_code, {
+    snippet <- sprintf(
+      'features(\n  x = %s,\n  y = %s,\n  included = %s,\n  p_attribute = "%s"\n)',
+      input$features_partition_x,
+      if (input$features_object_y == "corpus") sprintf('"%s"', input$features_corpus_y)  else input$features_partition_y,
+      input$features_included,
+      input$features_p_attribute
+    )
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
+    )
+    showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
+  })
+  
   
   
   # the sole purpose of the following block is to show empty table

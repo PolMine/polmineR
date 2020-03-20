@@ -9,7 +9,7 @@ shinyUI(
     id = "polmineR",
     
     tabPanel(
-  "corpus",
+      "corpus",
       sidebarLayout(
         sidebarPanel = sidebarPanel(corpusUiInput()),
         mainPanel = mainPanel(
@@ -62,16 +62,6 @@ shinyUI(
     ),
     
     
-    tabPanel(
-      "read",
-      fluidPage(
-        fluidRow(
-          column(2),
-          column(8, readUiOutput()),
-          column(2)
-        )
-      )
-    ),
     
     tabPanel(
       "dispersion",
@@ -86,6 +76,17 @@ shinyUI(
       )
     ),
     
+    tabPanel(
+      "read",
+      fluidPage(
+        fluidRow(
+          column(2),
+          column(8, readUiOutput()),
+          column(2)
+        )
+      )
+    ),
+
     tabPanel(
       "settings",
       sidebarLayout(

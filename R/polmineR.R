@@ -123,8 +123,9 @@ polmineR <- function(){
   
   .conditional_install("shiny")
   .conditional_install("shinythemes")
+  .conditional_install("highlight")
 
-  if (requireNamespace("shiny", quietly = TRUE) && requireNamespace("shinythemes", quietly = TRUE)){
+  if (requireNamespace("shiny", quietly = TRUE) && requireNamespace("shinythemes", quietly = TRUE) && requireNamespace("highlight", quietly = TRUE)){
     shiny::onStop(function() options(polmineR.shiny = FALSE))
     shiny::runApp(system.file("shiny", package = "polmineR"))
   }

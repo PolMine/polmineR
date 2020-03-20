@@ -56,14 +56,19 @@ countServer <- function(input, output, session){
   
   observeEvent(input$count_code, {
     snippet <- sprintf(
-      'count(%s, query = "%s", p_attribute = "%s", cqp = %s, breakdown = %s)',
+      'count(\n  %s,\n  query = "%s",\n  p_attribute = "%s",\n  cqp = %s,\n  breakdown = %s\n)',
       if (input$count_object == "corpus") sprintf('"%s"', input$count_corpus)  else input$count_partition,
       input$count_query,
       input$count_p_attribute,
       if (input$count_cqp == "yes") "TRUE" else "FALSE", 
       if (input$count_breakdown == "yes") "TRUE" else "FALSE"
     )
-    showModal(modalDialog(title = "Method call", snippet))
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
+    )
+    showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
 
   output$count_table <- DT::renderDataTable({
