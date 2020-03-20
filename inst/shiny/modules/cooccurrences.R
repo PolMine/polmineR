@@ -10,7 +10,6 @@
 cooccurrencesUiInput <- function(){
   list(
     actionButton("cooccurrences_go", "", icon = icon("play", lib = "glyphicon")),
-    actionButton("cooccurrences_mail", "", icon = icon("envelope", lib = "glyphicon")),
     code = actionButton("cooccurrences_code", label = "", icon = icon("code", lib = "font-awesome")),
     br(), br(),
     radioButtons("cooccurrences_object", "class", choices = list("corpus", "partition"), selected = "corpus", inline = TRUE),
@@ -71,6 +70,17 @@ cooccurrencesServer <- function(input, output, session){
     }
   )
   
+  observeEvent(input$cooccurrences_code, {
+    snippet <- sprintf(
+      'cooccurrences(%s, query = "%s", cqp = %s, p_attribute = "%s", window = %s)',
+      if (input$cooccurrences_object == "corpus") sprintf('"%s"', input$cooccurrences_corpus)  else input$cooccurrences_partition,
+      input$cooccurrences_query,
+      if (input$cooccurrences_cqp == "yes") "TRUE" else "FALSE", 
+      input$cooccurrences_p_attribute,
+      input$cooccurrences_window
+    )
+    showModal(modalDialog(title = "Method call", snippet))
+  })
   
   
   output$cooccurrences_table <- DT::renderDataTable({

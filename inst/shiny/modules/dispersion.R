@@ -73,7 +73,18 @@ dispersionServer <- function(input, output, session){
     updateSelectInput(session, "dispersion_s_attribute_1", choices = new_sAttr, selected = NULL)
   })
   
-
+  observeEvent(input$dispersion_code, {
+    snippet <- sprintf(
+      'dispersion(%s, query = "%s", freq = %s, cqp = %s, p_attribute = "%s", s_attribute = "%s")',
+      if (input$dispersion_object == "corpus") sprintf('"%s"', input$dispersion_corpus)  else input$dispersion_partition,
+      input$dispersion_query,
+      if (input$dispersion_freq == "yes") "TRUE" else "FALSE", 
+      if (input$dispersion_cqp == "yes") "TRUE" else "FALSE", 
+      input$dispersion_p_attribute,
+      input$dispersion_s_attribute_1
+    )
+    showModal(modalDialog(title = "Method call", snippet))
+  })
 
   observeEvent(
     input$dispersion_go,

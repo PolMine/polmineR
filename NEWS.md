@@ -82,6 +82,7 @@ is offered (#110).
 the `phrases` argument is used are now also available when a `phrases` object is not passed in.
 - The `p_attributes` method now accepts an argument `decode`.
 - The `p_attributes`-method has been implemented for `partition_bundle` objects.
+- In the shiny app you can launch via `polmineR()`, the mail-button has been dropped in the kwic, ...
 
 polmineR 0.8.0
 ==============

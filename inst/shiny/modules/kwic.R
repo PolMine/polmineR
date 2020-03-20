@@ -2,7 +2,6 @@ kwicUiInput <- function(drop = NULL){
   
   divs = list(
     go = actionButton("kwic_go", "", icon = icon("play", lib = "glyphicon")),
-    mail = actionButton("kwic_mail", "", icon = icon("envelope", lib = "glyphicon")),
     code = actionButton("kwic_code", label = "", icon = icon("code", lib = "font-awesome")),
     br1 = br(),
     br2 = br(),
@@ -62,7 +61,19 @@ kwicServer <- function(input, output, session, ...){
     updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
   })
   
-
+  observeEvent(input$kwic_code, {
+    snippet <- sprintf(
+      'kwic(%s, query = "%s", cqp = %s, positivelist = %s, window = %s)',
+      if (input$kwic_object == "corpus") sprintf('"%s"', input$kwic_corpus)  else input$kwic_partition,
+      input$kwic_query,
+      if (input$kwic_cqp == "yes") "TRUE" else "FALSE", 
+      if (input$kwic_positivelist != "") sprintf("c(%s)", paste(sprintf('"%s"', strsplit(x = input$kwic_positivelist, split = "(;\\s*|,\\s*)")[[1]]), collapse = ", ")) else "",
+      input$kwic_window
+    )
+    showModal(modalDialog(title = "Method call", snippet))
+  })
+  
+  
   output$kwic_table <- DT::renderDataTable({
     
     input$kwic_go
