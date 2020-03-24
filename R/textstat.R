@@ -152,28 +152,32 @@ setMethod("[", "textstat", function(x, i, j){
 #   )
 # })
 
-setAs(from = "textstat", to = "htmlwidget", def = function(from){
-  dt <- format(from)
-  colnames(dt) <- gsub("count_", "n_", colnames(dt))
+setAs(from = "data.table", to = "htmlwidget", def = function(from){
   DT::datatable(
-    dt,
+    from,
     extensions = "Buttons",
     filter = "top",
     options = c(list(
       pageLength = getOption("polmineR.pagelength"),
       lengthMenu = c(10,25,50,100,250),
       lengthChange = TRUE
-      ),
-      if (getOption("polmineR.buttons")){
-        list(
-          dom = "<'row'<'col-md-3'l><'col-md-6'><'col-md-3'B>><'row'<'col-md-12't>><'row'<'col-md-6'i><'col-md-6'p>>",
-          buttons = c('copy', 'excel', 'pdf')
-        )
-      } else NULL
+    ),
+    if (getOption("polmineR.buttons")){
+      list(
+        dom = "<'row'<'col-md-3'l><'col-md-6'><'col-md-3'B>><'row'<'col-md-12't>><'row'<'col-md-6'i><'col-md-6'p>>",
+        buttons = c('copy', 'excel', 'pdf')
+      )
+    } else NULL
     ),
     rownames = FALSE,
     selection = "single"
   )
+})
+
+setAs(from = "textstat", to = "htmlwidget", def = function(from){
+  dt <- format(from)
+  colnames(dt) <- gsub("count_", "n_", colnames(dt))
+  as(dt, "htmlwidget")
 })
 
 

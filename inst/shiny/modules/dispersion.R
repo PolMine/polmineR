@@ -141,21 +141,10 @@ dispersionServer <- function(input, output, session){
         )
       }
       
-      output$dispersion_table <- DT::renderDataTable(as.data.frame(tab))
+      output$dispersion_table <- DT::renderDataTable(as(as.data.table(tab), "htmlwidget"))
       
     })
   )
-  
-  # observeEvent(
-  #   input$dispersion_mail,
-  #   {
-  #     if (input$dispersion_mail > 0){
-  #       polmineR:::mail(
-  #         values[["cooccurrences"]]
-  #       )
-  #     }
-  #   }
-  # )
   
 }
 

@@ -147,12 +147,9 @@ setMethod("count", "subcorpus", function(
           function(x){
             region_matrix <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
             if (is.null(region_matrix)) return(NULL)
-            matches <- apply(
-              region_matrix, 1, 
-              function(row) 
-                get_token_stream(row[1]:row[2], corpus = .Object@corpus, p_attribute = p_attribute, collapse = " ", encoding = .Object@encoding)
-            )
-            matches_cnt <- table(matches)
+            token <- get_token_stream(cpos(region_matrix), corpus = .Object@corpus, p_attribute = p_attribute, encoding = .Object@encoding)
+            ids <- unlist(Map(rep, 1:nrow(region_matrix), region_matrix[,2] - region_matrix[,1] + 1))
+            matches_cnt <- table(sapply(split(token, ids), paste, collapse = " "))
             dt <- data.table(query = x, match = names(matches_cnt), count = as.vector(unname(matches_cnt)))
             if (nrow(dt) == 0L) return(NULL)
             setorderv(dt, cols = "count", order = -1L)

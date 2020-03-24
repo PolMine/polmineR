@@ -120,15 +120,6 @@ featuresServer <- function(input, output, session){
       message("... starting feature extraction")
       features_obj <- features(x = x, y = y, included = as.logical(input$features_included))
       output$features_table <- DT::renderDataTable(as(features_obj, "htmlwidget"))
-      # featuresObject <- round(featuresObject, 2)
-      # retval <- as.data.frame(featuresObject@stat)
-      # retval[["word_id.x"]] <- NULL
-      # retval[["word_id.y"]] <- NULL
-      # 
-      # values[["features"]] <- featuresObject
-      # output$features_table <- DT::renderDataTable(
-      #   DT::datatable(retval, selection = "single", rownames = FALSE)
-      # )
     }
   )
   

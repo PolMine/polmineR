@@ -98,9 +98,8 @@ countServer <- function(input, output, session){
             )
         }
         id_cols <- grep("_id", colnames(retval))
-        if (length(id_cols) > 0L) for (colname in id_cols) retval[[colname]] <- NULL
-        return(retval)
-
+        if (length(id_cols) > 0L) for (colname in id_cols) retval[, (colname) := NULL]
+        return(as(retval, "htmlwidget"))
       } else {
         return(data.frame(word = character(), count = integer()))
       }

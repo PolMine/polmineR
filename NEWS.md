@@ -83,7 +83,9 @@ the `phrases` argument is used are now also available when a `phrases` object is
 - The `p_attributes` method now accepts an argument `decode`.
 - The `p_attributes`-method has been implemented for `partition_bundle` objects.
 - In the shiny app you can launch via `polmineR()`, the mail-button has been dropped in the kwic, and code can
-be displayed (using code highlighting).
+be displayed (using code highlighting)
+- The settings have been dropped from the shiny app altogether, as we have the buttons now
+- The `count()`-method with arguments `breakdown` is `TRUE` and `cqp` is `TRUE` has been awfully slow. Fast now.
 
 polmineR 0.8.0
 ==============
