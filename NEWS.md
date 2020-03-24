@@ -87,6 +87,10 @@ be displayed (using code highlighting)
 - The settings have been dropped from the shiny app altogether, as we have the buttons now
 - The `count()`-method with arguments `breakdown` is `TRUE` and `cqp` is `TRUE` has been awfully slow. Fast now.
 - Decoding a p-attribute has seen a substantial performance improvement (#130). A new argument `boost` allows user to opt for the improvement, which will involve decoding the lexion directly.
+- The `Corpus` class has been re-introduced (temporarily), to avoid an issue with the GermaParl package if the class is not available (#127).
+- The `get_template()`-method is now defined for the `corpus` class.
+- If no template is set, no reliance on a plain and simple template, and telling error messages, if no template is available (#123).
+- The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy.
 
 polmineR 0.8.0
 ==============

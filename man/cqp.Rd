@@ -9,12 +9,15 @@
 \usage{
 is.cqp(query)
 
-check_cqp_query(query)
+check_cqp_query(query, warn = TRUE)
 
 as.cqp(query, normalise.case = FALSE, collapse = FALSE)
 }
 \arguments{
 \item{query}{A \code{character} vector with at least one CQP query.}
+
+\item{warn}{A (length-one) \code{logical} value, whether to issue a warning if
+a query may be buggy.}
 
 \item{normalise.case}{A \code{logical} value, if \code{TRUE}, a flag will be
 added to the query/queries to omit matching case.}
@@ -50,7 +53,6 @@ as.cqp("migration")
 as.cqp(c("migration", "diversity"))
 as.cqp(c("migration", "diversity"), collapse = TRUE)
 as.cqp("migration", normalise.case = TRUE)
-
 
 check_cqp_query('"Integration.*"') # TRUE, the query is ok
 check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing

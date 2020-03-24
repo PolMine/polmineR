@@ -42,6 +42,15 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 .as.markdown <- function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
   corpusEncoding <- registry_get_encoding(corpus)
   
+  if (is.null(get_template(corpus))){
+    warning(
+      sprintf(
+        "No template available for corpus '%s', it will not be possible to format fulltext output.",
+        corpus
+      )
+    )
+  }
+  
   # generate metainformation
   documentStruc <- cl_cpos2struc(
     corpus = corpus,
@@ -159,6 +168,7 @@ setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, templa
 #' @rdname as.markdown
 setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, template = get_template(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
+  if (is.null(template)) warning("No template available, formatting fulltext output is likely to fail.")
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){
     strucs_range <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L

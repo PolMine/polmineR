@@ -4,6 +4,7 @@
 \alias{get_template}
 \alias{get_template,subcorpus-method}
 \alias{get_template,character-method}
+\alias{get_template,corpus-method}
 \alias{get_template,partition-method}
 \alias{get_template,missing-method}
 \alias{set_template}
@@ -14,6 +15,8 @@
 get_template(.Object, ...)
 
 \S4method{get_template}{character}(.Object)
+
+\S4method{get_template}{corpus}(.Object)
 
 \S4method{get_template}{partition}(.Object)
 

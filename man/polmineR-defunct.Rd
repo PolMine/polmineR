@@ -3,6 +3,7 @@
 \name{polmineR-defunct}
 \alias{polmineR-defunct}
 \alias{browse}
+\alias{Corpus}
 \title{Defunct methods and functions.}
 \usage{
 browse(...)
@@ -13,4 +14,40 @@ browse(...)
 \description{
 Methods and functions not in use any more or that have been
   superseded by renamed functions.
+}
+\details{
+The RefClass `Corpus` has been superseded by the S4 `corpus`-class
+  and adherent methods.
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{Corpus$new()}}
+\item \href{#method-clone}{\code{Corpus$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Corpus$new(corpus, p_attribute = NULL, s_attributes = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Corpus$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

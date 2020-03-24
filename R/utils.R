@@ -10,6 +10,8 @@
 #' to a CQP query by putting the individual strings in quotation marks.
 #' 
 #' @param query A \code{character} vector with at least one CQP query.
+#' @param warn A (length-one) \code{logical} value, whether to issue a warning if
+#'   a query may be buggy.
 #' @name cqp
 #' @references CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})
 #' @rdname cqp
@@ -40,12 +42,11 @@ is.cqp <- function(query){
 #'   of CQP and the R session.
 #' @examples
 #' 
-#' 
 #' check_cqp_query('"Integration.*"') # TRUE, the query is ok
 #' check_cqp_query('"Integration.*') # FALSE, closing quotation mark is missing
 #' check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
 #' check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
-check_cqp_query <- function(query){
+check_cqp_query <- function(query, warn = TRUE){
   msg <- paste(c(
     "An issue occurred when checking query: %s\n",
     paste(
@@ -56,18 +57,26 @@ check_cqp_query <- function(query){
     )
   ), collapse = "")
   
-  check_results <- sapply(
+  sapply(
     query,
     function(q){
       query_ok <- TRUE
       chars <- strsplit(q, split = "")[[1]]
       if (length(which(chars == '"')) %% 2 != 0) query_ok <- FALSE
       if (length(which(chars == "'")) %% 2 != 0) query_ok <- FALSE
-      if (!query_ok) warning(sprintf(msg, q))
+      if (!query_ok && isTRUE(warn)) warning(sprintf(msg, q))
+      if (length(which(chars == '(')) != length(which(chars == ')'))){
+        query_ok <- FALSE
+        if (isTRUE(warn)) warning("Opening brackets are not matched by closing brackets in CQP query: ", q)
+      }
+      if (length(which(chars == '[')) != length(which(chars == ']'))){
+        query_ok <- FALSE
+        if (isTRUE(warn)) warning("Number of opening squarebrackets are not matched by closing brackets in CQP query: ", q)
+      }
+      
       query_ok
     }
   )
-  any(check_results)
 }
 
 

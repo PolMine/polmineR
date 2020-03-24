@@ -3,6 +3,7 @@
 export("%>%")
 export()
 export(.importPolMineCorpus)
+export(Corpus)
 export(as.corpusEnc)
 export(as.cqp)
 export(as.data.table.bundle)

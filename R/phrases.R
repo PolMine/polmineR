@@ -33,7 +33,12 @@ setMethod("as.phrases", "ngrams", function(.Object, ...){
     as.list(.Object@stat[, cols, with = FALSE])
   )
   queries <- do.call(sprintf, args)
-  regions_matrix <- cpos(.Object@corpus, query = queries,  cqp = TRUE, ...)
+  query_check_results <- check_cqp_query(queries)
+  if (isFALSE(all(query_check_results))){
+    queries <- queries[query_check_results]
+    warning("Queries dropped that are not valid CQP queries:", table(query_check_results)[["FALSE"]])
+  }
+  regions_matrix <- cpos(.Object@corpus, query = queries,  cqp = TRUE, check = FALSE, ...)
   as.phrases(regions_matrix, corpus = .Object@corpus, enc = .Object@encoding)
 })
 

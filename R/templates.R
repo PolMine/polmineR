@@ -26,6 +26,11 @@ setMethod("get_template", "character", function(.Object){
 })
 
 #' @rdname templates
+setMethod("get_template", "corpus", function(.Object){
+  get_template(.Object@corpus)
+})
+
+#' @rdname templates
 setMethod("get_template", "partition", function(.Object){
   getOption("polmineR.templates")[[.Object@corpus]]
 })
@@ -47,20 +52,16 @@ setGeneric("set_template", function(.Object, ... ) standardGeneric("set_template
 #' @rdname templates
 setMethod("set_template", "character", function(.Object){
   stopifnot(.Object %in% .list_corpora())
-  templateList <- getOption("polmineR.templates")
+  template_list <- getOption("polmineR.templates")
   filename <- file.path(registry_get_home(.Object), "template.json")
   if (file.exists(filename)){
-    templateList[[.Object]] <- jsonlite::fromJSON(txt = filename) 
-    if ("metadata" %in% names(templateList[[.Object]])){
-      templateList[[.Object]][["metadata"]] <- unlist(templateList[[.Object]][["metadata"]])
+    template_list[[.Object]] <- jsonlite::fromJSON(txt = filename) 
+    if ("metadata" %in% names(template_list[[.Object]])){
+      template_list[[.Object]][["metadata"]] <- unlist(template_list[[.Object]][["metadata"]])
     }
-  } else {
-    templateList[[.Object]] <- jsonlite::fromJSON(
-      txt = system.file(package = "polmineR", "templates", "plain.template.json")
-      )
   }
-  options("polmineR.templates" = templateList)
-  invisible(templateList[[.Object]])
+  options("polmineR.templates" = template_list)
+  invisible(template_list[[.Object]])
 })
 
 
