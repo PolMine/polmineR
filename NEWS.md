@@ -90,7 +90,7 @@ be displayed (using code highlighting)
 - The `Corpus` class has been re-introduced (temporarily), to avoid an issue with the GermaParl package if the class is not available (#127).
 - The `get_template()`-method is now defined for the `corpus` class.
 - If no template is set, no reliance on a plain and simple template, and telling error messages, if no template is available (#123).
-- The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy.
+- The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy. The `as.phrases()`-method will use the function to avoid that buggy CQP queries may be generated.
 
 polmineR 0.8.0
 ==============
