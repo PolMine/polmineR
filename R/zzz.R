@@ -15,6 +15,7 @@
     "polmineR.smtp_port" = if (length(getOption("polmineR.smtp_port")) > 0) getOption("polmineR.smtp_port") else "",
     "polmineR.email" = if (length(getOption("polmineR.email")) > 0) getOption("polmineR.email") else "",
     "polmineR.browse" = FALSE,
+    "polmineR.buttons" = interactive(),
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
     "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,

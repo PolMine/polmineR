@@ -113,7 +113,7 @@ cooccurrencesServer <- function(input, output, session){
           })
         
         if (!is.null(values[["cooccurrences"]])){
-          return(DT::datatable(format(values[["cooccurrences"]])[!is.na(ll)], selection = "single", rownames = FALSE))
+          return(as(values[["cooccurrences"]], "htmlwidget"))
         } else {
           y <- data.frame(
             word = character(), count_window = character(), count_partition = character(),

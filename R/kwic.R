@@ -4,7 +4,29 @@ NULL
 
 setAs(from = "kwic", to = "htmlwidget", def = function(from){
   dt <- format(from, align = FALSE)
-  retval <- DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE), escape = FALSE)
+  retval <- DT::datatable(
+    dt,
+    extensions = "Buttons",
+    filter = "top",
+    options = c(
+      list(
+        pageLength = getOption("polmineR.pagelength"), 
+        lengthMenu = c(10,25,50,100,250,500),
+        lengthChange = TRUE
+      ), 
+      if (getOption("polmineR.buttons")){
+        list(
+          dom = "<'row'<'col-md-3'l><'col-md-6'><'col-md-3'B>><'row'<'col-md-12't>><'row'<'col-md-6'i><'col-md-6'p>>",
+          buttons = c('copy', 'excel', 'pdf')
+        )
+      } else {
+        NULL
+      }
+    ),
+    escape = FALSE,
+    selection = "single",
+    rownames = FALSE
+  )
   if ("node" %in% colnames(dt)) retval <- DT::formatStyle(retval, "node", textAlign = "center")
   if ("left" %in% colnames(dt)) retval <- DT::formatStyle(retval, "left", textAlign = "right")
   retval$dependencies[[length(retval$dependencies) + 1L]] <- htmltools::htmlDependency(

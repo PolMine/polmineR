@@ -35,7 +35,9 @@ featuresUiInput <- function(){
 #' @rdname shiny_helper_functions
 #' @export featuresUiOutput
 featuresUiOutput <- function(){
-  DT::dataTableOutput('features_table')
+  list(
+    DT::dataTableOutput('features_table')
+  )
 }
 
 
@@ -116,16 +118,17 @@ featuresServer <- function(input, output, session){
       }
       
       message("... starting feature extraction")
-      featuresObject <- features(x = x, y = y, included = as.logical(input$features_included))
-      featuresObject <- round(featuresObject, 2)
-      retval <- as.data.frame(featuresObject@stat)
-      retval[["word_id.x"]] <- NULL
-      retval[["word_id.y"]] <- NULL
-      
-      values[["features"]] <- featuresObject
-      output$features_table <- DT::renderDataTable(
-        DT::datatable(retval, selection = "single", rownames = FALSE)
-      )
+      features_obj <- features(x = x, y = y, included = as.logical(input$features_included))
+      output$features_table <- DT::renderDataTable(as(features_obj, "htmlwidget"))
+      # featuresObject <- round(featuresObject, 2)
+      # retval <- as.data.frame(featuresObject@stat)
+      # retval[["word_id.x"]] <- NULL
+      # retval[["word_id.y"]] <- NULL
+      # 
+      # values[["features"]] <- featuresObject
+      # output$features_table <- DT::renderDataTable(
+      #   DT::datatable(retval, selection = "single", rownames = FALSE)
+      # )
     }
   )
   

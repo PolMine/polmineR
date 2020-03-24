@@ -22,6 +22,7 @@ library(shiny)
 library(shinythemes)
 
 options(polmineR.shiny = TRUE)
+options(polmineR.buttons = TRUE)
 
 source("modules/cooccurrences.R")
 source("modules/dispersion.R")

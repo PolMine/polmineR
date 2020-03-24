@@ -85,14 +85,7 @@ shinyUI(
           column(2)
         )
       )
-    ),
-
-    tabPanel(
-      "settings",
-      sidebarLayout(
-        sidebarPanel = sidebarPanel(settingsUiInput()),
-        mainPanel = mainPanel(settingsUiOutput())
-      )
     )
+    
   )
 )

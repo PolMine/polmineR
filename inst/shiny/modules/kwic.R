@@ -119,34 +119,36 @@ kwicServer <- function(input, output, session, ...){
         } else if (nrow(values[["kwic"]]@stat) == 0L){
           retval <- data.frame(left = character(), node = character(), right = character())
         } else {
-          tab <- values[["kwic"]]@stat
-          if ("match_id" %in% colnames(tab)) tab[, "match_id" := NULL]
-          if (length(input$kwic_meta) == 0L){
-            retval <- data.frame(no = 1L:nrow(tab), tab)
-          } else if (length(input$kwic_meta)){
-            metaRow <- unlist(lapply(
-              1L:nrow(tab),
-              function(i)paste(unlist(lapply(tab[i,1L:length(input$kwic_meta)], as.character)), collapse = " | ")
-            ))
-            retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta) + 1L):ncol(tab)])
-          }
+          retval <- as(values[["kwic"]], "htmlwidget")
+          # tab <- values[["kwic"]]@stat
+          # if ("match_id" %in% colnames(tab)) tab[, "match_id" := NULL]
+          # if (length(input$kwic_meta) == 0L){
+          #   retval <- as()
+          # } else if (length(input$kwic_meta)){
+          #   metaRow <- unlist(lapply(
+          #     1L:nrow(tab),
+          #     function(i) paste(unlist(lapply(tab[i,1L:length(input$kwic_meta)], as.character)), collapse = " | ")
+          #   ))
+          #   retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta) + 1L):ncol(tab)])
+          # }
         }
         
         
       } else {
         retval <- data.frame(left = character(), node = character(), right = character())
       }
-      
+      retval
     })
     
     # format DataTable
-    retval <- DT::datatable(retval, selection = "single", rownames = FALSE, escape = FALSE)
-    retval <- DT::formatStyle(retval, "node", color = "#4863A0", textAlign = "center")
-    retval <- DT::formatStyle(retval, "left", textAlign = "right")
-    if (length(input$kwic_meta) > 0){
-      retval <- DT::formatStyle(
-        retval, "meta", fontStyle = "italic", textAlign = "left", borderRight = "1px solid DarkGray")
-    }
+    # retval <- DT::datatable(retval, selection = "single", rownames = FALSE, escape = FALSE)
+    # retval <- DT::formatStyle(retval, "node", color = "#4863A0", textAlign = "center")
+    # retval <- DT::formatStyle(retval, "left", textAlign = "right")
+    # if (length(input$kwic_meta) > 0){
+    #   retval <- DT::formatStyle(
+    #     retval, "meta", fontStyle = "italic", textAlign = "left", borderRight = "1px solid DarkGray")
+    # }
+    # retval
     retval
   })
   

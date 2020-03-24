@@ -7,7 +7,6 @@ shinyServer(function(input, output, session) {
   dispersionServer(input, output, session)
   featuresServer(input, output, session)
   readServer(input, output, session)
-  settingsServer(input, output, session)
   countServer(input, output, session)
   
   session$onSessionEnded(
@@ -39,11 +38,7 @@ shinyServer(function(input, output, session) {
         "readServer",
         "readUiInput",
         "readUiOutput",
-        "rectifySpecialChars",
-        "settingsServer",
-        "settingsTable",
-        "settingsUiInput",
-        "settingsUiOutput"
+        "rectifySpecialChars"
       )
       rm(list = funs, envir = .GlobalEnv)
     }

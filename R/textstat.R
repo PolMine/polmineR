@@ -143,37 +143,46 @@ setMethod("[", "textstat", function(x, i, j){
 })
 
 
-setAs(from = "textstat", to = "htmlwidget", def = function(from){
-  DT::datatable(from@stat, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
-})
+# setAs(from = "textstat", to = "htmlwidget", def = function(from){
+#   DT::datatable(
+#     from@stat,
+#     options = list(
+#       pageLength = getOption("polmineR.pagelength"),
+#       lengthChange = FALSE)
+#   )
+# })
 
-setAs(from = "cooccurrences", to = "htmlwidget", def = function(from){
-  dt <- copy(round(from)@stat)
+setAs(from = "textstat", to = "htmlwidget", def = function(from){
+  dt <- format(from)
   colnames(dt) <- gsub("count_", "n_", colnames(dt))
   DT::datatable(
     dt,
     extensions = "Buttons",
+    filter = "top",
     options = c(list(
       pageLength = getOption("polmineR.pagelength"),
-      lengthChange = FALSE
+      lengthMenu = c(10,25,50,100,250),
+      lengthChange = TRUE
       ),
-      if (interactive()){
+      if (getOption("polmineR.buttons")){
         list(
-          dom = 'Bfrtip',
-          buttons = c('copy', 'csv', 'excel', 'pdf')
+          dom = "<'row'<'col-md-3'l><'col-md-6'><'col-md-3'B>><'row'<'col-md-12't>><'row'<'col-md-6'i><'col-md-6'p>>",
+          buttons = c('copy', 'excel', 'pdf')
         )
       } else NULL
     ),
-    rownames = FALSE
+    rownames = FALSE,
+    selection = "single"
   )
 })
 
-setAs(from = "features", to = "htmlwidget", def = function(from){
-  dt <- copy(round(from)@stat)
-  for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
-  colnames(dt) <- gsub("count_", "n_", colnames(dt))
-  DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
-})
+
+# setAs(from = "features", to = "htmlwidget", def = function(from){
+#   dt <- copy(round(from)@stat)
+#   for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
+#   colnames(dt) <- gsub("count_", "n_", colnames(dt))
+#   DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
+# })
 
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
