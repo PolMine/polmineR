@@ -171,7 +171,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
 
 #' @rdname hits
 setMethod("hits", "partition_bundle", function(
-  .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), size = TRUE, freq = FALSE,
+  .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL, size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
   
@@ -203,12 +203,14 @@ setMethod("hits", "partition_bundle", function(
   .message("finalizing tables", verbose = verbose)
   strucs <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]], registry = registry())
   count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
-  setkeyv(count_dt, cols = "struc")
-  setkeyv(struc_dt, cols = "struc")
-  dt <- struc_dt[count_dt] # merge
+  dt <- struc_dt[count_dt, on = "struc"] # merge
   nas <- which(is.na(dt[["partition"]]) == TRUE)
+  for (s_attr in s_attribute){
+    values <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = dt[["struc"]], registry = registry())
+    dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]
+  }
   if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
-  tf <- dt[, .N, by = c("partition", "query")]
+  tf <- dt[, .N, by = c(c("partition", "query"), s_attribute)]
   setnames(tf, old = "N", new = "count")
   if (freq) size <- TRUE
   if (size) tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]

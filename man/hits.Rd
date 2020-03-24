@@ -91,6 +91,7 @@ hits(.Object, ...)
   cqp = FALSE,
   check = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
+  s_attribute = NULL,
   size = TRUE,
   freq = FALSE,
   mc = getOption("polmineR.mc"),
