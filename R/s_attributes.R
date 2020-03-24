@@ -163,7 +163,6 @@ setMethod(
           tab <- data.frame(
             lapply(
               s_attribute,
-              # USE.NAMES = TRUE,
               function(x) { 
                 tmp <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = .Object@strucs, registry = registry())
                 Encoding(tmp) <- .Object@encoding

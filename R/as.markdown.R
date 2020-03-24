@@ -161,8 +161,8 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   # in the function call, meta is actually not needed, required by the calling function
   if (is.null(meta)) meta <- template[["metadata"]]
   if (interjections){
-    maxNoStrucs <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
-    if (maxNoStrucs != length(.Object@strucs)){
+    strucs_range <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
+    if (strucs_range != length(.Object@strucs)){
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
       .Object@cpos <- RcppCWB::get_region_matrix(
@@ -174,23 +174,23 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   }
   
   # detect where a change of metainformation occurs
-  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta)) # somewhat slow
+  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta, unique = FALSE)) # somewhat slow
   if (length(.Object@strucs) > 1L){
-    metaChange <- sapply(2L:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1L,]))
-    metaChange <- c(TRUE, metaChange)
+    meta_change <- sapply(2L:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1L,]))
+    meta_change <- c(TRUE, meta_change)
   } else {
-    metaChange <- TRUE
+    meta_change <- TRUE
   }
   
   type <- cl_struc2str(corpus = .Object@corpus, s_attribute = template[["speech"]][["sAttribute"]], struc = .Object@strucs, registry = registry())
   
   if (is.numeric(cutoff)){
-    beyondCutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
-    if (length(beyondCutoff) > 0){
-      threshold <- min(beyondCutoff)
-      if (threshold > 1){
-        metadata <- metadata[1:threshold,]
-        .Object@cpos <- .Object@cpos[1:threshold,]
+    beyond_cutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
+    if (length(beyond_cutoff) > 0L){
+      threshold <- min(beyond_cutoff)
+      if (threshold > 1L){
+        metadata <- metadata[1L:threshold,]
+        .Object@cpos <- .Object@cpos[1L:threshold,]
       }
     }
   }
@@ -199,7 +199,7 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
     1L:nrow(metadata),
     function(i) {
       meta <- ""
-      if (metaChange[i] == TRUE) { 
+      if (meta_change[i] == TRUE) { 
         meta <- paste(metadata[i,], collapse=" | ", sep="")
         meta <- paste(
           template[["document"]][["format"]][1],
@@ -215,14 +215,14 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
         cpos = cpos
       )
     tokens <- .tagTokens(tokens)
-    plainText <- paste(tokens, collapse = " ")
-    plainText <- paste(
+    plaintext <- paste(tokens, collapse = " ")
+    plaintext <- paste(
       template[["speech"]][["format"]][[type[i]]][1],
-      plainText,
+      plaintext,
       template[["speech"]][["format"]][[type[i]]][1],
       sep = ""
       )
-    paste(meta, plainText)
+    paste(meta, plaintext)
   })
   markdown <- paste(markdown, collapse = "\n\n")
   markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)

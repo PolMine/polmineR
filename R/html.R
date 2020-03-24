@@ -185,7 +185,7 @@ setMethod(
       stop("package 'markdown' is not installed, but necessary for this function")
     }
     if (is.null(meta)) meta <- names(object@s_attributes)
-    if (all(meta %in% s_attributes(object)) != TRUE) warning("not all s-attributes provided as meta are available")
+    if (isFALSE(all(meta %in% s_attributes(object)))) warning("not all s-attributes provided as meta are available")
     
     .message("generating markdown", verbose = verbose)
     md <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)
