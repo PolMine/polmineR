@@ -151,7 +151,8 @@ cooccurrencesServer <- function(input, output, session){
         }
         updateSelectInput(session, "kwic_cqp", selected = input$cooccurrences_cqp)
         updateTextInput(session, "kwic_query", value = input$cooccurrences_query)
-        updateSelectInput(session, "kwic_window", selected = input$cooccurrences_window)
+        updateSelectInput(session, "kwic_left", selected = input$cooccurrences_window)
+        updateSelectInput(session, "kwic_right", selected = input$cooccurrences_window)
         updateSelectInput(session, "kwic_p_attribute", selected = input$cooccurrences_p_attribute)
         updateNavbarPage(session, "polmineR", selected = "kwic")
         values[["kwic_go"]] <- as.character(Sys.time()) # will initiate kwic preparation & display
