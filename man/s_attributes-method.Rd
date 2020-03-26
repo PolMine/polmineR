@@ -33,8 +33,8 @@ s_attributes(.Object, ...)
 }
 \arguments{
 \item{.Object}{A \code{corpus}, \code{subcorpus}, \code{partition} object, or
-a \code{call}. A corpus can also be specified by a length-one character
-vector.}
+a \code{call}. A corpus can also be specified by a length-one
+\code{character} vector.}
 
 \item{...}{To maintain backward compatibility, if argument \code{sAttribute}
 (deprecated) is used. If \code{.Object} is a \code{remote_corpus} or
@@ -44,7 +44,7 @@ to be passed explicity.}
 
 \item{s_attribute}{The name of a specific s-attribute.}
 
-\item{unique}{Logical, whether to return unique values.}
+\item{unique}{A \code{logical} value, whether to return unique values.}
 
 \item{regex}{A regular expression passed into \code{grep} to filter return
 value by applying a regex.}
@@ -68,7 +68,7 @@ attributes into so-called "s-attributes". There are two basic uses of the
 (default), the return value is a \code{character} vector with all
 s-attributes present in a corpus.
 
-If \code{s_attribute} is the name of a specific s-attribute (a length one
+If \code{s_attribute} is the name of a specific s-attribute (a length-one
 character vector), the values of the s-attributes available in the
 \code{corpus}/\code{partition} are returned.
 
@@ -76,8 +76,9 @@ If argument \code{unique} is \code{FALSE}, the full sequence of the
 s_attributes is returned, which is a useful building block for decoding a
 corpus.
 
-If a character vector including several s-attributes is provided, the method
-will return a \code{data.table}.
+If argument \code{s_attributes} is a character providing several s-attributes, the method
+will return a \code{data.table}. If \code{unique} is \code{TRUE}, all unique
+combinations of the s-attributes will be reported by the \code{data.table}.
 
 If \code{.Object} is a call, the \code{s_attributes}-method will
   return a character vector with the s-attributes occurring in the call. This

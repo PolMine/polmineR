@@ -19,6 +19,48 @@ test_that(
   }
 )
 
+test_that(
+  "multiple s-attributes",{
+    s_attr_unique <- s_attributes("GERMAPARLMINI", s_attribute = c("date", "speaker"))
+    s_attr_all <- s_attributes("GERMAPARLMINI", s_attribute = c("date", "speaker"), unique = FALSE)
+    
+    expect_equal(class(s_attr_unique)[1], "data.table")
+    expect_equal(class(s_attr_all)[1], "data.table")
+    
+    expect_identical(ncol(s_attr_unique), 2L)
+    expect_identical(ncol(s_attr_all), 2L)
+    
+    expect_identical(nrow(s_attr_unique), 155L)
+    expect_identical(nrow(s_attr_all), 4810L)
+    
+    s_attr_sub_unique <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-11") %>%
+      s_attributes(s_attribute = c("date", "speaker"))
+    s_attr_sub_all <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-11") %>%
+      s_attributes(s_attribute = c("date", "speaker"), unique = FALSE)
+    
+    expect_equal(class(s_attr_sub_unique)[1], "data.table")
+    expect_equal(class(s_attr_sub_all)[1], "data.table")
+    
+    expect_identical(ncol(s_attr_sub_unique), 2L)
+    expect_identical(ncol(s_attr_sub_all), 2L)
+    
+    expect_identical(
+      all(s_attr_unique[date == "2009-11-11"][["speaker"]] %in% s_attr_sub_unique[["speaker"]]),
+      TRUE
+    )
+    expect_identical(
+      all(s_attr_all[date == "2009-11-11"][["speaker"]] %in% s_attr_sub_all[["speaker"]]),
+      TRUE
+    )
+    
+    
+    
+  }
+  
+)
+
 
 test_that(
   "get s-attributes in a call",

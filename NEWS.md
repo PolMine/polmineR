@@ -92,6 +92,7 @@ be displayed (using code highlighting)
 - If no template is set, no reliance on a plain and simple template, and telling error messages, if no template is available (#123).
 - The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy. The `as.phrases()`-method will use the function to avoid that buggy CQP queries may be generated.
 - The `hits()`-method for `partition_bundle` objects now accepts an argument `s_attribute` to include metadata in results (#74).
+- The `s_attributes()`-method is now consistent with the usage of the `unique` arugment (#133).
 
 polmineR 0.8.0
 ==============

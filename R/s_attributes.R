@@ -14,7 +14,7 @@ NULL
 #' (default), the return value is a \code{character} vector with all
 #' s-attributes present in a corpus.
 #' 
-#' If \code{s_attribute} is the name of a specific s-attribute (a length one
+#' If \code{s_attribute} is the name of a specific s-attribute (a length-one
 #' character vector), the values of the s-attributes available in the
 #' \code{corpus}/\code{partition} are returned.
 #' 
@@ -22,14 +22,15 @@ NULL
 #' s_attributes is returned, which is a useful building block for decoding a
 #' corpus.
 #' 
-#' If a character vector including several s-attributes is provided, the method
-#' will return a \code{data.table}.
+#' If argument \code{s_attributes} is a character providing several s-attributes, the method
+#' will return a \code{data.table}. If \code{unique} is \code{TRUE}, all unique
+#' combinations of the s-attributes will be reported by the \code{data.table}.
 #'
 #' @param .Object A \code{corpus}, \code{subcorpus}, \code{partition} object, or
-#'   a \code{call}. A corpus can also be specified by a length-one character
-#'   vector.
+#'   a \code{call}. A corpus can also be specified by a length-one
+#'   \code{character} vector.
 #' @param s_attribute The name of a specific s-attribute.
-#' @param unique Logical, whether to return unique values.
+#' @param unique A \code{logical} value, whether to return unique values.
 #' @param regex A regular expression passed into \code{grep} to filter return
 #'   value by applying a regex.
 #' @param ... To maintain backward compatibility, if argument \code{sAttribute}
@@ -72,9 +73,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   } else {
     if (length(s_attribute) == 1L){
       if (!s_attribute %in% s_attributes(.Object)){
-        stop(
-          sprintf("The s-attribute '%s' is not defined for corpus '%s'.", s_attribute, .Object@corpus)
-        )
+        stop(sprintf("The s-attribute '%s' is not defined for corpus '%s'.", s_attribute, .Object@corpus))
       }
       avs_file <- file.path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
       avs_file_size <- file.info(avs_file)[["size"]]
@@ -97,18 +96,9 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         return(y)
       }
     } else if (length(s_attribute) > 1L){
-      if (!all(s_attribute %in% s_attributes(.Object))){
-        stop(sprintf("At least one s-attribute provided is not defined for corpus '%s'.", .Object@corpus))
-      }
-      y <- lapply(
-        s_attribute,
-        function(x) {
-          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = 0L:(cl_attribute_size(corpus = .Object@corpus, attribute = x, attribute_type = "s", registry = registry()) - 1L), registry = registry())
-          Encoding(retval) <- .Object@encoding
-          as.nativeEnc(retval, from = .Object@encoding)
-        })
-      names(y) <- s_attribute
-      return( data.table::as.data.table(y) )
+      y <- data.table(sapply(s_attribute, function(s_attr) s_attributes(.Object, s_attribute = s_attr, unique = FALSE)))
+      if (isTRUE(unique)) y <- unique(y)
+      return( y )
     }
   }
 })
@@ -159,38 +149,26 @@ setMethod(
         Encoding(retval) <- localeToCharset()[1]
         return(retval)
       } else if (length(s_attribute) > 1L){
-        if (.Object@xml == "flat") {
-          tab <- data.frame(
-            lapply(
-              s_attribute,
-              function(x) { 
-                tmp <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = .Object@strucs, registry = registry())
-                Encoding(tmp) <- .Object@encoding
-                tmp <- as.nativeEnc(tmp, from = .Object@encoding)
-                Encoding(tmp) <- localeToCharset()[1]
-                tmp
+        tab <- data.table(
+          sapply(
+            s_attribute,
+            USE.NAMES = TRUE,
+            function(x) {
+              strucs <- if (.Object@xml == "nested"){
+                cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry())
+              } else {
+                .Object@strucs
               }
-            ),
-            stringsAsFactors = FALSE
+              str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
+              Encoding(str) <- .Object@encoding
+              str <- as.nativeEnc(str, from = .Object@encoding)
+              Encoding(str) <- localeToCharset()[1]
+              str
+            }
           )
-          colnames(tab) <- s_attribute
-        } else if (.Object@xml == "nested") {
-          tab <- data.frame(
-            sapply(
-              s_attribute,
-              USE.NAMES = TRUE,
-              function(x) {
-                tmp <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry()), registry = registry())
-                Encoding(tmp) <- .Object@encoding
-                as.nativeEnc(tmp, from = .Object@encoding)
-                Encoding(tmp) <- localeToCharset()[1]
-                tmp
-              }
-            )
-          )
-          colnames(tab) <- s_attribute
-        }
-        return( data.table::as.data.table(tab) )
+        )
+        if (isTRUE(unique)) tab <- unique(tab)
+        return( tab )
         
       }
     }
