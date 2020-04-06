@@ -270,24 +270,30 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (length(corpus) > 1L) stop("The objects in the bundle must be derived from the same corpus.")
     
     if (verbose) message("... creating data.table with corpus positions")
-    cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
-    cpos_dt[, "name" := do.call(
-      c,
-      lapply(
-        seq_along(.Object@objects),
-        function(i) rep(x = names(.Object@objects)[[i]], times = nrow(.Object@objects[[i]]@cpos))
-      )
-      )]
-    DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "name"]
-    setnames(DT, old = "V1", new = "cpos")
-    rm(cpos_dt)
+    # cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
+    # cpos_dt[, "name" := do.call(
+    #   c,
+    #   lapply(
+    #     seq_along(.Object@objects),
+    #     function(i) rep(x = names(.Object@objects)[[i]], times = nrow(.Object@objects[[i]]@cpos))
+    #   )
+    #   )]
+    # DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "name"] # slow
+    # 
+    DT <- data.table(
+      cpos = cpos(do.call(rbind, lapply(.Object@objects, slot, "cpos"))),
+      name_id = do.call(c, Map(rep, 1:length(.Object@objects), unname(sapply(.Object@objects, slot, "size"))))
+    )
+    # 
+    # setnames(DT, old = "V1", new = "cpos")
+    # rm(cpos_dt)
     
     if (is.null(phrases)){
       if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
       DT[, "id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
       
       if (verbose) message("... performing count")
-      CNT <- DT[,.N, by = c("name", "id")]
+      CNT <- DT[,.N, by = c("name_id", "id")]
       rm(DT)
       setnames(CNT, old = "N", new = "count")
       
@@ -306,12 +312,12 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       if (verbose) message("... generating phrases")
       DT_min <- concatenate_phrases(DT, phrases = phrases, col = p_attribute) # in utils.R
       if (verbose) message("... counting")
-      CNT <- DT_min[, .N, by = c("name", p_attribute)]
+      CNT <- DT_min[, .N, by = c("name_id", p_attribute)]
       setnames(CNT, old = "N", new = "count")
     }
     
     if (verbose) message("... creating bundle of count objects")
-    CNT_list <- split(CNT, by = "name")
+    CNT_list <- split(CNT, by = "name_id")
     rm(CNT)
     y <- new(Class = "count_bundle", p_attribute = p_attribute, corpus = corpus, encoding = enc)
     .fn <- function(i){
@@ -320,8 +326,8 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
         corpus = corpus,
         encoding = .Object@objects[[i]]@encoding,
         p_attribute = p_attribute,
-        stat = CNT_list[[i]],
-        name = .Object@objects[[ which(names(.Object@objects) == CNT_list[[i]][["name"]][[1]]) ]]@name,
+        stat = CNT_list[[i]][, "name_id" := NULL],
+        name = .Object@objects[[i]]@name,
         size = size(.Object@objects[[i]])
       )
     }

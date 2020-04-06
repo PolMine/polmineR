@@ -93,6 +93,9 @@ be displayed (using code highlighting)
 - The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy. The `as.phrases()`-method will use the function to avoid that buggy CQP queries may be generated.
 - The `hits()`-method for `partition_bundle` objects now accepts an argument `s_attribute` to include metadata in results (#74).
 - The `s_attributes()`-method is now consistent with the usage of the `unique` arugment (#133).
+- The performance of the `count()`-method for `partition_bundle` objects has been improved, is twice as fast now (#137).
+- A unit test checks different methods for generating a `DocumentTermMatrix` against each other, as a safeguard that different approaches might lead to different results (#139).
+)
 
 polmineR 0.8.0
 ==============

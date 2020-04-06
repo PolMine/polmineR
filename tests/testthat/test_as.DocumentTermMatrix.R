@@ -45,3 +45,39 @@ test_that(
     expect_identical(tdm, t(dtm))
   }
 )
+
+test_that(
+  "",
+  {
+    pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
+    
+    dtm_count <- count(pb, p_attribute = "word", verbose = FALSE) %>%
+      as.sparseMatrix(col = "count")
+    
+    dtm_enrich <- enrich(pb, p_attribute = "word") %>%
+      as.sparseMatrix(col = "count")
+    
+    dtm_direttisima <- as.DocumentTermMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "speaker") %>%
+      as.sparseMatrix() %>%
+      Matrix::t()
+      
+    expect_identical(length(which(!rownames(dtm_direttisima) %in% rownames(dtm_count))), 0L)
+    expect_identical(length(which(!rownames(dtm_enrich) %in% rownames(dtm_count))), 0L)
+    expect_identical(length(which(!colnames(dtm_enrich) %in% colnames(dtm_count))), 0L)
+    
+    expect_identical(slam::col_sums(dtm_enrich), slam::col_sums(dtm_count))
+    
+
+    dtm_enrich2 <- dtm_enrich[rownames(dtm_count),]
+    expect_identical(dtm_count, dtm_enrich2)
+    
+    dtm_direttisima2 <- dtm_direttisima[,colnames(dtm_count)]
+    dtm_direttisima3 <- dtm_direttisima2[rownames(dtm_count),]
+    expect_identical(unname(slam::col_sums(dtm_enrich)), unname(slam::col_sums(dtm_direttisima3)))
+    
+    expect_identical(dimnames(dtm_direttisima3)[[2]], dimnames(dtm_count)[[2]])
+    expect_identical(dimnames(dtm_direttisima3)[[1]], dimnames(dtm_count)[[1]])
+    expect_identical(dtm_count, dtm_direttisima3)
+    
+  }
+)

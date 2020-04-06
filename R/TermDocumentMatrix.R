@@ -180,7 +180,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
     terms <- as.nativeEnc(levels(token_factor), from = registry_get_encoding(x))
     documents <- as.nativeEnc(levels(s_attr_factor), from = registry_get_encoding(x))
     
-    dimnames(dtm) <- list(documents, terms)
+    dimnames(dtm) <- list(Docs = documents, Terms = terms)
   }
   class(dtm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   attr(dtm, "weighting") <- c("term frequency", "tf")
