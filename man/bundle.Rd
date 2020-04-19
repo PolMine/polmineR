@@ -62,7 +62,7 @@
 
 \S4method{as.list}{bundle}(x)
 
-as.list.bundle(x)
+\method{as.list}{bundle}(x, ...)
 
 \S4method{get_corpus}{bundle}(x)
 }
