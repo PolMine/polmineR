@@ -47,7 +47,7 @@ test_that(
 )
 
 test_that(
-  "",
+  "Check ways to generate DocumentTermMatrix against each other",
   {
     pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
     
@@ -73,10 +73,7 @@ test_that(
     
     dtm_direttisima2 <- dtm_direttisima[,colnames(dtm_count)]
     dtm_direttisima3 <- dtm_direttisima2[rownames(dtm_count),]
-    expect_identical(unname(slam::col_sums(dtm_enrich)), unname(slam::col_sums(dtm_direttisima3)))
-    
-    expect_identical(dimnames(dtm_direttisima3)[[2]], dimnames(dtm_count)[[2]])
-    expect_identical(dimnames(dtm_direttisima3)[[1]], dimnames(dtm_count)[[1]])
+
     expect_identical(dtm_count, dtm_direttisima3)
     
   }

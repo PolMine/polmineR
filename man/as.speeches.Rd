@@ -66,7 +66,10 @@ that provides the names of speakers.}
 assumed to make the difference whether a speech has been interrupted (by an
 interjection or question), or whether to assume seperate speeches.}
 
-\item{mc}{Whether to use multicore, defaults to \code{FALSE}.}
+\item{mc}{Whether to use multicore, defaults to \code{FALSE}. If
+\code{progress} is \code{TRUE}, argument \code{mc} is passed into
+\code{pblapply} as argument \code{cl}. If \code{progress} is \code{FALSE},
+\code{mc} is passed into \code{mclapply} as argument \code{mc.cores}.}
 
 \item{verbose}{A \code{logical} value, defaults to \code{TRUE}.}
 

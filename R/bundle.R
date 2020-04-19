@@ -221,3 +221,7 @@ setMethod("subset", "bundle", function(x, ...){
 #' @rdname bundle
 #' @exportMethod as.list
 setMethod("as.list", "bundle", function(x) x@objects)
+
+#' @rdname bundle
+#' @export as.list.bundle
+as.list.bundle <- function(x) x@objects

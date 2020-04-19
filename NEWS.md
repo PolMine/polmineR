@@ -96,6 +96,9 @@ be displayed (using code highlighting)
 - The performance of the `count()`-method for `partition_bundle` objects has been improved, is twice as fast now (#137).
 - A unit test checks different methods for generating a `DocumentTermMatrix` against each other, as a safeguard that different approaches might lead to different results (#139).
 )
+- The `as.speeches()`-method for `corpus` objects now supports parallelization
+- There is now a definition of an S3 `as.list.bundle()`-method (previously, there has only been the S4 method).
+The beautiful effect is that `lapply()` and `sapply()` can be used on `bundle` objects now (a `subcorpis_bundle`, for instance)
 
 polmineR 0.8.0
 ==============

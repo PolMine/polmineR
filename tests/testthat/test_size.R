@@ -49,3 +49,17 @@ test_that(
   }
 )
 
+test_that(
+  "size for partition_bundle / subcorpus_bundle",
+  {
+    reuters_articles <- corpus("REUTERS") %>% split(s_attribute = "id")
+    # This check is somewhat redundant but good to be on the safe side
+    to_be_checked <- size(reuters_articles)[["size"]]
+    expect_identical(length(to_be_checked), length(reuters_articles))
+    expect_identical(
+      unname(sapply(reuters_articles, size)), # Get size for each subcorpus individually
+      size(reuters_articles)[["size"]] # bulk processing of size,partition_bundle
+    )
+  }
+)
+

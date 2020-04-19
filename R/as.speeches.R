@@ -20,7 +20,10 @@ NULL
 #' @param gap An \code{integer} value, the number of tokens between strucs
 #'   assumed to make the difference whether a speech has been interrupted (by an
 #'   interjection or question), or whether to assume seperate speeches.
-#' @param mc Whether to use multicore, defaults to \code{FALSE}.
+#' @param mc Whether to use multicore, defaults to \code{FALSE}. If
+#'   \code{progress} is \code{TRUE}, argument \code{mc} is passed into
+#'   \code{pblapply} as argument \code{cl}. If \code{progress} is \code{FALSE},
+#'   \code{mc} is passed into \code{mclapply} as argument \code{mc.cores}.
 #' @param verbose A \code{logical} value, defaults to \code{TRUE}.
 #' @param progress A \code{logical} value, whether to show progress bar.
 #' @param ... Further arguments.
@@ -229,7 +232,16 @@ setMethod("as.speeches", "corpus", function(
       }
     )
   }
-  y <- if (progress) pblapply(seq_along(chunks_cpos), .iter_fn) else lapply(seq_along(chunks_cpos), .iter_fn)
+  y <- if (progress){
+    pblapply(seq_along(chunks_cpos), .iter_fn, cl = mc)
+  } else {
+    if (isFALSE(mc)){
+      lapply(seq_along(chunks_cpos), .iter_fn)
+    } else {
+      mclapply(seq_along(chunks_cpos), .iter_fn, mc.cores = mc)
+    }
+  }
+  
 
   retval <- new(
     "subcorpus_bundle",

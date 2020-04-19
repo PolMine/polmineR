@@ -22,6 +22,7 @@
 \alias{as.matrix,bundle-method}
 \alias{subset,bundle-method}
 \alias{as.list,bundle-method}
+\alias{as.list.bundle}
 \alias{get_corpus,bundle-method}
 \title{Bundle Class}
 \usage{
@@ -60,6 +61,8 @@
 \S4method{subset}{bundle}(x, ...)
 
 \S4method{as.list}{bundle}(x)
+
+as.list.bundle(x)
 
 \S4method{get_corpus}{bundle}(x)
 }

@@ -6,6 +6,7 @@
 \alias{size,corpus-method}
 \alias{size,character-method}
 \alias{size,partition-method}
+\alias{size,partition_bundle-method}
 \alias{size,DocumentTermMatrix-method}
 \alias{size,TermDocumentMatrix-method}
 \alias{size,features-method}
@@ -20,6 +21,8 @@ size(x, ...)
 \S4method{size}{character}(x, s_attribute = NULL, verbose = TRUE, ...)
 
 \S4method{size}{partition}(x, s_attribute = NULL, ...)
+
+\S4method{size}{partition_bundle}(x)
 
 \S4method{size}{DocumentTermMatrix}(x)
 
@@ -41,7 +44,12 @@ size(x, ...)
 \item{verbose}{A \code{logical} value, whether to output messages.}
 }
 \value{
-An \code{integer} vector if s_attribute is \code{NULL}, a \code{data.table} otherwise.
+If \code{.Object} is a corpus (a \code{corpus} object or specified by
+  corpus id), an \code{integer} vector if argument \code{s_attribute} is
+  \code{NULL}, a two-column \code{data.table} otherwise (first column is the
+  s-attribute, second column: "size"). If \code{.Object} is a
+  \code{subcorpus_bundle} or a \code{partition_bundle}, a \code{data.table}
+  (with columns "name" and "size").
 }
 \description{
 The method will get the number of tokens in a corpus or partition,
@@ -82,6 +90,10 @@ sc <- corpus("GERMAPARLMINI") \%>\% subset(date == "2009-11-11")
 size(sc, s_attribute = "speaker")
 size(sc, s_attribute = "party")
 size(sc, s_attribute = c("speaker", "party"))
+
+# for subcorpus_bundle
+subcorpora <- corpus("GERMAPARLMINI") \%>\% split(s_attribute = "date")
+size(subcorpora)
 }
 \seealso{
 See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
