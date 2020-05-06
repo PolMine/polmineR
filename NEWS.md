@@ -99,6 +99,10 @@ be displayed (using code highlighting)
 - The `as.speeches()`-method for `corpus` objects now supports parallelization
 - There is now a definition of an S3 `as.list.bundle()`-method (previously, there has only been the S4 method).
 The beautiful effect is that `lapply()` and `sapply()` can be used on `bundle` objects now (a `subcorpis_bundle`, for instance)
+- A new option `polmineR.warn.size` can be used to control the issuing of warnings
+for large `kwic` objects.
+- A skeleton documentation of package options is included in the documentation of the package as a whole (`?polmineR`)
+
 
 polmineR 0.8.0
 ==============

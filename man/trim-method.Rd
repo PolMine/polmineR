@@ -8,7 +8,9 @@
 \alias{trim,DocumentTermMatrix-method}
 \alias{punctuation}
 \title{trim an object}
-\format{An object of class \code{character} of length 13.}
+\format{
+An object of class \code{character} of length 13.
+}
 \usage{
 trim(object, ...)
 

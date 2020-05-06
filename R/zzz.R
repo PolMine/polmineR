@@ -8,7 +8,7 @@
     "polmineR.right" = 5L,
     "polmineR.lineview" = FALSE,
     "polmineR.pagelength" = 10L,
-    "polmineR.meta " =  character(),
+    "polmineR.meta" =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
     "polmineR.smtp_server" = if (length(getOption("polmineR.smtp_server")) > 0) getOption("polmineR.smtp_server") else "",
@@ -20,7 +20,8 @@
     "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
     "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
-    "polmineR.shiny" = FALSE
+    "polmineR.shiny" = FALSE,
+    "polmineR.warn.size" = FALSE
   )
   
   # Upon loading the package, registry files available in the polmineR package, or in a directory

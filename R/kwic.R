@@ -42,7 +42,19 @@ setAs(from = "kwic", to = "htmlwidget", def = function(from){
 #' @importFrom DT datatable formatStyle
 setMethod("show", "kwic", function(object){
   y <- as(object, "htmlwidget")
-  if (interactive()) show(y) else return(y)
+  if (interactive()){
+    if (
+      isFALSE(getOption("polmineR.warn.size")) && 
+      (is.null(getOption("DT.warn.size")) || isFALSE(getOption("DT.warn.size")))
+    ){
+      restore_value <- getOption("DT.warn.size")
+      options("DT.warn.size" = FALSE)
+    }
+    show(y)
+    if (exists("restore_value")) options("DT.warn.size" = restore_value)
+  } else {
+    return(y)
+  }
 })
 
 
