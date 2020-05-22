@@ -12,9 +12,4 @@ RUN apt-get update -y && apt-get install -y bison \
   libcurl4-openssl-dev \
   libssl-dev
 
-#  libssh2-1 \
-#  libssh2-1-dev
-
-RUN Rscript -e 'install.packages(pkgs = c("RUnit", "devtools", "plyr", "tm"))'
-RUN Rscript -e 'install.packages("rcqp")'
 RUN Rscript -e 'install.packages("polmineR")'

@@ -18,7 +18,7 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   authentication, the respective username.
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora
-setMethod("corpus", "character", function(.Object, server = NULL, user = NULL, password = NULL){
+setMethod("corpus", "character", function(.Object, server = NULL, user, password){
   
   if (length(.Object) != 1L) stop("Cannot process more than one corpus at a time: Provide only one corpus ID as input.")
   
@@ -57,6 +57,8 @@ setMethod("corpus", "character", function(.Object, server = NULL, user = NULL, p
     )
     return(y)
   } else {
+    if (missing(user)) user <- character()
+    if (missing(password)) password <- character()
     y <- ocpu_exec(fn = "corpus", server = server, user = user, password = password, .Object = .Object)
     y <- as(y, "remote_corpus")
     y@server <- server
