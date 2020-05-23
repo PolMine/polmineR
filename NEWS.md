@@ -103,6 +103,7 @@ The beautiful effect is that `lapply()` and `sapply()` can be used on `bundle` o
 for large `kwic` objects.
 - A skeleton documentation of package options is included in the documentation of the package as a whole (`?polmineR`)
 - The `corpus()`-method that serves as a constructor either for the `corpus` or the `remote_corpus` class does not flag default values for the arguments `user` and `password` any more. If the argument `server` is stated explicitly (not `NULL`, default), these variables will get the value `character()`. This way, a set of if/else statements can be omitted and it is much easier to implement methods for the `remote_corpus` class for corpora that are password-protected, or not.
+- The Dockerfile included in the package (./inst/docker/debian_polminer_min) prepares a Debian image with a minimal installation of polmineR that will be available at the 'polmine' repository at dockerhub (see `https://hub.docker.com/r/polmine/debian_polminer_min`). 
 
 
 polmineR 0.8.0
