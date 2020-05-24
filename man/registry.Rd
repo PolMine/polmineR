@@ -53,6 +53,13 @@ The Corpus Workbench may have problems to cope with a registry path
   that includes registry non-ASCII characters. On Windows, a call to
   \code{utils::shortPathName} will generate the short MS-DOS path name that
   circumvents resulting problems.
+
+Usage of the temporary registry directory can be suppress by setting
+  the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. In this
+  case, the \code{registry} function will return the environment variable
+  CORPUS_REGISTRY unchanged. The \code{data_dir} function will return the
+  "indexed_corpus" directory that is assumed to live in the same parent
+  directory as the registry directory.
 }
 \examples{
 registry() # returns temporary registry directory

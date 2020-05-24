@@ -12,7 +12,7 @@
 \alias{corpus,missing-method}
 \title{Corpus class initialization}
 \usage{
-\S4method{corpus}{character}(.Object, server = NULL, user = NULL, password = NULL)
+\S4method{corpus}{character}(.Object, server = NULL, user, password)
 
 \S4method{corpus}{missing}()
 }

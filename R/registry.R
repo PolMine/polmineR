@@ -187,6 +187,12 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 #'   that includes registry non-ASCII characters. On Windows, a call to
 #'   \code{utils::shortPathName} will generate the short MS-DOS path name that
 #'   circumvents resulting problems.
+#' @details Usage of the temporary registry directory can be suppress by setting
+#'   the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. In this
+#'   case, the \code{registry} function will return the environment variable
+#'   CORPUS_REGISTRY unchanged. The \code{data_dir} function will return the
+#'   "indexed_corpus" directory that is assumed to live in the same parent
+#'   directory as the registry directory.
 #' 
 #' @param pkg A character string with the name of a single package; if \code{NULL} (default),
 #' the temporary registry and data directory is returned.
@@ -204,14 +210,18 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 #' @importFrom stringi stri_enc_mark
 registry <- function(pkg = NULL){
   if (is.null(pkg)){
-    y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
-    
-    # The user name may include special characters. On windows, a possible solutions to avoid
-    # error messages, is to use the DOS short path name.
-    if (stri_enc_mark(y) != "ASCII"){
-      if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
+    if (tolower(Sys.getenv("POLMINER_USE_TMP_REGISTRY")) != "false"){
+      y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_registry", fsep = "/")
+      
+      # The user name may include special characters. On windows, a possible solutions to avoid
+      # error messages, is to use the DOS short path name.
+      if (stri_enc_mark(y) != "ASCII"){
+        if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
+      }
+      return(y)
+    } else {
+      return(Sys.getenv("CORPUS_REGISTRY"))
     }
-    return(y)
   } else {
     stopifnot(
       is.character(pkg),
@@ -240,7 +250,11 @@ registry <- function(pkg = NULL){
 #' @rdname registry
 data_dir <- function(pkg = NULL){
   if (is.null(pkg)){
-    y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_data_dir", fsep = "/")
+    if (tolower(Sys.getenv("POLMINER_USE_TMP_REGISTRY")) != "false"){
+      y <- file.path(normalizePath(tempdir(), winslash = "/"), "polmineR_data_dir", fsep = "/")
+    } else {
+      y <- file.path(dirname(Sys.getenv("CORPUS_REGISTRY")), "indexed_corpora")
+    }
     return(y)
   } else {
     stopifnot(
