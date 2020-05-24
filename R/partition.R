@@ -450,17 +450,19 @@ setMethod("partition", "context", function(.Object, node = TRUE){
 
 #' @rdname partition
 setMethod("partition", "remote_corpus", function(.Object, ...){
-  p <- ocpu_exec(fn = "partition", server = .Object@server, .Object = .Object@corpus, ...)
+  p <- ocpu_exec(fn = "partition", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
   y <- as(p, "remote_partition")
   y@server <- .Object@server
+  y@restricted <- .Object@restricted
   y
 })
 
 
 #' @rdname partition
 setMethod("partition", "remote_partition", function(.Object, ...){
-  p <- ocpu_exec(fn = "partition", server = .Object@server, .Object = as(.Object, "partition", ...))
+  p <- ocpu_exec(fn = "partition", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
   y <- as(p, "remote_partition")
+  y@restricted <- .Object@restricted
   y@server <- .Object@server
   y
 })

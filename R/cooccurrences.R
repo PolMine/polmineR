@@ -1101,3 +1101,16 @@ setAs(from = "cooccurrences", to = "kwic", function(from){
   y@stat[, "word_id" := NULL]
   y
 })
+
+
+#' @rdname cooccurrences
+setMethod("cooccurrences", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "cooccurrences", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+})
+
+#' @rdname cooccurrences
+setMethod("cooccurrences", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "cooccurrences", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+})
+
+

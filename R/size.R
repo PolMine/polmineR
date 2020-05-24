@@ -165,12 +165,12 @@ setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_re
 
 #' @rdname size-method
 setMethod("size", "remote_corpus", function(x){
-  ocpu_exec(fn = "size", server = x@server, do.call = FALSE, x = x@corpus)
+  ocpu_exec(fn = "size", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "corpus"))
 })
 
 #' @rdname size-method
 setMethod("size", "remote_partition", function(x){
-  ocpu_exec(fn = "size", server = x@server, x = as(x, "partition"))
+  ocpu_exec(fn = "size", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "partition"))
 })
 
 

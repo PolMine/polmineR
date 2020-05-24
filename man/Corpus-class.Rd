@@ -12,7 +12,7 @@
 \alias{corpus,missing-method}
 \title{Corpus class initialization}
 \usage{
-\S4method{corpus}{character}(.Object, server = NULL, user, password)
+\S4method{corpus}{character}(.Object, server = NULL, restricted)
 
 \S4method{corpus}{missing}()
 }
@@ -25,11 +25,8 @@ locally. If provided, the name of an OpenCPU server (can be an IP address)
 that hosts a corpus, or several corpora. The \code{corpus}-method will then
 instantiate a \code{remote_corpus} object.}
 
-\item{user}{If the corpus resides on a remote server and requires
-authentication, the respective username.}
-
-\item{password}{If the corpus resides on a remote server and requires
-authentication, the respective username.}
+\item{restricted}{A \code{logical} value, whether access to a remote corpus is
+restricted (\code{TRUE}) or not (\code{FALSE}).}
 }
 \description{
 Corpora indexed using the Corpus Workbench (CWB) offer an efficient data

@@ -20,12 +20,14 @@ library(polmineR)
 ```
 
 
-## Remote Corpus
+## Remote Corpora
 
-The GermaParl corpus is hosted on an OpenCPU server with the IP 52.24.44.232 (subject to change). To use the corpus, use the `corpus()`-method. The only difference is that you will need to supply the IP address using the argument `server`. 
+### Publicly Available Corpora
+
+The GermaParl corpus is hosted on an OpenCPU server with the IP 132.252.238.66 (subject to change). To use the corpus, use the `corpus()`-method. The only difference is that you will need to supply the IP address using the argument `server`. 
 
 ```{r, eval = FALSE}
-gparl <- corpus("GERMAPARL", server = "52.24.44.232")
+gparl <- corpus("GERMAPARL", server = "http://opencpu.politik.uni-due.de")
 ```
 
 The `gparl` object is an object of class `remote_corpus`.
@@ -92,6 +94,41 @@ Works for the `remote_subcorpus`, too.
 kwic(gparl2006, query = "Islam", left = 15, right = 15, meta = c("speaker", "party", "date"))
 ```
 
+
+### Restricted Corpora
+
+1. Create directory for registry file-style files with credentials
+
+2. Create file with credentials for your corpus in this directory
+
+Note: Filename is corpus id in lowercase
+
+```{r, eval = FALSE}
+##
+## registry entry for corpus GERMAPARLSAMPLE
+##
+
+# long descriptive name for the corpus
+NAME "GermaParlSample"
+# corpus ID (must be lowercase in registry!)
+ID   germaparlsample
+# path to binary data files
+HOME http://localhost:8005
+# optional info file (displayed by ",info;" command in CQP)
+INFO https://zenodo.org/record/3823245#.XsrU-8ZCT_Q 
+
+# corpus properties provide additional information about the corpus:
+##:: user = "YOUR_USER_NAME"
+##:: password = "YOUR_PASSWORD"
+```
+
+3. Set environment variable "OPENCPU_REGISTRY" in .Renviron to dir just mentioned
+
+4. Get server whereabouts
+
+```r
+x <- corpus("MIGPRESS_FAZ", server = "YOURSERVER", restricted = TRUE)
+```
 
 ## Next steps
 

@@ -5,22 +5,24 @@
 \alias{opencpu}
 \title{Execute code on OpenCPU server}
 \usage{
-ocpu_exec(fn, server, user = NULL, password = NULL, do.call = FALSE, ...)
+ocpu_exec(fn, corpus, server, restricted = FALSE, do.call = FALSE, ...)
 }
 \arguments{
 \item{fn}{Name of the function/method to execute on remote server (length-one
 \code{character} vector).}
 
+\item{corpus}{A length-one \code{character} vector, the id of the corpus to be 
+queried.}
+
 \item{server}{The IP/URL of the remote OpenCPU server.}
 
-\item{user}{A username required for authentication, if necessary.}
-
-\item{password}{A password required for authentication, if necessary.}
+\item{restricted}{A \code{logical} value, whether credentials are required to
+access the data.}
 
 \item{do.call}{Logical, if \code{TRUE}, the function \code{fn} is passed into
 a call of \code{do.call}, which offers some flexibility.}
 
-\item{...}{Further arguments passed into the method/function call.}
+\item{...}{Arguments passed into the method/function call.}
 }
 \description{
 \code{ocpu_exec} will execute a function/method \code{fn} on an OpenCPU server
@@ -36,14 +38,6 @@ ocpu_exec(
   server = Sys.getenv("OPENCPU_SERVER"),
   do.call = TRUE,
   pkg = "polmineR"
-)
-
-ocpu_exec(
-  fn = "subset",
-  server = Sys.getenv("OPENCPU_SERVER"),
-  do.call = TRUE,
-  x = iris,
-  subset = substitute(Sepal.Width > 4.0)
 )
 }
 }

@@ -11,6 +11,8 @@
 \alias{cooccurrences,context-method}
 \alias{cooccurrences,partition_bundle-method}
 \alias{cooccurrences,Cooccurrences-method}
+\alias{cooccurrences,remote_corpus-method}
+\alias{cooccurrences,remote_subcorpus-method}
 \title{Get cooccurrence statistics.}
 \usage{
 cooccurrences(.Object, ...)
@@ -114,6 +116,10 @@ cooccurrences(.Object, ...)
 \S4method{cooccurrences}{partition_bundle}(.Object, query, mc = getOption("polmineR.mc"), ...)
 
 \S4method{cooccurrences}{Cooccurrences}(.Object, query)
+
+\S4method{cooccurrences}{remote_corpus}(.Object, ...)
+
+\S4method{cooccurrences}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A \code{partition} object, or a \code{character} vector with a CWB corpus.}

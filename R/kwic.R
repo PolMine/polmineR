@@ -484,13 +484,19 @@ setMethod("kwic", "character", function(
 
 #' @rdname kwic
 setMethod("kwic", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "kwic", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, do.call = FALSE, .Object = as(.Object, "corpus"), ...)
 })
 
 #' @rdname kwic
 setMethod("kwic", "remote_partition", function(.Object, ...){
-  ocpu_exec(fn = "kwic", server = .Object@server, .Object = as(.Object, "partition"), ...)
+  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
 })
+
+#' @rdname kwic
+setMethod("kwic", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+})
+
 
 #' @rdname kwic-class
 #' @examples

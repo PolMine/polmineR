@@ -11,6 +11,7 @@
 \alias{kwic,character-method}
 \alias{kwic,remote_corpus-method}
 \alias{kwic,remote_partition-method}
+\alias{kwic,remote_subcorpus-method}
 \alias{kwic,partition_bundle-method}
 \alias{kwic,subcorpus_bundle-method}
 \title{Perform keyword-in-context (KWIC) analysis.}
@@ -117,6 +118,8 @@ kwic(.Object, ...)
 \S4method{kwic}{remote_corpus}(.Object, ...)
 
 \S4method{kwic}{remote_partition}(.Object, ...)
+
+\S4method{kwic}{remote_subcorpus}(.Object, ...)
 
 \S4method{kwic}{partition_bundle}(.Object, ..., verbose = FALSE)
 

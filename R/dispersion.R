@@ -167,3 +167,14 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
   }
   dt
 })
+
+
+#' @rdname dispersion-method
+setMethod("dispersion", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "dispersion", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+})
+
+#' @rdname dispersion-method
+setMethod("dispersion", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "dispersion", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+})

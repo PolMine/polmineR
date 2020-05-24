@@ -239,12 +239,12 @@ setMethod("s_attributes", "call", function(.Object, corpus){
 
 #' @rdname s_attributes-method
 setMethod("s_attributes", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "s_attributes", server = .Object@server, do.call = FALSE, .Object = .Object@corpus, ...)
+  ocpu_exec(fn = "s_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
 })
 
 
 #' @rdname s_attributes-method
 setMethod("s_attributes", "remote_partition", function(.Object, ...){
-  ocpu_exec(fn = "s_attributes", server = .Object@server, .Object = as(.Object, "partition"), ...)
+  ocpu_exec(fn = "s_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
 })
 

@@ -393,7 +393,10 @@ setClass(
 #' @rdname partition_class
 setClass(
   "remote_partition",
-  slots = c(server = "character"),
+  slots = c(
+    server = "character",
+    restricted = "logical"
+  ),
   contains = "partition"
 )
 
@@ -735,8 +738,7 @@ setClass(
   "remote_corpus",
   slots = c(
     server = "character",
-    user = "character",
-    password = "character"
+    restricted = "logical"
   ),
   contains = "corpus"
 )
@@ -886,9 +888,8 @@ setClass(
   "remote_subcorpus",
   slots = c(
     server = "character",
-    user = "character",
-    password = "character"
-    ),
+    restricted = "logical"
+  ),
   contains = "subcorpus"
 )
 

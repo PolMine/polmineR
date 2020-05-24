@@ -12,13 +12,11 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   locally. If provided, the name of an OpenCPU server (can be an IP address)
 #'   that hosts a corpus, or several corpora. The \code{corpus}-method will then
 #'   instantiate a \code{remote_corpus} object.
-#' @param user If the corpus resides on a remote server and requires
-#'   authentication, the respective username.
-#' @param password If the corpus resides on a remote server and requires
-#'   authentication, the respective username.
+#' @param restricted A \code{logical} value, whether access to a remote corpus is
+#'   restricted (\code{TRUE}) or not (\code{FALSE}).
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora
-setMethod("corpus", "character", function(.Object, server = NULL, user, password){
+setMethod("corpus", "character", function(.Object, server = NULL, restricted){
   
   if (length(.Object) != 1L) stop("Cannot process more than one corpus at a time: Provide only one corpus ID as input.")
   
@@ -57,13 +55,14 @@ setMethod("corpus", "character", function(.Object, server = NULL, user, password
     )
     return(y)
   } else {
-    if (missing(user)) user <- character()
-    if (missing(password)) password <- character()
-    y <- ocpu_exec(fn = "corpus", server = server, user = user, password = password, .Object = .Object)
+    if (missing(restricted)) restricted <- FALSE
+    if (isFALSE(is.logical(restricted))) stop("Argument 'restricted' is required to be a logical value.")
+    y <- ocpu_exec(fn = "corpus", corpus = .Object, server = server, restricted = restricted, .Object = .Object)
     y <- as(y, "remote_corpus")
+    # The object returned from the remote server will not include information on the server and
+    # the accessibility status.
     y@server <- server
-    y@user <- user
-    y@password <- password
+    y@restricted <- restricted
     return(y)
   }
 })
@@ -423,8 +422,11 @@ setMethod("show", "subcorpus_bundle", function (object) {
 #' @rdname subset
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- substitute(subset)
-  sc <- ocpu_exec(fn = "subset", server = x@server, do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  sc <- ocpu_exec(fn = "subset", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "corpus"), subset = expr)
   y <- as(sc, "remote_subcorpus")
+  # Capture information on accessibility status and the server which is not included
+  # in the object that is returned.
+  y@restricted <- x@restricted
   y@server <- x@server
   y
 })
