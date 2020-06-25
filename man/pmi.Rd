@@ -53,7 +53,13 @@ y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
 N <- size(y)[["partition"]]
 I <- log2((y[["count_coi"]]/N) / ((count(y) / N) * (y[["count_partition"]] / N)))
 use("polmineR")
-dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table", verbose = FALSE)
+dt <- decode(
+  "REUTERS",
+  p_attribute = "word",
+  s_attribute = character(), 
+  to = "data.table",
+  verbose = FALSE
+)
 n <- ngrams(dt, n = 2L, p_attribute = "word")
 obs <- count("REUTERS", p_attribute = "word")
 phrases <- pmi(n, observed = obs)

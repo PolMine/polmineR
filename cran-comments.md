@@ -11,7 +11,7 @@ pointed out by Uwe Ligges have been removed.
 
 ## Test environments
 
-* local OS X install, R 3.6.1
+* local OS X install, R 4.0.0
 * Ubuntu 14.04 (on travis-ci), R 3.6.1
 * Ubuntu 14.04 (project server), R 3.4.3
 * win-builder (devel and release), R. 3.6.1
