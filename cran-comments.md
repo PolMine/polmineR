@@ -13,7 +13,7 @@ pointed out by Uwe Ligges have been removed.
 
 * local OS X install, R 4.0.0
 * Ubuntu 14.04 (on travis-ci), R 3.6.1
-* Ubuntu 14.04 (project server), R 3.4.3
+* Ubuntu 16.04 (project server), R 3.6.3
 * win-builder (devel and release), R. 3.6.1
 * Windows/AppVeyor, R 3.6.1 Patched
 * Debian Linux, R-devel, GCC
