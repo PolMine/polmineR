@@ -82,6 +82,7 @@ test_that(
 test_that(
   "Identity of cooccurrences and Cooccurrences",
   {
+    testthat::skip_on_cran()
     stopwords <- unname(unlist(noise(terms("REUTERS", p_attribute = "word"), stopwordsLanguage = "en")))
     r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
     stm <- as.simple_triplet_matrix(r)
@@ -148,6 +149,7 @@ test_that(
 test_that(
   "Cooccurences-method for subcorpus and partition objects",
   {
+    testthat::skip_on_cran()
     merkel <- partition(
       "GERMAPARLMINI",
       speaker = "Merkel",
