@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -53,7 +57,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -102,7 +106,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -134,6 +143,11 @@
           <p class="section-desc"><p>Getting started with polmineR (CLI And GUI usage).</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -154,6 +168,11 @@
           <p class="section-desc"><p>Corpora, subcorpora/partitions, and partition_bundle objects are the point of departure for any analysis using polmineR. Constructors introduced in the next section require an understanding of basic methods and classes to generate and manage (sub-)corpora</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -223,13 +242,13 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="subcorpus-class.html">summary(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">`name<-`(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">get_corpus(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">size(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
+          <p><code><a href="subcorpus-class.html">summary(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">`name&lt;-`(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">get_corpus(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus-class.html">size(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
         </td>
         <td><p>The S4 subcorpus class.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="subcorpus_bundle.html">show(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> </p>
+          <p><code><a href="subcorpus_bundle.html">show(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">merge(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">merge(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="subcorpus_bundle.html">split(<i>&lt;subcorpus_bundle&gt;</i>)</a></code> </p>
         </td>
         <td><p>Bundled subcorpora</p></td>
       </tr><tr>
@@ -246,6 +265,11 @@
           <p class="section-desc"><p>Data analysis using polmineR will usually start by calling a constructor method resulting in an S4 class object with the name of the calling method. All methods basic vocabulary can be applied to corpora (defined by a character vector), to partitions, and to partition_bundle objects, some are applicable to additional classes. These methods are designed to be used in a pipe.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -294,6 +318,12 @@
           <p><code><a href="features.html">features()</a></code> </p>
         </td>
         <td><p>Get features by comparison.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="phrases-class.html">as.phrases(<i>&lt;ngrams&gt;</i>)</a></code> <code><a href="phrases-class.html">as.phrases(<i>&lt;matrix&gt;</i>)</a></code> <code><a href="phrases-class.html">as.character(<i>&lt;phrases&gt;</i>)</a></code> <code><a href="phrases-class.html">concatenate_phrases()</a></code> </p>
+        </td>
+        <td><p>Manage and use phrases</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -302,6 +332,11 @@
           <p class="section-desc"><p>The polmineR package offers a repertoire to modify base objects, and for type conversion. Methods for modyfing classes and type conversion.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -335,7 +370,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="encoding.html">encoding()</a></code> <code><a href="encoding.html">`encoding<-`()</a></code> </p>
+          <p><code><a href="encoding.html">encoding()</a></code> <code><a href="encoding.html">`encoding&lt;-`()</a></code> </p>
         </td>
         <td><p>Get and set encoding.</p></td>
       </tr><tr>
@@ -404,6 +439,12 @@
           <p><code><a href="dotplot-method.html">dotplot()</a></code> </p>
         </td>
         <td><p>dotplot</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="restore.html">restore()</a></code> </p>
+        </td>
+        <td><p>Restore S4 object with data.table slots</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -412,6 +453,11 @@
           <p class="section-desc"><p>A key consideration of polmineR is to combine quantitative and qualitative steps of analysis in a workflow. A set of methods is exposed to generate and enhance fulltext output.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -427,7 +473,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="annotations.html">annotations()</a></code> <code><a href="annotations.html">`annotations<-`()</a></code> <code><a href="annotations.html">edit(<i>&lt;textstat&gt;</i>)</a></code> </p>
+          <p><code><a href="annotations.html">annotations()</a></code> <code><a href="annotations.html">`annotations&lt;-`()</a></code> <code><a href="annotations.html">edit(<i>&lt;textstat&gt;</i>)</a></code> </p>
         </td>
         <td><p>Annotation functionality</p></td>
       </tr><tr>
@@ -439,7 +485,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="polmineR-defunct.html">browse()</a></code> <code><a href="polmineR-defunct.html">Corpus</a></code> </p>
+          <p><code><a href="polmineR-defunct.html">browse()</a></code> </p>
         </td>
         <td><p>Defunct methods and functions.</p></td>
       </tr><tr>
@@ -486,10 +532,15 @@
           <p class="section-desc"><p>The main feature of the textstat class and of classes inheriting from it is that it keeps statistical information about a corpus or partition in a data.table in the field ‘stat’. Methods defined for the textstat superclass are available for its child classes, unless they are overloaded in a specified manner.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
-          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">name(<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">`name<-`(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">show(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">knit_print(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">get_corpus(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">format(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
+          <p><code><a href="textstat-class.html">name(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">name(<i>&lt;character&gt;</i>)</a></code> <code><a href="textstat-class.html">`name&lt;-`(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">round(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">sort(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.bundle()</a></code> <code><a href="textstat-class.html">`+`(<i>&lt;textstat&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">subset(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">as.data.table(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">show(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">p_attributes(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">knit_print(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">get_corpus(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">format(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="textstat-class.html">view(<i>&lt;textstat&gt;</i>)</a></code> </p>
         </td>
         <td><p>S4 textstat superclass.</p></td>
       </tr><tr>
@@ -507,7 +558,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="partition_class.html">p_attributes(<i>&lt;slice&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">as.regions(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">split(<i>&lt;partition&gt;</i>)</a></code> </p>
+          <p><code><a href="partition_class.html">p_attributes(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">p_attributes(<i>&lt;subcorpus&gt;</i>)</a></code> <code><a href="partition_class.html">is.partition()</a></code> <code><a href="partition_class.html">enrich(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">as.regions(<i>&lt;partition&gt;</i>)</a></code> <code><a href="partition_class.html">split(<i>&lt;partition&gt;</i>)</a></code> </p>
         </td>
         <td><p>Partition class and methods.</p></td>
       </tr><tr>
@@ -531,13 +582,13 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="all-cooccurrences-class.html">as.simple_triplet_matrix(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">as_igraph(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">subset(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">decode(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">kwic(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">as.sparseMatrix(<i>&lt;Cooccurrences&gt;</i>)</a></code> </p>
+          <p><code><a href="all-cooccurrences-class.html">as.simple_triplet_matrix(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">as_igraph(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">subset(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">decode(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">kwic(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">as.sparseMatrix(<i>&lt;Cooccurrences&gt;</i>)</a></code> <code><a href="all-cooccurrences-class.html">enrich(<i>&lt;Cooccurrences&gt;</i>)</a></code> </p>
         </td>
         <td><p>Cooccurrences class for corpus/partition.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;character&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;slice&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;partition&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
+          <p><code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;corpus&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;character&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;slice&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;partition&gt;</i>)</a></code> <code><a href="all_cooccurrences.html">Cooccurrences(<i>&lt;subcorpus&gt;</i>)</a></code> </p>
         </td>
         <td><p>Get all cooccurrences in corpus/partition.</p></td>
       </tr><tr>
@@ -554,6 +605,11 @@
           <p class="section-desc"><p>xxx</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -568,10 +624,15 @@
           <p class="section-desc"><p>S4 classes for managing text analysis.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
-          <p><code><a href="bundle.html">`name<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names<-`(<i>&lt;bundle&gt;</i>,<i>&lt;vector&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`[[<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$<-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">get_corpus(<i>&lt;bundle&gt;</i>)</a></code> </p>
+          <p><code><a href="bundle.html">`name&lt;-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">length(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">names(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`names&lt;-`(<i>&lt;bundle&gt;</i>,<i>&lt;vector&gt;</i>)</a></code> <code><a href="bundle.html">unique(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`+`(<i>&lt;bundle&gt;</i>,<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">`[[`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`[[&lt;-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">`$&lt;-`(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">sample(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;list&gt;</i>)</a></code> <code><a href="bundle.html">as.bundle(<i>&lt;textstat&gt;</i>)</a></code> <code><a href="bundle.html">as.data.table(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.matrix(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">subset(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">as.list(<i>&lt;bundle&gt;</i>)</a></code> <code><a href="bundle.html">get_corpus(<i>&lt;bundle&gt;</i>)</a></code> </p>
         </td>
         <td><p>Bundle Class</p></td>
       </tr><tr>
@@ -600,6 +661,11 @@
           <p class="section-desc"><p>The API used to access CWB indexed corpora is the RcppCWB package. A set of functions in the polmineR package serves as an intermediate interface to access corpus data.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -650,6 +716,11 @@
           <p class="section-desc"><p>Exported utility functions / helpers.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -670,6 +741,11 @@
           <p class="section-desc"><p>Starting with v0.7.9, the coding style of the polmineR-package has moved from camelCase to snake_case. A set of ‘old style’-functions ensures backwards compatibility and that old code will not break.</p></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
@@ -681,21 +757,10 @@
     </table>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-package-basics">Package Basics</a></li>
-      <li><a href="#section-corpora-and-subcorpora">Corpora and subcorpora</a></li>
-      <li><a href="#section-methods-i-basic-vocabulary">Methods I: Basic Vocabulary</a></li>
-      <li><a href="#section-methods-ii-processing-objects">Methods II: Processing Objects</a></li>
-      <li><a href="#section-methods-iii-fulltext-output">Methods III: Fulltext Output</a></li>
-      <li><a href="#section-the-textstat-class-childs">The 'textstat' Class &amp; Childs</a></li>
-      <li><a href="#section-the-kwic-labels-classes">The 'kwic' &amp; 'Labels' Classes</a></li>
-      <li><a href="#section-the-bundle-class-childs">The 'bundle' Class &amp; Childs</a></li>
-      <li><a href="#section-low-level-cwb-access">Low-level CWB Access</a></li>
-      <li><a href="#section-utility-functions">Utility Functions</a></li>
-      <li><a href="#section-backwards-compatibility">Backwards Compatibility</a></li>
-    </ul>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -706,7 +771,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

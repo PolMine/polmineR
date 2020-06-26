@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -48,7 +52,6 @@ executed on the corpus on the remote machine from the local R session by
 calling them on the remote_corpus object. Calling the
 corpus-method without an argument will return a data.frame with
 basic information on the corpora that are available." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -66,7 +69,7 @@ basic information on the corpora that are available." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -80,7 +83,7 @@ basic information on the corpora that are available." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -115,7 +118,12 @@ basic information on the corpora that are available." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -130,7 +138,7 @@ basic information on the corpora that are available." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Corpus class initialization</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/S4classes.R'><code>R/S4classes.R</code></a>, <a href='https://github.com/PolMine/polmineR/blob/master/R/corpus.R'><code>R/corpus.R</code></a></small>
     <div class="hidden name"><code>corpus-class.Rd</code></div>
     </div>
 
@@ -150,8 +158,7 @@ basic information on the corpora that are available.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for character</span>
-<span class='fu'>corpus</span>(<span class='no'>.Object</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>user</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>password</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>corpus</span>(<span class='no'>.Object</span>, <span class='kw'>server</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>restricted</span>)
 
 <span class='co'># S4 method for missing</span>
 <span class='fu'>corpus</span>()</pre>
@@ -172,14 +179,9 @@ that hosts a corpus, or several corpora. The <code>corpus</code>-method will the
 instantiate a <code>remote_corpus</code> object.</p></td>
     </tr>
     <tr>
-      <th>user</th>
-      <td><p>If the corpus resides on a remote server and requires
-authentication, the respective username.</p></td>
-    </tr>
-    <tr>
-      <th>password</th>
-      <td><p>If the corpus resides on a remote server and requires
-authentication, the respective username.</p></td>
+      <th>restricted</th>
+      <td><p>A <code>logical</code> value, whether access to a remote corpus is
+restricted (<code>TRUE</code>) or not (<code>FALSE</code>).</p></td>
     </tr>
     </table>
 
@@ -205,7 +207,7 @@ basic information on the corpora.</p>
 
     
 
-<dl class='dl-horizontal'>
+<dl'>
 <dt><code>corpus</code></dt><dd><p>A length-one <code>character</code> vector, the upper-case ID of a CWB
 corpus.</p></dd>
 
@@ -213,9 +215,14 @@ corpus.</p></dd>
 
 <dt><code>type</code></dt><dd><p>The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).</p></dd>
 
-<dt><code>name</code></dt><dd><p>An additional name for the object that may be more telling than the corpus ID.</p></dd>
+<dt><code>name</code></dt><dd><p>An additional name for the object that may be more telling than
+the corpus ID.</p></dd>
 
-<dt><code>encoding</code></dt><dd><p>The encoding of the corpus, given as a length-one <code>character</code> vector.</p></dd>
+<dt><code>encoding</code></dt><dd><p>The encoding of the corpus, given as a length-one
+<code>character</code> vector.</p></dd>
+
+<dt><code>size</code></dt><dd><p>Number of tokens (size) of the corpus, a length-one <code>integer</code>
+vector.</p></dd>
 
 <dt><code>server</code></dt><dd><p>The URL (can be IP address) of the OpenCPU server. The slot is
 available only with the <code>remote_corpus</code> class inheriting from the
@@ -235,11 +242,13 @@ available only with the <code>remote_corpus</code> class inheriting from the
   <code><a href='size-method.html'>size</a></code>, <code><a href='count-method.html'>count</a></code>, <code><a href='dispersion-method.html'>dispersion</a></code>,
   <code><a href='kwic.html'>kwic</a></code>, <code><a href='cooccurrences.html'>cooccurrences</a></code>,
   <code><a href='as.DocumentTermMatrix.html'>as.TermDocumentMatrix</a></code>.</p>
-<p>Other classes to manage corpora: <code><a href='regions_class.html'>regions</a></code>,
-  <code><a href='subcorpus-class.html'>subcorpus</a></code></p></div>
+<p>Other classes to manage corpora: 
+<code><a href='phrases-class.html'>phrases</a></code>,
+<code><a href='regions_class.html'>regions</a></code>,
+<code><a href='subcorpus-class.html'>subcorpus</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># get corpora present locally</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>()
 
@@ -282,16 +291,10 @@ available only with the <code>remote_corpus</code> class inheriting from the
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>GERMAPARL</span>, <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-11-10"</span>)
 }</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#slots">Slots</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -302,7 +305,7 @@ available only with the <code>remote_corpus</code> class inheriting from the
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

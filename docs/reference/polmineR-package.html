@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="polmineR-package — polmineR-package" />
 <meta property="og:description" content="A library for corpus analysis using the Corpus Workbench (CWB) as an
 efficient back end for indexing and querying large corpora." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -56,7 +59,7 @@ efficient back end for indexing and querying large corpora." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -70,7 +73,7 @@ efficient back end for indexing and querying large corpora." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -105,7 +108,12 @@ efficient back end for indexing and querying large corpora." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -120,7 +128,7 @@ efficient back end for indexing and querying large corpora." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>polmineR-package</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/polmineR.R'><code>R/polmineR.R</code></a></small>
     <div class="hidden name"><code>polmineR-package.Rd</code></div>
     </div>
 
@@ -150,6 +158,48 @@ use the `Sys.getenv()`-function. Corpora wrapped in R data packages can be
 activated using the function <code><a href='use.html'>use()</a></code>.</p>
 <p>The package includes a draft shiny app that can be called using
 <code>polmineR()</code>.</p>
+    <h2 class="hasAnchor" id="package-options"><a class="anchor" href="#package-options"></a>Package options</h2>
+
+    
+
+<ul>
+<li><p><em>polmineR.p_attribute</em>: The default attribute</p></li>
+<li><p><em>polmineR.left</em>: Default value for left context.</p></li>
+<li><p><em>polmineR.lineview</em>: A logical value, whether ...</p></li>
+<li><p><em>polmineR.pagelength</em>: 10L</p></li>
+<li><p><em>polmineR.meta</em>:</p></li>
+<li><p><em>polmineR.mc</em>:</p></li>
+<li><p><em>polmineR.cores</em>:</p></li>
+<li><p><em>polmineR.browse</em>:</p></li>
+<li><p><em>polmineR.buttons</em>:</p></li>
+<li><p><em>polmineR.specialChars</em>:</p></li>
+<li><p><em>polmineR.templates</em>:</p></li>
+<li><p><em>polmineR.cutoff</em>:</p></li>
+<li><p><em>polmineR.corpus_registry</em>: The system corpus registry
+  directory defined by the environment variable CORPUS_REGISTRY before the
+  polmineR package has been loaded. The polmineR package uses a temporary
+  registry directory to be able to use corpora stored at multiple
+  locations in one session. The path to the system corpus registry directory
+  captures this setting to keep it available if necessary.</p></li>
+<li><p><em>polmineR.shiny</em>: A <code>logical</code> value, whether polmineR is
+  used in the context of a shiny app. Used to control the apprearance of
+  progress bars depending on whether shiny app is running, or not.</p></li>
+<li><p><em>polmineR.warn.size</em>: When generating HTML table widgets (e.g.
+  when preparing kwic output to be displayed in RStudio's Viewe pane), the
+  function <code><a href='https://rdrr.io/pkg/DT/man/datatable.html'>DT::datatable()</a></code> that is used internally will issue a
+  warning by default if the object size of the table is greater than 1500000.
+  The warning adresses a client-server scenario that is not applicable in the
+  context of a local RStudio session, so you may want to turn it of.
+  Internally, the warning can be suppressed by setting the option
+  <code>DT.warn.size</code> to <code>FALSE</code>. The polmineR option
+  <code>polmineR.warn.size</code> is processed by functions calling DT::datatable()
+  to set and reset the value of <code>DT.warn.size</code>. Please note: The
+  formulation of the warning does not match the scenario of a local RStudio
+  session, but it may still be useful to get a warning when tables are large
+  and slow to process. Therefore, the default value of the setting is
+  <code>FALSE</code>.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Jockers, Matthew L. (2014): <em>Text Analysis with R for Students of Literature</em>.
@@ -157,7 +207,7 @@ Cham et al: Springer.</p>
 <p>Baker, Paul (2006): <em>Using Corpora in Discourse Analysis</em>. London: continuum.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>) <span class='co'># activate demo corpora included in the package</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>) <span class='co'># activate demo corpora included in the package</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># The package includes two sample corpora</span>
 <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='polmineR-generics.html'>show_info</a></span>()
 <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='polmineR-generics.html'>show_info</a></span>()
@@ -174,7 +224,8 @@ Cham et al: Springer.</p>
 
 <span class='co'># Core methods applied to partition</span>
 
-<span class='no'>kuwait</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)</div><div class='output co'>#&gt; <span class='message'>... processing query oil</span></div><div class='input'><span class='no'>D</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dispersion-method.html'>dispersion</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>kuwait</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>C</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
+<span class='no'>D</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dispersion-method.html'>dispersion</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
 <span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='kwic.html'>kwic</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... number of hits: 14</span></div><div class='output co'>#&gt; <span class='message'>... checking that all p-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... getting token id for p-attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating contexts</span></div><div class='input'><span class='no'>CO</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>kuwait</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
 
 
@@ -188,19 +239,14 @@ Cham et al: Springer.</p>
 
 <span class='co'># Generate term document matrix</span>
 
-<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>pb</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>pb</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='no'>tdm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.DocumentTermMatrix.html'>as.TermDocumentMatrix</a></span>(<span class='no'>cnt</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"count"</span>)</div><div class='output co'>#&gt; <span class='message'>... using the p_attribute-slot of the first object in the bundle as p_attribute: word</span></div><div class='output co'>#&gt; <span class='message'>... generating (temporary) key column</span></div><div class='output co'>#&gt; <span class='message'>... generating cumulated data.table</span></div><div class='output co'>#&gt; <span class='message'>... getting unique keys</span></div><div class='output co'>#&gt; <span class='message'>... generating integer keys</span></div><div class='output co'>#&gt; <span class='message'>... cleaning up temporary key columns</span></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Andreas Blaette (andreas.blaette@uni-due.de)</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -211,7 +257,7 @@ Cham et al: Springer.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

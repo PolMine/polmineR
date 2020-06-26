@@ -1,18 +1,11 @@
 ## General remarks
 
-Having reworked the class systems thoroughly, this is a major release. But as the changes are pure R changes documented in the NEWS file, nothing noteworthy for the CRAN team, I think.
-
-Yet this is what I should address here: An issue that may arise with R 4.0 has been fixed. Kurt Hornik notified me that the in the upcoming R version (4.0), the 'matrix' class will inherit from the 'array' class, thus causing a error when running for instance: class(matrix(1 : 4, 2, 2)) == "matrix". I modified the code such that polmineR will comply with the upcoming changes in R-devel / R 4.0. 
-
-I am grateful for the foresight of the CRAN team and the precise advice I received!
-
-P.S.: This is the second take to submit polmineR v0.8.0. Flaws in the URLs linked
-pointed out by Uwe Ligges have been removed.
+This is a minor release with many new small features and bug fixes. The general architecture of the package is unchanged. I release the package earlier than originally planned to bring it back to CRAN: The RcppCWB, a major dependency of polmineR, was archived for several hours, provoking polmineR to be removed, too.
 
 ## Test environments
 
-* local OS X install, R 4.0.0
-* Ubuntu 14.04 (on travis-ci), R 3.6.1
+* local OS X install, R 4.0.2
+* Ubuntu 14.04 (on travis-ci), R 4.0.0
 * Ubuntu 16.04 (project server), R 3.6.3
 * win-builder (devel and release), R. 3.6.1
 * Windows/AppVeyor, R 3.6.1 Patched

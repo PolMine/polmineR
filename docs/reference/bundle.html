@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -42,7 +46,6 @@ a class inheriting from the bundle superclass will be used. When working with a
 context_bundle, a features_bundle, a cooccurrences_bundle, or a
 context_bundle, a similar set of standard methods is available to perform 
 transformations." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -60,7 +63,7 @@ transformations." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -74,7 +77,7 @@ transformations." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -109,7 +112,12 @@ transformations." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -124,7 +132,7 @@ transformations." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Bundle Class</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/S4classes.R'><code>R/S4classes.R</code></a>, <a href='https://github.com/PolMine/polmineR/blob/master/R/bundle.R'><code>R/bundle.R</code></a>, <a href='https://github.com/PolMine/polmineR/blob/master/R/corpus.R'><code>R/corpus.R</code></a></small>
     <div class="hidden name"><code>bundle.Rd</code></div>
     </div>
 
@@ -138,7 +146,7 @@ transformations.</p>
     </div>
 
     <pre class="usage"># S4 method for bundle
-name(x) <- value
+name(x) &lt;- value
 
 # S4 method for bundle
 length(x)
@@ -147,7 +155,7 @@ length(x)
 names(x)
 
 # S4 method for bundle,vector
-names(x) <- value
+names(x) &lt;- value
 
 # S4 method for bundle
 unique(x)
@@ -162,13 +170,13 @@ unique(x)
 [[(x, i)
 
 # S4 method for bundle
-[[(x, i) <- value
+[[(x, i) &lt;- value
 
 # S4 method for bundle
 $(x, name)
 
 # S4 method for bundle
-$(x, name) <- value
+$(x, name) &lt;- value
 
 # S4 method for bundle
 sample(x, size)
@@ -190,6 +198,9 @@ subset(x, ...)
 
 # S4 method for bundle
 as.list(x)
+
+# S3 method for bundle
+as.list(x, ...)
 
 # S4 method for bundle
 get_corpus(x)</pre>
@@ -243,7 +254,7 @@ get_corpus(x)</pre>
 
     
 
-<dl class='dl-horizontal'>
+<dl'>
 <dt><code>corpus</code></dt><dd><p>The CWB corpus the objects in the <code>bundle</code> are based on, a length 1 
 <code>character</code> vector.</p></dd>
 
@@ -258,7 +269,8 @@ get_corpus(x)</pre>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>parties</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"party"</span>)
 <span class='no'>parties</span> <span class='kw'>&lt;-</span> <span class='no'>parties</span>[-<span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>parties</span> <span class='kw'>==</span> <span class='st'>"NA"</span>)]
-<span class='no'>party_bundle</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  party</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt; [1] "B90_DIE_GRUENEN" "CDU_CSU"         "DIE_LINKE"       "FDP"            
+<span class='no'>party_bundle</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt; [1] "B90_DIE_GRUENEN" "CDU_CSU"         "DIE_LINKE"       "FDP"            
 #&gt; [5] "NA"              "SPD"            </div><div class='input'><span class='fu'><a href='corpus-class.html'>get_corpus</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt; [1] "GERMAPARLMINI"</div><div class='input'><span class='no'>party_bundle</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>party_bundle</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>party_bundle</span>)</div><div class='output co'>#&gt;              name  size p_attribute unique
 #&gt; 1 B90_DIE_GRUENEN 23052        word   4186
@@ -269,32 +281,30 @@ get_corpus(x)</pre>
 #&gt; 6             SPD 47302        word   6692</div><div class='input'><span class='no'>parties_big</span> <span class='kw'>&lt;-</span> <span class='no'>party_bundle</span><span class='kw'>[[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"CDU_CSU"</span>, <span class='st'>"SPD"</span>)]]
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>parties_big</span>)</div><div class='output co'>#&gt;      name  size p_attribute unique
 #&gt; 1 CDU_CSU 66490        word   8486
-#&gt; 2     SPD 47302        word   6692</div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='no'>p</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting values for s-attribute  party</span></div><div class='output co'>#&gt; <span class='message'>... number of partitions to be generated:  6</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "NA"              "FDP"             "SPD"             "CDU_CSU"        
-#&gt; [5] "DIE_LINKE"       "B90_DIE_GRUENEN"</div><div class='input'><span class='no'>pb</span><span class='kw'>[[</span><span class='st'>"NA"</span>]] <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "FDP"             "SPD"             "CDU_CSU"         "DIE_LINKE"      
-#&gt; [5] "B90_DIE_GRUENEN"</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  party</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>pb</span>$<span class='no'>SPD</span> <span class='co'># access partition names "SPD" in partition_bundle pb</span></div><div class='output co'>#&gt; ** partition object **
+#&gt; 2     SPD 47302        word   6692</div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='no'>p</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "B90_DIE_GRUENEN" "CDU_CSU"         "DIE_LINKE"       "FDP"            
+#&gt; [5] "NA"              "SPD"            </div><div class='input'><span class='no'>pb</span><span class='kw'>[[</span><span class='st'>"NA"</span>]] <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; [1] "B90_DIE_GRUENEN" "CDU_CSU"         "DIE_LINKE"       "FDP"            
+#&gt; [5] "SPD"            </div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)
+<span class='no'>pb</span>$<span class='no'>SPD</span> <span class='co'># access partition names "SPD" in partition_bundle pb</span></div><div class='output co'>#&gt; ** partition object **
 #&gt; corpus:              GERMAPARLMINI 
 #&gt; name:                SPD 
 #&gt; s-attributes:        party = SPD 
 #&gt; cpos:                908 pairs of corpus positions
 #&gt; size:                47302 tokens
-#&gt; count:               not available</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  party</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>pb</span>$<span class='st'>"NA"</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span> <span class='co'># quotation needed if name is "NA"</span>
-<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>Ps</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
+#&gt; count:               not available</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"party"</span>)
+<span class='no'>pb</span>$<span class='st'>"NA"</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span> <span class='co'># quotation needed if name is "NA"</span>
+<span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>Ps</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
   <span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>,
   <span class='kw'>values</span> <span class='kw'>=</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='st'>"REUTERS"</span>, <span class='st'>"id"</span>)
-)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>Cs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>Ps</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No hits for query oil (returning NULL)</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>polmineR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://rdrr.io/pkg/polmineR/man/bundle.html'>as.data.table.bundle</a></span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)
+)
+<span class='no'>Cs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cooccurrences.html'>cooccurrences</a></span>(<span class='no'>Ps</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No hits for query oil (returning NULL)</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>polmineR</span><span class='kw ns'>:::</span><span class='fu'>as.data.table.bundle</span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>Cs</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#slots">Slots</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Andreas Blaette</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -305,7 +315,7 @@ get_corpus(x)</pre>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

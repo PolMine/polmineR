@@ -36,6 +36,7 @@ reference:
       - context
       - cooccurrences
       - features
+      - phrases
   - title: "Methods II: Processing Objects"
     desc: The polmineR package offers a repertoire to modify base objects, and for type conversion. Methods for modyfing classes and type conversion.
     contents:
@@ -56,6 +57,7 @@ reference:
       - weigh
       - mail
       - dotplot
+      - restore
   - title: "Methods III: Fulltext Output"
     desc: A key consideration of polmineR is to combine quantitative and qualitative steps of analysis in a workflow. A set of methods is exposed to generate and enhance fulltext output.
     contents: 

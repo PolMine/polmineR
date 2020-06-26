@@ -19,5 +19,5 @@ k <- kwic("REUTERS", query = "oil")
 kwicfile <- tempfile()
 saveRDS(k, file = kwicfile)
 k <- restore(filename = kwicfile)
-enrich(k, s_attribute = "id")
+k2 <- enrich(k, s_attribute = "id")
 }

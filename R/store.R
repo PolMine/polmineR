@@ -50,7 +50,7 @@ setMethod("store", "kwic", function(.Object, filename = tempfile(fileext = ".xls
 #' kwicfile <- tempfile()
 #' saveRDS(k, file = kwicfile)
 #' k <- restore(filename = kwicfile)
-#' enrich(k, s_attribute = "id")
+#' k2 <- enrich(k, s_attribute = "id")
 #' @export restore
 restore <- function(filename){
   y <- readRDS(file = filename)

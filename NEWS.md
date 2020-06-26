@@ -1,18 +1,39 @@
-polmineR 0.8.0.9001 - 0.8.0.9009
-================================
+polmineR 0.8.1
+==============
 
+## New Features
+
+- The `decode()`-method now entails the possibility to decode structural and positional
+attributes selectively, via the new argumentas `p_attributes` and `s_attributes` (#116).
+Internally, the reliance on `coerce()`-methods has been replaced by a simpler 
+if-else-syntax. The `as(from, "Annotation")` option persists, however.
+- A new argument `phrases` was added to the `count()`-method for `partition_bundle` objects.
+- The slots "user" and "password" of the `remote_corpus` and the `remote_subcorpus` class are replaced by a single slot `restricted` (values `TRUE`/`FALSE`) to indicate if a user name and a password are necessary to access a corpus. A file following the conventions of CWB files is assumed to include the credentials for corpus access. This approach avoids the accessibility of the password. 
+- Using the temporary registry file can be suppressed by setting the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. (Background: Necessary to deal with changing temporary directories when polmineR is preloaded in an OpenCPU contect.)
+- The Dockerfile included in the package (./inst/docker/debian_polminer_min) prepares a Debian image with a minimal installation of polmineR that will be available at the 'polmine' repository at dockerhub (see `https://hub.docker.com/r/polmine/debian_polminer_min`). 
+- The `corpus()`-method that serves as a constructor either for the `corpus` or the `remote_corpus` class does not flag default values for the arguments `user` and `password` any more. If the argument `server` is stated explicitly (not `NULL`, default), these variables will get the value `character()`. This way, a set of if/else statements can be omitted and it is much easier to implement methods for the `remote_corpus` class for corpora that are password-protected, or not.
+- There is now a definition of an S3 `as.list.bundle()`-method (previously, there has only been the S4 method). The beautiful effect is that `lapply()` and `sapply()` can be used on `bundle` objects now (a `subcorpus_bundle`, for instance)
+- The performance of the `count()`-method for `partition_bundle` objects has been improved, it is twice as fast now (#137).
+- The `p_attributes` method now accepts an argument `decode`.
+- The `p_attributes`-method has been implemented for `partition_bundle` objects.
+- In the shiny app you can launch via `polmineR()`, the mail-button has been dropped in the kwic, and code can be displayed (using code highlighting)
+- The settings have been dropped from the shiny app altogether, as we have the buttons now
+the `phrases` argument is used are now also available when a `phrases` object is not passed in.
+- Code buttons have been added to the shiny app experimentally.
+- The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
+- The `merge()`-method for `partition_bundle`-objects has been reworked: Substantial performance improvement by relying on `RcppCWB::get_region_matrix`. Internally, the method performs a check whether the `partition`/`subcorpus` objects to be merged are non-overlapping. The default value for the argument `verbose` is now `FALSE`, as waiting time is much shorter.
+
+
+## Minor Improvements
+
+- A new option `polmineR.warn.size` can be used to control the issuing of warnings
+for large `kwic` objects.
 - Indexing `Cooccurrences` objects had not been possible, now at least using integer
   indices is possible (#114).
-- Added a new Rmarkdown temlate with flexdashboard for quanlitative analysis of
-  cooccurrences and concordances.
 - Introduced experimentally a feature to count phrases in the `count()`-method for 
   `slice` class objects.
 - The `corpus()` method for a character vector will not abort gracefully with a 
   message if more than one corpus is offered as `.Object`.
-- The `decode()`-method now entails the possibility to decode structural and positional
-  attributes selectively, via the new argumentas `p_attributes` and `s_attributes` (#116).
-  Internally, the reliance on `coerce()`-methods has been replaced by a simpler 
-  if-else-syntax. The `as(from, "Annotation")` option persists, however.
 - The `Cooccurrences()`-method will now accept zero values (0) for the arguments
   `left` and `right`. Relevant for detecting bigrams / phrases.
 - When sorting the results `data.table` of a `Cooccurrences` object, the NA values are
@@ -26,22 +47,32 @@ polmineR 0.8.0.9001 - 0.8.0.9009
   phrase detection.
 - A new method `enrich()` for object of class `Cooccurrences` will add columns with counts
   for the co-occurring tokens to the `data.table` in the slot 'stat'.
-- A new argument `phrases` was added to the `count()`-method for `partition_bundle` objects.
-- In the `as.speeches()`-method for `corpus` objects, setting `progress` as `FALSE` did not
-  suppress the display of a progress bar. Solved.
-- Removed a bug that occurred when counting matches for CQP queries over a `subcorpus_bundle`
-  that resulted from CQP queries being turned into invalid column names.
 - Removed an inconsistency with the naming of the columns of the `data.table` in the `stat`
   slot of an `ngrams` object: Column names will now be "word_1" , "word_2" etc.
 - Defined an explicit method `count()` for `subcorpus_bundle` objects (just callling `callNextMethod()` internally) -  useful to see the availability of the method in the documentation object.
+- The `as.speeches()`-method for `corpus` objects now supports parallelization
+- A unit test checks different methods for generating a `DocumentTermMatrix` against each other, as a safeguard that different approaches might lead to different results (#139).
+)
 - New class `phrases` and `as.phrases()`-method for `ngrams` and `matrix` objects. The
   `count()`-method now accepts an argument `phrases`. See the documentation (`?phrases`).
-- New coerce method to derive a `kwic` object from a `cooccurrences` object. Introduced to
-  serve as a basis for quantitative/qualitative workflows, e.g. integrated in a flexdashboard.
-- The `merge()`-method for `partition_bundle`-objects has been reworked: Substantial performance
-  improvement by relying on `RcppCWB::get_region_matrix`. Internally, the method performs a
-  check whether the `partition`/`subcorpus` objects to be merged are non-overlapping. The default
-  value for the argument `verbose` is now `FALSE`, as waiting time is much shorter.
+- The `s_attributes()`-method is now consistent with the usage of the `unique` arugment (#133).
+- The `hits()`-method for `partition_bundle` objects now accepts an argument `s_attribute` to include metadata in results (#74).
+- The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy. The `as.phrases()`-method will use the function to avoid that buggy CQP queries may be generated.
+- If no template is set, no reliance on a plain and simple template, and telling error messages, if no template is available (#123).
+- The `Corpus` class has been re-introduced (temporarily), to avoid an issue with the GermaParl package if the class is not available (#127).
+- The `get_template()`-method is now defined for the `corpus` class.
+- The `count()`-method with arguments `breakdown` is `TRUE` and `cqp` is `TRUE` has been awfully slow. Fast now.
+- Decoding a p-attribute has seen a substantial performance improvement (#130). A new argument `boost` allows user to opt for the improvement, which will involve decoding the lexion directly.
+- The `merge()`-method is implemented for `subcorpus_bundle` objects now, and has been implemented for `subcorpus` objects (#76).
+- Generating a `kwic` view from a `cooccurrences` object based on more than one p-attribute will work now (#119).
+- The `decode()`-method has been defined for `integer` vectors. Internally it will decide whether decoding token ids is speeded up by reading in the lexicon file directly. The behavior can be triggered explicitly by setting the argument `boost` as `TRUE`.
+- The `get_token_stream()`-method will use the new `decode()`-method for integer values internally. The argument `boost` is used by the `get_token_stream()` to control the approach.
+- Improvements of performance initially implemented for `get_token_stream` for `partition_bundle` when 
+- Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
+- Zero values can be processed by `Cooccurrences()`-method (#117).
+- The `corpus` class includes a (new) slot `size`, just as the `regions` and the `subcorpus` classes.
+- The `split()`-method for `corpus` objects now accepts the argument `xml`, to indicate whether the annotation structure of the corpus is flat or nested.
+- The definition of the S4 class `partition` now includes a prototype defining default values for the slots 'stat' (a `data.table`) and the slot 'size' (`NA_integer_`). This avoids that an incomplete initialization of a `partition` object will result in an error.
 - The `kwic()`-method is now available for `partition_bundle`/`subcorpus_bundle`-objects (#73).
 - To make the `kwic()`-method work correctly for `partition` objects that result from a `merge()`
   operation (and that were not created by ), the `cpos()`-method for `slice` objects will extract
@@ -49,63 +80,37 @@ polmineR 0.8.0.9001 - 0.8.0.9009
   in the list of the slot `s-attributes`.
 - Class `subcorpus` is exported for usage in other packages.
 - The default value of the argument `progress` of the `count()`-method for `partition_bundle` objects is now FALSE.
-- A bug caused when the name of an object in a `partition_bundle` was an empty string and calling `count()` on this object has been removed (#121).
-- A bug was addressed that occurs when unfolding the region matrix where all regions have the same
-length (#124).
-- There is now a telling error message for the `s_attributes()` method for `corpus` objects when 
-values are requested for an s-attribute that does not exist (#122).
-- In the `decode()`-method for `subcorpus` objects, s-attributes were not decoded appropriately (#120). Fixed. When decoding a corpus/subcorpus, the struc column is kept (again).
-- A new check in `.onLoad()` whether polmineR is loaded from the repository directory will ensure
-that temporary registry files will not be gone when calling `devtools::document()` (#68).
-- The deprecated `Corpus` reference class has been dropped from the code altogether: As `roxygen::roxygenize()` started to check the documentation of R6 classes and reference classes, the poor documentation of this class started to provoke many errors. Rather than starting to write documentation for a deprecated class, getting rid of an outdated and poorly documented class appeared to be the better solution.
-- A coerce method has been defined to turn a `corpus` object into a `subcorpus` object, to recover
-functionality used (internally) that relied on the former `Corpus` reference class.
-- The `Cooccurrences()`-method is now defined for the `corpus`-class, too. The `Cooccurrences()`-method 
-for the `character` class now relies on this method.
 - The `get_type()`-method is now defined for the `corpus` class.
 - Upon starting the shiny app included in the package, the presence of packages "shiny" 
 and "shinythemes" is checked. If the packages are not yet present, an optional install
 is offered (#110).
+- A coerce method has been defined to turn a `corpus` object into a `subcorpus` object, to recover
+functionality used (internally) that relied on the former `Corpus` reference class.
+- The `Cooccurrences()`-method is now defined for the `corpus`-class, too. The `Cooccurrences()`-method 
+for the `character` class now relies on this method.
+- The deprecated `Corpus` reference class has been dropped from the code altogether: As `roxygen::roxygenize()` started to check the documentation of R6 classes and reference classes, the poor documentation of this class started to provoke many errors. Rather than starting to write documentation for a deprecated class, getting rid of an outdated and poorly documented class appeared to be the better solution.
+- New coerce method to derive a `kwic` object from a `cooccurrences` object. Introduced to
+  serve as a basis for quantitative/qualitative workflows, e.g. integrated in a flexdashboard.
+- There is now a telling error message for the `s_attributes()` method for `corpus` objects when 
+values are requested for an s-attribute that does not exist (#122).
+- In the `decode()`-method for `subcorpus` objects, s-attributes were not decoded appropriately (#120). Fixed. When decoding a corpus/subcorpus, the struc column is kept (again).
+- A new check in `.onLoad()` whether polmineR is loaded from the repository directory will ensure that temporary registry files will not be gone when calling `devtools::document()` (#68).
+
+
+## Bug Fixes
+
+- In the `as.speeches()`-method for `corpus` objects, setting `progress` as `FALSE` did not
+  suppress the display of a progress bar. Solved.
+- Removed a bug that occurred when counting matches for CQP queries over a `subcorpus_bundle`
+  that resulted from CQP queries being turned into invalid column names.
 - Solved: No longer an error when calling polmineR commands after having worked in the shiny app context (#111).
-- Zero values can be processed by `Cooccurrences()`-method (#117).
-- The `corpus` class includes a (new) slot `size`, just as the `regions` and the `subcorpus` classes.
-- The `split()`-method for `corpus` objects now accepts the argument `xml`, to indicate whether the annotation structure of the corpus is flat or nested.
-- The definition of the S4 class `partition` now includes a prototype defining default values for the slots 'stat' (a `data.table`) and the slot 'size' (`NA_integer_`). This avoids that an incomplete initialization of a `partition` object will result in an error.
-- Internally, the `partition_bundle()`-methods defined for `character`, `corpus` and `partition` objects now call the `split()`-methods for `corpus` und `subcorpus` objects, resulting in a huge performance gain (#112).
-- The `merge()`-method is implemented for `subcorpus_bundle` objects now, and has been implemented for `subcorpus` objects (#76).
-- Generating a `kwic` view from a `cooccurrences` object based on more than one p-attribute will work now (#119).
-- Code buttons have been added to the shiny app experimentally.
-- The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
-- The `decode()`-method has been defined for `integer` vectors. Internally it will decide whether decoding token ids is speeded up by reading in the lexicon file directly. The behavior can be triggered explicitly by setting the argument `boost` as `TRUE`.
-- The `get_token_stream()`-method will use the new `decode()`-method for integer values internally. The argument `boost` is used by the `get_token_stream()` to control the approach.
-- Improvements of performance initially implemented for `get_token_stream` for `partition_bundle` when 
-the `phrases` argument is used are now also available when a `phrases` object is not passed in.
-- The `p_attributes` method now accepts an argument `decode`.
-- The `p_attributes`-method has been implemented for `partition_bundle` objects.
-- In the shiny app you can launch via `polmineR()`, the mail-button has been dropped in the kwic, and code can
-be displayed (using code highlighting)
-- The settings have been dropped from the shiny app altogether, as we have the buttons now
-- The `count()`-method with arguments `breakdown` is `TRUE` and `cqp` is `TRUE` has been awfully slow. Fast now.
-- Decoding a p-attribute has seen a substantial performance improvement (#130). A new argument `boost` allows user to opt for the improvement, which will involve decoding the lexion directly.
-- The `Corpus` class has been re-introduced (temporarily), to avoid an issue with the GermaParl package if the class is not available (#127).
-- The `get_template()`-method is now defined for the `corpus` class.
-- If no template is set, no reliance on a plain and simple template, and telling error messages, if no template is available (#123).
-- The `check_cqp_query()` function now has a further argument `warn`. If `TRUE` (default), a warning is issued, if the query is buggy. The `as.phrases()`-method will use the function to avoid that buggy CQP queries may be generated.
-- The `hits()`-method for `partition_bundle` objects now accepts an argument `s_attribute` to include metadata in results (#74).
-- The `s_attributes()`-method is now consistent with the usage of the `unique` arugment (#133).
-- The performance of the `count()`-method for `partition_bundle` objects has been improved, is twice as fast now (#137).
-- A unit test checks different methods for generating a `DocumentTermMatrix` against each other, as a safeguard that different approaches might lead to different results (#139).
-)
-- The `as.speeches()`-method for `corpus` objects now supports parallelization
-- There is now a definition of an S3 `as.list.bundle()`-method (previously, there has only been the S4 method).
-The beautiful effect is that `lapply()` and `sapply()` can be used on `bundle` objects now (a `subcorpis_bundle`, for instance)
-- A new option `polmineR.warn.size` can be used to control the issuing of warnings
-for large `kwic` objects.
+- A bug caused when the name of an object in a `partition_bundle` was an empty string and calling `count()` on this object has been removed (#121).
+- A bug was addressed that occurs when unfolding the region matrix where all regions have the same length (#124).
+
+
+## Documentation
+
 - A skeleton documentation of package options is included in the documentation of the package as a whole (`?polmineR`)
-- The `corpus()`-method that serves as a constructor either for the `corpus` or the `remote_corpus` class does not flag default values for the arguments `user` and `password` any more. If the argument `server` is stated explicitly (not `NULL`, default), these variables will get the value `character()`. This way, a set of if/else statements can be omitted and it is much easier to implement methods for the `remote_corpus` class for corpora that are password-protected, or not.
-- The Dockerfile included in the package (./inst/docker/debian_polminer_min) prepares a Debian image with a minimal installation of polmineR that will be available at the 'polmine' repository at dockerhub (see `https://hub.docker.com/r/polmine/debian_polminer_min`). 
-- Using the temporary registry file can be suppressed by setting the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. (Background: Necessary to deal with changing temporary directories when polmineR is preloaded in an OpenCPU contect.)
-- The slots "user" and "password" of the `remote_corpus` and the `remote_subcorpu` class are replaced by a single slot `restricted` (values `TRUE`/`FALSE`) to indicate if a user name and a password are necessary to access a corpus. A file following the conventions of CWB files is assumed to include the credentials for corpus access. This approach avoids the accessibility of the password. 
 
 
 polmineR 0.8.0

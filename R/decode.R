@@ -318,14 +318,18 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
     Encoding(lexicon) <- corpus@encoding
     if (!identical(corpus@encoding, localeToCharset()[1])){
-      lexicon <- stringi::stri_encode(lexicon, from = corpus@encoding, to = localeToCharset()[1]) # as.locale
+      # lexicon <- stringi::stri_encode(lexicon, from = corpus@encoding, to = localeToCharset()[1]) # as.locale
+      lexicon <- iconv(lexicon, from = corpus@encoding, to = localeToCharset()[1])
+      Encoding(lexicon) <- localeToCharset()[1]
     }
     y <- lexicon[.Object + 1L]
   } else if (isFALSE(boost)){
     y <- RcppCWB::cl_id2str(corpus = corpus@corpus, p_attribute = p_attributes, registry = registry(), id = .Object)
     Encoding(y) <- corpus@encoding
     if (!identical(corpus@encoding, localeToCharset()[1])){
-      y <- stringi::stri_encode(y, from = corpus@encoding, to = localeToCharset()[1])
+      # y <- stringi::stri_encode(y, from = corpus@encoding, to = localeToCharset()[1])
+      y <- iconv(y, from = corpus@encoding, to = localeToCharset()[1])
+      Encoding(y) <- localeToCharset()[1]
     }
   }
   y

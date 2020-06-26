@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -36,8 +40,8 @@
 
 
 <meta property="og:title" content="Decode corpus or subcorpus. — decode" />
-<meta property="og:description" content="Decode corpus or subcorpus and return class specified by argument to." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:description" content="Decode corpus or subcorpus and return class specified by
+argument to." />
 
 
 
@@ -55,7 +59,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -104,7 +108,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -119,25 +128,70 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Decode corpus or subcorpus.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/decode.R'><code>R/decode.R</code></a></small>
     <div class="hidden name"><code>decode.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Decode <code>corpus</code> or <code>subcorpus</code> and return class specified by argument <code>to</code>.</p>
+    <p>Decode <code>corpus</code> or <code>subcorpus</code> and return class specified by
+argument <code>to</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
+<span class='co'># S4 method for corpus</span>
+<span class='fu'>decode</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.table"</span>, <span class='st'>"Annotation"</span>),
+  <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
+
 <span class='co'># S4 method for character</span>
-<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.table"</span>, <span class='st'>"Annotation"</span>),
-  <span class='no'>...</span>)
+<span class='fu'>decode</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.table"</span>, <span class='st'>"Annotation"</span>),
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for slice</span>
-<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>)
+<span class='fu'>decode</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>)</pre>
+<span class='fu'>decode</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
+
+<span class='co'># S4 method for subcorpus</span>
+<span class='fu'>decode</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
+
+<span class='co'># S4 method for integer</span>
+<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attributes</span>, <span class='kw'>boost</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,11 +209,47 @@
       <td><p>The class of the returned object, stated as a length-one
 <code>character</code> vector.</p></td>
     </tr>
+    <tr>
+      <th>p_attributes</th>
+      <td><p>The positional attributes to decode. If <code>NULL</code>
+(default), all positional attributes will be decoded.</p></td>
+    </tr>
+    <tr>
+      <th>s_attributes</th>
+      <td><p>The structural attributes to decode. If <code>NULL</code>
+(default), all structural attributes will be decoded.</p></td>
+    </tr>
+    <tr>
+      <th>decode</th>
+      <td><p>A <code>logical</code> value, whether to decode token ids and struc
+ids to character strings. If <code>FALSE</code>, the values of columns for p- and
+s-attributes will be <code>integer</code> vectors. If <code>TRUE</code> (default), the
+respective columns are <code>character</code> vectors.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>A <code>logical</code> value, whether to output progess messages.</p></td>
+    </tr>
+    <tr>
+      <th>corpus</th>
+      <td><p>A CWB indexed corpus, either a length-one <code>character</code> vector,
+or a <code>corpus</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>boost</th>
+      <td><p>A length-one <code>logical</code> value, whether to speed up decoding
+a long vector of token ids by directly by reading in the lexion file from
+the data directory of a corpus. If <code>NULL</code> (default), the internal
+decision rule is that <code>boost</code> will be <code>TRUE</code> if the corpus is
+larger than 10 000 000 million tokens and more than 5 percent of the corpus
+are to be decoded.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The return value will correspond to the class specified by argument <code>to</code>.</p>
+    <p>The return value will correspond to the class specified by argument
+  <code>to</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The primary purpose of the method is type conversion. By obtaining the corpus
@@ -171,8 +261,20 @@ defined in the package <code>NLP</code>. Another purpose of decoding the corpus 
 be to rework it, and to re-import it into the CWB (e.g. using the
 <code>cwbtools</code>-package).</p>
 <p>An earlier version of the method included an option to decode a single
-s-attribute, which is not supported any more. See the <code>s_attribute_decode</code>
-function of the package RcppCWB.</p>
+s-attribute, which is not supported any more. See the
+<code>s_attribute_decode</code> function of the package RcppCWB.</p>
+<p>If <code>.Object</code> is an <code>integer</code> vector, it is assumed to be a
+  vector of integer ids of p-attributes. The <code>decode</code>-method will
+  translate token ids to string values as efficiently as possible. The
+  approach taken will depend on the corpus size and the share of the corpus
+  that is to be decoded. To decode a large number of integer ids, it is more
+  efficient to read the lexicon file from the data directory directly and to
+  index the lexicon with the ids rather than relying on
+  <code><a href='https://rdrr.io/pkg/RcppCWB/man/p_attributes.html'>RcppCWB::cl_id2str</a></code>. The internal decision rule is to use the lexicon
+  file when the corpus is larger than 10 000 000 million tokens and more than
+  5 percent of the corpus are to be decoded. The encoding of the
+  <code>character</code> vector that is returned will be the coding of the locale
+  (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>To decode a structural attribute, you can use the
@@ -182,58 +284,35 @@ function of the package RcppCWB.</p>
   returning a <code>VCorpus</code> object.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># Decode corpus as data.table</span>
 <span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>)</div><div class='output co'>#&gt; <span class='message'>decoding p-attribute:word</span></div><div class='output co'>#&gt; <span class='message'>decoding p-attribute:pos</span></div><div class='output co'>#&gt; <span class='message'>decoding s-attribute:interjection</span></div><div class='output co'>#&gt; <span class='message'>decoding s-attribute:date</span></div><div class='output co'>#&gt; <span class='message'>decoding s-attribute:party</span></div><div class='output co'>#&gt; <span class='message'>decoding s-attribute:speaker</span></div><div class='output co'>#&gt; <span class='message'>assembling data.table</span></div><div class='input'>
+<span class='co'># Decode corpus selectively</span>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>decoding p-attribute:word</span></div><div class='output co'>#&gt; <span class='message'>decoding s-attribute:party</span></div><div class='output co'>#&gt; <span class='message'>assembling data.table</span></div><div class='input'>
 <span class='co'># Decode a subcorpus</span>
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>), <span class='no'>speaker</span> <span class='kw'>==</span> <span class='st'>"Angela Dorothea Merkel"</span>)
-<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>sc</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute pos</span></div><div class='input'>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>sc</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute pos</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute interjection</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute date</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute party</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute speaker</span></div><div class='input'>
+<span class='co'># Decode subcorpus selectively</span>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>sc</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"data.table"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='st'>"party"</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute party</span></div><div class='input'>
 <span class='co'># Decode partition</span>
-<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='input'>
+<span class='no'>P</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"kuwait"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>P</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute id</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute topics_cat</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute places</span></div><div class='output co'>#&gt; <span class='message'>... decoding s_attribute language</span></div><div class='input'>
 <span class='co'># Previous versions of polmineR offered an option to decode a single</span>
 <span class='co'># s-attribute. This is how you could proceed to get a table with metadata.</span>
-<span class='no'>dt</span>[, <span class='st'>"word"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>]</div><div class='output co'>#&gt;      cpos struc  id
-#&gt;   1:  753     5 236
-#&gt;   2:  754     5 236
-#&gt;   3:  755     5 236
-#&gt;   4:  756     5 236
-#&gt;   5:  757     5 236
-#&gt;  ---               
-#&gt; 656: 3169    13 353
-#&gt; 657: 3170    13 353
-#&gt; 658: 3171    13 353
-#&gt; 659: 3172    13 353
-#&gt; 660: 3173    13 353
-#&gt;                                                                                                                                                topics_cat
-#&gt;   1: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;   2: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;   3: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;   4: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;   5: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;  ---                                                                                                                                                     
-#&gt; 656: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt; 657: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt; 658: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt; 659: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt; 660: crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|crude|c("crude", "ship")|crude|crude|crude|crude|c("crude", "nat-gas")
-#&gt;              places language
-#&gt;   1: kuwait|ecuador       en
-#&gt;   2: kuwait|ecuador       en
-#&gt;   3: kuwait|ecuador       en
-#&gt;   4: kuwait|ecuador       en
-#&gt;   5: kuwait|ecuador       en
-#&gt;  ---                        
-#&gt; 656:         kuwait       en
-#&gt; 657:         kuwait       en
-#&gt; 658:         kuwait       en
-#&gt; 659:         kuwait       en
-#&gt; 660:         kuwait       en</div><div class='input'><span class='no'>dt</span>[,
-  {<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>cpos_left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='no'>.SD</span><span class='kw'>[[</span><span class='st'>"cpos"</span>]]), <span class='kw'>cpos_right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='no'>.SD</span><span class='kw'>[[</span><span class='st'>"cpos"</span>]]), <span class='kw'>id</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>.SD</span><span class='kw'>[[</span><span class='st'>"id"</span>]]))},
-  <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"struc"</span>
-  ]</div><div class='output co'>#&gt;    struc cpos_left cpos_right  id
-#&gt; 1:     5       753       1217 236
-#&gt; 2:    11      2874       2965 349
-#&gt; 3:    13      3071       3173 353</div><div class='input'>
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='no'>P</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='message'>... decoding p_attribute word</span></div><div class='input'><span class='no'>dt</span>[, <span class='st'>"word"</span> <span class='kw'>:=</span> <span class='kw'>NULL</span>]</div><div class='output co'>#&gt;      cpos id struc
+#&gt;   1:  753  5     5
+#&gt;   2:  754  5     5
+#&gt;   3:  755  5     5
+#&gt;   4:  756  5     5
+#&gt;   5:  757  5     5
+#&gt;  ---              
+#&gt; 656: 3169 13    13
+#&gt; 657: 3170 13    13
+#&gt; 658: 3171 13    13
+#&gt; 659: 3172 13    13
+#&gt; 660: 3173 13    13</div><div class='input'><span class='no'>dt</span>[,{<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>cpos_left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>min</a></span>(<span class='no'>.SD</span><span class='kw'>[[</span><span class='st'>"cpos"</span>]]), <span class='kw'>cpos_right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='no'>.SD</span><span class='kw'>[[</span><span class='st'>"cpos"</span>]]))}, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"id"</span>]</div><div class='output co'>#&gt;    id cpos_left cpos_right
+#&gt; 1:  5       753       1217
+#&gt; 2: 11      2874       2965
+#&gt; 3: 13      3071       3173</div><div class='input'>
 <span class='co'># Decode subcorpus as Annotation object</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"NLP"</span>)){
@@ -249,18 +328,15 @@ function of the package RcppCWB.</p>
   <span class='no'>words</span> <span class='kw'>&lt;-</span> <span class='no'>s</span>[<span class='no'>a</span>[<span class='no'>a</span>$<span class='no'>type</span> <span class='kw'>==</span> <span class='st'>"word"</span>]]
   <span class='no'>sentences</span> <span class='kw'>&lt;-</span> <span class='no'>s</span>[<span class='no'>a</span>[<span class='no'>a</span>$<span class='no'>type</span> <span class='kw'>==</span> <span class='st'>"sentence"</span>]] <span class='co'># does not yet work perfectly for plenary protocols </span>
 }
-}</div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+}
 
+<span class='co'># decode vector of token ids</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='fl'>0</span>:<span class='fl'>20</span>, <span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -271,7 +347,7 @@ function of the package RcppCWB.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

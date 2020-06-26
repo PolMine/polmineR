@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Get counts. — count" />
 <meta property="og:description" content="Count all tokens, or number of occurrences of a query (CQP syntax may be
 used), or matches for the query." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -56,7 +59,7 @@ used), or matches for the query." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -70,7 +73,7 @@ used), or matches for the query." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -105,7 +108,12 @@ used), or matches for the query." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -120,7 +128,7 @@ used), or matches for the query." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get counts.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/count.R'><code>R/count.R</code></a></small>
     <div class="hidden name"><code>count-method.Rd</code></div>
     </div>
 
@@ -132,42 +140,94 @@ used), or matches for the query.</p>
     <pre class="usage"><span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
-  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>)
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.cores"</span>),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for subcorpus</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
-  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>)
-
-<span class='co'># S4 method for slice</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
-  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.cores"</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>)
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.cores"</span>),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for partition_bundle</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>total</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>total</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
+
+<span class='co'># S4 method for subcorpus_bundle</span>
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>total</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for corpus</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
-  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>)
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
-  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>)
+<span class='fu'>count</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.p_attribute"</span>),
+  <span class='kw'>breakdown</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for vector</span>
 <span class='fu'>count</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attribute</span>, <span class='no'>...</span>)
@@ -235,6 +295,11 @@ if query is NULL).</p></td>
       <td><p>Logical, whether to show progress bar.</p></td>
     </tr>
     <tr>
+      <th>phrases</th>
+      <td><p>A <code>phrases</code> object. If provided, the denoted regions will
+be concatenated as phrases.</p></td>
+    </tr>
+    <tr>
       <th>freq</th>
       <td><p>Logical, if <code>FALSE</code>, counts will be reported, if TRUE,
 (relative) frequencies are added to table.</p></td>
@@ -263,35 +328,46 @@ is returned.</p></td>
   is a <code>partition_bundle</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If .Object is a <code>partiton_bundle</code>, the data.table returned will have the
-queries in the columns, and as many rows as there are in the
+    <p>If <code>.Object</code> is a <code>partiton_bundle</code>, the <code>data.table</code> returned will
+have the queries in the columns, and as many rows as there are in the
 <code>partition_bundle</code>.</p>
-<p>If .Object is a length-one character vector and query is NULL, the count is
-performed for the whole partition.</p>
+<p>If <code>.Object</code> is a length-one <code>character</code> vector and <code>query</code> is
+<code>NULL</code>, the count is performed for the whole partition.</p>
 <p>If <code>breakdown</code> is <code>TRUE</code> and one query is supplied, the function
 returns a frequency breakdown of the results of the query. If several queries
 are supplied, frequencies for the individual queries are retrieved.</p>
+<p>Multiple queries can be used for argument <code>query</code>. Some care may be
+necessary when summing up the counts for the individual queries. When the
+CQP syntax is used, different queries may yield the same match result, so that
+the sum of all individual query matches may overestimate the true number of
+unique matches. In the case of overlapping matches, a warning message is
+issued. Collapsing multiple CQP queries into a single query (separating the
+individual queries by "|" and wrapping everything in round brackets) solves
+this problem.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Baker, Paul (2006): <em>Using Corpora in Discourse Analysis</em>. London: continuum, p. 47-69 (ch. 3).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>For a metadata-based breakdown of counts
-(i.e. tabulation by s-attributes), see <code>dispersion</code>.</p>
-<p>count</p></div>
+    <div class='dont-index'><p>For a metadata-based breakdown of counts (i.e. tabulation by
+  s-attributes), see <code><a href='dispersion-method.html'>dispersion</a></code>. The <code><a href='hits.html'>hits</a></code> is the
+  worker behind the <code>dispersion</code> method and offers a similar, yet more
+  low-level functionality as compared to the <code>count</code> method. Using the
+  <code><a href='hits.html'>hits</a></code> method may be useful to obtain the data required for
+  flexible cross-tabulations.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span></div><div class='output co'>#&gt; <span class='message'>... processing query Arbeit</span></div><div class='output co'>#&gt;     query count         freq
-#&gt; 1: Arbeit   159 0.0007155683</div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Freizeit"</span>, <span class='st'>"Zukunft"</span>)) <span class='co'># get frequencies for multiple tokens</span></div><div class='output co'>#&gt;       query count         freq
-#&gt; 1:   Arbeit   159 7.155683e-04
-#&gt; 2: Freizeit     1 4.500430e-06
-#&gt; 3:  Zukunft   142 6.390610e-04</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>".*"</span>, <span class='kw'>regex</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>) <span class='co'># get frequencies for one token</span></div><div class='output co'>#&gt;     query  match count         freq
+#&gt; 1: Arbeit Arbeit   159 0.0007155683</div><div class='input'><span class='fu'>count</span>(<span class='no'>debates</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Freizeit"</span>, <span class='st'>"Zukunft"</span>)) <span class='co'># get frequencies for multiple tokens</span></div><div class='output co'>#&gt;       query    match count         freq
+#&gt; 1:   Arbeit   Arbeit   159 7.155683e-04
+#&gt; 2: Freizeit Freizeit     1 4.500430e-06
+#&gt; 3:  Zukunft  Zukunft   142 6.390610e-04</div><div class='input'>
 <span class='fu'>count</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Migration"</span>, <span class='st'>"Integration"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt;          query count         freq
 #&gt; 1:   Migration     3 1.350129e-05
 #&gt; 2: Integration    23 1.035099e-04</div><div class='input'>
 <span class='no'>debates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(
   <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"date"</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Arbeit"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>debates</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Arbeit"</span>, <span class='st'>"Migration"</span>, <span class='st'>"Zukunft"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
@@ -318,19 +394,26 @@ are supplied, frequencies for the individual queries are retrieved.</p>
 #&gt; 6: "Integration.*"      Integrationserfolge     1  3.23
 #&gt; 7: "Integration.*"  Integrationsfähigkeiten     1  3.23
 #&gt; 8: "Integration.*"    Integrationskarrieren     1  3.23
-#&gt; 9: "Integration.*"   Integrationspolitik.Es     1  3.23</div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+#&gt; 9: "Integration.*"   Integrationspolitik.Es     1  3.23</div><div class='input'>
+<span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>party</span> <span class='kw'>==</span> <span class='st'>"SPD"</span>)
+<span class='no'>phr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cpos-method.html'>cpos</a></span>(<span class='no'>sc</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"Deutsche.*" "Bundestag.*"'</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='phrases-class.html'>as.phrases</a></span>(<span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>enc</span> <span class='kw'>=</span> <span class='st'>"latin1"</span>)
+<span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'>count</span>(<span class='no'>sc</span>, <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='no'>phr</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 
+<span class='co'># Multiple queries and overlapping query matches. The first count </span>
+<span class='co'># operation will issue a warning that matches overlap, see the second </span>
+<span class='co'># example for a solution.</span>
+<span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>count</span>(<span class='kw'>query</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'".*oil"'</span>, <span class='st'>'"turmoil"'</span>), <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: The CQP queries processed result in at least one overlapping query. Summing up the counts for the individual query matches may result in an overestimation of the total number of hits. To avoid this, consider collapsing multiple CQP queries into one single query.</span></div><div class='output co'>#&gt;        query count         freq
+#&gt; 1:   ".*oil"    79 0.0195061728
+#&gt; 2: "turmoil"     1 0.0002469136</div><div class='input'><span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>count</span>(<span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>'"(.*oil|turmoil)"'</span>, <span class='kw'>cqp</span> <span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;                query count       freq
+#&gt; 1: "(.*oil|turmoil)"    79 0.01950617</div></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -341,7 +424,7 @@ are supplied, frequencies for the individual queries are retrieved.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

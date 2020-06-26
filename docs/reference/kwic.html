@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Perform keyword-in-context (KWIC) analysis. — kwic" />
 <meta property="og:description" content="Get concordances for the matches for a query / perform keyword-in-context
 (kwic) analysis." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -56,7 +59,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -70,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -105,7 +108,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -120,7 +128,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Perform keyword-in-context (KWIC) analysis.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/kwic.R'><code>R/kwic.R</code></a></small>
     <div class="hidden name"><code>kwic.Rd</code></div>
     </div>
 
@@ -132,56 +140,121 @@
     <pre class="usage"><span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for context</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>,
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for slice</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>query</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.left"</span>),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.right"</span>),
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>query</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.left"</span>),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.right"</span>),
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for subcorpus</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>query</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.left"</span>),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.right"</span>),
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for corpus</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>query</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.left"</span>)),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.right"</span>)),
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>query</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='fu'>kwic</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>query</span>,
+  <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='no'>is.cqp</span>,
+  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>left</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.left"</span>)),
   <span class='kw'>right</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.right"</span>)),
-  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>), <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"polmineR.meta"</span>),
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>boundary</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>stoplist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for remote_corpus</span>
 <span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for remote_partition</span>
+<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for remote_subcorpus</span>
+<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for partition_bundle</span>
+<span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='co'># S4 method for subcorpus_bundle</span>
 <span class='fu'>kwic</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -206,8 +279,13 @@ output table as metainformation.</p></td>
     </tr>
     <tr>
       <th>cpos</th>
-      <td><p>Logical, if <code>TRUE</code>, the corpus positions ("cpos") if the hits will
-be included in the <code>kwic</code>-object that is returned.</p></td>
+      <td><p>Logical, if <code>TRUE</code>, a <code>data.table</code> with the corpus
+positions ("cpos") of the hits and their surrounding context will be
+assigned to the slot "cpos" of the <code>kwic</code>-object that is returned.
+Defaults to <code>TRUE</code>, as the availability of the cpos-<code>data.table</code>
+will often be a prerequisite for further operations on the <code>kwic</code>
+object. Omitting the table may however be useful to minimize memory
+consumption.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -252,8 +330,8 @@ results</p></td>
     </tr>
     <tr>
       <th>regex</th>
-      <td><p>Logical, whether <code>stoplist</code>/<code>positivelist</code> is interpreted as regular
-expression.</p></td>
+      <td><p>Logical, whether <code>stoplist</code>/<code>positivelist</code> is
+interpreted as regular expression.</p></td>
     </tr>
     <tr>
       <th>check</th>
@@ -281,6 +359,11 @@ interpreted as regular expressions. Tokens from the positivelist will be
 highlighted in the output table.</p>
 <p>If a <code>negativelist</code> is supplied, concordances are removed if any of the
 tokens of the <code>negativelist</code> occurrs in the context of the query match.</p>
+<p>Applying the <code>kwic</code>-method on a <code>partition_bundle</code> or
+  <code>subcorpus_bundle</code> will return a single <code>kwic</code> object that
+  includes a column 'subcorpus_name' with the name of the <code>subcorpus</code>
+  (or <code>partition</code>) in the input object where the match for a concordance
+  occurs.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Baker, Paul (2006): <em>Using Corpora in Discourse Analysis</em>. London: continuum, pp. 71-93 (ch. 4).</p>
@@ -296,7 +379,7 @@ Cham et al: Springer, pp. 73-87 (chs. 8 &amp; 9).</p>
   <code><a href='highlight.html'>highlight</a></code>-method.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># basic usage</span>
 <span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='st'>"Integration"</span>)
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'>show</span>(<span class='no'>K</span>)
@@ -333,19 +416,18 @@ Cham et al: Springer, pp. 73-87 (chs. 8 &amp; 9).</p>
 )</div><div class='output co'>#&gt; <span class='message'>... checking that context positions to not transgress regions</span></div><div class='output co'>#&gt; <span class='message'>... checking that all s-attributes are available</span></div><div class='output co'>#&gt; <span class='message'>... get struc for s-attribute: date</span></div><div class='output co'>#&gt; <span class='message'>... checking boundaries of regions</span></div><div class='output co'>#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  10%  |                                                                              |==========                                                            |  15%  |                                                                              |==============                                                        |  20%  |                                                                              |==================                                                    |  25%  |                                                                              |=====================                                                 |  30%  |                                                                              |========================                                              |  35%  |                                                                              |============================                                          |  40%  |                                                                              |================================                                      |  45%  |                                                                              |===================================                                   |  50%  |                                                                              |======================================                                |  55%  |                                                                              |==========================================                            |  60%  |                                                                              |==============================================                        |  65%  |                                                                              |=================================================                     |  70%  |                                                                              |====================================================                  |  75%  |                                                                              |========================================================              |  80%  |                                                                              |============================================================          |  85%  |                                                                              |===============================================================       |  90%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%</div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'>show</span>(<span class='no'>K</span>)
 
 <span class='co'># use positivelist and highlight matches in context</span>
-<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='st'>"[Ee]urop.*"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... filtering by positivelist</span></div><div class='output co'>#&gt; <span class='message'>... number of hits droped due to positivelist: 20</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='no'>K</span>, <span class='kw'>yellow</span> <span class='kw'>=</span> <span class='st'>"[Ee]urop.*"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>, <span class='kw'>positivelist</span> <span class='kw'>=</span> <span class='st'>"[Ee]urop.*"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... filtering by positivelist</span></div><div class='output co'>#&gt; <span class='message'>... number of hits droped due to positivelist: 20</span></div><div class='input'><span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='highlight.html'>highlight</a></span>(<span class='no'>K</span>, <span class='kw'>yellow</span> <span class='kw'>=</span> <span class='st'>"[Ee]urop.*"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
+<span class='co'># Apply kwic on partition_bundle/subcorpus_bundle</span>
+<span class='no'>gparl_2009_11_10_speeches</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-11-10"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='as.speeches.html'>as.speeches</a></span>(<span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='no'>k</span> <span class='kw'>&lt;-</span> <span class='fu'>kwic</span>(<span class='no'>gparl_2009_11_10_speeches</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Integration"</span>)</div></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -356,7 +438,7 @@ Cham et al: Springer, pp. 73-87 (chs. 8 &amp; 9).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

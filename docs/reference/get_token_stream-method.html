@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Get Token Stream. — get_token_stream" />
 <meta property="og:description" content="Auxiliary method to get the fulltext of a corpus, subcorpora etc. Can be used
 to export corpus data to other tools." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -56,7 +59,7 @@ to export corpus data to other tools." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -70,7 +73,7 @@ to export corpus data to other tools." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -105,7 +108,12 @@ to export corpus data to other tools." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/PolMine/polmineR/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -120,7 +128,7 @@ to export corpus data to other tools." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get Token Stream.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/token_stream.R'><code>R/token_stream.R</code></a></small>
     <div class="hidden name"><code>get_token_stream-method.Rd</code></div>
     </div>
 
@@ -132,41 +140,62 @@ to export corpus data to other tools.</p>
     <pre class="usage"><span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for numeric</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attribute</span>,
-  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>beautify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(
+  <span class='no'>.Object</span>,
+  <span class='no'>corpus</span>,
+  <span class='no'>p_attribute</span>,
+  <span class='kw'>subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>boost</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>beautify</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for matrix</span>
 <span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for corpus</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>right</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for slice</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>,
-  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for subcorpus</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>,
-  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='no'>p_attribute</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for regions</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
-  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>get_token_stream</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
 
 <span class='co'># S4 method for partition_bundle</span>
-<span class='fu'>get_token_stream</span>(<span class='no'>.Object</span>,
-  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>, <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>get_token_stream</span>(
+  <span class='no'>.Object</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>,
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>cpos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>decode</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>mc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,7 +216,23 @@ worker.</p></td>
     </tr>
     <tr>
       <th>p_attribute</th>
-      <td><p>A length-one <code>character</code> vector, the p-attribute to decode.</p></td>
+      <td><p>A length-one <code>character</code> vector, the p-attribute to
+decode.</p></td>
+    </tr>
+    <tr>
+      <th>subset</th>
+      <td><p>An expression applied on p-attributes, using non-standard
+evaluation. Note that symbols used in the expression may not be used
+internally (e.g. 'stopwords').</p></td>
+    </tr>
+    <tr>
+      <th>boost</th>
+      <td><p>A length-one <code>logical</code> value, whether to speed up decoding
+a long vector of token ids by directly by reading in the lexion file from
+the data directory of a corpus. If <code>NULL</code> (default), the internal
+decision rule is that <code>boost</code> will be <code>TRUE</code> if the corpus is
+larger than 10 000 000 million tokens and more than 5 percent of the corpus
+are to be decoded.</p></td>
     </tr>
     <tr>
       <th>encoding</th>
@@ -208,7 +253,8 @@ whitespace before and after interpunctation.</p></td>
     </tr>
     <tr>
       <th>cpos</th>
-      <td><p>A <code>logical</code> value, whether to return corpus positions as names of the tokens.</p></td>
+      <td><p>A <code>logical</code> value, whether to return corpus positions as
+names of the tokens.</p></td>
     </tr>
     <tr>
       <th>cutoff</th>
@@ -229,8 +275,17 @@ integer vector with token ids is returned.</p></td>
       <td><p>Right corpus position.</p></td>
     </tr>
     <tr>
+      <th>phrases</th>
+      <td><p>A <code>phrases</code> object. Defined phrases will be concatenated.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>A length-one <code>logical</code> value, whether to show messages.</p></td>
+    </tr>
+    <tr>
       <th>progress</th>
-      <td><p>A length-one <code>logical</code> value, whether to show progress bar.</p></td>
+      <td><p>A length-one <code>logical</code> value, whether to show progress
+bar.</p></td>
     </tr>
     <tr>
       <th>mc</th>
@@ -247,15 +302,15 @@ will be used.</p></td>
   right corpus position are called <em>regions</em>. The
   <code>get_token_stream</code>-method will extract the tokens (for regions) from a
   corpus.</p>
-<p>The primary usage of this method is to return the token
-  stream of a (sub-)corpus as defined by a <code>corpus</code>, <code>subcorpus</code> or
+<p>The primary usage of this method is to return the token stream of a
+  (sub-)corpus as defined by a <code>corpus</code>, <code>subcorpus</code> or
   <code>partition</code> object. The methods defined for a <code>numeric</code> vector or
   a (two-column) <code>matrix</code> defining regions (i.e. left and right corpus
   positions in the first and second column) are the actual workers for this
   operation.</p>
-<p>The <code>get_token_stream</code> has been introduced so serve as a worker by
-  higher level methods such as <code>read</code>, <code>html</code>, and
-  <code>as.markdown</code>. It may however be useful for decoding a corpus so that 
+<p>The <code>get_token_stream</code> has been introduced so serve as a worker
+  by higher level methods such as <code>read</code>, <code>html</code>, and
+  <code>as.markdown</code>. It may however be useful for decoding a corpus so that
   it can be exported to other tools.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -294,19 +349,32 @@ will be used.</p></td>
 <span class='co'># Decode partition_bundle</span>
 <span class='no'>pb_tokstr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='partition_class.html'>split</a></span>(<span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>get_token_stream</span>(<span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+  <span class='fu'>get_token_stream</span>(<span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... creating vector of document ids</span></div><div class='output co'>#&gt; <span class='message'>... creating vector of corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... decoding character vectors</span></div><div class='output co'>#&gt; <span class='message'>... generating list of character vectors</span></div><div class='input'>
+<span class='co'># Get token stream for partition_bundle</span>
+<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
+<span class='no'>ts_list</span> <span class='kw'>&lt;-</span> <span class='fu'>get_token_stream</span>(<span class='no'>pb</span>)</div><div class='output co'>#&gt; <span class='message'>... creating vector of document ids</span></div><div class='output co'>#&gt; <span class='message'>... creating vector of corpus positions</span></div><div class='output co'>#&gt; <span class='message'>... decoding character vectors</span></div><div class='output co'>#&gt; <span class='message'>... generating list of character vectors</span></div><div class='input'>
+<span class='co'># Workflow to filter decoded subcorpus_bundle</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='as.speeches.html'>as.speeches</a></span>(<span class='kw'>s_attribute_name</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='no'>queries</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'"freiheitliche" "Grundordnung"'</span>, <span class='st'>'"Bundesrepublik" "Deutschland"'</span> )
+<span class='no'>phr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='cpos-method.html'>cpos</a></span>(<span class='kw'>query</span> <span class='kw'>=</span> <span class='no'>queries</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='phrases-class.html'>as.phrases</a></span>(<span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>)
 
-<span class='co'># get token stream for partition_bundle</span>
-<span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting matrix with regions for s-attribute:  id</span></div><div class='output co'>#&gt; <span class='message'>... generating the partitions</span></div><div class='input'><span class='no'>ts_list</span> <span class='kw'>&lt;-</span> <span class='fu'>get_token_stream</span>(<span class='no'>pb</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div></pre>
+<span class='no'>kill</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tm</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/tm/man/stopwords.html'>stopwords</a></span>(<span class='st'>"de"</span>)
+
+<span class='no'>ts_phr</span> <span class='kw'>&lt;-</span> <span class='fu'>get_token_stream</span>(
+  <span class='no'>sp</span>,
+  <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>),
+  <span class='kw'>subset</span> <span class='kw'>=</span> {!<span class='no'>word</span> <span class='kw'>%in%</span> <span class='no'>kill</span>  <span class='kw'>&amp;</span> !<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grepl</a></span>(<span class='st'>"(\\$.$|ART)"</span>, <span class='no'>pos</span>)},
+  <span class='kw'>phrases</span> <span class='kw'>=</span> <span class='no'>phr</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
+}</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -317,7 +385,7 @@ will be used.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
