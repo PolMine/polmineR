@@ -327,6 +327,6 @@ round.data.table <- function(x, digits = 2L){
 .list_corpora = function() toupper(list.files( registry() ))
 
 #' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
+#' @export %>%
+NULL
 
