@@ -3,6 +3,7 @@ Introducing the polmineR package
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3909433.svg)](https://doi.org/10.5281/zenodo.3909433)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
@@ -78,8 +79,8 @@ if (!"GermaParl" %in% rownames(installed.packages())){
   install.packages("GermaParl", repos = "http://polmine.github.io/drat")
 }
 use("GermaParl")
-#> ... activating corpus: GERMAPARL
 #> ... activating corpus: GERMAPARLMINI
+#> ... activating corpus: GERMAPARLSAMPLE (version: v0.1.0)
 if (!"GERMAPARL" %in% corpus()$corpus){
   GermaParl::germaparl_download_corpus()
   use("GermaParl")
@@ -171,8 +172,7 @@ count("EUROPARL-EN", '"[pP]opulism"')
 
 The dispersion method is there to analyse the dispersion of a query, or
 a set of queries across one or two dimensions (absolute and relative
-frequencies). The CQP syntax can be
-used.
+frequencies). The CQP syntax can be used.
 
 ``` r
 populism <- dispersion("EUROPARL-EN", "populism", s_attribute = "text_year", progress = FALSE)
@@ -182,8 +182,7 @@ pop_regex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year
 ### cooccurrences (to analyse collocations)
 
 The cooccurrences method is used to analyse the context of a query
-(including some
-statistics).
+(including some statistics).
 
 ``` r
 islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
@@ -196,8 +195,7 @@ dotplot(islam)
 ### features (keyword extraction)
 
 Compare partitions to identify features / keywords (using statistical
-tests such as chi
-square).
+tests such as chi square).
 
 ``` r
 ep_2002 <- partition("EUROPARL-EN", text_year = "2002", p_attribute = "word")
@@ -458,3 +456,12 @@ Now install the remaining packages from within R.
 ``` r
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
+
+## Quoting polmineR
+
+The polmineR package has been developed to be useful for research. If
+you publish research results making use of polmineR, the following
+citation is suggested to be included in publications.
+
+Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis.
+R package version v0.8.1. <http://doi.org/10.5281/zenodo.3909433>

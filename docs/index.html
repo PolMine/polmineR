@@ -421,14 +421,14 @@
 <p>The following instructions for Mac users assume that R is installed on your system. Binaries are available from the <a href="https://cran.r-project.org/bin/macosx/">Homepage of the R Project</a>. An installation of RStudio is highly recommended. Get the Open Source License version of <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a>.</p>
 <p>At this stage, the RcppCWB dependency is not available as a pre-compiled binary and needs to be compiled. A set of system requirements needs to be fulfilled to do this.</p>
 <p>First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">xcode-select</span> --install</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" title="1"><span class="ex">xcode-select</span> --install</a></code></pre></div>
 <p>Please make sure that you agree to the license.</p>
 <p>Second, an installation of XQuartz is required. It can be obtained from <a href="https://www.xquartz.org/">www.xquartz.org</a>.</p>
 <p>Third, to fulfill the system requirements of the RcppCWB package, the Glib and pcre libraries need to be installed. Using a package manager makes things considerably easier. We recommend using ‘Homebrew’. To install Homebrew, follow the instructions on the <a href="https://brew.sh/index_de.html">Homebrew Homepage</a>. The following commands then need to be executed from a terminal window. They will install the C libraries that the RcppCWB package relies on:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">brew</span> -v install pkg-config</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="ex">brew</span> -v install glib --universal</span>
-<span id="cb16-3"><a href="#cb16-3"></a><span class="ex">brew</span> -v install pcre --universal</span>
-<span id="cb16-4"><a href="#cb16-4"></a><span class="ex">brew</span> -v install readline</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1"><span class="ex">brew</span> -v install pkg-config</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="ex">brew</span> -v install glib --universal</a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="ex">brew</span> -v install pcre --universal</a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="ex">brew</span> -v install readline</a></code></pre></div>
 <p>The latest release of polmineR can be installed from CRAN using the usual <code>install.packages</code>-function.</p>
 <div class="sourceCode" id="cb17"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</pre></div>
 <p>The development version of <em>polmineR</em> can be installed using devtools:</p>
@@ -443,17 +443,17 @@
 <h3 class="hasAnchor">
 <a href="#linux-ubuntu" class="anchor"></a>Linux (Ubuntu)</h3>
 <p>If you have not yet installed R on your Ubuntu machine, there is a good instruction at <a href="https://wiki.ubuntuusers.de/R/">ubuntuuser</a>. To install base R, enter in the terminal.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">sudo</span> apt-get install r-base r-recommended</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" title="1"><span class="fu">sudo</span> apt-get install r-base r-recommended</a></code></pre></div>
 <p>Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">sudo</span> apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9</span>
-<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">sudo</span> add-apt-repository <span class="st">'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'</span></span>
-<span id="cb21-3"><a href="#cb21-3"></a><span class="fu">sudo</span> apt-get update</span>
-<span id="cb21-4"><a href="#cb21-4"></a><span class="fu">sudo</span> apt-get upgrade</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">sudo</span> apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9</a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="fu">sudo</span> add-apt-repository <span class="st">'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'</span></a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="fu">sudo</span> apt-get update</a>
+<a class="sourceLine" id="cb21-4" title="4"><span class="fu">sudo</span> apt-get upgrade</a></code></pre></div>
 <p>It is highly recommended to install <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a>, a powerful IDE for R. Output of polmineR methods is generally optimized to be displayed using RStudio facilities. If you are working on a remote server, running RStudio Server may be an interesting option to consider.</p>
 <p>The RcppCWB package, the interface used by polmineR to query CWB corpora, will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">sudo</span> apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev</span>
-<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">sudo</span> apt-get install libxml2-dev</span>
-<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">sudo</span> apt-get install libprotobuf-dev</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb22-1" title="1"><span class="fu">sudo</span> apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev</a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="fu">sudo</span> apt-get install libxml2-dev</a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="fu">sudo</span> apt-get install libprotobuf-dev</a></code></pre></div>
 <p>The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.</p>
 <div class="sourceCode" id="cb23"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"RcppCWB"</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"polmineR"</span>)</pre></div>
@@ -465,10 +465,10 @@
 <span class="fu"><a href="reference/use.html">use</a></span>(<span class="st">"polmineR"</span>)
 <span class="fu"><a href="reference/corpus-class.html">corpus</a></span>()</pre></div>
 <p>To have access to all package functions and to run all package tests, the installation of further system requirements and packages is required. The xlsx dependency requires that rJava is installed and configured for R. That is done on the shell:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">sudo</span> apt-get install openjdk-8-jre</span>
-<span id="cb26-2"><a href="#cb26-2"></a><span class="fu">sudo</span> R CMD javareconf</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb26-1" title="1"><span class="fu">sudo</span> apt-get install openjdk-8-jre</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="fu">sudo</span> R CMD javareconf</a></code></pre></div>
 <p>To run package tests including (re-)building the manual and vignettes, a working installation of Latex is required, too. Be aware that this may be a time-consuming operation.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">sudo</span> apt-get install texlive-full texlive-xetex </span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">sudo</span> apt-get install texlive-full texlive-xetex </a></code></pre></div>
 <p>Now install the remaining packages from within R.</p>
 <div class="sourceCode" id="cb28"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="kw">pkgs</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"rJava"</span>, <span class="st">"xlsx"</span>, <span class="st">"tidytext"</span>))</pre></div>
 </div>

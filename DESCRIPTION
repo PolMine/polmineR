@@ -1,6 +1,6 @@
 Package: polmineR
 Type: Package
-Title: Toolkit for Corpus Analysis
+Title: Verbs and Nouns for Corpus Analysis
 Version: 0.8.1
 Date: 2020-06-25
 Authors@R: c(
