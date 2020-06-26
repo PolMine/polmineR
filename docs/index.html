@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toolkit for Corpus Analysis • polmineR</title>
+<title>Verbs and Nouns for Corpus Analysis • polmineR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Toolkit for Corpus Analysis">
+<script src="pkgdown.js"></script><meta property="og:title" content="Verbs and Nouns for Corpus Analysis">
 <meta property="og:description" content="Library for corpus analysis using the Corpus Workbench as an
     efficient back end for indexing and querying large corpora. The package offers
     functionality to flexibly create partitions and to carry out basic statistical
@@ -125,8 +125,8 @@
   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"GermaParl"</span>, <span class="kw">repos</span> <span class="kw">=</span> <span class="st">"http://polmine.github.io/drat"</span>)
 }
 <span class="fu"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)
-<span class="co">#&gt; ... activating corpus: GERMAPARL</span>
 <span class="co">#&gt; ... activating corpus: GERMAPARLMINI</span>
+<span class="co">#&gt; ... activating corpus: GERMAPARLSAMPLE (version: v0.1.0)</span>
 <span class="kw">if</span> (!<span class="st">"GERMAPARL"</span> <span class="kw">%in%</span> <span class="fu"><a href="reference/corpus-class.html">corpus</a></span>()$<span class="no">corpus</span>){
   <span class="kw pkg">GermaParl</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/GermaParl/man/download.html">germaparl_download_corpus</a></span>()
   <span class="fu"><a href="reference/use.html">use</a></span>(<span class="st">"GermaParl"</span>)
@@ -143,7 +143,7 @@
 <span class="co">#&gt; ... activating corpus: EUROPARL-IT</span>
 <span class="co">#&gt; ... activating corpus: EUROPARL-NL</span>
 <span class="kw">if</span> (!<span class="st">"EUROPARL-EN"</span> <span class="kw">%in%</span> <span class="fu"><a href="reference/corpus-class.html">corpus</a></span>()$<span class="no">corpus</span>){
-  <span class="kw pkg">europarl</span><span class="kw ns">::</span><span class="fu">europarl_download</span>()
+  <span class="kw pkg">europarl</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/europarl/man/europarl.html">europarl_download</a></span>()
   <span class="fu"><a href="reference/use.html">use</a></span>(<span class="st">"europarl"</span>)
 }</pre></div>
 <p>Calling the <code><a href="reference/use.html">use()</a></code>-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.</p>
@@ -473,6 +473,12 @@
 <div class="sourceCode" id="cb28"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="kw">pkgs</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"rJava"</span>, <span class="st">"xlsx"</span>, <span class="st">"tidytext"</span>))</pre></div>
 </div>
 </div>
+<div id="quoting-polminer" class="section level2">
+<h2 class="hasAnchor">
+<a href="#quoting-polminer" class="anchor"></a>Quoting polmineR</h2>
+<p>The polmineR package has been developed to be useful for research. If you publish research results making use of polmineR, the following citation is suggested to be included in publications.</p>
+<p>Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis. R package version v0.8.1. <a href="http://doi.org/10.5281/zenodo.3909433" class="uri">http://doi.org/10.5281/zenodo.3909433</a></p>
+</div>
 </div>
   </div>
 
@@ -511,6 +517,7 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://doi.org/10.5281/zenodo.3909433"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3909433.svg" alt="DOI"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://www.r-pkg.org/badges/version/polmineR" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://cran.r-project.org/package=polmineR"><img src="http://cranlogs.r-pkg.org/badges/polmineR" alt="Downloads"></a></li>
