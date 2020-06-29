@@ -105,7 +105,7 @@ setMethod("corpus", "missing", function(){
     y <- data.frame(
       corpus = corpora,
       size = unname(sapply(corpora,function(x) cl_attribute_size(corpus = x, attribute = registry_get_p_attributes(x)[1], attribute_type = "p", registry = registry()))),
-      template = unname(sapply(corpora, function(x) x %in% names(getOption("polmineR.templates")))),
+      template = unname(sapply(corpora, function(x) if (is.null(get_template(x, warn = FALSE))) FALSE else TRUE )),
       stringsAsFactors = FALSE
     )
   } else {
@@ -375,11 +375,11 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 #' @details The \code{show}-method will show basic information on the
 #'   \code{corpus} object.
 setMethod("show", "corpus", function(object){
-  cat(sprintf("** '%s' object **\n", class(object)))
-  cat(sprintf("%-12s", "corpus:"), object@corpus, "\n")
-  cat(sprintf("%-12s", "encoding:"), object@encoding, "\n")
-  cat(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]", "\n")
-  cat(sprintf("%-12s", "size:"), size(object), "\n")
+  message(sprintf("** '%s' object **", class(object)))
+  message(sprintf("%-12s", "corpus:"), object@corpus)
+  message(sprintf("%-12s", "encoding:"), object@encoding)
+  message(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]")
+  message(sprintf("%-12s", "size:"), size(object))
 })
 
 
@@ -414,8 +414,8 @@ setMethod("$", "corpus", function(x, name) s_attributes(x, s_attribute = name))
 #' @param object An object of class \code{subcorpus_bundle}.
 #' @rdname subcorpus_bundle
 setMethod("show", "subcorpus_bundle", function (object) {
-  cat('** subcorpus_bundle object: **\n')
-  cat(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects), '\n')
+  message('** subcorpus_bundle object: **')
+  message(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects))
 })
 
 

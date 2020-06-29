@@ -436,7 +436,8 @@ setMethod("chisquare", "features", function(.Object){
   count_notx_coi <- .Object@size_coi - .Object@stat[["count_coi"]]
   count_notx_ref <- .Object@size_ref - .Object@stat[["count_ref"]]
   count_notx_total <- size_total - count_x_total
-  options(digits = 20)
+  digits_restore_value <- options(digits = 20)
+  on.exit(digits_restore_value)
   exp_x_coi <- (count_x_total / size_total) * .Object@size_coi
   exp_x_ref <- (count_x_total / size_total) * .Object@size_ref
   exp_notx_coi <- (count_notx_total/size_total) * .Object@size_coi
@@ -447,7 +448,6 @@ setMethod("chisquare", "features", function(.Object){
   chi4 <- ((exp_notx_ref - count_notx_ref) ** 2) / exp_notx_ref
   chi <- chi1 + chi2 + chi3 + chi4
   chi <- chi * ifelse(.Object@stat[["count_coi"]] >= exp_x_coi, 1L, -1L)
-  options(digits = 7)
   .Object@stat[, "exp_coi" := exp_x_coi]
   .Object@stat[, "chisquare" := chi]
   setorderv(.Object@stat, cols = "chisquare", order = -1L)

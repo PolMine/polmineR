@@ -9,8 +9,6 @@
 \alias{getEncoding}
 \alias{partitionBundle}
 \alias{as.partitionBundle}
-\alias{setTemplate}
-\alias{getTemplate}
 \alias{corpus,textstat-method}
 \alias{corpus,bundle-method}
 \alias{corpus,kwic-method}
@@ -29,10 +27,6 @@ getEncoding(...)
 partitionBundle(...)
 
 as.partitionBundle(...)
-
-setTemplate(...)
-
-getTemplate(...)
 
 \S4method{corpus}{textstat}(.Object)
 

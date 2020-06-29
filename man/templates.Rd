@@ -6,38 +6,27 @@
 \alias{get_template,character-method}
 \alias{get_template,corpus-method}
 \alias{get_template,partition-method}
-\alias{get_template,missing-method}
-\alias{set_template}
-\alias{set_template,character-method}
-\alias{set_template,missing-method}
-\title{Get and set templates.}
+\title{Get template for reconstructing full text.}
 \usage{
 get_template(.Object, ...)
 
-\S4method{get_template}{character}(.Object)
+\S4method{get_template}{character}(.Object, warn = TRUE)
 
-\S4method{get_template}{corpus}(.Object)
+\S4method{get_template}{corpus}(.Object, warn = TRUE)
 
-\S4method{get_template}{partition}(.Object)
+\S4method{get_template}{partition}(.Object, warn = TRUE)
 
-\S4method{get_template}{subcorpus}(.Object)
-
-\S4method{get_template}{missing}(.Object)
-
-set_template(.Object, ...)
-
-\S4method{set_template}{character}(.Object)
-
-\S4method{set_template}{missing}(.Object, verbose = FALSE)
+\S4method{get_template}{subcorpus}(.Object, warn = TRUE)
 }
 \arguments{
-\item{.Object}{object}
+\item{.Object}{A \code{corpus}, \code{subcorpus} or \code{partition} object,
+or a length-one \code{character} vector with a corpus ID.}
 
-\item{...}{further parameters}
+\item{...}{Further arguments to be defined.}
 
-\item{verbose}{logical, whether to be verbose}
+\item{warn}{A \code{logical} value, whether to issue a warning if template 
+is not available.}
 }
 \description{
-Templates are used to format the markdown/html output of partitions. Upon loading 
-the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'.
+Templates are used to format the markdown/html output of partitions.
 }

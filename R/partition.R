@@ -21,25 +21,25 @@ setAs(from = "partition", to = "plpr_partition", function(from){
 #' @docType methods
 #' @noRd
 setMethod("show", "partition", function(object){
-  cat("** partition object **\n")
-  cat(sprintf("%-20s", "corpus:"), object@corpus, "\n")
-  cat(sprintf("%-20s", "name:"), object@name, "\n")
+  message("** partition object **")
+  message(sprintf("%-20s", "corpus:"), object@corpus)
+  message(sprintf("%-20s", "name:"), object@name)
   if (length(object@s_attributes) == 0L) {
-    cat(sprintf("%-20s", "s-attributes:"), "no specification\n")
+    message(sprintf("%-20s", "s-attributes:"), "no specification")
   } else {
     s <- unlist(lapply(
       names(object@s_attributes),
       function(x) paste(x, "=", paste(object@s_attributes[[x]], collapse = "/"))
     ))
-    cat(sprintf("%-20s", "s-attributes:"), s[1], '\n')
-    if (length(s)>1) {for (i in length(s)) cat(sprintf("%-20s", " "), s[i], '\n') }
+    message(sprintf("%-20s", "s-attributes:"), s[1])
+    if (length(s) > 1) {for (i in length(s)) message(sprintf("%-20s"), s[i]) }
   } 
-  cat(sprintf("%-21s", "cpos:"))
-  if (nrow(object@cpos) == 0L) cat("not available\n") else cat(nrow(object@cpos), "pairs of corpus positions\n")
-  cat(sprintf("%-21s", "size:"))
-  if (is.null(object@size)) cat("not available\n") else cat(object@size, "tokens\n")
-  cat(sprintf("%-21s", "count:"))
-  if (length(object@p_attribute) == 0L) cat("not available\n") else cat("available for ", object@p_attribute, "\n")
+  message(sprintf("%-21s", "cpos:"), appendLF = FALSE)
+  if (nrow(object@cpos) == 0L) message("not available") else message(nrow(object@cpos), " pairs of corpus positions")
+  message(sprintf("%-21s", "size:"), appendLF = FALSE)
+  if (is.null(object@size)) message("not available") else message(object@size, " tokens")
+  message(sprintf("%-21s", "count:"), appendLF = FALSE)
+  if (length(object@p_attribute) == 0L) message("not available") else message("available for ", object@p_attribute)
 })
 
 

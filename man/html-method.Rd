@@ -13,7 +13,7 @@
 \usage{
 html(object, ...)
 
-\S4method{html}{character}(object)
+\S4method{html}{character}(object, corpus, height = NULL)
 
 \S4method{html}{partition}(
   object,
@@ -34,12 +34,19 @@ html(object, ...)
   verbose = FALSE,
   cutoff = NULL,
   charoffset = FALSE,
-  beautify = TRUE,
+  beautify = FALSE,
   height = NULL,
   ...
 )
 
-\S4method{html}{partition_bundle}(object, filename = c(), type = "debate")
+\S4method{html}{partition_bundle}(
+  object,
+  charoffset = FALSE,
+  beautify = TRUE,
+  height = NULL,
+  progress = TRUE,
+  ...
+)
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL, verbose = FALSE, ...)
 }
@@ -47,6 +54,11 @@ html(object, ...)
 \item{object}{The object the fulltext output will be based on.}
 
 \item{...}{Further parameters that are passed into \code{as.markdown}.}
+
+\item{corpus}{The ID of the corpus, a length-one \code{character} vector.}
+
+\item{height}{A \code{character} vector that will be inserted into the html
+as an optional height of a scroll box.}
 
 \item{meta}{Metadata to include in  output, if \code{NULL} (default), the
 s-attributes defining a partition will be used.}
@@ -67,18 +79,16 @@ offset positions are added to elements embracing tokens.}
 \item{beautify}{Length-one \code{logical} value, if \code{TRUE}, whitespace
 before interpunctuation will be removed.}
 
-\item{height}{A \code{character} vector that will be inserted into the html
-as an optional height of a scroll box.}
-
-\item{filename}{The filename.}
-
-\item{type}{The partition type.}
+\item{progress}{Length-one \code{logical} value, whether to output progress#
+bar.}
 
 \item{i}{An \code{integer} value: If \code{object} is a \code{kwic}-object,
 the index of the concordance for which the fulltext is to be generated.}
 
 \item{s_attribute}{Structural attributes that will be used to define the partition 
 where the match occurred.}
+
+\item{type}{The partition type.}
 }
 \value{
 Returns an object of class \code{html} as used in the \code{htmltools} package. Methods

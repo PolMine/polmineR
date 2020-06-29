@@ -9,10 +9,12 @@ NULL
 #' @param .Object object of class \code{partition}
 #' @param n number of tokens/characters
 #' @param p_attribute the p-attribute to use (can be > 1)
-#' @param char if NULL, tokens will be counted, else characters, keeping only those provided by a character vector
-#' @param mc logical, whether to use multicore, passed into call to \code{blapply} (see respective documentation)
+#' @param char If \code{NULL}, tokens will be counted, else characters, keeping
+#'   only those provided by a character vector
+#' @param mc A \code{logical} value, whether to use multicore, passed into call
+#'   to \code{blapply} (see respective documentation)
 #' @param progress logical
-#' @param ... further parameters
+#' @param ... Further arguments.
 #' @exportMethod ngrams
 #' @rdname ngrams
 #' @name ngrams
@@ -88,6 +90,7 @@ setMethod("ngrams", "data.table", function(.Object, n = 2L, p_attribute = "word"
 
 
 #' @rdname ngrams
+#' @importFrom pbapply pbsapply
 setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -138,12 +141,11 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     }
     char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
     char_soup_total <- nchar(char_soup)
-    ngrams <- sapply(
-      1L:(char_soup_total - n + 1L),
-      function(x) {
-        if (progress) .progressBar(x, char_soup_total)
-        substr(char_soup, x, x + n - 1L)
-        })
+    
+    .fn <- function(x) substr(char_soup, x, x + n - 1L)
+    iter_values <- 1L:(char_soup_total - n + 1L)
+    ngrams <- if (isTRUE(progress)) pbsapply(iter_values, .fn) else sapply(iter_values, .fn)
+
     tabled_ngrams <- table(ngrams)
     TF <- data.table(
       ngram = names(tabled_ngrams),

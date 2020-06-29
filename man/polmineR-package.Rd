@@ -45,7 +45,6 @@ The package includes a draft shiny app that can be called using
   \item{\emph{polmineR.browse}:} {}
   \item{\emph{polmineR.buttons}:} {}
   \item{\emph{polmineR.specialChars}:} {}
-  \item{\emph{polmineR.templates}:} {}
   \item{\emph{polmineR.cutoff}:} {}
   \item{\emph{polmineR.corpus_registry}:} {The system corpus registry
   directory defined by the environment variable CORPUS_REGISTRY before the

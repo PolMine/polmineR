@@ -31,3 +31,13 @@ test_that("ngrams",{
     expect_equal(n, dt_min[["count"]][i])
   }
 })
+
+
+test_that("ngrams - character",{
+  o <- corpus("REUTERS")
+  n <- ngrams(o, n = 3, char = "")
+  expect_identical(
+    length(grep("oil", get_token_stream(o, p_attribute = "word"))),
+    n["oil",][["count"]]
+  )
+})

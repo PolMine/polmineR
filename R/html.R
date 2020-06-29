@@ -21,6 +21,7 @@ NULL
 #' @param cpos Length-one \code{logical} value, if \code{TRUE} (default), all
 #'   tokens will be wrapped by elements with id attribute indicating corpus
 #'   positions.
+#' @param corpus The ID of the corpus, a length-one \code{character} vector.
 #' @param beautify Length-one \code{logical} value, if \code{TRUE}, whitespace
 #'   before interpunctuation will be removed.
 #' @param charoffset Length-one \code{logical} value, if \code{TRUE}, character
@@ -29,7 +30,8 @@ NULL
 #'   as an optional height of a scroll box.
 #' @param verbose Length-one \code{logical} value, whether to output progress
 #'   messages.
-#' @param filename The filename.
+#' @param progress Length-one \code{logical} value, whether to output progress#
+#'   bar.
 #' @param cutoff An \code{integer} value, maximum number of tokens to decode
 #'   from token stream, passed into \code{as.markdown}.
 #' @param type The partition type.
@@ -63,17 +65,43 @@ NULL
 setGeneric("html", function(object, ...) standardGeneric("html") )
 
 
+#' @exportMethod html
 #' @rdname html-method
-setMethod("html", "character", function(object){
+setMethod("html", "character", function(object, corpus, height = NULL){
   if (!requireNamespace("markdown", quietly = TRUE))
     stop("package 'markdown' is not installed, but necessary for this function")
-  
-  md_file <- tempfile(fileext = ".md")
-  html_file <- tempfile(fileext = ".html")
-  cat(object, file = md_file)
-  if (localeToCharset()[1] != "UTF-8") object <- iconv(object, from = localeToCharset()[1], to = "UTF-8")
-  markdown::markdownToHTML(file = md_file, output = html_file)  
-  html_file
+
+  css <- paste(c(
+    readLines(getOption("markdown.HTML.stylesheet")),
+    readLines(system.file("css", "tooltips.css", package = "polmineR"))
+  ), collapse = "\n", sep = "\n"
+  )
+  md <- gsub('\u201c', '"', object)
+  md <- gsub('\u201D', '"', md)
+  md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
+
+  # produce result very similar to markdown::markdownToHTML, but selfmade to
+  # circumvent encoding issue on windows (poor handling of encodings other
+  # than UTF-8 by markdownToHTML)
+  template <- "<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n<title>%s</title>\n<style type=\"text/css\">\n%s\n</style>\n</head>\n<body>\n%s\n</body>\n</html>"
+  doc <- sprintf(
+    template,
+    sprintf("Corpus: %s", corpus), # title
+    css,
+    markdown::renderMarkdown(text = md)
+  )
+
+  if (!is.null(height)){
+    fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
+    doc <- sprintf(
+      fmt,
+      gsub("^(.*?)<body>\n.*?</body>.*?$", "\\1", doc),
+      height,
+      gsub("^.*?<body>\n(.*?)</body>.*?$", "\\1", doc)
+    )
+    doc <- gsub("<h3>", '<h3 class="fulltext">', doc)
+  }
+  doc
 })
 
 
@@ -180,7 +208,7 @@ setMethod(
 #' @docType methods
 setMethod(
   "html", "subcorpus",
-  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = TRUE, height = NULL, ...){
+  function(object, meta = NULL, cpos = TRUE, verbose = FALSE, cutoff = NULL, charoffset = FALSE, beautify = FALSE, height = NULL, ...){
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
@@ -195,41 +223,10 @@ setMethod(
     # even if this causes some (minimal) overhead.
     # The default stylesheet (markdown.css) needs to be included explicitly,
     # so that it is not lost.
-    css <- paste(c(
-      readLines(getOption("markdown.HTML.stylesheet")),
-      readLines(system.file("css", "tooltips.css", package = "polmineR"))
-      ), collapse = "\n", sep = "\n"
-    )
-    md <- gsub('\u201c', '"', md)
-    md <- gsub('\u201D', '"', md)
-    md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
     
-    # produce result very similar to markdown::markdownToHTML, but selfmade to 
-    # circumvent encoding issue on windows (poor handling of encodings other 
-    # than UTF-8 by markdownToHTML)
-    template <- "<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n<title>%s</title>\n<style type=\"text/css\">\n%s\n</style>\n</head>\n<body>\n%s\n</body>\n</html>"
-    doc <- sprintf(
-      template,
-      sprintf("Corpus: %s", object@corpus), # title
-      css,
-      markdown::renderMarkdown(text = md)
-    )
-    
-    if (!is.null(height)){
-      fmt <- '%s<div style="border: 1px solid #ddd; padding: 5px; overflow-y: scroll; height: %s;">%s</div></body></html>'
-      doc <- sprintf(
-        fmt,
-        gsub("^(.*?)<body>\n.*?</body>.*?$", "\\1", doc),
-        height,
-        gsub("^.*?<body>\n(.*?)</body>.*?$", "\\1", doc)
-      )
-      doc <- gsub("<h3>", '<h3 class="fulltext">', doc)
-    }
-    
+    doc <- html(object = md, corpus = object@corpus, height = height)
     if (beautify) doc <- .beautify(doc)
-    
     if (charoffset) doc <- .addCharacterOffset(doc)
-    
     ret <- htmltools::HTML(doc)
     attr(ret, "browsable_html") <- TRUE
     ret
@@ -238,19 +235,35 @@ setMethod(
 
 #' @docType methods
 #' @rdname html-method
-setMethod("html", "partition_bundle", function(object, filename = c(), type = "debate"){
-  markdown <- paste(lapply(object@objects, function(p) as.markdown(p, type)), collapse="\n* * *\n")
-  markdown <- paste(
-    paste('## Excerpt from corpus', object@corpus, '\n* * *\n'),
-    markdown,
-    '\n* * *\n',
-    collapse = "\n")
-  if (is.null(filename)) {
-    htmlFile <- html(markdown)
+setMethod("html", "partition_bundle", function(object, charoffset = FALSE, beautify = TRUE, height = NULL, progress = TRUE, ...){
+  
+  corpus_id <- get_corpus(object)
+  
+  if (!requireNamespace("markdown", quietly = TRUE))
+    stop("package 'markdown' is not installed, but necessary for this function")
+  
+  md_list <- if (isTRUE(progress)){
+    pblapply(object@objects, function(p) as.markdown(p, ...))
   } else {
-    cat(markdown, file = filename)    
+    lapply(object@objects, function(p) as.markdown(p, ...))
   }
-  if (is.null(filename)) browseURL(htmlFile)
+  
+  md <- paste(md_list, collapse = "\n* * *\n")
+  md <- paste(
+    paste('## Excerpt from corpus', corpus_id, '\n* * *\n'),
+    md,
+    '\n* * *\n',
+    collapse = "\n"
+  )
+
+  doc <- html(object = md, corpus = corpus_id, height = height)
+  if (beautify) doc <- .beautify(doc)
+  if (charoffset) doc <- .addCharacterOffset(doc)
+  ret <- htmltools::HTML(doc)
+  attr(ret, "browsable_html") <- TRUE
+  ret
+  
+  
 })
 
 
@@ -265,7 +278,7 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
     s_attrs <- s_attribute
     object <- enrich(object, s_attributes = s_attrs)
   } else if (length(object@metadata) == 0L){
-    s_attrs <- getOption("polmineR.templates")[[object@corpus]][["metadata"]]
+    s_attrs <- get_template(object@corpus)[["metadata"]]
     .message("using metadata from template: ", paste(s_attrs, collapse = " / "), verbose = verbose)
     if (length(s_attrs) > 0L){
       .message("enriching", verbose = verbose)

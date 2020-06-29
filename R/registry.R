@@ -43,8 +43,6 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
   } else {
     .message("status: FAIL", verbose = verbose)
   }
-  
-  set_template()
   invisible(oldRegistry)
 }
 
@@ -227,21 +225,20 @@ registry <- function(pkg = NULL){
       is.character(pkg),
       length(pkg) == 1L
     )
-    if (!pkg %in% rownames(installed.packages())){
-      warning(sprintf("package '%s' does not exist", pkg))
+    
+    pkg_home <- system.file(package = pkg)
+    if (pkg_home == ""){
+      warning(sprintf("Package '%s' is not available for R version %s.", pkg, getRversion()))
       return( NULL )
-    } else {
-      y <- system.file(package = pkg, "extdata", "cwb", "registry")
-      if (y == ""){
-        warning(sprintf("no registry directory in package '%s'", pkg))
-        return( NULL )
-      } else {
-        if (stri_enc_mark(y) != "ASCII"){
-          if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
-        }
-        return( y )
-      }
     }
+    regdir <- file.path(pkg_home, "extdata", "cwb", "registry")
+    if (isFALSE(file.exists(regdir))){
+      warning(sprintf("Cannot find registry directory (%s) in package %s.", regdir, pkg))
+    }
+    if (stri_enc_mark(regdir) != "ASCII"){
+      if (.Platform$OS.type == "windows") regdir <- utils::shortPathName(regdir)
+    }
+    return(regdir)
   }
 }
 
@@ -261,17 +258,21 @@ data_dir <- function(pkg = NULL){
       is.character(pkg),
       length(pkg) == 1L
     )
-    if (!pkg %in% rownames(installed.packages())){
-      warning(sprintf("package '%s' does not exist", pkg))
+    
+    pkg_home <- system.file(package = pkg)
+    if (pkg_home == ""){
+      warning(sprintf("Package '%s' is not available for R version %s.", pkg, getRversion()))
       return( NULL )
-    } else {
-      y <- system.file(package = pkg, "extdata", "cwb", "indexed_corpora")
-      if (y == ""){
-        warning(sprintf("no registry directory in package '%s'", pkg))
-        return( NULL )
-      } else {
-        return( y )
-      }
     }
+    data_dir <- file.path(pkg_home, "extdata", "cwb", "indexed_corpora")
+    if (isFALSE(file.exists(data_dir))){
+      warning(sprintf("Cannot find data directory (%s) in package %s.", data_dir, pkg))
+    }
+    if (stri_enc_mark(data_dir) != "ASCII"){
+      if (.Platform$OS.type == "windows") data_dir <- utils::shortPathName(data_dir)
+    }
+    return(data_dir)
+    
+    
   }
 }

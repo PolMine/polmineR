@@ -94,7 +94,6 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
       registry_new = registry(),
       home_dir_new = corpus_data_targetdir
     )
-    set_template(toupper(corpus))
   }
   
   # If CQP has been initialized before, it will not yet now about the

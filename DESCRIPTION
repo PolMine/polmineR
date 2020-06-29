@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.1
-Date: 2020-06-25
+Version: 0.8.2
+Date: 2020-06-29
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb")
@@ -11,7 +11,6 @@ Depends:
     R (>= 3.5.0)
 Imports:
     methods,
-    R6,
     data.table (>= 1.12.2),
     slam,
     Matrix,
@@ -31,7 +30,6 @@ Suggests:
     rmarkdown,
     htmltools (>= 0.4.0),
     highlight,
-    openxlsx,
     sendmailR,
     shiny,
     shinythemes,
@@ -47,14 +45,15 @@ Suggests:
     curl
 VignetteBuilder: knitr
 LazyData: yes
-Description: Library for corpus analysis using the Corpus Workbench as an
-    efficient back end for indexing and querying large corpora. The package offers
-    functionality to flexibly create partitions and to carry out basic statistical
-    operations (count, co-occurrences etc.). The original full text of documents
-    can be reconstructed and inspected at any time. Beyond that, the package is
-    intended to serve as an interface to packages implementing advanced statistical
-    procedures. Respective data structures (document term matrices, term co-
-    occurrence matrices etc.) can be created based on the indexed corpora.
+Description: Package for corpus analysis using the Corpus Workbench 
+    ('CWB', <http://cwb.sourceforge.net/>) as an efficient back end for indexing
+    and querying large corpora. The package offers functionality to flexibly create
+    subcorpora and to carry out basic statistical operations (count, co-occurrences
+    etc.). The original full text of documents can be reconstructed and inspected at
+    any time. Beyond that, the package is intended to serve as an interface to 
+    packages implementing advanced statistical procedures. Respective data structures
+    (document-term matrices, term-co-occurrence matrices etc.) can be created based 
+    on the indexed corpora.
 BugReports: https://github.com/PolMine/polmineR/issues
 Biarch: true
 License: GPL-3
@@ -95,11 +94,11 @@ Collate:
     'highlight.R'
     'html.R'
     'info.R'
-    'mail.R'
     'means.R'
     'noise.R'
     'opencpu.R'
     'phrases.R'
+    'polmineR-defunct.R'
     'regions.R'
     'read.R'
     'registry.R'

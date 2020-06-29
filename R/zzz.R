@@ -11,13 +11,9 @@
     "polmineR.meta" =  character(),
     "polmineR.mc" = FALSE,
     "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
-    "polmineR.smtp_server" = if (length(getOption("polmineR.smtp_server")) > 0) getOption("polmineR.smtp_server") else "",
-    "polmineR.smtp_port" = if (length(getOption("polmineR.smtp_port")) > 0) getOption("polmineR.smtp_port") else "",
-    "polmineR.email" = if (length(getOption("polmineR.email")) > 0) getOption("polmineR.email") else "",
     "polmineR.browse" = FALSE,
     "polmineR.buttons" = interactive(),
     "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
-    "polmineR.templates" = list(),
     "polmineR.cutoff" = 5000,
     "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
     "polmineR.shiny" = FALSE,
@@ -69,10 +65,7 @@
   }
   
   registry_reset(registryDir = registry(), verbose = FALSE)
-  
-  # rcqp is not always accessible here - set_templates would not work with perl interface
-  set_template()
-  NULL
+    NULL
 }
 
 
@@ -101,11 +94,6 @@
     }
   }
 
-  # if (cqp_is_initialized()) cqp_reset_registry(tmp_registry_dir)
-
-  # initializing CQP by calling RcppCWB::cqp_initialize would logically done here,
-  # but for some (unknown) reason, a package crash occurrs, when CQP is initialized
-  # on attach - thus, the 'on demand'-solution (call cqp_initialize before calling cqp_query)
 }
 
 .onDetach <- function(libpath){
@@ -115,9 +103,7 @@
   
   # Remove all options defined when loading the package
   do.call(options, args = sapply(grep("polmineR\\.", names(options()), value = TRUE), function(x) NULL))
-  
-  
-  
+
   # Remove temporary directories
   unlink(registry(), recursive = TRUE, force = TRUE)
   unlink(data_dir(), recursive = TRUE, force = TRUE)

@@ -46,8 +46,7 @@ test_that(
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
     
-    set_template("GERMAPARLMINI")
-    y <- as.character(read(m))
+    y <- as.character(read(m, beautify = TRUE))
 
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")

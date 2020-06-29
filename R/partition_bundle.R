@@ -4,16 +4,15 @@ NULL
 
 #' @rdname partition_bundle-class
 setMethod("show", "partition_bundle", function (object) {
-  cat('** partition_bundle object: **\n')
-  cat(sprintf('%-25s', 'Number of partitions:'), length(object@objects), '\n')
+  message('** partition_bundle object: **')
+  message(sprintf('%-25s', 'Number of partitions:'), length(object@objects))
   # same code as in show-method for partition
   sFix <- unlist(lapply(
     names(object@s_attributes_fixed),
     function(x) paste(x, "=", paste(object@s_attributes_fixed[[x]], collapse="/"))
   ))
-  cat(sprintf("%-25s", "s-attributes Fixed:"), sFix[1], '\n')
-  if (length(sFix) > 1) for (i in length(sFix)) cat(sprintf("%-25s", " "), sFix[i], '\n')
-  cat("\n")
+  message(sprintf("%-25s", "s-attributes fixed:"), sFix[1])
+  if (length(sFix) > 1) for (i in length(sFix)) message(sprintf("%-25s\n"), sFix[i])
 })
 
 #' @rdname partition_bundle-class

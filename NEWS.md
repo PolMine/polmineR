@@ -1,3 +1,30 @@
+polmineR 0.8.2
+==============
+
+## Minor Improvements
+
+- The (well-hidden) `.importPolMineCorpus()`-function has been superseded by `cwbtools::corpus_install()` and has been removed from the package.
+- Usage of `cat()` has been replaced by `massage()` within functions throughout to meet CRAN 
+requirements.
+- The unused argument `type` has been dropped from the `html()`-method for `partition_bundle`
+objects.
+- The `html()`-method for `character` class objects now serves as a worker to generate html 
+from markdown. The `html()`-method for `partition_bundle` objects did not return a `html`
+class object as stated in the documentation object. Fixed.
+- The `store()`-method has been declared defunct as it is unnecessary functionality that
+bloats the package. Using `format()` in combination with `openxlsx::write.xlsx()` is the 
+recommended alternative workflow. 
+- The `mail()`-method has been declared defunct and has been removed from the package. A 
+more user-friendly workflow is to use export buttons of the DataTable widgets.
+- The `Corpus` class has been removed from the package as it has beeen defunct for a while.
+- To avoid the side-effects of the `set_template()` method on options that may be unnoticed
+for the user and that potentially violate CRAN policies, the method has been dropped.
+
+## Bug Fixes
+
+- The `s_attributes()`-method returned a `data.table` mixing  up rows / columns for subcorpora/partitions with a region matrix that would only include a single set of corpus 
+
+
 polmineR 0.8.1
 ==============
 

@@ -47,9 +47,9 @@ setMethod("summary", "features", function(object) {
 #' @docType methods
 #' @rdname features-class
 setMethod("show", "features", function(object){
-  cat("the statistics table has", nrow(object@stat), "rows\n")
-  cat("pos attributest have been added: ")
-  if ("pos" %in% colnames(object@stat)) cat("YES\n") else "NO\n"
+  message("the statistics table has ", nrow(object@stat), " rows")
+  message("pos attributes have been added: ", appendLF = FALSE)
+  if ("pos" %in% colnames(object@stat)) message("YES\n") else "NO\n"
 })
 
 

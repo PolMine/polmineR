@@ -55,10 +55,11 @@ test_that(
       TRUE
     )
     
-    
-    
+    # If a subcorpus has only one region, the resulting data.table may be mixed up.
+    x <- corpus("REUTERS") %>% subset(id == "237")
+    s_attr_dt <- s_attributes(x, s_attribute = c("id", "places", "language"), unique = FALSE)
+    expect_equal(nrow(s_attr_dt), nrow(x@cpos))
   }
-  
 )
 
 

@@ -149,27 +149,28 @@ setMethod(
         Encoding(retval) <- localeToCharset()[1]
         return(retval)
       } else if (length(s_attribute) > 1L){
-        tab <- data.table(
-          sapply(
-            s_attribute,
-            USE.NAMES = TRUE,
-            function(x) {
-              strucs <- if (.Object@xml == "nested"){
-                cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry())
-              } else {
-                .Object@strucs
-              }
-              str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
-              Encoding(str) <- .Object@encoding
-              str <- as.nativeEnc(str, from = .Object@encoding)
-              Encoding(str) <- localeToCharset()[1]
-              str
+        tab_data <- sapply(
+          s_attribute,
+          USE.NAMES = TRUE,
+          function(x){
+            strucs <- if (.Object@xml == "nested"){
+              cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry())
+            } else {
+              .Object@strucs
             }
-          )
+            str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
+            Encoding(str) <- .Object@encoding
+            str <- as.nativeEnc(str, from = .Object@encoding)
+            Encoding(str) <- localeToCharset()[1]
+            str
+          }
         )
+        
+        # Checking for the number of rows in the region matrix is necessary to avoid that 
+        # the table is transposed if nrow(tab_data) == 1
+        tab <- if (nrow(.Object@cpos) > 1L) data.table(tab_data) else data.table(matrix(tab_data, nrow = 1))
         if (isTRUE(unique)) tab <- unique(tab)
         return( tab )
-        
       }
     }
   }

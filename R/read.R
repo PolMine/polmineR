@@ -95,7 +95,7 @@ setMethod(
     ...
   ){
     if (is.null(meta)){
-      templateMeta <- getOption("polmineR.templates")[[.Object@corpus]][["metadata"]]
+      templateMeta <- get_template(.Object)[["metadata"]]
       meta <- if (is.null(templateMeta)) names(.Object@s_attributes) else templateMeta
     }
     stopifnot(all(meta %in% s_attributes(.Object@corpus)))

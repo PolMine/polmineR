@@ -131,7 +131,7 @@ setMethod(
     .message("as.markdown", verbose = verbose)
     # ensure that template requested is available
     if (is.null(template)){
-      stop("template needed for formatting a partition of corpus ", .Object@corpus , " is missing, use set_template()")
+      stop("template needed for formatting a partition of corpus.")
     }
     if (is.null(template[["paragraphs"]])){
       .message("generating paragraphs (no template)", verbose = verbose)
@@ -183,8 +183,8 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
     }
   }
   
-  # detect where a change of metainformation occurs
-  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta, unique = FALSE)) # somewhat slow
+  # detect where a change of metainformation occurs (somewhat slow)
+  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta, unique = FALSE)) 
   if (length(.Object@strucs) > 1L){
     meta_change <- sapply(2L:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1L,]))
     meta_change <- c(TRUE, meta_change)

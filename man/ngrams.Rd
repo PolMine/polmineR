@@ -81,17 +81,19 @@ ngrams(.Object, ...)
 \arguments{
 \item{.Object}{object of class \code{partition}}
 
-\item{...}{further parameters}
+\item{...}{Further arguments.}
 
 \item{n}{number of tokens/characters}
 
 \item{p_attribute}{the p-attribute to use (can be > 1)}
 
-\item{char}{if NULL, tokens will be counted, else characters, keeping only those provided by a character vector}
+\item{char}{If \code{NULL}, tokens will be counted, else characters, keeping
+only those provided by a character vector}
 
 \item{progress}{logical}
 
-\item{mc}{logical, whether to use multicore, passed into call to \code{blapply} (see respective documentation)}
+\item{mc}{A \code{logical} value, whether to use multicore, passed into call
+to \code{blapply} (see respective documentation)}
 }
 \description{
 Count n-grams, either of words, or of characters.

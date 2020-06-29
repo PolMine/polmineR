@@ -49,9 +49,9 @@ setMethod("show", "kwic", function(object){
     ){
       restore_value <- getOption("DT.warn.size")
       options("DT.warn.size" = FALSE)
+      on.exit(options("DT.warn.size" = restore_value))
     }
     show(y)
-    if (exists("restore_value")) options("DT.warn.size" = restore_value)
   } else {
     return(y)
   }
