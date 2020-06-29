@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Conversion between corpus and native encoding. — encodings • polmineR</title>
+<title>Objects imported from other packages — polmineR-imports • polmineR</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,11 @@
 
 
 
-<meta property="og:title" content="Conversion between corpus and native encoding. — encodings" />
-<meta property="og:description" content="Utility functions to convert encoding between the native encoding and the 
-encoding of the corpus." />
+<meta property="og:title" content="Objects imported from other packages — polmineR-imports" />
+<meta property="og:description" content="These objects are imported from other packages. Follow the links to their documentation.
+  magrittr%&amp;gt;%
+
+" />
 
 
 
@@ -127,48 +129,20 @@ encoding of the corpus." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Conversion between corpus and native encoding.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/encoding.R'><code>R/encoding.R</code></a></small>
-    <div class="hidden name"><code>encodings.Rd</code></div>
+    <h1>Objects imported from other packages</h1>
+    
+    <div class="hidden name"><code>polmineR-imports.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Utility functions to convert encoding between the native encoding and the 
-encoding of the corpus.</p>
+    <p>These objects are imported from other packages. Follow the links to their documentation.</p><dl'>
+  <dt>magrittr</dt><dd><p><code>%&gt;%</code></p></dd>
+
+</dl>
     </div>
 
-    <pre class="usage"><span class='fu'>as.utf8</span>(<span class='no'>x</span>, <span class='no'>from</span>)
 
-<span class='fu'>as.nativeEnc</span>(<span class='no'>x</span>, <span class='no'>from</span>)
 
-<span class='fu'>as.corpusEnc</span>(<span class='no'>x</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/utils/localeToCharset.html'>localeToCharset</a></span>()[<span class='fl'>1</span>], <span class='no'>corpusEnc</span>)</pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>the object (a character vector)</p></td>
-    </tr>
-    <tr>
-      <th>from</th>
-      <td><p>encoding of the input character vector</p></td>
-    </tr>
-    <tr>
-      <th>corpusEnc</th>
-      <td><p>encoding of the corpus (e.g. "latin1", "UTF-8")</p></td>
-    </tr>
-    </table>
-
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The encoding of a corpus and the encoding of the terminal (the native 
-encoding) may differ and evoke strange output, or wrong results if no
-conversion is carried out between the potentially differing encodings. The
-functions <code>as.nativeEnc</code> and <code>as.corpusEnc</code> are auxiliary functions
-to assist this. The functions <code>as.nativeEnc</code> and <code>as.utf8</code>
-deliberately remove the explicit statement of the encoding, to avoid warnings
-that may occur with character vector columns in a <code>data.table</code> object.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get and set templates. — get_template • polmineR</title>
+<title>Get template for reconstructing full text. — get_template • polmineR</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Get and set templates. — get_template" />
-<meta property="og:description" content="Templates are used to format the markdown/html output of partitions. Upon loading 
-the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'." />
+<meta property="og:title" content="Get template for reconstructing full text. — get_template" />
+<meta property="og:description" content="Templates are used to format the markdown/html output of partitions." />
 
 
 
@@ -73,7 +72,7 @@ the polmineR package, templates for corpora are loaded into the option 'polmineR
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -127,55 +126,45 @@ the polmineR package, templates for corpora are loaded into the option 'polmineR
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get and set templates.</h1>
+    <h1>Get template for reconstructing full text.</h1>
     <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/templates.R'><code>R/templates.R</code></a></small>
     <div class="hidden name"><code>templates.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Templates are used to format the markdown/html output of partitions. Upon loading 
-the polmineR package, templates for corpora are loaded into the option 'polmineR.templates'.</p>
+    <p>Templates are used to format the markdown/html output of partitions.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_template</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for character</span>
-<span class='fu'>get_template</span>(<span class='no'>.Object</span>)
+<span class='fu'>get_template</span>(<span class='no'>.Object</span>, <span class='kw'>warn</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># S4 method for corpus</span>
-<span class='fu'>get_template</span>(<span class='no'>.Object</span>)
+<span class='fu'>get_template</span>(<span class='no'>.Object</span>, <span class='kw'>warn</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># S4 method for partition</span>
-<span class='fu'>get_template</span>(<span class='no'>.Object</span>)
+<span class='fu'>get_template</span>(<span class='no'>.Object</span>, <span class='kw'>warn</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'># S4 method for subcorpus</span>
-<span class='fu'>get_template</span>(<span class='no'>.Object</span>)
-
-<span class='co'># S4 method for missing</span>
-<span class='fu'>get_template</span>(<span class='no'>.Object</span>)
-
-<span class='fu'>set_template</span>(<span class='no'>.Object</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for character</span>
-<span class='fu'>set_template</span>(<span class='no'>.Object</span>)
-
-<span class='co'># S4 method for missing</span>
-<span class='fu'>set_template</span>(<span class='no'>.Object</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>get_template</span>(<span class='no'>.Object</span>, <span class='kw'>warn</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.Object</th>
-      <td><p>object</p></td>
+      <td><p>A <code>corpus</code>, <code>subcorpus</code> or <code>partition</code> object,
+or a length-one <code>character</code> vector with a corpus ID.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>further parameters</p></td>
+      <td><p>Further arguments to be defined.</p></td>
     </tr>
     <tr>
-      <th>verbose</th>
-      <td><p>logical, whether to be verbose</p></td>
+      <th>warn</th>
+      <td><p>A <code>logical</code> value, whether to issue a warning if template 
+is not available.</p></td>
     </tr>
     </table>
 

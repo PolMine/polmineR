@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Defunct methods and functions. — polmineR-defunct • polmineR</title>
+<title>Defunct functionality — polmineR-defunct • polmineR</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Defunct methods and functions. — polmineR-defunct" />
+<meta property="og:title" content="Defunct functionality — polmineR-defunct" />
 <meta property="og:description" content="Methods and functions not in use any more or that have been
   superseded by renamed functions." />
 
@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -127,8 +127,8 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Defunct methods and functions.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/renamed.R'><code>R/renamed.R</code></a></small>
+    <h1>Defunct functionality</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PolMine/polmineR/blob/master/R/polmineR-defunct.R'><code>R/polmineR-defunct.R</code></a>, <a href='https://github.com/PolMine/polmineR/blob/master/R/renamed.R'><code>R/renamed.R</code></a></small>
     <div class="hidden name"><code>polmineR-defunct.Rd</code></div>
     </div>
 
@@ -137,7 +137,11 @@
   superseded by renamed functions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>browse</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>store</span>(<span class='no'>...</span>)
+
+<span class='fu'>mail</span>(<span class='no'>...</span>)
+
+<span class='fu'>browse</span>(<span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,37 +151,6 @@
       <td><p>Any arguments that may be passed into the defunct function/method.</p></td>
     </tr>
     </table>
-
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The RefClass `Corpus` has been superseded by the S4 `corpus`-class
-  and adherent methods.</p>
-    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
-
-    
-<h3>Public methods</h3>
-
-<ul>
-<li><p><a href='#method-new'><code>Corpus$new()</code></a></p></li>
-<li><p><a href='#method-clone'><code>Corpus$clone()</code></a></p></li>
-</ul>
-<p><hr>
-<a id="method-new"></a></p><h3>Method <code>new()</code></h3>
-
-<h3>Usage</h3>
-<p><div class="r"></p><pre><span class='no'>Corpus</span>$<span class='fu'>new</span>(<span class='no'>corpus</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>s_attributes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p>
-
-<p><hr>
-<a id="method-clone"></a></p><h3>Method <code>clone()</code></h3>
-<p>The objects of this class are cloneable with this method.</p><h3>Usage</h3>
-<p><div class="r"></p><pre><span class='no'>Corpus</span>$<span class='fu'>clone</span>(<span class='kw'>deep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre><p></div></p>
-
-<h3>Arguments</h3>
-<p><div class="arguments"></p><dl'>
-<dt><code>deep</code></dt><dd><p>Whether to make a deep clone.</p></dd>
-
-</dl><p></div></p>
-
 
 
   </div>
