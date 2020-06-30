@@ -271,9 +271,9 @@ round.data.table <- function(x, digits = 2L){
 
 #' @importFrom magrittr %>%
 #' @export %>%
-NULL
+magrittr::`%>%`
 
 #' @importFrom data.table as.data.table
 #' @export as.data.table
-NULL
+data.table::as.data.table
 
