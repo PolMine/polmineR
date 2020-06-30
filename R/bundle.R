@@ -171,20 +171,36 @@ setMethod("as.bundle", "textstat", function(object){
 })
 
 
+#' @param keep.rownames Required argument to safeguard consistency with S3
+#'   method definition in the \code{data.table} package. Unused in this context.
 #' @examples
 #' use("polmineR")
-#' pb <- partition_bundle(
-#'   "REUTERS", s_attribute = "id",
-#'   values = s_attributes("REUTERS", "id")
-#' )
-#' coocs <- cooccurrences(pb, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-#' dt <- polmineR::as.data.table.bundle(coocs, col = "ll")
-#' m <- as.matrix(Cs, col = "ll")
-#' @export as.data.table.bundle
+#' pb <- partition_bundle("REUTERS", s_attribute = "id")
+#' coocs <- cooccurrences(pb, query = "oil", cqp = FALSE)
+#' dt <- as.data.table(coocs, col = "ll")
+#' m <- as.matrix(dt[, 2:ncol(dt)], rownames = dt[["token"]])
+#' @export
+#' @method as.data.table bundle
 #' @rdname bundle
-as.data.table.bundle <- function(x, col){
-  pAttr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
-  if (length(pAttr) > 1) stop("no unambigious p-attribute!")
+as.data.table.bundle <- function(x, keep.rownames, col, ...){
+  
+  if (!missing(keep.rownames)){
+    warning(
+      "The argument 'keep.rownames' of the 'as.data.table' method for 'regions' class ",
+      "objects or objects inheriting from the 'regions' class will not be used. It is ",
+      "used in the method definition as a matter of consistency with the data.table package."
+    )
+  }
+
+  if (length(list(...)) > 0L){
+    warning(
+      "Further arguments passed into the as.data.table method for bundle class objects ",
+      "or objects inheriting from the bundle class remain unused."
+    )
+  }
+  
+  p_attr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
+  if (length(p_attr) > 1L) stop("no unambigious p-attribute!")
   dts <- lapply(
     x@objects,
     function(object){
@@ -195,9 +211,8 @@ as.data.table.bundle <- function(x, col){
       )
     }
   )
-  DT <- rbindlist(dts)
-  y <- dcast(DT, token ~ name, value.var = "value")
-  y
+  dt <- rbindlist(dts)
+  dcast(dt, token ~ name, value.var = "value")
 }
 
 

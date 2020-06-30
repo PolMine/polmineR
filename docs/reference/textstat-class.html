@@ -78,7 +78,7 @@ text statistics of a corpus, or a partition." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
       </span>
     </div>
 
@@ -171,7 +171,7 @@ as.bundle(object, ...)
 subset(x, subset)
 
 # S3 method for textstat
-as.data.table(x)
+as.data.table(x, ...)
 
 # S4 method for textstat
 show(object)
@@ -352,7 +352,13 @@ the <code>name</code>-method and <code>name&lt;-</code>, respectively.</p>
 }
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Angela Dorothea Merkel"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>cnt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>sc</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>))
 <span class='no'>cnt_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>cnt</span>, <span class='no'>pos</span> <span class='kw'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"NN"</span>, <span class='st'>"ADJA"</span>))
-<span class='no'>cnt_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>cnt</span>, <span class='no'>pos</span> <span class='kw'>==</span> <span class='st'>"NE"</span>)</div></pre>
+<span class='no'>cnt_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>cnt</span>, <span class='no'>pos</span> <span class='kw'>==</span> <span class='st'>"NE"</span>)
+
+<span class='co'># Get statistics in textstat object as data.table</span>
+<span class='no'>count_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='subset.html'>subset</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span>(<span class='st'>"saudi-arabia"</span>, <span class='no'>places</span>)) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='count-method.html'>count</a></span>(<span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>as.data.table</span>()</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

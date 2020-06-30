@@ -92,8 +92,24 @@ setMethod("subset", "textstat", function(x, subset){
 
 
 #' @rdname textstat-class
-#' @export as.data.table.textstat
-as.data.table.textstat <- function(x) x@stat
+#' @export
+#' @method as.data.table textstat
+#' @examples 
+#' 
+#' # Get statistics in textstat object as data.table
+#' count_dt <- corpus("REUTERS") %>%
+#'   subset(grep("saudi-arabia", places)) %>% 
+#'   count(p_attribute = "word") %>%
+#'   as.data.table()
+as.data.table.textstat <- function(x, ...){
+  if (length(list(...)) > 0L){
+    warning(
+      "Further arguments passed into the as.data.table method for textstat class objects ",
+      "or objects inheriting from the textstat class remain unused."
+    )
+  }
+  x@stat
+}
 
 #' @exportMethod as.data.frame
 setMethod("as.data.frame", "textstat", function(x) as.data.frame(x@stat) )

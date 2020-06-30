@@ -53,7 +53,7 @@ as.bundle(object, ...)
 
 \S4method{subset}{textstat}(x, subset)
 
-\method{as.data.table}{textstat}(x)
+\method{as.data.table}{textstat}(x, ...)
 
 \S4method{show}{textstat}(object)
 
@@ -191,4 +191,10 @@ sc <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
 cnt <- count(sc, p_attribute = c("word", "pos"))
 cnt_min <- subset(cnt, pos \%in\% c("NN", "ADJA"))
 cnt_min <- subset(cnt, pos == "NE")
+
+# Get statistics in textstat object as data.table
+count_dt <- corpus("REUTERS") \%>\%
+  subset(grep("saudi-arabia", places)) \%>\% 
+  count(p_attribute = "word") \%>\%
+  as.data.table()
 }

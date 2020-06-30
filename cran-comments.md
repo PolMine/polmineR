@@ -1,21 +1,18 @@
 ## General remarks
 
 The 'polmineR' package has been archived because a required update of the 'RcppCWB'
-dependency failed  to pass tests I had not anticipated. When I resubmitted a new
-polmineR version (v0.8.1),  Swetlana Herbrandt identified the following issues that had 
-gone unnoticed before:
+dependency failed  to pass tests I had not anticipated. As a response to my last re-submission, I received some final instructions about do's and dont's from Martina Schmirl. I address the issues with this re-submission.
 
-(1.) Avoid calling the package a "library" in Description: Fixed.
-(2.) Avoid cat(): Fixed - I have replaced any remaining call by using message().
-(3.) Avoid changing options: Fixed - using on.exit() right after changing an option if necessary. Functions with side-effects on options have been re-written.
-(4.) Avoid changing the user's home filespace: Actually I was not aware any
-function might still do that. To be sure, I declared the (outdated) methods "mail" and 
-"store" as defunct. File operations are limited to the temporary session directory.
-(5.) Avoid using installed.packages(): Fixed by using system.file(package = pkg).
-(6.) No installation of packages without user's permission: There is an auxiliary 
-function .conditional_install() within the polmineR() function that asks for the
-user's consent before installing anything and that aborts of not in interactive 
-session.
+(1.) Avoid using foo:::f - remaining usage has been removed, fixed.
+
+(2.) Avoid using installed.packages(): One remaining usage has been replaced by using system.file(package = pkg).
+
+(3.) No installation of packages without user's permission: To avoid confusion, I
+removed installation instructions in the vignette where you may have seen some 
+install.packages() calls (though in Rmarkdown chunks with eval = FALSE). There is a 
+remaining usage in the polmineR() function. If a sugggested package 
+required to run the shiny app within the package is missing, a user dialogue will ask
+for the user's explicit consent to install a package.
 
 I would be very relieved if polmineR could make it back to CRAN soon. The package
 is used in a few university courses and I am getting requests where it has gone.-

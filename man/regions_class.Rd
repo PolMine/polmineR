@@ -12,12 +12,15 @@
 \usage{
 as.regions(x, ...)
 
-\method{as.data.table}{regions}(x, values = NULL)
+\method{as.data.table}{regions}(x, keep.rownames, values = NULL, ...)
 }
 \arguments{
 \item{x}{object of class \code{regions}}
 
 \item{...}{Further arguments.}
+
+\item{keep.rownames}{Required argument to safeguard consistency with S3
+method definition in the \code{data.table} package. Unused in this context.}
 
 \item{values}{values to assign to a column that will be added}
 }
@@ -31,6 +34,9 @@ by a character vector, \code{region} objects, and \code{partition} objects
 in a uniform manner.
 
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
+
+The \code{as.data.table} method returns the matrix with corpus
+  positions in the slot \code{cpos} as a \code{data.table}.
 }
 \section{Slots}{
 
@@ -46,6 +52,14 @@ The \code{as.regions}-method coerces objects to a \code{regions}-object.
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
+
+# Get regions matrix as data.table, without / with values
+sc <- corpus("REUTERS") \%>\% subset(grep("saudi-arabia", places))
+regions_dt <- as.data.table(sc)
+regions_dt <- as.data.table(
+  sc,
+  values = s_attributes(sc, "id", unique = FALSE)
+)
 }
 \seealso{
 Other classes to manage corpora: 

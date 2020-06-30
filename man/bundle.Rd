@@ -54,7 +54,7 @@
 
 \S4method{as.bundle}{textstat}(object)
 
-\method{as.data.table}{bundle}(x, col)
+\method{as.data.table}{bundle}(x, keep.rownames, col, ...)
 
 \S4method{as.matrix}{bundle}(x, col)
 
@@ -84,6 +84,9 @@
 \item{object}{A \code{bundle} object.}
 
 \item{...}{Further parameters}
+
+\item{keep.rownames}{Required argument to safeguard consistency with S3
+method definition in the \code{data.table} package. Unused in this context.}
 
 \item{col}{columns of the \code{data.table} to use to generate an object.}
 }
@@ -129,13 +132,10 @@ pb$SPD # access partition names "SPD" in partition_bundle pb
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 pb$"NA" <- NULL # quotation needed if name is "NA"
 use("polmineR")
-pb <- partition_bundle(
-  "REUTERS", s_attribute = "id",
-  values = s_attributes("REUTERS", "id")
-)
-coocs <- cooccurrences(pb, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-dt <- polmineR::as.data.table.bundle(coocs, col = "ll")
-m <- as.matrix(Cs, col = "ll")
+pb <- partition_bundle("REUTERS", s_attribute = "id")
+coocs <- cooccurrences(pb, query = "oil", cqp = FALSE)
+dt <- as.data.table(coocs, col = "ll")
+m <- as.matrix(dt[, 2:ncol(dt)], rownames = dt[["token"]])
 }
 \author{
 Andreas Blaette

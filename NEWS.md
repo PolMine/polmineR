@@ -1,3 +1,16 @@
+polmineR 0.8.3
+==============
+
+## Minor Improvements
+
+- The `as.data.table()`-method defined in the `data.table` is now reexported 
+and defined and documented for the `textstat`, `regions` and `bundle` class
+that it can be used cleanly.
+- The installation instructions have been removed from the package vignette. The
+logical place for these instructions is the README.md file and this will be single
+place where users will find authoritative up-to-date installation instructions. 
+
+
 polmineR 0.8.2
 ==============
 

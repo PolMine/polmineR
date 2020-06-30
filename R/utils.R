@@ -273,3 +273,7 @@ round.data.table <- function(x, digits = 2L){
 #' @export %>%
 NULL
 
+#' @importFrom data.table as.data.table
+#' @export as.data.table
+NULL
+

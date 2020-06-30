@@ -93,10 +93,36 @@ setMethod("as.regions", "context", function(x, node = TRUE){
 
 
 
-
+#' @details The \code{as.data.table} method returns the matrix with corpus
+#'   positions in the slot \code{cpos} as a \code{data.table}.
+#' @param keep.rownames Required argument to safeguard consistency with S3
+#'   method definition in the \code{data.table} package. Unused in this context.
 #' @rdname regions_class
-#' @export as.data.table.regions
-as.data.table.regions <- function(x, values = NULL){
+#' @export
+#' @method as.data.table regions
+#' @examples
+#' 
+#' # Get regions matrix as data.table, without / with values
+#' sc <- corpus("REUTERS") %>% subset(grep("saudi-arabia", places))
+#' regions_dt <- as.data.table(sc)
+#' regions_dt <- as.data.table(
+#'   sc,
+#'   values = s_attributes(sc, "id", unique = FALSE)
+#' )
+as.data.table.regions <- function(x, keep.rownames, values = NULL, ...){
+  if (!missing(keep.rownames)){
+    warning(
+      "The argument 'keep.rownames' of the 'as.data.table' method for 'regions' class ",
+      "objects or objects inheriting from the 'regions' class will not be used. It is ",
+      "used in the method definition as a matter of consistency with the data.table package."
+    )
+  }
+  if (length(list(...)) > 0L){
+    warning(
+      "Further arguments passed into the as.data.table method for regions class objects ",
+      "or objects inheriting from the region class remain unused."
+    )
+  }
   dt <- data.table::as.data.table(x@cpos)
   if (!is.null(values)){
     stopifnot(length(values) == nrow(dt) || length(values) == 1)

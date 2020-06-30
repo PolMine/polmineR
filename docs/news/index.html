@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
       </span>
     </div>
 
@@ -129,13 +129,26 @@
       <small>Source: <a href='https://github.com/PolMine/polmineR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="polminer-082" class="section level1">
-<h1 class="page-header" data-toc-text="0.8.2">
-<a href="#polminer-082" class="anchor"></a>polmineR 0.8.2<small> Unreleased </small>
+    <div id="polminer-083" class="section level1">
+<h1 class="page-header" data-toc-text="0.8.3">
+<a href="#polminer-083" class="anchor"></a>polmineR 0.8.3<small> Unreleased </small>
 </h1>
 <div id="minor-improvements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#minor-improvements" class="anchor"></a>Minor Improvements</h2>
+<ul>
+<li>The <code><a href="../reference/textstat-class.html">as.data.table()</a></code>-method defined in the <code>data.table</code> is now reexported and defined and documented for the <code>textstat</code>, <code>regions</code> and <code>bundle</code> class that it can be used cleanly.</li>
+<li>The installation instructions have been removed from the package vignette. The logical place for these instructions is the README.md file and this will be single place where users will find authoritative up-to-date installation instructions.</li>
+</ul>
+</div>
+</div>
+    <div id="polminer-082" class="section level1">
+<h1 class="page-header" data-toc-text="0.8.2">
+<a href="#polminer-082" class="anchor"></a>polmineR 0.8.2<small> Unreleased </small>
+</h1>
+<div id="minor-improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-1" class="anchor"></a>Minor Improvements</h2>
 <ul>
 <li>The (well-hidden) <code>.importPolMineCorpus()</code>-function has been superseded by <code><a href="https://rdrr.io/pkg/cwbtools/man/corpus_utils.html">cwbtools::corpus_install()</a></code> and has been removed from the package.</li>
 <li>Usage of <code><a href="https://rdrr.io/r/base/cat.html">cat()</a></code> has been replaced by <code>massage()</code> within functions throughout to meet CRAN requirements.</li>
@@ -180,9 +193,9 @@
 <li>The <code><a href="https://rdrr.io/r/base/merge.html">merge()</a></code>-method for <code>partition_bundle</code>-objects has been reworked: Substantial performance improvement by relying on <code><a href="https://rdrr.io/pkg/RcppCWB/man/get_region_matrix.html">RcppCWB::get_region_matrix</a></code>. Internally, the method performs a check whether the <code>partition</code>/<code>subcorpus</code> objects to be merged are non-overlapping. The default value for the argument <code>verbose</code> is now <code>FALSE</code>, as waiting time is much shorter.</li>
 </ul>
 </div>
-<div id="minor-improvements-1" class="section level2">
+<div id="minor-improvements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-1" class="anchor"></a>Minor Improvements</h2>
+<a href="#minor-improvements-2" class="anchor"></a>Minor Improvements</h2>
 <ul>
 <li>A new option <code>polmineR.warn.size</code> can be used to control the issuing of warnings for large <code>kwic</code> objects.</li>
 <li>Indexing <code>Cooccurrences</code> objects had not been possible, now at least using integer indices is possible (<a href='https://github.com/PolMine/polmineR/issues/114'>#114</a>).</li>
@@ -374,9 +387,9 @@
 <li>The <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code>-method for <code>kwic</code>-objects has seen a small performance improvement, and is more robust now if the order of columns changes unexpectedly.</li>
 </ul>
 </div>
-<div id="minor-improvements-2" class="section level2">
+<div id="minor-improvements-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-2" class="anchor"></a>MINOR IMPROVEMENTS</h2>
+<a href="#minor-improvements-3" class="anchor"></a>MINOR IMPROVEMENTS</h2>
 <ul>
 <li>Startup messages reporting the package version of polmineR and the registry path are omitted now.</li>
 <li>The functions <code><a href="../reference/registry.html">registry()</a></code> and <code><a href="../reference/registry.html">data_dir()</a></code> now accept an argument <code>pkg</code>. The functions will return the path to the registry directory / the data directory within a package, if the argument is used.</li>
@@ -441,9 +454,9 @@
 <li>A new argument height for the <code><a href="../reference/html-method.html">html()</a></code>-method will allow to define a scroll box. Useful to embed a fulltext output to a Rmarkdown document.</li>
 </ul>
 </div>
-<div id="minor-improvements-3" class="section level3">
+<div id="minor-improvements-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-improvements-3" class="anchor"></a>MINOR IMPROVEMENTS</h3>
+<a href="#minor-improvements-4" class="anchor"></a>MINOR IMPROVEMENTS</h3>
 <ul>
 <li>The <code>partition_bundle</code>-class, rather than inheriting from <code>bundle</code>-class directly, will now inherit from the <code>count_bundle</code>-class</li>
 <li>The <code><a href="../reference/use.html">use()</a></code>-function is limited now to activating the corpus in data packages. Having introduced the session registry, switching registry directories is not needed any more.</li>

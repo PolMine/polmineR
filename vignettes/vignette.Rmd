@@ -36,14 +36,6 @@ A basic issue to understand is the difference between *s*- and *p*-attributes. T
 
 ## Getting started
 
-CRAN releases of *polmineR* can be installed with the usual call of `install.packages()`.
-
-```{r install_polmineR, eval = FALSE}
-install.packages("polmineR")
-```
-
-Binaries are available for Windows, and everything should work out of the box. On macOS and Linux, system requirements need to be fulfilled. The annex of the vignette includes a detailed explanation how to install *polmineR* on macOS, and Linux.
-
 ### Loading polmineR
 
 The *polmineR* package is loaded just like any other package.
@@ -87,17 +79,8 @@ In the followings examples, the REUTERS corpus included in the *polmineR* packag
 use("polmineR")
 ```
 
-If you want to use corpora, you can download the EuroParl and the GermaParl data packages from a CRAN-like repository hosted by the PolMine Project.
 
-```{r, eval = FALSE}
-install.packages("europarl.en", repo = "http://polmine.sowi.uni-due.de/packages")
-install.packages("GermaParl", repo = "http://polmine.sowi.uni-due.de/packages")
-```
-
-We some advantages to use R data packages for shipping corpora. Data packages with corpora have a version number which may be important for reproducing results, they can include a vignette documenting the data, and functions to perform specialized tasks.
-
-
-#### Checking that corpora are available
+#### Checking corpora are available
 
 The `corpus()`-method can be used to check which corpora are described in the registry and accessible. The REUTERS corpus in our case (note that the names of CWB corpora are always written upper case). In addition to the English REUTERS corpus, a small subset of the GermaParl corpus ("GERMAPARLMINI") is included in the *polmineR* package.
 
@@ -316,149 +299,8 @@ H
 The package includes many features that go beyond this vignette. It is a key aim in the project to develop respective documentation in the vignette and the man pages for the individual functions further. Feedback is very welcome!
 
 
-## Annex I: Installing polmineR
 
-### Windows 
-
-The following instructions assume that you have installed R. If not, install it from[CRAN](https://cran.r-project.org/bin/windows/base/). An installation of [RStudio](https://www.rstudio.com/products/rstudio/download/#download) is highly recommended.
-
-
-#### Windows (32 and 64 bit)
-
-Install *polmineR* and all dependencies the conventional way.
-
-```{r, eval = FALSE}
-install.packages("polmineR")
-```
-
-To install the most recent development version, hosted in a GitHub repository, use the convenient installation mechanism offered by the devtools package.
-
-```{r, eval = FALSE}
-install.packages("devtools")
-devtools::install_github("PolMine/polmineR", ref = "dev")
-```
-
-Finally, as a basic test whether the REUTERS corpus included in the polmineR package (for testing and demonstration purposes) is available, run:
-
-```{r, eval = FALSE}
-use("polmineR")
-corpus()
-```
-
-
-### macOS
-
-The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. Get the Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
-
-
-##### Installing RcppCWB
-
-To install polmineR on macOS, you first need to install RcppCWB.
-
-First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
-
-```{sh, eval = FALSE}
-xcode-select --install
-```
-
-Please make sure that you agree to the license.
-
-Second, an installation of XQuartz is required, it can be obtained from [www.xquartz.org](https://www.xquartz.org/).
-
-Third, to compile the C code in the RcppCWB package, there are system requirements that need to be fulfilled. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands then need to be executed from a terminal window. They will install the dependencies that the RcppCWB package relies on:
-
-```{sh, eval = FALSE}
-brew -v install pkg-config
-brew -v install glib --universal
-brew -v install pcre --universal
-brew -v install readline
-```
-
-Fourth, install RcppCWB.
-
-```{r, eval = FALSE}
-install.packages("RcppCWB")
-```
-
-Now everything is ready to install polmineR.
-
-```{r, eval = FALSE}
-install.packages("polmineR")
-```
-
-A quick check that polmineR is installed correctly is to load the library, and to check which corpora are available.
-
-```{r, eval = FALSE}
-library(polmineR)
-use("polmineR")
-corpus()
-```
-
-The development version of *polmineR* can be installed using devtools:
-
-```{r, eval = FALSE}
-install.packages("devtools") # unless devtools is already installed
-devtools::install_github("PolMine/polmineR", ref = "dev")
-```
-
-
-### Linux (Ubuntu)
-
-#### Installing R
-
-If you have not yet installed R on your Ubuntu machine, there is a good instruction at [ubuntuuser](https://wiki.ubuntuusers.de/R/). To install base R, enter in the terminal.
-
-```{sh, eval = FALSE}
-sudo apt-get install r-base r-recommended
-```
-
-Make sure that you have installed the latest version of R. The following commands will add the R repository to the package sources and run an update. The second line assumes that you are using Ubuntu 16.04.
-
-```{sh, eval = FALSE}
-sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E084DAB9
-sudo add-apt-repository 'deb http://ftp5.gwdg.de/pub/misc/cran/bin/linux/ubuntu xenial/'
-sudo apt-get update
-sudo apt-get upgrade
-```
-
-#### Installing RStudio
-
-It is highly recommended to install [RStudio](https://www.rstudio.com/products/rstudio/download/#download). Output of polmineR methods is generally optimized to be displayed using RStudio facilities. If you are working on a remote server, running RStudio Server may be an interesting option to consider.
-
-#### Base Installation of polmineR
-
-The Corpus Workbench will require the pcre, glib and pkg-config libraries. They can be installed as follows. In addition libxml2 is installed, a dependency of the R package xml2 that is used for manipulating html output.
-
-```{sh,  eval = FALSE}
-sudo apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev
-sudo apt-get install libxml2-dev
-sudo apt-get install libprotobuf-dev
-```
-
-The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
-
-```{r, eval = FALSE}
-install.packages("RcppCWB")
-install.packages("polmineR")
-```
-
-Use devtools to install the development version of polmineR from GitHub.
-
-```{r, eval = FALSE}
-install.packages("devtools")
-devtools::install_github("PolMine/polmineR", ref = "dev")
-```
-
-Finally, check the installation.
-
-```{r, eval = FALSE}
-library(polmineR)
-use("polmineR")
-corpus()
-```
-
-
-#### Annex II: Setting the CORPUS_REGISTRY environment variable
+## Annex: Setting the CORPUS_REGISTRY environment variable
 
 The environment variable "CORPUS_REGISTRY" can be set as follows in R:
 
