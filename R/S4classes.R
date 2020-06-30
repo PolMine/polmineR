@@ -115,7 +115,7 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #'   colnames,textstat-method rownames,textstat-method names,textstat-method
 #'   as.DataTables,textstat-method head,textstat-method tail,textstat-method
 #'   dim,textstat-method nrow,textstat-method ncol,textstat-method
-#'   colnames,textstat-method as.data.table,textstat-method as.data.frame,textstat-method
+#'   colnames,textstat-method as.data.frame,textstat-method
 #'   round,textstat-method sort,textstat-method [,textstat,ANY,ANY,ANY-method [[,textstat-method
 #'   name name<-
 #' @docType class
@@ -151,7 +151,6 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' y[which(y[["word"]] %in% c("Arbeit", "Sozial"))]
 #' y[ y[["word"]] %in% c("Arbeit", "Sozial") ]
 #' }
-#' @aliases as.data.table
 setClass("textstat",
          representation(
            corpus = "character",

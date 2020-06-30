@@ -15,14 +15,12 @@
 \alias{tail,textstat-method}
 \alias{nrow,textstat-method}
 \alias{ncol,textstat-method}
-\alias{as.data.table,textstat-method}
 \alias{round,textstat-method}
 \alias{sort,textstat-method}
 \alias{[,textstat,ANY,ANY,ANY-method}
 \alias{[[,textstat-method}
 \alias{name}
 \alias{name<-}
-\alias{as.data.table}
 \alias{name,textstat-method}
 \alias{name,character-method}
 \alias{name<-,textstat-method}

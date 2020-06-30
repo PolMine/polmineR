@@ -140,7 +140,7 @@ regions object." />
     <pre class="usage"><span class='fu'>as.regions</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for regions</span>
-<span class='fu'><a href='textstat-class.html'>as.data.table</a></span>(<span class='no'>x</span>, <span class='no'>keep.rownames</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>(<span class='no'>x</span>, <span class='no'>keep.rownames</span>, <span class='kw'>values</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,8 +196,8 @@ in a uniform manner.</p>
 
 <span class='co'># Get regions matrix as data.table, without / with values</span>
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"REUTERS"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span>(<span class='st'>"saudi-arabia"</span>, <span class='no'>places</span>))
-<span class='no'>regions_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='textstat-class.html'>as.data.table</a></span>(<span class='no'>sc</span>)
-<span class='no'>regions_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='textstat-class.html'>as.data.table</a></span>(
+<span class='no'>regions_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>(<span class='no'>sc</span>)
+<span class='no'>regions_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>(
   <span class='no'>sc</span>,
   <span class='kw'>values</span> <span class='kw'>=</span> <span class='fu'><a href='s_attributes-method.html'>s_attributes</a></span>(<span class='no'>sc</span>, <span class='st'>"id"</span>, <span class='kw'>unique</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 )</div></pre>

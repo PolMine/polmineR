@@ -137,7 +137,7 @@
 <h2 class="hasAnchor">
 <a href="#minor-improvements" class="anchor"></a>Minor Improvements</h2>
 <ul>
-<li>The <code><a href="../reference/textstat-class.html">as.data.table()</a></code>-method defined in the <code>data.table</code> is now reexported and defined and documented for the <code>textstat</code>, <code>regions</code> and <code>bundle</code> class that it can be used cleanly.</li>
+<li>The <code><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html">as.data.table()</a></code>-method defined in the <code>data.table</code> is now reexported and defined and documented for the <code>textstat</code>, <code>regions</code> and <code>bundle</code> class that it can be used cleanly.</li>
 <li>The installation instructions have been removed from the package vignette. The logical place for these instructions is the README.md file and this will be single place where users will find authoritative up-to-date installation instructions.</li>
 </ul>
 </div>
@@ -393,7 +393,7 @@
 <ul>
 <li>Startup messages reporting the package version of polmineR and the registry path are omitted now.</li>
 <li>The functions <code><a href="../reference/registry.html">registry()</a></code> and <code><a href="../reference/registry.html">data_dir()</a></code> now accept an argument <code>pkg</code>. The functions will return the path to the registry directory / the data directory within a package, if the argument is used.</li>
-<li>The <code>data.table</code>-package used to be imported entirely, now the package is imported selectively. To avoid namespace conflicts, the former S4 method <code><a href="../reference/textstat-class.html">as.data.table()</a></code> is now a S3 method. Warnings appearing if the <code>data.table</code> package is loaded after polmineR are now omitted.</li>
+<li>The <code>data.table</code>-package used to be imported entirely, now the package is imported selectively. To avoid namespace conflicts, the former S4 method <code><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html">as.data.table()</a></code> is now a S3 method. Warnings appearing if the <code>data.table</code> package is loaded after polmineR are now omitted.</li>
 <li>The <code>coerce()</code>-methodes to turn <code>textstat</code>, <code>cooccurrences</code>, <code>features</code> and <code>kwic</code> objects into htmlwidgets now set a <code>pageLength</code>.</li>
 <li>New methods for <code>partition_bundle</code> objects: <code>[[&lt;-</code>, <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code>$&lt;-</code>
 </li>

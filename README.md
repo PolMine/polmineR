@@ -3,7 +3,7 @@ Introducing the polmineR package
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3909433.svg)](https://doi.org/10.5281/zenodo.3909433)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3924721.svg)](https://doi.org/10.5281/zenodo.3924721)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
@@ -85,6 +85,7 @@ if (!"GERMAPARL" %in% corpus()$corpus){
   GermaParl::germaparl_download_corpus()
   use("GermaParl")
 }
+#> Warning in .local(.Object, ...): No template available for corpus 'UNGAMINI'.
   
 if (!"europarl" %in% rownames(installed.packages())){
   install.packages("europarl", repos = "http://polmine.github.io/drat")
@@ -100,6 +101,13 @@ if (!"EUROPARL-EN" %in% corpus()$corpus){
   europarl::europarl_download()
   use("europarl")
 }
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-DE'.
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-EN'.
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-ES'.
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-FR'.
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-IT'.
+#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-NL'.
+#> Warning in .local(.Object, ...): No template available for corpus 'UNGAMINI'.
 ```
 
 Calling the `use()`-function will activate a corpus included in a data
@@ -206,18 +214,18 @@ features(ep_2002, ep_pre_2002, included = FALSE) %>%
   knitr::kable(format = "markdown")
 ```
 
-| rank\_chisquare | word         | count\_coi | count\_ref | exp\_coi | chisquare |
-| --------------: | :----------- | ---------: | ---------: | -------: | --------: |
-|               1 | 2002         |       1694 |        782 |   398.96 |   5011.70 |
-|               2 | Johannesburg |        479 |         21 |    80.57 |   2348.97 |
-|               3 | Seville      |        378 |         26 |    65.10 |   1792.96 |
-|               4 | Barcelona    |        706 |        528 |   198.84 |   1542.16 |
-|               5 | ’s           |      10694 |      36727 |  7641.03 |   1457.07 |
-|               6 | 2003         |        549 |        329 |   141.47 |   1399.45 |
-|               7 | Copenhagen   |        575 |        430 |   161.94 |   1256.06 |
-|               8 | terrorism    |       1221 |       1917 |   505.63 |   1206.67 |
-|               9 | 02           |        233 |          2 |    37.87 |   1198.75 |
-|              10 | candidate    |       1217 |       2088 |   532.54 |   1048.84 |
+| rank\_chisquare | word         | count\_coi | count\_ref |                exp\_coi |             chisquare |
+| --------------: | :----------- | ---------: | ---------: | ----------------------: | --------------------: |
+|               1 | 2002         |       1694 |        782 |  398.959999999999979536 | 5011.6999999999998181 |
+|               2 | Johannesburg |        479 |         21 |   80.569999999999993179 | 2348.9699999999997999 |
+|               3 | Seville      |        378 |         26 |   65.099999999999994316 | 1792.9600000000000364 |
+|               4 | Barcelona    |        706 |        528 |  198.840000000000003411 | 1542.1600000000000819 |
+|               5 | ’s           |      10694 |      36727 | 7641.029999999999745341 | 1457.0699999999999363 |
+|               6 | 2003         |        549 |        329 |  141.469999999999998863 | 1399.4500000000000455 |
+|               7 | Copenhagen   |        575 |        430 |  161.939999999999997726 | 1256.0599999999999454 |
+|               8 | terrorism    |       1221 |       1917 |  505.629999999999995453 | 1206.6700000000000728 |
+|               9 | 02           |        233 |          2 |   37.869999999999997442 | 1198.7500000000000000 |
+|              10 | candidate    |       1217 |       2088 |  532.539999999999963620 | 1048.8399999999999181 |
 
 ### kwic (also known as concordances)
 
@@ -464,4 +472,4 @@ you publish research results making use of polmineR, the following
 citation is suggested to be included in publications.
 
 Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis.
-R package version v0.8.1. <http://doi.org/10.5281/zenodo.3909433>
+R package version v0.8.2. <http://doi.org/10.5281/zenodo.3924721>
