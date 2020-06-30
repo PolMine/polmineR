@@ -38,7 +38,7 @@ NULL
 #' @importFrom stringi stri_enc_mark
 use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
-  if (!pkg %in% unname(installed.packages(lib.loc = lib.loc)[,"Package"]))
+  if (nchar(system.file(package = pkg)) == 0L)
     stop("Could not find package specified. Please check for typos,",
          "and/or whether it is installed for the R version you are using.")
   

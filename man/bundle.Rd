@@ -129,12 +129,12 @@ pb$SPD # access partition names "SPD" in partition_bundle pb
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 pb$"NA" <- NULL # quotation needed if name is "NA"
 use("polmineR")
-Ps <- partition_bundle(
+pb <- partition_bundle(
   "REUTERS", s_attribute = "id",
   values = s_attributes("REUTERS", "id")
 )
-Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-dt <- polmineR:::as.data.table.bundle(Cs, col = "ll")
+coocs <- cooccurrences(pb, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
+dt <- polmineR::as.data.table.bundle(coocs, col = "ll")
 m <- as.matrix(Cs, col = "ll")
 }
 \author{

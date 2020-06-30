@@ -65,7 +65,6 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
 #' 
 #' @param corpus name of the CWB corpus
 #' @param registry directory of the registry (defaults to CORPUS_Registry environment variable)
-#' @importFrom utils installed.packages
 #' @importFrom stringi stri_match_all_regex
 #' @export registry_get_name
 #' @rdname registry_eval

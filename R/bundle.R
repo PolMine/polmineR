@@ -173,12 +173,12 @@ setMethod("as.bundle", "textstat", function(object){
 
 #' @examples
 #' use("polmineR")
-#' Ps <- partition_bundle(
+#' pb <- partition_bundle(
 #'   "REUTERS", s_attribute = "id",
 #'   values = s_attributes("REUTERS", "id")
 #' )
-#' Cs <- cooccurrences(Ps, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
-#' dt <- polmineR:::as.data.table.bundle(Cs, col = "ll")
+#' coocs <- cooccurrences(pb, query = "oil", cqp = FALSE, verbose = FALSE, progress = TRUE)
+#' dt <- polmineR::as.data.table.bundle(coocs, col = "ll")
 #' m <- as.matrix(Cs, col = "ll")
 #' @export as.data.table.bundle
 #' @rdname bundle
