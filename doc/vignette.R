@@ -17,16 +17,15 @@ corpus()
 #  options()[grep("polmineR", names(options()))]
 
 ## -----------------------------------------------------------------------------
-options("polmineR.left" = 15)
-options("polmineR.right" = 15)
+options("polmineR.left" = 5)
+options("polmineR.right" = 5)
 options("polmineR.mc" = FALSE)
 
 ## ---- echo = FALSE, message = FALSE-------------------------------------------
 options("polmineR.pagelength" = 3L)
 
 ## ---- eval = TRUE, render = knit_print----------------------------------------
-k <- kwic("REUTERS", "oil")
-is(k)
+kwic("REUTERS", "oil")
 
 ## ---- eval = TRUE, render = knit_print----------------------------------------
 kwic("REUTERS", "oil", s_attributes = "places")
