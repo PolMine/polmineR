@@ -75,7 +75,7 @@ setMethod("show", "kwic", function(object){
 #'   \code{knit_print} is called on a \code{kwic} object.
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, options = knitr::opts_chunk){
-  callNextMethod(x = x, options = options, node_color = character(), align = FALSE, lineview = TRUE)
+  callNextMethod(x = x, options = options, node_color = character(), align = FALSE, lineview = FALSE)
 })
 
 

@@ -210,7 +210,8 @@ setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk, ...
     y <- knit_print(widget, options = options)
   } else {
     y <- format(x, ...)
-    show(y)
+    show(head(y, n = getOption("polmineR.pagelength")))
+    cat("-- RESULTS TRUNCATED --")
     y <- NULL
   }
   y
