@@ -107,10 +107,6 @@ the html color of the additional output (defaults to 'grey').}
 
 \item{lineview}{A \code{logical} value, whether to concatenate left context,
 node and right context when preparing kwic output.}
-
-\item{pagelength}{An \code{integer} value, the number of kwic lines displayed
-per page in the \code{datatables} htmlwidget that is returned when
-\code{knit_print} is called on a \code{kwic} object.}
 }
 \description{
 S4 class for organizing information for kwic/concordance output. A set of

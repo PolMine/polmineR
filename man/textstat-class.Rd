@@ -79,7 +79,8 @@ of a \code{textstat} class object.}
 
 \item{object}{a textstat object}
 
-\item{...}{Further arguments.}
+\item{...}{Argument that will be passed into a call of the \code{format} method
+on the object \code{x}.}
 
 \item{e1}{A \code{texstat} object.}
 

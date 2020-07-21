@@ -20,15 +20,14 @@ test_that(
     expect_identical(sc_p, sc1)
     expect_identical(sc_p, sc2)
     
-    # This is also a test whether special characters are digested properly. On
-    # Windows, input is assumed to be latin-1. So we iconv the input string
-    # explicitly to latin1, if we are on Windows.
-    if (.Platform$OS.type == "windows"){
-      sp <- iconv("B\u00E4rbel H\u00F6hn", from = "UTF-8", to = "latin1")
+    # This is also a test whether special characters are digested properly.
+    if (localeToCharset()[1] != "UTF-8"){
+      query <- "B\u00E4rbel H\u00F6hn"
+      Encoding(query) <- "UTF-8"
+      sp <- stringi::stri_enc_tonative(query)
       p <- partition("GERMAPARLMINI", speaker = sp)
-      sc <- subset(gparl, speaker == iconv("B\u00E4rbel H\u00F6hn", from = "UTF-8", to = "latin1"))
-    }
-    else {
+      sc <- subset(gparl, speaker == stringi::stri_enc_tonative(query))
+    } else {
       sc <- subset(gparl, speaker == "B\u00E4rbel H\u00F6hn")
       p <- partition("GERMAPARLMINI", speaker = "B\u00E4rbel H\u00F6hn")
     }

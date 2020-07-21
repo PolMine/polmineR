@@ -197,6 +197,8 @@ setAs(from = "textstat", to = "htmlwidget", def = function(from){
 #'   htmlwidgets in html documents requires that pandoc is installed. To avoid
 #'   an error, a formatted \code{data.table} is returned by \code{knit_print} if
 #'   pandoc is not available.
+#' @param ... Argument that will be passed into a call of the \code{format} method
+#'   on the object \code{x}.
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname textstat-class

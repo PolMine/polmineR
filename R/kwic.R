@@ -70,9 +70,6 @@ setMethod("show", "kwic", function(object){
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname kwic-class
-#' @param pagelength An \code{integer} value, the number of kwic lines displayed
-#'   per page in the \code{datatables} htmlwidget that is returned when
-#'   \code{knit_print} is called on a \code{kwic} object.
 #' @param options Chunk options.   
 setMethod("knit_print", "kwic", function(x, options = knitr::opts_chunk){
   callNextMethod(x = x, options = options, node_color = character(), align = FALSE, lineview = FALSE)
