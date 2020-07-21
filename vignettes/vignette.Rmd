@@ -121,7 +121,7 @@ The kwic method applied to the name of a corpus will return a KWIC object. Outpu
 
 ```{r, eval = TRUE, render = knit_print}
 k <- kwic("REUTERS", "oil")
-k
+is(k)
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
