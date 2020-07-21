@@ -24,17 +24,17 @@ options("polmineR.mc" = FALSE)
 ## ---- echo = FALSE, message = FALSE-------------------------------------------
 options("polmineR.pagelength" = 3L)
 
-## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
-#  kwic("REUTERS", "oil")
+## ---- eval = TRUE, render = knit_print----------------------------------------
+kwic("REUTERS", "oil")
 
-## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
-#  kwic("REUTERS", "oil", s_attributes = "places")
+## ---- eval = TRUE, render = knit_print----------------------------------------
+kwic("REUTERS", "oil", s_attributes = "places")
 
-## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
-#  kwic("REUTERS", "oil", s_attributes = c("id", "places"))
+## ---- eval = TRUE, render = knit_print----------------------------------------
+kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 
-## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
-#  kwic("REUTERS", '"oil" "price.*"')
+## ---- eval = TRUE, render = knit_print----------------------------------------
+kwic("REUTERS", '"oil" "price.*"')
 
 ## ---- eval = TRUE-------------------------------------------------------------
 count("REUTERS", "Kuwait")
@@ -84,15 +84,13 @@ df[1:5, c("word", "ll", "rank_ll")]
 q1 <- dispersion(saudi_arabia, query = 'oil', s_attribute = "id", progress = FALSE)
 q2 <- dispersion(saudi_arabia, query = c("oil", "barrel"), s_attribute = "id", progress = FALSE)
 
-## ---- eval = TRUE, message = FALSE--------------------------------------------
+## ---- eval = TRUE, message = FALSE, render = knit_print-----------------------
 saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 saudi_arabia <- enrich(saudi_arabia, p_attribute = "word")
 
 saudi_arabia_features <- features(saudi_arabia, "REUTERS", included = TRUE)
 saudi_arabia_features_min <- subset(saudi_arabia_features, rank_chisquare <= 10.83 & count_coi >= 5)
-
-## ---- eval = FALSE------------------------------------------------------------
-#  as(round(saudi_arabia_features_min), "htmlwidget")
+saudi_arabia_features_min
 
 ## ---- eval = TRUE, message = FALSE--------------------------------------------
 df <- as.data.frame(saudi_arabia_features_min)

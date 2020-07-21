@@ -245,7 +245,7 @@ hr {
 <pre><code class="r">registry()
 </code></pre>
 
-<pre><code>## [1] &quot;/tmp/RtmpjW7Cos/polmineR_registry&quot;
+<pre><code>## [1] &quot;/tmp/Rtmp05goa1/polmineR_registry&quot;
 </code></pre>
 
 <p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function. </p>
@@ -476,9 +476,7 @@ saudi_arabia &lt;- enrich(saudi_arabia, p_attribute = &quot;word&quot;)
 
 saudi_arabia_features &lt;- features(saudi_arabia, &quot;REUTERS&quot;, included = TRUE)
 saudi_arabia_features_min &lt;- subset(saudi_arabia_features, rank_chisquare &lt;= 10.83 &amp; count_coi &gt;= 5)
-</code></pre>
-
-<pre><code class="r">as(round(saudi_arabia_features_min), &quot;htmlwidget&quot;)
+saudi_arabia_features_min
 </code></pre>
 
 <p>To extract the statistical information, you can also use the <code>as.data.frame</code>-method.</p>

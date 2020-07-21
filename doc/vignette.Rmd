@@ -119,25 +119,25 @@ options("polmineR.pagelength" = 3L)
 
 The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
 
-```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
+```{r, eval = TRUE, render = knit_print}
 kwic("REUTERS", "oil")
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
 
-```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
+```{r, eval = TRUE, render = knit_print}
 kwic("REUTERS", "oil", s_attributes = "places")
 ```
 
 But you can display any number of s-attributes.
 
-```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
+```{r, eval = TRUE, render = knit_print}
 kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.
 
-```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
+```{r, eval = TRUE, render = knit_print}
 kwic("REUTERS", '"oil" "price.*"')
 ```
 
@@ -251,16 +251,13 @@ q2 <- dispersion(saudi_arabia, query = c("oil", "barrel"), s_attribute = "id", p
 
 To identify the specific vocabulary of a corpus of interest, a statistical test based (chi square, or log likelihood) can be performed.
 
-```{r, eval = TRUE, message = FALSE}
+```{r, eval = TRUE, message = FALSE, render = knit_print}
 saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 saudi_arabia <- enrich(saudi_arabia, p_attribute = "word")
 
 saudi_arabia_features <- features(saudi_arabia, "REUTERS", included = TRUE)
 saudi_arabia_features_min <- subset(saudi_arabia_features, rank_chisquare <= 10.83 & count_coi >= 5)
-```
-
-```{r, eval = FALSE} 
-as(round(saudi_arabia_features_min), "htmlwidget")
+saudi_arabia_features_min
 ```
 
 To extract the statistical information, you can also use the `as.data.frame`-method.
