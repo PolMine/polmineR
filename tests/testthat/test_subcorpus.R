@@ -24,9 +24,9 @@ test_that(
     if (localeToCharset()[1] != "UTF-8"){
       query <- "B\u00E4rbel H\u00F6hn"
       Encoding(query) <- "UTF-8"
-      sp <- stringi::stri_enc_tonative(query)
+      sp <- iconv(query, from = "UTF-8", to = localeToCharset()[1])
       p <- partition("GERMAPARLMINI", speaker = sp)
-      sc <- subset(gparl, speaker == stringi::stri_enc_tonative(query))
+      sc <- subset(gparl, speaker == iconv(query, from = "UTF-8", to = localeToCharset()[1]))
     } else {
       sc <- subset(gparl, speaker == "B\u00E4rbel H\u00F6hn")
       p <- partition("GERMAPARLMINI", speaker = "B\u00E4rbel H\u00F6hn")
