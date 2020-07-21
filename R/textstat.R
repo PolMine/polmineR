@@ -210,6 +210,7 @@ setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk){
     y <- knit_print(widget, options = options)
   } else {
     y <- format(x)
+    show(y)
   }
   y
 })

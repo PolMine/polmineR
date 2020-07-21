@@ -245,7 +245,7 @@ hr {
 <pre><code class="r">registry()
 </code></pre>
 
-<pre><code>## [1] &quot;/tmp/RtmpO4h38u/polmineR_registry&quot;
+<pre><code>## [1] &quot;/tmp/Rtmp3Ewwa9/polmineR_registry&quot;
 </code></pre>
 
 <p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function. </p>
@@ -310,14 +310,714 @@ is(k)
 <pre><code class="r">kwic(&quot;REUTERS&quot;, &quot;oil&quot;, s_attributes = &quot;places&quot;)
 </code></pre>
 
+<pre><code>##                                    places
+##  1:                                   usa
+##  2:                                   usa
+##  3:                                   usa
+##  4:                                   usa
+##  5:                                   usa
+##  6:                                   usa
+##  7:                                   usa
+##  8:                                   usa
+##  9:                                   usa
+## 10:                                   usa
+## 11:                                   usa
+## 12:                                   usa
+## 13:                                   usa
+## 14:                                   usa
+## 15:                                   usa
+## 16:                                   usa
+## 17:                                   usa
+## 18:                                canada
+## 19:                                canada
+## 20:                                   usa
+## 21:                        kuwait|ecuador
+## 22:                        kuwait|ecuador
+## 23:                        kuwait|ecuador
+## 24:                        kuwait|ecuador
+## 25:                        kuwait|ecuador
+## 26:                        kuwait|ecuador
+## 27:                         indonesia|usa
+## 28:                         indonesia|usa
+## 29:                         indonesia|usa
+## 30:                         indonesia|usa
+## 31:                  bahrain|saudi-arabia
+## 32:                  bahrain|saudi-arabia
+## 33:                                 qatar
+## 34:                                 qatar
+## 35:                                 qatar
+## 36:                                 qatar
+## 37:                                 qatar
+## 38:                  bahrain|saudi-arabia
+## 39:                  bahrain|saudi-arabia
+## 40:                  bahrain|saudi-arabia
+## 41:                  bahrain|saudi-arabia
+## 42:                  bahrain|saudi-arabia
+## 43:                  bahrain|saudi-arabia
+## 44:                      saudi-arabia|uae
+## 45:                      saudi-arabia|uae
+## 46:                      saudi-arabia|uae
+## 47:                      saudi-arabia|uae
+## 48:                      saudi-arabia|uae
+## 49: uae|bahrain|saudi-arabia|kuwait|qatar
+## 50: uae|bahrain|saudi-arabia|kuwait|qatar
+## 51: uae|bahrain|saudi-arabia|kuwait|qatar
+## 52: uae|bahrain|saudi-arabia|kuwait|qatar
+## 53:                  saudi-arabia|bahrain
+## 54:                  saudi-arabia|bahrain
+## 55:                  saudi-arabia|bahrain
+## 56:                  saudi-arabia|bahrain
+## 57:                                kuwait
+## 58:                                kuwait
+## 59:                                kuwait
+## 60:                                kuwait
+## 61:                                   usa
+## 62:                                   usa
+## 63:                                   usa
+## 64:                                   usa
+## 65:                                   usa
+## 66:                                   usa
+## 67:                                   usa
+## 68:                                   usa
+## 69:                                   usa
+## 70:                                   usa
+## 71:                                   usa
+## 72:                                   usa
+## 73:                                   usa
+## 74:                                   usa
+## 75:                                   usa
+## 76:                                   usa
+## 77:                                   usa
+## 78:                             argentina
+##                                    places
+##                                                                                                                                   left
+##  1:                  &lt;div align=&#39;right&#39;&gt;Diamond Shamrock Corp said that effective today it had cut its contract prices for crude&lt;/div&gt;
+##  2:                         &lt;div align=&#39;right&#39;&gt;barrel the copany said The price reduction today was made in the light of falling&lt;/div&gt;
+##  3:                                &lt;div align=&#39;right&#39;&gt;today was made in the light of falling oil product prices and a weak crude&lt;/div&gt;
+##  4:                              &lt;div align=&#39;right&#39;&gt;oil market a company spokeswoman said Diamond is the latest in a line of U.S&lt;/div&gt;
+##  5:                            &lt;div align=&#39;right&#39;&gt;that have cut its contract or posted prices over the last two days citing weak&lt;/div&gt;
+##  6:         &lt;div align=&#39;right&#39;&gt;readdress its production cutting agreement if the organization wants to halt the current slide in&lt;/div&gt;
+##  7:            &lt;div align=&#39;right&#39;&gt;production cutting agreement if the organization wants to halt the current slide in oil prices&lt;/div&gt;
+##  8:                    &lt;div align=&#39;right&#39;&gt;halt the current slide in oil prices oil industry analysts said The movement to higher&lt;/div&gt;
+##  9:    &lt;div align=&#39;right&#39;&gt;out the problems said Daniel Yergin director of Cambridge Energy Research Associates CERA Analysts and&lt;/div&gt;
+## 10:          &lt;div align=&#39;right&#39;&gt;Research Associates CERA Analysts and oil industry sources said the problem OPEC faces is excess&lt;/div&gt;
+## 11:                        &lt;div align=&#39;right&#39;&gt;and oil industry sources said the problem OPEC faces is excess oil supply in world&lt;/div&gt;
+## 12:                         &lt;div align=&#39;right&#39;&gt;problem but a production issue and must be addressed in that way said Paul Mlotok&lt;/div&gt;
+## 13:                  &lt;div align=&#39;right&#39;&gt;outlook that the organization must address soon if it wishes to regain the initiative in&lt;/div&gt;
+## 14:                  &lt;div align=&#39;right&#39;&gt;quotas fixed prices and set differentials said the regional manager for one of the major&lt;/div&gt;
+## 15:                                 &lt;div align=&#39;right&#39;&gt;meet now as they try to take advantage of the winter demand to sell their&lt;/div&gt;
+## 16:        &lt;div align=&#39;right&#39;&gt;Rahmani of Harvard University&#39;s Energy and Environment Policy Center said that the demand for OPEC&lt;/div&gt;
+## 17:                 &lt;div align=&#39;right&#39;&gt;first quarter and this may have prompted excesses in its production Demand for their OPEC&lt;/div&gt;
+## 18:                   &lt;div align=&#39;right&#39;&gt;interview Reuter Texaco Canada said it lowered the contract price it will pay for crude&lt;/div&gt;
+## 19:                       &lt;div align=&#39;right&#39;&gt;Hills Light Sweet to 22.26 Canadian dlrs a bbl Texaco Canada last changed its crude&lt;/div&gt;
+## 20:                                 &lt;div align=&#39;right&#39;&gt;Co said it reduced the contract price it will pay for all grades of crude&lt;/div&gt;
+## 21:                  &lt;div align=&#39;right&#39;&gt;remarks published today said there were no plans for an emergency OPEC meeting to review&lt;/div&gt;
+## 22:                 &lt;div align=&#39;right&#39;&gt;plans for an emergency OPEC meeting to review oil policies after recent weakness in world&lt;/div&gt;
+## 23:  &lt;div align=&#39;right&#39;&gt;under self imposed production limits of the 13 nation organisation Traders and analysts in international&lt;/div&gt;
+## 24:                    &lt;div align=&#39;right&#39;&gt;high of 19 dollars a barrel Sheikh Ali also delivered a challenge to any international&lt;/div&gt;
+## 25:                   &lt;div align=&#39;right&#39;&gt;lost custom he said but did not elaborate However Kuwait had guaranteed markets for its&lt;/div&gt;
+## 26:                        &lt;div align=&#39;right&#39;&gt;seek this at talks this month of opec s pricing committee Referring to pressure by&lt;/div&gt;
+## 27:                  &lt;div align=&#39;right&#39;&gt;deregulate its protected economy the U.S Embassy says in a new report To counter falling&lt;/div&gt;
+## 28:                      &lt;div align=&#39;right&#39;&gt;launched a series of measures over the past nine months to boost exports outside the&lt;/div&gt;
+## 29:                     &lt;div align=&#39;right&#39;&gt;leading primary commodity producer has been severely hit by last year s fall in world&lt;/div&gt;
+## 30:                        &lt;div align=&#39;right&#39;&gt;to the sharp fall in export earnings from the petroleum industry Growth in the non&lt;/div&gt;
+## 31:         &lt;div align=&#39;right&#39;&gt;new positions amidst uncertainty over whether OPEC will succeed in halting the current decline in&lt;/div&gt;
+## 32:     &lt;div align=&#39;right&#39;&gt;oil prices Oil industry sources said yesterday several Gulf Arab producers had had difficulty selling&lt;/div&gt;
+## 33:                            &lt;div align=&#39;right&#39;&gt;at 3.7495 98 to the dollar after quotes of 3.7500 03 yesterday REUTER The Gulf&lt;/div&gt;
+## 34:                  &lt;div align=&#39;right&#39;&gt;REUTER The Gulf oil state of Qatar recovering slightly from last year&#39;s decline in world&lt;/div&gt;
+## 35:              &lt;div align=&#39;right&#39;&gt;9.7 billion The government failed to publish a 1986 87 budget due to uncertainty surrounding&lt;/div&gt;
+## 36:              &lt;div align=&#39;right&#39;&gt;figure was revealed for expenditure on defence and security There was also no projection for&lt;/div&gt;
+## 37:            &lt;div align=&#39;right&#39;&gt;of 285,000 barrels per day Sheikh Abdul Aziz said Our expectations of positive signs regarding&lt;/div&gt;
+## 38:   &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 39:                            &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 40:                              &lt;div align=&#39;right&#39;&gt;said Saudi Arabia is fully adhering by the Accord and it will never sell its&lt;/div&gt;
+## 41:                             &lt;div align=&#39;right&#39;&gt;prices of around 18 dlrs a barrel The agreement followed a year of turmoil on&lt;/div&gt;
+## 42:                         &lt;div align=&#39;right&#39;&gt;the SPA as saying Saudi Arabia&#39;s adherence to the accord was shown clearly in the&lt;/div&gt;
+## 43:             &lt;div align=&#39;right&#39;&gt;no plans for an emergency OPEC meeting to review prices Traders and analysts in international&lt;/div&gt;
+## 44:           &lt;div align=&#39;right&#39;&gt;those producing above quota Sheikh Ali denied that Kuwait was over producing REUTER Saudi crude&lt;/div&gt;
+## 45:                                   &lt;div align=&#39;right&#39;&gt;average of 3.5 mln barrels per day bpd from 3.8 mln bpd in January Gulf&lt;/div&gt;
+## 46:            &lt;div align=&#39;right&#39;&gt;production restraint scheme approved by the 13 nation group last December to back new official&lt;/div&gt;
+## 47:                          &lt;div align=&#39;right&#39;&gt;have fallen in recent weeks to more than one dlr below Opec levels Saudi Arabian&lt;/div&gt;
+## 48:                       &lt;div align=&#39;right&#39;&gt;in January because of cuts at the Yanbu and Jubail export refineries They put crude&lt;/div&gt;
+## 49:   &lt;div align=&#39;right&#39;&gt;Bahrain&#39;s refinery and neutral zone production remained steady at around 200,000 bpd each REUTER Deputy&lt;/div&gt;
+## 50:                     &lt;div align=&#39;right&#39;&gt;from six Gulf Arab states will meet in Bahrain today to discuss coordination of crude&lt;/div&gt;
+## 51:     &lt;div align=&#39;right&#39;&gt;would be discussing implementation of last Sunday&#39;s agreement in Doha by Gulf Cooperation Council GCC&lt;/div&gt;
+## 52:                  &lt;div align=&#39;right&#39;&gt;Doha by Gulf Cooperation Council GCC oil ministers to help each other market their crude&lt;/div&gt;
+## 53:   &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 54:                            &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 55:                              &lt;div align=&#39;right&#39;&gt;said Saudi Arabia is fully adhering by the accord and it will never sell its&lt;/div&gt;
+## 56:                            &lt;div align=&#39;right&#39;&gt;was a main architect of December pact under which OPEC agreed to cut its total&lt;/div&gt;
+## 57:                         &lt;div align=&#39;right&#39;&gt;7.25 pct and return to fixed prices of around 18 dollars a barrel Reuter Kuwait&#39;s&lt;/div&gt;
+## 58:                      &lt;div align=&#39;right&#39;&gt;there were no plans for an emergency OPEC meeting after the recent weakness in world&lt;/div&gt;
+## 59:                       &lt;div align=&#39;right&#39;&gt;Kuwait was pumping above its OPEC quota of 948,000 barrels of crude daily bpd Crude&lt;/div&gt;
+## 60:               &lt;div align=&#39;right&#39;&gt;948,000 barrels of crude daily bpd Crude oil prices fell sharply last week as international&lt;/div&gt;
+## 61:                    &lt;div align=&#39;right&#39;&gt;over its self imposed limits Reuter The port of Philadelphia was closed when a Cypriot&lt;/div&gt;
+## 62:                            &lt;div align=&#39;right&#39;&gt;power lines across the river a Coast Guard spokesman said He said there was no&lt;/div&gt;
+## 63:                         &lt;div align=&#39;right&#39;&gt;until today when they hoped to refloat the ship on the high tide After delivering&lt;/div&gt;
+## 64:                                  &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+## 65:                              &lt;div align=&#39;right&#39;&gt;to deal with the present and future impact of low oil prices on the domestic&lt;/div&gt;
+## 66:               &lt;div align=&#39;right&#39;&gt;The Aspen Institute for Humanistic Studies a private group also called for new research for&lt;/div&gt;
+## 67:                          &lt;div align=&#39;right&#39;&gt;at about 30 pct of U.S consumption It said instead that such moves as increasing&lt;/div&gt;
+## 68:                                  &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+## 69:                              &lt;div align=&#39;right&#39;&gt;to deal with the present and future impact of low oil prices on the domestic&lt;/div&gt;
+## 70:               &lt;div align=&#39;right&#39;&gt;The Aspen Institute for Humanistic Studies a private group also called for new research for&lt;/div&gt;
+## 71:                          &lt;div align=&#39;right&#39;&gt;import fee or other such device or to accept the full economic benefits of cheap&lt;/div&gt;
+## 72:                   &lt;div align=&#39;right&#39;&gt;there were benefits and drawbacks to both It said instead that such moves as increasing&lt;/div&gt;
+## 73:                     &lt;div align=&#39;right&#39;&gt;imports Reuter Unocal Corp&#39;s Union Oil Co said it lowered its posted prices for crude&lt;/div&gt;
+## 74:                         &lt;div align=&#39;right&#39;&gt;said No changes were made in Union&#39;s posted prices for West Coast grades of crude&lt;/div&gt;
+## 75:                      &lt;div align=&#39;right&#39;&gt;that will increase the use of energy futures worldwide On April one NYMEX will allow&lt;/div&gt;
+## 76:                &lt;div align=&#39;right&#39;&gt;hedged in the futures market according to an exchange spokeswoman This will change the way&lt;/div&gt;
+## 77: &lt;div align=&#39;right&#39;&gt;differential to NYMEX prices McKiernan explained The expanded program will serve the industry because the&lt;/div&gt;
+## 78:    &lt;div align=&#39;right&#39;&gt;Commission approved the rule change in February according to a CFTC spokeswoman Reuter Argentine crude&lt;/div&gt;
+##                                                                                                                                   left
+##                                                        node
+##  1: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  2: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  3: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  4: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  5: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  6: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  7: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  8: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  9: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 10: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 11: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 12: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 13: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 14: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 15: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 16: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 17: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 18: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 19: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 20: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 21: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 22: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 23: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 24: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 25: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 26: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 27: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 28: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 29: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 30: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 31: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 32: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 33: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 34: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 35: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 36: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 37: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 38: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 39: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 40: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 41: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 42: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 43: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 44: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 45: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 46: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 47: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 48: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 49: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 50: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 51: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 52: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 53: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 54: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 55: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 56: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 57: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 58: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 59: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 60: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 61: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 62: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 63: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 64: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 65: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 66: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 67: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 68: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 69: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 70: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 71: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 72: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 73: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 74: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 75: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 76: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 77: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 78: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##                                                        node
+##                                                                                                            right
+##  1:                      by 1.50 dlrs a barrel The reduction brings its posted price for West Texas Intermediate
+##  2:                         product prices and a weak crude oil market a company spokeswoman said Diamond is the
+##  3:                                 market a company spokeswoman said Diamond is the latest in a line of U.S oil
+##  4:                          companies that have cut its contract or posted prices over the last two days citing
+##  5:                       markets Reuter OPEC may be forced to meet before a scheduled June session to readdress
+##  6:                          prices oil industry analysts said The movement to higher oil prices was never to be
+##  7:                             industry analysts said The movement to higher oil prices was never to be as easy
+##  8:                                    prices was never to be as easy as OPEC thought They may need an emergency
+##  9:                       industry sources said the problem OPEC faces is excess oil supply in world oil markets
+## 10:                           supply in world oil markets OPEC&#39;s problem is not a price problem but a production
+## 11:                             markets OPEC&#39;s problem is not a price problem but a production issue and must be
+## 12:                   analyst with Salomon Brothers Inc He said the market&#39;s earlier optimism about OPEC and its
+## 13:               prices But some other analysts were uncertain that even an emergency meeting would address the
+## 14:                               companies who spoke on condition that he not be named The market is now trying
+## 15:                          but in late March and April when demand slackens Mizrahi said But Mizrahi said that
+## 16:                         has been rising through the first quarter and this may have prompted excesses in its
+## 17:                                        is clearly above 15.8 mln bpd and is probably closer to 17 mln bpd or
+## 18:                  64 Canadian cts a barrel effective today The decrease brings the company&#39;s posted price for
+## 19:                        postings on Feb 19 Reuter Marathon Petroleum Co said it reduced the contract price it
+## 20:                   one dlr a barrel effective today The decrease brings Marathon&#39;s posted price for both West
+## 21:                        policies after recent weakness in world oil prices Sheikh Ali al Khalifa al Sabah was
+## 22:                                 prices Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas
+## 23:                                 markets estimate OPEC is producing up to one mln bpd above a ceiling of 15.8
+## 24:           company that declared Kuwait sold below official prices Because it was charging its official price
+## 25:        because of its local and international refining facilities and its own distribution network abroad he
+## 26:                    companies on OPEC members in apparent reference to difficulties faced by Qatar he said We
+## 27:                       revenues the government has launched a series of measures over the past nine months to
+## 28:                      sector and attract new investment Indonesia the only Asian member of OPEC and a leading
+## 29:                                prices which forced it to devalue its currency by 31 pct in September But the
+## 30:            sector is low because of weak domestic demand coupled with excessive plant capacity real declines
+## 31:        prices Oil industry sources said yesterday several Gulf Arab producers had had difficulty selling oil
+## 32:                              at official OPEC prices but Kuwait has said there are no plans for an emergency
+## 33:                state of Qatar recovering slightly from last year&#39;s decline in world oil prices announced its
+## 34:                  prices announced its first budget since early 1985 and projected a deficit of 5.472 billion
+## 35:              revenues Sheikh Abdul Aziz said that during that year the government decided to limit recurrent
+## 36:                         revenue Qatar an OPEC member has an output ceiling of 285,000 barrels per day Sheikh
+## 37: price trends foremost among them OPEC&#39;s determination to shoulder its responsibilites and protect its wealth
+## 38:                        prices and stabilise the market the official Saudi Press Agency SPA said Asked by the
+## 39:                             prices Nazer said Saudi Arabia is fully adhering by the Accord and it will never
+## 40:                 at prices below the pronounced prices under any circumstance Nazer quoted by SPA said recent
+## 41:                                 markets which saw prices slump briefly to under 10 dlrs a barrel in mid 1986
+## 42:                             market He said contacts among members of OPEC showed they all wanted to stick to
+## 43:                              markets estimate OPEC is producing up to one mln bpd above the 15.8 mln ceiling
+## 44:                                     output last month fell to an average of 3.5 mln barrels per day bpd from
+## 45:                       sources said They said exports from the Ras Tanurah and Ju&#39;aymah terminals in the Gulf
+## 46:                              prices averaging 18 dlrs a barrel The sources said the two fold jump in exports
+## 47:     minister Hisham Nazer yesterday reiterated the kingdom&#39;s commitment to the December OPEC accord and said
+## 48:                 exports through Yanbu at 100,000 bpd last month compared to zero in January while throughput
+## 49:                    ministers from six Gulf Arab states will meet in Bahrain today to discuss coordination of
+## 50:          marketing the official Emirates news agency WAM reported WAM said the officials would be discussing
+## 51:                             ministers to help each other market their crude oil Four of the GCC states Saudi
+## 52:                            Four of the GCC states Saudi Arabia the United Arab Emirates UAE Kuwait and Qatar
+## 53:                        prices and stabilize the market the official Saudi Press Agency SPA said Asked by the
+## 54:                             prices Nazer said Saudi Arabia is fully adhering by the accord and it will never
+## 55:               at prices below the pronounced prices under any circumstance Saudi Arabia was a main architect
+## 56:                                 output ceiling by 7.25 pct and return to fixed prices of around 18 dollars a
+## 57:                        minister said in a newspaper interview that there were no plans for an emergency OPEC
+## 58:                                 prices Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas
+## 59:              prices fell sharply last week as international oil traders and analysts estimated the 13 nation
+## 60:                          traders and analysts estimated the 13 nation OPEC was pumping up to one million bpd
+## 61:                  tanker Seapride II ran aground after hitting a 200 foot tower supporting power lines across
+## 62:                            spill but the ship is lodged on rocks opposite the Hope Creek nuclear power plant
+## 63:                          to a refinery in Paulsboro New Jersey the ship apparently lost its steering and hit
+## 64:                         prices on the domestic oil industry U.S policy now is to raise the strategic reserve
+## 65:                            industry U.S policy now is to raise the strategic reserve to 750 mln barrels from
+## 66:                exploration and development techniques It predicted prices would remain at about 15 18 dlrs a
+## 67:           reserves and more exploration and development research would help to guard against or mitigate the
+## 68:                         prices on the domestic oil industry U.S policy now is to raise the strategic reserve
+## 69:                            industry U.S policy now is to raise the strategic reserve to 750 mln barrels from
+## 70:                exploration and development techniques It predicted prices would remain at about 15 18 dlrs a
+## 71:                   But the group did not strongly back either option saying there were benefits and drawbacks
+## 72:           reserves and more exploration and development research would help to guard against or mitigate the
+## 73:                                     one to 1.50 dlrs a barrel in the eastern region of the U.S effective Feb
+## 74:                         the company said Reuter The New York Mercantile Exchange set April one for the debut
+## 75:                          traders that do not hold a futures position to initiate after the exchange closes a
+## 76:                 is transacted in the real world said said Thomas McKiernan McKiernan and Co chairman Foreign
+## 77:                  market does not close when NYMEX does said Frank Capozza secretary of Century Resources Inc
+## 78:                             production was down 10.8 pct in January 1987 to 12.32 mln barrels from 13.81 mln
+##                                                                                                            right
+</code></pre>
+
 <p>But you can display any number of s-attributes.</p>
 
 <pre><code class="r">kwic(&quot;REUTERS&quot;, &quot;oil&quot;, s_attributes = c(&quot;id&quot;, &quot;places&quot;))
 </code></pre>
 
+<pre><code>##      id                                places
+##  1: 127                                   usa
+##  2: 127                                   usa
+##  3: 127                                   usa
+##  4: 127                                   usa
+##  5: 127                                   usa
+##  6: 144                                   usa
+##  7: 144                                   usa
+##  8: 144                                   usa
+##  9: 144                                   usa
+## 10: 144                                   usa
+## 11: 144                                   usa
+## 12: 144                                   usa
+## 13: 144                                   usa
+## 14: 144                                   usa
+## 15: 144                                   usa
+## 16: 144                                   usa
+## 17: 144                                   usa
+## 18: 191                                canada
+## 19: 191                                canada
+## 20: 194                                   usa
+## 21: 236                        kuwait|ecuador
+## 22: 236                        kuwait|ecuador
+## 23: 236                        kuwait|ecuador
+## 24: 236                        kuwait|ecuador
+## 25: 236                        kuwait|ecuador
+## 26: 236                        kuwait|ecuador
+## 27: 237                         indonesia|usa
+## 28: 237                         indonesia|usa
+## 29: 237                         indonesia|usa
+## 30: 237                         indonesia|usa
+## 31: 242                  bahrain|saudi-arabia
+## 32: 242                  bahrain|saudi-arabia
+## 33: 246                                 qatar
+## 34: 246                                 qatar
+## 35: 246                                 qatar
+## 36: 246                                 qatar
+## 37: 246                                 qatar
+## 38: 248                  bahrain|saudi-arabia
+## 39: 248                  bahrain|saudi-arabia
+## 40: 248                  bahrain|saudi-arabia
+## 41: 248                  bahrain|saudi-arabia
+## 42: 248                  bahrain|saudi-arabia
+## 43: 248                  bahrain|saudi-arabia
+## 44: 273                      saudi-arabia|uae
+## 45: 273                      saudi-arabia|uae
+## 46: 273                      saudi-arabia|uae
+## 47: 273                      saudi-arabia|uae
+## 48: 273                      saudi-arabia|uae
+## 49: 349 uae|bahrain|saudi-arabia|kuwait|qatar
+## 50: 349 uae|bahrain|saudi-arabia|kuwait|qatar
+## 51: 349 uae|bahrain|saudi-arabia|kuwait|qatar
+## 52: 349 uae|bahrain|saudi-arabia|kuwait|qatar
+## 53: 352                  saudi-arabia|bahrain
+## 54: 352                  saudi-arabia|bahrain
+## 55: 352                  saudi-arabia|bahrain
+## 56: 352                  saudi-arabia|bahrain
+## 57: 353                                kuwait
+## 58: 353                                kuwait
+## 59: 353                                kuwait
+## 60: 353                                kuwait
+## 61: 368                                   usa
+## 62: 368                                   usa
+## 63: 368                                   usa
+## 64: 489                                   usa
+## 65: 489                                   usa
+## 66: 489                                   usa
+## 67: 489                                   usa
+## 68: 502                                   usa
+## 69: 502                                   usa
+## 70: 502                                   usa
+## 71: 502                                   usa
+## 72: 502                                   usa
+## 73: 543                                   usa
+## 74: 543                                   usa
+## 75: 704                                   usa
+## 76: 704                                   usa
+## 77: 704                                   usa
+## 78: 708                             argentina
+##      id                                places
+##                                                                                                                                   left
+##  1:                  &lt;div align=&#39;right&#39;&gt;Diamond Shamrock Corp said that effective today it had cut its contract prices for crude&lt;/div&gt;
+##  2:                         &lt;div align=&#39;right&#39;&gt;barrel the copany said The price reduction today was made in the light of falling&lt;/div&gt;
+##  3:                                &lt;div align=&#39;right&#39;&gt;today was made in the light of falling oil product prices and a weak crude&lt;/div&gt;
+##  4:                              &lt;div align=&#39;right&#39;&gt;oil market a company spokeswoman said Diamond is the latest in a line of U.S&lt;/div&gt;
+##  5:                            &lt;div align=&#39;right&#39;&gt;that have cut its contract or posted prices over the last two days citing weak&lt;/div&gt;
+##  6:         &lt;div align=&#39;right&#39;&gt;readdress its production cutting agreement if the organization wants to halt the current slide in&lt;/div&gt;
+##  7:            &lt;div align=&#39;right&#39;&gt;production cutting agreement if the organization wants to halt the current slide in oil prices&lt;/div&gt;
+##  8:                    &lt;div align=&#39;right&#39;&gt;halt the current slide in oil prices oil industry analysts said The movement to higher&lt;/div&gt;
+##  9:    &lt;div align=&#39;right&#39;&gt;out the problems said Daniel Yergin director of Cambridge Energy Research Associates CERA Analysts and&lt;/div&gt;
+## 10:          &lt;div align=&#39;right&#39;&gt;Research Associates CERA Analysts and oil industry sources said the problem OPEC faces is excess&lt;/div&gt;
+## 11:                        &lt;div align=&#39;right&#39;&gt;and oil industry sources said the problem OPEC faces is excess oil supply in world&lt;/div&gt;
+## 12:                         &lt;div align=&#39;right&#39;&gt;problem but a production issue and must be addressed in that way said Paul Mlotok&lt;/div&gt;
+## 13:                  &lt;div align=&#39;right&#39;&gt;outlook that the organization must address soon if it wishes to regain the initiative in&lt;/div&gt;
+## 14:                  &lt;div align=&#39;right&#39;&gt;quotas fixed prices and set differentials said the regional manager for one of the major&lt;/div&gt;
+## 15:                                 &lt;div align=&#39;right&#39;&gt;meet now as they try to take advantage of the winter demand to sell their&lt;/div&gt;
+## 16:        &lt;div align=&#39;right&#39;&gt;Rahmani of Harvard University&#39;s Energy and Environment Policy Center said that the demand for OPEC&lt;/div&gt;
+## 17:                 &lt;div align=&#39;right&#39;&gt;first quarter and this may have prompted excesses in its production Demand for their OPEC&lt;/div&gt;
+## 18:                   &lt;div align=&#39;right&#39;&gt;interview Reuter Texaco Canada said it lowered the contract price it will pay for crude&lt;/div&gt;
+## 19:                       &lt;div align=&#39;right&#39;&gt;Hills Light Sweet to 22.26 Canadian dlrs a bbl Texaco Canada last changed its crude&lt;/div&gt;
+## 20:                                 &lt;div align=&#39;right&#39;&gt;Co said it reduced the contract price it will pay for all grades of crude&lt;/div&gt;
+## 21:                  &lt;div align=&#39;right&#39;&gt;remarks published today said there were no plans for an emergency OPEC meeting to review&lt;/div&gt;
+## 22:                 &lt;div align=&#39;right&#39;&gt;plans for an emergency OPEC meeting to review oil policies after recent weakness in world&lt;/div&gt;
+## 23:  &lt;div align=&#39;right&#39;&gt;under self imposed production limits of the 13 nation organisation Traders and analysts in international&lt;/div&gt;
+## 24:                    &lt;div align=&#39;right&#39;&gt;high of 19 dollars a barrel Sheikh Ali also delivered a challenge to any international&lt;/div&gt;
+## 25:                   &lt;div align=&#39;right&#39;&gt;lost custom he said but did not elaborate However Kuwait had guaranteed markets for its&lt;/div&gt;
+## 26:                        &lt;div align=&#39;right&#39;&gt;seek this at talks this month of opec s pricing committee Referring to pressure by&lt;/div&gt;
+## 27:                  &lt;div align=&#39;right&#39;&gt;deregulate its protected economy the U.S Embassy says in a new report To counter falling&lt;/div&gt;
+## 28:                      &lt;div align=&#39;right&#39;&gt;launched a series of measures over the past nine months to boost exports outside the&lt;/div&gt;
+## 29:                     &lt;div align=&#39;right&#39;&gt;leading primary commodity producer has been severely hit by last year s fall in world&lt;/div&gt;
+## 30:                        &lt;div align=&#39;right&#39;&gt;to the sharp fall in export earnings from the petroleum industry Growth in the non&lt;/div&gt;
+## 31:         &lt;div align=&#39;right&#39;&gt;new positions amidst uncertainty over whether OPEC will succeed in halting the current decline in&lt;/div&gt;
+## 32:     &lt;div align=&#39;right&#39;&gt;oil prices Oil industry sources said yesterday several Gulf Arab producers had had difficulty selling&lt;/div&gt;
+## 33:                            &lt;div align=&#39;right&#39;&gt;at 3.7495 98 to the dollar after quotes of 3.7500 03 yesterday REUTER The Gulf&lt;/div&gt;
+## 34:                  &lt;div align=&#39;right&#39;&gt;REUTER The Gulf oil state of Qatar recovering slightly from last year&#39;s decline in world&lt;/div&gt;
+## 35:              &lt;div align=&#39;right&#39;&gt;9.7 billion The government failed to publish a 1986 87 budget due to uncertainty surrounding&lt;/div&gt;
+## 36:              &lt;div align=&#39;right&#39;&gt;figure was revealed for expenditure on defence and security There was also no projection for&lt;/div&gt;
+## 37:            &lt;div align=&#39;right&#39;&gt;of 285,000 barrels per day Sheikh Abdul Aziz said Our expectations of positive signs regarding&lt;/div&gt;
+## 38:   &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 39:                            &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 40:                              &lt;div align=&#39;right&#39;&gt;said Saudi Arabia is fully adhering by the Accord and it will never sell its&lt;/div&gt;
+## 41:                             &lt;div align=&#39;right&#39;&gt;prices of around 18 dlrs a barrel The agreement followed a year of turmoil on&lt;/div&gt;
+## 42:                         &lt;div align=&#39;right&#39;&gt;the SPA as saying Saudi Arabia&#39;s adherence to the accord was shown clearly in the&lt;/div&gt;
+## 43:             &lt;div align=&#39;right&#39;&gt;no plans for an emergency OPEC meeting to review prices Traders and analysts in international&lt;/div&gt;
+## 44:           &lt;div align=&#39;right&#39;&gt;those producing above quota Sheikh Ali denied that Kuwait was over producing REUTER Saudi crude&lt;/div&gt;
+## 45:                                   &lt;div align=&#39;right&#39;&gt;average of 3.5 mln barrels per day bpd from 3.8 mln bpd in January Gulf&lt;/div&gt;
+## 46:            &lt;div align=&#39;right&#39;&gt;production restraint scheme approved by the 13 nation group last December to back new official&lt;/div&gt;
+## 47:                          &lt;div align=&#39;right&#39;&gt;have fallen in recent weeks to more than one dlr below Opec levels Saudi Arabian&lt;/div&gt;
+## 48:                       &lt;div align=&#39;right&#39;&gt;in January because of cuts at the Yanbu and Jubail export refineries They put crude&lt;/div&gt;
+## 49:   &lt;div align=&#39;right&#39;&gt;Bahrain&#39;s refinery and neutral zone production remained steady at around 200,000 bpd each REUTER Deputy&lt;/div&gt;
+## 50:                     &lt;div align=&#39;right&#39;&gt;from six Gulf Arab states will meet in Bahrain today to discuss coordination of crude&lt;/div&gt;
+## 51:     &lt;div align=&#39;right&#39;&gt;would be discussing implementation of last Sunday&#39;s agreement in Doha by Gulf Cooperation Council GCC&lt;/div&gt;
+## 52:                  &lt;div align=&#39;right&#39;&gt;Doha by Gulf Cooperation Council GCC oil ministers to help each other market their crude&lt;/div&gt;
+## 53:   &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 54:                            &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 55:                              &lt;div align=&#39;right&#39;&gt;said Saudi Arabia is fully adhering by the accord and it will never sell its&lt;/div&gt;
+## 56:                            &lt;div align=&#39;right&#39;&gt;was a main architect of December pact under which OPEC agreed to cut its total&lt;/div&gt;
+## 57:                         &lt;div align=&#39;right&#39;&gt;7.25 pct and return to fixed prices of around 18 dollars a barrel Reuter Kuwait&#39;s&lt;/div&gt;
+## 58:                      &lt;div align=&#39;right&#39;&gt;there were no plans for an emergency OPEC meeting after the recent weakness in world&lt;/div&gt;
+## 59:                       &lt;div align=&#39;right&#39;&gt;Kuwait was pumping above its OPEC quota of 948,000 barrels of crude daily bpd Crude&lt;/div&gt;
+## 60:               &lt;div align=&#39;right&#39;&gt;948,000 barrels of crude daily bpd Crude oil prices fell sharply last week as international&lt;/div&gt;
+## 61:                    &lt;div align=&#39;right&#39;&gt;over its self imposed limits Reuter The port of Philadelphia was closed when a Cypriot&lt;/div&gt;
+## 62:                            &lt;div align=&#39;right&#39;&gt;power lines across the river a Coast Guard spokesman said He said there was no&lt;/div&gt;
+## 63:                         &lt;div align=&#39;right&#39;&gt;until today when they hoped to refloat the ship on the high tide After delivering&lt;/div&gt;
+## 64:                                  &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+## 65:                              &lt;div align=&#39;right&#39;&gt;to deal with the present and future impact of low oil prices on the domestic&lt;/div&gt;
+## 66:               &lt;div align=&#39;right&#39;&gt;The Aspen Institute for Humanistic Studies a private group also called for new research for&lt;/div&gt;
+## 67:                          &lt;div align=&#39;right&#39;&gt;at about 30 pct of U.S consumption It said instead that such moves as increasing&lt;/div&gt;
+## 68:                                  &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+## 69:                              &lt;div align=&#39;right&#39;&gt;to deal with the present and future impact of low oil prices on the domestic&lt;/div&gt;
+## 70:               &lt;div align=&#39;right&#39;&gt;The Aspen Institute for Humanistic Studies a private group also called for new research for&lt;/div&gt;
+## 71:                          &lt;div align=&#39;right&#39;&gt;import fee or other such device or to accept the full economic benefits of cheap&lt;/div&gt;
+## 72:                   &lt;div align=&#39;right&#39;&gt;there were benefits and drawbacks to both It said instead that such moves as increasing&lt;/div&gt;
+## 73:                     &lt;div align=&#39;right&#39;&gt;imports Reuter Unocal Corp&#39;s Union Oil Co said it lowered its posted prices for crude&lt;/div&gt;
+## 74:                         &lt;div align=&#39;right&#39;&gt;said No changes were made in Union&#39;s posted prices for West Coast grades of crude&lt;/div&gt;
+## 75:                      &lt;div align=&#39;right&#39;&gt;that will increase the use of energy futures worldwide On April one NYMEX will allow&lt;/div&gt;
+## 76:                &lt;div align=&#39;right&#39;&gt;hedged in the futures market according to an exchange spokeswoman This will change the way&lt;/div&gt;
+## 77: &lt;div align=&#39;right&#39;&gt;differential to NYMEX prices McKiernan explained The expanded program will serve the industry because the&lt;/div&gt;
+## 78:    &lt;div align=&#39;right&#39;&gt;Commission approved the rule change in February according to a CFTC spokeswoman Reuter Argentine crude&lt;/div&gt;
+##                                                                                                                                   left
+##                                                        node
+##  1: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  2: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  3: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  4: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  5: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  6: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  7: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  8: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##  9: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 10: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 11: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 12: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 13: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 14: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 15: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 16: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 17: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 18: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 19: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 20: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 21: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 22: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 23: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 24: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 25: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 26: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 27: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 28: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 29: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 30: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 31: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 32: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 33: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 34: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 35: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 36: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 37: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 38: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 39: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 40: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 41: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 42: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 43: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 44: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 45: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 46: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 47: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 48: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 49: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 50: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 51: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 52: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 53: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 54: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 55: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 56: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 57: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 58: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 59: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 60: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 61: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 62: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 63: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 64: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 65: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 66: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 67: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 68: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 69: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 70: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 71: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 72: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 73: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 74: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 75: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 76: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 77: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+## 78: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil&lt;/font&gt;&lt;/div&gt;
+##                                                        node
+##                                                                                                            right
+##  1:                      by 1.50 dlrs a barrel The reduction brings its posted price for West Texas Intermediate
+##  2:                         product prices and a weak crude oil market a company spokeswoman said Diamond is the
+##  3:                                 market a company spokeswoman said Diamond is the latest in a line of U.S oil
+##  4:                          companies that have cut its contract or posted prices over the last two days citing
+##  5:                       markets Reuter OPEC may be forced to meet before a scheduled June session to readdress
+##  6:                          prices oil industry analysts said The movement to higher oil prices was never to be
+##  7:                             industry analysts said The movement to higher oil prices was never to be as easy
+##  8:                                    prices was never to be as easy as OPEC thought They may need an emergency
+##  9:                       industry sources said the problem OPEC faces is excess oil supply in world oil markets
+## 10:                           supply in world oil markets OPEC&#39;s problem is not a price problem but a production
+## 11:                             markets OPEC&#39;s problem is not a price problem but a production issue and must be
+## 12:                   analyst with Salomon Brothers Inc He said the market&#39;s earlier optimism about OPEC and its
+## 13:               prices But some other analysts were uncertain that even an emergency meeting would address the
+## 14:                               companies who spoke on condition that he not be named The market is now trying
+## 15:                          but in late March and April when demand slackens Mizrahi said But Mizrahi said that
+## 16:                         has been rising through the first quarter and this may have prompted excesses in its
+## 17:                                        is clearly above 15.8 mln bpd and is probably closer to 17 mln bpd or
+## 18:                  64 Canadian cts a barrel effective today The decrease brings the company&#39;s posted price for
+## 19:                        postings on Feb 19 Reuter Marathon Petroleum Co said it reduced the contract price it
+## 20:                   one dlr a barrel effective today The decrease brings Marathon&#39;s posted price for both West
+## 21:                        policies after recent weakness in world oil prices Sheikh Ali al Khalifa al Sabah was
+## 22:                                 prices Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas
+## 23:                                 markets estimate OPEC is producing up to one mln bpd above a ceiling of 15.8
+## 24:           company that declared Kuwait sold below official prices Because it was charging its official price
+## 25:        because of its local and international refining facilities and its own distribution network abroad he
+## 26:                    companies on OPEC members in apparent reference to difficulties faced by Qatar he said We
+## 27:                       revenues the government has launched a series of measures over the past nine months to
+## 28:                      sector and attract new investment Indonesia the only Asian member of OPEC and a leading
+## 29:                                prices which forced it to devalue its currency by 31 pct in September But the
+## 30:            sector is low because of weak domestic demand coupled with excessive plant capacity real declines
+## 31:        prices Oil industry sources said yesterday several Gulf Arab producers had had difficulty selling oil
+## 32:                              at official OPEC prices but Kuwait has said there are no plans for an emergency
+## 33:                state of Qatar recovering slightly from last year&#39;s decline in world oil prices announced its
+## 34:                  prices announced its first budget since early 1985 and projected a deficit of 5.472 billion
+## 35:              revenues Sheikh Abdul Aziz said that during that year the government decided to limit recurrent
+## 36:                         revenue Qatar an OPEC member has an output ceiling of 285,000 barrels per day Sheikh
+## 37: price trends foremost among them OPEC&#39;s determination to shoulder its responsibilites and protect its wealth
+## 38:                        prices and stabilise the market the official Saudi Press Agency SPA said Asked by the
+## 39:                             prices Nazer said Saudi Arabia is fully adhering by the Accord and it will never
+## 40:                 at prices below the pronounced prices under any circumstance Nazer quoted by SPA said recent
+## 41:                                 markets which saw prices slump briefly to under 10 dlrs a barrel in mid 1986
+## 42:                             market He said contacts among members of OPEC showed they all wanted to stick to
+## 43:                              markets estimate OPEC is producing up to one mln bpd above the 15.8 mln ceiling
+## 44:                                     output last month fell to an average of 3.5 mln barrels per day bpd from
+## 45:                       sources said They said exports from the Ras Tanurah and Ju&#39;aymah terminals in the Gulf
+## 46:                              prices averaging 18 dlrs a barrel The sources said the two fold jump in exports
+## 47:     minister Hisham Nazer yesterday reiterated the kingdom&#39;s commitment to the December OPEC accord and said
+## 48:                 exports through Yanbu at 100,000 bpd last month compared to zero in January while throughput
+## 49:                    ministers from six Gulf Arab states will meet in Bahrain today to discuss coordination of
+## 50:          marketing the official Emirates news agency WAM reported WAM said the officials would be discussing
+## 51:                             ministers to help each other market their crude oil Four of the GCC states Saudi
+## 52:                            Four of the GCC states Saudi Arabia the United Arab Emirates UAE Kuwait and Qatar
+## 53:                        prices and stabilize the market the official Saudi Press Agency SPA said Asked by the
+## 54:                             prices Nazer said Saudi Arabia is fully adhering by the accord and it will never
+## 55:               at prices below the pronounced prices under any circumstance Saudi Arabia was a main architect
+## 56:                                 output ceiling by 7.25 pct and return to fixed prices of around 18 dollars a
+## 57:                        minister said in a newspaper interview that there were no plans for an emergency OPEC
+## 58:                                 prices Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas
+## 59:              prices fell sharply last week as international oil traders and analysts estimated the 13 nation
+## 60:                          traders and analysts estimated the 13 nation OPEC was pumping up to one million bpd
+## 61:                  tanker Seapride II ran aground after hitting a 200 foot tower supporting power lines across
+## 62:                            spill but the ship is lodged on rocks opposite the Hope Creek nuclear power plant
+## 63:                          to a refinery in Paulsboro New Jersey the ship apparently lost its steering and hit
+## 64:                         prices on the domestic oil industry U.S policy now is to raise the strategic reserve
+## 65:                            industry U.S policy now is to raise the strategic reserve to 750 mln barrels from
+## 66:                exploration and development techniques It predicted prices would remain at about 15 18 dlrs a
+## 67:           reserves and more exploration and development research would help to guard against or mitigate the
+## 68:                         prices on the domestic oil industry U.S policy now is to raise the strategic reserve
+## 69:                            industry U.S policy now is to raise the strategic reserve to 750 mln barrels from
+## 70:                exploration and development techniques It predicted prices would remain at about 15 18 dlrs a
+## 71:                   But the group did not strongly back either option saying there were benefits and drawbacks
+## 72:           reserves and more exploration and development research would help to guard against or mitigate the
+## 73:                                     one to 1.50 dlrs a barrel in the eastern region of the U.S effective Feb
+## 74:                         the company said Reuter The New York Mercantile Exchange set April one for the debut
+## 75:                          traders that do not hold a futures position to initiate after the exchange closes a
+## 76:                 is transacted in the real world said said Thomas McKiernan McKiernan and Co chairman Foreign
+## 77:                  market does not close when NYMEX does said Frank Capozza secretary of Century Resources Inc
+## 78:                             production was down 10.8 pct in January 1987 to 12.32 mln barrels from 13.81 mln
+##                                                                                                            right
+</code></pre>
+
 <p>You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.</p>
 
 <pre><code class="r">kwic(&quot;REUTERS&quot;, &#39;&quot;oil&quot; &quot;price.*&quot;&#39;)
+</code></pre>
+
+<pre><code>##                                                                                                                                 left
+##  1:       &lt;div align=&#39;right&#39;&gt;readdress its production cutting agreement if the organization wants to halt the current slide in&lt;/div&gt;
+##  2:                  &lt;div align=&#39;right&#39;&gt;halt the current slide in oil prices oil industry analysts said The movement to higher&lt;/div&gt;
+##  3:                &lt;div align=&#39;right&#39;&gt;outlook that the organization must address soon if it wishes to regain the initiative in&lt;/div&gt;
+##  4:               &lt;div align=&#39;right&#39;&gt;plans for an emergency OPEC meeting to review oil policies after recent weakness in world&lt;/div&gt;
+##  5:                   &lt;div align=&#39;right&#39;&gt;leading primary commodity producer has been severely hit by last year s fall in world&lt;/div&gt;
+##  6:       &lt;div align=&#39;right&#39;&gt;new positions amidst uncertainty over whether OPEC will succeed in halting the current decline in&lt;/div&gt;
+##  7:                &lt;div align=&#39;right&#39;&gt;REUTER The Gulf oil state of Qatar recovering slightly from last year&#39;s decline in world&lt;/div&gt;
+##  8:          &lt;div align=&#39;right&#39;&gt;of 285,000 barrels per day Sheikh Abdul Aziz said Our expectations of positive signs regarding&lt;/div&gt;
+##  9: &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 10:                          &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 11:          &lt;div align=&#39;right&#39;&gt;production restraint scheme approved by the 13 nation group last December to back new official&lt;/div&gt;
+## 12: &lt;div align=&#39;right&#39;&gt;Minister Hisham Nazer reiterated the kingdom&#39;s commitment to last December&#39;s OPEC accord to boost world&lt;/div&gt;
+## 13:                          &lt;div align=&#39;right&#39;&gt;Press Agency SPA said Asked by the agency about the recent fall in free market&lt;/div&gt;
+## 14:                    &lt;div align=&#39;right&#39;&gt;there were no plans for an emergency OPEC meeting after the recent weakness in world&lt;/div&gt;
+## 15:                     &lt;div align=&#39;right&#39;&gt;Kuwait was pumping above its OPEC quota of 948,000 barrels of crude daily bpd Crude&lt;/div&gt;
+## 16:                                &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+## 17:                                &lt;div align=&#39;right&#39;&gt;mln barrels as one way to deal with the present and future impact of low&lt;/div&gt;
+##                                                               node
+##  1: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  2: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  3: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  4: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  5: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  6: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  7: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##  8:  &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil price&lt;/font&gt;&lt;/div&gt;
+##  9: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 10: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 11: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 12: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 13: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 14: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 15: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 16: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+## 17: &lt;div align=&#39;center&#39;&gt;&lt;font color=&#39;blue&#39;&gt;oil prices&lt;/font&gt;&lt;/div&gt;
+##                                                                                                           right
+##  1:                             oil industry analysts said The movement to higher oil prices was never to be as
+##  2:                                  was never to be as easy as OPEC thought They may need an emergency meeting
+##  3:             But some other analysts were uncertain that even an emergency meeting would address the problem
+##  4:                                    Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas as
+##  5:                                  which forced it to devalue its currency by 31 pct in September But the U.S
+##  6:           Oil industry sources said yesterday several Gulf Arab producers had had difficulty selling oil at
+##  7:                 announced its first budget since early 1985 and projected a deficit of 5.472 billion riyals
+##  8: trends foremost among them OPEC&#39;s determination to shoulder its responsibilites and protect its wealth have
+##  9:                       and stabilise the market the official Saudi Press Agency SPA said Asked by the agency
+## 10:                              Nazer said Saudi Arabia is fully adhering by the Accord and it will never sell
+## 11:                               averaging 18 dlrs a barrel The sources said the two fold jump in exports last
+## 12:                       and stabilize the market the official Saudi Press Agency SPA said Asked by the agency
+## 13:                              Nazer said Saudi Arabia is fully adhering by the accord and it will never sell
+## 14:                                    Sheikh Ali al Khalifa al Sabah was quoted by the local daily al Qabas as
+## 15:               fell sharply last week as international oil traders and analysts estimated the 13 nation OPEC
+## 16:                            on the domestic oil industry U.S policy now is to raise the strategic reserve to
+## 17:                            on the domestic oil industry U.S policy now is to raise the strategic reserve to
 </code></pre>
 
 <p>Explaining the CQP syntax goes beyon this vignette. Consult the <a href="http://cwb.sourceforge.net/files/CQP_Tutorial.pdf">CQP tutorial</a> to learn more about the CQP syntax.</p>
@@ -481,6 +1181,24 @@ saudi_arabia &lt;- enrich(saudi_arabia, p_attribute = &quot;word&quot;)
 saudi_arabia_features &lt;- features(saudi_arabia, &quot;REUTERS&quot;, included = TRUE)
 saudi_arabia_features_min &lt;- subset(saudi_arabia_features, rank_chisquare &lt;= 10.83 &amp; count_coi &gt;= 5)
 saudi_arabia_features_min
+</code></pre>
+
+<pre><code>##    rank_chisquare    word count_coi count_ref               exp_coi
+## 1:              1   Saudi        18         0 4.8399999999999998579
+## 2:              2   Nazer         7         0 1.8799999999999998934
+## 3:              3  accord         7         0 1.8799999999999998934
+## 4:              4  market        14         6 5.3700000000000001066
+## 5:              5       8         6         0 1.6100000000000000977
+## 6:              6  Arabia         6         0 1.6100000000000000977
+## 7:              7 sources         7         2 2.4199999999999999289
+##                chisquare
+## 1: 49.219999999999998863
+## 2: 19.089999999999999858
+## 3: 19.089999999999999858
+## 4: 19.030000000000001137
+## 5: 16.359999999999999432
+## 6: 16.359999999999999432
+## 7: 11.900000000000000355
 </code></pre>
 
 <p>To extract the statistical information, you can also use the <code>as.data.frame</code>-method.</p>
