@@ -26,7 +26,7 @@ test_that(
       Encoding(query) <- "UTF-8"
       sp <- iconv(query, from = "UTF-8", to = localeToCharset()[1])
       p <- partition("GERMAPARLMINI", speaker = sp)
-      sc <- subset(gparl, speaker == iconv(query, from = "UTF-8", to = localeToCharset()[1]))
+      sc <- subset(gparl, speaker = sp)
     } else {
       sc <- subset(gparl, speaker == "B\u00E4rbel H\u00F6hn")
       p <- partition("GERMAPARLMINI", speaker = "B\u00E4rbel H\u00F6hn")
