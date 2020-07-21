@@ -100,8 +100,8 @@ options()[grep("polmineR", names(options()))]
 Several methods (such as kwic, or cooccurrences) will use these settings, if no explicit other value is provided. You can see this in the usage section of help pages (`?kwic`, for instance). To change settings, this is how.
 
 ```{r}  
-options("polmineR.left" = 15)
-options("polmineR.right" = 15)
+options("polmineR.left" = 5)
+options("polmineR.right" = 5)
 options("polmineR.mc" = FALSE)
 ```
 
@@ -120,8 +120,7 @@ options("polmineR.pagelength" = 3L)
 The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
 
 ```{r, eval = TRUE, render = knit_print}
-k <- kwic("REUTERS", "oil")
-is(k)
+kwic("REUTERS", "oil")
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.

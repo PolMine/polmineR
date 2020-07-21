@@ -201,7 +201,7 @@ setAs(from = "textstat", to = "htmlwidget", def = function(from){
 #' @exportMethod knit_print
 #' @rdname textstat-class
 #' @param options Chunk options.   
-setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk){
+setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk, ...){
   if (!requireNamespace("rmarkdown", quietly = TRUE)){
     stop("package 'rmarkdown' required but not available to run knit_print()-method on a textstat object")
   }
@@ -209,8 +209,9 @@ setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk){
     widget <- as(x, "htmlwidget")
     y <- knit_print(widget, options = options)
   } else {
-    y <- format(x)
+    y <- format(x, ...)
     show(y)
+    y <- NULL
   }
   y
 })
