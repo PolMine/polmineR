@@ -5,6 +5,11 @@ polmineR 0.8.4
 
 - The `knit_print()`-method for `textstat` objects does not accept the three dots argument any more. As an installation of pandoc is necessary to include resulting `htmlwidget` in an html document, the method will check now whether pandoc is available. If not, a formatted `data.table` is returned.
 - The `knit_print()`-method for `kwic` objects does not have the `pagelength` argument any more as it has been unused. The pagelength is controlled by the option `polmineR.pagelength`. Internally, the method will call the method for the `textstat` superclass of the `kwic` class, which is newly robust against a missing installation of pandoc.
+- 
+
+## Bug Fixes
+
+- The `chisquare()` method needs to increase the number of digits temporarily, but failed to revert to the original value as expected. One implication was, that rounding the values in `data.table` objects would fail, and rounding in general yielded very strange results (#155). Fixed.
 
 
 polmineR 0.8.3
