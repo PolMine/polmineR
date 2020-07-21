@@ -437,7 +437,7 @@ setMethod("chisquare", "features", function(.Object){
   count_notx_ref <- .Object@size_ref - .Object@stat[["count_ref"]]
   count_notx_total <- size_total - count_x_total
   digits_restore_value <- options(digits = 20)
-  on.exit(digits_restore_value)
+  on.exit(options(digits = digits_restore_value))
   exp_x_coi <- (count_x_total / size_total) * .Object@size_coi
   exp_x_ref <- (count_x_total / size_total) * .Object@size_ref
   exp_notx_coi <- (count_notx_total/size_total) * .Object@size_coi
