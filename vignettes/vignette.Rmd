@@ -119,25 +119,25 @@ options("polmineR.pagelength" = 3L)
 
 The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
 
-```{r, eval = TRUE, render = knit_print}
+```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
 kwic("REUTERS", "oil")
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
 
-```{r, render = knit_print}
+```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
 kwic("REUTERS", "oil", s_attributes = "places")
 ```
 
 But you can display any number of s-attributes.
 
-```{r, render = knit_print}
+```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
 kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.
 
-```{r, render = knit_print}
+```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
 kwic("REUTERS", '"oil" "price.*"')
 ```
 
@@ -163,7 +163,7 @@ Use the `dispersion()`-method to get dispersions of counts accross one (or two) 
 oil <- dispersion("REUTERS", query = "oil", s_attribute = "id", progress = FALSE)
 saudi_arabia <- dispersion(
   "REUTERS", query = '"Saudi" "Arabia.*"',
-  sAttribute = "id", cqp = TRUE, progress = FALSE
+  s_attribute = "id", cqp = TRUE, progress = FALSE
   )
 ```
 
@@ -186,7 +186,7 @@ top5 <- subset(oil, rank_ll <= 5)
 
 In an interactive session, simply type `top5` in the terminal, and the output will be shown in the data viewer. To inspect the output in the viewer pane, you can coerce the object to a htmlwidget. This is also a good way how to include the table in a Rmarkdown document.
 
-```{r, render = knit_print}
+```{r, eval = rmarkdown::pandoc_available(), render = knit_print}
 top5
 ```
 
@@ -257,6 +257,9 @@ saudi_arabia <- enrich(saudi_arabia, p_attribute = "word")
 
 saudi_arabia_features <- features(saudi_arabia, "REUTERS", included = TRUE)
 saudi_arabia_features_min <- subset(saudi_arabia_features, rank_chisquare <= 10.83 & count_coi >= 5)
+```
+
+```{r, eval = FALSE} 
 as(round(saudi_arabia_features_min), "htmlwidget")
 ```
 

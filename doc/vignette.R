@@ -24,17 +24,17 @@ options("polmineR.mc" = FALSE)
 ## ---- echo = FALSE, message = FALSE-------------------------------------------
 options("polmineR.pagelength" = 3L)
 
-## ---- eval = TRUE, render = knit_print----------------------------------------
-kwic("REUTERS", "oil")
+## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
+#  kwic("REUTERS", "oil")
 
-## ---- render = knit_print-----------------------------------------------------
-kwic("REUTERS", "oil", s_attributes = "places")
+## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
+#  kwic("REUTERS", "oil", s_attributes = "places")
 
-## ---- render = knit_print-----------------------------------------------------
-kwic("REUTERS", "oil", s_attributes = c("id", "places"))
+## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
+#  kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 
-## ---- render = knit_print-----------------------------------------------------
-kwic("REUTERS", '"oil" "price.*"')
+## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
+#  kwic("REUTERS", '"oil" "price.*"')
 
 ## ---- eval = TRUE-------------------------------------------------------------
 count("REUTERS", "Kuwait")
@@ -45,7 +45,7 @@ count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
 oil <- dispersion("REUTERS", query = "oil", s_attribute = "id", progress = FALSE)
 saudi_arabia <- dispersion(
   "REUTERS", query = '"Saudi" "Arabia.*"',
-  sAttribute = "id", cqp = TRUE, progress = FALSE
+  s_attribute = "id", cqp = TRUE, progress = FALSE
   )
 
 ## ---- eval = TRUE-------------------------------------------------------------
@@ -56,8 +56,8 @@ oil <- cooccurrences("REUTERS", query = "oil")
 sa <- cooccurrences("REUTERS", query = '"Saudi" "Arabia.*"', left = 10, right = 10)
 top5 <- subset(oil, rank_ll <= 5)
 
-## ---- render = knit_print-----------------------------------------------------
-top5
+## ---- eval = rmarkdown::pandoc_available(), render = knit_print---------------
+#  top5
 
 ## ---- eval = TRUE-------------------------------------------------------------
 as.data.frame(top5)
@@ -90,7 +90,9 @@ saudi_arabia <- enrich(saudi_arabia, p_attribute = "word")
 
 saudi_arabia_features <- features(saudi_arabia, "REUTERS", included = TRUE)
 saudi_arabia_features_min <- subset(saudi_arabia_features, rank_chisquare <= 10.83 & count_coi >= 5)
-as(round(saudi_arabia_features_min), "htmlwidget")
+
+## ---- eval = FALSE------------------------------------------------------------
+#  as(round(saudi_arabia_features_min), "htmlwidget")
 
 ## ---- eval = TRUE, message = FALSE--------------------------------------------
 df <- as.data.frame(saudi_arabia_features_min)
