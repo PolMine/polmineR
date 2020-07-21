@@ -99,11 +99,11 @@ setMethod("as.character", "phrases", function(x, p_attribute){
 #' # Use the concatenate_phrases() function on a data.table
 #'  
 #' lexical_units_cqp <- c(
-#'   '"Deutsche.*" "Bundestag.*"',
-#'   '"sozial.*" "Gerechtigkeit"',
-#'   '"Ausschuss" "für" "Arbeit" "und" "Soziales"',
-#'   '"soziale.*" "Marktwirtschaft"',
-#'   '"freiheitliche.*" "Grundordnung"'
+#'   '"Deutsche.*" "Bundestag.*";',
+#'   '"sozial.*" "Gerechtigkeit";',
+#'   '"Ausschuss" "für" "Arbeit" "und" "Soziales";',
+#'   '"soziale.*" "Marktwirtschaft";',
+#'   '"freiheitliche.*" "Grundordnung";'
 #' )
 #' 
 #' phr <- cpos("GERMAPARLMINI", query = lexical_units_cqp, cqp = TRUE) %>%
