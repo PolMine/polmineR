@@ -159,15 +159,6 @@ setMethod("[", "textstat", function(x, i, j){
 })
 
 
-# setAs(from = "textstat", to = "htmlwidget", def = function(from){
-#   DT::datatable(
-#     from@stat,
-#     options = list(
-#       pageLength = getOption("polmineR.pagelength"),
-#       lengthChange = FALSE)
-#   )
-# })
-
 setAs(from = "data.table", to = "htmlwidget", def = function(from){
   DT::datatable(
     from,
@@ -197,18 +188,28 @@ setAs(from = "textstat", to = "htmlwidget", def = function(from){
 })
 
 
-# setAs(from = "features", to = "htmlwidget", def = function(from){
-#   dt <- copy(round(from)@stat)
-#   for (i in grep("_id", colnames(dt), value = TRUE)) dt[, eval(i) := NULL]
-#   colnames(dt) <- gsub("count_", "n_", colnames(dt))
-#   DT::datatable(dt, options = list(pageLength = getOption("polmineR.pagelength"), lengthChange = FALSE))
-# })
-
+#' @details The \code{knit_print} method will be called by knitr to render
+#'   `textstat` objects or objects inheriting from the `textstat` class as a
+#'   DataTable  \code{htmlwidget} when rendering a R Markdown document as html.
+#'   It will usually be necessary to explicitly state "render = knit_print" in
+#'   the chunk options. The option `polmineR.pagelength` controls the number of
+#'   lines displayed in the resulting `htmlwidget`. Note that including
+#'   htmlwidgets in html documents requires that pandoc is installed. To avoid
+#'   an error, a formatted \code{data.table} is returned by \code{knit_print} if
+#'   pandoc is not available.
 #' @importFrom knitr knit_print
 #' @exportMethod knit_print
 #' @rdname textstat-class
 #' @param options Chunk options.   
-setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk, ...){
-  y <- as(x, "htmlwidget")
-  knit_print(y, options = options)
+setMethod("knit_print", "textstat", function(x, options = knitr::opts_chunk){
+  if (!requireNamespace("rmarkdown", quietly = TRUE)){
+    stop("package 'rmarkdown' required but not available to run knit_print()-method on a textstat object")
+  }
+  if (rmarkdown::pandoc_available()){
+    widget <- as(x, "htmlwidget")
+    y <- knit_print(widget, options = options)
+  } else {
+    y <- format(x)
+  }
+  y
 })
