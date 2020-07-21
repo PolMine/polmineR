@@ -122,7 +122,10 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     dummy <- lapply(
       1L:(n * length(p_attribute)),
       function(i){
-        str <- as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry()), from = encoding(.Object))
+        str_raw <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry())
+        Encoding(str_raw) <- encoding(.Object)
+        str <- stringi::stri_enc_tonative(str_raw)
+        # str <- as.nativeEnc(str_raw, from = encoding(.Object))
         TF[, eval(paste(p_attrs_cols[i], token_no[i], sep = "_")) := str , with = TRUE] 
       })
     
