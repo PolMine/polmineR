@@ -32,7 +32,7 @@ setMethod("as.phrases", "ngrams", function(.Object, ...){
     list(fmt = paste(rep('"%s"', times = .Object@n), collapse = " ")),
     as.list(.Object@stat[, cols, with = FALSE])
   )
-  queries <- do.call(sprintf, args)
+  queries <- sprintf("%s;", do.call(sprintf, args))
   query_check_results <- check_cqp_query(queries)
   if (isFALSE(all(query_check_results))){
     queries <- queries[query_check_results]
