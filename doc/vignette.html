@@ -245,7 +245,7 @@ hr {
 <pre><code class="r">registry()
 </code></pre>
 
-<pre><code>## [1] &quot;/tmp/RtmpsrDxKU/polmineR_registry&quot;
+<pre><code>## [1] &quot;/tmp/RtmpORyzaQ/polmineR_registry&quot;
 </code></pre>
 
 <p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function. </p>
@@ -511,14 +511,10 @@ saudi_arabia_features_min &lt;- subset(saudi_arabia_features, rank_chisquare &lt
 saudi_arabia_features_min
 </code></pre>
 
-<pre><code>##    rank_chisquare   word count_coi count_ref               exp_coi
-## 1:              1  Saudi        18         0 4.8399999999999998579
-## 2:              2  Nazer         7         0 1.8799999999999998934
-## 3:              3 accord         7         0 1.8799999999999998934
-##                chisquare
-## 1: 49.219999999999998863
-## 2: 19.089999999999999858
-## 3: 19.089999999999999858
+<pre><code>##    rank_chisquare   word count_coi count_ref exp_coi chisquare
+## 1:              1  Saudi        18         0    4.84     49.22
+## 2:              2  Nazer         7         0    1.88     19.09
+## 3:              3 accord         7         0    1.88     19.09
 ## -- RESULTS TRUNCATED --
 </code></pre>
 
