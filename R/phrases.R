@@ -49,11 +49,11 @@ setMethod("as.phrases", "ngrams", function(.Object, ...){
 #' # Derive phrases from explicitly stated CQP queries
 #' 
 #' cqp_phrase_queries <- c(
-#'   '"oil" "revenue"',
-#'   '"Sheikh" "Aziz"',
-#'   '"Abdul" "Aziz"',
-#'   '"Saudi" "Arabia"',
-#'   '"oil" "markets"'
+#'   '"oil" "revenue";',
+#'   '"Sheikh" "Aziz";',
+#'   '"Abdul" "Aziz";',
+#'   '"Saudi" "Arabia";',
+#'   '"oil" "markets";'
 #' )
 #' reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") %>%
 #'   as.phrases(corpus = "REUTERS", enc = "latin1")

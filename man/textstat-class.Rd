@@ -57,7 +57,7 @@ as.bundle(object, ...)
 
 \S4method{p_attributes}{textstat}(.Object)
 
-\S4method{knit_print}{textstat}(x, options = knitr::opts_chunk)
+\S4method{knit_print}{textstat}(x, options = knitr::opts_chunk, ...)
 
 \S4method{get_corpus}{textstat}(x)
 

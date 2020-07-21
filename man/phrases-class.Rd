@@ -107,11 +107,11 @@ phr <- as.character(reuters_phrases, p_attribute = "word")
 # Derive phrases from explicitly stated CQP queries
 
 cqp_phrase_queries <- c(
-  '"oil" "revenue"',
-  '"Sheikh" "Aziz"',
-  '"Abdul" "Aziz"',
-  '"Saudi" "Arabia"',
-  '"oil" "markets"'
+  '"oil" "revenue";',
+  '"Sheikh" "Aziz";',
+  '"Abdul" "Aziz";',
+  '"Saudi" "Arabia";',
+  '"oil" "markets";'
 )
 reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>\%
   as.phrases(corpus = "REUTERS", enc = "latin1")
@@ -119,11 +119,11 @@ reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>
 # Use the concatenate_phrases() function on a data.table
  
 lexical_units_cqp <- c(
-  '"Deutsche.*" "Bundestag.*"',
-  '"sozial.*" "Gerechtigkeit"',
-  '"Ausschuss" "für" "Arbeit" "und" "Soziales"',
-  '"soziale.*" "Marktwirtschaft"',
-  '"freiheitliche.*" "Grundordnung"'
+  '"Deutsche.*" "Bundestag.*";',
+  '"sozial.*" "Gerechtigkeit";',
+  '"Ausschuss" "für" "Arbeit" "und" "Soziales";',
+  '"soziale.*" "Marktwirtschaft";',
+  '"freiheitliche.*" "Grundordnung";'
 )
 
 phr <- cpos("GERMAPARLMINI", query = lexical_units_cqp, cqp = TRUE) \%>\%
