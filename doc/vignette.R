@@ -25,7 +25,8 @@ options("polmineR.mc" = FALSE)
 options("polmineR.pagelength" = 3L)
 
 ## ---- eval = TRUE, render = knit_print----------------------------------------
-kwic("REUTERS", "oil")
+k <- kwic("REUTERS", "oil")
+k
 
 ## ---- eval = TRUE, render = knit_print----------------------------------------
 kwic("REUTERS", "oil", s_attributes = "places")

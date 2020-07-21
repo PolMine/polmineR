@@ -245,7 +245,7 @@ hr {
 <pre><code class="r">registry()
 </code></pre>
 
-<pre><code>## [1] &quot;/tmp/Rtmp05goa1/polmineR_registry&quot;
+<pre><code>## [1] &quot;/tmp/Rtmp3hTUEv/polmineR_registry&quot;
 </code></pre>
 
 <p>The session registry directory combines the registry files describing the corpora <em>polmineR</em> knows about. Upon loading <em>polmineR</em>, the files in the registry directory defined by the environment variable CORPUS_REGISTRY are copied to the session registry directory. To see whether the environment variable CORPUS_REGISTRY is set, use the <code>Sys.getenv()</code>-function. </p>
@@ -298,7 +298,8 @@ options(&quot;polmineR.mc&quot; = FALSE)
 
 <p>The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. </p>
 
-<pre><code class="r">kwic(&quot;REUTERS&quot;, &quot;oil&quot;)
+<pre><code class="r">k &lt;- kwic(&quot;REUTERS&quot;, &quot;oil&quot;)
+k
 </code></pre>
 
 <p>You can include metadata from the corpus into the kwic display using the &#39;s_attributes&#39; argument. Let us start with one s-attribute.</p>

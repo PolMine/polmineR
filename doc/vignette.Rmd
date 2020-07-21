@@ -120,7 +120,8 @@ options("polmineR.pagelength" = 3L)
 The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
 
 ```{r, eval = TRUE, render = knit_print}
-kwic("REUTERS", "oil")
+k <- kwic("REUTERS", "oil")
+k
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
