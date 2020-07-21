@@ -102,7 +102,7 @@ setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra
   
   if (lineview){
     y[, "concordance" := apply(y, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))]
-    for (x in c("left", "node", "right")) y[, (x) := NULL]
+    for (column in c("left", "node", "right")) y[, (column) := NULL]
     setcolorder(y, neworder = c(x@metadata, "concordance", x@annotation_cols))
   }
   
