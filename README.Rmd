@@ -7,7 +7,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3924721.svg)](https://doi.org/10.5281/zenodo.3924721)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3956164.svg)](https://doi.org/10.5281/zenodo.3956164)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)

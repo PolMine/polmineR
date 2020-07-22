@@ -1,6 +1,6 @@
 ## General remarks
 
-This is a quick follow-up to polmineR v0.8.4 to address remaining issues with portability:
+This is a quick follow-up to polmineR v0.8.3 to address remaining issues with portability:
 
 - Internal usage of iconv will now allow that a Linux distribution might use something alse than UTF-8 (the Debian CRAN machine with clan / R-devel uses ISO-8859-15). An ERROR on this machine should be addressed.
 - All remaining Unicode characters have been removed from the documentation. Hopefully, the warning on Solaris "it is not known that wchar_t is Unicode on this platform" will not occurr any more.
@@ -14,7 +14,7 @@ This is a quick follow-up to polmineR v0.8.4 to address remaining issues with po
 * Ubuntu 16.04 (project server), R 3.6.3
 * win-builder (devel and release), R. 4.0.2
 * Windows/AppVeyor, R 4.0.2 Patched
-* Debian Linux, R-devel, GCC
+* Fedora Linux, R-devel, GCC
 
 
 ## R CMD check results

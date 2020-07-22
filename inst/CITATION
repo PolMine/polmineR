@@ -5,6 +5,6 @@ citEntry(entry="Manual",
          author = person("Andreas", "Blaette", email="andreas.blaette@uni-due.de"),
          year = "2020",
          note = "R package version 0.8.2",
-         doi = "10.5281/zenodo.3924721",
-         textVersion = "Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis. R package version v0.8.2. http://doi.org/10.5281/zenodo.3924721"
+         doi = "10.5281/zenodo.3956164",
+         textVersion = "Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis. R package version v0.8.2. http://doi.org/10.5281/zenodo.3956164"
 )
