@@ -77,7 +77,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -201,7 +201,6 @@ s-attributes.</p></td>
 
 <span class='co'># subsetting a corpus object using non-standard evaluation </span>
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='no'>speaker</span> <span class='kw'>==</span> <span class='st'>"Angela Dorothea Merkel"</span>)
-<span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='no'>speaker</span> <span class='kw'>==</span> <span class='st'>"Bärbel Höhn"</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='no'>speaker</span> <span class='kw'>==</span> <span class='st'>"Angela Dorothea Merkel"</span> <span class='kw'>&amp;</span> <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-10-28"</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grepl</a></span>(<span class='st'>"Merkel"</span>, <span class='no'>speaker</span>))
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grepl</a></span>(<span class='st'>"Merkel"</span>, <span class='no'>speaker</span>) <span class='kw'>&amp;</span> <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-10-28"</span>)
@@ -214,7 +213,6 @@ s-attributes.</p></td>
 
 <span class='co'># subsetting a corpus using the (old) logic of the partition-method</span>
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Angela Dorothea Merkel"</span>)
-<span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Bärbel Höhn"</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Angela Dorothea Merkel"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-10-28"</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='st'>"Merkel"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>a</span>, <span class='kw'>speaker</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Merkel"</span>, <span class='st'>"Kauder"</span>), <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)

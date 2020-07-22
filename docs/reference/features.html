@@ -74,7 +74,7 @@ The most important purpose is term extraction." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -240,38 +240,38 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
   )</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>interjection</span> <span class='kw'>=</span> <span class='st'>"speech"</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'>
 <span class='no'>terms_kauder</span> <span class='kw'>&lt;-</span> <span class='fu'>features</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>kauder</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>all</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='no'>top100</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>terms_kauder</span>, <span class='no'>rank_chisquare</span> <span class='kw'>&lt;=</span> <span class='fl'>100</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>top100</span>)</div><div class='output co'>#&gt;                word word_id.x count_coi word_id.y count_ref
-#&gt; 1:     Zusammenhalt      2538        12      2538        32
-#&gt; 2:           Räumen      5545         5      5545         4
-#&gt; 3:         Deswegen      4340        18      4340       105
-#&gt; 4: Ballungsgebieten      5543         2      5543         0
-#&gt; 5:        Höchstmaß      5422         2      5422         0
-#&gt; 6:           langer      5517         2      5517         0
-#&gt;                    exp_coi             chisquare rank_chisquare
-#&gt; 1: 0.799026096571668564827 159.95998044580994701              1
-#&gt; 2: 0.163437156116932186256 145.78162660683457830              2
-#&gt; 3: 2.233641133598073480471 113.42077828582172572              3
-#&gt; 4: 0.036319368025984934134 108.13522464959618219              4
-#&gt; 5: 0.036319368025984934134 108.13522464959618219              5
-#&gt; 6: 0.036319368025984934134 108.13522464959618219              6</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>top100</span>)</div><div class='output co'>#&gt;                word word_id.x count_coi word_id.y count_ref    exp_coi
+#&gt; 1:     Zusammenhalt      2538        12      2538        32 0.79902610
+#&gt; 2:           Räumen      5545         5      5545         4 0.16343716
+#&gt; 3:         Deswegen      4340        18      4340       105 2.23364113
+#&gt; 4: Ballungsgebieten      5543         2      5543         0 0.03631937
+#&gt; 5:        Höchstmaß      5422         2      5422         0 0.03631937
+#&gt; 6:           langer      5517         2      5517         0 0.03631937
+#&gt;    chisquare rank_chisquare
+#&gt; 1:  159.9600              1
+#&gt; 2:  145.7816              2
+#&gt; 3:  113.4208              3
+#&gt; 4:  108.1352              4
+#&gt; 5:  108.1352              5
+#&gt; 6:  108.1352              6</div><div class='input'>
 <span class='co'># a different way is to compare count objects</span>
 <span class='no'>kauder_count</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>kauder</span>, <span class='st'>"count"</span>)
 <span class='no'>all_count</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='as.VCorpus.html'>as</a></span>(<span class='no'>all</span>, <span class='st'>"count"</span>)
 <span class='no'>terms_kauder</span> <span class='kw'>&lt;-</span> <span class='fu'>features</span>(<span class='no'>kauder_count</span>, <span class='no'>all_count</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... combining frequency lists</span></div><div class='output co'>#&gt; <span class='message'>... statistical test:  chisquare</span></div><div class='input'><span class='no'>top100</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>terms_kauder</span>, <span class='no'>rank_chisquare</span> <span class='kw'>&lt;=</span> <span class='fl'>100</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>top100</span>)</div><div class='output co'>#&gt;                word word_id.x count_coi word_id.y count_ref
-#&gt; 1:     Zusammenhalt      2538        12      2538        32
-#&gt; 2:           Räumen      5545         5      5545         4
-#&gt; 3:         Deswegen      4340        18      4340       105
-#&gt; 4: Ballungsgebieten      5543         2      5543         0
-#&gt; 5:        Höchstmaß      5422         2      5422         0
-#&gt; 6:           langer      5517         2      5517         0
-#&gt;                    exp_coi             chisquare rank_chisquare
-#&gt; 1: 0.799026096571668564827 159.95998044580994701              1
-#&gt; 2: 0.163437156116932186256 145.78162660683457830              2
-#&gt; 3: 2.233641133598073480471 113.42077828582172572              3
-#&gt; 4: 0.036319368025984934134 108.13522464959618219              4
-#&gt; 5: 0.036319368025984934134 108.13522464959618219              5
-#&gt; 6: 0.036319368025984934134 108.13522464959618219              6</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>top100</span>)</div><div class='output co'>#&gt;                word word_id.x count_coi word_id.y count_ref    exp_coi
+#&gt; 1:     Zusammenhalt      2538        12      2538        32 0.79902610
+#&gt; 2:           Räumen      5545         5      5545         4 0.16343716
+#&gt; 3:         Deswegen      4340        18      4340       105 2.23364113
+#&gt; 4: Ballungsgebieten      5543         2      5543         0 0.03631937
+#&gt; 5:        Höchstmaß      5422         2      5422         0 0.03631937
+#&gt; 6:           langer      5517         2      5517         0 0.03631937
+#&gt;    chisquare rank_chisquare
+#&gt; 1:  159.9600              1
+#&gt; 2:  145.7816              2
+#&gt; 3:  113.4208              3
+#&gt; 4:  108.1352              4
+#&gt; 5:  108.1352              5
+#&gt; 6:  108.1352              6</div><div class='input'>
 <span class='no'>speakers</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)
 <span class='no'>speakers</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>speakers</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
 <span class='no'>speaker_terms</span> <span class='kw'>&lt;-</span> <span class='fu'>features</span>(<span class='no'>speakers</span><span class='kw'>[[</span><span class='fl'>1</span>:<span class='fl'>5</span>]], <span class='no'>all</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)

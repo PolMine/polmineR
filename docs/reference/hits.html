@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -308,7 +308,7 @@ count is 0).</p>
 <span class='co'># specify corpus by corpus ID</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>hits</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>hits</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"places"</span>, <span class='kw'>freq</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... getting sizes</span></div><div class='output co'>#&gt; <span class='message'>... frequencies</span></div><div class='input'>
-<span class='co'># get hits for partition´</span>
+<span class='co'># get hits for partition</span>
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>places</span> <span class='kw'>=</span> <span class='st'>"saudi-arabia"</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>hits</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>hits</span>(<span class='no'>p</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"id"</span>)
 

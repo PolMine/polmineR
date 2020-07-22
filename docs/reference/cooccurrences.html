@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -355,16 +355,11 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
 <span class='no'>c</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>b</span>, !<span class='no'>word</span> <span class='kw'>%in%</span> <span class='kw pkg'>tm</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/tm/man/stopwords.html'>stopwords</a></span>(<span class='st'>"en"</span>))
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>c</span>, <span class='no'>count_coi</span> <span class='kw'>&gt;=</span> <span class='fl'>5</span>)
 <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>c</span>, <span class='no'>ll</span> <span class='kw'>&gt;=</span> <span class='fl'>10.83</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>e</span>)</div><div class='output co'>#&gt;        word count_coi count_ref               exp_coi                exp_ref
-#&gt; 1:   prices        27        20 9.2300000000000004263 37.7700000000000031264
-#&gt; 2:    crude        13         7 3.9300000000000001599 16.0700000000000002842
-#&gt; 3: industry         8         2 1.9599999999999999645  8.0399999999999991473
-#&gt; 4:   recent         5         1 1.1799999999999999378  4.8200000000000002842
-#&gt;                       ll rank_ll
-#&gt; 1: 33.049999999999997158       1
-#&gt; 2: 19.620000000000000995       2
-#&gt; 3: 16.969999999999998863       3
-#&gt; 4: 11.330000000000000071       4</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>e</span>)</div><div class='output co'>#&gt;        word count_coi count_ref exp_coi exp_ref    ll rank_ll
+#&gt; 1:   prices        27        20    9.23   37.77 33.05       1
+#&gt; 2:    crude        13         7    3.93   16.07 19.62       2
+#&gt; 3: industry         8         2    1.96    8.04 16.97       3
+#&gt; 4:   recent         5         1    1.18    4.82 11.33       4</div><div class='input'>
 <span class='co'># using pipe operator may be convenient</span>
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>magrittr</span>)){
 <span class='fu'>cooccurrences</span>(<span class='st'>"REUTERS"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"oil"</span>) <span class='kw'>%&gt;%</span>
@@ -373,16 +368,11 @@ Processing</em>. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).</p>
   <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>count_coi</span> <span class='kw'>&gt;=</span> <span class='fl'>5</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>ll</span> <span class='kw'>&gt;=</span> <span class='fl'>10.83</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>()
-}</div><div class='output co'>#&gt; <span class='message'>Lade nötiges Paket: magrittr</span></div><div class='output co'>#&gt;        word count_coi count_ref               exp_coi                exp_ref
-#&gt; 1:   prices        27        20 9.2300000000000004263 37.7700000000000031264
-#&gt; 2:    crude        13         7 3.9300000000000001599 16.0700000000000002842
-#&gt; 3: industry         8         2 1.9599999999999999645  8.0399999999999991473
-#&gt; 4:   recent         5         1 1.1799999999999999378  4.8200000000000002842
-#&gt;                       ll rank_ll
-#&gt; 1: 33.049999999999997158       1
-#&gt; 2: 19.620000000000000995       2
-#&gt; 3: 16.969999999999998863       3
-#&gt; 4: 11.330000000000000071       4</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)
+}</div><div class='output co'>#&gt; <span class='message'>Lade nötiges Paket: magrittr</span></div><div class='output co'>#&gt;        word count_coi count_ref exp_coi exp_ref    ll rank_ll
+#&gt; 1:   prices        27        20    9.23   37.77 33.05       1
+#&gt; 2:    crude        13         7    3.93   16.07 19.62       2
+#&gt; 3: industry         8         2    1.96    8.04 16.97       3
+#&gt; 4:   recent         5         1    1.18    4.82 11.33       4</div><div class='input'><span class='no'>pb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_bundle-method.html'>partition_bundle</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>s_attribute</span> <span class='kw'>=</span> <span class='st'>"speaker"</span>)
 <span class='no'>pb_min</span> <span class='kw'>&lt;-</span> <span class='no'>pb</span><span class='kw'>[[</span> <span class='fu'><a href='count-method.html'>count</a></span>(<span class='no'>pb</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Deutschland"</span>)[<span class='no'>Deutschland</span> <span class='kw'>&gt;=</span> <span class='fl'>25</span>]<span class='kw'>[[</span><span class='st'>"partition"</span>]] ]]
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cooccurrences</span>(<span class='no'>pb_min</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Deutschland"</span>)
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='no'>y</span><span class='kw'>[[</span><span class='fl'>1</span>]]

@@ -78,7 +78,7 @@ text statistics of a corpus, or a partition." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -221,7 +221,8 @@ of a <code>textstat</code> class object.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Further arguments.</p></td>
+      <td><p>Argument that will be passed into a call of the <code>format</code> method
+on the object <code>x</code>.</p></td>
     </tr>
     <tr>
       <th>e1</th>
@@ -269,6 +270,15 @@ the <code>name</code>-method and <code>name&lt;-</code>, respectively.</p>
   <code>data.table</code> in the <code>stat</code>-slot of the <code>textstat</code> object and
   rounds values of these columns to the number of decimal places specified by
   argument <code>digits</code>.</p>
+<p>The <code>knit_print</code> method will be called by knitr to render
+  `textstat` objects or objects inheriting from the `textstat` class as a
+  DataTable  <code>htmlwidget</code> when rendering a R Markdown document as html.
+  It will usually be necessary to explicitly state "render = knit_print" in
+  the chunk options. The option `polmineR.pagelength` controls the number of
+  lines displayed in the resulting `htmlwidget`. Note that including
+  htmlwidgets in html documents requires that pandoc is installed. To avoid
+  an error, a formatted <code>data.table</code> is returned by <code>knit_print</code> if
+  pandoc is not available.</p>
 <p>The <code><a href='https://rdrr.io/r/base/format.html'>format()</a></code>-method returns a pretty-printed and minimized
   version of the <code>data.table</code> in the <code>stat</code>-slot of the
   <code>textstat</code>-object: It will round all numeric columns to the number of decimal
@@ -304,40 +314,33 @@ the <code>name</code>-method and <code>name&lt;-</code>, respectively.</p>
 <span class='co'># Standard generic methods known from data.frames work for objects inheriting</span>
 <span class='co'># from the textstat class</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt;             word word_id count_partition count_coi count_ref
-#&gt; 1: Bundesagentur    5360              15        11         4
-#&gt; 2:           für      66            1625        55      1570
-#&gt; 3:        Sozial   12775               9         7         2
-#&gt; 4:             "     493             468        21       447
-#&gt; 5:          ihre     597             121        12       109
-#&gt; 6:       schafft     675              36         8        28
-#&gt;                     exp_coi                  exp_ref                    ll
-#&gt; 1:  0.107412111222201206440   14.8925878887777987103 91.396289189104408024
-#&gt; 2: 11.636312049071797503075 1613.3636879509281243372 86.512040420848776989
-#&gt; 3:  0.064447266733320726639    8.9355527332666788709 59.672406489036035282
-#&gt; 4:  3.351257870132677396668  464.6487421298672870762 42.657820024360297850
-#&gt; 5:  0.866457697192423048627  120.1335423028075837237 41.954886313242568008
-#&gt; 6:  0.257789066933282906557   35.7422109330667154836 41.327760807595581127
-#&gt;    rank_ll
-#&gt; 1:       1
-#&gt; 2:       2
-#&gt; 3:       3
-#&gt; 4:       4
-#&gt; 5:       5
-#&gt; 6:       6</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt;                              word word_id count_partition count_coi count_ref
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt;             word word_id count_partition count_coi count_ref     exp_coi
+#&gt; 1: Bundesagentur    5360              15        11         4  0.10741211
+#&gt; 2:           für      66            1625        55      1570 11.63631205
+#&gt; 3:        Sozial   12775               9         7         2  0.06444727
+#&gt; 4:             "     493             468        21       447  3.35125787
+#&gt; 5:          ihre     597             121        12       109  0.86645770
+#&gt; 6:       schafft     675              36         8        28  0.25778907
+#&gt;        exp_ref       ll rank_ll
+#&gt; 1:   14.892588 91.39629       1
+#&gt; 2: 1613.363688 86.51204       2
+#&gt; 3:    8.935553 59.67241       3
+#&gt; 4:  464.648742 42.65782       4
+#&gt; 5:  120.133542 41.95489       5
+#&gt; 6:   35.742211 41.32776       6</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt;                              word word_id count_partition count_coi count_ref
 #&gt; 1:                       reguläre    2987               1         1         0
 #&gt; 2: sozialversicherungspflichtigen   13356               1         1         0
 #&gt; 3:                           tete    1440               1         1         0
 #&gt; 4:                      unsichere   12856               1         3         0
 #&gt; 5:                      verhelfen   13422               1         1         0
 #&gt; 6:          Überweisungsvorschlag    2473               7         7         0
-#&gt;                     exp_coi                exp_ref ll rank_ll
-#&gt; 1: 0.0071608074148134144565 0.99283919258518660289 NA     518
-#&gt; 2: 0.0071608074148134144565 0.99283919258518660289 NA     519
-#&gt; 3: 0.0071608074148134144565 0.99283919258518660289 NA     520
-#&gt; 4: 0.0214824222444402433696 2.97851757775555991969 NA     521
-#&gt; 5: 0.0071608074148134144565 0.99283919258518660289 NA     522
-#&gt; 6: 0.0501256519036938907874 6.94987434809630588717 NA     523</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 523</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 9</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 523   9</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] "word"            "word_id"         "count_partition" "count_coi"      
+#&gt;        exp_coi   exp_ref ll rank_ll
+#&gt; 1: 0.007160807 0.9928392 NA     518
+#&gt; 2: 0.007160807 0.9928392 NA     519
+#&gt; 3: 0.007160807 0.9928392 NA     520
+#&gt; 4: 0.021482422 2.9785176 NA     521
+#&gt; 5: 0.007160807 0.9928392 NA     522
+#&gt; 6: 0.050125652 6.9498743 NA     523</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 523</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 9</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] 523   9</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] "word"            "word_id"         "count_partition" "count_coi"      
 #&gt; [5] "count_ref"       "exp_coi"         "exp_ref"         "ll"             
 #&gt; [9] "rank_ll"        </div><div class='input'>
 <span class='co'># Use brackets for indexing </span>

@@ -76,7 +76,7 @@ enrich, view and knit_print methods." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -159,12 +159,7 @@ as.TermDocumentMatrix(x, p_attribute, verbose = TRUE, ...)
 show(object)
 
 # S4 method for kwic
-knit_print(
-  x,
-  pagelength = getOption("polmineR.pagelength"),
-  options = knitr::opts_chunk,
-  ...
-)
+knit_print(x, options = knitr::opts_chunk)
 
 # S4 method for kwic
 as.character(x, fmt = "&lt;i&gt;%s&lt;/i&gt;")
@@ -230,12 +225,6 @@ view(.Object)</pre>
       <td><p>A <code>kwic</code> class object.</p></td>
     </tr>
     <tr>
-      <th>pagelength</th>
-      <td><p>An <code>integer</code> value, the number of kwic lines displayed
-per page in the <code>datatables</code> htmlwidget that is returned when
-<code>knit_print</code> is called on a <code>kwic</code> object.</p></td>
-    </tr>
-    <tr>
       <th>options</th>
       <td><p>Chunk options.</p></td>
     </tr>
@@ -298,10 +287,15 @@ node and right context when preparing kwic output.</p></td>
     <p>Applying the <code>count</code>-method on a <code>kwic</code> object will return
   a <code>count</code> object with the evaluation of the left and right context of
   the match.</p>
-<p>The <code>knit_print</code> will be called by knitr when processing code
-  chunks in Rmarkdown documents to include a <code>htmlwidget</code> into the
-  resulting html document. It may be necessary to explicitly state
-  "render=knit_print" in the chunk options.</p>
+<p>The <code>knit_print</code> method will be called by knitr to render
+  `kwic` objects as a DataTable  <code>htmlwidget</code> when rendering a R
+  Markdown document as html. It will usually be necessary to explicitly state
+  "render = knit_print" in the chunk options. The option
+  `polmineR.pagelength` controls the number of lines displayed in the
+  resulting `htmlwidget`. Note that including htmlwidgets in html documents
+  requires that pandoc is installed. To avoid an error, a formatted
+  <code>data.table</code> is returned by <code>knit_print</code> if pandoc is not
+  available.</p>
 <p>The <code>as.character</code>-method will return a list of
   <code>character</code> vectors, concatenating the columns "left", "node" and
   "right" of the <code>data.table</code> in the <code>stat</code>-slot of the input

@@ -83,7 +83,7 @@ basic information on the corpora that are available." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -250,7 +250,7 @@ available only with the <code>remote_corpus</code> class inheriting from the
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='use.html'>use</a></span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'>
 <span class='co'># get corpora present locally</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'UNGAMINI'.</span></div><div class='input'>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'MIGPRESS_FAZ'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'MIGPRESS_SZ'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'UNGA'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'UNGAMINI'.</span></div><div class='input'>
 <span class='co'># initialize corpus object</span>
 <span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span>(<span class='st'>"REUTERS"</span>)
 <span class='no'>r</span> <span class='kw'>&lt;-</span> <span class='fu'>corpus</span> (<span class='st'>"reuters"</span>) <span class='co'># will work, but will result in a warning</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using corpus 'REUTERS', not 'reuters' - note that corpus ids are expected to be in upper case throughout.</span></div><div class='input'>

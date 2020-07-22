@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -259,11 +259,11 @@ from which regions / the <code>data.table</code> representing a decoded corpus i
 <span class='co'># Derive phrases from explicitly stated CQP queries</span>
 
 <span class='no'>cqp_phrase_queries</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(
-  <span class='st'>'"oil" "revenue"'</span>,
-  <span class='st'>'"Sheikh" "Aziz"'</span>,
-  <span class='st'>'"Abdul" "Aziz"'</span>,
-  <span class='st'>'"Saudi" "Arabia"'</span>,
-  <span class='st'>'"oil" "markets"'</span>
+  <span class='st'>'"oil" "revenue";'</span>,
+  <span class='st'>'"Sheikh" "Aziz";'</span>,
+  <span class='st'>'"Abdul" "Aziz";'</span>,
+  <span class='st'>'"Saudi" "Arabia";'</span>,
+  <span class='st'>'"oil" "markets";'</span>
 )
 <span class='no'>reuters_phrases</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cpos-method.html'>cpos</a></span>(<span class='st'>"REUTERS"</span>, <span class='no'>cqp_phrase_queries</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>as.phrases</span>(<span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"REUTERS"</span>, <span class='kw'>enc</span> <span class='kw'>=</span> <span class='st'>"latin1"</span>)
@@ -271,11 +271,11 @@ from which regions / the <code>data.table</code> representing a decoded corpus i
 <span class='co'># Use the concatenate_phrases() function on a data.table</span>
 
 <span class='no'>lexical_units_cqp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(
-  <span class='st'>'"Deutsche.*" "Bundestag.*"'</span>,
-  <span class='st'>'"sozial.*" "Gerechtigkeit"'</span>,
-  <span class='st'>'"Ausschuss" "für" "Arbeit" "und" "Soziales"'</span>,
-  <span class='st'>'"soziale.*" "Marktwirtschaft"'</span>,
-  <span class='st'>'"freiheitliche.*" "Grundordnung"'</span>
+  <span class='st'>'"Deutsche.*" "Bundestag.*";'</span>,
+  <span class='st'>'"sozial.*" "Gerechtigkeit";'</span>,
+  <span class='st'>'"Ausschuss" "f.r" "Arbeit" "und" "Soziales";'</span>,
+  <span class='st'>'"soziale.*" "Marktwirtschaft";'</span>,
+  <span class='st'>'"freiheitliche.*" "Grundordnung";'</span>
 )
 
 <span class='no'>phr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cpos-method.html'>cpos</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='no'>lexical_units_cqp</span>, <span class='kw'>cqp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>%&gt;%</span>

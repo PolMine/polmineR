@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -232,11 +232,11 @@ result table, respective <code>NA</code> values will usually disappear.</p>
 <span class='no'>oil</span> <span class='kw'>&lt;-</span> <span class='fu'>ll</span>(<span class='no'>oil</span>)
 <span class='no'>oil_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>oil</span>, <span class='no'>count_coi</span> <span class='kw'>&gt;=</span> <span class='fl'>3</span>)
 <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()) <span class='fu'><a href='https://rdrr.io/r/utils/View.html'>View</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>oil_min</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>oil</span>)</div><div class='output co'>#&gt;                           p         critical_value N_ll
-#&gt; 1: 0.0010000000000000000208 10.8300000000000000711    4
-#&gt; 2: 0.0050000000000000001041  7.8799999999999998934    4
-#&gt; 3: 0.0100000000000000002082  6.6299999999999998934    4
-#&gt; 4: 0.0500000000000000027756  3.8399999999999998579   17</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>oil</span>)</div><div class='output co'>#&gt;        p critical_value N_ll
+#&gt; 1: 0.001          10.83    4
+#&gt; 2: 0.005           7.88    4
+#&gt; 3: 0.010           6.63    4
+#&gt; 4: 0.050           3.84   17</div><div class='input'>
 <span class='co'># use ll-method on 'Cooccurrences'-object</span>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>R</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='all_cooccurrences.html'>Cooccurrences</a></span>(<span class='st'>"REUTERS"</span>, <span class='kw'>left</span> <span class='kw'>=</span> <span class='fl'>5L</span>, <span class='kw'>right</span> <span class='kw'>=</span> <span class='fl'>5L</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
@@ -253,11 +253,11 @@ result table, respective <code>NA</code> values will usually disappear.</p>
 )</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='features.html'>features</a></span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"ll"</span>)
 <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='features.html'>features</a></span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'>ll</span>(<span class='no'>f</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>f</span>)</div><div class='output co'>#&gt;                           p         critical_value N_ll
-#&gt; 1: 0.0010000000000000000208 10.8300000000000000711   63
-#&gt; 2: 0.0050000000000000001041  7.8799999999999998934  114
-#&gt; 3: 0.0100000000000000002082  6.6299999999999998934  143
-#&gt; 4: 0.0500000000000000027756  3.8399999999999998579  397</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>f</span>)</div><div class='output co'>#&gt;        p critical_value N_ll
+#&gt; 1: 0.001          10.83   63
+#&gt; 2: 0.005           7.88  114
+#&gt; 3: 0.010           6.63  143
+#&gt; 4: 0.050           3.84  397</div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
 <span class='co'># A sample do-it-yourself calculation for log-likelihood:</span>

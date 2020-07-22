@@ -73,7 +73,7 @@ ngrams inherit from the class." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -194,9 +194,9 @@ corpus the count is based upon.</p></dd>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># sample for dictionary-based sentiment analysis</span>
-    <span class='no'>weights</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(
-    <span class='kw'>word</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gut"</span>, <span class='st'>"schön"</span>, <span class='st'>"herrlich"</span>, <span class='st'>"schlecht"</span>, <span class='st'>"hässlich"</span>, <span class='st'>"mies"</span>),
-    <span class='kw'>weight</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>)
+<span class='no'>weights</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(
+  <span class='kw'>word</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gut"</span>, <span class='st'>"super"</span>, <span class='st'>"herrlich"</span>, <span class='st'>"schlecht"</span>, <span class='st'>"grob"</span>, <span class='st'>"mies"</span>),
+  <span class='kw'>weight</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>)
 )
 <span class='no'>corp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='corpus-class.html'>corpus</a></span>(<span class='st'>"GERMAPARLMINI"</span>)
 <span class='no'>sc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>corp</span>, <span class='no'>date</span> <span class='kw'>==</span> <span class='st'>"2009-11-11"</span>)
@@ -206,7 +206,7 @@ corpus the count is based upon.</p></dd>
 
 <span class='co'># old, partition-based workflow</span>
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.html'>partition</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2009-11-11"</span>)</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='input'><span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='enrich-method.html'>enrich</a></span>(<span class='no'>p</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>weights</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(
-  <span class='kw'>word</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gut"</span>, <span class='st'>"schön"</span>, <span class='st'>"herrlich"</span>, <span class='st'>"schlecht"</span>, <span class='st'>"hässlich"</span>, <span class='st'>"mies"</span>),
+  <span class='kw'>word</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gut"</span>, <span class='st'>"super"</span>, <span class='st'>"herrlich"</span>, <span class='st'>"schlecht"</span>, <span class='st'>"grob"</span>, <span class='st'>"mies"</span>),
   <span class='kw'>weight</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>,-<span class='fl'>1</span>)
 )
 <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weigh-method.html'>weigh</a></span>(<span class='no'>p</span>, <span class='kw'>with</span> <span class='kw'>=</span> <span class='no'>weights</span>)
@@ -223,19 +223,19 @@ corpus the count is based upon.</p></dd>
 #&gt; [1] 12080
 #&gt; 
 #&gt; $positive_n
-#&gt; [1] 101
+#&gt; [1] 87
 #&gt; 
 #&gt; $positive_share
-#&gt; [1] 0.00085874130630707225936
+#&gt; [1] 0.0007397079
 #&gt; 
 #&gt; $positive_weighed
-#&gt; [1] 101
+#&gt; [1] 87
 #&gt; 
 #&gt; $negative_n
 #&gt; [1] 7
 #&gt; 
 #&gt; $negative_share
-#&gt; [1] 5.9516724199500061941e-05
+#&gt; [1] 5.951672e-05
 #&gt; 
 #&gt; $negative_weighed
 #&gt; [1] -7

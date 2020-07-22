@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -201,11 +201,11 @@ accordingly (see examples).</p>
   <span class='kw'>regex</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>p_attribute</span> <span class='kw'>=</span> <span class='st'>"word"</span>
 )</div><div class='output co'>#&gt; <span class='message'>... get encoding: latin1</span></div><div class='output co'>#&gt; <span class='message'>... get cpos and strucs</span></div><div class='output co'>#&gt; <span class='message'>... getting counts for p-attribute(s): word</span></div><div class='input'><span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='features.html'>features</a></span>(<span class='no'>m</span>, <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>included</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='no'>f_min</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='subset.html'>subset</a></span>(<span class='no'>f</span>, <span class='no'>count_coi</span> <span class='kw'>&gt;=</span> <span class='fl'>5</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>f_min</span>)</div><div class='output co'>#&gt;                           p         critical_value N_chisquare
-#&gt; 1: 0.0010000000000000000208 10.8300000000000000711          60
-#&gt; 2: 0.0050000000000000001041  7.8799999999999998934          77
-#&gt; 3: 0.0100000000000000002082  6.6299999999999998934          80
-#&gt; 4: 0.0500000000000000027756  3.8399999999999998579         113</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>f_min</span>)</div><div class='output co'>#&gt;        p critical_value N_chisquare
+#&gt; 1: 0.001          10.83          60
+#&gt; 2: 0.005           7.88          77
+#&gt; 3: 0.010           6.63          80
+#&gt; 4: 0.050           3.84         113</div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 
 <span class='co'># A sample do-it-yourself calculation for chisquare:</span>
