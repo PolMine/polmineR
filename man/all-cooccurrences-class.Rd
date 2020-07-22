@@ -21,7 +21,7 @@
   edge_attributes = c("ll", "ab_count", "rank_ll"),
   vertex_attributes = "count",
   as.undirected = TRUE,
-  drop = c("\\u0084", "\\u0093")
+  drop = getOption("polmineR.villainChars")
 )
 
 \S4method{subset}{Cooccurrences}(x, ..., by)

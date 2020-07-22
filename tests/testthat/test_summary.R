@@ -8,7 +8,7 @@ test_that(
     p <- partition("GERMAPARLMINI", date = "2009-11-11")
     p <- enrich(p, p_attribute = "word")
     weights <- data.table(
-      word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+      word = c("gut", "super", "herrlich", "schlecht", "grob", "mies"),
       weight = c(1,1,1,-1,-1,-1)
     )
     p <- weigh(p, with = weights)
@@ -22,7 +22,7 @@ test_that(
 test_that(
   "summary,count-method",{
     weights <- data.table(
-      word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+      word = c("gut", "super", "herrlich", "schlecht", "grob", "mies"),
       weight = c(1,1,1,-1,-1,-1)
     )
     corp <- corpus("GERMAPARLMINI")

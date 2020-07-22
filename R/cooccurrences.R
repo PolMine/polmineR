@@ -903,7 +903,7 @@ setGeneric("as_igraph", function(x, ...) standardGeneric("as_igraph"))
 #'   \code{igraph} object that is prepared.
 #' @rdname all-cooccurrences-class
 #' @exportMethod as_igraph
-setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE, drop = c("\u0084", "\u0093")){
+setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "ab_count", "rank_ll"), vertex_attributes = "count", as.undirected = TRUE, drop = getOption("polmineR.villainChars")){
   
   if (!requireNamespace("igraph", quietly = TRUE))
     stop("Package 'igraph' is required for as.igraph()-method, but not yet installed.")

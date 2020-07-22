@@ -92,14 +92,6 @@ as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
   y
 }
 
-#' @examples
-#' y <- .recode_call(substitute(name == "Müller"), to = "latin1")
-#' dt <- data.table(
-#'   id = 1L:3L,
-#'   name = iconv(x = c("Müller", "Höhn", "Delingöz"), from = "UTF-8", to = "latin1")
-#' )
-#' dt[eval(y, envir = df), on = "name"]
-#' @noRd
 .recode_call <- function(x, from = localeToCharset()[1], to){
   .fn <- function(x){
     if (is.call(x)){

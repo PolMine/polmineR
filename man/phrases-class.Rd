@@ -121,7 +121,7 @@ reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>
 lexical_units_cqp <- c(
   '"Deutsche.*" "Bundestag.*";',
   '"sozial.*" "Gerechtigkeit";',
-  '"Ausschuss" "für" "Arbeit" "und" "Soziales";',
+  '"Ausschuss" "f.r" "Arbeit" "und" "Soziales";',
   '"soziale.*" "Marktwirtschaft";',
   '"freiheitliche.*" "Grundordnung";'
 )

@@ -155,7 +155,7 @@ y <- corpus("REUTERS") \%>\% hits(query = "oil", s_attribute = "places", freq = 
 y <- hits("REUTERS", query = "oil")
 y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
 
-# get hits for partition´
+# get hits for partition
 p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 y <- hits(p, query = "oil")
 y <- hits(p, query = "oil", s_attribute = "id")

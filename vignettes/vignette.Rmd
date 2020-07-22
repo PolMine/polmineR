@@ -1,6 +1,6 @@
 ---
 title: "Introducing the 'polmineR'-package"
-author: "Andreas Blätte (andreas.blaette@uni-due.de)"
+author: "Andreas Blaette (andreas.blaette@uni-due.de)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -229,7 +229,7 @@ saudi_arabia <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
 oil <- cooccurrences(saudi_arabia, "oil", p_attribute = "word", left = 10, right = 10)
 ```
 
-Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object. Alternatively, you can get the table with the statistics using ´as.data.frame´.
+Note that is is possible to provide a query that uses the full CQP syntax. The statistical analysis of collocations to the query can be accessed as the slot "stat" of the context object. Alternatively, you can get the table with the statistics using `as.data.frame`.
 
 ```{r, eval = TRUE}
 df <- as.data.frame(oil)

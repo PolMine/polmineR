@@ -1,26 +1,10 @@
 ## General remarks
 
-The 'polmineR' package has been archived because a required update of the 'RcppCWB'
-dependency failed  to pass tests I had not anticipated. As a response to my last re-submission, I received some final instructions about do's and dont's from Martina Schmirl. I address the issues with this re-submission.
+This is a quick follow-up to polmineR v0.8.4 to address remaining issues with portability:
 
-(1.) Avoid using foo:::f - remaining usage has been removed, fixed.
-
-(2.) Avoid using installed.packages(): One remaining usage has been replaced by using system.file(package = pkg).
-
-(3.) No installation of packages without user's permission: To avoid confusion, I
-removed installation instructions in the vignette where you may have seen some 
-install.packages() calls (though in Rmarkdown chunks with eval = FALSE). There is a 
-remaining usage in the polmineR() function. If a sugggested package 
-required to run the shiny app within the package is missing, a user dialogue will ask
-for the user's explicit consent to install a package.
-
-I would be very relieved if polmineR could make it back to CRAN soon. The package
-is used in a few university courses and I am getting requests where it has gone.-
-
-Yet I do understand very well that CRAN has standards that my package violated and 
-that you are investing a lot of effort for quality control. So thank you for your 
-enduring effort to make CRAN what it is and for helping me to make polmineR
-a better package.
+- Internal usage of iconv will now allow that a Linux distribution might use something alse than UTF-8 (the Debian CRAN machine with clan / R-devel uses ISO-8859-15). An ERROR on this machine should be addressed.
+- All remaining Unicode characters have been removed from the documentation. Hopefully, the warning on Solaris "it is not known that wchar_t is Unicode on this platform" will not occurr any more.
+- Building the vignette will not require pandoc to be present. Respective warnings on Solaris and macOS-oldrel will hopefully not occur any more.
 
 
 ## Test environments

@@ -5,7 +5,8 @@ polmineR 0.8.4
 
 - The `knit_print()`-method for `textstat` objects does not accept the three dots argument any more. As an installation of pandoc is necessary to include resulting `htmlwidget` in an html document, the method will check now whether pandoc is available. If not, a formatted `data.table` is returned.
 - The `knit_print()`-method for `kwic` objects does not have the `pagelength` argument any more as it has been unused. The pagelength is controlled by the option `polmineR.pagelength`. Internally, the method will call the method for the `textstat` superclass of the `kwic` class, which is newly robust against a missing installation of pandoc.
-- 
+- Any Unicode characters that could be detected have been removed from the documentation to avoid warnings on the CRAN Solaris test machine (#156).
+
 
 ## Bug Fixes
 

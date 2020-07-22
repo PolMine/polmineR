@@ -1,6 +1,6 @@
 ---
 title: "OpenCPU"
-author: "Andreas Blätte (andreas.blaette@uni-due.de)"
+author: "Andreas Blaette (andreas.blaette@uni-due.de)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 editor_options: 

@@ -156,7 +156,6 @@ setMethod("corpus", "missing", function(){
 #' 
 #' # subsetting a corpus object using non-standard evaluation 
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
-#' sc <- subset(a, speaker == "Bärbel Höhn")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker))
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
@@ -169,7 +168,6 @@ setMethod("corpus", "missing", function(){
 #' 
 #' # subsetting a corpus using the (old) logic of the partition-method
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel")
-#' sc <- subset(a, speaker = "Bärbel Höhn")
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
 #' sc <- subset(a, speaker = "Merkel", regex = TRUE)
 #' sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)

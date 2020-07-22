@@ -252,9 +252,9 @@ setClass("count",
 #' @rdname count_class
 #' @examples
 #' # sample for dictionary-based sentiment analysis
-#'     weights <- data.table::data.table(
-#'     word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
-#'     weight = c(1,1,1,-1,-1,-1)
+#' weights <- data.table::data.table(
+#'   word = c("gut", "super", "herrlich", "schlecht", "grob", "mies"),
+#'   weight = c(1,1,1,-1,-1,-1)
 #' )
 #' corp <- corpus("GERMAPARLMINI")
 #' sc <- subset(corp, date == "2009-11-11")
@@ -266,7 +266,7 @@ setClass("count",
 #' p <- partition("GERMAPARLMINI", date = "2009-11-11")
 #' p <- enrich(p, p_attribute = "word")
 #' weights <- data.table::data.table(
-#'   word = c("gut", "schön", "herrlich", "schlecht", "hässlich", "mies"),
+#'   word = c("gut", "super", "herrlich", "schlecht", "grob", "mies"),
 #'   weight = c(1,1,1,-1,-1,-1)
 #' )
 #' p <- weigh(p, with = weights)

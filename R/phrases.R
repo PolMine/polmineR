@@ -101,7 +101,7 @@ setMethod("as.character", "phrases", function(x, p_attribute){
 #' lexical_units_cqp <- c(
 #'   '"Deutsche.*" "Bundestag.*";',
 #'   '"sozial.*" "Gerechtigkeit";',
-#'   '"Ausschuss" "für" "Arbeit" "und" "Soziales";',
+#'   '"Ausschuss" "f.r" "Arbeit" "und" "Soziales";',
 #'   '"soziale.*" "Marktwirtschaft";',
 #'   '"freiheitliche.*" "Grundordnung";'
 #' )
