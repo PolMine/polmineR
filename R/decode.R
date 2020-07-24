@@ -334,3 +334,49 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
   }
   y
 })
+
+
+#' @details The \code{decode}-method for \code{data.table} objects will decode
+#'   token ids (column '[p-attribute]_id'), adding the corresponding string as a
+#'   new column. If a column "cpos" with corpus positions is present, ids are
+#'   derived for the corpus positions given first. If the \code{data.table}
+#'   neither has a column "cpos" nor columns with token ids (i.e. colummn name
+#'   ending with "_id"), the input \code{data.table} is returned unchanged. Note
+#'   that columns are added to the \code{data.table} in an in-place operation to
+#'   handle memory parsimoniously.
+#' @examples 
+#' hits_dt <- hits("GERMAPARLMINI", query = "Liebe", progress = FALSE) %>%
+#'   as.data.table()
+#' dt <- data.table::data.table(cpos = hits_dt[["cpos_left"]])
+#' decode(dt, corpus = "GERMAPARLMINI", p_attributes = c("word", "pos"))
+#' y <- dt[, .N, by = c("word", "pos")]
+#' @rdname decode
+setMethod("decode", "data.table", function(.Object, corpus, p_attributes){
+  corpus <- if (is.character(corpus)) corpus(corpus) else corpus
+  if (!inherits(corpus, "corpus")) stop("Argument 'corpus' is required to be a corpus object.")
+  if (isFALSE(all(p_attributes %in% p_attributes(corpus)))){
+    stop("At least one p-attribute is not available.")
+  }
+  
+  if ("cpos" %in% colnames(.Object)){
+    for (p_attr in p_attributes){
+      p_attr_id <- paste(p_attr, "id", sep = "_")
+      ids <- RcppCWB::cl_cpos2id(
+        corpus = corpus@corpus,
+        p_attribute = p_attr,
+        cpos = .Object[["cpos"]],
+        registry = registry()
+      )
+      .Object[, (p_attr_id) := ids]
+    }
+  }
+  
+  for (p_attr in p_attributes){
+    p_attr_id <- paste(p_attr, "id", sep = "_")
+    if (p_attr_id %in% colnames(.Object)){
+      .Object[, (p_attr) := decode(.Object[[p_attr_id]], corpus = corpus, p_attributes = p_attr)]
+    }
+  }
+  
+  .Object
+})

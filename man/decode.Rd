@@ -8,6 +8,7 @@
 \alias{decode,partition-method}
 \alias{decode,subcorpus-method}
 \alias{decode,integer-method}
+\alias{decode,data.table-method}
 \title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
@@ -59,6 +60,8 @@ decode(.Object, ...)
 )
 
 \S4method{decode}{integer}(.Object, corpus, p_attributes, boost = NULL)
+
+\S4method{decode}{data.table}(.Object, corpus, p_attributes)
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
@@ -125,6 +128,15 @@ If \code{.Object} is an \code{integer} vector, it is assumed to be a
   5 percent of the corpus are to be decoded. The encoding of the
   \code{character} vector that is returned will be the coding of the locale
   (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
+
+The \code{decode}-method for \code{data.table} objects will decode
+  token ids (column '[p-attribute]_id'), adding the corresponding string as a
+  new column. If a column "cpos" with corpus positions is present, ids are
+  derived for the corpus positions given first. If the \code{data.table}
+  neither has a column "cpos" nor columns with token ids (i.e. colummn name
+  ending with "_id"), the input \code{data.table} is returned unchanged. Note
+  that columns are added to the \code{data.table} in an in-place operation to
+  handle memory parsimoniously.
 }
 \examples{
 use("polmineR")
@@ -171,6 +183,11 @@ if (requireNamespace("NLP")){
  
 # decode vector of token ids
 y <- decode(0:20, corpus = "GERMAPARLMINI", p_attributes = "word")
+hits_dt <- hits("GERMAPARLMINI", query = "Liebe", progress = FALSE) \%>\%
+  as.data.table()
+dt <- data.table::data.table(cpos = hits_dt[["cpos_left"]])
+decode(dt, corpus = "GERMAPARLMINI", p_attributes = c("word", "pos"))
+y <- dt[, .N, by = c("word", "pos")]
 }
 \seealso{
 To decode a structural attribute, you can use the
