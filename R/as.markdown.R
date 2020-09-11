@@ -68,7 +68,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
     })
   names(metaInformation) <- meta
   
-  metaInformation <- paste(metaInformation, collapse=", ") # string will be converted to UTF-8
+  metaInformation <- paste(metaInformation, collapse = ", ") # string will be converted to UTF-8
   metaInformation <- paste(
     get_template(corpus)[["document"]][["format"]][1],
     metaInformation,
@@ -131,7 +131,8 @@ setMethod(
     .message("as.markdown", verbose = verbose)
     # ensure that template requested is available
     if (is.null(template)){
-      stop("template needed for formatting a partition of corpus.")
+      warning(sprintf("No template available for corpus '%s', using default template.", get_corpus(.Object)))
+      template <- default_template
     }
     if (is.null(template[["paragraphs"]])){
       .message("generating paragraphs (no template)", verbose = verbose)

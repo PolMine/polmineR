@@ -277,3 +277,4 @@ magrittr::`%>%`
 #' @export as.data.table
 data.table::as.data.table
 
+default_template <- list(document = list(sAttribute = "text", format = c("### ","")))

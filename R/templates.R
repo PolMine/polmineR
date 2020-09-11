@@ -8,7 +8,7 @@ NULL
 #' @param .Object A \code{corpus}, \code{subcorpus} or \code{partition} object,
 #'   or a length-one \code{character} vector with a corpus ID.
 #' @param warn A \code{logical} value, whether to issue a warning if template 
-#'   is not available.
+#'   is not available. Defaults to \code{FALSE}.
 #' @param ... Further arguments to be defined.
 #' @exportMethod get_template
 #' @rdname templates
@@ -16,29 +16,29 @@ NULL
 setGeneric("get_template", function(.Object, ...) standardGeneric("get_template"))
 
 #' @rdname templates
-setMethod("get_template", "character", function(.Object, warn = TRUE){
+setMethod("get_template", "character", function(.Object, warn = FALSE){
   get_template(corpus(.Object), warn = warn)
 })
 
 #' @rdname templates
-setMethod("get_template", "corpus", function(.Object, warn = TRUE){
+setMethod("get_template", "corpus", function(.Object, warn = FALSE){
   filename <- file.path(.Object@data_dir, "template.json")
   if (file.exists(filename)){
     y <- jsonlite::fromJSON(txt = filename) 
     if ("metadata" %in% names(y)) y[["metadata"]] <- unlist(y[["metadata"]])
     return(y)
   } else {
-    warning(sprintf("No template available for corpus '%s'.", .Object@corpus))
+    if (isTRUE(warn)) warning(sprintf("No template available for corpus '%s'.", .Object@corpus))
     return(NULL)
   }
 })
 
 #' @rdname templates
-setMethod("get_template", "partition", function(.Object, warn = TRUE){
-  get_template(as(.Object, "corpus"), warn = TRUE)
+setMethod("get_template", "partition", function(.Object, warn = FALSE){
+  get_template(as(.Object, "corpus"), warn = warn)
 })
 
 #' @rdname templates
-setMethod("get_template", "subcorpus", function(.Object, warn = TRUE){
+setMethod("get_template", "subcorpus", function(.Object, warn = FALSE){
   callNextMethod()
 })

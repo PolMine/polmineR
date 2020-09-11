@@ -1,3 +1,17 @@
+polmineR 0.8.4.9002
+===================
+
+## New Features
+
+- A new `decode()` method for `data.table` objects shall serve as a more user-friendly access to the efficiency of the `RcppCWB::cl_cpos2str()` function.
+- The `as.markdown()`-method for `subcorpus` objects now uses an (internal) default template accessible via `polmineR:::default_template`, if no template is defined for a corpus. 
+
+## Bug fixes
+
+- The `warn` argument of the `get_template()`-method remained unused, resulting in a warning message even if `warn` was `FALSE`, resulting in a set of warning messages when calling `corpus()`. The argument is used as intended now and defaults to `FALSE`.
+
+
+
 polmineR 0.8.4
 ==============
 
