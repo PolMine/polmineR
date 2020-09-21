@@ -57,7 +57,7 @@ Description: Package for corpus analysis using the Corpus Workbench
 BugReports: https://github.com/PolMine/polmineR/issues
 Biarch: true
 License: GPL-3
-URL: https://www.github.com/PolMine/polmineR
+URL: https://github.com/PolMine/polmineR
 Encoding: UTF-8
 Collate: 
     'polmineR.R'
