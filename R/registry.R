@@ -98,6 +98,7 @@ registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 #' @rdname registry_eval
 registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   y <- .registry_eval(corpus = corpus, registry = registry, regex = '^.*charset\\s*=\\s*"(.+?)".*$')
+  if (length(y) == 0L) y <- "latin1"
   if (y == "utf8") y <- "UTF-8"
   if (!toupper(y) %in% iconvlist()) warning('potentially unknown encoding')
   y
