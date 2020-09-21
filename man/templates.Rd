@@ -10,13 +10,13 @@
 \usage{
 get_template(.Object, ...)
 
-\S4method{get_template}{character}(.Object, warn = TRUE)
+\S4method{get_template}{character}(.Object, warn = FALSE)
 
-\S4method{get_template}{corpus}(.Object, warn = TRUE)
+\S4method{get_template}{corpus}(.Object, warn = FALSE)
 
-\S4method{get_template}{partition}(.Object, warn = TRUE)
+\S4method{get_template}{partition}(.Object, warn = FALSE)
 
-\S4method{get_template}{subcorpus}(.Object, warn = TRUE)
+\S4method{get_template}{subcorpus}(.Object, warn = FALSE)
 }
 \arguments{
 \item{.Object}{A \code{corpus}, \code{subcorpus} or \code{partition} object,
@@ -25,7 +25,7 @@ or a length-one \code{character} vector with a corpus ID.}
 \item{...}{Further arguments to be defined.}
 
 \item{warn}{A \code{logical} value, whether to issue a warning if template 
-is not available.}
+is not available. Defaults to \code{FALSE}.}
 }
 \description{
 Templates are used to format the markdown/html output of partitions.

@@ -41,4 +41,15 @@ possible without a full installation of the CWB.
 \details{
 An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
 includes an explanation of the registry file format.
+
+\code{registry_get_encoding} will parse the registry file for a
+  corpus and return the encoding that is defined (corpus property "charset").
+  If parsing the registry does not yield a result (corpus property "charset"
+  not defined), the CWB standard encoding ("latin1") is assigned to prevent
+  errors. Note that \code{RcppCWB::cl_charset_name} is equivalent but is
+  faster as it uses the internal C representation of a corpus rather than
+  parsing the registry file.
+}
+\examples{
+registry_get_encoding("REUTERS")
 }

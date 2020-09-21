@@ -1,10 +1,6 @@
 ## General remarks
 
-This is a quick follow-up to polmineR v0.8.3 to address remaining issues with portability:
-
-- Internal usage of iconv will now allow that a Linux distribution might use something alse than UTF-8 (the Debian CRAN machine with clan / R-devel uses ISO-8859-15). An ERROR on this machine should be addressed.
-- All remaining Unicode characters have been removed from the documentation. Hopefully, the warning on Solaris "it is not known that wchar_t is Unicode on this platform" will not occurr any more.
-- Building the vignette will not require pandoc to be present. Respective warnings on Solaris and macOS-oldrel will hopefully not occur any more.
+This release includes a few bug fixes to address issues encountered by users.
 
 
 ## Test environments
@@ -19,7 +15,11 @@ This is a quick follow-up to polmineR v0.8.3 to address remaining issues with po
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs or NOTEs on the Linux / macOS / Windows environments I used. 
+I see the NOTE "checking for future file timestamps ... unable to verify current time". I gather it is an known issue with the availability of worldclockapi.com (see https://stackoverflow.com/questions/63613301/r-cmd-check-note-unable-to-verify-current-time).
+
+There is a NOTE "installed size is  5.2Mb", resulting from 1.9Mb in the extdata directory. I plan to externalize sample data in a future release, but this has not yet been a priority.
+
+There were no ERRORs or WARNINGs on the Linux / macOS / Windows environments I used. 
 
 
 ## Downstream dependencies

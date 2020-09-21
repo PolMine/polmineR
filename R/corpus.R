@@ -105,6 +105,7 @@ setMethod("corpus", "missing", function(){
     y <- data.frame(
       corpus = corpora,
       size = unname(sapply(corpora,function(x) cl_attribute_size(corpus = x, attribute = registry_get_p_attributes(x)[1], attribute_type = "p", registry = registry()))),
+      encoding = unname(sapply(corpora, function(x) registry_get_encoding(x))),
       template = unname(sapply(corpora, function(x) if (is.null(get_template(x, warn = FALSE))) FALSE else TRUE )),
       stringsAsFactors = FALSE
     )

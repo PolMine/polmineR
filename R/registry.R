@@ -94,11 +94,22 @@ registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 }
 
 
+#' @details \code{registry_get_encoding} will parse the registry file for a
+#'   corpus and return the encoding that is defined (corpus property "charset").
+#'   If parsing the registry does not yield a result (corpus property "charset"
+#'   not defined), the CWB standard encoding ("latin1") is assigned to prevent
+#'   errors. Note that \code{RcppCWB::cl_charset_name} is equivalent but is
+#'   faster as it uses the internal C representation of a corpus rather than
+#'   parsing the registry file.
 #' @export registry_get_encoding
 #' @rdname registry_eval
+#' @examples
+#' registry_get_encoding("REUTERS")
 registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   y <- .registry_eval(corpus = corpus, registry = registry, regex = '^.*charset\\s*=\\s*"(.+?)".*$')
-  if (length(y) == 0L) y <- "latin1"
+  
+  # use CWB standard corpus encoding if parsing registry yields no result
+  if (length(y) == 0L) y <- "latin1" 
   if (y == "utf8") y <- "UTF-8"
   if (!toupper(y) %in% iconvlist()) warning('potentially unknown encoding')
   y
