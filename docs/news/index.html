@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -129,9 +129,31 @@
       <small>Source: <a href='https://github.com/PolMine/polmineR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="polminer-085" class="section level1">
+<h1 class="page-header" data-toc-text="0.8.5">
+<a href="#polminer-085" class="anchor"></a>polmineR 0.8.5<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New Features</h2>
+<ul>
+<li>A new <code><a href="../reference/decode.html">decode()</a></code> method for <code>data.table</code> objects shall serve as a more user-friendly access to the efficiency of the <code><a href="https://rdrr.io/pkg/RcppCWB/man/p_attributes.html">RcppCWB::cl_cpos2str()</a></code> function.</li>
+<li>The <code>data.frame</code> returned when calling <code><a href="../reference/corpus-class.html">corpus()</a></code> will now include a column with the encoding of the corpus.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>The <code>warn</code> argument of the <code><a href="../reference/templates.html">get_template()</a></code>-method remained unused, resulting in a warning message even if <code>warn</code> was <code>FALSE</code>, resulting in a set of warning messages when calling <code><a href="../reference/corpus-class.html">corpus()</a></code>. The argument is used as intended now and defaults to <code>FALSE</code>.</li>
+<li>The <code><a href="../reference/as.markdown.html">as.markdown()</a></code>-method for <code>subcorpus</code> objects now uses an (internal) default template accessible via <code>polmineR:::default_template</code>, if no template is defined for a corpus.</li>
+<li>The <code><a href="../reference/registry_eval.html">registry_get_encoding()</a></code> function returned a length-one character vector if the regular expression to extract the charset corpus property did not yield a match. To prevent errors, it now returns “latin1” as the CWB standard encoding (<a href='https://github.com/PolMine/polmineR/issues/159'>#159</a>).</li>
+</ul>
+</div>
+</div>
     <div id="polminer-084" class="section level1">
 <h1 class="page-header" data-toc-text="0.8.4">
-<a href="#polminer-084" class="anchor"></a>polmineR 0.8.4<small> Unreleased </small>
+<a href="#polminer-084" class="anchor"></a>polmineR 0.8.4<small> 2020-07-22 </small>
 </h1>
 <div id="minor-improvements" class="section level2">
 <h2 class="hasAnchor">
@@ -142,9 +164,9 @@
 <li>Any Unicode characters that could be detected have been removed from the documentation to avoid warnings on the CRAN Solaris test machine (<a href='https://github.com/PolMine/polmineR/issues/156'>#156</a>).</li>
 </ul>
 </div>
-<div id="bug-fixes" class="section level2">
+<div id="bug-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug Fixes</h2>
+<a href="#bug-fixes-1" class="anchor"></a>Bug Fixes</h2>
 <ul>
 <li>The <code><a href="../reference/chisquare-method.html">chisquare()</a></code> method needs to increase the number of digits temporarily, but failed to revert to the original value as expected. One implication was, that rounding the values in <code>data.table</code> objects would fail, and rounding in general yielded very strange results (<a href='https://github.com/PolMine/polmineR/issues/155'>#155</a>). Fixed.</li>
 </ul>
@@ -181,9 +203,9 @@
 <li>To avoid the side-effects of the <code>set_template()</code> method on options that may be unnoticed for the user and that potentially violate CRAN policies, the method has been dropped.</li>
 </ul>
 </div>
-<div id="bug-fixes-1" class="section level2">
+<div id="bug-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug Fixes</h2>
+<a href="#bug-fixes-2" class="anchor"></a>Bug Fixes</h2>
 <ul>
 <li>The <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code>-method returned a <code>data.table</code> mixing up rows / columns for subcorpora/partitions with a region matrix that would only include a single set of corpus</li>
 </ul>
@@ -193,9 +215,9 @@
 <h1 class="page-header" data-toc-text="0.8.1">
 <a href="#polminer-081" class="anchor"></a>polmineR 0.8.1<small> Unreleased </small>
 </h1>
-<div id="new-features" class="section level2">
+<div id="new-features-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New Features</h2>
+<a href="#new-features-1" class="anchor"></a>New Features</h2>
 <ul>
 <li>The <code><a href="../reference/decode.html">decode()</a></code>-method now entails the possibility to decode structural and positional attributes selectively, via new arguments <code>p_attributes</code> and <code>s_attributes</code> (<a href='https://github.com/PolMine/polmineR/issues/116'>#116</a>). Internally, the reliance on <code>coerce()</code>-methods has been replaced by a simpler if-else-syntax. The <code><a href="../reference/as.VCorpus.html">as(from, "Annotation")</a></code> option persists, however.</li>
 <li>A new argument <code>phrases</code> was added to the <code><a href="../reference/count-method.html">count()</a></code>-method for <code>partition_bundle</code> objects.</li>
@@ -267,9 +289,9 @@
 <li>A new check in <code><a href="https://rdrr.io/r/base/ns-hooks.html">.onLoad()</a></code> whether polmineR is loaded from the repository directory will ensure that temporary registry files will not be gone when calling <code><a href="https://devtools.r-lib.org//reference/document.html">devtools::document()</a></code> (<a href='https://github.com/PolMine/polmineR/issues/68'>#68</a>).</li>
 </ul>
 </div>
-<div id="bug-fixes-2" class="section level2">
+<div id="bug-fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-2" class="anchor"></a>Bug Fixes</h2>
+<a href="#bug-fixes-3" class="anchor"></a>Bug Fixes</h2>
 <ul>
 <li>In the <code><a href="../reference/as.speeches.html">as.speeches()</a></code>-method for <code>corpus</code> objects, setting <code>progress</code> as <code>FALSE</code> did not suppress the display of a progress bar. Solved.</li>
 <li>Removed a bug that occurred when counting matches for CQP queries over a <code>subcorpus_bundle</code> that resulted from CQP queries being turned into invalid column names.</li>
@@ -290,9 +312,9 @@
 <h1 class="page-header" data-toc-text="0.8.0">
 <a href="#polminer-080" class="anchor"></a>polmineR 0.8.0<small> 2019-12-17 </small>
 </h1>
-<div id="new-features-1" class="section level2">
+<div id="new-features-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>New Features</h2>
+<a href="#new-features-2" class="anchor"></a>New Features</h2>
 <ul>
 <li>The <code>corpus</code> class has been put in a shape to become the default point of departure of most workflows. All core methods are now available for the <code>corpus</code> class, and have been implemented newly if necessary, e.g. <code>show()</code> and <code><a href="../reference/size-method.html">size()</a></code>-method. The constructor method for a <code>corpus</code> object, the <code><a href="../reference/corpus-class.html">corpus()</a></code> method, will now check whether the character vector with the corpus ID refers to an available corpus, whether all letters are upper case and issue informative warnings and error messages.</li>
 <li>The <code><a href="../reference/s_attributes-method.html">s_attributes()</a></code>-method for <code>corpus</code> objects has been reworked: It will decode binary files directly, without reliance on the corpus library functions, which is significantly faster.</li>
@@ -351,9 +373,9 @@
 <li>Functionality to highlight terms in kwic display has been restored for the shiny app.</li>
 </ul>
 </div>
-<div id="bug-fixes-3" class="section level2">
+<div id="bug-fixes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-3" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes-4" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Removed a bug in the <code><a href="../reference/context-method.html">context()</a></code>/<code><a href="../reference/kwic.html">kwic()</a></code> method that led to superfluous words in the right context.</li>
 <li>Removed a bug that occurred with the <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code>-method for <code>kwic</code>-objects when no metadata were added.</li>
@@ -395,9 +417,9 @@
 <h1 class="page-header" data-toc-text="0.7.11">
 <a href="#polminer-0711" class="anchor"></a>polmineR 0.7.11<small> 2019-01-08 </small>
 </h1>
-<div id="new-features-2" class="section level2">
+<div id="new-features-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>NEW FEATURES</h2>
+<a href="#new-features-3" class="anchor"></a>NEW FEATURES</h2>
 <ul>
 <li>A <code><a href="../reference/all_cooccurrences.html">Cooccurrences()</a></code>-method and a <code>Cooccurrences</code>-class have been migrated from the (experimental) polmineR.graph package to polmineR to generate and manage all cooccurrences in a corpus/<code>partition</code>. A <code>cooccurrenes()</code>-method produces a subset of <code>Cooccurrences</code>-class object and is the basis for ensuring that results are identical.</li>
 <li>New functionality to make using corpora more robust when paths include special characters: There is now a temporary data directory which is a subdirectory of the per-session temporary directory. A new function <code><a href="../reference/registry.html">data_dir()</a></code> will return this temporary data directory. The <code><a href="../reference/use.html">use()</a></code>-function will now check for non-ASCII characters in the path to binary corpus data and move the corpus data to the temporary data directory (a subdirectory of the directory returned by <code><a href="../reference/registry.html">data_dir()</a></code>), if necessary. An argument <code>tmp</code> added to <code><a href="../reference/use.html">use()</a></code> will force using a temporary directory. The temporary files are removed when the package is detached.</li>
@@ -428,9 +450,9 @@
 <li>The <code><a href="../reference/ngrams.html">ngrams()</a></code>-method will work for corpora, and a new <code>show()</code>-method for <code>textstat</code>-object generates a proper output (<a href='https://github.com/PolMine/polmineR/issues/27'>#27</a>).</li>
 </ul>
 </div>
-<div id="bug-fixes-4" class="section level2">
+<div id="bug-fixes-5" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-4" class="anchor"></a>BUG FIXES</h2>
+<a href="#bug-fixes-5" class="anchor"></a>BUG FIXES</h2>
 <ul>
 <li>Any usage of <code><a href="https://rdrr.io/r/base/tempfile.html">tempdir()</a></code> is wrapped into normalizePath(…, winslash = “/”), to avoid mixture of file separators in a path, which may cause problems on Windows systems.</li>
 <li>In the calculation of cooccurrences, the node has previously been included in the window size. This has been corrected.</li>
@@ -462,9 +484,9 @@
 <h1 class="page-header" data-toc-text="0.7.10">
 <a href="#polminer-0710" class="anchor"></a>polmineR 0.7.10<small> 2018-09-18 </small>
 </h1>
-<div id="new-features-3" class="section level3">
+<div id="new-features-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features-3" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-4" class="anchor"></a>NEW FEATURES</h3>
 <ul>
 <li>The package now offers a simplified and seamless workflow for dictionary-based sentiment analysis: The <code><a href="../reference/weigh-method.html">weigh()</a></code>-method has been implemented for the classes <code>count</code> and <code>count_bundle</code>. Via inheritance, it will also be available for the <code>partition</code>- and <code>partition_bundle</code>-classes. Then, a new <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-method for <code>partition</code>-class objects is introduced. If the object has been weighed, the list that is returned will include a report on weights. There is an example that explains the workflow.</li>
 <li>The <code>partition_bundle</code>-method for <code>context</code>-objects has been reworked entirely (and is working again); a new <code>partition</code>-method for <code>context</code>-objects has been introduced. Buth steps are intended for workflows for dictionary-based sentiment analysis.</li>
@@ -487,9 +509,9 @@
 <li>A new <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code>-method for kwic-class objects is introduced.</li>
 </ul>
 </div>
-<div id="bug-fixes-5" class="section level3">
+<div id="bug-fixes-6" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-5" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-6" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>The <code>size_coi</code>-slot (coi for corpus of interest) of the <code>context</code>-object included the node; the node (i.e. matches for queries) is excluded now from the count of size_coi.</li>
 <li>When calling <code><a href="../reference/use.html">use()</a></code>, the registry directory is reset for CQP, so that the corpora in the package that have been activated can be used with CQP syntax.</li>

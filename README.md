@@ -3,7 +3,7 @@ Introducing the polmineR package
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3956164.svg)](https://doi.org/10.5281/zenodo.3956164)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4042093.svg)](https://doi.org/10.5281/zenodo.4042093)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
@@ -84,11 +84,6 @@ if (!"GERMAPARL" %in% corpus()$corpus){
   GermaParl::germaparl_download_corpus()
   use("GermaParl")
 }
-#> Warning in .local(.Object, ...): No template available for corpus
-#> 'MIGPRESS_FAZ'.
-#> Warning in .local(.Object, ...): No template available for corpus 'MIGPRESS_SZ'.
-#> Warning in .local(.Object, ...): No template available for corpus 'UNGA'.
-#> Warning in .local(.Object, ...): No template available for corpus 'UNGAMINI'.
   
 if (!"europarl" %in% rownames(installed.packages())){
   install.packages("europarl", repos = "http://polmine.github.io/drat")
@@ -104,17 +99,6 @@ if (!"EUROPARL-EN" %in% corpus()$corpus){
   europarl::europarl_download()
   use("europarl")
 }
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-DE'.
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-EN'.
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-ES'.
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-FR'.
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-IT'.
-#> Warning in .local(.Object, ...): No template available for corpus 'EUROPARL-NL'.
-#> Warning in .local(.Object, ...): No template available for corpus
-#> 'MIGPRESS_FAZ'.
-#> Warning in .local(.Object, ...): No template available for corpus 'MIGPRESS_SZ'.
-#> Warning in .local(.Object, ...): No template available for corpus 'UNGA'.
-#> Warning in .local(.Object, ...): No template available for corpus 'UNGAMINI'.
 ```
 
 Calling the `use()`-function will activate a corpus included in a data
@@ -479,4 +463,4 @@ you publish research results making use of polmineR, the following
 citation is suggested to be included in publications.
 
 Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis.
-R package version v0.8.2. <http://doi.org/10.5281/zenodo.3924721>
+R package version v0.8.2. <http://doi.org/10.5281/zenodo.4042093>

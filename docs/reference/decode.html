@@ -73,7 +73,7 @@ argument to." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -191,7 +191,10 @@ argument <code>to</code>.</p>
 )
 
 <span class='co'># S4 method for integer</span>
-<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attributes</span>, <span class='kw'>boost</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attributes</span>, <span class='kw'>boost</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># S4 method for data.table</span>
+<span class='fu'>decode</span>(<span class='no'>.Object</span>, <span class='no'>corpus</span>, <span class='no'>p_attributes</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -275,6 +278,14 @@ s-attribute, which is not supported any more. See the
   5 percent of the corpus are to be decoded. The encoding of the
   <code>character</code> vector that is returned will be the coding of the locale
   (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).</p>
+<p>The <code>decode</code>-method for <code>data.table</code> objects will decode
+  token ids (column '[p-attribute]_id'), adding the corresponding string as a
+  new column. If a column "cpos" with corpus positions is present, ids are
+  derived for the corpus positions given first. If the <code>data.table</code>
+  neither has a column "cpos" nor columns with token ids (i.e. colummn name
+  ending with "_id"), the input <code>data.table</code> is returned unchanged. Note
+  that columns are added to the <code>data.table</code> in an in-place operation to
+  handle memory parsimoniously.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>To decode a structural attribute, you can use the
@@ -331,7 +342,105 @@ s-attribute, which is not supported any more. See the
 }
 
 <span class='co'># decode vector of token ids</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='fl'>0</span>:<span class='fl'>20</span>, <span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='st'>"word"</span>)</div></pre>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>decode</span>(<span class='fl'>0</span>:<span class='fl'>20</span>, <span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='st'>"word"</span>)
+<span class='no'>hits_dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='hits.html'>hits</a></span>(<span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='st'>"Liebe"</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>()
+<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>cpos</span> <span class='kw'>=</span> <span class='no'>hits_dt</span><span class='kw'>[[</span><span class='st'>"cpos_left"</span>]])
+<span class='fu'>decode</span>(<span class='no'>dt</span>, <span class='kw'>corpus</span> <span class='kw'>=</span> <span class='st'>"GERMAPARLMINI"</span>, <span class='kw'>p_attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>))</div><div class='output co'>#&gt;       cpos word_id pos_id  word  pos
+#&gt;  1:     10      10      0 Liebe ADJA
+#&gt;  2:    568      10      0 Liebe ADJA
+#&gt;  3:   3492      10      1 Liebe   NN
+#&gt;  4:   3499      10      1 Liebe   NN
+#&gt;  5:   4822      10      0 Liebe ADJA
+#&gt;  6:   5323      10      0 Liebe ADJA
+#&gt;  7:   6077      10      0 Liebe ADJA
+#&gt;  8:   6719      10      0 Liebe ADJA
+#&gt;  9:   7470      10      0 Liebe ADJA
+#&gt; 10:   8502      10      0 Liebe ADJA
+#&gt; 11:   8662      10      0 Liebe ADJA
+#&gt; 12:   9119      10      0 Liebe ADJA
+#&gt; 13:   9931      10      1 Liebe   NN
+#&gt; 14:  10043      10      0 Liebe ADJA
+#&gt; 15:  10557      10      0 Liebe ADJA
+#&gt; 16:  10691      10      0 Liebe ADJA
+#&gt; 17:  21451      10      0 Liebe ADJA
+#&gt; 18:  25966      10      0 Liebe ADJA
+#&gt; 19:  45046      10      0 Liebe ADJA
+#&gt; 20:  46008      10      0 Liebe ADJA
+#&gt; 21:  47297      10      0 Liebe ADJA
+#&gt; 22:  49739      10      0 Liebe ADJA
+#&gt; 23:  56810      10      0 Liebe ADJA
+#&gt; 24:  59790      10      0 Liebe ADJA
+#&gt; 25:  59793      10      0 Liebe ADJA
+#&gt; 26:  66245      10      0 Liebe ADJA
+#&gt; 27:  69098      10      0 Liebe ADJA
+#&gt; 28:  69102      10      0 Liebe ADJA
+#&gt; 29:  70360      10      0 Liebe ADJA
+#&gt; 30:  70771      10      1 Liebe   NN
+#&gt; 31:  74678      10      0 Liebe ADJA
+#&gt; 32:  75805      10      0 Liebe ADJA
+#&gt; 33:  76002      10      0 Liebe ADJA
+#&gt; 34:  85838      10      0 Liebe ADJA
+#&gt; 35:  85841      10      0 Liebe ADJA
+#&gt; 36:  86522      10      0 Liebe ADJA
+#&gt; 37:  89354      10      0 Liebe ADJA
+#&gt; 38:  91483      10      0 Liebe ADJA
+#&gt; 39:  91704      10      0 Liebe ADJA
+#&gt; 40:  93459      10      0 Liebe ADJA
+#&gt; 41:  98038      10      0 Liebe ADJA
+#&gt; 42: 103072      10      0 Liebe ADJA
+#&gt; 43: 103934      10      0 Liebe ADJA
+#&gt; 44: 108337      10      0 Liebe ADJA
+#&gt; 45: 111273      10      0 Liebe ADJA
+#&gt; 46: 112594      10      0 Liebe ADJA
+#&gt; 47: 113368      10      0 Liebe ADJA
+#&gt; 48: 113831      10      0 Liebe ADJA
+#&gt; 49: 114772      10      0 Liebe ADJA
+#&gt; 50: 116114      10      0 Liebe ADJA
+#&gt; 51: 118275      10      0 Liebe ADJA
+#&gt; 52: 122273      10      0 Liebe ADJA
+#&gt; 53: 123463      10      0 Liebe ADJA
+#&gt; 54: 124268      10      0 Liebe ADJA
+#&gt; 55: 125486      10      0 Liebe ADJA
+#&gt; 56: 126850      10      0 Liebe ADJA
+#&gt; 57: 130690      10      0 Liebe ADJA
+#&gt; 58: 135910      10      0 Liebe ADJA
+#&gt; 59: 138099      10      0 Liebe ADJA
+#&gt; 60: 139004      10      0 Liebe ADJA
+#&gt; 61: 150552      10      0 Liebe ADJA
+#&gt; 62: 151702      10      0 Liebe ADJA
+#&gt; 63: 155655      10      0 Liebe ADJA
+#&gt; 64: 157311      10      0 Liebe ADJA
+#&gt; 65: 157918      10      0 Liebe ADJA
+#&gt; 66: 159346      10      0 Liebe ADJA
+#&gt; 67: 169744      10      0 Liebe ADJA
+#&gt; 68: 171657      10      0 Liebe ADJA
+#&gt; 69: 176041      10      0 Liebe ADJA
+#&gt; 70: 176447      10      0 Liebe ADJA
+#&gt; 71: 176824      10      0 Liebe ADJA
+#&gt; 72: 177589      10      0 Liebe ADJA
+#&gt; 73: 178112      10      0 Liebe ADJA
+#&gt; 74: 180526      10      0 Liebe ADJA
+#&gt; 75: 181253      10      0 Liebe ADJA
+#&gt; 76: 184704      10      0 Liebe ADJA
+#&gt; 77: 186167      10      0 Liebe ADJA
+#&gt; 78: 187917      10      0 Liebe ADJA
+#&gt; 79: 188731      10      0 Liebe ADJA
+#&gt; 80: 190545      10      1 Liebe   NN
+#&gt; 81: 192984      10      0 Liebe ADJA
+#&gt; 82: 194547      10      0 Liebe ADJA
+#&gt; 83: 196402      10      0 Liebe ADJA
+#&gt; 84: 196407      10      0 Liebe ADJA
+#&gt; 85: 199796      10      0 Liebe ADJA
+#&gt; 86: 202781      10      0 Liebe ADJA
+#&gt; 87: 202786      10      0 Liebe ADJA
+#&gt; 88: 203416      10      0 Liebe ADJA
+#&gt; 89: 204318      10      0 Liebe ADJA
+#&gt; 90: 207278      10      0 Liebe ADJA
+#&gt; 91: 212013      10      0 Liebe ADJA
+#&gt; 92: 216043      10      1 Liebe   NN
+#&gt; 93: 221108      10      0 Liebe ADJA
+#&gt;       cpos word_id pos_id  word  pos</div><div class='input'><span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>dt</span>[, <span class='no'>.N</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"word"</span>, <span class='st'>"pos"</span>)]</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

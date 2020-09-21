@@ -73,7 +73,7 @@ registry." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -181,20 +181,20 @@ per-session temporary data directory.</p>
   to reset the registry, see <code><a href='registry_reset.html'>registry_reset</a></code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='fu'><a href='corpus-class.html'>corpus</a></span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'MIGPRESS_FAZ'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'MIGPRESS_SZ'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'UNGA'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No template available for corpus 'UNGAMINI'.</span></div><div class='output co'>#&gt;             corpus      size template
-#&gt; 1       AUSTROPARL  76491381     TRUE
-#&gt; 2            BTFUL 113538879     TRUE
-#&gt; 3        GERMAPARL 101013708     TRUE
-#&gt; 4    GERMAPARLMINI    222201     TRUE
-#&gt; 5  GERMAPARLSAMPLE    222201     TRUE
-#&gt; 6          MIGPARL  51470707     TRUE
-#&gt; 7     MIGPRESS_FAZ  85157420    FALSE
-#&gt; 8      MIGPRESS_SZ  57081474    FALSE
-#&gt; 9        PARISPARL 216862722     TRUE
-#&gt; 10         REUTERS      4050     TRUE
-#&gt; 11       TWEEDEFUL 164448015     TRUE
-#&gt; 12            UNGA  43081472    FALSE
-#&gt; 13        UNGAMINI    168361    FALSE</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>use</span>(<span class='st'>"polmineR"</span>)</div><div class='output co'>#&gt; <span class='message'>... activating corpus: GERMAPARLMINI (version: 0.0.1 | build date: 2019-02-23)</span></div><div class='output co'>#&gt; <span class='message'>... activating corpus: REUTERS</span></div><div class='input'><span class='fu'><a href='corpus-class.html'>corpus</a></span>()</div><div class='output co'>#&gt;             corpus      size encoding template
+#&gt; 1       AUSTROPARL  76491381    UTF-8     TRUE
+#&gt; 2            BTFUL 113538879   latin1     TRUE
+#&gt; 3        GERMAPARL 101013708   latin1     TRUE
+#&gt; 4    GERMAPARLMINI    222201   latin1     TRUE
+#&gt; 5  GERMAPARLSAMPLE    222201   latin1     TRUE
+#&gt; 6          MIGPARL  51470707   latin1     TRUE
+#&gt; 7     MIGPRESS_FAZ  85157420   latin1    FALSE
+#&gt; 8      MIGPRESS_SZ  57081474   latin1    FALSE
+#&gt; 9        PARISPARL 216862722    UTF-8     TRUE
+#&gt; 10         REUTERS      4050   latin1     TRUE
+#&gt; 11       TWEEDEFUL 164448015    UTF-8     TRUE
+#&gt; 12            UNGA  43081472    UTF-8    FALSE
+#&gt; 13        UNGAMINI    168361    UTF-8    FALSE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

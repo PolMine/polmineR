@@ -75,7 +75,7 @@ possible without a full installation of the CWB." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">polmineR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -174,7 +174,16 @@ possible without a full installation of the CWB.</p>
 
     <p>An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
 includes an explanation of the registry file format.</p>
+<p><code>registry_get_encoding</code> will parse the registry file for a
+  corpus and return the encoding that is defined (corpus property "charset").
+  If parsing the registry does not yield a result (corpus property "charset"
+  not defined), the CWB standard encoding ("latin1") is assigned to prevent
+  errors. Note that <code><a href='https://rdrr.io/pkg/RcppCWB/man/cl_charset_name.html'>RcppCWB::cl_charset_name</a></code> is equivalent but is
+  faster as it uses the internal C representation of a corpus rather than
+  parsing the registry file.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>registry_get_encoding</span>(<span class='st'>"REUTERS"</span>)</div><div class='output co'>#&gt; [1] "latin1"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

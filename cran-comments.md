@@ -6,11 +6,9 @@ This release includes a few bug fixes to address issues encountered by users.
 ## Test environments
 
 * local OS X install, R 4.0.2
-* Ubuntu 14.04 (on travis-ci), R 4.0.0
-* Ubuntu 16.04 (project server), R 3.6.3
+* Ubuntu Ubuntu 16.04.6 LTS (on travis-ci), R 4.0.2
 * win-builder (devel and release), R. 4.0.2
 * Windows/AppVeyor, R 4.0.2 Patched
-* Fedora Linux, R-devel, GCC
 
 
 ## R CMD check results
