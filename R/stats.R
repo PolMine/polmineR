@@ -151,7 +151,7 @@ setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attribute
 #'   pp. 61-74.
 #' @references Rayson, Paul; Garside, Roger (2000): Comparing Corpora using
 #'   Frequency Profiling. \emph{The Workshop on Comparing Corpora}. 
-#'   \url{http://aclweb.org/anthology/W00-0901}.
+#'   \url{https://www.aclweb.org/anthology/W00-0901/}.
 #' @references Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
 #'   Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
 #'   \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}

@@ -1,6 +1,8 @@
 ## General remarks
 
-This release includes a few bug fixes to address issues encountered by users.
+This is the second submission of polmineR v0.8.5. If fixes a URL redirect detected on the Debian check machine. 
+
+Compared to polmineR v0.8.4, this release is a maintenance release that includes a few bug fixes.
 
 
 ## Test environments
