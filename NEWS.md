@@ -1,3 +1,11 @@
+polmineR 0.8.5.9001
+===================
+
+## Bug fixes
+
+- A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
+
+
 polmineR 0.8.5
 ==============
 

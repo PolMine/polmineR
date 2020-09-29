@@ -46,7 +46,9 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
     list(...),
     function(x)
       if (class(x) == "call"){
-        deparse(x)
+        # Deparsing may result in a character vector longer than 1 if expression is 
+        # long. Using paste() is safer than setting width.cutoff to maximum value (500)
+        paste(deparse(x), collapse = "")
       } else {
         curl::form_data(protolite::serialize_pb(x), "application/protobuf")
       }
