@@ -1,6 +1,11 @@
 polmineR 0.8.5.9001
 ===================
 
+## New Features
+
+- The `dispersion()` method now accepts an argument `fill`, a `logical` value to explicitly control whether (#160) zero matches for a value of a structural attribute should be reported.
+
+
 ## Bug fixes
 
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).

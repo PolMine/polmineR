@@ -22,6 +22,7 @@ dispersion(.Object, ...)
   cqp = FALSE,
   p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE,
+  fill = TRUE,
   mc = FALSE,
   progress = FALSE,
   verbose = FALSE,
@@ -35,6 +36,7 @@ dispersion(.Object, ...)
   cqp = FALSE,
   p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE,
+  fill = TRUE,
   mc = FALSE,
   progress = TRUE,
   verbose = FALSE,
@@ -48,6 +50,7 @@ dispersion(.Object, ...)
   cqp = FALSE,
   p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE,
+  fill = FALSE,
   mc = FALSE,
   progress = TRUE,
   verbose = FALSE,
@@ -61,6 +64,7 @@ dispersion(.Object, ...)
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE,
+  fill = TRUE,
   mc = FALSE,
   progress = FALSE,
   verbose = FALSE,
@@ -74,21 +78,30 @@ dispersion(.Object, ...)
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
   freq = FALSE,
+  fill = TRUE,
   mc = FALSE,
   progress = TRUE,
   verbose = TRUE,
   ...
 )
 
-\S4method{dispersion}{hits}(.Object, source, s_attribute, freq = FALSE, verbose = TRUE, ...)
+\S4method{dispersion}{hits}(
+  .Object,
+  source,
+  s_attribute,
+  freq = FALSE,
+  fill = TRUE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{dispersion}{remote_corpus}(.Object, ...)
 
 \S4method{dispersion}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
-\item{.Object}{A \code{partition} object or a corpus provided by a character
-string.}
+\item{.Object}{A \code{corpus}, \code{subcorpus} or \code{partition} object
+or a corpus provided by a character string.}
 
 \item{...}{Further parameters.}
 
@@ -104,6 +117,11 @@ guess whether query is a CQP query}
 will be looked up (typically 'word' or 'lemma').}
 
 \item{freq}{A \code{logical} value, whether to calculate normalized frequencies.}
+
+\item{fill}{A \code{logical} value, whether to report zero matches. Defaults
+to \code{TRUE}. But note that if there are few matches and many values of
+the s-attribute(s), the resulting data structure is sparse, potentially
+bloated and slow to be prepared.}
 
 \item{mc}{A \code{logical} value, whether to use multicore.}
 
@@ -121,8 +139,9 @@ depends on the input, as this is a wrapper function
 A \code{data.table}.
 }
 \description{
-The method returns counts (optionally frequencies) of a query or a multiple
-queries in subcorpora defined by one or two s-attributes.
+The method returns a \code{data.table} with the number of matches of a query
+or multiple queries (optionally frequencies) in a corpus or subcorpus as
+partitioned by one or two s-attributes.
 }
 \examples{
 use("polmineR")
