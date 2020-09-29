@@ -8,11 +8,12 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 
 #' Dispersion of a query or multiple queries.
 #' 
-#' The method returns counts (optionally frequencies) of a query or a multiple
-#' queries in subcorpora defined by one or two s-attributes.
+#' The method returns a \code{data.table} with the number of matches of a query
+#' or multiple queries (optionally frequencies) in a corpus or subcorpus as
+#' partitioned by one or two s-attributes.
 #' 
-#' @param .Object A \code{partition} object or a corpus provided by a character
-#'   string.
+#' @param .Object A \code{corpus}, \code{subcorpus} or \code{partition} object
+#'   or a corpus provided by a character string.
 #' @param query A \code{character} vector stating one or multiple queries.
 #' @param s_attribute A \code{character} vector (length 1 or 2) providing s-attributes.
 #' @param p_attribute Length one \code{character} vector, the p-attribute that
@@ -21,6 +22,10 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #'   function that is passed in, the function will be applied to the query to
 #'   guess whether query is a CQP query
 #' @param freq A \code{logical} value, whether to calculate normalized frequencies.
+#' @param fill A \code{logical} value, whether to report zero matches. Defaults
+#'   to \code{TRUE}. But note that if there are few matches and many values of
+#'   the s-attribute(s), the resulting data structure is sparse, potentially
+#'   bloated and slow to be prepared.
 #' @param mc A \code{logical} value, whether to use multicore.
 #' @param verbose A \code{logical} value, whether to be verbose.
 #' @param progress A \code{logical} value, whether to show progress.
@@ -47,7 +52,7 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @rdname dispersion-method
 #' @aliases dispersion,slice-method
 #' @name dispersion
-setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
+setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
@@ -57,26 +62,26 @@ setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FAL
     s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
     mc = mc, verbose = verbose, progress = progress
   )
-  dispersion(h, s_attribute = s_attribute, source = .Object, freq = freq)
+  dispersion(h, s_attribute = s_attribute, source = .Object, freq = freq, fill = fill)
 })
 
 #' @rdname dispersion-method
 setMethod("dispersion", "partition", function(
   .Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
-  freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+  freq = FALSE, fill = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   callNextMethod()
 })
 
 #' @rdname dispersion-method
 setMethod("dispersion", "subcorpus", function(
   .Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"),
-  freq = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
+  freq = FALSE, fill = FALSE, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   callNextMethod()
 })
 
 
 #' @rdname dispersion-method
-setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
+setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
   if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
@@ -90,7 +95,7 @@ setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is
 
 
 #' @rdname dispersion-method
-setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
+setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = TRUE, verbose = TRUE, ...){
   dispersion(
     .Object = corpus(.Object),
     query = query,
@@ -98,6 +103,7 @@ setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp =
     cqp = cqp,
     p_attribute = p_attribute,
     freq = freq,
+    fill = fill,
     mc = mc,
     progress = progress,
     verbose = verbose,
@@ -110,7 +116,7 @@ setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp =
 #' @param source The source of the evaluation the hits reported in
 #'   \code{.Object} are based on, a \code{corpus}, \code{subcorpus} or
 #'   \code{partition} object.
-setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FALSE, verbose = TRUE, ...){
+setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FALSE, fill = TRUE, verbose = TRUE, ...){
   
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
@@ -120,7 +126,7 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
     stop(sprintf("Number of s-attributes is %d but only 1 or 2 s-attributes are allowed.", length(s_attribute)))
   
   if (length(.Object@query) > 1L){
-    if (!freq){
+    if (isFALSE(freq)){
       .Object@stat <- .Object@stat[, {sum(.SD[["count"]])}, by = s_attribute][, "query" := paste(.Object@query, collapse = "//")]
       setnames(.Object@stat, old = "V1", new = "count")
       setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
@@ -135,7 +141,7 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
   if (length(s_attribute) == 1L){
     dt <- .Object@stat
     # ensure that zero matches are reported for all values of the s-attribute
-    if (!freq){
+    if (isTRUE(fill)){
       s_attr_values <- s_attributes(source, s_attribute = s_attribute, unique = TRUE)
       dt <- dt[do.call(data.table, setNames(list(s_attr_values, s_attribute), c(s_attribute, "key"))), on = s_attribute]
       dt[, "count" := ifelse(is.na(dt[["count"]]), 0L, dt[["count"]])]
@@ -153,7 +159,8 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
       .Object@stat, formula(paste(s_attribute, collapse = "~")),
       value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0L
     )
-    if (!freq){
+    
+    if (isTRUE(fill)){
       s_attr_values <- s_attributes(source, s_attribute = s_attribute[1], unique = TRUE)
       dt <- dt[do.call(data.table, setNames(list(s_attr_values, s_attribute[1]), c(s_attribute[1], "key"))), on = s_attribute[1]]
       dt[is.na(dt)] <- 0L
@@ -162,6 +169,7 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
       s_attr_values_missing <- s_attr_values[!s_attr_values %in% colnames(dt)]
       for (s_attr in s_attr_values_missing) dt[, (s_attr) := 0L]
     }
+    
   } else {
     warning("length(s_attribute) needs to be 1 or 2")
   }
