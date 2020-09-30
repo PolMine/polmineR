@@ -12,6 +12,11 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' or multiple queries (optionally frequencies) in a corpus or subcorpus as
 #' partitioned by one or two s-attributes.
 #' 
+#' @details Augmenting the \code{data.table} with zeros for subcorpora that do
+#'   not yield query matches (argument \code{fill} = \code{TRUE}) may require
+#'   adding many new columns. A respective warning issued by the
+#'   \code{data.table} package is supplemented an additional explanatory note
+#'   of the polmineR package.
 #' @param .Object A \code{corpus}, \code{subcorpus} or \code{partition} object
 #'   or a corpus provided by a character string.
 #' @param query A \code{character} vector stating one or multiple queries.
@@ -24,13 +29,13 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @param freq A \code{logical} value, whether to calculate normalized frequencies.
 #' @param fill A \code{logical} value, whether to report zero matches. Defaults
 #'   to \code{TRUE}. But note that if there are few matches and many values of
-#'   the s-attribute(s), the resulting data structure is sparse, potentially
-#'   bloated and slow to be prepared.
+#'   the s-attribute(s), the resulting data structure is sparse and potentially
+#'   bloated.
 #' @param mc A \code{logical} value, whether to use multicore.
 #' @param verbose A \code{logical} value, whether to be verbose.
 #' @param progress A \code{logical} value, whether to show progress.
 #' @param ... Further parameters.
-#' @return depends on the input, as this is a wrapper function
+#' @return A \code{data.table}.
 #' @seealso The worker behind the \code{dispersion}-method is the \code{hits}-method.
 #' @exportMethod dispersion
 #' @examples
@@ -90,7 +95,7 @@ setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is
     .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
     mc = mc, verbose = verbose, progress = progress
   )
-  dispersion(h, s_attribute = s_attribute, source = .Object, freq = freq)
+  dispersion(h, s_attribute = s_attribute, source = .Object, freq = freq, fill = fill)
 })
 
 
@@ -167,11 +172,20 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
       
       s_attr_values <- s_attributes(source, s_attribute = s_attribute[2], unique = TRUE)
       s_attr_values_missing <- s_attr_values[!s_attr_values %in% colnames(dt)]
-      for (s_attr in s_attr_values_missing) dt[, (s_attr) := 0L]
+      length_old <- length(dt)
+      dt[, (s_attr_values_missing) := 0L]
+      if (truelength(dt) > length_old + 10000L){
+        warning(
+          "Supplementary explanatory note on the data.table warning (issued by polmineR): ",
+          "Augmenting the data.table with zeros for all corpus subsets that do not evoke query matches ", 
+          sprintf("requires adding %d columns (with zeroes). This is more than data.table does without issuing ", length(s_attr_values_missing)),
+          "the warning you see."
+        )
+      }
     }
     
   } else {
-    warning("length(s_attribute) needs to be 1 or 2")
+    warning("length(s_attribute) required to be either 1 or 2")
   }
   dt
 })

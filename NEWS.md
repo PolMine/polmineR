@@ -3,8 +3,9 @@ polmineR 0.8.5.9001
 
 ## New Features
 
-- The `dispersion()` method now accepts an argument `fill`, a `logical` value to explicitly control whether (#160) zero matches for a value of a structural attribute should be reported.
-
+- The `dispersion()` method now accepts an argument `fill`, a `logical` value to explicitly control whether (#160) zero matches for a value of a structural attribute should be reported. The performance
+of adding columns (requred only if two structural attributes are provided) is improved substantially
+by using the reference semantic of the data.table package. If many columns are added at once, a warning issued by the data.table package is supplemented by an further explanatory warning of the polmineR package. Filling up the `data.table` was limited previously to `freq = FALSE`, this limitation is lifted.
 
 ## Bug fixes
 

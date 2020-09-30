@@ -120,8 +120,8 @@ will be looked up (typically 'word' or 'lemma').}
 
 \item{fill}{A \code{logical} value, whether to report zero matches. Defaults
 to \code{TRUE}. But note that if there are few matches and many values of
-the s-attribute(s), the resulting data structure is sparse, potentially
-bloated and slow to be prepared.}
+the s-attribute(s), the resulting data structure is sparse and potentially
+bloated.}
 
 \item{mc}{A \code{logical} value, whether to use multicore.}
 
@@ -142,6 +142,13 @@ A \code{data.table}.
 The method returns a \code{data.table} with the number of matches of a query
 or multiple queries (optionally frequencies) in a corpus or subcorpus as
 partitioned by one or two s-attributes.
+}
+\details{
+Augmenting the \code{data.table} with zeros for subcorpora that do
+  not yield query matches (argument \code{fill} = \code{TRUE}) may require
+  adding many new columns. A respective warning issued by the
+  \code{data.table} package is supplemented an additional explanatory note
+  of the polmineR package.
 }
 \examples{
 use("polmineR")
