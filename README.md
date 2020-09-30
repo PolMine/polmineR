@@ -463,4 +463,4 @@ you publish research results making use of polmineR, the following
 citation is suggested to be included in publications.
 
 Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis.
-R package version v0.8.2. <http://doi.org/10.5281/zenodo.4042093>
+R package version v0.8.5. <http://doi.org/10.5281/zenodo.4042093>
