@@ -117,6 +117,7 @@ setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp =
 })
 
 
+#' @importFrom data.table truelength
 #' @rdname dispersion-method
 #' @param source The source of the evaluation the hits reported in
 #'   \code{.Object} are based on, a \code{corpus}, \code{subcorpus} or

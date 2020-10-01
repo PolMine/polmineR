@@ -134,7 +134,7 @@ bloated.}
 \code{partition} object.}
 }
 \value{
-depends on the input, as this is a wrapper function
+A \code{data.table}.
 
 A \code{data.table}.
 }

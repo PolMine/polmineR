@@ -307,6 +307,13 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
 })
 
 
+#' @rdname html-method
+setMethod("html", "remote_subcorpus", function(object, ...){
+  ocpu_exec(fn = "html", corpus = object@corpus, server = object@server, restricted = object@restricted, object = as(object, "subcorpus"), ...)
+})
+
+
+
 #' @include polmineR.R
 NULL
 

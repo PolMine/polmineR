@@ -9,6 +9,7 @@
 \alias{html,subcorpus-method}
 \alias{html,partition_bundle-method}
 \alias{html,kwic-method}
+\alias{html,remote_subcorpus-method}
 \title{Generate html from object.}
 \usage{
 html(object, ...)
@@ -49,6 +50,8 @@ html(object, ...)
 )
 
 \S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL, verbose = FALSE, ...)
+
+\S4method{html}{remote_subcorpus}(object, ...)
 }
 \arguments{
 \item{object}{The object the fulltext output will be based on.}
