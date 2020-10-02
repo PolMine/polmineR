@@ -8,6 +8,10 @@ of adding columns (requred only if two structural attributes are provided) is im
 by using the reference semantic of the data.table package. If many columns are added at once, a warning issued by the data.table package is supplemented by an further explanatory warning of the polmineR package. Filling up the `data.table` was limited previously to `freq = FALSE`, this limitation is lifted.
 - The `html()` method is implemented for `remote_subcorpus` objects.
 
+## Minor Improvements
+
+- If arguments `sAttribute` or `pAttribute` (instead of `s_attribute` and `p_attribute`) are still used with `dispersion()` method, a warning is issued declaring that the argument is deprecated.
+
 ## Bug fixes
 
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).

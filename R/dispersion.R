@@ -59,8 +59,14 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 #' @name dispersion
 setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
-  if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
-  if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
+  if ("sAttribute" %in% names(dot_list)){
+    warning("The `sAttribute` argument of `dispersion()` is deprecated. Please use argument `s_attribute` instead.")
+    s_attribute <- dot_list[["sAttribute"]]
+  }
+  if ("pAttribute" %in% names(dot_list)){
+    warning("The `pAttribute` argument of `dispersion()` is deprecated. Please use argument `p_attribute` instead.")
+    p_attribute <- dot_list[["pAttribute"]]
+  }
   
   h <- hits(
     .Object = .Object, query = query, cqp = cqp,
@@ -88,9 +94,15 @@ setMethod("dispersion", "subcorpus", function(
 #' @rdname dispersion-method
 setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
-  if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
-  if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
-  
+  if ("sAttribute" %in% names(dot_list)){
+    warning("The `sAttribute` argument of `dispersion()` is deprecated. Please use argument `s_attribute` instead.")
+    s_attribute <- dot_list[["sAttribute"]]
+  }
+  if ("pAttribute" %in% names(dot_list)){
+    warning("The `pAttribute` argument of `dispersion()` is deprecated. Please use argument `p_attribute` instead.")
+    p_attribute <- dot_list[["pAttribute"]]
+  }
+
   h <- hits(
     .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
     mc = mc, verbose = verbose, progress = progress
@@ -125,9 +137,15 @@ setMethod("dispersion", "character", function(.Object, query, s_attribute, cqp =
 setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FALSE, fill = TRUE, verbose = TRUE, ...){
   
   dot_list <- list(...)
-  if ("sAttribute" %in% names(dot_list)) s_attribute <- dot_list[["sAttribute"]]
-  if ("pAttribute" %in% names(dot_list)) p_attribute <- dot_list[["pAttribute"]]
-  
+  if ("sAttribute" %in% names(dot_list)){
+    warning("The `sAttribute` argument of `dispersion()` is deprecated. Please use argument `s_attribute` instead.")
+    s_attribute <- dot_list[["sAttribute"]]
+  }
+  if ("pAttribute" %in% names(dot_list)){
+    warning("The `pAttribute` argument of `dispersion()` is deprecated. Please use argument `p_attribute` instead.")
+    p_attribute <- dot_list[["pAttribute"]]
+  }
+
   if (!length(s_attribute) %in% c(1L, 2L))
     stop(sprintf("Number of s-attributes is %d but only 1 or 2 s-attributes are allowed.", length(s_attribute)))
   

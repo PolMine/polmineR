@@ -5,19 +5,51 @@ testthat::context("dispersion")
 test_that(
   "dispersion",
   {
-    y <- dispersion("GERMAPARLMINI", query = "Integration", s_attribute = "date")
-    expect_identical(y[["count"]], c(1L, 0L, 7L, 15L, 0L))
+    y1 <- dispersion("GERMAPARLMINI", query = "Integration", s_attribute = "date", fill = TRUE)
+    expect_identical(y1[["count"]], c(1L, 0L, 7L, 15L, 0L))
+    
+    y2 <- dispersion("GERMAPARLMINI", '"Integration.*"', s_attribute = "date", cqp = TRUE, fill = TRUE)
+    expect_equal(y2[["count"]], c(1L, 0L, 11L, 31L, 0L))
+    
+    y3 <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-11") %>%
+      dispersion(query = "Integration", p_attribute = "word", s_attribute = "speaker", fill = FALSE)
+    expect_identical(y3[speaker == "Hartfrid Wolff"][["count"]], 3L)
+    expect_identical(y3[speaker == "Hermann Otto Solms"][["count"]], 4L)
+    
+    y4 <- dispersion("GERMAPARLMINI", "Integration", s_attribute = c("date", "party"), fill = TRUE)
+    expect_equal(rowSums(y4[, 2:ncol(y4)]), y1[["count"]])
+    s_attr_party_values <- s_attributes("GERMAPARLMINI", "party")
+    expect_true(all(colnames(y4)[2:ncol(y4)] %in% s_attr_party_values))
+    expect_identical(length(s_attr_party_values), ncol(y4) - 1L)
+    s_attr_date_values <- s_attributes("GERMAPARLMINI", "date")
+    expect_true(all(y4[[1]] %in% s_attr_date_values))
+    expect_identical(length(s_attr_date_values), nrow(y4))
+    
+    y5 <- dispersion("GERMAPARLMINI", "Integration", s_attribute = c("date", "party"), fill = FALSE)
+    expect_identical(sum(y5[, 2:ncol(y5)]), sum(y4[, 2:ncol(y4)]))
+    
+    y6 <- corpus("GERMAPARLMINI") %>%
+      subset(speaker == "Angela Dorothea Merkel") %>%
+      dispersion(query = "Integration", s_attribute = "date", fill = TRUE)
+    expect_identical(y6[["count"]], c(0L, 3L))
+  }
+)
 
-    p <- partition("GERMAPARLMINI", date = "2009-11-11", p_attribute = NULL, regex = TRUE)
-    int <- dispersion(p, query = "Integration", p_attribute = "word", s_attribute = "speaker")
-    expect_identical(int[speaker == "Hartfrid Wolff"][["count"]], 3L)
-    expect_identical(int[speaker == "Hermann Otto Solms"][["count"]], 4L)
-    
-    int <- dispersion("GERMAPARLMINI", "Integration", s_attribute = c("date", "party"))
-    expect_equal(rowSums(int[, 2:ncol(int)]), y[["count"]])
-    
-    integration <- dispersion("GERMAPARLMINI", '"Integration.*"', s_attribute = "date", cqp = TRUE)
-    expect_equal(integration[["count"]], c(1L, 0L, 11L, 31L, 0L))
+test_that(
+  "check that warnings are issued if argument sAttribute is used",
+  {
+    expect_warning(y <- dispersion("GERMAPARLMINI", query = "Integration", sAttribute = "date"))
+    expect_warning(
+      y <- corpus("GERMAPARLMINI") %>%
+        subset(speaker = "Angela Dorothea Merkel") %>% 
+        dispersion(query = "Integration", sAttribute = "date")
+    )
+    expect_warning(
+      y <- corpus("GERMAPARLMINI") %>%
+        hits(query = "Integration", s_attribute = "date") %>%
+        dispersion(sAttribute = "date", source = "GERMAPARLMINI")
+    )
   }
 )
 
