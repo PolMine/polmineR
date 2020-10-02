@@ -9,6 +9,8 @@
 \alias{hits,partition-method}
 \alias{hits,partition_bundle-method}
 \alias{hits,context-method}
+\alias{hits,remote_corpus-method}
+\alias{hits,remote_subcorpus-method}
 \title{Get hits for query}
 \usage{
 hits(.Object, ...)
@@ -101,6 +103,10 @@ hits(.Object, ...)
 )
 
 \S4method{hits}{context}(.Object, s_attribute = NULL, verbose = TRUE, ...)
+
+\S4method{hits}{remote_corpus}(.Object, ...)
+
+\S4method{hits}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A length-one \code{character} vector with a corpus ID, a \code{partition} or \code{partition_bundle} object}

@@ -48,6 +48,7 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
       if (class(x) == "call"){
         # Deparsing may result in a character vector longer than 1 if expression is 
         # long. Using paste() is safer than setting width.cutoff to maximum value (500)
+        # See GitHub issue #161 (https://github.com/PolMine/polmineR/issues/161)
         paste(deparse(x), collapse = "")
       } else {
         curl::form_data(protolite::serialize_pb(x), "application/protobuf")

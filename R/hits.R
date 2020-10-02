@@ -258,3 +258,13 @@ setMethod("hits", "context", function(.Object, s_attribute = NULL, verbose = TRU
   
   new("hits", stat = DT, corpus = .Object@corpus, query = .Object@query)
 })
+
+#' @rdname hits
+setMethod("hits", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "hits", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+})
+
+#' @rdname hits
+setMethod("hits", "remote_subcorpus", function(.Object, ...){
+  ocpu_exec(fn = "hits", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+})

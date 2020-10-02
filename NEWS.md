@@ -7,6 +7,7 @@ polmineR 0.8.5.9001 - 0.8.6.9003
 of adding columns (requred only if two structural attributes are provided) is improved substantially
 by using the reference semantic of the data.table package. If many columns are added at once, a warning issued by the data.table package is supplemented by an further explanatory warning of the polmineR package. Filling up the `data.table` was limited previously to `freq = FALSE`, this limitation is lifted.
 - The `html()` method is implemented for `remote_subcorpus` objects.
+- The `hits()` method is implemented for `remote_corpus` and `remote_subcorpus` class (#160).
 
 ## Minor Improvements
 
