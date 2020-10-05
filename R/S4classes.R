@@ -802,17 +802,6 @@ setMethod("name", "corpus", function(x) x@name)
 setClass("regions", slots = c(cpos = "matrix"), contains = "corpus")
 
 
-#' Ranges of query matches.
-#' 
-#' S4 class to manage ranges of corpus positions for query matches. The class
-#' inherits from the classes \code{regions} and \code{corpus}.
-#' 
-#' @slot query A length-one \code{character} string, query used for query
-#'   matches.
-#' @exportClass ranges
-#' @rdname ranges_class
-#' @family classes to manage corpora
-setClass("ranges", slots = c(query = "character"), contains = "regions")
 
 
 #' The S4 subcorpus class.
@@ -912,28 +901,7 @@ setAs(from = "subcorpus", to = "remote_subcorpus", def = function(from){
   y
 })
 
-setAs(from = "corpus", to = "subcorpus", def = function(from){
-  new(
-    "subcorpus",
-    corpus = from@corpus,
-    encoding = from@encoding,
-    cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
-    size = size(from)
-  )
-})
 
-
-setAs(from = "subcorpus", to = "corpus", def = function(from){
-  new(
-    "corpus",
-    corpus = from@corpus,
-    data_dir = from@data_dir,
-    type = from@type,
-    encoding = from@encoding,
-    name = character(),
-    size = size(from@corpus)
-  )
-})
 
 
 setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
@@ -1213,6 +1181,45 @@ setClassUnion(
   name = "slice",
   members = c("subcorpus", "regions", "partition")
 )
+
+
+setAs(from = "corpus", to = "subcorpus", def = function(from){
+  new(
+    "subcorpus",
+    corpus = from@corpus,
+    encoding = from@encoding,
+    cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
+    size = size(from)
+  )
+})
+
+
+setAs(from = "subcorpus", to = "corpus", def = function(from){
+  new(
+    "corpus",
+    corpus = from@corpus,
+    data_dir = from@data_dir,
+    type = from@type,
+    encoding = from@encoding,
+    name = character(),
+    size = size(from@corpus)
+  )
+})
+
+
+
+
+#' Ranges of query matches.
+#' 
+#' S4 class to manage ranges of corpus positions for query matches. The class
+#' inherits from the classes \code{regions} and \code{corpus}.
+#' 
+#' @slot query A length-one \code{character} string, query used for query
+#'   matches.
+#' @exportClass ranges
+#' @rdname ranges_class
+#' @family classes to manage corpora
+setClass("ranges", slots = c(query = "character"), contains = "regions")
 
 
 #' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
