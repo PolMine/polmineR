@@ -20,16 +20,22 @@ Hits class.
 \section{Slots}{
 
 \describe{
-\item{\code{stat}}{a \code{"data.table"}}
+\item{\code{stat}}{A \code{"data.table"} with at least three columns: Columns
+\code{cpos_left} and \code{cpos_right} indicate left and right corpus
+positions of the regions that yielded hits for a query or queries. Column
+\code{query} specifies the (CQP) query that resulted in a hit.}
 
-\item{\code{corpus}}{a \code{"character"} vector}
+\item{\code{corpus}}{A length-one \code{"character"} vector, ID of the corpus with
+hits for query or queries.}
 
-\item{\code{query}}{Object of class \code{"character"}}
+\item{\code{query}}{Object of class \code{"character"}, query or queries for}
 
-\item{\code{p_attribute}}{p-attribute that has been queried}
+\item{\code{p_attribute}}{The p-attribute that has been queried, a length-one
+\code{character} vector.}
 
-\item{\code{encoding}}{encoding of the corpus}
+\item{\code{encoding}}{Length-one \code{character} vector, the encoding of the
+corpus.}
 
-\item{\code{name}}{name of the object}
+\item{\code{name}}{Length-one \code{characte} vector, name of the object.}
 }}
 

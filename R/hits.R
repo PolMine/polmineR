@@ -23,7 +23,8 @@ NULL
 #' @param p_attribute A \code{character} vector stating a p-attribute.
 #' @param size A \code{logical} value, whether to report the size of subcorpus.
 #' @param freq A \code{logcial} value, whether to report relative frequencies.
-#' @param .Object A length-one \code{character} vector with a corpus ID, a \code{partition} or \code{partition_bundle} object
+#' @param .Object A length-one \code{character} vector with a corpus ID, a
+#'   \code{partition} or \code{partition_bundle} object
 #' @param mc A \code{logical} value, whether to use multicore.
 #' @param progress A \code{logical} value, whether to show progress bar.
 #' @param verbose A \code{logical} value, whether to output messages.
@@ -124,8 +125,9 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
 })
 
 
+
 #' @rdname hits
-setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -149,7 +151,7 @@ setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = N
       SIZE <- size(.Object, s_attribute = s_attribute)
       setkeyv(TF, cols = s_attribute)
       TF <- TF[SIZE]
-      TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0, x))]
+      TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0L, x))]
       if (freq) TF[, "freq" := count / size]
     }
   } else {
@@ -158,15 +160,21 @@ setMethod("hits", "slice", function(.Object, query, cqp = FALSE, s_attribute = N
   new("hits", stat = TF, corpus = .Object@corpus, query = query)
 })
 
-#' @rdname hits
-setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
-  callNextMethod()
-})
-
 
 #' @rdname hits
 setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
-  callNextMethod()
+  hits(
+    .Object = as(.Object, "subcorpus"),
+    query = query,
+    cqp = cqp,
+    s_attribute = s_attribute,
+    p_attribute = p_attribute,
+    size = size, 
+    freq = freq, 
+    mc = mc, 
+    progress = progress,
+    verbose
+  )
 })
 
 #' @rdname hits

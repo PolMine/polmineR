@@ -802,6 +802,19 @@ setMethod("name", "corpus", function(x) x@name)
 setClass("regions", slots = c(cpos = "matrix"), contains = "corpus")
 
 
+#' Ranges of query matches.
+#' 
+#' S4 class to manage ranges of corpus positions for query matches. The class
+#' inherits from the classes \code{regions} and \code{corpus}.
+#' 
+#' @slot query A length-one \code{character} string, query used for query
+#'   matches.
+#' @exportClass ranges
+#' @rdname ranges_class
+#' @family classes to manage corpora
+setClass("ranges", slots = c(query = "character"), contains = "regions")
+
+
 #' The S4 subcorpus class.
 #' 
 #' @description Class to manage subcorpora derived from a CWB corpus.
@@ -906,6 +919,19 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
     encoding = from@encoding,
     cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
     size = size(from)
+  )
+})
+
+
+setAs(from = "subcorpus", to = "corpus", def = function(from){
+  new(
+    "corpus",
+    corpus = from@corpus,
+    data_dir = from@data_dir,
+    type = from@type,
+    encoding = from@encoding,
+    name = character(),
+    size = size(from@corpus)
   )
 })
 
@@ -1026,12 +1052,18 @@ setClass("ngrams", representation(n = "integer"), contains = "count")
 
 
 #' Hits class.
-#' @slot stat a \code{"data.table"}
-#' @slot corpus a \code{"character"} vector
-#' @slot query Object of class \code{"character"}
-#' @slot p_attribute p-attribute that has been queried
-#' @slot encoding encoding of the corpus
-#' @slot name name of the object
+#' @slot stat A \code{"data.table"} with at least three columns: Columns
+#'   \code{cpos_left} and \code{cpos_right} indicate left and right corpus
+#'   positions of the regions that yielded hits for a query or queries. Column
+#'   \code{query} specifies the (CQP) query that resulted in a hit.
+#' @slot corpus A length-one \code{"character"} vector, ID of the corpus with
+#'   hits for query or queries.
+#' @slot query Object of class \code{"character"}, query or queries for 
+#' @slot p_attribute The p-attribute that has been queried, a length-one
+#'   \code{character} vector.
+#' @slot encoding Length-one \code{character} vector, the encoding of the
+#'   corpus.
+#' @slot name Length-one \code{characte} vector, name of the object.
 #' @exportClass hits
 #' @rdname hits_class
 #' @name hits_class

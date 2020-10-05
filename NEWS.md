@@ -1,4 +1,4 @@
-polmineR 0.8.5.9001 - 0.8.6.9003
+polmineR 0.8.5.9001 - 0.8.6.9005
 ================================
 
 ## New Features
@@ -8,6 +8,8 @@ of adding columns (requred only if two structural attributes are provided) is im
 by using the reference semantic of the data.table package. If many columns are added at once, a warning issued by the data.table package is supplemented by an further explanatory warning of the polmineR package. Filling up the `data.table` was limited previously to `freq = FALSE`, this limitation is lifted.
 - The `html()` method is implemented for `remote_subcorpus` objects.
 - The `hits()` method is implemented for `remote_corpus` and `remote_subcorpus` class (#160).
+- A new S4 class `ranges` is introduced to manage ranges of corpus positions for query matches. This is a preparatory step to remove an inconsistency from the `hits` class that mixed two very usages (getting ranges of corpus positions for matches and getting counts).
+- A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object.
 
 ## Minor Improvements
 
@@ -16,6 +18,8 @@ by using the reference semantic of the data.table package. If many columns are a
 ## Bug fixes
 
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
+- The `hits()` method for the `slice` virtual class has been removed and the implementation for `hits` for the `subcorpus` class is now real worker, also invoked for `hits()` for `partition`. This removes a bug that occurred when applying `hits` on `subcorpus` objects, which resulted in a count for the whole corpus.
+
 
 
 polmineR 0.8.5

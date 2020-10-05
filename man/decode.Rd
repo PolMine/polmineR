@@ -183,9 +183,7 @@ if (requireNamespace("NLP")){
  
 # decode vector of token ids
 y <- decode(0:20, corpus = "GERMAPARLMINI", p_attributes = "word")
-hits_dt <- hits("GERMAPARLMINI", query = "Liebe", progress = FALSE) \%>\%
-  as.data.table()
-dt <- data.table::data.table(cpos = hits_dt[["cpos_left"]])
+dt <- data.table::data.table(cpos = cpos("GERMAPARLMINI", query = "Liebe")[,1])
 decode(dt, corpus = "GERMAPARLMINI", p_attributes = c("word", "pos"))
 y <- dt[, .N, by = c("word", "pos")]
 }

@@ -345,9 +345,7 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
 #'   that columns are added to the \code{data.table} in an in-place operation to
 #'   handle memory parsimoniously.
 #' @examples 
-#' hits_dt <- hits("GERMAPARLMINI", query = "Liebe", progress = FALSE) %>%
-#'   as.data.table()
-#' dt <- data.table::data.table(cpos = hits_dt[["cpos_left"]])
+#' dt <- data.table::data.table(cpos = cpos("GERMAPARLMINI", query = "Liebe")[,1])
 #' decode(dt, corpus = "GERMAPARLMINI", p_attributes = c("word", "pos"))
 #' y <- dt[, .N, by = c("word", "pos")]
 #' @rdname decode

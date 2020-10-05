@@ -122,6 +122,7 @@ Most commonly, a \code{subcorpus} is derived from a \code{corpus} or
 Other classes to manage corpora: 
 \code{\link{corpus-class}},
 \code{\link{phrases}},
+\code{\link{ranges-class}},
 \code{\link{regions}}
 }
 \concept{classes to manage corpora}

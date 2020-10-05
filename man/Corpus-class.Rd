@@ -147,6 +147,7 @@ Methods to extract basic information from a \code{corpus} object are
 
 Other classes to manage corpora: 
 \code{\link{phrases}},
+\code{\link{ranges-class}},
 \code{\link{regions}},
 \code{\link{subcorpus}}
 }

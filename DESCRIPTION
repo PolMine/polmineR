@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.5.9004
-Date: 2020-10-02
+Version: 0.8.5.9005
+Date: 2020-10-05
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb")
@@ -99,6 +99,7 @@ Collate:
     'opencpu.R'
     'phrases.R'
     'polmineR-defunct.R'
+    'ranges.R'
     'regions.R'
     'read.R'
     'registry.R'

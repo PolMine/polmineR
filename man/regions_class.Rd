@@ -65,6 +65,7 @@ regions_dt <- as.data.table(
 Other classes to manage corpora: 
 \code{\link{corpus-class}},
 \code{\link{phrases}},
+\code{\link{ranges-class}},
 \code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}

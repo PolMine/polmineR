@@ -109,7 +109,8 @@ hits(.Object, ...)
 \S4method{hits}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
-\item{.Object}{A length-one \code{character} vector with a corpus ID, a \code{partition} or \code{partition_bundle} object}
+\item{.Object}{A length-one \code{character} vector with a corpus ID, a
+\code{partition} or \code{partition_bundle} object}
 
 \item{...}{Further arguments (used for backwards compatibility).}
 

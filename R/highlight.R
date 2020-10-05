@@ -34,10 +34,8 @@ NULL
 #' if (interactive()) htmltools::html_print(Y)
 #' 
 #' # highlight matches for a CQP query
-#' H2 <- highlight(
-#'   H,
-#'   highlight = list(yellow = cpos(hits(P, query = '"prod.*"', cqp = TRUE)))
-#' )
+#' regions <- cpos(P, query = '"prod.*"', cqp = TRUE)
+#' H2 <- highlight(H, highlight = list(yellow = regions))
 #' 
 #' # the method can be used in pipe
 #' P %>% html() %>% highlight(list(lightgreen = "1986")) -> H
