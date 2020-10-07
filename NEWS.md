@@ -12,6 +12,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object. In combination with `as.data.table()`, it replaces former functionality of `hits()` without argument `s_attribute`.
 -  The output of the `hits()` method is altered, making it much more consistent than previously: The method will consistently return a `hits` object. 
 - The method `hits()` has a new argument `fill` that will report zeros for combinations of s-attributes with no matches for a query.
+- The argument `subset` for the `subset` method for `remote_corpus` objects can now be a call (#162), this is a basis for passing vectors to OpenCPU server.
 
 ## Minor Improvements
 
