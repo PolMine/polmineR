@@ -13,7 +13,7 @@ test_that(
     
     p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     y <- hits(p, query = "oil")
-    expect_equal(nrow(ranges(sc, query = "oil")@cpos), nrow(y))
+    expect_equal(nrow(ranges(p, query = "oil")@cpos), as.data.table(y)[["count"]])
     
     y <- hits("REUTERS", query = c(a = "oil", b = "barrel"))
     rng <- ranges("REUTERS", query = c(a = "oil", b = "barrel"))

@@ -4,7 +4,6 @@
 \alias{hits}
 \alias{hits,corpus-method}
 \alias{hits,character-method}
-\alias{hits,slice-method}
 \alias{hits,subcorpus-method}
 \alias{hits,partition-method}
 \alias{hits,partition_bundle-method}
@@ -20,7 +19,7 @@ hits(.Object, ...)
   query,
   cqp = FALSE,
   check = TRUE,
-  s_attribute = NULL,
+  s_attribute,
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
@@ -35,7 +34,7 @@ hits(.Object, ...)
   query,
   cqp = FALSE,
   check = TRUE,
-  s_attribute = NULL,
+  s_attribute,
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
@@ -45,25 +44,12 @@ hits(.Object, ...)
   ...
 )
 
-\S4method{hits}{slice}(
-  .Object,
-  query,
-  cqp = FALSE,
-  s_attribute = NULL,
-  p_attribute = "word",
-  size = FALSE,
-  freq = FALSE,
-  mc = FALSE,
-  progress = FALSE,
-  verbose = TRUE,
-  ...
-)
-
 \S4method{hits}{subcorpus}(
   .Object,
   query,
   cqp = FALSE,
-  s_attribute = NULL,
+  check = TRUE,
+  s_attribute,
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
@@ -77,7 +63,8 @@ hits(.Object, ...)
   .Object,
   query,
   cqp = FALSE,
-  s_attribute = NULL,
+  check = TRUE,
+  s_attribute,
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
@@ -93,7 +80,7 @@ hits(.Object, ...)
   cqp = FALSE,
   check = TRUE,
   p_attribute = getOption("polmineR.p_attribute"),
-  s_attribute = NULL,
+  s_attribute,
   size = TRUE,
   freq = FALSE,
   mc = getOption("polmineR.mc"),
@@ -124,7 +111,7 @@ query), or a function to check whether \code{query} is a CQP query or not.}
 using \code{check_cqp_query}.}
 
 \item{s_attribute}{A \code{character} vector of s-attributes that will be
-reported as metadata.}
+used to breakdown counts for matches for query/queries.}
 
 \item{p_attribute}{A \code{character} vector stating a p-attribute.}
 
@@ -164,7 +151,6 @@ y <- hits("REUTERS", query = "oil", s_attribute = "places", freq = TRUE)
 
 # get hits for partition
 p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
-y <- hits(p, query = "oil")
 y <- hits(p, query = "oil", s_attribute = "id")
 
 # get hits for subcorpus

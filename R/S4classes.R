@@ -1194,17 +1194,6 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
 })
 
 
-setAs(from = "subcorpus", to = "corpus", def = function(from){
-  new(
-    "corpus",
-    corpus = from@corpus,
-    data_dir = from@data_dir,
-    type = from@type,
-    encoding = from@encoding,
-    name = character(),
-    size = size(from@corpus)
-  )
-})
 
 
 

@@ -91,14 +91,12 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' format(e)
 #' 
 #' # using pipe operator may be convenient
-#' if (require(magrittr)){
 #' cooccurrences("REUTERS", query = "oil") %>%
 #'   subset(!is.na(ll)) %>%
 #'   subset(!word %in% tm::stopwords("en")) %>%
 #'   subset(count_coi >= 5) %>%
 #'   subset(ll >= 10.83) %>%
 #'   format()
-#' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences

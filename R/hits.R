@@ -19,7 +19,7 @@ NULL
 #' @param check A \code{logical} value, whether to check validity of CQP query
 #'   using \code{check_cqp_query}.
 #' @param s_attribute A \code{character} vector of s-attributes that will be
-#'   reported as metadata.
+#'   used to breakdown counts for matches for query/queries.
 #' @param p_attribute A \code{character} vector stating a p-attribute.
 #' @param size A \code{logical} value, whether to report the size of subcorpus.
 #' @param freq A \code{logcial} value, whether to report relative frequencies.
@@ -48,73 +48,56 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' 
 #' # get hits for partition
 #' p <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
-#' y <- hits(p, query = "oil")
 #' y <- hits(p, query = "oil", s_attribute = "id")
 #' 
 #' # get hits for subcorpus
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
-setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
+setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
   
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
+  if (missing(s_attribute)){
+    dt <- count(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, freq = freq, mc = mc, verbose = verbose, progress = progress, ...)
+    retval <- new("hits", stat = dt, corpus = .Object@corpus, query = query)
+    return(retval)
+  }
   if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
-  .fn <- function(q){
-    cpos(.Object = .Object, query = q, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
+  rngs <- ranges(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress)
+  DT <- as.data.table(rngs)
+  
+  
+  for (i in seq_along(s_attribute)){
+    strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
+    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
+    DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
   }
-  cpos_list <- if (progress) pblapply(as.list(query), .fn, cl = mc) else mclapply(as.list(query), .fn, mc.cores = mc)
-
-  if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
+  TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
+  setnames(TF, old = "N", new = "count")
   
-  for (i in length(query):1L){
-    if (is.null(cpos_list[[i]])){
-      warning("no hits for query: ", query[i])
-      cpos_list[[i]] <- NULL
+  if (freq) size <- TRUE
+  if (size){
+    .message("getting sizes", verbose = verbose)
+    SIZE <- size(.Object, s_attribute = s_attribute)
+    setkeyv(TF, cols = s_attribute)
+    TF <- TF[SIZE]
+    TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
+    if (freq){
+      .message("frequencies", verbose = verbose)
+      TF[, "freq" := TF[["count"]] / TF[["size"]]]
     }
-  }
-  
-  DT <- data.table(
-    cpos_left = unlist(lapply(cpos_list, function(x) x[,1])),
-    cpos_right = unlist(lapply(cpos_list, function(x) x[,2])),
-    query = unlist(lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]]))))
-  )
-  
-  if (!is.null(s_attribute)){
-    for (i in seq_along(s_attribute)){
-      strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
-      s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
-      DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
-    }
-    TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
-    setnames(TF, old = "N", new = "count")
-    
-    if (freq) size <- TRUE
-    if (size){
-      .message("getting sizes", verbose = verbose)
-      SIZE <- size(.Object, s_attribute = s_attribute)
-      setkeyv(TF, cols = s_attribute)
-      TF <- TF[SIZE]
-      TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
-      # TF <- TF[is.na(TF[["query"]]) == FALSE]
-      if (freq){
-        .message("frequencies", verbose = verbose)
-        TF[, "freq" := TF[["count"]] / TF[["size"]]]
-      }
-    }
-  } else {
-    TF <- DT
   }
   new("hits", stat = TF, corpus = .Object@corpus, query = query)
 })
 
 
 #' @rdname hits
-setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
+setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
   hits(
     .Object = corpus(.Object),
     query = query, cqp = cqp, check = check,
@@ -127,46 +110,49 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
 
 
 #' @rdname hits
-setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  stopifnot(all(s_attribute %in% s_attributes(.Object@corpus)))
+  
   if (freq) size <- TRUE # not possible to calculate frequencies without sizes
   
-  DT <- hits(.Object@corpus, query = query, cqp = cqp, s_attribute = NULL, p_attribute = p_attribute, mc = mc, progress = progress)@stat
-  DT[, "struc" := cl_cpos2struc(corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs, cpos = DT[["cpos_left"]], registry = registry()), with = TRUE]
-  DT <- subset(DT, DT[["struc"]] %in% .Object@strucs)
+  if (missing(s_attribute)){
+    dt <- count(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, freq = freq, mc = mc, verbose = verbose, progress = progress, ...)
+    retval <- new("hits", stat = dt, corpus = .Object@corpus, query = query)
+    return(retval)
+  }
+
+  rngs <- ranges(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress)
+  DT <- as.data.table(rngs)
   
-  if (!is.null(s_attribute)){
-    for (i in 1L:length(s_attribute)){
-      s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
-      s_attr_values <- as.nativeEnc(s_attr_values, from = .Object@encoding)
-      DT[, eval(s_attribute[i]) := s_attr_values]
-    }
-    TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
-    setnames(TF, old = "N", new = "count")
-    if (size){
-      SIZE <- size(.Object, s_attribute = s_attribute)
-      setkeyv(TF, cols = s_attribute)
-      TF <- TF[SIZE]
-      TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0L, x))]
-      if (freq) TF[, "freq" := count / size]
-    }
-  } else {
-    TF <- DT
+  stopifnot(all(s_attribute %in% s_attributes(.Object@corpus)))
+  for (i in 1L:length(s_attribute)){
+    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
+    s_attr_values <- as.nativeEnc(s_attr_values, from = .Object@encoding)
+    DT[, eval(s_attribute[i]) := s_attr_values]
+  }
+  TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
+  setnames(TF, old = "N", new = "count")
+  if (size){
+    SIZE <- size(.Object, s_attribute = s_attribute)
+    setkeyv(TF, cols = s_attribute)
+    TF <- TF[SIZE]
+    TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0L, x))]
+    if (freq) TF[, "freq" := count / size]
   }
   new("hits", stat = TF, corpus = .Object@corpus, query = query)
 })
 
 
 #' @rdname hits
-setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute = NULL, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+setMethod("hits", "partition", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
   hits(
     .Object = as(.Object, "subcorpus"),
     query = query,
     cqp = cqp,
+    check = check,
     s_attribute = s_attribute,
     p_attribute = p_attribute,
     size = size, 
@@ -179,7 +165,7 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, s_attribute
 
 #' @rdname hits
 setMethod("hits", "partition_bundle", function(
-  .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), s_attribute = NULL, size = TRUE, freq = FALSE,
+  .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), s_attribute, size = TRUE, freq = FALSE,
   mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
   
@@ -213,6 +199,7 @@ setMethod("hits", "partition_bundle", function(
   count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
   dt <- struc_dt[count_dt, on = "struc"] # merge
   nas <- which(is.na(dt[["partition"]]) == TRUE)
+  if (missing(s_attribute)) s_attribute <- NULL
   for (s_attr in s_attribute){
     values <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = dt[["struc"]], registry = registry())
     dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]

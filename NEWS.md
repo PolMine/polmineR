@@ -9,7 +9,9 @@ by using the reference semantic of the data.table package. If many columns are a
 - The `html()` method is implemented for `remote_subcorpus` objects.
 - The `hits()` method is implemented for `remote_corpus` and `remote_subcorpus` class (#160).
 - A new S4 class `ranges` is introduced to manage ranges of corpus positions for query matches. This is a preparatory step to remove an inconsistency from the `hits` class that mixed two very usages (getting ranges of corpus positions for matches and getting counts).
-- A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object.
+- A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object. In combination with `as.data.table()`, it replaces former functionality of `hits()` without argument `s_attribute`.
+-  The output of the `hits()` method is altered, making it much more consistent than previously: The method will consistently return a `hits` object. 
+- 
 
 ## Minor Improvements
 
@@ -20,6 +22,9 @@ by using the reference semantic of the data.table package. If many columns are a
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
 - The `hits()` method for the `slice` virtual class has been removed and the implementation for `hits` for the `subcorpus` class is now real worker, also invoked for `hits()` for `partition`. This removes a bug that occurred when applying `hits` on `subcorpus` objects, which resulted in a count for the whole corpus.
 
+# Documentation 
+
+- Checks in examples whether magrittr is available have been dropped, as magrittr has become a dependency and the pipe operator is available by default.
 
 
 polmineR 0.8.5

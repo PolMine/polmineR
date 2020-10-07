@@ -270,24 +270,11 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (length(corpus) > 1L) stop("The objects in the bundle must be derived from the same corpus.")
     
     if (verbose) message("... creating data.table with corpus positions")
-    # cpos_dt <- data.table(do.call(rbind, lapply(.Object@objects, slot, name = "cpos")))
-    # cpos_dt[, "name" := do.call(
-    #   c,
-    #   lapply(
-    #     seq_along(.Object@objects),
-    #     function(i) rep(x = names(.Object@objects)[[i]], times = nrow(.Object@objects[[i]]@cpos))
-    #   )
-    #   )]
-    # DT <- cpos_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "name"] # slow
-    # 
     DT <- data.table(
       cpos = cpos(do.call(rbind, lapply(.Object@objects, slot, "cpos"))),
       name_id = do.call(c, Map(rep, 1:length(.Object@objects), unname(sapply(.Object@objects, slot, "size"))))
     )
-    # 
-    # setnames(DT, old = "V1", new = "cpos")
-    # rm(cpos_dt)
-    
+
     if (is.null(phrases)){
       if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
       DT[, "id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]

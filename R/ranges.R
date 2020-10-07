@@ -46,7 +46,17 @@ setMethod("ranges", "character", function(.Object, query, cqp = FALSE, check = T
 
 #' @rdname ranges
 setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = TRUE, p_attribute = "word", verbose = TRUE, mc = 1L, progress = FALSE){
-  rng <- ranges(.Object = as(.Object, "corpus"), query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, mc = mc, progress = progress)
+  x <- new(
+    "corpus",
+    corpus = .Object@corpus,
+    data_dir = .Object@data_dir,
+    type = .Object@type,
+    encoding = .Object@encoding,
+    name = character(),
+    size = size(.Object@corpus)
+  )
+  
+  rng <- ranges(.Object = x, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, mc = mc, progress = progress)
   strucs_matches <- cl_cpos2struc(
     corpus = .Object@corpus,
     s_attribute = .Object@s_attribute_strucs,
