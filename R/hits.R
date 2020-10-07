@@ -12,6 +12,7 @@ NULL
 #' If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will deliberately
 #' include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
 #' count is 0).
+#' 
 #' @param query A \code{character} vector (optionally named, see details) with
 #'   one or more queries.
 #' @param cqp Either a \code{logical} value (\code{TRUE} if query is a CQP
@@ -23,12 +24,17 @@ NULL
 #' @param p_attribute A \code{character} vector stating a p-attribute.
 #' @param size A \code{logical} value, whether to report the size of subcorpus.
 #' @param freq A \code{logcial} value, whether to report relative frequencies.
+#' @param fill A \code{logical} value, whethet to report counts (optionally
+#'   frequencies) for combinations of s-attributes where not matchers occurr.
 #' @param .Object A length-one \code{character} vector with a corpus ID, a
 #'   \code{partition} or \code{partition_bundle} object
 #' @param mc A \code{logical} value, whether to use multicore.
 #' @param progress A \code{logical} value, whether to show progress bar.
 #' @param verbose A \code{logical} value, whether to output messages.
 #' @param ... Further arguments (used for backwards compatibility).
+#' @return A \code{hits} class object.
+#' @seealso See the documentation of the \code{hits} class
+#'   (\code{\link{hits-class}}) for details.
 #' @rdname hits
 #' @exportMethod hits
 setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
@@ -54,7 +60,7 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
-setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
+setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, fill = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
   
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   
@@ -66,12 +72,12 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     retval <- new("hits", stat = dt, corpus = .Object@corpus, query = query)
     return(retval)
   }
+  
   if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
   rngs <- ranges(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress)
   DT <- as.data.table(rngs)
-  
-  
+
   for (i in seq_along(s_attribute)){
     strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
     s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
@@ -80,12 +86,24 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
   setnames(TF, old = "N", new = "count")
   
+  if (fill){
+    # Using s_attributes() requires decoding s-attributes and is potentially not the fastest solution,
+    # but it ensures that only combinations that do occurr are reported
+    s_attr_dt <- s_attributes(.Object = .Object, s_attribute = s_attribute, unique = TRUE)
+    .fn <- function(.SD){
+      dt <- .SD[s_attr_dt, on = s_attribute]
+      dt[, "count" := ifelse(is.na(dt[["count"]]), 0L, dt[["count"]])]
+    }
+    TF <- TF[, .fn(.SD), by = "query", .SDcols = c(s_attribute, "count")]
+  }
+  
   if (freq) size <- TRUE
   if (size){
     .message("getting sizes", verbose = verbose)
     SIZE <- size(.Object, s_attribute = s_attribute)
     setkeyv(TF, cols = s_attribute)
     TF <- TF[SIZE]
+    if (isFALSE(fill)) TF <- TF[!is.na(TF[["query"]])]
     TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
     if (freq){
       .message("frequencies", verbose = verbose)
@@ -110,44 +128,13 @@ setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRU
 
 
 #' @rdname hits
-setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
-  
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  
-  
-  if (freq) size <- TRUE # not possible to calculate frequencies without sizes
-  
-  if (missing(s_attribute)){
-    dt <- count(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, freq = freq, mc = mc, verbose = verbose, progress = progress, ...)
-    retval <- new("hits", stat = dt, corpus = .Object@corpus, query = query)
-    return(retval)
-  }
-
-  rngs <- ranges(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress)
-  DT <- as.data.table(rngs)
-  
-  stopifnot(all(s_attribute %in% s_attributes(.Object@corpus)))
-  for (i in 1L:length(s_attribute)){
-    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry()), registry = registry())
-    s_attr_values <- as.nativeEnc(s_attr_values, from = .Object@encoding)
-    DT[, eval(s_attribute[i]) := s_attr_values]
-  }
-  TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
-  setnames(TF, old = "N", new = "count")
-  if (size){
-    SIZE <- size(.Object, s_attribute = s_attribute)
-    setkeyv(TF, cols = s_attribute)
-    TF <- TF[SIZE]
-    TF[, count := sapply(TF[["count"]], function(x) ifelse(is.na(x), 0L, x))]
-    if (freq) TF[, "freq" := count / size]
-  }
-  new("hits", stat = TF, corpus = .Object@corpus, query = query)
+setMethod("hits", "subcorpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, fill = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+  callNextMethod()
 })
 
 
 #' @rdname hits
-setMethod("hits", "partition", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
+setMethod("hits", "partition", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, fill = FALSE, mc = FALSE, progress = FALSE, verbose = TRUE, ...){
   hits(
     .Object = as(.Object, "subcorpus"),
     query = query,
@@ -156,7 +143,8 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, check = TRU
     s_attribute = s_attribute,
     p_attribute = p_attribute,
     size = size, 
-    freq = freq, 
+    freq = freq,
+    fill = fill,
     mc = mc, 
     progress = progress,
     verbose

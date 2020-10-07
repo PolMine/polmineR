@@ -23,6 +23,7 @@ hits(.Object, ...)
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
+  fill = FALSE,
   mc = 1L,
   verbose = TRUE,
   progress = FALSE,
@@ -53,6 +54,7 @@ hits(.Object, ...)
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
+  fill = FALSE,
   mc = FALSE,
   progress = FALSE,
   verbose = TRUE,
@@ -68,6 +70,7 @@ hits(.Object, ...)
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
+  fill = FALSE,
   mc = FALSE,
   progress = FALSE,
   verbose = TRUE,
@@ -119,11 +122,17 @@ used to breakdown counts for matches for query/queries.}
 
 \item{freq}{A \code{logcial} value, whether to report relative frequencies.}
 
+\item{fill}{A \code{logical} value, whethet to report counts (optionally
+frequencies) for combinations of s-attributes where not matchers occurr.}
+
 \item{mc}{A \code{logical} value, whether to use multicore.}
 
 \item{verbose}{A \code{logical} value, whether to output messages.}
 
 \item{progress}{A \code{logical} value, whether to show progress bar.}
+}
+\value{
+A \code{hits} class object.
 }
 \description{
 Get hits for queries, optionally with s-attribute values.
@@ -157,4 +166,8 @@ y <- hits(p, query = "oil", s_attribute = "id")
 y <- corpus("REUTERS") \%>\%
   subset(grep("saudi-arabia", places)) \%>\%
   hits(query = "oil")
+}
+\seealso{
+See the documentation of the \code{hits} class
+  (\code{\link{hits-class}}) for details.
 }

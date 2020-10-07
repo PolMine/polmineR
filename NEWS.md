@@ -11,7 +11,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - A new S4 class `ranges` is introduced to manage ranges of corpus positions for query matches. This is a preparatory step to remove an inconsistency from the `hits` class that mixed two very usages (getting ranges of corpus positions for matches and getting counts).
 - A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object. In combination with `as.data.table()`, it replaces former functionality of `hits()` without argument `s_attribute`.
 -  The output of the `hits()` method is altered, making it much more consistent than previously: The method will consistently return a `hits` object. 
-- 
+- The method `hits()` has a new argument `fill` that will report zeros for combinations of s-attributes with no matches for a query.
 
 ## Minor Improvements
 
@@ -25,6 +25,7 @@ by using the reference semantic of the data.table package. If many columns are a
 # Documentation 
 
 - Checks in examples whether magrittr is available have been dropped, as magrittr has become a dependency and the pipe operator is available by default.
+- The documentation of the `hits` class now describes the `data.table` in the `stat` slot of the class in detail.
 
 
 polmineR 0.8.5

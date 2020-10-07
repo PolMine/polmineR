@@ -1019,11 +1019,23 @@ setClass("features_bundle", contains = "bundle")
 setClass("ngrams", representation(n = "integer"), contains = "count")
 
 
-#' Hits class.
-#' @slot stat A \code{"data.table"} with at least three columns: Columns
-#'   \code{cpos_left} and \code{cpos_right} indicate left and right corpus
-#'   positions of the regions that yielded hits for a query or queries. Column
-#'   \code{query} specifies the (CQP) query that resulted in a hit.
+#' S4 class to represent hits for queries.
+#' 
+#' @slot stat A \code{data.table} with the following columns: 
+#' \describe{
+#'   \item{query}{The query (optionally using CQP syntax) that evoked
+#'   a hit.}
+#'   \item{count}{Number of matches in corpus/subcorpus.}
+#'   \item{freq}{Relative frequency of matches in corpus/subcorpus (optional,
+#'   presence depends on usage of argument \code{freq} of the \code{hits} method).}
+#'   \item{size}{Total number of tokens in corpus/subcorpus (optional, presence
+#'   depends on usage of argument \code{size} of the \code{hits} method).}
+#' }
+#' If argument \code{s_attribute} has been used in the call of the \code{hits}
+#' method, the \code{data.table} will include additional columns with the
+#' s-attributes. The values in the columns will be the values these s-attributes
+#' assume. Columns \code{count}, \code{freq} and \code{size} will be based on
+#' subcorpora defined by (combinations of) s-attributes.
 #' @slot corpus A length-one \code{"character"} vector, ID of the corpus with
 #'   hits for query or queries.
 #' @slot query Object of class \code{"character"}, query or queries for 
