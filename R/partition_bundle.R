@@ -77,7 +77,8 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
 #' @rdname subcorpus_bundle
 setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
   y <- callNextMethod()
-  y@type <- get_type(y@corpus)
+  corpus_type <- get_type(y@corpus)
+  y@type <- if (is.null(corpus_type)) character() else corpus_type
   y@data_dir <- registry_get_home(corpus = y@corpus, registry = registry())
   y
 })

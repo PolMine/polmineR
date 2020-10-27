@@ -97,7 +97,7 @@
 
 }
 
-.onDetach <- function(libpath){
+.onUnload <- function(libpath){
   
   # Assign value of system variable CORPUS_REGISTRY it had before loading polmineR
   Sys.setenv("CORPUS_REGISTRY" = getOption("polmineR.corpus_registry"))

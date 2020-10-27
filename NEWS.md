@@ -17,6 +17,7 @@ by using the reference semantic of the data.table package. If many columns are a
 ## Minor Improvements
 
 - If arguments `sAttribute` or `pAttribute` (instead of `s_attribute` and `p_attribute`) are still used with `dispersion()` method, a warning is issued declaring that the argument is deprecated.
+- Examples in packages that depend on polmineR would have faced the issue that loading/re-loading the package in several examples would not be posssible as the mechanism of cleaning up between examples would trigger a removal of polmineR's temporary directories but not the re-creation. Removing temporary files is now moved from polmineR's `.onDetach()` to `.onUnload()` (#164). 
 
 ## Bug fixes
 

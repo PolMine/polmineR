@@ -1,8 +1,6 @@
 ## General remarks
 
-This is the second submission of polmineR v0.8.5. If fixes a URL redirect detected on the Debian check machine. 
-
-Compared to polmineR v0.8.4, this release is a maintenance release that includes a few bug fixes.
+Actions taken in .onDetach() were moved .onUnload() so that actions performed when loading the package (creating temporary directories) is mirrored by the corresponding actions when unloading the package.
 
 
 ## Test environments
