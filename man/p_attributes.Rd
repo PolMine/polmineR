@@ -6,6 +6,8 @@
 \alias{p_attributes,corpus-method}
 \alias{p_attributes,slice-method}
 \alias{p_attributes,partition_bundle-method}
+\alias{p_attributes,remote_corpus-method}
+\alias{p_attributes,remote_partition-method}
 \title{Get p-attributes.}
 \usage{
 p_attributes(.Object, ...)
@@ -17,6 +19,10 @@ p_attributes(.Object, ...)
 \S4method{p_attributes}{slice}(.Object, p_attribute = NULL, decode = TRUE)
 
 \S4method{p_attributes}{partition_bundle}(.Object, p_attribute = NULL, decode = TRUE)
+
+\S4method{p_attributes}{remote_corpus}(.Object, ...)
+
+\S4method{p_attributes}{remote_partition}(.Object, ...)
 }
 \arguments{
 \item{.Object}{A length-one \code{character} vector, or a \code{partition}

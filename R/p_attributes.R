@@ -105,3 +105,16 @@ setMethod("p_attributes", "subcorpus", function(.Object, p_attribute = NULL, dec
 
 #' @rdname context-class
 setMethod("p_attributes", "context", function(.Object) .Object@p_attribute)
+
+
+#' @rdname p_attributes
+setMethod("p_attributes", "remote_corpus", function(.Object, ...){
+  ocpu_exec(fn = "p_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+})
+
+
+#' @rdname p_attributes
+setMethod("p_attributes", "remote_partition", function(.Object, ...){
+  ocpu_exec(fn = "p_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
+})
+
