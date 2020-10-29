@@ -32,13 +32,13 @@ setMethod("show", "partition", function(object){
       function(x) paste(x, "=", paste(object@s_attributes[[x]], collapse = "/"))
     ))
     message(sprintf("%-20s", "s-attributes:"), s[1])
-    if (length(s) > 1) {for (i in length(s)) message(sprintf("%-20s"), s[i]) }
+    if (length(s) >= 2L) for (i in 2L:length(s)) message(sprintf("%-20s", ""), s[i], appendLF = TRUE)
   } 
-  message(sprintf("%-21s", "cpos:"), appendLF = FALSE)
+  message(sprintf("%-20s", "cpos:"), appendLF = FALSE)
   if (nrow(object@cpos) == 0L) message("not available") else message(nrow(object@cpos), " pairs of corpus positions")
-  message(sprintf("%-21s", "size:"), appendLF = FALSE)
+  message(sprintf("%-20s", "size:"), appendLF = FALSE)
   if (is.null(object@size)) message("not available") else message(object@size, " tokens")
-  message(sprintf("%-21s", "count:"), appendLF = FALSE)
+  message(sprintf("%-20s", "count:"), appendLF = FALSE)
   if (length(object@p_attribute) == 0L) message("not available") else message("available for ", object@p_attribute)
 })
 

@@ -13,6 +13,7 @@ by using the reference semantic of the data.table package. If many columns are a
 -  The output of the `hits()` method is altered, making it much more consistent than previously: The method will consistently return a `hits` object. 
 - The method `hits()` has a new argument `fill` that will report zeros for combinations of s-attributes with no matches for a query.
 - The argument `subset` for the `subset` method for `remote_corpus` objects can now be a call (#162), this is a basis for passing vectors to OpenCPU server.
+- `p_attributes()` implemented for `remote_corpus` and `remote_partition`.
 
 ## Minor Improvements
 
@@ -23,6 +24,7 @@ by using the reference semantic of the data.table package. If many columns are a
 
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
 - The `hits()` method for the `slice` virtual class has been removed and the implementation for `hits` for the `subcorpus` class is now real worker, also invoked for `hits()` for `partition`. This removes a bug that occurred when applying `hits` on `subcorpus` objects, which resulted in a count for the whole corpus.
+- Shortcoming of the `show()`-method for `partition` objects resvolved when more than one s-attribute has been used to define `partition` (#170).
 
 # Documentation 
 
