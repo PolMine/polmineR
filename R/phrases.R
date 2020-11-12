@@ -26,20 +26,30 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #' 
 #' phr <- as.character(reuters_phrases, p_attribute = "word")
 #' 
-setMethod("as.phrases", "ngrams", function(.Object, ...){
-  cols <- paste(.Object@p_attribute, 1L:.Object@n, sep = "_")
-  args <- c(
-    list(fmt = paste(rep('"%s"', times = .Object@n), collapse = " ")),
-    as.list(.Object@stat[, cols, with = FALSE])
+setMethod("as.phrases", "ngrams", function(.Object){
+  # First, prepare data.table with token id representation of phrases to look up
+  li <- lapply(
+    paste(.Object@p_attribute, 1L:.Object@n, sep = "_"),
+    function(colname) cl_str2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, str = .Object@stat[[colname]])
   )
-  queries <- sprintf("%s;", do.call(sprintf, args))
-  query_check_results <- check_cqp_query(queries)
-  if (isFALSE(all(query_check_results))){
-    queries <- queries[query_check_results]
-    warning("Queries dropped that are not valid CQP queries:", table(query_check_results)[["FALSE"]])
+  id_dt <- as.data.table(li)
+  
+  # Expand first token to corpus positions of initial token
+  cpos_dt <- data.table(unique(unlist(li)))[, list(cpos = RcppCWB::cl_id2cpos(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
+  y <- cpos_dt[id_dt, on = "V1"]  
+  
+  # Get id for 2nd, 3rd ... nth token after start corpus position and limit table to those matching the id
+  # at the position
+  for (i in 2L:.Object@n){
+    nextid <- RcppCWB::cl_cpos2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, cpos = (y[["cpos"]] + i - 1L))
+    y <- y[y[[paste("V", i, sep = "")]] == nextid]
   }
-  regions_matrix <- cpos(.Object@corpus, query = queries,  cqp = TRUE, check = FALSE, ...)
-  as.phrases(regions_matrix, corpus = .Object@corpus, enc = .Object@encoding)
+  
+  as.phrases(
+    matrix(data = c(y[["cpos"]], (y[["cpos"]] + .Object@n - 1L)), ncol = 2), 
+    corpus = .Object@corpus,
+    enc = .Object@encoding
+  )
 })
 
 
