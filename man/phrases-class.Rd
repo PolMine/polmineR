@@ -11,7 +11,7 @@
 \alias{concatenate_phrases}
 \title{Manage and use phrases}
 \usage{
-\S4method{as.phrases}{ngrams}(.Object, ...)
+\S4method{as.phrases}{ngrams}(.Object)
 
 \S4method{as.phrases}{matrix}(.Object, corpus, enc = encoding(corpus))
 
@@ -21,8 +21,6 @@ concatenate_phrases(dt, phrases, col)
 }
 \arguments{
 \item{.Object}{Input object, either a \code{ngrams} or a \code{matrix} object.}
-
-\item{...}{Arguments passed into internal call of \code{cpos} method.}
 
 \item{corpus}{A length-one \code{character} vector, the corpus ID of the corpus
 from which regions / the \code{data.table} representing a decoded corpus is derived.}

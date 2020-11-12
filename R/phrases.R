@@ -7,7 +7,6 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #'   look up the matching corpus positions and return an \code{phrases}
 #'   object.
 #' @param .Object Input object, either a \code{ngrams} or a \code{matrix} object.
-#' @param ... Arguments passed into internal call of \code{cpos} method.
 #' @param enc Encoding of the corpus.
 #' @param x A \code{phrases} class object.
 #' @param p_attribute The positional attribute (p-attribute) to decode.
@@ -30,7 +29,10 @@ setMethod("as.phrases", "ngrams", function(.Object){
   # First, prepare data.table with token id representation of phrases to look up
   li <- lapply(
     paste(.Object@p_attribute, 1L:.Object@n, sep = "_"),
-    function(colname) cl_str2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, str = .Object@stat[[colname]])
+    function(colname){
+      tokens <- as.corpusEnc(x = .Object@stat[[colname]], corpusEnc = .Object@encoding)
+      cl_str2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, str = tokens)
+    }
   )
   id_dt <- as.data.table(li)
   
