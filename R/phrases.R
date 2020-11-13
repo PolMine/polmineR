@@ -36,11 +36,25 @@ setMethod("as.phrases", "ngrams", function(.Object){
   )
   id_dt <- as.data.table(li)
   
+  
+  # Anticipate whether memory will suffice
+  cnt_file <- file.path(
+    registry_get_home(.Object@corpus),
+    sprintf("%s.corpus.cnt", .Object@p_attribute)
+  )
+  cnt_file_size <- file.info(cnt_file)$size
+  cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = cnt_file_size, endian = "big")
+  if (sum(cnt[id_dt[[1]] + 1L]) > 2**31){
+    warning("Table to detect ngrams will exceed memory that can be allocated. The problem is likely ", 
+            "to result from very frequent tokens as first tokens of ngrams. More restrictive ",
+            "filtering of ngrams is recommended.")
+  }
+  
   # Expand first token to corpus positions of initial token
   cpos_dt <- data.table(unique(li[[1]]))[, list(cpos = RcppCWB::cl_id2cpos(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
   # allow.cartesian = TRUE appropriate because several different ngrams may start with same token (id)
   y <- cpos_dt[id_dt, on = "V1", allow.cartesian = TRUE]   
-  
+
   # Get id for 2nd, 3rd ... nth token after start corpus position and limit table to those matching the id
   # at the position
   for (i in 2L:.Object@n){
