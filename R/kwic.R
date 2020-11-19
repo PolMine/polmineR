@@ -202,7 +202,7 @@ NULL
 #' 
 #' @return If there are no matches, or if all (initial) matches are dropped due to the
 #' application of a positivelist, a \code{NULL} is returned.
-#' 
+#' @inheritParams context
 #' @param .Object A (length-one) \code{character} vector with the name of a CWB
 #'   corpus, a \code{partition} or \code{context} object.
 #' @param query A query, CQP-syntax can be used.
@@ -211,8 +211,6 @@ NULL
 #'   (defaults to auxiliary function \code{is.query}).
 #' @param check A \code{logical} value, whether to check validity of CQP query
 #'   using \code{check_cqp_query}.
-#' @param left Number of tokens to the left of query match.
-#' @param right Number of tokens to the right of query match.
 #' @param s_attributes Structural attributes (s-attributes) to include into
 #'   output table as metainformation.
 #' @param cpos Logical, if \code{TRUE}, a \code{data.table} with the corpus

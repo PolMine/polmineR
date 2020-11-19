@@ -42,8 +42,17 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param boundary If provided, a length-one character vector specifying a
 #'   s-attribute. It will be checked that corpus positions do not extend beyond
 #'   the region defined by the s-attribute.
-#' @param left Number of tokens to the left of the query match.
-#' @param right Number of tokens to the right of the query match.
+#' @param left A single \code{integer} value defining the number of tokens to
+#'   the left of the query match to include in the context. Advanced usage: (a)
+#'   If \code{left} is a length-one \code{character} vector stating an
+#'   s-attribute, the context will be expanded to the (left) boundary of the
+#'   region where the match occurs. (b) If \code{left} is a named length-one
+#'   \code{integer} vector, this value is the number regions of the structural
+#'   attribute referred to by the vector's name  to the left of the query match
+#'   that are included in the context.
+#' @param right A single \code{integer} value, a length-one \code{character}
+#'   vector or a named length-one \code{integer} value, with equivalent effects
+#'   to argument \code{left}.
 #' @param stoplist Exclude match for query if stopword(s) is/are are present in
 #'   context. See positivelist for further explanation.
 #' @param positivelist character vector or numeric/integer vector: include a query hit
@@ -195,8 +204,8 @@ setMethod("context", "subcorpus", function(
 setMethod("context", "matrix", function(.Object, corpus, left, right){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
-  if (is.numeric(left)) left <- as.integer(left)
-  if (is.numeric(right)) right <- as.integer(right)
+  if (class(left) == "numeric") left <- setNames(as.integer(left), nm = names(left))
+  if (class(right) == "numeric") right <- setNames(as.integer(right), nm = names(right))
 
   if (is.integer(left) && is.integer(right)){
 
@@ -223,32 +232,28 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       )
       
       cpos_dt <- rbind(dt_left, dt_right, dt_node)
-      setorderv(cpos_dt, cols = c("match_id", "cpos"))
-      
-
     } else {
-      # set, left, right, corpus, s_attribute
-      .Object <- cbind(.Object, match_id = 1L:nrow(.Object))
-      regions_dt <- data.table(.Object)
+      s_attr <- unique(c(names(left), names(right)))
+      if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
       .fn <- function(.SD){
-        stop("NOT Implemented at present")
-        # hit_struc <- cl_cpos2struc(corpus = corpus, s_attribute = names(left), cpos = set[1], registry = registry())
-        # maxStruc <- cl_attribute_size(corpus = corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
-        # get left min cpos
-        # leftStruc <- queryStruc - left
-        # leftStruc <- ifelse(leftStruc < 0, 0, leftStruc)
-        # leftCposMin <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = leftStruc, registry = registry())[1]
-        # cposLeft <- c(leftCposMin:(set[1]-1))
-        # get right max cpos
-        # rightStruc <- queryStruc + right
-        # rightStruc <- ifelse(rightStruc > maxStruc - 1, maxStruc, rightStruc)
-        # rightCposMax <- cl_struc2cpos(corpus = corpus, s_attribute = s_attribute, struc = rightStruc, registry = registry())[2]
-        # cposRight <- c((set[2] + 1):rightCposMax)
-        # handing it back
-        # list(left = cposLeft, node = c(set[1]:set[2]), right = cposRight)
+        left_cpos_min <- cl_struc2cpos(corpus = corpus, s_attribute = s_attr, struc = .SD[["struc_left"]], registry = registry())[1]
+        cpos_left <- left_cpos_min:(.SD[[1]] - 1L) # use colname
+        right_cpos_max <- cl_struc2cpos(corpus = corpus, s_attribute = s_attr, struc = .SD[["struc_right"]], registry = registry())[2]
+        cpos_right <- (.SD[[2]] + 1L):right_cpos_max # use colname!
+        list(
+          cpos = c(cpos_left, .SD[[1]]:.SD[[2]], cpos_right),
+          position = c(cpos_left - .SD[[1]], rep.int(0L, times = .SD[[2]] - .SD[[1]] + 1L), cpos_right - .SD[[2]])
+        )
       }
-      cpos_dt <- regions_dt[, .fn(.SD), by = c("match_id")]
-      setnames(cpos_dt, old = c("V1", "V2"), new = c("cpos", "position"))
+      dt <- data.table(.Object)[, "match_id" := 1L:nrow(.Object)]
+      dt[, "struc" := cl_cpos2struc(corpus = corpus, s_attribute = s_attr, cpos = .Object[,1L])]
+      struc_left <- dt[["struc"]] - left
+      dt[, "struc_left" := ifelse(struc_left < 0L, 0L, struc_left)]
+      struc_right <- dt[["struc"]] + right
+      struc_max <- cl_attribute_size(corpus = corpus, attribute = s_attr, attribute_type = "s", registry = registry())
+      dt[, "struc_right" := ifelse(struc_right > struc_max, struc_max, struc_right)]
+
+      cpos_dt <- dt[, .fn(.SD), by = c("match_id")]
     }
   } else if (is.character(left) && is.character(right)){
     .fn <- function(.SD){
@@ -261,19 +266,19 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
         to = cl_cpos2rbound(corpus = corpus, s_attribute = right, cpos = .SD[[2]][1], registry = registry())
       )
       list(
-        c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
-        c(
+        cpos = c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
+        position = c(
           seq.int(from = -length(cpos_left), to = -1L, by = 1L),
           rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
           seq.int(from = 1L, to = length(cpos_right), by = 1L)
         )
       )
     }
-    cpos_dt <- regions_dt[, .fn(.SD), by = c("match_id")]
-    setnames(cpos_dt, old = c("V1", "V2"), new = c("cpos", "position"))
-    
+    dt <- data.table(.Object)[, "match_id" := 1L:nrow(.Object)]
+    cpos_dt <- dt[, .fn(.SD), by = "match_id"]
   }
   
+  setorderv(cpos_dt, cols = c("match_id", "cpos"))
   cpos_dt_min <- cpos_dt[between(cpos_dt[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
 
   new(

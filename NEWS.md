@@ -26,6 +26,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
 - The `hits()` method for the `slice` virtual class has been removed and the implementation for `hits` for the `subcorpus` class is now real worker, also invoked for `hits()` for `partition`. This removes a bug that occurred when applying `hits` on `subcorpus` objects, which resulted in a count for the whole corpus.
 - Shortcoming of the `show()`-method for `partition` objects resvolved when more than one s-attribute has been used to define `partition` (#170).
+- Arguments `left` and `right` of the `context()`-method for `matrix` objects, the worker behind the `context()`, `kwic()` and `cooccurrences()` methods did not work as intended for `character` values specifying an s-attribute. Fixed - it is not possible to use these arguments (#173).
 
 # Documentation 
 

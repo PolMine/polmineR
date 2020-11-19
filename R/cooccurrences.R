@@ -38,6 +38,7 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 
 #' Get cooccurrence statistics.
 #' 
+#' @inheritParams context
 #' @param .Object A \code{partition} object, or a \code{character} vector with a CWB corpus.
 #' @param query A query, either a character vector to match a token, or a CQP query.
 #' @param cqp Defaults to \code{is.cqp}-function, or provide
@@ -48,8 +49,6 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param boundary If provided, it will be checked that the corpus positions of
 #'   windows do not extend beyond the left and right boundaries of the region 
 #'   defined by the s-attribute where the match occurs.
-#' @param left Number of tokens to the left of the query match.
-#' @param right Number of tokens to the right of the query match.
 #' @param stoplist Exclude a query hit from analysis if stopword(s) is/are in
 #'   context (relevant only if query is not \code{NULL}).
 #' @param positivelist Character vector or numeric vector: include a query hit

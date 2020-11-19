@@ -153,9 +153,18 @@ consumption.}
 query), or a function to check whether query is a CQP query or not
 (defaults to auxiliary function \code{is.query}).}
 
-\item{left}{Number of tokens to the left of query match.}
+\item{left}{A single \code{integer} value defining the number of tokens to
+the left of the query match to include in the context. Advanced usage: (a)
+If \code{left} is a length-one \code{character} vector stating an
+s-attribute, the context will be expanded to the (left) boundary of the
+region where the match occurs. (b) If \code{left} is a named length-one
+\code{integer} vector, this value is the number regions of the structural
+attribute referred to by the vector's name  to the left of the query match
+that are included in the context.}
 
-\item{right}{Number of tokens to the right of query match.}
+\item{right}{A single \code{integer} value, a length-one \code{character}
+vector or a named length-one \code{integer} value, with equivalent effects
+to argument \code{left}.}
 
 \item{p_attribute}{The p-attribute, defaults to 'word'.}
 
