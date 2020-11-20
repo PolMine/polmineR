@@ -101,7 +101,7 @@ transformations.
 \section{Slots}{
 
 \describe{
-\item{\code{corpus}}{The CWB corpus the objects in the \code{bundle} are based on, a length 1 
+\item{\code{corpus}}{The CWB corpus the xobjects in the \code{bundle} are based on, a length 1 
 \code{character} vector.}
 
 \item{\code{objects}}{An object of class \code{list}.}

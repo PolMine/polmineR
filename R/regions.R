@@ -1,6 +1,39 @@
 #' @include partition.R S4classes.R
 NULL
 
+#' @rdname regions_class
+#' @param s_attribute An s-attribute denoted by a length-one \code{character}
+#'   vector for which regions shall be derived.
+#' @exportMethod regions
+setGeneric("regions", function(x, s_attribute) standardGeneric("regions"))
+
+#' @rdname regions_class
+#' @exportMethod regions
+setMethod("regions", "corpus", function(x, s_attribute){
+  struc_size <- cl_attribute_size(
+    corpus = x@corpus,
+    attribute = s_attribute,
+    attribute_type = "s",
+    registry = registry()
+  )
+
+  new(
+    "regions",
+    corpus = x@corpus, # slot inherited from 'corpus' class
+    data_dir = x@data_dir, # slot inherited from 'corpus' class
+    type = x@type, # slot inherited from 'corpus' class
+    encoding = x@encoding, # slot inherited from 'corpus' class
+    name = x@name, # slot inherited from 'corpus' class
+    size = x@size, # slot inherited from 'corpus' class
+    cpos = get_region_matrix(
+      corpus = x@corpus,
+      s_attribute = s_attribute,
+      strucs = 0L:(struc_size - 1L),
+      registry = registry()
+    )
+  )
+})
+
 #' @details The \code{as.regions}-method coerces objects to a \code{regions}-object.
 #' @param ... Further arguments.
 #' @rdname regions_class

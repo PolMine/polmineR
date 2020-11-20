@@ -14,6 +14,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - The method `hits()` has a new argument `fill` that will report zeros for combinations of s-attributes with no matches for a query.
 - The argument `subset` for the `subset` method for `remote_corpus` objects can now be a call (#162), this is a basis for passing vectors to OpenCPU server.
 - `p_attributes()` implemented for `remote_corpus` and `remote_partition`.
+- A new `regions()` method (for `corpus` class objects to start with) returns a `regions` class object with a regions matrix (slot `cpos`) with regions for an s-attribute (#176).
 
 ## Minor Improvements
 

@@ -6,16 +6,24 @@
 \alias{CorpusOrSubcorpus-class}
 \alias{regions-class}
 \alias{CorpusOrSubcorpus}
+\alias{regions,corpus-method}
 \alias{as.regions}
 \alias{as.data.table.regions}
 \title{Regions of a CWB corpus.}
 \usage{
+regions(x, s_attribute)
+
+\S4method{regions}{corpus}(x, s_attribute)
+
 as.regions(x, ...)
 
 \method{as.data.table}{regions}(x, keep.rownames, values = NULL, ...)
 }
 \arguments{
 \item{x}{object of class \code{regions}}
+
+\item{s_attribute}{An s-attribute denoted by a length-one \code{character}
+vector for which regions shall be derived.}
 
 \item{...}{Further arguments.}
 
