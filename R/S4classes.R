@@ -11,7 +11,7 @@ NULL
 #' \code{context_bundle}, a similar set of standard methods is available to perform 
 #' transformations.
 #' 
-#' @slot corpus The CWB corpus the objects in the \code{bundle} are based on, a length 1 
+#' @slot corpus The CWB corpus the xobjects in the \code{bundle} are based on, a length 1 
 #' \code{character} vector.
 #' @slot objects An object of class \code{list}.
 #' @slot p_attribute Object of class \code{character}.
