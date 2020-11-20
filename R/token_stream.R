@@ -25,6 +25,10 @@ NULL
 #' @param decode A (length-one) \code{logical} value, whether to decode token
 #'   ids to character strings. Defaults to \code{TRUE}, if \code{FALSE}, an
 #'   integer vector with token ids is returned.
+#' @param split A \code{logical} value, whether to return a \code{character}
+#'   vector (when \code{split} is \code{FALSE}, default) or a \code{list} of
+#'   \code{character} vectors; each of these vectors will then represent the
+#'   tokens of a region defined by a row in a regions matrix.
 #' @param left Left corpus position.
 #' @param right Right corpus position.
 #' @param cpos A \code{logical} value, whether to return corpus positions as
@@ -147,8 +151,19 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
 })
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "matrix", function(.Object, ...){
-  get_token_stream(cpos(.Object), ...)
+setMethod("get_token_stream", "matrix", function(.Object, split = FALSE, ...){
+  ts_vec <- get_token_stream(cpos(.Object), ...)
+  
+  if (isFALSE(is.logical(split))) stop("'split' needs to be a logical value.")
+  if (isFALSE(split)){
+    return(ts_vec)
+  }
+  if (isTRUE(split)){
+    breakpoints <- c(0L, cumsum(.Object[,2] - .Object[,1] + 1L))
+    breaks_factor <- cut(x = 1L:length(ts_vec), breaks = breakpoints, include.lowest = TRUE)
+    ts_list <- split(x = ts_vec, f = breaks_factor)
+    return(ts_list)
+  }
 })
 
 #' @rdname get_token_stream-method
@@ -187,10 +202,10 @@ setMethod("get_token_stream", "subcorpus", function(.Object, p_attribute, collap
 
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, ...){
+setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, split = FALSE, ...){
   get_token_stream(
     .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
-    encoding = .Object@encoding, collapse = collapse, cpos = cpos,
+    encoding = .Object@encoding, collapse = collapse, cpos = cpos, split = split,
     ...
   )
 })
