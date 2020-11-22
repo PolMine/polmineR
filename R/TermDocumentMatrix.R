@@ -121,8 +121,12 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
   token_id <- cl_cpos2id(corpus = x, p_attribute = p_attribute, cpos = cpos_vector, registry = registry())
   struc_vector <- 0L:(cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1)
   struc_id <- cl_cpos2struc(corpus = x, s_attribute = s_attribute, cpos = cpos_vector, registry = registry())
-  token_stream_dt <- data.table(cpos = cpos_vector, token_id = token_id, struc_id = struc_id)
-  token_stream_dt <- token_stream_dt[which(token_stream_dt[["struc_id"]] != -1)]
+  token_stream_dt <- data.table(
+    cpos = cpos_vector,
+    token_id = token_id,
+    struc_id = struc_id
+  )
+  token_stream_dt <- token_stream_dt[token_stream_dt[["struc_id"]] >= 0L]
   rm(token_id, struc_id)
   
   s_attr_select <- dot_list
@@ -131,12 +135,6 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
     length(s_attr_select) == 0L
     && length(unique(cl_struc2str(corpus = x, s_attribute = s_attribute, struc = struc_vector, registry = registry()))) == cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry())
   ){
-    
-    token_id <- cl_cpos2id(corpus = x, p_attribute = p_attribute, cpos = cpos_vector, registry = registry())
-    struc_id <- cl_cpos2struc(corpus = x, s_attribute = s_attribute, cpos = cpos_vector, registry = registry())
-    token_stream_dt <- data.table(token_id = token_id, struc_id = struc_id)
-    rm(token_id, struc_id)
-    token_stream_dt <- token_stream_dt[which(token_stream_dt[["struc_id"]] != -1)]
     
     if (verbose) message("... counting token per doc")
     count_dt <- token_stream_dt[, .N, by = c("token_id", "struc_id"), with = TRUE]

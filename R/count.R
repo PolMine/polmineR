@@ -136,6 +136,7 @@ setMethod("count", "subcorpus", function(
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   stopifnot(isTRUE(is.logical(breakdown)))
+  
   if (!is.null(query)){
     if (progress) verbose <- FALSE
     if (class(cqp) == "function") cqp <- cqp(query)

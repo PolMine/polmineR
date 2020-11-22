@@ -105,7 +105,7 @@ setMethod("as.phrases", "matrix", function(.Object, corpus, enc = encoding(corpu
 #'   will return the decoded regions, concatenated using an underscore as
 #'   seperator.
 setMethod("as.character", "phrases", function(x, p_attribute){
-  tokens <- get_token_stream(x@cpos, x@corpus, p_attribute = p_attribute, encoding = x@encoding)
+  tokens <- get_token_stream(x@cpos, corpus = x@corpus, p_attribute = p_attribute, encoding = x@encoding)
   splitvec <-  cut(
     1L:length(tokens),
     breaks = c(1L, cumsum(x@cpos[,2] - x@cpos[,1] + 1L)),

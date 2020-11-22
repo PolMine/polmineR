@@ -30,7 +30,7 @@ get_token_stream(.Object, ...)
   ...
 )
 
-\S4method{get_token_stream}{matrix}(.Object, ...)
+\S4method{get_token_stream}{matrix}(.Object, split = FALSE, ...)
 
 \S4method{get_token_stream}{corpus}(.Object, left = NULL, right = NULL, ...)
 
@@ -47,6 +47,7 @@ get_token_stream(.Object, ...)
   p_attribute = "word",
   collapse = NULL,
   cpos = FALSE,
+  split = FALSE,
   ...
 )
 
@@ -106,6 +107,11 @@ names of the tokens.}
 \item{decode}{A (length-one) \code{logical} value, whether to decode token
 ids to character strings. Defaults to \code{TRUE}, if \code{FALSE}, an
 integer vector with token ids is returned.}
+
+\item{split}{A \code{logical} value, whether to return a \code{character}
+vector (when \code{split} is \code{FALSE}, default) or a \code{list} of
+\code{character} vectors; each of these vectors will then represent the
+tokens of a region defined by a row in a regions matrix.}
 
 \item{left}{Left corpus position.}
 
