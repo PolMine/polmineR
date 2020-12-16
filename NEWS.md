@@ -1,4 +1,4 @@
-polmineR 0.8.5.9001 - 0.8.6.9005
+polmineR 0.8.5.9001 - 0.8.5.9013
 ================================
 
 ## New Features
@@ -22,6 +22,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - If arguments `sAttribute` or `pAttribute` (instead of `s_attribute` and `p_attribute`) are still used with `dispersion()` method, a warning is issued declaring that the argument is deprecated.
 - Examples in packages that depend on polmineR would have faced the issue that loading/re-loading the package in several examples would not be posssible as the mechanism of cleaning up between examples would trigger a removal of polmineR's temporary directories but not the re-creation. Removing temporary files is now moved from polmineR's `.onDetach()` to `.onUnload()` (#164). 
 - Significant improvement of the performance of the `as.phrases()` method (#172).
+- The `as.corpusEnc()` auxiliary function will now check whether non-convertible characters lead to an `NA` result and issue a warning how this warning can be avoided (#151).
 
 ## Bug fixes
 

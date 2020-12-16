@@ -2,11 +2,11 @@
 NULL
 
 #' Get and set encoding.
-#' 
+#'
 #' Method for \code{textstat} objects and classes inheriting from
 #' \code{textstat}; if \code{object} is a character vector, the encoding of the
 #' corpus is returned..
-#' 
+#'
 #' @param object A \code{textstat} or \code{bundle} object, or a length-one
 #'   character vector specifying a corpus.
 #' @param value Value to be assigned.
@@ -15,15 +15,15 @@ NULL
 #' @examples
 #' # Get encoding of a corpus.
 #' encoding("REUTERS")
-#' 
+#'
 #' # Get encoding of a partition.
 #' r <- partition("REUTERS", places = "kuwait", regex = TRUE)
 #' encoding(r)
-#' 
+#'
 #' # Get encoding of another class inheriting from textstat (count).
 #' cnt <- count("REUTERS", p_attribute = "word")
 #' encoding(cnt)
-#' 
+#'
 #' # Get encoding of objects in a bundle.
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' encoding(pb)
@@ -48,21 +48,23 @@ setMethod("encoding", "corpus", function(object) object@encoding)
 setMethod("encoding", "subcorpus", function(object) callNextMethod())
 
 #' Conversion between corpus and native encoding.
-#' 
-#' Utility functions to convert encoding between the native encoding and the 
-#' encoding of the corpus.
-#' 
-#' The encoding of a corpus and the encoding of the terminal (the native 
-#' encoding) may differ and evoke strange output, or wrong results if no
+#'
+#' Utility functions to convert the encoding of a \code{character} vector
+#' between the native encoding and the encoding of the corpus.
+#'
+#' The encoding of a corpus and the encoding of the terminal (the native
+#' encoding) may differ, provoking strange or wrong results if no
 #' conversion is carried out between the potentially differing encodings. The
-#' functions \code{as.nativeEnc} and \code{as.corpusEnc} are auxiliary functions
-#' to assist this. The functions \code{as.nativeEnc} and \code{as.utf8}
+#' functions \code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions
+#' to assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
 #' deliberately remove the explicit statement of the encoding, to avoid warnings
 #' that may occur with character vector columns in a \code{data.table} object.
-#' 
-#' @param x the object (a character vector)
-#' @param from encoding of the input character vector
-#' @param corpusEnc encoding of the corpus (e.g. "latin1", "UTF-8")
+#'
+#' @param x A \code{character} to be converted.
+#' @param from A \code{character} vector describing the encoding of the input
+#'   character vector.
+#' @param corpusEnc A \code{character} vector describing the target encoding,
+#'   i.e. the encoding of the corpus (usually "latin1", "UTF-8")
 #' @rdname encodings
 #' @export as.utf8
 #' @name encodings
@@ -88,6 +90,30 @@ as.nativeEnc <- function(x, from){
 as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
   if (is.na(from)) from <- "UTF-8"
   y <- iconv(x, from = from, to = corpusEnc)
+  if (anyNA(y)){
+    for (string in x){
+      if (is.na(iconv(string, from = from, to = corpusEnc))){
+        chars <- strsplit(string, split = "")[[1]]
+        inconvertible <- chars[is.na(iconv(chars, from = from, to = corpusEnc))]
+        warning(
+          sprintf(
+            paste(
+              c(
+              "Character string '%s' to be converted from encoding '%s' to targert encoding '%s'",
+              "contains single characters (%s) that are non-convertible.",
+              "The result is an NA character vector which may provoke errors.",
+              "Recommended solution:",
+              "Substitute non-convertible single characters with an appropriate equivalent",
+              "or a regular expression metacharacter such as '.'."
+              ),
+              collapse = " "
+            ),
+            string, from, corpusEnc, paste(sprintf("'%s'", inconvertible), collapse = "/")
+          )
+        )
+      }
+    }
+  }
   Encoding(y) <- corpusEnc
   y
 }

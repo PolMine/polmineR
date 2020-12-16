@@ -14,22 +14,24 @@ as.nativeEnc(x, from)
 as.corpusEnc(x, from = localeToCharset()[1], corpusEnc)
 }
 \arguments{
-\item{x}{the object (a character vector)}
+\item{x}{A \code{character} to be converted.}
 
-\item{from}{encoding of the input character vector}
+\item{from}{A \code{character} vector describing the encoding of the input
+character vector.}
 
-\item{corpusEnc}{encoding of the corpus (e.g. "latin1", "UTF-8")}
+\item{corpusEnc}{A \code{character} vector describing the target encoding,
+i.e. the encoding of the corpus (usually "latin1", "UTF-8")}
 }
 \description{
-Utility functions to convert encoding between the native encoding and the 
-encoding of the corpus.
+Utility functions to convert the encoding of a \code{character} vector
+between the native encoding and the encoding of the corpus.
 }
 \details{
-The encoding of a corpus and the encoding of the terminal (the native 
-encoding) may differ and evoke strange output, or wrong results if no
+The encoding of a corpus and the encoding of the terminal (the native
+encoding) may differ, provoking strange or wrong results if no
 conversion is carried out between the potentially differing encodings. The
-functions \code{as.nativeEnc} and \code{as.corpusEnc} are auxiliary functions
-to assist this. The functions \code{as.nativeEnc} and \code{as.utf8}
+functions \code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions
+to assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
 deliberately remove the explicit statement of the encoding, to avoid warnings
 that may occur with character vector columns in a \code{data.table} object.
 }
