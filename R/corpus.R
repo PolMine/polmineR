@@ -17,13 +17,13 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora
 setMethod("corpus", "character", function(.Object, server = NULL, restricted){
-  
+
   if (length(.Object) != 1L) stop("Cannot process more than one corpus at a time: Provide only one corpus ID as input.")
-  
+
   if (is.null(server)){
     corpora <- cqp_list_corpora()
-    
-    # check that corpus is available 
+
+    # check that corpus is available
     if (!.Object %in% corpora){
       uppered <- toupper(.Object)
       if (uppered %in% corpora){
@@ -43,7 +43,7 @@ setMethod("corpus", "character", function(.Object, server = NULL, restricted){
         }
       }
     }
-    
+
     properties <- registry_get_properties(.Object)
     y <- new(
       "corpus",
@@ -98,7 +98,7 @@ setMethod("get_corpus", "kwic", function(x) x@corpus)
 setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpus)))
 
 
-#' @rdname corpus-class 
+#' @rdname corpus-class
 setMethod("corpus", "missing", function(){
   if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
     corpora <- .list_corpora()
@@ -151,39 +151,39 @@ setMethod("corpus", "missing", function(){
 #'   this class).
 #' @examples
 #' use("polmineR")
-#' 
+#'
 #' # examples for standard and non-standard evaluation
 #' a <- corpus("GERMAPARLMINI")
-#' 
-#' # subsetting a corpus object using non-standard evaluation 
+#'
+#' # subsetting a corpus object using non-standard evaluation
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset(a, grepl("Merkel", speaker))
 #' sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
-#' 
-#' # subsetting corpus specified by character vector 
+#'
+#' # subsetting corpus specified by character vector
 #' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
 #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
 #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 #' sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker) & date == "2009-10-28")
-#' 
+#'
 #' # subsetting a corpus using the (old) logic of the partition-method
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel")
 #' sc <- subset(a, speaker = "Angela Dorothea Merkel", date = "2009-10-28")
 #' sc <- subset(a, speaker = "Merkel", regex = TRUE)
 #' sc <- subset(a, speaker = c("Merkel", "Kauder"), regex = TRUE)
 #' sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
-#' 
+#'
 #' # providing the value for s-attribute as a variable
 #' who <- "Volker Kauder"
 #' sc <- subset(a, quote(speaker == who))
-#' 
+#'
 #' # use bquote for quasiquotation when using a variable for subsetting in a loop
 #' for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
 #'    sc <- subset(a, bquote(speaker == .(who)))
 #'    if (interactive()) print(size(sc))
 #' }
-#' 
+#'
 #' # equivalent procedure with lapply (DOES NOT WORK YET)
 #' b <- lapply(
 #'   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
@@ -206,7 +206,7 @@ setMethod("corpus", "missing", function(){
 setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   stopifnot(is.logical(regex))
   s_attr <- character()
-  
+
   if (!missing(subset)){
     expr <- substitute(subset)
     # The expression may also have been passed in as an unevaluated expression. In
@@ -236,7 +236,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       s_attr_dots <- lapply(s_attr_dots, function(v) as.corpusEnc(v, corpusEnc = x@encoding))
     }
   }
-  
+
   # Reading the binary file with the ranges for the whole corpus is faster than using
   # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
   # to read in seperate rng files.
@@ -248,7 +248,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     cpos_left = rng[seq.int(from = 1L, to = length(rng), by = 2L)],
     cpos_right = rng[seq.int(from = 2L, to = length(rng), by = 2L)]
   )
-  
+
   # Now we add the values of the s-attributes to the data.table with regions, one at
   # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
   for (i in seq_along(s_attr)){
@@ -257,22 +257,22 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       avx = file.path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
     )
     sizes <- lapply(files, function(file) file.info(file)[["size"]])
-    
+
     avx <- readBin(files[["avx"]], what = integer(), size = 4L, n = sizes[["avx"]] / 4L, endian = "big")
     avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
-    
+
     avs <- readBin(con = files[["avs"]], what = character(), n = sizes[["avs"]])
     if (!is.null(encoding)) Encoding(avs) <- x@encoding
-    
+
     dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
   }
-  
+
   # Apply the expression.
   if (!missing(subset)){
     setindexv(dt, cols = s_attr)
     dt <- dt[eval(expr, envir = dt)]
   }
-  
+
   if (length(dots) > 0L){
     for (s in s_attr_dots){
       if (regex){
@@ -288,15 +288,15 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       }
     }
   }
-  
-  
+
+
   # And assemble the subcorpus object that is returned.
   if (nrow(dt) == 0L){
     warning("No matching regions found for the s-attributes provided: Returning NULL object")
     return(NULL)
   }
-  
-  
+
+
   y <- new(
     if (length(x@type) > 0L) paste(x@type, "subcorpus", sep = "_") else "subcorpus",
     corpus = x@corpus,
@@ -325,10 +325,10 @@ setMethod("subset", "character", function(x, ...){
 #' @rdname subset
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
-  
+
   if (localeToCharset()[1] != x@encoding)
     expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
-  
+
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
 
@@ -336,7 +336,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     stop("New s-attributes are nested in existing s-attribute defining subcorpus. ",
          "The method does not (yet) work for nested XML / nested structural attributes.")
   }
-  
+
   dt <- data.table(
     struc = x@strucs,
     cpos_left = x@cpos[,1],
@@ -387,20 +387,20 @@ setMethod("show", "corpus", function(object){
 #' @details Applying the `$`-method on a corpus will return the values for the
 #'   s-attribute stated with argument \code{name}.
 #' @examples
-#' # show-method 
+#' # show-method
 #' if (interactive()) corpus("REUTERS") %>% show()
 #' if (interactive()) corpus("REUTERS") # show is called implicitly
-#' 
+#'
 #' # get corpus ID
 #' corpus("REUTERS") %>% get_corpus()
-#' 
+#'
 #' # use $ to access s_attributes quickly
 #' use("polmineR")
 #' g <- corpus("GERMAPARLMINI")
 #' g$date
-#' corpus("GERMAPARLMINI")$date # 
+#' corpus("GERMAPARLMINI")$date #
 #' corpus("GERMAPARLMINI") %>% s_attributes(s_attribute = "date") # equivalent
-#' 
+#'
 #' use("polmineR")
 #' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
 #' sc$date
@@ -420,7 +420,8 @@ setMethod("show", "subcorpus_bundle", function (object) {
 
 #' @rdname subset
 setMethod("subset", "remote_corpus", function(x, subset){
-  expr <- if (is.logical(subset)) substitute(subset) else subset
+  expr <- substitute(subset)
+  expr <- if (is.call(try(eval(expr), silent = TRUE))) eval(expr) else expr
   sc <- ocpu_exec(fn = "subset", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "corpus"), subset = expr)
   y <- as(sc, "remote_subcorpus")
   # Capture information on accessibility status and the server which is not included
