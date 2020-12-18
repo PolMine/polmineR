@@ -63,7 +63,7 @@ corpus("REUTERS") \%>\% show_info()
 corpus("GERMAPARLMINI") \%>\% get_info()
 corpus("GERMAPARLMINI") \%>\% show_info()
 
-# show-method 
+# show-method
 if (interactive()) corpus("REUTERS") \%>\% show()
 if (interactive()) corpus("REUTERS") # show is called implicitly
 
@@ -74,7 +74,7 @@ corpus("REUTERS") \%>\% get_corpus()
 use("polmineR")
 g <- corpus("GERMAPARLMINI")
 g$date
-corpus("GERMAPARLMINI")$date # 
+corpus("GERMAPARLMINI")$date #
 corpus("GERMAPARLMINI") \%>\% s_attributes(s_attribute = "date") # equivalent
 
 use("polmineR")

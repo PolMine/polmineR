@@ -47,13 +47,13 @@ use("polmineR")
 # examples for standard and non-standard evaluation
 a <- corpus("GERMAPARLMINI")
 
-# subsetting a corpus object using non-standard evaluation 
+# subsetting a corpus object using non-standard evaluation
 sc <- subset(a, speaker == "Angela Dorothea Merkel")
 sc <- subset(a, speaker == "Angela Dorothea Merkel" & date == "2009-10-28")
 sc <- subset(a, grepl("Merkel", speaker))
 sc <- subset(a, grepl("Merkel", speaker) & date == "2009-10-28")
 
-# subsetting corpus specified by character vector 
+# subsetting corpus specified by character vector
 sc <- subset("GERMAPARLMINI", grepl("Merkel", speaker))
 sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
 sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel" & date == "2009-10-28")

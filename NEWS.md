@@ -31,6 +31,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - Shortcoming of the `show()`-method for `partition` objects resvolved when more than one s-attribute has been used to define `partition` (#170).
 - Arguments `left` and `right` of the `context()`-method for `matrix` objects, the worker behind the `context()`, `kwic()` and `cooccurrences()` methods did not work as intended for `character` values specifying an s-attribute. Fixed - it is not possible to use these arguments (#173).
 - An error that occurred with `as.TermDocumentMatrix()` or `as.DocumentTermMatrix()` when a s-attribute would not cover the entire corpus has been removed (#177). In this vein, an efficiency (decoding token stream twice) has been removed, so performance will also be better.
+- An error that occurred temporarily when passing an expression with logical operators without substituting the expression to `subset()` for `remote_corpus` objects(#181) has been fixed.
 
 # Documentation 
 

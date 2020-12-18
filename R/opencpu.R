@@ -1,14 +1,14 @@
 #' Execute code on OpenCPU server
-#' 
+#'
 #' \code{ocpu_exec} will execute a function/method \code{fn} on an OpenCPU server
 #' (specified by argument \code{server}), using three dots (\code{...}) to pass
 #' arguments. It is the worker of methods defined for \code{remote_corpus},
 #' \code{remote_subcorpus} and \code{remote_partition} objects.
-#'   
+#'
 #' @param fn Name of the function/method to execute on remote server (length-one
 #'   \code{character} vector).
 #' @param server The IP/URL of the remote OpenCPU server.
-#' @param corpus A length-one \code{character} vector, the id of the corpus to be 
+#' @param corpus A length-one \code{character} vector, the id of the corpus to be
 #'   queried.
 #' @param restricted A \code{logical} value, whether credentials are required to
 #'   access the data.
@@ -36,17 +36,19 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
   if (!requireNamespace("protolite", quietly = TRUE))
     stop("To access a remote corpus, package 'protolite' is required, but it is not yet installed.")
 
-  url <- if (isFALSE(do.call)){
-    sprintf("%s/ocpu/library/polmineR/R/%s/pb", server, fn)
+  # The url for calling a function from polmineR is somewhat different on the openCPU sample server
+  fmt_url <- if (server == "https://cloud.opencpu.org"){
+    "%s/ocpu/apps/polmine/polmineR/R/%s/pb"
   } else {
-    sprintf("%s/ocpu/library/base/R/do.call/pb", server)
+    "%s/ocpu/library/polmineR/R/%s/pb"
   }
-  
+  url <- sprintf(fmt = fmt_url, server, if (isTRUE(do.call)) "do.call" else fn)
+
   body <- lapply(
     list(...),
     function(x)
       if (class(x) == "call"){
-        # Deparsing may result in a character vector longer than 1 if expression is 
+        # Deparsing may result in a character vector longer than 1 if expression is
         # long. Using paste() is safer than setting width.cutoff to maximum value (500)
         # See GitHub issue #161 (https://github.com/PolMine/polmineR/issues/161)
         paste(deparse(x), collapse = "")
@@ -59,7 +61,7 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
     if (identical(nchar(opencpu_registry), 0L)){
       stop("Access to corpora with restricted corpora requires that the environment variable 'OPENCPU_REGISTRY' is set.")
     }
-    
+
     properties <- registry_get_properties(corpus = corpus, registry = opencpu_registry)
     resp <- httr::POST(
       url = url, body = body,
