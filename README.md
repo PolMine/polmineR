@@ -455,6 +455,8 @@ Now install the remaining packages from within R.
 ``` r
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
+### Docker 
+
 
 ## Quoting polmineR
 

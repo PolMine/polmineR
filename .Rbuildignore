@@ -16,3 +16,5 @@
 ^uml$
 ^CRAN-RELEASE$
 ^TODO.md$
+.github/
+Docker/
