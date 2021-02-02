@@ -510,16 +510,6 @@ To run it, please follow the Rocker documentation.
 The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
 accessible.
 
-#### pominer-opencpu
-
-Based on the polminer image OpenCPU will be installed additionally.
-Further documentation follows.
-
-#### pominer-opencpu-dev
-
-Based on the polminer-dev image OpenCPU will be installed.
-More documentation follows.
-
 
 ## Quoting polmineR
 
