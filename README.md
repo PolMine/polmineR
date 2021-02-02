@@ -455,7 +455,70 @@ Now install the remaining packages from within R.
 ``` r
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
+
 ### Docker 
+
+If you want to use polmineR with Docker, you can use our Docker images.
+To install Docker, you can find instructions on the [Docker website](https://www.docker.com/get-started). 
+
+#### polmine-builder
+
+This image is the base image for building the other images.
+It contains all dependencies that polmineR needs.
+The image is updated once a week.
+It is not intended to be used directly.
+
+#### polminer
+
+This image contains the latest R version and polminer from the master branch of the [repository](https://github.com/PolMine/polmineR).
+
+When started with `docker run -it ghcr.io/polmine/polminer:latest`, an R session is run in the terminal.
+
+After integration into the Polmine repo, this image is updated after a commit in the master branch.
+
+#### polminer-dev 
+
+This image contains the latest R version and polminer from the dev branch of the [repository](https://github.com/PolMine/polmineR).
+
+When started with `docker run -it ghcr.io/polmine/polminer-dev:latest`, an R session is run in the terminal.
+
+After integration into the Polmine repo, this image is updated after a commit in the dev branch.
+
+
+
+#### polminer-rstudio
+
+This image contains an Rstudio server with PolmineR installed.
+The base of this image is the image rstudio:4.0.3 from [rocker](https://hub.docker.com/r/rocker/rstudio).
+
+To run it, please follow the Rocker documentation.
+
+`docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio:latest`
+
+The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
+accessible.
+
+#### polminer-dev-rstudio
+
+This image contains an Rstudio server with PolmineR installed.
+The base of this image is from [rocker](https://hub.docker.com/r/rocker/rstudio) the image rstudio:4.0.3
+
+To run it, please follow the Rocker documentation.
+
+`docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio-dev:latest`
+
+The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
+accessible.
+
+#### pominer-opencpu
+
+Based on the polminer image OpenCPU will be installed additionally.
+Further documentation follows.
+
+#### pominer-opencpu-dev
+
+Based on the polminer-dev image OpenCPU will be installed.
+More documentation follows.
 
 
 ## Quoting polmineR
