@@ -472,7 +472,11 @@ It is not intended to be used directly.
 
 This image contains the latest R version and polminer from the master branch of the [repository](https://github.com/PolMine/polmineR).
 
-When started with `docker run -it ghcr.io/polmine/polminer:latest`, an R session is run in the terminal.
+When started with 
+```bash
+docker run -it ghcr.io/polmine/polminer:latest
+```
+, an R session is run in the terminal.
 
 After integration into the Polmine repo, this image is updated after a commit in the master branch.
 
@@ -480,7 +484,11 @@ After integration into the Polmine repo, this image is updated after a commit in
 
 This image contains the latest R version and polminer from the dev branch of the [repository](https://github.com/PolMine/polmineR).
 
-When started with `docker run -it ghcr.io/polmine/polminer-dev:latest`, an R session is run in the terminal.
+When started with 
+```bash
+docker run -it ghcr.io/polmine/polminer-dev:latest
+```
+, an R session is run in the terminal.
 
 After integration into the Polmine repo, this image is updated after a commit in the dev branch.
 
@@ -493,7 +501,9 @@ The base of this image is the image rstudio:4.0.3 from [rocker](https://hub.dock
 
 To run it, please follow the Rocker documentation.
 
-`docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio:latest`
+```bash
+docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio:latest`
+```
 
 The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
 accessible.
@@ -505,7 +515,9 @@ The base of this image is from [rocker](https://hub.docker.com/r/rocker/rstudio)
 
 To run it, please follow the Rocker documentation.
 
-`docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio-dev:latest`
+```bashs
+docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio-dev:latest
+```
 
 The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
 accessible.
