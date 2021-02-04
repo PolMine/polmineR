@@ -5,7 +5,8 @@ Version: 0.8.5
 Date: 2020-09-22
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
-  person("Christoph", "Leonhardt", role = "ctb")
+  person("Christoph", "Leonhardt", role = "ctb"),
+  person("Marius", "Bertram", role = "ctb")
   )
 Depends:
     R (>= 3.5.0)
