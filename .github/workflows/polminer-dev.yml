@@ -1,4 +1,4 @@
-name: Build PolmineR Dev Image  
+name: Build polmineR Dev Image  
 
 on:
   push:

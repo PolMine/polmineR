@@ -1,4 +1,4 @@
-name: Build PolmineR Rstudio Image 
+name: Build polmineR Rstudio Image 
 
 on:
   workflow_run:

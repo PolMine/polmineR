@@ -1,4 +1,4 @@
-name: Build PolmineR OpenCPU Image 
+name: Build polmineR OpenCPU Image 
 
 on:
   workflow_run:
