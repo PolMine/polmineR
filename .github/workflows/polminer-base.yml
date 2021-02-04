@@ -1,4 +1,4 @@
-name: Build PolmineR Build image
+name: Build polmineR Build image
 
 on:
   schedule:
