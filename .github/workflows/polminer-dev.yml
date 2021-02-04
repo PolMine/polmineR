@@ -41,5 +41,5 @@ jobs:
           push: true
           build-args: branch=dev
           tags: |
-            ghcr.io/polmine/polminer-dev:latest
-            ghcr.io/polmine/polminer-dev:${{env.POLMINE_VERSION}}
+            ghcr.io/org/polmine/polminer-dev:latest
+            ghcr.io/org/polmine/polminer-dev:${{env.POLMINE_VERSION}}

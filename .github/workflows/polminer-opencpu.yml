@@ -50,8 +50,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/polmine/polminer-opencpu:latest
-            ghcr.io/polmine/polminer-opencpu:${{env.POLMINE_VERSION_MASTER}}
+            ghcr.io/org/polmine/polminer-opencpu:latest
+            ghcr.io/org/polmine/polminer-opencpu:${{env.POLMINE_VERSION_MASTER}}
       -
         name: Build and push Dev
         uses: docker/build-push-action@v2
@@ -63,5 +63,5 @@ jobs:
           push: true
           build-args: PARENT_IMAGE=ghcr.io/polmine/polminer-dev:latest
           tags: |
-            ghcr.io/polmine/polminer-opencpu-dev:latest
-            ghcr.io/polmine/polminer-opencpu-dev:${{env.POLMINE_VERSION_DEV}}
+            ghcr.io/org/polmine/polminer-opencpu-dev:latest
+            ghcr.io/org/polmine/polminer-opencpu-dev:${{env.POLMINE_VERSION_DEV}}
