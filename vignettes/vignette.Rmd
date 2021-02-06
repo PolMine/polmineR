@@ -161,6 +161,9 @@ Use the `dispersion()`-method to get dispersions of counts accross one (or two) 
 
 ```{r, eval = TRUE, message = FALSE}
 oil <- dispersion("REUTERS", query = "oil", s_attribute = "id", progress = FALSE)
+```
+
+```{r}
 saudi_arabia <- dispersion(
   "REUTERS", query = '"Saudi" "Arabia.*"',
   s_attribute = "id", cqp = TRUE, progress = FALSE
