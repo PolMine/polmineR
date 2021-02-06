@@ -4,6 +4,7 @@ on:
   push:
       branches:
           - "main"
+  workflow_dispatch:
 
 
 jobs:
@@ -39,5 +40,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/org/polmine/polminer:latest
-            ghcr.io/org/polmine/polminer:${{env.POLMINE_VERSION}}
+            ghcr.io/polmine/polminer:latest
+            ghcr.io/polmine/polminer:${{env.POLMINE_VERSION}}

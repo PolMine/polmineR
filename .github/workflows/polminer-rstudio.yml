@@ -2,7 +2,7 @@ name: Build polmineR Rstudio Image
 
 on:
   workflow_run:
-      workflows: ["Build PolmineR Dev Image","Build PolmineR Stable Image"]
+      workflows: ["Build polmineR Dev Image","Build polmineR Stable Image"]
       types:
           - completed
     
@@ -50,8 +50,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/org/polmine/polminer-rstudio:latest
-            ghcr.io/org/polmine/polminer-rstudio:${{env.POLMINE_VERSION_MASTER}}
+            ghcr.io/polmine/polminer-rstudio:latest
+            ghcr.io/polmine/polminer-rstudio:${{env.POLMINE_VERSION_MASTER}}
       -
         name: Build and push Dev
         uses: docker/build-push-action@v2
@@ -63,5 +63,5 @@ jobs:
           push: true
           build-args: branch=dev
           tags: |
-            ghcr.io/org/polmine/polminer-rstudio-dev:latest
-            ghcr.io/org/polmine/polminer-rstudio-dev:${{env.POLMINE_VERSION_DEV}}
+            ghcr.io/polmine/polminer-rstudio-dev:latest
+            ghcr.io/polmine/polminer-rstudio-dev:${{env.POLMINE_VERSION_DEV}}
