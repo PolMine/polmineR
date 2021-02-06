@@ -120,25 +120,25 @@ options("polmineR.pagelength" = 3L)
 The kwic method applied to the name of a corpus will return a KWIC object. Output will be shown in the viewer pane of RStudio. Technically, a htmlwidget is prepared which offers some convenient functionality. 
 
 ```{r, eval = TRUE, render = knit_print}
-kwic("REUTERS", "oil")
+k <- kwic("REUTERS", "oil")
 ```
 
 You can include metadata from the corpus into the kwic display using the 's_attributes' argument. Let us start with one s-attribute.
 
 ```{r, eval = TRUE, render = knit_print}
-kwic("REUTERS", "oil", s_attributes = "places")
+k <- kwic("REUTERS", "oil", s_attributes = "places")
 ```
 
 But you can display any number of s-attributes.
 
 ```{r, eval = TRUE, render = knit_print}
-kwic("REUTERS", "oil", s_attributes = c("id", "places"))
+k <- kwic("REUTERS", "oil", s_attributes = c("id", "places"))
 ```
 
 You can also use the CQP query syntax for formulating queries. That way, you can find multi-word expressions, or match in a manner you may know from using regular expressions.
 
 ```{r, eval = TRUE, render = knit_print}
-kwic("REUTERS", '"oil" "price.*"')
+k <- kwic("REUTERS", '"oil" "price.*"')
 ```
 
 Explaining the CQP syntax goes beyon this vignette. Consult the [CQP tutorial](http://cwb.sourceforge.net/files/CQP_Tutorial.pdf) to learn more about the CQP syntax.
@@ -149,9 +149,9 @@ Explaining the CQP syntax goes beyon this vignette. Consult the [CQP tutorial](h
 You can count one or several hits in a corpus.
 
 ```{r, eval = TRUE}
-count("REUTERS", "Kuwait")
-count("REUTERS", c("Kuwait", "USA", "Bahrain"))
-count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
+cnt <- count("REUTERS", "Kuwait")
+cnt <- count("REUTERS", c("Kuwait", "USA", "Bahrain"))
+cnt <- count("REUTERS", c('"United" "States"', '"Saudi" "Arabia.*"'), cqp = TRUE)
 ```
 
 
