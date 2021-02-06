@@ -1,4 +1,4 @@
-Introducing the polmineR package
+Introducing polmineR
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -8,8 +8,8 @@ Introducing the polmineR package
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
-[![Travis-CI Build
-Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=master)](https://travis-ci.org/PolMine/polmineR)
+[![R build
+status](https://github.com/PolMine/polmineR/workflows/R-CMD-check/badge.svg)](https://github.com/PolMine/polmineR/actions)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)

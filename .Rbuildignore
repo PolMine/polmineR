@@ -8,7 +8,6 @@
 ^README\.md$
 ^README-.*\.png$
 ^paper\.Rmd$
-^\.travis\.yml$
 ^_pkgdown\.yml$
 ^docs$
 ^appveyor.yml$
@@ -18,3 +17,4 @@
 ^TODO.md$
 ^.github$
 ^Docker$
+^\.github$
