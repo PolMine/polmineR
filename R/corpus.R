@@ -219,8 +219,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     # Adjust the encoding of the expression to the one of the corpus. Adjusting
     # encodings is expensive, so the (small) epression will be adjusted to the
     # encoding of the corpus, not vice versa
-    if (localeToCharset()[1] != x@encoding)
-      expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
+    if (encoding() != x@encoding)
+      expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
   }
@@ -232,7 +232,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     }
     s_attr_dots <- names(dots)
     s_attr <- c(s_attr, s_attr_dots)
-    if (localeToCharset()[1] != x@encoding){
+    if (encoding() != x@encoding){
       s_attr_dots <- lapply(s_attr_dots, function(v) as.corpusEnc(v, corpusEnc = x@encoding))
     }
   }
@@ -326,8 +326,8 @@ setMethod("subset", "character", function(x, ...){
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
 
-  if (localeToCharset()[1] != x@encoding)
-    expr <- .recode_call(x = expr, from = localeToCharset()[1], to = x@encoding)
+  if (encoding() != x@encoding)
+    expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)

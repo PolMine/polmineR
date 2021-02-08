@@ -11,7 +11,7 @@ as.utf8(x, from)
 
 as.nativeEnc(x, from)
 
-as.corpusEnc(x, from = localeToCharset()[1], corpusEnc)
+as.corpusEnc(x, from = encoding(), corpusEnc)
 }
 \arguments{
 \item{x}{A \code{character} to be converted.}

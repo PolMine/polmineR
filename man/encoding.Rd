@@ -3,6 +3,7 @@
 \name{encoding}
 \alias{encoding}
 \alias{encoding<-}
+\alias{encoding,missing-method}
 \alias{encoding,textstat-method}
 \alias{encoding,bundle-method}
 \alias{encoding,character-method}
@@ -13,6 +14,8 @@
 encoding(object)
 
 encoding(object) <- value
+
+\S4method{encoding}{missing}(object)
 
 \S4method{encoding}{textstat}(object)
 
@@ -25,17 +28,32 @@ encoding(object) <- value
 \S4method{encoding}{subcorpus}(object)
 }
 \arguments{
-\item{object}{A \code{textstat} or \code{bundle} object, or a length-one
-character vector specifying a corpus.}
+\item{object}{A \code{textstat} or \code{bundle} object (or an object
+inheriting from these classes), or a length-one \code{character} vector
+specifying a corpus. If missing, the method will return the session
+character set.}
 
 \item{value}{Value to be assigned.}
+}
+\value{
+A length-one \code{character} vector with an encoding.
 }
 \description{
 Method for \code{textstat} objects and classes inheriting from
 \code{textstat}; if \code{object} is a character vector, the encoding of the
-corpus is returned..
+corpus is returned. If called without arguments, the session character set is
+returned.
+}
+\details{
+Calling \code{encoding()} relies on the \code{localeToCharset()}
+  function. If \code{localeToCharset()} returns \code{NA} for whatsoever
+  reason, the return value is "UTF-8" to avoid errors and a warning is
+  issued.
 }
 \examples{
+# Get session charset.
+encoding()
+
 # Get encoding of a corpus.
 encoding("REUTERS")
 

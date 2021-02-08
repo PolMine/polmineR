@@ -5,14 +5,25 @@ NULL
 #'
 #' Method for \code{textstat} objects and classes inheriting from
 #' \code{textstat}; if \code{object} is a character vector, the encoding of the
-#' corpus is returned..
+#' corpus is returned. If called without arguments, the session character set is
+#' returned.
 #'
-#' @param object A \code{textstat} or \code{bundle} object, or a length-one
-#'   character vector specifying a corpus.
+#' @details Calling \code{encoding()} relies on the \code{localeToCharset()}
+#'   function. If \code{localeToCharset()} returns \code{NA} for whatsoever
+#'   reason, the return value is "UTF-8" to avoid errors and a warning is
+#'   issued.
+#' @param object A \code{textstat} or \code{bundle} object (or an object
+#'   inheriting from these classes), or a length-one \code{character} vector
+#'   specifying a corpus. If missing, the method will return the session
+#'   character set.
 #' @param value Value to be assigned.
 #' @rdname encoding
+#' @return A length-one \code{character} vector with an encoding.
 #' @exportMethod encoding
 #' @examples
+#' # Get session charset.
+#' encoding()
+#' 
 #' # Get encoding of a corpus.
 #' encoding("REUTERS")
 #'
@@ -29,8 +40,23 @@ NULL
 #' encoding(pb)
 setGeneric("encoding", function(object) standardGeneric("encoding"))
 
+
 #' @rdname encoding
 setGeneric("encoding<-", function(object, value) standardGeneric("encoding<-"))
+
+#' @rdname encoding
+setMethod("encoding", "missing", function(object){
+  y <- localeToCharset()[1]
+  if (is.na(y)){
+    warning(
+      "Calling 'encoding()' cannot get the session character set ",
+      "as 'localeToCharset()' yields 'NA'. ",
+      "To avoid errors, a 'UTF-8' character set is assumed."
+    )
+    "UTF-8"
+  } else y
+})
+
 
 #' @rdname encoding
 setMethod("encoding", "textstat", function(object) object@encoding)
@@ -87,7 +113,7 @@ as.nativeEnc <- function(x, from){
 #' @export as.corpusEnc
 #' @rdname encodings
 #' @importFrom utils localeToCharset
-as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
+as.corpusEnc <- function(x, from = encoding(), corpusEnc){
   if (is.na(from)) from <- "UTF-8"
   y <- iconv(x, from = from, to = corpusEnc)
   if (anyNA(y)){
@@ -118,7 +144,7 @@ as.corpusEnc <- function(x, from = localeToCharset()[1], corpusEnc){
   y
 }
 
-.recode_call <- function(x, from = localeToCharset()[1], to){
+.recode_call <- function(x, from = encoding(), to){
   .fn <- function(x){
     if (is.call(x)){
       return( as.call(lapply(x, .fn)) )

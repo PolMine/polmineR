@@ -79,7 +79,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
       Encoding(avs) <- .Object@encoding
-      if (.Object@encoding != localeToCharset()[1]) avs <- as.nativeEnc(avs, from = .Object@encoding)
+      if (.Object@encoding != encoding()) avs <- as.nativeEnc(avs, from = .Object@encoding)
       
       if (unique){
         return(avs)
@@ -146,7 +146,7 @@ setMethod(
         }
         Encoding(retval) <- .Object@encoding
         retval <- as.nativeEnc(retval, from = .Object@encoding)
-        Encoding(retval) <- localeToCharset()[1]
+        Encoding(retval) <- encoding()
         return(retval)
       } else if (length(s_attribute) > 1L){
         tab_data <- sapply(
@@ -161,7 +161,7 @@ setMethod(
             str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
             Encoding(str) <- .Object@encoding
             str <- as.nativeEnc(str, from = .Object@encoding)
-            Encoding(str) <- localeToCharset()[1]
+            Encoding(str) <- encoding()
             str
           }
         )

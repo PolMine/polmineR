@@ -75,6 +75,15 @@
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
 
+  if (is.na(localeToCharset()[1])){
+    packageStartupMessage(
+      "Cannot guess session character set by using 'localeToCharset()' (yields NA). ",
+      "To avoid errors, it will be assumed that 'UTF-8' is applicable. ",
+      "Please adjust locale to prevent unwanted behavior and note that LC_CTYPE needs to ",
+      "be set such that it can be processed by 'localeToCharset()'."
+    )
+  }
+  
   if (Sys.getlocale() == "C"){
     if (Sys.info()["sysname"] == "Darwin"){
       packageStartupMessage(

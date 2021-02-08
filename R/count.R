@@ -288,7 +288,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       if (verbose) message("... adding decoded p-attribute")
       str_raw <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
       
-      CNT[, eval(p_attribute) := if (localeToCharset()[1] == enc) str_raw else as.nativeEnc(str_raw, from = enc)]
+      CNT[, eval(p_attribute) := if (encoding() == enc) str_raw else as.nativeEnc(str_raw, from = enc)]
       rm(str_raw)
     } else {
       if (verbose) message("... adding tokens")

@@ -48,8 +48,8 @@ setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
     }
     lexfile <- file.path(.Object@data_dir, sprintf("%s.lexicon", p_attribute), fsep = "/")
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
-    if (.Object@encoding != localeToCharset()[1]){
-      lexicon <- stringi::stri_encode(lexicon, from = .Object@encoding, to = localeToCharset()[1])
+    if (.Object@encoding != encoding()){
+      lexicon <- stringi::stri_encode(lexicon, from = .Object@encoding, to = encoding())
     }
     return(lexicon)
   }
@@ -74,8 +74,8 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
     ids_unique <- unique(ids)
     ids_unique <- ids_unique[order(ids_unique)]
     str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute, registry = registry(), id = ids_unique)
-    if (corpus@encoding != localeToCharset()[1]){
-      str <- stringi::stri_encode(str, from = corpus@encoding, to = localeToCharset()[1])
+    if (corpus@encoding != encoding()){
+      str <- stringi::stri_encode(str, from = corpus@encoding, to = encoding())
     }
     return(str)
   }
