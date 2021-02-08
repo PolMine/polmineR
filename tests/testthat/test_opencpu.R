@@ -4,7 +4,9 @@ test_that(
   "opencpu server - subsetting",
   {
     skip_on_cran()
-
+    
+    if (FALSE){
+      
     gparl <- corpus("GERMAPARLMINI", server = "https://cloud.opencpu.org", restricted = FALSE)
 
     gparl_sub1 <- subset(gparl, date == "2009-11-11")
@@ -23,6 +25,8 @@ test_that(
       subset(substitute(date %in% days, list(days = days)))
 
     expect_identical(size(gparl_sub4), size(gparl_sub_local))
+    } 
+    
   }
 )
 
@@ -32,10 +36,12 @@ test_that(
   {
     skip_on_cran()
 
+    if (FALSE){
     gparl <- corpus("GERMAPARLMINI", server = "https://cloud.opencpu.org", restricted = FALSE)
     gparl_s_attr <- s_attributes(gparl)
     gparl_s_attr_local <- s_attributes("GERMAPARLMINI")
     expect_identical(gparl_s_attr, gparl_s_attr_local)
+    }
 
   }
 )
