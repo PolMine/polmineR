@@ -47,14 +47,7 @@ setGeneric("encoding<-", function(object, value) standardGeneric("encoding<-"))
 #' @rdname encoding
 setMethod("encoding", "missing", function(object){
   y <- localeToCharset()[1]
-  if (is.na(y)){
-    warning(
-      "Calling 'encoding()' cannot get the session character set ",
-      "as 'localeToCharset()' yields 'NA'. ",
-      "To avoid errors, a 'UTF-8' character set is assumed."
-    )
-    "UTF-8"
-  } else y
+  if (is.na(y)) "UTF-8" else y
 })
 
 

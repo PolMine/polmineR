@@ -126,7 +126,7 @@ INFO https://zenodo.org/record/3823245#.XsrU-8ZCT_Q
 
 4. Get server whereabouts
 
-```r
+```{r, eval = FALSE}
 x <- corpus("MIGPRESS_FAZ", server = "YOURSERVER", restricted = TRUE)
 ```
 
