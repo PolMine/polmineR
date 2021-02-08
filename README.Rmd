@@ -1,5 +1,5 @@
 ---
-title: Introducing the polmineR package
+title: Introducing polmineR
 output: github_document
 editor_options: 
   chunk_output_type: console
@@ -11,9 +11,9 @@ editor_options:
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
-[![Travis-CI Build Status](https://api.travis-ci.org/PolMine/polmineR.svg?branch=dev)](https://travis-ci.org/PolMine/polmineR)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=dev&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
-[![codecov](https://codecov.io/gh/PolMine/polmineR/branch/dev/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/dev)
+[![R build status](https://github.com/PolMine/polmineR/workflows/R-CMD-check/badge.svg)](https://github.com/PolMine/polmineR/actions)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
+[![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
 
 
 ```{r chunk_options, echo = FALSE}
@@ -287,7 +287,7 @@ The RcppCWB package, the interface used by polmineR to query CWB corpora, will r
 ```{sh linux_install_system_requirements,  eval = FALSE}
 sudo apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev
 sudo apt-get install libxml2-dev
-sudo apt-get install libprotobuf-dev
+sudo apt-get install libprotobuf-dev protobuf-compiler
 ```
 
 The system requirements will now be fulfilled. From R, install dependencies for rcqp/polmineR first, and then rcqp and polmineR.
@@ -336,4 +336,4 @@ install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 The polmineR package has been developed to be useful for research. If you publish research results making use of polmineR, the following citation is suggested to be included in publications.
 
 Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis. R package version
-  v0.8.2. http://doi.org/10.5281/zenodo.4042093
+  v0.8.5. http://doi.org/10.5281/zenodo.4042093

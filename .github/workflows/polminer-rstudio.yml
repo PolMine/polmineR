@@ -1,8 +1,8 @@
-name: Build PolmineR Rstudio Image 
+name: Build polmineR Rstudio Image 
 
 on:
   workflow_run:
-      workflows: ["Build PolmineR Dev Image","Build PolmineR Stable Image"]
+      workflows: ["Build polmineR Dev Image","Build polmineR Stable Image"]
       types:
           - completed
     

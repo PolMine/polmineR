@@ -1,10 +1,10 @@
-name: Build PolmineR Dev Image  
+name: Build polmineR Dev Image  
 
 on:
   push:
       branches:
           - "dev"
-          
+  workflow_dispatch:
 
 jobs:
   build-devimage:
