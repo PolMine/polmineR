@@ -1,0 +1,8 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  OpenCPU: OpenCPU.html
+  vignette: vignette.html
+last_built: 2021-02-12T17:56Z
+
