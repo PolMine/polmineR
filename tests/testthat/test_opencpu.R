@@ -33,8 +33,8 @@ test_that(
   "opencpu server - s_attributes",
   {
     skip_on_cran()
-
     skip_on_ci()
+    
     gparl <- corpus("GERMAPARLMINI", server = "https://cloud.opencpu.org", restricted = FALSE)
     gparl_s_attr <- s_attributes(gparl)
     gparl_s_attr_local <- s_attributes("GERMAPARLMINI")
