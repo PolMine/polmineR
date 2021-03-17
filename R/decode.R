@@ -2,6 +2,7 @@
 setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 
 setOldClass("Annotation")
+setOldClass("AnnotatedPlainTextDocument")
 
 
 setAs(from = "corpus", to = "Annotation", def = function(from){
@@ -45,6 +46,100 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   c(w, s)
 })
 
+
+setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
+  
+  # Implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
+  
+  if (!requireNamespace(package = "NLP", quietly = TRUE))
+    stop("Package 'NLP' required but not available.")
+  
+  message("... decode p-attributes")
+  p_attrs <- p_attributes(from)
+  ts <- decode(from, p_attribute = p_attrs, s_attributes = character())
+
+  message("... generate plain text string")
+  whitespace_after <- if ("pos" %in% p_attrs){
+    # still assumes that STSS is used
+    c(ifelse(ts[["pos"]] %in% c("$.", "$,"), FALSE, TRUE)[2L:nrow(ts)], FALSE)
+  } else {
+    c(grepl("^[.,;!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
+  }
+  
+  word_with_whitespace <- paste(ts[["word"]], ifelse(whitespace_after, " ", ""), sep = "")
+  s <- paste(word_with_whitespace, collapse = "")
+  
+  message("... generate token-level annotation")
+  left_offset <- c(1L, (cumsum(nchar(word_with_whitespace)) + 1L)[1L:(nrow(ts) - 1L)])
+  right_offset <- left_offset + nchar(ts[["word"]]) - 1L
+  
+  w <- NLP::Annotation(
+    id = cpos(from@cpos),
+    rep.int("word", nrow(ts)),
+    start = left_offset,
+    end = right_offset,
+    features = lapply(split(ts[, p_attrs, with = FALSE], f = 1L:nrow(ts)), as.data.frame)
+  )
+  
+  message("... which s-attributes are document-level metadata?")
+  s_attrs <- s_attributes(from)
+  meta_candidates <- lapply(
+    setNames(s_attrs, s_attrs),
+    function(s_attr){
+      message(sprintf("... checking if s-attribute is metadata: %s ... ", s_attr), appendLF = FALSE)
+      strucs <- cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = cpos(from@cpos))
+      if (any(strucs < 0L)){
+        message("NO (not comprehensive)")
+        NULL
+      } else {
+        values <- cl_struc2str(corpus = from@corpus, s_attribute = s_attr, struc = strucs)
+        unique_values <- unique(values)
+        if (length(unique_values) == 1L){
+          message("OK")
+          return(unique_values)
+        } else {
+          message("NO (changes)")
+          character()
+        }
+      }
+    }
+  )
+  meta <- meta_candidates
+  # attributes that do not cover the entire subcorpus and that have different
+  # values are not metadata - discard it
+  for (i in rev(which(sapply(meta_candidates, length) != 1L))) meta[[i]] <- NULL
+  
+  # s-attributes that do not cover entire subcorpus (negative values) are 
+  # annotations of regions of text
+  s_attr_anno <- names(meta)[sapply(meta_candidates, is.null)]
+  mw_annotations <- c(lapply(
+    s_attr_anno,
+    function(s_attr){
+      strucs <- unique(
+        cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = cpos(from@cpos))
+      )
+      c(
+        lapply(
+          strucs,
+          function(struc){
+            cpos <- cl_struc2cpos(corpus = from@corpus, s_attribute = s_attr, struc = struc)
+            NLP::Annotation(
+              id = NULL, # assign id later on, if necessary
+              type = s_attr,
+              start = w[w[["id"]] == min(cpos)][["start"]],
+              end = w[w[["id"]] == max(cpos)][["end"]],
+              features = data.frame(constituents = cpos)
+            )
+          }
+        )
+      )
+    }
+  ))
+  
+  a <- if (length(mw_annotations) > 0L) c(w, a) else w
+  
+  NLP::AnnotatedPlainTextDocument(s = s, a = a, meta = meta)
+})
 
 
 #' Decode corpus or subcorpus.
@@ -118,7 +213,8 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 #' \dontrun{
 #' if (requireNamespace("NLP")){
 #'   library(NLP)
-#'   p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+#'   p <- corpus("GERMAPARLMINI") %>%
+#'     subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
 #'   s <- as(p, "String")
 #'   a <- as(p, "Annotation")
 #'   
@@ -128,6 +224,8 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 #' 
 #'   words <- s[a[a$type == "word"]]
 #'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+#'   
+#'   doc <- as(p, "AnnotatedPlainTextDocument")
 #' }
 #' }
 #' @rdname decode
@@ -172,7 +270,6 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
     } else {
       s_attribute_list <- list()
     }
-    
 
     message("assembling data.table")
     combined_list <- c(
