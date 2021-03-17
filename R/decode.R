@@ -30,7 +30,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   )
 
   right_offset <- left_offset + word_length
-  names(right_offset) <- word
+  names(right_offset) <- word # repeats 
   m <- matrix(data = c(left_offset, right_offset), ncol = 2, byrow = FALSE)
   f <- cut(x = 1L:length(pos), breaks = unique(c(1L, grep("\\$\\.", pos), length(pos))), include.lowest = TRUE)
   chunks <- split(x = m, f = f)

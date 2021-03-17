@@ -495,7 +495,7 @@ no explicit list necessary.
 - As a matter of consistency, the argument `meta` has been renamed to `s_attributes` for the `kwic()`-method for `context`-objects, and for the `enrich()`-method for `kwic`-objects.
 - To avoid confusion (with argument s_attributes), the argument `s_attribute` to check for integrity within 
 a struc has been renamed into `boundary`.
-
+- A new vignette "encodings" (rudimentary at this stage) explains what users need to know about encodings when working with polmineR.
 
 ### DOCUMENTATION FIXES
 

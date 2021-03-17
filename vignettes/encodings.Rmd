@@ -1,0 +1,30 @@
+---
+title: "Encodings"
+author: "Andreas Blaette (andreas.blaette@uni-due.de)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+editor_options: 
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{Encodings}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+## What you may need to know about encodings
+
+When working with textual data and corpora, issues with encodings are a frequent and nasty problem. While issues with encodings are sometimes quite obvious as you see "trash" character signs, they may also cause warnings and errors that are difficult to understand. In this vignette, we seek to explain what polmineR users should be aware of to avoid problems with encodings.
+
+
+### Windows, macOS and Linux have different default encodings
+
+Windows: latin-1
+macOS and Linux: UTF-8
+
+### Session and corpus encodings may differ
+
+When it was initiallly developed, the Corpus Workbench (CWB) worked with latin-1 encodings.
+
+### Encoding of user input.
+
+To query corpora, query strings are entered on the terminal or passed in via a script. User input is assumed to have the locale of the session. The encoding of user input is assumed to correspond to `localeToCharset()`, polmineR has a wrapper on `localeToCharset()` (`encoding()`) that will assume that your session charset is "UTF-8" rather than `NA`. 
