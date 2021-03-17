@@ -111,24 +111,25 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   
   # s-attributes that do not cover entire subcorpus (negative values) are 
   # annotations of regions of text
-  s_attr_anno <- names(meta)[sapply(meta_candidates, is.null)]
-  mw_annotations <- c(lapply(
+  s_attr_anno <- names(meta_candidates)[sapply(meta_candidates, is.null)]
+  mw_annotations <- do.call(c, lapply(
     s_attr_anno,
     function(s_attr){
       strucs <- unique(
         cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = cpos(from@cpos))
       )
-      c(
+      strucs <- strucs[which(strucs >= 0L)]
+      do.call(c,
         lapply(
           strucs,
           function(struc){
             cpos <- cl_struc2cpos(corpus = from@corpus, s_attribute = s_attr, struc = struc)
             NLP::Annotation(
-              id = NULL, # assign id later on, if necessary
+              id = -1, # assign id later on, if necessary
               type = s_attr,
-              start = w[w[["id"]] == min(cpos)][["start"]],
-              end = w[w[["id"]] == max(cpos)][["end"]],
-              features = data.frame(constituents = cpos)
+              start = w[which(w$id == min(cpos))]$start,
+              end = w[which(w$id == max(cpos))]$end,
+              features = list(list(constituents = cpos))
             )
           }
         )
@@ -136,7 +137,7 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     }
   ))
   
-  a <- if (length(mw_annotations) > 0L) c(w, a) else w
+  a <- if (length(mw_annotations) > 0L) c(w, mw_annotations) else w
   
   NLP::AnnotatedPlainTextDocument(s = s, a = a, meta = meta)
 })

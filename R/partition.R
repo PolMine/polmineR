@@ -156,7 +156,7 @@ is.partition <- function(x) "partition" %in% is(x)
       registry = Sys.getenv("CORPUS_REGISTRY"), strucs = strucs
     )
     
-    if (length(sAttrNames) > 1){
+    if (length(sAttrNames) > 1L){
       for (i in 2L:length(sAttrNames)){
         strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = sAttrNames[i], cpos = cpos[,1], registry = registry())
         s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = sAttrNames[i], struc = strucs, registry = registry())
@@ -166,7 +166,8 @@ is.partition <- function(x) "partition" %in% is(x)
         } else {
           hits <- which(s_attr_values %in% .Object@s_attributes[[ sAttrNames[i] ]])
         }
-        cpos <- cpos[hits,]
+        cpos <- if (length(hits) > 1L) cpos[hits,] else matrix(cpos[hits,], nrow = 1L, ncol = 2L)
+
         strucs <- strucs[hits]
       }
     }
