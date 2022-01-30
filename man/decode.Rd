@@ -168,7 +168,8 @@ dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by 
 \dontrun{
 if (requireNamespace("NLP")){
   library(NLP)
-  p <- subset(corpus("GERMAPARLMINI"), date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+  p <- corpus("GERMAPARLMINI") \%>\%
+    subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
   s <- as(p, "String")
   a <- as(p, "Annotation")
   
@@ -178,6 +179,8 @@ if (requireNamespace("NLP")){
 
   words <- s[a[a$type == "word"]]
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+  
+  doc <- as(p, "AnnotatedPlainTextDocument")
 }
 }
  
