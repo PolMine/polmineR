@@ -18,6 +18,7 @@ by using the reference semantic of the data.table package. If many columns are a
 - The `get_token_stream()`-method for `regions` and `matrix` objects will now accept a logical argument `split`. If `TRUE`, a list of character vectors is returned. The envisaged use case is a fast decoding of sentences (#176).
 - A `encoding()` method has been defined if argument `object` is missing. Calling `encoding()` will return the session character set. If it cannot be determined using `localeToCharset()`, a UTF-8 session charset will be assumed. Internally, `encoding()` replaces a direct call of `localeToCharset()` to avoid errors that have occurred on GitHub Actions with Ubuntu 20.04 (#188).
 - If the session character set cannot be guessed by `localeToCharset()` (`NA` return value), a startup message will issue a warning that 'UTF-8' is assumed (#188).
+- The `size()` method is now able to handle nested s-attributes.
 
 ## Minor Improvements
 

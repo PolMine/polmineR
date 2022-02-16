@@ -52,13 +52,14 @@ If \code{.Object} is a corpus (a \code{corpus} object or specified by
   (with columns "name" and "size").
 }
 \description{
-The method will get the number of tokens in a corpus or partition,
-or the dispersion across one or more s-attributes.
+The method will get the number of tokens in a `corpus`, `partition` or
+`subcorpus`, split up by an s-attribute if provided.
 }
 \details{
-One or more s-attributes can be provided to get the dispersion of
-tokens across one or more dimensions. Two or more s-attributes
-can lead to reasonable results only if the corpus XML is flat.
+One or more s-attributes can be provided to get the dispersion of tokens
+across one or more dimensions. If the corpus XML is nested, the s-attributes
+defining a `subcorpus` or `partition` are required to be children of the
+s-attribute(s) provided. If, not, a warning will be issued.
 
 The \code{size}-method for \code{features} objects will return a
   named list with the size of the corpus of interest ("coi"), i.e. the number
