@@ -13,16 +13,17 @@ NULL
 #' with token ids. Colors are inserted into the output html and need to be
 #' digestable for the browser used.
 #' 
-#' @param .Object A \code{html}, \code{character}, a \code{kwic} object.
-#' @param highlight A character vector, or a list of character or integer vectors.
+#' @param .Object A `html`, `character`, a `kwic` object.
+#' @param highlight A character vector, or a list of `character` or `integer` vectors.
 #' @param regex Logical, whether character vectors are interpreted as regular
 #'   expressions.
 #' @param perl Logical, whether to use perl-style regular expressions for
 #'   highlighting when regex is \code{TRUE}.
 #' @param verbose Logical, whether to output messages.
-#' @param ... Terms to be highlighted can be passed in as named character
-#'   vectors of terms (or regular expressions); the name then needs to be a
-#'   valid color name.
+#' @param ... Terms to be highlighted can be passed in as named `character`
+#'   vectors of terms (or regular expressions); the name needs to be a
+#'   valid color name. It is also possible to pass in a `matrix` with ranges (as
+#'   returned by `cpos()`).
 #' @name highlight
 #' @rdname highlight
 #' @exportMethod highlight
@@ -110,21 +111,26 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
   if (length(list(...)) > 0L) highlight <- list(...)
   if (is.character(highlight)) highlight <- split(x = unname(highlight), f = names(highlight))
   for (color in names(highlight)){
-    if (regex){
-      regexMatchList <- lapply(
-        highlight[[color]],
-        function(expr) grep(expr, .Object@cpos[[.Object@p_attribute]], perl = perl)
-      )
-      toHighlight <- 1L:nrow(.Object@cpos) %in% unique(unlist(regexMatchList))
+    if (is.matrix(highlight[[color]])){
+      to_highlight <- .Object@cpos[["cpos"]] %in% cpos(highlight[[color]])
     } else {
-      toHighlight <- .Object@cpos[[.Object@p_attribute]] %in% highlight[[color]]
+      if (regex){
+        regex_match_list <- lapply(
+          highlight[[color]],
+          function(expr) grep(expr, .Object@cpos[[.Object@p_attribute]], perl = perl)
+        )
+        to_highlight <- 1L:nrow(.Object@cpos) %in% unique(unlist(regex_match_list))
+      } else {
+        to_highlight <- .Object@cpos[[.Object@p_attribute]] %in% highlight[[color]]
+      }
     }
-    if (length(toHighlight) > 0){
-      .Object@cpos[[.Object@p_attribute]] <- ifelse(
-        toHighlight,
+    
+    if (length(to_highlight) > 0){
+      .Object@cpos[, (.Object@p_attribute) := ifelse(
+        to_highlight,
         sprintf('<span style="background-color:%s">%s</span>', color, .Object@cpos[[.Object@p_attribute]]),
         .Object@cpos[[.Object@p_attribute]]
-      )
+      )]
     }
   }
   .Object <- enrich(.Object, table = TRUE)

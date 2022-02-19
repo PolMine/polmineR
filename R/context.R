@@ -100,8 +100,8 @@ setMethod("context", "slice", function(
   if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   
-  if (is.numeric(left)) left <- as.integer(left) # input may be numeric
-  if (is.numeric(right)) right <- as.integer(right) # input may be numeric
+  if (!is.integer(left)) left <- setNames(as.integer(left), names(left))# input may be numeric
+  if (!is.integer(right)) right <- setNames(as.integer(right), names(left)) # input may be numeric
   
   # get regions for query matches
   .message("getting corpus positions", verbose = verbose)

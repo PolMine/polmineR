@@ -19,6 +19,10 @@ by using the reference semantic of the data.table package. If many columns are a
 - A `encoding()` method has been defined if argument `object` is missing. Calling `encoding()` will return the session character set. If it cannot be determined using `localeToCharset()`, a UTF-8 session charset will be assumed. Internally, `encoding()` replaces a direct call of `localeToCharset()` to avoid errors that have occurred on GitHub Actions with Ubuntu 20.04 (#188).
 - If the session character set cannot be guessed by `localeToCharset()` (`NA` return value), a startup message will issue a warning that 'UTF-8' is assumed (#188).
 - The `size()` method is now able to handle nested s-attributes.
+- The `trim()` method for `context` objects will now accept a matrix with ranges a `positivelist` argument.
+- The `highlight()` method now acceps `matrix` objects as elements of the list of items to be highlighted. It
+is treated as a set of regions, such as resulting from `cpos()`. Thus it is possible to highlight matches for 
+CQP queries.
 
 ## Minor Improvements
 
@@ -35,6 +39,8 @@ by using the reference semantic of the data.table package. If many columns are a
 - Arguments `left` and `right` of the `context()`-method for `matrix` objects, the worker behind the `context()`, `kwic()` and `cooccurrences()` methods did not work as intended for `character` values specifying an s-attribute. Fixed - it is not possible to use these arguments (#173).
 - An error that occurred with `as.TermDocumentMatrix()` or `as.DocumentTermMatrix()` when a s-attribute would not cover the entire corpus has been removed (#177). In this vein, an efficiency (decoding token stream twice) has been removed, so performance will also be better.
 - An error that occurred temporarily when passing an expression with logical operators without substituting the expression to `subset()` for `remote_corpus` objects(#181) has been fixed.
+- The `context()` method, and `kwic()` for `partition` or `subcorpus` objects did not process left and right contexts correctly, if it was a named character vector. Fixed.
+
 
 # Documentation 
 

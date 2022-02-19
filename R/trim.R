@@ -90,12 +90,22 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
   if (!is.null(positivelist)){
     .message("filtering by positivelist", verbose = verbose)
     before <- length(unique(object@cpos[["match_id"]]))
-    positivelistIds <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
-    .fn <- function(.SD){
-      neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
-      if (any(neighbors %in% positivelistIds)) return( .SD ) else return( NULL )
+    if (is.matrix(positivelist)){
+      dt <- data.table(cpos = cpos(positivelist), positivelist = TRUE)
+      cpos_min <- dt[object@cpos[position != 0], on = "cpos"]
+      matches_to_keep <- cpos_min[,
+        if (any(!is.na(.SD$positivelist))) .SD else NULL,
+        by = "match_id"
+      ][["match_id"]]
+      object@cpos <- object@cpos[match_id %in% matches_to_keep]
+    } else {
+      positivelist_ids <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
+      .fn <- function(.SD){
+        neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
+        if (any(neighbors %in% positivelist_ids)) return( .SD ) else return( NULL )
+      }
+      object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     }
-    object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     after <- length(unique(object@cpos[["match_id"]]))
     .message("number of hits droped due to positivelist:", before - after, verbose = verbose)
     if (nrow(object@cpos) == 0) {
@@ -107,10 +117,10 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
   if (!is.null(stoplist)){
     .message("applying stoplist", verbose = verbose)
     before <- length(unique(object@cpos[["match_id"]]))
-    stoplistIds <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
+    stoplist_ids <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
     .fn <- function(.SD){
-      pAttr <- paste(p_attribute[1], "id", sep = "_")
-      negatives <- which(.SD[[pAttr]] %in% stoplistIds)
+      p_attr <- paste(p_attribute[1], "id", sep = "_")
+      negatives <- which(.SD[[p_attr]] %in% stoplist_ids)
       negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
       if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
     }
