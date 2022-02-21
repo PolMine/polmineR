@@ -237,7 +237,7 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
       
       dt <- data.table(.Object)
-      setnames(dt, old = c("V1", "V2"), new = c("match_left", "match_right"))
+      colnames(dt) <- c("match_left", "match_right")
       dt[, "match_id" := 1L:nrow(.Object)]
       
       dt[, "struc" := cl_cpos2struc(
