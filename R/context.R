@@ -236,51 +236,37 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       s_attr <- unique(c(names(left), names(right)))
       if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
       
-      dt <- data.table(.Object)
-      colnames(dt) <- c("match_left", "match_right")
-      dt[, "match_id" := 1L:nrow(.Object)]
+      struc <- cl_cpos2struc(corpus = corpus, s_attribute = s_attr, cpos = .Object[,1L], registry = registry())
       
-      dt[, "struc" := cl_cpos2struc(
-        corpus = corpus,
-        s_attribute = s_attr,
-        cpos = .Object[,1L],
-        registry = registry())
-      ]
-      struc_left <- dt[["struc"]] - left
-      dt[, "left_cpos_min" := get_region_matrix(
-        corpus = corpus,
-        s_attribute = s_attr,
-        strucs = ifelse(struc_left < 0L, 0L, struc_left),
-        registry = registry())[,1]
-      ]
-
-      struc_right <- dt[["struc"]] + right
+      struc_left <- struc - left
+      left_cpos_min <- get_region_matrix(corpus = corpus, s_attribute = s_attr, strucs = ifelse(struc_left < 0L, 0L, struc_left), registry = registry())[,1]
+      
+      struc_right <- struc + right
       struc_max <- cl_attribute_size(corpus = corpus, attribute = s_attr, attribute_type = "s", registry = registry())
-      dt[, "right_cpos_max" := get_region_matrix(
-        corpus = corpus,
-        s_attribute = s_attr,
-        strucs = ifelse(struc_right > struc_max, struc_max, struc_right),
-        registry = registry())[,2]
-      ]
+      right_cpos_max <- get_region_matrix(corpus = corpus, s_attribute = s_attr, strucs = ifelse(struc_right > struc_max, struc_max, struc_right), registry = registry())[,2]
 
-      cpos_left <- dt[
-        , list(
-          cpos = .SD[["left_cpos_min"]]:(.SD[["match_left"]] - 1L), # but what if cpos of match_left is 0
-          position = (.SD[["left_cpos_min"]] - .SD[["match_left"]]):-1L
-        ),
-        by = c("match_id"), .SDcols = c("left_cpos_min", "match_left")
-      ]
-      cpos_right <- dt[
-        , list(
-          cpos = (.SD[["match_right"]] + 1L):.SD[["right_cpos_max"]], # but what if cpos of match_left is 0
-          position = 1L:(.SD[["right_cpos_max"]] - .SD[["match_right"]])
-        ),
-        by = c("match_id"), .SDcols = c("right_cpos_max", "match_right")
-      ]
-      cpos_match <- dt[
-        , list(cpos = .SD[["match_left"]]:.SD[["match_right"]],position = 0L),
-        by = c("match_id"), .SDcols = c("match_left", "match_right")
-      ]
+      ranges_left <- matrix(c(left_cpos_min, .Object[,1] - 1), ncol = 2)
+      sizes_left <- .Object[,1] - left_cpos_min
+      cpos_left <- data.table(
+        cpos = unlist(apply(ranges_left, 1, function(x) x[1]:x[2])),
+        position = unlist(lapply((-sizes_left), seq.int, to = -1)),
+        match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_left))
+      )
+      
+      ranges_right <- matrix(c(.Object[,2] + 1, right_cpos_max), ncol = 2)
+      sizes_right <- right_cpos_max - .Object[,2]
+      cpos_right <- data.table(
+          cpos = unlist(apply(ranges_right, 1, function(x) x[1]:x[2])),
+          position = unlist(lapply((sizes_right), function(x) 1:x)),
+          match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_right))
+      )
+      
+      sizes_match <- .Object[,2] - .Object[,1] + 1
+      cpos_match <- data.table(
+        cpos = unlist(apply(.Object, 1, function(x) x[1]:x[2])),
+        position = 0L,
+        match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_match))
+      )
       
       cpos_dt <- rbindlist(list(cpos_left, cpos_match, cpos_right))
     }
