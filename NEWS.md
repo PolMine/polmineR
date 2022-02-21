@@ -30,6 +30,7 @@ CQP queries.
 - Examples in packages that depend on polmineR would have faced the issue that loading/re-loading the package in several examples would not be posssible as the mechanism of cleaning up between examples would trigger a removal of polmineR's temporary directories but not the re-creation. Removing temporary files is now moved from polmineR's `.onDetach()` to `.onUnload()` (#164). 
 - Significant improvement of the performance of the `as.phrases()` method (#172).
 - The `as.corpusEnc()` auxiliary function will now check whether non-convertible characters lead to an `NA` result and issue a warning how this warning can be avoided (#151).
+- Significant performance improvement of the `context()` method for `matrix` objects if arguments `left` and `right` are named `integer` vectors. All `context()` benefit from the improved performance of this worker for creating contexts for query matches.
 
 ## Bug fixes
 

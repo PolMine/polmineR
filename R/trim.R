@@ -97,7 +97,7 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
         if (any(!is.na(.SD$positivelist))) .SD else NULL,
         by = "match_id"
       ][["match_id"]]
-      object@cpos <- object@cpos[match_id %in% matches_to_keep]
+      object@cpos <- object@cpos[object@cpos[["match_id"]] %in% matches_to_keep]
     } else {
       positivelist_ids <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
       .fn <- function(.SD){

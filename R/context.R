@@ -235,25 +235,54 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
     } else {
       s_attr <- unique(c(names(left), names(right)))
       if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
-      .fn <- function(.SD){
-        left_cpos_min <- cl_struc2cpos(corpus = corpus, s_attribute = s_attr, struc = .SD[["struc_left"]], registry = registry())[1]
-        cpos_left <- left_cpos_min:(.SD[[1]] - 1L) # use colname
-        right_cpos_max <- cl_struc2cpos(corpus = corpus, s_attribute = s_attr, struc = .SD[["struc_right"]], registry = registry())[2]
-        cpos_right <- (.SD[[2]] + 1L):right_cpos_max # use colname!
-        list(
-          cpos = c(cpos_left, .SD[[1]]:.SD[[2]], cpos_right),
-          position = c(cpos_left - .SD[[1]], rep.int(0L, times = .SD[[2]] - .SD[[1]] + 1L), cpos_right - .SD[[2]])
-        )
-      }
-      dt <- data.table(.Object)[, "match_id" := 1L:nrow(.Object)]
-      dt[, "struc" := cl_cpos2struc(corpus = corpus, s_attribute = s_attr, cpos = .Object[,1L])]
+      
+      dt <- data.table(.Object)
+      setnames(dt, old = c("V1", "V2"), new = c("match_left", "match_right"))
+      dt[, "match_id" := 1L:nrow(.Object)]
+      
+      dt[, "struc" := cl_cpos2struc(
+        corpus = corpus,
+        s_attribute = s_attr,
+        cpos = .Object[,1L],
+        registry = registry())
+      ]
       struc_left <- dt[["struc"]] - left
-      dt[, "struc_left" := ifelse(struc_left < 0L, 0L, struc_left)]
+      dt[, "left_cpos_min" := get_region_matrix(
+        corpus = corpus,
+        s_attribute = s_attr,
+        strucs = ifelse(struc_left < 0L, 0L, struc_left),
+        registry = registry())[,1]
+      ]
+
       struc_right <- dt[["struc"]] + right
       struc_max <- cl_attribute_size(corpus = corpus, attribute = s_attr, attribute_type = "s", registry = registry())
-      dt[, "struc_right" := ifelse(struc_right > struc_max, struc_max, struc_right)]
+      dt[, "right_cpos_max" := get_region_matrix(
+        corpus = corpus,
+        s_attribute = s_attr,
+        strucs = ifelse(struc_right > struc_max, struc_max, struc_right),
+        registry = registry())[,2]
+      ]
 
-      cpos_dt <- dt[, .fn(.SD), by = c("match_id")]
+      cpos_left <- dt[
+        , list(
+          cpos = .SD[["left_cpos_min"]]:(.SD[["match_left"]] - 1L), # but what if cpos of match_left is 0
+          position = (.SD[["left_cpos_min"]] - .SD[["match_left"]]):-1L
+        ),
+        by = c("match_id"), .SDcols = c("left_cpos_min", "match_left")
+      ]
+      cpos_right <- dt[
+        , list(
+          cpos = (.SD[["match_right"]] + 1L):.SD[["right_cpos_max"]], # but what if cpos of match_left is 0
+          position = 1L:(.SD[["right_cpos_max"]] - .SD[["match_right"]])
+        ),
+        by = c("match_id"), .SDcols = c("right_cpos_max", "match_right")
+      ]
+      cpos_match <- dt[
+        , list(cpos = .SD[["match_left"]]:.SD[["match_right"]],position = 0L),
+        by = c("match_id"), .SDcols = c("match_left", "match_right")
+      ]
+      
+      cpos_dt <- rbindlist(list(cpos_left, cpos_match, cpos_right))
     }
   } else if (is.character(left) && is.character(right)){
     .fn <- function(.SD){
