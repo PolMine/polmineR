@@ -15,6 +15,26 @@ setMethod("sample", "context", function(x, size){
   x
 })
 
+setAs(
+  from = "context", to = "matrix",
+  def = function(from){
+    x <- copy(from@cpos)
+    setorderv(x, cols = c("cpos", "match_id"))
+    x[, "direction" := sign(position)]
+    dt <- rbindlist(lapply(
+      c(-1L, 0L, 1L),
+      function(dir){
+        x[x[["direction"]] == dir][, list(
+          cpos_left = .SD$cpos[1],
+          cpos_right = .SD$cpos[nrow(.SD)]),
+          by = "match_id"
+        ]
+      }
+    ))
+
+    as.matrix(setorderv(dt, cols = "cpos_left")[, "match_id" := NULL])
+  }
+)
 
 
 #' @include partition.R partition_bundle.R

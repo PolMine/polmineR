@@ -31,6 +31,7 @@ CQP queries.
 - Significant improvement of the performance of the `as.phrases()` method (#172).
 - The `as.corpusEnc()` auxiliary function will now check whether non-convertible characters lead to an `NA` result and issue a warning how this warning can be avoided (#151).
 - Significant performance improvement of the `context()` method for `matrix` objects if arguments `left` and `right` are named `integer` vectors. All `context()` benefit from the improved performance of this worker for creating contexts for query matches.
+- New coerce-method to derive matrix with ranges from a `context` object.
 
 ## Bug fixes
 
