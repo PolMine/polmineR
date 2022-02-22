@@ -66,25 +66,22 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
   
   if (!is.null(s_attribute)){
     stopifnot(length(s_attribute) == 1L)
-    sAttrCol <- paste(s_attribute, "int", sep = "_")
-    if (!sAttrCol %in% colnames(object@cpos)){
-      object <- enrich(object, s_attribute = s_attribute)
+    s_attr_col <- paste(s_attribute, "int", sep = "_")
+    if (!s_attr_col %in% colnames(object@cpos)){
+      enrich(object, s_attribute = s_attribute) # in-place operation
     }
-    setnames(object@cpos, old = sAttrCol, new = "struc")
-    
-    position <- 0 # work around to make data.table syntax pass R CMD check
-    struc <- 0 # work around to make data.table syntax pass R CMD check
-    
+    setnames(object@cpos, old = s_attr_col, new = "struc")
+
     .message("checking boundaries of regions", verbose = verbose)
     if (progress) pb <- txtProgressBar(min = 1, max = object@count, style = 3)
     .checkBoundary <- function(.SD, .GRP){
       if (progress) setTxtProgressBar(pb, value = .GRP)
-      struc_hit <- .SD[position == 0][["struc"]][1]
-      .SD[struc == struc_hit]
+      struc_hit <- .SD[.SD[["position"]] == 0][["struc"]][1]
+      .SD[.SD[["struc"]] == struc_hit]
     }
     object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "match_id"]
     if (progress) close(pb)
-    setnames(object@cpos, old = "struc", new = sAttrCol)
+    setnames(object@cpos, old = "struc", new = s_attr_col)
   }
   
   if (!is.null(positivelist)){

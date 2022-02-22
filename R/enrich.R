@@ -197,7 +197,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
         if (colname_struc %in% colnames(.Object@cpos)){
           .message("already present, skipping assignment of column:", colname_struc, verbose = verbose)
         } else {
-          .Object@cpos[[colname_struc]] <- strucs
+          .Object@cpos[, (colname_struc) := strucs]
         }
       } else {
         if (s_attr %in% colnames(.Object@cpos)){
@@ -205,7 +205,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
         } else {
           .message("get string for s-attribute:", s_attr, verbose = verbose)
           strings <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
-          .Object@cpos[[s_attr]] <- as.nativeEnc(strings, from = .Object@encoding)
+          .Object@cpos[, (s_attr) := as.nativeEnc(strings, from = .Object@encoding)]
         }
       }
     }
@@ -216,14 +216,14 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     stopifnot( all(p_attribute %in% registry_get_p_attributes(.Object@corpus)) )
     
     # add ids
-    for (pAttr in p_attribute){
-      colname <- paste(pAttr, "id", sep = "_")
+    for (p_attr in p_attribute){
+      colname <- paste(p_attr, "id", sep = "_")
       if (colname %in% colnames(.Object@cpos)){
-        .message("already present - skip getting ids for p-attribute:", pAttr, verbose = verbose)
+        .message("already present - skip getting ids for p-attribute:", p_attr, verbose = verbose)
       } else {
-        .message("getting token id for p-attribute:", pAttr, verbose = verbose)
-        ids <- cl_cpos2id(corpus = .Object@corpus, p_attribute = pAttr, cpos = .Object@cpos[["cpos"]],  registry = registry())
-        .Object@cpos[[colname]] <- ids
+        .message("getting token id for p-attribute:", p_attr, verbose = verbose)
+        ids <- cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attr, cpos = .Object@cpos[["cpos"]],  registry = registry())
+        .Object@cpos[, (colname) := ids]
       }
     }
     

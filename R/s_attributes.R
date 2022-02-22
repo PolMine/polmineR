@@ -5,8 +5,8 @@ NULL
 #' 
 #' Structural annotations (s-attributes) of a corpus capture metainformation for
 #' regions of tokens. The \code{s_attributes}-method offers high-level access to
-#' the s-attributes present in a \code{corpus} or \code{subcorpus}, or the values of
-#' s-attributes in a \code{corpus}/\code{partition}.
+#' the s-attributes present in a \code{corpus} or \code{subcorpus}, or the
+#' values of s-attributes in a \code{corpus}/\code{partition}.
 #' 
 #' Importing XML into the Corpus Workbench (CWB) turns elements and element
 #' attributes into so-called "s-attributes". There are two basic uses of the
@@ -22,9 +22,15 @@ NULL
 #' s_attributes is returned, which is a useful building block for decoding a
 #' corpus.
 #' 
-#' If argument \code{s_attributes} is a character providing several s-attributes, the method
-#' will return a \code{data.table}. If \code{unique} is \code{TRUE}, all unique
-#' combinations of the s-attributes will be reported by the \code{data.table}.
+#' If argument \code{s_attributes} is a character providing several
+#' s-attributes, the method will return a \code{data.table}. If \code{unique} is
+#' \code{TRUE}, all unique combinations of the s-attributes will be reported by
+#' the \code{data.table}.
+#' 
+#' If the corpus is based on a nested XML structure, the order of items on the
+#' `s_attribute` vector matters. The method for `corpus` objects will take the
+#' first s-attribute as the benchmark and assume that further s-attributes are
+#' XML ancestors of the node. 
 #'
 #' @param .Object A \code{corpus}, \code{subcorpus}, \code{partition} object, or
 #'   a \code{call}. A corpus can also be specified by a length-one
@@ -96,7 +102,35 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         return(y)
       }
     } else if (length(s_attribute) > 1L){
-      y <- data.table(sapply(s_attribute, function(s_attr) s_attributes(.Object, s_attribute = s_attr, unique = FALSE)))
+      # This is a simple check whether s_attributes are nested: If attribute sizes
+      # are identical, it is not nested.
+      s_attr_sizes <- sapply(
+        s_attribute,
+        function(s_attr)
+          cl_attribute_size(
+            corpus = .Object@corpus,
+            attribute = s_attr, attribute_type = "s",
+            registry = Sys.getenv("CORPUS_REGISTRY")
+          )
+      )
+      if (length(unique(s_attr_sizes)) == 1L){
+        y <- data.table(sapply(s_attribute, function(s_attr) s_attributes(.Object, s_attribute = s_attr, unique = FALSE)))
+      } else {
+        dt <- s_attribute_decode(
+          corpus = .Object@corpus, s_attribute = s_attribute[1],
+          data_dir = .Object@data_dir,
+          encoding = .Object@encoding,
+          method = "R" # this is usually the fastest option
+        )
+        setDT(dt)
+        dt[, "struc" := 0L:(nrow(dt) - 1L)]
+        setcolorder(dt, "struc")
+        y <- s_attributes(
+          dt,
+          corpus = .Object@corpus, s_attribute = s_attribute[-1L]
+        )
+      }
+      
       if (isTRUE(unique)) y <- unique(y)
       return( y )
     }
@@ -249,3 +283,37 @@ setMethod("s_attributes", "remote_partition", function(.Object, ...){
   ocpu_exec(fn = "s_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
 })
 
+
+#' @rdname s_attributes-method
+#' @importFrom RcppCWB corpus_data_dir cl_charset_name s_attribute_decode
+setMethod("s_attributes", "data.table", function(.Object, corpus, s_attribute, registry = Sys.getenv("CORPUS_REGISTRY")){
+  
+  data_dir <- corpus_data_dir(corpus = corpus, registry = registry)
+  charset <- charset <- cl_charset_name(corpus = corpus, registry = registry)
+  
+  y <- copy(.Object)
+  
+  if ("cpos" %in% colnames(y)){
+    col <- "cpos"
+  } else if ("cpos_left" %in% colnames(y)){
+    col <- "cpos_left"
+  } else {
+    stop("colnames 'cpos' or 'cpos_left' expected to be present")
+  }
+  
+  for (s_attr in s_attribute){
+    strucs <- cl_cpos2struc(
+      corpus = corpus, s_attribute = s_attr,
+      cpos = y[[col]], registry = registry
+    )
+    idx <- strucs + 1L
+    
+    values <- s_attribute_decode(
+      corpus = corpus, data_dir = data_dir,
+      s_attribute = s_attr, encoding = charset, method = "R"
+    )[["value"]]
+    
+    y[, (s_attr) := values[idx]]
+  }
+  y
+})

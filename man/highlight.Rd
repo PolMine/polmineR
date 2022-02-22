@@ -23,13 +23,14 @@ highlight(.Object, ...)
 )
 }
 \arguments{
-\item{.Object}{A \code{html}, \code{character}, a \code{kwic} object.}
+\item{.Object}{A `html`, `character`, a `kwic` object.}
 
-\item{...}{Terms to be highlighted can be passed in as named character
-vectors of terms (or regular expressions); the name then needs to be a
-valid color name.}
+\item{...}{Terms to be highlighted can be passed in as named `character`
+vectors of terms (or regular expressions); the name needs to be a
+valid color name. It is also possible to pass in a `matrix` with ranges (as
+returned by `cpos()`).}
 
-\item{highlight}{A character vector, or a list of character or integer vectors.}
+\item{highlight}{A character vector, or a list of `character` or `integer` vectors.}
 
 \item{regex}{Logical, whether character vectors are interpreted as regular
 expressions.}

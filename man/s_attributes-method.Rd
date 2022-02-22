@@ -11,6 +11,7 @@
 \alias{s_attributes,call-method}
 \alias{s_attributes,remote_corpus-method}
 \alias{s_attributes,remote_partition-method}
+\alias{s_attributes,data.table-method}
 \title{Get s-attributes.}
 \usage{
 s_attributes(.Object, ...)
@@ -30,6 +31,13 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{remote_corpus}(.Object, ...)
 
 \S4method{s_attributes}{remote_partition}(.Object, ...)
+
+\S4method{s_attributes}{data.table}(
+  .Object,
+  corpus,
+  s_attribute,
+  registry = Sys.getenv("CORPUS_REGISTRY")
+)
 }
 \arguments{
 \item{.Object}{A \code{corpus}, \code{subcorpus}, \code{partition} object, or

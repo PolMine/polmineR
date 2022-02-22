@@ -80,20 +80,21 @@ check_cqp_query <- function(query, warn = TRUE){
 }
 
 
-#' @param collapse A \code{logical} value, whether to collapse the queries into one.
-#' @param normalise.case A \code{logical} value, if \code{TRUE}, a flag will be
+#' @param collapse A `logical` value, whether to collapse the queries into one.
+#' @param normalise.case A `logical` value, if `TRUE`, a flag will be
 #'   added to the query/queries to omit matching case.
+#' @param check A `logical` value whether to run `check_cqp_query()` on queries.
 #' @export as.cqp
 #' @rdname cqp
 #' @name as.cqp
-as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
+as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE, warn = TRUE){
   if (!is.logical(normalise.case)) stop("normalise.case needs to be a logical value")
   if (!is.logical(collapse)) stop("collapse needs to be a logical value")
-  cqp <- sapply(
+  cqp <- unlist(lapply(
     query,
     function(x){
       query <- gsub("\\s+", " ", x)
-      cqpRaw <- lapply(
+      cqp_raw <- lapply(
         unlist(strsplit(query, "\\s")),
         function(q){
           if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
@@ -104,10 +105,18 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE){
           }
           retval
         })
-      paste(cqpRaw, collapse = " ")
-    })
-  if (length(cqp) > 1 && collapse == TRUE){
-    cqp <- paste('(', paste(cqp, sep='', collapse='|'), ')', sep="")
+      retval <- paste(cqp_raw, collapse = " ")
+      
+      if (check) retval <- if (check_cqp_query(retval, warn = warn))
+        retval
+      else
+        NULL
+      
+      retval
+    }
+  ))
+  if (length(cqp) > 1L && collapse == TRUE){
+    cqp <- paste('(', paste(cqp, sep = '', collapse='|'), ')', sep = "")
   }    
   cqp
 }
