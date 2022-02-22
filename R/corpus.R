@@ -332,21 +332,27 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
 
+  dt <- data.table(struc = x@strucs, cpos_left = x@cpos[,1], cpos_right = x@cpos[,2])
+  
   if (max_attr != cl_attribute_size(corpus = x@corpus, attribute = x@s_attribute_strucs, attribute_type = "s", registry = registry())){
-    stop("New s-attributes are nested in existing s-attribute defining subcorpus. ",
-         "The method does not (yet) work for nested XML / nested structural attributes.")
-  }
-
-  dt <- data.table(
-    struc = x@strucs,
-    cpos_left = x@cpos[,1],
-    cpos_right = x@cpos[,2]
-  )
-  for (s in s_attr){
-    str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
+    
+    if (length(s_attr) > 1L) stop("For nested XML - can process only one s-attribute at a time")
+    
+    strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s_attr, cpos = x@cpos[,1], registry = registry())
+    str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
     Encoding(str) <- x@encoding
-    dt[, (s) := str]
+    
+    dt[, (s_attr) := str]
+    
+  } else {
+    for (s in s_attr){
+      str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
+      Encoding(str) <- x@encoding
+      dt[, (s) := str]
+    }
+    
   }
+  
   setindexv(dt, cols = s_attr)
   dt_min <- dt[eval(expr, envir = dt)]
 
