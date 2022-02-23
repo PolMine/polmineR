@@ -266,11 +266,15 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       right_cpos_max <- get_region_matrix(corpus = corpus, s_attribute = s_attr, strucs = ifelse(struc_right > struc_max, struc_max, struc_right), registry = registry())[,2]
 
       ranges_left <- matrix(c(left_cpos_min, .Object[,1] - 1), ncol = 2)
-      sizes_left <- .Object[,1] - left_cpos_min
+      match_id <- 1L:nrow(.Object)
+      filter <- ifelse(ranges_left[,1] <= ranges_left[,2], TRUE, FALSE)
+      match_id <- match_id[filter]
+      ranges_left <- ranges_left[filter,]
+      sizes_left <- .Object[filter,1] - left_cpos_min[filter]
       cpos_left <- data.table(
         cpos = unlist(apply(ranges_left, 1, function(x) x[1]:x[2])),
         position = unlist(lapply((-sizes_left), seq.int, to = -1)),
-        match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_left))
+        match_id = unlist(mapply(function(a, b) rep(a, times = b), match_id, sizes_left))
       )
       
       ranges_right <- matrix(c(.Object[,2] + 1, right_cpos_max), ncol = 2)
