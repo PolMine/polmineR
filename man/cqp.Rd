@@ -11,7 +11,13 @@ is.cqp(query)
 
 check_cqp_query(query, warn = TRUE)
 
-as.cqp(query, normalise.case = FALSE, collapse = FALSE)
+as.cqp(
+  query,
+  normalise.case = FALSE,
+  collapse = FALSE,
+  check = TRUE,
+  warn = TRUE
+)
 }
 \arguments{
 \item{query}{A \code{character} vector with at least one CQP query.}
@@ -19,10 +25,12 @@ as.cqp(query, normalise.case = FALSE, collapse = FALSE)
 \item{warn}{A (length-one) \code{logical} value, whether to issue a warning if
 a query may be buggy.}
 
-\item{normalise.case}{A \code{logical} value, if \code{TRUE}, a flag will be
+\item{normalise.case}{A `logical` value, if `TRUE`, a flag will be
 added to the query/queries to omit matching case.}
 
-\item{collapse}{A \code{logical} value, whether to collapse the queries into one.}
+\item{collapse}{A `logical` value, whether to collapse the queries into one.}
+
+\item{check}{A `logical` value whether to run `check_cqp_query()` on queries.}
 }
 \value{
 \code{is.cqp} returns a logical value, \code{as.cqp} a character

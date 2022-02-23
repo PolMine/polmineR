@@ -89,7 +89,7 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
     before <- length(unique(object@cpos[["match_id"]]))
     if (is.matrix(positivelist)){
       dt <- data.table(cpos = cpos(positivelist), positivelist = TRUE)
-      cpos_min <- dt[object@cpos[position != 0], on = "cpos"]
+      cpos_min <- dt[object@cpos[object@cpos[["position"]] != 0], on = "cpos"]
       matches_to_keep <- cpos_min[,
         if (any(!is.na(.SD$positivelist))) .SD else NULL,
         by = "match_id"

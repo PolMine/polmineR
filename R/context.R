@@ -20,7 +20,7 @@ setAs(
   def = function(from){
     x <- copy(from@cpos)
     setorderv(x, cols = c("cpos", "match_id"))
-    x[, "direction" := sign(position)]
+    x[, "direction" := sign(x[["position"]])]
     dt <- rbindlist(lapply(
       c(-1L, 0L, 1L),
       function(dir){

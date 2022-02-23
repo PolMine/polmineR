@@ -284,6 +284,8 @@ setMethod("s_attributes", "remote_partition", function(.Object, ...){
 })
 
 
+#' @param registry The registry directory with the registry file defining
+#'   `corpus`.
 #' @rdname s_attributes-method
 #' @importFrom RcppCWB corpus_data_dir cl_charset_name s_attribute_decode
 setMethod("s_attributes", "data.table", function(.Object, corpus, s_attribute, registry = Sys.getenv("CORPUS_REGISTRY")){

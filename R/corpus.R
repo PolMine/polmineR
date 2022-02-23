@@ -116,24 +116,6 @@ setMethod("corpus", "missing", function(){
 })
 
 
-
-#' @noRd
-.s_attributes_stop_if_nested <- function(corpus, s_attr){
-  max_attr <- unique(
-    sapply(
-      s_attr,
-      function(s) cl_attribute_size(corpus = corpus, attribute = s, attribute_type = "s", registry = registry())
-    )
-  )
-  if (length(max_attr) != 1){
-    stop(
-      sprintf("Differing attribute size of s-attributes detected (%s), ", paste(s_attr, collapse = "/")),
-      "but the method does not (yet) work for nested XML / nested structural attributes."
-    )
-  }
-  max_attr
-}
-
 #' @title Subsetting corpora and subcorpora
 #' @description The structural attributes of a corpus (s-attributes) can be used
 #'   to generate subcorpora (i.e. a \code{subcorpus} class object) by applying
@@ -197,7 +179,7 @@ setMethod("corpus", "missing", function(){
 #' @param subset A \code{logical} expression indicating elements or rows to
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
-#' @importFrom data.table setindexv
+#' @importFrom data.table setindexv setDT
 #' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
 #'   and passed into a \code{grep} call for subsetting a table with the regions
@@ -323,6 +305,7 @@ setMethod("subset", "character", function(x, ...){
 
 
 #' @rdname subset
+#' @importFrom RcppCWB s_attr_regions
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- substitute(subset)
 
@@ -330,19 +313,79 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  max_attr <- .s_attributes_stop_if_nested(corpus = x@corpus, s_attr = s_attr)
-
   dt <- data.table(struc = x@strucs, cpos_left = x@cpos[,1], cpos_right = x@cpos[,2])
   
-  if (max_attr != cl_attribute_size(corpus = x@corpus, attribute = x@s_attribute_strucs, attribute_type = "s", registry = registry())){
+  s_attr_sizes <- sapply(
+    unique(c(x@s_attribute_strucs, s_attr)),
+    function(s)
+      cl_attribute_size(
+        corpus = x@corpus,
+        attribute = s, attribute_type = "s",
+        registry = registry()
+      )
+  )
+  
+  if (length(unique(s_attr_sizes)) != 1L){
     
-    if (length(s_attr) > 1L) stop("For nested XML - can process only one s-attribute at a time")
+    # If sizes of s-attributes differ, we assume the nested scenario
     
-    strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s_attr, cpos = x@cpos[,1], registry = registry())
-    str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
-    Encoding(str) <- x@encoding
+    regions <- lapply(
+      setNames(s_attr, s_attr),
+      function(s) s_attr_regions(corpus = x@corpus, s_attr = s, registry = registry(), data_dir = x@data_dir)
+    )
+
+    if (length(s_attr) > 1L){
+      # When subsetting on more than one s-attribute at a time, it is required
+      # that these are on the same level.
+      if (length(unique(s_attr_sizes[-1L])) == 1L){
+        stop("structural attributes for subsetting need to have identical size - not true")
+      }
+      
+      # The second check is whether regions of s-attributes for subsetting are
+      # identical.
+      for (i in 2L:length(s_attr))
+        if (!identical(regions[[1]], regions[[i]]))
+          stop("structural attributes need to define the same regions")
+      
+    }
     
-    dt[, (s_attr) := str]
+    for (s in s_attr){
+      strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s, cpos = x@cpos[,1], registry = registry())
+      
+      if (any(is.na(strucs)) || any(strucs < 0L)){
+        descendant <- TRUE
+        break
+      }
+
+      r <- regions[[s]][strucs + 1L]
+      if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
+        descendant <- FALSE
+        str <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = strucs, registry = registry())
+        Encoding(str) <- x@encoding
+        dt[, (s_attr) := str]
+      } else {
+        descendant <- TRUE
+        break
+      }
+    }
+    
+    if (descendant){
+      # Slower by necessity
+      strucs <- cl_cpos2struc(x@corpus, s_attribute = s_attr[1], cpos = cpos(x@cpos), registry = registry())
+      strucs <- unique(strucs[strucs >= 0])
+      ranges <- get_region_matrix(x@corpus, s_attribute = s_attr[1], strucs = strucs, registry = registry())
+      str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr[1], struc = strucs, registry = registry())
+      Encoding(str) <- x@encoding
+      dt <- data.table(struc = strucs, cpos_left = ranges[,1], cpos_right = ranges[,2])
+      dt[, (s_attr[1]) := str]
+      if (length(s_attr) > 1L){
+        for (s in s_attr[-1]){
+          str <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = strucs, registry = registry())
+          Encoding(str) <- x@encoding
+          dt[, (s) := str]
+        }
+      }
+    }
     
   } else {
     for (s in s_attr){
