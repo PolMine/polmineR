@@ -73,7 +73,7 @@ context(.Object, ...)
   ...
 )
 
-\S4method{context}{matrix}(.Object, corpus, left, right)
+\S4method{context}{matrix}(.Object, corpus, left, right, boundary = NULL)
 
 \S4method{context}{corpus}(
   .Object,

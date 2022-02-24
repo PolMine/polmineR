@@ -103,7 +103,6 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @rdname context-method
 #' @name context
 #' @docType methods
-
 setMethod("context", "slice", function(
   .Object, query, cqp = is.cqp, check = TRUE,
   left = getOption("polmineR.left"),
@@ -134,7 +133,12 @@ setMethod("context", "slice", function(
   }
   colnames(regions) <- c("hit_cpos_left", "hit_cpos_right")
   
-  ctxt <- context(.Object = regions, left = left, right = right, corpus = .Object@corpus)
+  ctxt <- context(
+    .Object = regions,
+    left = left, right = right, boundary = boundary,
+    corpus = .Object@corpus
+  )
+  
   ctxt@query <- query
   ctxt@p_attribute <- p_attribute
   ctxt@corpus <- .Object@corpus
@@ -160,14 +164,6 @@ setMethod("context", "slice", function(
   ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
   ctxt@size_partition <- size(.Object)
   ctxt@count <- length(unique(ctxt@cpos[["match_id"]]))
-  
-  # check that windows do not transgress s-attribute
-  if (!is.null(boundary)){
-    stopifnot(boundary %in% registry_get_s_attributes(ctxt@corpus))
-    .message("checking that context positions to not transgress regions", verbose = verbose)
-    ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose)
-    ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
-  }
   
   # put together raw stat table
   if (count){
@@ -221,7 +217,8 @@ setMethod("context", "subcorpus", function(
 #'   CWB corpus.
 #' @rdname context-method
 #' @importFrom data.table between
-setMethod("context", "matrix", function(.Object, corpus, left, right){
+#' @importFrom RcppCWB region_matrix_context
+setMethod("context", "matrix", function(.Object, corpus, left, right, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
   if (class(left) == "numeric") left <- setNames(as.integer(left), nm = names(left))
@@ -256,42 +253,46 @@ setMethod("context", "matrix", function(.Object, corpus, left, right){
       s_attr <- unique(c(names(left), names(right)))
       if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
       
-      struc <- cl_cpos2struc(corpus = corpus, s_attribute = s_attr, cpos = .Object[,1L], registry = registry())
+      left_and_right <- region_matrix_context(
+        corpus = corpus,
+        matrix = .Object,
+        s_attribute = s_attr, left = left, right = right,
+        boundary = boundary
+      )
+      dt <- data.table(.Object, left_and_right)[, "match_id" := 1L:nrow(.Object)]
+      colnames(dt) <- c("cpos_left", "cpos_right", "begin", "end", "match_id")
       
-      struc_left <- struc - left
-      left_cpos_min <- get_region_matrix(corpus = corpus, s_attribute = s_attr, strucs = ifelse(struc_left < 0L, 0L, struc_left), registry = registry())[,1]
-      
-      struc_right <- struc + right
-      struc_max <- cl_attribute_size(corpus = corpus, attribute = s_attr, attribute_type = "s", registry = registry())
-      right_cpos_max <- get_region_matrix(corpus = corpus, s_attribute = s_attr, strucs = ifelse(struc_right > struc_max, struc_max, struc_right), registry = registry())[,2]
-
-      ranges_left <- matrix(c(left_cpos_min, .Object[,1] - 1), ncol = 2)
-      match_id <- 1L:nrow(.Object)
-      filter <- ifelse(ranges_left[,1] <= ranges_left[,2], TRUE, FALSE)
-      match_id <- match_id[filter]
-      ranges_left <- ranges_left[filter,]
-      sizes_left <- .Object[filter,1] - left_cpos_min[filter]
+      dt_left <- dt[,c("begin", "cpos_left", "match_id")]
+      dt_left[, "end" := dt[["cpos_left"]] - 1L][,"cpos_left" := NULL]
+      setcolorder(dt_left, c("begin", "end", "match_id"))
+      dt_left_min <- dt_left[!is.na(dt_left[["begin"]])]
+      ranges_left <- as.matrix(dt_left_min)
+      sizes_left <- dt_left_min[["end"]] - dt_left_min[["begin"]] + 1
       cpos_left <- data.table(
         cpos = unlist(apply(ranges_left, 1, function(x) x[1]:x[2])),
         position = unlist(lapply((-sizes_left), seq.int, to = -1)),
-        match_id = unlist(mapply(function(a, b) rep(a, times = b), match_id, sizes_left))
+        match_id = unlist(mapply(function(a, b) rep(a, times = b), dt_left_min[["match_id"]], sizes_left))
       )
-      
-      ranges_right <- matrix(c(.Object[,2] + 1, right_cpos_max), ncol = 2)
-      sizes_right <- right_cpos_max - .Object[,2]
+
+      dt_right <- dt[,c("cpos_right", "end", "match_id")]
+      dt_right[, "begin" := dt_right[["cpos_right"]] + 1L][,"cpos_right" := NULL]
+      setcolorder(dt_right, c("begin", "end", "match_id"))
+      dt_right_min <- dt_right[!is.na(dt_left[["end"]])]
+      ranges_right <- as.matrix(dt_right_min)
+      sizes_right <- dt_right_min[["end"]] - dt_right_min[["begin"]] + 1
       cpos_right <- data.table(
           cpos = unlist(apply(ranges_right, 1, function(x) x[1]:x[2])),
           position = unlist(lapply((sizes_right), function(x) 1:x)),
-          match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_right))
+          match_id = unlist(mapply(function(a, b) rep(a, times = b), dt_right_min[["match_id"]], sizes_right))
       )
-      
+
       sizes_match <- .Object[,2] - .Object[,1] + 1
       cpos_match <- data.table(
         cpos = unlist(apply(.Object, 1, function(x) x[1]:x[2])),
         position = 0L,
         match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_match))
       )
-      
+
       cpos_dt <- rbindlist(list(cpos_left, cpos_match, cpos_right))
     }
   } else if (is.character(left) && is.character(right)){
