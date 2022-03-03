@@ -119,8 +119,8 @@ setMethod("context", "slice", function(
   if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   
-  if (!is.integer(left)) left <- setNames(as.integer(left), names(left))# input may be numeric
-  if (!is.integer(right)) right <- setNames(as.integer(right), names(left)) # input may be numeric
+  if (is.numeric(left) && !is.integer(left)) left <- setNames(as.integer(left), names(left))# input may be numeric
+  if (is.numeric(right) && !is.integer(right)) right <- setNames(as.integer(right), names(left)) # input may be numeric
   
   # get regions for query matches
   .message("getting corpus positions", verbose = verbose)
@@ -135,7 +135,9 @@ setMethod("context", "slice", function(
   
   ctxt <- context(
     .Object = regions,
-    left = left, right = right, boundary = boundary,
+    left = left, right = right,
+    p_attribute = p_attribute,
+    boundary = boundary,
     corpus = .Object@corpus
   )
   
@@ -218,109 +220,38 @@ setMethod("context", "subcorpus", function(
 #' @rdname context-method
 #' @importFrom data.table between
 #' @importFrom RcppCWB region_matrix_context
-setMethod("context", "matrix", function(.Object, corpus, left, right, boundary = NULL){
+setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
   if (class(left) == "numeric") left <- setNames(as.integer(left), nm = names(left))
   if (class(right) == "numeric") right <- setNames(as.integer(right), nm = names(right))
 
   if (is.integer(left) && is.integer(right)){
-
     if (is.null(names(left)) && is.null(names(left))){
-      
-      positions_left <- rep(list(if (left >= 1L) -left:-1L else integer()), nrow(.Object))
-      positions_right <- rep(list(if (right >= 1L) 1L:right else integer()), nrow(.Object))
-      match_length <- .Object[,2] - .Object[,1]
-      
-      dt_left <- data.table(
-        cpos = unlist(mapply(function(a, b) a + b, .Object[,1], positions_left, SIMPLIFY = FALSE)),
-        position = unlist(positions_left),
-        match_id = rep(1L:nrow(.Object), each = left)
-      )
-      dt_right <- data.table(
-        cpos = unlist(mapply(function(a, b) a + b, .Object[,2], positions_right, SIMPLIFY = FALSE)),
-        position = unlist(positions_right),
-        match_id = rep(1L:nrow(.Object), each = right)
-      )
-      dt_node <- data.table(
-        cpos = unlist(lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2])),
-        position = rep(0L, sum(match_length) + nrow(.Object)),
-        match_id = unlist(lapply(1L:nrow(.Object), function(i) rep(i, times = match_length[i] + 1L)))
-      )
-      
-      cpos_dt <- rbind(dt_left, dt_right, dt_node)
+      s_attr <- NULL
     } else {
       s_attr <- unique(c(names(left), names(right)))
       if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
-      
-      left_and_right <- region_matrix_context(
-        corpus = corpus,
-        matrix = .Object,
-        s_attribute = s_attr, left = left, right = right,
-        boundary = boundary
-      )
-      dt <- data.table(.Object, left_and_right)[, "match_id" := 1L:nrow(.Object)]
-      colnames(dt) <- c("cpos_left", "cpos_right", "begin", "end", "match_id")
-      
-      dt_left <- dt[,c("begin", "cpos_left", "match_id")]
-      dt_left[, "end" := dt[["cpos_left"]] - 1L][,"cpos_left" := NULL]
-      setcolorder(dt_left, c("begin", "end", "match_id"))
-      dt_left_min <- dt_left[!is.na(dt_left[["begin"]])]
-      ranges_left <- as.matrix(dt_left_min)
-      sizes_left <- dt_left_min[["end"]] - dt_left_min[["begin"]] + 1
-      cpos_left <- data.table(
-        cpos = unlist(apply(ranges_left, 1, function(x) x[1]:x[2])),
-        position = unlist(lapply((-sizes_left), seq.int, to = -1)),
-        match_id = unlist(mapply(function(a, b) rep(a, times = b), dt_left_min[["match_id"]], sizes_left))
-      )
-
-      dt_right <- dt[,c("cpos_right", "end", "match_id")]
-      dt_right[, "begin" := dt_right[["cpos_right"]] + 1L][,"cpos_right" := NULL]
-      setcolorder(dt_right, c("begin", "end", "match_id"))
-      dt_right_min <- dt_right[!is.na(dt_left[["end"]])]
-      ranges_right <- as.matrix(dt_right_min)
-      sizes_right <- dt_right_min[["end"]] - dt_right_min[["begin"]] + 1
-      cpos_right <- data.table(
-          cpos = unlist(apply(ranges_right, 1, function(x) x[1]:x[2])),
-          position = unlist(lapply((sizes_right), function(x) 1:x)),
-          match_id = unlist(mapply(function(a, b) rep(a, times = b), dt_right_min[["match_id"]], sizes_right))
-      )
-
-      sizes_match <- .Object[,2] - .Object[,1] + 1
-      cpos_match <- data.table(
-        cpos = unlist(apply(.Object, 1, function(x) x[1]:x[2])),
-        position = 0L,
-        match_id = unlist(mapply(function(a, b) rep(a, times = b), 1L:nrow(.Object), sizes_match))
-      )
-
-      cpos_dt <- rbindlist(list(cpos_left, cpos_match, cpos_right))
     }
   } else if (is.character(left) && is.character(right)){
-    .fn <- function(.SD){
-      cpos_left <- seq.int(
-        from = cl_cpos2lbound(corpus = corpus, s_attribute = left, cpos = .SD[[1]][1], registry = registry()),
-        to = .SD[[1]][1] - 1L
-      )
-      cpos_right <- seq.int(
-        from = .SD[[2]][1] + 1L,
-        to = cl_cpos2rbound(corpus = corpus, s_attribute = right, cpos = .SD[[2]][1], registry = registry())
-      )
-      list(
-        cpos = c(cpos_left, .SD[[1]][1]:.SD[[2]][1], cpos_right),
-        position = c(
-          seq.int(from = -length(cpos_left), to = -1L, by = 1L),
-          rep(0L, .SD[[2]][1] - .SD[[1]][1] + 1L),
-          seq.int(from = 1L, to = length(cpos_right), by = 1L)
-        )
-      )
-    }
-    dt <- data.table(.Object)[, "match_id" := 1L:nrow(.Object)]
-    cpos_dt <- dt[, .fn(.SD), by = "match_id"]
+    s_attr <- unique(left, right)
+    if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
+    left <- 0L
+    right <- 0L
   }
   
-  setorderv(cpos_dt, cols = c("match_id", "cpos"))
-  cpos_dt_min <- cpos_dt[between(cpos_dt[["cpos"]], lower = 0L, upper = (size(corpus) - 1L))]
-
+  cpos_matrix <- region_matrix_context(
+    corpus = corpus,
+    matrix = .Object,
+    s_attribute = s_attr,
+    p_attribute = p_attribute,
+    left = left, right = right,
+    boundary = boundary
+  )
+  cpos_dt <- as.data.table(cpos_matrix)
+  colnames(cpos_dt) <- c("position", "cpos", "match_id", paste(p_attribute, "id", sep = "_"))
+  setcolorder(cpos_dt, c("match_id", "cpos"))
+  
   new(
     "context",
     query = character(),
@@ -328,7 +259,7 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, boundary =
     count = nrow(.Object),
     corpus = corpus,
     stat = data.table(),
-    cpos = cpos_dt_min,
+    cpos = cpos_dt,
     left = if (is.character(left)) 0L else as.integer(left),
     right = if (is.character(right)) 0L else as.integer(right),
     encoding = character(),

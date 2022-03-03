@@ -421,7 +421,7 @@ setMethod("kwic", "corpus", function(
     return(invisible(NULL))
   }
   
-  ctxt <- context(hits, left = left, right = right, corpus = .Object@corpus)
+  ctxt <- context(hits, left = left, right = right, p_attribute = p_attribute, corpus = .Object@corpus)
 
   ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = registry()), with = TRUE]
   
