@@ -35,6 +35,7 @@ CQP queries.
 - The `enrich()` method for `context` objects will now perform an in-place operation when adding new s-attributes.
 - The `as.cqp()` function includes arguments `check` and `warn` for running `check_cqp_query()` on queries.
 - The `context()` method for `matrix` objects includes a new argument `boundary` and relies on a new function`RcppCWB::region_matrix_context()`.
+- Default value of argument `verbose` of `context()`-methods is now `FALSE`.
 
 ## Bug fixes
 

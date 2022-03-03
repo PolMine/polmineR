@@ -30,7 +30,7 @@ context(.Object, ...)
   regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"),
-  verbose = TRUE,
+  verbose = FALSE,
   progress = TRUE,
   ...
 )
@@ -49,7 +49,7 @@ context(.Object, ...)
   regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"),
-  verbose = TRUE,
+  verbose = FALSE,
   progress = TRUE,
   ...
 )
@@ -68,12 +68,12 @@ context(.Object, ...)
   regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"),
-  verbose = TRUE,
+  verbose = FALSE,
   progress = TRUE,
   ...
 )
 
-\S4method{context}{matrix}(.Object, corpus, left, right, boundary = NULL)
+\S4method{context}{matrix}(.Object, corpus, left, right, p_attribute, boundary = NULL)
 
 \S4method{context}{corpus}(
   .Object,
@@ -88,7 +88,7 @@ context(.Object, ...)
   regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"),
-  verbose = TRUE,
+  verbose = FALSE,
   progress = TRUE,
   ...
 )
@@ -106,7 +106,7 @@ context(.Object, ...)
   regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"),
-  verbose = TRUE,
+  verbose = FALSE,
   progress = TRUE,
   ...
 )

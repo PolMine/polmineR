@@ -111,7 +111,7 @@ setMethod("context", "slice", function(
   boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ) {
   
@@ -193,7 +193,7 @@ setMethod("context", "partition", function(
   boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ) callNextMethod()
 )
@@ -207,7 +207,7 @@ setMethod("context", "subcorpus", function(
   boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ) callNextMethod()
 )
@@ -276,7 +276,7 @@ setMethod("context", "corpus", function(
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ){
   
@@ -311,7 +311,7 @@ setMethod("context", "character", function(
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
-  mc = getOption("polmineR.mc"), verbose = TRUE, progress = TRUE,
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ){
   context(
