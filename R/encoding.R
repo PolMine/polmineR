@@ -72,10 +72,10 @@ setMethod("encoding", "subcorpus", function(object) callNextMethod())
 #' between the native encoding and the encoding of the corpus.
 #'
 #' The encoding of a corpus and the encoding of the terminal (the native
-#' encoding) may differ, provoking strange or wrong results if no
-#' conversion is carried out between the potentially differing encodings. The
-#' functions \code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions
-#' to assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
+#' encoding) may differ, provoking strange or wrong results if no conversion is
+#' carried out between the potentially differing encodings. The functions
+#' \code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions to
+#' assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
 #' deliberately remove the explicit statement of the encoding, to avoid warnings
 #' that may occur with character vector columns in a \code{data.table} object.
 #'
@@ -107,7 +107,18 @@ as.nativeEnc <- function(x, from){
 #' @rdname encodings
 #' @importFrom utils localeToCharset
 as.corpusEnc <- function(x, from = encoding(), corpusEnc){
+  x <- as.character(x)
   if (is.na(from)) from <- "UTF-8"
+  
+  inputenc <- unique(Encoding(x))
+  if (any(!inputenc %in% c("unknown", from))){
+    warning(
+      sprintf(
+        "Found '%s' encoded strings, an unexpected encoding that may result in warnings and unpredictable behavior.  Please check input!",
+        inputenc[!inputenc %in% c("unknown", from)])
+      )
+  }
+  
   y <- iconv(x, from = from, to = corpusEnc)
   if (anyNA(y)){
     for (string in x){

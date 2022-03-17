@@ -36,6 +36,9 @@ CQP queries.
 - The `as.cqp()` function includes arguments `check` and `warn` for running `check_cqp_query()` on queries.
 - The `context()` method for `matrix` objects includes a new argument `boundary` and relies on a new function`RcppCWB::region_matrix_context()`.
 - Default value of argument `verbose` of `context()`-methods is now `FALSE`.
+- The `as.corpusEnc()` auxiliary function now includes a test whether input
+character vector includes unexpected encodings and issues a warning if this is
+the case.
 
 ## Bug fixes
 
