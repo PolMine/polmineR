@@ -50,6 +50,9 @@ of items to be highlighted. It is treated as a set of regions, such as resulting
 from `cpos()`. Thus it is possible to highlight matches for CQP queries.
 - The package now requires at least RcppCWB v0.5.1, which includes a much more
 efficient worker for token contexts for the `context()` method.
+- The `count()`-method for `partition_bundle` objects failed with an opaque
+error message if there were no query matches at all. There is now a check for
+this scenario and the expected table is returned (zero values throughout.)
 
 
 ## Minor Improvements
@@ -117,6 +120,8 @@ objects(#181) has been fixed.
 - The `context()` method, and `kwic()` for `partition` or `subcorpus` objects
 did not process left and right contexts correctly, if it was a named character
 vector. Fixed.
+- The `hits()` method failed for `partition_bundle` objects when there were no
+matches for the query. Fixed. (#199)
 
 
 # Documentation 

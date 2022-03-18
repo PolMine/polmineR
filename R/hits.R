@@ -183,21 +183,27 @@ setMethod("hits", "partition_bundle", function(
   count_dt <- rbindlist(count_dt_list)
   
   .message("finalizing tables", verbose = verbose)
-  strucs <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]], registry = registry())
-  count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
-  dt <- struc_dt[count_dt, on = "struc"] # merge
-  nas <- which(is.na(dt[["partition"]]) == TRUE)
-  if (missing(s_attribute)) s_attribute <- NULL
-  for (s_attr in s_attribute){
-    values <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = dt[["struc"]], registry = registry())
-    dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]
+  if (nrow(count_dt) > 0L){
+    strucs <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]], registry = registry())
+    count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
+    dt <- struc_dt[count_dt, on = "struc"] # merge
+    nas <- which(is.na(dt[["partition"]]) == TRUE)
+    if (missing(s_attribute)) s_attribute <- NULL
+    for (s_attr in s_attribute){
+      values <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = dt[["struc"]], registry = registry())
+      dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]
+    }
+    if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
+    tf <- dt[, .N, by = c(c("partition", "query"), s_attribute)]
+    setnames(tf, old = "N", new = "count")
+    if (freq) size <- TRUE
+    if (size) tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]
+    if (freq) tf[, freq := count / size]
+  } else {
+    tf <- data.table(partition = character(), query = character(), N = integer())
+    if (size) tf[, "size" := integer()]
+    if (freq) tf[, "freq" := numeric()]
   }
-  if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
-  tf <- dt[, .N, by = c(c("partition", "query"), s_attribute)]
-  setnames(tf, old = "N", new = "count")
-  if (freq) size <- TRUE
-  if (size) tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]
-  if (freq) tf[, freq := count / size]
   new("hits", stat = tf, corpus = corpus_id)
 })
 

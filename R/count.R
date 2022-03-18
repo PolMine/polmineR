@@ -236,19 +236,29 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     .message("getting hits for query/queries", verbose = verbose)
     DT <- hits(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress, verbose = verbose)@stat
     .message("rearranging table", verbose = verbose)
-    DT_cast <- dcast.data.table(DT, partition ~ query, value.var = "count", fill = 0)
+    if (nrow(DT) > 0L){
+      DT_cast <- dcast.data.table(DT, partition ~ query, value.var = "count", fill = 0)
+    } else {
+      # If there are no matches, we generate a data.table directly that will be 
+      # filled later on.
+      DT_cast <- data.table(partition = names(.Object))
+    }
+    
     
     # remove counts that are not in one of the partitions
-    noPartition <- which(is.na(DT_cast[["partition"]]) == TRUE)
-    if (length(noPartition) > 0L) DT_cast <- DT_cast[-noPartition]
+    no_partition <- which(is.na(DT_cast[["partition"]]) == TRUE)
+    if (length(no_partition) > 0L) DT_cast <- DT_cast[-no_partition]
     
     # add rows for partitions withous hits (all 0)
-    missingPartitions <- names(.Object)[which(!names(.Object) %in% DT_cast[[1]])]
-    if (length(missingPartitions) > 0L){
+    missing_partitions <- names(.Object)[which(!names(.Object) %in% DT_cast[[1]])]
+    if (length(missing_partitions) > 0L){
       queryColnames <- colnames(DT_cast)[2L:ncol(DT_cast)]
       DTnewList <- c(
-        list(partition = missingPartitions),
-        lapply(setNames(queryColnames, queryColnames), function(Q) rep(0L, times = length(missingPartitions)))
+        list(partition = missing_partitions),
+        lapply(
+          setNames(queryColnames, queryColnames),
+          function(Q) rep(0L, times = length(missing_partitions))
+        )
       )
       DTnomatch <- as.data.table(DTnewList)
       DT_cast <- rbindlist(list(DT_cast, DTnomatch))
