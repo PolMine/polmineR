@@ -146,3 +146,21 @@ test_that(
     expect_equal(dt[["N"]], cnt[["TOTAL"]])
   }
 )
+
+test_that(
+  "check boundary arg for kwic,character()-method",
+  {
+    K <- kwic(
+      "GERMAPARLMINI",
+      query = '"Sehr" "geehrte"', cqp = TRUE,
+      left = 100, right = 100,
+      boundary = "date"
+    )
+    for (i in c(1,3,4)){
+      expect_identical(
+        K@cpos[match_id == i][["word"]][1:2],
+        c("Sehr", "geehrte")
+      )
+    }
+  }
+)
