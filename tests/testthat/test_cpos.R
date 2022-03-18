@@ -44,3 +44,14 @@ test_that(
     expect_equal(cpos(sc, query = '"adfadfsaasdf.*"', cqp = TRUE), NULL)
   }
 )
+
+test_that(
+  "remove whitespace when looking up a token",
+  {
+    r <- corpus("REUTERS")
+    expect_warning(cpos(r, query = " oil"))
+    expect_warning(cpos(r, query = "oil "))
+    expect_warning(cpos(r, query = "  oil "))
+    expect_identical(nrow(cpos(r, query = "  oil ")), 78L)
+  }
+)

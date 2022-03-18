@@ -22,8 +22,11 @@ NULL
 #' 
 #' @param .Object A length-one \code{character} vector indicating a CWB corpus, a
 #'   \code{partition} object, or a \code{matrix} with corpus positions.
-#' @param query A \code{character} vector providing one or multiple queries
-#'   (token or CQP query). Token ids (i.e. \code{integer} values) are also accepted.
+#' @param query A `character` vector providing one or multiple queries (token to
+#'   look up, regular expression or CQP query). Token ids (i.e. `integer`
+#'   values) are also accepted. If `query` is neither a regular expression nor a
+#'   CQP query, a sanity check removes accidental leading/trailing whitespace,
+#'   issuing a respective warning.
 #' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a function to
 #'   check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
 #'   function).
@@ -81,9 +84,29 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
   if (class(cqp) == "function") cqp <- cqp(query)
   if (length(cqp) > 1L) stop("length of cqp is more than 1, but needs to be exactly 1")
   if (!cqp) {
+    
+    .fn <- function(id){
+      regions <- cl_id2cpos(corpus = .Object@corpus, p_attribute = p_attribute, id = id, registry = registry())
+      matrix(c(regions, regions), ncol = 2L)
+    }
+
     hit_list <- lapply(
       query,
       function(q){
+        
+        if (is.character(q) && !regex){
+          if (grepl("^\\s+", q) || grepl("\\s+$", q)){
+            warning(
+              sprintf(
+                "Query '%s' includes leading and/or trailing whitespace. ",
+                q
+              ),
+              "Surplus whitespace is considered to be accidental and will be removed."
+            )
+            q <- gsub("^\\s*(.*?)\\s*$", "\\1", q)
+          }
+        }
+        
         regions <- try({
           if (is.character(q)){
             if (!regex){
@@ -96,10 +119,7 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
           } else {
             warning("Argument 'query' needs to be an integer value or a character vector.")
           }
-          .fn <- function(id){
-            regions <- cl_id2cpos(corpus = .Object@corpus, p_attribute = p_attribute, id = id, registry = registry())
-            matrix(c(regions, regions), ncol = 2L)
-          }
+          
           if (length(ids) == 1L){
             if (ids < 0L){ # CQP will return -1 or another negative value if there are no matches
               .message("no hits for query: ", q, verbose = verbose)
