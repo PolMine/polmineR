@@ -421,7 +421,13 @@ setMethod("kwic", "corpus", function(
     return(invisible(NULL))
   }
   
-  ctxt <- context(hits, left = left, right = right, p_attribute = p_attribute, corpus = .Object@corpus)
+  ctxt <- context(
+    hits,
+    left = left, right = right,
+    p_attribute = p_attribute,
+    corpus = .Object@corpus,
+    boundary = boundary
+  )
 
   ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = registry()), with = TRUE]
   
@@ -431,14 +437,6 @@ setMethod("kwic", "corpus", function(
   ctxt@encoding <- .Object@encoding
   ctxt@partition <- new("partition", stat = data.table())
 
-  # check that windows do not transgress s-attribute
-  if (!is.null(boundary)){
-    stopifnot(boundary %in% registry_get_s_attributes(ctxt@corpus))
-    .message("checking that context positions to not transgress regions", verbose = verbose)
-    ctxt <- enrich(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
-    ctxt <- trim(ctxt, s_attribute = boundary, verbose = verbose, progress = progress)
-  }
-  
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (is.null(ctxt)) return(NULL)
