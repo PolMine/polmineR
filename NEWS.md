@@ -39,6 +39,8 @@ CQP queries.
 - The `as.corpusEnc()` auxiliary function now includes a test whether input
 character vector includes unexpected encodings and issues a warning if this is
 the case.
+- The `cpos()` method will now check for accidental leading and/or trailing
+whitespce.
 
 ## Bug fixes
 
