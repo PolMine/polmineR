@@ -1,62 +1,130 @@
-polmineR 0.8.5.9001 - 0.8.5.9013
+polmineR 0.8.5.9001 - 0.8.5.9019
 ================================
 
 ## New Features
 
-- The `dispersion()` method now accepts an argument `fill`, a `logical` value to explicitly control whether (#160) zero matches for a value of a structural attribute should be reported. The performance
-of adding columns (requred only if two structural attributes are provided) is improved substantially
-by using the reference semantic of the data.table package. If many columns are added at once, a warning issued by the data.table package is supplemented by an further explanatory warning of the polmineR package. Filling up the `data.table` was limited previously to `freq = FALSE`, this limitation is lifted.
+- The `dispersion()` method now accepts an argument `fill`, a `logical` value to
+explicitly control whether (#160) zero matches for a value of a structural
+attribute should be reported. The performance of adding columns (requred only if
+two structural attributes are provided) is improved substantially by using the
+reference semantic of the data.table package. If many columns are added at once,
+a warning issued by the data.table package is supplemented by an further
+explanatory warning of the polmineR package. Filling up the `data.table` was
+limited previously to `freq = FALSE`, this limitation is lifted.
 - The `html()` method is implemented for `remote_subcorpus` objects.
-- The `hits()` method is implemented for `remote_corpus` and `remote_subcorpus` class (#160).
-- A new S4 class `ranges` is introduced to manage ranges of corpus positions for query matches. This is a preparatory step to remove an inconsistency from the `hits` class that mixed two very usages (getting ranges of corpus positions for matches and getting counts).
-- A new S4 method `ranges` serves as the constructor to prepare a `ranges` class object. In combination with `as.data.table()`, it replaces former functionality of `hits()` without argument `s_attribute`.
--  The output of the `hits()` method is altered, making it much more consistent than previously: The method will consistently return a `hits` object. 
-- The method `hits()` has a new argument `fill` that will report zeros for combinations of s-attributes with no matches for a query.
-- The argument `subset` for the `subset` method for `remote_corpus` objects can now be a call (#162), this is a basis for passing vectors to OpenCPU server.
-- `p_attributes()` implemented for `remote_corpus` and `remote_partition`.
-- A new `regions()` method (for `corpus` class objects to start with) returns a `regions` class object with a regions matrix (slot `cpos`) with regions for an s-attribute (#176).
-- The `get_token_stream()`-method for `regions` and `matrix` objects will now accept a logical argument `split`. If `TRUE`, a list of character vectors is returned. The envisaged use case is a fast decoding of sentences (#176).
-- A `encoding()` method has been defined if argument `object` is missing. Calling `encoding()` will return the session character set. If it cannot be determined using `localeToCharset()`, a UTF-8 session charset will be assumed. Internally, `encoding()` replaces a direct call of `localeToCharset()` to avoid errors that have occurred on GitHub Actions with Ubuntu 20.04 (#188).
-- If the session character set cannot be guessed by `localeToCharset()` (`NA` return value), a startup message will issue a warning that 'UTF-8' is assumed (#188).
+- The `hits()` method is implemented for `remote_corpus` and `remote_subcorpus`
+class (#160).
+- A new S4 class `ranges` is introduced to manage ranges of corpus positions for
+query matches. This is a preparatory step to remove an inconsistency from the
+`hits` class that mixed two very usages (getting ranges of corpus positions for
+matches and getting counts).
+- A new S4 method `ranges` serves as the constructor to prepare a `ranges` class
+object. In combination with `as.data.table()`, it replaces former functionality
+of `hits()` without argument `s_attribute`.
+-  The output of the `hits()` method is altered, making it much more consistent
+than previously: The method will consistently return a `hits` object.
+- The method `hits()` has a new argument `fill` that will report zeros for
+combinations of s-attributes with no matches for a query.
+- The argument `subset` for the `subset` method for `remote_corpus` objects can
+now be a call (#162), this is a basis for passing vectors to OpenCPU server. -
+`p_attributes()` implemented for `remote_corpus` and `remote_partition`.
+- A new `regions()` method (for `corpus` class objects to start with) returns a
+`regions` class object with a regions matrix (slot `cpos`) with regions for an
+s-attribute (#176).
+- The `get_token_stream()`-method for `regions` and `matrix` objects will now
+accept a logical argument `split`. If `TRUE`, a list of character vectors is
+returned. The envisaged use case is a fast decoding of sentences (#176).
+- A `encoding()` method has been defined if argument `object` is missing.
+Calling `encoding()` will return the session character set. If it cannot be
+determined using `localeToCharset()`, a UTF-8 session charset will be assumed.
+Internally, `encoding()` replaces a direct call of `localeToCharset()` to avoid
+errors that have occurred on GitHub Actions with Ubuntu 20.04 (#188).
+- If the session character set cannot be guessed by `localeToCharset()` (`NA`
+return value), a startup message will issue a warning that 'UTF-8' is assumed
+(#188).
 - The `size()` method is now able to handle nested s-attributes.
-- The `trim()` method for `context` objects will now accept a matrix with ranges a `positivelist` argument.
-- The `highlight()` method now acceps `matrix` objects as elements of the list of items to be highlighted. It
-is treated as a set of regions, such as resulting from `cpos()`. Thus it is possible to highlight matches for 
-CQP queries.
+- The `trim()` method for `context` objects will now accept a matrix with ranges
+a `positivelist` argument.
+- The `highlight()` method now acceps `matrix` objects as elements of the list
+of items to be highlighted. It is treated as a set of regions, such as resulting
+from `cpos()`. Thus it is possible to highlight matches for CQP queries.
+- The package now requires at least RcppCWB v0.5.1, which includes a much more
+efficient worker for token contexts for the `context()` method.
+
 
 ## Minor Improvements
 
-- If arguments `sAttribute` or `pAttribute` (instead of `s_attribute` and `p_attribute`) are still used with `dispersion()` method, a warning is issued declaring that the argument is deprecated.
-- Examples in packages that depend on polmineR would have faced the issue that loading/re-loading the package in several examples would not be posssible as the mechanism of cleaning up between examples would trigger a removal of polmineR's temporary directories but not the re-creation. Removing temporary files is now moved from polmineR's `.onDetach()` to `.onUnload()` (#164). 
+- If arguments `sAttribute` or `pAttribute` (instead of `s_attribute` and
+`p_attribute`) are still used with `dispersion()` method, a warning is issued
+declaring that the argument is deprecated.
+- Examples in packages that depend on polmineR would have faced the issue that
+loading/re-loading the package in several examples would not be posssible as the
+mechanism of cleaning up between examples would trigger a removal of polmineR's
+temporary directories but not the re-creation. Removing temporary files is now
+moved from polmineR's `.onDetach()` to `.onUnload()` (#164).
 - Significant improvement of the performance of the `as.phrases()` method (#172).
-- The `as.corpusEnc()` auxiliary function will now check whether non-convertible characters lead to an `NA` result and issue a warning how this warning can be avoided (#151).
-- Significant performance improvement of the `context()` method for `matrix` objects if arguments `left` and `right` are named `integer` vectors. All `context()` benefit from the improved performance of this worker for creating contexts for query matches.
+- The `as.corpusEnc()` auxiliary function will now check whether non-convertible
+characters lead to an `NA` result and issue a warning how this warning can be
+avoided (#151).
+- Significant performance improvement of the `context()` method for `matrix`
+objects if arguments `left` and `right` are named `integer` vectors. All
+`context()` benefit from the improved performance of this worker for creating
+contexts for query matches.
 - New coerce-method to derive matrix with ranges from a `context` object.
-- The `enrich()` method for `context` objects will now perform an in-place operation when adding new s-attributes.
-- The `as.cqp()` function includes arguments `check` and `warn` for running `check_cqp_query()` on queries.
-- The `context()` method for `matrix` objects includes a new argument `boundary` and relies on a new function`RcppCWB::region_matrix_context()`.
+- The `enrich()` method for `context` objects will now perform an in-place
+operation when adding new s-attributes.
+- The `as.cqp()` function includes arguments `check` and `warn` for running
+`check_cqp_query()` on queries.
+- The `context()` method for `matrix` objects includes a new argument `boundary`
+and relies on a new function`RcppCWB::region_matrix_context()`.
 - Default value of argument `verbose` of `context()`-methods is now `FALSE`.
 - The `as.corpusEnc()` auxiliary function now includes a test whether input
 character vector includes unexpected encodings and issues a warning if this is
 the case.
 - The `cpos()` method will now check for accidental leading and/or trailing
-whitespce.
+whitespace and remove it for token lookup. Note that `hits()`, `count()` and
+`dispersion()` will report queries without removing whitespace.
+- Internals of the `count()`-method for `partition_bundle` objects will be much
+more efficient when many columns with zero matches need to be added. The
+implementation avoids a data.table warning when the bulk action of adding new
+columns exceeds the number of columns reserved by data.table objects.
+- The DESCRIPTION files does not state "LazyData: yes" any more, as the package
+does not have a data directory.
+
 
 ## Bug fixes
 
-- A limitation to pass long arguments to an OpenCPU server resulting from `deparse()` within is resolved (#161).
-- The `hits()` method for the `slice` virtual class has been removed and the implementation for `hits` for the `subcorpus` class is now real worker, also invoked for `hits()` for `partition`. This removes a bug that occurred when applying `hits` on `subcorpus` objects, which resulted in a count for the whole corpus.
-- Shortcoming of the `show()`-method for `partition` objects resvolved when more than one s-attribute has been used to define `partition` (#170).
-- Arguments `left` and `right` of the `context()`-method for `matrix` objects, the worker behind the `context()`, `kwic()` and `cooccurrences()` methods did not work as intended for `character` values specifying an s-attribute. Fixed - it is not possible to use these arguments (#173).
-- An error that occurred with `as.TermDocumentMatrix()` or `as.DocumentTermMatrix()` when a s-attribute would not cover the entire corpus has been removed (#177). In this vein, an efficiency (decoding token stream twice) has been removed, so performance will also be better.
-- An error that occurred temporarily when passing an expression with logical operators without substituting the expression to `subset()` for `remote_corpus` objects(#181) has been fixed.
-- The `context()` method, and `kwic()` for `partition` or `subcorpus` objects did not process left and right contexts correctly, if it was a named character vector. Fixed.
+- A limitation to pass long arguments to an OpenCPU server resulting from
+`deparse()` within is resolved (#161).
+- The `hits()` method for the `slice` virtual class has been removed and the
+implementation for `hits` for the `subcorpus` class is now real worker, also
+invoked for `hits()` for `partition`. This removes a bug that occurred when
+applying `hits` on `subcorpus` objects, which resulted in a count for the whole
+corpus.
+- Shortcoming of the `show()`-method for `partition` objects resvolved when more
+than one s-attribute has been used to define `partition` (#170).
+- Arguments `left` and `right` of the `context()`-method for `matrix` objects,
+the worker behind the `context()`, `kwic()` and `cooccurrences()` methods did
+not work as intended for `character` values specifying an s-attribute. Fixed -
+it is not possible to use these arguments (#173).
+- An error that occurred with `as.TermDocumentMatrix()` or
+`as.DocumentTermMatrix()` when a s-attribute would not cover the entire corpus
+has been removed (#177). In this vein, an efficiency (decoding token stream
+twice) has been removed, so performance will also be better.
+- An error that occurred temporarily when passing an expression with logical
+operators without substituting the expression to `subset()` for `remote_corpus`
+objects(#181) has been fixed.
+- The `context()` method, and `kwic()` for `partition` or `subcorpus` objects
+did not process left and right contexts correctly, if it was a named character
+vector. Fixed.
 
 
 # Documentation 
 
-- Checks in examples whether magrittr is available have been dropped, as magrittr has become a dependency and the pipe operator is available by default.
-- The documentation of the `hits` class now describes the `data.table` in the `stat` slot of the class in detail.
+- Checks in examples whether magrittr is available have been dropped, as
+magrittr has become a dependency and the pipe operator is available by default.
+- The documentation of the `hits` class now describes the `data.table` in the
+`stat` slot of the class in detail.
 
 
 polmineR 0.8.5

@@ -255,10 +255,20 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     }
     
     # add columns for quits without hits (all 0)
-    missingQueries <- query[!query %in% colnames(DT_cast)[2L:ncol(DT_cast)]]
-    if (length(missingQueries) > 0){
-      for (q in missingQueries){
-        DT_cast[, eval(q) := rep(0L, times = nrow(DT_cast)), with = TRUE]
+    missing_queries <- query[!query %in% colnames(DT_cast)[2L:ncol(DT_cast)]]
+    if (length(missing_queries) > 0L){
+      # It is not an unlikely scenario that there are no matches for many queries. But
+      # data.table objects envisage less than 10000 columns to be added in a bulk
+      # action. Therefore we check whether there 10000 or more columns to be 
+      # added. If yes, we break up the job into chunks.
+      if (length(missing_queries < 10000L)){
+        DT_cast[, (missing_queries) := 0L]
+      } else {
+        qlist <- split(
+          missing_queries,
+          ceiling(1L:length(missing_queries) / 9999L)
+        )
+        lapply(qlist, function(queries) DT_cast[, (queries) := 0L])
       }
     }
     

@@ -23,7 +23,7 @@ Imports:
     jsonlite,
     parallel,
     pbapply,
-    RcppCWB (>= 0.5.0.9010),
+    RcppCWB (>= 0.5.1),
     magrittr,
     knitr
 Suggests:
@@ -45,7 +45,6 @@ Suggests:
     protolite,
     curl
 VignetteBuilder: knitr
-LazyData: yes
 Description: Package for corpus analysis using the Corpus Workbench 
     ('CWB', <http://cwb.sourceforge.net/>) as an efficient back end for indexing
     and querying large corpora. The package offers functionality to flexibly create

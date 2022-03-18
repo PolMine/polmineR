@@ -101,7 +101,7 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
                 "Query '%s' includes leading and/or trailing whitespace. ",
                 q
               ),
-              "Surplus whitespace is considered to be accidental and will be removed."
+              "Surplus whitespace is considered to be accidental and will be removedv for token lookup."
             )
             q <- gsub("^\\s*(.*?)\\s*$", "\\1", q)
           }
