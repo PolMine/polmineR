@@ -20,15 +20,15 @@ S4 class to represent hits for queries.
 \section{Slots}{
 
 \describe{
-\item{\code{stat}}{A \code{data.table} with the following columns: 
+\item{\code{stat}}{A \code{data.table} with the following columns:
 \describe{
-  \item{query}{The query (optionally using CQP syntax) that evoked
-  a hit.}
-  \item{count}{Number of matches in corpus/subcorpus.}
-  \item{freq}{Relative frequency of matches in corpus/subcorpus (optional,
-  presence depends on usage of argument \code{freq} of the \code{hits} method).}
-  \item{size}{Total number of tokens in corpus/subcorpus (optional, presence
-  depends on usage of argument \code{size} of the \code{hits} method).}
+\item{query}{The query (optionally using CQP syntax) that evoked
+a hit.}
+\item{count}{Number of matches in corpus/subcorpus.}
+\item{freq}{Relative frequency of matches in corpus/subcorpus (optional,
+presence depends on usage of argument \code{freq} of the \code{hits} method).}
+\item{size}{Total number of tokens in corpus/subcorpus (optional, presence
+depends on usage of argument \code{size} of the \code{hits} method).}
 }
 If argument \code{s_attribute} has been used in the call of the \code{hits}
 method, the \code{data.table} will include additional columns with the

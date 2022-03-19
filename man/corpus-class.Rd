@@ -48,19 +48,19 @@ available locally and described in the active registry directory, and some
 basic information on the corpora.
 
 A \code{corpus} object is instantiated by passing a corpus ID as
-  argument \code{.Object}. Following the conventions of the Corpus Workbench
-  (CWB), Corpus IDs are written in upper case. If \code{.Object} includes
-  lower case letters, the \code{corpus} object is instantiated nevertheless,
-  but a warning is issued to prevent bad practice. If \code{.Object} is not a
-  known corpus, the error message will include a suggestion if there is a
-  potential candidate that can be identified by \code{agrep}.
+argument \code{.Object}. Following the conventions of the Corpus Workbench
+(CWB), Corpus IDs are written in upper case. If \code{.Object} includes
+lower case letters, the \code{corpus} object is instantiated nevertheless,
+but a warning is issued to prevent bad practice. If \code{.Object} is not a
+known corpus, the error message will include a suggestion if there is a
+potential candidate that can be identified by \code{agrep}.
 
 A limited set of methods of the \code{polmineR} package is exposed
-  to be executed on a remote OpenCPU server. As a matter of convenience, the
-  whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
-  environment variable "OPENCPU_SERVER". Environment variables for R sessions
-  can be set easily in the \code{.Renviron} file. A convenient way to do this
-  is to call \code{usethis::edit_r_environ()}.
+to be executed on a remote OpenCPU server. As a matter of convenience, the
+whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
+environment variable "OPENCPU_SERVER". Environment variables for R sessions
+can be set easily in the \code{.Renviron} file. A convenient way to do this
+is to call \code{usethis::edit_r_environ()}.
 }
 \section{Slots}{
 
@@ -138,12 +138,12 @@ sc <- subset(GERMAPARL, date == "2009-11-10")
 }
 \seealso{
 Methods to extract basic information from a \code{corpus} object are
-  covered by the \link{corpus-methods} documentation object. Use the
-  \code{\link{s_attributes}} method to get information on structural
-  attributes. Analytical methods available for \code{corpus} objects are
-  \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
-  \code{\link{kwic}}, \code{\link{cooccurrences}},
-  \code{\link{as.TermDocumentMatrix}}.
+covered by the \link{corpus-methods} documentation object. Use the
+\code{\link{s_attributes}} method to get information on structural
+attributes. Analytical methods available for \code{corpus} objects are
+\code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
+\code{\link{kwic}}, \code{\link{cooccurrences}},
+\code{\link{as.TermDocumentMatrix}}.
 
 Other classes to manage corpora: 
 \code{\link{phrases}},

@@ -95,13 +95,13 @@ A \code{bundle} is used to combine several objects (\code{partition}, \code{cont
 \code{features}, \code{cooccurrences} objects) into one S4 class object. Typically,
 a class inheriting from the \code{bundle} superclass will be used. When working with a
 \code{context_bundle}, a \code{features_bundle}, a \code{cooccurrences_bundle}, or a
-\code{context_bundle}, a similar set of standard methods is available to perform 
+\code{context_bundle}, a similar set of standard methods is available to perform
 transformations.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{corpus}}{The CWB corpus the xobjects in the \code{bundle} are based on, a length 1 
+\item{\code{corpus}}{The CWB corpus the xobjects in the \code{bundle} are based on, a length 1
 \code{character} vector.}
 
 \item{\code{objects}}{An object of class \code{list}.}

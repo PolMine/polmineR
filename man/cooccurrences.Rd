@@ -134,7 +134,7 @@ cooccurrences(.Object, ...)
 \item{p_attribute}{The p-attribute of the tokens/the query.}
 
 \item{boundary}{If provided, it will be checked that the corpus positions of
-windows do not extend beyond the left and right boundaries of the region 
+windows do not extend beyond the left and right boundaries of the region
 defined by the s-attribute where the match occurs.}
 
 \item{left}{A single \code{integer} value defining the number of tokens to
@@ -220,7 +220,7 @@ Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 }
 \seealso{
 See the documentation for the \code{\link{ll}}-method for an
-  explanation of the computation of the log-likelihood statistic.
+explanation of the computation of the log-likelihood statistic.
 }
 \author{
 Andreas Blaette

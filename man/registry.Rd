@@ -39,27 +39,27 @@ if \code{pkg} is \code{NULL} (default value).
 }
 \details{
 The \code{registry_move} is an auxiliary function to create a copy
-  of a registry file in the directory specified by the argument
-  \code{registry_new}.
+of a registry file in the directory specified by the argument
+\code{registry_new}.
 
 Upon loading the polmineR package, there is a check whether the
-  environment variable \code{CORPUS_REGISTRY} is defined. In case it is, the
-  registry files in the directory defined by the \code{CORPUS_REGISTRY}
-  environment variable are copied to the temporary registry directory, which
-  serves as the central place to store all registry files for all corpora, be
-  it system corpora, corpora included in R packages, or temporary corpora.
+environment variable \code{CORPUS_REGISTRY} is defined. In case it is, the
+registry files in the directory defined by the \code{CORPUS_REGISTRY}
+environment variable are copied to the temporary registry directory, which
+serves as the central place to store all registry files for all corpora, be
+it system corpora, corpora included in R packages, or temporary corpora.
 
 The Corpus Workbench may have problems to cope with a registry path
-  that includes registry non-ASCII characters. On Windows, a call to
-  \code{utils::shortPathName} will generate the short MS-DOS path name that
-  circumvents resulting problems.
+that includes registry non-ASCII characters. On Windows, a call to
+\code{utils::shortPathName} will generate the short MS-DOS path name that
+circumvents resulting problems.
 
 Usage of the temporary registry directory can be suppress by setting
-  the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. In this
-  case, the \code{registry} function will return the environment variable
-  CORPUS_REGISTRY unchanged. The \code{data_dir} function will return the
-  "indexed_corpus" directory that is assumed to live in the same parent
-  directory as the registry directory.
+the environment variable POLMINER_USE_TMP_REGISTRY as 'false'. In this
+case, the \code{registry} function will return the environment variable
+CORPUS_REGISTRY unchanged. The \code{data_dir} function will return the
+"indexed_corpus" directory that is assumed to live in the same parent
+directory as the registry directory.
 }
 \examples{
 registry() # returns temporary registry directory

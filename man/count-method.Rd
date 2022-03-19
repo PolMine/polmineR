@@ -155,9 +155,9 @@ is returned.}
 }
 \value{
 A \code{data.table} if argument query is used, a \code{count}-object,
-  if query is \code{NULL} and \code{.Object} is a character vector (referring 
-  to a corpus) or a \code{partition}, a \code{count_bundle}-object, if \code{.Object}
-  is a \code{partition_bundle}.
+if query is \code{NULL} and \code{.Object} is a character vector (referring
+to a corpus) or a \code{partition}, a \code{count_bundle}-object, if \code{.Object}
+is a \code{partition_bundle}.
 }
 \description{
 Count all tokens, or number of occurrences of a query (CQP syntax may be
@@ -222,9 +222,9 @@ Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuu
 }
 \seealso{
 For a metadata-based breakdown of counts (i.e. tabulation by
-  s-attributes), see \code{\link{dispersion}}. The \code{\link{hits}} is the
-  worker behind the \code{dispersion} method and offers a similar, yet more
-  low-level functionality as compared to the \code{count} method. Using the
-  \code{\link{hits}} method may be useful to obtain the data required for
-  flexible cross-tabulations.
+s-attributes), see \code{\link{dispersion}}. The \code{\link{hits}} is the
+worker behind the \code{dispersion} method and offers a similar, yet more
+low-level functionality as compared to the \code{count} method. Using the
+\code{\link{hits}} method may be useful to obtain the data required for
+flexible cross-tabulations.
 }

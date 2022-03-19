@@ -28,10 +28,10 @@ between the native encoding and the encoding of the corpus.
 }
 \details{
 The encoding of a corpus and the encoding of the terminal (the native
-encoding) may differ, provoking strange or wrong results if no
-conversion is carried out between the potentially differing encodings. The
-functions \code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions
-to assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
+encoding) may differ, provoking strange or wrong results if no conversion is
+carried out between the potentially differing encodings. The functions
+\code{as.nativeEnc()} and \code{as.corpusEnc} are auxiliary functions to
+assist the conversion. The functions \code{as.nativeEnc} and \code{as.utf8}
 deliberately remove the explicit statement of the encoding, to avoid warnings
 that may occur with character vector columns in a \code{data.table} object.
 }

@@ -29,8 +29,8 @@ S4 class to organize counts. The classes \code{polmineR} and
 }
 \details{
 The \code{summary}-method in combination with a weighed
-  \code{count}-object can be used to perform a dictionary-based sentiment
-  analysis (see examples).
+\code{count}-object can be used to perform a dictionary-based sentiment
+analysis (see examples).
 
 The \code{length}-method is synonymous with the \code{size}-method
 and will return the size of the \code{corpus} or \code{partition} a count

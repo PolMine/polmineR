@@ -94,7 +94,7 @@ combines a set of \code{partition} objects.
 \details{
 Applying the \code{partition_bundle}-method to a \code{partition_bundle}-object will iterate
 through the \code{partition} objects in the \code{object}-slot in the \code{partition_bundle}, and apply
-\code{partition_bundle} on each \code{partition}, splitting it up by the s-attribute provided by the 
+\code{partition_bundle} on each \code{partition}, splitting it up by the s-attribute provided by the
 argument \code{s_attribute}. The return value is a \code{partition_bundle}, the names of which will be
 the names of the incoming \code{partition_bundle} concatenated with the s-attribute values used for splitting.
 The argument \code{prefix} can be used to achieve a more descriptive name.

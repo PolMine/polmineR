@@ -133,23 +133,23 @@ to export corpus data to other tools.
 }
 \details{
 CWB indexed corpora have a fixed order of tokens which is called the
-  \emph{token stream}. Every token is assigned to a unique \emph{corpus
-  position}, Subsets of the (entire) token stream defined by a left and a
-  right corpus position are called \emph{regions}. The
-  \code{get_token_stream}-method will extract the tokens (for regions) from a
-  corpus.
+\emph{token stream}. Every token is assigned to a unique \emph{corpus
+position}, Subsets of the (entire) token stream defined by a left and a
+right corpus position are called \emph{regions}. The
+\code{get_token_stream}-method will extract the tokens (for regions) from a
+corpus.
 
 The primary usage of this method is to return the token stream of a
-  (sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
-  \code{partition} object. The methods defined for a \code{numeric} vector or
-  a (two-column) \code{matrix} defining regions (i.e. left and right corpus
-  positions in the first and second column) are the actual workers for this
-  operation.
+(sub-)corpus as defined by a \code{corpus}, \code{subcorpus} or
+\code{partition} object. The methods defined for a \code{numeric} vector or
+a (two-column) \code{matrix} defining regions (i.e. left and right corpus
+positions in the first and second column) are the actual workers for this
+operation.
 
 The \code{get_token_stream} has been introduced so serve as a worker
-  by higher level methods such as \code{read}, \code{html}, and
-  \code{as.markdown}. It may however be useful for decoding a corpus so that
-  it can be exported to other tools.
+by higher level methods such as \code{read}, \code{html}, and
+\code{as.markdown}. It may however be useful for decoding a corpus so that
+it can be exported to other tools.
 }
 \examples{
 # Decode first words of GERMAPARLMINI corpus (first sentence)

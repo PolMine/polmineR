@@ -61,7 +61,7 @@ value by applying a regex.}
 denoting a corpus.}
 
 \item{registry}{The registry directory with the registry file defining
-`corpus`.}
+\code{corpus}.}
 }
 \value{
 A character vector (s-attributes, or values of s-attributes).
@@ -93,15 +93,15 @@ s-attributes, the method will return a \code{data.table}. If \code{unique} is
 the \code{data.table}.
 
 If the corpus is based on a nested XML structure, the order of items on the
-`s_attribute` vector matters. The method for `corpus` objects will take the
+\code{s_attribute} vector matters. The method for \code{corpus} objects will take the
 first s-attribute as the benchmark and assume that further s-attributes are
 XML ancestors of the node.
 
 If \code{.Object} is a call, the \code{s_attributes}-method will
-  return a character vector with the s-attributes occurring in the call. This
-  usage is relevant internally to implement the \code{subset} method to
-  generate a \code{subcorpus} using non-standard evaluation. Usually it will
-  not be relevant in an interactive session.
+return a character vector with the s-attributes occurring in the call. This
+usage is relevant internally to implement the \code{subset} method to
+generate a \code{subcorpus} using non-standard evaluation. Usually it will
+not be relevant in an interactive session.
 }
 \examples{
 use("polmineR")

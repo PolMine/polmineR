@@ -207,10 +207,10 @@ If a \code{negativelist} is supplied, concordances are removed if any of the
 tokens of the \code{negativelist} occurrs in the context of the query match.
 
 Applying the \code{kwic}-method on a \code{partition_bundle} or
-  \code{subcorpus_bundle} will return a single \code{kwic} object that
-  includes a column 'subcorpus_name' with the name of the \code{subcorpus}
-  (or \code{partition}) in the input object where the match for a concordance
-  occurs.
+\code{subcorpus_bundle} will return a single \code{kwic} object that
+includes a column 'subcorpus_name' with the name of the \code{subcorpus}
+(or \code{partition}) in the input object where the match for a concordance
+occurs.
 }
 \examples{
 use("polmineR")
@@ -269,9 +269,9 @@ Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 }
 \seealso{
 The return value is a \code{\link{kwic-class}} object; the
-  documentation for the class explains the standard generic methods
-  applicable to \code{\link{kwic-class}} objects. It is possible to read the
-  whole text where a query match occurs, see the \code{\link{read}}-method.
-  To highlight terms in the context of a query match, see the
-  \code{\link{highlight}}-method.
+documentation for the class explains the standard generic methods
+applicable to \code{\link{kwic-class}} objects. It is possible to read the
+whole text where a query match occurs, see the \code{\link{read}}-method.
+To highlight terms in the context of a query match, see the
+\code{\link{highlight}}-method.
 }

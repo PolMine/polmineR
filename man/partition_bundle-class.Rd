@@ -82,7 +82,7 @@ prerequisite for this function to work properly is that there are no
 overlaps of the different partitions that are to be summarized.
 Encodings and the root node need to be identical, too.
 
-Using brackets can be used to retrieve the count for a token from the 
+Using brackets can be used to retrieve the count for a token from the
 \code{partition} objects in a \code{partition_bundle}.
 }
 \section{Slots}{

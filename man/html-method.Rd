@@ -88,7 +88,7 @@ bar.}
 \item{i}{An \code{integer} value: If \code{object} is a \code{kwic}-object,
 the index of the concordance for which the fulltext is to be generated.}
 
-\item{s_attribute}{Structural attributes that will be used to define the partition 
+\item{s_attribute}{Structural attributes that will be used to define the partition
 where the match occurred.}
 
 \item{type}{The partition type.}

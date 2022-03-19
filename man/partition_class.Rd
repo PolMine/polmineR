@@ -68,12 +68,12 @@ from the classes \code{count} and \code{textstat}.
 }
 \details{
 As \code{partition} objects inherit from \code{count} and
-  \code{textstat} class, methods available are \code{view} to inspect the
-  table in the \code{stat} slot, \code{name} and \code{name<-} to
-  retrieve/set the name of an object, and more.
+\code{textstat} class, methods available are \code{view} to inspect the
+table in the \code{stat} slot, \code{name} and \code{name<-} to
+retrieve/set the name of an object, and more.
 
 The \code{is.partition} function returns a \code{logical} value
-  whether \code{x} is a \code{partition}, or not.
+whether \code{x} is a \code{partition}, or not.
 
 The \code{enrich}-method will add a count of tokens defined by argument
 \code{p_attribute} to slot \code{stat} of the \code{partition} object.

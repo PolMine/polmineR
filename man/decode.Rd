@@ -96,7 +96,7 @@ are to be decoded.}
 }
 \value{
 The return value will correspond to the class specified by argument
-  \code{to}.
+\code{to}.
 }
 \description{
 Decode \code{corpus} or \code{subcorpus} and return class specified by
@@ -117,26 +117,26 @@ s-attribute, which is not supported any more. See the
 \code{s_attribute_decode} function of the package RcppCWB.
 
 If \code{.Object} is an \code{integer} vector, it is assumed to be a
-  vector of integer ids of p-attributes. The \code{decode}-method will
-  translate token ids to string values as efficiently as possible. The
-  approach taken will depend on the corpus size and the share of the corpus
-  that is to be decoded. To decode a large number of integer ids, it is more
-  efficient to read the lexicon file from the data directory directly and to
-  index the lexicon with the ids rather than relying on
-  \code{RcppCWB::cl_id2str}. The internal decision rule is to use the lexicon
-  file when the corpus is larger than 10 000 000 million tokens and more than
-  5 percent of the corpus are to be decoded. The encoding of the
-  \code{character} vector that is returned will be the coding of the locale
-  (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
+vector of integer ids of p-attributes. The \code{decode}-method will
+translate token ids to string values as efficiently as possible. The
+approach taken will depend on the corpus size and the share of the corpus
+that is to be decoded. To decode a large number of integer ids, it is more
+efficient to read the lexicon file from the data directory directly and to
+index the lexicon with the ids rather than relying on
+\code{RcppCWB::cl_id2str}. The internal decision rule is to use the lexicon
+file when the corpus is larger than 10 000 000 million tokens and more than
+5 percent of the corpus are to be decoded. The encoding of the
+\code{character} vector that is returned will be the coding of the locale
+(usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
 
 The \code{decode}-method for \code{data.table} objects will decode
-  token ids (column '[p-attribute]_id'), adding the corresponding string as a
-  new column. If a column "cpos" with corpus positions is present, ids are
-  derived for the corpus positions given first. If the \code{data.table}
-  neither has a column "cpos" nor columns with token ids (i.e. colummn name
-  ending with "_id"), the input \code{data.table} is returned unchanged. Note
-  that columns are added to the \code{data.table} in an in-place operation to
-  handle memory parsimoniously.
+token ids (column '\link{p-attribute}_id'), adding the corresponding string as a
+new column. If a column "cpos" with corpus positions is present, ids are
+derived for the corpus positions given first. If the \code{data.table}
+neither has a column "cpos" nor columns with token ids (i.e. colummn name
+ending with "_id"), the input \code{data.table} is returned unchanged. Note
+that columns are added to the \code{data.table} in an in-place operation to
+handle memory parsimoniously.
 }
 \examples{
 use("polmineR")
@@ -192,8 +192,8 @@ y <- dt[, .N, by = c("word", "pos")]
 }
 \seealso{
 To decode a structural attribute, you can use the
-  \code{\link{s_attributes}}-method, setting argument \code{unique} as
-  \code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See
-  \code{\link{as.VCorpus}} to decode a \code{partition_bundle} object,
-  returning a \code{VCorpus} object.
+\code{\link{s_attributes}}-method, setting argument \code{unique} as
+\code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See
+\code{\link{as.VCorpus}} to decode a \code{partition_bundle} object,
+returning a \code{VCorpus} object.
 }

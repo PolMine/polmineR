@@ -121,4 +121,5 @@ Collate:
     'view.R'
     'weigh.R'
     'zzz.R'
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

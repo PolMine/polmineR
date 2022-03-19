@@ -7,11 +7,7 @@ NULL
 #' \code{textstat}; if \code{object} is a character vector, the encoding of the
 #' corpus is returned. If called without arguments, the session character set is
 #' returned.
-#'
-#' @details Calling \code{encoding()} relies on the \code{localeToCharset()}
-#'   function. If \code{localeToCharset()} returns \code{NA} for whatsoever
-#'   reason, the return value is "UTF-8" to avoid errors and a warning is
-#'   issued.
+#' 
 #' @param object A \code{textstat} or \code{bundle} object (or an object
 #'   inheriting from these classes), or a length-one \code{character} vector
 #'   specifying a corpus. If missing, the method will return the session
@@ -44,9 +40,12 @@ setGeneric("encoding", function(object) standardGeneric("encoding"))
 #' @rdname encoding
 setGeneric("encoding<-", function(object, value) standardGeneric("encoding<-"))
 
+#' @details `encoding()` uses `l10n_info()` and `localeToCharset()` (in this
+#'   order) to determine the session encoding. If `localeToCharset()` returns
+#'   `NA`, "UTF-8" is assumed to be the session encoding.
 #' @rdname encoding
 setMethod("encoding", "missing", function(object){
-  y <- localeToCharset()[1]
+  y <- if (l10n_info()[["UTF-8"]]) "UTF-8" else localeToCharset()[1]
   if (is.na(y)) "UTF-8" else y
 })
 

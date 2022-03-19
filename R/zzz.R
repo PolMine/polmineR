@@ -75,7 +75,7 @@
 #' @importFrom utils packageVersion
 .onAttach <- function(libname, pkgname){
 
-  if (is.na(localeToCharset()[1])){
+  if (isFALSE(l10n_info()[["UTF-8"]]) && is.na(localeToCharset()[1])){
     packageStartupMessage(
       "Cannot guess session character set by using 'localeToCharset()' (yields NA). ",
       "To avoid errors, it will be assumed that 'UTF-8' is applicable. ",

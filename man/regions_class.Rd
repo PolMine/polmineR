@@ -44,7 +44,7 @@ in a uniform manner.
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
 
 The \code{as.data.table} method returns the matrix with corpus
-  positions in the slot \code{cpos} as a \code{data.table}.
+positions in the slot \code{cpos} as a \code{data.table}.
 }
 \section{Slots}{
 

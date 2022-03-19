@@ -39,37 +39,37 @@ from which regions / the \code{data.table} representing a decoded corpus is deri
 }
 \description{
 Class, methods and functionality for processing phrases (lexical
-  units, lexical items, multi-word expressions) beyond the token level. The
-  envisaged workflow at this stage is to detect phrases using the
-  \code{ngrams}-method and to generate a \code{phrases} class object from the
-  \code{ngrams} object using the \code{as.phrases} method. This object can be
-  passed into a call of \code{count}, see examples. Further methods and
-  functions documented here are used internally, but may be useful.
+units, lexical items, multi-word expressions) beyond the token level. The
+envisaged workflow at this stage is to detect phrases using the
+\code{ngrams}-method and to generate a \code{phrases} class object from the
+\code{ngrams} object using the \code{as.phrases} method. This object can be
+passed into a call of \code{count}, see examples. Further methods and
+functions documented here are used internally, but may be useful.
 }
 \details{
 The \code{phrases} considers a phrase as sequence as tokens that can
-  be defined by region, i.e. a left and a right corpus position. This
-  information is kept in a region matrix in the slot "cpos" of the
-  \code{phrases} class. The \code{phrases} class inherits from the
-  \code{\link{regions}} class (which inherits from the and the
-  \code{\link{corpus}} class), without adding further slots.
+be defined by region, i.e. a left and a right corpus position. This
+information is kept in a region matrix in the slot "cpos" of the
+\code{phrases} class. The \code{phrases} class inherits from the
+\code{\link{regions}} class (which inherits from the and the
+\code{\link{corpus}} class), without adding further slots.
 
 If \code{.Object} is an object of class \code{ngrams}, the
-  \code{as.phrases}-method will interpret the ngrams as CQP queries, 
-  look up the matching corpus positions and return an \code{phrases}
-  object.
+\code{as.phrases}-method will interpret the ngrams as CQP queries,
+look up the matching corpus positions and return an \code{phrases}
+object.
 
 If \code{.Object} is a \code{matrix}, the \code{as.phrases}-method
-  will initialize a \code{phrases} object. The corpus and the encoding of the
-  corpus will be assigned to the object.
+will initialize a \code{phrases} object. The corpus and the encoding of the
+corpus will be assigned to the object.
 
 Applying the \code{as.character}-method on a \code{phrases} object
-  will return the decoded regions, concatenated using an underscore as
-  seperator.
+will return the decoded regions, concatenated using an underscore as
+seperator.
 
 The \code{concatenate_phrases} function takes a \code{data.table}
-  (argument \code{dt}) as input and concatenates phrases in successive rows
-  into a phrase.
+(argument \code{dt}) as input and concatenates phrases in successive rows
+into a phrase.
 }
 \examples{
 # Workflow to create document-term-matrix with phrases

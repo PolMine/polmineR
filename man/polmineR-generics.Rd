@@ -15,6 +15,6 @@ show_info(x)
 }
 \description{
 This documentation object gives an overview over the generic
-  methods defined in the polmineR package that have no individual man page
-  but are documented directly with the classes they are defined for.
+methods defined in the polmineR package that have no individual man page
+but are documented directly with the classes they are defined for.
 }

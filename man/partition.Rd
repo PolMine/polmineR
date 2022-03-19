@@ -105,7 +105,7 @@ use regular expressions, set the parameter regex to \code{TRUE}. Regular
 expressions are passed into \code{grep}, i.e. the regex syntax used in R
 needs to be used (double backlashes etc.). If regex is \code{FALSE}, the
 length of the character vectors can be > 1, matching s-attributes are
-identifies with the operator '%in%'.
+identifies with the operator '\%in\%'.
 
 The XML imported into the CWB may be "flat" or "nested". This needs to be
 indicated with the parameter \code{xml} (default is "flat"). If you generate
@@ -124,13 +124,13 @@ counted. A typical scenario is to combine the p-attributes "word" or "lemma"
 and "pos".
 
 If \code{.Object} is a length-one character vector, a
-  subcorpus/partition for the corpus defined be \code{.Object} is generated.
+subcorpus/partition for the corpus defined be \code{.Object} is generated.
 
 If \code{.Object} is an environment (typically \code{.GlobalEnv}),
-  the \code{partition} objects present in the environment are listed.
+the \code{partition} objects present in the environment are listed.
 
 If \code{.Object} is a \code{partition} object, a subcorpus of the
-  subcorpus is generated.
+subcorpus is generated.
 }
 \examples{
 use("polmineR")
@@ -156,7 +156,7 @@ period <- partition("GERMAPARLMINI", date = days)
 }
 \seealso{
 To learn about the methods available for objects of the class
-  \code{partition}, see \code{\link{partition_class}},
+\code{partition}, see \code{\link{partition_class}},
 }
 \author{
 Andreas Blaette

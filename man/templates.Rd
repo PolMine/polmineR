@@ -24,7 +24,7 @@ or a length-one \code{character} vector with a corpus ID.}
 
 \item{...}{Further arguments to be defined.}
 
-\item{warn}{A \code{logical} value, whether to issue a warning if template 
+\item{warn}{A \code{logical} value, whether to issue a warning if template
 is not available. Defaults to \code{FALSE}.}
 }
 \description{

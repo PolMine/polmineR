@@ -145,10 +145,10 @@ partitioned by one or two s-attributes.
 }
 \details{
 Augmenting the \code{data.table} with zeros for subcorpora that do
-  not yield query matches (argument \code{fill} = \code{TRUE}) may require
-  adding many new columns. A respective warning issued by the
-  \code{data.table} package is supplemented an additional explanatory note
-  of the polmineR package.
+not yield query matches (argument \code{fill} = \code{TRUE}) may require
+adding many new columns. A respective warning issued by the
+\code{data.table} package is supplemented an additional explanatory note
+of the polmineR package.
 }
 \examples{
 use("polmineR")

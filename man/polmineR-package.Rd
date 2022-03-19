@@ -26,7 +26,7 @@ files for corpora that may reside in anywhere on the system. Upon loading
 \code{polmineR}, the files in the registry directory defined by the
 environment variable CORPUS_REGISTRY are copied to the session registry
 directory. To see whether the environment variable CORPUS_REGISTRY is set,
-use the `Sys.getenv()`-function. Corpora wrapped in R data packages can be
+use the \code{Sys.getenv()}-function. Corpora wrapped in R data packages can be
 activated using the function \code{use()}.
 
 The package includes a draft shiny app that can be called using
@@ -35,41 +35,41 @@ The package includes a draft shiny app that can be called using
 \section{Package options}{
 
 \itemize{
-  \item{\emph{polmineR.p_attribute}:} {The default attribute}
-  \item{\emph{polmineR.left}:} {Default value for left context.}
-  \item{\emph{polmineR.lineview}:} {A logical value, whether ...}
-  \item{\emph{polmineR.pagelength}:} {10L}
-  \item{\emph{polmineR.meta}:} {}
-  \item{\emph{polmineR.mc}:} {}
-  \item{\emph{polmineR.cores}:} {}
-  \item{\emph{polmineR.browse}:} {}
-  \item{\emph{polmineR.buttons}:} {}
-  \item{\emph{polmineR.specialChars}:} {}
-  \item{\emph{polmineR.cutoff}:} {}
-  \item{\emph{polmineR.corpus_registry}:} {The system corpus registry
-  directory defined by the environment variable CORPUS_REGISTRY before the
-  polmineR package has been loaded. The polmineR package uses a temporary
-  registry directory to be able to use corpora stored at multiple
-  locations in one session. The path to the system corpus registry directory
-  captures this setting to keep it available if necessary.}
-  \item{\emph{polmineR.shiny}:} {A \code{logical} value, whether polmineR is
-  used in the context of a shiny app. Used to control the apprearance of
-  progress bars depending on whether shiny app is running, or not.}
-  \item{\emph{polmineR.warn.size}:} {When generating HTML table widgets (e.g.
-  when preparing kwic output to be displayed in RStudio's Viewe pane), the
-  function \code{DT::datatable()} that is used internally will issue a
-  warning by default if the object size of the table is greater than 1500000.
-  The warning adresses a client-server scenario that is not applicable in the
-  context of a local RStudio session, so you may want to turn it of.
-  Internally, the warning can be suppressed by setting the option
-  \code{DT.warn.size} to \code{FALSE}. The polmineR option
-  \code{polmineR.warn.size} is processed by functions calling DT::datatable()
-  to set and reset the value of \code{DT.warn.size}. Please note: The
-  formulation of the warning does not match the scenario of a local RStudio
-  session, but it may still be useful to get a warning when tables are large
-  and slow to process. Therefore, the default value of the setting is
-  \code{FALSE}.}
- }
+\item{\emph{polmineR.p_attribute}:} {The default attribute}
+\item{\emph{polmineR.left}:} {Default value for left context.}
+\item{\emph{polmineR.lineview}:} {A logical value, whether ...}
+\item{\emph{polmineR.pagelength}:} {10L}
+\item{\emph{polmineR.meta}:} {}
+\item{\emph{polmineR.mc}:} {}
+\item{\emph{polmineR.cores}:} {}
+\item{\emph{polmineR.browse}:} {}
+\item{\emph{polmineR.buttons}:} {}
+\item{\emph{polmineR.specialChars}:} {}
+\item{\emph{polmineR.cutoff}:} {}
+\item{\emph{polmineR.corpus_registry}:} {The system corpus registry
+directory defined by the environment variable CORPUS_REGISTRY before the
+polmineR package has been loaded. The polmineR package uses a temporary
+registry directory to be able to use corpora stored at multiple
+locations in one session. The path to the system corpus registry directory
+captures this setting to keep it available if necessary.}
+\item{\emph{polmineR.shiny}:} {A \code{logical} value, whether polmineR is
+used in the context of a shiny app. Used to control the apprearance of
+progress bars depending on whether shiny app is running, or not.}
+\item{\emph{polmineR.warn.size}:} {When generating HTML table widgets (e.g.
+when preparing kwic output to be displayed in RStudio's Viewe pane), the
+function \code{DT::datatable()} that is used internally will issue a
+warning by default if the object size of the table is greater than 1500000.
+The warning adresses a client-server scenario that is not applicable in the
+context of a local RStudio session, so you may want to turn it of.
+Internally, the warning can be suppressed by setting the option
+\code{DT.warn.size} to \code{FALSE}. The polmineR option
+\code{polmineR.warn.size} is processed by functions calling DT::datatable()
+to set and reset the value of \code{DT.warn.size}. Please note: The
+formulation of the warning does not match the scenario of a local RStudio
+session, but it may still be useful to get a warning when tables are large
+and slow to process. Therefore, the default value of the setting is
+\code{FALSE}.}
+}
 }
 
 \examples{

@@ -61,8 +61,11 @@ ranges(.Object, ...)
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}
 
-\item{query}{A \code{character} vector providing one or multiple queries
-(token or CQP query). Token ids (i.e. \code{integer} values) are also accepted.}
+\item{query}{A \code{character} vector providing one or multiple queries (token to
+look up, regular expression or CQP query). Token ids (i.e. \code{integer}
+values) are also accepted. If \code{query} is neither a regular expression nor a
+CQP query, a sanity check removes accidental leading/trailing whitespace,
+issuing a respective warning.}
 
 \item{cqp}{Either logical (\code{TRUE} if query is a CQP query), or a function to
 check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary

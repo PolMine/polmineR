@@ -18,5 +18,5 @@ browse(...)
 }
 \description{
 Methods and functions not in use any more or that have been
-  superseded by renamed functions.
+superseded by renamed functions.
 }

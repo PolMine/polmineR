@@ -60,8 +60,8 @@ is a \code{bundle}) to use of assembling the matrix.}
 }
 \value{
 A \code{TermDocumentMatrix}, or a \code{DocumentTermMatrix} object.
-  These classes are defined in the \code{tm} package, and inherit from the
-  \code{simple_triplet_matrix}-class defined in the \code{slam}-package.
+These classes are defined in the \code{tm} package, and inherit from the
+\code{simple_triplet_matrix}-class defined in the \code{slam}-package.
 }
 \description{
 Methods to generate the classes \code{TermDocumentMatrix} or
@@ -89,18 +89,18 @@ In this case, a \code{p_attribute} needs to be provided. Then counting will
 be performed, too.
 
 If \code{x} is a \code{partition_bundle}, and argument \code{col} is
-  not \code{NULL}, as \code{TermDocumentMatrix} is generated based on the
-  column indicated by \code{col} of the \code{data.table} with counts in the
-  \code{stat} slots of the objects in the bundle. If \code{col} is
-  \code{NULL}, the p-attribute indicated by \code{p_attribute} is decoded,
-  and a count is performed to obtain the values of the resulting
-  \code{TermDocumentMatrix}. The same procedure applies to get a
-  \code{DocumentTermMatrix}.
+not \code{NULL}, as \code{TermDocumentMatrix} is generated based on the
+column indicated by \code{col} of the \code{data.table} with counts in the
+\code{stat} slots of the objects in the bundle. If \code{col} is
+\code{NULL}, the p-attribute indicated by \code{p_attribute} is decoded,
+and a count is performed to obtain the values of the resulting
+\code{TermDocumentMatrix}. The same procedure applies to get a
+\code{DocumentTermMatrix}.
 
 If \code{x} is a \code{subcorpus_bundle}, the p-attribute provided
-  by argument \code{p_attribute} is decoded, and a count is performed to
-  obtain the resulting \code{TermDocumentMatrix} or
-  \code{DocumentTermMatrix}.
+by argument \code{p_attribute} is decoded, and a count is performed to
+obtain the resulting \code{TermDocumentMatrix} or
+\code{DocumentTermMatrix}.
 }
 \examples{
 use("polmineR")

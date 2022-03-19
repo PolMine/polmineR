@@ -10,7 +10,7 @@
 \S4method{aggregate}{slice}(x)
 }
 \arguments{
-\item{x}{An object of a class belonging to the virtual class \code{slice}, i.e. a 
+\item{x}{An object of a class belonging to the virtual class \code{slice}, i.e. a
 \code{partition} or \code{regions} object.}
 }
 \description{

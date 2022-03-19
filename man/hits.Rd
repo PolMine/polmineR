@@ -169,5 +169,5 @@ y <- corpus("REUTERS") \%>\%
 }
 \seealso{
 See the documentation of the \code{hits} class
-  (\code{\link{hits-class}}) for details.
+(\code{\link{hits-class}}) for details.
 }

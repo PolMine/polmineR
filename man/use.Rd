@@ -42,5 +42,5 @@ corpus()
 }
 \seealso{
 To get the session registry directory, see \code{\link{registry}};
-  to reset the registry, see \code{\link{registry_reset}}.
+to reset the registry, see \code{\link{registry_reset}}.
 }

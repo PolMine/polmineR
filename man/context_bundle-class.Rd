@@ -20,11 +20,11 @@ class to organize information of multiple context analyses
 
 \section{Methods}{
 
-  \describe{
-    \item{show}{output of core information}
-    \item{summary}{core statistical information}
-    \item{[}{specific cooccurrences}
-    \item{[[}{specific cooccurrences}
-   }
+\describe{
+\item{show}{output of core information}
+\item{summary}{core statistical information}
+\item{[}{specific cooccurrences}
+\item{[[}{specific cooccurrences}
+}
 }
 

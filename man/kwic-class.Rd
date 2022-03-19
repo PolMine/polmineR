@@ -117,41 +117,41 @@ kwic class objects (see 'Usage'). See section 'Details' for the
 }
 \details{
 Applying the \code{count}-method on a \code{kwic} object will return
-  a \code{count} object with the evaluation of the left and right context of
-  the match.
+a \code{count} object with the evaluation of the left and right context of
+the match.
 
 The \code{knit_print} method will be called by knitr to render
-  `kwic` objects as a DataTable  \code{htmlwidget} when rendering a R
-  Markdown document as html. It will usually be necessary to explicitly state
-  "render = knit_print" in the chunk options. The option
-  `polmineR.pagelength` controls the number of lines displayed in the
-  resulting `htmlwidget`. Note that including htmlwidgets in html documents
-  requires that pandoc is installed. To avoid an error, a formatted
-  \code{data.table} is returned by \code{knit_print} if pandoc is not
-  available.
+\code{kwic} objects as a DataTable  \code{htmlwidget} when rendering a R
+Markdown document as html. It will usually be necessary to explicitly state
+"render = knit_print" in the chunk options. The option
+\code{polmineR.pagelength} controls the number of lines displayed in the
+resulting \code{htmlwidget}. Note that including htmlwidgets in html documents
+requires that pandoc is installed. To avoid an error, a formatted
+\code{data.table} is returned by \code{knit_print} if pandoc is not
+available.
 
 The \code{as.character}-method will return a list of
-  \code{character} vectors, concatenating the columns "left", "node" and
-  "right" of the \code{data.table} in the \code{stat}-slot of the input
-  \code{kwic}-class object. Optionally, the node can be formatted using a
-  format string that is passed into \code{sprintf}.
+\code{character} vectors, concatenating the columns "left", "node" and
+"right" of the \code{data.table} in the \code{stat}-slot of the input
+\code{kwic}-class object. Optionally, the node can be formatted using a
+format string that is passed into \code{sprintf}.
 
 The \code{subset}-method will apply \code{subset} to the table in
-  the slot \code{stat}, e.g. for filtering query results based on metadata (i.e.
-  s-attributes) that need to be present.
+the slot \code{stat}, e.g. for filtering query results based on metadata (i.e.
+s-attributes) that need to be present.
 
 The \code{enrich} method is used to generate the actual output for
-  the kwic method. If param \code{table} is \code{TRUE}, corpus positions
-  will be turned into a \code{data.frame} with the concordance lines. If
-  param \code{s_attributes} is a character vector with s-attributes, the
-  respective s-attributes will be added as columns to the table with
-  concordance lines.
+the kwic method. If param \code{table} is \code{TRUE}, corpus positions
+will be turned into a \code{data.frame} with the concordance lines. If
+param \code{s_attributes} is a character vector with s-attributes, the
+respective s-attributes will be added as columns to the table with
+concordance lines.
 
 The \code{format}-method will return a \code{data.table} that can
-  serve as input for rendering a \code{htmlwidget}, for instance using
-  \code{DT::datatable} or \code{rhandsontable::rhandsontable}. It will
-  include html tags, so ensure that the rendering engine does not obfuscate
-  the html.
+serve as input for rendering a \code{htmlwidget}, for instance using
+\code{DT::datatable} or \code{rhandsontable::rhandsontable}. It will
+include html tags, so ensure that the rendering engine does not obfuscate
+the html.
 }
 \section{Slots}{
 
@@ -247,5 +247,5 @@ i <- corpus("GERMAPARLMINI") \%>\%
 }
 \seealso{
 The constructor for generating kwic objects is the
-  \code{\link{kwic}} method.
+\code{\link{kwic}} method.
 }

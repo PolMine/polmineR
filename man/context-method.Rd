@@ -172,7 +172,7 @@ CWB corpus.}
 }
 \value{
 depending on whether a partition or a partition_bundle serves as
-  input, the return will be a context object, or a \code{context_bundle} object
+input, the return will be a context object, or a \code{context_bundle} object
 }
 \description{
 Retrieve the word context of a token, optionally checking for boundaries of a XML
@@ -183,8 +183,8 @@ For formulating the query, CPQ syntax may be used (see
 examples). Statistical tests available are log-likelihood, t-test, pmi.
 
 If \code{.Object} is a \code{matrix}, the \code{context}-method will
-  unfold the \code{matrix} (interpreted as regions defining left and right
-  corpus positions) and return an elementary ... object.
+unfold the \code{matrix} (interpreted as regions defining left and right
+corpus positions) and return an elementary ... object.
 }
 \examples{
 use("polmineR")

@@ -70,8 +70,8 @@ x will be used}
 \item{progress}{logical}
 }
 \description{
-The features of two objects, usually a \code{partition} defining a corpus of 
-interest (coi), and a \code{partition} defining a reference corpus (ref) are compared. 
+The features of two objects, usually a \code{partition} defining a corpus of
+interest (coi), and a \code{partition} defining a reference corpus (ref) are compared.
 The most important purpose is term extraction.
 }
 \examples{

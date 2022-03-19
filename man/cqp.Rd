@@ -25,32 +25,32 @@ as.cqp(
 \item{warn}{A (length-one) \code{logical} value, whether to issue a warning if
 a query may be buggy.}
 
-\item{normalise.case}{A `logical` value, if `TRUE`, a flag will be
+\item{normalise.case}{A \code{logical} value, if \code{TRUE}, a flag will be
 added to the query/queries to omit matching case.}
 
-\item{collapse}{A `logical` value, whether to collapse the queries into one.}
+\item{collapse}{A \code{logical} value, whether to collapse the queries into one.}
 
-\item{check}{A `logical` value whether to run `check_cqp_query()` on queries.}
+\item{check}{A \code{logical} value whether to run \code{check_cqp_query()} on queries.}
 }
 \value{
 \code{is.cqp} returns a logical value, \code{as.cqp} a character
-  vector, \code{check_cqp_query} a logical value that is \code{TRUE} if all
-  queries are valid, or \code{FALSE} if not.
+vector, \code{check_cqp_query} a logical value that is \code{TRUE} if all
+queries are valid, or \code{FALSE} if not.
 }
 \description{
 Test whether a character string is a CQP query, or turn a character
 vector into CQP queries.
 }
 \details{
-The \code{is.cqp} function guesses whether \code{query} is a CQP query 
+The \code{is.cqp} function guesses whether \code{query} is a CQP query
 and returns the respective logical value (\code{TRUE}/\code{FALSE}).
 
 The \code{as.cqp} function takes a character vector as input and converts it
 to a CQP query by putting the individual strings in quotation marks.
 
 The \code{check_cqp_query}-function will check that opening
-  quotation marks are matched by closing quotation marks, to prevent crashes
-  of CQP and the R session.
+quotation marks are matched by closing quotation marks, to prevent crashes
+of CQP and the R session.
 }
 \examples{
 is.cqp("migration") # will return FALSE

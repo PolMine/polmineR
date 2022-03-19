@@ -38,10 +38,10 @@ table of observationes, which is prepared for every single token in the
 corpus. It reports counts for a token to inspect and all other tokens in a
 corpus of interest (coi) and a reference corpus (ref):
 \tabular{rccc}{
-  \tab coi   \tab ref \tab TOTAL \cr
-  count token \tab \eqn{o_{11}}{o11} \tab \eqn{o_{12}}{o12} \tab \eqn{r_{1}}{r1} \cr
-  other tokens \tab \eqn{o_{21}}{o21} \tab \eqn{o_{22}}{o22} \tab \eqn{r_{2}}{r2} \cr
-  TOTAL \tab \eqn{c_{1}}{c1} \tab \eqn{c_{2}}{c2} \tab N
+\tab coi   \tab ref \tab TOTAL \cr
+count token \tab \eqn{o_{11}}{o11} \tab \eqn{o_{12}}{o12} \tab \eqn{r_{1}}{r1} \cr
+other tokens \tab \eqn{o_{21}}{o21} \tab \eqn{o_{22}}{o22} \tab \eqn{r_{2}}{r2} \cr
+TOTAL \tab \eqn{c_{1}}{c1} \tab \eqn{c_{2}}{c2} \tab N
 }
 (b) Based on the contingency table(s) with observed counts, expected values
 are calculated for each cell, as the product of the column and margin sums,
@@ -51,7 +51,7 @@ divided by the overall number of tokens (see example).
 follows.
 \deqn{G^{2} = 2 \sum{O_{ij} log(\frac{O_{ij}}{E_{ij}})}}{G2 = 2(o11 *
 log(o11/e11) + o12 * log(o12/e12) + o21 * log(o21/e21) + o22 * log(o22/e22))}
-Note: Before polmineR v0.7.11, a simplification of the formula was used 
+Note: Before polmineR v0.7.11, a simplification of the formula was used
 (Rayson/Garside 2000), which omits the third and fourth term of the previous
 formula:
 \deqn{ll = 2(o_{11} log (\frac{o_{11}}{E_{11}}) + o_{12} log(\frac{o_{12}}{E_{12}}))}{ll =
@@ -140,23 +140,23 @@ subset(df, word == "prices")[["ll"]]
 }
 \references{
 Dunning, Ted (1993): Accurate Methods for the Statistics of
-  Surprise and Coincidence. \emph{Computational Linguistics}, Vol. 19, No. 1,
-  pp. 61-74.
+Surprise and Coincidence. \emph{Computational Linguistics}, Vol. 19, No. 1,
+pp. 61-74.
 
 Rayson, Paul; Garside, Roger (2000): Comparing Corpora using
-  Frequency Profiling. \emph{The Workshop on Comparing Corpora}. 
-  \url{https://www.aclweb.org/anthology/W00-0901/}.
+Frequency Profiling. \emph{The Workshop on Comparing Corpora}.
+\url{https://www.aclweb.org/anthology/W00-0901/}.
 
 Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
-  Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
-  \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
+Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
+\url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
 
 Evert, Stefan (2009). Corpora and Collocations. In: A. Ludeling
-  and M. Kyto (eds.), \emph{Corpus Linguistics. An International Handbook}. Mouton
-  de Gruyter, Berlin, pp. 1212-1248 (ch. 58).
+and M. Kyto (eds.), \emph{Corpus Linguistics. An International Handbook}. Mouton
+de Gruyter, Berlin, pp. 1212-1248 (ch. 58).
 
 Tabbert, Ulrike (2015): \emph{Crime and Corpus. The Linguistic
-  Representation of Crime in the Press}. Amsterdam: Benjamins.
+Representation of Crime in the Press}. Amsterdam: Benjamins.
 }
 \seealso{
 Other statistical methods: 

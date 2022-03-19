@@ -43,7 +43,7 @@ punctuation
 \item{verbose}{logical}
 }
 \description{
-Method to trim and adjust objects by 
+Method to trim and adjust objects by
 applying thresholds, minimum frequencies etc. It can be applied to \code{context},
 \code{features}, \code{context}, \code{partition} and \code{partition_bundle} objects.
 }

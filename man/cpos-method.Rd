@@ -78,8 +78,11 @@ cpos(.Object, ...)
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}
 
-\item{query}{A \code{character} vector providing one or multiple queries
-(token or CQP query). Token ids (i.e. \code{integer} values) are also accepted.}
+\item{query}{A \code{character} vector providing one or multiple queries (token to
+look up, regular expression or CQP query). Token ids (i.e. \code{integer}
+values) are also accepted. If \code{query} is neither a regular expression nor a
+CQP query, a sanity check removes accidental leading/trailing whitespace,
+issuing a respective warning.}
 
 \item{p_attribute}{The p-attribute to search. Needs to be stated only if query
 is not a CQP query. Defaults to \code{NULL}.}
@@ -97,10 +100,10 @@ using \code{check_cqp_query}.}
 }
 \value{
 Unless \code{.Object} is a \code{matrix}, the return value is a
-  \code{matrix} with two columns.  The first column reports the left/starting
-  corpus positions (cpos) of the hits obtained. The second column reports the
-  right/ending corpus positions of the respective hit. The number of rows is
-  the number of hits. If there are no hits, a \code{NULL} object is returned.
+\code{matrix} with two columns.  The first column reports the left/starting
+corpus positions (cpos) of the hits obtained. The second column reports the
+right/ending corpus positions of the respective hit. The number of rows is
+the number of hits. If there are no hits, a \code{NULL} object is returned.
 }
 \description{
 Get matches for a query in a CQP corpus (subcorpus, partition etc.),
@@ -130,9 +133,9 @@ the matrix. The \code{cpos}-method for \code{matrix} objects will performs
 this task robustly.
 
 If \code{.Object} is \code{NULL}, the method will return an empty
-  integer vector. Used internally to handle \code{NULL} objects that may be
-  returned from the \code{cpos}-method if no matches are obtained for a
-  query.
+integer vector. Used internally to handle \code{NULL} objects that may be
+returned from the \code{cpos}-method if no matches are obtained for a
+query.
 }
 \examples{
 use("polmineR")

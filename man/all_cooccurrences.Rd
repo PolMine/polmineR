@@ -231,7 +231,7 @@ if (requireNamespace("igraph", quietly = TRUE)){
 }
 \seealso{
 To learn about methods available for the object that is returned,
-  see the documentation of the \code{\link{Cooccurrences-class}}. See the
-  \code{\link{cooccurrences}}-method (starting with a lower case c) to get
-  the cooccurrences for the match for a query, which may also be a CQP query.
+see the documentation of the \code{\link{Cooccurrences-class}}. See the
+\code{\link{cooccurrences}}-method (starting with a lower case c) to get
+the cooccurrences for the match for a query, which may also be a CQP query.
 }

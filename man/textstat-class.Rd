@@ -114,7 +114,7 @@ on the dimensions, the number of rows, or the number of columns of the
 
 Objects derived from the \code{textstat} class can be indexed with simple
 square brackets ("[") to get rows specified by an numeric/integer vector,
-and with double square brackets ("[[") to get specific columns from the 
+and with double square brackets ("[[") to get specific columns from the
 \code{data.table} in the slot \code{stat}.
 
 The \code{colnames}-method will return the column names of the \code{data-table}
@@ -128,25 +128,25 @@ The methods \code{as.data.table}, and \code{as.data.frame} will extract the
 the \code{name}-method and \code{name<-}, respectively.
 
 The \code{round()}-method looks up all numeric columns in the
-  \code{data.table} in the \code{stat}-slot of the \code{textstat} object and
-  rounds values of these columns to the number of decimal places specified by
-  argument \code{digits}.
+\code{data.table} in the \code{stat}-slot of the \code{textstat} object and
+rounds values of these columns to the number of decimal places specified by
+argument \code{digits}.
 
 The \code{knit_print} method will be called by knitr to render
-  `textstat` objects or objects inheriting from the `textstat` class as a
-  DataTable  \code{htmlwidget} when rendering a R Markdown document as html.
-  It will usually be necessary to explicitly state "render = knit_print" in
-  the chunk options. The option `polmineR.pagelength` controls the number of
-  lines displayed in the resulting `htmlwidget`. Note that including
-  htmlwidgets in html documents requires that pandoc is installed. To avoid
-  an error, a formatted \code{data.table} is returned by \code{knit_print} if
-  pandoc is not available.
+\code{textstat} objects or objects inheriting from the \code{textstat} class as a
+DataTable  \code{htmlwidget} when rendering a R Markdown document as html.
+It will usually be necessary to explicitly state "render = knit_print" in
+the chunk options. The option \code{polmineR.pagelength} controls the number of
+lines displayed in the resulting \code{htmlwidget}. Note that including
+htmlwidgets in html documents requires that pandoc is installed. To avoid
+an error, a formatted \code{data.table} is returned by \code{knit_print} if
+pandoc is not available.
 
 The \code{format()}-method returns a pretty-printed and minimized
-  version of the \code{data.table} in the \code{stat}-slot of the
-  \code{textstat}-object: It will round all numeric columns to the number of decimal
-  numbers specified by \code{digits}, and drop all columns with token ids. The 
-  return value is a \code{data.table}.
+version of the \code{data.table} in the \code{stat}-slot of the
+\code{textstat}-object: It will round all numeric columns to the number of decimal
+numbers specified by \code{digits}, and drop all columns with token ids. The
+return value is a \code{data.table}.
 }
 \section{Slots}{
 

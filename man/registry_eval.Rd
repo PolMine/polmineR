@@ -35,7 +35,7 @@ registry_get_properties(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
 \description{
 Functions to extract information from a registry file describing a corpus.
 Several operations could be accomplished with the 'cwb-regedit' tool,
-the functions defined here ensure that manipulating the registry is 
+the functions defined here ensure that manipulating the registry is
 possible without a full installation of the CWB.
 }
 \details{
@@ -43,12 +43,12 @@ An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/
 includes an explanation of the registry file format.
 
 \code{registry_get_encoding} will parse the registry file for a
-  corpus and return the encoding that is defined (corpus property "charset").
-  If parsing the registry does not yield a result (corpus property "charset"
-  not defined), the CWB standard encoding ("latin1") is assigned to prevent
-  errors. Note that \code{RcppCWB::cl_charset_name} is equivalent but is
-  faster as it uses the internal C representation of a corpus rather than
-  parsing the registry file.
+corpus and return the encoding that is defined (corpus property "charset").
+If parsing the registry does not yield a result (corpus property "charset"
+not defined), the CWB standard encoding ("latin1") is assigned to prevent
+errors. Note that \code{RcppCWB::cl_charset_name} is equivalent but is
+faster as it uses the internal C representation of a corpus rather than
+parsing the registry file.
 }
 \examples{
 registry_get_encoding("REUTERS")

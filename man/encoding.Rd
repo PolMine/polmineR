@@ -45,10 +45,9 @@ corpus is returned. If called without arguments, the session character set is
 returned.
 }
 \details{
-Calling \code{encoding()} relies on the \code{localeToCharset()}
-  function. If \code{localeToCharset()} returns \code{NA} for whatsoever
-  reason, the return value is "UTF-8" to avoid errors and a warning is
-  issued.
+\code{encoding()} uses \code{l10n_info()} and \code{localeToCharset()} (in this
+order) to determine the session encoding. If \code{localeToCharset()} returns
+\code{NA}, "UTF-8" is assumed to be the session encoding.
 }
 \examples{
 # Get session charset.

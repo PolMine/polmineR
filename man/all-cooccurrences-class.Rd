@@ -78,40 +78,40 @@ for \code{textstat}-objects are inherited (see examples).
 }
 \details{
 The \code{as.simple_triplet_matrix}-method will transform a
-  \code{Cooccurrences} object into a sparse matrix. For reasons of memory
-  efficiency, decoding token ids is performed within the method at the
-  as late as possible. It is NOT necessary that decoded tokens are present
-  in the table in the \code{Cooccurrences} object.
+\code{Cooccurrences} object into a sparse matrix. For reasons of memory
+efficiency, decoding token ids is performed within the method at the
+as late as possible. It is NOT necessary that decoded tokens are present
+in the table in the \code{Cooccurrences} object.
 
-The \code{as_igraph}-method can be used to turn an object of the \code{Cooccurrences}-class 
+The \code{as_igraph}-method can be used to turn an object of the \code{Cooccurrences}-class
 into an \code{igraph}-object.
 
 The \code{subset} method, as a particular feature, allows a
-  \code{Coocccurrences}-object to be subsetted by a \code{featurs}-Object
-  resulting from a features extraction that compares two Cooccurrences
-  objects.
+\code{Coocccurrences}-object to be subsetted by a \code{featurs}-Object
+resulting from a features extraction that compares two Cooccurrences
+objects.
 
 For reasons of memory efficiency, the initial \code{data.table} in
-  the slot \code{stat} of a \code{Cooccurrences}-object will identify tokens by an
-  integer id, not by the string of the token. The \code{decode()}-method will
-  replace these integer columns with human-readable character vectors. Due to
-  the reference logic of the \code{data.table} object, this is an in-place
-  operation, peformed without copying the table. The modified object is
-  returned invisibly; usually it will not be necessary to catch the return
-  value.
+the slot \code{stat} of a \code{Cooccurrences}-object will identify tokens by an
+integer id, not by the string of the token. The \code{decode()}-method will
+replace these integer columns with human-readable character vectors. Due to
+the reference logic of the \code{data.table} object, this is an in-place
+operation, peformed without copying the table. The modified object is
+returned invisibly; usually it will not be necessary to catch the return
+value.
 
 The \code{kwic}-method will add a column to the \code{data.table} in
-  the \code{stat}-slot with the concordances that are behind a statistical
-  finding, and to the \code{data.table} in the \code{stat}-slot of the
-  \code{partition} in the slot \code{partition}. It is an in-place operation.
+the \code{stat}-slot with the concordances that are behind a statistical
+finding, and to the \code{data.table} in the \code{stat}-slot of the
+\code{partition} in the slot \code{partition}. It is an in-place operation.
 
 Returns a \code{sparseMatrix} based on the counts of term cooccurrences. At this stage,
 it is required that decoded tokens are present.
 
-The \code{enrich}-method will add columns 'a_count' and 'b_count' to the 
-  \code{data.table} in the 'stat' slot of the \code{Cooccurrences} object. If the
-  count for the subcorpus/partition from which the cooccurrences are derived is 
-  not yet present, the count is performed first.
+The \code{enrich}-method will add columns 'a_count' and 'b_count' to the
+\code{data.table} in the 'stat' slot of the \code{Cooccurrences} object. If the
+count for the subcorpus/partition from which the cooccurrences are derived is
+not yet present, the count is performed first.
 }
 \section{Slots}{
 
@@ -148,8 +148,8 @@ stm <- as.simple_triplet_matrix(X)
 }
 \seealso{
 See the documentation of the \code{\link{Cooccurrences}}-method
-  (including examples) for procedures to get and filter cooccurrence
-  information. See the documentation for the \code{\link{textstat-class}}
-  explaining which methods for this superclass of the
-  \code{Cooccurrences}-class which are available.
+(including examples) for procedures to get and filter cooccurrence
+information. See the documentation for the \code{\link{textstat-class}}
+explaining which methods for this superclass of the
+\code{Cooccurrences}-class which are available.
 }

@@ -21,7 +21,7 @@ chisquare(.Object)
 }
 \value{
 Same class as input object, with enriched table in the
-  \code{stat}-slot.
+\code{stat}-slot.
 }
 \description{
 Perform Chisquare-Test based on a table with counts
@@ -94,12 +94,12 @@ as(f, "data.table")[word == "Weg"][["chisquare"]]
 }
 \references{
 Manning, Christopher D.; Schuetze, Hinrich (1999):
-  \emph{Foundations of Statistical Natural Language Processing}. MIT Press:
-  Cambridge, Mass., pp. 169-172.
+\emph{Foundations of Statistical Natural Language Processing}. MIT Press:
+Cambridge, Mass., pp. 169-172.
 
 Kilgarriff, A. and Rose, T. (1998): Measures for corpus
-  similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
-  Natural Language Processing}. Granada, Spain, pp 46-52.
+similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
+Natural Language Processing}. Granada, Spain, pp 46-52.
 }
 \seealso{
 Other statistical methods: 
