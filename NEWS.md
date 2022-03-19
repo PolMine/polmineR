@@ -93,7 +93,9 @@ implementation avoids a data.table warning when the bulk action of adding new
 columns exceeds the number of columns reserved by data.table objects.
 - The DESCRIPTION files does not state "LazyData: yes" any more, as the package
 does not have a data directory.
-
+- Typo in messages of `trim()` is removed (#197).
+- `encoding()` relies on `l10n_info()` before using `localeToCharset()` as a
+matter of performance and robustness (#196).
 
 ## Bug fixes
 
@@ -313,6 +315,7 @@ for the `character` class now relies on this method.
 ## Documentation
 
 - A skeleton documentation of package options is included in the documentation of the package as a whole (`?polmineR`)
+
 
 
 polmineR 0.8.0
