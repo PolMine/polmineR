@@ -81,7 +81,7 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
           verbose = verbose
         )
         for (x in list.files(corpus_data_srcdir, full.names = TRUE))
-          file.copy(from = x, to = file.path(corpus_data_targetdir, basename(x)))
+          file.copy(from = x, to = path(corpus_data_targetdir, basename(x)))
         
       }
     } else {

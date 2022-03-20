@@ -30,12 +30,12 @@
   # a subdirectory of the inst directory. Therefore both options are considered whether extdata
   # is in the inst directory, or immediately in main directory of the package.
   pkg_registry_dir_alternatives <- c(
-    file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "registry", fsep = "/"),
-    file.path(normalizePath(libname, winslash = "/"), pkgname, "inst", "extdata", "cwb", "registry", fsep = "/")
+    path(libname, pkgname, "extdata", "cwb", "registry"),
+    path(libname, pkgname, "inst", "extdata", "cwb", "registry")
   )
   pkg_registry_dir <- pkg_registry_dir_alternatives[dir.exists(pkg_registry_dir_alternatives)]
   
-  pkg_indexed_corpora_dir <- file.path(normalizePath(libname, winslash = "/"), pkgname, "extdata", "cwb", "indexed_corpora", fsep = "/")
+  pkg_indexed_corpora_dir <- path(libname, pkgname, "extdata", "cwb", "indexed_corpora")
   
   polmineR_registry_dir <- registry()
   
@@ -47,8 +47,8 @@
     if (Sys.getenv("CORPUS_REGISTRY") != ""){
       for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
         file.copy(
-          from = file.path(Sys.getenv("CORPUS_REGISTRY"), corpus),
-          to = file.path(polmineR_registry_dir, corpus)
+          from = path(Sys.getenv("CORPUS_REGISTRY"), corpus),
+          to = path(polmineR_registry_dir, corpus)
         )
       }
     }
@@ -58,7 +58,7 @@
         corpus = corpus,
         registry = pkg_registry_dir,
         registry_new = polmineR_registry_dir,
-        home_dir_new = file.path(pkg_indexed_corpora_dir, tolower(corpus))
+        home_dir_new = path(pkg_indexed_corpora_dir, tolower(corpus))
       )
     }
     

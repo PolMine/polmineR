@@ -166,7 +166,13 @@ setMethod("cpos", "character", function(.Object, query, p_attribute = getOption(
   
 #' @rdname cpos-method
 setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), verbose = TRUE, ...){
-  hits <- cpos(as(.Object, "corpus"), query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, ...)
+  hits <- cpos(
+    as(.Object, "corpus"),
+    query = query, cqp = cqp, check = check,
+    p_attribute = p_attribute,
+    verbose = verbose, ...
+  )
+  
   if (!is.null(hits)){
     if (length(.Object@s_attribute_strucs) > 0L){
       # The incoming .Object may be a partition/subcorpus object that has been generated

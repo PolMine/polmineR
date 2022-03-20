@@ -412,7 +412,7 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
   }
   
   if (isTRUE(boost)){
-    lexfile <- file.path(corpus@data_dir, sprintf("%s.lexicon", p_attributes), fsep = "/")
+    lexfile <- fs::path(corpus@data_dir, sprintf("%s.lexicon", p_attributes))
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
     Encoding(lexicon) <- corpus@encoding
     if (!identical(corpus@encoding, encoding())){
@@ -435,7 +435,7 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
 
 
 #' @details The \code{decode}-method for \code{data.table} objects will decode
-#'   token ids (column '[p-attribute]_id'), adding the corresponding string as a
+#'   token ids (column '`p-attribute`_id'), adding the corresponding string as a
 #'   new column. If a column "cpos" with corpus positions is present, ids are
 #'   derived for the corpus positions given first. If the \code{data.table}
 #'   neither has a column "cpos" nor columns with token ids (i.e. colummn name

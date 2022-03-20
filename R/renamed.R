@@ -27,7 +27,7 @@ getTerms <- function(...) terms(...)
 
 #' @export getEncoding
 #' @rdname renamed
-getEncoding <- function(...) registry_get_encoding(...)
+getEncoding <- function(...) cl_charset_name(...)
 
 #' @export partitionBundle
 #' @rdname renamed

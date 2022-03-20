@@ -4,7 +4,9 @@ setAs(from = "partition", to = "subcorpus", def = function(from){
     
     # slots inherited from class 'corpus'
     corpus = from@corpus,
-    data_dir = registry_get_home(from@corpus),
+    data_dir = fs::path(
+      corpus_data_dir(from@corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
+    ),
     type = if (grepl("^.*?_partition$", class(from))){
         as.vector(gsub("^(.*?)_partition$", "\\1", class(from)))
       } else {

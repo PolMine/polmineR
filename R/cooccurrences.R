@@ -987,12 +987,12 @@ setMethod("decode", "Cooccurrences", function(.Object){
     a_col <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", p_attr, "id", sep = "_")
     .Object@stat[, paste("a", p_attr, sep = "_") := as.nativeEnc(
       cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = .Object@stat[[a_col]]),
-      from = registry_get_encoding(.Object@corpus))
+      from = cl_charset_name(.Object@corpus))
       ]
     b_col <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", p_attr, "id", sep = "_")
     .Object@stat[, paste("b", p_attr, sep = "_") := as.nativeEnc(
       cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = .Object@stat[[b_col]]),
-      from = registry_get_encoding(.Object@corpus))
+      from = cl_charset_name(.Object@corpus))
       ]
   }
   # .Object@stat[, "a_id" := NULL][, "b_id" := NULL]

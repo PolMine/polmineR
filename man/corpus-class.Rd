@@ -12,13 +12,21 @@
 \alias{corpus,missing-method}
 \title{Corpus class initialization}
 \usage{
-\S4method{corpus}{character}(.Object, server = NULL, restricted)
+\S4method{corpus}{character}(
+  .Object,
+  registry_dir = Sys.getenv("CORPUS_REGISTRY"),
+  server = NULL,
+  restricted
+)
 
 \S4method{corpus}{missing}()
 }
 \arguments{
 \item{.Object}{The upper-case ID of a CWB corpus stated by a
 length-one \code{character} vector.}
+
+\item{registry_dir}{The registry directory with the registry file describing
+the corpus (longth-one \code{character} vector).}
 
 \item{server}{If \code{NULL} (default), the corpus is expected to be present
 locally. If provided, the name of an OpenCPU server (can be an IP address)
@@ -68,9 +76,13 @@ is to call \code{usethis::edit_r_environ()}.
 \item{\code{corpus}}{A length-one \code{character} vector, the upper-case ID of a CWB
 corpus.}
 
+\item{\code{registry_dir}}{Registry directory with registry file describing the
+corpus.}
+
 \item{\code{data_dir}}{The directory where the files for the indexed corpus are.}
 
-\item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).}
+\item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary
+protocols).}
 
 \item{\code{name}}{An additional name for the object that may be more telling than
 the corpus ID.}
@@ -87,7 +99,8 @@ available only with the \code{remote_corpus} class inheriting from the
 
 \item{\code{user}}{If the corpus on the server requires authentication, the username.}
 
-\item{\code{password}}{If the corpus on the server requires authentication, the password.}
+\item{\code{password}}{If the corpus on the server requires authentication, the
+password.}
 }}
 
 \examples{

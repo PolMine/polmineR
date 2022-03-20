@@ -1,13 +1,14 @@
 #' @include partition.R S4classes.R
 NULL
 
-#' Get terms in \code{partition} or corpus.
+#' Get terms in `partition` or `corpus`.
 #' 
-#' @param x an atomic \code{character} vector with a corpus id or \code{partition} object
-#' @param p_attribute the p-attribute to be analyzed
-#' @param regex regular expression(s) to filter results
-#' @param robust logical, whether to check for potential failures
-#' @param ... for backward compatibility
+#' @param x A `corpus`, `partition` or `subcorpus` object, or a length-one
+#'   `character` with a corpus id.
+#' @param p_attribute The p-attribute to for which to retrieve results
+#'   (length-one `character` vector).
+#' @param regex Regular expression(s) to filter results (`character` vector).
+#' @param robust A `logical` value, whether to check for potential failures.
 #' @exportMethod terms
 #' @docType methods
 #' @name terms
@@ -15,18 +16,12 @@ NULL
 #' @importFrom RcppCWB region_matrix_to_ids
 #' @examples
 #' use("polmineR")
-#' session <- partition("GERMAPARLMINI", date = "2009-10-27")
-#' words <- terms(session, "word")
-#' terms(session, p_attribute = "word", regex = "^Arbeit.*")
-#' terms(session, p_attribute = "word", regex = c("Arbeit.*", ".*arbeit"))
-#' 
-#' terms("GERMAPARLMINI", p_attribute = "word")
-#' terms("GERMAPARLMINI", p_attribute = "word", regex = "^Arbeit.*")
+#' r <- partition("REUTERS", id = "144")
+#' words <- terms(r, "word")
+#' terms(r, p_attribute = "word", regex = ".*il.*")
 #' @rdname terms
 #' @aliases terms,slice-method terms,partition-method
-setMethod("terms", "slice", function(x, p_attribute, regex = NULL, ...){
-  
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+setMethod("terms", "slice", function(x, p_attribute, regex = NULL){
   
   # ensure that input is correct
   stopifnot(is.character(p_attribute))
@@ -37,9 +32,18 @@ setMethod("terms", "slice", function(x, p_attribute, regex = NULL, ...){
   if (identical(p_attribute, x@p_attribute)){
     y <- x@stat[[p_attribute]]
   } else {
-    ids <- region_matrix_to_ids(corpus = x@corpus, p_attribute = p_attribute, matrix = x@cpos)
+    ids <- region_matrix_to_ids(
+      corpus = x@corpus,
+      p_attribute = p_attribute,
+      matrix = x@cpos
+    )
     ids_unique <- unique(ids)
-    y <- cl_id2str(corpus = x@corpus, p_attribute = p_attribute, id = ids_unique, registry = registry())
+    y <- cl_id2str(
+      corpus = x@corpus,
+      p_attribute = p_attribute,
+      id = ids_unique,
+      registry = registry()
+    )
     Encoding(y) <- x@encoding
   }
   y <- enc2utf8(y)
@@ -51,47 +55,53 @@ setMethod("terms", "slice", function(x, p_attribute, regex = NULL, ...){
 })
 
 #' @rdname terms
-setMethod("terms", "partition", function(x, p_attribute, regex = NULL, ...) callNextMethod() )
+setMethod("terms", "partition", function(x, p_attribute, regex = NULL) callNextMethod() )
 
 #' @rdname terms
-setMethod("terms", "subcorpus", function(x, p_attribute, regex = NULL, ...) callNextMethod() )
+setMethod("terms", "subcorpus", function(x, p_attribute, regex = NULL) callNextMethod() )
 
 
 #' @rdname terms
-setMethod("terms", "character", function(x, p_attribute, regex = NULL, robust = FALSE, ...){
-  
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+setMethod("terms", "corpus", function(x, p_attribute, regex = NULL, robust = FALSE){
   
   stopifnot(
-    length(x) == 1,
+    length(x) == 1L,
     is.character(p_attribute),
-    length(p_attribute) == 1,
+    length(p_attribute) == 1L,
     is.logical(robust)
-    )
+  )
   if (!is.null(regex)) stopifnot(is.character(regex))
   
-  terms_total <- cl_lexicon_size(corpus = x, p_attribute = p_attribute, registry = registry())
+  terms_total <- cl_lexicon_size(
+    corpus = x@corpus,
+    p_attribute = p_attribute,
+    registry = x@registry_dir
+  )
   ids <- 0L:(terms_total - 1L)
-  str <- cl_id2str(corpus = x, p_attribute = p_attribute, id = ids, registry = registry())
-  corpus_enc <- registry_get_encoding(x)
-  Encoding(str) <- corpus_enc
-  y <- as.nativeEnc(str, from = corpus_enc)
+  str <- cl_id2str(
+    corpus = x@corpus,
+    p_attribute = p_attribute,
+    id = ids,
+    registry = x@registry_dir
+  )
+  Encoding(str) <- x@encoding
+  y <- as.nativeEnc(str, from = x@encoding)
   
   if (robust != FALSE){
     if (robust){
       if (length(y) != length(unique(y))){
         warning("there may be terms causing issues")
         strCount <- table(y)
-        villainNames <- names(which(strCount > 1))
+        villains <- names(which(strCount > 1))
       }      
     } else if (is.character(robust)) {
-      villainNames <- robust
+      villains <- robust
     }
-    for (villainName in villainNames){
-      warning("this is a villain: ", villainName)
-      villainPos <- which(villainName == y)
-      for (i in 1L:length(villainPos)){
-        if (i >= 2L) y[villainPos[i]] <- paste(villainName, i, sep = "_")
+    for (villain in villains){
+      warning("this is a villain: ", villain)
+      villain_pos <- which(villain == y)
+      for (i in 1L:length(villain_pos)){
+        if (i >= 2L) y[villain_pos[i]] <- paste(villain, i, sep = "_")
       }
     }
   }
@@ -99,5 +109,16 @@ setMethod("terms", "character", function(x, p_attribute, regex = NULL, robust = 
     y <- unlist(lapply(regex, function(r) grep(r, y, value = TRUE)))
   }
   y
+})
+
+
+#' @rdname terms
+setMethod("terms", "character", function(x, p_attribute, regex = NULL, robust = FALSE){
+  terms(
+    x = corpus(x),
+    p_attribute = p_attribute,
+    regex = regex,
+    robust = robust
+  )
 })
 

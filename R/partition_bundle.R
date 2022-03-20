@@ -79,7 +79,9 @@ setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
   y <- callNextMethod()
   corpus_type <- get_type(y@corpus)
   y@type <- if (is.null(corpus_type)) character() else corpus_type
-  y@data_dir <- registry_get_home(corpus = y@corpus, registry = registry())
+  y@data_dir <- fs::path(
+    corpus_data_dir(corpus = y@corpus, registry = registry())
+  )
   y
 })
 

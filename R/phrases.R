@@ -38,8 +38,8 @@ setMethod("as.phrases", "ngrams", function(.Object){
   
   
   # Anticipate whether memory will suffice
-  cnt_file <- file.path(
-    registry_get_home(.Object@corpus),
+  cnt_file <- path(
+    corpus_data_dir(.Object@corpus),
     sprintf("%s.corpus.cnt", .Object@p_attribute)
   )
   cnt_file_size <- file.info(cnt_file)$size

@@ -48,7 +48,7 @@ setGeneric("as.regions", function(x, ...) standardGeneric("as.regions"))
 setAs(from = "partition", to = "regions", function(from, to){
   y <- new("regions")
   slots_to_get <- slotNames(y)
-  slots_to_get <- slots_to_get[-which(slots_to_get %in% c("data_dir", "type"))]
+  slots_to_get <- slots_to_get[-which(slots_to_get %in% c("registry_dir", "data_dir", "type"))]
   for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
   type <- get_type(y@corpus)
   y@type <- if (length(type) > 0L) type else character()

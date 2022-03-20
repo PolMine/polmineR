@@ -6,38 +6,37 @@
 \alias{terms,slice-method}
 \alias{terms,partition-method}
 \alias{terms,subcorpus-method}
+\alias{terms,corpus-method}
 \alias{terms,character-method}
-\title{Get terms in \code{partition} or corpus.}
+\title{Get terms in \code{partition} or \code{corpus}.}
 \usage{
-\S4method{terms}{slice}(x, p_attribute, regex = NULL, ...)
+\S4method{terms}{slice}(x, p_attribute, regex = NULL)
 
-\S4method{terms}{partition}(x, p_attribute, regex = NULL, ...)
+\S4method{terms}{partition}(x, p_attribute, regex = NULL)
 
-\S4method{terms}{subcorpus}(x, p_attribute, regex = NULL, ...)
+\S4method{terms}{subcorpus}(x, p_attribute, regex = NULL)
 
-\S4method{terms}{character}(x, p_attribute, regex = NULL, robust = FALSE, ...)
+\S4method{terms}{corpus}(x, p_attribute, regex = NULL, robust = FALSE)
+
+\S4method{terms}{character}(x, p_attribute, regex = NULL, robust = FALSE)
 }
 \arguments{
-\item{x}{an atomic \code{character} vector with a corpus id or \code{partition} object}
+\item{x}{A \code{corpus}, \code{partition} or \code{subcorpus} object, or a length-one
+\code{character} with a corpus id.}
 
-\item{p_attribute}{the p-attribute to be analyzed}
+\item{p_attribute}{The p-attribute to for which to retrieve results
+(length-one \code{character} vector).}
 
-\item{regex}{regular expression(s) to filter results}
+\item{regex}{Regular expression(s) to filter results (\code{character} vector).}
 
-\item{...}{for backward compatibility}
-
-\item{robust}{logical, whether to check for potential failures}
+\item{robust}{A \code{logical} value, whether to check for potential failures.}
 }
 \description{
-Get terms in \code{partition} or corpus.
+Get terms in \code{partition} or \code{corpus}.
 }
 \examples{
 use("polmineR")
-session <- partition("GERMAPARLMINI", date = "2009-10-27")
-words <- terms(session, "word")
-terms(session, p_attribute = "word", regex = "^Arbeit.*")
-terms(session, p_attribute = "word", regex = c("Arbeit.*", ".*arbeit"))
-
-terms("GERMAPARLMINI", p_attribute = "word")
-terms("GERMAPARLMINI", p_attribute = "word", regex = "^Arbeit.*")
+r <- partition("REUTERS", id = "144")
+words <- terms(r, "word")
+terms(r, p_attribute = "word", regex = ".*il.*")
 }

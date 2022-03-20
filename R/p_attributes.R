@@ -46,7 +46,7 @@ setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
     if (!p_attribute %in% p_attrs){
       stop(sprintf("The p-attribute '' is not available in corpus ''.", p_attribute, .Object@corpus))
     }
-    lexfile <- file.path(.Object@data_dir, sprintf("%s.lexicon", p_attribute), fsep = "/")
+    lexfile <- fs::path(.Object@data_dir, sprintf("%s.lexicon", p_attribute))
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
     if (.Object@encoding != encoding()){
       lexicon <- stringi::stri_encode(lexicon, from = .Object@encoding, to = encoding())

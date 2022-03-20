@@ -302,7 +302,7 @@ setMethod("partition", "character", function(
     )
   )  
   
-  p@encoding <- if (is.null(encoding)) registry_get_encoding(p@corpus) else encoding
+  p@encoding <- if (is.null(encoding)) cl_charset_name(p@corpus) else encoding
   .message('get encoding:', p@encoding, verbose = verbose)
   p@s_attributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = p@encoding))
   

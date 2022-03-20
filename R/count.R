@@ -360,7 +360,7 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
   
   if (is.null(query)){
     if (length(p_attribute) == 1L){
-      cnt_file <- file.path(.Object@data_dir, sprintf("%s.corpus.cnt", p_attribute)
+      cnt_file <- fs::path(.Object@data_dir, sprintf("%s.corpus.cnt", p_attribute)
       )
       if (file.exists(cnt_file)){
         cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
@@ -380,7 +380,7 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
         # somewhat surprisingly, cl_id2str a good deal faster than reading the
         # lexicon file directly using readBin a follows:
         # 
-        # lexicon_file <- file.path(.Object@data_dir, paste(p_attribute, "lexicon", sep = "."))
+        # lexicon_file <- path(.Object@data_dir, paste(p_attribute, "lexicon", sep = "."))
         # lexicon_file_size <- file.info(lexicon_file)[["size"]]
         # tokens <- readBin(con = lexicon_file, what = character(), n = lexicon_file_size)
         # 

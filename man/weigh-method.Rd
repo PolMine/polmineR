@@ -40,7 +40,7 @@ library(data.table)
 if (require("zoo") && require("devtools")){
 
 # Source in function 'get_sentiws' from a GitHub gist
-gist_url <- file.path(
+gist_url <- path(
   "gist.githubusercontent.com",
   "PolMine",
   "70eeb095328070c18bd00ee087272adf",

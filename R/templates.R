@@ -22,7 +22,7 @@ setMethod("get_template", "character", function(.Object, warn = FALSE){
 
 #' @rdname templates
 setMethod("get_template", "corpus", function(.Object, warn = FALSE){
-  filename <- file.path(.Object@data_dir, "template.json")
+  filename <- fs::path(.Object@data_dir, "template.json")
   if (file.exists(filename)){
     y <- jsonlite::fromJSON(txt = filename) 
     if ("metadata" %in% names(y)) y[["metadata"]] <- unlist(y[["metadata"]])

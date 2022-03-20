@@ -81,7 +81,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       if (!s_attribute %in% s_attributes(.Object)){
         stop(sprintf("The s-attribute '%s' is not defined for corpus '%s'.", s_attribute, .Object@corpus))
       }
-      avs_file <- file.path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+      avs_file <- fs::path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
       Encoding(avs) <- .Object@encoding
@@ -90,7 +90,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       if (unique){
         return(avs)
       } else {
-        avx_file <- file.path(.Object@data_dir, paste(s_attribute, "avx", sep = "."))
+        avx_file <- fs::path(.Object@data_dir, paste(s_attribute, "avx", sep = "."))
         avx_file_size <- file.info(avx_file)[["size"]]
 
         avx <- readBin(avx_file, what = integer(), size = 4L, n = avx_file_size / 4L, endian = "big")
@@ -291,7 +291,7 @@ setMethod("s_attributes", "remote_partition", function(.Object, ...){
 setMethod("s_attributes", "data.table", function(.Object, corpus, s_attribute, registry = Sys.getenv("CORPUS_REGISTRY")){
   
   data_dir <- corpus_data_dir(corpus = corpus, registry = registry)
-  charset <- charset <- cl_charset_name(corpus = corpus, registry = registry)
+  charset <- cl_charset_name(corpus = corpus, registry = registry)
   
   y <- copy(.Object)
   

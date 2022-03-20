@@ -49,7 +49,7 @@ setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = T
   x <- new(
     "corpus",
     corpus = .Object@corpus,
-    data_dir = .Object@data_dir,
+    data_dir = fs::path(.Object@data_dir),
     type = .Object@type,
     encoding = .Object@encoding,
     name = character(),

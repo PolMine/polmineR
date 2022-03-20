@@ -625,8 +625,11 @@ setClass("kwic_bundle", contains = "bundle")
 #'     
 #' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
 #'   corpus.
+#' @slot registry_dir Registry directory with registry file describing the
+#'   corpus.
 #' @slot data_dir The directory where the files for the indexed corpus are.
-#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary protocols).
+#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary
+#'   protocols).
 #' @slot name An additional name for the object that may be more telling than
 #'   the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one
@@ -637,7 +640,8 @@ setClass("kwic_bundle", contains = "bundle")
 #'   available only with the \code{remote_corpus} class inheriting from the
 #'   \code{corpus} class.
 #' @slot user If the corpus on the server requires authentication, the username.
-#' @slot password If the corpus on the server requires authentication, the password.
+#' @slot password If the corpus on the server requires authentication, the
+#'   password.
 #' @exportClass corpus
 #' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
 #' @name corpus-class
@@ -698,7 +702,8 @@ setClass(
   "corpus",
   slots = c(
     corpus = "character",
-    data_dir = "character",
+    registry_dir = "fs_path",
+    data_dir = "fs_path",
     type = "character",
     encoding = "character",
     name = "character",
@@ -710,7 +715,9 @@ setAs(from = "partition", to = "corpus", def = function(from){
   new(
     "corpus",
     corpus = from@corpus,
-    data_dir = registry_get_home(corpus = from@corpus, registry = registry()),
+    data_dir = fs::path(
+      corpus_data_dir(corpus = from@corpus, registry = registry())
+    ),
     type = if (class(from) == "partition") character() else gsub("^(.*?)_.*$", "\\1", class(from)),
     encoding = from@encoding,
     name = from@name

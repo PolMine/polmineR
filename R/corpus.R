@@ -7,18 +7,29 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 
 #' @rdname corpus-class
 #' @param .Object The upper-case ID of a CWB corpus stated by a
-#'   length-one \code{character} vector.
-#' @param server If \code{NULL} (default), the corpus is expected to be present
+#'   length-one `character` vector.
+#' @param registry_dir The registry directory with the registry file describing
+#'   the corpus (longth-one `character` vector).
+#' @param server If `NULL` (default), the corpus is expected to be present
 #'   locally. If provided, the name of an OpenCPU server (can be an IP address)
-#'   that hosts a corpus, or several corpora. The \code{corpus}-method will then
-#'   instantiate a \code{remote_corpus} object.
-#' @param restricted A \code{logical} value, whether access to a remote corpus is
-#'   restricted (\code{TRUE}) or not (\code{FALSE}).
+#'   that hosts a corpus, or several corpora. The `corpus`-method will then
+#'   instantiate a `remote_corpus` object.
+#' @param restricted A `logical` value, whether access to a remote corpus is
+#'   restricted (`TRUE`) or not (`FALSE`).
 #' @exportMethod corpus
-#' @importFrom RcppCWB cqp_list_corpora
-setMethod("corpus", "character", function(.Object, server = NULL, restricted){
+#' @importFrom RcppCWB cqp_list_corpora corpus_data_dir
+#' @importFrom fs path
+setMethod("corpus", "character", function(
+    .Object, registry_dir = Sys.getenv("CORPUS_REGISTRY"),
+    server = NULL, restricted
+){
 
-  if (length(.Object) != 1L) stop("Cannot process more than one corpus at a time: Provide only one corpus ID as input.")
+  if (length(.Object) > 1L){
+    stop(
+      "Cannot process more than one corpus at a time: ",
+      "Provide only one corpus ID as input."
+    )
+  }
 
   if (is.null(server)){
     corpora <- cqp_list_corpora()
@@ -45,14 +56,17 @@ setMethod("corpus", "character", function(.Object, server = NULL, restricted){
     }
 
     properties <- registry_get_properties(.Object)
+    
     y <- new(
       "corpus",
       corpus = .Object,
-      encoding = registry_get_encoding(.Object),
-      data_dir = registry_get_home(.Object),
+      encoding = cl_charset_name(corpus = .Object, registry = registry_dir),
+      registry_dir = fs::path(registry_dir),
+      data_dir = fs::path(corpus_data_dir(.Object, registry = registry_dir)),
       type = if ("type" %in% names(properties)) properties[["type"]] else character(),
       size = cl_attribute_size(corpus = .Object, attribute = "word", attribute_type = "p", registry = registry())
     )
+    
     return(y)
   } else {
     if (missing(restricted)) restricted <- FALSE
@@ -105,7 +119,7 @@ setMethod("corpus", "missing", function(){
     y <- data.frame(
       corpus = corpora,
       size = unname(sapply(corpora,function(x) cl_attribute_size(corpus = x, attribute = registry_get_p_attributes(x)[1], attribute_type = "p", registry = registry()))),
-      encoding = unname(sapply(corpora, function(x) registry_get_encoding(x))),
+      encoding = unname(sapply(corpora, function(x) cl_charset_name(x))),
       template = unname(sapply(corpora, function(x) if (is.null(get_template(x, warn = FALSE))) FALSE else TRUE )),
       stringsAsFactors = FALSE
     )
@@ -222,7 +236,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   # Reading the binary file with the ranges for the whole corpus is faster than using
   # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
   # to read in seperate rng files.
-  rng_file <- file.path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
+  rng_file <- fs::path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
   rng_size <- file.info(rng_file)[["size"]]
   rng <- readBin(rng_file, what = integer(), size = 4L, n = rng_size / 4L, endian = "big")
   dt <- data.table(
@@ -235,8 +249,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
   for (i in seq_along(s_attr)){
     files <- list(
-      avs = file.path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
-      avx = file.path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
+      avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
+      avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
     )
     sizes <- lapply(files, function(file) file.info(file)[["size"]])
 

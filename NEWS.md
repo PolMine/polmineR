@@ -96,6 +96,19 @@ does not have a data directory.
 - Typo in messages of `trim()` is removed (#197).
 - `encoding()` relies on `l10n_info()` before using `localeToCharset()` as a
 matter of performance and robustness (#196).
+- Class `corpus` has a new slot `registry_dir`. This is a preparatory step that
+will facilitate managing corpora described by registry files in different
+registry directories.
+- Constructor `corpus()` for `corpus`-class objects has an argument
+`registry_dir` that will be required to distinguish corpora described by
+registry files in different registry directories.
+- The package now relies on the the fs package to handle directories and paths.
+Slots in S4 classes are not `fs_path` classes.
+- Internally, functions `registry_get_home()` and `registry_get_encoding()` have
+been replaced by RcppCWB functions `cl_charset_name()` and `corpus_data_dir()`
+with equivalent result, but faster due to immediate access to C representation 
+of the corpus.
+
 
 ## Bug fixes
 

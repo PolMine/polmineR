@@ -11,7 +11,8 @@ test_that(
     sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
     r2 <- as(sc, "regions")
     
-    r2@data_dir <- character()
+    r2@data_dir <- fs::path()
+    r1@data_dir <- fs::path()
     expect_identical(r1, r2)
   }
 )

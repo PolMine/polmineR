@@ -40,7 +40,7 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 
 
 .as.markdown <- function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
-  corpusEncoding <- registry_get_encoding(corpus)
+  corpusEncoding <- cl_charset_name(corpus)
   
   if (is.null(get_template(corpus))){
     warning(

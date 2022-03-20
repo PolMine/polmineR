@@ -147,7 +147,7 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
     )
     docs <- cl_struc2str(corpus = x, s_attribute = s_attribute, struc = 0L:(cl_attribute_size(corpus = x, attribute = s_attribute, attribute_type = "s", registry = registry()) - 1L), registry = registry())
     terms <- cl_id2str(corpus = x, p_attribute = p_attribute, id = 0L:max(count_dt[["token_id"]]), registry = registry())
-    terms <- as.nativeEnc(terms, from = registry_get_encoding(x))
+    terms <- as.nativeEnc(terms, from = cl_charset_name(x))
     dimnames(dtm) <- list(docs, terms)
     
   } else {
@@ -175,8 +175,8 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
     dtm <- simple_triplet_matrix(i = count_dt[["doc_id"]], j = as.integer(token_factor), v = count_dt[["N"]],)
     
     .message("add row and column labels", verbose = verbose)
-    terms <- as.nativeEnc(levels(token_factor), from = registry_get_encoding(x))
-    documents <- as.nativeEnc(levels(s_attr_factor), from = registry_get_encoding(x))
+    terms <- as.nativeEnc(levels(token_factor), from = cl_charset_name(x))
+    documents <- as.nativeEnc(levels(s_attr_factor), from = cl_charset_name(x))
     
     dimnames(dtm) <- list(Docs = documents, Terms = terms)
   }

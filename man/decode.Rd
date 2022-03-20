@@ -130,7 +130,7 @@ file when the corpus is larger than 10 000 000 million tokens and more than
 (usually ISO-8859-1 on Windows, and UTF-8 on macOS and Linux machines).
 
 The \code{decode}-method for \code{data.table} objects will decode
-token ids (column '\link{p-attribute}_id'), adding the corresponding string as a
+token ids (column '\code{p-attribute}_id'), adding the corresponding string as a
 new column. If a column "cpos" with corpus positions is present, ids are
 derived for the corpus positions given first. If the \code{data.table}
 neither has a column "cpos" nor columns with token ids (i.e. colummn name
