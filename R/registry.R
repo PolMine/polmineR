@@ -82,6 +82,11 @@ registry_get_id = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")){
 #' @export registry_get_home
 #' @rdname registry_eval
 registry_get_home = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.6",
+    "registry_get_home()",
+    "RcppCWB::corpus_data_dir()"
+  )
   y <- .registry_eval(corpus = corpus, registry = registry, regex = '^HOME\\s+"?(.*?)"?\\s*$')
   normalizePath(path = y, winslash = "/", mustWork = FALSE)
 }
@@ -103,9 +108,16 @@ registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 #'   parsing the registry file.
 #' @export registry_get_encoding
 #' @rdname registry_eval
+#' @importFrom lifecycle deprecate_warn
 #' @examples
 #' registry_get_encoding("REUTERS")
 registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.6",
+    "registry_get_encoding()",
+    "RcppCWB::cl_charset_name()"
+  )
+  
   y <- .registry_eval(corpus = corpus, registry = registry, regex = '^.*charset\\s*=\\s*"(.+?)".*$')
   
   # use CWB standard corpus encoding if parsing registry yields no result

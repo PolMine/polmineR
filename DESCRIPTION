@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.5.9019
-Date: 2021-03-18
+Version: 0.8.5.9020
+Date: 2021-03-20
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb"),
@@ -26,7 +26,8 @@ Imports:
     pbapply,
     RcppCWB (>= 0.5.1),
     magrittr,
-    knitr
+    knitr,
+    lifecycle
 Suggests:
     markdown,
     rmarkdown,

@@ -12,7 +12,6 @@ editor_options:
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![R build status](https://github.com/PolMine/polmineR/workflows/R-CMD-check/badge.svg)](https://github.com/PolMine/polmineR/actions)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
 
 
@@ -42,48 +41,33 @@ knitr::opts_chunk$set(
 
 **Background**: The polmineR-package was specifically developed to make full use of the XML annotation structure of the corpora created in the PolMine project (see polmine.sowi.uni-due.de). The core PolMine corpora are corpora of plenary protocols. In these corpora, speakers, parties etc. are structurally annotated. The polmineR-package is meant to help making full use of the rich annotation structure.
 
-## Core Functions
 
-Upon loading *polmineR*, a message will report the version of the package and the location of a so-called 'registry'-directory. 
+## Core polmineR functionality
+
+To demonstrate the core functionality of package, we load polmineR.
 
 ```{r load_polmineR}
 library(polmineR)
 ```
 
-The session registry directory is populated with files that describe the corpora that are present and accessible on the user's system.
+The package includes two small sample corpora (REUTERS and GERMAPARLMINI). Here we want two use somewhat bigger "real life" corpora (Europarl and GermaParl). The [cwbtools](https://CRAN.R-project.org/package=cwbtools) package offers an installation mechanism, so we install this package first.
 
-### Install and use packaged corpora
-
-Indexed sample corpora wrapped into R data packages can be installed from the [drat](https://CRAN.R-project.org/package=drat)-repository
-of the [PolMine Project](https://polmine.github.io/). 
-
-The GermaParl package includes only a small excerpt the GermaParl corpus for demo
-purposes, the europarl package does not contain data at all. Yet the packages include
-functionality to download the full corpora. 
-
-```{r install_corpora, eval = TRUE}
-if (!"GermaParl" %in% rownames(installed.packages())){
-  install.packages("GermaParl", repos = "http://polmine.github.io/drat")
-}
-use("GermaParl")
-if (!"GERMAPARL" %in% corpus()$corpus){
-  GermaParl::germaparl_download_corpus()
-  use("GermaParl")
-}
-  
-if (!"europarl" %in% rownames(installed.packages())){
-  install.packages("europarl", repos = "http://polmine.github.io/drat")
-}
-use("europarl")
-if (!"EUROPARL-EN" %in% corpus()$corpus){
-  europarl::europarl_download()
-  use("europarl")
-}
+```{r install_cwbtools, eval = FALSE}
+install.packages("cwbtools")
 ```
 
-Calling the `use()`-function will activate a corpus included in a data package. The registry files describing the corpora in a package are added to the session registry directory.
+We now install Europarl ...
 
-An advantage of keeping corpora in data packages are the versioning and documentation mechanisms that are the hallmark of packages. Of course, polmineR will work with the library of CWB indexed corpora stored on your machine. The corpora described in the registry directory defined by the environment variable CORPUS_REGISTRY will be added to the session registry directory when loading polmineR.
+```{r install_europarl, eval = FALSE}
+europarl <- "http://corpora.linguistik.uni-erlangen.de/demos/download/Europarl3-CWB-2010-02-28.tar.gz"
+cwbtools::corpus_install(tarball = europarl)
+```
+
+... and the GermaParl corpus of parliamentary debates.
+
+```{r install_gparl, eval = FALSE}
+cwbtools::corpus_install(doi = "10.5281/zenodo.3742113")
+```
 
 
 ### partition (and partition_bundle)
@@ -215,50 +199,58 @@ corpus()
 ```
 
 
-### MacOS
+### macOS
 
-The following instructions for Mac users assume that R is installed on your system. Binaries are available from the [Homepage of the R Project](https://cran.r-project.org/bin/macosx/). An installation of RStudio is highly recommended. Get the Open Source License version of [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
+#### Install binary package from CRAN
 
-At this stage, the RcppCWB dependency is not available as a pre-compiled binary and needs to be compiled. A set of system requirements needs to be fulfilled to do this.
+CRAN offers [polmineR](https://CRAN.R-project.org/package=polmineR) as a binary package both for Intel processors (x86_64 architecture) and the newer Apple silicon chips (arm64 architecture). If R and RStudio are not yet installed, follow these preparatory steps.
 
-First, you will need an installation of Xcode, which you can get it via the Mac App Store. You will also need the Command Line Tools for Xcode. It can be installed from a terminal with:
+- Install R. Note that packages are available for both Intel 64-bit and Apple silicon arm64 chip architectures and make sure you install what applies for you, see the [R for macOS](https://cran.r-project.org/bin/macosx/) site.
+
+- Installing [XQuartz](https://www.xquartz.org) is recommended (the available image works for Intel and Apple chips).
+
+- Install [RStudio](https://www.rstudio.com/products/rstudio/download/#download). The free version of RStudio Desktop is enough. Starting with version 1.4, Apple silicon is supported. When installing RStudio, users with a Apple silicon chip will be asked to install [Rosetta](https://support.apple.com/en-gb/HT211861) (say yes).
+
+- When starting RStudio the first time, you may be asked to install the [Command Line Developer Tools](https://developer.apple.com/forums/thread/13781). This is not strictly necessary for basic usage, but recommended. Note that downloading the Command Line Developer Tools may require a stable internet connection and still take some time.
+
+Then run this command for installing polmineR:
+
+```{r macos_install_polmineR_binary, eval = FALSE}
+install.packages("polmineR")
+```
+
+The installation mechanism will determine which binary version you require and install all required dependencies.
+
+
+#### Install development version / build from source
+
+For installing the development version of polmineR and building the package from source, the prerequisites required for installing the binary package (including [XQuartz](https://www.xquartz.org/) and the Command Line Developer Tools) need to be met. The Command Line Developer Tools can also be installed from a terminal window as follows.
 
 ```{sh install_xcode, eval = FALSE}
 xcode-select --install
 ```
 
-Please make sure that you agree to the license.
+The [devtools](https://CRAN.R-project.org/package=devtools) package exposes a convenient and commonly used installation mechanism for installing a package from GitHub. First install the devtools package, which involves the installation of several dependencies.
 
-Second, an installation of XQuartz is required. It can be obtained from [www.xquartz.org](https://www.xquartz.org/).
-
-Third, to fulfill the system requirements of the RcppCWB package, the Glib and pcre libraries need to be installed. Using a package manager makes things considerably easier. We recommend using 'Homebrew'. To install Homebrew, follow the instructions on the [Homebrew Homepage](https://brew.sh/index_de.html). The following commands then need to be executed from a terminal window. They will install the C libraries that the RcppCWB package relies on:
-
-```{sh mac_brew_commands, eval = FALSE}
-brew -v install pkg-config
-brew -v install glib --universal
-brew -v install pcre --universal
-brew -v install readline
+```{r mac_install_devtools, eval = FALSE}
+install.packages("devtools") # unless devtools is already installed
 ```
 
-
-The latest release of polmineR can be installed from CRAN using the usual `install.packages`-function.
-
-```{r mac_install_polmineR_cran, eval = FALSE}
-install.packages("polmineR")
-```
-
-The development version of *polmineR* can be installed using devtools:
+Then use the `install_github()` function as follows.
 
 ```{r mac_install_polmineR_dev, eval = FALSE}
-install.packages("devtools") # unless devtools is already installed
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-Check whether everything works by loading polmineR, and activating the demo corpora included in the package.
+If you also want or want to install a development version of RcppCWB, several system dependencies need to be fulfilled for compiling the package from source. See the [README of the RcppCWB GitHub repository](https://github.com/PolMine/RcppCWB) for instructions.
+
+
+#### Checking the installation
+
+Check whether everything works by loading polmineR, and see whether you see the demo corpora included in the package.
 
 ```{r mac_check_installation, eval = FALSE}
 library(polmineR)
-use("polmineR")
 corpus()
 ```
 

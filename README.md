@@ -6,12 +6,10 @@ Introducing polmineR
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4042093.svg)](https://doi.org/10.5281/zenodo.4042093)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/polmineR)](https://cran.r-project.org/package=polmineR)
 [![Downloads](http://cranlogs.r-pkg.org/badges/polmineR)](https://cran.r-project.org/package=polmineR)
 [![R build
 status](https://github.com/PolMine/polmineR/workflows/R-CMD-check/badge.svg)](https://github.com/PolMine/polmineR/actions)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/PolMine/polmineR?branch=master&svg=true)](https://ci.appveyor.com/project/PolMine/polmineR)
 [![codecov](https://codecov.io/gh/PolMine/polmineR/branch/master/graph/badge.svg)](https://codecov.io/gh/PolMine/polmineR/branch/master)
 
 ## Motivation
@@ -22,27 +20,27 @@ package are performance, usability, and a modular design.
 
 **Aims**: Key aims for developing the package are:
 
-  - To keep the original text accessible. A seamless integration of
+-   To keep the original text accessible. A seamless integration of
     qualitative and quantitative steps in corpus analysis supports
     validation, based on inspecting the text behind the numbers.
 
-  - To provide a library with standard tasks. It is an open source
+-   To provide a library with standard tasks. It is an open source
     platform that will make text mining more productive, avoiding
     prohibitive costs to reimplement basics, or to run many lines of
     code to perform a basic tasks.
 
-  - To create a package that makes the creation and analysis of
+-   To create a package that makes the creation and analysis of
     subcorpora (‘partitions’) easy. A particular strength of the package
     is to support contrastive/comparative research.
 
-  - To offer performance for users with a standard infrastructure. The
+-   To offer performance for users with a standard infrastructure. The
     package picks up the idea of a three-tier software design. Corpus
     data are managed and indexed by using the *Open Corpus Workbench*
     (CWB). The CWB is particularly efficient for storing large corpora
     and offers a powerful language for querying corpora, the Corpus
     Query Processor (CQP).
 
-  - To support sharing consolidated and documented data, following the
+-   To support sharing consolidated and documented data, following the
     ideas of reproducible research.
 
 **Background**: The polmineR-package was specifically developed to make
@@ -52,67 +50,38 @@ are corpora of plenary protocols. In these corpora, speakers, parties
 etc. are structurally annotated. The polmineR-package is meant to help
 making full use of the rich annotation structure.
 
-## Core Functions
+## Core polmineR functionality
 
-Upon loading *polmineR*, a message will report the version of the
-package and the location of a so-called ‘registry’-directory.
+To demonstrate the core functionality of package, we load polmineR.
 
 ``` r
 library(polmineR)
 ```
 
-The session registry directory is populated with files that describe the
-corpora that are present and accessible on the user’s system.
-
-### Install and use packaged corpora
-
-Indexed sample corpora wrapped into R data packages can be installed
-from the [drat](https://CRAN.R-project.org/package=drat)-repository of
-the [PolMine Project](https://polmine.github.io/).
-
-The GermaParl package includes only a small excerpt the GermaParl corpus
-for demo purposes, the europarl package does not contain data at all.
-Yet the packages include functionality to download the full corpora.
+The package includes two small sample corpora (REUTERS and
+GERMAPARLMINI). Here we want two use somewhat bigger “real life” corpora
+(Europarl and GermaParl). The
+[cwbtools](https://CRAN.R-project.org/package=cwbtools) package offers
+an installation mechanism, so we install this package first.
 
 ``` r
-if (!"GermaParl" %in% rownames(installed.packages())){
-  install.packages("GermaParl", repos = "http://polmine.github.io/drat")
-}
-use("GermaParl")
-#> ... activating corpus: GERMAPARLMINI
-if (!"GERMAPARL" %in% corpus()$corpus){
-  GermaParl::germaparl_download_corpus()
-  use("GermaParl")
-}
-  
-if (!"europarl" %in% rownames(installed.packages())){
-  install.packages("europarl", repos = "http://polmine.github.io/drat")
-}
-use("europarl")
-#> ... activating corpus: EUROPARL-DE
-#> ... activating corpus: EUROPARL-EN
-#> ... activating corpus: EUROPARL-ES
-#> ... activating corpus: EUROPARL-FR
-#> ... activating corpus: EUROPARL-IT
-#> ... activating corpus: EUROPARL-NL
-if (!"EUROPARL-EN" %in% corpus()$corpus){
-  europarl::europarl_download()
-  use("europarl")
-}
+install.packages("cwbtools")
 ```
 
-Calling the `use()`-function will activate a corpus included in a data
-package. The registry files describing the corpora in a package are
-added to the session registry directory.
+We now install Europarl …
 
-An advantage of keeping corpora in data packages are the versioning and
-documentation mechanisms that are the hallmark of packages. Of course,
-polmineR will work with the library of CWB indexed corpora stored on
-your machine. The corpora described in the registry directory defined by
-the environment variable CORPUS\_REGISTRY will be added to the session
-registry directory when loading polmineR.
+``` r
+europarl <- "http://corpora.linguistik.uni-erlangen.de/demos/download/Europarl3-CWB-2010-02-28.tar.gz"
+cwbtools::corpus_install(tarball = europarl)
+```
 
-### partition (and partition\_bundle)
+… and the GermaParl corpus of parliamentary debates.
+
+``` r
+cwbtools::corpus_install(doi = "10.5281/zenodo.3742113")
+```
+
+### partition (and partition_bundle)
 
 All methods can be applied to a whole corpus, as well as to partitions
 (i.e. subcorpora). Use the metadata of a corpus (so-called s-attributes)
@@ -134,15 +103,15 @@ size(barroso)
 #> [1] 98142
 ```
 
-Partitions can be bundled into partition\_bundle objects, and most
+Partitions can be bundled into partition_bundle objects, and most
 methods can be applied to a whole corpus, a partition, or a
-partition\_bundle object alike. Consult the package vignette to learn
+partition_bundle object alike. Consult the package vignette to learn
 more.
 
 ### count (using CQP syntax)
 
 Counting occurrences of a feature in a corpus, a partition or in the
-partitions of a partition\_bundle is a basic operation. By offering
+partitions of a partition_bundle is a basic operation. By offering
 access to the query syntax of the Corpus Query Processor (CQP), polmineR
 package exposes a query syntax that goes far beyond regular expressions.
 See the [CQP
@@ -205,18 +174,18 @@ features(ep_2002, ep_pre_2002, included = FALSE) %>%
   knitr::kable(format = "markdown")
 ```
 
-| rank\_chisquare | word         | count\_coi | count\_ref | exp\_coi | chisquare |
-| --------------: | :----------- | ---------: | ---------: | -------: | --------: |
-|               1 | 2002         |       1694 |        782 |   398.96 |   5011.70 |
-|               2 | Johannesburg |        479 |         21 |    80.57 |   2348.97 |
-|               3 | Seville      |        378 |         26 |    65.10 |   1792.96 |
-|               4 | Barcelona    |        706 |        528 |   198.84 |   1542.16 |
-|               5 | ’s           |      10694 |      36727 |  7641.03 |   1457.07 |
-|               6 | 2003         |        549 |        329 |   141.47 |   1399.45 |
-|               7 | Copenhagen   |        575 |        430 |   161.94 |   1256.06 |
-|               8 | terrorism    |       1221 |       1917 |   505.63 |   1206.67 |
-|               9 | 02           |        233 |          2 |    37.87 |   1198.75 |
-|              10 | candidate    |       1217 |       2088 |   532.54 |   1048.84 |
+| rank_chisquare | word         | count_coi | count_ref | exp_coi | chisquare |
+|---------------:|:-------------|----------:|----------:|--------:|----------:|
+|              1 | 2002         |      1694 |       782 |  398.96 |   5011.70 |
+|              2 | Johannesburg |       479 |        21 |   80.57 |   2348.97 |
+|              3 | Seville      |       378 |        26 |   65.10 |   1792.96 |
+|              4 | Barcelona    |       706 |       528 |  198.84 |   1542.16 |
+|              5 | ’s           |     10694 |     36727 | 7641.03 |   1457.07 |
+|              6 | 2003         |       549 |       329 |  141.47 |   1399.45 |
+|              7 | Copenhagen   |       575 |       430 |  161.94 |   1256.06 |
+|              8 | terrorism    |      1221 |      1917 |  505.63 |   1206.67 |
+|              9 | 02           |       233 |         2 |   37.87 |   1198.75 |
+|             10 | candidate    |      1217 |      2088 |  532.54 |   1048.84 |
 
 ### kwic (also known as concordances)
 
@@ -233,7 +202,7 @@ kwic("EUROPARL-EN", "Islam", meta = c("text_date", "speaker_name")) %>%
 ```
 
 | meta                        | left                             | node  | right                                  |
-| :-------------------------- | :------------------------------- | :---- | :------------------------------------- |
+|:----------------------------|:---------------------------------|:------|:---------------------------------------|
 | 1996-05-09<br/>Oostlander   | , as for example with            | Islam | here in Europe , so                    |
 | 1996-05-09<br/>Féret        | promotion of the study of        | Islam | in Europe ’ , with                     |
 | 1996-05-09<br/>Féret        | seem to have forgotten that      | Islam | makes no distinction between spiritual |
@@ -307,66 +276,85 @@ library(polmineR)
 corpus()
 ```
 
-### MacOS
+### macOS
 
-The following instructions for Mac users assume that R is installed on
-your system. Binaries are available from the [Homepage of the R
-Project](https://cran.r-project.org/bin/macosx/). An installation of
-RStudio is highly recommended. Get the Open Source License version of
-[RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
+#### Install binary package from CRAN
 
-At this stage, the RcppCWB dependency is not available as a pre-compiled
-binary and needs to be compiled. A set of system requirements needs to
-be fulfilled to do this.
+CRAN offers [polmineR](https://CRAN.R-project.org/package=polmineR) as a
+binary package both for Intel processors (x86_64 architecture) and the
+newer Apple silicon chips (arm64 architecture). If R and RStudio are not
+yet installed, follow these preparatory steps.
 
-First, you will need an installation of Xcode, which you can get it via
-the Mac App Store. You will also need the Command Line Tools for Xcode.
-It can be installed from a terminal with:
+-   Install R. Note that packages are available for both Intel 64-bit
+    and Apple silicon arm64 chip architectures and make sure you install
+    what applies for you, see the [R for
+    macOS](https://cran.r-project.org/bin/macosx/) site.
 
-``` sh
-xcode-select --install
-```
+-   Installing [XQuartz](https://www.xquartz.org) is recommended (the
+    available image works for Intel and Apple chips).
 
-Please make sure that you agree to the license.
+-   Install
+    [RStudio](https://www.rstudio.com/products/rstudio/download/#download).
+    The free version of RStudio Desktop is enough. Starting with version
+    1.4, Apple silicon is supported. When installing RStudio, users with
+    a Apple silicon chip will be asked to install
+    [Rosetta](https://support.apple.com/en-gb/HT211861) (say yes).
 
-Second, an installation of XQuartz is required. It can be obtained from
-[www.xquartz.org](https://www.xquartz.org/).
+-   When starting RStudio the first time, you may be asked to install
+    the [Command Line Developer
+    Tools](https://developer.apple.com/forums/thread/13781). This is not
+    strictly necessary for basic usage, but recommended. Note that
+    downloading the Command Line Developer Tools may require a stable
+    internet connection and still take some time.
 
-Third, to fulfill the system requirements of the RcppCWB package, the
-Glib and pcre libraries need to be installed. Using a package manager
-makes things considerably easier. We recommend using ‘Homebrew’. To
-install Homebrew, follow the instructions on the [Homebrew
-Homepage](https://brew.sh/index_de.html). The following commands then
-need to be executed from a terminal window. They will install the C
-libraries that the RcppCWB package relies on:
-
-``` sh
-brew -v install pkg-config
-brew -v install glib --universal
-brew -v install pcre --universal
-brew -v install readline
-```
-
-The latest release of polmineR can be installed from CRAN using the
-usual `install.packages`-function.
+Then run this command for installing polmineR:
 
 ``` r
 install.packages("polmineR")
 ```
 
-The development version of *polmineR* can be installed using devtools:
+The installation mechanism will determine which binary version you
+require and install all required dependencies.
+
+#### Install development version / build from source
+
+For installing the development version of polmineR and building the
+package from source, the prerequisites required for installing the
+binary package (including [XQuartz](https://www.xquartz.org/) and the
+Command Line Developer Tools) need to be met. The Command Line Developer
+Tools can also be installed from a terminal window as follows.
+
+``` sh
+xcode-select --install
+```
+
+The [devtools](https://CRAN.R-project.org/package=devtools) package
+exposes a convenient and commonly used installation mechanism for
+installing a package from GitHub. First install the devtools package,
+which involves the installation of several dependencies.
 
 ``` r
 install.packages("devtools") # unless devtools is already installed
+```
+
+Then use the `install_github()` function as follows.
+
+``` r
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-Check whether everything works by loading polmineR, and activating the
-demo corpora included in the package.
+If you also want or want to install a development version of RcppCWB,
+several system dependencies need to be fulfilled for compiling the
+package from source. See the [README of the RcppCWB GitHub
+repository](https://github.com/PolMine/RcppCWB) for instructions.
+
+#### Checking the installation
+
+Check whether everything works by loading polmineR, and see whether you
+see the demo corpora included in the package.
 
 ``` r
 library(polmineR)
-use("polmineR")
 corpus()
 ```
 
@@ -405,7 +393,7 @@ of the R package xml2 that is used for manipulating html output.
 ``` sh
 sudo apt-get install libglib2.0-dev libssl-dev libcurl4-openssl-dev
 sudo apt-get install libxml2-dev
-sudo apt-get install libprotobuf-dev
+sudo apt-get install libprotobuf-dev protobuf-compiler
 ```
 
 The system requirements will now be fulfilled. From R, install
@@ -455,73 +443,6 @@ Now install the remaining packages from within R.
 ``` r
 install.packages(pkgs = c("rJava", "xlsx", "tidytext"))
 ```
-
-### Docker 
-
-If you want to use polmineR with Docker, you can use our Docker images.
-To install Docker, you can find instructions on the [Docker website](https://www.docker.com/get-started). 
-
-#### polmine-builder
-
-This image is the base image for building the other images.
-It contains all dependencies that polmineR needs.
-The image is updated once a week.
-It is not intended to be used directly.
-
-#### polminer
-
-This image contains the latest R version and polminer from the master branch of the [repository](https://github.com/PolMine/polmineR).
-
-When started with 
-```bash
-docker run -it ghcr.io/polmine/polminer:latest
-```
-, an R session is run in the terminal.
-
-After integration into the Polmine repo, this image is updated after a commit in the master branch.
-
-#### polminer-dev 
-
-This image contains the latest R version and polminer from the dev branch of the [repository](https://github.com/PolMine/polmineR).
-
-When started with 
-```bash
-docker run -it ghcr.io/polmine/polminer-dev:latest
-```
-, an R session is run in the terminal.
-
-After integration into the Polmine repo, this image is updated after a commit in the dev branch.
-
-
-
-#### polminer-rstudio
-
-This image contains an Rstudio server with PolmineR installed.
-The base of this image is the image rstudio:4.0.3 from [rocker](https://hub.docker.com/r/rocker/rstudio).
-
-To run it, please follow the Rocker documentation.
-
-```bash
-docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio:latest`
-```
-
-The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
-accessible.
-
-#### polminer-dev-rstudio
-
-This image contains an Rstudio server with PolmineR installed.
-The base of this image is from [rocker](https://hub.docker.com/r/rocker/rstudio) the image rstudio:4.0.3
-
-To run it, please follow the Rocker documentation.
-
-```bashs
-docker run --rm -p 8787:8787 -e PASSWORD=yourpasswordhere ghcr.io/polmine/polminer-rstudio-dev:latest
-```
-
-The Rstudio server instance is accessible via [localhost:8787](localhost:8787)
-accessible.
-
 
 ## Quoting polmineR
 
