@@ -205,13 +205,13 @@ corpus()
 
 CRAN offers [polmineR](https://CRAN.R-project.org/package=polmineR) as a binary package both for Intel processors (x86_64 architecture) and the newer Apple silicon chips (arm64 architecture). If R and RStudio are not yet installed, follow these preparatory steps.
 
-- Install R. Note that packages are available for both Intel 64-bit and Apple silicon arm64 chip architectures and make sure you install what applies for you, see the [R for macOS](https://cran.r-project.org/bin/macosx/) site.
+- Install R. Note that packages are available for both Intel 64-bit and Apple silicon arm64 chip architectures. Install what applies for you, see the [R for macOS](https://cran.r-project.org/bin/macosx/) site.
 
 - Installing [XQuartz](https://www.xquartz.org) is recommended (the available image works for Intel and Apple chips).
 
-- Install [RStudio](https://www.rstudio.com/products/rstudio/download/#download). The free version of RStudio Desktop is enough. Starting with version 1.4, Apple silicon is supported. When installing RStudio, users with a Apple silicon chip will be asked to install [Rosetta](https://support.apple.com/en-gb/HT211861) (say yes).
+- Install [RStudio](https://www.rstudio.com/products/rstudio/download/#download). The free version of RStudio Desktop is enough. Starting with version 1.4, Apple silicon is supported. When installing RStudio, users with a Apple silicon chips are be asked to install [Rosetta](https://support.apple.com/en-gb/HT211861) (say yes).
 
-- When starting RStudio the first time, you may be asked to install the [Command Line Developer Tools](https://developer.apple.com/forums/thread/13781). This is not strictly necessary for basic usage, but recommended. Note that downloading the Command Line Developer Tools may require a stable internet connection and still take some time.
+- When starting RStudio the first time, you may be asked to install the [Command Line Developer Tools](https://developer.apple.com/forums/thread/13781). This is not necessary for basic polmineR usage, but recommended. Note that downloading the Command Line Developer Tools may require a stable internet connection and still take some time.
 
 Then run this command for installing polmineR:
 
