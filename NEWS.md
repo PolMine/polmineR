@@ -53,6 +53,14 @@ efficient worker for token contexts for the `context()` method.
 - The `count()`-method for `partition_bundle` objects failed with an opaque
 error message if there were no query matches at all. There is now a check for
 this scenario and the expected table is returned (zero values throughout.)
+- The `corpus` class is now a superclass for the `textstat` class, starting to
+create a more coherent class structure in general. This is an important
+preparatory step to be able to keep all registry files in the temporary registry
+directory. To avoid a confusion in the class system resulting from the coerce
+method from `partition` to `corpus` objects, this coerce method (defined by
+`setAs()`) has been removed. The `get_template()`-method for `partition` objects
+using this coerce method has been removed - as it inherits the method anyway, it
+is not needed any more. See #201.
 
 
 ## Minor Improvements

@@ -1,9 +1,0 @@
-library(polmineR)
-library(ruml)
-library(plantuml)
-library(magrittr)
-
-plantuml_code <- make_plantuml_code("partition", pkg = polmineR)
-plantuml_obj <- plantuml(plantuml_code)
-svglite::xmlSVG(plot(plantuml_obj, vector = TRUE)) %>%
-  svgPanZoom::svgPanZoom(width = "100%", height = "100%")

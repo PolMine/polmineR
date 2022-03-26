@@ -1,6 +1,127 @@
 #' @include polmineR.R
 NULL
 
+#' Corpus class initialization
+#' 
+#' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+#' structure for large, linguistically annotated corpora. The
+#' \code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
+#' the name of the class, the \code{corpus}-method is the initializer for
+#' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
+#' on an \href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus}
+#' class (which inherits from the \code{corpus} class) will handle respective
+#' information. A (limited) set of polmineR functions and methods can be
+#' executed on the corpus on the remote machine from the local R session by
+#' calling them on the \code{remote_corpus} object. Calling the
+#' \code{corpus}-method without an argument will return a \code{data.frame} with
+#' basic information on the corpora that are available.
+#'
+#' @details Calling \code{corpus()} will return a \code{data.frame} listing the corpora
+#' available locally and described in the active registry directory, and some
+#' basic information on the corpora.
+#' @details A \code{corpus} object is instantiated by passing a corpus ID as
+#'   argument \code{.Object}. Following the conventions of the Corpus Workbench
+#'   (CWB), Corpus IDs are written in upper case. If \code{.Object} includes
+#'   lower case letters, the \code{corpus} object is instantiated nevertheless,
+#'   but a warning is issued to prevent bad practice. If \code{.Object} is not a
+#'   known corpus, the error message will include a suggestion if there is a
+#'   potential candidate that can be identified by \code{agrep}.
+#' @details A limited set of methods of the \code{polmineR} package is exposed
+#'   to be executed on a remote OpenCPU server. As a matter of convenience, the
+#'   whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
+#'   environment variable "OPENCPU_SERVER". Environment variables for R sessions
+#'   can be set easily in the \code{.Renviron} file. A convenient way to do this
+#'   is to call \code{usethis::edit_r_environ()}.
+#'     
+#' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
+#'   corpus.
+#' @slot registry_dir Registry directory with registry file describing the
+#'   corpus.
+#' @slot data_dir The directory where the files for the indexed corpus are.
+#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary
+#'   protocols).
+#' @slot name An additional name for the object that may be more telling than
+#'   the corpus ID.
+#' @slot encoding The encoding of the corpus, given as a length-one
+#'   \code{character} vector.
+#' @slot size Number of tokens (size) of the corpus, a length-one \code{integer}
+#'   vector.
+#' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
+#'   available only with the \code{remote_corpus} class inheriting from the
+#'   \code{corpus} class.
+#' @slot user If the corpus on the server requires authentication, the username.
+#' @slot password If the corpus on the server requires authentication, the
+#'   password.
+#' @exportClass corpus
+#' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
+#' @name corpus-class
+#' @seealso Methods to extract basic information from a \code{corpus} object are
+#'   covered by the \link{corpus-methods} documentation object. Use the
+#'   \code{\link{s_attributes}} method to get information on structural
+#'   attributes. Analytical methods available for \code{corpus} objects are
+#'   \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
+#'   \code{\link{kwic}}, \code{\link{cooccurrences}},
+#'   \code{\link{as.TermDocumentMatrix}}.
+#' @family classes to manage corpora
+#' @examples
+#' use("polmineR")
+#' 
+#' # get corpora present locally
+#' y <- corpus()
+#' 
+#' # initialize corpus object
+#' r <- corpus("REUTERS")
+#' r <- corpus ("reuters") # will work, but will result in a warning
+#' 
+#' 
+#' # apply core polmineR methods
+#' a <- size(r)
+#' b <- s_attributes(r)
+#' c <- count(r, query = "oil")
+#' d <- dispersion(r, query = "oil", s_attribute = "id")
+#' e <- kwic(r, query = "oil")
+#' f <- cooccurrences(r, query = "oil")
+#' 
+#' # used corpus initialization in a pipe
+#' y <- corpus("REUTERS") %>% s_attributes()
+#' y <- corpus("REUTERS") %>% count(query = "oil")
+#' 
+#' # working with a remote corpus
+#' \dontrun{
+#' REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))
+#' count(REUTERS, query = "oil")
+#' size(REUTERS)
+#' kwic(REUTERS, query = "oil")
+#' 
+#' GERMAPARL <- corpus("GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
+#' s_attributes(GERMAPARL)
+#' size(x = GERMAPARL)
+#' count(GERMAPARL, query = "Integration")
+#' kwic(GERMAPARL, query = "Islam")
+#' 
+#' p <- partition(GERMAPARL, year = 2000)
+#' s_attributes(p, s_attribute = "year")
+#' size(p)
+#' kwic(p, query = "Islam", meta = "date")
+#' 
+#' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
+#' s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
+#' sc <- subset(GERMAPARL, date == "2009-11-10")
+#' }
+setClass(
+  "corpus",
+  slots = c(
+    corpus = "character",
+    registry_dir = "fs_path",
+    data_dir = "fs_path",
+    type = "character",
+    encoding = "character",
+    name = "character",
+    size = "integer"
+  )
+)
+
+
 
 #' Bundle Class
 #' 
@@ -151,15 +272,14 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' y[which(y[["word"]] %in% c("Arbeit", "Sozial"))]
 #' y[ y[["word"]] %in% c("Arbeit", "Sozial") ]
 #' }
-setClass("textstat",
-         representation(
-           corpus = "character",
-           p_attribute = "character",
-           encoding = "character",
-           stat = "data.table",
-           annotation_cols = "character",
-           name = "character"
-         )
+setClass(
+  "textstat",
+  slots = c(
+    p_attribute = "character",
+    stat = "data.table",
+    annotation_cols = "character"
+  ),
+  contains = "corpus"
 )
 
 
@@ -590,139 +710,6 @@ setClass(
 setClass("kwic_bundle", contains = "bundle")
 
 
-
-#' Corpus class initialization
-#' 
-#' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
-#' structure for large, linguistically annotated corpora. The
-#' \code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
-#' the name of the class, the \code{corpus}-method is the initializer for
-#' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
-#' on an \href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus}
-#' class (which inherits from the \code{corpus} class) will handle respective
-#' information. A (limited) set of polmineR functions and methods can be
-#' executed on the corpus on the remote machine from the local R session by
-#' calling them on the \code{remote_corpus} object. Calling the
-#' \code{corpus}-method without an argument will return a \code{data.frame} with
-#' basic information on the corpora that are available.
-#'
-#' @details Calling \code{corpus()} will return a \code{data.frame} listing the corpora
-#' available locally and described in the active registry directory, and some
-#' basic information on the corpora.
-#' @details A \code{corpus} object is instantiated by passing a corpus ID as
-#'   argument \code{.Object}. Following the conventions of the Corpus Workbench
-#'   (CWB), Corpus IDs are written in upper case. If \code{.Object} includes
-#'   lower case letters, the \code{corpus} object is instantiated nevertheless,
-#'   but a warning is issued to prevent bad practice. If \code{.Object} is not a
-#'   known corpus, the error message will include a suggestion if there is a
-#'   potential candidate that can be identified by \code{agrep}.
-#' @details A limited set of methods of the \code{polmineR} package is exposed
-#'   to be executed on a remote OpenCPU server. As a matter of convenience, the
-#'   whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
-#'   environment variable "OPENCPU_SERVER". Environment variables for R sessions
-#'   can be set easily in the \code{.Renviron} file. A convenient way to do this
-#'   is to call \code{usethis::edit_r_environ()}.
-#'     
-#' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
-#'   corpus.
-#' @slot registry_dir Registry directory with registry file describing the
-#'   corpus.
-#' @slot data_dir The directory where the files for the indexed corpus are.
-#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary
-#'   protocols).
-#' @slot name An additional name for the object that may be more telling than
-#'   the corpus ID.
-#' @slot encoding The encoding of the corpus, given as a length-one
-#'   \code{character} vector.
-#' @slot size Number of tokens (size) of the corpus, a length-one \code{integer}
-#'   vector.
-#' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
-#'   available only with the \code{remote_corpus} class inheriting from the
-#'   \code{corpus} class.
-#' @slot user If the corpus on the server requires authentication, the username.
-#' @slot password If the corpus on the server requires authentication, the
-#'   password.
-#' @exportClass corpus
-#' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
-#' @name corpus-class
-#' @seealso Methods to extract basic information from a \code{corpus} object are
-#'   covered by the \link{corpus-methods} documentation object. Use the
-#'   \code{\link{s_attributes}} method to get information on structural
-#'   attributes. Analytical methods available for \code{corpus} objects are
-#'   \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
-#'   \code{\link{kwic}}, \code{\link{cooccurrences}},
-#'   \code{\link{as.TermDocumentMatrix}}.
-#' @family classes to manage corpora
-#' @examples
-#' use("polmineR")
-#' 
-#' # get corpora present locally
-#' y <- corpus()
-#' 
-#' # initialize corpus object
-#' r <- corpus("REUTERS")
-#' r <- corpus ("reuters") # will work, but will result in a warning
-#' 
-#' 
-#' # apply core polmineR methods
-#' a <- size(r)
-#' b <- s_attributes(r)
-#' c <- count(r, query = "oil")
-#' d <- dispersion(r, query = "oil", s_attribute = "id")
-#' e <- kwic(r, query = "oil")
-#' f <- cooccurrences(r, query = "oil")
-#' 
-#' # used corpus initialization in a pipe
-#' y <- corpus("REUTERS") %>% s_attributes()
-#' y <- corpus("REUTERS") %>% count(query = "oil")
-#' 
-#' # working with a remote corpus
-#' \dontrun{
-#' REUTERS <- corpus("REUTERS", server = Sys.getenv("OPENCPU_SERVER"))
-#' count(REUTERS, query = "oil")
-#' size(REUTERS)
-#' kwic(REUTERS, query = "oil")
-#' 
-#' GERMAPARL <- corpus("GERMAPARL", server = Sys.getenv("OPENCPU_SERVER"))
-#' s_attributes(GERMAPARL)
-#' size(x = GERMAPARL)
-#' count(GERMAPARL, query = "Integration")
-#' kwic(GERMAPARL, query = "Islam")
-#' 
-#' p <- partition(GERMAPARL, year = 2000)
-#' s_attributes(p, s_attribute = "year")
-#' size(p)
-#' kwic(p, query = "Islam", meta = "date")
-#' 
-#' GERMAPARL <- corpus("GERMAPARLMINI", server = Sys.getenv("OPENCPU_SERVER"))
-#' s_attrs <- s_attributes(GERMAPARL, s_attribute = "date")
-#' sc <- subset(GERMAPARL, date == "2009-11-10")
-#' }
-setClass(
-  "corpus",
-  slots = c(
-    corpus = "character",
-    registry_dir = "fs_path",
-    data_dir = "fs_path",
-    type = "character",
-    encoding = "character",
-    name = "character",
-    size = "integer"
-  )
-)
-
-setAs(from = "partition", to = "corpus", def = function(from){
-  new(
-    "corpus",
-    corpus = from@corpus,
-    data_dir = fs::path(
-      corpus_data_dir(corpus = from@corpus, registry = registry())
-    ),
-    type = if (class(from) == "partition") character() else gsub("^(.*?)_.*$", "\\1", class(from)),
-    encoding = from@encoding,
-    name = from@name
-  )
-})
 
 setAs(from = "corpus", to = "partition", def = function(from){
   new(

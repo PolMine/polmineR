@@ -22,9 +22,12 @@ setMethod("get_template", "character", function(.Object, warn = FALSE){
 
 #' @rdname templates
 setMethod("get_template", "corpus", function(.Object, warn = FALSE){
-  filename <- fs::path(.Object@data_dir, "template.json")
-  if (file.exists(filename)){
-    y <- jsonlite::fromJSON(txt = filename) 
+  fname <- path(
+    registry_get_home(corpus = .Object@corpus),
+    "template.json"
+  )
+  if (file.exists(fname)){
+    y <- jsonlite::fromJSON(txt = fname) 
     if ("metadata" %in% names(y)) y[["metadata"]] <- unlist(y[["metadata"]])
     return(y)
   } else {
@@ -33,10 +36,6 @@ setMethod("get_template", "corpus", function(.Object, warn = FALSE){
   }
 })
 
-#' @rdname templates
-setMethod("get_template", "partition", function(.Object, warn = FALSE){
-  get_template(as(.Object, "corpus"), warn = warn)
-})
 
 #' @rdname templates
 setMethod("get_template", "subcorpus", function(.Object, warn = FALSE){
