@@ -35,12 +35,6 @@ setAs(from = "partition", to = "subcorpus", def = function(from){
   y
 })
 
-setAs(from = "subcorpus", to = "plpr_subcorpus", def = function(from){
-  y <- new("plpr_subcorpus")
-  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
-  y
-})
-
 
 setAs(from = "plpr_partition", to = "plpr_subcorpus", def = function(from){
   as(as(from, "subcorpus"), "plpr_subcorpus")
@@ -51,9 +45,3 @@ setAs(from = "press_partition", to = "press_subcorpus", def = function(from){
   as(as(from, "subcorpus"), "press_subcorpus")
 })
 
-
-setAs(from = "subcorpus", to = "press_subcorpus", def = function(from){
-  y <- new("press_subcorpus")
-  for (x in slotNames(y)) slot(y, x) <- slot(from, x)
-  y
-})
