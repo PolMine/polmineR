@@ -30,11 +30,16 @@ setMethod("split", "partition", function(x, gap, ...){
           strucs = struc_list[[i]],
           cpos = matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L),
           corpus = x@corpus,
+          data_dir = x@data_dir,
+          registry_dir = x@registry_dir,
+          info_file = x@info_file,
+          template = x@template,
           encoding = x@encoding,
           s_attributes = x@s_attributes,
           xml = x@xml, s_attribute_strucs = x@s_attribute_strucs,
           explanation = "partition results from split, s-attributes do not necessarily define partition",
-          name = paste(x@name, i, collapse = "_", sep = ""),
+          name = paste(x@name, i, collapse = "_", sep = "_"),
+          # name = as.character(i),
           stat = data.table()
         )
         p@size <- size(p)
@@ -93,23 +98,19 @@ setMethod("split", "subcorpus", function(
     seq_along(cpos_list),
     function(i){
       m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-      y <- new(
-        new_class,
-        corpus = x@corpus,
-        encoding = x@encoding,
-        name = names(cpos_list)[[i]],
-        cpos = m,
-        strucs = struc_list[[i]],
-        s_attribute_strucs = s_attribute,
-        s_attributes = c(x@s_attributes, setNames(list(names(cpos_list)[[i]]), s_attribute)),
-        xml = "flat",
-        size = sum((m[,2] + 1L) - m[,1])
+      y <- as(x, new_class)
+      y@name <- names(cpos_list)[[i]]
+      y@cpos <- m
+      y@strucs <- struc_list[[i]]
+      y@s_attribute_strucs <- s_attribute
+      y@s_attributes <- c(
+        x@s_attributes,
+        setNames(list(names(cpos_list)[[i]]), s_attribute)
       )
-      if (grepl("subcorpus", obj_type)){
-        y@data_dir = x@data_dir
-        y@type = x@type
-        
-      }
+      y@xml = "flat"
+      y@size = sum((m[,2] + 1L) - m[,1])
+      y@type = x@type
+      
       y
     }
   )
@@ -158,22 +159,16 @@ setMethod("split", "corpus", function(
     seq_along(cpos_list),
     function(i){
       m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-      y <- new(
-        new_class,
-        corpus = x@corpus,
-        encoding = x@encoding,
-        name = names(cpos_list)[[i]],
-        cpos = m,
-        strucs = struc_list[[i]],
-        s_attributes = setNames(list(names(cpos_list)[[i]]), s_attribute),
-        s_attribute_strucs = s_attribute,
-        xml = xml,
-        size = sum((m[,2] + 1L) - m[,1])
-      )
-      if (obj_type == "subcorpus"){
-        y@data_dir = x@data_dir
-        y@type = x@type
-      }
+      y <- as(x, new_class)
+      
+      y@name <- names(cpos_list)[[i]]
+      y@cpos = m
+      y@strucs = struc_list[[i]]
+      y@s_attributes <- setNames(list(names(cpos_list)[[i]]), s_attribute)
+      y@s_attribute_strucs <- s_attribute
+      y@xml = xml
+      y@size = sum((m[,2] + 1L) - m[,1])
+      y@type = x@type
       y
     }
   )

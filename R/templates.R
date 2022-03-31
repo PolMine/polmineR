@@ -22,17 +22,15 @@ setMethod("get_template", "character", function(.Object, warn = FALSE){
 
 #' @rdname templates
 setMethod("get_template", "corpus", function(.Object, warn = FALSE){
-  fname <- path(
-    registry_get_home(corpus = .Object@corpus),
-    "template.json"
-  )
-  if (file.exists(fname)){
-    y <- jsonlite::fromJSON(txt = fname) 
+  if (is.na(.Object@template)){
+    if (warn) warning(
+      sprintf("No template available for corpus '%s'.", .Object@corpus)
+    )
+    return(NULL)
+  } else {
+    y <- jsonlite::fromJSON(txt = .Object@template) 
     if ("metadata" %in% names(y)) y[["metadata"]] <- unlist(y[["metadata"]])
     return(y)
-  } else {
-    if (isTRUE(warn)) warning(sprintf("No template available for corpus '%s'.", .Object@corpus))
-    return(NULL)
   }
 })
 

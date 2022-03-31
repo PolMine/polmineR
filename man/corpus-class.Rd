@@ -12,12 +12,7 @@
 \alias{corpus,missing-method}
 \title{Corpus class initialization}
 \usage{
-\S4method{corpus}{character}(
-  .Object,
-  registry_dir = Sys.getenv("CORPUS_REGISTRY"),
-  server = NULL,
-  restricted
-)
+\S4method{corpus}{character}(.Object, registry_dir, server = NULL, restricted)
 
 \S4method{corpus}{missing}()
 }
@@ -26,7 +21,9 @@
 length-one \code{character} vector.}
 
 \item{registry_dir}{The registry directory with the registry file describing
-the corpus (longth-one \code{character} vector).}
+the corpus (length-one \code{character} vector). If missing, the C
+representations of loaded corpora will be evaluated to get the registry
+directory with the registry file for the corpus.}
 
 \item{server}{If \code{NULL} (default), the corpus is expected to be present
 locally. If provided, the name of an OpenCPU server (can be an IP address)
@@ -38,37 +35,37 @@ restricted (\code{TRUE}) or not (\code{FALSE}).}
 }
 \description{
 Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
-structure for large, linguistically annotated corpora. The
-\code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
-the name of the class, the \code{corpus}-method is the initializer for
-objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
-on an \href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus}
-class (which inherits from the \code{corpus} class) will handle respective
-information. A (limited) set of polmineR functions and methods can be
-executed on the corpus on the remote machine from the local R session by
-calling them on the \code{remote_corpus} object. Calling the
-\code{corpus}-method without an argument will return a \code{data.frame} with
-basic information on the corpora that are available.
+structure for large, linguistically annotated corpora. The \code{corpus}-class
+keeps basic information on a CWB corpus. Corresponding to the name of the
+class, the \code{corpus}-method is the initializer for objects of the \code{corpus}
+class. A CWB corpus can also be hosted remotely on an
+\href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus} class
+(which inherits from the \code{corpus} class) will handle respective information.
+A (limited) set of polmineR functions and methods can be executed on the
+corpus on the remote machine from the local R session by calling them on the
+\code{remote_corpus} object. Calling the \code{corpus}-method without an argument will
+return a \code{data.frame} with basic information on the corpora that are
+available.
 }
 \details{
 Calling \code{corpus()} will return a \code{data.frame} listing the corpora
 available locally and described in the active registry directory, and some
 basic information on the corpora.
 
-A \code{corpus} object is instantiated by passing a corpus ID as
-argument \code{.Object}. Following the conventions of the Corpus Workbench
-(CWB), Corpus IDs are written in upper case. If \code{.Object} includes
-lower case letters, the \code{corpus} object is instantiated nevertheless,
-but a warning is issued to prevent bad practice. If \code{.Object} is not a
-known corpus, the error message will include a suggestion if there is a
-potential candidate that can be identified by \code{agrep}.
+A \code{corpus} object is instantiated by passing a corpus ID as argument
+\code{.Object}. Following the conventions of the Corpus Workbench (CWB), Corpus
+IDs are written in upper case. If \code{.Object} includes lower case letters,
+the \code{corpus} object is instantiated nevertheless, but a warning is issued
+to prevent bad practice. If \code{.Object} is not a known corpus, the error
+message will include a suggestion if there is a potential candidate that
+can be identified by \code{agrep}.
 
-A limited set of methods of the \code{polmineR} package is exposed
-to be executed on a remote OpenCPU server. As a matter of convenience, the
+A limited set of methods of the \code{polmineR} package is exposed to be
+executed on a remote OpenCPU server. As a matter of convenience, the
 whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
 environment variable "OPENCPU_SERVER". Environment variables for R sessions
-can be set easily in the \code{.Renviron} file. A convenient way to do this
-is to call \code{usethis::edit_r_environ()}.
+can be set easily in the \code{.Renviron} file. A convenient way to do this is
+to call \code{usethis::edit_r_environ()}.
 }
 \section{Slots}{
 
@@ -79,7 +76,13 @@ corpus.}
 \item{\code{registry_dir}}{Registry directory with registry file describing the
 corpus.}
 
-\item{\code{data_dir}}{The directory where the files for the indexed corpus are.}
+\item{\code{data_dir}}{The directory where binary files of the indexed corpus reside.}
+
+\item{\code{info_file}}{The info file indicated in the registry file (typically a
+file named \code{.info} \code{info.md} in the data directory).}
+
+\item{\code{template}}{Full path to the template containing formatting instructions
+when showing full text output (\code{fs_path} object).}
 
 \item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary
 protocols).}
@@ -94,8 +97,8 @@ the corpus ID.}
 vector.}
 
 \item{\code{server}}{The URL (can be IP address) of the OpenCPU server. The slot is
-available only with the \code{remote_corpus} class inheriting from the
-\code{corpus} class.}
+available only with the \code{remote_corpus} class inheriting from the \code{corpus}
+class.}
 
 \item{\code{user}}{If the corpus on the server requires authentication, the username.}
 

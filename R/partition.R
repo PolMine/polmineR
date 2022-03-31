@@ -47,20 +47,6 @@ setMethod("show", "partition", function(object){
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 
-setAs(from = "partition", to = "count", def = function(from){
-  if (nrow(from@stat) == 0){
-    stop("The input partiton does not include a data.table in its slot 'stat' - aborting.")
-  }
-  new(
-    "count",
-    stat = from@stat,
-    p_attribute = from@p_attribute,
-    corpus = from@corpus,
-    encoding = from@encoding,
-    size = from@size,
-    name = from@name
-  )
-})
 
 #' @importFrom jsonlite fromJSON
 setAs(
@@ -293,14 +279,10 @@ setMethod("partition", "character", function(
   }
 
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
-  assign(
-    "p",
-    new(
-      paste(c(type, "partition"), collapse = "_"),
-      stat = data.table(), # call = deparse(match.call()),
-      corpus = .Object, name = name, xml = xml
-    )
-  )  
+  p <- as(corpus(.Object), paste(c(type, "partition"), collapse = "_"))
+  p@name <- name
+  p@xml <- xml
+
   
   p@encoding <- if (is.null(encoding)) cl_charset_name(p@corpus) else encoding
   .message('get encoding:', p@encoding, verbose = verbose)
@@ -378,11 +360,10 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   if (length(def) > 1L) stop("only one s-attribute allowed")
   if (!is.null(xml)) stopifnot(xml %in% c("flat", "nested"))
   
-  y <- new(
-    class(.Object)[1], corpus = .Object@corpus, encoding = .Object@encoding, name = name,
-    xml = if (is.null(xml)) .Object@xml else xml,
-    stat = data.table()
-  )
+  y <- as(.Object, class(.Object)[1])
+  y@xml <- if (is.null(xml)) .Object@xml else xml
+  y@stat <- data.table()
+  
   .message('Setting up partition', name, verbose = verbose)
   def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
   y@s_attributes <- c(.Object@s_attributes, def)

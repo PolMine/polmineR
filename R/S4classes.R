@@ -4,58 +4,62 @@ NULL
 #' Corpus class initialization
 #' 
 #' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
-#' structure for large, linguistically annotated corpora. The
-#' \code{corpus}-class keeps basic information on a CWB corpus. Corresponding to
-#' the name of the class, the \code{corpus}-method is the initializer for
-#' objects of the \code{corpus} class. A CWB corpus can also be hosted remotely
-#' on an \href{https://www.opencpu.org}{OpenCPU} server. The \code{remote_corpus}
-#' class (which inherits from the \code{corpus} class) will handle respective
-#' information. A (limited) set of polmineR functions and methods can be
-#' executed on the corpus on the remote machine from the local R session by
-#' calling them on the \code{remote_corpus} object. Calling the
-#' \code{corpus}-method without an argument will return a \code{data.frame} with
-#' basic information on the corpora that are available.
+#' structure for large, linguistically annotated corpora. The `corpus`-class
+#' keeps basic information on a CWB corpus. Corresponding to the name of the
+#' class, the `corpus`-method is the initializer for objects of the `corpus`
+#' class. A CWB corpus can also be hosted remotely on an
+#' \href{https://www.opencpu.org}{OpenCPU} server. The `remote_corpus` class
+#' (which inherits from the `corpus` class) will handle respective information.
+#' A (limited) set of polmineR functions and methods can be executed on the
+#' corpus on the remote machine from the local R session by calling them on the
+#' `remote_corpus` object. Calling the `corpus`-method without an argument will
+#' return a `data.frame` with basic information on the corpora that are
+#' available.
 #'
-#' @details Calling \code{corpus()} will return a \code{data.frame} listing the corpora
-#' available locally and described in the active registry directory, and some
-#' basic information on the corpora.
-#' @details A \code{corpus} object is instantiated by passing a corpus ID as
-#'   argument \code{.Object}. Following the conventions of the Corpus Workbench
-#'   (CWB), Corpus IDs are written in upper case. If \code{.Object} includes
-#'   lower case letters, the \code{corpus} object is instantiated nevertheless,
-#'   but a warning is issued to prevent bad practice. If \code{.Object} is not a
-#'   known corpus, the error message will include a suggestion if there is a
-#'   potential candidate that can be identified by \code{agrep}.
-#' @details A limited set of methods of the \code{polmineR} package is exposed
-#'   to be executed on a remote OpenCPU server. As a matter of convenience, the
+#' @details Calling `corpus()` will return a `data.frame` listing the corpora
+#'   available locally and described in the active registry directory, and some
+#'   basic information on the corpora.
+#' @details A `corpus` object is instantiated by passing a corpus ID as argument
+#'   `.Object`. Following the conventions of the Corpus Workbench (CWB), Corpus
+#'   IDs are written in upper case. If `.Object` includes lower case letters,
+#'   the `corpus` object is instantiated nevertheless, but a warning is issued
+#'   to prevent bad practice. If `.Object` is not a known corpus, the error
+#'   message will include a suggestion if there is a potential candidate that
+#'   can be identified by `agrep`.
+#' @details A limited set of methods of the `polmineR` package is exposed to be
+#'   executed on a remote OpenCPU server. As a matter of convenience, the
 #'   whereabouts of an OpenCPU server hosting a CWB corpus can be stated in an
 #'   environment variable "OPENCPU_SERVER". Environment variables for R sessions
-#'   can be set easily in the \code{.Renviron} file. A convenient way to do this
-#'   is to call \code{usethis::edit_r_environ()}.
+#'   can be set easily in the `.Renviron` file. A convenient way to do this is
+#'   to call `usethis::edit_r_environ()`.
 #'     
-#' @slot corpus A length-one \code{character} vector, the upper-case ID of a CWB
+#' @slot corpus A length-one `character` vector, the upper-case ID of a CWB
 #'   corpus.
 #' @slot registry_dir Registry directory with registry file describing the
 #'   corpus.
-#' @slot data_dir The directory where the files for the indexed corpus are.
+#' @slot data_dir The directory where binary files of the indexed corpus reside.
+#' @slot info_file The info file indicated in the registry file (typically a
+#'   file named `.info` `info.md` in the data directory).
+#' @slot template Full path to the template containing formatting instructions
+#'   when showing full text output (`fs_path` object).
 #' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary
 #'   protocols).
 #' @slot name An additional name for the object that may be more telling than
 #'   the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one
-#'   \code{character} vector.
-#' @slot size Number of tokens (size) of the corpus, a length-one \code{integer}
+#'   `character` vector.
+#' @slot size Number of tokens (size) of the corpus, a length-one `integer`
 #'   vector.
 #' @slot server The URL (can be IP address) of the OpenCPU server. The slot is
-#'   available only with the \code{remote_corpus} class inheriting from the
-#'   \code{corpus} class.
+#'   available only with the `remote_corpus` class inheriting from the `corpus`
+#'   class.
 #' @slot user If the corpus on the server requires authentication, the username.
 #' @slot password If the corpus on the server requires authentication, the
 #'   password.
 #' @exportClass corpus
 #' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
 #' @name corpus-class
-#' @seealso Methods to extract basic information from a \code{corpus} object are
+#' @seealso Methods to extract basic information from a `corpus` object are
 #'   covered by the \link{corpus-methods} documentation object. Use the
 #'   \code{\link{s_attributes}} method to get information on structural
 #'   attributes. Analytical methods available for \code{corpus} objects are
@@ -114,6 +118,8 @@ setClass(
     corpus = "character",
     registry_dir = "fs_path",
     data_dir = "fs_path",
+    template = "fs_path",
+    info_file = "fs_path",
     type = "character",
     encoding = "character",
     name = "character",
@@ -164,7 +170,7 @@ setClass(
 #' summary(parties_big)
 setClass(
   "bundle",
-  representation(
+  slots = c(
     objects = "list",
     p_attribute = "character",
     corpus = "character",
@@ -718,6 +724,10 @@ setAs(from = "corpus", to = "partition", def = function(from){
     encoding = from@encoding,
     cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
     stat = data.table(),
+    info_file = from@info_file,
+    data_dir = from@data_dir,
+    registry_dir = from@registry_dir,
+    template = from@template,
     size = size(from),
     p_attribute = character()
   )
@@ -977,7 +987,6 @@ setClass("press_subcorpus", contains = "subcorpus")
 #' 
 setClass(
   "phrases",
-  # slots = c(),
   contains = "regions"
 )
 
@@ -1193,6 +1202,10 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
   new(
     "subcorpus",
     corpus = from@corpus,
+    data_dir = from@data_dir,
+    template = from@template,
+    registry_dir = from@registry_dir,
+    info_file = from@info_file,
     encoding = from@encoding,
     cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
     size = size(from)

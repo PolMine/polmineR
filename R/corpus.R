@@ -9,7 +9,9 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #' @param .Object The upper-case ID of a CWB corpus stated by a
 #'   length-one `character` vector.
 #' @param registry_dir The registry directory with the registry file describing
-#'   the corpus (longth-one `character` vector).
+#'   the corpus (length-one `character` vector). If missing, the C
+#'   representations of loaded corpora will be evaluated to get the registry
+#'   directory with the registry file for the corpus.
 #' @param server If `NULL` (default), the corpus is expected to be present
 #'   locally. If provided, the name of an OpenCPU server (can be an IP address)
 #'   that hosts a corpus, or several corpora. The `corpus`-method will then
@@ -17,10 +19,11 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #' @param restricted A `logical` value, whether access to a remote corpus is
 #'   restricted (`TRUE`) or not (`FALSE`).
 #' @exportMethod corpus
-#' @importFrom RcppCWB cqp_list_corpora corpus_data_dir
-#' @importFrom fs path
+#' @importFrom RcppCWB cqp_list_corpora corpus_data_dir corpus_registry_dir
+#'   corpus_info_file
+#' @importFrom fs path path_expand
 setMethod("corpus", "character", function(
-    .Object, registry_dir = Sys.getenv("CORPUS_REGISTRY"),
+    .Object, registry_dir,
     server = NULL, restricted
 ){
 
@@ -50,19 +53,55 @@ setMethod("corpus", "character", function(
         if (length(proxy) == 0L){
           stop("Corpus '", .Object, "' is not available.")
         } else {
-          stop("Corpus '", .Object, "' is not available. Maybe you meant '", proxy, "'?")
+          stop(
+            "Corpus '", .Object, "' is not available. Maybe you meant '", proxy, "'?"
+          )
         }
       }
     }
 
+    c_regdir <- path(corpus_registry_dir(.Object))
+    if (missing(registry_dir)){
+      if (is.na(c_regdir)){
+        stop(
+          "Cannot initialize corpus object - ",
+          "cannot derive argument 'registry' from C representation of corpus."
+        )
+      } else if (length(c_regdir) > 1L){
+        stop(
+          "Cannot initialize corpus object - ",
+          "corpus defined by two different registry files."
+        )
+      } else {
+        registry_dir <- c_regdir
+      }
+    } else {
+      registry_dir <- path(path_expand(registry_dir))
+      if (is.na(c_regdir)){
+        stop("Cannot locate corpus with registry provided.")
+      } else if (length(c_regdir) > 1L){
+        if (!registry_dir %in% c_regdir){
+          stop("Cannot locate corpus with registry provided.")
+        }
+      } else if (registry_dir != c_regdir){
+        stop("Cannot locate corpus with registry provided.")
+      }
+      
+    }
+    
     properties <- registry_get_properties(.Object)
+    data_dir <- corpus_data_dir(.Object, registry = registry_dir)
+    template <- path(data_dir, "template.json")
+    info_file <- corpus_info_file(.Object, registry = registry_dir)
     
     y <- new(
       "corpus",
       corpus = .Object,
       encoding = cl_charset_name(corpus = .Object, registry = registry_dir),
-      registry_dir = fs::path(registry_dir),
-      data_dir = fs::path(corpus_data_dir(.Object, registry = registry_dir)),
+      registry_dir = registry_dir,
+      data_dir = data_dir,
+      info_file = if (file.exists(info_file)) info_file else path(NA),
+      template = if (file.exists(template)) template else path(NA),
       type = if ("type" %in% names(properties)) properties[["type"]] else character(),
       size = cl_attribute_size(corpus = .Object, attribute = "word", attribute_type = "p", registry = registry())
     )
@@ -132,19 +171,18 @@ setMethod("corpus", "missing", function(){
 
 #' @title Subsetting corpora and subcorpora
 #' @description The structural attributes of a corpus (s-attributes) can be used
-#'   to generate subcorpora (i.e. a \code{subcorpus} class object) by applying
-#'   the \code{subset}-method. To obtain a \code{subcorpus}, the
-#'   \code{subset}-method can be applied on a corpus represented by a
-#'   \code{corpus} object, a length-one \code{character} vector (as a shortcut),
-#'   and on a \code{subcorpus} object.
+#'   to generate subcorpora (i.e. a `subcorpus` class object) by applying the
+#'   `subset`-method. To obtain a `subcorpus`, the `subset`-method can be
+#'   applied on a corpus represented by a `corpus` object, a length-one
+#'   `character` vector (as a shortcut), and on a `subcorpus` object.
 #' @rdname subset
 #' @name subset
 #' @aliases subset,corpus-method
-#' @seealso The methods applicable for the \code{subcorpus} object resulting
-#'   from subsetting a corpus or subcorpus are described in the documentation of
-#'   the \code{\link{subcorpus-class}}. Note that the \code{subset}-method can also be
-#'   applied to \code{\link{textstat-class}} objects (and objects inheriting from
-#'   this class).
+#' @seealso The methods applicable for the `subcorpus` object resulting from
+#'   subsetting a corpus or subcorpus are described in the documentation of the
+#'   `\link{subcorpus-class}`. Note that the `subset`-method can also be applied
+#'   to \code{\link{textstat-class}} objects (and objects inheriting from this
+#'   class).
 #' @examples
 #' use("polmineR")
 #'
@@ -291,23 +329,22 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     warning("No matching regions found for the s-attributes provided: Returning NULL object")
     return(NULL)
   }
-
-
-  y <- new(
-    if (length(x@type) > 0L) paste(x@type, "subcorpus", sep = "_") else "subcorpus",
-    corpus = x@corpus,
-    encoding = x@encoding,
-    type = x@type,
-    data_dir = x@data_dir,
-    cpos = as.matrix(dt[, c("cpos_left", "cpos_right")]),
-    strucs = dt[["struc"]],
-    s_attribute_strucs = s_attr[length(s_attr)],
-    s_attributes = lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]])),
-    xml = "flat",
-    name = ""
-  )
+  
+  y <- if (length(x@type) > 0L){
+    as(x, paste(x@type, "subcorpus", sep = "_"))
+  } else { 
+    as(x, "subcorpus")
+  }
+  
+  y@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
   dimnames(y@cpos) <- NULL
+  y@strucs = dt[["struc"]]
+  y@s_attribute_strucs <- s_attr[length(s_attr)]
+  y@s_attributes <- lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]]))
+  y@xml <- "flat"
+  y@name <- ""
   y@size <- size(y)
+  
   y
 })
 

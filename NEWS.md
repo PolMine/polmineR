@@ -48,7 +48,7 @@ a `positivelist` argument.
 - The `highlight()` method now acceps `matrix` objects as elements of the list
 of items to be highlighted. It is treated as a set of regions, such as resulting
 from `cpos()`. Thus it is possible to highlight matches for CQP queries.
-- The package now requires at least RcppCWB v0.5.1, which includes a much more
+- The package now requires at least RcppCWB v0.5.2, which includes a much more
 efficient worker for token contexts for the `context()` method.
 - The `count()`-method for `partition_bundle` objects failed with an opaque
 error message if there were no query matches at all. There is now a check for
@@ -116,6 +116,8 @@ Slots in S4 classes are not `fs_path` classes.
 been replaced by RcppCWB functions `cl_charset_name()` and `corpus_data_dir()`
 with equivalent result, but faster due to immediate access to C representation 
 of the corpus.
+- The `corpus()` method will deduce the registry directory from the C representation
+of the corpus if possible.
 
 
 ## Bug fixes

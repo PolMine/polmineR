@@ -44,28 +44,19 @@ setGeneric("as.regions", function(x, ...) standardGeneric("as.regions"))
 #' @examples 
 #' p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
 #' r <- as(p, "regions")
+#' 
+#' #' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+#' r <- as(sc, "regions")
 #' @noRd
 setAs(from = "partition", to = "regions", function(from, to){
   y <- new("regions")
   slots_to_get <- slotNames(y)
-  slots_to_get <- slots_to_get[-which(slots_to_get %in% c("registry_dir", "data_dir", "type"))]
   for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
   type <- get_type(y@corpus)
   y@type <- if (length(type) > 0L) type else character()
   y
 })
 
-#' @examples 
-#' sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
-#' r <- as(sc, "regions")
-#' @noRd
-setAs(from = "subcorpus", to = "regions", function(from, to){
-  y <- new("regions")
-  slots_to_get <- slotNames(y)
-  slots_to_get <- slots_to_get[-which(slots_to_get == "type")]
-  for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
-  y
-})
 
 
 setAs(from = "regions", to = "partition", function(from, to){
@@ -84,6 +75,10 @@ setAs(from = "subcorpus", to = "partition", function(from, to){
     cpos = from@cpos,
     encoding = from@encoding,
     corpus = from@corpus,
+    registry_dir = from@registry_dir,
+    data_dir = from@data_dir,
+    info_file = from@info_file,
+    template = from@template,
     strucs = from@strucs,
     s_attribute_strucs = from@s_attribute_strucs,
     xml = from@xml,
@@ -120,6 +115,10 @@ setMethod("as.regions", "context", function(x, node = TRUE){
     Class = "regions",
     cpos = as.matrix(DT_regions[, "match_id" := NULL]),
     corpus = x@corpus,
+    registry_dir = x@registry_dir,
+    data_dir = x@data_dir,
+    info_file = x@info_file,
+    template = x@template,
     encoding = x@encoding
   )
 })

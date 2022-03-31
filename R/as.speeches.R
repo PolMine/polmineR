@@ -58,14 +58,19 @@ setMethod("as.speeches", "partition", function(
   
   stopifnot(
     is.character(s_attribute_date),
-    length(s_attribute_date) == 1,
+    length(s_attribute_date) == 1L,
+    
     is.character(s_attribute_name),
-    length(s_attribute_name) == 1
+    length(s_attribute_name) == 1L
   )
+  
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
-  if (length(s_attributes(.Object, s_attribute_date)) > 1){
-    partition_bundle_dates <- partition_bundle(.Object, s_attribute = s_attribute_date)
+  if (length(s_attributes(.Object, s_attribute_date)) > 1L){
+    partition_bundle_dates <- partition_bundle(
+      .Object,
+      s_attribute = s_attribute_date
+    )
   } else {
     partition_bundle_dates <- list(.Object)
   }
@@ -75,7 +80,11 @@ setMethod("as.speeches", "partition", function(
     nested <- lapply(
       s_attributes(partition_date, s_attribute_name),
       function(speaker_name){
-        partition_bundle_names <- partition(partition_date, def = setNames(list(speaker_name), s_attribute_name), verbose = FALSE)
+        partition_bundle_names <- partition(
+          partition_date,
+          def = setNames(list(speaker_name), s_attribute_name),
+          verbose = FALSE
+        )
         split(partition_bundle_names, gap = gap, verbose = FALSE)
       }
     )
@@ -91,14 +100,22 @@ setMethod("as.speeches", "partition", function(
   partition_names <- sapply(
     speaker_list,
     function(x){
-      paste(x@s_attributes[[s_attribute_name]], s_attributes(x, s_attribute_date), x@name, sep = "_")
+      paste(
+        x@s_attributes[[s_attribute_name]],
+        s_attributes(x, s_attribute_date),
+        gsub("^.*_(\\d+)$", "\\1", x@name),
+        sep = "_", collapse = "_"
+      )
     }
   )
-  for (i in 1L:length(speaker_list)) name(speaker_list[[i]]) <- partition_names[i]
+  for (i in 1L:length(speaker_list))
+    name(speaker_list[[i]]) <- partition_names[i]
   
-  # at this stage, the list may contain partitions of size 0, that need to be dropped
+  # at this stage, the list may contain partitions of size 0 - to be dropped
   empty_partitions <- which(sapply(speaker_list, size) == 0L)
-  if (length(empty_partitions) > 0L) for (i in rev(empty_partitions)) speaker_list[[i]] <- NULL
+  if (length(empty_partitions) > 0L){
+    for (i in rev(empty_partitions)) speaker_list[[i]] <- NULL
+  }
   
   # the resulting list may be totally unordered - reorder now
   .message("reordering partitions", verbose = verbose)
