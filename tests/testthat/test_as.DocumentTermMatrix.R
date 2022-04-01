@@ -5,9 +5,9 @@ testthat::context("as.TermDocumentMatrix")
 test_that(
   "Generate Term-Document-Matrix from corpus using as.TermDocumentMatrix",
   {
-    dtm <- as.DocumentTermMatrix("REUTERS", p_attribute = "word", sAttribute = "id")
+    dtm <- as.DocumentTermMatrix("REUTERS", p_attribute = "word", s_attribute = "id")
     expect_equal(
-      length(sAttributes("REUTERS", "id")), dim(dtm)[1]
+      length(s_attributes("REUTERS", "id")), dim(dtm)[1]
     )
     expect_equal(
       RcppCWB::cl_lexicon_size(corpus = "REUTERS", p_attribute = "word", registry = registry()),

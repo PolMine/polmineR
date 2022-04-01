@@ -35,11 +35,10 @@ s-attributes.}
 }
 \description{
 The structural attributes of a corpus (s-attributes) can be used
-to generate subcorpora (i.e. a \code{subcorpus} class object) by applying
-the \code{subset}-method. To obtain a \code{subcorpus}, the
-\code{subset}-method can be applied on a corpus represented by a
-\code{corpus} object, a length-one \code{character} vector (as a shortcut),
-and on a \code{subcorpus} object.
+to generate subcorpora (i.e. a \code{subcorpus} class object) by applying the
+\code{subset}-method. To obtain a \code{subcorpus}, the \code{subset}-method can be
+applied on a corpus represented by a \code{corpus} object, a length-one
+\code{character} vector (as a shortcut), and on a \code{subcorpus} object.
 }
 \examples{
 use("polmineR")
@@ -84,9 +83,9 @@ b <- lapply(
 sapply(b, size)
 }
 \seealso{
-The methods applicable for the \code{subcorpus} object resulting
-from subsetting a corpus or subcorpus are described in the documentation of
-the \code{\link{subcorpus-class}}. Note that the \code{subset}-method can also be
-applied to \code{\link{textstat-class}} objects (and objects inheriting from
-this class).
+The methods applicable for the \code{subcorpus} object resulting from
+subsetting a corpus or subcorpus are described in the documentation of the
+\verb{\link{subcorpus-class}}. Note that the \code{subset}-method can also be applied
+to \code{\link{textstat-class}} objects (and objects inheriting from this
+class).
 }

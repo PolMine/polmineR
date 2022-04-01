@@ -103,7 +103,10 @@ setMethod("corpus", "character", function(
       info_file = if (file.exists(info_file)) info_file else path(NA),
       template = if (file.exists(template)) template else path(NA),
       type = if ("type" %in% names(properties)) properties[["type"]] else character(),
-      size = cl_attribute_size(corpus = .Object, attribute = "word", attribute_type = "p", registry = registry())
+      size = cl_attribute_size(
+        corpus = .Object, registry = registry_dir,
+        attribute = "word", attribute_type = "p"
+      )
     )
     
     return(y)
@@ -153,7 +156,7 @@ setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpu
 
 #' @rdname corpus-class
 setMethod("corpus", "missing", function(){
-  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1){
+  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1L){
     corpora <- .list_corpora()
     y <- data.frame(
       corpus = corpora,
@@ -372,7 +375,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       cl_attribute_size(
         corpus = x@corpus,
         attribute = s, attribute_type = "s",
-        registry = registry()
+        registry = x@registry_dir
       )
   )
   
@@ -382,7 +385,12 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     
     regions <- lapply(
       setNames(s_attr, s_attr),
-      function(s) s_attr_regions(corpus = x@corpus, s_attr = s, registry = registry(), data_dir = x@data_dir)
+      function(s)
+        s_attr_regions(
+          corpus = x@corpus, registry = x@registry_dir,
+          data_dir = x@data_dir,
+          s_attr = s
+        )
     )
 
     if (length(s_attr) > 1L){
@@ -401,7 +409,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     }
     
     for (s in s_attr){
-      strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s, cpos = x@cpos[,1], registry = registry())
+      strucs <- cl_cpos2struc(
+        corpus = x@corpus, registry = x@registry_dir,
+        s_attribute = s, cpos = x@cpos[,1]
+      )
       
       if (any(is.na(strucs)) || any(strucs < 0L)){
         descendant <- TRUE
@@ -411,7 +422,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       r <- regions[[s]][strucs + 1L]
       if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
         descendant <- FALSE
-        str <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = strucs, registry = registry())
+        str <- cl_struc2str(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s, struc = strucs
+        )
         Encoding(str) <- x@encoding
         dt[, (s_attr) := str]
       } else {
@@ -422,16 +436,32 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     
     if (descendant){
       # Slower by necessity
-      strucs <- cl_cpos2struc(x@corpus, s_attribute = s_attr[1], cpos = cpos(x@cpos), registry = registry())
+      strucs <- cl_cpos2struc(
+        x@corpus, registry = x@registry_dir,
+        s_attribute = s_attr[1], cpos = cpos(x@cpos)
+      )
       strucs <- unique(strucs[strucs >= 0])
-      ranges <- get_region_matrix(x@corpus, s_attribute = s_attr[1], strucs = strucs, registry = registry())
-      str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr[1], struc = strucs, registry = registry())
+      ranges <- get_region_matrix(
+        x@corpus, registry = x@registry_dir,
+        s_attribute = s_attr[1], strucs = strucs
+      )
+      str <- cl_struc2str(
+        corpus = x@corpus, registry = x@registry_dir,
+        s_attribute = s_attr[1], struc = strucs
+      )
       Encoding(str) <- x@encoding
-      dt <- data.table(struc = strucs, cpos_left = ranges[,1], cpos_right = ranges[,2])
+      dt <- data.table(
+        struc = strucs,
+        cpos_left = ranges[,1],
+        cpos_right = ranges[,2]
+      )
       dt[, (s_attr[1]) := str]
       if (length(s_attr) > 1L){
         for (s in s_attr[-1]){
-          str <- cl_struc2str(corpus = x@corpus, s_attribute = s, struc = strucs, registry = registry())
+          str <- cl_struc2str(
+            corpus = x@corpus, registry = x@registry_dir,
+            s_attribute = s, struc = strucs
+          )
           Encoding(str) <- x@encoding
           dt[, (s) := str]
         }
@@ -440,7 +470,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     
   } else {
     for (s in s_attr){
-      str <- RcppCWB::cl_struc2str(corpus = x@corpus, s_attribute = s, struc = dt[["struc"]], registry = registry())
+      str <- cl_struc2str(
+        corpus = x@corpus, registry = x@registry_dir,
+        s_attribute = s, struc = dt[["struc"]]
+      )
       Encoding(str) <- x@encoding
       dt[, (s) := str]
     }
@@ -453,6 +486,9 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
   y <- new(
     "subcorpus",
     corpus = x@corpus,
+    registry_dir = x@registry_dir,
+    template = x@template,
+    info_file = x@info_file,
     encoding = x@encoding,
     type = x@type,
     data_dir = x@data_dir,

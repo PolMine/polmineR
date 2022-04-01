@@ -285,7 +285,10 @@ setClass(
     stat = "data.table",
     annotation_cols = "character"
   ),
-  contains = "corpus"
+  contains = "corpus",
+  prototype = list(
+    stat = data.table()
+  )
 )
 
 

@@ -69,13 +69,21 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   
   if (missing(s_attribute)){
     dt <- count(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, freq = freq, mc = mc, verbose = verbose, progress = progress, ...)
-    retval <- new("hits", stat = dt, corpus = .Object@corpus, query = query)
+    retval <- as(.Object, "hits")
+    retval@stat <- dt
+    retval@corpus <- .Object@corpus
+    retval@query <- query
+    
     return(retval)
   }
   
   if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
-  rngs <- ranges(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress)
+  rngs <- ranges(
+    .Object,
+    query = query, cqp = cqp, p_attribute = p_attribute,
+    mc = mc, progress = progress
+  )
   DT <- as.data.table(rngs)
 
   for (i in seq_along(s_attribute)){
@@ -110,7 +118,11 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
       TF[, "freq" := TF[["count"]] / TF[["size"]]]
     }
   }
-  new("hits", stat = TF, corpus = .Object@corpus, query = query)
+  retval <- as(.Object, "hits")
+  retval@stat = TF
+  retval@corpus = .Object@corpus
+  retval@query = query
+  retval
 })
 
 
@@ -218,7 +230,12 @@ setMethod("sample", "hits", function(x, size){
   new(
     "hits",
     dt = x@stat[sample(1L:nrow(x@stat), size = size)],
-    corpus = x@corpus, query = x@query
+    corpus = x@corpus,
+    registry_dir = x@registry_dir,
+    data_dir = x@data_dir,
+    info_file = x@info_file,
+    template = x@template,
+    query = x@query
   )
 })
 
@@ -245,7 +262,16 @@ setMethod("hits", "context", function(.Object, s_attribute = NULL, verbose = TRU
     DT[, eval(x) := str]
   }
   
-  new("hits", stat = DT, corpus = .Object@corpus, query = .Object@query)
+  new(
+    "hits",
+    stat = DT,
+    corpus = .Object@corpus,
+    registry_dir = .Object@registry_dir,
+    data_dir = .Object@data_dir,
+    info_file = .Object@info_file,
+    template = .Object@template,
+    query = .Object@query
+  )
 })
 
 #' @rdname hits

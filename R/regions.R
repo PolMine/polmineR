@@ -14,13 +14,17 @@ setMethod("regions", "corpus", function(x, s_attribute){
     corpus = x@corpus,
     attribute = s_attribute,
     attribute_type = "s",
-    registry = registry()
+    registry = x@registry_dir
   )
 
   new(
     "regions",
     corpus = x@corpus, # slot inherited from 'corpus' class
+    registry_dir = x@registry_dir,
+    info_file = x@info_file,
+    template = x@template,
     data_dir = x@data_dir, # slot inherited from 'corpus' class
+    
     type = x@type, # slot inherited from 'corpus' class
     encoding = x@encoding, # slot inherited from 'corpus' class
     name = x@name, # slot inherited from 'corpus' class
@@ -29,7 +33,7 @@ setMethod("regions", "corpus", function(x, s_attribute){
       corpus = x@corpus,
       s_attribute = s_attribute,
       strucs = 0L:(struc_size - 1L),
-      registry = registry()
+      registry = x@registry_dir
     )
   )
 })
@@ -65,6 +69,10 @@ setAs(from = "regions", to = "partition", function(from, to){
     cpos = from@cpos,
     encoding = from@encoding,
     corpus = from@corpus,
+    registry_dir = from@registry_dir, 
+    data_dir = from@data_dir,
+    info_file = from@info_file,
+    template = from@template,
     stat = data.table()
   )
 })

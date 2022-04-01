@@ -108,7 +108,10 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
   
-  ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
+  ids <- cl_cpos2id(
+    corpus = corpus, registry = corpus_registry_dir(corpus),
+    p_attribute = p_attribute, cpos = .Object
+  )
   if (isTRUE(decode)){
     tokens <- decode(.Object = ids, corpus = corpus, p_attributes = p_attribute, boost = boost)
     rm(ids)
@@ -134,7 +137,10 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
     if (beautify){
       whitespace <- rep(collapse, times = length(.Object))
       if ("pos" %in% p_attributes(corpus)){
-        pos <- cl_cpos2str(corpus = corpus, p_attribute = "pos", cpos = .Object, registry = registry())
+        pos <- cl_cpos2str(
+          corpus = corpus, registry = corpus_registry_dir(corpus),
+          p_attribute = "pos", cpos = .Object
+        )
         whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
       } else {
         whitespace[grep("^[\\.;,:!?]$", tokens, perl = TRUE)] <- ""

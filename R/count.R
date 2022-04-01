@@ -192,7 +192,14 @@ setMethod("count", "subcorpus", function(
       }
     } else {
       cpos <- cpos(.Object@cpos)
-      id_list <- lapply(p_attribute, function(p) cl_cpos2id(corpus = .Object@corpus, p_attribute = p, cpos = cpos, registry = registry()))
+      id_list <- lapply(
+        p_attribute,
+        function(p)
+          cl_cpos2id(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            p_attribute = p, cpos = cpos
+          )
+      )
       names(id_list) <- paste(p_attribute, "id", sep = "_")
       ID <- data.table::as.data.table(id_list)
       setkeyv(ID, cols = names(id_list))
@@ -203,7 +210,10 @@ setMethod("count", "subcorpus", function(
       dummy <- lapply(
         seq_along(p_attribute),
         function(i){
-          str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = TF[[p_attr_id[i]]], registry = registry())
+          str <- cl_id2str(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            p_attribute = p_attribute[i], id = TF[[p_attr_id[i]]]
+          )
           TF[, eval(p_attribute[i]) := as.nativeEnc(str, from = .Object@encoding) , with = TRUE] 
         })
       setcolorder(TF, neworder = c(p_attribute, p_attr_id, "count"))
@@ -215,6 +225,10 @@ setMethod("count", "subcorpus", function(
     y <- new(
       Class = "count",
       corpus = .Object@corpus,
+      registry_dir = .Object@registry_dir,
+      data_dir = .Object@data_dir,
+      info_file = .Object@info_file,
+      template = .Object@template,
       p_attribute = p_attribute,
       encoding = .Object@encoding,
       stat = TF,
@@ -298,7 +312,10 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
 
     if (is.null(phrases)){
       if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
-      DT[, "id" :=  cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
+      DT[, "id" :=  cl_cpos2id(
+        corpus = corpus, registry = corpus_registry_dir(corpus),
+        p_attribute = p_attribute, cpos = DT[["cpos"]]
+        )]
       
       if (verbose) message("... performing count")
       CNT <- DT[,.N, by = c("name_id", "id")]
@@ -306,7 +323,10 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       setnames(CNT, old = "N", new = "count")
       
       if (verbose) message("... adding decoded p-attribute")
-      str_raw <- cl_id2str(corpus = corpus, p_attribute = p_attribute, id = CNT[["id"]], registry = registry())
+      str_raw <- cl_id2str(
+        corpus = corpus, registry = corpus_registry_dir(corpus),
+        p_attribute = p_attribute, id = CNT[["id"]]
+      )
       
       CNT[, eval(p_attribute) := if (encoding() == enc) str_raw else as.nativeEnc(str_raw, from = enc)]
       rm(str_raw)
@@ -327,12 +347,21 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name_id")
     rm(CNT)
-    y <- new(Class = "count_bundle", p_attribute = p_attribute, corpus = corpus, encoding = enc)
+    y <- new(
+      Class = "count_bundle",
+      p_attribute = p_attribute,
+      corpus = corpus, encoding = enc
+    )
+    co <- corpus(corpus)
     .fn <- function(i){
       new(
         "count",
         corpus = corpus,
-        encoding = .Object@objects[[i]]@encoding,
+        registry_dir = co@registry_dir,
+        data_dir = co@data_dir,
+        info_file = co@info_file,
+        template = co@template,
+        encoding = co@encoding,
         p_attribute = p_attribute,
         stat = CNT_list[[i]][, "name_id" := NULL],
         name = .Object@objects[[i]]@name,
@@ -387,10 +416,8 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
         # Using a Rcpp implementation for reading in the lexion file might be a
         # fast solution, see https://gist.github.com/hadley/6353939
         tokens <- cl_id2str(
-          corpus = .Object@corpus,
-          p_attribute = p_attribute,
-          id = TF[[p_attr_col_id]],
-          registry = registry()
+          corpus = .Object@corpus, registry = .Object@registry_dir,
+          p_attribute = p_attribute, id = TF[[p_attr_col_id]]
         )
         TF[, "token" := as.nativeEnc(tokens, from = encoding(.Object)), with = TRUE] # recode is slow
         Encoding(TF[["token"]]) <- "unknown"
@@ -406,7 +433,10 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
           function(p_attr){
             .message("getting token stream for p-attribute: ", p_attr, verbose = verbose)
-            cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attr, 0L:(size(.Object) - 1L), registry = registry())
+            cl_cpos2id(
+              corpus = .Object@corpus, registry = .Object@registry_dir,
+              p_attribute = p_attr, 0L:(size(.Object) - 1L)
+            )
           }
         )
       )
@@ -414,22 +444,24 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       TF <- tokenStreamDT[, .N, by = c(eval(colnames(tokenStreamDT)))]
       setnames(TF, old = "N", new = "count")
       if (decode){
-        for (pAttr in p_attribute){
-          .message("decode p-attribute: ", pAttr, verbose = verbose)
-          TF[, eval(pAttr) := as.nativeEnc(cl_id2str(corpus = .Object@corpus, p_attribute = pAttr, id = TF[[paste(pAttr, "id", sep = "_")]], registry = registry()), from = encoding(.Object)), with = TRUE]
+        for (p_attr in p_attribute){
+          .message("decode p-attribute: ", p_attr, verbose = verbose)
+          strings <- cl_id2str(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            p_attribute = p_attr, id = TF[[paste(p_attr, "id", sep = "_")]]
+          ) 
+          TF[, (p_attr) := as.nativeEnc(strings, from = encoding(.Object))]
         }
         setcolorder(TF, c(p_attribute, paste(p_attribute, "id", sep = "_"), "count"))
       }
     }
-    y <- new(
-      Class = "count",
-      corpus = .Object@corpus,
-      p_attribute = p_attribute,
-      encoding = encoding(.Object),
-      stat = TF,
-      name = character(),
-      size = size(.Object)
-    )
+    y <- as(.Object, "count")
+    
+    y@p_attribute <- p_attribute
+    y@stat <- TF
+    y@name <- character()
+    y@size <- size(.Object)
+    
     return(y)
   } else {
     if (class(cqp) == "function") cqp <- cqp(query)
@@ -439,12 +471,18 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       count <- sapply(
         query,
         function(query){
-          query_id <- cl_str2id(corpus = .Object@corpus, p_attribute = p_attribute, str = query, registry = registry())
+          query_id <- cl_str2id(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            p_attribute = p_attribute, str = query
+          )
           # if there is no id for query, query_id will be -5
-          if (query_id >= 0){
-            cl_id2freq(corpus = .Object@corpus, p_attribute = p_attribute, id = query_id, registry = registry())
+          if (query_id >= 0L){
+            cl_id2freq(
+              corpus = .Object@corpus, registry = .Object@registry_dir,
+              p_attribute = p_attribute, id = query_id
+            )
           } else {
-            0
+            0L
           }
         }
       )
@@ -508,15 +546,18 @@ setMethod("count", "vector", function(.Object, corpus, p_attribute, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
+  ids <- cl_cpos2id(
+    corpus = corpus, registry = corpus_registry_dir(corpus),
+    p_attribute = p_attribute, cpos = .Object
+  )
   count <- tabulate(ids)
   TF <- data.table(
     id = 0L:length(count),
-    count = c(length(which(ids == 0)), count)
+    count = c(length(which(ids == 0L)), count)
   )
   setkeyv(TF, cols = "id")
   setnames(TF, "id", paste(p_attribute, "id", sep = "_"))
-  TF[count > 0]
+  TF[count > 0L]
 })
 
 
@@ -544,6 +585,10 @@ setMethod("count", "kwic", function(.Object, p_attribute = "word"){
     "count",
     stat = cnt,
     corpus = .Object@corpus,
+    registry_dir = .Object@registry_dir,
+    data_dir = .Object@data_dir,
+    info_file = .Object@info_file,
+    template = .Object@template,
     encoding = .Object@encoding,
     p_attribute = p_attribute,
     name = .Object@name,

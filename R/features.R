@@ -6,6 +6,10 @@ setAs(from = "features", to = "features_ngrams", def = function(from){
   new(
     "features_ngrams",
     corpus = from@corpus,
+    registry_dir = from@registry_dir,
+    data_dir = from@data_dir,
+    info_file = from@info_file,
+    template = from@template,
     p_attribute = from@p_attribute,
     encoding = from@p_attribute,
     stat = from@stat,
@@ -165,8 +169,13 @@ setMethod("features", "count", function(x, y, by = NULL, included = FALSE, metho
   )
   z <- new(
     "features",
-    encoding = x@encoding, included = included,
+    encoding = x@encoding,
+    included = included,
     corpus = unique(c(x@corpus, y@corpus)),
+    registry_dir = x@registry_dir,
+    data_dir = x@data_dir,
+    info_file = x@info_file,
+    template = x@template,
     size_coi = x@size,
     size_ref = if (included) y@size - x@size else y@size,
     p_attribute = x@p_attribute,

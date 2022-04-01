@@ -89,11 +89,16 @@ setMethod("as.phrases", "ngrams", function(.Object){
 #'   will initialize a \code{phrases} object. The corpus and the encoding of the
 #'   corpus will be assigned to the object.
 setMethod("as.phrases", "matrix", function(.Object, corpus, enc = encoding(corpus)){
+  corpus_obj <- corpus(corpus)
   new(
     "phrases",
     cpos = .Object,
     corpus = corpus,
-    encoding = if (missing(enc)) encoding(corpus) else enc,
+    registry_dir = corpus_obj@registry_dir,
+    data_dir = corpus_obj@data_dir,
+    info_file = corpus_obj@info_file,
+    template = corpus_obj@template,
+    encoding = if (missing(enc)) corpus_obj@encoding else enc,
     size = sum(.Object[,2] - .Object[,1] + 1L)
   )
 })

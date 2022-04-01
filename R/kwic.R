@@ -307,7 +307,7 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   p_attr_decoded <- cl_id2str(
     corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
     id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
-    registry = registry()
+    registry = .Object@registry_dir
   )
   DT[, .Object@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = .Object@encoding), with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
@@ -316,11 +316,17 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   y <- new(
     "kwic",
     corpus = .Object@corpus,
+    encoding = .Object@encoding,
+    data_dir = .Object@data_dir,
+    registry_dir = .Object@registry_dir,
+    template = .Object@template,
+
     left = as.integer(.Object@left),
     right = as.integer(.Object@right),
+    
     p_attribute = .Object@p_attribute,
     metadata = if (length(s_attributes) == 0L) character() else s_attributes,
-    encoding = .Object@encoding,
+    
     cpos = DT,
     stat = data.table()
   )
@@ -415,9 +421,13 @@ setMethod("kwic", "corpus", function(
   if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
   if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
-  hits <- cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
+  hits <- cpos(
+    .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute,
+    verbose = FALSE
+  )
+  
   if (is.null(hits)){
-    message("No hits for query: ", query);
+    message("No hits for query: ", query)
     return(invisible(NULL))
   }
   
@@ -429,11 +439,17 @@ setMethod("kwic", "corpus", function(
     boundary = boundary
   )
 
-  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = registry()), with = TRUE]
+  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(
+    corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = .Object@registry_dir
+    ), with = TRUE]
   
   ctxt@count <- nrow(hits)
   ctxt@boundary <- if (!is.null(boundary)) boundary else character()
   ctxt@p_attribute <- p_attribute
+  ctxt@registry_dir <- .Object@registry_dir
+  ctxt@data_dir <- .Object@data_dir
+  ctxt@info_file <- .Object@info_file
+  ctxt@template <- ctxt@template
   ctxt@encoding <- .Object@encoding
   ctxt@partition <- new("partition", stat = data.table())
 
@@ -461,17 +477,13 @@ setMethod("kwic", "character", function(
 ){
   kwic(
     .Object = corpus(.Object),
-    query = query,
-    cqp = cqp,
-    check = check,
-    left = left,
-    right = right,
+    query = query, cqp = cqp, check = check,
+    left = left, right = right,
     s_attributes = s_attributes,
     p_attribute = p_attribute,
     boundary = boundary,
     cpos = cpos,
-    stoplist = stoplist,
-    positivelist = positivelist,
+    stoplist = stoplist, positivelist = positivelist,
     regex = regex,
     verbose = verbose,
     progress = progress,
@@ -552,7 +564,14 @@ setMethod("merge", "kwic_bundle", function(x){
 #' @rdname kwic
 setMethod("kwic", "partition_bundle", function(.Object, ..., verbose = FALSE){
   strucs_combined <- unlist(lapply(.Object@objects, slot, "strucs"))
-  strucs_obj_name <- unname(unlist(lapply(.Object@objects, function(obj) rep(obj@name, times = length(obj@strucs)))))
+  strucs_obj_name <- unname(
+    unlist(
+      lapply(
+        .Object@objects,
+        function(obj) rep(obj@name, times = length(obj@strucs))
+      )
+    )
+  )
   
   if (verbose) message("... merging subcorpora/partitions into one single subcorpus")
   sc <- merge(.Object)

@@ -62,9 +62,9 @@ setMethod("+", signature(e1 = "bundle", e2 = "bundle"), function(e1, e2){
   if (length(newObjectClass) > 1) stop("the two objects do not have the same length")
   new(
     newObjectClass,
-    objects=c(e1@objects, e2@objects),
-    corpus=unique(e1@corpus, e2@corpus),
-    encoding=unique(e1@encoding, e2@encoding)
+    objects = c(e1@objects, e2@objects),
+    corpus = unique(e1@corpus, e2@corpus),
+    encoding = unique(e1@encoding, e2@encoding)
     )
 })
 

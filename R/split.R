@@ -141,7 +141,15 @@ setMethod("split", "corpus", function(
   obj_type <- if (isTRUE(partition_bundle_call)) "partition" else "subcorpus"
   new_class <- if (length(x@type) == 0L) obj_type else paste(x@type, obj_type, sep = "_")
   
-  y <- new(retval_class, corpus = x@corpus, encoding = x@encoding)
+  y <- new(
+    retval_class,
+    corpus = x@corpus,
+#    registry_dir = x@registry_dir,
+#    data_dir = x@data_dir,
+#    info_file = x@info_file,
+#    template = x@template,
+    encoding = x@encoding
+  )
   struc_size <- cl_attribute_size(corpus = x@corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
   strucs <- 0L:(struc_size - 1L)
   cpos_matrix <- get_region_matrix(corpus = x@corpus, s_attribute = s_attribute, strucs = strucs, registry = registry())

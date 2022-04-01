@@ -145,6 +145,10 @@ setMethod("context", "slice", function(
   ctxt@p_attribute <- p_attribute
   ctxt@corpus <- .Object@corpus
   ctxt@encoding <- .Object@encoding
+  ctxt@data_dir <- .Object@data_dir
+  ctxt@registry_dir <- .Object@registry_dir
+  ctxt@info_file <- .Object@info_file
+  ctxt@template <- .Object@template
   ctxt@partition <- as(.Object, "partition")
   ctxt@size_partition <- as.integer(.Object@size)
   ctxt@boundary <- if (!is.null(boundary)) boundary else character()
@@ -176,7 +180,11 @@ setMethod("context", "slice", function(
     setnames(ctxt@stat, "N", "count_coi")
     
     for (i in seq_along(p_attribute)){
-      newColumn <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute[i], id = ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]], registry = registry())
+      newColumn <- cl_id2str(
+        corpus = .Object@corpus,  registry = .Object@registry_dir,
+        p_attribute = p_attribute[i],
+        id = ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]]
+      )
       newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
       ctxt@stat[, eval(p_attribute[i]) := newColumnNative]
     }
@@ -246,7 +254,8 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
     s_attribute = s_attr,
     p_attribute = p_attribute,
     left = left, right = right,
-    boundary = boundary
+    boundary = boundary,
+    registry = corpus_registry_dir(corpus)
   )
   cpos_dt <- as.data.table(cpos_matrix)
   colnames(cpos_dt) <- c("position", "cpos", "match_id", paste(p_attribute, "id", sep = "_"))
@@ -342,8 +351,13 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, v
     corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
     positivelist <- unlist(lapply(
       positivelist,
-      function(x) cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = x, registry = registry()))
+      function(x)
+        cl_regex2id(
+          corpus = corpus, registry = .Object@registry_dir,
+          p_attribute = p_attribute, regex = x
+        )
       )
+    )
   }
   
   retval@objects <- sapply(
@@ -370,6 +384,10 @@ setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, com
     right = as.integer(.Object@right),
     p_attribute = .Object@p_attribute,
     corpus = .Object@corpus,
+    registry_dir = .Object@registry_dir,
+    data_dir = .Object@data_dir,
+    template = .Object@template,
+    info_file = .Object@info_file,
     encoding = .Object@encoding,
     method = .Object@method,
     stat = subset(.Object@stat, .Object@stat[, "node"]==query),
@@ -439,6 +457,9 @@ setAs(from = "kwic", to = "context", def = function(from){
     right = from@right,
     p_attribute = from@p_attribute,
     corpus = from@corpus,
+    registry_dir = from@registry_dir,
+    info_file = from@info_file,
+    template = from@template,
     stat = data.table(),
     encoding = from@encoding,
     cpos = from@cpos

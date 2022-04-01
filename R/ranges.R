@@ -25,16 +25,24 @@ setMethod("ranges", "corpus", function(.Object, query, cqp = FALSE, check = TRUE
   .fn <- function(x){
     cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   }
-  cpos_list <- if (progress) pblapply(as.list(query), .fn, cl = mc) else mclapply(as.list(query), .fn, mc.cores = mc)
-  if (is.null(names(query))) names(cpos_list) <- query else names(cpos_list) <- names(query)
-  for (i in length(query):1L) if (is.null(cpos_list[[i]])) cpos_list[[i]] <- NULL
-  new(
-    "ranges",
-    corpus = .Object@corpus,
-    encoding = .Object@encoding,
-    cpos = do.call(rbind, cpos_list),
-    query = unlist(lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]]))))
+  
+  if (progress){
+    cpos_list <- pblapply(as.list(query), .fn, cl = mc)
+  } else {
+    cpos_list <- mclapply(as.list(query), .fn, mc.cores = mc)
+  }
+
+  if (is.null(names(query))) names(cpos_list) <- query
+  
+  for (i in length(query):1L)
+    if (is.null(cpos_list[[i]])) cpos_list[[i]] <- NULL
+  
+  y <- as(.Object, "ranges")
+  y@cpos <- do.call(rbind, cpos_list)
+  y@query <- unlist(
+    lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]])))
   )
+  y
 })
 
 
@@ -46,21 +54,18 @@ setMethod("ranges", "character", function(.Object, query, cqp = FALSE, check = T
 
 #' @rdname ranges
 setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = TRUE, p_attribute = "word", verbose = TRUE, mc = 1L, progress = FALSE){
-  x <- new(
-    "corpus",
-    corpus = .Object@corpus,
-    data_dir = fs::path(.Object@data_dir),
-    type = .Object@type,
-    encoding = .Object@encoding,
-    name = character(),
-    size = size(.Object@corpus)
+
+  rng <- ranges(
+    .Object = as(.Object, "corpus"),
+    query = query, cqp = cqp, check = check,
+    p_attribute = p_attribute,
+    verbose = verbose, mc = mc, progress = progress
   )
   
-  rng <- ranges(.Object = x, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, mc = mc, progress = progress)
   strucs_matches <- cl_cpos2struc(
     corpus = .Object@corpus,
     s_attribute = .Object@s_attribute_strucs,
-    cpos = rng@cpos[,1], registry = registry()
+    cpos = rng@cpos[,1], registry = .Object@registry_dir
   )
   rng@cpos <- rng@cpos[strucs_matches %in% .Object@strucs,]
   rng@query <- rng@query[strucs_matches %in% .Object@strucs]

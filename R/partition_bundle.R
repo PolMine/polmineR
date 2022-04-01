@@ -63,7 +63,13 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
 
   y <- new(
     obj_type,
-    corpus = corpus_id, xml = x[[1]]@xml, encoding = x[[1]]@encoding,
+    corpus = corpus_id, 
+    registry_dir = x[[1]]@registry_dir,
+    data_dir = x[[1]]@data_dir,
+    info_file = x[[1]]@info_file,
+    template = x[[1]]@template,
+    xml = x[[1]]@xml,
+    encoding = x[[1]]@encoding,
     s_attribute_strucs = s_attr, strucs = strucs_combined,
     name = name
   )

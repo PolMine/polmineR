@@ -21,17 +21,17 @@ NULL
 #' @examples 
 #' use("polmineR")
 #' P <- partition("GERMAPARLMINI", date = "2009-10-27")
-#' ngramObject <- ngrams(P, n = 2, p_attribute = "word", char = NULL)
+#' ngrm <- ngrams(P, n = 2, p_attribute = "word", char = NULL)
 #' 
 #' # a more complex scenario: get most frequent ADJA/NN-combinations
-#' ngramObject <- ngrams(P, n = 2, p_attribute = c("word", "pos"), char = NULL)
-#' ngramObject2 <- subset(
-#'  ngramObject,
-#'  ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
+#' ngrm <- ngrams(P, n = 2, p_attribute = c("word", "pos"), char = NULL)
+#' ngrm2 <- subset(
+#'  ngrm,
+#'  ngrm[["1_pos"]] == "ADJA"  & ngrm[["2_pos"]] == "NN"
 #'  )
-#' ngramObject2@@stat[, "1_pos" := NULL][, "2_pos" := NULL]
-#' ngramObject3 <- sort(ngramObject2, by = "count")
-#' head(ngramObject3)
+#' ngrm2@@stat[, "1_pos" := NULL][, "2_pos" := NULL]
+#' ngrm3 <- sort(ngrm2, by = "count")
+#' head(ngrm3)
 setGeneric("ngrams", function(.Object, ...) standardGeneric("ngrams"))
 
 #' @rdname ngrams
@@ -122,7 +122,10 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     dummy <- lapply(
       1L:(n * length(p_attribute)),
       function(i){
-        str_raw <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attrs_cols[i], id = TF[[i]], registry = registry())
+        str_raw <- cl_id2str(
+          corpus = .Object@corpus, registry = .Object@registry_dir,
+          p_attribute = p_attrs_cols[i], id = TF[[i]]
+        )
         Encoding(str_raw) <- encoding(.Object)
         str <- stringi::stri_enc_tonative(str_raw)
         # str <- as.nativeEnc(str_raw, from = encoding(.Object))
@@ -155,12 +158,14 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
       count = unname(as.vector(tabled_ngrams))
       )
   }
-  new(
-    "ngrams",
-    n = as.integer(n), corpus = .Object@corpus, encoding = encoding(.Object),
-    size = as.integer(size(.Object)), stat = TF, name = name(.Object),
-    p_attribute = if (is.null(char)) p_attribute else "ngram"
-    )
+  
+  y <- as(as(.Object, "corpus"), "ngrams")
+  y@n = as.integer(n)
+  y@size = as.integer(size(.Object))
+  y@stat = TF
+  y@name = name(.Object)
+  y@p_attribute = if (is.null(char)) p_attribute else "ngram"
+  y
 })
 
 #' @rdname ngrams

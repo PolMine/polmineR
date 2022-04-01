@@ -104,7 +104,9 @@ setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is
   }
 
   h <- hits(
-    .Object, query = query, cqp = cqp, s_attribute = s_attribute, p_attribute = p_attribute, freq = freq,
+    .Object, query = query, cqp = cqp,
+    s_attribute = s_attribute, p_attribute = p_attribute, 
+    freq = freq,
     mc = mc, verbose = verbose, progress = progress
   )
   dispersion(h, s_attribute = s_attribute, source = .Object, freq = freq, fill = fill)

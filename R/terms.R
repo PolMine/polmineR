@@ -33,7 +33,7 @@ setMethod("terms", "slice", function(x, p_attribute, regex = NULL){
     y <- x@stat[[p_attribute]]
   } else {
     ids <- region_matrix_to_ids(
-      corpus = x@corpus,
+      corpus = x@corpus, registry = x@registry_dir,
       p_attribute = p_attribute,
       matrix = x@cpos
     )
@@ -42,7 +42,7 @@ setMethod("terms", "slice", function(x, p_attribute, regex = NULL){
       corpus = x@corpus,
       p_attribute = p_attribute,
       id = ids_unique,
-      registry = registry()
+      registry = x@registry_dir
     )
     Encoding(y) <- x@encoding
   }

@@ -8,12 +8,6 @@ NULL
 
 
 
-setAs(from = "partition", to = "plpr_partition", function(from){
-  y <- new("plpr_partition")
-  for (z in slotNames(from)) slot(y, z) <- slot(from, z)
-  y
-})
-
 
 
 

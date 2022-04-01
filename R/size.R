@@ -61,23 +61,39 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (is.null(s_attribute)){
-    return( cl_attribute_size(corpus = x@corpus, attribute = "word", attribute_type = "p", registry = registry()) )
+    return(
+      cl_attribute_size(
+        corpus = x@corpus, registry = x@registry_dir,
+        attribute = "word", attribute_type = "p"
+      )
+    )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     dt <- data.table::as.data.table(
       lapply(
         setNames(s_attribute, s_attribute),
         function(s_attr){
-          s_attr_max <- cl_attribute_size(corpus = x@corpus, attribute = s_attr, attribute_type = "s", registry = registry())
-          s_attr_vals <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = 0L:(s_attr_max - 1L), registry = registry())
+          s_attr_max <- cl_attribute_size(
+            corpus = x@corpus, registry = x@registry_dir,
+            attribute = s_attr, attribute_type = "s"
+          )
+          s_attr_vals <- cl_struc2str(
+            corpus = x@corpus, registry = x@registry_dir,
+            s_attribute = s_attr, struc = 0L:(s_attr_max - 1L)
+          )
           as.nativeEnc(s_attr_vals, from = x@encoding)
         }
       )
     )
     cpos_matrix <- RcppCWB::get_region_matrix(
       corpus = x@corpus, s_attribute = s_attribute[1],
-      strucs = 0L:(cl_attribute_size(corpus = x@corpus, attribute = s_attribute[1], attribute_type = "s", registry = registry()) - 1L),
-      registry = Sys.getenv("CORPUS_REGISTRY")
+      strucs = 0L:(
+        cl_attribute_size(
+          corpus = x@corpus, registry = x@registry_dir,
+          attribute = s_attribute[1], attribute_type = "s"
+          ) - 1L
+      ),
+      registry = x@registry_dir
     )
     
     dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
@@ -110,12 +126,18 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
     s_attr_sizes <- lapply(
       c(x@s_attribute_strucs, s_attribute),
       function(s_attr){
-        cl_attribute_size(corpus = x@corpus, attribute = s_attr, attribute_type = "s", registry = registry())
+        cl_attribute_size(
+          corpus = x@corpus, registry = x@registry_dir,
+          attribute = s_attr, attribute_type = "s" 
+        )
       }
     )
     if (do.call(identical, s_attr_sizes)){
       .fn <- function(s_attr){
-        str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = x@strucs, registry = registry())
+        str <- cl_struc2str(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s_attr, struc = x@strucs
+        )
         as.nativeEnc(str, from = x@encoding) 
       }
       dt <- data.table::as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
@@ -124,10 +146,19 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
     } else {
       dt <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
       for (s_attr in s_attribute){
-        strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s_attr, cpos = x@cpos[,1], registry = registry())
-        m <- get_region_matrix(corpus = x@corpus, s_attribute = s_attr, strucs = strucs, registry = registry())
+        strucs <- cl_cpos2struc(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s_attr, cpos = x@cpos[,1]
+        )
+        m <- get_region_matrix(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s_attr, strucs = strucs
+        )
         if (all(m[,1] <= x@cpos[,1]) && all(m[,2] >= x@cpos[,2])){
-          str <- cl_struc2str(corpus = x@corpus, s_attribute = s_attr, struc = strucs, registry = registry())
+          str <- cl_struc2str(
+            corpus = x@corpus, registry = x@registry_dir,
+            s_attribute = s_attr, struc = strucs
+          )
           dt[, (s_attr) := as.nativeEnc(str, from = x@encoding)]
         } else {
           warning(
