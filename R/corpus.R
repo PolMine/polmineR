@@ -157,7 +157,7 @@ setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpu
 #' @rdname corpus-class
 setMethod("corpus", "missing", function(){
   if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1L){
-    corpora <- .list_corpora()
+    corpora <- cqp_list_corpora()
     y <- data.frame(
       corpus = corpora,
       size = unname(sapply(corpora,function(x) cl_attribute_size(corpus = x, attribute = registry_get_p_attributes(x)[1], attribute_type = "p", registry = registry()))),

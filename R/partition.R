@@ -289,7 +289,7 @@ setMethod("partition", "character", function(
     dot_list[["pAttribute"]] <- NULL
   }
   
-  if (!.Object %in% .list_corpora()) stop("corpus not found (not installed / not in registry / a typo?)")
+  if (!.Object %in% cqp_list_corpora()) stop("corpus not loaded and available (not installed / not in registry / a typo?)")
   if (is.null(def)){
     if (length(dot_list) > 0L)
       def <- dot_list

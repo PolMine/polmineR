@@ -132,7 +132,7 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
 #' @noRd
 .token2id <- function(corpus, p_attribute, token = NULL, regex = FALSE){
   stopifnot(
-    corpus %in% .list_corpora(),
+    corpus %in% cqp_list_corpora(),
     p_attribute %in% registry_get_p_attributes(corpus)
     )
   if (is.null(token)) return( NULL )
@@ -275,8 +275,6 @@ round.data.table <- function(x, digits = 2L){
   invisible( NULL )
 }
 
-
-.list_corpora = function() toupper(list.files( registry() ))
 
 #' @importFrom magrittr %>%
 #' @export %>%
