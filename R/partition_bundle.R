@@ -73,7 +73,10 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
     s_attribute_strucs = s_attr, strucs = strucs_combined,
     name = name
   )
-  y@cpos <- get_region_matrix(corpus = corpus_id, s_attribute = s_attr, strucs = strucs_combined, registry = registry())
+  y@cpos <- get_region_matrix(
+    corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
+    s_attribute = s_attr, strucs = strucs_combined, 
+  )
   y@size <- size(y)
   y
 })
@@ -85,8 +88,8 @@ setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
   y <- callNextMethod()
   corpus_type <- get_type(y@corpus)
   y@type <- if (is.null(corpus_type)) character() else corpus_type
-  y@data_dir <- fs::path(
-    corpus_data_dir(corpus = y@corpus, registry = registry())
+  y@data_dir <- path(
+    corpus_data_dir(corpus = y@corpus, registry = corpus_registry_dir(y@corpus))
   )
   y
 })
@@ -260,7 +263,10 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
   CNT <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
-    CNT[[p_attr]] <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]], registry = registry())
+    CNT[[p_attr]] <- cl_id2str(
+      corpus = .Object@corpus, registry = corpus_registry_dir(.Object@corpus),
+      p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]]
+      )
   }
   count_list <- split(CNT, by = "match_id")
   

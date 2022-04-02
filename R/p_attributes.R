@@ -56,6 +56,9 @@ setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
 })
 
 
+#' @examples
+#' merkel <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+#' merkel_words <- p_attributes(merkel, "word")
 #' @rdname p_attributes
 setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode = TRUE){
   p_attrs <- registry_get_p_attributes(.Object@corpus)
@@ -63,19 +66,25 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
     return( p_attrs )
   } else {
     if (!p_attribute %in% p_attrs){
-      stop(sprintf("The p-attribute '' is not available in corpus ''.", p_attribute, .Object@corpus))
+      stop(
+        sprintf(
+          "The p-attribute '' is not available in corpus ''.",
+          p_attribute, .Object@corpus
+        )
+      )
     }
-    ids <- RcppCWB::cl_cpos2id(
-      corpus = .Object@corpus,
-      p_attribute = p_attribute,
-      registry = registry,
-      cpos = cpos(.Object@cpos)
+    ids <- cl_cpos2id(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      p_attribute = p_attribute, cpos = cpos(.Object@cpos)
     )
     ids_unique <- unique(ids)
     ids_unique <- ids_unique[order(ids_unique)]
-    str <- cl_id2str(corpus = .Object@corpus, p_attribute = p_attribute, registry = registry(), id = ids_unique)
-    if (corpus@encoding != encoding()){
-      str <- stringi::stri_encode(str, from = corpus@encoding, to = encoding())
+    str <- cl_id2str(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      p_attribute = p_attribute, id = ids_unique
+    )
+    if (.Object@encoding != encoding()){
+      str <- stringi::stri_encode(str, from = .Object@encoding, to = encoding())
     }
     return(str)
   }
