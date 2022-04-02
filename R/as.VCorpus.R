@@ -44,7 +44,8 @@ setAs(from = "partition_bundle", to = "VCorpus", def = function(from){
     s_attributes(from@objects[[1]]@corpus),
     function(s_attr)
       cl_attribute_size(
-        corpus = from@objects[[1]]@corpus, registry = registry(),
+        corpus = from@objects[[1]]@corpus,
+        registry = from@objects[[1]]@registry_dir,
         attribute = s_attr, attribute_type = "s"
       )
   )

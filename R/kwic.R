@@ -581,10 +581,9 @@ setMethod("kwic", "partition_bundle", function(.Object, ..., verbose = FALSE){
   k_cpos <- k@cpos[k@cpos[["position"]] == 0][, {.SD[.SD[["cpos"]] == min(.SD[["cpos"]])]}, by = "match_id"]
   k_cpos[, c("match_id", "cpos")][k@stat, on = "match_id"]
   match_strucs <- cl_cpos2struc(
-    corpus = get_corpus(sc),
+    corpus = get_corpus(sc), registry = .Object@objects[[1]]@registry_dir,
     s_attribute = sc@s_attribute_strucs,
-    cpos = k_cpos[["cpos"]],
-    registry = registry()
+    cpos = k_cpos[["cpos"]]
   )
   k@stat[, "subcorpus_name" := strucs_obj_name[match(match_strucs, unname(strucs_combined))]]
   setcolorder(k@stat, neworder = c("subcorpus_name", cols_old))

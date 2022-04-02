@@ -336,7 +336,10 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
     rm(regions_dt)
 
     .message("getting ids", verbose = verbose)
-    DT[, "id" := cl_cpos2id(corpus = x[[1]]@corpus, p_attribute = p_attribute, cpos = DT[["cpos"]], registry = registry())]
+    DT[, "id" := cl_cpos2id(
+      corpus = x[[1]]@corpus, registry = x[[1]]@registry_dir,
+      p_attribute = p_attribute, cpos = DT[["cpos"]]
+      )]
     DT[, "cpos" := NULL]
     setkeyv(x = DT, cols = c("i", "id"))
 
@@ -344,7 +347,10 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
     TF <- DT[, .N, by = c("i", "id"), with = TRUE]
     rm(DT)
     setnames(TF, old = "N", new = "count")
-    str <- cl_id2str(corpus = x[[1]]@corpus, p_attribute = p_attribute, id = TF[["id"]], registry = registry())
+    str <- cl_id2str(
+      corpus = x[[1]]@corpus, registry = x[[1]]@registry_dir,
+      p_attribute = p_attribute, id = TF[["id"]]
+    )
     TF[, (p_attribute) := as.nativeEnc(str, from = encoding)]
     rm(str)
     
@@ -425,10 +431,8 @@ setMethod("as.DocumentTermMatrix", "context", function(x, p_attribute, verbose =
   id_index_new <- setNames(1L:length(unique_ids), as.character(unique_ids))
   decoded_tokens <- as.nativeEnc(
     cl_id2str(
-      corpus = x@corpus,
-      p_attribute = p_attribute,
-      id = unique_ids,
-      registry = registry()
+      corpus = x@corpus, registry = x@registry_dir,
+      p_attribute = p_attribute, id = unique_ids
     ),
     from = x@encoding
   )

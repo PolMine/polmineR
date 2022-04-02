@@ -142,10 +142,17 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
     if (regex){
       retval <- unlist(lapply(
         token,
-        function(x) cl_regex2id(corpus = corpus, p_attribute = p_attribute, regex = x, registry = registry())
+        function(x)
+          cl_regex2id(
+            corpus = corpus, registry = corpus_registry_dir(corpus),
+            p_attribute = p_attribute, regex = x
+          )
       ))
     } else {
-      retval <- cl_str2id(corpus = corpus, p_attribute = p_attribute, str = token, registry = registry())
+      retval <- cl_str2id(
+        corpus = corpus, registry = corpus_registry_dir(corpus),
+        p_attribute = p_attribute, str = token
+      )
     }
     return( retval )
   }
