@@ -85,8 +85,14 @@ setMethod("split", "subcorpus", function(
   
   if (x@xml == "nested") stop("splitting not yet implemented for nested XML")
   
-  strucs <- cl_cpos2struc(corpus = x@corpus, s_attribute = s_attribute, cpos = x@cpos[,1], registry = registry())
-  strucs_values <- cl_struc2str(corpus = x@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
+  strucs <- cl_cpos2struc(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attribute, cpos = x@cpos[,1]
+  )
+  strucs_values <- cl_struc2str(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attribute, struc = strucs
+  )
   strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
   
   cpos_list <- split(x@cpos, strucs_values)
@@ -150,10 +156,19 @@ setMethod("split", "corpus", function(
 #    template = x@template,
     encoding = x@encoding
   )
-  struc_size <- cl_attribute_size(corpus = x@corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
+  struc_size <- cl_attribute_size(
+    corpus = x@corpus, registry = x@registry_dir,
+    attribute = s_attribute, attribute_type = "s"
+  )
   strucs <- 0L:(struc_size - 1L)
-  cpos_matrix <- get_region_matrix(corpus = x@corpus, s_attribute = s_attribute, strucs = strucs, registry = registry())
-  strucs_values <- cl_struc2str(corpus = x@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
+  cpos_matrix <- get_region_matrix(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attribute, strucs = strucs
+  )
+  strucs_values <- cl_struc2str(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attribute, struc = strucs
+  )
   strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
   
   cpos_list <- split(cpos_matrix, strucs_values)

@@ -177,8 +177,11 @@ setMethod("read", "regions", function(.Object, meta = NULL){
             cl_struc2str(
               corpus = .Object@corpus,
               s_attribute = M,
-              struc = cl_cpos2struc(corpus = .Object@corpus, s_attribute = M, cpos = .BY[[1]], registry = registry()),
-              registry = registry()
+              struc = cl_cpos2struc(
+                corpus = .Object@corpus,  registry = .Object@registry_dir,
+                s_attribute = M, cpos = .BY[[1]]
+              ),
+              registry = .Object@registry_dir
             ), from = .Object@encoding
             )
         }

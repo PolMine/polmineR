@@ -234,7 +234,8 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
   if (to == "data.table"){
 
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
-    if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
+    if (!all(p_attributes %in% p_attributes(.Object)))
+      stop("Not all p_attributes provided are available.")
     
 
     p_attribute_list <- lapply(
@@ -249,7 +250,8 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
     
     if (is.null(s_attributes)) s_attributes <- s_attributes(.Object)
     if (length(s_attributes) > 0L){
-      if (!all(s_attributes %in% s_attributes(.Object))) stop("Not all s_attributes provided are available.")
+      if (!all(s_attributes %in% s_attributes(.Object)))
+        stop("Not all s_attributes provided are available.")
     }
     
     if (length(s_attributes) > 0L){
@@ -257,10 +259,15 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
         setNames(s_attributes, s_attributes),
         function(s_attr){
           if (verbose) message("decoding s-attribute:", s_attr)
-          corpus_id <- get_corpus(.Object)
-          struc <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attr, cpos = 0L:max_cpos, registry = registry())
+          struc <- cl_cpos2struc(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = s_attr, cpos = 0L:max_cpos
+          )
           if (decode){
-            str <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = struc, registry = registry())
+            str <- cl_struc2str(
+              corpus = .Object@corpus, registry = .Object@registry_dir,
+              s_attribute = s_attr, struc = struc
+            )
             Encoding(str) <- encoding(.Object)
             return(as.nativeEnc(str, from = encoding(.Object)))
           } else {
@@ -321,10 +328,16 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
     if (is.null(s_attributes)) s_attributes <- s_attributes(.Object)
     if (length(s_attributes) > 0L){
       if (!all(s_attributes %in% s_attributes(.Object))) stop("Not all s_attributes provided are available.")
-      strucs <- RcppCWB::cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attributes[1], cpos = .Object@cpos[,1])
+      strucs <- RcppCWB::cl_cpos2struc(
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        s_attribute = s_attributes[1], cpos = .Object@cpos[,1]
+      )
       
       s_attr_dt <- data.table(
-        RcppCWB::get_region_matrix(corpus = .Object@corpus, s_attribute = s_attributes[1], strucs = strucs, registry = registry())
+        RcppCWB::get_region_matrix(
+          corpus = .Object@corpus, registry = .Object@registry_dir,
+          s_attribute = s_attributes[1], strucs = strucs
+        )
       )
       setnames(s_attr_dt, old = c("V1", "V2"), new = c("cpos_left", "cpos_right"))
       s_attr_dt[, "struc" := strucs]
@@ -422,7 +435,10 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
     }
     y <- lexicon[.Object + 1L]
   } else if (isFALSE(boost)){
-    y <- RcppCWB::cl_id2str(corpus = corpus@corpus, p_attribute = p_attributes, registry = registry(), id = .Object)
+    y <- RcppCWB::cl_id2str(
+      corpus = corpus@corpus, registry = corpus@registry_dir,
+      p_attribute = p_attributes, id = .Object
+    )
     Encoding(y) <- corpus@encoding
     if (!identical(corpus@encoding, encoding())){
       # y <- stringi::stri_encode(y, from = corpus@encoding, to = encoding())
@@ -458,10 +474,8 @@ setMethod("decode", "data.table", function(.Object, corpus, p_attributes){
     for (p_attr in p_attributes){
       p_attr_id <- paste(p_attr, "id", sep = "_")
       ids <- RcppCWB::cl_cpos2id(
-        corpus = corpus@corpus,
-        p_attribute = p_attr,
-        cpos = .Object[["cpos"]],
-        registry = registry()
+        corpus = corpus@corpus, registry = corpus@registry_dir,
+        p_attribute = p_attr, cpos = .Object[["cpos"]]
       )
       .Object[, (p_attr_id) := ids]
     }

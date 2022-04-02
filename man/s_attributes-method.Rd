@@ -32,12 +32,7 @@ s_attributes(.Object, ...)
 
 \S4method{s_attributes}{remote_partition}(.Object, ...)
 
-\S4method{s_attributes}{data.table}(
-  .Object,
-  corpus,
-  s_attribute,
-  registry = Sys.getenv("CORPUS_REGISTRY")
-)
+\S4method{s_attributes}{data.table}(.Object, corpus, s_attribute, registry)
 }
 \arguments{
 \item{.Object}{A \code{corpus}, \code{subcorpus}, \code{partition} object, or
@@ -61,7 +56,8 @@ value by applying a regex.}
 denoting a corpus.}
 
 \item{registry}{The registry directory with the registry file defining
-\code{corpus}.}
+\code{corpus}. If missing, the registry directory that can be derived using
+\code{RcppCWB::corpus_registry_dir()} is used.}
 }
 \value{
 A character vector (s-attributes, or values of s-attributes).

@@ -12,8 +12,9 @@ setGeneric("show_info", function(x) standardGeneric("show_info"))
 #'   corpus (usually in the data directory of the corpus) and return it as a
 #'   \code{character} vector. Returns \code{NULL} if there is not info file.
 #' @export get_info
+#' @importFrom RcppCWB corpus_info_file
 setMethod("get_info", "corpus", function(x){
-  fname <- registry_get_info(corpus = x@corpus, registry = registry())
+  fname <- corpus_info_file(corpus = x@corpus, registry = x@registry_dir)
   if (file.exists(fname)){
     info <- readLines(fname)
     attr(info, "md") <- if (grepl(".md$", fname)) TRUE else FALSE

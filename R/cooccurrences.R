@@ -1101,9 +1101,9 @@ setAs(from = "cooccurrences", to = "kwic", function(from){
   # Add word_id to concordances
   y@stat <- tbl[y@stat, on = "match_id"]
   p_attr_decoded <- cl_id2str(
-    corpus = from@corpus, p_attribute = from@p_attribute[1],
-    id = y@stat[[paste(from@p_attribute[1], "id", sep = "_")]],
-    registry = registry()
+    corpus = from@corpus, registry = from@registry_dir,
+    p_attribute = from@p_attribute[1],
+    id = y@stat[[paste(from@p_attribute[1], "id", sep = "_")]]
   )
   y@stat[, from@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = from@encoding), with = TRUE]
   y@stat[, "word_id" := NULL]

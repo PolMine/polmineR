@@ -75,17 +75,27 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (is.null(s_attribute)){
-    return( registry_get_s_attributes(corpus = .Object@corpus, registry = registry()) )
+    s_attrs <- corpus_s_attributes(
+      corpus = .Object@corpus,
+      registry = .Object@registry_dir
+    )
+    return(s_attrs)
   } else {
     if (length(s_attribute) == 1L){
       if (!s_attribute %in% s_attributes(.Object)){
-        stop(sprintf("The s-attribute '%s' is not defined for corpus '%s'.", s_attribute, .Object@corpus))
+        stop(
+          sprintf(
+            "The s-attribute '%s' is not defined for corpus '%s'.",
+            s_attribute, .Object@corpus
+          )
+        )
       }
       avs_file <- fs::path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
       Encoding(avs) <- .Object@encoding
-      if (.Object@encoding != encoding()) avs <- as.nativeEnc(avs, from = .Object@encoding)
+      if (.Object@encoding != encoding())
+        avs <- as.nativeEnc(avs, from = .Object@encoding)
       
       if (unique){
         return(avs)
@@ -108,9 +118,8 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         s_attribute,
         function(s_attr)
           cl_attribute_size(
-            corpus = .Object@corpus,
-            attribute = s_attr, attribute_type = "s",
-            registry = Sys.getenv("CORPUS_REGISTRY")
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            attribute = s_attr, attribute_type = "s"
           )
       )
       if (length(unique(s_attr_sizes)) == 1L){
@@ -156,26 +165,39 @@ setMethod(
         xml_is_flat <- if (length(.Object@xml) > 0L) if (.Object@xml == "flat") TRUE else FALSE else FALSE
         s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
         if (xml_is_flat && s_attr_strucs){
-          len1 <- cl_attribute_size(corpus = .Object@corpus, attribute = .Object@s_attribute_strucs, attribute_type = "s", registry = registry())
-          len2 <- cl_attribute_size(corpus = .Object@corpus, attribute = s_attribute, attribute_type = "s", registry = registry())
+          len1 <- cl_attribute_size(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            attribute = .Object@s_attribute_strucs, attribute_type = "s"
+          )
+          len2 <- cl_attribute_size(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            attribute = s_attribute, attribute_type = "s"
+          )
           if (len1 != len2){
-            stop("XML is stated to be flat, but s_attribute_strucs hat length ", len1, " and s_attribute length ", len2)
+            stop(
+              "XML is stated to be flat, but s_attribute_strucs hat length ", len1,
+              " and s_attribute length ", len2
+            )
           }
-          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = .Object@strucs, registry = registry())
+          retval <- cl_struc2str(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = s_attribute, struc = .Object@strucs
+          )
           if (unique) retval <- unique(retval)
         } else {
           cpos_vector <- cpos(.Object@cpos)
           strucs <- cl_cpos2struc(
-            corpus = .Object@corpus,
-            s_attribute = s_attribute,
-            cpos = cpos_vector,
-            registry = registry()
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = s_attribute, cpos = cpos_vector
           )
           strucs <- unique(strucs)
           # filtering out negative struc values is necessary, because RcppCWB
           # will complain about negative values
           strucs <- strucs[which(strucs >= 0L)]
-          retval <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute, struc = strucs, registry = registry())
+          retval <- cl_struc2str(
+            corpus = .Object@corpus,  registry = .Object@registry_dir,
+            s_attribute = s_attribute, struc = strucs
+          )
           if (unique) retval <- unique(retval)
         }
         Encoding(retval) <- .Object@encoding
@@ -188,11 +210,17 @@ setMethod(
           USE.NAMES = TRUE,
           function(x){
             strucs <- if (.Object@xml == "nested"){
-              cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = .Object@cpos[,1], registry = registry())
+              cl_cpos2struc(
+                corpus = .Object@corpus,  registry = .Object@registry_dir,
+                s_attribute = x, cpos = .Object@cpos[,1]
+              )
             } else {
               .Object@strucs
             }
-            str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
+            str <- cl_struc2str(
+              corpus = .Object@corpus, registry = .Object@registry_dir,
+              s_attribute = x, struc = strucs
+            )
             Encoding(str) <- .Object@encoding
             str <- as.nativeEnc(str, from = .Object@encoding)
             Encoding(str) <- encoding()
@@ -249,12 +277,16 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 #'   quote(speaker == "Angela Merkel" & date == "2009-10-28"),
 #'   corpus = "GERMAPARLMINI"
 #' )
+#' @importFrom RcppCWB corpus_s_attributes
 setMethod("s_attributes", "call", function(.Object, corpus){
   s_attrs <- s_attributes(corpus)
   s_attrs <- if (is.character(corpus)){
-    registry_get_s_attributes(corpus = corpus, registry = registry())
+    corpus_s_attributes(corpus = corpus, registry = corpus_registry_dir(corpus))
   } else {
-    registry_get_s_attributes(corpus = corpus@corpus, registry = registry())
+    corpus_s_attributes(
+      corpus = corpus@corpus,
+      registry = corpus@registry_dir
+    )
   }
   # for the following recursive function, see http://adv-r.had.co.nz/Expressions.html
   .fn <- function(x){
@@ -285,14 +317,16 @@ setMethod("s_attributes", "remote_partition", function(.Object, ...){
 
 
 #' @param registry The registry directory with the registry file defining
-#'   `corpus`.
+#'   `corpus`. If missing, the registry directory that can be derived using
+#'   `RcppCWB::corpus_registry_dir()` is used.
 #' @rdname s_attributes-method
 #' @importFrom RcppCWB corpus_data_dir cl_charset_name s_attribute_decode
-setMethod("s_attributes", "data.table", function(.Object, corpus, s_attribute, registry = Sys.getenv("CORPUS_REGISTRY")){
+setMethod("s_attributes", "data.table", function(.Object, corpus, s_attribute, registry){
   
+  if (missing(registry)) registry <- corpus_registry_dir(corpus)
   data_dir <- corpus_data_dir(corpus = corpus, registry = registry)
   charset <- cl_charset_name(corpus = corpus, registry = registry)
-  
+
   y <- copy(.Object)
   
   if ("cpos" %in% colnames(y)){

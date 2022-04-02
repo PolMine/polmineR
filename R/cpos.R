@@ -86,7 +86,10 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
   if (!cqp) {
     
     .fn <- function(id){
-      regions <- cl_id2cpos(corpus = .Object@corpus, p_attribute = p_attribute, id = id, registry = registry())
+      regions <- cl_id2cpos(
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        p_attribute = p_attribute, id = id
+      )
       matrix(c(regions, regions), ncol = 2L)
     }
 
@@ -110,9 +113,15 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
         regions <- try({
           if (is.character(q)){
             if (!regex){
-              ids <- cl_str2id(corpus = .Object@corpus, p_attribute = p_attribute, str = q, registry = registry())
+              ids <- cl_str2id(
+                corpus = .Object@corpus, registry = .Object@registry_dir,
+                p_attribute = p_attribute, str = q
+              )
             } else {
-              ids <- cl_regex2id(corpus = .Object@corpus, p_attribute = p_attribute, regex = q, registry = registry())
+              ids <- cl_regex2id(
+                corpus = .Object@corpus, registry = .Object@registry_dir,
+                p_attribute = p_attribute, regex = q
+              )
             }
           } else if (is.integer(q)){
             ids <- q
@@ -179,7 +188,10 @@ setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, 
       # from a corpus object. In this case, the slot s_attribute_strucs is an empty character
       # vector, and no filtering will be performed. This is used by the coocurrences-method
       # that is implemented for the partition class, but not for the corpus class.
-      struc_hits <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs, cpos = hits[,1], registry = registry())
+      struc_hits <- cl_cpos2struc(
+        corpus = .Object@corpus,  registry = .Object@registry_dir,
+        s_attribute = .Object@s_attribute_strucs, cpos = hits[,1]
+      )
       hits <- hits[which(struc_hits %in% .Object@strucs),]
       if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2L)
       if (nrow(hits) == 0L) hits <- NULL
