@@ -75,7 +75,7 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
   )
   y@cpos <- get_region_matrix(
     corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
-    s_attribute = s_attr, strucs = strucs_combined, 
+    s_attribute = s_attr, strucs = strucs_combined 
   )
   y@size <- size(y)
   y

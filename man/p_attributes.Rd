@@ -53,6 +53,8 @@ use("polmineR")
 p_attributes("GERMAPARLMINI")
 p_attributes("REUTERS")
 p_attributes("REUTERS", p_attribute = "word")
+merkel <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
+merkel_words <- p_attributes(merkel, "word")
 }
 \references{
 Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.net/files/CQP_Tutorial.pdf.

@@ -147,6 +147,8 @@ did not process left and right contexts correctly, if it was a named character
 vector. Fixed.
 - The `hits()` method failed for `partition_bundle` objects when there were no
 matches for the query. Fixed. (#199 and #163)
+- The `p_attributes()` method for `slice` objects had an error when decoding
+the token stream. Fixed.
 
 
 # Documentation 

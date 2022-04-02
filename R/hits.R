@@ -87,7 +87,10 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   DT <- as.data.table(rngs)
 
   for (i in seq_along(s_attribute)){
-    strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = s_attribute[i], cpos = DT[["cpos_left"]], registry = registry())
+    strucs <- cl_cpos2struc(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      s_attribute = s_attribute[i], cpos = DT[["cpos_left"]]
+    )
     s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
     DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
   }
@@ -196,13 +199,19 @@ setMethod("hits", "partition_bundle", function(
   
   .message("finalizing tables", verbose = verbose)
   if (nrow(count_dt) > 0L){
-    strucs <- cl_cpos2struc(corpus = corpus_id, s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]], registry = registry())
+    strucs <- cl_cpos2struc(
+      corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
+      s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]]
+    )
     count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
     dt <- struc_dt[count_dt, on = "struc"] # merge
     nas <- which(is.na(dt[["partition"]]) == TRUE)
     if (missing(s_attribute)) s_attribute <- NULL
     for (s_attr in s_attribute){
-      values <- cl_struc2str(corpus = corpus_id, s_attribute = s_attr, struc = dt[["struc"]], registry = registry())
+      values <- cl_struc2str(
+        corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
+        s_attribute = s_attr, struc = dt[["struc"]]
+      )
       dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]
     }
     if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
@@ -257,8 +266,14 @@ setMethod("hits", "context", function(.Object, s_attribute = NULL, verbose = TRU
   
   .message("adding s_attributes", verbose = verbose)
   for (x in s_attribute){
-    strucs <- cl_cpos2struc(corpus = .Object@corpus, s_attribute = x, cpos = DT[["cpos_left"]], registry = registry())
-    str <- cl_struc2str(corpus = .Object@corpus, s_attribute = x, struc = strucs, registry = registry())
+    strucs <- cl_cpos2struc(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      s_attribute = x, cpos = DT[["cpos_left"]]
+    )
+    str <- cl_struc2str(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      s_attribute = x, struc = strucs
+    )
     DT[, eval(x) := str]
   }
   

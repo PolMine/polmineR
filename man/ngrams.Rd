@@ -101,17 +101,17 @@ Count n-grams, either of words, or of characters.
 \examples{
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-10-27")
-ngramObject <- ngrams(P, n = 2, p_attribute = "word", char = NULL)
+ngrm <- ngrams(P, n = 2, p_attribute = "word", char = NULL)
 
 # a more complex scenario: get most frequent ADJA/NN-combinations
-ngramObject <- ngrams(P, n = 2, p_attribute = c("word", "pos"), char = NULL)
-ngramObject2 <- subset(
- ngramObject,
- ngramObject[["1_pos"]] == "ADJA"  & ngramObject[["2_pos"]] == "NN"
+ngrm <- ngrams(P, n = 2, p_attribute = c("word", "pos"), char = NULL)
+ngrm2 <- subset(
+ ngrm,
+ ngrm[["1_pos"]] == "ADJA"  & ngrm[["2_pos"]] == "NN"
  )
-ngramObject2@stat[, "1_pos" := NULL][, "2_pos" := NULL]
-ngramObject3 <- sort(ngramObject2, by = "count")
-head(ngramObject3)
+ngrm2@stat[, "1_pos" := NULL][, "2_pos" := NULL]
+ngrm3 <- sort(ngrm2, by = "count")
+head(ngrm3)
 use("polmineR")
 dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table")
 y <- ngrams(dt, n = 3L, p_attribute = "word")

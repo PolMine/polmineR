@@ -53,16 +53,18 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   
   # generate metainformation
   documentStruc <- cl_cpos2struc(
-    corpus = corpus,
+    corpus = corpus, registry = corpus_registry_dir(corpus),
     s_attribute = get_template(corpus)[["document"]][["sAttribute"]],
-    cpos = .Object[1],
-    registry = registry()
+    cpos = .Object[1]
   )
 
   metaInformation <- sapply(
     meta,
     function(x) {
-      retval <- cl_struc2str(corpus = corpus, s_attribute = x, struc = documentStruc, registry = registry())
+      retval <- cl_struc2str(
+        corpus = corpus, registry = corpus_registry_dir(corpus),
+        s_attribute = x, struc = documentStruc
+      )
       Encoding(retval) <- corpusEncoding
       as.nativeEnc(retval, from = corpusEncoding)
     })
@@ -77,9 +79,16 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
     )
   
   cposSeries <- .Object[1]:.Object[2]
-  pStrucs <- cl_cpos2struc(corpus = corpus, s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], cpos = cposSeries, registry = registry())
+  pStrucs <- cl_cpos2struc(
+    corpus = corpus, registry = corpus_registry_dir(corpus),
+    s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], cpos = cposSeries
+  )
   chunks <- split(cposSeries, pStrucs)
-  pTypes <- cl_struc2str(corpus = corpus, s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], struc = as.numeric(names(chunks)), registry = registry())
+  pTypes <- cl_struc2str(
+    corpus = corpus, registry = corpus_registry_dir(corpus),
+    s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]],
+    struc = as.numeric(names(chunks))
+  )
   bodyList <- Map(
     function(pType, chunk){
       tokens <- get_token_stream(
@@ -177,8 +186,8 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
       .Object@cpos <- RcppCWB::get_region_matrix(
-        corpus = .Object@corpus, s_attribute = .Object@s_attribute_strucs,
-        registry = Sys.getenv("CORPUS_REGISTRY"), strucs = .Object@strucs
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        s_attribute = .Object@s_attribute_strucs, strucs = .Object@strucs
       )
       
     }
@@ -193,7 +202,10 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
     meta_change <- TRUE
   }
   
-  type <- cl_struc2str(corpus = .Object@corpus, s_attribute = template[["speech"]][["sAttribute"]], struc = .Object@strucs, registry = registry())
+  type <- cl_struc2str(
+    corpus = .Object@corpus, registry = .Object@registry_dir,
+    s_attribute = template[["speech"]][["sAttribute"]], struc = .Object@strucs
+  )
   
   if (is.numeric(cutoff)){
     beyond_cutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
