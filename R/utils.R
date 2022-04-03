@@ -134,8 +134,10 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
   stopifnot(
     corpus %in% cqp_list_corpora(),
     p_attribute %in% registry_get_p_attributes(corpus)
-    )
+  )
+  
   if (is.null(token)) return( NULL )
+  
   if (is.numeric(token)){
     return( token ) # do nothing if token is already numeric (i.e. presumably integer)
   } else {

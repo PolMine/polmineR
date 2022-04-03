@@ -118,6 +118,8 @@ with equivalent result, but faster due to immediate access to C representation
 of the corpus.
 - The `corpus()` method will deduce the registry directory from the C representation
 of the corpus if possible.
+- An inefficiency in the implementation of `as.markdown()` has been removed,
+making fulltext display (using `read()` or `html()`) much faster.
 
 
 ## Bug fixes

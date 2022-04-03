@@ -39,77 +39,6 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 }
 
 
-.as.markdown <- function(.Object, corpus, meta = NULL, cpos = FALSE, cutoff = NULL, ...){
-  corpusEncoding <- cl_charset_name(corpus)
-  
-  if (is.null(get_template(corpus))){
-    warning(
-      sprintf(
-        "No template available for corpus '%s', it will not be possible to format fulltext output.",
-        corpus
-      )
-    )
-  }
-  
-  # generate metainformation
-  documentStruc <- cl_cpos2struc(
-    corpus = corpus, registry = corpus_registry_dir(corpus),
-    s_attribute = get_template(corpus)[["document"]][["sAttribute"]],
-    cpos = .Object[1]
-  )
-
-  metaInformation <- sapply(
-    meta,
-    function(x) {
-      retval <- cl_struc2str(
-        corpus = corpus, registry = corpus_registry_dir(corpus),
-        s_attribute = x, struc = documentStruc
-      )
-      Encoding(retval) <- corpusEncoding
-      as.nativeEnc(retval, from = corpusEncoding)
-    })
-  names(metaInformation) <- meta
-  
-  metaInformation <- paste(metaInformation, collapse = ", ") # string will be converted to UTF-8
-  metaInformation <- paste(
-    get_template(corpus)[["document"]][["format"]][1],
-    metaInformation,
-    get_template(corpus)[["document"]][["format"]][2],
-    sep = ""
-    )
-  
-  cposSeries <- .Object[1]:.Object[2]
-  pStrucs <- cl_cpos2struc(
-    corpus = corpus, registry = corpus_registry_dir(corpus),
-    s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]], cpos = cposSeries
-  )
-  chunks <- split(cposSeries, pStrucs)
-  pTypes <- cl_struc2str(
-    corpus = corpus, registry = corpus_registry_dir(corpus),
-    s_attribute = get_template(corpus)[["paragraphs"]][["sAttribute"]],
-    struc = as.numeric(names(chunks))
-  )
-  bodyList <- Map(
-    function(pType, chunk){
-      tokens <- get_token_stream(
-        chunk, corpus = corpus, p_attribute = "word",
-        encoding = corpusEncoding, cpos = cpos, cutoff = cutoff
-      )
-      tokens <- .tagTokens(tokens)
-      paste(
-        get_template(corpus)[["paragraphs"]][["format"]][[pType]][1],
-        paste(tokens, collapse = " "),
-        get_template(corpus)[["paragraphs"]][["format"]][[pType]][2],
-        sep = ""
-      )
-    },
-    pTypes, chunks
-  )
-  article <- c(metaInformation, unlist(bodyList))
-  markdown <- paste(article, collapse = "\n\n")
-  markdown <- gsub("(.)\\s([,.:!?])", "\\1\\2", markdown)
-  markdown
-}
 
 #' @rdname as.markdown
 setMethod(
@@ -145,26 +74,93 @@ setMethod(
     }
     if (is.null(template[["paragraphs"]])){
       .message("generating paragraphs (no template)", verbose = verbose)
-      tokens <- get_token_stream(.Object, p_attribute = "word", cpos = cpos, cutoff = cutoff, ...)
+      tokens <- get_token_stream(
+        .Object,
+        p_attribute = "word", cpos = cpos,
+        cutoff = cutoff, ...
+      )
       tokens <- .tagTokens(tokens)
       tokens <- paste(tokens, collapse = " ")
-      rawTxt <- paste(tokens, sep = "\n")
-      txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", rawTxt)
+      txt_raw <- paste(tokens, sep = "\n")
+      txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", txt_raw)
     } else {
       .message("generating paragraphs (template for paras)", verbose = verbose)
       articles <- apply(
         .Object@cpos, 1,
-        function(row) .as.markdown(row, corpus = .Object@corpus, meta = meta, cutoff = cutoff, ...)
-        )
+        function(row){
+          # Previously, there was a check here whether template is NULL
+          # but there is the initial check already!
+          
+          # generate metainformation
+          doc_struc <- cl_cpos2struc(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = template[["document"]][["sAttribute"]],
+            cpos = row[1]
+          )
+          
+          meta_values <- sapply(
+            meta,
+            function(x) {
+              retval <- cl_struc2str(
+                corpus = .Object@corpus, registry = .Object@registry_dir,
+                s_attribute = x, struc = doc_struc
+              )
+              Encoding(retval) <- .Object@encoding
+              as.nativeEnc(retval, from = .Object@encoding)
+            }
+          )
+          names(meta_values) <- meta
+          
+          meta_values <- paste(meta_values, collapse = ", ") # string will be converted to UTF-8
+          meta_values <- paste(
+            template[["document"]][["format"]][1],
+            meta_values,
+            template[["document"]][["format"]][2],
+            sep = ""
+          )
+          
+          corpus_positions <- row[1]:row[2]
+          para_strucs <- cl_cpos2struc(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = template[["paragraphs"]][["sAttribute"]],
+            cpos = corpus_positions
+          )
+          chunks <- split(corpus_positions, para_strucs)
+          para_types <- cl_struc2str(
+            corpus = .Object@corpus, registry = .Object@registry_dir,
+            s_attribute = template[["paragraphs"]][["sAttribute"]],
+            struc = as.integer(names(chunks))
+          )
+          body_li <- Map(
+            function(p_type, chunk){
+              tokens <- get_token_stream(
+                chunk, corpus = corpus, p_attribute = "word",
+                encoding = .Object@encoding, cpos = cpos, cutoff = cutoff
+              )
+              tokens <- .tagTokens(tokens)
+              paste(
+                template[["paragraphs"]][["format"]][[p_type]][1],
+                paste(tokens, collapse = " "),
+                template[["paragraphs"]][["format"]][[p_type]][2],
+                sep = ""
+              )
+            },
+            para_types, chunks
+          )
+          article <- c(meta_values, unlist(body_li))
+          md <- paste(article, collapse = "\n\n")
+          gsub("(.)\\s([,.:!?])", "\\1\\2", md)
+        }
+      )
       txt <- paste(c("\n", unlist(articles)), collapse = '\n* * *\n')
     }
     txt
-    metaInfo <- paste(
+    meta_info <- paste(
       sapply(meta, function(x) sprintf("%s: %s", x, paste(s_attributes(.Object, x), collapse = "|"))),
       collapse = " // "
     )
-    corpusInfo <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
-    header <- paste(corpusInfo, paste("### ", metaInfo), "\n\n", sep = "")
+    corpus_info <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
+    header <- paste(corpus_info, paste("### ", meta_info), "\n\n", sep = "")
     txt <- paste(header, txt, '\n', collapse = "\n")
     txt
   })
