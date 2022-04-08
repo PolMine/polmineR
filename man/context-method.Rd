@@ -165,8 +165,7 @@ the value from the options}
 
 \item{progress}{logical, whether to show progress bar}
 
-\item{corpus}{A length-one \code{character} vector stating the corpus ID of a
-CWB corpus.}
+\item{corpus}{A length-one \code{character} vector stating a corpus ID.}
 
 \item{complete}{enhance completely}
 }
@@ -182,9 +181,9 @@ region.
 For formulating the query, CPQ syntax may be used (see
 examples). Statistical tests available are log-likelihood, t-test, pmi.
 
-If \code{.Object} is a \code{matrix}, the \code{context}-method will
-unfold the \code{matrix} (interpreted as regions defining left and right
-corpus positions) and return an elementary ... object.
+If \code{.Object} is a \code{matrix}, the \code{context}-method will call
+\code{RcppCWB::region_matrix_context()}, the worker behind the
+\code{context()}-method.
 }
 \examples{
 use("polmineR")

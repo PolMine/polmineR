@@ -220,30 +220,32 @@ setMethod("context", "subcorpus", function(
 ) callNextMethod()
 )
 
-#' @details If \code{.Object} is a \code{matrix}, the \code{context}-method will
-#'   unfold the \code{matrix} (interpreted as regions defining left and right
-#'   corpus positions) and return an elementary ... object.
-#' @param corpus A length-one \code{character} vector stating the corpus ID of a
-#'   CWB corpus.
+#' @details If `.Object` is a `matrix`, the `context`-method will call
+#'   `RcppCWB::region_matrix_context()`, the worker behind the
+#'   `context()`-method.
+#' @param corpus A length-one `character` vector stating a corpus ID.
 #' @rdname context-method
 #' @importFrom data.table between
 #' @importFrom RcppCWB region_matrix_context
 setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
-  if (class(left) == "numeric") left <- setNames(as.integer(left), nm = names(left))
-  if (class(right) == "numeric") right <- setNames(as.integer(right), nm = names(right))
+  if (class(left) == "numeric")
+    left <- setNames(as.integer(left), nm = names(left))
+  
+  if (class(right) == "numeric")
+    right <- setNames(as.integer(right), nm = names(right))
 
   if (is.integer(left) && is.integer(right)){
     if (is.null(names(left)) && is.null(names(left))){
       s_attr <- NULL
     } else {
       s_attr <- unique(c(names(left), names(right)))
-      if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
+      if (length(s_attr) > 1L) stop("Only one single s-attribute allowed.")
     }
   } else if (is.character(left) && is.character(right)){
     s_attr <- unique(left, right)
-    if (length(s_attr) > 1L) stop("Only on singe s-attribute allowed.")
+    if (length(s_attr) > 1L) stop("Only one single s-attribute allowed.")
     left <- 0L
     right <- 0L
   }
@@ -258,23 +260,21 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
     registry = corpus_registry_dir(corpus)
   )
   cpos_dt <- as.data.table(cpos_matrix)
-  colnames(cpos_dt) <- c("position", "cpos", "match_id", paste(p_attribute, "id", sep = "_"))
+  
+  colnames(cpos_dt) <- c(
+    "position", "cpos", "match_id", paste(p_attribute, "id", sep = "_")
+  )
   setcolorder(cpos_dt, c("match_id", "cpos"))
   
-  new(
-    "context",
-    query = character(),
-    p_attribute = character(),
-    count = nrow(.Object),
-    corpus = corpus,
-    stat = data.table(),
-    cpos = cpos_dt,
-    left = if (is.character(left)) 0L else as.integer(left),
-    right = if (is.character(right)) 0L else as.integer(right),
-    encoding = character(),
-    partition = new("partition", stat = data.table(), size = 0L),
-    boundary = character()
-  )
+  retval <- as(corpus(corpus), "context")
+  retval@count <- nrow(.Object)
+  retval@cpos <- cpos_dt
+  retval@left <- if (is.character(left)) 0L else as.integer(left)
+  retval@right <- if (is.character(right)) 0L else as.integer(right)
+  retval@boundary <- if (is.null(boundary)) character() else boundary
+  retval@p_attribute <- p_attribute
+  
+  retval
 })
 
 
