@@ -25,7 +25,7 @@ setAs(from = "kwic", to = "htmlwidget", def = function(from){
     ),
     escape = FALSE,
     selection = "single",
-    rownames = FALSE
+    rownames = TRUE
   )
   if ("node" %in% colnames(dt)) retval <- DT::formatStyle(retval, "node", textAlign = "center")
   if ("left" %in% colnames(dt)) retval <- DT::formatStyle(retval, "left", textAlign = "right")
