@@ -194,11 +194,7 @@ setMethod("count", "subcorpus", function(
       cpos <- cpos(.Object@cpos)
       id_list <- lapply(
         p_attribute,
-        function(p)
-          cl_cpos2id(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
-            p_attribute = p, cpos = cpos
-          )
+        function(p) cpos2id(x = .Object, p_attribute = p, cpos = cpos)
       )
       names(id_list) <- paste(p_attribute, "id", sep = "_")
       ID <- data.table::as.data.table(id_list)
@@ -433,9 +429,9 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
           setNames(p_attribute, paste(p_attribute, "id", sep = "_")),
           function(p_attr){
             .message("getting token stream for p-attribute: ", p_attr, verbose = verbose)
-            cl_cpos2id(
-              corpus = .Object@corpus, registry = .Object@registry_dir,
-              p_attribute = p_attr, 0L:(size(.Object) - 1L)
+            cpos2id(
+              x = .Object, p_attribute = p_attr,
+              cpos = 0L:(size(.Object) - 1L)
             )
           }
         )

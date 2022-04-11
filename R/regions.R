@@ -2,8 +2,8 @@
 NULL
 
 #' @rdname regions_class
-#' @param s_attribute An s-attribute denoted by a length-one \code{character}
-#'   vector for which regions shall be derived.
+#' @param s_attribute An s-attribute denoted by a length-one `character` vector
+#'   for which regions shall be derived.
 #' @exportMethod regions
 setGeneric("regions", function(x, s_attribute) standardGeneric("regions"))
 

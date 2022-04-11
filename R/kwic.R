@@ -438,10 +438,10 @@ setMethod("kwic", "corpus", function(
     corpus = .Object@corpus,
     boundary = boundary
   )
+  
+  ids <- cpos2id(x = .Object, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]])
 
-  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := cl_cpos2id(
-    corpus = .Object@corpus, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]], registry = .Object@registry_dir
-    ), with = TRUE]
+  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := ids, with = TRUE]
   
   ctxt@count <- nrow(hits)
   ctxt@boundary <- if (!is.null(boundary)) boundary else character()

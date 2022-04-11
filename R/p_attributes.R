@@ -73,10 +73,7 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
         )
       )
     }
-    ids <- cl_cpos2id(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
-      p_attribute = p_attribute, cpos = cpos(.Object@cpos)
-    )
+    ids <- cpos2id(.Object, p_attribute = p_attribute, cpos = cpos(.Object@cpos))
     ids_unique <- unique(ids)
     ids_unique <- ids_unique[order(ids_unique)]
     str <- cl_id2str(

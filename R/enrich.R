@@ -105,9 +105,9 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
     token_id <- paste(p_attributes(.Object), "id", sep = "_")
     word_id_na <- is.na(.Object@cpos[[token_id]])
     word_id_na_index <- which(word_id_na)
-    ids_na <- RcppCWB::cl_cpos2id(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
-      p_attribute = p_attributes(.Object), cpos = .Object@cpos[["cpos"]][word_id_na]
+    ids_na <- cpos2id(
+      .Object, p_attribute = p_attributes(.Object),
+      cpos = .Object@cpos[["cpos"]][word_id_na]
     )
     str_na <- RcppCWB::cl_id2str(
       corpus = .Object@corpus, registry = .Object@registry_dir,

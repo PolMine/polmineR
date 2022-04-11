@@ -3,15 +3,15 @@
 #' Test whether a character string is a CQP query, or turn a character
 #' vector into CQP queries.
 #' 
-#' The \code{is.cqp} function guesses whether \code{query} is a CQP query 
-#' and returns the respective logical value (\code{TRUE}/\code{FALSE}).
+#' The `is.cqp()` function guesses whether `query` is a CQP query 
+#' and returns the respective logical value (`TRUE`/`FALSE`).
 #' 
-#' The \code{as.cqp} function takes a character vector as input and converts it
+#' The `as.cqp()` function takes a character vector as input and converts it
 #' to a CQP query by putting the individual strings in quotation marks.
 #' 
-#' @param query A \code{character} vector with at least one CQP query.
-#' @param warn A (length-one) \code{logical} value, whether to issue a warning if
-#'   a query may be buggy.
+#' @param query A `character` vector with at least one CQP query.
+#' @param warn A (length-one) `logical` value, whether to issue a warning if a
+#'   query may be buggy.
 #' @name cqp
 #' @references CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})
 #' @rdname cqp
@@ -88,8 +88,16 @@ check_cqp_query <- function(query, warn = TRUE){
 #' @rdname cqp
 #' @name as.cqp
 as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE, warn = TRUE){
-  if (!is.logical(normalise.case)) stop("normalise.case needs to be a logical value")
-  if (!is.logical(collapse)) stop("collapse needs to be a logical value")
+  
+  if (!is.character(query))
+    stop("Function as.cqp() expects argument 'query' to be a character vector.")
+
+  if (!is.logical(normalise.case))
+    stop("normalise.case needs to be a logical value")
+  
+  if (!is.logical(collapse))
+    stop("collapse needs to be a logical value")
+  
   cqp <- unlist(lapply(
     query,
     function(x){
@@ -97,10 +105,10 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
       cqp_raw <- lapply(
         unlist(strsplit(query, "\\s")),
         function(q){
-          if ((substr(q, 1, 1) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
+          if ((substr(q, 1L, 1L) == '[') && (substr(q, nchar(q), nchar(q)) == ']')){
             retval <- q
           } else {
-            retval <- paste('"', q, '"', sep='')
+            retval <- paste('"', q, '"', sep = '')
             if (normalise.case == TRUE) retval <- paste(retval, "%c", sep = " ")
           }
           retval
@@ -293,4 +301,16 @@ magrittr::`%>%`
 #' @export as.data.table
 data.table::as.data.table
 
-default_template <- list(document = list(sAttribute = "text", format = c("### ","")))
+default_template <- list(
+  document = list(
+    sAttribute = "text",
+    format = c("### ","")
+  )
+)
+
+cpos2id <- function(x, p_attribute, cpos){
+  cl_cpos2id(
+    corpus = x@corpus, registry = x@registry_dir,
+    p_attribute = p_attribute, cpos = cpos
+  )
+}

@@ -112,10 +112,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
       attribute = p_attribute, attribute_type = "p"
     ) - 1L
   )
-  token_id <- cl_cpos2id(
-    corpus = x@corpus, registry = x@registry_dir,
-    p_attribute = p_attribute, cpos = cpos_vector
-  )
+  token_id <- cpos2id(x = x, p_attribute = p_attribute, cpos = cpos_vector)
   struc_vector <- 0L:(
     cl_attribute_size(
       corpus = x@corpus, registry = x@registry_dir,
@@ -336,10 +333,7 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
     rm(regions_dt)
 
     .message("getting ids", verbose = verbose)
-    DT[, "id" := cl_cpos2id(
-      corpus = x[[1]]@corpus, registry = x[[1]]@registry_dir,
-      p_attribute = p_attribute, cpos = DT[["cpos"]]
-      )]
+    DT[, "id" := cpos2id(x[[1]], p_attribute = p_attribute, cpos = DT[["cpos"]])]
     DT[, "cpos" := NULL]
     setkeyv(x = DT, cols = c("i", "id"))
 

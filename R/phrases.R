@@ -58,7 +58,11 @@ setMethod("as.phrases", "ngrams", function(.Object){
   # Get id for 2nd, 3rd ... nth token after start corpus position and limit table to those matching the id
   # at the position
   for (i in 2L:.Object@n){
-    nextid <- cl_cpos2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, cpos = (y[["cpos"]] + i - 1L))
+    nextid <- cpos2id(
+      x = .Object,
+      p_attribute = .Object@p_attribute,
+      cpos = (y[["cpos"]] + i - 1L)
+    )
     y <- y[y[[paste("V", i, sep = "")]] == nextid]
   }
   

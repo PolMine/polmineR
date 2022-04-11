@@ -634,7 +634,9 @@ setMethod("Cooccurrences", "slice", function(
     id_list <- lapply(
       1L:nrow(.Object@cpos),
       function(j)
-        RcppCWB::cl_cpos2id(corpus = .Object@corpus, p_attribute = p_attribute, cpos = .Object@cpos[j,1]:.Object@cpos[j,2]
+        cpos2id(
+          .Object, p_attribute = p_attribute,
+          cpos = .Object@cpos[j,1]:.Object@cpos[j,2]
         )
     )
 
@@ -754,8 +756,8 @@ setMethod("Cooccurrences", "slice", function(
     lapply(
       p_attribute,
       function(x){
-        dt[, eval(a_cols_id[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = dt[["a_cpos"]]), with = TRUE]
-        dt[, eval(b_cols_id[x]) := cl_cpos2id(corpus = .Object@corpus, p_attribute = x, cpos = dt[["b_cpos"]]), with = TRUE]
+        dt[, eval(a_cols_id[x]) := cpos2id(.Object, p_attribute = x, cpos = dt[["a_cpos"]]), with = TRUE]
+        dt[, eval(b_cols_id[x]) := cpos2id(.Object, p_attribute = x, cpos = dt[["b_cpos"]]), with = TRUE]
       }
     )
     if (verbose) message("... counting window size")

@@ -473,10 +473,7 @@ setMethod("decode", "data.table", function(.Object, corpus, p_attributes){
   if ("cpos" %in% colnames(.Object)){
     for (p_attr in p_attributes){
       p_attr_id <- paste(p_attr, "id", sep = "_")
-      ids <- RcppCWB::cl_cpos2id(
-        corpus = corpus@corpus, registry = corpus@registry_dir,
-        p_attribute = p_attr, cpos = .Object[["cpos"]]
-      )
+      ids <- cpos2id(corpus, p_attribute = p_attr, cpos = .Object[["cpos"]])
       .Object[, (p_attr_id) := ids]
     }
   }
