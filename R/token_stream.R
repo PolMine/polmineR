@@ -68,8 +68,8 @@ NULL
 #' # Decode first sentence and collapse tokens into single string
 #' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
 #'
-#' # Decode regions defined by two-column matrix
-#' region_matrix <- matrix(c(0,9,10,25), ncol = 2, byrow = TRUE)
+#' # Decode regions defined by two-column integer matrix
+#' region_matrix <- matrix(c(0L,9L,10L,25L), ncol = 2, byrow = TRUE)
 #' get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1")
 #'
 #' # Use argument 'beautify' to remove surplus whitespace

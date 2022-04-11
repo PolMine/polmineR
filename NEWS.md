@@ -123,6 +123,10 @@ making fulltext display (using `read()` or `html()`) much faster.
 - Calling `corpus()` without any arguments now returns an expanded `data.frame`
 reporting all slots of the `corpus` class objects, skipping only the data
 directory of the corpus.
+- The `cpos()` method for `matrix` objects that turns a matrix with corpus
+positions into a vector of `integer` values now relies on a C-level
+implementation newly included in the RcppCWB package, that is significantly 
+faster than the best possible implementation in R.
 
 
 ## Bug fixes

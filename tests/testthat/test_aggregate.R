@@ -15,7 +15,7 @@ test_that(
     
     P <- new(
       "partition",
-      cpos = matrix(data = c(1:10, 20:29), ncol = 2, byrow = TRUE),
+      cpos = matrix(data = c(1L:10L, 20L:29L), ncol = 2, byrow = TRUE),
       stat = data.table()
     )
     P2 <- aggregate(P)
@@ -28,7 +28,7 @@ test_that(
     
     P <- new(
       Class = "regions",
-      cpos = matrix(data = c(1:10, 20:29), ncol = 2, byrow = TRUE)
+      cpos = matrix(data = c(1L:10L, 20L:29L), ncol = 2, byrow = TRUE)
     )
     P2 <- aggregate(P)
     P2@cpos
@@ -43,9 +43,9 @@ test_that(
 test_that(
   "disaggregate region matrix / as_cpos_vector",
   {
-    y <- cpos(matrix(c(1,5, 6,10), ncol = 2, byrow = TRUE))
+    y <- cpos(matrix(c(1L,5L, 6L, 10L), ncol = 2, byrow = TRUE))
     expect_equal(y, 1:10)
-    y <- cpos(matrix(c(1,6, 7,10), ncol = 2, byrow = TRUE))
+    y <- cpos(matrix(c(1L, 6L, 7L, 10L), ncol = 2, byrow = TRUE))
     expect_equal(y, 1:10)
   }
 )

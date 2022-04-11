@@ -94,11 +94,11 @@ test_that(
 test_that(
   "get_token_stream()-method for matrix input",
   {
-    region_matrix <- matrix(c(0,9,10,25), ncol = 2, byrow = TRUE)
-    ts_rm <- get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1", collapse = " ")
+    rngs <- matrix(c(0L,9L,10L,25L), ncol = 2L, byrow = TRUE)
+    ts_rm <- get_token_stream(rngs, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1", collapse = " ")
     expect_identical(nchar(ts_rm), 159L)
     
-    r <- new("regions", cpos = region_matrix, corpus = "GERMAPARLMINI", encoding = "latin1")
+    r <- new("regions", cpos = rngs, corpus = "GERMAPARLMINI", encoding = "latin1")
     ts_r <- get_token_stream(r, p_attribute = "word", collapse = " ")
     expect_identical(ts_rm, ts_r)
   }

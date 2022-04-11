@@ -222,8 +222,9 @@ setMethod("cpos", "subcorpus", function(.Object, query, cqp = is.cqp, check = TR
 #' the matrix. The \code{cpos}-method for \code{matrix} objects will performs
 #' this task robustly.
 #' @rdname cpos-method
+#' @importFrom RcppCWB ranges_to_cpos
 setMethod("cpos", "matrix", function(.Object)
-  do.call(c, lapply(1L:nrow(.Object), function(i) .Object[i,1]:.Object[i,2]))
+  ranges_to_cpos(.Object)
 )
 
 #' @rdname cpos-method
