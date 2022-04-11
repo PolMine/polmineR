@@ -219,7 +219,6 @@ Use the read method, to inspect the full text of a partition (a speech
 given by chancellor Angela Merkel in this case).
 
 ``` r
-use("GermaParl")
 merkel <- partition("GERMAPARL", speaker = "Angela Merkel", date = "2013-09-03")
 read(merkel)
 ```
@@ -232,7 +231,6 @@ obtained in a fast and flexible manner, for performing topic modelling,
 machine learning etc.
 
 ``` r
-use("europarl")
 speakers <- partition_bundle(
   "EUROPARL-EN", s_attribute = "speaker_id",
   progress = FALSE, verbose = FALSE
@@ -247,7 +245,7 @@ dim(tdm)
 ### Windows
 
 The following instructions assume that you have installed R. If not,
-install it from[CRAN](https://cran.r-project.org/bin/windows/base/). An
+install it from [CRAN](https://cran.r-project.org/bin/windows/base/). An
 installation of
 [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
 is highly recommended.
@@ -285,25 +283,27 @@ binary package both for Intel processors (x86_64 architecture) and the
 newer Apple silicon chips (arm64 architecture). If R and RStudio are not
 yet installed, follow these preparatory steps.
 
--   Install R. Note that packages are available for both Intel 64-bit
-    and Apple silicon arm64 chip architectures and make sure you install
-    what applies for you, see the [R for
-    macOS](https://cran.r-project.org/bin/macosx/) site.
+-   Installing [XQuartz](https://www.xquartz.org) is recommended. The
+    available image works for Intel and Apple chips. Note that XQuartz
+    capability is configured and used by R only if XQuartz has been
+    installed **before** installing R.
 
--   Installing [XQuartz](https://www.xquartz.org) is recommended (the
-    available image works for Intel and Apple chips).
+-   Install R. Note that packages are available for both Intel 64-bit
+    and Apple silicon arm64 chip architectures. Install what applies for
+    you, see the [R for macOS](https://cran.r-project.org/bin/macosx/)
+    site.
 
 -   Install
     [RStudio](https://www.rstudio.com/products/rstudio/download/#download).
     The free version of RStudio Desktop is enough. Starting with version
     1.4, Apple silicon is supported. When installing RStudio, users with
-    a Apple silicon chip will be asked to install
+    a Apple silicon chips are be asked to install
     [Rosetta](https://support.apple.com/en-gb/HT211861) (say yes).
 
 -   When starting RStudio the first time, you may be asked to install
     the [Command Line Developer
     Tools](https://developer.apple.com/forums/thread/13781). This is not
-    strictly necessary for basic usage, but recommended. Note that
+    necessary for basic polmineR usage, but recommended. Note that
     downloading the Command Line Developer Tools may require a stable
     internet connection and still take some time.
 
@@ -319,14 +319,16 @@ require and install all required dependencies.
 #### Install development version / build from source
 
 For installing the development version of polmineR and building the
-package from source, the prerequisites required for installing the
-binary package (including [XQuartz](https://www.xquartz.org/) and the
-Command Line Developer Tools) need to be met. The Command Line Developer
-Tools can also be installed from a terminal window as follows.
+package from source, the Command Line Developer Tools need to be
+installed. Install them from a terminal window as follows.
 
 ``` sh
 xcode-select --install
 ```
+
+If you haven’t done so already, install
+[XQuartz](https://www.xquartz.org/), R and RStudio (see previous
+instructions for binary installation).
 
 The [devtools](https://CRAN.R-project.org/package=devtools) package
 exposes a convenient and commonly used installation mechanism for
@@ -343,9 +345,12 @@ Then use the `install_github()` function as follows.
 devtools::install_github("PolMine/polmineR", ref = "dev")
 ```
 
-If you also want or want to install a development version of RcppCWB,
-several system dependencies need to be fulfilled for compiling the
-package from source. See the [README of the RcppCWB GitHub
+The development version of polmineR may require the installation of a
+development version of the RcppCWB: polmineR interacts with the Corpus
+Workbench (CWB) via RcppCWB, an R package which exposes the C-level
+functions of the CWB. If you want or need to install a development
+version of RcppCWB, several system dependencies need to be fulfilled for
+compiling the package from source. See the [README of the RcppCWB GitHub
 repository](https://github.com/PolMine/RcppCWB) for instructions.
 
 #### Checking the installation
@@ -416,7 +421,6 @@ vignette, and the man packages.
 
 ``` r
 library(polmineR)
-use("polmineR")
 corpus()
 ```
 
