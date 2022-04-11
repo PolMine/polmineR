@@ -78,20 +78,21 @@ corpus.}
 
 \item{\code{data_dir}}{The directory where binary files of the indexed corpus reside.}
 
-\item{\code{info_file}}{The info file indicated in the registry file (typically a
-file named \code{.info} \code{info.md} in the data directory).}
+\item{\code{info_file}}{If available, the info file indicated in the registry file
+(typically a file named \code{.info} \code{info.md} in the data directory), or \code{NA}
+if not.}
 
 \item{\code{template}}{Full path to the template containing formatting instructions
-when showing full text output (\code{fs_path} object).}
+when showing full text output (\code{fs_path} object or \code{NA}).}
 
-\item{\code{type}}{The type of the corpus (e.g. "plpr" for a corpus of plenary
-protocols).}
+\item{\code{type}}{If available, the type of the corpus (e.g. "plpr" for a corpus of
+plenary protocols), or \code{NA}.}
 
-\item{\code{name}}{An additional name for the object that may be more telling than
+\item{\code{name}}{Full name of the corpus that may be more expressive than
 the corpus ID.}
 
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one
-\code{character} vector.}
+\code{character} vector (usually 'utf8' or 'latin1').}
 
 \item{\code{size}}{Number of tokens (size) of the corpus, a length-one \code{integer}
 vector.}

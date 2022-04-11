@@ -120,6 +120,9 @@ of the corpus.
 of the corpus if possible.
 - An inefficiency in the implementation of `as.markdown()` has been removed,
 making fulltext display (using `read()` or `html()`) much faster.
+- Calling `corpus()` without any arguments now returns an expanded `data.frame`
+reporting all slots of the `corpus` class objects, skipping only the data
+directory of the corpus.
 
 
 ## Bug fixes

@@ -20,7 +20,7 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   restricted (`TRUE`) or not (`FALSE`).
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora corpus_data_dir corpus_registry_dir
-#'   corpus_info_file
+#'   corpus_info_file corpus_full_name
 #' @importFrom fs path path_expand
 setMethod("corpus", "character", function(
     .Object, registry_dir,
@@ -102,11 +102,15 @@ setMethod("corpus", "character", function(
       data_dir = data_dir,
       info_file = if (file.exists(info_file)) info_file else path(NA),
       template = if (file.exists(template)) template else path(NA),
-      type = if ("type" %in% names(properties)) properties[["type"]] else character(),
+      type = if ("type" %in% names(properties))
+        properties[["type"]]
+      else
+        NA_character_,
       size = cl_attribute_size(
         corpus = .Object, registry = registry_dir,
         attribute = "word", attribute_type = "p"
-      )
+      ),
+      name = corpus_full_name(corpus = .Object, registry = registry_dir)
     )
     
     return(y)
@@ -156,28 +160,30 @@ setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpu
 
 #' @rdname corpus-class
 setMethod("corpus", "missing", function(){
-  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 1L){
-    corpora <- cqp_list_corpora()
-    y <- data.frame(
-      corpus = corpora,
-      size = unname(
-        sapply(
-          corpora,
-          function(x)
-            cl_attribute_size(
-              corpus = x, registry = corpus_registry_dir(x),
-              attribute = registry_get_p_attributes(x)[1], attribute_type = "p"
-            )
-          )
-      ),
-      encoding = unname(sapply(corpora, function(x) cl_charset_name(x))),
-      template = unname(sapply(corpora, function(x) if (is.null(get_template(x, warn = FALSE))) FALSE else TRUE )),
-      stringsAsFactors = FALSE
+  
+  corpora <- lapply(RcppCWB::cqp_list_corpora(), corpus)
+  corpus_slots <- slotNames(new("corpus"))
+  
+  dt <- rbindlist(lapply(
+    corpora,
+    function(x)
+      as.data.table(
+        setNames(lapply(corpus_slots, function(s) slot(x, s)),corpus_slots)
+      )
     )
-  } else {
-    y <- data.frame(corpus = character(), size = integer())
-  }
-  return(y)
+  )
+  
+  dt[, "data_dir" := NULL]
+  dt[, "info_file" := ifelse(is.na(dt$info_file), FALSE, TRUE)]
+  dt[, "template" := ifelse(is.na(dt$template), FALSE, TRUE)]
+  dt[, "registry_dir" := ifelse(dt$registry_dir == registry(), "tmp", "other")]
+  
+  setcolorder(
+    dt,
+    neworder = c("corpus", "name", "encoding", "type", "template")
+  )
+  
+  as.data.frame(dt)
 })
 
 
@@ -342,7 +348,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     return(NULL)
   }
   
-  y <- if (length(x@type) > 0L){
+  y <- if (!is.na(x@type)){
     as(x, paste(x@type, "subcorpus", sep = "_"))
   } else { 
     as(x, "subcorpus")

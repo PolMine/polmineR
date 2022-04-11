@@ -38,16 +38,17 @@ NULL
 #' @slot registry_dir Registry directory with registry file describing the
 #'   corpus.
 #' @slot data_dir The directory where binary files of the indexed corpus reside.
-#' @slot info_file The info file indicated in the registry file (typically a
-#'   file named `.info` `info.md` in the data directory).
+#' @slot info_file If available, the info file indicated in the registry file
+#'   (typically a file named `.info` `info.md` in the data directory), or `NA`
+#'   if not.
 #' @slot template Full path to the template containing formatting instructions
-#'   when showing full text output (`fs_path` object).
-#' @slot type The type of the corpus (e.g. "plpr" for a corpus of plenary
-#'   protocols).
-#' @slot name An additional name for the object that may be more telling than
+#'   when showing full text output (`fs_path` object or `NA`). 
+#' @slot type If available, the type of the corpus (e.g. "plpr" for a corpus of
+#'   plenary protocols), or `NA`.
+#' @slot name Full name of the corpus that may be more expressive than
 #'   the corpus ID.
 #' @slot encoding The encoding of the corpus, given as a length-one
-#'   `character` vector.
+#'   `character` vector (usually 'utf8' or 'latin1').
 #' @slot size Number of tokens (size) of the corpus, a length-one `integer`
 #'   vector.
 #' @slot server The URL (can be IP address) of the OpenCPU server. The slot is

@@ -145,7 +145,7 @@ setMethod("split", "corpus", function(
   partition_bundle_call <- if (5L %in% which(call_history == "partition_bundle")) TRUE else FALSE
   retval_class <- if (isTRUE(partition_bundle_call)) "partition_bundle" else "subcorpus_bundle"
   obj_type <- if (isTRUE(partition_bundle_call)) "partition" else "subcorpus"
-  new_class <- if (length(x@type) == 0L) obj_type else paste(x@type, obj_type, sep = "_")
+  new_class <- if (is.na(x@type)) obj_type else paste(x@type, obj_type, sep = "_")
   
   y <- new(
     retval_class,
