@@ -314,3 +314,19 @@ cpos2id <- function(x, p_attribute, cpos){
     p_attribute = p_attribute, cpos = cpos
   )
 }
+
+cpos2struc <- function(x, s_attr, cpos){
+  cl_cpos2struc(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attr, cpos = cpos
+  )
+}
+
+struc2str <- function(x, s_attr, struc){
+  struc_values <- cl_struc2str(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attr, struc = struc
+  )
+  Encoding(struc_values) <- x@encoding
+  enc2native(struc_values)
+}

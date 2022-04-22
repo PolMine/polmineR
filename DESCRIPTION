@@ -82,7 +82,6 @@ Collate:
     'decode.R'
     'cooccurrences.R'
     'as.sparseMatrix.R'
-    'make_region_matrix.R'
     'as.speeches.R'
     'blapply.R'
     'coerce.R'

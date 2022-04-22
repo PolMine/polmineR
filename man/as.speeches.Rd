@@ -15,6 +15,7 @@ as.speeches(.Object, ...)
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500,
+  xml = "flat",
   mc = FALSE,
   verbose = TRUE,
   progress = TRUE
@@ -25,6 +26,7 @@ as.speeches(.Object, ...)
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500,
+  xml = "flat",
   mc = FALSE,
   verbose = TRUE,
   progress = TRUE
@@ -65,6 +67,8 @@ that provides the names of speakers.}
 \item{gap}{An \code{integer} value, the number of tokens between strucs
 assumed to make the difference whether a speech has been interrupted (by an
 interjection or question), or whether to assume seperate speeches.}
+
+\item{xml}{Whether XML is "flat" or "nested" (length-one \code{character} vector).}
 
 \item{mc}{Whether to use multicore, defaults to \code{FALSE}. If
 \code{progress} is \code{TRUE}, argument \code{mc} is passed into

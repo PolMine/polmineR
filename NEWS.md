@@ -131,6 +131,10 @@ faster than the best possible implementation in R.
 when referring to specific rows (#184).
 - The `as.cqp()` now checks whether argument `query` meets the expectation that
 it is a query (#191).
+- The method `make_region_matrix()`, which has been used internally only, has
+been removed. `RcppCWB::s_attr_regions()` replaces the functionality.
+- The `as.speeches()` method had not yet been implemented for nested corpora. A
+limited rewrite makes this work now (#198).
 
 
 ## Bug fixes
