@@ -49,7 +49,7 @@ html(object, ...)
   ...
 )
 
-\S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL, verbose = FALSE, ...)
+\S4method{html}{kwic}(object, i, s_attribute = NULL, type = NULL, verbose = FALSE)
 
 \S4method{html}{remote_subcorpus}(object, ...)
 }

@@ -18,12 +18,16 @@ test_that(
 test_that(
   "features (comparing a partition with corpus)",
   {
-    x <- partition("REUTERS", places = "qatar", pAttribute = "word")
+    x <- partition("REUTERS", places = "qatar", p_attribute = "word")
     z <- features(x, "REUTERS", included = TRUE)
     expect_equal(
-      z@stat[["word"]][1:5], c("budget", "riyals", "billion", "Abdul", "Aziz")
+      z@stat[["word"]][1:5],
+      c("budget", "riyals", "billion", "Abdul", "Aziz")
     )
-    expect_equal(sum(z@stat[["count_coi"]][1:5]), 29)  
+    expect_equal(
+      sum(z@stat[["count_coi"]][1:5]),
+      29
+    )
   }
 )
 

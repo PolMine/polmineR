@@ -162,6 +162,8 @@ vector. Fixed.
 matches for the query. Fixed. (#199 and #163)
 - The `p_attributes()` method for `slice` objects had an error when decoding
 the token stream. Fixed.
+- An error when using `format()` on a `features_ngrams` object resulting in an
+error when using `knit_print()` on this object has been fixed (#200).
 
 
 # Documentation 

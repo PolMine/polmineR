@@ -49,13 +49,16 @@ setMethod("format", "cooccurrences", function(x, digits = 2L){
 setMethod("format", "features", function(x, digits = 2L){
   dt <- copy(x@stat)
   round(dt, digits = digits)
-  cols_to_keep <- c(
+  
+  for (col in grep("_id\\.", colnames(dt), value = TRUE)) dt[, (col) := NULL]
+
+  colorder <- c(
     paste("rank", x@method, sep = "_"),
-    x@p_attribute,
+    grep(x@p_attribute, colnames(dt), value = TRUE),
     "count_coi", "count_ref", "exp_coi",
     x@method
   )
-  dt[, cols_to_keep, with = FALSE]
+  dt[, colorder, with = FALSE]
 })
 
 

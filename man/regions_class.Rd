@@ -22,8 +22,8 @@ as.regions(x, ...)
 \arguments{
 \item{x}{object of class \code{regions}}
 
-\item{s_attribute}{An s-attribute denoted by a length-one \code{character}
-vector for which regions shall be derived.}
+\item{s_attribute}{An s-attribute denoted by a length-one \code{character} vector
+for which regions shall be derived.}
 
 \item{...}{Further arguments.}
 

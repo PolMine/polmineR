@@ -22,8 +22,8 @@ as.cqp(
 \arguments{
 \item{query}{A \code{character} vector with at least one CQP query.}
 
-\item{warn}{A (length-one) \code{logical} value, whether to issue a warning if
-a query may be buggy.}
+\item{warn}{A (length-one) \code{logical} value, whether to issue a warning if a
+query may be buggy.}
 
 \item{normalise.case}{A \code{logical} value, if \code{TRUE}, a flag will be
 added to the query/queries to omit matching case.}
@@ -42,10 +42,10 @@ Test whether a character string is a CQP query, or turn a character
 vector into CQP queries.
 }
 \details{
-The \code{is.cqp} function guesses whether \code{query} is a CQP query
+The \code{is.cqp()} function guesses whether \code{query} is a CQP query
 and returns the respective logical value (\code{TRUE}/\code{FALSE}).
 
-The \code{as.cqp} function takes a character vector as input and converts it
+The \code{as.cqp()} function takes a character vector as input and converts it
 to a CQP query by putting the individual strings in quotation marks.
 
 The \code{check_cqp_query}-function will check that opening

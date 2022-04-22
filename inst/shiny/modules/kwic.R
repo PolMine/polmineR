@@ -158,18 +158,41 @@ kwicServer <- function(input, output, session, ...){
         corpus_properties <- registry_get_properties(corpus = values[["kwic"]]@corpus)
         corpusType <- if ("type" %in% names(corpus_properties)) corpus_properties["type"] else NULL
         if (debug) assign("kwicObject", value = values[["kwic"]], envir = .GlobalEnv)
-        fulltext <- polmineR::html(
-          values[["kwic"]],
-          input$kwic_table_rows_selected,
-          type = corpusType,
-          verbose = TRUE
-          )
-        if (debug) message("html generated")
-        fulltext <- htmltools::HTML(gsub("<head>.*?</head>", "", as.character(fulltext)))
-        fulltext <- htmltools::HTML(gsub('<blockquote>', '<blockquote style="font-size:14px">', as.character(fulltext)))
-        output$read_fulltext <- renderUI(fulltext)
         
-        updateNavbarPage(session, "polmineR", selected = "read")
+        kwic_metadata <- values[["kwic"]]@metadata
+        template_metadata <- get_template(values[["kwic"]])[["metadata"]]
+        if (length(kwic_metadata) > 0L || length(template_metadata) > 0L){
+          fulltext <- polmineR::html(
+            values[["kwic"]],
+            input$kwic_table_rows_selected,
+            type = corpusType,
+            verbose = TRUE
+          )
+          if (debug) message("html generated")
+          fulltext <- htmltools::HTML(gsub("<head>.*?</head>", "", as.character(fulltext)))
+          fulltext <- htmltools::HTML(gsub('<blockquote>', '<blockquote style="font-size:14px">', as.character(fulltext)))
+          output$read_fulltext <- renderUI(fulltext)
+          
+          updateNavbarPage(session, "polmineR", selected = "read")
+        } else {
+          showModal(
+            modalDialog(
+              title = "s-attribute definition missing",
+              HTML(
+                paste(
+                  c(
+                    "Generating fulltext output requires the definition of a ",
+                    "structural attribute that will define the region of the ",
+                    "query match to be displayed. This is possible either via ",
+                    "a template or s_attributes included in the kwic table. ",
+                    "Condition not met."
+                  ), collapse = ""
+                )
+              )
+            )
+          )
+        }
+        
       }
     })
   

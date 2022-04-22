@@ -268,21 +268,29 @@ setMethod("html", "partition_bundle", function(object, charoffset = FALSE, beaut
 
 
 #' @rdname html-method
-setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, verbose = FALSE, ...){
-  
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, verbose = FALSE){
   
   # getting metadata for all kwic lines is potentially not the fastes solution ...
   if (!is.null(s_attribute)){
-    if (!s_attribute %in% s_attributes(object@corpus)) stop("s-attribute provided is not available")
+    if (!s_attribute %in% s_attributes(object@corpus))
+      stop("s-attribute provided is not available")
     s_attrs <- s_attribute
     object <- enrich(object, s_attributes = s_attrs)
   } else if (length(object@metadata) == 0L){
-    s_attrs <- get_template(object@corpus)[["metadata"]]
-    .message("using metadata from template: ", paste(s_attrs, collapse = " / "), verbose = verbose)
-    if (length(s_attrs) > 0L){
-      .message("enriching", verbose = verbose)
-      object <- enrich(object, meta = s_attrs)
+    s_attrs <- get_template(object)[["metadata"]]
+    if (is.null(s_attrs)){
+      stop(
+        "The html()-method for kwic objects requires ",
+        "an explicit statement of an s-attribute in the method call, ",
+        "an implicit declaration via the kwic metadata ",
+        "or a statement in a template. Requirement not met."
+      )
+    } else {
+      .message("using metadata from template: ", paste(s_attrs, collapse = " / "), verbose = verbose)
+      if (length(s_attrs) > 0L){
+        .message("enriching", verbose = verbose)
+        object <- enrich(object, meta = s_attrs)
+      }
     }
   } else {
     s_attrs <- object@metadata
