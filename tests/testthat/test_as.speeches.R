@@ -5,9 +5,8 @@ testthat::context("as.speeches")
 test_that(
   "as.speeches",
   {
-    skip("knowingly not working")
     p <- partition("GERMAPARLMINI", date = ".*", regex = TRUE)
-    pb <- as.speeches(p, s_attribute_name = "speaker")
+    pb <- as.speeches(corpus("GERMAPARLMINI"), s_attribute_name = "speaker")
     expect_equal(length(pb), 276L)
     
     scb <- as.speeches(corpus("GERMAPARLMINI"), s_attribute_name = "speaker")
@@ -21,6 +20,23 @@ test_that(
       do.call(rbind, lapply(scb@objects, function(x) x@cpos)),
       do.call(rbind, lapply(pb@objects, function(x) x@cpos))
     )
+  }
+)
+
+test_that(
+  "as.speeches() same result for partition and corpus-method",
+  {
+    sp_all <- as.speeches("GERMAPARLMINI", s_attribute_name = "speaker")
+    sp_min1 <- sp_all[[grep("(2009-10-28|2009-11-10)", names(sp_all), value = TRUE)]]
+    
+    sp_min2 <- corpus("GERMAPARLMINI") %>%
+      subset(date %in% c("2009-10-28", "2009-11-10")) %>%
+      as.speeches(s_attribute_name = "speaker")
+    
+    expect_identical(length(sp_min1), length(sp_min2))
+    expect_identical(sum(summary(sp_min1)$size), sum(summary(sp_min2)$size))
+    expect_true(all(names(sp_min1) %in% names(sp_min2)))
+    
   }
 )
 
