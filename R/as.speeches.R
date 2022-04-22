@@ -203,30 +203,28 @@ setMethod("as.speeches", "corpus", function(
   chunks_strucs <- split(x = strucs, f = speakers)
 
   new_class <- if (length(.Object@type) == 0L) "subcorpus" else paste(.Object@type, "subcorpus", sep = "_")
-  
+  prototype <- as(.Object, new_class)
+
   .iter_fn <- function(i){
     mx <- matrix(data = chunks_cpos[[i]], byrow = FALSE, ncol = 2L)
     
     # if we have a matrix with only one region (i.e. one row), no need for further splitting,
     # we return a subcorpus immediately
     if (nrow(mx) == 1L){
-      return(list(new(
-        new_class,
-        strucs = chunks_strucs[[i]],
-        cpos = mx,
-        corpus = .Object@corpus,
-        registry_dir = .Object@registry_dir, 
-        template = .Object@template,
-        info_file = .Object@info_file,
-        type = .Object@type,
-        encoding = .Object@encoding,
-        data_dir = .Object@data_dir,
-        s_attributes = setNames(list(chunks_dates[[i]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
-        xml = "flat",
-        s_attribute_strucs = s_attribute_name,
-        name = sprintf("%s_%s_%d", names(chunks_cpos)[[i]], chunks_dates[[i]], 1L),
-        size = mx[,2] - mx[,1] + 1L
-      )))
+      y <- prototype
+      
+      y@strucs = chunks_strucs[[i]]
+      y@cpos = mx
+      y@s_attributes = setNames(
+        list(chunks_dates[[i]], names(chunks_cpos)[i]),
+        nm = c(s_attribute_date, s_attribute_name)
+      )
+      y@xml = "flat"
+      y@s_attribute_strucs = s_attribute_name
+      y@name = sprintf("%s_%s_%d", names(chunks_cpos)[[i]], chunks_dates[[i]], 1L)
+      y@size = mx[,2] - mx[,1] + 1L
+      
+      return(list(y))
     }
     
     distance <- mx[,1L][2L:nrow(mx)] - mx[,2L][1L:(nrow(mx) - 1L)]
@@ -265,24 +263,20 @@ setMethod("as.speeches", "corpus", function(
     lapply(
       seq_along(li_cpos),
       function(j){
-        cpos_matrix <- matrix(data = li_cpos[[j]], byrow = FALSE, ncol = 2L)
-        new(
-          new_class,
-          strucs = li_strucs[[j]],
-          cpos = cpos_matrix,
-          corpus = .Object@corpus,
-          registry_dir = .Object@registry_dir,
-          info_file = .Object@info_file,
-          template = .Object@template,
-          type = .Object@type,
-          encoding = .Object@encoding,
-          data_dir = .Object@data_dir,
-          s_attributes = setNames(list(vec_dates[[j]], names(chunks_cpos)[i]), nm = c(s_attribute_date, s_attribute_name)),
-          xml = "flat",
-          s_attribute_strucs = s_attribute_name,
-          name = sprintf("%s_%s_%d", names(chunks_cpos)[i], vec_dates[[j]], speech_no[[j]]),
-          size = sum(cpos_matrix[,2] - cpos_matrix[,1] + 1L)
+        y <- prototype
+        
+        y@strucs = li_strucs[[j]]
+        y@cpos = matrix(data = li_cpos[[j]], byrow = FALSE, ncol = 2L)
+        y@s_attributes = setNames(
+          list(vec_dates[[j]], names(chunks_cpos)[i]),
+          nm = c(s_attribute_date, s_attribute_name)
         )
+        y@xml = "flat"
+        y@s_attribute_strucs = s_attribute_name
+        y@name = sprintf("%s_%s_%d", names(chunks_cpos)[i], vec_dates[[j]], speech_no[[j]])
+        y@size = sum(y@cpos[,2] - y@cpos[,1] + 1L)
+        
+        y
       }
     )
   }
