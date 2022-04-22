@@ -42,7 +42,7 @@ setMethod("format", "cooccurrences", function(x, digits = 2L){
 })
 
 
-#' @param x A \code{features} object.
+#' @param x A `features` object.
 #' @param digits Integer indicating the number of decimal places (round) or
 #'   significant digits (signif) to be used.
 #' @rdname features-class
@@ -56,7 +56,8 @@ setMethod("format", "features", function(x, digits = 2L){
     paste("rank", x@method, sep = "_"),
     grep(x@p_attribute, colnames(dt), value = TRUE),
     "count_coi", "count_ref", "exp_coi",
-    x@method
+    x@method,
+    x@annotation_cols
   )
   dt[, colorder, with = FALSE]
 })
