@@ -379,6 +379,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   if (length(def) > 1L) stop("only one s-attribute allowed")
   if (!is.null(xml)) stopifnot(xml %in% c("flat", "nested"))
   
+
   y <- as(.Object, class(.Object)[1])
   y@xml <- if (is.null(xml)) .Object@xml else xml
   y@stat <- data.table()
@@ -390,7 +391,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   
   .message('getting cpos and strucs', verbose = verbose)
   
-  if (.Object@xml == "flat") {
+  if (y@xml == "flat") {
     s_attr_values <- cl_struc2str(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = names(def), struc = .Object@strucs
@@ -404,19 +405,20 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
       "integer"= matrix(cpos_matrix_new, ncol = 2, byrow = TRUE)
     )
     y@strucs <- .Object@strucs[hits]
-  } else if (.Object@xml == "nested") {
+  } else if (y@xml == "nested") {
     cpos_vec <- cpos(.Object@cpos)
     strucs_new <- cl_cpos2struc(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = names(def)[1], cpos = cpos_vec
     )
+    strucs_new_unique <- unique(strucs_new)
     s_attr_values <- cl_struc2str(
       corpus = .Object@corpus, registry = .Object@registry_dir,
-      s_attribute = names(def), struc = strucs_new
+      s_attribute = names(def), struc = strucs_new_unique
     )
     Encoding(s_attr_values) <- .Object@encoding
-    hits <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
-    y@strucs <- unique(strucs_new[hits])
+    matching <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
+    y@strucs <- strucs_new_unique[matching]
     y@cpos <- RcppCWB::get_region_matrix(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = names(def), strucs = y@strucs

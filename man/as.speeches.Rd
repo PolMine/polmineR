@@ -15,7 +15,6 @@ as.speeches(.Object, ...)
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500,
-  xml = "flat",
   mc = FALSE,
   verbose = TRUE,
   progress = TRUE
@@ -26,7 +25,6 @@ as.speeches(.Object, ...)
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
   gap = 500,
-  xml = "flat",
   mc = FALSE,
   verbose = TRUE,
   progress = TRUE
@@ -53,27 +51,25 @@ as.speeches(.Object, ...)
 )
 }
 \arguments{
-\item{.Object}{A \code{partition}, or length-one \code{character} vector
-indicating a CWB corpus.}
+\item{.Object}{A \code{partition}, or length-one \code{character} vector indicating a
+CWB corpus.}
 
 \item{...}{Further arguments.}
 
-\item{s_attribute_date}{A length-one \code{character} vector, the s-attribute
-that provides the dates of sessions.}
+\item{s_attribute_date}{A length-one \code{character} vector, the s-attribute that
+provides the dates of sessions.}
 
-\item{s_attribute_name}{A length-one \code{character} vector, the s-attribute
-that provides the names of speakers.}
+\item{s_attribute_name}{A length-one \code{character} vector, the s-attribute that
+provides the names of speakers.}
 
 \item{gap}{An \code{integer} value, the number of tokens between strucs
 assumed to make the difference whether a speech has been interrupted (by an
 interjection or question), or whether to assume seperate speeches.}
 
-\item{xml}{Whether XML is "flat" or "nested" (length-one \code{character} vector).}
-
-\item{mc}{Whether to use multicore, defaults to \code{FALSE}. If
-\code{progress} is \code{TRUE}, argument \code{mc} is passed into
-\code{pblapply} as argument \code{cl}. If \code{progress} is \code{FALSE},
-\code{mc} is passed into \code{mclapply} as argument \code{mc.cores}.}
+\item{mc}{Whether to use multicore, defaults to \code{FALSE}. If \code{progress} is
+\code{TRUE}, argument \code{mc} is passed into \code{pblapply} as argument \code{cl}. If
+\code{progress} is \code{FALSE}, \code{mc} is passed into \code{mclapply()} as argument
+\code{mc.cores}.}
 
 \item{verbose}{A \code{logical} value, defaults to \code{TRUE}.}
 
@@ -88,10 +84,9 @@ speech on a given day, concatenated by underscores.
 Split entire corpus or a partition into speeches. The heuristic is to split
 the corpus/partition into partitions on day-to-day basis first, using the
 s-attribute provided by \code{s_attribute_date}. These subcorpora are then
-splitted into speeches by speaker name, using s-attribute
-\code{s_attribute_name}. If there is a gap larger than the number of tokens
-supplied by argument \code{gap}, contributions of a speaker are assumed to be
-two seperate speeches.
+splitted into speeches by speaker name, using s-attribute \code{s_attribute_name}.
+If there is a gap larger than the number of tokens supplied by argument
+\code{gap}, contributions of a speaker are assumed to be two seperate speeches.
 }
 \examples{
 use("polmineR")

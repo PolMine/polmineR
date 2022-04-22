@@ -5,30 +5,28 @@ NULL
 #' 
 #' Split entire corpus or a partition into speeches. The heuristic is to split
 #' the corpus/partition into partitions on day-to-day basis first, using the
-#' s-attribute provided by \code{s_attribute_date}. These subcorpora are then
-#' splitted into speeches by speaker name, using s-attribute
-#' \code{s_attribute_name}. If there is a gap larger than the number of tokens
-#' supplied by argument \code{gap}, contributions of a speaker are assumed to be
-#' two seperate speeches.
+#' s-attribute provided by `s_attribute_date`. These subcorpora are then
+#' splitted into speeches by speaker name, using s-attribute `s_attribute_name`.
+#' If there is a gap larger than the number of tokens supplied by argument
+#' `gap`, contributions of a speaker are assumed to be two seperate speeches.
 #' 
-#' @param .Object A \code{partition}, or length-one \code{character} vector
-#'   indicating a CWB corpus.
-#' @param s_attribute_date A length-one \code{character} vector, the s-attribute
-#'   that provides the dates of sessions.
-#' @param s_attribute_name A length-one \code{character} vector, the s-attribute
-#'   that provides the names of speakers.
-#' @param gap An \code{integer} value, the number of tokens between strucs
+#' @param .Object A `partition`, or length-one `character` vector indicating a
+#'   CWB corpus.
+#' @param s_attribute_date A length-one `character` vector, the s-attribute that
+#'   provides the dates of sessions.
+#' @param s_attribute_name A length-one `character` vector, the s-attribute that
+#'   provides the names of speakers.
+#' @param gap An `integer` value, the number of tokens between strucs
 #'   assumed to make the difference whether a speech has been interrupted (by an
 #'   interjection or question), or whether to assume seperate speeches.
-#' @param mc Whether to use multicore, defaults to \code{FALSE}. If
-#'   \code{progress} is \code{TRUE}, argument \code{mc} is passed into
-#'   \code{pblapply} as argument \code{cl}. If \code{progress} is \code{FALSE},
-#'   \code{mc} is passed into \code{mclapply} as argument \code{mc.cores}.
-#' @param verbose A \code{logical} value, defaults to \code{TRUE}.
-#' @param progress A \code{logical} value, whether to show progress bar.
-#' @param xml Whether XML is "flat" or "nested" (length-one `character` vector).
+#' @param mc Whether to use multicore, defaults to `FALSE`. If `progress` is
+#'   `TRUE`, argument `mc` is passed into `pblapply` as argument `cl`. If
+#'   `progress` is `FALSE`, `mc` is passed into `mclapply()` as argument
+#'   `mc.cores`.
+#' @param verbose A `logical` value, defaults to `TRUE`.
+#' @param progress A `logical` value, whether to show progress bar.
 #' @param ... Further arguments.
-#' @return A \code{partition_bundle}, the names of the objects in the bundle are
+#' @return A `partition_bundle`, the names of the objects in the bundle are
 #'   the speaker name, the date of the speech and an index for the number of the
 #'   speech on a given day, concatenated by underscores.
 #' @name as.speeches
@@ -54,7 +52,7 @@ setMethod("as.speeches", "partition", function(
   .Object,
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
-  gap = 500, xml = "flat", mc = FALSE, verbose = TRUE, progress = TRUE
+  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
 ){
   
   stopifnot(
@@ -64,6 +62,26 @@ setMethod("as.speeches", "partition", function(
     is.character(s_attribute_name),
     length(s_attribute_name) == 1L
   )
+  
+  is_sibling <- s_attr_is_sibling(
+    x = s_attribute_date, y = s_attribute_name,
+    corpus = .Object@corpus, registry = .Object@registry_dir
+  )
+  if (is_sibling){
+    xml <- "flat"
+  } else {
+    speaker_is_descendent <- s_attr_is_descendent(
+      x = s_attribute_name, y = s_attribute_date, 
+      corpus = .Object@corpus, registry = .Object@registry_dir
+    )
+    if (isFALSE(speaker_is_descendent)){
+      stop(
+        "s-attribute 's_attribute_name' is not a sibling of 's_attribute_date' ",
+        "but is not a descendent then as would be expected"
+      )
+    }
+    xml <- "nested"
+  }
   
   # as a first step, create partitions by date
   .message("generating partitions by date", verbose = verbose)
@@ -81,13 +99,13 @@ setMethod("as.speeches", "partition", function(
     nested <- lapply(
       s_attributes(partition_date, s_attribute_name),
       function(speaker_name){
-        partition_bundle_names <- partition(
+        p <- partition(
           partition_date,
           def = setNames(list(speaker_name), s_attribute_name),
           verbose = FALSE,
           xml = xml
         )
-        split(partition_bundle_names, gap = gap, verbose = FALSE)
+        split(p, gap = gap, verbose = FALSE)
       }
     )
     unlist(lapply(1L:length(nested), function(i) nested[[i]]@objects))
@@ -104,7 +122,7 @@ setMethod("as.speeches", "partition", function(
     function(x){
       paste(
         x@s_attributes[[s_attribute_name]],
-        s_attributes(x, s_attribute_date),
+        x@s_attributes[[s_attribute_date]],
         gsub("^.*_(\\d+)$", "\\1", x@name),
         sep = "_", collapse = "_"
       )
@@ -115,10 +133,9 @@ setMethod("as.speeches", "partition", function(
   
   # at this stage, the list may contain partitions of size 0 - to be dropped
   empty_partitions <- which(sapply(speaker_list, size) == 0L)
-  if (length(empty_partitions) > 0L){
+  if (length(empty_partitions) > 0L)
     for (i in rev(empty_partitions)) speaker_list[[i]] <- NULL
-  }
-  
+
   # the resulting list may be totally unordered - reorder now
   .message("reordering partitions", verbose = verbose)
   speaker_list_ordered <- lapply(
@@ -130,7 +147,10 @@ setMethod("as.speeches", "partition", function(
   if ("type" %in% names(properties)){
     if (properties[["type"]] == "plpr"){
       .message("coercing partitions to plpr_partitions", verbose = verbose)
-      speaker_list_ordered <- lapply(speaker_list_ordered, function(x) as(x, "plpr_partition"))
+      speaker_list_ordered <- lapply(
+        speaker_list_ordered,
+        function(x) as(x, "plpr_partition")
+      )
     }
   }
   
@@ -144,13 +164,13 @@ setMethod("as.speeches", "subcorpus", function(
   .Object,
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
-  gap = 500, xml = "flat", mc = FALSE, verbose = TRUE, progress = TRUE
+  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
 ){
   as.speeches(
     .Object = as(.Object, "partition"),
     s_attribute_date = s_attribute_date,
     s_attribute_name = s_attribute_name,
-    gap = gap, xml = xml,
+    gap = gap,
     mc = mc, verbose = verbose, progress = progress
   )
 }

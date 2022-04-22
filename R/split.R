@@ -46,7 +46,7 @@ setMethod("split", "partition", function(x, gap, ...){
         p
       })
   } else {
-    x@name <- paste(x@name, 1, collapse = "_", sep = "")
+    x@name <- paste(x@name, 1, collapse = "_", sep = "_")
     y_list <- list(x)
   }
   names(y_list) <- unlist(lapply(y_list, function(y) y@name))
