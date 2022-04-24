@@ -35,7 +35,10 @@ test_that(
     pb@objects <- pb_2@objects
     expect_equal(names(scb), names(pb))
     expect_equal(lapply(scb@objects, size), lapply(pb@objects, size))
-    foo <- lapply(seq_along(scb@objects), function(i){ expect_equal(pb[[i]]@cpos, scb[[i]]@cpos); invisible(NULL) })
+    foo <- lapply(
+      seq_along(scb@objects),
+      function(i) expect_equal(pb[[i]]@cpos, scb[[i]]@cpos)
+    )
     expect_equal(names(pb), names(scb))
     y <- as(pb, "subcorpus_bundle")
     expect_equal(y, scb)

@@ -169,6 +169,10 @@ the token stream. Fixed.
 - An error when using `format()` on a `features_ngrams` object resulting in an
 error when using `knit_print()` on this object has been fixed (#200).
 - The `edit()` method can now be invoked on a `features` object (#165).
+- The `context()`-method for `partition_bundle` objects always required an
+explicit statement of the argument `positivelist`, which is not necessary.
+Fixed. (#178)
+
 
 # Documentation 
 

@@ -75,17 +75,18 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #'   `left`.
 #' @param stoplist Exclude match for query if stopword(s) is/are are present in
 #'   context. See positivelist for further explanation.
-#' @param positivelist character vector or numeric/integer vector: include a query hit
-#'   only if token in positivelist is present. If positivelist is a character
-#'   vector, it may include regular expressions (see parameter regex)
-#' @param regex logical, defaults to FALSE - whether stoplist and/or positivelist are
-#'   regular expressions 
+#' @param positivelist A `character` vector or `numeric`/`integer` vector:
+#'   include a query hit only if token in positivelist is present. If
+#'   positivelist is a `character` vector, it may include regular expressions
+#'   (see parameter regex).
+#' @param regex A `logical` value, defaults to `FALSE` - whether `stoplist`
+#'   and/or `positivelist` are regular expressions.
 #' @param count logical
-#' @param mc whether to use multicore; if NULL (default), the function will get
-#'   the value from the options
-#' @param verbose report progress, defaults to TRUE
-#' @param progress logical, whether to show progress bar
-#' @param ... further parameters
+#' @param mc Whether to use multicore; if `NULL` (default), the function will get
+#'   the value from the options.
+#' @param verbose Report progress? A `logical` value, defaults to `TRUE`.
+#' @param progress A `logical` value, whether to show progress bar.
+#' @param ... Further parameters.
 #' @return depending on whether a `partition` or a `partition_bundle` serves as
 #'   input, the return will be a context object, or a `context_bundle` object.
 #'   Note that the number of objects in the `context_bundle` may differ from the
@@ -160,9 +161,12 @@ setMethod("context", "slice", function(
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
   
   # generate positivelist/stoplist with ids and apply it
-  if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+  if (!is.null(positivelist))
+    ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (is.null(ctxt)) return(NULL)
-  if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
+  
+  if (!is.null(stoplist))
+    ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   if (is.null(ctxt)) return(NULL)
   
   .message("generating contexts", verbose = verbose)
@@ -345,17 +349,37 @@ setMethod("context", "character", function(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partition_bundle", function(.Object, query, p_attribute, positivelist = NULL, verbose = TRUE, ...){
+setMethod("context", "partition_bundle", function(.Object, query, p_attribute, stoplist = NULL, positivelist = NULL, regex = FALSE, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
   # Turn tokens on positivelist into ids once for entire corpus to avoid doing
   # this for every single object.
   if (!is.null(positivelist) && !is.numeric(positivelist)){
-    positivelist <- unlist(lapply(
-      positivelist,
-      function(x) regex2id(x = .Object, p_attribute = p_attribute, regex = x)
-    ))
+    if (regex){
+      positivelist <- unlist(lapply(
+        positivelist,
+        function(x) regex2id(x = .Object, p_attribute = p_attribute, regex = x)
+      ))
+    } else {
+      positivelist <- str2id(
+        x = .Object, p_attribute = p_attribute, str = positivelist
+      )
+    }
+  }
+  
+  # Same for stoplist.
+  if (!is.null(stoplist) && !is.numeric(stoplist)){
+    if (regex){
+      stoplist <- unlist(lapply(
+        stoplist,
+        function(x) regex2id(x = .Object, p_attribute = p_attribute, regex = x)
+      ))
+    } else {
+      stoplist <- str2id(
+        x = .Object, p_attribute = p_attribute, str = stoplist
+      )
+    }
   }
   
   y <- as(as(.Object, "corpus"), "context_bundle")

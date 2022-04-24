@@ -337,3 +337,11 @@ regex2id <- function(x, p_attribute, regex){
     p_attribute = p_attribute, regex = regex
   )
 }
+
+str2id <- function(x, p_attribute, str){
+  cl_str2id(
+    corpus = x@corpus, registry = x@registry_dir,
+    p_attribute = p_attribute,
+    str = as.corpusEnc(str, corpusEnc = x@encoding)
+  )
+}

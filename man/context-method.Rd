@@ -111,14 +111,23 @@ context(.Object, ...)
   ...
 )
 
-\S4method{context}{partition_bundle}(.Object, query, p_attribute, positivelist = NULL, verbose = TRUE, ...)
+\S4method{context}{partition_bundle}(
+  .Object,
+  query,
+  p_attribute,
+  stoplist = NULL,
+  positivelist = NULL,
+  regex = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{context}{cooccurrences}(.Object, query, check = TRUE, complete = FALSE)
 }
 \arguments{
 \item{.Object}{a partition or a partition_bundle object}
 
-\item{...}{further parameters}
+\item{...}{Further parameters.}
 
 \item{query}{A query, which may by a character vector or a CQP query.}
 
@@ -149,21 +158,22 @@ the region defined by the s-attribute.}
 \item{stoplist}{Exclude match for query if stopword(s) is/are are present in
 context. See positivelist for further explanation.}
 
-\item{positivelist}{character vector or numeric/integer vector: include a query hit
-only if token in positivelist is present. If positivelist is a character
-vector, it may include regular expressions (see parameter regex)}
+\item{positivelist}{A \code{character} vector or \code{numeric}/\code{integer} vector:
+include a query hit only if token in positivelist is present. If
+positivelist is a \code{character} vector, it may include regular expressions
+(see parameter regex).}
 
-\item{regex}{logical, defaults to FALSE - whether stoplist and/or positivelist are
-regular expressions}
+\item{regex}{A \code{logical} value, defaults to \code{FALSE} - whether \code{stoplist}
+and/or \code{positivelist} are regular expressions.}
 
 \item{count}{logical}
 
-\item{mc}{whether to use multicore; if NULL (default), the function will get
-the value from the options}
+\item{mc}{Whether to use multicore; if \code{NULL} (default), the function will get
+the value from the options.}
 
-\item{verbose}{report progress, defaults to TRUE}
+\item{verbose}{Report progress? A \code{logical} value, defaults to \code{TRUE}.}
 
-\item{progress}{logical, whether to show progress bar}
+\item{progress}{A \code{logical} value, whether to show progress bar.}
 
 \item{corpus}{A length-one \code{character} vector stating a corpus ID.}
 

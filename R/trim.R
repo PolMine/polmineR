@@ -96,7 +96,10 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       ][["match_id"]]
       object@cpos <- object@cpos[object@cpos[["match_id"]] %in% matches_to_keep]
     } else {
-      positivelist_ids <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = positivelist, regex = regex)
+      positivelist_ids <- .token2id(
+        corpus = object@corpus, p_attribute = p_attribute,
+        token = positivelist, regex = regex
+      )
       .fn <- function(.SD){
         neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
         if (any(neighbors %in% positivelist_ids)) return( .SD ) else return( NULL )
