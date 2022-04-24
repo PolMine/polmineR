@@ -56,23 +56,23 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param .Object a partition or a partition_bundle object
 #' @param query A query, which may by a character vector or a CQP query.
 #' @param cqp defaults to is.cqp-function, or provide TRUE/FALSE
-#' @param check A \code{logical} value, whether to check validity of CQP query
-#'   using \code{check_cqp_query}.
+#' @param check A `logical` value, whether to check validity of CQP query using
+#'   `check_cqp_query`.
 #' @param p_attribute The p-attribute of the query.
 #' @param boundary If provided, a length-one character vector specifying a
 #'   s-attribute. It will be checked that corpus positions do not extend beyond
 #'   the region defined by the s-attribute.
-#' @param left A single \code{integer} value defining the number of tokens to
-#'   the left of the query match to include in the context. Advanced usage: (a)
-#'   If \code{left} is a length-one \code{character} vector stating an
-#'   s-attribute, the context will be expanded to the (left) boundary of the
-#'   region where the match occurs. (b) If \code{left} is a named length-one
-#'   \code{integer} vector, this value is the number regions of the structural
-#'   attribute referred to by the vector's name  to the left of the query match
-#'   that are included in the context.
-#' @param right A single \code{integer} value, a length-one \code{character}
-#'   vector or a named length-one \code{integer} value, with equivalent effects
-#'   to argument \code{left}.
+#' @param left A single `integer` value defining the number of tokens to the
+#'   left of the query match to include in the context. Advanced usage: (a) If
+#'   `left` is a length-one `character` vector stating an s-attribute, the
+#'   context will be expanded to the (left) boundary of the region where the
+#'   match occurs. (b) If `left` is a named length-one `integer` vector, this
+#'   value is the number regions of the structural attribute referred to by the
+#'   vector's name  to the left of the query match that are included in the
+#'   context.
+#' @param right A single `integer` value, a length-one `character` vector or a
+#'   named length-one `integer` value, with equivalent effects to argument
+#'   `left`.
 #' @param stoplist Exclude match for query if stopword(s) is/are are present in
 #'   context. See positivelist for further explanation.
 #' @param positivelist character vector or numeric/integer vector: include a query hit
@@ -86,8 +86,11 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param verbose report progress, defaults to TRUE
 #' @param progress logical, whether to show progress bar
 #' @param ... further parameters
-#' @return depending on whether a partition or a partition_bundle serves as
-#'   input, the return will be a context object, or a \code{context_bundle} object
+#' @return depending on whether a `partition` or a `partition_bundle` serves as
+#'   input, the return will be a context object, or a `context_bundle` object.
+#'   Note that the number of objects in the `context_bundle` may differ from the
+#'   number of objects in the input `bundle` object: `NULL` objects that result
+#'   if no hit is obtained are dropped.
 #' @author Andreas Blaette
 #' @aliases context,slice-method as.matrix,context_bundle-method context,partition-method
 #' @examples
@@ -342,34 +345,42 @@ setMethod("context", "character", function(
 
 #' @docType methods
 #' @rdname context-method
-setMethod("context", "partition_bundle", function(.Object, query, p_attribute, verbose = TRUE, ...){
+setMethod("context", "partition_bundle", function(.Object, query, p_attribute, positivelist = NULL, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
-  retval <- new("context_bundle", query = query, p_attribute = p_attribute)
-  if (!is.numeric(positivelist)){
-    corpus <- unique(lapply(.Object@objects, function(x) x@corpus))
+  # Turn tokens on positivelist into ids once for entire corpus to avoid doing
+  # this for every single object.
+  if (!is.null(positivelist) && !is.numeric(positivelist)){
     positivelist <- unlist(lapply(
       positivelist,
-      function(x)
-        cl_regex2id(
-          corpus = corpus, registry = .Object@registry_dir,
-          p_attribute = p_attribute, regex = x
-        )
-      )
-    )
+      function(x) regex2id(x = .Object, p_attribute = p_attribute, regex = x)
+    ))
   }
   
-  retval@objects <- sapply(
+  y <- as(as(.Object, "corpus"), "context_bundle")
+  y@query <- query
+  y@p_attribute <- p_attribute
+
+  y@objects <- sapply(
     .Object@objects,
     function(x) {
-      .message("proceeding to partition ", x@name, verbose = verbose)
-      context(x, query, ...)
+      .message("get context for partition ", x@name, verbose = verbose)
+      context(
+        x, query = query,
+        p_attribute = p_attribute, positivelist = positivelist,
+        verbose = FALSE,
+        ...
+      )
     },
     simplify = TRUE,
     USE.NAMES = TRUE
   )
-  retval
+  
+  # Remove NULL objects that result of no match has been obtained
+  for (i in rev(which(sapply(y@objects, is.null)))) y@objects[[i]] <- NULL
+  
+  y
 })
 
 #' @param complete enhance completely
@@ -423,16 +434,37 @@ NULL
 #' @docType methods
 #' @noRd
 setMethod("summary", "context_bundle", function(object, top = 3){
-  sizes_partition <- unlist(lapply(object@objects, function(x) x@partition_size))
-  counts <- unlist(lapply(object@objects, function(x) x@frequency))
-  overview <- data.frame(
-    count = counts,
-    freq = round(counts / sizes_partition * 100000, 2)
-  )
-  overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))))
-  colnames(overview)[3:6] <- criticalValue <- c(">10.83", ">7.88", ">6.63", ">3.84")
-  overview <- cbind(overview, t(data.frame(lapply(object@objects, function(x) rownames(x@stat)[1:top]))))
-  overview
+  
+  sizes_partition <- unname(sapply(object@objects, slot, "size_partition"))
+  counts <- unname(sapply(object@objects, slot, "count"))
+  y <- data.frame(count = counts, freq = counts / sizes_partition)
+  
+  method <- unlist(unique(unname(sapply(object@objects, slot, "method"))))
+  if (length(method) > 0L){
+    y <- cbind(
+      y,
+      t(
+        data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))
+      )
+    )
+    colnames(y)[3:6] <- c(">10.83", ">7.88", ">6.63", ">3.84")
+  }
+  
+  if (top > 0L){
+    y <- cbind(
+      y,
+      t(
+        data.frame(
+          lapply(
+            object@objects,
+            function(x) x@stat[[object@p_attribute]][1:top]
+          )
+        )
+      )
+    )
+  }
+  
+  y
 })
 
 #' @docType methods

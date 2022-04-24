@@ -173,10 +173,9 @@ setClass(
   "bundle",
   slots = c(
     objects = "list",
-    p_attribute = "character",
-    corpus = "character",
-    encoding = "character"
-  )
+    p_attribute = "character"
+  ),
+  contains = "corpus"
 )
 
 
@@ -593,21 +592,22 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @docType class
 #' @rdname context-class
 #' @exportClass context
-setClass("context",
-         slots = c(
-           query = "character",
-           count = "integer",
-           partition = "partition",
-           size_partition = "integer",
-           size_match = "integer",
-           left = "integer",
-           right = "integer",
-           size = "integer",
-           boundary = "character",
-           cpos = "data.table",
-           call = "character"
-         ),
-         contains = "features"
+setClass(
+  "context",
+  slots = c(
+    query = "character",
+    count = "integer",
+    partition = "partition",
+    size_partition = "integer",
+    size_match = "integer",
+    left = "integer",
+    right = "integer",
+    size = "integer",
+    boundary = "character",
+    cpos = "data.table",
+    call = "character"
+  ),
+  contains = "features"
 )
 
 #' @details The \code{length}-method will return the number of hits that were achieved.
@@ -1081,9 +1081,12 @@ setClass(
 #' @docType class
 #' @exportClass kwic
 #' @rdname context_bundle-class
-setClass("context_bundle",
-         slots = c(query = "character"),
-         contains = "bundle"
+setClass(
+  "context_bundle",
+  slots = c(
+    query = "character"
+  ),
+  contains = "bundle"
 )
 
 
@@ -1158,16 +1161,18 @@ setClass("subcorpus_bundle",
 #' @export
 setAs(from = "partition_bundle", to = "subcorpus_bundle", def = function(from){
   type <- get_type(from)
-  dest_class <- if (is.null(type)) "subcorpus" else paste(type, "subcorpus", sep = "_")
-  new(
-    "subcorpus_bundle",
-    objects = lapply(from@objects, function(x) as(x, dest_class)),
-    p_attribute = character(), # unlike a partition_bundle, a subcorpus_bundle will never include a count
-    corpus = from@corpus,
-    encoding = from@encoding,
-    s_attributes_fixed = from@s_attributes_fixed,
-    xml = from@xml
-  )
+  
+  dest_class <- if (is.null(type))
+    "subcorpus"
+  else
+    paste(type, "subcorpus", sep = "_")
+  
+  y <- as(as(from, "corpus"), "subcorpus_bundle")
+  y@objects <- lapply(from@objects, function(x) as(x, dest_class))
+  y@s_attributes_fixed <- from@s_attributes_fixed
+  y@xml <- from@xml
+  
+  y
 })
 
 

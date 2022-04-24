@@ -295,7 +295,9 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress
 })
 
 #' @rdname partition_bundle-class
-setMethod("partition_bundle", "environment", function(.Object) .get_objects(class = "partition_bundle", envir = .Object))
+setMethod("partition_bundle", "environment", function(.Object) 
+  .get_objects(class = "partition_bundle", envir = .Object)
+)
 
 
 #' @details Applying the \code{partition_bundle}-method to a \code{partition_bundle}-object will iterate

@@ -311,15 +311,11 @@ setMethod("as.speeches", "corpus", function(
     }
   }
   
-
-  retval <- new(
-    "subcorpus_bundle",
-    xml = "flat",
-    objects = unlist(y, recursive = FALSE),
-    corpus = .Object@corpus,
-    encoding = .Object@encoding
-  )
+  retval <- as(.Object, "subcorpus_bundle")
+  retval@xml <- if (sibling) "flat" else "nested"
+  retval@objects <- unlist(y, recursive = FALSE)
   names(retval@objects) <- sapply(retval@objects, name)
+  
   retval
 })
 

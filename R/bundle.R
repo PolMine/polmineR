@@ -19,13 +19,10 @@ setReplaceMethod(
   "names",
   signature = c(x = "bundle", value = "vector"),
   function(x, value) {
-    if ( !is.vector(value) ){
-      stop("value needs to be a character vector")
-    }
+    if (!is.vector(value)) stop("value needs to be a character vector")
     if (is.list(value)) value <- unlist(value)
-    if ( length(value) != length(x@objects) ) {
-      warning("length of value provided does not match number of partitions")
-      stop()
+    if (length(value) != length(x@objects)) {
+      stop("length of value provided does not match number of partitions")
     }
     # for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
     x@objects <- lapply(

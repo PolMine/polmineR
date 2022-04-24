@@ -137,18 +137,18 @@ cooccurrences(.Object, ...)
 windows do not extend beyond the left and right boundaries of the region
 defined by the s-attribute where the match occurs.}
 
-\item{left}{A single \code{integer} value defining the number of tokens to
-the left of the query match to include in the context. Advanced usage: (a)
-If \code{left} is a length-one \code{character} vector stating an
-s-attribute, the context will be expanded to the (left) boundary of the
-region where the match occurs. (b) If \code{left} is a named length-one
-\code{integer} vector, this value is the number regions of the structural
-attribute referred to by the vector's name  to the left of the query match
-that are included in the context.}
+\item{left}{A single \code{integer} value defining the number of tokens to the
+left of the query match to include in the context. Advanced usage: (a) If
+\code{left} is a length-one \code{character} vector stating an s-attribute, the
+context will be expanded to the (left) boundary of the region where the
+match occurs. (b) If \code{left} is a named length-one \code{integer} vector, this
+value is the number regions of the structural attribute referred to by the
+vector's name  to the left of the query match that are included in the
+context.}
 
-\item{right}{A single \code{integer} value, a length-one \code{character}
-vector or a named length-one \code{integer} value, with equivalent effects
-to argument \code{left}.}
+\item{right}{A single \code{integer} value, a length-one \code{character} vector or a
+named length-one \code{integer} value, with equivalent effects to argument
+\code{left}.}
 
 \item{stoplist}{Exclude a query hit from analysis if stopword(s) is/are in
 context (relevant only if query is not \code{NULL}).}

@@ -77,11 +77,9 @@ setMethod("split", "subcorpus", function(
   retval_class <- if (isTRUE(partition_bundle_call)) "partition_bundle" else "subcorpus_bundle"
   obj_type <- if (isTRUE(partition_bundle_call)) "partition" else "subcorpus"
   new_class <- if (length(x@type) == 0L) obj_type else paste(x@type, obj_type, sep = "_")
-
-  y <- new(
-    retval_class,
-    corpus = x@corpus, s_attributes_fixed = x@s_attributes, encoding = x@encoding
-  )
+  
+  y <- as(as(x, "corpus"), retval_class)
+  y@s_attributes_fixed <- x@s_attributes
   
   if (x@xml == "nested") stop("splitting not yet implemented for nested XML")
   

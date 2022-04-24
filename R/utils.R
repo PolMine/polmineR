@@ -330,3 +330,10 @@ struc2str <- function(x, s_attr, struc){
   Encoding(struc_values) <- x@encoding
   enc2native(struc_values)
 }
+
+regex2id <- function(x, p_attribute, regex){
+  cl_regex2id(
+    corpus = x@corpus, registry = x@registry_dir,
+    p_attribute = p_attribute, regex = regex
+  )
+}

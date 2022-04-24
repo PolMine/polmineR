@@ -1,3 +1,8 @@
+# system requirement: ghostscript (brew install ghostscript)
+# the dot program needs to be on the path. Consider adding
+# PATH=/opt/homebrew/bin
+# to ~/.Renviron
+
 library(polmineR)
 library(ruml) # available at/install from: https://github.com/PolMine/ruml
 library(plantuml) # available at/install from: https://github.com/rkrug/plantuml

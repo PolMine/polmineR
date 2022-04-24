@@ -111,7 +111,7 @@ context(.Object, ...)
   ...
 )
 
-\S4method{context}{partition_bundle}(.Object, query, p_attribute, verbose = TRUE, ...)
+\S4method{context}{partition_bundle}(.Object, query, p_attribute, positivelist = NULL, verbose = TRUE, ...)
 
 \S4method{context}{cooccurrences}(.Object, query, check = TRUE, complete = FALSE)
 }
@@ -124,21 +124,21 @@ context(.Object, ...)
 
 \item{cqp}{defaults to is.cqp-function, or provide TRUE/FALSE}
 
-\item{check}{A \code{logical} value, whether to check validity of CQP query
-using \code{check_cqp_query}.}
+\item{check}{A \code{logical} value, whether to check validity of CQP query using
+\code{check_cqp_query}.}
 
-\item{left}{A single \code{integer} value defining the number of tokens to
-the left of the query match to include in the context. Advanced usage: (a)
-If \code{left} is a length-one \code{character} vector stating an
-s-attribute, the context will be expanded to the (left) boundary of the
-region where the match occurs. (b) If \code{left} is a named length-one
-\code{integer} vector, this value is the number regions of the structural
-attribute referred to by the vector's name  to the left of the query match
-that are included in the context.}
+\item{left}{A single \code{integer} value defining the number of tokens to the
+left of the query match to include in the context. Advanced usage: (a) If
+\code{left} is a length-one \code{character} vector stating an s-attribute, the
+context will be expanded to the (left) boundary of the region where the
+match occurs. (b) If \code{left} is a named length-one \code{integer} vector, this
+value is the number regions of the structural attribute referred to by the
+vector's name  to the left of the query match that are included in the
+context.}
 
-\item{right}{A single \code{integer} value, a length-one \code{character}
-vector or a named length-one \code{integer} value, with equivalent effects
-to argument \code{left}.}
+\item{right}{A single \code{integer} value, a length-one \code{character} vector or a
+named length-one \code{integer} value, with equivalent effects to argument
+\code{left}.}
 
 \item{p_attribute}{The p-attribute of the query.}
 
@@ -170,8 +170,11 @@ the value from the options}
 \item{complete}{enhance completely}
 }
 \value{
-depending on whether a partition or a partition_bundle serves as
-input, the return will be a context object, or a \code{context_bundle} object
+depending on whether a \code{partition} or a \code{partition_bundle} serves as
+input, the return will be a context object, or a \code{context_bundle} object.
+Note that the number of objects in the \code{context_bundle} may differ from the
+number of objects in the input \code{bundle} object: \code{NULL} objects that result
+if no hit is obtained are dropped.
 }
 \description{
 Retrieve the word context of a token, optionally checking for boundaries of a XML
