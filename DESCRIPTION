@@ -110,7 +110,7 @@ Collate:
     'size.R'
     'split.R'
     'stats.R'
-    'store.R'
+    'restore.R'
     'templates.R'
     'terms.R'
     'token_stream.R'

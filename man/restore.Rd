@@ -2,22 +2,68 @@
 % Please edit documentation in R/store.R
 \name{restore}
 \alias{restore}
-\title{Restore S4 object with data.table slots}
+\alias{restore,character-method}
+\alias{restore,textstat-method}
+\title{Restore S4 textstat objects}
 \usage{
-restore(filename)
+restore(x)
+
+\S4method{restore}{character}(x)
+
+\S4method{restore}{textstat}(x)
 }
 \arguments{
-\item{filename}{A *.rds file to restore.}
+\item{x}{An S4 \code{textstat} object or *.rds file to restore.}
 }
 \description{
-Reloading an S4 object that has a slot with a \code{data.table} may result in
-buggy behavior. this auxiliary function will copy the \code{data.table} once
-to have a restored object that works.
+Using the reference semantics of \code{data.table} objects (i.e. inplace
+modification) has great advantages for  memory efficiency. But there may be
+unexpected behavior when reloading an S4 \code{textstat} object (including classes
+inheriting from \code{textstat}) with a \code{data.table} in the \code{stat} slot. The
+\code{restore} method will copy the \code{data.table} once to have a restored object
+that works after saving / reloading it.
+}
+\details{
+It is not possible to add columns to the \code{data.table} in the \code{stat}
+slot of a \code{textclass} object, when the object has been saved and loaded
+using \code{save()}/\code{load()}. This scenario also applies, when you agree to save
+the objects of an interactive R session are stored and load objects when
+starting the next interactive R session. The \code{restore()} method will create
+a copy of the \code{data.table}, so that inplace modifications are possible.
 }
 \examples{
+# Before moving to examples, this is a brief technical dip into the problem
+# solved by restore(): If we load the rds file the default way with
+# readRDS(), the data.table in the slot 'stat' will have the pointer '0x0'
+# and the data.table cannot be augmented without having been copied
+# previously.
+
 k <- kwic("REUTERS", query = "oil")
-kwicfile <- tempfile()
+kwicfile <- tempfile(fileext = ".rds")
 saveRDS(k, file = kwicfile)
-k <- restore(filename = kwicfile)
-k2 <- enrich(k, s_attribute = "id")
+problemprone <- readRDS(file = kwicfile)
+attr(problemprone@stat, ".internal.selfref")
+identical(attr(problemprone@stat, ".internal.selfref"), new("externalptr"))
+problemprone@stat[, "newcol" := TRUE]
+"newcol" \%in\% colnames(problemprone@stat) # is FALSE!
+problemprone@stat <- data.table::copy(problemprone@stat)
+problemprone@stat[, "newcol" := TRUE]
+"newcol" \%in\% colnames(problemprone@stat) # is TRUE now
+
+# Restore stored S4 object with data.table slot
+k <- kwic("REUTERS", query = "oil")
+kwicfile <- tempfile(fileext = ".rds")
+saveRDS(k, file = kwicfile)
+
+k2 <- restore(kwicfile)
+k3 <- enrich(k2, s_attribute = "id")
+
+# Restore already loaded object
+k <- kwic("REUTERS", query = "oil")
+rdata_file <- tempfile(fileext = ".RData")
+save(k, file = rdata_file)
+rm(k)
+load(rdata_file)
+restore(k) # now it is possible to columns by reference
+k@stat[, "newcol" := TRUE]
 }
