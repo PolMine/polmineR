@@ -43,3 +43,44 @@ test_that(
   }
 )
 
+test_that(
+  "context-method for subcorpus_bundle",
+  {
+    # This is a somewhat limited test: We check that positivelist and stoplist
+    # are applied as intended
+    
+    q <- "Arbeit"
+    positive <- "gute"
+    
+    scb <- corpus("GERMAPARLMINI") %>%
+      as.speeches(, s_attribute_name = "speaker", progress = FALSE)
+
+    p <- polmineR::context(
+      scb, query = q, p_attribute = "word", positivelist = positive,
+      verbose = FALSE
+    )
+    
+    expect_true(
+      all(
+        sapply(
+          lapply(lapply(p@objects, slot, "stat"), `[[`, "word"),
+          function(vec) positive %in% vec
+        )
+      )
+    )
+    
+    n <- polmineR::context(
+      scb, query = q, p_attribute = "word", stoplist = positive,
+      verbose = FALSE
+    )
+    
+    expect_true(
+      all(
+        sapply(
+          lapply(lapply(n@objects, slot, "stat"), `[[`, "word"),
+          function(vec) !positive %in% vec
+        )
+      )
+    )
+  }
+)

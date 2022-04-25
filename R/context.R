@@ -391,8 +391,8 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, s
     function(x) {
       .message("get context for partition ", x@name, verbose = verbose)
       context(
-        x, query = query,
-        p_attribute = p_attribute, positivelist = positivelist,
+        x, query = query, p_attribute = p_attribute,
+        positivelist = positivelist, stoplist = stoplist,
         verbose = FALSE,
         ...
       )
