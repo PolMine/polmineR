@@ -343,29 +343,26 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     if (verbose) message("... creating bundle of count objects")
     CNT_list <- split(CNT, by = "name_id")
     rm(CNT)
-    y <- new(
-      Class = "count_bundle",
-      p_attribute = p_attribute,
-      corpus = corpus, encoding = enc
-    )
-    co <- corpus(corpus)
+    
+    y <- as(as(.Object, "corpus"), "count_bundle")
+
+    prototype <- as(as(.Object, "corpus"), "count")
     .fn <- function(i){
-      new(
-        "count",
-        corpus = corpus,
-        registry_dir = co@registry_dir,
-        data_dir = co@data_dir,
-        info_file = co@info_file,
-        template = co@template,
-        encoding = co@encoding,
-        p_attribute = p_attribute,
-        stat = CNT_list[[i]][, "name_id" := NULL],
-        name = .Object@objects[[i]]@name,
-        size = size(.Object@objects[[i]])
-      )
+      cnt <- prototype
+      cnt@p_attribute <- p_attribute
+      cnt@stat <- CNT_list[[i]][, "name_id" := NULL]
+      cnt@name <- .Object@objects[[i]]@name
+      cnt@size <- size(.Object@objects[[i]])
+      cnt
     }
-    y@objects <- if (progress) pblapply(seq_along(CNT_list), .fn) else lapply(seq_along(CNT_list), .fn)
+    
+    y@objects <- if (progress)
+      pblapply(seq_along(CNT_list), .fn)
+    else
+      lapply(seq_along(CNT_list), .fn)
+    
     names(y@objects) <- names(.Object)
+    
     return( y )
   }
 })
