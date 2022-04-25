@@ -7,6 +7,7 @@
 \alias{regions-class}
 \alias{CorpusOrSubcorpus}
 \alias{regions,corpus-method}
+\alias{regions,subcorpus-method}
 \alias{as.regions}
 \alias{as.data.table.regions}
 \title{Regions of a CWB corpus.}
@@ -14,6 +15,8 @@
 regions(x, s_attribute)
 
 \S4method{regions}{corpus}(x, s_attribute)
+
+\S4method{regions}{subcorpus}(x, s_attribute)
 
 as.regions(x, ...)
 

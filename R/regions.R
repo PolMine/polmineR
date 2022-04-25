@@ -10,6 +10,9 @@ setGeneric("regions", function(x, s_attribute) standardGeneric("regions"))
 #' @rdname regions_class
 #' @exportMethod regions
 setMethod("regions", "corpus", function(x, s_attribute){
+  
+  y <- as(x, "regions")
+  
   struc_size <- cl_attribute_size(
     corpus = x@corpus,
     attribute = s_attribute,
@@ -17,28 +20,47 @@ setMethod("regions", "corpus", function(x, s_attribute){
     registry = x@registry_dir
   )
 
-  new(
-    "regions",
-    corpus = x@corpus, # slot inherited from 'corpus' class
-    registry_dir = x@registry_dir,
-    info_file = x@info_file,
-    template = x@template,
-    data_dir = x@data_dir, # slot inherited from 'corpus' class
-    
-    type = x@type, # slot inherited from 'corpus' class
-    encoding = x@encoding, # slot inherited from 'corpus' class
-    name = x@name, # slot inherited from 'corpus' class
-    size = x@size, # slot inherited from 'corpus' class
-    cpos = get_region_matrix(
-      corpus = x@corpus,
-      s_attribute = s_attribute,
-      strucs = 0L:(struc_size - 1L),
-      registry = x@registry_dir
-    )
+  y@cpos = get_region_matrix(
+    corpus = x@corpus,
+    s_attribute = s_attribute,
+    strucs = 0L:(struc_size - 1L),
+    registry = x@registry_dir
   )
+  
+  y
 })
 
-#' @details The \code{as.regions}-method coerces objects to a \code{regions}-object.
+#' @rdname regions_class
+setMethod("regions", "subcorpus", function(x, s_attribute){
+  
+  y <- as(x, "regions")
+  
+  is_sibling <- s_attr_is_sibling(
+    x = s_attribute, y = x@s_attribute_strucs,
+    corpus = x@corpus, registry = x@registry_dir
+  )
+  if (is_sibling) return(y)
+
+  is_descendent <- s_attr_is_descendent(
+    x = s_attribute, y = x@s_attribute_strucs,
+    corpus = x@corpus, registry = x@registry_dir
+  )
+  if (!is_descendent) stop("s-attribute required to be a descendent of x")
+  
+  regions <- s_attr_regions(
+    corpus = x@corpus, registry = x@registry_dir, data_dir = x@data_dir,
+    s_attr = s_attribute
+  )
+  
+  strucs <- cpos2struc(x = x, s_attr = x@s_attribute_strucs, cpos = regions[,1])
+  y@cpos <- regions[which(strucs %in% x@strucs),]
+  
+  y
+})
+
+
+
+#' @details The `as.regions`-method coerces objects to a `regions`-object.
 #' @param ... Further arguments.
 #' @rdname regions_class
 #' @exportMethod as.regions
