@@ -224,7 +224,6 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' ts_list <- get_token_stream(pb)
 #' 
 #' # Workflow to filter decoded subcorpus_bundle
-#' \dontrun{
 #' sp <- corpus("GERMAPARLMINI") %>% as.speeches(s_attribute_name = "speaker", progress = FALSE)
 #' queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
 #' phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
@@ -239,7 +238,6 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   progress = FALSE,
 #'   verbose = FALSE
 #' )
-#' }
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
 
   corpus_id <- get_corpus(.Object)
@@ -258,11 +256,21 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   rm(region_matrix, region_matrix_list)
 
   if (is.null(phrases)){
+    expr <- substitute(subset)
+    if (!is.null(expr))
+      stop(
+        "Abort - using an expression as argument subset is pointless unless ",
+        "argument 'phrases' is provided."
+      )
+
     if (verbose) message("... decoding character vectors")
-    p_attr <- get_token_stream(cpos_vec, corpus = corpus_id, encoding = encoding(.Object), p_attribute = p_attribute, decode = decode)
+    p_attr <- get_token_stream(
+      cpos_vec, corpus = corpus_id, encoding = encoding(.Object),
+      p_attribute = p_attribute, decode = decode
+    )
     if (cpos) names(p_attr) <- cpos_vec
     if (verbose) message("... generating list of character vectors")
-    if (!is.null(subset)) stop("using subset is not yet implemented")
+
     y <- split(x = p_attr, f = obj_id)
     names(y) <- names(.Object@objects)[unique(obj_id)] # subsetting may have removed objs
   } else {
