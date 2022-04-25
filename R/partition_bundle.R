@@ -51,7 +51,8 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
   }
   
   obj_type <- unique(unname(sapply(x@objects, class)))
-  if (length(obj_type) > 1L) stop("Class of the objects within the bundle is not unique.")
+  if (length(obj_type) > 1L) 
+    stop("Class of the objects within the bundle is not unique.")
 
   .message('number of objects to be merged: ', length(x@objects), verbose = verbose)
   

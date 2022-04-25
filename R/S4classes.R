@@ -291,6 +291,18 @@ setClass(
   )
 )
 
+# setValidity("textstat", function(object){
+#   if (
+#     identical(attr(object@stat, ".internal.selfref"), new("externalptr"))
+#   ){
+#     return(paste(
+#       "data.table pointer is 0x0 - copy object using cp() to create",
+#       "object with valid pointer"
+#     ))
+#   } else {
+#     TRUE
+#   }
+# })
 
 #' @details \code{textstat} objects can have a name, which can be retrieved, and set using
 #' the \code{name}-method and \code{name<-}, respectively.
@@ -1091,10 +1103,22 @@ setClass(
 
 
 #' @rdname partition_class
-setClass("plpr_partition", contains = "partition")
+setClass(
+  "plpr_partition",
+  contains = "partition",
+  prototype = list(
+    stat = data.table()
+  )
+)
 
 #' @rdname partition_class
-setClass("press_partition", contains = "partition")
+setClass(
+  "press_partition",
+  contains = "partition",
+  prototype = list(
+    stat = data.table()
+  )
+)
 
 
 #' Bundle of partitions (partition_bundle class).
