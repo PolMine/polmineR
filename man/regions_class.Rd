@@ -3,9 +3,7 @@
 \docType{class}
 \name{regions}
 \alias{regions}
-\alias{CorpusOrSubcorpus-class}
 \alias{regions-class}
-\alias{CorpusOrSubcorpus}
 \alias{regions,corpus-method}
 \alias{regions,subcorpus-method}
 \alias{as.regions}
@@ -36,13 +34,37 @@ method definition in the \code{data.table} package. Unused in this context.}
 \item{values}{values to assign to a column that will be added}
 }
 \description{
-A coerce-method is available to coerce a \code{partition} object to a
-\code{regions} object.
+Class to store and process the regions of a corpus. Regions are defined by
+start and end corpus positions and correspond to a set of tokens surrounded
+by start and end XML tags.
 }
 \details{
-The virtual class \code{CorpusOrSubcorpus} is a way to handle corpora specified
-by a character vector, \code{region} objects, and \code{partition} objects
-in a uniform manner.
+The \code{regions} class is a minimal representation of regions and does not
+include information on the "strucs" (region IDs) that are used internally to
+obtain values of s-attributes or information, which combination of conditions
+on s-attributes has been used to obtain regions. This is left to the
+\code{subcorpus} corpus class. Whereas the \code{subcorpus} class is associated with
+the assumption, that a set of regions is a meaningful sub-unit of a corpus,
+the \code{regions} class has a focus on the individual sequences of tokens defined
+by a structural attribute (such as paragraphs, sentences, named entities).
+
+Information on regions is maintained in the \code{cpos} slot of the \code{regions} S4
+class: A two-column \code{matrix} with begin and end corpus positions (first and
+second column, respectively). All other slots are inherited from the \code{corpus}
+class.
+
+The understanding of "regions" is modelled on the usage of terms by CWB
+developers. As it is put in the
+\href{https://cwb.sourceforge.io/files/CQP_Manual.pdf}{CQP Interface and
+Query Language Manual}: "Matching pairs of XML start and end tags are encoded
+as token regions, identified by the corpus positions of the first token
+(immediately following the start tag) and the last token (immediately
+preceding the end tag) of the region. \link{...} Elements of the same name (e.g.
+<s>...</s> or <text>...</text>) are collected and referred to as a structural
+attribute or s-attribute. The corresponding regions must be non-overlapping
+and non-recursive. Different s-attributes are completely independent in the
+CWB: a hierarchical nesting of the XML elements is neither required nor can
+it be guaranteed." (p. 6)
 
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
 
@@ -52,11 +74,8 @@ positions in the slot \code{cpos} as a \code{data.table}.
 \section{Slots}{
 
 \describe{
-\item{\code{cpos}}{a two-column \code{data.table} that will include a "cpos_left" and "cpos_right" column}
-
-\item{\code{corpus}}{the CWB corpus (character vector length 1)}
-
-\item{\code{encoding}}{the encoding of the CWB corpus (character vector length 1)}
+\item{\code{cpos}}{A two-column \code{matrix} with start and end corpus positions (first
+and second column, respectively).}
 }}
 
 \examples{
