@@ -191,6 +191,11 @@ NULL
 #' The method works with a whole CWB corpus defined by a  character vector, and
 #' can be applied on a \code{partition}- or a \code{context} object.
 #' 
+#' If `query` produces a lot of matches, the `DT::datatable()` function used to
+#' produce output in the Viewer pane of RStudio may issue a warning. Usually,
+#' this warning is harmless and can be ignored. Use
+#' `options("polmineR.warn.size" = FALSE)` for turning off this warning.
+#' 
 #' If a \code{positivelist} is supplied, only those concordances will be kept that
 #' have one of the terms from the \code{positivelist} occurr in the context of
 #' the query match. Use argument \code{regex} if the positivelist should be
