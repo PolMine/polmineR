@@ -135,6 +135,10 @@ it is a query (#191).
 been removed. `RcppCWB::s_attr_regions()` replaces the functionality.
 - The `as.speeches()` method had not yet been implemented for nested corpora. A
 limited rewrite makes this work now (#198).
+- Inconsistencies and unnecessary limitations of the `get_token_stream()` method
+for `partition_bundle` objects have been addressed: Multiple p-attributes can be
+used without providing `phrases` at the same time (#142) and using the `subset`
+argument does not depend on using `phrases` either (#141).
 
 
 ## Bug fixes

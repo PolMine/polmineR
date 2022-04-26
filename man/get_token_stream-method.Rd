@@ -74,8 +74,7 @@ worker.}
 
 \item{corpus}{A CWB indexed corpus.}
 
-\item{p_attribute}{A length-one \code{character} vector, the p-attribute to
-decode.}
+\item{p_attribute}{A \code{character} vector, the p-attribute(s) to decode.}
 
 \item{subset}{An expression applied on p-attributes, using non-standard
 evaluation. Note that symbols used in the expression may not be used
@@ -192,9 +191,18 @@ pb_tokstr <- corpus("REUTERS") \%>\%
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 ts_list <- get_token_stream(pb)
 
-# Workflow to filter decoded subcorpus_bundle
-\dontrun{
-sp <- corpus("GERMAPARLMINI") \%>\% as.speeches(s_attribute_name = "speaker", progress = FALSE)
+# Use two p-attributes
+sp <- corpus("GERMAPARLMINI") \%>\%
+  as.speeches(s_attribute_name = "speaker", progress = FALSE)
+p2 <- get_token_stream(sp, p_attribute = c("word", "pos"), verbose = FALSE)
+
+# Apply filter
+p_sub <- get_token_stream(
+  sp, p_attribute = c("word", "pos"),
+  subset = {!grepl("(\\\\$.$|ART)", pos)}
+)
+
+# Concatenate phrases and apply filter
 queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
 phr <- corpus("GERMAPARLMINI") \%>\% cpos(query = queries) \%>\% as.phrases(corpus = "GERMAPARLMINI")
 
@@ -208,5 +216,4 @@ ts_phr <- get_token_stream(
   progress = FALSE,
   verbose = FALSE
 )
-}
 }

@@ -134,11 +134,37 @@ test_that(
   }
 )
 
+test_that(
+  "get_token_stream() with two attributes", 
+  {
+    sp <- corpus("GERMAPARLMINI") %>%
+      as.speeches(s_attribute_name = "speaker", progress = FALSE)
+    p2 <- get_token_stream(sp, p_attribute = c("word", "pos"), verbose = FALSE)
+    
+    spl <- strsplit(p2[[1]], "//")
+    word <- sapply(spl, `[`, 1L)
+    pos <- sapply(spl, `[`, 1L)
+    expect_identical(
+      word[1:100], get_token_stream(sp[[1]], p_attribute = "word")[1:100]
+    )
+    
+    # Apply filter
+    p_sub <- get_token_stream(
+      sp, p_attribute = c("word", "pos"),
+      subset = {!grepl("\\$.$", pos)}
+    )
+    expect_identical(length(grep("\\$.$", p_sub[[1]])), 0L)
+  }
+)
+
+
+
 
 test_that(
   "Check workflow to filter subcorpus_bundle",
   {
-    sp <- corpus("GERMAPARLMINI") %>% as.speeches(s_attribute_name = "speaker", progress = FALSE)
+    sp <- corpus("GERMAPARLMINI") %>%
+      as.speeches(s_attribute_name = "speaker", progress = FALSE)
     queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
     
     phr <- corpus("GERMAPARLMINI") %>%
