@@ -140,7 +140,10 @@ test_that(
   {
     sp <- corpus("GERMAPARLMINI") %>% as.speeches(s_attribute_name = "speaker", progress = FALSE)
     queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
-    phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
+    
+    phr <- corpus("GERMAPARLMINI") %>%
+      cpos(query = queries) %>%
+      as.phrases(corpus = "GERMAPARLMINI")
     
     kill <- tm::stopwords("de")
     assign("kill", tm::stopwords("de"), envir = .GlobalEnv)
@@ -154,7 +157,10 @@ test_that(
       verbose = FALSE
     )
     
-    testthat::expect_identical(FALSE, any(tm::stopwords("de") %in% gsub("^(.*?)//.*?$", "\\1", ts_phr[[1]])))
+    testthat::expect_identical(
+      FALSE,
+      any(tm::stopwords("de") %in% gsub("^(.*?)//.*?$", "\\1", ts_phr[[1]]))
+    )
     
   }
 )
