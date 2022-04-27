@@ -5,6 +5,7 @@
 \alias{as.sparseMatrix}
 \alias{as.sparseMatrix,simple_triplet_matrix-method}
 \alias{as.sparseMatrix,TermDocumentMatrix-method}
+\alias{as.sparseMatrix,DocumentTermMatrix-method}
 \alias{as.sparseMatrix,bundle-method}
 \title{Type conversion - get sparseMatrix.}
 \usage{
@@ -13,6 +14,8 @@ as.sparseMatrix(x, ...)
 \S4method{as.sparseMatrix}{simple_triplet_matrix}(x, ...)
 
 \S4method{as.sparseMatrix}{TermDocumentMatrix}(x, ...)
+
+\S4method{as.sparseMatrix}{DocumentTermMatrix}(x, ...)
 
 \S4method{as.sparseMatrix}{bundle}(x, col, ...)
 }

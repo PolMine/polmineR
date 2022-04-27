@@ -58,12 +58,18 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 #' @rdname as.DocumentTermMatrix
 #' @name as.TermDocumentMatrix
 #' @aliases as.DocumentTermMatrix
-setGeneric("as.TermDocumentMatrix", function(x, ...) UseMethod("as.TermDocumentMatrix") )
+setGeneric(
+  "as.TermDocumentMatrix",
+  function(x, ...) UseMethod("as.TermDocumentMatrix")
+)
 
 
 #' @exportMethod as.DocumentTermMatrix
 #' @rdname as.DocumentTermMatrix
-setGeneric("as.DocumentTermMatrix", function(x, ...) UseMethod("as.DocumentTermMatrix") )
+setGeneric(
+  "as.DocumentTermMatrix",
+  function(x, ...) UseMethod("as.DocumentTermMatrix")
+)
 
 #' @examples
 #' use("polmineR")
@@ -207,7 +213,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
     
     dimnames(dtm) <- list(Docs = documents, Terms = terms)
   }
-  class(dtm) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  class(dtm) <- c("DocumentTermMatrix", "simple_triplet_matrix")
   attr(dtm, "weighting") <- c("term frequency", "tf")
   dtm
 })

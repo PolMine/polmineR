@@ -139,6 +139,9 @@ limited rewrite makes this work now (#198).
 for `partition_bundle` objects have been addressed: Multiple p-attributes can be
 used without providing `phrases` at the same time (#142) and using the `subset`
 argument does not depend on using `phrases` either (#141).
+- The `as.sparseMatrix()` method is now also defined for `DocumentTermMatrix` 
+objects (was available previously ony for `TermDocumentMatrix` objects).
+
 
 
 ## Bug fixes
@@ -179,6 +182,8 @@ Fixed. (#178)
 - A bug reported for the progress bar of the `kwic()` method is gone as a result
 of refactoring how the s-attribute is matched (#149). The argument `progress`
 has been removed from the method.
+- The `as.DocumentTermMatrix()` method mistakenly returned as
+`TermDocumentMatrix` object. Fixed (#146).
 
 
 # Documentation 

@@ -71,6 +71,16 @@ setMethod("as.sparseMatrix", "TermDocumentMatrix", function(x, ...){
   )
 })
 
+#' @rdname as.sparseMatrix
+setMethod("as.sparseMatrix", "DocumentTermMatrix", function(x, ...){
+  Matrix::sparseMatrix(
+    i = x$i, j = x$j, x = x$v,
+    dims = c(x$nrow, x$ncol),
+    dimnames = dimnames(x),
+    ...
+  )
+})
+
 
 
 #' @docType methods
