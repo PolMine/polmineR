@@ -20,5 +20,9 @@ test_that(
     expect_equal(is.null(get_type(partition("REUTERS", places = "kuwait"))), TRUE)
     expect_equal(is.null(get_type(partition_bundle("REUTERS", s_attribute = "places"))), TRUE)
     expect_equal(is.null(get_type(corpus("REUTERS"))), TRUE)
+    expect_equal(
+      is.null(corpus("REUTERS") %>% split(s_attribute = "id") %>% get_type()),
+      TRUE
+    )
   }
 )

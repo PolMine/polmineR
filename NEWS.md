@@ -143,6 +143,8 @@ argument does not depend on using `phrases` either (#141).
 objects (was available previously ony for `TermDocumentMatrix` objects).
 - If a vector of queries is named, theses named are now used consistently by the
 `hits()` method (#195).
+- `get_type()` for `subcorpus_bundle` returns `NULL` if no type is defined as a
+matter of consistency (#169).
 
 
 
