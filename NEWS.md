@@ -184,6 +184,8 @@ of refactoring how the s-attribute is matched (#149). The argument `progress`
 has been removed from the method.
 - The `as.DocumentTermMatrix()` method mistakenly returned as
 `TermDocumentMatrix` object. Fixed (#146).
+- The `noise()` method misleadingly handled the number of characters provided by
+`minNchar` as a maximum threshold, not as a minimum requirement (#135). Fixed.
 
 
 # Documentation 

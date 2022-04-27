@@ -7,16 +7,16 @@ setGeneric("noise", function(.Object, ...) standardGeneric("noise"))
 
 #' detect noise
 #' 
-#' @param .Object an .Object of class \code{"DocumentTermMatrix"}
+#' @param .Object An object of class `DocumentTermMatrix`.
 #' @param minTotal minimum colsum (for DocumentTermMatrix) to qualify a term as non-noise
 #' @param minTfIdfMean minimum mean value for tf-idf to qualify a term as non-noise
 #' @param specialChars special characters to drop
 #' @param numbers regex, to drop numbers
 #' @param verbose logical
 #' @param p_attribute relevant if applied to a textstat object
-#' @param sparse will be passed into \code{"removeSparseTerms"} from \code{"tm"}-package
-#' @param stopwordsLanguage e.g. "german", to get stopwords defined in the tm package
-#' @param minNchar min char length ti qualify a term as non-noise
+#' @param sparse Will be passed into `tm::removeSparseTerms()`.
+#' @param stopwordsLanguage e.g. "german", to get stopwords defined in the `tm` package.
+#' @param minNchar Minimum number of characters to qualify a term as non-noise.
 #' @param ... further parameters
 #' @return a list 
 #' @importFrom slam col_sums
@@ -26,7 +26,7 @@ setMethod(
   "noise", "DocumentTermMatrix",
   function(
     .Object, minTotal = 2, minTfIdfMean = 0.005, sparse = 0.995,
-    stopwordsLanguage = "german", minNchar = 2,
+    stopwordsLanguage = "german", minNchar = 2L,
     specialChars = getOption("polmineR.specialChars"),
     numbers = "^[0-9\\.,]+$",
     verbose = TRUE
@@ -59,8 +59,8 @@ setMethod(
     noiseList,
     noise(
       colnames(.Object),
-      stopwordsLanguage=stopwordsLanguage, minNchar=minNchar,
-      specialChars=specialChars, numbers=numbers
+      stopwordsLanguage = stopwordsLanguage, minNchar = minNchar,
+      specialChars = specialChars, numbers = numbers
     )
   )
   noiseList
@@ -95,7 +95,13 @@ setMethod(
       noiseList[["numbers"]] <- grep(numbers, .Object, value=T)
     }
     if (!is.null(minNchar)){
-      noiseList[["minNchar"]] <- .Object[which(nchar(.Object) <= minNchar)]  
+      stopifnot(is.numeric(minNchar))
+      if (minNchar <= 1) stop("minNchar needs to be greater than 1")
+      terms_to_remove <- which(nchar(.Object) < minNchar)
+      noiseList[["minNchar"]] <- if (length(terms_to_remove) > 0L)
+        .Object[-terms_to_remove]
+      else
+        .Object
     }
     noiseList
   })
