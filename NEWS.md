@@ -176,6 +176,9 @@ error when using `knit_print()` on this object has been fixed (#200).
 - The `context()`-method for `partition_bundle` objects always required an
 explicit statement of the argument `positivelist`, which is not necessary.
 Fixed. (#178)
+- A bug reported for the progress bar of the `kwic()` method is gone as a result
+of refactoring how the s-attribute is matched (#149). The argument `progress`
+has been removed from the method.
 
 
 # Documentation 

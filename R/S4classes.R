@@ -193,49 +193,51 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 
 #' S4 textstat superclass.
 #' 
-#' The \code{textstat}-class (technically an S4 class) serves as a superclass
-#' for the classes \code{features}, \code{context}, and \code{partition}.
-#' Usually, the class will not be used directly. It offers a set of standard
-#' generic methods (such as \code{head}, \code{tail}, \code{dim}, \code{nrow},
-#' \code{colnames}) its childs inherit. The core feature of \code{textstat} and
-#' its childs is a \code{data.table} in the slot \code{stat} for keeping data on
-#' text statistics of a corpus, or a \code{partition}.
+#' The `textstat` S4 class is the superclass for the classes `features`,
+#' `context`, and `partition`. Usually, these subclasses, which are designed to
+#' serve a specified analytical purpose, will be used . Common standard generic
+#' methods such as `head`, `tail`, `dim`, `nrow`, `colnames` are defined for the
+#' `textstat` class and are available for subclasses by inheritence. The core of
+#' `textstat` and its childs is a `data.table` in the slot `stat` for keeping
+#' data on text statistics of a `corpus`, or a `partition`. The `textstat` class
+#' inherits from the `corpus` class, keeping information on the corpus
+#' available.
 #' 
-#' A \code{head}-method will return the first rows of the \code{data.table} in
-#' the \code{stat}-slot. Use argument \code{n} to specify the number of rows.
+#' A `head`-method will return the first rows of the `data.table` in
+#' the `stat`-slot. Use argument `n` to specify the number of rows.
 #'
-#' A \code{tail}-method will return the last rows of the \code{data.table} in
-#' the \code{stat}-slot. Use argument \code{n} to specify the number of rows.
+#' A `tail`-method will return the last rows of the `data.table` in
+#' the `stat`-slot. Use argument `n` to specify the number of rows.
 #'
-#' The methods \code{dim}, \code{nrow} and \code{ncol} will return information
+#' The methods `dim`, `nrow` and `ncol` will return information
 #' on the dimensions, the number of rows, or the number of columns of the
-#' \code{data.table} in the \code{stat}-slot, respectively.
+#' `data.table` in the `stat`-slot, respectively.
 #' 
-#' Objects derived from the \code{textstat} class can be indexed with simple
+#' Objects derived from the `textstat` class can be indexed with simple
 #' square brackets ("[") to get rows specified by an numeric/integer vector,
 #' and with double square brackets ("[[") to get specific columns from the 
-#' \code{data.table} in the slot \code{stat}.
+#' `data.table` in the slot `stat`.
 #' 
-#' The \code{colnames}-method will return the column names of the \code{data-table}
-#' in the slot \code{stat}.
+#' The `colnames`-method will return the column names of the `data-table`
+#' in the slot `stat`.
 #' 
-#' The methods \code{as.data.table}, and \code{as.data.frame} will extract the
-#' \code{data.table} in the slot \code{stat} as a \code{data.table}, or
-#' \code{data.frame}, respectively.
+#' The methods `as.data.table`, and `as.data.frame` will extract the
+#' `data.table` in the slot `stat` as a `data.table`, or `data.frame`,
+#' respectively.
 #' 
-#' @slot p_attribute Object of class \code{character}, p-attribute of the query.
-#' @slot corpus A corpus specified by a length-one \code{character} vector. 
-#' @slot stat A \code{data.table} with statistical information.
+#' @slot p_attribute Object of class `character`, p-attribute of the query.
+#' @slot corpus A corpus specified by a length-one `character` vector. 
+#' @slot stat A `data.table` with statistical information.
 #' @slot name The name of the object.
-#' @slot annotation_cols A \code{character} vector, column names of
-#'   \code{data.table} in slot \code{stat} that are annotations.
-#' @slot encoding A length-one \code{character} vector, the encoding of the corpus.
-#' @param .Object A \code{textstat} object.
-#' @param x A \code{textstat} object.
+#' @slot annotation_cols A `character` vector, column names of
+#'   `data.table` in slot `stat` that are annotations.
+#' @slot encoding A length-one `character` vector, the encoding of the corpus.
+#' @param .Object A `textstat` object.
+#' @param x A `textstat` object.
 #' @param by Column that will serve as the key for sorting.
 #' @param decreasing Logical, whether to return decreasing order.
-#' @param e1 A \code{texstat} object.
-#' @param e2 Another \code{texstat} object.
+#' @param e1 A `texstat` object.
+#' @param e2 Another `texstat` object.
 #' @param ... Further arguments.
 #' @aliases as.data.frame,textstat-method show,textstat-method
 #'   dim,textstat-method

@@ -92,7 +92,6 @@ kwic(.Object, ...)
   positivelist = NULL,
   regex = FALSE,
   verbose = TRUE,
-  progress = TRUE,
   ...
 )
 
@@ -111,7 +110,6 @@ kwic(.Object, ...)
   positivelist = NULL,
   regex = FALSE,
   verbose = TRUE,
-  progress = TRUE,
   ...
 )
 
@@ -182,8 +180,6 @@ interpreted as regular expression.}
 
 \item{check}{A \code{logical} value, whether to check validity of CQP query
 using \code{check_cqp_query}.}
-
-\item{progress}{A \code{logical} value, whether to show progress bar.}
 }
 \value{
 If there are no matches, or if all (initial) matches are dropped due to the

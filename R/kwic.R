@@ -235,7 +235,6 @@ NULL
 #' @param regex Logical, whether \code{stoplist}/\code{positivelist} is
 #'   interpreted as regular expression.
 #' @param verbose A \code{logical} value, whether to print messages.
-#' @param progress A \code{logical} value, whether to show progress bar.
 #' @param ... Further arguments, used to ensure backwards compatibility. If
 #'   \code{.Object} is a \code{remote_corpus} of \code{remote_partition} object,
 #'   the three dots (\code{...}) are used to pass arguments. Hence, it is
@@ -418,7 +417,7 @@ setMethod("kwic", "corpus", function(
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
-  verbose = TRUE, progress = TRUE, ...
+  verbose = TRUE, ...
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -478,7 +477,7 @@ setMethod("kwic", "character", function(
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
-  verbose = TRUE, progress = TRUE, ...
+  verbose = TRUE, ...
 ){
   kwic(
     .Object = corpus(.Object),
@@ -491,7 +490,6 @@ setMethod("kwic", "character", function(
     stoplist = stoplist, positivelist = positivelist,
     regex = regex,
     verbose = verbose,
-    progress = progress,
     ...
   )
 })
