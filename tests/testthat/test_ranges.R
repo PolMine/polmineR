@@ -18,5 +18,7 @@ test_that(
     y <- hits("REUTERS", query = c(a = "oil", b = "barrel"))
     rng <- ranges("REUTERS", query = c(a = "oil", b = "barrel"))
     identical(as.data.table(y), as.data.table(rng))
+    
+    expect_error(ranges("REUTERS", query = c(a = "oil", "barrel")))
   }
 )

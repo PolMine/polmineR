@@ -26,6 +26,10 @@ setMethod("ranges", "corpus", function(.Object, query, cqp = FALSE, check = TRUE
     cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
   }
   
+  if (!is.null(names(query))) if (any(nchar(names(query)) == 0L)) stop(
+    "If vector query is named, all individual queries need to be named."
+  )
+  
   if (progress){
     cpos_list <- pblapply(as.list(query), .fn, cl = mc)
   } else {

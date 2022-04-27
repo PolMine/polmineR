@@ -13,7 +13,7 @@ NULL
 #' include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
 #' count is 0).
 #' 
-#' @param query A \code{character} vector (optionally named, see details) with
+#' @param query A `character` vector (optionally named, see details) with
 #'   one or more queries.
 #' @param cqp Either a \code{logical} value (\code{TRUE} if query is a CQP
 #'   query), or a function to check whether \code{query} is a CQP query or not.
@@ -68,7 +68,17 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   if (missing(s_attribute)){
-    dt <- count(.Object = .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, freq = freq, mc = mc, verbose = verbose, progress = progress, ...)
+    dt <- count(
+      .Object = .Object,
+      query = query, cqp = cqp, check = check, p_attribute = p_attribute,
+      freq = freq, mc = mc, verbose = verbose, progress = progress, ...
+    )
+    if (!is.null(names(query))){
+      if (any(nchar(names(query)) == 0L))
+        stop("if query is a named vector, all queries need to be named")
+      q <- unname(setNames(names(query), unname(query))[dt[["query"]]])
+      dt[, "query" := q]
+    }
     retval <- as(.Object, "hits")
     retval@stat <- dt
     retval@corpus <- .Object@corpus
