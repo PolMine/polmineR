@@ -288,10 +288,15 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       s_attr_dots <- lapply(s_attr_dots, function(v) as.corpusEnc(v, corpusEnc = x@encoding))
     }
   }
+  
+  if (all(is.na(s_attr)))
+    stop("abort - no valid s-attributes for subsetting the corpus")
 
   # Reading the binary file with the ranges for the whole corpus is faster than using
   # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
   # to read in seperate rng files.
+  if (!s_attr[1] %in% s_attributes(x))
+    stop(sprintf("structural attribute '%s' not defined", s_attr[1]))
   rng_file <- fs::path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
   rng_size <- file.info(rng_file)[["size"]]
   rng <- readBin(rng_file, what = integer(), size = 4L, n = rng_size / 4L, endian = "big")
@@ -304,6 +309,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   # Now we add the values of the s-attributes to the data.table with regions, one at
   # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
   for (i in seq_along(s_attr)){
+    if (!s_attr[i] %in% s_attributes(x))
+      stop(sprintf("structural attribute '%s' not defined", s_attr[i]))
     files <- list(
       avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
       avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))

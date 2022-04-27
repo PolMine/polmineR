@@ -230,7 +230,11 @@ setMethod(
         
         # Checking for the number of rows in the region matrix is necessary to avoid that 
         # the table is transposed if nrow(tab_data) == 1
-        tab <- if (nrow(.Object@cpos) > 1L) data.table(tab_data) else data.table(matrix(tab_data, nrow = 1))
+        tab <- if (nrow(.Object@cpos) > 1L)
+          data.table(tab_data)
+        else
+          data.table(matrix(tab_data, nrow = 1L))
+        
         if (isTRUE(unique)) tab <- unique(tab)
         return( tab )
       }
@@ -294,7 +298,19 @@ setMethod("s_attributes", "call", function(.Object, corpus){
       y <- lapply(x, .fn)
     } else if (is.symbol(x)){
       char <- deparse(x)
-      y <- if (char %in% s_attrs) char else NULL
+      if (char %in% s_attrs){
+        y <- char
+      } else {
+        if (!exists(char)){
+          warning(
+            sprintf(
+              "expression includes undefined symbol that does not refer to s-attribute: %s",
+              char
+            )
+          )
+        }
+        y <- NULL
+      }
     } else {
       y <- NULL
     }
