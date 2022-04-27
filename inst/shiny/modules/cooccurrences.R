@@ -24,7 +24,8 @@ cooccurrencesUiInput <- function(){
     textInput("cooccurrences_query", "query", value = ""),
     cqp = radioButtons("cooccurrences_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     selectInput("cooccurrences_p_attribute", "p_attribute:", choices = c("word", "pos", "lemma"), selected = "word", multiple = TRUE),
-    sliderInput("cooccurrences_window", "window", min = 1, max = 25, value = getOption("polmineR.left")),
+    sliderInput("cooccurrences_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
+    sliderInput("cooccurrences_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
     br()
   )
 }
@@ -72,12 +73,13 @@ cooccurrencesServer <- function(input, output, session){
   
   observeEvent(input$cooccurrences_code, {
     snippet <- sprintf(
-      'cooccurrences(\n  %s,\n  query = "%s",\n  cqp = %s,\n  p_attribute = "%s",\n  window = %s\n)',
+      'cooccurrences(\n  %s,\n  query = "%s",\n  cqp = %s,\n  p_attribute = "%s",\n  left = %s,\n  right = %s\n)',
       if (input$cooccurrences_object == "corpus") sprintf('"%s"', input$cooccurrences_corpus)  else input$cooccurrences_partition,
       input$cooccurrences_query,
       if (input$cooccurrences_cqp == "yes") "TRUE" else "FALSE", 
       input$cooccurrences_p_attribute,
-      input$cooccurrences_window
+      input$cooccurrences_left,
+      input$cooccurrences_right
     )
     snippet_html <- highlight::highlight(
       parse.output = parse(text = snippet),
@@ -107,7 +109,7 @@ cooccurrencesServer <- function(input, output, session){
               query = rectifySpecialChars(input$cooccurrences_query),
               cqp = if (input$cooccurrences_cqp == "yes") TRUE else FALSE,
               p_attribute = input$cooccurrences_p_attribute,
-              left = input$cooccurrences_window[1], right = input$cooccurrences_window[1],
+              left = input$cooccurrences_left, right = input$cooccurrences_right[1],
               verbose = "shiny"
             )
           })
@@ -151,8 +153,8 @@ cooccurrencesServer <- function(input, output, session){
         }
         updateSelectInput(session, "kwic_cqp", selected = input$cooccurrences_cqp)
         updateTextInput(session, "kwic_query", value = input$cooccurrences_query)
-        updateSelectInput(session, "kwic_left", selected = input$cooccurrences_window)
-        updateSelectInput(session, "kwic_right", selected = input$cooccurrences_window)
+        updateSelectInput(session, "kwic_left", selected = input$cooccurrences_left)
+        updateSelectInput(session, "kwic_right", selected = input$cooccurrences_right)
         updateSelectInput(session, "kwic_p_attribute", selected = input$cooccurrences_p_attribute)
         updateNavbarPage(session, "polmineR", selected = "kwic")
         values[["kwic_go"]] <- as.character(Sys.time()) # will initiate kwic preparation & display

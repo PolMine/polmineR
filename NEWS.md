@@ -147,6 +147,8 @@ objects (was available previously ony for `TermDocumentMatrix` objects).
 matter of consistency (#169).
 - If an expression for subsetting a `corpus`/`subcorpus` includes invalid 
 s-attributes, the warning is telling and `NULL` is returend (#179).
+- The cooccurrences options of the shiny app mirror the arguments used/required
+by the `cooccurrences()` method - left/right rather than window (#134).
 
 
 
