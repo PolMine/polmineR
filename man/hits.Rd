@@ -104,8 +104,8 @@ hits(.Object, ...)
 
 \item{...}{Further arguments (used for backwards compatibility).}
 
-\item{query}{A \code{character} vector (optionally named, see details) with
-one or more queries.}
+\item{query}{A \code{character} vector (optionally named, see details) with one or
+more queries.}
 
 \item{cqp}{Either a \code{logical} value (\code{TRUE} if query is a CQP
 query), or a function to check whether \code{query} is a CQP query or not.}

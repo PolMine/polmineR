@@ -73,7 +73,22 @@ test_that(
 
 
 test_that(
-  "methods for subcorpus objects", {
+  "warnings if s-attributes are not valid",
+  {
+    expect_warning({a <- corpus("REUTERS") %>% subset(foo == "127")})
+    expect_null(a)
     
+    expect_warning({b <- corpus("REUTERS") %>% subset(lm == "127")})
+    expect_null(b)
+    
+    expect_warning({
+      c <- corpus("REUTERS") %>% subset(id == "127" & foo == "abc")
+    })
+    expect_null(c)
+    
+    expect_warning({
+      d <- corpus("REUTERS") %>% subset(lm == "127" & foo == "abc")
+    })
+    expect_null(d)
   }
 )

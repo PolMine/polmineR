@@ -33,6 +33,11 @@ for s-attributes must match exactly.}
 \item{...}{An expression that will be used to create a subcorpus from
 s-attributes.}
 }
+\value{
+A \code{subcorpus} object. If the expression provided by argument \code{subset}
+includes undefined s-attributes, a warning is issued and the return value
+is \code{NULL}.
+}
 \description{
 The structural attributes of a corpus (s-attributes) can be used
 to generate subcorpora (i.e. a \code{subcorpus} class object) by applying the

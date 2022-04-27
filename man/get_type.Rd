@@ -5,7 +5,6 @@
 \alias{get_type,subcorpus-method}
 \alias{get_type,corpus-method}
 \alias{get_type,character-method}
-\alias{get_type,partition-method}
 \alias{get_type,partition_bundle-method}
 \alias{get_type,subcorpus_bundle-method}
 \title{Get corpus/partition type.}
@@ -16,28 +15,25 @@ get_type(.Object)
 
 \S4method{get_type}{character}(.Object)
 
-\S4method{get_type}{partition}(.Object)
-
-\S4method{get_type}{subcorpus}(.Object)
-
 \S4method{get_type}{partition_bundle}(.Object)
 
 \S4method{get_type}{subcorpus_bundle}(.Object)
 }
 \arguments{
-\item{.Object}{A \code{partition}, \code{partition_bundle}, \code{Corpus}
-object, or a length-one character vector indicating a CWB corpus.}
+\item{.Object}{A \code{partition}, \code{partition_bundle}, \code{Corpus} object, or a
+length-one character vector indicating a CWB corpus.}
 }
 \description{
 To generate fulltext output, different templates can be used with a behavior
-that depends on the type of a corpus. \code{get_type} will return the type of corpus
-if it is a specialized one, or \code{NULL}.
+that depends on the type of a corpus. \code{get_type} will return the type of
+corpus if it is a specialized one, or \code{NULL}.
 }
 \details{
 When generating a \code{partition}, the corpus type will be prefixed to the class
-that is generated (separated by underscore). If the corpus type is not \code{NULL},
-a class inheriting from the \code{partition}-class is instantiated. Note that at
-this time, only \code{plpr_partition} and \code{press_partition} is implemented.
+that is generated (separated by underscore). If the corpus type is not
+\code{NULL}, a class inheriting from the \code{partition}-class is instantiated. Note
+that at this time, only \code{plpr_partition} and \code{press_partition} is
+implemented.
 }
 \examples{
 use("polmineR")

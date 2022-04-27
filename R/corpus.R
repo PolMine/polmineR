@@ -193,6 +193,9 @@ setMethod("corpus", "missing", function(){
 #'   `subset`-method. To obtain a `subcorpus`, the `subset`-method can be
 #'   applied on a corpus represented by a `corpus` object, a length-one
 #'   `character` vector (as a shortcut), and on a `subcorpus` object.
+#' @return A `subcorpus` object. If the expression provided by argument `subset`
+#'   includes undefined s-attributes, a warning is issued and the return value
+#'   is `NULL`.
 #' @rdname subset
 #' @name subset
 #' @aliases subset,corpus-method
@@ -261,18 +264,13 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 
   if (!missing(subset)){
     expr <- substitute(subset)
-    # The expression may also have been passed in as an unevaluated expression. In
-    # this case, it is "unwrapped". Note that parent.frames looks back two generations
-    # because the S4 Method inserts an additional layer to the original calling
-    # environment
+    # The expression may also have been passed in as an unevaluated expression.
+    # In this case, it is "unwrapped". Note that parent.frames looks back two
+    # generations because the S4 Method inserts an additional layer to the
+    # original calling environment
     if (class(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE)) == "call"){
       expr <- eval(expr, envir = parent.frame(n = c(1L, 2L)))
     }
-    # Adjust the encoding of the expression to the one of the corpus. Adjusting
-    # encodings is expensive, so the (small) epression will be adjusted to the
-    # encoding of the corpus, not vice versa
-    if (encoding() != x@encoding)
-      expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
   }
@@ -285,18 +283,26 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     s_attr_dots <- names(dots)
     s_attr <- c(s_attr, s_attr_dots)
     if (encoding() != x@encoding){
-      s_attr_dots <- lapply(s_attr_dots, function(v) as.corpusEnc(v, corpusEnc = x@encoding))
+      s_attr_dots <- lapply(
+        s_attr_dots,
+        function(v) as.corpusEnc(v, corpusEnc = x@encoding)
+      )
     }
   }
   
-  if (all(is.na(s_attr)))
-    stop("abort - no valid s-attributes for subsetting the corpus")
+  if (all(is.na(s_attr))){
+    warning("no valid s-attributes for subsetting the corpus (returning NULL)")
+    return(NULL)
+  }
 
   # Reading the binary file with the ranges for the whole corpus is faster than using
   # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
   # to read in seperate rng files.
-  if (!s_attr[1] %in% s_attributes(x))
-    stop(sprintf("structural attribute '%s' not defined", s_attr[1]))
+  if (!s_attr[1] %in% s_attributes(x)){
+    warning(sprintf("structural attribute '%s' not defined", s_attr[1]))
+    return(NULL)
+  }
+    
   rng_file <- fs::path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
   rng_size <- file.info(rng_file)[["size"]]
   rng <- readBin(rng_file, what = integer(), size = 4L, n = rng_size / 4L, endian = "big")
@@ -309,8 +315,10 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   # Now we add the values of the s-attributes to the data.table with regions, one at
   # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
   for (i in seq_along(s_attr)){
-    if (!s_attr[i] %in% s_attributes(x))
-      stop(sprintf("structural attribute '%s' not defined", s_attr[i]))
+    if (!s_attr[i] %in% s_attributes(x)){
+      warning(sprintf("structural attribute '%s' not defined", s_attr[i]))
+      return(NULL)
+    }
     files <- list(
       avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
       avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
@@ -328,8 +336,14 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 
   # Apply the expression.
   if (!missing(subset)){
+    # Adjust the encoding of the expression to the one of the corpus. Adjusting
+    # encodings is expensive, so the (small) epression will be adjusted to the
+    # encoding of the corpus, not vice versa
+    if (encoding() != x@encoding)
+      expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
     setindexv(dt, cols = s_attr)
-    dt <- dt[eval(expr, envir = dt)]
+    success <- try({dt <- dt[eval(expr, envir = dt)]})
+    if (is(success, "try-error")) return(NULL)
   }
 
   if (length(dots) > 0L){

@@ -145,6 +145,8 @@ objects (was available previously ony for `TermDocumentMatrix` objects).
 `hits()` method (#195).
 - `get_type()` for `subcorpus_bundle` returns `NULL` if no type is defined as a
 matter of consistency (#169).
+- If an expression for subsetting a `corpus`/`subcorpus` includes invalid 
+s-attributes, the warning is telling and `NULL` is returend (#179).
 
 
 

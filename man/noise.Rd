@@ -16,7 +16,7 @@ noise(.Object, ...)
   minTfIdfMean = 0.005,
   sparse = 0.995,
   stopwordsLanguage = "german",
-  minNchar = 2,
+  minNchar = 2L,
   specialChars = getOption("polmineR.specialChars"),
   numbers = "^[0-9\\\\.,]+$",
   verbose = TRUE
@@ -36,7 +36,7 @@ noise(.Object, ...)
 \S4method{noise}{textstat}(.Object, p_attribute, ...)
 }
 \arguments{
-\item{.Object}{an .Object of class \code{"DocumentTermMatrix"}}
+\item{.Object}{An object of class \code{DocumentTermMatrix}.}
 
 \item{...}{further parameters}
 
@@ -44,11 +44,11 @@ noise(.Object, ...)
 
 \item{minTfIdfMean}{minimum mean value for tf-idf to qualify a term as non-noise}
 
-\item{sparse}{will be passed into \code{"removeSparseTerms"} from \code{"tm"}-package}
+\item{sparse}{Will be passed into \code{tm::removeSparseTerms()}.}
 
-\item{stopwordsLanguage}{e.g. "german", to get stopwords defined in the tm package}
+\item{stopwordsLanguage}{e.g. "german", to get stopwords defined in the \code{tm} package.}
 
-\item{minNchar}{min char length ti qualify a term as non-noise}
+\item{minNchar}{Minimum number of characters to qualify a term as non-noise.}
 
 \item{specialChars}{special characters to drop}
 
