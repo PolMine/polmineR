@@ -141,6 +141,8 @@ used without providing `phrases` at the same time (#142) and using the `subset`
 argument does not depend on using `phrases` either (#141).
 - The `as.sparseMatrix()` method is now also defined for `DocumentTermMatrix` 
 objects (was available previously ony for `TermDocumentMatrix` objects).
+- If a vector of queries is named, theses named are now used consistently by the
+`hits()` method (#195).
 
 
 

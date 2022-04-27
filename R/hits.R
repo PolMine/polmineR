@@ -13,8 +13,8 @@ NULL
 #' include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
 #' count is 0).
 #' 
-#' @param query A `character` vector (optionally named, see details) with
-#'   one or more queries.
+#' @param query A `character` vector (optionally named, see details) with one or
+#'   more queries.
 #' @param cqp Either a \code{logical} value (\code{TRUE} if query is a CQP
 #'   query), or a function to check whether \code{query} is a CQP query or not.
 #' @param check A \code{logical} value, whether to check validity of CQP query
