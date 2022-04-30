@@ -1,3 +1,15 @@
+#check_and_install_pkg("kable")
+#library(kable)
+library(lexRankr)
+library(tidytext)
+library(readr)
+library(rjson)
+library(stringr)
+library(dplyr)
+library(tidyverse)
+
+library(reticulate)
+
 library(polmineR)
 library(data.table)
 loadNamespace("DT")
@@ -34,6 +46,7 @@ source("modules/utils.R")
 source("modules/count.R")
 source("modules/kwic.R")
 source("modules/read.R")
+source("modules/view.R")
 
 values <- reactiveValues()
 values[["partitions"]] <- list()

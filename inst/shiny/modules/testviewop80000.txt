@@ -1,0 +1,20 @@
+Dobar vam dan eh dragi naši i dobrodošli u Čakavianu. #t=0.442,3.600
+Dobar   vam   dan   eh   dragi   naši   i   dobrodošli   u   Čakavianu   .
+
+
+
+you        day        uh        dear        our        and        welcome        in        Čakaviana        
+
+Prs.2Plur.Dat        Masc.Nom.Sing                Masc.Nom.Plur.Def        Poss.1Plur.Masc.Nom.Plur                                Fem.Acc.Sing        Dobar vam dan eh dragi naši i dobrodošli u Čakavianu. #t=0.442,3.600
+Dobar   vam   dan   eh   dragi   naši   i   dobrodošli   u   Čakavianu   .
+
+
+
+good        you        day        uh        dear        our        and        welcome        in        Čakaviana        
+
+Masc.Nom.Sing.Ind        Prs.2Plur.Dat        Masc.Nom.Sing                Masc.Nom.Plur.Def        Poss.1Plur.Masc.Nom.Plur                                Fem.Acc.Sing        Dobar vam dan eh dragi naši i dobrodošli u Čakavianu. #t=0.442,3.600
+Dobar   vam   dan   eh   dragi   naši   i   dobrodošli   u   Čakavianu   .
+
+
+
+good        you        

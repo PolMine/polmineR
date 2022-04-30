@@ -76,6 +76,15 @@ shinyUI(
       )
     ),
     
+      tabPanel(
+        "view",
+        sidebarLayout(
+          #sidebarPanel = sidebarPanel(tags$audio(src = "Čakaviana_Noel_Šuran_1_mono.wav", type = "audio/mp3", controls = 'play' ),viewUiInput()),
+          sidebarPanel = sidebarPanel(viewUiInput()),
+          mainPanel = mainPanel(viewUiOutput())
+        )
+      ),
+
     tabPanel(
       "read",
       fluidPage(

@@ -1,6 +1,12 @@
+# source_python("audio_functions.py")
+# audio_func <- play_audio("www/audio_mono.wav", 0, 5000)
+
+
+
 kwicUiInput <- function(drop = NULL){
   
-  divs = list(
+  # divs = 
+  list(
     go = actionButton("kwic_go", "", icon = icon("play", lib = "glyphicon")),
     code = actionButton("kwic_code", label = "", icon = icon("code", lib = "font-awesome")),
     br1 = br(),
@@ -18,21 +24,25 @@ kwicUiInput <- function(drop = NULL){
     cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     positivelist = textInput("kwic_positivelist", label = "positivelist", value = ""),
     s_attribute = selectInput(
-      "kwic_meta", "s_attribute",
-      choices = s_attributes(corpus()[["corpus"]][1]),
-      multiple = TRUE
-    ),
-    p_attribute = selectInput(
+        "kwic_meta", "s_attribute",
+        choices = s_attributes(corpus()[["corpus"]][1]),
+        selected =s_attributes(corpus()[["corpus"]][1])[4],
+        multiple = TRUE
+      ),
+    p_attribute = 
+      
+    selectInput(
       "kwic_p_attribute", "p_attribute",
       choices = p_attributes(corpus()[["corpus"]][1]),
       selected = "word"
     ),
+    
     left = sliderInput("kwic_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
     right = sliderInput("kwic_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
     br3 = br()
   )
-  if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
-  divs
+  # if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
+  # divs
 }
 
 #' @rdname shiny_helper_functions
@@ -40,6 +50,7 @@ kwicUiInput <- function(drop = NULL){
 kwicUiOutput <- function(){
   DT::dataTableOutput('kwic_table')
 }
+
 
 
 kwicServer <- function(input, output, session, ...){
@@ -50,7 +61,8 @@ kwicServer <- function(input, output, session, ...){
       new_sAttr <- s_attributes(values$partitions[[input$kwic_partition]]@corpus)
       new_pAttr <- p_attributes(values$partitions[[input$kwic_partition]]@corpus)
       updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
-      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
+      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = s_attributes(corpus()[["corpus"]][1])[4])
+      
     }
   })
   
@@ -59,8 +71,16 @@ kwicServer <- function(input, output, session, ...){
     new_sAttr <- s_attributes(input$kwic_corpus)
     new_pAttr <- p_attributes(input$kwic_corpus)
     updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
-    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
+    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = s_attributes(corpus()[["corpus"]][1])[4])
+    
   })
+  
+  # play_button <- actionButton("play_audio", "Play audio")
+  # 
+  # observeEvent(input$play_audio, {
+  #   session$sendCustomerMessage(type = 'testmessage',
+  #                               message = 'Thank you')
+  # })
   
   observeEvent(input$kwic_code, {
     format_string <- if (input$kwic_positivelist == ""){
@@ -77,6 +97,7 @@ kwicServer <- function(input, output, session, ...){
       if (input$kwic_positivelist != "") sprintf("c(%s)", paste(sprintf('"%s"', strsplit(x = input$kwic_positivelist, split = "(;\\s*|,\\s*)")[[1]]), collapse = ", ")) else "",
       input$kwic_left,
       input$kwic_right
+
     )
     snippet_html <- highlight::highlight(
       parse.output = parse(text = snippet),
@@ -86,15 +107,17 @@ kwicServer <- function(input, output, session, ...){
     showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
   
-  
+
   output$kwic_table <- DT::renderDataTable({
+    
     
     input$kwic_go
     values[["kwic_go"]]
 
     isolate({
       
-      if ((input$kwic_go > 0 || values[["kwic_go"]] != values[["startingTime"]]) && input$kwic_query != ""){
+      if ((input$kwic_go > 0 || values[["kwic_go"]] != values[["startingTime"]]) && input$kwic_query != "")
+        {
         
         object <- if (input$kwic_object == "corpus")
           input$kwic_corpus
@@ -117,17 +140,29 @@ kwicServer <- function(input, output, session, ...){
               positivelist = poslist,
               cpos = TRUE # required for reading
             )
+            
             if (!is.null(poslist) & !is.null(K)) K <- highlight(K, yellow = poslist)
             values[["kwic"]] <- K
+           
           }
         ) # end withProgress
         
         if (is.null(values[["kwic"]])){
-          retval <- data.frame(left = character(), node = character(), right = character())
+         
+          retval <- data.frame(left = character(), node = character(), right = character()) 
         } else if (nrow(values[["kwic"]]@stat) == 0L){
-          retval <- data.frame(left = character(), node = character(), right = character())
-        } else {
-          retval <- as(values[["kwic"]], "htmlwidget")
+          retval <- data.frame(left = character(), node = character(), right = character()) 
+        } else { 
+          
+          
+          #retval <- as(values[["kwic"]], "htmlwidget")
+          tab <- values[["kwic"]]@stat 
+          retval <- data.table('Play',tab)
+          #Actions <- "Play Audio"
+          #retval<-  as(data.table(Actions,tab), "htmlwidget")
+          #retval<-  data.table(Actions,tab)
+           
+          
           # tab <- values[["kwic"]]@stat
           # if ("match_id" %in% colnames(tab)) tab[, "match_id" := NULL]
           # if (length(input$kwic_meta) == 0L){
@@ -143,13 +178,19 @@ kwicServer <- function(input, output, session, ...){
         
         
       } else {
+       
         retval <- data.frame(left = character(), node = character(), right = character())
       }
-      retval
+      retval 
     })
     
-    retval
+    retval 
+    
   })
+  
+  
+  
+  
   
   observeEvent(
     input$kwic_table_rows_selected,
@@ -187,7 +228,8 @@ setMethod("kwic", "missing", function(){
       gadgetTitleBar(
         "KWIC",
         left = miniTitleBarCancelButton(),
-        right = miniTitleBarButton(inputId = "kwic_go", label = "Go", primary = TRUE)
+        right = miniTitleBarButton(inputId = "kwic_go", label = "Go", primary = TRUE),
+        
       ),
       div(br()),
       sidebarLayout(

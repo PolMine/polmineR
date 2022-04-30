@@ -8,6 +8,7 @@ shinyServer(function(input, output, session) {
   featuresServer(input, output, session)
   readServer(input, output, session)
   countServer(input, output, session)
+  viewServer(input, output, session)
   
   session$onSessionEnded(
     function() {
@@ -38,7 +39,10 @@ shinyServer(function(input, output, session) {
         "readServer",
         "readUiInput",
         "readUiOutput",
-        "rectifySpecialChars"
+        "rectifySpecialChars",
+        "viewServer",
+        "viewUiInput",
+        "viewUiOutput"
       )
       rm(list = funs, envir = .GlobalEnv)
     }
