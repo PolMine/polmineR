@@ -155,7 +155,7 @@ sc <- subset(GERMAPARL, date == "2009-11-10")
 }
 \seealso{
 Methods to extract basic information from a \code{corpus} object are
-covered by the \link{corpus-methods} documentation object. Use the
+covered by the \code{corpus-methods} documentation object. Use the
 \code{\link{s_attributes}} method to get information on structural
 attributes. Analytical methods available for \code{corpus} objects are
 \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},

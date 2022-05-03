@@ -24,6 +24,7 @@ context(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
@@ -43,6 +44,7 @@ context(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
@@ -62,6 +64,7 @@ context(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   stoplist = NULL,
   positivelist = NULL,
@@ -73,13 +76,22 @@ context(.Object, ...)
   ...
 )
 
-\S4method{context}{matrix}(.Object, corpus, left, right, p_attribute, boundary = NULL)
+\S4method{context}{matrix}(
+  .Object,
+  corpus,
+  left,
+  right,
+  p_attribute,
+  region = NULL,
+  boundary = NULL
+)
 
 \S4method{context}{corpus}(
   .Object,
   query,
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
@@ -98,6 +110,7 @@ context(.Object, ...)
   query,
   cqp = is.cqp,
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
@@ -151,6 +164,12 @@ named length-one \code{integer} value, with equivalent effects to argument
 
 \item{p_attribute}{The p-attribute of the query.}
 
+\item{region}{An s-attribute, given by a length-one \code{character} vector.
+The context of query matches will be expanded to the left and right
+boundary of the region where the match is located. If arguments \code{left} and
+\code{right} are > 1, the left and right boundaries of the respective number of
+regions will be identified.}
+
 \item{boundary}{If provided, a length-one character vector specifying a
 s-attribute. It will be checked that corpus positions do not extend beyond
 the region defined by the s-attribute.}
@@ -187,8 +206,8 @@ number of objects in the input \code{bundle} object: \code{NULL} objects that re
 if no hit is obtained are dropped.
 }
 \description{
-Retrieve the word context of a token, optionally checking for boundaries of a XML
-region.
+Retrieve the word context of a token, optionally checking for boundaries of a
+XML region.
 }
 \details{
 For formulating the query, CPQ syntax may be used (see

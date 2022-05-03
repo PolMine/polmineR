@@ -47,8 +47,8 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 
 #' Analyze context of a node word.
 #' 
-#' Retrieve the word context of a token, optionally checking for boundaries of a XML
-#' region.
+#' Retrieve the word context of a token, optionally checking for boundaries of a
+#' XML region.
 #' 
 #' For formulating the query, CPQ syntax may be used (see
 #' examples). Statistical tests available are log-likelihood, t-test, pmi.
@@ -59,6 +59,11 @@ setGeneric("context", function(.Object, ...) standardGeneric("context") )
 #' @param check A `logical` value, whether to check validity of CQP query using
 #'   `check_cqp_query`.
 #' @param p_attribute The p-attribute of the query.
+#' @param region An s-attribute, given by a length-one `character` vector.
+#'   The context of query matches will be expanded to the left and right
+#'   boundary of the region where the match is located. If arguments `left` and
+#'   `right` are > 1, the left and right boundaries of the respective number of
+#'   regions will be identified.
 #' @param boundary If provided, a length-one character vector specifying a
 #'   s-attribute. It will be checked that corpus positions do not extend beyond
 #'   the region defined by the s-attribute.
@@ -112,19 +117,18 @@ setMethod("context", "slice", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  boundary = NULL,
+  region = NULL, boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = TRUE,
   ...
 ) {
   
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
-  if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
+  if (is.numeric(left) && !is.integer(left))
+    left <- setNames(as.integer(left), names(left))# input may be numeric
   
-  if (is.numeric(left) && !is.integer(left)) left <- setNames(as.integer(left), names(left))# input may be numeric
-  if (is.numeric(right) && !is.integer(right)) right <- setNames(as.integer(right), names(left)) # input may be numeric
+  if (is.numeric(right) && !is.integer(right))
+    right <- setNames(as.integer(right), names(left)) # input may be numeric
   
   # get regions for query matches
   .message("getting corpus positions", verbose = verbose)
@@ -140,7 +144,7 @@ setMethod("context", "slice", function(
   ctxt <- context(
     .Object = regions,
     left = left, right = right,
-    p_attribute = p_attribute,
+    p_attribute = p_attribute, region = region,
     boundary = boundary,
     corpus = .Object@corpus
   )
@@ -205,6 +209,7 @@ setMethod("context", "partition", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -219,6 +224,7 @@ setMethod("context", "subcorpus", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL,
   boundary = NULL,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -233,8 +239,8 @@ setMethod("context", "subcorpus", function(
 #' @param corpus A length-one `character` vector stating a corpus ID.
 #' @rdname context-method
 #' @importFrom data.table between
-#' @importFrom RcppCWB region_matrix_context
-setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, boundary = NULL){
+#' @importFrom RcppCWB region_matrix_context corpus_s_attributes
+setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, region = NULL, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
   if (class(left) == "numeric")
@@ -245,7 +251,21 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
 
   if (is.integer(left) && is.integer(right)){
     if (is.null(names(left)) && is.null(names(left))){
-      s_attr <- NULL
+      if (is.null(region)){
+        s_attr <- NULL
+      } else {
+        s_attr_present <- corpus_s_attributes(
+          corpus = corpus,
+          registry = corpus_registry_dir(corpus)
+        )
+        if (region %in% s_attr_present){
+          s_attr <- region
+        } else {
+          warning(sprintf("s-attribute '%s' not defined", region))
+          s_attr <- NULL
+        }
+      }
+      
     } else {
       s_attr <- unique(c(names(left), names(right)))
       if (length(s_attr) > 1L) stop("Only one single s-attribute allowed.")
@@ -288,7 +308,8 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
 #' @rdname context-method
 setMethod("context", "corpus", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL, boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -313,7 +334,8 @@ setMethod("context", "corpus", function(
   context(
     p, query = query, cqp = is.cqp,
     left = left, right = right,
-    p_attribute = p_attribute, boundary = boundary,
+    p_attribute = p_attribute,
+    region = region, boundary = boundary,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count, mc = mc, verbose = verbose, progress = progress
   )
@@ -323,7 +345,8 @@ setMethod("context", "corpus", function(
 #' @rdname context-method
 setMethod("context", "character", function(
   .Object, query, cqp = is.cqp,
-  p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+  p_attribute = getOption("polmineR.p_attribute"),
+  region = NULL, boundary = NULL,
   left = getOption("polmineR.left"), right = getOption("polmineR.right"),
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   count = TRUE,
@@ -335,7 +358,7 @@ setMethod("context", "character", function(
     query = query,
     cqp = cqp,
     p_attribute = p_attribute,
-    boundary = boundary,
+    region = region, boundary = boundary,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
     count = count,

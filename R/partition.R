@@ -41,6 +41,7 @@ setMethod("show", "partition", function(object){
 
 setAs("partition", "data.table", function(from) data.table(count(from)) )
 
+setOldClass("json")
 
 #' @importFrom jsonlite fromJSON
 setAs(

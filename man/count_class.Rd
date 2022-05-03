@@ -74,7 +74,7 @@ p <- weigh(p, with = weights)
 summary(p)
 }
 \seealso{
-The \code{count}-class inherits from the \code{\link{textstat-class}}
+The \code{count}-class inherits from the `\link{textstat-class`}
 }
 \author{
 Andreas Blaette

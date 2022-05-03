@@ -130,14 +130,13 @@ requires that pandoc is installed. To avoid an error, a formatted
 \code{data.table} is returned by \code{knit_print} if pandoc is not
 available.
 
-The \code{as.character}-method will return a list of
-\code{character} vectors, concatenating the columns "left", "node" and
-"right" of the \code{data.table} in the \code{stat}-slot of the input
-\code{kwic}-class object. Optionally, the node can be formatted using a
-format string that is passed into \code{sprintf}.
+The \code{as.character}-method will return a list of \code{character} vectors,
+concatenating the columns "left", "node" and "right" of the \code{data.table} in
+the \code{stat}-slot of the input \code{kwic}-class object. Optionally, the node can
+be formatted using a format string that is passed into \code{sprintf}.
 
-The \code{subset}-method will apply \code{subset} to the table in
-the slot \code{stat}, e.g. for filtering query results based on metadata (i.e.
+The \code{subset}-method will apply \code{subset} to the table in the slot
+\code{stat}, e.g. for filtering query results based on metadata (i.e.
 s-attributes) that need to be present.
 
 The \code{enrich} method is used to generate the actual output for
@@ -247,5 +246,5 @@ i <- corpus("GERMAPARLMINI") \%>\%
 }
 \seealso{
 The constructor for generating kwic objects is the
-\code{\link{kwic}} method.
+`\link{kwic`} method.
 }

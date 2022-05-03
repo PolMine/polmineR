@@ -61,9 +61,9 @@ NULL
 #' @aliases zoom corpus get_corpus remote_corpus remote_corpus-class
 #' @name corpus-class
 #' @seealso Methods to extract basic information from a `corpus` object are
-#'   covered by the \link{corpus-methods} documentation object. Use the
+#'   covered by the `corpus-methods` documentation object. Use the
 #'   \code{\link{s_attributes}} method to get information on structural
-#'   attributes. Analytical methods available for \code{corpus} objects are
+#'   attributes. Analytical methods available for `corpus` objects are
 #'   \code{\link{size}}, \code{\link{count}}, \code{\link{dispersion}},
 #'   \code{\link{kwic}}, \code{\link{cooccurrences}},
 #'   \code{\link{as.TermDocumentMatrix}}.
@@ -132,25 +132,25 @@ setClass(
 
 #' Bundle Class
 #' 
-#' A \code{bundle} is used to combine several objects (\code{partition}, \code{context},
-#' \code{features}, \code{cooccurrences} objects) into one S4 class object. Typically,
-#' a class inheriting from the \code{bundle} superclass will be used. When working with a
-#' \code{context_bundle}, a \code{features_bundle}, a \code{cooccurrences_bundle}, or a
-#' \code{context_bundle}, a similar set of standard methods is available to perform 
+#' A `bundle` is used to combine several objects (`partition`, `context`,
+#' `features`, `cooccurrences` objects) into one S4 class object. Typically, a
+#' class inheriting from the `bundle` superclass will be used. When working with
+#' a `context_bundle`, a `features_bundle`, a `cooccurrences_bundle`, or a
+#' `context_bundle`, a similar set of standard methods is available to perform
 #' transformations.
 #' 
-#' @slot corpus The CWB corpus the xobjects in the \code{bundle} are based on, a length 1 
-#' \code{character} vector.
-#' @slot objects An object of class \code{list}.
-#' @slot p_attribute Object of class \code{character}.
+#' @slot corpus The CWB corpus the xobjects in the `bundle` are based on, a
+#'   length 1 `character` vector.
+#' @slot objects An object of class `list`.
+#' @slot p_attribute Object of class `character`.
 #' @slot encoding The encoding of the corpus.
 #' 
 #' @param x a bundle object
-#' @param i An \code{integer} value to index a bundle object.
-#' @param object A \code{bundle} object.
+#' @param i An `integer` value to index a bundle object.
+#' @param object A `bundle` object.
 #' @param size number of items to choose to generate a sample
 #' @param ... Further parameters
-#' @param col columns of the \code{data.table} to use to generate an object.
+#' @param col columns of the `data.table` to use to generate an object.
 #' @param value character string with a name to be assigned
 #' @rdname bundle
 #' @name bundle-class
@@ -306,16 +306,16 @@ setClass(
 #   }
 # })
 
-#' @details \code{textstat} objects can have a name, which can be retrieved, and set using
-#' the \code{name}-method and \code{name<-}, respectively.
+#' @details `textstat` objects can have a name, which can be retrieved, and set using
+#' the `name`-method and `name<-`, respectively.
 #' @rdname textstat-class
 setMethod("name", "textstat", function(x) x@name)
 
 #' @rdname textstat-class
 setMethod("name", "character", function(x) x)
 
-#' @param value A \code{character} vector to assign as name to slot \code{name}
-#'   of a \code{textstat} class object.
+#' @param value A `character` vector to assign as name to slot `name`
+#'   of a `textstat` class object.
 #' @rdname textstat-class
 #' @exportMethod name<-
 setReplaceMethod("name", signature = "textstat", function(x, value) {
@@ -327,22 +327,22 @@ setReplaceMethod("name", signature = "textstat", function(x, value) {
 
 #' Feature selection by comparison.
 #' 
-#' The  \code{features}-method returns a \code{features}-object. Several
-#' \code{features}-objects can be combined into a \code{features_bundle}-object.
+#' The  `features`-method returns a `features`-object. Several
+#' `features`-objects can be combined into a `features_bundle`-object.
 #' 
-#' @slot corpus The CWB corpus the features are derived from, a \code{character} vector of length 1.
-#' @slot p_attribute Object of class \code{character}.
-#' @slot encoding Object of class \code{character}.
-#' @slot corpus Object of class \code{character}.
-#' @slot stat Object of class \code{data.frame}.
-#' @slot size_coi Object of class \code{integer}. 
-#' @slot size_ref Object of class \code{integer}.
-#' @slot included Object of class \code{logical} whether corpus of interest is included in reference corpus
-#' @slot method Object of class \code{character} statisticalTest used
-#' @slot call Object of class \code{character} the call that generated the object
+#' @slot corpus The CWB corpus the features are derived from, a `character` vector of length 1.
+#' @slot p_attribute Object of class `character`.
+#' @slot encoding Object of class `character`.
+#' @slot corpus Object of class `character`.
+#' @slot stat Object of class `data.frame`.
+#' @slot size_coi Object of class `integer`. 
+#' @slot size_ref Object of class `integer`.
+#' @slot included Object of class `logical` whether corpus of interest is included in reference corpus
+#' @slot method Object of class `character` statisticalTest used
+#' @slot call Object of class `character` the call that generated the object
 #' 
-#' @param object A \code{features} or \code{features_bundle} object.
-#' @param .Object a \code{features} object.
+#' @param object A `features` or `features_bundle` object.
+#' @param .Object a `features` object.
 #' 
 #' @rdname features-class
 #' @name features-class
@@ -363,14 +363,14 @@ setClass("features",
 
 #' Count class.
 #' 
-#' S4 class to organize counts. The classes \code{polmineR} and
-#' \code{ngrams} inherit from the class.
+#' S4 class to organize counts. The classes `polmineR` and
+#' `ngrams` inherit from the class.
 #' 
-#' @slot stat Object of class \code{data.table}.
-#' @slot corpus Object of class \code{character} the CWB corpus the partition is based on .
-#' @slot encoding Object of class \code{character}, the encoding of the corpus.
-#' @slot name Object of class \code{character}, a name for the object.
-#' @slot size Object of class \code{integer}, the size of the partition or
+#' @slot stat Object of class `data.table`.
+#' @slot corpus Object of class `character` the CWB corpus the partition is based on .
+#' @slot encoding Object of class `character`, the encoding of the corpus.
+#' @slot name Object of class `character`, a name for the object.
+#' @slot size Object of class `integer`, the size of the partition or
 #'   corpus the count is based upon.
 #' @rdname count_class
 #' @param ... Further parameters.
@@ -379,7 +379,7 @@ setClass("features",
 #' @docType class
 #' @author Andreas Blaette
 #' @aliases count-class
-#' @seealso The \code{count}-class inherits from the \code{\link{textstat-class}}
+#' @seealso The `count`-class inherits from the `\link{textstat-class`}
 setClass("count",
          representation = list(
            size = "integer"
@@ -388,9 +388,9 @@ setClass("count",
          )
 
 
-#' @param object A \code{count} object.
-#' @details The \code{summary}-method in combination with a weighed
-#'   \code{count}-object can be used to perform a dictionary-based sentiment
+#' @param object A `count` object.
+#' @details The `summary`-method in combination with a weighed
+#'   `count`-object can be used to perform a dictionary-based sentiment
 #'   analysis (see examples).
 #' @rdname count_class
 #' @examples
@@ -454,10 +454,10 @@ setClass("count_bundle", contains = "bundle")
 
 
 
-#' @details The \code{length}-method is synonymous with the \code{size}-method
-#' and will return the size of the \code{corpus} or \code{partition} a count
+#' @details The `length`-method is synonymous with the `size`-method
+#' and will return the size of the `corpus` or `partition` a count
 #' has been derived from.
-#' @param x A \code{count} object, or a class inheriting from \code{count}.
+#' @param x A `count` object, or a class inheriting from `count`.
 #' @exportMethod length
 #' @rdname count_class
 setMethod("length", "count", function(x) x@size)
@@ -467,38 +467,38 @@ setMethod("length", "count", function(x) x@size)
 
 #' Partition class and methods.
 #' 
-#' The \code{partition} class is used to manage subcorpora. It is an S4 class, and
+#' The `partition` class is used to manage subcorpora. It is an S4 class, and
 #' a set of methods is defined for the class. The class inherits
-#' from the classes \code{count} and \code{textstat}.
+#' from the classes `count` and `textstat`.
 #' 
-#' @details As \code{partition} objects inherit from \code{count} and
-#'   \code{textstat} class, methods available are \code{view} to inspect the
-#'   table in the \code{stat} slot, \code{name} and \code{name<-} to
+#' @details As `partition` objects inherit from `count` and
+#'   `textstat` class, methods available are `view` to inspect the
+#'   table in the `stat` slot, `name` and `name<-` to
 #'   retrieve/set the name of an object, and more.
 #' 
-#' @slot name A name to identify the object (\code{character} vector with length 1); useful when multiple
-#' \code{partition} objects are combined to a \code{partition_bundle}.
-#' @slot corpus The CWB indexed corpus the partition is derived from (\code{character} vector with length 1).
-#' @slot encoding Encoding of the corpus (\code{character} vector with length 1).
-#' @slot s_attributes A named \code{list} with the s-attributes specifying the partition.
-#' @slot explanation Object of class \code{character}, an explanation of the partition.
-#' @slot cpos A \code{matrix} with left and right corpus positions defining regions (two columns).
-#' @slot annotations Object of class \code{list}.
-#' @slot size Total size of the partition (\code{integer} vector, length 1).
-#' @slot stat An (optional) \code{data.table} with counts. If present, speeds up computation of cooccurrences,
+#' @slot name A name to identify the object (`character` vector with length 1); useful when multiple
+#' `partition` objects are combined to a `partition_bundle`.
+#' @slot corpus The CWB indexed corpus the partition is derived from (`character` vector with length 1).
+#' @slot encoding Encoding of the corpus (`character` vector with length 1).
+#' @slot s_attributes A named `list` with the s-attributes specifying the partition.
+#' @slot explanation Object of class `character`, an explanation of the partition.
+#' @slot cpos A `matrix` with left and right corpus positions defining regions (two columns).
+#' @slot annotations Object of class `list`.
+#' @slot size Total size of the partition (`integer` vector, length 1).
+#' @slot stat An (optional) `data.table` with counts. If present, speeds up computation of cooccurrences,
 #' as count is already present.
-#' @slot metadata Object of class \code{data.frame}, metadata information.
-#' @slot strucs Object of class \code{intger}, the strucs defining the partition.
-#' @slot p_attribute Object of class \code{character} indicating the p_attribute of the
-#' count in slot \code{stat}.
-#' @slot xml Object of class \code{character}, whether the xml is flat or nested.
-#' @slot s_attribute_strucs Object of class \code{character} the base node 
+#' @slot metadata Object of class `data.frame`, metadata information.
+#' @slot strucs Object of class `integer`, the strucs defining the partition.
+#' @slot p_attribute Object of class `character` indicating the p_attribute of the
+#' count in slot `stat`.
+#' @slot xml Object of class `character`, whether the xml is flat or nested.
+#' @slot s_attribute_strucs Object of class `character` the base node 
 #' @slot key Experimental, an s-attribute that is used as a key.
-#' @slot call Object of class \code{character} the call that generated the partition 
-#' @param .Object A \code{partition} object.
+#' @slot call Object of class `character` the call that generated the partition 
+#' @param .Object A `partition` object.
 #' @param p_attribute a p-attribute (for enriching) / performing count.
-#' @param verbose \code{logical} value, whether to output messages
-#' @param ... further parameters passed into \code{count} when calling \code{enrich}, and ...
+#' @param verbose `logical` value, whether to output messages
+#' @param ... further parameters passed into `count` when calling `enrich`, and ...
 #' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
 #'   [,partition-method as.partition_bundle 
 #'   as.partition_bundle,partition-method export export,partition-method split
@@ -507,7 +507,7 @@ setMethod("length", "count", function(x) x@size)
 #' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
-#' @seealso The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
+#' @seealso The `partition`-class inherits from the `\link{textstat-class`}, see
 #' respective documentation to learn more.
 setClass(
   "partition",
@@ -561,35 +561,35 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' 
 #' Class to organize information of context analysis.
 #' 
-#' @details Objects of the class \code{context} include a \code{data.table} in the
-#' slot \code{cpos}. The \code{data.table} will at least include the columns "match_id",
+#' @details Objects of the class `context` include a `data.table` in the
+#' slot `cpos`. The `data.table` will at least include the columns "match_id",
 #' "cpos" and "position".
 #' 
-#' @slot query The query examined (\code{character}).
-#' @slot count An \code{integer} value, the number of hits for the query.
-#' @slot partition The \code{partition} the \code{context} object is based on.
-#' @slot size_partition The size of the partition, a length-one \code{integer} vector.
-#' @slot left A length-one \code{integer} value, the number of tokens to the left of the query match.
-#' @slot right An \code{integer} value, the number of tokens to the right of the query match.
-#' @slot size A length-one \code{integer} value, the number of tokens covered by
-#'   the \code{context}-object, i.e. the number of tokens in the right and left context
+#' @slot query The query examined (`character`).
+#' @slot count An `integer` value, the number of hits for the query.
+#' @slot partition The `partition` the `context` object is based on.
+#' @slot size_partition The size of the partition, a length-one `integer` vector.
+#' @slot left A length-one `integer` value, the number of tokens to the left of the query match.
+#' @slot right An `integer` value, the number of tokens to the right of the query match.
+#' @slot size A length-one `integer` value, the number of tokens covered by
+#'   the `context`-object, i.e. the number of tokens in the right and left context
 #'   of the node as well as query matches.
-#' @slot size_match A length-one \code{integer} value, the number of tokens
-#'   matches by the query. Identical with the value in slot \code{count} if the query
+#' @slot size_match A length-one `integer` value, the number of tokens
+#'   matches by the query. Identical with the value in slot `count` if the query
 #'   is \emph{not} a CQP query.
-#' @slot size_coi A length-one \code{integer} value, the number of tokens in the
+#' @slot size_coi A length-one `integer` value, the number of tokens in the
 #'   right and left context of the node (excluding query matches).
-#' @slot size_ref A length-one \code{integer} value, the number of tokens in the
+#' @slot size_ref A length-one `integer` value, the number of tokens in the
 #'   partition, without tokens matched and the tokens in the left and right
 #'   context.
-#' @slot boundary An s-attribute (\code{character}).
-#' @slot p_attribute The p-attribute of the query (\code{character}).
-#' @slot corpus The CWB corpus used (\code{character}).
-#' @slot stat A \code{data.table}, the statistics of the analysis.
-#' @slot encoding Object of class \code{character}, encoding of the corpus.
-#' @slot cpos A \code{data.table}, with the columns match_id, cpos, position, word_id.
-#' @slot method A \code{character}-vector, statistical test used.
-#' @slot call Object of class \code{character}, call that generated the object.
+#' @slot boundary An s-attribute (`character`).
+#' @slot p_attribute The p-attribute of the query (`character`).
+#' @slot corpus The CWB corpus used (`character`).
+#' @slot stat A `data.table`, the statistics of the analysis.
+#' @slot encoding Object of class `character`, encoding of the corpus.
+#' @slot cpos A `data.table`, with the columns match_id, cpos, position, word_id.
+#' @slot method A `character`-vector, statistical test used.
+#' @slot call Object of class `character`, call that generated the object.
 #'     
 #' @param .Object object
 #' @param x a context object
@@ -599,7 +599,7 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @param stoplist tokens that are used to exclude a match
 #' @param regex logical, whether positivlist / stoplist is interpreted as regular expressions
 #' @param progress logical, whether to show progress bar
-#' @param ... to maintain backwards compatibility if argument \code{pAttribute} is still used
+#' @param ... to maintain backwards compatibility if argument `pAttribute` is still used
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
@@ -624,7 +624,7 @@ setClass(
   contains = "features"
 )
 
-#' @details The \code{length}-method will return the number of hits that were achieved.
+#' @details The `length`-method will return the number of hits that were achieved.
 #' @rdname context-class
 #' @exportMethod length
 setMethod("length", "context", function(x) as.integer(x@count))
@@ -639,16 +639,16 @@ setAs(from = "partition", to = "data.table", def = function(from) from@stat)
 #' @param .Object object to work with
 #' @param object object to work with
 #' @param x object to work with
-#' @slot call Object of class \code{character} the call that generated the object
-#' @slot partition Object of class \code{character} the partition the analysis is based on
-#' @slot size_partition  Object of class \code{integer} the size of the partition
-#' @slot left  Object of class \code{integer} number of tokens to the left.
-#' @slot right  Object of class \code{integer} number of tokens to the right.
-#' @slot p_attribute  Object of class \code{character} p-attribute of the query
-#' @slot corpus  Object of class \code{character} the CWB corpus used
-#' @slot stat  Object of class \code{data.table} statistics of the analysis
-#' @slot encoding  Object of class \code{character} encoding of the corpus
-#' @slot method  Object of class \code{character} statistical test(s) used
+#' @slot call Object of class `character` the call that generated the object
+#' @slot partition Object of class `character` the partition the analysis is based on
+#' @slot size_partition  Object of class `integer` the size of the partition
+#' @slot left  Object of class `integer` number of tokens to the left.
+#' @slot right  Object of class `integer` number of tokens to the right.
+#' @slot p_attribute  Object of class `character` p-attribute of the query
+#' @slot corpus  Object of class `character` the CWB corpus used
+#' @slot stat  Object of class `data.table` statistics of the analysis
+#' @slot encoding  Object of class `character` encoding of the corpus
+#' @slot method  Object of class `character` statistical test(s) used
 #' @aliases cooccurrences-class
 #' @docType class
 #' @exportClass cooccurrences
@@ -661,39 +661,39 @@ setClass("cooccurrences", contains = "context")
 #' S4 kwic class
 #' 
 #' S4 class for organizing information for kwic/concordance output. A set of
-#' standard generics (\code{show}, \code{as.character}, \code{as.data.frame},
-#' \code{length}, \code{sample}, \code{subset}) as well as indexing is implemented to process
+#' standard generics (`show`, `as.character`, `as.data.frame`,
+#' `length`, `sample`, `subset`) as well as indexing is implemented to process
 #' kwic class objects (see 'Usage'). See section 'Details' for the
-#' \code{enrich}, \code{view} and \code{knit_print} methods.
+#' `enrich`, `view` and `knit_print` methods.
 #' 
-#' @slot metadata A \code{character} vector with s-attributes of the metadata
+#' @slot metadata A `character` vector with s-attributes of the metadata
 #'   that are to be displayed.
 #' @slot p_attribute The p-attribute for which the context has been generated.
-#' @slot left An \code{integer} value, words to the left of the query match. 
-#' @slot right An \code{integer} value, words to the right of the query match.
-#' @slot corpus Length-one \code{character} vector, the CWB corpus.
-#' @slot cpos A \code{data.table} with the columns "match_id", "cpos", "position",
+#' @slot left An `integer` value, words to the left of the query match. 
+#' @slot right An `integer` value, words to the right of the query match.
+#' @slot corpus Length-one `character` vector, the CWB corpus.
+#' @slot cpos A `data.table` with the columns "match_id", "cpos", "position",
 #'   "word_id", "word" and "direction".
-#' @slot stat A \code{data.table}, a table with columns "left", "node",
+#' @slot stat A `data.table`, a table with columns "left", "node",
 #'   "right", and metadata, if the object has been enriched.
-#' @slot encoding A length-one \code{character} vector with the encoding of the
+#' @slot encoding A length-one `character` vector with the encoding of the
 #'   corpus.
-#' @slot name A length-one \code{character} vector naming the object.
-#' @slot annotation_cols A \code{character} vector designating the columns of
-#'   the \code{data.table} in the slot \code{table} that are annotations.
+#' @slot name A length-one `character` vector naming the object.
+#' @slot annotation_cols A `character` vector designating the columns of
+#'   the `data.table` in the slot `table` that are annotations.
 #' 
-#' @param x A \code{kwic} class object.
-#' @param object A \code{kwic} class object.
+#' @param x A `kwic` class object.
+#' @param object A `kwic` class object.
 #' @param s_attributes Character vector of s-attributes with metainformation.
-#' @param table Logical, whether to turn cpos \code{data.table} into
-#'   \code{data.table} in slot \code{stat} for output.
-#' @param p_attribute A length-one \code{character} vector supplying a p-attribute.
-#' @param verbose A \code{logical} value, whether to output debugging messages.
-#' @param extra An \code{integer} value, number of extra tokens to the left and
+#' @param table Logical, whether to turn cpos `data.table` into
+#'   `data.table` in slot `stat` for output.
+#' @param p_attribute A length-one `character` vector supplying a p-attribute.
+#' @param verbose A `logical` value, whether to output debugging messages.
+#' @param extra An `integer` value, number of extra tokens to the left and
 #'   to the right of the windows of tokens to the left and right of a query
 #'   match that are decoded to be displayed in a kwic output to facilitate
 #'   interpretation.
-#' @param size An \code{integer}, subset size for sampling.
+#' @param size An `integer`, subset size for sampling.
 #' @param i Single integer value, the kwic line for which the fulltext shall be
 #'   inspected.
 #' @param ... Used for backwards compatibility.
@@ -703,7 +703,7 @@ setClass("cooccurrences", contains = "context")
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
 #' @seealso The constructor for generating kwic objects is the
-#'   \code{\link{kwic}} method.
+#'   `\link{kwic`} method.
 #' @examples
 #' use("polmineR")
 #' K <- kwic("GERMAPARLMINI", "Integration")
@@ -780,13 +780,13 @@ setAs(from = "remote_corpus", to = "corpus", def = function(from){
 #' Corpus class methods
 #' 
 #' A set of generic methods is available to extract basic information from
-#' objects of the \code{corpus} class.
-#' @param object An object of class \code{corpus}, or inheriting from it.
+#' objects of the `corpus` class.
+#' @param object An object of class `corpus`, or inheriting from it.
 #' @aliases name,corpus-method
 #' @name corpus-methods
 #' @rdname corpus_methods
-#' @details A \code{corpus} object can have a name, which can be retrieved using
-#' the \code{name}-method.
+#' @details A `corpus` object can have a name, which can be retrieved using
+#' the `name`-method.
 #' @examples
 #' # get/show information on corpora
 #' corpus("REUTERS") %>% get_info()
@@ -852,36 +852,36 @@ setClass("regions", slots = c(cpos = "matrix"), contains = "corpus")
 #' 
 #' @description Class to manage subcorpora derived from a CWB corpus.
 #' 
-#' @slot s_attributes A named \code{list} with the structural attributes
+#' @slot s_attributes A named `list` with the structural attributes
 #'   defining the subcorpus.
-#' @slot cpos A \code{matrix} with left and right corpus positions defining
-#'   regions (two column matrix with \code{integer} values).
-#' @slot annotations Object of class \code{list}.
-#' @slot size Total size (number of tokens) of the \code{subcorpus} object (a
-#'   length-one \code{integer} vector). The value is accessible by calling 
-#'   the \code{size}-method on the \code{subcorpus}-object (see examples).
-#' @slot metadata Object of class \code{data.frame}, metadata information.
-#' @slot strucs Object of class \code{integer}, the strucs defining the
+#' @slot cpos A `matrix` with left and right corpus positions defining
+#'   regions (two column matrix with `integer` values).
+#' @slot annotations Object of class `list`.
+#' @slot size Total size (number of tokens) of the `subcorpus` object (a
+#'   length-one `integer` vector). The value is accessible by calling 
+#'   the `size`-method on the `subcorpus`-object (see examples).
+#' @slot metadata Object of class `data.frame`, metadata information.
+#' @slot strucs Object of class `integer`, the strucs defining the
 #'   subcorpus.
-#' @slot xml Object of class \code{character}, whether the xml is "flat" or
+#' @slot xml Object of class `character`, whether the xml is "flat" or
 #'   "nested".
-#' @slot s_attribute_strucs Object of class \code{character}, the base node.
+#' @slot s_attribute_strucs Object of class `character`, the base node.
 #' @slot user If the corpus on the server requires authentication, the username.
 #' @slot password If the corpus on the server requires authentication, the password.
-#' @param object A \code{subcorpus} object.
-#' @param x A \code{subcorpus} object.
-#' @param ... Arguments passed into \code{size}-method. Used only to maintain
+#' @param object A `subcorpus` object.
+#' @param x A `subcorpus` object.
+#' @param ... Arguments passed into `size`-method. Used only to maintain
 #'   backwards compatibility.
 #' @inheritParams size
-#' @seealso Most commonly, a \code{subcorpus} is derived from a \code{corpus} or
-#'   a \code{subcorpus} using the \code{\link{subset}} method. See
+#' @seealso Most commonly, a `subcorpus` is derived from a `corpus` or
+#'   a `subcorpus` using the \code{\link{subset}} method. See
 #'   \code{\link{size}} for detailed documentation on how to use the
-#'   \code{size}-method. The \code{subcorpus} class shares many features with
-#'   the \code{partition} class, but it is more parsimonious and does not
+#'   `size`-method. The `subcorpus` class shares many features with
+#'   the `partition` class, but it is more parsimonious and does not
 #'   include information on statistical properties of the subcorpus (i.e. a
-#'   count table). In line with this logic, the \code{subcorpus} class inherits
-#'   from the \code{corpus} class, whereas the \code{partition} class inherits
-#'   from the \code{textstat} class.
+#'   count table). In line with this logic, the `subcorpus` class inherits
+#'   from the `corpus` class, whereas the `partition` class inherits
+#'   from the `textstat` class.
 #' @family classes to manage corpora
 #' @name subcorpus
 #' @rdname subcorpus-class
@@ -957,7 +957,7 @@ setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
 
 
 #' @describeIn subcorpus Get named list with basic information for
-#'   \code{subcorpus} object.
+#'   `subcorpus` object.
 #' @export
 setMethod("summary", "subcorpus", function(object){
   list(
@@ -967,9 +967,9 @@ setMethod("summary", "subcorpus", function(object){
 })
 
 
-#' @param value A \code{character} vector to assign as name to slot \code{name}
-#'   of a \code{subcorpus} class object.
-#' @describeIn subcorpus Assign name to a \code{subcorpus} object.
+#' @param value A `character` vector to assign as name to slot `name`
+#'   of a `subcorpus` class object.
+#' @describeIn subcorpus Assign name to a `subcorpus` object.
 #' @exportMethod name<-
 setReplaceMethod("name", "subcorpus", function(x, value) {
   x@name <- value
@@ -990,14 +990,14 @@ setClass("press_subcorpus", contains = "subcorpus")
 #' @description Class, methods and functionality for processing phrases (lexical
 #'   units, lexical items, multi-word expressions) beyond the token level. The
 #'   envisaged workflow at this stage is to detect phrases using the
-#'   \code{ngrams}-method and to generate a \code{phrases} class object from the
-#'   \code{ngrams} object using the \code{as.phrases} method. This object can be
-#'   passed into a call of \code{count}, see examples. Further methods and
+#'   `ngrams`-method and to generate a `phrases` class object from the
+#'   `ngrams` object using the `as.phrases` method. This object can be
+#'   passed into a call of `count`, see examples. Further methods and
 #'   functions documented here are used internally, but may be useful.
-#' @details The \code{phrases} considers a phrase as sequence as tokens that can
+#' @details The `phrases` considers a phrase as sequence as tokens that can
 #'   be defined by region, i.e. a left and a right corpus position. This
 #'   information is kept in a region matrix in the slot "cpos" of the
-#'   \code{phrases} class. The \code{phrases} class inherits from the
+#'   `phrases` class. The `phrases` class inherits from the
 #'   \code{\link{regions}} class (which inherits from the and the
 #'   \code{\link{corpus}} class), without adding further slots.
 #' @family classes to manage corpora
@@ -1043,10 +1043,10 @@ setClass("features_cooccurrences", contains = "features")
 setClass("features_ngrams", representation(n = "integer"), contains = "features")
 
 
-#' @details A set of \code{features} objects can be combined into a \code{features_bundle}.
-#' Typically, a \code{features_bundle} will result from applying the \code{features}-method
-#' on a \code{partition_bundle}. See the documentation for \code{bundle} to learn about
-#' the methods for \code{bundle} objects that are available for a \code{features_bundle}.
+#' @details A set of `features` objects can be combined into a `features_bundle`.
+#' Typically, a `features_bundle` will result from applying the `features`-method
+#' on a `partition_bundle`. See the documentation for `bundle` to learn about
+#' the methods for `bundle` objects that are available for a `features_bundle`.
 #' @rdname features-class
 setClass("features_bundle", contains = "bundle")
 
@@ -1064,29 +1064,29 @@ setClass("ngrams", representation(n = "integer"), contains = "count")
 
 #' S4 class to represent hits for queries.
 #' 
-#' @slot stat A \code{data.table} with the following columns: 
+#' @slot stat A `data.table` with the following columns: 
 #' \describe{
 #'   \item{query}{The query (optionally using CQP syntax) that evoked
 #'   a hit.}
 #'   \item{count}{Number of matches in corpus/subcorpus.}
 #'   \item{freq}{Relative frequency of matches in corpus/subcorpus (optional,
-#'   presence depends on usage of argument \code{freq} of the \code{hits} method).}
+#'   presence depends on usage of argument `freq` of the `hits` method).}
 #'   \item{size}{Total number of tokens in corpus/subcorpus (optional, presence
-#'   depends on usage of argument \code{size} of the \code{hits} method).}
+#'   depends on usage of argument `size` of the `hits` method).}
 #' }
-#' If argument \code{s_attribute} has been used in the call of the \code{hits}
-#' method, the \code{data.table} will include additional columns with the
+#' If argument `s_attribute` has been used in the call of the `hits`
+#' method, the `data.table` will include additional columns with the
 #' s-attributes. The values in the columns will be the values these s-attributes
-#' assume. Columns \code{count}, \code{freq} and \code{size} will be based on
+#' assume. Columns `count`, `freq` and `size` will be based on
 #' subcorpora defined by (combinations of) s-attributes.
-#' @slot corpus A length-one \code{"character"} vector, ID of the corpus with
+#' @slot corpus A length-one `"character"` vector, ID of the corpus with
 #'   hits for query or queries.
-#' @slot query Object of class \code{"character"}, query or queries for 
+#' @slot query Object of class `"character"`, query or queries for 
 #' @slot p_attribute The p-attribute that has been queried, a length-one
-#'   \code{character} vector.
-#' @slot encoding Length-one \code{character} vector, the encoding of the
+#'   `character` vector.
+#' @slot encoding Length-one `character` vector, the encoding of the
 #'   corpus.
-#' @slot name Length-one \code{characte} vector, name of the object.
+#' @slot name Length-one `characte` vector, name of the object.
 #' @exportClass hits
 #' @rdname hits_class
 #' @name hits_class
@@ -1102,7 +1102,7 @@ setClass(
 #' 
 #' class to organize information of multiple context analyses
 #' 
-#' @slot objects Object of class \code{"list"} a list of context objects
+#' @slot objects Object of class `"list"` a list of context objects
 #'
 #' @section Methods:
 #'   \describe{
@@ -1149,13 +1149,13 @@ setClass(
 #' 
 #' Class and methods to manage bundles of partitions. 
 #' 
-#' @slot objects Object of class \code{list} the partitions making up the bundle
-#' @slot corpus Object of class \code{character} the CWB corpus the partition is based on
-#' @slot s_attributes_fixed Object of class \code{list} fixed s-attributes
-#' @slot encoding Object of class \code{character} encoding of the corpus
-#' @slot explanation Object of class \code{character} an explanation of the partition
-#' @slot xml Object of class \code{character} whether the xml is flat or nested
-#' @slot call Object of class \code{character} the call that generated the \code{partition_bundle}
+#' @slot objects Object of class `list` the partitions making up the bundle
+#' @slot corpus Object of class `character` the CWB corpus the partition is based on
+#' @slot s_attributes_fixed Object of class `list` fixed s-attributes
+#' @slot encoding Object of class `character` encoding of the corpus
+#' @slot explanation Object of class `character` an explanation of the partition
+#' @slot xml Object of class `character` whether the xml is flat or nested
+#' @slot call Object of class `character` the call that generated the `partition_bundle`
 #' @aliases partition_bundle-class
 #'   [,partition_bundle-method [[,partition_bundle-method
 #'   as.matrix,partition_bundle-method 
@@ -1165,9 +1165,9 @@ setClass(
 #'   [,partition_bundle,ANY,ANY,ANY-method +,partition_bundle,partition-method 
 #'   +,partition_bundle,partition_bundle-method as.partition_bundle,list-method 
 #'   barplot,partition_bundle-method
-#' @param x a \code{partition_bundle} object
-#' @param .Object a \code{partition_bundle} object
-#' @param object a \code{partition_bundle} object
+#' @param x a `partition_bundle` object
+#' @param .Object a `partition_bundle` object
+#' @param object a `partition_bundle` object
 #' @param i integer index
 #' @param s_attribute the s-attribute to use
 #' @param height height
@@ -1188,11 +1188,11 @@ setClass("partition_bundle",
 
 
 #' @title Bundled subcorpora
-#' @description A \code{subcorpus_bundle} object combines a set of
-#'   \code{subcorpus} objects in a \code{list} in the the slot \code{objects}.
-#'   The class inherits from the \code{partition_bundle} and the \code{bundle}
-#'   class. Typically, a \code{subcorpus_bundle} is generated by applying the
-#'   \code{split}-method on a \code{corpus} or \code{subcorpus}.
+#' @description A `subcorpus_bundle` object combines a set of
+#'   `subcorpus` objects in a `list` in the the slot `objects`.
+#'   The class inherits from the `partition_bundle` and the `bundle`
+#'   class. Typically, a `subcorpus_bundle` is generated by applying the
+#'   `split`-method on a `corpus` or `subcorpus`.
 #' @exportClass subcorpus_bundle
 #' @rdname subcorpus_bundle
 #' @examples 
@@ -1238,11 +1238,11 @@ setClass("cooccurrences_bundle", contains = "bundle")
 
 #' Virtual class slice.
 #' 
-#' The classes \code{subcorpus} and \code{partition} can be used to define
-#' subcorpora. Unlike the \code{subcorpus} class, the \code{partition} class may
-#' include statistical evaluations. The virtual class \code{slice} is a
-#' mechanism to define methods for these classes without making \code{subcorpus}
-#' the superclass of \code{partition}.
+#' The classes `subcorpus` and `partition` can be used to define
+#' subcorpora. Unlike the `subcorpus` class, the `partition` class may
+#' include statistical evaluations. The virtual class `slice` is a
+#' mechanism to define methods for these classes without making `subcorpus`
+#' the superclass of `partition`.
 #' 
 #' @rdname slice
 #' @name slice
@@ -1277,9 +1277,9 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
 #' Ranges of query matches.
 #' 
 #' S4 class to manage ranges of corpus positions for query matches. The class
-#' inherits from the classes \code{regions} and \code{corpus}.
+#' inherits from the classes `regions` and `corpus`.
 #' 
-#' @slot query A length-one \code{character} string, query used for query
+#' @slot query A length-one `character` string, query used for query
 #'   matches.
 #' @exportClass ranges
 #' @rdname ranges_class
@@ -1287,13 +1287,13 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
 setClass("ranges", slots = c(query = "character"), contains = "regions")
 
 
-#' @details The method \code{aggregate} will deflate the matrix in the slot \code{cpos},
+#' @details The method `aggregate` will deflate the matrix in the slot `cpos`,
 #' i.e. it checks for each new row in the matrix whether it increments the end
 #' of the previous region (by 1), and ensure that the cpos matrix defines
 #' disjoined regions.
 #' 
-#' @param x An object of a class belonging to the virtual class \code{slice}, i.e. a 
-#' \code{partition} or \code{regions} object.
+#' @param x An object of a class belonging to the virtual class `slice`, i.e. a 
+#' `partition` or `regions` object.
 #' @exportMethod aggregate
 #' @rdname slice
 #' @examples 

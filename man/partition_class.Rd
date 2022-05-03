@@ -69,7 +69,7 @@ from the classes \code{count} and \code{textstat}.
 \details{
 As \code{partition} objects inherit from \code{count} and
 \code{textstat} class, methods available are \code{view} to inspect the
-table in the \code{stat} slot, \code{name} and \code{name<-} to
+table in the \code{stat} slot, \code{name} and \verb{name<-} to
 retrieve/set the name of an object, and more.
 
 The \code{is.partition} function returns a \code{logical} value
@@ -110,7 +110,7 @@ as count is already present.}
 
 \item{\code{metadata}}{Object of class \code{data.frame}, metadata information.}
 
-\item{\code{strucs}}{Object of class \code{intger}, the strucs defining the partition.}
+\item{\code{strucs}}{Object of class \code{integer}, the strucs defining the partition.}
 
 \item{\code{p_attribute}}{Object of class \code{character} indicating the p_attribute of the
 count in slot \code{stat}.}
@@ -131,7 +131,7 @@ pb <- split(p, gap = 500L)
 summary(pb)
 }
 \seealso{
-The \code{partition}-class inherits from the \code{\link{textstat-class}}, see
+The \code{partition}-class inherits from the `\link{textstat-class`}, see
 respective documentation to learn more.
 }
 \author{

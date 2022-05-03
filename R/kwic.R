@@ -81,11 +81,10 @@ setMethod("knit_print", "kwic", function(x, options = knitr::opts_chunk){
 #' @exportMethod as.character
 #' @param fmt A format string passed into \code{sprintf} to format the node of a
 #'   KWIC display.
-#' @details The \code{as.character}-method will return a list of
-#'   \code{character} vectors, concatenating the columns "left", "node" and
-#'   "right" of the \code{data.table} in the \code{stat}-slot of the input
-#'   \code{kwic}-class object. Optionally, the node can be formatted using a
-#'   format string that is passed into \code{sprintf}.
+#' @details The `as.character`-method will return a list of `character` vectors,
+#'   concatenating the columns "left", "node" and "right" of the `data.table` in
+#'   the `stat`-slot of the input `kwic`-class object. Optionally, the node can
+#'   be formatted using a format string that is passed into `sprintf`.
 #' @examples 
 #' # extract node and left and right context as character vectors
 #' oil <- kwic("REUTERS", query = "oil")
@@ -107,8 +106,8 @@ setMethod("[", "kwic", function(x, i){
   x
 })
 
-#' @details The \code{subset}-method will apply \code{subset} to the table in
-#'   the slot \code{stat}, e.g. for filtering query results based on metadata (i.e.
+#' @details The `subset`-method will apply `subset` to the table in the slot
+#'   `stat`, e.g. for filtering query results based on metadata (i.e.
 #'   s-attributes) that need to be present.
 #' @rdname kwic-class
 #' @examples 
@@ -302,9 +301,7 @@ setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 #' @exportMethod kwic
 #' @docType methods
 #' @rdname kwic
-setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE, ...){
-  
-  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
+setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE){
   
   DT <- copy(.Object@cpos) # do not accidentily modify things
   setorderv(DT, cols = c("match_id", "cpos"))
@@ -313,27 +310,19 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
     id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
     registry = .Object@registry_dir
   )
-  DT[, .Object@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = .Object@encoding), with = TRUE]
+  p_attr_recoded <- as.nativeEnc(p_attr_decoded, from = .Object@encoding)
+  DT[, .Object@p_attribute[1] := p_attr_recoded, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(s_attributes)) s_attributes <- character()
-  y <- new(
-    "kwic",
-    corpus = .Object@corpus,
-    encoding = .Object@encoding,
-    data_dir = .Object@data_dir,
-    registry_dir = .Object@registry_dir,
-    template = .Object@template,
-
-    left = as.integer(.Object@left),
-    right = as.integer(.Object@right),
-    
-    p_attribute = .Object@p_attribute,
-    metadata = if (length(s_attributes) == 0L) character() else s_attributes,
-    
-    cpos = DT,
-    stat = data.table()
-  )
+  
+  y <- as(as(.Object, "textstat"), "kwic")
+  y@left = as.integer(.Object@left)
+  y@right = as.integer(.Object@right)
+  y@metadata = if (length(s_attributes) == 0L) character() else s_attributes
+  y@cpos = DT
+  y@ stat = data.table()
+  
   y <- enrich(y, table = TRUE, s_attributes = s_attributes)
   if (isFALSE(cpos)) y@cpos <- data.table()
   y
@@ -347,34 +336,31 @@ setMethod("kwic", "slice", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
+  region = NULL,
   p_attribute = "word", boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
-  
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
-  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   # the actual work is done by the kwic,context-method
   # this method prepares a context-object and applies the
   # kwic method to that object
   ctxt <- context(
     .Object = .Object, query = query, cqp = cqp,
-    p_attribute = p_attribute, boundary = boundary,
+    p_attribute = p_attribute,
+    region = region, boundary = boundary,
     left = left, right = right,
     stoplist = stoplist, positivelist = positivelist, regex = regex,
-    count = FALSE, verbose = verbose
+    count = FALSE, verbose = verbose, ...
   )
   if (is.null(ctxt)){
-    message("... no matches for query (or no matches left after applying stoplist/positivelist)")
+    message(
+      "... no matches for query (or no matches left after applying stoplist/positivelist)"
+    )
     return(invisible(NULL))
   }
-  retval <- kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
-  # if (!is.null(positivelist)) retval <- highlight(retval, highlight = list(yellow = positivelist), regex = regex)
-
-  retval
+  
+  kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
 })
 
 
@@ -385,7 +371,9 @@ setMethod("kwic", "partition", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
-  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  p_attribute = "word",
+  region = NULL, boundary = NULL,
+  cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
@@ -399,7 +387,8 @@ setMethod("kwic", "subcorpus", function(
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
-  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  p_attribute = "word",
+  region = NULL, boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
@@ -415,15 +404,11 @@ setMethod("kwic", "corpus", function(
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
-  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  p_attribute = "word",
+  region = NULL, boundary = NULL, cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
-  
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
-  if ("s_attribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
-  if ("meta" %in% names(list(...))) s_attributes <- list(...)[["meta"]]
   
   hits <- cpos(
     .Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute,
@@ -440,7 +425,9 @@ setMethod("kwic", "corpus", function(
     left = left, right = right,
     p_attribute = p_attribute,
     corpus = .Object@corpus,
-    boundary = boundary
+    boundary = boundary,
+    region = region,
+    ...
   )
   
   ids <- cpos2id(x = .Object, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]])
@@ -458,12 +445,15 @@ setMethod("kwic", "corpus", function(
   ctxt@partition <- new("partition", stat = data.table())
 
   # generate positivelist/stoplist with ids and apply it
-  if (!is.null(positivelist)) ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
+  if (!is.null(positivelist))
+    ctxt <- trim(ctxt, positivelist = positivelist, regex = regex, verbose = verbose)
   if (is.null(ctxt)) return(NULL)
-  if (!is.null(stoplist)) ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
+
+  if (!is.null(stoplist))
+    ctxt <- trim(ctxt, stoplist = stoplist, regex = regex, verbose = verbose)
   if (is.null(ctxt)) return(NULL)
   
-  kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos)
+  kwic(.Object = ctxt, s_attributes = s_attributes, cpos = cpos, ...)
 })
 
 
@@ -475,7 +465,9 @@ setMethod("kwic", "character", function(
   left = as.integer(getOption("polmineR.left")),
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
-  p_attribute = "word", boundary = NULL, cpos = TRUE,
+  p_attribute = "word",
+  region = NULL, boundary = NULL,
+  cpos = TRUE,
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   verbose = TRUE, ...
 ){
@@ -485,7 +477,7 @@ setMethod("kwic", "character", function(
     left = left, right = right,
     s_attributes = s_attributes,
     p_attribute = p_attribute,
-    boundary = boundary,
+    region = region, boundary = boundary,
     cpos = cpos,
     stoplist = stoplist, positivelist = positivelist,
     regex = regex,

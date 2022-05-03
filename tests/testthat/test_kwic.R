@@ -6,17 +6,17 @@ test_that(
   "kwic-method for corpus",
   {
     expect_equal(
-      nrow(kwic("REUTERS", query = "oil", pAttribute = "word")@stat),
+      nrow(kwic("REUTERS", query = "oil", p_attribute = "word")@stat),
       78L
       )
     
     expect_equal(
-      nrow(kwic("REUTERS", query = '"barrel.*"', pAttribute = "word")@stat),
+      nrow(kwic("REUTERS", query = '"barrel.*"', p_attribute = "word")@stat),
       26L
       )
 
     expect_equal(
-      kwic("REUTERS", query = "asdfasdf", pAttribute = "word"),
+      kwic("REUTERS", query = "asdfasdf", p_attribute = "word"),
       NULL
       )
     
@@ -33,22 +33,22 @@ test_that(
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     expect_equal(
-      nrow(kwic(P, query = "oil", pAttribute = "word")@stat),
+      nrow(kwic(P, query = "oil", p_attribute = "word")@stat),
       21L
     )
     
     expect_equal(
-      nrow(kwic(P, query = '"barrel.*"', cqp = TRUE, pAttribute = "word")@stat),
+      nrow(kwic(P, query = '"barrel.*"', cqp = TRUE, p_attribute = "word")@stat),
       7L
       )
 
     expect_equal(
-      kwic(P, query = "asdfasdf", pAttribute = "word"),
+      kwic(P, query = "asdfasdf", p_attribute = "word"),
       NULL
       )
     
     expect_equal(
-      kwic(P, query = '"asdfasdfasdfasd.*"', cqp = TRUE, pAttribute = "word"),
+      kwic(P, query = '"asdfasdfasdfasd.*"', cqp = TRUE, p_attribute = "word"),
       NULL
     )
   }

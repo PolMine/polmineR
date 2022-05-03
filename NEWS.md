@@ -149,6 +149,9 @@ matter of consistency (#169).
 s-attributes, the warning is telling and `NULL` is returend (#179).
 - The cooccurrences options of the shiny app mirror the arguments used/required
 by the `cooccurrences()` method - left/right rather than window (#134).
+- Methods `kwic` and `context` now have argument `region` as an intuitive
+alternative to named `character` vectors `left` and `right` when expanding match
+to left and right limitation of an s-attribute.
 
 
 

@@ -22,8 +22,7 @@ kwic(.Object, ...)
   .Object,
   s_attributes = getOption("polmineR.meta"),
   cpos = TRUE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 
 \S4method{kwic}{slice}(
@@ -33,6 +32,7 @@ kwic(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
+  region = NULL,
   p_attribute = "word",
   boundary = NULL,
   cpos = TRUE,
@@ -51,6 +51,7 @@ kwic(.Object, ...)
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word",
+  region = NULL,
   boundary = NULL,
   cpos = TRUE,
   stoplist = NULL,
@@ -68,6 +69,7 @@ kwic(.Object, ...)
   right = getOption("polmineR.right"),
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word",
+  region = NULL,
   boundary = NULL,
   cpos = TRUE,
   stoplist = NULL,
@@ -86,6 +88,7 @@ kwic(.Object, ...)
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word",
+  region = NULL,
   boundary = NULL,
   cpos = TRUE,
   stoplist = NULL,
@@ -104,6 +107,7 @@ kwic(.Object, ...)
   right = as.integer(getOption("polmineR.right")),
   s_attributes = getOption("polmineR.meta"),
   p_attribute = "word",
+  region = NULL,
   boundary = NULL,
   cpos = TRUE,
   stoplist = NULL,
@@ -163,6 +167,12 @@ context.}
 \item{right}{A single \code{integer} value, a length-one \code{character} vector or a
 named length-one \code{integer} value, with equivalent effects to argument
 \code{left}.}
+
+\item{region}{An s-attribute, given by a length-one \code{character} vector.
+The context of query matches will be expanded to the left and right
+boundary of the region where the match is located. If arguments \code{left} and
+\code{right} are > 1, the left and right boundaries of the respective number of
+regions will be identified.}
 
 \item{p_attribute}{The p-attribute, defaults to 'word'.}
 

@@ -135,7 +135,7 @@ The methods \code{as.data.table}, and \code{as.data.frame} will extract the
 respectively.
 
 \code{textstat} objects can have a name, which can be retrieved, and set using
-the \code{name}-method and \code{name<-}, respectively.
+the \code{name}-method and \verb{name<-}, respectively.
 
 The \code{round()}-method looks up all numeric columns in the
 \code{data.table} in the \code{stat}-slot of the \code{textstat} object and
