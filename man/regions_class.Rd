@@ -59,12 +59,7 @@ developers. As it is put in the
 Query Language Manual}: "Matching pairs of XML start and end tags are encoded
 as token regions, identified by the corpus positions of the first token
 (immediately following the start tag) and the last token (immediately
-preceding the end tag) of the region. \link{...} Elements of the same name (e.g.
-<s>...</s> or <text>...</text>) are collected and referred to as a structural
-attribute or s-attribute. The corresponding regions must be non-overlapping
-and non-recursive. Different s-attributes are completely independent in the
-CWB: a hierarchical nesting of the XML elements is neither required nor can
-it be guaranteed." (p. 6)
+preceding the end tag) of the region." (p. 6)
 
 The \code{as.regions}-method coerces objects to a \code{regions}-object.
 
