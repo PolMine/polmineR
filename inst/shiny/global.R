@@ -42,4 +42,4 @@ values[["corpora"]] <- list()
 values[["fulltext"]] <- ""
 values[["startingTime"]] <- as.character(Sys.time())
 
-debug <- TRUE
+debug <- FALSE

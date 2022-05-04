@@ -34,12 +34,6 @@ kwicUiInput <- function(drop = NULL){
         inline = TRUE
       )
     ),
-    boundary = selectInput(
-      "kwic_boundary", "boundary", 
-      choices = c("", s_attributes(corpus()[["corpus"]][1])),
-      multiple = FALSE
-    ),
-    
     p_attribute = selectInput(
       "kwic_p_attribute", "p_attribute",
       choices = p_attributes(corpus()[["corpus"]][1]),
@@ -47,6 +41,11 @@ kwicUiInput <- function(drop = NULL){
     ),
     left = sliderInput("kwic_left", "left", min = 0, max = 25, value = getOption("polmineR.left")),
     right = sliderInput("kwic_right", "right", min = 0, max = 25, value = getOption("polmineR.right")),
+    boundary = selectInput(
+      "kwic_boundary", "boundary", 
+      choices = c("", s_attributes(corpus()[["corpus"]][1])),
+      multiple = FALSE
+    ),
     br3 = br()
   )
   if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
@@ -127,10 +126,12 @@ kwicServer <- function(input, output, session, ...){
       input$kwic_left,
       input$kwic_right
     )
-    snippet_html <- highlight::highlight(
-      parse.output = parse(text = snippet),
-      renderer = highlight::renderer_html(document = TRUE),
-      output = NULL
+    withProgress(
+      snippet_html <- highlight::highlight(
+        parse.output = parse(text = snippet),
+        renderer = highlight::renderer_html(document = TRUE),
+        output = NULL
+      )
     )
     showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
@@ -179,17 +180,6 @@ kwicServer <- function(input, output, session, ...){
           retval <- data.frame(left = character(), node = character(), right = character())
         } else {
           retval <- as(values[["kwic"]], "htmlwidget")
-          # tab <- values[["kwic"]]@stat
-          # if ("match_id" %in% colnames(tab)) tab[, "match_id" := NULL]
-          # if (length(input$kwic_meta) == 0L){
-          #   retval <- as()
-          # } else if (length(input$kwic_meta)){
-          #   metaRow <- unlist(lapply(
-          #     1L:nrow(tab),
-          #     function(i) paste(unlist(lapply(tab[i,1L:length(input$kwic_meta)], as.character)), collapse = " | ")
-          #   ))
-          #   retval <- data.frame(meta = metaRow, tab[,(length(input$kwic_meta) + 1L):ncol(tab)])
-          # }
         }
         
         
@@ -203,6 +193,24 @@ kwicServer <- function(input, output, session, ...){
   })
   
   observeEvent(
+    input$kwic_region,
+    {
+      if (input$kwic_region %in% getOption("polmineR.segments")){
+        updateSliderInput(inputId = "kwic_left", value = 0L)
+        updateSliderInput(inputId = "kwic_right", value = 0L)
+      } else {
+        updateSliderInput(
+          inputId = "kwic_left", value = getOption("polmineR.left")
+        )
+        updateSliderInput(
+          inputId = "kwic_right", value = getOption("polmineR.right")
+        )
+      }
+    }
+    
+  )
+  
+  observeEvent(
     input$kwic_table_rows_selected,
     {
       if (length(input$kwic_table_rows_selected) > 0){
@@ -213,12 +221,13 @@ kwicServer <- function(input, output, session, ...){
         kwic_metadata <- values[["kwic"]]@metadata
         template_metadata <- get_template(values[["kwic"]])[["metadata"]]
         if (length(kwic_metadata) > 0L || length(template_metadata) > 0L){
-          fulltext <- polmineR::html(
+          withProgress(
+            fulltext <- polmineR::html(
             values[["kwic"]],
             input$kwic_table_rows_selected,
             type = corpusType,
             verbose = TRUE
-          )
+          ))
           if (debug) message("html generated")
           fulltext <- htmltools::HTML(gsub("<head>.*?</head>", "", as.character(fulltext)))
           fulltext <- htmltools::HTML(gsub('<blockquote>', '<blockquote style="font-size:14px">', as.character(fulltext)))

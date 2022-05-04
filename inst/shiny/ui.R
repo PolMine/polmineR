@@ -3,10 +3,11 @@ shinyThemeToUse <- shinytheme("cerulean") # alternative: flatly
 shinyUI(
   
   navbarPage(
-    shinyjs::useShinyjs(),
     theme = shinyThemeToUse,
     title = "polmineR",
     id = "polmineR",
+    
+    header = tags$head(shinyjs::useShinyjs()),
     
     tabPanel(
       "corpus",
