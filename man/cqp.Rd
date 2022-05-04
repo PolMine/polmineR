@@ -68,5 +68,5 @@ check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
 check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
 }
 \references{
-CQP Query Language Tutorial (\url{http://cwb.sourceforge.net/files/CQP_Tutorial.pdf})
+CQP Query Language Tutorial (\url{http://cwb.sourceforge.io/files/CQP_Tutorial.pdf})
 }

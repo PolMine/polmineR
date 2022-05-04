@@ -39,7 +39,7 @@ the functions defined here ensure that manipulating the registry is
 possible without a full installation of the CWB.
 }
 \details{
-An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
+An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf)
 includes an explanation of the registry file format.
 
 \code{registry_get_encoding} will parse the registry file for a

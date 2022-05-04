@@ -60,7 +60,7 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
 #' the functions defined here ensure that manipulating the registry is 
 #' possible without a full installation of the CWB.
 #' 
-#' An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.net/files/CWB_Encoding_Tutorial.pdf)
+#' An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf)
 #' includes an explanation of the registry file format. 
 #' 
 #' @param corpus name of the CWB corpus
