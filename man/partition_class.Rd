@@ -131,8 +131,8 @@ pb <- split(p, gap = 500L)
 summary(pb)
 }
 \seealso{
-The \code{partition}-class inherits from the `\link{textstat-class`}, see
-respective documentation to learn more.
+The \code{partition}-class inherits from the
+\code{\link{textstat-class}}, see respective documentation to learn more.
 }
 \author{
 Andreas Blaette

@@ -246,5 +246,5 @@ i <- corpus("GERMAPARLMINI") \%>\%
 }
 \seealso{
 The constructor for generating kwic objects is the
-`\link{kwic`} method.
+\code{\link{kwic}} method.
 }

@@ -161,27 +161,37 @@ setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpu
 #' @rdname corpus-class
 setMethod("corpus", "missing", function(){
   
-  corpora <- lapply(RcppCWB::cqp_list_corpora(), corpus)
-  corpus_slots <- slotNames(new("corpus"))
-  
-  dt <- rbindlist(lapply(
-    corpora,
-    function(x)
-      as.data.table(
-        setNames(lapply(corpus_slots, function(s) slot(x, s)),corpus_slots)
-      )
-    )
+  dt <- data.table(corpus = cqp_list_corpora())
+  regdirs <- sapply(dt[["corpus"]], corpus_registry_dir)
+  charset <- mapply(
+    RcppCWB::corpus_property,
+    corpus = dt[["corpus"]], registry = regdirs, property = "charset"
   )
+  dt[, "encoding" := charset]
   
-  dt[, "data_dir" := NULL]
-  dt[, "info_file" := ifelse(is.na(dt$info_file), FALSE, TRUE)]
-  dt[, "template" := ifelse(is.na(dt$template), FALSE, TRUE)]
-  dt[, "registry_dir" := ifelse(dt$registry_dir == registry(), "tmp", "other")]
-  
-  setcolorder(
-    dt,
-    neworder = c("corpus", "name", "encoding", "type", "template")
+  corpus_type <- mapply(
+    RcppCWB::corpus_property,
+    corpus = dt[["corpus"]], registry = regdirs, property = "type"
   )
+  dt[, "type" := corpus_type]
+  
+  data_dirs <- mapply(
+    RcppCWB::corpus_data_dir,
+    corpus = dt[["corpus"]],
+    registry = regdirs
+  )
+  template <- sapply(data_dirs, function(dir) file.exists(path(dir, "template.json")))
+  dt[, "template" := template]
+  
+  size <- mapply(
+    RcppCWB::cl_attribute_size,
+    corpus = dt[["corpus"]],
+    registry = regdirs,
+    attribute = "word", 
+    attribute_type = "p"
+  )
+  dt[, "size" := size]
+  
   
   as.data.frame(dt)
 })

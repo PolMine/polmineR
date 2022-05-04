@@ -379,7 +379,7 @@ setClass("features",
 #' @docType class
 #' @author Andreas Blaette
 #' @aliases count-class
-#' @seealso The `count`-class inherits from the `\link{textstat-class`}
+#' @seealso The `count`-class inherits from the \code{\link{textstat-class}}.
 setClass("count",
          representation = list(
            size = "integer"
@@ -507,8 +507,8 @@ setMethod("length", "count", function(x) x@size)
 #' @exportClass partition
 #' @docType class
 #' @author Andreas Blaette
-#' @seealso The `partition`-class inherits from the `\link{textstat-class`}, see
-#' respective documentation to learn more.
+#' @seealso The `partition`-class inherits from the
+#'   \code{\link{textstat-class}}, see respective documentation to learn more.
 setClass(
   "partition",
   slots = c(
@@ -703,7 +703,7 @@ setClass("cooccurrences", contains = "context")
 #' @aliases kwic-class [,kwic,ANY,ANY,ANY-method [,kwic-method
 #' @exportClass kwic
 #' @seealso The constructor for generating kwic objects is the
-#'   `\link{kwic`} method.
+#'   \code{\link{kwic}} method.
 #' @examples
 #' use("polmineR")
 #' K <- kwic("GERMAPARLMINI", "Integration")
