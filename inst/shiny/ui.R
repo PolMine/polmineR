@@ -3,7 +3,7 @@ shinyThemeToUse <- shinytheme("cerulean") # alternative: flatly
 shinyUI(
   
   navbarPage(
-    
+    shinyjs::useShinyjs(),
     theme = shinyThemeToUse,
     title = "polmineR",
     id = "polmineR",

@@ -18,17 +18,32 @@ kwicUiInput <- function(drop = NULL){
     cqp = radioButtons("kwic_cqp", "CQP", choices = list("yes", "no"), selected = "no", inline = TRUE),
     positivelist = textInput("kwic_positivelist", label = "positivelist", value = ""),
     s_attribute = selectInput(
-      "kwic_meta", "s_attribute",
+      "kwic_s_attributes", "s_attribute",
       choices = s_attributes(corpus()[["corpus"]][1]),
       multiple = TRUE
     ),
+    region = conditionalPanel(
+      condition = "input.kwic_show_regions == 'show'",
+      radioButtons(
+        "kwic_region", "region", 
+        choices = as.list(c("none", c("s", "p")[c("s", "p") %in% s_attributes(corpus()[["corpus"]][1])])),
+        selected = "none",
+        inline = TRUE
+      )
+    ),
+    boundary = selectInput(
+      "kwic_boundary", "boundary", 
+      choices = c("", s_attributes(corpus()[["corpus"]][1])),
+      multiple = FALSE
+    ),
+    
     p_attribute = selectInput(
       "kwic_p_attribute", "p_attribute",
       choices = p_attributes(corpus()[["corpus"]][1]),
       selected = "word"
     ),
-    left = sliderInput("kwic_left", "left", min = 1, max = 25, value = getOption("polmineR.left")),
-    right = sliderInput("kwic_right", "right", min = 1, max = 25, value = getOption("polmineR.right")),
+    left = sliderInput("kwic_left", "left", min = 0, max = 25, value = getOption("polmineR.left")),
+    right = sliderInput("kwic_right", "right", min = 0, max = 25, value = getOption("polmineR.right")),
     br3 = br()
   )
   if (!is.null(drop)) for (x in drop) divs[[x]] <- NULL
@@ -50,7 +65,20 @@ kwicServer <- function(input, output, session, ...){
       new_sAttr <- s_attributes(values$partitions[[input$kwic_partition]]@corpus)
       new_pAttr <- p_attributes(values$partitions[[input$kwic_partition]]@corpus)
       updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
-      updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
+      updateSelectInput(session, "kwic_s_attributes", choices = new_sAttr, selected = NULL)
+      updateSelectInput(session, "kwic_boundary", choices = c("", new_sAttr), selected = NULL)
+      
+      updateRadioButtons(
+        session, "kwic_region",
+        choices = as.list(c("none", c("s", "p")[c("s", "p") %in% new_sAttr])),
+        selected = "none", inline = TRUE
+      )
+      if (any(baseregions %in% new_sAttr)){
+        shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "show");')
+      } else {
+        shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "hide");')
+      }
+
     }
   })
   
@@ -59,7 +87,21 @@ kwicServer <- function(input, output, session, ...){
     new_sAttr <- s_attributes(input$kwic_corpus)
     new_pAttr <- p_attributes(input$kwic_corpus)
     updateSelectInput(session, "kwic_p_attribute", choices = new_pAttr, selected = NULL)
-    updateSelectInput(session, "kwic_meta", choices = new_sAttr, selected = NULL)
+    updateSelectInput(session, "kwic_s_attributes", choices = new_sAttr, selected = NULL)
+    updateSelectInput(session, "kwic_boundary", choices = c("", new_sAttr), selected = NULL)
+    
+    baseregions <- c("s", "p")
+    updateRadioButtons(
+      session, "kwic_region",
+      choices = as.list(c("none", baseregions[baseregions %in% new_sAttr])),
+      selected = "none", inline = TRUE
+    )
+    
+    if (any(baseregions %in% new_sAttr)){
+      shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "show");')
+    } else {
+      shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "hide");')
+    }
   })
   
   observeEvent(input$kwic_code, {
@@ -110,9 +152,11 @@ kwicServer <- function(input, output, session, ...){
               query = rectifySpecialChars(input$kwic_query),
               cqp = if (input$kwic_cqp == "yes") TRUE else FALSE,
               p_attribute = if (is.null(input$kwic_p_attribute)) "word" else input$kwic_p_attribute,
+              region = if (input$kwic_region == "none") NULL else input$kwic_region,
+              boundary = if (input$kwic_boundary == "") NULL else input$kwic_boundary,
               left = input$kwic_left,
               right = input$kwic_right,
-              meta = input$kwic_meta,
+              s_attributes = input$kwic_s_attributes,
               verbose = "shiny",
               positivelist = poslist,
               cpos = TRUE # required for reading

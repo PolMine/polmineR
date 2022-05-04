@@ -17,6 +17,7 @@ check_and_install_pkg <- function(pkgname){
   }
 }
 check_and_install_pkg("shiny")
+check_and_install_pkg("shinyjs")
 check_and_install_pkg("shinythemes")
 library(shiny)
 library(shinythemes)
