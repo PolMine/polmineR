@@ -112,9 +112,9 @@ kwicServer <- function(input, output, session, ...){
   
   observeEvent(input$kwic_code, {
     format_string <- if (input$kwic_positivelist == ""){
-      'kwic(\n  %s,\n  query = "%s",\n  cqp = %s,\n  %sleft = %s,\n  right = %s\n)' 
+      'kwic(\n  %s,\n  query = "%s",\n  cqp = %s,\n  boundary = %s,\n  region = %s,\n  %sleft = %s,\n  right = %s\n)' 
     } else {
-      'kwic(\n  %s,\n  query = "%s",\n  cqp = %s,\n  positivelist = %s,\n  left = %s,\n  right = %s\n)' 
+      'kwic(\n  %s,\n  query = "%s",\n  cqp = %s,\n  boundary = %s,\n  region = %s,\n  positivelist = %s,\n  left = %s,\n  right = %s\n)' 
     }
 
     snippet <- sprintf(
@@ -122,16 +122,17 @@ kwicServer <- function(input, output, session, ...){
       if (input$kwic_object == "corpus") sprintf('"%s"', input$kwic_corpus)  else input$kwic_partition,
       input$kwic_query,
       if (input$kwic_cqp == "yes") "TRUE" else "FALSE", 
-      if (input$kwic_positivelist != "") sprintf("c(%s)", paste(sprintf('"%s"', strsplit(x = input$kwic_positivelist, split = "(;\\s*|,\\s*)")[[1]]), collapse = ", ")) else "",
+      if (input$kwic_boundary == "") "NULL" else sprintf('"%s"', input$kwic_boundary),
+      if (input$kwic_region == "none") "NULL" else sprintf('"%s"', input$kwic_region),
+      if (input$kwic_positivelist != "")
+        sprintf("c(%s)", paste(sprintf('"%s"', strsplit(x = input$kwic_positivelist, split = "(;\\s*|,\\s*)")[[1]]), collapse = ", ")) else "",
       input$kwic_left,
       input$kwic_right
     )
-    withProgress(
-      snippet_html <- highlight::highlight(
-        parse.output = parse(text = snippet),
-        renderer = highlight::renderer_html(document = TRUE),
-        output = NULL
-      )
+    snippet_html <- highlight::highlight(
+      parse.output = parse(text = snippet),
+      renderer = highlight::renderer_html(document = TRUE),
+      output = NULL
     )
     showModal(modalDialog(title = "Code", HTML(paste(snippet_html, collapse = ""))))
   })
