@@ -61,6 +61,11 @@ method from `partition` to `corpus` objects, this coerce method (defined by
 `setAs()`) has been removed. The `get_template()`-method for `partition` objects
 using this coerce method has been removed - as it inherits the method anyway, it
 is not needed any more. See #201.
+- The kwic tab of the shiny app included in the package exposes the improved 
+capabilities to determine the context of a query match based on an s-attribute 
+(argument `region`) and to consider the changing value of an s-attribute as 
+a boundary of a context (argument `boundary`). New menu "boundary" and radio 
+buttons, conditional on presence of s-attributes "s" and/or "p".
 
 
 ## Minor Improvements

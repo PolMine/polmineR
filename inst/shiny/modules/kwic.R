@@ -26,7 +26,10 @@ kwicUiInput <- function(drop = NULL){
       condition = "input.kwic_show_regions == 'show'",
       radioButtons(
         "kwic_region", "region", 
-        choices = as.list(c("none", c("s", "p")[c("s", "p") %in% s_attributes(corpus()[["corpus"]][1])])),
+        choices = as.list(c(
+          "none",
+          getOption("polmineR.segments")[getOption("polmineR.segments") %in% s_attributes(corpus()[["corpus"]][1])]
+        )),
         selected = "none",
         inline = TRUE
       )
@@ -70,10 +73,13 @@ kwicServer <- function(input, output, session, ...){
       
       updateRadioButtons(
         session, "kwic_region",
-        choices = as.list(c("none", c("s", "p")[c("s", "p") %in% new_sAttr])),
+        choices = as.list(c(
+          "none",
+          getOption("polmineR.segments")[getOption("polmineR.segments") %in% new_sAttr]
+        )),
         selected = "none", inline = TRUE
       )
-      if (any(baseregions %in% new_sAttr)){
+      if (any(getOption("polmineR.segments") %in% new_sAttr)){
         shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "show");')
       } else {
         shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "hide");')
@@ -90,14 +96,15 @@ kwicServer <- function(input, output, session, ...){
     updateSelectInput(session, "kwic_s_attributes", choices = new_sAttr, selected = NULL)
     updateSelectInput(session, "kwic_boundary", choices = c("", new_sAttr), selected = NULL)
     
-    baseregions <- c("s", "p")
     updateRadioButtons(
       session, "kwic_region",
-      choices = as.list(c("none", baseregions[baseregions %in% new_sAttr])),
+      choices = as.list(c(
+        "none", getOption("polmineR.segments")[getOption("polmineR.segments") %in% new_sAttr]
+      )),
       selected = "none", inline = TRUE
     )
     
-    if (any(baseregions %in% new_sAttr)){
+    if (any(getOption("polmineR.segments") %in% new_sAttr)){
       shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "show");')
     } else {
       shinyjs::runjs('Shiny.onInputChange("kwic_show_regions", "hide");')

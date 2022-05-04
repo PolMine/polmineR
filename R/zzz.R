@@ -18,7 +18,8 @@
     "polmineR.cutoff" = 5000,
     "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
     "polmineR.shiny" = FALSE,
-    "polmineR.warn.size" = FALSE
+    "polmineR.warn.size" = FALSE,
+    "polmineR.segments" = c("s", "p")
   )
   
   # Upon loading the package, registry files available in the polmineR package, or in a directory
