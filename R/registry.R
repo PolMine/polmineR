@@ -56,12 +56,13 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
 #' Evaluate registry file.
 #' 
 #' Functions to extract information from a registry file describing a corpus.
-#' Several operations could be accomplished with the 'cwb-regedit' tool,
-#' the functions defined here ensure that manipulating the registry is 
-#' possible without a full installation of the CWB.
+#' Several operations could be accomplished with the 'cwb-regedit' tool, the
+#' functions defined here ensure that manipulating the registry is possible
+#' without a full installation of the CWB.
 #' 
-#' An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf)
-#' includes an explanation of the registry file format. 
+#' An appendix to the 'Corpus Encoding Tutorial'
+#' (https://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf) includes an
+#' explanation of the registry file format.
 #' 
 #' @param corpus name of the CWB corpus
 #' @param registry directory of the registry (defaults to CORPUS_Registry environment variable)

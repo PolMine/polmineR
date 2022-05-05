@@ -34,13 +34,14 @@ registry_get_properties(corpus, registry = Sys.getenv("CORPUS_REGISTRY"))
 }
 \description{
 Functions to extract information from a registry file describing a corpus.
-Several operations could be accomplished with the 'cwb-regedit' tool,
-the functions defined here ensure that manipulating the registry is
-possible without a full installation of the CWB.
+Several operations could be accomplished with the 'cwb-regedit' tool, the
+functions defined here ensure that manipulating the registry is possible
+without a full installation of the CWB.
 }
 \details{
-An appendix to the 'Corpus Encoding Tutorial' (http://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf)
-includes an explanation of the registry file format.
+An appendix to the 'Corpus Encoding Tutorial'
+(https://cwb.sourceforge.io/files/CWB_Encoding_Tutorial.pdf) includes an
+explanation of the registry file format.
 
 \code{registry_get_encoding} will parse the registry file for a
 corpus and return the encoding that is defined (corpus property "charset").

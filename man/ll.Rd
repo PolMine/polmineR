@@ -145,7 +145,7 @@ pp. 61-74.
 
 Rayson, Paul; Garside, Roger (2000): Comparing Corpora using
 Frequency Profiling. \emph{The Workshop on Comparing Corpora}.
-\url{https://www.aclweb.org/anthology/W00-0901/}.
+\url{https://aclanthology.org/W00-0901/}.
 
 Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
 Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.

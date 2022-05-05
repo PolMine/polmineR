@@ -28,7 +28,8 @@ NULL
 #' p_attributes("GERMAPARLMINI")
 #' p_attributes("REUTERS")
 #' p_attributes("REUTERS", p_attribute = "word")
-#' @references Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.io/files/CQP_Tutorial.pdf.
+#' @references Stefan Evert & The OCWB Development Team, CQP Query Language
+#'   Tutorial, https://cwb.sourceforge.io/files/CQP_Tutorial.pdf.
 setGeneric("p_attributes", function(.Object, ...) standardGeneric("p_attributes"))
 
 #' @rdname p_attributes

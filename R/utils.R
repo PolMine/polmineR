@@ -13,7 +13,8 @@
 #' @param warn A (length-one) `logical` value, whether to issue a warning if a
 #'   query may be buggy.
 #' @name cqp
-#' @references CQP Query Language Tutorial (\url{http://cwb.sourceforge.io/files/CQP_Tutorial.pdf})
+#' @references CQP Query Language Tutorial
+#'   (\url{https://cwb.sourceforge.io/files/CQP_Tutorial.pdf})
 #' @rdname cqp
 #' @export is.cqp
 #' @examples 

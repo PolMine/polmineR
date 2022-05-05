@@ -57,5 +57,6 @@ merkel <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)
 merkel_words <- p_attributes(merkel, "word")
 }
 \references{
-Stefan Evert & The OCWB Development Team, CQP Query Language Tutorial, http://cwb.sourceforge.io/files/CQP_Tutorial.pdf.
+Stefan Evert & The OCWB Development Team, CQP Query Language
+Tutorial, https://cwb.sourceforge.io/files/CQP_Tutorial.pdf.
 }
