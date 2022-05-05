@@ -81,7 +81,7 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
   }
 
   query <- as.corpusEnc(query, corpusEnc = .Object@encoding)
-  if (class(cqp) == "function") cqp <- cqp(query)
+  if (is.function(cqp)) cqp <- cqp(query)
   if (length(cqp) > 1L) stop("length of cqp is more than 1, but needs to be exactly 1")
   if (!cqp) {
     

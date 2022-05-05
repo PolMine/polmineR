@@ -243,10 +243,10 @@ setMethod("context", "subcorpus", function(
 setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, region = NULL, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
   
-  if (class(left) == "numeric")
+  if (inherits(left, "numeric"))
     left <- setNames(as.integer(left), nm = names(left))
   
-  if (class(right) == "numeric")
+  if (inherits(right, "numeric"))
     right <- setNames(as.integer(right), nm = names(right))
 
   if (is.integer(left) && is.integer(right)){

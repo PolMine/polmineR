@@ -278,7 +278,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     # In this case, it is "unwrapped". Note that parent.frames looks back two
     # generations because the S4 Method inserts an additional layer to the
     # original calling environment
-    if (class(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE)) == "call"){
+    if (is.call(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE))){
       expr <- eval(expr, envir = parent.frame(n = c(1L, 2L)))
     }
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression

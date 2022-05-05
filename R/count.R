@@ -139,7 +139,7 @@ setMethod("count", "subcorpus", function(
   
   if (!is.null(query)){
     if (progress) verbose <- FALSE
-    if (class(cqp) == "function") cqp <- cqp(query)
+    if (is.function(cqp)) cqp <- cqp(query)
     if (length(cqp) > 1L) stop("length of cqp is larger than 1, it needs to be 1")
     if (isTRUE(cqp)){
       if (breakdown){
@@ -457,7 +457,7 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
     
     return(y)
   } else {
-    if (class(cqp) == "function") cqp <- cqp(query)
+    if (is.function(cqp)) cqp <- cqp(query)
     if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
     if (isFALSE(cqp)){
       query <- as.corpusEnc(query, corpusEnc = encoding(.Object))
