@@ -1,27 +1,27 @@
 ## General remarks
 
-Actions taken in .onDetach() were moved .onUnload() so that actions performed when loading the package (creating temporary directories) is mirrored by the corresponding actions when unloading the package.
+Many changes and performance improvements, but nothing that would change the
+setup of the package and that would require your particular attention - as I 
+conceive it.
 
 
 ## Test environments
 
-* local OS X install, R 4.0.2
-* Ubuntu Ubuntu 16.04.6 LTS (on travis-ci), R 4.0.2
-* win-builder (devel and release), R. 4.0.2
-* Windows/AppVeyor, R 4.0.2 Patched
+* local OS X install, R 4.1.3
+* GithubActions (Windows, macOS, Linux), R 4.2.0
+* win-builder (devel and release)
 
 
 ## R CMD check results
 
-I see the NOTE "checking for future file timestamps ... unable to verify current time". I gather it is an known issue with the availability of worldclockapi.com (see https://stackoverflow.com/questions/63613301/r-cmd-check-note-unable-to-verify-current-time).
-
-There is a NOTE "installed size is  5.2Mb", resulting from 1.9Mb in the extdata directory. I plan to externalize sample data in a future release, but this has not yet been a priority.
+There is a NOTE "installed size is  5.2Mb", resulting from 1.9Mb in the extdata
+directory. I plan to externalize sample data in a future release, but this has
+not yet been a priority.
 
 There were no ERRORs or WARNINGs on the Linux / macOS / Windows environments I used. 
 
 
 ## Downstream dependencies
 
-I have also checked downstream dependencies using devtools::revdep(),
-without seeing ERRORs, WARNINGs, or NOTEs.
+Not applicable.
 
