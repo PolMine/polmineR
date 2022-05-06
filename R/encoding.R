@@ -57,7 +57,7 @@ setMethod("encoding", "textstat", function(object) object@encoding)
 setMethod("encoding", "bundle", function(object) object@encoding)
 
 #' @rdname encoding
-setMethod("encoding", "character", function(object) cl_charset_name(object))
+setMethod("encoding", "character", function(object) corpus(object)@encoding)
 
 #' @rdname encoding
 setMethod("encoding", "corpus", function(object) object@encoding)

@@ -51,6 +51,3 @@ errors. Note that \code{RcppCWB::cl_charset_name} is equivalent but is
 faster as it uses the internal C representation of a corpus rather than
 parsing the registry file.
 }
-\examples{
-registry_get_encoding("REUTERS")
-}

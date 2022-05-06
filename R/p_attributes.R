@@ -100,7 +100,7 @@ setMethod("p_attributes", "partition_bundle", function(.Object, p_attribute = NU
   corpus_id <- unique(sapply(.Object@objects, slot, "corpus"))
   if (length(corpus_id) > 1L) stop("Getting p-attributes for a corpus requires that objects ",
                                    "are derived from the same corpus.")
-  p_attrs <- registry_get_p_attributes(.Object@corpus)
+  p_attrs <- corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir)
   if (is.null(p_attribute)){
     return(p_attrs)
   } else {

@@ -110,8 +110,6 @@ registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 #' @export registry_get_encoding
 #' @rdname registry_eval
 #' @importFrom lifecycle deprecate_warn
-#' @examples
-#' registry_get_encoding("REUTERS")
 registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   lifecycle::deprecate_warn(
     "0.8.6",

@@ -148,9 +148,13 @@ setMethod("as.speeches", "partition", function(
     function(i) speaker_list[[i]]
   )
   corpus <- if (is.character(.Object)) .Object else .Object@corpus
-  properties <- registry_get_properties(corpus = corpus)
-  if ("type" %in% names(properties)){
-    if (properties[["type"]] == "plpr"){
+  properties <- corpus_properties(
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir
+  )
+  if ("type" %in% properties){
+    type <- corpus_property(.Object@corpus, .Object@registry_dir, "type")
+    if (type == "plpr"){
       .message("coercing partitions to plpr_partitions", verbose = verbose)
       speaker_list_ordered <- lapply(
         speaker_list_ordered,

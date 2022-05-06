@@ -1,5 +1,5 @@
 library(polmineR)
-
+use("polmineR")
 testthat::context("testing polmineR")
 
 test_that(

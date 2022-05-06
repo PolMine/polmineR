@@ -27,7 +27,9 @@ setMethod("reindex", "TermDocumentMatrix", function(x){
 
 setMethod("reindex", "Cooccurrences", function(x){
   
-  if (length(x@p_attribute) > 1L) stop("Method 'reindex' only works if one and only one p-attribute is used.")
+  if (length(x@p_attribute) > 1L)
+    stop("Method 'reindex' only works if one and only one p-attribute is used.")
+  
   verbose <- interactive()
   
   if (verbose) message("... creating data.table for reindexing")
@@ -46,7 +48,7 @@ setMethod("reindex", "Cooccurrences", function(x){
   
   if (verbose) message("... decoding tokens")
   as.nativeEnc(
-    cl_id2str(corpus = x@corpus, p_attribute = x@p_attribute, id = dt[["id"]]),
-    from = getEncoding(x@corpus)
+    id2str(x, p_attribute = x@p_attribute, id = dt[["id"]]),
+    from = x@encoding
   )
 })

@@ -140,9 +140,10 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
 #' @param regex logical
 #' @noRd
 .token2id <- function(corpus, p_attribute, token = NULL, regex = FALSE){
+  regdir <- corpus_registry_dir(corpus)
   stopifnot(
     corpus %in% cqp_list_corpora(),
-    p_attribute %in% registry_get_p_attributes(corpus)
+    p_attribute %in% corpus_p_attributes(corpus, regdir)
   )
   
   if (is.null(token)) return( NULL )
@@ -155,13 +156,13 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
         token,
         function(x)
           cl_regex2id(
-            corpus = corpus, registry = corpus_registry_dir(corpus),
+            corpus = corpus, registry = regdir,
             p_attribute = p_attribute, regex = x
           )
       ))
     } else {
       retval <- cl_str2id(
-        corpus = corpus, registry = corpus_registry_dir(corpus),
+        corpus = corpus, registry = regdir,
         p_attribute = p_attribute, str = token
       )
     }
@@ -338,6 +339,16 @@ regex2id <- function(x, p_attribute, regex){
     p_attribute = p_attribute, regex = regex
   )
 }
+
+id2str <- function(x, p_attribute, id){
+  str <- cl_id2str(
+    corpus = x@corpus, registry = x@registry_dir,
+    p_attribute = p_attribute, id = id
+  )
+  Encoding(str) <- x@encoding
+  str
+}
+
 
 str2id <- function(x, p_attribute, str){
   cl_str2id(

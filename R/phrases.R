@@ -31,7 +31,10 @@ setMethod("as.phrases", "ngrams", function(.Object){
     paste(.Object@p_attribute, 1L:.Object@n, sep = "_"),
     function(colname){
       tokens <- as.corpusEnc(x = .Object@stat[[colname]], corpusEnc = .Object@encoding)
-      cl_str2id(corpus = .Object@corpus, p_attribute = .Object@p_attribute, str = tokens)
+      cl_str2id(
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        p_attribute = .Object@p_attribute, str = tokens
+      )
     }
   )
   id_dt <- as.data.table(li)
@@ -39,7 +42,7 @@ setMethod("as.phrases", "ngrams", function(.Object){
   
   # Anticipate whether memory will suffice
   cnt_file <- path(
-    corpus_data_dir(.Object@corpus),
+    corpus_data_dir(.Object@corpus, registry = .Object@registry_dir),
     sprintf("%s.corpus.cnt", .Object@p_attribute)
   )
   cnt_file_size <- file.info(cnt_file)$size
@@ -51,7 +54,7 @@ setMethod("as.phrases", "ngrams", function(.Object){
   }
   
   # Expand first token to corpus positions of initial token
-  cpos_dt <- data.table(unique(li[[1]]))[, list(cpos = RcppCWB::cl_id2cpos(corpus = .Object@corpus, p_attribute = .Object@p_attribute, id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
+  cpos_dt <- data.table(unique(li[[1]]))[, list(cpos = RcppCWB::cl_id2cpos(corpus = .Object@corpus, registry = .Object@registry_dir, p_attribute = .Object@p_attribute, id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
   # allow.cartesian = TRUE appropriate because several different ngrams may start with same token (id)
   y <- cpos_dt[id_dt, on = "V1", allow.cartesian = TRUE]   
 
@@ -59,8 +62,7 @@ setMethod("as.phrases", "ngrams", function(.Object){
   # at the position
   for (i in 2L:.Object@n){
     nextid <- cpos2id(
-      x = .Object,
-      p_attribute = .Object@p_attribute,
+      x = .Object, p_attribute = .Object@p_attribute,
       cpos = (y[["cpos"]] + i - 1L)
     )
     y <- y[y[[paste("V", i, sep = "")]] == nextid]

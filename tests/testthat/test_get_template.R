@@ -1,5 +1,5 @@
 library(polmineR)
-
+use("polmineR")
 testthat::context("get_template")
 
 test_that(

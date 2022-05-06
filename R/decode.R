@@ -345,7 +345,7 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
       for (s_attr in s_attributes){
         if (decode){
           if (verbose) message("... decoding s_attribute ", s_attr)
-          str <- RcppCWB::cl_struc2str(corpus = .Object@corpus, s_attribute = s_attr, struc = strucs)
+          str <- cl_struc2str(corpus = .Object@corpus, registry = .Object@registry_dir, s_attribute = s_attr, struc = strucs)
           Encoding(str) <- encoding(.Object)
           s_attr_dt[, (s_attr) := as.nativeEnc(str, from = encoding(.Object))]
         } else {

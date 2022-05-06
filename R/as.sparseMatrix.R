@@ -36,6 +36,7 @@ setMethod("as.sparseMatrix", "simple_triplet_matrix", function(x, ...){
 #' @rdname all-cooccurrences-class
 #' @examples 
 #' \dontrun{
+#' use("polmineR")
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 #' decode(X)
 #' sm <- as.sparseMatrix(X)

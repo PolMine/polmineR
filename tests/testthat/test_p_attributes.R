@@ -23,7 +23,7 @@ test_that(
     )
     expect_identical(
       length(p_attributes(corpus("REUTERS"), p_attribute = "word")),
-      RcppCWB::cl_lexicon_size("REUTERS", p_attribute = "word")
+      RcppCWB::cl_lexicon_size("REUTERS", p_attribute = "word", registry = registry())
     )
   }
 )

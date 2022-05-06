@@ -1,5 +1,6 @@
 library(polmineR)
 library(data.table)
+use("polmineR")
 
 testthat::context("aggregate")
 
