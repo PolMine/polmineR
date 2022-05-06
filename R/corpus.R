@@ -89,7 +89,7 @@ setMethod("corpus", "character", function(
       
     }
     
-    properties <- registry_get_properties(.Object)
+    properties <- registry_get_properties(.Object, registry = registry_dir)
     data_dir <- corpus_data_dir(.Object, registry = registry_dir)
     template <- path(data_dir, "template.json")
     info_file <- corpus_info_file(.Object, registry = registry_dir)

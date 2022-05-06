@@ -118,7 +118,7 @@ is.partition <- function(x) "partition" %in% is(x)
     }
     if (nrow(meta) != 0) {
       .Object@cpos <- RcppCWB::get_region_matrix(
-        corpus = .Object@corpus,
+        corpus = .Object@corpus, registry = .Object@registry_dir,
         s_attribute = .Object@s_attribute_strucs,
         strucs = meta[, 1]
       )
@@ -273,13 +273,11 @@ setGeneric("partition", function(.Object, ...) standardGeneric("partition") )
 
 
 
-#' @details If \code{.Object} is a length-one character vector, a
-#'   subcorpus/partition for the corpus defined be \code{.Object} is generated.
 #' @rdname partition
-setMethod("partition", "character", function(
-  .Object, def = NULL, name = "",
-  encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
+setMethod("partition", "corpus", function(
+    .Object, def = NULL, name = "",
+    encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
+    decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
 ) {
   
   stopifnot(xml %in% c("nested", "flat"))
@@ -290,22 +288,18 @@ setMethod("partition", "character", function(
     dot_list[["pAttribute"]] <- NULL
   }
   
-  if (!.Object %in% cqp_list_corpora()) stop("corpus not loaded and available (not installed / not in registry / a typo?)")
   if (is.null(def)){
     if (length(dot_list) > 0L)
       def <- dot_list
     else 
       stop("No s_attributes defining the partition offered")
   }
-
+  
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
-  p <- as(corpus(.Object), paste(c(type, "partition"), collapse = "_"))
+  p <- as(.Object, paste(c(type, "partition"), collapse = "_"))
   p@name <- name
   p@xml <- xml
-
   
-  p@encoding <- if (is.null(encoding)) cl_charset_name(p@corpus) else encoding
-  .message('get encoding:', p@encoding, verbose = verbose)
   p@s_attributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = p@encoding))
   
   .message('get cpos and strucs', verbose = verbose)
@@ -326,6 +320,26 @@ setMethod("partition", "character", function(
     warning("... setting up the partition failed (returning NULL object)")
   }
   p
+})
+
+
+
+
+
+#' @details If \code{.Object} is a length-one character vector, a
+#'   subcorpus/partition for the corpus defined be \code{.Object} is generated.
+#' @rdname partition
+setMethod("partition", "character", function(
+  .Object, def = NULL, name = "",
+  encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
+  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
+) {
+  partition(
+    .Object = corpus(.Object),
+    def = def, name = name, encoding = encoding, p_attribute = p_attribute,
+    regex = regex, xml = xml, decode = decode, type = type, mc = mc,
+    verbose = verbose, ...
+  )
 })
 
 #' @param slots Object slots that will be reported columns of \code{data.frame}

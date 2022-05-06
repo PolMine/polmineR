@@ -87,7 +87,8 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     return(retval)
   }
   
-  if (!is.null(s_attribute)) stopifnot(all(s_attribute %in% s_attributes(.Object)))
+  if (!is.null(s_attribute))
+    stopifnot(all(s_attribute %in% s_attributes(.Object)))
   
   rngs <- ranges(
     .Object,
@@ -101,7 +102,10 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = s_attribute[i], cpos = DT[["cpos_left"]]
     )
-    s_attr_values <- cl_struc2str(corpus = .Object@corpus, s_attribute = s_attribute[i], struc = strucs)
+    s_attr_values <- cl_struc2str(
+      corpus = .Object@corpus, registry = .Object@registry_dir,
+      s_attribute = s_attribute[i], struc = strucs
+    )
     DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
   }
   TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]

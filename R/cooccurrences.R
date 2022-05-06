@@ -178,7 +178,11 @@ setMethod(
       count = TRUE, 
       mc = mc, verbose = verbose, progress = progress
     )
-    if (is.null(y)) invisible(NULL) else cooccurrences(y, method = method, verbose = verbose)
+    
+    if (is.null(y))
+      invisible(NULL)
+    else
+      cooccurrences(y, method = method, verbose = verbose)
   }
 )
 
@@ -226,8 +230,14 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
     .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = FALSE)
   }
   
-  setkeyv(.Object@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
-  setkeyv(.Object@partition@stat, cols = paste(.Object@p_attribute, "id", sep = "_"))
+  setkeyv(
+    .Object@stat,
+    cols = paste(.Object@p_attribute, "id", sep = "_")
+  )
+  setkeyv(
+    .Object@partition@stat,
+    cols = paste(.Object@p_attribute, "id", sep = "_")
+  )
   .Object@stat <- .Object@partition@stat[.Object@stat]
   for (p_attr in .Object@p_attribute){
     if (paste("i", p_attr, sep = ".") %in% colnames(.Object@stat)){

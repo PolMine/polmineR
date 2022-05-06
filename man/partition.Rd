@@ -2,6 +2,7 @@
 % Please edit documentation in R/partition.R
 \name{partition}
 \alias{partition}
+\alias{partition,corpus-method}
 \alias{partition,character-method}
 \alias{partition,environment-method}
 \alias{partition,partition-method}
@@ -11,6 +12,21 @@
 \title{Initialize a partition.}
 \usage{
 partition(.Object, ...)
+
+\S4method{partition}{corpus}(
+  .Object,
+  def = NULL,
+  name = "",
+  encoding = NULL,
+  p_attribute = NULL,
+  regex = FALSE,
+  xml = "flat",
+  decode = TRUE,
+  type = get_type(.Object),
+  mc = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{partition}{character}(
   .Object,

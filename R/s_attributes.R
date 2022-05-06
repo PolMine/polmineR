@@ -157,7 +157,9 @@ setMethod(
   function (.Object, s_attribute = NULL, unique = TRUE, ...) {
     if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
     if (is.null(s_attribute)){
-      return( registry_get_s_attributes(.Object@corpus) )
+      return(
+        corpus_s_attributes(.Object@corpus, registry = .Object@registry_dir)
+      )
     } else {
       if (length(s_attribute) == 1L){
         # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 

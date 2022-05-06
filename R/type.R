@@ -31,18 +31,31 @@
 #' get_type("REUTERS") # returns NULL - no specialized corpus
 setGeneric("get_type", function(.Object) standardGeneric("get_type"))
 
-
+#' @importFrom RcppCWB corpus_properties corpus_property
 #' @rdname get_type
 setMethod("get_type", "corpus", function(.Object){
-  get_type(.Object@corpus)
+  props <- corpus_properties(
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir
+  )
+  if ("type" %in% props){
+    return(
+      corpus_property(
+        corpus = .Object@corpus,
+        registry = .Object@registry_dir,
+        property = "type"
+      )
+    )
+  } else {
+    return(NULL)
+  }
+  NULL
 })
 
 
 #' @rdname get_type
 setMethod("get_type", "character", function(.Object){
-  stopifnot(length(.Object) == 1)
-  corpus_properties <- registry_get_properties(.Object)
-  if ("type" %in% names(corpus_properties)) corpus_properties[["type"]] else NULL
+  get_type(corpus(.Object))
 })
 
 #' @rdname get_type

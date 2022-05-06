@@ -30,7 +30,11 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   if (!is.null(p_attribute)) {
-    stopifnot(is.character(p_attribute) == TRUE, length(p_attribute) <= 2, all(p_attribute %in% p_attributes(.Object)))
+    stopifnot(
+      is.character(p_attribute),
+      length(p_attribute) <= 2,
+      all(p_attribute %in% p_attributes(.Object))
+    )
     .message('getting counts for p-attribute(s):', paste(p_attribute, collapse = ", "), verbose = verbose)  
     .Object@stat <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)@stat
     .Object@p_attribute <- p_attribute
@@ -180,6 +184,7 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
 #' @param p_attribute p-attribute(s) to add to data.table in cpos-slot
 #' @param decode logical, whether to convert integer ids to expressive strings
 #' @param verbose logical, whether to be talkative
+#' @importFrom RcppCWB corpus_p_attributes
 setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -188,7 +193,9 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (!is.null(s_attribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
-    stopifnot( all(s_attribute %in% registry_get_s_attributes(.Object@corpus)) )
+    stopifnot(
+      all(s_attribute %in% corpus_s_attributes(corpus = .Object@corpus, registry = .Object@registry_dir))
+    )
     
     for (s_attr in s_attribute){
       .message("get struc for s-attribute:", s_attr, verbose = verbose)
@@ -220,7 +227,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (!is.null(p_attribute)){
     # check that all p-attributes are available
     .message("checking that all p-attributes are available", verbose = verbose)
-    stopifnot( all(p_attribute %in% registry_get_p_attributes(.Object@corpus)) )
+    stopifnot( all(p_attribute %in% corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir)) )
     
     # add ids
     for (p_attr in p_attribute){

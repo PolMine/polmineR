@@ -232,18 +232,14 @@ registry_move <- function(corpus, registry, registry_new, home_dir_new){
 #' @importFrom stringi stri_enc_mark
 registry <- function(pkg = NULL){
   if (is.null(pkg)){
-    if (tolower(Sys.getenv("POLMINER_USE_TMP_REGISTRY")) != "false"){
-      y <- path(tempdir(), "polmineR_registry")
-      
-      # The user name may include special characters. On windows, a possible solutions to avoid
-      # error messages, is to use the DOS short path name.
-      if (stri_enc_mark(y) != "ASCII"){
-        if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
-      }
-      return(y)
-    } else {
-      return(Sys.getenv("CORPUS_REGISTRY"))
+    y <- path(tempdir(), "polmineR_registry")
+    
+    # The user name may include special characters. On windows, a possible solutions to avoid
+    # error messages, is to use the DOS short path name.
+    if (stri_enc_mark(y) != "ASCII"){
+      if (.Platform$OS.type == "windows") y <- utils::shortPathName(y)
     }
+    return(y)
   } else {
     stopifnot(
       is.character(pkg),

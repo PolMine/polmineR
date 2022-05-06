@@ -178,8 +178,8 @@ setMethod("count", "subcorpus", function(
     if (length(p_attribute) == 1L){
       if (is.null(phrases)){
         count_matrix <- RcppCWB::region_matrix_to_count_matrix(
-          corpus = .Object@corpus, p_attribute = p_attribute,
-          matrix = .Object@cpos
+          corpus = .Object@corpus, registry = .Object@registry_dir,
+          p_attribute = p_attribute, matrix = .Object@cpos
         )
         TF <- data.table::as.data.table(count_matrix)
         setnames(TF, old = c("V1", "V2"), new = c(p_attr_id, "count"))

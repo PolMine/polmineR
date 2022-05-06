@@ -22,14 +22,30 @@
     "polmineR.segments" = c("s", "p")
   )
   
-  # Upon loading the package, registry files available in the polmineR package, or in a directory
-  # defined by the environment variable CORPUS_REGISTRY are moved to a temporary registry.
-  # The operation is deliberately in .onLoad, and not in .onAttach, so that attaching the 
-  # package is not a prerequisite for executing the code.
+  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 0L){
+    if (!file.exists(Sys.getenv("CORPUS_REGISTRY"))){
+      packageStartupMessage("directory does not exist")
+    } else {
+      if (!cqp_is_initialized()){
+        packageStartupMessage("initializing CQP")
+        cqp_initialize(registry = Sys.getenv("CORPUS_REGISTRY"))
+      } else {
+        cqp_reset_registry(registry = Sys.getenv("CORPUS_REGISTRY"))
+      }
+    }
+  }
   
-  # If the package is loaded from the the files of the raw code, the extdata dir will still be 
-  # a subdirectory of the inst directory. Therefore both options are considered whether extdata
-  # is in the inst directory, or immediately in main directory of the package.
+  
+  # Upon loading the package, registry files available in the polmineR package,
+  # or in a directory defined by the environment variable CORPUS_REGISTRY are
+  # moved to a temporary registry. The operation is deliberately in .onLoad, and
+  # not in .onAttach, so that attaching the package is not a prerequisite for
+  # executing the code.
+  
+  # If the package is loaded from the the files of the raw code, the extdata dir
+  # will still be a subdirectory of the inst directory. Therefore both options
+  # are considered whether extdata is in the inst directory, or immediately in
+  # main directory of the package.
   pkg_registry_dir_alternatives <- c(
     path(libname, pkgname, "extdata", "cwb", "registry"),
     path(libname, pkgname, "inst", "extdata", "cwb", "registry")
@@ -38,36 +54,20 @@
   
   pkg_indexed_corpora_dir <- path(libname, pkgname, "extdata", "cwb", "indexed_corpora")
   
-  polmineR_registry_dir <- registry()
   
-  if (!dir.exists(polmineR_registry_dir)) dir.create(polmineR_registry_dir)
+  if (!dir.exists(registry())) dir.create(registry())
   if (!dir.exists(data_dir())) dir.create(data_dir())
   
-  if (tolower(Sys.getenv("POLMINER_USE_TMP_REGISTRY")) != "false"){
-    
-    if (Sys.getenv("CORPUS_REGISTRY") != ""){
-      for (corpus in list.files(Sys.getenv("CORPUS_REGISTRY"), full.names = FALSE)){
-        file.copy(
-          from = path(Sys.getenv("CORPUS_REGISTRY"), corpus),
-          to = path(polmineR_registry_dir, corpus)
-        )
-      }
-    }
-    
-    for (corpus in list.files(pkg_registry_dir)){
-      registry_move(
-        corpus = corpus,
-        registry = pkg_registry_dir,
-        registry_new = polmineR_registry_dir,
-        home_dir_new = path(pkg_indexed_corpora_dir, tolower(corpus))
-      )
-    }
-    
-    Sys.setenv("CORPUS_REGISTRY" = polmineR_registry_dir)
+  for (corpus in list.files(pkg_registry_dir)){
+    registry_move(
+      corpus = corpus,
+      registry = pkg_registry_dir,
+      registry_new = registry(),
+      home_dir_new = path(pkg_indexed_corpora_dir, tolower(corpus))
+    )
   }
   
-  registry_reset(registryDir = registry(), verbose = FALSE)
-    NULL
+  NULL
 }
 
 

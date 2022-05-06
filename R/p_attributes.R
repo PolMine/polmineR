@@ -40,7 +40,11 @@ setMethod("p_attributes", "character", function(.Object, p_attribute = NULL){
 
 #' @rdname p_attributes
 setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
-  p_attrs <- registry_get_p_attributes(corpus = .Object@corpus)
+  p_attrs <- corpus_p_attributes(
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir
+  )
+  
   if (is.null(p_attribute)){
     return(p_attrs)
   } else {
@@ -62,7 +66,10 @@ setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
 #' merkel_words <- p_attributes(merkel, "word")
 #' @rdname p_attributes
 setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode = TRUE){
-  p_attrs <- registry_get_p_attributes(.Object@corpus)
+  p_attrs <- corpus_p_attributes(
+    .Object@corpus,
+    registry = .Object@registry_dir
+  )
   if (is.null(p_attribute)){
     return( p_attrs )
   } else {
