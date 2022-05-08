@@ -145,8 +145,19 @@ setMethod("read", "hits", function(.Object, def, i = NULL, ...){
 setMethod("read", "kwic", function(.Object, i = NULL, type){
   
   if (missing(type)){
-    corpus_properties <- registry_get_properties(get_corpus(.Object))
-    type <- if ("type" %in% names(corpus_properties)) corpus_properties[["type"]] else NULL
+    properties <- corpus_properties(
+      corpus = .Object@corpus,
+      registry = .Object@registry_dir
+    )
+    if ("type" %in% properties){
+      type <- corpus_property(
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        property = "type"
+      )
+    } else {
+      type <- NULL
+    }
+      
   }
   if (length(type) > 0L) if (is.na(type)) type <- NULL
   if (!is.null(type)) type <- unname(type)

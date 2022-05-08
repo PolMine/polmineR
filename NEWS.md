@@ -1,5 +1,21 @@
-polmineR 0.8.5.9001 - 0.8.5.9019
-================================
+polmineR 0.8.6.9001
+===================
+
+## New Features
+
+- Using the `corpus` class throughout is an opportunity to keep the corpus ID
+together with the registry directory of a corpus. And as we are able now to
+handle corpora defined in different registry files, the temporary registry
+directory is not necessary any more. It still exists, yet only for temporary
+corpora and corpora that are described by registry files that cannot be
+modified, i.e. corpora shipped in packages. The test corpus of the polmineR
+package is an important respective scenario.
+- `registry_*()` functions are superseded by `RcppCWB::corpus_*` functions and
+throw a warning that they are deprecated.
+
+
+polmineR 0.8.6
+==============
 
 ## New Features
 

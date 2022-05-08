@@ -317,10 +317,23 @@ setMethod("context", "corpus", function(
   ...
 ){
   
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["sAttribute"]]
-  if ("sAttribute" %in% names(list(...))) boundary <- list(...)[["s_attribute"]]
-  
+  if ("pAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "context(pAttribute)",
+      with = "context(p_attribute)"
+    )
+    p_attribute <- list(...)[["pAttribute"]]
+  }
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "context(sAttribute)",
+      with = "context(boundary)"
+    )
+    boundary <- list(...)[["sAttribute"]]
+  }
+
   p <- as(.Object, "partition")
   
   # There is a potential overhead of performing the count here: When context-method

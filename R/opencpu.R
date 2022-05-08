@@ -62,10 +62,16 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
       stop("Access to corpora with restricted corpora requires that the environment variable 'OPENCPU_REGISTRY' is set.")
     }
 
-    properties <- registry_get_properties(corpus = corpus, registry = opencpu_registry)
+    properties <- corpus_properties(corpus = corpus, registry = opencpu_registry)
+    if (!"password" %in% properties)
+      stop("property 'password' required but not found")
+    pw <- corpus_property(
+      corpus = corpus, registry = opencpu_registry,
+      property = "password"
+    )
     resp <- httr::POST(
       url = url, body = body,
-      httr::authenticate(user = properties[["user"]], password = properties[["password"]])
+      httr::authenticate(user = properties[["user"]], password = pw)
     )
     rm(properties)
   } else {

@@ -41,6 +41,5 @@ use("polmineR")
 corpus()
 }
 \seealso{
-To get the session registry directory, see \code{\link{registry}};
-to reset the registry, see \code{\link{registry_reset}}.
+To get the temporary registry directory, see \code{\link{registry}}.
 }

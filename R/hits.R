@@ -64,8 +64,22 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "hits(sAttribute)",
+      with = "hits(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
+  if ("pAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "hits(pAttribute)",
+      with = "hits(p_attribute)"
+    )
+    p_attribute <- list(...)[["pAttribute"]]
+  }
   
   if (missing(s_attribute)){
     dt <- count(

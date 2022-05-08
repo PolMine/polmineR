@@ -20,12 +20,14 @@
 #' @importFrom stringi stri_match_all_regex
 #' @importFrom RcppCWB cqp_reset_registry cqp_get_registry cqp_initialize
 #' @seealso To conveniently reset registry, see \code{\link{use}}.
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' x <- system.file(package = "polmineR", "extdata", "cwb", "registry")
 #' registry_reset(registryDir = x)
 #' }
 registry_reset <- function(registryDir = registry(), verbose = TRUE) {
+  lifecycle::deprecate_warn("0.8.7", "registry_reset()")
   
   if (!file.exists(registryDir)) stop("registry directory does not exist")
   oldRegistry <- Sys.getenv("CORPUS_REGISTRY")
@@ -69,19 +71,28 @@ registry_reset <- function(registryDir = registry(), verbose = TRUE) {
 #' @importFrom stringi stri_match_all_regex
 #' @export registry_get_name
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_name = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")){
+  lifecycle::deprecate_warn(
+    "0.8.7",
+    "registry_get_name()",
+    "RcppCWB::corpus_full_name()"
+  )
   .registry_eval(corpus = corpus, registry = registry, regex = "^NAME\\s+(.*?)\\s*$")
 }
 
 #' @export registry_get_id
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_id = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")){
+  lifecycle::deprecate_warn("0.8.7", "registry_get_id()")
   .registry_eval(corpus = corpus, registry = registry, regex = "^ID\\s+(.*?)\\s*$")
 }
 
 
 #' @export registry_get_home
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_home = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   lifecycle::deprecate_warn(
     "0.8.6",
@@ -94,7 +105,13 @@ registry_get_home = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 
 #' @export registry_get_info
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.7",
+    "registry_get_info()",
+    "RcppCWB::corpus_info_file()"
+  )
   y <- .registry_eval(corpus = corpus, registry = registry, regex = '^INFO\\s+"?(.*?)"?\\s*$')
   normalizePath(path = y, winslash = "/", mustWork = FALSE)
 }
@@ -110,6 +127,7 @@ registry_get_info = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
 #' @export registry_get_encoding
 #' @rdname registry_eval
 #' @importFrom lifecycle deprecate_warn
+#' @keywords internal
 registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
   lifecycle::deprecate_warn(
     "0.8.6",
@@ -128,21 +146,41 @@ registry_get_encoding = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY"
 
 #' @export registry_get_p_attributes
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_p_attributes = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.7",
+    "registry_get_p_attributes()",
+    "RcppCWB::corpus_p_attributes()"
+  )
+  
   .registry_eval(corpus = corpus, registry = registry, regex = "^ATTRIBUTE\\s+(.*?)$")
 }
 
 
 #' @export registry_get_s_attributes
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_s_attributes = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.7",
+    "registry_get_s_attributes()",
+    "RcppCWB::corpus_s_attributes()"
+  )
   .registry_eval(corpus = corpus, registry = registry, regex = "^STRUCTURE\\s+(.*?)(|\\s+.*?)$")
 }
 
 
 #' @export registry_get_properties
 #' @rdname registry_eval
+#' @keywords internal
 registry_get_properties = function(corpus, registry = Sys.getenv("CORPUS_REGISTRY")) {
+  lifecycle::deprecate_warn(
+    "0.8.7",
+    "registry_get_properties()",
+    "RcppCWB::corpus_properties()"
+  )
+  
   registry_file <- path(registry, tolower(corpus))
   if (isFALSE(file.exists(registry_file))){
     stop("There is no registry file for corpus ", corpus, ".")

@@ -62,7 +62,14 @@ setMethod("trim", "DocumentTermMatrix", function(object, ...){
 #' @rdname context-class
 setMethod("trim", "context", function(object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE, ...){
   
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "trim(sAttribute)",
+      with = "trim(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   
   if (!is.null(s_attribute)){
     stopifnot(length(s_attribute) == 1L)

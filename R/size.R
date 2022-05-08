@@ -58,7 +58,14 @@ setGeneric("size", function(x, ...) UseMethod("size"))
 #' @rdname size-method
 setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...){
   
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "size(sAttribute)",
+      with = "size(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   
   if (is.null(s_attribute)){
     return(
@@ -114,7 +121,14 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
 #' @noRd
 setMethod("size", "slice", function(x, s_attribute = NULL, ...){
   
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "size(sAttribute)",
+      with = "size(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   
   if (is.null(s_attribute)){
     return( sum(as.integer(x@cpos[,2L]) - as.integer(x@cpos[,1L]) + 1L) )

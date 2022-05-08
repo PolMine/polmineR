@@ -36,3 +36,4 @@ registry_reset(registryDir = x)
 \seealso{
 To conveniently reset registry, see \code{\link{use}}.
 }
+\keyword{internal}

@@ -298,11 +298,7 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "character", function(.Object, to = c("data.table", "Annotation"), s_attributes = NULL, p_attributes = NULL, decode = TRUE, verbose = TRUE, ...){
-  if (any(c("sAttribute", "s_attribute") %in% names(list(...)))){
-    stop("Decoding an s_attribute is not supported any longer in the decode()-method of ",
-         "the polmineR package. See s_attribute_decode in the RcppCWB package as a substitute.")
-  }
+setMethod("decode", "character", function(.Object, to = c("data.table", "Annotation"), s_attributes = NULL, p_attributes = NULL, decode = TRUE, verbose = TRUE){
   decode(corpus(.Object), to = to, s_attributes = s_attributes, p_attributes = p_attributes, decode = decode, verbose = verbose)
 })
 

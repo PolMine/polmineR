@@ -60,11 +60,19 @@ setGeneric("dispersion", function(.Object, ...){standardGeneric("dispersion")})
 setMethod("dispersion", "slice", function(.Object, query, s_attribute, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)){
-    warning("The `sAttribute` argument of `dispersion()` is deprecated. Please use argument `s_attribute` instead.")
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "dispersion(sAttribute)",
+      with = "dispersion(s_attribute)"
+    )
     s_attribute <- dot_list[["sAttribute"]]
   }
   if ("pAttribute" %in% names(dot_list)){
-    warning("The `pAttribute` argument of `dispersion()` is deprecated. Please use argument `p_attribute` instead.")
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "dispersion(pAttribute)",
+      with = "dispersion(p_attribute)"
+    )
     p_attribute <- dot_list[["pAttribute"]]
   }
   
@@ -95,11 +103,19 @@ setMethod("dispersion", "subcorpus", function(
 setMethod("dispersion", "corpus", function(.Object, query, s_attribute, cqp = is.cqp, p_attribute = getOption("polmineR.p_attribute"), freq = FALSE, fill = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   dot_list <- list(...)
   if ("sAttribute" %in% names(dot_list)){
-    warning("The `sAttribute` argument of `dispersion()` is deprecated. Please use argument `s_attribute` instead.")
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "dispersion(sAttribute)",
+      with = "dispersion(s_attribute)"
+    )
     s_attribute <- dot_list[["sAttribute"]]
   }
   if ("pAttribute" %in% names(dot_list)){
-    warning("The `pAttribute` argument of `dispersion()` is deprecated. Please use argument `p_attribute` instead.")
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "dispersion(pAttribute)",
+      with = "dispersion(p_attribute)"
+    )
     p_attribute <- dot_list[["pAttribute"]]
   }
 

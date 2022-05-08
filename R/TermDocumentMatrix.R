@@ -86,8 +86,22 @@ setGeneric(
 #'    
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attribute, verbose = TRUE, ...) {
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("pAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "as.TermDocumentMatrix(pAttribute)",
+      with = "as.TermDocumentMatrix(p_attribute)"
+    )
+    p_attribute <- list(...)[["pAttribute"]]
+  }
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "as.TermDocumentMatrix(sAttribute)",
+      with = "as.TermDocumentMatrix(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   
   y <- as.DocumentTermMatrix(x = x, p_attribute = p_attribute, s_attribute = s_attribute, verbose = verbose, ...)
   as.TermDocumentMatrix(y)

@@ -187,7 +187,14 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
 #' @importFrom RcppCWB corpus_p_attributes
 setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
   
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("pAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "enrich(pAttribute)",
+      with = "enrich(p_attribute)"
+    )
+    p_attribute <- list(...)[["pAttribute"]]
+  }
   if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
   
   if (!is.null(s_attribute)){

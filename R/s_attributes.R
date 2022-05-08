@@ -62,7 +62,14 @@ setGeneric("s_attributes", function(.Object, ...) standardGeneric("s_attributes"
 #' s_attributes("GERMAPARLMINI", "date") # dates of plenary meetings
 #' s_attributes("GERMAPARLMINI", s_attribute = c("date", "party"))  
 setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "s_attributes(sAttribute)",
+      with = "s_attributes(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   s_attributes(.Object = corpus(.Object), s_attribute = s_attribute, unique = unique, regex = regex, ...)
 })
 
@@ -72,7 +79,14 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
 #' s_attributes(corpus("GERMAPARLMINI"))
 setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique = TRUE, regex = NULL, ...){
   
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "s_attributes(sAttribute)",
+      with = "s_attributes(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
   
   if (is.null(s_attribute)){
     s_attrs <- corpus_s_attributes(
@@ -155,7 +169,14 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
 setMethod(
   "s_attributes", "slice",
   function (.Object, s_attribute = NULL, unique = TRUE, ...) {
-    if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+    if ("sAttribute" %in% names(list(...))){
+      lifecycle::deprecate_warn(
+        when = "0.8.7", 
+        what = "s_attributes(sAttribute)",
+        with = "s_attributes(s_attribute)"
+      )
+      s_attribute <- list(...)[["sAttribute"]]
+    }
     if (is.null(s_attribute)){
       return(
         corpus_s_attributes(.Object@corpus, registry = .Object@registry_dir)

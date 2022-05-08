@@ -28,8 +28,7 @@ decode(.Object, ...)
   s_attributes = NULL,
   p_attributes = NULL,
   decode = TRUE,
-  verbose = TRUE,
-  ...
+  verbose = TRUE
 )
 
 \S4method{decode}{slice}(
