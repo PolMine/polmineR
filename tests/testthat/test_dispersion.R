@@ -40,16 +40,24 @@ test_that(
 test_that(
   "check that warnings are issued if argument sAttribute is used",
   {
-    expect_warning(y <- dispersion("GERMAPARLMINI", query = "Integration", sAttribute = "date"))
-    expect_warning(
-      y <- corpus("GERMAPARLMINI") %>%
-        subset(speaker = "Angela Dorothea Merkel") %>% 
-        dispersion(query = "Integration", sAttribute = "date")
-    )
-    expect_warning(
-      y <- corpus("GERMAPARLMINI") %>%
-        hits(query = "Integration", s_attribute = "date") %>%
-        dispersion(sAttribute = "date", source = "GERMAPARLMINI")
+    expect_snapshot({
+      expect_warning(
+        y <- dispersion("GERMAPARLMINI", query = "Integration", sAttribute = "date")
+      )
+    })
+    expect_snapshot({
+      expect_warning(
+        y <- corpus("GERMAPARLMINI") %>%
+          subset(speaker = "Angela Dorothea Merkel") %>% 
+          dispersion(query = "Integration", sAttribute = "date")
+      )
+    })
+    expect_snapshot(
+      expect_warning(
+        y <- corpus("GERMAPARLMINI") %>%
+          hits(query = "Integration", s_attribute = "date") %>%
+          dispersion(sAttribute = "date", source = "GERMAPARLMINI")
+      )
     )
   }
 )
