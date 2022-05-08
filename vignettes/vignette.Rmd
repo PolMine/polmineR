@@ -11,6 +11,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r, include = FALSE}
+Sys.setenv(CORPUS_REGISTRY = "")
+```
+
 ## Purpose
 
 The purpose of the package *polmineR* is to offer a toolset for the interactive analysis of corpora using R. Apart from performance and usability, key considerations for developing the package are:
@@ -95,6 +99,7 @@ In the followings examples, the REUTERS corpus included in the *polmineR* packag
 
 ```{r use_polmineR_data, message = FALSE, eval = TRUE}
 use("polmineR")
+use("RcppCWB", corpus = "REUTERS")
 ```
 
 

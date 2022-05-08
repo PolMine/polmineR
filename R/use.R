@@ -23,8 +23,9 @@ NULL
 #' per-session temporary data directory.
 #' 
 #' @param pkg A package including at least one CWB indexed corpus.
-#' @param lib.loc A character vector with path names of \code{R} libraries.
-#' @param tmp Whether to use a temporary data directory.
+#' @param corpus A corpus (or corpora) to be loaded selectively.
+#' @param lib.loc A character vector with path names of `R` libraries.
+#' @param tmp A `logical` value, whether to use a temporary data directory.
 #' @param verbose Logical, whether to output status messages.
 #' @export use
 #' @rdname use
@@ -35,7 +36,7 @@ NULL
 #' @seealso To get the temporary registry directory, see \code{\link{registry}}.
 #' @importFrom RcppCWB cqp_reset_registry cl_load_corpus cqp_load_corpus
 #' @importFrom stringi stri_enc_mark
-use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
+use <- function(pkg, corpus, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   
   if (nchar(system.file(package = pkg)) == 0L)
     stop("Could not find package specified. Please check for typos,",
@@ -47,7 +48,17 @@ use <- function(pkg, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE){
   if (!dir.exists(registry_dir))
     stop("pkg exists, but is not a standardized package - registry directory missing")
   
-  for (corpus in list.files(registry_dir)){
+  corpora <- list.files(registry_dir)
+  if (!missing(corpus)){
+    if (all(tolower(corpus) %in% corpora)){
+      corpora <- tolower(corpus)
+    } else {
+      stop("corpus provided is not included in package")
+    }
+    
+  }
+
+  for (corpus in corpora){
     
     corpus_data_srcdir <- system.file(
       "extdata", "cwb", "indexed_corpora", tolower(corpus),
