@@ -112,7 +112,7 @@ ngrm2 <- subset(
 ngrm2@stat[, "1_pos" := NULL][, "2_pos" := NULL]
 ngrm3 <- sort(ngrm2, by = "count")
 head(ngrm3)
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table")
 y <- ngrams(dt, n = 3L, p_attribute = "word")
 }

@@ -33,7 +33,7 @@ Highlight tokens based on exact match, a regular expression or corpus
 position in \code{kwic} output or html document.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)

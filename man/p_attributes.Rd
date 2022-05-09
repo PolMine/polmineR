@@ -49,8 +49,8 @@ corpus the partition is derived from, if argument \code{p_attribute} is
 values for the p-attribute are returned.
 }
 \examples{
-use("polmineR")
-p_attributes("GERMAPARLMINI")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 p_attributes("REUTERS")
 p_attributes("REUTERS", p_attribute = "word")
 merkel <- partition("GERMAPARLMINI", speaker = "Merkel", regex = TRUE)

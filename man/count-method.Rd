@@ -186,6 +186,8 @@ this problem.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 debates <- partition("GERMAPARLMINI", date = ".*", regex=TRUE)
 count(debates, query = "Arbeit") # get frequencies for one token
 count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens

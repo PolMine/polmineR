@@ -18,7 +18,7 @@ NULL
 #' @rdname tooltips
 #' @exportMethod tooltips
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)

@@ -41,7 +41,8 @@ NULL
 #' @rdname html-method
 #' @aliases show,html-method
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
 #' if (interactive()) H # show full text in viewer pane

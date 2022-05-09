@@ -151,6 +151,8 @@ by higher level methods such as \code{read}, \code{html}, and
 it can be exported to other tools.
 }
 \examples{
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 # Decode first words of GERMAPARLMINI corpus (first sentence)
 get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
 

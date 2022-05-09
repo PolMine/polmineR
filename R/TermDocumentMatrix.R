@@ -394,6 +394,8 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
 #'   \code{DocumentTermMatrix}.
 #' @rdname as.DocumentTermMatrix
 #' @examples
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' dtm <- corpus("REUTERS") %>%
 #'   split(s_attribute = "id") %>%
 #'   as.TermDocumentMatrix(p_attribute = "word")

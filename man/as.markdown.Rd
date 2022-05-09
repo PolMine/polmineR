@@ -76,7 +76,8 @@ usually to reconstruct the full text of a \code{partition} and read it. The
 from the \code{partition}-class.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 P <- partition("REUTERS", places = "argentina")
 as.markdown(P)
 as.markdown(P, meta = c("id", "places"))

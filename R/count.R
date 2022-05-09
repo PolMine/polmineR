@@ -76,6 +76,8 @@ NULL
 #' Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 47-69 (ch. 3).
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' debates <- partition("GERMAPARLMINI", date = ".*", regex=TRUE)
 #' count(debates, query = "Arbeit") # get frequencies for one token
 #' count(debates, c("Arbeit", "Freizeit", "Zukunft")) # get frequencies for multiple tokens

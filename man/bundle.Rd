@@ -131,7 +131,8 @@ pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 pb$SPD # access partition names "SPD" in partition_bundle pb
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 pb$"NA" <- NULL # quotation needed if name is "NA"
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 coocs <- cooccurrences(pb, query = "oil", cqp = FALSE)
 dt <- as.data.table(coocs, col = "ll")

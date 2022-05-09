@@ -58,7 +58,7 @@ setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", 
 
 #' @rdname ngrams
 #' @examples 
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' dt <- decode("REUTERS", p_attribute = "word", s_attribute = character(), to = "data.table")
 #' y <- ngrams(dt, n = 3L, p_attribute = "word")
 setMethod("ngrams", "data.table", function(.Object, n = 2L, p_attribute = "word"){

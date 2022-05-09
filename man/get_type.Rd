@@ -37,6 +37,7 @@ implemented.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 get_type("GERMAPARLMINI")
 

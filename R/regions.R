@@ -173,6 +173,7 @@ setMethod("as.regions", "context", function(x, node = TRUE){
 #' @export
 #' @method as.data.table regions
 #' @examples
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # Get regions matrix as data.table, without / with values
 #' sc <- corpus("REUTERS") %>% subset(grep("saudi-arabia", places))

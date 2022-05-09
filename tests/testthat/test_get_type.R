@@ -1,5 +1,6 @@
 library(polmineR)
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 testthat::context("get_type")
 
 test_that(

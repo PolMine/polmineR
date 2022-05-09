@@ -66,6 +66,8 @@ setMethod("pmi", "Cooccurrences", function(.Object){
 #' @export
 #' @examples 
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' dt <- decode(
 #'   "REUTERS",
 #'   p_attribute = "word",

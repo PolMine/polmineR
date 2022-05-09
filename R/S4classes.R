@@ -69,7 +69,7 @@ NULL
 #'   \code{\link{as.TermDocumentMatrix}}.
 #' @family classes to manage corpora
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # get corpora present locally
 #' y <- corpus()
@@ -250,7 +250,9 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' @docType class
 #' @exportClass textstat
 #' @examples
-#' use("polmineR")
+#' use(pkg = "polmineR", corpus = "GERMAPARLMINI")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 #' y <- cooccurrences(P, query = "Arbeit")
 #' 

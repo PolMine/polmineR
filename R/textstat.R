@@ -95,6 +95,7 @@ setMethod("subset", "textstat", function(x, subset){
 #' @export
 #' @method as.data.table textstat
 #' @examples 
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # Get statistics in textstat object as data.table
 #' count_dt <- corpus("REUTERS") %>%

@@ -121,6 +121,8 @@ tdm <- partition_bundle("GERMAPARLMINI", s_attribute = "date") \%>\%
 # obtain TermDocumentMatrix directly (fastest option)
 tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
 
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 dtm <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   as.TermDocumentMatrix(p_attribute = "word")

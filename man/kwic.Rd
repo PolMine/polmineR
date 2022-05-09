@@ -225,6 +225,7 @@ occurs.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # basic usage
 K <- kwic("GERMAPARLMINI", "Integration")

@@ -92,6 +92,8 @@ dtm <- corpus("GERMAPARLMINI") \%>\%
 grep("erneuerbaren_Energien", colnames(dtm))
 grep("verpasste_Chancen", colnames(dtm))
 
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 # Derive phrases object from an ngrams object
 
 reuters_phrases <- ngrams("REUTERS", p_attribute = "word", n = 2L) \%>\%

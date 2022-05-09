@@ -109,6 +109,8 @@ Using brackets can be used to retrieve the count for a token from the
 gparl <- corpus("GERMAPARLMINI") \%>\%
   split(s_attribute = "date") \%>\% 
   merge()
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 barplot(pb, las = 2)
 

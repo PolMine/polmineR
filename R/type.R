@@ -18,6 +18,7 @@
 #' @aliases get_type,subcorpus-method
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' get_type("GERMAPARLMINI")
 #' 

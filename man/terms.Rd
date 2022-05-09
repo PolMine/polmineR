@@ -35,7 +35,8 @@
 Get terms in \code{partition} or \code{corpus}.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 r <- partition("REUTERS", id = "144")
 words <- terms(r, "word")
 terms(r, p_attribute = "word", regex = ".*il.*")

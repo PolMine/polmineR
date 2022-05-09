@@ -21,7 +21,8 @@ NULL
 #' @rdname as.markdown
 #' @exportMethod as.markdown
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' P <- partition("REUTERS", places = "argentina")
 #' as.markdown(P)
 #' as.markdown(P, meta = c("id", "places"))

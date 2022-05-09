@@ -182,6 +182,8 @@ Get cooccurrence statistics.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 merkel <- enrich(merkel, p_attribute = "word")
 cooc <- cooccurrences(merkel, query = "Deutschland")

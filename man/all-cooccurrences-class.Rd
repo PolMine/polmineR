@@ -137,11 +137,13 @@ context of a token identified by id.}
 }}
 
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 m <- as.simple_triplet_matrix(X)
 \dontrun{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)
 decode(X)
 sm <- as.sparseMatrix(X)

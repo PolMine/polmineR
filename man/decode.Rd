@@ -139,6 +139,7 @@ handle memory parsimoniously.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # Decode corpus as data.table
 dt <- decode("GERMAPARLMINI", to = "data.table")

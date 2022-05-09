@@ -53,6 +53,8 @@ y <- cooccurrences("REUTERS", query = "oil", method = "pmi")
 N <- size(y)[["partition"]]
 I <- log2((y[["count_coi"]]/N) / ((count(y) / N) * (y[["count_partition"]] / N)))
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 dt <- decode(
   "REUTERS",
   p_attribute = "word",

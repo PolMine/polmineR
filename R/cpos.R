@@ -48,7 +48,7 @@ NULL
 #' @name cpos
 #' @importFrom data.table fread
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # looking up single tokens
 #' cpos("REUTERS", query = "oil")

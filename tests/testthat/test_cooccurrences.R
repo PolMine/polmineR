@@ -1,5 +1,7 @@
 library(polmineR)
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 testthat::context("cooccurrences")
 
 test_that(

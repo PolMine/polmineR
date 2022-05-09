@@ -98,6 +98,7 @@ setOldClass("htmlwidget")
 #' @importFrom parallel detectCores
 #' @examples
 #' use("polmineR") # activate demo corpora included in the package
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # The package includes two sample corpora
 #' corpus("REUTERS") %>% show_info()

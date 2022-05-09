@@ -1,6 +1,6 @@
 library(polmineR)
 testthat::context("restore")
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 
 test_that(

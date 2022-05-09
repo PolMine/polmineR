@@ -1,11 +1,12 @@
 library(polmineR)
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 testthat::context("get_template")
 
 test_that(
   "get_template",
   {
-    use("polmineR")
     y <- get_template("GERMAPARLMINI")
     expect_identical(length(y), 3L)
     expect_identical(unname(y$metadata), c("speaker", "date", "party"))

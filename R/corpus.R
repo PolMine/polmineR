@@ -161,37 +161,60 @@ setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpu
 #' @rdname corpus-class
 setMethod("corpus", "missing", function(){
   
-  dt <- data.table(corpus = cqp_list_corpora())
-  regdirs <- sapply(dt[["corpus"]], corpus_registry_dir)
+  corpora <- RcppCWB::cqp_list_corpora()
+  if (length(corpora) == 0L){
+    dt <- data.table(
+      corpus = character(),
+      encoding = character(),
+      type = character(),
+      template = logical(),
+      size = integer()
+    )
+    return(dt)
+  }
+  
+  # This implementation takes into account that different corpora may have the
+  # same ID yet are defined in different registry files.
+  dt <- rbindlist(lapply(
+    unique(corpora),
+    function(corpus_id){
+      data.table(
+        corpus = corpus_id,
+        registry = RcppCWB::corpus_registry_dir(corpus_id)
+      )
+    }
+  ))
   charset <- mapply(
     RcppCWB::corpus_property,
-    corpus = dt[["corpus"]], registry = regdirs, property = "charset"
+    corpus = dt[["corpus"]], registry = dt[["registry"]], property = "charset"
   )
   dt[, "encoding" := charset]
   
   corpus_type <- mapply(
     RcppCWB::corpus_property,
-    corpus = dt[["corpus"]], registry = regdirs, property = "type"
+    corpus = dt[["corpus"]], registry = dt[["registry"]], property = "type"
   )
   dt[, "type" := corpus_type]
   
   data_dirs <- mapply(
     RcppCWB::corpus_data_dir,
     corpus = dt[["corpus"]],
-    registry = regdirs
+    registry = dt[["registry"]]
   )
-  template <- sapply(data_dirs, function(dir) file.exists(path(dir, "template.json")))
+  template <- sapply(
+    data_dirs,
+    function(dir) file.exists(path(dir, "template.json"))
+  )
   dt[, "template" := template]
   
   size <- mapply(
     RcppCWB::cl_attribute_size,
-    corpus = dt[["corpus"]],
-    registry = regdirs,
-    attribute = "word", 
-    attribute_type = "p"
+    corpus = dt[["corpus"]], registry = dt[["registry"]],
+    attribute = "word", attribute_type = "p"
   )
   dt[, "size" := size]
   
+  setorderv(dt, cols = "corpus") # sort alphabetically
   
   as.data.frame(dt)
 })
@@ -569,6 +592,8 @@ setMethod("show", "corpus", function(object){
 #' @details Applying the `$`-method on a corpus will return the values for the
 #'   s-attribute stated with argument \code{name}.
 #' @examples
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' # show-method
 #' if (interactive()) corpus("REUTERS") %>% show()
 #' if (interactive()) corpus("REUTERS") # show is called implicitly

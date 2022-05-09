@@ -77,6 +77,7 @@ and second column, respectively).}
 use("polmineR")
 P <- partition("GERMAPARLMINI", date = "2009-11-12", speaker = "Jens Spahn")
 R <- as.regions(P)
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # Get regions matrix as data.table, without / with values
 sc <- corpus("REUTERS") \%>\% subset(grep("saudi-arabia", places))

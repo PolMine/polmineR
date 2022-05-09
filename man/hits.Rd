@@ -147,7 +147,7 @@ include the subsets of the \code{partition}/\code{corpus} with no hits (query is
 count is 0).
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # get hits for corpus object
 y <- corpus("REUTERS") \%>\% hits(query = "oil")

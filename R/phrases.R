@@ -15,6 +15,8 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #' @aliases as.phrases
 #' @export
 #' @examples
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' # Derive phrases object from an ngrams object
 #' 
 #' reuters_phrases <- ngrams("REUTERS", p_attribute = "word", n = 2L) %>%

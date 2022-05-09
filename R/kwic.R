@@ -252,6 +252,7 @@ NULL
 #' Cham et al: Springer, pp. 73-87 (chs. 8 & 9).
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # basic usage
 #' K <- kwic("GERMAPARLMINI", "Integration")

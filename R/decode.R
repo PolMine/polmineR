@@ -186,6 +186,7 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
 #'   returning a \code{VCorpus} object.
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # Decode corpus as data.table
 #' dt <- decode("GERMAPARLMINI", to = "data.table")

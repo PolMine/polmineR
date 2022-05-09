@@ -36,5 +36,6 @@ pb <- partition("GERMAPARLMINI", date = "2009-11-10") \%>\%
 vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
 vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
 
+use(pkg = "RcppCWB", corpus = "REUTERS")
 vc <- corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% as("VCorpus")
 }

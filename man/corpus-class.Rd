@@ -108,7 +108,7 @@ password.}
 }}
 
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # get corpora present locally
 y <- corpus()

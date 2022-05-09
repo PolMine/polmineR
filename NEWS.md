@@ -12,6 +12,12 @@ modified, i.e. corpora shipped in packages. The test corpus of the polmineR
 package is an important respective scenario.
 - `registry_*()` functions are superseded by `RcppCWB::corpus_*` functions and
 throw a warning that they are deprecated.
+- The `use()` function now has an additional argument `corpus` to specify which
+corpus from a package shall be loaded (#138).
+- The REUTERS corpus is not included in the package any more: Unnecessary,
+because it was an identical copy of the REUTERS corpus included in the RcppCWB
+package. All examples and unit tests now use `use(pkg = "RcppCWB", corpus =
+"REUTERS")` to make the REUTERS corpus available.
 
 
 polmineR 0.8.6

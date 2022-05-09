@@ -138,7 +138,7 @@ returned from the \code{cpos}-method if no matches are obtained for a
 query.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # looking up single tokens
 cpos("REUTERS", query = "oil")

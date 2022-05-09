@@ -41,7 +41,7 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 
 #' @rdname hits
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # get hits for corpus object
 #' y <- corpus("REUTERS") %>% hits(query = "oil")

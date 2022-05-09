@@ -1,5 +1,5 @@
 library(polmineR)
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 testthat::context("ranges")
 
 test_that(

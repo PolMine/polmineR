@@ -107,7 +107,8 @@ added to tags that embrace tokens. This may be useful, if exported html document
 is annotated with a tool that stores annotations with character offset positions.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 P <- partition("REUTERS", places = "argentina")
 H <- html(P)
 if (interactive()) H # show full text in viewer pane

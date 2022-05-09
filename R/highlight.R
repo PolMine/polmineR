@@ -29,6 +29,8 @@ NULL
 #' @exportMethod highlight
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' P <- partition("REUTERS", places = "argentina")
 #' H <- html(P)
 #' Y <- highlight(H, list(lightgreen = "higher"))

@@ -24,8 +24,8 @@ NULL
 #' @rdname p_attributes
 #' @name p_attributes
 #' @examples 
-#' use("polmineR")
-#' p_attributes("GERMAPARLMINI")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' p_attributes("REUTERS")
 #' p_attributes("REUTERS", p_attribute = "word")
 #' @references Stefan Evert & The OCWB Development Team, CQP Query Language

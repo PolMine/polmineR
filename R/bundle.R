@@ -171,7 +171,8 @@ setMethod("as.bundle", "textstat", function(object){
 #' @param keep.rownames Required argument to safeguard consistency with S3
 #'   method definition in the \code{data.table} package. Unused in this context.
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' coocs <- cooccurrences(pb, query = "oil", cqp = FALSE)
 #' dt <- as.data.table(coocs, col = "ll")

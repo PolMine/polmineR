@@ -192,7 +192,9 @@ be used to avoid unwanted side effects of modifying an object.
 }}
 
 \examples{
-use("polmineR")
+use(pkg = "polmineR", corpus = "GERMAPARLMINI")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 P <- partition("GERMAPARLMINI", date = ".*", p_attribute = "word", regex = TRUE)
 y <- cooccurrences(P, query = "Arbeit")
 
@@ -226,6 +228,7 @@ sc <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
 cnt <- count(sc, p_attribute = c("word", "pos"))
 cnt_min <- subset(cnt, pos \%in\% c("NN", "ADJA"))
 cnt_min <- subset(cnt, pos == "NE")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # Get statistics in textstat object as data.table
 count_dt <- corpus("REUTERS") \%>\%

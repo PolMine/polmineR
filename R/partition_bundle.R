@@ -133,6 +133,8 @@ setMethod('[', 'partition_bundle', function(x,i){
 #' @exportMethod barplot
 #' @rdname partition_bundle-class
 #' @examples
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' barplot(pb, las = 2)
 #' 

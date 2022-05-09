@@ -69,6 +69,7 @@ window.
 }
 \examples{
 use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # for corpus object
 corpus("REUTERS") \%>\% size()

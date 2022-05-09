@@ -63,6 +63,8 @@ corpus("REUTERS") \%>\% show_info()
 corpus("GERMAPARLMINI") \%>\% get_info()
 corpus("GERMAPARLMINI") \%>\% show_info()
 
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 # show-method
 if (interactive()) corpus("REUTERS") \%>\% show()
 if (interactive()) corpus("REUTERS") # show is called implicitly

@@ -69,7 +69,8 @@ would be painful after the work that may have been invested.
 Consult the examples for the intended workflow.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
 a <- 2
 # upon initializing a kwic object, there is a minimal labels object
 # in the labels slot of the kwic object, which we can get using the

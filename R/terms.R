@@ -15,7 +15,8 @@ NULL
 #' @docType methods
 #' @importFrom RcppCWB region_matrix_to_ids
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' r <- partition("REUTERS", id = "144")
 #' words <- terms(r, "word")
 #' terms(r, p_attribute = "word", regex = ".*il.*")

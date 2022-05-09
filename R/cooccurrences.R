@@ -77,6 +77,8 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
 #' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' merkel <- partition("GERMAPARLMINI", interjection = "speech", speaker = ".*Merkel", regex = TRUE)
 #' merkel <- enrich(merkel, p_attribute = "word")
 #' cooc <- cooccurrences(merkel, query = "Deutschland")
@@ -807,7 +809,8 @@ setMethod("Cooccurrences", "subcorpus", function(
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
 #' @examples
-#' use("polmineR")
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' 
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 #' m <- as.simple_triplet_matrix(X)
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
