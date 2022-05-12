@@ -16,6 +16,7 @@
 ^CRAN-RELEASE$
 ^TODO.md$
 ^.github$
-^Docker$
+^docker$
+^sticker$
 ^\.github$
 ^CRAN-SUBMISSION$
