@@ -1,8 +1,6 @@
 polmineR 0.8.6.9001
 ===================
 
-## New Features
-
 - Using the `corpus` class throughout is an opportunity to keep the corpus ID
 together with the registry directory of a corpus. And as we are able now to
 handle corpora defined in different registry files, the temporary registry
@@ -18,8 +16,6 @@ corpus from a package shall be loaded (#138).
 because it was an identical copy of the REUTERS corpus included in the RcppCWB
 package. All examples and unit tests now use `use(pkg = "RcppCWB", corpus =
 "REUTERS")` to make the REUTERS corpus available.
-
-
 - The `get_token_stream()`-method for `partition_bundle` objects is more memory
 efficient (no exhaustion for big corpora) and faster.
 - Significantly improved performance of `split()`-method for `corpus` objects.

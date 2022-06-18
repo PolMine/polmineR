@@ -254,7 +254,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   dt <- data.table(obj_id = do.call(c, id_list))
   rm(id_list, sizes); gc()
   
-  if (verbose) message("... creating vector of corpus positions")
+  if (verbose) message("... get region matrices and corpus positions")
   region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
   if (!is.null(phrases)) dt[, "cpos" := cpos(region_matrix)]
 
