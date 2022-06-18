@@ -218,6 +218,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 })
 
 #' @rdname get_token_stream-method
+#' @importFrom stringi stri_c
 #' @examples 
 #' 
 #' # Get token stream for partition_bundle
@@ -270,9 +271,11 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     if (verbose) message("... decoding token stream for p-attribute ", p_attr)
     ts <- get_token_stream(
       dt[["cpos"]], p_attribute = p_attr,
-      corpus = .Object@corpus, encoding = .Object@encoding
+      corpus = .Object@corpus, encoding = .Object@encoding,
+      ...
     )
     dt[, (p_attr) := ts]
+    rm(ts); gc()
   }
   
   if (!is.null(phrases)){
@@ -298,16 +301,28 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
       c(lapply(p_attribute, function(p_attr) dt[[p_attr]]), sep = "//")
     )
     dt[, (p_attribute[[1]]) := merger]
+    rm(merger); gc()
   }
   
   if (verbose) message("... generating list of character vectors")
   y <- split(x = dt[[p_attribute[[1]]]], f = dt[["obj_id"]])
-  
+
   # subsetting may have removed objs
-  names(y) <- names(.Object@objects)[unique(dt[["obj_id"]])] 
+  ids <- dt[["obj_id"]]
+  rm(dt); gc()
+  ids_unique <- unique(ids)
+  rm(ids); gc()
   
-  if (!is.null(collapse))
-    y <- lapply(y, function(x) paste(x, collapse = collapse))
+  names(y) <- names(.Object@objects)[ids_unique]
+
+  if (!is.null(collapse)){
+    y <- if (progress){
+      pblapply(y, function(x) stringi::stri_c(x, collapse = collapse), cl = mc)
+    } else {
+      lapply(y, function(x) stringi::stri_c(x, collapse = collapse))
+    }
+  }
+
   y
 })
 

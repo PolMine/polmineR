@@ -20,6 +20,12 @@ package. All examples and unit tests now use `use(pkg = "RcppCWB", corpus =
 "REUTERS")` to make the REUTERS corpus available.
 
 
+- The `get_token_stream()`-method for `partition_bundle` objects is more memory
+efficient (no exhaustion for big corpora) and faster.
+- Significantly improved performance of `split()`-method for `corpus` objects.
+- The `split()`-method for `corpus` objects offers progress bar.
+
+
 polmineR 0.8.6
 ==============
 

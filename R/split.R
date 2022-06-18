@@ -72,11 +72,11 @@ setMethod("split", "subcorpus", function(
   type = get_type(x)
 ) {
   
-  call_history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
-  partition_bundle_call <- if (5L %in% which(call_history == "partition_bundle")) TRUE else FALSE
-  retval_class <- if (isTRUE(partition_bundle_call)) "partition_bundle" else "subcorpus_bundle"
-  obj_type <- if (isTRUE(partition_bundle_call)) "partition" else "subcorpus"
-  new_class <- if (length(x@type) == 0L) obj_type else paste(x@type, obj_type, sep = "_")
+  history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
+  pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
+  retval_class <- if (isTRUE(pb_call)) "partition_bundle" else "subcorpus_bundle"
+  cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
+  new_class <- if (length(x@type) == 0L) cl else paste(x@type, cl, sep = "_")
   
   y <- as(as(x, "corpus"), retval_class)
   y@s_attributes_fixed <- x@s_attributes
@@ -98,27 +98,34 @@ setMethod("split", "subcorpus", function(
   
   if (!is.null(values)) for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
   
-  y@objects <- lapply(
-    seq_along(cpos_list),
-    function(i){
-      m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-      y <- as(x, new_class)
-      y@name <- names(cpos_list)[[i]]
-      y@cpos <- m
-      y@strucs <- struc_list[[i]]
-      y@s_attribute_strucs <- s_attribute
-      y@s_attributes <- c(
-        x@s_attributes,
-        setNames(list(names(cpos_list)[[i]]), s_attribute)
-      )
-      y@xml = "flat"
-      y@size = sum((m[,2] + 1L) - m[,1])
-      y@type = x@type
-      
-      y
-    }
-  )
-  if (nchar(prefix) == 0L) names(y@objects) <- names(cpos_list) else names(y) <- paste(prefix, names(cpos_list), sep = "_")
+  .fn <- function(i){
+    m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
+    y <- as(x, new_class)
+    y@name <- names(cpos_list)[[i]]
+    y@cpos <- m
+    y@strucs <- struc_list[[i]]
+    y@s_attribute_strucs <- s_attribute
+    y@s_attributes <- c(
+      x@s_attributes,
+      setNames(list(names(cpos_list)[[i]]), s_attribute)
+    )
+    y@xml = "flat"
+    y@size = sum((m[,2] + 1L) - m[,1])
+    y@type = x@type
+    
+    y
+  }
+  
+  y@objects <- if (progress)
+    pblapply(seq_along(cpos_list), .fn)
+  else
+    lapply(seq_along(cpos_list), .fn)
+  
+  if (nchar(prefix) == 0L){
+    names(y@objects) <- names(cpos_list)
+  } else {
+    names(y) <- paste(prefix, names(cpos_list), sep = "_")
+  }
   names(y@objects) <- sapply(y@objects, function(x) x@name)
   y
 })
@@ -139,36 +146,25 @@ setMethod("split", "corpus", function(
   # Ensure that when split() is called within partition_bundle(), the resulting 
   # object is a partition_bundle and the objects in the slot 'object' are 
   # partition objects, not subcorpus objects.
-  call_history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
-  partition_bundle_call <- if (5L %in% which(call_history == "partition_bundle")) TRUE else FALSE
-  retval_class <- if (isTRUE(partition_bundle_call)) "partition_bundle" else "subcorpus_bundle"
-  obj_type <- if (isTRUE(partition_bundle_call)) "partition" else "subcorpus"
-  new_class <- if (is.na(x@type)) obj_type else paste(x@type, obj_type, sep = "_")
+  history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
+  pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
+  retval_class <- if (pb_call) "partition_bundle" else "subcorpus_bundle"
+  cl <- if (pb_call) "partition" else "subcorpus"
+  new_class <- if (is.na(x@type)) cl else paste(x@type, cl, sep = "_")
   
-  y <- new(
-    retval_class,
-    corpus = x@corpus,
-#    registry_dir = x@registry_dir,
-#    data_dir = x@data_dir,
-#    info_file = x@info_file,
-#    template = x@template,
-    encoding = x@encoding
-  )
+  y <- as(as(x, "corpus"), retval_class)
+
   struc_size <- cl_attribute_size(
     corpus = x@corpus, registry = x@registry_dir,
     attribute = s_attribute, attribute_type = "s"
   )
   strucs <- 0L:(struc_size - 1L)
+  
   cpos_matrix <- get_region_matrix(
     corpus = x@corpus, registry = x@registry_dir,
     s_attribute = s_attribute, strucs = strucs
   )
-  strucs_values <- cl_struc2str(
-    corpus = x@corpus, registry = x@registry_dir,
-    s_attribute = s_attribute, struc = strucs
-  )
-  strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
-  
+  strucs_values <- struc2str(x = x, s_attr = s_attribute, struc = strucs)
   cpos_list <- split(cpos_matrix, strucs_values)
   struc_list <- split(strucs, strucs_values)
   
@@ -176,25 +172,33 @@ setMethod("split", "corpus", function(
     for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
   }
   
-  y@objects <- lapply(
-    seq_along(cpos_list),
-    function(i){
-      m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-      y <- as(x, new_class)
-      
-      y@name <- names(cpos_list)[[i]]
-      y@cpos = m
-      y@strucs = struc_list[[i]]
-      y@s_attributes <- setNames(list(names(cpos_list)[[i]]), s_attribute)
-      y@s_attribute_strucs <- s_attribute
-      y@xml = xml
-      y@size = sum((m[,2] + 1L) - m[,1])
-      y@type = x@type
-      y
-    }
-  )
-  if (nchar(prefix) == 0L) names(y@objects) <- names(cpos_list) else names(y) <- paste(prefix, names(cpos_list), sep = "_")
+  prototype <- as(x, new_class)
+  
+  .fn <- function(i){
+    y <- prototype
+    y@name <- names(cpos_list)[[i]]
+    y@cpos <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
+    y@strucs <- struc_list[[i]]
+    y@s_attributes <- setNames(list(names(cpos_list)[[i]]), s_attribute)
+    y@s_attribute_strucs <- s_attribute
+    y@xml <- xml
+    y@size <- sum((y@cpos[,2] + 1L) - y@cpos[,1])
+    y@type <- x@type
+    y
+  }
+  
+  y@objects <- if (progress)
+    pblapply(seq_along(cpos_list), .fn, cl = mc)
+  else
+    lapply(seq_along(cpos_list), .fn)
+  
+  if (nchar(prefix) == 0L){
+    names(y@objects) <- names(cpos_list)
+  } else {
+    names(y) <- paste(prefix, names(cpos_list), sep = "_")
+  }
   names(y@objects) <- sapply(y@objects, function(x) x@name)
+  
   y
 })
 
