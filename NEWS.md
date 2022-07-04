@@ -1,5 +1,5 @@
-polmineR 0.8.6.9001
-===================
+polmineR 0.8.6.9001 - 9007
+==========================
 
 - Using the `corpus` class throughout is an opportunity to keep the corpus ID
 together with the registry directory of a corpus. And as we are able now to
@@ -20,6 +20,11 @@ package. All examples and unit tests now use `use(pkg = "RcppCWB", corpus =
 efficient (no exhaustion for big corpora) and faster.
 - Significantly improved performance of `split()`-method for `corpus` objects.
 - The `split()`-method for `corpus` objects offers progress bar.
+- `as.speeches()` for `corpus` objects has new argument `subset`, offering a 
+significantly faster approach than the method for `subcorpus` objects in many 
+cases.
+- `get_token_stream()` will return list of `integer` values if `decode` is
+`TRUE` (#213).
 
 
 polmineR 0.8.6

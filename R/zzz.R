@@ -21,18 +21,7 @@
     "polmineR.warn.size" = FALSE,
     "polmineR.segments" = c("s", "p")
   )
-  
-  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 0L){
-    if (file.exists(Sys.getenv("CORPUS_REGISTRY"))){
-      if (!cqp_is_initialized()){
-        cqp_initialize(registry = Sys.getenv("CORPUS_REGISTRY"))
-      } else {
-        cqp_reset_registry(registry = Sys.getenv("CORPUS_REGISTRY"))
-      }
-    }
-  }
-  
-  
+
   # Upon loading the package, registry files available in the polmineR package,
   # or in a directory defined by the environment variable CORPUS_REGISTRY are
   # moved to a temporary registry. The operation is deliberately in .onLoad, and
@@ -64,6 +53,23 @@
     )
   }
   
+  if (nchar(Sys.getenv("CORPUS_REGISTRY")) > 0L){
+    if (file.exists(Sys.getenv("CORPUS_REGISTRY"))){
+      if (!cqp_is_initialized()){
+        cqp_initialize(registry = Sys.getenv("CORPUS_REGISTRY"))
+      } else {
+        cqp_reset_registry(registry = Sys.getenv("CORPUS_REGISTRY"))
+      }
+    }
+  } else {
+    if (!cqp_is_initialized()){
+      cqp_initialize(registry = registry())
+    } else {
+      cqp_reset_registry(registry = registry())
+    }
+    
+  }
+
   NULL
 }
 

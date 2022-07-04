@@ -186,15 +186,35 @@ setMethod("as.speeches", "subcorpus", function(
 )
 
 
+#' @param subset A ´logical` expression evaluated in a temporary `data.table` with
+#'   columns 'speaker' and 'date' to define a subset of the entire corpus to be
+#'   turned into speeches. Usually faster than applying `as.speeches()` on a 
+#'   `partition` or `subcorpus`.
 #' @rdname as.speeches
 #' @examples
 #' sp <- as.speeches(.Object = corpus("GERMAPARLMINI"), s_attribute_name = "speaker")
+#' 
+#' sp <- corpus("GERMAPARLMINI") %>%
+#'   as.speeches(
+#'     s_attribute_name = "speaker",
+#'     subset = {date == as.Date("2009-11-11")},
+#'     progress = FALSE
+#'   )
+#'   
+#' sp <- corpus("GERMAPARLMINI") %>%
+#'   as.speeches(
+#'     s_attribute_name = "speaker",
+#'     subset = {date == "2009-11-10" & grepl("Merkel", speaker)},
+#'     progress = FALSE
+#'   )
+#' 
 #' @importFrom RcppCWB s_attr_regions s_attr_is_sibling s_attr_is_descendent
 setMethod("as.speeches", "corpus", function( 
   .Object,
   s_attribute_date = grep("date", s_attributes(.Object), value = TRUE),
   s_attribute_name = grep("name", s_attributes(.Object), value = TRUE),
-  gap = 500, mc = FALSE, verbose = TRUE, progress = TRUE
+  gap = 500, subset,
+  mc = FALSE, verbose = TRUE, progress = TRUE
 ){
   
   speakers <- s_attributes(.Object, s_attribute = s_attribute_name, unique = FALSE)
@@ -225,6 +245,22 @@ setMethod("as.speeches", "corpus", function(
       )
     s <- cpos2struc(.Object, s_attr = s_attribute_date, cpos = regions[,1L])
     dates <- struc2str(.Object, s_attr = s_attribute_date, struc = s)
+  }
+  
+  if (!missing(subset)){
+    expr <- substitute(subset)
+    dt <- data.table(speaker = speakers, date = as.Date(dates))
+    keep <- eval(expr, envir = dt)
+    
+    if (!any(keep)){
+      warning("subsetting corpus data removes all regions - returning NULL")
+      return(NULL)
+    }
+    
+    speakers <- speakers[keep]
+    strucs <- strucs[keep]
+    dates <- dates[keep]
+    regions <- regions[keep,]
   }
 
   chunks_cpos <- split(x = regions, f = speakers)

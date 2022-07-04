@@ -264,12 +264,21 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
       corpus = .Object@corpus, registry = .Object@registry_dir,
       p_attribute = p_attr, matrix = region_matrix
     )
-    tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
-    dt[, (p_attr) := iconv(x = tokens, from = .Object@encoding, to = encoding())]
-    rm(ids, tokens); gc()
+    if (isTRUE(decode)){
+      tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
+      dt[, (p_attr) := iconv(x = tokens, from = .Object@encoding, to = encoding())]
+      rm(ids, tokens); gc()
+    } else {
+      dt[, (p_attr) := ids]
+      rm(ids); gc()
+    }
   }
   
   if (!is.null(phrases)){
+    
+    if (isFALSE(decode))
+      stop("concatenating phrases not possible when decode = FALSE")
+    
     if (isTRUE(cpos))
       stop(
         "Argument 'cpos' is TRUE, but cannot assigning corpus positions ",
@@ -286,6 +295,10 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   }
   
   if (length(p_attribute) > 1L){
+    
+    if (isFALSE(decode))
+      stop("cannot concatenate multiple p-attributes when decode = FALSE")
+    
     if (verbose) message("... concatenate multiple p-attributes")
     merger <- do.call(
       paste,
@@ -307,6 +320,10 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   names(y) <- names(.Object@objects)[ids_unique]
 
   if (!is.null(collapse)){
+    
+    if (isFALSE(decode))
+      stop("cannot collapse tokens when decode = FALSE")
+    
     y <- if (progress){
       pblapply(y, function(x) stringi::stri_c(x, collapse = collapse), cl = mc)
     } else {

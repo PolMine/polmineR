@@ -122,6 +122,12 @@ test_that(
     
     y <- corpus("REUTERS") %>% split(s_attribute = "id") %>% get_token_stream(p_attribute = "word")
     expect_identical(y[["127"]], reuters_1)
+    
+    # When decode = FALSE, result required to be list of integer vectors
+    int_list <- corpus("REUTERS") %>%
+      split(s_attribute = "id", verbose = FALSE) %>%
+      get_token_stream(p_attribute = "word", decode = FALSE, verbose = FALSE)
+    expect_true(all(unlist(lapply(int_list, is.integer))))
   }
 )
 

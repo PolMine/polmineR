@@ -98,10 +98,18 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
 #' @rdname p_attributes
 setMethod("p_attributes", "partition_bundle", function(.Object, p_attribute = NULL, decode = TRUE){
   corpus_id <- unique(sapply(.Object@objects, slot, "corpus"))
-  if (length(corpus_id) > 1L) stop("Getting p-attributes for a corpus requires that objects ",
-                                   "are derived from the same corpus.")
-  p_attrs <- corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir)
+  if (length(corpus_id) > 1L){
+    stop(
+      "Getting p-attributes for a corpus requires that objects ",
+      "are derived from the same corpus."
+    )
+  }
+  
   if (is.null(p_attribute)){
+    p_attrs <- corpus_p_attributes(
+      .Object@corpus,
+      registry = .Object@registry_dir
+    )
     return(p_attrs)
   } else {
     y_pre <- get_token_stream(.Object, p_attribute = p_attribute, decode = decode)
