@@ -212,6 +212,9 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
   )
 })
 
+#' @param min_length If not `NULL` (default), an `integer` value with minimum
+#'   length of documents required to keep them in the `list` object that is 
+#'   returned.
 #' @rdname get_token_stream-method
 #' @importFrom stringi stri_c
 #' @importFrom RcppCWB region_matrix_to_ids
@@ -246,7 +249,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   progress = FALSE,
 #'   verbose = FALSE
 #' )
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
   if (verbose) message("... creating vector of document ids")
   sizes <- sapply(.Object@objects, slot, "size")
@@ -292,6 +295,14 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   if (!is.null(expr)){
     if (verbose) message("... applying argument subset")
     dt <- dt[eval(expr, envir = dt, enclos = .GlobalEnv),]
+  }
+  
+  if (!is.null(min_length)){
+    if (verbose) message("... drop documents shorter than `min_length`")
+    stopifnot(is.numeric(min_length), length(min_length) == 1L)
+    dt_cnt <- dt[, .N, by = "obj_id"]
+    ids_to_keep <- dt_cnt[dt_cnt[["N"]] >= min_length][["obj_id"]]
+    dt <- dt[dt[["obj_id"]] %in% ids_to_keep]
   }
   
   if (length(p_attribute) > 1L){

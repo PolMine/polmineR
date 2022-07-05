@@ -13,6 +13,7 @@
 \alias{unique,bundle-method}
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
+\alias{[,bundle,ANY,ANY,ANY-method}
 \alias{$,bundle-method}
 \alias{$<-,bundle-method}
 \alias{sample,bundle-method}
@@ -41,6 +42,8 @@
 \S4method{+}{bundle,textstat}(e1, e2)
 
 \S4method{[[}{bundle}(x, i)
+
+\S4method{[}{bundle,ANY,ANY,ANY}(x, i)
 
 \S4method{[[}{bundle}(x, i) <- value
 
@@ -122,6 +125,12 @@ party_bundle <- enrich(party_bundle, p_attribute = "word")
 summary(party_bundle)
 parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
 summary(parties_big)
+\dontrun{
+# not working yet
+b <- corpus("REUTERS") \%>\% split(s_attribute = "id")
+b[1:3]
+b[-1]
+}
 p <- partition("GERMAPARLMINI", date = "2009-11-11")
 pb <- partition_bundle(p, s_attribute = "party")
 names(pb)

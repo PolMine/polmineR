@@ -25,6 +25,7 @@ significantly faster approach than the method for `subcorpus` objects in many
 cases.
 - `get_token_stream()` will return list of `integer` values if `decode` is
 `TRUE` (#213).
+- `get_token_stream()` now has an argument `min_length`.
 
 
 polmineR 0.8.6
@@ -336,7 +337,6 @@ the `phrases` argument is used are now also available when a `phrases` object is
 - Code buttons have been added to the shiny app experimentally.
 - The `get_token_stream()`-method for `partition_bundle` objects will now accept an argument `phrases`(#128).
 - The `merge()`-method for `partition_bundle`-objects has been reworked: Substantial performance improvement by relying on `RcppCWB::get_region_matrix`. Internally, the method performs a check whether the `partition`/`subcorpus` objects to be merged are non-overlapping. The default value for the argument `verbose` is now `FALSE`, as waiting time is much shorter.
-
 
 ## Minor Improvements
 

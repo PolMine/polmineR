@@ -85,6 +85,31 @@ setMethod('[[', 'bundle', function(x,i){
   }
 })  
 
+#' @exportMethod [
+#' @rdname bundle
+#' @examples
+#' \dontrun{
+#' # not working yet
+#' b <- corpus("REUTERS") %>% split(s_attribute = "id")
+#' b[1:3]
+#' b[-1]
+#' }
+setMethod('[', 'bundle', function(x,i){
+  if (is.numeric(i)){
+    if (all(i > 0L)){
+      return(x[[i]])
+    } else {
+      if (any(i > 0L))
+        stop("when indexing bundle objects, mixing positive and negative indices is not allowed")
+      for (k in rev(sort(abs(i)))) x@objects[[k]] <- NULL
+      return(x)
+    }
+  } else {
+    return(x[[i]])
+  }
+})  
+
+
 #' @exportMethod [[<-
 #' @rdname bundle
 #' @examples

@@ -56,6 +56,7 @@ get_token_stream(.Object, ...)
   p_attribute = "word",
   phrases = NULL,
   subset = NULL,
+  min_length = NULL,
   collapse = NULL,
   cpos = FALSE,
   decode = TRUE,
@@ -114,6 +115,10 @@ in a regions matrix.}
 \item{right}{Right corpus position.}
 
 \item{phrases}{A \code{phrases} object. Defined phrases will be concatenated.}
+
+\item{min_length}{If not \code{NULL} (default), an \code{integer} value with minimum
+length of documents required to keep them in the \code{list} object that is
+returned.}
 
 \item{verbose}{A length-one \code{logical} value, whether to show messages.}
 
