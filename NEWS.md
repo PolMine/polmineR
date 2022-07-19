@@ -26,7 +26,9 @@ cases.
 - `get_token_stream()` will return list of `integer` values if `decode` is
 `TRUE` (#213).
 - `get_token_stream()` now has an argument `min_length`.
-- Removed a bug for `hits()` method for `partition` objects #215
+- Removed a bug for `hits()` method for `partition` objects #215.
+- `size()` works for `partition`/`subcorpus` with `s-attribute` that is a child
+of the s-attribute the object is based on #216.
 
 
 polmineR 0.8.6

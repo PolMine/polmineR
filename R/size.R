@@ -176,12 +176,25 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
           )
           dt[, (s_attr) := as.nativeEnc(str, from = x@encoding)]
         } else {
-          warning(
-            sprintf(
-              "Structural attribute '%s' is required to be a child of attribute '%s' - not true.",
-              x@s_attribute_strucs, s_attr
+          if (length(s_attribute) == 1L){
+            cpos <- ranges_to_cpos(x@cpos)
+            strucs <- cpos2struc(x = x, s_attr = s_attr, cpos = cpos)
+            dt <- data.table(struc = strucs)[, .N, by = "struc"]
+            value <- struc2str(x = x, s_attr = s_attr, struc = dt[["struc"]])
+            dt[, (s_attr) := value][, "struc" := NULL]
+            setnames(dt, old = "N", new = "size")
+            setcolorder(dt, neworder = s_attr)
+          } else {
+            stop(
+              sprintf(
+                paste(
+                  "Structural attribute `%s` is a child of `%s`.",
+                  "Processing more than one s-attribute is not implemented."
+                ),
+                s_attr, x@s_attribute_strucs
+              )
             )
-          )
+          }
         }
       }
       y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
