@@ -105,3 +105,12 @@ test_that(
   }
 )
 
+test_that(
+  "dispersion on partition",
+  {
+    use("polmineR")
+    p <- partition("GERMAPARLMINI", date = "2009-11-10")
+    y <- dispersion(p, query = "Arbeit", s_attribute = "date", freq = TRUE)
+    expect_identical(y[["count"]], 37L)
+  }
+)

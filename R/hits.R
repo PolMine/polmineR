@@ -93,7 +93,7 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
       q <- unname(setNames(names(query), unname(query))[dt[["query"]]])
       dt[, "query" := q]
     }
-    retval <- as(.Object, "hits")
+    retval <- as(as(.Object, "corpus"), "hits")
     retval@stat <- dt
     retval@corpus <- .Object@corpus
     retval@query <- query
@@ -149,7 +149,7 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
       TF[, "freq" := TF[["count"]] / TF[["size"]]]
     }
   }
-  retval <- as(.Object, "hits")
+  retval <- as(as(.Object, "corpus"), "hits")
   retval@stat = TF
   retval@corpus = .Object@corpus
   retval@query = query
