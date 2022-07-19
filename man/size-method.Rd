@@ -57,7 +57,8 @@ The method will get the number of tokens in a \code{corpus}, \code{partition} or
 \details{
 One or more s-attributes can be provided to get the dispersion of tokens
 across one or more dimensions. If \code{s_attribute} is a child of the s-attribute
-defining a \code{subcorpus} or \code{partition}, only one s-attribute can be processed.
+defining a \code{subcorpus} or \code{partition}, the struc values need to be decoded
+for all corpus positions, which may take some time.
 
 The \code{size()}-method for \code{features} objects will return a named list
 with the size of the corpus of interest ("coi"), i.e. the number of tokens

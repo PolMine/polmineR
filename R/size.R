@@ -8,7 +8,8 @@ NULL
 #' 
 #' One or more s-attributes can be provided to get the dispersion of tokens
 #' across one or more dimensions. If `s_attribute` is a child of the s-attribute
-#' defining a `subcorpus` or `partition`, only one s-attribute can be processed.
+#' defining a `subcorpus` or `partition`, the struc values need to be decoded 
+#' for all corpus positions, which may take some time.
 #' 
 #' @param x An object to get size(s) for.
 #' @param s_attribute A `character` vector with s-attributes (one or more).
@@ -154,11 +155,11 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
         )
         as.nativeEnc(str, from = x@encoding) 
       }
-      dt <- data.table::as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
-      dt[, size := x@cpos[,2] - x@cpos[,1] + 1L]
-      y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
+      tab <- data.table::as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
+      tab[, size := x@cpos[,2] - x@cpos[,1] + 1L]
+      y <- tab[, sum(size), by = eval(s_attribute), with = TRUE]
     } else {
-      dt <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
+      is_parent <- NA
       for (s_attr in s_attribute){
         strucs <- cl_cpos2struc(
           corpus = x@corpus, registry = x@registry_dir,
@@ -169,34 +170,40 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
           s_attribute = s_attr, strucs = strucs
         )
         if (all(m[,1] <= x@cpos[,1]) && all(m[,2] >= x@cpos[,2])){
+          is_parent <- TRUE
           str <- cl_struc2str(
             corpus = x@corpus, registry = x@registry_dir,
             s_attribute = s_attr, struc = strucs
           )
-          dt[, (s_attr) := as.nativeEnc(str, from = x@encoding)]
-        } else {
-          if (length(s_attribute) == 1L){
-            cpos <- ranges_to_cpos(x@cpos)
-            strucs <- cpos2struc(x = x, s_attr = s_attr, cpos = cpos)
-            dt <- data.table(struc = strucs)[, .N, by = "struc"]
-            value <- struc2str(x = x, s_attr = s_attr, struc = dt[["struc"]])
-            dt[, (s_attr) := value][, "struc" := NULL]
-            setnames(dt, old = "N", new = "size")
-            setcolorder(dt, neworder = s_attr)
-          } else {
-            stop(
-              sprintf(
-                paste(
-                  "Structural attribute `%s` is a child of `%s`.",
-                  "Processing more than one s-attribute is not implemented."
-                ),
-                s_attr, x@s_attribute_strucs
-              )
-            )
+          if (!exists("tab")){
+            tab <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
           }
+          tab[, (s_attr) := as.nativeEnc(str, from = x@encoding)]
+        } else {
+          if (isTRUE(is_parent)) stop("Cannot mix parents and childs!")
+          is_parent <- FALSE
+          cpos <- ranges_to_cpos(x@cpos)
+          strucs <- cpos2struc(x = x, s_attr = s_attr, cpos = cpos)
+          
+          if (length(s_attribute) == 1L){
+            tab <- data.table(struc = strucs)[, .N, by = "struc"]
+            value <- struc2str(x = x, s_attr = s_attr, struc = tab[["struc"]])
+            tab[, (s_attr) := value][, "struc" := NULL]
+            setnames(tab, old = "N", new = "size")
+            setcolorder(tab, neworder = s_attr)
+          } else {
+            values <- struc2str(x = x, s_attr = s_attr, struc = strucs)
+            if (!exists("tab")){
+              tab <- data.table(value = values, size = 1L)
+              setnames(tab, old = "value", new = s_attr)
+            } else {
+              tab[, (s_attr) := values]
+            }
+          }
+          
         }
       }
-      y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
+      y <- tab[, sum(size), by = eval(s_attribute), with = TRUE]
     }
     setnames(y, old = "V1", new = "size")
     setkeyv(y, cols = s_attribute)
