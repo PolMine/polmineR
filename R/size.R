@@ -7,23 +7,22 @@ NULL
 #' `subcorpus`, split up by an s-attribute if provided.
 #' 
 #' One or more s-attributes can be provided to get the dispersion of tokens
-#' across one or more dimensions. If the corpus XML is nested, the s-attributes
-#' defining a `subcorpus` or `partition` are required to be children of the
-#' s-attribute(s) provided. If, not, a warning will be issued.
+#' across one or more dimensions. If `s_attribute` is a child of the s-attribute
+#' defining a `subcorpus` or `partition`, only one s-attribute can be processed.
 #' 
 #' @param x An object to get size(s) for.
-#' @param s_attribute A \code{character} vector with s-attributes (one or more).
-#' @param verbose A \code{logical} value, whether to output messages.
+#' @param s_attribute A `character` vector with s-attributes (one or more).
+#' @param verbose A `logical` value, whether to output messages.
 #' @param ... Further arguments (used only for backwards compatibility).
 #' @rdname size-method
-#' @return If \code{.Object} is a corpus (a \code{corpus} object or specified by
-#'   corpus id), an \code{integer} vector if argument \code{s_attribute} is
-#'   \code{NULL}, a two-column \code{data.table} otherwise (first column is the
-#'   s-attribute, second column: "size"). If \code{.Object} is a
-#'   \code{subcorpus_bundle} or a \code{partition_bundle}, a \code{data.table}
-#'   (with columns "name" and "size").
-#' @seealso See \code{\link{dispersion}}-method for counts of hits. The \code{\link{hits}}
-#' method calls the \code{size}-method to get sizes of subcorpora.
+#' @return If `.Object` is a corpus (a `corpus` object or specified by corpus
+#'   id), an `integer` vector if argument `s_attribute` is `NULL`, a two-column
+#'   `data.table` otherwise (first column is the s-attribute, second column:
+#'   "size"). If `.Object` is a `subcorpus_bundle` or a `partition_bundle`, a
+#'   `data.table` (with columns "name" and "size").
+#' @seealso See \code{\link{dispersion}}-method for counts of hits. The
+#'   \code{\link{hits}} method calls the `size`-method to get sizes of
+#'   subcorpora.
 #' @aliases size,slice-method
 #' @examples
 #' use("polmineR")
@@ -225,7 +224,7 @@ setMethod("size", "partition_bundle", function(x){
 })
 
 
-#' @describeIn subcorpus Get the size of a \code{subcorpus} object from the
+#' @describeIn subcorpus Get the size of a `subcorpus` object from the
 #'   respective slot of the object.
 setMethod("size", "subcorpus", function(x, s_attribute = NULL, ...){
   callNextMethod()
@@ -242,11 +241,10 @@ setMethod("size", "TermDocumentMatrix", function(x){
   setNames(tapply(x$v, INDEX = x$j, sum), x[["dimnames"]][["Docs"]])
 })
 
-#' @details The \code{size}-method for \code{features} objects will return a
-#'   named list with the size of the corpus of interest ("coi"), i.e. the number
-#'   of tokens in the window, and the reference corpus ("ref"), i.e. the number
-#'   of tokens that are not matched by the query and that are outside the
-#'   window.
+#' @details The `size()`-method for `features` objects will return a named list
+#'   with the size of the corpus of interest ("coi"), i.e. the number of tokens
+#'   in the window, and the reference corpus ("ref"), i.e. the number of tokens
+#'   that are not matched by the query and that are outside the window.
 #' @rdname size-method
 setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )
 
