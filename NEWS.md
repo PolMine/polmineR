@@ -29,6 +29,10 @@ cases.
 - Removed a bug for `hits()` method for `partition` objects #215.
 - `size()` works for `partition`/`subcorpus` with `s-attribute` that is a child
 of the s-attribute the object is based on #216.
+- The documentation of the `cooccurrences()` method now includes example code
+for creating a table using `DT::datatable()` with buttons for exporting tables
+(to Excel, for instance).
+
 
 
 polmineR 0.8.6
