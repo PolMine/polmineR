@@ -275,10 +275,10 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
 
 #' @export
 #' @rdname all-cooccurrences-class
-#' @details The \code{enrich}-method will add columns 'a_count' and 'b_count' to the 
-#'   \code{data.table} in the 'stat' slot of the \code{Cooccurrences} object. If the
-#'   count for the subcorpus/partition from which the cooccurrences are derived is 
-#'   not yet present, the count is performed first.
+#' @details The `enrich()`-method will add columns 'a_count' and 'b_count' to
+#'   the `data.table` in the 'stat' slot of the `Cooccurrences` object. If the
+#'   count for the subcorpus/partition from which the cooccurrences are derived
+#'   is not yet present, the count is performed first.
 setMethod("enrich", "Cooccurrences", function(.Object){
   
   cnt <- if (nrow(.Object@partition@stat) > 0L){
