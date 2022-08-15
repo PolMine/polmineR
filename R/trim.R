@@ -113,8 +113,13 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       }
       object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     }
-    after <- length(unique(object@cpos[["match_id"]]))
-    .message("number of hits dropped due to positivelist:", before - after, verbose = verbose)
+    
+    object@count <- length(unique(object@cpos[["match_id"]]))
+    .message(
+      "number of hits dropped due to positivelist:",
+      before - object@count, verbose = verbose
+    )
+    
     if (nrow(object@cpos) == 0) {
       warning("no remaining hits after applying positivelist, returning NULL object")
       return( invisible(NULL) )
@@ -132,8 +137,14 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
     }
     object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
-    after <- length(unique(object@cpos[["match_id"]]))
-    .message("number of hits dropped due to stoplist:", before - after, verbose = verbose)
+    
+    object@count <- length(unique(object@cpos[["match_id"]]))
+    .message(
+      "number of hits dropped due to stoplist:",
+      before - object@count,
+      verbose = verbose
+    )
+
     if (nrow(object@cpos) == 0) {
       warning("no remaining hits after applying stoplist, returning NULL object")
       return( NULL )
