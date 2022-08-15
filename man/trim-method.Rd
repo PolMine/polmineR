@@ -7,15 +7,15 @@
 \alias{trim,TermDocumentMatrix-method}
 \alias{trim,DocumentTermMatrix-method}
 \alias{punctuation}
-\title{trim an object}
+\title{Trim an object.}
 \format{
 An object of class \code{character} of length 13.
 }
 \usage{
-trim(object, ...)
+trim(.Object, ...)
 
 \S4method{trim}{TermDocumentMatrix}(
-  object,
+  .Object,
   termsToKeep = NULL,
   termsToDrop = NULL,
   docsToKeep = NULL,
@@ -23,12 +23,12 @@ trim(object, ...)
   verbose = TRUE
 )
 
-\S4method{trim}{DocumentTermMatrix}(object, ...)
+\S4method{trim}{DocumentTermMatrix}(.Object, ...)
 
 punctuation
 }
 \arguments{
-\item{object}{the object to be trimmed}
+\item{.Object}{The object to be trimmed}
 
 \item{...}{further arguments}
 
@@ -43,9 +43,9 @@ punctuation
 \item{verbose}{logical}
 }
 \description{
-Method to trim and adjust objects by
-applying thresholds, minimum frequencies etc. It can be applied to \code{context},
-\code{features}, \code{context}, \code{partition} and \code{partition_bundle} objects.
+Method to trim and adjust objects by applying thresholds, minimum frequencies
+etc. It can be applied to \code{context}, \code{features}, \code{context}, \code{partition} and
+\code{partition_bundle} objects.
 }
 \author{
 Andreas Blaette

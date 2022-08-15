@@ -2,13 +2,13 @@
 #' @include features.R
 NULL
 
-#' trim an object
+#' Trim an object.
 #' 
-#' Method to trim and adjust objects by 
-#' applying thresholds, minimum frequencies etc. It can be applied to \code{context},
-#' \code{features}, \code{context}, \code{partition} and \code{partition_bundle} objects.
+#' Method to trim and adjust objects by applying thresholds, minimum frequencies
+#' etc. It can be applied to `context`, `features`, `context`, `partition` and
+#' `partition_bundle` objects.
 #' 
-#' @param object the object to be trimmed
+#' @param .Object The object to be trimmed
 #' @param termsToKeep ...
 #' @param termsToDrop ...
 #' @param docsToKeep ...
@@ -18,8 +18,9 @@ NULL
 #' @author Andreas Blaette
 #' @docType methods
 #' @aliases trim trim-method trim,TermDocumentMatrix-method
+#' @export
 #' @rdname trim-method
-setGeneric("trim", function(object, ...) standardGeneric("trim") )
+setGeneric("trim", function(.Object, ...) standardGeneric("trim") )
 
 
 
@@ -27,7 +28,7 @@ setGeneric("trim", function(object, ...) standardGeneric("trim") )
 #' @importFrom tm stopwords
 #' @importFrom slam as.simple_triplet_matrix
 #' @rdname trim-method
-setMethod("trim", "TermDocumentMatrix", function(object, termsToKeep = NULL, termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL, verbose = TRUE){
+setMethod("trim", "TermDocumentMatrix", function(.Object, termsToKeep = NULL, termsToDrop = NULL, docsToKeep = NULL, docsToDrop = NULL, verbose = TRUE){
   .rmBlank <- function(mat, verbose=TRUE){
     .message("removing empty rows", verbose = verbose)
     matTmp <- as.sparseMatrix(mat)
@@ -37,30 +38,35 @@ setMethod("trim", "TermDocumentMatrix", function(object, termsToKeep = NULL, ter
     mat
   }
   if (!is.null(docsToKeep)){
-    object <- object[,which(colnames(object) %in% docsToKeep)]
+    .Object <- .Object[,which(colnames(.Object) %in% docsToKeep)]
   }
   if (!is.null(docsToDrop)){
-    object <- object[,which(!colnames(object) %in% docsToDrop)]
+    .Object <- .Object[,which(!colnames(.Object) %in% docsToDrop)]
   }
   if (!is.null(termsToKeep)){
-    object <- object[which(rownames(object) %in% termsToKeep),]
+    .Object <- .Object[which(rownames(.Object) %in% termsToKeep),]
   }
   if (!is.null(termsToDrop)){
-    object <- object[which(!rownames(object) %in% termsToDrop), ]
+    .Object <- .Object[which(!rownames(.Object) %in% termsToDrop), ]
   }
-  object
+  .Object
 })
+
 
 #' @rdname trim-method
-setMethod("trim", "DocumentTermMatrix", function(object, ...){
-  t(trim(t(object), ...))
+setMethod("trim", "DocumentTermMatrix", function(.Object, ...){
+  t(trim(t(.Object), ...))
 })
-
-
 
 
 #' @rdname context-class
-setMethod("trim", "context", function(object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, fn = NULL, verbose = TRUE, progress = TRUE, ...){
+#' @examples 
+#' # Keep matches for 'oil' only if first position to the left is 'crude'
+#' .fn <- function(x) if (x[position == -1L][["word"]] == "crude") x else NULL
+#' crude_oil <- context("REUTERS", "oil") %>%
+#'   enrich(p_attribute = "word", decode = TRUE) %>%
+#'   trim(fn = .fn)
+setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(.Object), regex = FALSE, stoplist = NULL, fn = NULL, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))){
     lifecycle::deprecate_warn(
@@ -74,87 +80,101 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
   if (!is.null(s_attribute)){
     stopifnot(length(s_attribute) == 1L)
     s_attr_col <- paste(s_attribute, "int", sep = "_")
-    if (!s_attr_col %in% colnames(object@cpos)){
-      enrich(object, s_attribute = s_attribute) # in-place operation
+    if (!s_attr_col %in% colnames(.Object@cpos)){
+      enrich(.Object, s_attribute = s_attribute) # in-place operation
     }
-    setnames(object@cpos, old = s_attr_col, new = "struc")
+    setnames(.Object@cpos, old = s_attr_col, new = "struc")
 
     .message("checking boundaries of regions", verbose = verbose)
-    if (progress) pb <- txtProgressBar(min = 1, max = object@count, style = 3)
+    if (progress) pb <- txtProgressBar(min = 1, max = .Object@count, style = 3)
     .check <- function(.SD, .GRP){
       if (progress) setTxtProgressBar(pb, value = .GRP)
       struc_hit <- .SD[.SD[["position"]] == 0][["struc"]][1]
       .SD[.SD[["struc"]] == struc_hit]
     }
-    object@cpos <- object@cpos[, .check(.SD, .GRP), by = "match_id"]
+    .Object@cpos <- .Object@cpos[, .check(.SD, .GRP), by = "match_id"]
     if (progress) close(pb)
-    setnames(object@cpos, old = "struc", new = s_attr_col)
+    setnames(.Object@cpos, old = "struc", new = s_attr_col)
   }
   
   if (!is.null(positivelist)){
     .message("filtering by positivelist", verbose = verbose)
-    before <- length(unique(object@cpos[["match_id"]]))
+    before <- length(unique(.Object@cpos[["match_id"]]))
     if (is.matrix(positivelist)){
       dt <- data.table(cpos = cpos(positivelist), positivelist = TRUE)
-      cpos_min <- dt[object@cpos[object@cpos[["position"]] != 0], on = "cpos"]
+      cpos_min <- dt[.Object@cpos[.Object@cpos[["position"]] != 0], on = "cpos"]
       matches_to_keep <- cpos_min[,
         if (any(!is.na(.SD$positivelist))) .SD else NULL,
         by = "match_id"
       ][["match_id"]]
-      object@cpos <- object@cpos[object@cpos[["match_id"]] %in% matches_to_keep]
+      .Object@cpos <- .Object@cpos[.Object@cpos[["match_id"]] %in% matches_to_keep]
     } else {
       positivelist_ids <- .token2id(
-        corpus = object@corpus, p_attribute = p_attribute,
+        corpus = .Object@corpus, p_attribute = p_attribute,
         token = positivelist, regex = regex
       )
       .fn <- function(.SD){
         neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
         if (any(neighbors %in% positivelist_ids)) return( .SD ) else return( NULL )
       }
-      object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
+      .Object@cpos <- .Object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     }
     
-    if (nrow(object@cpos) == 0) {
-      warning("no remaining hits after applying positivelist, returning NULL object")
+    if (nrow(.Object@cpos) == 0) {
+      warning("no remaining hits after applying positivelist, returning NULL")
       return( invisible(NULL) )
     }
 
-    object@count <- length(unique(object@cpos[["match_id"]]))
+    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
     .message(
       "number of hits dropped due to positivelist:",
-      before - object@count, verbose = verbose
+      before - .Object@count, verbose = verbose
     )
     
-    object <- enrich(object, stat = TRUE)
+    .Object <- enrich(.Object, stat = TRUE)
     
   }
   
   if (!is.null(stoplist)){
     .message("applying stoplist", verbose = verbose)
-    before <- length(unique(object@cpos[["match_id"]]))
-    stoplist_ids <- .token2id(corpus = object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
+    before <- length(unique(.Object@cpos[["match_id"]]))
+    stoplist_ids <- .token2id(corpus = .Object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
     .fn <- function(.SD){
       p_attr <- paste(p_attribute[1], "id", sep = "_")
       negatives <- which(.SD[[p_attr]] %in% stoplist_ids)
       negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
       if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
     }
-    object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
+    .Object@cpos <- .Object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     
-    if (nrow(object@cpos) == 0L) {
-      warning("no remaining hits after applying stoplist, returning NULL object")
+    if (nrow(.Object@cpos) == 0L) {
+      warning("no remaining hits after applying stoplist, returning NULL")
       return( NULL )
     }
 
-    object@count <- length(unique(object@cpos[["match_id"]]))
+    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
     .message(
       "number of hits dropped due to stoplist:",
-      before - object@count,
+      before - .Object@count,
       verbose = verbose
     )
     
-    object <- enrich(object, stat = TRUE)
+    .Object <- enrich(.Object, stat = TRUE)
   }
   
-  object
+  if (!is.null(fn)){
+    before <- length(unique(.Object@cpos[["match_id"]]))
+    .Object@cpos <- rbindlist(lapply(split(.Object@cpos, by = "match_id"), fn))
+    
+    if (nrow(.Object@cpos) == 0L) {
+      warning("no remaining hits after applying trimming fn, returning NULL")
+      return( NULL )
+    }
+    
+    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
+    .message("new number of hits:", .Object@count, verbose = verbose)
+    .Object <- enrich(.Object, stat = TRUE)
+  }
+  
+  .Object
 })

@@ -198,7 +198,15 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     )
     p_attribute <- list(...)[["pAttribute"]]
   }
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
+  
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "enrich(sAttribute)",
+      with = "enrich(s_attribute)"
+    )
+    s_attribute <- list(...)[["pAttribute"]]
+  }
   
   if (!is.null(s_attribute)){
     # check that all s-attributes are available
@@ -242,39 +250,34 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
       all(p_attribute %in% corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir))
     )
     
-    # add ids
+    # add ids and decode if requested
     for (p_attr in p_attribute){
       colname <- paste(p_attr, "id", sep = "_")
       if (colname %in% colnames(.Object@cpos)){
         .message("already present - skip getting ids for p-attribute:", p_attr, verbose = verbose)
       } else {
         .message("getting token id for p-attribute:", p_attr, verbose = verbose)
-        ids <- cl_cpos2id(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
-          p_attribute = p_attr, cpos = .Object@cpos[["cpos"]]
+        ids <- cpos2id(
+          x = .Object, p_attribute = p_attr, cpos = .Object@cpos[["cpos"]]
         )
         .Object@cpos[, (colname) := ids]
       }
-    }
-    
-    # add 
-    if (decode){
-      for (p_attr in p_attribute){
+      
+      if (decode){
         if (p_attr %in% colnames(.Object@cpos)){
           .message("already present - skip getting strings for p-attribute:", p_attr, verbose = verbose)
         } else {
           .message("decode p-attribute:", p_attr, verbose = verbose)
           p_attr_id <- paste(p_attr, "id", sep = "_")
-          decoded <- cl_id2str(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
-            p_attribute = p_attr, id = .Object@cpos[[p_attr_id]]
+          decoded <- id2str(
+            x = .Object, p_attribute = p_attr, id = .Object@cpos[[p_attr_id]]
           )
-          .Object@cpos[, (p_attr) := as.nativeEnc(decoded, from = .Object@encoding)]
-          .Object@cpos[, (p_attr_id) := NULL]
+          native <- as.nativeEnc(decoded, from = .Object@encoding)
+          .Object@cpos <- .Object@cpos[, "word" := native]
+          # .Object@cpos[, (p_attr_id) := NULL]
         }
       }
     }
-    
   }
   
   if (isTRUE(stat)){

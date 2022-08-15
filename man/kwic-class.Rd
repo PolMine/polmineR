@@ -120,14 +120,14 @@ Applying the \code{count}-method on a \code{kwic} object will return
 a \code{count} object with the evaluation of the left and right context of
 the match.
 
-The \code{knit_print} method will be called by knitr to render
+The \code{knit_print()} method will be called by knitr to render
 \code{kwic} objects as a DataTable  \code{htmlwidget} when rendering a R
 Markdown document as html. It will usually be necessary to explicitly state
 "render = knit_print" in the chunk options. The option
 \code{polmineR.pagelength} controls the number of lines displayed in the
 resulting \code{htmlwidget}. Note that including htmlwidgets in html documents
 requires that pandoc is installed. To avoid an error, a formatted
-\code{data.table} is returned by \code{knit_print} if pandoc is not
+\code{data.table} is returned by \code{knit_print()} if pandoc is not
 available.
 
 The \code{as.character}-method will return a list of \code{character} vectors,

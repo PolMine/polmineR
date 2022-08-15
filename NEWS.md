@@ -35,9 +35,13 @@ for creating a table using `DT::datatable()` with buttons for exporting tables
 - After applying `trim()` on a `context` object using arguments `positivelist`
 or `negativelist`, the `count` slot as reported by `length` was not updated. 
 Fixed. (#220)
+- After applying `trim()` on a `context` object using arguments `positivelist`
+or `negativelist`, the count statistics reported in the `stat` slot were not
+updated. Fixed. (#220)
 - The `enrich()` method for `context` objects has a new argument `stat` for 
 creating / updating the `data.table` in the slot `stat`.
-
+- The `trim()` methode for `context` objects has a new argument `fn` for
+supplying a (trimming) function to be applied all match contexts.
 
 
 polmineR 0.8.6

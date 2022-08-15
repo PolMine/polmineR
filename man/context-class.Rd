@@ -41,23 +41,24 @@
 \S4method{as.regions}{context}(x, node = TRUE)
 
 \S4method{trim}{context}(
-  object,
+  .Object,
   s_attribute = NULL,
   positivelist = NULL,
-  p_attribute = p_attributes(object),
+  p_attribute = p_attributes(.Object),
   regex = FALSE,
   stoplist = NULL,
+  fn = NULL,
   verbose = TRUE,
   progress = TRUE,
   ...
 )
 }
 \arguments{
-\item{x}{a context object}
+\item{x}{A \code{context} object.}
 
-\item{.Object}{object}
+\item{.Object}{A \code{context} object.}
 
-\item{size}{integer indicating sample size}
+\item{size}{An \code{integer} indicating sample size.}
 
 \item{s_attribute}{The s-attribute(s) to add to \code{data.table} in slot \code{cpos}.}
 
@@ -71,20 +72,23 @@ the \code{cpos} table.}
 
 \item{verbose}{A \code{logical}, whether to be talkative.}
 
-\item{...}{to maintain backwards compatibility if argument \code{pAttribute} is still used}
+\item{...}{To maintain backwards compatibility if argument \code{pAttribute} is
+still used.}
 
 \item{node}{A logical value, whether to include the node (i.e. query matches) in the region matrix
 generated when creating a \code{partition} from a \code{context}-object.}
 
-\item{object}{a context object}
+\item{positivelist}{Tokens that are required to be present to keep a match.}
 
-\item{positivelist}{tokens that are required to be present to keep a match}
+\item{regex}{A \code{logical} value, whether arguments \code{positivlist} / \code{stoplist}
+are interpreted as regular expressions.}
 
-\item{regex}{logical, whether positivlist / stoplist is interpreted as regular expressions}
+\item{stoplist}{Tokens that are used to exclude a match.}
 
-\item{stoplist}{tokens that are used to exclude a match}
+\item{fn}{A function that will be applied on context tables splitted by
+match_id.}
 
-\item{progress}{logical, whether to show progress bar}
+\item{progress}{A \code{logical} value, whether to show progress bar}
 }
 \description{
 Class to organize information of context analysis.
@@ -146,3 +150,10 @@ context.}
 \item{\code{call}}{Object of class \code{character}, call that generated the object.}
 }}
 
+\examples{
+# Keep matches for 'oil' only if first position to the left is 'crude'
+.fn <- function(x) if (x[position == -1L][["word"]] == "crude") x else NULL
+crude_oil <- context("REUTERS", "oil") \%>\%
+  enrich(p_attribute = "word", decode = TRUE) \%>\%
+  trim(fn = .fn)
+}

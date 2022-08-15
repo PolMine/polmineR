@@ -593,15 +593,18 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @slot method A `character`-vector, statistical test used.
 #' @slot call Object of class `character`, call that generated the object.
 #'     
-#' @param .Object object
-#' @param x a context object
-#' @param size integer indicating sample size
-#' @param object a context object
-#' @param positivelist tokens that are required to be present to keep a match
-#' @param stoplist tokens that are used to exclude a match
-#' @param regex logical, whether positivlist / stoplist is interpreted as regular expressions
-#' @param progress logical, whether to show progress bar
-#' @param ... to maintain backwards compatibility if argument `pAttribute` is still used
+#' @param .Object A `context` object.
+#' @param x A `context` object.
+#' @param size An `integer` indicating sample size.
+#' @param positivelist Tokens that are required to be present to keep a match.
+#' @param stoplist Tokens that are used to exclude a match.
+#' @param regex A `logical` value, whether arguments `positivlist` / `stoplist`
+#'   are interpreted as regular expressions.
+#' @param fn A function that will be applied on context tables splitted by
+#'   match_id.
+#' @param progress A `logical` value, whether to show progress bar
+#' @param ... To maintain backwards compatibility if argument `pAttribute` is
+#'   still used.
 #' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
 #'   [[,context-method summary,context-method head,context-method
 #'   as.DataTables,context-method
