@@ -33,6 +33,7 @@
   s_attribute = NULL,
   p_attribute = NULL,
   decode = FALSE,
+  stat = FALSE,
   verbose = TRUE,
   ...
 )
@@ -58,13 +59,17 @@
 
 \item{size}{integer indicating sample size}
 
-\item{s_attribute}{s-attribute(s) to add to data.table in cpos-slot}
+\item{s_attribute}{The s-attribute(s) to add to \code{data.table} in slot \code{cpos}.}
 
-\item{p_attribute}{p-attribute(s) to add to data.table in cpos-slot}
+\item{p_attribute}{The p-attribute(s) to add to \code{data.table} in slot \code{cpos}.}
 
-\item{decode}{logical, whether to convert integer ids to expressive strings}
+\item{decode}{A \code{logical} value, whether to convert integer ids to expressive
+strings.}
 
-\item{verbose}{logical, whether to be talkative}
+\item{stat}{A \code{logical} value, whether to generate / update slot \code{stat} from
+the \code{cpos} table.}
+
+\item{verbose}{A \code{logical}, whether to be talkative.}
 
 \item{...}{to maintain backwards compatibility if argument \code{pAttribute} is still used}
 
@@ -91,8 +96,8 @@ slot \code{cpos}. The \code{data.table} will at least include the columns "match
 
 The \code{length}-method will return the number of hits that were achieved.
 
-The \code{enrich}-method can be used to add additional information to the \code{data.table}
-in the "cpos"-slot of a \code{context}-object.
+The \code{enrich()}-method can be used to add additional information to
+the \code{data.table} in the \code{cpos}-slot of a \code{context}-object.
 }
 \section{Slots}{
 

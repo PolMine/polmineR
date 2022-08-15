@@ -196,13 +196,23 @@ d <- subset(c, count_coi >= 5)
 e <- subset(c, ll >= 10.83)
 format(e)
 
-# using pipe operator may be convenient
+# using pipe operator with subset
 cooccurrences("REUTERS", query = "oil") \%>\%
   subset(!is.na(ll)) \%>\%
   subset(!word \%in\% tm::stopwords("en")) \%>\%
   subset(count_coi >= 5) \%>\%
   subset(ll >= 10.83) \%>\%
   format()
+  
+# generate datatables htmlwidget with buttons for export (Excel & more)
+# (alternatively use openxlsx::write.xlsx())
+interactive_table <- cooccurrences("REUTERS", query = "oil") \%>\%
+  format() \%>\%
+  DT::datatable(
+    extensions = "Buttons",
+    options = list(dom = 'Btip', buttons = c("excel", "pdf", "csv"))
+  )
+if (interactive()) show(interactive_table)
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]
 y <- cooccurrences(pb_min, query = "Deutschland")

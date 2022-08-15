@@ -32,6 +32,11 @@ of the s-attribute the object is based on #216.
 - The documentation of the `cooccurrences()` method now includes example code
 for creating a table using `DT::datatable()` with buttons for exporting tables
 (to Excel, for instance).
+- After applying `trim()` on a `context` object using arguments `positivelist`
+or `negativelist`, the `count` slot as reported by `length` was not updated. 
+Fixed. (#220)
+- The `enrich()` method for `context` objects has a new argument `stat` for 
+creating / updating the `data.table` in the slot `stat`.
 
 
 

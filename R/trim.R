@@ -19,7 +19,7 @@ NULL
 #' @docType methods
 #' @aliases trim trim-method trim,TermDocumentMatrix-method
 #' @rdname trim-method
-setGeneric("trim", function(object, ...){standardGeneric("trim")})
+setGeneric("trim", function(object, ...) standardGeneric("trim") )
 
 
 
@@ -60,7 +60,7 @@ setMethod("trim", "DocumentTermMatrix", function(object, ...){
 
 
 #' @rdname context-class
-setMethod("trim", "context", function(object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, verbose = TRUE, progress = TRUE, ...){
+setMethod("trim", "context", function(object, s_attribute = NULL, positivelist = NULL, p_attribute = p_attributes(object), regex = FALSE, stoplist = NULL, fn = NULL, verbose = TRUE, progress = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))){
     lifecycle::deprecate_warn(
@@ -81,12 +81,12 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
 
     .message("checking boundaries of regions", verbose = verbose)
     if (progress) pb <- txtProgressBar(min = 1, max = object@count, style = 3)
-    .checkBoundary <- function(.SD, .GRP){
+    .check <- function(.SD, .GRP){
       if (progress) setTxtProgressBar(pb, value = .GRP)
       struc_hit <- .SD[.SD[["position"]] == 0][["struc"]][1]
       .SD[.SD[["struc"]] == struc_hit]
     }
-    object@cpos <- object@cpos[, .checkBoundary(.SD, .GRP), by = "match_id"]
+    object@cpos <- object@cpos[, .check(.SD, .GRP), by = "match_id"]
     if (progress) close(pb)
     setnames(object@cpos, old = "struc", new = s_attr_col)
   }
@@ -114,16 +114,19 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
       object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     }
     
+    if (nrow(object@cpos) == 0) {
+      warning("no remaining hits after applying positivelist, returning NULL object")
+      return( invisible(NULL) )
+    }
+
     object@count <- length(unique(object@cpos[["match_id"]]))
     .message(
       "number of hits dropped due to positivelist:",
       before - object@count, verbose = verbose
     )
     
-    if (nrow(object@cpos) == 0) {
-      warning("no remaining hits after applying positivelist, returning NULL object")
-      return( invisible(NULL) )
-    }
+    object <- enrich(object, stat = TRUE)
+    
   }
   
   if (!is.null(stoplist)){
@@ -138,17 +141,19 @@ setMethod("trim", "context", function(object, s_attribute = NULL, positivelist =
     }
     object@cpos <- object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
     
+    if (nrow(object@cpos) == 0L) {
+      warning("no remaining hits after applying stoplist, returning NULL object")
+      return( NULL )
+    }
+
     object@count <- length(unique(object@cpos[["match_id"]]))
     .message(
       "number of hits dropped due to stoplist:",
       before - object@count,
       verbose = verbose
     )
-
-    if (nrow(object@cpos) == 0) {
-      warning("no remaining hits after applying stoplist, returning NULL object")
-      return( NULL )
-    }
+    
+    object <- enrich(object, stat = TRUE)
   }
   
   object

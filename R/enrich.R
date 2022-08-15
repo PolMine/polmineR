@@ -174,18 +174,21 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
   .Object
 })
 
-#' @details The \code{enrich}-method can be used to add additional information to the \code{data.table}
-#' in the "cpos"-slot of a \code{context}-object.
+#' @details The `enrich()`-method can be used to add additional information to
+#'   the `data.table` in the `cpos`-slot of a `context`-object.
 #' 
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname context-class
-#' @param s_attribute s-attribute(s) to add to data.table in cpos-slot
-#' @param p_attribute p-attribute(s) to add to data.table in cpos-slot
-#' @param decode logical, whether to convert integer ids to expressive strings
-#' @param verbose logical, whether to be talkative
+#' @param s_attribute The s-attribute(s) to add to `data.table` in slot `cpos`.
+#' @param p_attribute The p-attribute(s) to add to `data.table` in slot `cpos`.
+#' @param decode A `logical` value, whether to convert integer ids to expressive
+#'   strings.
+#' @param stat A `logical` value, whether to generate / update slot `stat` from
+#'   the `cpos` table.
+#' @param verbose A `logical`, whether to be talkative.
 #' @importFrom RcppCWB corpus_p_attributes
-setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute = NULL, decode = FALSE, verbose = TRUE, ...){
+setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute = NULL, decode = FALSE, stat = FALSE, verbose = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))){
     lifecycle::deprecate_warn(
@@ -231,10 +234,13 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
       }
     }
   }
+  
   if (!is.null(p_attribute)){
     # check that all p-attributes are available
     .message("checking that all p-attributes are available", verbose = verbose)
-    stopifnot( all(p_attribute %in% corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir)) )
+    stopifnot(
+      all(p_attribute %in% corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir))
+    )
     
     # add ids
     for (p_attr in p_attribute){
@@ -270,6 +276,32 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     }
     
   }
+  
+  if (isTRUE(stat)){
+    msg <- sprintf(
+      "%s count statistics for slot cpos",
+      if (nrow(.Object@cpos) == 0L) "generate" else "update"
+    )
+    .message(msg, verbose = verbose)
+    
+    p_attr_id <- paste(.Object@p_attribute, "id", sep = "_")
+    setkeyv(.Object@cpos, p_attr_id)
+    cpos_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)]
+    .Object@stat <- cpos_min[, .N, by = eval(p_attr_id), with = TRUE]
+    setnames(.Object@stat, "N", "count_coi")
+    
+    for (i in seq_along(.Object@p_attribute)){
+      new_col <- id2str(
+        x = .Object,
+        p_attribute = .Object@p_attribute[i],
+        id = .Object@stat[[p_attr_id[i]]]
+      )
+      new_col_native <- as.nativeEnc(new_col, from = .Object@encoding)
+      .Object@stat[, eval(.Object@p_attribute[i]) := new_col_native]
+    }
+    
+  }
+  
   .Object
 })
 

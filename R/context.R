@@ -183,23 +183,8 @@ setMethod("context", "slice", function(
   ctxt@count <- length(unique(ctxt@cpos[["match_id"]]))
   
   # put together raw stat table
-  if (count){
-    .message("counting tokens", verbose = verbose)
-    
-    setkeyv(ctxt@cpos, paste(p_attribute, "id", sep = "_"))
-    ctxt@stat <- ctxt@cpos[which(ctxt@cpos[["position"]] != 0)][, .N, by = c(eval(paste(p_attribute, "id", sep = "_"))), with = TRUE]
-    setnames(ctxt@stat, "N", "count_coi")
-    
-    for (i in seq_along(p_attribute)){
-      newColumn <- cl_id2str(
-        corpus = .Object@corpus,  registry = .Object@registry_dir,
-        p_attribute = p_attribute[i],
-        id = ctxt@stat[[paste(p_attribute[i], "id", sep = "_")]]
-      )
-      newColumnNative <- as.nativeEnc(newColumn, from = .Object@encoding)
-      ctxt@stat[, eval(p_attribute[i]) := newColumnNative]
-    }
-  }
+  if (count) ctxt <- enrich(ctxt, stat = TRUE)
+  
   ctxt
 })
 
@@ -341,9 +326,10 @@ setMethod("context", "corpus", function(
   # cooccurrences, it is much, much faster (for one p-attribute) having done the 
   # count here for the entire corpus.
   
-  if (length(p_attribute) == 1L)
+  if (length(p_attribute) == 1L){
     p@stat <- count(.Object@corpus, p_attribute = p_attribute, decode = FALSE)@stat
-  
+  }
+    
   context(
     p, query = query, cqp = is.cqp,
     left = left, right = right,
