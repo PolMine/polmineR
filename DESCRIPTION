@@ -24,7 +24,7 @@ Imports:
     jsonlite,
     parallel,
     pbapply,
-    RcppCWB (>= 0.5.2),
+    RcppCWB (>= 0.5.3),
     magrittr,
     knitr,
     lifecycle

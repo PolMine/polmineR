@@ -367,6 +367,8 @@ siblings <- function(corpus, registry, ...){
   s_attrs <- unlist(list(...))
   stopifnot(all(s_attrs %in% s_attributes(corpus)))
   
+  if (length(s_attrs) < 2L) return(NA)
+  
   # If s-attributes have same number of values, we assume that they cover same
   # regions.
 

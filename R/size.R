@@ -56,6 +56,7 @@ NULL
 #' size(subcorpora)
 setGeneric("size", function(x, ...) UseMethod("size"))
 
+#' @importFrom RcppCWB s_attr_relationship
 #' @rdname size-method
 setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...){
   
@@ -77,37 +78,103 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
     )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
-    dt <- data.table::as.data.table(
-      lapply(
-        setNames(s_attribute, s_attribute),
-        function(s_attr){
-          s_attr_max <- cl_attribute_size(
+    
+    all_siblings <- siblings(
+      corpus = x@corpus, registry = x@registry_dir,
+      s_attribute
+    )
+    if (is.na(all_siblings)) all_siblings <- TRUE
+    
+    if (all_siblings){
+      
+      dt <- data.table::as.data.table(
+        lapply(
+          setNames(s_attribute, s_attribute),
+          function(s_attr){
+            s_attr_max <- cl_attribute_size(
+              corpus = x@corpus, registry = x@registry_dir,
+              attribute = s_attr, attribute_type = "s"
+            )
+            s_attr_vals <- cl_struc2str(
+              corpus = x@corpus, registry = x@registry_dir,
+              s_attribute = s_attr, struc = 0L:(s_attr_max - 1L)
+            )
+            as.nativeEnc(s_attr_vals, from = x@encoding)
+          }
+        )
+      )
+      cpos_matrix <- RcppCWB::get_region_matrix(
+        corpus = x@corpus, s_attribute = s_attribute[1],
+        strucs = 0L:(
+          cl_attribute_size(
             corpus = x@corpus, registry = x@registry_dir,
-            attribute = s_attr, attribute_type = "s"
+            attribute = s_attribute[1], attribute_type = "s"
+          ) - 1L
+        ),
+        registry = x@registry_dir
+      )
+      
+      dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
+      y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
+      setnames(y, old = "V1", new = "size")
+      setkeyv(y, cols = s_attribute)
+    } else {
+      relationship <- sapply(
+        1L:(length(s_attribute) - 1L),
+        function(i){
+          s_attr_relationship(
+            s_attribute[[i]], s_attribute[[i + 1]],
+            corpus = x@corpus, registry = x@registry_dir
           )
-          s_attr_vals <- cl_struc2str(
-            corpus = x@corpus, registry = x@registry_dir,
-            s_attribute = s_attr, struc = 0L:(s_attr_max - 1L)
-          )
-          as.nativeEnc(s_attr_vals, from = x@encoding)
         }
       )
-    )
-    cpos_matrix <- RcppCWB::get_region_matrix(
-      corpus = x@corpus, s_attribute = s_attribute[1],
-      strucs = 0L:(
-        cl_attribute_size(
+      if (all(relationship <= 0L)){
+        struc_size <- cl_attribute_size(
           corpus = x@corpus, registry = x@registry_dir,
-          attribute = s_attribute[1], attribute_type = "s"
-          ) - 1L
-      ),
-      registry = x@registry_dir
-    )
-    
-    dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
-    y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
-    setnames(y, old = "V1", new = "size")
-    setkeyv(y, cols = s_attribute)
+          attribute_type = "s", attribute = s_attribute[[1]]
+        )
+        strucs <- 0L:(struc_size - 1L)
+        m <- RcppCWB::get_region_matrix(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s_attribute[[1]], strucs = strucs
+        )
+        dt <- data.table(size = m[,2] - m[,1] + 1L)
+        str <- struc2str(x = x, s_attr = s_attribute[[1]], struc = strucs)
+        dt[, (s_attribute[[1]]) := str]
+        for (i in 2L:length(s_attribute)){
+          strucs <- cpos2struc(x, s_attr = s_attribute[[i]], cpos = m[,1])
+          str <- struc2str(x, s_attr = s_attribute[[i]], struc = strucs)
+          dt[, (s_attribute[[i]]) := str]
+        }
+        y <- dt[, sum(size), by = eval(s_attribute), with = TRUE]
+      } else {
+        dt <- rbindlist(lapply(
+          s_attribute,
+          function(s_attr){
+            df <- s_attribute_decode(
+              corpus = x@corpus, registry = x@registry_dir, data_dir = x@data_dir,
+              s_attribute = s_attr, method = "R"
+            )
+            dt <- data.table(df)
+            dt[, "struc" := 0L:(nrow(dt) - 1L)]
+            .fn <- function(.SD){
+              list(
+                cpos = .SD[["cpos_left"]]:.SD[["cpos_right"]],
+                value = .SD[["value"]]
+              )
+            }
+            dt_ext <- dt[, .fn(.SD), by = "struc", .SDcols = c("cpos_left", "cpos_right", "value")]
+            dt_ext[, "s_attr" := s_attr][, "struc" := NULL]
+            dt_ext
+          }
+        ))
+        foo <- dcast(data = dt, cpos ~ s_attr)
+        foo[, "size" := 1L]
+        y <- foo[, sum(size), by = eval(s_attribute), with = TRUE]
+        setnames(x = y, old = "V1", new = "size")
+      }
+      return(y)
+    }
     return(y)
   }
 })
@@ -120,7 +187,7 @@ setMethod("size", "character", function(x, s_attribute = NULL, verbose = TRUE, .
 
 
 #' @noRd
-setMethod("size", "slice", function(x, s_attribute = NULL, ...){
+setMethod("size", "slice", function(x, s_attribute = NULL, verbose = TRUE, ...){
   
   if ("sAttribute" %in% names(list(...))){
     lifecycle::deprecate_warn(
@@ -136,11 +203,11 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     
-    are_siblings <- siblings(
+    all_siblings <- siblings(
       corpus = x@corpus, registry = x@registry_dir,
       c(x@s_attribute_strucs, s_attribute)
     )
-    if (are_siblings){
+    if (all_siblings){
       .fn <- function(s_attr){
         str <- cl_struc2str(
           corpus = x@corpus, registry = x@registry_dir,
@@ -148,59 +215,69 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
         )
         as.nativeEnc(str, from = x@encoding) 
       }
-      tab <- data.table::as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
+      tab <- as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
       tab[, size := x@cpos[,2] - x@cpos[,1] + 1L]
       y <- tab[, sum(size), by = eval(s_attribute), with = TRUE]
     } else {
-      is_parent <- NA
-      for (s_attr in s_attribute){
-        strucs <- cl_cpos2struc(
-          corpus = x@corpus, registry = x@registry_dir,
-          s_attribute = s_attr, cpos = x@cpos[,1]
-        )
-        m <- get_region_matrix(
-          corpus = x@corpus, registry = x@registry_dir,
-          s_attribute = s_attr, strucs = strucs
-        )
-        if (all(m[,1] <= x@cpos[,1]) && all(m[,2] >= x@cpos[,2])){
-          is_parent <- TRUE
+      
+      struclist <- lapply(
+        s_attribute, 
+        function(s) cpos2struc(x = x, s_attr = s, cpos = x@cpos[,1])
+      )
+      
+      regionslist <- lapply(
+        seq_along(s_attribute),
+        function(i){
+          get_region_matrix(
+            corpus = x@corpus, registry = x@registry_dir,
+            s_attribute = s_attribute[i], strucs = struclist[[i]]
+          )
+        }
+      )
+      
+      is_parent <- sapply(
+        regionslist,
+        function(m) all(m[,1] <= x@cpos[,1]) && all(m[,2] >= x@cpos[,2])
+      )
+      
+      if (all(is_parent)){
+        tab <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
+        for (i in seq_along(struclist)){
           str <- cl_struc2str(
             corpus = x@corpus, registry = x@registry_dir,
-            s_attribute = s_attr, struc = strucs
+            s_attribute = s_attribute[[i]], struc = struclist[[i]]
           )
-          if (!exists("tab")){
-            tab <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
-          }
-          tab[, (s_attr) := as.nativeEnc(str, from = x@encoding)]
+          tab[, (s_attribute[[i]]) := as.nativeEnc(str, from = x@encoding)]
+        }
+      } else {
+        if (verbose) message("... decoding nested s-attributes at token-level (potentially slow)")
+        cpos <- ranges_to_cpos(x@cpos)
+        if (length(s_attribute) == 1L){
+          strucs <- cpos2struc(x = x, s_attr = s_attribute, cpos = cpos)
+          tab <- data.table(struc = strucs)[, .N, by = "struc"]
+          value <- struc2str(x = x, s_attr = s_attribute, struc = tab[["struc"]])
+          tab[, (s_attribute) := value][, "struc" := NULL]
+          setnames(tab, old = "N", new = "size")
+          setcolorder(tab, neworder = s_attribute)
         } else {
-          if (isTRUE(is_parent)) stop("Cannot mix parents and childs!")
-          is_parent <- FALSE
-          cpos <- ranges_to_cpos(x@cpos)
-          strucs <- cpos2struc(x = x, s_attr = s_attr, cpos = cpos)
-          
-          if (length(s_attribute) == 1L){
-            tab <- data.table(struc = strucs)[, .N, by = "struc"]
-            value <- struc2str(x = x, s_attr = s_attr, struc = tab[["struc"]])
-            tab[, (s_attr) := value][, "struc" := NULL]
-            setnames(tab, old = "N", new = "size")
-            setcolorder(tab, neworder = s_attr)
-          } else {
-            values <- struc2str(x = x, s_attr = s_attr, struc = strucs)
-            if (!exists("tab")){
-              tab <- data.table(value = values, size = 1L)
-              setnames(tab, old = "value", new = s_attr)
-            } else {
-              tab[, (s_attr) := values]
+          value_list <- lapply(
+            s_attribute,
+            function(s_attr){
+              if (verbose) message("... decoding s-attribute: ", s_attr)
+              strucs <- cpos2struc(x = x, s_attr = s_attr, cpos = cpos)
+              struc2str(x = x, s_attr = s_attr, struc = strucs)
             }
-          }
-          
+          )
+          names(value_list) <- s_attribute
+          tab <- as.data.table(value_list)[, "size" := 1L]
         }
       }
+
       y <- tab[, sum(size), by = eval(s_attribute), with = TRUE]
     }
     setnames(y, old = "V1", new = "size")
     setkeyv(y, cols = s_attribute)
-    return( y )
+    y
   }
 })
 
