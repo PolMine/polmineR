@@ -27,7 +27,8 @@ Imports:
     RcppCWB (>= 0.5.3),
     magrittr,
     knitr,
-    lifecycle
+    lifecycle,
+    rlang
 Suggests:
     markdown,
     rmarkdown,

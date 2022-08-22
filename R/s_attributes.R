@@ -305,7 +305,7 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 #'   corpus = "GERMAPARLMINI"
 #' )
 #' @importFrom RcppCWB corpus_s_attributes
-setMethod("s_attributes", "call", function(.Object, corpus){
+setMethod("s_attributes", "quosure", function(.Object, corpus){
   s_attrs <- s_attributes(corpus)
   s_attrs <- if (is.character(corpus)){
     corpus_s_attributes(corpus = corpus, registry = corpus_registry_dir(corpus))

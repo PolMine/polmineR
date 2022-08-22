@@ -290,6 +290,7 @@ setMethod("corpus", "missing", function(){
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
 #' @importFrom data.table setindexv setDT
+#' @importFrom rlang enquo eval_tidy
 #' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
 #'   and passed into a \code{grep} call for subsetting a table with the regions
@@ -300,14 +301,16 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   s_attr <- character()
 
   if (!missing(subset)){
-    expr <- substitute(subset)
+    expr <- enquo(subset)
     # The expression may also have been passed in as an unevaluated expression.
     # In this case, it is "unwrapped". Note that parent.frames looks back two
     # generations because the S4 Method inserts an additional layer to the
     # original calling environment
-    if (is.call(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE))){
-      expr <- eval(expr, envir = parent.frame(n = c(1L, 2L)))
-    }
+    
+    # if (is.call(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE))){
+    #   expr <- eval(expr, envir = parent.frame(n = c(1L, 2L)))
+    # }
+    
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
   }
@@ -376,10 +379,12 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     # Adjust the encoding of the expression to the one of the corpus. Adjusting
     # encodings is expensive, so the (small) epression will be adjusted to the
     # encoding of the corpus, not vice versa
-    if (encoding() != x@encoding)
-      expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
+    
+    # if (encoding() != x@encoding)
+    #   expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
+    
     setindexv(dt, cols = s_attr)
-    success <- try({dt <- dt[eval(expr, envir = dt)]})
+    success <- try({dt <- dt[eval_tidy(expr, data = dt)]})
     if (is(success, "try-error")) return(NULL)
   }
 
