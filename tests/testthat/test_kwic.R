@@ -166,3 +166,14 @@ test_that(
     }
   }
 )
+
+test_that(
+  "",
+  {
+    oil <- kwic("REUTERS", query = "oil", s_attributes = "id") %>%
+      highlight(list(yellow = "prices")) %>%
+      tooltips(tooltips = list(yellow = "alert"))
+    expect_true("id" %in% colnames(oil@stat))
+    
+  }
+)

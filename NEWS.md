@@ -42,6 +42,8 @@ updated. Fixed. (#220)
 creating / updating the `data.table` in the slot `stat`.
 - The `trim()` methode for `context` objects has a new argument `fn` for
 supplying a (trimming) function to be applied all match contexts.
+- Structural attributes do not disappear any more after adding tooltips to a 
+`kwic` object #218.
 
 
 polmineR 0.8.6

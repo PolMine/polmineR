@@ -4,14 +4,14 @@ NULL
 #' Add tooltips to text output.
 #' 
 #' Highlight tokens based on exact match, a regular expression or corpus
-#' position in \code{kwic} output or html document.
+#' position in `kwic` output or html document.
 #' 
-#' @param .Object A \code{html} or \code{character} object with html.
-#' @param tooltips A named \code{list} of character vectors, the names need to
-#'   match colors in the list provided to param \code{highlight}. The value of
+#' @param .Object A `html` or `character` object with html.
+#' @param tooltips A named `list` of character vectors, the names need to
+#'   match colors in the list provided to param `highlight`. The value of
 #'   the character vector is the tooltip to be displayed.
-#' @param regex Logical, whether character vector values of argument
-#'   \code{tooltips} are interpreted as regular expressions.
+#' @param regex A `logical` value, whether character vector values of argument
+#'   `tooltips` are interpreted as regular expressions.
 #' @param ... Further arguments are interpreted as assignments of tooltips to
 #'   tokens.
 #' @name tooltips
@@ -31,16 +31,25 @@ NULL
 #'   html() %>%
 #'   highlight(yellow = c("barrels", "oil", "gas")) %>%
 #'   tooltips(list(yellow = "energy"))
-setGeneric("tooltips", function(.Object, tooltips, ...) standardGeneric("tooltips"))
+setGeneric("tooltips", function(.Object, tooltips, ...){
+  standardGeneric("tooltips")
+})
+  
 
 
 
 #' @rdname tooltips
 setMethod("tooltips", "character", function(.Object, tooltips = list()){
-  if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' required but not installed")
+  
+  if (!requireNamespace("xml2", quietly = TRUE)){
+    stop("package 'xml2' required but not installed")
+  }
   doc <- xml2::read_html(.Object)
   for (color in names(tooltips)){
-    nodes <- xml2::xml_find_all(doc, xpath = sprintf('//span[@style="background-color:%s"]', color))
+    nodes <- xml2::xml_find_all(
+      doc,
+      xpath = sprintf('//span[@style="background-color:%s"]', color)
+    )
     lapply(
       nodes,
       function(node){
@@ -72,7 +81,10 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
 
 #' @rdname tooltips
 setMethod("tooltips", "html", function(.Object, tooltips = list()){
-  if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
+  
+  if (!requireNamespace("htmltools", quietly = TRUE)){
+    stop("package 'htmltools' required but not available")
+  }
   ret <- htmltools::HTML(tooltips(as.character(.Object), tooltips = tooltips))
   attr(ret, "browsable_html") <- TRUE
   ret
@@ -81,7 +93,10 @@ setMethod("tooltips", "html", function(.Object, tooltips = list()){
 
 #' @rdname tooltips
 setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
-  if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' required but not available")
+  
+  if (!requireNamespace("htmltools", quietly = TRUE)){
+    stop("package 'htmltools' required but not available")
+  }
   
   if (length(list(...)) > 0L) tooltips <- list(...)
   
@@ -91,7 +106,11 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
     c,
     lapply(
       1L:length(tooltips),
-      function(i) setNames(tooltips[[i]], rep(names(tooltips)[[i]], times = length(tooltips[[i]])))
+      function(i)
+        setNames(
+          tooltips[[i]],
+          rep(names(tooltips)[[i]], times = length(tooltips[[i]]))
+        )
       )
   )
   
@@ -99,8 +118,14 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
     pb <- txtProgressBar(min = 0L, max = length(tooltips))
     for (i in 1L:length(tooltips)){
       .Object@cpos[["word"]] <- ifelse(
-        grepl(sprintf("^(<.*?>|)%s(<.*?>|)$", unname(tooltips[[i]])), .Object@cpos[["word"]]),
-        sprintf('<span class="tooltip">%s<span class="tooltiptext">%s</span></span>', .Object@cpos[["word"]], names(tooltips)[[i]]),
+        grepl(
+          sprintf("^(<.*?>|)%s(<.*?>|)$", unname(tooltips[[i]])),
+          .Object@cpos[["word"]]
+        ),
+        sprintf(
+          '<span class="tooltip">%s<span class="tooltiptext">%s</span></span>',
+          .Object@cpos[["word"]], names(tooltips)[[i]]
+        ),
         .Object@cpos[["word"]]
       )
       setTxtProgressBar(pb, value = i)
@@ -109,17 +134,25 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
   } else {
     tips_rev <- setNames(object = names(tooltips), nm = unname(tooltips))
     if (length(names(tips_rev)) > length(unique(names(tips_rev)))){
-      tips_rev <- sapply(split(x = unname(tips_rev), f = names(tips_rev)), function(x) x[1])
+      tips_rev <- sapply(
+        split(x = unname(tips_rev), f = names(tips_rev)),
+        `[[`, 1
+      )
     }
-    words <- gsub("^(<.*?>|)(.*?)(<.*?>|)$", "\\2", .Object@cpos[["word"]], perl = TRUE)
+    words <- gsub(
+      "^(<.*?>|)(.*?)(<.*?>|)$", "\\2",
+      .Object@cpos[["word"]], perl = TRUE
+    )
     tips_vec <- tips_rev[words]
     
     .Object@cpos[["word"]] <- ifelse(
       is.na(tips_vec),
       .Object@cpos[["word"]],
-      sprintf('<span class="tooltip">%s<span class="tooltiptext">%s</span></span>', .Object@cpos[["word"]], tips_vec)
+      sprintf(
+        '<span class="tooltip">%s<span class="tooltiptext">%s</span></span>',
+        .Object@cpos[["word"]], tips_vec
+      )
     )
   }
-  .Object <- enrich(.Object, table = TRUE)
-  .Object
+  enrich(.Object, table = TRUE, s_attributes = .Object@metadata)
 })
