@@ -44,6 +44,16 @@ creating / updating the `data.table` in the slot `stat`.
 supplying a (trimming) function to be applied all match contexts.
 - Structural attributes do not disappear any more after adding tooltips to a 
 `kwic` object #218.
+- A new s-attribute "protocol_date" has been added to sample corpus
+"GERMAPARLMINI", so that sample data for nested corpus data is available. To
+prevent confusion between s-attributes "protocol_date" (at protocol-level) and
+"date" (at speaker-level), argument `s_attribute_date` is stated explicitly in
+all examples.
+- Method `size()` has been refactored to work with nested corpora.
+- Method `subset()` for `subcorpus` objects has been debugged to work with 
+nested corpora.
+
+
 
 
 polmineR 0.8.6

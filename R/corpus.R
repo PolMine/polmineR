@@ -386,9 +386,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   if (length(dots) > 0L){
     for (s in s_attr_dots){
       if (regex){
-        for (i in length(dots[[s]])){
-          dt <- dt[grep(dots[[s]][i], dt[[s]])]
-        }
+        index <- unique(unlist(lapply(dots[[s]], function(r) grep(r, dt[[s]]))))
+        dt <- dt[index]
       } else {
         if (length(dots[[s]]) == 1L){
           dt <- dt[dt[[s]] == dots[[s]]]
@@ -492,7 +491,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
         break
       }
 
-      r <- regions[[s]][strucs + 1L]
+      r <- matrix(regions[[s]][strucs + 1L,], ncol = 2)
       if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
         descendant <- FALSE
         str <- cl_struc2str(

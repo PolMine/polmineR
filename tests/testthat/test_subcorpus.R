@@ -54,21 +54,21 @@ test_that(
     expect_identical(size(p), size(sc))
     expect_identical(p@cpos, sc@cpos)
     
-    # a <- corpus("GERMAPARLMINI")
-    # who <- "Volker Kauder"
-    # sc <- subset("GERMAPARLMINI", bquote(speaker == .(who)))
-    # expect_identical(size(sc), size(partition("GERMAPARLMINI", speaker = "Volker Kauder")))
-    # 
-    # some <- c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")
-    # scs <- list()
-    # for (who in ){
-    #    scs[[who]] <- subset(a, bquote(speaker == .(who)))
-    # }
-
-    # b <- lapply(some, function(who) subset(a, bquote(speaker == .(who))))
-    # names(b) <- some
+    # check for nested data, same result irrespective from order
+    a <- corpus("GERMAPARLMINI") %>%
+      subset(protocol_date == "2009-11-11") %>%
+      subset(party == "SPD")
     
-    # expect_identical(scs, b)
+    b <- corpus("GERMAPARLMINI") %>%
+      subset(party == "SPD") %>%
+      subset(protocol_date == "2009-11-11")
+    
+    expect_identical(a@cpos, b@cpos)
+    
+    speakers <- corpus("GERMAPARLMINI") %>%
+      subset(speaker = c("Merkel", "Kauder"), regex = TRUE) %>%
+      s_attributes("speaker")
+    expect_identical(speakers, c("Angela Dorothea Merkel", "Volker Kauder"))
   }
 )
 
