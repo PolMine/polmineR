@@ -62,7 +62,7 @@ test_that(
   {
     cnt_int_total <- corpus("GERMAPARLMINI") %>% count(query = "Integration")
     sp_bundle <- corpus("GERMAPARLMINI") %>%
-      as.speeches(s_attribute_name = "speaker")
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date")
     cnt_int_pb <- count(sp_bundle, query = "Integration") %>%
       subset(Integration > 0)
     expect_equal(sum(cnt_int_pb[["TOTAL"]]), cnt_int_total[["count"]])
@@ -88,7 +88,7 @@ test_that(
       as.phrases()
     
     speeches <- corpus("GERMAPARLMINI") %>%
-      as.speeches(s_attribute_name = "speaker", progress = FALSE)
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
     
     dtm <- count(speeches, phrases = phrases, p_attribute = "word", progress = FALSE, verbose = TRUE) %>%
       as.DocumentTermMatrix(col = "count", verbose = FALSE)

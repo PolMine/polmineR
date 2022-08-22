@@ -136,18 +136,11 @@ setMethod("size", "slice", function(x, s_attribute = NULL, ...){
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     
-    # Check whether s-attributes are nested by approximation: If s-attributes
-    # have same number of values, we assume that they cover same regions.
-    s_attr_sizes <- lapply(
-      c(x@s_attribute_strucs, s_attribute),
-      function(s_attr){
-        cl_attribute_size(
-          corpus = x@corpus, registry = x@registry_dir,
-          attribute = s_attr, attribute_type = "s" 
-        )
-      }
+    are_siblings <- siblings(
+      corpus = x@corpus, registry = x@registry_dir,
+      c(x@s_attribute_strucs, s_attribute)
     )
-    if (do.call(identical, s_attr_sizes)){
+    if (are_siblings){
       .fn <- function(s_attr){
         str <- cl_struc2str(
           corpus = x@corpus, registry = x@registry_dir,

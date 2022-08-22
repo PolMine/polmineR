@@ -25,7 +25,7 @@ the character vector is the tooltip to be displayed.}
 \item{...}{Further arguments are interpreted as assignments of tooltips to
 tokens.}
 
-\item{regex}{Logical, whether character vector values of argument
+\item{regex}{A \code{logical} value, whether character vector values of argument
 \code{tooltips} are interpreted as regular expressions.}
 }
 \description{

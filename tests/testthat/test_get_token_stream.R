@@ -146,7 +146,7 @@ test_that(
   "get_token_stream() with two attributes", 
   {
     sp <- corpus("GERMAPARLMINI") %>%
-      as.speeches(s_attribute_name = "speaker", progress = FALSE)
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
     p2 <- get_token_stream(sp, p_attribute = c("word", "pos"), verbose = FALSE)
     
     spl <- strsplit(p2[[1]], "//")
@@ -172,7 +172,7 @@ test_that(
   "Check workflow to filter subcorpus_bundle",
   {
     sp <- corpus("GERMAPARLMINI") %>%
-      as.speeches(s_attribute_name = "speaker", progress = FALSE)
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
     queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
     
     phr <- corpus("GERMAPARLMINI") %>%

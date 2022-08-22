@@ -270,7 +270,10 @@ K <- highlight(K, yellow = "[Ee]urop.*", regex = TRUE)
 # Apply kwic on partition_bundle/subcorpus_bundle
 gparl_2009_11_10_speeches <- corpus("GERMAPARLMINI") \%>\%
   subset(date == "2009-11-10") \%>\%
-  as.speeches(s_attribute_name = "speaker", progress = FALSE, verbose = FALSE)
+  as.speeches(
+    s_attribute_name = "speaker", s_attribute_date = "date",
+    progress = FALSE, verbose = FALSE
+  )
 k <- kwic(gparl_2009_11_10_speeches, query = "Integration")
 }
 \references{

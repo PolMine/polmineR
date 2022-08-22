@@ -76,7 +76,10 @@ interjection or question), or whether to assume seperate speeches.}
 
 \item{progress}{A \code{logical} value, whether to show progress bar.}
 
-\item{subset}{A ´logical\verb{expression evaluated in a temporary}data.table\verb{with columns 'speaker' and 'date' to define a subset of the entire corpus to be turned into speeches. Usually faster than applying}as.speeches()\verb{on a }partition\code{or}subcorpus`.}
+\item{subset}{A \code{logical} expression evaluated in a temporary \code{data.table}
+with columns 'speaker' and 'date' to define a subset of the entire corpus
+to be turned into speeches. Usually faster than applying \code{as.speeches()} on
+a \code{partition} or \code{subcorpus}.}
 }
 \value{
 A \code{partition_bundle}, the names of the objects in the bundle are
@@ -101,13 +104,19 @@ speeches_count <- count(speeches, p_attribute = "word")
 tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
 
 bt <- partition("GERMAPARLMINI", date = "2009-10-27")
-speeches <- as.speeches(bt, s_attribute_name = "speaker")
+speeches <- as.speeches(
+  bt, 
+  s_attribute_name = "speaker",
+  s_attribute_date = "date"
+)
 summary(speeches)
-sp <- as.speeches(.Object = corpus("GERMAPARLMINI"), s_attribute_name = "speaker")
+sp <- corpus("GERMAPARLMINI") \%>\%
+  as.speeches(s_attribute_name = "speaker", s_attribute_date = "date")
 
 sp <- corpus("GERMAPARLMINI") \%>\%
   as.speeches(
     s_attribute_name = "speaker",
+    s_attribute_date = "date",
     subset = {date == as.Date("2009-11-11")},
     progress = FALSE
   )
@@ -115,6 +124,7 @@ sp <- corpus("GERMAPARLMINI") \%>\%
 sp <- corpus("GERMAPARLMINI") \%>\%
   as.speeches(
     s_attribute_name = "speaker",
+    s_attribute_date = "date",
     subset = {date == "2009-11-10" & grepl("Merkel", speaker)},
     progress = FALSE
   )

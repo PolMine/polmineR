@@ -42,7 +42,11 @@ NULL
 #' tdm <- as.TermDocumentMatrix(speeches_count, col = "count")
 #' 
 #' bt <- partition("GERMAPARLMINI", date = "2009-10-27")
-#' speeches <- as.speeches(bt, s_attribute_name = "speaker")
+#' speeches <- as.speeches(
+#'   bt, 
+#'   s_attribute_name = "speaker",
+#'   s_attribute_date = "date"
+#' )
 #' summary(speeches)
 setGeneric("as.speeches", function(.Object, ...) standardGeneric("as.speeches"))
 
@@ -186,17 +190,19 @@ setMethod("as.speeches", "subcorpus", function(
 )
 
 
-#' @param subset A ´logical` expression evaluated in a temporary `data.table` with
-#'   columns 'speaker' and 'date' to define a subset of the entire corpus to be
-#'   turned into speeches. Usually faster than applying `as.speeches()` on a 
-#'   `partition` or `subcorpus`.
+#' @param subset A `logical` expression evaluated in a temporary `data.table`
+#'   with columns 'speaker' and 'date' to define a subset of the entire corpus
+#'   to be turned into speeches. Usually faster than applying `as.speeches()` on
+#'   a `partition` or `subcorpus`.
 #' @rdname as.speeches
 #' @examples
-#' sp <- as.speeches(.Object = corpus("GERMAPARLMINI"), s_attribute_name = "speaker")
+#' sp <- corpus("GERMAPARLMINI") %>%
+#'   as.speeches(s_attribute_name = "speaker", s_attribute_date = "date")
 #' 
 #' sp <- corpus("GERMAPARLMINI") %>%
 #'   as.speeches(
 #'     s_attribute_name = "speaker",
+#'     s_attribute_date = "date",
 #'     subset = {date == as.Date("2009-11-11")},
 #'     progress = FALSE
 #'   )
@@ -204,6 +210,7 @@ setMethod("as.speeches", "subcorpus", function(
 #' sp <- corpus("GERMAPARLMINI") %>%
 #'   as.speeches(
 #'     s_attribute_name = "speaker",
+#'     s_attribute_date = "date",
 #'     subset = {date == "2009-11-10" & grepl("Merkel", speaker)},
 #'     progress = FALSE
 #'   )

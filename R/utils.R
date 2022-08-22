@@ -357,3 +357,27 @@ str2id <- function(x, p_attribute, str){
     str = as.corpusEnc(str, corpusEnc = x@encoding)
   )
 }
+
+
+#' @param corpus The id of a CWB corpus.
+#' @param registry Path to the registry directory.
+#' @param ... Structural attributes (set of length-one character vectors).
+#' @noRd
+siblings <- function(corpus, registry, ...){
+  s_attrs <- unlist(list(...))
+  stopifnot(all(s_attrs %in% s_attributes(corpus)))
+  
+  # If s-attributes have same number of values, we assume that they cover same
+  # regions.
+
+  s_attr_sizes <- lapply(
+    s_attrs,
+    function(s_attr){
+      cl_attribute_size(
+        corpus = corpus, registry = registry,
+        attribute = s_attr, attribute_type = "s" 
+      )
+    }
+  )
+  do.call(identical, s_attr_sizes)
+}

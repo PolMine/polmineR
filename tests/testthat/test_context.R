@@ -54,7 +54,7 @@ test_that(
     positive <- "gute"
     
     scb <- corpus("GERMAPARLMINI") %>%
-      as.speeches(, s_attribute_name = "speaker", progress = FALSE)
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
 
     p <- polmineR::context(
       scb, query = q, p_attribute = "word", positivelist = positive,

@@ -38,7 +38,7 @@ test_that(
 test_that(
   "identity of as.TermDocumentMatrix and as.DocumentTermMatrix",
   {
-    sp <- as.speeches("GERMAPARLMINI", s_attribute_name = "speaker")
+    sp <- as.speeches("GERMAPARLMINI", s_attribute_name = "speaker", s_attribute_date = "date")
     
     tdm <- as.TermDocumentMatrix(sp, p_attribute = "word")
     dtm <- as.DocumentTermMatrix(sp, p_attribute = "word")

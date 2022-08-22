@@ -195,7 +195,7 @@ ts_list <- get_token_stream(pb)
 
 # Use two p-attributes
 sp <- corpus("GERMAPARLMINI") \%>\%
-  as.speeches(s_attribute_name = "speaker", progress = FALSE)
+  as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
 p2 <- get_token_stream(sp, p_attribute = c("word", "pos"), verbose = FALSE)
 
 # Apply filter

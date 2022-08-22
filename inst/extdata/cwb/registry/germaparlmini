@@ -1,5 +1,5 @@
 ##
-## registry entry for corpus GermaParlMini
+## registry entry for corpus GERMAPARLMINI
 ##
 
 # long descriptive name for the corpus
@@ -7,16 +7,18 @@ NAME "GermaParlMini - excerpt from the GermaParl corpus of plenary protocols of 
 # corpus ID (must be lowercase in registry!)
 ID   germaparlmini
 # path to binary data files
-HOME /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/germaparlmini
-# optional info file (displayed by "info;" command in CQP)
-INFO /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/extdata/cwb/indexed_corpora/germaparlmini/info.md
+HOME /Users/andreasblatte/Lab/github/polmineR/inst/extdata/cwb/indexed_corpora/germaparlmini
+# optional info file (displayed by ",info;" command in CQP)
+INFO /Users/andreasblatte/Lab/github/polmineR/inst/extdata/cwb/indexed_corpora/germaparlmini/info.md
 
 # corpus properties provide additional information about the corpus:
-##:: charset  = "latin1" # character encoding of corpus data
-##:: language = "de"     # insert ISO code for language (de, en, fr, ...)
+##:: charset = "latin1"
+##:: language = "de"
 ##:: type = "plpr"
 ##:: version = "0.0.1"
 ##:: build_date = "2019-02-23"
+#========================================================================#
+
 
 ##
 ## p-attributes (token annotations)
@@ -25,13 +27,12 @@ INFO /Library/Frameworks/R.framework/Versions/3.5/Resources/library/polmineR/ext
 ATTRIBUTE word
 ATTRIBUTE pos
 
-
 ##
-## s-attributes (structural markup)
+## s-attributes
 ##
 
 STRUCTURE interjection
 STRUCTURE date
 STRUCTURE party
 STRUCTURE speaker
-
+STRUCTURE protocol_date
