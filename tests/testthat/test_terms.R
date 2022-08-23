@@ -16,6 +16,13 @@ test_that("terms-method for partition, without/with regex", {
   expect_equal(y, c("oil", "of", "one", "over", "plans", "prices", "pumping"))
 })
 
+test_that("terms-method for subcorpus", {
+  sc <- corpus("REUTERS") %>% subset(places = "kuwait")
+  y <- terms(sc, p_attribute = "word", regex = c("^o.*$", "^p.*"))
+  expect_equal(y, c("oil", "of", "one", "over", "plans", "prices", "pumping"))
+})
+
+
 test_that("terms-method for character/corpus, with regex", {
   y <- terms("REUTERS", p_attribute = "word")
   expect_equal(nchar(paste(y, collapse = "")), 7451)
