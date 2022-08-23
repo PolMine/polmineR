@@ -9,6 +9,10 @@
 \alias{encoding,character-method}
 \alias{encoding,corpus-method}
 \alias{encoding,subcorpus-method}
+\alias{encoding,call-method}
+\alias{encoding,quosure-method}
+\alias{encoding<-,call-method}
+\alias{encoding<-,quosure-method}
 \title{Get and set encoding.}
 \usage{
 encoding(object)
@@ -26,6 +30,14 @@ encoding(object) <- value
 \S4method{encoding}{corpus}(object)
 
 \S4method{encoding}{subcorpus}(object)
+
+\S4method{encoding}{call}(object)
+
+\S4method{encoding}{quosure}(object)
+
+\S4method{encoding}{call}(object) <- value
+
+\S4method{encoding}{quosure}(object) <- value
 }
 \arguments{
 \item{object}{A \code{textstat} or \code{bundle} object (or an object

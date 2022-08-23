@@ -38,6 +38,7 @@ setGeneric("encoding", function(object) standardGeneric("encoding"))
 
 
 #' @rdname encoding
+#' @exportMethod encoding<-
 setGeneric("encoding<-", function(object, value) standardGeneric("encoding<-"))
 
 #' @details `encoding()` uses `l10n_info()` and `localeToCharset()` (in this
@@ -64,6 +65,7 @@ setMethod("encoding", "corpus", function(object) object@encoding)
 
 #' @rdname encoding
 setMethod("encoding", "subcorpus", function(object) callNextMethod())
+
 
 #' Conversion between corpus and native encoding.
 #'
@@ -147,7 +149,31 @@ as.corpusEnc <- function(x, from = encoding(), corpusEnc){
   y
 }
 
-.recode_call <- function(x, from = encoding(), to){
+
+#' @rdname encoding
+setMethod("encoding", "call", function(object){
+  .fn <- function(x){
+    if (is.call(x)){
+      return( lapply(x, .fn) )
+    } else if (is.character(x)){
+      return( Encoding(x) )
+    } else {
+      return(NULL)
+    }
+  }
+  y <- unique(unlist(.fn(object)))
+  if ("unknown" %in% y) y <- y[-which(y == "unknown")]
+  if (length(y) == 0L) y <- "unknown"
+  y
+})
+
+#' @rdname encoding
+setMethod("encoding", "quosure", function(object){
+  encoding(quo_get_expr(object))
+})
+
+
+.recode <- function(x, from = encoding(), to){
   .fn <- function(x){
     if (is.call(x)){
       return( as.call(lapply(x, .fn)) )
@@ -159,3 +185,24 @@ as.corpusEnc <- function(x, from = encoding(), corpusEnc){
   }
   .fn(x)
 }
+
+
+#' @rdname encoding
+setReplaceMethod("encoding", signature = "call", function(object, value){
+  enc <- encoding(object)
+  if (enc != "unknown") object <- .recode(x = object, from = enc, to = value)
+  object
+})
+
+#' @importFrom rlang quo_set_expr
+#' @rdname encoding
+setReplaceMethod("encoding", signature = "quosure", function(object, value){
+  enc <- encoding(object)
+  if (enc != "unknown"){
+    expr <- quo_get_expr(object)
+    encoding(expr) <- value
+    object <- quo_set_expr(object, expr = expr)
+  }
+  object
+})
+

@@ -268,20 +268,15 @@ setMethod("corpus", "missing", function(){
 #'
 #' # providing the value for s-attribute as a variable
 #' who <- "Volker Kauder"
-#' sc <- subset(a, quote(speaker == who))
+#' sc <- subset(a, quote(speaker == !!who))
 #'
-#' # use bquote for quasiquotation when using a variable for subsetting in a loop
-#' for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
-#'    sc <- subset(a, bquote(speaker == .(who)))
-#'    if (interactive()) print(size(sc))
-#' }
-#'
-#' # equivalent procedure with lapply (DOES NOT WORK YET)
-#' b <- lapply(
+#' # quoting and quosures necessary when programming against subset
+#' # note how variable who needs to be handled
+#' gparl <- corpus("GERMAPARLMINI")
+#' subcorpora <- lapply(
 #'   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
-#'   function(who) subset(a, bquote(speaker == .(who)))
+#'   function(who) subset(gparl, speaker == !!who)
 #' )
-#' sapply(b, size)
 #' @param x A \code{corpus} or \code{subcorpus} object. A corpus may also
 #'   specified by a length-one \code{character} vector.
 #' @param ... An expression that will be used to create a subcorpus from
@@ -307,10 +302,13 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     # generations because the S4 Method inserts an additional layer to the
     # original calling environment
     
-    # if (is.call(try(eval(expr, envir = parent.frame(n = c(1L, 2L))), silent = TRUE))){
-    #   expr <- eval(expr, envir = parent.frame(n = c(1L, 2L)))
-    # }
     
+    evaluated <- tryCatch(
+      eval_tidy(expr),
+      error = function(e) FALSE
+    )
+    if (is.call(evaluated)) expr <- eval_tidy(expr)
+
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
   }
@@ -380,8 +378,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     # encodings is expensive, so the (small) epression will be adjusted to the
     # encoding of the corpus, not vice versa
     
-    # if (encoding() != x@encoding)
-    #   expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
+    if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
     
     setindexv(dt, cols = s_attr)
     success <- try({dt <- dt[eval_tidy(expr, data = dt)]})
@@ -438,10 +435,14 @@ setMethod("subset", "character", function(x, ...){
 #' @rdname subset
 #' @importFrom RcppCWB s_attr_regions
 setMethod("subset", "subcorpus", function(x, subset, ...){
-  expr <- substitute(subset)
-
-  if (encoding() != x@encoding)
-    expr <- .recode_call(x = expr, from = encoding(), to = x@encoding)
+  expr <- enquo(subset)
+  evaluated <- tryCatch(
+    eval_tidy(expr),
+    error = function(e) FALSE
+  )
+  if (is.call(evaluated)) expr <- eval_tidy(expr)
+  
+  if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
 
   s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
   dt <- data.table(struc = x@strucs, cpos_left = x@cpos[,1], cpos_right = x@cpos[,2])
@@ -558,8 +559,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
   }
   
   setindexv(dt, cols = s_attr)
-  dt_min <- dt[eval(expr, envir = dt)]
-
+  
+  success <- try({dt_min <- dt[eval_tidy(expr, data = dt)]})
+  if (is(success, "try-error")) return(NULL)
+  
   y <- new(
     "subcorpus",
     corpus = x@corpus,

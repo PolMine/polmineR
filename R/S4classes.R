@@ -1,6 +1,7 @@
 #' @include polmineR.R
 NULL
 
+
 #' Corpus class initialization
 #' 
 #' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data

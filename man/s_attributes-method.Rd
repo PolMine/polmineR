@@ -9,6 +9,7 @@
 \alias{s_attributes,partition-method}
 \alias{s_attributes,subcorpus-method}
 \alias{s_attributes,call-method}
+\alias{s_attributes,quosure-method}
 \alias{s_attributes,remote_corpus-method}
 \alias{s_attributes,remote_partition-method}
 \alias{s_attributes,data.table-method}
@@ -27,6 +28,8 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{subcorpus}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
 \S4method{s_attributes}{call}(.Object, corpus)
+
+\S4method{s_attributes}{quosure}(.Object, corpus)
 
 \S4method{s_attributes}{remote_corpus}(.Object, ...)
 
@@ -93,11 +96,12 @@ If the corpus is based on a nested XML structure, the order of items on the
 first s-attribute as the benchmark and assume that further s-attributes are
 XML ancestors of the node.
 
-If \code{.Object} is a call, the \code{s_attributes}-method will
-return a character vector with the s-attributes occurring in the call. This
-usage is relevant internally to implement the \code{subset} method to
-generate a \code{subcorpus} using non-standard evaluation. Usually it will
-not be relevant in an interactive session.
+If \code{.Object} is a \code{call} or a \code{quosure} (defined in the rlang
+package), the \code{s_attributes}-method will return a \code{character} vector with
+the s-attributes occurring in the call. This usage is relevant internally
+to implement the \code{subset} method to generate a \code{subcorpus} using
+non-standard evaluation. Usually it will not be relevant in an interactive
+session.
 }
 \examples{
 use("polmineR")
@@ -116,6 +120,12 @@ s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI")
 s_attributes(quote(speaker != "Angela Merkel"), corpus = "GERMAPARLMINI")
 s_attributes(
   quote(speaker == "Angela Merkel" & date == "2009-10-28"),
+  corpus = "GERMAPARLMINI"
+)
+
+# Get s-attributes from quosure
+s_attributes(
+  rlang::new_quosure(quote(grep("Merkel", speaker))),
   corpus = "GERMAPARLMINI"
 )
 }

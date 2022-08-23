@@ -52,8 +52,14 @@ all examples.
 - Method `size()` has been refactored to work with nested corpora.
 - Method `subset()` for `subcorpus` objects has been debugged to work with 
 nested corpora.
-
-
+- Method `subset()` would not work reliably with argument `regex` if more than
+one expression is passed #212. Debugged.
+- Method `encoding()` and replace method `encoding<-` are defined for `call`
+and `quosure` objects to get and adjust the encoding, replacing a previously
+unexported function `.recode_call()`.
+- The `subset()` methods for `corpus` and `subcorpus` objects now handle
+expressions for subsetting as quosures, laying the ground to program against
+subset(), see respective update of the examples, #212.
 
 
 polmineR 0.8.6

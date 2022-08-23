@@ -21,6 +21,7 @@ NULL
 
 
 setOldClass("htmlwidget")
+setOldClass("quosure")
 
 
 #' polmineR-package

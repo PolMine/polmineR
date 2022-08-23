@@ -286,13 +286,14 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 })
 
 
-#' @details If \code{.Object} is a call, the \code{s_attributes}-method will
-#'   return a character vector with the s-attributes occurring in the call. This
-#'   usage is relevant internally to implement the \code{subset} method to
-#'   generate a \code{subcorpus} using non-standard evaluation. Usually it will
-#'   not be relevant in an interactive session.
+#' @details If `.Object` is a `call` or a `quosure` (defined in the rlang
+#'   package), the `s_attributes`-method will return a `character` vector with
+#'   the s-attributes occurring in the call. This usage is relevant internally
+#'   to implement the `subset` method to generate a `subcorpus` using
+#'   non-standard evaluation. Usually it will not be relevant in an interactive
+#'   session.
 #' @rdname s_attributes-method
-#' @param corpus A \code{corpus}-object or a length one character vector
+#' @param corpus A `corpus`-object or a length one character vector
 #'   denoting a corpus.
 #' @examples
 #' 
@@ -304,8 +305,14 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...
 #'   quote(speaker == "Angela Merkel" & date == "2009-10-28"),
 #'   corpus = "GERMAPARLMINI"
 #' )
+#' 
+#' # Get s-attributes from quosure
+#' s_attributes(
+#'   rlang::new_quosure(quote(grep("Merkel", speaker))),
+#'   corpus = "GERMAPARLMINI"
+#' )
 #' @importFrom RcppCWB corpus_s_attributes
-setMethod("s_attributes", "quosure", function(.Object, corpus){
+setMethod("s_attributes", "call", function(.Object, corpus){
   s_attrs <- s_attributes(corpus)
   s_attrs <- if (is.character(corpus)){
     corpus_s_attributes(corpus = corpus, registry = corpus_registry_dir(corpus))
@@ -315,7 +322,8 @@ setMethod("s_attributes", "quosure", function(.Object, corpus){
       registry = corpus@registry_dir
     )
   }
-  # for the following recursive function, see http://adv-r.had.co.nz/Expressions.html
+  # for the following recursive function,
+  # see http://adv-r.had.co.nz/Expressions.html
   .fn <- function(x){
     if (is.call(x)){
       y <- lapply(x, .fn)
@@ -327,7 +335,7 @@ setMethod("s_attributes", "quosure", function(.Object, corpus){
         if (!exists(char)){
           warning(
             sprintf(
-              "expression includes undefined symbol that does not refer to s-attribute: %s",
+              "expression includes undefined symbol that is not a s-attribute: %s",
               char
             )
           )
@@ -340,6 +348,13 @@ setMethod("s_attributes", "quosure", function(.Object, corpus){
     unique(unlist(y))
   }
   .fn(.Object)
+})
+
+
+#' @rdname s_attributes-method
+#' @importFrom rlang quo_get_expr
+setMethod("s_attributes", "quosure", function(.Object, corpus){
+  s_attributes(quo_get_expr(.Object), corpus = corpus)
 })
 
 

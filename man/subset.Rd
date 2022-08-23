@@ -72,20 +72,15 @@ sc <- subset(a, speaker = "Merkel", date = "2009-10-28", regex = TRUE)
 
 # providing the value for s-attribute as a variable
 who <- "Volker Kauder"
-sc <- subset(a, quote(speaker == who))
+sc <- subset(a, quote(speaker == !!who))
 
-# use bquote for quasiquotation when using a variable for subsetting in a loop
-for (who in c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")){
-   sc <- subset(a, bquote(speaker == .(who)))
-   if (interactive()) print(size(sc))
-}
-
-# equivalent procedure with lapply (DOES NOT WORK YET)
-b <- lapply(
+# quoting and quosures necessary when programming against subset
+# note how variable who needs to be handled
+gparl <- corpus("GERMAPARLMINI")
+subcorpora <- lapply(
   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
-  function(who) subset(a, bquote(speaker == .(who)))
+  function(who) subset(gparl, speaker == !!who)
 )
-sapply(b, size)
 }
 \seealso{
 The methods applicable for the \code{subcorpus} object resulting from

@@ -64,7 +64,7 @@ test_that(
 
 
 test_that(
-  "get s-attributes in a call",
+  "get s-attributes in a call or a quosure",
   {
     expect_equal(
       s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI"),
@@ -81,5 +81,14 @@ test_that(
       ),
       c("speaker", "date")
     )
+    
+    expect_equal(
+      s_attributes(
+        rlang::new_quosure(quote(grep("Merkel", speaker))),
+        corpus = "GERMAPARLMINI"
+      ),
+      "speaker"
+    )
+    
   }
 )
