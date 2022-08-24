@@ -69,6 +69,8 @@ misinterpreted as formatting instructions. Fixes #166.
 Addresses #171.
 - The ability of `cooccurrences()` (and `context()`) to process more than one
 p-attribute has been lost temporarily. Fixed. #208.
+- When applying `as.speeches()` on a `subcorpus`, the date may have been missing
+from the object names. Fixed. #219
 
 
 polmineR 0.8.6
