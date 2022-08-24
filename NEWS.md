@@ -76,6 +76,8 @@ developed now. Indexing with double brackets, suppling multiple values for `i`
 is deprecated. The aim is a consistent behavior that a `bundle` indexed by `[`
 will always return a `bundle`, and indexing with `[[` always gets a single object
 from the list of objects. #214
+- Fixed an issue that `minNchar` in the `noise()` method would work exactly the 
+way opposite to the way intended #211.
 
 
 polmineR 0.8.6

@@ -84,22 +84,23 @@ setMethod(
     noiseList <- list()
     if (!is.null(stopwordsLanguage)){
       .message("stopwords", verbose = verbose)
-      noiseList[["stopwords"]] <- .Object[which(.Object %in% tm::stopwords(stopwordsLanguage))]
+      i <- which(.Object %in% tm::stopwords(stopwordsLanguage))
+      noiseList[["stopwords"]] <- .Object[i]
     }
     if (!is.null(specialChars)){
       .message("specialCharsRegex", verbose = verbose)
-      noiseList[["specialChars"]] <- .Object[which(!c(1:length(.Object)) %in% grep(specialChars, .Object))]  
+      noiseList[["specialChars"]] <- unique(grep(specialChars, .Object, value = TRUE))
     }
     if (!is.null(numbers)){
       .message("numbers", verbose = verbose)
-      noiseList[["numbers"]] <- grep(numbers, .Object, value=T)
+      noiseList[["numbers"]] <- unique(grep(numbers, .Object, value = TRUE))
     }
     if (!is.null(minNchar)){
       stopifnot(is.numeric(minNchar))
       if (minNchar <= 1) stop("minNchar needs to be greater than 1")
       terms_to_remove <- which(nchar(.Object) < minNchar)
       noiseList[["minNchar"]] <- if (length(terms_to_remove) > 0L)
-        .Object[-terms_to_remove]
+        .Object[terms_to_remove]
       else
         .Object
     }
