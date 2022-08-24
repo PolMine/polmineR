@@ -13,6 +13,13 @@ test_that(
     y <- cooccurrences("REUTERS", query = '"barrel.*"', p_attribute = "word")
     expect_equal(subset(y, !is.na(ll))[["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
     
+    # handle more than one p-attribute
+    p_attrs <- c("word", "pos")
+    dt <- corpus("GERMAPARLMINI") %>%
+      cooccurrences(query = "Arbeit", p_attribute = p_attrs) %>%
+      format()
+    expect_true(all(p_attrs %in% colnames(dt)))
+
     expect_equal(
       cooccurrences("REUTERS", query = "asdfasdf", p_attribute = "word"),
       NULL
@@ -22,6 +29,8 @@ test_that(
       cooccurrences("REUTERS", query = '"asdfasdfasdfasd.*"', cqp = TRUE),
       NULL
     )
+    
+    
   }
 )
 

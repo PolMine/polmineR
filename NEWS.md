@@ -67,6 +67,9 @@ misinterpreted as formatting instructions. Fixes #166.
 - The messages issued by `check_cqp_query()` now include a hint that argument 
 `check` can be used to omit checking the CQP syntax to prevent false positives.
 Addresses #171.
+- The ability of `cooccurrences()` (and `context()`) to process more than one
+p-attribute has been lost temporarily. Fixed. #208.
+
 
 polmineR 0.8.6
 ==============

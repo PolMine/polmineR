@@ -262,20 +262,34 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
     right <- 0L
   }
   
+  regdir <- corpus_registry_dir(corpus)
   cpos_matrix <- region_matrix_context(
     corpus = corpus,
     matrix = .Object,
     s_attribute = s_attr,
-    p_attribute = p_attribute,
+    p_attribute = p_attribute[1],
     left = left, right = right,
     boundary = boundary,
-    registry = corpus_registry_dir(corpus)
+    registry = regdir
   )
   cpos_dt <- as.data.table(cpos_matrix)
   
   colnames(cpos_dt) <- c(
-    "position", "cpos", "match_id", paste(p_attribute, "id", sep = "_")
+    "position", "cpos", "match_id", paste(p_attribute[1], "id", sep = "_")
   )
+  
+  # region_matrix_context can only handle one p-attribute.
+  # Add ids for further p-attributes now
+  if (length(p_attribute) > 1L){
+    for (i in 2L:length(p_attribute)){
+      ids <- cl_cpos2id(
+        corpus = corpus, registry = regdir,
+        p_attribute = p_attribute[i], cpos = cpos_dt[["cpos"]]
+      )
+      cpos_dt[, (paste(p_attribute[i], "id", sep = "_")) := ids]
+    }
+  }
+
   setcolorder(cpos_dt, c("match_id", "cpos"))
   
   retval <- as(corpus(corpus), "context")
