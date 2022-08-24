@@ -48,13 +48,20 @@ is.cqp <- function(query){
 #' check_cqp_query("'Integration.*") # FALSE, closing quotation mark is missing
 #' check_cqp_query(c("'Integration.*", '"Integration.*')) # FALSE too
 check_cqp_query <- function(query, warn = TRUE){
+  
+  disclaimer <- paste(
+    "If this is a false positive, omit check of the query syntax by setting", 
+    "argument `check` to `FALSE`."
+  )
+  
   msg <- paste(c(
     "An issue occurred when checking query: %s\n",
     paste(
       "Number of quotation marks is not divisable by 2:",
       "Opening quotation marks are not matched by closing quotation marks, or vice versa.",
       "Aborting to avoid a potential crash of CQP and the entire R session.",
-      "Please check query.", collapse = " "
+      "Please check query.", disclaimer,
+      collapse = " "
     )
   ), collapse = "")
   
@@ -68,11 +75,19 @@ check_cqp_query <- function(query, warn = TRUE){
       if (!query_ok && isTRUE(warn)) warning(sprintf(msg, q))
       if (length(which(chars == '(')) != length(which(chars == ')'))){
         query_ok <- FALSE
-        if (isTRUE(warn)) warning("Opening brackets are not matched by closing brackets in CQP query: ", q)
+        if (isTRUE(warn))
+          warning(
+            "Opening brackets are not matched by closing brackets in CQP query: ",
+            q, " ", disclaimer
+          )
       }
       if (length(which(chars == '[')) != length(which(chars == ']'))){
         query_ok <- FALSE
-        if (isTRUE(warn)) warning("Number of opening squarebrackets are not matched by closing brackets in CQP query: ", q)
+        if (isTRUE(warn))
+          warning(
+            "Number of opening square brackets are not matched by closing brackets in CQP query: ",
+            q, " ", disclaimer
+          )
       }
       
       query_ok

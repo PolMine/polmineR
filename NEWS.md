@@ -64,7 +64,9 @@ subset(), see respective update of the examples, #212.
 - New option `polmineR.mdsub` configures substitutions that are applied on
 markdown documents to prevent presence of characters that would be
 misinterpreted as formatting instructions. Fixes #166.
-
+- The messages issued by `check_cqp_query()` now include a hint that argument 
+`check` can be used to omit checking the CQP syntax to prevent false positives.
+Addresses #171.
 
 polmineR 0.8.6
 ==============
