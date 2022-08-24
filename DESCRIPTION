@@ -28,8 +28,7 @@ Imports:
     magrittr,
     knitr,
     lifecycle,
-    rlang,
-    dplyr
+    rlang
 Suggests:
     markdown,
     rmarkdown,
