@@ -60,6 +60,7 @@ get_token_stream(.Object, ...)
   collapse = NULL,
   cpos = FALSE,
   decode = TRUE,
+  beautify = FALSE,
   verbose = TRUE,
   progress = FALSE,
   mc = FALSE,

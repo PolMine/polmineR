@@ -166,6 +166,7 @@ setAs(from = "list", to = "bundle", def = function(from){
     new_object_class,
     objects = setNames(from, nm = unlist(unname(lapply(from, function(x) x@name)))),
     corpus = unique(unlist(lapply(from, function(x) x@corpus))),
+    registry_dir = path(unique(unlist(lapply(from, function(x) x@registry_dir)))),
     encoding = unique(unlist(lapply(from, function(x) x@encoding)))
   )
 })

@@ -95,6 +95,7 @@ NULL
 #'   get_token_stream(p_attribute = "word")
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
+
 #' @inheritParams decode
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
@@ -132,18 +133,9 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
     
     if (beautify){
       whitespace <- rep(collapse, times = length(.Object))
-      if ("pos" %in% p_attributes(corpus)){
-        pos <- cl_cpos2str(
-          corpus = corpus, registry = corpus_registry_dir(corpus),
-          p_attribute = "pos", cpos = .Object
-        )
-        whitespace[grep("\\$[\\.;,:!?]", pos, perl = TRUE)] <- ""
-      } else {
-        whitespace[grep("^[\\.;,:!?]$", tokens, perl = TRUE)] <- ""
-      }
-      whitespace[grep("\\)", tokens, perl = TRUE)] <- ""
-      whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
       whitespace[1] <- ""
+      whitespace[grep("^[\\.;,:!?\\)]$", tokens, perl = TRUE)] <- ""
+      whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
       tokens <- paste(paste(whitespace, tokens, sep = ""), collapse = "")
     } else {
       tokens <- paste(tokens, collapse = collapse)  
@@ -249,13 +241,13 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   progress = FALSE,
 #'   verbose = FALSE
 #' )
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
   if (verbose) message("... creating vector of document ids")
   sizes <- sapply(.Object@objects, slot, "size")
   id_list <- mapply(rep, seq_along(.Object), sizes)
   dt <- data.table(obj_id = do.call(c, id_list))
-  rm(id_list, sizes); gc()
+  rm(id_list); gc()
   
   if (verbose) message("... get region matrices and corpus positions")
   region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
@@ -269,7 +261,18 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     )
     if (isTRUE(decode)){
       tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
-      dt[, (p_attr) := iconv(x = tokens, from = .Object@encoding, to = encoding())]
+      tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
+      
+      if (beautify){
+        whitespace <- rep(" ", times = length(tokens))
+        whitespace[1] <- ""
+        whitespace[cumsum(sizes[1:(length(sizes) - 1L)]) + 1L] <- ""
+        whitespace[grep("^[\\.;,:!?\\)]$", tokens, perl = TRUE)] <- ""
+        whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
+        tokens <- paste(whitespace, tokens, sep = "")
+      }
+
+      dt[, (p_attr) := tokens]
       rm(ids, tokens); gc()
     } else {
       dt[, (p_attr) := ids]
@@ -334,6 +337,8 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     
     if (isFALSE(decode))
       stop("cannot collapse tokens when decode = FALSE")
+    
+    if (isTRUE(beautify)) collapse <- ""
     
     y <- if (progress){
       pblapply(y, function(x) stringi::stri_c(x, collapse = collapse), cl = mc)
