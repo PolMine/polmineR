@@ -147,7 +147,7 @@ setClass(
 #' @slot encoding The encoding of the corpus.
 #' 
 #' @param x a bundle object
-#' @param i An `integer` value to index a bundle object.
+#' @param i `integer` or `character` values for indexing a bundle object.
 #' @param object A `bundle` object.
 #' @param size number of items to choose to generate a sample
 #' @param ... Further parameters
@@ -160,16 +160,14 @@ setClass(
 #' @docType class
 #' @author Andreas Blaette
 #' @examples
-#' parties <- s_attributes("GERMAPARLMINI", "party")
-#' parties <- parties[-which(parties == "NA")]
 #' party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' 
 #' length(party_bundle)
 #' names(party_bundle)
 #' get_corpus(party_bundle)
+#' 
 #' party_bundle <- enrich(party_bundle, p_attribute = "word")
 #' summary(party_bundle)
-#' parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
-#' summary(parties_big)
 setClass(
   "bundle",
   slots = c(
@@ -1169,7 +1167,6 @@ setClass(
 #' @param x a `partition_bundle` object
 #' @param .Object a `partition_bundle` object
 #' @param object a `partition_bundle` object
-#' @param i integer index
 #' @param s_attribute the s-attribute to use
 #' @param height height
 #' @param ... further parameters

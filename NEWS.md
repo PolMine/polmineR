@@ -71,6 +71,11 @@ Addresses #171.
 p-attribute has been lost temporarily. Fixed. #208.
 - When applying `as.speeches()` on a `subcorpus`, the date may have been missing
 from the object names. Fixed. #219
+- Functionality for indexing `bundle` objects with single square brackets is
+developed now. Indexing with double brackets, suppling multiple values for `i`
+is deprecated. The aim is a consistent behavior that a `bundle` indexed by `[`
+will always return a `bundle`, and indexing with `[[` always gets a single object
+from the list of objects. #214
 
 
 polmineR 0.8.6

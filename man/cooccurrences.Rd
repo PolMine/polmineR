@@ -214,7 +214,8 @@ interactive_table <- cooccurrences("REUTERS", query = "oil") \%>\%
   )
 if (interactive()) show(interactive_table)
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
-pb_min <- pb[[ count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]] ]]
+ps <- count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]]
+pb_min <- pb[ps]
 y <- cooccurrences(pb_min, query = "Deutschland")
 if (interactive()) y[[1]]
 if (interactive()) y[[2]]

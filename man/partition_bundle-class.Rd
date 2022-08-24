@@ -30,8 +30,6 @@
 
 \S4method{merge}{partition_bundle}(x, name = "", verbose = FALSE)
 
-\S4method{[}{partition_bundle,ANY,ANY,ANY}(x, i)
-
 \S4method{barplot}{partition_bundle}(height, ...)
 
 \S4method{as.partition_bundle}{list}(.Object, ...)
@@ -54,8 +52,6 @@ flatten(object)
 \item{name}{the name for the new partition}
 
 \item{verbose}{logical}
-
-\item{i}{integer index}
 
 \item{height}{height}
 
@@ -81,9 +77,6 @@ The \code{merge}-method aggregates several partitions into one partition. The
 prerequisite for this function to work properly is that there are no
 overlaps of the different partitions that are to be summarized.
 Encodings and the root node need to be identical, too.
-
-Using brackets can be used to retrieve the count for a token from the
-\code{partition} objects in a \code{partition_bundle}.
 }
 \section{Slots}{
 

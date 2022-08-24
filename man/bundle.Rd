@@ -78,7 +78,7 @@
 
 \item{e2}{object 2}
 
-\item{i}{An \code{integer} value to index a bundle object.}
+\item{i}{\code{integer} or \code{character} values for indexing a bundle object.}
 
 \item{name}{The name of an object in the \code{bundle} object.}
 
@@ -115,22 +115,23 @@ length 1 \code{character} vector.}
 }}
 
 \examples{
-parties <- s_attributes("GERMAPARLMINI", "party")
-parties <- parties[-which(parties == "NA")]
 party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+
 length(party_bundle)
 names(party_bundle)
 get_corpus(party_bundle)
+
 party_bundle <- enrich(party_bundle, p_attribute = "word")
 summary(party_bundle)
-parties_big <- party_bundle[[c("CDU_CSU", "SPD")]]
-summary(parties_big)
-\dontrun{
-# not working yet
-b <- corpus("REUTERS") \%>\% split(s_attribute = "id")
-b[1:3]
-b[-1]
-}
+
+# Indexing bundle objects
+reu <- corpus("REUTERS") \%>\% split(s_attribute = "id")
+reu[1:3]
+reu[-1]
+reu[-(1:10)]
+reu["127"]
+reu[c("127", "273")]
+
 p <- partition("GERMAPARLMINI", date = "2009-11-11")
 pb <- partition_bundle(p, s_attribute = "party")
 names(pb)

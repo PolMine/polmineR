@@ -14,7 +14,7 @@ test_that(
     expect_equal(sum(unname(unlist(lapply(scb@objects, size)))), size("GERMAPARLMINI"))
     expect_equal(all(names(scb) %in% names(pb)), TRUE)
     
-    pb <- pb[[names(scb)]]
+    pb <- pb[names(scb)]
     expect_identical(names(scb), names(pb))
     expect_identical(
       do.call(rbind, lapply(scb@objects, function(x) x@cpos)),
@@ -27,7 +27,7 @@ test_that(
   "as.speeches() same result for partition and corpus-method",
   {
     sp_all <- as.speeches("GERMAPARLMINI", s_attribute_name = "speaker", s_attribute_date = "date")
-    sp_min1 <- sp_all[[grep("(2009-10-28|2009-11-10)", names(sp_all), value = TRUE)]]
+    sp_min1 <- sp_all[grep("(2009-10-28|2009-11-10)", names(sp_all), value = TRUE)]
     
     sp_min2 <- corpus("GERMAPARLMINI") %>%
       subset(date %in% c("2009-10-28", "2009-11-10")) %>%
@@ -71,7 +71,7 @@ test_that(
     co <- corpus("GERMAPARLMINI")
     s <- subset(co, date == "2009-11-11")
     sp <- as.speeches(co, s_attribute_name = "speaker", s_attribute_date = "date")
-    tmp <- sp[[names(pb)]]
+    tmp <- sp[names(pb)]
     sp@objects <- tmp@objects
     cnt2 <- count(sp, p_attribute = "word")
     tdm2 <- as.TermDocumentMatrix(cnt2, col = "count")

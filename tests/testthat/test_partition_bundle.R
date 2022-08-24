@@ -32,7 +32,7 @@ test_that(
     expect_equal(length(scb), length(pb))
     
     expect_equal(all(names(scb) %in% names(pb)), TRUE)
-    pb_2 <- pb[[names(scb)]] # necessary, because order may be different
+    pb_2 <- pb[names(scb)] # necessary, because order may be different
     pb@objects <- pb_2@objects
     expect_equal(names(scb), names(pb))
     expect_equal(lapply(scb@objects, size), lapply(pb@objects, size))

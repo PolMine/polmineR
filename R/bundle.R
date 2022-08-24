@@ -81,6 +81,11 @@ setMethod('[[', 'bundle', function(x,i){
   if (length(i) == 1L){
     return(x@objects[[i]])
   } else {
+    lifecycle::deprecate_warn(
+      when = "0.8.7", 
+      what = "`[[`(i = 'must be length one')",
+      with = "`[`()"
+    )
     return( as.bundle(lapply(i, function(j) x[[j]])) )
   }
 })  
@@ -88,24 +93,33 @@ setMethod('[[', 'bundle', function(x,i){
 #' @exportMethod [
 #' @rdname bundle
 #' @examples
-#' \dontrun{
-#' # not working yet
-#' b <- corpus("REUTERS") %>% split(s_attribute = "id")
-#' b[1:3]
-#' b[-1]
-#' }
-setMethod('[', 'bundle', function(x,i){
+#' 
+#' # Indexing bundle objects
+#' reu <- corpus("REUTERS") %>% split(s_attribute = "id")
+#' reu[1:3]
+#' reu[-1]
+#' reu[-(1:10)]
+#' reu["127"]
+#' reu[c("127", "273")]
+#' 
+setMethod('[', 'bundle', function(x, i){
   if (is.numeric(i)){
     if (all(i > 0L)){
-      return(x[[i]])
-    } else {
-      if (any(i > 0L))
-        stop("when indexing bundle objects, mixing positive and negative indices is not allowed")
+      names_min <- names(x)[i]
+      x@objects <- lapply(i, function(j) x@objects[[j]])
+      names(x@objects) <- names_min
+      return(x)
+    } else if (all(i < 0L)) {
       for (k in rev(sort(abs(i)))) x@objects[[k]] <- NULL
       return(x)
+    } else {
+      stop("mixing positive and negative indices is not allowed when indexing bundle objects")
     }
-  } else {
-    return(x[[i]])
+  } else if (is.character(i)) {
+    if (!all(i %in% names(x))) stop("cannot index, not all elements present")
+    x@objects <- lapply(i, function(j) x@objects[[j]])
+    names(x@objects) <- i
+    return(x)
   }
 })  
 

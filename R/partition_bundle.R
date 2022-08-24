@@ -112,22 +112,22 @@ setMethod("merge", "subcorpus", function(x, y, ...){
 })
 
 
-#' @details Using brackets can be used to retrieve the count for a token from the 
-#' \code{partition} objects in a \code{partition_bundle}.
-#' @exportMethod [
-#' @rdname partition_bundle-class
-setMethod('[', 'partition_bundle', function(x,i){
-  a <- unname(unlist(lapply(x@objects, function(y) y@stat[i,2])))
-  sizes <- unlist(lapply(x@objects, function(y) y@size))
-  dist <- data.frame(
-    partition = names(x@objects),
-    count = a,
-    freq = round(a / sizes * 100000, 2),
-    row.names = 1L:length(x@objects)
-  )
-  dist
-}
-)
+#' #' @details Using brackets can be used to retrieve the count for a token from the 
+#' #' \code{partition} objects in a \code{partition_bundle}.
+#' #' @exportMethod [
+#' #' @rdname partition_bundle-class
+#' setMethod('[', 'partition_bundle', function(x,i){
+#'   a <- unname(unlist(lapply(x@objects, function(y) y@stat[i,2])))
+#'   sizes <- unlist(lapply(x@objects, function(y) y@size))
+#'   dist <- data.frame(
+#'     partition = names(x@objects),
+#'     count = a,
+#'     freq = round(a / sizes * 100000, 2),
+#'     row.names = 1L:length(x@objects)
+#'   )
+#'   dist
+#' }
+#' )
 
 
 #' @exportMethod barplot

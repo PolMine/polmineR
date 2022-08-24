@@ -118,7 +118,7 @@ NULL
 #' 
 #' speakers <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' speakers <- enrich(speakers, p_attribute = "word")
-#' speaker_terms <- features(speakers[[1:5]], all, included = TRUE, progress = TRUE)
+#' speaker_terms <- features(speakers[1:5], all, included = TRUE, progress = TRUE)
 #' dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
 #' @rdname features
 #' @name features

@@ -67,7 +67,7 @@ test_that(
     
     pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
     
-    pb <- pb[[c("Angela Dorothea Merkel", "Hubertus Heil")]]
+    pb <- pb[c("Angela Dorothea Merkel", "Hubertus Heil")]
     pb <- enrich(pb, p_attribute = "word")
     y2 <- features(pb, "GERMAPARLMINI", included = TRUE, method = "chisquare")
     
@@ -129,7 +129,7 @@ test_that(
     
     b <- partition("GERMAPARLMINI", interjection = "speech", date = "2009-11-11") %>%
       partition_bundle(s_attribute = "speaker") %>%
-      .[[names(a)]] %>%
+      .[names(a)] %>%
       ngrams(n = 2)
     
     expect_identical(a, b)
@@ -149,7 +149,7 @@ test_that(
     y2 <- partition("GERMAPARLMINI", interjection = "speech") %>%
       partition_bundle(s_attribute = "date") %>%
       partition_bundle(s_attribute = "speaker") %>%
-      .[[names(scb)]] %>%
+      .[names(scb)] %>%
       summary()
     
     expect_identical(y1, y2)
@@ -160,7 +160,9 @@ test_that(
   "summary-method for subcorpus_bundle",
   {
     y1 <- corpus("GERMAPARLMINI") %>% split(s_attribute = "date") %>% summary()
-    y2 <- partition_bundle("GERMAPARLMINI", s_attribute = "date") %>% .[[ y1[["name"]] ]] %>% summary()
+    y2 <- partition_bundle("GERMAPARLMINI", s_attribute = "date") %>%
+      .[ y1[["name"]] ] %>%
+      summary()
     expect_identical(y1, y2)
   }
 )
