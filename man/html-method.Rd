@@ -102,6 +102,10 @@ document will be UTF-8 on all systems (including Windows).
 Prepare html document to see full text.
 }
 \details{
+Substitutions configured by option \code{polmineR.mdsub} are applied to
+prevent presence of characters that would be misinterpreted as markdown
+formatting instructions.
+
 If param \code{charoffset} is \code{TRUE}, character offset positions will be
 added to tags that embrace tokens. This may be useful, if exported html document
 is annotated with a tool that stores annotations with character offset positions.

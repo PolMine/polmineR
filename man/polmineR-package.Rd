@@ -35,7 +35,7 @@ The package includes a draft shiny app that can be called using
 \section{Package options}{
 
 \itemize{
-\item{\emph{polmineR.p_attribute}:} {The default attribute}
+\item{\emph{polmineR.p_attribute}:} {The default positional attribute}
 \item{\emph{polmineR.left}:} {Default value for left context.}
 \item{\emph{polmineR.lineview}:} {A logical value, whether ...}
 \item{\emph{polmineR.pagelength}:} {10L}
@@ -46,6 +46,10 @@ The package includes a draft shiny app that can be called using
 \item{\emph{polmineR.buttons}:} {}
 \item{\emph{polmineR.specialChars}:} {}
 \item{\emph{polmineR.cutoff}:} {}
+\item{\emph{polmineR.mdsub}:}{A list of pairs of character vectors
+defining regular expression substitutions applied as part of preprocessing
+documents for html display. Intended usage: Remove characters that would be
+misinterpreted as markdown formatting instructions.}
 \item{\emph{polmineR.corpus_registry}:} {The system corpus registry
 directory defined by the environment variable CORPUS_REGISTRY before the
 polmineR package has been loaded. The polmineR package uses a temporary

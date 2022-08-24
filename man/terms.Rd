@@ -10,8 +10,6 @@
 \alias{terms,character-method}
 \title{Get terms in \code{partition} or \code{corpus}.}
 \usage{
-\S4method{terms}{slice}(x, p_attribute, regex = NULL)
-
 \S4method{terms}{partition}(x, p_attribute, regex = NULL)
 
 \S4method{terms}{subcorpus}(x, p_attribute, regex = NULL)

@@ -60,6 +60,10 @@ unexported function `.recode_call()`.
 - The `subset()` methods for `corpus` and `subcorpus` objects now handle
 expressions for subsetting as quosures, laying the ground to program against
 subset(), see respective update of the examples, #212.
+- `terms()` did not work for `subcorpus` objects. Fixed. #209
+- New option `polmineR.mdsub` configures substitutions that are applied on
+markdown documents to prevent presence of characters that would be
+misinterpreted as formatting instructions. Fixes #166.
 
 
 polmineR 0.8.6

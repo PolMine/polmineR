@@ -19,7 +19,13 @@
     "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
     "polmineR.shiny" = FALSE,
     "polmineR.warn.size" = FALSE,
-    "polmineR.segments" = c("s", "p")
+    "polmineR.segments" = c("s", "p"),
+    "polmineR.mdsub" = list(
+      c('\u201c', '"'),
+      c('\u201D', '"'),
+      c('``', '"'), # the `` would wrongly be interpreted as comments
+      c('_', ':')
+    )
   )
 
   # Upon loading the package, registry files available in the polmineR package,

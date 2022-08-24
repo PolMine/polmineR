@@ -9,6 +9,9 @@ NULL
 #' such as \code{htmltools::html_print} will be available. The encoding of the html
 #' document will be UTF-8 on all systems (including Windows).
 #' 
+#' @details Substitutions configured by option `polmineR.mdsub` are applied to
+#' prevent presence of characters that would be misinterpreted as markdown
+#' formatting instructions.
 #' @details If param \code{charoffset} is \code{TRUE}, character offset positions will be
 #' added to tags that embrace tokens. This may be useful, if exported html document
 #' is annotated with a tool that stores annotations with character offset positions.
@@ -69,17 +72,25 @@ setGeneric("html", function(object, ...) standardGeneric("html") )
 #' @exportMethod html
 #' @rdname html-method
 setMethod("html", "character", function(object, corpus, height = NULL){
+  
   if (!requireNamespace("markdown", quietly = TRUE))
     stop("package 'markdown' is not installed, but necessary for this function")
 
-  css <- paste(c(
-    readLines(getOption("markdown.HTML.stylesheet")),
-    readLines(system.file("css", "tooltips.css", package = "polmineR"))
-  ), collapse = "\n", sep = "\n"
+  css <- paste(
+    c(
+      readLines(getOption("markdown.HTML.stylesheet")),
+      readLines(system.file("css", "tooltips.css", package = "polmineR"))
+    ),
+    collapse = "\n", sep = "\n"
   )
-  md <- gsub('\u201c', '"', object)
-  md <- gsub('\u201D', '"', md)
-  md <- gsub('``', '"', md) # the `` would wrongly be interpreted as comments
+  
+  for (i in seq_along(getOption("polmineR.mdsub"))){
+    object <- gsub(
+      getOption("polmineR.mdsub")[[i]][1],
+      getOption("polmineR.mdsub")[[i]][2],
+      object
+    )
+  }
 
   # produce result very similar to markdown::markdownToHTML, but selfmade to
   # circumvent encoding issue on windows (poor handling of encodings other
@@ -89,7 +100,7 @@ setMethod("html", "character", function(object, corpus, height = NULL){
     template,
     sprintf("Corpus: %s", corpus), # title
     css,
-    markdown::renderMarkdown(text = md)
+    markdown::renderMarkdown(text = object)
   )
 
   if (!is.null(height)){
@@ -106,14 +117,17 @@ setMethod("html", "character", function(object, corpus, height = NULL){
 })
 
 
-#' @importFrom xml2 read_html xml_find_all xml_text xml_parent xml_attr xml_attr<- xml_name
-#' @importFrom xml2 xml_attrs xml_remove
+#' @importFrom xml2 read_html xml_find_all xml_text xml_parent xml_attr 
+#' @importFrom xml2 xml_attrs xml_remove xml_attr<- xml_name
 #' @importFrom stringi stri_extract_all_boundaries
 .addCharacterOffset <- function(x){
   
   # check that required dependencies are present
-  if (!requireNamespace("xml2", quietly = TRUE)) stop("package 'xml2' missing")
-  if (!requireNamespace("htmltools", quietly = TRUE)) stop("package 'htmltools' missing")
+  if (!requireNamespace("xml2", quietly = TRUE))
+    stop("package 'xml2' not installed (please install)")
+  
+  if (!requireNamespace("htmltools", quietly = TRUE))
+    stop("package 'htmltools' not installed (please install")
   
   doc <- read_html(x)
   textnodes <- xml_find_all(doc, xpath = "//body//text()")
