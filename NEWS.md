@@ -1,5 +1,7 @@
-polmineR 0.8.6.9001 - 9007
-==========================
+polmineR 0.8.7
+==============
+
+## New feautres
 
 - Using the `corpus` class throughout is an opportunity to keep the corpus ID
 together with the registry directory of a corpus. And as we are able now to
@@ -8,14 +10,40 @@ directory is not necessary any more. It still exists, yet only for temporary
 corpora and corpora that are described by registry files that cannot be
 modified, i.e. corpora shipped in packages. The test corpus of the polmineR
 package is an important respective scenario.
+- `get_token_stream()` now has an argument `min_length`.
 - `registry_*()` functions are superseded by `RcppCWB::corpus_*` functions and
 throw a warning that they are deprecated.
+- The REUTERS corpus is not included in the package any more: There was an
+identical copy of the REUTERS corpus included in the RcppCWB package. All
+examples and unit tests now use `use(pkg = "RcppCWB", corpus = "REUTERS")` to
+make the REUTERS corpus available.
+- `size()` works for `partition`/`subcorpus` with `s-attribute` that is a child
+of the s-attribute the object is based on #216.
+- The `trim()`-method for `context` objects has a new argument `fn` for
+supplying a (trimming) function to be applied all match contexts.
+- A new s-attribute "protocol_date" has been added to sample corpus
+"GERMAPARLMINI", so that sample data for nested corpus data is available. To
+prevent confusion between s-attributes "protocol_date" (at protocol-level) and
+"date" (at speaker-level), argument `s_attribute_date` is stated explicitly in
+all examples.
+- Method `size()` has been refactored to work with nested corpora.
+- Method `encoding()` and replace method `encoding<-` are defined for `call`
+and `quosure` objects to get and adjust the encoding, replacing a previously
+unexported function `.recode_call()`.
+- The `subset()` methods for `corpus` and `subcorpus` objects now handle
+expressions for subsetting as quosures, laying the ground to program against
+subset(), see respective update of the examples, #212.
+- Functionality for indexing `bundle` objects with single square brackets is
+developed now. Indexing with double brackets, suppling multiple values for `i`
+is deprecated. The aim is a consistent behavior that a `bundle` indexed by `[`
+will always return a `bundle`, and indexing with `[[` always gets a single object
+from the list of objects. #214
+
+
+## Minor improvements
+
 - The `use()` function now has an additional argument `corpus` to specify which
 corpus from a package shall be loaded (#138).
-- The REUTERS corpus is not included in the package any more: Unnecessary,
-because it was an identical copy of the REUTERS corpus included in the RcppCWB
-package. All examples and unit tests now use `use(pkg = "RcppCWB", corpus =
-"REUTERS")` to make the REUTERS corpus available.
 - The `get_token_stream()`-method for `partition_bundle` objects is more memory
 efficient (no exhaustion for big corpora) and faster.
 - Significantly improved performance of `split()`-method for `corpus` objects.
@@ -23,66 +51,52 @@ efficient (no exhaustion for big corpora) and faster.
 - `as.speeches()` for `corpus` objects has new argument `subset`, offering a 
 significantly faster approach than the method for `subcorpus` objects in many 
 cases.
+- The `size()` method will return `NA` and issue a telling warning if the slot
+`corpus` and `registry_dir` of the `corpus` object are not filled #222.
 - `get_token_stream()` will return list of `integer` values if `decode` is
 `TRUE` (#213).
-- `get_token_stream()` now has an argument `min_length`.
-- Removed a bug for `hits()` method for `partition` objects #215.
-- `size()` works for `partition`/`subcorpus` with `s-attribute` that is a child
-of the s-attribute the object is based on #216.
-- The documentation of the `cooccurrences()` method now includes example code
-for creating a table using `DT::datatable()` with buttons for exporting tables
-(to Excel, for instance).
 - After applying `trim()` on a `context` object using arguments `positivelist`
 or `negativelist`, the `count` slot as reported by `length` was not updated. 
 Fixed. (#220)
-- After applying `trim()` on a `context` object using arguments `positivelist`
-or `negativelist`, the count statistics reported in the `stat` slot were not
-updated. Fixed. (#220)
 - The `enrich()` method for `context` objects has a new argument `stat` for 
 creating / updating the `data.table` in the slot `stat`.
-- The `trim()` methode for `context` objects has a new argument `fn` for
-supplying a (trimming) function to be applied all match contexts.
-- Structural attributes do not disappear any more after adding tooltips to a 
-`kwic` object #218.
-- A new s-attribute "protocol_date" has been added to sample corpus
-"GERMAPARLMINI", so that sample data for nested corpus data is available. To
-prevent confusion between s-attributes "protocol_date" (at protocol-level) and
-"date" (at speaker-level), argument `s_attribute_date` is stated explicitly in
-all examples.
-- Method `size()` has been refactored to work with nested corpora.
 - Method `subset()` for `subcorpus` objects has been debugged to work with 
 nested corpora.
-- Method `subset()` would not work reliably with argument `regex` if more than
-one expression is passed #212. Debugged.
-- Method `encoding()` and replace method `encoding<-` are defined for `call`
-and `quosure` objects to get and adjust the encoding, replacing a previously
-unexported function `.recode_call()`.
-- The `subset()` methods for `corpus` and `subcorpus` objects now handle
-expressions for subsetting as quosures, laying the ground to program against
-subset(), see respective update of the examples, #212.
-- `terms()` did not work for `subcorpus` objects. Fixed. #209
 - New option `polmineR.mdsub` configures substitutions that are applied on
 markdown documents to prevent presence of characters that would be
 misinterpreted as formatting instructions. Fixes #166.
 - The messages issued by `check_cqp_query()` now include a hint that argument 
 `check` can be used to omit checking the CQP syntax to prevent false positives.
 Addresses #171.
+
+
+## Bug fixes
+
 - The ability of `cooccurrences()` (and `context()`) to process more than one
 p-attribute has been lost temporarily. Fixed. #208.
+- Removed a bug for `hits()` method for `partition` objects #215.
+- After applying `trim()` on a `context` object using arguments `positivelist`
+or `negativelist`, the count statistics reported in the `stat` slot were not
+updated. Fixed. (#220)
+- Structural attributes do not disappear any more after adding tooltips to a 
+`kwic` object #218.
+- Method `subset()` would not work reliably with argument `regex` if more than
+one expression is passed #212. Fixed.
+- `terms()` did not work for `subcorpus` objects. Fixed. #209
 - When applying `as.speeches()` on a `subcorpus`, the date may have been missing
 from the object names. Fixed. #219
-- Functionality for indexing `bundle` objects with single square brackets is
-developed now. Indexing with double brackets, suppling multiple values for `i`
-is deprecated. The aim is a consistent behavior that a `bundle` indexed by `[`
-will always return a `bundle`, and indexing with `[[` always gets a single object
-from the list of objects. #214
 - Fixed an issue that `minNchar` in the `noise()` method would work exactly the 
 way opposite to the way intended #211.
-- The `size()` method will return `NA` and issue a telling warning if the slot
-`corpus` and `registry_dir` of the `corpus` object are not filled #222.
 - The slot `registry_dir` of a `cooccurrences_bundle` derived from a
 `partition_bundle` was not filled, resulting in an error of the `show()`-method
 for the `cooccurrences_bundle`. Fixed #222.
+
+
+## Documentation
+
+- The documentation of the `cooccurrences()` method now includes example code
+for creating a table using `DT::datatable()` with buttons for exporting tables
+(to Excel, for instance).
 
 
 polmineR 0.8.6
