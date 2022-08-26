@@ -94,9 +94,11 @@ test_that(
   "Identity of cooccurrences and Cooccurrences",
   {
     testthat::skip_on_cran()
-    stopwords <- unname(unlist(
-      noise(terms("REUTERS", p_attribute = "word"), minNchar = 7L, stopwordsLanguage = "en")
-    ))
+    rm <- noise(
+      terms("REUTERS", p_attribute = "word"),
+      specialChars = NULL, minNchar = 2L, stopwordsLanguage = "en"
+    )
+    stopwords <- unname(unlist(rm))
     r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, stoplist = stopwords)
     stm <- as.simple_triplet_matrix(r)
 

@@ -68,7 +68,7 @@ Cambridge, Mass., pp. 163-166.
 Church, Kenneth W. et al. (1991): Using Statistics in Lexical
 Analysis. In: Uri Zernik (ed.), \emph{Lexical Acquisition}. Hillsdale,
 NJ:Lawrence Erlbaum, pp. 115-164
-\url{https://www.researchgate.net/publication/230875926_Using_Statistics_in_Lexical_Analysis}
+\url{https://doi.org/10.4324/9781315785387-8}
 
 Evert, Stefan (2005): \emph{The Statistics of Word Cooccurrences.
 Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
