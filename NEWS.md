@@ -78,6 +78,11 @@ will always return a `bundle`, and indexing with `[[` always gets a single objec
 from the list of objects. #214
 - Fixed an issue that `minNchar` in the `noise()` method would work exactly the 
 way opposite to the way intended #211.
+- The `size()` method will return `NA` and issue a telling warning if the slot
+`corpus` and `registry_dir` of the `corpus` object are not filled #222.
+- The slot `registry_dir` of a `cooccurrences_bundle` derived from a
+`partition_bundle` was not filled, resulting in an error of the `show()`-method
+for the `cooccurrences_bundle`. Fixed #222.
 
 
 polmineR 0.8.6

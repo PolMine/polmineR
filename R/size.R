@@ -70,12 +70,18 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
   }
   
   if (is.null(s_attribute)){
-    return(
-      cl_attribute_size(
+    if (length(x@registry_dir) > 0L && length(x@corpus) > 0L){
+      corpus_size <- cl_attribute_size(
         corpus = x@corpus, registry = x@registry_dir,
         attribute = "word", attribute_type = "p"
       )
-    )
+      return(corpus_size)
+    } else {
+      warning(
+        "unable to get size, lslots `corpus` and/or `registry_dir` not available"
+      )
+      return(NA_integer_)
+    }
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     

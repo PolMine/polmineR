@@ -41,7 +41,7 @@ the \code{name}-method.
 Use \code{get_corpus}-method to get the corpus ID from the slot
 \code{corpus} of the \code{corpus} object.
 
-The \code{show}-method will show basic information on the
+The \code{show()}-method will show basic information on the
 \code{corpus} object.
 
 Applying the \code{$}-method on a corpus will return the values for the

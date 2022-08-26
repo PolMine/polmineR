@@ -183,7 +183,7 @@ setMethod("context", "slice", function(
   ctxt@count <- length(unique(ctxt@cpos[["match_id"]]))
   
   # put together raw stat table
-  if (count) ctxt <- enrich(ctxt, stat = TRUE)
+  if (count) ctxt <- enrich(ctxt, stat = TRUE, verbose = verbose)
   
   ctxt
 })

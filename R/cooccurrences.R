@@ -325,17 +325,20 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 #'   subset(speaker %in% c("Hubertus Heil", "Angela Dorothea Merkel")) %>%
 #'   split(s_attribute = "speaker") %>%
 #'   cooccurrences(query = "Deutschland")
-setMethod("cooccurrences", "partition_bundle", function(.Object, query, mc = getOption("polmineR.mc"), ...){
-  bundle <- new("cooccurrences_bundle")
+setMethod("cooccurrences", "partition_bundle", function(.Object, query, verbose = FALSE, mc = getOption("polmineR.mc"), ...){
+  bundle <- as(as(.Object, Class = "bundle"), Class = "cooccurrences_bundle")
   bundle@objects <- pbapply::pblapply(
     .Object@objects,
-    function(x) cooccurrences(x, query = query, mc = mc, ...) 
+    function(x) cooccurrences(x, query = query, mc = mc, verbose = verbose, ...) 
   )
   names(bundle@objects) <- names(.Object@objects)
   for (i in seq_along(bundle@objects)){
-    if (!is.null(bundle@objects[[i]])) bundle@objects[[i]]@name <- .Object@objects[[i]]@name
+    if (!is.null(bundle@objects[[i]]))
+      bundle@objects[[i]]@name <- .Object@objects[[i]]@name
   }
-  for (i in rev(which(sapply(bundle@objects, is.null)))) bundle@objects[[i]] <- NULL
+  
+  for (i in rev(which(sapply(bundle@objects, is.null))))
+    bundle@objects[[i]] <- NULL
   bundle
 })
 

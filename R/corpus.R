@@ -587,10 +587,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 #' @exportMethod show
 #' @docType methods
 #' @rdname corpus_methods
-#' @details The \code{show}-method will show basic information on the
-#'   \code{corpus} object.
+#' @details The `show()`-method will show basic information on the
+#'   `corpus` object.
 setMethod("show", "corpus", function(object){
-  message(sprintf("** '%s' object **", class(object)))
+  message(sprintf("<< %s >>", class(object)))
   message(sprintf("%-12s", "corpus:"), object@corpus)
   message(sprintf("%-12s", "encoding:"), object@encoding)
   message(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]")

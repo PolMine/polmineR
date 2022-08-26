@@ -113,7 +113,13 @@ cooccurrences(.Object, ...)
 
 \S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
 
-\S4method{cooccurrences}{partition_bundle}(.Object, query, mc = getOption("polmineR.mc"), ...)
+\S4method{cooccurrences}{partition_bundle}(
+  .Object,
+  query,
+  verbose = FALSE,
+  mc = getOption("polmineR.mc"),
+  ...
+)
 
 \S4method{cooccurrences}{Cooccurrences}(.Object, query)
 
