@@ -43,13 +43,82 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
 })
 
 #' @param mc logical or, if numeric, providing the number of cores
-#' @param progress logical
-#' @param verbose logical
+#' @param progress A `logical` value.
+#' @param verbose A `logical` value.
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname partition_bundle-class
-setMethod("enrich", "partition_bundle", function(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
-  blapply(x = .Object, f = enrich, mc = mc, progress = progress, verbose = verbose, ...)  
+#' @importFrom cli cli_process_start cli_process_done col_blue
+setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE){
+  m <- do.call(rbind, lapply(.Object@objects, slot, name = "cpos"))
+  ids <- lapply(
+    p_attribute,
+    function(p_attr){
+      if (verbose)
+        cli_process_start(
+          sprintf("get ids for p-attribute %s", col_blue(p_attr))
+        )
+      y <- RcppCWB::region_matrix_to_ids(
+        corpus = .Object@corpus, registry = .Object@registry_dir,
+        p_attribute = p_attr, matrix = m
+      )
+      if (verbose) cli_process_done()
+      y
+      
+    }
+  )
+  
+  names(ids) <- paste(p_attribute, "id", sep = "_")
+  
+  if (verbose) cli_process_start("create temporary table with doc ids")
+  dt <- setDT(ids)
+
+  doc_id <- unlist(mapply(
+    rep,
+    x = 1L:length(.Object@objects),
+    times = sapply(.Object@objects, slot, name = "size")
+  ))
+  dt[, "doc_id" := doc_id]
+  if (verbose) cli_process_done()
+  
+  if (verbose) cli_process_start("perform count")
+  cnt <- dt[, .N, by = c("doc_id", paste(p_attribute, "id", sep = "_"))]
+  rm(dt)
+  setnames(cnt, old = "N", new = "count")
+  if (verbose) cli_process_done()
+  
+  if (decode){
+    for (p_attr in p_attribute){
+      if (verbose)
+        cli_process_start(sprintf("decode p-attribute %s", col_blue(p_attr)))
+      str <- id2str(
+        x = .Object,
+        p_attribute = p_attr,
+        id = cnt[[paste(p_attr, "id", sep = "_")]]
+      )
+      cnt[, (p_attr) := as.nativeEnc(x = str, from = .Object@encoding)]
+      if (verbose) cli_process_done()
+    }
+  }
+  setcolorder(
+    cnt,
+    neworder = c(p_attribute, paste(p_attribute, "id", sep = "_"))
+  )
+  
+  if (verbose) cli_process_start("split into tables")
+  cnt_list <- split(x = cnt, by = "doc_id", keep.by = FALSE)
+  rm(cnt)
+  if (verbose) cli_process_done()
+  
+  if (verbose) cli_process_start("assign count tables to input object")
+  .Object@objects <- mapply(
+    function(a, b){a@stat <- b; a},
+    .Object@objects,
+    cnt_list
+  )
+  if (verbose) cli_process_done()
+  
+  .Object
 })
 
 

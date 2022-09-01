@@ -28,7 +28,8 @@ Imports:
     magrittr,
     knitr,
     lifecycle,
-    rlang
+    rlang,
+    cli
 Suggests:
     markdown,
     rmarkdown,

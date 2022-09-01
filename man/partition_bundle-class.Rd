@@ -36,7 +36,14 @@
 
 \S4method{partition_bundle}{environment}(.Object)
 
-\S4method{enrich}{partition_bundle}(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+\S4method{enrich}{partition_bundle}(
+  .Object,
+  p_attribute,
+  decode = TRUE,
+  mc = FALSE,
+  progress = TRUE,
+  verbose = FALSE
+)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, ...)
 
@@ -45,13 +52,13 @@ flatten(object)
 \arguments{
 \item{object}{a \code{partition_bundle} object}
 
-\item{progress}{logical}
+\item{progress}{A \code{logical} value.}
 
 \item{x}{a \code{partition_bundle} object}
 
 \item{name}{the name for the new partition}
 
-\item{verbose}{logical}
+\item{verbose}{A \code{logical} value.}
 
 \item{height}{height}
 

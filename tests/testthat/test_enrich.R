@@ -1,7 +1,7 @@
 library(polmineR)
 testthat::context("enrich")
 use("polmineR")
-
+use("RcppCWB")
 
 test_that(
   "enrich partition",
@@ -13,3 +13,11 @@ test_that(
   }
 )
 
+
+test_that(
+  "enrich partition_bundle",
+  {
+    pb <- partition_bundle("REUTERS", s_attribute = "id")
+    pb_word <- enrich(pb, p_attribute = "word")
+  }
+)
