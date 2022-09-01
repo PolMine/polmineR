@@ -4,7 +4,7 @@ NULL
 
 #' Corpus class initialization
 #' 
-#' Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+#' Corpora indexed using the 'Corpus Workbench' ('CWB') offer an efficient data
 #' structure for large, linguistically annotated corpora. The `corpus`-class
 #' keeps basic information on a CWB corpus. Corresponding to the name of the
 #' class, the `corpus`-method is the initializer for objects of the `corpus`

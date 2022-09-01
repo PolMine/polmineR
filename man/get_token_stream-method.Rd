@@ -189,7 +189,7 @@ corpus("REUTERS") \%>\%
 pb_tokstr <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   get_token_stream(p_attribute = "word")
-
+\donttest{
 # Get token stream for partition_bundle
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 ts_list <- get_token_stream(pb)
@@ -219,4 +219,5 @@ ts_phr <- get_token_stream(
   progress = FALSE,
   verbose = FALSE
 )
+}
 }

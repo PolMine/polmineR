@@ -1,5 +1,4 @@
-polmineR 0.8.7
-==============
+# polmineR v0.8.7
 
 ## New feautres
 
@@ -99,8 +98,7 @@ for creating a table using `DT::datatable()` with buttons for exporting tables
 (to Excel, for instance).
 
 
-polmineR 0.8.6
-==============
+# polmineR v0.8.6
 
 ## New Features
 
@@ -305,7 +303,7 @@ has been removed from the method.
 `minNchar` as a maximum threshold, not as a minimum requirement (#135). Fixed.
 
 
-# Documentation 
+## Documentation 
 
 - Checks in examples whether magrittr is available have been dropped, as
 magrittr has become a dependency and the pipe operator is available by default.
@@ -313,8 +311,7 @@ magrittr has become a dependency and the pipe operator is available by default.
 `stat` slot of the class in detail.
 
 
-polmineR 0.8.5
-==============
+# polmineR 0.8.5
 
 ## New Features
 

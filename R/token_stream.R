@@ -211,7 +211,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' @importFrom stringi stri_c
 #' @importFrom RcppCWB region_matrix_to_ids
 #' @examples 
-#' 
+#' \donttest{
 #' # Get token stream for partition_bundle
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' ts_list <- get_token_stream(pb)
@@ -241,6 +241,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   progress = FALSE,
 #'   verbose = FALSE
 #' )
+#' }
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
   if (verbose) message("... creating vector of document ids")
