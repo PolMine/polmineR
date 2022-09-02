@@ -15,7 +15,13 @@ test_that(
       enrich(p_attribute = "word") %>%
       as.TermDocumentMatrix(col = "count")
     
-    expect_identical(tdm, tdm2)
+    expect_identical(slam::col_sums(tdm), slam::col_sums(tdm2))
+    expect_identical(as.matrix(tdm), as.matrix(tdm2))
+    
+    # NOTE: as previous test, expect_identical(tdm, tdm2) started to fail,
+    # because the index values for terms changed when refactoring the
+    # enrich,partition_bundle-method. Applying as.matrix() ensures that 
+    # the substantial meaning of the test is maintained.
   }
 )
 

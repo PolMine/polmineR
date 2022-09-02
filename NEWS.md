@@ -1,3 +1,7 @@
+# polmineR v0.8.7.9001
+
+* Improved performance of `enrich()`-method for `partition_bundle` objects #225.
+
 # polmineR v0.8.7
 
 ## New feautres

@@ -42,14 +42,18 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
   .Object
 })
 
-#' @param mc logical or, if numeric, providing the number of cores
-#' @param progress A `logical` value.
-#' @param verbose A `logical` value.
+#' @details The `enrich()` method will fill the slot `stat` of the `partition`
+#'   objects within the bundle with a count for the designated p-attributes.
+#' @param p_attribute A `character` vector with p-attribute(s) for counting.
+#' @param decode A `logical` value, whether to turn token ids into decoded
+#'   strings.
+#' @param progress A `logical` value, whether to show progress bar.
+#' @param verbose A `logical` value, whether to show progress messages.
 #' @exportMethod enrich
 #' @docType methods
 #' @rdname partition_bundle-class
 #' @importFrom cli cli_process_start cli_process_done col_blue
-setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = TRUE, mc = FALSE, progress = TRUE, verbose = FALSE){
+setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = TRUE, verbose = FALSE){
   m <- do.call(rbind, lapply(.Object@objects, slot, name = "cpos"))
   ids <- lapply(
     p_attribute,
@@ -112,7 +116,7 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
   
   if (verbose) cli_process_start("assign count tables to input object")
   .Object@objects <- mapply(
-    function(a, b){a@stat <- b; a},
+    function(a, b){a@stat <- b; a@p_attribute <- p_attribute; a},
     .Object@objects,
     cnt_list
   )
