@@ -1,6 +1,6 @@
 # polmineR v0.8.7
 
-## New feautres
+## New features
 
 - Using the `corpus` class throughout is an opportunity to keep the corpus ID
 together with the registry directory of a corpus. And as we are able now to
