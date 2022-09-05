@@ -88,13 +88,14 @@ setMethod("as.sparseMatrix", "DocumentTermMatrix", function(x, ...){
 #' @docType methods
 #' @rdname as.sparseMatrix
 setMethod("as.sparseMatrix", "bundle", function(x, col, ...){
-  message("... converting partition_bundle to TermDocumentMatrix")
+  cli_process_start("convert partition_bundle to `TermDocumentMatrix`")
   tdm_stm <- as.TermDocumentMatrix(x = x, col = col)
-  message("... converting TermDocumentMatrix to Matrix")
-  retval <-  as.sparseMatrix(tdm_stm, ...)
-  return(retval)
+  cli_process_done()
+  
+  cli_process_start("converting `TermDocumentMatrix` to `Matrix`")
+  retval <- as.sparseMatrix(tdm_stm, ...)
+  cli_process_done()
+  
+  retval
 })
-
-
-
 

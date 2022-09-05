@@ -1,6 +1,8 @@
 # polmineR v0.8.7.9001
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
+* Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
+to improve performance.
 
 # polmineR v0.8.7
 

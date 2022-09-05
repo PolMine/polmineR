@@ -254,54 +254,67 @@ setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attri
 #' @importFrom slam simple_triplet_matrix
 setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL, verbose = TRUE, ...){
   
-  if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if ("pAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.8", 
+      what = "as.TermDocumentMatrix(pAttribute)",
+      with = "as.TermDocumentMatrix(p_attribute)"
+    )
+    p_attribute <- list(...)[["pAttribute"]]
+  }
   
-  if (is.null(names(x))) names(x) <- as.character(1L:length(x))
+  if (is.null(names(x))) names(x) <- as.character(seq_along(x))
 
   if (is.null(p_attribute)){
     p_attribute <- x@objects[[1]]@p_attribute
-    .message("using the p_attribute-slot of the first object in the bundle as p_attribute:", p_attribute, verbose = verbose)
-  }
-  .message("generating (temporary) key column", verbose = verbose)
-  if (length(p_attribute) > 1){
-    dummy <- lapply(
-      1L:length(x@objects),
-      function(i){
-        keysRaw <- x@objects[[i]]@stat[, c(p_attribute), with = FALSE]
-        keys <- apply(keys, 1, function(row) paste(row, collapse="//"))
-        x@objects[[i]]@stat[, "key" := keys]
-      })
-    rm(dummy)
-  } else {
-    lapply(
-      1L:length(x@objects),
-      function(i) setnames(x@objects[[i]]@stat, old = p_attribute, new = "key")
+    if (verbose) cli::cli_alert_info(
+      sprintf("using p-attribute %s", col_blue(p_attribute))
     )
   }
-  .message("generating cumulated data.table", verbose = verbose)
-  DT <- data.table::rbindlist(lapply(x@objects, function(y) y@stat))
-  j <- unlist(lapply(1L:length(x@objects), function(i) rep(i, times = nrow(x@objects[[i]]@stat))))
-  DT[, "j" := j]
-  DT <- DT[which(DT[["key"]] != "")] # to avoid errors
-  .message("getting unique keys", verbose = verbose)
-  uniqueKeys <- unique(DT[["key"]])
-  keys <- setNames(1L:length(uniqueKeys), uniqueKeys)
-  .message("generating integer keys", verbose = verbose)
+  
+  if (verbose) cli_process_start("create temporary data.table")
+  DT <- data.table::rbindlist(lapply(x@objects, slot, "stat"))
+  DT[, "j" := unlist(mapply(
+      rep,
+      seq_along(x@objects),
+      lapply(x@objects, function(obj) nrow(obj@stat))
+    ))
+  ]
+  if (verbose) cli_process_done()
+
+  if (verbose) cli_process_start("assign keys to data.table")
+  if (length(p_attribute) == 1L){
+    setnames(DT, old = p_attribute, new = "key")
+  } else {
+    DT[, "key" := do.call(paste, c(DT[, p_attribute, with = FALSE], sep = "//"))]
+    for (p_attr in p_attribute) DT[, (p_attr) := NULL]
+  }
+  DT <- DT[which(DT[["key"]] != ""), c("key", col, "j"), with = FALSE] # to avoid errors
+  if (verbose) cli_process_done()
+  
+  if (verbose) cli_process_start("make unique keys")
+  unique_keys <- unique(DT[["key"]])
+  keys <- setNames(seq_along(unique_keys), unique_keys)
+  rm(unique_keys)
   i <- keys[ DT[["key"]] ]
+  if (verbose) cli_process_done()
+  
+  if (verbose) cli_process_start("create TermDocumentMatrix")
   retval <- simple_triplet_matrix(
-    i = unname(i), j = DT[["j"]], v = DT[[col]],
-    nrow = length(names(keys)), ncol = length(names(x@objects)),
-    dimnames = list(Terms = names(keys), Docs = names(x@objects))
+    i = unname(i),
+    j = DT[["j"]],
+    v = DT[[col]],
+    nrow = length(names(keys)),
+    ncol = length(names(x@objects)),
+    dimnames = list(
+      Terms = names(keys),
+      Docs = names(x@objects)
+    )
   )
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-  
-  .message("cleaning up temporary key columns", verbose = verbose)
-  if (length(p_attribute) > 1){
-    dummy <- lapply(1L:length(x@objects), function(i) x@objects[[i]]@stat[, "key" := NULL])
-  } else {
-    dummy <- lapply(1L:length(x@objects), function(i) setnames(x@objects[[i]]@stat, old = "key", new = p_attribute))
-  }
   attr(retval, "weighting") <- c("term frequency", "tf")
+  if (verbose) cli_process_done()
+  
   retval
 })
 
@@ -335,56 +348,68 @@ setMethod("as.DocumentTermMatrix", "partition_bundle", function(x, col = NULL, p
 #'   \code{TermDocumentMatrix}. The same procedure applies to get a
 #'   \code{DocumentTermMatrix}.
 #' @rdname as.DocumentTermMatrix
+#' @importFrom cli cli_alert_danger
 setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute = NULL, col = NULL, verbose = TRUE, ...){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  
   if (!is.null(col)){
-    callNextMethod()
-  } else if (!is.null(p_attribute)){
-    encoding <- unique(sapply(x@objects, slot, name = "encoding"))
-    
-    .message("generating corpus positions", verbose = verbose)
-    regions_dt <- data.table(do.call(rbind, lapply(x@objects, slot, name = "cpos")))
-    regions_dt[, "i" := do.call(
-      c,
-      lapply(seq_along(x@objects), function(i) rep(x = i, times = nrow(x@objects[[i]]@cpos)))
-    )]
-    DT <- regions_dt[, {do.call(c, lapply(1L:nrow(.SD), function(i) .SD[[1]][i]:.SD[[2]][i]))}, by = "i"]
-    setnames(DT, old = "V1", new = "cpos")
-    rm(regions_dt)
-
-    .message("getting ids", verbose = verbose)
-    DT[, "id" := cpos2id(x[[1]], p_attribute = p_attribute, cpos = DT[["cpos"]])]
-    DT[, "cpos" := NULL]
-    setkeyv(x = DT, cols = c("i", "id"))
-
-    .message("performing count", verbose = verbose)
-    TF <- DT[, .N, by = c("i", "id"), with = TRUE]
-    rm(DT)
-    setnames(TF, old = "N", new = "count")
-    str <- cl_id2str(
-      corpus = x[[1]]@corpus, registry = x[[1]]@registry_dir,
-      p_attribute = p_attribute, id = TF[["id"]]
-    )
-    TF[, (p_attribute) := as.nativeEnc(str, from = encoding)]
-    rm(str)
-    
-    .message("generating keys", verbose = verbose)
-    unique_terms <- unique(TF[[p_attribute]])
-    keys <- setNames(1L:length(unique_terms), unique_terms)
-    
-    .message("generating simple triplet matrix", verbose = verbose)
-    retval <- simple_triplet_matrix(
-      i = keys[ TF[[p_attribute]] ],
-      j = TF[["i"]],
-      v = TF[["count"]],
-      dimnames = list(Terms = names(keys), Docs = names(x@objects))
-    )
-    class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
-    attr(retval, "weighting") <- c("term frequency", "tf")
-    return( retval )
-  } else {
-    message("... doing nothing, as p_attribute and col is NULL")
+    return(callNextMethod())
+  } else if (is.null(p_attribute)){
+    cli::cli_alert_danger("return `NULL`, as p_attribute and col is NULL")
+    return(NULL)
   }
+  
+  encoding <- unique(sapply(x@objects, slot, name = "encoding"))
+  
+  if (verbose) cli::cli_process_start("generating document ids")
+  DT <- data.table(
+    i = do.call(
+      c,
+      mapply(rep, seq_along(x@objects), lapply(x@objects, slot, "size"))
+    )
+  )
+  if (verbose) cli::cli_process_done()
+  
+  if (verbose) cli::cli_process_start("getting ids")
+  DT[, "id" := region_matrix_to_ids(
+    corpus = x@corpus, registry = x@registry_dir,
+    p_attribute = p_attribute,
+    matrix = do.call(rbind, lapply(x@objects, slot, name = "cpos")))
+  ]
+  if (verbose) cli::cli_process_done()
+  
+  if (verbose) cli::cli_process_start("performing count")
+  TF <- DT[, .N, by = c("i", "id"), with = TRUE]
+  rm(DT)
+  setnames(TF, old = "N", new = "count")
+  if (verbose) cli::cli_process_done()
+  
+  if (verbose) cli::cli_process_start("decoding token ids")
+  str <- cl_id2str(
+    corpus = x[[1]]@corpus, registry = x[[1]]@registry_dir,
+    p_attribute = p_attribute, id = TF[["id"]]
+  )
+  TF[, (p_attribute) := as.nativeEnc(str, from = encoding)]
+  rm(str)
+  if (verbose) cli::cli_process_done()
+  
+  if (verbose) cli::cli_process_start("generating keys")
+  unique_terms <- unique(TF[[p_attribute]])
+  keys <- setNames(1L:length(unique_terms), unique_terms)
+  if (verbose) cli::cli_process_done()
+  
+  if (verbose) cli::cli_process_start("generating simple triplet matrix")
+  retval <- simple_triplet_matrix(
+    i = keys[ TF[[p_attribute]] ],
+    j = TF[["i"]],
+    v = TF[["count"]],
+    dimnames = list(Terms = names(keys), Docs = names(x@objects))
+  )
+  class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
+  attr(retval, "weighting") <- c("term frequency", "tf")
+  if (verbose) cli::cli_process_done()
+  
+  retval
 })
 
 
