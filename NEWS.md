@@ -1,8 +1,11 @@
-# polmineR v0.8.7.9001
+# polmineR v0.8.7.9001-9003
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
 * Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
 to improve performance.
+* Substantial performance improvement of `partition_bundle()`-method for
+`partition` objects (more efficient instantiation of S4 objects).
+* Performance improvement of `split()`-method for `subcorpus` objects.
 
 # polmineR v0.8.7
 

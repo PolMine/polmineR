@@ -22,26 +22,15 @@ setMethod("split", "partition", function(x, gap, ...){
     no <- cumsum(beginning)
     struc_list <- split(x@strucs, no)
     cpos_list <- split(x@cpos, no)
+    
     y_list <- lapply(
       seq_along(struc_list),
       function(i) {
-        p <- new(
-          class(x)[1],
-          strucs = struc_list[[i]],
-          cpos = matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L),
-          corpus = x@corpus,
-          data_dir = x@data_dir,
-          registry_dir = x@registry_dir,
-          info_file = x@info_file,
-          template = x@template,
-          encoding = x@encoding,
-          s_attributes = x@s_attributes,
-          xml = x@xml, s_attribute_strucs = x@s_attribute_strucs,
-          explanation = "partition results from split, s-attributes do not necessarily define partition",
-          name = paste(x@name, i, collapse = "_", sep = "_"),
-          # name = as.character(i),
-          stat = data.table()
-        )
+        p <- x
+        p@strucs <- struc_list[[i]]
+        p@cpos <- matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L)
+        p@name = paste(x@name, i, collapse = "_", sep = "_")
+        p@stat = data.table()
         p@size <- size(p)
         p
       })
@@ -77,7 +66,7 @@ setMethod("split", "subcorpus", function(
   retval_class <- if (isTRUE(pb_call)) "partition_bundle" else "subcorpus_bundle"
   cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
   new_class <- if (length(x@type) == 0L) cl else paste(x@type, cl, sep = "_")
-  
+  prototype <- as(x, new_class)
   y <- as(as(x, "corpus"), retval_class)
   y@s_attributes_fixed <- x@s_attributes
   
@@ -96,13 +85,14 @@ setMethod("split", "subcorpus", function(
   cpos_list <- split(x@cpos, strucs_values)
   struc_list <- split(strucs, strucs_values)
   
-  if (!is.null(values)) for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
-  
+  if (!is.null(values)){
+    for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
+  }
+
   .fn <- function(i){
-    m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-    y <- as(x, new_class)
+    y <- prototype
+    y@cpos <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
     y@name <- names(cpos_list)[[i]]
-    y@cpos <- m
     y@strucs <- struc_list[[i]]
     y@s_attribute_strucs <- s_attribute
     y@s_attributes <- c(
@@ -110,7 +100,7 @@ setMethod("split", "subcorpus", function(
       setNames(list(names(cpos_list)[[i]]), s_attribute)
     )
     y@xml = "flat"
-    y@size = sum((m[,2] + 1L) - m[,1])
+    y@size = sum((y@cpos[,2] + 1L) - y@cpos[,1])
     y@type = x@type
     
     y
