@@ -297,8 +297,13 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   keys <- setNames(seq_along(unique_keys), unique_keys)
   rm(unique_keys)
   i <- keys[ DT[["key"]] ]
+  DT[, "key" := NULL]
   if (verbose) cli_process_done()
   
+  if (verbose) cli_process_start("run garbage collection")
+  gc()
+  if (verbose) cli_process_done()
+
   if (verbose) cli_process_start("create TermDocumentMatrix")
   retval <- simple_triplet_matrix(
     i = unname(i),
