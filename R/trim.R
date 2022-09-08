@@ -101,7 +101,7 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
     .message("filtering by positivelist", verbose = verbose)
     before <- length(unique(.Object@cpos[["match_id"]]))
     if (is.matrix(positivelist)){
-      dt <- data.table(cpos = cpos(positivelist), positivelist = TRUE)
+      dt <- data.table(cpos = ranges_to_cpos(positivelist), positivelist = TRUE)
       cpos_min <- dt[.Object@cpos[.Object@cpos[["position"]] != 0], on = "cpos"]
       matches_to_keep <- cpos_min[,
         if (any(!is.na(.SD$positivelist))) .SD else NULL,

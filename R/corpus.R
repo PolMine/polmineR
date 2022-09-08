@@ -516,7 +516,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       # Slower by necessity
       strucs <- cl_cpos2struc(
         x@corpus, registry = x@registry_dir,
-        s_attribute = s_attr[1], cpos = cpos(x@cpos)
+        s_attribute = s_attr[1], cpos = ranges_to_cpos(x@cpos)
       )
       strucs <- unique(strucs[strucs >= 0])
       ranges <- get_region_matrix(

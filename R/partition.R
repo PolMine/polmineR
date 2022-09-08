@@ -421,7 +421,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     )
     y@strucs <- .Object@strucs[hits]
   } else if (y@xml == "nested") {
-    cpos_vec <- cpos(.Object@cpos)
+    cpos_vec <- ranges_to_cpos(.Object@cpos)
     strucs_new <- cl_cpos2struc(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = names(def)[1], cpos = cpos_vec

@@ -55,8 +55,8 @@ ranges(.Object, ...)
 )
 }
 \arguments{
-\item{.Object}{A length-one \code{character} vector indicating a CWB corpus, a
-\code{partition} object, or a \code{matrix} with corpus positions.}
+\item{.Object}{A length-one \code{character} vector indicating a CWB corpus, or a
+\code{corpus}, or \code{partition} object.}
 
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}

@@ -207,7 +207,9 @@ p_sub <- get_token_stream(
 
 # Concatenate phrases and apply filter
 queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
-phr <- corpus("GERMAPARLMINI") \%>\% cpos(query = queries) \%>\% as.phrases(corpus = "GERMAPARLMINI")
+phr <- corpus("GERMAPARLMINI") \%>\%
+  cpos(query = queries) \%>\%
+  as.phrases(corpus = "GERMAPARLMINI")
 
 kill <- tm::stopwords("de")
 

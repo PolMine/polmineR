@@ -146,7 +146,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "matrix", function(.Object, split = FALSE, ...){
-  ts_vec <- get_token_stream(cpos(.Object), ...)
+  ts_vec <- get_token_stream(ranges_to_cpos(.Object), ...)
   
   if (isFALSE(is.logical(split))) stop("'split' needs to be a logical value.")
   if (isFALSE(split)){
@@ -229,7 +229,9 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' 
 #' # Concatenate phrases and apply filter
 #' queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
-#' phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
+#' phr <- corpus("GERMAPARLMINI") %>%
+#'   cpos(query = queries) %>%
+#'   as.phrases(corpus = "GERMAPARLMINI")
 #' 
 #' kill <- tm::stopwords("de")
 #'
@@ -252,7 +254,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   
   if (verbose) message("... get region matrices and corpus positions")
   region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
-  if (!is.null(phrases)) dt[, "cpos" := cpos(region_matrix)]
+  if (!is.null(phrases)) dt[, "cpos" := ranges_to_cpos(region_matrix)]
 
   for (p_attr in p_attribute){
     if (verbose) message("... decoding token stream for p-attribute ", p_attr)

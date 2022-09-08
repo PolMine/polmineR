@@ -208,7 +208,7 @@ setMethod(
           )
           if (unique) retval <- unique(retval)
         } else {
-          cpos_vector <- cpos(.Object@cpos)
+          cpos_vector <- ranges_to_cpos(.Object@cpos)
           strucs <- cl_cpos2struc(
             corpus = .Object@corpus, registry = .Object@registry_dir,
             s_attribute = s_attribute, cpos = cpos_vector

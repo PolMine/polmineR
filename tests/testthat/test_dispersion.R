@@ -94,11 +94,18 @@ test_that(
     # two queries, two s-attributes, frequencies
     y <- dispersion(corpus_obj, query = queries, cqp = TRUE, s_attribute = c("date", "party"), freq = TRUE)
     for (i in 1L:nrow(y)){
-      corpus_obj_sub <- subset(corpus_obj, date = y[["date"]][i]) %>% subset(party == "CDU_CSU")
+      corpus_obj_sub <- subset(corpus_obj, date = y[["date"]][i]) %>%
+        subset(party == "CDU_CSU")
       s <- size(corpus_obj_sub)
       expect_equal(
         y[["CDU_CSU"]][i],
-        sum(sapply(queries, function(q) polmineR::count(corpus_obj_sub, query = q, verbose = FALSE)[["freq"]]))
+        sum(
+          sapply(
+            queries,
+            function(q)
+              polmineR::count(corpus_obj_sub, query = q, verbose = FALSE, cqp = TRUE)[["freq"]]
+          )
+          )
       )
     }
     
