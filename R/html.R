@@ -78,7 +78,7 @@ setMethod("html", "character", function(object, corpus, height = NULL){
 
   css <- paste(
     c(
-      readLines(getOption("markdown.HTML.stylesheet")),
+      readLines(system.file("resources", "markdown.css", package = "markdown")),
       readLines(system.file("css", "tooltips.css", package = "polmineR"))
     ),
     collapse = "\n", sep = "\n"
