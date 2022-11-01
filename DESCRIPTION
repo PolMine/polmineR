@@ -30,7 +30,7 @@ Imports:
     lifecycle,
     rlang
 Suggests:
-    markdown,
+    markdown (>= 1.3),
     rmarkdown,
     htmltools (>= 0.4.0),
     highlight,
