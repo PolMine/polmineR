@@ -6,6 +6,8 @@ to improve performance.
 * Substantial performance improvement of `partition_bundle()`-method for
 `partition` objects (more efficient instantiation of S4 objects).
 * Performance improvement of `split()`-method for `subcorpus` objects.
+* Defunct functions `store()` and `mail()` have finally been removed from the
+package.
 
 # polmineR v0.8.7
 
