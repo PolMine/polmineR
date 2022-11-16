@@ -1,4 +1,4 @@
-# polmineR v0.8.7.9001-9003
+# polmineR v0.8.7.9001-9005
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
 * Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
@@ -8,6 +8,9 @@ to improve performance.
 * Performance improvement of `split()`-method for `subcorpus` objects.
 * Defunct functions `store()` and `mail()` have finally been removed from the
 package.
+* The `sample()` method for `bundle` objects (and objects inheriting from the
+`bundle` class) did not yet use the new convention to use single square brackets
+(not double brackets) for extracting a subset from the `bundle`. Fixed #236.
 
 # polmineR v0.8.7
 
