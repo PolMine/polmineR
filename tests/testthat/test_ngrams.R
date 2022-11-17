@@ -41,3 +41,15 @@ test_that("ngrams - character",{
     n["oil",][["count"]]
   )
 })
+
+test_that("ngrams - character, bundle",{
+  a <- corpus("REUTERS") %>%
+    split(s_attribute = "id") %>%
+    ngrams(n = 3L, char = "")
+  
+  b <- corpus("REUTERS") %>%
+    subset(id == "127") %>%
+    ngrams(n = 3L, char = "")
+  
+  expect_identical(a[["127"]]@stat, b@stat)
+})

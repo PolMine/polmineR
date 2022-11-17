@@ -1,20 +1,17 @@
 #' @include count.R S4classes.R
 NULL
 
-.character_ngrams <- function(x, n, char, progress){
-  char_soup <- unlist(strsplit(x, ""))
-  if (char[1] != "") char_soup <- ifelse(char_soup %in% char, char_soup, NA)
-  char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
-  
-  .fn <- function(x) substr(char_soup, x, x + n - 1L)
-  iter_values <- 1L:(nchar(char_soup) - n + 1L)
-  ngrams <- if (isTRUE(progress)) pbsapply(iter_values, .fn) else sapply(iter_values, .fn)
-  
-  tabled_ngrams <- table(ngrams)
-  data.table(
-    ngram = names(tabled_ngrams),
-    count = unname(as.vector(tabled_ngrams))
-  )
+#' @importFrom stringi stri_sub
+.character_ngrams <- function(x, n, char){
+  if (char[1] != ""){
+    splitted <- unlist(strsplit(x, ""))
+    splitted <- ifelse(splitted %in% char, splitted, NA)
+    x <- paste(splitted[which(!is.na(splitted))], sep = "", collapse = "")
+  }
+  ngrams <- stringi::stri_sub(x, from = 1L:(nchar(x) - n + 1L), to = n:nchar(x))
+  dt <- data.table(ngram = ngrams)[, .N, by = "ngram"]
+  setnames(dt, old = "N", new = "count")
+  dt
 }
 
 #' Get N-Grams
@@ -155,7 +152,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
     char_soup_base <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "")
-    TF <- .character_ngrams(x = char_soup_base, n = n, char = char, progress = progress)
+    TF <- .character_ngrams(x = char_soup_base, n = n, char = char)
   }
   
   y <- as(as(.Object, "corpus"), "ngrams")
@@ -172,7 +169,7 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  retval <- new("bundle")
+  retval <- as(as(.Object, "corpus"), "bundle")
   
   if (is.null(char)){
     retval@objects <- blapply(
@@ -185,15 +182,15 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_
     li <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "", verbose = FALSE)
     if (progress){
       if (mc){
-        dts <- pblapply(li, .character_ngrams, n = n, char = char, progress = progress, cl = mc)
+        dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = mc)
       } else {
-        dts <- lapply(li, .character_ngrams, n = n, char = char, progress = progress)
+        dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = NULL)
       }
     } else {
       if (mc){
-        dts <- mclapply(li, .character_ngrams, n = n, char = char, progress = progress, mc.cores = mc)
+        dts <- mclapply(li, .character_ngrams, n = n, char = char, mc.cores = mc)
       } else {
-        dts <- lapply(li, .character_ngrams, n = n, char = char, progress = progress)
+        dts <- lapply(li, .character_ngrams, n = n, char = char)
       }
     }
     
