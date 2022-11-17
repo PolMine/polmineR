@@ -437,7 +437,7 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
       Encoding(lexicon) <- encoding()
     }
     y <- lexicon[.Object + 1L]
-  } else if (isFALSE(boost)){
+  head(y)} else if (isFALSE(boost)){
     y <- RcppCWB::cl_id2str(
       corpus = corpus@corpus, registry = corpus@registry_dir,
       p_attribute = p_attributes, id = .Object

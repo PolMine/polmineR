@@ -1,6 +1,21 @@
 #' @include count.R S4classes.R
 NULL
 
+.character_ngrams <- function(x, n, char, progress){
+  char_soup <- unlist(strsplit(x, ""))
+  if (char[1] != "") char_soup <- ifelse(char_soup %in% char, char_soup, NA)
+  char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
+  
+  .fn <- function(x) substr(char_soup, x, x + n - 1L)
+  iter_values <- 1L:(nchar(char_soup) - n + 1L)
+  ngrams <- if (isTRUE(progress)) pbsapply(iter_values, .fn) else sapply(iter_values, .fn)
+  
+  tabled_ngrams <- table(ngrams)
+  data.table(
+    ngram = names(tabled_ngrams),
+    count = unname(as.vector(tabled_ngrams))
+  )
+}
 
 #' Get N-Grams
 #' 
@@ -41,18 +56,18 @@ setMethod("ngrams", "partition", function(.Object, ...) callNextMethod(.Object, 
 setMethod("ngrams", "character", function(.Object, ...) callNextMethod(.Object, ...))
 
 #' @rdname ngrams
-setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
-  ngrams(.Object = as(.Object, "subcorpus"), n = n, p_attribute = p_attribute, char = char, progress = progress, ...)
+setMethod("ngrams", "partition", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, mc = 1L, ...){
+  ngrams(.Object = as(.Object, "subcorpus"), n = n, p_attribute = p_attribute, char = char, progress = progress, mc = mc, ...)
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "subcorpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+setMethod("ngrams", "subcorpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, mc = 1L, ...){
   callNextMethod()
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
-  ngrams(.Object = corpus(.Object), n = n, p_attribute = p_attribute, char = char, progress = progress, ...)
+setMethod("ngrams", "character", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, mc = 1L, ...){
+  ngrams(.Object = corpus(.Object), n = n, p_attribute = p_attribute, char = char, progress = progress, mc = mc, ...)
 })
 
 
@@ -91,7 +106,7 @@ setMethod("ngrams", "data.table", function(.Object, n = 2L, p_attribute = "word"
 
 #' @rdname ngrams
 #' @importFrom pbapply pbsapply
-setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, ...){
+setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", char = NULL, progress = FALSE, mc = 1L, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -140,23 +155,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
     char_soup_base <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "")
-    char_soup <- unlist(strsplit(char_soup_base, ""))
-    if (char[1] != ""){
-      char_soup <- unname(unlist(sapply(char_soup, function(x) ifelse(x %in% char, x, NA))))
-      if (any(is.na(char_soup))) char_soup[-which(is.na(char_soup))]
-    }
-    char_soup <- paste(char_soup[which(!is.na(char_soup))], sep = "", collapse = "")
-    char_soup_total <- nchar(char_soup)
-    
-    .fn <- function(x) substr(char_soup, x, x + n - 1L)
-    iter_values <- 1L:(char_soup_total - n + 1L)
-    ngrams <- if (isTRUE(progress)) pbsapply(iter_values, .fn) else sapply(iter_values, .fn)
-
-    tabled_ngrams <- table(ngrams)
-    TF <- data.table(
-      ngram = names(tabled_ngrams),
-      count = unname(as.vector(tabled_ngrams))
-      )
+    TF <- .character_ngrams(x = char_soup_base, n = n, char = char, progress = progress)
   }
   
   y <- as(as(.Object, "corpus"), "ngrams")
@@ -174,11 +173,46 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   retval <- new("bundle")
-  retval@objects <- blapply(
-    .Object@objects, f = ngrams,
-    n = n, p_attribute = p_attribute, char = char, mc = mc, progress = progress
+  
+  if (is.null(char)){
+    retval@objects <- blapply(
+      .Object@objects, f = ngrams,
+      n = n, p_attribute = p_attribute, char = char, mc = mc, progress = progress
     )
-  retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
+    retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
+  } else {
+    retval@p_attribute <- p_attribute
+    li <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "", verbose = FALSE)
+    if (progress){
+      if (mc){
+        dts <- pblapply(li, .character_ngrams, n = n, char = char, progress = progress, cl = mc)
+      } else {
+        dts <- lapply(li, .character_ngrams, n = n, char = char, progress = progress)
+      }
+    } else {
+      if (mc){
+        dts <- mclapply(li, .character_ngrams, n = n, char = char, progress = progress, mc.cores = mc)
+      } else {
+        dts <- lapply(li, .character_ngrams, n = n, char = char, progress = progress)
+      }
+    }
+    
+    proto <- as(as(.Object, "corpus"), "ngrams")
+    proto@n = as.integer(n)
+    proto@p_attribute = if (is.null(char)) p_attribute else "ngram"
+    
+    retval@objects <- lapply(
+      1L:length(dts),
+      function(i){
+        proto@stat <- dts[[i]]
+        proto@size <- as.integer(size(.Object[[i]]))
+        proto@name <- names(.Object)[[i]]
+        proto
+      }
+    )
+  }
+  
   names(retval@objects) <- names(.Object)
+  
   retval
 })

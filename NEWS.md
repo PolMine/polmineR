@@ -1,4 +1,4 @@
-# polmineR v0.8.7.9001-9005
+# polmineR v0.8.7.9001-9006
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
 * Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
@@ -11,6 +11,8 @@ package.
 * The `sample()` method for `bundle` objects (and objects inheriting from the
 `bundle` class) did not yet use the new convention to use single square brackets
 (not double brackets) for extracting a subset from the `bundle`. Fixed #236.
+* Performance improvements for `ngrams()` method for `partition_bundle` objects,
+introducing more efficient data handling and parallelization.
 
 # polmineR v0.8.7
 
