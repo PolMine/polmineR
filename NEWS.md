@@ -13,6 +13,8 @@ package.
 (not double brackets) for extracting a subset from the `bundle`. Fixed #236.
 * Performance improvements for `ngrams()` method for `partition_bundle` objects,
 introducing more efficient data handling, vectorization and parallelization.
+* `get_token_stream()` for `partition_bundle` failed if all docs have
+equal length (`mapply()` issue). Fixed.
 
 # polmineR v0.8.7
 

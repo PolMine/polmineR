@@ -248,7 +248,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   
   if (verbose) message("... creating vector of document ids")
   sizes <- sapply(.Object@objects, slot, "size")
-  id_list <- mapply(rep, seq_along(.Object), sizes)
+  id_list <- mapply(rep, seq_along(.Object), sizes, SIMPLIFY = FALSE)
   dt <- data.table(obj_id = do.call(c, id_list))
   rm(id_list); gc()
   
