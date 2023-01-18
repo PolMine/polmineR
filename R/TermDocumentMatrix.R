@@ -40,8 +40,8 @@ setMethod("cbind2", signature = c(x = "TermDocumentMatrix", y = "TermDocumentMat
 #' In this case, a \code{p_attribute} needs to be provided. Then counting will
 #' be performed, too.
 #' 
-#' @param x A \code{character} vector indicating a corpus, or an object of class
-#'   \code{bundle}, or inheriting from class \code{bundle} (e.g. \code{partition_bundle}).
+#' @param x A `character` vector indicating a corpus, or an object of class
+#'   `bundle`, or inheriting from class `bundle` (e.g. `partition_bundle`).
 #' @param p_attribute A p-attribute counting is be based on.
 #' @param s_attribute An s-attribute that defines content of columns, or rows.
 #' @param col The column of \code{data.table} in slot \code{stat} (if \code{x}
@@ -108,10 +108,15 @@ setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attri
 })
 
 
+#' @importFrom cli cli_progress_step
+#' @param binarize A `logical` value. If `TRUE`, report occurence of term, not
+#'   absoulte count.
+#' @param stoplist A `character` vector of tokens to exclude from the matrix, as
+#'   memory efficient way to exclude irrelevant terms early on.
 #' @rdname as.DocumentTermMatrix
-setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribute, verbose = TRUE, ...){
+setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribute, stoplist = NULL, binarize = FALSE, verbose = TRUE, ...){
   
-  dot_list <- list(...)
+  s_attr_select <- list(...)
 
   stopifnot(
     is.character(p_attribute),
@@ -122,70 +127,98 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
     length(s_attribute) == 1L,
     s_attribute %in% s_attributes(x),
     is.logical(verbose),
-    all(names(dot_list) %in% s_attributes(x))
+    
+    is.list(s_attr_select),
+    all(names(s_attr_select) %in% s_attributes(x)),
+    
+    is.logical(binarize)
   )
   
-  .message("generate data.table with token and struc ids", verbose = verbose)
-  cpos_vector <- 0L:(
-    cl_attribute_size(
-      corpus = x@corpus, registry = x@registry_dir,
-      attribute = p_attribute, attribute_type = "p"
-    ) - 1L
-  )
-  token_id <- cpos2id(x = x, p_attribute = p_attribute, cpos = cpos_vector)
-  struc_vector <- 0L:(
-    cl_attribute_size(
-      corpus = x@corpus, registry = x@registry_dir,
-      attribute = s_attribute, attribute_type = "s"
-    ) - 1)
-  struc_id <- cl_cpos2struc(
+  p_attr_size <- cl_attribute_size(
     corpus = x@corpus, registry = x@registry_dir,
-    s_attribute = s_attribute, cpos = cpos_vector
+    attribute = p_attribute, attribute_type = "p"
   )
-  token_stream_dt <- data.table(
-    cpos = cpos_vector,
-    token_id = token_id,
-    struc_id = struc_id
-  )
+  token_stream_dt <- data.table(cpos = 0L:(p_attr_size - 1L))
+  
+  if (verbose) cli_progress_step("get token ids")
+  token_stream_dt[, "token_id" := cpos2id(x = x, p_attribute = p_attribute, cpos = token_stream_dt[["cpos"]])]
+  
+  if (verbose) cli_progress_step("get struc ids")
+  token_stream_dt[, "struc_id" := cl_cpos2struc(
+    corpus = x@corpus, registry = x@registry_dir,
+    s_attribute = s_attribute, cpos = token_stream_dt[["cpos"]]
+  )]
+  
+  if (verbose) cli_progress_step("drop tokens outside strucs")
   token_stream_dt <- token_stream_dt[token_stream_dt[["struc_id"]] >= 0L]
-  rm(token_id, struc_id)
   
-  s_attr_select <- dot_list
+  if (!is.null(stoplist)){
+    if (!is.numeric(stoplist)){
+      if (verbose) cli_progress_step("get ids for tokens on stoplist")
+      stoplist <- cl_str2id(
+        corpus = x@corpus, registry = x@registry_dir,
+        p_attribute = p_attribute, str = stoplist
+      )
+    }
+    token_stream_dt <- token_stream_dt[!token_stream_dt[["token_id"]] %in% stoplist]
+  }
+
+  if (verbose) cli_progress_step("get unique s-attribute values")
+  s_attr_size <- cl_attribute_size(
+    corpus = x@corpus, registry = x@registry_dir,
+    attribute = s_attribute,
+    attribute_type = "s"
+  )
+
+  avs_file <- sprintf("%s/%s.avs", x@data_dir, s_attribute)
+  avs_size <- file.info(avs_file)$size
+  s_attr_values <- readBin(con = avs_file, what = character(), n = avs_size)
   
-  if (
-    length(s_attr_select) == 0L
-    && length(
-      unique(
-        cl_struc2str(corpus = x@corpus, registry = x@registry_dir, s_attribute = s_attribute, struc = struc_vector)
-        )
-      ) == cl_attribute_size(corpus = x@corpus, x@registry_dir, attribute = s_attribute, attribute_type = "s")
-  ){
-    
-    if (verbose) message("... counting token per doc")
-    count_dt <- token_stream_dt[, .N, by = c("token_id", "struc_id"), with = TRUE]
-    
-    if(verbose) message("... generate simple_triplet_matrix")
-    dtm <- simple_triplet_matrix(
-      i = count_dt[["struc_id"]] + 1L,
-      j = count_dt[["token_id"]] + 1L,
-      v = count_dt[["N"]],
-    )
+  if (length(s_attr_select) == 0L && length(unique(s_attr_values)) == s_attr_size){
+
+    if (verbose) cli_progress_step("counting token per doc")
+    token_stream_dt[, "cpos" := NULL] # to save memory
+    gc()
+    if (!binarize){
+      count_dt <- token_stream_dt[, .N, by = c("token_id", "struc_id"), with = TRUE]
+    } else {
+      count_dt <- token_stream_dt[, unique(.SD), by = "struc_id"]
+      rm(token_stream_dt)
+      gc()
+      count_dt[, "N" := 1L]
+    }
+
+    if (verbose) cli_progress_step("generate simple_triplet_matrix")
     docs <- cl_struc2str(
       corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, struc = 0L:(cl_attribute_size(corpus = x@corpus, attribute = s_attribute, attribute_type = "s", registry = x@registry_dir) - 1L)
+      s_attribute = s_attribute, struc = 0L:(s_attr_size - 1L)
     )
     terms <- cl_id2str(
       corpus = x@corpus, registry = x@registry_dir,
       p_attribute = p_attribute, id = 0L:max(count_dt[["token_id"]])
     )
     terms <- as.nativeEnc(terms, from = x@encoding)
-    dimnames(dtm) <- list(docs, terms)
     
+    count_dt[, "struc_id" :=  count_dt[["struc_id"]] + 1L]
+    count_dt[, "token_id" :=  count_dt[["token_id"]] + 1L]
+
+    # The following code is extracted from slam::simple_triplet_matrix()
+    # It skips anyDuplicated(cbind(stm$i, stm$j)) which is not necessary
+    # and time consuming for big data
+    dtm <- list(
+      i = count_dt[["struc_id"]],
+      j = count_dt[["token_id"]],
+      v = count_dt[["N"]],
+      nrow = max(count_dt[["struc_id"]]),
+      ncol = max(count_dt[["token_id"]]),
+      dimnames = list(docs, terms)
+    )
+
   } else {
     if (length(s_attr_select) >= 1L){
       for (i in 1L:length(s_attr_select)){
         s_attr_sub <- names(s_attr_select)[i]
-        .message("subsetting data.table by s-attribute", s_attr_sub, verbose = verbose)
+        if (verbose) cli_progress_step("subsetting data.table by s-attribute", s_attr_sub)
         struc_id <- cl_cpos2struc(
           corpus = x@corpus, registry = x@registry_dir,
           s_attribute = s_attr_sub, cpos = token_stream_dt[["cpos"]]
@@ -197,7 +230,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
         token_stream_dt <- token_stream_dt[ which(struc_values %in% as.character(s_attr_select[[i]])) ]
       }
     }
-    .message("generate unique document ids", verbose = verbose)
+    if (verbose) cli_progress_step("generate unique document ids")
     struc_values <- cl_struc2str(
       corpus = x@corpus, registry = x@registry_dir,
       s_attribute = s_attribute, struc = token_stream_dt[["struc_id"]]
@@ -206,7 +239,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
     token_stream_dt[, "doc_id" := as.integer(s_attr_factor)]
     token_stream_dt[, "struc_id" := NULL][, "cpos" := NULL]
     
-    .message("counting token per doc", verbose = verbose)
+    if (verbose) cli_progress_step("counting token per doc")
     count_dt <- token_stream_dt[, .N, by = c("token_id", "doc_id"), with = TRUE]
     count_dt[, "token_decoded" := cl_id2str(
       corpus = x@corpus, registry = x@registry_dir,
@@ -214,14 +247,14 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
     ) ]
     token_factor <- factor(count_dt[["token_decoded"]])
     
-    .message("generate simple_triplet_matrix", verbose = verbose)
+    if (verbose) cli_progress_step("generate simple_triplet_matrix")
     dtm <- simple_triplet_matrix(
       i = count_dt[["doc_id"]],
       j = as.integer(token_factor),
       v = count_dt[["N"]]
     )
     
-    .message("add row and column labels", verbose = verbose)
+    if (verbose) cli_progress_step("add row and column labels")
     terms <- as.nativeEnc(levels(token_factor), from = x@encoding)
     documents <- as.nativeEnc(levels(s_attr_factor), from = x@encoding)
     

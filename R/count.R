@@ -408,7 +408,13 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       cnt_file <- fs::path(.Object@data_dir, sprintf("%s.corpus.cnt", p_attribute)
       )
       if (file.exists(cnt_file)){
-        cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
+        cnt <- readBin(
+          con = cnt_file,
+          what = integer(),
+          size = 4L,
+          n = file.info(cnt_file)$size,
+          endian = "big"
+        )
         TF <- data.table(count = cnt)
       } else {
         TF <- data.table(
