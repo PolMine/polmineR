@@ -612,21 +612,34 @@ setMethod("show", "corpus", function(object){
 #' # get corpus ID
 #' corpus("REUTERS") %>% get_corpus()
 #'
-#' # use $ to access s_attributes quickly
+#' # use $ to access corpus properties
 #' use("polmineR")
 #' g <- corpus("GERMAPARLMINI")
 #' g$date
-#' corpus("GERMAPARLMINI")$date #
-#' corpus("GERMAPARLMINI") %>% s_attributes(s_attribute = "date") # equivalent
-#'
-#' use("polmineR")
-#' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
-#' sc$date
+#' corpus("GERMAPARLMINI")$build_date #
+#' gparl <- corpus("GERMAPARLMINI")
+#' gparl$version %>%
+#'   as.numeric_version()
+#' 
 #' @exportMethod $
 #' @rdname corpus_methods
-#' @param x An object of class \code{corpus}, or inheriting from it.
+#' @param x An object of class `corpus`, or inheriting from it.
 #' @param name A (single) s-attribute.
-setMethod("$", "corpus", function(x, name) s_attributes(x, s_attribute = name))
+#' @importFrom RcppCWB corpus_properties corpus_property
+setMethod("$", "corpus", function(x, name){
+  
+  properties <- corpus_properties(corpus = x@corpus, registry = x@registry_dir)
+  if (!name %in% properties){
+    warning(sprintf("property `%s` is not defined, returning NA", name))
+    return(NA_character_)
+  }
+    
+  corpus_property(
+    corpus = x@corpus,
+    registry = x@registry_dir,
+    property = name
+  )
+})
 
 #' @param object An object of class \code{subcorpus_bundle}.
 #' @rdname subcorpus_bundle

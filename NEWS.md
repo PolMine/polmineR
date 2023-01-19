@@ -15,6 +15,11 @@ package.
 introducing more efficient data handling, vectorization and parallelization.
 * `get_token_stream()` for `partition_bundle` failed if all docs have
 equal length (`mapply()` issue). Fixed.
+*  Memory efficiency of `as.DocumentTermMatrtix()` for large corpora significantly
+improved for handlung large corpora.
+* The `$`-method for `corpus` is now used for accessing corpus properties, 
+replacing previous usage to inspect s-attributes.
+
 
 # polmineR v0.8.7
 
