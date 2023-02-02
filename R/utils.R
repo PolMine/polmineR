@@ -145,6 +145,31 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
   cqp
 }
 
+#' Capitalize character vector.
+#' 
+#' Make the first character of the elements of a `character` vector have upper
+#' case and the rest lower case.
+#' 
+#' The `capitalize()` function may be useful when applying lowercased
+#' dictionaries of stoplists, a sentiment dictionary etc. on a CWB corpus that
+#' maintains capitalization (tokens are not lowercased).
+#' 
+#' This function is inspired by a method Python offers for string objects.
+#' @param x A `character` vector.
+#' @export
+#' @examples
+#' capitalize(c("oil", "corpus", "data"))
+capitalize <- function(x){
+  if (!is.character(x)) stop("capitalize() requires character vector as input")
+  retval <- paste0(
+    toupper(substr(x, start = 1L, stop = 1L)),
+    tolower(substr(x, start = 2L, stop = nchar(x)))
+  )
+  retval[is.na(x)] <- NA_character_
+  retval
+}
+
+
 #' Get ID for token.
 #' 
 #' Helper function for context method. Get ids for tokens.

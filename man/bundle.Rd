@@ -13,7 +13,6 @@
 \alias{unique,bundle-method}
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
-\alias{[[,bundle,ANY-method}
 \alias{[,bundle,ANY,ANY,ANY-method}
 \alias{$,bundle-method}
 \alias{$<-,bundle-method}
@@ -42,7 +41,7 @@
 
 \S4method{+}{bundle,textstat}(e1, e2)
 
-\S4method{[[}{bundle,ANY}(x, i)
+\S4method{[[}{bundle}(x, i)
 
 \S4method{[}{bundle,ANY,ANY,ANY}(x, i)
 

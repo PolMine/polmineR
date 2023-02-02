@@ -19,6 +19,10 @@ equal length (`mapply()` issue). Fixed.
 improved for handlung large corpora.
 * The `$`-method for `corpus` is now used for accessing corpus properties, 
 replacing previous usage to inspect s-attributes.
+* The `partition_bundle()`-method for `context` class objects has improved
+verbosity now and telling progress messages.
+* New utility function `capitalize()` for uppercasing first letter of elements
+in a character vector.
 
 
 # polmineR v0.8.7

@@ -176,35 +176,42 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
   
   if (length(s_attr_select) == 0L && length(unique(s_attr_values)) == s_attr_size){
 
-    if (verbose) cli_progress_step("counting token per doc")
     token_stream_dt[, "cpos" := NULL] # to save memory
     gc()
     if (!binarize){
+      if (verbose) cli_progress_step("counting token per doc")
       count_dt <- token_stream_dt[, .N, by = c("token_id", "struc_id"), with = TRUE]
+      rm(token_stream_dt)
+      gc()
     } else {
+      if (verbose) cli_progress_step("counting token per doc (binarized)")
       count_dt <- token_stream_dt[, unique(.SD), by = "struc_id"]
       rm(token_stream_dt)
       gc()
       count_dt[, "N" := 1L]
     }
 
-    if (verbose) cli_progress_step("generate simple_triplet_matrix")
+    if (verbose) cli_progress_step("decode strucs")
     docs <- cl_struc2str(
       corpus = x@corpus, registry = x@registry_dir,
       s_attribute = s_attribute, struc = 0L:(s_attr_size - 1L)
     )
+    
+    if (verbose) cli_progress_step("decode and recode token ids")
     terms <- cl_id2str(
       corpus = x@corpus, registry = x@registry_dir,
       p_attribute = p_attribute, id = 0L:max(count_dt[["token_id"]])
     )
     terms <- as.nativeEnc(terms, from = x@encoding)
     
+    if (verbose) cli_progress_step("adjust ids")
     count_dt[, "struc_id" :=  count_dt[["struc_id"]] + 1L]
     count_dt[, "token_id" :=  count_dt[["token_id"]] + 1L]
 
     # The following code is extracted from slam::simple_triplet_matrix()
     # It skips anyDuplicated(cbind(stm$i, stm$j)) which is not necessary
     # and time consuming for big data
+    if (verbose) cli_progress_step("generate simple_triplet_matrix")
     dtm <- list(
       i = count_dt[["struc_id"]],
       j = count_dt[["token_id"]],
@@ -223,6 +230,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
           corpus = x@corpus, registry = x@registry_dir,
           s_attribute = s_attr_sub, cpos = token_stream_dt[["cpos"]]
         )
+        token_stream_dt[, "cpos" := NULL]
         struc_values <- cl_struc2str(
           corpus = x@corpus, registry = x@registry_dir,
           s_attribute = s_attr_sub, struc = struc_id
@@ -237,28 +245,41 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
     )
     s_attr_factor <- factor(struc_values)
     token_stream_dt[, "doc_id" := as.integer(s_attr_factor)]
-    token_stream_dt[, "struc_id" := NULL][, "cpos" := NULL]
+    token_stream_dt[, "struc_id" := NULL]
     
-    if (verbose) cli_progress_step("counting token per doc")
-    count_dt <- token_stream_dt[, .N, by = c("token_id", "doc_id"), with = TRUE]
-    count_dt[, "token_decoded" := cl_id2str(
+    if (!binarize){
+      if (verbose) cli_progress_step("counting token per doc")
+      count_dt <- token_stream_dt[, .N, by = c("token_id", "doc_id"), with = TRUE]
+    } else {
+      if (verbose) cli_progress_step("counting token per doc (binarized)")
+      count_dt <- token_stream_dt[, unique(.SD), by = "doc_id"]
+      rm(token_stream_dt)
+      gc()
+      count_dt[, "N" := 1L]
+    }
+    
+    if (verbose) cli_progress_step("decode tokens and generate factor")
+    token_decoded <- cl_id2str(
       corpus = x@corpus, registry = x@registry_dir,
       p_attribute = p_attribute, id = count_dt[["token_id"]]
-    ) ]
-    token_factor <- factor(count_dt[["token_decoded"]])
-    
-    if (verbose) cli_progress_step("generate simple_triplet_matrix")
-    dtm <- simple_triplet_matrix(
-      i = count_dt[["doc_id"]],
-      j = as.integer(token_factor),
-      v = count_dt[["N"]]
     )
+    token_factor <- factor(token_decoded)
     
-    if (verbose) cli_progress_step("add row and column labels")
+    if (verbose) cli_progress_step("prepare row and column labels")
     terms <- as.nativeEnc(levels(token_factor), from = x@encoding)
-    documents <- as.nativeEnc(levels(s_attr_factor), from = x@encoding)
+    docs <- as.nativeEnc(levels(s_attr_factor), from = x@encoding)
+
+    if (verbose) cli_progress_step("generate simple_triplet_matrix")
+    token_ids <- as.integer(token_factor)
     
-    dimnames(dtm) <- list(Docs = documents, Terms = terms)
+    dtm <- list(
+      i = count_dt[["doc_id"]],
+      j = token_ids,
+      v = count_dt[["N"]],
+      nrow = max(count_dt[["doc_id"]]),
+      ncol = max(token_ids),
+      dimnames = list(docs, terms)
+    )
   }
   class(dtm) <- c("DocumentTermMatrix", "simple_triplet_matrix")
   attr(dtm, "weighting") <- c("term frequency", "tf")
