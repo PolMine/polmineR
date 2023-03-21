@@ -1,8 +1,8 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.7.9012
-Date: 2023-02-02
+Version: 0.8.7.9013
+Date: 2023-02-12
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
   person("Christoph", "Leonhardt", role = "ctb"),
@@ -31,7 +31,7 @@ Imports:
     rlang,
     cli
 Suggests:
-    markdown,
+    markdown (>= 1.5),
     rmarkdown,
     htmltools (>= 0.4.0),
     highlight,
@@ -126,5 +126,5 @@ Collate:
     'weigh.R'
     'zzz.R'
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3

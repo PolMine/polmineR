@@ -23,6 +23,13 @@ replacing previous usage to inspect s-attributes.
 verbosity now and telling progress messages.
 * New utility function `capitalize()` for uppercasing first letter of elements
 in a character vector.
+* The `trim()`-method for classes `DocumentTermMatrix` and `TermDocumentMatrix` has
+been updated. Arguments `termsToKeep`, and `docsToDrop` have been deprecated,
+argument `termsToDrop` is deprecated and replaced by `terms_to_drop` and
+`docsToKeep` is deprecated and replaced by `docs_to_keep`. New arguments
+`min_count` and `min_doc_length` are introduced to drop rare terms and short
+documents, respectively. The purpose of redesigning the `trim()`-method is to
+make it more useful for preparing matrices for topic modelling. 
 
 
 # polmineR v0.8.7
