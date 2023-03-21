@@ -357,6 +357,17 @@ setMethod("s_attributes", "quosure", function(.Object, corpus){
   s_attributes(quo_get_expr(.Object), corpus = corpus)
 })
 
+#' @rdname s_attributes-method
+setMethod("s_attributes", "name", function(.Object, corpus){
+  s_attrs <- s_attributes(corpus)
+  s <- deparse(.Object)
+  if (!s %in% s_attrs){
+    warning(sprintf("'%s' is not a s-attribute, returning NULL", s))
+    return(NULL)
+  }
+  s
+})
+
 
 #' @rdname s_attributes-method
 setMethod("s_attributes", "remote_corpus", function(.Object, ...){

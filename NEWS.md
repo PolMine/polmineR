@@ -30,6 +30,9 @@ argument `termsToDrop` is deprecated and replaced by `terms_to_drop` and
 `min_count` and `min_doc_length` are introduced to drop rare terms and short
 documents, respectively. The purpose of redesigning the `trim()`-method is to
 make it more useful for preparing matrices for topic modelling. 
+* Method `subset()` for `corpus` and `subcorpus` objects will now process 
+indication of s-attribute without value, so that subsetting corpora for 
+s-attributes without values is now possible.
 
 
 # polmineR v0.8.7

@@ -10,6 +10,7 @@
 \alias{s_attributes,subcorpus-method}
 \alias{s_attributes,call-method}
 \alias{s_attributes,quosure-method}
+\alias{s_attributes,name-method}
 \alias{s_attributes,remote_corpus-method}
 \alias{s_attributes,remote_partition-method}
 \alias{s_attributes,data.table-method}
@@ -30,6 +31,8 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{call}(.Object, corpus)
 
 \S4method{s_attributes}{quosure}(.Object, corpus)
+
+\S4method{s_attributes}{name}(.Object, corpus)
 
 \S4method{s_attributes}{remote_corpus}(.Object, ...)
 
