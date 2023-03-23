@@ -1,4 +1,4 @@
-# polmineR v0.8.7.9001-9007
+# polmineR v0.8.7.9001-9015
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
 * Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
@@ -29,10 +29,14 @@ argument `termsToDrop` is deprecated and replaced by `terms_to_drop` and
 `docsToKeep` is deprecated and replaced by `docs_to_keep`. New arguments
 `min_count` and `min_doc_length` are introduced to drop rare terms and short
 documents, respectively. The purpose of redesigning the `trim()`-method is to
-make it more useful for preparing matrices for topic modelling. 
+make it more useful for preparing matrices for topic modelling.
 * Method `subset()` for `corpus` and `subcorpus` objects will now process 
 indication of s-attribute without value, so that subsetting corpora for 
 s-attributes without values is now possible.
+* Method `split()` for `subcorpus` objects will now also work if `s_attribute`
+for splitting is not a sibling of the s-attribute the subcorpus is based on.
+* Method `as.speeches()` for `subcorpus` objects refactored to work with 
+nested scenario.
 
 
 # polmineR v0.8.7
