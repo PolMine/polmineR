@@ -123,17 +123,14 @@ setMethod("split", "subcorpus", function(
     struc_list <- split(x@strucs, strucs_values) # different from sibling
     s_attr_strucs <- x@s_attribute_strucs
   } else if (relation == "descendent"){
-    strucs <- unique(
-      cpos2struc(x, cpos = ranges_to_cpos(x@cpos), s_attr = s_attribute)
-    )
-    
+    cpos <- ranges_to_cpos(x@cpos)
+    strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
     regions <- get_region_matrix(
       corpus = x@corpus,
       s_attribute = s_attribute,
       strucs = strucs,
       registry = x@registry_dir
     )
-    
     strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
     cpos_list <- split(regions, strucs_values)

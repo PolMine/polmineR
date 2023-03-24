@@ -278,7 +278,7 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
       v = count_dt[["N"]],
       nrow = max(count_dt[["doc_id"]]),
       ncol = max(token_ids),
-      dimnames = list(docs, terms)
+      dimnames = list(Docs = docs, Terms = terms)
     )
   }
   class(dtm) <- c("DocumentTermMatrix", "simple_triplet_matrix")
