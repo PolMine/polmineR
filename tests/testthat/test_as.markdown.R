@@ -8,6 +8,10 @@ testthat::context("as.markdown")
 test_that(
   "as.markdown",
   {
+    # Running these tests on CRAN would be too limiting for development of
+    # markdown pkg
+    skip_on_cran()
+    
     p <- partition("REUTERS", id = "127", regex = TRUE)
     y <- as.markdown(p)
     if (.Platform$OS.type == "windows") y <- iconv(y, from = encoding(), to = "UTF-8")
@@ -37,6 +41,7 @@ test_that(
 test_that(
   "plpr_partition",
   {
+    skip_on_cran()
     m <- partition("GERMAPARLMINI", date = "2009-10-28", speaker = "Merkel", regex = TRUE) %>%
       as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", gap = 100) %>%
       .[[2]]
@@ -65,6 +70,8 @@ test_that(
 test_that(
   "read",
   {
+    skip_on_cran()
+    
     a <- subset(corpus("REUTERS"), places = "argentina")
     b <- html(a)
     c <- highlight(b, lightgreen = "higher")

@@ -39,6 +39,9 @@ for splitting is not a sibling of the s-attribute the subcorpus is based on.
 nested scenario.
 * Adapted to changes of pkg markdown >= 1.3 #235.
 * `s_attributes()` will return `NA` if s-attribute does not have values #234.
+* `hits()`-method for `partition_bundle` objects passes argument `p_attribute` 
+to `cpos()` #239.
+
 
 # polmineR v0.8.7
 
