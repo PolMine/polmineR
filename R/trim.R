@@ -80,6 +80,8 @@ setMethod("trim", "DocumentTermMatrix", function(.Object, terms_to_drop, docs_to
     deprecate_warn("0.8.8", "DocumentTermMatrix(docsToDrop)")
   }
   
+  purge <- FALSE # set to TRUE on demand
+  
   if (!missing(docs_to_keep)){
     nrow_old <- nrow(.Object)
     rows_to_keep <- which(rownames(.Object) %in% docs_to_keep)

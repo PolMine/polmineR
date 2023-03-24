@@ -272,7 +272,7 @@ setMethod("as.speeches", "subcorpus", function(
       if (verbose) cli_progress_step("coercing partitions to plpr_subcorpus")
       speaker_list_ordered <- lapply(
         speaker_list_ordered,
-        function(x) as(x, "plpr_subcorpus")
+        function(x) as(as(x, "subcorpus"), "plpr_subcorpus")
       )
       if (verbose) cli_progress_done()
     }

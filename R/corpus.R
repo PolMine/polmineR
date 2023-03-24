@@ -285,7 +285,7 @@ setMethod("corpus", "missing", function(){
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
 #' @importFrom data.table setindexv setDT
-#' @importFrom rlang enquo eval_tidy
+#' @importFrom rlang enquo eval_tidy is_quosure
 #' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
 #'   and passed into a \code{grep} call for subsetting a table with the regions
@@ -307,7 +307,14 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       eval_tidy(expr),
       error = function(e) FALSE
     )
-    if (is.call(evaluated)) expr <- eval_tidy(expr)
+    if (is.call(evaluated)){
+      is_call <- TRUE
+      expr <- eval_tidy(expr)
+    } else if (is_quosure(expr)){
+      if (is.call(quo_get_expr(expr))) is_call <- TRUE
+    } else {
+      is_call <- FALSE
+    }
 
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
@@ -389,7 +396,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 
   # Apply the expression.
   if (!missing(subset)){
-    if (is(quo_get_expr(expr))[1L] == "call"){
+    if (is_call){
       # Adjust the encoding of the expression to the one of the corpus. Adjusting
       # encodings is expensive, so the (small) epression will be adjusted to the
       # encoding of the corpus, not vice versa

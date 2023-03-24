@@ -109,44 +109,23 @@ setMethod("split", "subcorpus", function(
   }
 
   if (relation == "sibling"){
-    strucs <- cl_cpos2struc(
-      corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, cpos = x@cpos[,1]
-    )
-    strucs_values <- cl_struc2str(
-      corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, struc = strucs
-    )
+    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
-    
     cpos_list <- split(x@cpos, strucs_values)
     struc_list <- split(strucs, strucs_values)
-    
     s_attr_strucs <- s_attribute
-    
   } else if (relation == "ancestor"){
-    
-    strucs <- cl_cpos2struc(
-      corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, cpos = x@cpos[,1]
-    )
-    strucs_values <- cl_struc2str(
-      corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, struc = strucs
-    )
+    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
     cpos_list <- split(x@cpos, strucs_values)
     struc_list <- split(x@strucs, strucs_values) # different from sibling
-    
     s_attr_strucs <- x@s_attribute_strucs
-    
   } else if (relation == "descendent"){
-    strucs <- unique(cl_cpos2struc(
-      corpus = x@corpus,
-      s_attribute = s_attribute,
-      cpos = ranges_to_cpos(x@cpos),
-      registry = x@registry_dir
-    ))
+    strucs <- unique(
+      cpos2struc(x, cpos = ranges_to_cpos(x@cpos), s_attr = s_attribute)
+    )
     
     regions <- get_region_matrix(
       corpus = x@corpus,
@@ -155,15 +134,10 @@ setMethod("split", "subcorpus", function(
       registry = x@registry_dir
     )
     
-    strucs_values <- cl_struc2str(
-      corpus = x@corpus, registry = x@registry_dir,
-      s_attribute = s_attribute, struc = strucs
-    )
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
-    
     cpos_list <- split(regions, strucs_values)
     struc_list <- split(strucs, strucs_values) # different from sibling
-
     s_attr_strucs <- s_attribute
   }
 
@@ -180,14 +154,15 @@ setMethod("split", "subcorpus", function(
     y@name <- names(cpos_list)[[i]]
     y@strucs <- struc_list[[i]]
     y@s_attribute_strucs <- s_attr_strucs
-    # y@s_attributes <- c(
-    #   x@s_attributes,
-    #   setNames(list(names(cpos_list)[[i]]), s_attribute)
-    # )
+    if (relation == "sibling"){
+      y@s_attributes <- c(
+        x@s_attributes,
+        setNames(list(names(cpos_list)[[i]]), s_attribute)
+      )
+    }
     y@xml = x@xml # to reconsider
     y@size = sum((y@cpos[,2] + 1L) - y@cpos[,1])
     y@type = x@type
-    
     y
   }
   
