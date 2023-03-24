@@ -72,14 +72,13 @@ if (interactive()) corpus("REUTERS") # show is called implicitly
 # get corpus ID
 corpus("REUTERS") \%>\% get_corpus()
 
-# use $ to access s_attributes quickly
+# use $ to access corpus properties
 use("polmineR")
 g <- corpus("GERMAPARLMINI")
 g$date
-corpus("GERMAPARLMINI")$date #
-corpus("GERMAPARLMINI") \%>\% s_attributes(s_attribute = "date") # equivalent
+corpus("GERMAPARLMINI")$build_date #
+gparl <- corpus("GERMAPARLMINI")
+gparl$version \%>\%
+  as.numeric_version()
 
-use("polmineR")
-sc <- subset("GERMAPARLMINI", date == "2009-10-27")
-sc$date
 }

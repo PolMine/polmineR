@@ -208,7 +208,7 @@ setMethod(
           )
           if (unique) retval <- unique(retval)
         } else {
-          cpos_vector <- cpos(.Object@cpos)
+          cpos_vector <- ranges_to_cpos(.Object@cpos)
           strucs <- cl_cpos2struc(
             corpus = .Object@corpus, registry = .Object@registry_dir,
             s_attribute = s_attribute, cpos = cpos_vector
@@ -355,6 +355,17 @@ setMethod("s_attributes", "call", function(.Object, corpus){
 #' @importFrom rlang quo_get_expr
 setMethod("s_attributes", "quosure", function(.Object, corpus){
   s_attributes(quo_get_expr(.Object), corpus = corpus)
+})
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "name", function(.Object, corpus){
+  s_attrs <- s_attributes(corpus)
+  s <- deparse(.Object)
+  if (!s %in% s_attrs){
+    warning(sprintf("'%s' is not a s-attribute, returning NULL", s))
+    return(NULL)
+  }
+  s
 })
 
 

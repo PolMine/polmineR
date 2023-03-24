@@ -39,17 +39,17 @@ Class to manage subcorpora derived from a CWB corpus.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{summary}: Get named list with basic information for
+\item \code{summary(subcorpus)}: Get named list with basic information for
 \code{subcorpus} object.
 
-\item \code{name<-}: Assign name to a \code{subcorpus} object.
+\item \code{name(subcorpus) <- value}: Assign name to a \code{subcorpus} object.
 
-\item \code{get_corpus}: Get the corpus ID from the \code{subcorpus} object.
+\item \code{get_corpus(subcorpus)}: Get the corpus ID from the \code{subcorpus} object.
 
-\item \code{size}: Get the size of a \code{subcorpus} object from the
+\item \code{size(subcorpus)}: Get the size of a \code{subcorpus} object from the
 respective slot of the object.
-}}
 
+}}
 \section{Slots}{
 
 \describe{

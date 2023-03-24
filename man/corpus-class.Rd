@@ -34,7 +34,7 @@ instantiate a \code{remote_corpus} object.}
 restricted (\code{TRUE}) or not (\code{FALSE}).}
 }
 \description{
-Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+Corpora indexed using the 'Corpus Workbench' ('CWB') offer an efficient data
 structure for large, linguistically annotated corpora. The \code{corpus}-class
 keeps basic information on a CWB corpus. Corresponding to the name of the
 class, the \code{corpus}-method is the initializer for objects of the \code{corpus}

@@ -2,13 +2,10 @@
 % Please edit documentation in R/polmineR-defunct.R, R/renamed.R
 \name{polmineR-defunct}
 \alias{polmineR-defunct}
-\alias{store}
 \alias{mail}
 \alias{browse}
 \title{Defunct functionality}
 \usage{
-store(...)
-
 mail(...)
 
 browse(...)

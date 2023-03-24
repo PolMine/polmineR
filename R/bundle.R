@@ -159,7 +159,9 @@ setMethod("$<-", "bundle", function(x,name, value){
 
 #' @exportMethod sample
 #' @rdname bundle
-setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = size)]])
+setMethod("sample", "bundle", function(x, size){
+  x[sample(1L:length(x), size = size)]
+})
 
 
 setAs(from = "list", to = "bundle", def = function(from){

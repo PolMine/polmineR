@@ -285,7 +285,7 @@ setMethod("corpus", "missing", function(){
 #'   keep. The expression may be unevaluated (using \code{quote} or
 #'   \code{bquote}).
 #' @importFrom data.table setindexv setDT
-#' @importFrom rlang enquo eval_tidy
+#' @importFrom rlang enquo eval_tidy is_quosure
 #' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
 #'   and passed into a \code{grep} call for subsetting a table with the regions
@@ -307,7 +307,14 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       eval_tidy(expr),
       error = function(e) FALSE
     )
-    if (is.call(evaluated)) expr <- eval_tidy(expr)
+    if (is.call(evaluated)){
+      is_call <- TRUE
+      expr <- eval_tidy(expr)
+    } else if (is_quosure(expr)){
+      if (is.call(quo_get_expr(expr))) is_call <- TRUE
+    } else {
+      is_call <- FALSE
+    }
 
     s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
     s_attr <- c(s_attr, s_attr_expr)
@@ -350,8 +357,9 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     cpos_right = rng[seq.int(from = 2L, to = length(rng), by = 2L)]
   )
 
-  # Now we add the values of the s-attributes to the data.table with regions, one at
-  # a time. Again, doing this from the binary files directly is faster than using RcppCWB.
+  # Now we add the values of the s-attributes to the data.table with regions,
+  # one at a time. Again, doing this from the binary files directly is faster
+  # than using RcppCWB.
   for (i in seq_along(s_attr)){
     if (!s_attr[i] %in% s_attributes(x)){
       warning(sprintf("structural attribute '%s' not defined", s_attr[i]))
@@ -361,28 +369,44 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
       avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
     )
-    sizes <- lapply(files, function(file) file.info(file)[["size"]])
-
-    avx <- readBin(files[["avx"]], what = integer(), size = 4L, n = sizes[["avx"]] / 4L, endian = "big")
-    avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
-
-    avs <- readBin(con = files[["avs"]], what = character(), n = sizes[["avs"]])
-    if (!is.null(encoding)) Encoding(avs) <- x@encoding
-
-    dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
+    if (all(file.exists(unlist(files)))){
+      sizes <- lapply(files, function(file) file.info(file)[["size"]])
+      
+      avx <- readBin(
+        files[["avx"]],
+        what = integer(),
+        size = 4L,
+        n = sizes[["avx"]] / 4L,
+        endian = "big"
+      )
+      avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
+      
+      avs <- readBin(
+        con = files[["avs"]],
+        what = character(),
+        n = sizes[["avs"]]
+      )
+      if (!is.null(encoding)) Encoding(avs) <- x@encoding
+      
+      dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
+    } else {
+      cli_alert_info("s_attribute {.val {s_attr[i]}} does not have values")
+    }
   }
 
   # Apply the expression.
   if (!missing(subset)){
-    # Adjust the encoding of the expression to the one of the corpus. Adjusting
-    # encodings is expensive, so the (small) epression will be adjusted to the
-    # encoding of the corpus, not vice versa
-    
-    if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
-    
-    setindexv(dt, cols = s_attr)
-    success <- try({dt <- dt[eval_tidy(expr, data = dt)]})
-    if (is(success, "try-error")) return(NULL)
+    if (is_call){
+      # Adjust the encoding of the expression to the one of the corpus. Adjusting
+      # encodings is expensive, so the (small) epression will be adjusted to the
+      # encoding of the corpus, not vice versa
+      
+      if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
+      
+      setindexv(dt, cols = s_attr)
+      success <- try({dt <- dt[eval_tidy(expr, data = dt)]})
+      if (is(success, "try-error")) return(NULL)
+    }
   }
 
   if (length(dots) > 0L){
@@ -440,12 +464,18 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     eval_tidy(expr),
     error = function(e) FALSE
   )
-  if (is.call(evaluated)) expr <- eval_tidy(expr)
-  
-  if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
+  if (is.call(evaluated)){
+    expr <- eval_tidy(expr)
+    if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
+  }
 
-  s_attr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
-  dt <- data.table(struc = x@strucs, cpos_left = x@cpos[,1], cpos_right = x@cpos[,2])
+  # get s_attributes present in the expression
+  s_attr <- s_attributes(expr, corpus = x) 
+  dt <- data.table(
+    struc = x@strucs,
+    cpos_left = x@cpos[, 1],
+    cpos_right = x@cpos[, 2]
+  )
   
   s_attr_sizes <- sapply(
     unique(c(x@s_attribute_strucs, s_attr)),
@@ -516,24 +546,29 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       # Slower by necessity
       strucs <- cl_cpos2struc(
         x@corpus, registry = x@registry_dir,
-        s_attribute = s_attr[1], cpos = cpos(x@cpos)
+        s_attribute = s_attr[1], cpos = ranges_to_cpos(x@cpos)
       )
-      strucs <- unique(strucs[strucs >= 0])
+      strucs <- unique(strucs[strucs >= 0L])
       ranges <- get_region_matrix(
         x@corpus, registry = x@registry_dir,
         s_attribute = s_attr[1], strucs = strucs
       )
-      str <- cl_struc2str(
-        corpus = x@corpus, registry = x@registry_dir,
-        s_attribute = s_attr[1], struc = strucs
-      )
-      Encoding(str) <- x@encoding
       dt <- data.table(
         struc = strucs,
         cpos_left = ranges[,1],
         cpos_right = ranges[,2]
       )
-      dt[, (s_attr[1]) := str]
+      
+      # this is a somewhat dirty assumption that s_attr will not have values
+      if (is.call(quo_get_expr(expr))){
+        str <- cl_struc2str(
+          corpus = x@corpus, registry = x@registry_dir,
+          s_attribute = s_attr[1], struc = strucs
+        )
+        Encoding(str) <- x@encoding
+        dt[, (s_attr[1]) := str]
+      }
+      
       if (length(s_attr) > 1L){
         for (s in s_attr[-1]){
           str <- cl_struc2str(
@@ -558,11 +593,6 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     
   }
   
-  setindexv(dt, cols = s_attr)
-  
-  success <- try({dt_min <- dt[eval_tidy(expr, data = dt)]})
-  if (is(success, "try-error")) return(NULL)
-  
   y <- new(
     "subcorpus",
     corpus = x@corpus,
@@ -572,13 +602,26 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     encoding = x@encoding,
     type = x@type,
     data_dir = x@data_dir,
-    cpos = as.matrix(dt_min[, c("cpos_left", "cpos_right")]),
-    strucs = dt_min[["struc"]],
-    s_attributes = c(x@s_attributes, lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]]))),
     s_attribute_strucs = s_attr[length(s_attr)],
     xml = "flat",
     name = x@name
   )
+
+  if (is.call(quo_get_expr(expr))){
+    setindexv(dt, cols = s_attr)
+    success <- try({dt_min <- dt[eval_tidy(expr, data = dt)]})
+    if (is(success, "try-error")) return(NULL)
+    y@cpos <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
+    y@strucs <- dt_min[["struc"]]
+    y@s_attributes <- c(
+      x@s_attributes,
+      lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]]))
+    )
+  } else {
+    y@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
+    y@strucs <- dt[["struc"]]
+  }
+
   y@size <- size(y)
   y
 })
@@ -612,21 +655,34 @@ setMethod("show", "corpus", function(object){
 #' # get corpus ID
 #' corpus("REUTERS") %>% get_corpus()
 #'
-#' # use $ to access s_attributes quickly
+#' # use $ to access corpus properties
 #' use("polmineR")
 #' g <- corpus("GERMAPARLMINI")
 #' g$date
-#' corpus("GERMAPARLMINI")$date #
-#' corpus("GERMAPARLMINI") %>% s_attributes(s_attribute = "date") # equivalent
-#'
-#' use("polmineR")
-#' sc <- subset("GERMAPARLMINI", date == "2009-10-27")
-#' sc$date
+#' corpus("GERMAPARLMINI")$build_date #
+#' gparl <- corpus("GERMAPARLMINI")
+#' gparl$version %>%
+#'   as.numeric_version()
+#' 
 #' @exportMethod $
 #' @rdname corpus_methods
-#' @param x An object of class \code{corpus}, or inheriting from it.
+#' @param x An object of class `corpus`, or inheriting from it.
 #' @param name A (single) s-attribute.
-setMethod("$", "corpus", function(x, name) s_attributes(x, s_attribute = name))
+#' @importFrom RcppCWB corpus_properties corpus_property
+setMethod("$", "corpus", function(x, name){
+  
+  properties <- corpus_properties(corpus = x@corpus, registry = x@registry_dir)
+  if (!name %in% properties){
+    warning(sprintf("property `%s` is not defined, returning NA", name))
+    return(NA_character_)
+  }
+    
+  corpus_property(
+    corpus = x@corpus,
+    registry = x@registry_dir,
+    property = name
+  )
+})
 
 #' @param object An object of class \code{subcorpus_bundle}.
 #' @rdname subcorpus_bundle

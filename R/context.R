@@ -132,7 +132,10 @@ setMethod("context", "slice", function(
   
   # get regions for query matches
   .message("getting corpus positions", verbose = verbose)
-  regions <- cpos(.Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp, check = check)
+  regions <- cpos(
+    .Object = .Object, query = query, p_attribute = p_attribute[1], cqp = cqp,
+    check = check
+  )
   if (is.null(regions)){
     warning('No hits for query ', query, ' (returning NULL)')
     return( invisible(NULL) )

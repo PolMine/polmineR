@@ -23,7 +23,15 @@ as.DocumentTermMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{corpus}(x, p_attribute, s_attribute, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{corpus}(
+  x,
+  p_attribute,
+  s_attribute,
+  stoplist = NULL,
+  binarize = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{as.DocumentTermMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
@@ -57,6 +65,12 @@ partition-method.}
 \item{s_attribute}{An s-attribute that defines content of columns, or rows.}
 
 \item{verbose}{A \code{logial} value, whether to output progress messages.}
+
+\item{stoplist}{A \code{character} vector of tokens to exclude from the matrix, as
+memory efficient way to exclude irrelevant terms early on.}
+
+\item{binarize}{A \code{logical} value. If \code{TRUE}, report occurence of term, not
+absoulte count.}
 
 \item{col}{The column of \code{data.table} in slot \code{stat} (if \code{x}
 is a \code{bundle}) to use of assembling the matrix.}

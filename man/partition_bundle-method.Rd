@@ -50,7 +50,13 @@ partition_bundle(.Object, ...)
   ...
 )
 
-\S4method{partition_bundle}{context}(.Object, node = TRUE, progress = TRUE, mc = 1L)
+\S4method{partition_bundle}{context}(
+  .Object,
+  node = TRUE,
+  verbose = TRUE,
+  progress = TRUE,
+  mc = 1L
+)
 
 \S4method{partition_bundle}{partition_bundle}(
   .Object,
@@ -107,6 +113,10 @@ pb <- enrich(pb, p_attribute = "word")
 dtm <- as.DocumentTermMatrix(pb, col = "count")
 summary(pb)
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+use("RcppCWB", corpus = "REUTERS")
+pb <- corpus("REUTERS") \%>\%
+  context(query = "oil", p_attribute = "word") \%>\%
+  partition_bundle(node = FALSE, verbose = TRUE)
 # split up objects in partition_bundle by using partition_bundle-method
 use("polmineR")
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")

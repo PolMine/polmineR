@@ -18,6 +18,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 
@@ -27,6 +28,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 
@@ -36,6 +38,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 
@@ -45,6 +48,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 
@@ -54,6 +58,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 
@@ -65,6 +70,7 @@ ngrams(.Object, ...)
   p_attribute = "word",
   char = NULL,
   progress = FALSE,
+  mc = 1L,
   ...
 )
 

@@ -21,11 +21,12 @@ test_that(
     expect_identical(y, benchmark)
     
     y <- as.character(html(p))
+    y <- gsub("\n\n", "\n", y)
 
     refdoc <- system.file(package = "polmineR", "fulltext", "reuters_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
-    benchmark <- gsub("\n\n", "\n", benchmark)
     benchmark <- paste(benchmark, collapse = "\n")
+    benchmark <- gsub("\n\n", "\n", benchmark)
     benchmark <- paste(benchmark, "\n", sep = "")
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
@@ -49,12 +50,13 @@ test_that(
     expect_identical(y, benchmark)
     
     y <- as.character(read(m, beautify = TRUE))
+    y <- gsub("\n\n", "\n", y)
 
     refdoc <- system.file(package = "polmineR", "fulltext", "merkel_as_html.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
-    benchmark <- gsub("\n\n", "\n", benchmark)
     benchmark <- paste(benchmark, collapse = "\n")
     benchmark <- paste(benchmark, "\n", sep = "")
+    benchmark <- gsub("\n\n", "\n", benchmark)
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(y, benchmark)
   }
@@ -76,10 +78,13 @@ test_that(
     
     expect_identical(d, y)
     
+    y <- gsub("\n\n", "\n", y)
+    
     refdoc <- system.file(package = "polmineR", "fulltext", "reading_reuters.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
     benchmark <- paste(benchmark, collapse = "\n")
     benchmark <- paste(benchmark, "\n", sep = "")
+    benchmark <- gsub("\n\n", "\n", benchmark)
     expect_identical(nchar(y), nchar(benchmark))
     expect_identical(as.character(y), benchmark)
   }

@@ -1,3 +1,44 @@
+# polmineR v0.8.7.9001-9015
+
+* Improved performance of `enrich()`-method for `partition_bundle` objects #225.
+* Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
+to improve performance.
+* Substantial performance improvement of `partition_bundle()`-method for
+`partition` objects (more efficient instantiation of S4 objects).
+* Performance improvement of `split()`-method for `subcorpus` objects.
+* Defunct functions `store()` and `mail()` have finally been removed from the
+package.
+* The `sample()` method for `bundle` objects (and objects inheriting from the
+`bundle` class) did not yet use the new convention to use single square brackets
+(not double brackets) for extracting a subset from the `bundle`. Fixed #236.
+* Performance improvements for `ngrams()` method for `partition_bundle` objects,
+introducing more efficient data handling, vectorization and parallelization.
+* `get_token_stream()` for `partition_bundle` failed if all docs have
+equal length (`mapply()` issue). Fixed.
+*  Memory efficiency of `as.DocumentTermMatrtix()` for large corpora significantly
+improved for handlung large corpora.
+* The `$`-method for `corpus` is now used for accessing corpus properties, 
+replacing previous usage to inspect s-attributes.
+* The `partition_bundle()`-method for `context` class objects has improved
+verbosity now and telling progress messages.
+* New utility function `capitalize()` for uppercasing first letter of elements
+in a character vector.
+* The `trim()`-method for classes `DocumentTermMatrix` and `TermDocumentMatrix` has
+been updated. Arguments `termsToKeep`, and `docsToDrop` have been deprecated,
+argument `termsToDrop` is deprecated and replaced by `terms_to_drop` and
+`docsToKeep` is deprecated and replaced by `docs_to_keep`. New arguments
+`min_count` and `min_doc_length` are introduced to drop rare terms and short
+documents, respectively. The purpose of redesigning the `trim()`-method is to
+make it more useful for preparing matrices for topic modelling.
+* Method `subset()` for `corpus` and `subcorpus` objects will now process 
+indication of s-attribute without value, so that subsetting corpora for 
+s-attributes without values is now possible.
+* Method `split()` for `subcorpus` objects will now also work if `s_attribute`
+for splitting is not a sibling of the s-attribute the subcorpus is based on.
+* Method `as.speeches()` for `subcorpus` objects refactored to work with 
+nested scenario.
+
+
 # polmineR v0.8.7
 
 ## New feautres

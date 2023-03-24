@@ -185,7 +185,13 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
     # ensure that zero matches are reported for all values of the s-attribute
     if (isTRUE(fill)){
       s_attr_values <- s_attributes(source, s_attribute = s_attribute, unique = TRUE)
-      dt <- dt[do.call(data.table, setNames(list(s_attr_values, s_attribute), c(s_attribute, "key"))), on = s_attribute]
+      dt <- dt[
+        do.call(
+          data.table,
+          setNames(list(s_attr_values, s_attribute), c(s_attribute, "key"))
+        ),
+        on = s_attribute
+      ]
       dt[, "count" := ifelse(is.na(dt[["count"]]), 0L, dt[["count"]])]
     }
     if (any(is.na(dt[["query"]]))) dt[, "query" := unique(dt[["query"]][!is.na(dt[["query"]])])]
@@ -210,7 +216,10 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
       s_attr_values <- s_attributes(source, s_attribute = s_attribute[2], unique = TRUE)
       s_attr_values_missing <- s_attr_values[!s_attr_values %in% colnames(dt)]
       length_old <- length(dt)
-      dt[, (s_attr_values_missing) := 0L]
+      
+      if (length(s_attr_values_missing) > 0L)
+        dt[, (s_attr_values_missing) := 0L]
+      
       if (truelength(dt) > length_old + 10000L){
         warning(
           "Supplementary explanatory note on the data.table warning (issued by polmineR): ",

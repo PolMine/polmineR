@@ -22,26 +22,15 @@ setMethod("split", "partition", function(x, gap, ...){
     no <- cumsum(beginning)
     struc_list <- split(x@strucs, no)
     cpos_list <- split(x@cpos, no)
+    
     y_list <- lapply(
       seq_along(struc_list),
       function(i) {
-        p <- new(
-          class(x)[1],
-          strucs = struc_list[[i]],
-          cpos = matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L),
-          corpus = x@corpus,
-          data_dir = x@data_dir,
-          registry_dir = x@registry_dir,
-          info_file = x@info_file,
-          template = x@template,
-          encoding = x@encoding,
-          s_attributes = x@s_attributes,
-          xml = x@xml, s_attribute_strucs = x@s_attribute_strucs,
-          explanation = "partition results from split, s-attributes do not necessarily define partition",
-          name = paste(x@name, i, collapse = "_", sep = "_"),
-          # name = as.character(i),
-          stat = data.table()
-        )
+        p <- x
+        p@strucs <- struc_list[[i]]
+        p@cpos <- matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L)
+        p@name = paste(x@name, i, collapse = "_", sep = "_")
+        p@stat = data.table()
         p@size <- size(p)
         p
       })
@@ -63,8 +52,10 @@ setMethod("split", "partition", function(x, gap, ...){
 #' y <- partition_bundle(p, s_attribute = "speaker")
 #' @export
 #' @rdname subcorpus_bundle
+#' @importFrom RcppCWB s_attr_is_sibling s_attr_is_descendent
+#' @importFrom cli col_cyan
 #' @inheritParams partition_bundle
-#' @param x A \code{corpus}, \code{subcorpus}, or \code{subcorpus_bundle}
+#' @param x A `corpus`, `subcorpus`, or `subcorpus_bundle`
 #'   object.
 setMethod("split", "subcorpus", function(
   x, s_attribute, values = NULL, prefix = "",
@@ -75,44 +66,100 @@ setMethod("split", "subcorpus", function(
   history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
   pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
   retval_class <- if (isTRUE(pb_call)) "partition_bundle" else "subcorpus_bundle"
+  y <- as(as(x, "corpus"), retval_class)
+  if (verbose) cli_alert_info("bundle class: {col_cyan({retval_class})}")
+  
   cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
   new_class <- if (length(x@type) == 0L) cl else paste(x@type, cl, sep = "_")
-  
-  y <- as(as(x, "corpus"), retval_class)
+  prototype <- as(x, new_class)
+  if (verbose) cli_alert_info("objects in bundle: {col_cyan({new_class})}")
+
   y@s_attributes_fixed <- x@s_attributes
   
-  if (x@xml == "nested") stop("splitting not yet implemented for nested XML")
-  
-  strucs <- cl_cpos2struc(
-    corpus = x@corpus, registry = x@registry_dir,
-    s_attribute = s_attribute, cpos = x@cpos[,1]
+  is_sibling <- s_attr_is_sibling(
+    x = x@s_attribute_strucs,
+    y = s_attribute,
+    corpus = x@corpus,
+    registry = x@registry_dir
   )
-  strucs_values <- cl_struc2str(
-    corpus = x@corpus, registry = x@registry_dir,
-    s_attribute = s_attribute, struc = strucs
-  )
-  strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
   
-  cpos_list <- split(x@cpos, strucs_values)
-  struc_list <- split(strucs, strucs_values)
-  
-  if (!is.null(values)) for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
-  
-  .fn <- function(i){
-    m <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-    y <- as(x, new_class)
-    y@name <- names(cpos_list)[[i]]
-    y@cpos <- m
-    y@strucs <- struc_list[[i]]
-    y@s_attribute_strucs <- s_attribute
-    y@s_attributes <- c(
-      x@s_attributes,
-      setNames(list(names(cpos_list)[[i]]), s_attribute)
+  if (!is_sibling){
+    is_descendent <- s_attr_is_descendent(
+      x = s_attribute,
+      y = x@s_attribute_strucs,
+      corpus = x@corpus,
+      registry = x@registry_dir
     )
-    y@xml = "flat"
-    y@size = sum((m[,2] + 1L) - m[,1])
+    if (is_descendent){
+      relation <- "descendent"
+      stop("split() not implemented if s_attribute is not a descendent")
+    } else {
+      relation <- "ancestor"
+    }
+  } else {
+    relation <- "sibling"
+  }
+  if (verbose){
+    cli_alert_info(
+      paste0(
+        "s-attribute for splitting ({.val {s_attribute}}) is {relation} ",
+        "of s-attribute {.val {x@s_attribute_strucs}}"
+      )
+    )
+  }
+
+  if (relation == "sibling"){
+    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
+    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    cpos_list <- split(x@cpos, strucs_values)
+    struc_list <- split(strucs, strucs_values)
+    s_attr_strucs <- s_attribute
+  } else if (relation == "ancestor"){
+    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
+    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    cpos_list <- split(x@cpos, strucs_values)
+    struc_list <- split(x@strucs, strucs_values) # different from sibling
+    s_attr_strucs <- x@s_attribute_strucs
+  } else if (relation == "descendent"){
+    cpos <- ranges_to_cpos(x@cpos)
+    strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
+    regions <- get_region_matrix(
+      corpus = x@corpus,
+      s_attribute = s_attribute,
+      strucs = strucs,
+      registry = x@registry_dir
+    )
+    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
+    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    cpos_list <- split(regions, strucs_values)
+    struc_list <- split(strucs, strucs_values) # different from sibling
+    s_attr_strucs <- s_attribute
+  }
+
+  if (!is.null(values)){
+    for (i in rev(which(!names(cpos_list) %in% values))){
+      cpos_list[[i]] <- NULL
+      struc_list[[i]] <- NULL
+    }
+  }
+
+  .fn <- function(i){
+    y <- prototype
+    y@cpos <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
+    y@name <- names(cpos_list)[[i]]
+    y@strucs <- struc_list[[i]]
+    y@s_attribute_strucs <- s_attr_strucs
+    if (relation == "sibling"){
+      y@s_attributes <- c(
+        x@s_attributes,
+        setNames(list(names(cpos_list)[[i]]), s_attribute)
+      )
+    }
+    y@xml = x@xml # to reconsider
+    y@size = sum((y@cpos[,2] + 1L) - y@cpos[,1])
     y@type = x@type
-    
     y
   }
   

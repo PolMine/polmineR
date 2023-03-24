@@ -39,14 +39,3 @@ test_that(
     
   }
 )
-
-
-test_that(
-  "disaggregate region matrix / as_cpos_vector",
-  {
-    y <- cpos(matrix(c(1L,5L, 6L, 10L), ncol = 2, byrow = TRUE))
-    expect_equal(y, 1:10)
-    y <- cpos(matrix(c(1L, 6L, 7L, 10L), ncol = 2, byrow = TRUE))
-    expect_equal(y, 1:10)
-  }
-)
