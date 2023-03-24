@@ -5,35 +5,34 @@ NULL
 #' 
 #' Get hits for queries, optionally with s-attribute values.
 #' 
-#' If the \code{character} vector provided by \code{query} is named, these names
-#' will be reported in the \code{data.table} that is returned rather than the
-#' queries.
+#' If the `character` vector provided by `query` is named, these names will be
+#' reported in the `data.table` that is returned rather than the queries.
 #' 
-#' If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will deliberately
-#' include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
-#' count is 0).
+#' If `freq` is `TRUE`, the `data.table` returned in the DT-slot will
+#' deliberately include the subsets of the `partition`/`corpus` with no hits
+#' (query is NA, count is 0).
 #' 
 #' @param query A `character` vector (optionally named, see details) with one or
 #'   more queries.
-#' @param cqp Either a \code{logical} value (\code{TRUE} if query is a CQP
-#'   query), or a function to check whether \code{query} is a CQP query or not.
-#' @param check A \code{logical} value, whether to check validity of CQP query
-#'   using \code{check_cqp_query}.
-#' @param s_attribute A \code{character} vector of s-attributes that will be
+#' @param cqp Either a `logical` value (`TRUE` if query is a CQP query), or a
+#'   function to check whether `query` is a CQP query or not.
+#' @param check A `logical` value, whether to check validity of CQP query using
+#'   `check_cqp_query`.
+#' @param s_attribute A `character` vector of s-attributes that will be
 #'   used to breakdown counts for matches for query/queries.
-#' @param p_attribute A \code{character} vector stating a p-attribute.
-#' @param size A \code{logical} value, whether to report the size of subcorpus.
-#' @param freq A \code{logcial} value, whether to report relative frequencies.
-#' @param fill A \code{logical} value, whethet to report counts (optionally
+#' @param p_attribute A `character` vector stating a p-attribute.
+#' @param size A `logical` value, whether to report the size of subcorpus.
+#' @param freq A `logcial` value, whether to report relative frequencies.
+#' @param fill A `logical` value, whethet to report counts (optionally
 #'   frequencies) for combinations of s-attributes where not matchers occurr.
-#' @param .Object A length-one \code{character} vector with a corpus ID, a
-#'   \code{partition} or \code{partition_bundle} object
-#' @param mc A \code{logical} value, whether to use multicore.
-#' @param progress A \code{logical} value, whether to show progress bar.
-#' @param verbose A \code{logical} value, whether to output messages.
+#' @param .Object A length-one `character` vector with a corpus ID, a
+#'   `partition` or `partition_bundle` object
+#' @param mc A `logical` value, whether to use multicore.
+#' @param progress A `logical` value, whether to show progress bar.
+#' @param verbose A `logical` value, whether to output messages.
 #' @param ... Further arguments (used for backwards compatibility).
-#' @return A \code{hits} class object.
-#' @seealso See the documentation of the \code{hits} class
+#' @return A `hits` class object.
+#' @seealso See the documentation of the `hits` class
 #'   (\code{\link{hits-class}}) for details.
 #' @rdname hits
 #' @exportMethod hits
@@ -205,21 +204,32 @@ setMethod("hits", "partition_bundle", function(
   corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
   if (length(corpus_id) > 1L) stop("partiton_bundle not derived from one corpus")
   corpus_obj <- corpus(corpus_id)
-  s_attribute_strucs <- unique(unlist(lapply(.Object@objects, function(x) x@s_attribute_strucs)))
+  s_attribute_strucs <- unique(unlist(lapply(
+    .Object@objects,
+    function(x) x@s_attribute_strucs
+  )))
   stopifnot(length(s_attribute_strucs) == 1L)
   
   # combine strucs and partition names into an overall data.table
   .message("preparing struc table", verbose = verbose)
   struc_dt <- data.table(
     struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
-    partition = unlist(lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs))))
+    partition = unlist(
+      lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs)))
+    )
   )
   
   # perform counts
   .message("now performing counts", verbose = verbose)
   if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
   .fn <- function(q, corpus_obj, ...) {
-    m <- cpos(.Object = corpus_obj, query = q, cqp = cqp, check = check, verbose = verbose)
+    m <- cpos(
+      .Object = corpus_obj,
+      p_attribute = p_attribute,
+      query = q, cqp = cqp,
+      check = check,
+      verbose = verbose
+    )
     if (!is.null(m)) data.table(m)[, query := q] else NULL
   }
   count_dt_list <- blapply(as.list(query), f = .fn, corpus_obj = corpus_obj, mc = mc, progress = progress, verbose = FALSE)
@@ -256,7 +266,7 @@ setMethod("hits", "partition_bundle", function(
   new("hits", stat = tf, corpus = corpus_id)
 })
 
-#' @param x A \code{hits} object.
+#' @param x A `hits` object.
 #' @param size A non-negative integer giving the number of items to choose.
 #' @rdname hits_class
 setMethod("sample", "hits", function(x, size){
