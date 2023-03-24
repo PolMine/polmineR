@@ -259,7 +259,7 @@ setMethod("count", "subcorpus", function(
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
+setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 

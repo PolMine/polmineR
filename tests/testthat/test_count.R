@@ -109,6 +109,20 @@ test_that(
 )
 
 test_that(
+  "equivalence of using arg p_attribute and CQP syntax for count,partition_bundle",
+  {
+    speeches <- corpus("GERMAPARLMINI") |>
+      as.speeches(s_attribute_date = "date", s_attribute_name = "speaker")
+    
+    a <- count(speeches, query = '[pos = "ADJA"]', cqp = TRUE)
+    b <- count(speeches, query = "ADJA", p_attribute = "pos")
+    
+    expect_identical(a$TOTAL, b$TOTAL)
+    
+  }
+)
+
+test_that(
   "issue warning if there are overlapping queries",
   {
   }
