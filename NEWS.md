@@ -37,7 +37,8 @@ s-attributes without values is now possible.
 for splitting is not a sibling of the s-attribute the subcorpus is based on.
 * Method `as.speeches()` for `subcorpus` objects refactored to work with 
 nested scenario.
-
+* Adapted to changes of pkg markdown >= 1.3 #235.
+* `s_attributes()` will return `NA` if s-attribute does not have values #234.
 
 # polmineR v0.8.7
 
