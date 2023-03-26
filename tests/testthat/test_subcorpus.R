@@ -138,11 +138,11 @@ test_that(
 
     p <- corpus("GERMAPARL2MINI") %>%
       subset(speaker_name == "Carlo Schmid") %>%
-      subset(p)
+      subset(p_type == "speech")
     
     stage <- corpus("GERMAPARL2MINI") %>%
       subset(speaker_name == "Carlo Schmid") %>%
-      subset(stage)
+      subset(p_type == "stage")
     
     cschmid <- corpus("GERMAPARL2MINI") %>%
       subset(speaker_name == "Carlo Schmid")
@@ -153,10 +153,10 @@ test_that(
     
     p1 <- corpus("GERMAPARL2MINI") %>%
       subset(speaker_name == "Carlo Schmid") %>%
-      subset(p)
+      subset(p_type == "speech")
     
     p2 <- corpus("GERMAPARL2MINI") %>%
-      subset(p) %>%
+      subset(p_type == "speech") %>%
       subset(speaker_name == "Carlo Schmid")
       
     expect_identical(size(p1), size(p2))

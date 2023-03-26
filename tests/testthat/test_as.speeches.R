@@ -85,7 +85,7 @@ test_that(
   {
     skip_if_not(use("GermaParl2"))
     sp <- corpus("GERMAPARL2MINI") %>%
-      subset(p) %>%
+      subset(p_type == "speech") %>%
       as.speeches(
         s_attribute_date = "protocol_date",
         s_attribute_name = "speaker_name",
@@ -95,7 +95,7 @@ test_that(
     
     cschmid <- corpus("GERMAPARL2MINI") %>%
       subset(speaker_name == "Carlo Schmid") %>%
-      subset(p)
+      subset(p_type == "speech")
 
     expect_identical(
       size(sp[[grep("Carlo Schmid", names(sp), value = TRUE)]]),

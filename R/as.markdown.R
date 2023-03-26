@@ -173,27 +173,38 @@ setMethod("as.markdown", "plpr_partition", function(.Object, meta = NULL, templa
 
 
 #' @rdname as.markdown
+#' @importFrom cli cli_alert_warning
 setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, template = get_template(.Object), cpos = FALSE, interjections = TRUE, cutoff = NULL, ...){
   # in the function call, meta is actually not needed, required by the calling function
-  if (is.null(template)) warning("No template available, formatting fulltext output is likely to fail.")
+  
+  if (is.null(template))
+    cli_alert_warning(
+      "No template available, generating fulltext output likely to fail."
+    )
+  
   if (is.null(meta)) meta <- template[["metadata"]]
+  
   if (interjections){
-    strucs_range <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
-    if (strucs_range != length(.Object@strucs)){
+    expected <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
+    if (expected != length(.Object@strucs)){
       .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
       # fill regions matrix to include interjections
       .Object@cpos <- RcppCWB::get_region_matrix(
         corpus = .Object@corpus, registry = .Object@registry_dir,
         s_attribute = .Object@s_attribute_strucs, strucs = .Object@strucs
       )
-      
     }
   }
   
   # detect where a change of metainformation occurs (somewhat slow)
-  metadata <- as.matrix(s_attributes(.Object, s_attribute = meta, unique = FALSE)) 
+  metadata <- as.matrix(
+    s_attributes(.Object, s_attribute = meta, unique = FALSE)
+  ) 
   if (length(.Object@strucs) > 1L){
-    meta_change <- sapply(2L:nrow(metadata), function(i) !all(metadata[i,] == metadata[i - 1L,]))
+    meta_change <- sapply(
+      2L:nrow(metadata),
+      function(i) !all(metadata[i,] == metadata[i - 1L,])
+    )
     meta_change <- c(TRUE, meta_change)
   } else {
     meta_change <- TRUE

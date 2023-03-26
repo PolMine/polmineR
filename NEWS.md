@@ -43,7 +43,9 @@ nested scenario.
 to `cpos()` #239.
 * `use()` returns `TRUE`, if loading corpus in package was successful, or
 `FALSE` if not. Previously, the function aborted with an error, or returned 
-`NULL`. 
+`NULL`.
+* If package 'GermaParl2' (with GERMAPARL2MINI inside) is available, some
+initial tests for functionality for nested corpora is run.
 
 
 # polmineR v0.8.7
