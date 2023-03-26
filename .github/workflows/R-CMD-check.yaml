@@ -71,6 +71,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("covr")
+          install.packages(pkgs = "GermaParl2", contriburl = "https://polmine.github.io/drat/src/contrib", type = "source")
         shell: Rscript {0}
 
       - name: Check

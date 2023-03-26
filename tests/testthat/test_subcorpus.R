@@ -129,3 +129,37 @@ test_that(
     expect_null(d)
   }
 )
+
+
+test_that(
+  "subset() for nested corpus",
+  {
+    skip_if_not(use("GermaParl2"))
+
+    p <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(p)
+    
+    stage <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(stage)
+    
+    cschmid <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid")
+    
+    expect_identical(size(p) + size(stage), size(cschmid))
+    
+    # The order of subsetting should not matter
+    
+    p1 <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(p)
+    
+    p2 <- corpus("GERMAPARL2MINI") %>%
+      subset(p) %>%
+      subset(speaker_name == "Carlo Schmid")
+      
+    expect_identical(size(p1), size(p2))
+    
+  }
+)

@@ -311,7 +311,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       is_call <- TRUE
       expr <- eval_tidy(expr)
     } else if (is_quosure(expr)){
-      if (is.call(quo_get_expr(expr))) is_call <- TRUE
+      is_call <- if (is.call(quo_get_expr(expr))) TRUE else FALSE
     } else {
       is_call <- FALSE
     }
@@ -393,7 +393,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       cli_alert_info("s_attribute {.val {s_attr[i]}} does not have values")
     }
   }
-
+  
   # Apply the expression.
   if (!missing(subset)){
     if (is_call){
@@ -687,7 +687,7 @@ setMethod("$", "corpus", function(x, name){
 #' @param object An object of class \code{subcorpus_bundle}.
 #' @rdname subcorpus_bundle
 setMethod("show", "subcorpus_bundle", function (object) {
-  message('** subcorpus_bundle object: **')
+  message('<<subcorpus_bundle>>')
   message(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects))
 })
 
