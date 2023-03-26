@@ -41,6 +41,9 @@ nested scenario.
 * `s_attributes()` will return `NA` if s-attribute does not have values #234.
 * `hits()`-method for `partition_bundle` objects passes argument `p_attribute` 
 to `cpos()` #239.
+* `use()` returns `TRUE`, if loading corpus in package was successful, or
+`FALSE` if not. Previously, the function aborted with an error, or returned 
+`NULL`. 
 
 
 # polmineR v0.8.7

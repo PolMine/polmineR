@@ -17,20 +17,24 @@ use(pkg, corpus, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE)
 
 \item{verbose}{Logical, whether to output status messages.}
 }
+\value{
+A \code{logical} value: \code{TRUE} if corpus has been loaded successfully, or
+\code{FALSE}, if any kind of error occurred.
+}
 \description{
 Use CWB indexed corpora in R data packages by adding registry file to session
 registry.
 }
 \details{
-{pkg} is expected to be an installed data package that includes CWB indexed
-corpora. The \code{use}-function will add the registry files describing the
+\code{pkg} is expected to be an installed data package that includes CWB indexed
+corpora. The \code{use()}-function will add the registry files describing the
 corpus (or the corpora) to the session registry directory and adjust the path
 pointing to the data in the package.
 
 The registry files within the package are assumed to be in the subdirectory
-\code{./extdata/cwb/registry} of the installed package. The data directories
+'./extdata/cwb/registry' of the installed package. The data directories
 for corpora are assumed to be in a subdirectory named after the corpus (lower
-case) in the package subdirectory \code{./extdata/cwb/indexed_corpora/}. When
+case) in the package subdirectory './extdata/cwb/indexed_corpora/'. When
 adding a corpus to the registry, templates for formatting fulltext output are
 reloaded.
 
