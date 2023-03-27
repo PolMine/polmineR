@@ -46,6 +46,10 @@ to `cpos()` #239.
 `NULL`.
 * If package 'GermaParl2' (with GERMAPARL2MINI inside) is available, some
 initial tests for functionality for nested corpora is run.
+* Subsetting a corpus using `subset()` would loose specific subcorpus class
+(such as "plpr_subcorpus"). Fixed.
+* Class "corpus" has slot "xml", and classes ("subcorpus" and "partition") now
+inherit this slot.
 
 
 # polmineR v0.8.7

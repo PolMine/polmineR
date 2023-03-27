@@ -263,8 +263,10 @@ setMethod(
           function(x){
             strucs <- if (.Object@xml == "nested"){
               cl_cpos2struc(
-                corpus = .Object@corpus,  registry = .Object@registry_dir,
-                s_attribute = x, cpos = .Object@cpos[,1]
+                corpus = .Object@corpus,
+                registry = .Object@registry_dir,
+                s_attribute = x,
+                cpos = .Object@cpos[,1]
               )
             } else {
               .Object@strucs

@@ -5,6 +5,25 @@ use(pkg = "RcppCWB", corpus = "REUTERS")
 testthat::context("subcorpus")
 
 test_that(
+  "is_nested() auxiliary function",
+  {
+    use("RcppCWB")
+    expect_false(is_nested("REUTERS"))
+    expect_true(is_nested("GERMAPARLMINI"))
+  }
+)
+
+test_that(
+  "setting of xml slot of corpus class",
+  {
+    use("RcppCWB")
+    use("polmineR")
+    expect_identical(corpus("REUTERS")@xml, "flat")
+    expect_identical(corpus("GERMAPARLMINI")@xml, "nested")
+  }
+)
+
+test_that(
   "generate subcorpus", {
     p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
     gparl <- corpus("GERMAPARLMINI")

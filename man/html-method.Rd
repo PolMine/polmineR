@@ -56,12 +56,12 @@ html(object, ...)
 \arguments{
 \item{object}{The object the fulltext output will be based on.}
 
-\item{...}{Further parameters that are passed into \code{as.markdown}.}
+\item{...}{Further parameters that are passed into \code{as.markdown()}.}
 
 \item{corpus}{The ID of the corpus, a length-one \code{character} vector.}
 
-\item{height}{A \code{character} vector that will be inserted into the html
-as an optional height of a scroll box.}
+\item{height}{A \code{character} vector that will be inserted into the html as an
+optional height of a scroll box.}
 
 \item{meta}{Metadata to include in  output, if \code{NULL} (default), the
 s-attributes defining a partition will be used.}
@@ -74,41 +74,41 @@ positions.}
 messages.}
 
 \item{cutoff}{An \code{integer} value, maximum number of tokens to decode
-from token stream, passed into \code{as.markdown}.}
+from token stream, passed into \code{as.markdown()}.}
 
-\item{charoffset}{Length-one \code{logical} value, if \code{TRUE}, character
-offset positions are added to elements embracing tokens.}
+\item{charoffset}{Length-one \code{logical} value, if \code{TRUE}, character offset
+positions are added to elements embracing tokens.}
 
-\item{beautify}{Length-one \code{logical} value, if \code{TRUE}, whitespace
-before interpunctuation will be removed.}
+\item{beautify}{A \code{logical} value, if \code{TRUE}, whitespace before
+interpunctuation will be removed.}
 
-\item{progress}{Length-one \code{logical} value, whether to output progress#
-bar.}
+\item{progress}{Length-one \code{logical} value, whether to output progress bar.}
 
 \item{i}{An \code{integer} value: If \code{object} is a \code{kwic}-object,
 the index of the concordance for which the fulltext is to be generated.}
 
-\item{s_attribute}{Structural attributes that will be used to define the partition
-where the match occurred.}
+\item{s_attribute}{Structural attributes that will be used to define the
+partition where the match occurred.}
 
 \item{type}{The partition type.}
 }
 \value{
-Returns an object of class \code{html} as used in the \code{htmltools} package. Methods
-such as \code{htmltools::html_print} will be available. The encoding of the html
-document will be UTF-8 on all systems (including Windows).
+Returns an object of class \code{html} as used in the 'htmltools' package.
+Methods such as \code{htmltools::html_print()} will be available. The encoding
+of the html document will be UTF-8 on all systems (including Windows).
 }
 \description{
 Prepare html document to see full text.
 }
 \details{
-Substitutions configured by option \code{polmineR.mdsub} are applied to
+Substitutions configured by option 'polmineR.mdsub' are applied to
 prevent presence of characters that would be misinterpreted as markdown
 formatting instructions.
 
-If param \code{charoffset} is \code{TRUE}, character offset positions will be
-added to tags that embrace tokens. This may be useful, if exported html document
-is annotated with a tool that stores annotations with character offset positions.
+If param \verb{charoffset\} is }TRUE``, character offset positions will be
+added to tags that embrace tokens. This may be useful, if exported html
+document is annotated with a tool that stores annotations with character
+offset positions.
 }
 \examples{
 use(pkg = "RcppCWB", corpus = "REUTERS")

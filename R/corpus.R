@@ -117,6 +117,8 @@ setMethod("corpus", "character", function(
       name = corpus_full_name(corpus = .Object, registry = registry_dir)
     )
     
+    y@xml <- if (is_nested(y)) "nested" else "flat"
+    
     return(y)
   } else {
     if (missing(restricted)) restricted <- FALSE
@@ -144,12 +146,12 @@ setMethod("get_corpus", "textstat", function(x) x@corpus)
 
 #' @exportMethod get_corpus
 #' @rdname corpus_methods
-#' @details Use \code{get_corpus}-method to get the corpus ID from the slot
-#'   \code{corpus} of the \code{corpus} object.
+#' @details Use `get_corpus()`-method to get the corpus ID from the slot
+#'   `corpus` of the `corpus` object.
 setMethod("get_corpus", "corpus", function(x) x@corpus)
 
 #' @exportMethod get_corpus
-#' @describeIn subcorpus Get the corpus ID from the \code{subcorpus} object.
+#' @describeIn subcorpus Get the corpus ID from the `subcorpus` object.
 setMethod("get_corpus", "subcorpus", function(x) x@corpus)
 
 
@@ -593,37 +595,25 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     
   }
   
-  y <- new(
-    "subcorpus",
-    corpus = x@corpus,
-    registry_dir = x@registry_dir,
-    template = x@template,
-    info_file = x@info_file,
-    encoding = x@encoding,
-    type = x@type,
-    data_dir = x@data_dir,
-    s_attribute_strucs = s_attr[length(s_attr)],
-    xml = "flat",
-    name = x@name
-  )
-
+  x@s_attribute_strucs = s_attr[length(s_attr)]
+  
   if (is.call(quo_get_expr(expr))){
     setindexv(dt, cols = s_attr)
     success <- try({dt_min <- dt[eval_tidy(expr, data = dt)]})
     if (is(success, "try-error")) return(NULL)
-    y@cpos <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
-    y@strucs <- dt_min[["struc"]]
-    y@s_attributes <- c(
+    x@cpos <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
+    x@strucs <- dt_min[["struc"]]
+    x@s_attributes <- c(
       x@s_attributes,
       lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]]))
     )
   } else {
-    y@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
-    y@strucs <- dt[["struc"]]
+    x@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
+    x@strucs <- dt[["struc"]]
   }
 
-  y@size <- size(y)
-  y
+  x@size <- size(x)
+  x
 })
 
 

@@ -170,6 +170,34 @@ capitalize <- function(x){
 }
 
 
+#' Check whether s-attributes of corpus are nested
+#' 
+#' Simple test whether the attribute size of all s-attributes of a corpus is 
+#' identical (flat import XML) or not (nested import XML).
+#' @param x A `character` vector with corpus ID or a `corpus` object.
+#' @return A `logical` value: `FALSE` is data structure is flat and `TRUE` if 
+#' data structure is nested.
+#' @export is_nested
+#' @examples 
+#' use("polmineR")
+#' use("RcppCWB")
+#' @importFrom RcppCWB cl_attribute_size
+is_nested <- function(x){
+  if (is.character(x)) x <- corpus(x)
+  sizes <- lapply(
+    s_attributes(x),
+    function(s_attr)
+      cl_attribute_size(
+        corpus = x@corpus,
+        attribute = s_attr,
+        attribute_type = "s",
+        registry = x@registry_dir
+      )
+  )
+  if (length(unique(unlist(sizes))) == 1L) FALSE else TRUE
+}
+
+
 #' Get ID for token.
 #' 
 #' Helper function for context method. Get ids for tokens.

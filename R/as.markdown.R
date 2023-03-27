@@ -182,7 +182,7 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
       "No template available, generating fulltext output likely to fail."
     )
   
-  if (is.null(meta)) meta <- template[["metadata"]]
+  if (is.null(meta)) meta <- unlist(unname(template[["metadata"]]))
   
   if (interjections){
     expected <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
@@ -211,8 +211,10 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   }
   
   type <- cl_struc2str(
-    corpus = .Object@corpus, registry = .Object@registry_dir,
-    s_attribute = template[["speech"]][["sAttribute"]], struc = .Object@strucs
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir,
+    s_attribute = template[["speech"]][["sAttribute"]],
+    struc = .Object@strucs
   )
   
   if (is.numeric(cutoff)){
@@ -231,7 +233,7 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
     function(i) {
       meta <- ""
       if (meta_change[i] == TRUE) { 
-        meta <- paste(metadata[i,], collapse=" | ", sep="")
+        meta <- paste(metadata[i,], collapse=" | ", sep = "")
         meta <- paste(
           template[["document"]][["format"]][1],
           meta,
@@ -242,7 +244,9 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
       }
       tokens <- get_token_stream(
         matrix(.Object@cpos[i,], nrow = 1),
-        corpus = .Object@corpus, p_attribute = "word", encoding = .Object@encoding,
+        corpus = .Object@corpus,
+        p_attribute = "word",
+        encoding = .Object@encoding,
         cpos = cpos
       )
     tokens <- .tagTokens(tokens)
