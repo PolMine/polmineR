@@ -20,7 +20,7 @@ partition(.Object, ...)
   encoding = NULL,
   p_attribute = NULL,
   regex = FALSE,
-  xml = "flat",
+  xml = slot(.Object, "xml"),
   decode = TRUE,
   type = get_type(.Object),
   mc = FALSE,
@@ -35,7 +35,6 @@ partition(.Object, ...)
   encoding = NULL,
   p_attribute = NULL,
   regex = FALSE,
-  xml = "flat",
   decode = TRUE,
   type = get_type(.Object),
   mc = FALSE,
@@ -139,8 +138,8 @@ more p-attributes are provided, The occurrence of combinations will be
 counted. A typical scenario is to combine the p-attributes "word" or "lemma"
 and "pos".
 
-If \code{.Object} is a length-one character vector, a
-subcorpus/partition for the corpus defined be \code{.Object} is generated.
+If \code{.Object} is a length-one character vector, a subcorpus/partition
+for the corpus defined be \code{.Object} is generated.
 
 If \code{.Object} is an environment (typically \code{.GlobalEnv}),
 the \code{partition} objects present in the environment are listed.

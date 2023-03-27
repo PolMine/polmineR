@@ -444,7 +444,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   y@strucs = dt[["struc"]]
   y@s_attribute_strucs <- s_attr[length(s_attr)]
   y@s_attributes <- lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]]))
-  y@xml <- "flat"
+  y@xml <- x@xml
   y@name <- ""
   y@size <- size(y)
   

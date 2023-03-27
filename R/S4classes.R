@@ -522,7 +522,6 @@ setClass(
     size = "integer",
     metadata = "data.frame",
     strucs = "integer",
-    xml = "character",
     s_attribute_strucs = "character",
     call = "character",
     key = "character"
@@ -928,7 +927,6 @@ setClass(
     annotations = "list",
     metadata = "data.frame",
     strucs = "integer",
-    xml = "character",
     s_attribute_strucs = "character"
   ),
   contains = "regions"
