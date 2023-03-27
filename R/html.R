@@ -227,7 +227,15 @@ setMethod(
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
-    if (is.null(meta)) meta <- names(object@s_attributes)
+    
+    # code to get meta (almost) identical with read,subcorpus()
+    if (is.null(meta)){
+      template_meta <- get_template(object)[["metadata"]]
+      meta <- if (is.null(template_meta))
+        names(object@s_attributes)
+      else
+        template_meta
+    }
     if (isFALSE(all(meta %in% s_attributes(object)))) 
       warning("not all s-attributes provided as meta are available")
     

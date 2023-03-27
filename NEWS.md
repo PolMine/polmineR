@@ -50,6 +50,8 @@ initial tests for functionality for nested corpora is run.
 (such as "plpr_subcorpus"). Fixed.
 * Class "corpus" has slot "xml", and classes ("subcorpus" and "partition") now
 inherit this slot.
+* `html()` for `subcorpus` reconstructs `meta` equivalent to `read()` for
+`subcorpus` objects.
 
 
 # polmineR v0.8.7
