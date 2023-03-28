@@ -423,7 +423,8 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
     is.character(p_attributes)
   )
   corpus <- if (is.character(corpus)) corpus(corpus) else corpus
-  if (!inherits(corpus, "corpus")) stop("Argument 'corpus' is required to be a corpus object.")
+  if (!inherits(corpus, "corpus"))
+    stop("Argument 'corpus' is required to be a corpus object.")
   
   if (is.null(boost)){
     boost <- if (corpus@size > 10000000L && length(cpos) >= (corpus@size * 0.05)) TRUE else FALSE
@@ -439,7 +440,7 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
       Encoding(lexicon) <- encoding()
     }
     y <- lexicon[.Object + 1L]
-  head(y)} else if (isFALSE(boost)){
+  } else if (isFALSE(boost)){
     y <- RcppCWB::cl_id2str(
       corpus = corpus@corpus, registry = corpus@registry_dir,
       p_attribute = p_attributes, id = .Object

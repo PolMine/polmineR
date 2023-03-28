@@ -72,20 +72,23 @@ test_that(
   {
     skip_on_cran()
     
-    a <- subset(corpus("REUTERS"), places = "argentina")
-    b <- html(a)
-    c <- highlight(b, lightgreen = "higher")
-    d <- tooltips(c, list(lightgreen = "Further information"))
+    a <- corpus("REUTERS") %>%
+      subset(places = "argentina") %>%
+      html(meta = "places") %>%
+      highlight(lightgreen = "higher") %>%
+      tooltips(list(lightgreen = "Further information"))
     
-    y <- read(
-      a, meta = "places",
-      highlight = list(lightgreen = "higher"),
-      tooltips = list(lightgreen = "Further information")
-    )
+    b <- corpus("REUTERS") %>%
+      subset(places = "argentina") %>%
+      read(
+        meta = "places",
+        highlight = list(lightgreen = "higher"),
+        tooltips = list(lightgreen = "Further information")
+      )
     
-    expect_identical(d, y)
+    expect_identical(a, b)
     
-    y <- gsub("\n\n", "\n", y)
+    y <- gsub("\n\n", "\n", b)
     
     refdoc <- system.file(package = "polmineR", "fulltext", "reading_reuters.html")
     benchmark <- readLines(refdoc, warn = FALSE, encoding = "UTF-8")
