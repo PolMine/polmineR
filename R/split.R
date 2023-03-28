@@ -1,17 +1,21 @@
-#' @details The \code{split}-method will split a partition object into a
-#' \code{partition_bundle} if gap between strucs exceeds a minimum number of
-#' tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
-#' speeches. Note: To speed things up, the returned partitions will not include
-#' frequency lists. The lists can be prepared by applying \code{enrich} on the
-#' \code{partition_bundle} object that is returned.
-#' @param x A \code{partition} object.
+#' @details The `split()`-method will split a partition object into a
+#'   `partition_bundle` if gap between strucs exceeds a minimum number of tokens
+#'   specified by `gap`. Relevant to split up a plenary protocol into speeches.
+#'   Note: To speed things up, the returned partitions will not include
+#'   frequency lists. The lists can be prepared by applying `enrich` on the
+#'   `partition_bundle` object that is returned.
+#' @param x A `partition` object.
 #' @param gap An integer value specifying the minimum gap between regions for
 #'   performing the split.
 #' @rdname partition_class
 #' @exportMethod split
 #' @docType methods
 #' @examples
-#' p <- partition("GERMAPARLMINI", date = "2009-11-11", speaker = "Norbert Lammert")
+#' p <- partition(
+#'   "GERMAPARLMINI",
+#'   date = "2009-11-11",
+#'   speaker = "Norbert Lammert"
+#'  )
 #' name(p) <- "Norbert Lammert"
 #' pb <- split(p, gap = 500L)
 #' summary(pb)
@@ -52,16 +56,26 @@ setMethod("split", "partition", function(x, gap, ...){
 #' y <- partition_bundle(p, s_attribute = "speaker")
 #' @export
 #' @rdname subcorpus_bundle
+#' @param values Either a `character` vector with values used for splitting, or 
+#'   a `logical` value: If `TRUE`, changes of s-attribute values will be the
+#'   basis for generating subcorpora. If `FALSE`, a new subcorpus is generated
+#'   for every struc of the s-attribute. If missing (default), `TRUE`/`FALSE` is
+#'   assigned depending on whether `s-attribute` has values, or not.
 #' @importFrom RcppCWB s_attr_is_sibling s_attr_is_descendent
 #' @importFrom cli col_cyan
 #' @inheritParams partition_bundle
 #' @param x A `corpus`, `subcorpus`, or `subcorpus_bundle`
 #'   object.
 setMethod("split", "subcorpus", function(
-  x, s_attribute, values = NULL, prefix = "",
+  x, s_attribute, values, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(x)
 ) {
+  
+  if (missing(values))
+    values <- s_attr_has_values(s_attribute = s_attribute , x = x)
+  if (is.null(values))
+    values <- TRUE
   
   history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
   pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
@@ -108,20 +122,26 @@ setMethod("split", "subcorpus", function(
     )
   }
 
-  if (relation == "sibling"){
+  if (relation %in% c("sibling", "ancestor")){
     strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
-    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    if (isTRUE(values)){
+      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
+      strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    } else if (isFALSE(values)){
+      if (verbose) cli_alert_info("split by change of strucs")
+      strucs_values <- strucs
+    } else {
+      stop("not implemented")
+    }
     cpos_list <- split(x@cpos, strucs_values)
-    struc_list <- split(strucs, strucs_values)
-    s_attr_strucs <- s_attribute
-  } else if (relation == "ancestor"){
-    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
-    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
-    cpos_list <- split(x@cpos, strucs_values)
-    struc_list <- split(x@strucs, strucs_values) # different from sibling
-    s_attr_strucs <- x@s_attribute_strucs
+    
+    if (relation == "sibling"){
+      struc_list <- split(strucs, strucs_values)
+      s_attr_strucs <- s_attribute
+    } else if (relation == "ancestor"){
+      struc_list <- split(x@strucs, strucs_values) # different from sibling
+      s_attr_strucs <- x@s_attribute_strucs
+    }
   } else if (relation == "descendent"){
     cpos <- ranges_to_cpos(x@cpos)
     strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
@@ -138,7 +158,7 @@ setMethod("split", "subcorpus", function(
     s_attr_strucs <- s_attribute
   }
 
-  if (!is.null(values)){
+  if (is.character(values)){
     for (i in rev(which(!names(cpos_list) %in% values))){
       cpos_list[[i]] <- NULL
       struc_list[[i]] <- NULL
@@ -250,13 +270,13 @@ setMethod("split", "corpus", function(
 })
 
 
-#' @details Applying the \code{split}-method to a \code{subcorpus_bundle}-object
-#'   will iterate through the subcorpus, and apply \code{split} on each
-#'   \code{subcorpus} object in the bundle, splitting it up by the s-attribute
-#'   provided by the argument \code{s_attribute}. The return value is a
-#'   \code{subcorpus_bundle}, the names of which will be the names of the
-#'   incoming \code{partition_bundle} concatenated with the s-attribute values
-#'   used for splitting. The argument \code{prefix} can be used to achieve a
+#' @details Applying the `split`-method to a `subcorpus_bundle`-object
+#'   will iterate through the subcorpus, and apply `split` on each
+#'   `subcorpus` object in the bundle, splitting it up by the s-attribute
+#'   provided by the argument `s_attribute`. The return value is a
+#'   `subcorpus_bundle`, the names of which will be the names of the
+#'   incoming `partition_bundle` concatenated with the s-attribute values
+#'   used for splitting. The argument `prefix` can be used to achieve a
 #'   more descriptive name.
 #' @examples
 #' # split up objects in partition_bundle by using partition_bundle-method

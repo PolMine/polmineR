@@ -78,10 +78,10 @@ whether \code{x} is a \code{partition}, or not.
 The \code{enrich}-method will add a count of tokens defined by argument
 \code{p_attribute} to slot \code{stat} of the \code{partition} object.
 
-The \code{split}-method will split a partition object into a
-\code{partition_bundle} if gap between strucs exceeds a minimum number of
-tokens specified by \code{gap}. Relevant to split up a plenary protocol# into
-speeches. Note: To speed things up, the returned partitions will not include
+The \code{split()}-method will split a partition object into a
+\code{partition_bundle} if gap between strucs exceeds a minimum number of tokens
+specified by \code{gap}. Relevant to split up a plenary protocol into speeches.
+Note: To speed things up, the returned partitions will not include
 frequency lists. The lists can be prepared by applying \code{enrich} on the
 \code{partition_bundle} object that is returned.
 }
@@ -125,7 +125,11 @@ count in slot \code{stat}.}
 }}
 
 \examples{
-p <- partition("GERMAPARLMINI", date = "2009-11-11", speaker = "Norbert Lammert")
+p <- partition(
+  "GERMAPARLMINI",
+  date = "2009-11-11",
+  speaker = "Norbert Lammert"
+ )
 name(p) <- "Norbert Lammert"
 pb <- split(p, gap = 500L)
 summary(pb)

@@ -62,15 +62,15 @@ setMethod("corpus", "character", function(
 
     c_regdir <- path(corpus_registry_dir(.Object))
     if (missing(registry_dir)){
-      if (is.na(c_regdir)){
-        stop(
-          "Cannot initialize corpus object - ",
-          "cannot derive argument 'registry' from C representation of corpus."
-        )
-      } else if (length(c_regdir) > 1L){
+      if (length(c_regdir) > 1L){
         stop(
           "Cannot initialize corpus object - ",
           "corpus defined by two different registry files."
+        )
+      } else if (is.na(c_regdir)){
+        stop(
+          "Cannot initialize corpus object - ",
+          "cannot derive argument 'registry' from C representation of corpus."
         )
       } else {
         registry_dir <- c_regdir

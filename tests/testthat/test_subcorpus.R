@@ -180,5 +180,14 @@ test_that(
       
     expect_identical(size(p1), size(p2))
     
+    
+    cpos1 <- corpus("GERMAPARL2MINI") %>%
+      subset(ne)
+    cpos2 <- cpos("GERMAPARL2MINI", query = '/region[ne]', cqp = TRUE)
+    cpos3 <- cpos("GERMAPARL2MINI", query = '<ne> []* </ne>', cqp = TRUE)
+    
+    expect_identical(cpos1@cpos, cpos2)
+    expect_identical(cpos2, cpos3)
+    
   }
 )

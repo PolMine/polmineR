@@ -21,7 +21,7 @@
 \S4method{split}{subcorpus}(
   x,
   s_attribute,
-  values = NULL,
+  values,
   prefix = "",
   mc = getOption("polmineR.mc"),
   verbose = TRUE,
@@ -65,7 +65,11 @@ object.}
 
 \item{s_attribute}{The s-attribute to vary.}
 
-\item{values}{Values the s-attribute provided shall assume.}
+\item{values}{Either a \code{character} vector with values used for splitting, or
+a \code{logical} value: If \code{TRUE}, changes of s-attribute values will be the
+basis for generating subcorpora. If \code{FALSE}, a new subcorpus is generated
+for every struc of the s-attribute. If missing (default), \code{TRUE}/\code{FALSE} is
+assigned depending on whether \code{s-attribute} has values, or not.}
 
 \item{prefix}{A character vector that will be attached as a prefix to partition names.}
 

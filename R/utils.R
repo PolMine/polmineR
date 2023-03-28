@@ -197,6 +197,33 @@ is_nested <- function(x){
   if (length(unique(unlist(sizes))) == 1L) FALSE else TRUE
 }
 
+#' 
+#' @importFrom RcppCWB cl_struc_values
+s_attr_has_values <- function(s_attribute, x){
+
+  s_attr_files <- sprintf("^%s.(avs|avx|rng)$", s_attribute) |>
+    grep(list.files(x@data_dir), value = TRUE) |>
+    strsplit("\\.") |>
+    sapply(`[[`, 2)
+
+  if (length(s_attr_files) == 0L){
+    return(NA)
+  } else if (all(c("avs", "avs", "rng") %in% s_attr_files)){
+    return(TRUE)
+  } else if (s_attr_files == "rng"){
+    return(FALSE)
+  } else {
+    warning("s_attr_values() encountered unknown issue")
+    return(NA)
+  }
+  
+  # cl_struc_values(
+  #   corpus = x@corpus,
+  #   s_attribute = s_attribute,
+  #   registry = x@registry_dir
+  # )
+}
+
 
 #' Get ID for token.
 #' 

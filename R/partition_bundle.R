@@ -191,7 +191,8 @@ setMethod("partition_bundle", "partition", function(
   type = get_type(.Object), ...
 ) {
   split(
-    x = as(.Object, "subcorpus"), s_attribute = s_attribute, values = values, prefix = prefix,
+    x = as(.Object, "subcorpus"), s_attribute = s_attribute,
+    values = values, prefix = prefix,
     mc = mc, verbose = verbose, progress = progress,
     type = type,
     ...

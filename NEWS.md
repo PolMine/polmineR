@@ -52,7 +52,7 @@ initial tests for functionality for nested corpora is run.
 inherit this slot.
 * `html()` for `subcorpus` reconstructs `meta` equivalent to `read()` for
 `subcorpus` objects.
-
+* Subsetting using an s-attribute without values now possible #240.
 
 # polmineR v0.8.7
 
