@@ -1,7 +1,7 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.7.9019
+Version: 0.8.8
 Date: 2023-03-28
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
