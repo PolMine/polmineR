@@ -35,7 +35,7 @@ setMethod("as.sparseMatrix", "simple_triplet_matrix", function(x, ...){
 #' @exportMethod as.sparseMatrix
 #' @rdname all-cooccurrences-class
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)

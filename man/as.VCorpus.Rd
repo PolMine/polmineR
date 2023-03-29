@@ -30,12 +30,15 @@ this (propable) scenario, it is possible to use a coerce-method
 (\code{as(YOUROBJECT, "VCorpus")}), see examples.
 }
 \examples{
-pb <- partition("GERMAPARLMINI", date = "2009-11-10") \%>\%
-  partition_bundle(s_attribute = "speaker")
+use(pkg = "RcppCWB", corpus = "REUTERS")
+
+pb <- corpus("REUTERS") \%>\%
+  partition_bundle(s_attribute = "id")
  
 vc <- as.VCorpus(pb) # works only, if tm-package has not yet been loaded
 vc <- as(pb, "VCorpus") # will work if tm-package has been loaded, too
 
-use(pkg = "RcppCWB", corpus = "REUTERS")
-vc <- corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% as("VCorpus")
+vc <- corpus("REUTERS") \%>\%
+  split(s_attribute = "id") \%>\%
+  as("VCorpus")
 }

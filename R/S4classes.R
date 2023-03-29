@@ -162,14 +162,19 @@ setClass(
 #' @docType class
 #' @author Andreas Blaette
 #' @examples
-#' party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' use("RcppCWB", "REUTERS")
 #' 
-#' length(party_bundle)
-#' names(party_bundle)
-#' get_corpus(party_bundle)
+#' # generate bundle with articles in REUTERS corpus
+#' b <- partition_bundle("REUTERS", s_attribute = "id")
 #' 
-#' party_bundle <- enrich(party_bundle, p_attribute = "word")
-#' summary(party_bundle)
+#' # basic operations
+#' length(b)
+#' names(b)
+#' get_corpus(b)
+#' summary(b)
+#' 
+#' # enrich with count for p-attribute
+#' b <- enrich(b, p_attribute = "word")
 setClass(
   "bundle",
   slots = c(

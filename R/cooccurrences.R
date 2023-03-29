@@ -823,10 +823,12 @@ setMethod("Cooccurrences", "subcorpus", function(
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
 #' @examples
+#' \donttest{
+#' # takes too much time on CRAN test machines
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
-#' 
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 #' m <- as.simple_triplet_matrix(X)
+#' }
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   
   verbose <- interactive()

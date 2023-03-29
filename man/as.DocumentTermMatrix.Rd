@@ -120,23 +120,28 @@ obtain the resulting \code{TermDocumentMatrix} or
 \code{DocumentTermMatrix}.
 }
 \examples{
-use("polmineR")
+use(pkg = "RcppCWB", corpus = "REUTERS")
  
 # enriching partition_bundle explicitly 
-tdm <- partition("GERMAPARLMINI", date = ".*", regex = TRUE) \%>\% 
-  partition_bundle(s_attribute = "date") \%>\% 
+tdm <- corpus("REUTERS") \%>\% 
+  partition_bundle(s_attribute = "id") \%>\% 
   enrich(p_attribute = "word") \%>\%
   as.TermDocumentMatrix(col = "count")
    
 # leave the counting to the as.TermDocumentMatrix-method
-tdm <- partition_bundle("GERMAPARLMINI", s_attribute = "date") \%>\% 
+tdm <- partition_bundle("REUTERS", s_attribute = "id") \%>\% 
   as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
    
 # obtain TermDocumentMatrix directly (fastest option)
-tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
+tdm <- as.TermDocumentMatrix(
+  "REUTERS",
+  p_attribute = "word",
+  s_attribute = "id",
+  verbose = FALSE
+)
 
-use(pkg = "RcppCWB", corpus = "REUTERS")
 
+# workflow using split()
 dtm <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   as.TermDocumentMatrix(p_attribute = "word")
