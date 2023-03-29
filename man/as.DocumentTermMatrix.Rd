@@ -120,7 +120,9 @@ obtain the resulting \code{TermDocumentMatrix} or
 \code{DocumentTermMatrix}.
 }
 \examples{
-use(pkg = "RcppCWB", corpus = "REUTERS")
+# examples not run by default to save time on CRAN test machines
+\donttest{
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
  
 # enriching partition_bundle explicitly 
 tdm <- corpus("REUTERS") \%>\% 
@@ -131,7 +133,7 @@ tdm <- corpus("REUTERS") \%>\%
 # leave the counting to the as.TermDocumentMatrix-method
 tdm <- partition_bundle("REUTERS", s_attribute = "id") \%>\% 
   as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
-   
+  
 # obtain TermDocumentMatrix directly (fastest option)
 tdm <- as.TermDocumentMatrix(
   "REUTERS",
@@ -140,11 +142,11 @@ tdm <- as.TermDocumentMatrix(
   verbose = FALSE
 )
 
-
 # workflow using split()
 dtm <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   as.TermDocumentMatrix(p_attribute = "word")
+}
 }
 \author{
 Andreas Blaette

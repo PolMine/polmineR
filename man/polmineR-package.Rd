@@ -77,21 +77,24 @@ and slow to process. Therefore, the default value of the setting is
 }
 
 \examples{
-use("polmineR") # activate demo corpora included in the package
-use(pkg = "RcppCWB", corpus = "REUTERS")
+# The REUTERS corpus included in the RcppCWB package is used in examples
+use(pkg = "RcppCWB", corpus = "REUTERS") # activate REUTERS corpus
+r <- corpus("REUTERS")
+if (interactive()) show_info(r)
 
-# The package includes two sample corpora
-corpus("REUTERS") \%>\% show_info()
-corpus("GERMAPARLMINI") \%>\% show_info()
+# The package includes GERMAPARLMINI as sample data
+use("polmineR") # activate GERMAPARLMINI
+gparl <- corpus("GERMAPARLMINI")
+if (interactive()) show_info(gparl)
 
-# Core methods applied to corpus
+# Core methods
 
-C <- count("REUTERS", query = "oil")
-C <- count("REUTERS", query = c("oil", "barrel"))
-C <- count("REUTERS", query = '"Saudi" "Arab.*"', breakdown = TRUE, cqp = TRUE)
-D <- dispersion("REUTERS", query = "oil", s_attribute = "id")
-K <- kwic("REUTERS", query = "oil")
-CO <- cooccurrences("REUTERS", query = "oil")
+count("REUTERS", query = "oil")
+count("REUTERS", query = c("oil", "barrel"))
+count("REUTERS", query = '"Saudi" "Arab.*"', breakdown = TRUE, cqp = TRUE)
+dispersion("REUTERS", query = "oil", s_attribute = "id")
+k <- kwic("REUTERS", query = "oil")
+coocs <- cooccurrences("REUTERS", query = "oil")
 
 
 # Core methods applied to partition
@@ -107,16 +110,17 @@ CO <- cooccurrences(kuwait, query = "oil")
 
 p <- partition("REUTERS", id = 127)
 if (interactive()) read(p)
-h <- html(p)
-h_highlighted <- highlight(h, highlight = list(yellow = "oil"))
+h <- html(p) \%>\%
+  highlight(highlight = list(yellow = "oil"))
 if (interactive()) h_highlighted
 
 
-# Generate term document matrix
-
+# Generate term document matrix (not run by default to save time)
+\donttest{
 pb <- partition_bundle("REUTERS", s_attribute = "id")
 cnt <- count(pb, p_attribute = "word")
 tdm <- as.TermDocumentMatrix(cnt, col = "count")
+}
 }
 \references{
 Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.

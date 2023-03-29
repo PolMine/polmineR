@@ -212,6 +212,7 @@ cooccurrences("REUTERS", query = "oil") \%>\%
   
 # generate datatables htmlwidget with buttons for export (Excel & more)
 # (alternatively use openxlsx::write.xlsx())
+\donttest{
 interactive_table <- cooccurrences("REUTERS", query = "oil") \%>\%
   format() \%>\%
   DT::datatable(
@@ -219,6 +220,11 @@ interactive_table <- cooccurrences("REUTERS", query = "oil") \%>\%
     options = list(dom = 'Btip', buttons = c("excel", "pdf", "csv"))
   )
 if (interactive()) show(interactive_table)
+}
+
+# compute cooccurrences for a set of partitions
+# (example not run by default to save time on test machines)
+\donttest{
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 ps <- count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]]
 pb_min <- pb[ps]
@@ -230,6 +236,7 @@ y2 <- corpus("GERMAPARLMINI") \%>\%
   subset(speaker \%in\% c("Hubertus Heil", "Angela Dorothea Merkel")) \%>\%
   split(s_attribute = "speaker") \%>\%
   cooccurrences(query = "Deutschland")
+}
 }
 \references{
 Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum, p. 95-120 (ch. 5).

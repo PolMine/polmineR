@@ -72,7 +72,9 @@ setGeneric(
 )
 
 #' @examples
-#' use(pkg = "RcppCWB", corpus = "REUTERS")
+#' # examples not run by default to save time on CRAN test machines
+#' \donttest{
+#' #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #'  
 #' # enriching partition_bundle explicitly 
 #' tdm <- corpus("REUTERS") %>% 
@@ -83,7 +85,20 @@ setGeneric(
 #' # leave the counting to the as.TermDocumentMatrix-method
 #' tdm <- partition_bundle("REUTERS", s_attribute = "id") %>% 
 #'   as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
-#'    
+#'   
+#' # obtain TermDocumentMatrix directly (fastest option)
+#' tdm <- as.TermDocumentMatrix(
+#'   "REUTERS",
+#'   p_attribute = "word",
+#'   s_attribute = "id",
+#'   verbose = FALSE
+#' )
+#' 
+#' # workflow using split()
+#' dtm <- corpus("REUTERS") %>%
+#'   split(s_attribute = "id") %>%
+#'   as.TermDocumentMatrix(p_attribute = "word")
+#' }
 #' @rdname as.DocumentTermMatrix
 setMethod("as.TermDocumentMatrix", "character",function (x, p_attribute, s_attribute, verbose = TRUE, ...) {
   if ("pAttribute" %in% names(list(...))){
@@ -288,15 +303,6 @@ setMethod("as.DocumentTermMatrix", "corpus", function(x, p_attribute, s_attribut
 
 
 
-#' @examples
-#' # obtain TermDocumentMatrix directly (fastest option)
-#' tdm <- as.TermDocumentMatrix(
-#'   "REUTERS",
-#'   p_attribute = "word",
-#'   s_attribute = "id",
-#'   verbose = FALSE
-#' )
-#' 
 #' @rdname as.DocumentTermMatrix
 setMethod("as.DocumentTermMatrix", "character", function(x, p_attribute, s_attribute, verbose = TRUE, ...){
   as.DocumentTermMatrix(
@@ -482,12 +488,6 @@ setMethod("as.TermDocumentMatrix", "partition_bundle", function(x, p_attribute =
 #'   obtain the resulting \code{TermDocumentMatrix} or
 #'   \code{DocumentTermMatrix}.
 #' @rdname as.DocumentTermMatrix
-#' @examples
-#' 
-#' # workflow using split()
-#' dtm <- corpus("REUTERS") %>%
-#'   split(s_attribute = "id") %>%
-#'   as.TermDocumentMatrix(p_attribute = "word")
 setMethod("as.TermDocumentMatrix", "subcorpus_bundle", function(x, p_attribute = NULL, verbose = TRUE, ...){
   callNextMethod()
 })
