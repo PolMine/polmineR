@@ -38,7 +38,7 @@ objects of the \code{corpus} class.
 A \code{corpus} object can have a name, which can be retrieved using
 the \code{name}-method.
 
-Use \code{get_corpus}-method to get the corpus ID from the slot
+Use \code{get_corpus()}-method to get the corpus ID from the slot
 \code{corpus} of the \code{corpus} object.
 
 The \code{show()}-method will show basic information on the
@@ -72,14 +72,13 @@ if (interactive()) corpus("REUTERS") # show is called implicitly
 # get corpus ID
 corpus("REUTERS") \%>\% get_corpus()
 
-# use $ to access s_attributes quickly
+# use $ to access corpus properties
 use("polmineR")
 g <- corpus("GERMAPARLMINI")
 g$date
-corpus("GERMAPARLMINI")$date #
-corpus("GERMAPARLMINI") \%>\% s_attributes(s_attribute = "date") # equivalent
+corpus("GERMAPARLMINI")$build_date #
+gparl <- corpus("GERMAPARLMINI")
+gparl$version \%>\%
+  as.numeric_version()
 
-use("polmineR")
-sc <- subset("GERMAPARLMINI", date == "2009-10-27")
-sc$date
 }

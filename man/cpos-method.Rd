@@ -72,8 +72,8 @@ cpos(.Object, ...)
 \S4method{cpos}{`NULL`}(.Object)
 }
 \arguments{
-\item{.Object}{A length-one \code{character} vector indicating a CWB corpus, a
-\code{partition} object, or a \code{matrix} with corpus positions.}
+\item{.Object}{A length-one \code{character} vector indicating a CWB corpus, or a
+\code{corpus}, or \code{partition} object.}
 
 \item{...}{Used for reasons of backwards compatibility to
 process arguments that have been renamed (e.g. \code{pAttribute}).}
@@ -99,54 +99,41 @@ using \code{check_cqp_query}.}
 \item{verbose}{A \code{logical} value, whether to show messages.}
 }
 \value{
-Unless \code{.Object} is a \code{matrix}, the return value is a
-\code{matrix} with two columns.  The first column reports the left/starting
-corpus positions (cpos) of the hits obtained. The second column reports the
-right/ending corpus positions of the respective hit. The number of rows is
-the number of hits. If there are no hits, a \code{NULL} object is returned.
+A \code{matrix} with two columns.  The first column reports the
+left/starting corpus positions (cpos) of the hits obtained. The second
+column reports the right/ending corpus positions of the respective hit. The
+number of rows is the number of hits. If there are no hits, \code{NULL} is
+returned.
 }
 \description{
 Get matches for a query in a CQP corpus (subcorpus, partition etc.),
 optionally using the CQP syntax of the Corpus Workbench (CWB).
 }
 \details{
-If the \code{cpos()}-method is applied on a \code{character} or
-\code{partition} object, the result is a two-column \code{matrix} with the
-regions (start end end corpus positions of the matches) for a query. CQP
-syntax can be used. The encoding of the query is adjusted to conform to the
-encoding of the CWB corpus. If there are not matches, \code{NULL} is
-returned.
+The \code{cpos()}-method returns a two-column \code{matrix} with the ranges (start end
+end corpus positions of the matches) matched by a query. CQP syntax can be
+used. The encoding of the query is adjusted to conform to the encoding of the
+CWB corpus. If there are not matches, \code{NULL} is returned.
 
-If the \code{cpos()}-method is called on a \code{matrix} object,  the cpos
-matrix is unfolded, the return value is an integer vector with the individual
-corpus positions.
-
-If \code{.Object} is a \code{hits} object, an \code{integer} vector is
-returned with the individual corpus positions.
-
-. If \code{.Object} is a \code{matrix}, it is assumed to be a region
-matrix, i.e. a two-column \code{matrix} with left and right corpus positions
-in the first and second row, respectively. For many operations, such as
-decoding the token stream, it is necessary to inflate the denoted regions
-into a vector of all corpus positions referred to by the regions defined in
-the matrix. The \code{cpos}-method for \code{matrix} objects will performs
-this task robustly.
-
-If \code{.Object} is \code{NULL}, the method will return an empty
-integer vector. Used internally to handle \code{NULL} objects that may be
-returned from the \code{cpos}-method if no matches are obtained for a
-query.
+Previous polmineR versions defined the \code{cpos()}-method for \code{matrix} and
+\code{hits} objects to obtain an integer vector with unfolded individual corpus
+positions. This usage is deprecated starting with polmineR v0.8.8
 }
 \examples{
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-# looking up single tokens
+# look up single tokens
 cpos("REUTERS", query = "oil")
 corpus("REUTERS") \%>\% cpos(query = "oil")
-corpus("REUTERS") \%>\% subset(grepl("saudi-arabia", places)) \%>\% cpos(query = "oil")
-partition("REUTERS", places = "saudi-arabia", regex = TRUE) \%>\% cpos(query = "oil")
 
-# using CQP query syntax
+corpus("REUTERS") \%>\%
+  subset(grepl("saudi-arabia", places)) \%>\%
+  cpos(query = "oil")
+  
+partition("REUTERS", places = "saudi-arabia", regex = TRUE) \%>\%
+  cpos(query = "oil")
+
+# use CQP query syntax
 cpos("REUTERS", query = '"Saudi" "Arabia"')
 corpus("REUTERS") \%>\% cpos(query = '"Saudi" "Arabia"')
 corpus("REUTERS") \%>\%

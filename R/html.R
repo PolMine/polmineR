@@ -5,42 +5,42 @@ NULL
 #' 
 #' Prepare html document to see full text.
 #' 
-#' @return Returns an object of class \code{html} as used in the \code{htmltools} package. Methods
-#' such as \code{htmltools::html_print} will be available. The encoding of the html
-#' document will be UTF-8 on all systems (including Windows).
+#' @return Returns an object of class `html` as used in the 'htmltools' package.
+#'   Methods such as `htmltools::html_print()` will be available. The encoding
+#'   of the html document will be UTF-8 on all systems (including Windows).
 #' 
-#' @details Substitutions configured by option `polmineR.mdsub` are applied to
+#' @details Substitutions configured by option 'polmineR.mdsub' are applied to
 #' prevent presence of characters that would be misinterpreted as markdown
 #' formatting instructions.
-#' @details If param \code{charoffset} is \code{TRUE}, character offset positions will be
-#' added to tags that embrace tokens. This may be useful, if exported html document
-#' is annotated with a tool that stores annotations with character offset positions.
+#' @details If param `charoffset} is `TRUE``, character offset positions will be
+#'   added to tags that embrace tokens. This may be useful, if exported html
+#'   document is annotated with a tool that stores annotations with character
+#'   offset positions.
 #' 
 #' @param object The object the fulltext output will be based on.
-#' @param meta Metadata to include in  output, if \code{NULL} (default), the
+#' @param meta Metadata to include in  output, if `NULL` (default), the
 #'   s-attributes defining a partition will be used.
-#' @param s_attribute Structural attributes that will be used to define the partition 
-#' where the match occurred.
-#' @param cpos Length-one \code{logical} value, if \code{TRUE} (default), all
+#' @param s_attribute Structural attributes that will be used to define the
+#'   partition where the match occurred.
+#' @param cpos Length-one `logical` value, if `TRUE` (default), all
 #'   tokens will be wrapped by elements with id attribute indicating corpus
 #'   positions.
-#' @param corpus The ID of the corpus, a length-one \code{character} vector.
-#' @param beautify Length-one \code{logical} value, if \code{TRUE}, whitespace
-#'   before interpunctuation will be removed.
-#' @param charoffset Length-one \code{logical} value, if \code{TRUE}, character
-#'   offset positions are added to elements embracing tokens.
-#' @param height A \code{character} vector that will be inserted into the html
-#'   as an optional height of a scroll box.
-#' @param verbose Length-one \code{logical} value, whether to output progress
+#' @param corpus The ID of the corpus, a length-one `character` vector.
+#' @param beautify A `logical` value, if `TRUE`, whitespace before
+#'   interpunctuation will be removed.
+#' @param charoffset Length-one `logical` value, if `TRUE`, character offset
+#'   positions are added to elements embracing tokens.
+#' @param height A `character` vector that will be inserted into the html as an
+#'   optional height of a scroll box.
+#' @param verbose Length-one `logical` value, whether to output progress
 #'   messages.
-#' @param progress Length-one \code{logical} value, whether to output progress#
-#'   bar.
-#' @param cutoff An \code{integer} value, maximum number of tokens to decode
-#'   from token stream, passed into \code{as.markdown}.
+#' @param progress Length-one `logical` value, whether to output progress bar.
+#' @param cutoff An `integer` value, maximum number of tokens to decode
+#'   from token stream, passed into `as.markdown()`.
 #' @param type The partition type.
-#' @param i An \code{integer} value: If \code{object} is a \code{kwic}-object,
+#' @param i An `integer` value: If `object` is a `kwic`-object,
 #'   the index of the concordance for which the fulltext is to be generated.
-#' @param ... Further parameters that are passed into \code{as.markdown}.
+#' @param ... Further parameters that are passed into `as.markdown()`.
 #' @rdname html-method
 #' @aliases show,html-method
 #' @examples
@@ -78,7 +78,7 @@ setMethod("html", "character", function(object, corpus, height = NULL){
 
   css <- paste(
     c(
-      readLines(getOption("markdown.HTML.stylesheet")),
+      readLines(system.file("css", "markdown.css", package = "polmineR")),
       readLines(system.file("css", "tooltips.css", package = "polmineR"))
     ),
     collapse = "\n", sep = "\n"
@@ -227,8 +227,17 @@ setMethod(
     if (!requireNamespace("markdown", quietly = TRUE) && requireNamespace("htmltools", quietly = TRUE)){
       stop("package 'markdown' is not installed, but necessary for this function")
     }
-    if (is.null(meta)) meta <- names(object@s_attributes)
-    if (isFALSE(all(meta %in% s_attributes(object)))) warning("not all s-attributes provided as meta are available")
+    
+    # code to get meta (almost) identical with read,subcorpus()
+    if (is.null(meta)){
+      template_meta <- get_template(object)[["metadata"]]
+      meta <- if (is.null(template_meta))
+        names(object@s_attributes)
+      else
+        template_meta
+    }
+    if (isFALSE(all(meta %in% s_attributes(object)))) 
+      warning("not all s-attributes provided as meta are available")
     
     .message("generating markdown", verbose = verbose)
     md <- as.markdown(object, meta = meta, cpos = cpos, cutoff = cutoff, ...)

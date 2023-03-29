@@ -148,12 +148,31 @@ setMethod("count", "subcorpus", function(
         dts <- lapply(
           query,
           function(x){
-            region_matrix <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
+            region_matrix <- cpos(
+              .Object = .Object,
+              query = x, p_attribute = p_attribute,
+              cqp = cqp,
+              check = check
+            )
             if (is.null(region_matrix)) return(NULL)
-            token <- get_token_stream(cpos(region_matrix), corpus = .Object@corpus, p_attribute = p_attribute, encoding = .Object@encoding)
-            ids <- unlist(Map(rep, 1:nrow(region_matrix), region_matrix[,2] - region_matrix[,1] + 1))
-            matches_cnt <- table(sapply(split(token, ids), paste, collapse = " "))
-            dt <- data.table(query = x, match = names(matches_cnt), count = as.vector(unname(matches_cnt)))
+            token <- get_token_stream(
+              ranges_to_cpos(region_matrix),
+              corpus = .Object@corpus, p_attribute = p_attribute,
+              encoding = .Object@encoding
+            )
+            ids <- unlist(
+              Map(
+                rep, 1:nrow(region_matrix),
+                region_matrix[,2] - region_matrix[,1] + 1
+              )
+            )
+            matches_cnt <- table(
+              sapply(split(token, ids), paste, collapse = " ")
+            )
+            dt <- data.table(
+              query = x, match = names(matches_cnt),
+              count = as.vector(unname(matches_cnt))
+            )
             if (nrow(dt) == 0L) return(NULL)
             setorderv(dt, cols = "count", order = -1L)
             dt[, "share" := round(dt[["count"]] / sum(dt[["count"]]) * 100, 2)]
@@ -193,7 +212,7 @@ setMethod("count", "subcorpus", function(
         decode <- FALSE
       }
     } else {
-      cpos <- cpos(.Object@cpos)
+      cpos <- ranges_to_cpos(.Object@cpos)
       id_list <- lapply(
         p_attribute,
         function(p) cpos2id(x = .Object, p_attribute = p, cpos = cpos)
@@ -240,7 +259,7 @@ setMethod("count", "subcorpus", function(
 
 #' @rdname count-method
 #' @docType methods
-setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = NULL, phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
+setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FALSE, p_attribute = getOption("polmineR.p_attribute"), phrases = NULL, freq = FALSE, total = TRUE, mc = FALSE, progress = FALSE, verbose = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
@@ -304,7 +323,9 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     
     if (verbose) message("... creating data.table with corpus positions")
     DT <- data.table(
-      cpos = cpos(do.call(rbind, lapply(.Object@objects, slot, "cpos"))),
+      cpos = ranges_to_cpos(
+        do.call(rbind, lapply(.Object@objects, slot, "cpos"))
+      ),
       name_id = do.call(c, Map(rep, 1:length(.Object@objects), unname(sapply(.Object@objects, slot, "size"))))
     )
 
@@ -387,7 +408,13 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       cnt_file <- fs::path(.Object@data_dir, sprintf("%s.corpus.cnt", p_attribute)
       )
       if (file.exists(cnt_file)){
-        cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = file.info(cnt_file)$size, endian = "big")
+        cnt <- readBin(
+          con = cnt_file,
+          what = integer(),
+          size = 4L,
+          n = file.info(cnt_file)$size,
+          endian = "big"
+        )
         TF <- data.table(count = cnt)
       } else {
         TF <- data.table(
@@ -460,7 +487,9 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
     return(y)
   } else {
     if (is.function(cqp)) cqp <- cqp(query)
-    if (length(cqp) > 1) stop("length of cqp is larger than 1, it needs to be 1")
+    if (length(cqp) > 1L)
+      stop("length of cqp is larger than 1, needs to be 1")
+    
     if (isFALSE(cqp)){
       query <- as.corpusEnc(query, corpusEnc = encoding(.Object))
       count <- sapply(
@@ -486,13 +515,17 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
       if (isFALSE(breakdown)){
         region_matrices <- lapply(
           query,
-          function(query) cpos(.Object, query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = FALSE)
+          function(q)
+            cpos(
+              .Object, query = q, cqp = cqp,
+              check = check, p_attribute = p_attribute, verbose = FALSE
+            )
         )
-        # If any corpus position in the region matrices occurrs more than once, there 
-        # is an overlap of matches obtained for queries. A warning shall prevent that 
-        # users sum up query matches and unknowingly overestimate the total number of 
-        # query matches.
-        if (any(table(unlist(lapply(region_matrices, cpos))) > 1L)){
+        # If any corpus position in the region matrices occurrs more than once,
+        # there is an overlap of matches obtained for queries. A warning shall
+        # prevent that users sum up query matches and unknowingly overestimate
+        # the total number of query matches.
+        if (any(table(unlist(lapply(region_matrices, function(m) if (is.null(m)) integer() else ranges_to_cpos(m)))) > 1L)){
           warning(
             "The CQP queries processed result in at least one overlapping query. ",
             "Summing up the counts for the individual query matches may result in an ",

@@ -51,7 +51,7 @@ count(.Object, ...)
   .Object,
   query = NULL,
   cqp = FALSE,
-  p_attribute = NULL,
+  p_attribute = getOption("polmineR.p_attribute"),
   phrases = NULL,
   freq = FALSE,
   total = TRUE,

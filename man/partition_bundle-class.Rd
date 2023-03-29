@@ -36,7 +36,7 @@
 
 \S4method{partition_bundle}{environment}(.Object)
 
-\S4method{enrich}{partition_bundle}(.Object, mc = FALSE, progress = TRUE, verbose = FALSE, ...)
+\S4method{enrich}{partition_bundle}(.Object, p_attribute, decode = TRUE, verbose = FALSE)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, ...)
 
@@ -45,13 +45,13 @@ flatten(object)
 \arguments{
 \item{object}{a \code{partition_bundle} object}
 
-\item{progress}{logical}
+\item{progress}{A \code{logical} value, whether to show progress bar.}
 
 \item{x}{a \code{partition_bundle} object}
 
 \item{name}{the name for the new partition}
 
-\item{verbose}{logical}
+\item{verbose}{A \code{logical} value, whether to show progress messages.}
 
 \item{height}{height}
 
@@ -59,7 +59,10 @@ flatten(object)
 
 \item{.Object}{a \code{partition_bundle} object}
 
-\item{mc}{logical or, if numeric, providing the number of cores}
+\item{p_attribute}{A \code{character} vector with p-attribute(s) for counting.}
+
+\item{decode}{A \code{logical} value, whether to turn token ids into decoded
+strings.}
 
 \item{s_attribute}{the s-attribute to use}
 }
@@ -77,6 +80,9 @@ The \code{merge}-method aggregates several partitions into one partition. The
 prerequisite for this function to work properly is that there are no
 overlaps of the different partitions that are to be summarized.
 Encodings and the root node need to be identical, too.
+
+The \code{enrich()} method will fill the slot \code{stat} of the \code{partition}
+objects within the bundle with a count for the designated p-attributes.
 }
 \section{Slots}{
 

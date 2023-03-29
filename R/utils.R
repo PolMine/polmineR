@@ -145,6 +145,86 @@ as.cqp <- function(query, normalise.case = FALSE, collapse = FALSE, check = TRUE
   cqp
 }
 
+#' Capitalize character vector.
+#' 
+#' Make the first character of the elements of a `character` vector have upper
+#' case and the rest lower case.
+#' 
+#' The `capitalize()` function may be useful when applying lowercased
+#' dictionaries of stoplists, a sentiment dictionary etc. on a CWB corpus that
+#' maintains capitalization (tokens are not lowercased).
+#' 
+#' This function is inspired by a method Python offers for string objects.
+#' @param x A `character` vector.
+#' @export
+#' @examples
+#' capitalize(c("oil", "corpus", "data"))
+capitalize <- function(x){
+  if (!is.character(x)) stop("capitalize() requires character vector as input")
+  retval <- paste0(
+    toupper(substr(x, start = 1L, stop = 1L)),
+    tolower(substr(x, start = 2L, stop = nchar(x)))
+  )
+  retval[is.na(x)] <- NA_character_
+  retval
+}
+
+
+#' Check whether s-attributes of corpus are nested
+#' 
+#' Simple test whether the attribute size of all s-attributes of a corpus is 
+#' identical (flat import XML) or not (nested import XML).
+#' @param x A `character` vector with corpus ID or a `corpus` object.
+#' @return A `logical` value: `FALSE` is data structure is flat and `TRUE` if 
+#' data structure is nested.
+#' @export is_nested
+#' @examples 
+#' use("polmineR")
+#' use("RcppCWB")
+#' @importFrom RcppCWB cl_attribute_size
+is_nested <- function(x){
+  if (is.character(x)) x <- corpus(x)
+  sizes <- lapply(
+    s_attributes(x),
+    function(s_attr)
+      cl_attribute_size(
+        corpus = x@corpus,
+        attribute = s_attr,
+        attribute_type = "s",
+        registry = x@registry_dir
+      )
+  )
+  if (length(unique(unlist(sizes))) == 1L) FALSE else TRUE
+}
+
+#' 
+#' @importFrom RcppCWB cl_struc_values
+s_attr_has_values <- function(s_attribute, x){
+
+  s_attr_files <- sprintf("^%s.(avs|avx|rng)$", s_attribute) |>
+    grep(list.files(x@data_dir), value = TRUE) |>
+    strsplit("\\.") |>
+    sapply(`[[`, 2)
+
+  if (length(s_attr_files) == 0L){
+    return(NA)
+  } else if (all(c("avs", "avs", "rng") %in% s_attr_files)){
+    return(TRUE)
+  } else if (s_attr_files == "rng"){
+    return(FALSE)
+  } else {
+    warning("s_attr_values() encountered unknown issue")
+    return(NA)
+  }
+  
+  # cl_struc_values(
+  #   corpus = x@corpus,
+  #   s_attribute = s_attribute,
+  #   registry = x@registry_dir
+  # )
+}
+
+
 #' Get ID for token.
 #' 
 #' Helper function for context method. Get ids for tokens.

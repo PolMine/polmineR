@@ -95,15 +95,18 @@ setMethod(
     ...
   ){
     if (is.null(meta)){
-      templateMeta <- get_template(.Object)[["metadata"]]
-      meta <- if (is.null(templateMeta)) names(.Object@s_attributes) else templateMeta
+      template_meta <- get_template(.Object)[["metadata"]]
+      meta <- if (is.null(template_meta))
+        names(.Object@s_attributes)
+      else
+        template_meta
     }
     stopifnot(all(meta %in% s_attributes(.Object@corpus)))
     doc <- html(.Object, meta = meta,  cpos = cpos, cutoff = cutoff,  template = template, ...)
     
-    if (length(highlight) > 0) {
+    if (length(highlight) > 0L) {
       doc <- highlight(doc, highlight = highlight)
-      if (length(tooltips) > 0){
+      if (length(tooltips) > 0L){
         doc <- tooltips(doc, tooltips = tooltips)
       }
     }

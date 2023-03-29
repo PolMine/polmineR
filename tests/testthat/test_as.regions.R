@@ -8,7 +8,8 @@ test_that(
     p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
     r1 <- as(p, "regions")
     
-    sc <- subset("GERMAPARLMINI", speaker == "Angela Dorothea Merkel")
+    sc <- corpus("GERMAPARLMINI") %>% 
+      subset(speaker == "Angela Dorothea Merkel")
     r2 <- as(sc, "regions")
     
     expect_identical(r1, r2)

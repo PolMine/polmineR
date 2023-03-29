@@ -1,10 +1,7 @@
-citHeader("To cite package 'polmineR' in publications use:")
-
-citEntry(entry="Manual",
+bibentry(bibtype = "Manual",
          title = "polmineR: Verbs and Nouns for Corpus Analysis",
          author = person("Andreas", "Blaette", email="andreas.blaette@uni-due.de"),
-         year = "2020",
-         note = "R package version 0.8.2",
-         doi = "10.5281/zenodo.4042093",
-         textVersion = "Blaette, Andreas (2020). polmineR: Verbs and Nouns for Corpus Analysis. R package version v0.8.2. http://doi.org/10.5281/zenodo.4042093"
+         year = "2023",
+         note = "R package version 0.8.8",
+         textVersion = "Blaette, Andreas (2023). polmineR: Verbs and Nouns for Corpus Analysis. R package version v0.8.8."
 )

@@ -5,6 +5,25 @@ use(pkg = "RcppCWB", corpus = "REUTERS")
 testthat::context("subcorpus")
 
 test_that(
+  "is_nested() auxiliary function",
+  {
+    use("RcppCWB")
+    expect_false(is_nested("REUTERS"))
+    expect_true(is_nested("GERMAPARLMINI"))
+  }
+)
+
+test_that(
+  "setting of xml slot of corpus class",
+  {
+    use("RcppCWB")
+    use("polmineR")
+    expect_identical(corpus("REUTERS")@xml, "flat")
+    expect_identical(corpus("GERMAPARLMINI")@xml, "nested")
+  }
+)
+
+test_that(
   "generate subcorpus", {
     p <- partition("GERMAPARLMINI", speaker = "Angela Dorothea Merkel")
     gparl <- corpus("GERMAPARLMINI")
@@ -127,5 +146,48 @@ test_that(
       d <- corpus("REUTERS") %>% subset(lm == "127" & foo == "abc")
     })
     expect_null(d)
+  }
+)
+
+
+test_that(
+  "subset() for nested corpus",
+  {
+    skip_if_not(use("GermaParl2"))
+
+    p <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(p_type == "speech")
+    
+    stage <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(p_type == "stage")
+    
+    cschmid <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid")
+    
+    expect_identical(size(p) + size(stage), size(cschmid))
+    
+    # The order of subsetting should not matter
+    
+    p1 <- corpus("GERMAPARL2MINI") %>%
+      subset(speaker_name == "Carlo Schmid") %>%
+      subset(p_type == "speech")
+    
+    p2 <- corpus("GERMAPARL2MINI") %>%
+      subset(p_type == "speech") %>%
+      subset(speaker_name == "Carlo Schmid")
+      
+    expect_identical(size(p1), size(p2))
+    
+    
+    cpos1 <- corpus("GERMAPARL2MINI") %>%
+      subset(ne)
+    cpos2 <- cpos("GERMAPARL2MINI", query = '/region[ne]', cqp = TRUE)
+    cpos3 <- cpos("GERMAPARL2MINI", query = '<ne> []* </ne>', cqp = TRUE)
+    
+    expect_identical(cpos1@cpos, cpos2)
+    expect_identical(cpos2, cpos3)
+    
   }
 )

@@ -6,43 +6,38 @@ NULL
 #' Get matches for a query in a CQP corpus (subcorpus, partition etc.),
 #' optionally using the CQP syntax of the Corpus Workbench (CWB).
 #' 
-#' If the \code{cpos()}-method is applied on a \code{character} or
-#' \code{partition} object, the result is a two-column \code{matrix} with the
-#' regions (start end end corpus positions of the matches) for a query. CQP
-#' syntax can be used. The encoding of the query is adjusted to conform to the
-#' encoding of the CWB corpus. If there are not matches, \code{NULL} is
-#' returned.
+#' The `cpos()`-method returns a two-column `matrix` with the ranges (start end
+#' end corpus positions of the matches) matched by a query. CQP syntax can be
+#' used. The encoding of the query is adjusted to conform to the encoding of the
+#' CWB corpus. If there are not matches, `NULL` is returned.
 #' 
-#' If the \code{cpos()}-method is called on a \code{matrix} object,  the cpos
-#' matrix is unfolded, the return value is an integer vector with the individual
-#' corpus positions.
+#' Previous polmineR versions defined the `cpos()`-method for `matrix` and
+#' `hits` objects to obtain an integer vector with unfolded individual corpus
+#' positions. This usage is deprecated starting with polmineR v0.8.8
 #' 
-#' If \code{.Object} is a \code{hits} object, an \code{integer} vector is
-#' returned with the individual corpus positions.
-#' 
-#' @param .Object A length-one \code{character} vector indicating a CWB corpus, a
-#'   \code{partition} object, or a \code{matrix} with corpus positions.
+#' @param .Object A length-one `character` vector indicating a CWB corpus, or a
+#'   `corpus`, or `partition` object.
 #' @param query A `character` vector providing one or multiple queries (token to
 #'   look up, regular expression or CQP query). Token ids (i.e. `integer`
 #'   values) are also accepted. If `query` is neither a regular expression nor a
 #'   CQP query, a sanity check removes accidental leading/trailing whitespace,
 #'   issuing a respective warning.
-#' @param cqp Either logical (\code{TRUE} if query is a CQP query), or a function to
-#'   check whether query is a CQP query or not (defaults to \code{is.cqp} auxiliary
+#' @param cqp Either logical (`TRUE` if query is a CQP query), or a function to
+#'   check whether query is a CQP query or not (defaults to `is.cqp` auxiliary
 #'   function).
-#' @param regex Interpret \code{query} as a regular expression. 
-#' @param check A \code{logical} value, whether to check validity of CQP query
-#'   using \code{check_cqp_query}.
+#' @param regex Interpret `query` as a regular expression. 
+#' @param check A `logical` value, whether to check validity of CQP query
+#'   using `check_cqp_query`.
 #' @param p_attribute The p-attribute to search. Needs to be stated only if query
-#'   is not a CQP query. Defaults to \code{NULL}.
-#' @param verbose A \code{logical} value, whether to show messages.
+#'   is not a CQP query. Defaults to `NULL`.
+#' @param verbose A `logical` value, whether to show messages.
 #' @param ... Used for reasons of backwards compatibility to
-#'   process arguments that have been renamed (e.g. \code{pAttribute}).
-#' @return Unless \code{.Object} is a \code{matrix}, the return value is a
-#'   \code{matrix} with two columns.  The first column reports the left/starting
-#'   corpus positions (cpos) of the hits obtained. The second column reports the
-#'   right/ending corpus positions of the respective hit. The number of rows is
-#'   the number of hits. If there are no hits, a \code{NULL} object is returned.
+#'   process arguments that have been renamed (e.g. `pAttribute`).
+#' @return A `matrix` with two columns.  The first column reports the
+#'   left/starting corpus positions (cpos) of the hits obtained. The second
+#'   column reports the right/ending corpus positions of the respective hit. The
+#'   number of rows is the number of hits. If there are no hits, `NULL` is
+#'   returned.
 #' @exportMethod cpos
 #' @rdname cpos-method
 #' @name cpos
@@ -50,13 +45,18 @@ NULL
 #' @examples
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
-#' # looking up single tokens
+#' # look up single tokens
 #' cpos("REUTERS", query = "oil")
 #' corpus("REUTERS") %>% cpos(query = "oil")
-#' corpus("REUTERS") %>% subset(grepl("saudi-arabia", places)) %>% cpos(query = "oil")
-#' partition("REUTERS", places = "saudi-arabia", regex = TRUE) %>% cpos(query = "oil")
 #' 
-#' # using CQP query syntax
+#' corpus("REUTERS") %>%
+#'   subset(grepl("saudi-arabia", places)) %>%
+#'   cpos(query = "oil")
+#'   
+#' partition("REUTERS", places = "saudi-arabia", regex = TRUE) %>%
+#'   cpos(query = "oil")
+#' 
+#' # use CQP query syntax
 #' cpos("REUTERS", query = '"Saudi" "Arabia"')
 #' corpus("REUTERS") %>% cpos(query = '"Saudi" "Arabia"')
 #' corpus("REUTERS") %>%
@@ -214,29 +214,51 @@ setMethod("cpos", "subcorpus", function(.Object, query, cqp = is.cqp, check = TR
 
 
 
-#' @details. If \code{.Object} is a \code{matrix}, it is assumed to be a region
-#' matrix, i.e. a two-column \code{matrix} with left and right corpus positions
-#' in the first and second row, respectively. For many operations, such as
-#' decoding the token stream, it is necessary to inflate the denoted regions
-#' into a vector of all corpus positions referred to by the regions defined in
-#' the matrix. The \code{cpos}-method for \code{matrix} objects will performs
-#' this task robustly.
 #' @rdname cpos-method
 #' @importFrom RcppCWB ranges_to_cpos
-setMethod("cpos", "matrix", function(.Object)
+setMethod("cpos", "matrix", function(.Object){
+
+  lifecycle::deprecate_warn(
+    when = "0.8.8", 
+    what = "cpos()",
+    details = paste0(
+      "This warning applies for the `cpos()` method for matrix objects only. ", 
+      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "into a vector of individual corpus positions."
+    )
+  )
+  
   ranges_to_cpos(.Object)
-)
+})
 
 #' @rdname cpos-method
-setMethod("cpos", "hits", function(.Object)
+setMethod("cpos", "hits", function(.Object){
+  lifecycle::deprecate_warn(
+    when = "0.8.8", 
+    what = "cpos()",
+    details = paste0(
+      "This warning applies for the `cpos()` method for `hits` objects. ", 
+      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "into a vector of individual corpus positions."
+    )
+  )
+  
   cpos(as.matrix(.Object@stat[, c("cpos_left", "cpos_right")]))
-)
+})
 
 
-#' @details If \code{.Object} is \code{NULL}, the method will return an empty
-#'   integer vector. Used internally to handle \code{NULL} objects that may be
-#'   returned from the \code{cpos}-method if no matches are obtained for a
-#'   query.
 #' @rdname cpos-method
-setMethod("cpos", "NULL", function(.Object) integer())
+setMethod("cpos", "NULL", function(.Object){
+  
+  lifecycle::deprecate_warn(
+    when = "0.8.8", 
+    what = "cpos()",
+    details = paste0(
+      "This warning applies for the `cpos()` method for `NULL` objects. ", 
+      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "into a vector of individual corpus positions."
+    )
+  )
+  integer()
+})
 

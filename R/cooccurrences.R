@@ -101,6 +101,7 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #'   
 #' # generate datatables htmlwidget with buttons for export (Excel & more)
 #' # (alternatively use openxlsx::write.xlsx())
+#' \donttest{
 #' interactive_table <- cooccurrences("REUTERS", query = "oil") %>%
 #'   format() %>%
 #'   DT::datatable(
@@ -108,6 +109,7 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #'     options = list(dom = 'Btip', buttons = c("excel", "pdf", "csv"))
 #'   )
 #' if (interactive()) show(interactive_table)
+#' }
 setGeneric("cooccurrences", function(.Object, ...) standardGeneric("cooccurrences") )
 
 #' @rdname cooccurrences
@@ -314,6 +316,10 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 
 #' @rdname cooccurrences
 #' @examples
+#' 
+#' # compute cooccurrences for a set of partitions
+#' # (example not run by default to save time on test machines)
+#' \donttest{
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' ps <- count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]]
 #' pb_min <- pb[ps]
@@ -325,6 +331,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 #'   subset(speaker %in% c("Hubertus Heil", "Angela Dorothea Merkel")) %>%
 #'   split(s_attribute = "speaker") %>%
 #'   cooccurrences(query = "Deutschland")
+#' }
 setMethod("cooccurrences", "partition_bundle", function(.Object, query, verbose = FALSE, mc = getOption("polmineR.mc"), ...){
   bundle <- as(as(.Object, Class = "bundle"), Class = "cooccurrences_bundle")
   bundle@objects <- pbapply::pblapply(
@@ -823,10 +830,12 @@ setMethod("Cooccurrences", "subcorpus", function(
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
 #' @examples
+#' \donttest{
+#' # takes too much time on CRAN test machines
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
-#' 
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 #' m <- as.simple_triplet_matrix(X)
+#' }
 setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   
   verbose <- interactive()

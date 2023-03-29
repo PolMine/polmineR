@@ -48,6 +48,7 @@ NULL
 #'   plenary protocols), or `NA`.
 #' @slot name Full name of the corpus that may be more expressive than
 #'   the corpus ID.
+#' @slot xml Object of class `character`, whether the xml is "flat" or "nested".
 #' @slot encoding The encoding of the corpus, given as a length-one
 #'   `character` vector (usually 'utf8' or 'latin1').
 #' @slot size Number of tokens (size) of the corpus, a length-one `integer`
@@ -125,7 +126,8 @@ setClass(
     type = "character",
     encoding = "character",
     name = "character",
-    size = "integer"
+    size = "integer",
+    xml = "character"
   )
 )
 
@@ -160,14 +162,19 @@ setClass(
 #' @docType class
 #' @author Andreas Blaette
 #' @examples
-#' party_bundle <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
+#' use("RcppCWB", "REUTERS")
 #' 
-#' length(party_bundle)
-#' names(party_bundle)
-#' get_corpus(party_bundle)
+#' # generate bundle with articles in REUTERS corpus
+#' b <- partition_bundle("REUTERS", s_attribute = "id")
 #' 
-#' party_bundle <- enrich(party_bundle, p_attribute = "word")
-#' summary(party_bundle)
+#' # basic operations
+#' length(b)
+#' names(b)
+#' get_corpus(b)
+#' summary(b)
+#' 
+#' # enrich with count for p-attribute
+#' b <- enrich(b, p_attribute = "word")
 setClass(
   "bundle",
   slots = c(
@@ -520,7 +527,6 @@ setClass(
     size = "integer",
     metadata = "data.frame",
     strucs = "integer",
-    xml = "character",
     s_attribute_strucs = "character",
     call = "character",
     key = "character"
@@ -842,7 +848,13 @@ setMethod("name", "corpus", function(x) x@name)
 #' R <- as.regions(P)
 #' @aliases regions-class
 #' @family classes to manage corpora
-setClass("regions", slots = c(cpos = "matrix"), contains = "corpus")
+setClass(
+  "regions",
+  slots = c(
+    cpos = "matrix"
+  ),
+  contains = "corpus"
+)
 
 
 
@@ -920,7 +932,6 @@ setClass(
     annotations = "list",
     metadata = "data.frame",
     strucs = "integer",
-    xml = "character",
     s_attribute_strucs = "character"
   ),
   contains = "regions"

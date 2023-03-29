@@ -4,46 +4,44 @@ NULL
 #' Get s-attributes.
 #' 
 #' Structural annotations (s-attributes) of a corpus capture metainformation for
-#' regions of tokens. The \code{s_attributes}-method offers high-level access to
-#' the s-attributes present in a \code{corpus} or \code{subcorpus}, or the
-#' values of s-attributes in a \code{corpus}/\code{partition}.
+#' regions of tokens. The `s_attributes()`-method offers high-level access to
+#' the s-attributes present in a `corpus` or `subcorpus`, or the values of
+#' s-attributes in a `corpus`/`partition`.
 #' 
 #' Importing XML into the Corpus Workbench (CWB) turns elements and element
 #' attributes into so-called "s-attributes". There are two basic uses of the
-#' \code{s_attributes}-method: If the argument \code{s_attribute} is \code{NULL}
-#' (default), the return value is a \code{character} vector with all
-#' s-attributes present in a corpus.
-#' 
-#' If \code{s_attribute} is the name of a specific s-attribute (a length-one
-#' character vector), the values of the s-attributes available in the
-#' \code{corpus}/\code{partition} are returned.
-#' 
-#' If argument \code{unique} is \code{FALSE}, the full sequence of the
-#' s_attributes is returned, which is a useful building block for decoding a
+#' `s_attributes()`-method: If the argument `s_attribute` is `NULL` (default),
+#' the return value is a `character` vector with all s-attributes present in a
 #' corpus.
 #' 
-#' If argument \code{s_attributes} is a character providing several
-#' s-attributes, the method will return a \code{data.table}. If \code{unique} is
-#' \code{TRUE}, all unique combinations of the s-attributes will be reported by
-#' the \code{data.table}.
+#' If `s_attribute` denotes a specific s-attribute (a length-one character
+#' vector), the values of the s-attributes available in the `corpus`/`partition`
+#' are returned. if the s-attribute does not have values, `NA` is returned and a
+#' warning message is issued.
+#' 
+#' If argument `unique` is `FALSE`, the full sequence of the s_attributes is
+#' returned, which is a useful building block for decoding a corpus.
+#' 
+#' If argument `s_attributes` is a character providing several s-attributes, the
+#' method will return a `data.table`. If `unique` is `TRUE`, all unique
+#' combinations of the s-attributes will be reported by the `data.table`.
 #' 
 #' If the corpus is based on a nested XML structure, the order of items on the
 #' `s_attribute` vector matters. The method for `corpus` objects will take the
 #' first s-attribute as the benchmark and assume that further s-attributes are
 #' XML ancestors of the node. 
 #'
-#' @param .Object A \code{corpus}, \code{subcorpus}, \code{partition} object, or
-#'   a \code{call}. A corpus can also be specified by a length-one
-#'   \code{character} vector.
+#' @param .Object A `corpus`, `subcorpus`, `partition` object, or a `call`. A
+#'   corpus can also be specified by a length-one `character` vector.
 #' @param s_attribute The name of a specific s-attribute.
-#' @param unique A \code{logical} value, whether to return unique values.
-#' @param regex A regular expression passed into \code{grep} to filter return
-#'   value by applying a regex.
-#' @param ... To maintain backward compatibility, if argument \code{sAttribute}
-#'   (deprecated) is used. If \code{.Object} is a \code{remote_corpus} or
-#'   \code{remote_subcorpus} object, the three dots (\code{...}) are used to
-#'   pass arguments. Hence, it is necessary to state the names of all arguments
-#'   to be passed explicity.
+#' @param unique A `logical` value, whether to return unique values.
+#' @param regex A regular expression passed into `grep` to filter return value
+#'   by applying a regex.
+#' @param ... To maintain backward compatibility, if argument `sAttribute`
+#'   (deprecated) is used. If `.Object` is a `remote_corpus` or
+#'   `remote_subcorpus` object, the three dots (`...`) are used to pass
+#'   arguments. Hence, it is necessary to state the names of all arguments to be
+#'   passed explicity.
 #' @return A character vector (s-attributes, or values of s-attributes).
 #' @exportMethod s_attributes
 #' @docType methods
@@ -74,6 +72,8 @@ setMethod("s_attributes", "character", function(.Object, s_attribute = NULL, uni
 })
 
 
+#' @importFrom fs path
+#' @importFrom cli cli_alert_warning
 #' @rdname s_attributes-method
 #' @examples
 #' s_attributes(corpus("GERMAPARLMINI"))
@@ -104,7 +104,13 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
           )
         )
       }
-      avs_file <- fs::path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+      avs_file <- path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+      if (!file.exists(avs_file)){
+        cli_alert_warning(
+          "s-attribute {.var {s_attribute}} does not have values, returning NA"
+        )
+        return(NA_character_)
+      }
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
       Encoding(avs) <- .Object@encoding
@@ -117,7 +123,13 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         avx_file <- fs::path(.Object@data_dir, paste(s_attribute, "avx", sep = "."))
         avx_file_size <- file.info(avx_file)[["size"]]
 
-        avx <- readBin(avx_file, what = integer(), size = 4L, n = avx_file_size / 4L, endian = "big")
+        avx <- readBin(
+          avx_file, 
+          what = integer(),
+          size = 4L,
+          n = avx_file_size / 4L,
+          endian = "big"
+        )
         avx_matrix <- matrix(avx, ncol = 2, byrow = TRUE)
 
         y <- avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))]
@@ -137,7 +149,12 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
           )
       )
       if (length(unique(s_attr_sizes)) == 1L){
-        y <- data.table(sapply(s_attribute, function(s_attr) s_attributes(.Object, s_attribute = s_attr, unique = FALSE)))
+        y <- data.table(
+          sapply(
+            s_attribute,
+            function(s_attr)
+              s_attributes(.Object, s_attribute = s_attr, unique = FALSE))
+        )
       } else {
         dt <- s_attribute_decode(
           corpus = .Object@corpus, s_attribute = s_attribute[1],
@@ -183,9 +200,21 @@ setMethod(
       )
     } else {
       if (length(s_attribute) == 1L){
+        avs_file <- path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+        if (!file.exists(avs_file)){
+          cli_alert_warning(
+            "s-attribute {.var {s_attribute}} does not have values, returning NA"
+          )
+          return(NA_character_)
+        }
+
         # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
         # is necessary because there are scenarios when these slots are not defined.
-        xml_is_flat <- if (length(.Object@xml) > 0L) if (.Object@xml == "flat") TRUE else FALSE else FALSE
+        xml_is_flat <- if (length(.Object@xml) > 0L){
+          if (.Object@xml == "flat") TRUE else FALSE
+        } else {
+          FALSE
+        }
         s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
         if (xml_is_flat && s_attr_strucs){
           len1 <- cl_attribute_size(
@@ -208,7 +237,7 @@ setMethod(
           )
           if (unique) retval <- unique(retval)
         } else {
-          cpos_vector <- cpos(.Object@cpos)
+          cpos_vector <- ranges_to_cpos(.Object@cpos)
           strucs <- cl_cpos2struc(
             corpus = .Object@corpus, registry = .Object@registry_dir,
             s_attribute = s_attribute, cpos = cpos_vector
@@ -234,8 +263,10 @@ setMethod(
           function(x){
             strucs <- if (.Object@xml == "nested"){
               cl_cpos2struc(
-                corpus = .Object@corpus,  registry = .Object@registry_dir,
-                s_attribute = x, cpos = .Object@cpos[,1]
+                corpus = .Object@corpus,
+                registry = .Object@registry_dir,
+                s_attribute = x,
+                cpos = .Object@cpos[,1]
               )
             } else {
               .Object@strucs
@@ -355,6 +386,17 @@ setMethod("s_attributes", "call", function(.Object, corpus){
 #' @importFrom rlang quo_get_expr
 setMethod("s_attributes", "quosure", function(.Object, corpus){
   s_attributes(quo_get_expr(.Object), corpus = corpus)
+})
+
+#' @rdname s_attributes-method
+setMethod("s_attributes", "name", function(.Object, corpus){
+  s_attrs <- s_attributes(corpus)
+  s <- deparse(.Object)
+  if (!s %in% s_attrs){
+    warning(sprintf("'%s' is not a s-attribute, returning NULL", s))
+    return(NULL)
+  }
+  s
 })
 
 

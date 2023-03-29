@@ -137,11 +137,13 @@ context of a token identified by id.}
 }}
 
 \examples{
+\donttest{
+# takes too much time on CRAN test machines
 use(pkg = "RcppCWB", corpus = "REUTERS")
-
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
 m <- as.simple_triplet_matrix(X)
-\dontrun{
+}
+\donttest{
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L)

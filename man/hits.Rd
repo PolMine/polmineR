@@ -107,11 +107,11 @@ hits(.Object, ...)
 \item{query}{A \code{character} vector (optionally named, see details) with one or
 more queries.}
 
-\item{cqp}{Either a \code{logical} value (\code{TRUE} if query is a CQP
-query), or a function to check whether \code{query} is a CQP query or not.}
+\item{cqp}{Either a \code{logical} value (\code{TRUE} if query is a CQP query), or a
+function to check whether \code{query} is a CQP query or not.}
 
-\item{check}{A \code{logical} value, whether to check validity of CQP query
-using \code{check_cqp_query}.}
+\item{check}{A \code{logical} value, whether to check validity of CQP query using
+\code{check_cqp_query}.}
 
 \item{s_attribute}{A \code{character} vector of s-attributes that will be
 used to breakdown counts for matches for query/queries.}
@@ -138,13 +138,12 @@ A \code{hits} class object.
 Get hits for queries, optionally with s-attribute values.
 }
 \details{
-If the \code{character} vector provided by \code{query} is named, these names
-will be reported in the \code{data.table} that is returned rather than the
-queries.
+If the \code{character} vector provided by \code{query} is named, these names will be
+reported in the \code{data.table} that is returned rather than the queries.
 
-If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will deliberately
-include the subsets of the \code{partition}/\code{corpus} with no hits (query is NA,
-count is 0).
+If \code{freq} is \code{TRUE}, the \code{data.table} returned in the DT-slot will
+deliberately include the subsets of the \code{partition}/\code{corpus} with no hits
+(query is NA, count is 0).
 }
 \examples{
 use(pkg = "RcppCWB", corpus = "REUTERS")

@@ -95,10 +95,16 @@ terms_kauder <- features(kauder_count, all_count, included = TRUE)
 top100 <- subset(terms_kauder, rank_chisquare <= 100)
 head(top100)
 
-speakers <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
-speakers <- enrich(speakers, p_attribute = "word")
-speaker_terms <- features(speakers[1:5], all, included = TRUE, progress = TRUE)
-dtm <- as.DocumentTermMatrix(speaker_terms, col = "chisquare")
+# get matrix with features (dontrun to keep time for examples short)
+\dontrun{
+use("RcppCWB")
+docs <- partition_bundle("REUTERS", s_attribute = "id") \%>\%
+  enrich( p_attribute = "word")
+all <- corpus("REUTERS") \%>\%
+  count(p_attribute = "word")
+docs_terms <- features(docs[1:5], all, included = TRUE, progress = FALSE)
+dtm <- as.DocumentTermMatrix(docs_terms, col = "chisquare", verbose = FALSE)
+}
 # Get features of objects in a count_bundle
 ref <- corpus("GERMAPARLMINI") \%>\% count(p_attribute = "word")
 cois <- corpus("GERMAPARLMINI") \%>\%

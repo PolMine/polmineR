@@ -191,7 +191,8 @@ setMethod("partition_bundle", "partition", function(
   type = get_type(.Object), ...
 ) {
   split(
-    x = as(.Object, "subcorpus"), s_attribute = s_attribute, values = values, prefix = prefix,
+    x = as(.Object, "subcorpus"), s_attribute = s_attribute,
+    values = values, prefix = prefix,
     mc = mc, verbose = verbose, progress = progress,
     type = type,
     ...
@@ -243,36 +244,56 @@ setMethod("as.partition_bundle", "list", function(.Object, ...){
 
 
 #' @param node A logical value, whether to include the node (i.e. query matches) in the region matrix
-#' generated when creating a \code{partition} from a \code{context}-object.
+#' generated when creating a `partition` from a `context`-object.
 #' @exportMethod as.partition_bundle
 #' @rdname partition_bundle-method
-setMethod("partition_bundle", "context", function(.Object, node = TRUE, progress = TRUE, mc = 1L){
+#' @importFrom cli cli_progress_step
+#' @examples 
+#' use("RcppCWB", corpus = "REUTERS")
+#' pb <- corpus("REUTERS") %>%
+#'   context(query = "oil", p_attribute = "word") %>%
+#'   partition_bundle(node = FALSE, verbose = TRUE)
+setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose = TRUE, progress = TRUE, mc = 1L){
   
-  stopifnot(is.logical(node))
+  stopifnot(
+    is.logical(node),
+    is.logical(verbose),
+    is.logical(progress)
+  )
   
   DT <- copy(.Object@cpos)
   setkeyv(x = DT, cols = c("match_id", "cpos"))
-  if (!node) DT <- subset(DT, DT[["position"]] != 0)
   
-  # First step, generate a list of data.tables with regions
-  .cpos_left_right <- function(.SD) list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
-  DT_list <- list(left = subset(DT, DT[["position"]] < 0), right = subset(DT, DT[["position"]] > 0))
+  if (!node){
+    if (verbose) cli_progress_step("exclude node from preparation of partitions")
+    DT <- subset(DT, DT[["position"]] != 0)
+  }
+  
+  if (verbose) cli_progress_step("generate list of {.code data.table} objects with regions")
+  .cpos_left_right <- function(.SD) 
+    list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
+  
+  DT_list <- list(
+    left = subset(DT, DT[["position"]] < 0),
+    right = subset(DT, DT[["position"]] > 0)
+  )
   if (node) DT_list[["node"]] <- subset(DT, DT[["position"]] == 0)
   DT_regions <- rbindlist(lapply(DT_list, function(x) x[, .cpos_left_right(.SD), by = "match_id"]))
   setorderv(DT_regions, cols = "match_id")
   regions_list <- split(DT_regions, by = "match_id")
   
-  # Second, generate a list with data.table objects with counts
+  if (verbose) cli_progress_step("generate list of {.code data.table} objects with counts")
   CNT <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
     CNT[[p_attr]] <- cl_id2str(
       corpus = .Object@corpus, registry = corpus_registry_dir(.Object@corpus),
       p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]]
-      )
+    )
   }
   count_list <- split(CNT, by = "match_id")
   
+  if (verbose) cli_progress_step("assemble {.code partition_bundle}")
   prototype <- as(as(.Object, "corpus"), "partition")
   prototype@p_attribute <- .Object@p_attribute
   

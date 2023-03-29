@@ -6,11 +6,6 @@ NULL
 # for generating the partition class, and the helper functions used 
 # by the constructur
 
-
-
-
-
-
 #' @exportMethod show
 #' @docType methods
 #' @noRd
@@ -276,7 +271,7 @@ setGeneric("partition", function(.Object, ...) standardGeneric("partition") )
 #' @rdname partition
 setMethod("partition", "corpus", function(
     .Object, def = NULL, name = "",
-    encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
+    encoding = NULL, p_attribute = NULL, regex = FALSE, xml = slot(.Object, "xml"),
     decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
 ) {
   
@@ -326,18 +321,19 @@ setMethod("partition", "corpus", function(
 
 
 
-#' @details If \code{.Object} is a length-one character vector, a
-#'   subcorpus/partition for the corpus defined be \code{.Object} is generated.
+#' @details If `.Object` is a length-one character vector, a subcorpus/partition
+#'   for the corpus defined be `.Object` is generated.
 #' @rdname partition
 setMethod("partition", "character", function(
-  .Object, def = NULL, name = "",
-  encoding = NULL, p_attribute = NULL, regex = FALSE, xml = "flat",
-  decode = TRUE, type = get_type(.Object), mc = FALSE, verbose = TRUE, ...
-) {
+  .Object, def = NULL, name = "", encoding = NULL, p_attribute = NULL,
+  regex = FALSE,  decode = TRUE, type = get_type(.Object), mc = FALSE,
+  verbose = TRUE, ...
+){
+  x <- corpus(.Object)
   partition(
-    .Object = corpus(.Object),
+    .Object = x,
     def = def, name = name, encoding = encoding, p_attribute = p_attribute,
-    regex = regex, xml = xml, decode = decode, type = type, mc = mc,
+    regex = regex, xml = x@xml, decode = decode, type = type, mc = mc,
     verbose = verbose, ...
   )
 })
@@ -421,7 +417,7 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     )
     y@strucs <- .Object@strucs[hits]
   } else if (y@xml == "nested") {
-    cpos_vec <- cpos(.Object@cpos)
+    cpos_vec <- ranges_to_cpos(.Object@cpos)
     strucs_new <- cl_cpos2struc(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       s_attribute = names(def)[1], cpos = cpos_vec

@@ -59,7 +59,7 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
         # make div for a tooltip
         xml2::xml_text(node) <- ""
         xml2::xml_name(node) <- "span"
-        xml2::xml_attrs(node) <- c(class = "tooltip")
+        xml2::xml_attrs(node) <- c(class = "tooltipping")
         
         # create actual tooltip node (dummy first)
         children <- xml2::xml_children(node)
@@ -70,7 +70,7 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
         tipnode <- children[[length(children)]]
         xml2::xml_text(tipnode) <- tooltips[[color]]
         xml2::xml_name(tipnode) <- "span"
-        xml2::xml_attrs(tipnode) <- c(class = "tooltiptext")
+        xml2::xml_attrs(tipnode) <- c(class = "tooltippingtext")
         
         return( NULL )
       }
@@ -123,7 +123,7 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
           .Object@cpos[["word"]]
         ),
         sprintf(
-          '<span class="tooltip">%s<span class="tooltiptext">%s</span></span>',
+          '<span class="tooltipping">%s<span class="tooltippingtext">%s</span></span>',
           .Object@cpos[["word"]], names(tooltips)[[i]]
         ),
         .Object@cpos[["word"]]
@@ -149,7 +149,7 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
       is.na(tips_vec),
       .Object@cpos[["word"]],
       sprintf(
-        '<span class="tooltip">%s<span class="tooltiptext">%s</span></span>',
+        '<span class="tooltipping">%s<span class="tooltippingtext">%s</span></span>',
         .Object@cpos[["word"]], tips_vec
       )
     )

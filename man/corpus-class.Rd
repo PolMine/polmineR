@@ -34,7 +34,7 @@ instantiate a \code{remote_corpus} object.}
 restricted (\code{TRUE}) or not (\code{FALSE}).}
 }
 \description{
-Corpora indexed using the Corpus Workbench (CWB) offer an efficient data
+Corpora indexed using the 'Corpus Workbench' ('CWB') offer an efficient data
 structure for large, linguistically annotated corpora. The \code{corpus}-class
 keeps basic information on a CWB corpus. Corresponding to the name of the
 class, the \code{corpus}-method is the initializer for objects of the \code{corpus}
@@ -90,6 +90,8 @@ plenary protocols), or \code{NA}.}
 
 \item{\code{name}}{Full name of the corpus that may be more expressive than
 the corpus ID.}
+
+\item{\code{xml}}{Object of class \code{character}, whether the xml is "flat" or "nested".}
 
 \item{\code{encoding}}{The encoding of the corpus, given as a length-one
 \code{character} vector (usually 'utf8' or 'latin1').}

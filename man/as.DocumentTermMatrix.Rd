@@ -23,7 +23,15 @@ as.DocumentTermMatrix(x, ...)
 
 \S4method{as.TermDocumentMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
-\S4method{as.DocumentTermMatrix}{corpus}(x, p_attribute, s_attribute, verbose = TRUE, ...)
+\S4method{as.DocumentTermMatrix}{corpus}(
+  x,
+  p_attribute,
+  s_attribute,
+  stoplist = NULL,
+  binarize = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 \S4method{as.DocumentTermMatrix}{character}(x, p_attribute, s_attribute, verbose = TRUE, ...)
 
@@ -57,6 +65,12 @@ partition-method.}
 \item{s_attribute}{An s-attribute that defines content of columns, or rows.}
 
 \item{verbose}{A \code{logial} value, whether to output progress messages.}
+
+\item{stoplist}{A \code{character} vector of tokens to exclude from the matrix, as
+memory efficient way to exclude irrelevant terms early on.}
+
+\item{binarize}{A \code{logical} value. If \code{TRUE}, report occurence of term, not
+absoulte count.}
 
 \item{col}{The column of \code{data.table} in slot \code{stat} (if \code{x}
 is a \code{bundle}) to use of assembling the matrix.}
@@ -106,26 +120,33 @@ obtain the resulting \code{TermDocumentMatrix} or
 \code{DocumentTermMatrix}.
 }
 \examples{
-use("polmineR")
+# examples not run by default to save time on CRAN test machines
+\donttest{
+#' use(pkg = "RcppCWB", corpus = "REUTERS")
  
 # enriching partition_bundle explicitly 
-tdm <- partition("GERMAPARLMINI", date = ".*", regex = TRUE) \%>\% 
-  partition_bundle(s_attribute = "date") \%>\% 
+tdm <- corpus("REUTERS") \%>\% 
+  partition_bundle(s_attribute = "id") \%>\% 
   enrich(p_attribute = "word") \%>\%
   as.TermDocumentMatrix(col = "count")
    
 # leave the counting to the as.TermDocumentMatrix-method
-tdm <- partition_bundle("GERMAPARLMINI", s_attribute = "date") \%>\% 
+tdm <- partition_bundle("REUTERS", s_attribute = "id") \%>\% 
   as.TermDocumentMatrix(p_attribute = "word", verbose = FALSE)
-   
+  
 # obtain TermDocumentMatrix directly (fastest option)
-tdm <- as.TermDocumentMatrix("GERMAPARLMINI", p_attribute = "word", s_attribute = "date")
+tdm <- as.TermDocumentMatrix(
+  "REUTERS",
+  p_attribute = "word",
+  s_attribute = "id",
+  verbose = FALSE
+)
 
-use(pkg = "RcppCWB", corpus = "REUTERS")
-
+# workflow using split()
 dtm <- corpus("REUTERS") \%>\%
   split(s_attribute = "id") \%>\%
   as.TermDocumentMatrix(p_attribute = "word")
+}
 }
 \author{
 Andreas Blaette

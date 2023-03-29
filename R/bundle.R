@@ -94,14 +94,15 @@ setMethod('[[', 'bundle', function(x,i){
 #' @rdname bundle
 #' @examples
 #' 
-#' # Indexing bundle objects
+#' # Indexing and accessing bundle objects
 #' reu <- corpus("REUTERS") %>% split(s_attribute = "id")
 #' reu[1:3]
 #' reu[-1]
 #' reu[-(1:10)]
 #' reu["127"]
+#' reu$`127` # alternative access
 #' reu[c("127", "273")]
-#' 
+#' reu[["127"]] <- NULL
 setMethod('[', 'bundle', function(x, i){
   if (is.numeric(i)){
     if (all(i > 0L)){
@@ -126,12 +127,6 @@ setMethod('[', 'bundle', function(x, i){
 
 #' @exportMethod [[<-
 #' @rdname bundle
-#' @examples
-#' p <- partition("GERMAPARLMINI", date = "2009-11-11")
-#' pb <- partition_bundle(p, s_attribute = "party")
-#' names(pb)
-#' pb[["NA"]] <- NULL
-#' names(pb)
 setMethod("[[<-", "bundle", function(x,i, value){
   x@objects[[i]] <- value
   x
@@ -141,9 +136,6 @@ setMethod("[[<-", "bundle", function(x,i, value){
 #' @param name The name of an object in the \code{bundle} object.
 #' @exportMethod $
 #' @rdname bundle
-#' @examples
-#' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
-#' pb$SPD # access partition names "SPD" in partition_bundle pb
 setMethod("$", "bundle", function(x,name) x@objects[[name]])
 
 
@@ -159,7 +151,9 @@ setMethod("$<-", "bundle", function(x,name, value){
 
 #' @exportMethod sample
 #' @rdname bundle
-setMethod("sample", "bundle", function(x, size) x[[sample(1:length(x), size = size)]])
+setMethod("sample", "bundle", function(x, size){
+  x[sample(1L:length(x), size = size)]
+})
 
 
 setAs(from = "list", to = "bundle", def = function(from){
@@ -211,12 +205,13 @@ setMethod("as.bundle", "textstat", function(object){
 #' @param keep.rownames Required argument to safeguard consistency with S3
 #'   method definition in the \code{data.table} package. Unused in this context.
 #' @examples
-#' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
-#' pb <- partition_bundle("REUTERS", s_attribute = "id")
-#' coocs <- cooccurrences(pb, query = "oil", cqp = FALSE)
-#' dt <- as.data.table(coocs, col = "ll")
-#' m <- as.matrix(dt[, 2:ncol(dt)], rownames = dt[["token"]])
+#' # Turn bundle into data.table (not tested to save time)
+#' \donttest{
+#' dt <- partition_bundle("REUTERS", s_attribute = "id") %>%
+#'   cooccurrences(query = "oil", cqp = FALSE) %>%
+#'   as.data.table(col = "ll")
+#' }
 #' @export
 #' @method as.data.table bundle
 #' @rdname bundle

@@ -22,7 +22,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
-  cpos <- cpos(from@cpos)
+  cpos <- ranges_to_cpos(from@cpos)
   w <- NLP::Annotation(
     id = cpos,
     rep.int("word", length(cpos)),
@@ -74,7 +74,7 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   right_offset <- left_offset + nchar(ts[["word"]]) - 1L
   
   w <- NLP::Annotation(
-    id = cpos(from@cpos),
+    id = ranges_to_cpos(from@cpos),
     rep.int("word", nrow(ts)),
     start = left_offset,
     end = right_offset,
@@ -87,7 +87,7 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     setNames(s_attrs, s_attrs),
     function(s_attr){
       message(sprintf("... checking if s-attribute is metadata: %s ... ", s_attr), appendLF = FALSE)
-      strucs <- cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = cpos(from@cpos))
+      strucs <- cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = ranges_to_cpos(from@cpos))
       if (any(strucs < 0L)){
         message("NO (not comprehensive)")
         NULL
@@ -116,7 +116,10 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     s_attr_anno,
     function(s_attr){
       strucs <- unique(
-        cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = cpos(from@cpos))
+        cl_cpos2struc(
+          corpus = from@corpus, s_attribute = s_attr,
+          cpos = ranges_to_cpos(from@cpos)
+        )
       )
       strucs <- strucs[which(strucs >= 0L)]
       do.call(c,
@@ -234,18 +237,19 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
 #' }
 #' }
 #' @rdname decode
+#' @importFrom cli cli_progress_step
 setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation"), p_attributes = NULL, s_attributes = NULL, decode = TRUE, verbose = TRUE){
   if (to == "data.table"){
 
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
     if (!all(p_attributes %in% p_attributes(.Object)))
       stop("Not all p_attributes provided are available.")
-    
 
     p_attribute_list <- lapply(
       setNames(p_attributes, p_attributes),
       function(p_attr){
-        if (verbose) message("decoding p-attribute:", p_attr)
+        if (verbose)
+          cli_progress_step(sprintf("decoding p-attribute: %s", p_attr))
         get_token_stream(.Object, p_attribute = p_attr, decode = decode)
       }
     )
@@ -262,7 +266,8 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
       s_attribute_list <- lapply(
         setNames(s_attributes, s_attributes),
         function(s_attr){
-          if (verbose) message("decoding s-attribute:", s_attr)
+          if (verbose)
+            cli_progress_step(sprintf("decoding s-attribute: %s", s_attr))
           struc <- cl_cpos2struc(
             corpus = .Object@corpus, registry = .Object@registry_dir,
             s_attribute = s_attr, cpos = 0L:max_cpos
@@ -283,7 +288,7 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
       s_attribute_list <- list()
     }
 
-    message("assembling data.table")
+    if (verbose) cli_progress_step("assembling data.table")
     combined_list <- c(
       list(cpos = 0L:max_cpos),
       p_attribute_list,
@@ -318,7 +323,7 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
     if (!all(p_attributes %in% p_attributes(.Object))) stop("Not all p_attributes provided are available.")
     
-    y <- data.table(cpos = cpos(.Object@cpos))
+    y <- data.table(cpos = ranges_to_cpos(.Object@cpos))
 
     for (p_attr in p_attributes){
       if (verbose) message("... decoding p_attribute ", p_attr)
@@ -418,7 +423,8 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
     is.character(p_attributes)
   )
   corpus <- if (is.character(corpus)) corpus(corpus) else corpus
-  if (!inherits(corpus, "corpus")) stop("Argument 'corpus' is required to be a corpus object.")
+  if (!inherits(corpus, "corpus"))
+    stop("Argument 'corpus' is required to be a corpus object.")
   
   if (is.null(boost)){
     boost <- if (corpus@size > 10000000L && length(cpos) >= (corpus@size * 0.05)) TRUE else FALSE

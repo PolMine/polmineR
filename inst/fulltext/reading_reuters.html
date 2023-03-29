@@ -139,14 +139,14 @@ hr {
    }
 }
  /* Tooltip container */
-.tooltip {
+.tooltipping {
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
 /* Tooltip text */
-.tooltip .tooltiptext {
+.tooltipping .tooltippingtext {
     visibility: hidden;
     width: 120px;
     background-color: #555;
@@ -168,7 +168,7 @@ hr {
 }
 
 /* Tooltip arrow */
-.tooltip .tooltiptext::after {
+.tooltipping .tooltippingtext::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -180,7 +180,7 @@ hr {
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+.tooltipping:hover .tooltippingtext {
     visibility: visible;
     opacity: 1;
 }
@@ -189,10 +189,8 @@ hr {
 </head>
 <body>
 <h2>Corpus: REUTERS</h2>
-
 <h3>places: argentina</h3>
-
-<p><span id="3997" token="Argentine" class="fulltext">Argentine</span> <span id="3998" token="crude" class="fulltext">crude</span> <span id="3999" token="oil" class="fulltext">oil</span> <span id="4000" token="production" class="fulltext">production</span> <span id="4001" token="was" class="fulltext">was</span> <span id="4002" token="down" class="fulltext">down</span> <span id="4003" token="10.8" class="fulltext">10.8</span> <span id="4004" token="pct" class="fulltext">pct</span> <span id="4005" token="in" class="fulltext">in</span> <span id="4006" token="January" class="fulltext">January</span> <span id="4007" token="1987" class="fulltext">1987</span> <span id="4008" token="to" class="fulltext">to</span> <span id="4009" token="12.32" class="fulltext">12.32</span> <span id="4010" token="mln" class="fulltext">mln</span> <span id="4011" token="barrels" class="fulltext">barrels</span> <span id="4012" token="from" class="fulltext">from</span> <span id="4013" token="13.81" class="fulltext">13.81</span> <span id="4014" token="mln" class="fulltext">mln</span> <span id="4015" token="barrels" class="fulltext">barrels</span> <span id="4016" token="in" class="fulltext">in</span> <span id="4017" token="January" class="fulltext">January</span> <span id="4018" token="1986" class="fulltext">1986</span> <span id="4019" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4020" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4021" token="Fiscales" class="fulltext">Fiscales</span> <span id="4022" token="said" class="fulltext">said</span> <span id="4023" token="January" class="fulltext">January</span> <span id="4024" token="1987" class="fulltext">1987</span> <span id="4025" token="natural" class="fulltext">natural</span> <span id="4026" token="gas" class="fulltext">gas</span> <span id="4027" token="output" class="fulltext">output</span> <span id="4028" token="totalled" class="fulltext">totalled</span> <span id="4029" token="1.15" class="fulltext">1.15</span> <span id="4030" token="billion" class="fulltext">billion</span> <span id="4031" token="cubic" class="fulltext">cubic</span> <span id="4032" token="metrers" class="fulltext">metrers</span> <span id="4033" token="3.6" class="fulltext">3.6</span> <span id="4034" token="pct" class="fulltext">pct</span> <span class="tooltip"><span id="4035" token="higher" class="fulltext" style="background-color:lightgreen">higher</span><span class="tooltiptext">Further information</span></span> <span id="4036" token="than" class="fulltext">than</span> <span id="4037" token="1.11" class="fulltext">1.11</span> <span id="4038" token="billion" class="fulltext">billion</span> <span id="4039" token="cubic" class="fulltext">cubic</span> <span id="4040" token="metres" class="fulltext">metres</span> <span id="4041" token="produced" class="fulltext">produced</span> <span id="4042" token="in" class="fulltext">in</span> <span id="4043" token="January" class="fulltext">January</span> <span id="4044" token="1986" class="fulltext">1986</span> <span id="4045" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4046" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4047" token="Fiscales" class="fulltext">Fiscales</span> <span id="4048" token="added" class="fulltext">added</span> <span id="4049" token="Reuter" class="fulltext">Reuter</span> </p>
+<p><span id="3997" token="Argentine" class="fulltext">Argentine</span> <span id="3998" token="crude" class="fulltext">crude</span> <span id="3999" token="oil" class="fulltext">oil</span> <span id="4000" token="production" class="fulltext">production</span> <span id="4001" token="was" class="fulltext">was</span> <span id="4002" token="down" class="fulltext">down</span> <span id="4003" token="10.8" class="fulltext">10.8</span> <span id="4004" token="pct" class="fulltext">pct</span> <span id="4005" token="in" class="fulltext">in</span> <span id="4006" token="January" class="fulltext">January</span> <span id="4007" token="1987" class="fulltext">1987</span> <span id="4008" token="to" class="fulltext">to</span> <span id="4009" token="12.32" class="fulltext">12.32</span> <span id="4010" token="mln" class="fulltext">mln</span> <span id="4011" token="barrels" class="fulltext">barrels</span> <span id="4012" token="from" class="fulltext">from</span> <span id="4013" token="13.81" class="fulltext">13.81</span> <span id="4014" token="mln" class="fulltext">mln</span> <span id="4015" token="barrels" class="fulltext">barrels</span> <span id="4016" token="in" class="fulltext">in</span> <span id="4017" token="January" class="fulltext">January</span> <span id="4018" token="1986" class="fulltext">1986</span> <span id="4019" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4020" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4021" token="Fiscales" class="fulltext">Fiscales</span> <span id="4022" token="said" class="fulltext">said</span> <span id="4023" token="January" class="fulltext">January</span> <span id="4024" token="1987" class="fulltext">1987</span> <span id="4025" token="natural" class="fulltext">natural</span> <span id="4026" token="gas" class="fulltext">gas</span> <span id="4027" token="output" class="fulltext">output</span> <span id="4028" token="totalled" class="fulltext">totalled</span> <span id="4029" token="1.15" class="fulltext">1.15</span> <span id="4030" token="billion" class="fulltext">billion</span> <span id="4031" token="cubic" class="fulltext">cubic</span> <span id="4032" token="metrers" class="fulltext">metrers</span> <span id="4033" token="3.6" class="fulltext">3.6</span> <span id="4034" token="pct" class="fulltext">pct</span> <span class="tooltipping"><span id="4035" token="higher" class="fulltext" style="background-color:lightgreen">higher</span><span class="tooltippingtext">Further information</span></span> <span id="4036" token="than" class="fulltext">than</span> <span id="4037" token="1.11" class="fulltext">1.11</span> <span id="4038" token="billion" class="fulltext">billion</span> <span id="4039" token="cubic" class="fulltext">cubic</span> <span id="4040" token="metres" class="fulltext">metres</span> <span id="4041" token="produced" class="fulltext">produced</span> <span id="4042" token="in" class="fulltext">in</span> <span id="4043" token="January" class="fulltext">January</span> <span id="4044" token="1986" class="fulltext">1986</span> <span id="4045" token="Yacimientos" class="fulltext">Yacimientos</span> <span id="4046" token="Petroliferos" class="fulltext">Petroliferos</span> <span id="4047" token="Fiscales" class="fulltext">Fiscales</span> <span id="4048" token="added" class="fulltext">added</span> <span id="4049" token="Reuter" class="fulltext">Reuter</span></p>
 
 </body>
 </html>

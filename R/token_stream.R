@@ -146,7 +146,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "matrix", function(.Object, split = FALSE, ...){
-  ts_vec <- get_token_stream(cpos(.Object), ...)
+  ts_vec <- get_token_stream(ranges_to_cpos(.Object), ...)
   
   if (isFALSE(is.logical(split))) stop("'split' needs to be a logical value.")
   if (isFALSE(split)){
@@ -229,7 +229,9 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' 
 #' # Concatenate phrases and apply filter
 #' queries <- c('"freiheitliche" "Grundordnung"', '"Bundesrepublik" "Deutschland"' )
-#' phr <- corpus("GERMAPARLMINI") %>% cpos(query = queries) %>% as.phrases(corpus = "GERMAPARLMINI")
+#' phr <- corpus("GERMAPARLMINI") %>%
+#'   cpos(query = queries) %>%
+#'   as.phrases(corpus = "GERMAPARLMINI")
 #' 
 #' kill <- tm::stopwords("de")
 #'
@@ -244,24 +246,25 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' }
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
-  if (verbose) message("... creating vector of document ids")
+  if (verbose) cli_progress_step("creating vector of document ids")
   sizes <- sapply(.Object@objects, slot, "size")
-  id_list <- mapply(rep, seq_along(.Object), sizes)
+  id_list <- mapply(rep, seq_along(.Object), sizes, SIMPLIFY = FALSE)
   dt <- data.table(obj_id = do.call(c, id_list))
   rm(id_list); gc()
   
-  if (verbose) message("... get region matrices and corpus positions")
+  if (verbose) cli_progress_step("get region matrices and corpus positions")
   region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
-  if (!is.null(phrases)) dt[, "cpos" := cpos(region_matrix)]
+  if (!is.null(phrases)) dt[, "cpos" := ranges_to_cpos(region_matrix)]
 
   for (p_attr in p_attribute){
-    if (verbose) message("... decoding token stream for p-attribute ", p_attr)
+    if (verbose) cli_progress_step("decoding token stream for p-attribute {.val {p_attr}}")
     ids <- region_matrix_to_ids(
       corpus = .Object@corpus, registry = .Object@registry_dir,
       p_attribute = p_attr, matrix = region_matrix
     )
     if (isTRUE(decode)){
       tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
+      rm(ids); gc()
       tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
       
       if (beautify){
@@ -274,7 +277,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
       }
 
       dt[, (p_attr) := tokens]
-      rm(ids, tokens); gc()
+      rm(tokens); gc()
     } else {
       dt[, (p_attr) := ids]
       rm(ids); gc()
@@ -291,18 +294,18 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
         "Argument 'cpos' is TRUE, but cannot assigning corpus positions ",
         "AND concatenate phrases."
       )
-    if (verbose) message("... concatenate phrases")
+    if (verbose) cli_progress_step("concatenate phrases")
     dt <- concatenate_phrases(dt = dt, phrases = phrases, col = p_attribute[[1]])
   }
 
   expr <- substitute(subset)
   if (!is.null(expr)){
-    if (verbose) message("... applying argument subset")
+    if (verbose) cli_progress_step("applying argument subset")
     dt <- dt[eval(expr, envir = dt, enclos = .GlobalEnv),]
   }
   
   if (!is.null(min_length)){
-    if (verbose) message("... drop documents shorter than `min_length`")
+    if (verbose) cli_progress_step("drop documents shorter than `min_length`")
     stopifnot(is.numeric(min_length), length(min_length) == 1L)
     dt_cnt <- dt[, .N, by = "obj_id"]
     ids_to_keep <- dt_cnt[dt_cnt[["N"]] >= min_length][["obj_id"]]
@@ -314,7 +317,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     if (isFALSE(decode))
       stop("cannot concatenate multiple p-attributes when decode = FALSE")
     
-    if (verbose) message("... concatenate multiple p-attributes")
+    if (verbose) cli_progress_step("concatenate multiple p-attributes")
     merger <- do.call(
       paste,
       c(lapply(p_attribute, function(p_attr) dt[[p_attr]]), sep = "//")
@@ -323,16 +326,19 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
     rm(merger); gc()
   }
   
-  if (verbose) message("... generating list of character vectors")
-  y <- split(x = dt[[p_attribute[[1]]]], f = dt[["obj_id"]])
-
-  # subsetting may have removed objs
+  if (verbose) cli_progress_step("generating list of character vectors")
+  
+  p_attr <- dt[[ p_attribute[[1]] ]]
+  dt[, (p_attribute[[1]]) := NULL]
+  gc()
   ids <- dt[["obj_id"]]
   rm(dt); gc()
-  ids_unique <- unique(ids)
-  rm(ids); gc()
   
+  y <- split(x = p_attr, f = ids)
+  rm(p_attr); gc()
+  ids_unique <- unique(ids) # subsetting may have removed objs
   names(y) <- names(.Object@objects)[ids_unique]
+  rm(ids_unique); gc()
 
   if (!is.null(collapse)){
     
