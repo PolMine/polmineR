@@ -4,8 +4,8 @@ This release catches up with markdown >= 1.3 such that markdown maintainers
 will not have to rely on workarounds to ensure that markdown improvements 
 to not break polmineR reverse dependency tests.
 
-The first and second submission of this update was rejected because some examples
-ran too long (> 2.5 secs).
+The first, second and this submission of this update was rejected because some
+examples ran too long (> 2.5 secs).
 
 I have minimized long-running examples and replaced the (bigger) test data 
 "GERMAPARLMINI" with the (smaller) "REUTERS" data, which reduces execution time
