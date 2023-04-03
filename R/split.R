@@ -84,7 +84,11 @@ setMethod("split", "subcorpus", function(
   if (verbose) cli_alert_info("bundle class: {col_cyan({retval_class})}")
   
   cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
-  new_class <- if (length(x@type) == 0L) cl else paste(x@type, cl, sep = "_")
+  new_class <- if (length(x@type) == 0L || is.na(x@type))
+    cl
+  else
+    paste(x@type, cl, sep = "_")
+  
   prototype <- as(x, new_class)
   if (verbose) cli_alert_info("objects in bundle: {col_cyan({new_class})}")
 

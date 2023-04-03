@@ -1,4 +1,9 @@
-# polmineR v0.8.7.9001-9015
+# polmineR v0.8.8.9001
+
+* `split()` would set type of `subcorpus` to `NA`, causing an error if another 
+split is performed. Fixed.
+
+# polmineR v0.8.8
 
 * Improved performance of `enrich()`-method for `partition_bundle` objects #225.
 * Refactored `as.TermDocumentMatrix()` for `partition_bundle` and `bundle`, 
