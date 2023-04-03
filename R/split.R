@@ -72,6 +72,10 @@ setMethod("split", "subcorpus", function(
   type = get_type(x)
 ) {
   
+  stopifnot(is.character(s_attribute), length(s_attribute) == 1L)
+  if (!s_attribute %in% s_attributes(x))
+    stop(sprintf("s-attribute '%s' not available", s_attribute))
+
   if (missing(values))
     values <- s_attr_has_values(s_attribute = s_attribute , x = x)
   if (is.null(values))
@@ -110,7 +114,6 @@ setMethod("split", "subcorpus", function(
     )
     if (is_descendent){
       relation <- "descendent"
-      stop("split() not implemented if s_attribute is not a descendent")
     } else {
       relation <- "ancestor"
     }
@@ -213,6 +216,10 @@ setMethod("split", "corpus", function(
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(x), xml = "flat"
 ) {
+  
+  stopifnot(is.character(s_attribute), length(s_attribute) == 1L)
+  if (!s_attribute %in% s_attributes(x))
+    stop(sprintf("s-attribute '%s' not available", s_attribute))
   
   # Ensure that when split() is called within partition_bundle(), the resulting 
   # object is a partition_bundle and the objects in the slot 'object' are 

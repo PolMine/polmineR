@@ -18,3 +18,33 @@ test_that(
   }
 )
 
+test_that(
+  "different order, same result",
+  {
+    pp1 <- corpus("GERMAPARLMINI") %>%
+      subset(protocol_date == "2009-11-10") %>%
+      split(s_attribute = "speaker")
+    
+    pp2 <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-10") %>%
+      split(s_attribute = "speaker")
+    
+    pp3 <- corpus("GERMAPARLMINI") %>%
+      split(s_attribute = "speaker") %>%
+      .[["Angela Dorothea Merkel"]] %>%
+      subset(date == "2009-11-10")
+    
+    dimnames(pp3@cpos) <- NULL
+    
+    expect_identical(
+      pp1[["Angela Dorothea Merkel"]]@cpos,
+      pp2[["Angela Dorothea Merkel"]]@cpos
+    )
+    
+    expect_identical(
+      pp1[["Angela Dorothea Merkel"]]@cpos,
+      pp3@cpos
+    )
+  }
+)
+
