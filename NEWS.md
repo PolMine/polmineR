@@ -1,10 +1,11 @@
-# polmineR v0.8.8.9001
+# polmineR v0.8.8.9001-90003
 
 * `split()` sets type of `subcorpus` to `NA`, causing an error if another 
 split is performed. Fixed.
 * `split()` throwed misleading error message if `s_attribute` not existing. The
 error message is now telling #242.
 * `split()` was not implemented if s_attribute was child. Done #243.
+* 
 
 # polmineR v0.8.8
 

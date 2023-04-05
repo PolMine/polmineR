@@ -118,6 +118,7 @@ Collate:
     'terms.R'
     'token_stream.R'
     'tooltips.R'
+    'tree_structure.R'
     'trim.R'
     'type.R'
     'use.R'
