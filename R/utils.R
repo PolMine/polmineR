@@ -476,5 +476,5 @@ siblings <- function(corpus, registry, ...){
       )
     }
   )
-  do.call(identical, s_attr_sizes)
+  if (length(unique(unlist(s_attr_sizes))) == 1L) TRUE else FALSE
 }

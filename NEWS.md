@@ -5,7 +5,8 @@ split is performed. Fixed.
 * `split()` throwed misleading error message if `s_attribute` not existing. The
 error message is now telling #242.
 * `split()` was not implemented if s_attribute was child. Done #243.
-* 
+* Inefficiency of `size()` for `corpus` objects for scenario of nested s-attributes
+addressed #231.
 
 # polmineR v0.8.8
 

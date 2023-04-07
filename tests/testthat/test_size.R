@@ -38,7 +38,24 @@ test_that(
     expect_equal(length(unique(y[["party"]])), 6)
     expect_equal(sum(y[["size"]]), size("GERMAPARLMINI"))
     expect_equal(y[["size"]][1:3], c(17,71,25))
+    
+    # check that result is independent of s-attribute order in nested scenario
+    library(data.table)
 
+    corpus_id <- "GERMAPARLMINI"
+    s_attrs <- c("party", "protocol_date", "speaker")
+
+    result <- corpus(corpus_id) %>%
+      size(s_attribute = c("party", "protocol_date", "speaker")) %>%
+      setorderv(cols = s_attrs) %>%
+      setcolorder(neworder = s_attrs)
+    
+    check <- corpus(corpus_id) %>%
+      size(s_attribute = c("party", "speaker", "protocol_date")) %>%
+      setorderv(cols = s_attrs) %>%
+      setcolorder(neworder = s_attrs)
+    
+    expect_identical(result, check)
   }
 )
 
