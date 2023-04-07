@@ -4,9 +4,10 @@ NULL
 
 #' Enrich an object.
 #' 
-#' Methods to enrich objects with additional (statistical) information. The methods are documented
-#' with the classes to which they adhere. See the references in the \code{seealso}-section.
-#' @param .Object a \code{partition}, \code{partition_bundle} or comp object
+#' Methods to enrich objects with additional (statistical) information. The
+#' methods are documented with the classes to which they adhere. See the
+#' references in the \code{seealso}-section.
+#' @param .Object a `partition`, `partition_bundle` or comp object
 #' @param ... further parameters
 #' @aliases enrich enrich-method
 #' @docType methods
@@ -113,6 +114,18 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
   cnt_list <- split(x = cnt, by = "doc_id", keep.by = FALSE)
   rm(cnt)
   if (verbose) cli_process_done()
+  
+  if (!inherits(.Object@objects[[1]], "textstat")){
+    if (inherits(.Object@objects[[1]], "subcorpus")){
+      new_obj <- gsub("subcorpus", "partition", class(.Object@objects[[1]]))
+      if (verbose) cli_progress_step("coercing to: {.val {new_obj}}")
+      .Object@objects <- lapply(
+        .Object@objects,
+        function(obj) as(as(obj, "partition"), new_obj)
+      )
+      if (verbose) cli_progress_done()
+    }
+  }
   
   if (verbose) cli_process_start("assign count tables to input object")
   .Object@objects <- mapply(

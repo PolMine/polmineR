@@ -7,9 +7,9 @@ NULL
 #' `subcorpus`, split up by an s-attribute if provided.
 #' 
 #' One or more s-attributes can be provided to get the dispersion of tokens
-#' across one or more dimensions. If `s_attribute` is a child of the s-attribute
-#' defining a `subcorpus` or `partition`, the struc values need to be decoded 
-#' for all corpus positions, which may take some time.
+#' across one or more dimensions. If more than one `s_attribute` is provided and
+#' the structure of s-attributes is nested, ordering attributes according to the
+#' ascending tree structure is advised for performance reasons.
 #' 
 #' @param x An object to get size(s) for.
 #' @param s_attribute A `character` vector with s-attributes (one or more).
@@ -187,31 +187,37 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
         dt <- data.table(cpos = 0L:(size(x) - 1L))
         
         for (s_attr in s_attribute){
-          if (verbose) cli_progress_step(
-            "get regions for s-attribute {.val {s_attr}}"
-          )
-          reg <- s_attribute_decode(
+          if (verbose) cli_progress_step("decode s-attribute {.val {s_attr}}")
+          n_strucs <- cl_attribute_size(
             corpus = x@corpus,
-            registry = x@registry_dir, data_dir = x@data_dir,
-            s_attribute = s_attr, method = "R"
+            registry = x@registry_dir,
+            attribute = s_attr,
+            attribute_type = "s"
           )
-          setDT(reg)
-          reg[, "value" := as.nativeEnc(reg[["value"]], from = x@encoding)]
-          reg[, "struc" := 0L:(nrow(reg) - 1L)]
-          setnames(reg, old = c("cpos_left", "cpos_right"), new = c("l", "r"))
-          
-          if (verbose) cli_progress_step(
-            "get values for corpus positions for s-attribute {.val {s_attr}}"
+          struc_vec <- 0L:(n_strucs - 1L)
+          m <- get_region_matrix(
+            corpus = x@corpus,
+            registry = x@registry_dir,
+            s_attribute = s_attr,
+            strucs = struc_vec
           )
-          .fn <- function(.SD)
-            list(cpos = .SD[["l"]]:.SD[["r"]], value = .SD[["value"]])
-          ext <- reg[,.fn(.SD), by = "struc", .SDcols = c("l", "r", "value")]
-          ext[, "struc" := NULL]
+          ext <- data.table(cpos = RcppCWB::ranges_to_cpos(m))
+          struc_values <- cl_struc2str(
+            corpus = x@corpus,
+            registry = x@registry_dir,
+            s_attribute = s_attr,
+            struc = struc_vec
+          ) |>
+            as.nativeEnc(from = x@encoding)
+          unfolded <- rep(struc_values, times = m[,2] - m[, 1] + 1)
+          ext[, (s_attr) := unfolded]
           
           if (verbose) cli_progress_step(
             "merge corpus position results for s-attribute {.val {s_attr}}"
           )
-          dt[, (s_attr) := ext[dt, on = "cpos"][["value"]]]
+          
+          dt[, (s_attr) := ext[dt, on = "cpos"][[s_attr]]]
+          
         }
         dt[, "size" := 1L]
       }
