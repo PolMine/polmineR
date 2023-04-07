@@ -7,6 +7,8 @@ error message is now telling #242.
 * `split()` was not implemented if s_attribute was child. Done #243.
 * Inefficiency of `size()` for `corpus` objects for scenario of nested s-attributes
 addressed #231.
+* `enrich()` for `subcorpus_bundle` objects (returning `partition_bundle` now) 
+#224.
 
 # polmineR v0.8.8
 

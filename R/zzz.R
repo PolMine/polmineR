@@ -13,7 +13,7 @@
     "polmineR.cores" = if (.Platform$OS.type == "windows") 1L else 2L,
     "polmineR.browse" = FALSE,
     "polmineR.buttons" = interactive(),
-    "polmineR.specialChars" = "^[a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df|-]+$",
+    "polmineR.specialChars" = "[^a-zA-Z\u00e9\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc-\u00df-]+",
     "polmineR.villainChars" = c("\u0084", "\u0093"),
     "polmineR.cutoff" = 5000,
     "polmineR.corpus_registry" = Sys.getenv("CORPUS_REGISTRY"),
