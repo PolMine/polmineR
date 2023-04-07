@@ -223,7 +223,7 @@ setMethod("cpos", "matrix", function(.Object){
     what = "cpos()",
     details = paste0(
       "This warning applies for the `cpos()` method for matrix objects only. ", 
-      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "Please use `RcppCWB::ranges_to_cpos()` for turning a matrix of ranges ",
       "into a vector of individual corpus positions."
     )
   )
@@ -238,7 +238,7 @@ setMethod("cpos", "hits", function(.Object){
     what = "cpos()",
     details = paste0(
       "This warning applies for the `cpos()` method for `hits` objects. ", 
-      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "Please use `RcppCWB::ranges_to_cpos()` for turning a matrix of ranges ",
       "into a vector of individual corpus positions."
     )
   )
@@ -255,7 +255,7 @@ setMethod("cpos", "NULL", function(.Object){
     what = "cpos()",
     details = paste0(
       "This warning applies for the `cpos()` method for `NULL` objects. ", 
-      "Please use `RcppCWB::ranges_to_matrix()` for turning a matrix of ranges ",
+      "Please use `RcppCWB::ranges_to_cpos()` for turning a matrix of ranges ",
       "into a vector of individual corpus positions."
     )
   )
