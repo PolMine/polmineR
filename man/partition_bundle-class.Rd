@@ -20,6 +20,7 @@
 \alias{show,partition_bundle-method}
 \alias{partition_bundle,environment-method}
 \alias{enrich,partition_bundle-method}
+\alias{enrich,subcorpus_bundle-method}
 \alias{s_attributes,partition_bundle-method}
 \alias{flatten}
 \title{Bundle of partitions (partition_bundle class).}
@@ -37,6 +38,8 @@
 \S4method{partition_bundle}{environment}(.Object)
 
 \S4method{enrich}{partition_bundle}(.Object, p_attribute, decode = TRUE, verbose = FALSE)
+
+\S4method{enrich}{subcorpus_bundle}(.Object, p_attribute, decode = TRUE, verbose = FALSE)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, ...)
 
@@ -82,7 +85,9 @@ overlaps of the different partitions that are to be summarized.
 Encodings and the root node need to be identical, too.
 
 The \code{enrich()} method will fill the slot \code{stat} of the \code{partition}
-objects within the bundle with a count for the designated p-attributes.
+objects within the bundle with a count for the designated p-attributes. If
+\code{.Object} is a \code{subcorpus_bundle}, the output class will be a
+\code{partition_bundle}.
 }
 \section{Slots}{
 

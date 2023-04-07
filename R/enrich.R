@@ -44,7 +44,9 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
 })
 
 #' @details The `enrich()` method will fill the slot `stat` of the `partition`
-#'   objects within the bundle with a count for the designated p-attributes.
+#'   objects within the bundle with a count for the designated p-attributes. If
+#'   `.Object` is a `subcorpus_bundle`, the output class will be a
+#'   `partition_bundle`.
 #' @param p_attribute A `character` vector with p-attribute(s) for counting.
 #' @param decode A `logical` value, whether to turn token ids into decoded
 #'   strings.
@@ -114,19 +116,7 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
   cnt_list <- split(x = cnt, by = "doc_id", keep.by = FALSE)
   rm(cnt)
   if (verbose) cli_process_done()
-  
-  if (!inherits(.Object@objects[[1]], "textstat")){
-    if (inherits(.Object@objects[[1]], "subcorpus")){
-      new_obj <- gsub("subcorpus", "partition", class(.Object@objects[[1]]))
-      if (verbose) cli_progress_step("coercing to: {.val {new_obj}}")
-      .Object@objects <- lapply(
-        .Object@objects,
-        function(obj) as(as(obj, "partition"), new_obj)
-      )
-      if (verbose) cli_progress_done()
-    }
-  }
-  
+
   if (verbose) cli_process_start("assign count tables to input object")
   .Object@objects <- mapply(
     function(a, b){a@stat <- b; a@p_attribute <- p_attribute; a},
@@ -137,6 +127,20 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
   
   .Object
 })
+
+#' @rdname partition_bundle-class
+#' @exportMethod enrich
+setMethod("enrich", "subcorpus_bundle", function(.Object, p_attribute, decode = TRUE, verbose = FALSE){
+  cli_alert_info("coercion to `partition_bundle` class")
+  # coercion ensures that objects in slot objects inherit from partition
+  enrich(
+    as(.Object, "partition_bundle"),
+    p_attribute = p_attribute,
+    decode = decode,
+    verbose = verbose
+  )
+})
+
 
 
 #' @details The \code{enrich} method is used to generate the actual output for

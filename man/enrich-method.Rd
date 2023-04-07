@@ -14,8 +14,9 @@ enrich(.Object, ...)
 \item{...}{further parameters}
 }
 \description{
-Methods to enrich objects with additional (statistical) information. The methods are documented
-with the classes to which they adhere. See the references in the \code{seealso}-section.
+Methods to enrich objects with additional (statistical) information. The
+methods are documented with the classes to which they adhere. See the
+references in the \code{seealso}-section.
 }
 \seealso{
 The enrich method is defined for the following classes:

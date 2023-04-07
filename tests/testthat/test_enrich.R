@@ -33,3 +33,19 @@ test_that(
     for (x in colnames(dt_pb)) expect_identical(dt_pb[[x]], dt_p[[x]])
   }
 )
+
+test_that(
+  "enrich subcorpus_bundle",
+  {
+    # The subcorpus class does not have slot 'stat' (for the time being),
+    # so enriching a subcorpus_bundle requires coercion to partition_bundle.
+    # This test checks that this coercion is performed.
+    
+    pb <- corpus("GERMAPARLMINI") %>%
+      as.speeches(s_attribute_date = "date", s_attribute_name = "speaker") %>%
+      enrich(p_attribute = "word")
+    
+    expect_identical(is(pb)[1], "partition_bundle")
+    expect_identical(unique(sapply(pb@objects, "class")), "plpr_partition")
+  }
+)

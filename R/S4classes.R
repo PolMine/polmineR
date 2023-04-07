@@ -1232,6 +1232,16 @@ setAs(from = "partition_bundle", to = "subcorpus_bundle", def = function(from){
   y
 })
 
+#' @export
+setAs(from = "subcorpus_bundle", to = "partition_bundle", def = function(from){
+  y <- as(as(from, "corpus"), "partition_bundle")
+  old <- unique(sapply(from@objects, class))
+  if (length(old) > 1L) stop("mixed classes in subcorpus_bundle")
+  new <- gsub("subcorpus", "partition", old)
+  y@objects <- lapply(from@objects, function(x) as(as(x, "partition"), new))
+  y
+})
+
 
 #' @rdname cooccurrences-class
 setClass("cooccurrences_reshaped", contains = "cooccurrences")
