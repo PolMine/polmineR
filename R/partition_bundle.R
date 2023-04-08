@@ -2,10 +2,44 @@
 NULL
 
 
+#' @examples
+#' if (FALSE){
+#'   use("GermaParl2")
+#'   x <- corpus("GERMAPARL2MINI") %>%
+#'     as.speeches(
+#'       s_attribute_name = "speaker_name",
+#'       s_attribute_date = "protocol_date"
+#'     )
+#'   x_min <- subset(x, subset = {p_type == "speech"}, byone = TRUE)
+#' }
+#' @rdname partition_bundle-class
+setMethod("subset", "subcorpus_bundle", function(x, subset, byone = FALSE, verbose = TRUE){
+  if (verbose) cli_alert_info("experimental functionality")
+  expr <- enquo(subset)
+  print(expr)
+  s_attr <- unique(unlist(lapply(x, slot, "s_attribute_strucs")))
+  if (length(s_attr) > 1L) stop("slot `s_attribute_strucs` not unique")
+  if (isFALSE(byone)){
+    merged <- merge(x)
+    subsetted <- subset(x, subset = expr)
+    y <- split(subsetted, s_attribute = s_attr)
+  } else {
+    x@objects <- lapply(
+      x@objects,
+      function(obj){
+        show(obj)
+        subset(obj, subset = expr)
+      }
+    )
+  }
+  y
+})
+
+
 #' @rdname partition_bundle-class
 setMethod("show", "partition_bundle", function (object) {
-  message('** partition_bundle object: **')
-  message(sprintf('%-25s', 'Number of partitions:'), length(object@objects))
+  message('<<partition_bundle>>')
+  message(sprintf('%-25s', 'Number of objects:'), length(object@objects))
   # same code as in show-method for partition
   sFix <- unlist(lapply(
     names(object@s_attributes_fixed),
@@ -83,21 +117,24 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
 })
 
 
-#' @param name The name of the new \code{subcorpus} object.
+#' @param name The name of the new `subcorpus` object.
 #' @rdname subcorpus_bundle
 setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
   y <- callNextMethod()
   corpus_type <- get_type(y@corpus)
   y@type <- if (is.null(corpus_type)) character() else corpus_type
   y@data_dir <- path(
-    corpus_data_dir(corpus = y@corpus, registry = corpus_registry_dir(y@corpus))
+    corpus_data_dir(
+      corpus = y@corpus,
+      registry = corpus_registry_dir(y@corpus)
+    )
   )
   y
 })
 
 
-#' @param ... Further \code{subcorpus} objects to be merged with \code{x} and \code{y}.
-#' @param y A \code{subcorpus} to be merged with \code{x}.
+#' @param ... Further `subcorpus` objects to be merged with `x` and `y`.
+#' @param y A `subcorpus` to be merged with `x`.
 #' @examples
 #' 
 #' # Merge multiple subcorpus objects
@@ -112,8 +149,8 @@ setMethod("merge", "subcorpus", function(x, y, ...){
 })
 
 
-#' #' @details Using brackets can be used to retrieve the count for a token from the 
-#' #' \code{partition} objects in a \code{partition_bundle}.
+#' #' @details Using brackets can be used to retrieve the count for a token from
+#' the #' \code{partition} objects in a \code{partition_bundle}.
 #' #' @exportMethod [
 #' #' @rdname partition_bundle-class
 #' setMethod('[', 'partition_bundle', function(x,i){
