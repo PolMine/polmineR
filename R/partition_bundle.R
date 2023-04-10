@@ -2,40 +2,6 @@
 NULL
 
 
-#' @examples
-#' if (FALSE){
-#'   use("GermaParl2")
-#'   x <- corpus("GERMAPARL2MINI") %>%
-#'     as.speeches(
-#'       s_attribute_name = "speaker_name",
-#'       s_attribute_date = "protocol_date"
-#'     )
-#'   x_min <- subset(x, subset = {p_type == "speech"}, byone = TRUE)
-#' }
-#' @rdname partition_bundle-class
-setMethod("subset", "subcorpus_bundle", function(x, subset, byone = FALSE, verbose = TRUE){
-  if (verbose) cli_alert_info("experimental functionality")
-  expr <- enquo(subset)
-  print(expr)
-  s_attr <- unique(unlist(lapply(x, slot, "s_attribute_strucs")))
-  if (length(s_attr) > 1L) stop("slot `s_attribute_strucs` not unique")
-  if (isFALSE(byone)){
-    merged <- merge(x)
-    subsetted <- subset(x, subset = expr)
-    y <- split(subsetted, s_attribute = s_attr)
-  } else {
-    x@objects <- lapply(
-      x@objects,
-      function(obj){
-        show(obj)
-        subset(obj, subset = expr)
-      }
-    )
-  }
-  y
-})
-
-
 #' @rdname partition_bundle-class
 setMethod("show", "partition_bundle", function (object) {
   message('<<partition_bundle>>')

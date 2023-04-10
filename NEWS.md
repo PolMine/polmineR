@@ -9,6 +9,7 @@ error message is now telling #242.
 addressed #231.
 * `enrich()` for `subcorpus_bundle` objects (returning `partition_bundle` now) 
 #224.
+* `subset()` implemented for `subcorpus_bundle` obejcts #234.
 
 # polmineR v0.8.8
 
