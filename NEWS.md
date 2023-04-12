@@ -1,4 +1,4 @@
-# polmineR v0.8.8.9001-90003
+# polmineR v0.8.8.9001-9003
 
 * `split()` sets type of `subcorpus` to `NA`, causing an error if another 
 split is performed. Fixed.
@@ -10,6 +10,7 @@ addressed #231.
 * `enrich()` for `subcorpus_bundle` objects (returning `partition_bundle` now) 
 #224.
 * `subset()` implemented for `subcorpus_bundle` obejcts #234.
+* Sample corpus GERMAPARLMINI now includes s-attribute protocol_lp.
 
 # polmineR v0.8.8
 

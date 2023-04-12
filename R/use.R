@@ -143,7 +143,7 @@ use <- function(pkg, corpus, lib.loc = .libPaths(), tmp = FALSE, verbose = TRUE)
       additional_info <- sprintf(" (%s)", additional_info)
     
     if (verbose) cli_alert_success(
-      sprintf("corpus loaded: %s%s", toupper(corpus), additional_info)
+      sprintf("corpus loaded: {.pkg %s}%s", toupper(corpus), additional_info)
     )
   }
   
