@@ -11,6 +11,8 @@ addressed #231.
 #224.
 * `subset()` implemented for `subcorpus_bundle` obejcts #234.
 * Sample corpus GERMAPARLMINI now includes s-attribute protocol_lp.
+* Bug removed from `setAs()`-method from `slice` to "AnnotatedPlainTextDocument"
+that would prevent using GERMAPARLMINI as sample data.
 
 # polmineR v0.8.8
 
