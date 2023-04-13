@@ -12,13 +12,28 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available")
 
-  word <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "word", encoding = from@encoding)
-  pos <- get_token_stream(from@cpos, corpus = from@corpus, p_attribute = "pos", encoding = from@encoding)
-  whitespace_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[2L:length(pos)], FALSE)
-  word_with_whitespace <- paste(word, ifelse(whitespace_after, " ", ""), sep = "")
-  s <- paste(word_with_whitespace, collapse = "")
+  word <- get_token_stream(
+    from@cpos,
+    corpus = from@corpus,
+    p_attribute = "word",
+    encoding = from@encoding
+  )
+  
+  if (!"pos" %in% p_attributes(from)) stop("p-attribute not available")
+  pos <- get_token_stream(
+    from@cpos,
+    corpus = from@corpus,
+    p_attribute = "pos",
+    encoding = from@encoding
+  )
+  ws_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[-1], FALSE)
+  word_with_ws <- paste(word, ifelse(ws_after, " ", ""), sep = "")
+  s <- paste(word_with_ws, collapse = "")
   word_length <- sapply(word, nchar)
-  left_offset <- c(1L, (cumsum(sapply(word_with_whitespace, nchar)) + 1L)[1L:(length(word) - 1L)] )
+  left_offset <- c(
+    1L,
+    (cumsum(sapply(word_with_ws, nchar)) + 1L)[1L:(length(word) - 1L)]
+  )
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
@@ -33,7 +48,11 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   right_offset <- left_offset + word_length
   names(right_offset) <- word # repeats 
   m <- matrix(data = c(left_offset, right_offset), ncol = 2, byrow = FALSE)
-  f <- cut(x = 1L:length(pos), breaks = unique(c(1L, grep("\\$\\.", pos), length(pos))), include.lowest = TRUE)
+  f <- cut(
+    x = 1L:length(pos),
+    breaks = unique(c(1L, grep("\\$\\.", pos), length(pos))), 
+    include.lowest = TRUE
+  )
   chunks <- split(x = m, f = f)
   sentence_left <- sapply(chunks, min)
   sentence_right <- sapply(chunks, max) - 1L
@@ -59,18 +78,18 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   ts <- decode(from, p_attribute = p_attrs, s_attributes = character())
 
   message("... generate plain text string")
-  whitespace_after <- if ("pos" %in% p_attrs){
+  ws_after <- if ("pos" %in% p_attrs){
     # still assumes that STSS is used
     c(ifelse(ts[["pos"]] %in% c("$.", "$,"), FALSE, TRUE)[2L:nrow(ts)], FALSE)
   } else {
     c(grepl("^[.,;!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
   }
   
-  word_with_whitespace <- paste(ts[["word"]], ifelse(whitespace_after, " ", ""), sep = "")
-  s <- paste(word_with_whitespace, collapse = "")
+  word_with_ws <- paste(ts[["word"]], ifelse(ws_after, " ", ""), sep = "")
+  s <- paste(word_with_ws, collapse = "")
   
   message("... generate token-level annotation")
-  left_offset <- c(1L, (cumsum(nchar(word_with_whitespace)) + 1L)[1L:(nrow(ts) - 1L)])
+  left_offset <- c(1L, (cumsum(nchar(word_with_ws)) + 1L)[1L:(nrow(ts) - 1L)])
   right_offset <- left_offset + nchar(ts[["word"]]) - 1L
   
   w <- NLP::Annotation(
@@ -78,7 +97,10 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     rep.int("word", nrow(ts)),
     start = left_offset,
     end = right_offset,
-    features = lapply(split(ts[, p_attrs, with = FALSE], f = 1L:nrow(ts)), as.data.frame)
+    features = lapply(
+      split(ts[, p_attrs, with = FALSE], f = 1L:nrow(ts)),
+      as.data.frame
+    )
   )
   
   message("... which s-attributes are document-level metadata?")
@@ -86,13 +108,24 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   meta_candidates <- lapply(
     setNames(s_attrs, s_attrs),
     function(s_attr){
-      message(sprintf("... checking if s-attribute is metadata: %s ... ", s_attr), appendLF = FALSE)
-      strucs <- cl_cpos2struc(corpus = from@corpus, s_attribute = s_attr, cpos = ranges_to_cpos(from@cpos))
+      message(
+        sprintf("... checking if s-attribute is metadata: %s ... ", s_attr),
+        appendLF = FALSE
+      )
+      strucs <- cl_cpos2struc(
+        corpus = from@corpus,
+        s_attribute = s_attr,
+        cpos = ranges_to_cpos(from@cpos)
+      )
       if (any(strucs < 0L)){
         message("NO (not comprehensive)")
         NULL
       } else {
-        values <- cl_struc2str(corpus = from@corpus, s_attribute = s_attr, struc = strucs)
+        values <- cl_struc2str(
+          corpus = from@corpus,
+          s_attribute = s_attr,
+          struc = strucs
+        )
         unique_values <- unique(values)
         if (length(unique_values) == 1L){
           message("OK")
