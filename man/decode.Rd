@@ -15,7 +15,7 @@ decode(.Object, ...)
 
 \S4method{decode}{corpus}(
   .Object,
-  to = c("data.table", "Annotation"),
+  to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"),
   p_attributes = NULL,
   s_attributes = NULL,
   decode = TRUE,
@@ -183,7 +183,7 @@ if (requireNamespace("NLP")){
   words <- s[a[a$type == "word"]]
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
   
-  doc <- as(p, "AnnotatedPlainTextDocument")
+  doc <- as.AnnotatedPlainTextDocument(p)
 }
 }
  

@@ -13,6 +13,8 @@ addressed #231.
 * Sample corpus GERMAPARLMINI now includes s-attribute protocol_lp.
 * Bug removed from `setAs()`-method from `slice` to "AnnotatedPlainTextDocument"
 that would prevent using GERMAPARLMINI as sample data.
+* Method `decode()` can return 'AnnotatedPlainTextDocument' from NLP package.
+* Coerce method `as(x, "AnnotatedPlainTextDocument")` not available any more.
 
 # polmineR v0.8.8
 

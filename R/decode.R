@@ -66,18 +66,17 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 })
 
 
-setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
-  
+as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
   # Implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
   
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available.")
   
-  cli_alert_info("decode p-attributes")
-  p_attrs <- p_attributes(from)
-  ts <- decode(from, p_attribute = p_attrs, s_attributes = character())
-
-  cli_progress_step("generate plain text string")
+  if (verbose) cli_alert_info("decode p-attributes")
+  p_attrs <- p_attributes(x)
+  ts <- decode(x, p_attribute = p_attrs, s_attributes = character())
+  
+  if (verbose) cli_progress_step("generate plain text string")
   ws_after <- if ("pos" %in% p_attrs){
     # still assumes that STSS is used
     c(ifelse(ts[["pos"]] %in% c("$.", "$,"), FALSE, TRUE)[2L:nrow(ts)], FALSE)
@@ -88,12 +87,12 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   word_with_ws <- paste(ts[["word"]], ifelse(ws_after, " ", ""), sep = "")
   s <- paste(word_with_ws, collapse = "")
   
-  cli_progress_step("generate token-level annotation")
+  if (verbose) cli_progress_step("generate token-level annotation")
   left_offset <- c(1L, (cumsum(nchar(word_with_ws)) + 1L)[1L:(nrow(ts) - 1L)])
   right_offset <- left_offset + nchar(ts[["word"]]) - 1L
   
   w <- NLP::Annotation(
-    id = ranges_to_cpos(from@cpos),
+    id = ts[["cpos"]],
     rep.int("word", nrow(ts)),
     start = left_offset,
     end = right_offset,
@@ -103,33 +102,37 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     )
   )
   
-  cli_alert_info("detect which s-attributes are document-level metadata")
-  s_attrs <- s_attributes(from)
+  if (verbose)
+    cli_alert_info("detect which s-attributes are document-level metadata")
+  
+  s_attrs <- s_attributes(x)
   meta_candidates <- lapply(
     setNames(s_attrs, s_attrs),
     function(s_attr){
       strucs <- cl_cpos2struc(
-        corpus = from@corpus,
-        registry = from@registry_dir,
+        corpus = x@corpus,
+        registry = x@registry_dir,
         s_attribute = s_attr,
-        cpos = ranges_to_cpos(from@cpos)
+        cpos = ranges_to_cpos(x@cpos)
       )
       if (any(strucs < 0L)){
-        cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
+        if (verbose)
+          cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
         NULL
       } else {
         values <- cl_struc2str(
-          corpus = from@corpus,
-          registry = from@registry_dir,
+          corpus = x@corpus,
+          registry = x@registry_dir,
           s_attribute = s_attr,
           struc = strucs
         )
         unique_values <- unique(values)
         if (length(unique_values) == 1L){
-          cli_alert_info("s-attribute {.val {s_attr}} is metadata")
+          if (verbose) cli_alert_info("s-attribute {.val {s_attr}} is metadata")
           return(unique_values)
         } else {
-          cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
+          if (verbose)
+            cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
           character()
         }
       }
@@ -148,32 +151,32 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
     function(s_attr){
       strucs <- unique(
         cl_cpos2struc(
-          corpus = from@corpus,
-          registry = from@registry_dir,
+          corpus = x@corpus,
+          registry = x@registry_dir,
           s_attribute = s_attr,
-          cpos = ranges_to_cpos(from@cpos)
+          cpos = ranges_to_cpos(x@cpos)
         )
       )
       strucs <- strucs[which(strucs >= 0L)]
       do.call(c,
-        lapply(
-          strucs,
-          function(struc){
-            cpos <- cl_struc2cpos(
-              corpus = from@corpus,
-              registry = from@registry_dir,
-              s_attribute = s_attr,
-              struc = struc
-            )
-            NLP::Annotation(
-              id = -1, # assign id later on, if necessary
-              type = s_attr,
-              start = w[which(w$id == min(cpos))]$start,
-              end = w[which(w$id == max(cpos))]$end,
-              features = list(list(constituents = cpos))
-            )
-          }
-        )
+              lapply(
+                strucs,
+                function(struc){
+                  cpos <- cl_struc2cpos(
+                    corpus = x@corpus,
+                    registry = x@registry_dir,
+                    s_attribute = s_attr,
+                    struc = struc
+                  )
+                  NLP::Annotation(
+                    id = -1, # assign id later on, if necessary
+                    type = s_attr,
+                    start = w[which(w$id == min(cpos))]$start,
+                    end = w[which(w$id == max(cpos))]$end,
+                    features = list(list(constituents = cpos))
+                  )
+                }
+              )
       )
     }
   ))
@@ -181,7 +184,7 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
   a <- if (length(mw_annotations) > 0L) c(w, mw_annotations) else w
   
   NLP::AnnotatedPlainTextDocument(s = s, a = a, meta = meta)
-})
+}
 
 
 #' Decode corpus or subcorpus.
@@ -271,12 +274,20 @@ setAs(from = "corpus", to = "AnnotatedPlainTextDocument", def = function(from){
 #'   words <- s[a[a$type == "word"]]
 #'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
 #'   
-#'   doc <- as(p, "AnnotatedPlainTextDocument")
+#'   doc <- as.AnnotatedPlainTextDocument(p)
 #' }
 #' }
 #' @rdname decode
 #' @importFrom cli cli_progress_step
-setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation"), p_attributes = NULL, s_attributes = NULL, decode = TRUE, verbose = TRUE){
+setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, decode = TRUE, verbose = TRUE){
+  
+  if (!to %in% c("data.table", "Annotation", "as.AnnotatedPlainTextDocument")){
+    cli_alert_danger(
+      "Argument 'to' of `decode()` required to be 'data.table' or 'Annotation'."
+    )
+    stop()
+  }
+  
   if (to == "data.table"){
 
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
@@ -336,9 +347,10 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
     
   } else if (to == "Annotation"){
     y <- as(.Object, "Annotation")
-  } else {
-    stop("The 'to'-argument of the decode()-method is required to be either 'data.table' or 'Annotation'.")
+  } else if (to == "AnnotatedPlainTextDocument"){
+    y <- as.AnnotatedPlainTextDocument(x = .Object)
   }
+  
   y
 })
 
