@@ -76,7 +76,7 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NUL
   p_attrs <- if (is.null(p_attributes)) p_attributes(x) else p_attributes
   ts <- decode(x, p_attribute = p_attrs, s_attributes = character())
   
-  if (!is.null(stoplist)) ts <- ts[!word %in% stoplist]
+  if (!is.null(stoplist)) ts <- ts[!ts[["word"]] %in% stoplist]
   
   if (verbose) cli_progress_step("generate plain text string")
   ws_after <- if ("pos" %in% p_attrs){
@@ -106,7 +106,9 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NUL
   
   if ("ne_type" %in% s_attributes(x)){
     if (verbose) cli_progress_step("generate entity annotation")
-    ne_sub <- subset(x, ne)
+    # Mimicks `subset(x, ne)` to avoid 'no visible binding for global variable'
+    # warning
+    ne_sub <- subset(x, ne_type = ".*", regex = TRUE)
     start <- sapply(ne_sub@cpos[,1], function(x) w[w$id == x]$start)
     end <- sapply(ne_sub@cpos[,2], function(x) w[w$id == x]$end)
     ne_type = RcppCWB::cl_struc2str(
