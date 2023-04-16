@@ -7,15 +7,15 @@ test_that(
   "s_attributes for corpus, without specification of s_attribute",
   {
     s_attrs <- s_attributes("GERMAPARLMINI")
-    expect_equal(length(s_attrs), 6L)
+    expect_equal(length(s_attrs), 7L)
     expect_equal(is.character(s_attrs), TRUE)
-    expect_equal(all(s_attrs %in% c("protocol_lp", "protocol_date", "interjection", "date", "party", "speaker")), TRUE)
+    expect_equal(all(s_attrs %in% c("protocol_lp", "protocol_date", "interjection", "date", "party", "speaker", "role")), TRUE)
     
     s_attrs <- corpus("GERMAPARLMINI") %>%
       s_attributes()
-    expect_equal(length(s_attrs), 6L)
+    expect_equal(length(s_attrs), 7L)
     expect_equal(is.character(s_attrs), TRUE)
-    expect_equal(all(s_attrs %in% c("protocol_lp", "protocol_date", "interjection", "date", "party", "speaker")), TRUE)
+    expect_equal(all(s_attrs %in% c("protocol_lp", "protocol_date", "interjection", "date", "party", "speaker", "role")), TRUE)
   }
 )
 

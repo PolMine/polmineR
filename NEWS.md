@@ -16,7 +16,10 @@ that would prevent using GERMAPARLMINI as sample data.
 * Method `decode()` can return 'AnnotatedPlainTextDocument' from NLP package.
 * Coerce method `as(x, "AnnotatedPlainTextDocument")` not available any more.
 * Method `decode()` has new argument "stoplist" to drop terms from 'AnnotatedPlainTextDocument'. Unused for other return values.
-* Tooltips now have auto width.
+* Tooltips now have auto width - all text is displayed.
+* The s-attribute 'role' has been added to GERMAPARLMINI to make it more suitable
+for demonstration purposes for data linkage.
+
 
 # polmineR v0.8.8
 

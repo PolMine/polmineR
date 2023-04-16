@@ -15,8 +15,8 @@ INFO /Users/andreasblatte/Lab/github/polmineR/inst/extdata/cwb/indexed_corpora/g
 ##:: charset = "latin1"
 ##:: language = "de"
 ##:: type = "plpr"
-##:: version = "0.0.1"
-##:: build_date = "2019-02-23"
+##:: version = "0.1.0"
+##:: build_date = "2023-04-16"
 #========================================================================#
 
 
@@ -37,3 +37,4 @@ STRUCTURE party
 STRUCTURE speaker
 STRUCTURE protocol_date
 STRUCTURE protocol_lp
+STRUCTURE role
