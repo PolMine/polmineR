@@ -8,11 +8,15 @@
 /* Tooltip text */
 .tooltipping .tooltippingtext {
     visibility: hidden;
-    width: 120px;
+    width: auto;
     background-color: #555;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    /* padding: 5px 0; */
     border-radius: 6px;
 
     /* Position the tooltip text */

@@ -18,6 +18,7 @@ decode(.Object, ...)
   to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"),
   p_attributes = NULL,
   s_attributes = NULL,
+  stoplist = NULL,
   decode = TRUE,
   verbose = TRUE
 )
@@ -75,6 +76,8 @@ decode(.Object, ...)
 
 \item{s_attributes}{The structural attributes to decode. If \code{NULL}
 (default), all structural attributes will be decoded.}
+
+\item{stoplist}{A \code{character} vector with terms to be dropped.}
 
 \item{decode}{A \code{logical} value, whether to decode token ids and struc
 ids to character strings. If \code{FALSE}, the values of columns for p- and

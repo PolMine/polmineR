@@ -66,22 +66,24 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 })
 
 
-as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
-  # Implemented only for class 'corpus', 'subcorpus'-class will inherit from it.
+as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NULL, verbose = TRUE){
+  # x can be corpus or subcorpus
   
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available.")
   
   if (verbose) cli_alert_info("decode p-attributes")
-  p_attrs <- p_attributes(x)
+  p_attrs <- if (is.null(p_attributes)) p_attributes(x) else p_attributes
   ts <- decode(x, p_attribute = p_attrs, s_attributes = character())
+  
+  if (!is.null(stoplist)) ts <- ts[!word %in% stoplist]
   
   if (verbose) cli_progress_step("generate plain text string")
   ws_after <- if ("pos" %in% p_attrs){
     # still assumes that STSS is used
     c(ifelse(ts[["pos"]] %in% c("$.", "$,"), FALSE, TRUE)[2L:nrow(ts)], FALSE)
   } else {
-    c(grepl("^[.,;!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
+    c(!grepl("^[.,;!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
   }
   
   word_with_ws <- paste(ts[["word"]], ifelse(ws_after, " ", ""), sep = "")
@@ -101,6 +103,37 @@ as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
       as.data.frame
     )
   )
+  
+  if ("ne_type" %in% s_attributes(x)){
+    if (verbose) cli_progress_step("generate entity annotation")
+    ne_sub <- subset(x, ne)
+    start <- sapply(ne_sub@cpos[,1], function(x) w[w$id == x]$start)
+    end <- sapply(ne_sub@cpos[,2], function(x) w[w$id == x]$end)
+    ne_type = RcppCWB::cl_struc2str(
+      corpus = x@corpus,
+      registry = x@registry_dir,
+      s_attribute = "ne_type",
+      struc = ne_sub@strucs
+    )
+    txt = stri_sub(str = s, from = start, to  = end)
+    features <- lapply(
+      1L:nrow(ne_sub@cpos),
+      function(i)
+        list(
+          kind = ne_type[i],
+          text = txt[i],
+          constituents = ne_sub@cpos[i,1]:ne_sub@cpos[i,2]
+        )
+    )
+    
+    entities <- NLP::Annotation(
+      id = 1L:nrow(ne_sub@cpos),
+      type = rep.int("entity", nrow(ne_sub@cpos)),
+      start = start,
+      end = end,
+      features = features
+    )
+  }
   
   if (verbose)
     cli_alert_info("detect which s-attributes are document-level metadata")
@@ -182,6 +215,7 @@ as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
   ))
   
   a <- if (length(mw_annotations) > 0L) c(w, mw_annotations) else w
+  if (length(entities) > 0L) a <- c(a, entities)
   
   NLP::AnnotatedPlainTextDocument(s = s, a = a, meta = meta)
 }
@@ -215,6 +249,7 @@ as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
 #'   (default), all structural attributes will be decoded.
 #' @param p_attributes The positional attributes to decode. If \code{NULL}
 #'   (default), all positional attributes will be decoded.
+#' @param stoplist A `character` vector with terms to be dropped.
 #' @param decode A \code{logical} value, whether to decode token ids and struc
 #'   ids to character strings. If \code{FALSE}, the values of columns for p- and
 #'   s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the
@@ -279,7 +314,7 @@ as.AnnotatedPlainTextDocument <- function(x, verbose = TRUE){
 #' }
 #' @rdname decode
 #' @importFrom cli cli_progress_step
-setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, decode = TRUE, verbose = TRUE){
+setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
   if (!to %in% c("data.table", "Annotation", "as.AnnotatedPlainTextDocument")){
     cli_alert_danger(
@@ -348,7 +383,11 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
   } else if (to == "Annotation"){
     y <- as(.Object, "Annotation")
   } else if (to == "AnnotatedPlainTextDocument"){
-    y <- as.AnnotatedPlainTextDocument(x = .Object)
+    y <- as.AnnotatedPlainTextDocument(
+      x = .Object,
+      p_attributes = p_attributes,
+      stoplist = stoplist
+    )
   }
   
   y
