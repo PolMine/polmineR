@@ -66,33 +66,37 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 })
 
 
-as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NULL, verbose = TRUE){
-  # x can be corpus or subcorpus
+as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, verbose = TRUE){
+  # is required to be a subcorpus object
   
+  stopifnot(
+    inherits(x, "subcorpus"),
+    length(mw) == length(unique(mw))
+  )
+
   if (!requireNamespace(package = "NLP", quietly = TRUE))
     stop("Package 'NLP' required but not available.")
   
   if (verbose) cli_alert_info("decode p-attributes")
   p_attrs <- if (is.null(p_attributes)) p_attributes(x) else p_attributes
-  ts <- decode(x, p_attribute = p_attrs, s_attributes = character())
+  ts <- decode(
+    x,
+    to = "data.table",
+    p_attribute = p_attrs,
+    s_attributes = character(),
+    verbose = verbose
+  )
   
   if (!is.null(stoplist)) ts <- ts[!ts[["word"]] %in% stoplist]
   
   if (verbose) cli_progress_step("generate plain text string")
-  ws_after <- if ("pos" %in% p_attrs){
-    # still assumes that STSS is used
-    c(ifelse(ts[["pos"]] %in% c("$.", "$,"), FALSE, TRUE)[2L:nrow(ts)], FALSE)
-  } else {
-    c(!grepl("^[.,;!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
-  }
-  
+  ws_after <- c(!grepl("^[.,;:!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
   word_with_ws <- paste(ts[["word"]], ifelse(ws_after, " ", ""), sep = "")
-  s <- paste(word_with_ws, collapse = "")
+  s <- stringi::stri_c(word_with_ws, collapse = "")
   
   if (verbose) cli_progress_step("generate token-level annotation")
   left_offset <- c(1L, (cumsum(nchar(word_with_ws)) + 1L)[1L:(nrow(ts) - 1L)])
   right_offset <- left_offset + nchar(ts[["word"]]) - 1L
-  
   w <- NLP::Annotation(
     id = ts[["cpos"]],
     rep.int("word", nrow(ts)),
@@ -104,160 +108,129 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NUL
     )
   )
   
-  if ("ne_type" %in% s_attributes(x)){
-    if (verbose) cli_progress_step("generate entity annotation")
-    # Mimicks `subset(x, ne)` to avoid 'no visible binding for global variable'
-    # warning
-    ne_sub <- subset(x, ne_type = ".*", regex = TRUE)
-    start <- sapply(ne_sub@cpos[,1], function(x) w[w$id == x]$start)
-    end <- sapply(ne_sub@cpos[,2], function(x) w[w$id == x]$end)
-    ne_type = RcppCWB::cl_struc2str(
-      corpus = x@corpus,
-      registry = x@registry_dir,
-      s_attribute = "ne_type",
-      struc = ne_sub@strucs
-    )
-    txt = stri_sub(str = s, from = start, to  = end)
-    features <- lapply(
-      1L:nrow(ne_sub@cpos),
-      function(i)
-        list(
-          kind = ne_type[i],
-          text = txt[i],
-          constituents = ne_sub@cpos[i,1]:ne_sub@cpos[i,2]
-        )
-    )
-    
-    entities <- NLP::Annotation(
-      id = 1L:nrow(ne_sub@cpos),
-      type = rep.int("entity", nrow(ne_sub@cpos)),
-      start = start,
-      end = end,
-      features = features
-    )
-  }
-  
-  if (verbose)
-    cli_alert_info("detect which s-attributes are document-level metadata")
-  
-  s_attrs <- s_attributes(x)
-  meta_candidates <- lapply(
-    setNames(s_attrs, s_attrs),
+  mw_annotations <- lapply(
+    mw,
     function(s_attr){
+      if (verbose)
+        cli_progress_step(
+          "generate annotation for s-attribute {.val {s_attr}}"
+        )
+      
       strucs <- cl_cpos2struc(
         corpus = x@corpus,
         registry = x@registry_dir,
-        s_attribute = s_attr,
-        cpos = ranges_to_cpos(x@cpos)
+        cpos = ranges_to_cpos(x@cpos),
+        s_attribute = s_attr
       )
-      if (any(strucs < 0L)){
-        if (verbose)
-          cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
-        NULL
-      } else {
-        values <- cl_struc2str(
-          corpus = x@corpus,
-          registry = x@registry_dir,
-          s_attribute = s_attr,
-          struc = strucs
-        )
-        unique_values <- unique(values)
-        if (length(unique_values) == 1L){
-          if (verbose) cli_alert_info("s-attribute {.val {s_attr}} is metadata")
-          return(unique_values)
-        } else {
-          if (verbose)
-            cli_alert_info("s-attribute {.val {s_attr}} is NOT metadata")
-          character()
-        }
-      }
+      strucs_min <- unique(strucs[strucs >= 0L])
+      regions <- get_region_matrix(
+        corpus = x@corpus,
+        s_attribute = s_attr,
+        strucs = strucs_min,
+        registry = x@registry_dir
+      )
+      
+      str <- RcppCWB::cl_struc2str(
+        corpus = x@corpus,
+        registry = x@registry_dir,
+        s_attribute = s_attr,
+        struc = strucs_min
+      )
+      Encoding(str) <- x@encoding
+      str <- as.nativeEnc(x = str, from = x@encoding)
+      
+      start <- sapply(regions[,1], function(cpos_left) w[w$id == cpos_left]$start)
+      end <- sapply(regions[,2], function(cpos_right) w[w$id == cpos_right]$end)
+      txt <- stri_sub(str = s, from = start, to  = end)
+      
+      features <- lapply(
+        1L:nrow(regions),
+        function(i)
+          list(
+            kind = str[i],
+            text = txt[i],
+            constituents = regions[i,1]:regions[i,2]
+          )
+      )
+      
+      NLP::Annotation(
+        id = 1L:nrow(regions),
+        type = rep.int(
+          if (is.null(names(mw))) s_attr else names(mw)[which(mw == s_attr)],
+          nrow(regions)
+        ),
+        start = start,
+        end = end,
+        features = features
+      )
     }
   )
-  meta <- meta_candidates
-  # attributes that do not cover the entire subcorpus and that have different
-  # values are not metadata - discard it
-  for (i in rev(which(sapply(meta_candidates, length) != 1L))) meta[[i]] <- NULL
   
-  # s-attributes that do not cover entire subcorpus (negative values) are 
-  # annotations of regions of text
-  s_attr_anno <- names(meta_candidates)[sapply(meta_candidates, is.null)]
-  mw_annotations <- do.call(c, lapply(
-    s_attr_anno,
+  if (verbose) cli_progress_step("retrieve metadata")
+  meta <- lapply(
+    setNames(s_attributes, s_attributes),
     function(s_attr){
-      strucs <- unique(
-        cl_cpos2struc(
-          corpus = x@corpus,
-          registry = x@registry_dir,
-          s_attribute = s_attr,
-          cpos = ranges_to_cpos(x@cpos)
-        )
+      struc <- cl_cpos2struc(
+        corpus = x@corpus,
+        registry = x@registry_dir,
+        s_attribute = s_attr,
+        cpos = x@cpos[1,1]
       )
-      strucs <- strucs[which(strucs >= 0L)]
-      do.call(c,
-              lapply(
-                strucs,
-                function(struc){
-                  cpos <- cl_struc2cpos(
-                    corpus = x@corpus,
-                    registry = x@registry_dir,
-                    s_attribute = s_attr,
-                    struc = struc
-                  )
-                  NLP::Annotation(
-                    id = -1, # assign id later on, if necessary
-                    type = s_attr,
-                    start = w[which(w$id == min(cpos))]$start,
-                    end = w[which(w$id == max(cpos))]$end,
-                    features = list(list(constituents = cpos))
-                  )
-                }
-              )
+      value <- cl_struc2str(
+        corpus = x@corpus,
+        registry = x@registry_dir,
+        s_attribute = s_attr,
+        struc = struc
       )
+      Encoding(value) <- x@encoding
+      as.nativeEnc(x = value, from = x@encoding)
     }
-  ))
+  )
   
-  a <- if (length(mw_annotations) > 0L) c(w, mw_annotations) else w
-  if (length(entities) > 0L) a <- c(a, entities)
-  
-  NLP::AnnotatedPlainTextDocument(s = s, a = a, meta = meta)
+  if (verbose) cli_progress_step("instantiate AnnotatedPlainTextDocument")
+  NLP::AnnotatedPlainTextDocument(
+    s = s,
+    a = c(w, do.call(c, mw_annotations)),
+    meta = meta
+  )
 }
 
 
 #' Decode corpus or subcorpus.
 #' 
-#' Decode \code{corpus} or \code{subcorpus} and return class specified by
-#' argument \code{to}.
+#' Decode `corpus` or `subcorpus` and return class specified by argument `to`.
 #'
 #' The primary purpose of the method is type conversion. By obtaining the corpus
-#' or subcorpus in the format specified by the argument \code{to}, the data can
-#' be processed with tools that do not rely on the Corpus Workbench (CWB).
-#' Supported output formats are \code{data.table} (which can be converted to a
-#' \code{data.frame} or \code{tibble} easily) or an \code{Annotation} object as
-#' defined in the package \code{NLP}. Another purpose of decoding the corpus can
-#' be to rework it, and to re-import it into the CWB (e.g. using the
-#' \code{cwbtools}-package).
+#' or subcorpus in the format specified by the argument `to`, the data can be
+#' processed with tools that do not rely on the Corpus Workbench (CWB).
+#' Supported output formats are `data.table` (which can be converted to a
+#' `data.frame` or `tibble` easily) or an `Annotation` object as defined in the
+#' package 'NLP'. Another purpose of decoding the corpus can be to rework it,
+#' and to re-import it into the CWB (e.g. using the 'cwbtools'-package).
 #'
 #' An earlier version of the method included an option to decode a single
-#' s-attribute, which is not supported any more. See the
-#' \code{s_attribute_decode} function of the package RcppCWB.
+#' s-attribute, which is not supported any more. See the `s_attribute_decode()`
+#' function of the package RcppCWB.
 #'
 #' @return The return value will correspond to the class specified by argument
-#'   \code{to}.
+#'   `to`.
 #' 
-#' @param .Object The \code{corpus} or \code{subcorpus} to decode.
+#' @param .Object The `corpus` or `subcorpus` to decode.
 #' @param to The class of the returned object, stated as a length-one
-#'   \code{character} vector.
-#' @param s_attributes The structural attributes to decode. If \code{NULL}
-#'   (default), all structural attributes will be decoded.
-#' @param p_attributes The positional attributes to decode. If \code{NULL}
-#'   (default), all positional attributes will be decoded.
+#'   `character` vector.
+#' @param s_attributes The structural attributes to decode. If `NULL` (default),
+#'   all structural attributes will be decoded.
+#' @param p_attributes The positional attributes to decode. If `NULL` (default),
+#'   all positional attributes will be decoded.
 #' @param stoplist A `character` vector with terms to be dropped.
-#' @param decode A \code{logical} value, whether to decode token ids and struc
-#'   ids to character strings. If \code{FALSE}, the values of columns for p- and
-#'   s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the
-#'   respective columns are \code{character} vectors.
+#' @param decode A `logical` value, whether to decode token ids and struc ids to
+#'   character strings. If `FALSE`, the values of columns for p- and
+#'   s-attributes will be `integer` vectors. If `TRUE` (default), the respective
+#'   columns are `character` vectors.
+#' @param mw A `character` vector with s-attributes with multiword expressions.
+#'   Used only if `to` is 'AnnotatedPlainTextDocument'.
 #' @param ... Further arguments.
-#' @param verbose A \code{logical} value, whether to output progess messages.
+#' @param verbose A `logical` value, whether to output progess messages.
 #' @exportMethod decode
 #' @importFrom RcppCWB get_region_matrix
 #' @seealso To decode a structural attribute, you can use the
@@ -311,14 +284,14 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, stoplist = NUL
 #'   words <- s[a[a$type == "word"]]
 #'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
 #'   
-#'   doc <- as.AnnotatedPlainTextDocument(p)
+#'   doc <- decode(p, to = "AnnotatedPlainTextDocument")
 #' }
 #' }
 #' @rdname decode
 #' @importFrom cli cli_progress_step
-setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
+setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
-  if (!to %in% c("data.table", "Annotation", "as.AnnotatedPlainTextDocument")){
+  if (!to %in% c("data.table", "Annotation", "AnnotatedPlainTextDocument")){
     cli_alert_danger(
       "Argument 'to' of `decode()` required to be 'data.table' or 'Annotation'."
     )
@@ -386,9 +359,12 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
     y <- as(.Object, "Annotation")
   } else if (to == "AnnotatedPlainTextDocument"){
     y <- as.AnnotatedPlainTextDocument(
-      x = .Object,
+      x = as(.Object, "subcorpus"), # fn requires cpos slot
       p_attributes = p_attributes,
-      stoplist = stoplist
+      s_attributes = s_attributes,
+      mw = mw,
+      stoplist = stoplist,
+      verbose = verbose
     )
   }
   
@@ -408,7 +384,7 @@ setMethod("decode", "character", function(.Object, to = c("data.table", "Annotat
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes = NULL, p_attributes = NULL, decode = TRUE, verbose = TRUE){
+setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   if (to == "data.table"){
     
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
@@ -475,6 +451,10 @@ setMethod("decode", "slice", function(.Object, to = "data.table", s_attributes =
     }
   } else if (to == "Annotation"){
     y <- as(.Object, "Annotation")
+  } else if (to == "AnnotatedPlainTextDocument"){
+    return(callNextMethod())
+  } else {
+    stop("not implemented")
   }
   y
 })
@@ -487,7 +467,21 @@ setMethod("decode", "partition", function(.Object, to = "data.table", s_attribut
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "subcorpus", function(.Object, to = "data.table", s_attributes = NULL, p_attributes = NULL, decode = TRUE, verbose = TRUE){
+setMethod("decode", "subcorpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
+  
+  if (to == "AnnotatedPlainTextDocument"){
+    return(
+      as.AnnotatedPlainTextDocument(
+        x = .Object,
+        p_attributes = p_attributes,
+        s_attributes = s_attributes,
+        mw = mw,
+        stoplist = stoplist,
+        verbose = verbose
+      )
+    )
+  }
+  
   callNextMethod()
 })
 

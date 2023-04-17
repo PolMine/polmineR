@@ -18,6 +18,7 @@ decode(.Object, ...)
   to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"),
   p_attributes = NULL,
   s_attributes = NULL,
+  mw = NULL,
   stoplist = NULL,
   decode = TRUE,
   verbose = TRUE
@@ -34,9 +35,11 @@ decode(.Object, ...)
 
 \S4method{decode}{slice}(
   .Object,
-  to = "data.table",
+  to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"),
   s_attributes = NULL,
   p_attributes = NULL,
+  mw = NULL,
+  stoplist = NULL,
   decode = TRUE,
   verbose = TRUE
 )
@@ -52,9 +55,11 @@ decode(.Object, ...)
 
 \S4method{decode}{subcorpus}(
   .Object,
-  to = "data.table",
+  to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"),
   s_attributes = NULL,
   p_attributes = NULL,
+  mw = NULL,
+  stoplist = NULL,
   decode = TRUE,
   verbose = TRUE
 )
@@ -71,18 +76,21 @@ decode(.Object, ...)
 \item{to}{The class of the returned object, stated as a length-one
 \code{character} vector.}
 
-\item{p_attributes}{The positional attributes to decode. If \code{NULL}
-(default), all positional attributes will be decoded.}
+\item{p_attributes}{The positional attributes to decode. If \code{NULL} (default),
+all positional attributes will be decoded.}
 
-\item{s_attributes}{The structural attributes to decode. If \code{NULL}
-(default), all structural attributes will be decoded.}
+\item{s_attributes}{The structural attributes to decode. If \code{NULL} (default),
+all structural attributes will be decoded.}
+
+\item{mw}{A \code{character} vector with s-attributes with multiword expressions.
+Used only if \code{to} is 'AnnotatedPlainTextDocument'.}
 
 \item{stoplist}{A \code{character} vector with terms to be dropped.}
 
-\item{decode}{A \code{logical} value, whether to decode token ids and struc
-ids to character strings. If \code{FALSE}, the values of columns for p- and
-s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the
-respective columns are \code{character} vectors.}
+\item{decode}{A \code{logical} value, whether to decode token ids and struc ids to
+character strings. If \code{FALSE}, the values of columns for p- and
+s-attributes will be \code{integer} vectors. If \code{TRUE} (default), the respective
+columns are \code{character} vectors.}
 
 \item{verbose}{A \code{logical} value, whether to output progess messages.}
 
@@ -101,22 +109,20 @@ The return value will correspond to the class specified by argument
 \code{to}.
 }
 \description{
-Decode \code{corpus} or \code{subcorpus} and return class specified by
-argument \code{to}.
+Decode \code{corpus} or \code{subcorpus} and return class specified by argument \code{to}.
 }
 \details{
 The primary purpose of the method is type conversion. By obtaining the corpus
-or subcorpus in the format specified by the argument \code{to}, the data can
-be processed with tools that do not rely on the Corpus Workbench (CWB).
+or subcorpus in the format specified by the argument \code{to}, the data can be
+processed with tools that do not rely on the Corpus Workbench (CWB).
 Supported output formats are \code{data.table} (which can be converted to a
-\code{data.frame} or \code{tibble} easily) or an \code{Annotation} object as
-defined in the package \code{NLP}. Another purpose of decoding the corpus can
-be to rework it, and to re-import it into the CWB (e.g. using the
-\code{cwbtools}-package).
+\code{data.frame} or \code{tibble} easily) or an \code{Annotation} object as defined in the
+package 'NLP'. Another purpose of decoding the corpus can be to rework it,
+and to re-import it into the CWB (e.g. using the 'cwbtools'-package).
 
 An earlier version of the method included an option to decode a single
-s-attribute, which is not supported any more. See the
-\code{s_attribute_decode} function of the package RcppCWB.
+s-attribute, which is not supported any more. See the \code{s_attribute_decode()}
+function of the package RcppCWB.
 
 If \code{.Object} is an \code{integer} vector, it is assumed to be a
 vector of integer ids of p-attributes. The \code{decode}-method will
@@ -186,7 +192,7 @@ if (requireNamespace("NLP")){
   words <- s[a[a$type == "word"]]
   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
   
-  doc <- as.AnnotatedPlainTextDocument(p)
+  doc <- decode(p, to = "AnnotatedPlainTextDocument")
 }
 }
  
