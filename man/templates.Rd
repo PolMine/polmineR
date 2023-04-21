@@ -2,10 +2,10 @@
 % Please edit documentation in R/templates.R
 \name{get_template}
 \alias{get_template}
-\alias{get_template,subcorpus-method}
 \alias{get_template,character-method}
 \alias{get_template,corpus-method}
-\title{Get template for reconstructing full text.}
+\alias{get_template,subcorpus-method}
+\title{Get template for formatting full text output.}
 \usage{
 get_template(.Object, ...)
 
@@ -19,11 +19,30 @@ get_template(.Object, ...)
 \item{.Object}{A \code{corpus}, \code{subcorpus} or \code{partition} object,
 or a length-one \code{character} vector with a corpus ID.}
 
-\item{...}{Further arguments to be defined.}
+\item{...}{Further arguments.}
 
 \item{warn}{A \code{logical} value, whether to issue a warning if template
 is not available. Defaults to \code{FALSE}.}
 }
+\value{
+If a template is available, a \code{list} with the parsed content of the
+template file, otherwise \code{NULL}.
+}
 \description{
-Templates are used to format the markdown/html output of partitions.
+Templates are used to format the markdown/html of fulltext. \code{get_template()}
+loads and parses the content of the JSON template file, if it is found in the
+slot "template" of \code{.Object}.
+}
+\details{
+To learn how to write templates, consult the sample files in the folder
+"templates" of the installed package - see examples.
+}
+\examples{
+use("polmineR")
+corpus("GERMAPARLMINI") \%>\%
+  get_template()
+
+# template files included in the package   
+template_dir <- system.file(package = "polmineR", "templates")
+list.files(template_dir)
 }

@@ -168,11 +168,11 @@ corpus("GERMAPARLMINI") \%>\%
 
 # Decode partition
 P <- partition("REUTERS", places = "kuwait", regex = TRUE)
-dt <- decode(P)
+dt <- decode(P, to = "data.table")
 
 # Previous versions of polmineR offered an option to decode a single
 # s-attribute. This is how you could proceed to get a table with metadata.
-dt <- decode(P, s_attribute = "id", decode = FALSE)
+dt <- decode(P, s_attribute = "id", decode = FALSE, to = "data.table")
 dt[, "word" := NULL]
 dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 

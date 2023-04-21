@@ -205,7 +205,13 @@ setMethod("count", "subcorpus", function(
         TF <- data.table::as.data.table(count_matrix)
         setnames(TF, old = c("V1", "V2"), new = c(p_attr_id, "count"))
       } else {
-        token_table <- decode(.Object, p_attributes = p_attribute, s_attributes = character(), verbose = FALSE)
+        token_table <- decode(
+          .Object,
+          to = "data.table",
+          p_attributes = p_attribute,
+          s_attributes = character(),
+          verbose = FALSE
+        )
         token_table_min <- concatenate_phrases(token_table, phrases = phrases, col = p_attribute)
         TF <- token_table_min[, .N, by = p_attribute]
         setnames(TF, old = "N", new = "count")

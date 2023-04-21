@@ -85,9 +85,9 @@ setMethod(
       txt_raw <- paste(tokens, sep = "\n")
       txt <- gsub("(.)\\s([,.:!?])", "\\1\\2", txt_raw)
     } else {
-      .message("generating paragraphs (template for paras)", verbose = verbose)
+      if (verbose) cli_alert_info("generating paragraphs (using template)")
       articles <- apply(
-        .Object@cpos, 1,
+        .Object@cpos, 1L,
         function(row){
           # Previously, there was a check here whether template is NULL
           # but there is the initial check already!
@@ -135,7 +135,7 @@ setMethod(
           body_li <- Map(
             function(p_type, chunk){
               tokens <- get_token_stream(
-                chunk, corpus = corpus, p_attribute = "word",
+                chunk, corpus = .Object@corpus, p_attribute = "word",
                 encoding = .Object@encoding, cpos = cpos, cutoff = cutoff
               )
               tokens <- .tagTokens(tokens)

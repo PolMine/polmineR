@@ -260,11 +260,11 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' 
 #' # Decode partition
 #' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
-#' dt <- decode(P)
+#' dt <- decode(P, to = "data.table")
 #' 
 #' # Previous versions of polmineR offered an option to decode a single
 #' # s-attribute. This is how you could proceed to get a table with metadata.
-#' dt <- decode(P, s_attribute = "id", decode = FALSE)
+#' dt <- decode(P, s_attribute = "id", decode = FALSE, to = "data.table")
 #' dt[, "word" := NULL]
 #' dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 #' 
@@ -291,6 +291,8 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' @importFrom cli cli_progress_step
 setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
+  if (length(to) != 1L)
+    stop("`decode()` - argument 'to' required to have length 1")
   if (!to %in% c("data.table", "Annotation", "AnnotatedPlainTextDocument")){
     cli_alert_danger(
       "Argument 'to' of `decode()` required to be 'data.table' or 'Annotation'."

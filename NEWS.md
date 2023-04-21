@@ -19,6 +19,13 @@ that would prevent using GERMAPARLMINI as sample data.
 * Tooltips now have auto width - all text is displayed.
 * The s-attribute 'role' has been added to GERMAPARLMINI to make it more suitable
 for demonstration purposes for data linkage.
+* Improved documentation of method `get_template()`, examples added.
+* Formatting instructions for "subtitle" added to template file
+"article.template.json" in folder "templates".
+* The `show()`-method for `corpus` objects gives an information whether a
+template is available.
+* Bug removed from `as.markdown()` that would prevent fulltext display for
+non-parliamentary-protocol documents.
 
 
 # polmineR v0.8.8

@@ -626,7 +626,12 @@ setMethod("show", "corpus", function(object){
   message(sprintf("<<%s>>", class(object)))
   message(sprintf("%-12s", "corpus:"), object@corpus)
   message(sprintf("%-12s", "encoding:"), object@encoding)
-  message(sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]")
+  message(
+    sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]"
+  )
+  message(
+    sprintf("%-12s", "template:"), if (is.na(object@template)) "no" else "yes"
+  )
   message(sprintf("%-12s", "size:"), size(object))
 })
 
