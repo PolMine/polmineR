@@ -26,6 +26,8 @@ for demonstration purposes for data linkage.
 template is available.
 * Bug removed from `as.markdown()` that would prevent fulltext display for
 non-parliamentary-protocol documents.
+* Method `tooltips()` has new argument `fmt` to provide flexibility to assign 
+tooltips based on corpus positions.
 
 
 # polmineR v0.8.8

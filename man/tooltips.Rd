@@ -9,9 +9,14 @@
 \usage{
 tooltips(.Object, tooltips, ...)
 
-\S4method{tooltips}{character}(.Object, tooltips = list())
+\S4method{tooltips}{character}(
+  .Object,
+  tooltips = list(),
+  fmt = "//span[@style=\\"background-color:\%s\\"]",
+  verbose
+)
 
-\S4method{tooltips}{html}(.Object, tooltips = list())
+\S4method{tooltips}{html}(.Object, tooltips = list(), fmt, verbose = TRUE)
 
 \S4method{tooltips}{kwic}(.Object, tooltips, regex = FALSE, ...)
 }
@@ -25,6 +30,13 @@ the character vector is the tooltip to be displayed.}
 \item{...}{Further arguments are interpreted as assignments of tooltips to
 tokens.}
 
+\item{fmt}{A format string with an xpath expression used to look up the node
+where the tooltip is inserted. If missing, a heuristic evaluating the names
+of the \code{tooltips} list decides whether tooltips are inserted based on
+highlighting colors or corpus positions.}
+
+\item{verbose}{A \code{logical} value, whether to show messages.}
+
 \item{regex}{A \code{logical} value, whether character vector values of argument
 \code{tooltips} are interpreted as regular expressions.}
 }
@@ -35,14 +47,14 @@ position in \code{kwic} output or html document.
 \examples{
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-P <- partition("REUTERS", places = "argentina")
-H <- html(P)
-Y <- highlight(H, lightgreen = "higher")
-T <- tooltips(Y, list(lightgreen = "Further information"))
-if (interactive()) T
+a <- partition("REUTERS", places = "argentina")
+b <- html(a)
+c <- highlight(b, lightgreen = "higher")
+d <- tooltips(c, list(lightgreen = "Further information"))
+if (interactive()) d
 
 # Using the tooltips-method in a pipe ...
-h <- P \%>\%
+h <- a \%>\%
   html() \%>\%
   highlight(yellow = c("barrels", "oil", "gas")) \%>\%
   tooltips(list(yellow = "energy"))

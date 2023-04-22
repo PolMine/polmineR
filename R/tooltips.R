@@ -12,22 +12,28 @@ NULL
 #'   the character vector is the tooltip to be displayed.
 #' @param regex A `logical` value, whether character vector values of argument
 #'   `tooltips` are interpreted as regular expressions.
+#' @param fmt A format string with an xpath expression used to look up the node
+#'   where the tooltip is inserted. If missing, a heuristic evaluating the names
+#'   of the `tooltips` list decides whether tooltips are inserted based on 
+#'   highlighting colors or corpus positions.
+#' @param verbose A `logical` value, whether to show messages.
 #' @param ... Further arguments are interpreted as assignments of tooltips to
 #'   tokens.
 #' @name tooltips
 #' @rdname tooltips
 #' @exportMethod tooltips
+#' @importFrom grDevices colors
 #' @examples
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
-#' P <- partition("REUTERS", places = "argentina")
-#' H <- html(P)
-#' Y <- highlight(H, lightgreen = "higher")
-#' T <- tooltips(Y, list(lightgreen = "Further information"))
-#' if (interactive()) T
+#' a <- partition("REUTERS", places = "argentina")
+#' b <- html(a)
+#' c <- highlight(b, lightgreen = "higher")
+#' d <- tooltips(c, list(lightgreen = "Further information"))
+#' if (interactive()) d
 #' 
 #' # Using the tooltips-method in a pipe ...
-#' h <- P %>%
+#' h <- a %>%
 #'   html() %>%
 #'   highlight(yellow = c("barrels", "oil", "gas")) %>%
 #'   tooltips(list(yellow = "energy"))
@@ -39,16 +45,16 @@ setGeneric("tooltips", function(.Object, tooltips, ...){
 
 
 #' @rdname tooltips
-setMethod("tooltips", "character", function(.Object, tooltips = list()){
+setMethod("tooltips", "character", function(.Object, tooltips = list(), fmt = '//span[@style="background-color:%s"]', verbose){
   
-  if (!requireNamespace("xml2", quietly = TRUE)){
+  if (!requireNamespace("xml2", quietly = TRUE))
     stop("package 'xml2' required but not installed")
-  }
+  
   doc <- xml2::read_html(.Object)
-  for (color in names(tooltips)){
+  for (lookup in names(tooltips)){
     nodes <- xml2::xml_find_all(
       doc,
-      xpath = sprintf('//span[@style="background-color:%s"]', color)
+      xpath = sprintf(fmt = fmt, lookup)
     )
     lapply(
       nodes,
@@ -68,7 +74,7 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
         # get tooltip node and bring it in proper shape
         children <- xml2::xml_children(node)
         tipnode <- children[[length(children)]]
-        xml2::xml_text(tipnode) <- tooltips[[color]]
+        xml2::xml_text(tipnode) <- tooltips[[lookup]]
         xml2::xml_name(tipnode) <- "span"
         xml2::xml_attrs(tipnode) <- c(class = "tooltippingtext")
         
@@ -80,12 +86,29 @@ setMethod("tooltips", "character", function(.Object, tooltips = list()){
 })
 
 #' @rdname tooltips
-setMethod("tooltips", "html", function(.Object, tooltips = list()){
+setMethod("tooltips", "html", function(.Object, tooltips = list(), fmt, verbose = TRUE){
   
-  if (!requireNamespace("htmltools", quietly = TRUE)){
+  if (!requireNamespace("htmltools", quietly = TRUE))
     stop("package 'htmltools' required but not available")
+  
+  if (missing(fmt)){
+    if (names(tooltips) %in% colors() | grepl("#[0-9a-fA-F]{6}", names(tooltips))){
+      if (verbose) cli_alert_info("assign tooltips based on color")
+      fmt <- '//span[@style="background-color:%s"]'
+    } else if (!any(is.na(suppressWarnings(as.integer(names(tooltips)))))){
+      if (verbose) cli_alert_info("assign tooltips based on cpos")
+      fmt <- '//span[@id="%s"]'
+    }
   }
-  ret <- htmltools::HTML(tooltips(as.character(.Object), tooltips = tooltips))
+  
+  ret <- htmltools::HTML(
+    tooltips(
+      .Object = as.character(.Object),
+      tooltips = tooltips,
+      fmt = fmt,
+      verbose = verbose
+    )
+  )
   attr(ret, "browsable_html") <- TRUE
   ret
 })
