@@ -96,6 +96,7 @@ Collate:
     'enrich.R'
     'format.R'
     'highlight.R'
+    'href.R'
     'html.R'
     'info.R'
     'means.R'

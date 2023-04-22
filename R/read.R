@@ -4,25 +4,25 @@ NULL
 #' Display full text.
 #' 
 #' Generate text (i.e. html) and display it in the viewer pane of RStudio for
-#' reading it. If called on a \code{partition_bundle}-object, skip through the
+#' reading it. If called on a `partition_bundle`-object, skip through the
 #' partitions contained in the bundle.
 #'
-#' To prepare the html output, the method \code{read} will call \code{html} and
-#' \code{as.markdown} subsequently, the latter method being the actual worker.
+#' To prepare the html output, the method `read()` will call `html()` and
+#' `as.markdown()` subsequently, the latter method being the actual worker.
 #' Consult these methods to understand how preparing the output works.
 #'
-#' The param \code{highlight} can be used to highlight terms. It is expected to
+#' The param `highlight()` can be used to highlight terms. It is expected to
 #' be a named list of character vectors, the names providing the colors, and the
 #' vectors the terms to be highlighted. To add tooltips, use the param
-#' \code{tooltips}.
+#' `tooltips`.
 #'
-#' The method \code{read} is a high-level function that calls the methods
-#' mentioned before. Results obtained through \code{read} can also be obtained
-#' through combining these methods in a pipe using the package \code{magrittr}.
+#' The method `read()` is a high-level function that calls the methods
+#' mentioned before. Results obtained through `read()` can also be obtained
+#' through combining these methods in a pipe using the package 'magrittr'.
 #' That may offer more flexibility, e.g. to highlight matches for CQP queries.
 #' See examples and the documentation for the different methods to learn more.
 #' 
-#' @param .Object an object to be read (\code{partition} or {partition_bundle})
+#' @param .Object aAn object to be read (`partition` or `partition_bundle`).
 #' @param meta a character vector supplying s-attributes for the metainformation
 #'   to be printed; if not stated explicitly, session settings will be used
 #' @param template template to format output
@@ -40,6 +40,7 @@ NULL
 #' @param type the partition type, see documentation for \code{partition}-method
 #' @param cutoff maximum number of tokens to display
 #' @param ... further parameters passed into read
+#' @inheritParams href
 #' @exportMethod read
 #' @rdname read-method
 #' @examples
@@ -65,7 +66,7 @@ setGeneric("read", function(.Object, ...) standardGeneric("read"))
 setMethod("read", "partition",
   function(
     .Object, meta = NULL,
-    highlight = list(), tooltips = list(),
+    highlight = list(), tooltips = list(), href = list(),
     verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
     template = get_template(.Object),
     ...
@@ -73,23 +74,30 @@ setMethod("read", "partition",
     newobj <- if (is.null(get_type(.Object))){
       "subcorpus"
     } else {
-      switch( get_type(.Object), "plpr" = "plpr_subcorpus", "press" = "press_subcorpus" )
+      switch(
+        get_type(.Object),
+        "plpr" = "plpr_subcorpus",
+        "press" = "press_subcorpus"
+      )
     }
     
     read(
-      .Object = as(.Object, newobj), meta = meta, highlight = highlight, tooltips = tooltips,
+      .Object = as(.Object, newobj),
+      meta = meta,
+      highlight = highlight, tooltips = tooltips, href = href,
       verbose = verbose, cpos = cpos, cutoff = cutoff,
       template = template,
       ...
     )
-  })
+  }
+)
 
 #' @rdname read-method
 setMethod(
   "read", "subcorpus",
   function(
     .Object, meta = NULL,
-    highlight = list(), tooltips = list(),
+    highlight = list(), tooltips = list(), href = list(),
     verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
     template = get_template(.Object),
     ...
@@ -102,16 +110,27 @@ setMethod(
         template_meta
     }
     stopifnot(all(meta %in% s_attributes(.Object@corpus)))
-    doc <- html(.Object, meta = meta,  cpos = cpos, cutoff = cutoff,  template = template, ...)
+    doc <- html(
+      .Object,
+      meta = meta,
+      cpos = cpos,
+      cutoff = cutoff,
+      template = template,
+      ...
+    )
     
-    if (length(highlight) > 0L) {
+    if (length(highlight) > 0L)
       doc <- highlight(doc, highlight = highlight)
-      if (length(tooltips) > 0L){
-        doc <- tooltips(doc, tooltips = tooltips)
-      }
-    }
+    
+    if (length(tooltips) > 0L)
+      doc <- tooltips(doc, tooltips = tooltips)
+    
+    if (length(href) > 0L)
+      doc <- href(doc, href = href)
+
     doc
-  })
+  }
+)
 
 #' @rdname read-method
 setMethod("read", "partition_bundle", function(.Object, highlight = list(), cpos = TRUE, ...){
@@ -170,7 +189,9 @@ setMethod("read", "kwic", function(.Object, i = NULL, type){
   if (length(i) > 1L){
     for (j in i){
       read(.Object, i = j, type = type)
-      user <- readline(prompt = "Hit 'q' to quit or any other key to continue.\n")
+      user <- readline(
+        prompt = "Hit 'q' to quit or any other key to continue.\n"
+      )
       if (user == "q") return( invisible(NULL) )
     }
   } else {

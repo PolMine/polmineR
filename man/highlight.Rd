@@ -30,7 +30,8 @@ vectors of terms (or regular expressions); the name needs to be a
 valid color name. It is also possible to pass in a \code{matrix} with ranges (as
 returned by \code{cpos()}).}
 
-\item{highlight}{A character vector, or a list of \code{character} or \code{integer} vectors.}
+\item{highlight}{A character vector, or a list of \code{character} or \code{integer}
+vectors.}
 
 \item{regex}{Logical, whether character vectors are interpreted as regular
 expressions.}
@@ -45,11 +46,11 @@ Highlight tokens in fulltext based on exact match, a regular expression or
 corpus position in \code{kwic} output or \code{html} document.
 }
 \details{
-If \code{highlight} is a character vector, the names of the vector are
-interpreted as colors. If \code{highlight} is a list, the names of the list
-are considered as colors. Values can be character values or integer values
-with token ids. Colors are inserted into the output html and need to be
-digestable for the browser used.
+If \code{highlight} is a character vector, the names of the vector are interpreted
+as colors. If \code{highlight} is a list, the names of the list are considered as
+colors. Values can be character values or integer values with token ids.
+Colors are inserted into the output html and need to be digestable for the
+browser used.
 }
 \examples{
 use("polmineR")
