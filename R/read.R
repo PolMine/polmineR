@@ -28,18 +28,21 @@ NULL
 #' @param template template to format output
 #' @param highlight a named list of character vectors (see details)
 #' @param tooltips a named list (names are colors, vectors are tooltips)
+#' @param annotation Object inheriting from `subcorpus` class. If provided,
+#'   `highlight`, `tooltips` and `href` will be taken from the slot 'annotations'
+#'   of this object.
 #' @param verbose logical
-#' @param cpos logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
-#' tag of a html element surrounding the tokens
-#' @param col column of \code{data.table} with terms to be highlighted
-#' @param partition_bundle a \code{partition_bundle} object
-#' @param def a named list used to define a partition (names are s-attributes, vectors are
-#' values of s-attributes)
-#' @param i if \code{.Object} is an object of the classes \code{kwic} or \code{hits},
-#' the ith kwic line or hit to derive a partition to be inspected from
-#' @param type the partition type, see documentation for \code{partition}-method
+#' @param cpos logical, if `TRUE`, corpus positions will be assigned (invisibly)
+#'   to a cpos tag of a html element surrounding the tokens
+#' @param col column of `data.table` with terms to be highlighted
+#' @param partition_bundle A `partition_bundle` object.
+#' @param def a named list used to define a partition (names are s-attributes,
+#'   vectors are values of s-attributes)
+#' @param i If `.Object` is an object of the classes `kwic` or `hits`, the ith
+#'   kwic line or hit to derive a partition to be inspected from
+#' @param type the partition type, see documentation for `partition()`-method
 #' @param cutoff maximum number of tokens to display
-#' @param ... further parameters passed into read
+#' @param ... Further parameters passed into `read()`.
 #' @inheritParams href
 #' @exportMethod read
 #' @rdname read-method
@@ -98,6 +101,7 @@ setMethod(
   function(
     .Object, meta = NULL,
     highlight = list(), tooltips = list(), href = list(),
+    annotation,
     verbose = TRUE, cpos = TRUE, cutoff = getOption("polmineR.cutoff"), 
     template = get_template(.Object),
     ...
@@ -118,6 +122,64 @@ setMethod(
       template = template,
       ...
     )
+    
+    if (!missing(annotation)){
+      if (!inherits(annotation, "subcorpus"))
+        stop("argument 'annotation' required to inherit from subcorpus")
+      
+      if (!all(sapply(annotation@annotations, length) == nrow(annotation@cpos)))
+        stop("length of all annotations not identical with number of regions")
+      
+      if ("highlight" %in% names(annotation@annotations)){
+        highlight <- split(
+          ranges_to_cpos(annotation@cpos),
+          unlist(
+            mapply(
+              rep,
+              x = annotation@annotations[["highlight"]],
+              times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+              SIMPLIFY = FALSE
+            )
+          )
+        )
+      }
+      
+      if ("tooltips" %in% names(annotation@annotations)){
+        tooltips <- as.list(
+          setNames(
+            unname(
+              unlist(
+                mapply(
+                  rep,
+                  x = annotation@annotations[["tooltips"]],
+                  times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+                  SIMPLIFY = FALSE
+                )
+              )
+            ),
+            as.character(ranges_to_cpos(annotation@cpos))
+          )
+        )
+      }
+      
+      if ("href" %in% names(annotation@annotations)){
+        href <- as.list(
+          setNames(
+            unname(
+              unlist(
+                mapply(
+                  rep,
+                  x = annotation@annotations[["href"]],
+                  times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+                  SIMPLIFY = FALSE
+                )
+              )
+            ),
+            as.character(ranges_to_cpos(annotation@cpos))
+          )
+        )
+      }
+    }
     
     if (length(highlight) > 0L)
       doc <- highlight(doc, highlight = highlight)

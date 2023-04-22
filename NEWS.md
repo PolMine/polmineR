@@ -28,7 +28,9 @@ template is available.
 non-parliamentary-protocol documents.
 * Method `tooltips()` has new argument `fmt` to provide flexibility to assign 
 tooltips based on corpus positions.
-
+* New function `href()` to add hypertext references to fulltext output.
+* Method `read()` has new argument `annotation` to get values for arguments
+`highlight`, `tooltips` and `href` from a subcorpus object.
 
 # polmineR v0.8.8
 

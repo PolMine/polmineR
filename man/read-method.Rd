@@ -32,6 +32,7 @@ read(.Object, ...)
   highlight = list(),
   tooltips = list(),
   href = list(),
+  annotation,
   verbose = TRUE,
   cpos = TRUE,
   cutoff = getOption("polmineR.cutoff"),
@@ -52,7 +53,7 @@ read(.Object, ...)
 \arguments{
 \item{.Object}{aAn object to be read (\code{partition} or \code{partition_bundle}).}
 
-\item{...}{further parameters passed into read}
+\item{...}{Further parameters passed into \code{read()}.}
 
 \item{meta}{a character vector supplying s-attributes for the metainformation
 to be printed; if not stated explicitly, session settings will be used}
@@ -67,24 +68,28 @@ highlighted text that has been generated previously, or corpus positions.}
 
 \item{verbose}{logical}
 
-\item{cpos}{logical, if TRUE, corpus positions will be assigned (invisibly) to a cpos
-tag of a html element surrounding the tokens}
+\item{cpos}{logical, if \code{TRUE}, corpus positions will be assigned (invisibly)
+to a cpos tag of a html element surrounding the tokens}
 
 \item{cutoff}{maximum number of tokens to display}
 
 \item{template}{template to format output}
 
+\item{annotation}{Object inheriting from \code{subcorpus} class. If provided,
+\code{highlight}, \code{tooltips} and \code{href} will be taken from the slot 'annotations'
+of this object.}
+
 \item{col}{column of \code{data.table} with terms to be highlighted}
 
-\item{partition_bundle}{a \code{partition_bundle} object}
+\item{partition_bundle}{A \code{partition_bundle} object.}
 
-\item{def}{a named list used to define a partition (names are s-attributes, vectors are
-values of s-attributes)}
+\item{def}{a named list used to define a partition (names are s-attributes,
+vectors are values of s-attributes)}
 
-\item{i}{if \code{.Object} is an object of the classes \code{kwic} or \code{hits},
-the ith kwic line or hit to derive a partition to be inspected from}
+\item{i}{If \code{.Object} is an object of the classes \code{kwic} or \code{hits}, the ith
+kwic line or hit to derive a partition to be inspected from}
 
-\item{type}{the partition type, see documentation for \code{partition}-method}
+\item{type}{the partition type, see documentation for \code{partition()}-method}
 }
 \description{
 Generate text (i.e. html) and display it in the viewer pane of RStudio for
