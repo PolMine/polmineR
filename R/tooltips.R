@@ -92,7 +92,7 @@ setMethod("tooltips", "html", function(.Object, tooltips = list(), fmt, verbose 
     stop("package 'htmltools' required but not available")
   
   if (missing(fmt)){
-    if (names(tooltips) %in% colors() | grepl("#[0-9a-fA-F]{6}", names(tooltips))){
+    if (all(names(tooltips) %in% colors() | grepl("#[0-9a-fA-F]{6}", names(tooltips)))){
       if (verbose) cli_alert_info("assign tooltips based on color")
       fmt <- '//span[@style="background-color:%s"]'
     } else if (!any(is.na(suppressWarnings(as.integer(names(tooltips)))))){

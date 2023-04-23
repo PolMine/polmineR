@@ -29,7 +29,7 @@ href <- function(x, href, fmt, verbose = TRUE){
     stop("package 'htmltools' required but not available")
   
   if (missing(fmt)){
-    if (names(href) %in% colors() | grepl("#[0-9a-fA-F]{6}", names(href))){
+    if (all(names(href) %in% colors() | grepl("#[0-9a-fA-F]{6}", names(href)))){
       if (verbose) cli_alert_info("assign href based on color")
       fmt <- '//span[@style="background-color:%s"]'
     } else if (!any(is.na(suppressWarnings(as.integer(names(href)))))){

@@ -141,7 +141,17 @@ setMethod(
               tokens <- .tagTokens(tokens)
               paste(
                 template[["paragraphs"]][["format"]][[p_type]][1],
-                paste(tokens, collapse = " "),
+                paste(
+                  stringi::stri_c(
+                    ifelse(
+                      c(TRUE, grepl("[,.:!?]", tokens[2L:length(tokens)])),
+                      "",
+                      " "
+                    ),
+                    tokens
+                  ),
+                  collapse = ""
+                ),
                 template[["paragraphs"]][["format"]][[p_type]][2],
                 sep = ""
               )
@@ -150,19 +160,14 @@ setMethod(
           )
           article <- c(meta_values, unlist(body_li))
           md <- paste(article, collapse = "\n\n")
-          gsub("(.)\\s([,.:!?])", "\\1\\2", md)
+          md
         }
       )
       txt <- paste(c("\n", unlist(articles)), collapse = '\n* * *\n')
     }
-    txt
-    meta_info <- paste(
-      sapply(meta, function(x) sprintf("%s: %s", x, paste(s_attributes(.Object, x), collapse = "|"))),
-      collapse = " // "
-    )
+    
     corpus_info <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
-    header <- paste(corpus_info, paste("### ", meta_info), "\n\n", sep = "")
-    txt <- paste(header, txt, '\n', collapse = "\n")
+    txt <- paste(corpus_info, txt, '\n', collapse = "\n")
     txt
   })
 

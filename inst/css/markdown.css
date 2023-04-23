@@ -39,9 +39,19 @@ h6 {
    font-size:0.8em;
 }
 
+a:link {
+   color: black;
+   border-bottom: 1px dotted black;
+   text-decoration: none;
+}
+
 a:visited {
    color: rgb(50%, 0%, 50%);
+   text-decoration: none; 
 }
+
+a:hover { text-decoration: none; }
+a:active { text-decoration: none; }
 
 pre, img {
   max-width: 100%;
