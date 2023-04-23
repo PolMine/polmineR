@@ -31,6 +31,8 @@ tooltips based on corpus positions.
 * New function `href()` to add hypertext references to fulltext output.
 * Method `read()` has new argument `annotation` to get values for arguments
 `highlight`, `tooltips` and `href` from a subcorpus object.
+* Internally, variants of opening/closing double quotes are removed that interfere
+with html output.
 
 # polmineR v0.8.8
 

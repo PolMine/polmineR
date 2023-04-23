@@ -210,7 +210,11 @@ setMethod("read", "data.table", function(.Object, col, partition_bundle, highlig
   DT <- .Object[which(.Object[[col]] > 0)]
   partitionsToGet <- DT[["partition"]]
   if (col == "TOTAL") col <- colnames(.Object)[2:(ncol(.Object)-1)]
-  toRead <- as.bundle(lapply(partitionsToGet, function(x) partition_bundle@objects[[x]]))
+  toRead <- as.bundle(
+    lapply(
+      partitionsToGet,
+      function(x) partition_bundle@objects[[x]])
+  )
   read(toRead, highlight = list(yellow = col), ...)
 })
 

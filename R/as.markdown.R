@@ -3,18 +3,18 @@ NULL
 
 #' Get markdown-formatted full text of a partition.
 #' 
-#' The method is the worker behind the \code{read}-method, which will be called
-#' usually to reconstruct the full text of a \code{partition} and read it. The
-#' \code{as.markdown}-method can be customized for different classes inheriting
-#' from the \code{partition}-class.
+#' The method is the worker behind the `read()`-method, which will be called
+#' usually to reconstruct the full text of a `partition` and read it. The
+#' `as.markdown()`-method can be customized for different classes inheriting
+#' from the `partition`-class.
 #' 
 #' @param .Object The object to be converted, a \code{partition}, or a class
 #'   inheriting from \code{partition}, such as \code{plpr_partition}.
 #' @param meta The metainformation (s-attributes) to be displayed.
-#' @param cpos A \code{logical} value, whether to add cpos as ids in span elements.
-#' @param interjections A \code{logical} value, whether to format interjections.
-#' @param cutoff The maximum number of tokens to reconstruct, to avoid that full text is
-#' excessively long.
+#' @param cpos A `logical` value, whether to add cpos as ids in span elements.
+#' @param interjections A `logical` value, whether to format interjections.
+#' @param cutoff The maximum number of tokens to reconstruct, to avoid that full
+#'   text is excessively long.
 #' @param template A template for formating output.
 #' @param verbose A \code{logical} value, whether to output messages.
 #' @param ... further arguments
@@ -32,10 +32,32 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
 # vectorized sprintf is considerably faster than shiny::span,
 # an alternative that could be considered
 .tagTokens <- function(tokens){
-  if (is.null(names(tokens))) {
-    return( sprintf('<span token="%s" class="fulltext">%s</span>', tokens, tokens) )
+  
+  # This is different from purging markdown doc from signs that would interfere
+  # with markdown formatting syntax: We replace signs that would mess up 
+  # opening and closing double quotes here.
+  
+  if ('"' %in% tokens) tokens[which(tokens == '"')] <- "'"
+  if ('„' %in% tokens) tokens[which(tokens == '„')] <- "'"
+  if ('“' %in% tokens) tokens[which(tokens == '“')] <- "'"
+  
+  if (is.null(names(tokens))){
+    return(
+      sprintf(
+        '<span token="%s" class="fulltext">%s</span>',
+        tokens,
+        tokens
+      )
+    )
   } else {
-    return( sprintf('<span id="%s" token="%s" class="fulltext">%s</span>', names(tokens), tokens, tokens) )
+    return(
+      sprintf(
+        '<span id="%s" token="%s" class="fulltext">%s</span>',
+        names(tokens),
+        tokens,
+        tokens
+      )
+    )
   }
 }
 
@@ -70,7 +92,9 @@ setMethod(
     .message("as.markdown", verbose = verbose)
     # ensure that template requested is available
     if (is.null(template)){
-      warning(sprintf("No template available for corpus '%s', using default template.", get_corpus(.Object)))
+      cli_alert_warning(
+        "No template available for corpus {.val {get_corpus(.Object)}}. Using default template."
+      )
       template <- default_template
     }
     if (is.null(template[["paragraphs"]])){

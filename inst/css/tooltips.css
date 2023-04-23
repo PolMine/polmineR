@@ -8,7 +8,8 @@
 /* Tooltip text */
 .tooltipping .tooltippingtext {
     visibility: hidden;
-    width: auto;
+    /* width: auto; */
+    width: 180px;
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -24,7 +25,8 @@
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    margin-left: -60px;
+    /* margin-left: auto; */
+    margin-left: -90px;
 
     /* Fade in tooltip */
     opacity: 0;
