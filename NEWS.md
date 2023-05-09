@@ -1,4 +1,4 @@
-# polmineR v0.8.8.9001-9003
+# polmineR v0.8.8.9001-9004
 
 * `split()` sets type of `subcorpus` to `NA`, causing an error if another 
 split is performed. Fixed.

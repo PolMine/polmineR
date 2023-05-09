@@ -9,7 +9,7 @@
 .tooltipping .tooltippingtext {
     visibility: hidden;
     /* width: auto; */
-    width: 180px;
+    width: 240px;
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -26,7 +26,7 @@
     bottom: 125%;
     left: 50%;
     /* margin-left: auto; */
-    margin-left: -90px;
+    margin-left: -120px;
 
     /* Fade in tooltip */
     opacity: 0;
