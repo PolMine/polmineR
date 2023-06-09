@@ -41,7 +41,7 @@ hits(.Object, ...)
   freq = FALSE,
   mc = FALSE,
   verbose = TRUE,
-  progress = TRUE,
+  progress = FALSE,
   ...
 )
 

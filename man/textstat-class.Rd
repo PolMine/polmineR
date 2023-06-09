@@ -152,11 +152,11 @@ htmlwidgets in html documents requires that pandoc is installed. To avoid
 an error, a formatted \code{data.table} is returned by \code{knit_print} if
 pandoc is not available.
 
-The \code{format()}-method returns a pretty-printed and minimized
-version of the \code{data.table} in the \code{stat}-slot of the
-\code{textstat}-object: It will round all numeric columns to the number of decimal
-numbers specified by \code{digits}, and drop all columns with token ids. The
-return value is a \code{data.table}.
+The \code{format()}-method returns a pretty-printed and minimized version
+of the \code{data.table} in the \code{stat}-slot of the \code{textstat}-object: It will
+round all numeric columns to the number of decimal numbers specified by
+\code{digits}, and drop all columns with token ids. The return value is a
+\code{data.table}.
 
 Using the reference semantics of \code{data.table} objects (i.e. inplace
 modification) has great advantages for  memory efficiency. But there may be

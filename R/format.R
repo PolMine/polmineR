@@ -1,17 +1,19 @@
 #' @exportMethod format
 #' @rdname textstat-class
-#' @details The \code{format()}-method returns a pretty-printed and minimized
-#'   version of the \code{data.table} in the \code{stat}-slot of the
-#'   \code{textstat}-object: It will round all numeric columns to the number of decimal
-#'   numbers specified by \code{digits}, and drop all columns with token ids. The 
-#'   return value is a \code{data.table}.
+#' @details The `format()`-method returns a pretty-printed and minimized version
+#'   of the `data.table` in the `stat`-slot of the `textstat`-object: It will
+#'   round all numeric columns to the number of decimal numbers specified by
+#'   `digits`, and drop all columns with token ids. The return value is a
+#'   `data.table`.
 #' @importFrom data.table copy
 setMethod("format", "textstat", function(x, digits = 2L){
-  dt <- copy(x@stat) # create copy, to avoid confusion resulting from in-place modification
+  # create copy, to avoid confusion resulting from in-place modification
+  dt <- copy(x@stat) 
   if (is(dt)[1] == "data.table"){
     round(dt, digits = digits) # this is an in-place operation
-    id_columns <- grep("_id", colnames(dt)) # get columns with token ids
-    for (i in id_columns) dt[[i]] <- NULL # remove token id columns
+    id_cols <- grep("_id", colnames(dt)) # get columns with token ids
+    id_cols <- intersect(id_cols, paste(p_attributes(x), "id", sep = "_"))
+    for (del in id_cols) dt[, (del) := NULL] # remove token id columns
   } else {
     stop("No data.table in slot 'stat' of the object - cannot show output.")
   }

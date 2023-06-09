@@ -62,17 +62,17 @@ inheriting from \code{partition}, such as \code{plpr_partition}.}
 
 \item{cpos}{A \code{logical} value, whether to add cpos as ids in span elements.}
 
-\item{cutoff}{The maximum number of tokens to reconstruct, to avoid that full text is
-excessively long.}
+\item{cutoff}{The maximum number of tokens to reconstruct, to avoid that full
+text is excessively long.}
 
 \item{verbose}{A \code{logical} value, whether to output messages.}
 
 \item{interjections}{A \code{logical} value, whether to format interjections.}
 }
 \description{
-The method is the worker behind the \code{read}-method, which will be called
+The method is the worker behind the \code{read()}-method, which will be called
 usually to reconstruct the full text of a \code{partition} and read it. The
-\code{as.markdown}-method can be customized for different classes inheriting
+\code{as.markdown()}-method can be customized for different classes inheriting
 from the \code{partition}-class.
 }
 \examples{

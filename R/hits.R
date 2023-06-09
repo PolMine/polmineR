@@ -157,7 +157,7 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
 
 
 #' @rdname hits
-setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = TRUE, ...){
+setMethod("hits", "character", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, mc = FALSE, verbose = TRUE, progress = FALSE, ...){
   hits(
     .Object = corpus(.Object),
     query = query, cqp = cqp, check = check,

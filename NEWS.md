@@ -33,6 +33,10 @@ tooltips based on corpus positions.
 `highlight`, `tooltips` and `href` from a subcorpus object.
 * Internally, variants of opening/closing double quotes are removed that interfere
 with html output.
+* The `format()` method used internally to produce output does not drop
+s-attributes ending on "_id" any more #253.
+* The default value for argument `progress` is FALSE for the `hits()` method for
+character class objects, as a matter of consistency #252.
 
 # polmineR v0.8.8
 
