@@ -137,15 +137,18 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
   
   if (freq) size <- TRUE
   if (size){
+    if (verbose) cli_progress_step("getting sizes")
     .message("getting sizes", verbose = verbose)
     SIZE <- size(.Object, s_attribute = s_attribute)
     setkeyv(TF, cols = s_attribute)
     TF <- TF[SIZE]
     if (isFALSE(fill)) TF <- TF[!is.na(TF[["query"]])]
     TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
+    if (verbose) cli_progress_done()
     if (freq){
-      .message("frequencies", verbose = verbose)
+      if (verbose) cli_progress_step("calculate frequencies")
       TF[, "freq" := TF[["count"]] / TF[["size"]]]
+      if (verbose) cli_progress_done()
     }
   }
   retval <- as(as(.Object, "corpus"), "hits")

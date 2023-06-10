@@ -238,6 +238,7 @@ setMethod("split", "corpus", function(
   )
   strucs <- 0L:(struc_size - 1L)
   
+  if (verbose) cli_progress_step("get regions and get values")
   cpos_matrix <- get_region_matrix(
     corpus = x@corpus, registry = x@registry_dir,
     s_attribute = s_attribute, strucs = strucs
@@ -245,9 +246,16 @@ setMethod("split", "corpus", function(
   strucs_values <- struc2str(x = x, s_attr = s_attribute, struc = strucs)
   cpos_list <- split(cpos_matrix, strucs_values)
   struc_list <- split(strucs, strucs_values)
+  if (verbose) cli_progress_done()
   
   if (!is.null(values)){
-    for (i in rev(which(!names(cpos_list) %in% values))) cpos_list[[i]] <- NULL
+    if (verbose) cli_progress_step("drop values")
+    drop <- which(!names(cpos_list) %in% values)
+    if (length(drop) > 0L){
+      cpos_list <- cpos_list[-drop]
+      struc_list <- struc_list[-drop]
+    }
+    if (verbose) cli_progress_done()
   }
   
   prototype <- as(x, new_class)
@@ -265,17 +273,21 @@ setMethod("split", "corpus", function(
     y
   }
   
+  if (verbose) cli_progress_step("instantiate objects")
   y@objects <- if (progress)
     pblapply(seq_along(cpos_list), .fn, cl = mc)
   else
     lapply(seq_along(cpos_list), .fn)
+  if (verbose) cli_progress_done()
   
+  if (verbose) cli_progress_step("assign names")
   if (nchar(prefix) == 0L){
     names(y@objects) <- names(cpos_list)
   } else {
     names(y) <- paste(prefix, names(cpos_list), sep = "_")
   }
   names(y@objects) <- sapply(y@objects, function(x) x@name)
+  if (verbose) cli_progress_done()
   
   y
 })

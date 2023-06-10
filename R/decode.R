@@ -329,14 +329,20 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
         function(s_attr){
           if (verbose)
             cli_progress_step(sprintf("decoding s-attribute: %s", s_attr))
+          
           struc <- cl_cpos2struc(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
-            s_attribute = s_attr, cpos = 0L:max_cpos
+            corpus = .Object@corpus,
+            registry = .Object@registry_dir,
+            s_attribute = s_attr,
+            cpos = 0L:max_cpos
           )
-          if (decode){
+          
+          if (decode && s_attr_has_values(s_attr, x = .Object)){
             str <- cl_struc2str(
-              corpus = .Object@corpus, registry = .Object@registry_dir,
-              s_attribute = s_attr, struc = struc
+              corpus = .Object@corpus,
+              registry = .Object@registry_dir,
+              s_attribute = s_attr,
+              struc = struc
             )
             Encoding(str) <- encoding(.Object)
             return(as.nativeEnc(str, from = encoding(.Object)))
@@ -424,8 +430,8 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
       s_attr_dt[, "struc" := strucs]
       
       for (s_attr in s_attributes){
-        if (decode){
-          if (verbose) message("... decoding s_attribute ", s_attr)
+        if (decode && s_attr_has_values(s_attr, x = .Object)){
+          if (verbose) cli_progress_step("decoding s_attribute {.val  s_attr}")
           str <- cl_struc2str(
             corpus = .Object@corpus,
             registry = .Object@registry_dir,

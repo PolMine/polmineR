@@ -37,6 +37,8 @@ with html output.
 s-attributes ending on "_id" any more #253.
 * The default value for argument `progress` is FALSE for the `hits()` method for
 character class objects, as a matter of consistency #252.
+* Performance improvement for application of values in `split()` for `corpus`
+objects.
 
 # polmineR v0.8.8
 
