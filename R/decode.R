@@ -407,19 +407,30 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
       if (verbose) cli_progress_done()
     }
     
-    if (is.null(s_attributes)) s_attributes <- s_attributes(.Object)
+    if (is.null(s_attributes)){
+      if (verbose)
+        cli_alert_info(
+          "argument `s_attributes` missing - decode all s-attributes"
+          )
+      s_attributes <- s_attributes(.Object)
+    }
     if (length(s_attributes) > 0L){
       if (!all(s_attributes %in% s_attributes(.Object)))
         stop("Not all s_attributes provided are available.")
+      
       strucs <- RcppCWB::cl_cpos2struc(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
-        s_attribute = s_attributes[1], cpos = .Object@cpos[,1]
+        corpus = .Object@corpus,
+        registry = .Object@registry_dir,
+        s_attribute = s_attributes[1],
+        cpos = .Object@cpos[,1]
       )
       
       s_attr_dt <- data.table(
         RcppCWB::get_region_matrix(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
-          s_attribute = s_attributes[1], strucs = strucs
+          corpus = .Object@corpus,
+          registry = .Object@registry_dir,
+          s_attribute = s_attributes[1],
+          strucs = strucs
         )
       )
       setnames(
@@ -431,7 +442,7 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
       
       for (s_attr in s_attributes){
         if (decode && s_attr_has_values(s_attr, x = .Object)){
-          if (verbose) cli_progress_step("decoding s_attribute {.val  s_attr}")
+          if (verbose) cli_progress_step("decoding s_attribute {.val  {s_attr}}")
           str <- cl_struc2str(
             corpus = .Object@corpus,
             registry = .Object@registry_dir,
