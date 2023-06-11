@@ -401,6 +401,7 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
       stop("Not all p_attributes provided are available.")
     
     y <- data.table(cpos = ranges_to_cpos(.Object@cpos))
+    setkeyv(y, cols = "cpos") # col cpos used repeatedly to  merge s-attributes
 
     for (p_attr in p_attributes){
       if (verbose) cli_progress_step("decoding p_attribute {.val {p_attr}}")
@@ -422,42 +423,42 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
 
       for (i in 1L:length(s_attributes)){
         if (verbose)
-          cli_alert_info("decode s_attribute {.val  {s_attributes[i]}}")
+          cli_progress_step("decoding s_attribute {.val  {s_attributes[i]}}")
         
-        if (verbose) cli_progress_step("get strucs")
-        # Let C++ do it, should should be much faster
-        strucs <- unique(unlist(
-          lapply(
-            1L:nrow(.Object@cpos),
-            function(j){
-              struc_vec <- RcppCWB::region_to_strucs(
-                s_attribute = s_attributes[i],
-                corpus = .Object@corpus,
-                registry = .Object@registry_dir,
-                region = .Object@cpos[j,]
-              )
-              if (any(is.na(struc_vec))) return(NULL)
-              struc_vec[1]:struc_vec[2]
-            }
-          )
-        ))
-        # address scenario: No matches at all
-        
-        if (verbose) cli_progress_step("get regions")
-        region_dt <- data.table(
-          RcppCWB::get_region_matrix(
-            corpus = .Object@corpus,
-            registry = .Object@registry_dir,
-            s_attribute = s_attributes[i],
-            strucs = strucs
+        # Tested: strucs, regions and corpus positions will be identical if
+        # i > 2 and current s-attribute is sibling of previous sibling. But
+        # the cost of learning whether s-attributes are siblings consumes the 
+        # performance gain, so we get strucs, regions and cpos anew.
+        # Let C++ do it? Should should be much faster
+        strucs <- unique(
+          unlist(
+            lapply(
+              1L:nrow(.Object@cpos),
+              function(j){
+                struc_vec <- RcppCWB::region_to_strucs(
+                  s_attribute = s_attributes[i],
+                  corpus = .Object@corpus,
+                  registry = .Object@registry_dir,
+                  region = .Object@cpos[j,]
+                )
+                if (any(is.na(struc_vec))) return(NULL)
+                struc_vec[1]:struc_vec[2]
+              }
+            )
           )
         )
-        setnames(region_dt, old = c("V1", "V2"), new = c("begin", "end"))
-        region_dt[, "struc" := strucs]
-
-        if (decode && s_attr_has_values(s_attributes[i], x = .Object)){
-          if (verbose) cli_progress_step("decode")
-          
+        if (length(strucs) == 0L) next
+        
+        regions <- RcppCWB::get_region_matrix(
+          corpus = .Object@corpus,
+          registry = .Object@registry_dir,
+          s_attribute = s_attributes[i],
+          strucs = strucs
+        )
+        cpos <- RcppCWB::ranges_to_cpos(regions)
+        
+        decode <- decode && s_attr_has_values(s_attributes[i], x = .Object)
+        if (decode){
           str <- cl_struc2str(
             corpus = .Object@corpus,
             registry = .Object@registry_dir,
@@ -465,25 +466,23 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
             struc = strucs
           )
           Encoding(str) <- encoding(.Object)
-          region_dt[, (s_attributes[i]) := as.nativeEnc(str, from = encoding(.Object))]
-        } else {
-          region_dt[, (s_attributes[i]) := strucs]
         }
         
-        if (verbose) cli_progress_step("unfold")
-        unfold <- function(.SD){
-          dt <- data.table(
-            cpos = .SD[["begin"]]:.SD[["end"]],
-            s_attr = .SD[[s_attributes[i]]]
+        values <- data.table(
+          cpos = cpos,
+          attr = do.call(
+            c,
+            mapply(
+              rep,
+              x = if (decode) str else strucs,
+              times = (regions[,2] - regions[,1]) + 1
+            )
           )
-          setnames(dt, old = "s_attr", new = s_attributes[i])
-          dt
-        }
-        ext <- region_dt[, unfold(.SD), by = "struc", .SDcols = c(s_attributes[i], "begin", "end")]
-        ext[, "struc" := NULL]
-        
-        if (verbose) cli_progress_step("merge")
-        y <- ext[y, on = "cpos"]
+        )
+        setnames(values, old = "attr", new = s_attributes[i])
+
+        y <- values[y, on = "cpos"]
+        if (verbose) cli_progress_done()
       }
       
       setcolorder(y, neworder = c("cpos", p_attributes, s_attributes))

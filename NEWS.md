@@ -39,6 +39,8 @@ s-attributes ending on "_id" any more #253.
 character class objects, as a matter of consistency #252.
 * Performance improvement for application of values in `split()` for `corpus`
 objects.
+* The `decode()` method for `subcorpus` objects is now able to process nested 
+corpora. Performance gain for all scenarios.
 
 # polmineR v0.8.8
 
