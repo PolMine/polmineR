@@ -475,7 +475,8 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
             mapply(
               rep,
               x = if (decode) str else strucs,
-              times = (regions[,2] - regions[,1]) + 1
+              times = (regions[,2] - regions[,1]) + 1,
+              SIMPLIFY = FALSE
             )
           )
         )
