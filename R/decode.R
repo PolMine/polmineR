@@ -393,6 +393,7 @@ setMethod("decode", "character", function(.Object, to = c("data.table", "Annotat
 #' @exportMethod decode
 #' @rdname decode
 setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
+  
   if (to == "data.table"){
     
     if (is.null(p_attributes)) p_attributes <- p_attributes(.Object)
@@ -414,58 +415,77 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
           )
       s_attributes <- s_attributes(.Object)
     }
+    
     if (length(s_attributes) > 0L){
       if (!all(s_attributes %in% s_attributes(.Object)))
         stop("Not all s_attributes provided are available.")
-      
-      strucs <- RcppCWB::cl_cpos2struc(
-        corpus = .Object@corpus,
-        registry = .Object@registry_dir,
-        s_attribute = s_attributes[1],
-        cpos = .Object@cpos[,1]
-      )
-      
-      s_attr_dt <- data.table(
-        RcppCWB::get_region_matrix(
-          corpus = .Object@corpus,
-          registry = .Object@registry_dir,
-          s_attribute = s_attributes[1],
-          strucs = strucs
+
+      for (i in 1L:length(s_attributes)){
+        if (verbose)
+          cli_alert_info("decode s_attribute {.val  {s_attributes[i]}}")
+        
+        if (verbose) cli_progress_step("get strucs")
+        # Let C++ do it, should should be much faster
+        strucs <- unique(unlist(
+          lapply(
+            1L:nrow(.Object@cpos),
+            function(j){
+              struc_vec <- RcppCWB::region_to_strucs(
+                s_attribute = s_attributes[i],
+                corpus = .Object@corpus,
+                registry = .Object@registry_dir,
+                region = .Object@cpos[j,]
+              )
+              if (any(is.na(struc_vec))) return(NULL)
+              struc_vec[1]:struc_vec[2]
+            }
+          )
+        ))
+        # address scenario: No matches at all
+        
+        if (verbose) cli_progress_step("get regions")
+        region_dt <- data.table(
+          RcppCWB::get_region_matrix(
+            corpus = .Object@corpus,
+            registry = .Object@registry_dir,
+            s_attribute = s_attributes[i],
+            strucs = strucs
+          )
         )
-      )
-      setnames(
-        s_attr_dt,
-        old = c("V1", "V2"),
-        new = c("cpos_left", "cpos_right")
-      )
-      s_attr_dt[, "struc" := strucs]
-      
-      for (s_attr in s_attributes){
-        if (decode && s_attr_has_values(s_attr, x = .Object)){
-          if (verbose) cli_progress_step("decoding s_attribute {.val  {s_attr}}")
+        setnames(region_dt, old = c("V1", "V2"), new = c("begin", "end"))
+        region_dt[, "struc" := strucs]
+
+        if (decode && s_attr_has_values(s_attributes[i], x = .Object)){
+          if (verbose) cli_progress_step("decode")
+          
           str <- cl_struc2str(
             corpus = .Object@corpus,
             registry = .Object@registry_dir,
-            s_attribute = s_attr,
+            s_attribute = s_attributes[i],
             struc = strucs
           )
           Encoding(str) <- encoding(.Object)
-          s_attr_dt[, (s_attr) := as.nativeEnc(str, from = encoding(.Object))]
+          region_dt[, (s_attributes[i]) := as.nativeEnc(str, from = encoding(.Object))]
         } else {
-          s_attr_dt[, (s_attr) := strucs]
+          region_dt[, (s_attributes[i]) := strucs]
         }
+        
+        if (verbose) cli_progress_step("unfold")
+        unfold <- function(.SD){
+          dt <- data.table(
+            cpos = .SD[["begin"]]:.SD[["end"]],
+            s_attr = .SD[[s_attributes[i]]]
+          )
+          setnames(dt, old = "s_attr", new = s_attributes[i])
+          dt
+        }
+        ext <- region_dt[, unfold(.SD), by = "struc", .SDcols = c(s_attributes[i], "begin", "end")]
+        ext[, "struc" := NULL]
+        
+        if (verbose) cli_progress_step("merge")
+        y <- ext[y, on = "cpos"]
       }
       
-      unfold <- function(.SD){
-        dt <- data.table(cpos = .SD[["cpos_left"]]:.SD[["cpos_right"]])
-        for (s_attr in s_attributes){
-          value <- .SD[[s_attr]]
-          dt[, (s_attr) := value]
-        }
-        dt
-      }
-      s_attr_dt_ext <- s_attr_dt[, unfold(.SD), by = "struc"]
-      y <- y[s_attr_dt_ext, on = "cpos"]
       setcolorder(y, neworder = c("cpos", p_attributes, s_attributes))
     }
   } else if (to == "Annotation"){
