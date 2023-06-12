@@ -429,24 +429,13 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
         # i > 2 and current s-attribute is sibling of previous sibling. But
         # the cost of learning whether s-attributes are siblings consumes the 
         # performance gain, so we get strucs, regions and cpos anew.
-        # Let C++ do it? Should should be much faster
-        strucs <- unique(
-          unlist(
-            lapply(
-              1L:nrow(.Object@cpos),
-              function(j){
-                struc_vec <- RcppCWB::region_to_strucs(
-                  s_attribute = s_attributes[i],
-                  corpus = .Object@corpus,
-                  registry = .Object@registry_dir,
-                  region = .Object@cpos[j,]
-                )
-                if (any(is.na(struc_vec))) return(NULL)
-                struc_vec[1]:struc_vec[2]
-              }
-            )
-          )
+        struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
+          corpus = .Object@corpus,
+          s_attribute = s_attributes[i],
+          registry = .Object@registry_dir,
+          region_matrix = .Object@cpos
         )
+        strucs <- RcppCWB::ranges_to_cpos(struc_matrix)
         if (length(strucs) == 0L) next
         
         regions <- RcppCWB::get_region_matrix(
