@@ -459,7 +459,7 @@ setMethod("subset", "character", function(x, ...){
 
 
 #' @rdname subset
-#' @importFrom RcppCWB s_attr_regions
+#' @importFrom RcppCWB s_attr_regions region_matrix_to_struc_matrix
 setMethod("subset", "subcorpus", function(x, subset, ...){
   expr <- enquo(subset)
   evaluated <- tryCatch(
@@ -545,12 +545,19 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
     }
     
     if (descendant){
-      # Slower by necessity
-      strucs <- cl_cpos2struc(
-        x@corpus, registry = x@registry_dir,
-        s_attribute = s_attr[1], cpos = ranges_to_cpos(x@cpos)
+      struc_matrix <- region_matrix_to_struc_matrix(
+        corpus = x@corpus,
+        s_attribute = s_attr[1],
+        region_matrix = x@cpos,
+        registry = x@registry_dir
       )
-      strucs <- unique(strucs[strucs >= 0L])
+      na_rows <- apply(struc_matrix, 1, function(row) any(is.na(row)))
+      if (any(na_rows)) struc_matrix <- struc_matrix[-na_rows,]
+      
+      nomatch <- which(struc_matrix[,1] < 0L)
+      if (length(nomatch) > 0L) struc_matrix <- struc_matrix[-nomatch,]
+      
+      strucs <- ranges_to_cpos(struc_matrix)
       ranges <- get_region_matrix(
         x@corpus, registry = x@registry_dir,
         s_attribute = s_attr[1], strucs = strucs

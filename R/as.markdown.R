@@ -8,15 +8,15 @@ NULL
 #' `as.markdown()`-method can be customized for different classes inheriting
 #' from the `partition`-class.
 #' 
-#' @param .Object The object to be converted, a \code{partition}, or a class
-#'   inheriting from \code{partition}, such as \code{plpr_partition}.
+#' @param .Object The object to be converted, a `partition`, or a class
+#'   inheriting from `partition`, such as `plpr_partition`.
 #' @param meta The metainformation (s-attributes) to be displayed.
 #' @param cpos A `logical` value, whether to add cpos as ids in span elements.
 #' @param interjections A `logical` value, whether to format interjections.
 #' @param cutoff The maximum number of tokens to reconstruct, to avoid that full
 #'   text is excessively long.
 #' @param template A template for formating output.
-#' @param verbose A \code{logical} value, whether to output messages.
+#' @param verbose A `logical` value, whether to output messages.
 #' @param ... further arguments
 #' @rdname as.markdown
 #' @exportMethod as.markdown
@@ -38,8 +38,8 @@ setGeneric("as.markdown", function(.Object, ...) standardGeneric("as.markdown"))
   # opening and closing double quotes here.
   
   if ('"' %in% tokens) tokens[which(tokens == '"')] <- "'"
-  if ('„' %in% tokens) tokens[which(tokens == '„')] <- "'"
-  if ('“' %in% tokens) tokens[which(tokens == '“')] <- "'"
+  if ('\u201e' %in% tokens) tokens[which(tokens == '\u201e')] <- "'"
+  if ('\u201c' %in% tokens) tokens[which(tokens == '\u201c')] <- "'"
   
   if (is.null(names(tokens))){
     return(
