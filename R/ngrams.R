@@ -179,7 +179,12 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_
     retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
   } else {
     retval@p_attribute <- p_attribute
-    li <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "", verbose = FALSE)
+    li <- get_token_stream(
+      .Object,
+      p_attribute = p_attribute[1],
+      collapse = "",
+      verbose = FALSE
+    )
     if (progress){
       if (mc){
         dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = mc)
