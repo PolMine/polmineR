@@ -3,10 +3,11 @@ NULL
 
 #' @importFrom stringi stri_sub
 .character_ngrams <- function(x, n, char){
+  # had tried stringi::stri_extract_all() - not faster
   if (char[1] != ""){
-    splitted <- unlist(strsplit(x, ""))
-    splitted <- ifelse(splitted %in% char, splitted, NA)
-    x <- paste(splitted[which(!is.na(splitted))], sep = "", collapse = "")
+    splitted <- strsplit(x, "")[[1]]
+    splitted_min <- ifelse(splitted %in% char, splitted, NA)
+    x <- paste(na.omit(splitted_min), collapse = "")
   }
   ngrams <- stringi::stri_sub(x, from = 1L:(nchar(x) - n + 1L), to = n:nchar(x))
   dt <- data.table(ngram = ngrams)[, .N, by = "ngram"]
