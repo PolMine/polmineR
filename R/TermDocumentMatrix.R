@@ -370,7 +370,7 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
   if (verbose) cli_process_done()
 
   if (verbose) cli_process_start("create TermDocumentMatrix")
-  retval <- simple_triplet_matrix(
+  retval <- list(
     i = unname(i),
     j = DT[["j"]],
     v = DT[[col]],
@@ -381,6 +381,17 @@ setMethod("as.TermDocumentMatrix", "bundle", function(x, col, p_attribute = NULL
       Docs = names(x@objects)
     )
   )
+  # retval <- simple_triplet_matrix(
+  #   i = unname(i),
+  #   j = DT[["j"]],
+  #   v = DT[[col]],
+  #   nrow = length(names(keys)),
+  #   ncol = length(names(x@objects)),
+  #   dimnames = list(
+  #     Terms = names(keys),
+  #     Docs = names(x@objects)
+  #   )
+  # )
   class(retval) <- c("TermDocumentMatrix", "simple_triplet_matrix")
   attr(retval, "weighting") <- c("term frequency", "tf")
   if (verbose) cli_process_done()

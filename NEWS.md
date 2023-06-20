@@ -41,6 +41,11 @@ character class objects, as a matter of consistency #252.
 objects.
 * The `decode()` method for `subcorpus` objects is now able to process nested 
 corpora. Performance gain for all scenarios.
+* `as.TermDocumentMatrix()` for `bundle` objects speed ups instantiation of 
+`simple_triplet_matrix`.
+* Method `s_attributes()` for `bundle` objects is implemented much more
+efficiently.
+
 
 # polmineR v0.8.8
 

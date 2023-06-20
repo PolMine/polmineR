@@ -311,9 +311,38 @@ setMethod("s_attributes", "subcorpus", function (.Object, s_attribute = NULL, un
 
 #' @docType methods
 #' @rdname partition_bundle-class
-setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, ...){
-  if ("sAttribute" %in% names(list(...))) s_attribute <- list(...)[["sAttribute"]]
-  lapply(.Object@objects, function(x) s_attributes(x, s_attribute))
+setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, unique = TRUE, ...){
+
+  if ("sAttribute" %in% names(list(...))){
+    lifecycle::deprecate_warn(
+      when = "0.8.9", 
+      what = "s_attributes(sAttribute)",
+      with = "s_attributes(s_attribute)"
+    )
+    s_attribute <- list(...)[["sAttribute"]]
+  }
+  
+  strucs <- unlist(lapply(.Object@objects, slot, "strucs"), recursive = FALSE)
+  f <- unlist(
+    mapply(
+      rep,
+      x = seq_along(strucs),
+      times = sapply(strucs, length, USE.NAMES = FALSE)
+    ),
+    recursive = FALSE
+  )
+  values <- cl_struc2str(
+    corpus = .Object@corpus,
+    s_attribute = s_attribute,
+    struc = strucs,
+    registry = .Object@registry_dir
+  )
+  Encoding(values) <- .Object@encoding
+  values <- as.nativeEnc(values, from = .Object@encoding)
+  retval <- split(x = values, f = f)
+  if (unique) retval <- lapply(retval, unique)
+  names(retval) <- names(.Object@objects)
+  retval
 })
 
 
