@@ -1175,10 +1175,9 @@ setClass(
 #'   [,partition_bundle,ANY,ANY,ANY-method +,partition_bundle,partition-method 
 #'   +,partition_bundle,partition_bundle-method as.partition_bundle,list-method 
 #'   barplot,partition_bundle-method
-#' @param x a `partition_bundle` object
-#' @param .Object a `partition_bundle` object
-#' @param object a `partition_bundle` object
-#' @param s_attribute the s-attribute to use
+#' @param x A `partition_bundle` object.
+#' @param .Object A `partition_bundle` object.
+#' @param object A `partition_bundle` object.
 #' @param height height
 #' @param ... further parameters
 #' @rdname partition_bundle-class

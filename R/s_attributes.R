@@ -310,7 +310,7 @@ setMethod("s_attributes", "subcorpus", function (.Object, s_attribute = NULL, un
 
 
 #' @docType methods
-#' @rdname partition_bundle-class
+#' @rdname s_attributes-method
 setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, unique = TRUE, ...){
 
   if ("sAttribute" %in% names(list(...))){

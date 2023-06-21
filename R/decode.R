@@ -67,7 +67,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
 
 
 #' @importFrom RcppCWB region_matrix_to_struc_matrix
-as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, verbose = TRUE, mc = FALSE){
+as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, verbose = TRUE){
   # is required to be a subcorpus object
   
   stopifnot(
@@ -293,7 +293,7 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' }
 #' @rdname decode
 #' @importFrom cli cli_progress_step
-setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE, mc = FALSE){
+setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
   if (length(to) != 1L)
     stop("`decode()` - argument 'to' required to have length 1")
@@ -376,8 +376,7 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
       s_attributes = s_attributes,
       mw = mw,
       stoplist = stoplist,
-      verbose = verbose,
-      mc = mc
+      verbose = verbose
     )
   }
   
@@ -397,7 +396,7 @@ setMethod("decode", "character", function(.Object, to = c("data.table", "Annotat
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE, mc = FALSE){
+setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
   if (to == "data.table"){
     
@@ -500,7 +499,7 @@ setMethod("decode", "partition", function(.Object, to = "data.table", s_attribut
 
 #' @exportMethod decode
 #' @rdname decode
-setMethod("decode", "subcorpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE, mc = FALSE){
+setMethod("decode", "subcorpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), s_attributes = NULL, p_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
   
   if (to == "AnnotatedPlainTextDocument"){
     return(
@@ -510,8 +509,7 @@ setMethod("decode", "subcorpus", function(.Object, to = c("data.table", "Annotat
         s_attributes = s_attributes,
         mw = mw,
         stoplist = stoplist,
-        verbose = verbose,
-        mc = mc
+        verbose = verbose
       )
     )
   }

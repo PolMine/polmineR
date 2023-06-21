@@ -78,6 +78,7 @@ ngrams(.Object, ...)
   .Object,
   n = 2,
   char = NULL,
+  vocab = NULL,
   p_attribute = "word",
   mc = FALSE,
   progress = FALSE,
@@ -89,17 +90,20 @@ ngrams(.Object, ...)
 
 \item{...}{Further arguments.}
 
-\item{n}{number of tokens/characters}
+\item{n}{Number of tokens (if \code{char} is \code{NULL}) or characters otherwise.}
 
 \item{p_attribute}{the p-attribute to use (can be > 1)}
 
 \item{char}{If \code{NULL}, tokens will be counted, else characters, keeping
 only those provided by a character vector}
 
-\item{progress}{logical}
+\item{progress}{A \code{logical} value.}
 
 \item{mc}{A \code{logical} value, whether to use multicore, passed into call
-to \code{blapply} (see respective documentation)}
+to \code{blapply()}.}
+
+\item{vocab}{A \code{character} vector with an alternative vocabulary to the one
+stored on disk.}
 }
 \description{
 Count n-grams, either of words, or of characters.

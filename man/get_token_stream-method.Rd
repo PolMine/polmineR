@@ -54,6 +54,7 @@ get_token_stream(.Object, ...)
 \S4method{get_token_stream}{partition_bundle}(
   .Object,
   p_attribute = "word",
+  vocab = NULL,
   phrases = NULL,
   subset = NULL,
   min_length = NULL,
@@ -114,6 +115,9 @@ in a regions matrix.}
 \item{left}{Left corpus position.}
 
 \item{right}{Right corpus position.}
+
+\item{vocab}{A \code{character} vector with an alternative vocabulary to the one
+stored on disk.}
 
 \item{phrases}{A \code{phrases} object. Defined phrases will be concatenated.}
 

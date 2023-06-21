@@ -8,6 +8,7 @@
 \alias{s_attributes,slice-method}
 \alias{s_attributes,partition-method}
 \alias{s_attributes,subcorpus-method}
+\alias{s_attributes,partition_bundle-method}
 \alias{s_attributes,call-method}
 \alias{s_attributes,quosure-method}
 \alias{s_attributes,name-method}
@@ -27,6 +28,8 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{partition}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
 \S4method{s_attributes}{subcorpus}(.Object, s_attribute = NULL, unique = TRUE, ...)
+
+\S4method{s_attributes}{partition_bundle}(.Object, s_attribute, unique = TRUE, ...)
 
 \S4method{s_attributes}{call}(.Object, corpus)
 

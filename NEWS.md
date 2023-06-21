@@ -45,6 +45,9 @@ corpora. Performance gain for all scenarios.
 `simple_triplet_matrix`.
 * Method `s_attributes()` for `bundle` objects is implemented much more
 efficiently.
+* Methods `get_token_stream()` and `ngrams()` have new argument `vocab` to pass
+in alternative dictionary. Envisaged usage is to efficiently use pruned
+vocabulary for decoding the token stream.
 
 
 # polmineR v0.8.8

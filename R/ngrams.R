@@ -1,6 +1,7 @@
 #' @include count.R S4classes.R
 NULL
 
+#' @importFrom stats na.omit
 #' @importFrom stringi stri_sub
 .character_ngrams <- function(x, n, char){
   # had tried stringi::stri_extract_all() - not faster
@@ -19,14 +20,15 @@ NULL
 #' 
 #' Count n-grams, either of words, or of characters.
 #' 
-#' @param .Object object of class \code{partition}
-#' @param n number of tokens/characters
+#' @param .Object object of class `partition`
+#' @param n Number of tokens (if `char` is `NULL`) or characters otherwise.
 #' @param p_attribute the p-attribute to use (can be > 1)
-#' @param char If \code{NULL}, tokens will be counted, else characters, keeping
+#' @param char If `NULL`, tokens will be counted, else characters, keeping
 #'   only those provided by a character vector
-#' @param mc A \code{logical} value, whether to use multicore, passed into call
-#'   to \code{blapply} (see respective documentation)
-#' @param progress logical
+#' @param mc A `logical` value, whether to use multicore, passed into call
+#'   to `blapply()`.
+#' @inheritParams get_token_stream
+#' @param progress A `logical` value.
 #' @param ... Further arguments.
 #' @exportMethod ngrams
 #' @rdname ngrams
@@ -166,7 +168,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_attribute = "word", mc = FALSE, progress = FALSE, ...){
+setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vocab = NULL, p_attribute = "word", mc = FALSE, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -184,6 +186,7 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, p_
       .Object,
       p_attribute = p_attribute[1],
       collapse = "",
+      vocab = vocab,
       verbose = FALSE
     )
     if (progress){

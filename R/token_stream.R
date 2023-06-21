@@ -207,6 +207,8 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' @param min_length If not `NULL` (default), an `integer` value with minimum
 #'   length of documents required to keep them in the `list` object that is 
 #'   returned.
+#' @param vocab A `character` vector with an alternative vocabulary to the one
+#'   stored on disk. 
 #' @rdname get_token_stream-method
 #' @importFrom stringi stri_c
 #' @importFrom RcppCWB region_matrix_to_ids
@@ -244,7 +246,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   verbose = FALSE
 #' )
 #' }
-setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
+setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", vocab = NULL, phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
   if (verbose) cli_progress_step("creating vector of document ids")
   sizes <- sapply(.Object@objects, slot, "size")
@@ -263,9 +265,26 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
       p_attribute = p_attr, matrix = region_matrix
     )
     if (isTRUE(decode)){
-      tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
-      rm(ids); gc()
-      tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
+      if (is.null(vocab)){
+        tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
+        rm(ids); gc()
+        tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
+      } else {
+        corpus_vocab_size <- cl_attribute_size(
+          corpus = .Object@corpus,
+          registry = .Object@registry_dir,
+          attribute = p_attr,
+          attribute_type = "p"
+        )
+        if (length(vocab) != corpus_vocab_size){
+          cli_alert_danger(
+            "length of vector `vocab` ({.val {length(vocab)}}) is not identical with vocabulary size of corpus ({.val {corpus_vocab_size}})"
+          )
+          stop()
+        }
+        if (length(p_attribute) > 1L) cli_alert_warning("reusing vocabulary")
+        tokens <- vocab[ids - 1L]
+      }
       
       if (beautify){
         whitespace <- rep(" ", times = length(tokens))
