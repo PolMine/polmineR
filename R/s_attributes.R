@@ -322,7 +322,7 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, uni
     s_attribute <- list(...)[["sAttribute"]]
   }
   
-  strucs <- unlist(lapply(.Object@objects, slot, "strucs"), recursive = FALSE)
+  strucs <- lapply(.Object@objects, slot, "strucs")
   f <- unlist(
     mapply(
       rep,
@@ -334,7 +334,7 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, uni
   values <- cl_struc2str(
     corpus = .Object@corpus,
     s_attribute = s_attribute,
-    struc = strucs,
+    struc = unlist(strucs, recursive = TRUE),
     registry = .Object@registry_dir
   )
   Encoding(values) <- .Object@encoding

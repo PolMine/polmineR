@@ -168,7 +168,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
 })
 
 #' @rdname ngrams
-setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vocab = NULL, p_attribute = "word", mc = FALSE, progress = FALSE, ...){
+setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vocab = NULL, p_attribute = "word", mc = FALSE, verbose = FALSE, progress = FALSE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
@@ -182,6 +182,7 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
     retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
   } else {
     retval@p_attribute <- p_attribute
+    if (verbose) cli_progress_step("decoding token stream")
     li <- get_token_stream(
       .Object,
       p_attribute = p_attribute[1],
@@ -189,6 +190,7 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
       vocab = vocab,
       verbose = FALSE
     )
+    if (verbose) cli_progress_done()
     if (progress){
       if (mc){
         dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = mc)
@@ -196,13 +198,16 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
         dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = NULL)
       }
     } else {
+      if (verbose) cli_progress_step("generate ngrams")
       if (mc){
         dts <- mclapply(li, .character_ngrams, n = n, char = char, mc.cores = mc)
       } else {
         dts <- lapply(li, .character_ngrams, n = n, char = char)
       }
+      if (verbose) cli_progress_done()
     }
     
+    if (verbose) cli_progress_step("generate return value")
     proto <- as(as(.Object, "corpus"), "ngrams")
     proto@n = as.integer(n)
     proto@p_attribute = if (is.null(char)) p_attribute else "ngram"
@@ -216,6 +221,7 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
         proto
       }
     )
+    if (verbose) cli_progress_done()
   }
   
   names(retval@objects) <- names(.Object)

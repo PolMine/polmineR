@@ -211,7 +211,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #'   stored on disk. 
 #' @rdname get_token_stream-method
 #' @importFrom stringi stri_c
-#' @importFrom RcppCWB region_matrix_to_ids
+#' @importFrom RcppCWB region_matrix_to_ids cl_lexicon_size
 #' @examples 
 #' \donttest{
 #' # Get token stream for partition_bundle
@@ -270,11 +270,10 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
         rm(ids); gc()
         tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
       } else {
-        corpus_vocab_size <- cl_attribute_size(
+        corpus_vocab_size <- cl_lexicon_size(
           corpus = .Object@corpus,
           registry = .Object@registry_dir,
-          attribute = p_attr,
-          attribute_type = "p"
+          p_attribute = p_attr
         )
         if (length(vocab) != corpus_vocab_size){
           cli_alert_danger(
@@ -283,7 +282,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
           stop()
         }
         if (length(p_attribute) > 1L) cli_alert_warning("reusing vocabulary")
-        tokens <- vocab[ids - 1L]
+        tokens <- vocab[ids + 1L]
       }
       
       if (beautify){
