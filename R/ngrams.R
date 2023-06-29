@@ -1,20 +1,7 @@
 #' @include count.R S4classes.R
 NULL
 
-#' @importFrom stats na.omit
-#' @importFrom stringi stri_sub
-.character_ngrams <- function(x, n, char){
-  # had tried stringi::stri_extract_all() - not faster
-  if (char[1] != ""){
-    splitted <- strsplit(x, "")[[1]]
-    splitted_min <- ifelse(splitted %in% char, splitted, NA)
-    x <- paste(na.omit(splitted_min), collapse = "")
-  }
-  ngrams <- stringi::stri_sub(x, from = 1L:(nchar(x) - n + 1L), to = n:nchar(x))
-  dt <- data.table(ngram = ngrams)[, .N, by = "ngram"]
-  setnames(dt, old = "N", new = "count")
-  dt
-}
+
 
 #' Get N-Grams
 #' 
@@ -155,7 +142,8 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
     setcolorder(TF, neworder = c(colnames(TF)[!colnames(TF) %in% "count"], "count"))
   } else {
     char_soup_base <- get_token_stream(.Object, p_attribute = p_attribute[1], collapse = "")
-    TF <- .character_ngrams(x = char_soup_base, n = n, char = char)
+    TF <- ngrams(.Object = list(char_soup_base), n = n, char = char)[[1]]
+    # TF <- .character_ngrams(x = char_soup_base, n = n, char = char)
   }
   
   y <- as(as(.Object, "corpus"), "ngrams")
@@ -166,6 +154,45 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
   y@p_attribute = if (is.null(char)) p_attribute else "ngram"
   y
 })
+
+
+#' @importFrom stats na.omit
+#' @importFrom stringi stri_sub
+#' @rdname ngrams
+setMethod("ngrams", "list", function(.Object, n = 2, char = NULL, mc = FALSE, verbose = FALSE, progress = FALSE, ...){
+  
+  .character_ngrams <- function(x, n, char){
+    # had tried stringi::stri_extract_all() - not faster
+    if (char[1] != ""){
+      splitted <- strsplit(x, "")[[1]]
+      splitted_min <- ifelse(splitted %in% char, splitted, NA)
+      x <- paste(na.omit(splitted_min), collapse = "")
+    }
+    ngrams <- stringi::stri_sub(x, from = 1L:(nchar(x) - n + 1L), to = n:nchar(x))
+    dt <- data.table(ngram = ngrams)[, .N, by = "ngram"]
+    setnames(dt, old = "N", new = "count")
+    dt
+  }
+  
+  if (progress){
+    if (mc){
+      dts <- pblapply(.Object, .character_ngrams, n = n, char = char, cl = mc)
+    } else {
+      dts <- pblapply(.Object, .character_ngrams, n = n, char = char, cl = NULL)
+    }
+  } else {
+    if (verbose) cli_progress_step("generate ngrams")
+    if (mc){
+      dts <- mclapply(.Object, .character_ngrams, n = n, char = char, mc.cores = mc)
+    } else {
+      dts <- lapply(.Object, .character_ngrams, n = n, char = char)
+    }
+    if (verbose) cli_progress_done()
+  }
+  
+  dts
+})
+
 
 #' @rdname ngrams
 setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vocab = NULL, p_attribute = "word", mc = FALSE, verbose = FALSE, progress = FALSE, ...){
@@ -191,21 +218,11 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
       verbose = FALSE
     )
     if (verbose) cli_progress_done()
-    if (progress){
-      if (mc){
-        dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = mc)
-      } else {
-        dts <- pblapply(li, .character_ngrams, n = n, char = char, cl = NULL)
-      }
-    } else {
-      if (verbose) cli_progress_step("generate ngrams")
-      if (mc){
-        dts <- mclapply(li, .character_ngrams, n = n, char = char, mc.cores = mc)
-      } else {
-        dts <- lapply(li, .character_ngrams, n = n, char = char)
-      }
-      if (verbose) cli_progress_done()
-    }
+
+    dts <- ngrams(
+      li, n = n, char = char,
+      mc = mc, verbose = verbose, progress = progress
+    )
     
     if (verbose) cli_progress_step("generate return value")
     proto <- as(as(.Object, "corpus"), "ngrams")

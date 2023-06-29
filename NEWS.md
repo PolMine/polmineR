@@ -48,6 +48,8 @@ efficiently.
 * Methods `get_token_stream()` and `ngrams()` have new argument `vocab` to pass
 in alternative dictionary. Envisaged usage is to efficiently use pruned
 vocabulary for decoding the token stream.
+* New method `ngrams()` for `list` objects. Serves as worker for `ngrams()`-method
+for `partition_bundle` objects.
 
 
 # polmineR v0.8.8
