@@ -18,6 +18,7 @@ get_token_stream(.Object, ...)
 \S4method{get_token_stream}{numeric}(
   .Object,
   corpus,
+  registry = NULL,
   p_attribute,
   subset = NULL,
   boost = NULL,
@@ -75,6 +76,8 @@ get_token_stream(.Object, ...)
 \code{get_token_stream}-method for a \code{numeric} vector, the real worker.}
 
 \item{corpus}{A CWB indexed corpus.}
+
+\item{registry}{Registry directory with registry file describing the corpus.}
 
 \item{p_attribute}{A \code{character} vector, the p-attribute(s) to decode.}
 

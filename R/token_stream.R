@@ -97,16 +97,18 @@ setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token
 
 
 #' @inheritParams decode
+#' @param registry Registry directory with registry file describing the corpus.
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
+setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NULL, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
+  if (is.null(registry)) registry <- corpus_registry_dir(corpus)
   
   ids <- cl_cpos2id(
-    corpus = corpus, registry = corpus_registry_dir(corpus),
+    corpus = corpus, registry = registry,
     p_attribute = p_attribute, cpos = .Object
   )
   if (isTRUE(decode)){
@@ -164,7 +166,13 @@ setMethod("get_token_stream", "matrix", function(.Object, split = FALSE, ...){
 setMethod("get_token_stream", "corpus", function(.Object, left = NULL, right = NULL, ...){
   if (is.null(left)) left <- 0L
   if (is.null(right)) right <- size(.Object) - 1L
-  get_token_stream(left:right, corpus = .Object@corpus, encoding = encoding(.Object), ...)
+  get_token_stream(
+    left:right,
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir,
+    encoding = encoding(.Object),
+    ...
+  )
 })
 
 

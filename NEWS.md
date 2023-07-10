@@ -50,6 +50,9 @@ in alternative dictionary. Envisaged usage is to efficiently use pruned
 vocabulary for decoding the token stream.
 * New method `ngrams()` for `list` objects. Serves as worker for `ngrams()`-method
 for `partition_bundle` objects.
+* Better handling of conflicting registry directories by method  `corpus()`.
+* Method `get_token_stream()` for `numeric` input has new argument `registry`
+to optionally specify registry directory.
 
 
 # polmineR v0.8.8

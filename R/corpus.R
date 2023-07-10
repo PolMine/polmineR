@@ -77,16 +77,9 @@ setMethod("corpus", "character", function(
       }
     } else {
       registry_dir <- path(path_expand(registry_dir))
-      if (is.na(c_regdir)){
-        stop("Cannot locate corpus with registry provided.")
-      } else if (length(c_regdir) > 1L){
-        if (!registry_dir %in% c_regdir){
-          stop("Cannot locate corpus with registry provided.")
-        }
-      } else if (registry_dir != c_regdir){
+      if (!registry_dir %in% c_regdir){
         stop("Cannot locate corpus with registry provided.")
       }
-      
     }
     
     properties <- sapply(
