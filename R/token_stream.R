@@ -112,7 +112,12 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NU
     p_attribute = p_attribute, cpos = .Object
   )
   if (isTRUE(decode)){
-    tokens <- decode(.Object = ids, corpus = corpus, p_attributes = p_attribute, boost = boost)
+    tokens <- decode(
+      .Object = ids,
+      corpus = corpus(corpus, registry = registry),
+      p_attributes = p_attribute,
+      boost = boost
+    )
     rm(ids)
   } else if (isFALSE(decode)){
     return(ids)
