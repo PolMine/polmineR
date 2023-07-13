@@ -48,6 +48,7 @@ jobs:
 
       - name: Install further dependencies
         run: |
+          install.packages("remotes")
           remotes::install_cran("rcmdcheck")
           install.packages(pkgs = "GermaParl2", contriburl = "https://polmine.github.io/drat/src/contrib", type = "source")
         shell: Rscript {0}
