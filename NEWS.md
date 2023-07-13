@@ -53,6 +53,8 @@ for `partition_bundle` objects.
 * Better handling of conflicting registry directories by method  `corpus()`.
 * Method `get_token_stream()` for `numeric` input has new argument `registry`
 to optionally specify registry directory.
+* Method `count()` for `subcorpus` objects did not pass value of argument 
+`verbose` to `cpos()`, resulting in potentially unwanted verbosity. Fixed.
 
 
 # polmineR v0.8.8

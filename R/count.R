@@ -187,7 +187,14 @@ setMethod("count", "subcorpus", function(
       count_vec <- sapply(
         query,
         function(x){
-          region_matrix <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
+          region_matrix <- cpos(
+            .Object = .Object,
+            query = x,
+            cqp = cqp,
+            check = check,
+            p_attribute = p_attribute,
+            verbose = verbose
+          )
           if (is.null(region_matrix)) 0L else nrow(region_matrix)
         }
       )
