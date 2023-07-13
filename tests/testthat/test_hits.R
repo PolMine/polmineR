@@ -23,9 +23,8 @@ test_that(
 test_that(
   "hits for nested scenario",
   {
-    testthat::skip_on_cran()
-    use("GermaParl2")
-    
+    skip_if_not(use("GermaParl2"))
+
     # we want to ensure that the order is independent from the order of 
     # subsetting operations
     
