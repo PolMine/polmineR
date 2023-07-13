@@ -48,21 +48,12 @@ jobs:
 
       - name: Install further dependencies
         run: |
-          install.packages("remotes")
-          remotes::install_cran("rcmdcheck")
           install.packages(pkgs = "GermaParl2", contriburl = "https://polmine.github.io/drat/src/contrib", type = "source")
         shell: Rscript {0}
         
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          options(crayon.enabled = TRUE)
-          Sys.setlocale("LC_CTYPE", "en_US.UTF-8")
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
+      - uses: r-lib/actions/check-r-package@v2
 
       - name: Test coverage
         run: |
