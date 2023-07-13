@@ -55,6 +55,9 @@ for `partition_bundle` objects.
 to optionally specify registry directory.
 * Method `count()` for `subcorpus` objects did not pass value of argument 
 `verbose` to `cpos()`, resulting in potentially unwanted verbosity. Fixed.
+* Subsetting a `subcorpus` using `subset()`-method kept strucs for nested 
+attributes but assigned ancestor s-attribute to slot "s_attribute_strucs",
+resulting in false counts, for example. Fixed.
 
 
 # polmineR v0.8.8

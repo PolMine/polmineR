@@ -278,7 +278,13 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
 
   if (!is.null(query)){
     .message("getting hits for query/queries", verbose = verbose)
-    DT <- hits(.Object, query = query, cqp = cqp, p_attribute = p_attribute, mc = mc, progress = progress, verbose = verbose)@stat
+    DT <- hits(
+      .Object,
+      query = query,
+      cqp = cqp,
+      p_attribute = p_attribute,
+      mc = mc, progress = progress, verbose = verbose
+    )@stat
     .message("rearranging table", verbose = verbose)
     if (nrow(DT) > 0L){
       DT_cast <- dcast.data.table(DT, partition ~ query, value.var = "count", fill = 0)

@@ -207,10 +207,9 @@ setMethod("hits", "partition_bundle", function(
   corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
   if (length(corpus_id) > 1L) stop("partiton_bundle not derived from one corpus")
   corpus_obj <- corpus(corpus_id)
-  s_attribute_strucs <- unique(unlist(lapply(
-    .Object@objects,
-    function(x) x@s_attribute_strucs
-  )))
+  s_attribute_strucs <- unique(unlist(
+    lapply(.Object@objects, slot, "s_attribute_strucs")
+  ))
   stopifnot(length(s_attribute_strucs) == 1L)
   
   # combine strucs and partition names into an overall data.table
@@ -224,7 +223,8 @@ setMethod("hits", "partition_bundle", function(
   
   # perform counts
   .message("now performing counts", verbose = verbose)
-  if (any(is.na(query))) stop("Please check your queries - there is an NA among them!")
+  if (any(is.na(query)))
+    stop("Please check your queries - there is an NA among them!")
   .fn <- function(q, corpus_obj, ...) {
     m <- cpos(
       .Object = corpus_obj,
@@ -235,7 +235,12 @@ setMethod("hits", "partition_bundle", function(
     )
     if (!is.null(m)) data.table(m)[, query := q] else NULL
   }
-  count_dt_list <- blapply(as.list(query), f = .fn, corpus_obj = corpus_obj, mc = mc, progress = progress, verbose = FALSE)
+  count_dt_list <- blapply(
+    as.list(query),
+    f = .fn,
+    corpus_obj = corpus_obj,
+    mc = mc, progress = progress, verbose = FALSE
+  )
   count_dt <- rbindlist(count_dt_list)
   
   .message("finalizing tables", verbose = verbose)
@@ -245,15 +250,16 @@ setMethod("hits", "partition_bundle", function(
       s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]]
     )
     count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
-    dt <- struc_dt[count_dt, on = "struc"] # merge
+    dt <- unique(struc_dt)[count_dt, on = "struc"] # merge
     nas <- which(is.na(dt[["partition"]]) == TRUE)
     if (missing(s_attribute)) s_attribute <- NULL
     for (s_attr in s_attribute){
       values <- cl_struc2str(
         corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
         s_attribute = s_attr, struc = dt[["struc"]]
-      )
-      dt[, (s_attr) := as.nativeEnc(values, from = .Object@objects[[1]]@encoding)]
+      ) |>
+        as.nativeEnc(from = .Object@encoding)
+      dt[, (s_attr) := values]
     }
     if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
     tf <- dt[, .N, by = c(c("partition", "query"), s_attribute)]

@@ -581,6 +581,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
           dt[, (s) := str]
         }
       }
+      x@s_attribute_strucs = s_attr[length(s_attr)]
     }
     
   } else {
@@ -592,10 +593,8 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       Encoding(str) <- x@encoding
       dt[, (s) := str]
     }
-    
+    x@s_attribute_strucs = s_attr[length(s_attr)]
   }
-  
-  x@s_attribute_strucs = s_attr[length(s_attr)]
   
   if (is.call(quo_get_expr(expr))){
     setindexv(dt, cols = s_attr)
