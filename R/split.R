@@ -77,7 +77,8 @@ setMethod("split", "subcorpus", function(
     stop(sprintf("s-attribute '%s' not available", s_attribute))
 
   if (missing(values))
-    values <- s_attr_has_values(s_attribute = s_attribute , x = x)
+    # prospecitvely use RcppCWB::cl_struc_values()
+    values <- s_attr_has_values(s_attribute = s_attribute, x = x)
   if (is.null(values))
     values <- TRUE
   
@@ -158,8 +159,13 @@ setMethod("split", "subcorpus", function(
       strucs = strucs,
       registry = x@registry_dir
     )
-    strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-    strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    if (isTRUE(values)){
+      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
+      strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
+    } else if (isFALSE(values)){
+      if (verbose) cli_alert_info("split by change of strucs")
+      strucs_values <- strucs
+    }
     cpos_list <- split(regions, strucs_values)
     struc_list <- split(strucs, strucs_values) # different from sibling
     s_attr_strucs <- s_attribute
