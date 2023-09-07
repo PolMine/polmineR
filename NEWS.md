@@ -58,9 +58,11 @@ to optionally specify registry directory.
 * Subsetting a `subcorpus` using `subset()`-method kept strucs for nested 
 attributes but assigned ancestor s-attribute to slot "s_attribute_strucs",
 resulting in false counts, for example. Fixed.
-* The `split()`-method was not implemented correctly for descendent attributes
-without values, so that getting subcorpora with sentences in a subcorpus would
-have wrong result. Fixed.
+* The `split()`-method for `subcorpus` objects was not implemented correctly for
+descendent attributes without values, so that getting subcorpora with sentences
+in a subcorpus would have wrong result. Fixed.
+* Argument `values` of method `split()` for `corpus` objects did not process 
+value `FALSE` to split corpus by s-attribute without values #263. Fixed.
 
 
 # polmineR v0.8.8
