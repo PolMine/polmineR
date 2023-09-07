@@ -45,6 +45,34 @@ test_that(
       pp1[["Angela Dorothea Merkel"]]@cpos,
       pp3@cpos
     )
+    
+    # the following tests require that GERMAPARL2MINI is available
+    # It is wrapped into the GermaParl2 package, which can be installed as 
+    # follows:
+    # install.packages(
+    #   pkgs = "GermaParl2",
+    #   contriburl = "https://polmine.github.io/drat/src/contrib",
+    #   type = "source"
+    # )
+    
+    skip_if_not(use("GermaParl2"))
+    
+    gparl2 <- corpus("GERMAPARL2MINI")
+    
+    renner <- gparl2 %>% 
+      subset(speaker_who == "Renner")
+
+    n_subcorpora <- split(renner, s_attribute = "s", verbose = FALSE) |>
+      length()
+    
+    n_sentences <- renner |>
+      slot("cpos") %>% 
+      RcppCWB::ranges_to_cpos() %>% 
+      RcppCWB::cl_cpos2struc(corpus = "GERMAPARL2MINI", s_attribute = "s", cpos = ., registry = gparl2@registry_dir) %>% 
+      unique() %>% 
+      length()
+    
+    expect_identical(n_subcorpora, n_sentences)
   }
 )
 
