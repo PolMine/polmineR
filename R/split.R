@@ -77,10 +77,11 @@ setMethod("split", "subcorpus", function(
     stop(sprintf("s-attribute '%s' not available", s_attribute))
 
   if (missing(values))
-    # prospecitvely use RcppCWB::cl_struc_values()
+    # prospectvely use RcppCWB::cl_struc_values()
     values <- s_attr_has_values(s_attribute = s_attribute, x = x)
   if (is.null(values))
     values <- TRUE
+  # result is reported, yet later with other info on s-attribute
   
   history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
   pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
@@ -128,6 +129,12 @@ setMethod("split", "subcorpus", function(
         "of s-attribute {.val {x@s_attribute_strucs}}"
       )
     )
+    
+    # report here, together with further info on s-attribute 
+    cli_alert_info(
+      's-attribute has values: {col_cyan({if (isFALSE(values)) "no" else "yes"})}'
+    )
+    
   }
 
   if (relation %in% c("sibling", "ancestor")){
@@ -218,14 +225,27 @@ setMethod("split", "subcorpus", function(
 #' @rdname subcorpus_bundle
 #' @inheritParams partition_bundle
 setMethod("split", "corpus", function(
-  x, s_attribute, values = NULL, prefix = "",
+  x, s_attribute, values, prefix = "",
   mc = getOption("polmineR.mc"), verbose = TRUE, progress = FALSE,
   type = get_type(x), xml = "flat"
 ) {
   
-  stopifnot(is.character(s_attribute), length(s_attribute) == 1L)
+  stopifnot(
+    is.character(s_attribute),
+    length(s_attribute) == 1L
+  )
   if (!s_attribute %in% s_attributes(x))
     stop(sprintf("s-attribute '%s' not available", s_attribute))
+  
+  if (missing(values))
+    # prospectively use RcppCWB::cl_struc_values()
+    values <- s_attr_has_values(s_attribute = s_attribute, x = x)
+  if (is.null(values)) values <- TRUE
+  
+  if (verbose) cli_alert_info(
+    's-attribute {.val {s_attribute}} has values: {col_cyan({if (isFALSE(values)) "no" else "yes"})}'
+  )
+  
   
   # Ensure that when split() is called within partition_bundle(), the resulting 
   # object is a partition_bundle and the objects in the slot 'object' are 
@@ -249,13 +269,22 @@ setMethod("split", "corpus", function(
     corpus = x@corpus, registry = x@registry_dir,
     s_attribute = s_attribute, strucs = strucs
   )
-  strucs_values <- struc2str(x = x, s_attr = s_attribute, struc = strucs)
-  cpos_list <- split(cpos_matrix, strucs_values)
-  struc_list <- split(strucs, strucs_values)
+  
+  if (isFALSE(values)){
+    cpos_list <- split(cpos_matrix, strucs)
+    struc_list <- split(strucs, strucs)
+  } else {
+    strucs_values <- struc2str(x = x, s_attr = s_attribute, struc = strucs)
+    cpos_list <- split(cpos_matrix, strucs_values)
+    struc_list <- split(strucs, strucs_values)
+  }
+  
   if (verbose) cli_progress_done()
   
-  if (!is.null(values)){
-    if (verbose) cli_progress_step("drop values")
+  if (!is.null(values) && is.character(values)){
+    if (verbose) cli_progress_step(
+      "keep only matches for {col_cyan({length(values)})} values provided"
+    )
     drop <- which(!names(cpos_list) %in% values)
     if (length(drop) > 0L){
       cpos_list <- cpos_list[-drop]
@@ -279,7 +308,9 @@ setMethod("split", "corpus", function(
     y
   }
   
-  if (verbose) cli_progress_step("instantiate objects")
+  if (verbose)
+    cli_progress_step("instantiate objects (n = {.val {length(cpos_list)}})")
+  
   y@objects <- if (progress)
     pblapply(seq_along(cpos_list), .fn, cl = mc)
   else

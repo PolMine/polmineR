@@ -15,6 +15,40 @@ test_that(
     y2 <- merge(y)
     expect_identical(as.integer(merge(y)@cpos), as.integer(x@cpos))
     expect_identical(as.vector(merge(y)@cpos), as.vector(x@cpos))
+    
+    # check that argument values works as intended
+    speakers <- c("Volker Kauder", "Norbert Lammert", "Wolfgang Thierse")
+    sb_speakers <- corpus("GERMAPARLMINI") %>% 
+      split(s_attribute = "speaker", values = speakers)
+    expect_true(all(speakers %in% names(sb_speakers)))
+    
+    
+    # the following tests require that GERMAPARL2MINI is available
+    # It is wrapped into the GermaParl2 package, which can be installed as 
+    # follows:
+    # install.packages(
+    #   pkgs = "GermaParl2",
+    #   contriburl = "https://polmine.github.io/drat/src/contrib",
+    #   type = "source"
+    # )
+    
+    skip_if_not(use("GermaParl2"))
+    
+    gparl2 <- corpus("GERMAPARL2MINI")
+    
+    n_sentences <- gparl2 %>% 
+      split(s_attribute = "p", values = FALSE, verbose = FALSE) %>% 
+      length()
+    
+    attr_size <- RcppCWB::cl_attribute_size(
+      corpus = "GERMAPARL2MINI",
+      attribute = "p",
+      attribute_type = "s",
+      registry = gparl2@registry_dir
+    )
+    
+    expect_identical(n_sentences, attr_size)
+    
   }
 )
 
@@ -45,15 +79,6 @@ test_that(
       pp1[["Angela Dorothea Merkel"]]@cpos,
       pp3@cpos
     )
-    
-    # the following tests require that GERMAPARL2MINI is available
-    # It is wrapped into the GermaParl2 package, which can be installed as 
-    # follows:
-    # install.packages(
-    #   pkgs = "GermaParl2",
-    #   contriburl = "https://polmine.github.io/drat/src/contrib",
-    #   type = "source"
-    # )
     
     skip_if_not(use("GermaParl2"))
     
