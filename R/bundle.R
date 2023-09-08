@@ -104,6 +104,7 @@ setMethod('[[', 'bundle', function(x,i){
 #' reu[c("127", "273")]
 #' reu[["127"]] <- NULL
 setMethod('[', 'bundle', function(x, i){
+  if (is.logical(i)) i <- which(i)
   if (is.numeric(i)){
     if (all(i > 0L)){
       names_min <- names(x)[i]

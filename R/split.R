@@ -90,10 +90,11 @@ setMethod("split", "subcorpus", function(
   if (verbose) cli_alert_info("bundle class: {col_cyan({retval_class})}")
   
   cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
-  new_class <- if (length(x@type) == 0L || is.na(x@type))
+  new_class <- if (length(x@type) == 0L || is.na(x@type)){
     cl
-  else
-    paste(x@type, cl, sep = "_")
+  } else {
+    paste(x@type, cl, sep = "_") 
+  }
   
   prototype <- as(x, new_class)
   if (verbose) cli_alert_info("objects in bundle: {col_cyan({new_class})}")
@@ -114,11 +115,7 @@ setMethod("split", "subcorpus", function(
       corpus = x@corpus,
       registry = x@registry_dir
     )
-    if (is_descendent){
-      relation <- "descendent"
-    } else {
-      relation <- "ancestor"
-    }
+    relation <- if (is_descendent) "descendent" else "ancestor"
   } else {
     relation <- "sibling"
   }
@@ -132,10 +129,11 @@ setMethod("split", "subcorpus", function(
     
     # report here, together with further info on s-attribute 
     cli_alert_info(
-      's-attribute has values: {col_cyan({if (isFALSE(values)) "no" else "yes"})}'
+      's-attribute {.val {s_attribute}} has values: {col_cyan({if (isFALSE(values)) "no" else "yes"})}'
     )
-    
   }
+
+  if (verbose) cli_progress_step("get list of regions")
 
   if (relation %in% c("sibling", "ancestor")){
     strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
@@ -158,8 +156,15 @@ setMethod("split", "subcorpus", function(
       s_attr_strucs <- x@s_attribute_strucs
     }
   } else if (relation == "descendent"){
-    cpos <- ranges_to_cpos(x@cpos)
-    strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
+    # cpos <- ranges_to_cpos(x@cpos)
+    struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
+      corpus = x@corpus,
+      s_attribute = s_attribute,
+      region_matrix = x@cpos,
+      registry = x@registry_dir
+    )
+    strucs <- RcppCWB::ranges_to_cpos(struc_matrix)
+    # strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
     regions <- get_region_matrix(
       corpus = x@corpus,
       s_attribute = s_attribute,
@@ -177,12 +182,15 @@ setMethod("split", "subcorpus", function(
     struc_list <- split(strucs, strucs_values) # different from sibling
     s_attr_strucs <- s_attribute
   }
+  if (verbose) cli_progress_done()
 
   if (is.character(values)){
+    if (verbose) cli_progress_step("keep only matches for values")
     for (i in rev(which(!names(cpos_list) %in% values))){
       cpos_list[[i]] <- NULL
       struc_list[[i]] <- NULL
     }
+    if (verbose) cli_progress_done()
   }
 
   .fn <- function(i){
@@ -203,11 +211,29 @@ setMethod("split", "subcorpus", function(
     y
   }
   
-  y@objects <- if (progress)
-    pblapply(seq_along(cpos_list), .fn)
-  else
-    lapply(seq_along(cpos_list), .fn)
-  
+  if (progress){
+    if (verbose)
+      cli_alert_info(
+        "instantiate {.val {length(cpos_list)}} {new_class} objects"
+      )
+    y@objects <- pblapply(seq_along(cpos_list), .fn)
+  } else {
+    if (isFALSE(mc)){
+      if (verbose) cli_progress_step(
+        "instantiate {.val {length(cpos_list)}} {new_class} objects "
+      )
+      y@objects <- lapply(seq_along(cpos_list), .fn)
+    } else {
+      if (isTRUE(mc)) mc <- parallel::detectCores() - 1L
+      if (verbose) cli_progress_step(
+        "instantiate {.val {length(cpos_list)}} {new_class} objects using {.val {mc}} cores"
+      )
+      y@objects <- mclapply(seq_along(cpos_list), .fn, mc.cores = mc)
+      
+    }
+    if (verbose) cli_progress_done()
+  }
+
   if (nchar(prefix) == 0L){
     names(y@objects) <- names(cpos_list)
   } else {
