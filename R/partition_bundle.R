@@ -255,7 +255,7 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
   }
   
   if (verbose) cli_progress_step("generate list of {.code data.table} objects with regions")
-  .cpos_left_right <- function(.SD) 
+  .cpos_left_right <- function(.SD)
     list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))
   
   DT_list <- list(
@@ -271,8 +271,8 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
   CNT <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
   for (p_attr in .Object@p_attribute){
-    CNT[[p_attr]] <- cl_id2str(
-      corpus = .Object@corpus, registry = corpus_registry_dir(.Object@corpus),
+    CNT[[p_attr]] <- RcppCWB::cl_id2str(
+      corpus = .Object@corpus, registry = RcppCWB::corpus_registry_dir(.Object@corpus),
       p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]]
     )
   }
@@ -285,7 +285,7 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
   .fn <- function(i){
     y <- prototype
     y@cpos <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
-    y@size <- sum(y@cpos[,2] - y@cpos[,1] + 1L)
+    y@size <- as.integer(sum(y@cpos[,2] - y@cpos[,1] + 1L)) # see #265
     y@stat = count_list[[i]][, "match_id" := NULL]
     y
   }
