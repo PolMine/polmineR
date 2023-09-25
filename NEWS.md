@@ -63,6 +63,8 @@ descendent attributes without values, so that getting subcorpora with sentences
 in a subcorpus would have wrong result. Fixed.
 * Argument `values` of method `split()` for `corpus` objects did not process 
 value `FALSE` to split corpus by s-attribute without values #263. Fixed.
+* New `s_attributes()`-method for `context` objects. Returns s-attribute values
+for the matches for query in context object.
 
 
 # polmineR v0.8.8

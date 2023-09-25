@@ -32,7 +32,7 @@
 \S4method{split}{corpus}(
   x,
   s_attribute,
-  values = NULL,
+  values,
   prefix = "",
   mc = getOption("polmineR.mc"),
   verbose = TRUE,

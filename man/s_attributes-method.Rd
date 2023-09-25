@@ -8,6 +8,7 @@
 \alias{s_attributes,slice-method}
 \alias{s_attributes,partition-method}
 \alias{s_attributes,subcorpus-method}
+\alias{s_attributes,context-method}
 \alias{s_attributes,partition_bundle-method}
 \alias{s_attributes,call-method}
 \alias{s_attributes,quosure-method}
@@ -28,6 +29,8 @@ s_attributes(.Object, ...)
 \S4method{s_attributes}{partition}(.Object, s_attribute = NULL, unique = TRUE, ...)
 
 \S4method{s_attributes}{subcorpus}(.Object, s_attribute = NULL, unique = TRUE, ...)
+
+\S4method{s_attributes}{context}(.Object, s_attribute = NULL)
 
 \S4method{s_attributes}{partition_bundle}(.Object, s_attribute, unique = TRUE, ...)
 
@@ -99,6 +102,10 @@ If the corpus is based on a nested XML structure, the order of items on the
 \code{s_attribute} vector matters. The method for \code{corpus} objects will take the
 first s-attribute as the benchmark and assume that further s-attributes are
 XML ancestors of the node.
+
+If \code{.Object} is a \code{context} object, the s-attribute value for the
+first corpus position of every match is returned in a character vector.
+If the match is outside a region of the s-attribute, \code{NA} is returned.
 
 If \code{.Object} is a \code{call} or a \code{quosure} (defined in the rlang
 package), the \code{s_attributes}-method will return a \code{character} vector with

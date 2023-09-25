@@ -143,43 +143,44 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
       Encoding(str) <- x@encoding
       str <- as.nativeEnc(x = str, from = x@encoding)
       
-      # start <- w[w$id %in% regions[,1]]$start
-      # end <- w[w$id %in% regions[,2]]$end
-      # txt <- stri_sub(str = s, from = start, to = end)
-      
-      start_end <- lapply(
+      data <- lapply(
         1:nrow(regions),
         function(i){
           matching <- which(w$id %in% regions[i,1]:regions[i,2])
-          c(start = w[min(matching)]$start, end = w[max(matching)]$end)
+          
+          # If the region covers tokens that have been dropped due to the 
+          # stoplist, no matches - omit these cases.
+          if (length(matching) > 0L){
+            txt <- stri_sub(
+              str = s,
+              from = w[min(matching)]$start,
+              to = w[max(matching)]$end
+            )
+            list(
+              kind = str[i],
+              text = txt,
+              constituents = regions[i,1]:regions[i,2],
+              start = w[min(matching)]$start,
+              end = w[max(matching)]$end
+            )
+          } else {
+            NULL
+          }
         }
       )
       
-      features <- lapply(
-        1L:nrow(regions),
-        function(i){
-          txt <- stri_sub(
-            str = s,
-            from = start_end[[i]]["start"],
-            to = start_end[[i]]["end"]
-          )
-          list(
-            kind = str[i],
-            text = txt,
-            constituents = regions[i,1]:regions[i,2]
-          )
-        }
-      )
+      nomatch <- sapply(data, length) == 0
+      if (any(nomatch)) data <- data[-which(nomatch)]
       
       NLP::Annotation(
-        id = 1L:nrow(regions),
+        id = seq_along(data),
         type = rep.int(
           if (is.null(names(mw))) s_attr else names(mw)[which(mw == s_attr)],
-          nrow(regions)
+          length(data)
         ),
-        start = unname(unlist(lapply(start_end, `[`, "start"))),
-        end = unname(unlist(lapply(start_end, `[`, "end"))),
-        features = features
+        start = unname(unlist(lapply(data, `[[`, "start"))),
+        end = unname(unlist(lapply(data, `[[`, "end"))),
+        features = lapply(data, `[`, c("kind", "text", "constituents"))
       )
     }
   )

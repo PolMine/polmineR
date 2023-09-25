@@ -307,6 +307,31 @@ setMethod("s_attributes", "subcorpus", function (.Object, s_attribute = NULL, un
   callNextMethod()
 )
 
+#' @rdname s_attributes-method
+#' @details If `.Object` is a `context` object, the s-attribute value for the
+#'   first corpus position of every match is returned in a character vector.
+#'   If the match is outside a region of the s-attribute, `NA` is returned.
+setMethod("s_attributes", "context", function (.Object, s_attribute = NULL){
+  dt <- slot(.Object, "cpos")
+  dt_min <- dt[dt[["position"]] == 0]
+  setorderv(dt_min, cols = "cpos", order = 1L)
+  cpos <- dt_min[, list(cpos = .SD[["cpos"]][1]), by = "match_id"][["cpos"]]
+  strucs <- cl_cpos2struc(
+    corpus = .Object@corpus,
+    s_attribute = s_attribute,
+    registry = .Object@registry_dir,
+    cpos = cpos
+  )
+  s_attr <- cl_struc2str(
+    corpus = .Object@corpus,
+    s_attribute = s_attribute,
+    struc = strucs
+  )
+  Encoding(s_attr) <- .Object@encoding
+  as.nativeEnc(s_attr, from = .Object@encoding)
+})
+
+
 
 
 #' @docType methods
