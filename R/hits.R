@@ -121,12 +121,14 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     )
     DT[, eval(s_attribute[i]) := as.nativeEnc(s_attr_values, from = .Object@encoding)]
   }
+  
   TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
   setnames(TF, old = "N", new = "count")
   
   if (fill){
-    # Using s_attributes() requires decoding s-attributes and is potentially not the fastest solution,
-    # but it ensures that only combinations that do occurr are reported
+    # Using s_attributes() requires decoding s-attributes and is potentially not
+    # the fastest solution, but it ensures that only combinations that do occurr
+    # are reported
     s_attr_dt <- s_attributes(.Object = .Object, s_attribute = s_attribute, unique = TRUE)
     .fn <- function(.SD){
       dt <- .SD[s_attr_dt, on = s_attribute]

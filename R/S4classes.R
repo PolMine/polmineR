@@ -982,7 +982,7 @@ setMethod("summary", "subcorpus", function(object){
 #' @describeIn subcorpus Assign name to a `subcorpus` object.
 #' @exportMethod name<-
 setReplaceMethod("name", "subcorpus", function(x, value) {
-  x@name <- value
+  x@name <- as.character(value)
   x
 })
 
