@@ -23,6 +23,7 @@ hits(.Object, ...)
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
+  decode = TRUE,
   fill = FALSE,
   mc = 1L,
   verbose = TRUE,
@@ -39,6 +40,7 @@ hits(.Object, ...)
   p_attribute = "word",
   size = FALSE,
   freq = FALSE,
+  decode = TRUE,
   mc = FALSE,
   verbose = TRUE,
   progress = FALSE,
@@ -55,6 +57,7 @@ hits(.Object, ...)
   size = FALSE,
   freq = FALSE,
   fill = FALSE,
+  decode = TRUE,
   mc = FALSE,
   progress = FALSE,
   verbose = TRUE,
@@ -71,10 +74,10 @@ hits(.Object, ...)
   size = FALSE,
   freq = FALSE,
   fill = FALSE,
+  decode = TRUE,
   mc = FALSE,
   progress = FALSE,
-  verbose = TRUE,
-  ...
+  verbose = TRUE
 )
 
 \S4method{hits}{partition_bundle}(
@@ -121,6 +124,9 @@ used to breakdown counts for matches for query/queries.}
 \item{size}{A \code{logical} value, whether to report the size of subcorpus.}
 
 \item{freq}{A \code{logcial} value, whether to report relative frequencies.}
+
+\item{decode}{A \code{logical} value, whether to decode s-attributes. If \code{FALSE},
+the \code{integer} values of strucs are reported in the table with matches.}
 
 \item{fill}{A \code{logical} value, whethet to report counts (optionally
 frequencies) for combinations of s-attributes where not matchers occurr.}

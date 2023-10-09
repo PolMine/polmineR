@@ -65,3 +65,37 @@ test_that(
     
   }
 )
+
+test_that(
+  "test arg decode of hits()",
+  {
+    s_attrs <- c("id", "places", "language")
+    
+    corpus("REUTERS") %>% 
+      hits(query = "oil", s_attribute = s_attrs, decode = TRUE) %>% 
+      as.data.table() %>% 
+      .[, s_attrs, with = FALSE] %>% 
+      sapply(typeof) %>% 
+      unname() %>% 
+      unique() %>% 
+      expect_identical("character")
+    
+    corpus("REUTERS") %>% 
+      hits(query = "oil", s_attribute = s_attrs, decode = FALSE) %>% 
+      as.data.table() %>% 
+      .[, s_attrs, with = FALSE] %>% 
+      sapply(typeof) %>% 
+      unname() %>% 
+      unique() %>% 
+      expect_identical("integer")
+    
+
+    corpus("REUTERS") %>% 
+      hits(query = "oil", s_attribute = s_attrs, decode = c(FALSE, TRUE, TRUE)) %>% 
+      as.data.table() %>% 
+      .[, s_attrs, with = FALSE] %>% 
+      sapply(typeof) %>% 
+      unname() %>%
+      expect_identical(c("integer", "character", "character"))
+  }
+)

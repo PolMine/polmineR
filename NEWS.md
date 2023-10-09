@@ -65,6 +65,8 @@ in a subcorpus would have wrong result. Fixed.
 value `FALSE` to split corpus by s-attribute without values #263. Fixed.
 * New `s_attributes()`-method for `context` objects. Returns s-attribute values
 for the matches for query in context object.
+* Method `hits()` has new argument `decoce`. If `FALSE`, the strucs for are not
+decoded.
 
 
 # polmineR v0.8.8
