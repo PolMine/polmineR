@@ -114,7 +114,10 @@ test_that(
     # subcorpus as point of departure
     gparl_sub <- corpus("GERMAPARLMINI") %>% subset(date == "2009-11-10")
     persons <- c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla")
-    subcorpora <- lapply(persons, function(who) subset(gparl_sub, speaker == !!who))
+    subcorpora <- lapply(
+      persons,
+      function(who) subset(gparl_sub, speaker == !!who)
+    )
     names(subcorpora) <- persons
     for (person in persons){
       p <- partition(as(gparl_sub, "partition"), speaker = person, verbose = FALSE)

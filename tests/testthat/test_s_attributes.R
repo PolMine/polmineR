@@ -68,18 +68,18 @@ test_that(
   {
     expect_equal(
       s_attributes(quote(grep("Merkel", speaker)), corpus = "GERMAPARLMINI"),
-      "speaker"
+      setNames("speaker", "character")
     )
     expect_equal(
       s_attributes(quote(speaker == "Angela Merkel"), corpus = "GERMAPARLMINI"),
-      "speaker"
+      setNames("speaker", "character")
     )
     expect_equal(
       s_attributes(
         quote(speaker == "Angela Merkel" & date == "2009-10-28"),
         corpus = "GERMAPARLMINI"
       ),
-      c("speaker", "date")
+      c(character = "speaker", character = "date")
     )
     
     expect_equal(
@@ -87,7 +87,7 @@ test_that(
         rlang::new_quosure(quote(grep("Merkel", speaker))),
         corpus = "GERMAPARLMINI"
       ),
-      "speaker"
+      setNames("speaker", "character")
     )
     
   }

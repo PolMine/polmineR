@@ -272,19 +272,19 @@ setMethod("corpus", "missing", function(){
 #'   c("Angela Dorothea Merkel", "Volker Kauder", "Ronald Pofalla"),
 #'   function(who) subset(gparl, speaker == !!who)
 #' )
-#' @param x A \code{corpus} or \code{subcorpus} object. A corpus may also
-#'   specified by a length-one \code{character} vector.
+#' @param x A `corpus` or `subcorpus` object. A corpus may also specified by a
+#'   length-one `character` vector.
 #' @param ... An expression that will be used to create a subcorpus from
 #'   s-attributes.
-#' @param subset A \code{logical} expression indicating elements or rows to
-#'   keep. The expression may be unevaluated (using \code{quote} or
-#'   \code{bquote}).
+#' @param subset A `logical` expression indicating elements or rows to
+#'   keep. The expression may be unevaluated (using `quote()` or
+#'   `bquote()`).
 #' @importFrom data.table setindexv setDT
 #' @importFrom rlang enquo eval_tidy is_quosure
-#' @param regex A \code{logical} value. If \code{TRUE}, values for s-attributes
+#' @param regex A `logical` value. If `TRUE`, values for s-attributes
 #'   defined using the three dots (...) are interpreted as regular expressions
-#'   and passed into a \code{grep} call for subsetting a table with the regions
-#'   and values of structural attributes. If \code{FALSE} (the default), values
+#'   and passed into a `grep` call for subsetting a table with the regions
+#'   and values of structural attributes. If `FALSE` (the default), values
 #'   for s-attributes must match exactly.
 setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   stopifnot(is.logical(regex))
@@ -311,14 +311,15 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       is_call <- FALSE
     }
 
-    s_attr_expr <- s_attributes(expr, corpus = x) # get s_attributes present in the expression
+    # get s_attributes present in the expression
+    s_attr_expr <- s_attributes(expr, corpus = x) 
     s_attr <- c(s_attr, s_attr_expr)
   }
 
   dots <- list(...)
   if (length(dots) > 0L){
     if (!all(names(dots) %in% s_attributes(x))){
-      stop("Aborting - at least one of the s-attributes provided as an argument is not available.")
+      stop("Aborting - at least one s-attributes required is not available.")
     }
     s_attr_dots <- names(dots)
     s_attr <- c(s_attr, s_attr_dots)
@@ -335,9 +336,9 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     return(NULL)
   }
 
-  # Reading the binary file with the ranges for the whole corpus is faster than using
-  # the RcppCWB functionality. The assumption here is that the XML is flat, i.e. no need
-  # to read in seperate rng files.
+  # Reading the binary file with the ranges for the whole corpus is faster than
+  # using the RcppCWB functionality. The assumption here is that the XML is
+  # flat, i.e. no need to read in seperate rng files.
   if (!s_attr[1] %in% s_attributes(x)){
     warning(sprintf("structural attribute '%s' not defined", s_attr[1]))
     return(NULL)
@@ -345,7 +346,13 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
     
   rng_file <- fs::path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
   rng_size <- file.info(rng_file)[["size"]]
-  rng <- readBin(rng_file, what = integer(), size = 4L, n = rng_size / 4L, endian = "big")
+  rng <- readBin(
+    rng_file,
+    what = integer(),
+    size = 4L,
+    n = rng_size / 4L,
+    endian = "big"
+  )
   dt <- data.table(
     struc = 0L:((length(rng) / 2L) - 1L),
     cpos_left = rng[seq.int(from = 1L, to = length(rng), by = 2L)],
@@ -386,6 +393,14 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
     } else {
       cli_alert_info("s_attribute {.val {s_attr[i]}} does not have values")
+      attr_size <- cl_attribute_size(
+        corpus = x@corpus,
+        attribute = s_attr[i],
+        attribute_type = "s",
+        registry = x@registry_dir
+        
+      )
+      dt[, (s_attr[i]) := 0L:(attr_size - 1L)]
     }
   }
   
@@ -422,7 +437,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
 
   # And assemble the subcorpus object that is returned.
   if (nrow(dt) == 0L){
-    warning("No matching regions found for the s-attributes provided: Returning NULL object")
+    warning("No matching regions found for the s-attributes provided (returning NULL)")
     return(NULL)
   }
   
@@ -435,7 +450,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
   y@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
   dimnames(y@cpos) <- NULL
   y@strucs = dt[["struc"]]
-  y@s_attribute_strucs <- s_attr[length(s_attr)]
+  y@s_attribute_strucs <- unname(s_attr[length(s_attr)])
   y@s_attributes <- lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]]))
   y@xml <- x@xml
   y@name <- ""
@@ -581,7 +596,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
           dt[, (s) := str]
         }
       }
-      x@s_attribute_strucs = s_attr[length(s_attr)]
+      x@s_attribute_strucs = unname(s_attr[length(s_attr)])
     }
     
   } else {
@@ -593,7 +608,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       Encoding(str) <- x@encoding
       dt[, (s) := str]
     }
-    x@s_attribute_strucs = s_attr[length(s_attr)]
+    x@s_attribute_strucs = unname(s_attr[length(s_attr)])
   }
   
   if (is.call(quo_get_expr(expr))){

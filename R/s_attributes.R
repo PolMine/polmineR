@@ -409,9 +409,9 @@ setMethod("s_attributes", "call", function(.Object, corpus){
   }
   # for the following recursive function,
   # see http://adv-r.had.co.nz/Expressions.html
-  .fn <- function(x){
+  get_s_attrs <- function(x){
     if (is.call(x)){
-      y <- lapply(x, .fn)
+      y <- lapply(x, get_s_attrs)
     } else if (is.symbol(x)){
       char <- deparse(x)
       if (char %in% s_attrs){
@@ -430,9 +430,34 @@ setMethod("s_attributes", "call", function(.Object, corpus){
     } else {
       y <- NULL
     }
-    unique(unlist(y))
+    unlist(y)
   }
-  .fn(.Object)
+  
+  get_typeof <- function(x){
+    if (is.call(x)){
+      evaluated <- try(eval(x), silent = TRUE)
+      if (is.vector(evaluated)){
+        y <- unique(unlist(lapply(x, get_typeof)))
+      } else {
+        y <- lapply(x, get_typeof)
+      }
+    } else if (is.symbol(x)){
+      y <- NULL
+    } else {
+      y <- typeof(x)
+    }
+    unlist(y)
+  }
+  
+  s_attrs <- get_s_attrs(.Object)
+  types <- get_typeof(.Object)
+  
+  if (length(s_attrs) != length(types)){
+    warning("Cannot map s-attributes and types")
+    return(character())
+  }
+  dt <- unique(data.table(s_attrs, types))
+  setNames(dt[[1]], dt[[2]])
 })
 
 
