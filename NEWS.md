@@ -67,6 +67,10 @@ value `FALSE` to split corpus by s-attribute without values #263. Fixed.
 for the matches for query in context object.
 * Method `hits()` has new argument `decoce`. If `FALSE`, the strucs for are not
 decoded.
+* `s_attributes()`-method for `expression` assigns types of vectors matched
+against as names if possible.
+* `subset` for `corpus` objects will use integer struc values for subsetting,
+if integer values are passed in logical expression.
 
 
 # polmineR v0.8.8

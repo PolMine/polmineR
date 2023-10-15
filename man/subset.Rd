@@ -9,7 +9,7 @@
 \alias{subset,subcorpus_bundle-method}
 \title{Subsetting corpora and subcorpora}
 \usage{
-\S4method{subset}{corpus}(x, subset, regex = FALSE, ...)
+\S4method{subset}{corpus}(x, subset, regex = FALSE, verbose = FALSE, ...)
 
 \S4method{subset}{character}(x, ...)
 
@@ -20,12 +20,12 @@
 \S4method{subset}{subcorpus_bundle}(x, ..., iterate = FALSE, verbose = TRUE, progress = FALSE, mc = NULL)
 }
 \arguments{
-\item{x}{A \code{corpus} or \code{subcorpus} object. A corpus may also
-specified by a length-one \code{character} vector.}
+\item{x}{A \code{corpus} or \code{subcorpus} object. A corpus may also specified by a
+length-one \code{character} vector.}
 
 \item{subset}{A \code{logical} expression indicating elements or rows to
-keep. The expression may be unevaluated (using \code{quote} or
-\code{bquote}).}
+keep. The expression may be unevaluated (using \code{quote()} or
+\code{bquote()}).}
 
 \item{regex}{A \code{logical} value. If \code{TRUE}, values for s-attributes
 defined using the three dots (...) are interpreted as regular expressions
@@ -33,13 +33,13 @@ and passed into a \code{grep} call for subsetting a table with the regions
 and values of structural attributes. If \code{FALSE} (the default), values
 for s-attributes must match exactly.}
 
+\item{verbose}{A \code{logical} value, whether to show progress messages.}
+
 \item{...}{An expression that will be used to create a subcorpus from
 s-attributes.}
 
 \item{iterate}{A \code{logical} value, if \code{TRUE}, process very single object of
 \code{x} individually.}
-
-\item{verbose}{A \code{logical} value, whether to show progress messages.}
 
 \item{progress}{A \code{logical} value, whether to display progress bar.}
 

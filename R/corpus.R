@@ -276,6 +276,7 @@ setMethod("corpus", "missing", function(){
 #'   length-one `character` vector.
 #' @param ... An expression that will be used to create a subcorpus from
 #'   s-attributes.
+#' @param verbose A `logical` value, whether to show messages.
 #' @param subset A `logical` expression indicating elements or rows to
 #'   keep. The expression may be unevaluated (using `quote()` or
 #'   `bquote()`).
@@ -286,7 +287,7 @@ setMethod("corpus", "missing", function(){
 #'   and passed into a `grep` call for subsetting a table with the regions
 #'   and values of structural attributes. If `FALSE` (the default), values
 #'   for s-attributes must match exactly.
-setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
+setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE, ...){
   stopifnot(is.logical(regex))
   s_attr <- character()
 
@@ -371,7 +372,18 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
       avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
     )
-    if (all(file.exists(unlist(files)))){
+    if (
+      all(
+        c(
+          all(file.exists(unlist(files))),
+          (names(s_attr)[i] != "integer")
+          )
+        )
+      ){
+      if (verbose)
+        cli_alert_info(
+          "get/assign decoded values of s-attribute {.val {s_attr[i]}}"
+        )
       sizes <- lapply(files, function(file) file.info(file)[["size"]])
       
       avx <- readBin(
@@ -392,7 +404,12 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, ...){
       
       dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
     } else {
-      cli_alert_info("s_attribute {.val {s_attr[i]}} does not have values")
+      if (verbose){
+        cli_alert_info(
+          "get/assign integer struc numbers for s-attribute {.val {s_attr[i]}}"
+        )
+      }
+      
       attr_size <- cl_attribute_size(
         corpus = x@corpus,
         attribute = s_attr[i],

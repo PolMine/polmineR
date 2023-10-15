@@ -194,3 +194,34 @@ test_that(
     
   }
 )
+
+test_that(
+  "unquote expression",
+  {
+    ids <- c("127", "144", "191", "194")
+    corpus("REUTERS") %>% 
+      subset(id %in% !!ids)
+    
+    ids <- 0:5
+    corpus("REUTERS") %>% 
+      subset(id %in% !!ids)
+  }
+)
+
+test_that(
+  "subset by integer struc values",
+  {
+    expect_identical(
+      corpus("REUTERS") %>% subset(id == 0L) %>% s_attributes("id"),
+      "127"
+    )
+    
+    ids <- corpus("REUTERS") %>% s_attributes("id", unique = FALSE)
+    for (i in 0L:3L){
+      expect_identical(
+        corpus("REUTERS") %>% subset(id == !!i) %>% s_attributes("id"),
+        ids[i + 1L]
+      )
+    }
+  }
+)

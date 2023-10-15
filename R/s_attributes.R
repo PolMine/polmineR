@@ -453,8 +453,8 @@ setMethod("s_attributes", "call", function(.Object, corpus){
   types <- get_typeof(.Object)
   
   if (length(s_attrs) != length(types)){
-    warning("Cannot map s-attributes and types")
-    return(character())
+    cli_alert_info("Cannot map s-attributes and types")
+    return(unique(s_attrs))
   }
   dt <- unique(data.table(s_attrs, types))
   setNames(dt[[1]], dt[[2]])
