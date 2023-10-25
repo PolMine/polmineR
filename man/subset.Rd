@@ -13,7 +13,7 @@
 
 \S4method{subset}{character}(x, ...)
 
-\S4method{subset}{subcorpus}(x, subset, ...)
+\S4method{subset}{subcorpus}(x, subset, verbose = FALSE, ...)
 
 \S4method{subset}{remote_corpus}(x, subset)
 

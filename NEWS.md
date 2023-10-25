@@ -69,8 +69,8 @@ for the matches for query in context object.
 decoded.
 * `s_attributes()`-method for `expression` assigns types of vectors matched
 against as names if possible.
-* `subset` for `corpus` objects will use integer struc values for subsetting,
-if integer values are passed in logical expression.
+* `subset` for `corpus` and `subset` objects will use integer struc values for
+subsetting, if integer values are passed in logical expression.
 
 
 # polmineR v0.8.8

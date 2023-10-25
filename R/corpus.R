@@ -63,6 +63,7 @@ setMethod("corpus", "character", function(
     c_regdir <- path(corpus_registry_dir(.Object))
     if (missing(registry_dir)){
       if (length(c_regdir) > 1L){
+        print(c_regdir)
         stop(
           "Cannot initialize corpus object - ",
           "corpus defined by two different registry files."
@@ -373,17 +374,14 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
       avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
     )
     if (
-      all(
-        c(
+      all(c(
           all(file.exists(unlist(files))),
           (names(s_attr)[i] != "integer")
-          )
-        )
+      ))
       ){
-      if (verbose)
-        cli_alert_info(
-          "get/assign decoded values of s-attribute {.val {s_attr[i]}}"
-        )
+      if (verbose) cli_alert_info(
+        "preparing s-attribute {.val {s_attr[i]}} (using decoded values)"
+      )
       sizes <- lapply(files, function(file) file.info(file)[["size"]])
       
       avx <- readBin(
@@ -406,7 +404,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
     } else {
       if (verbose){
         cli_alert_info(
-          "get/assign integer struc numbers for s-attribute {.val {s_attr[i]}}"
+          "preparing s-attribute {.val {s_attr[i]}} (undecoded struc numbers)"
         )
       }
       
@@ -485,7 +483,7 @@ setMethod("subset", "character", function(x, ...){
 
 #' @rdname subset
 #' @importFrom RcppCWB s_attr_regions region_matrix_to_struc_matrix
-setMethod("subset", "subcorpus", function(x, subset, ...){
+setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
   expr <- enquo(subset)
   evaluated <- tryCatch(
     eval_tidy(expr),
@@ -498,6 +496,7 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
 
   # get s_attributes present in the expression
   s_attr <- s_attributes(expr, corpus = x) 
+  
   dt <- data.table(
     struc = x@strucs,
     cpos_left = x@cpos[, 1],
@@ -522,17 +521,18 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       setNames(s_attr, s_attr),
       function(s)
         s_attr_regions(
-          corpus = x@corpus, registry = x@registry_dir,
+          corpus = x@corpus,
+          registry = x@registry_dir,
           data_dir = x@data_dir,
           s_attr = s
         )
     )
-
+    
     if (length(s_attr) > 1L){
       # When subsetting on more than one s-attribute at a time, it is required
       # that these are on the same level.
-      if (length(unique(s_attr_sizes[-1L])) == 1L){
-        stop("structural attributes for subsetting need to have identical size - not true")
+      if (length(unique(s_attr_sizes[-1L])) != 1L){
+        stop("s-attributes required to have identical size - not true")
       }
       
       # The second check is whether regions of s-attributes for subsetting are
@@ -543,10 +543,12 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       
     }
     
-    for (s in s_attr){
+    for (i in 1L:length(s_attr)){
       strucs <- cl_cpos2struc(
-        corpus = x@corpus, registry = x@registry_dir,
-        s_attribute = s, cpos = x@cpos[,1]
+        corpus = x@corpus,
+        registry = x@registry_dir,
+        s_attribute = s_attr[i],
+        cpos = x@cpos[,1]
       )
       
       if (any(is.na(strucs)) || any(strucs < 0L)){
@@ -554,15 +556,30 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
         break
       }
 
-      r <- matrix(regions[[s]][strucs + 1L,], ncol = 2)
+      r <- matrix(regions[[s_attr[i]]][strucs + 1L,], ncol = 2L)
       if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
         descendant <- FALSE
-        str <- cl_struc2str(
-          corpus = x@corpus, registry = x@registry_dir,
-          s_attribute = s, struc = strucs
-        )
-        Encoding(str) <- x@encoding
-        dt[, (s_attr) := str]
+        if (names(s_attr)[i] == "integer"){
+          if (verbose) cli_alert_info(
+            "preparing s-attribute {.val {s_attr[i]}} (undecoded struc numbers)"
+          )
+          dt[, (s_attr[i]) := strucs]
+        } else if (s_attr_has_values(s_attribute = s_attr[i], x = x)){
+          if (verbose) cli_alert_info(
+            "preparing s-attribute {.val {s_attr[i]}} (using decoded values)"
+          )
+          str <- cl_struc2str(
+            corpus = x@corpus,
+            registry = x@registry_dir,
+            s_attribute = s_attr[i],
+            struc = strucs
+          )
+          Encoding(str) <- x@encoding
+          dt[, (s_attr[i]) := str]
+        } else {
+          stop("s-attribute does not have values")
+        }
+        
       } else {
         descendant <- TRUE
         break
@@ -595,35 +612,77 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
       
       # this is a somewhat dirty assumption that s_attr will not have values
       if (is.call(quo_get_expr(expr))){
-        str <- cl_struc2str(
-          corpus = x@corpus, registry = x@registry_dir,
-          s_attribute = s_attr[1], struc = strucs
-        )
-        Encoding(str) <- x@encoding
-        dt[, (s_attr[1]) := str]
+        if (names(s_attr)[1] == "integer"){
+          if (verbose){
+            cli_alert_info(
+              "preparing s-attribute {.val {s_attr[1]}} (undecoded struc numbers)"
+            )
+          }
+          dt[, (s_attr[1]) := strucs]
+        } else if (s_attr_has_values(s_attribute = s_attr[i], x = x)){
+          if (verbose)
+            cli_alert_info(
+              "preparing s-attribute {.val {s_attr[1]}} (using decoded values)"
+            )
+          str <- cl_struc2str(
+            corpus = x@corpus,
+            registry = x@registry_dir,
+            s_attribute = s_attr[1],
+            struc = strucs
+          )
+          Encoding(str) <- x@encoding
+          dt[, (s_attr[1]) := str]
+        }
+      } else {
+        stop("s-attribute does not have values")
       }
       
       if (length(s_attr) > 1L){
         for (s in s_attr[-1]){
-          str <- cl_struc2str(
-            corpus = x@corpus, registry = x@registry_dir,
-            s_attribute = s, struc = strucs
-          )
-          Encoding(str) <- x@encoding
-          dt[, (s) := str]
+          if (names(s_attr)[which(s_attr == s)] == "integer"){
+            if (verbose){
+              cli_alert_info(
+                "preparing s-attribute {.val {s}} (undecoded struc numbers)"
+              )
+            }
+            dt[, (s) := strucs]
+          } else if (s_attr_has_values(s_attribute = s, x = x)){
+            if (verbose)
+              cli_alert_info(
+                "preparing s-attribute {.val {s}} (using decoded values)"
+              )
+            str <- cl_struc2str(
+              corpus = x@corpus,
+              registry = x@registry_dir,
+              s_attribute = s,
+              struc = strucs
+            )
+            Encoding(str) <- x@encoding
+            dt[, (s) := str]
+          } else {
+            stop("s-attribute does not have values")
+          }
         }
       }
       x@s_attribute_strucs = unname(s_attr[length(s_attr)])
     }
-    
+
   } else {
     for (s in s_attr){
-      str <- cl_struc2str(
-        corpus = x@corpus, registry = x@registry_dir,
-        s_attribute = s, struc = dt[["struc"]]
-      )
-      Encoding(str) <- x@encoding
-      dt[, (s) := str]
+      if (names(s_attr)[which(s_attr == s)] == "integer"){
+        dt[, (s) := dt[["struc"]]]
+      } else if (s_attr_has_values(s_attribute = s, x = x)){
+        str <- cl_struc2str(
+          corpus = x@corpus,
+          registry = x@registry_dir,
+          s_attribute = s,
+          struc = dt[["struc"]]
+        )
+        Encoding(str) <- x@encoding
+        dt[, (s) := str]
+      } else {
+        stop("s-attribute does not have values")
+      }
     }
     x@s_attribute_strucs = unname(s_attr[length(s_attr)])
   }
@@ -631,7 +690,10 @@ setMethod("subset", "subcorpus", function(x, subset, ...){
   if (is.call(quo_get_expr(expr))){
     setindexv(dt, cols = s_attr)
     success <- try({dt_min <- dt[eval_tidy(expr, data = dt)]})
-    if (is(success, "try-error")) return(NULL)
+    if (is(success, "try-error")){
+      cli_alert_info("using expression for subsetting fails")
+      return(NULL)
+    }
     x@cpos <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
     x@strucs <- dt_min[["struc"]]
     x@s_attributes <- c(
