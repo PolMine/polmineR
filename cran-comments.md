@@ -1,22 +1,13 @@
 ## General remarks
 
-This release catches up with markdown >= 1.3 such that markdown maintainers
-will not have to rely on workarounds to ensure that markdown improvements 
-to not break polmineR reverse dependency tests.
-
-The first, second and this submission of this update was rejected because some
-examples ran too long (> 2.5 secs).
-
-I have minimized long-running examples and replaced the (bigger) test data 
-"GERMAPARLMINI" with the (smaller) "REUTERS" data, which reduces execution time
-for executing examples by 1/3. I also put long-running examples into donttest{}
-sections.
+Fedora R-devel checks indicated an encoding issue in a plot. I have resolved 
+the underlying issue and checked all plots.
 
 
 ## Test environments
 
-* local OS X install, R 4.2.2
-* GithubActions (Windows, macOS, Linux), R 4.2.3
+* local OS X installation, R 4.3.1
+* GithubActions (Windows, macOS, Linux), R 4.3.1
 * win-builder (devel, release, oldrel)
 
 

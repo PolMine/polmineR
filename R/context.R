@@ -149,7 +149,8 @@ setMethod("context", "slice", function(
     left = left, right = right,
     p_attribute = p_attribute, region = region,
     boundary = boundary,
-    corpus = .Object@corpus
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir
   )
   
   ctxt@query <- query
@@ -225,11 +226,14 @@ setMethod("context", "subcorpus", function(
 #'   `RcppCWB::region_matrix_context()`, the worker behind the
 #'   `context()`-method.
 #' @param corpus A length-one `character` vector stating a corpus ID.
+#' @param registry The registry directory with the registry file for `corpus`.
 #' @rdname context-method
 #' @importFrom data.table between
 #' @importFrom RcppCWB region_matrix_context corpus_s_attributes
-setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribute, region = NULL, boundary = NULL){
+setMethod("context", "matrix", function(.Object, corpus, registry = Sys.getenv("CORPUS_REGISTRY"), left, right, p_attribute, region = NULL, boundary = NULL){
   if (ncol(.Object) != 2L) stop("context,matrix-method: .Object is required to be a two-column matrix")
+  
+  stopifnot(is.character(corpus), length(corpus) == 1L)
   
   if (inherits(left, "numeric"))
     left <- setNames(as.integer(left), nm = names(left))
@@ -242,11 +246,8 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
       if (is.null(region)){
         s_attr <- NULL
       } else {
-        s_attr_present <- corpus_s_attributes(
-          corpus = corpus,
-          registry = corpus_registry_dir(corpus)
-        )
-        if (region %in% s_attr_present){
+        s_attrs <- corpus_s_attributes(corpus = corpus, registry = registry)
+        if (region %in% s_attrs){
           s_attr <- region
         } else {
           warning(sprintf("s-attribute '%s' not defined", region))
@@ -265,7 +266,6 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
     right <- 0L
   }
   
-  regdir <- corpus_registry_dir(corpus)
   cpos_matrix <- region_matrix_context(
     corpus = corpus,
     matrix = .Object,
@@ -273,7 +273,7 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
     p_attribute = p_attribute[1],
     left = left, right = right,
     boundary = boundary,
-    registry = regdir
+    registry = registry
   )
   cpos_dt <- as.data.table(cpos_matrix)
   
@@ -286,8 +286,10 @@ setMethod("context", "matrix", function(.Object, corpus, left, right, p_attribut
   if (length(p_attribute) > 1L){
     for (i in 2L:length(p_attribute)){
       ids <- cl_cpos2id(
-        corpus = corpus, registry = regdir,
-        p_attribute = p_attribute[i], cpos = cpos_dt[["cpos"]]
+        corpus = corpus,
+        registry = registry,
+        p_attribute = p_attribute[i],
+        cpos = cpos_dt[["cpos"]]
       )
       cpos_dt[, (paste(p_attribute[i], "id", sep = "_")) := ids]
     }

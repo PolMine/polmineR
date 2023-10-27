@@ -31,7 +31,7 @@ get_token_stream(.Object, ...)
   ...
 )
 
-\S4method{get_token_stream}{matrix}(.Object, split = FALSE, ...)
+\S4method{get_token_stream}{matrix}(.Object, corpus, registry = NULL, split = FALSE, ...)
 
 \S4method{get_token_stream}{corpus}(.Object, left = NULL, right = NULL, ...)
 

@@ -22,6 +22,7 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #' @importFrom RcppCWB cqp_list_corpora corpus_data_dir corpus_registry_dir
 #'   corpus_info_file corpus_full_name
 #' @importFrom fs path path_expand
+#' @importFrom cli cli_bullets
 setMethod("corpus", "character", function(
     .Object, registry_dir,
     server = NULL, restricted
@@ -63,11 +64,17 @@ setMethod("corpus", "character", function(
     c_regdir <- path(corpus_registry_dir(.Object))
     if (missing(registry_dir)){
       if (length(c_regdir) > 1L){
-        print(c_regdir)
-        stop(
-          "Cannot initialize corpus object - ",
-          "corpus defined by two different registry files."
-        )
+        c_regdir <- path(unique(path(c_regdir)))
+        if (length(c_regdir) > 1L){
+          cli_alert_warning(
+            "corpus loaded multiple times with following registries:"
+          )
+          cli_bullets(setNames(c_regdir, rep("*", times = length(c_regdir))))
+          cli_alert_info(
+            "using {c_regdir[1]}"
+          )
+        }
+        registry_dir <- c_regdir[1]
       } else if (is.na(c_regdir)){
         stop(
           "Cannot initialize corpus object - ",

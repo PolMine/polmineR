@@ -79,6 +79,7 @@ context(.Object, ...)
 \S4method{context}{matrix}(
   .Object,
   corpus,
+  registry = Sys.getenv("CORPUS_REGISTRY"),
   left,
   right,
   p_attribute,
@@ -195,6 +196,8 @@ the value from the options.}
 \item{progress}{A \code{logical} value, whether to show progress bar.}
 
 \item{corpus}{A length-one \code{character} vector stating a corpus ID.}
+
+\item{registry}{The registry directory with the registry file for \code{corpus}.}
 
 \item{complete}{enhance completely}
 }

@@ -94,7 +94,11 @@ setMethod("knit_print", "kwic", function(x, options = knitr::opts_chunk){
 #' 
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
   if (!is.null(fmt)) x@stat[, "node" := sprintf(fmt, x@stat[["node"]])]
-  apply(x@stat, 1L, function(r) paste(r[["left"]], r[["node"]], r[["right"]], sep = " "))
+  apply(
+    x@stat,
+    1L,
+    function(r) paste(r[["left"]], r[["node"]], r[["right"]], sep = " ")
+  )
 })
 
 #' @docType methods
@@ -150,7 +154,13 @@ setMethod("as.data.frame", "kwic", function(x){
     )
     if (length(x@metadata) > 0L){
       df <- data.frame(
-        meta = do.call(paste, c(lapply(x@metadata, function(s_attr) x@stat[[s_attr]]), sep = "<br/>")),
+        meta = do.call(
+          paste,
+          c(
+            lapply(x@metadata, function(s_attr) x@stat[[s_attr]]),
+            sep = "<br/>"
+          )
+        ),
         df,
         stringsAsFactors = FALSE
       )
@@ -426,12 +436,17 @@ setMethod("kwic", "corpus", function(
     left = left, right = right,
     p_attribute = p_attribute,
     corpus = .Object@corpus,
+    registry = .Object@registry_dir,
     boundary = boundary,
     region = region,
     ...
   )
   
-  ids <- cpos2id(x = .Object, p_attribute = p_attribute, cpos = ctxt@cpos[["cpos"]])
+  ids <- cpos2id(
+    x = .Object,
+    p_attribute = p_attribute,
+    cpos = ctxt@cpos[["cpos"]]
+  )
 
   ctxt@cpos[, paste(p_attribute, "id", sep = "_") := ids, with = TRUE]
   

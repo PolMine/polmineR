@@ -233,7 +233,8 @@ setMethod("hits", "partition_bundle", function(
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
 
   corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
-  if (length(corpus_id) > 1L) stop("partiton_bundle not derived from one corpus")
+  if (length(corpus_id) > 1L)
+    stop("partiton_bundle not derived from one corpus")
   corpus_obj <- corpus(corpus_id)
   s_attribute_strucs <- unique(unlist(
     lapply(.Object@objects, slot, "s_attribute_strucs")
@@ -274,7 +275,8 @@ setMethod("hits", "partition_bundle", function(
   .message("finalizing tables", verbose = verbose)
   if (nrow(count_dt) > 0L){
     strucs <- cl_cpos2struc(
-      corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
+      corpus = corpus_id,
+      registry = corpus_obj@registry_dir,
       s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]]
     )
     count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]

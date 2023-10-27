@@ -54,8 +54,11 @@ test_that(
 test_that(
   "count over subcorpus_bundle",
   {
-    cnt1 <- partition_bundle("REUTERS", s_attribute = "id") %>% count(query = "oil")
-    cnt2 <- corpus("REUTERS") %>% split(s_attribute = "id") %>% count(query = "oil")
+    cnt1 <- partition_bundle("REUTERS", s_attribute = "id") %>%
+      count(query = "oil")
+    
+    cnt2 <- corpus("REUTERS") %>% split(s_attribute = "id") %>%
+      count(query = "oil")
     
     expect_identical(cnt1, cnt2)
   }

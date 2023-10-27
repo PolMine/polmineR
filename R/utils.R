@@ -229,16 +229,16 @@ s_attr_has_values <- function(s_attribute, x){
 #' 
 #' Helper function for context method. Get ids for tokens.
 #' 
-#' @param corpus the CWB corpus to use
-#' @param p_attribute the p-attribute to use
+#' @param corpus CWB corpus to use.
+#' @param registry Registry directory with registry file describing `corpus`.
+#' @param p_attribute The p-attribute to use.
 #' @param token character tokens to turn into ids (character vector length >= 1)
 #' @param regex logical
 #' @noRd
-.token2id <- function(corpus, p_attribute, token = NULL, regex = FALSE){
-  regdir <- corpus_registry_dir(corpus)
+.token2id <- function(corpus, registry, p_attribute, token = NULL, regex = FALSE){
   stopifnot(
     corpus %in% cqp_list_corpora(),
-    p_attribute %in% corpus_p_attributes(corpus, regdir)
+    p_attribute %in% corpus_p_attributes(corpus, registry)
   )
   
   if (is.null(token)) return( NULL )
@@ -251,14 +251,18 @@ s_attr_has_values <- function(s_attribute, x){
         token,
         function(x)
           cl_regex2id(
-            corpus = corpus, registry = regdir,
-            p_attribute = p_attribute, regex = x
+            corpus = corpus,
+            registry = registry,
+            p_attribute = p_attribute,
+            regex = x
           )
       ))
     } else {
       retval <- cl_str2id(
-        corpus = corpus, registry = regdir,
-        p_attribute = p_attribute, str = token
+        corpus = corpus,
+        registry = registry,
+        p_attribute = p_attribute, 
+        str = token
       )
     }
     return( retval )

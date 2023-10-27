@@ -105,7 +105,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NU
   
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
-  if (is.null(registry)) registry <- corpus_registry_dir(corpus)
+  if (is.null(registry)) registry <- corpus_registry_dir(corpus)[1]
   
   ids <- cl_cpos2id(
     corpus = corpus, registry = registry,
@@ -152,8 +152,13 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NU
 })
 
 #' @rdname get_token_stream-method
-setMethod("get_token_stream", "matrix", function(.Object, split = FALSE, ...){
-  ts_vec <- get_token_stream(ranges_to_cpos(.Object), ...)
+setMethod("get_token_stream", "matrix", function(.Object, corpus, registry = NULL, split = FALSE, ...){
+  ts_vec <- get_token_stream(
+    ranges_to_cpos(.Object),
+    corpus = corpus, 
+    registry = registry,
+    ...
+  )
   
   if (isFALSE(is.logical(split))) stop("'split' needs to be a logical value.")
   if (isFALSE(split)){
@@ -190,8 +195,13 @@ setMethod("get_token_stream", "character", function(.Object, left = NULL, right 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "slice", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){
   get_token_stream(
-    .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
-    encoding = .Object@encoding, collapse = collapse, cpos = cpos,
+    .Object = .Object@cpos,
+    corpus = .Object@corpus,
+    registry = .Object@registry_dir,
+    p_attribute = p_attribute,
+    encoding = .Object@encoding,
+    collapse = collapse,
+    cpos = cpos,
     ...
     )
 })

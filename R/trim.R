@@ -190,8 +190,11 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
       .Object@cpos <- .Object@cpos[.Object@cpos[["match_id"]] %in% matches_to_keep]
     } else {
       positivelist_ids <- .token2id(
-        corpus = .Object@corpus, p_attribute = p_attribute,
-        token = positivelist, regex = regex
+        corpus = .Object@corpus,
+        registry = .Object@registry_dir,
+        p_attribute = p_attribute,
+        token = positivelist,
+        regex = regex
       )
       .fn <- function(.SD){
         neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
@@ -218,7 +221,13 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
   if (!is.null(stoplist)){
     .message("applying stoplist", verbose = verbose)
     before <- length(unique(.Object@cpos[["match_id"]]))
-    stoplist_ids <- .token2id(corpus = .Object@corpus, p_attribute = p_attribute, token = stoplist, regex = regex)
+    stoplist_ids <- .token2id(
+      corpus = .Object@corpus,
+      registry = .Object@registry_dir,
+      p_attribute = p_attribute,
+      token = stoplist,
+      regex = regex
+    )
     .fn <- function(.SD){
       p_attr <- paste(p_attribute[1], "id", sep = "_")
       negatives <- which(.SD[[p_attr]] %in% stoplist_ids)

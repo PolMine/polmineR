@@ -150,14 +150,17 @@ setMethod("count", "subcorpus", function(
           function(x){
             region_matrix <- cpos(
               .Object = .Object,
-              query = x, p_attribute = p_attribute,
+              query = x,
+              p_attribute = p_attribute,
               cqp = cqp,
               check = check
             )
             if (is.null(region_matrix)) return(NULL)
             token <- get_token_stream(
               ranges_to_cpos(region_matrix),
-              corpus = .Object@corpus, p_attribute = p_attribute,
+              corpus = .Object@corpus,
+              registry = .Object@registry_dir,
+              p_attribute = p_attribute,
               encoding = .Object@encoding
             )
             ids <- unlist(
@@ -287,7 +290,12 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     )@stat
     .message("rearranging table", verbose = verbose)
     if (nrow(DT) > 0L){
-      DT_cast <- dcast.data.table(DT, partition ~ query, value.var = "count", fill = 0)
+      DT_cast <- dcast.data.table(
+        DT,
+        partition ~ query,
+        value.var = "count",
+        fill = 0
+      )
     } else {
       # If there are no matches, we generate a data.table directly that will be 
       # filled later on.
@@ -338,18 +346,27 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
     
     enc <- encoding(.Object)
     corpus <- get_corpus(.Object)
-    if (length(corpus) > 1L) stop("The objects in the bundle must be derived from the same corpus.")
+    if (length(corpus) > 1L)
+      stop("The objects in the bundle must be derived from the same corpus.")
     
     if (verbose) message("... creating data.table with corpus positions")
     DT <- data.table(
       cpos = ranges_to_cpos(
         do.call(rbind, lapply(.Object@objects, slot, "cpos"))
       ),
-      name_id = do.call(c, Map(rep, 1:length(.Object@objects), unname(sapply(.Object@objects, slot, "size"))))
+      name_id = do.call(
+        c,
+        Map(
+          rep,
+          1:length(.Object@objects),
+          unname(sapply(.Object@objects, slot, "size"))
+        )
+      )
     )
 
     if (is.null(phrases)){
-      if (verbose) message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
+      if (verbose)
+        message(sprintf("... adding ids for p-attribute '%s'", p_attribute))
       DT[, "id" :=  cl_cpos2id(
         corpus = corpus, registry = corpus_registry_dir(corpus),
         p_attribute = p_attribute, cpos = DT[["cpos"]]
@@ -560,7 +577,13 @@ setMethod("count", "corpus", function(.Object, query = NULL, cqp = is.cqp, check
         # call the method for the slice class. There is an additional check whether
         # hits are within the regions defined by the subcorpus, but this extra 
         # cost is minimal.
-        retval <- count(as(.Object, "subcorpus"), query = query, cqp = cqp, p_attribute = p_attribute, breakdown = TRUE)
+        retval <- count(
+          as(.Object, "subcorpus"),
+          query = query,
+          cqp = cqp,
+          p_attribute = p_attribute,
+          breakdown = TRUE
+        )
         return( retval )
       }
     }
