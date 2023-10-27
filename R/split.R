@@ -79,8 +79,7 @@ setMethod("split", "subcorpus", function(
   if (missing(values))
     # prospectvely use RcppCWB::cl_struc_values()
     values <- s_attr_has_values(s_attribute = s_attribute, x = x)
-  if (is.null(values))
-    values <- TRUE
+  if (is.null(values)) values <- TRUE
   # result is reported, yet later with other info on s-attribute
   
   history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
@@ -139,7 +138,6 @@ setMethod("split", "subcorpus", function(
     strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
     if (isTRUE(values)){
       strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-      strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
     } else if (isFALSE(values)){
       if (verbose) cli_alert_info("split by change of strucs")
       strucs_values <- strucs
@@ -173,7 +171,6 @@ setMethod("split", "subcorpus", function(
     )
     if (isTRUE(values)){
       strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-      strucs_values <- as.nativeEnc(strucs_values, from = x@encoding)
     } else if (isFALSE(values)){
       if (verbose) cli_alert_info("split by change of strucs")
       strucs_values <- strucs
