@@ -1,4 +1,4 @@
-# polmineR v0.8.8.9001-9004
+# polmineR v0.8.9
 
 * `split()` sets type of `subcorpus` to `NA`, causing an error if another 
 split is performed. Fixed.
@@ -131,7 +131,7 @@ inherit this slot.
 
 # polmineR v0.8.7
 
-## New feautres
+## New features
 
 - Using the `corpus` class throughout is an opportunity to keep the corpus ID
 together with the registry directory of a corpus. And as we are able now to
