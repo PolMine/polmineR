@@ -23,7 +23,7 @@ based on the indexed corpora.
 
 A session registry directory (see \code{registry()}) combines the registry
 files for corpora that may reside in anywhere on the system. Upon loading
-\code{polmineR}, the files in the registry directory defined by the
+'polmineR', the files in the registry directory defined by the
 environment variable CORPUS_REGISTRY are copied to the session registry
 directory. To see whether the environment variable CORPUS_REGISTRY is set,
 use the \code{Sys.getenv()}-function. Corpora wrapped in R data packages can be
@@ -35,44 +35,49 @@ The package includes a draft shiny app that can be called using
 \section{Package options}{
 
 \itemize{
-\item{\emph{polmineR.p_attribute}:} {The default positional attribute}
-\item{\emph{polmineR.left}:} {Default value for left context.}
-\item{\emph{polmineR.lineview}:} {A logical value, whether ...}
-\item{\emph{polmineR.pagelength}:} {10L}
-\item{\emph{polmineR.meta}:} {}
-\item{\emph{polmineR.mc}:} {}
-\item{\emph{polmineR.cores}:} {}
-\item{\emph{polmineR.browse}:} {}
-\item{\emph{polmineR.buttons}:} {}
-\item{\emph{polmineR.specialChars}:} {}
-\item{\emph{polmineR.cutoff}:} {}
-\item{\emph{polmineR.mdsub}:}{A list of pairs of character vectors
+\item \emph{polmineR.p_attribute}: The default positional attribute.
+\item \emph{polmineR.left}: Default value for left context.
+\item \emph{polmineR.lineview}: A \code{logical} value to activate lineview output of
+\code{kwic()}.
+\item \emph{polmineR.pagelength}: Maximum number of lines to show when preparing output
+using \code{DT::datatable()} (defaults to 10L).
+\item \emph{polmineR.meta}: Default metadata (s-attributes) to show.
+\item \emph{polmineR.mc}: Whether to use multiple cores.
+\item \emph{polmineR.cores}: Number of cores to use. Passed as argument \code{cl} into
+\code{mclapply()}.
+\item \emph{polmineR.browse}: Whether to show output in browser.
+\item \emph{polmineR.buttons}: A \code{logical} value, whether to display buttons when
+preparing htmlwidget using \code{DT::datatable()}.
+\item \emph{polmineR.specialChars}:
+\item \emph{polmineR.cutoff}: Maximum number of characters to display when preparing
+html output.
+\item \emph{polmineR.mdsub}: A list of pairs of character vectors
 defining regular expression substitutions applied as part of preprocessing
 documents for html display. Intended usage: Remove characters that would be
-misinterpreted as markdown formatting instructions.}
-\item{\emph{polmineR.corpus_registry}:} {The system corpus registry
+misinterpreted as markdown formatting instructions.
+\item \emph{polmineR.corpus_registry}: The system corpus registry
 directory defined by the environment variable CORPUS_REGISTRY before the
 polmineR package has been loaded. The polmineR package uses a temporary
 registry directory to be able to use corpora stored at multiple
 locations in one session. The path to the system corpus registry directory
-captures this setting to keep it available if necessary.}
-\item{\emph{polmineR.shiny}:} {A \code{logical} value, whether polmineR is
+captures this setting to keep it available if necessary.
+\item \emph{polmineR.shiny}: A \code{logical} value, whether polmineR is
 used in the context of a shiny app. Used to control the apprearance of
-progress bars depending on whether shiny app is running, or not.}
-\item{\emph{polmineR.warn.size}:} {When generating HTML table widgets (e.g.
+progress bars depending on whether shiny app is running, or not.
+\item \emph{polmineR.warn.size}: When generating HTML table widgets (e.g.
 when preparing kwic output to be displayed in RStudio's Viewe pane), the
 function \code{DT::datatable()} that is used internally will issue a
 warning by default if the object size of the table is greater than 1500000.
 The warning adresses a client-server scenario that is not applicable in the
 context of a local RStudio session, so you may want to turn it of.
 Internally, the warning can be suppressed by setting the option
-\code{DT.warn.size} to \code{FALSE}. The polmineR option
-\code{polmineR.warn.size} is processed by functions calling DT::datatable()
-to set and reset the value of \code{DT.warn.size}. Please note: The
+"DT.warn.size" to \code{FALSE}. The polmineR option
+"polmineR.warn.size" is processed by functions calling DT::datatable()
+to set and reset the value of "DT.warn.size". Please note: The
 formulation of the warning does not match the scenario of a local RStudio
 session, but it may still be useful to get a warning when tables are large
 and slow to process. Therefore, the default value of the setting is
-\code{FALSE}.}
+\code{FALSE}.
 }
 }
 
