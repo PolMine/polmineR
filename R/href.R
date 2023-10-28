@@ -1,13 +1,13 @@
 #' Add hypertext reference to html document.
 #' 
-#' 
-#' 
 #' @param x Object of class 'html'.
 #' @param href A named `list` with hypertext references that will be inserted as
 #'   attribute href of a elements. The names of the list are either colors of
 #'   highlighted text that has been generated previously, or corpus positions.
 #' @export
-#' @inheritParams tooltips
+#' @inheritParams tooltips-method
+#' @name href-function
+#' @aliases href
 #' @examples
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 

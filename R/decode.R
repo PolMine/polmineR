@@ -1,3 +1,5 @@
+#' @name decode-method
+#' @aliases decode
 #' @rdname decode
 setGeneric("decode", function(.Object, ...) standardGeneric("decode"))
 

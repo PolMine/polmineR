@@ -1011,7 +1011,7 @@ setClass("press_subcorpus", contains = "subcorpus")
 #'   \code{\link{regions}} class (which inherits from the and the
 #'   \code{\link{corpus}} class), without adding further slots.
 #' @family classes to manage corpora
-#' @name phrases
+#' @name phrases-class
 #' @rdname phrases-class
 #' @aliases phrases-class
 #' @examples

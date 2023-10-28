@@ -96,7 +96,7 @@ NULL
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
 
-#' @inheritParams decode
+#' @inheritParams decode-method
 #' @param registry Registry directory with registry file describing the corpus.
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NULL, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){

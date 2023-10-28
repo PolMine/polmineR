@@ -237,8 +237,8 @@ setMethod("corpus", "missing", function(){
 #'   includes undefined s-attributes, a warning is issued and the return value
 #'   is `NULL`.
 #' @rdname subset
-#' @name subset
-#' @aliases subset,corpus-method
+#' @name subset-method
+#' @aliases subset subset,corpus-method
 #' @seealso The methods applicable for the `subcorpus` object resulting from
 #'   subsetting a corpus or subcorpus are described in the documentation of the
 #'   `\link{subcorpus-class}`. Note that the `subset`-method can also be applied

@@ -19,7 +19,8 @@ NULL
 #' @param verbose A `logical` value, whether to show messages.
 #' @param ... Further arguments are interpreted as assignments of tooltips to
 #'   tokens.
-#' @name tooltips
+#' @name tooltips-method
+#' @aliases tooltips
 #' @rdname tooltips
 #' @exportMethod tooltips
 #' @importFrom grDevices colors
@@ -37,9 +38,9 @@ NULL
 #'   html() %>%
 #'   highlight(yellow = c("barrels", "oil", "gas")) %>%
 #'   tooltips(list(yellow = "energy"))
-setGeneric("tooltips", function(.Object, tooltips, ...){
+setGeneric("tooltips", function(.Object, tooltips, ...)
   standardGeneric("tooltips")
-})
+)
   
 
 

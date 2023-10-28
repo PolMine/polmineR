@@ -25,7 +25,8 @@ NULL
 #'   vectors of terms (or regular expressions); the name needs to be a
 #'   valid color name. It is also possible to pass in a `matrix` with ranges (as
 #'   returned by `cpos()`).
-#' @name highlight
+#' @name highlight-method
+#' @aliases highlight
 #' @rdname highlight
 #' @exportMethod highlight
 #' @examples

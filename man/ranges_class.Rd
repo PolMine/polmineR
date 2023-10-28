@@ -27,7 +27,7 @@ matches.}
 \seealso{
 Other classes to manage corpora: 
 \code{\link{corpus-class}},
-\code{\link{phrases}},
+\code{\link{phrases-class}},
 \code{\link{regions}},
 \code{\link{subcorpus}}
 }

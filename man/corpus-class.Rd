@@ -165,7 +165,7 @@ attributes. Analytical methods available for \code{corpus} objects are
 \code{\link{as.TermDocumentMatrix}}.
 
 Other classes to manage corpora: 
-\code{\link{phrases}},
+\code{\link{phrases-class}},
 \code{\link{ranges-class}},
 \code{\link{regions}},
 \code{\link{subcorpus}}

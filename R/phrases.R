@@ -2,17 +2,17 @@
 setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 
 
-#' @details If \code{.Object} is an object of class \code{ngrams}, the
-#'   \code{as.phrases}-method will interpret the ngrams as CQP queries, 
-#'   look up the matching corpus positions and return an \code{phrases}
+#' @details If `.Object` is an object of class `ngrams`, the
+#'   `as.phrases()`-method will interpret the ngrams as CQP queries, 
+#'   look up the matching corpus positions and return an `phrases`
 #'   object.
-#' @param .Object Input object, either a \code{ngrams} or a \code{matrix} object.
+#' @param .Object Input object, either a `ngrams` or a `matrix` object.
 #' @param enc Encoding of the corpus.
-#' @param x A \code{phrases} class object.
+#' @param x A `phrases` class object.
 #' @param p_attribute The positional attribute (p-attribute) to decode.
-#' @param phrases A \code{phrases} class object.
+#' @param phrases A `phrases` class object.
 #' @rdname phrases-class
-#' @aliases as.phrases
+#' @aliases phrases as.phrases
 #' @export
 #' @examples
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
@@ -26,7 +26,6 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 #'   as.phrases()
 #' 
 #' phr <- as.character(reuters_phrases, p_attribute = "word")
-#' 
 setMethod("as.phrases", "ngrams", function(.Object){
   # First, prepare data.table with token id representation of phrases to look up
   li <- lapply(

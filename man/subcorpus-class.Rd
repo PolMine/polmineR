@@ -121,7 +121,7 @@ from the \code{textstat} class.
 
 Other classes to manage corpora: 
 \code{\link{corpus-class}},
-\code{\link{phrases}},
+\code{\link{phrases-class}},
 \code{\link{ranges-class}},
 \code{\link{regions}}
 }

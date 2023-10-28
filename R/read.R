@@ -43,7 +43,7 @@ NULL
 #' @param type the partition type, see documentation for `partition()`-method
 #' @param cutoff maximum number of tokens to display
 #' @param ... Further parameters passed into `read()`.
-#' @inheritParams href
+#' @inheritParams href-function
 #' @exportMethod read
 #' @rdname read-method
 #' @examples
