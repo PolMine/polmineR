@@ -59,9 +59,9 @@ If \code{.Object} is an object of class \code{ngrams}, the
 look up the matching corpus positions and return an \code{phrases}
 object.
 
-If \code{.Object} is a \code{matrix}, the \code{as.phrases}-method
-will initialize a \code{phrases} object. The corpus and the encoding of the
-corpus will be assigned to the object.
+If \code{.Object} is a \code{matrix}, the \code{as.phrases()}-method will
+initialize a \code{phrases} object. The corpus and the encoding of the corpus
+will be assigned to the object.
 
 Applying the \code{as.character}-method on a \code{phrases} object
 will return the decoded regions, concatenated using an underscore as
@@ -92,6 +92,7 @@ dtm <- corpus("GERMAPARLMINI") \%>\%
 grep("erneuerbaren_Energien", colnames(dtm))
 grep("verpasste_Chancen", colnames(dtm))
 
+\dontrun{
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
 # Derive phrases object from an ngrams object
@@ -103,8 +104,10 @@ reuters_phrases <- ngrams("REUTERS", p_attribute = "word", n = 2L) \%>\%
   as.phrases()
 
 phr <- as.character(reuters_phrases, p_attribute = "word")
+}
 # Derive phrases from explicitly stated CQP queries
 
+\dontrun{
 cqp_phrase_queries <- c(
   '"oil" "revenue";',
   '"Sheikh" "Aziz";',
@@ -114,10 +117,12 @@ cqp_phrase_queries <- c(
 )
 reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>\%
   as.phrases(corpus = "REUTERS", enc = "latin1")
+}
   
 # Use the concatenate_phrases() function on a data.table
- 
-lexical_units_cqp <- c(
+
+\dontrun{
+#' lexical_units_cqp <- c(
   '"Deutsche.*" "Bundestag.*";',
   '"sozial.*" "Gerechtigkeit";',
   '"Ausschuss" "f.r" "Arbeit" "und" "Soziales";',
@@ -134,6 +139,7 @@ dt <- corpus("GERMAPARLMINI") \%>\%
   
 dt[word == "Deutschen_Bundestag"]
 dt[word == "soziale_Marktwirtschaft"]
+}  
 
 }
 \seealso{

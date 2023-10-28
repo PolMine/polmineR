@@ -34,6 +34,7 @@ NULL
 #' @rdname as.speeches
 #' @importFrom cli cli_progress_step cli_progress_done
 #' @examples 
+#' \dontrun{
 #' use("polmineR")
 #' speeches <- as.speeches(
 #'   "GERMAPARLMINI",
@@ -49,6 +50,7 @@ NULL
 #'   s_attribute_date = "date"
 #' )
 #' summary(speeches)
+#' }
 setGeneric("as.speeches", function(.Object, ...) standardGeneric("as.speeches"))
 
 #' @exportMethod as.speeches
@@ -288,7 +290,8 @@ setMethod("as.speeches", "subcorpus", function(
 #'   a `partition` or `subcorpus`.
 #' @rdname as.speeches
 #' @examples
-#' sp <- corpus("GERMAPARLMINI") %>%
+#' \dontrun{
+#' #' sp <- corpus("GERMAPARLMINI") %>%
 #'   as.speeches(s_attribute_name = "speaker", s_attribute_date = "date")
 #' 
 #' sp <- corpus("GERMAPARLMINI") %>%
@@ -306,6 +309,7 @@ setMethod("as.speeches", "subcorpus", function(
 #'     subset = {date == "2009-11-10" & grepl("Merkel", speaker)},
 #'     progress = FALSE
 #'   )
+#' }
 #' 
 #' @importFrom RcppCWB s_attr_regions s_attr_is_sibling s_attr_is_descendent
 setMethod("as.speeches", "corpus", function( 

@@ -159,6 +159,7 @@ NULL
 #' @docType methods
 #' @rdname partition_bundle-method
 #' @examples
+#' \dontrun{
 #' use("polmineR")
 #' bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
 #' pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE)
@@ -166,6 +167,7 @@ NULL
 #' dtm <- as.DocumentTermMatrix(pb, col = "count")
 #' summary(pb)
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+#' }
 #' @seealso \code{\link{partition}} and \code{\link{bundle}}
 setGeneric("partition_bundle", function(.Object, ...) standardGeneric("partition_bundle"))
 
@@ -234,10 +236,12 @@ setMethod("as.partition_bundle", "list", function(.Object, ...){
 #' @rdname partition_bundle-method
 #' @importFrom cli cli_progress_step
 #' @examples 
+#' \dontrun{
 #' use("RcppCWB", corpus = "REUTERS")
 #' pb <- corpus("REUTERS") %>%
 #'   context(query = "oil", p_attribute = "word") %>%
 #'   partition_bundle(node = FALSE, verbose = TRUE)
+#' }
 setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose = TRUE, progress = TRUE, mc = 1L){
   
   stopifnot(

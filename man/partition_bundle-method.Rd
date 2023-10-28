@@ -106,6 +106,7 @@ the names of the incoming \code{partition_bundle} concatenated with the s-attrib
 The argument \code{prefix} can be used to achieve a more descriptive name.
 }
 \examples{
+\dontrun{
 use("polmineR")
 bt2009 <- partition("GERMAPARLMINI", date = "2009-.*", regex = TRUE)
 pb <- partition_bundle(bt2009, s_attribute = "date", progress = TRUE)
@@ -113,10 +114,13 @@ pb <- enrich(pb, p_attribute = "word")
 dtm <- as.DocumentTermMatrix(pb, col = "count")
 summary(pb)
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+}
+\dontrun{
 use("RcppCWB", corpus = "REUTERS")
 pb <- corpus("REUTERS") \%>\%
   context(query = "oil", p_attribute = "word") \%>\%
   partition_bundle(node = FALSE, verbose = TRUE)
+}
 # split up objects in partition_bundle by using partition_bundle-method
 use("polmineR")
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")

@@ -95,6 +95,7 @@ If there is a gap larger than the number of tokens supplied by argument
 \code{gap}, contributions of a speaker are assumed to be two seperate speeches.
 }
 \examples{
+\dontrun{
 use("polmineR")
 speeches <- as.speeches(
   "GERMAPARLMINI",
@@ -110,7 +111,9 @@ speeches <- as.speeches(
   s_attribute_date = "date"
 )
 summary(speeches)
-sp <- corpus("GERMAPARLMINI") \%>\%
+}
+\dontrun{
+#' sp <- corpus("GERMAPARLMINI") \%>\%
   as.speeches(s_attribute_name = "speaker", s_attribute_date = "date")
 
 sp <- corpus("GERMAPARLMINI") \%>\%
@@ -128,5 +131,6 @@ sp <- corpus("GERMAPARLMINI") \%>\%
     subset = {date == "2009-11-10" & grepl("Merkel", speaker)},
     progress = FALSE
   )
+}
 
 }

@@ -3,6 +3,8 @@
 Fedora R-devel checks indicated an encoding issue in a plot. I have resolved 
 the underlying issue and checked all plots.
 
+I have also cleaned up warnings from tidy for HTML and moved further examples
+into 'donttest'-blocks to avoid long check times.
 
 ## Test environments
 
