@@ -3,8 +3,10 @@
 Fedora R-devel checks indicated an encoding issue in a plot. I have resolved 
 the underlying issue and checked all plots.
 
-I have also cleaned up warnings from tidy for HTML and moved further examples
-into 'donttest'-blocks to avoid long check times.
+- I have also cleaned up warnings from tidy for HTML 
+- moved examples into 'donttest'-blocks to avoid long check times
+- I call setDTthreads(2L) in zzz.R to limit usage of cores to 2 on CRAN
+
 
 ## Test environments
 
