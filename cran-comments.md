@@ -7,6 +7,7 @@ the underlying issue and checked all plots.
 - moved examples into 'donttest'-blocks to avoid long check times
 - I call setDTthreads(2L) in zzz.R to limit usage of cores to 2 on CRAN
 
+To convey to users how to get full performance, I introduced a startup message.
 
 ## Test environments
 

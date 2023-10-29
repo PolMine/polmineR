@@ -71,6 +71,7 @@ decoded.
 against as names if possible.
 * `subset` for `corpus` and `subset` objects will use integer struc values for
 subsetting, if integer values are passed in logical expression.
+* Number of cores limited to 2 as required by CRAN Repository Policy.
 
 
 # polmineR v0.8.8

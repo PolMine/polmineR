@@ -77,13 +77,6 @@
       cqp_reset_registry(registry = registry())
     }
   }
-  
-  # Limit data.table's usage to 2 threads on CRAN, cp.CRAN Repository Policy:
-  # "If running a package uses multiple threads/cores it must never use more
-  # than two simultaneously: the check farm is a shared resource and will
-  # typically be running many checks simultaneously."
-  on_cran <- !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "true")))
-  if (on_cran) setDTthreads(2L)
 
   NULL
 }
@@ -122,7 +115,18 @@
       
     }
   }
-
+  
+  # Limit data.table's usage to 2 threads on CRAN, cp.CRAN Repository Policy:
+  # "If running a package uses multiple threads/cores it must never use more
+  # than two simultaneously: the check farm is a shared resource and will
+  # typically be running many checks simultaneously."
+  setDTthreads(if (.Platform$OS.type == "windows") 1L else 2L)
+  
+  packageStartupMessage(
+    "polmineR is throttled to use 2 cores as required by CRAN Repository Policy. To get full performance:\n",
+    "* Use `n_cores <- parallel::detectCores()` to detect the number of cores available on your machine\n",
+    "* Set number of cores using `options('polmineR.cores' = n_cores - 1)` and `data.table::setDTthreads(n_cores - 1)`"
+  )
 }
 
 .onUnload <- function(libpath){
