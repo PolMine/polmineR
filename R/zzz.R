@@ -1,3 +1,4 @@
+#' @importFrom data.table setDTthreads
 .onLoad <- function (libname, pkgname) {
   
   # Options are set before anything else mainly to catch the CORPUS_REGISTRY
@@ -38,15 +39,17 @@
   # will still be a subdirectory of the inst directory. Therefore both options
   # are considered whether extdata is in the inst directory, or immediately in
   # main directory of the package.
-  pkg_registry_dir_alternatives <- c(
+  alt <- c(
     path(libname, pkgname, "extdata", "cwb", "registry"),
     path(libname, pkgname, "inst", "extdata", "cwb", "registry")
   )
-  pkg_registry_dir <- pkg_registry_dir_alternatives[dir.exists(pkg_registry_dir_alternatives)]
+  pkg_registry_dir <- alt[dir.exists(alt)]
   
-  pkg_indexed_corpora_dir <- path(libname, pkgname, "extdata", "cwb", "indexed_corpora")
-  
-  
+  pkg_indexed_corpora_dir <- path(
+    libname, pkgname,
+    "extdata", "cwb", "indexed_corpora"
+  )
+
   if (!dir.exists(registry())) dir.create(registry())
   if (!dir.exists(data_dir())) dir.create(data_dir())
   
@@ -73,8 +76,14 @@
     } else {
       cqp_reset_registry(registry = registry())
     }
-    
   }
+  
+  # Limit data.table's usage to 2 threads on CRAN, cp.CRAN Repository Policy:
+  # "If running a package uses multiple threads/cores it must never use more
+  # than two simultaneously: the check farm is a shared resource and will
+  # typically be running many checks simultaneously."
+  on_cran <- !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "true")))
+  if (on_cran) setDTthreads(2L)
 
   NULL
 }
