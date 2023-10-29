@@ -7,7 +7,7 @@
 Decode as String.
 }
 \examples{
-use("polmineR")
-p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Angela Dorothea Merkel")
-s <- as(p, "String")
+corpus("REUTERS") \%>\% 
+  subset(id == "127") \%>\% 
+  as("String")
 }

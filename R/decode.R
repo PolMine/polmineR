@@ -264,28 +264,29 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
 #' # Decode corpus as data.table
-#' dt <- decode("GERMAPARLMINI", to = "data.table")
+#' dt <- decode("REUTERS", to = "data.table")
 #' 
 #' # Decode corpus selectively
-#' dt <- decode("GERMAPARLMINI", to = "data.table", p_attributes = "word", s_attributes = "party")
+#' dt <- decode(
+#'   "REUTERS",
+#'   to = "data.table",
+#'   p_attributes = "word",
+#'   s_attributes = "id"
+#' )
 #' 
 #' # Decode a subcorpus
-#' dt <- corpus("GERMAPARLMINI") %>%
-#'   subset(speaker == "Angela Dorothea Merkel") %>%
-#'   decode(s_attributes = c("speaker", "party", "date"), to = "data.table")
-#' 
-#' # Decode subcorpus selectively
-#' corpus("GERMAPARLMINI") %>%
-#'   subset(speaker == "Angela Dorothea Merkel") %>%
-#'   decode(to = "data.table", p_attributes = "word", s_attributes = "party")
+#' dt <- corpus("REUTERS") %>%
+#'   subset(id %in% c("127", "144")) %>%
+#'   decode(s_attributes = "id", to = "data.table")
 #' 
 #' # Decode partition
-#' P <- partition("REUTERS", places = "kuwait", regex = TRUE)
-#' dt <- decode(P, to = "data.table")
+#' dt <- partition("REUTERS", places = "kuwait", regex = TRUE) %>%
+#'   decode(to = "data.table")
 #' 
 #' # Previous versions of polmineR offered an option to decode a single
 #' # s-attribute. This is how you could proceed to get a table with metadata.
-#' dt <- decode(P, s_attribute = "id", decode = FALSE, to = "data.table")
+#' dt <- partition("REUTERS", places = "kuwait", regex = TRUE) %>% 
+#'   decode(s_attribute = "id", decode = FALSE, to = "data.table")
 #' dt[, "word" := NULL]
 #' dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 #' 

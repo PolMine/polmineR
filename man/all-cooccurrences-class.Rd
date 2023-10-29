@@ -137,7 +137,7 @@ context of a token identified by id.}
 }}
 
 \examples{
-\donttest{
+\dontrun{
 # takes too much time on CRAN test machines
 use(pkg = "RcppCWB", corpus = "REUTERS")
 X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)

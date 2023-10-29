@@ -72,6 +72,7 @@ The \code{concatenate_phrases} function takes a \code{data.table}
 into a phrase.
 }
 \examples{
+\dontrun{
 # Workflow to create document-term-matrix with phrases
 
 obs <- corpus("GERMAPARLMINI") \%>\%
@@ -91,7 +92,7 @@ dtm <- corpus("GERMAPARLMINI") \%>\%
   
 grep("erneuerbaren_Energien", colnames(dtm))
 grep("verpasste_Chancen", colnames(dtm))
-
+}
 \dontrun{
 use(pkg = "RcppCWB", corpus = "REUTERS")
 

@@ -75,6 +75,7 @@ interest (coi), and a \code{partition} defining a reference corpus (ref) are com
 The most important purpose is term extraction.
 }
 \examples{
+\dontrun{
 use("polmineR")
 
 kauder <- partition(
@@ -94,6 +95,7 @@ all_count <- as(all, "count")
 terms_kauder <- features(kauder_count, all_count, included = TRUE)
 top100 <- subset(terms_kauder, rank_chisquare <= 100)
 head(top100)
+}
 
 # get matrix with features (dontrun to keep time for examples short)
 \dontrun{

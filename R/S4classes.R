@@ -1015,6 +1015,7 @@ setClass("press_subcorpus", contains = "subcorpus")
 #' @rdname phrases-class
 #' @aliases phrases-class
 #' @examples
+#' \dontrun{
 #' # Workflow to create document-term-matrix with phrases
 #' 
 #' obs <- corpus("GERMAPARLMINI") %>%
@@ -1034,7 +1035,7 @@ setClass("press_subcorpus", contains = "subcorpus")
 #'   
 #' grep("erneuerbaren_Energien", colnames(dtm))
 #' grep("verpasste_Chancen", colnames(dtm))
-#' 
+#' }
 setClass(
   "phrases",
   contains = "regions"

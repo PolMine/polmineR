@@ -96,6 +96,7 @@ NULL
 #' Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statistical Natural Language
 #' Processing}. MIT Press: Cambridge, Mass., pp. 151-189 (ch. 5).
 #' @examples
+#' \dontrun{
 #' use("polmineR")
 #' 
 #' kauder <- partition(
@@ -115,6 +116,7 @@ NULL
 #' terms_kauder <- features(kauder_count, all_count, included = TRUE)
 #' top100 <- subset(terms_kauder, rank_chisquare <= 100)
 #' head(top100)
+#' }
 #' 
 #' # get matrix with features (dontrun to keep time for examples short)
 #' \dontrun{

@@ -58,17 +58,23 @@ NULL
 #' @examples
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' 
-#' # Decode first words of GERMAPARLMINI corpus (first sentence)
-#' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word")
+#' # Decode first words of REUTERS corpus (first sentence)
+#' get_token_stream(0:20, corpus = "REUTERS", p_attribute = "word")
 #'
 #' # Decode first sentence and collapse tokens into single string
-#' get_token_stream(0:9, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
+#' get_token_stream(0:20, corpus = "REUTERS", p_attribute = "word", collapse = " ")
 #'
 #' # Decode regions defined by two-column integer matrix
-#' region_matrix <- matrix(c(0L,9L,10L,25L), ncol = 2, byrow = TRUE)
-#' get_token_stream(region_matrix, corpus = "GERMAPARLMINI", p_attribute = "word", encoding = "latin1")
+#' region_matrix <- matrix(c(0L,20L,21L,38L), ncol = 2, byrow = TRUE)
+#' get_token_stream(
+#'   region_matrix,
+#'   corpus = "REUTERS",
+#'   p_attribute = "word",
+#'   encoding = "latin1"
+#' )
 #'
 #' # Use argument 'beautify' to remove surplus whitespace
+#' \dontrun{
 #' get_token_stream(
 #'   region_matrix,
 #'   corpus = "GERMAPARLMINI",
@@ -76,10 +82,10 @@ NULL
 #'   encoding = "latin1",
 #'   collapse = " ", beautify = TRUE
 #' )
+#' }
 #'
 #' # Decode entire corpus (corpus object / specified by corpus ID)
-#' fulltext <- get_token_stream("GERMAPARLMINI", p_attribute = "word")
-#' corpus("GERMAPARLMINI") %>%
+#' corpus("REUTERS") %>%
 #'   get_token_stream(p_attribute = "word") %>%
 #'   head()
 #'
@@ -90,9 +96,11 @@ NULL
 #'   head()
 #'
 #' # Decode partition_bundle
+#' \dontrun{
 #' pb_tokstr <- corpus("REUTERS") %>%
 #'   split(s_attribute = "id") %>%
 #'   get_token_stream(p_attribute = "word")
+#' }
 setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token_stream"))
 
 
@@ -236,7 +244,7 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 #' @importFrom stringi stri_c
 #' @importFrom RcppCWB region_matrix_to_ids cl_lexicon_size
 #' @examples 
-#' \donttest{
+#' \dontrun{
 #' # Get token stream for partition_bundle
 #' pb <- partition_bundle("REUTERS", s_attribute = "id")
 #' ts_list <- get_token_stream(pb)
@@ -404,9 +412,9 @@ setOldClass("String")
 #' Decode as String.
 #'
 #' @examples
-#' use("polmineR")
-#' p <- partition("GERMAPARLMINI", date = "2009-11-10", speaker = "Angela Dorothea Merkel")
-#' s <- as(p, "String")
+#' corpus("REUTERS") %>% 
+#'   subset(id == "127") %>% 
+#'   as("String")
 #' @name partition_to_string
 setAs(from = "slice", to = "String", def = function(from){
   word <- get_token_stream(from, p_attribute = "word")

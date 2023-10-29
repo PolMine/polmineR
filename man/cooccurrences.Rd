@@ -224,7 +224,7 @@ if (interactive()) show(interactive_table)
 
 # compute cooccurrences for a set of partitions
 # (example not run by default to save time on test machines)
-\donttest{
+\dontrun{
 pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 ps <- count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]]
 pb_min <- pb[ps]

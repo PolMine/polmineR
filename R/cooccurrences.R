@@ -319,7 +319,7 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 #' 
 #' # compute cooccurrences for a set of partitions
 #' # (example not run by default to save time on test machines)
-#' \donttest{
+#' \dontrun{
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "speaker")
 #' ps <- count(pb, query = "Deutschland")[Deutschland >= 25][["partition"]]
 #' pb_min <- pb[ps]
@@ -830,7 +830,7 @@ setMethod("Cooccurrences", "subcorpus", function(
 #' @exportMethod as.simple_triplet_matrix
 #' @rdname all-cooccurrences-class
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # takes too much time on CRAN test machines
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
 #' X <- Cooccurrences("REUTERS", p_attribute = "word", left = 2L, right = 2L)
