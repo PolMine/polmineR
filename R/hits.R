@@ -27,6 +27,9 @@ NULL
 #' @param freq A `logcial` value, whether to report relative frequencies.
 #' @param fill A `logical` value, whethet to report counts (optionally
 #'   frequencies) for combinations of s-attributes where not matchers occurr.
+#' @param by Either "query" or "match". Whether to aggregate table with query
+#'   matches by the query or the decoded matching regions (in addition to
+#'   aggregation by s-attributes). Defaults to "query".
 #' @param .Object A length-one `character` vector with a corpus ID, a
 #'   `partition` or `partition_bundle` object
 #' @param mc A `logical` value, whether to use multicore.
@@ -61,9 +64,12 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
-setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, decode = TRUE, fill = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
+setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, decode = TRUE, by = c("query", "match"), fill = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
   
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
+  
+  if (length(by) > 1L) by <- by[1]
+  stopifnot(by %in% c("match", "query"))
   
   stopifnot(is.logical(decode))
   if (!missing(s_attribute)){
@@ -140,19 +146,23 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     }
   }
   
-  TF <- DT[, .N, by = c(eval(c("query", s_attribute))), with = TRUE]
+  TF <- DT[, .N, by = c(eval(c(by, s_attribute))), with = TRUE]
   setnames(TF, old = "N", new = "count")
   
   if (fill){
     # Using s_attributes() requires decoding s-attributes and is potentially not
-    # the fastest solution, but it ensures that only combinations that do occurr
+    # the fastest solution, but it ensures that only combinations that do occur
     # are reported
-    s_attr_dt <- s_attributes(.Object = .Object, s_attribute = s_attribute, unique = TRUE)
+    s_attr_dt <- s_attributes(
+      .Object = .Object,
+      s_attribute = s_attribute,
+      unique = TRUE
+    )
     .fn <- function(.SD){
       dt <- .SD[s_attr_dt, on = s_attribute]
       dt[, "count" := ifelse(is.na(dt[["count"]]), 0L, dt[["count"]])]
     }
-    TF <- TF[, .fn(.SD), by = "query", .SDcols = c(s_attribute, "count")]
+    TF <- TF[, .fn(.SD), by = by, .SDcols = c(s_attribute, "count")]
   }
   
   if (freq) size <- TRUE
@@ -162,7 +172,7 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     SIZE <- size(.Object, s_attribute = s_attribute)
     setkeyv(TF, cols = s_attribute)
     TF <- TF[SIZE]
-    if (isFALSE(fill)) TF <- TF[!is.na(TF[["query"]])]
+    if (isFALSE(fill)) TF <- TF[!is.na(TF[[by]])]
     TF[, "count" := ifelse(is.na(TF[["count"]]), 0L, TF[["count"]])]
     if (verbose) cli_progress_done()
     if (freq){
@@ -227,10 +237,11 @@ setMethod("hits", "partition", function(.Object, query, cqp = FALSE, check = TRU
 #' @rdname hits
 setMethod("hits", "partition_bundle", function(
   .Object, query, cqp = FALSE, check = TRUE, p_attribute = getOption("polmineR.p_attribute"), s_attribute, size = TRUE, freq = FALSE,
-  mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
+  by = c("query", "match"), mc = getOption("polmineR.mc"), progress = FALSE, verbose = TRUE, ...
 ){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+  if (length(by) > 1L) by <- by[1]
 
   corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
   if (length(corpus_id) > 1L)
@@ -292,7 +303,7 @@ setMethod("hits", "partition_bundle", function(
       dt[, (s_attr) := values]
     }
     if (length(nas) > 0) dt <- dt[-nas] # remove hits that are not in partition_bundle
-    tf <- dt[, .N, by = c(c("partition", "query"), s_attribute)]
+    tf <- dt[, .N, by = c(c("partition", by), s_attribute)]
     setnames(tf, old = "N", new = "count")
     if (freq) size <- TRUE
     if (size) tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]

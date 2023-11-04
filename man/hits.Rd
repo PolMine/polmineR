@@ -24,6 +24,7 @@ hits(.Object, ...)
   size = FALSE,
   freq = FALSE,
   decode = TRUE,
+  by = c("query", "match"),
   fill = FALSE,
   mc = 1L,
   verbose = TRUE,
@@ -89,6 +90,7 @@ hits(.Object, ...)
   s_attribute,
   size = TRUE,
   freq = FALSE,
+  by = c("query", "match"),
   mc = getOption("polmineR.mc"),
   progress = FALSE,
   verbose = TRUE,
@@ -127,6 +129,10 @@ used to breakdown counts for matches for query/queries.}
 
 \item{decode}{A \code{logical} value, whether to decode s-attributes. If \code{FALSE},
 the \code{integer} values of strucs are reported in the table with matches.}
+
+\item{by}{Either "query" or "match". Whether to aggregate table with query
+matches by the query or the decoded matching regions (in addition to
+aggregation by s-attributes). Defaults to "query".}
 
 \item{fill}{A \code{logical} value, whethet to report counts (optionally
 frequencies) for combinations of s-attributes where not matchers occurr.}

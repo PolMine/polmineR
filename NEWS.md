@@ -2,7 +2,9 @@
 
 * S4 class has new slot 'match' for decoded matches for query.
 * Method `ranges()` adds decoded token stream of query matches to 'ranges'
-object (slot "match") that is returned.
+object (slot "match") that is returned #277.
+* Method `hits()` has new argument 'by' to aggregate query matches either by 
+'query' or by 'match' #278.
 
 
 # polmineR v0.8.9

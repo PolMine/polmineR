@@ -79,16 +79,22 @@ is not a CQP query. Defaults to \code{NULL}.}
 
 \item{verbose}{A \code{logical} value, whether to show messages.}
 
-\item{mc}{If \code{logical} value \code{TRUE}, the value of
-\code{getOption("polmineR.cores")} is passed into \code{mclapply} or
-\code{pblapply} as the specification of the number of cores to use. It is
-also possible to supply an integer value with the number of cores directly.
-Defaults to 1 (no multicore). Relevant only if several queries are to be
-processed.}
+\item{mc}{If \code{TRUE}, the value of \code{getOption("polmineR.cores")} is passed
+into \code{mclapply()} or \code{pblapply()} as the specification of the number of
+cores to use. It is also possible to supply an integer value with the
+number of cores directly. Defaults to 1 (no multicore). Relevant only if
+several queries are to be processed.}
 
 \item{progress}{A \code{logical} value, whether to show a progess bar when
 processing multiple queries.}
 }
 \description{
 Get ranges (pairs of left and right corpus positions) for queries.
+}
+\examples{
+use("RcppCWB")
+
+dt <- corpus("REUTERS") \%>\% 
+  ranges(query = '"crude" "oil"', cqp = TRUE) \%>\% 
+  as.data.table()
 }
