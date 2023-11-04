@@ -1298,12 +1298,18 @@ setAs(from = "corpus", to = "subcorpus", def = function(from){
 #' S4 class to manage ranges of corpus positions for query matches. The class
 #' inherits from the classes `regions` and `corpus`.
 #' 
-#' @slot query A length-one `character` string, query used for query
+#' @slot query A `character` string with queries that yielded matching regions
+#'   reported in the rows of matrix in slot 'cpos'.
 #'   matches.
+#' @slot match A `character` string that decodes matching regions.
 #' @exportClass ranges
 #' @rdname ranges_class
 #' @family classes to manage corpora
-setClass("ranges", slots = c(query = "character"), contains = "regions")
+setClass(
+  "ranges",
+  slots = c(query = "character", match = "character"),
+  contains = "regions"
+)
 
 
 #' @details The method `aggregate` will deflate the matrix in the slot `cpos`,

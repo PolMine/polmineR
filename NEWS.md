@@ -1,3 +1,10 @@
+# polmineR v0.8.9.9001
+
+* S4 class has new slot 'match' for decoded matches for query.
+* Method `ranges()` adds decoded token stream of query matches to 'ranges'
+object (slot "match") that is returned.
+
+
 # polmineR v0.8.9
 
 * `split()` sets type of `subcorpus` to `NA`, causing an error if another 

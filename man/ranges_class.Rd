@@ -20,8 +20,11 @@ inherits from the classes \code{regions} and \code{corpus}.
 \section{Slots}{
 
 \describe{
-\item{\code{query}}{A length-one \code{character} string, query used for query
+\item{\code{query}}{A \code{character} string with queries that yielded matching regions
+reported in the rows of matrix in slot 'cpos'.
 matches.}
+
+\item{\code{match}}{A \code{character} string that decodes matching regions.}
 }}
 
 \seealso{
