@@ -565,6 +565,8 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
 
       r <- matrix(regions[[s_attr[i]]][strucs + 1L,], ncol = 2L)
       if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
+        
+        if (verbose) cli_alert_info("s-attribute {.val {s_attr[i]}} is ancestor")
         descendant <- FALSE
         if (names(s_attr)[i] == "integer"){
           if (verbose) cli_alert_info(
@@ -588,6 +590,7 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
         }
         
       } else {
+        if (verbose) cli_alert_info("s-attribute {.val {s_attr[i]}} is descendant")
         descendant <- TRUE
         break
       }
@@ -641,7 +644,7 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
           dt[, (s_attr[1]) := str]
         }
       } else {
-        stop("s-attribute does not have values")
+        cli_alert_warning("s-attribute does not have values")
       }
       
       if (length(s_attr) > 1L){

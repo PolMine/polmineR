@@ -123,9 +123,7 @@
   setDTthreads(if (.Platform$OS.type == "windows") 1L else 2L)
   
   packageStartupMessage(
-    "polmineR is throttled to use 2 cores as required by CRAN Repository Policy. To get full performance:\n",
-    "* Use `n_cores <- parallel::detectCores()` to detect the number of cores available on your machine\n",
-    "* Set number of cores using `options('polmineR.cores' = n_cores - 1)` and `data.table::setDTthreads(n_cores - 1)`"
+    "polmineR 0.8.9.9001 using 2 threads (see `?polmineR` on optimizing performance)"
   )
 }
 

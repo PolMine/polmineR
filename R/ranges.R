@@ -2,9 +2,9 @@
 NULL
 
 
-#' Get ranges for query.
+#' Get ranges for query matches.
 #' 
-#' Get ranges (pairs of left and right corpus positions) for queries.
+#' Get ranges (left and right corpus positions) of query matches.
 #' 
 #' @param mc If `TRUE`, the value of `getOption("polmineR.cores")` is passed
 #'   into `mclapply()` or `pblapply()` as the specification of the number of
@@ -19,9 +19,25 @@ NULL
 #' @examples
 #' use("RcppCWB")
 #' 
-#' dt <- corpus("REUTERS") %>% 
+#' oil <- corpus("REUTERS") %>% 
 #'   ranges(query = '"crude" "oil"', cqp = TRUE) %>% 
 #'   as.data.table()
+#'   
+#' # use ranges() to check which matches for two CQP queries occur within
+#' # defined maximum distance
+#' 
+#' prices <- corpus("REUTERS") %>% 
+#'   ranges(query = '"price.*"', cqp = TRUE) %>% 
+#'   as.data.table()
+#' 
+#' is_close <- oil[, .(
+#'   close = any(
+#'     abs(cpos_left - prices$cpos_right) <= 10 |
+#'     abs(cpos_right - prices$cpos_left) <= 10
+#'   )),
+#'   by = "cpos_left"
+#' ]
+#' oil_min <- oil[cpos_left %in% is_close[close == TRUE]$cpos_left]
 setGeneric("ranges", function(.Object, ...) standardGeneric("ranges"))
 
 #' @importFrom stringi stri_c_list

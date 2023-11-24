@@ -5,7 +5,8 @@
 object (slot "match") that is returned #277.
 * Method `hits()` has new argument 'by' to aggregate query matches either by 
 'query' or by 'match' #278.
-
+* `subset()` for subcorpus objects issued ERROR if s-attribute did not have 
+values. Warning issued now.
 
 # polmineR v0.8.9
 
