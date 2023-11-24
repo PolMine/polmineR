@@ -122,9 +122,9 @@
   # typically be running many checks simultaneously."
   setDTthreads(if (.Platform$OS.type == "windows") 1L else 2L)
   
-  packageStartupMessage(
-    "polmineR 0.8.9.9001 using 2 threads (see `?polmineR` on optimizing performance)"
-  )
+  packageStartupMessage(sprintf("polmineR version: %s", packageVersion("polmineR")))
+  packageStartupMessage(sprintf("CWB version:      %s", RcppCWB::cwb_version()))
+  packageStartupMessage("Threads used:     2 (see `?polmineR` on optimizing performance)")
 }
 
 .onUnload <- function(libpath){
