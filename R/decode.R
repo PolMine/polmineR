@@ -125,6 +125,11 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
         region_matrix = x@cpos,
         s_attribute = s_attr
       )
+      # missing regions for s_attr within regions result in NAs
+      drop <- which(apply(struc_matrix, 1, function(row) any(is.na(row))))
+      if (length(drop) > 0L) struc_matrix <- struc_matrix[-drop,]
+      if (nrow(struc_matrix) == 0L) return(NULL)
+      
       strucs <- ranges_to_cpos(struc_matrix)
       strucs_min <- unique(strucs[strucs >= 0L])
       if (length(strucs_min) == 0L) return(NULL)
