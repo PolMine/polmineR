@@ -470,8 +470,16 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
           registry = .Object@registry_dir,
           region_matrix = .Object@cpos
         )
-        strucs <- RcppCWB::ranges_to_cpos(struc_matrix)
-        if (length(strucs) == 0L) next
+        strucs <- suppressWarnings(RcppCWB::ranges_to_cpos(struc_matrix))
+        if (length(strucs) == 0L){
+          if (decode){
+            y[, (s_attributes[i]) := rep(NA_character_, times = nrow(y))]
+          } else {
+            y[, (s_attributes[i]) := rep(NA_integer_, times = nrow(y))]
+          }
+          
+          next
+        }
         
         regions <- RcppCWB::get_region_matrix(
           corpus = .Object@corpus,
