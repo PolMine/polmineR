@@ -92,3 +92,44 @@ test_that(
     
   }
 )
+
+test_that(
+  "s_attributes for subcorpus_bundle",
+  {
+    speeches <- corpus("GERMAPARLMINI") |>
+      as.speeches(
+        s_attribute_date = "protocol_date",
+        s_attribute_name = "speaker",
+        gap = 300,
+        progress = FALSE
+      )
+    
+    # s-attribute is sibling
+    s_attrs_sibling <- s_attributes(speeches, s_attribute = "party")
+    for (i in 1:10){
+      expect_identical(
+        s_attrs_sibling[[i]],
+        s_attributes(speeches[[i]], "party")
+      )
+    }
+    
+    # s-attribute is ancestor
+    s_attrs_ancestor <- s_attributes(speeches, s_attribute = "protocol_date")
+    for (i in 1:10){
+      expect_identical(
+        s_attrs_ancestor[[i]],
+        s_attributes(speeches[[i]], "protocol_date")
+      )
+    }
+
+    daywise <- corpus("GERMAPARLMINI") %>%
+      split(s_attribute = "protocol_date", verbose = FALSE)
+    
+    s_attrs <- s_attributes(daywise, "speaker")
+    
+    for (i in seq_along(daywise)){
+      expect_identical(s_attrs[[i]], s_attributes(daywise[[i]], "speaker"))
+    }
+    
+  }
+)
