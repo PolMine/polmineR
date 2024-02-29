@@ -1,4 +1,4 @@
-# polmineR v0.8.9.9001-9002
+# polmineR v0.8.9.9001-9003
 
 * S4 class has new slot 'match' for decoded matches for query.
 * Method `ranges()` adds decoded token stream of query matches to 'ranges'
@@ -9,6 +9,8 @@ object (slot "match") that is returned #277.
 values. Warning issued now.
 * No warning for `decode(to = "AnnotatedPlainTextDocument")` of no regions
 available for s_attribute defined by `mw`.
+* `decode()` to `AnnotatedPlainTextDocument` failed if a document contains only
+one token. Fixed #285.
 
 # polmineR v0.8.9
 

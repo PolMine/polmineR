@@ -93,12 +93,20 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
   if (!is.null(stoplist)) ts <- ts[!ts[["word"]] %in% stoplist]
   
   if (verbose) cli_progress_step("generate plain text string")
-  ws_after <- c(!grepl("^[.,;:!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
+  ws_after <- if (nrow(ts) > 1L){
+    c(!grepl("^[.,;:!?]$", ts[["word"]])[2L:nrow(ts)], FALSE)
+  } else {
+    FALSE
+  }
   word_with_ws <- paste(ts[["word"]], ifelse(ws_after, " ", ""), sep = "")
   s <- stringi::stri_c(word_with_ws, collapse = "")
   
   if (verbose) cli_progress_step("generate token-level annotation")
-  left_offset <- c(1L, (cumsum(nchar(word_with_ws)) + 1L)[1L:(nrow(ts) - 1L)])
+  left_offset <- if (nrow(ts) > 1L){
+    c(1L, (cumsum(nchar(word_with_ws)) + 1L)[1L:(nrow(ts) - 1L)])
+  } else {
+    1L
+  }
   right_offset <- left_offset + nchar(ts[["word"]]) - 1L
   w <- NLP::Annotation(
     id = ts[["cpos"]],
