@@ -12,6 +12,8 @@ available for s_attribute defined by `mw`.
 * `decode()` to `AnnotatedPlainTextDocument` failed if a document contains only
 one token. Fixed #285.
 * `decode()` failed if nested s-attribute does not occur. Fixed #284.
+* `s_attributes()` for bundle works if s-attribute is sibling, ancestor and 
+descendent #283.
 
 # polmineR v0.8.9
 

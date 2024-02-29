@@ -215,7 +215,12 @@ setMethod(
         } else {
           FALSE
         }
-        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L) if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE else FALSE
+        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L){
+          if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE
+        } else {
+          FALSE
+        }
+           
         if (xml_is_flat && s_attr_strucs){
           len1 <- cl_attribute_size(
             corpus = .Object@corpus, registry = .Object@registry_dir,
@@ -336,7 +341,9 @@ setMethod("s_attributes", "context", function (.Object, s_attribute = NULL){
 
 #' @docType methods
 #' @rdname s_attributes-method
-setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, unique = TRUE, ...){
+setMethod(
+  "s_attributes", "partition_bundle",
+  function(.Object, s_attribute, unique = TRUE, ...){
 
   if ("sAttribute" %in% names(list(...))){
     lifecycle::deprecate_warn(
@@ -356,12 +363,56 @@ setMethod("s_attributes", "partition_bundle", function(.Object, s_attribute, uni
     ),
     recursive = FALSE
   )
-  values <- cl_struc2str(
+  s_attr_strucs <- unique(unlist(lapply(.Object, slot, "s_attribute_strucs")))
+  relationship <- s_attr_relationship(
+    x = s_attr_strucs,
+    y = s_attribute,
     corpus = .Object@corpus,
-    s_attribute = s_attribute,
-    struc = unlist(strucs, recursive = TRUE),
     registry = .Object@registry_dir
   )
+  
+  if (relationship == 0L){
+    values <- cl_struc2str(
+      corpus = .Object@corpus,
+      s_attribute = s_attribute,
+      struc = unlist(strucs, recursive = TRUE),
+      registry = .Object@registry_dir
+    )
+  } else if (relationship == -1L){
+    strucs <- cl_cpos2struc(
+      corpus = .Object@corpus,
+      cpos = do.call(
+        c,
+        unname(lapply(.Object@objects, function(x) x@cpos[,1]))
+      ),
+      s_attribute = s_attribute,
+      registry = .Object@registry_dir
+    )
+    values <- cl_struc2str(
+      corpus = .Object@corpus,
+      s_attribute = s_attribute,
+      struc = unlist(strucs, recursive = TRUE),
+      registry = .Object@registry_dir
+    )
+  } else if (relationship == 1L){
+    region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
+    struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
+      corpus = .Object@corpus,
+      s_attribute = s_attribute,
+      region_matrix = region_matrix,
+      registry = .Object@registry_dir
+    )
+    strucs <- ranges_to_cpos(struc_matrix)
+    values <- cl_struc2str(
+      corpus = .Object@corpus,
+      s_attribute = s_attribute,
+      struc = strucs,
+      registry = .Object@registry_dir
+    )
+    .size <- function(x) sum(x[,2] - x[,1] + 1L)
+    n <- lapply(lapply(split(x = struc_matrix, f = f), matrix, ncol = 2), .size)
+    f <- unlist(mapply(rep, x = seq_along(n), times = n), recursive = FALSE)
+  }
   Encoding(values) <- .Object@encoding
   values <- as.nativeEnc(values, from = .Object@encoding)
   retval <- split(x = values, f = f)

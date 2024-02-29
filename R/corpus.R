@@ -162,7 +162,10 @@ setMethod("get_corpus", "kwic", function(x) x@corpus)
 
 #' @exportMethod get_corpus
 #' @rdname bundle
-setMethod("get_corpus", "bundle", function(x) unique(sapply(x@objects, get_corpus)))
+setMethod(
+  "get_corpus", "bundle",
+  function(x) unique(sapply(x@objects, get_corpus))
+)
 
 
 #' @rdname corpus-class
