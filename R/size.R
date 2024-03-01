@@ -388,4 +388,10 @@ setMethod("size", "remote_partition", function(x){
   ocpu_exec(fn = "size", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "partition"))
 })
 
-
+#' @rdname size-method
+setMethod("size", "ranges", function(x)
+  if (identical(x@size, integer()))
+    sum(x@cpos[, 2] - x@cpos[, 1] + 1L) 
+  else
+    x@size
+)

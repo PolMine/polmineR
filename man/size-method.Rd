@@ -12,6 +12,7 @@
 \alias{size,features-method}
 \alias{size,remote_corpus-method}
 \alias{size,remote_partition-method}
+\alias{size,ranges-method}
 \title{Get Number of Tokens.}
 \usage{
 size(x, ...)
@@ -33,6 +34,8 @@ size(x, ...)
 \S4method{size}{remote_corpus}(x)
 
 \S4method{size}{remote_partition}(x)
+
+\S4method{size}{ranges}(x)
 }
 \arguments{
 \item{x}{An object to get size(s) for.}

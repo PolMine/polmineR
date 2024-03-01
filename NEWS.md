@@ -14,6 +14,9 @@ one token. Fixed #285.
 * `decode()` failed if nested s-attribute does not occur. Fixed #284.
 * `s_attributes()` for bundle works if s-attribute is sibling, ancestor and 
 descendent #283.
+* New method `size()` for `ranges` object: Computes size if not available or 
+returns content of slot size from object.
+* Method `size()` returns correct result for `corpus` and `subcorpus` onewbjects #276.
 
 # polmineR v0.8.9
 

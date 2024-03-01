@@ -42,7 +42,12 @@ setGeneric("ranges", function(.Object, ...) standardGeneric("ranges"))
 
 #' @importFrom stringi stri_c_list
 #' @rdname ranges
-setMethod("ranges", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, p_attribute = "word", verbose = TRUE, mc = 1L, progress = FALSE){
+setMethod(
+  "ranges", "corpus",
+  function(
+    .Object, query, cqp = FALSE, check = TRUE, p_attribute = "word",
+    verbose = TRUE, mc = 1L, progress = FALSE
+  ){
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   .fn <- function(x) cpos(
     .Object = .Object,
@@ -80,14 +85,29 @@ setMethod("ranges", "corpus", function(.Object, query, cqp = FALSE, check = TRUE
     registry = .Object@registry_dir,
     split = TRUE
   ), sep = " ")
-  
+  y@size <- integer() # drop corpus size
+  y@size <- size(y)
   y
 })
 
 
 #' @rdname ranges
-setMethod("ranges", "character", function(.Object, query, cqp = FALSE, check = TRUE, p_attribute = "word", verbose = TRUE, mc = 1L, progress = FALSE){
-  ranges(.Object = corpus(.Object), query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, mc = mc, progress = progress)
+setMethod(
+  "ranges", "character",
+  function(
+    .Object, query, cqp = FALSE, check = TRUE, p_attribute = "word",
+    verbose = TRUE, mc = 1L, progress = FALSE
+  ){
+  ranges(
+    .Object = corpus(.Object),
+    query = query,
+    cqp = cqp,
+    check = check,
+    p_attribute = p_attribute,
+    verbose = verbose,
+    mc = mc,
+    progress = progress
+  )
 })
 
 
@@ -116,14 +136,31 @@ setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = T
     split = TRUE
   ), sep = " ")
   
+  rng@size <- integer() # drop corpus size
+  rng@size <- size(rng)
+
   rng
 })
 
 
 
 #' @rdname ranges
-setMethod("ranges", "partition", function(.Object, query, cqp = FALSE, check = TRUE, p_attribute = "word", verbose = TRUE, mc = 1L, progress = FALSE){
-  ranges(.Object = as(.Object, "subcorpus"), query = query, cqp = cqp, check = check, p_attribute = p_attribute, verbose = verbose, mc = mc, progress = progress)
+setMethod(
+  "ranges", "partition",
+  function(
+    .Object, query, cqp = FALSE, check = TRUE, p_attribute = "word",
+    verbose = TRUE, mc = 1L, progress = FALSE
+  ){
+  ranges(
+    .Object = as(.Object, "subcorpus"),
+    query = query,
+    cqp = cqp,
+    check = check,
+    p_attribute = p_attribute,
+    verbose = verbose,
+    mc = mc,
+    progress = progress
+  )
 })
 
 #' @param x A `ranges` class object.
