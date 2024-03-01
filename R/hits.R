@@ -64,7 +64,14 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
-setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, s_attribute, p_attribute = "word", size = FALSE, freq = FALSE, decode = TRUE, by = c("query", "match"), fill = FALSE, mc = 1L, verbose = TRUE, progress = FALSE, ...){
+setMethod(
+  "hits", "corpus",
+  function(
+    .Object, query, cqp = FALSE, check = TRUE, s_attribute,
+    p_attribute = "word", size = FALSE, freq = FALSE, decode = TRUE,
+    by = c("query", "match"), fill = FALSE, mc = 1L, verbose = TRUE,
+    progress = FALSE, ...
+  ){
   
   if (is.logical(mc)) if (mc) mc <- getOption("polmineR.cores") else mc <- 1L
   
@@ -135,10 +142,10 @@ setMethod("hits", "corpus", function(.Object, query, cqp = FALSE, check = TRUE, 
     )
     if (!s_attr_has_values(s_attribute[i], x = .Object)) decode[i] <- FALSE
     if (decode[i]){
-      s_attr_values <- cl_struc2str(
+      s_attr_values <- suppressWarnings(cl_struc2str(
         corpus = .Object@corpus, registry = .Object@registry_dir,
         s_attribute = s_attribute[i], struc = strucs
-      ) |>
+      )) |>
         as.nativeEnc(from = .Object@encoding)
       DT[, eval(s_attribute[i]) := s_attr_values]
     } else {

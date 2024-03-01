@@ -74,17 +74,25 @@ setMethod(
     if (is.null(cpos_list[[i]])) cpos_list[[i]] <- NULL
   
   y <- as(.Object, "ranges")
-  y@cpos <- do.call(rbind, cpos_list)
-  y@query <- unlist(
-    lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]])))
-  )
-  y@match <- stri_c_list(get_token_stream(
-    y@cpos,
-    p_attribute = p_attribute,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
-    split = TRUE
-  ), sep = " ")
+  region_matrix <- do.call(rbind, cpos_list)
+  if (is.null(region_matrix)){ # no query matches at all
+    y@cpos <- matrix(nrow = 0L, ncol = 2L)
+    y@query <- character()
+    y@match <- character()
+  } else {
+    y@cpos <- region_matrix
+    y@query <- unlist(
+      lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]])))
+    )
+    y@match <- stri_c_list(get_token_stream(
+      y@cpos,
+      p_attribute = p_attribute,
+      corpus = .Object@corpus,
+      registry = .Object@registry_dir,
+      split = TRUE
+    ), sep = " ")
+  }
+
   y@size <- integer() # drop corpus size
   y@size <- size(y)
   y
@@ -128,14 +136,21 @@ setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = T
   )
   rng@cpos <- rng@cpos[strucs_matches %in% .Object@strucs,]
   rng@query <- rng@query[strucs_matches %in% .Object@strucs]
-  rng@match <- stri_c_list(get_token_stream(
-    rng@cpos,
-    p_attribute = p_attribute,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
-    split = TRUE
-  ), sep = " ")
-  
+  rng@match <- if (nrow(rng@cpos) == 0L){
+    character()
+  } else {
+    stri_c_list(
+      get_token_stream(
+        rng@cpos,
+        p_attribute = p_attribute,
+        corpus = .Object@corpus,
+        registry = .Object@registry_dir,
+        split = TRUE
+      ),
+      sep = " "
+    )
+  }
+
   rng@size <- integer() # drop corpus size
   rng@size <- size(rng)
 

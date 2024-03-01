@@ -17,6 +17,9 @@ test_that(
     
     y <- hits(p, query = "oil", s_attribute = "id")
     expect_equal(y@stat[id == "242"][["count"]], count(partition("REUTERS", id = "242"), query = "oil")[["count"]])
+    
+    y <- hits("REUTERS", query = "'adf'", cqp = TRUE, s_attribute = "id", size = FALSE, fill = TRUE)
+    expect_equal(nrow(as.data.table(y)), 0L)
   }
 )
 
