@@ -42,6 +42,7 @@ hits(.Object, ...)
   size = FALSE,
   freq = FALSE,
   decode = TRUE,
+  by = c("query", "match"),
   mc = FALSE,
   verbose = TRUE,
   progress = FALSE,
@@ -59,6 +60,7 @@ hits(.Object, ...)
   freq = FALSE,
   fill = FALSE,
   decode = TRUE,
+  by = c("query", "match"),
   mc = FALSE,
   progress = FALSE,
   verbose = TRUE,
@@ -76,6 +78,7 @@ hits(.Object, ...)
   freq = FALSE,
   fill = FALSE,
   decode = TRUE,
+  by = c("query", "match"),
   mc = FALSE,
   progress = FALSE,
   verbose = TRUE

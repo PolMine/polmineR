@@ -20,6 +20,45 @@ test_that(
     
     y <- hits("REUTERS", query = "'adf'", cqp = TRUE, s_attribute = "id", size = FALSE, fill = TRUE)
     expect_equal(nrow(as.data.table(y)), 0L)
+    
+    hits_by_match <- hits(
+      corpus("REUTERS"), 
+      query = '"[oO]il.*"',
+      cqp = TRUE,
+      s_attribute = "id",
+      by = "match"
+    )
+    
+    hits_by_query <- hits(
+      corpus("REUTERS"), 
+      query = '"[oO]il.*"',
+      cqp = TRUE,
+      s_attribute = "id",
+      by = "query"
+    )
+    
+    expect_identical(
+      as.data.table(subset(hits_by_match, id == "236"))$match,
+      c("Oil", "oil")
+    )
+    
+    expect_identical(
+      sum(as.data.table(subset(hits_by_match, id == "236"))[["count"]]),
+      as.data.table(subset(hits_by_query, id == "236"))[["count"]]
+    )
+    
+    hits_by_match <- corpus("REUTERS") %>%
+      subset(id == "236") %>%
+      hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "match")
+    
+    hits_by_query <- corpus("REUTERS") %>%
+      subset(id == "236") %>%
+      hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "query")
+    
+    expect_identical(
+      sum(as.data.table(hits_by_match)$count),
+      as.data.table(hits_by_query)[["count"]]
+    )
   }
 )
 
