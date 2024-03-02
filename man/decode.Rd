@@ -179,24 +179,20 @@ dt[, "word" := NULL]
 dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 
 # Decode subcorpus as Annotation object
-\dontrun{
-if (requireNamespace("NLP")){
-  library(NLP)
-  p <- corpus("GERMAPARLMINI") \%>\%
-    subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
+library(NLP)
+p <- corpus("GERMAPARLMINI") \%>\%
+  subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
   s <- as(p, "String")
   a <- as(p, "Annotation")
   
-  # The beauty of having this NLP Annotation object is that you can now use 
-  # the different annotators of the openNLP package. Here, just a short scenario
-  # how you can have a look at the tokenized words and the sentences.
+# The beauty of having this NLP Annotation object is that you can now use 
+# the different annotators of the openNLP package. Here, just a short scenario
+# how you can have a look at the tokenized words and the sentences.
 
-  words <- s[a[a$type == "word"]]
-  sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
-  
-  doc <- decode(p, to = "AnnotatedPlainTextDocument")
-}
-}
+words <- s[a[a$type == "word"]]
+sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+
+doc <- decode(p, to = "AnnotatedPlainTextDocument")
  
 # decode vector of token ids
 y <- decode(0:20, corpus = "GERMAPARLMINI", p_attributes = "word")

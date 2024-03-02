@@ -17,6 +17,8 @@ descendent #283.
 * New method `size()` for `ranges` object: Computes size if not available or 
 returns content of slot size from object.
 * Method `size()` returns correct result for `corpus` and `subcorpus` onewbjects #276.
+* Coerce method to `Annotation` works without pos p-attribute #246. 
+
 
 # polmineR v0.8.9
 

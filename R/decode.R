@@ -21,14 +21,27 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
     encoding = from@encoding
   )
   
-  if (!"pos" %in% p_attributes(from)) stop("p-attribute not available")
-  pos <- get_token_stream(
-    from@cpos,
-    corpus = from@corpus,
-    p_attribute = "pos",
-    encoding = from@encoding
-  )
-  ws_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[-1], FALSE)
+  if ("pos" %in% p_attributes(from)){
+    cli_alert_info("using p_attribute 'pos' for detecting interpunctation")
+    # this is not robust if we have a subcorpus with one token only
+    pos <- get_token_stream(
+      from@cpos,
+      corpus = from@corpus,
+      p_attribute = "pos",
+      encoding = from@encoding
+    )
+    ws_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[-1], FALSE)
+    breaks <- unique(c(1L, grep("\\$\\.", pos), length(pos)))
+  } else {
+    cli_alert_info("using interpunctuation for sentence segmentation")
+    ws_after <- if (length(word) > 1L){
+      c(!grepl("^[\\.,;:\\!\\?]$", word)[2L:length(word)], FALSE)
+    } else {
+      FALSE
+    }
+    breaks <- unique(c(1L, grep("^[\\.:\\!\\?]$", word), length(word)))
+  }
+  
   word_with_ws <- paste(word, ifelse(ws_after, " ", ""), sep = "")
   s <- paste(word_with_ws, collapse = "")
   word_length <- sapply(word, nchar)
@@ -50,11 +63,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   right_offset <- left_offset + word_length
   names(right_offset) <- word # repeats 
   m <- matrix(data = c(left_offset, right_offset), ncol = 2, byrow = FALSE)
-  f <- cut(
-    x = 1L:length(pos),
-    breaks = unique(c(1L, grep("\\$\\.", pos), length(pos))), 
-    include.lowest = TRUE
-  )
+  f <- cut(x = 1L:length(word), breaks = breaks, include.lowest = TRUE)
   chunks <- split(x = m, f = f)
   sentence_left <- sapply(chunks, min)
   sentence_right <- sapply(chunks, max) - 1L
@@ -268,10 +277,9 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' @exportMethod decode
 #' @importFrom RcppCWB get_region_matrix
 #' @seealso To decode a structural attribute, you can use the
-#'   \code{\link{s_attributes}}-method, setting argument \code{unique} as
-#'   \code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See
-#'   \code{\link{as.VCorpus}} to decode a \code{partition_bundle} object,
-#'   returning a \code{VCorpus} object.
+#'   \code{\link{s_attributes}}-method, setting argument `unique` as `FALSE` and
+#'   \code{\link[RcppCWB]{s_attribute_decode}}. See \code{\link{as.VCorpus}} to
+#'   decode a `partition_bundle` object, returning a `VCorpus` object.
 #' @examples
 #' use("polmineR")
 #' use(pkg = "RcppCWB", corpus = "REUTERS")
@@ -304,24 +312,21 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
 #' dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by = "id"]
 #' 
 #' # Decode subcorpus as Annotation object
-#' \dontrun{
-#' if (requireNamespace("NLP")){
-#'   library(NLP)
-#'   p <- corpus("GERMAPARLMINI") %>%
-#'     subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
-#'   s <- as(p, "String")
-#'   a <- as(p, "Annotation")
-#'   
-#'   # The beauty of having this NLP Annotation object is that you can now use 
-#'   # the different annotators of the openNLP package. Here, just a short scenario
-#'   # how you can have a look at the tokenized words and the sentences.
+#' library(NLP)
+#' p <- corpus("GERMAPARLMINI") %>%
+#'   subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
 #' 
-#'   words <- s[a[a$type == "word"]]
-#'   sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+#' s <- as(p, "String")
+#' a <- as(p, "Annotation")
 #'   
-#'   doc <- decode(p, to = "AnnotatedPlainTextDocument")
-#' }
-#' }
+#' # The beauty of having this NLP Annotation object is that you can now use 
+#' # the different annotators of the openNLP package. Here, just a short scenario
+#' # how you can have a look at the tokenized words and the sentences.
+#'
+#' words <- s[a[a$type == "word"]]
+#' sentences <- s[a[a$type == "sentence"]] # does not yet work perfectly for plenary protocols 
+#'
+#' doc <- decode(p, to = "AnnotatedPlainTextDocument")
 #' @rdname decode
 #' @importFrom cli cli_progress_step
 setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation", "AnnotatedPlainTextDocument"), p_attributes = NULL, s_attributes = NULL, mw = NULL, stoplist = NULL, decode = TRUE, verbose = TRUE){
