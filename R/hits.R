@@ -65,6 +65,15 @@ setGeneric("hits", function(.Object, ...) standardGeneric("hits"))
 #' y <- corpus("REUTERS") %>%
 #'   subset(grep("saudi-arabia", places)) %>%
 #'   hits(query = "oil")
+#'   
+#' # aggregate by match
+#' hits_by_query <- corpus("REUTERS") %>%
+#'   hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "query")
+#'
+#' # aggregate by query 
+#' hits_by_match <- corpus("REUTERS") %>%
+#'   hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "match")
+#'
 setMethod(
   "hits", "corpus",
   function(

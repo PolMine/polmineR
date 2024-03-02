@@ -166,7 +166,8 @@ use(pkg = "RcppCWB", corpus = "REUTERS")
 # get hits for corpus object
 y <- corpus("REUTERS") \%>\% hits(query = "oil")
 y <- corpus("REUTERS") \%>\% hits(query = c("oil", "barrel"))
-y <- corpus("REUTERS") \%>\% hits(query = "oil", s_attribute = "places", freq = TRUE)
+y <- corpus("REUTERS") \%>\%
+  hits(query = "oil", s_attribute = "places", freq = TRUE)
 
 # specify corpus by corpus ID
 y <- hits("REUTERS", query = "oil")
@@ -180,6 +181,15 @@ y <- hits(p, query = "oil", s_attribute = "id")
 y <- corpus("REUTERS") \%>\%
   subset(grep("saudi-arabia", places)) \%>\%
   hits(query = "oil")
+  
+# aggregate by match
+hits_by_query <- corpus("REUTERS") \%>\%
+  hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "query")
+
+# aggregate by query 
+hits_by_match <- corpus("REUTERS") \%>\%
+  hits(query = '"[oO]il.*"', cqp = TRUE, s_attribute = "id", by = "match")
+
 }
 \seealso{
 See the documentation of the \code{hits} class
