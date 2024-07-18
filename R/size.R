@@ -375,17 +375,34 @@ setMethod("size", "TermDocumentMatrix", function(x){
 #'   in the window, and the reference corpus ("ref"), i.e. the number of tokens
 #'   that are not matched by the query and that are outside the window.
 #' @rdname size-method
-setMethod("size", "features", function(x) list(coi = x@size_coi, ref = x@size_ref) )
+setMethod(
+  "size", "features",
+  function(x) list(coi = x@size_coi, ref = x@size_ref)
+)
 
 
 #' @rdname size-method
 setMethod("size", "remote_corpus", function(x){
-  ocpu_exec(fn = "size", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "corpus"))
+  ocpu_exec(
+    fn = "size",
+    corpus = x@corpus,
+    server = x@server,
+    restricted = x@restricted,
+    do.call = FALSE,
+    x = as(x, "corpus")
+  )
 })
 
 #' @rdname size-method
 setMethod("size", "remote_partition", function(x){
-  ocpu_exec(fn = "size", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "partition"))
+  ocpu_exec(
+    fn = "size",
+    corpus = x@corpus,
+    server = x@server,
+    restricted = x@restricted,
+    do.call = FALSE,
+    x = as(x, "partition")
+  )
 })
 
 #' @rdname size-method

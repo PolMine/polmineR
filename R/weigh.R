@@ -18,7 +18,7 @@ setGeneric("weigh", function(.Object, ...) standardGeneric("weigh") )
 #' @rdname weigh-method
 setMethod("weigh", "TermDocumentMatrix", function(.Object, method = "tfidf"){
   if (method == "tfidf"){
-    .Object$v <- .Object$v/col_sums(.Object)[.Object$j] * log2(nDocs(.Object)/row_sums(.Object > 0))[.Object$i]  
+    .Object$v <- .Object$v / col_sums(.Object)[.Object$j] * log2(nDocs(.Object) / row_sums(.Object > 0))[.Object$i]  
     attr(.Object, "weighting") <- c(
       "term frequency - inverse document frequency (normalized)",
       "tf-idf"
