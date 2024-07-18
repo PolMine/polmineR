@@ -120,7 +120,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       if (unique){
         return(avs)
       } else {
-        avx_file <- fs::path(.Object@data_dir, paste(s_attribute, "avx", sep = "."))
+        avx_file <- fs::path(slot(.Object, "data_dir"), paste(s_attribute, "avx", sep = "."))
         avx_file_size <- file.info(avx_file)[["size"]]
 
         avx <- readBin(
