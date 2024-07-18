@@ -104,7 +104,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
           )
         )
       }
-      avs_file <- path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+      avs_file <- path(slot(.Object, "data_dir"), paste(s_attribute, "avs", sep = "."))
       if (!file.exists(avs_file)){
         cli_alert_warning(
           "s-attribute {.var {s_attribute}} does not have values, returning NA"
