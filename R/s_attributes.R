@@ -90,8 +90,8 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
   
   if (is.null(s_attribute)){
     s_attrs <- corpus_s_attributes(
-      corpus = .Object@corpus,
-      registry = .Object@registry_dir
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
     )
     return(s_attrs)
   } else {
