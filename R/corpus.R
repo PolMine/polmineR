@@ -103,10 +103,10 @@ setMethod("corpus", "character", function(
       "corpus",
       corpus = .Object,
       encoding = cl_charset_name(corpus = .Object, registry = registry_dir),
-      registry_dir = as.character(registry_dir),
-      data_dir = as.character(data_dir),
-      info_file = if (file.exists(info_file)) as.character(info_file) else NA_character_,
-      template = if (file.exists(template)) as.character(template) else NA_character_,
+      registry_dir = registry_dir,
+      data_dir = data_dir,
+      info_file = if (file.exists(info_file)) info_file else path(NA),
+      template = if (file.exists(template)) template else path(NA),
       type = if ("type" %in% names(properties))
         properties[["type"]]
       else
