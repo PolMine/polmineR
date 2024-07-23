@@ -118,7 +118,7 @@ setMethod("corpus", "character", function(
       name = corpus_full_name(corpus = .Object, registry = registry_dir)
     )
     
-    y@xml <- if (is_nested(y)) "nested" else "flat"
+    slot(y, "xml") <- if (is_nested(y)) "nested" else "flat"
     
     return(y)
   } else {
@@ -128,8 +128,8 @@ setMethod("corpus", "character", function(
     y <- as(y, "remote_corpus")
     # The object returned from the remote server will not include information on the server and
     # the accessibility status.
-    y@server <- server
-    y@restricted <- restricted
+    slot(y, "server") <- server
+    slot(y, "restricted") <- restricted
     return(y)
   }
 })
@@ -142,29 +142,29 @@ setGeneric("get_corpus", function(x) standardGeneric("get_corpus"))
 
 #' @exportMethod get_corpus
 #' @rdname textstat-class
-setMethod("get_corpus", "textstat", function(x) x@corpus)
+setMethod("get_corpus", "textstat", function(x) slot(x, "corpus"))
 
 
 #' @exportMethod get_corpus
 #' @rdname corpus_methods
 #' @details Use `get_corpus()`-method to get the corpus ID from the slot
 #'   `corpus` of the `corpus` object.
-setMethod("get_corpus", "corpus", function(x) x@corpus)
+setMethod("get_corpus", "corpus", function(x) slot(x, "corpus"))
 
 #' @exportMethod get_corpus
 #' @describeIn subcorpus Get the corpus ID from the `subcorpus` object.
-setMethod("get_corpus", "subcorpus", function(x) x@corpus)
+setMethod("get_corpus", "subcorpus", function(x) slot(x, "corpus"))
 
 
 #' @exportMethod get_corpus
 #' @rdname kwic-class
-setMethod("get_corpus", "kwic", function(x) x@corpus)
+setMethod("get_corpus", "kwic", function(x) slot(x, "corpus"))
 
 #' @exportMethod get_corpus
 #' @rdname bundle
 setMethod(
   "get_corpus", "bundle",
-  function(x) unique(sapply(x@objects, get_corpus))
+  function(x) unique(sapply(slot(x, "objects"), get_corpus))
 )
 
 
@@ -335,10 +335,10 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
     }
     s_attr_dots <- names(dots)
     s_attr <- c(s_attr, s_attr_dots)
-    if (encoding() != x@encoding){
+    if (encoding() != slot(x, "encoding")){
       s_attr_dots <- lapply(
         s_attr_dots,
-        function(v) as.corpusEnc(v, corpusEnc = x@encoding)
+        function(v) as.corpusEnc(v, corpusEnc = slot(x, "encoding"))
       )
     }
   }
@@ -356,7 +356,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
     return(NULL)
   }
     
-  rng_file <- fs::path(x@data_dir, paste(s_attr[1], "rng", sep = "."))
+  rng_file <- fs::path(slot(x, "data_dir"), paste(s_attr[1], "rng", sep = "."))
   rng_size <- file.info(rng_file)[["size"]]
   rng <- readBin(
     rng_file,
@@ -380,8 +380,8 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
       return(NULL)
     }
     files <- list(
-      avs = fs::path(x@data_dir, paste(s_attr[i], "avs", sep = ".")),
-      avx = fs::path(x@data_dir, paste(s_attr[i], "avx", sep = "."))
+      avs = fs::path(slot(x, "data_dir"), paste(s_attr[i], "avs", sep = ".")),
+      avx = fs::path(slot(x, "data_dir"), paste(s_attr[i], "avx", sep = "."))
     )
     if (
       all(c(
@@ -408,7 +408,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
         what = character(),
         n = sizes[["avs"]]
       )
-      if (!is.null(encoding)) Encoding(avs) <- x@encoding
+      if (!is.null(encoding)) Encoding(avs) <- slot(x, "encoding")
       
       dt[, (s_attr[i]) := avs[match(avx_matrix[, 2], unique(avx_matrix[, 2]))] ]
     } else {
@@ -419,10 +419,10 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
       }
       
       attr_size <- cl_attribute_size(
-        corpus = x@corpus,
+        corpus = slot(x, "corpus"),
         attribute = s_attr[i],
         attribute_type = "s",
-        registry = x@registry_dir
+        registry = slot(x, "registry_dir")
         
       )
       dt[, (s_attr[i]) := 0L:(attr_size - 1L)]
@@ -436,7 +436,7 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
       # encodings is expensive, so the (small) epression will be adjusted to the
       # encoding of the corpus, not vice versa
       
-      if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
+      if (encoding(expr) != slot(x, "encoding")) encoding(expr) <- slot(x, "encoding")
       
       setindexv(dt, cols = s_attr)
       success <- try({dt <- dt[eval_tidy(expr, data = dt)]})
@@ -466,20 +466,20 @@ setMethod("subset", "corpus", function(x, subset, regex = FALSE, verbose = FALSE
     return(NULL)
   }
   
-  y <- if (!is.na(x@type)){
-    as(x, paste(x@type, "subcorpus", sep = "_"))
+  y <- if (!is.na(slot(x, "type"))){
+    as(x, paste(slot(x, "type"), "subcorpus", sep = "_"))
   } else { 
     as(x, "subcorpus")
   }
   
-  y@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
-  dimnames(y@cpos) <- NULL
-  y@strucs = dt[["struc"]]
-  y@s_attribute_strucs <- unname(s_attr[length(s_attr)])
-  y@s_attributes <- lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]]))
-  y@xml <- x@xml
-  y@name <- ""
-  y@size <- size(y)
+  slot(y, "cpos") <- as.matrix(dt[, c("cpos_left", "cpos_right")])
+  dimnames(slot(y, "cpos")) <- NULL
+  slot(y, "strucs") = dt[["struc"]]
+  slot(y, "s_attribute_strucs") <- unname(s_attr[length(s_attr)])
+  slot(y, "s_attributes") <- lapply(setNames(s_attr, s_attr), function(s) unique(dt[[s]]))
+  slot(y, "xml") <- slot(x, "xml")
+  slot(y, "name") <- ""
+  slot(y, "size") <- size(y)
   
   y
 })
@@ -501,25 +501,25 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
   )
   if (is.call(evaluated)){
     expr <- eval_tidy(expr)
-    if (encoding(expr) != x@encoding) encoding(expr) <- x@encoding
+    if (encoding(expr) != slot(x, "encoding")) encoding(expr) <- slot(x, "encoding")
   }
 
   # get s_attributes present in the expression
   s_attr <- s_attributes(expr, corpus = x) 
   
   dt <- data.table(
-    struc = x@strucs,
-    cpos_left = x@cpos[, 1],
-    cpos_right = x@cpos[, 2]
+    struc = slot(x, "strucs"),
+    cpos_left = slot(x, "cpos")[, 1],
+    cpos_right = slot(x, "cpos")[, 2]
   )
   
   s_attr_sizes <- sapply(
-    unique(c(x@s_attribute_strucs, s_attr)),
+    unique(c(slot(x, "s_attribute_strucs"), s_attr)),
     function(s)
       cl_attribute_size(
-        corpus = x@corpus,
+        corpus = slot(x, "corpus"),
         attribute = s, attribute_type = "s",
-        registry = x@registry_dir
+        registry = slot(x, "registry_dir")
       )
   )
   
@@ -531,9 +531,9 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
       setNames(s_attr, s_attr),
       function(s)
         s_attr_regions(
-          corpus = x@corpus,
-          registry = x@registry_dir,
-          data_dir = x@data_dir,
+          corpus = slot(x, "corpus"),
+          registry = slot(x, "registry_dir"),
+          data_dir = slot(x, "data_dir"),
           s_attr = s
         )
     )
@@ -555,10 +555,10 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
     
     for (i in 1L:length(s_attr)){
       strucs <- cl_cpos2struc(
-        corpus = x@corpus,
-        registry = x@registry_dir,
+        corpus = slot(x, "corpus"),
+        registry = slot(x, "registry_dir"),
         s_attribute = s_attr[i],
-        cpos = x@cpos[,1]
+        cpos = slot(x, "cpos")[,1]
       )
       
       if (any(is.na(strucs)) || any(strucs < 0L)){
@@ -567,7 +567,7 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
       }
 
       r <- matrix(regions[[s_attr[i]]][strucs + 1L,], ncol = 2L)
-      if (all(r[,1] <= x@cpos[,1]) && all(r[,2] >= x@cpos[,2])){
+      if (all(r[,1] <= slot(x, "cpos")[,1]) && all(r[,2] >= slot(x, "cpos")[,2])){
         
         if (verbose) cli_alert_info("s-attribute {.val {s_attr[i]}} is ancestor")
         descendant <- FALSE
@@ -581,12 +581,12 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
             "preparing s-attribute {.val {s_attr[i]}} (using decoded values)"
           )
           str <- cl_struc2str(
-            corpus = x@corpus,
-            registry = x@registry_dir,
+            corpus = slot(x, "corpus"),
+            registry = slot(x, "registry_dir"),
             s_attribute = s_attr[i],
             struc = strucs
           )
-          Encoding(str) <- x@encoding
+          Encoding(str) <- slot(x, "encoding")
           dt[, (s_attr[i]) := str]
         } else {
           stop("s-attribute does not have values")
@@ -601,10 +601,10 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
     
     if (descendant){
       struc_matrix <- region_matrix_to_struc_matrix(
-        corpus = x@corpus,
+        corpus = slot(x, "corpus"),
         s_attribute = s_attr[1],
-        region_matrix = x@cpos,
-        registry = x@registry_dir
+        region_matrix = slot(x, "cpos"),
+        registry = slot(x, "registry_dir")
       )
       na_rows <- apply(struc_matrix, 1, function(row) any(is.na(row)))
       if (any(na_rows)) struc_matrix <- struc_matrix[-na_rows,]
@@ -614,7 +614,7 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
       
       strucs <- ranges_to_cpos(struc_matrix)
       ranges <- get_region_matrix(
-        x@corpus, registry = x@registry_dir,
+        slot(x, "corpus"), registry = slot(x, "registry_dir"),
         s_attribute = s_attr[1], strucs = strucs
       )
       dt <- data.table(
@@ -638,12 +638,12 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
               "preparing s-attribute {.val {s_attr[1]}} (using decoded values)"
             )
           str <- cl_struc2str(
-            corpus = x@corpus,
-            registry = x@registry_dir,
+            corpus = slot(x, "corpus"),
+            registry = slot(x, "registry_dir"),
             s_attribute = s_attr[1],
             struc = strucs
           )
-          Encoding(str) <- x@encoding
+          Encoding(str) <- slot(x, "encoding")
           dt[, (s_attr[1]) := str]
         }
       } else {
@@ -665,19 +665,19 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
                 "preparing s-attribute {.val {s}} (using decoded values)"
               )
             str <- cl_struc2str(
-              corpus = x@corpus,
-              registry = x@registry_dir,
+              corpus = slot(x, "corpus"),
+              registry = slot(x, "registry_dir"),
               s_attribute = s,
               struc = strucs
             )
-            Encoding(str) <- x@encoding
+            Encoding(str) <- slot(x, "encoding")
             dt[, (s) := str]
           } else {
             stop("s-attribute does not have values")
           }
         }
       }
-      x@s_attribute_strucs = unname(s_attr[length(s_attr)])
+      slot(x, "s_attribute_strucs") = unname(s_attr[length(s_attr)])
     }
 
   } else {
@@ -686,18 +686,18 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
         dt[, (s) := dt[["struc"]]]
       } else if (s_attr_has_values(s_attribute = s, x = x)){
         str <- cl_struc2str(
-          corpus = x@corpus,
-          registry = x@registry_dir,
+          corpus = slot(x, "corpus"),
+          registry = slot(x, "registry_dir"),
           s_attribute = s,
           struc = dt[["struc"]]
         )
-        Encoding(str) <- x@encoding
+        Encoding(str) <- slot(x, "encoding")
         dt[, (s) := str]
       } else {
         stop("s-attribute does not have values")
       }
     }
-    x@s_attribute_strucs = unname(s_attr[length(s_attr)])
+    slot(x, "s_attribute_strucs") = unname(s_attr[length(s_attr)])
   }
   
   if (is.call(quo_get_expr(expr))){
@@ -707,18 +707,18 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
       cli_alert_info("using expression for subsetting fails")
       return(NULL)
     }
-    x@cpos <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
-    x@strucs <- dt_min[["struc"]]
-    x@s_attributes <- c(
-      x@s_attributes,
+    slot(x, "cpos") <- as.matrix(dt_min[, c("cpos_left", "cpos_right")])
+    slot(x, "strucs") <- dt_min[["struc"]]
+    slot(x, "s_attributes") <- c(
+      slot(x, "s_attributes"),
       lapply(setNames(s_attr, s_attr), function(s) unique(dt_min[[s]]))
     )
   } else {
-    x@cpos <- as.matrix(dt[, c("cpos_left", "cpos_right")])
-    x@strucs <- dt[["struc"]]
+    slot(x, "cpos") <- as.matrix(dt[, c("cpos_left", "cpos_right")])
+    slot(x, "strucs") <- dt[["struc"]]
   }
 
-  x@size <- size(x)
+  slot(x, "size") <- size(x)
   x
 })
 
@@ -730,13 +730,13 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
 #'   `corpus` object.
 setMethod("show", "corpus", function(object){
   message(sprintf("<<%s>>", class(object)))
-  message(sprintf("%-12s", "corpus:"), object@corpus)
-  message(sprintf("%-12s", "encoding:"), object@encoding)
+  message(sprintf("%-12s", "corpus:"), slot(object, "corpus"))
+  message(sprintf("%-12s", "encoding:"), slot(object, "encoding"))
   message(
-    sprintf("%-12s", "type:"), if (length(object@type) > 0) object@type else "[undefined]"
+    sprintf("%-12s", "type:"), if (length(slot(object, "type")) > 0) slot(object, "type") else "[undefined]"
   )
   message(
-    sprintf("%-12s", "template:"), if (is.na(object@template)) "no" else "yes"
+    sprintf("%-12s", "template:"), if (is.na(slot(object, "template"))) "no" else "yes"
   )
   message(sprintf("%-12s", "size:"), size(object))
 })
@@ -772,15 +772,15 @@ setMethod("show", "corpus", function(object){
 #' @importFrom RcppCWB corpus_properties corpus_property
 setMethod("$", "corpus", function(x, name){
   
-  properties <- corpus_properties(corpus = x@corpus, registry = x@registry_dir)
+  properties <- corpus_properties(corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"))
   if (!name %in% properties){
     warning(sprintf("property `%s` is not defined, returning NA", name))
     return(NA_character_)
   }
     
   corpus_property(
-    corpus = x@corpus,
-    registry = x@registry_dir,
+    corpus = slot(x, "corpus"),
+    registry = slot(x, "registry_dir"),
     property = name
   )
 })
@@ -789,7 +789,7 @@ setMethod("$", "corpus", function(x, name){
 #' @rdname subcorpus_bundle
 setMethod("show", "subcorpus_bundle", function (object) {
   message('<<subcorpus_bundle>>')
-  message(sprintf('%-25s', 'Number of subcorpora:'), length(object@objects))
+  message(sprintf('%-25s', 'Number of subcorpora:'), length(slot(object, "objects")))
 })
 
 
@@ -797,12 +797,12 @@ setMethod("show", "subcorpus_bundle", function (object) {
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- substitute(subset)
   expr <- if (is.call(try(eval(expr), silent = TRUE))) eval(expr) else expr
-  sc <- ocpu_exec(fn = "subset", corpus = x@corpus, server = x@server, restricted = x@restricted, do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  sc <- ocpu_exec(fn = "subset", corpus = slot(x, "corpus"), server = slot(x, "server"), restricted = slot(x, "restricted"), do.call = FALSE, x = as(x, "corpus"), subset = expr)
   y <- as(sc, "remote_subcorpus")
   # Capture information on accessibility status and the server which is not included
   # in the object that is returned.
-  y@restricted <- x@restricted
-  y@server <- x@server
+  slot(y, "restricted") <- slot(x, "restricted")
+  slot(y, "server") <- slot(x, "server")
   y
 })
 

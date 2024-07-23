@@ -232,7 +232,7 @@ setMethod(
     if (is.null(meta)){
       template_meta <- get_template(object)[["metadata"]]
       meta <- if (is.null(template_meta))
-        names(object@s_attributes)
+        names(slot(object, "s_attributes"))
       else
         template_meta
     }
@@ -248,7 +248,7 @@ setMethod(
     # The default stylesheet (markdown.css) needs to be included explicitly,
     # so that it is not lost.
     
-    doc <- html(object = md, corpus = object@corpus, height = height)
+    doc <- html(object = md, corpus = slot(object, "corpus"), height = height)
     if (beautify) doc <- .beautify(doc)
     if (charoffset) doc <- .addCharacterOffset(doc)
     ret <- htmltools::HTML(doc)
@@ -267,9 +267,9 @@ setMethod("html", "partition_bundle", function(object, charoffset = FALSE, beaut
     stop("package 'markdown' is not installed, but necessary for this function")
   
   md_list <- if (isTRUE(progress)){
-    pblapply(object@objects, function(p) as.markdown(p, ...))
+    pblapply(slot(object, "objects"), function(p) as.markdown(p, ...))
   } else {
-    lapply(object@objects, function(p) as.markdown(p, ...))
+    lapply(slot(object, "objects"), function(p) as.markdown(p, ...))
   }
   
   md <- paste(md_list, collapse = "\n* * *\n")
@@ -296,11 +296,11 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
   
   # getting metadata for all kwic lines is potentially not the fastes solution ...
   if (!is.null(s_attribute)){
-    if (!s_attribute %in% s_attributes(object@corpus))
+    if (!s_attribute %in% s_attributes(slot(object, "corpus")))
       stop("s-attribute provided is not available")
     s_attrs <- s_attribute
     object <- enrich(object, s_attributes = s_attrs)
-  } else if (length(object@metadata) == 0L){
+  } else if (length(slot(object, "metadata")) == 0L){
     s_attrs <- get_template(object)[["metadata"]]
     if (is.null(s_attrs)){
       stop(
@@ -317,18 +317,18 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
       }
     }
   } else {
-    s_attrs <- object@metadata
+    s_attrs <- slot(object, "metadata")
   }
   
   partition_to_read <- partition(
-    object@corpus,
-    def = lapply(setNames(s_attrs, s_attrs), function(x) object@stat[[x]][i]),
+    slot(object, "corpus"),
+    def = lapply(setNames(s_attrs, s_attrs), function(x) slot(object, "stat")[[x]][i]),
     type = type
   )
   .message("generating html", verbose = verbose)
   fulltext <- polmineR::html(partition_to_read, meta = s_attrs, cpos = TRUE)
   .message("generating highlights", verbose = verbose)
-  tabSubset <- object@cpos[which(object@cpos[["match_id"]] == i)]
+  tabSubset <- slot(object, "cpos")[which(slot(object, "cpos")[["match_id"]] == i)]
   cposContext <- tabSubset[which(tabSubset[["position"]] != 0)][["cpos"]]
   cposNode <- tabSubset[which(tabSubset[["position"]] == 0)][["cpos"]]
   fulltext <- highlight(
@@ -341,7 +341,7 @@ setMethod("html", "kwic", function(object, i, s_attribute = NULL, type = NULL, v
 
 #' @rdname html-method
 setMethod("html", "remote_subcorpus", function(object, ...){
-  ocpu_exec(fn = "html", corpus = object@corpus, server = object@server, restricted = object@restricted, object = as(object, "subcorpus"), ...)
+  ocpu_exec(fn = "html", corpus = slot(object, "corpus"), server = slot(object, "server"), restricted = slot(object, "restricted"), object = as(object, "subcorpus"), ...)
 })
 
 

@@ -141,33 +141,33 @@ setMethod("highlight", "kwic", function(.Object, highlight = list(), regex = FAL
   
   for (color in names(highlight)){
     if (is.matrix(highlight[[color]])){
-      to_highlight <- .Object@cpos[["cpos"]] %in% cpos(highlight[[color]])
+      to_highlight <- slot(.Object, "cpos")[["cpos"]] %in% cpos(highlight[[color]])
     } else {
       if (regex){
         regex_match_list <- lapply(
           highlight[[color]],
           function(expr) 
-            grep(expr, .Object@cpos[[.Object@p_attribute]], perl = perl)
+            grep(expr, slot(.Object, "cpos")[[slot(.Object, "p_attribute")]], perl = perl)
         )
-        to_highlight <- 1L:nrow(.Object@cpos) %in% unique(unlist(regex_match_list))
+        to_highlight <- 1L:nrow(slot(.Object, "cpos")) %in% unique(unlist(regex_match_list))
       } else {
-        to_highlight <- .Object@cpos[[.Object@p_attribute]] %in% highlight[[color]]
+        to_highlight <- slot(.Object, "cpos")[[slot(.Object, "p_attribute")]] %in% highlight[[color]]
       }
     }
     
     if (length(to_highlight) > 0){
-      .Object@cpos[, (.Object@p_attribute) := ifelse(
+      slot(.Object, "cpos")[, (slot(.Object, "p_attribute")) := ifelse(
         to_highlight,
         sprintf(
           '<span style="background-color:%s">%s</span>',
           color,
-          .Object@cpos[[.Object@p_attribute]]
+          slot(.Object, "cpos")[[slot(.Object, "p_attribute")]]
         ),
-        .Object@cpos[[.Object@p_attribute]]
+        slot(.Object, "cpos")[[slot(.Object, "p_attribute")]]
       )]
     }
   }
   .Object <- enrich(.Object, table = TRUE)
-  .Object <- enrich(.Object, s_attributes = unique(.Object@metadata))
+  .Object <- enrich(.Object, s_attributes = unique(slot(.Object, "metadata")))
   .Object
 })

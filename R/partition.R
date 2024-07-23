@@ -11,24 +11,24 @@ NULL
 #' @noRd
 setMethod("show", "partition", function(object){
   message("** partition object **")
-  message(sprintf("%-20s", "corpus:"), object@corpus)
-  message(sprintf("%-20s", "name:"), object@name)
-  if (length(object@s_attributes) == 0L) {
+  message(sprintf("%-20s", "corpus:"), slot(object, "corpus"))
+  message(sprintf("%-20s", "name:"), slot(object, "name"))
+  if (length(slot(object, "s_attributes")) == 0L) {
     message(sprintf("%-20s", "s-attributes:"), "no specification")
   } else {
     s <- unlist(lapply(
-      names(object@s_attributes),
-      function(x) paste(x, "=", paste(object@s_attributes[[x]], collapse = "/"))
+      names(slot(object, "s_attributes")),
+      function(x) paste(x, "=", paste(slot(object, "s_attributes")[[x]], collapse = "/"))
     ))
     message(sprintf("%-20s", "s-attributes:"), s[1])
     if (length(s) >= 2L) for (i in 2L:length(s)) message(sprintf("%-20s", ""), s[i], appendLF = TRUE)
   } 
   message(sprintf("%-20s", "cpos:"), appendLF = FALSE)
-  if (nrow(object@cpos) == 0L) message("not available") else message(nrow(object@cpos), " pairs of corpus positions")
+  if (nrow(slot(object, "cpos")) == 0L) message("not available") else message(nrow(slot(object, "cpos")), " pairs of corpus positions")
   message(sprintf("%-20s", "size:"), appendLF = FALSE)
-  if (is.null(object@size)) message("not available") else message(object@size, " tokens")
+  if (is.null(slot(object, "size"))) message("not available") else message(slot(object, "size"), " tokens")
   message(sprintf("%-20s", "count:"), appendLF = FALSE)
-  if (length(object@p_attribute) == 0L) message("not available") else message("available for ", object@p_attribute)
+  if (length(slot(object, "p_attribute")) == 0L) message("not available") else message("available for ", slot(object, "p_attribute"))
 })
 
 
@@ -87,23 +87,23 @@ is.partition <- function(x) "partition" %in% is(x)
     # an Rcpp-implementation of struc2str is not faster
     # potential for optimization: struc2str
     maxAttr <- cl_attribute_size(
-      corpus = .Object@corpus,  registry = .Object@registry_dir,
-      attribute = .Object@s_attribute_strucs, attribute_type = "s"
+      corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
+      attribute = slot(.Object, "s_attribute_strucs"), attribute_type = "s"
     )
     meta <- data.frame(struc = 0L:(maxAttr - 1L), select = rep(0L, times = maxAttr))
-    if (length(.Object@s_attributes) > 0) {
-      for (s_attr in names(.Object@s_attributes)){
+    if (length(slot(.Object, "s_attributes")) > 0) {
+      for (s_attr in names(slot(.Object, "s_attributes"))){
         meta[,2] <- as.vector(
           cl_struc2str(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = s_attr, struc = meta[,1]
           )
         )
-        Encoding(meta[,2]) <- .Object@encoding
+        Encoding(meta[,2]) <- slot(.Object, "encoding")
         if (regex == FALSE) {
-          meta <- meta[which(meta[,2] %in% .Object@s_attributes[[s_attr]]),]
+          meta <- meta[which(meta[,2] %in% slot(.Object, "s_attributes")[[s_attr]]),]
         } else {
-          lines <- lapply(.Object@s_attributes[[s_attr]], function(x) grep(x, meta[,2]))
+          lines <- lapply(slot(.Object, "s_attributes")[[s_attr]], function(x) grep(x, meta[,2]))
           meta <- meta[unique(unlist(lines)),]
         }
       }
@@ -112,34 +112,34 @@ is.partition <- function(x) "partition" %in% is(x)
       }
     }
     if (nrow(meta) != 0) {
-      .Object@cpos <- RcppCWB::get_region_matrix(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
-        s_attribute = .Object@s_attribute_strucs,
+      slot(.Object, "cpos") <- RcppCWB::get_region_matrix(
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+        s_attribute = slot(.Object, "s_attribute_strucs"),
         strucs = meta[, 1]
       )
-      .Object@strucs <- as.integer(meta[, 1])
+      slot(.Object, "strucs") <- as.integer(meta[, 1])
     } else {
       warning("returning a NULL object")
       .Object <- NULL    
     }
   } else if (xml == "nested"){
-    s_attr_names <- rev(names(.Object@s_attributes))
+    s_attr_names <- rev(names(slot(.Object, "s_attributes")))
     strucs <- 0L:(
       cl_attribute_size(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
         attribute = s_attr_names[1], attribute_type = "s"
       ) - 1L
     )
     s_attr_values <- cl_struc2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = s_attr_names[1], struc = strucs
     )
-    Encoding(s_attr_values) <- .Object@encoding
+    Encoding(s_attr_values) <- slot(.Object, "encoding")
     if (regex == FALSE) {
-      strucs <- strucs[ which(s_attr_values %in% .Object@s_attributes[[ s_attr_names[1] ]]) ]
+      strucs <- strucs[ which(s_attr_values %in% slot(.Object, "s_attributes")[[ s_attr_names[1] ]]) ]
     } else {
       matchList <- lapply(
-        .Object@s_attributes[[ s_attr_names[1] ]],
+        slot(.Object, "s_attributes")[[ s_attr_names[1] ]],
         function(x) grep(x, s_attr_values)
       )
       strucs <- strucs[ unique(unlist(matchList)) ]
@@ -147,33 +147,33 @@ is.partition <- function(x) "partition" %in% is(x)
     
     # turn strucs into cpos matrix using RcppCWB
     cpos <- RcppCWB::get_region_matrix(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = s_attr_names[1], strucs = strucs
     )
     
     if (length(s_attr_names) > 1L){
       for (i in 2L:length(s_attr_names)){
         strucs <- cl_cpos2struc(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
           s_attribute = s_attr_names[i], cpos = cpos[,1]
         )
         s_attr_values <- cl_struc2str(
-          corpus = .Object@corpus,  registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
           s_attribute = s_attr_names[i], struc = strucs
         )
-        Encoding(s_attr_values) <- .Object@encoding
+        Encoding(s_attr_values) <- slot(.Object, "encoding")
         if (regex) {
-          hits <- unique(unlist(lapply(.Object@s_attributes[[ s_attr_names[i] ]], function(x) grep(x, s_attr_values))))
+          hits <- unique(unlist(lapply(slot(.Object, "s_attributes")[[ s_attr_names[i] ]], function(x) grep(x, s_attr_values))))
         } else {
-          hits <- which(s_attr_values %in% .Object@s_attributes[[ s_attr_names[i] ]])
+          hits <- which(s_attr_values %in% slot(.Object, "s_attributes")[[ s_attr_names[i] ]])
         }
         cpos <- if (length(hits) > 1L) cpos[hits,] else matrix(cpos[hits,], nrow = 1L, ncol = 2L)
 
         strucs <- strucs[hits]
       }
     }
-    .Object@strucs <- strucs
-    .Object@cpos <- cpos
+    slot(.Object, "strucs") <- strucs
+    slot(.Object, "cpos") <- cpos
   }
   .Object
 }
@@ -292,21 +292,21 @@ setMethod("partition", "corpus", function(
   
   if (!all(names(def) %in% s_attributes(.Object))) stop("not all s-attributes are available")
   p <- as(.Object, paste(c(type, "partition"), collapse = "_"))
-  p@name <- name
-  p@xml <- xml
+  slot(p, "name") <- name
+  slot(p, "xml") <- xml
   
-  p@s_attributes <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = p@encoding))
+  slot(p, "s_attributes") <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = slot(p, "encoding")))
   
   .message('get cpos and strucs', verbose = verbose)
   if (is.null(def)){
     stop("no s-attributes provided to define partition")
   } else {
-    p@s_attribute_strucs <- names(def)[length(def)]
+    slot(p, "s_attribute_strucs") <- names(def)[length(def)]
     p <- .partition_add_cpos(p, xml, regex)  
   }
   if (!is.null(p)) {
     # get partition size
-    p@size <- size(p)
+    slot(p, "size") <- size(p)
     if (!is.null(p_attribute)) if (p_attribute[1] == FALSE) p_attribute <- NULL
     if (!is.null(p_attribute)) {
       p <- enrich(p, p_attribute = p_attribute, verbose = verbose, decode = decode, mc = mc)
@@ -333,7 +333,7 @@ setMethod("partition", "character", function(
   partition(
     .Object = x,
     def = def, name = name, encoding = encoding, p_attribute = p_attribute,
-    regex = regex, xml = x@xml, decode = decode, type = type, mc = mc,
+    regex = regex, xml = slot(x, "xml"), decode = decode, type = type, mc = mc,
     verbose = verbose, ...
   )
 })
@@ -392,31 +392,31 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
   
 
   y <- as(.Object, class(.Object)[1])
-  y@xml <- if (is.null(xml)) .Object@xml else xml
-  y@stat <- data.table()
+  slot(y, "xml") <- if (is.null(xml)) slot(.Object, "xml") else xml
+  slot(y, "stat") <- data.table()
   
   .message('Setting up partition', name, verbose = verbose)
-  def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = .Object@encoding))  
-  y@s_attributes <- c(.Object@s_attributes, def)
-  y@s_attribute_strucs <- names(def)[1]
+  def <- lapply(def, function(x) as.corpusEnc(x, corpusEnc = slot(.Object, "encoding")))  
+  slot(y, "s_attributes") <- c(slot(.Object, "s_attributes"), def)
+  slot(y, "s_attribute_strucs") <- names(def)[1]
   
   .message('getting cpos and strucs', verbose = verbose)
   
-  if (y@xml == "flat") {
+  if (slot(y, "xml") == "flat") {
     s_attr_values <- cl_struc2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
-      s_attribute = names(def), struc = .Object@strucs
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+      s_attribute = names(def), struc = slot(.Object, "strucs")
     )
-    Encoding(s_attr_values) <- y@encoding
+    Encoding(s_attr_values) <- slot(y, "encoding")
     hits <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
-    cpos_matrix_new <- .Object@cpos[hits,]
-    y@cpos <- switch(
+    cpos_matrix_new <- slot(.Object, "cpos")[hits,]
+    slot(y, "cpos") <- switch(
       class(cpos_matrix_new)[1],
       "matrix" = cpos_matrix_new,
       "integer"= matrix(cpos_matrix_new, ncol = 2, byrow = TRUE)
     )
-    y@strucs <- .Object@strucs[hits]
-  } else if (y@xml == "nested") {
+    slot(y, "strucs") <- slot(.Object, "strucs")[hits]
+  } else if (slot(y, "xml") == "nested") {
     cpos_vec <- ranges_to_cpos(.Object@cpos)
     strucs_new <- cl_cpos2struc(
       corpus = .Object@corpus, registry = .Object@registry_dir,

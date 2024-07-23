@@ -80,14 +80,14 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
     warning("An argument has been passed into the cpos()-method via three dots (...) that is unknown.")
   }
 
-  query <- as.corpusEnc(query, corpusEnc = .Object@encoding)
+  query <- as.corpusEnc(query, corpusEnc = slot(.Object, "encoding"))
   if (is.function(cqp)) cqp <- cqp(query)
   if (length(cqp) > 1L) stop("length of cqp is more than 1, but needs to be exactly 1")
   if (!cqp) {
     
     .fn <- function(id){
       regions <- cl_id2cpos(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
         p_attribute = p_attribute, id = id
       )
       matrix(c(regions, regions), ncol = 2L)
@@ -114,12 +114,12 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
           if (is.character(q)){
             if (!regex){
               ids <- cl_str2id(
-                corpus = .Object@corpus, registry = .Object@registry_dir,
+                corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
                 p_attribute = p_attribute, str = q
               )
             } else {
               ids <- cl_regex2id(
-                corpus = .Object@corpus, registry = .Object@registry_dir,
+                corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
                 p_attribute = p_attribute, regex = q
               )
             }
@@ -148,8 +148,8 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
       function(q){
         if (check) if (!check_cqp_query(q)) stop("Aborting - CQP query does not pass check and may cause a crash.")
         if (!RcppCWB::cqp_is_initialized()) cqp_initialize()
-        cqp_query(corpus = .Object@corpus, query = q)
-        regions <- try(cqp_dump_subcorpus(corpus = .Object@corpus), silent = TRUE)
+        cqp_query(corpus = slot(.Object, "corpus"), query = q)
+        regions <- try(cqp_dump_subcorpus(corpus = slot(.Object, "corpus")), silent = TRUE)
         if (is(regions)[1] == "try-error"){
           .message("no hits for query: ", q, verbose = verbose)
           return( NULL )
@@ -183,16 +183,16 @@ setMethod("cpos", "slice", function(.Object, query, cqp = is.cqp, check = TRUE, 
   )
   
   if (!is.null(hits)){
-    if (length(.Object@s_attribute_strucs) > 0L){
+    if (length(slot(.Object, "s_attribute_strucs")) > 0L){
       # The incoming .Object may be a partition/subcorpus object that has been generated
       # from a corpus object. In this case, the slot s_attribute_strucs is an empty character
       # vector, and no filtering will be performed. This is used by the coocurrences-method
       # that is implemented for the partition class, but not for the corpus class.
       struc_hits <- cl_cpos2struc(
-        corpus = .Object@corpus,  registry = .Object@registry_dir,
-        s_attribute = .Object@s_attribute_strucs, cpos = hits[,1]
+        corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
+        s_attribute = slot(.Object, "s_attribute_strucs"), cpos = hits[,1]
       )
-      hits <- hits[which(struc_hits %in% .Object@strucs),]
+      hits <- hits[which(struc_hits %in% slot(.Object, "strucs")),]
       if (is(hits)[1] == "integer") hits <- matrix(data = hits, ncol = 2L)
       if (nrow(hits) == 0L) hits <- NULL
     }
@@ -243,7 +243,7 @@ setMethod("cpos", "hits", function(.Object){
     )
   )
   
-  cpos(as.matrix(.Object@stat[, c("cpos_left", "cpos_right")]))
+  cpos(as.matrix(slot(.Object, "stat")[, c("cpos_left", "cpos_right")]))
 })
 
 

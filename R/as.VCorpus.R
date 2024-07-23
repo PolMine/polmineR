@@ -45,25 +45,25 @@ setMethod("as.VCorpus", "partition_bundle", function(x) as(x, "VCorpus") )
 #' @rdname as.VCorpus
 setAs(from = "partition_bundle", to = "VCorpus", def = function(from){
   s_attr_lengths <- sapply(
-    s_attributes(from@objects[[1]]@corpus),
+    s_attributes(slot(from, "objects")[[1]]@corpus),
     function(s_attr)
       cl_attribute_size(
-        corpus = from@objects[[1]]@corpus,
-        registry = from@objects[[1]]@registry_dir,
+        corpus = slot(from, "objects")[[1]]@corpus,
+        registry = slot(from, "objects")[[1]]@registry_dir,
         attribute = s_attr, attribute_type = "s"
       )
   )
   
   if (length(unique(s_attr_lengths)) == 1L){
-    s_attr_to_get <- s_attributes(from@objects[[1]]@corpus)
+    s_attr_to_get <- s_attributes(slot(from, "objects")[[1]]@corpus)
   } else {
     message("Using only the s-attributes that have the same length as the s-attribute in the slot s_attribute_strucs ",
             "of the first partition")
-    s_attr_to_get <- names(s_attr_lengths[which(s_attr_lengths == s_attr_lengths[from@objects[[1]]@s_attribute_strucs])])
+    s_attr_to_get <- names(s_attr_lengths[which(s_attr_lengths == s_attr_lengths[slot(from, "objects")[[1]]@s_attribute_strucs])])
   }
   
   content <- lapply(
-    from@objects,
+    slot(from, "objects"),
     function(p){
       metadata <- sapply(s_attr_to_get, function(s_attr) s_attributes(p, s_attr)[1])
       class(metadata) <- "TextDocumentMeta"

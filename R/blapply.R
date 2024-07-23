@@ -101,11 +101,11 @@ setMethod("blapply", "vector", function(x, f, mc=FALSE, progress=TRUE, verbose=F
 #' @rdname blapply
 setMethod("blapply", "bundle", function(x, f, mc = FALSE, progress = TRUE, verbose = FALSE, ...){
   L <- setNames(
-    blapply(x@objects, f = f, mc = mc, progress = progress, verbose = verbose, ...),
+    blapply(slot(x, "objects"), f = f, mc = mc, progress = progress, verbose = verbose, ...),
     names(x)
   )
   if (all(sapply(L, function(x) "partition" %in% is(x)))){
-    x@objects <- L
+    slot(x, "objects") <- L
     return(x)
   } else {
     return(L)

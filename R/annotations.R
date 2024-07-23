@@ -99,9 +99,9 @@ setMethod("annotations", "kwic", function(x, i, j, value) callNextMethod())
 #' @rdname annotations
 setMethod("annotations", "textstat", function(x, i, j, value){
   if (missing(i)){
-    return( x@stat[, c("match_id", x@annotation_cols), with = FALSE] )
+    return( slot(x, "stat")[, c("match_id", slot(x, "annotation_cols")), with = FALSE] )
   } else {
-    x@stat[i, eval(j) := value]
+    slot(x, "stat")[i, eval(j) := value]
     return( invisible(x) )
   }
 })
@@ -119,8 +119,8 @@ setReplaceMethod("annotations", signature = c(x = "kwic", value = "list"), funct
 #' @rdname annotations
 #' @exportMethod annotations<-
 setReplaceMethod("annotations", signature = c(x = "textstat", value = "list"), function(x, value){
-  x@stat[, (value[["name"]]) := value[["what"]]]
-  x@annotation_cols <- c(x@annotation_cols, value[["name"]])
+  slot(x, "stat")[, (value[["name"]]) := value[["what"]]]
+  slot(x, "annotation_cols") <- c(slot(x, "annotation_cols"), value[["name"]])
   x
 })
 
@@ -157,7 +157,7 @@ setMethod("edit", "textstat", function(name, viewer = shiny::paneViewer(minHeigh
     
     .reset_values <- function(df){
       values[["hot"]] <- df
-      for (col in name@annotation_cols) name@stat[, eval(col) := df[[col]]]
+      for (col in slot(name, "annotation_cols")) slot(name, "stat")[, eval(col) := df[[col]]]
     }
     
     output$hot <- rhandsontable::renderRHandsontable({
@@ -179,7 +179,7 @@ setMethod("edit", "textstat", function(name, viewer = shiny::paneViewer(minHeigh
         rht <- rhandsontable::hot_col(rht, col = "concordance", colWidths = "300")
         rht <- rhandsontable::hot_col(rht, col = "concordance", readOnly = TRUE, halign = "htCenter", renderer = htmlwidgets::JS("safeHtmlRenderer"))
       } else {
-        rht <- rhandsontable::hot_col(rht, col = (1L:ncol(dt))[which(!colnames(dt) %in% name@annotation_cols)], readOnly = TRUE)
+        rht <- rhandsontable::hot_col(rht, col = (1L:ncol(dt))[which(!colnames(dt) %in% slot(name, "annotation_cols"))], readOnly = TRUE)
       }
       rht
     })

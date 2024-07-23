@@ -130,9 +130,9 @@ setMethod(
         dt[, "query" := q]
       }
       retval <- as(as(.Object, "corpus"), "hits")
-      retval@stat <- dt
-      retval@corpus <- .Object@corpus
-      retval@query <- query
+      slot(retval, "stat") <- dt
+      slot(retval, "corpus") <- slot(.Object, "corpus")
+      slot(retval, "query") <- query
 
       return(retval)
     }
@@ -149,16 +149,16 @@ setMethod(
 
     for (i in seq_along(s_attribute)){
       strucs <- cl_cpos2struc(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
         s_attribute = s_attribute[i], cpos = DT[["cpos_left"]]
       )
       if (!s_attr_has_values(s_attribute[i], x = .Object)) decode[i] <- FALSE
       if (decode[i]) {
         s_attr_values <- suppressWarnings(cl_struc2str(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
           s_attribute = s_attribute[i], struc = strucs
         )) |>
-          as.nativeEnc(from = .Object@encoding)
+          as.nativeEnc(from = slot(.Object, "encoding"))
         DT[, eval(s_attribute[i]) := s_attr_values]
       } else {
         DT[, eval(s_attribute[i]) := strucs]
@@ -201,9 +201,9 @@ setMethod(
       }
     }
     retval <- as(as(.Object, "corpus"), "hits")
-    retval@stat <- TF
-    retval@corpus <- .Object@corpus
-    retval@query <- query
+    slot(retval, "stat") <- TF
+    slot(retval, "corpus") <- slot(.Object, "corpus")
+    slot(retval, "query") <- query
     retval
   })
 
@@ -290,21 +290,21 @@ setMethod("hits", "partition_bundle", function(
   stopifnot(by %in% c("match", "query"))
   if (verbose) cli_alert_info("aggregate results by: {.val {by}}")
 
-  corpus_id <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
+  corpus_id <- unique(unlist(lapply(slot(.Object, "objects"), function(x) slot(x, "corpus"))))
   if (length(corpus_id) > 1L)
     stop("partiton_bundle not derived from one corpus")
   corpus_obj <- corpus(corpus_id)
   s_attribute_strucs <- unique(unlist(
-    lapply(.Object@objects, slot, "s_attribute_strucs")
+    lapply(slot(.Object, "objects"), slot, "s_attribute_strucs")
   ))
   stopifnot(length(s_attribute_strucs) == 1L)
 
   # combine strucs and partition names into an overall data.table
   .message("preparing struc table", verbose = verbose)
   struc_dt <- data.table(
-    struc = unlist(lapply(.Object@objects, function(x) x@strucs)),
+    struc = unlist(lapply(slot(.Object, "objects"), function(x) slot(x, "strucs"))),
     partition = unlist(
-      lapply(.Object@objects, function(x) rep(x@name, times = length(x@strucs)))
+      lapply(slot(.Object, "objects"), function(x) rep(slot(x, "name"), times = length(slot(x, "strucs"))))
     )
   )
 
@@ -334,7 +334,7 @@ setMethod("hits", "partition_bundle", function(
   if (nrow(count_dt) > 0L) {
     strucs <- cl_cpos2struc(
       corpus = corpus_id,
-      registry = corpus_obj@registry_dir,
+      registry = slot(corpus_obj, "registry_dir"),
       s_attribute = s_attribute_strucs, cpos = count_dt[["V1"]]
     )
     count_dt[, "struc" := strucs, with = TRUE][, "V1" := NULL][, "V2" := NULL]
@@ -346,7 +346,7 @@ setMethod("hits", "partition_bundle", function(
         corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
         s_attribute = s_attr, struc = dt[["struc"]]
       ) |>
-        as.nativeEnc(from = .Object@encoding)
+        as.nativeEnc(from = slot(.Object, "encoding"))
       dt[, (s_attr) := values]
     }
     # remove hits that are not in partition_bundle
@@ -355,7 +355,7 @@ setMethod("hits", "partition_bundle", function(
     setnames(tf, old = "N", new = "count")
     if (freq) size <- TRUE
     if (size)
-      tf[, size := sapply(.Object@objects, function(x) x@size)[tf[["partition"]]]]
+      tf[, size := sapply(slot(.Object, "objects"), function(x) slot(x, "size"))[tf[["partition"]]]]
     if (freq) tf[, freq := count / size]
   } else {
     tf <- data.table(
@@ -373,19 +373,19 @@ setMethod("hits", "partition_bundle", function(
 #' @param size A non-negative integer giving the number of items to choose.
 #' @rdname hits_class
 setMethod("sample", "hits", function(x, size) {
-  if (size > nrow(x@stat)) {
+  if (size > nrow(slot(x, "stat"))) {
     warning("size exceeds nrow of the data.table of the hits object")
-    size <- nrow(x@stat)
+    size <- nrow(slot(x, "stat"))
   }
   new(
     "hits",
-    dt = x@stat[sample(seq_len(nrow(x@stat)), size = size)],
-    corpus = x@corpus,
-    registry_dir = x@registry_dir,
-    data_dir = x@data_dir,
-    info_file = x@info_file,
-    template = x@template,
-    query = x@query
+    dt = slot(x, "stat")[sample(seq_len(nrow(slot(x, "stat"))), size = size)],
+    corpus = slot(x, "corpus"),
+    registry_dir = slot(x, "registry_dir"),
+    data_dir = slot(x, "data_dir"),
+    info_file = slot(x, "info_file"),
+    template = slot(x, "template"),
+    query = slot(x, "query")
   )
 })
 
@@ -397,7 +397,7 @@ setMethod(
   if ("sAttribute" %in% names(list(...)))
     s_attribute <- list(...)[["sAttribute"]]
 
-  ctxt_min <- .Object@cpos[which(.Object@cpos[["position"]] == 0)]
+  ctxt_min <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] == 0)]
 
   .message("compressing data.table", verbose = verbose)
   .get_cpos_left_right <- function(.SD) {
@@ -411,11 +411,11 @@ setMethod(
   .message("adding s_attributes", verbose = verbose)
   for (x in s_attribute){
     strucs <- cl_cpos2struc(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = x, cpos = DT[["cpos_left"]]
     )
     str <- cl_struc2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = x, struc = strucs
     )
     DT[, eval(x) := str]
@@ -424,12 +424,12 @@ setMethod(
   new(
     "hits",
     stat = DT,
-    corpus = .Object@corpus,
-    registry_dir = .Object@registry_dir,
-    data_dir = .Object@data_dir,
-    info_file = .Object@info_file,
-    template = .Object@template,
-    query = .Object@query
+    corpus = slot(.Object, "corpus"),
+    registry_dir = slot(.Object, "registry_dir"),
+    data_dir = slot(.Object, "data_dir"),
+    info_file = slot(.Object, "info_file"),
+    template = slot(.Object, "template"),
+    query = slot(.Object, "query")
   )
 })
 
@@ -437,9 +437,9 @@ setMethod(
 setMethod("hits", "remote_corpus", function(.Object, ...) {
   ocpu_exec(
     fn = "hits",
-    corpus = .Object@corpus,
-    server = .Object@server,
-    restricted = .Object@restricted,
+    corpus = slot(.Object, "corpus"),
+    server = slot(.Object, "server"),
+    restricted = slot(.Object, "restricted"),
     .Object = as(.Object, "corpus"), ...)
 })
 
@@ -447,8 +447,8 @@ setMethod("hits", "remote_corpus", function(.Object, ...) {
 setMethod("hits", "remote_subcorpus", function(.Object, ...) {
   ocpu_exec(
     fn = "hits",
-    corpus = .Object@corpus,
-    server = .Object@server,
-    restricted = .Object@restricted,
+    corpus = slot(.Object, "corpus"),
+    server = slot(.Object, "server"),
+    restricted = slot(.Object, "restricted"),
     .Object = as(.Object, "subcorpus"), ...)
 })

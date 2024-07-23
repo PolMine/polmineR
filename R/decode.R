@@ -15,20 +15,20 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
     stop("Package 'NLP' required but not available")
 
   word <- get_token_stream(
-    from@cpos,
-    corpus = from@corpus,
+    slot(from, "cpos"),
+    corpus = slot(from, "corpus"),
     p_attribute = "word",
-    encoding = from@encoding
+    encoding = slot(from, "encoding")
   )
   
   if ("pos" %in% p_attributes(from)){
     cli_alert_info("using p_attribute 'pos' for detecting interpunctation")
     # this is not robust if we have a subcorpus with one token only
     pos <- get_token_stream(
-      from@cpos,
-      corpus = from@corpus,
+      slot(from, "cpos"),
+      corpus = slot(from, "corpus"),
       p_attribute = "pos",
-      encoding = from@encoding
+      encoding = slot(from, "encoding")
     )
     ws_after <- c(ifelse(pos %in% c("$.", "$,"), FALSE, TRUE)[-1], FALSE)
     breaks <- unique(c(1L, grep("\\$\\.", pos), length(pos)))
@@ -52,7 +52,7 @@ setAs(from = "corpus", to = "Annotation", def = function(from){
   names(left_offset) <- word
   right_offset <- left_offset + word_length - 1L
   names(right_offset) <- word
-  cpos <- ranges_to_cpos(from@cpos)
+  cpos <- ranges_to_cpos(slot(from, "cpos"))
   w <- NLP::Annotation(
     id = cpos,
     rep.int("word", length(cpos)),
@@ -137,9 +137,9 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
         )
       
       struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
-        corpus = x@corpus,
-        registry = x@registry_dir,
-        region_matrix = x@cpos,
+        corpus = slot(x, "corpus"),
+        registry = slot(x, "registry_dir"),
+        region_matrix = slot(x, "cpos"),
         s_attribute = s_attr
       )
       # missing regions for s_attr within regions result in NAs
@@ -152,20 +152,20 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
       if (length(strucs_min) == 0L) return(NULL)
       
       regions <- get_region_matrix(
-        corpus = x@corpus,
+        corpus = slot(x, "corpus"),
         s_attribute = s_attr,
         strucs = strucs_min,
-        registry = x@registry_dir
+        registry = slot(x, "registry_dir")
       )
       
       str <- RcppCWB::cl_struc2str(
-        corpus = x@corpus,
-        registry = x@registry_dir,
+        corpus = slot(x, "corpus"),
+        registry = slot(x, "registry_dir"),
         s_attribute = s_attr,
         struc = strucs_min
       )
-      Encoding(str) <- x@encoding
-      str <- as.nativeEnc(x = str, from = x@encoding)
+      Encoding(str) <- slot(x, "encoding")
+      str <- as.nativeEnc(x = str, from = slot(x, "encoding"))
       
       data <- lapply(
         1:nrow(regions),
@@ -214,19 +214,19 @@ as.AnnotatedPlainTextDocument <- function(x, p_attributes = NULL, s_attributes =
     setNames(s_attributes, s_attributes),
     function(s_attr){
       struc <- cl_cpos2struc(
-        corpus = x@corpus,
-        registry = x@registry_dir,
+        corpus = slot(x, "corpus"),
+        registry = slot(x, "registry_dir"),
         s_attribute = s_attr,
-        cpos = x@cpos[1,1]
+        cpos = slot(x, "cpos")[1,1]
       )
       value <- cl_struc2str(
-        corpus = x@corpus,
-        registry = x@registry_dir,
+        corpus = slot(x, "corpus"),
+        registry = slot(x, "registry_dir"),
         s_attribute = s_attr,
         struc = struc
       )
-      Encoding(value) <- x@encoding
-      as.nativeEnc(x = value, from = x@encoding)
+      Encoding(value) <- slot(x, "encoding")
+      as.nativeEnc(x = value, from = slot(x, "encoding"))
     }
   )
   
@@ -371,16 +371,16 @@ setMethod("decode", "corpus", function(.Object, to = c("data.table", "Annotation
             cli_progress_step(sprintf("decoding s-attribute: %s", s_attr))
           
           struc <- cl_cpos2struc(
-            corpus = .Object@corpus,
-            registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"),
+            registry = slot(.Object, "registry_dir"),
             s_attribute = s_attr,
             cpos = 0L:max_cpos
           )
           
           if (decode && s_attr_has_values(s_attr, x = .Object)){
             str <- cl_struc2str(
-              corpus = .Object@corpus,
-              registry = .Object@registry_dir,
+              corpus = slot(.Object, "corpus"),
+              registry = slot(.Object, "registry_dir"),
               s_attribute = s_attr,
               struc = struc
             )
@@ -440,7 +440,7 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
     if (!all(p_attributes %in% p_attributes(.Object)))
       stop("Not all p_attributes provided are available.")
     
-    y <- data.table(cpos = ranges_to_cpos(.Object@cpos))
+    y <- data.table(cpos = ranges_to_cpos(slot(.Object, "cpos")))
     setkeyv(y, cols = "cpos") # col cpos used repeatedly to  merge s-attributes
 
     for (p_attr in p_attributes){
@@ -470,10 +470,10 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
         # the cost of learning whether s-attributes are siblings consumes the 
         # performance gain, so we get strucs, regions and cpos anew.
         struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
-          corpus = .Object@corpus,
+          corpus = slot(.Object, "corpus"),
           s_attribute = s_attributes[i],
-          registry = .Object@registry_dir,
-          region_matrix = .Object@cpos
+          registry = slot(.Object, "registry_dir"),
+          region_matrix = slot(.Object, "cpos")
         )
         strucs <- suppressWarnings(RcppCWB::ranges_to_cpos(struc_matrix))
         if (length(strucs) == 0L){
@@ -487,8 +487,8 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
         }
         
         regions <- RcppCWB::get_region_matrix(
-          corpus = .Object@corpus,
-          registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"),
+          registry = slot(.Object, "registry_dir"),
           s_attribute = s_attributes[i],
           strucs = strucs
         )
@@ -497,8 +497,8 @@ setMethod("decode", "slice", function(.Object, to = c("data.table", "Annotation"
         decode <- decode && s_attr_has_values(s_attributes[i], x = .Object)
         if (decode){
           str <- cl_struc2str(
-            corpus = .Object@corpus,
-            registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"),
+            registry = slot(.Object, "registry_dir"),
             s_attribute = s_attributes[i],
             struc = strucs
           )
@@ -600,28 +600,28 @@ setMethod("decode", "integer", function(.Object, corpus, p_attributes, boost = N
     stop("Argument 'corpus' is required to be a corpus object.")
   
   if (is.null(boost)){
-    boost <- if (corpus@size > 10000000L && length(cpos) >= (corpus@size * 0.05)) TRUE else FALSE
+    boost <- if (slot(corpus, "size") > 10000000L && length(cpos) >= (slot(corpus, "size") * 0.05)) TRUE else FALSE
   }
   
   if (isTRUE(boost)){
-    lexfile <- fs::path(corpus@data_dir, sprintf("%s.lexicon", p_attributes))
+    lexfile <- fs::path(slot(corpus, "data_dir"), sprintf("%s.lexicon", p_attributes))
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
-    Encoding(lexicon) <- corpus@encoding
-    if (!identical(corpus@encoding, encoding())){
-      # lexicon <- stringi::stri_encode(lexicon, from = corpus@encoding, to = encoding()) # as.locale
-      lexicon <- iconv(lexicon, from = corpus@encoding, to = encoding())
+    Encoding(lexicon) <- slot(corpus, "encoding")
+    if (!identical(slot(corpus, "encoding"), encoding())){
+      # lexicon <- stringi::stri_encode(lexicon, from = slot(corpus, "encoding"), to = encoding()) # as.locale
+      lexicon <- iconv(lexicon, from = slot(corpus, "encoding"), to = encoding())
       Encoding(lexicon) <- encoding()
     }
     y <- lexicon[.Object + 1L]
   } else if (isFALSE(boost)){
     y <- RcppCWB::cl_id2str(
-      corpus = corpus@corpus, registry = corpus@registry_dir,
+      corpus = slot(corpus, "corpus"), registry = slot(corpus, "registry_dir"),
       p_attribute = p_attributes, id = .Object
     )
-    Encoding(y) <- corpus@encoding
-    if (!identical(corpus@encoding, encoding())){
-      # y <- stringi::stri_encode(y, from = corpus@encoding, to = encoding())
-      y <- iconv(y, from = corpus@encoding, to = encoding())
+    Encoding(y) <- slot(corpus, "encoding")
+    if (!identical(slot(corpus, "encoding"), encoding())){
+      # y <- stringi::stri_encode(y, from = slot(corpus, "encoding"), to = encoding())
+      y <- iconv(y, from = slot(corpus, "encoding"), to = encoding())
       Encoding(y) <- encoding()
     }
   }

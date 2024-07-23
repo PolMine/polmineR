@@ -47,16 +47,16 @@ setMethod("as.sparseMatrix", "Cooccurrences", function(x, col = "ab_count", ...)
   
   decoded_tokens <- reindex(x)
   retval <- sparseMatrix(
-    i = x@stat[["a_new_index"]],
-    j = x@stat[["b_new_index"]],
-    x = x@stat[[col]], 
+    i = slot(x, "stat")[["a_new_index"]],
+    j = slot(x, "stat")[["b_new_index"]],
+    x = slot(x, "stat")[[col]], 
     dims = c(length(decoded_tokens), length(decoded_tokens)),
     dimnames = list(decoded_tokens, decoded_tokens),
     ...
   ) 
   
   # restore original data.table and remove columns generated during reindexing
-  x@stat[, "a_new_index" := NULL][, "b_new_index" := NULL]
+  slot(x, "stat")[, "a_new_index" := NULL][, "b_new_index" := NULL]
   retval
 })
 

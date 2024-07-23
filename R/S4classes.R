@@ -188,8 +188,8 @@ setClass(
 #' @exportMethod name<-
 #' @rdname bundle
 setReplaceMethod("name", signature = "bundle", function(x, value) {
-  names(x@objects) <- value
-  for (i in 1L:length(x)) x@objects[[i]]@name <- value[[i]]
+  names(slot(x, "objects")) <- value
+  for (i in 1L:length(x)) slot(x, "objects")[[i]]@name <- value[[i]]
   x
 })
 
@@ -303,7 +303,7 @@ setClass(
 
 # setValidity("textstat", function(object){
 #   if (
-#     identical(attr(object@stat, ".internal.selfref"), new("externalptr"))
+#     identical(attr(slot(object, "stat"), ".internal.selfref"), new("externalptr"))
 #   ){
 #     return(paste(
 #       "data.table pointer is 0x0 - copy object using cp() to create",
@@ -317,7 +317,7 @@ setClass(
 #' @details `textstat` objects can have a name, which can be retrieved, and set using
 #' the `name`-method and `name<-`, respectively.
 #' @rdname textstat-class
-setMethod("name", "textstat", function(x) x@name)
+setMethod("name", "textstat", function(x) slot(x, "name"))
 
 #' @rdname textstat-class
 setMethod("name", "character", function(x) x)
@@ -327,7 +327,7 @@ setMethod("name", "character", function(x) x)
 #' @rdname textstat-class
 #' @exportMethod name<-
 setReplaceMethod("name", signature = "textstat", function(x, value) {
-  x@name <- value
+  slot(x, "name") <- value
   x
 })
 
@@ -425,13 +425,13 @@ setClass("count",
 setMethod("summary", "count", function(object){
   y <- list(
     name = if (length(name(object)) > 0) name(object) else NA,
-    size = object@size
+    size = slot(object, "size")
   )
-  if (nrow(object@stat) > 0){
-    y[["p_attribute"]] <- paste(object@p_attribute, collapse = "|")
-    y[["unique"]] <- nrow(object@stat)
-    if ("weight" %in% colnames(object@stat)){
-      dt_positive <- subset(object@stat, object@stat[["weight"]] > 0)
+  if (nrow(slot(object, "stat")) > 0){
+    y[["p_attribute"]] <- paste(slot(object, "p_attribute"), collapse = "|")
+    y[["unique"]] <- nrow(slot(object, "stat"))
+    if ("weight" %in% colnames(slot(object, "stat"))){
+      dt_positive <- subset(slot(object, "stat"), slot(object, "stat")[["weight"]] > 0)
       if (nrow(dt_positive) > 0){
         y[["positive_n"]] <- sum(dt_positive[["count"]])
         y[["positive_share"]] <- y[["positive_n"]] / y[["size"]]
@@ -440,7 +440,7 @@ setMethod("summary", "count", function(object){
         y <- c(y, list(positive_n = 0, positive_share = 0, positive_weighed = 0))
       }
       
-      dt_negative <- subset(object@stat, object@stat[["weight"]] < 0)
+      dt_negative <- subset(slot(object, "stat"), slot(object, "stat")[["weight"]] < 0)
       if (nrow(dt_negative) > 0){
         y[["negative_n"]] <- sum(dt_negative[["count"]])
         y[["negative_share"]] <- y[["negative_n"]] / y[["size"]]
@@ -468,7 +468,7 @@ setClass("count_bundle", contains = "bundle")
 #' @param x A `count` object, or a class inheriting from `count`.
 #' @exportMethod length
 #' @rdname count_class
-setMethod("length", "count", function(x) x@size)
+setMethod("length", "count", function(x) slot(x, "size"))
 
 
 
@@ -637,10 +637,10 @@ setClass(
 #' @details The `length`-method will return the number of hits that were achieved.
 #' @rdname context-class
 #' @exportMethod length
-setMethod("length", "context", function(x) as.integer(x@count))
+setMethod("length", "context", function(x) as.integer(slot(x, "count")))
 
-setAs(from = "textstat", to = "data.table", def = function(from) from@stat)
-setAs(from = "partition", to = "data.table", def = function(from) from@stat)
+setAs(from = "textstat", to = "data.table", def = function(from) slot(from, "stat"))
+setAs(from = "partition", to = "data.table", def = function(from) slot(from, "stat"))
 
 #' Cooccurrences class.
 #' 
@@ -748,14 +748,14 @@ setClass("kwic_bundle", contains = "bundle")
 setAs(from = "corpus", to = "partition", def = function(from){
   new(
     "partition",
-    corpus = from@corpus,
-    encoding = from@encoding,
+    corpus = slot(from, "corpus"),
+    encoding = slot(from, "encoding"),
     cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
     stat = data.table(),
-    info_file = from@info_file,
-    data_dir = from@data_dir,
-    registry_dir = from@registry_dir,
-    template = from@template,
+    info_file = slot(from, "info_file"),
+    data_dir = slot(from, "data_dir"),
+    registry_dir = slot(from, "registry_dir"),
+    template = slot(from, "template"),
     size = size(from),
     p_attribute = character()
   )
@@ -804,7 +804,7 @@ setAs(from = "remote_corpus", to = "corpus", def = function(from){
 #' corpus("GERMAPARLMINI") %>% get_info()
 #' corpus("GERMAPARLMINI") %>% show_info()
 #'
-setMethod("name", "corpus", function(x) x@name)
+setMethod("name", "corpus", function(x) slot(x, "name"))
 
 
 #' Regions of a CWB corpus.
@@ -972,7 +972,7 @@ setAs(from = "remote_subcorpus", to = "subcorpus", def = function(from){
 setMethod("summary", "subcorpus", function(object){
   list(
     name = if (length(name(object)) > 0L) name(object) else NA,
-    size = object@size
+    size = slot(object, "size")
   )
 })
 
@@ -982,7 +982,7 @@ setMethod("summary", "subcorpus", function(object){
 #' @describeIn subcorpus Assign name to a `subcorpus` object.
 #' @exportMethod name<-
 setReplaceMethod("name", "subcorpus", function(x, value) {
-  x@name <- as.character(value)
+  slot(x, "name") <- as.character(value)
   x
 })
 
@@ -1225,9 +1225,9 @@ setAs(from = "partition_bundle", to = "subcorpus_bundle", def = function(from){
     paste(type, "subcorpus", sep = "_")
   
   y <- as(as(from, "corpus"), "subcorpus_bundle")
-  y@objects <- lapply(from@objects, function(x) as(x, dest_class))
-  y@s_attributes_fixed <- from@s_attributes_fixed
-  y@xml <- from@xml
+  slot(y, "objects") <- lapply(slot(from, "objects"), function(x) as(x, dest_class))
+  slot(y, "s_attributes_fixed") <- slot(from, "s_attributes_fixed")
+  slot(y, "xml") <- slot(from, "xml")
   
   y
 })
@@ -1235,10 +1235,10 @@ setAs(from = "partition_bundle", to = "subcorpus_bundle", def = function(from){
 #' @export
 setAs(from = "subcorpus_bundle", to = "partition_bundle", def = function(from){
   y <- as(as(from, "corpus"), "partition_bundle")
-  old <- unique(sapply(from@objects, class))
+  old <- unique(sapply(slot(from, "objects"), class))
   if (length(old) > 1L) stop("mixed classes in subcorpus_bundle")
   new <- gsub("subcorpus", "partition", old)
-  y@objects <- lapply(from@objects, function(x) as(as(x, "partition"), new))
+  slot(y, "objects") <- lapply(slot(from, "objects"), function(x) as(as(x, "partition"), new))
   y
 })
 
@@ -1277,12 +1277,12 @@ setClassUnion(
 setAs(from = "corpus", to = "subcorpus", def = function(from){
   new(
     "subcorpus",
-    corpus = from@corpus,
-    data_dir = from@data_dir,
-    template = from@template,
-    registry_dir = from@registry_dir,
-    info_file = from@info_file,
-    encoding = from@encoding,
+    corpus = slot(from, "corpus"),
+    data_dir = slot(from, "data_dir"),
+    template = slot(from, "template"),
+    registry_dir = slot(from, "registry_dir"),
+    info_file = slot(from, "info_file"),
+    encoding = slot(from, "encoding"),
     cpos = matrix(data = c(0L, (size(from) - 1L)), nrow = 1L),
     size = size(from)
   )
@@ -1330,17 +1330,17 @@ setClass(
 #' P2 <- aggregate(P)
 #' P2@cpos
 setMethod("aggregate", "slice", function(x){
-  if (nrow(x@cpos) == 1L){
+  if (nrow(slot(x, "cpos")) == 1L){
     message("NOTE: Only one region, returning the partition unchanged")
     return(x)
   }
-  jumps <- x@cpos[2L:nrow(x@cpos), 1L] - x@cpos[1L:(nrow(x@cpos) - 1L), 2L]
-  jumpsWhere <- c(0L, which(jumps > 1L), nrow(x@cpos)) + 1L
+  jumps <- slot(x, "cpos")[2L:nrow(slot(x, "cpos")), 1L] - slot(x, "cpos")[1L:(nrow(slot(x, "cpos")) - 1L), 2L]
+  jumpsWhere <- c(0L, which(jumps > 1L), nrow(slot(x, "cpos"))) + 1L
   rework <- lapply(
     1L:(length(jumpsWhere) - 1L),
-    function(i) c(x@cpos[jumpsWhere[i], 1L], x@cpos[jumpsWhere[i + 1L] - 1L, 2L])
+    function(i) c(slot(x, "cpos")[jumpsWhere[i], 1L], slot(x, "cpos")[jumpsWhere[i + 1L] - 1L, 2L])
   )
-  x@cpos <- do.call(rbind, rework)
+  slot(x, "cpos") <- do.call(rbind, rework)
   x
 })
 

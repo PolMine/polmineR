@@ -14,7 +14,7 @@ setGeneric("show_info", function(x) standardGeneric("show_info"))
 #' @export get_info
 #' @importFrom RcppCWB corpus_info_file
 setMethod("get_info", "corpus", function(x){
-  fname <- corpus_info_file(corpus = x@corpus, registry = x@registry_dir)
+  fname <- corpus_info_file(corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"))
   if (file.exists(fname)){
     info <- readLines(fname)
     attr(info, "md") <- if (grepl(".md$", fname)) TRUE else FALSE

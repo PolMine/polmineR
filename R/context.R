@@ -4,21 +4,21 @@ NULL
 
 #' @rdname context-class
 setMethod("sample", "context", function(x, size){
-  hits_unique <- unique(x@cpos[["match_id"]])
+  hits_unique <- unique(slot(x, "cpos")[["match_id"]])
   if (size > length(hits_unique)){
     warning("argument size exceeds number of hits, returning original object")
     return(x)
   }
-  x@cpos <- x@cpos[which(x@cpos[["match_id"]] %in% sample(hits_unique, size = size))]
-  x@count <- as.integer(size)
-  x@size <- length(which(x@cpos[["position"]] != 0))
+  slot(x, "cpos") <- slot(x, "cpos")[which(slot(x, "cpos")[["match_id"]] %in% sample(hits_unique, size = size))]
+  slot(x, "count") <- as.integer(size)
+  slot(x, "size") <- length(which(slot(x, "cpos")[["position"]] != 0))
   x
 })
 
 setAs(
   from = "context", to = "matrix",
   def = function(from){
-    x <- copy(from@cpos)
+    x <- copy(slot(from, "cpos"))
     setorderv(x, cols = c("cpos", "match_id"))
     x[, "direction" := sign(x[["position"]])]
     dt <- rbindlist(lapply(
@@ -149,21 +149,21 @@ setMethod("context", "slice", function(
     left = left, right = right,
     p_attribute = p_attribute, region = region,
     boundary = boundary,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir")
   )
   
-  ctxt@query <- query
-  ctxt@p_attribute <- p_attribute
-  ctxt@corpus <- .Object@corpus
-  ctxt@encoding <- .Object@encoding
-  ctxt@data_dir <- .Object@data_dir
-  ctxt@registry_dir <- .Object@registry_dir
-  ctxt@info_file <- .Object@info_file
-  ctxt@template <- .Object@template
-  ctxt@partition <- as(.Object, "partition")
-  ctxt@size_partition <- as.integer(.Object@size)
-  ctxt@boundary <- if (!is.null(boundary)) boundary else character()
+  slot(ctxt, "query") <- query
+  slot(ctxt, "p_attribute") <- p_attribute
+  slot(ctxt, "corpus") <- slot(.Object, "corpus")
+  slot(ctxt, "encoding") <- slot(.Object, "encoding")
+  slot(ctxt, "data_dir") <- slot(.Object, "data_dir")
+  slot(ctxt, "registry_dir") <- slot(.Object, "registry_dir")
+  slot(ctxt, "info_file") <- slot(.Object, "info_file")
+  slot(ctxt, "template") <- slot(.Object, "template")
+  slot(ctxt, "partition") <- as(.Object, "partition")
+  slot(ctxt, "size_partition") <- as.integer(slot(.Object, "size"))
+  slot(ctxt, "boundary") <- if (!is.null(boundary)) boundary else character()
 
   # add decoded tokens (ids at this stage)
   ctxt <- enrich(ctxt, p_attribute = p_attribute, decode = FALSE, verbose = verbose)
@@ -179,12 +179,12 @@ setMethod("context", "slice", function(
   
   .message("generating contexts", verbose = verbose)
   
-  ctxt@size <- nrow(ctxt@cpos)
-  ctxt@size_match <- as.integer(sum(regions[,2] - regions[,1]) + nrow(regions))
-  ctxt@size_coi <- as.integer(ctxt@size) - ctxt@size_match
-  ctxt@size_ref <- as.integer(ctxt@size_partition - ctxt@size_coi - ctxt@size_match)
-  ctxt@size_partition <- size(.Object)
-  ctxt@count <- length(unique(ctxt@cpos[["match_id"]]))
+  slot(ctxt, "size") <- nrow(slot(ctxt, "cpos"))
+  slot(ctxt, "size_match") <- as.integer(sum(regions[,2] - regions[,1]) + nrow(regions))
+  slot(ctxt, "size_coi") <- as.integer(slot(ctxt, "size")) - slot(ctxt, "size_match")
+  slot(ctxt, "size_ref") <- as.integer(slot(ctxt, "size_partition") - slot(ctxt, "size_coi") - slot(ctxt, "size_match"))
+  slot(ctxt, "size_partition") <- size(.Object)
+  slot(ctxt, "count") <- length(unique(slot(ctxt, "cpos")[["match_id"]]))
   
   # put together raw stat table
   if (count) ctxt <- enrich(ctxt, stat = TRUE, verbose = verbose)
@@ -298,12 +298,12 @@ setMethod("context", "matrix", function(.Object, corpus, registry = Sys.getenv("
   setcolorder(cpos_dt, c("match_id", "cpos"))
   
   retval <- as(corpus(corpus), "context")
-  retval@count <- nrow(.Object)
-  retval@cpos <- cpos_dt
-  retval@left <- if (is.character(left)) 0L else as.integer(left)
-  retval@right <- if (is.character(right)) 0L else as.integer(right)
-  retval@boundary <- if (is.null(boundary)) character() else boundary
-  retval@p_attribute <- p_attribute
+  slot(retval, "count") <- nrow(.Object)
+  slot(retval, "cpos") <- cpos_dt
+  slot(retval, "left") <- if (is.character(left)) 0L else as.integer(left)
+  slot(retval, "right") <- if (is.character(right)) 0L else as.integer(right)
+  slot(retval, "boundary") <- if (is.null(boundary)) character() else boundary
+  slot(retval, "p_attribute") <- p_attribute
   
   retval
 })
@@ -346,7 +346,7 @@ setMethod("context", "corpus", function(
   # count here for the entire corpus.
   
   if (length(p_attribute) == 1L){
-    p@stat <- count(.Object@corpus, p_attribute = p_attribute, decode = FALSE)@stat
+    slot(p, "stat") <- count(slot(.Object, "corpus"), p_attribute = p_attribute, decode = FALSE)@stat
   }
     
   context(
@@ -424,13 +424,13 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, s
   }
   
   y <- as(as(.Object, "corpus"), "context_bundle")
-  y@query <- query
-  y@p_attribute <- p_attribute
+  slot(y, "query") <- query
+  slot(y, "p_attribute") <- p_attribute
 
-  y@objects <- sapply(
-    .Object@objects,
+  slot(y, "objects") <- sapply(
+    slot(.Object, "objects"),
     function(x) {
-      .message("get context for partition ", x@name, verbose = verbose)
+      .message("get context for partition ", slot(x, "name"), verbose = verbose)
       context(
         x, query = query, p_attribute = p_attribute,
         positivelist = positivelist, stoplist = stoplist,
@@ -443,7 +443,7 @@ setMethod("context", "partition_bundle", function(.Object, query, p_attribute, s
   )
   
   # Remove NULL objects that result of no match has been obtained
-  for (i in rev(which(sapply(y@objects, is.null)))) y@objects[[i]] <- NULL
+  for (i in rev(which(sapply(slot(y, "objects"), is.null)))) slot(y, "objects")[[i]] <- NULL
   
   y
 })
@@ -454,39 +454,39 @@ setMethod("context", "cooccurrences", function(.Object, query, check = TRUE, com
   newObject <- new(
     "context",
     query = query,
-    partition = .Object@partition,
-    size_partition = as.integer(.Object@partition_size),
-    left = as.integer(.Object@left),
-    right = as.integer(.Object@right),
-    p_attribute = .Object@p_attribute,
-    corpus = .Object@corpus,
-    registry_dir = .Object@registry_dir,
-    data_dir = .Object@data_dir,
-    template = .Object@template,
-    info_file = .Object@info_file,
-    encoding = .Object@encoding,
-    method = .Object@method,
-    stat = subset(.Object@stat, .Object@stat[, "node"]==query),
+    partition = slot(.Object, "partition"),
+    size_partition = as.integer(slot(.Object, "partition_size")),
+    left = as.integer(slot(.Object, "left")),
+    right = as.integer(slot(.Object, "right")),
+    p_attribute = slot(.Object, "p_attribute"),
+    corpus = slot(.Object, "corpus"),
+    registry_dir = slot(.Object, "registry_dir"),
+    data_dir = slot(.Object, "data_dir"),
+    template = slot(.Object, "template"),
+    info_file = slot(.Object, "info_file"),
+    encoding = slot(.Object, "encoding"),
+    method = slot(.Object, "method"),
+    stat = subset(slot(.Object, "stat"), slot(.Object, "stat")[, "node"]==query),
     call = deparse(match.call()),
-    size = unique(subset(.Object@stat, .Object@stat[, "node"] == query)[,"size_window"])
+    size = unique(subset(slot(.Object, "stat"), slot(.Object, "stat")[, "node"] == query)[,"size_window"])
   )  
   stop("due to refactoring the context method, this does not work at present")
   # if (complete){
-  #   s_attribute <- names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]]
+  #   s_attribute <- names(get(slot(newObject, "partition"), ".GlobalEnv")@s_attributes)[[1]]
   #   sAttr <- paste(
-  #     newObject@corpus, ".",
-  #     names(get(newObject@partition, ".GlobalEnv")@s_attributes)[[1]],
+  #     slot(newObject, "corpus"), ".",
+  #     names(get(slot(newObject, "partition"), ".GlobalEnv")@s_attributes)[[1]],
   #     sep = ""
   #   )
   #   hits <- cpos(
-  #     newObject@query,
-  #     get(newObject@partition, ".GlobalEnv"),
-  #     p_attribute = newObject@p_attribute,
+  #     slot(newObject, "query"),
+  #     get(slot(newObject, "partition"), ".GlobalEnv"),
+  #     p_attribute = slot(newObject, "p_attribute"),
   #     verbose = FALSE, check = check
   #   )
-  #   newObject@size <- nrow(hits)
-  #   hits <- cbind(hits, cl_cpos2struc(corpus = newObject@corpus, s_attribute = s_attribute, cpos = hits[,1], registry = registry()))
-  #   newObject@cpos <- .make_context_dt(hits, left = newObject@left, right = newObject@right, corpus = newObject@corpus, s_attribute = sAttr)
+  #   slot(newObject, "size") <- nrow(hits)
+  #   hits <- cbind(hits, cl_cpos2struc(corpus = slot(newObject, "corpus"), s_attribute = s_attribute, cpos = hits[,1], registry = registry()))
+  #   slot(newObject, "cpos") <- .make_context_dt(hits, left = slot(newObject, "left"), right = slot(newObject, "right"), corpus = slot(newObject, "corpus"), s_attribute = sAttr)
   # }
   newObject
 })
@@ -500,16 +500,16 @@ NULL
 #' @noRd
 setMethod("summary", "context_bundle", function(object, top = 3){
   
-  sizes_partition <- unname(sapply(object@objects, slot, "size_partition"))
-  counts <- unname(sapply(object@objects, slot, "count"))
+  sizes_partition <- unname(sapply(slot(object, "objects"), slot, "size_partition"))
+  counts <- unname(sapply(slot(object, "objects"), slot, "count"))
   y <- data.frame(count = counts, freq = counts / sizes_partition)
   
-  method <- unlist(unique(unname(sapply(object@objects, slot, "method"))))
+  method <- unlist(unique(unname(sapply(slot(object, "objects"), slot, "method"))))
   if (length(method) > 0L){
     y <- cbind(
       y,
       t(
-        data.frame(lapply(object@objects, function(x) .statisticalSummary(x)$no))
+        data.frame(lapply(slot(object, "objects"), function(x) .statisticalSummary(x)$no))
       )
     )
     colnames(y)[3:6] <- c(">10.83", ">7.88", ">6.63", ">3.84")
@@ -521,8 +521,8 @@ setMethod("summary", "context_bundle", function(object, top = 3){
       t(
         data.frame(
           lapply(
-            object@objects,
-            function(x) x@stat[[object@p_attribute]][1:top]
+            slot(object, "objects"),
+            function(x) slot(x, "stat")[[slot(object, "p_attribute")]][1:top]
           )
         )
       )
@@ -550,16 +550,16 @@ setAs(from = "kwic", to = "context", def = function(from){
     size = -1L,
     boundary = character(),
     call = "",
-    left = from@left,
-    right = from@right,
-    p_attribute = from@p_attribute,
-    corpus = from@corpus,
-    registry_dir = from@registry_dir,
-    info_file = from@info_file,
-    template = from@template,
+    left = slot(from, "left"),
+    right = slot(from, "right"),
+    p_attribute = slot(from, "p_attribute"),
+    corpus = slot(from, "corpus"),
+    registry_dir = slot(from, "registry_dir"),
+    info_file = slot(from, "info_file"),
+    template = slot(from, "template"),
     stat = data.table(),
-    encoding = from@encoding,
-    cpos = from@cpos
+    encoding = slot(from, "encoding"),
+    cpos = slot(from, "cpos")
   )
 })
 

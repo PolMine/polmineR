@@ -93,9 +93,9 @@ setMethod("knit_print", "kwic", function(x, options = knitr::opts_chunk){
 #' as.character(oil, fmt = "<b>%s</b>")
 #' 
 setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
-  if (!is.null(fmt)) x@stat[, "node" := sprintf(fmt, x@stat[["node"]])]
+  if (!is.null(fmt)) slot(x, "stat")[, "node" := sprintf(fmt, slot(x, "stat")[["node"]])]
   apply(
-    x@stat,
+    slot(x, "stat"),
     1L,
     function(r) paste(r[["left"]], r[["node"]], r[["right"]], sep = " ")
   )
@@ -104,9 +104,9 @@ setMethod("as.character", "kwic", function(x, fmt = "<i>%s</i>"){
 #' @docType methods
 #' @rdname kwic-class
 setMethod("[", "kwic", function(x, i){
-  ids <- x@stat[["match_id"]][i]
-  x@stat <- x@stat[which(x@stat[["match_id"]] %in% ids)]
-  x@cpos <- x@cpos[x@cpos[["match_id"]] %in% x@stat[["match_id"]]]
+  ids <- slot(x, "stat")[["match_id"]][i]
+  slot(x, "stat") <- slot(x, "stat")[which(slot(x, "stat")[["match_id"]] %in% ids)]
+  slot(x, "cpos") <- slot(x, "cpos")[slot(x, "cpos")[["match_id"]] %in% slot(x, "stat")[["match_id"]]]
   x
 })
 
@@ -128,8 +128,8 @@ setMethod("[", "kwic", function(x, i){
 #'   subset(grepl("SPD", party))
 #'
 setMethod("subset", "kwic", function(x, ...) {
-  x@stat <- subset(x@stat, ...)
-  x@cpos <- x@cpos[x@cpos[["match_id"]] %in% x@stat[["match_id"]]]
+  slot(x, "stat") <- subset(slot(x, "stat"), ...)
+  slot(x, "cpos") <- slot(x, "cpos")[slot(x, "cpos")[["match_id"]] %in% slot(x, "stat")[["match_id"]]]
   x
 })
 
@@ -145,19 +145,19 @@ setMethod("subset", "kwic", function(x, ...) {
 #'   as.data.frame()
 #'   
 setMethod("as.data.frame", "kwic", function(x){
-  if (all(c("left", "node", "right") %in% colnames(x@stat))){
+  if (all(c("left", "node", "right") %in% colnames(slot(x, "stat")))){
     df <- data.frame(
-      left = x@stat[["left"]],
-      node = x@stat[["node"]],
-      right = x@stat[["right"]],
+      left = slot(x, "stat")[["left"]],
+      node = slot(x, "stat")[["node"]],
+      right = slot(x, "stat")[["right"]],
       stringsAsFactors = FALSE
     )
-    if (length(x@metadata) > 0L){
+    if (length(slot(x, "metadata")) > 0L){
       df <- data.frame(
         meta = do.call(
           paste,
           c(
-            lapply(x@metadata, function(s_attr) x@stat[[s_attr]]),
+            lapply(slot(x, "metadata"), function(s_attr) slot(x, "stat")[[s_attr]]),
             sep = "<br/>"
           )
         ),
@@ -173,18 +173,18 @@ setMethod("as.data.frame", "kwic", function(x){
 
 
 #' @rdname kwic-class
-setMethod("length", "kwic", function(x) nrow(x@stat) )
+setMethod("length", "kwic", function(x) nrow(slot(x, "stat")) )
 
 #' @rdname kwic-class
 setMethod("sample", "kwic", function(x, size){
-  hits_unique <- unique(x@cpos[["match_id"]])
+  hits_unique <- unique(slot(x, "cpos")[["match_id"]])
   if (size > length(hits_unique)){
     warning("argument size exceeds number of hits, returning original object")
     return(x)
   }
-  x@cpos <- x@cpos[which(x@cpos[["match_id"]] %in% sample(hits_unique, size = size))]
+  slot(x, "cpos") <- slot(x, "cpos")[which(slot(x, "cpos")[["match_id"]] %in% sample(hits_unique, size = size))]
   x <- enrich(x, table = TRUE)
-  x <- enrich(x, s_attributes = x@metadata)
+  x <- enrich(x, s_attributes = slot(x, "metadata"))
   x
 })
 
@@ -314,28 +314,28 @@ setGeneric("kwic", function(.Object, ...) standardGeneric("kwic") )
 #' @rdname kwic
 setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmineR.meta"), cpos = TRUE, verbose = FALSE){
   
-  DT <- copy(.Object@cpos) # do not accidentily modify things
+  DT <- copy(slot(.Object, "cpos")) # do not accidentily modify things
   setorderv(DT, cols = c("match_id", "cpos"))
   p_attr_decoded <- cl_id2str(
-    corpus = .Object@corpus, p_attribute = .Object@p_attribute[1],
-    id = DT[[paste(.Object@p_attribute[1], "id", sep = "_")]],
-    registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"), p_attribute = slot(.Object, "p_attribute")[1],
+    id = DT[[paste(slot(.Object, "p_attribute")[1], "id", sep = "_")]],
+    registry = slot(.Object, "registry_dir")
   )
-  p_attr_recoded <- as.nativeEnc(p_attr_decoded, from = .Object@encoding)
-  DT[, .Object@p_attribute[1] := p_attr_recoded, with = TRUE]
+  p_attr_recoded <- as.nativeEnc(p_attr_decoded, from = slot(.Object, "encoding"))
+  DT[, slot(.Object, "p_attribute")[1] := p_attr_recoded, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(s_attributes)) s_attributes <- character()
   
   y <- as(as(.Object, "textstat"), "kwic")
-  y@left = as.integer(.Object@left)
-  y@right = as.integer(.Object@right)
-  y@metadata = if (length(s_attributes) == 0L) character() else s_attributes
-  y@cpos = DT
+  slot(y, "left") = as.integer(slot(.Object, "left"))
+  slot(y, "right") = as.integer(slot(.Object, "right"))
+  slot(y, "metadata") = if (length(s_attributes) == 0L) character() else s_attributes
+  slot(y, "cpos") = DT
   y@ stat = data.table()
   
   y <- enrich(y, table = TRUE, s_attributes = s_attributes)
-  if (isFALSE(cpos)) y@cpos <- data.table()
+  if (isFALSE(cpos)) slot(y, "cpos") <- data.table()
   y
 })
 
@@ -435,8 +435,8 @@ setMethod("kwic", "corpus", function(
     hits,
     left = left, right = right,
     p_attribute = p_attribute,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir"),
     boundary = boundary,
     region = region,
     ...
@@ -445,20 +445,20 @@ setMethod("kwic", "corpus", function(
   ids <- cpos2id(
     x = .Object,
     p_attribute = p_attribute,
-    cpos = ctxt@cpos[["cpos"]]
+    cpos = slot(ctxt, "cpos")[["cpos"]]
   )
 
-  ctxt@cpos[, paste(p_attribute, "id", sep = "_") := ids, with = TRUE]
+  slot(ctxt, "cpos")[, paste(p_attribute, "id", sep = "_") := ids, with = TRUE]
   
-  ctxt@count <- nrow(hits)
-  ctxt@boundary <- if (!is.null(boundary)) boundary else character()
-  ctxt@p_attribute <- p_attribute
-  ctxt@registry_dir <- .Object@registry_dir
-  ctxt@data_dir <- .Object@data_dir
-  ctxt@info_file <- .Object@info_file
-  ctxt@template <- ctxt@template
-  ctxt@encoding <- .Object@encoding
-  ctxt@partition <- new("partition", stat = data.table())
+  slot(ctxt, "count") <- nrow(hits)
+  slot(ctxt, "boundary") <- if (!is.null(boundary)) boundary else character()
+  slot(ctxt, "p_attribute") <- p_attribute
+  slot(ctxt, "registry_dir") <- slot(.Object, "registry_dir")
+  slot(ctxt, "data_dir") <- slot(.Object, "data_dir")
+  slot(ctxt, "info_file") <- slot(.Object, "info_file")
+  slot(ctxt, "template") <- slot(ctxt, "template")
+  slot(ctxt, "encoding") <- slot(.Object, "encoding")
+  slot(ctxt, "partition") <- new("partition", stat = data.table())
 
   # generate positivelist/stoplist with ids and apply it
   if (!is.null(positivelist))
@@ -504,17 +504,17 @@ setMethod("kwic", "character", function(
 
 #' @rdname kwic
 setMethod("kwic", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, do.call = FALSE, .Object = as(.Object, "corpus"), ...)
+  ocpu_exec(fn = "kwic", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), do.call = FALSE, .Object = as(.Object, "corpus"), ...)
 })
 
 #' @rdname kwic
 setMethod("kwic", "remote_partition", function(.Object, ...){
-  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
+  ocpu_exec(fn = "kwic", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "partition"), ...)
 })
 
 #' @rdname kwic
 setMethod("kwic", "remote_subcorpus", function(.Object, ...){
-  ocpu_exec(fn = "kwic", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+  ocpu_exec(fn = "kwic", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "subcorpus"), ...)
 })
 
 
@@ -529,8 +529,8 @@ setMethod("kwic", "remote_subcorpus", function(.Object, ...){
 #'  
 setMethod("merge", "kwic_bundle", function(x){
   
-  table_list <- lapply(x@objects, function(obj) copy(obj@stat))
-  cpos_list <- lapply(x@objects, function(obj) copy(obj@cpos))
+  table_list <- lapply(slot(x, "objects"), function(obj) copy(slot(obj, "stat")))
+  cpos_list <- lapply(slot(x, "objects"), function(obj) copy(slot(obj, "cpos")))
   
   starting <- cumsum(sapply(table_list, function(tab) max(tab[["match_id"]])))
   starting <- c(0L, starting[-length(table_list)])
@@ -546,14 +546,14 @@ setMethod("merge", "kwic_bundle", function(x){
 
   new(
     "kwic",
-    corpus = x@corpus,
-    encoding = x@encoding,
+    corpus = slot(x, "corpus"),
+    encoding = slot(x, "encoding"),
     cpos = rbindlist(cpos_list),
     stat = rbindlist(table_list),
-    p_attribute = unique(sapply(x@objects, function(obj) obj@p_attribute)),
+    p_attribute = unique(sapply(slot(x, "objects"), function(obj) slot(obj, "p_attribute"))),
     metadata = character(),
-    left = unique(sapply(x@objects, function(obj) obj@left)),
-    right = unique(sapply(x@objects, function(obj) obj@right)),
+    left = unique(sapply(slot(x, "objects"), function(obj) slot(obj, "left"))),
+    right = unique(sapply(slot(x, "objects"), function(obj) slot(obj, "right"))),
 
     name = character(),
     annotation_cols = character()
@@ -577,12 +577,12 @@ setMethod("merge", "kwic_bundle", function(x){
 #' k <- kwic(gparl_2009_11_10_speeches, query = "Integration")
 #' @rdname kwic
 setMethod("kwic", "partition_bundle", function(.Object, ..., verbose = FALSE){
-  strucs_combined <- unlist(lapply(.Object@objects, slot, "strucs"))
+  strucs_combined <- unlist(lapply(slot(.Object, "objects"), slot, "strucs"))
   strucs_obj_name <- unname(
     unlist(
       lapply(
-        .Object@objects,
-        function(obj) rep(obj@name, times = length(obj@strucs))
+        slot(.Object, "objects"),
+        function(obj) rep(slot(obj, "name"), times = length(slot(obj, "strucs")))
       )
     )
   )
@@ -592,15 +592,15 @@ setMethod("kwic", "partition_bundle", function(.Object, ..., verbose = FALSE){
   
   k <- kwic(sc, ..., verbose = FALSE)
   cols_old <- copy(colnames(k))
-  k_cpos <- k@cpos[k@cpos[["position"]] == 0][, {.SD[.SD[["cpos"]] == min(.SD[["cpos"]])]}, by = "match_id"]
-  k_cpos[, c("match_id", "cpos")][k@stat, on = "match_id"]
+  k_cpos <- slot(k, "cpos")[slot(k, "cpos")[["position"]] == 0][, {.SD[.SD[["cpos"]] == min(.SD[["cpos"]])]}, by = "match_id"]
+  k_cpos[, c("match_id", "cpos")][slot(k, "stat"), on = "match_id"]
   match_strucs <- cl_cpos2struc(
-    corpus = get_corpus(sc), registry = .Object@objects[[1]]@registry_dir,
-    s_attribute = sc@s_attribute_strucs,
+    corpus = get_corpus(sc), registry = slot(.Object, "objects")[[1]]@registry_dir,
+    s_attribute = slot(sc, "s_attribute_strucs"),
     cpos = k_cpos[["cpos"]]
   )
-  k@stat[, "subcorpus_name" := strucs_obj_name[match(match_strucs, unname(strucs_combined))]]
-  setcolorder(k@stat, neworder = c("subcorpus_name", cols_old))
+  slot(k, "stat")[, "subcorpus_name" := strucs_obj_name[match(match_strucs, unname(strucs_combined))]]
+  setcolorder(slot(k, "stat"), neworder = c("subcorpus_name", cols_old))
   k
 })
 

@@ -6,11 +6,11 @@ NULL
 setGeneric("as.bundle", function(object,...) standardGeneric("as.bundle"))
 
 #' @rdname bundle
-setMethod("length", "bundle", function(x) length(x@objects))
+setMethod("length", "bundle", function(x) length(slot(x, "objects")))
 
 
 #' @rdname bundle
-setMethod("names", "bundle", function(x) names(x@objects))
+setMethod("names", "bundle", function(x) names(slot(x, "objects")))
 
 
 #' @rdname bundle
@@ -21,15 +21,15 @@ setReplaceMethod(
   function(x, value) {
     if (!is.vector(value)) stop("value needs to be a character vector")
     if (is.list(value)) value <- unlist(value)
-    if (length(value) != length(x@objects)) {
+    if (length(value) != length(slot(x, "objects"))) {
       stop("length of value provided does not match number of partitions")
     }
-    # for (i in 1L:length(x@objects)) x@objects[[i]]@name <- value[i]
-    x@objects <- lapply(
-      1L:length(x@objects),
-      function(i) {p <- x@objects[[i]];  p@name <- value[i]; p}
+    # for (i in 1L:length(slot(x, "objects"))) slot(x, "objects")[[i]]@name <- value[i]
+    slot(x, "objects") <- lapply(
+      1L:length(slot(x, "objects")),
+      function(i) {p <- slot(x, "objects")[[i]];  slot(p, "name") <- value[i]; p}
     )
-    names(x@objects) <- value
+    names(slot(x, "objects")) <- value
     x
   }
 )
@@ -42,7 +42,7 @@ setMethod("unique", "bundle", function(x){
   uniquePos <- sapply(uniqueObjectNames, function(x) grep(x, objectNames)[1])
   objectsToDrop <- which(1:length(objectNames) %in% uniquePos == FALSE)
   objectsToDrop <- objectsToDrop[order(objectsToDrop, decreasing=TRUE)]
-  for (pos in objectsToDrop) x@objects[pos] <- NULL
+  for (pos in objectsToDrop) slot(x, "objects")[pos] <- NULL
   x
 })
 
@@ -79,7 +79,7 @@ setMethod("+", signature(e1 = "bundle", e2 = "textstat"), function(e1, e2){
 #' @rdname bundle
 setMethod('[[', 'bundle', function(x,i){
   if (length(i) == 1L){
-    return(x@objects[[i]])
+    return(slot(x, "objects")[[i]])
   } else {
     lifecycle::deprecate_warn(
       when = "0.8.7", 
@@ -108,19 +108,19 @@ setMethod('[', 'bundle', function(x, i){
   if (is.numeric(i)){
     if (all(i > 0L)){
       names_min <- names(x)[i]
-      x@objects <- lapply(i, function(j) x@objects[[j]])
-      names(x@objects) <- names_min
+      slot(x, "objects") <- lapply(i, function(j) slot(x, "objects")[[j]])
+      names(slot(x, "objects")) <- names_min
       return(x)
     } else if (all(i < 0L)) {
-      for (k in rev(sort(abs(i)))) x@objects[[k]] <- NULL
+      for (k in rev(sort(abs(i)))) slot(x, "objects")[[k]] <- NULL
       return(x)
     } else {
       stop("mixing positive and negative indices is not allowed when indexing bundle objects")
     }
   } else if (is.character(i)) {
     if (!all(i %in% names(x))) stop("cannot index, not all elements present")
-    x@objects <- lapply(i, function(j) x@objects[[j]])
-    names(x@objects) <- i
+    slot(x, "objects") <- lapply(i, function(j) slot(x, "objects")[[j]])
+    names(slot(x, "objects")) <- i
     return(x)
   }
 })  
@@ -129,7 +129,7 @@ setMethod('[', 'bundle', function(x, i){
 #' @exportMethod [[<-
 #' @rdname bundle
 setMethod("[[<-", "bundle", function(x,i, value){
-  x@objects[[i]] <- value
+  slot(x, "objects")[[i]] <- value
   x
   }
 )
@@ -137,7 +137,7 @@ setMethod("[[<-", "bundle", function(x,i, value){
 #' @param name The name of an object in the \code{bundle} object.
 #' @exportMethod $
 #' @rdname bundle
-setMethod("$", "bundle", function(x,name) x@objects[[name]])
+setMethod("$", "bundle", function(x,name) slot(x, "objects")[[name]])
 
 
 #' @exportMethod $<-
@@ -146,7 +146,7 @@ setMethod("$", "bundle", function(x,name) x@objects[[name]])
 #' pb <- partition_bundle("GERMAPARLMINI", s_attribute = "party")
 #' pb$"NA" <- NULL # quotation needed if name is "NA"
 setMethod("$<-", "bundle", function(x,name, value){
-  x@objects[[name]] <- value
+  slot(x, "objects")[[name]] <- value
   x}
 )
 
@@ -173,10 +173,10 @@ setAs(from = "list", to = "bundle", def = function(from){
   
   new(
     new_object_class,
-    objects = setNames(from, nm = unlist(unname(lapply(from, function(x) x@name)))),
-    corpus = unique(unlist(lapply(from, function(x) x@corpus))),
-    registry_dir = path(unique(unlist(lapply(from, function(x) x@registry_dir)))),
-    encoding = unique(unlist(lapply(from, function(x) x@encoding)))
+    objects = setNames(from, nm = unlist(unname(lapply(from, function(x) slot(x, "name"))))),
+    corpus = unique(unlist(lapply(from, function(x) slot(x, "corpus")))),
+    registry_dir = path(unique(unlist(lapply(from, function(x) slot(x, "registry_dir"))))),
+    encoding = unique(unlist(lapply(from, function(x) slot(x, "encoding"))))
   )
 })
 
@@ -194,11 +194,11 @@ setMethod("as.bundle", "textstat", function(object){
   retval <- new(
     paste(is(object)[1], "_bundle", sep = ""),
     objects = list(object),
-    corpus = object@corpus,
-    encoding = object@encoding,
+    corpus = slot(object, "corpus"),
+    encoding = slot(object, "encoding"),
     explanation = c("derived from a partition object")
   )
-  names(retval@objects)[1] <- object@name
+  names(slot(retval, "objects"))[1] <- slot(object, "name")
   retval
 })
 
@@ -233,15 +233,15 @@ as.data.table.bundle <- function(x, keep.rownames, col, ...){
     )
   }
   
-  p_attr <- unique(unlist(lapply(x@objects, function(i) i@p_attribute)))
+  p_attr <- unique(unlist(lapply(slot(x, "objects"), function(i) slot(i, "p_attribute"))))
   if (length(p_attr) > 1L) stop("no unambigious p-attribute!")
   dts <- lapply(
-    x@objects,
+    slot(x, "objects"),
     function(object){
       data.table(
-        name = object@name,
-        token = object@stat[[object@p_attribute]],
-        value = object@stat[[col]]
+        name = slot(object, "name"),
+        token = slot(object, "stat")[[slot(object, "p_attribute")]],
+        value = slot(object, "stat")[[col]]
       )
     }
   )
@@ -263,15 +263,15 @@ setMethod("as.matrix", "bundle", function(x, col){
 
 #' @rdname bundle
 setMethod("subset", "bundle", function(x, ...){
-  for (i in 1L:length(x)) x@objects[[i]]@stat <- subset(x@objects[[i]]@stat, ...)
+  for (i in 1L:length(x)) slot(x, "objects")[[i]]@stat <- subset(slot(x, "objects")[[i]]@stat, ...)
   x
 })
 
 #' @rdname bundle
 #' @exportMethod as.list
-setMethod("as.list", "bundle", function(x) x@objects)
+setMethod("as.list", "bundle", function(x) slot(x, "objects"))
 
 #' @rdname bundle
 #' @method as.list bundle
 #' @export
-as.list.bundle <- function(x, ...) x@objects
+as.list.bundle <- function(x, ...) slot(x, "objects")

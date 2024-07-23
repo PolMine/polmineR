@@ -113,5 +113,5 @@ setMethod("noise", "textstat", function(.Object, p_attribute, ...){
   
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
-  noise(.Object@stat[[p_attribute]], ...)
+  noise(slot(.Object, "stat")[[p_attribute]], ...)
 })

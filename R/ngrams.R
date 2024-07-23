@@ -125,7 +125,7 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
       1L:(n * length(p_attribute)),
       function(i){
         str_raw <- cl_id2str(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
           p_attribute = p_attrs_cols[i], id = TF[[i]]
         )
         Encoding(str_raw) <- encoding(.Object)
@@ -147,11 +147,11 @@ setMethod("ngrams", "corpus", function(.Object, n = 2, p_attribute = "word", cha
   }
   
   y <- as(as(.Object, "corpus"), "ngrams")
-  y@n = as.integer(n)
-  y@size = as.integer(size(.Object))
-  y@stat = TF
-  y@name = name(.Object)
-  y@p_attribute = if (is.null(char)) p_attribute else "ngram"
+  slot(y, "n") = as.integer(n)
+  slot(y, "size") = as.integer(size(.Object))
+  slot(y, "stat") = TF
+  slot(y, "name") = name(.Object)
+  slot(y, "p_attribute") = if (is.null(char)) p_attribute else "ngram"
   y
 })
 
@@ -202,13 +202,13 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
   retval <- as(as(.Object, "corpus"), "bundle")
   
   if (is.null(char)){
-    retval@objects <- blapply(
-      .Object@objects, f = ngrams,
+    slot(retval, "objects") <- blapply(
+      slot(.Object, "objects"), f = ngrams,
       n = n, p_attribute = p_attribute, char = char, mc = mc, progress = progress
     )
-    retval@p_attribute <- unique(unlist(lapply(retval@objects, function(x) x@p_attribute)))
+    slot(retval, "p_attribute") <- unique(unlist(lapply(slot(retval, "objects"), function(x) slot(x, "p_attribute"))))
   } else {
-    retval@p_attribute <- p_attribute
+    slot(retval, "p_attribute") <- p_attribute
     if (verbose) cli_progress_step("decoding token stream")
     li <- get_token_stream(
       .Object,
@@ -226,22 +226,22 @@ setMethod("ngrams", "partition_bundle", function(.Object, n = 2, char = NULL, vo
     
     if (verbose) cli_progress_step("generate return value")
     proto <- as(as(.Object, "corpus"), "ngrams")
-    proto@n = as.integer(n)
-    proto@p_attribute = if (is.null(char)) p_attribute else "ngram"
+    slot(proto, "n") = as.integer(n)
+    slot(proto, "p_attribute") = if (is.null(char)) p_attribute else "ngram"
     
-    retval@objects <- lapply(
+    slot(retval, "objects") <- lapply(
       1L:length(dts),
       function(i){
-        proto@stat <- dts[[i]]
-        proto@size <- as.integer(size(.Object[[i]]))
-        proto@name <- names(.Object)[[i]]
+        slot(proto, "stat") <- dts[[i]]
+        slot(proto, "size") <- as.integer(size(.Object[[i]]))
+        slot(proto, "name") <- names(.Object)[[i]]
         proto
       }
     )
     if (verbose) cli_progress_done()
   }
   
-  names(retval@objects) <- names(.Object)
+  names(slot(retval, "objects")) <- names(.Object)
   
   retval
 })

@@ -37,8 +37,8 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
       all(p_attribute %in% p_attributes(.Object))
     )
     .message('getting counts for p-attribute(s):', paste(p_attribute, collapse = ", "), verbose = verbose)  
-    .Object@stat <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)@stat
-    .Object@p_attribute <- p_attribute
+    slot(.Object, "stat") <- count(.Object = .Object, p_attribute = p_attribute, decode = decode, mc = mc, verbose = verbose)@stat
+    slot(.Object, "p_attribute") <- p_attribute
   }
   .Object
 })
@@ -57,7 +57,7 @@ setMethod("enrich", "partition", function(.Object, p_attribute = NULL, decode = 
 #' @rdname partition_bundle-class
 #' @importFrom cli cli_process_start cli_process_done col_blue
 setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = TRUE, verbose = FALSE){
-  m <- do.call(rbind, lapply(.Object@objects, slot, name = "cpos"))
+  m <- do.call(rbind, lapply(slot(.Object, "objects"), slot, name = "cpos"))
   ids <- lapply(
     p_attribute,
     function(p_attr){
@@ -66,7 +66,7 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
           sprintf("get ids for p-attribute %s", col_blue(p_attr))
         )
       y <- RcppCWB::region_matrix_to_ids(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
         p_attribute = p_attr, matrix = m
       )
       if (verbose) cli_process_done()
@@ -82,8 +82,8 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
 
   doc_id <- unlist(mapply(
     rep,
-    x = 1L:length(.Object@objects),
-    times = sapply(.Object@objects, slot, name = "size")
+    x = 1L:length(slot(.Object, "objects")),
+    times = sapply(slot(.Object, "objects"), slot, name = "size")
   ))
   dt[, "doc_id" := doc_id]
   if (verbose) cli_process_done()
@@ -103,7 +103,7 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
         p_attribute = p_attr,
         id = cnt[[paste(p_attr, "id", sep = "_")]]
       )
-      cnt[, (p_attr) := as.nativeEnc(x = str, from = .Object@encoding)]
+      cnt[, (p_attr) := as.nativeEnc(x = str, from = slot(.Object, "encoding"))]
       if (verbose) cli_process_done()
     }
   }
@@ -118,9 +118,9 @@ setMethod("enrich", "partition_bundle", function(.Object, p_attribute, decode = 
   if (verbose) cli_process_done()
 
   if (verbose) cli_process_start("assign count tables to input object")
-  .Object@objects <- mapply(
-    function(a, b){a@stat <- b; a@p_attribute <- p_attribute; a},
-    .Object@objects,
+  slot(.Object, "objects") <- mapply(
+    function(a, b){slot(a, "stat") <- b; slot(a, "p_attribute") <- p_attribute; a},
+    slot(.Object, "objects"),
     cnt_list
   )
   if (verbose) cli_process_done()
@@ -183,81 +183,81 @@ setMethod("enrich", "kwic", function(.Object, s_attributes = NULL, extra = NULL,
         direction = 2L
       )
     }
-    dt_left <- .Object@cpos[, .fn_left(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
-    dt_right <- .Object@cpos[, .fn_right(.SD), by = "match_id", .SDcols = 1L:ncol(.Object@cpos)]
-    dt <- rbindlist(list(.Object@cpos, dt_left, dt_right), use.names = TRUE, fill = TRUE)
+    dt_left <- slot(.Object, "cpos")[, .fn_left(.SD), by = "match_id", .SDcols = 1L:ncol(slot(.Object, "cpos"))]
+    dt_right <- slot(.Object, "cpos")[, .fn_right(.SD), by = "match_id", .SDcols = 1L:ncol(slot(.Object, "cpos"))]
+    dt <- rbindlist(list(slot(.Object, "cpos"), dt_left, dt_right), use.names = TRUE, fill = TRUE)
     setkeyv(x = dt, cols = c("match_id", "cpos"))
     setorderv(x = dt, cols = "cpos")
     
     corpus_size <- RcppCWB::cl_attribute_size(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       attribute = p_attributes(.Object), attribute_type = "p"
       
     )
-    .Object@cpos <- dt[cpos >= 0L][cpos <= (corpus_size - 1L)]
+    slot(.Object, "cpos") <- dt[cpos >= 0L][cpos <= (corpus_size - 1L)]
     
     token_id <- paste(p_attributes(.Object), "id", sep = "_")
-    word_id_na <- is.na(.Object@cpos[[token_id]])
+    word_id_na <- is.na(slot(.Object, "cpos")[[token_id]])
     word_id_na_index <- which(word_id_na)
     ids_na <- cpos2id(
       .Object, p_attribute = p_attributes(.Object),
-      cpos = .Object@cpos[["cpos"]][word_id_na]
+      cpos = slot(.Object, "cpos")[["cpos"]][word_id_na]
     )
     str_na <- RcppCWB::cl_id2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       p_attribute = p_attributes(.Object), id = ids_na
     )
-    str_na <- as.nativeEnc(str_na, from = .Object@encoding)
-    .Object@cpos[word_id_na_index, (token_id) := ids_na]
-    .Object@cpos[word_id_na_index, (p_attributes(.Object)) := str_na]
+    str_na <- as.nativeEnc(str_na, from = slot(.Object, "encoding"))
+    slot(.Object, "cpos")[word_id_na_index, (token_id) := ids_na]
+    slot(.Object, "cpos")[word_id_na_index, (p_attributes(.Object)) := str_na]
   }
   
   if (table){
-    if (nrow(.Object@cpos) > 0L){
-      .fn <- function(.SD) paste(.SD[[.Object@p_attribute[1]]], collapse = " ")
-      table_ext <- .Object@cpos[, .fn(.SD), by = c("match_id", "direction"), with = TRUE]
-      .Object@stat <- dcast(data = table_ext, formula = match_id ~ direction, value.var = "V1")
-      setnames(.Object@stat, old = "0", new = "node")
+    if (nrow(slot(.Object, "cpos")) > 0L){
+      .fn <- function(.SD) paste(.SD[[slot(.Object, "p_attribute")[1]]], collapse = " ")
+      table_ext <- slot(.Object, "cpos")[, .fn(.SD), by = c("match_id", "direction"), with = TRUE]
+      slot(.Object, "stat") <- dcast(data = table_ext, formula = match_id ~ direction, value.var = "V1")
+      setnames(slot(.Object, "stat"), old = "0", new = "node")
       
       # columns are renamed one at a time to cover the special case when either the 
       # left or the right context are (deliberately) empty
       
-      if ("-2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-2", new = "left_extra")
-      if ("-1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "-1", new = "left")
-      if ("1" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "1", new = "right")
-      if ("2" %in% colnames(.Object@stat)) setnames(.Object@stat, old = "2", new = "right_extra")
+      if ("-2" %in% colnames(slot(.Object, "stat"))) setnames(slot(.Object, "stat"), old = "-2", new = "left_extra")
+      if ("-1" %in% colnames(slot(.Object, "stat"))) setnames(slot(.Object, "stat"), old = "-1", new = "left")
+      if ("1" %in% colnames(slot(.Object, "stat"))) setnames(slot(.Object, "stat"), old = "1", new = "right")
+      if ("2" %in% colnames(slot(.Object, "stat"))) setnames(slot(.Object, "stat"), old = "2", new = "right_extra")
 
     } else {
-      .Object@stat <- data.table(match_id = integer(), left = character(), node = character(), right = character())
+      slot(.Object, "stat") <- data.table(match_id = integer(), left = character(), node = character(), right = character())
     }
   }
   
   if (length(s_attributes) > 0L){
-    .Object@metadata <- unique(c(s_attributes, .Object@metadata))
-    for (s_attr in .Object@metadata){
-      if (!s_attr %in% colnames(.Object@stat)){
-        cpos_to_get <- .Object@cpos[which(.Object@cpos[["position"]] == 0)][, .SD[1], by = "match_id", with = TRUE][["cpos"]]
+    slot(.Object, "metadata") <- unique(c(s_attributes, slot(.Object, "metadata")))
+    for (s_attr in slot(.Object, "metadata")){
+      if (!s_attr %in% colnames(slot(.Object, "stat"))){
+        cpos_to_get <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] == 0)][, .SD[1], by = "match_id", with = TRUE][["cpos"]]
         strucs <- cl_cpos2struc(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
           s_attribute = s_attr, cpos = cpos_to_get
         )
         strucs_invalid <- which(strucs < 0L)
         if (length(strucs_invalid) > 0L) strucs[strucs_invalid] <- 0L
         struc_values <- cl_struc2str(
-          corpus = .Object@corpus, registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
           s_attribute = s_attr, struc = strucs
         )
         if (length(strucs_invalid) > 0L) struc_values[strucs_invalid] <- ""
-        .Object@stat[, (s_attr) := as.nativeEnc(struc_values, from = .Object@encoding)]
+        slot(.Object, "stat")[, (s_attr) := as.nativeEnc(struc_values, from = slot(.Object, "encoding"))]
       }
     }
-    setcolorder(x = .Object@stat, neworder = c(
-      .Object@metadata,
-      if ("left_extra" %in% colnames(.Object@stat)) "left_extra" else NULL,
-      if ("left" %in% colnames(.Object@stat)) "left" else NULL,
+    setcolorder(x = slot(.Object, "stat"), neworder = c(
+      slot(.Object, "metadata"),
+      if ("left_extra" %in% colnames(slot(.Object, "stat"))) "left_extra" else NULL,
+      if ("left" %in% colnames(slot(.Object, "stat"))) "left" else NULL,
       "node",
-      if ("right" %in% colnames(.Object@stat)) "right" else NULL,
-      if ("right_extra" %in% colnames(.Object@stat)) "right_extra" else NULL
+      if ("right" %in% colnames(slot(.Object, "stat"))) "right" else NULL,
+      if ("right_extra" %in% colnames(slot(.Object, "stat"))) "right_extra" else NULL
       )
     )
   }
@@ -302,32 +302,32 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
     stopifnot(
-      all(s_attribute %in% corpus_s_attributes(corpus = .Object@corpus, registry = .Object@registry_dir))
+      all(s_attribute %in% corpus_s_attributes(corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir")))
     )
     
     for (s_attr in s_attribute){
       .message("get struc for s-attribute:", s_attr, verbose = verbose)
       strucs <- cl_cpos2struc(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
-        s_attribute = s_attr, cpos = .Object@cpos[["cpos"]]
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+        s_attribute = s_attr, cpos = slot(.Object, "cpos")[["cpos"]]
       )
       if (decode == FALSE){
         colname_struc <- paste(s_attr, "int", sep = "_")
-        if (colname_struc %in% colnames(.Object@cpos)){
+        if (colname_struc %in% colnames(slot(.Object, "cpos"))){
           .message("already present, skipping assignment of column:", colname_struc, verbose = verbose)
         } else {
-          .Object@cpos[, (colname_struc) := strucs]
+          slot(.Object, "cpos")[, (colname_struc) := strucs]
         }
       } else {
-        if (s_attr %in% colnames(.Object@cpos)){
+        if (s_attr %in% colnames(slot(.Object, "cpos"))){
           .message("already present, skipping assignment of column:", s_attr, verbose = verbose)
         } else {
           .message("get string for s-attribute:", s_attr, verbose = verbose)
           strings <- cl_struc2str(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = s_attr, struc = strucs
           )
-          .Object@cpos[, (s_attr) := as.nativeEnc(strings, from = .Object@encoding)]
+          slot(.Object, "cpos")[, (s_attr) := as.nativeEnc(strings, from = slot(.Object, "encoding"))]
         }
       }
     }
@@ -337,34 +337,34 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
     # check that all p-attributes are available
     .message("checking that all p-attributes are available", verbose = verbose)
     stopifnot(
-      all(p_attribute %in% corpus_p_attributes(.Object@corpus, registry = .Object@registry_dir))
+      all(p_attribute %in% corpus_p_attributes(slot(.Object, "corpus"), registry = slot(.Object, "registry_dir")))
     )
     
     # add ids and decode if requested
     for (p_attr in p_attribute){
       colname <- paste(p_attr, "id", sep = "_")
-      if (colname %in% colnames(.Object@cpos)){
+      if (colname %in% colnames(slot(.Object, "cpos"))){
         .message("already present - skip getting ids for p-attribute:", p_attr, verbose = verbose)
       } else {
         .message("getting token id for p-attribute:", p_attr, verbose = verbose)
         ids <- cpos2id(
-          x = .Object, p_attribute = p_attr, cpos = .Object@cpos[["cpos"]]
+          x = .Object, p_attribute = p_attr, cpos = slot(.Object, "cpos")[["cpos"]]
         )
-        .Object@cpos[, (colname) := ids]
+        slot(.Object, "cpos")[, (colname) := ids]
       }
       
       if (decode){
-        if (p_attr %in% colnames(.Object@cpos)){
+        if (p_attr %in% colnames(slot(.Object, "cpos"))){
           .message("already present - skip getting strings for p-attribute:", p_attr, verbose = verbose)
         } else {
           .message("decode p-attribute:", p_attr, verbose = verbose)
           p_attr_id <- paste(p_attr, "id", sep = "_")
           decoded <- id2str(
-            x = .Object, p_attribute = p_attr, id = .Object@cpos[[p_attr_id]]
+            x = .Object, p_attribute = p_attr, id = slot(.Object, "cpos")[[p_attr_id]]
           )
-          native <- as.nativeEnc(decoded, from = .Object@encoding)
-          .Object@cpos <- .Object@cpos[, "word" := native]
-          # .Object@cpos[, (p_attr_id) := NULL]
+          native <- as.nativeEnc(decoded, from = slot(.Object, "encoding"))
+          slot(.Object, "cpos") <- slot(.Object, "cpos")[, "word" := native]
+          # slot(.Object, "cpos")[, (p_attr_id) := NULL]
         }
       }
     }
@@ -373,24 +373,24 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (isTRUE(stat)){
     msg <- sprintf(
       "%s count statistics for slot cpos",
-      if (nrow(.Object@cpos) == 0L) "generate" else "update"
+      if (nrow(slot(.Object, "cpos")) == 0L) "generate" else "update"
     )
     .message(msg, verbose = verbose)
     
-    p_attr_id <- paste(.Object@p_attribute, "id", sep = "_")
-    setkeyv(.Object@cpos, p_attr_id)
-    cpos_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)]
-    .Object@stat <- cpos_min[, .N, by = eval(p_attr_id), with = TRUE]
-    setnames(.Object@stat, "N", "count_coi")
+    p_attr_id <- paste(slot(.Object, "p_attribute"), "id", sep = "_")
+    setkeyv(slot(.Object, "cpos"), p_attr_id)
+    cpos_min <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] != 0)]
+    slot(.Object, "stat") <- cpos_min[, .N, by = eval(p_attr_id), with = TRUE]
+    setnames(slot(.Object, "stat"), "N", "count_coi")
     
-    for (i in seq_along(.Object@p_attribute)){
+    for (i in seq_along(slot(.Object, "p_attribute"))){
       new_col <- id2str(
         x = .Object,
-        p_attribute = .Object@p_attribute[i],
-        id = .Object@stat[[p_attr_id[i]]]
+        p_attribute = slot(.Object, "p_attribute")[i],
+        id = slot(.Object, "stat")[[p_attr_id[i]]]
       )
-      new_col_native <- as.nativeEnc(new_col, from = .Object@encoding)
-      .Object@stat[, eval(.Object@p_attribute[i]) := new_col_native]
+      new_col_native <- as.nativeEnc(new_col, from = slot(.Object, "encoding"))
+      slot(.Object, "stat")[, eval(slot(.Object, "p_attribute")[i]) := new_col_native]
     }
     
   }
@@ -406,18 +406,18 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
 #'   is not yet present, the count is performed first.
 setMethod("enrich", "Cooccurrences", function(.Object){
   
-  cnt <- if (nrow(.Object@partition@stat) > 0L){
-    .Object@partition@stat
+  cnt <- if (nrow(slot(.Object, "partition")@stat) > 0L){
+    slot(.Object, "partition")@stat
   } else {
-    count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
+    count(slot(.Object, "partition"), p_attribute = slot(.Object, "p_attribute"), decode = FALSE)@stat
   }
   
-  setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
+  setkeyv(cnt, paste(slot(.Object, "p_attribute"), "id", sep = "_"))
   
-  setkeyv(.Object@stat, cols = "a_id")
-  .Object@stat[, "a_count" := cnt[.Object@stat][["count"]] ]
+  setkeyv(slot(.Object, "stat"), cols = "a_id")
+  slot(.Object, "stat")[, "a_count" := cnt[slot(.Object, "stat")][["count"]] ]
   
-  setkeyv(.Object@stat, cols = "b_id")
-  .Object@stat[, "b_count" := cnt[.Object@stat][["count"]] ]
+  setkeyv(slot(.Object, "stat"), cols = "b_id")
+  slot(.Object, "stat")[, "b_count" := cnt[slot(.Object, "stat")][["count"]] ]
   invisible(.Object)
 })

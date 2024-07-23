@@ -111,14 +111,14 @@ setMethod(
     } else {
       if (verbose) cli_alert_info("generating paragraphs (using template)")
       articles <- apply(
-        .Object@cpos, 1L,
+        slot(.Object, "cpos"), 1L,
         function(row){
           # Previously, there was a check here whether template is NULL
           # but there is the initial check already!
           
           # generate metainformation
           doc_struc <- cl_cpos2struc(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = template[["document"]][["sAttribute"]],
             cpos = row[1]
           )
@@ -127,11 +127,11 @@ setMethod(
             meta,
             function(x) {
               retval <- cl_struc2str(
-                corpus = .Object@corpus, registry = .Object@registry_dir,
+                corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
                 s_attribute = x, struc = doc_struc
               )
-              Encoding(retval) <- .Object@encoding
-              as.nativeEnc(retval, from = .Object@encoding)
+              Encoding(retval) <- slot(.Object, "encoding")
+              as.nativeEnc(retval, from = slot(.Object, "encoding"))
             }
           )
           names(meta_values) <- meta
@@ -146,21 +146,21 @@ setMethod(
           
           corpus_positions <- row[1]:row[2]
           para_strucs <- cl_cpos2struc(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = template[["paragraphs"]][["sAttribute"]],
             cpos = corpus_positions
           )
           chunks <- split(corpus_positions, para_strucs)
           para_types <- cl_struc2str(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = template[["paragraphs"]][["sAttribute"]],
             struc = as.integer(names(chunks))
           )
           body_li <- Map(
             function(p_type, chunk){
               tokens <- get_token_stream(
-                chunk, corpus = .Object@corpus, p_attribute = "word",
-                encoding = .Object@encoding, cpos = cpos, cutoff = cutoff
+                chunk, corpus = slot(.Object, "corpus"), p_attribute = "word",
+                encoding = slot(.Object, "encoding"), cpos = cpos, cutoff = cutoff
               )
               tokens <- .tagTokens(tokens)
               paste(
@@ -190,7 +190,7 @@ setMethod(
       txt <- paste(c("\n", unlist(articles)), collapse = '\n* * *\n')
     }
     
-    corpus_info <- paste("## Corpus: ", .Object@corpus, "\n\n", sep = "")
+    corpus_info <- paste("## Corpus: ", slot(.Object, "corpus"), "\n\n", sep = "")
     txt <- paste(corpus_info, txt, '\n', collapse = "\n")
     txt
   })
@@ -214,13 +214,13 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   if (is.null(meta)) meta <- unlist(unname(template[["metadata"]]))
   
   if (interjections){
-    expected <- .Object@strucs[length(.Object@strucs)] - .Object@strucs[1] + 1L
-    if (expected != length(.Object@strucs)){
-      .Object@strucs <- .Object@strucs[1]:.Object@strucs[length(.Object@strucs)]
+    expected <- slot(.Object, "strucs")[length(slot(.Object, "strucs"))] - slot(.Object, "strucs")[1] + 1L
+    if (expected != length(slot(.Object, "strucs"))){
+      slot(.Object, "strucs") <- slot(.Object, "strucs")[1]:slot(.Object, "strucs")[length(slot(.Object, "strucs"))]
       # fill regions matrix to include interjections
-      .Object@cpos <- RcppCWB::get_region_matrix(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
-        s_attribute = .Object@s_attribute_strucs, strucs = .Object@strucs
+      slot(.Object, "cpos") <- RcppCWB::get_region_matrix(
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+        s_attribute = slot(.Object, "s_attribute_strucs"), strucs = slot(.Object, "strucs")
       )
     }
   }
@@ -229,7 +229,7 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   metadata <- as.matrix(
     s_attributes(.Object, s_attribute = meta, unique = FALSE)
   ) 
-  if (length(.Object@strucs) > 1L){
+  if (length(slot(.Object, "strucs")) > 1L){
     meta_change <- sapply(
       2L:nrow(metadata),
       function(i) !all(metadata[i,] == metadata[i - 1L,])
@@ -240,19 +240,19 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
   }
   
   type <- cl_struc2str(
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir"),
     s_attribute = template[["speech"]][["sAttribute"]],
-    struc = .Object@strucs
+    struc = slot(.Object, "strucs")
   )
   
   if (is.numeric(cutoff)){
-    beyond_cutoff <- which(cumsum(.Object@cpos[,2] - .Object@cpos[,1]) > cutoff)
+    beyond_cutoff <- which(cumsum(slot(.Object, "cpos")[,2] - slot(.Object, "cpos")[,1]) > cutoff)
     if (length(beyond_cutoff) > 0L){
       threshold <- min(beyond_cutoff)
       if (threshold > 1L){
         metadata <- metadata[1L:threshold,]
-        .Object@cpos <- .Object@cpos[1L:threshold,]
+        slot(.Object, "cpos") <- slot(.Object, "cpos")[1L:threshold,]
       }
     }
   }
@@ -269,13 +269,13 @@ setMethod("as.markdown", "plpr_subcorpus", function(.Object, meta = NULL, templa
           template[["document"]][["format"]][2],
           collapse = ""
         )
-        meta <- as.corpusEnc(meta, corpusEnc = .Object@encoding)
+        meta <- as.corpusEnc(meta, corpusEnc = slot(.Object, "encoding"))
       }
       tokens <- get_token_stream(
-        matrix(.Object@cpos[i,], nrow = 1),
-        corpus = .Object@corpus,
+        matrix(slot(.Object, "cpos")[i,], nrow = 1),
+        corpus = slot(.Object, "corpus"),
         p_attribute = "word",
-        encoding = .Object@encoding,
+        encoding = slot(.Object, "encoding"),
         cpos = cpos
       )
     tokens <- .tagTokens(tokens)

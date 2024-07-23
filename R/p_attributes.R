@@ -41,20 +41,20 @@ setMethod("p_attributes", "character", function(.Object, p_attribute = NULL){
 #' @rdname p_attributes
 setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
   p_attrs <- corpus_p_attributes(
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir")
   )
   
   if (is.null(p_attribute)){
     return(p_attrs)
   } else {
     if (!p_attribute %in% p_attrs){
-      stop(sprintf("The p-attribute '' is not available in corpus ''.", p_attribute, .Object@corpus))
+      stop(sprintf("The p-attribute '' is not available in corpus ''.", p_attribute, slot(.Object, "corpus")))
     }
-    lexfile <- fs::path(.Object@data_dir, sprintf("%s.lexicon", p_attribute))
+    lexfile <- fs::path(slot(.Object, "data_dir"), sprintf("%s.lexicon", p_attribute))
     lexicon <- readBin(con = lexfile, what = character(), n = file.info(lexfile)$size)
-    if (.Object@encoding != encoding()){
-      lexicon <- stringi::stri_encode(lexicon, from = .Object@encoding, to = encoding())
+    if (slot(.Object, "encoding") != encoding()){
+      lexicon <- stringi::stri_encode(lexicon, from = slot(.Object, "encoding"), to = encoding())
     }
     return(lexicon)
   }
@@ -67,8 +67,8 @@ setMethod("p_attributes", "corpus", function(.Object, p_attribute = NULL){
 #' @rdname p_attributes
 setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode = TRUE){
   p_attrs <- corpus_p_attributes(
-    .Object@corpus,
-    registry = .Object@registry_dir
+    slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir")
   )
   if (is.null(p_attribute)){
     return( p_attrs )
@@ -77,21 +77,21 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
       stop(
         sprintf(
           "The p-attribute '' is not available in corpus ''.",
-          p_attribute, .Object@corpus
+          p_attribute, slot(.Object, "corpus")
         )
       )
     }
     ids <- cpos2id(
-      .Object, p_attribute = p_attribute, cpos = ranges_to_cpos(.Object@cpos)
+      .Object, p_attribute = p_attribute, cpos = ranges_to_cpos(slot(.Object, "cpos"))
     )
     ids_unique <- unique(ids)
     ids_unique <- ids_unique[order(ids_unique)]
     str <- cl_id2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       p_attribute = p_attribute, id = ids_unique
     )
-    if (.Object@encoding != encoding()){
-      str <- stringi::stri_encode(str, from = .Object@encoding, to = encoding())
+    if (slot(.Object, "encoding") != encoding()){
+      str <- stringi::stri_encode(str, from = slot(.Object, "encoding"), to = encoding())
     }
     return(str)
   }
@@ -99,7 +99,7 @@ setMethod("p_attributes", "slice", function(.Object, p_attribute = NULL, decode 
 
 #' @rdname p_attributes
 setMethod("p_attributes", "partition_bundle", function(.Object, p_attribute = NULL, decode = TRUE){
-  corpus_id <- unique(sapply(.Object@objects, slot, "corpus"))
+  corpus_id <- unique(sapply(slot(.Object, "objects"), slot, "corpus"))
   if (length(corpus_id) > 1L){
     stop(
       "Getting p-attributes for a corpus requires that objects ",
@@ -109,8 +109,8 @@ setMethod("p_attributes", "partition_bundle", function(.Object, p_attribute = NU
   
   if (is.null(p_attribute)){
     p_attrs <- corpus_p_attributes(
-      .Object@corpus,
-      registry = .Object@registry_dir
+      slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
     )
     return(p_attrs)
   } else {
@@ -128,17 +128,17 @@ setMethod("p_attributes", "subcorpus", function(.Object, p_attribute = NULL, dec
 
 
 #' @rdname context-class
-setMethod("p_attributes", "context", function(.Object) .Object@p_attribute)
+setMethod("p_attributes", "context", function(.Object) slot(.Object, "p_attribute"))
 
 
 #' @rdname p_attributes
 setMethod("p_attributes", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "p_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+  ocpu_exec(fn = "p_attributes", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "corpus"), ...)
 })
 
 
 #' @rdname p_attributes
 setMethod("p_attributes", "remote_partition", function(.Object, ...){
-  ocpu_exec(fn = "p_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
+  ocpu_exec(fn = "p_attributes", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "partition"), ...)
 })
 

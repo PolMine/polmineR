@@ -167,21 +167,21 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
   if (!length(s_attribute) %in% c(1L, 2L))
     stop(sprintf("Number of s-attributes is %d but only 1 or 2 s-attributes are allowed.", length(s_attribute)))
   
-  if (length(.Object@query) > 1L){
+  if (length(slot(.Object, "query")) > 1L){
     if (isFALSE(freq)){
-      .Object@stat <- .Object@stat[, {sum(.SD[["count"]])}, by = s_attribute][, "query" := paste(.Object@query, collapse = "//")]
-      setnames(.Object@stat, old = "V1", new = "count")
-      setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
+      slot(.Object, "stat") <- slot(.Object, "stat")[, {sum(.SD[["count"]])}, by = s_attribute][, "query" := paste(slot(.Object, "query"), collapse = "//")]
+      setnames(slot(.Object, "stat"), old = "V1", new = "count")
+      setcolorder(slot(.Object, "stat"), neworder = c("query", "count", s_attribute))
     } else {
-      .Object@stat <- .Object@stat[, "freq" := NULL][, {list(count = sum(.SD[["count"]]), size = unique(.SD[["size"]]))}, by = s_attribute]
-      .Object@stat[, "freq" := .Object@stat[["count"]] / .Object@stat[["size"]]][, "query" := paste(.Object@query, collapse = "//")]
-      setcolorder(.Object@stat, neworder = c("query", "count", s_attribute))
+      slot(.Object, "stat") <- slot(.Object, "stat")[, "freq" := NULL][, {list(count = sum(.SD[["count"]]), size = unique(.SD[["size"]]))}, by = s_attribute]
+      slot(.Object, "stat")[, "freq" := slot(.Object, "stat")[["count"]] / slot(.Object, "stat")[["size"]]][, "query" := paste(slot(.Object, "query"), collapse = "//")]
+      setcolorder(slot(.Object, "stat"), neworder = c("query", "count", s_attribute))
     }
   }
   
   
   if (length(s_attribute) == 1L){
-    dt <- .Object@stat
+    dt <- slot(.Object, "stat")
     # ensure that zero matches are reported for all values of the s-attribute
     if (isTRUE(fill)){
       s_attr_values <- s_attributes(source, s_attribute = s_attribute, unique = TRUE)
@@ -196,7 +196,7 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
     }
     if (any(is.na(dt[["query"]]))) dt[, "query" := unique(dt[["query"]][!is.na(dt[["query"]])])]
   } else if (length(s_attribute) == 2L){
-    for (s_attr in s_attribute) if ("" %in% .Object@stat[[s_attr]]){
+    for (s_attr in s_attribute) if ("" %in% slot(.Object, "stat")[[s_attr]]){
       warning(
         "There is a zero-length character vector for s_attribute ",
         s_attr,
@@ -204,7 +204,7 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
       )
     }
     dt <- data.table::dcast.data.table(
-      .Object@stat, formula(paste(s_attribute, collapse = "~")),
+      slot(.Object, "stat"), formula(paste(s_attribute, collapse = "~")),
       value.var = if (freq) "freq" else "count", fun.aggregate = sum, fill = 0L
     )
     
@@ -239,10 +239,10 @@ setMethod("dispersion", "hits", function(.Object, source, s_attribute, freq = FA
 
 #' @rdname dispersion-method
 setMethod("dispersion", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "dispersion", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+  ocpu_exec(fn = "dispersion", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "corpus"), ...)
 })
 
 #' @rdname dispersion-method
 setMethod("dispersion", "remote_subcorpus", function(.Object, ...){
-  ocpu_exec(fn = "dispersion", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+  ocpu_exec(fn = "dispersion", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "subcorpus"), ...)
 })

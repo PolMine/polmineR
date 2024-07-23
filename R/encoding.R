@@ -52,16 +52,16 @@ setMethod("encoding", "missing", function(object){
 
 
 #' @rdname encoding
-setMethod("encoding", "textstat", function(object) object@encoding)
+setMethod("encoding", "textstat", function(object) slot(object, "encoding"))
 
 #' @rdname encoding
-setMethod("encoding", "bundle", function(object) object@encoding)
+setMethod("encoding", "bundle", function(object) slot(object, "encoding"))
 
 #' @rdname encoding
 setMethod("encoding", "character", function(object) corpus(object)@encoding)
 
 #' @rdname encoding
-setMethod("encoding", "corpus", function(object) object@encoding)
+setMethod("encoding", "corpus", function(object) slot(object, "encoding"))
 
 #' @rdname encoding
 setMethod("encoding", "subcorpus", function(object) callNextMethod())

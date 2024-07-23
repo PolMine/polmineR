@@ -5,18 +5,18 @@ NULL
 setAs(from = "features", to = "features_ngrams", def = function(from){
   new(
     "features_ngrams",
-    corpus = from@corpus,
-    registry_dir = from@registry_dir,
-    data_dir = from@data_dir,
-    info_file = from@info_file,
-    template = from@template,
-    p_attribute = from@p_attribute,
-    encoding = from@p_attribute,
-    stat = from@stat,
-    size_coi = from@size_coi,
-    size_ref = from@size_ref,
-    method = from@method,
-    included = from@included
+    corpus = slot(from, "corpus"),
+    registry_dir = slot(from, "registry_dir"),
+    data_dir = slot(from, "data_dir"),
+    info_file = slot(from, "info_file"),
+    template = slot(from, "template"),
+    p_attribute = slot(from, "p_attribute"),
+    encoding = slot(from, "p_attribute"),
+    stat = slot(from, "stat"),
+    size_coi = slot(from, "size_coi"),
+    size_ref = slot(from, "size_ref"),
+    method = slot(from, "method"),
+    included = slot(from, "included")
   )
 })
 
@@ -39,7 +39,7 @@ setMethod("summary", "features", function(object) {
   for (m in methods){
     y[[paste("N", m, sep = "_")]] <- vapply(
       y[["critical_value"]],
-      function(x) length(which(object@stat[[m]] >= x)),
+      function(x) length(which(slot(object, "stat")[[m]] >= x)),
       FUN.VALUE = 1L
     )
   }
@@ -51,15 +51,15 @@ setMethod("summary", "features", function(object) {
 #' @docType methods
 #' @rdname features-class
 setMethod("show", "features", function(object){
-  message("the statistics table has ", nrow(object@stat), " rows")
+  message("the statistics table has ", nrow(slot(object, "stat")), " rows")
   message("pos attributes have been added: ", appendLF = FALSE)
-  if ("pos" %in% colnames(object@stat)) message("YES\n") else "NO\n"
+  if ("pos" %in% colnames(slot(object, "stat"))) message("YES\n") else "NO\n"
 })
 
 
 #' @rdname features-class
 setMethod("summary", "features_bundle", function(object){
-  tab <- do.call(rbind, lapply(object@objects, function(x) summary(x)$no))
+  tab <- do.call(rbind, lapply(slot(object, "objects"), function(x) summary(x)$no))
   colnames(tab) <- c("0.001", "0.005", "0.010", "0.050")
   tab
 })
@@ -144,22 +144,22 @@ setMethod("features", "partition", function(
 ) {
   
   # check that counts are available
-  if (length(x@p_attribute) == 0) stop("no count performed for x - enrich the object!")
+  if (length(slot(x, "p_attribute")) == 0) stop("no count performed for x - enrich the object!")
   if (!is.character(y)){
-    if (length(y@p_attribute) == 0) stop("no count performed for y - enrich the object!")
-    if (!identical(x@p_attribute, y@p_attribute)) stop("mismatch of p-attribute of x and y")
+    if (length(slot(y, "p_attribute")) == 0) stop("no count performed for y - enrich the object!")
+    if (!identical(slot(x, "p_attribute"), slot(y, "p_attribute"))) stop("mismatch of p-attribute of x and y")
   }
   
   # if y is a character vector, create a partition from corpus
   if (is.character(y)){
     stopifnot(length(y) == 1L) # can only compare to exactly one 
     stopifnot(y %in% cqp_list_corpora()) # make sure that it is a corpus that is available
-    if (y == x@corpus && included == FALSE){
+    if (y == slot(x, "corpus") && included == FALSE){
       included <- TRUE
       warning("x is derived from corpus y, but included is FALSE - setting to TRUE")
     }
     ref_corpus <- corpus(y)
-    y <- count(ref_corpus, p_attribute = x@p_attribute)
+    y <- count(ref_corpus, p_attribute = slot(x, "p_attribute"))
   }
   
   .message ('Comparing x and y ...', verbose = verbose)
@@ -173,31 +173,31 @@ setMethod("features", "partition", function(
 #' @rdname  features
 setMethod("features", "count", function(x, y, by = NULL, included = FALSE, method = "chisquare", verbose = TRUE){
   stopifnot(
-    x@encoding == y@encoding,
-    identical(x@p_attribute, y@p_attribute)
+    slot(x, "encoding") == slot(y, "encoding"),
+    identical(slot(x, "p_attribute"), slot(y, "p_attribute"))
   )
   z <- new(
     "features",
-    encoding = x@encoding,
+    encoding = slot(x, "encoding"),
     included = included,
-    corpus = unique(c(x@corpus, y@corpus)),
-    registry_dir = x@registry_dir,
-    data_dir = x@data_dir,
-    info_file = x@info_file,
-    template = x@template,
-    size_coi = x@size,
-    size_ref = if (included) y@size - x@size else y@size,
-    p_attribute = x@p_attribute,
+    corpus = unique(c(slot(x, "corpus"), slot(y, "corpus"))),
+    registry_dir = slot(x, "registry_dir"),
+    data_dir = slot(x, "data_dir"),
+    info_file = slot(x, "info_file"),
+    template = slot(x, "template"),
+    size_coi = slot(x, "size"),
+    size_ref = if (included) slot(y, "size") - slot(x, "size") else slot(y, "size"),
+    p_attribute = slot(x, "p_attribute"),
     stat = data.table()
   )
   
   .message("combining frequency lists", verbose = verbose)
   # merge.data.table - good option, because keys would be used if present
-  if (is.null(by)) by <- z@p_attribute
-  z@stat <- merge(x@stat, y@stat, by = by) 
+  if (is.null(by)) by <- slot(z, "p_attribute")
+  slot(z, "stat") <- merge(slot(x, "stat"), slot(y, "stat"), by = by) 
   
-  setnames(z@stat, c("count.x", "count.y"),  c("count_coi", "count_ref"))
-  if (included) z@stat[, "count_ref" := z@stat[["count_ref"]] - z@stat[["count_coi"]] ]
+  setnames(slot(z, "stat"), c("count.x", "count.y"),  c("count_coi", "count_ref"))
+  if (included) slot(z, "stat")[, "count_ref" := slot(z, "stat")[["count_ref"]] - slot(z, "stat")[["count_coi"]] ]
   
   for (how in method){
     .message("statistical test: ", how, verbose = verbose)
@@ -216,8 +216,8 @@ setMethod("features", "partition_bundle", function(
 ) {
   .fn <- function(x, y, included, method, ...) features(x = x, y = y, included = included, method = method)
   retval <- new("features_bundle")
-  retval@objects <- blapply(
-    x@objects,
+  slot(retval, "objects") <- blapply(
+    slot(x, "objects"),
     f = .fn,
     y = y,
     included = included,
@@ -226,7 +226,7 @@ setMethod("features", "partition_bundle", function(
     mc = mc,
     progress = progress
   )
-  names(retval@objects) <- names(x@objects)
+  names(slot(retval, "objects")) <- names(slot(x, "objects"))
   retval
 })
 
@@ -246,8 +246,8 @@ setMethod("features", "count_bundle", function(
 ) {
   .fn <- function(x) features(x = x, y = y, included = included, verbose = verbose, method = method)
   retval <- new("features_bundle")
-  retval@objects <- if (progress) pblapply(x@objects, .fn, cl = mc) else lapply(x@objects, .fn)
-  names(retval@objects) <- names(x@objects)
+  slot(retval, "objects") <- if (progress) pblapply(slot(x, "objects"), .fn, cl = mc) else lapply(slot(x, "objects"), .fn)
+  names(slot(retval, "objects")) <- names(slot(x, "objects"))
   retval
 })
 
@@ -258,17 +258,17 @@ setMethod(
   "features", "ngrams",
   function(x, y, included = FALSE, method = "chisquare", verbose = TRUE, ...){
     stopifnot(
-      identical(x@p_attribute, y@p_attribute),
-      x@n == y@n,
+      identical(slot(x, "p_attribute"), slot(y, "p_attribute")),
+      slot(x, "n") == slot(y, "n"),
       all(method %in% c("chisquare", "ll"))
     )
-    token_colnames <- sapply(1L:x@n, function(i) paste(x@p_attribute, i, sep = "_"))
+    token_colnames <- sapply(1L:slot(x, "n"), function(i) paste(slot(x, "p_attribute"), i, sep = "_"))
     z <- callNextMethod(
       x = x, y = y, by = token_colnames,
       included = included, method = method, verbose = verbose
     )
     z <- as(z, "features_ngrams")
-    z@n <- x@n
+    slot(z, "n") <- slot(x, "n")
     z
   }
 )

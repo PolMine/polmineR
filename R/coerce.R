@@ -3,35 +3,35 @@ setAs(from = "partition", to = "subcorpus", def = function(from){
     "subcorpus",
     
     # slots inherited from class 'corpus'
-    corpus = from@corpus,
-    registry_dir = from@registry_dir,
-    data_dir = from@data_dir,
+    corpus = slot(from, "corpus"),
+    registry_dir = slot(from, "registry_dir"),
+    data_dir = slot(from, "data_dir"),
     type = if (grepl("^.*?_partition$", class(from))){
         as.vector(gsub("^(.*?)_partition$", "\\1", class(from)))
       } else {
         character()
       }, # slot type does not exist in 'partition' class
-    encoding = from@encoding,
+    encoding = slot(from, "encoding"),
     
     # slots inherited from class 'regions'
-    cpos = from@cpos,
-    size = from@size,
-    info_file = from@info_file,
-    template = from@template,
+    cpos = slot(from, "cpos"),
+    size = slot(from, "size"),
+    info_file = slot(from, "info_file"),
+    template = slot(from, "template"),
     
-    name = unname(from@name),
+    name = unname(slot(from, "name")),
 
     # slots defined for class 'subcorpus' on its own right
-    s_attributes = from@s_attributes,
+    s_attributes = slot(from, "s_attributes"),
     annotations = list(),
-    metadata = from@metadata,
-    strucs = from@strucs,
-    xml = from@xml,
-    s_attribute_strucs = from@s_attribute_strucs
+    metadata = slot(from, "metadata"),
+    strucs = slot(from, "strucs"),
+    xml = slot(from, "xml"),
+    s_attribute_strucs = slot(from, "s_attribute_strucs")
   )
-  if (length(y@type) > 0L){
-    if (y@type == "plpr") y <- as(y, "plpr_subcorpus")
-    if (y@type == "press") y <- as(y, "press_subcorpus")
+  if (length(slot(y, "type")) > 0L){
+    if (slot(y, "type") == "plpr") y <- as(y, "plpr_subcorpus")
+    if (slot(y, "type") == "press") y <- as(y, "press_subcorpus")
   }
   y
 })

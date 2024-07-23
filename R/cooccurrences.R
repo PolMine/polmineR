@@ -5,11 +5,11 @@ NULL
 #' @docType methods
 #' @rdname cooccurrences-class
 setMethod("show", "cooccurrences", function(object) {
-  object@stat <- format(object, digits = 2L)
+  slot(object, "stat") <- format(object, digits = 2L)
   if (Sys.getenv("RSTUDIO") == "1" && interactive() && is.na(Sys.getenv("NOT_CRAN", unset = NA))){
     view(object)
   } else {
-    if (getOption("polmineR.browse")) browse(object@stat) else return(object@stat) 
+    if (getOption("polmineR.browse")) browse(slot(object, "stat")) else return(slot(object, "stat")) 
   }
 })
 
@@ -19,11 +19,11 @@ setMethod("show", "cooccurrences", function(object) {
 #' @rdname cooccurrences-class
 setMethod("as.data.frame", "cooccurrences_bundle", function(x){
   dts <- lapply(
-    x@objects,
-    function(object) copy(object@stat)[, "a" := object@query, with = TRUE]
+    slot(x, "objects"),
+    function(object) copy(slot(object, "stat"))[, "a" := slot(object, "query"), with = TRUE]
   )
   dt <- rbindlist(dts)
-  pAttr <- unique(unlist(lapply(x@objects, function(C) C@p_attribute)))
+  pAttr <- unique(unlist(lapply(slot(x, "objects"), function(C) slot(C, "p_attribute"))))
   if (length(pAttr) > 1){
     b <- dt[[ pAttr[1] ]]
     for (i in 2:length(pAttr)) b <- paste(b, dt[[pAttr[i]]], sep = "//")
@@ -236,31 +236,31 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   
   
   # enrich partition if necessary
-  if (!all(paste(.Object@p_attribute, "id", sep = "_") %in% colnames(.Object@partition@stat))){
+  if (!all(paste(slot(.Object, "p_attribute"), "id", sep = "_") %in% colnames(slot(.Object, "partition")@stat))){
     # It may not seem logical that counts are performed for all p-attribute-combinations if
     # we deal with more than p-attribute. But doing it selectively is much, much slower
     # than the the comprehensive approach.
-    .message("enrichtung partition by missing count for p-attribute: ", .Object@p_attribute, verbose = verbose)
-    .Object@partition <- enrich(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE, verbose = FALSE)
+    .message("enrichtung partition by missing count for p-attribute: ", slot(.Object, "p_attribute"), verbose = verbose)
+    slot(.Object, "partition") <- enrich(slot(.Object, "partition"), p_attribute = slot(.Object, "p_attribute"), decode = FALSE, verbose = FALSE)
   }
   
   setkeyv(
-    .Object@stat,
-    cols = paste(.Object@p_attribute, "id", sep = "_")
+    slot(.Object, "stat"),
+    cols = paste(slot(.Object, "p_attribute"), "id", sep = "_")
   )
   setkeyv(
-    .Object@partition@stat,
-    cols = paste(.Object@p_attribute, "id", sep = "_")
+    slot(.Object, "partition")@stat,
+    cols = paste(slot(.Object, "p_attribute"), "id", sep = "_")
   )
-  .Object@stat <- .Object@partition@stat[.Object@stat]
-  for (p_attr in .Object@p_attribute){
-    if (paste("i", p_attr, sep = ".") %in% colnames(.Object@stat)){
-      .Object@stat[, eval(paste("i", p_attr, sep = ".")) := NULL, with = TRUE]
+  slot(.Object, "stat") <- slot(.Object, "partition")@stat[slot(.Object, "stat")]
+  for (p_attr in slot(.Object, "p_attribute")){
+    if (paste("i", p_attr, sep = ".") %in% colnames(slot(.Object, "stat"))){
+      slot(.Object, "stat")[, eval(paste("i", p_attr, sep = ".")) := NULL, with = TRUE]
     }
   }
-  setnames(.Object@stat, old = "count", new = "count_partition")
+  setnames(slot(.Object, "stat"), old = "count", new = "count_partition")
   
-  count_ref <- .Object@stat[["count_partition"]] - .Object@stat[["count_coi"]]
+  count_ref <- slot(.Object, "stat")[["count_partition"]] - slot(.Object, "stat")[["count_coi"]]
   
   # If may appear very odd, but count_ref may assume values < 0
   # consider the times "Intermediate" and "West" are counted as cooccurrences
@@ -272,18 +272,18 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   # The solution is to count again tokens in cpos, but this time controlling 
   # for corpus positions
   if (TRUE){
-    .Object@stat[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
+    slot(.Object, "stat")[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
   } else {
-    multi_min <- .Object@cpos[which(.Object@cpos[["position"]] != 0)][, .N, by = c("cpos", paste(.Object@p_attribute, "id", sep = "_")), with = TRUE]
+    multi_min <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] != 0)][, .N, by = c("cpos", paste(slot(.Object, "p_attribute"), "id", sep = "_")), with = TRUE]
     multicount_min <- multi_min[multi_min[["N"]] > 1L][, "cpos" := NULL]
     multicount_min[, "N" := (multicount_min[["N"]] - 1)]
-    multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(.Object@p_attribute, "id", sep = "_"))]
-    setkeyv(multicount_min2, cols = paste(.Object@p_attribute, "id", sep = "_"))
-    dt <- multicount_min2[.Object@stat]
-    .Object@stat[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
+    multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(slot(.Object, "p_attribute"), "id", sep = "_"))]
+    setkeyv(multicount_min2, cols = paste(slot(.Object, "p_attribute"), "id", sep = "_"))
+    dt <- multicount_min2[slot(.Object, "stat")]
+    slot(.Object, "stat")[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
   }
   
-  setkeyv(.Object@stat, .Object@p_attribute)
+  setkeyv(slot(.Object, "stat"), slot(.Object, "p_attribute"))
   
   if (!is.null(method)){
     for (test in method){
@@ -295,10 +295,10 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   
   
   # finishing
-  if (nrow(.Object@stat) > 0L){
+  if (nrow(slot(.Object, "stat")) > 0L){
     setcolorder(
-      .Object@stat,
-      c(.Object@p_attribute, colnames(.Object@stat)[-which(colnames(.Object@stat) %in% .Object@p_attribute)])
+      slot(.Object, "stat"),
+      c(slot(.Object, "p_attribute"), colnames(slot(.Object, "stat"))[-which(colnames(slot(.Object, "stat")) %in% slot(.Object, "p_attribute"))])
     )
   }
   
@@ -334,18 +334,18 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
 #' }
 setMethod("cooccurrences", "partition_bundle", function(.Object, query, verbose = FALSE, mc = getOption("polmineR.mc"), ...){
   bundle <- as(as(.Object, Class = "bundle"), Class = "cooccurrences_bundle")
-  bundle@objects <- pbapply::pblapply(
-    .Object@objects,
+  slot(bundle, "objects") <- pbapply::pblapply(
+    slot(.Object, "objects"),
     function(x) cooccurrences(x, query = query, mc = mc, verbose = verbose, ...) 
   )
-  names(bundle@objects) <- names(.Object@objects)
-  for (i in seq_along(bundle@objects)){
-    if (!is.null(bundle@objects[[i]]))
-      bundle@objects[[i]]@name <- .Object@objects[[i]]@name
+  names(slot(bundle, "objects")) <- names(slot(.Object, "objects"))
+  for (i in seq_along(slot(bundle, "objects"))){
+    if (!is.null(slot(bundle, "objects")[[i]]))
+      slot(bundle, "objects")[[i]]@name <- slot(.Object, "objects")[[i]]@name
   }
   
-  for (i in rev(which(sapply(bundle@objects, is.null))))
-    bundle@objects[[i]] <- NULL
+  for (i in rev(which(sapply(slot(bundle, "objects"), is.null))))
+    slot(bundle, "objects")[[i]] <- NULL
   bundle
 })
 
@@ -399,38 +399,38 @@ setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
   tests <- "ll"["ll" %in% colnames(.Object)]
   y <- new(
     "cooccurrences",
-    corpus = .Object@corpus,
-    registry_dir = .Object@registry_dir,
-    data_dir = .Object@data_dir,
-    info_file = .Object@info_file,
-    template = .Object@template,
-    p_attribute = .Object@p_attribute,
-    encoding = .Object@partition@encoding,
+    corpus = slot(.Object, "corpus"),
+    registry_dir = slot(.Object, "registry_dir"),
+    data_dir = slot(.Object, "data_dir"),
+    info_file = slot(.Object, "info_file"),
+    template = slot(.Object, "template"),
+    p_attribute = slot(.Object, "p_attribute"),
+    encoding = slot(.Object, "partition")@encoding,
     query = query,
-    partition = .Object@partition,
-    size_partition = size(.Object@partition),
-    left = .Object@left,
-    right = .Object@right,
-    size = sum(.Object@window_sizes),
+    partition = slot(.Object, "partition"),
+    size_partition = size(slot(.Object, "partition")),
+    left = slot(.Object, "left"),
+    right = slot(.Object, "right"),
+    size = sum(slot(.Object, "window_sizes")),
     boundary = character(),
     cpos = data.table(),
     call = character(),
-    stat = subset(.Object@stat, .Object@stat[[paste("a", .Object@p_attribute, sep = "_")]] == query),
+    stat = subset(slot(.Object, "stat"), slot(.Object, "stat")[[paste("a", slot(.Object, "p_attribute"), sep = "_")]] == query),
     method = tests,
     included = FALSE,
-    size_ref = size(.Object@partition) - sum(.Object@window_sizes),
-    size_coi = sum(.Object@window_sizes)
+    size_ref = size(slot(.Object, "partition")) - sum(slot(.Object, "window_sizes")),
+    size_coi = sum(slot(.Object, "window_sizes"))
   )
   for (colname in c("a_word_id", "b_word_id", "size_coi", "a_word", "a_count"))
-    if (colname %in% colnames(y)) y@stat[, eval(colname) := NULL, with = TRUE]
+    if (colname %in% colnames(y)) slot(y, "stat")[, eval(colname) := NULL, with = TRUE]
   
   setnames(
-    y@stat,
+    slot(y, "stat"),
     old = c("ab_count", "b_count", "b_word"),
     new = c("count_coi", "count_ref", "word")
   )
-  setorderv(y@stat, cols = tests[1], order = -1L)
-  y@stat[[paste("rank", tests[1], sep = "_")]] <- 1L:nrow(y@stat)
+  setorderv(slot(y, "stat"), cols = tests[1], order = -1L)
+  slot(y, "stat")[[paste("rank", tests[1], sep = "_")]] <- 1L:nrow(slot(y, "stat"))
   y
 })
 
@@ -525,11 +525,11 @@ setMethod("Cooccurrences", "character", function(
 #' ll(r) # note that the table in the stat slot is augmented in-place
 #' decode(r) # in-place modification, again
 #' r <- subset(r, ll > 11.83 & ab_count >= 5)
-#' data.table::setorderv(r@stat, cols = "ll", order = -1L)
+#' data.table::setorderv(slot(r, "stat"), cols = "ll", order = -1L)
 #' head(r, 25)
 #' 
 #' if (requireNamespace("igraph", quietly = TRUE)){
-#'   r@partition <- enrich(r@partition, p_attribute = "word")
+#'   slot(r, "partition") <- enrich(slot(r, "partition"), p_attribute = "word")
 #'   g <- as_igraph(r, as.undirected = TRUE)
 #'   plot(g)
 #' }
@@ -646,11 +646,11 @@ setMethod("Cooccurrences", "slice", function(
 ){
   y <- new(
     "Cooccurrences",
-    corpus = .Object@corpus,
-    registry_dir = .Object@registry_dir,
-    data_dir = .Object@data_dir,
-    template = .Object@template,
-    encoding = .Object@encoding,
+    corpus = slot(.Object, "corpus"),
+    registry_dir = slot(.Object, "registry_dir"),
+    data_dir = slot(.Object, "data_dir"),
+    template = slot(.Object, "template"),
+    encoding = slot(.Object, "encoding"),
     left = as.integer(left),
     right = as.integer(right),
     p_attribute = p_attribute,
@@ -665,11 +665,11 @@ setMethod("Cooccurrences", "slice", function(
   if (length(p_attribute) == 1L){
     
     id_list <- lapply(
-      1L:nrow(.Object@cpos),
+      1L:nrow(slot(.Object, "cpos")),
       function(j)
         cpos2id(
           .Object, p_attribute = p_attribute,
-          cpos = .Object@cpos[j,1]:.Object@cpos[j,2]
+          cpos = slot(.Object, "cpos")[j,1]:slot(.Object, "cpos")[j,2]
         )
     )
 
@@ -722,33 +722,33 @@ setMethod("Cooccurrences", "slice", function(
       a_id <- 0L; b_id <- 0L # to pass R CMD check
       if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids]
       
-      if (identical(y@stat, data.table())){
-        y@window_sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
-        setnames(y@window_sizes, old = "V1", new = "size_coi")
-        setkeyv(y@window_sizes, cols = "a_id")
-        if (!is.null(stoplist)) y@stat <- dt[!b_id %in% stoplist_ids] else y@stat <- dt
+      if (identical(slot(y, "stat"), data.table())){
+        slot(y, "window_sizes") <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
+        setnames(slot(y, "window_sizes"), old = "V1", new = "size_coi")
+        setkeyv(slot(y, "window_sizes"), cols = "a_id")
+        if (!is.null(stoplist)) slot(y, "stat") <- dt[!b_id %in% stoplist_ids] else slot(y, "stat") <- dt
       } else {
         sizes <- dt[, {sum(.SD[["N"]])}, by = "a_id"]
         setkeyv(sizes, cols = "a_id")
-        y@window_sizes <- merge(y@window_sizes, sizes, all = TRUE)
-        y@window_sizes[, "size_coi" := ifelse(is.na(y@window_sizes[["size_coi"]]), 0L, y@window_sizes[["size_coi"]]) + ifelse(is.na(y@window_sizes[["V1"]]), 0L, y@window_sizes[["V1"]])]
-        y@window_sizes[, "V1" := NULL]
+        slot(y, "window_sizes") <- merge(slot(y, "window_sizes"), sizes, all = TRUE)
+        slot(y, "window_sizes")[, "size_coi" := ifelse(is.na(slot(y, "window_sizes")[["size_coi"]]), 0L, slot(y, "window_sizes")[["size_coi"]]) + ifelse(is.na(slot(y, "window_sizes")[["V1"]]), 0L, slot(y, "window_sizes")[["V1"]])]
+        slot(y, "window_sizes")[, "V1" := NULL]
         
         if (!is.null(stoplist)) dt <- dt[!a_id %in% stoplist_ids][!b_id %in% stoplist_ids]
         
-        y@stat <- merge(y@stat, dt, all = TRUE)
-        y@stat[, "N" := ifelse(is.na(y@stat[["N.x"]]), 0L, y@stat[["N.x"]]) + ifelse(is.na(y@stat[["N.y"]]), 0L, y@stat[["N.y"]])]
-        y@stat[, "N.x" := NULL][, "N.y" := NULL]
+        slot(y, "stat") <- merge(slot(y, "stat"), dt, all = TRUE)
+        slot(y, "stat")[, "N" := ifelse(is.na(slot(y, "stat")[["N.x"]]), 0L, slot(y, "stat")[["N.x"]]) + ifelse(is.na(slot(y, "stat")[["N.y"]]), 0L, slot(y, "stat")[["N.y"]])]
+        slot(y, "stat")[, "N.x" := NULL][, "N.y" := NULL]
         rm(dt); gc()
       }
     }
     
-    setnames(y@stat, old = "N", new = "ab_count")
+    setnames(slot(y, "stat"), old = "N", new = "ab_count")
     
   } else {
     
     
-    # if (length(.Object@p_attribute) == 0)
+    # if (length(slot(.Object, "p_attribute")) == 0)
     #  stop("The partition is required to included counts. Enrich the object first!")
     
     a_cols_id <- setNames(paste("a", p_attribute, "id", sep = "_"), p_attribute)
@@ -757,8 +757,8 @@ setMethod("Cooccurrences", "slice", function(
     b_cols_str <- setNames(paste("b", p_attribute, sep = "_"), p_attribute)
     
     .make_window <- function(i){
-      cpos_min <- .Object@cpos[i,1]
-      cpos_max <- .Object@cpos[i,2]
+      cpos_min <- slot(.Object, "cpos")[i,1]
+      cpos_max <- slot(.Object, "cpos")[i,2]
       if (cpos_min < cpos_max){
         range <- cpos_min:cpos_max
         lapply(
@@ -772,9 +772,9 @@ setMethod("Cooccurrences", "slice", function(
     }
     
     if (progress){
-      bag <- pblapply(1L:nrow(.Object@cpos), .make_window, cl = mc)
+      bag <- pblapply(1L:nrow(slot(.Object, "cpos")), .make_window, cl = mc)
     } else{
-      bag <- if (mc) lapply(1L:nrow(.Object@cpos), .make_window) else mclapply(1L:nrow(.Object@cpos), .make_window)
+      bag <- if (mc) lapply(1L:nrow(slot(.Object, "cpos")), .make_window) else mclapply(1L:nrow(slot(.Object, "cpos")), .make_window)
     }
       
     
@@ -795,12 +795,12 @@ setMethod("Cooccurrences", "slice", function(
     )
     if (verbose) message("... counting window size")
     
-    y@window_sizes <- dt[, .N, by = c(eval(a_cols_id)), with = TRUE]
-    setnames(y@window_sizes, "N", "size_coi")
+    slot(y, "window_sizes") <- dt[, .N, by = c(eval(a_cols_id)), with = TRUE]
+    setnames(slot(y, "window_sizes"), "N", "size_coi")
 
     if (verbose) message("... counting co-occurrences")
-    y@stat <- dt[, .N, by = c(eval(c(a_cols_id, b_cols_id))), with = TRUE]
-    setnames(y@stat, "N", "ab_count")
+    slot(y, "stat") <- dt[, .N, by = c(eval(c(a_cols_id, b_cols_id))), with = TRUE]
+    setnames(slot(y, "stat"), "N", "ab_count")
   }
   y
 })
@@ -841,19 +841,19 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
   verbose <- interactive()
   
   decoded_tokens <- reindex(x)
-  if (length(x@p_attribute) > 1L)
+  if (length(slot(x, "p_attribute")) > 1L)
     stop("Method only works if one and only one p-attribute is used.")
 
   if (verbose) message("... creating simple triplet matrix")
   retval <- slam::simple_triplet_matrix(
-    i = x@stat[["a_new_index"]],
-    j = x@stat[["b_new_index"]],
-    v = x@stat[["ab_count"]],
+    i = slot(x, "stat")[["a_new_index"]],
+    j = slot(x, "stat")[["b_new_index"]],
+    v = slot(x, "stat")[["ab_count"]],
     dimnames = list(decoded_tokens, decoded_tokens)
   )
   
   # restore original data.table and remove columns generated during reindexing
-  x@stat[, "a_new_index" := NULL][, "b_new_index" := NULL]
+  slot(x, "stat")[, "a_new_index" := NULL][, "b_new_index" := NULL]
   retval
 })
 
@@ -864,14 +864,14 @@ setMethod("as.simple_triplet_matrix", "Cooccurrences", function(x){
 #' @exportMethod features
 setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method = "ll", verbose = TRUE){
   
-  if (!identical(x@p_attribute, y@p_attribute))
+  if (!identical(slot(x, "p_attribute"), slot(y, "p_attribute")))
     warning("BEWARE: cooccurrences objects are not based on the same p_attribute!")
 
   if (verbose) message("... preparing tabs for matching")
-  keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, x@p_attribute, sep = "_"))) 
-  setkeyv(x@stat, keys)
-  setkeyv(y@stat, keys)
-  MATCH <- y@stat[x@stat]
+  keys <- unlist(lapply(c("a", "b"), function(ab) paste(ab, slot(x, "p_attribute"), sep = "_"))) 
+  setkeyv(slot(x, "stat"), keys)
+  setkeyv(slot(y, "stat"), keys)
+  MATCH <- slot(y, "stat")[slot(x, "stat")]
   
   # remove columns not needed
   setnames(MATCH, old = c("ab_count", "i.ab_count"), new = c("count_ref", "count_coi"))
@@ -883,14 +883,14 @@ setMethod("features", "Cooccurrences", function(x, y, included = FALSE, method =
   retval <- new(
     "features",
     included = FALSE,
-    corpus = x@corpus,
-    registry_dir = x@registry_dir,
-    data_dir = x@data_dir,
-    info_file = x@info_file,
-    template = x@template,
-    size_coi = x@partition@size,
-    size_ref = if (included) y@partition@size - x@partition@size else y@partition@size,
-    p_attribute = x@p_attribute,
+    corpus = slot(x, "corpus"),
+    registry_dir = slot(x, "registry_dir"),
+    data_dir = slot(x, "data_dir"),
+    info_file = slot(x, "info_file"),
+    template = slot(x, "template"),
+    size_coi = slot(x, "partition")@size,
+    size_ref = if (included) slot(y, "partition")@size - slot(x, "partition")@size else slot(y, "partition")@size,
+    p_attribute = slot(x, "p_attribute"),
     stat = MATCH
   )
   
@@ -925,20 +925,20 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
   if (!requireNamespace("igraph", quietly = TRUE))
     stop("Package 'igraph' is required for as.igraph()-method, but not yet installed.")
   
-  if (!all(edge_attributes %in% colnames(x@stat)))
+  if (!all(edge_attributes %in% colnames(slot(x, "stat"))))
     warning("edge_attribute supplied is not available")
   
   if ("kwic" %in% colnames(x)) edge_attributes <- unique(c(edge_attributes, "kwic"))
 
-  a_cols <- paste("a", x@p_attribute, sep = "_")
-  b_cols <- paste("b", x@p_attribute, sep = "_")
+  a_cols <- paste("a", slot(x, "p_attribute"), sep = "_")
+  b_cols <- paste("b", slot(x, "p_attribute"), sep = "_")
   
-  if (length(x@p_attribute) > 1L){
-    x@stat[, "node" := do.call(paste, c(x@stat[, b_cols, with = FALSE], sep = "//"))]
-    x@stat[, "collocate" := do.call(paste, c(x@stat[, a_cols, with = FALSE], sep = "//"))]
-    g <- igraph::graph_from_data_frame(x@stat[, c("node", "collocate", edge_attributes), with = FALSE])
+  if (length(slot(x, "p_attribute")) > 1L){
+    slot(x, "stat")[, "node" := do.call(paste, c(slot(x, "stat")[, b_cols, with = FALSE], sep = "//"))]
+    slot(x, "stat")[, "collocate" := do.call(paste, c(slot(x, "stat")[, a_cols, with = FALSE], sep = "//"))]
+    g <- igraph::graph_from_data_frame(slot(x, "stat")[, c("node", "collocate", edge_attributes), with = FALSE])
   } else {
-    g <- igraph::graph_from_data_frame(x@stat[, c(a_cols, b_cols, edge_attributes), with = FALSE])
+    g <- igraph::graph_from_data_frame(slot(x, "stat")[, c(a_cols, b_cols, edge_attributes), with = FALSE])
   }
   if ("kwic" %in% igraph::edge_attr_names(g)){
     igraph::E(g)$info <- unlist(lapply(igraph::E(g)$kwic, function(x) x[1]))
@@ -946,23 +946,23 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
   }
   
   if ("count" %in% vertex_attributes){
-    if (length(x@p_attribute) == 1L){
-      if (!x@p_attribute %in% colnames(x@partition@stat))
-        x@partition <- enrich(x@partition, p_attribute = x@p_attribute)
-      setkeyv(x@partition@stat, x@p_attribute)
-      igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
+    if (length(slot(x, "p_attribute")) == 1L){
+      if (!slot(x, "p_attribute") %in% colnames(slot(x, "partition")@stat))
+        slot(x, "partition") <- enrich(slot(x, "partition"), p_attribute = slot(x, "p_attribute"))
+      setkeyv(slot(x, "partition")@stat, slot(x, "p_attribute"))
+      igraph::V(g)$count <- slot(x, "partition")@stat[names(igraph::V(g))][["count"]]
     } else{
-      x@partition@stat[, "key" := do.call(paste, c(x@partition@stat[, x@p_attribute, with = FALSE], sep = "//"))]
-      # x@partition@stat[, "key" := apply(x@partition@stat, 1, function(row) paste(row[x@p_attribute], collapse = "//"))]
-      setkeyv(x@partition@stat, cols = "key")
-      igraph::V(g)$count <- x@partition@stat[names(igraph::V(g))][["count"]]
+      slot(x, "partition")@stat[, "key" := do.call(paste, c(slot(x, "partition")@stat[, slot(x, "p_attribute"), with = FALSE], sep = "//"))]
+      # slot(x, "partition")@stat[, "key" := apply(slot(x, "partition")@stat, 1, function(row) paste(row[slot(x, "p_attribute")], collapse = "//"))]
+      setkeyv(slot(x, "partition")@stat, cols = "key")
+      igraph::V(g)$count <- slot(x, "partition")@stat[names(igraph::V(g))][["count"]]
     }
-    igraph::V(g)$freq <- round((igraph::V(g)$count / x@partition@size) * 100000, 3)
+    igraph::V(g)$freq <- round((igraph::V(g)$count / slot(x, "partition")@size) * 100000, 3)
   }
   
-  if ("kwic" %in% colnames(x@partition)){
-    setkeyv(x@partition@stat, cols = x@p_attribute[1])
-    igraph::V(g)$info <- unlist(lapply(igraph::V(g)$name, function(n) x@partition@stat[n][["kwic"]]))
+  if ("kwic" %in% colnames(slot(x, "partition"))){
+    setkeyv(slot(x, "partition")@stat, cols = slot(x, "p_attribute")[1])
+    igraph::V(g)$info <- unlist(lapply(igraph::V(g)$name, function(n) slot(x, "partition")@stat[n][["kwic"]]))
   }
   
   if (as.undirected) g <- igraph::as.undirected(g, edge.attr.comb = "concat")
@@ -982,12 +982,12 @@ setMethod("as_igraph", "Cooccurrences", function(x, edge_attributes = c("ll", "a
 setMethod("subset", "Cooccurrences", function(x, ..., by){
   if (!missing(by)){
     if (is(by)[1] != "features") stop("If 'by' is provided, a features object is expected")
-    keys <- unlist(lapply(c("a", "b"), function(what) paste(what, x@p_attribute, sep = "_")))
-    setkeyv(x@stat, keys)
-    setkeyv(by@stat, keys)
-    x@stat <- x@stat[by@stat]
+    keys <- unlist(lapply(c("a", "b"), function(what) paste(what, slot(x, "p_attribute"), sep = "_")))
+    setkeyv(slot(x, "stat"), keys)
+    setkeyv(slot(by, "stat"), keys)
+    slot(x, "stat") <- slot(x, "stat")[slot(by, "stat")]
   }
-  x@stat <- subset(copy(x@stat), ...)
+  slot(x, "stat") <- subset(copy(slot(x, "stat")), ...)
   x
 })
 
@@ -1003,19 +1003,19 @@ setMethod("subset", "Cooccurrences", function(x, ..., by){
 #'   returned invisibly; usually it will not be necessary to catch the return
 #'   value.
 setMethod("decode", "Cooccurrences", function(.Object){
-  for (p_attr in .Object@p_attribute){
-    a_col <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", p_attr, "id", sep = "_")
-    .Object@stat[, paste("a", p_attr, sep = "_") := as.nativeEnc(
-      cl_id2str(corpus = .Object@corpus, registry = .Object@registry_dir, p_attribute = p_attr, id = .Object@stat[[a_col]]),
-      from = .Object@encoding)
+  for (p_attr in slot(.Object, "p_attribute")){
+    a_col <- if (length(slot(.Object, "p_attribute")) == 1L) "a_id" else paste("a", p_attr, "id", sep = "_")
+    slot(.Object, "stat")[, paste("a", p_attr, sep = "_") := as.nativeEnc(
+      cl_id2str(corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"), p_attribute = p_attr, id = slot(.Object, "stat")[[a_col]]),
+      from = slot(.Object, "encoding"))
       ]
-    b_col <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", p_attr, "id", sep = "_")
-    .Object@stat[, paste("b", p_attr, sep = "_") := as.nativeEnc(
-      cl_id2str(corpus = .Object@corpus,  registry = .Object@registry_dir, p_attribute = p_attr, id = .Object@stat[[b_col]]),
-      from = .Object@encoding)
+    b_col <- if (length(slot(.Object, "p_attribute")) == 1L) "b_id" else paste("b", p_attr, "id", sep = "_")
+    slot(.Object, "stat")[, paste("b", p_attr, sep = "_") := as.nativeEnc(
+      cl_id2str(corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"), p_attribute = p_attr, id = slot(.Object, "stat")[[b_col]]),
+      from = slot(.Object, "encoding"))
       ]
   }
-  # .Object@stat[, "a_id" := NULL][, "b_id" := NULL]
+  # slot(.Object, "stat")[, "a_id" := NULL][, "b_id" := NULL]
   invisible(.Object)
 })
 
@@ -1032,23 +1032,23 @@ setMethod("kwic", "Cooccurrences", function(
   ){
   message("... getting context of nodes")
   
-  stopifnot(length(.Object@p_attribute) == 1)
+  stopifnot(length(slot(.Object, "p_attribute")) == 1)
   
   token <- unique(c(
-    .Object@stat[[paste("a", .Object@p_attribute, sep = "_")]],
-    .Object@stat[[paste("b", .Object@p_attribute, sep = "_")]]
+    slot(.Object, "stat")[[paste("a", slot(.Object, "p_attribute"), sep = "_")]],
+    slot(.Object, "stat")[[paste("b", slot(.Object, "p_attribute"), sep = "_")]]
     ))
   names(token) <- token
   
-  .fn_ctxt <- function(x) context(.Object@partition, query = x, left = left * 2L, right = right * 2L, p_attribute = .Object@p_attribute, cqp = FALSE, verbose = FALSE)
+  .fn_ctxt <- function(x) context(slot(.Object, "partition"), query = x, left = left * 2L, right = right * 2L, p_attribute = slot(.Object, "p_attribute"), cqp = FALSE, verbose = FALSE)
   context_list <- if (progress) pblapply(token, .fn_ctxt) else lapply(token, .fn_ctxt)
   
   if (verbose) message("... getting kwic for nodes")
   .get_kwic_for_nodes <- function(x){
     if (x %in% names(context_list)){
       a <- context_list[[x]]
-      a@cpos <- a@cpos[between(a@cpos[["position"]], lower = -left, upper = right)]
-      # k <- kwic(a, left = left, right = right, p_attribute = .Object@p_attribute, verbose = FALSE)
+      slot(a, "cpos") <- slot(a, "cpos")[between(slot(a, "cpos")[["position"]], lower = -left, upper = right)]
+      # k <- kwic(a, left = left, right = right, p_attribute = slot(.Object, "p_attribute"), verbose = FALSE)
       k <- kwic(a)
       vec <- as.character(k, fmt = '<span style="background-color:yellow">%s</span>')
       el <- paste(vec, collapse = "<br/>")
@@ -1057,22 +1057,22 @@ setMethod("kwic", "Cooccurrences", function(
       return( character() )
     }
   }
-  if (nrow(.Object@partition@stat) == 0){
-    .Object@partition@stat <- data.table(terms(.Object@partition, p_attribute = .Object@p_attribute))
-    colnames(.Object@partition@stat) <- .Object@p_attribute
+  if (nrow(slot(.Object, "partition")@stat) == 0){
+    slot(.Object, "partition")@stat <- data.table(terms(slot(.Object, "partition"), p_attribute = slot(.Object, "p_attribute")))
+    colnames(slot(.Object, "partition")@stat) <- slot(.Object, "p_attribute")
   }
-  setkeyv(.Object@partition@stat, cols = .Object@p_attribute)
-  .Object@partition@stat <- .Object@partition@stat[unname(token)]
-  nodes <- .Object@partition@stat[[.Object@p_attribute]]
+  setkeyv(slot(.Object, "partition")@stat, cols = slot(.Object, "p_attribute"))
+  slot(.Object, "partition")@stat <- slot(.Object, "partition")@stat[unname(token)]
+  nodes <- slot(.Object, "partition")@stat[[slot(.Object, "p_attribute")]]
   node_kwic <- if (progress) pblapply(nodes, .get_kwic_for_nodes) else lapply(nodes, .get_kwic_for_nodes)
-  .Object@partition@stat[, "kwic" := node_kwic]
+  slot(.Object, "partition")@stat[, "kwic" := node_kwic]
 
   if (verbose) message("... creating edge data")
-  .Object@stat[, "i" := 1L:nrow(.Object@stat)]
+  slot(.Object, "stat")[, "i" := 1L:nrow(slot(.Object, "stat"))]
   .fn_edges <- function(.SD){
     context_min <- trim(
-      context_list[[ .SD[[paste("a", .Object@p_attribute, sep = "_")]][1] ]],
-      positivelist = as.corpusEnc(.SD[[paste("b", .Object@p_attribute, sep = "_")]][1], corpusEnc = .Object@partition@encoding),
+      context_list[[ .SD[[paste("a", slot(.Object, "p_attribute"), sep = "_")]][1] ]],
+      positivelist = as.corpusEnc(.SD[[paste("b", slot(.Object, "p_attribute"), sep = "_")]][1], corpusEnc = slot(.Object, "partition")@encoding),
       verbose = FALSE
     )
     if (is.null(context_min)){
@@ -1084,8 +1084,8 @@ setMethod("kwic", "Cooccurrences", function(
       paste(y, collapse = "</br>")
     }
   }
-  .Object@stat[, "kwic" := .Object@stat[, .fn_edges(.SD), by = "i"][["V1"]] ]
-  .Object@stat[, "i" := NULL]
+  slot(.Object, "stat")[, "kwic" := slot(.Object, "stat")[, .fn_edges(.SD), by = "i"][["V1"]] ]
+  slot(.Object, "stat")[, "i" := NULL]
 
   invisible(.Object)
 })
@@ -1096,38 +1096,38 @@ setMethod("kwic", "Cooccurrences", function(
 #' @export
 setAs(from = "cooccurrences", to = "kwic", function(from){
   # Prepare a data.table that links match_id and word_id (i.e. which tokens occurr in a match?)
-  tbl <- from@cpos[, {.SD[.SD[["word_id"]] %in% from[["word_id"]]][["word_id"]]}, by = "match_id"]
+  tbl <- slot(from, "cpos")[, {.SD[.SD[["word_id"]] %in% from[["word_id"]]][["word_id"]]}, by = "match_id"]
   setnames(tbl, old = "V1", new = "word_id")
   setorderv(tbl, cols = c("match_id", "word_id"))
   
   # Reduce kwic to those concordances with tokens that are statistically significant, and
   # highlight these tokens
   y <- kwic(from)
-  y@stat <- y@stat[y@stat[["match_id"]] %in% tbl[["match_id"]]]
-  y@cpos <- y@cpos[y@cpos[["match_id"]] %in% tbl[["match_id"]]]
+  slot(y, "stat") <- slot(y, "stat")[slot(y, "stat")[["match_id"]] %in% tbl[["match_id"]]]
+  slot(y, "cpos") <- slot(y, "cpos")[slot(y, "cpos")[["match_id"]] %in% tbl[["match_id"]]]
   y <- highlight(y, yellow = from[["word"]])
   
   # Add word_id to concordances
-  y@stat <- tbl[y@stat, on = "match_id"]
+  slot(y, "stat") <- tbl[slot(y, "stat"), on = "match_id"]
   p_attr_decoded <- cl_id2str(
-    corpus = from@corpus, registry = from@registry_dir,
-    p_attribute = from@p_attribute[1],
-    id = y@stat[[paste(from@p_attribute[1], "id", sep = "_")]]
+    corpus = slot(from, "corpus"), registry = slot(from, "registry_dir"),
+    p_attribute = slot(from, "p_attribute")[1],
+    id = slot(y, "stat")[[paste(slot(from, "p_attribute")[1], "id", sep = "_")]]
   )
-  y@stat[, from@p_attribute[1] := as.nativeEnc(p_attr_decoded, from = from@encoding), with = TRUE]
-  y@stat[, "word_id" := NULL]
+  slot(y, "stat")[, slot(from, "p_attribute")[1] := as.nativeEnc(p_attr_decoded, from = slot(from, "encoding")), with = TRUE]
+  slot(y, "stat")[, "word_id" := NULL]
   y
 })
 
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "cooccurrences", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+  ocpu_exec(fn = "cooccurrences", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "corpus"), ...)
 })
 
 #' @rdname cooccurrences
 setMethod("cooccurrences", "remote_subcorpus", function(.Object, ...){
-  ocpu_exec(fn = "cooccurrences", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "subcorpus"), ...)
+  ocpu_exec(fn = "cooccurrences", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "subcorpus"), ...)
 })
 
 

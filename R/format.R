@@ -8,7 +8,7 @@
 #' @importFrom data.table copy
 setMethod("format", "textstat", function(x, digits = 2L){
   # create copy, to avoid confusion resulting from in-place modification
-  dt <- copy(x@stat) 
+  dt <- copy(slot(x, "stat")) 
   if (is(dt)[1] == "data.table"){
     round(dt, digits = digits) # this is an in-place operation
     id_cols <- grep("_id", colnames(dt)) # get columns with token ids
@@ -25,7 +25,7 @@ setMethod("format", "textstat", function(x, digits = 2L){
 #' @rdname cooccurrences-class
 #' @exportMethod format
 setMethod("format", "cooccurrences", function(x, digits = 2L){
-  dt <- copy(x@stat)
+  dt <- copy(slot(x, "stat"))
   round(dt, digits = digits)
   
   if ("count_ref" %in% colnames(dt))
@@ -49,17 +49,17 @@ setMethod("format", "cooccurrences", function(x, digits = 2L){
 #'   significant digits (signif) to be used.
 #' @rdname features-class
 setMethod("format", "features", function(x, digits = 2L){
-  dt <- copy(x@stat)
+  dt <- copy(slot(x, "stat"))
   round(dt, digits = digits)
   
   for (col in grep("_id\\.", colnames(dt), value = TRUE)) dt[, (col) := NULL]
 
   colorder <- c(
-    paste("rank", x@method, sep = "_"),
-    grep(x@p_attribute, colnames(dt), value = TRUE),
+    paste("rank", slot(x, "method"), sep = "_"),
+    grep(slot(x, "p_attribute"), colnames(dt), value = TRUE),
     "count_coi", "count_ref", "exp_coi",
-    x@method,
-    x@annotation_cols
+    slot(x, "method"),
+    slot(x, "annotation_cols")
   )
   dt[, colorder, with = FALSE]
 })
@@ -84,7 +84,7 @@ setMethod("format", "features", function(x, digits = 2L){
 #'   
 setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra_color = "grey", lineview = getOption("polmineR.lineview")){
   if (lineview) align <- FALSE
-  y <- copy(x@stat)[, "match_id" := NULL]
+  y <- copy(slot(x, "stat"))[, "match_id" := NULL]
   
   if ("left_extra" %in% colnames(y)){
     if (lineview) y[, "left" := sprintf("<u>%s</u>", y[["left"]])]
@@ -109,7 +109,7 @@ setMethod("format", "kwic", function(x, node_color = "blue", align = TRUE, extra
   if (lineview){
     y[, "concordance" := apply(y, 1, function(x) paste(x[c("left", "node", "right")], collapse = " "))]
     for (column in c("left", "node", "right")) y[, (column) := NULL]
-    setcolorder(y, neworder = c(x@metadata, "concordance", x@annotation_cols))
+    setcolorder(y, neworder = c(slot(x, "metadata"), "concordance", slot(x, "annotation_cols")))
   }
   
   y
