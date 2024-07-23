@@ -31,19 +31,19 @@
 setMethod("subset", "subcorpus_bundle", function(x, ..., iterate = FALSE, verbose = TRUE, progress = FALSE, mc = NULL){
   if (iterate){
     if (progress){
-      x@objects <- pblapply(x@objects, function(obj) subset(obj, ...), cl = mc)
+      slot(x, "objects") <- pblapply(slot(x, "objects"), function(obj) subset(obj, ...), cl = mc)
     } else {
-      x@objects <- if (!is.null(mc))
-        mclapply(x@objects, function(obj) subset(obj, ...), mc.cores = mc)
+      slot(x, "objects") <- if (!is.null(mc))
+        mclapply(slot(x, "objects"), function(obj) subset(obj, ...), mc.cores = mc)
       else
-        lapply(x@objects, function(obj) subset(obj, ...))
+        lapply(slot(x, "objects"), function(obj) subset(obj, ...))
     }
     return(x)
   } else {
     merged <- merge(x)
     sub <- subset(merged, ...)
     
-    if (nrow(sub@cpos) == 0L){
+    if (nrow(slot(sub, "cpos")) == 0L){
       cli_alert_warning("no objects left after subsetting, returning `NULL`")
       return(NULL)
     }

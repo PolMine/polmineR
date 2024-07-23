@@ -417,28 +417,28 @@ setMethod("partition", "partition", function(.Object, def = NULL, name = "", reg
     )
     slot(y, "strucs") <- slot(.Object, "strucs")[hits]
   } else if (slot(y, "xml") == "nested") {
-    cpos_vec <- ranges_to_cpos(.Object@cpos)
+    cpos_vec <- ranges_to_cpos(slot(.Object, "cpos"))
     strucs_new <- cl_cpos2struc(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = names(def)[1], cpos = cpos_vec
     )
     strucs_new_unique <- unique(strucs_new)
     s_attr_values <- cl_struc2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       s_attribute = names(def), struc = strucs_new_unique
     )
-    Encoding(s_attr_values) <- .Object@encoding
+    Encoding(s_attr_values) <- slot(.Object, "encoding")
     matching <- if (regex) grep(def[[1]], s_attr_values) else which(s_attr_values %in% def[[1]])
-    y@strucs <- strucs_new_unique[matching]
-    y@cpos <- RcppCWB::get_region_matrix(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
-      s_attribute = names(def), strucs = y@strucs
+    slot(y, "strucs") <- strucs_new_unique[matching]
+    slot(y, "cpos") <- RcppCWB::get_region_matrix(
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+      s_attribute = names(def), strucs = slot(y, "strucs")
     )
   }
-  y@size <- size(y)
+  slot(y, "size") <- size(y)
   if (length(p_attribute) > 0) {
-    y@stat <- count(.Object = y, p_attribute = p_attribute, decode = decode, mc = mc)@stat
-    y@p_attribute <- p_attribute
+    slot(y, "stat") <- count(.Object = y, p_attribute = p_attribute, decode = decode, mc = mc)@stat
+    slot(y, "p_attribute") <- p_attribute
   }
   y
 })
@@ -454,20 +454,20 @@ setMethod("partition", "context", function(.Object, node = TRUE){
   r <- as.regions(.Object, node = node)
   y <- as(object = r, Class = "partition")
   
-  y@name <- .Object@name
-  y@p_attribute = .Object@p_attribute
-  y@size <- size(y)
+  slot(y, "name") <- slot(.Object, "name")
+  slot(y, "p_attribute") = slot(.Object, "p_attribute")
+  slot(y, "size") <- size(y)
 
   # Second, generate a list with data.table objects with counts
-  DT <- copy(.Object@cpos)
+  DT <- copy(slot(.Object, "cpos"))
   if (!node) DT <- subset(DT, DT[["position"]] != 0)
-  y@stat <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
+  slot(y, "stat") <- DT[, .N, by = c("match_id", paste(slot(.Object, "p_attribute"), "id", sep = "_"))]
   
-  setnames(y@stat, old = "N", new = "count")
-  for (p_attr in .Object@p_attribute){
-    y@stat[[p_attr]] <- cl_id2str(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
-      p_attribute = p_attr, id = y@stat[[paste(p_attr, "id", sep = "_")]]
+  setnames(slot(y, "stat"), old = "N", new = "count")
+  for (p_attr in slot(.Object, "p_attribute")){
+    slot(y, "stat")[[p_attr]] <- cl_id2str(
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+      p_attribute = p_attr, id = slot(y, "stat")[[paste(p_attr, "id", sep = "_")]]
     )
   }
   y
@@ -476,20 +476,20 @@ setMethod("partition", "context", function(.Object, node = TRUE){
 
 #' @rdname partition
 setMethod("partition", "remote_corpus", function(.Object, ...){
-  p <- ocpu_exec(fn = "partition", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+  p <- ocpu_exec(fn = "partition", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "corpus"), ...)
   y <- as(p, "remote_partition")
-  y@server <- .Object@server
-  y@restricted <- .Object@restricted
+  slot(y, "server") <- slot(.Object, "server")
+  slot(y, "restricted") <- slot(.Object, "restricted")
   y
 })
 
 
 #' @rdname partition
 setMethod("partition", "remote_partition", function(.Object, ...){
-  p <- ocpu_exec(fn = "partition", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
+  p <- ocpu_exec(fn = "partition", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "partition"), ...)
   y <- as(p, "remote_partition")
-  y@restricted <- .Object@restricted
-  y@server <- .Object@server
+  slot(y, "restricted") <- slot(.Object, "restricted")
+  slot(y, "server") <- slot(.Object, "server")
   y
 })
 

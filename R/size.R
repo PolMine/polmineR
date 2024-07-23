@@ -71,7 +71,7 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
   
   if (is.null(s_attribute)){
     corpus_size <- cl_attribute_size(
-      corpus = x@corpus, registry = x@registry_dir,
+      corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
       attribute = "word", attribute_type = "p"
     )
     return(corpus_size)
@@ -79,8 +79,8 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
     stopifnot(all(s_attribute %in% s_attributes(x)))
     
     all_siblings <- siblings(
-      corpus = x@corpus,
-      registry = x@registry_dir,
+      corpus = slot(x, "corpus"),
+      registry = slot(x, "registry_dir"),
       s_attribute
     )
     if (is.na(all_siblings)) all_siblings <- TRUE
@@ -92,26 +92,26 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
           setNames(s_attribute, s_attribute),
           function(s_attr){
             s_attr_max <- cl_attribute_size(
-              corpus = x@corpus, registry = x@registry_dir,
+              corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
               attribute = s_attr, attribute_type = "s"
             )
             s_attr_vals <- cl_struc2str(
-              corpus = x@corpus, registry = x@registry_dir,
+              corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
               s_attribute = s_attr, struc = 0L:(s_attr_max - 1L)
             )
-            as.nativeEnc(s_attr_vals, from = x@encoding)
+            as.nativeEnc(s_attr_vals, from = slot(x, "encoding"))
           }
         )
       )
       cpos_matrix <- RcppCWB::get_region_matrix(
-        corpus = x@corpus, s_attribute = s_attribute[1],
+        corpus = slot(x, "corpus"), s_attribute = s_attribute[1],
         strucs = 0L:(
           cl_attribute_size(
-            corpus = x@corpus, registry = x@registry_dir,
+            corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
             attribute = s_attribute[1], attribute_type = "s"
           ) - 1L
         ),
-        registry = x@registry_dir
+        registry = slot(x, "registry_dir")
       )
       
       dt[, size := cpos_matrix[,2] - cpos_matrix[,1] + 1L]
@@ -128,7 +128,7 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
         function(i){
           s_attr_relationship(
             s_attribute[[i]], s_attribute[[i + 1]],
-            corpus = x@corpus, registry = x@registry_dir
+            corpus = slot(x, "corpus"), registry = slot(x, "registry_dir")
           )
         }
       )
@@ -153,12 +153,12 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
           )
         
         struc_size <- cl_attribute_size(
-          corpus = x@corpus, registry = x@registry_dir,
+          corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
           attribute_type = "s", attribute = s_attribute[[1]]
         )
         strucs_seq <- 0L:(struc_size - 1L)
         m <- RcppCWB::get_region_matrix(
-          corpus = x@corpus, registry = x@registry_dir,
+          corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
           s_attribute = s_attribute[[1]], strucs = strucs_seq
         )
         dt <- data.table(size = m[,2L] - m[,1L] + 1L)
@@ -189,26 +189,26 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
         for (s_attr in s_attribute){
           if (verbose) cli_progress_step("decode s-attribute {.val {s_attr}}")
           n_strucs <- cl_attribute_size(
-            corpus = x@corpus,
-            registry = x@registry_dir,
+            corpus = slot(x, "corpus"),
+            registry = slot(x, "registry_dir"),
             attribute = s_attr,
             attribute_type = "s"
           )
           struc_vec <- 0L:(n_strucs - 1L)
           m <- get_region_matrix(
-            corpus = x@corpus,
-            registry = x@registry_dir,
+            corpus = slot(x, "corpus"),
+            registry = slot(x, "registry_dir"),
             s_attribute = s_attr,
             strucs = struc_vec
           )
           ext <- data.table(cpos = RcppCWB::ranges_to_cpos(m))
           struc_values <- cl_struc2str(
-            corpus = x@corpus,
-            registry = x@registry_dir,
+            corpus = slot(x, "corpus"),
+            registry = slot(x, "registry_dir"),
             s_attribute = s_attr,
             struc = struc_vec
           ) |>
-            as.nativeEnc(from = x@encoding)
+            as.nativeEnc(from = slot(x, "encoding"))
           unfolded <- rep(struc_values, times = m[,2] - m[, 1] + 1)
           ext[, (s_attr) := unfolded]
           
@@ -251,37 +251,37 @@ setMethod("size", "slice", function(x, s_attribute = NULL, verbose = TRUE, ...){
   }
   
   if (is.null(s_attribute)){
-    return( sum(as.integer(x@cpos[,2L]) - as.integer(x@cpos[,1L]) + 1L) )
+    return( sum(as.integer(slot(x, "cpos")[,2L]) - as.integer(slot(x, "cpos")[,1L]) + 1L) )
   } else {
     stopifnot(all(s_attribute %in% s_attributes(x)))
     
     all_siblings <- siblings(
-      corpus = x@corpus, registry = x@registry_dir,
-      c(x@s_attribute_strucs, s_attribute)
+      corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
+      c(slot(x, "s_attribute_strucs"), s_attribute)
     )
     if (all_siblings){
       .fn <- function(s_attr){
         str <- cl_struc2str(
-          corpus = x@corpus, registry = x@registry_dir,
-          s_attribute = s_attr, struc = x@strucs
+          corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
+          s_attribute = s_attr, struc = slot(x, "strucs")
         )
-        as.nativeEnc(str, from = x@encoding) 
+        as.nativeEnc(str, from = slot(x, "encoding")) 
       }
       tab <- as.data.table(lapply(setNames(s_attribute, s_attribute), .fn))
-      tab[, size := x@cpos[,2] - x@cpos[,1] + 1L]
+      tab[, size := slot(x, "cpos")[,2] - slot(x, "cpos")[,1] + 1L]
       y <- tab[, sum(size), by = eval(s_attribute), with = TRUE]
     } else {
       
       struclist <- lapply(
         s_attribute, 
-        function(s) cpos2struc(x = x, s_attr = s, cpos = x@cpos[,1])
+        function(s) cpos2struc(x = x, s_attr = s, cpos = slot(x, "cpos")[,1])
       )
       
       regionslist <- lapply(
         seq_along(s_attribute),
         function(i){
           get_region_matrix(
-            corpus = x@corpus, registry = x@registry_dir,
+            corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
             s_attribute = s_attribute[i], strucs = struclist[[i]]
           )
         }
@@ -289,21 +289,21 @@ setMethod("size", "slice", function(x, s_attribute = NULL, verbose = TRUE, ...){
       
       is_parent <- sapply(
         regionslist,
-        function(m) all(m[,1] <= x@cpos[,1]) && all(m[,2] >= x@cpos[,2])
+        function(m) all(m[,1] <= slot(x, "cpos")[,1]) && all(m[,2] >= slot(x, "cpos")[,2])
       )
       
       if (all(is_parent)){
-        tab <- data.table(size = x@cpos[,2] - x@cpos[,1] + 1L)
+        tab <- data.table(size = slot(x, "cpos")[,2] - slot(x, "cpos")[,1] + 1L)
         for (i in seq_along(struclist)){
           str <- cl_struc2str(
-            corpus = x@corpus, registry = x@registry_dir,
+            corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
             s_attribute = s_attribute[[i]], struc = struclist[[i]]
           )
-          tab[, (s_attribute[[i]]) := as.nativeEnc(str, from = x@encoding)]
+          tab[, (s_attribute[[i]]) := as.nativeEnc(str, from = slot(x, "encoding"))]
         }
       } else {
         if (verbose) message("... decoding nested s-attributes at token-level (potentially slow)")
-        cpos <- ranges_to_cpos(x@cpos)
+        cpos <- ranges_to_cpos(slot(x, "cpos"))
         if (length(s_attribute) == 1L){
           strucs <- cpos2struc(x = x, s_attr = s_attribute, cpos = cpos)
           tab <- data.table(struc = strucs)[, .N, by = "struc"]
@@ -341,11 +341,11 @@ setMethod("size", "partition", function(x, s_attribute = NULL, ...){
 
 #' @rdname size-method
 setMethod("size", "partition_bundle", function(x){
-  cpos_list <- lapply(x@objects, slot, "cpos")
+  cpos_list <- lapply(slot(x, "objects"), slot, "cpos")
   cpos_matrix <- do.call(rbind, cpos_list)
   dt <- data.table(cpos_matrix)
   setnames(dt, old = c("V1", "V2"), new = c("cpos_left", "cpos_right"))
-  dt[, "name" := unlist(Map(f = rep, x = lapply(x@objects, slot, "name"), times = lapply(cpos_list, nrow)))]
+  dt[, "name" := unlist(Map(f = rep, x = lapply(slot(x, "objects"), slot, "name"), times = lapply(cpos_list, nrow)))]
   dt[, "region_size" := dt[["cpos_right"]] - dt[["cpos_left"]] + 1L]
   y <- dt[, sum(.SD[["region_size"]]), by = "name"]
   setnames(y, old = "V1", new = "size")
@@ -377,7 +377,7 @@ setMethod("size", "TermDocumentMatrix", function(x){
 #' @rdname size-method
 setMethod(
   "size", "features",
-  function(x) list(coi = x@size_coi, ref = x@size_ref)
+  function(x) list(coi = slot(x, "size_coi"), ref = slot(x, "size_ref"))
 )
 
 
@@ -385,9 +385,9 @@ setMethod(
 setMethod("size", "remote_corpus", function(x){
   ocpu_exec(
     fn = "size",
-    corpus = x@corpus,
-    server = x@server,
-    restricted = x@restricted,
+    corpus = slot(x, "corpus"),
+    server = slot(x, "server"),
+    restricted = slot(x, "restricted"),
     do.call = FALSE,
     x = as(x, "corpus")
   )
@@ -397,9 +397,9 @@ setMethod("size", "remote_corpus", function(x){
 setMethod("size", "remote_partition", function(x){
   ocpu_exec(
     fn = "size",
-    corpus = x@corpus,
-    server = x@server,
-    restricted = x@restricted,
+    corpus = slot(x, "corpus"),
+    server = slot(x, "server"),
+    restricted = slot(x, "restricted"),
     do.call = FALSE,
     x = as(x, "partition")
   )
@@ -407,8 +407,8 @@ setMethod("size", "remote_partition", function(x){
 
 #' @rdname size-method
 setMethod("size", "ranges", function(x)
-  if (identical(x@size, integer()))
-    sum(x@cpos[, 2] - x@cpos[, 1] + 1L) 
+  if (identical(slot(x, "size"), integer()))
+    sum(slot(x, "cpos")[, 2] - slot(x, "cpos")[, 1] + 1L) 
   else
-    x@size
+    slot(x, "size")
 )

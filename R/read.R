@@ -109,11 +109,11 @@ setMethod(
     if (is.null(meta)){
       template_meta <- get_template(.Object)[["metadata"]]
       meta <- if (is.null(template_meta))
-        names(.Object@s_attributes)
+        names(slot(.Object, "s_attributes"))
       else
         template_meta
     }
-    stopifnot(all(meta %in% s_attributes(.Object@corpus)))
+    stopifnot(all(meta %in% s_attributes(slot(.Object, "corpus"))))
     doc <- html(
       .Object,
       meta = meta,
@@ -127,55 +127,55 @@ setMethod(
       if (!inherits(annotation, "subcorpus"))
         stop("argument 'annotation' required to inherit from subcorpus")
       
-      if (!all(sapply(annotation@annotations, length) == nrow(annotation@cpos)))
+      if (!all(sapply(slot(annotation, "annotations"), length) == nrow(slot(annotation, "cpos"))))
         stop("length of all annotations not identical with number of regions")
       
-      if ("highlight" %in% names(annotation@annotations)){
+      if ("highlight" %in% names(slot(annotation, "annotations"))){
         highlight <- split(
-          ranges_to_cpos(annotation@cpos),
+          ranges_to_cpos(slot(annotation, "cpos")),
           unlist(
             mapply(
               rep,
-              x = annotation@annotations[["highlight"]],
-              times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+              x = slot(annotation, "annotations")[["highlight"]],
+              times = slot(annotation, "cpos")[,2L] - slot(annotation, "cpos")[,1L] + 1L,
               SIMPLIFY = FALSE
             )
           )
         )
       }
       
-      if ("tooltips" %in% names(annotation@annotations)){
+      if ("tooltips" %in% names(slot(annotation, "annotations"))){
         tooltips <- as.list(
           setNames(
             unname(
               unlist(
                 mapply(
                   rep,
-                  x = annotation@annotations[["tooltips"]],
-                  times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+                  x = slot(annotation, "annotations")[["tooltips"]],
+                  times = slot(annotation, "cpos")[,2L] - slot(annotation, "cpos")[,1L] + 1L,
                   SIMPLIFY = FALSE
                 )
               )
             ),
-            as.character(ranges_to_cpos(annotation@cpos))
+            as.character(ranges_to_cpos(slot(annotation, "cpos")))
           )
         )
       }
       
-      if ("href" %in% names(annotation@annotations)){
+      if ("href" %in% names(slot(annotation, "annotations"))){
         href <- as.list(
           setNames(
             unname(
               unlist(
                 mapply(
                   rep,
-                  x = annotation@annotations[["href"]],
-                  times = annotation@cpos[,2L] - annotation@cpos[,1L] + 1L,
+                  x = slot(annotation, "annotations")[["href"]],
+                  times = slot(annotation, "cpos")[,2L] - slot(annotation, "cpos")[,1L] + 1L,
                   SIMPLIFY = FALSE
                 )
               )
             ),
-            as.character(ranges_to_cpos(annotation@cpos))
+            as.character(ranges_to_cpos(slot(annotation, "cpos")))
           )
         )
       }
@@ -196,8 +196,8 @@ setMethod(
 
 #' @rdname read-method
 setMethod("read", "partition_bundle", function(.Object, highlight = list(), cpos = TRUE, ...){
-  for (i in 1L:length(.Object@objects)){
-    y <- read(.Object@objects[[i]], highlight = highlight, cpos = cpos, ...)
+  for (i in 1L:length(slot(.Object, "objects"))){
+    y <- read(slot(.Object, "objects")[[i]], highlight = highlight, cpos = cpos, ...)
     show(y)
     key <- readline("Enter 'q' to quit, any other key to continue. ")
     if (key == "q") break
@@ -213,7 +213,7 @@ setMethod("read", "data.table", function(.Object, col, partition_bundle, highlig
   toRead <- as.bundle(
     lapply(
       partitionsToGet,
-      function(x) partition_bundle@objects[[x]])
+      function(x) slot(partition_bundle, "objects")[[x]])
   )
   read(toRead, highlight = list(yellow = col), ...)
 })
@@ -221,9 +221,9 @@ setMethod("read", "data.table", function(.Object, col, partition_bundle, highlig
 #' @rdname read-method
 setMethod("read", "hits", function(.Object, def, i = NULL, ...){
   if (is.null(i)){
-    for (i in 1L:nrow(.Object@stat)){
-      sAttrs <- lapply(setNames(def, def), function(x) .Object@stat[[x]][i])
-      read(partition(.Object@corpus, def = sAttrs, ...))
+    for (i in 1L:nrow(slot(.Object, "stat"))){
+      sAttrs <- lapply(setNames(def, def), function(x) slot(.Object, "stat")[[x]][i])
+      read(partition(slot(.Object, "corpus"), def = sAttrs, ...))
       readline(">> ")
     }
   }
@@ -234,12 +234,12 @@ setMethod("read", "kwic", function(.Object, i = NULL, type){
   
   if (missing(type)){
     properties <- corpus_properties(
-      corpus = .Object@corpus,
-      registry = .Object@registry_dir
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
     )
     if ("type" %in% properties){
       type <- corpus_property(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
         property = "type"
       )
     } else {
@@ -276,14 +276,14 @@ setMethod("read", "regions", function(.Object, meta = NULL){
         function(M){
           as.nativeEnc(
             cl_struc2str(
-              corpus = .Object@corpus,
+              corpus = slot(.Object, "corpus"),
               s_attribute = M,
               struc = cl_cpos2struc(
-                corpus = .Object@corpus,  registry = .Object@registry_dir,
+                corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
                 s_attribute = M, cpos = .BY[[1]]
               ),
-              registry = .Object@registry_dir
-            ), from = .Object@encoding
+              registry = slot(.Object, "registry_dir")
+            ), from = slot(.Object, "encoding")
             )
         }
       )

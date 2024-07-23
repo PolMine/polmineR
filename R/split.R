@@ -20,29 +20,29 @@
 #' pb <- split(p, gap = 500L)
 #' summary(pb)
 setMethod("split", "partition", function(x, gap, ...){
-  if (nrow(x@cpos) > 1L){
-    distance <- x@cpos[,1][2L:nrow(x@cpos)] - x@cpos[,2][1L:(nrow(x@cpos) - 1L)]
+  if (nrow(slot(x, "cpos")) > 1L){
+    distance <- slot(x, "cpos")[,1][2L:nrow(slot(x, "cpos"))] - slot(x, "cpos")[,2][1L:(nrow(slot(x, "cpos")) - 1L)]
     beginning <- c(TRUE, ifelse(distance > gap, TRUE, FALSE))
     no <- cumsum(beginning)
-    struc_list <- split(x@strucs, no)
-    cpos_list <- split(x@cpos, no)
+    struc_list <- split(slot(x, "strucs"), no)
+    cpos_list <- split(slot(x, "cpos"), no)
     
     y_list <- lapply(
       seq_along(struc_list),
       function(i) {
         p <- x
-        p@strucs <- struc_list[[i]]
-        p@cpos <- matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L)
-        p@name = paste(x@name, i, collapse = "_", sep = "_")
-        p@stat = data.table()
-        p@size <- size(p)
+        slot(p, "strucs") <- struc_list[[i]]
+        slot(p, "cpos") <- matrix(data = cpos_list[[i]], byrow = FALSE, ncol = 2L)
+        slot(p, "name") = paste(slot(x, "name"), i, collapse = "_", sep = "_")
+        slot(p, "stat") = data.table()
+        slot(p, "size") <- size(p)
         p
       })
   } else {
-    x@name <- paste(x@name, 1, collapse = "_", sep = "_")
+    slot(x, "name") <- paste(slot(x, "name"), 1, collapse = "_", sep = "_")
     y_list <- list(x)
   }
-  names(y_list) <- unlist(lapply(y_list, function(y) y@name))
+  names(y_list) <- unlist(lapply(y_list, function(y) slot(y, "name")))
   as.bundle(y_list)
 })
 
@@ -89,30 +89,30 @@ setMethod("split", "subcorpus", function(
   if (verbose) cli_alert_info("bundle class: {col_cyan({retval_class})}")
   
   cl <- if (isTRUE(pb_call)) "partition" else "subcorpus"
-  new_class <- if (length(x@type) == 0L || is.na(x@type)){
+  new_class <- if (length(slot(x, "type")) == 0L || is.na(slot(x, "type"))){
     cl
   } else {
-    paste(x@type, cl, sep = "_") 
+    paste(slot(x, "type"), cl, sep = "_") 
   }
   
   prototype <- as(x, new_class)
   if (verbose) cli_alert_info("objects in bundle: {col_cyan({new_class})}")
 
-  y@s_attributes_fixed <- x@s_attributes
+  slot(y, "s_attributes_fixed") <- slot(x, "s_attributes")
   
   is_sibling <- s_attr_is_sibling(
-    x = x@s_attribute_strucs,
+    x = slot(x, "s_attribute_strucs"),
     y = s_attribute,
-    corpus = x@corpus,
-    registry = x@registry_dir
+    corpus = slot(x, "corpus"),
+    registry = slot(x, "registry_dir")
   )
   
   if (!is_sibling){
     is_descendent <- s_attr_is_descendent(
       x = s_attribute,
-      y = x@s_attribute_strucs,
-      corpus = x@corpus,
-      registry = x@registry_dir
+      y = slot(x, "s_attribute_strucs"),
+      corpus = slot(x, "corpus"),
+      registry = slot(x, "registry_dir")
     )
     relation <- if (is_descendent) "descendent" else "ancestor"
   } else {
@@ -122,7 +122,7 @@ setMethod("split", "subcorpus", function(
     cli_alert_info(
       paste0(
         "s-attribute for splitting ({.val {s_attribute}}) is {relation} ",
-        "of s-attribute {.val {x@s_attribute_strucs}}"
+        "of s-attribute {.val {slot(x, 's_attribute_strucs')}}"
       )
     )
     
@@ -135,7 +135,7 @@ setMethod("split", "subcorpus", function(
   if (verbose) cli_progress_step("get list of regions")
 
   if (relation %in% c("sibling", "ancestor")){
-    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = x@cpos[,1])
+    strucs <- cpos2struc(x, s_attr = s_attribute, cpos = slot(x, "cpos")[,1])
     if (isTRUE(values)){
       strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     } else if (isFALSE(values)){
@@ -144,30 +144,30 @@ setMethod("split", "subcorpus", function(
     } else {
       stop("not implemented")
     }
-    cpos_list <- split(x@cpos, strucs_values)
+    cpos_list <- split(slot(x, "cpos"), strucs_values)
     
     if (relation == "sibling"){
       struc_list <- split(strucs, strucs_values)
       s_attr_strucs <- s_attribute
     } else if (relation == "ancestor"){
-      struc_list <- split(x@strucs, strucs_values) # different from sibling
-      s_attr_strucs <- x@s_attribute_strucs
+      struc_list <- split(slot(x, "strucs"), strucs_values) # different from sibling
+      s_attr_strucs <- slot(x, "s_attribute_strucs")
     }
   } else if (relation == "descendent"){
-    # cpos <- ranges_to_cpos(x@cpos)
+    # cpos <- ranges_to_cpos(slot(x, "cpos"))
     struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
-      corpus = x@corpus,
+      corpus = slot(x, "corpus"),
       s_attribute = s_attribute,
-      region_matrix = x@cpos,
-      registry = x@registry_dir
+      region_matrix = slot(x, "cpos"),
+      registry = slot(x, "registry_dir")
     )
     strucs <- RcppCWB::ranges_to_cpos(struc_matrix)
     # strucs <- unique(cpos2struc(x, cpos = cpos, s_attr = s_attribute))
     regions <- get_region_matrix(
-      corpus = x@corpus,
+      corpus = slot(x, "corpus"),
       s_attribute = s_attribute,
       strucs = strucs,
-      registry = x@registry_dir
+      registry = slot(x, "registry_dir")
     )
     if (isTRUE(values)){
       strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
@@ -192,19 +192,19 @@ setMethod("split", "subcorpus", function(
 
   .fn <- function(i){
     y <- prototype
-    y@cpos <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-    y@name <- names(cpos_list)[[i]]
-    y@strucs <- struc_list[[i]]
-    y@s_attribute_strucs <- s_attr_strucs
+    slot(y, "cpos") <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
+    slot(y, "name") <- names(cpos_list)[[i]]
+    slot(y, "strucs") <- struc_list[[i]]
+    slot(y, "s_attribute_strucs") <- s_attr_strucs
     if (relation == "sibling"){
-      y@s_attributes <- c(
-        x@s_attributes,
+      slot(y, "s_attributes") <- c(
+        slot(x, "s_attributes"),
         setNames(list(names(cpos_list)[[i]]), s_attribute)
       )
     }
-    y@xml = x@xml # to reconsider
-    y@size = sum((y@cpos[,2] + 1L) - y@cpos[,1])
-    y@type = x@type
+    slot(y, "xml") = slot(x, "xml") # to reconsider
+    slot(y, "size") = sum((slot(y, "cpos")[,2] + 1L) - slot(y, "cpos")[,1])
+    slot(y, "type") = slot(x, "type")
     y
   }
   
@@ -213,30 +213,30 @@ setMethod("split", "subcorpus", function(
       cli_alert_info(
         "instantiate {.val {length(cpos_list)}} {new_class} objects"
       )
-    y@objects <- pblapply(seq_along(cpos_list), .fn)
+    slot(y, "objects") <- pblapply(seq_along(cpos_list), .fn)
   } else {
     if (isFALSE(mc)){
       if (verbose) cli_progress_step(
         "instantiate {.val {length(cpos_list)}} {new_class} objects "
       )
-      y@objects <- lapply(seq_along(cpos_list), .fn)
+      slot(y, "objects") <- lapply(seq_along(cpos_list), .fn)
     } else {
       if (isTRUE(mc)) mc <- parallel::detectCores() - 1L
       if (verbose) cli_progress_step(
         "instantiate {.val {length(cpos_list)}} {new_class} objects using {.val {mc}} cores"
       )
-      y@objects <- mclapply(seq_along(cpos_list), .fn, mc.cores = mc)
+      slot(y, "objects") <- mclapply(seq_along(cpos_list), .fn, mc.cores = mc)
       
     }
     if (verbose) cli_progress_done()
   }
 
   if (nchar(prefix) == 0L){
-    names(y@objects) <- names(cpos_list)
+    names(slot(y, "objects")) <- names(cpos_list)
   } else {
     names(y) <- paste(prefix, names(cpos_list), sep = "_")
   }
-  names(y@objects) <- sapply(y@objects, function(x) x@name)
+  names(slot(y, "objects")) <- sapply(slot(y, "objects"), function(x) slot(x, "name"))
   y
 })
 
@@ -277,19 +277,19 @@ setMethod("split", "corpus", function(
   pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
   retval_class <- if (pb_call) "partition_bundle" else "subcorpus_bundle"
   cl <- if (pb_call) "partition" else "subcorpus"
-  new_class <- if (is.na(x@type)) cl else paste(x@type, cl, sep = "_")
+  new_class <- if (is.na(slot(x, "type"))) cl else paste(slot(x, "type"), cl, sep = "_")
   
   y <- as(as(x, "corpus"), retval_class)
 
   struc_size <- cl_attribute_size(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     attribute = s_attribute, attribute_type = "s"
   )
   strucs <- 0L:(struc_size - 1L)
   
   if (verbose) cli_progress_step("get regions and get values")
   cpos_matrix <- get_region_matrix(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     s_attribute = s_attribute, strucs = strucs
   )
   
@@ -320,21 +320,21 @@ setMethod("split", "corpus", function(
   
   .fn <- function(i){
     y <- prototype
-    y@name <- names(cpos_list)[[i]]
-    y@cpos <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
-    y@strucs <- struc_list[[i]]
-    y@s_attributes <- setNames(list(names(cpos_list)[[i]]), s_attribute)
-    y@s_attribute_strucs <- s_attribute
-    y@xml <- xml
-    y@size <- sum((y@cpos[,2] + 1L) - y@cpos[,1])
-    y@type <- x@type
+    slot(y, "name") <- names(cpos_list)[[i]]
+    slot(y, "cpos") <- matrix(cpos_list[[i]], ncol = 2L, byrow = FALSE)
+    slot(y, "strucs") <- struc_list[[i]]
+    slot(y, "s_attributes") <- setNames(list(names(cpos_list)[[i]]), s_attribute)
+    slot(y, "s_attribute_strucs") <- s_attribute
+    slot(y, "xml") <- xml
+    slot(y, "size") <- sum((slot(y, "cpos")[,2] + 1L) - slot(y, "cpos")[,1])
+    slot(y, "type") <- slot(x, "type")
     y
   }
   
   if (verbose)
     cli_progress_step("instantiate objects (n = {.val {length(cpos_list)}})")
   
-  y@objects <- if (progress)
+  slot(y, "objects") <- if (progress)
     pblapply(seq_along(cpos_list), .fn, cl = mc)
   else
     lapply(seq_along(cpos_list), .fn)
@@ -342,11 +342,11 @@ setMethod("split", "corpus", function(
   
   if (verbose) cli_progress_step("assign names")
   if (nchar(prefix) == 0L){
-    names(y@objects) <- names(cpos_list)
+    names(slot(y, "objects")) <- names(cpos_list)
   } else {
     names(y) <- paste(prefix, names(cpos_list), sep = "_")
   }
-  names(y@objects) <- sapply(y@objects, function(x) x@name)
+  names(slot(y, "objects")) <- sapply(slot(y, "objects"), function(x) slot(x, "name"))
   if (verbose) cli_progress_done()
   
   y
@@ -379,9 +379,9 @@ setMethod("split", "subcorpus_bundle", function(x, s_attribute, prefix = "", pro
   .fn <- function(sc){
     y <- split(x = sc, s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
     names(y) <- paste(name(sc), paste(prefix, names(y), sep = if (nchar(prefix) > 0) "_" else ""), sep = "_")
-    y@objects
+    slot(y, "objects")
   }
-  li <- if (progress) pblapply(x@objects, .fn, cl = mc) else lapply(x@objects, .fn)
+  li <- if (progress) pblapply(slot(x, "objects"), .fn, cl = mc) else lapply(slot(x, "objects"), .fn)
   as(unlist(li), "bundle")
 })
 

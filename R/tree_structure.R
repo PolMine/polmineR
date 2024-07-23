@@ -119,7 +119,7 @@ setMethod("tree_structure", "xml_document", function(x, s_attribute = NULL, pref
 setMethod("tree_structure", "subcorpus", function(x){
   tree_structure(
     x = as(x, "corpus"),
-    s_attribute = x@s_attribute_strucs
+    s_attribute = slot(x, "s_attribute_strucs")
   )
 })
 

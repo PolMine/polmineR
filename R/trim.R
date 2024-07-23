@@ -160,38 +160,38 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
   if (!is.null(s_attribute)){
     stopifnot(length(s_attribute) == 1L)
     s_attr_col <- paste(s_attribute, "int", sep = "_")
-    if (!s_attr_col %in% colnames(.Object@cpos)){
+    if (!s_attr_col %in% colnames(slot(.Object, "cpos"))){
       enrich(.Object, s_attribute = s_attribute) # in-place operation
     }
-    setnames(.Object@cpos, old = s_attr_col, new = "struc")
+    setnames(slot(.Object, "cpos"), old = s_attr_col, new = "struc")
 
     .message("checking boundaries of regions", verbose = verbose)
-    if (progress) pb <- txtProgressBar(min = 1, max = .Object@count, style = 3)
+    if (progress) pb <- txtProgressBar(min = 1, max = slot(.Object, "count"), style = 3)
     .check <- function(.SD, .GRP){
       if (progress) setTxtProgressBar(pb, value = .GRP)
       struc_hit <- .SD[.SD[["position"]] == 0][["struc"]][1]
       .SD[.SD[["struc"]] == struc_hit]
     }
-    .Object@cpos <- .Object@cpos[, .check(.SD, .GRP), by = "match_id"]
+    slot(.Object, "cpos") <- slot(.Object, "cpos")[, .check(.SD, .GRP), by = "match_id"]
     if (progress) close(pb)
-    setnames(.Object@cpos, old = "struc", new = s_attr_col)
+    setnames(slot(.Object, "cpos"), old = "struc", new = s_attr_col)
   }
   
   if (!is.null(positivelist)){
     .message("filtering by positivelist", verbose = verbose)
-    before <- length(unique(.Object@cpos[["match_id"]]))
+    before <- length(unique(slot(.Object, "cpos")[["match_id"]]))
     if (is.matrix(positivelist)){
       dt <- data.table(cpos = ranges_to_cpos(positivelist), positivelist = TRUE)
-      cpos_min <- dt[.Object@cpos[.Object@cpos[["position"]] != 0], on = "cpos"]
+      cpos_min <- dt[slot(.Object, "cpos")[slot(.Object, "cpos")[["position"]] != 0], on = "cpos"]
       matches_to_keep <- cpos_min[,
         if (any(!is.na(.SD$positivelist))) .SD else NULL,
         by = "match_id"
       ][["match_id"]]
-      .Object@cpos <- .Object@cpos[.Object@cpos[["match_id"]] %in% matches_to_keep]
+      slot(.Object, "cpos") <- slot(.Object, "cpos")[slot(.Object, "cpos")[["match_id"]] %in% matches_to_keep]
     } else {
       positivelist_ids <- .token2id(
-        corpus = .Object@corpus,
-        registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"),
+        registry = slot(.Object, "registry_dir"),
         p_attribute = p_attribute,
         token = positivelist,
         regex = regex
@@ -200,18 +200,18 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
         neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
         if (any(neighbors %in% positivelist_ids)) return( .SD ) else return( NULL )
       }
-      .Object@cpos <- .Object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
+      slot(.Object, "cpos") <- slot(.Object, "cpos")[, .fn(.SD), by = "match_id", with = TRUE]
     }
     
-    if (nrow(.Object@cpos) == 0) {
+    if (nrow(slot(.Object, "cpos")) == 0) {
       warning("no remaining hits after applying positivelist, returning NULL")
       return( invisible(NULL) )
     }
 
-    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
+    slot(.Object, "count") <- length(unique(slot(.Object, "cpos")[["match_id"]]))
     .message(
       "number of hits dropped due to positivelist:",
-      before - .Object@count, verbose = verbose
+      before - slot(.Object, "count"), verbose = verbose
     )
     
     .Object <- enrich(.Object, stat = TRUE)
@@ -220,10 +220,10 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
   
   if (!is.null(stoplist)){
     .message("applying stoplist", verbose = verbose)
-    before <- length(unique(.Object@cpos[["match_id"]]))
+    before <- length(unique(slot(.Object, "cpos")[["match_id"]]))
     stoplist_ids <- .token2id(
-      corpus = .Object@corpus,
-      registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir"),
       p_attribute = p_attribute,
       token = stoplist,
       regex = regex
@@ -234,17 +234,17 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
       negatives <- negatives[ -which(.SD[["position"]] == 0) ] # exclude node
       if (any(negatives)) return( NULL ) else return( .SD ) # this is the only difference
     }
-    .Object@cpos <- .Object@cpos[, .fn(.SD), by = "match_id", with = TRUE]
+    slot(.Object, "cpos") <- slot(.Object, "cpos")[, .fn(.SD), by = "match_id", with = TRUE]
     
-    if (nrow(.Object@cpos) == 0L) {
+    if (nrow(slot(.Object, "cpos")) == 0L) {
       warning("no remaining hits after applying stoplist, returning NULL")
       return( NULL )
     }
 
-    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
+    slot(.Object, "count") <- length(unique(slot(.Object, "cpos")[["match_id"]]))
     .message(
       "number of hits dropped due to stoplist:",
-      before - .Object@count,
+      before - slot(.Object, "count"),
       verbose = verbose
     )
     
@@ -252,16 +252,16 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
   }
   
   if (!is.null(fn)){
-    before <- length(unique(.Object@cpos[["match_id"]]))
-    .Object@cpos <- rbindlist(lapply(split(.Object@cpos, by = "match_id"), fn))
+    before <- length(unique(slot(.Object, "cpos")[["match_id"]]))
+    slot(.Object, "cpos") <- rbindlist(lapply(split(slot(.Object, "cpos"), by = "match_id"), fn))
     
-    if (nrow(.Object@cpos) == 0L) {
+    if (nrow(slot(.Object, "cpos")) == 0L) {
       warning("no remaining hits after applying trimming fn, returning NULL")
       return( NULL )
     }
     
-    .Object@count <- length(unique(.Object@cpos[["match_id"]]))
-    .message("new number of hits:", .Object@count, verbose = verbose)
+    slot(.Object, "count") <- length(unique(slot(.Object, "cpos")[["match_id"]]))
+    .message("new number of hits:", slot(.Object, "count"), verbose = verbose)
     .Object <- enrich(.Object, stat = TRUE)
   }
   

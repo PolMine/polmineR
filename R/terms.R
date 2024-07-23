@@ -30,22 +30,22 @@ setMethod("terms", "partition", function(x, p_attribute, regex = NULL){
   if (!is.null(regex)) stopifnot(is.character(regex))
   
   # if count has been performed for partition use stat table
-  if (identical(p_attribute, x@p_attribute)){
-    y <- x@stat[[p_attribute]]
+  if (identical(p_attribute, slot(x, "p_attribute"))){
+    y <- slot(x, "stat")[[p_attribute]]
   } else {
     ids <- region_matrix_to_ids(
-      corpus = x@corpus, registry = x@registry_dir,
+      corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
       p_attribute = p_attribute,
-      matrix = x@cpos
+      matrix = slot(x, "cpos")
     )
     ids_unique <- unique(ids)
     y <- cl_id2str(
-      corpus = x@corpus,
+      corpus = slot(x, "corpus"),
       p_attribute = p_attribute,
       id = ids_unique,
-      registry = x@registry_dir
+      registry = slot(x, "registry_dir")
     )
-    Encoding(y) <- x@encoding
+    Encoding(y) <- slot(x, "encoding")
   }
   y <- enc2utf8(y)
   
@@ -74,19 +74,19 @@ setMethod("terms", "corpus", function(x, p_attribute, regex = NULL, robust = FAL
   if (!is.null(regex)) stopifnot(is.character(regex))
   
   terms_total <- cl_lexicon_size(
-    corpus = x@corpus,
+    corpus = slot(x, "corpus"),
     p_attribute = p_attribute,
-    registry = x@registry_dir
+    registry = slot(x, "registry_dir")
   )
   ids <- 0L:(terms_total - 1L)
   str <- cl_id2str(
-    corpus = x@corpus,
+    corpus = slot(x, "corpus"),
     p_attribute = p_attribute,
     id = ids,
-    registry = x@registry_dir
+    registry = slot(x, "registry_dir")
   )
-  Encoding(str) <- x@encoding
-  y <- as.nativeEnc(str, from = x@encoding)
+  Encoding(str) <- slot(x, "encoding")
+  y <- as.nativeEnc(str, from = slot(x, "encoding"))
   
   if (robust != FALSE){
     if (robust){

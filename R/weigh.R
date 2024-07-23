@@ -120,16 +120,16 @@ setMethod("weigh", "DocumentTermMatrix", function(.Object, method = "tfidf"){
 #' }
 #' @rdname weigh-method
 setMethod("weigh", "count", function(.Object, with){
-  setkeyv(x = .Object@stat, cols = .Object@p_attribute)
-  setkeyv(x = with, cols = .Object@p_attribute)
-  with_min <- with[, c(.Object@p_attribute, "weight"), with = FALSE]
-  .Object@stat <- with_min[.Object@stat]
+  setkeyv(x = slot(.Object, "stat"), cols = slot(.Object, "p_attribute"))
+  setkeyv(x = with, cols = slot(.Object, "p_attribute"))
+  with_min <- with[, c(slot(.Object, "p_attribute"), "weight"), with = FALSE]
+  slot(.Object, "stat") <- with_min[slot(.Object, "stat")]
   .Object
 })
 
 #' @rdname weigh-method
 setMethod("weigh", "count_bundle", function(.Object, with, progress = TRUE){
   .fn <- function(x) weigh(x, with = with)
-  if (progress) .Object@objects <- pblapply(.Object@objects, .fn) else lapply(.Object@objects, .fn)
+  if (progress) slot(.Object, "objects") <- pblapply(slot(.Object, "objects"), .fn) else lapply(slot(.Object, "objects"), .fn)
   .Object
 })

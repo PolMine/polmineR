@@ -141,16 +141,16 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
   if (regex){
     pb <- txtProgressBar(min = 0L, max = length(tooltips))
     for (i in 1L:length(tooltips)){
-      .Object@cpos[["word"]] <- ifelse(
+      slot(.Object, "cpos")[["word"]] <- ifelse(
         grepl(
           sprintf("^(<.*?>|)%s(<.*?>|)$", unname(tooltips[[i]])),
-          .Object@cpos[["word"]]
+          slot(.Object, "cpos")[["word"]]
         ),
         sprintf(
           '<span class="tooltipping">%s<span class="tooltippingtext">%s</span></span>',
-          .Object@cpos[["word"]], names(tooltips)[[i]]
+          slot(.Object, "cpos")[["word"]], names(tooltips)[[i]]
         ),
-        .Object@cpos[["word"]]
+        slot(.Object, "cpos")[["word"]]
       )
       setTxtProgressBar(pb, value = i)
     }
@@ -165,18 +165,18 @@ setMethod("tooltips", "kwic", function(.Object, tooltips, regex = FALSE, ...){
     }
     words <- gsub(
       "^(<.*?>|)(.*?)(<.*?>|)$", "\\2",
-      .Object@cpos[["word"]], perl = TRUE
+      slot(.Object, "cpos")[["word"]], perl = TRUE
     )
     tips_vec <- tips_rev[words]
     
-    .Object@cpos[["word"]] <- ifelse(
+    slot(.Object, "cpos")[["word"]] <- ifelse(
       is.na(tips_vec),
-      .Object@cpos[["word"]],
+      slot(.Object, "cpos")[["word"]],
       sprintf(
         '<span class="tooltipping">%s<span class="tooltippingtext">%s</span></span>',
-        .Object@cpos[["word"]], tips_vec
+        slot(.Object, "cpos")[["word"]], tips_vec
       )
     )
   }
-  enrich(.Object, table = TRUE, s_attributes = .Object@metadata)
+  enrich(.Object, table = TRUE, s_attributes = slot(.Object, "metadata"))
 })

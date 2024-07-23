@@ -100,7 +100,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         stop(
           sprintf(
             "The s-attribute '%s' is not defined for corpus '%s'.",
-            s_attribute, .Object@corpus
+            s_attribute, slot(.Object, "corpus")
           )
         )
       }
@@ -113,9 +113,9 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
       }
       avs_file_size <- file.info(avs_file)[["size"]]
       avs <- readBin(con = avs_file, what = character(), n = avs_file_size)
-      Encoding(avs) <- .Object@encoding
-      if (.Object@encoding != encoding())
-        avs <- as.nativeEnc(avs, from = .Object@encoding)
+      Encoding(avs) <- slot(.Object, "encoding")
+      if (slot(.Object, "encoding") != encoding())
+        avs <- as.nativeEnc(avs, from = slot(.Object, "encoding"))
       
       if (unique){
         return(avs)
@@ -144,7 +144,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         s_attribute,
         function(s_attr)
           cl_attribute_size(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             attribute = s_attr, attribute_type = "s"
           )
       )
@@ -157,9 +157,9 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         )
       } else {
         dt <- s_attribute_decode(
-          corpus = .Object@corpus, s_attribute = s_attribute[1],
-          data_dir = .Object@data_dir,
-          encoding = .Object@encoding,
+          corpus = slot(.Object, "corpus"), s_attribute = s_attribute[1],
+          data_dir = slot(.Object, "data_dir"),
+          encoding = slot(.Object, "encoding"),
           method = "R" # this is usually the fastest option
         )
         setDT(dt)
@@ -167,7 +167,7 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
         setcolorder(dt, "struc")
         y <- s_attributes(
           dt,
-          corpus = .Object@corpus, s_attribute = s_attribute[-1L]
+          corpus = slot(.Object, "corpus"), s_attribute = s_attribute[-1L]
         )
       }
       
@@ -196,11 +196,11 @@ setMethod(
     }
     if (is.null(s_attribute)){
       return(
-        corpus_s_attributes(.Object@corpus, registry = .Object@registry_dir)
+        corpus_s_attributes(slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"))
       )
     } else {
       if (length(s_attribute) == 1L){
-        avs_file <- path(.Object@data_dir, paste(s_attribute, "avs", sep = "."))
+        avs_file <- path(slot(.Object, "data_dir"), paste(s_attribute, "avs", sep = "."))
         if (!file.exists(avs_file)){
           cli_alert_warning(
             "s-attribute {.var {s_attribute}} does not have values, returning NA"
@@ -208,26 +208,26 @@ setMethod(
           return(NA_character_)
         }
 
-        # Checking whether the xml is flat / whether s_attribute is in .Object@s_attribute_strucs 
+        # Checking whether the xml is flat / whether s_attribute is in slot(.Object, "s_attribute_strucs") 
         # is necessary because there are scenarios when these slots are not defined.
-        xml_is_flat <- if (length(.Object@xml) > 0L){
-          if (.Object@xml == "flat") TRUE else FALSE
+        xml_is_flat <- if (length(slot(.Object, "xml")) > 0L){
+          if (slot(.Object, "xml") == "flat") TRUE else FALSE
         } else {
           FALSE
         }
-        s_attr_strucs <- if (length(.Object@s_attribute_strucs) > 0L){
-          if (.Object@s_attribute_strucs == s_attribute) TRUE else FALSE
+        s_attr_strucs <- if (length(slot(.Object, "s_attribute_strucs")) > 0L){
+          if (slot(.Object, "s_attribute_strucs") == s_attribute) TRUE else FALSE
         } else {
           FALSE
         }
            
         if (xml_is_flat && s_attr_strucs){
           len1 <- cl_attribute_size(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
-            attribute = .Object@s_attribute_strucs, attribute_type = "s"
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+            attribute = slot(.Object, "s_attribute_strucs"), attribute_type = "s"
           )
           len2 <- cl_attribute_size(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             attribute = s_attribute, attribute_type = "s"
           )
           if (len1 != len2){
@@ -237,14 +237,14 @@ setMethod(
             )
           }
           retval <- cl_struc2str(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
-            s_attribute = s_attribute, struc = .Object@strucs
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+            s_attribute = s_attribute, struc = slot(.Object, "strucs")
           )
           if (unique) retval <- unique(retval)
         } else {
-          cpos_vector <- ranges_to_cpos(.Object@cpos)
+          cpos_vector <- ranges_to_cpos(slot(.Object, "cpos"))
           strucs <- cl_cpos2struc(
-            corpus = .Object@corpus, registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
             s_attribute = s_attribute, cpos = cpos_vector
           )
           strucs <- unique(strucs)
@@ -252,13 +252,13 @@ setMethod(
           # will complain about negative values
           strucs <- strucs[which(strucs >= 0L)]
           retval <- cl_struc2str(
-            corpus = .Object@corpus,  registry = .Object@registry_dir,
+            corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
             s_attribute = s_attribute, struc = strucs
           )
           if (unique) retval <- unique(retval)
         }
-        Encoding(retval) <- .Object@encoding
-        retval <- as.nativeEnc(retval, from = .Object@encoding)
+        Encoding(retval) <- slot(.Object, "encoding")
+        retval <- as.nativeEnc(retval, from = slot(.Object, "encoding"))
         Encoding(retval) <- encoding()
         return(retval)
       } else if (length(s_attribute) > 1L){
@@ -266,22 +266,22 @@ setMethod(
           s_attribute,
           USE.NAMES = TRUE,
           function(x){
-            strucs <- if (.Object@xml == "nested"){
+            strucs <- if (slot(.Object, "xml") == "nested"){
               cl_cpos2struc(
-                corpus = .Object@corpus,
-                registry = .Object@registry_dir,
+                corpus = slot(.Object, "corpus"),
+                registry = slot(.Object, "registry_dir"),
                 s_attribute = x,
-                cpos = .Object@cpos[,1]
+                cpos = slot(.Object, "cpos")[,1]
               )
             } else {
-              .Object@strucs
+              slot(.Object, "strucs")
             }
             str <- cl_struc2str(
-              corpus = .Object@corpus, registry = .Object@registry_dir,
+              corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
               s_attribute = x, struc = strucs
             )
-            Encoding(str) <- .Object@encoding
-            str <- as.nativeEnc(str, from = .Object@encoding)
+            Encoding(str) <- slot(.Object, "encoding")
+            str <- as.nativeEnc(str, from = slot(.Object, "encoding"))
             Encoding(str) <- encoding()
             str
           }
@@ -289,7 +289,7 @@ setMethod(
         
         # Checking for the number of rows in the region matrix is necessary to avoid that 
         # the table is transposed if nrow(tab_data) == 1
-        tab <- if (nrow(.Object@cpos) > 1L)
+        tab <- if (nrow(slot(.Object, "cpos")) > 1L)
           data.table(tab_data)
         else
           data.table(matrix(tab_data, nrow = 1L))
@@ -322,18 +322,18 @@ setMethod("s_attributes", "context", function (.Object, s_attribute = NULL){
   setorderv(dt_min, cols = "cpos", order = 1L)
   cpos <- dt_min[, list(cpos = .SD[["cpos"]][1]), by = "match_id"][["cpos"]]
   strucs <- cl_cpos2struc(
-    corpus = .Object@corpus,
+    corpus = slot(.Object, "corpus"),
     s_attribute = s_attribute,
-    registry = .Object@registry_dir,
+    registry = slot(.Object, "registry_dir"),
     cpos = cpos
   )
   s_attr <- cl_struc2str(
-    corpus = .Object@corpus,
+    corpus = slot(.Object, "corpus"),
     s_attribute = s_attribute,
     struc = strucs
   )
-  Encoding(s_attr) <- .Object@encoding
-  as.nativeEnc(s_attr, from = .Object@encoding)
+  Encoding(s_attr) <- slot(.Object, "encoding")
+  as.nativeEnc(s_attr, from = slot(.Object, "encoding"))
 })
 
 
@@ -354,7 +354,7 @@ setMethod(
     s_attribute <- list(...)[["sAttribute"]]
   }
   
-  strucs <- lapply(.Object@objects, slot, "strucs")
+  strucs <- lapply(slot(.Object, "objects"), slot, "strucs")
   f <- unlist(
     mapply(
       rep,
@@ -367,57 +367,57 @@ setMethod(
   relationship <- s_attr_relationship(
     x = s_attr_strucs,
     y = s_attribute,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir")
   )
   
   if (relationship == 0L){
     values <- cl_struc2str(
-      corpus = .Object@corpus,
+      corpus = slot(.Object, "corpus"),
       s_attribute = s_attribute,
       struc = unlist(strucs, recursive = TRUE),
-      registry = .Object@registry_dir
+      registry = slot(.Object, "registry_dir")
     )
   } else if (relationship == -1L){
     strucs <- cl_cpos2struc(
-      corpus = .Object@corpus,
+      corpus = slot(.Object, "corpus"),
       cpos = do.call(
         c,
-        unname(lapply(.Object@objects, function(x) x@cpos[,1]))
+        unname(lapply(slot(.Object, "objects"), function(x) slot(x, "cpos")[,1]))
       ),
       s_attribute = s_attribute,
-      registry = .Object@registry_dir
+      registry = slot(.Object, "registry_dir")
     )
     values <- cl_struc2str(
-      corpus = .Object@corpus,
+      corpus = slot(.Object, "corpus"),
       s_attribute = s_attribute,
       struc = unlist(strucs, recursive = TRUE),
-      registry = .Object@registry_dir
+      registry = slot(.Object, "registry_dir")
     )
   } else if (relationship == 1L){
-    region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
+    region_matrix <- do.call(rbind, lapply(slot(.Object, "objects"), slot, "cpos"))
     struc_matrix <- RcppCWB::region_matrix_to_struc_matrix(
-      corpus = .Object@corpus,
+      corpus = slot(.Object, "corpus"),
       s_attribute = s_attribute,
       region_matrix = region_matrix,
-      registry = .Object@registry_dir
+      registry = slot(.Object, "registry_dir")
     )
     strucs <- ranges_to_cpos(struc_matrix)
     values <- cl_struc2str(
-      corpus = .Object@corpus,
+      corpus = slot(.Object, "corpus"),
       s_attribute = s_attribute,
       struc = strucs,
-      registry = .Object@registry_dir
+      registry = slot(.Object, "registry_dir")
     )
     .size <- function(x) sum(x[,2] - x[,1] + 1L)
     n <- lapply(lapply(split(x = struc_matrix, f = f), matrix, ncol = 2), .size)
     f <- unlist(mapply(rep, x = seq_along(n), times = n), recursive = FALSE)
   }
-  Encoding(values) <- .Object@encoding
-  values <- as.nativeEnc(values, from = .Object@encoding)
+  Encoding(values) <- slot(.Object, "encoding")
+  values <- as.nativeEnc(values, from = slot(.Object, "encoding"))
   retval <- split(x = values, f = f)
   if (unique) retval <- lapply(retval, unique)
-  names(retval) <- names(.Object@objects)
+  names(retval) <- names(slot(.Object, "objects"))
   retval
 })
 
@@ -454,8 +454,8 @@ setMethod("s_attributes", "call", function(.Object, corpus){
     corpus_s_attributes(corpus = corpus, registry = corpus_registry_dir(corpus))
   } else {
     corpus_s_attributes(
-      corpus = corpus@corpus,
-      registry = corpus@registry_dir
+      corpus = slot(corpus, "corpus"),
+      registry = slot(corpus, "registry_dir")
     )
   }
   # for the following recursive function,
@@ -532,13 +532,13 @@ setMethod("s_attributes", "name", function(.Object, corpus){
 
 #' @rdname s_attributes-method
 setMethod("s_attributes", "remote_corpus", function(.Object, ...){
-  ocpu_exec(fn = "s_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "corpus"), ...)
+  ocpu_exec(fn = "s_attributes", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "corpus"), ...)
 })
 
 
 #' @rdname s_attributes-method
 setMethod("s_attributes", "remote_partition", function(.Object, ...){
-  ocpu_exec(fn = "s_attributes", corpus = .Object@corpus, server = .Object@server, restricted = .Object@restricted, .Object = as(.Object, "partition"), ...)
+  ocpu_exec(fn = "s_attributes", corpus = slot(.Object, "corpus"), server = slot(.Object, "server"), restricted = slot(.Object, "restricted"), .Object = as(.Object, "partition"), ...)
 })
 
 

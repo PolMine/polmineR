@@ -39,13 +39,13 @@ setMethod("get_template", "character", function(.Object, warn = FALSE){
 
 #' @rdname templates
 setMethod("get_template", "corpus", function(.Object, warn = FALSE){
-  if (is.na(.Object@template)){
+  if (is.na(slot(.Object, "template"))){
     if (warn) cli_alert_warning(
-      "No template available for corpus {.val {.Object@corpus}}."
+      "No template available for corpus {.val {slot(.Object, 'corpus')}}."
     )
     return(NULL)
   } else {
-    y <- jsonlite::fromJSON(txt = .Object@template) 
+    y <- jsonlite::fromJSON(txt = slot(.Object, "template")) 
     if ("metadata" %in% names(y)) y[["metadata"]] <- unlist(y[["metadata"]])
     return(y)
   }

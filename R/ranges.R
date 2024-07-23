@@ -76,25 +76,25 @@ setMethod(
   y <- as(.Object, "ranges")
   region_matrix <- do.call(rbind, cpos_list)
   if (is.null(region_matrix)){ # no query matches at all
-    y@cpos <- matrix(nrow = 0L, ncol = 2L)
-    y@query <- character()
-    y@match <- character()
+    slot(y, "cpos") <- matrix(nrow = 0L, ncol = 2L)
+    slot(y, "query") <- character()
+    slot(y, "match") <- character()
   } else {
-    y@cpos <- region_matrix
-    y@query <- unlist(
+    slot(y, "cpos") <- region_matrix
+    slot(y, "query") <- unlist(
       lapply(names(cpos_list), function(x) rep(x, times = nrow(cpos_list[[x]])))
     )
-    y@match <- stri_c_list(get_token_stream(
-      y@cpos,
+    slot(y, "match") <- stri_c_list(get_token_stream(
+      slot(y, "cpos"),
       p_attribute = p_attribute,
-      corpus = .Object@corpus,
-      registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir"),
       split = TRUE
     ), sep = " ")
   }
 
-  y@size <- integer() # drop corpus size
-  y@size <- size(y)
+  slot(y, "size") <- integer() # drop corpus size
+  slot(y, "size") <- size(y)
   y
 })
 
@@ -130,29 +130,29 @@ setMethod("ranges", "subcorpus", function(.Object, query, cqp = FALSE, check = T
   )
   
   strucs_matches <- cl_cpos2struc(
-    corpus = .Object@corpus,
-    s_attribute = .Object@s_attribute_strucs,
-    cpos = rng@cpos[,1], registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"),
+    s_attribute = slot(.Object, "s_attribute_strucs"),
+    cpos = slot(rng, "cpos")[,1], registry = slot(.Object, "registry_dir")
   )
-  rng@cpos <- rng@cpos[strucs_matches %in% .Object@strucs,]
-  rng@query <- rng@query[strucs_matches %in% .Object@strucs]
-  rng@match <- if (nrow(rng@cpos) == 0L){
+  slot(rng, "cpos") <- slot(rng, "cpos")[strucs_matches %in% slot(.Object, "strucs"),]
+  slot(rng, "query") <- slot(rng, "query")[strucs_matches %in% slot(.Object, "strucs")]
+  slot(rng, "match") <- if (nrow(slot(rng, "cpos")) == 0L){
     character()
   } else {
     stri_c_list(
       get_token_stream(
-        rng@cpos,
+        slot(rng, "cpos"),
         p_attribute = p_attribute,
-        corpus = .Object@corpus,
-        registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"),
+        registry = slot(.Object, "registry_dir"),
         split = TRUE
       ),
       sep = " "
     )
   }
 
-  rng@size <- integer() # drop corpus size
-  rng@size <- size(rng)
+  slot(rng, "size") <- integer() # drop corpus size
+  slot(rng, "size") <- size(rng)
 
   rng
 })
@@ -184,9 +184,9 @@ setMethod(
 #' @export
 #' @method as.data.table ranges
 as.data.table.ranges <- function(x, ...){
-  y <- data.table::as.data.table(x@cpos)
+  y <- data.table::as.data.table(slot(x, "cpos"))
   colnames(y) <- c("cpos_left", "cpos_right")
-  y[, "query" := x@query]
-  y[, "match" := x@match]
+  y[, "query" := slot(x, "query")]
+  y[, "match" := slot(x, "match")]
   y
 }

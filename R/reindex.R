@@ -27,28 +27,28 @@ setMethod("reindex", "TermDocumentMatrix", function(x){
 
 setMethod("reindex", "Cooccurrences", function(x){
   
-  if (length(x@p_attribute) > 1L)
+  if (length(slot(x, "p_attribute")) > 1L)
     stop("Method 'reindex' only works if one and only one p-attribute is used.")
   
   verbose <- interactive()
   
   if (verbose) message("... creating data.table for reindexing")
-  dt <- data.table(id = unique(x@stat[["a_id"]]))
+  dt <- data.table(id = unique(slot(x, "stat")[["a_id"]]))
   setkeyv(dt, cols = "id")
   setorderv(dt, cols = "id")
   dt[, "id_new" := 1L:nrow(dt), with = TRUE]
-  setkeyv(x@stat, "a_id")
+  setkeyv(slot(x, "stat"), "a_id")
   
   if (verbose) message("... reindexing a")
-  x@stat[, "a_new_index" := x@stat[dt][["id_new"]]]
-  setkeyv(x@stat, "b_id")
+  slot(x, "stat")[, "a_new_index" := slot(x, "stat")[dt][["id_new"]]]
+  setkeyv(slot(x, "stat"), "b_id")
   
   if (verbose) message("... reindexing b")
-  x@stat[, "b_new_index" := x@stat[dt][["id_new"]]]
+  slot(x, "stat")[, "b_new_index" := slot(x, "stat")[dt][["id_new"]]]
   
   if (verbose) message("... decoding tokens")
   as.nativeEnc(
-    id2str(x, p_attribute = x@p_attribute, id = dt[["id"]]),
-    from = x@encoding
+    id2str(x, p_attribute = slot(x, "p_attribute"), id = dt[["id"]]),
+    from = slot(x, "encoding")
   )
 })

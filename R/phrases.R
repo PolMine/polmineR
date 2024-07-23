@@ -31,12 +31,12 @@ setGeneric("as.phrases", function(.Object, ...) standardGeneric("as.phrases"))
 setMethod("as.phrases", "ngrams", function(.Object){
   # First, prepare data.table with token id representation of phrases to look up
   li <- lapply(
-    paste(.Object@p_attribute, 1L:.Object@n, sep = "_"),
+    paste(slot(.Object, "p_attribute"), 1L:slot(.Object, "n"), sep = "_"),
     function(colname){
-      tokens <- as.corpusEnc(x = .Object@stat[[colname]], corpusEnc = .Object@encoding)
+      tokens <- as.corpusEnc(x = slot(.Object, "stat")[[colname]], corpusEnc = slot(.Object, "encoding"))
       cl_str2id(
-        corpus = .Object@corpus, registry = .Object@registry_dir,
-        p_attribute = .Object@p_attribute, str = tokens
+        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+        p_attribute = slot(.Object, "p_attribute"), str = tokens
       )
     }
   )
@@ -45,8 +45,8 @@ setMethod("as.phrases", "ngrams", function(.Object){
   
   # Anticipate whether memory will suffice
   cnt_file <- path(
-    corpus_data_dir(.Object@corpus, registry = .Object@registry_dir),
-    sprintf("%s.corpus.cnt", .Object@p_attribute)
+    corpus_data_dir(slot(.Object, "corpus"), registry = slot(.Object, "registry_dir")),
+    sprintf("%s.corpus.cnt", slot(.Object, "p_attribute"))
   )
   cnt_file_size <- file.info(cnt_file)$size
   cnt <- readBin(con = cnt_file, what = integer(), size = 4L, n = cnt_file_size, endian = "big")
@@ -57,24 +57,24 @@ setMethod("as.phrases", "ngrams", function(.Object){
   }
   
   # Expand first token to corpus positions of initial token
-  cpos_dt <- data.table(unique(li[[1]]))[, list(cpos = RcppCWB::cl_id2cpos(corpus = .Object@corpus, registry = .Object@registry_dir, p_attribute = .Object@p_attribute, id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
+  cpos_dt <- data.table(unique(li[[1]]))[, list(cpos = RcppCWB::cl_id2cpos(corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"), p_attribute = slot(.Object, "p_attribute"), id = .SD[["V1"]])), by = "V1", .SDcols = "V1"]
   # allow.cartesian = TRUE appropriate because several different ngrams may start with same token (id)
   y <- cpos_dt[id_dt, on = "V1", allow.cartesian = TRUE]   
 
   # Get id for 2nd, 3rd ... nth token after start corpus position and limit table to those matching the id
   # at the position
-  for (i in 2L:.Object@n){
+  for (i in 2L:slot(.Object, "n")){
     nextid <- cpos2id(
-      x = .Object, p_attribute = .Object@p_attribute,
+      x = .Object, p_attribute = slot(.Object, "p_attribute"),
       cpos = (y[["cpos"]] + i - 1L)
     )
     y <- y[y[[paste("V", i, sep = "")]] == nextid]
   }
   
   as.phrases(
-    matrix(data = c(y[["cpos"]], (y[["cpos"]] + .Object@n - 1L)), ncol = 2), 
-    corpus = .Object@corpus,
-    enc = .Object@encoding
+    matrix(data = c(y[["cpos"]], (y[["cpos"]] + slot(.Object, "n") - 1L)), ncol = 2), 
+    corpus = slot(.Object, "corpus"),
+    enc = slot(.Object, "encoding")
   )
 })
 
@@ -105,11 +105,11 @@ setMethod("as.phrases", "matrix", function(.Object, corpus, enc = encoding(corpu
     "phrases",
     cpos = .Object,
     corpus = corpus,
-    registry_dir = corpus_obj@registry_dir,
-    data_dir = corpus_obj@data_dir,
-    info_file = corpus_obj@info_file,
-    template = corpus_obj@template,
-    encoding = if (missing(enc)) corpus_obj@encoding else enc,
+    registry_dir = slot(corpus_obj, "registry_dir"),
+    data_dir = slot(corpus_obj, "data_dir"),
+    info_file = slot(corpus_obj, "info_file"),
+    template = slot(corpus_obj, "template"),
+    encoding = if (missing(enc)) slot(corpus_obj, "encoding") else enc,
     size = sum(.Object[,2] - .Object[,1] + 1L)
   )
 })
@@ -121,10 +121,10 @@ setMethod("as.phrases", "matrix", function(.Object, corpus, enc = encoding(corpu
 #'   will return the decoded regions, concatenated using an underscore as
 #'   seperator.
 setMethod("as.character", "phrases", function(x, p_attribute){
-  tokens <- get_token_stream(x@cpos, corpus = x@corpus, p_attribute = p_attribute, encoding = x@encoding)
+  tokens <- get_token_stream(slot(x, "cpos"), corpus = slot(x, "corpus"), p_attribute = p_attribute, encoding = slot(x, "encoding"))
   splitvec <-  cut(
     1L:length(tokens),
-    breaks = c(1L, cumsum(x@cpos[,2] - x@cpos[,1] + 1L)),
+    breaks = c(1L, cumsum(slot(x, "cpos")[,2] - slot(x, "cpos")[,1] + 1L)),
     include.lowest = TRUE
   )
   unname(sapply(split(tokens, splitvec), function(toks) paste(toks, collapse = "_")))
@@ -167,8 +167,8 @@ concatenate_phrases <- function(dt, phrases, col){
   if (is.null(phrases)) warning("Argument 'regions' of concatenate,data.table-method is NULL: Mission may fail.")
   dt[, "keep" := TRUE]
   mwe <- as.character(phrases, p_attribute = col) # multi-word expressions
-  dt[match(phrases@cpos[,1], dt[["cpos"]]), (col) := mwe]
-  drop_cpos <- as.vector(unlist(apply(phrases@cpos, 1, function(row) (row[1] + 1L):row[2])))
+  dt[match(slot(phrases, "cpos")[,1], dt[["cpos"]]), (col) := mwe]
+  drop_cpos <- as.vector(unlist(apply(slot(phrases, "cpos"), 1, function(row) (row[1] + 1L):row[2])))
   dt[match(drop_cpos, dt[["cpos"]]), "keep" := FALSE]
   dt[dt[["keep"]] == TRUE][, "keep" := NULL]
 }

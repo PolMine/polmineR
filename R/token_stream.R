@@ -186,8 +186,8 @@ setMethod("get_token_stream", "corpus", function(.Object, left = NULL, right = N
   if (is.null(right)) right <- size(.Object) - 1L
   get_token_stream(
     left:right,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir"),
     encoding = encoding(.Object),
     ...
   )
@@ -203,11 +203,11 @@ setMethod("get_token_stream", "character", function(.Object, left = NULL, right 
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "slice", function(.Object, p_attribute, collapse = NULL, cpos = FALSE, ...){
   get_token_stream(
-    .Object = .Object@cpos,
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir,
+    .Object = slot(.Object, "cpos"),
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir"),
     p_attribute = p_attribute,
-    encoding = .Object@encoding,
+    encoding = slot(.Object, "encoding"),
     collapse = collapse,
     cpos = cpos,
     ...
@@ -229,8 +229,8 @@ setMethod("get_token_stream", "subcorpus", function(.Object, p_attribute, collap
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word", collapse = NULL, cpos = FALSE, split = FALSE, ...){
   get_token_stream(
-    .Object = .Object@cpos, corpus = .Object@corpus, p_attribute = p_attribute,
-    encoding = .Object@encoding, collapse = collapse, cpos = cpos, split = split,
+    .Object = slot(.Object, "cpos"), corpus = slot(.Object, "corpus"), p_attribute = p_attribute,
+    encoding = slot(.Object, "encoding"), collapse = collapse, cpos = cpos, split = split,
     ...
   )
 })
@@ -280,30 +280,30 @@ setMethod("get_token_stream", "regions", function(.Object, p_attribute = "word",
 setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute = "word", vocab = NULL, phrases = NULL, subset = NULL, min_length = NULL, collapse = NULL, cpos = FALSE, decode = TRUE, beautify = FALSE, verbose = TRUE, progress = FALSE, mc = FALSE, ...){
   
   if (verbose) cli_progress_step("creating vector of document ids")
-  sizes <- sapply(.Object@objects, slot, "size")
+  sizes <- sapply(slot(.Object, "objects"), slot, "size")
   id_list <- mapply(rep, seq_along(.Object), sizes, SIMPLIFY = FALSE)
   dt <- data.table(obj_id = do.call(c, id_list))
   rm(id_list); gc()
   
   if (verbose) cli_progress_step("get region matrices and corpus positions")
-  region_matrix <- do.call(rbind, lapply(.Object@objects, slot, "cpos"))
+  region_matrix <- do.call(rbind, lapply(slot(.Object, "objects"), slot, "cpos"))
   if (!is.null(phrases)) dt[, "cpos" := ranges_to_cpos(region_matrix)]
 
   for (p_attr in p_attribute){
     if (verbose) cli_progress_step("decoding token stream for p-attribute {.val {p_attr}}")
     ids <- region_matrix_to_ids(
-      corpus = .Object@corpus, registry = .Object@registry_dir,
+      corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
       p_attribute = p_attr, matrix = region_matrix
     )
     if (isTRUE(decode)){
       if (is.null(vocab)){
         tokens <- id2str(x = .Object, p_attribute = p_attr, id = ids)
         rm(ids); gc()
-        tokens <- iconv(x = tokens, from = .Object@encoding, to = encoding())
+        tokens <- iconv(x = tokens, from = slot(.Object, "encoding"), to = encoding())
       } else {
         corpus_vocab_size <- cl_lexicon_size(
-          corpus = .Object@corpus,
-          registry = .Object@registry_dir,
+          corpus = slot(.Object, "corpus"),
+          registry = slot(.Object, "registry_dir"),
           p_attribute = p_attr
         )
         if (length(vocab) != corpus_vocab_size){
@@ -386,7 +386,7 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
   y <- split(x = p_attr, f = ids)
   rm(p_attr); gc()
   ids_unique <- unique(ids) # subsetting may have removed objs
-  names(y) <- names(.Object@objects)[ids_unique]
+  names(y) <- names(slot(.Object, "objects"))[ids_unique]
   rm(ids_unique); gc()
 
   if (!is.null(collapse)){

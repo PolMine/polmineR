@@ -5,11 +5,11 @@ NULL
 #' @rdname partition_bundle-class
 setMethod("show", "partition_bundle", function (object) {
   message('<<partition_bundle>>')
-  message(sprintf('%-25s', 'Number of objects:'), length(object@objects))
+  message(sprintf('%-25s', 'Number of objects:'), length(slot(object, "objects")))
   # same code as in show-method for partition
   sFix <- unlist(lapply(
-    names(object@s_attributes_fixed),
-    function(x) paste(x, "=", paste(object@s_attributes_fixed[[x]], collapse="/"))
+    names(slot(object, "s_attributes_fixed")),
+    function(x) paste(x, "=", paste(slot(object, "s_attributes_fixed")[[x]], collapse="/"))
   ))
   message(sprintf("%-25s", "s-attributes fixed:"), sFix[1])
   if (length(sFix) > 1) for (i in length(sFix)) message(sprintf("%-25s\n"), sFix[i])
@@ -18,7 +18,7 @@ setMethod("show", "partition_bundle", function (object) {
 #' @rdname partition_bundle-class
 setMethod("summary", "partition_bundle", function (object, progress = FALSE){
   .fn <- function(x) data.frame(summary(x), stringsAsFactors = FALSE)
-  a <- if (!progress) lapply(object@objects, .fn) else pblapply(object@objects, .fn)
+  a <- if (!progress) lapply(slot(object, "objects"), .fn) else pblapply(slot(object, "objects"), .fn)
   y <- do.call(rbind, a)
   rownames(y) <- NULL
   y
@@ -50,14 +50,14 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
     )
   }
   
-  obj_type <- unique(unname(sapply(x@objects, class)))
+  obj_type <- unique(unname(sapply(slot(x, "objects"), class)))
   if (length(obj_type) > 1L) 
     stop("Class of the objects within the bundle is not unique.")
 
-  .message('number of objects to be merged: ', length(x@objects), verbose = verbose)
+  .message('number of objects to be merged: ', length(slot(x, "objects")), verbose = verbose)
   
-  s_attr <- unique(unname(unlist(lapply(x@objects, slot,  "s_attribute_strucs"))))
-  strucs_combined <- unname(unlist(lapply(x@objects, slot,  "strucs")))
+  s_attr <- unique(unname(unlist(lapply(slot(x, "objects"), slot,  "s_attribute_strucs"))))
+  strucs_combined <- unname(unlist(lapply(slot(x, "objects"), slot,  "strucs")))
   if (any(table(strucs_combined) > 1L)) stop("The objects are not non-overlapping.")
   strucs_combined <- unique(strucs_combined)
   strucs_combined <- strucs_combined[order(strucs_combined)]
@@ -74,11 +74,11 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
     s_attribute_strucs = s_attr, strucs = strucs_combined,
     name = name
   )
-  y@cpos <- get_region_matrix(
+  slot(y, "cpos") <- get_region_matrix(
     corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
     s_attribute = s_attr, strucs = strucs_combined 
   )
-  y@size <- size(y)
+  slot(y, "size") <- size(y)
   y
 })
 
@@ -87,12 +87,12 @@ setMethod("merge", "partition_bundle", function(x, name = "", verbose = FALSE){
 #' @rdname subcorpus_bundle
 setMethod("merge", "subcorpus_bundle", function(x, name = "", verbose = FALSE){
   y <- callNextMethod()
-  corpus_type <- get_type(y@corpus)
-  y@type <- if (is.null(corpus_type)) character() else corpus_type
-  y@data_dir <- path(
+  corpus_type <- get_type(slot(y, "corpus"))
+  slot(y, "type") <- if (is.null(corpus_type)) character() else corpus_type
+  slot(y, "data_dir") <- path(
     corpus_data_dir(
-      corpus = y@corpus,
-      registry = corpus_registry_dir(y@corpus)
+      corpus = slot(y, "corpus"),
+      registry = corpus_registry_dir(slot(y, "corpus"))
     )
   )
   y
@@ -250,7 +250,7 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
     is.logical(progress)
   )
   
-  DT <- copy(.Object@cpos)
+  DT <- copy(slot(.Object, "cpos"))
   setkeyv(x = DT, cols = c("match_id", "cpos"))
   
   if (!node){
@@ -272,11 +272,11 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
   regions_list <- split(DT_regions, by = "match_id")
   
   if (verbose) cli_progress_step("generate list of {.code data.table} objects with counts")
-  CNT <- DT[, .N, by = c("match_id", paste(.Object@p_attribute, "id", sep = "_"))]
+  CNT <- DT[, .N, by = c("match_id", paste(slot(.Object, "p_attribute"), "id", sep = "_"))]
   setnames(CNT, old = "N", new = "count")
-  for (p_attr in .Object@p_attribute){
+  for (p_attr in slot(.Object, "p_attribute")){
     CNT[[p_attr]] <- RcppCWB::cl_id2str(
-      corpus = .Object@corpus, registry = RcppCWB::corpus_registry_dir(.Object@corpus),
+      corpus = slot(.Object, "corpus"), registry = RcppCWB::corpus_registry_dir(slot(.Object, "corpus")),
       p_attribute = p_attr, id = CNT[[paste(p_attr, "id", sep = "_")]]
     )
   }
@@ -284,25 +284,25 @@ setMethod("partition_bundle", "context", function(.Object, node = TRUE, verbose 
   
   if (verbose) cli_progress_step("assemble {.code partition_bundle}")
   prototype <- as(as(.Object, "corpus"), "partition")
-  prototype@p_attribute <- .Object@p_attribute
+  slot(prototype, "p_attribute") <- slot(.Object, "p_attribute")
   
   .fn <- function(i){
     y <- prototype
-    y@cpos <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
-    y@size <- as.integer(sum(y@cpos[,2] - y@cpos[,1] + 1L)) # see #265
-    y@stat = count_list[[i]][, "match_id" := NULL]
+    slot(y, "cpos") <- as.matrix(regions_list[[i]][, c("cpos_left", "cpos_right")])
+    slot(y, "size") <- as.integer(sum(slot(y, "cpos")[,2] - slot(y, "cpos")[,1] + 1L)) # see #265
+    slot(y, "stat") = count_list[[i]][, "match_id" := NULL]
     y
   }
   
   retval <- as(as(.Object, "corpus"), "partition_bundle")
-  retval@p_attribute <- .Object@p_attribute
-  retval@objects <- if (progress)
+  slot(retval, "p_attribute") <- slot(.Object, "p_attribute")
+  slot(retval, "objects") <- if (progress)
     pblapply(seq_along(.Object), .fn, cl = mc)
   else
     lapply(seq_along(.Object), .fn)
   
   
-  retval@explanation <- "this partition_bundle is derived from a context object"
+  slot(retval, "explanation") <- "this partition_bundle is derived from a context object"
   retval
 })
 
@@ -335,8 +335,8 @@ setMethod("partition_bundle", "partition_bundle", function(.Object, s_attribute,
   iterfun <- function(p){
     pb <- partition_bundle(p, s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
     names(pb) <- paste(name(p), paste(prefix, names(pb), sep = if (length(prefix) > 0) "_" else ""), sep = "_")
-    pb@objects
+    slot(pb, "objects")
   }
-  partition_list_nested <- if (progress) pblapply(.Object@objects, iterfun, cl = mc) else lapply(.Object@objects, iterfun)
+  partition_list_nested <- if (progress) pblapply(slot(.Object, "objects"), iterfun, cl = mc) else lapply(slot(.Object, "objects"), iterfun)
   as.partition_bundle(unlist(partition_list_nested))
 })

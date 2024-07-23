@@ -14,17 +14,17 @@ setMethod("regions", "corpus", function(x, s_attribute){
   y <- as(x, "regions")
   
   struc_size <- cl_attribute_size(
-    corpus = x@corpus,
+    corpus = slot(x, "corpus"),
     attribute = s_attribute,
     attribute_type = "s",
-    registry = x@registry_dir
+    registry = slot(x, "registry_dir")
   )
 
-  y@cpos = get_region_matrix(
-    corpus = x@corpus,
+  slot(y, "cpos") = get_region_matrix(
+    corpus = slot(x, "corpus"),
     s_attribute = s_attribute,
     strucs = 0L:(struc_size - 1L),
-    registry = x@registry_dir
+    registry = slot(x, "registry_dir")
   )
   
   y
@@ -36,24 +36,24 @@ setMethod("regions", "subcorpus", function(x, s_attribute){
   y <- as(x, "regions")
   
   is_sibling <- s_attr_is_sibling(
-    x = s_attribute, y = x@s_attribute_strucs,
-    corpus = x@corpus, registry = x@registry_dir
+    x = s_attribute, y = slot(x, "s_attribute_strucs"),
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir")
   )
   if (is_sibling) return(y)
 
   is_descendent <- s_attr_is_descendent(
-    x = s_attribute, y = x@s_attribute_strucs,
-    corpus = x@corpus, registry = x@registry_dir
+    x = s_attribute, y = slot(x, "s_attribute_strucs"),
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir")
   )
   if (!is_descendent) stop("s-attribute required to be a descendent of x")
   
   regions <- s_attr_regions(
-    corpus = x@corpus, registry = x@registry_dir, data_dir = x@data_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"), data_dir = slot(x, "data_dir"),
     s_attr = s_attribute
   )
   
-  strucs <- cpos2struc(x = x, s_attr = x@s_attribute_strucs, cpos = regions[,1])
-  y@cpos <- regions[which(strucs %in% x@strucs),]
+  strucs <- cpos2struc(x = x, s_attr = slot(x, "s_attribute_strucs"), cpos = regions[,1])
+  slot(y, "cpos") <- regions[which(strucs %in% slot(x, "strucs")),]
   
   y
 })
@@ -78,8 +78,8 @@ setAs(from = "partition", to = "regions", function(from, to){
   y <- new("regions")
   slots_to_get <- slotNames(y)
   for (s in slots_to_get) slot(y, name = s) <- slot(from, name = s)
-  type <- get_type(y@corpus)
-  y@type <- if (length(type) > 0L) type else character()
+  type <- get_type(slot(y, "corpus"))
+  slot(y, "type") <- if (length(type) > 0L) type else character()
   y
 })
 
@@ -88,13 +88,13 @@ setAs(from = "partition", to = "regions", function(from, to){
 setAs(from = "regions", to = "partition", function(from, to){
   new(
     "partition",
-    cpos = from@cpos,
-    encoding = from@encoding,
-    corpus = from@corpus,
-    registry_dir = from@registry_dir, 
-    data_dir = from@data_dir,
-    info_file = from@info_file,
-    template = from@template,
+    cpos = slot(from, "cpos"),
+    encoding = slot(from, "encoding"),
+    corpus = slot(from, "corpus"),
+    registry_dir = slot(from, "registry_dir"), 
+    data_dir = slot(from, "data_dir"),
+    info_file = slot(from, "info_file"),
+    template = slot(from, "template"),
     stat = data.table()
   )
 })
@@ -102,16 +102,16 @@ setAs(from = "regions", to = "partition", function(from, to){
 setAs(from = "subcorpus", to = "partition", function(from, to){
   new(
     "partition",
-    cpos = from@cpos,
-    encoding = from@encoding,
-    corpus = from@corpus,
-    registry_dir = from@registry_dir,
-    data_dir = from@data_dir,
-    info_file = from@info_file,
-    template = from@template,
-    strucs = from@strucs,
-    s_attribute_strucs = from@s_attribute_strucs,
-    xml = from@xml,
+    cpos = slot(from, "cpos"),
+    encoding = slot(from, "encoding"),
+    corpus = slot(from, "corpus"),
+    registry_dir = slot(from, "registry_dir"),
+    data_dir = slot(from, "data_dir"),
+    info_file = slot(from, "info_file"),
+    template = slot(from, "template"),
+    strucs = slot(from, "strucs"),
+    s_attribute_strucs = slot(from, "s_attribute_strucs"),
+    xml = slot(from, "xml"),
     size = size(from),
     stat = data.table(),
     ###
@@ -134,7 +134,7 @@ setMethod("as.regions", "partition", function(x) as(x, "regions"))
 #' generated when creating a \code{partition} from a \code{context}-object.
 #' @rdname context-class
 setMethod("as.regions", "context", function(x, node = TRUE){
-  DT <- copy(x@cpos)
+  DT <- copy(slot(x, "cpos"))
   setkeyv(x = DT, cols = c("match_id", "cpos"))
   
   .cpos_left_right <- function(.SD)
@@ -154,12 +154,12 @@ setMethod("as.regions", "context", function(x, node = TRUE){
   new(
     Class = "regions",
     cpos = as.matrix(DT_regions[, "match_id" := NULL]),
-    corpus = x@corpus,
-    registry_dir = x@registry_dir,
-    data_dir = x@data_dir,
-    info_file = x@info_file,
-    template = x@template,
-    encoding = x@encoding
+    corpus = slot(x, "corpus"),
+    registry_dir = slot(x, "registry_dir"),
+    data_dir = slot(x, "data_dir"),
+    info_file = slot(x, "info_file"),
+    template = slot(x, "template"),
+    encoding = slot(x, "encoding")
   )
 })
 
@@ -196,7 +196,7 @@ as.data.table.regions <- function(x, keep.rownames, values = NULL, ...){
       "or objects inheriting from the region class remain unused."
     )
   }
-  dt <- data.table::as.data.table(x@cpos)
+  dt <- data.table::as.data.table(slot(x, "cpos"))
   if (!is.null(values)){
     stopifnot(length(values) == nrow(dt) || length(values) == 1)
     dt[[3]] <- values

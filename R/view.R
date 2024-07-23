@@ -22,7 +22,7 @@ setMethod("view", "cooccurrences", function(.Object){
 #' @rdname kwic-class
 #' @param .Object A \code{kwic} class object.
 setMethod("view", "kwic", function(.Object){
-  table_to_view <- .Object@stat
+  table_to_view <- slot(.Object, "stat")
   get("View", envir = .GlobalEnv)(table_to_view)
 })
 
@@ -44,7 +44,7 @@ setMethod("view", "features", function(.Object){
 setMethod("view", "cooccurrences_reshaped", function(.Object){
   .Object <- round(.Object, digits = 2)
   colsToView <- c("a", "b", "count_ab", "count_a", "count_b", "ll_a2b", "ll_b2a")
-  get("View", envir = .GlobalEnv)(.Object@stat[, colsToView, with = FALSE])
+  get("View", envir = .GlobalEnv)(slot(.Object, "stat")[, colsToView, with = FALSE])
 })
 
 setMethod("view", "kwic", function(.Object){

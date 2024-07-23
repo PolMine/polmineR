@@ -36,10 +36,10 @@ setGeneric("pmi", function(.Object, ...) standardGeneric("pmi") )
 #' N <- size(y)[["partition"]]
 #' I <- log2((y[["count_coi"]]/N) / ((count(y) / N) * (y[["count_partition"]] / N)))
 setMethod("pmi", "context", function(.Object){
-  .Object@stat[, "pmi" := log2((.Object@stat[["count_coi"]]/.Object@size_partition)/((.Object@count/.Object@size_partition)*(.Object@stat[["count_partition"]]/.Object@size_partition)))]
-  setorderv(.Object@stat, cols = "pmi")
-  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
-  .Object@method <- c(.Object@method, "pmi")
+  slot(.Object, "stat")[, "pmi" := log2((slot(.Object, "stat")[["count_coi"]]/slot(.Object, "size_partition"))/((slot(.Object, "count")/slot(.Object, "size_partition"))*(slot(.Object, "stat")[["count_partition"]]/slot(.Object, "size_partition"))))]
+  setorderv(slot(.Object, "stat"), cols = "pmi")
+  slot(.Object, "stat")[, "rank_pmi" := 1L:nrow(slot(.Object, "stat"))]
+  slot(.Object, "method") <- c(slot(.Object, "method"), "pmi")
   invisible(.Object)
 })
 
@@ -48,13 +48,13 @@ setMethod("pmi", "context", function(.Object){
 #' @export
 setMethod("pmi", "Cooccurrences", function(.Object){
   if (!"a_count" %in% colnames(.Object) || !"b_count" %in% colnames(.Object)) enrich(.Object)
-  p_ab <- .Object@stat[["ab_count"]] / .Object@partition@size
-  p_a <- .Object@stat[["a_count"]] / .Object@partition@size
-  p_b <- .Object@stat[["b_count"]] / .Object@partition@size
-  .Object@stat[, "pmi" := log2(p_ab / (p_a * p_b))]
-  setorderv(.Object@stat, cols = "pmi", order = -1L, na.last = TRUE)
-  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
-  .Object@method <- c(.Object@method, "pmi")
+  p_ab <- slot(.Object, "stat")[["ab_count"]] / slot(.Object, "partition")@size
+  p_a <- slot(.Object, "stat")[["a_count"]] / slot(.Object, "partition")@size
+  p_b <- slot(.Object, "stat")[["b_count"]] / slot(.Object, "partition")@size
+  slot(.Object, "stat")[, "pmi" := log2(p_ab / (p_a * p_b))]
+  setorderv(slot(.Object, "stat"), cols = "pmi", order = -1L, na.last = TRUE)
+  slot(.Object, "stat")[, "rank_pmi" := 1L:nrow(slot(.Object, "stat"))]
+  slot(.Object, "method") <- c(slot(.Object, "method"), "pmi")
   invisible(.Object)
 })
 
@@ -81,24 +81,24 @@ setMethod("pmi", "Cooccurrences", function(.Object){
 setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attributes(.Object)[1]){
   if (length(p_attribute) > 1L) stop("pmi-method for ngrams objects not yet implemented for length(p_attribute) > 1")
   
-  setkeyv(observed@stat, cols = p_attribute)
-  setnames(.Object@stat, old = "count", new = "ngram_count")
+  setkeyv(slot(observed, "stat"), cols = p_attribute)
+  setnames(slot(.Object, "stat"), old = "count", new = "ngram_count")
   
-  for (i in 1L:.Object@n){
-    setkeyv(.Object@stat, cols = paste(p_attribute, i, sep = "_"))
-    .Object@stat <- .Object@stat[observed@stat[,c(p_attribute, "count"), with = FALSE]]
-    setnames(.Object@stat, old = "count", new = paste(p_attribute, i, "count", sep = "_"))
+  for (i in 1L:slot(.Object, "n")){
+    setkeyv(slot(.Object, "stat"), cols = paste(p_attribute, i, sep = "_"))
+    slot(.Object, "stat") <- slot(.Object, "stat")[slot(observed, "stat")[,c(p_attribute, "count"), with = FALSE]]
+    setnames(slot(.Object, "stat"), old = "count", new = paste(p_attribute, i, "count", sep = "_"))
   }
   
-  p_ngram <- .Object@stat[["ngram_count"]] / observed@size
+  p_ngram <- slot(.Object, "stat")[["ngram_count"]] / slot(observed, "size")
   denominator <- 1L
-  for (i in 1L:.Object@n){
-    denominator <- denominator * .Object@stat[[paste(p_attribute, i, "count", sep = "_")]] / observed@size
+  for (i in 1L:slot(.Object, "n")){
+    denominator <- denominator * slot(.Object, "stat")[[paste(p_attribute, i, "count", sep = "_")]] / slot(observed, "size")
   }
   
-  .Object@stat[, "pmi" := log2(p_ngram / denominator)]
-  setorderv(.Object@stat, cols = "pmi", order = -1L)
-  .Object@stat[, "rank_pmi" := 1L:nrow(.Object@stat)]
+  slot(.Object, "stat")[, "pmi" := log2(p_ngram / denominator)]
+  setorderv(slot(.Object, "stat"), cols = "pmi", order = -1L)
+  slot(.Object, "stat")[, "rank_pmi" := 1L:nrow(slot(.Object, "stat"))]
   invisible(.Object)
 })
 
@@ -240,29 +240,29 @@ setGeneric("ll", function(.Object, ...) standardGeneric("ll") )
 #' @rdname ll
 setMethod("ll", "features", function(.Object){
   
-  o21 <- .Object@size_coi - .Object@stat[["count_coi"]]
-  o22 <- .Object@size_ref - .Object@stat[["count_ref"]]
+  o21 <- slot(.Object, "size_coi") - slot(.Object, "stat")[["count_coi"]]
+  o22 <- slot(.Object, "size_ref") - slot(.Object, "stat")[["count_ref"]]
   
-  N <- .Object@size_ref + .Object@size_coi
-  r1 <- .Object@stat[["count_ref"]] + .Object@stat[["count_coi"]]
-  .Object@stat[, "exp_coi" := .Object@size_coi * (r1 / N)] # equivalent to e11
-  .Object@stat[, "exp_ref" := .Object@size_ref * (r1 / N)] # equivalent to e12
+  N <- slot(.Object, "size_ref") + slot(.Object, "size_coi")
+  r1 <- slot(.Object, "stat")[["count_ref"]] + slot(.Object, "stat")[["count_coi"]]
+  slot(.Object, "stat")[, "exp_coi" := slot(.Object, "size_coi") * (r1 / N)] # equivalent to e11
+  slot(.Object, "stat")[, "exp_ref" := slot(.Object, "size_ref") * (r1 / N)] # equivalent to e12
   r2 <- o21 + o22
-  e21 <- .Object@size_coi * (r2 / N) 
-  e22 <- .Object@size_ref * (r2 / N)
+  e21 <- slot(.Object, "size_coi") * (r2 / N) 
+  e22 <- slot(.Object, "size_ref") * (r2 / N)
 
-  f11 <- .Object@stat[["count_coi"]] / .Object@stat[["exp_coi"]]
-  f12  <- .Object@stat[["count_ref"]] / .Object@stat[["exp_ref"]]
+  f11 <- slot(.Object, "stat")[["count_coi"]] / slot(.Object, "stat")[["exp_coi"]]
+  f12  <- slot(.Object, "stat")[["count_ref"]] / slot(.Object, "stat")[["exp_ref"]]
   f21 <- o21 / e21
   f22 <- o22 / e22
   
-  bracket <- .Object@stat[["count_coi"]] * log(f11) + .Object@stat[["count_ref"]] * log(f12) + o21 * log(f21) + o22 * log(f22)
-  direction <- ifelse(.Object@stat[["count_coi"]] >= .Object@stat[["exp_coi"]], 1L, -1L)
-  .Object@stat[, "ll" := 2 * bracket * direction]
-  .Object@stat[, "ll" := ifelse(is.nan(ll), NA, ll)]
-  setorderv(.Object@stat, cols = "ll", order = -1L, na.last = TRUE)
-  .Object@stat[, "rank_ll" := 1L:nrow(.Object@stat)]
-  .Object@method <- c(.Object@method, "ll")
+  bracket <- slot(.Object, "stat")[["count_coi"]] * log(f11) + slot(.Object, "stat")[["count_ref"]] * log(f12) + o21 * log(f21) + o22 * log(f22)
+  direction <- ifelse(slot(.Object, "stat")[["count_coi"]] >= slot(.Object, "stat")[["exp_coi"]], 1L, -1L)
+  slot(.Object, "stat")[, "ll" := 2 * bracket * direction]
+  slot(.Object, "stat")[, "ll" := ifelse(is.nan(ll), NA, ll)]
+  setorderv(slot(.Object, "stat"), cols = "ll", order = -1L, na.last = TRUE)
+  slot(.Object, "stat")[, "rank_ll" := 1L:nrow(slot(.Object, "stat"))]
+  slot(.Object, "method") <- c(slot(.Object, "method"), "ll")
   .Object
 })
 
@@ -277,25 +277,25 @@ setMethod("ll", "cooccurrences", function(.Object) callNextMethod(.Object))
 #' @param verbose Logical, whether to output messages.
 setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   
-  a_cols_id <- if (length(.Object@p_attribute) == 1L) "a_id" else paste("a", .Object@p_attribute, "id", sep = "_")
-  b_cols_id <- if (length(.Object@p_attribute) == 1L) "b_id" else paste("b", .Object@p_attribute, "id", sep = "_")
+  a_cols_id <- if (length(slot(.Object, "p_attribute")) == 1L) "a_id" else paste("a", slot(.Object, "p_attribute"), "id", sep = "_")
+  b_cols_id <- if (length(slot(.Object, "p_attribute")) == 1L) "b_id" else paste("b", slot(.Object, "p_attribute"), "id", sep = "_")
   
   if (verbose) message("... adding window size")
   
-  setkeyv(.Object@window_sizes, a_cols_id)
-  dt <- .Object@stat # due to the reference logic of data.tables, manipulating dt changes .Object@stat; 
+  setkeyv(slot(.Object, "window_sizes"), a_cols_id)
+  dt <- slot(.Object, "stat") # due to the reference logic of data.tables, manipulating dt changes slot(.Object, "stat"); 
   
   setkeyv(dt, a_cols_id)
-  dt[, "size_coi" := .Object@window_sizes[dt][["size_coi"] ]]
+  dt[, "size_coi" := slot(.Object, "window_sizes")[dt][["size_coi"] ]]
   
-  if (nrow(.Object@partition@stat) > 0L){
-    cnt <- .Object@partition@stat
+  if (nrow(slot(.Object, "partition")@stat) > 0L){
+    cnt <- slot(.Object, "partition")@stat
   } else {
-    cnt <- count(.Object@partition, p_attribute = .Object@p_attribute, decode = FALSE)@stat
+    cnt <- count(slot(.Object, "partition"), p_attribute = slot(.Object, "p_attribute"), decode = FALSE)@stat
   }
 
   
-  setkeyv(cnt, paste(.Object@p_attribute, "id", sep = "_"))
+  setkeyv(cnt, paste(slot(.Object, "p_attribute"), "id", sep = "_"))
   
   setkeyv(dt, cols = a_cols_id)
   dt[, "a_count" := cnt[dt][["count"]] ]
@@ -305,7 +305,7 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   
   if (verbose) message('... log likelihood-Test')
   
-  N <- .Object@partition@size - dt[["a_count"]]
+  N <- slot(.Object, "partition")@size - dt[["a_count"]]
   dt[, "size_ref" := N - dt[["size_coi"]] ]
   
   dt[, "obs_ref" := dt[["b_count"]] - dt[["ab_count"]] ]
@@ -433,28 +433,28 @@ setGeneric("chisquare", function(.Object){standardGeneric("chisquare")})
 
 #' @rdname chisquare-method
 setMethod("chisquare", "features", function(.Object){
-  size_total <- .Object@size_coi + .Object@size_ref
-  count_x_total <- .Object@stat[["count_coi"]] + .Object@stat[["count_ref"]]
-  count_notx_coi <- .Object@size_coi - .Object@stat[["count_coi"]]
-  count_notx_ref <- .Object@size_ref - .Object@stat[["count_ref"]]
+  size_total <- slot(.Object, "size_coi") + slot(.Object, "size_ref")
+  count_x_total <- slot(.Object, "stat")[["count_coi"]] + slot(.Object, "stat")[["count_ref"]]
+  count_notx_coi <- slot(.Object, "size_coi") - slot(.Object, "stat")[["count_coi"]]
+  count_notx_ref <- slot(.Object, "size_ref") - slot(.Object, "stat")[["count_ref"]]
   count_notx_total <- size_total - count_x_total
   digits_restore_value <- options(digits = 20)
   on.exit(options(digits = digits_restore_value[["digits"]]))
-  exp_x_coi <- (count_x_total / size_total) * .Object@size_coi
-  exp_x_ref <- (count_x_total / size_total) * .Object@size_ref
-  exp_notx_coi <- (count_notx_total/size_total) * .Object@size_coi
-  exp_notx_ref <- (count_notx_total/size_total) * .Object@size_ref
-  chi1 <- ((exp_x_coi - .Object@stat[["count_coi"]]) ** 2) / exp_x_coi
-  chi2 <- ((exp_x_ref - .Object@stat[["count_ref"]]) ** 2) / exp_x_ref
+  exp_x_coi <- (count_x_total / size_total) * slot(.Object, "size_coi")
+  exp_x_ref <- (count_x_total / size_total) * slot(.Object, "size_ref")
+  exp_notx_coi <- (count_notx_total/size_total) * slot(.Object, "size_coi")
+  exp_notx_ref <- (count_notx_total/size_total) * slot(.Object, "size_ref")
+  chi1 <- ((exp_x_coi - slot(.Object, "stat")[["count_coi"]]) ** 2) / exp_x_coi
+  chi2 <- ((exp_x_ref - slot(.Object, "stat")[["count_ref"]]) ** 2) / exp_x_ref
   chi3 <- ((exp_notx_coi - count_notx_coi) ** 2) / exp_notx_coi
   chi4 <- ((exp_notx_ref - count_notx_ref) ** 2) / exp_notx_ref
   chi <- chi1 + chi2 + chi3 + chi4
-  chi <- chi * ifelse(.Object@stat[["count_coi"]] >= exp_x_coi, 1L, -1L)
-  .Object@stat[, "exp_coi" := exp_x_coi]
-  .Object@stat[, "chisquare" := chi]
-  setorderv(.Object@stat, cols = "chisquare", order = -1L)
-  .Object@stat[, "rank_chisquare" := 1L:nrow(.Object@stat)]
-  .Object@method <- c(.Object@method, "chisquare")
+  chi <- chi * ifelse(slot(.Object, "stat")[["count_coi"]] >= exp_x_coi, 1L, -1L)
+  slot(.Object, "stat")[, "exp_coi" := exp_x_coi]
+  slot(.Object, "stat")[, "chisquare" := chi]
+  setorderv(slot(.Object, "stat"), cols = "chisquare", order = -1L)
+  slot(.Object, "stat")[, "rank_chisquare" := 1L:nrow(slot(.Object, "stat"))]
+  slot(.Object, "method") <- c(slot(.Object, "method"), "chisquare")
   invisible(.Object)
 })
 
@@ -534,13 +534,13 @@ setGeneric("t_test", function(.Object) standardGeneric("t_test") )
 
 #' @rdname t_test
 setMethod("t_test", "context", function(.Object){
-  p_random <- (.Object@stat[["count_partition"]] / .Object@size_partition) * ( .Object@count / .Object@size_partition)
-  p_sample <- .Object@stat[["count_coi"]] / .Object@size_partition
-  t_values <- (p_sample - p_random) / sqrt( p_sample / .Object@size_partition )
-  .Object@stat[, "t-score" := t_values]
-  setorderv(x = .Object@stat, cols = "t-score", order = -1L)
-  .Object@stat[, "rank_t" := 1L:nrow(.Object@stat)]
-  .Object@method <- c(.Object@method, "t_test")
+  p_random <- (slot(.Object, "stat")[["count_partition"]] / slot(.Object, "size_partition")) * ( slot(.Object, "count") / slot(.Object, "size_partition"))
+  p_sample <- slot(.Object, "stat")[["count_coi"]] / slot(.Object, "size_partition")
+  t_values <- (p_sample - p_random) / sqrt( p_sample / slot(.Object, "size_partition") )
+  slot(.Object, "stat")[, "t-score" := t_values]
+  setorderv(x = slot(.Object, "stat"), cols = "t-score", order = -1L)
+  slot(.Object, "stat")[, "rank_t" := 1L:nrow(slot(.Object, "stat"))]
+  slot(.Object, "method") <- c(slot(.Object, "method"), "t_test")
   invisible(.Object)
 })
 

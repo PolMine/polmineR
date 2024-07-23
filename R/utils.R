@@ -188,10 +188,10 @@ is_nested <- function(x){
     s_attributes(x),
     function(s_attr)
       cl_attribute_size(
-        corpus = x@corpus,
+        corpus = slot(x, "corpus"),
         attribute = s_attr,
         attribute_type = "s",
-        registry = x@registry_dir
+        registry = slot(x, "registry_dir")
       )
   )
   if (length(unique(unlist(sizes))) == 1L) FALSE else TRUE
@@ -202,7 +202,7 @@ is_nested <- function(x){
 s_attr_has_values <- function(s_attribute, x){
 
   s_attr_files <- sprintf("^%s.(avs|avx|rng)$", s_attribute) |>
-    grep(list.files(x@data_dir), value = TRUE) |>
+    grep(list.files(slot(x, "data_dir")), value = TRUE) |>
     strsplit("\\.") |>
     sapply(`[[`, 2)
 
@@ -218,9 +218,9 @@ s_attr_has_values <- function(s_attribute, x){
   }
   
   # cl_struc_values(
-  #   corpus = x@corpus,
+  #   corpus = slot(x, "corpus"),
   #   s_attribute = s_attribute,
-  #   registry = x@registry_dir
+  #   registry = slot(x, "registry_dir")
   # )
 }
 
@@ -300,12 +300,12 @@ flatten <- function(object){
 }
 
 .statisticalSummary <- function(object) {
-  if (object@method %in% c("ll", "chiSquare")){
+  if (slot(object, "method") %in% c("ll", "chiSquare")){
     criticalValue <- c(3.84, 6.63, 7.88, 10.83)
     propability <- c(0.05, 0.01, 0.005, 0.001)
     no <- vapply(
       criticalValue,
-      function(x) length(which(object@stat[[object@method]]>x)),
+      function(x) length(which(slot(object, "stat")[[slot(object, "method")]]>x)),
       FUN.VALUE=1
     )
     result <- data.frame(propability, criticalValue, no)
@@ -411,49 +411,49 @@ default_template <- list(
 
 cpos2id <- function(x, p_attribute, cpos){
   cl_cpos2id(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     p_attribute = p_attribute, cpos = cpos
   )
 }
 
 cpos2struc <- function(x, s_attr, cpos){
   cl_cpos2struc(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     s_attribute = s_attr, cpos = cpos
   )
 }
 
 struc2str <- function(x, s_attr, struc){
   struc_values <- cl_struc2str(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     s_attribute = s_attr, struc = struc
   )
-  Encoding(struc_values) <- x@encoding
+  Encoding(struc_values) <- slot(x, "encoding")
   enc2native(struc_values)
 }
 
 regex2id <- function(x, p_attribute, regex){
   cl_regex2id(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     p_attribute = p_attribute, regex = regex
   )
 }
 
 id2str <- function(x, p_attribute, id){
   str <- cl_id2str(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     p_attribute = p_attribute, id = id
   )
-  Encoding(str) <- x@encoding
+  Encoding(str) <- slot(x, "encoding")
   str
 }
 
 
 str2id <- function(x, p_attribute, str){
   cl_str2id(
-    corpus = x@corpus, registry = x@registry_dir,
+    corpus = slot(x, "corpus"), registry = slot(x, "registry_dir"),
     p_attribute = p_attribute,
-    str = as.corpusEnc(str, corpusEnc = x@encoding)
+    str = as.corpusEnc(str, corpusEnc = slot(x, "encoding"))
   )
 }
 

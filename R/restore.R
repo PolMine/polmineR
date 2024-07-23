@@ -70,7 +70,7 @@ restore <- function(file){
 #' @export
 cp <- function(x){
   y <- x
-  y@stat <- copy(x@stat)
+  slot(y, "stat") <- copy(slot(x, "stat"))
   y
 }
 

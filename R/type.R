@@ -36,14 +36,14 @@ setGeneric("get_type", function(.Object) standardGeneric("get_type"))
 #' @rdname get_type
 setMethod("get_type", "corpus", function(.Object){
   props <- corpus_properties(
-    corpus = .Object@corpus,
-    registry = .Object@registry_dir
+    corpus = slot(.Object, "corpus"),
+    registry = slot(.Object, "registry_dir")
   )
   if ("type" %in% props){
     return(
       corpus_property(
-        corpus = .Object@corpus,
-        registry = .Object@registry_dir,
+        corpus = slot(.Object, "corpus"),
+        registry = slot(.Object, "registry_dir"),
         property = "type"
       )
     )
@@ -61,7 +61,7 @@ setMethod("get_type", "character", function(.Object){
 
 #' @rdname get_type
 setMethod("get_type", "partition_bundle", function(.Object){
-  corpus <- unique(unlist(lapply(.Object@objects, function(x) x@corpus)))
+  corpus <- unique(unlist(lapply(slot(.Object, "objects"), function(x) slot(x, "corpus"))))
   type <- unique(unlist(lapply(corpus, function(x) get_type(x))))
   if (length(type) > 1L)
     warning("cannot determine type, partitions derived from more than one corpus")
@@ -70,7 +70,7 @@ setMethod("get_type", "partition_bundle", function(.Object){
 
 #' @rdname get_type
 setMethod("get_type", "subcorpus_bundle", function(.Object){
-  type <- unlist(unique(lapply(.Object@objects, function(x) x@type)))
+  type <- unlist(unique(lapply(slot(.Object, "objects"), function(x) slot(x, "type"))))
   if (length(get_type) > 1L)
     warning("cannot determine type, partitions derived from more than one corpus")
   if (is.na(type)) return(NULL)
