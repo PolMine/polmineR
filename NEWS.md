@@ -22,6 +22,8 @@ returns content of slot size from object.
 (rather than `@`), to circumvent errors when running R/polmineR within a Docker
 container with OpenCPU. #295
 * Functions `get_token_stream()` and `decode()` exposed for OpenCPU access.
+* Updated the generation of the package manpage so that calling this
+documentation via `package?polmineR` and `?polmineR` works #297.
 
 
 # polmineR v0.8.9

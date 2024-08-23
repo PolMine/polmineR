@@ -24,7 +24,7 @@ setOldClass("htmlwidget")
 setOldClass("quosure")
 
 
-#' polmineR-package
+#' polmineR
 #' 
 #' A library for corpus analysis using the Corpus Workbench (CWB) as an
 #' efficient back end for indexing and querying large corpora.
@@ -95,9 +95,8 @@ setOldClass("quosure")
 #' @author Andreas Blaette (andreas.blaette@@uni-due.de)
 #' @keywords package
 #' @docType package
-#' @aliases polmineR polmineR-package
-#' @rdname polmineR-package
-#' @name polmineR-package
+#' @rdname polmineR
+#' @name polmineR
 #' @references Jockers, Matthew L. (2014): \emph{Text Analysis with R for Students of Literature}.
 #' Cham et al: Springer.
 #' @references Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuum.
@@ -150,6 +149,9 @@ setOldClass("quosure")
 #' tdm <- as.TermDocumentMatrix(cnt, col = "count")
 #' }
 #' @importFrom utils packageVersion
+"_PACKAGE"
+
+#' @rdname polmineR
 polmineR <- function(){
   # The code is adapted from the pkgload library
   # https://github.com/r-lib/pkgload/blob/master/R/utils.R
