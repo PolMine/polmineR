@@ -112,7 +112,9 @@ package), the \code{s_attributes}-method will return a \code{character} vector w
 the s-attributes occurring in the call. This usage is relevant internally
 to implement the \code{subset} method to generate a \code{subcorpus} using
 non-standard evaluation. Usually it will not be relevant in an interactive
-session.
+session. The vector is named. If the types of the s-attributes can be
+determined, integer struc values are indicated. If not, all names are
+"unknown".
 }
 \examples{
 use("polmineR")

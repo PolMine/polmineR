@@ -24,6 +24,9 @@ container with OpenCPU. #295
 * Functions `get_token_stream()` and `decode()` exposed for OpenCPU access.
 * Updated the generation of the package manpage so that calling this
 documentation via `package?polmineR` and `?polmineR` works #297.
+* The `s_attributes()`-method for `call` objects assigns "unknown" as names if 
+types cannot be determined. Solves bug when you do mathematical operations in 
+expression passed into `subset()`#294.
 
 
 # polmineR v0.8.9

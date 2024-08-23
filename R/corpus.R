@@ -652,6 +652,7 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
       
       if (length(s_attr) > 1L){
         for (s in s_attr[-1]){
+          
           if (names(s_attr)[which(s_attr == s)] == "integer"){
             if (verbose){
               cli_alert_info(
@@ -733,7 +734,9 @@ setMethod("show", "corpus", function(object){
   message(sprintf("%-12s", "corpus:"), slot(object, "corpus"))
   message(sprintf("%-12s", "encoding:"), slot(object, "encoding"))
   message(
-    sprintf("%-12s", "type:"), if (length(slot(object, "type")) > 0) slot(object, "type") else "[undefined]"
+    sprintf("%-12s", "type:"),
+    if (length(slot(object, "type")) > 0)
+      slot(object, "type") else "[undefined]"
   )
   message(
     sprintf("%-12s", "template:"), if (is.na(slot(object, "template"))) "no" else "yes"

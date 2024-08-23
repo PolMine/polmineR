@@ -427,7 +427,9 @@ setMethod(
 #'   the s-attributes occurring in the call. This usage is relevant internally
 #'   to implement the `subset` method to generate a `subcorpus` using
 #'   non-standard evaluation. Usually it will not be relevant in an interactive
-#'   session.
+#'   session. The vector is named. If the types of the s-attributes can be
+#'   determined, integer struc values are indicated. If not, all names are
+#'   "unknown".
 #' @rdname s_attributes-method
 #' @param corpus A `corpus`-object or a length one character vector
 #'   denoting a corpus.
@@ -471,7 +473,7 @@ setMethod("s_attributes", "call", function(.Object, corpus){
         if (!exists(char)){
           warning(
             sprintf(
-              "expression includes undefined symbol that is not a s-attribute: %s",
+              "undefined symbol in expression that is not a s-attribute: %s",
               char
             )
           )
@@ -504,8 +506,13 @@ setMethod("s_attributes", "call", function(.Object, corpus){
   types <- get_typeof(.Object)
   
   if (length(s_attrs) != length(types)){
-    cli_alert_info("Cannot map s-attributes and types")
-    return(unique(s_attrs))
+    cli_alert_info("Cannot determine types of s-attributes")
+    retval <- unique(s_attrs)
+    # We assign a name 'unknown' as name to ensure that the result is a named
+    # vector as expected by the subset() method #294
+    if (length(s_attrs) >= 1L)
+      names(retval) <- rep("unknown", times = length(retval))
+    return(retval)
   }
   dt <- unique(data.table(s_attrs, types))
   setNames(dt[[1]], dt[[2]])
