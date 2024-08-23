@@ -666,3 +666,16 @@ setMethod("decode", "data.table", function(.Object, corpus, p_attributes){
   
   .Object
 })
+
+
+#' @rdname decode
+setMethod("decode", "remote_subcorpus", function(.Object, ...) {
+  ocpu_exec(
+    fn = "decode",
+    corpus = slot(.Object, "corpus"),
+    server = slot(.Object, "server"),
+    restricted = slot(.Object, "restricted"),
+    .Object = as(.Object, "subcorpus"),
+    ...
+  )
+})

@@ -1,4 +1,4 @@
-# polmineR v0.8.9.9001-9003
+# polmineR v0.8.9.9001-9007
 
 * S4 class has new slot 'match' for decoded matches for query.
 * Method `ranges()` adds decoded token stream of query matches to 'ranges'
@@ -18,6 +18,10 @@ descendent #283.
 returns content of slot size from object.
 * Method `size()` returns correct result for `corpus` and `subcorpus` onewbjects #276.
 * Coerce method to `Annotation` works without pos p-attribute #246. 
+* Internally, slots of S4 classes are accessed using the `slot()` function
+(rather than `@`), to circumvent errors when running R/polmineR within a Docker
+container with OpenCPU. #295
+* Functions `get_token_stream()` and `decode()` exposed for OpenCPU access.
 
 
 # polmineR v0.8.9

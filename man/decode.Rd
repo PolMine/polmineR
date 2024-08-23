@@ -10,6 +10,7 @@
 \alias{decode,subcorpus-method}
 \alias{decode,integer-method}
 \alias{decode,data.table-method}
+\alias{decode,remote_subcorpus-method}
 \title{Decode corpus or subcorpus.}
 \usage{
 decode(.Object, ...)
@@ -68,6 +69,8 @@ decode(.Object, ...)
 \S4method{decode}{integer}(.Object, corpus, p_attributes, boost = NULL)
 
 \S4method{decode}{data.table}(.Object, corpus, p_attributes)
+
+\S4method{decode}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
 \item{.Object}{The \code{corpus} or \code{subcorpus} to decode.}
@@ -182,8 +185,9 @@ dt[,{list(cpos_left = min(.SD[["cpos"]]), cpos_right = max(.SD[["cpos"]]))}, by 
 library(NLP)
 p <- corpus("GERMAPARLMINI") \%>\%
   subset(date == "2009-11-10" & speaker == "Angela Dorothea Merkel")
-  s <- as(p, "String")
-  a <- as(p, "Annotation")
+
+s <- as(p, "String")
+a <- as(p, "Annotation")
   
 # The beauty of having this NLP Annotation object is that you can now use 
 # the different annotators of the openNLP package. Here, just a short scenario
@@ -202,8 +206,7 @@ y <- dt[, .N, by = c("word", "pos")]
 }
 \seealso{
 To decode a structural attribute, you can use the
-\code{\link{s_attributes}}-method, setting argument \code{unique} as
-\code{FALSE} and \code{\link[RcppCWB]{s_attribute_decode}}. See
-\code{\link{as.VCorpus}} to decode a \code{partition_bundle} object,
-returning a \code{VCorpus} object.
+\code{\link{s_attributes}}-method, setting argument \code{unique} as \code{FALSE} and
+\code{\link[RcppCWB]{s_attribute_decode}}. See \code{\link{as.VCorpus}} to
+decode a \code{partition_bundle} object, returning a \code{VCorpus} object.
 }

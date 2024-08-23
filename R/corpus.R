@@ -797,7 +797,15 @@ setMethod("show", "subcorpus_bundle", function (object) {
 setMethod("subset", "remote_corpus", function(x, subset){
   expr <- substitute(subset)
   expr <- if (is.call(try(eval(expr), silent = TRUE))) eval(expr) else expr
-  sc <- ocpu_exec(fn = "subset", corpus = slot(x, "corpus"), server = slot(x, "server"), restricted = slot(x, "restricted"), do.call = FALSE, x = as(x, "corpus"), subset = expr)
+  sc <- ocpu_exec(
+    fn = "subset",
+    corpus = slot(x, "corpus"),
+    server = slot(x, "server"),
+    restricted = slot(x, "restricted"),
+    do.call = FALSE,
+    x = as(x, "corpus"),
+    subset = expr
+  )
   y <- as(sc, "remote_subcorpus")
   # Capture information on accessibility status and the server which is not included
   # in the object that is returned.

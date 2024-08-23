@@ -407,6 +407,19 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
 })
 
 
+#' @rdname get_token_stream-method
+setMethod("get_token_stream", "remote_subcorpus", function(.Object, ...) {
+  ocpu_exec(
+    fn = "get_token_stream",
+    corpus = slot(.Object, "corpus"),
+    server = slot(.Object, "server"),
+    restricted = slot(.Object, "restricted"),
+    .Object = as(.Object, "subcorpus"),
+    ...
+  )
+})
+
+
 setOldClass("String")
 
 #' Decode as String.

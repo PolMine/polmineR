@@ -114,11 +114,11 @@ r <- Cooccurrences(
 ll(r) # note that the table in the stat slot is augmented in-place
 decode(r) # in-place modification, again
 r <- subset(r, ll > 11.83 & ab_count >= 5)
-data.table::setorderv(r@stat, cols = "ll", order = -1L)
+data.table::setorderv(slot(r, "stat"), cols = "ll", order = -1L)
 head(r, 25)
 
 if (requireNamespace("igraph", quietly = TRUE)){
-  r@partition <- enrich(r@partition, p_attribute = "word")
+  slot(r, "partition") <- enrich(slot(r, "partition"), p_attribute = "word")
   g <- as_igraph(r, as.undirected = TRUE)
   plot(g)
 }

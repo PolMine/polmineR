@@ -2,6 +2,7 @@
 % Please edit documentation in R/polmineR.R
 \docType{package}
 \name{polmineR-package}
+\alias{-package}
 \alias{polmineR-package}
 \alias{polmineR}
 \title{polmineR-package}

@@ -69,7 +69,7 @@ cpos(.Object, ...)
 
 \S4method{cpos}{hits}(.Object)
 
-\S4method{cpos}{`NULL`}(.Object)
+\S4method{cpos}{NULL}(.Object)
 }
 \arguments{
 \item{.Object}{A length-one \code{character} vector indicating a CWB corpus, or a

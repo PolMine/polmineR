@@ -11,6 +11,7 @@
 \alias{get_token_stream,subcorpus-method}
 \alias{get_token_stream,regions-method}
 \alias{get_token_stream,partition_bundle-method}
+\alias{get_token_stream,remote_subcorpus-method}
 \title{Get Token Stream.}
 \usage{
 get_token_stream(.Object, ...)
@@ -68,6 +69,8 @@ get_token_stream(.Object, ...)
   mc = FALSE,
   ...
 )
+
+\S4method{get_token_stream}{remote_subcorpus}(.Object, ...)
 }
 \arguments{
 \item{.Object}{Input object.}
