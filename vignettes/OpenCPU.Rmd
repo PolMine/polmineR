@@ -130,6 +130,34 @@ INFO https://zenodo.org/record/3823245#.XsrU-8ZCT_Q
 x <- corpus("MIGPRESS_FAZ", server = "YOURSERVER", restricted = TRUE)
 ```
 
+
+## Hosting public and restricted resources
+
+
+
+To host resources with differentiated access rights in parallel, using `docker compose` facilitates running the system. The following 'composed.yaml' demo file may serve as an example.
+
+```{yaml hosting_resources}
+services:
+  ocpu_protected:
+    image: ocpu_protected:latest
+    ports:
+      - "8005:8004"
+    volumes:
+      - /usr/local/apache2/htdocs:/usr/local/apache2/htdocs
+      - /opt/data/cwb/restricted/registry:/opt/data/cwb/registry
+      - /opt/data/cwb/restricted/indexed_corpora:/opt/data/cwb/indexed_corpora
+  ocpu_public:
+    image: ocpu_public:latest
+    ports:
+      - "8004:8004"
+    volumes:
+      - /opt/data/cwb/public/registry:/opt/data/cwb/registry
+      - /opt/data/cwb/public/indexed_corpora:/opt/data/cwb/indexed_corpora
+```
+
+Note that OpenCPU uses port 8004 by default. We therefore map this port an another port that needs to be open by the corpus server.
+
 ## Next steps
 
 Upcoming versions of polmineR will expose further functionality. This is a simple proof-of-concept!

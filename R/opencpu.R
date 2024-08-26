@@ -30,13 +30,14 @@
 #' }
 ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, ...){
   if (!requireNamespace("httr", quietly = TRUE))
-    stop("To access a remote corpus, package 'httr' is required. The 'httr' package is not installed.")
+    stop("Package 'httr' required but not installed.")
   if (!requireNamespace("curl", quietly = TRUE))
-    stop("To access a remote corpus, package 'curl' is required, but it is not yet installed.")
+    stop("Package 'curl' required but not installed.")
   if (!requireNamespace("protolite", quietly = TRUE))
-    stop("To access a remote corpus, package 'protolite' is required, but it is not yet installed.")
+    stop("Package 'protolite' required but not installed.")
 
-  # The url for calling a function from polmineR is somewhat different on the openCPU sample server
+  # The url for calling a function from polmineR is somewhat different on the
+  # openCPU sample server
   fmt_url <- if (server == "https://cloud.opencpu.org"){
     "%s/ocpu/apps/polmine/polmineR/R/%s/pb"
   } else {
@@ -48,30 +49,46 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
     list(...),
     function(x)
       if (is.call(x)){
-        # Deparsing may result in a character vector longer than 1 if expression is
-        # long. Using paste() is safer than setting width.cutoff to maximum value (500)
-        # See GitHub issue #161 (https://github.com/PolMine/polmineR/issues/161)
+        # Deparsing may result in a character vector longer than 1 if expression
+        # is long. Using paste() is safer than setting width.cutoff to maximum
+        # value (500) See GitHub issue #161
+        # (https://github.com/PolMine/polmineR/issues/161)
         paste(deparse(x), collapse = "")
       } else {
         curl::form_data(protolite::serialize_pb(x), "application/protobuf")
       }
   )
   if (isTRUE(restricted)){
-    opencpu_registry <- Sys.getenv("OPENCPU_REGISTRY")
-    if (identical(nchar(opencpu_registry), 0L)){
-      stop("Access to corpora with restricted corpora requires that the environment variable 'OPENCPU_REGISTRY' is set.")
+    ocpu_registry <- Sys.getenv("OPENCPU_REGISTRY")
+    if (identical(nchar(ocpu_registry), 0L)){
+      stop(paste0(c(
+        "Accessing restricted corpora requires environment variable ",
+        "'OPENCPU_REGISTRY' to be set."
+      )))
     }
 
-    properties <- corpus_properties(corpus = corpus, registry = opencpu_registry)
+    properties <- corpus_properties(corpus = corpus, registry = ocpu_registry)
+    
     if (!"password" %in% properties)
       stop("property 'password' required but not found")
     pw <- corpus_property(
-      corpus = corpus, registry = opencpu_registry,
+      corpus = corpus,
+      registry = ocpu_registry,
       property = "password"
     )
+    
+    if (!"password" %in% properties)
+      stop("property 'password' required but not found")
+    user <- corpus_property(
+      corpus = corpus,
+      registry = ocpu_registry,
+      property = "user"
+    )
+    
     resp <- httr::POST(
-      url = url, body = body,
-      httr::authenticate(user = properties[["user"]], password = pw)
+      url = url,
+      body = body,
+      httr::authenticate(user = user, password = pw)
     )
     rm(properties)
   } else {

@@ -123,11 +123,18 @@ setMethod("corpus", "character", function(
     return(y)
   } else {
     if (missing(restricted)) restricted <- FALSE
-    if (isFALSE(is.logical(restricted))) stop("Argument 'restricted' is required to be a logical value.")
-    y <- ocpu_exec(fn = "corpus", corpus = .Object, server = server, restricted = restricted, .Object = .Object)
+    if (isFALSE(is.logical(restricted)))
+      stop("Argument 'restricted' is required to be a logical value.")
+    y <- ocpu_exec(
+      fn = "corpus",
+      corpus = .Object,
+      server = server,
+      restricted = restricted,
+      .Object = .Object
+    )
     y <- as(y, "remote_corpus")
-    # The object returned from the remote server will not include information on the server and
-    # the accessibility status.
+    # The object returned from the remote server will not include information on
+    # the server and the accessibility status.
     slot(y, "server") <- server
     slot(y, "restricted") <- restricted
     return(y)
