@@ -614,8 +614,8 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
         registry = slot(x, "registry_dir")
       )
       na_rows <- apply(struc_matrix, 1, function(row) any(is.na(row)))
-      if (any(na_rows)) struc_matrix <- struc_matrix[-na_rows,]
-      
+      if (any(na_rows)) struc_matrix <- struc_matrix[!na_rows,]
+
       nomatch <- which(struc_matrix[,1] < 0L)
       if (length(nomatch) > 0L) struc_matrix <- struc_matrix[-nomatch,]
       

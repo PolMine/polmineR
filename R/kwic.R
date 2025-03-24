@@ -317,22 +317,27 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   DT <- copy(slot(.Object, "cpos")) # do not accidentily modify things
   setorderv(DT, cols = c("match_id", "cpos"))
   p_attr_decoded <- cl_id2str(
-    corpus = slot(.Object, "corpus"), p_attribute = slot(.Object, "p_attribute")[1],
+    corpus = slot(.Object, "corpus"),
+    p_attribute = slot(.Object, "p_attribute")[1],
     id = DT[[paste(slot(.Object, "p_attribute")[1], "id", sep = "_")]],
     registry = slot(.Object, "registry_dir")
   )
-  p_attr_recoded <- as.nativeEnc(p_attr_decoded, from = slot(.Object, "encoding"))
+  p_attr_recoded <- as.nativeEnc(
+    p_attr_decoded,
+    from = slot(.Object, "encoding")
+  )
+  
   DT[, slot(.Object, "p_attribute")[1] := p_attr_recoded, with = TRUE]
   DT[, "direction" := sign(DT[["position"]]), with = TRUE]
   
   if (is.null(s_attributes)) s_attributes <- character()
   
   y <- as(as(.Object, "textstat"), "kwic")
-  slot(y, "left") = as.integer(slot(.Object, "left"))
-  slot(y, "right") = as.integer(slot(.Object, "right"))
-  slot(y, "metadata") = if (length(s_attributes) == 0L) character() else s_attributes
-  slot(y, "cpos") = DT
-  y@ stat = data.table()
+  slot(y, "left") <- as.integer(slot(.Object, "left"))
+  slot(y, "right") <- as.integer(slot(.Object, "right"))
+  slot(y, "metadata") <- if (length(s_attributes) == 0L) character() else s_attributes
+  slot(y, "cpos") <- DT
+  y@stat <- data.table()
   
   y <- enrich(y, table = TRUE, s_attributes = s_attributes)
   if (isFALSE(cpos)) slot(y, "cpos") <- data.table()

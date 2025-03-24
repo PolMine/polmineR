@@ -14,6 +14,7 @@
 \alias{+,bundle,bundle-method}
 \alias{+,bundle,textstat-method}
 \alias{[,bundle,ANY,ANY,ANY-method}
+\alias{[[<-,bundle,ANY,ANY,ANY-method}
 \alias{$,bundle-method}
 \alias{$<-,bundle-method}
 \alias{sample,bundle-method}
@@ -45,7 +46,7 @@
 
 \S4method{[}{bundle,ANY,ANY,ANY}(x, i)
 
-\S4method{[[}{bundle}(x, i) <- value
+\S4method{[[}{bundle,ANY,ANY,ANY}(x, i) <- value
 
 \S4method{$}{bundle}(x, name)
 

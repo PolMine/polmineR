@@ -27,6 +27,8 @@ documentation via `package?polmineR` and `?polmineR` works #297.
 * The `s_attributes()`-method for `call` objects assigns "unknown" as names if 
 types cannot be determined. Solves bug when you do mathematical operations in 
 expression passed into `subset()`#294.
+* Removed bug in `subset()`-method for `subcorpus` objects that would result in 
+a warning about NAs from `Rcpp::ranges_to_cpos()`.
 
 
 # polmineR v0.8.9
