@@ -335,7 +335,12 @@ setMethod("kwic", "context", function(.Object, s_attributes = getOption("polmine
   y <- as(as(.Object, "textstat"), "kwic")
   slot(y, "left") <- as.integer(slot(.Object, "left"))
   slot(y, "right") <- as.integer(slot(.Object, "right"))
-  slot(y, "metadata") <- if (length(s_attributes) == 0L) character() else s_attributes
+  
+  slot(y, "metadata") <- if (length(s_attributes) == 0L)
+    character()
+  else
+    s_attributes
+  
   slot(y, "cpos") <- DT
   y@stat <- data.table()
   

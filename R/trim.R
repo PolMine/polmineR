@@ -184,25 +184,30 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
       dt <- data.table(cpos = ranges_to_cpos(positivelist), positivelist = TRUE)
       cpos_min <- dt[slot(.Object, "cpos")[slot(.Object, "cpos")[["position"]] != 0], on = "cpos"]
       matches_to_keep <- cpos_min[,
-        if (any(!is.na(.SD$positivelist))) .SD else NULL,
-        by = "match_id"
+                                  if (any(!is.na(.SD$positivelist))) .SD else NULL,
+                                  by = "match_id"
       ][["match_id"]]
       slot(.Object, "cpos") <- slot(.Object, "cpos")[slot(.Object, "cpos")[["match_id"]] %in% matches_to_keep]
     } else {
-      positivelist_ids <- .token2id(
-        corpus = slot(.Object, "corpus"),
-        registry = slot(.Object, "registry_dir"),
-        p_attribute = p_attribute,
-        token = positivelist,
-        regex = regex
-      )
-      .fn <- function(.SD){
-        neighbors <- .SD[[paste(p_attribute[1], "id", sep = "_")]][.SD[["position"]] != 0]
-        if (any(neighbors %in% positivelist_ids)) return( .SD ) else return( NULL )
+      if (is.character(positivelist)){
+        positivelist <- .token2id(
+          corpus = slot(.Object, "corpus"),
+          registry = slot(.Object, "registry_dir"),
+          p_attribute = p_attribute,
+          token = positivelist,
+          regex = regex
+        )
       }
-      slot(.Object, "cpos") <- slot(.Object, "cpos")[, .fn(.SD), by = "match_id", with = TRUE]
+      
+      col <- paste(p_attribute[1], "id", sep = "_")
+      dt <- data.table(id = positivelist, positivelist = TRUE)
+      setnames(dt, old = "id", new = col)
+      dt <- dt[slot(.Object, "cpos"), on = col]
+      dt_min <- dt[dt[["position"]] != 0]
+      matches <- dt_min[dt_min[["positivelist"]] == TRUE][["match_id"]]
+      slot(.Object, "cpos") <- slot(.Object, "cpos")[slot(.Object, "cpos")[["match_id"]] %in% matches]
     }
-    
+
     if (nrow(slot(.Object, "cpos")) == 0) {
       warning("no remaining hits after applying positivelist, returning NULL")
       return( invisible(NULL) )

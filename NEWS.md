@@ -29,6 +29,7 @@ types cannot be determined. Solves bug when you do mathematical operations in
 expression passed into `subset()`#294.
 * Removed bug in `subset()`-method for `subcorpus` objects that would result in 
 a warning about NAs from `Rcpp::ranges_to_cpos()`.
+* Improved performance for `trim()`-method for `context` objects (argument `positivelist`).
 
 
 # polmineR v0.8.9
