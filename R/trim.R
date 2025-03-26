@@ -178,7 +178,7 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
   }
   
   if (!is.null(positivelist)){
-    .message("filtering by positivelist", verbose = verbose)
+    if (verbose) cli_process_start("filter by positivelist")
     before <- length(unique(slot(.Object, "cpos")[["match_id"]]))
     if (is.matrix(positivelist)){
       dt <- data.table(cpos = ranges_to_cpos(positivelist), positivelist = TRUE)
@@ -209,16 +209,21 @@ setMethod("trim", "context", function(.Object, s_attribute = NULL, positivelist 
     }
 
     if (nrow(slot(.Object, "cpos")) == 0) {
-      warning("no remaining hits after applying positivelist, returning NULL")
+      cli_alert_warning("no remaining hits after applying positivelist, returning NULL")
       return( invisible(NULL) )
     }
-
     slot(.Object, "count") <- length(unique(slot(.Object, "cpos")[["match_id"]]))
-    .message(
-      "number of hits dropped due to positivelist:",
-      before - slot(.Object, "count"), verbose = verbose
-    )
+    if (verbose) cli_process_done()
     
+    if (verbose){
+      dropped <- before - slot(.Object, "count")
+      cli_alert_info(
+        sprintf(
+          'number of hits dropped due to positivelist: {.val {dropped}}'
+        )
+      )
+    }
+
     .Object <- enrich(.Object, stat = TRUE)
     
   }

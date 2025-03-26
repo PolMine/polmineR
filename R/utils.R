@@ -368,11 +368,11 @@ flatten <- function(object){
     }
   } else {
     if (type == "error"){
-      stop(msg)
+      cli_alert_danger(msg)
     } else if (type == "warning"){
-      warning(msg)
+      cli_alert_warning(msg)
     } else {
-      if (verbose) message(paste("...", msg))
+      if (verbose) cli_alert_info(msg)
     }
   }
   

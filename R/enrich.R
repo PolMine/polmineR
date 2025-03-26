@@ -302,20 +302,27 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   if (!is.null(s_attribute)){
     # check that all s-attributes are available
     .message("checking that all s-attributes are available", verbose = verbose)
-    stopifnot(
-      all(s_attribute %in% corpus_s_attributes(corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir")))
+    s_attrs <- corpus_s_attributes(
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
     )
+    stopifnot(all(s_attribute %in% s_attrs))
     
     for (s_attr in s_attribute){
       .message("get struc for s-attribute:", s_attr, verbose = verbose)
       strucs <- cl_cpos2struc(
-        corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
-        s_attribute = s_attr, cpos = slot(.Object, "cpos")[["cpos"]]
+        corpus = slot(.Object, "corpus"),
+        registry = slot(.Object, "registry_dir"),
+        s_attribute = s_attr,
+        cpos = slot(.Object, "cpos")[["cpos"]]
       )
       if (decode == FALSE){
         colname_struc <- paste(s_attr, "int", sep = "_")
         if (colname_struc %in% colnames(slot(.Object, "cpos"))){
-          .message("already present, skipping assignment of column:", colname_struc, verbose = verbose)
+          .message(
+            sprintf("already present, skipping assignment of column: {.val }", colname_struc),
+            verbose = verbose
+          )
         } else {
           slot(.Object, "cpos")[, (colname_struc) := strucs]
         }
@@ -336,36 +343,49 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
   
   if (!is.null(p_attribute)){
     # check that all p-attributes are available
-    .message("checking that all p-attributes are available", verbose = verbose)
-    stopifnot(
-      all(p_attribute %in% corpus_p_attributes(slot(.Object, "corpus"), registry = slot(.Object, "registry_dir")))
+    if (verbose)
+      cli_process_start("checking that all p-attributes are available")
+    
+    p_attrs <- corpus_p_attributes(
+      slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
     )
+    stopifnot(
+      all(p_attribute %in% p_attrs)
+    )
+    if (verbose) cli_process_done()
     
     # add ids and decode if requested
     for (p_attr in p_attribute){
       colname <- paste(p_attr, "id", sep = "_")
       if (colname %in% colnames(slot(.Object, "cpos"))){
-        .message("already present - skip getting ids for p-attribute:", p_attr, verbose = verbose)
+        if (verbose)
+          cli_alert_info("p-attribute {.val {p_attr}} already present")
       } else {
         .message("getting token id for p-attribute:", p_attr, verbose = verbose)
         ids <- cpos2id(
-          x = .Object, p_attribute = p_attr, cpos = slot(.Object, "cpos")[["cpos"]]
+          x = .Object,
+          p_attribute = p_attr,
+          cpos = slot(.Object, "cpos")[["cpos"]]
         )
         slot(.Object, "cpos")[, (colname) := ids]
       }
       
       if (decode){
         if (p_attr %in% colnames(slot(.Object, "cpos"))){
-          .message("already present - skip getting strings for p-attribute:", p_attr, verbose = verbose)
+          if (verbose)
+            cli_alert_info("p-attribute {.val {p_attr}} already present")
         } else {
-          .message("decode p-attribute:", p_attr, verbose = verbose)
+          if (verbose) cli_process_start("decode p-attribute: {.val {p_attr}}")
           p_attr_id <- paste(p_attr, "id", sep = "_")
           decoded <- id2str(
-            x = .Object, p_attribute = p_attr, id = slot(.Object, "cpos")[[p_attr_id]]
+            x = .Object,
+            p_attribute = p_attr,
+            id = slot(.Object, "cpos")[[p_attr_id]]
           )
           native <- as.nativeEnc(decoded, from = slot(.Object, "encoding"))
           slot(.Object, "cpos") <- slot(.Object, "cpos")[, "word" := native]
-          # slot(.Object, "cpos")[, (p_attr_id) := NULL]
+          if (verbose) cli_process_done()
         }
       }
     }
@@ -376,7 +396,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
       "%s count statistics for slot cpos",
       if (nrow(slot(.Object, "cpos")) == 0L) "generate" else "update"
     )
-    .message(msg, verbose = verbose)
+    if (verbose) cli_process_start(msg)
     
     p_attr_id <- paste(slot(.Object, "p_attribute"), "id", sep = "_")
     setkeyv(slot(.Object, "cpos"), p_attr_id)
@@ -394,6 +414,7 @@ setMethod("enrich", "context", function(.Object, s_attribute = NULL, p_attribute
       slot(.Object, "stat")[, eval(slot(.Object, "p_attribute")[i]) := new_col_native]
     }
     
+    if (verbose) cli_process_done()
   }
   
   .Object
