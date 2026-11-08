@@ -1,5 +1,10 @@
 # polmineR v0.8.9.9001-9007
 
+* The `ll()` method returns a log-likelihood value rather than `NA` if an observed
+count is 0, e.g. if a term occurs exclusively in the neighborhood of a node word.
+Terms with an observed count of 0 contribute 0 to the statistic. Note that this
+changes results: These terms now have values and ranks, and can appear at the top
+of result tables.
 * The `ll()` method for `Cooccurrences` objects no longer fails for objects with
 more than one p-attribute. Column names of slots 'stat' and 'window_sizes' keep
 the id columns (e.g. 'a_word_id') rather than taking names from the p-attributes.

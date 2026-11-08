@@ -143,11 +143,14 @@ setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attribute
 #' formula is not significantly slower than relying on the simplified formula,
 #' polmineR has moved to the standard computation.
 #' 
-#' An inherent difficulty of the log likelihood statistic is that it is not
-#' possible to compute the statistical test value if the number of observed
-#' counts in the reference corpus is 0, i.e. if a term only occurrs exclusively
-#' in the neighborhood of a node word. When filtering out rare words from the
-#' result table, respective \code{NA} values will usually disappear.
+#' If an observed count is 0, e.g. if a term occurs exclusively in the
+#' neighborhood of a node word, the term \eqn{O_{ij} log(\frac{O_{ij}}{E_{ij}})}{Oij *
+#' log(Oij/Eij)} is undefined when evaluated literally. Following the usual
+#' convention, it is treated as 0, its limit as the observed count approaches 0
+#' (see Dunning 1993). Note: Before polmineR v0.8.9.9014, the result was
+#' \code{NA} in this scenario. Values for rare terms need to be interpreted
+#' cautiously, so filtering out rare words from the result table is still
+#' advisable.
 #' @references Dunning, Ted (1993): Accurate Methods for the Statistics of
 #'   Surprise and Coincidence. \emph{Computational Linguistics}, Vol. 19, No. 1,
 #'   pp. 61-74.
@@ -236,6 +239,15 @@ setMethod("pmi", "ngrams", function(.Object, observed, p_attribute = p_attribute
 setGeneric("ll", function(.Object, ...) standardGeneric("ll") )
 
 
+# A term of the log-likelihood statistic: O * log(O/E). The limit for O -> 0 is
+# 0, but evaluating it literally yields NaN.
+.ll_term <- function(o, e){
+  y <- o * log(o / e)
+  y[which(o == 0)] <- 0
+  y
+}
+
+
 
 #' @rdname ll
 setMethod("ll", "features", function(.Object){
@@ -251,12 +263,10 @@ setMethod("ll", "features", function(.Object){
   e21 <- slot(.Object, "size_coi") * (r2 / N) 
   e22 <- slot(.Object, "size_ref") * (r2 / N)
 
-  f11 <- slot(.Object, "stat")[["count_coi"]] / slot(.Object, "stat")[["exp_coi"]]
-  f12  <- slot(.Object, "stat")[["count_ref"]] / slot(.Object, "stat")[["exp_ref"]]
-  f21 <- o21 / e21
-  f22 <- o22 / e22
-  
-  bracket <- slot(.Object, "stat")[["count_coi"]] * log(f11) + slot(.Object, "stat")[["count_ref"]] * log(f12) + o21 * log(f21) + o22 * log(f22)
+  bracket <- .ll_term(slot(.Object, "stat")[["count_coi"]], slot(.Object, "stat")[["exp_coi"]]) +
+    .ll_term(slot(.Object, "stat")[["count_ref"]], slot(.Object, "stat")[["exp_ref"]]) +
+    .ll_term(o21, e21) +
+    .ll_term(o22, e22)
   direction <- ifelse(slot(.Object, "stat")[["count_coi"]] >= slot(.Object, "stat")[["exp_coi"]], 1L, -1L)
   slot(.Object, "stat")[, "ll" := 2 * bracket * direction]
   slot(.Object, "stat")[, "ll" := ifelse(is.nan(ll), NA, ll)]
@@ -323,10 +333,10 @@ setMethod("ll", "Cooccurrences", function(.Object, verbose = TRUE){
   dt[, "e22" := dt[["size_ref"]] * ((dt[["o21"]] + dt[["o22"]]) / (dt[["size_coi"]] + dt[["size_ref"]])) ]
   
   ll <- 2 * (
-    dt[["ab_count"]] * log(dt[["ab_count"]] / dt[["exp_coi"]]) + 
-    dt[["obs_ref"]] * log(dt[["obs_ref"]] / dt[["exp_ref"]]) + 
-    dt[["o21"]] * log(dt[["o21"]]/dt[["e21"]]) + 
-    dt[["o22"]] * log(dt[["o22"]]/dt[["e22"]])
+    .ll_term(dt[["ab_count"]], dt[["exp_coi"]]) +
+    .ll_term(dt[["obs_ref"]], dt[["exp_ref"]]) +
+    .ll_term(dt[["o21"]], dt[["e21"]]) +
+    .ll_term(dt[["o22"]], dt[["e22"]])
   )
   
   direction <- ifelse(dt[["ab_count"]] >= dt[["exp_coi"]], 1L, -1L)

@@ -66,11 +66,14 @@ table, generating individual contingency tables etc. As using the standard
 formula is not significantly slower than relying on the simplified formula,
 polmineR has moved to the standard computation.
 
-An inherent difficulty of the log likelihood statistic is that it is not
-possible to compute the statistical test value if the number of observed
-counts in the reference corpus is 0, i.e. if a term only occurrs exclusively
-in the neighborhood of a node word. When filtering out rare words from the
-result table, respective \code{NA} values will usually disappear.
+If an observed count is 0, e.g. if a term occurs exclusively in the
+neighborhood of a node word, the term \eqn{O_{ij} log(\frac{O_{ij}}{E_{ij}})}{Oij *
+log(Oij/Eij)} is undefined when evaluated literally. Following the usual
+convention, it is treated as 0, its limit as the observed count approaches 0
+(see Dunning 1993). Note: Before polmineR v0.8.9.9014, the result was
+\code{NA} in this scenario. Values for rare terms need to be interpreted
+cautiously, so filtering out rare words from the result table is still
+advisable.
 }
 \examples{
 # use ll-method explicitly
@@ -159,9 +162,9 @@ Tabbert, Ulrike (2015): \emph{Crime and Corpus. The Linguistic
 Representation of Crime in the Press}. Amsterdam: Benjamins.
 }
 \seealso{
-Other statistical methods: 
-\code{\link{chisquare}()},
-\code{\link{pmi}()},
-\code{\link{t_test}()}
+Other statistical methods:
+\code{\link[=chisquare]{chisquare()}},
+\code{\link[=pmi]{pmi()}},
+\code{\link[=t_test]{t_test()}}
 }
 \concept{statistical methods}

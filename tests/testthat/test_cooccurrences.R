@@ -8,10 +8,12 @@ test_that(
   "cooccurrences-method for corpus",
   {
     y <- cooccurrences("REUTERS", query = "oil", p_attribute = "word")
-    expect_equal(subset(y, !is.na(ll))[["word"]][1:4], c("prices", "crude", "industry", "recent"))
+    expect_equal(subset(y, count_ref > 0L)[["word"]][1:4], c("prices", "crude", "industry", "recent"))
+    expect_equal(y[["word"]][1:4], c("prices", "world", "markets", "crude"))
     
     y <- cooccurrences("REUTERS", query = '"barrel.*"', p_attribute = "word")
-    expect_equal(subset(y, !is.na(ll))[["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
+    expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
+    expect_equal(y[["word"]][1:5], c("18", "dlrs", "mln", "per", "a"))
     
     # handle more than one p-attribute
     p_attrs <- c("word", "pos")
@@ -40,10 +42,12 @@ test_that(
     P <- partition("REUTERS", places = "saudi-arabia", regex = TRUE)
     
     y <- cooccurrences(P, query = "oil", p_attribute = "word")
-    expect_equal(subset(y, !is.na(ll))[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
+    expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
+    expect_equal(y[["word"]][1:5], c("each", "prices", "GCC", "boost", "fall"))
     
     y <- cooccurrences(P, query = '"barrel.*"', cqp = TRUE, p_attribute = "word")
-    expect_equal(subset(y, is.na(ll))[["word"]][1:5], c("10", "17.52", "18", "1986","3.5"))
+    expect_false(anyNA(y[["ll"]]))
+    expect_true(all(c("10", "17.52", "18", "1986", "3.5") %in% subset(y, count_ref == 0L)[["word"]]))
     
     expect_equal(
       cooccurrences(P, query = "asdfasdf", p_attribute = "word"),
@@ -79,7 +83,9 @@ test_that(
       e21 <- (o11 + o21) * ((o21 + o22) / N)
       e22 <- (o12 + o22) * ((o21 + o22) / N)
       
-      ll <- 2 * (o11*log(o11/e11) + o12*log(o12/e12) + o21*log(o21/e21) + o22*log(o22/e22) )
+      # A term with an observed count of 0 is 0 (limit of o * log(o/e) for o -> 0).
+      term <- function(o, e) if (o == 0L) 0 else o * log(o / e)
+      ll <- 2 * (term(o11, e11) + term(o12, e12) + term(o21, e21) + term(o22, e22))
 
       expect_identical(round(cooc_dt[["ll"]][i], 3), round(ll, 3))
     }
@@ -141,9 +147,17 @@ test_that(
     decode(r)
 
     a <- data.table::as.data.table(cooccurrences(r, query = "oil"))
-    a <- a[!is.na(ll)][!is.nan(ll)]
+    expect_false(anyNA(a[["ll"]]))
     b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))[!word %in% stopwords]
-    b <- b[!is.na(ll)][!is.nan(ll)]
+    expect_false(anyNA(b[["ll"]]))
+    
+    # Tokens may be counted several times if windows overlap, so count_coi can
+    # exceed the count of a token in the corpus. The two methods derive expected
+    # values differently in this scenario (using the corpus count or count_coi),
+    # so they can be compared only for the remaining tokens.
+    multicounted <- b[count_coi > count_partition][["word"]]
+    a <- a[!word %in% multicounted]
+    b <- b[!word %in% multicounted]
     
     library(data.table)
     setkeyv(a, cols = "word")
@@ -239,5 +253,53 @@ test_that(
     ll(y, verbose = FALSE)
     expect_true("ll" %in% colnames(y@stat))
     expect_gt(sum(!is.na(y@stat[["ll"]])), 0L)
+  }
+)
+
+test_that(
+  "ll values are computed if observed counts are 0",
+  {
+    # Expected value from a complete contingency table. Cells with an observed
+    # count of 0 contribute 0.
+    g2 <- function(o11, o12, o21, o22){
+      o <- matrix(c(o11, o21, o12, o22), nrow = 2L)
+      e <- outer(rowSums(o), colSums(o)) / sum(o)
+      2 * sum(ifelse(o == 0, 0, o * log(o / e)))
+    }
+    
+    # context/cooccurrences (method for features class)
+    y <- cooccurrences("REUTERS", query = "oil", p_attribute = "word")
+    dt <- y@stat[count_ref == 0L][count_coi <= count_partition]
+    expect_gt(nrow(dt), 0L)
+    expect_false(anyNA(y@stat[["ll"]]))
+    expect_equal(
+      dt[["ll"]][1],
+      g2(dt[["count_coi"]][1], 0L, y@size_coi - dt[["count_coi"]][1], y@size_ref)
+    )
+    
+    # Cooccurrences
+    p <- partition(
+      "GERMAPARLMINI",
+      speaker = "Merkel",
+      date = "2009-11-10",
+      interjection = "speech",
+      regex = TRUE
+    )
+    r <- Cooccurrences(p, p_attribute = "word", left = 3L, right = 3L, verbose = FALSE)
+    ll(r, verbose = FALSE)
+    expect_false(anyNA(r@stat[["ll"]]))
+    row <- r@stat[obs_ref == 0L][1]
+    expect_equal(
+      row[["ll"]],
+      g2(row[["ab_count"]], 0L, row[["size_coi"]] - row[["ab_count"]], row[["size_ref"]])
+    )
+    
+    # features
+    f <- features(
+      partition("GERMAPARLMINI", speaker = "Merkel", interjection = "speech", regex = TRUE, p_attribute = "word"),
+      "GERMAPARLMINI", included = TRUE, method = "ll"
+    )
+    expect_gt(sum(f@stat[["count_ref"]] == 0L), 0L)
+    expect_false(anyNA(f@stat[["ll"]]))
   }
 )
