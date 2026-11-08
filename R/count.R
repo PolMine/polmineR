@@ -329,7 +329,7 @@ setMethod("count", "partition_bundle", function(.Object, query = NULL, cqp = FAL
       # data.table objects envisage less than 10000 columns to be added in a bulk
       # action. Therefore we check whether there 10000 or more columns to be 
       # added. If yes, we break up the job into chunks.
-      if (length(missing_queries < 10000L)){
+      if (length(missing_queries) < 10000L){
         DT_cast[, (missing_queries) := 0L]
       } else {
         qlist <- split(

@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9007
 
+* The `show()` method for `partition_bundle` objects no longer fails with more
+than one fixed s-attribute, and reports all of them.
+* The `count()` method for `partition_bundle` objects adds columns for queries
+without matches in chunks if there are 10000 or more such queries, as intended.
 * S4 class has new slot 'match' for decoded matches for query.
 * Method `ranges()` adds decoded token stream of query matches to 'ranges'
 object (slot "match") that is returned #277.

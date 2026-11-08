@@ -127,3 +127,17 @@ test_that(
   {
   }
 )
+
+test_that(
+  "count for partition_bundle handles 10000+ queries without matches",
+  {
+    pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+    nomatch <- paste0("zzznomatch", seq_len(10500L))
+    # data.table warns about over-allocation when adding this many columns
+    dt <- suppressWarnings(count(pb, query = c("Integration", nomatch)))
+    expect_true(all(nomatch %in% colnames(dt)))
+    expect_equal(sum(dt[["zzznomatch10500"]]), 0L)
+    expect_equal(sum(dt[["TOTAL"]]), sum(dt[["Integration"]]))
+    expect_gt(sum(dt[["Integration"]]), 0L)
+  }
+)

@@ -12,7 +12,7 @@ setMethod("show", "partition_bundle", function (object) {
     function(x) paste(x, "=", paste(slot(object, "s_attributes_fixed")[[x]], collapse="/"))
   ))
   message(sprintf("%-25s", "s-attributes fixed:"), sFix[1])
-  if (length(sFix) > 1) for (i in length(sFix)) message(sprintf("%-25s\n"), sFix[i])
+  if (length(sFix) > 1L) for (i in 2L:length(sFix)) message(sprintf("%-25s", ""), sFix[i])
 })
 
 #' @rdname partition_bundle-class

@@ -46,3 +46,15 @@ test_that(
   }
 )
 
+test_that(
+  "show for partition_bundle reports all fixed s-attributes",
+  {
+    pb <- partition_bundle("GERMAPARLMINI", s_attribute = "date")
+    pb@s_attributes_fixed <- list(a = "x", b = "y", c = "z")
+    msg <- paste(capture_messages(show(pb)), collapse = "")
+    expect_match(msg, "a = x", fixed = TRUE)
+    expect_match(msg, "b = y", fixed = TRUE)
+    expect_match(msg, "c = z", fixed = TRUE)
+  }
+)
+
