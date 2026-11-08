@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); f=\"${f#\"$CLAUDE_PROJECT_DIR\"/}\"; case \"$f\" in man/*|docs/*|NAMESPACE) echo \"$f is generated or off limits: edit roxygen comments in R/ and run devtools::document(); never edit docs/.\" >&2; exit 2 ;; esac"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *.R|*.r) Rscript --vanilla -e 'invisible(parse(file = commandArgs(TRUE)[1], keep.source = FALSE))' \"$f\" 1>&2 || exit 2 ;; esac",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
