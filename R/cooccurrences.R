@@ -795,11 +795,12 @@ setMethod("Cooccurrences", "slice", function(
     )
     if (verbose) message("... counting window size")
     
-    slot(y, "window_sizes") <- dt[, .N, by = c(eval(a_cols_id)), with = TRUE]
+    # Names need to be removed: data.table would use them as column names.
+    slot(y, "window_sizes") <- dt[, .N, by = c(eval(unname(a_cols_id))), with = TRUE]
     setnames(slot(y, "window_sizes"), "N", "size_coi")
 
     if (verbose) message("... counting co-occurrences")
-    slot(y, "stat") <- dt[, .N, by = c(eval(c(a_cols_id, b_cols_id))), with = TRUE]
+    slot(y, "stat") <- dt[, .N, by = c(eval(unname(c(a_cols_id, b_cols_id)))), with = TRUE]
     setnames(slot(y, "stat"), "N", "ab_count")
   }
   y

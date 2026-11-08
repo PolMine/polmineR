@@ -1,5 +1,8 @@
 # polmineR v0.8.9.9001-9007
 
+* The `ll()` method for `Cooccurrences` objects no longer fails for objects with
+more than one p-attribute. Column names of slots 'stat' and 'window_sizes' keep
+the id columns (e.g. 'a_word_id') rather than taking names from the p-attributes.
 * The `show()` method for `partition_bundle` objects no longer fails with more
 than one fixed s-attribute, and reports all of them.
 * The `count()` method for `partition_bundle` objects adds columns for queries

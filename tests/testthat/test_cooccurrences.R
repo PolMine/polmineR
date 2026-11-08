@@ -210,3 +210,34 @@ test_that(
     expect_identical(merkel_cooc@stat, merkel_cooc_sc@stat)
   }
 )
+
+test_that(
+  "Cooccurrences with multiple p-attributes keeps id columns for ll()",
+  {
+    # Not skipped on CRAN, so that a plain R CMD check catches this.
+    p <- partition(
+      "GERMAPARLMINI",
+      speaker = "Merkel",
+      date = "2009-11-10",
+      interjection = "speech",
+      regex = TRUE
+    )
+    y <- Cooccurrences(
+      p,
+      p_attribute = c("word", "pos"),
+      left = 3L, right = 3L,
+      verbose = FALSE
+    )
+    expect_identical(
+      colnames(y@window_sizes),
+      c("a_word_id", "a_pos_id", "size_coi")
+    )
+    expect_identical(
+      colnames(y@stat),
+      c("a_word_id", "a_pos_id", "b_word_id", "b_pos_id", "ab_count")
+    )
+    ll(y, verbose = FALSE)
+    expect_true("ll" %in% colnames(y@stat))
+    expect_gt(sum(!is.na(y@stat[["ll"]])), 0L)
+  }
+)
