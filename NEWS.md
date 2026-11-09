@@ -1,5 +1,12 @@
 # polmineR v0.8.9.9001-9007
 
+* New argument `deduplicate` of the `cooccurrences()` and `Cooccurrences()` methods
+to control whether each corpus position is counted once if windows of neighboring
+matches overlap. It defaults to `FALSE`, so results do not change. With
+`deduplicate = TRUE`, counts cannot exceed the count of a token in the corpus, and
+both methods yield identical statistics. Counts are no longer symmetric then: The
+counts for a token 'b' as a cooccurrence of 'a' and for 'a' as a cooccurrence of 'b'
+may differ.
 * The `ll()` method returns a log-likelihood value rather than `NA` if an observed
 count is 0, e.g. if a term occurs exclusively in the neighborhood of a node word.
 Terms with an observed count of 0 contribute 0 to the statistic. Note that this

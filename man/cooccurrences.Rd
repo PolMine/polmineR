@@ -34,6 +34,7 @@ cooccurrences(.Object, ...)
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
   progress = FALSE,
+  deduplicate = FALSE,
   ...
 )
 
@@ -54,6 +55,7 @@ cooccurrences(.Object, ...)
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
   progress = FALSE,
+  deduplicate = FALSE,
   ...
 )
 
@@ -72,6 +74,7 @@ cooccurrences(.Object, ...)
   mc = FALSE,
   progress = TRUE,
   verbose = FALSE,
+  deduplicate = FALSE,
   ...
 )
 
@@ -90,6 +93,7 @@ cooccurrences(.Object, ...)
   mc = FALSE,
   progress = TRUE,
   verbose = FALSE,
+  deduplicate = FALSE,
   ...
 )
 
@@ -108,10 +112,11 @@ cooccurrences(.Object, ...)
   mc = FALSE,
   progress = TRUE,
   verbose = FALSE,
+  deduplicate = FALSE,
   ...
 )
 
-\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE)
+\S4method{cooccurrences}{context}(.Object, method = "ll", verbose = FALSE, deduplicate = FALSE)
 
 \S4method{cooccurrences}{partition_bundle}(
   .Object,
@@ -179,6 +184,11 @@ corpus positions for the whole corpus will be used}
 \item{verbose}{A \code{logical} value, whether to be verbose.}
 
 \item{progress}{A \code{logical} value, whether to output progress bar.}
+
+\item{deduplicate}{A \code{logical} value, whether to count each corpus
+position once if windows of neighboring matches overlap. Defaults to
+\code{FALSE}, so tokens in overlapping windows are counted several times.
+See the documentation of \code{\link{ll}} for the consequences.}
 }
 \value{
 a cooccurrences-class object

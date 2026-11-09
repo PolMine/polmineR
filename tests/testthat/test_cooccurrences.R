@@ -303,3 +303,125 @@ test_that(
     expect_false(anyNA(f@stat[["ll"]]))
   }
 )
+
+test_that(
+  "each corpus position is counted once if deduplicate is TRUE",
+  {
+    # FALSE is the default
+    expect_identical(
+      cooccurrences("REUTERS", query = "oil", deduplicate = FALSE)@stat,
+      cooccurrences("REUTERS", query = "oil")@stat
+    )
+    
+    # "domestic" occurs 3 times, 2 occurrences are in the windows of 2 matches
+    # each ("low oil prices on the domestic oil industry"), 1 is in no window
+    y <- cooccurrences("REUTERS", query = "oil", left = 5L, right = 5L, deduplicate = TRUE)
+    dt <- y@stat[word == "domestic"]
+    expect_identical(dt[["count_partition"]], 3L)
+    expect_identical(dt[["count_coi"]], 2L)
+    expect_identical(dt[["count_ref"]], 1L)
+    expect_true(all(y@stat[["count_coi"]] <= y@stat[["count_partition"]]))
+    expect_false(anyNA(y@stat[["ll"]]))
+    expect_identical(y@size_coi + y@size_ref + y@size_match, y@size_partition)
+    
+    # Without deduplication, the token is counted 4 times
+    y_dup <- cooccurrences("REUTERS", query = "oil", left = 5L, right = 5L)
+    expect_identical(y_dup@stat[word == "domestic"][["count_coi"]], 4L)
+    expect_lt(y@size_coi, y_dup@size_coi)
+    
+    # The context retains the number of tokens in windows
+    ctxt <- context("REUTERS", query = "oil", left = 5L, right = 5L)
+    expect_identical(ctxt@stat[word == "domestic"][["count_coi"]], 4L)
+    
+    r <- Cooccurrences("REUTERS", p_attribute = "word", left = 5L, right = 5L, deduplicate = TRUE)
+    a <- str2id(corpus("REUTERS"), p_attribute = "word", str = "oil")
+    b <- str2id(corpus("REUTERS"), p_attribute = "word", str = "domestic")
+    expect_identical(r@stat[a_id == a & b_id == b][["ab_count"]], 2L)
+    # Not symmetric: 4 distinct positions of "oil" are in windows of "domestic"
+    expect_identical(r@stat[a_id == b & b_id == a][["ab_count"]], 4L)
+    
+    # cooccurrences() and Cooccurrences() yield identical statistics
+    ll(r, verbose = FALSE)
+    decode(r)
+    m <- merge(
+      data.table::as.data.table(cooccurrences(r, query = "oil")),
+      data.table::as.data.table(y),
+      by = "word"
+    )
+    expect_gt(nrow(m), 0L)
+    expect_equal(m[["count_coi.x"]], m[["count_coi.y"]])
+    expect_equal(m[["ll.x"]], m[["ll.y"]])
+  }
+)
+
+test_that(
+  "Cooccurrences with deduplicate = TRUE matches a brute force count",
+  {
+    p <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE)
+    p_attrs <- c("word", "pos")
+    ids <- lapply(
+      setNames(nm = p_attrs),
+      function(x) RcppCWB::cpos2id(corpus = "GERMAPARLMINI", p_attribute = x, cpos = 0L:(size("GERMAPARLMINI") - 1L), registry = p@registry_dir)
+    )
+    # Pairs of node and position in window, each position once per node
+    windows <- data.table::rbindlist(lapply(
+      seq_len(nrow(p@cpos)),
+      function(i) data.table::rbindlist(lapply(
+        p@cpos[i, 1]:p@cpos[i, 2],
+        function(node){
+          w <- c((node - 2L):(node - 1L), (node + 1L):(node + 4L))
+          w <- w[w >= p@cpos[i, 1] & w <= p@cpos[i, 2]]
+          list(a_word_id = rep(ids$word[node + 1L], length(w)), a_pos_id = rep(ids$pos[node + 1L], length(w)), b_cpos = w)
+        }
+      ))
+    ))
+    windows <- unique(windows, by = c("a_word_id", "a_pos_id", "b_cpos"))
+    windows[, "b_word_id" := ids$word[windows[["b_cpos"]] + 1L]]
+    windows[, "b_pos_id" := ids$pos[windows[["b_cpos"]] + 1L]]
+    
+    # one p-attribute
+    brute <- unique(windows, by = c("a_word_id", "b_cpos"))[, .N, by = c("a_word_id", "b_word_id")]
+    data.table::setnames(brute, c("a_word_id", "b_word_id"), c("a_id", "b_id"))
+    r <- Cooccurrences(p, p_attribute = "word", left = 2L, right = 4L, deduplicate = TRUE)
+    joined <- merge(brute, r@stat, by = c("a_id", "b_id"), all = TRUE)
+    expect_identical(joined[["N"]], joined[["ab_count"]])
+    
+    # several p-attributes (symmetric window, see the swap of left and right)
+    windows3 <- data.table::rbindlist(lapply(
+      seq_len(nrow(p@cpos)),
+      function(i) data.table::rbindlist(lapply(
+        p@cpos[i, 1]:p@cpos[i, 2],
+        function(node){
+          w <- setdiff((node - 3L):(node + 3L), node)
+          w <- w[w >= p@cpos[i, 1] & w <= p@cpos[i, 2]]
+          list(a_word_id = rep(ids$word[node + 1L], length(w)), a_pos_id = rep(ids$pos[node + 1L], length(w)), b_cpos = w)
+        }
+      ))
+    ))
+    windows3 <- unique(windows3, by = c("a_word_id", "a_pos_id", "b_cpos"))
+    windows3[, "b_word_id" := ids$word[windows3[["b_cpos"]] + 1L]]
+    windows3[, "b_pos_id" := ids$pos[windows3[["b_cpos"]] + 1L]]
+    id_cols <- c("a_word_id", "a_pos_id", "b_word_id", "b_pos_id")
+    brute <- windows3[, .N, by = id_cols]
+    m <- Cooccurrences(p, p_attribute = p_attrs, left = 3L, right = 3L, deduplicate = TRUE)
+    joined <- merge(brute, m@stat, by = id_cols, all = TRUE)
+    expect_identical(joined[["N"]], joined[["ab_count"]])
+  }
+)
+
+test_that(
+  "helper to count each corpus position once",
+  {
+    # "oil prices oil": 1 for "prices" as a cooccurrence of "oil", 2 for "oil" as
+    # a cooccurrence of "prices"
+    ids <- c(1L, 2L, 1L)
+    expect_identical(
+      polmineR:::.cooccurrence_pairs(ids, offset = -1L, offsets_done = integer()),
+      list(a = c(2L, 1L), b = c(1L, 2L))
+    )
+    expect_identical(
+      polmineR:::.cooccurrence_pairs(ids, offset = 1L, offsets_done = -1L),
+      list(a = 2L, b = 1L)
+    )
+  }
+)

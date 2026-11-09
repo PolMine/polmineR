@@ -62,6 +62,10 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param progress A \code{logical} value, whether to output progress bar.
 #' @param keep list with tokens to keep
 #' @param mc whether to use multicore
+#' @param deduplicate A \code{logical} value, whether to count each corpus
+#'   position once if windows of neighboring matches overlap. Defaults to
+#'   \code{FALSE}, so tokens in overlapping windows are counted several times.
+#'   See the documentation of \code{\link{ll}} for the consequences.
 #' @param ... Further parameters that will be passed into bigmatrix (applies only of big = TRUE).
 #' @return a cooccurrences-class object
 #' @seealso See the documentation for the \code{\link{ll}}-method for an
@@ -120,6 +124,7 @@ setMethod("cooccurrences", "corpus", function(
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE,
   ...
 ){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -133,7 +138,15 @@ setMethod("cooccurrences", "corpus", function(
     count = TRUE, 
     mc = mc, verbose = verbose, progress = progress
   )
-  if (is.null(ctxt)) invisible(NULL) else cooccurrences(ctxt, method = method, verbose = verbose)
+  if (is.null(ctxt))
+    invisible(NULL)
+  else
+    cooccurrences(
+      ctxt,
+      method = method,
+      verbose = verbose,
+      deduplicate = deduplicate
+    )
 })
 
 
@@ -146,6 +159,7 @@ setMethod("cooccurrences", "character", function(
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE,
   ...
 ){
   cooccurrences(
@@ -165,6 +179,7 @@ setMethod("cooccurrences", "character", function(
     mc = mc,
     verbose = verbose,
     progress = progress,
+    deduplicate = deduplicate,
     ...
   )
 })
@@ -181,6 +196,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
+    deduplicate = FALSE,
     ...
   ){
     if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -196,7 +212,7 @@ setMethod(
     if (is.null(y))
       invisible(NULL)
     else
-      cooccurrences(y, method = method, verbose = verbose)
+      cooccurrences(y, method = method, verbose = verbose, deduplicate = deduplicate)
   }
 )
 
@@ -210,6 +226,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
+    deduplicate = FALSE,
     ...
   ) callNextMethod()
 )
@@ -225,6 +242,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
+    deduplicate = FALSE,
     ...
   ) callNextMethod()
 )
@@ -232,7 +250,7 @@ setMethod(
 
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE){
+setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE, deduplicate = FALSE){
   
   
   # enrich partition if necessary
@@ -260,8 +278,6 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   }
   setnames(slot(.Object, "stat"), old = "count", new = "count_partition")
   
-  count_ref <- slot(.Object, "stat")[["count_partition"]] - slot(.Object, "stat")[["count_coi"]]
-  
   # If may appear very odd, but count_ref may assume values < 0
   # consider the times "Intermediate" and "West" are counted as cooccurrences
   # of "Texas" in the following example:
@@ -269,18 +285,19 @@ setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose =
   # For hits for a query that include the query in the window, tokens may be 
   # counted several times, which may result in a count for the token that is
   # higher than the overall occurrence of the token in the corpus
-  # The solution is to count again tokens in cpos, but this time controlling 
-  # for corpus positions
-  if (TRUE){
-    slot(.Object, "stat")[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
+  if (deduplicate){
+    # Each corpus position in the windows is counted once.
+    p_attr_id <- paste(slot(.Object, "p_attribute"), "id", sep = "_")
+    cpos_min <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] != 0)]
+    cpos_unique <- unique(cpos_min, by = "cpos")
+    count_unique <- cpos_unique[, .N, by = eval(p_attr_id), with = TRUE]
+    slot(.Object, "stat")[, "count_coi" := count_unique[slot(.Object, "stat"), on = p_attr_id][["N"]]]
+    slot(.Object, "size_coi") <- nrow(cpos_unique)
+    slot(.Object, "size_ref") <- as.integer(slot(.Object, "size_partition") - slot(.Object, "size_coi") - slot(.Object, "size_match"))
+    slot(.Object, "stat")[, "count_ref" := slot(.Object, "stat")[["count_partition"]] - slot(.Object, "stat")[["count_coi"]]]
   } else {
-    multi_min <- slot(.Object, "cpos")[which(slot(.Object, "cpos")[["position"]] != 0)][, .N, by = c("cpos", paste(slot(.Object, "p_attribute"), "id", sep = "_")), with = TRUE]
-    multicount_min <- multi_min[multi_min[["N"]] > 1L][, "cpos" := NULL]
-    multicount_min[, "N" := (multicount_min[["N"]] - 1)]
-    multicount_min2 <- multicount_min[, sum(.SD[["N"]]), by = c(paste(slot(.Object, "p_attribute"), "id", sep = "_"))]
-    setkeyv(multicount_min2, cols = paste(slot(.Object, "p_attribute"), "id", sep = "_"))
-    dt <- multicount_min2[slot(.Object, "stat")]
-    slot(.Object, "stat")[, "count_ref" := ifelse(!is.na(dt[["V1"]]), count_ref + dt[["V1"]], count_ref)]
+    count_ref <- slot(.Object, "stat")[["count_partition"]] - slot(.Object, "stat")[["count_coi"]]
+    slot(.Object, "stat")[, "count_ref" := ifelse(count_ref >= 0L, count_ref,  0L)]
   }
   
   setkeyv(slot(.Object, "stat"), slot(.Object, "p_attribute"))
@@ -440,19 +457,42 @@ setMethod("cooccurrences", "Cooccurrences", function(.Object, query){
 setGeneric("Cooccurrences", function(.Object, ...) standardGeneric("Cooccurrences"))
 
 
+# Get the pairs of token ids with collocate b at the offset from node a, for the
+# ids of a region. Windows of neighboring occurrences of a node may overlap. To
+# count each corpus position once, a pair is dropped if the same node occurs at
+# an offset of the collocate that has been processed already. This avoids
+# keeping corpus positions in memory when iterating over offsets.
+.cooccurrence_pairs <- function(ids, offset, offsets_done){
+  n <- length(ids)
+  if (n <= abs(offset) + 1L) return(NULL)
+  node <- if (offset < 0L) (-offset + 1L):n else 1L:(n - offset)
+  collocate <- node + offset
+  keep <- rep(TRUE, times = length(node))
+  for (k in offsets_done[abs(offsets_done) + 1L < n]){
+    other_node <- collocate - k
+    in_region <- which(other_node >= 1L & other_node <= n)
+    same <- ids[other_node[in_region]] == ids[node[in_region]]
+    keep[in_region[same]] <- FALSE
+  }
+  list(a = ids[node[keep]], b = ids[collocate[keep]])
+}
+
+
 #' @exportMethod Cooccurrences
 #' @rdname all_cooccurrences
 #' @aliases Cooccurrences
 setMethod("Cooccurrences", "corpus", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE
 ){
   Cooccurrences(
     as(.Object, "subcorpus"),
     p_attribute = p_attribute,
     left = left, right = right, stoplist = stoplist,
-    mc = mc, verbose = verbose, progress = progress)
+    mc = mc, verbose = verbose, progress = progress,
+    deduplicate = deduplicate)
 })
 
 
@@ -463,13 +503,15 @@ setMethod("Cooccurrences", "corpus", function(
 setMethod("Cooccurrences", "character", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE
 ){
   Cooccurrences(
     corpus(.Object),
     p_attribute = p_attribute,
     left = left, right = right, stoplist = stoplist,
-    mc = mc, verbose = verbose, progress = progress)
+    mc = mc, verbose = verbose, progress = progress,
+    deduplicate = deduplicate)
 })
 
 
@@ -496,6 +538,10 @@ setMethod("Cooccurrences", "character", function(
 #' @param mc Logical value, whether to use multiple cores.
 #' @param progress Logical value, whether to display a progress bar.
 #' @param verbose Logical value, whether to output messages.
+#' @param deduplicate Logical value, whether to count each corpus position once
+#'   if windows of neighboring occurrences of a node overlap. Defaults to
+#'   \code{FALSE}, so tokens in overlapping windows are counted several times.
+#'   See the documentation of \code{\link{ll}} for the consequences.
 #' @importFrom data.table data.table melt.data.table as.data.table
 #' @importFrom RcppCWB cl_id2str cl_str2id cl_cpos2id
 #' @import methods
@@ -642,7 +688,8 @@ setMethod("Cooccurrences", "character", function(
 setMethod("Cooccurrences", "slice", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE
 ){
   y <- new(
     "Cooccurrences",
@@ -688,34 +735,41 @@ setMethod("Cooccurrences", "slice", function(
       
       if (verbose) message("Processing tokens at position: ", i)
 
-      node_vector <- unlist(lapply(
-        id_list,
-        function(ids){
-          if (i < 0){
-            from <- -i + 1L
-            to <- length(ids)
-            if (to > from) return(ids[from:to]) else return(NULL)
-          } else {
-            to <- length(ids) - i
-            if (to > 1L) return(ids[1L:to]) else return(NULL)
+      if (deduplicate){
+        offsets_done <- positions[seq_len(which(positions == i) - 1L)]
+        pairs <- lapply(id_list, .cooccurrence_pairs, offset = i, offsets_done = offsets_done)
+        node_vector <- unlist(lapply(pairs, `[[`, "a"))
+        collocate_vector <- unlist(lapply(pairs, `[[`, "b"))
+      } else {
+        node_vector <- unlist(lapply(
+          id_list,
+          function(ids){
+            if (i < 0){
+              from <- -i + 1L
+              to <- length(ids)
+              if (to > from) return(ids[from:to]) else return(NULL)
+            } else {
+              to <- length(ids) - i
+              if (to > 1L) return(ids[1L:to]) else return(NULL)
+            }
           }
-        }
-      ))
+        ))
       
-      collocate_vector <- unlist(lapply(
-        id_list,
-        function(ids){
-          if (i < 0){
-            to <- length(ids) + i
-            if (to > 1L) return(ids[1L:to]) else return(NULL)
-          } else {
-            from <- i + 1L
-            to <- length(ids)
-            if (to > from) return(ids[from:to]) else return(NULL)
+        collocate_vector <- unlist(lapply(
+          id_list,
+          function(ids){
+            if (i < 0){
+              to <- length(ids) + i
+              if (to > 1L) return(ids[1L:to]) else return(NULL)
+            } else {
+              from <- i + 1L
+              to <- length(ids)
+              if (to > from) return(ids[from:to]) else return(NULL)
+            }
           }
-        }
-      ))
-      
+        ))
+      }
+
       dt <- data.table(a_id = node_vector, b_id = collocate_vector) [, .N, by = c("a_id", "b_id")]
       setkeyv(dt, cols = c("a_id", "b_id"))
       
@@ -783,8 +837,13 @@ setMethod("Cooccurrences", "slice", function(
       function(x) lapply(names(x), function(y) rep(as.integer(y), times = length(x[[y]])))
     )
     if (verbose) message("... putting together data.table")
-    dt <- data.table(a_cpos = unlist(bag), b_cpos = unlist(b_cpos))
-    
+    if (deduplicate){
+      # a_cpos: position of the node, b_cpos: position in the window of the node
+      dt <- data.table(a_cpos = unlist(b_cpos), b_cpos = unlist(bag))
+    } else {
+      dt <- data.table(a_cpos = unlist(bag), b_cpos = unlist(b_cpos))
+    }
+
     if (verbose) message("... getting token ids")
     lapply(
       p_attribute,
@@ -793,8 +852,11 @@ setMethod("Cooccurrences", "slice", function(
         dt[, eval(b_cols_id[x]) := cpos2id(.Object, p_attribute = x, cpos = dt[["b_cpos"]]), with = TRUE]
       }
     )
+    # Windows of neighboring nodes may overlap: Count each corpus position once.
+    if (deduplicate) dt <- unique(dt, by = c(unname(a_cols_id), "b_cpos"))
+
     if (verbose) message("... counting window size")
-    
+
     # Names need to be removed: data.table would use them as column names.
     slot(y, "window_sizes") <- dt[, .N, by = c(eval(unname(a_cols_id))), with = TRUE]
     setnames(slot(y, "window_sizes"), "N", "size_coi")
@@ -811,7 +873,8 @@ setMethod("Cooccurrences", "slice", function(
 setMethod("Cooccurrences", "partition", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE
 ){ callNextMethod() })
 
 
@@ -819,7 +882,8 @@ setMethod("Cooccurrences", "partition", function(
 setMethod("Cooccurrences", "subcorpus", function(
   .Object, p_attribute, left, right,
   stoplist = NULL,
-  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE
+  mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
+  deduplicate = FALSE
 ){ callNextMethod() })
 
 

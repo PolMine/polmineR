@@ -17,7 +17,8 @@
   stoplist = NULL,
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
-  progress = FALSE
+  progress = FALSE,
+  deduplicate = FALSE
 )
 
 \S4method{Cooccurrences}{character}(
@@ -28,7 +29,8 @@
   stoplist = NULL,
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
-  progress = FALSE
+  progress = FALSE,
+  deduplicate = FALSE
 )
 
 \S4method{Cooccurrences}{slice}(
@@ -39,7 +41,8 @@
   stoplist = NULL,
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
-  progress = FALSE
+  progress = FALSE,
+  deduplicate = FALSE
 )
 
 \S4method{Cooccurrences}{partition}(
@@ -50,7 +53,8 @@
   stoplist = NULL,
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
-  progress = FALSE
+  progress = FALSE,
+  deduplicate = FALSE
 )
 
 \S4method{Cooccurrences}{subcorpus}(
@@ -61,7 +65,8 @@
   stoplist = NULL,
   mc = getOption("polmineR.mc"),
   verbose = FALSE,
-  progress = FALSE
+  progress = FALSE,
+  deduplicate = FALSE
 )
 }
 \arguments{
@@ -81,6 +86,11 @@
 \item{verbose}{Logical value, whether to output messages.}
 
 \item{progress}{Logical value, whether to display a progress bar.}
+
+\item{deduplicate}{Logical value, whether to count each corpus position once
+if windows of neighboring occurrences of a node overlap. Defaults to
+\code{FALSE}, so tokens in overlapping windows are counted several times.
+See the documentation of \code{\link{ll}} for the consequences.}
 }
 \description{
 Obtain all cooccurrences in a corpus, or a \code{partition}. The result is a
