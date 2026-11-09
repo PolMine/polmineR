@@ -14,7 +14,6 @@
 ^revdep$
 ^uml$
 ^CRAN-RELEASE$
-^TODO.md$
 ^.github$
 ^docker$
 ^sticker$
