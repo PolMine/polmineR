@@ -1,5 +1,5 @@
 ---
-title: "Introducing the 'polmineR'-package"
+title: "Introduction to polmineR"
 author: "Andreas Blaette (andreas.blaette@uni-due.de)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
