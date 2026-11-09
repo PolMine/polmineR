@@ -202,13 +202,15 @@ setMethod("size", "corpus", function(x, s_attribute = NULL, verbose = TRUE, ...)
             strucs = struc_vec
           )
           ext <- data.table(cpos = RcppCWB::ranges_to_cpos(m))
-          struc_values <- cl_struc2str(
-            corpus = slot(x, "corpus"),
-            registry = slot(x, "registry_dir"),
-            s_attribute = s_attr,
-            struc = struc_vec
-          ) |>
-            as.nativeEnc(from = slot(x, "encoding"))
+          struc_values <- as.nativeEnc(
+            cl_struc2str(
+              corpus = slot(x, "corpus"),
+              registry = slot(x, "registry_dir"),
+              s_attribute = s_attr,
+              struc = struc_vec
+            ),
+            from = slot(x, "encoding")
+          )
           unfolded <- rep(struc_values, times = m[,2] - m[, 1] + 1)
           ext[, (s_attr) := unfolded]
           

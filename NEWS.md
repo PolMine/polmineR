@@ -1,5 +1,7 @@
 # polmineR v0.8.9.9001-9007
 
+* Usage of the native pipe operator `|>` removed, so that the package works with
+R versions before 4.1.0 as declared in the DESCRIPTION file (R >= 3.5.0).
 * The `Cooccurrences()` method with more than one p-attribute used multiple cores
 if `mc` was `FALSE`, and a single core if `mc` was `TRUE`. With `progress = TRUE`,
 argument `mc` was ignored. If `mc` is `TRUE`, the number of cores is now taken

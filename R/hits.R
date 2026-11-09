@@ -154,11 +154,13 @@ setMethod(
       )
       if (!s_attr_has_values(s_attribute[i], x = .Object)) decode[i] <- FALSE
       if (decode[i]) {
-        s_attr_values <- suppressWarnings(cl_struc2str(
-          corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
-          s_attribute = s_attribute[i], struc = strucs
-        )) |>
-          as.nativeEnc(from = slot(.Object, "encoding"))
+        s_attr_values <- as.nativeEnc(
+          suppressWarnings(cl_struc2str(
+            corpus = slot(.Object, "corpus"), registry = slot(.Object, "registry_dir"),
+            s_attribute = s_attribute[i], struc = strucs
+          )),
+          from = slot(.Object, "encoding")
+        )
         DT[, eval(s_attribute[i]) := s_attr_values]
       } else {
         DT[, eval(s_attribute[i]) := strucs]
@@ -342,11 +344,13 @@ setMethod("hits", "partition_bundle", function(
     nas <- which(is.na(dt[["partition"]]) == TRUE)
     if (missing(s_attribute)) s_attribute <- NULL
     for (s_attr in s_attribute){
-      values <- cl_struc2str(
-        corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
-        s_attribute = s_attr, struc = dt[["struc"]]
-      ) |>
-        as.nativeEnc(from = slot(.Object, "encoding"))
+      values <- as.nativeEnc(
+        cl_struc2str(
+          corpus = corpus_id, registry = corpus_registry_dir(corpus_id),
+          s_attribute = s_attr, struc = dt[["struc"]]
+        ),
+        from = slot(.Object, "encoding")
+      )
       dt[, (s_attr) := values]
     }
     # remove hits that are not in partition_bundle

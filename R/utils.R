@@ -201,10 +201,12 @@ is_nested <- function(x){
 #' @importFrom RcppCWB cl_struc_values
 s_attr_has_values <- function(s_attribute, x){
 
-  s_attr_files <- sprintf("^%s.(avs|avx|rng)$", s_attribute) |>
-    grep(list.files(slot(x, "data_dir")), value = TRUE) |>
-    strsplit("\\.") |>
-    sapply(`[[`, 2)
+  s_attr_files <- grep(
+    sprintf("^%s.(avs|avx|rng)$", s_attribute),
+    list.files(slot(x, "data_dir")),
+    value = TRUE
+  )
+  s_attr_files <- sapply(strsplit(s_attr_files, "\\."), `[[`, 2)
 
   if (length(s_attr_files) == 0L){
     return(NA)
