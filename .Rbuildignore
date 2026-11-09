@@ -20,6 +20,5 @@
 ^sticker$
 ^\.github$
 ^CRAN-SUBMISSION$
-^CLAUDE\.md$
 ^\.claude$
 ^\.lintr$
