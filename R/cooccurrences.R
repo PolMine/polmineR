@@ -819,7 +819,11 @@ setMethod("Cooccurrences", "slice", function(
         lapply(
           setNames(range, range),
           function(x) {
-            cpos <- c((x - left):(x - 1L), (x + 1L):(x + right))
+            # (x - 0L):(x - 1L) would yield x and x - 1L, so skip empty sides
+            cpos <- c(
+              if (left > 0L) (x - left):(x - 1L) else integer(),
+              if (right > 0L) (x + 1L):(x + right) else integer()
+            )
             cpos <- cpos[which(cpos >= cpos_min)]
             cpos[which(cpos <= cpos_max)]
           })
@@ -838,12 +842,8 @@ setMethod("Cooccurrences", "slice", function(
       function(x) lapply(names(x), function(y) rep(as.integer(y), times = length(x[[y]])))
     )
     if (verbose) message("... putting together data.table")
-    if (deduplicate){
-      # a_cpos: position of the node, b_cpos: position in the window of the node
-      dt <- data.table(a_cpos = unlist(b_cpos), b_cpos = unlist(bag))
-    } else {
-      dt <- data.table(a_cpos = unlist(bag), b_cpos = unlist(b_cpos))
-    }
+    # a_cpos: position of the node, b_cpos: position in the window of the node
+    dt <- data.table(a_cpos = unlist(b_cpos), b_cpos = unlist(bag))
 
     if (verbose) message("... getting token ids")
     lapply(

@@ -426,3 +426,49 @@ test_that(
     )
   }
 )
+
+test_that(
+  "Cooccurrences with several p-attributes respects left and right",
+  {
+    p <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE)
+    p_attrs <- c("word", "pos")
+    id_cols <- c("a_word_id", "a_pos_id", "b_word_id", "b_pos_id")
+    ids <- lapply(
+      setNames(nm = p_attrs),
+      function(x) RcppCWB::cpos2id(corpus = "GERMAPARLMINI", p_attribute = x, cpos = 0L:(size("GERMAPARLMINI") - 1L), registry = p@registry_dir)
+    )
+    brute <- function(left, right, deduplicate){
+      offsets <- c(if (left > 0L) -left:-1L else integer(), if (right > 0L) 1L:right else integer())
+      windows <- data.table::rbindlist(lapply(
+        seq_len(nrow(p@cpos)),
+        function(i) data.table::rbindlist(lapply(
+          p@cpos[i, 1]:p@cpos[i, 2],
+          function(node){
+            w <- node + offsets
+            w <- w[w >= p@cpos[i, 1] & w <= p@cpos[i, 2]]
+            list(a_word_id = rep(ids$word[node + 1L], length(w)), a_pos_id = rep(ids$pos[node + 1L], length(w)), b_cpos = w)
+          }
+        ))
+      ))
+      if (deduplicate) windows <- unique(windows, by = c("a_word_id", "a_pos_id", "b_cpos"))
+      windows[, "b_word_id" := ids$word[windows[["b_cpos"]] + 1L]]
+      windows[, "b_pos_id" := ids$pos[windows[["b_cpos"]] + 1L]]
+      windows
+    }
+    for (window in list(c(2L, 4L), c(0L, 1L), c(1L, 0L))){
+      for (deduplicate in c(FALSE, TRUE)){
+        m <- Cooccurrences(p, p_attribute = p_attrs, left = window[1], right = window[2], deduplicate = deduplicate)
+        windows <- brute(window[1], window[2], deduplicate)
+        joined <- merge(windows[, .N, by = id_cols], m@stat, by = id_cols, all = TRUE)
+        expect_identical(joined[["N"]], joined[["ab_count"]])
+        sizes <- merge(windows[, .N, by = c("a_word_id", "a_pos_id")], m@window_sizes, by = c("a_word_id", "a_pos_id"), all = TRUE)
+        expect_identical(sizes[["N"]], sizes[["size_coi"]])
+      }
+    }
+    
+    # Results for one p-attribute and several p-attributes are consistent
+    w <- Cooccurrences(p, p_attribute = "word", left = 0L, right = 1L)
+    m <- Cooccurrences(p, p_attribute = p_attrs, left = 0L, right = 1L)
+    expect_identical(sum(w@stat[["ab_count"]]), sum(m@stat[["ab_count"]]))
+  }
+)

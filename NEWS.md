@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9007
 
+* The `Cooccurrences()` method with more than one p-attribute counted the
+cooccurrences for a window with `left` and `right` exchanged, so results were
+wrong for asymmetric windows. If `left` or `right` was 0, tokens were counted as
+cooccurrences of themselves and of the token on the other side. Both are fixed.
 * The `cooccurrences()` method counts each corpus position once by default
 (`deduplicate = TRUE`) if windows of neighboring matches overlap. Note that this
 changes results (counts, window sizes, log-likelihood values and ranks). Use
