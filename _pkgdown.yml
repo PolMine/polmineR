@@ -1,8 +1,8 @@
 url: https://polmine.github.io/polmineR/
 
 template:
-  params:
-    bootswatch: cerulean
+  bootstrap: 5
+  bootswatch: cerulean
 reference:
   - title: "Package Basics"
     desc: Getting started with polmineR (CLI And GUI usage).
