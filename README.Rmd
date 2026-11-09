@@ -112,7 +112,7 @@ pop_regex <- dispersion("EUROPARL-EN", '"[pP]opulism"', s_attribute = "text_year
 
 The cooccurrences method is used to analyse the context of a query (including some statistics).
 
-```{r cooccurrences_dotplot, eval = TRUE, message = FALSE}
+```{r cooccurrences_dotplot, eval = TRUE, message = FALSE, fig.alt = "Dot plot of the 20 terms with the highest log-likelihood values as cooccurrences of 'Islam' in the EUROPARL-EN corpus. After 'Islam' itself, 'Christianity', 'religion' and 'Judaism' rank highest."}
 islam <- cooccurrences("EUROPARL-EN", query = 'Islam', left = 10, right = 10)
 islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)

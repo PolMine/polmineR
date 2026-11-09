@@ -158,7 +158,7 @@ islam <- subset(islam, rank_ll <= 100)
 dotplot(islam)
 ```
 
-![](README-cooccurrences_dotplot-1.png)<!-- -->
+<img src="README-cooccurrences_dotplot-1.png" alt="Dot plot of the 20 terms with the highest log-likelihood values as cooccurrences of 'Islam' in the EUROPARL-EN corpus. After 'Islam' itself, 'Christianity', 'religion' and 'Judaism' rank highest."  />
 
 ### features (keyword extraction)
 
