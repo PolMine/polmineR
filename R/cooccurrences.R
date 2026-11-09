@@ -830,10 +830,19 @@ setMethod("Cooccurrences", "slice", function(
       }
     }
     
+    cores <- if (is.logical(mc)) {
+      if (isTRUE(mc)) as.integer(getOption("polmineR.cores")) else 1L
+    } else {
+      as.integer(mc)
+    }
     if (progress){
-      bag <- pblapply(1L:nrow(slot(.Object, "cpos")), .make_window, cl = mc)
+      bag <- pblapply(1L:nrow(slot(.Object, "cpos")), .make_window, cl = if (cores > 1L) cores else NULL)
     } else{
-      bag <- if (mc) lapply(1L:nrow(slot(.Object, "cpos")), .make_window) else mclapply(1L:nrow(slot(.Object, "cpos")), .make_window)
+      bag <- if (cores > 1L){
+        mclapply(1L:nrow(slot(.Object, "cpos")), .make_window, mc.cores = cores)
+      } else {
+        lapply(1L:nrow(slot(.Object, "cpos")), .make_window)
+      }
     }
       
     

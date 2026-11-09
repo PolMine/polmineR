@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9007
 
+* The `Cooccurrences()` method with more than one p-attribute used multiple cores
+if `mc` was `FALSE`, and a single core if `mc` was `TRUE`. With `progress = TRUE`,
+argument `mc` was ignored. If `mc` is `TRUE`, the number of cores is now taken
+from option `polmineR.cores`.
 * The `Cooccurrences()` method with more than one p-attribute counted the
 cooccurrences for a window with `left` and `right` exchanged, so results were
 wrong for asymmetric windows. If `left` or `right` was 0, tokens were counted as

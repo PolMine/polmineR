@@ -472,3 +472,16 @@ test_that(
     expect_identical(sum(w@stat[["ab_count"]]), sum(m@stat[["ab_count"]]))
   }
 )
+
+test_that(
+  "Cooccurrences with several p-attributes yields identical results with and without mc",
+  {
+    p <- partition("GERMAPARLMINI", speaker = "Merkel", date = "2009-11-10", interjection = "speech", regex = TRUE)
+    y <- Cooccurrences(p, p_attribute = c("word", "pos"), left = 3L, right = 3L, mc = FALSE)
+    for (progress in c(FALSE, TRUE)){
+      y_mc <- suppressMessages(Cooccurrences(p, p_attribute = c("word", "pos"), left = 3L, right = 3L, mc = TRUE, progress = progress))
+      expect_identical(y_mc@stat, y@stat)
+      expect_identical(y_mc@window_sizes, y@window_sizes)
+    }
+  }
+)
