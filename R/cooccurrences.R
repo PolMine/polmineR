@@ -64,8 +64,9 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param mc whether to use multicore
 #' @param deduplicate A \code{logical} value, whether to count each corpus
 #'   position once if windows of neighboring matches overlap. Defaults to
-#'   \code{FALSE}, so tokens in overlapping windows are counted several times.
-#'   See the documentation of \code{\link{ll}} for the consequences.
+#'   \code{TRUE}. If \code{FALSE}, tokens in overlapping windows are counted
+#'   several times. See the documentation of \code{\link{ll}} for the
+#'   consequences.
 #' @param ... Further parameters that will be passed into bigmatrix (applies only of big = TRUE).
 #' @return a cooccurrences-class object
 #' @seealso See the documentation for the \code{\link{ll}}-method for an
@@ -124,7 +125,7 @@ setMethod("cooccurrences", "corpus", function(
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
-  deduplicate = FALSE,
+  deduplicate = TRUE,
   ...
 ){
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -159,7 +160,7 @@ setMethod("cooccurrences", "character", function(
   stoplist = NULL, positivelist = NULL, regex = FALSE,
   keep = NULL, cpos = NULL, method = "ll",
   mc = getOption("polmineR.mc"), verbose = FALSE, progress = FALSE,
-  deduplicate = FALSE,
+  deduplicate = TRUE,
   ...
 ){
   cooccurrences(
@@ -196,7 +197,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
-    deduplicate = FALSE,
+    deduplicate = TRUE,
     ...
   ){
     if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
@@ -226,7 +227,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
-    deduplicate = FALSE,
+    deduplicate = TRUE,
     ...
   ) callNextMethod()
 )
@@ -242,7 +243,7 @@ setMethod(
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
-    deduplicate = FALSE,
+    deduplicate = TRUE,
     ...
   ) callNextMethod()
 )
@@ -250,7 +251,7 @@ setMethod(
 
 
 #' @rdname cooccurrences
-setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE, deduplicate = FALSE){
+setMethod("cooccurrences", "context", function(.Object, method = "ll", verbose = FALSE, deduplicate = TRUE){
   
   
   # enrich partition if necessary

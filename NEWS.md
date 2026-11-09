@@ -1,5 +1,10 @@
 # polmineR v0.8.9.9001-9007
 
+* The `cooccurrences()` method counts each corpus position once by default
+(`deduplicate = TRUE`) if windows of neighboring matches overlap. Note that this
+changes results (counts, window sizes, log-likelihood values and ranks). Use
+`deduplicate = FALSE` to get the previous results. The default of the
+`Cooccurrences()` method remains `FALSE`.
 * New argument `deduplicate` of the `cooccurrences()` and `Cooccurrences()` methods
 to control whether each corpus position is counted once if windows of neighboring
 matches overlap. It defaults to `FALSE`, so results do not change. With

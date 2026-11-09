@@ -76,13 +76,16 @@ cautiously, so filtering out rare words from the result table is still
 advisable.
 
 Windows of neighboring matches of a node may overlap. By default, the
-\code{cooccurrences}- and \code{Cooccurrences}-methods count tokens in the
-overlap several times. With argument \code{deduplicate = TRUE}, each corpus
-position is counted once, however many windows it occurs in. As a
+\code{cooccurrences}-method counts each corpus position once, however many
+windows it occurs in (argument \code{deduplicate = TRUE}). The
+\code{Cooccurrences}-method counts tokens in the overlap several times
+unless \code{deduplicate = TRUE} is set. If each position is counted once, as a
 consequence, the number of cooccurrences is not symmetric: The tokens in "oil
 prices oil" yield a count of 1 for "prices" as a cooccurrence of "oil", but 2
 for "oil" as a cooccurrence of "prices". The slot \code{stat} of a
-\code{context} object always reports the number of tokens in windows.
+\code{context} object always reports the number of tokens in windows. Note:
+Before polmineR v0.8.9.9016, the \code{cooccurrences}-method counted tokens
+in overlapping windows several times by default.
 }
 \examples{
 # use ll-method explicitly

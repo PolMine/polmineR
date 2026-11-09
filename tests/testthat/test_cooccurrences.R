@@ -8,12 +8,12 @@ test_that(
   "cooccurrences-method for corpus",
   {
     y <- cooccurrences("REUTERS", query = "oil", p_attribute = "word")
-    expect_equal(subset(y, count_ref > 0L)[["word"]][1:4], c("prices", "crude", "industry", "recent"))
-    expect_equal(y[["word"]][1:4], c("prices", "world", "markets", "crude"))
+    expect_equal(subset(y, count_ref > 0L)[["word"]][1:4], c("prices", "crude", "world", "markets"))
+    expect_equal(y[["word"]][1:4], c("prices", "crude", "world", "markets"))
     
     y <- cooccurrences("REUTERS", query = '"barrel.*"', p_attribute = "word")
-    expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("dlrs", "mln", "a", "reserve", "brings"))
-    expect_equal(y[["word"]][1:5], c("18", "dlrs", "mln", "per", "a"))
+    expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("dlrs", "a", "mln", "reserve", "brings"))
+    expect_equal(y[["word"]][1:5], c("18", "dlrs", "per", "a", "mln"))
     
     # handle more than one p-attribute
     p_attrs <- c("word", "pos")
@@ -43,7 +43,7 @@ test_that(
     
     y <- cooccurrences(P, query = "oil", p_attribute = "word")
     expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
-    expect_equal(y[["word"]][1:5], c("each", "prices", "GCC", "boost", "fall"))
+    expect_equal(y[["word"]][1:5], c("prices", "GCC", "boost", "each", "fall"))
     
     y <- cooccurrences(P, query = '"barrel.*"', cqp = TRUE, p_attribute = "word")
     expect_false(anyNA(y[["ll"]]))
@@ -135,7 +135,7 @@ test_that(
 
         expect_equal(
           a2b,
-          cooccurrences("REUTERS", query = tokens[1])@stat[word == tokens[2]][["count_coi"]]
+          cooccurrences("REUTERS", query = tokens[1], deduplicate = FALSE)@stat[word == tokens[2]][["count_coi"]]
         )
 
         NULL
@@ -148,7 +148,8 @@ test_that(
 
     a <- data.table::as.data.table(cooccurrences(r, query = "oil"))
     expect_false(anyNA(a[["ll"]]))
-    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil"))[!word %in% stopwords]
+    # Cooccurrences() does not deduplicate by default
+    b <- data.table::as.data.table(cooccurrences("REUTERS", query = "oil", deduplicate = FALSE))[!word %in% stopwords]
     expect_false(anyNA(b[["ll"]]))
     
     # Tokens may be counted several times if windows overlap, so count_coi can
@@ -307,9 +308,9 @@ test_that(
 test_that(
   "each corpus position is counted once if deduplicate is TRUE",
   {
-    # FALSE is the default
+    # TRUE is the default for cooccurrences()
     expect_identical(
-      cooccurrences("REUTERS", query = "oil", deduplicate = FALSE)@stat,
+      cooccurrences("REUTERS", query = "oil", deduplicate = TRUE)@stat,
       cooccurrences("REUTERS", query = "oil")@stat
     )
     
@@ -325,7 +326,7 @@ test_that(
     expect_identical(y@size_coi + y@size_ref + y@size_match, y@size_partition)
     
     # Without deduplication, the token is counted 4 times
-    y_dup <- cooccurrences("REUTERS", query = "oil", left = 5L, right = 5L)
+    y_dup <- cooccurrences("REUTERS", query = "oil", left = 5L, right = 5L, deduplicate = FALSE)
     expect_identical(y_dup@stat[word == "domestic"][["count_coi"]], 4L)
     expect_lt(y@size_coi, y_dup@size_coi)
     
