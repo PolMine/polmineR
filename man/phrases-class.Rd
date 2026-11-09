@@ -123,7 +123,7 @@ reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>
 # Use the concatenate_phrases() function on a data.table
 
 \dontrun{
-#' lexical_units_cqp <- c(
+lexical_units_cqp <- c(
   '"Deutsche.*" "Bundestag.*";',
   '"sozial.*" "Gerechtigkeit";',
   '"Ausschuss" "f.r" "Arbeit" "und" "Soziales";',
@@ -132,7 +132,7 @@ reuters_phrases <- cpos("REUTERS", cqp_phrase_queries, p_attribute = "word") \%>
 )
 
 phr <- cpos("GERMAPARLMINI", query = lexical_units_cqp, cqp = TRUE) \%>\%
-  as.phrases(corpus = "GERMAPARLMINI", enc = "word")
+  as.phrases(corpus = "GERMAPARLMINI")
 
 dt <- corpus("GERMAPARLMINI") \%>\%
   decode(p_attribute = "word", s_attribute = character(), to = "data.table") \%>\%
