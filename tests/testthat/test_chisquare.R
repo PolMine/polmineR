@@ -1,5 +1,4 @@
 library(polmineR)
-testthat::context("chisquare")
 use("polmineR")
 
 test_that(

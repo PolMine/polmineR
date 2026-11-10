@@ -1,5 +1,4 @@
 library(polmineR)
-testthat::context("enrich")
 use("polmineR")
 use("RcppCWB")
 

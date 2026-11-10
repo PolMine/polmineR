@@ -1,5 +1,4 @@
 library(polmineR)
-testthat::context("decode")
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 

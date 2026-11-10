@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
-testthat::context("features")
-
 test_that(
   "features (comparing a partition with a partition)",
   {

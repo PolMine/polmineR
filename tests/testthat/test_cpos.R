@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("cpos")
-
 test_that(
   "cpos-method for corpus",
   {

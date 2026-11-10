@@ -2,8 +2,6 @@ library(polmineR)
 library(data.table)
 use("polmineR")
 
-testthat::context("partition_bundle")
-
 test_that(
   "partition_bundle",
   {

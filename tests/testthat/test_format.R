@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("features")
-
 test_that(
   "formatting features object",
   {

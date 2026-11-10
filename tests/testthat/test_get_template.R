@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("get_template")
-
 test_that(
   "get_template",
   {

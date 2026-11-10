@@ -1,5 +1,4 @@
 library(polmineR)
-testthat::context("decode")
 use("polmineR")
 
 

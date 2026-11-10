@@ -1,7 +1,5 @@
 library(polmineR)
 
-testthat::context("encoding")
-
 test_that(
   "as.corpusEnc",
   {

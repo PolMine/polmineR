@@ -1,4 +1,3 @@
-testthat::context("opencpu")
 use("polmineR")
 
 # test_that(

@@ -1,7 +1,5 @@
 library(polmineR)
 use("polmineR")
-testthat::context("as.regions")
-
 test_that(
   "coerce to regions",
   {

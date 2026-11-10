@@ -1,6 +1,4 @@
 library(polmineR)
-testthat::context("use")
-
 test_that(
   "check return values of use()",
   {

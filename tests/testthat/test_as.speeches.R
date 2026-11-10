@@ -1,7 +1,5 @@
 library(polmineR)
 use("polmineR")
-testthat::context("as.speeches")
-
 test_that(
   "as.speeches",
   {

@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("kwic")
-
 test_that(
   "kwic-method for corpus",
   {

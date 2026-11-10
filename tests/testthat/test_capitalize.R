@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("capitalize")
-
 test_that("",
   {
   vec <- c("oil", "data", "corpus", NA, "x")

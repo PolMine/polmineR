@@ -1,7 +1,5 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
-testthat::context("hits")
-
 test_that(
   "hits method",
   {

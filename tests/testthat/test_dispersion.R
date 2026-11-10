@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 
-testthat::context("dispersion")
-
 test_that(
   "dispersion",
   {

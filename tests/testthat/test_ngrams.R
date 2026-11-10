@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("ngrams-method")
-
 test_that("ngrams",{
   o <- corpus("REUTERS")
   n <- ngrams(o, n = 2)

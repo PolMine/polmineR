@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
-testthat::context("context")
-
 
 test_that(
   "context-method for corpus",

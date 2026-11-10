@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("as.data.table")
-
 test_that(
   "as.data.table.bundle",
   {

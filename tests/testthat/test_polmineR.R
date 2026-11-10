@@ -3,8 +3,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("testing polmineR")
-
 test_that(
   "corpora present",
   {

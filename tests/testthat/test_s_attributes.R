@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 
-testthat::context("s_attributes-method")
-
 test_that(
   "s_attributes for corpus, without specification of s_attribute",
   {

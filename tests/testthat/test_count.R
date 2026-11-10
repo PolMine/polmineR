@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("count-method")
-
 test_that("count",{
   dt <- count("REUTERS")
   expect_true(all(colnames(dt) %in% c("word", "word_id", "count")))

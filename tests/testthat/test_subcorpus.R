@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("subcorpus")
-
 test_that(
   "is_nested() auxiliary function",
   {

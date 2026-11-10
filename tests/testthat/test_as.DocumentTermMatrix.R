@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
-testthat::context("as.TermDocumentMatrix")
-
 test_that(
   "Generate Term-Document-Matrix from corpus using as.TermDocumentMatrix",
   {

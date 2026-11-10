@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("get_token_stream")
-
 test_that(
   "get_token_stream()-method - decode entire corpus",
   {

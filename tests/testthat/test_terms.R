@@ -1,8 +1,6 @@
 library(polmineR)
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("terms-method")
-
 test_that("terms-method for partition, without/with regex", {
   P <- partition("REUTERS", places = "kuwait")
 

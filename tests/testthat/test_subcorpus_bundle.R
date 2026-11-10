@@ -2,8 +2,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("subcorpus_bundle")
-
 test_that(
   "get TermDocumentMatrix from subcorpus_bundle",
   {

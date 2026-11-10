@@ -3,8 +3,6 @@ library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
 
-testthat::context("p_attributes")
-
 test_that(
   "p_attributes,character",
   {

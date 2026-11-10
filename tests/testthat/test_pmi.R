@@ -1,8 +1,6 @@
 library(polmineR)
 use("polmineR")
 use(pkg = "RcppCWB", corpus = "REUTERS")
-testthat::context("pmi")
-
 test_that(
   "check calculation of pointwise mutual information",
   {
