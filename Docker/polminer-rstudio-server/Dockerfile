@@ -17,7 +17,7 @@ RUN apt-get update \
         && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
  	    && rm -rf /var/lib/apt/lists/*
 
-RUN Rscript -e "options(warn = 2); install.packages('devtools')"
+RUN Rscript -e "options(warn = 2); install.packages(c('devtools', 'remotes'))"
 
 ARG branch=master
 
