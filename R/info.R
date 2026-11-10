@@ -34,7 +34,7 @@ setMethod("show_info", "corpus", function(x){
   info_plain <- get_info(x)
   if (!is.null(info_plain)){
     if (attr(info_plain, "md")){
-      info_html_raw <- markdown::markdownToHTML(text = info_plain) 
+      info_html_raw <- markdown::mark_html(text = info_plain) 
       info_html <- htmltools::HTML(
         gsub("^.*<body>(.*?)</body>.*?$", "\\1", as.character(info_html_raw))
       )

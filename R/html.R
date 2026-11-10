@@ -92,15 +92,15 @@ setMethod("html", "character", function(object, corpus, height = NULL){
     )
   }
 
-  # produce result very similar to markdown::markdownToHTML, but selfmade to
+  # produce result very similar to markdown::mark_html(), but selfmade to
   # circumvent encoding issue on windows (poor handling of encodings other
-  # than UTF-8 by markdownToHTML)
+  # than UTF-8 by markdownToHTML(), its predecessor)
   template <- "<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n<title>%s</title>\n<style type=\"text/css\">\n%s\n</style>\n</head>\n<body>\n%s\n</body>\n</html>"
   doc <- sprintf(
     template,
     sprintf("Corpus: %s", corpus), # title
     css,
-    markdown::renderMarkdown(text = object)
+    markdown::mark(text = object)
   )
 
   if (!is.null(height)){

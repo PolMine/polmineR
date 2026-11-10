@@ -14,3 +14,24 @@ test_that(
     }
 )
 
+
+test_that(
+  "html() and show_info() render markdown as HTML (#257)",
+  {
+    testthat::skip_on_cran()
+    sp <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-11") %>%
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
+    doc <- as.character(html(sp[[1]], beautify = FALSE))
+    expect_match(doc, "<h3[^>]*>Norbert Lammert \\| 2009-11-11 \\| NA</h3>")
+    expect_match(doc, '<p><span id="80450" token="Die" class="fulltext">Die</span>', fixed = TRUE)
+    expect_no_match(doc, "### ", fixed = TRUE)
+
+    use(pkg = "RcppCWB", corpus = "REUTERS")
+    old <- options(viewer = function(...) invisible(NULL))
+    info <- as.character(show_info(corpus("REUTERS")))
+    options(old)
+    expect_match(info, '<h1[^>]*>REUTERS corpus</h1>')
+    expect_no_match(info, "<html", fixed = TRUE)
+  }
+)

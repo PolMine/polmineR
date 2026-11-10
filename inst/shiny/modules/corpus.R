@@ -24,7 +24,7 @@ corpusServer <- function(input, output, session){
       if (file.exists(infoFile)){
         content <- readLines(infoFile)
         if (grepl(".md$", infoFile)){
-            content <- markdown::markdownToHTML(text = content)
+            content <- markdown::mark_html(text = content)
             content <-  htmltools::HTML(gsub("^.*<body>(.*?)</body>.*?$", "\\1", as.character(content)))
         }
       } else {

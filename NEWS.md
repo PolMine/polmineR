@@ -1,5 +1,8 @@
 # polmineR v0.8.9.9001-9007
 
+* Functions `renderMarkdown()` and `markdownToHTML()`, which the markdown package
+keeps only for backward compatibility, replaced by their successors `mark()` and
+`mark_html()` (#257).
 * Usage of the native pipe operator `|>` removed, so that the package works with
 R versions before 4.1.0 as declared in the DESCRIPTION file (R >= 3.5.0).
 * The `Cooccurrences()` method with more than one p-attribute used multiple cores
