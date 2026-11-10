@@ -1,4 +1,4 @@
-# polmineR v0.8.9.9001-9007
+# polmineR v0.8.9.9001-9023
 
 * Functions `renderMarkdown()` and `markdownToHTML()`, which the markdown package
 keeps only for backward compatibility, replaced by their successors `mark()` and
