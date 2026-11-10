@@ -1,5 +1,10 @@
-# polmineR v0.8.9.9001-9024
+# polmineR v0.8.9.9001-9025
 
+* The `split()` method for `subcorpus_bundle` objects has a new argument `values`,
+as the methods for `corpus` and `subcorpus` objects. If `values` is a `character`
+vector, subcorpora that do not contain any of the values are dropped (#288).
+* The `split()` method for `subcorpus` objects failed with "not implemented" if
+argument `values` was a `character` vector (#288).
 * With argument `height`, the `html()` method again adds the CSS class "fulltext"
 to headings (`<h3 class="fulltext">`). The class was no longer added because recent
 versions of the markdown package add an `id` attribute to headings.

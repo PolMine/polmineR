@@ -100,3 +100,43 @@ test_that(
   }
 )
 
+
+test_that(
+  "split() with argument values for subcorpus and subcorpus_bundle (#288)",
+  {
+    dates <- corpus("GERMAPARLMINI") %>%
+      split(s_attribute = "date", verbose = FALSE)
+    speakers <- c("Norbert Lammert", "Angela Dorothea Merkel")
+
+    # subcorpus: character vector
+    sc <- dates[["2009-11-10"]]
+    y <- split(sc, s_attribute = "speaker", values = speakers, verbose = FALSE)
+    expect_identical(sort(names(y)), sort(speakers))
+    y_all <- split(sc, s_attribute = "speaker", values = TRUE, verbose = FALSE)
+    expect_identical(size(y[["Norbert Lammert"]]), size(y_all[["Norbert Lammert"]]))
+
+    # subcorpus_bundle: character vector, Merkel is missing on three days
+    b <- split(dates, s_attribute = "speaker", values = speakers, progress = FALSE)
+    expect_identical(is(b)[1], "subcorpus_bundle")
+    expect_identical(
+      sort(names(b)),
+      sort(c(
+        paste(names(dates), "Norbert Lammert", sep = "_"),
+        paste(c("2009-10-28", "2009-11-10"), "Angela Dorothea Merkel", sep = "_")
+      ))
+    )
+    expect_identical(
+      size(b[["2009-11-10_Norbert Lammert"]]),
+      size(y[["Norbert Lammert"]])
+    )
+
+    # subcorpus_bundle: no matches at all
+    b_none <- split(dates, s_attribute = "speaker", values = "nobody", progress = FALSE)
+    expect_identical(length(b_none), 0L)
+
+    # subcorpus_bundle: logical value and missing values give the same result
+    b_true <- split(dates, s_attribute = "speaker", values = TRUE, progress = FALSE)
+    b_missing <- split(dates, s_attribute = "speaker", progress = FALSE)
+    expect_identical(names(b_true), names(b_missing))
+  }
+)

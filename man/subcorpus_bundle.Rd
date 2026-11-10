@@ -44,6 +44,7 @@
 \S4method{split}{subcorpus_bundle}(
   x,
   s_attribute,
+  values,
   prefix = "",
   progress = TRUE,
   mc = getOption("polmineR.mc")
@@ -96,7 +97,9 @@ provided by the argument \code{s_attribute}. The return value is a
 \code{subcorpus_bundle}, the names of which will be the names of the
 incoming \code{partition_bundle} concatenated with the s-attribute values
 used for splitting. The argument \code{prefix} can be used to achieve a
-more descriptive name.
+more descriptive name. Argument \code{values} is passed to the \code{split}-method
+for each \code{subcorpus}. If \code{values} is a \code{character} vector, subcorpora
+that do not contain any of the values are dropped.
 }
 \examples{
 corpus("REUTERS") \%>\% split(s_attribute = "id") \%>\% summary()
@@ -121,4 +124,14 @@ y <- corpus("GERMAPARLMINI") \%>\%
   split(s_attribute = "speaker")
 
 summary(y)
+
+# split only by selected values of the s-attribute, with a prefix for names
+sc_bundle <- corpus("GERMAPARLMINI") \%>\%
+  split(s_attribute = "date", verbose = FALSE)
+y <- split(
+  sc_bundle,
+  s_attribute = "party", values = c("SPD", "FDP"), prefix = "party",
+  progress = FALSE
+)
+names(y)
 }

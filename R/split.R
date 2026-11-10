@@ -77,14 +77,18 @@ setMethod("split", "subcorpus", function(
     stop(sprintf("s-attribute '%s' not available", s_attribute))
 
   if (missing(values))
-    # prospectvely use RcppCWB::cl_struc_values()
+    # prospectively use RcppCWB::cl_struc_values()
     values <- s_attr_has_values(s_attribute = s_attribute, x = x)
   if (is.null(values)) values <- TRUE
   # result is reported, yet later with other info on s-attribute
   
   history <- rev(sapply(sys.calls(), function(x) deparse(x[[1]])))
   pb_call <- if (5L %in% which(history == "partition_bundle")) TRUE else FALSE
-  retval_class <- if (isTRUE(pb_call)) "partition_bundle" else "subcorpus_bundle"
+  retval_class <- if (isTRUE(pb_call))
+    "partition_bundle"
+  else
+    "subcorpus_bundle"
+  
   y <- as(as(x, "corpus"), retval_class)
   if (verbose) cli_alert_info("bundle class: {col_cyan({retval_class})}")
   
@@ -136,13 +140,12 @@ setMethod("split", "subcorpus", function(
 
   if (relation %in% c("sibling", "ancestor")){
     strucs <- cpos2struc(x, s_attr = s_attribute, cpos = slot(x, "cpos")[,1])
-    if (isTRUE(values)){
-      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-    } else if (isFALSE(values)){
+    if (isFALSE(values)){
       if (verbose) cli_alert_info("split by change of strucs")
       strucs_values <- strucs
     } else {
-      stop("not implemented")
+      # TRUE or character vector: split by values (filtered below if character)
+      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     }
     cpos_list <- split(slot(x, "cpos"), strucs_values)
     
@@ -169,11 +172,12 @@ setMethod("split", "subcorpus", function(
       strucs = strucs,
       registry = slot(x, "registry_dir")
     )
-    if (isTRUE(values)){
-      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
-    } else if (isFALSE(values)){
+    if (isFALSE(values)){
       if (verbose) cli_alert_info("split by change of strucs")
       strucs_values <- strucs
+    } else {
+      # TRUE or character vector: split by values (filtered below if character)
+      strucs_values <- struc2str(x, s_attr = s_attribute, struc = strucs)
     }
     cpos_list <- split(regions, strucs_values)
     struc_list <- split(strucs, strucs_values) # different from sibling
@@ -360,7 +364,9 @@ setMethod("split", "corpus", function(
 #'   `subcorpus_bundle`, the names of which will be the names of the
 #'   incoming `partition_bundle` concatenated with the s-attribute values
 #'   used for splitting. The argument `prefix` can be used to achieve a
-#'   more descriptive name.
+#'   more descriptive name. Argument `values` is passed to the `split`-method
+#'   for each `subcorpus`. If `values` is a `character` vector, subcorpora
+#'   that do not contain any of the values are dropped.
 #' @examples
 #' # split up objects in partition_bundle by using partition_bundle-method
 #' use("polmineR")
@@ -369,20 +375,41 @@ setMethod("split", "corpus", function(
 #'   split(s_attribute = "speaker")
 #' 
 #' summary(y)
+#'
+#' # split only by selected values of the s-attribute, with a prefix for names
+#' sc_bundle <- corpus("GERMAPARLMINI") %>%
+#'   split(s_attribute = "date", verbose = FALSE)
+#' y <- split(
+#'   sc_bundle,
+#'   s_attribute = "party", values = c("SPD", "FDP"), prefix = "party",
+#'   progress = FALSE
+#' )
+#' names(y)
 #' @rdname subcorpus_bundle
-setMethod("split", "subcorpus_bundle", function(x, s_attribute, prefix = "", progress = TRUE, mc = getOption("polmineR.mc")){
-  
+setMethod("split", "subcorpus_bundle", function(x, s_attribute, values, prefix = "", progress = TRUE, mc = getOption("polmineR.mc")){
+
   if (is.logical(mc)) mc <- if (isTRUE(mc)) as.integer(getOption("polmineR.cores")) else 1L
   mc <- as.integer(mc)
   stopifnot(length(mc) == 1L, !is.na(mc), is.integer(mc))
-  
+
+  # pass values only if provided, so that the default of the subcorpus method applies
+  args <- list(s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
+  if (!missing(values)) args[["values"]] <- values
+
   .fn <- function(sc){
-    y <- split(x = sc, s_attribute = s_attribute, verbose = FALSE, progress = FALSE)
+    y <- do.call(split, c(list(x = sc), args))
+    if (length(y) == 0L) return(list())
     names(y) <- paste(name(sc), paste(prefix, names(y), sep = if (nchar(prefix) > 0) "_" else ""), sep = "_")
     slot(y, "objects")
   }
   li <- if (progress) pblapply(slot(x, "objects"), .fn, cl = mc) else lapply(slot(x, "objects"), .fn)
-  as(unlist(li), "bundle")
+  objs <- unlist(li)
+  if (length(objs) == 0L){
+    # no subcorpus contains any of the values: return empty bundle
+    slot(x, "objects") <- list()
+    return(x)
+  }
+  as(objs, "bundle")
 })
 
 
