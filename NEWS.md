@@ -1,5 +1,8 @@
-# polmineR v0.8.9.9001-9023
+# polmineR v0.8.9.9001-9024
 
+* With argument `height`, the `html()` method again adds the CSS class "fulltext"
+to headings (`<h3 class="fulltext">`). The class was no longer added because recent
+versions of the markdown package add an `id` attribute to headings.
 * Functions `renderMarkdown()` and `markdownToHTML()`, which the markdown package
 keeps only for backward compatibility, replaced by their successors `mark()` and
 `mark_html()` (#257).

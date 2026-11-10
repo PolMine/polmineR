@@ -35,3 +35,20 @@ test_that(
     expect_no_match(info, "<html", fixed = TRUE)
   }
 )
+
+test_that(
+  "html() with height adds class 'fulltext' to headings",
+  {
+    testthat::skip_on_cran()
+    sp <- corpus("GERMAPARLMINI") %>%
+      subset(date == "2009-11-11") %>%
+      as.speeches(s_attribute_name = "speaker", s_attribute_date = "date", progress = FALSE)
+    for (beautify in c(FALSE, TRUE)){
+      doc <- as.character(html(sp[[1]], beautify = beautify, height = "250px"))
+      expect_match(doc, "overflow-y: scroll; height: 250px;", fixed = TRUE)
+      expect_match(doc, '<h3 class="fulltext"[^>]*>Norbert Lammert \\| 2009-11-11 \\| NA</h3>')
+    }
+    doc <- as.character(html(sp[[1]], beautify = FALSE))
+    expect_no_match(doc, 'class="fulltext"[^>]*>Norbert', perl = TRUE)
+  }
+)

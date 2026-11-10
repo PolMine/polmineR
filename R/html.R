@@ -111,7 +111,8 @@ setMethod("html", "character", function(object, corpus, height = NULL){
       height,
       gsub("^.*?<body>\n(.*?)</body>.*?$", "\\1", doc)
     )
-    doc <- gsub("<h3>", '<h3 class="fulltext">', doc)
+    # markdown::mark() adds an id attribute to headings (<h3 id="...">)
+    doc <- gsub("<h3(\\s[^>]*)?>", '<h3 class="fulltext"\\1>', doc)
   }
   doc
 })
