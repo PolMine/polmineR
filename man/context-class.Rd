@@ -4,13 +4,6 @@
 \docType{class}
 \name{context-class}
 \alias{context-class}
-\alias{show,context-method}
-\alias{[,context-method}
-\alias{[,context,ANY,ANY,ANY-method}
-\alias{[[,context-method}
-\alias{summary,context-method}
-\alias{head,context-method}
-\alias{as.DataTables,context-method}
 \alias{length,context-method}
 \alias{p_attributes,context-method}
 \alias{count,context-method}

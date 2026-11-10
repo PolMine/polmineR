@@ -610,9 +610,6 @@ setAs(from = "remote_partition", to = "partition", def = function(from){
 #' @param progress A `logical` value, whether to show progress bar
 #' @param ... To maintain backwards compatibility if argument `pAttribute` is
 #'   still used.
-#' @aliases show,context-method [,context-method [,context,ANY,ANY,ANY-method
-#'   [[,context-method summary,context-method head,context-method
-#'   as.DataTables,context-method
 #' @docType class
 #' @rdname context-class
 #' @exportClass context
