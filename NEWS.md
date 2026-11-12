@@ -1,5 +1,8 @@
-# polmineR v0.8.9.9001-9030
+# polmineR v0.8.9.9001-9031
 
+* `tooltips()` accepts numeric values as tooltips (e.g. word weights), which
+are coerced to `character`. Previously, numeric values resulted in an error
+from `xml2::xml_text<-` (#260).
 * Tooltips added by `tooltips()` are centred above the highlighted token
 irrespective of their width. The width of tooltips adapts to the tooltip text
 (up to 240px) rather than being fixed (#247).

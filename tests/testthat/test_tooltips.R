@@ -24,3 +24,22 @@ test_that(
     expect_true(grepl("translateX(-50%)", as.character(h), fixed = TRUE))
   }
 )
+
+test_that(
+  "numeric values are accepted as tooltips",
+  {
+    use(pkg = "RcppCWB", corpus = "REUTERS")
+    h <- corpus("REUTERS") %>%
+      subset(id == "127") %>%
+      read() %>%
+      highlight(list(lightgreen = "oil"))
+
+    # numeric value failed with error from xml2::xml_text<- (#260)
+    num <- tooltips(h, list(lightgreen = 0.5), verbose = FALSE)
+    chr <- tooltips(h, list(lightgreen = "0.5"), verbose = FALSE)
+    expect_identical(as.character(num), as.character(chr))
+    expect_true(
+      grepl('<span class="tooltippingtext">0.5</span>', num, fixed = TRUE)
+    )
+  }
+)

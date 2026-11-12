@@ -9,7 +9,8 @@ NULL
 #' @param .Object A `html` or `character` object with html.
 #' @param tooltips A named `list` of character vectors, the names need to
 #'   match colors in the list provided to param `highlight`. The value of
-#'   the character vector is the tooltip to be displayed.
+#'   the character vector is the tooltip to be displayed. Numeric values (e.g.
+#'   word weights) are coerced to `character`.
 #' @param regex A `logical` value, whether character vector values of argument
 #'   `tooltips` are interpreted as regular expressions.
 #' @param fmt A format string with an xpath expression used to look up the node
@@ -75,7 +76,7 @@ setMethod("tooltips", "character", function(.Object, tooltips = list(), fmt = '/
         # get tooltip node and bring it in proper shape
         children <- xml2::xml_children(node)
         tipnode <- children[[length(children)]]
-        xml2::xml_text(tipnode) <- tooltips[[lookup]]
+        xml2::xml_text(tipnode) <- as.character(tooltips[[lookup]])
         xml2::xml_name(tipnode) <- "span"
         xml2::xml_attrs(tipnode) <- c(class = "tooltippingtext")
         

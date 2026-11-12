@@ -26,7 +26,8 @@ tooltips(.Object, tooltips, ...)
 
 \item{tooltips}{A named \code{list} of character vectors, the names need to
 match colors in the list provided to param \code{highlight}. The value of
-the character vector is the tooltip to be displayed.}
+the character vector is the tooltip to be displayed. Numeric values (e.g.
+word weights) are coerced to \code{character}.}
 
 \item{...}{Further arguments are interpreted as assignments of tooltips to
 tokens.}
