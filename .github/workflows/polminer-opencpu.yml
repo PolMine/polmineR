@@ -47,6 +47,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Build and push Master
+        # only when the stable image was rebuilt (push to master) or on manual dispatch
+        if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.name == 'Build polmineR Stable Image'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -59,6 +61,8 @@ jobs:
             ghcr.io/polmine/polminer-opencpu:${{env.POLMINE_VERSION_MASTER}}
       -
         name: Build and push Dev
+        # only when the dev image was rebuilt (push to dev) or on manual dispatch
+        if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.name == 'Build polmineR Dev Image'
         uses: docker/build-push-action@v7
         with:
           context: .
