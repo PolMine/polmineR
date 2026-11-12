@@ -251,10 +251,15 @@ setMethod(
           # filtering out negative struc values is necessary, because RcppCWB
           # will complain about negative values
           strucs <- strucs[which(strucs >= 0L)]
-          retval <- cl_struc2str(
-            corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
-            s_attribute = s_attribute, struc = strucs
-          )
+          # s_attribute may not be present in the subcorpus at all (#287)
+          retval <- if (length(strucs) > 0L){
+            cl_struc2str(
+              corpus = slot(.Object, "corpus"),  registry = slot(.Object, "registry_dir"),
+              s_attribute = s_attribute, struc = strucs
+            )
+          } else {
+            character()
+          }
           if (unique) retval <- unique(retval)
         }
         Encoding(retval) <- slot(.Object, "encoding")
@@ -364,13 +369,21 @@ setMethod(
     recursive = FALSE
   )
   s_attr_strucs <- unique(unlist(lapply(.Object, slot, "s_attribute_strucs")))
-  relationship <- s_attr_relationship(
-    x = s_attr_strucs,
-    y = s_attribute,
-    corpus = slot(.Object, "corpus"),
-    registry = slot(.Object, "registry_dir")
+  # RcppCWB warns about negative strucs if regions of s_attribute do not
+  # start at every region of s_attr_strucs - irrelevant here (#287)
+  relationship <- withCallingHandlers(
+    s_attr_relationship(
+      x = s_attr_strucs,
+      y = s_attribute,
+      corpus = slot(.Object, "corpus"),
+      registry = slot(.Object, "registry_dir")
+    ),
+    warning = function(w){
+      if (grepl("struc vector includes negative values", conditionMessage(w)))
+        invokeRestart("muffleWarning")
+    }
   )
-  
+
   if (relationship == 0L){
     values <- cl_struc2str(
       corpus = slot(.Object, "corpus"),
@@ -402,20 +415,31 @@ setMethod(
       region_matrix = region_matrix,
       registry = slot(.Object, "registry_dir")
     )
-    strucs <- ranges_to_cpos(struc_matrix)
-    values <- cl_struc2str(
-      corpus = slot(.Object, "corpus"),
-      s_attribute = s_attribute,
-      struc = strucs,
-      registry = slot(.Object, "registry_dir")
+    # regions without the s_attribute yield NA rows in struc_matrix (#287)
+    strucs <- ranges_to_cpos(
+      struc_matrix[!is.na(struc_matrix[,1]), , drop = FALSE]
     )
-    .size <- function(x) sum(x[,2] - x[,1] + 1L)
+    values <- if (length(strucs) > 0L){
+      cl_struc2str(
+        corpus = slot(.Object, "corpus"),
+        s_attribute = s_attribute,
+        struc = strucs,
+        registry = slot(.Object, "registry_dir")
+      )
+    } else {
+      character()
+    }
+    .size <- function(x) sum(x[,2] - x[,1] + 1L, na.rm = TRUE)
     n <- lapply(lapply(split(x = struc_matrix, f = f), matrix, ncol = 2), .size)
     f <- unlist(mapply(rep, x = seq_along(n), times = n), recursive = FALSE)
   }
   Encoding(values) <- slot(.Object, "encoding")
   values <- as.nativeEnc(values, from = slot(.Object, "encoding"))
-  retval <- split(x = values, f = f)
+  # factor levels keep objects without values in the result (#287)
+  retval <- split(
+    x = values,
+    f = factor(f, levels = seq_along(slot(.Object, "objects")))
+  )
   if (unique) retval <- lapply(retval, unique)
   names(retval) <- names(slot(.Object, "objects"))
   retval

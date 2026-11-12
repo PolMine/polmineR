@@ -1,5 +1,9 @@
-# polmineR v0.8.9.9001-9025
+# polmineR v0.8.9.9001-9026
 
+* `s_attributes()` returns `character(0)` without a warning if the s-attribute
+does not occur in a `subcorpus`. For a `subcorpus_bundle`, `s_attributes()` failed
+with an error if the s-attribute did not occur in some subcorpora; these now get
+`character(0)`, so the result has one element for each subcorpus (#287).
 * The `split()` method for `subcorpus_bundle` objects has a new argument `values`,
 as the methods for `corpus` and `subcorpus` objects. If `values` is a `character`
 vector, subcorpora that do not contain any of the values are dropped (#288).

@@ -131,3 +131,48 @@ test_that(
     
   }
 )
+test_that(
+  "s_attributes() for s-attribute not present in (sub)corpus (#287)",
+  {
+    tmp <- tempfile()
+    vrt_dir <- file.path(tmp, "vrt")
+    data_dir <- file.path(tmp, "data")
+    registry <- file.path(tmp, "registry")
+    for (d in c(vrt_dir, data_dir, registry)) dir.create(d, recursive = TRUE)
+    writeLines(
+      c(
+        '<doc id="d1">',
+        '<p type="speech">',
+        '<ne type="PER">', "Angela\tNE\tAngela", "Merkel\tNE\tMerkel", "</ne>",
+        "spricht\tVVFIN\tsprechen", "in\tAPPR\tin",
+        '<ne type="LOC">', "Berlin\tNE\tBerlin", "</ne>",
+        "</p>",
+        '<p type="interjection">', "Beifall\tNN\tBeifall", ".\t$.\t.", "</p>",
+        '<p type="speech">', "Danke\tNN\tDanke", ".\t$.\t.", "</p>",
+        "</doc>"
+      ),
+      file.path(vrt_dir, "netest.vrt")
+    )
+    RcppCWB::cwb_encode(
+      corpus = "NETEST", registry = registry, data_dir = data_dir,
+      vrt_dir = vrt_dir, p_attributes = c("word", "pos", "lemma"),
+      s_attributes = list(doc = "id", p = "type", ne = "type"), quietly = TRUE
+    )
+    RcppCWB::cqp_load_corpus("NETEST", registry = registry)
+
+    paragraphs <- corpus("NETEST", registry_dir = registry) %>%
+      split(s_attribute = "p_type", values = FALSE, verbose = FALSE, progress = FALSE)
+
+    # subcorpus
+    expect_identical(s_attributes(paragraphs[[1]], "ne_type"), c("PER", "LOC"))
+    expect_no_warning(y <- s_attributes(paragraphs[[2]], "ne_type"))
+    expect_identical(y, character())
+
+    # subcorpus_bundle
+    expect_no_warning(y <- s_attributes(paragraphs, "ne_type"))
+    expect_length(y, 3L)
+    expect_identical(y[[1]], c("PER", "LOC"))
+    expect_identical(y[[2]], character())
+    expect_identical(y[[3]], character())
+  }
+)
