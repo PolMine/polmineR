@@ -8,8 +8,9 @@
 /* Tooltip text */
 .tooltipping .tooltippingtext {
     visibility: hidden;
-    /* width: auto; */
-    width: 240px;
+    /* adapt width to tooltip text, wrap text beyond max-width */
+    width: max-content;
+    max-width: 240px;
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -25,8 +26,8 @@
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    /* margin-left: auto; */
-    margin-left: -120px;
+    /* center tooltip irrespective of its width (#247) */
+    transform: translateX(-50%);
 
     /* Fade in tooltip */
     opacity: 0;

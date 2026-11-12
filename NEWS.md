@@ -1,5 +1,8 @@
-# polmineR v0.8.9.9001-9029
+# polmineR v0.8.9.9001-9030
 
+* Tooltips added by `tooltips()` are centred above the highlighted token
+irrespective of their width. The width of tooltips adapts to the tooltip text
+(up to 240px) rather than being fixed (#247).
 * `s_attributes()` for a corpus with several s-attributes of different sizes
 (e.g. `c("speaker", "party", "protocol_lp")` for GERMAPARLMINI) returned the first
 s-attribute as column 'value', and additional columns 'struc', 'cpos_left' and
