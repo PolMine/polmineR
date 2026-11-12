@@ -1,5 +1,11 @@
 # polmineR v0.8.9.9001-9031
 
+* New function `mcp_server()` runs polmineR as a server implementing the Model
+Context Protocol (MCP), so that AI assistants such as Claude can query CWB
+corpora like GermaParl. Tools offered are `list_corpora`, `corpus_info`,
+`s_attribute_values`, `count`, `kwic`, `dispersion`, `cooccurrences`,
+`keyness` and `read_text`. Subcorpora are defined by s-attributes and values.
+The server uses the stdio transport and has no additional dependencies.
 * `tooltips()` accepts numeric values as tooltips (e.g. word weights), which
 are coerced to `character`. Previously, numeric values resulted in an error
 from `xml2::xml_text<-` (#260).

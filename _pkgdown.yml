@@ -9,6 +9,7 @@ reference:
     contents:
       - polmineR
       - polmineR-generics
+      - mcp_server
   - title: "Corpora and subcorpora"
     desc: Corpora, subcorpora/partitions, and partition_bundle objects are the point of departure for any analysis using polmineR. Constructors introduced in the next section require an understanding of basic methods and classes to generate and manage (sub-)corpora
     contents:
