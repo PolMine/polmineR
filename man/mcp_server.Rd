@@ -95,6 +95,9 @@ client. Corpora are looked up in the registry directory defined by the
 environment variable \code{CORPUS_REGISTRY} (e.g. set in \code{.Renviron}) and in
 corpora loaded with \code{\link[=use]{use()}}.
 
+To offer the tools to clients on other machines, use \code{\link[=mcp_http_server]{mcp_http_server()}}
+(HTTP transport) instead.
+
 \code{mcp_process()} processes a single JSON-RPC message and returns the
 JSON-RPC response as a length-one \code{character} vector, or \code{NULL} for
 notifications. It is the worker of \code{mcp_server()} and can be used to test

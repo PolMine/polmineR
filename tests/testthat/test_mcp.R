@@ -200,3 +200,66 @@ test_that("mcp_server reads from and writes to connections", {
 
   expect_error(mcp_server(corpora = "FOO", verbose = FALSE), "not available")
 })
+
+test_that("mcp http handler", {
+  handler <- polmineR:::mcp_http_handler(tools = tools, token = "secret")
+
+  req <- function(body = "", method = "POST", path = "/mcp", headers = list()){
+    input <- list(read = function() charToRaw(body))
+    c(
+      list(REQUEST_METHOD = method, PATH_INFO = path, rook.input = input),
+      headers
+    )
+  }
+  auth <- list(HTTP_AUTHORIZATION = "Bearer secret")
+  ping <- '{"jsonrpc":"2.0","id":1,"method":"ping"}'
+
+  # Token required
+  expect_identical(handler(req(ping))[["status"]], 401L)
+  expect_identical(handler(req(ping, headers = list(HTTP_AUTHORIZATION = "Bearer wrong")))[["status"]], 401L)
+
+  y <- handler(req(ping, headers = auth))
+  expect_identical(y[["status"]], 200L)
+  expect_identical(y[["headers"]][["Content-Type"]], "application/json")
+  expect_identical(y[["body"]], '{"jsonrpc":"2.0","id":1,"result":{}}')
+
+  # Notifications are acknowledged without body
+  y <- handler(req('{"jsonrpc":"2.0","method":"notifications/initialized"}', headers = auth))
+  expect_identical(y[["status"]], 202L)
+
+  # Tool calls
+  y <- handler(req(
+    '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"count","arguments":{"corpus":"GERMAPARLMINI","query":"Integration"}}}',
+    headers = auth
+  ))
+  expect_identical(y[["status"]], 200L)
+  result <- jsonlite::fromJSON(y[["body"]])[["result"]]
+  expect_false(isTRUE(result[["isError"]]))
+
+  expect_identical(handler(req("not json", headers = auth))[["status"]], 400L)
+  expect_identical(handler(req(method = "GET", headers = auth))[["status"]], 405L)
+  expect_identical(handler(req(ping, path = "/other", headers = auth))[["status"]], 404L)
+  expect_identical(
+    handler(req(ping, headers = c(auth, list(HTTP_MCP_PROTOCOL_VERSION = "1999-01-01"))))[["status"]],
+    400L
+  )
+  expect_identical(
+    handler(req(ping, headers = c(auth, list(HTTP_MCP_PROTOCOL_VERSION = "2025-06-18"))))[["status"]],
+    200L
+  )
+
+  # Browser origins only if allowed
+  expect_identical(
+    handler(req(ping, headers = c(auth, list(HTTP_ORIGIN = "https://evil.example"))))[["status"]],
+    403L
+  )
+  handler_origin <- polmineR:::mcp_http_handler(tools = tools, token = "secret", origins = "https://ok.example")
+  expect_identical(
+    handler_origin(req(ping, headers = c(auth, list(HTTP_ORIGIN = "https://ok.example"))))[["status"]],
+    200L
+  )
+
+  # Without token, no authorization needed
+  handler_open <- polmineR:::mcp_http_handler(tools = tools, token = "")
+  expect_identical(handler_open(req(ping))[["status"]], 200L)
+})

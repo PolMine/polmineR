@@ -1,5 +1,10 @@
-# polmineR v0.8.9.9001-9031
+# polmineR v0.8.9.9001-9033
 
+* New function `mcp_http_server()` offers the MCP tools of `mcp_server()` via
+HTTP ("Streamable HTTP" transport), so that MCP clients on other machines can
+query the corpora of a server. Access can be restricted by a bearer token
+(environment variable `POLMINER_MCP_TOKEN`). Requires the package 'httpuv'
+(added to Suggests).
 * New function `mcp_server()` runs polmineR as a server implementing the Model
 Context Protocol (MCP), so that AI assistants such as Claude can query CWB
 corpora like GermaParl. Tools offered are `list_corpora`, `corpus_info`,
