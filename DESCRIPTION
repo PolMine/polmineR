@@ -1,7 +1,7 @@
 Package: polmineR
 Type: Package
 Title: Verbs and Nouns for Corpus Analysis
-Version: 0.8.9.9026
+Version: 0.8.9.9027
 Date: 2026-11-12
 Authors@R: c(
   person("Andreas", "Blaette", role = c("aut", "cre"), email = "andreas.blaette@uni-due.de", comment = c(ORCID = "0000-0001-8970-8010")),
@@ -46,7 +46,7 @@ Suggests:
     covr,
     igraph,
     NLP,
-    httr,
+    httr2,
     protolite,
     curl
 VignetteBuilder: knitr

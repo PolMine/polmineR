@@ -1,5 +1,10 @@
-# polmineR v0.8.9.9001-9026
+# polmineR v0.8.9.9001-9027
 
+* `ocpu_exec()`, the worker for objects on an OpenCPU server, uses the httr2
+package instead of httr (in Suggests). Error messages from the OpenCPU
+server are passed on to the user, not only the HTTP status. Tests for OpenCPU
+run if the environment variable `OPENCPU_SERVER` is set to the URL of a server
+(#296).
 * `s_attributes()` returns `character(0)` without a warning if the s-attribute
 does not occur in a `subcorpus`. For a `subcorpus_bundle`, `s_attributes()` failed
 with an error if the s-attribute did not occur in some subcorpora; these now get

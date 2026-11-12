@@ -29,8 +29,8 @@
 #' )
 #' }
 ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, ...){
-  if (!requireNamespace("httr", quietly = TRUE))
-    stop("Package 'httr' required but not installed.")
+  if (!requireNamespace("httr2", quietly = TRUE))
+    stop("Package 'httr2' required but not installed.")
   if (!requireNamespace("curl", quietly = TRUE))
     stop("Package 'curl' required but not installed.")
   if (!requireNamespace("protolite", quietly = TRUE))
@@ -58,6 +58,13 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
         curl::form_data(protolite::serialize_pb(x), "application/protobuf")
       }
   )
+  req <- do.call(httr2::req_body_multipart, c(list(httr2::request(url)), body))
+  # OpenCPU returns the R error message as plain text in the response body
+  req <- httr2::req_error(
+    req,
+    body = function(resp) httr2::resp_body_string(resp)
+  )
+
   if (isTRUE(restricted)){
     ocpu_registry <- Sys.getenv("OPENCPU_REGISTRY")
     if (identical(nchar(ocpu_registry), 0L)){
@@ -85,16 +92,10 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
       property = "user"
     )
     
-    resp <- httr::POST(
-      url = url,
-      body = body,
-      httr::authenticate(user = user, password = pw)
-    )
+    req <- httr2::req_auth_basic(req, username = user, password = pw)
     rm(properties)
-  } else {
-    resp <- httr::POST(url = url, body = body)
   }
-  httr::stop_for_status(resp)
-  protolite::unserialize_pb(resp$content)
+  resp <- httr2::req_perform(req)
+  protolite::unserialize_pb(httr2::resp_body_raw(resp))
 }
 
