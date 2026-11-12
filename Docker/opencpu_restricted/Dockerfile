@@ -1,4 +1,4 @@
-FROM opencpu_public:latest
+FROM ghcr.io/polmine/polminer-opencpu-dev:latest
 RUN mkdir -p /usr/local/apache2/htdocs/
 COPY ./apache2.conf /etc/apache2/apache2.conf
 COPY ./htaccess /var/www/html/.htaccess

@@ -2,14 +2,14 @@
 
 ### Purpose
 
-Access to resources exposed via polmineR/OpenCPU can be restricted on Apache2 webserver using .htaccess files. Building on the 'opencpu_public' image, the webserver is re-configured for restricted access.
+Access to resources exposed via polmineR/OpenCPU can be restricted on Apache2 webserver using .htaccess files. Building on the 'polminer-opencpu-dev' image, the webserver is re-configured for restricted access.
 
 The .htpasswd-Files with (hashed) passwords remain outside the container and are made available by mounting a volume, see the `docker run` command below. 
 
 
 ### Building the container 
 
-The image builds on the image build with the Docker file in the directory opencpu_public and is assumed to be present as 'ocpu_public'.
+The image builds on 'ghcr.io/polmine/polminer-opencpu-dev:latest', built from the Dockerfile in the directory polminer-opencpu and published by GitHub Actions. Docker pulls it automatically when building.
 
 ```sh
 docker build -t ocpu_restricted:latest .

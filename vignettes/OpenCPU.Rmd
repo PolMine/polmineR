@@ -148,7 +148,7 @@ services:
       - /opt/data/cwb/restricted/registry:/opt/data/cwb/registry
       - /opt/data/cwb/restricted/indexed_corpora:/opt/data/cwb/indexed_corpora
   ocpu_public:
-    image: ocpu_public:latest
+    image: ghcr.io/polmine/polminer-opencpu-dev:latest
     ports:
       - "8004:8004"
     volumes:
