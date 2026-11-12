@@ -139,8 +139,8 @@ To host resources with differentiated access rights in parallel, using `docker c
 
 ```{yaml hosting_resources}
 services:
-  ocpu_protected:
-    image: ocpu_protected:latest
+  ocpu_restricted:
+    image: ocpu_restricted:latest
     ports:
       - "8005:8004"
     volumes:
