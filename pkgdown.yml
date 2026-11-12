@@ -1,8 +1,11 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  encodings: encodings.html
   OpenCPU: OpenCPU.html
   vignette: vignette.html
-last_built: 2021-02-12T17:56Z
-
+last_built: 2026-11-12T13:45Z
+urls:
+  reference: https://polmine.github.io/polmineR/reference
+  article: https://polmine.github.io/polmineR/articles
