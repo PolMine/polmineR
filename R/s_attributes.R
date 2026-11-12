@@ -169,6 +169,9 @@ setMethod("s_attributes", "corpus", function(.Object, s_attribute = NULL, unique
           dt,
           corpus = slot(.Object, "corpus"), s_attribute = s_attribute[-1L]
         )
+        # keep only the s-attributes, as for flat s-attributes (#245)
+        setnames(y, old = "value", new = s_attribute[1])
+        y[, c("struc", "cpos_left", "cpos_right") := NULL]
       }
       
       if (isTRUE(unique)) y <- unique(y)
@@ -298,7 +301,9 @@ setMethod(
           data.table(tab_data)
         else
           data.table(matrix(tab_data, nrow = 1L))
-        
+        # names get lost for one-row matrix (#245)
+        setnames(tab, s_attribute)
+
         if (isTRUE(unique)) tab <- unique(tab)
         return( tab )
       }

@@ -1,5 +1,12 @@
-# polmineR v0.8.9.9001-9028
+# polmineR v0.8.9.9001-9029
 
+* `s_attributes()` for a corpus with several s-attributes of different sizes
+(e.g. `c("speaker", "party", "protocol_lp")` for GERMAPARLMINI) returned the first
+s-attribute as column 'value', and additional columns 'struc', 'cpos_left' and
+'cpos_right', so that `unique = TRUE` did not remove duplicates. The result now
+has one column for each s-attribute, as for flat s-attributes and subcorpora.
+For subcorpora with only one region, columns are named after the s-attributes,
+not 'V1', 'V2' etc. (#245).
 * For restricted corpora on an OpenCPU server, `ocpu_exec()` checked twice that
 the corpus property 'password' is defined, but not the property 'user'. A missing
 'user' property now results in an informative error.

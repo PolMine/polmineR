@@ -176,3 +176,43 @@ test_that(
     expect_identical(y[[3]], character())
   }
 )
+
+test_that(
+  "s_attributes() for corpus with nested s-attributes (#245)",
+  {
+    s_attrs <- c("speaker", "party", "protocol_lp")
+
+    y <- s_attributes("GERMAPARLMINI", s_attribute = s_attrs)
+    expect_identical(colnames(y), s_attrs)
+
+    # same result as combining the results for daywise subcorpora (regions
+    # of subcorpora created by subset() are the regions of s-attribute 'date')
+    y_days <- lapply(
+      s_attributes("GERMAPARLMINI", "date"),
+      function(day){
+        corpus("GERMAPARLMINI") %>%
+          subset(date == !!day) %>%
+          s_attributes(s_attribute = s_attrs)
+      }
+    ) %>%
+      data.table::rbindlist() %>%
+      unique()
+    expect_true(data.table::fsetequal(y, y_days))
+
+    # column names also for subcorpus with only one region
+    sc <- corpus("GERMAPARLMINI") %>% subset(protocol_date == "2009-10-27")
+    expect_identical(nrow(slot(sc, "cpos")), 1L)
+    expect_identical(colnames(s_attributes(sc, s_attrs)), s_attrs)
+
+    # one row per region of the first s-attribute if unique is FALSE
+    y_all <- s_attributes("GERMAPARLMINI", s_attribute = s_attrs, unique = FALSE)
+    expect_identical(colnames(y_all), s_attrs)
+    expect_identical(
+      nrow(y_all),
+      RcppCWB::cl_attribute_size(
+        "GERMAPARLMINI", attribute = "speaker", attribute_type = "s",
+        registry = corpus_registry_dir("GERMAPARLMINI")
+      )
+    )
+  }
+)
