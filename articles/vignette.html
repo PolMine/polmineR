@@ -201,7 +201,7 @@ directory. To get the path of the session registry directory, call
 seen when loading <em>polmineR</em>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/registry.html">registry</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpSAujKU/polmineR_registry</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpZlCsH3/polmineR_registry</span></span></span></code></pre>
 <p>The session registry directory combines the registry files describing
 the corpora <em>polmineR</em> knows about. Upon loading
 <em>polmineR</em>, the files in the registry directory defined by the
@@ -239,8 +239,8 @@ package.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/corpus-class.html">corpus</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          corpus                          registry encoding type template   size</span></span>
-<span><span class="co">## 1 GERMAPARLMINI /tmp/RtmpSAujKU/polmineR_registry   latin1 plpr     TRUE 222201</span></span>
-<span><span class="co">## 2       REUTERS /tmp/RtmpSAujKU/polmineR_registry   latin1 &lt;NA&gt;     TRUE   4050</span></span></code></pre>
+<span><span class="co">## 1 GERMAPARLMINI /tmp/RtmpZlCsH3/polmineR_registry   latin1 plpr     TRUE 222201</span></span>
+<span><span class="co">## 2       REUTERS /tmp/RtmpZlCsH3/polmineR_registry   latin1 &lt;NA&gt;     TRUE   4050</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="session-settings">Session settings<a class="anchor" aria-label="anchor" href="#session-settings"></a>
@@ -450,13 +450,13 @@ a partitionBundle and then applying a method to get the matrix.</p>
 <code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/corpus-class.html">corpus</a></span><span class="op">(</span><span class="st">"REUTERS"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/partition_bundle-method.html">partition_bundle</a></span><span class="op">(</span>s_attribute <span class="op">=</span> <span class="st">"id"</span>, progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #00BBBB;">ℹ</span> s-attribute <span style="color: #0000BB;">"id"</span> has values: <span style="color: #00BBBB;">yes</span></span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #00BBBB;">ℹ</span> get regions and get values</span></span></code></pre>
-<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> get regions and get values <span style="color: #B2B2B2;">[8ms]</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> get regions and get values <span style="color: #B2B2B2;">[9ms]</span></span></span></code></pre>
 <pre><code><span><span class="co">## </span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #00BBBB;">ℹ</span> instantiate objects (n = <span style="color: #0000BB;">20</span>)</span></span></code></pre>
-<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> instantiate objects (n = <span style="color: #0000BB;">20</span>) <span style="color: #B2B2B2;">[18ms]</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> instantiate objects (n = <span style="color: #0000BB;">20</span>) <span style="color: #B2B2B2;">[25ms]</span></span></span></code></pre>
 <pre><code><span><span class="co">## </span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #00BBBB;">ℹ</span> assign names</span></span></code></pre>
-<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> assign names <span style="color: #B2B2B2;">[5ms]</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #00BB00;">✔</span> assign names <span style="color: #B2B2B2;">[6ms]</span></span></span></code></pre>
 <pre><code><span><span class="co">## </span></span></code></pre>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">articles_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count-method.html">count</a></span><span class="op">(</span><span class="va">articles</span>, p_attribute <span class="op">=</span> <span class="st">"word"</span><span class="op">)</span></span>
