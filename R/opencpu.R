@@ -84,8 +84,8 @@ ocpu_exec <- function(fn, corpus, server, restricted = FALSE, do.call = FALSE, .
       property = "password"
     )
     
-    if (!"password" %in% properties)
-      stop("property 'password' required but not found")
+    if (!"user" %in% properties)
+      stop("property 'user' required but not found")
     user <- corpus_property(
       corpus = corpus,
       registry = ocpu_registry,

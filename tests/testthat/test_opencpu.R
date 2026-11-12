@@ -75,3 +75,39 @@ test_that(
     )
   }
 )
+
+test_that(
+  "ocpu_exec() checks that corpus property 'user' is defined",
+  {
+    skip_if_not_installed("httr2")
+    skip_if_not_installed("protolite")
+    skip_if_not_installed("curl")
+
+    registry <- tempfile()
+    dir.create(registry)
+    regfile <- system.file(
+      package = "RcppCWB", "extdata", "cwb", "registry", "reuters"
+    )
+    # A corpus id of its own avoids that REUTERS is loaded from two registries.
+    # Corpus properties have to precede attribute declarations.
+    reglines <- sub("^ID\\s+reuters$", "ID   ocputest", readLines(regfile))
+    writeLines(
+      append(
+        reglines, '##:: password = "secret"',
+        after = grep("^##:: language", reglines)
+      ),
+      file.path(registry, "ocputest")
+    )
+    old <- Sys.getenv("OPENCPU_REGISTRY")
+    Sys.setenv(OPENCPU_REGISTRY = registry)
+    on.exit(Sys.setenv(OPENCPU_REGISTRY = old))
+
+    expect_error(
+      ocpu_exec(
+        fn = "size", corpus = "OCPUTEST", server = "http://localhost:1",
+        restricted = TRUE, .Object = "OCPUTEST"
+      ),
+      "property 'user' required but not found"
+    )
+  }
+)

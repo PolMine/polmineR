@@ -1,5 +1,8 @@
-# polmineR v0.8.9.9001-9027
+# polmineR v0.8.9.9001-9028
 
+* For restricted corpora on an OpenCPU server, `ocpu_exec()` checked twice that
+the corpus property 'password' is defined, but not the property 'user'. A missing
+'user' property now results in an informative error.
 * `ocpu_exec()`, the worker for objects on an OpenCPU server, uses the httr2
 package instead of httr (in Suggests). Error messages from the OpenCPU
 server are passed on to the user, not only the HTTP status. Tests for OpenCPU
