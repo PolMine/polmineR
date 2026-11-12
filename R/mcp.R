@@ -844,7 +844,7 @@ mcp_subcorpus <- function(x, def, regex = FALSE, required = FALSE){
   # Subsetting a corpus with s-attributes at different levels of nested XML
   # (e.g. 'protocol_lp' and 'speaker_party' in GERMAPARL2) fails, so
   # conditions are applied one after another. Subsetting a subcorpus requires
-  # an expression.
+  # an expression (#301).
   y <- do.call(subset, c(list(x = x), values[1], list(regex = regex)))
   for (s_attr in names(values)[-1]){
     if (is.null(y)) break
