@@ -133,8 +133,6 @@ x <- corpus("MIGPRESS_FAZ", server = "YOURSERVER", restricted = TRUE)
 
 ## Hosting public and restricted resources
 
-
-
 To host resources with differentiated access rights in parallel, using `docker compose` facilitates running the system. The following 'composed.yaml' demo file may serve as an example.
 
 ```{yaml hosting_resources}
