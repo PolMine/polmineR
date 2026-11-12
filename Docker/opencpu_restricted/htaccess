@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Restricted Corpus Access"
+AuthUserFile /usr/local/apache2/htdocs/.htpasswd
+Require valid-user

@@ -1,7 +1,7 @@
 ARG PARENT_IMAGE=ghcr.io/polmine/polminer:latest
 FROM ${PARENT_IMAGE}
 
-LABEL org.opencontainers.image.source https://github.com/PolMine/polmineR
+LABEL org.opencontainers.image.source=https://github.com/PolMine/polmineR
 
 RUN \
   apt-get update && \
@@ -15,10 +15,8 @@ RUN \
   apt-get install -y bison \
   flex \
   libglib2.0-dev \
-  libpcre3 \
-  libpcre3-dev \
-  libncurses5-dev \
-  libncursesw5-dev \
+  libpcre2-dev \
+  libncurses-dev \
   libcurl4-openssl-dev \
   libssl-dev
 
@@ -35,7 +33,7 @@ ENV POLMINER_USE_TMP_REGISTRY=false
 RUN touch ~/.Renviron && echo "POLMINER_USE_TMP_REGISTRY=false" >> ~/.Renviron
 
 RUN \
-    rm /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-enabled/default-ssl.conf  /etc/apache2/sites-enabled/rstudio.conf /var/www/html/index.html
+    rm -f /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-enabled/default-ssl.conf  /etc/apache2/sites-enabled/rstudio.conf /var/www/html/index.html
 
 # Prints apache logs to stdout
 RUN \
