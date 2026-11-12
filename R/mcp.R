@@ -51,6 +51,9 @@
 #' environment variable `CORPUS_REGISTRY` (e.g. set in `.Renviron`) and in
 #' corpora loaded with [use()].
 #'
+#' To offer the tools to clients on other machines, use [mcp_http_server()]
+#' (HTTP transport) instead.
+#'
 #' @param corpora A `character` vector with the ids of the corpora that can be
 #'   queried. If `NULL` (default), all corpora returned by [corpus()] are
 #'   available.
@@ -72,23 +75,7 @@
 #' mcp_server(corpora = c("GERMAPARLMINI", "GERMAPARL2"))
 #' }
 mcp_server <- function(corpora = NULL, use = NULL, verbose = TRUE, input = file("stdin"), output = stdout()){
-  for (pkg in use){
-    utils::capture.output(use(pkg = pkg, verbose = FALSE))
-  }
-
-  available <- corpus()[["corpus"]]
-  if (is.null(corpora)){
-    corpora <- available
-  } else {
-    missing_corpora <- setdiff(corpora, available)
-    if (length(missing_corpora) > 0L){
-      stop(sprintf(
-        "corpora not available: %s", paste(missing_corpora, collapse = ", ")
-      ))
-    }
-  }
-  if (length(corpora) == 0L) stop("no corpora available")
-
+  corpora <- mcp_corpora(corpora = corpora, use = use)
   tools <- mcp_tools(corpora = corpora)
 
   if (!isOpen(input)) open(input, "r")
@@ -108,6 +95,29 @@ mcp_server <- function(corpora = NULL, use = NULL, verbose = TRUE, input = file(
   }
   if (verbose) cli_alert_info("input closed, polmineR MCP server stops")
   invisible(NULL)
+}
+
+
+# Load corpora from data packages and check that the corpora requested are
+# available. Returns the ids of the corpora the server offers.
+mcp_corpora <- function(corpora = NULL, use = NULL){
+  for (pkg in use){
+    utils::capture.output(use(pkg = pkg, verbose = FALSE))
+  }
+
+  available <- corpus()[["corpus"]]
+  if (is.null(corpora)){
+    corpora <- available
+  } else {
+    missing_corpora <- setdiff(corpora, available)
+    if (length(missing_corpora) > 0L){
+      stop(sprintf(
+        "corpora not available: %s", paste(missing_corpora, collapse = ", ")
+      ))
+    }
+  }
+  if (length(corpora) == 0L) stop("no corpora available")
+  corpora
 }
 
 
@@ -991,4 +1001,161 @@ mcp_arg_int <- function(args, name, default, max = .Machine$integer.max){
     stop(sprintf("argument '%s' needs to be a non-negative integer", name))
   }
   min(value, as.integer(max))
+}
+
+
+#' Run polmineR as a remote MCP server (HTTP)
+#'
+#' Start an MCP server that is reached via HTTP ("Streamable HTTP" transport)
+#' instead of stdin/stdout, so that MCP clients on other machines can query
+#' the corpora of a server. Tools and messages are the same as for
+#' [mcp_server()].
+#'
+#' The server offers a single endpoint (`path`, default `/mcp`). A JSON-RPC
+#' request is sent via `POST` and answered with a JSON response; notifications
+#' are acknowledged with status 202. The server is stateless: it does not
+#' assign session ids and does not open server-sent event streams (`GET` and
+#' `DELETE` return 405).
+#'
+#' Access control:
+#'
+#' - If `token` is a non-empty string, every request needs the header
+#'   `Authorization: Bearer <token>`; otherwise the server answers 401. By
+#'   default, the token is taken from the environment variable
+#'   `POLMINER_MCP_TOKEN`. Without a token, everyone who can reach the server
+#'   can query the corpora (including full texts via `read_text`), so run a
+#'   server without token only on localhost or behind a proxy that
+#'   authenticates users.
+#' - Requests with an `Origin` header (sent by web browsers) are rejected
+#'   with status 403 unless the origin is listed in `origins`, as a protection
+#'   against DNS rebinding attacks.
+#'
+#' Requests are processed one at a time. Use HTTPS (e.g. a reverse proxy such
+#' as Traefik or nginx) if the server is reachable from the internet, as the
+#' token is sent with every request.
+#'
+#' To use the server with Claude Code:
+#'
+#' `claude mcp add --transport http polmineR https://example.org/mcp --header "Authorization: Bearer <token>"`
+#'
+#' The function requires the package 'httpuv'.
+#'
+#' @inheritParams mcp_server
+#' @param host The address to listen on. The default `"127.0.0.1"` accepts
+#'   connections from the local machine only; use `"0.0.0.0"` to accept
+#'   connections from other machines (e.g. in a Docker container).
+#' @param port The port to listen on, an `integer` value.
+#' @param path The path of the MCP endpoint.
+#' @param token A length-one `character` vector with the bearer token clients
+#'   need to send. If `NULL` or `""`, no token is required.
+#' @param origins A `character` vector of origins (e.g.
+#'   `"https://example.org"`) allowed to send requests from web browsers.
+#' @return Called for its side effect: the function blocks and serves requests
+#'   until interrupted.
+#' @export mcp_http_server
+#' @rdname mcp_http_server
+#' @seealso [mcp_server()] for the stdio transport and the tools offered.
+#' @importFrom cli cli_alert_warning
+#' @examples
+#' \dontrun{
+#' Sys.setenv(POLMINER_MCP_TOKEN = "secret")
+#' mcp_http_server(corpora = "GERMAPARL2", port = 8080L)
+#' # then, in a terminal:
+#' # curl -H "Authorization: Bearer secret" -H "Content-Type: application/json" \
+#' #   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' http://127.0.0.1:8080/mcp
+#' }
+mcp_http_server <- function(
+    corpora = NULL, use = NULL,
+    host = "127.0.0.1", port = 8080L, path = "/mcp",
+    token = Sys.getenv("POLMINER_MCP_TOKEN"), origins = NULL,
+    verbose = TRUE
+){
+  if (!requireNamespace("httpuv", quietly = TRUE)){
+    stop("package 'httpuv' required, install it with install.packages('httpuv')")
+  }
+  corpora <- mcp_corpora(corpora = corpora, use = use)
+  tools <- mcp_tools(corpora = corpora)
+
+  if ((is.null(token) || !nzchar(token)) && !host %in% c("127.0.0.1", "localhost", "::1")){
+    cli_alert_warning(
+      "no token set: everyone who can reach {.val {host}}:{port} can query the corpora"
+    )
+  }
+
+  app <- list(
+    call = mcp_http_handler(
+      tools = tools, path = path, token = token, origins = origins,
+      verbose = verbose
+    )
+  )
+  if (verbose) cli_alert_success(
+    "polmineR MCP server listening on http://{host}:{port}{path} (corpora: {.val {corpora}})"
+  )
+  httpuv::runServer(host = host, port = as.integer(port), app = app)
+  invisible(NULL)
+}
+
+
+# Maximum size of a request body (bytes).
+mcp_http_max_body <- 1e6
+
+
+# Returns a function that handles a Rook request (as passed by httpuv) and
+# returns a Rook response. Kept separate from mcp_http_server() for testing.
+mcp_http_handler <- function(tools, path = "/mcp", token = NULL, origins = NULL, verbose = FALSE){
+  token <- if (is.null(token) || !nzchar(token)) NULL else token
+
+  respond <- function(status, body = "", headers = list()){
+    list(status = status, headers = headers, body = body)
+  }
+  respond_json <- function(status, body){
+    respond(status, body, headers = list("Content-Type" = "application/json"))
+  }
+  respond_error <- function(status, message){
+    respond_json(status, mcp_json(mcp_error(NULL, -32600L, message)))
+  }
+
+  function(req){
+    method <- req[["REQUEST_METHOD"]]
+    if (!identical(req[["PATH_INFO"]], path)){
+      return(respond(404L, "Not Found", list("Content-Type" = "text/plain")))
+    }
+
+    origin <- req[["HTTP_ORIGIN"]]
+    if (!is.null(origin) && !origin %in% origins){
+      if (verbose) cli_alert_danger("request from origin {.val {origin}} rejected")
+      return(respond_error(403L, "Forbidden: origin not allowed"))
+    }
+
+    if (!is.null(token)){
+      if (!identical(req[["HTTP_AUTHORIZATION"]], paste("Bearer", token))){
+        if (verbose) cli_alert_danger("request without valid token rejected")
+        return(respond(
+          401L, mcp_json(mcp_error(NULL, -32600L, "Unauthorized")),
+          list("Content-Type" = "application/json", "WWW-Authenticate" = "Bearer")
+        ))
+      }
+    }
+
+    if (!identical(method, "POST")){
+      return(respond(405L, "", list(Allow = "POST")))
+    }
+
+    version <- req[["HTTP_MCP_PROTOCOL_VERSION"]]
+    if (!is.null(version) && !version %in% mcp_protocol_versions){
+      return(respond_error(400L, sprintf("Unsupported protocol version: %s", version)))
+    }
+
+    body <- req[["rook.input"]]$read()
+    if (length(body) > mcp_http_max_body){
+      return(respond_error(413L, "Request too large"))
+    }
+    message <- rawToChar(body)
+    Encoding(message) <- "UTF-8"
+
+    response <- mcp_process(message, tools = tools, verbose = verbose)
+    if (is.null(response)) return(respond(202L))
+    status <- if (grepl('"code":-32700', response, fixed = TRUE)) 400L else 200L
+    respond_json(status, response)
+  }
 }
