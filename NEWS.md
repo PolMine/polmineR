@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9033
 
+* The description of the MCP tool `entities` and the notes on named entities
+returned by `corpus_info` explain that URIs give access to further information
+on entities in a knowledge base (e.g. DBpedia or Wikidata), and that the type
+of a linked entity should be checked, as links can be wrong.
 * New MCP tool `entities` counts the mentions of named entities in a corpus or
 subcorpus by surface form or by URI, using `named_entities()`. It reports the
 number of mentions not linked to a URI. Counts for whole corpora are cached.
