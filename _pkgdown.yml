@@ -24,6 +24,7 @@ reference:
       - partition_bundle
       - p_attributes
       - s_attributes
+      - ne_attributes
       - is_nested
       - tree_structure
       - as.speeches

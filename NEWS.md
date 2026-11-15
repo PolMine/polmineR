@@ -1,5 +1,10 @@
 # polmineR v0.8.9.9001-9033
 
+* New method `ne_attributes()` for `corpus` objects (and objects inheriting
+from it) and length-one `character` vectors returns the s-attributes of
+named-entity annotation, as declared by corpus properties in the registry file
+(`ne_s_attribute`, `ne_type_s_attribute`, `ne_uri_s_attribute`, `ne_types`).
+It returns `NULL` if a corpus does not declare named-entity annotation.
 * New function `mcp_http_server()` offers the MCP tools of `mcp_server()` via
 HTTP ("Streamable HTTP" transport), so that MCP clients on other machines can
 query the corpora of a server. Access can be restricted by a bearer token
