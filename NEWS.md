@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9033
 
+* The result of the MCP tool `corpus_info` includes a block `named_entities`
+if a corpus declares named-entity annotation (see `ne_attributes()`). It names
+the s-attributes of the annotation, the types of named entities, and gives CQP
+queries for mentions.
 * The tools of `mcp_server()` detect CQP queries with brackets but without
 quotation marks (e.g. `<ne>[]+</ne>`), as documented for argument `cqp`.
 Previously, such queries were treated as a single word, resulting in a count

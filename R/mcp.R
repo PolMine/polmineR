@@ -10,6 +10,8 @@
 #'
 #' - `list_corpora`: Corpora available, with size and encoding.
 #' - `corpus_info`: Size, positional and structural attributes of a corpus.
+#'   If the corpus declares named-entity annotation (see [ne_attributes()]),
+#'   the result includes its s-attributes and CQP queries for mentions.
 #' - `s_attribute_values`: Values of a structural attribute (e.g. speakers,
 #'   parties, dates), with the number of tokens for each value.
 #' - `count`: Counts of words or CQP queries.
@@ -325,7 +327,9 @@ mcp_tools <- function(corpora){
         "Describe a corpus: its size, the positional attributes (token-level",
         "annotation such as 'word', 'pos', 'lemma') and the structural",
         "attributes (metadata such as 'speaker', 'party', 'date') with the",
-        "number of distinct values. Call this first to learn how to define",
+        "number of distinct values. If the corpus declares named-entity",
+        "annotation, 'named_entities' names its s-attributes and gives CQP",
+        "queries for mentions. Call this first to learn how to define",
         "subcorpora."
       ),
       inputSchema = list(
@@ -344,7 +348,7 @@ mcp_tools <- function(corpora){
           ),
           FUN.VALUE = integer(1L)
         )
-        list(
+        y <- list(
           corpus = slot(x, "corpus"),
           name = slot(x, "name"),
           size = size(x),
@@ -356,6 +360,8 @@ mcp_tools <- function(corpora){
             row.names = NULL
           )
         )
+        y[["named_entities"]] <- mcp_named_entities(x)
+        y
       }
     ),
 
@@ -877,6 +883,46 @@ mcp_subcorpus <- function(x, def, regex = FALSE, required = FALSE){
       mcp_json(def)
     ))
   }
+  y
+}
+
+
+# Describe the named-entity annotation of a corpus for an MCP client, with
+# CQP queries for mentions. Returns NULL if the corpus does not declare
+# named-entity annotation (see ne_attributes()).
+mcp_named_entities <- function(x){
+  ne <- ne_attributes(x)
+  if (is.null(ne)) return(NULL)
+
+  region_query <- function(s_attribute, value = NULL){
+    if (is.null(value)){
+      sprintf("<%s>[]+</%s>", s_attribute, s_attribute)
+    } else {
+      sprintf('<%s="%s">[]+</%s>', s_attribute, value, s_attribute)
+    }
+  }
+
+  y <- list(s_attribute = ne[["s_attribute"]])
+  if (!is.na(ne[["type"]])) y[["type_s_attribute"]] <- ne[["type"]]
+  if (!is.null(ne[["types"]])) y[["types"]] <- I(ne[["types"]])
+  if (!is.na(ne[["uri"]])) y[["uri_s_attribute"]] <- ne[["uri"]]
+
+  y[["query_mentions"]] <- region_query(ne[["s_attribute"]])
+  if (!is.na(ne[["type"]]) && length(ne[["types"]]) > 0L){
+    y[["query_mentions_of_type"]] <- region_query(ne[["type"]], ne[["types"]][1])
+  }
+  if (!is.na(ne[["uri"]])){
+    y[["query_mentions_of_entity"]] <- region_query(ne[["uri"]], "URI")
+  }
+
+  y[["notes"]] <- paste(
+    "A named-entity mention is a region of one or more tokens. Each match of",
+    "the queries is one mention: use them with tool count (with 'breakdown'",
+    "to list the entities mentioned), dispersion or kwic, replacing the",
+    "example values with a type or a URI (see s_attribute_values).",
+    "The size of a subcorpus defined by these s-attributes (e.g. with",
+    "'subset') is a number of tokens, not of mentions."
+  )
   y
 }
 

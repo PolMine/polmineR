@@ -81,12 +81,86 @@ test_that("mcp tools for corpus information", {
   y <- mcp_call("corpus_info", list(corpus = "GERMAPARLMINI"))
   expect_identical(y[["p_attributes"]], p_attributes("GERMAPARLMINI"))
   expect_setequal(y[["s_attributes"]][["s_attribute"]], s_attributes("GERMAPARLMINI"))
+  # GERMAPARLMINI does not declare named-entity annotation
+  expect_null(y[["named_entities"]])
 
   y <- mcp_call("s_attribute_values", list(corpus = "GERMAPARLMINI", s_attribute = "speaker", pattern = "merkel"))
   expect_identical(y[["values"]][["value"]], "Angela Dorothea Merkel")
   expect_identical(
     y[["values"]][["size"]],
     size(subset(corpus("GERMAPARLMINI"), speaker == "Angela Dorothea Merkel"))
+  )
+})
+
+test_that("corpus_info describes declared named-entity annotation", {
+  # s-attributes of GERMAPARLMINI stand in for named-entity annotation
+  registry <- ne_test_corpus(
+    id = "mcpnetest",
+    properties = c(
+      '##:: ne_s_attribute = "speaker"',
+      '##:: ne_type_s_attribute = "party"',
+      '##:: ne_uri_s_attribute = "role"'
+    )
+  )
+  ne_tools <- mcp_tools(corpora = "MCPNETEST")
+  call_ne_tool <- function(name, arguments){
+    request <- jsonlite::toJSON(
+      list(
+        jsonrpc = "2.0", id = 1L, method = "tools/call",
+        params = list(name = name, arguments = arguments)
+      ),
+      auto_unbox = TRUE
+    )
+    response <- jsonlite::fromJSON(mcp_process(request, tools = ne_tools), simplifyVector = FALSE)
+    jsonlite::fromJSON(response[["result"]][["content"]][[1]][["text"]])
+  }
+
+  ne <- call_ne_tool("corpus_info", list(corpus = "MCPNETEST"))[["named_entities"]]
+  types <- sort(s_attributes("MCPNETEST", "party"))
+  expect_identical(ne[["s_attribute"]], "speaker")
+  expect_identical(ne[["type_s_attribute"]], "party")
+  expect_identical(ne[["uri_s_attribute"]], "role")
+  expect_identical(ne[["types"]], types)
+  expect_identical(ne[["query_mentions"]], "<speaker>[]+</speaker>")
+  expect_identical(
+    ne[["query_mentions_of_type"]],
+    sprintf('<party="%s">[]+</party>', types[1])
+  )
+  expect_identical(ne[["query_mentions_of_entity"]], '<role="URI">[]+</role>')
+
+  # Each match of the queries is one region (mention), not one token. CQP does
+  # not match '[]+' beyond 500 tokens (option 'HardBoundary'). This does not
+  # matter for named entities (in GERMAPARL2, mentions have at most 63
+  # tokens), but some of the speaker regions standing in for mentions are
+  # longer, so only regions of up to 500 tokens are expected to match.
+  regions <- function(s_attribute){
+    n <- RcppCWB::cl_attribute_size(
+      "MCPNETEST", attribute = s_attribute, attribute_type = "s",
+      registry = registry
+    )
+    m <- RcppCWB::get_region_matrix(
+      "MCPNETEST", s_attribute = s_attribute, strucs = 0L:(n - 1L),
+      registry = registry
+    )
+    data.frame(
+      value = RcppCWB::cl_struc2str(
+        "MCPNETEST", s_attribute = s_attribute, struc = 0L:(n - 1L),
+        registry = registry
+      ),
+      n_tokens = m[, 2] - m[, 1] + 1L
+    )
+  }
+  speaker_regions <- regions("speaker")
+  y <- call_ne_tool("count", list(corpus = "MCPNETEST", query = ne[["query_mentions"]]))
+  expect_identical(
+    y[["counts"]][["count"]],
+    sum(speaker_regions[["n_tokens"]] <= 500L)
+  )
+  party_regions <- regions("party")
+  y <- call_ne_tool("count", list(corpus = "MCPNETEST", query = ne[["query_mentions_of_type"]]))
+  expect_identical(
+    y[["counts"]][["count"]],
+    sum(party_regions[["value"]] == types[1] & party_regions[["n_tokens"]] <= 500L)
   )
 })
 
