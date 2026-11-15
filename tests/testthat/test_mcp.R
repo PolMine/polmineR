@@ -3,7 +3,7 @@ use("polmineR")
 
 tools <- mcp_tools(corpora = "GERMAPARLMINI")
 
-mcp_call <- function(name, arguments){
+mcp_call <- function(name, arguments, tool_list = tools){
   request <- jsonlite::toJSON(
     list(
       jsonrpc = "2.0", id = 1L, method = "tools/call",
@@ -11,7 +11,7 @@ mcp_call <- function(name, arguments){
     ),
     auto_unbox = TRUE
   )
-  response <- jsonlite::fromJSON(mcp_process(request, tools = tools), simplifyVector = FALSE)
+  response <- jsonlite::fromJSON(mcp_process(request, tools = tool_list), simplifyVector = FALSE)
   result <- response[["result"]]
   if (isTRUE(result[["isError"]])) return(structure(result[["content"]][[1]][["text"]], class = "mcp_error"))
   jsonlite::fromJSON(result[["content"]][[1]][["text"]])
@@ -45,8 +45,8 @@ test_that("mcp protocol messages", {
   )[["result"]][["tools"]]
   expect_setequal(
     vapply(tool_list, `[[`, "name", FUN.VALUE = character(1L)),
-    c("list_corpora", "corpus_info", "s_attribute_values", "count", "kwic",
-      "dispersion", "cooccurrences", "keyness", "read_text")
+    c("list_corpora", "corpus_info", "entities", "s_attribute_values", "count",
+      "kwic", "dispersion", "cooccurrences", "keyness", "read_text")
   )
   # 'required' needs to be an array, also if there is only one element
   for (tool in tool_list){
@@ -103,17 +103,7 @@ test_that("corpus_info describes declared named-entity annotation", {
     )
   )
   ne_tools <- mcp_tools(corpora = "MCPNETEST")
-  call_ne_tool <- function(name, arguments){
-    request <- jsonlite::toJSON(
-      list(
-        jsonrpc = "2.0", id = 1L, method = "tools/call",
-        params = list(name = name, arguments = arguments)
-      ),
-      auto_unbox = TRUE
-    )
-    response <- jsonlite::fromJSON(mcp_process(request, tools = ne_tools), simplifyVector = FALSE)
-    jsonlite::fromJSON(response[["result"]][["content"]][[1]][["text"]])
-  }
+  call_ne_tool <- function(name, arguments) mcp_call(name, arguments, tool_list = ne_tools)
 
   ne <- call_ne_tool("corpus_info", list(corpus = "MCPNETEST"))[["named_entities"]]
   types <- sort(s_attributes("MCPNETEST", "party"))
@@ -162,6 +152,69 @@ test_that("corpus_info describes declared named-entity annotation", {
     y[["counts"]][["count"]],
     sum(party_regions[["value"]] == types[1] & party_regions[["n_tokens"]] <= 500L)
   )
+})
+
+test_that("entities counts mentions of named entities", {
+  # s-attributes of GERMAPARLMINI stand in for named-entity annotation:
+  # speaker regions are mentions, party the type and interjection the URI
+  ne_test_corpus(
+    id = "mcpentities",
+    properties = c(
+      '##:: ne_s_attribute = "speaker"',
+      '##:: ne_type_s_attribute = "party"',
+      '##:: ne_uri_s_attribute = "interjection"'
+    )
+  )
+  ne_tools <- mcp_tools(corpora = c("MCPENTITIES", "GERMAPARLMINI"))
+  call_ne_tool <- function(name, arguments) mcp_call(name, arguments, tool_list = ne_tools)
+
+  # by surface form, for a type
+  y <- call_ne_tool("entities", list(corpus = "MCPENTITIES", type = "SPD"))
+  expected <- slot(count(named_entities("MCPENTITIES", type = "SPD")), "stat")
+  expect_identical(y[["n_mentions"]], sum(expected[["count"]]))
+  expect_identical(y[["n_entities"]], nrow(expected))
+  expect_identical(y[["entities"]][["surface"]], utils::head(expected[["surface"]], 100L))
+  expect_identical(y[["entities"]][["count"]], utils::head(expected[["count"]], 100L))
+  expect_true(y[["truncated"]])
+  expect_null(y[["n_unlinked"]])
+  # numbers are written to JSON with 4 significant digits
+  expect_equal(
+    y[["entities"]][["share"]],
+    utils::head(expected[["count"]], 100L) / sum(expected[["count"]]),
+    tolerance = 5e-4
+  )
+
+  # by URI, with a limit
+  y <- call_ne_tool("entities", list(corpus = "MCPENTITIES", by = "uri", limit = 2L))
+  expected <- slot(count(named_entities("MCPENTITIES"), by = "uri"), "stat")
+  expect_identical(y[["entities"]][["uri"]], utils::head(expected[["uri"]], 2L))
+  expect_identical(y[["entities"]][["count"]], utils::head(expected[["count"]], 2L))
+  expect_identical(y[["n_unlinked"]], 0L)
+  expect_identical(y[["n_mentions"]], nrow(slot(named_entities("MCPENTITIES"), "cpos")))
+
+  # several types, and a subset
+  y <- call_ne_tool("entities", list(
+    corpus = "MCPENTITIES", type = c("SPD", "FDP"),
+    subset = list(date = "2009-11-10")
+  ))
+  sc <- subset(corpus("MCPENTITIES"), date == "2009-11-10")
+  expected <- slot(count(named_entities(sc, type = c("SPD", "FDP"))), "stat")
+  expect_identical(y[["n_mentions"]], sum(expected[["count"]]))
+
+  # the second call for a whole corpus uses the cache
+  expect_identical(
+    call_ne_tool("entities", list(corpus = "MCPENTITIES", type = "SPD")),
+    call_ne_tool("entities", list(corpus = "MCPENTITIES", type = "SPD"))
+  )
+
+  # errors
+  y <- call_ne_tool("entities", list(corpus = "GERMAPARLMINI"))
+  expect_s3_class(y, "mcp_error")
+  expect_match(y, "does not declare named-entity annotation")
+  y <- call_ne_tool("entities", list(corpus = "MCPENTITIES", type = "XYZ"))
+  expect_match(y, "type\\(s\\) not available: XYZ")
+  y <- call_ne_tool("entities", list(corpus = "MCPENTITIES", by = "name"))
+  expect_match(y, "'surface' or 'uri'")
 })
 
 test_that("mcp tools for analysis", {

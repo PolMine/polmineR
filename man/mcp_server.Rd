@@ -56,6 +56,9 @@ The tools are:
 \item \code{corpus_info}: Size, positional and structural attributes of a corpus.
 If the corpus declares named-entity annotation (see \code{\link[=ne_attributes]{ne_attributes()}}),
 the result includes its s-attributes and CQP queries for mentions.
+\item \code{entities}: Counts of the mentions of named entities, by surface form or
+by URI (see \code{\link[=named_entities]{named_entities()}}). Requires that the corpus declares
+named-entity annotation.
 \item \code{s_attribute_values}: Values of a structural attribute (e.g. speakers,
 parties, dates), with the number of tokens for each value.
 \item \code{count}: Counts of words or CQP queries.
