@@ -12,6 +12,9 @@
 #' - `corpus_info`: Size, positional and structural attributes of a corpus.
 #'   If the corpus declares named-entity annotation (see [ne_attributes()]),
 #'   the result includes its s-attributes and CQP queries for mentions.
+#' - `entities`: Counts of the mentions of named entities, by surface form or
+#'   by URI (see [named_entities()]). Requires that the corpus declares
+#'   named-entity annotation.
 #' - `s_attribute_values`: Values of a structural attribute (e.g. speakers,
 #'   parties, dates), with the number of tokens for each value.
 #' - `count`: Counts of words or CQP queries.
@@ -361,6 +364,96 @@ mcp_tools <- function(corpora){
           )
         )
         y[["named_entities"]] <- mcp_named_entities(x)
+        y
+      }
+    ),
+
+    list(
+      name = "entities",
+      description = paste(
+        "Count the mentions of named entities (persons, organizations,",
+        "locations etc.) in a corpus or subcorpus, by surface form (e.g.",
+        "'Schmidt') or by the URI of the entity in a knowledge base that",
+        "mentions are linked to (e.g. a DBpedia URI). A mention of several",
+        "tokens (e.g. 'Helmut Schmidt') counts once. Use 'by' = 'uri' to",
+        "count entities rather than names, as one name can refer to",
+        "different entities. 'share' is the count divided by the number of",
+        "all mentions ('n_mentions'), including mentions not linked to a URI.",
+        "Only available if corpus_info reports 'named_entities' for the",
+        "corpus."
+      ),
+      inputSchema = list(
+        type = "object",
+        properties = list(
+          corpus = schema_corpus,
+          type = list(
+            anyOf = list(
+              list(type = "string"),
+              list(type = "array", items = list(type = "string"))
+            ),
+            description = paste(
+              "Type(s) of named entities to count (e.g. 'PERSON'). See",
+              "'types' in the result of corpus_info. If omitted, mentions of",
+              "all types are counted."
+            )
+          ),
+          by = list(
+            type = "string", enum = list("surface", "uri"), default = "surface",
+            description = paste(
+              "Count mentions by their surface form ('surface') or by the",
+              "URI they are linked to ('uri'). Not all mentions are linked:",
+              "the number of mentions without a URI is reported as",
+              "'n_unlinked'."
+            )
+          ),
+          subset = schema_subset,
+          regex = schema_regex,
+          p_attribute = schema_p_attribute,
+          limit = schema_int(100L, 1L, 1000L, "Maximum number of entities to return.")
+        ),
+        required = list("corpus")
+      ),
+      fn = function(args){
+        x <- get_object(args)
+        if (is.null(ne_attributes(x))){
+          stop(sprintf(
+            "corpus '%s' does not declare named-entity annotation - see tool corpus_info",
+            slot(x, "corpus")
+          ))
+        }
+        type <- mcp_arg_chr(args, "type")
+        by <- mcp_arg_chr(args, "by", default = "surface")
+        if (!by %in% c("surface", "uri")){
+          stop("argument 'by' is expected to be 'surface' or 'uri'")
+        }
+        p <- p_attr(args, x)
+        limit <- mcp_arg_int(args, "limit", default = 100L, max = 1000L)
+
+        # Counting mentions in a large corpus takes time (decoding surface
+        # forms), so counts for whole corpora are kept for the lifetime of the
+        # server.
+        stat <- if (is.null(args[["subset"]])){
+          key <- paste(
+            slot(x, "corpus"), "entities", by, p,
+            paste(sort(type), collapse = "|"), sep = "::"
+          )
+          if (is.null(cache[[key]])) cache[[key]] <- mcp_entities(x, type, by, p)
+          cache[[key]]
+        } else {
+          mcp_entities(x, type, by, p)
+        }
+
+        n_mentions <- sum(stat[["count"]])
+        unlinked <- is.na(stat[[by]])
+        entities <- as.data.frame(stat[!unlinked])
+        entities[["share"]] <- if (n_mentions > 0L) entities[["count"]] / n_mentions else numeric()
+        y <- list(
+          n_mentions = n_mentions,
+          n_entities = nrow(entities)
+        )
+        if (by == "uri") y[["n_unlinked"]] <- sum(stat[["count"]][unlinked])
+        y[["truncated"]] <- nrow(entities) > limit
+        y[["entities"]] <- utils::head(entities, limit)
         y
       }
     ),
@@ -781,7 +874,8 @@ mcp_dispatch <- function(msg, tools, verbose = FALSE){
         "list_corpora and corpus_info to learn the structural attributes",
         "(metadata) of a corpus, and s_attribute_values to look up values",
         "(e.g. speaker names). Use count, dispersion, kwic, cooccurrences and",
-        "keyness for analysis, and read_text to read a speech or debate.",
+        "keyness for analysis, entities to count mentions of named entities,",
+        "and read_text to read a speech or debate.",
         "Counts are exact counts in the corpus, not estimates."
       )
     )))
@@ -916,14 +1010,29 @@ mcp_named_entities <- function(x){
   }
 
   y[["notes"]] <- paste(
-    "A named-entity mention is a region of one or more tokens. Each match of",
-    "the queries is one mention: use them with tool count (with 'breakdown'",
-    "to list the entities mentioned), dispersion or kwic, replacing the",
-    "example values with a type or a URI (see s_attribute_values).",
-    "The size of a subcorpus defined by these s-attributes (e.g. with",
-    "'subset') is a number of tokens, not of mentions."
+    "A named-entity mention is a region of one or more tokens. Use tool",
+    "entities to count mentions by surface form or URI. Each match of the",
+    "queries is one mention: use them with tools dispersion or kwic,",
+    "replacing the example values with a type or a URI (see",
+    "s_attribute_values). The size of a subcorpus defined by these",
+    "s-attributes (e.g. with 'subset') is a number of tokens, not of",
+    "mentions."
   )
   y
+}
+
+
+# Count the mentions of named entities, returning the table of the count
+# object (with zero rows if there is no mention).
+#' @importFrom data.table data.table setnames
+mcp_entities <- function(x, type, by, p_attribute){
+  ne <- named_entities(x, type = type)
+  if (is.null(ne)){
+    y <- data.table(key = character(), type = character(), count = integer())
+    setnames(y, "key", by)
+    return(y)
+  }
+  slot(count(ne, by = by, p_attribute = p_attribute), "stat")
 }
 
 

@@ -1,5 +1,8 @@
 # polmineR v0.8.9.9001-9033
 
+* New MCP tool `entities` counts the mentions of named entities in a corpus or
+subcorpus by surface form or by URI, using `named_entities()`. It reports the
+number of mentions not linked to a URI. Counts for whole corpora are cached.
 * New class `named_entities`, inheriting from `subcorpus`, for the mentions of
 named entities in a corpus or subcorpus, as declared by corpus properties (see
 `ne_attributes()`). The constructor `named_entities()` gets the mentions
