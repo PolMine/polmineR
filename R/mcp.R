@@ -210,11 +210,16 @@ mcp_tools <- function(corpora){
 
   # Get queries and whether they are CQP queries. If some queries use CQP
   # syntax and others do not, the plain words are turned into CQP queries.
+  # is.cqp() only checks for quotation marks, so queries with brackets but
+  # without quotation marks (such as '<ne>[]+</ne>') are detected here.
   get_query <- function(args){
     query <- mcp_arg_chr(args, "query", required = TRUE)
     cqp <- mcp_arg_lgl(args, "cqp", default = NA)
     if (is.na(cqp)){
-      is_cqp <- vapply(query, is.cqp, FUN.VALUE = logical(1L))
+      is_cqp <- vapply(
+        query, function(q) is.cqp(q) || grepl("[][<>]", q),
+        FUN.VALUE = logical(1L)
+      )
       cqp <- any(is_cqp)
       if (cqp) query[!is_cqp] <- sprintf('"%s"', query[!is_cqp])
     }

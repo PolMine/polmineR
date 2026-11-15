@@ -101,6 +101,14 @@ test_that("mcp tools for analysis", {
   y <- mcp_call("count", list(corpus = "GERMAPARLMINI", query = c("Integration", '"Migration.*"')))
   expect_identical(y[["counts"]][["query"]], c('"Integration"', '"Migration.*"'))
 
+  # CQP queries with brackets but without quotation marks are detected
+  y <- mcp_call("count", list(corpus = "GERMAPARLMINI", query = "<speaker>[]+</speaker>"))
+  expect_identical(
+    y[["counts"]][["count"]],
+    count("GERMAPARLMINI", query = "<speaker>[]+</speaker>", cqp = TRUE)[["count"]]
+  )
+  expect_gt(y[["counts"]][["count"]], 0L)
+
   sc <- subset(corpus("GERMAPARLMINI"), party == "SPD" & date == "2009-11-10")
   y <- mcp_call("count", list(
     corpus = "GERMAPARLMINI", query = "Integration",

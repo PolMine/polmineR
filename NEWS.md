@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9033
 
+* The tools of `mcp_server()` detect CQP queries with brackets but without
+quotation marks (e.g. `<ne>[]+</ne>`), as documented for argument `cqp`.
+Previously, such queries were treated as a single word, resulting in a count
+of 0.
 * New method `ne_attributes()` for `corpus` objects (and objects inheriting
 from it) and length-one `character` vectors returns the s-attributes of
 named-entity annotation, as declared by corpus properties in the registry file
