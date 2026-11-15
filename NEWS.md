@@ -1,5 +1,11 @@
 # polmineR v0.8.9.9001-9033
 
+* New class `named_entities`, inheriting from `subcorpus`, for the mentions of
+named entities in a corpus or subcorpus, as declared by corpus properties (see
+`ne_attributes()`). The constructor `named_entities()` gets the mentions
+(optionally of selected types) and the `count()` method counts mentions by
+surface form or by the URI they are linked to. The `count` object returned can
+be used with `features()` to compare the named entities of two subcorpora.
 * The result of the MCP tool `corpus_info` includes a block `named_entities`
 if a corpus declares named-entity annotation (see `ne_attributes()`). It names
 the s-attributes of the annotation, the types of named entities, and gives CQP
