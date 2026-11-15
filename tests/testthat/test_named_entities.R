@@ -86,3 +86,175 @@ test_that(
     )
   }
 )
+
+# s-attributes of GERMAPARLMINI stand in for named-entity annotation: speaker
+# regions are mentions, party is the type, and interjection the URI. Regions
+# of 'interjection' have the same boundaries as speaker regions, so all
+# mentions are "linked".
+ne_registry <- ne_test_corpus(
+  id = "netestclass",
+  properties = c(
+    '##:: ne_s_attribute = "speaker"',
+    '##:: ne_type_s_attribute = "party"',
+    '##:: ne_uri_s_attribute = "interjection"'
+  )
+)
+
+ne_regions <- function(s_attribute){
+  n <- RcppCWB::cl_attribute_size(
+    "NETESTCLASS", attribute = s_attribute, attribute_type = "s",
+    registry = ne_registry
+  )
+  m <- RcppCWB::get_region_matrix(
+    "NETESTCLASS", s_attribute = s_attribute, strucs = 0L:(n - 1L),
+    registry = ne_registry
+  )
+  data.frame(
+    struc = 0L:(n - 1L), cpos_left = m[, 1], cpos_right = m[, 2],
+    value = RcppCWB::cl_struc2str(
+      "NETESTCLASS", s_attribute = s_attribute, struc = 0L:(n - 1L),
+      registry = ne_registry
+    )
+  )
+}
+
+test_that(
+  "named_entities() gets mentions in a corpus",
+  {
+    speaker <- ne_regions("speaker")
+    ne <- named_entities("NETESTCLASS")
+    expect_s4_class(ne, "named_entities")
+    expect_true(is(ne, "subcorpus"))
+    expect_identical(slot(ne, "strucs"), speaker[["struc"]])
+    expect_identical(unname(slot(ne, "cpos")[, 1]), speaker[["cpos_left"]])
+    expect_identical(slot(ne, "s_attribute_strucs"), "speaker")
+    expect_identical(
+      size(ne),
+      as.integer(sum(speaker[["cpos_right"]] - speaker[["cpos_left"]] + 1L))
+    )
+    expect_identical(ne, named_entities(corpus("NETESTCLASS")))
+  }
+)
+
+test_that(
+  "named_entities() selects mentions by type and within regions",
+  {
+    party <- ne_regions("party")
+    cdu <- named_entities("NETESTCLASS", type = "CDU_CSU")
+    expect_identical(slot(cdu, "strucs"), party[["struc"]][party[["value"]] == "CDU_CSU"])
+
+    # mentions within the regions of a subcorpus
+    sc <- subset(corpus("NETESTCLASS"), date == "2009-11-10")
+    ne <- named_entities(sc)
+    speaker <- ne_regions("speaker")
+    within <- vapply(
+      seq_len(nrow(speaker)),
+      function(i) any(
+        speaker[["cpos_left"]][i] >= slot(sc, "cpos")[, 1] &
+          speaker[["cpos_right"]][i] <= slot(sc, "cpos")[, 2]
+      ),
+      FUN.VALUE = logical(1L)
+    )
+    expect_identical(slot(ne, "strucs"), speaker[["struc"]][within])
+
+    # a named_entities object is a subcorpus, so the constructor can select
+    # mentions by type
+    spd <- named_entities(ne, type = "SPD")
+    expect_s4_class(spd, "named_entities")
+    expect_identical(
+      slot(spd, "strucs"),
+      intersect(slot(ne, "strucs"), party[["struc"]][party[["value"]] == "SPD"])
+    )
+
+    expect_error(
+      named_entities("NETESTCLASS", type = "XYZ"),
+      "type\\(s\\) not available: XYZ"
+    )
+    expect_error(
+      named_entities("GERMAPARLMINI"),
+      "does not declare named-entity annotation"
+    )
+  }
+)
+
+test_that(
+  "count() counts mentions of named entities",
+  {
+    ne <- named_entities("NETESTCLASS", type = "CDU_CSU")
+    cnt <- count(ne)
+    expect_s4_class(cnt, "count")
+    expect_identical(slot(cnt, "p_attribute"), "surface")
+    expect_identical(slot(cnt, "size"), nrow(slot(ne, "cpos")))
+    expect_identical(colnames(slot(cnt, "stat")), c("surface", "type", "count"))
+    expect_identical(sum(slot(cnt, "stat")[["count"]]), nrow(slot(ne, "cpos")))
+    expect_true(all(slot(cnt, "stat")[["type"]] == "CDU_CSU"))
+    expect_false(is.unsorted(rev(slot(cnt, "stat")[["count"]])))
+
+    # the surface form of a mention are its tokens, separated by a space
+    first <- slot(ne, "cpos")[1, ]
+    surface <- paste(
+      RcppCWB::cl_cpos2str(
+        "NETESTCLASS", p_attribute = "word", cpos = first[1]:first[2],
+        registry = ne_registry
+      ),
+      collapse = " "
+    )
+    surface <- as.nativeEnc(surface, from = "latin1")
+    expect_true(surface %in% slot(cnt, "stat")[["surface"]])
+
+    # by URI: mentions are linked if a URI region has the same boundaries
+    ne <- named_entities("NETESTCLASS")
+    cnt <- count(ne, by = "uri")
+    expect_identical(slot(cnt, "p_attribute"), "uri")
+    expect_identical(
+      colnames(slot(cnt, "stat")),
+      c("uri", "type", "count", "surface", "n_surface")
+    )
+    stat <- slot(cnt, "stat")
+    expected <- table(ne_regions("interjection")[["value"]])
+    expect_identical(
+      stat[["count"]][match(names(expected), stat[["uri"]])],
+      as.integer(expected)
+    )
+    expect_false(anyNA(stat[["uri"]]))
+
+    # Regions of 'protocol_date' include all mentions, but do not have the
+    # same boundaries, so no mention is linked.
+    registry <- ne_test_corpus(
+      id = "netestunlinked",
+      properties = c(
+        '##:: ne_s_attribute = "speaker"',
+        '##:: ne_uri_s_attribute = "protocol_date"'
+      )
+    )
+    stat <- slot(count(named_entities("NETESTUNLINKED"), by = "uri"), "stat")
+    expect_identical(nrow(stat), 1L)
+    expect_true(is.na(stat[["uri"]]))
+    expect_identical(stat[["count"]], nrow(ne_regions("speaker")))
+
+    # count objects of mentions can be compared with features()
+    spd <- count(named_entities("NETESTCLASS", type = "SPD"))
+    cdu <- count(named_entities("NETESTCLASS", type = "CDU_CSU"))
+    expect_s4_class(features(spd, cdu, included = FALSE, verbose = FALSE), "features")
+  }
+)
+
+test_that(
+  "named_entities() and count() check the declaration",
+  {
+    registry <- ne_test_corpus(
+      id = "netestnotype",
+      properties = '##:: ne_s_attribute = "speaker"'
+    )
+    expect_error(
+      named_entities("NETESTNOTYPE", type = "SPD"),
+      "requires that the corpus declares a type s-attribute"
+    )
+    ne <- named_entities("NETESTNOTYPE")
+    expect_true(all(is.na(slot(count(ne), "stat")[["type"]])))
+    expect_error(
+      count(ne, by = "uri"),
+      "requires that the corpus declares a URI s-attribute"
+    )
+  }
+)

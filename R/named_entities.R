@@ -125,3 +125,309 @@ setMethod("ne_attributes", "character", function(.Object, ...){
   }
   ne_attributes(corpus(.Object), ...)
 })
+
+
+
+#' Named entities
+#'
+#' The mentions of named entities in a corpus or subcorpus, and the number of
+#' mentions of entities. A mention is a region of the s-attribute declared for
+#' named-entity annotation (see [ne_attributes()]), so a mention of several
+#' tokens (e.g. "Helmut Schmidt") is one mention.
+#'
+#' The `named_entities` class inherits from the `subcorpus` class: Its regions
+#' (slot `cpos`) are the mentions, slot `strucs` has the strucs of the
+#' s-attribute with mentions. Methods for `subcorpus` objects can be used
+#' (e.g. `size()` for the number of tokens of all mentions, or `kwic()`).
+#' The type and the URI of mentions are not stored but derived from the
+#' corpus when needed.
+#'
+#' The `named_entities()` constructor gets the mentions within a `corpus`
+#' object or the regions of an object inheriting from the `regions` class
+#' (such as a `subcorpus`). A mention is included if it is completely within
+#' a region. As a `named_entities` object is a `subcorpus`, the constructor can
+#' also be applied to it, e.g. to select mentions of a type.
+#'
+#' The `count()` method counts the mentions by surface form or by the URI
+#' mentions are linked to. It returns a `count` object. Slot `p_attribute` of
+#' this object has the name of the column with the key ("surface" or "uri"),
+#' and slot `size` is the number of mentions. Thus, `features()` can be used to
+#' compare the named entities in two `count` objects.
+#'
+#' The s-attribute with the type of mentions is expected to be an attribute of
+#' the mention element (e.g. "ne_type" for the element "ne"), so that types
+#' are found by the strucs of mentions. Regions of the URI s-attribute are
+#' expected to coincide with mentions. Mentions without a URI region with the
+#' same boundaries are not linked.
+#'
+#' @param .Object A `corpus` object, an object inheriting from the `regions`
+#'   class (such as a `subcorpus`), or a length-one `character` vector with
+#'   the ID of a corpus. For `count()`, a `named_entities` object.
+#' @param type A `character` vector with the types of named entities to get
+#'   (e.g. "PERSON"). If `NULL` (default), mentions of all types are included.
+#' @param by Either "surface" (default), to count mentions by their surface
+#'   form, or "uri", to count mentions by the URI they are linked to.
+#' @param p_attribute The p-attribute surface forms are derived from (e.g.
+#'   "word" or "lemma"). The tokens of a mention are separated by a space.
+#' @param ... Further arguments (not used).
+#' @return `named_entities()` returns a `named_entities` object, or `NULL`
+#'   (with a warning) if there is no mention. An error is raised if the corpus
+#'   does not declare named-entity annotation.
+#'
+#'   `count()` returns a `count` object. The table in slot `stat` is ordered
+#'   by the number of mentions (column `count`). With `by = "surface"`, the
+#'   columns are `surface`, `type` (the most frequent type of the surface
+#'   form) and `count`. With `by = "uri"`, the columns are `uri`, `type`,
+#'   `count`, `surface` (the most frequent surface form) and `n_surface` (the
+#'   number of distinct surface forms). Mentions that are not linked are
+#'   reported in a row with `uri` `NA`. Column `type` is `NA` if no type
+#'   s-attribute is declared.
+#' @exportClass named_entities
+#' @exportMethod named_entities
+#' @rdname named_entities
+#' @name named_entities
+#' @aliases named_entities-class
+#' @seealso [ne_attributes()]
+#' @examples
+#' \dontrun{
+#' use("GermaParl2")
+#'
+#' # Requires that GERMAPARL2 declares named-entity annotation (see
+#' # ?ne_attributes)
+#' persons <- corpus("GERMAPARL2") %>%
+#'   subset(p_type == "speech") %>%
+#'   named_entities(type = "PERSON")
+#'
+#' count(persons, by = "uri")
+#'
+#' # Persons mentioned more often in speeches of the SPD than of the CDU
+#' spd <- corpus("GERMAPARL2") %>%
+#'   subset(p_type == "speech") %>%
+#'   subset(speaker_party == "SPD") %>%
+#'   named_entities(type = "PERSON") %>%
+#'   count(by = "uri")
+#' cdu <- corpus("GERMAPARL2") %>%
+#'   subset(p_type == "speech") %>%
+#'   subset(speaker_party == "CDU") %>%
+#'   named_entities(type = "PERSON") %>%
+#'   count(by = "uri")
+#' features(spd, cdu, included = FALSE)
+#' }
+setClass("named_entities", contains = "subcorpus")
+
+
+#' @rdname named_entities
+setGeneric("named_entities", function(.Object, ...) standardGeneric("named_entities"))
+
+
+#' @rdname named_entities
+setMethod("named_entities", "corpus", function(.Object, type = NULL, ...){
+  .named_entities(.Object, cpos = NULL, type = type)
+})
+
+
+#' @rdname named_entities
+setMethod("named_entities", "regions", function(.Object, type = NULL, ...){
+  .named_entities(.Object, cpos = slot(.Object, "cpos"), type = type)
+})
+
+
+#' @rdname named_entities
+setMethod("named_entities", "character", function(.Object, type = NULL, ...){
+  if (length(.Object) != 1L){
+    stop("'.Object' is expected to be a length-one character vector")
+  }
+  named_entities(corpus(.Object), type = type)
+})
+
+
+# Get the mentions in a corpus, or within the regions of 'cpos' (a two-column
+# matrix with the corpus positions of regions).
+#' @importFrom RcppCWB cl_attribute_size get_region_matrix
+.named_entities <- function(x, cpos = NULL, type = NULL){
+  corpus_id <- slot(x, "corpus")
+  registry_dir <- slot(x, "registry_dir")
+
+  ne <- ne_attributes(x)
+  if (is.null(ne)){
+    stop(sprintf(
+      "corpus '%s' does not declare named-entity annotation (see ?ne_attributes)",
+      corpus_id
+    ))
+  }
+  if (!is.null(type)){
+    if (is.na(ne[["type"]])){
+      stop("argument 'type' requires that the corpus declares a type s-attribute")
+    }
+    unknown <- setdiff(type, ne[["types"]])
+    if (length(unknown) > 0L){
+      stop(sprintf(
+        "type(s) not available: %s - available types: %s",
+        paste(unknown, collapse = ", "), paste(ne[["types"]], collapse = ", ")
+      ))
+    }
+  }
+
+  n <- cl_attribute_size(
+    corpus = corpus_id, attribute = ne[["s_attribute"]],
+    attribute_type = "s", registry = registry_dir
+  )
+  if (!is.na(ne[["type"]])){
+    n_type <- cl_attribute_size(
+      corpus = corpus_id, attribute = ne[["type"]],
+      attribute_type = "s", registry = registry_dir
+    )
+    if (n_type != n){
+      stop(sprintf(
+        "s-attribute '%s' is expected to be an attribute of s-attribute '%s'",
+        ne[["type"]], ne[["s_attribute"]]
+      ))
+    }
+  }
+
+  strucs <- 0L:(n - 1L)
+  regions <- get_region_matrix(
+    corpus = corpus_id, s_attribute = ne[["s_attribute"]],
+    strucs = strucs, registry = registry_dir
+  )
+
+  # Keep mentions within regions. Regions do not overlap, so the region a
+  # mention starts in is found by findInterval() on sorted left boundaries.
+  if (!is.null(cpos)){
+    cpos <- cpos[order(cpos[, 1]), , drop = FALSE]
+    i <- findInterval(regions[, 1], cpos[, 1])
+    keep <- i > 0L
+    keep[keep] <- regions[keep, 2] <= cpos[i[keep], 2]
+    strucs <- strucs[keep]
+    regions <- regions[keep, , drop = FALSE]
+  }
+
+  if (!is.null(type) && length(strucs) > 0L){
+    keep <- .ne_values(x, ne[["type"]], strucs) %in% type
+    strucs <- strucs[keep]
+    regions <- regions[keep, , drop = FALSE]
+  }
+
+  if (length(strucs) == 0L){
+    warning("no named-entity mentions found (returning NULL)")
+    return(NULL)
+  }
+
+  new(
+    "named_entities",
+    as(x, "corpus"),
+    cpos = regions,
+    strucs = strucs,
+    s_attribute_strucs = ne[["s_attribute"]],
+    s_attributes = if (is.null(type)) list() else setNames(list(type), ne[["type"]]),
+    size = as.integer(sum(regions[, 2] - regions[, 1] + 1L))
+  )
+}
+
+
+# Decode the values of an s-attribute for strucs, as UTF-8.
+#' @importFrom RcppCWB cl_struc2str
+.ne_values <- function(x, s_attribute, strucs){
+  values <- cl_struc2str(
+    corpus = slot(x, "corpus"), s_attribute = s_attribute,
+    struc = strucs, registry = slot(x, "registry_dir")
+  )
+  as.nativeEnc(values, from = slot(x, "encoding"))
+}
+
+
+# The URI of each mention of a named_entities object, NA if a mention is not
+# linked. Regions of the URI s-attribute coincide with mentions, but are a
+# separate s-attribute: A mention is linked if it starts and ends a URI region.
+#' @importFrom RcppCWB cl_cpos2struc get_region_matrix
+.ne_uri <- function(x, s_attribute){
+  cpos <- slot(x, "cpos")
+  y <- rep(NA_character_, nrow(cpos))
+  uri_strucs <- cl_cpos2struc(
+    corpus = slot(x, "corpus"), s_attribute = s_attribute,
+    cpos = cpos[, 1], registry = slot(x, "registry_dir")
+  )
+  linked <- which(uri_strucs >= 0L)
+  if (length(linked) == 0L) return(y)
+  uri_regions <- get_region_matrix(
+    corpus = slot(x, "corpus"), s_attribute = s_attribute,
+    strucs = uri_strucs[linked], registry = slot(x, "registry_dir")
+  )
+  same <- uri_regions[, 1] == cpos[linked, 1] & uri_regions[, 2] == cpos[linked, 2]
+  linked <- linked[same]
+  if (length(linked) > 0L){
+    y[linked] <- .ne_values(x, s_attribute, uri_strucs[linked])
+  }
+  y
+}
+
+
+# The surface form of each mention of a named_entities object: The tokens of
+# a mention, separated by a space. Tokens are added position by position
+# (mentions are short), which is vectorized.
+#' @importFrom RcppCWB cl_cpos2str
+.ne_surface <- function(x, p_attribute){
+  cpos <- slot(x, "cpos")
+  n_tokens <- cpos[, 2] - cpos[, 1] + 1L
+  get_tokens <- function(positions) as.nativeEnc(
+    cl_cpos2str(
+      corpus = slot(x, "corpus"), p_attribute = p_attribute,
+      cpos = positions, registry = slot(x, "registry_dir")
+    ),
+    from = slot(x, "encoding")
+  )
+  y <- get_tokens(cpos[, 1])
+  for (k in seq_len(max(n_tokens) - 1L)){
+    i <- which(n_tokens > k)
+    y[i] <- paste(y[i], get_tokens(cpos[i, 1] + k))
+  }
+  y
+}
+
+
+#' @rdname named_entities
+#' @importFrom data.table data.table setorderv
+setMethod("count", "named_entities", function(.Object, by = c("surface", "uri"), p_attribute = "word", ...){
+  N <- NULL # column of data.table objects, defined to avoid R CMD check notes
+  by <- match.arg(by)
+  ne <- ne_attributes(.Object)
+  if (by == "uri" && is.na(ne[["uri"]])){
+    stop("by = 'uri' requires that the corpus declares a URI s-attribute")
+  }
+  if (!p_attribute %in% p_attributes(.Object)){
+    stop(sprintf("p-attribute '%s' not available", p_attribute))
+  }
+
+  dt <- data.table(
+    surface = .ne_surface(.Object, p_attribute = p_attribute),
+    type = if (is.na(ne[["type"]])){
+      NA_character_
+    } else {
+      .ne_values(.Object, ne[["type"]], slot(.Object, "strucs"))
+    }
+  )
+  if (by == "uri") dt[["uri"]] <- .ne_uri(.Object, ne[["uri"]])
+
+  # The most frequent type (and surface form) of a key is the first after
+  # ordering by key and count.
+  types <- dt[, .N, by = c(by, "type")]
+  setorderv(types, cols = c(by, "N"), order = c(1L, -1L))
+  y <- types[, list(type = type[1], count = sum(N)), by = by]
+
+  if (by == "uri"){
+    surfaces <- dt[, .N, by = c("uri", "surface")]
+    setorderv(surfaces, cols = c("uri", "N"), order = c(1L, -1L))
+    surfaces <- surfaces[, list(surface = surface[1], n_surface = .N), by = "uri"]
+    y <- y[surfaces, on = "uri"]
+  }
+  setorderv(y, cols = c("count", by), order = c(-1L, 1L), na.last = TRUE)
+
+  new(
+    "count",
+    as(.Object, "corpus"),
+    p_attribute = by,
+    stat = y,
+    name = character(),
+    size = nrow(slot(.Object, "cpos"))
+  )
+})

@@ -25,6 +25,7 @@ reference:
       - p_attributes
       - s_attributes
       - ne_attributes
+      - named_entities
       - is_nested
       - tree_structure
       - as.speeches
