@@ -117,6 +117,8 @@ test_that("corpus_info describes declared named-entity annotation", {
     sprintf('<party="%s">[]+</party>', types[1])
   )
   expect_identical(ne[["query_mentions_of_entity"]], '<role="URI">[]+</role>')
+  # the notes explain that URIs give access to information on entities
+  expect_match(ne[["notes"]], "key to further information")
 
   # Each match of the queries is one region (mention), not one token. CQP does
   # not match '[]+' beyond 500 tokens (option 'HardBoundary'). This does not

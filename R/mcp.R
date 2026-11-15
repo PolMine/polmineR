@@ -379,6 +379,13 @@ mcp_tools <- function(corpora){
         "count entities rather than names, as one name can refer to",
         "different entities. 'share' is the count divided by the number of",
         "all mentions ('n_mentions'), including mentions not linked to a URI.",
+        "The URI is the key to further information on an entity: if you can",
+        "access the knowledge base (e.g. DBpedia, or Wikidata via DBpedia or",
+        "the Wikipedia article the URI is derived from), use it to get facts",
+        "such as the party, office or occupation of a person, e.g. to find",
+        "out which of the entities mentioned are politicians. Links can be",
+        "wrong: check that the entity retrieved matches the type of the",
+        "mention (e.g. a person for PERSON) before you use its facts.",
         "Only available if corpus_info reports 'named_entities' for the",
         "corpus."
       ),
@@ -1018,6 +1025,15 @@ mcp_named_entities <- function(x){
     "s-attributes (e.g. with 'subset') is a number of tokens, not of",
     "mentions."
   )
+  if (!is.na(ne[["uri"]])){
+    y[["notes"]] <- paste(
+      y[["notes"]],
+      "Mentions are linked to entities in a knowledge base by the URIs in",
+      sprintf("s-attribute '%s'.", ne[["uri"]]),
+      "A URI is the key to further information on an entity (e.g. from",
+      "DBpedia or Wikidata), see tool entities."
+    )
+  }
   y
 }
 
