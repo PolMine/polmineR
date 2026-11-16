@@ -131,26 +131,26 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, registry = NU
     return(ids)
   }
   
+  # The selection is applied to the tokens and to the corpus positions, so that
+  # both remain of the same length (#290).
   expr <- substitute(subset)
   if (!is.null(expr)){
     assign(p_attribute, tokens)
-    assign(p_attribute, get(p_attribute)[eval(expr)])
-    tokens <- get(p_attribute)
+    selected <- eval(expr)
+    tokens <- tokens[selected]
+    .Object <- .Object[selected]
   }
 
   if (cpos) names(tokens) <- .Object
   if (!is.null(collapse)) {
-    
+
     if (typeof(collapse) != "character")
       warning("Argument 'collapse' of the get_token_stream()-method is expected to be a character vector, but it isn't.")
     if (length(collapse) != 1L)
       stop("Argument 'collapse' of the get_token_stream()-method is expected to be a length-one vector, but length is > 1.")
-    
+
     if (beautify){
-      whitespace <- rep(collapse, times = length(.Object))
-      whitespace[1] <- ""
-      whitespace[grep("^[\\.;,:!?\\)]$", tokens, perl = TRUE)] <- ""
-      whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
+      whitespace <- .whitespace(tokens, collapse = collapse)
       tokens <- paste(paste(whitespace, tokens, sep = ""), collapse = "")
     } else {
       tokens <- paste(tokens, collapse = collapse)  
@@ -317,11 +317,11 @@ setMethod("get_token_stream", "partition_bundle", function(.Object, p_attribute 
       }
       
       if (beautify){
-        whitespace <- rep(" ", times = length(tokens))
-        whitespace[1] <- ""
-        whitespace[cumsum(sizes[1:(length(sizes) - 1L)]) + 1L] <- ""
-        whitespace[grep("^[\\.;,:!?\\)]$", tokens, perl = TRUE)] <- ""
-        whitespace[grep("\\(", tokens, perl = TRUE) + 1L] <- ""
+        # no whitespace before the first token of each object
+        whitespace <- .whitespace(
+          tokens, collapse = " ",
+          no_space = utils::head(cumsum(sizes), -1L) + 1L
+        )
         tokens <- paste(whitespace, tokens, sep = "")
       }
 
@@ -449,3 +449,22 @@ setAs(from = "slice", to = "String", def = function(from){
   y
 })
 
+
+
+# The whitespace before each token when tokens are concatenated: 'collapse',
+# but nothing before the first token, before closing punctuation, after an
+# opening bracket, and at the positions in 'no_space'. The result has the same
+# length as 'tokens', also if the last token is an opening bracket (#290).
+.whitespace <- function(tokens, collapse = " ", no_space = integer()){
+  n <- length(tokens)
+  y <- rep(collapse, times = n)
+  if (n == 0L) return(y)
+  none <- c(
+    1L,
+    no_space,
+    grep("^[\\.;,:!?\\)]$", tokens, perl = TRUE),
+    grep("\\(", tokens, perl = TRUE) + 1L
+  )
+  y[none[none <= n]] <- ""
+  y
+}
