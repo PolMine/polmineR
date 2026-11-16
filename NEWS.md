@@ -1,5 +1,10 @@
 # polmineR v0.8.9.9001-9033
 
+* `get_token_stream()` with arguments `subset` and `collapse` (and `beautify =
+TRUE`, the default) returned a string with recycled tokens, longer than without
+`subset`. With `subset` and `cpos = TRUE`, it failed. If the last token was an
+opening bracket, the first token was appended. For a `partition_bundle` with
+one object, `beautify = TRUE` resulted in an error (#290).
 * The description of the MCP tool `entities` and the notes on named entities
 returned by `corpus_info` explain that URIs give access to further information
 on entities in a knowledge base (e.g. DBpedia or Wikidata), and that the type

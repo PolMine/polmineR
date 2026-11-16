@@ -190,3 +190,96 @@ test_that(
 
 
 
+
+
+test_that(
+  "get_token_stream() with subset, collapse and beautify (#290)",
+  {
+    sc <- corpus("GERMAPARLMINI") %>%
+      subset(protocol_date == "2009-10-27") %>%
+      subset(speaker == "Volker Kauder")
+    # The subset expression is evaluated in the method, so the tokens to drop
+    # are stated in the expression rather than in a variable.
+    kept <- get_token_stream(
+      sc, p_attribute = "word",
+      subset = {!word %in% c("der", "die", "das", "und", polmineR::punctuation)}
+    )
+    collapsed <- get_token_stream(
+      sc, p_attribute = "word", collapse = " ",
+      subset = {!word %in% c("der", "die", "das", "und", polmineR::punctuation)}
+    )
+    # Previously, tokens were recycled, so the string was longer than the
+    # string without subset.
+    expect_identical(collapsed, paste(kept, collapse = " "))
+    expect_lt(
+      nchar(collapsed),
+      nchar(get_token_stream(sc, p_attribute = "word", collapse = " "))
+    )
+
+    # corpus positions are selected like tokens
+    with_cpos <- get_token_stream(
+      sc, p_attribute = "word", cpos = TRUE,
+      subset = {!word %in% c("der", "die", "das", "und", polmineR::punctuation)}
+    )
+    expect_identical(unname(with_cpos), kept)
+    all_tokens <- get_token_stream(sc, p_attribute = "word")
+    expect_identical(
+      as.integer(names(with_cpos)),
+      RcppCWB::ranges_to_cpos(slot(sc, "cpos"))[!all_tokens %in% c("der", "die", "das", "und", polmineR::punctuation)]
+    )
+  }
+)
+
+
+test_that(
+  "beautify does not recycle tokens if the last token is an opening bracket (#290)",
+  {
+    reg <- registry()
+    bracket <- RcppCWB::cl_id2cpos(
+      "GERMAPARLMINI", p_attribute = "word",
+      id = RcppCWB::cl_str2id("GERMAPARLMINI", p_attribute = "word", str = "(", registry = reg),
+      registry = reg
+    )[1]
+    cpos <- (bracket - 3L):bracket
+    tokens <- get_token_stream(cpos, corpus = "GERMAPARLMINI", p_attribute = "word")
+    expect_identical(tail(tokens, 1L), "(")
+    y <- get_token_stream(cpos, corpus = "GERMAPARLMINI", p_attribute = "word", collapse = " ")
+    expect_identical(substr(y, nchar(y), nchar(y)), "(")
+    expect_identical(
+      y,
+      paste(paste(polmineR:::.whitespace(tokens), tokens, sep = ""), collapse = "")
+    )
+  }
+)
+
+
+test_that(
+  "beautify works for a partition_bundle with one object (#290)",
+  {
+    pb <- corpus("GERMAPARLMINI") %>%
+      subset(protocol_date == "2009-10-27") %>%
+      split(s_attribute = "speaker")
+    y <- get_token_stream(pb[1], p_attribute = "word", beautify = TRUE, verbose = FALSE)
+    expect_identical(
+      lengths(y),
+      lengths(get_token_stream(pb[1], p_attribute = "word", verbose = FALSE))
+    )
+  }
+)
+
+
+test_that(
+  ".whitespace() returns a vector of the length of tokens",
+  {
+    expect_identical(polmineR:::.whitespace(character()), character())
+    expect_identical(polmineR:::.whitespace("a"), "")
+    expect_identical(
+      polmineR:::.whitespace(c("a", "(", "b", ")", ".", "c", "(")),
+      c("", " ", "", "", "", " ", " ")
+    )
+    expect_identical(
+      polmineR:::.whitespace(c("a", "b", "c", "d"), no_space = c(3L, 10L)),
+      c("", " ", "", " ")
+    )
+  }
+)
