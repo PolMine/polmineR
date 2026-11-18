@@ -10,8 +10,24 @@ NULL
 #' @param p_attribute A `character` vector, the p-attribute(s) to decode.
 #' @param phrases A `phrases` object. Defined phrases will be concatenated.
 #' @param subset An expression applied on p-attributes, using non-standard
-#'   evaluation. Note that symbols used in the expression may not be used
-#'   internally (e.g. 'stopwords').
+#'   evaluation, e.g. `!word %in% c("der", "die", "das")`. The p-attribute
+#'   is available by its name (e.g. `word`). Note the scope of the evaluation:
+#'
+#'   - Variables used in the expression are found in the global environment,
+#'   but not in the environment `get_token_stream()` is called from. If it is
+#'   called within a function, variables defined in the function are not found
+#'   and an error is raised. State the values in the expression, or define the
+#'   variable in the global environment.
+#'   - For a `corpus`, a `subcorpus` and other single objects, the expression
+#'   is evaluated within the method. A variable with the name of an argument of
+#'   `get_token_stream()` (such as `corpus`, `cpos` or `collapse`) or of a
+#'   variable used internally (`tokens`) is replaced by the internal value,
+#'   without an error or a warning. For instance, with a global variable
+#'   `tokens`, `subset = !word %in% tokens` drops all tokens. Use other names
+#'   (e.g. `stopwords_de`).
+#'   - For a `partition_bundle`, the expression is evaluated with the columns
+#'   of the table of tokens (`obj_id` and the p-attributes) and the variables
+#'   in the global environment.
 #' @param encoding If not `NULL` (default) a length-one `character` vector
 #'   stating an encoding that will be assigned to the (decoded) token stream.
 #' @param collapse If not `NULL` (default), a length-one `character` string

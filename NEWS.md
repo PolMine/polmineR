@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9033
 
+* The documentation of argument `subset` of `get_token_stream()` explains the
+scope of the evaluation: Variables are found in the global environment, not in
+a calling function, and names of arguments or internal variables (e.g.
+`tokens`) are replaced by internal values.
 * `get_token_stream()` with arguments `subset` and `collapse` (and `beautify =
 TRUE`, the default) returned a string with recycled tokens, longer than without
 `subset`. With `subset` and `cpos = TRUE`, it failed. If the last token was an
