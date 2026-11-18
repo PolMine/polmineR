@@ -1007,6 +1007,17 @@ mcp_named_entities <- function(x){
   if (!is.na(ne[["type"]])) y[["type_s_attribute"]] <- ne[["type"]]
   if (!is.null(ne[["types"]])) y[["types"]] <- I(ne[["types"]])
   if (!is.na(ne[["uri"]])) y[["uri_s_attribute"]] <- ne[["uri"]]
+  # Attributes of the mention element are s-attributes named after it (e.g.
+  # 'ne_wikidata_id' for element 'ne'), as created by cwb-encode.
+  mention_attributes <- setdiff(
+    grep(
+      sprintf("^%s_", ne[["s_attribute"]]), s_attributes(x), value = TRUE
+    ),
+    c(ne[["type"]], ne[["uri"]])
+  )
+  if (length(mention_attributes) > 0L){
+    y[["mention_attributes"]] <- I(mention_attributes)
+  }
 
   y[["query_mentions"]] <- region_query(ne[["s_attribute"]])
   if (!is.na(ne[["type"]]) && length(ne[["types"]]) > 0L){
@@ -1023,7 +1034,8 @@ mcp_named_entities <- function(x){
     "replacing the example values with a type or a URI (see",
     "s_attribute_values). The size of a subcorpus defined by these",
     "s-attributes (e.g. with 'subset') is a number of tokens, not of",
-    "mentions."
+    "mentions. An empty value of an s-attribute of mentions means that",
+    "the information is not available."
   )
   if (!is.na(ne[["uri"]])){
     y[["notes"]] <- paste(
@@ -1031,7 +1043,23 @@ mcp_named_entities <- function(x){
       "Mentions are linked to entities in a knowledge base by the URIs in",
       sprintf("s-attribute '%s'.", ne[["uri"]]),
       "A URI is the key to further information on an entity (e.g. from",
-      "DBpedia or Wikidata), see tool entities."
+      "DBpedia or Wikidata), see tool entities. Mentions with an empty URI",
+      sprintf(
+        "are not linked (query: '%s').", region_query(ne[["uri"]], "")
+      )
+    )
+  }
+  if (length(mention_attributes) > 0L){
+    y[["notes"]] <- paste(
+      y[["notes"]],
+      "The s-attributes in 'mention_attributes' have further information on",
+      "mentions, with one value for each mention (e.g. a Wikidata ID).",
+      "Values enclosed in '|' (e.g. '|Q6256|Q3624078|') are sets of values:",
+      "query them with 'contains', e.g.",
+      sprintf(
+        "'<%s contains \"VALUE\">[]+</%s>'.",
+        mention_attributes[1], mention_attributes[1]
+      )
     )
   }
   y

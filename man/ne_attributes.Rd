@@ -49,8 +49,9 @@ entity mentions (e.g. "ne"). A mention is a region of one or more tokens.
 \item \code{ne_type_s_attribute} (optional): The s-attribute with the type of a
 mention (e.g. "ne_type").
 \item \code{ne_uri_s_attribute} (optional): The s-attribute with a link of the
-mention to an entry in a knowledge base (e.g. "dbpedia_uri"). Regions of
-this s-attribute are expected to coincide with the regions of mentions.
+mention to an entry in a knowledge base (e.g. "ne_dbpedia_uri"). Regions
+of this s-attribute are expected to coincide with the regions of
+mentions. An empty string means that a mention is not linked.
 \item \code{ne_types} (optional): The types of named entities, separated by "|"
 (e.g. "PERSON|ORGANIZATION|LOCATION|MISC").
 }
@@ -60,7 +61,7 @@ corpus would include these lines:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{##:: ne_s_attribute = "ne"
 ##:: ne_type_s_attribute = "ne_type"
-##:: ne_uri_s_attribute = "dbpedia_uri"
+##:: ne_uri_s_attribute = "ne_dbpedia_uri"
 ##:: ne_types = "PERSON|ORGANIZATION|LOCATION|MISC"
 }\if{html}{\out{</div>}}
 }

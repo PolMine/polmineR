@@ -16,8 +16,9 @@ NULL
 #' - `ne_type_s_attribute` (optional): The s-attribute with the type of a
 #'   mention (e.g. "ne_type").
 #' - `ne_uri_s_attribute` (optional): The s-attribute with a link of the
-#'   mention to an entry in a knowledge base (e.g. "dbpedia_uri"). Regions of
-#'   this s-attribute are expected to coincide with the regions of mentions.
+#'   mention to an entry in a knowledge base (e.g. "ne_dbpedia_uri"). Regions
+#'   of this s-attribute are expected to coincide with the regions of
+#'   mentions. An empty string means that a mention is not linked.
 #' - `ne_types` (optional): The types of named entities, separated by "|"
 #'   (e.g. "PERSON|ORGANIZATION|LOCATION|MISC").
 #'
@@ -27,7 +28,7 @@ NULL
 #' ```
 #' ##:: ne_s_attribute = "ne"
 #' ##:: ne_type_s_attribute = "ne_type"
-#' ##:: ne_uri_s_attribute = "dbpedia_uri"
+#' ##:: ne_uri_s_attribute = "ne_dbpedia_uri"
 #' ##:: ne_types = "PERSON|ORGANIZATION|LOCATION|MISC"
 #' ```
 #'
@@ -108,10 +109,12 @@ setMethod("ne_attributes", "corpus", function(.Object, ...){
   if (!is.na(types)){
     y[["types"]] <- trimws(strsplit(types, "|", fixed = TRUE)[[1]])
   } else if (!is.na(y[["type"]])){
-    y[["types"]] <- sort(s_attributes(
+    types <- s_attributes(
       corpus(corpus_id, registry_dir = registry_dir),
       s_attribute = y[["type"]], unique = TRUE
-    ))
+    )
+    # an empty string means that the type is not available
+    y[["types"]] <- sort(types[types != ""])
   }
 
   y
@@ -158,7 +161,9 @@ setMethod("ne_attributes", "character", function(.Object, ...){
 #' the mention element (e.g. "ne_type" for the element "ne"), so that types
 #' are found by the strucs of mentions. Regions of the URI s-attribute are
 #' expected to coincide with mentions. Mentions without a URI region with the
-#' same boundaries are not linked.
+#' same boundaries are not linked. An empty string means that a value is not
+#' available: Mentions with an empty URI are not linked, and an empty type is
+#' `NA`.
 #'
 #' @param .Object A `corpus` object, an object inheriting from the `regions`
 #'   class (such as a `subcorpus`), or a length-one `character` vector with
@@ -325,20 +330,27 @@ setMethod("named_entities", "character", function(.Object, type = NULL, ...){
 }
 
 
-# Decode the values of an s-attribute for strucs, as UTF-8.
+# Decode the values of an s-attribute for strucs, as UTF-8. An empty string
+# means that a value is not available (cwb-encode writes an empty string if an
+# XML attribute is missing), so it is turned into NA.
 #' @importFrom RcppCWB cl_struc2str
 .ne_values <- function(x, s_attribute, strucs){
   values <- cl_struc2str(
     corpus = slot(x, "corpus"), s_attribute = s_attribute,
     struc = strucs, registry = slot(x, "registry_dir")
   )
-  as.nativeEnc(values, from = slot(x, "encoding"))
+  values <- as.nativeEnc(values, from = slot(x, "encoding"))
+  values[values == ""] <- NA_character_
+  values
 }
 
 
 # The URI of each mention of a named_entities object, NA if a mention is not
 # linked. Regions of the URI s-attribute coincide with mentions, but are a
-# separate s-attribute: A mention is linked if it starts and ends a URI region.
+# separate s-attribute: A mention is linked if it starts and ends a URI region
+# with a value that is not an empty string. Both encodings of unlinked mentions
+# occur: No URI region (sparse encoding), or a URI region with an empty value
+# (an attribute of the mention element, as in GermaParl2).
 #' @importFrom RcppCWB cl_cpos2struc get_region_matrix
 .ne_uri <- function(x, s_attribute){
   cpos <- slot(x, "cpos")

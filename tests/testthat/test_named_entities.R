@@ -258,3 +258,30 @@ test_that(
     )
   }
 )
+
+test_that(
+  "empty values of named-entity s-attributes are not available",
+  {
+    registry <- ne_vrt_corpus()
+    expect_identical(
+      RcppCWB::cl_struc2str(
+        "NETESTVRT", s_attribute = "ne_uri", struc = 0:4, registry = registry
+      ),
+      c("Q567", "Q64", "Q64", "", "")
+    )
+
+    # without property 'ne_types', an empty type is not a type
+    expect_identical(ne_attributes("NETESTVRT")[["types"]], c("LOCATION", "PERSON"))
+
+    ne <- named_entities("NETESTVRT")
+    stat <- slot(count(ne, by = "uri"), "stat")
+    expect_identical(stat[["uri"]], c("Q64", NA, "Q567"))
+    expect_identical(stat[["count"]], c(2L, 2L, 1L))
+
+    stat <- slot(count(ne), "stat")
+    expect_identical(stat[stat[["surface"]] == "Ostpolitik"][["type"]], NA_character_)
+
+    # mentions without a type are not selected by type
+    expect_identical(slot(named_entities("NETESTVRT", type = "PERSON"), "strucs"), c(0L, 3L))
+  }
+)
