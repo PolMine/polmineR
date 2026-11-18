@@ -85,8 +85,25 @@ get_token_stream(.Object, ...)
 \item{p_attribute}{A \code{character} vector, the p-attribute(s) to decode.}
 
 \item{subset}{An expression applied on p-attributes, using non-standard
-evaluation. Note that symbols used in the expression may not be used
-internally (e.g. 'stopwords').}
+evaluation, e.g. \code{!word \%in\% c("der", "die", "das")}. The p-attribute
+is available by its name (e.g. \code{word}). Note the scope of the evaluation:
+\itemize{
+\item Variables used in the expression are found in the global environment,
+but not in the environment \code{get_token_stream()} is called from. If it is
+called within a function, variables defined in the function are not found
+and an error is raised. State the values in the expression, or define the
+variable in the global environment.
+\item For a \code{corpus}, a \code{subcorpus} and other single objects, the expression
+is evaluated within the method. A variable with the name of an argument of
+\code{get_token_stream()} (such as \code{corpus}, \code{cpos} or \code{collapse}) or of a
+variable used internally (\code{tokens}) is replaced by the internal value,
+without an error or a warning. For instance, with a global variable
+\code{tokens}, \code{subset = !word \%in\% tokens} drops all tokens. Use other names
+(e.g. \code{stopwords_de}).
+\item For a \code{partition_bundle}, the expression is evaluated with the columns
+of the table of tokens (\code{obj_id} and the p-attributes) and the variables
+in the global environment.
+}}
 
 \item{boost}{A length-one \code{logical} value, whether to speed up decoding
 a long vector of token ids by directly by reading in the lexion file from
