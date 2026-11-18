@@ -83,6 +83,12 @@ test_that("mcp tools for corpus information", {
   expect_setequal(y[["s_attributes"]][["s_attribute"]], s_attributes("GERMAPARLMINI"))
   # GERMAPARLMINI does not declare named-entity annotation
   expect_null(y[["named_entities"]])
+  # the content of the info file is the documentation of the corpus
+  expect_identical(
+    y[["documentation"]],
+    paste(get_info(corpus("GERMAPARLMINI")), collapse = "\n")
+  )
+  expect_match(y[["documentation"]], "^# GERMAPARLMINI corpus")
 
   y <- mcp_call("s_attribute_values", list(corpus = "GERMAPARLMINI", s_attribute = "speaker", pattern = "merkel"))
   expect_identical(y[["values"]][["value"]], "Angela Dorothea Merkel")
@@ -226,6 +232,8 @@ test_that("mcp tools handle empty values of named-entity s-attributes", {
   ne_tools <- mcp_tools(corpora = "MCPNEVRT")
   call_ne_tool <- function(name, arguments) mcp_call(name, arguments, tool_list = ne_tools)
 
+  # a corpus without info file has no documentation
+  expect_null(call_ne_tool("corpus_info", list(corpus = "MCPNEVRT"))[["documentation"]])
   ne <- call_ne_tool("corpus_info", list(corpus = "MCPNEVRT"))[["named_entities"]]
   expect_identical(ne[["mention_attributes"]], "ne_wikidata_type")
   expect_match(ne[["notes"]], "empty value", fixed = TRUE)
