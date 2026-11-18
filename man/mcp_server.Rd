@@ -55,7 +55,9 @@ The tools are:
 \item \code{list_corpora}: Corpora available, with size and encoding.
 \item \code{corpus_info}: Size, positional and structural attributes of a corpus.
 If the corpus declares named-entity annotation (see \code{\link[=ne_attributes]{ne_attributes()}}),
-the result includes its s-attributes and CQP queries for mentions.
+the result includes its s-attributes and CQP queries for mentions. If
+the registry file names an info file (see \code{\link[=get_info]{get_info()}}), the result
+includes its content as \code{documentation}.
 \item \code{entities}: Counts of the mentions of named entities, by surface form or
 by URI (see \code{\link[=named_entities]{named_entities()}}). Requires that the corpus declares
 named-entity annotation.

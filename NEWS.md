@@ -1,5 +1,8 @@
 # polmineR v0.8.9.9001-9033
 
+* The MCP tool `corpus_info` returns the documentation of a corpus (the content
+of the info file named in the registry) as `documentation`, so that AI agents
+learn what attributes mean and what to keep in mind.
 * The documentation of argument `subset` of `get_token_stream()` explains the
 scope of the evaluation: Variables are found in the global environment, not in
 a calling function, and names of arguments or internal variables (e.g.

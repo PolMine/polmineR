@@ -11,7 +11,9 @@
 #' - `list_corpora`: Corpora available, with size and encoding.
 #' - `corpus_info`: Size, positional and structural attributes of a corpus.
 #'   If the corpus declares named-entity annotation (see [ne_attributes()]),
-#'   the result includes its s-attributes and CQP queries for mentions.
+#'   the result includes its s-attributes and CQP queries for mentions. If
+#'   the registry file names an info file (see [get_info()]), the result
+#'   includes its content as `documentation`.
 #' - `entities`: Counts of the mentions of named entities, by surface form or
 #'   by URI (see [named_entities()]). Requires that the corpus declares
 #'   named-entity annotation.
@@ -332,7 +334,10 @@ mcp_tools <- function(corpora){
         "attributes (metadata such as 'speaker', 'party', 'date') with the",
         "number of distinct values. If the corpus declares named-entity",
         "annotation, 'named_entities' names its s-attributes and gives CQP",
-        "queries for mentions. Call this first to learn how to define",
+        "queries for mentions. If the corpus has documentation (an info",
+        "file), 'documentation' has its content (usually markdown): read it",
+        "to learn what the attributes mean and what to keep in mind when",
+        "analysing the corpus. Call this first to learn how to define",
         "subcorpora."
       ),
       inputSchema = list(
@@ -364,6 +369,8 @@ mcp_tools <- function(corpora){
           )
         )
         y[["named_entities"]] <- mcp_named_entities(x)
+        info <- get_info(x)
+        if (!is.null(info)) y[["documentation"]] <- paste(info, collapse = "\n")
         y
       }
     ),
