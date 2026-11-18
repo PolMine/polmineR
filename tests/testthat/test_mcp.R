@@ -119,6 +119,8 @@ test_that("corpus_info describes declared named-entity annotation", {
   expect_identical(ne[["query_mentions_of_entity"]], '<role="URI">[]+</role>')
   # the notes explain that URIs give access to information on entities
   expect_match(ne[["notes"]], "key to further information")
+  # GERMAPARLMINI has no s-attributes named "speaker_*"
+  expect_null(ne[["mention_attributes"]])
 
   # Each match of the queries is one region (mention), not one token. CQP does
   # not match '[]+' beyond 500 tokens (option 'HardBoundary'). This does not
@@ -217,6 +219,33 @@ test_that("entities counts mentions of named entities", {
   expect_match(y, "type\\(s\\) not available: XYZ")
   y <- call_ne_tool("entities", list(corpus = "MCPENTITIES", by = "name"))
   expect_match(y, "'surface' or 'uri'")
+})
+
+test_that("mcp tools handle empty values of named-entity s-attributes", {
+  registry <- ne_vrt_corpus(id = "mcpnevrt")
+  ne_tools <- mcp_tools(corpora = "MCPNEVRT")
+  call_ne_tool <- function(name, arguments) mcp_call(name, arguments, tool_list = ne_tools)
+
+  ne <- call_ne_tool("corpus_info", list(corpus = "MCPNEVRT"))[["named_entities"]]
+  expect_identical(ne[["mention_attributes"]], "ne_wikidata_type")
+  expect_match(ne[["notes"]], "empty value", fixed = TRUE)
+  expect_match(ne[["notes"]], '<ne_uri="">[]+</ne_uri>', fixed = TRUE)
+  expect_match(ne[["notes"]], "<ne_wikidata_type contains", fixed = TRUE)
+
+  # queries for unlinked mentions and for values in a set of values
+  y <- call_ne_tool("count", list(corpus = "MCPNEVRT", query = '<ne_uri="">[]+</ne_uri>'))
+  expect_identical(y[["counts"]][["count"]], 2L)
+  y <- call_ne_tool("count", list(
+    corpus = "MCPNEVRT", query = '<ne_wikidata_type contains "Q515">[]+</ne_wikidata_type>'
+  ))
+  expect_identical(y[["counts"]][["count"]], 2L)
+
+  # mentions with an empty URI are not linked
+  y <- call_ne_tool("entities", list(corpus = "MCPNEVRT", by = "uri"))
+  expect_identical(y[["n_mentions"]], 5L)
+  expect_identical(y[["n_entities"]], 2L)
+  expect_identical(y[["n_unlinked"]], 2L)
+  expect_identical(y[["entities"]][["uri"]], c("Q64", "Q567"))
 })
 
 test_that("mcp tools for analysis", {

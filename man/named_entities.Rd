@@ -80,7 +80,9 @@ The s-attribute with the type of mentions is expected to be an attribute of
 the mention element (e.g. "ne_type" for the element "ne"), so that types
 are found by the strucs of mentions. Regions of the URI s-attribute are
 expected to coincide with mentions. Mentions without a URI region with the
-same boundaries are not linked.
+same boundaries are not linked. An empty string means that a value is not
+available: Mentions with an empty URI are not linked, and an empty type is
+\code{NA}.
 }
 \examples{
 \dontrun{
