@@ -3,6 +3,14 @@
 * The MCP tool `corpus_info` returns the documentation of a corpus (the content
 of the info file named in the registry) as `documentation`, so that AI agents
 learn what attributes mean and what to keep in mind.
+* An empty value of an s-attribute of named-entity mentions means that the
+information is not available: `named_entities()` and `count()` treat mentions
+with an empty URI as not linked (row with `uri` `NA`) and an empty type as
+`NA`, and `ne_attributes()` does not report an empty type. Previously, unlinked
+mentions with an empty URI were counted as one entity. The `named_entities`
+block of the MCP tool `corpus_info` lists further attributes of mentions
+(`mention_attributes`, e.g. a Wikidata ID) and explains empty values and sets
+of values.
 * The documentation of argument `subset` of `get_token_stream()` explains the
 scope of the evaluation: Variables are found in the global environment, not in
 a calling function, and names of arguments or internal variables (e.g.
