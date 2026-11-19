@@ -1,0 +1,108 @@
+---
+title: "MCP"
+author: "Andreas Blaette (andreas.blaette@uni-due.de)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+editor_options: 
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{MCP}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+## Objective
+
+polmineR can also serve corpora to AI chat agents such as Claude, Claude Code or ChatGPT, using the Model Context Protocol (MCP). The MCP server offers polmineR functionality as tools (e.g. `count`, `kwic`, `dispersion`, `read_text`), so users can explore corpora in a chat without writing code. See `?mcp_server` for the tools offered.
+
+Chatting with corpora is convenient for exploring data, and can be a valuable preliminary step for research results that are then corroborated and methodologically checked. Counts are exact counts in the corpus, not estimates. Ask the agent for the polmineR code behind its tool calls, so that findings can be checked and reproduced.
+
+There are two ways to run an MCP server, which differ in how the chat agent reaches it:
+
+- **Local (stdio):** The chat agent starts R on your machine and talks to `polmineR::mcp_server()` via stdin and stdout. R, polmineR and the corpora need to be installed locally. Claude Desktop, Claude Code and OpenAI Codex support this.
+- **Remote (HTTP):** A server runs `polmineR::mcp_http_server()` and is reached via HTTPS. Users need not install anything. Chat agents that cannot start local programs (such as ChatGPT) depend on a remote server.
+
+The following snippets show how to configure common chat agents. As MCP support of chat agents changes frequently, check the documentation of your chat agent.
+
+## Local MCP server
+
+The configuration of a local server names the command to start R and the R code to run:
+
+- `command`: The full path to `Rscript`. Chat agents usually do not use the `PATH` of your shell, so `Rscript` alone may not be found. Find the path with `which Rscript` in a terminal (macOS and Linux), e.g. `/usr/local/bin/Rscript` or `/opt/homebrew/bin/Rscript`.
+- `args`: Starts `polmineR::mcp_server()`.
+  - `use = 'polmineR'` also loads GERMAPARLMINI, the sample corpus included in polmineR.
+  - Without argument `corpora`, the server offers all corpora that `corpus()` finds: those in the registry directory defined by `CORPUS_REGISTRY` (e.g. in `~/.Renviron`) and those loaded with `use`. To offer selected corpora only, state them with `corpora`, e.g. `corpora = c('GERMAPARL2', 'GERMAPARLMINI')`. Do so in particular if restricted corpora are installed: an MCP server gives access to full texts (tool `read_text`).
+
+### Claude Desktop
+
+Add the server to the configuration file of Claude Desktop: `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS, `%APPDATA%\Claude\claude_desktop_config.json` on Windows.
+
+```json
+{
+  "mcpServers": {
+    "polmineR": {
+      "command": "/usr/local/bin/Rscript",
+      "args": [
+        "-e",
+        "polmineR::mcp_server(use = 'polmineR', corpora = c('GERMAPARL2', 'GERMAPARLMINI'))"
+      ]
+    }
+  }
+}
+```
+
+Quit Claude Desktop completely and start it again to load the server.
+
+### Claude Code
+
+Add the server in a terminal. With `-s user`, it is available in all projects:
+
+```bash
+claude mcp add polmineR -s user -- /usr/local/bin/Rscript -e "polmineR::mcp_server(use = 'polmineR')"
+```
+
+Check the connection with `/mcp` in Claude Code. After updating polmineR, reconnect the server with `/mcp`, as a running server keeps using the version it was started with.
+
+### OpenAI Codex
+
+Codex (CLI, IDE extension and app) reads MCP servers from `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.polmineR]
+command = "/usr/local/bin/Rscript"
+args = ["-e", "polmineR::mcp_server(use = 'polmineR')"]
+startup_timeout_sec = 60
+```
+
+`startup_timeout_sec` gives R time to load polmineR and the corpora before Codex gives up (the default is about 10 seconds).
+
+## Remote MCP server
+
+`mcp_http_server()` serves corpora via HTTP, so that chat agents on other machines can use them:
+
+```{r, eval = FALSE}
+Sys.setenv(POLMINER_MCP_TOKEN = "secret")
+mcp_http_server(corpora = "GERMAPARL2", host = "0.0.0.0", port = 8080L)
+```
+
+- With a token, every request needs the header `Authorization: Bearer <token>`. Without a token, everyone who can reach the server can read the corpora, including full texts.
+- Run the server behind a reverse proxy with HTTPS (e.g. Traefik or nginx), as the token is sent with every request.
+- Requests are processed one at a time: a slow request (e.g. cooccurrences on a large corpus) delays all others. Take this into account when many users share a server.
+
+See `?mcp_http_server` for details.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http polmineR https://example.org/mcp --header "Authorization: Bearer <token>"
+```
+
+### ChatGPT
+
+ChatGPT cannot start local MCP servers. It connects to remote servers via HTTPS, added as custom connectors in developer mode (Settings, Apps & Connectors). Check whether the authentication of your server is supported by ChatGPT connectors.
+
+## Removing an MCP server
+
+- Claude Desktop: Delete the entry in `claude_desktop_config.json` and restart Claude Desktop.
+- Claude Code: `claude mcp remove polmineR -s user`
+- OpenAI Codex: Delete the table `[mcp_servers.polmineR]` in `~/.codex/config.toml`.

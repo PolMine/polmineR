@@ -156,6 +156,7 @@ services:
 
 Note that OpenCPU uses port 8004 by default. We therefore map this port an another port that needs to be open by the corpus server.
 
-## Next steps
 
-Upcoming versions of polmineR will expose further functionality. This is a simple proof-of-concept!
+## MCP
+
+polmineR can also serve corpora to AI chat agents (such as Claude or ChatGPT), using the Model Context Protocol (MCP). See the vignette "MCP" (`vignette("mcp", package = "polmineR")`).
