@@ -170,6 +170,26 @@ dim(tdm)
 ```
 
 
+## Chatting with corpora (MCP)
+
+polmineR can serve corpora to AI chat agents such as Claude, Claude Code or ChatGPT, using the Model Context Protocol (MCP). The MCP server offers polmineR functionality as tools: chat agents can look up metadata, count words and CQP queries, get concordances, cooccurrences, keywords and named entities, and read the full text of speeches. Users can explore corpora in a chat without writing code. Counts are exact counts in the corpus, and agents can state the polmineR code behind their tool calls, so findings can be checked and reproduced.
+
+A local MCP server is started by the chat agent. For instance, to add polmineR to Claude Code, run in a terminal:
+
+```bash
+claude mcp add polmineR -s user -- /usr/local/bin/Rscript -e "polmineR::mcp_server(use = 'polmineR')"
+```
+
+A remote MCP server serves corpora via HTTP, so that users need not install anything:
+
+```{r mcp_remote, eval = FALSE}
+Sys.setenv(POLMINER_MCP_TOKEN = "secret")
+mcp_http_server(corpora = "GERMAPARL2", port = 8080L)
+```
+
+See the vignette "MCP" (`vignette("mcp", package = "polmineR")`) for the configuration of Claude Desktop, Claude Code, OpenAI Codex and ChatGPT.
+
+
 ## Installation
 
 ### Windows 

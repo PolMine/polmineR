@@ -2,7 +2,8 @@
 
 * New vignette "MCP" (`vignette("mcp")`) explains how to use polmineR as a
 local MCP server (Claude Desktop, Claude Code, OpenAI Codex) and as a remote MCP
-server (`mcp_http_server()`, e.g. for ChatGPT).
+server (`mcp_http_server()`, e.g. for ChatGPT). The README introduces the MCP
+option.
 * `count()` for `named_entities` objects has an argument `mention_attributes`
 to report the values of further s-attributes of mentions (e.g. a Wikidata ID)
 for each key. Counting by URI, the MCP tool `entities` reports the
