@@ -254,6 +254,19 @@ test_that("mcp tools handle empty values of named-entity s-attributes", {
   expect_identical(y[["n_entities"]], 2L)
   expect_identical(y[["n_unlinked"]], 2L)
   expect_identical(y[["entities"]][["uri"]], c("Q64", "Q567"))
+  # by URI, entities have the values of the attributes of mentions
+  expect_identical(y[["entities"]][["ne_wikidata_type"]], c("|Q515|Q1549591|", "|Q5|"))
+
+  # the attributes of mentions can be selected, and are reported by URI only
+  y <- call_ne_tool("entities", list(corpus = "MCPNEVRT", by = "uri", mention_attributes = list()))
+  expect_false("ne_wikidata_type" %in% colnames(y[["entities"]]))
+  y <- call_ne_tool("entities", list(corpus = "MCPNEVRT", by = "surface"))
+  expect_false("ne_wikidata_type" %in% colnames(y[["entities"]]))
+  y <- call_ne_tool("entities", list(
+    corpus = "MCPNEVRT", by = "uri", mention_attributes = list("ne_xyz")
+  ))
+  expect_s3_class(y, "mcp_error")
+  expect_match(y, "not in 'mention_attributes' of the corpus: ne_xyz \\(available: ne_wikidata_type\\)")
 })
 
 test_that("mcp tools for analysis", {

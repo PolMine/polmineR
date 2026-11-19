@@ -16,7 +16,8 @@
 #'   includes its content as `documentation`.
 #' - `entities`: Counts of the mentions of named entities, by surface form or
 #'   by URI (see [named_entities()]). Requires that the corpus declares
-#'   named-entity annotation.
+#'   named-entity annotation. Counting by URI, entities have the values
+#'   of further attributes of mentions (e.g. a Wikidata ID).
 #' - `s_attribute_values`: Values of a structural attribute (e.g. speakers,
 #'   parties, dates), with the number of tokens for each value.
 #' - `count`: Counts of words or CQP queries.
@@ -393,6 +394,14 @@ mcp_tools <- function(corpora){
         "out which of the entities mentioned are politicians. Links can be",
         "wrong: check that the entity retrieved matches the type of the",
         "mention (e.g. a person for PERSON) before you use its facts.",
+        "With 'by' = 'uri', each entity has the values of the",
+        "'mention_attributes' of the corpus (see corpus_info), e.g. a",
+        "Wikidata ID or the classes of the entity in DBpedia. A class that",
+        "does not match the type (e.g. a company for PERSON) hints at a",
+        "wrong link, but classes can be wrong as well: check the entity",
+        "(e.g. by its Wikidata ID or a concordance) before you conclude that",
+        "a link is wrong. The documentation in corpus_info describes known",
+        "problems. Empty values are null.",
         "Only available if corpus_info reports 'named_entities' for the",
         "corpus."
       ),
@@ -420,6 +429,14 @@ mcp_tools <- function(corpora){
               "'n_unlinked'."
             )
           ),
+          mention_attributes = list(
+            type = "array", items = list(type = "string"),
+            description = paste(
+              "With 'by' = 'uri': the 'mention_attributes' (see",
+              "corpus_info) to report for each entity. If omitted, all of",
+              "them are reported. An empty array reports none."
+            )
+          ),
           subset = schema_subset,
           regex = schema_regex,
           p_attribute = schema_p_attribute,
@@ -429,7 +446,8 @@ mcp_tools <- function(corpora){
       ),
       fn = function(args){
         x <- get_object(args)
-        if (is.null(ne_attributes(x))){
+        ne <- ne_attributes(x)
+        if (is.null(ne)){
           stop(sprintf(
             "corpus '%s' does not declare named-entity annotation - see tool corpus_info",
             slot(x, "corpus")
@@ -443,18 +461,41 @@ mcp_tools <- function(corpora){
         p <- p_attr(args, x)
         limit <- mcp_arg_int(args, "limit", default = 100L, max = 1000L)
 
+        # Further attributes of mentions are reported for entities (by URI)
+        # only: values derived from a linked resource are the same for all
+        # mentions of an entity, but not for all mentions of a surface form.
+        available <- mcp_mention_attributes(x, ne)
+        mention_attrs <- if (by != "uri"){
+          NULL
+        } else if (is.null(args[["mention_attributes"]])){
+          available
+        } else {
+          as.character(unlist(args[["mention_attributes"]]))
+        }
+        not_available <- setdiff(mention_attrs, available)
+        if (length(not_available) > 0L){
+          stop(sprintf(
+            "not in 'mention_attributes' of the corpus: %s (available: %s)",
+            paste(not_available, collapse = ", "),
+            if (length(available) > 0L) paste(available, collapse = ", ") else "none"
+          ))
+        }
+
         # Counting mentions in a large corpus takes time (decoding surface
         # forms), so counts for whole corpora are kept for the lifetime of the
         # server.
         stat <- if (is.null(args[["subset"]])){
           key <- paste(
             slot(x, "corpus"), "entities", by, p,
-            paste(sort(type), collapse = "|"), sep = "::"
+            paste(sort(type), collapse = "|"),
+            paste(mention_attrs, collapse = "|"), sep = "::"
           )
-          if (is.null(cache[[key]])) cache[[key]] <- mcp_entities(x, type, by, p)
+          if (is.null(cache[[key]])){
+            cache[[key]] <- mcp_entities(x, type, by, p, mention_attrs)
+          }
           cache[[key]]
         } else {
-          mcp_entities(x, type, by, p)
+          mcp_entities(x, type, by, p, mention_attrs)
         }
 
         n_mentions <- sum(stat[["count"]])
@@ -1014,14 +1055,7 @@ mcp_named_entities <- function(x){
   if (!is.na(ne[["type"]])) y[["type_s_attribute"]] <- ne[["type"]]
   if (!is.null(ne[["types"]])) y[["types"]] <- I(ne[["types"]])
   if (!is.na(ne[["uri"]])) y[["uri_s_attribute"]] <- ne[["uri"]]
-  # Attributes of the mention element are s-attributes named after it (e.g.
-  # 'ne_wikidata_id' for element 'ne'), as created by cwb-encode.
-  mention_attributes <- setdiff(
-    grep(
-      sprintf("^%s_", ne[["s_attribute"]]), s_attributes(x), value = TRUE
-    ),
-    c(ne[["type"]], ne[["uri"]])
-  )
+  mention_attributes <- mcp_mention_attributes(x, ne)
   if (length(mention_attributes) > 0L){
     y[["mention_attributes"]] <- I(mention_attributes)
   }
@@ -1073,17 +1107,36 @@ mcp_named_entities <- function(x){
 }
 
 
+# Further attributes of named-entity mentions: s-attributes named after the
+# mention element (e.g. 'ne_wikidata_id' for element 'ne'), as created by
+# cwb-encode, other than the declared type and URI s-attributes.
+mcp_mention_attributes <- function(x, ne){
+  setdiff(
+    grep(
+      sprintf("^%s_", ne[["s_attribute"]]), s_attributes(x), value = TRUE
+    ),
+    c(ne[["type"]], ne[["uri"]])
+  )
+}
+
+
 # Count the mentions of named entities, returning the table of the count
 # object (with zero rows if there is no mention).
 #' @importFrom data.table data.table setnames
-mcp_entities <- function(x, type, by, p_attribute){
+mcp_entities <- function(x, type, by, p_attribute, mention_attributes = NULL){
   ne <- named_entities(x, type = type)
   if (is.null(ne)){
     y <- data.table(key = character(), type = character(), count = integer())
     setnames(y, "key", by)
     return(y)
   }
-  slot(count(ne, by = by, p_attribute = p_attribute), "stat")
+  slot(
+    count(
+      ne, by = by, p_attribute = p_attribute,
+      mention_attributes = mention_attributes
+    ),
+    "stat"
+  )
 }
 
 
