@@ -18,7 +18,13 @@ named_entities(.Object, ...)
 
 \S4method{named_entities}{character}(.Object, type = NULL, ...)
 
-\S4method{count}{named_entities}(.Object, by = c("surface", "uri"), p_attribute = "word", ...)
+\S4method{count}{named_entities}(
+  .Object,
+  by = c("surface", "uri"),
+  p_attribute = "word",
+  mention_attributes = NULL,
+  ...
+)
 }
 \arguments{
 \item{.Object}{A \code{corpus} object, an object inheriting from the \code{regions}
@@ -35,6 +41,14 @@ form, or "uri", to count mentions by the URI they are linked to.}
 
 \item{p_attribute}{The p-attribute surface forms are derived from (e.g.
 "word" or "lemma"). The tokens of a mention are separated by a space.}
+
+\item{mention_attributes}{A \code{character} vector with further s-attributes of
+mentions (e.g. "ne_wikidata_id"), or \code{NULL} (default). These are
+attributes of the mention element: they have one region for each mention,
+with the same boundaries. For each key, the most frequent value is
+reported in a column named after the s-attribute. Counting by URI, values
+derived from the linked resource (such as its Wikidata ID or classes) are
+the same for all mentions of a key.}
 }
 \value{
 \code{named_entities()} returns a \code{named_entities} object, or \code{NULL}
@@ -48,7 +62,7 @@ form) and \code{count}. With \code{by = "uri"}, the columns are \code{uri}, \cod
 \code{count}, \code{surface} (the most frequent surface form) and \code{n_surface} (the
 number of distinct surface forms). Mentions that are not linked are
 reported in a row with \code{uri} \code{NA}. Column \code{type} is \code{NA} if no type
-s-attribute is declared.
+s-attribute is declared. Columns for \code{mention_attributes} follow.
 }
 \description{
 The mentions of named entities in a corpus or subcorpus, and the number of

@@ -1,5 +1,9 @@
 # polmineR v0.8.9.9001-9033
 
+* `count()` for `named_entities` objects has an argument `mention_attributes`
+to report the values of further s-attributes of mentions (e.g. a Wikidata ID)
+for each key. Counting by URI, the MCP tool `entities` reports the
+`mention_attributes` of the corpus for each entity, as a hint at wrong links.
 * The MCP tool `corpus_info` returns the documentation of a corpus (the content
 of the info file named in the registry) as `documentation`, so that AI agents
 learn what attributes mean and what to keep in mind.

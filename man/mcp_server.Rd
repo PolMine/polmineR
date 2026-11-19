@@ -60,7 +60,8 @@ the registry file names an info file (see \code{\link[=get_info]{get_info()}}), 
 includes its content as \code{documentation}.
 \item \code{entities}: Counts of the mentions of named entities, by surface form or
 by URI (see \code{\link[=named_entities]{named_entities()}}). Requires that the corpus declares
-named-entity annotation.
+named-entity annotation. Counting by URI, entities have the values
+of further attributes of mentions (e.g. a Wikidata ID).
 \item \code{s_attribute_values}: Values of a structural attribute (e.g. speakers,
 parties, dates), with the number of tokens for each value.
 \item \code{count}: Counts of words or CQP queries.

@@ -285,3 +285,45 @@ test_that(
     expect_identical(slot(named_entities("NETESTVRT", type = "PERSON"), "strucs"), c(0L, 3L))
   }
 )
+
+test_that(
+  "count() reports further attributes of mentions",
+  {
+    registry <- ne_vrt_corpus(id = "netestattrs")
+    ne <- named_entities("NETESTATTRS")
+
+    stat <- slot(count(ne, by = "uri", mention_attributes = "ne_wikidata_type"), "stat")
+    expect_identical(
+      colnames(stat),
+      c("uri", "type", "count", "surface", "n_surface", "ne_wikidata_type")
+    )
+    expect_identical(stat[["uri"]], c("Q64", NA, "Q567"))
+    # empty values (of unlinked mentions) are NA
+    expect_identical(
+      stat[["ne_wikidata_type"]], c("|Q515|Q1549591|", NA, "|Q5|")
+    )
+
+    # by surface form, the most frequent value is reported
+    stat <- slot(count(ne, mention_attributes = "ne_wikidata_type"), "stat")
+    expect_identical(
+      stat[["ne_wikidata_type"]][match("Berlin", stat[["surface"]])],
+      "|Q515|Q1549591|"
+    )
+
+    # without mention_attributes, the result is the same as before
+    expect_identical(
+      colnames(slot(count(ne, by = "uri"), "stat")),
+      c("uri", "type", "count", "surface", "n_surface")
+    )
+
+    expect_error(
+      count(ne, by = "uri", mention_attributes = "ne_xyz"),
+      "s-attribute\\(s\\) not available: ne_xyz"
+    )
+    # 'doc' is an s-attribute, but not an attribute of mentions
+    expect_error(
+      count(ne, by = "uri", mention_attributes = "doc_id"),
+      "without one region for each mention: doc_id"
+    )
+  }
+)

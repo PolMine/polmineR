@@ -174,6 +174,13 @@ setMethod("ne_attributes", "character", function(.Object, ...){
 #'   form, or "uri", to count mentions by the URI they are linked to.
 #' @param p_attribute The p-attribute surface forms are derived from (e.g.
 #'   "word" or "lemma"). The tokens of a mention are separated by a space.
+#' @param mention_attributes A `character` vector with further s-attributes of
+#'   mentions (e.g. "ne_wikidata_id"), or `NULL` (default). These are
+#'   attributes of the mention element: they have one region for each mention,
+#'   with the same boundaries. For each key, the most frequent value is
+#'   reported in a column named after the s-attribute. Counting by URI, values
+#'   derived from the linked resource (such as its Wikidata ID or classes) are
+#'   the same for all mentions of a key.
 #' @param ... Further arguments (not used).
 #' @return `named_entities()` returns a `named_entities` object, or `NULL`
 #'   (with a warning) if there is no mention. An error is raised if the corpus
@@ -186,7 +193,7 @@ setMethod("ne_attributes", "character", function(.Object, ...){
 #'   `count`, `surface` (the most frequent surface form) and `n_surface` (the
 #'   number of distinct surface forms). Mentions that are not linked are
 #'   reported in a row with `uri` `NA`. Column `type` is `NA` if no type
-#'   s-attribute is declared.
+#'   s-attribute is declared. Columns for `mention_attributes` follow.
 #' @exportClass named_entities
 #' @exportMethod named_entities
 #' @rdname named_entities
@@ -345,6 +352,35 @@ setMethod("named_entities", "character", function(.Object, type = NULL, ...){
 }
 
 
+# Check that s-attributes are attributes of the mention element: they are
+# s-attributes of the corpus with the same number of regions as mentions. An
+# s-attribute with other regions would not have the strucs of mentions.
+#' @importFrom RcppCWB cl_attribute_size
+.ne_check_mention_attributes <- function(x, s_attrs, ne){
+  if (is.null(s_attrs)) return(invisible(TRUE))
+  stopifnot(is.character(s_attrs))
+  missing_s_attrs <- s_attrs[!s_attrs %in% s_attributes(x)]
+  if (length(missing_s_attrs) > 0L){
+    stop(sprintf(
+      "s-attribute(s) not available: %s", paste(missing_s_attrs, collapse = ", ")
+    ))
+  }
+  n <- function(s_attr) cl_attribute_size(
+    corpus = slot(x, "corpus"), attribute = s_attr, attribute_type = "s",
+    registry = slot(x, "registry_dir")
+  )
+  n_mentions <- n(ne[["s_attribute"]])
+  not_aligned <- s_attrs[vapply(s_attrs, n, integer(1L)) != n_mentions]
+  if (length(not_aligned) > 0L){
+    stop(sprintf(
+      "s-attribute(s) without one region for each mention: %s",
+      paste(not_aligned, collapse = ", ")
+    ))
+  }
+  invisible(TRUE)
+}
+
+
 # The URI of each mention of a named_entities object, NA if a mention is not
 # linked. Regions of the URI s-attribute coincide with mentions, but are a
 # separate s-attribute: A mention is linked if it starts and ends a URI region
@@ -399,7 +435,7 @@ setMethod("named_entities", "character", function(.Object, type = NULL, ...){
 
 #' @rdname named_entities
 #' @importFrom data.table data.table setorderv
-setMethod("count", "named_entities", function(.Object, by = c("surface", "uri"), p_attribute = "word", ...){
+setMethod("count", "named_entities", function(.Object, by = c("surface", "uri"), p_attribute = "word", mention_attributes = NULL, ...){
   N <- NULL # column of data.table objects, defined to avoid R CMD check notes
   by <- match.arg(by)
   ne <- ne_attributes(.Object)
@@ -409,6 +445,7 @@ setMethod("count", "named_entities", function(.Object, by = c("surface", "uri"),
   if (!p_attribute %in% p_attributes(.Object)){
     stop(sprintf("p-attribute '%s' not available", p_attribute))
   }
+  .ne_check_mention_attributes(.Object, mention_attributes, ne)
 
   dt <- data.table(
     surface = .ne_surface(.Object, p_attribute = p_attribute),
@@ -431,6 +468,16 @@ setMethod("count", "named_entities", function(.Object, by = c("surface", "uri"),
     setorderv(surfaces, cols = c("uri", "N"), order = c(1L, -1L))
     surfaces <- surfaces[, list(surface = surface[1], n_surface = .N), by = "uri"]
     y <- y[surfaces, on = "uri"]
+  }
+
+  # The most frequent value of further attributes of mentions for a key.
+  # Values of these attributes have the strucs of mentions.
+  for (s_attr in mention_attributes){
+    dt[[s_attr]] <- .ne_values(.Object, s_attr, slot(.Object, "strucs"))
+    values <- dt[, .N, by = c(by, s_attr)]
+    setorderv(values, cols = c(by, "N"), order = c(1L, -1L))
+    values <- values[!duplicated(values[[by]])]
+    y[[s_attr]] <- values[[s_attr]][match(y[[by]], values[[by]])]
   }
   setorderv(y, cols = c("count", by), order = c(-1L, 1L), na.last = TRUE)
 
