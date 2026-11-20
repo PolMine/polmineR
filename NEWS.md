@@ -1,5 +1,7 @@
 # polmineR v0.8.9.9001-9033
 
+* The MCP tool `corpus_info` reports the version of a corpus stated in its
+registry file as `version` (`null` if the registry file does not state one).
 * `cooccurrences()` for `partition` and `subcorpus` objects uses the s-attribute
 in the slot `s_attribute_strucs` as the default `boundary`. Windows no longer
 include tokens outside the subcorpus (e.g. stage directions if the subcorpus

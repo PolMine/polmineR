@@ -53,8 +53,8 @@ offers polmineR functionality as tools.
 The tools are:
 \itemize{
 \item \code{list_corpora}: Corpora available, with size and encoding.
-\item \code{corpus_info}: Size, positional and structural attributes of a corpus.
-If the corpus declares named-entity annotation (see \code{\link[=ne_attributes]{ne_attributes()}}),
+\item \code{corpus_info}: Size, positional and structural attributes of a corpus,
+and its version if the registry file states one. If the corpus declares named-entity annotation (see \code{\link[=ne_attributes]{ne_attributes()}}),
 the result includes its s-attributes and CQP queries for mentions. If
 the registry file names an info file (see \code{\link[=get_info]{get_info()}}), the result
 includes its content as \code{documentation}.
