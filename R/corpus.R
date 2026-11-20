@@ -731,14 +731,44 @@ setMethod("subset", "subcorpus", function(x, subset, verbose = FALSE, ...){
 })
 
 
+#' The value of a property declared in the registry file of a corpus (such as
+#' "version"), or `NULL` if the property is not declared. Unlike the
+#' `$`-method for corpus objects, this does not issue a warning.
+#' @importFrom RcppCWB corpus_properties corpus_property
+#' @noRd
+registry_property <- function(x, property){
+  registry <- slot(x, "registry_dir")
+  if (!property %in% corpus_properties(slot(x, "corpus"), registry = registry))
+    return(NULL)
+  corpus_property(slot(x, "corpus"), registry = registry, property = property)
+}
+
+
 #' @exportMethod show
 #' @docType methods
 #' @rdname corpus_methods
 #' @details The `show()`-method will show basic information on the
-#'   `corpus` object.
+#'   `corpus` object: the corpus ID, the full name and the version of the
+#'   corpus ("not available" if the registry file does not state them), the
+#'   encoding, the type, whether a template is available, and the size.
+#' @importFrom RcppCWB corpus_full_name
 setMethod("show", "corpus", function(object){
+  # For subcorpora, the slot "name" is the name of the subcorpus, so the full
+  # name of the corpus is taken from the registry file
+  name <- corpus_full_name(
+    corpus = slot(object, "corpus"), registry = slot(object, "registry_dir")
+  )
+  version <- registry_property(object, "version")
   message(sprintf("<<%s>>", class(object)))
-  message(sprintf("%-12s", "corpus:"), slot(object, "corpus"))
+  message(sprintf("%-12s", "corpus ID:"), slot(object, "corpus"))
+  message(
+    sprintf("%-12s", "name:"),
+    if (length(name) == 1L && !is.na(name) && nzchar(name)) name else "not available"
+  )
+  message(
+    sprintf("%-12s", "version:"),
+    if (length(version) == 1L && !is.na(version) && nzchar(version)) version else "not available"
+  )
   message(sprintf("%-12s", "encoding:"), slot(object, "encoding"))
   message(
     sprintf("%-12s", "type:"),

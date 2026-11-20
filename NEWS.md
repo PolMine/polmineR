@@ -1,5 +1,8 @@
 # polmineR v0.8.9.9001-9033
 
+* The `show()` method for `corpus` objects (and subcorpora) reports the full
+name and the version of the corpus from the registry file ("not available" if
+they are not stated). The corpus is labelled "corpus ID" (previously "corpus").
 * The MCP tool `corpus_info` reports the version of a corpus stated in its
 registry file as `version` (`null` if the registry file does not state one).
 * `cooccurrences()` for `partition` and `subcorpus` objects uses the s-attribute
