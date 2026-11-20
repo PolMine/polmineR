@@ -79,6 +79,8 @@ test_that("mcp tools for corpus information", {
   expect_identical(y[["corpora"]][["size"]], size(corpus("GERMAPARLMINI")))
 
   y <- mcp_call("corpus_info", list(corpus = "GERMAPARLMINI"))
+  # the version stated in the registry file
+  expect_identical(y[["version"]], corpus("GERMAPARLMINI")$version)
   expect_identical(y[["p_attributes"]], p_attributes("GERMAPARLMINI"))
   expect_setequal(y[["s_attributes"]][["s_attribute"]], s_attributes("GERMAPARLMINI"))
   # GERMAPARLMINI does not declare named-entity annotation
@@ -232,8 +234,11 @@ test_that("mcp tools handle empty values of named-entity s-attributes", {
   ne_tools <- mcp_tools(corpora = "MCPNEVRT")
   call_ne_tool <- function(name, arguments) mcp_call(name, arguments, tool_list = ne_tools)
 
-  # a corpus without info file has no documentation
-  expect_null(call_ne_tool("corpus_info", list(corpus = "MCPNEVRT"))[["documentation"]])
+  # a corpus without info file has no documentation, and no version if the
+  # registry file does not state one
+  y <- expect_silent(call_ne_tool("corpus_info", list(corpus = "MCPNEVRT")))
+  expect_null(y[["documentation"]])
+  expect_null(y[["version"]])
   ne <- call_ne_tool("corpus_info", list(corpus = "MCPNEVRT"))[["named_entities"]]
   expect_identical(ne[["mention_attributes"]], "ne_wikidata_type")
   expect_match(ne[["notes"]], "empty value", fixed = TRUE)

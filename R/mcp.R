@@ -9,8 +9,8 @@
 #' The tools are:
 #'
 #' - `list_corpora`: Corpora available, with size and encoding.
-#' - `corpus_info`: Size, positional and structural attributes of a corpus.
-#'   If the corpus declares named-entity annotation (see [ne_attributes()]),
+#' - `corpus_info`: Size, positional and structural attributes of a corpus,
+#'   and its version if the registry file states one. If the corpus declares named-entity annotation (see [ne_attributes()]),
 #'   the result includes its s-attributes and CQP queries for mentions. If
 #'   the registry file names an info file (see [get_info()]), the result
 #'   includes its content as `documentation`.
@@ -165,12 +165,24 @@ mcp_process <- function(message, tools, verbose = FALSE){
 }
 
 
+# The value of a property declared in the registry file of a corpus (such as
+# "version"), or NULL if the property is not declared. Unlike the
+# `$`-method for corpus objects, this does not issue a warning.
+mcp_corpus_property <- function(x, property){
+  registry <- slot(x, "registry_dir")
+  if (!property %in% corpus_properties(slot(x, "corpus"), registry = registry))
+    return(NULL)
+  corpus_property(slot(x, "corpus"), registry = registry, property = property)
+}
+
+
 #' @details `mcp_tools()` returns the definitions of the tools offered by the
 #'   server: A `list` of `list` objects with the name, the description, the
 #'   JSON Schema of the input (`inputSchema`) and the function implementing the
 #'   tool (`fn`).
 #' @export mcp_tools
 #' @rdname mcp_server
+#' @importFrom RcppCWB corpus_properties corpus_property
 mcp_tools <- function(corpora){
   # Counts for whole corpora are expensive for large corpora (such as
   # GERMAPARL2) and are kept for the lifetime of the server.
@@ -330,10 +342,11 @@ mcp_tools <- function(corpora){
     list(
       name = "corpus_info",
       description = paste(
-        "Describe a corpus: its size, the positional attributes (token-level",
-        "annotation such as 'word', 'pos', 'lemma') and the structural",
-        "attributes (metadata such as 'speaker', 'party', 'date') with the",
-        "number of distinct values. If the corpus declares named-entity",
+        "Describe a corpus: its size, its version (if stated), the positional",
+        "attributes (token-level annotation such as 'word', 'pos', 'lemma')",
+        "and the structural attributes (metadata such as 'speaker', 'party',",
+        "'date') with the number of distinct values. Report the version when",
+        "citing results. If the corpus declares named-entity",
         "annotation, 'named_entities' names its s-attributes and gives CQP",
         "queries for mentions. If the corpus has documentation (an info",
         "file), 'documentation' has its content (usually markdown): read it",
@@ -362,6 +375,7 @@ mcp_tools <- function(corpora){
           name = slot(x, "name"),
           size = size(x),
           encoding = slot(x, "encoding"),
+          version = mcp_corpus_property(x, "version"),
           p_attributes = I(p_attributes(x)),
           s_attributes = data.frame(
             s_attribute = s_attrs,
