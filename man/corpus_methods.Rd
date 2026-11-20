@@ -42,7 +42,9 @@ Use \code{get_corpus()}-method to get the corpus ID from the slot
 \code{corpus} of the \code{corpus} object.
 
 The \code{show()}-method will show basic information on the
-\code{corpus} object.
+\code{corpus} object: the corpus ID, the full name and the version of the
+corpus ("not available" if the registry file does not state them), the
+encoding, the type, whether a template is available, and the size.
 
 Applying the \code{$}-method on a corpus will return the values for the
 s-attribute stated with argument \code{name}.

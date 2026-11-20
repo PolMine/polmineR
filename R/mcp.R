@@ -165,24 +165,12 @@ mcp_process <- function(message, tools, verbose = FALSE){
 }
 
 
-# The value of a property declared in the registry file of a corpus (such as
-# "version"), or NULL if the property is not declared. Unlike the
-# `$`-method for corpus objects, this does not issue a warning.
-mcp_corpus_property <- function(x, property){
-  registry <- slot(x, "registry_dir")
-  if (!property %in% corpus_properties(slot(x, "corpus"), registry = registry))
-    return(NULL)
-  corpus_property(slot(x, "corpus"), registry = registry, property = property)
-}
-
-
 #' @details `mcp_tools()` returns the definitions of the tools offered by the
 #'   server: A `list` of `list` objects with the name, the description, the
 #'   JSON Schema of the input (`inputSchema`) and the function implementing the
 #'   tool (`fn`).
 #' @export mcp_tools
 #' @rdname mcp_server
-#' @importFrom RcppCWB corpus_properties corpus_property
 mcp_tools <- function(corpora){
   # Counts for whole corpora are expensive for large corpora (such as
   # GERMAPARL2) and are kept for the lifetime of the server.
@@ -375,7 +363,7 @@ mcp_tools <- function(corpora){
           name = slot(x, "name"),
           size = size(x),
           encoding = slot(x, "encoding"),
-          version = mcp_corpus_property(x, "version"),
+          version = registry_property(x, "version"),
           p_attributes = I(p_attributes(x)),
           s_attributes = data.frame(
             s_attribute = s_attrs,
