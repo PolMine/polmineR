@@ -48,7 +48,11 @@ setMethod("as.data.frame", "cooccurrences_bundle", function(x){
 #' @param p_attribute The p-attribute of the tokens/the query.
 #' @param boundary If provided, it will be checked that the corpus positions of
 #'   windows do not extend beyond the left and right boundaries of the region 
-#'   defined by the s-attribute where the match occurs.
+#'   defined by the s-attribute where the match occurs. For `partition` and
+#'   `subcorpus` objects, the default is the s-attribute in the slot
+#'   `s_attribute_strucs`, so that windows do not include tokens outside the
+#'   subcorpus. Windows do not extend into a neighboring region either, even if
+#'   it belongs to the subcorpus. Use `boundary = NULL` to disable the check.
 #' @param stoplist Exclude a query hit from analysis if stopword(s) is/are in
 #'   context (relevant only if query is not \code{NULL}).
 #' @param positivelist Character vector or numeric vector: include a query hit
@@ -188,12 +192,14 @@ setMethod("cooccurrences", "character", function(
 
 
 #' @rdname cooccurrences
+#' @importFrom cli cli_alert_info
 setMethod(
   "cooccurrences", "slice",
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+    p_attribute = getOption("polmineR.p_attribute"),
+    boundary = slot(.Object, "s_attribute_strucs"),
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
@@ -201,6 +207,11 @@ setMethod(
     ...
   ){
     if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
+    # The slot s_attribute_strucs is empty for a partition derived from a
+    # corpus without subsetting: no boundary check is needed then.
+    if (length(boundary) == 0L) boundary <- NULL
+    if (verbose && !is.null(boundary))
+      cli_alert_info("s-attribute used as boundary: {.val {boundary}}")
     y <- context(
       .Object = .Object, query = query, cqp = is.cqp,
       p_attribute = p_attribute, boundary = boundary,
@@ -223,7 +234,8 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+    p_attribute = getOption("polmineR.p_attribute"),
+    boundary = slot(.Object, "s_attribute_strucs"),
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,
@@ -239,7 +251,8 @@ setMethod(
   function(
     .Object, query, cqp = is.cqp,
     left = getOption("polmineR.left"), right = getOption("polmineR.right"),
-    p_attribute = getOption("polmineR.p_attribute"), boundary = NULL,
+    p_attribute = getOption("polmineR.p_attribute"),
+    boundary = slot(.Object, "s_attribute_strucs"),
     stoplist = NULL, positivelist = NULL, keep = NULL,
     method = "ll",
     mc = FALSE, progress = TRUE, verbose = FALSE,

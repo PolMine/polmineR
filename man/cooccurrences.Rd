@@ -66,7 +66,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  boundary = NULL,
+  boundary = slot(.Object, "s_attribute_strucs"),
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -85,7 +85,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  boundary = NULL,
+  boundary = slot(.Object, "s_attribute_strucs"),
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -104,7 +104,7 @@ cooccurrences(.Object, ...)
   left = getOption("polmineR.left"),
   right = getOption("polmineR.right"),
   p_attribute = getOption("polmineR.p_attribute"),
-  boundary = NULL,
+  boundary = slot(.Object, "s_attribute_strucs"),
   stoplist = NULL,
   positivelist = NULL,
   keep = NULL,
@@ -146,7 +146,11 @@ cooccurrences(.Object, ...)
 
 \item{boundary}{If provided, it will be checked that the corpus positions of
 windows do not extend beyond the left and right boundaries of the region
-defined by the s-attribute where the match occurs.}
+defined by the s-attribute where the match occurs. For \code{partition} and
+\code{subcorpus} objects, the default is the s-attribute in the slot
+\code{s_attribute_strucs}, so that windows do not include tokens outside the
+subcorpus. Windows do not extend into a neighboring region either, even if
+it belongs to the subcorpus. Use \code{boundary = NULL} to disable the check.}
 
 \item{left}{A single \code{integer} value defining the number of tokens to the
 left of the query match to include in the context. Advanced usage: (a) If
