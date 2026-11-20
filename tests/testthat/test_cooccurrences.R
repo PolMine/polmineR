@@ -41,7 +41,9 @@ test_that(
     
     y <- cooccurrences(P, query = "oil", p_attribute = "word")
     expect_equal(subset(y, count_ref > 0L)[["word"]][1:5], c("prices", "below", "its", "crude", "market"))
-    expect_equal(y[["word"]][1:5], c("prices", "GCC", "boost", "each", "fall"))
+    # Windows do not cross the boundaries of articles (regions of s-attribute
+    # "places"), even if neighboring articles belong to the partition.
+    expect_equal(y[["word"]][1:5], c("prices", "GCC", "boost", "fall", "had"))
     
     y <- cooccurrences(P, query = '"barrel.*"', cqp = TRUE, p_attribute = "word")
     expect_false(anyNA(y[["ll"]]))
@@ -481,5 +483,35 @@ test_that(
       expect_identical(y_mc@stat, y@stat)
       expect_identical(y_mc@window_sizes, y@window_sizes)
     }
+  }
+)
+
+test_that(
+  "cooccurrences for a subcorpus do not count tokens beyond the subcorpus",
+  {
+    sc <- corpus("GERMAPARLMINI") %>% subset(speaker == "Angela Dorothea Merkel")
+    regions <- slot(sc, "cpos")
+    in_subcorpus <- function(cpos) findInterval(cpos, regions[,1]) > 0L &
+      cpos <= regions[pmax(findInterval(cpos, regions[,1]), 1L), 2]
+
+    # The default boundary is the s-attribute in slot s_attribute_strucs
+    y <- cooccurrences(sc, query = "Präsident", left = 10L, right = 10L)
+    cpos_window <- slot(y, "cpos")[slot(y, "cpos")[["position"]] != 0L][["cpos"]]
+    expect_true(all(in_subcorpus(cpos_window)))
+    expect_false(any(slot(y, "stat")[["count_ref"]] < 0L))
+    expect_false(any(is.nan(slot(y, "stat")[["ll"]])))
+
+    # If verbose, a message reports the s-attribute used as boundary
+    expect_message(
+      cooccurrences(sc, query = "Präsident", left = 10L, right = 10L, verbose = TRUE),
+      "s-attribute used as boundary"
+    )
+
+    # With boundary = NULL, windows extend beyond the subcorpus
+    y_unbounded <- suppressWarnings(
+      cooccurrences(sc, query = "Präsident", left = 10L, right = 10L, boundary = NULL)
+    )
+    cpos_window <- slot(y_unbounded, "cpos")[slot(y_unbounded, "cpos")[["position"]] != 0L][["cpos"]]
+    expect_false(all(in_subcorpus(cpos_window)))
   }
 )

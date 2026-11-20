@@ -1,5 +1,12 @@
 # polmineR v0.8.9.9001-9033
 
+* `cooccurrences()` for `partition` and `subcorpus` objects uses the s-attribute
+in the slot `s_attribute_strucs` as the default `boundary`. Windows no longer
+include tokens outside the subcorpus (e.g. stage directions if the subcorpus
+is limited to speech) or from a neighboring text, which could result in
+negative values of `count_ref` and `NaN` values of the log-likelihood
+statistic. This also applies to the MCP tool `cooccurrences`. Use
+`boundary = NULL` for the previous behavior.
 * New vignette "MCP" (`vignette("mcp")`) explains how to use polmineR as a
 local MCP server (Claude Desktop, Claude Code, OpenAI Codex) and as a remote MCP
 server (`mcp_http_server()`, e.g. for ChatGPT). The README introduces the MCP
