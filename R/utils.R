@@ -387,6 +387,7 @@ flatten <- function(object){
 #' 
 #' @param x A \code{data.table}.
 #' @param digits Number of digits.
+#' @exportS3Method NULL
 #' @noRd
 round.data.table <- function(x, digits = 2L){
   column_classes <- sapply(x, function(column) is(column)[1])

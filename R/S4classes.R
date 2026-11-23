@@ -245,14 +245,13 @@ setReplaceMethod("name", signature = "bundle", function(x, value) {
 #' @param e1 A `texstat` object.
 #' @param e2 Another `texstat` object.
 #' @param ... Further arguments.
-#' @aliases as.data.frame,textstat-method show,textstat-method
-#'   dim,textstat-method
-#'   colnames,textstat-method rownames,textstat-method names,textstat-method
-#'   as.DataTables,textstat-method head,textstat-method tail,textstat-method
-#'   dim,textstat-method nrow,textstat-method ncol,textstat-method
-#'   colnames,textstat-method as.data.frame,textstat-method
-#'   round,textstat-method sort,textstat-method [,textstat,ANY,ANY,ANY-method [[,textstat-method
-#'   name name<-
+#' @aliases as.data.frame,textstat-method show,textstat-method dim,textstat-method
+#' @aliases colnames,textstat-method rownames,textstat-method names,textstat-method
+#' @aliases as.DataTables,textstat-method head,textstat-method tail,textstat-method
+#' @aliases nrow,textstat-method ncol,textstat-method
+#' @aliases round,textstat-method sort,textstat-method
+#' @aliases [,textstat,ANY,ANY,ANY-method [[,textstat-method
+#' @aliases name name<-
 #' @docType class
 #' @exportClass textstat
 #' @examples
@@ -507,9 +506,9 @@ setMethod("length", "count", function(x) slot(x, "size"))
 #' @param p_attribute a p-attribute (for enriching) / performing count.
 #' @param verbose `logical` value, whether to output messages
 #' @param ... further parameters passed into `count` when calling `enrich`, and ...
-#' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method 
-#'   [,partition-method as.partition_bundle 
-#'   as.partition_bundle,partition-method export export,partition-method split
+#' @aliases partition-class show,partition-method [,partition,ANY,ANY,ANY-method
+#' @aliases [,partition-method as.partition_bundle
+#' @aliases as.partition_bundle,partition-method export export,partition-method split
 #' @rdname partition_class
 #' @name partition_class
 #' @exportClass partition
@@ -1165,14 +1164,13 @@ setClass(
 #' @slot xml Object of class `character` whether the xml is flat or nested
 #' @slot call Object of class `character` the call that generated the `partition_bundle`
 #' @aliases partition_bundle-class
-#'   [,partition_bundle-method [[,partition_bundle-method
-#'   as.matrix,partition_bundle-method 
-#'   merge,partition_bundle-method
-#'   +,partition_bundle-method names,partition_bundle-method 
-#'   summary,partition_bundle-method +,partition_bundle,ANY-method
-#'   [,partition_bundle,ANY,ANY,ANY-method +,partition_bundle,partition-method 
-#'   +,partition_bundle,partition_bundle-method as.partition_bundle,list-method 
-#'   barplot,partition_bundle-method
+#' @aliases [,partition_bundle-method [[,partition_bundle-method
+#' @aliases as.matrix,partition_bundle-method merge,partition_bundle-method
+#' @aliases +,partition_bundle-method names,partition_bundle-method
+#' @aliases summary,partition_bundle-method +,partition_bundle,ANY-method
+#' @aliases [,partition_bundle,ANY,ANY,ANY-method +,partition_bundle,partition-method
+#' @aliases +,partition_bundle,partition_bundle-method as.partition_bundle,list-method
+#' @aliases barplot,partition_bundle-method
 #' @param x A `partition_bundle` object.
 #' @param .Object A `partition_bundle` object.
 #' @param object A `partition_bundle` object.
