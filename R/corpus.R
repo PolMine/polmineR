@@ -20,7 +20,7 @@ setGeneric("corpus", function(.Object, ...) standardGeneric("corpus"))
 #'   restricted (`TRUE`) or not (`FALSE`).
 #' @exportMethod corpus
 #' @importFrom RcppCWB cqp_list_corpora corpus_data_dir corpus_registry_dir
-#'   corpus_info_file corpus_full_name
+#' @importFrom RcppCWB corpus_info_file corpus_full_name
 #' @importFrom fs path path_expand
 #' @importFrom cli cli_bullets
 setMethod("corpus", "character", function(
