@@ -8,9 +8,6 @@
 \alias{trim,DocumentTermMatrix-method}
 \alias{punctuation}
 \title{Trim an object.}
-\format{
-An object of class \code{character} of length 13.
-}
 \usage{
 trim(.Object, ...)
 
@@ -72,4 +69,3 @@ trim(dtm, min_doc_length = 100)
 \author{
 Andreas Blaette
 }
-\keyword{datasets}

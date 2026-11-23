@@ -136,6 +136,7 @@ Baker, Paul (2006): \emph{Using Corpora in Discourse Analysis}. London: continuu
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://polmine.github.io/polmineR/}
   \item \url{https://github.com/PolMine/polmineR}
   \item Report bugs at \url{https://github.com/PolMine/polmineR/issues}
 }

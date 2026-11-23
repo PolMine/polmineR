@@ -119,10 +119,10 @@ count table). In line with this logic, the \code{subcorpus} class inherits
 from the \code{corpus} class, whereas the \code{partition} class inherits
 from the \code{textstat} class.
 
-Other classes to manage corpora: 
+Other classes to manage corpora:
 \code{\link{corpus-class}},
 \code{\link{phrases-class}},
 \code{\link{ranges-class}},
-\code{\link{regions}}
+\code{\link[=regions]{regions()}}
 }
 \concept{classes to manage corpora}

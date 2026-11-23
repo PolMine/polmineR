@@ -164,10 +164,10 @@ attributes. Analytical methods available for \code{corpus} objects are
 \code{\link{kwic}}, \code{\link{cooccurrences}},
 \code{\link{as.TermDocumentMatrix}}.
 
-Other classes to manage corpora: 
+Other classes to manage corpora:
 \code{\link{phrases-class}},
 \code{\link{ranges-class}},
-\code{\link{regions}},
+\code{\link[=regions]{regions()}},
 \code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}
