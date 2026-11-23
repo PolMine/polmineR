@@ -102,10 +102,10 @@ similarity and homogeneity. \emph{Proc. 3rd Conf. on Empirical Methods in
 Natural Language Processing}. Granada, Spain, pp 46-52.
 }
 \seealso{
-Other statistical methods: 
-\code{\link{ll}()},
-\code{\link{pmi}()},
-\code{\link{t_test}()}
+Other statistical methods:
+\code{\link[=ll]{ll()}},
+\code{\link[=pmi]{pmi()}},
+\code{\link[=t_test]{t_test()}}
 }
 \author{
 Andreas Blaette

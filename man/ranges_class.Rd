@@ -28,10 +28,10 @@ matches.}
 }}
 
 \seealso{
-Other classes to manage corpora: 
+Other classes to manage corpora:
 \code{\link{corpus-class}},
 \code{\link{phrases-class}},
-\code{\link{regions}},
+\code{\link[=regions]{regions()}},
 \code{\link{subcorpus}}
 }
 \concept{classes to manage corpora}

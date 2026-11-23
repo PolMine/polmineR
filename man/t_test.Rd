@@ -75,9 +75,9 @@ Word Pairs and Collocations.} URN urn:nbn:de:bsz:93-opus-23714.
 \url{https://elib.uni-stuttgart.de/bitstream/11682/2573/1/Evert2005phd.pdf}
 }
 \seealso{
-Other statistical methods: 
-\code{\link{chisquare}()},
-\code{\link{ll}()},
-\code{\link{pmi}()}
+Other statistical methods:
+\code{\link[=chisquare]{chisquare()}},
+\code{\link[=ll]{ll()}},
+\code{\link[=pmi]{pmi()}}
 }
 \concept{statistical methods}

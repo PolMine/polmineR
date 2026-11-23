@@ -71,9 +71,9 @@ Manning, Christopher D.; Schuetze, Hinrich (1999): \emph{Foundations of Statisti
 Processing}. MIT Press: Cambridge, Mass., pp. 178-183.
 }
 \seealso{
-Other statistical methods: 
-\code{\link{chisquare}()},
-\code{\link{ll}()},
-\code{\link{t_test}()}
+Other statistical methods:
+\code{\link[=chisquare]{chisquare()}},
+\code{\link[=ll]{ll()}},
+\code{\link[=t_test]{t_test()}}
 }
 \concept{statistical methods}
