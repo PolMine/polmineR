@@ -145,7 +145,8 @@ test_that(
   {
     old <- options(polmineR.encoder = NULL)
     on.exit(options(old))
-    expect_error(semantic_search("GERMAPARLMINI", query = "Klimaschutz", embeddings = emb), "polmineR.encoder")
+    # embeddings with backend "matrix" do not state a model
+    expect_error(semantic_search("GERMAPARLMINI", query = "Klimaschutz", embeddings = emb), "do not state a model")
     expect_error(semantic_search("GERMAPARLMINI", query = 1:3, embeddings = emb), "dimensions")
 
     # a custom encoder
@@ -166,5 +167,114 @@ test_that(
       as.data.table(semantic_search("GERMAPARLMINI", query = kauder, embeddings = emb2, k = 3L)),
       as.data.table(semantic_search("GERMAPARLMINI", query = kauder, embeddings = emb, k = 3L))
     )
+  }
+)
+
+
+# A directory with the metadata 'hf download --local-dir' writes, standing in
+# for a local copy of a model.
+fake_model_dir <- function(revision){
+  d <- file.path(tempfile(), "gbert-test")
+  dir.create(file.path(d, ".cache", "huggingface", "download"), recursive = TRUE)
+  writeLines(c(revision, "etag", "123"), file.path(d, ".cache", "huggingface", "download", "config.json.metadata"))
+  d
+}
+
+emb_model <- embeddings(
+  "GERMAPARLMINI", vectors = m, s_attribute = "speaker",
+  model = "test/gbert-test", model_revision = "abc123"
+)
+
+test_that(
+  "encoder() creates an encoder from embeddings, corpus and corpus ID",
+  {
+    d <- fake_model_dir("abc123")
+    enc <- encoder(emb_model, path = d)
+    expect_s4_class(enc, "sentence_encoder")
+    expect_s4_class(enc, "encoder")
+    expect_true(is.function(enc))
+    expect_identical(slot(enc, "model"), "test/gbert-test")
+    expect_identical(slot(enc, "revision"), "abc123")
+    expect_identical(slot(enc, "revision_check"), "verified")
+    expect_identical(slot(enc, "path"), normalizePath(d))
+    expect_identical(slot(enc, "dimensions"), 8L)
+    expect_identical(slot(enc, "s_attribute"), "speaker")
+    expect_true(is.na(slot(enc, "query_prefix")))
+    out <- capture.output(show(enc), type = "message")
+    expect_true(any(grepl("verified", out)))
+    expect_true(any(grepl("loaded on first use", out)))
+
+    # local model found via option polmineR.model_dir
+    old <- options(polmineR.model_dir = dirname(d))
+    on.exit(options(old))
+    expect_identical(slot(encoder(emb_model), "path"), normalizePath(d))
+    options(old)
+
+    # without a local copy: Hugging Face hub
+    expect_true(is.na(slot(encoder(emb_model), "path")))
+
+    # corpus and corpus ID: the embeddings declared for the corpus
+    expect_error(encoder("GERMAPARLMINI"), "does not declare embeddings")
+    expect_error(encoder(corpus("GERMAPARLMINI")), "does not declare embeddings")
+  }
+)
+
+test_that(
+  "encoder() checks model and revision",
+  {
+    expect_error(encoder(emb), "do not state a model")
+    expect_error(encoder(emb_model, path = fake_model_dir("other")), "revision")
+    expect_warning(
+      enc <- encoder(emb_model, path = dirname(fake_model_dir("abc123"))),
+      "cannot determine"
+    )
+    expect_identical(slot(enc, "revision_check"), "unknown")
+    expect_error(encoder(emb_model, path = tempfile()), "not found")
+  }
+)
+
+
+# Tests that load a model require the Python package sentence-transformers
+# and a local copy of the model the embeddings of GERMAPARL2 were computed
+# with: Set the environment variable POLMINER_TEST_ENCODER_MODEL to its
+# directory.
+encoder_model <- Sys.getenv("POLMINER_TEST_ENCODER_MODEL")
+
+test_that(
+  "an encoder reproduces stored vectors",
+  {
+    skip_if(encoder_model == "", "POLMINER_TEST_ENCODER_MODEL not set")
+    # py_module_available() would import the module, and with it PyTorch,
+    # before the encoder can handle the OpenMP runtimes (see ?encoder)
+    skip_if_not(
+      !is.null(reticulate::import("importlib.util")$find_spec("sentence_transformers"))
+    )
+    skip_if_not("GERMAPARL2" %in% RcppCWB::cqp_list_corpora())
+
+    enc <- encoder("GERMAPARL2", path = encoder_model, fp16 = TRUE)
+    expect_identical(slot(enc, "revision_check"), "verified")
+    v <- enc(polmineR:::.region_text(corpus("GERMAPARL2"), "p", c(98406L, 5755999L)), type = "document")
+    expect_identical(dim(v), c(2L, 1024L))
+    expect_equal(sqrt(rowSums(v^2)), c(1, 1), tolerance = 1e-3)
+    out <- capture.output(show(enc), type = "message")
+    expect_true(any(grepl("Loaded: yes", out)))
+
+    # one text, a matrix with one row
+    expect_identical(dim(enc("Klimaschutz")), c(1L, 1024L))
+  }
+)
+
+test_that(
+  ".local_model_revision() reads the revision written by hf download",
+  {
+    d <- tempfile()
+    dir.create(file.path(d, ".cache", "huggingface", "download"), recursive = TRUE)
+    expect_identical(polmineR:::.local_model_revision(d), NA_character_)
+    for (f in c("config.json", "vocab.txt")){
+      writeLines(c("53404af", "etag", "123"), file.path(d, ".cache", "huggingface", "download", paste0(f, ".metadata")))
+    }
+    expect_identical(polmineR:::.local_model_revision(d), "53404af")
+    writeLines("other", file.path(d, ".cache", "huggingface", "download", "x.metadata"))
+    expect_identical(polmineR:::.local_model_revision(d), NA_character_)
   }
 )

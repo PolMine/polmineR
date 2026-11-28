@@ -15,6 +15,7 @@ semantic_search(.Object, ...)
   query,
   k = 10L,
   embeddings = NULL,
+  encoder = NULL,
   exclude_query = TRUE,
   ...
 )
@@ -24,6 +25,7 @@ semantic_search(.Object, ...)
   query,
   k = 10L,
   embeddings = NULL,
+  encoder = NULL,
   exclude_query = TRUE,
   ...
 )
@@ -33,6 +35,7 @@ semantic_search(.Object, ...)
   query,
   k = 10L,
   embeddings = NULL,
+  encoder = NULL,
   exclude_query = TRUE,
   ...
 )
@@ -52,6 +55,13 @@ length-one \code{character} vector with a corpus ID.}
 \item{embeddings}{An \code{embeddings} object. Defaults to the embeddings
 declared for the corpus (see \code{\link[=embeddings]{embeddings()}}).}
 
+\item{encoder}{The \code{encoder} to encode a \code{character} query. If \code{NULL}, the
+function given by option \code{polmineR.encoder} is used if set, otherwise an
+encoder is created with \code{encoder(embeddings)} (see \code{\link[=encoder]{encoder()}}, e.g. on
+option \code{polmineR.model_dir}). A custom function set as option
+\code{polmineR.encoder} is called with arguments \code{x}, \code{model}, \code{revision} and
+\code{prefix} and needs to return a \code{matrix}.}
+
 \item{exclude_query}{A \code{logical} value, whether to exclude the regions of a
 \code{subcorpus} used as query from the result.}
 }
@@ -68,9 +78,8 @@ to the regions fully contained in the subcorpus. Applied to a
 \details{
 The query can be:
 \itemize{
-\item a \code{character} vector, which is encoded using the function given by
-option \code{polmineR.encoder} (see \code{\link[=encoder_sentence_transformers]{encoder_sentence_transformers()}}). The
-encoder needs to use the model the embeddings were computed with.
+\item a \code{character} vector, which is encoded with the model the embeddings were
+computed with (see \code{\link[=encoder]{encoder()}}).
 \item a \code{numeric} vector with the same number of dimensions as the embeddings
 (a query that has been encoded already).
 \item a \code{subcorpus} ("more like this"): The query is the mean of the vectors of
@@ -102,7 +111,7 @@ corpus("GERMAPARLMINI") |>
 \seealso{
 Other embeddings:
 \code{\link[=embeddings]{embeddings()}},
-\code{\link[=encoder_sentence_transformers]{encoder_sentence_transformers()}},
+\code{\link[=encoder]{encoder()}},
 \code{\link{semantic_hits}}
 }
 \concept{embeddings}

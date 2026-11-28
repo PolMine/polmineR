@@ -123,7 +123,7 @@ emb
 \code{\link[=semantic_search]{semantic_search()}}
 
 Other embeddings:
-\code{\link[=encoder_sentence_transformers]{encoder_sentence_transformers()}},
+\code{\link[=encoder]{encoder()}},
 \code{\link{semantic_hits}},
 \code{\link[=semantic_search]{semantic_search()}}
 }

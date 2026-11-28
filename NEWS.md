@@ -5,10 +5,17 @@
 regions of an s-attribute (e.g. paragraphs), method `semantic_search()` for
 `corpus`, `subcorpus` and `subcorpus_bundle` objects, and class `semantic_hits`,
 which inherits from `subcorpus` and adds the similarity of regions with the
-query. The query can be a character vector (encoded by the function set as
-option `polmineR.encoder`, e.g. `encoder_sentence_transformers()`), a numeric
-vector or a subcorpus ("more like this"). So far, only vectors held in memory
-are supported (backend "matrix").
+query. The query can be a character vector (encoded with the
+model the embeddings were computed with, see below), a numeric vector or a
+subcorpus ("more like this"). So far, only vectors held in memory are supported
+(backend "matrix").
+* New method `encoder()` for `embeddings`, `corpus` and `character` objects
+(draft): returns an encoder for the model of the embeddings (class
+`sentence_encoder`, inheriting from `encoder`, models of sentence-transformers
+via reticulate). Encoders are functions that encode texts; model, revision and
+prefixes are taken from the embeddings, the revision of a local copy of the
+model is checked. Local models are found via argument `path` or option
+`polmineR.model_dir`.
 * The `show()` method for `corpus` objects (and subcorpora) reports the full
 name and the version of the corpus from the registry file ("not available" if
 they are not stated). The corpus is labelled "corpus ID" (previously "corpus").

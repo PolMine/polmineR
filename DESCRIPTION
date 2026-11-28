@@ -95,6 +95,7 @@ Collate:
     'dispersion.R'
     'dotplot.R'
     'embeddings.R'
+    'encoder.R'
     'encoding.R'
     'enrich.R'
     'format.R'

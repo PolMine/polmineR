@@ -63,7 +63,7 @@ exact (\code{FALSE} for approximations from a compressed index).}
 \seealso{
 Other embeddings:
 \code{\link[=embeddings]{embeddings()}},
-\code{\link[=encoder_sentence_transformers]{encoder_sentence_transformers()}},
+\code{\link[=encoder]{encoder()}},
 \code{\link[=semantic_search]{semantic_search()}}
 }
 \concept{embeddings}

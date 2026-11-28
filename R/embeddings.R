@@ -418,9 +418,8 @@ setMethod("subset", "semantic_hits", function(x, subset, ...){
 #'
 #' The query can be:
 #'
-#' - a `character` vector, which is encoded using the function given by
-#'   option `polmineR.encoder` (see [encoder_sentence_transformers()]). The
-#'   encoder needs to use the model the embeddings were computed with.
+#' - a `character` vector, which is encoded with the model the embeddings were
+#'   computed with (see [encoder()]).
 #' - a `numeric` vector with the same number of dimensions as the embeddings
 #'   (a query that has been encoded already).
 #' - a `subcorpus` ("more like this"): The query is the mean of the vectors of
@@ -433,6 +432,12 @@ setMethod("subset", "semantic_hits", function(x, subset, ...){
 #' @param k A length-one `integer` vector, the number of hits.
 #' @param embeddings An `embeddings` object. Defaults to the embeddings
 #'   declared for the corpus (see [embeddings()]).
+#' @param encoder The `encoder` to encode a `character` query. If `NULL`, the
+#'   function given by option `polmineR.encoder` is used if set, otherwise an
+#'   encoder is created with `encoder(embeddings)` (see [encoder()], e.g. on
+#'   option `polmineR.model_dir`). A custom function set as option
+#'   `polmineR.encoder` is called with arguments `x`, `model`, `revision` and
+#'   `prefix` and needs to return a `matrix`.
 #' @param exclude_query A `logical` value, whether to exclude the regions of a
 #'   `subcorpus` used as query from the result.
 #' @param ... Further arguments.
@@ -466,20 +471,20 @@ setGeneric("semantic_search", function(.Object, ...) standardGeneric("semantic_s
 
 
 #' @rdname semantic_search
-setMethod("semantic_search", "corpus", function(.Object, query, k = 10L, embeddings = NULL, exclude_query = TRUE, ...){
+setMethod("semantic_search", "corpus", function(.Object, query, k = 10L, embeddings = NULL, encoder = NULL, exclude_query = TRUE, ...){
   if (is.null(embeddings)) embeddings <- embeddings(.Object)
   .semantic_search(
-    .Object, query = .query_vector(query, embeddings), strucs = NULL,
+    .Object, query = .query_vector(query, embeddings, encoder), strucs = NULL,
     k = k, embeddings = embeddings, exclude_query = exclude_query
   )
 })
 
 
 #' @rdname semantic_search
-setMethod("semantic_search", "subcorpus", function(.Object, query, k = 10L, embeddings = NULL, exclude_query = TRUE, ...){
+setMethod("semantic_search", "subcorpus", function(.Object, query, k = 10L, embeddings = NULL, encoder = NULL, exclude_query = TRUE, ...){
   if (is.null(embeddings)) embeddings <- embeddings(.Object)
   .semantic_search(
-    .Object, query = .query_vector(query, embeddings),
+    .Object, query = .query_vector(query, embeddings, encoder),
     strucs = .contained_strucs(.Object, slot(embeddings, "s_attribute")),
     k = k, embeddings = embeddings, exclude_query = exclude_query
   )
@@ -487,10 +492,10 @@ setMethod("semantic_search", "subcorpus", function(.Object, query, k = 10L, embe
 
 
 #' @rdname semantic_search
-setMethod("semantic_search", "subcorpus_bundle", function(.Object, query, k = 10L, embeddings = NULL, exclude_query = TRUE, ...){
+setMethod("semantic_search", "subcorpus_bundle", function(.Object, query, k = 10L, embeddings = NULL, encoder = NULL, exclude_query = TRUE, ...){
   if (is.null(embeddings)) embeddings <- embeddings(as(.Object, "corpus"))
   # Encode the query once for all subcorpora.
-  q <- .query_vector(query, embeddings)
+  q <- .query_vector(query, embeddings, encoder)
   y <- as(as(.Object, "corpus"), "subcorpus_bundle")
   slot(y, "objects") <- lapply(
     slot(.Object, "objects"),
@@ -516,7 +521,7 @@ setMethod("semantic_search", "character", function(.Object, ...){
 #' Turn a query into a vector. The original query is kept as attribute
 #' "query", the regions of a subcorpus used as query as attribute "strucs".
 #' @noRd
-.query_vector <- function(query, embeddings){
+.query_vector <- function(query, embeddings, encoder = NULL){
   if (is(query, "subcorpus")){
     strucs <- .contained_strucs(query, slot(embeddings, "s_attribute"))
     if (length(strucs) == 0L)
@@ -529,19 +534,26 @@ setMethod("semantic_search", "character", function(.Object, ...){
     v <- colMeans(.get_vectors(embeddings, strucs), na.rm = TRUE)
     attr(v, "strucs") <- strucs
   } else if (is.character(query)){
-    encoder <- getOption("polmineR.encoder")
-    if (is.null(encoder)){
-      stop(
-        "To encode a query, set option 'polmineR.encoder' to a function ",
-        "(see ?encoder_sentence_transformers), or provide the query as a ",
-        "numeric vector or a subcorpus."
+    if (is.null(encoder)) encoder <- getOption("polmineR.encoder")
+    if (is.null(encoder)) encoder <- polmineR::encoder(embeddings)
+    if (is(encoder, "encoder")){
+      # the encoder needs to belong to the vector space of the embeddings
+      for (s in c("model", "revision")){
+        a <- slot(encoder, s)
+        b <- slot(embeddings, if (s == "model") "model" else "model_revision")
+        if (!identical(a, b)) stop(sprintf("%s of the encoder (%s) differs from the embeddings (%s)", s, a, b))
+      }
+      v <- encoder(query, type = "query")
+    } else if (is.function(encoder)){
+      v <- encoder(
+        query,
+        model = slot(embeddings, "model"),
+        revision = slot(embeddings, "model_revision"),
+        prefix = slot(embeddings, "spec")[["query"]][["prefix"]]
       )
+    } else {
+      stop("encoder needs to be an encoder object or a function")
     }
-    v <- encoder(
-      query,
-      model = slot(embeddings, "model"),
-      revision = slot(embeddings, "model_revision")
-    )
     v <- as.numeric(if (is.matrix(v)) v[1L, ] else v)
   } else if (is.numeric(query)){
     v <- as.numeric(query)
@@ -670,42 +682,27 @@ setMethod("semantic_search", "character", function(.Object, ...){
 }
 
 
-#' Encode queries with sentence-transformers
-#'
-#' Create a function that encodes queries using the Python package
-#' sentence-transformers via reticulate. Assign it to option
-#' `polmineR.encoder` to use character queries with [semantic_search()]. The
-#' model is loaded on first use and kept for later calls.
-#'
-#' @param model A Hugging Face model ID or local path. If `NULL`, the model
-#'   recorded in the embeddings is used.
-#' @param device The device ("cpu", "mps", "cuda"), or `NULL` to let
-#'   sentence-transformers decide.
-#' @return A function with arguments `x` (a `character` vector), `model` and
-#'   `revision`, returning a matrix with one row per element of `x`.
-#' @export encoder_sentence_transformers
-#' @family embeddings
-#' @examples
-#' \dontrun{
-#' options(polmineR.encoder = encoder_sentence_transformers())
-#' semantic_search("GERMAPARL2", query = "Wir brauchen mehr Klimaschutz.")
-#' }
-encoder_sentence_transformers <- function(model = NULL, device = NULL){
-  if (!requireNamespace("reticulate", quietly = TRUE))
-    stop("package 'reticulate' required")
-  model_override <- model
-  cache <- new.env()
-  function(x, model = NULL, revision = NULL, ...){
-    m <- if (is.null(model_override)) model else model_override
-    if (is.null(m) || is.na(m)) stop("model unknown")
-    if (is.null(cache[[m]])){
-      st <- reticulate::import("sentence_transformers")
-      args <- list(m)
-      if (!is.null(device)) args$device <- device
-      if (!is.null(revision) && !is.na(revision) && is.null(model_override))
-        args$revision <- revision
-      cache[[m]] <- do.call(st$SentenceTransformer, args)
-    }
-    cache[[m]]$encode(as.list(x), normalize_embeddings = TRUE)
-  }
+#' Texts of regions of an s-attribute, built from the corpus as the input of
+#' the model: tokens of a p-attribute, joined by a separator (as declared by
+#' "input" in _embeddings.json).
+#' @importFrom RcppCWB get_region_matrix cl_cpos2str
+#' @noRd
+.region_text <- function(x, s_attribute, strucs, p_attribute = "word", collapse = " "){
+  regions <- get_region_matrix(
+    corpus = slot(x, "corpus"), s_attribute = s_attribute,
+    strucs = strucs, registry = slot(x, "registry_dir")
+  )
+  vapply(
+    seq_len(nrow(regions)),
+    function(i){
+      str <- cl_cpos2str(
+        corpus = slot(x, "corpus"), p_attribute = p_attribute,
+        registry = slot(x, "registry_dir"),
+        cpos = regions[i, 1]:regions[i, 2]
+      )
+      Encoding(str) <- slot(x, "encoding")
+      paste(str, collapse = collapse)
+    },
+    character(1)
+  )
 }
