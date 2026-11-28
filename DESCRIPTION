@@ -49,7 +49,8 @@ Suggests:
     httr2,
     httpuv,
     protolite,
-    curl
+    curl,
+    reticulate
 VignetteBuilder: knitr
 Description: Package for corpus analysis using the Corpus Workbench 
     ('CWB', <https://cwb.sourceforge.io>) as an efficient back end for indexing
@@ -93,6 +94,7 @@ Collate:
     'cpos.R'
     'dispersion.R'
     'dotplot.R'
+    'embeddings.R'
     'encoding.R'
     'enrich.R'
     'format.R'

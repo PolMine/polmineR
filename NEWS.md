@@ -1,5 +1,14 @@
 # polmineR v0.8.9.9001-9033
 
+* Draft of semantic search (experimental, see issue #307): S4 class
+`embeddings` and constructor `embeddings()` for vector representations of the
+regions of an s-attribute (e.g. paragraphs), method `semantic_search()` for
+`corpus`, `subcorpus` and `subcorpus_bundle` objects, and class `semantic_hits`,
+which inherits from `subcorpus` and adds the similarity of regions with the
+query. The query can be a character vector (encoded by the function set as
+option `polmineR.encoder`, e.g. `encoder_sentence_transformers()`), a numeric
+vector or a subcorpus ("more like this"). So far, only vectors held in memory
+are supported (backend "matrix").
 * The `show()` method for `corpus` objects (and subcorpora) reports the full
 name and the version of the corpus from the registry file ("not available" if
 they are not stated). The corpus is labelled "corpus ID" (previously "corpus").
